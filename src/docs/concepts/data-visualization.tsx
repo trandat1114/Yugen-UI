@@ -14,7 +14,8 @@ function C({ children }: { children: ReactNode }) {
 
 function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
   return (
-    <div className="overflow-x-auto rounded-xlarge border border-stroke-2 bg-background-1">
+    // tabIndex: bảng rộng cuộn ngang được bằng bàn phím (axe scrollable-region-focusable).
+    <div tabIndex={0} className="overflow-x-auto rounded-xlarge border border-stroke-2 bg-background-1">
       <table className="w-full border-collapse text-start text-body1">
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
@@ -166,6 +167,8 @@ export default function Page() {
               ["Một chuỗi là trọng tâm", "Nhấn mạnh: một màu, còn lại xám", "1 màu + xám", <C key="c">highlight</C>],
               ["Trên / dưới mốc 0", "Cột phân kỳ", "Phân kỳ (2 cực + giữa xám)", <C key="c">diverging</C>],
               ["Phần – tổng", "Cột chồng; donut ≤ 6 lát để nhìn nhanh", "Phân loại", <><C>stacked</C> <C>DonutChart</C></>],
+              ["Quan hệ giữa hai đại lượng", "Phân tán; bong bóng khi có chiều thứ ba", "Một màu; ≤ 3 nhóm phân loại", <C key="c">ScatterChart</C>],
+              ["Độ lớn trên lưới hai chiều (giờ × ngày, cohort)", "Bản đồ nhiệt", "Tuần tự; phân kỳ khi có mốc giữa", <C key="c">Heatmap</C>],
               ["Hơn ~7 nhóm đều quan trọng", "Bảng (hoặc bảng + biểu đồ)", "—", <C key="c">Table</C>],
             ]}
           />

@@ -27,6 +27,7 @@
   --color-foreground-disabled: var(--colorNeutralForegroundDisabled);
   --color-foreground-on-brand: var(--colorNeutralForegroundOnBrand);
   --color-foreground-inverted: var(--colorNeutralForegroundInverted);
+  --color-foreground-1-static: var(--colorNeutralForeground1Static);
   --color-brand-foreground-1: var(--colorBrandForeground1);
   --color-brand-foreground-2: var(--colorBrandForeground2);
   --color-brand-foreground-2-hover: var(--colorBrandForeground2Hover);

@@ -25,6 +25,26 @@ export const NEWS_KIND_LABEL: Record<NewsKind, string> = {
 
 export const NEWS: NewsRelease[] = [
   {
+    version: "0.6.0",
+    date: "2026-10-21",
+    title: "DataGrid, bộ AI, registry shadcn & kiểm thử tự động",
+    summary:
+      "Thêm DataGrid, bộ component AI (StreamingMarkdown, Citation, Reasoning, PromptInput), Tour, NotificationCenter, FileUpload, Stepper, TimePicker, Overflow và biểu đồ Scatter / Heatmap; cài từng component bằng shadcn CLI; docs nạp nhanh hơn, có tiếng Anh và hơn 800 bài test tự động.",
+    items: [
+      { kind: "new", text: "DataGrid — sắp xếp, chọn dòng, đổi cỡ cột, ảo hoá 10 000 dòng.", href: "#/components/datagrid" },
+      { kind: "new", text: "Bộ AI: StreamingMarkdown an toàn, Citation, Reasoning, PromptInput có đính kèm.", href: "#/components/streamingmarkdown" },
+      { kind: "new", text: "Tour hướng dẫn có spotlight và NotificationCenter (popover / bottom sheet).", href: "#/components/tour" },
+      { kind: "new", text: "FileUpload, Stepper / Wizard và mẫu form react-hook-form + zod.", href: "#/components/fileupload" },
+      { kind: "new", text: "TimePicker, preset cho DateRangePicker và Overflow tự ẩn bớt item.", href: "#/components/timepicker" },
+      { kind: "new", text: "ScatterChart, Heatmap, AreaChart 100% và zoom / brush.", href: "#/components/scatterchart" },
+      { kind: "new", text: "Cài component dạng mã nguồn bằng shadcn CLI: npx shadcn add …/r/<tên>.json.", href: "#/concepts/shadcn-registry" },
+      { kind: "new", text: "Theme Designer xuất JSON (W3C Design Tokens, Tokens Studio).", href: "#/theme-designer" },
+      { kind: "improved", text: "Docs nạp lười từng trang (JS lần đầu 970 kB → 108 kB), có bản tiếng Anh và menu chọn phiên bản.", href: "#/" },
+      { kind: "improved", text: "Nút StackBlitz cho mọi ví dụ và chính sách phiên bản / deprecate.", href: "#/concepts/versioning" },
+      { kind: "fixed", text: "Sửa a11y (axe trên 128 trang × sáng / tối), Resizable kéo ngược trong RTL, lệch hydration khi SSR, tương thích React 19." },
+    ],
+  },
+  {
     version: "0.5.0",
     date: "2026-10-20",
     title: "Yugen Labs, gói npm & cộng đồng",

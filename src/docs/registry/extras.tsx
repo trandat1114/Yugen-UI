@@ -53,35 +53,11 @@ import { VisuallyHidden } from "@/components/ui/VisuallyHidden/VisuallyHidden";
 import { AriaLiveAnnouncer, useAnnounce } from "@/components/ui/AriaLive/AriaLive";
 import { useArrowNavigationGroup, useFocusableGroup } from "@/components/ui/FocusManagement/FocusManagement";
 import type { ComponentDoc, PropDoc } from "../types";
+import { fabric, illustration, marble, wood } from "../sample-assets";
 
 /* ================================================================== Dữ liệu mẫu */
 
-/** Hoạ tiết chất liệu dạng SVG data URI (dữ liệu ảnh mẫu, không phải màu UI). */
-function texture(base: string, line: string, angle: number) {
-  const svg =
-    "<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'>" +
-    "<rect width='32' height='32' fill='" + base + "'/>" +
-    "<g transform='rotate(" + angle + " 16 16)' stroke='" + line + "' stroke-width='3'>" +
-    "<line x1='-16' y1='4' x2='48' y2='4'/><line x1='-16' y1='12' x2='48' y2='12'/>" +
-    "<line x1='-16' y1='20' x2='48' y2='20'/><line x1='-16' y1='28' x2='48' y2='28'/></g></svg>";
-  return "data:image/svg+xml," + encodeURIComponent(svg);
-}
-
-// wood, marble, fabric: URL ảnh bất kỳ (ở đây là SVG sinh sẵn).
-const wood = texture("#B9875A", "#9A6A40", 12);
-const marble = texture("#ECEAE6", "#C9C4BC", -35);
-const fabric = texture("#5B6FA8", "#7488C2", 45);
-
-/** Minh hoạ hoa anh đào cho TeachingPopover (dữ liệu ảnh mẫu). */
-const illustration =
-  "data:image/svg+xml," +
-  encodeURIComponent(
-    "<svg xmlns='http://www.w3.org/2000/svg' width='320' height='140' viewBox='0 0 320 140'>" +
-      "<defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#FDEDF3'/><stop offset='1' stop-color='#E9DDF7'/></linearGradient></defs>" +
-      "<rect width='320' height='140' fill='url(#g)'/>" +
-      "<g fill='#FA65A8'><circle cx='160' cy='46' r='18'/><circle cx='183' cy='63' r='18'/><circle cx='174' cy='90' r='18'/>" +
-      "<circle cx='146' cy='90' r='18'/><circle cx='137' cy='63' r='18'/></g><circle cx='160' cy='70' r='9' fill='#FFF6DC'/></svg>",
-  );
+// wood, marble, fabric, illustration: URL ảnh bất kỳ (ở đây là SVG sinh sẵn — xem ../sample-assets).
 
 const colors = [
   { value: "#C2347A", label: "Hồng anh đào" },

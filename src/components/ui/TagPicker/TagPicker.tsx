@@ -6,6 +6,7 @@ import { Command as CommandPrimitive } from "cmdk";
 import { ChevronDown20Regular, ChevronDown24Regular } from "@fluentui/react-icons";
 import { usePortalThemeProps } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
+import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { popoverSurfaceClass } from "@/components/ui/Popover/Popover";
 import { fieldAppearanceClass, type FieldAppearance } from "@/components/ui/Select/Select";
 import { cmdkGroupClass, cmdkOptionClass, normalizeSearchText } from "@/components/ui/Combobox/Combobox";
@@ -109,7 +110,7 @@ export const TagPicker = React.forwardRef<HTMLInputElement, TagPickerProps>(
     const firstEnabled = (list: NormalizedOption[]) => list.find((i) => !i.disabled)?.value ?? "";
     const optionOf = (v: string) => items.find((i) => i.value === v);
 
-    React.useLayoutEffect(() => {
+    useIsomorphicLayoutEffect(() => {
       if (!open || !listEl || !active) {
         setActiveId(undefined);
         return;

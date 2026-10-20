@@ -2,6 +2,7 @@
 import * as React from "react";
 import { Send20Filled, Stop20Filled } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
+import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { Button } from "../Button/Button";
 import { fieldControlClass } from "../Field/Field";
 
@@ -80,7 +81,7 @@ export const ChatComposer = React.forwardRef<HTMLTextAreaElement, ChatComposerPr
     );
 
     // Tự giãn chiều cao theo nội dung, tối đa maxRows dòng.
-    React.useLayoutEffect(() => {
+    useIsomorphicLayoutEffect(() => {
       const el = textareaRef.current;
       if (!el) return;
       el.style.height = "auto";

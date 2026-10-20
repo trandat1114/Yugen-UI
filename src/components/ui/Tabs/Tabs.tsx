@@ -44,9 +44,32 @@ export interface TabsTriggerProps extends React.ComponentPropsWithoutRef<typeof 
 export const TabsTrigger = React.forwardRef<React.ElementRef<typeof TabsPrimitive.Trigger>, TabsTriggerProps>(
   ({ className, icon, children, ...props }, ref) => {
     const { size, appearance } = React.useContext(TabsContext);
+    const innerRef = React.useRef<HTMLButtonElement | null>(null);
+    const controlsRef = React.useRef<string | null>(null);
+    const setRefs = React.useCallback(
+      (node: HTMLButtonElement | null) => {
+        innerRef.current = node;
+        if (typeof ref === "function") ref(node);
+        else if (ref) ref.current = node;
+      },
+      [ref],
+    );
+
+    // TabList kiểu Fluent hay dùng không kèm TabsContent: Radix vẫn gắn aria-controls tới panel không tồn tại
+    // (id rỗng là ARIA không hợp lệ). Chỉ giữ aria-controls khi panel thật sự có trong DOM — chạy lại mỗi lần render.
+    React.useEffect(() => {
+      const el = innerRef.current;
+      if (!el) return;
+      controlsRef.current ??= el.getAttribute("aria-controls");
+      const id = controlsRef.current;
+      if (!id) return;
+      if (document.getElementById(id)) el.setAttribute("aria-controls", id);
+      else el.removeAttribute("aria-controls");
+    });
+
     return (
       <TabsPrimitive.Trigger
-        ref={ref}
+        ref={setRefs}
         className={cn(
           "group/tab relative inline-flex shrink-0 cursor-pointer whitespace-nowrap items-center justify-center rounded-medium text-foreground-2",
           "transition-colors duration-faster ease-easy-ease",
@@ -64,10 +87,11 @@ export const TabsTrigger = React.forwardRef<React.ElementRef<typeof TabsPrimitiv
         {...props}
       >
         {icon}
-        {/* Giữ chỗ cho chữ đậm để tab không bị nhảy độ rộng khi active */}
+        {/* Giữ chỗ cho chữ đậm để tab không bị nhảy độ rộng khi active. Chữ thật luôn hiển thị (đậm theo trigger)
+            để tab active vẫn có tên truy cập; bản sao đậm chỉ chiếm chỗ, luôn ẩn. */}
         <span className="inline-grid">
-          <span className="col-start-1 row-start-1 group-data-[state=active]/tab:invisible">{children}</span>
-          <span aria-hidden className="invisible col-start-1 row-start-1 font-semibold group-data-[state=active]/tab:visible">
+          <span className="col-start-1 row-start-1">{children}</span>
+          <span aria-hidden className="invisible col-start-1 row-start-1 font-semibold">
             {children}
           </span>
         </span>

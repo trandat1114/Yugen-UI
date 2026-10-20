@@ -2,6 +2,7 @@
 import * as React from "react";
 import { ArrowDown16Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
+import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { Button } from "../Button/Button";
 import { Spinner } from "../Spinner/Spinner";
 import {
@@ -174,7 +175,7 @@ export const MessageScroller = React.forwardRef<HTMLDivElement, MessageScrollerP
     }, []);
 
     /* ---------- Sau mỗi lần danh sách đổi: giữ vị trí đọc, bám đáy, đếm tin mới, thông báo ---------- */
-    React.useLayoutEffect(() => {
+    useIsomorphicLayoutEffect(() => {
       const el = viewportRef.current;
       if (!el) return;
       const prev = prevKeysRef.current;

@@ -5,6 +5,7 @@ import { cn } from "@/lib/cn";
 import { PageHeader } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
 import { NEWS, NEWS_KIND_LABEL, type NewsKind } from "../news";
+import { useLocale } from "../i18n";
 import { SITE } from "../site";
 import { markNewsSeen } from "../useNews";
 
@@ -15,12 +16,15 @@ const KIND_BADGE: Record<NewsKind, Pick<BadgeProps, "color" | "appearance">> = {
   breaking: { color: "warning", appearance: "tint" },
 };
 
-function formatDate(date: string) {
-  return new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "long", year: "numeric" }).format(new Date(date));
+function formatDate(date: string, locale: string) {
+  return new Intl.DateTimeFormat(locale === "en" ? "en-US" : "vi-VN", { day: "2-digit", month: "long", year: "numeric" }).format(new Date(date));
 }
 
 export function NewsPage() {
   const [filter, setFilter] = React.useState<"all" | NewsKind>("all");
+  const { t, locale } = useLocale();
+  // Nội dung bản tin chưa dịch: lang="vi" khi giao diện là tiếng Anh (App hiện thông báo dịch một phần).
+  const itemLang = locale === "en" ? "vi" : undefined;
 
   React.useEffect(() => markNewsSeen(), []);
 
@@ -31,15 +35,15 @@ export function NewsPage() {
   return (
     <div className="pb-XXXL">
       <PageHeader
-        eyebrow="Cập nhật"
-        title="Có gì mới"
-        lead="Mọi thay đổi của Yugen UI theo từng phiên bản — component mới, cải tiến, sửa lỗi và thay đổi cần lưu ý khi nâng cấp."
+        eyebrow={t("news.eyebrow")}
+        title={t("nav.news")}
+        lead={t("news.lead")}
       >
-        Bản đầy đủ nằm trong <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">CHANGELOG.md</code>
+        {t("news.fullIn")} <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">CHANGELOG.md</code>
         {SITE.links.repository ? (
           <>
             {" "}
-            và trang{" "}
+            {t("news.andPage")}{" "}
             <a className="text-link underline hover:text-link-hover" href={`${SITE.links.repository}/releases`}>
               Releases
             </a>
@@ -53,16 +57,16 @@ export function NewsPage() {
           type="single"
           value={filter}
           onValueChange={(v) => v && setFilter(v as typeof filter)}
-          aria-label="Lọc theo loại thay đổi"
+          aria-label={t("news.filter")}
         >
-          <ToggleGroupItem value="all">Tất cả</ToggleGroupItem>
+          <ToggleGroupItem value="all">{t("news.all")}</ToggleGroupItem>
           {(Object.keys(NEWS_KIND_LABEL) as NewsKind[]).map((k) => (
             <ToggleGroupItem key={k} value={k}>
-              {NEWS_KIND_LABEL[k]}
+              {t(`news.kind.${k}`)}
             </ToggleGroupItem>
           ))}
         </ToggleGroup>
-        <span className="text-caption1 text-foreground-3">Phiên bản hiện tại: {SITE.version}</span>
+        <span className="text-caption1 text-foreground-3">{t("news.current", { version: SITE.version })}</span>
       </div>
 
       <ol className="relative flex flex-col gap-XXXL before:absolute before:inset-y-2 before:inset-s-1.75 before:w-0.5 before:rounded-circular before:bg-stroke-2 md:before:inset-s-41.75">
@@ -78,33 +82,37 @@ export function NewsPage() {
             <div className="md:pe-XL md:text-end">
               <p className="font-display text-title3 font-semibold tabular-nums">v{release.version}</p>
               <time dateTime={release.date} className="text-caption1 text-foreground-3">
-                {formatDate(release.date)}
+                {formatDate(release.date, locale)}
               </time>
             </div>
             <article className="rounded-2xlarge border border-stroke-2 bg-background-1 p-XL shadow-2 md:ms-XL">
               <div className="flex flex-wrap items-center gap-S">
-                <h2 className="font-display text-title3 font-semibold">{release.title}</h2>
+                <h2 lang={itemLang} className="font-display text-title3 font-semibold">
+                  {release.title}
+                </h2>
                 {index === 0 && (
                   <Badge appearance="filled" color="brand" icon={<Sparkle20Regular />}>
-                    Mới nhất
+                    {t("news.latest")}
                   </Badge>
                 )}
               </div>
-              <p className="mt-S text-body2 text-foreground-2">{release.summary}</p>
+              <p lang={itemLang} className="mt-S text-body2 text-foreground-2">
+                {release.summary}
+              </p>
               <ul className="mt-L flex flex-col gap-S">
                 {release.items.map((item) => (
                   <li key={item.text} className="flex items-start gap-M">
                     <Badge size="large" shape="rounded" className="mt-XXS w-24 shrink-0" {...KIND_BADGE[item.kind]}>
-                      {NEWS_KIND_LABEL[item.kind]}
+                      {t(`news.kind.${item.kind}`)}
                     </Badge>
                     <span className="text-body1 text-foreground-1">
-                      {item.text}
+                      {itemLang ? <span lang={itemLang}>{item.text}</span> : item.text}
                       {item.href && (
                         <a
                           href={item.href}
                           className="ms-XS inline-flex items-center gap-XXS whitespace-nowrap text-link hover:text-link-hover hover:underline"
                         >
-                          Xem
+                          {t("news.view")}
                           <ArrowRight16Regular className="rtl:-scale-x-100" />
                         </a>
                       )}
@@ -118,10 +126,9 @@ export function NewsPage() {
       </ol>
 
       <section className="mt-16 rounded-3xlarge border border-stroke-2 bg-background-2 p-XXL">
-        <h2 className="font-display text-title3 font-semibold">Nâng cấp lên phiên bản mới</h2>
+        <h2 className="font-display text-title3 font-semibold">{t("news.upgradeTitle")}</h2>
         <p className="mt-S max-w-2xl text-body2 text-foreground-2">
-          Dùng gói npm: cập nhật rồi đọc mục “Thay đổi lớn” ở trên. Dùng kiểu copy-paste: chép lại thư mục component cần
-          cập nhật cùng <code className="font-mono text-caption1">tokens.css</code>.
+          {t("news.upgradeBody")} <code className="font-mono text-caption1">tokens.css</code>.
         </p>
         <CodeBlock className="mt-L" code={`npm install ${SITE.packageName}@${SITE.version}`} />
       </section>

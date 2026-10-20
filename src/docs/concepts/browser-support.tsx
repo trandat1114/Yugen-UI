@@ -8,7 +8,8 @@ function C({ children }: { children: ReactNode }) {
 
 function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
   return (
-    <div className="overflow-x-auto rounded-xlarge border border-stroke-2 bg-background-1">
+    // tabIndex: bảng rộng cuộn ngang được bằng bàn phím (axe scrollable-region-focusable).
+    <div tabIndex={0} className="overflow-x-auto rounded-xlarge border border-stroke-2 bg-background-1">
       <table className="w-full border-collapse text-start text-body1">
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">

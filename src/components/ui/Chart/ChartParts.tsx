@@ -84,9 +84,12 @@ export interface ChartLegendItem {
   /** Giá trị phụ hiển thị sau nhãn (vd. tỉ lệ của lát donut). */
   value?: React.ReactNode;
   hidden?: boolean;
+  /** Thay ô màu mặc định (vd. hình marker của ScatterChart). */
+  swatch?: React.ReactNode;
 }
 
-export interface ChartLegendProps extends React.HTMLAttributes<HTMLUListElement> {
+// onToggle của DOM (sự kiện <details>/popover) bị thay bằng callback bật/tắt chuỗi — React 19 có kiểu ToggleEvent riêng.
+export interface ChartLegendProps extends Omit<React.HTMLAttributes<HTMLUListElement>, "onToggle"> {
   items: ChartLegendItem[];
   /** Mirror mark: rect cho cột / vùng / donut, line cho đường. */
   shape?: ChartLegendShape;
@@ -111,7 +114,7 @@ export const ChartLegend = React.forwardRef<HTMLUListElement, ChartLegendProps>(
       {items.map((item) => {
         const content = (
           <>
-            <ChartLegendSwatch slot={item.slot} shape={shape} textured={textured} />
+            {item.swatch ?? <ChartLegendSwatch slot={item.slot} shape={shape} textured={textured} />}
             <span className={cn("min-w-0", item.hidden && "text-foreground-disabled line-through")}>{item.label}</span>
             {item.value !== undefined && (
               <span className="ms-auto ps-S font-semibold text-foreground-1 tabular-nums">
@@ -155,6 +158,8 @@ export interface ChartTooltipRow {
   slot?: ChartSlot;
   /** Hình khoá khi bật texture (ô hoa văn cho cột / vùng); bình thường luôn là nét ngắn. */
   shape?: ChartLegendShape;
+  /** Thay khoá màu mặc định (vd. hình marker của ScatterChart). */
+  swatch?: React.ReactNode;
 }
 
 export interface ChartTooltipProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
@@ -236,7 +241,9 @@ export const ChartTooltip = React.forwardRef<HTMLDivElement, ChartTooltipProps>(
           <div className="grid grid-cols-[auto_1fr_auto] items-center gap-x-S gap-y-XXS">
             {rows.map((row) => (
               <React.Fragment key={row.key}>
-                {row.slot !== undefined ? (
+                {row.swatch ? (
+                  row.swatch
+                ) : row.slot !== undefined ? (
                   // Khoá bằng nét ngắn (không phải ô đặc); chỉ khi có hoa văn mới cần ô để thấy hoa văn.
                   <ChartLegendSwatch slot={row.slot} shape={textured ? (row.shape ?? "line") : "line"} textured={textured} />
                 ) : (

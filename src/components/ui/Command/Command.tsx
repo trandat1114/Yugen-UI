@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Command as CommandPrimitive } from "cmdk";
+import { Command as CommandPrimitive, useCommandState } from "cmdk";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Search20Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
@@ -126,9 +126,13 @@ export function CommandShortcut({ className, ...props }: React.HTMLAttributes<HT
 export const CommandSeparator = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Separator>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Separator>
->(({ className, ...props }, ref) => (
-  <CommandPrimitive.Separator ref={ref} className={cn("-mx-XS my-XS h-px bg-stroke-2", className)} {...props} />
-));
+>(({ className, alwaysRender, ...props }, ref) => {
+  // cmdk gắn role="separator" — không hợp lệ trong listbox (chỉ chứa option / group). Vẽ vạch trang trí riêng,
+  // vẫn ẩn khi đang tìm kiếm như cmdk (trừ alwaysRender).
+  const idle = useCommandState((state) => !state.search);
+  if (!alwaysRender && !idle) return null;
+  return <div ref={ref} role="none" cmdk-separator="" className={cn("-mx-XS my-XS h-px bg-stroke-2", className)} {...props} />;
+});
 CommandSeparator.displayName = "CommandSeparator";
 
 export interface CommandDialogProps extends React.ComponentPropsWithoutRef<typeof CommandPrimitive> {

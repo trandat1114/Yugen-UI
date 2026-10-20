@@ -28,63 +28,71 @@ import {
   WavyUnderline,
 } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import { useLocale, type MessageKey } from "../i18n";
 
-const SPLIT_MENU = (
-  <>
-    <MenuItem icon={<Copy20Regular />}>Sao chép liên kết</MenuItem>
-    <MenuItem icon={<Share20Regular />}>Chia sẻ với nhóm</MenuItem>
-  </>
-);
+function SplitMenu() {
+  const { t } = useLocale();
+  return (
+    <>
+      <MenuItem icon={<Copy20Regular />}>{t("show.copyLink")}</MenuItem>
+      <MenuItem icon={<Share20Regular />}>{t("show.shareTeam")}</MenuItem>
+    </>
+  );
+}
+
+const SPLIT_MENU = <SplitMenu />;
 
 function Float({ className, children }: { className: string; children: React.ReactNode }) {
   return <div className={cn("absolute animate-surface-in", className)}>{children}</div>;
 }
 
 function ActionsCollage() {
+  const { t } = useLocale();
   return (
     <>
       <Float className="top-[12%] inset-s-0">
         <Card className="flex-row items-center gap-XXS rounded-xlarge p-XS shadow-16">
-          <Button appearance="subtle" icon={<TextBold20Regular />} aria-label="Đậm" />
-          <Button appearance="subtle" icon={<TextItalic20Regular />} aria-label="Nghiêng" />
-          <Button appearance="subtle" icon={<TextUnderline20Regular />} aria-label="Gạch chân" />
+          <Button appearance="subtle" icon={<TextBold20Regular />} aria-label={t("show.bold")} />
+          <Button appearance="subtle" icon={<TextItalic20Regular />} aria-label={t("show.italic")} />
+          <Button appearance="subtle" icon={<TextUnderline20Regular />} aria-label={t("show.underline")} />
           <span className="mx-XS h-5 w-px bg-stroke-2" />
           <Button appearance="primary" icon={<Send20Regular />}>
-            Gửi
+            {t("show.send")}
           </Button>
         </Card>
       </Float>
       <Float className="top-[48%] inset-s-[6%]">
         <SplitButton appearance="primary" size="large" menu={SPLIT_MENU} className="shadow-16">
-          Chia sẻ
+          {t("show.share")}
         </SplitButton>
       </Float>
       <Float className="inset-e-[8%] bottom-[10%]">
-        <Button appearance="primary" shape="circular" size="large" icon={<Add20Regular />} aria-label="Tạo mới" className="size-14 shadow-28" />
+        <Button appearance="primary" shape="circular" size="large" icon={<Add20Regular />} aria-label={t("show.create")} className="size-14 shadow-28" />
       </Float>
     </>
   );
 }
 
 function InputsCollage() {
+  const { t } = useLocale();
   return (
     <>
       <Float className="top-[18%] inset-s-0 w-80 max-w-[80%]">
         <Card className="flex-row items-center gap-M rounded-xlarge px-L py-S shadow-16">
           <Play20Filled className="shrink-0 text-foreground-1" />
-          <Slider aria-label="Tiến độ phát" defaultValue={[35]} />
+          <Slider aria-label={t("show.progress")} defaultValue={[35]} />
           <ArrowMaximize20Regular className="shrink-0 text-foreground-2" />
         </Card>
       </Float>
       <Float className="top-[52%] inset-s-[-2%]">
         <SplitButton appearance="primary" size="large" menu={SPLIT_MENU} className="shadow-16">
-          Văn bản
+          {t("show.text")}
         </SplitButton>
       </Float>
       <Float className="inset-e-[6%] bottom-[8%]">
         <Card className="gap-XXS rounded-xlarge px-L py-S shadow-16">
-          <Switch label="Phụ đề" defaultChecked />
-          <Checkbox label="Tự động phát" defaultChecked />
+          <Switch label={t("show.captions")} defaultChecked />
+          <Checkbox label={t("show.autoplay")} defaultChecked />
         </Card>
       </Float>
     </>
@@ -92,12 +100,13 @@ function InputsCollage() {
 }
 
 function FeedbackCollage() {
+  const { t } = useLocale();
   return (
     <>
       <Float className="top-[10%] inset-s-0 w-80 max-w-[85%]">
         <div className="rounded-medium bg-background-1 shadow-16">
-          <MessageBar intent="success" title="Đã đồng bộ">
-            Mọi thay đổi đã được lưu.
+          <MessageBar intent="success" title={t("show.synced")}>
+            {t("show.saved")}
           </MessageBar>
         </div>
       </Float>
@@ -114,7 +123,7 @@ function FeedbackCollage() {
       <Float className="inset-e-[6%] bottom-[10%]">
         <Card className="flex-row items-center gap-S rounded-xlarge px-M py-S shadow-16">
           <Badge color="danger">3</Badge>
-          <span className="text-body1">Thông báo mới</span>
+          <span className="text-body1">{t("show.notifications")}</span>
         </Card>
       </Float>
     </>
@@ -122,36 +131,42 @@ function FeedbackCollage() {
 }
 
 function SurfacesCollage() {
+  const { t } = useLocale();
   return (
     <>
       <Float className="top-[8%] inset-s-0 w-80 max-w-[85%]">
         <Card className="gap-S rounded-xlarge p-XL shadow-64">
-          <p className="text-subtitle1 font-semibold">Lưu thay đổi?</p>
-          <p className="text-body1 text-foreground-2">Bạn có thay đổi chưa lưu trong tài liệu này.</p>
+          <p className="text-subtitle1 font-semibold">{t("show.saveTitle")}</p>
+          <p className="text-body1 text-foreground-2">{t("show.saveBody")}</p>
           <div className="mt-S flex justify-end gap-S">
-            <Button>Bỏ</Button>
-            <Button appearance="primary">Lưu</Button>
+            <Button>{t("show.discard")}</Button>
+            <Button appearance="primary">{t("show.save")}</Button>
           </div>
         </Card>
       </Float>
       <Float className="inset-e-[6%] bottom-[8%] w-64">
         <Card className="rounded-xlarge shadow-16">
-          <CardHeader image={<Avatar name="Báo cáo" shape="square" color="brand" />} header="Báo cáo Q3" description="Cập nhật 2 giờ trước" />
+          <CardHeader
+            image={<Avatar name={t("show.report")} shape="square" color="brand" />}
+            header={t("show.reportTitle")}
+            description={t("show.reportUpdated")}
+          />
         </Card>
       </Float>
     </>
   );
 }
 
-const SHOWCASE: { id: string; label: string; gradient: GradientName; href: string; Collage: () => React.ReactNode }[] = [
-  { id: "actions", label: "Hành động", gradient: "sakura", href: "#/components/button", Collage: ActionsCollage },
-  { id: "inputs", label: "Nhập liệu", gradient: "dusk", href: "#/components/slider", Collage: InputsCollage },
-  { id: "feedback", label: "Phản hồi", gradient: "sunset", href: "#/components/messagebar", Collage: FeedbackCollage },
-  { id: "surfaces", label: "Bề mặt", gradient: "brand", href: "#/components/card", Collage: SurfacesCollage },
+const SHOWCASE: { id: string; label: MessageKey; gradient: GradientName; href: string; Collage: () => React.ReactNode }[] = [
+  { id: "actions", label: "show.actions", gradient: "sakura", href: "#/components/button", Collage: ActionsCollage },
+  { id: "inputs", label: "show.inputs", gradient: "dusk", href: "#/components/slider", Collage: InputsCollage },
+  { id: "feedback", label: "show.feedback", gradient: "sunset", href: "#/components/messagebar", Collage: FeedbackCollage },
+  { id: "surfaces", label: "show.surfaces", gradient: "brand", href: "#/components/card", Collage: SurfacesCollage },
 ];
 
 export function HomeShowcase() {
   const [active, setActive] = React.useState(SHOWCASE[1].id);
+  const { t } = useLocale();
   const current = SHOWCASE.find((s) => s.id === active) ?? SHOWCASE[0];
 
   return (
@@ -169,10 +184,10 @@ export function HomeShowcase() {
               >
                 <span className="font-display text-[clamp(44px,6.5vw,88px)] leading-[1.1] font-normal tracking-[-0.02em]">
                   {on ? (
-                    <GradientText gradient={s.gradient}>{s.label}</GradientText>
+                    <GradientText gradient={s.gradient}>{t(s.label)}</GradientText>
                   ) : (
                     <span className="text-foreground-1 transition-colors duration-normal group-hover/item:text-foreground-2">
-                      {s.label}
+                      {t(s.label)}
                     </span>
                   )}
                 </span>

@@ -1,0 +1,76 @@
+name: Visual regression
+
+# Manual only (Actions → Visual regression → Run workflow). Screenshots differ per OS, so Linux baselines
+# (e2e/__screenshots__/**/*-linux.png) are produced here. This workflow never commits: with `update` checked it
+# regenerates the baselines and uploads them as the `visual-screenshots` artifact — download it, copy the files into
+# e2e/__screenshots__/ and commit them in a pull request.
+
+on:
+  workflow_dispatch:
+    inputs:
+      update:
+        description: "Update snapshots (--update-snapshots) instead of comparing"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: visual-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  visual:
+    name: Visual (${{ inputs.update && 'update' || 'compare' }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CI: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+
+      - name: Run visual tests
+        env:
+          UPDATE: ${{ inputs.update }}
+        run: |
+          if [ "$UPDATE" = "true" ]; then
+            npm run test:visual -- --update-snapshots
+          else
+            npm run test:visual
+          fi
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-report
+          path: playwright-report/
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Upload screenshots (baselines)
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-screenshots
+          path: e2e/__screenshots__/
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Upload test results (diffs)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-test-results
+          path: test-results/
+          retention-days: 14
+          if-no-files-found: ignore

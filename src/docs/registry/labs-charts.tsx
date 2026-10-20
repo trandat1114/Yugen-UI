@@ -466,7 +466,7 @@ const LABS_CHARTS: ComponentDoc[] = [
       { name: "endLabels", type: "boolean", defaultValue: "≤ 4 chuỗi", description: "Nhãn cuối đường; tự tắt nếu va nhau." },
       { name: "highlight", type: "string", description: "Key chuỗi được nhấn mạnh (các chuỗi khác xám)." },
       { name: "includeZero", type: "boolean", defaultValue: "false (Line) · true (Area)", description: "Trục Y bắt đầu từ 0." },
-      { name: "stacked", type: "boolean", defaultValue: "false", description: "Chỉ AreaChart: chồng vùng." },
+      { name: "AreaChart.stacked", type: "boolean", defaultValue: "false", description: "Chỉ AreaChart: chồng vùng." },
       { name: "title, description, toolbar, height, locale, texture, legend…", type: "ChartFrameProps", description: "Như BarChart." },
     ],
   },

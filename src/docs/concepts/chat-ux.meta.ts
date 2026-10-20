@@ -14,6 +14,7 @@ export const meta: ConceptMeta = {
     { id: "a11y", label: "Live region & trình đọc màn hình" },
     { id: "composer", label: "Bàn phím trong ô soạn" },
     { id: "transparency", label: "Minh bạch với Trace" },
+    { id: "ai-kit", label: "Câu trả lời AI: Markdown, nguồn, suy luận" },
     { id: "rules", label: "Nên & không nên" },
   ],
 };

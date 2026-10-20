@@ -15,8 +15,14 @@ copy-friendly, composable API style of [shadcn/ui](https://ui.shadcn.com/), and 
 - **Tree-shakeable ESM**, TypeScript types, `"use client"` directives for the Next.js App Router.
 - Icons from [Fluent System Icons](https://github.com/microsoft/fluentui-system-icons) (`@fluentui/react-icons`).
 
-> **Screenshots:** coming soon. Run the docs site locally (`npm run dev`) to browse every component, block and
-> foundation page.
+**Documentation:** <https://trandat1114.github.io/Yugen-UI/> — every component with live examples, copyable code,
+blocks, concepts and a Theme Designer (Vietnamese; English docs are on the [roadmap](./ROADMAP.md)).
+
+| Light | Dark |
+|---|---|
+| ![Yugen UI docs home, light theme](./.github/assets/home-light.png) | ![Yugen UI docs home, dark theme](./.github/assets/home-dark.png) |
+| ![Ready-made blocks](./.github/assets/blocks-light.png) | ![BarChart in dark theme](./.github/assets/chart-dark.png) |
+| ![MessageScroller in right-to-left layout](./.github/assets/chat-rtl.png) | ![Wait UX guidance](./.github/assets/wait-ux-dark.png) |
 
 > Yugen UI is an independent project. It is **not affiliated with or endorsed by Microsoft**.
 
@@ -185,7 +191,19 @@ layout because `react-resizable-panels` measures the physical X axis.
 
 ## Copy-paste mode
 
-Prefer owning the code, shadcn-style? Copy from this repository:
+Prefer owning the code, shadcn-style? Use the **shadcn CLI** — Yugen UI publishes a compatible registry. One command
+copies the component, the components it imports, `cn()` and the theme, and installs the npm dependencies:
+
+```bash
+npx shadcn@latest add https://trandat1114.github.io/Yugen-UI/r/button.json
+# everything: …/r/all.json · catalogue: …/r/registry.json
+```
+
+Then add `@import "./styles/yugen.css";` right after `@import "tailwindcss";`. With a namespaced registry in
+`components.json` — `"registries": { "@yugen": "https://trandat1114.github.io/Yugen-UI/r/{name}.json" }` — you can run
+`npx shadcn@latest add @yugen/button @yugen/chart`. Each component page in the docs shows its exact command.
+
+Or copy by hand from this repository:
 
 1. `src/components/ui/<Name>/` — plus any sibling components it imports (e.g. `Combobox` uses `Popover` and `Field`).
 2. `src/lib/cn.ts`.
@@ -194,6 +212,13 @@ Prefer owning the code, shadcn-style? Copy from this repository:
 4. Configure the `@/` path alias (`"paths": { "@/*": ["./src/*"] }` + your bundler alias) and install the
    component's dependencies (Radix packages, `class-variance-authority`, `@fluentui/react-icons`…).
 5. Next.js App Router: add `"use client";` at the top of every copied component file.
+
+## Starter templates
+
+```bash
+npx degit trandat1114/Yugen-UI/templates/vite-dashboard my-app   # dashboard: stats, charts, transactions
+npx degit trandat1114/Yugen-UI/templates/vite-ai-chat my-chat     # AI assistant chat
+```
 
 ## Next.js (App Router)
 
@@ -254,7 +279,7 @@ Behaviour primitives: [Radix UI](https://www.radix-ui.com/), [cmdk](https://cmdk
 
 ## License
 
-[MIT](./LICENSE) © 2026 trandat1114
+[MIT](./LICENSE) © 2026 [trandat1114](https://github.com/trandat1114)
 
 ---
 
@@ -274,8 +299,8 @@ dễ ghép của [shadcn/ui](https://ui.shadcn.com/), cùng brand riêng **Sakur
 - **ESM tree-shake được**, có kiểu TypeScript, chỉ thị `"use client"` cho Next.js App Router.
 - Icon: [Fluent System Icons](https://github.com/microsoft/fluentui-system-icons) (`@fluentui/react-icons`).
 
-> **Ảnh chụp màn hình:** sẽ bổ sung sau. Chạy trang docs trên máy (`npm run dev`) để xem mọi component, block và
-> trang nền tảng.
+**Tài liệu:** <https://trandat1114.github.io/Yugen-UI/> — mọi component kèm ví dụ chạy được, code copy được, block,
+khái niệm và Theme Designer. Ảnh chụp màn hình ở [phần tiếng Anh](#yugen-ui-幽玄); lộ trình ở [ROADMAP.md](./ROADMAP.md).
 
 > Yugen UI là dự án độc lập, **không liên kết và không được Microsoft bảo trợ**.
 
@@ -410,7 +435,19 @@ Giới hạn đã biết: nhóm `Resizable` ngang giữ bố cục LTR vì `reac
 
 ### Chế độ copy-paste
 
-Muốn sở hữu mã nguồn như shadcn? Sao chép từ repo này:
+Muốn sở hữu mã nguồn như shadcn? Dùng **shadcn CLI** — Yugen UI có registry tương thích. Một lệnh chép component,
+các component nó import, `cn()` và theme, đồng thời cài gói npm còn thiếu:
+
+```bash
+npx shadcn@latest add https://trandat1114.github.io/Yugen-UI/r/button.json
+# tất cả: …/r/all.json · danh mục: …/r/registry.json
+```
+
+Sau đó thêm `@import "./styles/yugen.css";` ngay sau `@import "tailwindcss";`. Khai báo registry có tên trong
+`components.json` — `"registries": { "@yugen": "https://trandat1114.github.io/Yugen-UI/r/{name}.json" }` — để gõ
+`npx shadcn@latest add @yugen/button @yugen/chart`. Trang docs của mỗi component có sẵn lệnh cài.
+
+Hoặc sao chép thủ công từ repo này:
 
 1. `src/components/ui/<Name>/` — kèm các component anh em mà nó import (vd. `Combobox` dùng `Popover` và `Field`).
 2. `src/lib/cn.ts`.
@@ -419,6 +456,13 @@ Muốn sở hữu mã nguồn như shadcn? Sao chép từ repo này:
 4. Cấu hình alias `@/` (`"paths": { "@/*": ["./src/*"] }` + alias của bundler) và cài dependency của component
    (các gói Radix, `class-variance-authority`, `@fluentui/react-icons`…).
 5. Next.js App Router: thêm `"use client";` ở đầu mỗi file component đã chép.
+
+### Starter template
+
+```bash
+npx degit trandat1114/Yugen-UI/templates/vite-dashboard my-app   # dashboard: số liệu, biểu đồ, giao dịch
+npx degit trandat1114/Yugen-UI/templates/vite-ai-chat my-chat     # trợ lý AI dạng chat
+```
 
 ### Next.js (App Router)
 
@@ -461,4 +505,4 @@ Icons (MIT). Primitive hành vi: Radix UI, cmdk, React DayPicker, react-resizabl
 
 ### Giấy phép
 
-[MIT](./LICENSE) © 2026 trandat1114
+[MIT](./LICENSE) © 2026 [trandat1114](https://github.com/trandat1114)

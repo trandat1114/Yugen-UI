@@ -32,6 +32,8 @@ export * from "./Rating/Rating";
 export * from "./SwatchPicker/SwatchPicker";
 export * from "./Calendar/Calendar";
 export * from "./DatePicker/DatePicker";
+export * from "./TimePicker/TimePicker";
+export * from "./FileUpload/FileUpload";
 
 // Điều hướng
 export * from "./Tabs/Tabs";
@@ -42,6 +44,7 @@ export * from "./Menu/Menu";
 export * from "./Menubar/Menubar";
 export * from "./ContextMenu/ContextMenu";
 export * from "./Command/Command";
+export * from "./Stepper/Stepper";
 
 // Hiển thị dữ liệu
 export * from "./Avatar/Avatar";
@@ -56,6 +59,7 @@ export * from "./Text/Text";
 export * from "./Image/Image";
 export * from "./List/List";
 export * from "./Table/Table";
+export * from "./DataGrid/DataGrid";
 export * from "./Tree/Tree";
 export * from "./Carousel/Carousel";
 
@@ -83,6 +87,7 @@ export * from "./Collapsible/Collapsible";
 export * from "./Divider/Divider";
 export * from "./ScrollArea/ScrollArea";
 export * from "./Resizable/Resizable";
+export * from "./Overflow/Overflow";
 
 // Chuyển động
 export * from "./Motion/Motion";
@@ -100,6 +105,9 @@ export * from "./Trace/Trace";
 export * from "./Questionnaire/Questionnaire";
 export * from "./MessageScroller/MessageScroller";
 export * from "./CodeBlock/CodeBlock";
+export * from "./AIKit/AIKit";
+export * from "./Tour/Tour";
+export * from "./NotificationCenter/NotificationCenter";
 
 // Trang trí (chỉ cho minh hoạ)
 export * from "./Decorative/Decorative";

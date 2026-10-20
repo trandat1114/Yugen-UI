@@ -1,4 +1,4 @@
-import { lazy, type ComponentType } from "react";
+import { lazy, type ComponentType, type LazyExoticComponent } from "react";
 import { CONCEPT_GROUPS, type ConceptGroup, type ConceptMeta } from "../types";
 import { CONCEPT_METAS } from "./_meta";
 
@@ -30,3 +30,11 @@ export const CONCEPTS_BY_GROUP: { group: ConceptGroup; items: typeof CONCEPTS }[
   group,
   items: CONCEPTS.filter((c) => c.meta.group === group),
 })).filter((g) => g.items.length > 0);
+
+/** Bản tiếng Anh của trang khái niệm (`en/<slug>.tsx`) — nạp lười khi locale là "en"; trang chưa dịch không có mục. */
+export const CONCEPT_EN_PAGES: Record<string, LazyExoticComponent<ComponentType>> = Object.fromEntries(
+  Object.entries(import.meta.glob<{ default: ComponentType }>("./en/*.tsx")).map(([file, load]) => [
+    file.replace(/^\.\/en\/(.+)\.tsx$/, "$1"),
+    lazy(load),
+  ]),
+);

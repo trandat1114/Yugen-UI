@@ -12,7 +12,8 @@ export interface ScrollAreaProps extends React.ComponentPropsWithoutRef<typeof S
 export const ScrollArea = React.forwardRef<React.ElementRef<typeof ScrollAreaPrimitive.Root>, ScrollAreaProps>(
   ({ className, viewportClassName, orientation = "vertical", type = "hover", children, ...props }, ref) => (
     <ScrollAreaPrimitive.Root ref={ref} type={type} className={cn("relative overflow-hidden", className)} {...props}>
-      <ScrollAreaPrimitive.Viewport className={cn("size-full rounded-[inherit]", viewportClassName)}>
+      {/* Vùng cuộn phải focus được để cuộn bằng bàn phím (axe scrollable-region-focusable); outline thụt vào vì Root overflow-hidden. */}
+      <ScrollAreaPrimitive.Viewport tabIndex={0} className={cn("size-full rounded-[inherit] -outline-offset-2", viewportClassName)}>
         {children}
       </ScrollAreaPrimitive.Viewport>
       {orientation !== "horizontal" && <ScrollBar orientation="vertical" />}

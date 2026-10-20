@@ -12,6 +12,7 @@ import {
   WeatherMoon20Regular,
   Grid20Regular,
   PaintBrush20Regular,
+  Translate20Regular,
 } from "@fluentui/react-icons";
 import {
   CommandDialog,
@@ -27,6 +28,7 @@ import type { Appearance } from "@/hooks/useAppearance";
 import { CONCEPTS } from "../concepts";
 import { FOUNDATIONS } from "../foundations";
 import { COMPONENTS_BY_CATEGORY } from "../registry";
+import { useLocale } from "../i18n";
 
 /** Bảng lệnh của trang docs: Ctrl/⌘ + K để nhảy tới mọi trang hoặc đổi giao diện. */
 export function DocsCommandPalette({
@@ -40,6 +42,8 @@ export function DocsCommandPalette({
   appearance: Appearance;
   onAppearanceChange: (patch: Partial<Appearance>) => void;
 }) {
+  const { t, locale, category, group, foundation, component, concept } = useLocale();
+
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
@@ -61,14 +65,14 @@ export function DocsCommandPalette({
   };
 
   return (
-    <CommandDialog open={open} onOpenChange={onOpenChange} title="Tìm nhanh trong Yugen UI">
-      <CommandInput placeholder="Tìm trang, component, khái niệm hoặc lệnh…" />
+    <CommandDialog open={open} onOpenChange={onOpenChange} title={t("palette.title")}>
+      <CommandInput placeholder={t("palette.placeholder")} />
       <CommandList className="max-h-[min(60vh,440px)]">
-        <CommandEmpty>Không tìm thấy kết quả.</CommandEmpty>
+        <CommandEmpty>{t("palette.empty")}</CommandEmpty>
 
-        <CommandGroup heading="Trang">
+        <CommandGroup heading={t("palette.pages")}>
           <CommandItem icon={<Home20Regular />} onSelect={() => go("#/")}>
-            Tổng quan
+            {t("nav.overview")}
           </CommandItem>
           <CommandItem icon={<Grid20Regular />} onSelect={() => go("#/blocks")}>
             Blocks
@@ -77,22 +81,29 @@ export function DocsCommandPalette({
             Theme Designer
           </CommandItem>
           <CommandItem icon={<Megaphone20Regular />} onSelect={() => go("#/news")} keywords={["changelog", "news", "cập nhật"]}>
-            Có gì mới
+            {t("nav.news")}
           </CommandItem>
           <CommandItem icon={<People20Regular />} onSelect={() => go("#/community")} keywords={["community", "đóng góp"]}>
-            Cộng đồng
+            {t("nav.community")}
           </CommandItem>
         </CommandGroup>
 
-        <CommandGroup heading="Giao diện">
+        <CommandGroup heading={t("palette.appearance")}>
           <CommandItem icon={<WeatherMoon20Regular />} onSelect={() => act({ theme: appearance.theme === "dark" ? "light" : "dark" })}>
-            {appearance.theme === "dark" ? "Chuyển sang sáng" : "Chuyển sang tối"}
+            {appearance.theme === "dark" ? t("topbar.toLight") : t("topbar.toDark")}
           </CommandItem>
           <CommandItem icon={<Accessibility20Regular />} onSelect={() => act({ theme: appearance.theme === "high-contrast" ? "light" : "high-contrast" })}>
-            {appearance.theme === "high-contrast" ? "Tắt tương phản cao" : "Bật tương phản cao"}
+            {appearance.theme === "high-contrast" ? t("palette.hcOff") : t("palette.hcOn")}
           </CommandItem>
           <CommandItem icon={<ArrowSwap20Regular />} onSelect={() => act({ dir: appearance.dir === "rtl" ? "ltr" : "rtl" })}>
-            {appearance.dir === "rtl" ? "Chuyển sang LTR" : "Chuyển sang RTL"}
+            {appearance.dir === "rtl" ? t("palette.toLtr") : t("palette.toRtl")}
+          </CommandItem>
+          <CommandItem
+            icon={<Translate20Regular />}
+            onSelect={() => act({ lang: locale === "en" ? "vi" : "en" })}
+            keywords={["language", "ngôn ngữ", "english", "tiếng việt", "lang"]}
+          >
+            {t("palette.switchLang")}
           </CommandItem>
           {(["sakura", "web", "teams"] as const)
             .filter((b) => b !== appearance.brand)
@@ -105,33 +116,38 @@ export function DocsCommandPalette({
 
         <CommandSeparator />
 
-        <CommandGroup heading="Ngôn ngữ thiết kế">
+        <CommandGroup heading={t("nav.foundations")}>
           {FOUNDATIONS.map((f) => (
-            <CommandItem key={f.slug} icon={<Color20Regular />} onSelect={() => go(`#/foundations/${f.slug}`)}>
-              {f.name}
+            <CommandItem key={f.slug} icon={<Color20Regular />} onSelect={() => go(`#/foundations/${f.slug}`)} keywords={[f.name]}>
+              {foundation(f)}
             </CommandItem>
           ))}
         </CommandGroup>
 
-        <CommandGroup heading="Khái niệm">
+        <CommandGroup heading={t("nav.concepts")}>
           {CONCEPTS.map((c) => (
-            <CommandItem key={c.meta.slug} icon={<Book20Regular />} onSelect={() => go(`#/concepts/${c.meta.slug}`)} keywords={[c.meta.group]}>
-              {c.meta.title}
-              <CommandShortcut>{c.meta.group}</CommandShortcut>
+            <CommandItem
+              key={c.meta.slug}
+              icon={<Book20Regular />}
+              onSelect={() => go(`#/concepts/${c.meta.slug}`)}
+              keywords={[c.meta.title, c.meta.group, group(c.meta.group)]}
+            >
+              {concept(c.meta).title}
+              <CommandShortcut>{group(c.meta.group)}</CommandShortcut>
             </CommandItem>
           ))}
         </CommandGroup>
 
-        {COMPONENTS_BY_CATEGORY.map((group) => (
-          <CommandGroup key={group.category} heading={group.category}>
-            {group.items.map((c) => (
+        {COMPONENTS_BY_CATEGORY.map((g) => (
+          <CommandGroup key={g.category} heading={category(g.category)}>
+            {g.items.map((c) => (
               <CommandItem
                 key={c.slug}
-                icon={group.category === "Yugen Labs" ? <PuzzlePiece20Regular /> : <Document20Regular />}
+                icon={g.category === "Yugen Labs" ? <PuzzlePiece20Regular /> : <Document20Regular />}
                 onSelect={() => go(`#/components/${c.slug}`)}
-                keywords={[c.slug, group.category]}
+                keywords={[c.slug, g.category, category(g.category)]}
               >
-                {c.name}
+                {component(c).name}
               </CommandItem>
             ))}
           </CommandGroup>

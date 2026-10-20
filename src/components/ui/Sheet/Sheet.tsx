@@ -3,6 +3,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useDirection } from "@radix-ui/react-direction";
 import { usePortalThemeProps } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
+import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { useMediaQuery } from "./useMediaQuery";
 
 export { useMediaQuery, type UseMediaQueryOptions } from "./useMediaQuery";
@@ -104,7 +105,7 @@ export function Sheet({
   const isBottom = mode === "bottom" || (mode === "auto" && !isDesktop);
 
   const callbacks = React.useRef({ onOpenChange, onSnapPointChange });
-  React.useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     callbacks.current = { onOpenChange, onSnapPointChange };
   });
 
@@ -272,7 +273,7 @@ export const SheetContent = React.forwardRef<React.ElementRef<typeof DialogPrimi
       [setSnapPoint],
     );
 
-    React.useLayoutEffect(() => {
+    useIsomorphicLayoutEffect(() => {
       if (!node) return;
       if (!isBottom) {
         node.style.removeProperty("--sheet-offset");

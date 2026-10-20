@@ -1,14 +1,20 @@
 import { Suspense } from "react";
 import { ChevronRight12Regular } from "@fluentui/react-icons";
 import { PageProgressFallback, SkeletonText } from "@/components/ui";
-import { CONCEPT_BY_SLUG, CONCEPTS } from "../concepts";
+import { CONCEPT_BY_SLUG, CONCEPT_EN_PAGES, CONCEPTS } from "../concepts";
+import { useLocale } from "../i18n";
 import { OnThisPage, PageHeader } from "../blocks";
 
 export function ConceptPage({ slug }: { slug: string }) {
+  const { t, locale, group, concept } = useLocale();
   const entry = CONCEPT_BY_SLUG[slug];
-  if (!entry) return <p className="py-XXXL text-body2 text-foreground-3">Không tìm thấy trang “{slug}”.</p>;
+  if (!entry) return <p className="py-XXXL text-body2 text-foreground-3">{t("concept.notFound", { slug })}</p>;
 
-  const { meta, Page } = entry;
+  // Tiếng Anh: dùng bản dịch nếu có (en/<slug>.tsx), không thì bản gốc tiếng Việt (App hiện thông báo chưa dịch).
+  const EnPage = locale === "en" ? CONCEPT_EN_PAGES[slug] : undefined;
+  const Page = EnPage ?? entry.Page;
+  const meta = concept(entry.meta);
+  const untranslated = locale === "en" && !EnPage;
   const index = CONCEPTS.findIndex((c) => c.meta.slug === slug);
   const prev = CONCEPTS[index - 1];
   const next = CONCEPTS[index + 1];
@@ -17,18 +23,18 @@ export function ConceptPage({ slug }: { slug: string }) {
     <div className="flex gap-XXXL">
       <article key={slug} className="min-w-0 flex-1">
         <nav className="flex items-center gap-XS pt-XL text-caption1 text-foreground-3">
-          <span>Khái niệm</span>
+          <span>{t("nav.concepts")}</span>
           <ChevronRight12Regular className="rtl:-scale-x-100" />
-          <span>{meta.group}</span>
+          <span>{group(meta.group)}</span>
           <ChevronRight12Regular className="rtl:-scale-x-100" />
           <span className="text-foreground-1">{meta.title}</span>
         </nav>
         <PageHeader title={meta.title} lead={meta.lead} />
-        <div className="pb-XXL">
+        <div lang={untranslated ? "vi" : undefined} className="pb-XXL">
           <Suspense
             fallback={
               <PageProgressFallback>
-                <SkeletonText lines={8} />
+                <SkeletonText lines={8} data-page-loading="" />
               </PageProgressFallback>
             }
           >
@@ -38,8 +44,8 @@ export function ConceptPage({ slug }: { slug: string }) {
         <div className="grid gap-M border-t border-stroke-2 pt-XL sm:grid-cols-2">
           {prev ? (
             <a href={`#/concepts/${prev.meta.slug}`} className="rounded-xlarge border border-stroke-2 p-L hover:bg-subtle-hover">
-              <span className="text-caption1 text-foreground-3">Trang trước</span>
-              <span className="block text-body1 font-semibold">{prev.meta.title}</span>
+              <span className="text-caption1 text-foreground-3">{t("concept.prev")}</span>
+              <span className="block text-body1 font-semibold">{concept(prev.meta).title}</span>
             </a>
           ) : (
             <span />
@@ -49,13 +55,13 @@ export function ConceptPage({ slug }: { slug: string }) {
               href={`#/concepts/${next.meta.slug}`}
               className="rounded-xlarge border border-stroke-2 p-L text-end hover:bg-subtle-hover"
             >
-              <span className="text-caption1 text-foreground-3">Trang sau</span>
-              <span className="block text-body1 font-semibold">{next.meta.title}</span>
+              <span className="text-caption1 text-foreground-3">{t("concept.next")}</span>
+              <span className="block text-body1 font-semibold">{concept(next.meta).title}</span>
             </a>
           )}
         </div>
       </article>
-      <OnThisPage key={`toc-${slug}`} items={meta.toc} />
+      <OnThisPage key={`toc-${slug}-${locale}`} items={meta.toc} />
     </div>
   );
 }

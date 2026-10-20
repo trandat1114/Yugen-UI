@@ -119,7 +119,6 @@ export const AvatarGroup = React.forwardRef<HTMLDivElement, AvatarGroupProps>(
             <PopoverTrigger asChild>
               <button
                 type="button"
-                aria-label={overflowLabel ?? `Xem ${items.length} thành viên`}
                 className={cn(
                   "relative grid shrink-0 gap-px overflow-hidden rounded-circular bg-background-1",
                   BOX[size],
@@ -127,9 +126,14 @@ export const AvatarGroup = React.forwardRef<HTMLDivElement, AvatarGroupProps>(
                   inline.length === 3 && "grid-rows-2",
                 )}
               >
+                {/* Tên lấy từ nội dung ẩn thay cho aria-label: chữ viết tắt trong ô ghép (aria-hidden) là hình, không phải
+                    nhãn — tránh lệch "nhãn nhìn thấy ⊄ tên truy cập" (WCAG 2.5.3). sr-only nằm absolute, không chiếm ô grid. */}
+                <span className="sr-only">{overflowLabel ?? `Xem ${items.length} thành viên`}</span>
                 {inline.map((item, index) => (
+                  // Ô ghép chỉ để nhìn — tên nút đã có aria-label, chữ viết tắt không được lọt vào tên truy cập.
                   <span
                     key={item.key ?? index}
+                    aria-hidden
                     className={cn("relative overflow-hidden", inline.length === 3 && index === 0 && "row-span-2")}
                   >
                     <span className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2">

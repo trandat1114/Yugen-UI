@@ -1,5 +1,6 @@
 import * as React from "react";
 import {
+  ArrowDownload20Regular,
   CheckmarkCircle16Filled,
   DismissCircle16Filled,
   Warning16Filled,
@@ -12,6 +13,7 @@ import {
   Button,
   Card,
   Checkbox,
+  CodeTabs,
   Field,
   Input,
   MessageBar,
@@ -33,8 +35,18 @@ import {
   rampToCss,
   rampToStyle,
 } from "@/lib/brandRamp";
+import { rampToDesignTokens, rampToTokensStudio } from "@/lib/tokenExport";
 import { DocSection, PageHeader } from "../blocks";
 import { CodeBlock, CopyButton } from "../CodeBlock";
+
+/** Tải chuỗi về máy thành file (CSS / JSON). */
+function download(fileName: string, text: string) {
+  const type = fileName.endsWith(".json") ? "application/json" : "text/css";
+  const url = URL.createObjectURL(new Blob([text], { type }));
+  const a = Object.assign(document.createElement("a"), { href: url, download: fileName });
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 const PRESETS = [
   { name: "Sakura", hex: "#C2347A" },
@@ -121,7 +133,13 @@ export function ThemeDesignerPage() {
     [key, vibrancy, torsion],
   );
   const style = React.useMemo(() => rampToStyle(ramp) as React.CSSProperties, [ramp]);
-  const css = rampToCss(name || "my-brand", ramp);
+  const brandName = name || "my-brand";
+  const css = rampToCss(brandName, ramp);
+  const exportFiles = [
+    { name: `${brandName}.css`, code: css, language: "css" as const },
+    { name: `${brandName}.tokens.json`, code: JSON.stringify(rampToDesignTokens(brandName, ramp), null, 2), language: "json" as const },
+    { name: `${brandName}.tokens-studio.json`, code: JSON.stringify(rampToTokensStudio(brandName, ramp), null, 2), language: "json" as const },
+  ];
 
   const onWhite = contrastRatio(ramp[7], "#ffffff");
   const tintText = contrastRatio(ramp[6], ramp[15]);
@@ -240,7 +258,8 @@ export function ThemeDesignerPage() {
                   title={`Copy ${hex}`}
                   onClick={() => navigator.clipboard.writeText(hex)}
                   className="group/step flex h-28 flex-1 flex-col items-center justify-end gap-XXS pb-S"
-                  style={{ background: hex, color: contrastRatio(hex, "#ffffff") >= 3 ? "#ffffff" : "#242424" }}
+                  // Nhãn 10px: chữ trắng hoặc đen — bên nào tương phản cao hơn luôn ≥ 4.58:1 (ngưỡng 3:1 cũ để lọt bậc 90 ~3.7:1).
+                  style={{ background: hex, color: contrastRatio(hex, "#ffffff") >= contrastRatio(hex, "#000000") ? "#ffffff" : "#000000" }}
                 >
                   <span className="font-mono text-[10px] font-semibold">{RAMP_STEPS[i]}</span>
                   <span className="hidden font-mono text-[9px] opacity-80 group-hover/step:block">{hex.slice(1)}</span>
@@ -256,17 +275,26 @@ export function ThemeDesignerPage() {
             </div>
           </DocSection>
 
-          <DocSection id="export" title="Xuất CSS" description="Dán vào src/styles/tokens.css (sau các block brand có sẵn), rồi đặt data-brand trên <html> hoặc YugenProvider.">
+          <DocSection
+            id="export"
+            title="Xuất token"
+            description="CSS: dán vào src/styles/tokens.css (sau các block brand có sẵn), rồi đặt data-brand trên <html> hoặc YugenProvider. JSON: nhập vào Figma (Tokens Studio, Variables) hoặc Style Dictionary — kèm alias brand cho light / dark."
+          >
             <div className="flex flex-col gap-M">
-              <CodeBlock code={css} />
+              <CodeTabs files={exportFiles} maxHeight={360} />
+              <div className="flex flex-wrap justify-end gap-S">
+                {exportFiles.map((f) => (
+                  <Button key={f.name} size="small" icon={<ArrowDownload20Regular />} onClick={() => download(f.name, f.code)}>
+                    {f.name}
+                  </Button>
+                ))}
+                <CopyButton text={css} className="border border-stroke-1" />
+              </div>
               <CodeBlock
-                code={`<YugenProvider applyToDocument brand="${name || "my-brand"}" theme="light">
+                code={`<YugenProvider applyToDocument brand="${brandName}" theme="light">
   <App />
 </YugenProvider>`}
               />
-              <div className="flex justify-end">
-                <CopyButton text={css} className="border border-stroke-1" />
-              </div>
             </div>
           </DocSection>
         </div>

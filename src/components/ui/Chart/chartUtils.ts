@@ -1,4 +1,6 @@
 import * as React from "react";
+import { useMediaQuery } from "../Sheet/useMediaQuery";
+import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { useYugen } from "../YugenProvider/context";
 
 /* ================================================================== Kiểu dữ liệu */
@@ -316,7 +318,7 @@ export function ringPath(cx: number, cy: number, r0: number, r1: number) {
 export function useElementWidth<T extends HTMLElement>(): [(el: T | null) => void, number] {
   const [el, setEl] = React.useState<T | null>(null);
   const [width, setWidth] = React.useState(0);
-  React.useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!el) return;
     setWidth(el.getBoundingClientRect().width);
     if (typeof ResizeObserver === "undefined") return;
@@ -328,19 +330,6 @@ export function useElementWidth<T extends HTMLElement>(): [(el: T | null) => voi
     return () => ro.disconnect();
   }, [el]);
   return [setEl, width];
-}
-
-function useMediaQuery(query: string) {
-  const [match, setMatch] = React.useState(() => typeof window !== "undefined" && !!window.matchMedia?.(query).matches);
-  React.useEffect(() => {
-    const mql = window.matchMedia?.(query);
-    if (!mql) return;
-    const onChange = () => setMatch(mql.matches);
-    onChange();
-    mql.addEventListener("change", onChange);
-    return () => mql.removeEventListener("change", onChange);
-  }, [query]);
-  return match;
 }
 
 /** Bật hoa văn khi: prop texture, theme tương phản cao, hoặc forced-colors của hệ điều hành. */

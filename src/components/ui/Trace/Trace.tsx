@@ -46,17 +46,22 @@ const SUMMARY_ORDER: TraceStatus[] = ["success", "error", "running", "cancelled"
 /** Định dạng thời lượng (ms) gọn: 320ms · 4.2s · 2m 05s. */
 export function formatTraceDuration(ms: number): string {
   if (!Number.isFinite(ms) || ms < 0) return "";
-  if (ms < 1000) return `${Math.round(ms)}ms`;
+  // So sánh sau khi làm tròn: 999.6ms → "1.0s" (không phải "1000ms"), 59.96s → "1m 00s" (không phải "60.0s").
+  if (Math.round(ms) < 1000) return `${Math.round(ms)}ms`;
   const seconds = ms / 1000;
-  if (seconds < 60) return `${seconds.toFixed(1)}s`;
-  const minutes = Math.floor(seconds / 60);
-  const rest = Math.floor(seconds % 60);
+  if (Math.round(seconds * 10) < 600) return `${seconds.toFixed(1)}s`;
+  const whole = Math.max(60, Math.floor(seconds));
+  const minutes = Math.floor(whole / 60);
+  const rest = whole % 60;
   return `${minutes}m ${String(rest).padStart(2, "0")}s`;
 }
 
-/** Thời điểm hiện tại, cập nhật đều khi `active` (đồng hồ chạy cho bước đang chạy). */
+/**
+ * Thời điểm hiện tại, cập nhật đều khi `active` (đồng hồ chạy cho bước đang chạy).
+ * `null` cho tới khi mount: giờ của server và client khác nhau, đọc trong render sẽ làm lệch hydration.
+ */
 function useNow(active: boolean, interval = 100) {
-  const [now, setNow] = React.useState(() => Date.now());
+  const [now, setNow] = React.useState<number | null>(null);
   React.useEffect(() => {
     if (!active) return;
     setNow(Date.now());
@@ -68,7 +73,7 @@ function useNow(active: boolean, interval = 100) {
 
 function LiveDuration({ since }: { since: number }) {
   const now = useNow(true);
-  return <>{formatTraceDuration(Math.max(0, now - since))}</>;
+  return <>{now === null ? "" : formatTraceDuration(Math.max(0, now - since))}</>;
 }
 
 export interface TraceStatusIconProps {

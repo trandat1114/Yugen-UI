@@ -13,6 +13,8 @@ import { CONCEPTS_BY_GROUP } from "../concepts";
 import { SITE } from "../site";
 import { FOUNDATIONS } from "../foundations";
 import type { Route } from "../router";
+import { AuthorLink } from "../AuthorLink";
+import { useLocale } from "../i18n";
 
 interface NavItem {
   label: string;
@@ -91,6 +93,7 @@ export function Sidebar({ route, open, onClose }: { route: Route; open: boolean;
   const [query, setQuery] = React.useState("");
   const [searching, setSearching] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const { t, category, group: groupLabel, foundation, component, concept } = useLocale();
 
   const openSearch = React.useCallback(() => {
     setSearching(true);
@@ -114,34 +117,36 @@ export function Sidebar({ route, open, onClose }: { route: Route; open: boolean;
 
   const conceptItems = (group: string): NavItem[] =>
     (CONCEPTS_BY_GROUP.find((g) => g.group === group)?.items ?? [])
-      .filter((c) => match(c.meta.title))
-      .map((c) => ({
-        label: c.meta.title,
+      .map((c) => ({ c, title: concept(c.meta).title }))
+      .filter(({ title }) => match(title))
+      .map(({ c, title }) => ({
+        label: title,
         href: `#/concepts/${c.meta.slug}`,
         active: route.kind === "concept" && route.slug === c.meta.slug,
       }));
 
   const start: NavItem[] = [
-    { label: "Tổng quan", href: "#/", active: route.kind === "home" },
+    { label: t("nav.overview"), href: "#/", active: route.kind === "home" },
     ...conceptItems("Bắt đầu"),
     { label: "Blocks", href: "#/blocks", active: route.kind === "blocks" },
     { label: "Theme Designer", href: "#/theme-designer", active: route.kind === "theme-designer" },
-    { label: "Có gì mới", href: "#/news", active: route.kind === "news", badge: `v${SITE.version}` },
-    { label: "Cộng đồng", href: "#/community", active: route.kind === "community" },
+    { label: t("nav.news"), href: "#/news", active: route.kind === "news", badge: `v${SITE.version}` },
+    { label: t("nav.community"), href: "#/community", active: route.kind === "community" },
   ].filter((i) => match(i.label));
-  const conceptGroups = (["Nhà phát triển", "Khả năng tiếp cận", "Chuyển đổi"] as const).map((group) => ({
+  const conceptGroups = (["Nhà phát triển", "Khả năng tiếp cận", "Yugen Labs", "Chuyển đổi"] as const).map((group) => ({
     group,
     items: conceptItems(group),
   }));
-  const foundations: NavItem[] = FOUNDATIONS.filter((f) => match(f.name)).map((f) => ({
-    label: f.name,
+  const foundations: NavItem[] = FOUNDATIONS.map((f) => ({
+    label: foundation(f),
     href: `#/foundations/${f.slug}`,
     active: route.kind === "foundation" && route.slug === f.slug,
-  }));
+  })).filter((i) => match(i.label));
   const groups = COMPONENTS_BY_CATEGORY.map((g) => ({
     category: g.category,
     total: g.items.length,
     items: g.items
+      .map((c) => ({ slug: c.slug, name: component(c).name }))
       .filter((c) => match(c.name))
       .map((c) => ({
         label: c.name,
@@ -186,14 +191,14 @@ export function Sidebar({ route, open, onClose }: { route: Route; open: boolean;
               onClick={openSearch}
               className="inline-flex h-6 items-center gap-XS rounded-medium bg-background-4 ps-S pe-XXS text-caption2 text-foreground-3 hover:bg-background-5"
             >
-              Tìm kiếm
+              {t("sidebar.search")}
               <kbd className="inline-flex h-4 min-w-4 items-center justify-center rounded-small border border-stroke-1 bg-background-1 px-XXS font-mono text-[10px] text-foreground-2">
                 /
               </kbd>
             </button>
             <button
               type="button"
-              aria-label="Tìm kiếm"
+              aria-label={t("sidebar.search")}
               onClick={openSearch}
               className="inline-flex size-8 items-center justify-center rounded-medium text-foreground-1 hover:bg-subtle-hover"
             >
@@ -202,7 +207,7 @@ export function Sidebar({ route, open, onClose }: { route: Route; open: boolean;
             <button
               type="button"
               onClick={onClose}
-              aria-label="Đóng menu"
+              aria-label={t("sidebar.close")}
               className="inline-flex size-8 items-center justify-center rounded-medium text-foreground-2 hover:bg-subtle-hover lg:hidden"
             >
               <Dismiss20Regular />
@@ -218,14 +223,14 @@ export function Sidebar({ route, open, onClose }: { route: Route; open: boolean;
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => e.key === "Escape" && closeSearch()}
-              placeholder="Tìm component, foundation…"
-              aria-label="Tìm kiếm"
+              placeholder={t("sidebar.placeholder")}
+              aria-label={t("sidebar.search")}
               className="h-8 min-w-0 flex-1 bg-transparent text-body1 outline-none placeholder:text-foreground-4"
             />
             <button
               type="button"
               onClick={closeSearch}
-              aria-label="Đóng tìm kiếm"
+              aria-label={t("sidebar.closeSearch")}
               className="inline-flex size-6 items-center justify-center rounded-medium text-foreground-3 hover:bg-subtle-hover"
             >
               <Dismiss20Regular className="size-4" />
@@ -234,11 +239,18 @@ export function Sidebar({ route, open, onClose }: { route: Route; open: boolean;
         )}
 
         <nav className="min-h-0 flex-1 overflow-y-auto px-XL pb-XL">
-          <NavGroup title="Bắt đầu" items={start} forceOpen={!!q} />
+          <NavGroup title={groupLabel("Bắt đầu")} items={start} forceOpen={!!q} />
           {conceptGroups.map((g) => (
-            <NavGroup key={g.group} title={g.group} items={g.items} forceOpen={!!q} defaultOpen={false} />
+            <NavGroup
+              key={g.group}
+              // Nhóm khái niệm Labs trùng tên nhóm component "Yugen Labs" bên dưới → đặt tên riêng cho dễ phân biệt.
+              title={g.group === "Yugen Labs" ? t("nav.labsConcepts") : groupLabel(g.group)}
+              items={g.items}
+              forceOpen={!!q}
+              defaultOpen={false}
+            />
           ))}
-          <NavGroup title="Ngôn ngữ thiết kế" items={foundations} forceOpen={!!q} defaultOpen={false} />
+          <NavGroup title={t("nav.foundations")} items={foundations} forceOpen={!!q} defaultOpen={false} />
 
           <div className="py-S">
             <div className="flex h-9 items-center gap-S rounded-xlarge border border-brand-stroke px-M text-body1 text-brand-foreground-2">
@@ -249,18 +261,18 @@ export function Sidebar({ route, open, onClose }: { route: Route; open: boolean;
           </div>
 
           {groups.map((g) => (
-            <NavGroup key={g.category} title={g.category} items={g.items} count={g.total} forceOpen={!!q} defaultOpen={false} />
+            <NavGroup key={g.category} title={category(g.category)} items={g.items} count={g.total} forceOpen={!!q} defaultOpen={false} />
           ))}
-          {empty && <p className="px-S py-L text-body1 text-foreground-3">Không tìm thấy “{query}”.</p>}
+          {empty && <p className="px-S py-L text-body1 text-foreground-3">{t("sidebar.noResults", { query })}</p>}
 
           <div className="px-S pt-L text-caption1 text-foreground-3">
             <p>
-              <span className="font-semibold text-foreground-1">Yugen UI</span> · tạo bởi{" "}
-              <span className="font-semibold text-brand-foreground-2">trandat1114</span>
+              <span className="font-semibold text-foreground-1">Yugen UI</span> · {t("credit.by")}{" "}
+              <AuthorLink className="text-brand-foreground-2" />
             </p>
-            <p className="mt-XXS">Lấy cảm hứng từ Microsoft Fluent 2</p>
+            <p className="mt-XXS">{t("credit.inspired")}</p>
             <p className="mt-XXS">
-              Quy tắc đầy đủ: <span className="font-mono text-foreground-2">Design.md</span>
+              {t("credit.rules")} <span className="font-mono text-foreground-2">Design.md</span>
             </p>
           </div>
         </nav>

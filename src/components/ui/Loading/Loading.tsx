@@ -2,6 +2,7 @@ import * as React from "react";
 import { createPortal } from "react-dom";
 import { ArrowClockwise20Regular, DocumentSearch24Regular, ErrorCircle20Regular, ErrorCircle24Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
+import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { useAnnounce } from "../AriaLive/AriaLive";
 import { Button } from "../Button/Button";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "../Empty/Empty";
@@ -501,7 +502,7 @@ export const AsyncContent = React.forwardRef<HTMLDivElement, AsyncContentProps>(
     const rootRef = React.useRef<HTMLDivElement>(null);
     const focusInside = React.useRef(false);
     React.useImperativeHandle(ref, () => rootRef.current as HTMLDivElement);
-    React.useLayoutEffect(() => {
+    useIsomorphicLayoutEffect(() => {
       const root = rootRef.current;
       if (!root || !focusInside.current) return;
       const activeEl = document.activeElement;

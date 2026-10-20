@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Copy16Regular, Checkmark16Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
+import { useLocale } from "./i18n";
 
 const TOKEN_RE =
   /((?<=^|\s)\/\/.*$|\{\/\*[\s\S]*?\*\/\})|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)|(<\/?[A-Za-z][\w.]*|\/?>)|\b(import|from|export|const|let|function|return|default|true|false|null|undefined)\b|([A-Za-z_][\w-]*)(?==)/gm;
@@ -52,6 +53,7 @@ export function useCopy(text: string) {
 
 export function CopyButton({ text, className }: { text: string; className?: string }) {
   const { copied, copy } = useCopy(text);
+  const { t } = useLocale();
   return (
     <button
       type="button"
@@ -63,7 +65,7 @@ export function CopyButton({ text, className }: { text: string; className?: stri
       )}
     >
       {copied ? <Checkmark16Regular className="text-success-foreground-1" /> : <Copy16Regular />}
-      {copied ? "Đã copy" : "Copy"}
+      {copied ? t("copy.copied") : t("copy.copy")}
     </button>
   );
 }
@@ -79,7 +81,8 @@ export function CodeBlock({ code, className, bare }: { code: string; className?:
       )}
     >
       <CopyButton text={code} className="absolute top-S inset-e-S opacity-0 group-hover/code:opacity-100 focus-visible:opacity-100" />
-      <pre dir="ltr" className="overflow-x-auto p-L pe-24 text-left font-mono text-[13px] leading-[1.6] text-foreground-1">
+      {/* tabIndex: khối code cuộn ngang được bằng bàn phím (axe scrollable-region-focusable); outline thụt vào vì khung overflow-hidden. */}
+      <pre dir="ltr" tabIndex={0} className="overflow-x-auto p-L pe-24 text-left font-mono text-[13px] leading-[1.6] text-foreground-1 -outline-offset-2">
         <code>{highlight(code)}</code>
       </pre>
     </div>

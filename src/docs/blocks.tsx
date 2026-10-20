@@ -6,10 +6,14 @@ import {
   WeatherSunny16Regular,
   WeatherMoon16Regular,
   ChevronDown16Regular,
+  Open16Regular,
 } from "@fluentui/react-icons";
 import { Menu, MenuItemRadio, MenuPopover, MenuRadioGroup, MenuTrigger, YugenProvider, useYugen } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { CodeBlock, CopyButton } from "./CodeBlock";
+import { SITE } from "./site";
+import { openInStackBlitz } from "./stackblitz";
+import { useLocale } from "./i18n";
 
 import type { Example, PropDoc } from "./types";
 export type { Example, PropDoc };
@@ -92,6 +96,7 @@ export function ExampleFrame({
   const [showCode, setShowCode] = React.useState(false);
   const current = FRAME_THEMES.find((t) => t.id === frameId) ?? FRAME_THEMES[0];
   const { dir: pageDir } = useYugen();
+  const { t } = useLocale();
 
   React.useEffect(() => setFrameId(frameIdOf(defaultTheme, defaultBrand)), [defaultTheme, defaultBrand]);
 
@@ -107,26 +112,40 @@ export function ExampleFrame({
                 className="inline-flex h-7 items-center gap-XS rounded-medium px-S text-caption1 font-semibold text-link hover:bg-subtle-hover"
               >
                 {current.theme === "light" ? <WeatherSunny16Regular /> : <WeatherMoon16Regular />}
-                {current.label}
+                {current.id === "hc" ? t("theme.highContrast") : current.label}
                 <ChevronDown16Regular />
               </button>
             </MenuTrigger>
             <MenuPopover>
               <MenuRadioGroup value={frameId} onValueChange={setFrameId}>
-                {FRAME_THEMES.map((t) => (
+                {FRAME_THEMES.map((ft) => (
                   <MenuItemRadio
-                    key={t.id}
-                    value={t.id}
-                    icon={<span data-brand={t.brand} className="size-3 shrink-0 rounded-circular bg-brand-background" />}
+                    key={ft.id}
+                    value={ft.id}
+                    icon={<span data-brand={ft.brand} className="size-3 shrink-0 rounded-circular bg-brand-background" />}
                   >
-                    {t.label}
+                    {ft.id === "hc" ? t("theme.highContrast") : ft.label}
                   </MenuItemRadio>
                 ))}
               </MenuRadioGroup>
             </MenuPopover>
           </Menu>
         </div>
-        <CopyButton text={example.code} />
+        <div className="flex items-center gap-XS">
+          {SITE.links.npm && (
+            <button
+              type="button"
+              onClick={() =>
+                openInStackBlitz(example.code, { title: example.title, theme: current.theme, brand: current.brand, dir: pageDir, version: SITE.version, setup: example.setup })
+              }
+              className="inline-flex h-7 items-center gap-XS rounded-medium px-S text-caption1 font-semibold text-foreground-2 hover:bg-subtle-hover hover:text-foreground-1"
+            >
+              <Open16Regular />
+              StackBlitz
+            </button>
+          )}
+          <CopyButton text={example.code} />
+        </div>
       </div>
 
       <YugenProvider
@@ -147,7 +166,7 @@ export function ExampleFrame({
           className="inline-flex h-8 items-center gap-SNudge rounded-medium px-S text-body1 font-semibold text-foreground-2 hover:bg-subtle-hover hover:text-foreground-1"
         >
           <Code16Regular />
-          {showCode ? "Ẩn code" : "Hiện code"}
+          {showCode ? t("blocks.hideCode") : t("blocks.showCode")}
         </button>
       </div>
       {showCode && <CodeBlock code={example.code} bare className="border-t border-stroke-2" />}
@@ -158,6 +177,7 @@ export function ExampleFrame({
 /* ---------- Example tile (variants grid, takeaway style) ---------- */
 export function ExampleTile({ example }: { example: Example }) {
   const [showCode, setShowCode] = React.useState(false);
+  const { t } = useLocale();
 
   return (
     <div className="flex min-w-0 flex-col">
@@ -177,7 +197,7 @@ export function ExampleTile({ example }: { example: Example }) {
           type="button"
           onClick={() => setShowCode((v) => !v)}
           aria-expanded={showCode}
-          aria-label={showCode ? "Ẩn code" : "Xem code"}
+          aria-label={showCode ? t("blocks.hideCode") : t("blocks.viewCode")}
           className={cn(
             "inline-flex h-7 shrink-0 items-center gap-XS rounded-medium px-S text-caption1 font-semibold",
             showCode ? "bg-brand-background-2 text-brand-foreground-1" : "text-foreground-2 hover:bg-subtle-hover",
@@ -192,9 +212,9 @@ export function ExampleTile({ example }: { example: Example }) {
   );
 }
 
-export function ExampleGrid({ examples }: { examples: Example[] }) {
+export function ExampleGrid({ examples, lang }: { examples: Example[]; lang?: string }) {
   return (
-    <div className="grid gap-x-XL gap-y-XXL md:grid-cols-2">
+    <div lang={lang} className="grid gap-x-XL gap-y-XXL md:grid-cols-2">
       {examples.map((ex) => (
         <ExampleTile key={ex.title} example={ex} />
       ))}
@@ -203,7 +223,8 @@ export function ExampleGrid({ examples }: { examples: Example[] }) {
 }
 
 /* ---------- Do / Don't ---------- */
-export function DoDont({ dos, donts }: { dos: string[]; donts: string[] }) {
+export function DoDont({ dos, donts, contentLang }: { dos: string[]; donts: string[]; contentLang?: string }) {
+  const { t } = useLocale();
   const column = (kind: "do" | "dont", items: string[]) => (
     <div
       className={cn(
@@ -218,9 +239,9 @@ export function DoDont({ dos, donts }: { dos: string[]; donts: string[] }) {
         ) : (
           <DismissCircle20Filled className="text-danger-foreground-1" />
         )}
-        {kind === "do" ? "Nên" : "Không nên"}
+        {kind === "do" ? t("blocks.do") : t("blocks.dont")}
       </div>
-      <ul className="flex flex-col gap-S">
+      <ul lang={contentLang} className="flex flex-col gap-S">
         {items.map((item) => (
           <li key={item} className="flex gap-S text-body1 text-foreground-2">
             <span className="mt-2 size-1.5 shrink-0 rounded-circular bg-foreground-4" />
@@ -239,16 +260,18 @@ export function DoDont({ dos, donts }: { dos: string[]; donts: string[] }) {
 }
 
 /* ---------- Props table ---------- */
-export function PropsTable({ props }: { props: PropDoc[] }) {
+export function PropsTable({ props, contentLang }: { props: PropDoc[]; contentLang?: string }) {
+  const { t } = useLocale();
   return (
-    <div className="overflow-x-auto rounded-xlarge border border-stroke-2 bg-background-1">
+    // Vùng cuộn ngang: focus được để cuộn bằng bàn phím, có tên khi là landmark region.
+    <div role="region" aria-label={t("blocks.propsTable")} tabIndex={0} className="overflow-x-auto rounded-xlarge border border-stroke-2 bg-background-1">
       <table className="w-full border-collapse text-left text-body1">
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
             <th className="px-L py-S">Prop</th>
-            <th className="px-L py-S">Kiểu</th>
-            <th className="px-L py-S">Mặc định</th>
-            <th className="px-L py-S">Mô tả</th>
+            <th className="px-L py-S">{t("blocks.type")}</th>
+            <th className="px-L py-S">{t("blocks.default")}</th>
+            <th className="px-L py-S">{t("blocks.description")}</th>
           </tr>
         </thead>
         <tbody>
@@ -259,7 +282,7 @@ export function PropsTable({ props }: { props: PropDoc[] }) {
               </td>
               <td className="px-L py-M font-mono text-[13px] text-foreground-2">{p.type}</td>
               <td className="px-L py-M font-mono text-[13px] whitespace-nowrap text-foreground-3">{p.defaultValue ?? "—"}</td>
-              <td className="px-L py-M text-foreground-2">{p.description}</td>
+              <td lang={contentLang} className="px-L py-M text-foreground-2">{p.description}</td>
             </tr>
           ))}
         </tbody>
@@ -271,6 +294,7 @@ export function PropsTable({ props }: { props: PropDoc[] }) {
 /* ---------- On this page ---------- */
 export function OnThisPage({ items }: { items: { id: string; label: string }[] }) {
   const [active, setActive] = React.useState(items[0]?.id);
+  const { t } = useLocale();
 
   React.useEffect(() => {
     const observer = new IntersectionObserver(
@@ -280,16 +304,29 @@ export function OnThisPage({ items }: { items: { id: string; label: string }[] }
       },
       { rootMargin: "-80px 0px -60% 0px" },
     );
-    items.forEach((item) => {
-      const el = document.getElementById(item.id);
-      if (el) observer.observe(el);
-    });
-    return () => observer.disconnect();
+    // Nội dung trang có thể nạp lười (Suspense) — mục chưa có trong DOM thì chờ tới khi xuất hiện.
+    const missing = new Set(items.map((item) => item.id));
+    const mutations = new MutationObserver(() => scan());
+    const scan = () => {
+      for (const id of missing) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        observer.observe(el);
+        missing.delete(id);
+      }
+      if (missing.size === 0) mutations.disconnect();
+    };
+    scan();
+    if (missing.size > 0) mutations.observe(document.body, { childList: true, subtree: true });
+    return () => {
+      observer.disconnect();
+      mutations.disconnect();
+    };
   }, [items]);
 
   return (
-    <nav aria-label="Trên trang này" className="sticky top-24 hidden w-52 shrink-0 self-start xl:block">
-      <p className="mb-M text-body1 font-semibold text-foreground-1">Trên trang này</p>
+    <nav aria-label={t("blocks.onThisPage")} className="sticky top-24 hidden w-52 shrink-0 self-start xl:block">
+      <p className="mb-M text-body1 font-semibold text-foreground-1">{t("blocks.onThisPage")}</p>
       <ul className="flex flex-col border-s border-stroke-2">
         {items.map((item) => (
           <li key={item.id}>

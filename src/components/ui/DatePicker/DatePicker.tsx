@@ -81,6 +81,8 @@ function PickerShell({
               type="button"
               id={id}
               disabled={disabled}
+              // Combobox (như DatePicker của Fluent): tên lấy từ nhãn, nội dung là giá trị; hỗ trợ aria-required.
+              role="combobox"
               aria-haspopup="dialog"
               aria-required={required || undefined}
               {...aria}
@@ -178,12 +180,98 @@ export function DatePicker({
 
 /* ------------------------------------------------------------------ DateRangePicker */
 
+/** Một lựa chọn nhanh: `range()` được gọi lúc render / bấm nên luôn tính theo "bây giờ". */
+export interface DateRangePreset {
+  label: string;
+  range: () => { from: Date; to: Date };
+}
+
+const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+const lastDays = (n: number) => {
+  const to = startOfDay(new Date());
+  return { from: new Date(to.getFullYear(), to.getMonth(), to.getDate() - (n - 1)), to };
+};
+
+/** Preset mặc định: Hôm nay, 7 ngày qua, 30 ngày qua, Tháng này (đến hôm nay), Tháng trước. */
+export const DEFAULT_RANGE_PRESETS: DateRangePreset[] = [
+  { label: "Hôm nay", range: () => lastDays(1) },
+  { label: "7 ngày qua", range: () => lastDays(7) },
+  { label: "30 ngày qua", range: () => lastDays(30) },
+  {
+    label: "Tháng này",
+    range: () => {
+      const to = startOfDay(new Date());
+      return { from: new Date(to.getFullYear(), to.getMonth(), 1), to };
+    },
+  },
+  {
+    label: "Tháng trước",
+    range: () => {
+      const now = new Date();
+      return { from: new Date(now.getFullYear(), now.getMonth() - 1, 1), to: new Date(now.getFullYear(), now.getMonth(), 0) };
+    },
+  },
+];
+
+const sameDay = (a?: Date, b?: Date) => !!a && !!b && startOfDay(a).getTime() === startOfDay(b).getTime();
+
+function PresetList({
+  presets,
+  current,
+  minDate,
+  maxDate,
+  label,
+  onPick,
+}: {
+  presets: DateRangePreset[];
+  current?: DateRange;
+  minDate?: Date;
+  maxDate?: Date;
+  label: string;
+  onPick: (range: { from: Date; to: Date }) => void;
+}) {
+  return (
+    <div
+      role="group"
+      aria-label={label}
+      className="flex flex-wrap gap-XS border-b border-stroke-2 pb-S sm:w-36 sm:shrink-0 sm:flex-col sm:flex-nowrap sm:border-e sm:border-b-0 sm:pe-S sm:pb-0"
+    >
+      {presets.map((preset) => {
+        const r = preset.range();
+        const active = sameDay(current?.from, r.from) && sameDay(current?.to, r.to);
+        const outOfBounds = (!!minDate && r.from < startOfDay(minDate)) || (!!maxDate && startOfDay(r.to) > startOfDay(maxDate));
+        return (
+          <button
+            key={preset.label}
+            type="button"
+            aria-pressed={active}
+            disabled={outOfBounds}
+            onClick={() => onPick(r)}
+            className={cn(
+              "inline-flex h-8 shrink-0 cursor-pointer items-center rounded-medium px-S text-start text-body1 whitespace-nowrap text-foreground-2",
+              "transition-colors duration-faster ease-easy-ease hover:bg-subtle-hover hover:text-foreground-1 active:bg-subtle-pressed",
+              "disabled:cursor-not-allowed disabled:bg-transparent disabled:text-foreground-disabled",
+              active && "bg-brand-background-2 font-semibold text-brand-foreground-2 hover:bg-brand-background-2-hover hover:text-brand-foreground-2",
+            )}
+          >
+            {preset.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 export interface DateRangePickerProps extends PickerBaseProps {
   value?: DateRange | null;
   defaultValue?: DateRange | null;
   onSelectRange?: (range: DateRange | undefined) => void;
   /** Số tháng hiển thị trong popover. */
   numberOfMonths?: number;
+  /** Lựa chọn nhanh hiển thị cạnh lịch (xếp trên lịch ở màn hẹp), vd. `DEFAULT_RANGE_PRESETS`. */
+  presets?: DateRangePreset[];
+  /** Nhãn nhóm preset cho trình đọc màn hình. */
+  presetsLabel?: string;
 }
 
 export function DateRangePicker({
@@ -196,6 +284,8 @@ export function DateRangePicker({
   minDate,
   maxDate,
   numberOfMonths = 2,
+  presets,
+  presetsLabel = "Chọn nhanh khoảng ngày",
   ...props
 }: DateRangePickerProps) {
   const [open, setOpen] = React.useState(false);
@@ -219,6 +309,20 @@ export function DateRangePicker({
       onClear={clearable ? () => commit(undefined) : undefined}
       surfaceClassName="max-w-[calc(100vw-24px)]"
     >
+      <div className={presets?.length ? "flex flex-col gap-S sm:flex-row" : "contents"}>
+      {presets?.length ? (
+        <PresetList
+          presets={presets}
+          current={current}
+          minDate={minDate}
+          maxDate={maxDate}
+          label={presetsLabel}
+          onPick={(r) => {
+            commit({ from: r.from, to: r.to });
+            setOpen(false);
+          }}
+        />
+      ) : null}
       <Calendar
         mode="range"
         autoFocus
@@ -232,6 +336,7 @@ export function DateRangePicker({
         }}
         {...boundsOf(minDate, maxDate)}
       />
+      </div>
     </PickerShell>
   );
 }

@@ -1,6 +1,8 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
 import { ChartContainer, ChartFocusRing, ChartLegend, ChartTable, ChartTooltip, type ChartTooltipRow } from "./ChartParts";
+import { ChartBrush } from "./ChartBrush";
+import { normalizeDomain, stackValues, type ChartDomain } from "./chartMath";
 import { Baseline, CategoryAxisBottom, GridLines, PlotArea, ValueAxisLeft, formatCategory, pickLabelIndices } from "./cartesian";
 import {
   clamp,
@@ -53,11 +55,20 @@ export interface LineChartProps extends ChartFrameProps {
   includeZero?: boolean;
   /** Mặc định hiện khi ≥ 2 chuỗi. */
   legend?: boolean;
+  /** Dải tổng quan (brush) dưới vùng vẽ: kéo / đổi kích thước cửa sổ để zoom, có nút "Đặt lại". */
+  brush?: boolean;
+  /** Miền chỉ số đang xem [đầu, cuối] (gồm cả hai đầu) — có điều khiển. Có miền thì vùng vẽ chỉ hiện các mốc trong miền. */
+  domain?: ChartDomain;
+  /** Miền ban đầu khi không điều khiển. */
+  defaultDomain?: ChartDomain;
+  onDomainChange?: (domain: ChartDomain) => void;
 }
 
 export interface AreaChartProps extends LineChartProps {
   /** Chồng các vùng (phần–tổng theo thời gian). */
   stacked?: boolean;
+  /** Khi chồng: "expand" chuẩn hoá mỗi mốc về 100% (trục Y là tỉ lệ). */
+  stackOffset?: "none" | "expand";
 }
 
 interface Column {
@@ -70,7 +81,8 @@ interface Column {
 function SeriesChart({
   variant,
   stacked = false,
-  data,
+  stackOffset = "none",
+  data: allData,
   index,
   series,
   xType,
@@ -84,6 +96,10 @@ function SeriesChart({
   highlight,
   includeZero,
   legend,
+  brush = false,
+  domain: domainProp,
+  defaultDomain,
+  onDomainChange,
   title,
   description,
   toolbar,
@@ -105,9 +121,24 @@ function SeriesChart({
 
   const isArea = variant === "area";
   const isStacked = isArea && stacked && series.length > 1;
+  const expand = isStacked && stackOffset === "expand";
+
+  /* ---------- miền zoom (brush) ---------- */
+  const [innerDomain, setInnerDomain] = React.useState<ChartDomain | undefined>(defaultDomain);
+  const domainRaw = domainProp ?? innerDomain;
+  const nAll = allData.length;
+  const [ds, de] = normalizeDomain(domainRaw, nAll);
+  const zoomed = domainRaw !== undefined && nAll > 1;
+  const setDomain = (next: ChartDomain) => {
+    if (domainProp === undefined) setInnerDomain(next);
+    onDomainChange?.(next);
+  };
+  const data = zoomed ? allData.slice(ds, de + 1) : allData;
+  const rawAll = allData.map((d) => d[index]);
+
   const n = data.length;
   const raw = data.map((d) => d[index]);
-  const isTime = xType ? xType === "time" : raw.some((v) => v instanceof Date);
+  const isTime = xType ? xType === "time" : rawAll.some((v) => v instanceof Date);
   const fmt = makeNumberFormatter(locale, valueFormat);
 
   const xAxisText = (v: ChartValue): string => {
@@ -122,7 +153,8 @@ function SeriesChart({
     return formatCategory(v, locale);
   };
   const xLabels = raw.map(xAxisText);
-  const xLong = raw.map(xLongText);
+  const xLongAll = rawAll.map(xLongText);
+  const xLong = zoomed ? xLongAll.slice(ds, de + 1) : xLongAll;
 
   const slots = series.map((s, i) => slotOf(s.color, i));
   const slotFor = (key: string, slot: ChartSlot): ChartSlot => (highlight && key !== highlight ? "other" : slot);
@@ -131,32 +163,17 @@ function SeriesChart({
   const drawOrder = highlight ? [...vis.filter((v) => v.s.key !== highlight), ...vis.filter((v) => v.s.key === highlight)] : vis;
   const val = (r: number, key: string) => toNumber(data[r]?.[key]);
 
-  /* ---------- giá trị (cộng dồn khi chồng) ---------- */
-  const upper: (number | null)[][] = [];
-  const lower: number[][] = [];
-  {
-    const acc = new Array<number>(n).fill(0);
-    for (const v of vis) {
-      const lo: number[] = [];
-      const up: (number | null)[] = [];
-      for (let r = 0; r < n; r++) {
-        const x = val(r, v.s.key);
-        if (isStacked) {
-          lo.push(acc[r]);
-          acc[r] += x ?? 0;
-          up.push(acc[r]);
-        } else {
-          lo.push(0);
-          up.push(x);
-        }
-      }
-      upper.push(up);
-      lower.push(lo);
-    }
-  }
+  /* ---------- giá trị (cộng dồn khi chồng; "expand" = tỉ lệ 0…1) ---------- */
+  const stacks = stackValues(
+    vis.map((v) => data.map((_, r) => val(r, v.s.key))),
+    isStacked,
+    expand ? "expand" : "none",
+  );
+  const upper = stacks.map((st) => st.upper);
+  const lower = stacks.map((st) => st.lower);
   const all = upper.flat().filter((v): v is number => v != null);
-  let lo = all.length ? Math.min(...all) : 0;
-  let hi = all.length ? Math.max(...all) : 1;
+  let lo = expand ? 0 : all.length ? Math.min(...all) : 0;
+  let hi = expand ? 1 : all.length ? Math.max(...all) : 1;
   if (isArea || includeZero) {
     lo = Math.min(lo, 0);
     hi = Math.max(hi, 0);
@@ -169,7 +186,7 @@ function SeriesChart({
   const ticks = niceTicks(lo, hi, clamp(Math.round(plotH / 56), 2, 8));
   const d0 = ticks[0];
   const d1 = ticks[ticks.length - 1];
-  const axisFmt = makeAxisFormatter(locale, axisFormat ?? valueFormat, Math.max(Math.abs(d0), Math.abs(d1)), ticks.length > 1 ? ticks[1] - ticks[0] : 0);
+  const axisFmt = makeAxisFormatter(locale, axisFormat ?? (expand ? { style: "percent" } : valueFormat), Math.max(Math.abs(d0), Math.abs(d1)), ticks.length > 1 ? ticks[1] - ticks[0] : 0);
   const left = Math.ceil(Math.max(0, ...ticks.map((t) => measureText(axisFmt(t))))) + 8;
 
   // Nhãn cuối đường
@@ -187,7 +204,8 @@ function SeriesChart({
   const plotW = Math.max(0, width - left - right);
 
   const y = linearScale([d0, d1], [top + plotH, top]);
-  const times = raw.map((v) => (v instanceof Date ? +v : typeof v === "number" ? v : NaN));
+  const timeOf = (v: ChartValue) => (v instanceof Date ? +v : typeof v === "number" ? v : NaN);
+  const times = raw.map(timeOf);
   const tMin = Math.min(...times.filter(Number.isFinite));
   const tMax = Math.max(...times.filter(Number.isFinite));
   const xs = raw.map((_, r) => {
@@ -248,12 +266,15 @@ function SeriesChart({
         .map((v, k) => ({ v, k, value: upper[k][activeCol.i] }))
         .filter((p): p is { v: (typeof vis)[number]; k: number; value: number } => p.value != null)
     : [];
+  const pctFmt = makeNumberFormatter(locale, { style: "percent", maximumFractionDigits: 1 });
   const rowsAt = (r: number): ChartTooltipRow[] => {
+    const total = vis.reduce((a, v) => a + (val(r, v.s.key) ?? 0), 0);
     const rows: ChartTooltipRow[] = vis.map((v) => {
       const x = val(r, v.s.key);
-      return { key: v.s.key, label: v.s.label, value: x == null ? "—" : fmt(x), slot: v.slot, shape: isArea ? "rect" : "line" };
+      const text = x == null ? "—" : expand && total > 0 ? `${fmt(x)} (${pctFmt(Math.max(0, x) / total)})` : fmt(x);
+      return { key: v.s.key, label: v.s.label, value: text, slot: v.slot, shape: isArea ? "rect" : "line" };
     });
-    if (isStacked) rows.push({ key: "__total", label: "Tổng", value: fmt(vis.reduce((a, v) => a + (val(r, v.s.key) ?? 0), 0)) });
+    if (isStacked) rows.push({ key: "__total", label: "Tổng", value: fmt(total) });
     return rows;
   };
 
@@ -268,7 +289,7 @@ function SeriesChart({
 
   const xLabelIdx = width > 0 ? pickLabelIndices(xs, xLabels, 0, width) : [];
   const showLegend = legend ?? series.length > 1;
-  const kind = isArea ? (isStacked ? "vùng chồng" : "vùng") : "đường";
+  const kind = isArea ? (isStacked ? (expand ? "vùng chồng 100%" : "vùng chồng") : "vùng") : "đường";
   const summary =
     ariaLabel ??
     `Biểu đồ ${kind}: ${n} điểm${n ? ` từ ${xLong[0]} đến ${xLong[n - 1]}` : ""}, ${
@@ -282,9 +303,9 @@ function SeriesChart({
         { key: "__index", label: indexLabel ?? (isTime ? "Thời gian" : "Danh mục") },
         ...series.map((s) => ({ key: s.key, label: s.label, numeric: true })),
       ]}
-      rows={data.map((d, r) => ({
+      rows={allData.map((d, r) => ({
         key: String(r),
-        header: xLong[r],
+        header: xLongAll[r],
         cells: series.map((s) => {
           const v = toNumber(d[s.key]);
           return v == null ? "—" : fmt(v);
@@ -292,6 +313,21 @@ function SeriesChart({
       }))}
     />
   );
+
+  /* ---------- dải tổng quan (toàn bộ dữ liệu) ---------- */
+  const overview = brush
+    ? stackValues(
+        vis.map((v) => allData.map((d) => toNumber(d[v.s.key]))),
+        isStacked,
+        expand ? "expand" : "none",
+      )
+    : [];
+  const allTimes = rawAll.map(timeOf);
+  const finiteTimes = allTimes.filter(Number.isFinite);
+  const atMin = finiteTimes.length ? Math.min(...finiteTimes) : 0;
+  const atMax = finiteTimes.length ? Math.max(...finiteTimes) : 0;
+  const brushPositions =
+    brush && isTime && atMax > atMin && finiteTimes.length === allTimes.length ? allTimes.map((t) => (t - atMin) / (atMax - atMin)) : undefined;
 
   const activeTop = activePoints.length ? Math.min(...activePoints.map((p) => y(p.value))) : top;
   const activeBottom = activePoints.length ? Math.max(...activePoints.map((p) => y(p.value))) : top;
@@ -438,6 +474,16 @@ function SeriesChart({
           <ChartTooltip x={activeCol.x} y={activeTop} title={xLong[activeCol.i]} rows={rowsAt(activeCol.i)} textured={textured} />
         )}
       </PlotArea>
+      {brush && nAll > 2 && (
+        <ChartBrush
+          count={nAll}
+          positions={brushPositions}
+          labels={xLongAll}
+          value={[ds, de]}
+          onValueChange={setDomain}
+          lines={overview.map((st, k) => ({ key: vis[k].s.key, slot: vis[k].slot, values: st.upper }))}
+        />
+      )}
     </ChartContainer>
   );
 }

@@ -4,6 +4,8 @@ export interface Example {
   title: string;
   description?: string;
   code: string;
+  /** Code dùng chung (dữ liệu / hàm mẫu) cần thêm vào trước `code` để chạy độc lập — StackBlitz, check:examples. */
+  setup?: string;
   render: () => ReactNode;
 }
 
@@ -43,6 +45,12 @@ export interface ComponentDoc {
   donts: string[];
   props: PropDoc[];
 }
+
+/**
+ * Phần nạp sẵn của một trang component (sidebar, trang chủ, command palette, header trang) — trích lúc build,
+ * không kéo theo demo / code mẫu. `file`: file trong src/docs/registry chứa doc (nạp lười theo file).
+ */
+export type ComponentMeta = Pick<ComponentDoc, "slug" | "name" | "category" | "lead"> & { file: string };
 
 /** Nhóm trang "Khái niệm" (tương đương mục Concepts của Fluent UI Storybook). */
 export const CONCEPT_GROUPS = ["Bắt đầu", "Nhà phát triển", "Khả năng tiếp cận", "Yugen Labs", "Chuyển đổi"] as const;

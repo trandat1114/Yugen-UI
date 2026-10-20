@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Suspense, useEffect, useRef, useState, type ReactNode } from "react";
 import {
   ArrowRight20Regular,
   Color24Regular,
@@ -11,20 +11,33 @@ import {
 } from "@fluentui/react-icons";
 import { Card } from "@/components/ui";
 import { YugenMark } from "../YugenMark";
-import { COMPONENTS, COMPONENTS_BY_CATEGORY } from "../registry";
+import { COMPONENTS_BY_CATEGORY, COMPONENTS_META, readComponentDoc } from "../registry";
 import { FOUNDATIONS } from "../foundations";
 import { LATEST_RELEASE } from "../news";
 import { HomeShowcase } from "./HomeShowcase";
+import { AuthorLink } from "../AuthorLink";
+import { useLocale } from "../i18n";
 
 const PRINCIPLES = [
-  { icon: Color24Regular, title: "Token 3 lớp", text: "Global → Alias → Utility. Đổi brand chỉ bằng data-brand." },
-  { icon: DarkTheme24Regular, title: "Light & Dark", text: "Theme và brand lồng được trên bất kỳ phần tử nào." },
-  { icon: ShieldCheckmark24Regular, title: "Accessible", text: "Radix primitives, tương phản AA, không dùng màu làm tín hiệu duy nhất." },
-  { icon: Copy24Regular, title: "Copy & dùng", text: "Mỗi mẫu đều có code thật — hover để copy vào dự án." },
-];
+  { icon: Color24Regular, title: "home.p1Title", text: "home.p1Text" },
+  { icon: DarkTheme24Regular, title: "home.p2Title", text: "home.p2Text" },
+  { icon: ShieldCheckmark24Regular, title: "home.p3Title", text: "home.p3Text" },
+  { icon: Copy24Regular, title: "home.p4Title", text: "home.p4Text" },
+] as const;
 
-/** Chỉ render demo khi tile sắp vào màn hình — trang chủ có ~80 demo. Demo bị khoá tương tác (inert). */
-function LazyPreview({ render }: { render: () => ReactNode }) {
+/** Demo hero của một component — nạp file registry chứa nó (treo tới khi xong; lỗi → để trống). */
+function HeroPreview({ slug }: { slug: string }) {
+  const { doc } = readComponentDoc(slug);
+  return <>{doc?.hero.render()}</>;
+}
+
+const PREVIEW_PLACEHOLDER = <span className="h-8 w-40 animate-pulse rounded-medium bg-stencil-1 motion-reduce:animate-none" />;
+
+/**
+ * Chỉ nạp + render demo khi tile sắp vào màn hình — trang chủ có ~110 demo, chia theo file registry (chunk lười).
+ * Demo bị khoá tương tác (inert).
+ */
+function LazyPreview({ slug }: { slug: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
@@ -47,7 +60,13 @@ function LazyPreview({ render }: { render: () => ReactNode }) {
 
   return (
     <div ref={ref} className="flex max-w-full origin-center scale-75 flex-wrap items-center justify-center gap-S">
-      {visible ? render() : <span className="h-8 w-40 animate-pulse rounded-medium bg-stencil-1 motion-reduce:animate-none" />}
+      {visible ? (
+        <Suspense fallback={PREVIEW_PLACEHOLDER}>
+          <HeroPreview slug={slug} />
+        </Suspense>
+      ) : (
+        PREVIEW_PLACEHOLDER
+      )}
     </div>
   );
 }
@@ -64,6 +83,9 @@ function CollabHighlight({ children }: { children: ReactNode }) {
 }
 
 export function HomePage() {
+  const { t, category, foundation, component } = useLocale();
+  const count = COMPONENTS_META.length;
+
   return (
     <div className="pb-XXXL">
       {/* Hero */}
@@ -80,7 +102,7 @@ export function HomePage() {
             className="group/news mb-XL inline-flex max-w-full items-center gap-S rounded-circular border border-stroke-2 bg-background-1/80 py-XXS ps-XXS pe-M text-caption1 shadow-2 backdrop-blur transition-colors duration-faster hover:border-brand-stroke"
           >
             <span className="rounded-circular bg-brand-background px-S py-XXS font-semibold text-foreground-on-brand">v{LATEST_RELEASE.version}</span>
-            <span className="truncate text-foreground-1">{LATEST_RELEASE.title}</span>
+            <span className="truncate text-foreground-1">{t("home.releasePill", { title: LATEST_RELEASE.title, version: LATEST_RELEASE.version })}</span>
             <ArrowRight20Regular className="size-4 shrink-0 text-foreground-3 transition-transform duration-normal group-hover/news:translate-x-0.5 rtl:-scale-x-100 rtl:group-hover/news:-translate-x-0.5" />
           </a>
           <p className="text-caption1 font-semibold tracking-[0.2em] text-foreground-1 uppercase">Welcome to</p>
@@ -88,17 +110,17 @@ export function HomePage() {
             Yugen UI
           </h1>
           <p className="mt-XL font-display text-[clamp(28px,3.6vw,48px)] leading-tight font-semibold text-foreground-1">
-            Để công việc<CollabHighlight>trôi chảy</CollabHighlight>
+            {t("home.taglineBefore")}
+            <CollabHighlight>{t("home.taglineHighlight")}</CollabHighlight>
           </p>
           <p className="mt-L max-w-xl text-subtitle1 font-normal text-foreground-2">
-            Thư viện UI cho React + Tailwind CSS, lấy cảm hứng từ Fluent 2 của Microsoft. Token chuẩn, {COMPONENTS.length}{" "}
-            component sẵn dùng, code mẫu copy được.
+            {t("home.intro", { count })}
           </p>
           <p className="mt-L inline-flex flex-wrap items-center gap-S rounded-circular border border-stroke-2 bg-background-1/70 px-M py-XS text-caption1 text-foreground-2 backdrop-blur">
             <YugenMark size={16} />
-            Tạo bởi <span className="font-semibold text-foreground-1">trandat1114</span>
+            {t("home.createdBy")} <AuthorLink className="text-foreground-1" />
             <span aria-hidden className="text-foreground-4">·</span>
-            Lấy cảm hứng từ <span className="font-semibold text-foreground-1">Microsoft Fluent 2</span>
+            {t("home.inspiredBy")} <span className="font-semibold text-foreground-1">Microsoft Fluent 2</span>
           </p>
         </div>
 
@@ -106,22 +128,22 @@ export function HomePage() {
           <HeroCard
             href="#/foundations/color"
             icon={<Color24Regular />}
-            title="Ngôn ngữ thiết kế"
-            text="Màu, typography, spacing, elevation, motion"
+            title={t("nav.foundations")}
+            text={t("home.cardFoundations")}
             tone="bg-lavender-bg text-lavender-fg"
           />
           <HeroCard
             href="#/components/button"
             icon={<Code24Regular />}
             title="Components"
-            text={`${COMPONENTS.length} component React + Tailwind kèm code mẫu`}
+            text={t("home.cardComponents", { count })}
             tone="bg-brand-background-2 text-brand-foreground-2"
           />
           <HeroCard
             href="#/blocks"
             icon={<Grid24Regular />}
             title="Blocks"
-            text="Mẫu giao diện ghép sẵn để copy cả cụm"
+            text={t("home.cardBlocks")}
             tone="bg-marigold-bg text-marigold-fg"
           />
         </div>
@@ -129,10 +151,9 @@ export function HomePage() {
 
       {/* Showcase */}
       <section className="mt-XL">
-        <h2 className="font-display text-title1 font-semibold">Khám phá</h2>
+        <h2 className="font-display text-title1 font-semibold">{t("home.explore")}</h2>
         <p className="mt-S max-w-2xl text-body2 text-foreground-2">
-          Rê chuột vào từng nhóm để xem component thực tế. Gradient chỉ dùng cho phần minh hoạ như thế này — không dùng
-          trong control.
+          {t("home.exploreDesc")}
         </p>
         <div className="mt-XXL">
           <HomeShowcase />
@@ -141,13 +162,13 @@ export function HomePage() {
 
       {/* Principles */}
       <section className="mt-20">
-        <h2 className="font-display text-title1 font-semibold">Nguyên tắc</h2>
+        <h2 className="font-display text-title1 font-semibold">{t("home.principles")}</h2>
         <div className="mt-XL grid gap-L sm:grid-cols-2 lg:grid-cols-4">
           {PRINCIPLES.map(({ icon: Icon, title, text }) => (
             <div key={title} className="rounded-2xlarge border border-stroke-2 bg-background-1 p-L">
               <Icon className="text-brand-foreground-1" />
-              <p className="mt-M text-subtitle2 font-semibold">{title}</p>
-              <p className="mt-XS text-body1 text-foreground-2">{text}</p>
+              <p className="mt-M text-subtitle2 font-semibold">{t(title)}</p>
+              <p className="mt-XS text-body1 text-foreground-2">{t(text)}</p>
             </div>
           ))}
         </div>
@@ -155,7 +176,7 @@ export function HomePage() {
 
       {/* Foundations */}
       <section className="mt-16">
-        <h2 className="font-display text-title1 font-semibold">Ngôn ngữ thiết kế</h2>
+        <h2 className="font-display text-title1 font-semibold">{t("nav.foundations")}</h2>
         <div className="mt-XL flex flex-wrap gap-S">
           {FOUNDATIONS.map((f) => (
             <a
@@ -163,7 +184,7 @@ export function HomePage() {
               href={`#/foundations/${f.slug}`}
               className="inline-flex h-10 items-center gap-S rounded-circular border border-stroke-1 bg-background-1 px-L text-body1 font-semibold hover:border-stroke-1-hover hover:bg-background-1-hover"
             >
-              {f.name}
+              {foundation(f)}
               <ArrowRight20Regular className="size-4 text-foreground-3 rtl:-scale-x-100" />
             </a>
           ))}
@@ -175,21 +196,21 @@ export function HomePage() {
         <div className="flex items-end justify-between">
           <h2 className="font-display text-title1 font-semibold">Components</h2>
           <span className="inline-flex items-center gap-XS text-body1 text-foreground-3">
-            <PuzzlePiece24Regular className="size-5" /> {COMPONENTS.length} component
+            <PuzzlePiece24Regular className="size-5" /> {t("home.componentCount", { count })}
           </span>
         </div>
         <div className="mt-XL flex flex-col gap-XXXL">
           {COMPONENTS_BY_CATEGORY.map((group) => (
             <div key={group.category}>
               <h3 className="flex items-baseline gap-S border-b border-stroke-2 pb-S text-title3 font-semibold">
-                {group.category}
+                {category(group.category)}
                 <span className="text-body1 font-normal text-foreground-3">{group.items.length}</span>
               </h3>
               <div className="mt-L grid gap-L sm:grid-cols-2 xl:grid-cols-4">
-                {group.items.map((c) => (
+                {group.items.map((m) => ({ ...m, ...component(m) })).map((c) => (
                   <div key={c.slug} className="group/comp relative rounded-3xlarge">
                     <div className="pointer-events-none flex h-40 items-center justify-center overflow-hidden rounded-3xlarge border border-stroke-2 bg-background-3 p-M transition-shadow duration-normal group-hover/comp:shadow-8">
-                      <LazyPreview render={c.hero.render} />
+                      <LazyPreview slug={c.slug} />
                     </div>
                     <a
                       href={`#/components/${c.slug}`}

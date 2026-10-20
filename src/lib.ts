@@ -19,3 +19,4 @@ export {
   type Oklch,
   type RampOptions,
 } from "./lib/brandRamp";
+export { BRAND_ALIAS_STEPS, rampToDesignTokens, rampToTokensStudio } from "./lib/tokenExport";

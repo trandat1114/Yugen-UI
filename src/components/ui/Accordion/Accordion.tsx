@@ -111,7 +111,10 @@ const HEADER_SIZE: Record<AccordionSize, string> = {
 export interface AccordionHeaderProps extends React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger> {
   /** Icon trước tiêu đề (cỡ 20). */
   icon?: React.ReactNode;
-  /** Dòng mô tả phụ dưới tiêu đề (caption, foreground-3) — được đọc như mô tả của nút. */
+  /**
+   * Dòng mô tả phụ dưới tiêu đề (caption, foreground-3) — nằm trong tên của nút (đọc ngay sau tiêu đề), để chữ nhìn
+   * thấy luôn khớp tên truy cập (WCAG 2.5.3 Label in Name).
+   */
   description?: React.ReactNode;
 }
 
@@ -137,8 +140,6 @@ export const AccordionHeader = React.forwardRef<React.ElementRef<typeof Accordio
       <AccordionPrimitive.Header className="m-0 flex">
         <AccordionPrimitive.Trigger
           ref={ref}
-          aria-labelledby={description ? `${id}-title` : undefined}
-          aria-describedby={description ? `${id}-description` : undefined}
           className={cn(
             "group/acc flex w-full flex-1 items-center gap-S py-S text-start text-foreground-1",
             "transition-colors duration-faster ease-easy-ease hover:bg-subtle-hover active:bg-subtle-pressed",

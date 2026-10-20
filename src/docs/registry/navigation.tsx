@@ -887,23 +887,25 @@ export const docs: ComponentDoc[] = [
       },
       {
         title: "Kích thước & icon",
-        description: "size small / medium; phím mũi tên dùng icon kèm aria-label.",
+        description: "size small / medium; phím mũi tên dùng icon kèm chữ ẩn (sr-only) cho trình đọc màn hình.",
         code: `<Kbd size="small">Esc</Kbd>
 <Kbd>Esc</Kbd>
 <KbdGroup>
-  <Kbd aria-label="Mũi tên lên"><ArrowUp16Regular /></Kbd>
-  <Kbd aria-label="Mũi tên xuống"><ArrowDown16Regular /></Kbd>
+  <Kbd><ArrowUp16Regular /><span className="sr-only">Mũi tên lên</span></Kbd>
+  <Kbd><ArrowDown16Regular /><span className="sr-only">Mũi tên xuống</span></Kbd>
 </KbdGroup>`,
         render: () => (
           <>
             <Kbd size="small">Esc</Kbd>
             <Kbd>Esc</Kbd>
             <KbdGroup>
-              <Kbd aria-label="Mũi tên lên">
+              <Kbd>
                 <ArrowUp16Regular />
+                <span className="sr-only">Mũi tên lên</span>
               </Kbd>
-              <Kbd aria-label="Mũi tên xuống">
+              <Kbd>
                 <ArrowDown16Regular />
+                <span className="sr-only">Mũi tên xuống</span>
               </Kbd>
             </KbdGroup>
           </>
@@ -920,7 +922,7 @@ export const docs: ComponentDoc[] = [
     ],
     props: [
       { name: "size", type: `"small" | "medium"`, defaultValue: `"medium"`, description: "Cao 16 / 20px." },
-      { name: "children", type: "ReactNode", description: "Tên phím hoặc icon (kèm aria-label)." },
+      { name: "children", type: "ReactNode", description: "Tên phím hoặc icon (kèm chữ sr-only — <kbd> không nhận aria-label)." },
       { name: "KbdGroup", type: "HTMLAttributes", description: "Bọc các Kbd và dấu “+” của tổ hợp phím." },
     ],
   },
@@ -1390,7 +1392,7 @@ const [zoom, setZoom] = useState("100");
       { name: "MenubarItem.onSelect / disabled", type: "(e: Event) => void / boolean", description: "Xử lý chọn / vô hiệu hoá." },
       { name: "MenubarCheckboxItem.checked / onCheckedChange", type: "boolean", description: "Bật/tắt (controlled)." },
       { name: "MenubarRadioGroup.value / onValueChange", type: "string", description: "Lựa chọn loại trừ." },
-      { name: "MenubarSub / SubTrigger / SubContent", type: "—", description: "Submenu; SubTrigger nhận icon." },
+      { name: "MenubarSub / MenubarSubTrigger / MenubarSubContent", type: "—", description: "Submenu; MenubarSubTrigger nhận icon." },
     ],
   },
 
@@ -1495,7 +1497,7 @@ const [sort, setSort] = useState("name");
       { name: "ContextMenuItem.icon / secondaryContent", type: "ReactNode", description: "Icon cỡ 20 và phím tắt bên phải." },
       { name: "ContextMenuCheckboxItem.checked / onCheckedChange", type: "boolean", description: "Bật/tắt (controlled)." },
       { name: "ContextMenuRadioGroup.value / onValueChange", type: "string", description: "Lựa chọn loại trừ." },
-      { name: "ContextMenuSub / SubTrigger / SubContent", type: "—", description: "Submenu; SubTrigger nhận icon." },
+      { name: "ContextMenuSub / ContextMenuSubTrigger / ContextMenuSubContent", type: "—", description: "Submenu; ContextMenuSubTrigger nhận icon." },
     ],
   },
 

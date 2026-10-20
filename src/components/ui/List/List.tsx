@@ -1,8 +1,7 @@
 import * as React from "react";
 import { useDirection } from "@radix-ui/react-direction";
-import { Checkmark20Regular } from "@fluentui/react-icons";
+import { Checkmark12Filled, Checkmark20Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
-import { Checkbox } from "../Checkbox/Checkbox";
 
 /**
  * Fluent 2 List — https://fluent2.microsoft.design/components/web/react/core/list/usage
@@ -251,8 +250,19 @@ export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
         {...props}
       >
         {ctx.selectionMode === "multiselect" && (
-          <span aria-hidden className="pointer-events-none flex shrink-0 [&>span]:py-0">
-            <Checkbox checked={selected} disabled={disabled} tabIndex={-1} />
+          // Chỉ là hình checkbox (giống Checkbox): option không được chứa control tương tác, kể cả tabIndex -1.
+          <span
+            aria-hidden
+            className={cn(
+              "inline-flex size-4 shrink-0 items-center justify-center rounded-small border text-foreground-on-brand",
+              disabled
+                ? "border-stroke-disabled text-foreground-disabled"
+                : selected
+                  ? "border-brand-background bg-brand-background"
+                  : "border-stroke-accessible",
+            )}
+          >
+            {selected && <Checkmark12Filled className="size-3" />}
           </span>
         )}
         {media && (

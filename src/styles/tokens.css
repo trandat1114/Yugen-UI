@@ -261,6 +261,8 @@
   --colorNeutralForegroundDisabled: var(--grey-74);
   --colorNeutralForegroundOnBrand: var(--white);
   --colorNeutralForegroundInverted: var(--white);
+  /* Chữ tối cố định mọi theme — trên nền đặc sáng như warning Background3 (Fluent: colorNeutralForeground1Static). */
+  --colorNeutralForeground1Static: var(--grey-14);
 
   --colorShellBackground: var(--shell-light);
   --colorShellNavBackground: var(--shell-nav-light);
@@ -355,6 +357,7 @@
   --colorNeutralForegroundDisabled: var(--grey-36);
   --colorNeutralForegroundOnBrand: var(--white);
   --colorNeutralForegroundInverted: var(--grey-14);
+  --colorNeutralForeground1Static: var(--grey-14);
 
   --colorShellBackground: var(--shell-dark);
   --colorShellNavBackground: var(--shell-nav-dark);
@@ -538,6 +541,7 @@
   --colorNeutralForegroundDisabled: #3ff23f;
   --colorNeutralForegroundOnBrand: #000000;
   --colorNeutralForegroundInverted: #000000;
+  --colorNeutralForeground1Static: #000000;
 
   --colorShellBackground: #000000;
   --colorShellNavBackground: #000000;
@@ -619,9 +623,11 @@
   color-scheme: dark;
 }
 
-/* Brand ở chế độ tương phản cao luôn là cyan, bất kể data-brand */
+/* Brand ở chế độ tương phản cao luôn là cyan, bất kể data-brand.
+   :not([data-theme]) — phần tử tự đặt data-theme="light|dark" + data-brand (theme lồng trong trang HC) giữ ramp của
+   theme đó; nếu không, khối này (đứng sau) thắng [data-brand][data-theme="light"] → nền cyan + chữ trắng của light. */
 [data-theme="high-contrast"],
-[data-theme="high-contrast"] [data-brand],
+[data-theme="high-contrast"] [data-brand]:not([data-theme]),
 [data-brand][data-theme="high-contrast"] {
   --colorBrandForeground1: #1aebff;
   --colorBrandForeground2: #1aebff;

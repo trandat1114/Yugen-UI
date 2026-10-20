@@ -14,7 +14,7 @@ Yugen UI is pre-1.0. Security fixes are released for the latest minor version on
 **Please do not open a public issue for security problems.**
 
 Report vulnerabilities privately through GitHub's **"Report a vulnerability"** button (Security tab → Advisories) of
-the Yugen UI repository, or by contacting the maintainer, **trandat1114**, privately. Please include:
+the Yugen UI repository, or by contacting the maintainer, **[trandat1114](https://github.com/trandat1114)**, privately. Please include:
 
 - the affected version(s) and component(s);
 - a description of the issue and its impact;

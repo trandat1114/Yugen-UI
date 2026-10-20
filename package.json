@@ -1,6 +1,6 @@
 {
   "name": "yugen-ui",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Fluent 2-inspired React component library for Tailwind CSS v4: design tokens, accessible Radix-based components, Sakura brand, light/dark/high-contrast themes and RTL.",
   "keywords": [
     "react",
@@ -24,7 +24,18 @@
     "sakura"
   ],
   "license": "MIT",
-  "author": "trandat1114",
+  "author": {
+    "name": "trandat1114",
+    "url": "https://github.com/trandat1114"
+  },
+  "homepage": "https://trandat1114.github.io/Yugen-UI/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trandat1114/Yugen-UI.git"
+  },
+  "bugs": {
+    "url": "https://github.com/trandat1114/Yugen-UI/issues"
+  },
   "type": "module",
   "sideEffects": [
     "**/*.css"
@@ -51,13 +62,24 @@
   },
   "scripts": {
     "dev": "vite",
-    "build:docs": "vite build",
+    "registry": "node scripts/build-registry.mjs",
+    "build:docs": "npm run registry && vite build",
     "build:lib": "vite build -c vite.lib.config.ts && tsc -p tsconfig.lib.json && tsc-alias -p tsconfig.lib.json && node scripts/build-css.mjs",
     "build": "npm run build:lib && npm run build:docs",
     "preview": "vite preview",
     "typecheck": "tsc -b",
     "lint:classes": "node scripts/canonical-classes.mjs",
-    "prepublishOnly": "npm run typecheck && npm run lint:classes && npm run build:lib",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:visual": "playwright test --project=visual",
+    "size": "size-limit",
+    "changeset": "changeset",
+    "version-packages": "changeset version && npm install --package-lock-only",
+    "check:release": "node scripts/check-release.mjs",
+    "check:examples": "vite-node scripts/check-examples.ts",
+    "check:props": "vite-node scripts/check-props.ts",
+    "prepublishOnly": "npm run check:release && npm run typecheck && npm run lint:classes && npm run build:lib",
     "pack:check": "npm pack --dry-run"
   },
   "peerDependencies": {
@@ -102,18 +124,33 @@
     "tailwind-merge": "^2.6.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@changesets/cli": "^2.31.1",
+    "@hookform/resolvers": "^3.10.0",
+    "@playwright/test": "^1.64.1",
+    "@size-limit/esbuild": "^11.2.0",
+    "@size-limit/file": "^11.2.0",
     "@tailwindcss/node": "^4.3.3",
     "@tailwindcss/oxide": "^4.3.3",
     "@tailwindcss/vite": "^4.0.0",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.8",
     "@types/node": "^26.6.5",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",
+    "jsdom": "^27.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-hook-form": "^7.90.0",
+    "size-limit": "^11.2.0",
     "tailwindcss": "^4.0.0",
     "tsc-alias": "^1.9.8",
     "typescript": "^5.7.3",
-    "vite": "^6.0.11"
+    "vite": "^6.0.11",
+    "vite-node": "^3.2.4",
+    "vitest": "^3.2.7",
+    "zod": "^3.25.76"
   }
 }

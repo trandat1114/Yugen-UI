@@ -2,9 +2,12 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "node:path";
+import { yugenDocsMeta, yugenTypeExports } from "./vite.plugins";
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  // GitHub Pages phục vụ site ở /Yugen-UI/ — workflow pages.yml đặt DOCS_BASE; dev & preview giữ "/".
+  base: process.env.DOCS_BASE ?? "/",
+  plugins: [react(), tailwindcss(), yugenTypeExports(__dirname), yugenDocsMeta(__dirname)],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -12,14 +15,14 @@ export default defineConfig({
   },
   build: {
     outDir: "dist-docs",
-    // Chunk "index" là nội dung trang docs (demo + code mẫu của mọi component), không phải thư viện.
+    // Demo + code mẫu nạp lười: mỗi file src/docs/registry/*.tsx thành một chunk riêng (registry/index.ts); entry chỉ giữ metadata.
+    // Chunk lớn nhất là yugen-ui (toàn bộ thư viện cho demo).
     chunkSizeWarningLimit: 800,
     rollupOptions: {
       output: {
         manualChunks(id) {
           const file = id.replace(/\\/g, "/");
           if (!file.includes("/node_modules/")) {
-            if (file.includes("/src/docs/registry/")) return "docs-registry";
             if (file.includes("/src/components/ui/") || file.includes("/src/lib/")) return "yugen-ui";
             return undefined;
           }

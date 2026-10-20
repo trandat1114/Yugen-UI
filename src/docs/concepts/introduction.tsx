@@ -9,6 +9,7 @@ import {
 } from "@fluentui/react-icons";
 import { Badge, Button, Card, CardContent, CardHeader, MessageBar } from "@/components/ui";
 import { DocSection } from "../blocks";
+import { AuthorLink } from "../AuthorLink";
 import { CodeBlock } from "../CodeBlock";
 
 function P({ children }: { children: ReactNode }) {
@@ -110,7 +111,7 @@ export default function Page() {
         <div className="flex flex-col gap-XL">
           <P>
             Yugen UI là bộ component và token cho <strong className="font-semibold text-foreground-1">React 18 + TypeScript + Tailwind CSS v4</strong>,
-            tạo bởi trandat1114. Hệ thống kết hợp ba nguồn: cấu trúc token và hành vi component của Microsoft Fluent 2, mô hình phân
+            tạo bởi <AuthorLink className="text-link hover:text-link-hover" />. Hệ thống kết hợp ba nguồn: cấu trúc token và hành vi component của Microsoft Fluent 2, mô hình phân
             phối copy-paste của shadcn/ui và bảng màu thương hiệu Sakura riêng.
           </P>
           <div className="grid gap-L md:grid-cols-3">
@@ -187,7 +188,7 @@ export default function Page() {
       <DocSection id="credit" title="Ghi công">
         <div className="flex flex-col gap-L">
           <P>
-            <strong className="font-semibold text-foreground-1">Yugen UI</strong> © trandat1114. Lấy cảm hứng từ{" "}
+            <strong className="font-semibold text-foreground-1">Yugen UI</strong> © <AuthorLink className="text-link hover:text-link-hover" />. Lấy cảm hứng từ{" "}
             <a className="text-link underline hover:text-link-hover" href="https://fluent2.microsoft.design/" target="_blank" rel="noopener noreferrer">
               Microsoft Fluent 2
             </a>{" "}

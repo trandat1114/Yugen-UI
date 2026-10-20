@@ -10,6 +10,7 @@ import {
   TextWrapOff16Regular,
 } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
+import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { Badge } from "../Badge/Badge";
 import { Button } from "../Button/Button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../Tabs/Tabs";
@@ -533,7 +534,7 @@ export const CodeBlock = React.forwardRef<HTMLDivElement, CodeBlockProps>(
     const collapsed = collapsible && !expanded;
 
     // Đo xem nội dung có vượt maxHeight không (chỉ khi đang thu gọn).
-    React.useLayoutEffect(() => {
+    useIsomorphicLayoutEffect(() => {
       const pre = preRef.current;
       if (!pre || !collapsed) return;
       const measure = () => setOverflowing(pre.scrollHeight > pre.clientHeight + 1);

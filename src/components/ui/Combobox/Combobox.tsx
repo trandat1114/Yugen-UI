@@ -12,6 +12,7 @@ import {
 } from "@fluentui/react-icons";
 import { usePortalThemeProps } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
+import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { popoverSurfaceClass } from "@/components/ui/Popover/Popover";
 import { fieldAppearanceClass, type FieldAppearance } from "@/components/ui/Select/Select";
 import { listboxOptionClass } from "@/components/ui/Dropdown/Dropdown";
@@ -160,7 +161,7 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
   const invalid = inputProps["aria-invalid"] === true || inputProps["aria-invalid"] === "true";
 
   // aria-activedescendant + cuộn option đang highlight vào tầm nhìn.
-  React.useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!open || !listEl || !active) {
       setActiveId(undefined);
       return;

@@ -6,3 +6,10 @@ dist-ssr
 *.local
 .env
 *.tsbuildinfo
+
+# Playwright
+playwright-report
+test-results
+
+# Registry shadcn sinh bởi scripts/build-registry.mjs (npm run registry)
+public/r/

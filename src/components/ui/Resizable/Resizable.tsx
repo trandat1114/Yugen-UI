@@ -4,8 +4,8 @@ import {
   Group,
   Panel,
   Separator,
-  isCoarsePointer,
   useDefaultLayout,
+  type GroupImperativeHandle,
   type GroupProps,
   type LayoutStorage,
   type PanelImperativeHandle,
@@ -20,27 +20,24 @@ import {
   ReOrderDotsVertical16Regular,
 } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
+import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 
 /**
  * shadcn Resizable — https://ui.shadcn.com/docs/components/resizable
  * (react-resizable-panels v4: Group / Panel / Separator; kích thước số = px, chuỗi "30%" = phần trăm).
  *
  * Yugen Labs: nút thu gọn / mở rộng trên đường chia, lưu bố cục (persistKey) và RTL lật thứ tự hiển thị.
- * Thư viện chỉ biết trục X vật lý: ở nhóm ngang RTL, Yugen lật bố cục bằng `dir="rtl"` rồi đảo dấu
- * thao tác kéo (sự kiện con trỏ được phát lại với clientX đối xứng) và đổi vai ArrowLeft / ArrowRight.
+ * Ở nhóm ngang RTL, Yugen lật bố cục bằng `dir="rtl"`. Thư viện (≥ 4.14) sắp panel theo vị trí hiển thị
+ * (offsetLeft) nên kéo và ArrowLeft / ArrowRight tự đi theo hướng nhìn thấy — không phát lại / đảo sự kiện
+ * (bản cũ đảo dấu thêm lần nữa khiến đường chia chạy ngược con trỏ).
  */
 
 type Orientation = "horizontal" | "vertical";
-type HitSize = { coarse: number; fine: number };
-
-/** Kích thước vùng bắt chuột mặc định của thư viện (px). */
-const DEFAULT_HIT_SIZE: HitSize = { coarse: 20, fine: 10 };
 
 interface ResizableGroupContextValue {
   orientation: Orientation;
-  /** Nhóm ngang đang lật theo RTL — thao tác kéo / phím cần đảo chiều. */
+  /** Nhóm ngang đang lật theo RTL (để lật icon chevron của nút thu gọn). */
   mirrored: boolean;
-  hitSize: HitSize;
   panels: React.MutableRefObject<Map<string, PanelImperativeHandle>>;
   collapsed: Record<string, boolean>;
   setCollapsed: (id: string, value: boolean) => void;
@@ -53,98 +50,16 @@ function setRef<T>(ref: React.Ref<T> | undefined, value: T | null) {
   else if (ref) (ref as React.MutableRefObject<T | null>).current = value;
 }
 
-/* ------------------------------------------------------------------ cầu nối sự kiện (RTL + nút thu gọn) */
-const syntheticEvents = new WeakSet<Event>();
-const mirroredSeparators = new Set<{ element: HTMLElement; hitSize: HitSize }>();
+/* ------------------------------------------------------------------ cầu nối sự kiện (nút thu gọn) */
 let bridgeUsers = 0;
-let pendingDrag: { pointerId: number; startX: number } | null = null;
-let mirroredDrag: { pointerId: number; startX: number } | null = null;
 
 function isAction(target: EventTarget | null) {
   return target instanceof Element && target.closest("[data-resizable-action]") !== null;
 }
 
-/** Vùng bắt giống thư viện: rect của separator nới tới kích thước tối thiểu (+1px dự phòng làm tròn). */
-function hitsMirroredSeparator(event: PointerEvent) {
-  for (const { element, hitSize } of mirroredSeparators) {
-    const rect = element.getBoundingClientRect();
-    const min = isCoarsePointer() ? hitSize.coarse : hitSize.fine;
-    const halfWidth = Math.max(rect.width, min) / 2 + 1;
-    const halfHeight = Math.max(rect.height, min) / 2 + 1;
-    if (
-      Math.abs(event.clientX - (rect.left + rect.width / 2)) <= halfWidth &&
-      Math.abs(event.clientY - (rect.top + rect.height / 2)) <= halfHeight
-    ) {
-      return true;
-    }
-  }
-  return false;
-}
-
-/** Chặn sự kiện thật và phát lại bản đối xứng qua điểm bắt đầu kéo → thư viện tính delta ngược dấu. */
-function redispatchMirrored(event: PointerEvent, startX: number) {
-  event.stopImmediatePropagation();
-  const clone = new PointerEvent(event.type, {
-    bubbles: event.bubbles,
-    cancelable: event.cancelable,
-    composed: event.composed,
-    clientX: 2 * startX - event.clientX,
-    clientY: event.clientY,
-    screenX: event.screenX,
-    screenY: event.screenY,
-    movementX: -event.movementX,
-    movementY: event.movementY,
-    button: event.button,
-    buttons: event.buttons,
-    pointerId: event.pointerId,
-    pointerType: event.pointerType,
-    isPrimary: event.isPrimary,
-    pressure: event.pressure,
-    width: event.width,
-    height: event.height,
-    ctrlKey: event.ctrlKey,
-    shiftKey: event.shiftKey,
-    altKey: event.altKey,
-    metaKey: event.metaKey,
-  });
-  syntheticEvents.add(clone);
-  (event.target ?? document).dispatchEvent(clone);
-}
-
 function onPointerDownCapture(event: PointerEvent) {
-  if (syntheticEvents.has(event)) return;
-  pendingDrag = null;
   // Nút thu gọn nằm trên đường chia: không để thư viện coi cú bấm là bắt đầu kéo.
-  if (isAction(event.target)) {
-    event.preventDefault();
-    return;
-  }
-  if (mirroredSeparators.size > 0 && hitsMirroredSeparator(event)) {
-    pendingDrag = { pointerId: event.pointerId, startX: event.clientX };
-  }
-}
-
-function onPointerDownBubble(event: PointerEvent) {
-  // Thư viện gọi preventDefault() khi thật sự bắt đầu kéo một separator.
-  mirroredDrag = pendingDrag && event.defaultPrevented && pendingDrag.pointerId === event.pointerId ? pendingDrag : null;
-  pendingDrag = null;
-}
-
-function onPointerMoveCapture(event: PointerEvent) {
-  if (!mirroredDrag || syntheticEvents.has(event) || event.pointerId !== mirroredDrag.pointerId) return;
-  redispatchMirrored(event, mirroredDrag.startX);
-}
-
-function onPointerEndCapture(event: PointerEvent) {
-  if (!mirroredDrag || syntheticEvents.has(event) || event.pointerId !== mirroredDrag.pointerId) return;
-  const { startX } = mirroredDrag;
-  mirroredDrag = null;
-  if (event.type === "pointerup") redispatchMirrored(event, startX);
-}
-
-function onPointerLeaveCapture(event: PointerEvent) {
-  if (!mirroredDrag || syntheticEvents.has(event) || event.target !== document) return;
-  redispatchMirrored(event, mirroredDrag.startX);
+  if (isAction(event.target)) event.preventDefault();
 }
 
 function onDoubleClickCapture(event: MouseEvent) {
@@ -152,34 +67,15 @@ function onDoubleClickCapture(event: MouseEvent) {
   if (isAction(event.target)) event.preventDefault();
 }
 
-function onWindowBlur() {
-  pendingDrag = null;
-  mirroredDrag = null;
-}
-
 function retainBridge() {
   if (bridgeUsers++ === 0) {
     window.addEventListener("pointerdown", onPointerDownCapture, true);
-    window.addEventListener("pointerdown", onPointerDownBubble);
-    window.addEventListener("pointermove", onPointerMoveCapture, true);
-    window.addEventListener("pointerup", onPointerEndCapture, true);
-    window.addEventListener("pointercancel", onPointerEndCapture, true);
-    window.addEventListener("pointerleave", onPointerLeaveCapture, true);
     window.addEventListener("dblclick", onDoubleClickCapture, true);
-    window.addEventListener("blur", onWindowBlur);
   }
   return () => {
     if (--bridgeUsers > 0) return;
     window.removeEventListener("pointerdown", onPointerDownCapture, true);
-    window.removeEventListener("pointerdown", onPointerDownBubble);
-    window.removeEventListener("pointermove", onPointerMoveCapture, true);
-    window.removeEventListener("pointerup", onPointerEndCapture, true);
-    window.removeEventListener("pointercancel", onPointerEndCapture, true);
-    window.removeEventListener("pointerleave", onPointerLeaveCapture, true);
     window.removeEventListener("dblclick", onDoubleClickCapture, true);
-    window.removeEventListener("blur", onWindowBlur);
-    pendingDrag = null;
-    mirroredDrag = null;
   };
 }
 
@@ -219,24 +115,70 @@ export interface ResizablePanelGroupProps extends GroupProps {
   mirrorInRtl?: boolean;
 }
 
-export function ResizablePanelGroup({
+export function ResizablePanelGroup({ persistKey, ...props }: ResizablePanelGroupProps) {
+  // Chỉ nhóm có persistKey mới gọi useDefaultLayout (hook của thư viện đọc localStorage và dùng useLayoutEffect
+  // trực tiếp → React 18 cảnh báo khi SSR).
+  return persistKey ? <PersistedPanelGroup persistKey={persistKey} {...props} /> : <PanelGroup {...props} />;
+}
+
+const subscribeNothing = () => () => {};
+
+/**
+ * Nhóm có lưu bố cục. Khi SSR và lúc hydration chưa đọc localStorage để HTML khớp server (tránh lệch `style` của panel);
+ * bố cục đã lưu được áp ngay sau hydration qua API mệnh lệnh. Render thuần client: đọc ngay từ lần mount đầu.
+ */
+function PersistedPanelGroup({
+  persistKey,
+  defaultLayout,
+  onLayoutChanged,
+  groupRef,
+  ...props
+}: ResizablePanelGroupProps & { persistKey: string }) {
+  const hydrating = React.useSyncExternalStore(subscribeNothing, () => false, () => true);
+  const persisted = useDefaultLayout({ id: persistKey, storage: hydrating ? noopStorage : safeLocalStorage });
+  const api = React.useRef<GroupImperativeHandle | null>(null);
+  const restoreAfterHydration = React.useRef(hydrating);
+
+  React.useEffect(() => {
+    if (hydrating || !restoreAfterHydration.current) return;
+    restoreAfterHydration.current = false;
+    if (defaultLayout === undefined && persisted.defaultLayout) api.current?.setLayout(persisted.defaultLayout);
+  }, [hydrating, defaultLayout, persisted.defaultLayout]);
+
+  const setGroupRef = React.useCallback(
+    (handle: GroupImperativeHandle | null) => {
+      api.current = handle;
+      setRef(groupRef, handle);
+    },
+    [groupRef],
+  );
+
+  return (
+    <PanelGroup
+      {...props}
+      groupRef={setGroupRef}
+      defaultLayout={defaultLayout ?? persisted.defaultLayout}
+      onLayoutChanged={(layout, meta) => {
+        persisted.onLayoutChanged(layout, meta);
+        onLayoutChanged?.(layout, meta);
+      }}
+    />
+  );
+}
+
+function PanelGroup({
   className,
   dir,
   orientation = "horizontal",
-  persistKey,
   mirrorInRtl = true,
-  defaultLayout,
-  onLayoutChanged,
   resizeTargetMinimumSize,
   ...props
-}: ResizablePanelGroupProps) {
+}: Omit<ResizablePanelGroupProps, "persistKey">) {
   const contextDir = useDirection();
   const horizontalRtl = orientation === "horizontal" && contextDir === "rtl" && dir === undefined;
   const mirrored = horizontalRtl && mirrorInRtl;
   // Không lật: ép LTR để kéo đúng chiều (ResizablePanel trả lại hướng chữ cho nội dung).
   const groupDir = dir ?? (horizontalRtl ? (mirrorInRtl ? "rtl" : "ltr") : undefined);
-
-  const persisted = useDefaultLayout({ id: persistKey ?? "yugen-resizable", storage: persistKey ? safeLocalStorage : noopStorage });
 
   const panels = React.useRef(new Map<string, PanelImperativeHandle>());
   const [collapsed, setCollapsedState] = React.useState<Record<string, boolean>>({});
@@ -244,11 +186,9 @@ export function ResizablePanelGroup({
     setCollapsedState((current) => (current[id] === value ? current : { ...current, [id]: value }));
   }, []);
 
-  const hitFine = resizeTargetMinimumSize?.fine ?? DEFAULT_HIT_SIZE.fine;
-  const hitCoarse = resizeTargetMinimumSize?.coarse ?? DEFAULT_HIT_SIZE.coarse;
   const context = React.useMemo<ResizableGroupContextValue>(
-    () => ({ orientation, mirrored, hitSize: { fine: hitFine, coarse: hitCoarse }, panels, collapsed, setCollapsed }),
-    [orientation, mirrored, hitFine, hitCoarse, collapsed, setCollapsed],
+    () => ({ orientation, mirrored, panels, collapsed, setCollapsed }),
+    [orientation, mirrored, collapsed, setCollapsed],
   );
 
   return (
@@ -256,11 +196,6 @@ export function ResizablePanelGroup({
       <Group
         dir={groupDir}
         orientation={orientation}
-        defaultLayout={defaultLayout ?? (persistKey ? persisted.defaultLayout : undefined)}
-        onLayoutChanged={(layout, meta) => {
-          if (persistKey) persisted.onLayoutChanged(layout, meta);
-          onLayoutChanged?.(layout, meta);
-        }}
         resizeTargetMinimumSize={resizeTargetMinimumSize}
         className={cn("size-full", className)}
         {...props}
@@ -354,23 +289,10 @@ export function ResizableHandle({
   );
 
   // Panel đích của nút thu gọn: panel liền trước / liền sau trong DOM (thứ tự logic, đúng cả khi lật RTL).
-  React.useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const id = element && collapseButton ? adjacentPanelId(element, collapseButton) : null;
     setTargetId((current) => (current === id ? current : id));
   });
-
-  const hitFine = group?.hitSize.fine ?? DEFAULT_HIT_SIZE.fine;
-  const hitCoarse = group?.hitSize.coarse ?? DEFAULT_HIT_SIZE.coarse;
-  React.useEffect(() => {
-    if (!element || !mirrored) return;
-    const entry = { element, hitSize: { fine: hitFine, coarse: hitCoarse } };
-    mirroredSeparators.add(entry);
-    const release = retainBridge();
-    return () => {
-      mirroredSeparators.delete(entry);
-      release();
-    };
-  }, [element, mirrored, hitFine, hitCoarse]);
 
   React.useEffect(() => (collapseButton ? retainBridge() : undefined), [collapseButton]);
 
@@ -400,28 +322,11 @@ export function ResizableHandle({
       data-mirrored={mirrored || undefined}
       onKeyDownCapture={(event) => {
         onKeyDownCapture?.(event);
-        if (event.defaultPrevented || event.target !== event.currentTarget || syntheticEvents.has(event.nativeEvent)) return;
+        if (event.defaultPrevented || event.target !== event.currentTarget) return;
+        // Enter thu gọn / mở rộng đúng panel đích của nút (liền trước / sau đường chia trong DOM).
         if (collapseButton && event.key === "Enter") {
           event.preventDefault();
           toggle();
-          return;
-        }
-        // Nhóm ngang đã lật (RTL): mũi tên trái phải di chuyển đường chia sang trái → phát lại phím ngược vai.
-        if (mirrored && (event.key === "ArrowLeft" || event.key === "ArrowRight")) {
-          event.preventDefault();
-          const swapped = event.key === "ArrowLeft" ? "ArrowRight" : "ArrowLeft";
-          const clone = new KeyboardEvent("keydown", {
-            key: swapped,
-            code: swapped,
-            bubbles: true,
-            cancelable: true,
-            shiftKey: event.shiftKey,
-            ctrlKey: event.ctrlKey,
-            altKey: event.altKey,
-            metaKey: event.metaKey,
-          });
-          syntheticEvents.add(clone);
-          event.currentTarget.dispatchEvent(clone);
         }
       }}
       className={cn(
@@ -447,10 +352,9 @@ export function ResizableHandle({
         </span>
       )}
       {collapseButton && (
-        // Bản sao cho chuột / cảm ứng của phím Enter trên đường chia → ẩn khỏi cây truy cập, không nhận Tab.
-        <button
-          type="button"
-          tabIndex={-1}
+        // Bản sao cho chuột / cảm ứng của phím Enter trên đường chia → ẩn khỏi cây truy cập, không nhận focus
+        // (span thay vì button: separator đã là control, không được chứa phần tử focus được — axe nested-interactive).
+        <span
           aria-hidden
           data-resizable-action=""
           title={isCollapsed ? expandLabel : collapseLabel}
@@ -468,7 +372,7 @@ export function ResizableHandle({
           )}
         >
           <ChevronIcon className={cn("size-3", horizontal && mirrored && "-scale-x-100")} />
-        </button>
+        </span>
       )}
       {children}
     </Separator>

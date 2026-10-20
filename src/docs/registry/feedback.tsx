@@ -396,21 +396,21 @@ const FEEDBACK: Record<string, ComponentDoc> = {
       },
       {
         title: "Màu, độ dày & hình dạng",
-        description: "thickness medium (2px) / large (4px); shape rounded / square.",
+        description: "thickness medium (2px) / large (4px); shape rounded / square. Không có label thì đặt aria-label.",
         code: `<div className="flex w-72 flex-col gap-L">
-  <ProgressBar value={0.4} />
-  <ProgressBar value={0.4} thickness="large" />
-  <ProgressBar value={1} color="success" thickness="large" />
-  <ProgressBar value={0.85} color="warning" thickness="large" />
-  <ProgressBar value={0.3} color="error" thickness="large" shape="square" />
+  <ProgressBar value={0.4} aria-label="Mặc định" />
+  <ProgressBar value={0.4} thickness="large" aria-label="Dày" />
+  <ProgressBar value={1} color="success" thickness="large" aria-label="Hoàn tất" />
+  <ProgressBar value={0.85} color="warning" thickness="large" aria-label="Sắp đầy dung lượng" />
+  <ProgressBar value={0.3} color="error" thickness="large" shape="square" aria-label="Lỗi tải lên" />
 </div>`,
         render: () => (
           <div className="flex w-72 flex-col gap-L">
-            <ProgressBar value={0.4} />
-            <ProgressBar value={0.4} thickness="large" />
-            <ProgressBar value={1} color="success" thickness="large" />
-            <ProgressBar value={0.85} color="warning" thickness="large" />
-            <ProgressBar value={0.3} color="error" thickness="large" shape="square" />
+            <ProgressBar value={0.4} aria-label="Mặc định" />
+            <ProgressBar value={0.4} thickness="large" aria-label="Dày" />
+            <ProgressBar value={1} color="success" thickness="large" aria-label="Hoàn tất" />
+            <ProgressBar value={0.85} color="warning" thickness="large" aria-label="Sắp đầy dung lượng" />
+            <ProgressBar value={0.3} color="error" thickness="large" shape="square" aria-label="Lỗi tải lên" />
           </div>
         ),
       },
@@ -1302,7 +1302,7 @@ function ToastPositionDemo() {
     ],
     props: [
       { name: "DrawerSurface / OverlayDrawer.position", type: `"start" | "end" | "bottom"`, defaultValue: `"end"`, description: "Cạnh trượt vào." },
-      { name: "size", type: `"small" | "medium" | "large" | "full"`, defaultValue: `"small"`, description: "320 / 592 / 940px / toàn màn hình (rộng, hoặc cao khi bottom)." },
+      { name: "DrawerSurface / OverlayDrawer.size", type: `"small" | "medium" | "large" | "full"`, defaultValue: `"small"`, description: "320 / 592 / 940px / toàn màn hình (rộng, hoặc cao khi bottom)." },
       { name: "DrawerSurface.modalType", type: `"modal" | "alert"`, defaultValue: `"modal"`, description: "alert: không đóng khi bấm lớp phủ / Esc." },
       { name: "OverlayDrawer.open / onOpenChange", type: "boolean / (open) => void", description: "Điều khiển trạng thái (Drawer root cũng nhận các prop này)." },
       { name: "InlineDrawer.open / position / size", type: "boolean / DrawerPosition / DrawerSize", defaultValue: `false / "start" / "small"`, description: "Drawer trong bố cục, chuyển động độ rộng." },
@@ -1355,7 +1355,7 @@ function ToastPositionDemo() {
     examples: [
       {
         title: "Separated — thẻ có icon & mô tả",
-        description: "appearance=\"separated\": mỗi mục là một thẻ; description là dòng phụ dưới tiêu đề (được đọc như mô tả của nút).",
+        description: "appearance=\"separated\": mỗi mục là một thẻ; description là dòng phụ dưới tiêu đề (đọc ngay sau tiêu đề, nằm trong tên của nút).",
         code: `<Accordion type="single" collapsible appearance="separated" defaultValue="account" className="w-full max-w-96">
   <AccordionItem value="account">
     <AccordionHeader icon={<Person20Regular />} description="Tên hiển thị, ảnh đại diện, ngôn ngữ">
@@ -1559,7 +1559,7 @@ function ToastPositionDemo() {
       { name: "expandIconPosition", type: `"start" | "end"`, defaultValue: `"start"`, description: "Vị trí chevron; Accordion lồng mặc định theo cha." },
       { name: "AccordionItem.value / disabled", type: "string / boolean", description: "Định danh mục; vô hiệu hoá." },
       { name: "AccordionHeader.icon", type: "ReactNode", description: "Icon cỡ 20 trước tiêu đề." },
-      { name: "AccordionHeader.description", type: "ReactNode", description: "Dòng mô tả phụ (caption) dưới tiêu đề, gắn qua aria-describedby." },
+      { name: "AccordionHeader.description", type: "ReactNode", description: "Dòng mô tả phụ (caption) dưới tiêu đề; là một phần tên truy cập của nút (khớp chữ nhìn thấy — WCAG 2.5.3)." },
     ],
   },
 

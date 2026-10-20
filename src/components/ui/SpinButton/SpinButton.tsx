@@ -88,7 +88,7 @@ export const SpinButton = React.forwardRef<HTMLInputElement, SpinButtonProps>(
     textRef.current = text;
     const onValueChangeRef = React.useRef(onValueChange);
     onValueChangeRef.current = onValueChange;
-    const timer = React.useRef<number>();
+    const timer = React.useRef<number | undefined>(undefined);
 
     const page = stepPage ?? step * 10;
     const digits = precision ?? Math.max(decimals(step), decimals(page));

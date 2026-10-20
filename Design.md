@@ -112,6 +112,7 @@ Quy ước: named export trùng tên file, import qua `@/components/ui`, không 
 |---|---|---|
 | `text-foreground-1/2/3/4` | `colorNeutralForeground1..4` | Chữ chính → phụ → mờ → placeholder |
 | `text-foreground-disabled` / `-on-brand` / `-inverted` | `colorNeutralForeground{Disabled,OnBrand,Inverted}` | Disabled, chữ trên nền brand/đặc, nền đảo |
+| `text-foreground-1-static` | `colorNeutralForeground1Static` | Chữ tối cố định mọi theme, trên nền đặc sáng (Badge warning) |
 | `text-brand-foreground-1`, `text-brand-foreground-2` (+`-hover`) | `colorBrandForeground1/2(Hover)` | Icon/chữ nhấn brand; chữ trên tint brand |
 | `text-link`, `text-link-hover` | `colorBrandForegroundLink(Hover)` | Link |
 | `bg-shell`, `bg-shell-nav` | `colorShellBackground`, `colorShellNavBackground` | Nền trang, thanh điều hướng |
@@ -263,6 +264,11 @@ Mỗi gradient có biến thể dark sáng hơn. Mọi stop light đạt **≥ 3
 12. **Focus**: không bao giờ `outline-none` mà không có chỉ báo thay thế; trong vùng `overflow-hidden` dùng `-outline-offset-2` để outline không bị cắt.
 13. **Thông báo**: lỗi quan trọng trong Toast dùng `timeout: -1` (không tự tắt); kết quả bất đồng bộ không có UI thì `useAnnounce()`.
 14. **Next.js App Router**: thêm `"use client"` đầu mỗi file component khi copy sang; hằng class dùng chung (`fieldControlClass`…) vẫn import được trong client component.
+15. **Không phá API trong bản minor/patch** (từ 1.0; trước 1.0 phải ghi "Thay đổi lớn"). Muốn bỏ một prop/giá trị/export: thêm thay thế,
+    đánh dấu JSDoc `@deprecated` và gọi `warnDeprecated(id, "dùng …", "x.0.0")` từ `@/lib/deprecate` — chỉ xoá ở bản major sau đó.
+    Chi tiết: `#/concepts/versioning`.
+16. **SSR an toàn**: không đọc `Date.now()`, `Math.random()`, `window`, `matchMedia`, `localStorage` hay kích thước layout trong lúc render —
+    làm trong effect, hoặc `useSyncExternalStore` có `getServerSnapshot` (`useMediaQuery`). Id dùng `React.useId()`.
 
 ---
 
@@ -332,21 +338,21 @@ Chọn tín hiệu theo thời gian **dự kiến**, không theo thói quen (chi
 
 ---
 
-## 7. Danh mục component (95 trang docs)
+## 7. Danh mục component (111 trang docs)
 
 | Nhóm | Component |
 |---|---|
 | **Provider** | YugenProvider (+ `useYugen`, `usePortalThemeProps`) |
 | **Hành động** (9) | Button (+ `loading`, `loadingText`), CompoundButton, MenuButton, SplitButton, ButtonGroup, ToggleButton, ToggleGroup, Toolbar, Link |
-| **Nhập liệu** (20) | Field, Label, Input, Textarea, SearchBox, Select (native), Dropdown, Combobox, Tag (+TagGroup), TagPicker, Checkbox, RadioGroup, Switch, Slider, SpinButton, InputOTP, Rating, SwatchPicker, Calendar, DatePicker |
-| **Điều hướng** (8) | Tabs, Breadcrumb, Pagination, Nav, Menu, Menubar, ContextMenu, Command |
-| **Hiển thị dữ liệu** (13) | Avatar, AvatarGroup, Persona, PresenceBadge, Badge, CounterBadge, Kbd, Text, Image, List, Table (+DataTable mẫu), Tree, Carousel (loop, autoplay có tiến độ, `slidesPerView`, `CarouselThumbnails`) |
+| **Nhập liệu** (25) | Field, Label, Input, Textarea, SearchBox, Select (native), Dropdown, Combobox, Tag (+TagGroup), TagPicker, Checkbox, RadioGroup, Switch, Slider, SpinButton, InputOTP, Rating, SwatchPicker, Calendar, DatePicker, TimePicker, DateRangePicker `presets`, FileUpload, Form (react-hook-form + zod, chỉ ví dụ) |
+| **Điều hướng** (9) | Tabs, Breadcrumb, Pagination, Nav, Menu, Menubar, ContextMenu, Command, Stepper / Wizard |
+| **Hiển thị dữ liệu** (14) | Avatar, AvatarGroup, Persona, PresenceBadge, Badge, CounterBadge, Kbd, Text, Image, List, Table (+DataTable mẫu), Tree, Carousel (loop, autoplay có tiến độ, `slidesPerView`, `CarouselThumbnails`), DataGrid (sort, chọn dòng, đổi cỡ cột, ảo hoá) |
 | **Phản hồi** (7) | MessageBar, Toast, ProgressBar, Spinner, Skeleton (+ `SkeletonText/Avatar/Card/List/Table`), Empty, InfoLabel |
 | **Bề mặt & overlay** (7) | Card, Dialog, Drawer (overlay + inline), Popover, TeachingPopover, HoverCard, Tooltip |
-| **Bố cục** (6) | Accordion (`appearance` flush / separated / outline), AspectRatio, Collapsible, Divider, ScrollArea, Resizable (`collapsible`, `persistKey`) |
+| **Bố cục** (7) | Accordion (`appearance` flush / separated / outline), AspectRatio, Collapsible, Divider, ScrollArea, Resizable (`collapsible`, `persistKey`), Overflow |
 | **Chuyển động** (6) | Fade, Scale, Slide, Collapse, Blur & Rotate, Stagger (+ hook `usePresence`) |
 | **Tiện ích** (4) | VisuallyHidden, AriaLiveAnnouncer + `useAnnounce`, Focus management (`useArrowNavigationGroup`, `useFocusableGroup`), `useMediaQuery` |
-| **Yugen Labs** (15) | Xem §7.1 |
+| **Yugen Labs** (24) | Xem §7.1 |
 | **Trang trí** | GradientText, WavyUnderline, BloomArt |
 
 (Tương đương shadcn: Alert → MessageBar, Alert Dialog → `DialogSurface modalType="alert"`, Sheet → Sheet (thích ứng) hoặc Drawer,
@@ -359,8 +365,10 @@ Props chi tiết: xem trang docs tương ứng; hướng dẫn chuyên sâu: m�
 |---|---|---|
 | **Wait UX** | `useSpinDelay`, `LoadingOverlay`, `PageProgress` (+ `PageProgressFallback`, `usePageProgress`, `pageProgress`, `createPageProgress`), `AsyncContent`, `ErrorState`, Skeleton presets, `useOptimisticList` | `#/concepts/wait-ux` |
 | **Thích ứng** | `Sheet` (+ `SheetTrigger/Content/Header/Title/Description/Body/Footer/Close`) | `#/concepts/adaptive-overlays` |
-| **Trực quan hoá** | `BarChart`, `LineChart`, `AreaChart`, `DonutChart`, `Sparkline`, `StatTile`, `ChartContainer/Legend/Tooltip/Table/Patterns` | `#/concepts/data-visualization` |
+| **Trực quan hoá** | `BarChart`, `LineChart`, `AreaChart` (stacked / 100%, `brush`), `ScatterChart`, `Heatmap`, `DonutChart`, `Sparkline`, `StatTile`, `ChartContainer/Legend/Tooltip/Table/Patterns` | `#/concepts/data-visualization` |
 | **Hội thoại & AI** | `MessageScroller`, `MessageBubble`, `MessageReaction`, `MessageDaySeparator`, `TypingIndicator`, `ChatComposer` | `#/concepts/chat-ux` |
+| **AI kit** | `StreamingMarkdown` (parser an toàn, không `dangerouslySetInnerHTML`), `Citation`, `CitationList`, `Reasoning`, `PromptInput` | `#/concepts/chat-ux` |
+| **Hướng dẫn & thông báo** | `Tour` (+ `useTour`), `NotificationCenter` (+ `useNotifications`) | — |
 | **Minh bạch tiến trình** | `Trace`, `TraceStep`, `TraceLog`, `TraceStatusIcon` (pending · running · success · error · skipped · cancelled) | `#/concepts/agent-trace` |
 | **Thu thập ý kiến** | `Questionnaire` (single, multiple, rating, scale, text, longText, yesNo) | — |
 | **Mã nguồn** | `CodeBlock` (highlight, số dòng, dòng nhấn, diff), `CodeTabs`, `PackageManagerTabs`, `CopyCodeButton` | — |
@@ -377,11 +385,11 @@ Luật riêng của Labs:
 - **CodeBlock**: luôn `dir="ltr"`; nút copy có trạng thái "Đã copy" và đọc được bằng trình đọc màn hình.
 
 ### 7.2 Giới hạn đã biết
-- **Resizable** ở RTL: `react-resizable-panels` đo theo trục X vật lý; Yugen lật bố cục bằng cách phát lại sự kiện con trỏ
-  (`mirrorInRtl`, bật mặc định). Bàn phím và `persistKey` dùng chung; nếu gặp lỗi kéo trong RTL, đặt `mirrorInRtl={false}`.
+- **Resizable** ở RTL: nhóm ngang tự lật theo hướng chữ (`mirrorInRtl`, bật mặc định) — `react-resizable-panels` đã sắp panel theo thứ tự
+  hiển thị nên kéo và phím mũi tên đi đúng chiều con trỏ (có test e2e). `mirrorInRtl={false}` giữ bố cục LTR.
 - **Sheet** dạng bottom: cử chỉ kéo/vuốt mới kiểm tra bằng chuột và trình giả lập cảm ứng; cần thử thêm trên thiết bị iOS/Android thật.
-- **Chart** viết tay bằng SVG: chưa có zoom/brush, trục log, scatter hay bản đồ; dữ liệu rất lớn (> vài nghìn điểm) nên lấy mẫu trước.
-- Chưa có: Overflow (ẩn bớt item theo độ rộng), ColorPicker đầy đủ, TimePicker.
+- **Chart** viết tay bằng SVG: chưa có trục log hay bản đồ; brush luôn trái→phải như vùng vẽ (cả khi RTL); dữ liệu rất lớn nên lấy mẫu trước.
+- Chưa có: ColorPicker đầy đủ, TimePicker qua nửa đêm. Overflow cần item có độ rộng tự nhiên (không `flex-1`).
 
 ---
 
@@ -404,12 +412,17 @@ Luật riêng của Labs:
    `export const meta: ConceptMeta = { slug, title, group, order, lead, toc }` (`group` thuộc `CONCEPT_GROUPS`).
 2. Sidebar, bảng lệnh Ctrl+K và route `#/concepts/<slug>` tự sinh; trang được tải lười (lazy).
 
-### Phát hành phiên bản (News + CHANGELOG + npm)
-1. Tăng `version` trong `package.json` **và** `SITE.version` trong `src/docs/site.ts` (theo SemVer; đổi API = `breaking`).
+### Phát hành phiên bản (Changesets + News + npm)
+0. Trong mỗi PR có thay đổi người dùng thấy được: `npx changeset` (patch / minor, tóm tắt cho người dùng). Từ 0.6.0
+   `CHANGELOG.md` do Changesets sinh — không sửa tay.
+1. `npx changeset version` — gộp changeset vào `CHANGELOG.md`, tăng `version` trong `package.json` (theo SemVer; khi còn
+   `0.x`, đổi API = minor + `breaking`). `SITE.version` của site docs đọc thẳng từ `package.json`, không cần sửa.
 2. Thêm mục mới vào **đầu** mảng `NEWS` trong `src/docs/news.ts` (`kind`: `new` | `improved` | `fixed` | `breaking`, kèm `href`
-   tới trang docs) và mục tương ứng trong `CHANGELOG.md`. Chấm báo "Có gì mới" trên thanh trên tự hiện cho người chưa xem.
-3. `npm run typecheck && npm run lint:classes && npm run build` → `npm run pack:check` để xem trước nội dung gói.
-4. Phát hành: `npm publish` (hoặc đẩy tag `v*` để workflow `.github/workflows/release.yml` chạy, cần secret `NPM_TOKEN`).
+   tới trang docs). Chấm báo "Có gì mới" trên thanh trên tự hiện cho người chưa xem.
+3. `npm install --package-lock-only` → `npm run check:release` (`package.json` = `news.ts` = `CHANGELOG.md`) →
+   `npm run typecheck && npm test && npm run build && npm run size` → `npm run pack:check` để xem trước nội dung gói.
+4. Commit rồi `git tag vX.Y.Z && git push --tags` — workflow `.github/workflows/release.yml` kiểm tra tag, chạy test,
+   build và `npm publish --provenance` (cần secret `NPM_TOKEN`; tag có `-` → dist-tag `next`).
 
 ---
 
@@ -425,6 +438,9 @@ Luật riêng của Labs:
 - [ ] Kiểm tra ở RTL và ở màn hình 390px (Sheet/Drawer, bảng, biểu đồ không tràn ngang).
 - [ ] Component mới được export trong `src/components/ui/index.ts` (để có trong gói npm).
 - [ ] `npm run typecheck`, `npm run lint:classes`, `npm run build` đều pass, không còn cảnh báo.
+- [ ] `npm test` và `npm run test:e2e` pass (axe không báo lỗi); đổi giao diện có chủ đích thì cập nhật ảnh `test:visual`.
+- [ ] `npm run size` vẫn trong ngân sách (`.size-limit.cjs`); tăng `limit` phải có lý do trong PR.
+- [ ] Thay đổi người dùng thấy được có changeset (`npx changeset`).
 
 ---
 
@@ -440,6 +456,12 @@ npm run build:docs     # site docs → dist-docs/
 npm run build          # build:lib + build:docs
 npm run pack:check     # npm pack --dry-run — xem trước file sẽ lên npm
 npm run preview
+npm test               # Vitest + Testing Library (unit, bàn phím, SSR) — test:watch khi đang viết
+npm run test:e2e       # Playwright: axe × theme × hướng chữ, kéo chuột, chạm mô phỏng
+npm run test:visual    # so sánh ảnh chụp (baseline theo nền tảng trong e2e/__screenshots__)
+npm run size           # ngân sách dung lượng (size-limit, sau build:lib)
+npx changeset          # thêm changeset cho PR · `npx changeset version` khi phát hành
+npm run check:release  # package.json = news.ts = CHANGELOG.md (thêm --tag vX.Y.Z để so cả tag)
 ```
 
 ### Dùng gói npm `yugen-ui`

@@ -75,35 +75,13 @@ import {
 import { DirectionProvider } from "@radix-ui/react-direction";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/Resizable/Resizable";
 import type { ComponentDoc } from "../types";
+import { landscape, mountain, people, scenery, sunset } from "../sample-assets";
 
 /* ================================================================== Dữ liệu mẫu */
 
-const people = ["Nguyễn Văn An", "Trần Thị Bình", "Lê Hoàng Cường", "Phạm Minh Dũng", "Hoàng Thu Hà", "Vũ Quốc Khánh", "Đặng Mai Linh", "Bùi Thanh Nam"];
 
-/** Ảnh phong cảnh minh hoạ dạng SVG data URI (không phụ thuộc mạng). Đây là nội dung ảnh, không phải màu UI. */
-function photo(sky: string, glow: string, sun: string, far: string, near: string, width = 640, height = 400) {
-  const svg =
-    "<svg xmlns='http://www.w3.org/2000/svg' width='" + width + "' height='" + height + "' viewBox='0 0 640 400' preserveAspectRatio='xMidYMid slice'>" +
-    "<defs><linearGradient id='s' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='" + sky + "'/><stop offset='1' stop-color='" + glow + "'/></linearGradient></defs>" +
-    "<rect width='640' height='400' fill='url(#s)'/>" +
-    "<circle cx='468' cy='130' r='52' fill='" + sun + "'/>" +
-    "<path d='M0 292 L118 182 L226 262 L344 148 L498 288 L640 206 V400 H0Z' fill='" + far + "'/>" +
-    "<path d='M0 338 Q170 272 330 330 T640 318 V400 H0Z' fill='" + near + "'/>" +
-    "</svg>";
-  return "data:image/svg+xml," + encodeURIComponent(svg);
-}
 
-// mountain, sunset, landscape, scenery: URL ảnh bất kỳ (ở đây là SVG sinh sẵn).
-const mountain = photo("#8fbff0", "#e6f1fc", "#fff6dc", "#4a78a8", "#1d4a70");
-const sunset = photo("#f2a68c", "#fde3cf", "#fff0c2", "#9a527a", "#552a50");
-const landscape = photo("#8fbff0", "#e6f1fc", "#fff6dc", "#4a78a8", "#1d4a70", 200, 125);
-const scenery = [
-  { title: "Núi sáng sớm", src: mountain },
-  { title: "Đồi hoàng hôn", src: sunset },
-  { title: "Rừng thông", src: photo("#a8d8c0", "#eef8f1", "#fffbe6", "#3f7a5a", "#1f4a35") },
-  { title: "Hồ đêm", src: photo("#2b3a67", "#6b7fb8", "#f4f1d0", "#1e2a4d", "#0f1730") },
-  { title: "Sa mạc", src: photo("#f5c98a", "#fdf0d8", "#fff8e1", "#c27c43", "#8a4b22") },
-];
+// mountain, sunset, landscape, scenery: URL ảnh bất kỳ (ở đây là SVG sinh sẵn — xem ../sample-assets).
 
 const versions = Array.from({ length: 30 }, (_, i) => "v2." + (30 - i) + ".0");
 
@@ -2327,7 +2305,7 @@ function TableSelectionDemo() {
     props: [
       { name: "ResizablePanelGroup.orientation", type: `"horizontal" | "vertical"`, defaultValue: `"horizontal"`, description: "Hướng chia panel." },
       { name: "ResizablePanelGroup.persistKey", type: "string", description: "Lưu / khôi phục bố cục qua localStorage (khoá react-resizable-panels:<persistKey>)." },
-      { name: "ResizablePanelGroup.mirrorInRtl", type: "boolean", defaultValue: "true", description: "RTL: hiển thị nhóm ngang phải → trái và đảo hướng kéo / phím; false = giữ bố cục LTR." },
+      { name: "ResizablePanelGroup.mirrorInRtl", type: "boolean", defaultValue: "true", description: "RTL: hiển thị nhóm ngang phải → trái (kéo / phím mũi tên theo hướng nhìn thấy); false = giữ bố cục LTR." },
       { name: "ResizablePanelGroup.onLayoutChanged", type: "(layout: Layout, meta) => void", description: "Gọi sau khi kéo xong — dùng để lưu bố cục theo cách riêng." },
       { name: "ResizablePanel.defaultSize / minSize / maxSize", type: "number | string", description: "Chuỗi “30%” = phần trăm, số = px. Nhấp đúp đường chia trả về defaultSize." },
       { name: "ResizablePanel.collapsible / collapsedSize", type: "boolean / number | string", defaultValue: `false / "0%"`, description: "Cho phép thu gọn panel (kéo qua minSize, Enter, hoặc nút)." },

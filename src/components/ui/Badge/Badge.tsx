@@ -37,7 +37,8 @@ const badgeVariants = cva(
       { appearance: "filled", color: "brand", class: "bg-brand-background text-foreground-on-brand" },
       { appearance: "filled", color: "danger", class: "bg-danger-background-3 text-foreground-on-brand" },
       { appearance: "filled", color: "success", class: "bg-success-background-3 text-foreground-on-brand" },
-      { appearance: "filled", color: "warning", class: "bg-warning-background-3 text-foreground-on-brand" },
+      // Nền cam sáng: chữ trắng chỉ ~3.1:1 → chữ tối cố định như Fluent (≥ 4.9:1 ở light lẫn dark).
+      { appearance: "filled", color: "warning", class: "bg-warning-background-3 text-foreground-1-static" },
       { appearance: "filled", color: "informative", class: "bg-background-5 text-foreground-3" },
       { appearance: "filled", color: "subtle", class: "bg-background-1 text-foreground-1" },
 

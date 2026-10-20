@@ -165,7 +165,8 @@ function NeutralSection() {
               className="flex flex-1 items-end justify-center pb-S font-mono text-[10px]"
               style={{
                 background: g === 100 ? "var(--white)" : g === 0 ? "var(--black)" : `var(--grey-${g})`,
-                color: g > 50 ? "var(--grey-26)" : "var(--grey-90)",
+                // Nhãn 10px cần ≥ 4.5:1: nền từ grey-48 trở lên dùng chữ đen, tối hơn dùng chữ trắng.
+                color: g >= 48 ? "var(--black)" : "var(--white)",
               }}
             >
               {g === 100 ? "W" : g === 0 ? "B" : g}
@@ -312,7 +313,8 @@ function BrandSection() {
         <div className="flex overflow-hidden rounded-2xlarge border border-stroke-2">
           {BRAND_STEPS.map((step) => (
             <div key={step} className="flex h-24 flex-1 items-end justify-center pb-S" style={{ background: `var(--brand-${step})` }}>
-              <span className={cn("font-mono text-[10px]", step < 100 ? "text-(--white)" : "text-(--grey-14)")}>{step}</span>
+              {/* brand-90 của mọi brand chỉ ~3.7:1 với chữ trắng → từ bậc 90 dùng chữ đen (≥ 4.5:1 cho nhãn 10px). */}
+              <span className={cn("font-mono text-[10px]", step < 90 ? "text-(--white)" : "text-(--black)")}>{step}</span>
             </div>
           ))}
         </div>
@@ -598,6 +600,8 @@ function ContrastRow({ fg, bg, kind, label, theme }: (typeof CONTRAST_PAIRS)[num
     <tr className="border-b border-stroke-3 last:border-b-0">
       <td className="px-L py-S">
         <span
+          // Mẫu "Aa" vẽ đúng cặp token; hàng decor (viền trang trí, disabled) cố ý tương phản thấp — xem e2e/a11y-allowlist.ts.
+          data-contrast-sample={kind}
           className="inline-flex h-9 w-14 items-center justify-center rounded-medium border border-stroke-2 text-body2 font-semibold"
           style={{ background: `var(--${bg})`, color: `var(--${fg})` }}
         >
@@ -637,7 +641,8 @@ function AccessibilitySection({ theme }: { theme: string }) {
         Bảng dưới đây được tính <strong className="font-semibold text-foreground-1">trực tiếp</strong> từ token đang áp
         dụng — đổi theme ở góc trên để kiểm tra dark mode.
       </p>
-      <div className="mt-S overflow-x-auto rounded-2xlarge border border-stroke-2 bg-background-1">
+      {/* tabIndex: bảng cuộn ngang được bằng bàn phím (axe scrollable-region-focusable). */}
+      <div tabIndex={0} className="mt-S overflow-x-auto rounded-2xlarge border border-stroke-2 bg-background-1">
         <table className="w-full min-w-160 text-left">
           <thead>
             <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">

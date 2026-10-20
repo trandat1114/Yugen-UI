@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useDirection } from "@radix-ui/react-direction";
 import { cn } from "@/lib/cn";
+import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { Button, type ButtonProps } from "../Button/Button";
 import { ToggleButton, type ToggleButtonProps } from "../ToggleButton/ToggleButton";
 
@@ -53,7 +54,7 @@ export const Toolbar = React.forwardRef<HTMLDivElement, ToolbarProps>(
       });
     };
 
-    React.useLayoutEffect(syncTabIndex);
+    useIsomorphicLayoutEffect(syncTabIndex);
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
       onKeyDown?.(e);

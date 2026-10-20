@@ -10,6 +10,7 @@ import {
   type MessageStatus,
 } from "@/components/ui/MessageScroller/MessageScroller";
 import { Trace, TraceStep } from "@/components/ui/Trace/Trace";
+import { CitationList, PromptInput, Reasoning, StreamingMarkdown, type CitationSource } from "@/components/ui/AIKit/AIKit";
 import { DocSection, DoDont, PropsTable } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
 
@@ -23,7 +24,8 @@ function C({ children }: { children: ReactNode }) {
 
 function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
   return (
-    <div className="overflow-x-auto rounded-xlarge border border-stroke-2 bg-background-1">
+    // tabIndex: bảng rộng cuộn ngang được bằng bàn phím (axe scrollable-region-focusable).
+    <div tabIndex={0} className="overflow-x-auto rounded-xlarge border border-stroke-2 bg-background-1">
       <table className="w-full border-collapse text-start text-body1">
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
@@ -176,6 +178,26 @@ function TransparencyDemo() {
         {"1. Công ty Hoa Đào cần báo giá gói Team trước 25/10.\n2. Anh Minh báo lỗi đăng nhập trên Safari.\n3. Chị Lan muốn dời buổi demo sang thứ Năm."}
       </MessageBubble>
     </MessageScroller>
+  );
+}
+
+/* ---------- Demo: AI Kit ---------- */
+
+const AI_SOURCES: CitationSource[] = [
+  { title: "Fluent 2 — Color", url: "https://fluent2.microsoft.design/color", snippet: "Brand color is used sparingly for emphasis." },
+  { title: "WCAG 2.2 — Contrast (Minimum)", url: "https://www.w3.org/TR/WCAG22/#contrast-minimum", snippet: "At least 4.5:1 for text." },
+];
+
+function AiAnswerDemo() {
+  return (
+    <div className="flex w-full max-w-xl flex-col gap-M">
+      <Reasoning duration={8200}>{"Kiểm tra quy tắc brand và ngưỡng tương phản WCAG."}</Reasoning>
+      <StreamingMarkdown citations={AI_SOURCES}>
+        {"Dùng **brand** cho hành động chính và trạng thái chọn[1]; chữ cần tương phản **≥ 4.5:1**[2].\n\n- Không phủ brand lên nền lớn\n- Luôn kèm icon + chữ cho trạng thái"}
+      </StreamingMarkdown>
+      <CitationList sources={AI_SOURCES} />
+      <PromptInput placeholder="Hỏi tiếp…" onSubmit={() => {}} />
+    </div>
   );
 }
 
@@ -356,8 +378,35 @@ export default function Page() {
           </Stage>
           <P>
             Trace trong tin nhắn nên ở <C>size=&quot;small&quot;</C>, dùng <C>appearance=&quot;plain&quot;</C> cho bong bóng chứa nó, và
-            đặt trước câu trả lời. Xem thêm trang <a href="#/concepts/agent-trace" className="text-link hover:underline">Minh bạch tiến trình với Trace</a>.
+            đặt trước câu trả lời. Xem thêm trang <a href="#/concepts/agent-trace" className="text-link underline hover:text-link-hover">Minh bạch tiến trình với Trace</a>.
           </P>
+        </div>
+      </DocSection>
+
+      <DocSection
+        id="ai-kit"
+        title="Câu trả lời AI: Markdown, nguồn, suy luận"
+        description="Bộ AI Kit ghép với MessageScroller để dựng câu trả lời đầy đủ: suy luận thu gọn, Markdown đang stream, chip nguồn và ô soạn có đính kèm."
+      >
+        <div className="flex flex-col gap-L">
+          <Stage>
+            <AiAnswerDemo />
+          </Stage>
+          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+            <li>
+              <C>Reasoning</C> đứng trước câu trả lời: mở khi model đang suy nghĩ, tự thu lại kèm “Đã suy luận trong 12s”.
+            </li>
+            <li>
+              <C>StreamingMarkdown</C> nhận chuỗi đang dài dần: không lộ <C>**</C> hay fence dở dang, khối đã xong không render lại,
+              link chỉ http / https / mailto. Trong <C>MessageBubble streaming</C> đặt <C>caret=&#123;false&#125;</C>.
+            </li>
+            <li>
+              <C>[1]</C> trong Markdown + <C>citations</C> thành chip <C>Citation</C>; <C>CitationList</C> liệt kê nguồn bên dưới.
+            </li>
+            <li>
+              <C>PromptInput</C> thay <C>ChatComposer</C> khi cần đính kèm (nút, kéo thả, dán ảnh), chọn model và nút Dừng.
+            </li>
+          </ul>
         </div>
       </DocSection>
 

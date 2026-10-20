@@ -2,6 +2,7 @@ import * as React from "react";
 import { useDirection } from "@radix-ui/react-direction";
 import { ChevronLeft20Regular, ChevronRight20Regular, Pause20Regular, Play20Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
+import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { Button } from "../Button/Button";
 
 /** Fluent 2 Carousel — https://fluent2.microsoft.design/components/web/react/core/carousel/usage (+ Yugen Labs: progress, peek, thumbnails) */
@@ -161,7 +162,7 @@ export const Carousel = React.forwardRef<HTMLElement, CarouselProps>(
     const elapsedRef = React.useRef(0);
     const progressEls = React.useRef(new Set<HTMLElement>());
     const callbacks = React.useRef({ onActiveIndexChange, onAutoplayChange });
-    React.useLayoutEffect(() => {
+    useIsomorphicLayoutEffect(() => {
       callbacks.current = { onActiveIndexChange, onAutoplayChange };
     });
 
@@ -479,7 +480,7 @@ CarouselCard.displayName = "CarouselCard";
 function ProgressFill({ className }: { className?: string }) {
   const { registerProgress } = useCarousel();
   const fillRef = React.useRef<HTMLSpanElement>(null);
-  React.useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (fillRef.current) return registerProgress(fillRef.current);
   }, [registerProgress]);
   return (
