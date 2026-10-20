@@ -36,6 +36,11 @@ npm run dev          # trang docs tại http://localhost:5173
 | `npm run size` | Ngân sách dung lượng gói (`size-limit`, chạy sau `build:lib`) |
 | `npm run changeset` | Thêm changeset cho PR (`npx changeset`) |
 | `npm run check:release` | Kiểm tra `package.json` = `src/docs/news.ts` = `CHANGELOG.md` |
+| `npm run check:examples` | Mọi ví dụ docs typecheck được khi chép ra dùng với `yugen-ui` |
+| `npm run check:props` | Bảng props trên docs khớp type thật |
+| `npm run registry` | Sinh registry shadcn vào `public/r/` (tự chạy trong `build:docs`) |
+| `npm run version-packages` | (maintainer) Đánh số phiên bản từ changeset + đồng bộ templates & lockfile |
+| `node scripts/sync-templates.mjs` | Sinh lại `templates/` từ block (`--check` để kiểm tra) |
 
 ### Kiểm thử
 
@@ -75,7 +80,21 @@ npm run dev          # trang docs tại http://localhost:5173
 3. Viết trang docs: thêm một `ComponentDoc` vào file trong `src/docs/registry/` (`slug`, `name`, `category`, `lead`,
    `description`, `importCode`, `hero`, `examples` — **`code` phải giống hệt JSX trong `render`**, `dos`/`donts`,
    `props`). Sidebar, tìm kiếm, trang chủ tự sinh từ registry.
-4. Dependency mới (nếu thật sự cần) phải nằm trong `dependencies` của `package.json` — maintainer quyết định.
+   - `slug`, `name`, `category`, `lead` phải là **chuỗi literal** (được trích lúc build để nạp lười trang).
+   - Ví dụ có state / dữ liệu: viết component demo trong file rồi cắt code bằng `// #region Tên` … `// #endregion`
+     (xem `src/docs/registry/content-search.tsx`) để `code` luôn trùng `render`.
+   - `code` phải **chạy được khi chép ra**: dữ liệu dùng chung đặt ở `setup` (`declarationsOf(RAW, ["TÊN"])`).
+4. Thêm mô tả tiếng Anh: `<slug>: { lead: "…" }` trong `src/docs/i18n/en/components.ts` (test bắt buộc đủ mọi slug).
+5. Test cạnh component (`<Name>.test.tsx`): hành vi, bàn phím, ARIA. Component đọc thời gian / media query / storage
+   → thêm case vào `src/test/ssrCases.tsx`.
+6. Kiểm tra trước khi mở PR:
+   ```bash
+   npm run typecheck && npm run lint:classes && npm test
+   npm run check:examples && npm run check:props          # ví dụ chạy độc lập · bảng props khớp type
+   npx playwright test e2e/a11y.spec.ts --project=a11y --grep "<slug>"   # axe cho trang của bạn
+   ```
+7. Changeset (`npx changeset`, thường là `minor` cho component mới) — xem mục [Changeset](#changeset).
+8. Dependency mới (nếu thật sự cần) phải nằm trong `dependencies` của `package.json` — maintainer quyết định.
 
 ### Thêm block
 
@@ -119,6 +138,22 @@ npx changeset    # chọn yugen-ui → patch hoặc minor → viết tóm tắt 
 - Tóm tắt viết cho người dùng gói (tiếng Anh, như CHANGELOG): "`Combobox`: keep focus when a tag is removed with
   Backspace.", không phải "fix bug".
 - Commit file `.changeset/*.md` vừa tạo cùng PR; sửa lại nội dung file được nếu cần.
+- Mỗi thay đổi một changeset (2 component mới → 2 file), tên file tuỳ ý, ví dụ:
+
+  ```md
+  ---
+  "yugen-ui": minor
+  ---
+
+  New `Quote` component: attributed quotations rendered as <figure> › <blockquote cite> + <figcaption>…
+  ```
+
+- **Cần changeset**: thứ người cài `yugen-ui` nhận được — component, prop, export, token, CSS, sửa lỗi, a11y.
+  **Không cần**: chỉ sửa trang docs / ví dụ, test, CI, wiki (vd. thiết kế lại một ví dụ trên docs).
+- `npx changeset status` cho biết phiên bản sẽ tăng thế nào trước khi phát hành.
+- **Trên nhánh `next` (chế độ prerelease)**: `.changeset/pre.json` chỉ tồn tại ở `next` — commit nó ở đó, không sửa tay,
+  không đưa sang `main`. Khi phát hành `-next.N`, các file changeset **được giữ lại** (bình thường); chúng chỉ bị xoá khi
+  thoát chế độ pre và ra bản ổn định. Chi tiết: wiki › *Branching and Release Channels*.
 
 ### Checklist PR
 
@@ -133,7 +168,7 @@ npx changeset    # chọn yugen-ui → patch hoặc minor → viết tóm tắt 
 
 ### Phát hành (maintainer)
 
-1. `npx changeset version` — gộp các changeset vào `CHANGELOG.md` (mục mới ở đầu file), tăng `version` trong
+1. `npm run version-packages` (= `changeset version` + đồng bộ `templates/` + lockfile — thiếu bước đồng bộ thì CI đỏ) — gộp các changeset vào `CHANGELOG.md` (mục mới ở đầu file), tăng `version` trong
    `package.json` và xoá file đã dùng. Xem lại phần CHANGELOG vừa sinh.
 2. Thêm mục cho phiên bản mới vào **đầu** mảng `NEWS` trong `src/docs/news.ts` (trang "Có gì mới"). Số phiên bản trên
    site docs lấy thẳng từ `package.json`, không cần sửa.
@@ -184,6 +219,13 @@ focus / links, gradients never on controls, WCAG contrast (4.5:1 text, 3:1 UI), 
    interaction states, keyboard support, ARIA), then export it from `src/components/ui/index.ts` — the npm package
    exports everything in that barrel.
 2. Add a `ComponentDoc` to a file in `src/docs/registry/` (example `code` must match the rendered JSX exactly).
+   `slug` / `name` / `category` / `lead` must be string literals (extracted at build time). For stateful examples, slice
+   the code from `// #region Name` … `// #endregion` in the same file; put shared data in `setup` so every example runs
+   when copied (`npm run check:examples`).
+   Add an English lead in `src/docs/i18n/en/components.ts` (a test requires every slug), tests next to the component
+   (behaviour, keyboard, ARIA; SSR case in `src/test/ssrCases.tsx` if it reads time / media queries / storage), then run
+   `npm run check:examples`, `npm run check:props` and
+   `npx playwright test e2e/a11y.spec.ts --project=a11y --grep "<slug>"`, and add a changeset (`minor` for a new component).
 3. Blocks: `src/docs/block-library/NN-name.tsx` with `export const meta` + a default export, importing only from
    `@/components/ui` and `@fluentui/react-icons`.
 
@@ -218,9 +260,15 @@ Use `patch` for fixes and small improvements, `minor` for new components / props
 for package users ("`Combobox`: keep focus when a tag is removed with Backspace."), then commit the generated
 `.changeset/*.md` file with your PR.
 
+One changeset per change (two new components → two files). Needs a changeset: anything people installing `yugen-ui`
+receive (components, props, exports, tokens, CSS, fixes, a11y). No changeset: docs pages / examples, tests, CI, wiki.
+`npx changeset status` previews the bump. On the `next` branch (prerelease mode) `.changeset/pre.json` lives only on
+`next` — commit it there, never edit it by hand or bring it to `main`; changeset files are kept after each `-next.N`
+release and removed when the cycle exits pre mode.
+
 ### Releasing (maintainers)
 
-1. `npx changeset version` — writes the pending changesets into `CHANGELOG.md` (new section at the top), bumps
+1. `npm run version-packages` (= `changeset version` + syncs `templates/` and the lockfile — skipping it turns CI red) — writes the pending changesets into `CHANGELOG.md` (new section at the top), bumps
    `version` in `package.json` and deletes the used changeset files. Review the generated entry.
 2. Add the release at the **top** of the `NEWS` array in `src/docs/news.ts` (the "Có gì mới" page). The docs site
    reads its version from `package.json` automatically.

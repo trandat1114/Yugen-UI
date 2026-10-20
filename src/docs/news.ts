@@ -25,6 +25,18 @@ export const NEWS_KIND_LABEL: Record<NewsKind, string> = {
 
 export const NEWS: NewsRelease[] = [
   {
+    version: "0.7.0",
+    date: "2026-10-21",
+    title: "Quote, Autocomplete & SearchBox dễ nhìn hơn",
+    summary:
+      "Thêm Quote cho trích dẫn có nguồn và Autocomplete — ô tìm kiếm có gợi ý, lọc không dấu; ví dụ lọc danh sách của SearchBox được thiết kế lại.",
+    items: [
+      { kind: "new", text: "Quote — trích dẫn có tác giả và nguồn, 3 kiểu default / subtle / emphasis.", href: "#/components/quote" },
+      { kind: "new", text: "Autocomplete — ô tìm kiếm có gợi ý: lọc không dấu (gõ “xoai” ra “Xoài”), tô sáng phần khớp, nhóm gợi ý, tải từ server.", href: "#/components/autocomplete" },
+      { kind: "improved", text: "SearchBox — ví dụ “Lọc danh sách” giờ hiển thị kết quả trong khung danh sách có số đếm, avatar và trạng thái rỗng.", href: "#/components/searchbox" },
+    ],
+  },
+  {
     version: "0.6.0",
     date: "2026-10-21",
     title: "DataGrid, bộ AI, registry shadcn & kiểm thử tự động",
