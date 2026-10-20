@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.7.0
+
+### Minor Changes
+
+- ad4d8c1: New `Autocomplete`: a search box with suggestions following the ARIA combobox pattern — accent-insensitive filtering ("xoai" matches "Xoài"), match highlighting, grouped suggestions with icons and descriptions, disabled items, `minChars={0}` for recent searches, server-side mode (`filter={false}` + `loading` with a 300 ms spin delay), `onSelect` for suggestions and `onSubmit` for the raw query. Also exports `HighlightMatch` and `highlightRanges` for highlighting matches in filtered lists.
+- ad4d8c1: New `Quote` component: attributed quotations rendered as `<figure>` › `<blockquote cite>` + `<figcaption>` (author, title, `<cite>` source with optional link), with `default`, `subtle` and `emphasis` (testimonial) appearances and three sizes. The accent bar uses logical borders, so it flips in RTL.
+
+## 0.7.0-next.0
+
+### Minor Changes
+
+- ad4d8c1: New `Autocomplete`: a search box with suggestions following the ARIA combobox pattern — accent-insensitive filtering ("xoai" matches "Xoài"), match highlighting, grouped suggestions with icons and descriptions, disabled items, `minChars={0}` for recent searches, server-side mode (`filter={false}` + `loading` with a 300 ms spin delay), `onSelect` for suggestions and `onSubmit` for the raw query. Also exports `HighlightMatch` and `highlightRanges` for highlighting matches in filtered lists.
+- ad4d8c1: New `Quote` component: attributed quotations rendered as `<figure>` › `<blockquote cite>` + `<figcaption>` (author, title, `<cite>` source with optional link), with `default`, `subtle` and `emphasis` (testimonial) appearances and three sizes. The accent bar uses logical borders, so it flips in RTL.
+
 ## 0.6.0
 
 ### Minor Changes
@@ -105,6 +119,7 @@ with a user-facing change adds one with `npx changeset`, and `npx changeset vers
 - 11 core components.
 - Documentation site.
 
-[Unreleased]: https://github.com/trandat1114/Yugen-UI/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/trandat1114/Yugen-UI/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.7.0
 [0.6.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.6.0
 [0.5.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.5.0

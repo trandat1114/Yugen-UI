@@ -32,6 +32,8 @@ export const COMPONENTS_EN: Record<string, { lead: string; name?: string }> = {
   label: { lead: "Label names a control so people know what to enter or choose." },
   radiogroup: { lead: "RadioGroup lets people choose exactly one option from a mutually exclusive set." },
   rating: { lead: "Rating lets people score with stars; RatingDisplay shows a read-only score." },
+  autocomplete: { lead: "Autocomplete is a search box with suggestions: type to filter, pick a suggestion to fill it, or press Enter to search the raw query." },
+  quote: { lead: "Quote shows an attributed quotation — testimonials, excerpts from documents, statements in an article." },
   searchbox: { lead: "SearchBox is an input dedicated to search, with a magnifier icon and a quick clear button." },
   select: { lead: "Select picks one value from a list using the browser's native select element." },
   slider: { lead: "Slider picks a value (or a range) along a continuous track by dragging the thumb." },
