@@ -1,0 +1,153 @@
+/**
+ * Token cho biểu đồ (Chart) — xem src/components/ui/Chart và trang docs "Trực quan hoá dữ liệu".
+ * Light trong `:root, [data-theme="light"]`, dark trong `[data-theme="dark"]`, tương phản cao trong
+ * `[data-theme="high-contrast"]` (cùng mẫu selector với tokens.css).
+ *
+ * Bảng màu phân loại Yugen (thứ tự CỐ ĐỊNH, không xoay vòng — thứ tự chính là cơ chế an toàn cho mù màu):
+ *   1 Sakura 桜 · 2 Ai 藍 (chàm) · 3 Kohaku 琥珀 (hổ phách) · 4 Fuji 藤 (tử đằng)
+ *   5 Matcha 抹茶 (xanh ngọc) · 6 Kaki 柿 (hồng giòn) · 7 Sora 空 (xanh trời) · 8 Koke 苔 (rêu)
+ * Đã kiểm bằng validate_palette.js (OKLab ×100, Machado 2009, cặp kề nhau):
+ *   light trên #ffffff — CVD tệ nhất 12.9 (Kaki↔Matcha, deutan) · mắt thường tệ nhất 19.8 · cả 8 ≥ 3:1
+ *   dark  trên #292929 — CVD tệ nhất 12.8 (Kaki↔Matcha, protan) · mắt thường tệ nhất 19.0 · cả 8 ≥ 3:1
+ *   Dạng "mọi cặp" (scatter, bản đồ, small multiples): chỉ 3 màu đầu đạt (CVD 14.4 light / 13.8 dark).
+ * Dải tuần tự (Sequential1 = nhỏ … 7 = lớn) là một sắc Sakura; dạng thứ bậc (ordinal) chỉ dùng bậc 3–7.
+ * Phân kỳ: Sakura (âm) ↔ Ai (dương), điểm giữa xám trung tính.
+ */
+
+/* Animation vào cảnh của biểu đồ — luôn đi kèm motion-reduce:animate-none trong component. */
+@theme {
+  --animate-chart-grow: chart-grow var(--durationSlower) var(--curveDecelerateMid) both;
+  --animate-chart-grow-x: chart-grow-x var(--durationSlower) var(--curveDecelerateMid) both;
+  --animate-chart-draw: chart-draw var(--durationUltraSlow) var(--curveDecelerateMid) both;
+}
+
+@keyframes chart-grow {
+  from {
+    transform: scaleY(0);
+  }
+}
+@keyframes chart-grow-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes chart-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ===================== LIGHT ===================== */
+:root,
+[data-theme="light"] {
+  /* Phân loại — nhận diện chuỗi */
+  --colorChartCategorical1: #c2347a; /* Sakura  (= brand80) */
+  --colorChartCategorical2: #2f6fd0; /* Ai      chàm */
+  --colorChartCategorical3: #b78300; /* Kohaku  hổ phách */
+  --colorChartCategorical4: #7a5ad6; /* Fuji    tử đằng */
+  --colorChartCategorical5: #0e9f8a; /* Matcha  xanh ngọc */
+  --colorChartCategorical6: #d65a22; /* Kaki    hồng giòn */
+  --colorChartCategorical7: #0a8fb8; /* Sora    xanh trời */
+  --colorChartCategorical8: #4e8a1e; /* Koke    rêu */
+
+  /* Tuần tự — độ lớn (một sắc, nhạt → đậm) */
+  --colorChartSequential1: #fed6e4;
+  --colorChartSequential2: #ffa7c9;
+  --colorChartSequential3: #fb7cb2;
+  --colorChartSequential4: #e24a92;
+  --colorChartSequential5: #c2347a;
+  --colorChartSequential6: #912d5c;
+  --colorChartSequential7: #61213f;
+
+  /* Phân kỳ — hai phía của mốc 0 */
+  --colorChartDivergingNeg: #c2347a;
+  --colorChartDivergingMid: #d1d1d1;
+  --colorChartDivergingPos: #2f6fd0;
+
+  /* "Khác" & làm nền (emphasis, sparkline ngữ cảnh) */
+  --colorChartOther: #949494;
+
+  /* Khung & mực */
+  --colorChartSurface: var(--colorNeutralBackground1);
+  --colorChartGrid: var(--colorNeutralStroke2);
+  --colorChartAxis: var(--colorNeutralStroke1);
+  --colorChartCrosshair: var(--colorNeutralStrokeAccessible);
+  --colorChartLabel: var(--colorNeutralForeground3);
+  --colorChartLabelStrong: var(--colorNeutralForeground1);
+  --chartAreaOpacity: 0.1;
+  --chartDimOpacity: 0.5;
+}
+
+/* ===================== DARK — cùng 8 sắc, bậc riêng cho nền tối (không tự đảo) ===================== */
+[data-theme="dark"] {
+  --colorChartCategorical1: #e24a92; /* Sakura  (= brand90) */
+  --colorChartCategorical2: #4a8eeb;
+  --colorChartCategorical3: #c08400;
+  --colorChartCategorical4: #9079e6;
+  --colorChartCategorical5: #14a08a;
+  --colorChartCategorical6: #e0662e;
+  --colorChartCategorical7: #22a4c6;
+  --colorChartCategorical8: #5fa032;
+
+  /* Neo đảo chiều: giá trị nhỏ chìm về nền tối, giá trị lớn sáng lên */
+  --colorChartSequential1: #61213f;
+  --colorChartSequential2: #912d5c;
+  --colorChartSequential3: #c2347a;
+  --colorChartSequential4: #e24a92;
+  --colorChartSequential5: #fb7cb2;
+  --colorChartSequential6: #ffa7c9;
+  --colorChartSequential7: #fed6e4;
+
+  --colorChartDivergingNeg: #e24a92;
+  --colorChartDivergingMid: #5c5c5c;
+  --colorChartDivergingPos: #4a8eeb;
+
+  --colorChartOther: #7a7a7a;
+
+  --colorChartSurface: var(--colorNeutralBackground1);
+  --colorChartGrid: var(--colorNeutralStroke3);
+  --colorChartAxis: var(--colorNeutralStroke2);
+  --colorChartCrosshair: var(--colorNeutralStrokeAccessible);
+  --colorChartLabel: var(--colorNeutralForeground3);
+  --colorChartLabelStrong: var(--colorNeutralForeground1);
+  --chartAreaOpacity: 0.14;
+  --chartDimOpacity: 0.5;
+}
+
+/* ===================== HIGH CONTRAST — mark trắng; nhận diện bằng hoa văn 45°/135° và nét đứt ===================== */
+[data-theme="high-contrast"] {
+  --colorChartCategorical1: #ffffff;
+  --colorChartCategorical2: #ffffff;
+  --colorChartCategorical3: #ffffff;
+  --colorChartCategorical4: #ffffff;
+  --colorChartCategorical5: #ffffff;
+  --colorChartCategorical6: #ffffff;
+  --colorChartCategorical7: #ffffff;
+  --colorChartCategorical8: #ffffff;
+
+  --colorChartSequential1: #3d3d3d;
+  --colorChartSequential2: #5c5c5c;
+  --colorChartSequential3: #7a7a7a;
+  --colorChartSequential4: #999999;
+  --colorChartSequential5: #b8b8b8;
+  --colorChartSequential6: #d6d6d6;
+  --colorChartSequential7: #ffffff;
+
+  --colorChartDivergingNeg: #ffffff;
+  --colorChartDivergingMid: #808080;
+  --colorChartDivergingPos: #ffffff;
+
+  --colorChartOther: #ffffff;
+
+  --colorChartSurface: #000000;
+  --colorChartGrid: #6b6b6b;
+  --colorChartAxis: #ffffff;
+  --colorChartCrosshair: #1aebff;
+  --colorChartLabel: #ffffff;
+  --colorChartLabelStrong: #ffffff;
+  --chartAreaOpacity: 0.2;
+  --chartDimOpacity: 1;
+}

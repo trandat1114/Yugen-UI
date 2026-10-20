@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "incremental": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  },
+  "include": ["src/lib.ts"],
+  "tsc-alias": {
+    "resolveFullPaths": true,
+    "verbose": false,
+    "fileExtensions": {
+      "inputGlob": "d.ts"
+    }
+  }
+}

@@ -1,0 +1,46 @@
+name: Release
+
+# Push a tag that matches package.json, e.g. `git tag v0.5.0 && git push origin v0.5.0`.
+# Requires the repository secret NPM_TOKEN (npm automation / granular token with publish rights) and a
+# `repository` field in package.json that points at this GitHub repository (needed for --provenance).
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+  id-token: write # npm provenance
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://registry.npmjs.org
+
+      - run: npm ci
+
+      - name: Check tag matches package.json version
+        run: |
+          PKG_VERSION="v$(node -p "require('./package.json').version")"
+          if [ "$PKG_VERSION" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match package.json version $PKG_VERSION"
+            exit 1
+          fi
+
+      - name: Build library and docs
+        run: npm run build
+
+      # prepublishOnly also runs typecheck + lint:classes + build:lib.
+      - name: Publish to npm
+        run: |
+          if [[ "$GITHUB_REF_NAME" == *-* ]]; then DIST_TAG=next; else DIST_TAG=latest; fi
+          npm publish --provenance --access public --tag "$DIST_TAG"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Yugen UI</title>
+    <script>
+      // Áp theme / brand / hướng chữ trước khi React render để tránh nháy (cùng key với useAppearance).
+      (function () {
+        var a = {};
+        try { a = JSON.parse(localStorage.getItem("yugen-ui-appearance") || "{}"); } catch (e) {}
+        var q = new URLSearchParams(location.search);
+        ["theme", "brand", "dir"].forEach(function (k) { if (q.get(k)) a[k] = q.get(k); });
+        var t = a.theme === "light" || a.theme === "dark" || a.theme === "high-contrast" ? a.theme
+          : matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        var root = document.documentElement;
+        root.setAttribute("data-theme", t);
+        root.setAttribute("data-brand", a.brand === "web" || a.brand === "teams" ? a.brand : "sakura");
+        root.setAttribute("dir", a.dir === "rtl" ? "rtl" : "ltr");
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

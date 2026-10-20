@@ -1,0 +1,54 @@
+name: Feature request
+description: Suggest a new component, prop, token or improvement.
+title: "[Feature]: "
+labels: ["enhancement", "needs triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the idea! Yugen UI follows Fluent 2 behaviour and the rules in Design.md — please mention the
+        Fluent 2 / shadcn/ui equivalent if there is one.
+        Cảm ơn góp ý của bạn! Bạn có thể viết bằng tiếng Việt hoặc tiếng Anh.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Type
+      options:
+        - New component
+        - New prop / variant on an existing component
+        - Design token / theme / brand
+        - Block (page section)
+        - Documentation
+        - Tooling / packaging
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What are you trying to do, and why is it hard today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: API sketch, behaviour, accessibility notes (keyboard, ARIA), RTL considerations.
+    validations:
+      required: true
+  - type: input
+    id: reference
+    attributes:
+      label: Reference
+      description: Link to the Fluent 2 / shadcn/ui / WAI-ARIA pattern, if any.
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: Contribution
+      options:
+        - label: I would like to open a pull request for this.

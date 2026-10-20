@@ -1,0 +1,77 @@
+name: Bug report
+description: Something in Yugen UI does not work as expected.
+title: "[Bug]: "
+labels: ["bug", "needs triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please search existing issues first.
+        Security problems must **not** be reported here — see SECURITY.md.
+        Cảm ơn bạn đã báo lỗi! Bạn có thể viết bằng tiếng Việt hoặc tiếng Anh.
+  - type: input
+    id: component
+    attributes:
+      label: Component(s)
+      description: Which component, hook or stylesheet is affected?
+      placeholder: e.g. Combobox, YugenProvider, styles.css
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: A clear description of the bug, and what you expected to happen instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Minimal code or a link to a repository / StackBlitz / CodeSandbox.
+      placeholder: |
+        1. Render `<Combobox … />`
+        2. Press ArrowDown
+        3. …
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Yugen UI version
+      placeholder: e.g. 0.5.0
+    validations:
+      required: true
+  - type: dropdown
+    id: setup
+    attributes:
+      label: Styling setup
+      options:
+        - "Setup A: Tailwind CSS v4 + yugen-ui/theme.css"
+        - "Setup B: yugen-ui/styles.css (no Tailwind)"
+        - Copy-paste (source copied into my project)
+        - Docs site
+    validations:
+      required: true
+  - type: checkboxes
+    id: context
+    attributes:
+      label: Where does it happen?
+      options:
+        - label: Light theme
+        - label: Dark theme
+        - label: High contrast theme
+        - label: RTL (`dir="rtl"`)
+        - label: Next.js App Router / SSR
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser and version, OS, React version, framework / bundler.
+      placeholder: Chrome 130, Windows 11, React 18.3, Vite 6
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Screenshots or additional context
