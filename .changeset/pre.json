@@ -4,5 +4,8 @@
   "initialVersions": {
     "yugen-ui": "0.6.0"
   },
-  "changesets": []
+  "changesets": [
+    "autocomplete-search",
+    "quote-component"
+  ]
 }

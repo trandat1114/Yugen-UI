@@ -415,7 +415,7 @@ Luật riêng của Labs:
 ### Phát hành phiên bản (Changesets + News + npm)
 0. Trong mỗi PR có thay đổi người dùng thấy được: `npx changeset` (patch / minor, tóm tắt cho người dùng). Từ 0.6.0
    `CHANGELOG.md` do Changesets sinh — không sửa tay.
-1. `npx changeset version` — gộp changeset vào `CHANGELOG.md`, tăng `version` trong `package.json` (theo SemVer; khi còn
+1. `npm run version-packages` (= `changeset version` + đồng bộ `templates/` + lockfile) — gộp changeset vào `CHANGELOG.md`, tăng `version` trong `package.json` (theo SemVer; khi còn
    `0.x`, đổi API = minor + `breaking`). `SITE.version` của site docs đọc thẳng từ `package.json`, không cần sửa.
 2. Thêm mục mới vào **đầu** mảng `NEWS` trong `src/docs/news.ts` (`kind`: `new` | `improved` | `fixed` | `breaking`, kèm `href`
    tới trang docs). Chấm báo "Có gì mới" trên thanh trên tự hiện cho người chưa xem.
@@ -460,7 +460,7 @@ npm test               # Vitest + Testing Library (unit, bàn phím, SSR) — te
 npm run test:e2e       # Playwright: axe × theme × hướng chữ, kéo chuột, chạm mô phỏng
 npm run test:visual    # so sánh ảnh chụp (baseline theo nền tảng trong e2e/__screenshots__)
 npm run size           # ngân sách dung lượng (size-limit, sau build:lib)
-npx changeset          # thêm changeset cho PR · `npx changeset version` khi phát hành
+npx changeset          # thêm changeset cho PR · `npm run version-packages` khi phát hành
 npm run check:release  # package.json = news.ts = CHANGELOG.md (thêm --tag vX.Y.Z để so cả tag)
 ```
 
