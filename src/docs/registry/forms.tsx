@@ -12,6 +12,9 @@ import { InteractionTag, Tag, TagGroup } from "@/components/ui/Tag/Tag";
 import { TagPicker } from "@/components/ui/TagPicker/TagPicker";
 import { SpinButton } from "@/components/ui/SpinButton/SpinButton";
 import { SearchBox } from "@/components/ui/SearchBox/SearchBox";
+import { HighlightMatch } from "@/components/ui/Autocomplete/Autocomplete";
+import { normalizeSearchText } from "@/components/ui/Combobox/Combobox";
+import { List, ListItem } from "@/components/ui/List/List";
 import { InputOTP } from "@/components/ui/InputOTP/InputOTP";
 import { Rating, RatingDisplay } from "@/components/ui/Rating/Rating";
 import type { ComponentDoc } from "../types";
@@ -123,19 +126,44 @@ function SpinButtonControlledDemo() {
   );
 }
 
-function SearchBoxFilterDemo() {
+const FRUITS = [
+  { name: "Xoài cát Hoà Lộc", origin: "Tiền Giang" },
+  { name: "Sầu riêng Ri6", origin: "Bến Tre" },
+  { name: "Măng cụt", origin: "Lái Thiêu" },
+  { name: "Chôm chôm Java", origin: "Vĩnh Long" },
+  { name: "Thanh long ruột đỏ", origin: "Bình Thuận" },
+  { name: "Vú sữa Lò Rèn", origin: "Tiền Giang" },
+];
+
+function FruitFilterDemo() {
   const [query, setQuery] = useState("");
-  const results = ["Xoài", "Sầu riêng", "Măng cụt", "Chôm chôm", "Thanh long"].filter((f) =>
-    f.toLowerCase().includes(query.toLowerCase()),
-  );
+  const results = FRUITS.filter((f) => normalizeSearchText(f.name).includes(normalizeSearchText(query.trim())));
+
   return (
-    <div className="flex w-72 flex-col gap-S">
-      <SearchBox aria-label="Tìm trái cây" value={query} onValueChange={setQuery} />
-      <ul className="text-body1 text-foreground-2">
-        {results.map((f) => (
-          <li key={f}>{f}</li>
-        ))}
-      </ul>
+    <div className="w-80 overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1 shadow-4">
+      <div className="flex flex-col gap-XS border-b border-stroke-2 p-M">
+        <SearchBox aria-label="Tìm trái cây" aria-controls="fruit-results" value={query} onValueChange={setQuery} />
+        <p aria-live="polite" className="text-caption1 text-foreground-3">
+          {results.length} / {FRUITS.length} trái cây
+        </p>
+      </div>
+      {results.length > 0 ? (
+        <List id="fruit-results" aria-label="Kết quả" className="divide-y divide-stroke-3">
+          {results.map((f) => (
+            <ListItem
+              key={f.name}
+              media={<Avatar name={f.name} size={32} color="colorful" />}
+              title={<HighlightMatch text={f.name} query={query} />}
+              description={f.origin}
+              className="px-M"
+            />
+          ))}
+        </List>
+      ) : (
+        <p id="fruit-results" className="px-M py-XL text-center text-body1 text-foreground-3">
+          Không có trái cây nào khớp “{query}”.
+        </p>
+      )}
     </div>
   );
 }
@@ -1297,21 +1325,49 @@ const [plan, setPlan] = useState("monthly");
     examples: [
       {
         title: "Lọc danh sách (controlled)",
-        description: "onValueChange chạy cả khi bấm X hoặc nhấn Esc.",
-        code: `const [query, setQuery] = useState("");
-const results = ["Xoài", "Sầu riêng", "Măng cụt", "Chôm chôm", "Thanh long"].filter((f) =>
-  f.toLowerCase().includes(query.toLowerCase()),
-);
+        description: "Kết quả nằm trong khung danh sách có số đếm, tô sáng phần khớp (không dấu: gõ “xoai” vẫn ra “Xoài”) và trạng thái rỗng. onValueChange chạy cả khi bấm X hoặc Esc.",
+        code: `const FRUITS = [
+  { name: "Xoài cát Hoà Lộc", origin: "Tiền Giang" },
+  { name: "Sầu riêng Ri6", origin: "Bến Tre" },
+  { name: "Măng cụt", origin: "Lái Thiêu" },
+  { name: "Chôm chôm Java", origin: "Vĩnh Long" },
+  { name: "Thanh long ruột đỏ", origin: "Bình Thuận" },
+  { name: "Vú sữa Lò Rèn", origin: "Tiền Giang" },
+];
 
-<div className="flex w-72 flex-col gap-S">
-  <SearchBox aria-label="Tìm trái cây" value={query} onValueChange={setQuery} />
-  <ul className="text-body1 text-foreground-2">
-    {results.map((f) => (
-      <li key={f}>{f}</li>
-    ))}
-  </ul>
-</div>`,
-        render: () => <SearchBoxFilterDemo />,
+function FruitFilterDemo() {
+  const [query, setQuery] = useState("");
+  const results = FRUITS.filter((f) => normalizeSearchText(f.name).includes(normalizeSearchText(query.trim())));
+
+  return (
+    <div className="w-80 overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1 shadow-4">
+      <div className="flex flex-col gap-XS border-b border-stroke-2 p-M">
+        <SearchBox aria-label="Tìm trái cây" aria-controls="fruit-results" value={query} onValueChange={setQuery} />
+        <p aria-live="polite" className="text-caption1 text-foreground-3">
+          {results.length} / {FRUITS.length} trái cây
+        </p>
+      </div>
+      {results.length > 0 ? (
+        <List id="fruit-results" aria-label="Kết quả" className="divide-y divide-stroke-3">
+          {results.map((f) => (
+            <ListItem
+              key={f.name}
+              media={<Avatar name={f.name} size={32} color="colorful" />}
+              title={<HighlightMatch text={f.name} query={query} />}
+              description={f.origin}
+              className="px-M"
+            />
+          ))}
+        </List>
+      ) : (
+        <p id="fruit-results" className="px-M py-XL text-center text-body1 text-foreground-3">
+          Không có trái cây nào khớp “{query}”.
+        </p>
+      )}
+    </div>
+  );
+}`,
+        render: () => <FruitFilterDemo />,
       },
       {
         title: "Appearance",

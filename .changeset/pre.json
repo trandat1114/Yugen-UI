@@ -1,0 +1,8 @@
+{
+  "mode": "pre",
+  "tag": "next",
+  "initialVersions": {
+    "yugen-ui": "0.6.0"
+  },
+  "changesets": []
+}
