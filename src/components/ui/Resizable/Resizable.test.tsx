@@ -34,7 +34,9 @@ describe("ResizablePanelGroup persistKey", () => {
     window.localStorage.setItem(KEY, JSON.stringify({ a: 25, b: 75 }));
     const setLayout = vi.fn();
     const { container } = render(
-      <Layout groupRef={(handle) => handle && vi.spyOn(handle, "setLayout").mockImplementation(setLayout)} />,
+      <Layout groupRef={(handle) => {
+        if (handle) vi.spyOn(handle, "setLayout").mockImplementation(setLayout);
+      }} />,
     );
     expect(grow(container, "a")).toBe(25);
     expect(grow(container, "b")).toBe(75);
@@ -84,7 +86,13 @@ describe("ResizablePanelGroup persistKey", () => {
 
   it("groupRef của người dùng vẫn nhận API mệnh lệnh", () => {
     const handles: (GroupImperativeHandle | null)[] = [];
-    render(<Layout groupRef={(handle) => handles.push(handle)} />);
+    render(
+      <Layout
+        groupRef={(handle) => {
+          handles.push(handle);
+        }}
+      />,
+    );
     expect(typeof handles[0]?.setLayout).toBe("function");
     expect(typeof handles[0]?.getLayout).toBe("function");
   });
