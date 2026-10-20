@@ -144,7 +144,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.90.0",
-    "size-limit": "^11.2.0",
+    "size-limit": "^14.2.0",
     "tailwindcss": "^4.0.0",
     "tsc-alias": "^1.9.8",
     "typescript": "^5.7.3",
