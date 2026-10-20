@@ -30,6 +30,7 @@ export const vi = {
   "topbar.lang": "Ngôn ngữ",
   "version.label": "Phiên bản docs: v{version}",
   "version.latest": " (mới nhất)",
+  "version.next": " (xem trước)",
 
   // Sidebar
   "sidebar.search": "Tìm kiếm",

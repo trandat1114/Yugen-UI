@@ -1,0 +1,38 @@
+title: "[Ý tưởng] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ý tưởng tốt bắt đầu từ một bài toán thật. Khi ý tưởng đã rõ và được ủng hộ, maintainer sẽ chuyển thành issue.
+        Good ideas start from a real problem. Once it is clear and upvoted, a maintainer will turn it into an issue.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Bài toán · Problem
+      description: Bạn đang xây gì và vướng ở đâu?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Đề xuất · Proposal
+      description: API mong muốn, phác thảo, ảnh tham khảo (Fluent 2, shadcn/ui, sản phẩm khác…).
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Khu vực · Area
+      options:
+        - Component mới · New component
+        - Prop / biến thể · Prop or variant
+        - Yugen Labs (AI, Chart, DataGrid…)
+        - Token / theme / brand
+        - Block / template
+        - Docs / công cụ · Docs or tooling
+  - type: textarea
+    id: a11y
+    attributes:
+      label: Bàn phím & trình đọc màn hình · Accessibility
+      description: Người dùng bàn phím / trình đọc màn hình sẽ dùng nó thế nào?

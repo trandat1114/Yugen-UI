@@ -1,0 +1,27 @@
+name: Welcome
+
+on:
+  issues:
+    types: [opened]
+  pull_request_target:
+    types: [opened]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  welcome:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: |
+            Cảm ơn bạn đã mở issue đầu tiên cho Yugen UI! 🌸 Maintainer sẽ phản hồi trong khoảng 7 ngày.
+            Trong lúc chờ: một ví dụ tái hiện (nút **StackBlitz** trên trang docs) giúp xử lý nhanh hơn nhiều.
+            Thanks for your first issue! A minimal reproduction speeds things up.
+          pr-message: |
+            Cảm ơn PR đầu tiên của bạn! 🌸 Vui lòng kiểm tra checklist trong mô tả PR, thêm changeset (`npx changeset`)
+            nếu thay đổi ảnh hưởng người dùng, và đợi CI xanh. Hướng dẫn: CONTRIBUTING.md · wiki › Component Guidelines.
+            Thanks for your first PR! Please complete the checklist and add a changeset if needed.

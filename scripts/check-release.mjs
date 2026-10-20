@@ -54,7 +54,9 @@ if (news && newsStart === -1) {
   if (!m) errors.push(`${rel(newsPath)}: mảng NEWS không có mục nào có \`version: "x.y.z"\`.`);
   else newsVersion = m[1];
 }
-if (version && newsVersion && newsVersion !== version) {
+// Prerelease (0.7.0-next.1, canary…) không cần mục News riêng — trang Có gì mới chỉ ghi bản ổn định.
+const isPrerelease = version.includes("-");
+if (version && newsVersion && newsVersion !== version && !(isPrerelease && newsVersion !== "")) {
   errors.push(
     `${rel(newsPath)}: mục đầu tiên của NEWS là "${newsVersion}" nhưng package.json là "${version}". ` +
       `Thêm mục mới vào ĐẦU mảng NEWS cho ${version}.`,

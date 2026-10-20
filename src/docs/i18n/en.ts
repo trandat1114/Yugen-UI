@@ -29,6 +29,7 @@ export const en: Record<MessageKey, string> = {
   "topbar.lang": "Language",
   "version.label": "Docs version: v{version}",
   "version.latest": " (latest)",
+  "version.next": " (preview)",
 
   // Sidebar
   "sidebar.search": "Search",

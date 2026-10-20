@@ -1,0 +1,31 @@
+title: "[Showcase] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Khoe sản phẩm, block, theme hay brand bạn làm với Yugen UI! Bài nổi bật có thể được đưa lên mục Showcase của trang Cộng đồng.
+        Share what you built with Yugen UI — highlights may be featured on the docs Community page.
+  - type: input
+    id: name
+    attributes:
+      label: Tên dự án · Project
+    validations:
+      required: true
+  - type: input
+    id: link
+    attributes:
+      label: Link (demo / repo)
+      placeholder: https://
+  - type: textarea
+    id: about
+    attributes:
+      label: Giới thiệu · About
+      description: Dùng những component nào, tuỳ biến gì (brand, token, block)? Ảnh chụp rất được hoan nghênh.
+    validations:
+      required: true
+  - type: checkboxes
+    id: consent
+    attributes:
+      label: Showcase
+      options:
+        - label: Đồng ý cho Yugen UI giới thiệu dự án (tên, link, ảnh) trên trang docs · OK to feature on the docs site

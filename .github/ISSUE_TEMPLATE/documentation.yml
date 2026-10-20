@@ -1,0 +1,38 @@
+name: Documentation · Tài liệu
+description: Ví dụ sai, props thiếu, hướng dẫn khó hiểu, đề xuất bản dịch.
+title: "[Docs]: "
+labels: ["documentation", "area: docs site", "needs triage"]
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Trang · Page
+      placeholder: "https://trandat1114.github.io/Yugen-UI/#/components/datagrid"
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Loại · Kind
+      options:
+        - Ví dụ / code mẫu chạy sai · Example is wrong
+        - Thiếu prop / mô tả sai · Missing or wrong props
+        - Hướng dẫn khó hiểu · Unclear guidance
+        - Bản dịch tiếng Anh · English translation
+        - Lỗi giao diện trang docs · Docs site UI bug
+        - Khác · Other
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Chi tiết · Details
+      description: Đoạn nào sai, nên sửa thế nào. Bản dịch có thể dán trực tiếp ở đây.
+    validations:
+      required: true
+  - type: checkboxes
+    id: pr
+    attributes:
+      label: Đóng góp · Contribution
+      options:
+        - label: Tôi muốn tự gửi PR sửa (xem CONTRIBUTING.md) · I'd like to open a PR

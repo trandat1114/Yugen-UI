@@ -1,0 +1,61 @@
+name: Accessibility issue · Vấn đề khả năng tiếp cận
+description: Bàn phím, trình đọc màn hình, focus, tương phản, tương phản cao, RTL.
+title: "[A11y]: "
+labels: ["accessibility", "needs triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Cảm ơn bạn! Yugen UI cam kết WCAG 2.1 AA (xem `#/concepts/accessibility` trên docs).
+        Thanks! Yugen UI targets WCAG 2.1 AA. You can write in English or Vietnamese.
+  - type: input
+    id: component
+    attributes:
+      label: Component / trang docs
+      placeholder: "Combobox — https://trandat1114.github.io/Yugen-UI/#/components/combobox"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Loại vấn đề · Kind
+      multiple: true
+      options:
+        - Bàn phím / focus · Keyboard / focus
+        - Trình đọc màn hình (tên, vai trò, trạng thái) · Screen reader
+        - Tương phản màu · Colour contrast
+        - Chế độ tương phản cao / forced colors
+        - RTL
+        - Chuyển động (prefers-reduced-motion)
+        - Khác · Other
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Các bước tái hiện · Steps
+      description: Thao tác cụ thể (phím đã bấm), điều bạn nghe / thấy và điều mong đợi.
+      placeholder: |
+        1. Tab vào ô Combobox
+        2. Bấm ArrowDown
+        3. NVDA đọc "…" — mong đợi "…"
+    validations:
+      required: true
+  - type: input
+    id: at
+    attributes:
+      label: Trình duyệt & công nghệ hỗ trợ · Browser & assistive tech
+      placeholder: "Edge 140 + NVDA 2025.1, Windows 11"
+    validations:
+      required: true
+  - type: dropdown
+    id: theme
+    attributes:
+      label: Theme / hướng chữ
+      multiple: true
+      options: [Light, Dark, High contrast, RTL]
+  - type: textarea
+    id: axe
+    attributes:
+      label: Kết quả axe / Lighthouse (nếu có)
+      render: text

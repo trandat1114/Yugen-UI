@@ -1,0 +1,82 @@
+# Bộ nhãn của repo — đồng bộ tự động bởi .github/workflows/labels.yml (tạo mới / cập nhật màu & mô tả, không xoá nhãn lạ).
+# Quy ước: 1 nhãn loại (type) + 1–2 nhãn khu vực (area) + nhãn trạng thái khi cần.
+
+# ---------- Loại ----------
+- name: bug
+  color: d73a4a
+  description: Có gì đó không chạy đúng · Something isn't working
+- name: enhancement
+  color: a2eeef
+  description: Tính năng hoặc cải tiến mới · New feature or improvement
+- name: documentation
+  color: 0075ca
+  description: Tài liệu, ví dụ, bản dịch · Docs, examples, translations
+- name: accessibility
+  color: 7057ff
+  description: Bàn phím, trình đọc màn hình, tương phản, RTL · a11y
+- name: question
+  color: d876e3
+  description: Câu hỏi — nên chuyển sang Discussions Q&A
+- name: performance
+  color: fbca04
+  description: Dung lượng gói, tốc độ render, ảo hoá
+
+# ---------- Khu vực ----------
+- name: "area: components"
+  color: c2347a
+  description: src/components/ui
+- name: "area: labs"
+  color: e24a92
+  description: Yugen Labs (Chart, AI kit, Trace, DataGrid…)
+- name: "area: tokens & theming"
+  color: fa65a8
+  description: tokens.css, brand, dark / high contrast, Theme Designer
+- name: "area: docs site"
+  color: 1d76db
+  description: src/docs — trang docs, registry, khái niệm, i18n
+- name: "area: build & package"
+  color: 5319e7
+  description: npm package, CSS build, shadcn registry, templates
+- name: "area: ci & tests"
+  color: 0e8a16
+  description: Vitest, Playwright, workflows
+
+# ---------- Trạng thái ----------
+- name: needs triage
+  color: ededed
+  description: Chờ maintainer phân loại
+- name: needs reproduction
+  color: f9d0c4
+  description: Cần ví dụ tái hiện (StackBlitz / repo nhỏ)
+- name: confirmed
+  color: 0e8a16
+  description: Đã xác nhận, sẵn sàng làm
+- name: in progress
+  color: fbca04
+  description: Đang có người làm
+- name: blocked
+  color: b60205
+  description: Chờ việc khác hoặc thư viện bên ngoài
+- name: stale
+  color: d4c5f9
+  description: Im lặng quá lâu — sẽ tự đóng (workflow stale.yml)
+- name: breaking change
+  color: b60205
+  description: Phá vỡ API — cần changeset major/minor và hướng dẫn chuyển đổi
+
+# ---------- Cộng đồng ----------
+- name: good first issue
+  color: 7057ff
+  description: Phù hợp cho người mới đóng góp
+- name: help wanted
+  color: 008672
+  description: Cần thêm người giúp
+- name: duplicate
+  color: cfd3d7
+  description: Trùng issue khác
+- name: wontfix
+  color: ffffff
+  description: Sẽ không xử lý
+- name: invalid
+  color: e4e669
+  description: Không đúng hoặc không còn liên quan

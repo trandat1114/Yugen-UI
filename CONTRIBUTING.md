@@ -3,7 +3,7 @@
 Cảm ơn bạn đã quan tâm! · Thanks for your interest! The Vietnamese guide comes first, followed by a short English
 version. Both point to [Design.md](./Design.md) — the project rulebook, which always wins when in doubt.
 
-Mọi người tham gia đều phải tuân thủ [Quy tắc ứng xử](./CODE_OF_CONDUCT.md). Lỗ hổng bảo mật: **không** mở issue công
+Mọi người tham gia đều phải tuân thủ [Quy tắc ứng xử](./CODE_OF_CONDUCT.md). Vai trò, cách ra quyết định và RFC: [GOVERNANCE.md](./GOVERNANCE.md); kiến trúc và vận hành: [Wiki](https://github.com/trandat1114/Yugen-UI/wiki). Lỗ hổng bảo mật: **không** mở issue công
 khai, xem [SECURITY.md](./SECURITY.md).
 
 ---
@@ -86,6 +86,10 @@ npm run dev          # trang docs tại http://localhost:5173
 ### Dịch tài liệu
 
 Chuỗi giao diện docs nằm ở `src/docs/i18n/vi.ts` (nguồn khoá) và `src/docs/i18n/en.ts`. Tên / mô tả component tiếng Anh: `src/docs/i18n/en/components.ts` (test bắt buộc đủ mọi slug). Trang khái niệm tiếng Anh: thêm `src/docs/concepts/en/<slug>.tsx` cùng cấu trúc mục với bản tiếng Việt. Trang chưa dịch tự hiện thông báo và nội dung gốc.
+
+### Nhánh
+
+Sửa lỗi, docs, test → PR vào `main`. Component / prop / token mới và thay đổi phá vỡ → PR vào `next` (nếu đang có; nếu không thì `main`). Tên nhánh: `feat/…`, `fix/…`, `docs/…`, `chore/…`, `exp/…`. Chi tiết kênh `latest` / `next` / `canary` / `release-X.Y`: wiki › *Branching and Release Channels*.
 
 ### Quy ước commit
 
@@ -186,6 +190,10 @@ focus / links, gradients never on controls, WCAG contrast (4.5:1 text, 3:1 UI), 
 ### Translating the docs
 
 UI strings live in `src/docs/i18n/vi.ts` (source of the keys) and `src/docs/i18n/en.ts`. English component names and leads: `src/docs/i18n/en/components.ts` (a test requires every slug). English concept pages: add `src/docs/concepts/en/<slug>.tsx` with the same section ids as the Vietnamese page. Untranslated pages show a notice and the Vietnamese original.
+
+### Branches
+
+Bug fixes, docs, tests → PR to `main`. New components / props / tokens and breaking changes → PR to `next` (when it exists, otherwise `main`). Branch names: `feat/…`, `fix/…`, `docs/…`, `chore/…`, `exp/…`. Release channels (`latest`, `next`, `canary`, `release-X.Y`): wiki › *Branching and Release Channels*.
 
 ### Commits and pull requests
 

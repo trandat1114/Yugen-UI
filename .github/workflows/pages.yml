@@ -5,7 +5,7 @@ name: Docs
 
 on:
   push:
-    branches: [main]
+    branches: [main, next] # push vào next cũng build lại để cập nhật /next/
   workflow_dispatch:
 
 permissions:
@@ -23,7 +23,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # cần tag để build docs các phiên bản cũ
+          ref: main # gốc site luôn là main; next và các minor cũ build thêm bằng git worktree
+          fetch-depth: 0 # cần tag và nhánh next
 
       - uses: actions/setup-node@v4
         with:

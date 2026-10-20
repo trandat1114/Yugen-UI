@@ -1,0 +1,38 @@
+name: Sync main → next
+
+# Sau mỗi push vào main: nếu có nhánh next và next đang thiếu commit của main, mở (hoặc giữ) PR "main → next"
+# để bản sửa lỗi trên main có mặt trong bản phát hành kế tiếp. Merge bằng "Create a merge commit" (không squash).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Open PR main → next
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if ! git rev-parse --verify --quiet origin/next >/dev/null; then
+            echo "Chưa có nhánh next — bỏ qua."; exit 0
+          fi
+          if [ "$(git rev-list --count origin/next..origin/main)" = "0" ]; then
+            echo "next đã có mọi commit của main."; exit 0
+          fi
+          if [ -n "$(gh pr list --base next --head main --state open --json number -q '.[].number')" ]; then
+            echo "PR main → next đã mở."; exit 0
+          fi
+          gh pr create --base next --head main \
+            --title "chore: sync main → next" \
+            --body "Tự động: đưa các commit mới của \`main\` (bản sửa lỗi, docs) vào \`next\`. Merge bằng **Create a merge commit**; nếu xung đột, giải quyết trong một nhánh \`chore/sync-next\`. Xem wiki › Branching and Release Channels."

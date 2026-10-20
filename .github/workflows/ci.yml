@@ -2,8 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, next, "release/**", canary]
   pull_request:
+    branches: [main, next, "release/**", canary]
 
 permissions:
   contents: read

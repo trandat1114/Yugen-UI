@@ -40,18 +40,19 @@ const older = [...latestPerMinor.entries()]
   .sort(([, a], [, b]) => b.major - a.major || b.minor - a.minor)
   .slice(0, MAX_VERSIONS);
 
-const versions = [{ version: current, path: "" }];
-for (const [minor, { tag }] of older) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), `yugen-docs-${minor}-`));
+/** Build docs của một ref (tag / nhánh) vào dist-docs/<sub>/. Trả về true nếu thành công. */
+function buildRef(ref, sub, label) {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), `yugen-docs-${sub.replace(/\W/g, "")}-`));
   try {
-    console.log(`\n▶ docs ${tag} → v${minor}/`);
-    run("git", ["worktree", "add", "--detach", dir, tag], root);
+    console.log(`\n▶ docs ${label} → ${sub}`);
+    run("git", ["worktree", "add", "--detach", dir, ref], root);
     run("npm", ["ci", "--no-audit", "--no-fund"], dir);
-    run("npm", ["run", "build:docs"], dir, { DOCS_BASE: `${base}v${minor}/` });
-    fs.cpSync(path.join(dir, "dist-docs"), path.join(out, `v${minor}`), { recursive: true });
-    versions.push({ version: minor, path: `v${minor}/` });
+    run("npm", ["run", "build:docs"], dir, { DOCS_BASE: `${base}${sub}` });
+    fs.cpSync(path.join(dir, "dist-docs"), path.join(out, sub), { recursive: true });
+    return true;
   } catch (error) {
-    console.warn(`⚠ Bỏ qua ${tag}: ${error.message}`);
+    console.warn(`⚠ Bỏ qua ${label}: ${error.message}`);
+    return false;
   } finally {
     try {
       run("git", ["worktree", "remove", "--force", dir], root);
@@ -59,6 +60,23 @@ for (const [minor, { tag }] of older) {
       fs.rmSync(dir, { recursive: true, force: true });
     }
   }
+}
+
+const versions = [{ version: current, path: "" }];
+
+// Kênh thử nghiệm: nhánh next (nếu có) → /next/ — docs của bản sắp ra.
+const hasNext = (() => {
+  try {
+    execFileSync("git", ["rev-parse", "--verify", "--quiet", "origin/next"], { cwd: root, stdio: "ignore" });
+    return true;
+  } catch {
+    return false;
+  }
+})();
+if (hasNext && buildRef("origin/next", "next/", "nhánh next")) versions.push({ version: "next", path: "next/" });
+
+for (const [minor, { tag }] of older) {
+  if (buildRef(tag, `v${minor}/`, tag)) versions.push({ version: minor, path: `v${minor}/` });
 }
 
 fs.writeFileSync(path.join(out, "versions.json"), JSON.stringify(versions, null, 2) + "\n");

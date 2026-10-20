@@ -1,0 +1,42 @@
+name: Wiki
+
+# Đẩy thư mục wiki/ lên GitHub Wiki của repo (repo con <repo>.wiki.git).
+# Một lần duy nhất: vào tab Wiki → "Create the first page" → Save (để GitHub tạo repo wiki). Sau đó mọi trang do workflow quản lý.
+
+on:
+  push:
+    branches: [main]
+    paths: [wiki/**, .github/workflows/wiki.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: wiki
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Publish wiki/
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git clone --depth 1 "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git" .wiki
+          # Đồng bộ đúng nội dung wiki/ (xoá trang không còn trong repo), giữ lịch sử git của wiki.
+          find .wiki -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -r wiki/. .wiki/
+          cd .wiki
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Wiki không đổi."
+          else
+            git commit -m "docs(wiki): sync from ${GITHUB_SHA::7}"
+            git push
+          fi

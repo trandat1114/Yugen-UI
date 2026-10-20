@@ -1,9 +1,14 @@
 blank_issues_enabled: false
-# Maintainer: once the repository URL is public, add links here, e.g.
-# contact_links:
-#   - name: Questions & ideas (GitHub Discussions)
-#     url: https://github.com/<owner>/<repo>/discussions
-#     about: Ask and answer questions about Yugen UI.
-#   - name: Report a security vulnerability
-#     url: https://github.com/<owner>/<repo>/security/advisories/new
-#     about: Please report security issues privately (see SECURITY.md).
+contact_links:
+  - name: Hỏi đáp · Questions (Discussions Q&A)
+    url: https://github.com/trandat1114/Yugen-UI/discussions/categories/q-a
+    about: Hỏi cách dùng, tích hợp, theme… — issue chỉ dành cho lỗi và đề xuất cụ thể. Ask usage questions here.
+  - name: Ý tưởng · Ideas (Discussions)
+    url: https://github.com/trandat1114/Yugen-UI/discussions/categories/ideas
+    about: Ý tưởng còn sơ khai? Thảo luận trước khi mở feature request. Early ideas start here.
+  - name: Báo lỗ hổng bảo mật · Security vulnerability
+    url: https://github.com/trandat1114/Yugen-UI/security/advisories/new
+    about: Báo riêng tư, không mở issue công khai (xem SECURITY.md). Please report privately.
+  - name: Tài liệu · Documentation site
+    url: https://trandat1114.github.io/Yugen-UI/
+    about: Xem ví dụ, props và hướng dẫn trước khi báo lỗi. Check the docs first.

@@ -19,6 +19,8 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # cần lịch sử nhánh để kiểm tra tag nằm đúng nhánh
 
       - uses: actions/setup-node@v4
         with:
@@ -46,10 +48,13 @@ jobs:
       - name: Build library and docs
         run: npm run build
 
+      # Kênh phát hành theo nhánh: next → "next", main → "latest", release/X.Y (vá minor cũ) → "release-X.Y".
+      - name: Choose dist-tag (and check the tag's branch)
+        id: channel
+        run: echo "dist_tag=$(node scripts/release-channel.mjs "$GITHUB_REF_NAME")" >> "$GITHUB_OUTPUT"
+
       # prepublishOnly also runs typecheck + lint:classes + build:lib.
       - name: Publish to npm
-        run: |
-          if [[ "$GITHUB_REF_NAME" == *-* ]]; then DIST_TAG=next; else DIST_TAG=latest; fi
-          npm publish --provenance --access public --tag "$DIST_TAG"
+        run: npm publish --provenance --access public --tag "${{ steps.channel.outputs.dist_tag }}"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

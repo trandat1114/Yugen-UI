@@ -1,0 +1,23 @@
+# Nhãn khu vực tự gắn cho PR theo file thay đổi (workflow pr-labeler.yml).
+"area: components":
+  - changed-files:
+      - any-glob-to-any-file: "src/components/ui/**"
+"area: labs":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/components/ui/{Chart,AIKit,Trace,DataGrid,Questionnaire,MessageScroller,CodeBlock,Loading,Sheet,Tour,NotificationCenter}/**"
+"area: tokens & theming":
+  - changed-files:
+      - any-glob-to-any-file: ["src/styles/**", "src/index.css", "src/lib/brandRamp.ts", "src/lib/tokenExport.ts"]
+"area: docs site":
+  - changed-files:
+      - any-glob-to-any-file: ["src/docs/**", "wiki/**", "*.md"]
+"area: build & package":
+  - changed-files:
+      - any-glob-to-any-file: ["scripts/**", "vite*.ts", "package.json", "templates/**", ".size-limit.cjs", "src/lib.ts"]
+"area: ci & tests":
+  - changed-files:
+      - any-glob-to-any-file: [".github/**", "e2e/**", "src/test/**", "**/*.test.ts", "**/*.test.tsx", "playwright.config.ts", "vitest.config.ts"]
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: ["src/docs/**", "wiki/**", "*.md"]

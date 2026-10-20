@@ -1,0 +1,29 @@
+name: Stale
+
+# Chỉ áp dụng cho issue thiếu thông tin tái hiện (Community and Triage, Operations Handbook).
+on:
+  schedule:
+    - cron: "30 1 * * *"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v9
+        with:
+          only-labels: needs reproduction
+          days-before-stale: 14
+          days-before-close: 7
+          days-before-pr-stale: -1
+          days-before-pr-close: -1
+          stale-issue-label: stale
+          stale-issue-message: >
+            Issue này chưa có ví dụ tái hiện sau 14 ngày. Bạn có thể thêm link StackBlitz (nút StackBlitz trên mọi ví dụ docs)
+            hoặc repo nhỏ để chúng tôi xử lý — nếu không, issue sẽ tự đóng sau 7 ngày nữa.
+            · No reproduction after 14 days; this will close in 7 days unless one is added.
+          close-issue-message: >
+            Đóng vì chưa có ví dụ tái hiện. Bình luận kèm ví dụ bất cứ lúc nào để mở lại. · Closed for lack of a reproduction.

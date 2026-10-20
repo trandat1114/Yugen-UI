@@ -10,9 +10,10 @@ interface DocsVersion {
   path: string;
 }
 
-/** Gốc site: BASE_URL bỏ đi đoạn "vX.Y/" khi đang xem docs của phiên bản cũ. */
-const siteRoot = () => import.meta.env.BASE_URL.replace(/v\d+\.\d+\/$/, "");
-const currentMinor = SITE.version.split(".").slice(0, 2).join(".");
+/** Gốc site: BASE_URL bỏ đi đoạn "vX.Y/" (phiên bản cũ) hoặc "next/" (bản xem trước). */
+const siteRoot = () => import.meta.env.BASE_URL.replace(/(v\d+\.\d+|next)\/$/, "");
+const currentMinor = /\/next\/$/.test(import.meta.env.BASE_URL) ? "next" : SITE.version.split(".").slice(0, 2).join(".");
+const label = (version: string) => (version === "next" ? "next" : `v${version}`);
 
 /** Menu chọn phiên bản docs — chỉ hiện khi versions.json (sinh bởi scripts/build-versioned-docs.mjs) có ≥ 2 bản. */
 export function VersionMenu() {
@@ -40,7 +41,7 @@ export function VersionMenu() {
     <Menu>
       <MenuTrigger asChild>
         <Button appearance="subtle" size="small" className="gap-XXS font-normal" aria-label={t("version.label", { version: currentMinor })}>
-          v{currentMinor}
+          {label(currentMinor)}
           <ChevronDown16Regular />
         </Button>
       </MenuTrigger>
@@ -48,8 +49,8 @@ export function VersionMenu() {
         <MenuRadioGroup value={currentMinor} onValueChange={go}>
           {versions.map((v, i) => (
             <MenuItemRadio key={v.version} value={v.version}>
-              v{v.version}
-              {i === 0 ? t("version.latest") : ""}
+              {label(v.version)}
+              {i === 0 ? t("version.latest") : v.version === "next" ? t("version.next") : ""}
             </MenuItemRadio>
           ))}
         </MenuRadioGroup>

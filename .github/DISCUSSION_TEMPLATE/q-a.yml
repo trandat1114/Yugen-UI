@@ -1,0 +1,35 @@
+title: "[Hỏi] "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Hỏi gì cũng được — tiếng Việt hoặc tiếng Anh. Nhớ đánh dấu **Mark as answer** cho câu trả lời giúp được bạn.
+        Ask anything, in Vietnamese or English. Please mark the reply that solved it as the answer.
+  - type: textarea
+    id: question
+    attributes:
+      label: Câu hỏi · Question
+      description: Bạn muốn làm gì, đã thử gì, kết quả ra sao?
+    validations:
+      required: true
+  - type: dropdown
+    id: setup
+    attributes:
+      label: Cách dùng Yugen UI · Setup
+      options:
+        - npm + Tailwind v4 (theme.css)
+        - npm, không Tailwind (styles.css)
+        - shadcn CLI (chép mã nguồn)
+        - Chép tay từ repo
+        - Chưa cài · Not installed yet
+  - type: input
+    id: env
+    attributes:
+      label: Môi trường · Environment
+      placeholder: "yugen-ui 0.6.0, React 19, Next.js 16 App Router"
+  - type: textarea
+    id: code
+    attributes:
+      label: Đoạn code liên quan · Code
+      render: tsx
