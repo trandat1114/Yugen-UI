@@ -63,7 +63,11 @@ export function installSnippets(importCode: string): InstallSnippets {
   const items = [...byFolder.keys()];
   if (items.length === 0) return { npm, shadcn: "", items };
 
-  const add = `// npx shadcn@latest add ${items.map((f) => `${REGISTRY_URL}/${registryItemName(f)}.json`).join(" \\\n//   ")}`;
+  // Dòng init chỉ chạy một lần mỗi dự án (theme + cn + YugenProvider) — component không tự kéo theme.
+  const add = [
+    `// npx shadcn@latest init ${REGISTRY_URL}/init.json   (1×; Next.js: init-next.json)`,
+    `// npx shadcn@latest add ${items.map((f) => `${REGISTRY_URL}/${registryItemName(f)}.json`).join(" \\\n//   ")}`,
+  ].join("\n");
   const imports = [...byFolder].map(
     ([folder, names]) => `import { ${names.join(", ")} } from "@/components/ui/${folder}/${folder}";`,
   );
