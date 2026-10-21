@@ -8,8 +8,8 @@ Yêu cầu: React 18 hoặc 19, TypeScript 5 (khuyên dùng). Tailwind CSS v4 l�
 |---|---|---|
 | **npm + Tailwind v4** | Dự án mới / đã có Tailwind v4 — khuyên dùng | `npm install yugen-ui` + `@import "yugen-ui/theme.css"` |
 | **npm, không Tailwind** | Dự án dùng CSS khác | `import "yugen-ui/styles.css"` |
-| **shadcn CLI** | Muốn sở hữu và sửa sâu mã nguồn | `npx shadcn@latest add https://trandat1114.github.io/Yugen-UI/r/button.json` |
-| **Starter template** | Bắt đầu nhanh một app hoàn chỉnh | `npx degit trandat1114/Yugen-UI/templates/vite-dashboard my-app` |
+| **shadcn CLI** | Muốn sở hữu và sửa sâu mã nguồn | `npx shadcn@latest init https://trandat1114.github.io/Yugen-UI/r/init.json` rồi `add …/r/button.json` |
+| **Starter template** | Bắt đầu nhanh một app hoàn chỉnh (starter, SaaS, blog…) | `npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-starter my-app --install` |
 
 Chi tiết từng cách: [README](https://github.com/trandat1114/Yugen-UI#readme) và trang
 [Cài bằng shadcn CLI](https://trandat1114.github.io/Yugen-UI/#/concepts/shadcn-registry).

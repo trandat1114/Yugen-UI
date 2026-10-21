@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="vi" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#c2347a" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Sakura Studio · Yugen UI</title>
+    <meta name="description" content="Ứng dụng SaaS dựng bằng Yugen UI: sidebar, bảng lệnh Ctrl K, thông báo, theme sáng / tối / tương phản cao và 8 trang mẫu." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Sakura Studio · Yugen UI" />
+    <meta property="og:description" content="Ứng dụng SaaS dựng bằng Yugen UI: sidebar, bảng lệnh Ctrl K, thông báo, theme sáng / tối / tương phản cao và 8 trang mẫu." />
+    <script>
+      // Áp theme / brand đã lưu trước khi React render để không nháy nền (cùng khoá với App.tsx).
+      (function () {
+        var a = {};
+        try { a = JSON.parse(localStorage.getItem("yugen-saas-appearance") || "{}"); } catch (e) {}
+        var t = a.theme === "light" || a.theme === "dark" || a.theme === "high-contrast" ? a.theme
+          : matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", t);
+        document.documentElement.setAttribute("data-brand", a.brand === "web" || a.brand === "teams" ? a.brand : "sakura");
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

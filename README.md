@@ -191,15 +191,17 @@ layout because `react-resizable-panels` measures the physical X axis.
 
 ## Copy-paste mode
 
-Prefer owning the code, shadcn-style? Use the **shadcn CLI** — Yugen UI publishes a compatible registry. One command
-copies the component, the components it imports, `cn()` and the theme, and installs the npm dependencies:
+Prefer owning the code, shadcn-style? Use the **shadcn CLI** — Yugen UI publishes a compatible registry. `init` runs once
+per project: it creates `components.json` if missing, copies the theme, `cn()` and `YugenProvider`, installs npm packages
+and adds the theme `@import` to your CSS. `add` then copies components and the components they import:
 
 ```bash
+npx shadcn@latest init https://trandat1114.github.io/Yugen-UI/r/init.json   # Next.js: …/r/init-next.json
 npx shadcn@latest add https://trandat1114.github.io/Yugen-UI/r/button.json
 # everything: …/r/all.json · catalogue: …/r/registry.json
 ```
 
-Then add `@import "./styles/yugen.css";` right after `@import "tailwindcss";`. With a namespaced registry in
+With a namespaced registry in
 `components.json` — `"registries": { "@yugen": "https://trandat1114.github.io/Yugen-UI/r/{name}.json" }` — you can run
 `npx shadcn@latest add @yugen/button @yugen/chart`. Each component page in the docs shows its exact command.
 
@@ -215,10 +217,23 @@ Or copy by hand from this repository:
 
 ## Starter templates
 
+One command downloads a template, installs dependencies and starts the dev server — preview them all at
+[#/templates](https://trandat1114.github.io/Yugen-UI/#/templates), or open one on StackBlitz with nothing to install.
+
 ```bash
-npx degit trandat1114/Yugen-UI/templates/vite-dashboard my-app   # dashboard: stats, charts, transactions
-npx degit trandat1114/Yugen-UI/templates/vite-ai-chat my-chat     # AI assistant chat
+npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-starter my-app --install && cd my-app && npm run dev
 ```
+
+| Template | What you get |
+| --- | --- |
+| `vite-starter` | Blank start: persisted theme, toast, `@/` alias, SEO basics, a cherry-blossom welcome page to delete |
+| `vite-saas` | 8-page SaaS app: sidebar → drawer, Ctrl K palette, notifications, themes & brands |
+| `vite-blog` | Markdown blog: tags, search, TOC; build-time HTML per post, sitemap.xml, rss.xml |
+| `vite-dashboard` | KPI tiles, charts, recent transactions |
+| `vite-ai-chat` | AI assistant chat with agent trace |
+
+Prefer the shadcn CLI? `npx shadcn@latest init https://trandat1114.github.io/Yugen-UI/r/init.json` sets up the theme,
+`cn()` and `YugenProvider` in one step.
 
 ## Next.js (App Router)
 
@@ -435,15 +450,17 @@ Giới hạn đã biết: nhóm `Resizable` ngang giữ bố cục LTR vì `reac
 
 ### Chế độ copy-paste
 
-Muốn sở hữu mã nguồn như shadcn? Dùng **shadcn CLI** — Yugen UI có registry tương thích. Một lệnh chép component,
-các component nó import, `cn()` và theme, đồng thời cài gói npm còn thiếu:
+Muốn sở hữu mã nguồn như shadcn? Dùng **shadcn CLI** — Yugen UI có registry tương thích. `init` chạy một lần mỗi dự án:
+tạo `components.json` nếu chưa có, chép theme, `cn()` và `YugenProvider`, cài gói npm và tự thêm `@import` theme vào CSS.
+Sau đó `add` chép component cùng các component nó import:
 
 ```bash
+npx shadcn@latest init https://trandat1114.github.io/Yugen-UI/r/init.json   # Next.js: …/r/init-next.json
 npx shadcn@latest add https://trandat1114.github.io/Yugen-UI/r/button.json
 # tất cả: …/r/all.json · danh mục: …/r/registry.json
 ```
 
-Sau đó thêm `@import "./styles/yugen.css";` ngay sau `@import "tailwindcss";`. Khai báo registry có tên trong
+Khai báo registry có tên trong
 `components.json` — `"registries": { "@yugen": "https://trandat1114.github.io/Yugen-UI/r/{name}.json" }` — để gõ
 `npx shadcn@latest add @yugen/button @yugen/chart`. Trang docs của mỗi component có sẵn lệnh cài.
 
@@ -459,10 +476,23 @@ Hoặc sao chép thủ công từ repo này:
 
 ### Starter template
 
+Một lệnh tải template, cài phụ thuộc và chạy dev server — xem trước ở
+[#/templates](https://trandat1114.github.io/Yugen-UI/#/templates) hoặc mở thẳng trên StackBlitz.
+
 ```bash
-npx degit trandat1114/Yugen-UI/templates/vite-dashboard my-app   # dashboard: số liệu, biểu đồ, giao dịch
-npx degit trandat1114/Yugen-UI/templates/vite-ai-chat my-chat     # trợ lý AI dạng chat
+npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-starter my-app --install && cd my-app && npm run dev
 ```
+
+| Template | Có gì |
+| --- | --- |
+| `vite-starter` | Khởi đầu trắng: theme ghi nhớ, toast, alias `@/`, SEO cơ bản, trang chào hoa anh đào (xoá được) |
+| `vite-saas` | Ứng dụng SaaS 8 trang: sidebar → drawer, bảng lệnh Ctrl K, thông báo, theme & thương hiệu |
+| `vite-blog` | Blog Markdown: thẻ, tìm kiếm, mục lục; HTML tĩnh từng bài, sitemap.xml, rss.xml lúc build |
+| `vite-dashboard` | Thẻ KPI, biểu đồ, giao dịch gần đây |
+| `vite-ai-chat` | Trợ lý AI dạng chat, Trace các bước agent |
+
+Dùng shadcn CLI? `npx shadcn@latest init https://trandat1114.github.io/Yugen-UI/r/init.json` cài theme, `cn()` và
+`YugenProvider` trong một bước.
 
 ### Next.js (App Router)
 

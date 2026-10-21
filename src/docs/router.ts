@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 export type Route =
   | { kind: "home" }
   | { kind: "blocks" }
+  | { kind: "templates" }
   | { kind: "theme-designer" }
   | { kind: "news" }
   | { kind: "community" }
@@ -13,6 +14,7 @@ export type Route =
 export function parseHash(hash: string): Route {
   const [, section, slug] = hash.replace(/^#/, "").split("/");
   if (section === "blocks") return { kind: "blocks" };
+  if (section === "templates") return { kind: "templates" };
   if (section === "theme-designer") return { kind: "theme-designer" };
   if (section === "news") return { kind: "news" };
   if (section === "community") return { kind: "community" };
@@ -24,6 +26,7 @@ export function parseHash(hash: string): Route {
 
 export function hrefOf(route: Route) {
   if (route.kind === "blocks") return "#/blocks";
+  if (route.kind === "templates") return "#/templates";
   if (route.kind === "theme-designer") return "#/theme-designer";
   if (route.kind === "news") return "#/news";
   if (route.kind === "community") return "#/community";
