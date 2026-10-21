@@ -18,13 +18,14 @@ import type { Route } from "@/docs/router";
 // Trang ít dùng / nặng nạp lười theo route.
 const FoundationsPage = lazy(() => import("@/docs/pages/FoundationsPage").then((m) => ({ default: m.FoundationsPage })));
 const BlocksPage = lazy(() => import("@/docs/pages/BlocksPage").then((m) => ({ default: m.BlocksPage })));
+const TemplatesPage = lazy(() => import("@/docs/pages/TemplatesPage").then((m) => ({ default: m.TemplatesPage })));
 const ThemeDesignerPage = lazy(() => import("@/docs/pages/ThemeDesignerPage").then((m) => ({ default: m.ThemeDesignerPage })));
 const NewsPage = lazy(() => import("@/docs/pages/NewsPage").then((m) => ({ default: m.NewsPage })));
 const CommunityPage = lazy(() => import("@/docs/pages/CommunityPage").then((m) => ({ default: m.CommunityPage })));
 
 /** Chế độ tiếng Anh: route nào còn hiện nội dung tiếng Việt (toàn trang hoặc một phần). */
 function fallbackOf(route: Route): "page" | "partial" | null {
-  if (route.kind === "home" || route.kind === "community") return null;
+  if (route.kind === "home" || route.kind === "community" || route.kind === "templates") return null;
   if (route.kind === "news") return "partial";
   if (route.kind === "concept") return CONCEPT_EN_PAGES[route.slug] ? null : "page";
   return "page";
@@ -97,6 +98,7 @@ export default function App() {
                   <BlocksPage />
                 </VietnameseContent>
               )}
+              {route.kind === "templates" && <TemplatesPage />}
               {route.kind === "theme-designer" && (
                 <VietnameseContent>
                   <ThemeDesignerPage />

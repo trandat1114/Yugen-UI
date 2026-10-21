@@ -11,6 +11,7 @@ import {
   PuzzlePiece20Regular,
   WeatherMoon20Regular,
   Grid20Regular,
+  Rocket20Regular,
   PaintBrush20Regular,
   Translate20Regular,
 } from "@fluentui/react-icons";
@@ -73,6 +74,9 @@ export function DocsCommandPalette({
         <CommandGroup heading={t("palette.pages")}>
           <CommandItem icon={<Home20Regular />} onSelect={() => go("#/")}>
             {t("nav.overview")}
+          </CommandItem>
+          <CommandItem icon={<Rocket20Regular />} onSelect={() => go("#/templates")} keywords={["template", "starter", "mẫu"]}>
+            Templates
           </CommandItem>
           <CommandItem icon={<Grid20Regular />} onSelect={() => go("#/blocks")}>
             Blocks
