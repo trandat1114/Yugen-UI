@@ -6,7 +6,8 @@ Muốn nhận một mục? Mở issue hoặc bình luận vào issue sẵn có t
 > **English summary** — 0.5 ships the first npm release. 0.6 adds automated tests (unit, interaction, axe, visual,
 > touch) and release tooling. 0.7 improves developer experience (shadcn-compatible registry, lazy docs, generated props,
 > English docs, StackBlitz, token export). 0.8 grows the component set (Overflow, date/time range, DataGrid, forms,
-> AI and chart additions). 1.0 freezes the API with a SemVer and deprecation policy.
+> AI and chart additions). 1.0 freezes the API with a SemVer and deprecation policy. The SEO track moves the docs to
+> path-based, prerendered pages and ships SEO-ready templates.
 
 ---
 
@@ -17,7 +18,7 @@ Muốn nhận một mục? Mở issue hoặc bình luận vào issue sẵn có t
 - [x] Workflow GitHub Pages (`.github/workflows/pages.yml`) — maintainer bật Settings → Pages → Source: GitHub Actions
 - [x] Thử gói `.tgz` trong app Vite (React 18) và Next.js 16 App Router (React 19), cả `theme.css` lẫn `styles.css`
 - [x] Link so sánh phiên bản trong `CHANGELOG.md`, ảnh chụp cho README
-- [ ] Phát hành lên npm (maintainer) — bản đầu tiên sẽ là `yugen-ui@0.6.0`
+- [x] Phát hành lên npm — `yugen-ui@0.6.0`, `0.7.0` (`latest`)
 
 ## Giai đoạn 1 — 0.6: Chất lượng & niềm tin
 
@@ -32,6 +33,9 @@ Muốn nhận một mục? Mở issue hoặc bình luận vào issue sẵn có t
 ## Giai đoạn 2 — 0.7: Trải nghiệm nhà phát triển
 
 - [x] Registry tương thích shadcn: `npx shadcn add <url>/r/<component>.json` (`npm run registry`, trang `#/concepts/shadcn-registry`)
+- [x] `npx shadcn@latest init <url>/r/init.json` (và `init-next.json`): một lệnh tạo `components.json`, chép theme + `cn()` + `YugenProvider`, tự `@import` theme vào CSS, không kéo style mặc định của shadcn
+- [ ] Đăng ký `@yugen` vào danh mục registry của shadcn (maintainer, PR vào `shadcn-ui/ui`) để `npx shadcn add @yugen/button` chạy không cần cấu hình
+- [x] Bắt đầu nhanh rút còn 1 lệnh (template) hoặc 3 bước (npm) — bỏ hướng dẫn chép tay & danh sách phụ thuộc
 - [x] Tải lười demo từng component trên docs (metadata trích lúc build; JS lần đầu 970 kB → 108 kB)
 - [x] Kiểm tra lệch props docs/code từ type TypeScript (`npm run check:props`, chạy trong CI)
 - [~] Docs tiếng Anh (i18n): khung, trang chủ, Cộng đồng, 4 trang khái niệm, tên/mô tả 111 component — còn nội dung chi tiết từng component & các khái niệm khác
@@ -54,4 +58,21 @@ Muốn nhận một mục? Mở issue hoặc bình luận vào issue sẵn có t
 - [x] Docs theo phiên bản (`/vX.Y/` từ tag + menu chọn bản), audit a11y đạt (axe trong e2e), test đủ React 18 & 19 (CI)
 - [ ] Nhãn `good first issue` (maintainer, trên GitHub)
 - [x] Starter template `templates/vite-dashboard`, `templates/vite-ai-chat` (sinh từ block — `node scripts/sync-templates.mjs`); mục showcase trên trang Cộng đồng
+- [x] Trang `#/templates` (preview chạy thật, lệnh `npx giget … --install` một dòng, Open in StackBlitz) + template `vite-starter`, `vite-saas`, `vite-blog` (Markdown, SEO lúc build)
+- [ ] Gói `create-yugen-ui` (`npm create yugen-ui@latest`) chọn template tương tác (maintainer publish)
 - [ ] Đang cân nhắc: Figma kit, gói icon Sakura
+
+## Giai đoạn SEO — docs dễ tìm, template sẵn SEO
+
+Docs đang định tuyến bằng hash (`#/components/button`) — công cụ tìm kiếm coi mọi trang là một URL. Lộ trình:
+
+- [x] `<head>` cơ bản: `description`, canonical, Open Graph + ảnh `public/og.jpg` (`node scripts/og-image.mjs`), Twitter card, JSON-LD `SoftwareSourceCode`, `theme-color`
+- [x] Tiêu đề tab, `description`, `og:title` theo trang khi chuyển route (`src/docs/seo.ts`)
+- [x] Template sẵn SEO: `description`, Open Graph, `robots.txt`; `vite-blog` sinh HTML tĩnh từng bài, canonical, JSON-LD `BlogPosting`, `sitemap.xml`, `rss.xml`
+- [ ] Định tuyến theo đường dẫn (`/components/button`) bằng History API; tự chuyển link `#/…` cũ sang URL mới; `404.html` cho GitHub Pages
+- [ ] Prerender mọi route thành HTML tĩnh lúc build (`renderToString` — component đã có test SSR) với `<title>`, `description`, canonical riêng
+- [ ] `sitemap.xml` sinh từ danh sách route; `hreflang` vi / en khi bản tiếng Anh có URL riêng
+- [ ] Ảnh Open Graph riêng cho từng trang component (sinh lúc build)
+- [ ] Lighthouse CI trên workflow Pages: SEO ≥ 95, cảnh báo khi trang thiếu `description`
+- [ ] Trang khái niệm "SEO với Yugen UI" cho người dùng: Next.js `metadata`, heading đúng cấp, `Link` / `asChild` cho link crawl được, `alt` cho `Image`
+- [ ] Gửi sitemap lên Google Search Console (maintainer, sau khi có URL theo đường dẫn)

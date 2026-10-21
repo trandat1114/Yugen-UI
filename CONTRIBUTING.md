@@ -40,7 +40,8 @@ npm run dev          # trang docs tại http://localhost:5173
 | `npm run check:props` | Bảng props trên docs khớp type thật |
 | `npm run registry` | Sinh registry shadcn vào `public/r/` (tự chạy trong `build:docs`) |
 | `npm run version-packages` | (maintainer) Đánh số phiên bản từ changeset + đồng bộ templates & lockfile |
-| `node scripts/sync-templates.mjs` | Sinh lại `templates/` từ block (`--check` để kiểm tra) |
+| `node scripts/sync-templates.mjs` | Sinh lại `templates/` từ block và `src/docs/template-library/` (`--check` để kiểm tra) |
+| `node scripts/og-image.mjs` | Sinh lại ảnh chia sẻ `public/og.jpg` (Open Graph) |
 
 ### Kiểm thử
 

@@ -128,6 +128,7 @@ export function Sidebar({ route, open, onClose }: { route: Route; open: boolean;
   const start: NavItem[] = [
     { label: t("nav.overview"), href: "#/", active: route.kind === "home" },
     ...conceptItems("Bắt đầu"),
+    { label: "Templates", href: "#/templates", active: route.kind === "templates" },
     { label: "Blocks", href: "#/blocks", active: route.kind === "blocks" },
     { label: "Theme Designer", href: "#/theme-designer", active: route.kind === "theme-designer" },
     { label: t("nav.news"), href: "#/news", active: route.kind === "news", badge: `v${SITE.version}` },

@@ -17,8 +17,7 @@ export const SITE = {
     issues: "https://github.com/trandat1114/Yugen-UI/issues",
     /** Điền "https://github.com/trandat1114/Yugen-UI/discussions" sau khi bật Discussions trong Settings của repo. */
     discussions: "https://github.com/trandat1114/Yugen-UI/discussions",
-    /** Điền "https://www.npmjs.com/package/yugen-ui" sau khi đã publish. */
-    npm: "",
+    npm: "https://www.npmjs.com/package/yugen-ui",
   },
 } as const;
 

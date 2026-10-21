@@ -25,6 +25,23 @@ export const NEWS_KIND_LABEL: Record<NewsKind, string> = {
 
 export const NEWS: NewsRelease[] = [
   {
+    version: "0.8.0",
+    date: "2026-10-21",
+    title: "Templates, shadcn init một lệnh & SEO",
+    summary:
+      "Trang Templates với ba template mới — starter, SaaS và blog Markdown — tạo dự án bằng một lệnh; shadcn CLI cài theme, cn() và YugenProvider trong một bước; Bắt đầu nhanh gọn còn một lệnh và docs bắt đầu hỗ trợ SEO.",
+    items: [
+      { kind: "new", text: "Trang Templates: preview chạy thật, tạo dự án bằng một lệnh (npx giget … --install) hoặc mở trên StackBlitz.", href: "#/templates" },
+      { kind: "new", text: "vite-starter — khởi đầu trắng: theme được ghi nhớ, không nháy khi tải, alias @/, SEO cơ bản và trang chào hoa anh đào 幽玄.", href: "#/templates" },
+      { kind: "new", text: "vite-saas — ứng dụng 8 trang có sidebar, bảng lệnh Ctrl K, thông báo; vite-blog — blog Markdown sinh HTML từng bài, sitemap.xml, rss.xml.", href: "#/templates" },
+      { kind: "new", text: "shadcn CLI: npx shadcn@latest init …/r/init.json (Next.js: init-next.json) tạo components.json, chép theme + cn() + YugenProvider và tự thêm @import vào CSS.", href: "#/concepts/shadcn-registry" },
+      { kind: "breaking", text: "Registry shadcn: component không còn tự cài theme — chạy init một lần cho mỗi dự án, hoặc add kèm …/r/theme.json. Gói npm không đổi.", href: "#/concepts/shadcn-registry" },
+      { kind: "improved", text: "Bắt đầu nhanh: một lệnh từ template, hoặc ba bước cho dự án có sẵn (cài gói, một dòng CSS, YugenProvider).", href: "#/concepts/quick-start" },
+      { kind: "improved", text: "Docs: tiêu đề và mô tả theo từng trang, Open Graph kèm ảnh chia sẻ link, JSON-LD; lộ trình SEO mới trên trang Cộng đồng.", href: "#/community" },
+      { kind: "improved", text: "Nút Open in StackBlitz hiện trên mọi ví dụ component.", href: "#/components/button" },
+    ],
+  },
+  {
     version: "0.7.0",
     date: "2026-10-21",
     title: "Quote, Autocomplete & SearchBox dễ nhìn hơn",

@@ -1,7 +1,29 @@
 import type { ReactNode } from "react";
-import { Button, Field, Input, MessageBar, toast } from "@/components/ui";
+import { Open16Regular, Rocket16Regular } from "@fluentui/react-icons";
+import {
+  Button,
+  Field,
+  Input,
+  MessageBar,
+  PackageManagerTabs,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  toast,
+} from "@/components/ui";
 import { DocSection } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
+import { templateStackBlitzUrl } from "../templates";
+import {
+  CSS_PRECOMPILED,
+  CSS_TAILWIND,
+  PROVIDER_NEXT,
+  PROVIDER_VITE,
+  SHADCN_ADD,
+  SHADCN_INIT,
+  TEMPLATE_COMMAND,
+} from "./_snippets";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -9,6 +31,36 @@ function P({ children }: { children: ReactNode }) {
 
 function C({ children }: { children: ReactNode }) {
   return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+}
+
+function A({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <a className="text-link underline hover:text-link-hover" href={href}>
+      {children}
+    </a>
+  );
+}
+
+/** Các bước đánh số — mỗi bước một tiêu đề h3 và nội dung. */
+function Steps({ items }: { items: { title: ReactNode; body: ReactNode }[] }) {
+  return (
+    <ol className="flex max-w-4xl flex-col gap-XL">
+      {items.map((s, i) => (
+        <li key={i} className="grid grid-cols-[2rem_minmax(0,1fr)] gap-M">
+          <span
+            aria-hidden
+            className="flex size-8 items-center justify-center rounded-circular bg-brand-background-2 text-body1 font-semibold text-brand-foreground-2"
+          >
+            {i + 1}
+          </span>
+          <div className="flex min-w-0 flex-col gap-S pt-XS">
+            <h3 className="text-subtitle2 font-semibold text-foreground-1">{s.title}</h3>
+            {s.body}
+          </div>
+        </li>
+      ))}
+    </ol>
+  );
 }
 
 function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
@@ -40,106 +92,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
   );
 }
 
-const INSTALL = `# Phụ thuộc runtime
-npm install @fluentui/react-icons class-variance-authority clsx tailwind-merge \\
-  cmdk react-day-picker react-resizable-panels \\
-  @radix-ui/react-accordion @radix-ui/react-avatar @radix-ui/react-checkbox \\
-  @radix-ui/react-collapsible @radix-ui/react-context-menu @radix-ui/react-dialog \\
-  @radix-ui/react-direction @radix-ui/react-dropdown-menu @radix-ui/react-hover-card \\
-  @radix-ui/react-menubar @radix-ui/react-popover @radix-ui/react-radio-group \\
-  @radix-ui/react-scroll-area @radix-ui/react-select @radix-ui/react-slider \\
-  @radix-ui/react-slot @radix-ui/react-switch @radix-ui/react-tabs @radix-ui/react-toast \\
-  @radix-ui/react-toggle @radix-ui/react-toggle-group @radix-ui/react-tooltip
-
-# Công cụ build
-npm install -D tailwindcss @tailwindcss/vite`;
-
-const TREE = `src/
-  styles/tokens.css        # Global + Alias token, brand, theme — chép nguyên file
-  index.css                # @import tailwindcss + tokens, tắt scale mặc định, @theme bridge
-  lib/cn.ts                # cn() = clsx + tailwind-merge đã dạy scale Yugen
-  components/ui/
-    index.ts               # barrel — export theo nhóm
-    YugenProvider/YugenProvider.tsx
-    Button/Button.tsx
-    Field/Field.tsx
-    ...                    # chỉ cần chép những thư mục bạn dùng`;
-
-const VITE = `// vite.config.ts
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
-import path from "node:path";
-
-export default defineConfig({
-  plugins: [react(), tailwindcss()],
-  resolve: {
-    alias: { "@": path.resolve(__dirname, "./src") },
-  },
-});`;
-
-const TSCONFIG = `// tsconfig.app.json (hoặc tsconfig.json)
-{
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": { "@/*": ["src/*"] }
-  }
-}`;
-
-const MAIN = `// src/main.tsx
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import App from "./App";
-import "./index.css";
-
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-);`;
-
-const APP = `// src/App.tsx
-import * as React from "react";
-import { YugenProvider, type YugenTheme } from "@/components/ui";
-
-const STORAGE_KEY = "yugen-ui-theme";
-
-function initialTheme(): YugenTheme {
-  // Script trong index.html đã đặt data-theme trước khi React chạy — đọc lại cho khớp.
-  return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
-}
-
-export default function App() {
-  const [theme, setTheme] = React.useState<YugenTheme>(initialTheme);
-
-  React.useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, theme);
-    } catch {
-      /* storage bị chặn */
-    }
-  }, [theme]);
-
-  return (
-    <YugenProvider applyToDocument withToaster theme={theme} brand="sakura" dir="ltr">
-      <AppShell onThemeChange={setTheme} />
-    </YugenProvider>
-  );
-}`;
-
-const HTML = `<!-- index.html — đặt TRƯỚC script của ứng dụng -->
-<head>
-  <script>
-    (function () {
-      var t;
-      try { t = localStorage.getItem("yugen-ui-theme"); } catch (e) {}
-      if (t !== "light" && t !== "dark") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-      document.documentElement.setAttribute("data-theme", t);
-    })();
-  </script>
-</head>`;
-
-const FIRST = `import { Button, Field, Input, toast } from "@/components/ui";
+const FIRST = `import { Button, Field, Input, toast } from "yugen-ui";
 
 export function NewsletterForm() {
   return (
@@ -179,83 +132,136 @@ function NewsletterForm() {
   );
 }
 
+const PERSIST = `// src/App.tsx — nhớ theme người dùng chọn
+import * as React from "react";
+import { YugenProvider, type YugenTheme } from "yugen-ui";
+
+const STORAGE_KEY = "yugen-ui-theme";
+
+// Script trong index.html đã đặt data-theme trước khi React chạy — đọc lại cho khớp.
+const initialTheme = (): YugenTheme =>
+  document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+
+export default function App() {
+  const [theme, setTheme] = React.useState(initialTheme);
+
+  React.useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, theme);
+    } catch {
+      /* storage bị chặn */
+    }
+  }, [theme]);
+
+  return (
+    <YugenProvider applyToDocument withToaster theme={theme}>
+      <AppShell onThemeChange={setTheme} />
+    </YugenProvider>
+  );
+}`;
+
+const HTML = `<!-- index.html — đặt TRƯỚC script của ứng dụng -->
+<script>
+  (function () {
+    var t;
+    try { t = localStorage.getItem("yugen-ui-theme"); } catch (e) {}
+    if (t !== "light" && t !== "dark") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+</script>`;
+
 export default function Page() {
   return (
     <>
-      <DocSection id="requirements" title="Yêu cầu">
-        <SimpleTable
-          head={["Công nghệ", "Phiên bản", "Ghi chú"]}
-          rows={[
-            ["React", "18.3+", "Tương thích React 19. Component dùng forwardRef, useId, useSyncExternalStore."],
-            ["TypeScript", "5.x", "Khuyến nghị strict. Mọi prop đều có kiểu, không cần @types riêng."],
-            ["Tailwind CSS", "4.x", <>Cấu hình CSS-first (<C>@theme</C>, <C>@utility</C>), không có tailwind.config.js. Tailwind 3 không được hỗ trợ.</>],
-            ["Bundler", "Vite 6 hoặc Next.js 14+", <>Vite dùng <C>@tailwindcss/vite</C>; Next.js dùng <C>@tailwindcss/postcss</C> (xem trang SSR & Next.js).</>],
-            ["Node.js", "18+", "Theo yêu cầu của Vite 6 và Tailwind 4."],
+      <DocSection
+        id="template"
+        title="Nhanh nhất: một lệnh"
+        description="Tải template, cài phụ thuộc và chạy dev server — không cần cấu hình gì thêm."
+      >
+        <div className="flex flex-col gap-L">
+          <CodeBlock code={TEMPLATE_COMMAND} />
+          <P>
+            Lệnh trên tạo dự án starter: theme đã ghi nhớ, toast, alias <C>@/</C>, SEO cơ bản và một trang chào để xoá khi bắt đầu viết.
+            Cần nhiều hơn? Đổi <C>vite-starter</C> thành <C>vite-saas</C> (ứng dụng SaaS 8 trang), <C>vite-blog</C> (blog Markdown),{" "}
+            <C>vite-dashboard</C> hoặc <C>vite-ai-chat</C> — xem trước tất cả ở trang Templates. Không muốn cài gì? Mở thẳng trên
+            StackBlitz.
+          </P>
+          <div className="flex flex-wrap gap-S">
+            <Button asChild appearance="primary" icon={<Rocket16Regular />}>
+              <a href="#/templates">Xem các template</a>
+            </Button>
+            <Button asChild icon={<Open16Regular />}>
+              <a href={templateStackBlitzUrl("vite-starter")} target="_blank" rel="noreferrer">
+                Mở trên StackBlitz
+              </a>
+            </Button>
+          </div>
+        </div>
+      </DocSection>
+
+      <DocSection id="existing" title="Thêm vào dự án có sẵn" description="React 18+ và Tailwind CSS v4 — ba bước, không cần alias hay cấu hình bundler.">
+        <Steps
+          items={[
+            {
+              title: "Cài gói",
+              body: (
+                <>
+                  <PackageManagerTabs packages="yugen-ui" />
+                  <P>Mọi primitive Radix, icon Fluent và helper đều là dependency của gói — không cần cài thêm gì.</P>
+                </>
+              ),
+            },
+            {
+              title: "Thêm theme vào CSS",
+              body: (
+                <>
+                  <CodeBlock code={CSS_TAILWIND} />
+                  <P>
+                    Không dùng Tailwind? Bỏ dòng trên và import bản CSS biên dịch sẵn (preflight + token + mọi utility component cần):
+                  </P>
+                  <CodeBlock code={CSS_PRECOMPILED} />
+                </>
+              ),
+            },
+            {
+              title: "Bọc ứng dụng bằng YugenProvider",
+              body: (
+                <>
+                  <Tabs defaultValue="vite" className="flex flex-col gap-S">
+                    <TabsList aria-label="Framework">
+                      <TabsTrigger value="vite">Vite</TabsTrigger>
+                      <TabsTrigger value="next">Next.js</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="vite">
+                      <CodeBlock code={PROVIDER_VITE} />
+                    </TabsContent>
+                    <TabsContent value="next">
+                      <CodeBlock code={PROVIDER_NEXT} />
+                    </TabsContent>
+                  </Tabs>
+                  <P>
+                    <C>applyToDocument</C> ghi theme lên <C>{"<html>"}</C> để Dialog, Menu, Tooltip (render qua portal) cũng đúng màu;{" "}
+                    <C>withToaster</C> để gọi <C>toast()</C> ở bất kỳ đâu. Xong — thử ngay với component đầu tiên bên dưới.
+                  </P>
+                </>
+              ),
+            },
           ]}
         />
       </DocSection>
 
       <DocSection
-        id="install"
-        title="Cài phụ thuộc"
-        description="Danh sách dưới đây là đủ cho toàn bộ thư viện. Nếu chỉ chép vài component, chỉ cần primitive Radix mà các file đó import."
+        id="shadcn"
+        title="Muốn sở hữu mã nguồn?"
+        description="shadcn CLI chép component vào dự án để bạn sửa từng dòng — hai lệnh, CLI tự lo components.json, theme và gói npm."
       >
         <div className="flex flex-col gap-L">
-          <CodeBlock code={INSTALL} />
+          <PackageManagerTabs packages={SHADCN_INIT} command="dlx" />
+          <PackageManagerTabs packages={SHADCN_ADD} command="dlx" />
           <P>
-            <C>@radix-ui/react-direction</C> là bắt buộc vì <C>YugenProvider</C> bọc <C>DirectionProvider</C> cho hướng chữ RTL;{" "}
-            <C>@radix-ui/react-slot</C> cung cấp <C>asChild</C> cho Button, Link, Breadcrumb, Nav.
+            Dự án Next.js dùng <C>init-next.json</C>. Chi tiết, kết quả và cách cập nhật ở trang{" "}
+            <A href="#/concepts/shadcn-registry">Cài bằng shadcn CLI</A>.
           </P>
-        </div>
-      </DocSection>
-
-      <DocSection id="copy" title="Chép mã nguồn" description="Yugen UI không phải package npm — mã nguồn nằm trong dự án của bạn, sửa tuỳ ý.">
-        <div className="flex flex-col gap-L">
-          <CodeBlock code={TREE} />
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
-            <li>
-              <C>tokens.css</C> và <C>index.css</C> phải đi cùng nhau: <C>index.css</C> tắt palette mặc định của Tailwind và nối token
-              Fluent sang utility (<C>bg-background-1</C>, <C>p-M</C>, <C>text-body1</C>…).
-            </li>
-            <li>
-              Một số component dùng lại nhau: <C>Dropdown</C> cần <C>Popover</C> + <C>Select</C>, <C>SplitButton</C> cần <C>Button</C> +{" "}
-              <C>Menu</C>, <C>YugenProvider</C> cần <C>Tooltip</C> + <C>Toast</C>. Đọc dòng import đầu file để biết cần chép gì.
-            </li>
-            <li>
-              Nếu đổi tên thư mục, cập nhật alias <C>@/</C> hoặc đường dẫn import tương ứng.
-            </li>
-          </ul>
-        </div>
-      </DocSection>
-
-      <DocSection id="config" title="Cấu hình Vite & alias @/" description="Mọi file component import bằng alias @/ — cần khai báo ở cả Vite và TypeScript.">
-        <div className="flex flex-col gap-L">
-          <CodeBlock code={VITE} />
-          <CodeBlock code={TSCONFIG} />
-          <CodeBlock code={MAIN} />
-        </div>
-      </DocSection>
-
-      <DocSection
-        id="provider"
-        title="YugenProvider & chống nháy theme"
-        description="Bọc toàn bộ ứng dụng một lần. applyToDocument ghi data-theme / data-brand / dir lên <html> để cả portal (Dialog, Menu, Tooltip) cũng đúng theme."
-      >
-        <div className="flex flex-col gap-L">
-          <CodeBlock code={APP} />
-          <P>
-            <C>withToaster</C> gắn sẵn <C>{"<Toaster />"}</C> để gọi <C>toast()</C> ở bất kỳ đâu; <C>TooltipProvider</C> được gắn mặc
-            định (<C>withTooltipProvider</C>). Chi tiết từng prop ở trang <a className="text-link underline hover:text-link-hover" href="#/concepts/theming">Theming</a>.
-          </P>
-          <P>
-            Vì <C>YugenProvider</C> ghi attribute trong <C>useEffect</C> (sau lần vẽ đầu), hãy thêm script nhỏ vào <C>{"<head>"}</C> để đặt
-            theme trước khi trang hiển thị — tránh chớp nền trắng khi người dùng đã chọn theme tối:
-          </P>
-          <CodeBlock code={HTML} />
-          <MessageBar intent="warning" title="Giữ cùng một khoá localStorage." className="max-w-3xl">
-            Script và ứng dụng phải đọc / ghi cùng khoá (ví dụ <C>yugen-ui-theme</C>) và cùng tập giá trị, nếu không theme sẽ nhảy sau khi
-            React chạy.
-          </MessageBar>
         </div>
       </DocSection>
 
@@ -265,7 +271,40 @@ export default function Page() {
             <NewsletterForm />
           </div>
           <CodeBlock code={FIRST} />
-          <P>Bước tiếp theo:</P>
+        </div>
+      </DocSection>
+
+      <DocSection
+        id="persist-theme"
+        title="Nhớ theme & chống nháy (tuỳ chọn)"
+        description="Template đã làm sẵn phần này. Tự dựng thì cần hai mảnh: state lưu lựa chọn và script nhỏ đặt theme trước khi trang hiện."
+      >
+        <div className="flex flex-col gap-L">
+          <CodeBlock code={PERSIST} />
+          <P>
+            <C>YugenProvider</C> ghi attribute trong <C>useEffect</C> (sau lần vẽ đầu), nên thêm script vào <C>{"<head>"}</C> để không chớp
+            nền trắng khi người dùng đã chọn theme tối. Với Next.js, xem <A href="#/concepts/ssr">SSR & Next.js</A>.
+          </P>
+          <CodeBlock code={HTML} />
+          <MessageBar intent="warning" title="Giữ cùng một khoá localStorage." className="max-w-3xl">
+            Script và ứng dụng phải đọc / ghi cùng khoá (ví dụ <C>yugen-ui-theme</C>) và cùng tập giá trị, nếu không theme sẽ nhảy sau khi
+            React chạy.
+          </MessageBar>
+        </div>
+      </DocSection>
+
+      <DocSection id="requirements" title="Yêu cầu">
+        <div className="flex flex-col gap-L">
+          <SimpleTable
+            head={["Công nghệ", "Phiên bản", "Ghi chú"]}
+            rows={[
+              ["React", "18.3+", "Tương thích React 19."],
+              ["Tailwind CSS", "4.x", <>Không bắt buộc nếu dùng <C>yugen-ui/styles.css</C>. Tailwind 3 không được hỗ trợ.</>],
+              ["Bundler", "Vite 6, Next.js 14+", <>Vite dùng <C>@tailwindcss/vite</C>; Next.js dùng <C>@tailwindcss/postcss</C>.</>],
+              ["TypeScript", "5.x", "Không bắt buộc — gói đã kèm kiểu."],
+              ["Node.js", "18+", "Theo yêu cầu của Vite 6 và Tailwind 4."],
+            ]}
+          />
           <div className="flex flex-wrap gap-S">
             <Button asChild>
               <a href="#/concepts/styling">Tuỳ biến style</a>
