@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.8.0
+
+### Minor Changes
+
+- 68a54b3: shadcn registry: set up a project in one command — `npx shadcn@latest init https://trandat1114.github.io/Yugen-UI/r/init.json` (Next.js App Router / React Router: `init-next.json`) creates `components.json` if missing, copies the theme, `cn()` and `YugenProvider`, installs the npm packages and adds the theme `@import` to your main CSS file, without the default shadcn/ui style. The `theme` and new `theme-next` items now import themselves into your CSS.
+
+  **Breaking (registry only):** component items no longer pull in `theme`. Run `init` once per project, or add `…/r/theme.json` (Next.js: `theme-next.json`) together with your first component. The npm package is unchanged.
+
+### Patch Changes
+
+- dc72f1a: Templates: new `vite-starter` (blank start with a persisted theme, `@/` alias, SEO basics and a cherry-blossom welcome page to delete), `vite-saas` (8-page app with sidebar, Ctrl K command palette and notifications) and `vite-blog` (Markdown posts, build-time HTML per post, `sitemap.xml` and `rss.xml`). Create a project with `npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-starter my-app --install`, or preview every template at `#/templates` on the docs.
+
 ## 0.7.0
 
 ### Minor Changes
@@ -119,7 +131,8 @@ with a user-facing change adds one with `npx changeset`, and `npx changeset vers
 - 11 core components.
 - Documentation site.
 
-[Unreleased]: https://github.com/trandat1114/Yugen-UI/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/trandat1114/Yugen-UI/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.8.0
 [0.7.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.7.0
 [0.6.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.6.0
 [0.5.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.5.0
