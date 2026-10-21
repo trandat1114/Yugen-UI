@@ -1,7 +1,29 @@
 import type { ReactNode } from "react";
-import { Button, Field, Input, MessageBar, toast } from "@/components/ui";
+import { Open16Regular, Rocket16Regular } from "@fluentui/react-icons";
+import {
+  Button,
+  Field,
+  Input,
+  MessageBar,
+  PackageManagerTabs,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  toast,
+} from "@/components/ui";
 import { DocSection } from "../../blocks";
 import { CodeBlock } from "../../CodeBlock";
+import { templateStackBlitzUrl } from "../../templates";
+import {
+  CSS_PRECOMPILED,
+  CSS_TAILWIND,
+  PROVIDER_NEXT,
+  PROVIDER_VITE,
+  SHADCN_ADD,
+  SHADCN_INIT,
+  TEMPLATE_COMMAND,
+} from "../_snippets";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -9,6 +31,36 @@ function P({ children }: { children: ReactNode }) {
 
 function C({ children }: { children: ReactNode }) {
   return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+}
+
+function A({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <a className="text-link underline hover:text-link-hover" href={href}>
+      {children}
+    </a>
+  );
+}
+
+/** Numbered steps — each with an h3 title and a body. */
+function Steps({ items }: { items: { title: ReactNode; body: ReactNode }[] }) {
+  return (
+    <ol className="flex max-w-4xl flex-col gap-XL">
+      {items.map((s, i) => (
+        <li key={i} className="grid grid-cols-[2rem_minmax(0,1fr)] gap-M">
+          <span
+            aria-hidden
+            className="flex size-8 items-center justify-center rounded-circular bg-brand-background-2 text-body1 font-semibold text-brand-foreground-2"
+          >
+            {i + 1}
+          </span>
+          <div className="flex min-w-0 flex-col gap-S pt-XS">
+            <h3 className="text-subtitle2 font-semibold text-foreground-1">{s.title}</h3>
+            {s.body}
+          </div>
+        </li>
+      ))}
+    </ol>
+  );
 }
 
 function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
@@ -40,106 +92,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
   );
 }
 
-const INSTALL = `# Runtime dependencies
-npm install @fluentui/react-icons class-variance-authority clsx tailwind-merge \\
-  cmdk react-day-picker react-resizable-panels \\
-  @radix-ui/react-accordion @radix-ui/react-avatar @radix-ui/react-checkbox \\
-  @radix-ui/react-collapsible @radix-ui/react-context-menu @radix-ui/react-dialog \\
-  @radix-ui/react-direction @radix-ui/react-dropdown-menu @radix-ui/react-hover-card \\
-  @radix-ui/react-menubar @radix-ui/react-popover @radix-ui/react-radio-group \\
-  @radix-ui/react-scroll-area @radix-ui/react-select @radix-ui/react-slider \\
-  @radix-ui/react-slot @radix-ui/react-switch @radix-ui/react-tabs @radix-ui/react-toast \\
-  @radix-ui/react-toggle @radix-ui/react-toggle-group @radix-ui/react-tooltip
-
-# Build tools
-npm install -D tailwindcss @tailwindcss/vite`;
-
-const TREE = `src/
-  styles/tokens.css        # Global + Alias tokens, brands, themes — copy the whole file
-  index.css                # @import tailwindcss + tokens, disables default scales, @theme bridge
-  lib/cn.ts                # cn() = clsx + tailwind-merge taught the Yugen scales
-  components/ui/
-    index.ts               # barrel — exports by group
-    YugenProvider/YugenProvider.tsx
-    Button/Button.tsx
-    Field/Field.tsx
-    ...                    # only copy the folders you use`;
-
-const VITE = `// vite.config.ts
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
-import path from "node:path";
-
-export default defineConfig({
-  plugins: [react(), tailwindcss()],
-  resolve: {
-    alias: { "@": path.resolve(__dirname, "./src") },
-  },
-});`;
-
-const TSCONFIG = `// tsconfig.app.json (or tsconfig.json)
-{
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": { "@/*": ["src/*"] }
-  }
-}`;
-
-const MAIN = `// src/main.tsx
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import App from "./App";
-import "./index.css";
-
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-);`;
-
-const APP = `// src/App.tsx
-import * as React from "react";
-import { YugenProvider, type YugenTheme } from "@/components/ui";
-
-const STORAGE_KEY = "yugen-ui-theme";
-
-function initialTheme(): YugenTheme {
-  // The script in index.html already set data-theme before React ran — read it back to match.
-  return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
-}
-
-export default function App() {
-  const [theme, setTheme] = React.useState<YugenTheme>(initialTheme);
-
-  React.useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, theme);
-    } catch {
-      /* storage blocked */
-    }
-  }, [theme]);
-
-  return (
-    <YugenProvider applyToDocument withToaster theme={theme} brand="sakura" dir="ltr">
-      <AppShell onThemeChange={setTheme} />
-    </YugenProvider>
-  );
-}`;
-
-const HTML = `<!-- index.html — place BEFORE the app script -->
-<head>
-  <script>
-    (function () {
-      var t;
-      try { t = localStorage.getItem("yugen-ui-theme"); } catch (e) {}
-      if (t !== "light" && t !== "dark") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-      document.documentElement.setAttribute("data-theme", t);
-    })();
-  </script>
-</head>`;
-
-const FIRST = `import { Button, Field, Input, toast } from "@/components/ui";
+const FIRST = `import { Button, Field, Input, toast } from "yugen-ui";
 
 export function NewsletterForm() {
   return (
@@ -179,102 +132,179 @@ function NewsletterForm() {
   );
 }
 
+const PERSIST = `// src/App.tsx — remember the user's theme
+import * as React from "react";
+import { YugenProvider, type YugenTheme } from "yugen-ui";
+
+const STORAGE_KEY = "yugen-ui-theme";
+
+// The script in index.html already set data-theme before React ran — read it back to match.
+const initialTheme = (): YugenTheme =>
+  document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+
+export default function App() {
+  const [theme, setTheme] = React.useState(initialTheme);
+
+  React.useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, theme);
+    } catch {
+      /* storage blocked */
+    }
+  }, [theme]);
+
+  return (
+    <YugenProvider applyToDocument withToaster theme={theme}>
+      <AppShell onThemeChange={setTheme} />
+    </YugenProvider>
+  );
+}`;
+
+const HTML = `<!-- index.html — place BEFORE the app script -->
+<script>
+  (function () {
+    var t;
+    try { t = localStorage.getItem("yugen-ui-theme"); } catch (e) {}
+    if (t !== "light" && t !== "dark") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+</script>`;
+
 export default function Page() {
   return (
     <>
-      <DocSection id="requirements" title="Requirements">
-        <SimpleTable
-          head={["Technology", "Version", "Notes"]}
-          rows={[
-            ["React", "18.3+", "React 19 compatible. Components use forwardRef, useId and useSyncExternalStore."],
-            ["TypeScript", "5.x", "strict recommended. Every prop is typed; no separate @types package needed."],
-            ["Tailwind CSS", "4.x", <>CSS-first configuration (<C>@theme</C>, <C>@utility</C>), no tailwind.config.js. Tailwind 3 is not supported.</>],
-            ["Bundler", "Vite 6 or Next.js 14+", <>Vite uses <C>@tailwindcss/vite</C>; Next.js uses <C>@tailwindcss/postcss</C> (see the SSR & Next.js page).</>],
-            ["Node.js", "18+", "Required by Vite 6 and Tailwind 4."],
+      <DocSection
+        id="template"
+        title="Fastest: one command"
+        description="Downloads a template, installs dependencies and starts the dev server — nothing else to configure."
+      >
+        <div className="flex flex-col gap-L">
+          <CodeBlock code={TEMPLATE_COMMAND} />
+          <P>
+            That creates the starter: persisted theme, toast, an <C>@/</C> alias, SEO basics and a welcome page to delete once you start
+            building. Need more? Swap <C>vite-starter</C> for <C>vite-saas</C> (8-page SaaS app), <C>vite-blog</C> (Markdown blog),{" "}
+            <C>vite-dashboard</C> or <C>vite-ai-chat</C> — preview them all on the Templates page. Nothing to install? Open it on
+            StackBlitz.
+          </P>
+          <div className="flex flex-wrap gap-S">
+            <Button asChild appearance="primary" icon={<Rocket16Regular />}>
+              <a href="#/templates">Browse templates</a>
+            </Button>
+            <Button asChild icon={<Open16Regular />}>
+              <a href={templateStackBlitzUrl("vite-starter")} target="_blank" rel="noreferrer">
+                Open in StackBlitz
+              </a>
+            </Button>
+          </div>
+        </div>
+      </DocSection>
+
+      <DocSection id="existing" title="Add to an existing project" description="React 18+ and Tailwind CSS v4 — three steps, no aliases or bundler config.">
+        <Steps
+          items={[
+            {
+              title: "Install the package",
+              body: (
+                <>
+                  <PackageManagerTabs packages="yugen-ui" />
+                  <P>Radix primitives, Fluent icons and helpers are all dependencies of the package — nothing else to install.</P>
+                </>
+              ),
+            },
+            {
+              title: "Add the theme to your CSS",
+              body: (
+                <>
+                  <CodeBlock code={CSS_TAILWIND} />
+                  <P>
+                    Not using Tailwind? Skip that and import the precompiled stylesheet (preflight + tokens + every utility the components use):
+                  </P>
+                  <CodeBlock code={CSS_PRECOMPILED} />
+                </>
+              ),
+            },
+            {
+              title: "Wrap your app in YugenProvider",
+              body: (
+                <>
+                  <Tabs defaultValue="vite" className="flex flex-col gap-S">
+                    <TabsList aria-label="Framework">
+                      <TabsTrigger value="vite">Vite</TabsTrigger>
+                      <TabsTrigger value="next">Next.js</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="vite">
+                      <CodeBlock code={PROVIDER_VITE} />
+                    </TabsContent>
+                    <TabsContent value="next">
+                      <CodeBlock code={PROVIDER_NEXT} />
+                    </TabsContent>
+                  </Tabs>
+                  <P>
+                    <C>applyToDocument</C> writes the theme to <C>{"<html>"}</C> so portalled Dialog, Menu and Tooltip match;{" "}
+                    <C>withToaster</C> lets you call <C>toast()</C> anywhere. Done — try your first component below.
+                  </P>
+                </>
+              ),
+            },
           ]}
         />
       </DocSection>
 
       <DocSection
-        id="install"
-        title="Install dependencies"
-        description="The list below covers the whole library. If you only copy a few components, you only need the Radix primitives those files import."
+        id="shadcn"
+        title="Want to own the source?"
+        description="The shadcn CLI copies components into your project so you can edit every line — two commands; the CLI handles components.json, the theme and npm packages."
       >
         <div className="flex flex-col gap-L">
-          <CodeBlock code={INSTALL} />
+          <PackageManagerTabs packages={SHADCN_INIT} command="dlx" />
+          <PackageManagerTabs packages={SHADCN_ADD} command="dlx" />
           <P>
-            <C>@radix-ui/react-direction</C> is required because <C>YugenProvider</C> wraps <C>DirectionProvider</C> for RTL text;{" "}
-            <C>@radix-ui/react-slot</C> provides <C>asChild</C> for Button, Link, Breadcrumb and Nav.
+            Next.js projects use <C>init-next.json</C>. Details, output and updating are on{" "}
+            <A href="#/concepts/shadcn-registry">Install with the shadcn CLI</A>.
           </P>
         </div>
       </DocSection>
 
-      <DocSection id="copy" title="Copy the source" description="With copy-paste, the source lives in your project — edit it however you like.">
-        <div className="flex flex-col gap-L">
-          <CodeBlock code={TREE} />
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
-            <li>
-              <C>tokens.css</C> and <C>index.css</C> go together: <C>index.css</C> disables Tailwind's default palette and maps the Fluent
-              tokens to utilities (<C>bg-background-1</C>, <C>p-M</C>, <C>text-body1</C>…).
-            </li>
-            <li>
-              Some components reuse others: <C>Dropdown</C> needs <C>Popover</C> + <C>Select</C>, <C>SplitButton</C> needs <C>Button</C> +{" "}
-              <C>Menu</C>, <C>YugenProvider</C> needs <C>Tooltip</C> + <C>Toast</C>. Check the imports at the top of each file to see what to
-              copy.
-            </li>
-            <li>
-              If you rename folders, update the <C>@/</C> alias or the matching import paths.
-            </li>
-          </ul>
-        </div>
-      </DocSection>
-
-      <DocSection id="config" title="Vite & the @/ alias" description="Every component file imports through the @/ alias — declare it in both Vite and TypeScript.">
-        <div className="flex flex-col gap-L">
-          <CodeBlock code={VITE} />
-          <CodeBlock code={TSCONFIG} />
-          <CodeBlock code={MAIN} />
-        </div>
-      </DocSection>
-
-      <DocSection
-        id="provider"
-        title="YugenProvider & a no-flash theme"
-        description="Wrap the whole app once. applyToDocument writes data-theme / data-brand / dir on <html> so portals (Dialog, Menu, Tooltip) get the right theme too."
-      >
-        <div className="flex flex-col gap-L">
-          <CodeBlock code={APP} />
-          <P>
-            <C>withToaster</C> mounts a <C>{"<Toaster />"}</C> so you can call <C>toast()</C> from anywhere; <C>TooltipProvider</C> is mounted
-            by default (<C>withTooltipProvider</C>). Every prop is covered on the{" "}
-            <a className="text-link underline hover:text-link-hover" href="#/concepts/theming">
-              Theming
-            </a>{" "}
-            page.
-          </P>
-          <P>
-            Because <C>YugenProvider</C> writes attributes in <C>useEffect</C> (after the first paint), add a small script to{" "}
-            <C>{"<head>"}</C> that sets the theme before the page shows — avoiding a white flash when the user picked the dark theme:
-          </P>
-          <CodeBlock code={HTML} />
-          <MessageBar intent="warning" title="Use the same localStorage key." className="max-w-3xl">
-            The script and the app must read / write the same key (for example <C>yugen-ui-theme</C>) with the same set of values, or the
-            theme will jump once React runs.
-          </MessageBar>
-        </div>
-      </DocSection>
-
-      <DocSection
-        id="first-component"
-        title="Your first component"
-        description="Field wires the label, hint and aria-* attributes to the Input; toast() shows brief feedback after submitting."
-      >
+      <DocSection id="first-component" title="Your first component" description="Field wires the label, hint and aria-* to the Input; toast() shows brief feedback after submitting.">
         <div className="flex flex-col gap-L">
           <div className="flex flex-wrap items-center gap-M rounded-2xlarge border border-stroke-2 bg-background-1 p-XXL">
             <NewsletterForm />
           </div>
           <CodeBlock code={FIRST} />
-          <P>Next steps:</P>
+        </div>
+      </DocSection>
+
+      <DocSection
+        id="persist-theme"
+        title="Remember the theme, no flash (optional)"
+        description="Templates already do this. Doing it yourself takes two pieces: state that stores the choice and a tiny script that sets the theme before the page paints."
+      >
+        <div className="flex flex-col gap-L">
+          <CodeBlock code={PERSIST} />
+          <P>
+            <C>YugenProvider</C> writes attributes in <C>useEffect</C> (after the first paint), so add a script to <C>{"<head>"}</C> to avoid
+            a white flash for users who picked the dark theme. For Next.js, see <A href="#/concepts/ssr">SSR & Next.js</A>.
+          </P>
+          <CodeBlock code={HTML} />
+          <MessageBar intent="warning" title="Use the same localStorage key." className="max-w-3xl">
+            The script and the app must read / write the same key (for example <C>yugen-ui-theme</C>) and the same set of values, or the
+            theme jumps once React runs.
+          </MessageBar>
+        </div>
+      </DocSection>
+
+      <DocSection id="requirements" title="Requirements">
+        <div className="flex flex-col gap-L">
+          <SimpleTable
+            head={["Technology", "Version", "Notes"]}
+            rows={[
+              ["React", "18.3+", "Compatible with React 19."],
+              ["Tailwind CSS", "4.x", <>Optional when using <C>yugen-ui/styles.css</C>. Tailwind 3 is not supported.</>],
+              ["Bundler", "Vite 6, Next.js 14+", <>Vite uses <C>@tailwindcss/vite</C>; Next.js uses <C>@tailwindcss/postcss</C>.</>],
+              ["TypeScript", "5.x", "Optional — types ship with the package."],
+              ["Node.js", "18+", "Required by Vite 6 and Tailwind 4."],
+            ]}
+          />
           <div className="flex flex-wrap gap-S">
             <Button asChild>
               <a href="#/concepts/styling">Styling</a>
