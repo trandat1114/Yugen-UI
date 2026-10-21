@@ -5,7 +5,7 @@ name: Docs
 
 on:
   push:
-    branches: [main, next] # push vào next cũng build lại để cập nhật /next/
+    branches: [main, next] # push vào next → job redispatch chạy lại trên main để cập nhật /next/
   workflow_dispatch:
 
 permissions:
@@ -18,7 +18,19 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Environment github-pages chỉ cho main deploy → push vào next chỉ kích hoạt lại workflow trên main để cập nhật /next/.
+  redispatch:
+    if: github.ref == 'refs/heads/next'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - run: gh workflow run pages.yml --ref main -R ${{ github.repository }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+
   build:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

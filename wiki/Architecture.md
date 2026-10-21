@@ -14,7 +14,7 @@ src/
     concepts/, block-library/      trang khái niệm, block
     i18n/                          VI / EN
 scripts/                           build CSS, registry shadcn, các bước check
-templates/                         starter template sinh từ block (sync-templates)
+templates/                         starter template sinh từ block + src/docs/template-library (sync-templates)
 wiki/                              nguồn của GitHub Wiki này
 e2e/                               Playwright (a11y, visual, touch)
 ```

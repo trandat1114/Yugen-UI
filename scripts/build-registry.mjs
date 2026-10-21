@@ -2,14 +2,19 @@
 /**
  * Sinh registry tương thích shadcn CLI vào public/r/ (site docs phục vụ tại <docs>/r/<item>.json):
  *
+ *   npx shadcn@latest init https://trandat1114.github.io/Yugen-UI/r/init.json      # một lần / dự án
  *   npx shadcn@latest add https://trandat1114.github.io/Yugen-UI/r/button.json
  *
  *   public/r/registry.json   — danh mục (định dạng https://ui.shadcn.com/schema/registry.json, không kèm nội dung file)
  *   public/r/<item>.json     — từng item (https://ui.shadcn.com/schema/registry-item.json, kèm nội dung file)
- *     theme                  — registry:file  → styles/yugen.css (token + @theme + @utility + keyframes + base)
+ *     init / init-next       — registry:style (extends none) → components.json + theme + cn + YugenProvider, không kéo style shadcn
+ *     theme                  — registry:file  → src/styles/yugen.css + tự chèn @import vào file CSS chính (Vite, TanStack Start)
+ *     theme-next             — registry:file  → app/yugen.css cạnh app/globals.css (Next.js App Router, React Router)
  *     cn                     — registry:lib   → lib/cn.ts
  *     <component>            — registry:ui    → components/ui/<Name>/*.tsx (giữ nguyên thư mục để import tương đối chạy)
  *     all                    — mọi component một lần
+ *
+ * Component KHÔNG phụ thuộc theme: đường dẫn @import khác nhau giữa Vite và Next.js nên theme đi cùng init (một lần / dự án).
  *
  * Phụ thuộc npm và registryDependencies được suy ra từ import của từng file — thêm component mới không cần sửa script.
  *
@@ -109,17 +114,27 @@ function themeCss() {
 const SCHEMA_ITEM = "https://ui.shadcn.com/schema/registry-item.json";
 const items = [];
 
-items.push({
-  name: "theme",
-  type: "registry:file",
-  title: "Yugen UI theme",
-  description:
-    "Design tokens (light, dark, high contrast; Sakura, Web and Teams brands), the Tailwind v4 @theme bridge, utilities and keyframes. Import it after tailwindcss.",
-  dependencies: [],
-  registryDependencies: [],
-  files: [{ path: "registry/yugen/styles/yugen.css", type: "registry:file", target: "styles/yugen.css", content: themeCss() }],
-  docs: 'Add `@import "./styles/yugen.css";` (path relative to your CSS file) right after `@import "tailwindcss";`. It disables Tailwind\'s default colour, radius, shadow and font-size scales — use the Yugen utilities instead.',
-});
+// Hai biến thể theme: file CSS đặt sao cho @import tương đối luôn đúng. CLI tự thêm "src/" khi dự án có thư mục src,
+// nên "app/yugen.css" nằm cạnh app/globals.css lẫn src/app/globals.css.
+const THEMES = [
+  { name: "theme", target: "styles/yugen.css", importPath: "./styles/yugen.css", layout: "Vite / TanStack Start (src/index.css)" },
+  { name: "theme-next", target: "app/yugen.css", importPath: "./yugen.css", layout: "Next.js App Router / React Router (app/globals.css)" },
+];
+const theme = themeCss();
+for (const t of THEMES) {
+  items.push({
+    name: t.name,
+    type: "registry:file",
+    title: `Yugen UI theme — ${t.layout}`,
+    description:
+      "Design tokens (light, dark, high contrast; Sakura, Web and Teams brands), the Tailwind v4 @theme bridge, utilities and keyframes. Imported into your main CSS file automatically.",
+    dependencies: [],
+    registryDependencies: [],
+    files: [{ path: `registry/yugen/${t.target}`, type: "registry:file", target: t.target, content: theme }],
+    css: { [`@import "${t.importPath}"`]: {} },
+    docs: "The Yugen theme is now imported into your CSS. It replaces Tailwind's default colour, radius, shadow and font-size scales — use Yugen utilities (bg-background-1, p-M, rounded-medium, text-body1) instead.",
+  });
+}
 
 const libFiles = new Map(); // tên file trong src/lib → item name
 function libItem(file) {
@@ -156,7 +171,7 @@ for (const folder of folders) {
   if (files.length === 0) continue;
 
   const npm = new Set();
-  const regDeps = new Set([itemUrl("theme")]);
+  const regDeps = new Set();
   for (const file of files) {
     if (!/\.tsx?$/.test(file)) continue;
     const a = analyse(path.join(dir, file), folder);
@@ -187,11 +202,29 @@ items.push({
   name: "all",
   type: "registry:item",
   title: "All Yugen UI components",
-  description: "Every Yugen UI component, the theme and the cn() helper.",
+  description: "Every Yugen UI component and the cn() helper. Run init first for the theme.",
   dependencies: [],
   registryDependencies: componentNames.map(itemUrl),
   files: [],
 });
+
+// ---------- init: `npx shadcn@latest init <url>/r/init.json` — tạo components.json nếu thiếu, không cài style mặc định của shadcn ----------
+for (const [name, themeName, framework] of [
+  ["init", "theme", "Vite, TanStack Start"],
+  ["init-next", "theme-next", "Next.js App Router, React Router"],
+]) {
+  items.push({
+    name,
+    type: "registry:style",
+    extends: "none",
+    title: `Yugen UI — init (${framework})`,
+    description: `Set up Yugen UI in a ${framework} project: theme, cn() and YugenProvider, without the default shadcn/ui style.`,
+    dependencies: [],
+    registryDependencies: [itemUrl(themeName), itemUrl(libItem("cn")), itemUrl("yugen-provider")],
+    files: [],
+    docs: `Yugen UI is ready. Wrap your app once — <YugenProvider applyToDocument withToaster> from "@/components/ui/YugenProvider/YugenProvider" — then add components: npx shadcn@latest add ${itemUrl("button")}`,
+  });
+}
 
 // ---------- Ghi file ----------
 fs.rmSync(outDir, { recursive: true, force: true });
