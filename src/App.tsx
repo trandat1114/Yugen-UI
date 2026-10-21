@@ -13,6 +13,7 @@ import { AuthorLink } from "@/docs/AuthorLink";
 import { CONCEPT_EN_PAGES } from "@/docs/concepts";
 import { LocaleProvider, useLocale } from "@/docs/i18n";
 import { FallbackNotice } from "@/docs/i18n/FallbackNotice";
+import { DocumentMeta } from "@/docs/seo";
 import type { Route } from "@/docs/router";
 
 // Trang ít dùng / nặng nạp lười theo route.
@@ -74,6 +75,7 @@ export default function App() {
   return (
     <YugenProvider applyToDocument withToaster theme={theme} brand={brand} dir={dir}>
       <LocaleProvider locale={lang}>
+        <DocumentMeta route={route} />
         <PageProgress />
         <Sidebar route={route} open={navOpen} onClose={() => setNavOpen(false)} />
         <div className="min-h-dvh lg:ps-80">
