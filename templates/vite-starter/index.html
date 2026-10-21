@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="vi" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#c2347a" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&display=swap&text=%E3%81%84%E3%81%86%E3%81%8B%E3%81%92%E3%81%93%E3%81%97%E3%81%98%E3%81%9D%E3%81%A4%E3%81%A6%E3%81%AB%E3%81%AF%E3%81%BE%E3%81%BF%E3%82%82%E3%82%86%E3%82%88%E3%82%8A%E3%82%8B%E3%82%93%E4%B8%80%E4%B8%89%E4%BA%8C%E4%BA%BA%E5%84%AA%E5%8C%BA%E5%93%81%E5%9E%8B%E5%B9%BD%E5%BD%A2%E6%95%B0%E6%A1%9C%E6%BA%90%E7%8E%84%E7%94%BB%E7%AA%93%E8%89%B2%E8%A9%A6%E9%80%B2%E9%83%A8%E9%9D%99" />
+    <title>Yugen Starter</title>
+    <meta name="description" content="Điểm khởi đầu cho ứng dụng React + Tailwind CSS v4 với Yugen UI: theme được ghi nhớ, toast, alias @/ và trang chào hoa anh đào." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Yugen Starter" />
+    <meta property="og:description" content="Điểm khởi đầu cho ứng dụng React + Tailwind CSS v4 với Yugen UI: theme được ghi nhớ, toast, alias @/ và trang chào hoa anh đào." />
+    <script>
+      // Áp theme / brand đã lưu trước khi React render để không nháy nền (cùng khoá với App.tsx).
+      (function () {
+        var a = {};
+        try { a = JSON.parse(localStorage.getItem("yugen-starter-appearance") || "{}"); } catch (e) {}
+        var t = a.theme === "light" || a.theme === "dark" || a.theme === "high-contrast" ? a.theme
+          : matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", t);
+        document.documentElement.setAttribute("data-brand", a.brand === "web" || a.brand === "teams" ? a.brand : "sakura");
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
