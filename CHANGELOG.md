@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.3
+
+### Patch Changes
+
+- b044bcb: Docs site: the create-project commands now work in Windows PowerShell. They use `npx create-yugen-ui@latest my-app --template <name>`, because PowerShell drops the `--` in `npm create yugen-ui@latest my-app -- --template <name>` and npm then reads `--template` as its own option. `cd my-app` and `npm run dev` go on separate lines instead of being chained with `&&`, which Windows PowerShell 5.1 rejects. The npm package is unchanged.
+
 ## 0.8.2
 
 ### Patch Changes
@@ -144,7 +150,8 @@ with a user-facing change adds one with `npx changeset`, and `npx changeset vers
 - 11 core components.
 - Documentation site.
 
-[Unreleased]: https://github.com/trandat1114/Yugen-UI/compare/v0.8.2...HEAD
+[Unreleased]: https://github.com/trandat1114/Yugen-UI/compare/v0.8.3...HEAD
+[0.8.3]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.8.3
 [0.8.2]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.8.2
 [0.8.1]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.8.1
 [0.8.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.8.0
