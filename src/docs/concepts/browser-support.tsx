@@ -132,6 +132,27 @@ export default function Page() {
           />
         </div>
       </DocSection>
+
+      <DocSection
+        id="engines"
+        title="Kiểm thử trên từng engine"
+        description="Mọi PR chạy E2E trên Chromium. Firefox và WebKit chạy hằng tuần và trên PR phát hành vào main."
+      >
+        <div className="flex flex-col gap-4">
+          <p className="max-w-3xl text-body1 text-foreground-2">
+            Trên Firefox và WebKit (Safari desktop, iPhone) chạy các test kéo chuột, Carousel, bàn phím, luồng chính của docs và bố cục
+            mobile. Kiểm tra a11y (axe) chỉ chạy trên Chromium vì kết quả không phụ thuộc engine. Khác biệt đã biết:
+          </p>
+          <SimpleTable
+            head={["Engine", "Khác biệt", "Ảnh hưởng"]}
+            rows={[
+              ["Safari / WebKit", "Click chuột không đặt focus vào nút (hành vi mặc định của macOS).", "Không đổi hành vi component. Khi kiểm thử focus, hãy thao tác bằng bàn phím."],
+              ["Firefox, WebKit", <>Playwright không giả lập được chạm-kéo (<C>Input.dispatchTouchEvent</C> chỉ có trên Chromium).</>, "Kéo Sheet và vuốt Carousel chỉ được kiểm thử tự động trên Chromium; trên iOS cần thử bằng tay."],
+              ["Firefox, WebKit", "Không cho trang đọc clipboard nếu người dùng chưa cho phép.", <>Nút Copy chỉ ghi (<C>navigator.clipboard.writeText</C> trong sự kiện click) nên chạy trên mọi engine.</>],
+            ]}
+          />
+        </div>
+      </DocSection>
     </>
   );
 }

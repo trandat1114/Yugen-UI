@@ -8,7 +8,7 @@ import { describe, expect, it } from "vitest";
  * Tag của image phải đúng phiên bản @playwright/test trong lockfile, nếu không Playwright báo thiếu trình duyệt.
  */
 const root = path.resolve(__dirname, "../..");
-const WORKFLOWS = [".github/workflows/ci.yml", ".github/workflows/visual.yml"];
+const WORKFLOWS = [".github/workflows/ci.yml", ".github/workflows/visual.yml", ".github/workflows/engines.yml"];
 const IMAGE = /mcr\.microsoft\.com\/playwright:v(\d+\.\d+\.\d+)-\w+/g;
 
 describe("Playwright image trong CI", () => {

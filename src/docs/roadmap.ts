@@ -45,7 +45,7 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
         { status: "planned", issue: 44, vi: "Theme Designer: bo góc, mật độ, font, màu trung tính, bóng, chuyển động", en: "Theme Designer: radius, density, typography, neutrals, elevation, motion" },
         { status: "planned", issue: 45, vi: "Trang Motion: hướng dẫn theo component, playground, xem trước giảm chuyển động", en: "Motion page: guidance per component, playground, reduced-motion preview" },
         { status: "planned", issue: 46, vi: "Sidebar docs kéo được độ rộng, thu gọn về dạng icon", en: "Resizable docs sidebar that collapses to icons" },
-        { status: "planned", issue: 40, vi: "Kiểm thử trên Firefox và WebKit theo lịch", en: "Scheduled Firefox and WebKit test runs" },
+        { status: "done", issue: 40, vi: "Kiểm thử trên Firefox và WebKit theo lịch", en: "Scheduled Firefox and WebKit test runs" },
       ],
     },
   ],

@@ -1,0 +1,106 @@
+name: Browser engines
+
+# E2E trên Firefox và WebKit (#40): interaction (kéo chuột, carousel, bàn phím, luồng docs) trên Firefox + Safari desktop,
+# touch trên WebKit (iPhone). Không chạy a11y: kết quả axe không phụ thuộc engine. Không chạy trên mọi PR để check giữ
+# nhanh: hằng tuần, trên PR vào main (bản phát hành), trên PR vào next có đổi test E2E / cấu hình Playwright, và khi gọi
+# tay. Bản chạy theo lịch hỏng → mở issue (hoặc bình luận vào issue đang mở); xanh lại → đóng issue đó.
+
+on:
+  schedule:
+    - cron: "0 4 * * 1"
+  pull_request:
+    branches: [main, next]
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: engines-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  scope:
+    name: Scope
+    if: github.event.pull_request.draft != true
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      run: ${{ steps.check.outputs.run }}
+    steps:
+      - id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BASE: ${{ github.base_ref }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" != "pull_request" ] || [ "$BASE" = "main" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          elif gh pr diff "$PR" -R "$GITHUB_REPOSITORY" --name-only | grep -qE '^(e2e/|playwright\.config\.ts$|\.github/workflows/engines\.yml$)'; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  engines:
+    name: E2E (Firefox + WebKit)
+    needs: scope
+    if: needs.scope.outputs.run == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    # Image có sẵn cả Firefox và WebKit. Tag phải khớp @playwright/test trong package-lock.json (src/test/playwright-image.test.ts).
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble
+      options: --user 1001
+    env:
+      CI: true
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run test:engines
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: engines-report
+          path: playwright-report/
+          retention-days: 14
+          if-no-files-found: ignore
+
+  report:
+    name: Report scheduled result
+    needs: engines
+    if: ${{ always() && github.event_name == 'schedule' }}
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Open, update or close the tracking issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RESULT: ${{ needs.engines.result }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title="E2E on Firefox / WebKit is failing"
+          num=$(gh issue list -R "$GITHUB_REPOSITORY" --state open --search "\"$title\" in:title" --json number,title \
+            -q ".[] | select(.title == \"$title\") | .number" | head -n 1)
+          if [ "$RESULT" = "failure" ]; then
+            if [ -n "$num" ]; then
+              gh issue comment "$num" -R "$GITHUB_REPOSITORY" --body "Still failing: $RUN_URL"
+            else
+              gh issue create -R "$GITHUB_REPOSITORY" --title "$title" --label bug --label "area: ci & tests" --body \
+                "The weekly Browser engines run failed: $RUN_URL. Download **engines-report** from the run for traces. Run locally with \`npx playwright install firefox webkit\` then \`npm run test:engines\`."
+            fi
+          elif [ "$RESULT" = "success" ] && [ -n "$num" ]; then
+            gh issue close "$num" -R "$GITHUB_REPOSITORY" --comment "Green again: $RUN_URL"
+          fi
