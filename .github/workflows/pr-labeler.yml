@@ -13,6 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Chỉ đọc danh sách file thay đổi, không checkout / chạy code của PR → an toàn với pull_request_target.
-      - uses: actions/labeler@v5
+      - uses: actions/labeler@v7
         with:
           sync-labels: false
