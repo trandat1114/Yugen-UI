@@ -70,7 +70,9 @@ if (typeof window !== "undefined") {
     return ctx as unknown as CanvasRenderingContext2D;
   } as unknown as typeof HTMLCanvasElement.prototype.getContext;
 
-  const { cleanup } = await import("@testing-library/react");
+  const { cleanup, configure } = await import("@testing-library/react");
+  // findBy* / waitFor mặc định chờ 1 s — không đủ khi cả bộ test chạy song song trên máy bận (Loading, Questionnaire chập chờn).
+  configure({ asyncUtilTimeout: 3000 });
   afterEach(() => {
     cleanup();
     resetMediaQueries();

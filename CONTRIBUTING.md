@@ -12,7 +12,7 @@ khai, xem [SECURITY.md](./SECURITY.md).
 
 ### Cài đặt
 
-Yêu cầu Node.js **20+** và npm.
+Yêu cầu Node.js **24 LTS** (hoặc 22.22+) và npm.
 
 ```bash
 npm install
@@ -189,7 +189,7 @@ các bước ở wiki › *Release Process* › CLI. Trước khi tag: `npm run 
 
 ### Setup
 
-Requires Node.js **20+** and npm. Run `npm install`, then `npm run dev` (docs site at http://localhost:5173).
+Requires Node.js **24 LTS** (or 22.22+) and npm. Run `npm install`, then `npm run dev` (docs site at http://localhost:5173).
 Scripts: `typecheck`, `lint:classes` (Tailwind canonical classes; `node scripts/canonical-classes.mjs --fix`
 repairs them), `build:lib` (library → `dist/`), `build:docs` (docs → `dist-docs/`), `build` (both), `pack:check`,
 `test`, `test:e2e`, `test:visual`, `size`, `changeset`, `check:release`.
