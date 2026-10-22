@@ -127,6 +127,19 @@ docs(theming): ví dụ brand tự tạo
 Loại: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`. Thay đổi phá vỡ API: thêm `!`
 (`feat(field)!: …`) và mô tả trong phần thân commit.
 
+### Giữ ít PR
+
+Mỗi lần push vào một PR chạy lại toàn bộ CI (~5 phút, cộng Visual), nên ít PR và ít lần push thì nhanh hơn cho mọi người.
+
+- **Một PR cho một issue.** Các sửa nhỏ cùng khu vực (chữ, docs của cùng một trang) gộp chung một PR, không mở PR cho
+  từng chỗ. Tránh PR xếp chồng (PR B dựng trên nhánh của PR A); nếu bắt buộc, ghi rõ thứ tự merge trong mô tả.
+- **Mở ở dạng Draft khi còn đang làm.** CI không chạy với PR draft; bấm *Ready for review* khi xong để chạy một lần.
+- **Kiểm tra trên máy trước khi push** (typecheck, `lint:classes`, test liên quan), gom commit rồi push một lần.
+- **PR chỉ đổi Markdown / `wiki/`** không chạy CI.
+- **Dependabot** (`.github/dependabot.yml`): mọi bản cập nhật vào `next`, mỗi tuần tối đa một PR minor + patch và một PR
+  major; CLI và GitHub Actions mỗi tháng một PR; cooldown 7 ngày. Bản major cần sửa code được bỏ qua trong cấu hình và
+  theo dõi ở issue migration (#91), không để PR đỏ nằm chờ.
+
 ### Changeset
 
 Từ 0.6.0, `CHANGELOG.md` do [Changesets](https://github.com/changesets/changesets) sinh — **không sửa tay**. PR có
@@ -266,6 +279,16 @@ Use [Conventional Commits](https://www.conventionalcommits.org/) (`feat(scope): 
 `build:docs` pass (plus `npm run test:e2e` for new UI or interactions, and `npm run size` within budget); checked in
 light / dark / high contrast, all brands and RTL; registry docs added; a changeset added for user-facing changes.
 Fill in the pull-request template.
+
+**Keep PRs few.** Every push to a PR reruns the whole CI (~5 min, plus Visual).
+- One PR per issue; small changes in the same area go together. Avoid stacked PRs, or state the merge order when they
+  are unavoidable.
+- Open it as a **draft** while you are still working: CI does not run on drafts; click *Ready for review* once.
+- Check locally before pushing (typecheck, `lint:classes`, the related tests), then push once.
+- PRs that only touch Markdown / `wiki/` skip CI.
+- Dependabot (`.github/dependabot.yml`): all updates go to `next`, at most one minor + patch PR and one major PR a week;
+  the CLI and GitHub Actions get one PR a month; 7-day cooldown. Majors that need code changes are ignored in the config
+  and tracked in a migration issue (#91) instead of sitting as red PRs.
 
 ### Changesets
 
