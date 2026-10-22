@@ -12,6 +12,7 @@ export const en: Record<MessageKey, string> = {
   "nav.foundations": "Design language",
   "nav.concepts": "Concepts",
   "nav.labsConcepts": "Yugen Labs concepts",
+  "nav.components": "Components",
   "credit.by": "made by",
   "credit.rules": "Full rules:",
   "footer.links": "Project links",
@@ -42,6 +43,9 @@ export const en: Record<MessageKey, string> = {
   "sidebar.placeholder": "Search components, foundations…",
   "sidebar.closeSearch": "Close search",
   "sidebar.noResults": "No results for “{query}”.",
+  "sidebar.collapse": "Collapse sidebar",
+  "sidebar.expand": "Expand sidebar",
+  "sidebar.resize": "Sidebar width",
 
   // Command palette
   "palette.title": "Search Yugen UI",

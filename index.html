@@ -46,6 +46,12 @@
         root.setAttribute("data-brand", a.brand === "web" || a.brand === "teams" ? a.brand : "sakura");
         root.setAttribute("dir", a.dir === "rtl" ? "rtl" : "ltr");
         root.setAttribute("lang", a.lang === "en" ? "en" : "vi");
+        // Độ rộng / dạng rail của sidebar (cùng key và giới hạn với src/docs/layout/sidebarLayout.ts).
+        var s = {};
+        try { s = JSON.parse(localStorage.getItem("yugen-docs-sidebar") || "{}"); } catch (e) {}
+        var w = typeof s.width === "number" ? Math.min(400, Math.max(240, s.width)) : 320;
+        root.style.setProperty("--docs-sidebar-width", (s.collapsed === true ? 56 : w) + "px");
+        if (s.collapsed === true) root.setAttribute("data-docs-sidebar", "rail");
       })();
     </script>
   </head>

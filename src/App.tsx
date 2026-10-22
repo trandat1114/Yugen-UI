@@ -91,8 +91,8 @@ export default function App() {
       <LocaleProvider locale={lang}>
         <DocumentMeta route={route} />
         <PageProgress />
-        <Sidebar route={route} open={navOpen} onClose={() => setNavOpen(false)} />
-        <div className="min-h-dvh lg:ps-80">
+        <Sidebar route={route} open={navOpen} onClose={() => setNavOpen(false)} onOpenPalette={() => setPaletteOpen(true)} />
+        <div className="min-h-dvh transition-[padding] duration-normal ease-decelerate-mid in-data-docs-resizing:transition-none motion-reduce:transition-none lg:ps-(--docs-sidebar-width)">
           <TopBar
             appearance={{ theme, brand, dir, lang }}
             onChange={update}
