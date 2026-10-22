@@ -1,0 +1,63 @@
+name: Release CLI
+
+# Phát hành CLI `yugen` + `create-yugen-ui` (packages/) — tách khỏi release.yml của yugen-ui (tag v*).
+# Maintainer: tăng version trong packages/cli/package.json (và packages/create-yugen-ui nếu đổi), ghi CHANGELOG,
+# merge vào main rồi đẩy tag `yugen@X.Y.Z`. Gói create-yugen-ui chỉ publish khi version của nó chưa có trên npm.
+
+on:
+  push:
+    tags: ["yugen@*"]
+
+permissions:
+  contents: read
+  id-token: write # npm provenance
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: packages/cli/package-lock.json
+          registry-url: https://registry.npmjs.org
+
+      - name: Check tag matches packages/cli version
+        run: |
+          PKG_VERSION="yugen@$(node -p "require('./packages/cli/package.json').version")"
+          if [ "$PKG_VERSION" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match $PKG_VERSION"
+            exit 1
+          fi
+
+      - run: npm ci --prefix packages/cli
+      - run: npm run typecheck --prefix packages/cli
+      - run: npm test --prefix packages/cli
+
+      - name: Choose dist-tag
+        id: channel
+        run: |
+          VERSION="${GITHUB_REF_NAME#yugen@}"
+          if [[ "$VERSION" == *-* ]]; then echo "dist_tag=next" >> "$GITHUB_OUTPUT"; else echo "dist_tag=latest" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Publish yugen
+        working-directory: packages/cli
+        run: npm publish --provenance --access public --tag "${{ steps.channel.outputs.dist_tag }}"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish create-yugen-ui (if its version is new)
+        working-directory: packages/create-yugen-ui
+        run: |
+          NAME_VERSION="create-yugen-ui@$(node -p "require('./package.json').version")"
+          if npm view "$NAME_VERSION" version >/dev/null 2>&1; then
+            echo "$NAME_VERSION is already published — skipping."
+          else
+            npm publish --provenance --access public --tag "${{ steps.channel.outputs.dist_tag }}"
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

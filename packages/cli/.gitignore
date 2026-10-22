@@ -1,0 +1,4 @@
+node_modules
+dist
+# Sinh bởi scripts/copy-templates.mjs từ templates/ ở gốc repo
+templates

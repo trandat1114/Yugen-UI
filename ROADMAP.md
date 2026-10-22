@@ -59,7 +59,9 @@ Muốn nhận một mục? Mở issue hoặc bình luận vào issue sẵn có t
 - [ ] Nhãn `good first issue` (maintainer, trên GitHub)
 - [x] Starter template `templates/vite-dashboard`, `templates/vite-ai-chat` (sinh từ block — `node scripts/sync-templates.mjs`); mục showcase trên trang Cộng đồng
 - [x] Trang `#/templates` (preview chạy thật, lệnh `npx giget … --install` một dòng, Open in StackBlitz) + template `vite-starter`, `vite-saas`, `vite-blog` (Markdown, SEO lúc build)
-- [ ] Gói `create-yugen-ui` (`npm create yugen-ui@latest`) chọn template tương tác (maintainer publish)
+- [x] CLI `yugen` (`packages/cli`): `create` (template đóng gói sẵn, chọn tương tác), `init` (gói npm / mã nguồn), `add`, `list`, `doctor` — `create-yugen-ui` (`npm create yugen-ui@latest`) gọi `yugen create`
+- [ ] Publish `yugen` + `create-yugen-ui` lên npm (maintainer: đẩy tag `yugen@0.1.0` → `release-cli.yml`)
+- [ ] CLI giai đoạn 2: `yugen diff` / `update` (so mã local với registry), `yugen theme --brand <hex>` (brandRamp), `yugen remove`, codemod bọc `YugenProvider`, `create --ref <branch>` (template từ GitHub), trang docs `#/concepts/cli`
 - [ ] Đang cân nhắc: Figma kit, gói icon Sakura
 
 ## Giai đoạn SEO — docs dễ tìm, template sẵn SEO
