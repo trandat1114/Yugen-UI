@@ -1,0 +1,59 @@
+name: Release CLI
+
+# Phát hành CLI `yugen` + `create-yugen-ui` (packages/) — tách khỏi release.yml của yugen-ui (tag v*).
+# Quy tắc và các bước: wiki › Release Process › CLI. Kiểm tra: packages/cli/scripts/check-release.mjs.
+# Bản ổn định tag trên main (dist-tag latest), prerelease (yugen@X.Y.Z-beta.N) trên next (dist-tag next).
+# create-yugen-ui chỉ publish khi version của nó chưa có trên npm.
+
+on:
+  push:
+    tags: ["yugen@*"]
+
+permissions:
+  contents: read
+  id-token: write # npm provenance
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # cần lịch sử nhánh để kiểm tra tag nằm đúng nhánh
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: packages/cli/package-lock.json
+          registry-url: https://registry.npmjs.org
+
+      - run: npm ci --prefix packages/cli
+
+      - name: Check release rules (tag, version, CHANGELOG, branch) and choose dist-tag
+        id: channel
+        run: echo "dist_tag=$(node packages/cli/scripts/check-release.mjs --tag "$GITHUB_REF_NAME")" >> "$GITHUB_OUTPUT"
+
+      - run: npm run typecheck --prefix packages/cli
+      - run: npm test --prefix packages/cli
+      - run: npm run smoke --prefix packages/cli
+
+      - name: Publish yugen
+        working-directory: packages/cli
+        run: npm publish --provenance --access public --tag "${{ steps.channel.outputs.dist_tag }}"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish create-yugen-ui (if its version is new; stable releases only)
+        if: steps.channel.outputs.dist_tag == 'latest'
+        working-directory: packages/create-yugen-ui
+        run: |
+          NAME_VERSION="create-yugen-ui@$(node -p "require('./package.json').version")"
+          if [ "$(npm view "$NAME_VERSION" version 2>/dev/null)" != "" ]; then
+            echo "$NAME_VERSION is already published — skipping."
+          else
+            npm publish --provenance --access public
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

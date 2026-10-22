@@ -22,6 +22,19 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
       requirements: "Requirements",
     },
   },
+  cli: {
+    title: "The yugen CLI",
+    lead: "A command-line tool to create an app from a template, set up Yugen UI in an existing project, copy component source and check the setup.",
+    toc: {
+      commands: "Commands",
+      create: "Create an app",
+      init: "Set up an existing project",
+      add: "Add components",
+      doctor: "Check the setup",
+      config: "yugen.json and the registry",
+      options: "Common options",
+    },
+  },
   "shadcn-registry": {
     title: "Install with the shadcn CLI",
     lead: "Want to own the source like with shadcn/ui? Two commands: init once (theme, cn(), YugenProvider, components.json and the CSS @import — all automatic), then add the components you need.",

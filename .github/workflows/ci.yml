@@ -59,6 +59,31 @@ jobs:
       - run: npm ci
       - run: npm test
 
+  # CLI `yugen` (packages/cli) — package độc lập, lockfile riêng; template đóng gói từ templates/.
+  cli:
+    name: CLI · Node ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: packages/cli/package-lock.json
+
+      - run: npm ci --prefix packages/cli
+      - run: npm run check:release --prefix packages/cli
+      - run: npm run typecheck --prefix packages/cli
+      - run: npm test --prefix packages/cli
+      # npm pack yugen + create-yugen-ui, cài từ .tgz, tạo app với mọi template.
+      - run: npm run smoke --prefix packages/cli
+
   react-19:
     name: React 19
     runs-on: ubuntu-latest

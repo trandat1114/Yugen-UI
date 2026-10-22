@@ -23,6 +23,8 @@ const check = process.argv.includes("--check");
 const TEMPLATES = [
   {
     dir: "vite-starter",
+    /** Mô tả một dòng (tiếng Anh) cho `yugen create` — ghi vào templates/templates.json. */
+    hint: "Blank app: theme switcher, toast, @/ alias and a cherry-blossom welcome page",
     title: "Yugen Starter",
     description:
       "Điểm khởi đầu cho ứng dụng React + Tailwind CSS v4 với Yugen UI: theme được ghi nhớ, toast, alias @/ và trang chào hoa anh đào.",
@@ -36,6 +38,7 @@ const TEMPLATES = [
   },
   {
     dir: "vite-saas",
+    hint: "SaaS workspace: sidebar, Ctrl K command palette, notifications, 8 pages",
     title: "Sakura Studio · Yugen UI",
     description:
       "Ứng dụng SaaS dựng bằng Yugen UI: sidebar, bảng lệnh Ctrl K, thông báo, theme sáng / tối / tương phản cao và 8 trang mẫu.",
@@ -45,6 +48,7 @@ const TEMPLATES = [
   },
   {
     dir: "vite-blog",
+    hint: "Markdown blog: table of contents, tags, search, build-time SEO",
     title: "Nhật ký Sakura · Yugen UI",
     description: "Blog viết bằng Markdown, dựng bằng Yugen UI: mục lục, thẻ, tìm kiếm, theme tối và SEO sinh sẵn lúc build.",
     app: "blog",
@@ -55,12 +59,14 @@ const TEMPLATES = [
   },
   {
     dir: "vite-dashboard",
+    hint: "Dashboard: KPI cards, charts and recent transactions",
     title: "Yugen UI · Dashboard",
     description: "Dashboard dựng bằng Yugen UI: thẻ KPI, biểu đồ và giao dịch gần đây.",
     blocks: ["02-stats.tsx", "11-analytics.tsx", "06-transactions.tsx"],
   },
   {
     dir: "vite-ai-chat",
+    hint: "AI assistant chat UI",
     title: "Yugen UI · AI chat",
     description: "Trợ lý AI dạng chat dựng bằng Yugen UI.",
     blocks: ["12-ai-assistant.tsx"],
@@ -410,22 +416,26 @@ export default defineConfig({
   };
 }
 
+/** Danh mục cho `yugen create` (packages/cli đóng gói templates/ kèm file này). */
+const manifest = TEMPLATES.map(({ dir, title, hint }) => ({ dir, name: dir.replace(/^vite-/, ""), title, hint }));
+const outputs = [
+  ...TEMPLATES.flatMap((t) => Object.entries(files(t)).map(([rel, content]) => [`${t.dir}/${rel}`, content])),
+  ["templates.json", JSON.stringify(manifest, null, 2) + "\n"],
+];
+
 let drift = 0;
-for (const t of TEMPLATES) {
-  const base = path.join(root, "templates", t.dir);
-  for (const [rel, content] of Object.entries(files(t))) {
-    const file = path.join(base, rel);
-    const same = fs.existsSync(file) && read(file) === content;
-    if (check) {
-      if (!same) {
-        drift++;
-        console.error(`✗ templates/${t.dir}/${rel} lệch — chạy: node scripts/sync-templates.mjs`);
-      }
-      continue;
+for (const [rel, content] of outputs) {
+  const file = path.join(root, "templates", rel);
+  const same = fs.existsSync(file) && read(file) === content;
+  if (check) {
+    if (!same) {
+      drift++;
+      console.error(`✗ templates/${rel} lệch — chạy: node scripts/sync-templates.mjs`);
     }
-    fs.mkdirSync(path.dirname(file), { recursive: true });
-    fs.writeFileSync(file, content);
+    continue;
   }
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, content);
 }
 if (check && drift) process.exit(1);
 console.log(check ? "sync-templates: OK" : `sync-templates: đã ghi ${TEMPLATES.map((t) => `templates/${t.dir}`).join(", ")}`);
