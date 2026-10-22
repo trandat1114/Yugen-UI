@@ -184,7 +184,7 @@ export default function Page() {
             Lệnh trên tạo dự án starter: theme đã ghi nhớ, toast, alias <C>@/</C>, SEO cơ bản và một trang chào để xoá khi bắt đầu viết.
             Cần nhiều hơn? Đổi <C>vite-starter</C> thành <C>vite-saas</C> (ứng dụng SaaS 8 trang), <C>vite-blog</C> (blog Markdown),{" "}
             <C>vite-dashboard</C> hoặc <C>vite-ai-chat</C> — xem trước tất cả ở trang Templates. Không muốn cài gì? Mở thẳng trên
-            StackBlitz.
+            StackBlitz. Muốn chọn template từ danh sách? Dùng <A href="#/concepts/cli">CLI yugen</A>: <C>npx yugen@latest create</C>.
           </P>
           <div className="flex flex-wrap gap-S">
             <Button asChild appearance="primary" icon={<Rocket16Regular />}>

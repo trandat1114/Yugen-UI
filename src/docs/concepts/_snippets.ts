@@ -52,3 +52,33 @@ export const NAMESPACE = `{
     "@yugen": "${REGISTRY_URL}/{name}.json"
   }
 }`;
+
+/* CLI yugen (packages/cli) — trang #/concepts/cli. */
+
+export const CLI_CREATE = "yugen@latest create my-app";
+export const CLI_CREATE_PM = `npm create yugen-ui@latest my-app -- --template saas
+pnpm create yugen-ui my-app --template saas
+yarn create yugen-ui my-app --template saas
+bun create yugen-ui my-app --template saas`;
+export const CLI_INIT = "yugen@latest init";
+export const CLI_INIT_SOURCE = "yugen@latest init --mode source";
+export const CLI_ADD = "yugen@latest add button dialog data-grid";
+export const CLI_DOCTOR = "yugen@latest doctor";
+
+export const CLI_CONFIG = `{
+  "mode": "source",
+  "framework": "vite",
+  "rsc": false,
+  "css": "src/index.css",
+  "paths": { "ui": "src/components/ui", "lib": "src/lib" },
+  "aliases": { "ui": "@/components/ui", "lib": "@/lib" }
+}`;
+
+export const CLI_DOCTOR_OUTPUT = `◆  yugen.json: source mode
+◆  React 18.3.1
+◆  Tailwind CSS 4.3.3
+◆  Theme imported: src/index.css → ./yugen.css
+◆  15 component folders in src/components/ui
+▲  YugenProvider not found
+│  Wrap your app once: <YugenProvider applyToDocument withToaster>…</YugenProvider>
+└  Looks good, 1 warning`;

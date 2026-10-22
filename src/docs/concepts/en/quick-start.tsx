@@ -184,7 +184,7 @@ export default function Page() {
             That creates the starter: persisted theme, toast, an <C>@/</C> alias, SEO basics and a welcome page to delete once you start
             building. Need more? Swap <C>vite-starter</C> for <C>vite-saas</C> (8-page SaaS app), <C>vite-blog</C> (Markdown blog),{" "}
             <C>vite-dashboard</C> or <C>vite-ai-chat</C> — preview them all on the Templates page. Nothing to install? Open it on
-            StackBlitz.
+            StackBlitz. Prefer picking a template from a list? Use the <A href="#/concepts/cli">yugen CLI</A>: <C>npx yugen@latest create</C>.
           </P>
           <div className="flex flex-wrap gap-S">
             <Button asChild appearance="primary" icon={<Rocket16Regular />}>
