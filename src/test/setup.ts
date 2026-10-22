@@ -15,9 +15,11 @@ if (typeof window !== "undefined") {
     disconnect() {}
   }
 
-  class IntersectionObserverStub implements IntersectionObserver {
+  // Không `implements IntersectionObserver`: lib.dom mỗi bản TypeScript thêm thuộc tính mới (TS 6: scrollMargin…).
+  class IntersectionObserverStub {
     readonly root = null;
     readonly rootMargin = "0px";
+    readonly scrollMargin = "0px";
     readonly thresholds = [0];
     observe() {}
     unobserve() {}
@@ -28,7 +30,7 @@ if (typeof window !== "undefined") {
   }
 
   window.ResizeObserver ??= ResizeObserverStub;
-  window.IntersectionObserver ??= IntersectionObserverStub;
+  window.IntersectionObserver ??= IntersectionObserverStub as unknown as typeof IntersectionObserver;
 
   const proto = Element.prototype as unknown as Record<string, unknown>;
   proto.scrollIntoView ??= function scrollIntoView() {};
