@@ -51,7 +51,8 @@ export function useCopy(text: string) {
   return { copied, copy };
 }
 
-export function CopyButton({ text, className }: { text: string; className?: string }) {
+/** `collapse`: dưới sm chỉ còn icon (chữ chuyển thành sr-only). */
+export function CopyButton({ text, className, collapse }: { text: string; className?: string; collapse?: boolean }) {
   const { copied, copy } = useCopy(text);
   const { t } = useLocale();
   return (
@@ -59,13 +60,13 @@ export function CopyButton({ text, className }: { text: string; className?: stri
       type="button"
       onClick={copy}
       className={cn(
-        "inline-flex h-7 items-center gap-XS rounded-medium px-S text-caption1 font-semibold text-foreground-2",
+        "inline-flex h-7 shrink-0 items-center gap-XS whitespace-nowrap rounded-medium px-S text-caption1 font-semibold text-foreground-2",
         "transition-colors duration-faster hover:bg-subtle-hover hover:text-foreground-1",
         className,
       )}
     >
       {copied ? <Checkmark16Regular className="text-success-foreground-1" /> : <Copy16Regular />}
-      {copied ? t("copy.copied") : t("copy.copy")}
+      <span className={cn(collapse && "max-sm:sr-only")}>{copied ? t("copy.copied") : t("copy.copy")}</span>
     </button>
   );
 }

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.1
+
+### Patch Changes
+
+- 7cb3170: Docs site: one Appearance menu in the top bar for mode, brand and text direction, with the language switch available on every screen size; component examples get a one-row toolbar that collapses to icons on small screens; the home page has a new hero, an npm / shadcn install snippet and a searchable component list that opens one demo at a time on phones. New ink-brush logo and favicon. The npm package is unchanged.
+
 ## 0.8.0
 
 ### Minor Changes
@@ -131,7 +137,8 @@ with a user-facing change adds one with `npx changeset`, and `npx changeset vers
 - 11 core components.
 - Documentation site.
 
-[Unreleased]: https://github.com/trandat1114/Yugen-UI/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/trandat1114/Yugen-UI/compare/v0.8.1...HEAD
+[0.8.1]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.8.1
 [0.8.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.8.0
 [0.7.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.7.0
 [0.6.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.6.0
