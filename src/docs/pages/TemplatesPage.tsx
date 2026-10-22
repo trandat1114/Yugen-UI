@@ -19,7 +19,7 @@ const VI = {
   featured: "Nổi bật",
   more: "Template khác",
   moreDesc: "Nhỏ gọn, một trang — hợp để thử nhanh hoặc ghép vào ứng dụng có sẵn.",
-  command: "Tạo dự án (tải, cài phụ thuộc, chạy dev server)",
+  command: "Tạo dự án bằng CLI (chép template, cài phụ thuộc, chạy dev server)",
   stackblitz: "Mở trên StackBlitz",
   source: "Mã nguồn",
   loading: "Đang tải preview…",
@@ -28,15 +28,16 @@ const VI = {
   other: "Không cần cả ứng dụng?",
   otherBody: (
     <>
-      Thêm Yugen UI vào dự án có sẵn ở{" "}
+      Thêm Yugen UI vào dự án có sẵn bằng <code className="font-mono text-caption1">npx @yugen-ui/cli@latest init</code> (
+      <a className="text-link underline hover:text-link-hover" href="#/concepts/cli">
+        CLI yugen
+      </a>
+      ) hoặc theo{" "}
       <a className="text-link underline hover:text-link-hover" href="#/concepts/quick-start">
         Bắt đầu nhanh
       </a>
-      , chép mã nguồn từng component bằng{" "}
-      <a className="text-link underline hover:text-link-hover" href="#/concepts/shadcn-registry">
-        shadcn CLI
-      </a>
-      , hoặc lấy từng cụm giao diện ở{" "}
+      , chép mã nguồn từng component bằng <code className="font-mono text-caption1">npx @yugen-ui/cli add</code>, hoặc lấy từng cụm giao
+      diện ở{" "}
       <a className="text-link underline hover:text-link-hover" href="#/blocks">
         Blocks
       </a>
@@ -58,7 +59,7 @@ const EN: typeof VI = {
   featured: "Featured",
   more: "More templates",
   moreDesc: "Small, single-page — good for a quick try or for merging into an existing app.",
-  command: "Create a project (download, install dependencies, start the dev server)",
+  command: "Create a project with the CLI (copy the template, install dependencies, start the dev server)",
   stackblitz: "Open in StackBlitz",
   source: "Source",
   loading: "Loading preview…",
@@ -67,15 +68,16 @@ const EN: typeof VI = {
   other: "Don't need a whole app?",
   otherBody: (
     <>
-      Add Yugen UI to an existing project in{" "}
+      Add Yugen UI to an existing project with <code className="font-mono text-caption1">npx @yugen-ui/cli@latest init</code> (
+      <a className="text-link underline hover:text-link-hover" href="#/concepts/cli">
+        yugen CLI
+      </a>
+      ) or by following{" "}
       <a className="text-link underline hover:text-link-hover" href="#/concepts/quick-start">
         Quick start
       </a>
-      , copy component source with the{" "}
-      <a className="text-link underline hover:text-link-hover" href="#/concepts/shadcn-registry">
-        shadcn CLI
-      </a>
-      , or grab individual pieces from{" "}
+      , copy component source with <code className="font-mono text-caption1">npx @yugen-ui/cli add</code>, or grab individual pieces
+      from{" "}
       <a className="text-link underline hover:text-link-hover" href="#/blocks">
         Blocks
       </a>

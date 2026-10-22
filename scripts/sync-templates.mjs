@@ -9,7 +9,7 @@
  *   node scripts/sync-templates.mjs           # ghi lại templates/
  *   node scripts/sync-templates.mjs --check   # CI: báo lỗi nếu templates/ lệch so với nguồn
  *
- * Dùng: npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-saas my-app --install && cd my-app && npm run dev
+ * Dùng: npm create yugen-ui@latest my-app -- --template saas  (hoặc npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-saas my-app --install)
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -185,12 +185,15 @@ createRoot(document.getElementById("root")!).render(
 `;
 
 const install = (dir) => `\`\`\`bash
-npx giget@latest gh:trandat1114/Yugen-UI/templates/${dir} my-app --install
+npm create yugen-ui@latest my-app -- --template ${dir.replace(/^vite-/, "")}
 cd my-app
 npm run dev
 \`\`\`
 
-Không muốn cài gì? Mở thẳng trên StackBlitz: https://stackblitz.com/github/trandat1114/Yugen-UI/tree/main/templates/${dir}`;
+Không dùng CLI: \`npx giget@latest gh:trandat1114/Yugen-UI/templates/${dir} my-app --install\`. Không muốn cài gì? Mở thẳng
+trên StackBlitz: https://stackblitz.com/github/trandat1114/Yugen-UI/tree/main/templates/${dir}
+
+Kiểm tra cấu hình bất cứ lúc nào: \`npx @yugen-ui/cli doctor\` (CLI yugen, https://trandat1114.github.io/Yugen-UI/#/concepts/cli).`;
 
 const generatedFrom = (t) =>
   `File trong \`src/\` sinh từ \`src/docs/template-library/${t.app}\` (và \`src/docs/block-library\`) bằng \`scripts/sync-templates.mjs\`.`;

@@ -26,8 +26,10 @@ interface QueuedMessage {
 
 function createAnnouncer(getRegion: (politeness: AriaLivePoliteness) => HTMLElement | null) {
   const queues: Record<AriaLivePoliteness, QueuedMessage[]> = { polite: [], assertive: [] };
-  const timers: Record<AriaLivePoliteness, number | undefined> = { polite: undefined, assertive: undefined };
+  const timers: Record<AriaLivePoliteness, ReturnType<typeof setTimeout> | undefined> = { polite: undefined, assertive: undefined };
 
+  // setTimeout toàn cục, không phải window.setTimeout: announcer dự phòng sống ở mức module nên timer có thể chạy sau khi
+  // window đã mất (môi trường test bị gỡ, unmount muộn) — khi đó getRegion trả null và hàng đợi tự dừng, không văng lỗi.
   const flush = (politeness: AriaLivePoliteness) => {
     const item = queues[politeness].shift();
     const region = getRegion(politeness);
@@ -36,9 +38,9 @@ function createAnnouncer(getRegion: (politeness: AriaLivePoliteness) => HTMLElem
       return;
     }
     region.textContent = "";
-    timers[politeness] = window.setTimeout(() => {
+    timers[politeness] = setTimeout(() => {
       region.textContent = item.message;
-      timers[politeness] = window.setTimeout(() => flush(politeness), MESSAGE_GAP);
+      timers[politeness] = setTimeout(() => flush(politeness), MESSAGE_GAP);
     }, CLEAR_DELAY);
   };
 
@@ -55,7 +57,7 @@ function createAnnouncer(getRegion: (politeness: AriaLivePoliteness) => HTMLElem
 
   const dispose = () => {
     (Object.keys(timers) as AriaLivePoliteness[]).forEach((p) => {
-      window.clearTimeout(timers[p]);
+      clearTimeout(timers[p]);
       timers[p] = undefined;
       queues[p].length = 0;
     });

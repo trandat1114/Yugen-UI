@@ -47,6 +47,9 @@ blocks, concepts and a Theme Designer (Vietnamese; English docs are on the [road
 
 ## Install
 
+The quickest way is the [CLI](#cli): `npx @yugen-ui/cli@latest init` installs the package, adds the theme import to your CSS and
+prints the `YugenProvider` wrapper. New app? `npm create yugen-ui@latest`. By hand:
+
 ```bash
 npm install yugen-ui
 # pnpm add yugen-ui · yarn add yugen-ui · bun add yugen-ui
@@ -191,7 +194,10 @@ layout because `react-resizable-panels` measures the physical X axis.
 
 ## Copy-paste mode
 
-Prefer owning the code, shadcn-style? Use the **shadcn CLI** — Yugen UI publishes a compatible registry. `init` runs once
+Prefer owning the code, shadcn-style? The shortest route is the [yugen CLI](#cli): `npx @yugen-ui/cli@latest init --mode source`
+once, then `npx @yugen-ui/cli add button dialog` — short names, imports rewritten to your alias, no `components.json` needed.
+
+The **shadcn CLI** works too — Yugen UI publishes a compatible registry. `init` runs once
 per project: it creates `components.json` if missing, copies the theme, `cn()` and `YugenProvider`, installs npm packages
 and adds the theme `@import` to your CSS. `add` then copies components and the components they import:
 
@@ -217,12 +223,15 @@ Or copy by hand from this repository:
 
 ## Starter templates
 
-One command downloads a template, installs dependencies and starts the dev server — preview them all at
+One command copies a template, installs dependencies and starts the dev server — preview them all at
 [#/templates](https://trandat1114.github.io/Yugen-UI/#/templates), or open one on StackBlitz with nothing to install.
 
 ```bash
-npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-starter my-app --install && cd my-app && npm run dev
+npm create yugen-ui@latest my-app -- --template starter && cd my-app && npm run dev
+# leave out --template to pick from a list · pnpm create yugen-ui · yarn create yugen-ui · bun create yugen-ui
 ```
+
+Without the CLI: `npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-starter my-app --install`.
 
 | Template | What you get |
 | --- | --- |
@@ -333,6 +342,9 @@ khái niệm và Theme Designer. Ảnh chụp màn hình ở [phần tiếng Anh
 > Yugen UI là dự án độc lập, **không liên kết và không được Microsoft bảo trợ**.
 
 ### Cài đặt
+
+Nhanh nhất là [CLI](#cli-1): `npx @yugen-ui/cli@latest init` cài gói, thêm dòng import theme vào CSS và in đoạn bọc
+`YugenProvider`. App mới: `npm create yugen-ui@latest`. Tự làm:
 
 ```bash
 npm install yugen-ui
@@ -463,7 +475,10 @@ Giới hạn đã biết: nhóm `Resizable` ngang giữ bố cục LTR vì `reac
 
 ### Chế độ copy-paste
 
-Muốn sở hữu mã nguồn như shadcn? Dùng **shadcn CLI** — Yugen UI có registry tương thích. `init` chạy một lần mỗi dự án:
+Muốn sở hữu mã nguồn như shadcn? Ngắn nhất là [CLI yugen](#cli-1): `npx @yugen-ui/cli@latest init --mode source` một lần, rồi
+`npx @yugen-ui/cli add button dialog` — tên ngắn, import tự đổi theo alias của dự án, không cần `components.json`.
+
+**shadcn CLI** cũng dùng được — Yugen UI có registry tương thích. `init` chạy một lần mỗi dự án:
 tạo `components.json` nếu chưa có, chép theme, `cn()` và `YugenProvider`, cài gói npm và tự thêm `@import` theme vào CSS.
 Sau đó `add` chép component cùng các component nó import:
 
@@ -489,12 +504,15 @@ Hoặc sao chép thủ công từ repo này:
 
 ### Starter template
 
-Một lệnh tải template, cài phụ thuộc và chạy dev server — xem trước ở
+Một lệnh chép template, cài phụ thuộc và chạy dev server — xem trước ở
 [#/templates](https://trandat1114.github.io/Yugen-UI/#/templates) hoặc mở thẳng trên StackBlitz.
 
 ```bash
-npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-starter my-app --install && cd my-app && npm run dev
+npm create yugen-ui@latest my-app -- --template starter && cd my-app && npm run dev
+# bỏ --template để chọn từ danh sách · pnpm create yugen-ui · yarn create yugen-ui · bun create yugen-ui
 ```
+
+Không dùng CLI: `npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-starter my-app --install`.
 
 | Template | Có gì |
 | --- | --- |
