@@ -3,12 +3,10 @@ import { MessageBar, PackageManagerTabs } from "@/components/ui";
 import { DocSection } from "../../blocks";
 import { CodeBlock } from "../../CodeBlock";
 import { REGISTRY_URL } from "../../install";
-import { templateGigetCommand } from "../../templates";
 import {
   CLI_ADD,
   CLI_CONFIG,
   CLI_CREATE,
-  CLI_CREATE_PM,
   CLI_DOCTOR,
   CLI_DOCTOR_OUTPUT,
   CLI_INIT,
@@ -92,7 +90,7 @@ export default function Page() {
             ]}
           />
           <P>
-            Nothing to install first: run it with <C>npx @yugen-ui/cli@latest</C> (or <C>pnpm dlx</C>, <C>yarn dlx</C>, <C>bunx</C>). Requires Node.js 20
+            Nothing to install first: run it with <C>npx @yugen-ui/cli@latest</C> (or <C>pnpm dlx</C>, <C>yarn dlx</C>, <C>bunx</C>). Requires Node.js 22
             or later.
           </P>
         </div>
@@ -102,16 +100,10 @@ export default function Page() {
         <div className="flex flex-col gap-L">
           <PackageManagerTabs packages={CLI_CREATE} command="dlx" />
           <P>
-            The <C>create-yugen-ui</C> package does the same through each package manager&apos;s <C>create</C> command:
+            Options: <C>-t, --template</C>, <C>--lang en|vi</C> (language of the app's text, for templates that have both; English by default), <C>--pm npm|pnpm|yarn|bun</C>, <C>--no-install</C>, <C>--no-git</C>, <C>--force</C> (write into a
+            non-empty directory). <C>npx create-yugen-ui@latest</C> is a shorter way to run the same command. Templates ship inside the
+            package, so this works offline. Preview them on <A href="#/templates">Templates</A>.
           </P>
-          <CodeBlock code={CLI_CREATE_PM} />
-          <P>
-            Templates ship inside the CLI package, so this step works offline. Preview them on <A href="#/templates">Templates</A>. Options:{" "}
-            <C>-t, --template</C>, <C>--pm npm|pnpm|yarn|bun</C>, <C>--no-install</C>, <C>--no-git</C>, <C>--force</C> (write into a non-empty
-            directory).
-          </P>
-          <P>Without the CLI, download the template folder straight from GitHub:</P>
-          <CodeBlock code={templateGigetCommand("vite-starter")} />
         </div>
       </DocSection>
 

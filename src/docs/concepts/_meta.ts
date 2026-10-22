@@ -62,11 +62,12 @@ export const CONCEPT_METAS: Record<string, ConceptMeta> = {
     title: "Giới thiệu",
     group: "Bắt đầu",
     order: 1,
-    lead: "Yugen UI là design system cho React và Tailwind CSS v4: token và hành vi của Fluent 2, cách phân phối copy-paste kiểu shadcn/ui, khoác sắc hoa anh đào Sakura 桜.",
+    lead: "Bộ component React cho Tailwind CSS v4, có theme sáng, tối, tương phản cao và hỗ trợ RTL. Dùng qua gói npm hoặc chép mã nguồn vào dự án.",
     toc: [
       { id: "what", label: "Yugen UI là gì?" },
+      { id: "ways", label: "Chọn cách dùng" },
       { id: "principles", label: "Nguyên tắc" },
-      { id: "structure", label: "Cấu trúc tài liệu" },
+      { id: "status", label: "Phiên bản & giấy phép" },
       { id: "credit", label: "Ghi công" },
     ],
   },
@@ -137,7 +138,7 @@ export const CONCEPT_METAS: Record<string, ConceptMeta> = {
     toc: [
       { id: "template", label: "Nhanh nhất: một lệnh" },
       { id: "existing", label: "Thêm vào dự án có sẵn" },
-      { id: "shadcn", label: "Sở hữu mã nguồn" },
+      { id: "shadcn", label: "Tuỳ biến mã nguồn" },
       { id: "first-component", label: "Component đầu tiên" },
       { id: "persist-theme", label: "Nhớ theme & chống nháy" },
       { id: "requirements", label: "Yêu cầu" },

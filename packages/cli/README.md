@@ -25,6 +25,7 @@ npx @yugen-ui/cli@latest create my-app --template saas
 ```
 
 Templates ship inside the CLI, so this works offline apart from installing dependencies. Options: `-t, --template`,
+`--lang <en|vi>` (language of the app's text, for templates that have both; English by default),
 `--pm <npm|pnpm|yarn|bun>`, `--no-install`, `--no-git`, `--force`, `-y`.
 
 ## init

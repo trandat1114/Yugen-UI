@@ -507,7 +507,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
       { name: "size", type: "20 | 24 | 32 | 40 | 48 | 64 | 96", defaultValue: "32", description: "Kích thước mọi avatar trong nhóm." },
       { name: "maxAvatars", type: "number", defaultValue: "5", description: "Số ô tối đa (tính cả nút tràn); không áp dụng cho pie." },
       { name: "overflowIndicator", type: `"count" | "icon"`, defaultValue: `"count"`, description: "Nút tràn hiện “+N” hoặc icon “…”." },
-      { name: "overflowLabel", type: "string", description: "aria-label cho nút mở danh sách." },
+      { name: "overflowLabel", type: "string", description: "Nhãn đọc sau số đếm của nút mở danh sách (\"+2 …\"); với overflowIndicator=\"icon\" là toàn bộ tên của nút." },
       { name: "AvatarGroupItem.name / src / color", type: "string / string / AvatarColor", defaultValue: `color "colorful"`, description: "Thông tin từng thành viên." },
     ],
   },

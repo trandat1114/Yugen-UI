@@ -103,7 +103,7 @@ export default function Page() {
         <SimpleTable
           head={["Thành phần", "Phiên bản", "Ghi chú"]}
           rows={[
-            ["React / React DOM", "18.3 (đã kiểm thử) · 19 (tương thích)", "Dùng forwardRef, useId, useSyncExternalStore; Radix, cmdk, react-day-picker đều hỗ trợ React 19."],
+            ["React / React DOM", "19 (mặc định) · 18.3 (vẫn hỗ trợ, CI kiểm thử)", "Dùng forwardRef, useId, useSyncExternalStore; Radix, cmdk, react-day-picker đều hỗ trợ React 19."],
             ["TypeScript", "5.x", "Mã nguồn viết ở chế độ strict; mọi kiểu prop export cùng component (ButtonProps, FieldProps…)."],
             ["Tailwind CSS", "4.x", <>Bắt buộc v4: cấu hình CSS-first (<C>@theme</C>, <C>@utility</C>), cú pháp <C>size-4!</C>, <C>max-h-(--var)</C>.</>],
             ["Bundler", "Vite 6 · Next.js 14 / 15 · bất kỳ bundler hỗ trợ PostCSS", <>Component không dùng API riêng của bundler; chỉ cần alias <C>@/</C>.</>],

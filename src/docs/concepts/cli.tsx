@@ -3,12 +3,10 @@ import { MessageBar, PackageManagerTabs } from "@/components/ui";
 import { DocSection } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
 import { REGISTRY_URL } from "../install";
-import { templateGigetCommand } from "../templates";
 import {
   CLI_ADD,
   CLI_CONFIG,
   CLI_CREATE,
-  CLI_CREATE_PM,
   CLI_DOCTOR,
   CLI_DOCTOR_OUTPUT,
   CLI_INIT,
@@ -92,7 +90,7 @@ export default function Page() {
             ]}
           />
           <P>
-            Không cần cài trước: chạy bằng <C>npx @yugen-ui/cli@latest</C> (hoặc <C>pnpm dlx</C>, <C>yarn dlx</C>, <C>bunx</C>). Cần Node.js 20 trở lên.
+            Không cần cài trước: chạy bằng <C>npx @yugen-ui/cli@latest</C> (hoặc <C>pnpm dlx</C>, <C>yarn dlx</C>, <C>bunx</C>). Cần Node.js 22 trở lên.
           </P>
         </div>
       </DocSection>
@@ -101,16 +99,10 @@ export default function Page() {
         <div className="flex flex-col gap-L">
           <PackageManagerTabs packages={CLI_CREATE} command="dlx" />
           <P>
-            Gói <C>create-yugen-ui</C> làm cùng việc theo cú pháp <C>create</C> của từng trình quản lý gói:
+            Tuỳ chọn: <C>-t, --template</C>, <C>--lang en|vi</C> (ngôn ngữ chữ trong app, với template có cả hai; mặc định tiếng Anh), <C>--pm npm|pnpm|yarn|bun</C>, <C>--no-install</C>, <C>--no-git</C>, <C>--force</C> (ghi vào thư
+            mục không trống). <C>npx create-yugen-ui@latest</C> là cách gọi ngắn của lệnh này. Template nằm sẵn trong gói nên không cần
+            mạng. Xem trước ở <A href="#/templates">Templates</A>.
           </P>
-          <CodeBlock code={CLI_CREATE_PM} />
-          <P>
-            Template nằm sẵn trong gói CLI nên bước tạo không cần mạng. Xem trước từng template ở <A href="#/templates">Templates</A>. Tuỳ
-            chọn: <C>-t, --template</C>, <C>--pm npm|pnpm|yarn|bun</C>, <C>--no-install</C>, <C>--no-git</C>, <C>--force</C> (ghi vào thư
-            mục không trống).
-          </P>
-          <P>Không dùng CLI thì tải thẳng thư mục template từ GitHub:</P>
-          <CodeBlock code={templateGigetCommand("vite-starter")} />
         </div>
       </DocSection>
 

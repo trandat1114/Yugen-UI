@@ -9,7 +9,7 @@
  *   node scripts/sync-templates.mjs           # ghi lại templates/
  *   node scripts/sync-templates.mjs --check   # CI: báo lỗi nếu templates/ lệch so với nguồn
  *
- * Dùng: npx create-yugen-ui@latest my-app --template saas  (hoặc npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-saas my-app --install)
+ * Dùng: npx create-yugen-ui@latest my-app --template saas
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -24,10 +24,13 @@ const TEMPLATES = [
   {
     dir: "vite-starter",
     /** Mô tả một dòng (tiếng Anh) cho `yugen create` — ghi vào templates/templates.json. */
-    hint: "Blank app: theme switcher, toast, @/ alias and a cherry-blossom welcome page",
-    title: "Yugen Starter",
-    description:
-      "Điểm khởi đầu cho ứng dụng React + Tailwind CSS v4 với Yugen UI: theme được ghi nhớ, toast, alias @/ và trang chào hoa anh đào.",
+    hint: "Blank app: saved theme, toast, @/ alias and a short welcome page",
+    /** Tên template (trình chọn của `yugen create`, docs). `appTitle`: <title> và README của app được tạo. */
+    title: "Starter",
+    appTitle: "My app",
+    description: "A blank React + Tailwind CSS v4 project with Yugen UI: saved theme, toast and the @/ alias.",
+    /** <html lang>, README và trang chào; `create --lang vi` (#55) đổi sang tiếng Việt. Template khác: "vi". */
+    lang: "en",
     app: "starter",
     storageKey: "yugen-starter-appearance",
     /** Alias @/ → src cho mã của người dùng (vite.config + tsconfig). */
@@ -39,7 +42,8 @@ const TEMPLATES = [
   {
     dir: "vite-saas",
     hint: "SaaS workspace: sidebar, Ctrl K command palette, notifications, 8 pages",
-    title: "Sakura Studio · Yugen UI",
+    title: "SaaS",
+    appTitle: "Sakura Studio",
     description:
       "Ứng dụng SaaS dựng bằng Yugen UI: sidebar, bảng lệnh Ctrl K, thông báo, theme sáng / tối / tương phản cao và 8 trang mẫu.",
     app: "saas",
@@ -49,7 +53,8 @@ const TEMPLATES = [
   {
     dir: "vite-blog",
     hint: "Markdown blog: table of contents, tags, search, build-time SEO",
-    title: "Nhật ký Sakura · Yugen UI",
+    title: "Blog",
+    appTitle: "Nhật ký Sakura",
     description: "Blog viết bằng Markdown, dựng bằng Yugen UI: mục lục, thẻ, tìm kiếm, theme tối và SEO sinh sẵn lúc build.",
     app: "blog",
     storageKey: "yugen-blog-theme",
@@ -60,14 +65,14 @@ const TEMPLATES = [
   {
     dir: "vite-dashboard",
     hint: "Dashboard: KPI cards, charts and recent transactions",
-    title: "Yugen UI · Dashboard",
+    title: "Dashboard",
     description: "Dashboard dựng bằng Yugen UI: thẻ KPI, biểu đồ và giao dịch gần đây.",
     blocks: ["02-stats.tsx", "11-analytics.tsx", "06-transactions.tsx"],
   },
   {
     dir: "vite-ai-chat",
     hint: "AI assistant chat UI",
-    title: "Yugen UI · AI chat",
+    title: "AI chat",
     description: "Trợ lý AI dạng chat dựng bằng Yugen UI.",
     blocks: ["12-ai-assistant.tsx"],
   },
@@ -126,7 +131,8 @@ const indexHtml = (t) => {
       })();
     </script>`
     : "";
-  const attrs = t.storageKey ? `lang="vi" dir="ltr"` : `lang="vi" data-theme="light" data-brand="sakura" dir="ltr"`;
+  const lang = t.lang ?? "vi";
+  const attrs = t.storageKey ? `lang="${lang}" dir="ltr"` : `lang="${lang}" data-theme="light" data-brand="sakura" dir="ltr"`;
   // Google Fonts chỉ gửi glyph của đúng các ký tự này (vài kB thay vì vài MB cho cả bộ chữ Nhật).
   const jpFont = t.jpFont
     ? `
@@ -141,10 +147,10 @@ const indexHtml = (t) => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#c2347a" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />${jpFont}
-${t.seoPlugin ? "    <!-- seo -->\n" : ""}    <title>${esc(t.title)}</title>
+${t.seoPlugin ? "    <!-- seo -->\n" : ""}    <title>${esc(t.appTitle ?? t.title)}</title>
     <meta name="description" content="${esc(t.description)}" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="${esc(t.title)}" />
+    <meta property="og:title" content="${esc(t.appTitle ?? t.title)}" />
     <meta property="og:description" content="${esc(t.description)}" />${t.seoPlugin ? "\n    <!-- /seo -->" : ""}${noFlash}
   </head>
   <body>
@@ -184,60 +190,75 @@ createRoot(document.getElementById("root")!).render(
 );
 `;
 
-const install = (dir) => `\`\`\`bash
+const install = (dir, lang = "vi") => `\`\`\`bash
 npx create-yugen-ui@latest my-app --template ${dir.replace(/^vite-/, "")}
 cd my-app
 npm run dev
 \`\`\`
 
-Không dùng CLI: \`npx giget@latest gh:trandat1114/Yugen-UI/templates/${dir} my-app --install\`. Không muốn cài gì? Mở thẳng
-trên StackBlitz: https://stackblitz.com/github/trandat1114/Yugen-UI/tree/main/templates/${dir}
+${
+  lang === "en"
+    ? "Try it without installing anything on StackBlitz:"
+    : "Không muốn cài gì? Mở thẳng trên StackBlitz:"
+} https://stackblitz.com/github/trandat1114/Yugen-UI/tree/main/templates/${dir}
 
-Kiểm tra cấu hình bất cứ lúc nào: \`npx @yugen-ui/cli doctor\` (CLI yugen, https://trandat1114.github.io/Yugen-UI/#/concepts/cli).`;
+${lang === "en" ? "Check your setup any time:" : "Kiểm tra cấu hình bất cứ lúc nào:"} \`npx @yugen-ui/cli doctor\` (${
+  lang === "en" ? "see" : "xem"
+} https://trandat1114.github.io/Yugen-UI/#/concepts/cli).`;
 
 const generatedFrom = (t) =>
-  `File trong \`src/\` sinh từ \`src/docs/template-library/${t.app}\` (và \`src/docs/block-library\`) bằng \`scripts/sync-templates.mjs\`.`;
+  t.lang === "en"
+    ? `Files in \`src/\` are generated from \`src/docs/template-library/${t.app}\` (and \`src/docs/block-library\`) by \`scripts/sync-templates.mjs\`.`
+    : `File trong \`src/\` sinh từ \`src/docs/template-library/${t.app}\` (và \`src/docs/block-library\`) bằng \`scripts/sync-templates.mjs\`.`;
 
 const README = {
-  starter: (t) => `# ${t.title}
+  starter: (t) => `# ${t.appTitle ?? t.title}
 
-<p lang="ja">はじまりは、いつも静かに。</p>
+A blank [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates) project: Vite, React and Tailwind CSS v4, set up and
+ready to go.
 
-Điểm khởi đầu "trắng" của [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates): Vite + React + Tailwind CSS v4 đã nối
-sẵn, kèm một trang chào để bạn thấy thư viện làm được gì — rồi xoá đi khi bắt đầu viết ứng dụng.
+${install(t.dir, "en")}
 
-${install(t.dir)}
+## What's included
 
-## Đã có sẵn
+- \`YugenProvider\` with light, dark and high-contrast themes and the Sakura and Web brands, saved in \`localStorage\`
+  with no flash on reload (a small script in \`index.html\`).
+- \`toast()\` from anywhere, Tooltip, focus rings, RTL.
+- An \`@/\` → \`src/\` alias (\`vite.config.ts\` + \`tsconfig.json\`).
+- SEO basics: \`description\`, Open Graph, \`theme-color\`, favicon, \`robots.txt\`.
+- Vendor chunks split out, so the build has no size warnings.
+- A short welcome page. Its text lives in \`src/content/\`: English by default, Vietnamese with
+  \`npx create-yugen-ui@latest my-app --template starter --lang vi\`.
 
-- \`YugenProvider\` với theme sáng / tối / tương phản cao và thương hiệu Sakura / Web / Teams, **ghi nhớ** trong \`localStorage\`
-  và **không nháy** khi tải lại (script nhỏ trong \`index.html\`).
-- \`toast()\` dùng được ở mọi nơi, Tooltip, focus ring, RTL.
-- Alias \`@/\` → \`src/\` (\`vite.config.ts\` + \`tsconfig.json\`).
-- SEO cơ bản: \`description\`, Open Graph, \`theme-color\`, favicon, \`robots.txt\`.
-- Build tách chunk vendor, không cảnh báo dung lượng.
-- Trang chào: hero chữ dọc 幽玄, cánh hoa anh đào rơi (tự tắt khi bật "giảm chuyển động"), sáu thẻ component chạy thật.
+## Start building
 
-## Bắt đầu viết ứng dụng
+1. In \`src/App.tsx\`, replace \`<Welcome />\` with your app.
+2. When you no longer need it, delete \`src/Welcome.tsx\`, \`src/Sakura.tsx\` and \`src/content/\`, and remove the
+   Shippori Mincho font \`<link>\` from \`index.html\`.
+3. Add components: \`import { Button, DataGrid } from "yugen-ui"\`. Examples are in the
+   [docs](https://trandat1114.github.io/Yugen-UI/).
 
-1. Mở \`src/App.tsx\`, thay \`<Welcome />\` bằng component của bạn.
-2. Xoá \`src/Welcome.tsx\` và \`src/Sakura.tsx\` khi không cần nữa; bỏ thẻ \`<link>\` font Shippori Mincho trong \`index.html\`.
-3. Thêm component: \`import { Button, DataGrid } from "yugen-ui"\` — ví dụ ở [tài liệu](https://trandat1114.github.io/Yugen-UI/).
+## Brand colour
 
-## Cấu trúc
+The appearance menu switches between Sakura and Web. For your own colour, create a palette in
+[Theme Designer](https://trandat1114.github.io/Yugen-UI/#/theme-designer), paste its CSS into \`src/index.css\`, and
+use its name as the default brand: \`"sakura"\` in \`index.html\` (the no-flash script) and in \`src/App.tsx\`.
+
+## Structure
 
 \`\`\`
 src/
-  App.tsx        # YugenProvider, lưu theme — điểm bắt đầu của bạn
-  Welcome.tsx    # trang chào (xoá được)
-  Sakura.tsx     # cánh hoa, bông hoa SVG, font chữ Nhật (xoá được)
-  index.css      # @import "tailwindcss" + theme Yugen
+  App.tsx        # YugenProvider and the saved theme: your starting point
+  Welcome.tsx    # welcome page (safe to delete)
+  content/       # welcome page text, one file per language
+  Sakura.tsx     # blossom SVG and the Japanese font class (safe to delete)
+  index.css      # @import "tailwindcss" + the Yugen theme
   main.tsx
 \`\`\`
 
 ${generatedFrom(t)}
 `,
-  blog: (t) => `# ${t.title}
+  blog: (t) => `# ${t.appTitle ?? t.title}
 
 Starter template của [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates) — blog viết bằng Markdown trên Vite + React +
 Tailwind CSS v4. Không cần CMS hay thư viện Markdown: thêm file \`.md\` là có bài mới.
@@ -275,7 +296,7 @@ vite.config.ts     # plugin blogSeo: HTML tĩnh từng trang, sitemap, RSS
 
 ${generatedFrom(t)}
 `,
-  saas: (t) => `# ${t.title}
+  saas: (t) => `# ${t.appTitle ?? t.title}
 
 Starter template của [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates) — ứng dụng SaaS hoàn chỉnh trên Vite + React +
 Tailwind CSS v4, sẵn sàng thay dữ liệu thật.
@@ -319,7 +340,7 @@ ${generatedFrom(t)}
 const readme = (t) =>
   t.app
     ? README[t.app](t)
-    : `# ${t.title}
+    : `# ${t.appTitle ?? t.title}
 
 Starter template của [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates) — Vite + React + Tailwind CSS v4.
 
@@ -347,14 +368,15 @@ function files(t) {
           scripts: { dev: "vite", build: "tsc -b && vite build", preview: "vite preview" },
           dependencies: {
             "@fluentui/react-icons": pkg.dependencies["@fluentui/react-icons"],
-            react: "^18.3.1",
-            "react-dom": "^18.3.1",
+            // React và type theo devDependencies ở gốc repo (cùng bản mà docs và test chạy).
+            react: pkg.devDependencies.react,
+            "react-dom": pkg.devDependencies["react-dom"],
             "yugen-ui": `^${pkg.version}`,
           },
           devDependencies: {
             "@tailwindcss/vite": "^4.0.0",
-            "@types/react": "^18.3.18",
-            "@types/react-dom": "^18.3.5",
+            "@types/react": pkg.devDependencies["@types/react"],
+            "@types/react-dom": pkg.devDependencies["@types/react-dom"],
             "@vitejs/plugin-react": "^4.3.4",
             tailwindcss: "^4.0.0",
             typescript: "^5.7.3",

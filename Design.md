@@ -450,6 +450,7 @@ Luật riêng của Labs:
 - [ ] `npm test` và `npm run test:e2e` pass (axe không báo lỗi); đổi giao diện có chủ đích thì cập nhật ảnh `test:visual`.
 - [ ] `npm run size` vẫn trong ngân sách (`.size-limit.cjs`); tăng `limit` phải có lý do trong PR.
 - [ ] Thay đổi người dùng thấy được có changeset (`npx changeset`).
+- [ ] Nội dung (docs, template, thông báo CLI) theo [wiki › Writing](https://github.com/trandat1114/Yugen-UI/wiki/Writing).
 
 ---
 

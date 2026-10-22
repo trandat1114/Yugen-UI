@@ -2,11 +2,15 @@ import { defineConfig, devices, type Project } from "@playwright/test";
 
 /**
  * E2E của site docs Yugen UI.
- * - `npm run test:e2e`    → a11y (axe) + interaction (kéo chuột, desktop) + touch (giả lập mobile).
+ * - `npm run test:e2e`    → a11y (axe) + interaction (kéo chuột, bàn phím / focus, luồng chính của docs; desktop)
+ *                            + touch (giả lập mobile).
  * - `npm run test:visual` → chỉ project `visual` (so sánh ảnh chụp; baseline theo nền tảng trong e2e/__screenshots__).
  * Local dùng Microsoft Edge đã cài sẵn (không cần tải trình duyệt); CI dùng Chromium của Playwright.
+ * Mặc định chạy trên bản build (`build:docs` + `vite preview`), giống site đã deploy. `YUGEN_E2E_DEV=1` dùng dev server
+ * để debug (module biến đổi theo yêu cầu, chậm hơn và có HMR).
  */
 const CI = !!process.env.CI;
+const DEV = process.env.YUGEN_E2E_DEV === "1";
 const PORT = 5200;
 const BASE_URL = `http://localhost:${PORT}`;
 const browser = CI ? {} : { channel: "msedge" as const };
@@ -29,7 +33,7 @@ const desktop = {
 
 const projects: Project[] = [
   { name: "a11y", testMatch: /a11y\.spec\.ts/, use: desktop },
-  { name: "interaction", testMatch: /(drag|carousel)\.spec\.ts/, use: desktop },
+  { name: "interaction", testMatch: /(drag|carousel|keyboard|docs-flows)\.spec\.ts/, use: desktop },
   {
     name: "touch",
     testMatch: /(touch|responsive)\.spec\.ts/,
@@ -56,8 +60,8 @@ export default defineConfig({
   globalSetup: "./e2e/global-setup.ts",
   fullyParallel: true,
   forbidOnly: CI,
-  // Dev server (Vite) đôi khi nghẽn khi nhiều worker cùng tải module — thử lại một lần.
-  retries: 1,
+  // CI thử lại một lần để không chặn PR vì lỗi mạng / runner; test chập chờn vẫn hiện là "flaky" trong báo cáo.
+  retries: CI ? 1 : 0,
   workers: CI ? 3 : "50%",
   timeout: 90_000,
   expect: {
@@ -74,10 +78,12 @@ export default defineConfig({
   },
   projects,
   webServer: {
-    command: `npm run dev -- --port ${PORT} --strictPort`,
+    command: DEV
+      ? `npm run dev -- --port ${PORT} --strictPort`
+      : `npm run build:docs && npx vite preview --port ${PORT} --strictPort`,
     url: BASE_URL,
     reuseExistingServer: !CI,
-    timeout: 120_000,
+    timeout: 240_000,
     stdout: "ignore",
     stderr: "pipe",
   },

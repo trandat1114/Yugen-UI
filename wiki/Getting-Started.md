@@ -1,6 +1,6 @@
 # Getting Started · Bắt đầu
 
-Yêu cầu: React 18 hoặc 19, TypeScript 5 (khuyên dùng). Tailwind CSS v4 là tuỳ chọn.
+Yêu cầu: React 19 (khuyên dùng) hoặc 18.3, TypeScript 5 (khuyên dùng). Tailwind CSS v4 là tuỳ chọn.
 
 ## 1. Chọn cách dùng
 
@@ -13,8 +13,7 @@ Yêu cầu: React 18 hoặc 19, TypeScript 5 (khuyên dùng). Tailwind CSS v4 l�
 | **npm, không Tailwind** | Dự án dùng CSS khác | `import "yugen-ui/styles.css"` (hoặc `npx @yugen-ui/cli init` tự thêm) |
 | **shadcn CLI** | Dự án đã dùng shadcn/ui | `npx shadcn@latest init https://trandat1114.github.io/Yugen-UI/r/init.json` rồi `add …/r/button.json` |
 
-Không dùng CLI để tạo app: `npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-starter my-app --install`.
-Chi tiết: [CLI yugen](https://trandat1114.github.io/Yugen-UI/#/concepts/cli), [README](https://github.com/trandat1114/Yugen-UI#readme),
+Chi tiết: [@yugen-ui/cli](https://trandat1114.github.io/Yugen-UI/#/concepts/cli), [README](https://github.com/trandat1114/Yugen-UI#readme),
 [Cài bằng shadcn CLI](https://trandat1114.github.io/Yugen-UI/#/concepts/shadcn-registry).
 
 ## 2. Thiết lập tối thiểu (npm + Tailwind v4)

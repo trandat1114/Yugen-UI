@@ -5,6 +5,8 @@ on:
     branches: [main, next, "release/**", canary]
   pull_request:
     branches: [main, next, "release/**", canary]
+  # node-versions.yml gọi CI trên nhánh PR nó tạo (PR do GITHUB_TOKEN mở không tự chạy workflow).
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -21,7 +23,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [20, 22]
+        # LTS + Current đang được hỗ trợ (https://github.com/nodejs/Release); node-versions.yml mở PR khi lệch lịch.
+        node: [22, 24, 26]
     steps:
       - uses: actions/checkout@v7
 
@@ -45,7 +48,7 @@ jobs:
       - run: npm run size
 
   unit:
-    name: Unit tests (React 18)
+    name: Unit tests (React 19)
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -53,7 +56,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
       - run: npm ci
@@ -67,7 +70,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [20, 22]
+        # Cùng các bản Node như Build; engines của CLI: node >=22.
+        node: [22, 24, 26]
     steps:
       - uses: actions/checkout@v7
 
@@ -84,8 +88,9 @@ jobs:
       # npm pack yugen + create-yugen-ui, cài từ .tgz, tạo app với mọi template.
       - run: npm run smoke --prefix packages/cli
 
-  react-19:
-    name: React 19
+  # React 18.3 vẫn được hỗ trợ (peer react >=18) cho tới khi #62 quyết định ngừng.
+  react-18:
+    name: React 18
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -93,13 +98,13 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
       - run: npm ci
-      # Swap the dev copies of React for 19 in this workspace only (package.json / lockfile stay on 18).
-      - name: Install React 19 (not saved)
-        run: npm i --no-save --no-audit --no-fund react@^19 react-dom@^19 @types/react@^19 @types/react-dom@^19
+      # Swap the dev copies of React for 18.3 in this workspace only (package.json / lockfile stay on 19).
+      - name: Install React 18 (not saved)
+        run: npm i --no-save --no-audit --no-fund react@^18.3 react-dom@^18.3 @types/react@^18.3 @types/react-dom@^18.3
       - run: node -p "'react ' + require('react/package.json').version + ', @types/react ' + require('@types/react/package.json').version"
       - run: npm run typecheck
       - run: npm test
@@ -109,6 +114,11 @@ jobs:
     name: E2E (Playwright + axe)
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # Trình duyệt và thư viện hệ thống có sẵn trong image: không `playwright install --with-deps` (apt) mỗi lần chạy.
+    # Tag phải khớp @playwright/test trong package-lock.json (src/test/playwright-image.test.ts).
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble
+      options: --user 1001
     env:
       CI: true
     steps:
@@ -116,11 +126,10 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
 
       - name: Upload Playwright report

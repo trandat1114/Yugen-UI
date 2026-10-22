@@ -20,12 +20,13 @@ Cách dự án được vận hành hằng ngày: ai làm gì, khi nào, theo lu
 | Hằng tuần | Phân loại `needs triage` ([[Community and Triage]]), trả lời Q&A tồn đọng, review PR | Triager / maintainer |
 | Hằng tuần | Xem CI trên `main` (phải luôn xanh), PR Dependabot | Maintainer |
 | 2–4 tuần | Phát hành nếu có changeset ([[Release Process]]) | Maintainer |
+| Khi `packages/cli/CHANGELOG.md` có mục `Unreleased` | Phát hành CLI kèm mục tin trên `#/news` ([[Release Process]] › CLI) | Maintainer |
 | Hằng tháng | Cập nhật ROADMAP, gắn `good first issue` mới, chọn Showcase | Maintainer |
 | Hằng quý | Rà dependency lớn (React, Radix, Tailwind), ngân sách dung lượng, audit a11y thủ công với NVDA / VoiceOver | Maintainer |
 
 ## 3. Luật review & merge
 
-1. Mọi thay đổi vào `main` qua PR; CI **phải xanh** (build, unit, React 19, e2e).
+1. Mọi thay đổi vào `main` qua PR; CI **phải xanh** (build, unit, React 18, e2e).
 2. Ít nhất **1 approve** của maintainer (người viết PR không tự approve, trừ khi chỉ có một maintainer — khi đó tự merge
    sau khi CI xanh và đã tự review lại diff ngày hôm sau).
 3. Thay đổi người dùng thấy → có changeset. Thay đổi phá vỡ → RFC đã chấp nhận + mục "Thay đổi lớn" + hướng dẫn chuyển đổi.
@@ -39,7 +40,7 @@ Bảo vệ cho `next`, `release/*`, `canary` và tag `v*`: xem [[Branching and R
 
 **Settings → Branches → Branch protection cho `main`:**
 - Require a pull request before merging · Require approvals: 1 · Dismiss stale approvals
-- Require status checks: `Build · Node 20`, `Build · Node 22`, `Unit tests (React 18)`, `React 19`, `E2E (Playwright + axe)`
+- Require status checks: `Build · Node 22`, `Build · Node 24`, `Build · Node 26`, `Unit tests (React 19)`, `React 18`, `E2E (Playwright + axe)`
 - Require conversation resolution · Block force pushes · Do not allow deletions
 
 **Settings → General:** Allow squash merging (mặc định) · Automatically delete head branches · Discussions: bật.
@@ -52,10 +53,12 @@ Bảo vệ cho `next`, `release/*`, `canary` và tag `v*`: xem [[Branching and R
 
 | Workflow / file | Làm gì |
 |---|---|
-| `ci.yml` | Build, test, React 19, e2e, các check, size |
+| `ci.yml` | Build, test (React 19), React 18, e2e, các check, size |
 | `release.yml` | Tag `v*` → kiểm tra nhánh + nhất quán → `npm publish --provenance` (dist-tag theo kênh) |
+| `release-cli.yml` | Tag `cli@*` → `check-release.mjs --tag` (CHANGELOG, mục tin trên `#/news`, version chưa dùng) → publish `@yugen-ui/cli` + `create-yugen-ui` |
 | `canary.yml` | Push vào `canary` → bản `x.y.z-canary-…` với dist-tag `canary` |
 | `sync-next.yml` | Push vào `main` → mở PR `main → next` nếu `next` thiếu commit |
+| `node-versions.yml` | Hằng tuần → so bản Node.js trong workflow với lịch phát hành (`scripts/node-versions.mjs`), mở PR vào `next` khi lệch rồi chạy CI trên nhánh đó |
 | `pages.yml` | Deploy docs (+ docs các minor cũ) lên GitHub Pages |
 | `wiki.yml` | Đẩy `wiki/` lên GitHub Wiki |
 | `labels.yml` | Đồng bộ nhãn từ `.github/labels.yml` |

@@ -61,6 +61,16 @@ try {
     );
   }
 
+  // --lang: starter bằng tiếng Việt chỉ còn file vi, <html lang="vi">.
+  sh(`${createBin} app-vi -t starter --lang vi --no-install --no-git -y`, app);
+  const vi = path.join(app, "app-vi");
+  check(
+    fs.readFileSync(path.join(vi, "src/content/index.ts"), "utf8").includes('"./vi"') &&
+      !fs.existsSync(path.join(vi, "src/content/en.ts")) &&
+      fs.readFileSync(path.join(vi, "index.html"), "utf8").includes('<html lang="vi"'),
+    "create-yugen-ui -t starter --lang vi",
+  );
+
   let unknownFails = false;
   try {
     sh(`${createBin} x -t nope -y --no-install --no-git`, app);

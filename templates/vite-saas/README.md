@@ -1,4 +1,4 @@
-# Sakura Studio · Yugen UI
+# Sakura Studio
 
 Starter template của [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates) — ứng dụng SaaS hoàn chỉnh trên Vite + React +
 Tailwind CSS v4, sẵn sàng thay dữ liệu thật.
@@ -9,10 +9,9 @@ cd my-app
 npm run dev
 ```
 
-Không dùng CLI: `npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-saas my-app --install`. Không muốn cài gì? Mở thẳng
-trên StackBlitz: https://stackblitz.com/github/trandat1114/Yugen-UI/tree/main/templates/vite-saas
+Không muốn cài gì? Mở thẳng trên StackBlitz: https://stackblitz.com/github/trandat1114/Yugen-UI/tree/main/templates/vite-saas
 
-Kiểm tra cấu hình bất cứ lúc nào: `npx @yugen-ui/cli doctor` (CLI yugen, https://trandat1114.github.io/Yugen-UI/#/concepts/cli).
+Kiểm tra cấu hình bất cứ lúc nào: `npx @yugen-ui/cli doctor` (xem https://trandat1114.github.io/Yugen-UI/#/concepts/cli).
 
 ## Có gì bên trong
 

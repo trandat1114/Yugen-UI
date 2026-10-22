@@ -12,7 +12,7 @@ function InstallTabs({ importCode }: { importCode: string }) {
   const { t } = useLocale();
   const files = [
     { name: "npm", code: npm, language: "tsx" as const },
-    ...(cli ? [{ name: "yugen CLI", code: cli, language: "tsx" as const }] : []),
+    ...(cli ? [{ name: "@yugen-ui/cli", code: cli, language: "tsx" as const }] : []),
     ...(shadcn ? [{ name: "shadcn CLI", code: shadcn, language: "tsx" as const }] : []),
     { name: t("component.repoTab"), code: importCode, language: "tsx" as const },
   ];

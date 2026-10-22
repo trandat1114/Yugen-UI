@@ -1,81 +1,81 @@
 # Lộ trình Yugen UI · Roadmap
 
-Lộ trình từ **0.5.0** tới **1.0**. Mục đã xong được đánh dấu `[x]`; trang Cộng đồng (`#/community`) hiển thị bản tóm tắt.
-Muốn nhận một mục? Mở issue hoặc bình luận vào issue sẵn có trước khi bắt tay làm.
+<!-- Sinh từ src/docs/roadmap.ts bằng `npm run roadmap`. Đừng sửa tay. -->
 
-> **English summary** — 0.5 ships the first npm release. 0.6 adds automated tests (unit, interaction, axe, visual,
-> touch) and release tooling. 0.7 improves developer experience (shadcn-compatible registry, lazy docs, generated props,
-> English docs, StackBlitz, token export). 0.8 grows the component set (Overflow, date/time range, DataGrid, forms,
-> AI and chart additions). 1.0 freezes the API with a SemVer and deprecation policy. The SEO track moves the docs to
-> path-based, prerendered pages and ships SEO-ready templates.
+Kế hoạch theo từng bản phát hành, cập nhật 2026-10-23. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và
+phụ thuộc nằm ở [GitHub Project](https://github.com/users/trandat1114/projects/6). `[x]` đã xong, `[~]` đang làm, `[ ]` dự kiến.
 
----
+Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. English: the community page
+(https://trandat1114.github.io/Yugen-UI/?lang=en#/community) shows the same roadmap.
 
-## Giai đoạn 0 — Phát hành 0.5.0
+## Đang làm
 
-- [x] Điền `repository`, `homepage`, `bugs` trong `package.json` và link trong `src/docs/site.ts`
-- [x] Bật GitHub Discussions rồi điền link `discussions`
-- [x] Workflow GitHub Pages (`.github/workflows/pages.yml`) — maintainer bật Settings → Pages → Source: GitHub Actions
-- [x] Thử gói `.tgz` trong app Vite (React 18) và Next.js 16 App Router (React 19), cả `theme.css` lẫn `styles.css`
-- [x] Link so sánh phiên bản trong `CHANGELOG.md`, ảnh chụp cho README
-- [x] Phát hành lên npm — `yugen-ui@0.6.0`, `0.7.0` (`latest`)
+### 0.9.0 · minor · hạn 2026-10-30
 
-## Giai đoạn 1 — 0.6: Chất lượng & niềm tin
+React 19 làm mặc định, starter tối giản, E2E nhanh hơn, docs và lộ trình cập nhật (gồm cả việc dự kiến cho 0.8.4).
 
-- [x] Vitest + Testing Library: logic thuần (`brandRamp`, `useSpinDelay`, `tokenizeCode`, `validateQuestion`, `chartUtils`, `parseLineRanges`)
-- [x] Test bàn phím: Tree, Toolbar, Tabs, Menu, Combobox, Questionnaire (+ SSR/hydration cho 37 nhóm component)
-- [x] Playwright + axe trên mọi trang docs × sáng / tối / tương phản cao × LTR / RTL
-- [x] So sánh ảnh chụp (visual regression)
-- [x] Mô phỏng chạm cho Sheet, Resizable, Carousel
-- [x] CI: job test, ngân sách dung lượng (`size-limit`), ma trận React 18 / 19
-- [x] Changesets cho phiên bản & CHANGELOG; kiểm tra `news.ts` khớp `package.json` (`npm run check:release`)
+- [x] React 19 cho dev, docs và template; React 18 vẫn hỗ trợ, báo trước ngày ngừng (#62)
+- [x] E2E từ ~20 còn 4,4 phút: container Playwright, chạy trên bản build, a11y theo theme (#43)
+- [x] E2E cho bàn phím, focus và các luồng chính của docs (#39)
+- [x] So sánh ảnh chụp trên mọi PR đổi giao diện (#41)
+- [x] Thẻ demo của starter chuyển thành 5 block mới (#56)
+- [x] CI trên Node.js 22, 24, 26 và tự theo lịch phát hành của Node.js (#59)
+- [x] Có gì mới có tab riêng cho từng gói và tin cho bản sắp phát hành (#61)
+- [x] Lộ trình lấy từ một nguồn, trang Cộng đồng đầy đủ tiếng Anh (#58)
+- [x] Quy tắc viết nội dung cho docs, template và CLI (#52)
+- [x] Tên template ngắn, mô tả một dòng; trang Giới thiệu viết lại (#57)
 
-## Giai đoạn 2 — 0.7: Trải nghiệm nhà phát triển
+### cli 0.2.0 · hạn 2026-10-30
 
-- [x] Registry tương thích shadcn: `npx shadcn add <url>/r/<component>.json` (`npm run registry`, trang `#/concepts/shadcn-registry`)
-- [x] `npx shadcn@latest init <url>/r/init.json` (và `init-next.json`): một lệnh tạo `components.json`, chép theme + `cn()` + `YugenProvider`, tự `@import` theme vào CSS, không kéo style mặc định của shadcn
-- [ ] Đăng ký `@yugen` vào danh mục registry của shadcn (maintainer, PR vào `shadcn-ui/ui`) để `npx shadcn add @yugen/button` chạy không cần cấu hình
-- [x] Bắt đầu nhanh rút còn 1 lệnh (template) hoặc 3 bước (npm) — bỏ hướng dẫn chép tay & danh sách phụ thuộc
-- [x] Tải lười demo từng component trên docs (metadata trích lúc build; JS lần đầu 970 kB → 108 kB)
-- [x] Kiểm tra lệch props docs/code từ type TypeScript (`npm run check:props`, chạy trong CI)
-- [~] Docs tiếng Anh (i18n): khung, trang chủ, Cộng đồng, 4 trang khái niệm, tên/mô tả 111 component — còn nội dung chi tiết từng component & các khái niệm khác
-- [x] Nút "Open in StackBlitz" cho ví dụ (hiện khi đã publish npm) + `npm run check:examples` typecheck mọi ví dụ
-- [x] Theme Designer xuất JSON / Tokens Studio (`rampToDesignTokens`, `rampToTokensStudio`)
+CLI cùng 0.9.0 (gồm cả việc dự kiến cho cli 0.3.0).
 
-## Giai đoạn 3 — 0.8: Mở rộng component
+- [x] Yêu cầu Node.js 22 trở lên (#60)
+- [x] create --lang en|vi chọn ngôn ngữ cho app được tạo (#55)
+- [x] Starter tối giản, tiếng Anh mặc định, hai thương hiệu Sakura và Web (#54)
+- [x] Tên template ngắn: Starter, SaaS, Blog, Dashboard, AI chat (#53)
 
-- [x] Overflow (Toolbar, Tabs, Breadcrumb, TagGroup tự ẩn bớt item — ghép qua `Overflow`/`OverflowItem`)
-- [x] DateRangePicker (preset), TimePicker
-- [x] DataGrid: sắp xếp, chọn dòng, đổi cỡ cột, ảo hoá
-- [x] FileUpload / Dropzone, Stepper / Wizard, ví dụ react-hook-form + zod
-- [x] Labs AI: StreamingMarkdown, Citation, Reasoning, PromptInput có đính kèm
-- [x] Labs: Tour, NotificationCenter
-- [x] Chart: Scatter, Heatmap, stacked area, zoom / brush
+## Tiếp theo
 
-## Giai đoạn 4 — 1.0: Ổn định & hệ sinh thái
+### 0.10.0 · minor · hạn 2027-01-29
 
-- [x] Chính sách SemVer & deprecate (cảnh báo trước ít nhất một bản minor) — `#/concepts/versioning`, `warnDeprecated()`
-- [x] Docs theo phiên bản (`/vX.Y/` từ tag + menu chọn bản), audit a11y đạt (axe trong e2e), test đủ React 18 & 19 (CI)
-- [ ] Nhãn `good first issue` (maintainer, trên GitHub)
-- [x] Starter template `templates/vite-dashboard`, `templates/vite-ai-chat` (sinh từ block — `node scripts/sync-templates.mjs`); mục showcase trên trang Cộng đồng
-- [x] Trang `#/templates` (preview chạy thật, lệnh `npx giget … --install` một dòng, Open in StackBlitz) + template `vite-starter`, `vite-saas`, `vite-blog` (Markdown, SEO lúc build)
-- [x] CLI `@yugen-ui/cli` (`packages/cli`, lệnh `yugen`): `create` (template đóng gói sẵn, chọn tương tác), `init` (gói npm / mã nguồn), `add`, `list`, `doctor` — `create-yugen-ui` (`npm create yugen-ui@latest`) gọi `yugen create`
-- [x] Trang docs `#/concepts/cli` (vi + en); quy tắc phát hành CLI (wiki › Release Process › CLI, `check-release.mjs`, `npm run smoke`)
-- [ ] Publish `@yugen-ui/cli` + `create-yugen-ui` lên npm (maintainer: tạo npm org `yugen-ui`, cấp quyền cho `NPM_TOKEN`, đẩy tag `cli@0.1.0` trên `main`; tên `yugen` bị npm chặn vì giống `hygen`)
-- [ ] CLI giai đoạn 2: `yugen diff` / `update` (so mã local với registry), `yugen theme --brand <hex>` (brandRamp), `yugen remove`, codemod bọc `YugenProvider`, `create --ref <branch>` (template từ GitHub)
-- [ ] Đang cân nhắc: Figma kit, gói icon Sakura
+Thang spacing theo số và trải nghiệm docs.
 
-## Giai đoạn SEO — docs dễ tìm, template sẵn SEO
+- [ ] Spacing theo thang số (p-3, gap-5); class viết hoa vẫn chạy nhưng được đánh dấu deprecated (#42)
+- [ ] Theme Designer: bo góc, mật độ, font, màu trung tính, bóng, chuyển động (#44)
+- [ ] Trang Motion: hướng dẫn theo component, playground, xem trước giảm chuyển động (#45)
+- [ ] Sidebar docs kéo được độ rộng, thu gọn về dạng icon (#46)
+- [ ] Kiểm thử trên Firefox và WebKit theo lịch (#40)
 
-Docs đang định tuyến bằng hash (`#/components/button`) — công cụ tìm kiếm coi mọi trang là một URL. Lộ trình:
+## Sau đó
 
-- [x] `<head>` cơ bản: `description`, canonical, Open Graph + ảnh `public/og.jpg` (`node scripts/og-image.mjs`), Twitter card, JSON-LD `SoftwareSourceCode`, `theme-color`
-- [x] Tiêu đề tab, `description`, `og:title` theo trang khi chuyển route (`src/docs/seo.ts`)
-- [x] Template sẵn SEO: `description`, Open Graph, `robots.txt`; `vite-blog` sinh HTML tĩnh từng bài, canonical, JSON-LD `BlogPosting`, `sitemap.xml`, `rss.xml`
-- [ ] Định tuyến theo đường dẫn (`/components/button`) bằng History API; tự chuyển link `#/…` cũ sang URL mới; `404.html` cho GitHub Pages
-- [ ] Prerender mọi route thành HTML tĩnh lúc build (`renderToString` — component đã có test SSR) với `<title>`, `description`, canonical riêng
-- [ ] `sitemap.xml` sinh từ danh sách route; `hreflang` vi / en khi bản tiếng Anh có URL riêng
-- [ ] Ảnh Open Graph riêng cho từng trang component (sinh lúc build)
-- [ ] Lighthouse CI trên workflow Pages: SEO ≥ 95, cảnh báo khi trang thiếu `description`
-- [ ] Trang khái niệm "SEO với Yugen UI" cho người dùng: Next.js `metadata`, heading đúng cấp, `Link` / `asChild` cho link crawl được, `alt` cho `Image`
-- [ ] Gửi sitemap lên Google Search Console (maintainer, sau khi có URL theo đường dẫn)
+### 1.0.0 · major
+
+API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện hoàn tất.
+
+- [ ] Rà soát API, gỡ deprecation, quyết định về React 18 và class spacing viết hoa (#65)
+- [ ] SEO: URL theo đường dẫn, prerender từng trang, sitemap (#63)
+
+### Backlog
+
+Chưa xếp lịch.
+
+- [ ] Docs tiếng Anh cho trang component và các trang khái niệm còn lại (#69)
+- [ ] CLI giai đoạn 2: diff, update, theme, remove (#64)
+- [ ] Đăng ký @yugen vào danh mục registry của shadcn (#68)
+- [ ] Đang cân nhắc: bộ Figma, gói icon Sakura
+
+## Đã phát hành
+
+Chi tiết ở trang Có gì mới (`#/news`) và `CHANGELOG.md`.
+
+- **0.8.3** (2026-10-22): Lệnh tạo dự án chạy được trên PowerShell
+- **0.8.2** (2026-10-22): CLI @yugen-ui/cli
+- **0.8.1** (2026-10-22): Docs gọn hơn trên điện thoại
+- **0.8.0** (2026-10-21): Templates, shadcn init một lệnh & SEO
+- **0.7.0** (2026-10-21): Quote, Autocomplete & SearchBox dễ nhìn hơn
+- **0.6.0** (2026-10-21): DataGrid, bộ AI, registry shadcn & kiểm thử tự động
+- **0.5.0** (2026-10-20): Yugen Labs, gói npm & cộng đồng
+- **0.4.0** (2026-10-20): Khái niệm, RTL & tương phản cao
+- **0.3.0** (2026-10-20): Yugen UI ra đời — Sakura 桜
+- **0.2.0** (2026-10-20): Ngôn ngữ thiết kế theo Fluent 2
+- **0.1.0** (2026-10-20): Nền móng

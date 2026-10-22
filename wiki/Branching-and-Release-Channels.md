@@ -19,6 +19,10 @@ fix/tabs-focus ─────────PR──▶ main ──tag v0.6.1─�
 bất kỳ nhánh ──push / reset──▶ canary ──▶ yugen-ui@canary
 ```
 
+Docs của `next` (https://trandat1114.github.io/Yugen-UI/next/) build lại sau mỗi push vào `next`, kèm tin sắp phát hành
+(`upcoming`) trên trang Có gì mới: kiểm tra ở đó trước khi mở PR `next → main` ([[Release Process]] › Tin cho bản sắp
+phát hành).
+
 ## PR vào nhánh nào?
 
 | Thay đổi | Nhánh đích |

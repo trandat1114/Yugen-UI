@@ -12,7 +12,7 @@ khai, xem [SECURITY.md](./SECURITY.md).
 
 ### Cài đặt
 
-Yêu cầu Node.js **20+** và npm.
+Yêu cầu Node.js **24 LTS** (hoặc 22.22+) và npm.
 
 ```bash
 npm install
@@ -50,14 +50,15 @@ npm run dev          # trang docs tại http://localhost:5173
 - `npm run test:e2e` — Playwright tự chạy `npm run dev` ở cổng 5200. Trên máy dùng Microsoft Edge đã cài sẵn; CI dùng
   Chromium của Playwright (`npx playwright install chromium`, rồi chạy với `CI=1` nếu máy không có Edge). Báo cáo:
   `npx playwright show-report`.
-- `npm run test:visual` — ảnh gốc nằm trong `e2e/__screenshots__/` và **khác nhau theo hệ điều hành** (hậu tố
-  `-win32` / `-linux`). Cố ý đổi giao diện thì cập nhật bằng `npm run test:visual -- --update-snapshots` rồi xem lại
-  ảnh trước khi commit. Ảnh Linux cho CI: chạy workflow **Visual regression** (Actions → Run workflow, tick `update`)
-  và tải artifact `visual-screenshots` về — workflow không tự commit.
+- `npm run test:visual` — chỉ ảnh Linux (`e2e/__screenshots__/**/*-linux.png`) được commit; CI so sánh trên mọi PR đổi
+  component, style hoặc khung docs. Trên Windows / macOS, lần chạy đầu tạo ảnh riêng cho máy bạn (gitignore). Cố ý đổi
+  giao diện: chạy workflow **Visual regression** trên nhánh của bạn (Actions → Run workflow, tick `update`), tải artifact
+  `visual-screenshots`, chép vào `e2e/__screenshots__/` rồi commit. Workflow không tự commit.
 - `npm run size` — sau `npm run build:lib`. Vượt ngân sách thì tìm nguyên nhân trước (import thừa, dependency mới);
   tăng có chủ đích thì sửa `limit` trong `.size-limit.cjs` và ghi lý do trong PR.
-- CI chạy thêm toàn bộ bằng React 19 (job `react-19`). Muốn thử trên máy: làm trong một bản sao của repo
-  (`npm i --no-save react@^19 react-dom@^19 @types/react@^19 @types/react-dom@^19`), đừng làm bẩn `node_modules` chính.
+- Repo chạy React 19; CI chạy thêm typecheck, test và build:lib bằng React 18.3 (job `react-18`) vì bản này vẫn được
+  hỗ trợ. Muốn thử trên máy: làm trong một bản sao của repo
+  (`npm i --no-save react@^18.3 react-dom@^18.3 @types/react@^18.3 @types/react-dom@^18.3`), đừng làm bẩn `node_modules` chính.
 
 ### Luật bắt buộc (tóm tắt Design.md §0)
 
@@ -107,6 +108,8 @@ npm run dev          # trang docs tại http://localhost:5173
 
 Chuỗi giao diện docs nằm ở `src/docs/i18n/vi.ts` (nguồn khoá) và `src/docs/i18n/en.ts`. Tên / mô tả component tiếng Anh: `src/docs/i18n/en/components.ts` (test bắt buộc đủ mọi slug). Trang khái niệm tiếng Anh: thêm `src/docs/concepts/en/<slug>.tsx` cùng cấu trúc mục với bản tiếng Việt. Trang chưa dịch tự hiện thông báo và nội dung gốc.
 
+Viết nội dung (docs, template, thông báo CLI, changeset) theo wiki › *Writing*: ngắn, rõ, không lặp lại thứ đã hiện bên cạnh, gọi đúng tên gói.
+
 ### Nhánh
 
 Sửa lỗi, docs, test → PR vào `main`. Component / prop / token mới và thay đổi phá vỡ → PR vào `next` (nếu đang có; nếu không thì `main`). Tên nhánh: `feat/…`, `fix/…`, `docs/…`, `chore/…`, `exp/…`. Chi tiết kênh `latest` / `next` / `canary` / `release-X.Y`: wiki › *Branching and Release Channels*.
@@ -129,6 +132,11 @@ Loại: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci
 Từ 0.6.0, `CHANGELOG.md` do [Changesets](https://github.com/changesets/changesets) sinh — **không sửa tay**. PR có
 thay đổi người dùng thấy được (component, prop, token, CSS, sửa lỗi) thêm một changeset; PR chỉ đổi docs / test / CI
 thì không cần.
+
+PR vào `next` có thay đổi người dùng thấy được (kể cả docs) còn thêm một dòng vào **tin sắp phát hành**: mục đầu của
+`NEWS` trong `src/docs/news.ts` mang `upcoming: true` (tạo mục nếu chưa có, `version` theo `npx changeset status`). Bản
+CLI ghi vào `CLI_NEWS` / `CREATE_NEWS`. Xem trước ở docs `/next/`. Chi tiết: wiki › *Release Process* › Tin cho bản sắp
+phát hành.
 
 ```bash
 npx changeset    # chọn yugen-ui → patch hoặc minor → viết tóm tắt cho người dùng
@@ -160,19 +168,22 @@ npx changeset    # chọn yugen-ui → patch hoặc minor → viết tóm tắt 
 
 - [ ] `npm run typecheck`, `npm run lint:classes`, `npm test`, `npm run build:lib`, `npm run build:docs` đều pass.
 - [ ] `npm run test:e2e` pass (component có giao diện / tương tác mới); `npm run size` vẫn trong ngân sách.
+- [ ] Check **Visual (compare)** xanh, hoặc đã chụp lại baseline ngay trong PR khi cố ý đổi giao diện.
 - [ ] Không HEX/px/ms tuỳ ý; spacing viết hoa; cỡ chữ theo type ramp; dùng class dùng chung (Design.md §5.7).
 - [ ] Màu đúng vai trò; không brand diện tích lớn; không gradient trên control.
 - [ ] Đủ trạng thái hover / pressed / disabled / focus-visible; bàn phím hoạt động; đã thử RTL.
 - [ ] Đã kiểm tra Sakura / Web / Teams × Light / Dark và High contrast.
 - [ ] Có mục registry (hoặc file block); code mẫu khớp với render.
 - [ ] Đã thêm changeset (`npx changeset`) nếu thay đổi ảnh hưởng người dùng.
+- [ ] Nội dung theo wiki › *Writing* (checklist cuối trang).
+- [ ] PR vào `next`: đã thêm dòng vào tin sắp phát hành (`upcoming`) trong `src/docs/news.ts`.
 
 ### Phát hành (maintainer)
 
 1. `npm run version-packages` (= `changeset version` + đồng bộ `templates/` + lockfile — thiếu bước đồng bộ thì CI đỏ) — gộp các changeset vào `CHANGELOG.md` (mục mới ở đầu file), tăng `version` trong
    `package.json` và xoá file đã dùng. Xem lại phần CHANGELOG vừa sinh.
-2. Thêm mục cho phiên bản mới vào **đầu** mảng `NEWS` trong `src/docs/news.ts` (trang "Có gì mới"). Số phiên bản trên
-   site docs lấy thẳng từ `package.json`, không cần sửa.
+2. Chốt tin: bỏ `upcoming` khỏi mục đầu mảng `NEWS` trong `src/docs/news.ts` và điền ngày phát hành (chưa có tin
+   `upcoming` thì thêm mục mới lên đầu). Số phiên bản trên site docs lấy thẳng từ `package.json`, không cần sửa.
 3. `npm install --package-lock-only` (đồng bộ `version` trong `package-lock.json`) rồi `npm run check:release`
    (`package.json` = `news.ts` = `CHANGELOG.md`).
 4. Commit (`chore(release): vX.Y.Z`), mở PR hoặc đẩy lên `main`.
@@ -180,8 +191,10 @@ npx changeset    # chọn yugen-ui → patch hoặc minor → viết tóm tắt 
    `npm publish --provenance` (cần secret `NPM_TOKEN`). Tag có `-` (vd. `v0.6.0-beta.1`) phát hành với dist-tag `next`.
 
 CLI `@yugen-ui/cli` và `create-yugen-ui` (`packages/`) phát hành riêng bằng tag `cli@X.Y.Z`, không qua Changesets — quy tắc và
-các bước ở wiki › *Release Process* › CLI. Trước khi tag: `npm run check:release --prefix packages/cli -- --npm` và
-`npm run smoke --prefix packages/cli`.
+các bước ở wiki › *Release Process* › CLI. PR đổi `packages/cli` hoặc `packages/create-yugen-ui`: ghi một dòng vào mục
+`## Unreleased` của `packages/cli/CHANGELOG.md`. Mỗi bản phát hành cần mục tin ở đầu `CLI_NEWS` (và `CREATE_NEWS` khi
+`create-yugen-ui` đổi version) trong `src/docs/news.ts`, hiện ở tab riêng trên trang Có gì mới. `check-release` báo lỗi
+nếu thiếu. Trước khi tag: `npm run check:release --prefix packages/cli -- --npm` và `npm run smoke --prefix packages/cli`.
 
 ---
 
@@ -189,7 +202,7 @@ các bước ở wiki › *Release Process* › CLI. Trước khi tag: `npm run 
 
 ### Setup
 
-Requires Node.js **20+** and npm. Run `npm install`, then `npm run dev` (docs site at http://localhost:5173).
+Requires Node.js **24 LTS** (or 22.22+) and npm. Run `npm install`, then `npm run dev` (docs site at http://localhost:5173).
 Scripts: `typecheck`, `lint:classes` (Tailwind canonical classes; `node scripts/canonical-classes.mjs --fix`
 repairs them), `build:lib` (library → `dist/`), `build:docs` (docs → `dist-docs/`), `build` (both), `pack:check`,
 `test`, `test:e2e`, `test:visual`, `size`, `changeset`, `check:release`.
@@ -201,14 +214,16 @@ repairs them), `build:lib` (library → `dist/`), `build:docs` (docs → `dist-d
 - `npm run test:e2e` — Playwright against the docs site (it starts `npm run dev` on port 5200): axe accessibility,
   mouse drag and emulated touch. Locally it uses the installed Microsoft Edge; CI uses Playwright's Chromium (without
   Edge: `npx playwright install chromium` and run with `CI=1`). Open the report with `npx playwright show-report`.
-- `npm run test:visual` — screenshot comparison. Baselines live in `e2e/__screenshots__/` and are **per platform**
-  (`-win32` / `-linux`). After an intended visual change run `npm run test:visual -- --update-snapshots` and review the
-  images before committing. Linux baselines for CI come from the manual **Visual regression** workflow (tick `update`,
-  then download the `visual-screenshots` artifact) — it never commits.
+- `npm run test:visual` — screenshot comparison. Only Linux baselines (`e2e/__screenshots__/**/*-linux.png`) are
+  committed, and CI compares them on every PR that changes components, styles or the docs layout. On Windows / macOS the
+  first run creates baselines for your machine (gitignored). After an intended visual change, run the **Visual
+  regression** workflow on your branch (tick `update`), download the `visual-screenshots` artifact, copy it into
+  `e2e/__screenshots__/` and commit. The workflow never commits.
 - `npm run size` — size budgets (`.size-limit.cjs`), after `npm run build:lib`. If a budget fails, find the cause
   first; raise a `limit` only on purpose, and say why in the PR.
-- CI also runs typecheck, unit tests and the library build against React 19 (`react-19` job). To try it locally, use
-  a copy of the repo (`npm i --no-save react@^19 react-dom@^19 @types/react@^19 @types/react-dom@^19`).
+- The repo runs React 19; CI also runs typecheck, unit tests and the library build against React 18.3 (`react-18` job),
+  which is still supported. To try it locally, use a copy of the repo
+  (`npm i --no-save react@^18.3 react-dom@^18.3 @types/react@^18.3 @types/react-dom@^18.3`).
 
 ### Rules
 
@@ -238,6 +253,8 @@ focus / links, gradients never on controls, WCAG contrast (4.5:1 text, 3:1 UI), 
 
 UI strings live in `src/docs/i18n/vi.ts` (source of the keys) and `src/docs/i18n/en.ts`. English component names and leads: `src/docs/i18n/en/components.ts` (a test requires every slug). English concept pages: add `src/docs/concepts/en/<slug>.tsx` with the same section ids as the Vietnamese page. Untranslated pages show a notice and the Vietnamese original.
 
+Copy (docs, templates, CLI messages, changesets) follows wiki › *Writing*: short and clear, no repeating what the UI next to it already says, package names as users see them.
+
 ### Branches
 
 Bug fixes, docs, tests → PR to `main`. New components / props / tokens and breaking changes → PR to `next` (when it exists, otherwise `main`). Branch names: `feat/…`, `fix/…`, `docs/…`, `chore/…`, `exp/…`. Release channels (`latest`, `next`, `canary`, `release-X.Y`): wiki › *Branching and Release Channels*.
@@ -255,6 +272,11 @@ Fill in the pull-request template.
 From 0.6.0, `CHANGELOG.md` is generated by [Changesets](https://github.com/changesets/changesets) — do not edit it by
 hand. A PR with a user-facing change (component, prop, token, CSS, bug fix) adds a changeset; docs / test / CI-only
 PRs do not need one.
+
+A PR into `next` with a user-facing change (docs included) also adds a line to the **upcoming news entry**: the first
+`NEWS` entry in `src/docs/news.ts`, marked `upcoming: true` (create it if missing, with the version from
+`npx changeset status`). CLI changes go to `CLI_NEWS` / `CREATE_NEWS`. Preview it on the `/next/` docs. Details: wiki ›
+*Release Process* › Tin cho bản sắp phát hành.
 
 ```bash
 npx changeset    # pick yugen-ui → patch or minor → write a user-facing summary
@@ -275,8 +297,8 @@ release and removed when the cycle exits pre mode.
 
 1. `npm run version-packages` (= `changeset version` + syncs `templates/` and the lockfile — skipping it turns CI red) — writes the pending changesets into `CHANGELOG.md` (new section at the top), bumps
    `version` in `package.json` and deletes the used changeset files. Review the generated entry.
-2. Add the release at the **top** of the `NEWS` array in `src/docs/news.ts` (the "Có gì mới" page). The docs site
-   reads its version from `package.json` automatically.
+2. Finalize the news: remove `upcoming` from the first `NEWS` entry in `src/docs/news.ts` and set the release date (add a
+   new entry at the top if there is none). The docs site reads its version from `package.json` automatically.
 3. `npm install --package-lock-only` (syncs the version in `package-lock.json`), then `npm run check:release`
    (`package.json` = `news.ts` = `CHANGELOG.md`).
 4. Commit (`chore(release): vX.Y.Z`) and merge to `main`.
@@ -285,5 +307,8 @@ release and removed when the cycle exits pre mode.
    (e.g. `v0.6.0-beta.1`) are published under the `next` dist-tag.
 
 The `@yugen-ui/cli` CLI and `create-yugen-ui` (`packages/`) are released separately with a `cli@X.Y.Z` tag, outside
-Changesets — rules and steps in the wiki › *Release Process* › CLI. Before tagging run
+Changesets — rules and steps in the wiki › *Release Process* › CLI. PRs that change `packages/cli` or
+`packages/create-yugen-ui` add a line under `## Unreleased` in `packages/cli/CHANGELOG.md`. Every release needs a news
+entry at the top of `CLI_NEWS` (and `CREATE_NEWS` when `create-yugen-ui` changes version) in `src/docs/news.ts`, shown
+in its own tab on the What's new page; `check-release` fails without it. Before tagging run
 `npm run check:release --prefix packages/cli -- --npm` and `npm run smoke --prefix packages/cli`.

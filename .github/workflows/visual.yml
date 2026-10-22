@@ -1,11 +1,24 @@
 name: Visual regression
 
-# Manual only (Actions → Visual regression → Run workflow). Screenshots differ per OS, so Linux baselines
-# (e2e/__screenshots__/**/*-linux.png) are produced here. This workflow never commits: with `update` checked it
-# regenerates the baselines and uploads them as the `visual-screenshots` artifact — download it, copy the files into
-# e2e/__screenshots__/ and commit them in a pull request.
+# Compare: on PRs that touch src/ (tests aside), index.html or dependencies (not a required check yet). A UI change
+# that is meant to happen updates the baselines in the same PR. Update: Actions →
+# Visual regression → Run workflow with `update` on your branch; the new Linux baselines
+# (e2e/__screenshots__/**/*-linux.png, the only committed ones) come back as the `visual-screenshots` artifact — copy
+# them into e2e/__screenshots__/ and commit. This workflow never commits.
 
 on:
+  pull_request:
+    branches: [main, next]
+    paths:
+      # Ảnh chụp gồm trang chủ, Blocks, Màu và trang component: block, registry, i18n hay phụ thuộc đổi đều ảnh hưởng.
+      - "src/**"
+      - "!src/**/*.test.ts"
+      - "!src/**/*.test.tsx"
+      - "index.html"
+      - "package-lock.json"
+      - "e2e/visual.spec.ts"
+      - "e2e/utils.ts"
+      - "e2e/__screenshots__/**"
   workflow_dispatch:
     inputs:
       update:
@@ -25,6 +38,11 @@ jobs:
     name: Visual (${{ inputs.update && 'update' || 'compare' }})
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # Trình duyệt và thư viện hệ thống có sẵn trong image: không `playwright install --with-deps` (apt) mỗi lần chạy.
+    # Tag phải khớp @playwright/test trong package-lock.json (src/test/playwright-image.test.ts).
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble
+      options: --user 1001
     env:
       CI: true
     steps:
@@ -32,11 +50,10 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
 
       - name: Run visual tests
         env:
@@ -74,3 +91,14 @@ jobs:
           path: test-results/
           retention-days: 14
           if-no-files-found: ignore
+
+      - name: Explain a failed compare
+        if: failure() && !inputs.update
+        run: |
+          {
+            echo "### Visual differences"
+            echo ""
+            echo "Download **visual-test-results** (diff, actual and expected PNGs) from this run's artifacts."
+            echo "If the change is intended: Actions → Visual regression → Run workflow on this branch with **update**,"
+            echo "then copy the files from **visual-screenshots** into \`e2e/__screenshots__/\` and commit them."
+          } >> "$GITHUB_STEP_SUMMARY"
