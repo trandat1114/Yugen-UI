@@ -55,8 +55,8 @@ npm run dev          # trang docs tại http://localhost:5173
   component, style hoặc khung docs. Trên Windows / macOS, lần chạy đầu tạo ảnh riêng cho máy bạn (gitignore). Cố ý đổi
   giao diện: chạy workflow **Visual regression** trên nhánh của bạn (Actions → Run workflow, tick `update`), tải artifact
   `visual-screenshots`, chép vào `e2e/__screenshots__/` rồi commit. Workflow không tự commit.
-- `npm run test:engines` — cần `npx playwright install firefox webkit` một lần. CI chạy hằng tuần và trên PR vào `main`
-  (workflow **Browser engines**), không chạy trên mọi PR. Test chạm-kéo dùng CDP nên chỉ chạy trên Chromium.
+- `npm run test:engines` — cần `npx playwright install firefox webkit` một lần. CI chạy hằng tuần, trên PR vào `main` và
+  trên PR có đổi `e2e/` hoặc `playwright.config.ts` (workflow **Browser engines**), không chạy trên mọi PR. Test chạm-kéo dùng CDP nên chỉ chạy trên Chromium.
 - `npm run size` — sau `npm run build:lib`. Vượt ngân sách thì tìm nguyên nhân trước (import thừa, dependency mới);
   tăng có chủ đích thì sửa `limit` trong `.size-limit.cjs` và ghi lý do trong PR.
 - Repo chạy React 19; CI chạy thêm typecheck, test và build:lib bằng React 18.3 (job `react-18`) vì bản này vẫn được
@@ -236,8 +236,8 @@ repairs them), `build:lib` (library → `dist/`), `build:docs` (docs → `dist-d
   regression** workflow on your branch (tick `update`), download the `visual-screenshots` artifact, copy it into
   `e2e/__screenshots__/` and commit. The workflow never commits.
 - `npm run test:engines` — interaction E2E on Firefox and WebKit (Safari desktop, iPhone); run
-  `npx playwright install firefox webkit` once. CI runs it weekly and on PRs into `main` (the **Browser engines**
-  workflow), not on every PR. Touch-drag tests go through CDP, so they run on Chromium only.
+  `npx playwright install firefox webkit` once. CI runs it weekly, on PRs into `main` and on PRs that change
+  `e2e/` or `playwright.config.ts` (the **Browser engines** workflow), not on every PR. Touch-drag tests go through CDP, so they run on Chromium only.
 - `npm run size` — size budgets (`.size-limit.cjs`), after `npm run build:lib`. If a budget fails, find the cause
   first; raise a `limit` only on purpose, and say why in the PR.
 - The repo runs React 19; CI also runs typecheck, unit tests and the library build against React 18.3 (`react-18` job),

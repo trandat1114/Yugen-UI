@@ -6,7 +6,7 @@ import { defineConfig, devices, type Project } from "@playwright/test";
  *                            + touch (giả lập mobile).
  * - `npm run test:visual` → chỉ project `visual` (so sánh ảnh chụp; baseline theo nền tảng trong e2e/__screenshots__).
  * - `npm run test:engines` → interaction trên Firefox và WebKit, touch trên WebKit (iPhone) — #40. Workflow engines.yml
- *                            chạy theo lịch và trên PR vào main; local cần `npx playwright install firefox webkit`.
+ *                            chạy theo lịch, trên PR vào main và PR đổi e2e/; local cần `npx playwright install firefox webkit`.
  * Local dùng Microsoft Edge đã cài sẵn (không cần tải trình duyệt); CI dùng Chromium của Playwright.
  * Mặc định chạy trên bản build (`build:docs` + `vite preview`), giống site đã deploy. `YUGEN_E2E_DEV=1` dùng dev server
  * để debug (module biến đổi theo yêu cầu, chậm hơn và có HMR).

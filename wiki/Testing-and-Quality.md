@@ -25,8 +25,8 @@
 | React 18 | cài React 18.3 tạm thời → typecheck, test, build:lib |
 | E2E (Playwright + axe) | chromium, upload `playwright-report` khi lỗi |
 
-Workflow riêng **Browser engines** (`engines.yml`): `npm run test:engines` hằng tuần (thứ Hai), trên PR vào `main` và khi
-gọi tay. Bản chạy theo lịch hỏng thì mở issue "E2E on Firefox / WebKit is failing" (hoặc bình luận nếu đang mở), xanh
+Workflow riêng **Browser engines** (`engines.yml`): `npm run test:engines` hằng tuần (thứ Hai), trên PR vào `main`, trên PR
+vào `next` có đổi `e2e/` / `playwright.config.ts` / chính workflow, và khi gọi tay. Bản chạy theo lịch hỏng thì mở issue "E2E on Firefox / WebKit is failing" (hoặc bình luận nếu đang mở), xanh
 lại thì tự đóng. Khác biệt giữa engine ghi ở trang docs Trình duyệt & nền tảng › Kiểm thử trên từng engine.
 
 ## Sửa CI đỏ — các ca hay gặp

@@ -2,14 +2,14 @@ name: Browser engines
 
 # E2E trên Firefox và WebKit (#40): interaction (kéo chuột, carousel, bàn phím, luồng docs) trên Firefox + Safari desktop,
 # touch trên WebKit (iPhone). Không chạy a11y: kết quả axe không phụ thuộc engine. Không chạy trên mọi PR để check giữ
-# nhanh: hằng tuần, trên PR vào main (bản phát hành) và khi gọi tay. Bản chạy theo lịch hỏng → mở issue (hoặc bình
-# luận vào issue đang mở); xanh lại → đóng issue đó.
+# nhanh: hằng tuần, trên PR vào main (bản phát hành), trên PR vào next có đổi test E2E / cấu hình Playwright, và khi gọi
+# tay. Bản chạy theo lịch hỏng → mở issue (hoặc bình luận vào issue đang mở); xanh lại → đóng issue đó.
 
 on:
   schedule:
     - cron: "0 4 * * 1"
   pull_request:
-    branches: [main]
+    branches: [main, next]
     types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 
@@ -21,9 +21,33 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  scope:
+    name: Scope
+    if: github.event.pull_request.draft != true
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      run: ${{ steps.check.outputs.run }}
+    steps:
+      - id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BASE: ${{ github.base_ref }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" != "pull_request" ] || [ "$BASE" = "main" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          elif gh pr diff "$PR" -R "$GITHUB_REPOSITORY" --name-only | grep -qE '^(e2e/|playwright\.config\.ts$|\.github/workflows/engines\.yml$)'; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+
   engines:
     name: E2E (Firefox + WebKit)
-    if: github.event.pull_request.draft != true
+    needs: scope
+    if: needs.scope.outputs.run == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 40
     # Image có sẵn cả Firefox và WebKit. Tag phải khớp @playwright/test trong package-lock.json (src/test/playwright-image.test.ts).
