@@ -235,6 +235,19 @@ npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-starter my-app --install
 Prefer the shadcn CLI? `npx shadcn@latest init https://trandat1114.github.io/Yugen-UI/r/init.json` sets up the theme,
 `cn()` and `YugenProvider` in one step.
 
+## CLI
+
+[`yugen`](packages/cli#readme) does all of the above from one tool — templates ship inside it, components come from the
+same registry:
+
+```bash
+npm create yugen-ui@latest my-app            # pick a template (= npx yugen@latest create my-app)
+npx yugen@latest init                        # existing project: npm package or source mode, theme import, yugen.json
+npx yugen@latest add button dialog           # copy component source + install its dependencies
+npx yugen@latest list                        # components in the registry
+npx yugen@latest doctor                      # check React, Tailwind v4, the theme import, versions, YugenProvider
+```
+
 ## Next.js (App Router)
 
 The published build already starts every component module with `"use client";`. The entry barrel, `cn()` and
@@ -493,6 +506,19 @@ npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-starter my-app --install
 
 Dùng shadcn CLI? `npx shadcn@latest init https://trandat1114.github.io/Yugen-UI/r/init.json` cài theme, `cn()` và
 `YugenProvider` trong một bước.
+
+### CLI
+
+[`yugen`](packages/cli#readme) gom mọi cách trên vào một công cụ — template đóng gói sẵn, component lấy từ cùng
+registry:
+
+```bash
+npm create yugen-ui@latest my-app            # chọn template (= npx yugen@latest create my-app)
+npx yugen@latest init                        # dự án có sẵn: gói npm hoặc mã nguồn, import theme, ghi yugen.json
+npx yugen@latest add button dialog           # chép mã nguồn component + cài phụ thuộc
+npx yugen@latest list                        # danh sách component trong registry
+npx yugen@latest doctor                      # kiểm tra React, Tailwind v4, import theme, phiên bản, YugenProvider
+```
 
 ### Next.js (App Router)
 

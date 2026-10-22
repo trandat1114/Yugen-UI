@@ -18,6 +18,9 @@
  *
  * Phụ thuộc npm và registryDependencies được suy ra từ import của từng file — thêm component mới không cần sửa script.
  *
+ * CLI `yugen add` / `init` (packages/cli) đọc cùng output: tên item, `registry/yugen/{ui,lib}/…` trong `files[].path`,
+ * import `@/lib/…` / `@/components/ui/…` và item `theme`, `cn`, `yugen-provider`, `all` — đổi những thứ đó thì sửa cả CLI.
+ *
  *   node scripts/build-registry.mjs                 # URL mặc định: homepage trong package.json + "r"
  *   REGISTRY_URL=http://localhost:5173/r node scripts/build-registry.mjs
  */
