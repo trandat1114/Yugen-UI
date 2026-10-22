@@ -22,7 +22,7 @@ jobs:
         with:
           fetch-depth: 0 # cần lịch sử nhánh để kiểm tra tag nằm đúng nhánh
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
