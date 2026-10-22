@@ -13,7 +13,13 @@ updates:
         patterns: ["vitest", "@vitest/*", "@testing-library/*", "@playwright/test", "@axe-core/*", "jsdom"]
       build:
         patterns: ["vite", "vite-node", "@vitejs/*", "tailwindcss", "@tailwindcss/*", "typescript", "tsc-alias"]
+      # @size-limit/* ghim peer size-limit đúng version — phải lên cùng nhau.
+      size-limit:
+        patterns: ["size-limit", "@size-limit/*"]
     ignore:
+      # TypeScript 7 (bản Go) chưa có JS API mà vite.plugins.ts và scripts/check-props.ts dùng.
+      - dependency-name: "typescript"
+        versions: [">=7"]
       # Major của React / Tailwind cần RFC + kiểm thử riêng (GOVERNANCE.md).
       - dependency-name: "react"
         update-types: ["version-update:semver-major"]
