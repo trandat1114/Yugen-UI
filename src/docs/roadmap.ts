@@ -35,30 +35,11 @@ export const PROJECT_URL = "https://github.com/users/trandat1114/projects/6";
 export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
   now: [
     {
-      milestone: "0.9.0",
-      kind: "minor",
-      due: "2026-10-30",
-      vi: "React 19 làm mặc định, starter tối giản, E2E nhanh hơn, docs và lộ trình cập nhật (gồm cả việc dự kiến cho 0.8.4).",
-      en: "React 19 first, a minimal starter, faster E2E, updated docs and roadmap (including what was planned for 0.8.4).",
-      items: [
-        { status: "done", issue: 62, vi: "React 19 cho dev, docs và template; React 18 vẫn hỗ trợ, báo trước ngày ngừng", en: "React 19 for dev, docs and templates; React 18 still supported, end announced" },
-        { status: "done", issue: 43, vi: "E2E từ ~20 còn 4,4 phút: container Playwright, chạy trên bản build, a11y theo theme", en: "E2E from ~20 to 4.4 min: Playwright container, production build, a11y per theme" },
-        { status: "done", issue: 39, vi: "E2E cho bàn phím, focus và các luồng chính của docs", en: "E2E for keyboard, focus and the main docs flows" },
-        { status: "done", issue: 41, vi: "So sánh ảnh chụp trên mọi PR đổi giao diện", en: "Visual comparison on every PR that changes the UI" },
-        { status: "done", issue: 56, vi: "Thẻ demo của starter chuyển thành 5 block mới", en: "The starter's demo cards become 5 new blocks" },
-        { status: "done", issue: 59, vi: "CI trên Node.js 22, 24, 26 và tự theo lịch phát hành của Node.js", en: "CI on Node.js 22, 24, 26, following the Node.js release schedule automatically" },
-        { status: "done", issue: 61, vi: "Có gì mới có tab riêng cho từng gói và tin cho bản sắp phát hành", en: "What's new has a tab per package and news for the upcoming release" },
-        { status: "done", issue: 58, vi: "Lộ trình lấy từ một nguồn, trang Cộng đồng đầy đủ tiếng Anh", en: "Roadmap from one source, community page fully in English" },
-        { status: "done", issue: 52, vi: "Quy tắc viết nội dung cho docs, template và CLI", en: "Copy guidelines for docs, templates and the CLI" },
-        { status: "done", issue: 57, vi: "Tên template ngắn, mô tả một dòng; trang Giới thiệu viết lại", en: "Short template names, one-line descriptions; introduction rewritten" },
-      ],
-    },
-    {
       milestone: "cli 0.2.0",
       kind: "cli",
       due: "2026-10-30",
-      vi: "CLI cùng 0.9.0 (gồm cả việc dự kiến cho cli 0.3.0).",
-      en: "CLI alongside 0.9.0 (including what was planned for cli 0.3.0).",
+      vi: "CLI đi kèm yugen-ui 0.9.0 (gồm cả việc dự kiến cho cli 0.3.0).",
+      en: "CLI to go with yugen-ui 0.9.0 (including what was planned for cli 0.3.0).",
       items: [
         { status: "done", issue: 60, vi: "Yêu cầu Node.js 22 trở lên", en: "Requires Node.js 22 or later" },
         { status: "done", issue: 55, vi: "create --lang en|vi chọn ngôn ngữ cho app được tạo", en: "create --lang en|vi picks the language of the generated app" },
