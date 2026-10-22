@@ -69,7 +69,8 @@ Names are matched loosely (`data-grid`, `DataGrid`). Files you have edited are l
 }
 ```
 
-Projects set up with `npx shadcn init …/r/init.json` work without it: `add` reads `components.json` instead.
+Projects set up with `npx shadcn init …/r/init.json` work without it: `add` reads `components.json` instead. A project
+with `yugen-ui` in its dependencies and no `yugen.json` (an app made by `create`) is treated as package mode.
 
 ## Registry
 

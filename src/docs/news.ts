@@ -214,6 +214,16 @@ export const LATEST_RELEASE = NEWS.find((r) => !r.upcoming) ?? NEWS[0];
  */
 export const CLI_NEWS: NewsRelease[] = [
   {
+    version: "0.2.1",
+    upcoming: true,
+    date: "2026-10-30",
+    title: "doctor nhận app vừa tạo",
+    summary: "App tạo bằng create không còn bị doctor cảnh báo thiếu yugen.json.",
+    items: [
+      { kind: "fixed", text: "doctor, add, list: dự án đã cài yugen-ui mà chưa có yugen.json (app tạo bằng create, hoặc cài tay theo README) được hiểu là mode package; doctor hết cảnh báo, add in sẵn dòng import thay vì đòi chạy yugen init.", href: "#/concepts/cli" },
+    ],
+  },
+  {
     version: "0.2.0",
     date: "2026-10-23",
     title: "Node.js 22, --lang và template mới",

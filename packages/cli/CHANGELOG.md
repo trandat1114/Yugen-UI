@@ -1,5 +1,11 @@
 # @yugen-ui/cli
 
+## Unreleased
+
+- `doctor`, `add`, `list`: a project with `yugen-ui` in its dependencies and no `yugen.json` (an app made by `create`,
+  or one set up by hand from the README) is read as package mode. `doctor` no longer warns on a fresh app, and `add`
+  prints the import line instead of asking for `yugen init`.
+
 ## 0.2.0
 
 - `create --lang en|vi`: language of the app's text for templates that have both (the starter today). English by

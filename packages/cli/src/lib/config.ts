@@ -1,8 +1,8 @@
 import path from "node:path";
-import { CONFIG_FILE } from "./constants.js";
+import { CONFIG_FILE, PACKAGE } from "./constants.js";
 import { CliError } from "./errors.js";
 import { exists, parseJsonc, readText, writeJson } from "./fs.js";
-import { detectFramework, readPkg, readTsconfigAlias, type Framework } from "./project.js";
+import { allDeps, detectFramework, readPkg, readTsconfigAlias, type Framework } from "./project.js";
 import type { Placement } from "./transform.js";
 
 export type Mode = "package" | "source";
@@ -27,7 +27,7 @@ export type SourceConfig = YugenConfig & { mode: "source"; paths: Placement };
 
 export function loadConfig(cwd: string): YugenConfig | null {
   const file = path.join(cwd, CONFIG_FILE);
-  if (!exists(file)) return fromShadcn(cwd);
+  if (!exists(file)) return fromShadcn(cwd) ?? fromPackage(cwd);
   let config: YugenConfig;
   try {
     config = JSON.parse(readText(file)) as YugenConfig;
@@ -42,6 +42,14 @@ export function loadConfig(cwd: string): YugenConfig | null {
 }
 
 export const writeConfig = (cwd: string, config: YugenConfig) => writeJson(path.join(cwd, CONFIG_FILE), config);
+
+/** Không có yugen.json nhưng đã cài yugen-ui (app tạo bằng `create`, hoặc cài tay theo README) → mode package. */
+function fromPackage(cwd: string): YugenConfig | null {
+  const pkg = readPkg(cwd);
+  if (!pkg || !allDeps(pkg)[PACKAGE]) return null;
+  const framework = detectFramework(pkg);
+  return { mode: "package", framework, rsc: framework === "next", css: null };
+}
 
 /** Dự án đã chạy `npx shadcn init <docs>/r/init.json`: suy ra cấu hình source từ components.json + alias tsconfig. */
 function fromShadcn(cwd: string): YugenConfig | null {
