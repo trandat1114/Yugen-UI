@@ -133,11 +133,11 @@ export const CONCEPT_METAS: Record<string, ConceptMeta> = {
     title: "Bắt đầu nhanh",
     group: "Bắt đầu",
     order: 2,
-    lead: "Một lệnh là có ứng dụng chạy được từ template; dự án có sẵn thì chỉ ba bước: cài yugen-ui, thêm một dòng CSS, bọc YugenProvider.",
+    lead: "Một lệnh là có ứng dụng chạy được từ template. Dự án có sẵn: chạy npx yugen@latest init, hoặc tự làm ba bước (cài yugen-ui, thêm một dòng CSS, bọc YugenProvider).",
     toc: [
       { id: "template", label: "Nhanh nhất: một lệnh" },
       { id: "existing", label: "Thêm vào dự án có sẵn" },
-      { id: "shadcn", label: "Sở hữu mã nguồn (shadcn)" },
+      { id: "shadcn", label: "Sở hữu mã nguồn" },
       { id: "first-component", label: "Component đầu tiên" },
       { id: "persist-theme", label: "Nhớ theme & chống nháy" },
       { id: "requirements", label: "Yêu cầu" },

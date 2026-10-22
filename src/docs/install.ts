@@ -9,7 +9,8 @@ export const exportNames = () => [...Object.keys(UI), ...Object.keys(Ramp), ...O
 /**
  * Suy ra lệnh cài cho từng trang component từ `importCode` của docs:
  *   - npm:        import { … } from "yugen-ui"
- *   - shadcn CLI: npx shadcn@latest add <registry>/r/<item>.json + import theo từng thư mục component
+ *   - yugen CLI:  npx yugen add <item> + import theo từng thư mục component (packages/cli)
+ *   - shadcn CLI: npx shadcn@latest add <registry>/r/<item>.json + cùng import đó
  * Bản đồ tên export → thư mục lấy từ chính các module component (cùng module trang docs đã nạp, không tốn thêm).
  */
 const modules = import.meta.glob<Record<string, unknown>>(["../components/ui/*/*.{ts,tsx}", "!**/*.test.*"], { eager: true });
@@ -42,8 +43,10 @@ function parseNames(list: string) {
 
 export interface InstallSnippets {
   npm: string;
+  /** CLI yugen (chế độ source); rỗng nếu không suy ra được thư mục component. */
+  cli: string;
   shadcn: string;
-  /** Thư mục component cần cài qua shadcn (rỗng nếu không suy ra được). */
+  /** Thư mục component cần chép (rỗng nếu không suy ra được). */
   items: string[];
 }
 
@@ -61,16 +64,20 @@ export function installSnippets(importCode: string): InstallSnippets {
   });
 
   const items = [...byFolder.keys()];
-  if (items.length === 0) return { npm, shadcn: "", items };
+  if (items.length === 0) return { npm, cli: "", shadcn: "", items };
 
   // Dòng init chỉ chạy một lần mỗi dự án (theme + cn + YugenProvider) — component không tự kéo theme.
-  const add = [
+  const cliAdd = [
+    "// npx yugen@latest init --mode source   (1×)",
+    `// npx yugen add ${items.map(registryItemName).join(" ")}`,
+  ].join("\n");
+  const shadcnAdd = [
     `// npx shadcn@latest init ${REGISTRY_URL}/init.json   (1×; Next.js: init-next.json)`,
     `// npx shadcn@latest add ${items.map((f) => `${REGISTRY_URL}/${registryItemName(f)}.json`).join(" \\\n//   ")}`,
   ].join("\n");
   const imports = [...byFolder].map(
     ([folder, names]) => `import { ${names.join(", ")} } from "@/components/ui/${folder}/${folder}";`,
   );
-  const shadcn = [add, ...imports, rest.trim()].filter(Boolean).join("\n");
-  return { npm, shadcn, items };
+  const withImports = (header: string) => [header, ...imports, rest.trim()].filter(Boolean).join("\n");
+  return { npm, cli: withImports(cliAdd), shadcn: withImports(shadcnAdd), items };
 }

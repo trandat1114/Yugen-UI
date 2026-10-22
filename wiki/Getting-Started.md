@@ -6,16 +6,21 @@ Yêu cầu: React 18 hoặc 19, TypeScript 5 (khuyên dùng). Tailwind CSS v4 l�
 
 | Cách | Khi nào | Lệnh |
 |---|---|---|
-| **npm + Tailwind v4** | Dự án mới / đã có Tailwind v4 — khuyên dùng | `npm install yugen-ui` + `@import "yugen-ui/theme.css"` |
-| **npm, không Tailwind** | Dự án dùng CSS khác | `import "yugen-ui/styles.css"` |
-| **shadcn CLI** | Muốn sở hữu và sửa sâu mã nguồn | `npx shadcn@latest init https://trandat1114.github.io/Yugen-UI/r/init.json` rồi `add …/r/button.json` |
-| **Starter template** | Bắt đầu nhanh một app hoàn chỉnh (starter, SaaS, blog…) | `npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-starter my-app --install` |
-| **CLI `yugen`** | Tạo app / thiết lập dự án có sẵn / chép component bằng một công cụ | `npm create yugen-ui@latest` · `npx yugen@latest init` · `npx yugen add button` |
+| **CLI `yugen`** — đơn giản nhất | Dự án có sẵn: cài gói + thêm theme vào CSS trong một lệnh | `npx yugen@latest init` |
+| **Starter template** | Bắt đầu nhanh một app hoàn chỉnh (starter, SaaS, blog…) | `npm create yugen-ui@latest my-app` |
+| **Chép mã nguồn** | Muốn sở hữu và sửa sâu mã nguồn | `npx yugen@latest init --mode source` rồi `npx yugen add button` |
+| **npm + Tailwind v4** (tự làm) | Như dòng đầu, không dùng CLI | `npm install yugen-ui` + `@import "yugen-ui/theme.css"` |
+| **npm, không Tailwind** | Dự án dùng CSS khác | `import "yugen-ui/styles.css"` (hoặc `npx yugen init` tự thêm) |
+| **shadcn CLI** | Dự án đã dùng shadcn/ui | `npx shadcn@latest init https://trandat1114.github.io/Yugen-UI/r/init.json` rồi `add …/r/button.json` |
 
-Chi tiết từng cách: [README](https://github.com/trandat1114/Yugen-UI#readme) và trang
+Không dùng CLI để tạo app: `npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-starter my-app --install`.
+Chi tiết: [CLI yugen](https://trandat1114.github.io/Yugen-UI/#/concepts/cli), [README](https://github.com/trandat1114/Yugen-UI#readme),
 [Cài bằng shadcn CLI](https://trandat1114.github.io/Yugen-UI/#/concepts/shadcn-registry).
 
 ## 2. Thiết lập tối thiểu (npm + Tailwind v4)
+
+`npx yugen@latest init` (chọn `package`) làm hộ bước CSS bên dưới và in đoạn bọc `YugenProvider`; kiểm tra lại bằng
+`npx yugen doctor`. Tự làm:
 
 ```css
 /* src/index.css */

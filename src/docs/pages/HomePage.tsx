@@ -15,6 +15,7 @@ import { homepage } from "../../../package.json";
 import { COMPONENTS_META } from "../registry";
 import { FOUNDATIONS } from "../foundations";
 import { LATEST_RELEASE } from "../news";
+import { HomeCreate } from "./HomeCreate";
 import { HomeShowcase } from "./HomeShowcase";
 import { HomeComponents } from "./HomeComponents";
 import { FallingPetals, YugenKanji } from "../HeroArt";
@@ -29,13 +30,15 @@ const PRINCIPLES = [
 ] as const;
 
 // Không import từ ../install (nạp sẵn mọi module component) — trang chủ chỉ cần URL registry.
+// cli: cài gói + thêm dòng theme vào CSS trong một lệnh (packages/cli) — cách ngắn nhất cho dự án có sẵn.
 const INSTALL = {
+  cli: "npx yugen@latest init",
   npm: "npm i yugen-ui",
   shadcn: `npx shadcn@latest init ${homepage.replace(/\/$/, "")}/r/init.json`,
 } as const;
 
 function InstallSnippet({ className }: { className?: string }) {
-  const [tool, setTool] = useState<keyof typeof INSTALL>("npm");
+  const [tool, setTool] = useState<keyof typeof INSTALL>("cli");
   const { t } = useLocale();
   return (
     <Tabs
@@ -44,6 +47,7 @@ function InstallSnippet({ className }: { className?: string }) {
       className={cn("overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1/80 shadow-2 backdrop-blur", className)}
     >
       <TabsList size="small" aria-label={t("home.install")} className="border-b border-stroke-2 px-XS">
+        <TabsTrigger value="cli">CLI</TabsTrigger>
         <TabsTrigger value="npm">npm</TabsTrigger>
         <TabsTrigger value="shadcn">shadcn</TabsTrigger>
       </TabsList>
@@ -137,6 +141,15 @@ export function HomePage() {
             text={t("home.cardBlocks")}
             tone="bg-marigold-bg text-marigold-fg"
           />
+        </div>
+      </section>
+
+      {/* Tạo dự án nhanh (CLI) — khung cài đặt trong hero dành cho dự án có sẵn */}
+      <section className="mt-12 md:mt-16 lg:mt-20">
+        <h2 className="font-display text-title1 font-semibold">{t("home.create")}</h2>
+        <p className="mt-S max-w-3xl text-body1 text-foreground-2">{t("home.createLead")}</p>
+        <div className="mt-L md:mt-XL">
+          <HomeCreate />
         </div>
       </section>
 

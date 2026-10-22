@@ -16,6 +16,9 @@ import { DocSection } from "../../blocks";
 import { CodeBlock } from "../../CodeBlock";
 import { templateStackBlitzUrl } from "../../templates";
 import {
+  CLI_ADD,
+  CLI_INIT,
+  CLI_INIT_SOURCE,
   CSS_PRECOMPILED,
   CSS_TAILWIND,
   PROVIDER_NEXT,
@@ -176,15 +179,15 @@ export default function Page() {
       <DocSection
         id="template"
         title="Fastest: one command"
-        description="Downloads a template, installs dependencies and starts the dev server — nothing else to configure."
+        description="The CLI copies a template, installs dependencies and starts the dev server. Nothing else to configure."
       >
         <div className="flex flex-col gap-L">
           <CodeBlock code={TEMPLATE_COMMAND} />
           <P>
             That creates the starter: persisted theme, toast, an <C>@/</C> alias, SEO basics and a welcome page to delete once you start
-            building. Need more? Swap <C>vite-starter</C> for <C>vite-saas</C> (8-page SaaS app), <C>vite-blog</C> (Markdown blog),{" "}
-            <C>vite-dashboard</C> or <C>vite-ai-chat</C> — preview them all on the Templates page. Nothing to install? Open it on
-            StackBlitz. Prefer picking a template from a list? Use the <A href="#/concepts/cli">yugen CLI</A>: <C>npx yugen@latest create</C>.
+            building. Need more? Swap <C>starter</C> for <C>saas</C> (8-page SaaS app), <C>blog</C> (Markdown blog), <C>dashboard</C> or{" "}
+            <C>ai-chat</C>, or drop <C>--template</C> to pick from a list. Preview them all on the Templates page, or open one on
+            StackBlitz with nothing to install. More options on <A href="#/concepts/cli">the yugen CLI</A>.
           </P>
           <div className="flex flex-wrap gap-S">
             <Button asChild appearance="primary" icon={<Rocket16Regular />}>
@@ -199,7 +202,14 @@ export default function Page() {
         </div>
       </DocSection>
 
-      <DocSection id="existing" title="Add to an existing project" description="React 18+ and Tailwind CSS v4 — three steps, no aliases or bundler config.">
+      <DocSection id="existing" title="Add to an existing project" description="React 18+ and Tailwind CSS v4. No aliases or bundler config.">
+        <div className="flex flex-col gap-L">
+          <PackageManagerTabs packages={CLI_INIT} command="dlx" />
+          <P>
+            Pick <C>package</C> when asked: the CLI installs <C>yugen-ui</C>, adds the theme line to your main CSS file (or{" "}
+            <C>styles.css</C> without Tailwind v4) and prints the <C>YugenProvider</C> wrapper with the file to put it in. Prefer doing it
+            by hand? Follow the three steps below.
+          </P>
         <Steps
           items={[
             {
@@ -248,20 +258,27 @@ export default function Page() {
             },
           ]}
         />
+        </div>
       </DocSection>
 
       <DocSection
         id="shadcn"
         title="Want to own the source?"
-        description="The shadcn CLI copies components into your project so you can edit every line — two commands; the CLI handles components.json, the theme and npm packages."
+        description="Copy components into your project and edit every line. Two commands: init once, then add what you need."
       >
         <div className="flex flex-col gap-L">
+          <PackageManagerTabs packages={CLI_INIT_SOURCE} command="dlx" />
+          <PackageManagerTabs packages={CLI_ADD} command="dlx" />
+          <P>
+            The CLI writes the theme, <C>cn()</C> and <C>YugenProvider</C>, pulls in the components each one depends on, installs missing npm
+            packages and rewrites imports to your project&apos;s alias. Details on <A href="#/concepts/cli">the yugen CLI</A>.
+          </P>
+          <P>
+            Used to the shadcn CLI? The Yugen registry works with it too (Next.js uses <C>init-next.json</C>, see{" "}
+            <A href="#/concepts/shadcn-registry">Install with the shadcn CLI</A>):
+          </P>
           <PackageManagerTabs packages={SHADCN_INIT} command="dlx" />
           <PackageManagerTabs packages={SHADCN_ADD} command="dlx" />
-          <P>
-            Next.js projects use <C>init-next.json</C>. Details, output and updating are on{" "}
-            <A href="#/concepts/shadcn-registry">Install with the shadcn CLI</A>.
-          </P>
         </div>
       </DocSection>
 

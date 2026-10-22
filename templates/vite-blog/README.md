@@ -4,12 +4,15 @@ Starter template của [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templ
 Tailwind CSS v4. Không cần CMS hay thư viện Markdown: thêm file `.md` là có bài mới.
 
 ```bash
-npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-blog my-app --install
+npm create yugen-ui@latest my-app -- --template blog
 cd my-app
 npm run dev
 ```
 
-Không muốn cài gì? Mở thẳng trên StackBlitz: https://stackblitz.com/github/trandat1114/Yugen-UI/tree/main/templates/vite-blog
+Không dùng CLI: `npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-blog my-app --install`. Không muốn cài gì? Mở thẳng
+trên StackBlitz: https://stackblitz.com/github/trandat1114/Yugen-UI/tree/main/templates/vite-blog
+
+Kiểm tra cấu hình bất cứ lúc nào: `npx yugen doctor` (CLI yugen, https://trandat1114.github.io/Yugen-UI/#/concepts/cli).
 
 ## Có gì bên trong
 
