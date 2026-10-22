@@ -1,16 +1,10 @@
 import type { ReactNode } from "react";
-import {
-  Accessibility24Regular,
-  Code24Regular,
-  Color24Regular,
-  DarkTheme24Regular,
-  Layer24Regular,
-  PaintBrush24Regular,
-} from "@fluentui/react-icons";
-import { Badge, Button, Card, CardContent, CardHeader, MessageBar } from "@/components/ui";
+import { Accessibility24Regular, Code24Regular, DarkTheme24Regular, Layer24Regular } from "@fluentui/react-icons";
+import { Button, MessageBar } from "@/components/ui";
 import { DocSection } from "../../blocks";
 import { AuthorLink } from "../../AuthorLink";
-import { CodeBlock } from "../../CodeBlock";
+import { COMPONENTS_META } from "../../registry";
+import { SITE } from "../../site";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -20,83 +14,94 @@ function C({ children }: { children: ReactNode }) {
   return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
 }
 
+function A({ href, children }: { href: string; children: ReactNode }) {
+  const external = href.startsWith("http");
+  return (
+    <a
+      className="text-link underline hover:text-link-hover"
+      href={href}
+      {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+    >
+      {children}
+    </a>
+  );
+}
+
 function IconTile({ children }: { children: ReactNode }) {
   return (
-    <span className="flex size-10 items-center justify-center rounded-large bg-brand-background-2 text-brand-foreground-2">
+    <span className="flex size-10 shrink-0 items-center justify-center rounded-large bg-brand-background-2 text-brand-foreground-2">
       {children}
     </span>
   );
 }
 
-const PILLARS = [
+const INCLUDED = [
   {
-    icon: <Color24Regular />,
-    title: "Built on Fluent 2",
-    tag: "Tokens & behavior",
-    body: "Token names map 1:1 to Fluent UI React v9 (colorNeutralForeground1, spacingHorizontalM, shadow16…), with the same spacing scale, type ramp, corner radii, elevation, motion and per-component state rules.",
+    href: "#/components/button",
+    title: `${COMPONENTS_META.length} components`,
+    body: "Each page has live examples, usage guidance and a props table. Yugen Labs adds charts, AI chat UI, Trace and Sheet.",
   },
   {
-    icon: <Code24Regular />,
-    title: "You own the code",
-    tag: "Copy-paste",
-    body: "Like shadcn/ui, you can copy component folders straight into your project — readable and editable — or install the npm package. Complex behavior builds on Radix, cmdk and react-day-picker.",
+    href: "#/blocks",
+    title: "Blocks",
+    body: "Screens built from components: sign-in, data tables, scheduling… Copy the whole file into your project.",
   },
   {
-    icon: <PaintBrush24Regular />,
-    title: "Sakura 桜 brand",
-    tag: "Brand",
-    body: "The default brand is cherry-blossom pink with a 16-step ramp; Brand80 reaches 5.16:1 against white text. Switch to Web (Fluent blue), Teams or your own brand with a single attribute.",
+    href: "#/templates",
+    title: "Templates",
+    body: "Sample apps created with one command: starter, SaaS, blog, dashboard, AI chat.",
+  },
+  {
+    href: "#/theme-designer",
+    title: "Theme Designer",
+    body: "Build brand colors from one hex value, check contrast and export the tokens.",
+  },
+];
+
+const WAYS: { way: string; command: string; when: string; update: ReactNode }[] = [
+  { way: "npm package", command: "npm i yugen-ui", when: "You want to start right away and rarely change components.", update: <C>npm update yugen-ui</C> },
+  {
+    way: "@yugen-ui/cli",
+    command: "npx @yugen-ui/cli add button",
+    when: "You need to edit component source in your project.",
+    update: (
+      <>
+        Rerun <C>add --overwrite</C> and review the diff
+      </>
+    ),
+  },
+  {
+    way: "shadcn CLI",
+    command: "npx shadcn@latest add …",
+    when: "Your project already uses shadcn/ui.",
+    update: (
+      <>
+        Rerun <C>add</C>, as with shadcn/ui
+      </>
+    ),
   },
 ];
 
 const PRINCIPLES = [
   {
     icon: <Layer24Regular />,
-    title: "Three-layer tokens",
-    body: "Global (raw values) → Alias (roles, Fluent names) → Utility (Tailwind classes). Components only use utilities, so changing a theme means changing tokens, not components.",
+    title: "Three token layers",
+    body: "Raw value → role → Tailwind class. Components only use classes, so changing the theme means changing tokens, not components.",
   },
   {
     icon: <Accessibility24Regular />,
-    title: "Accessible from the start",
-    body: "ARIA semantics and keyboard navigation from Radix, a high-contrast 2px focus ring, text at 4.5:1 or better, and color is never the only signal.",
+    title: "Accessible",
+    body: "Works with a keyboard and screen readers, has a clear focus ring, text meets 4.5:1 contrast, and state is never shown by color alone.",
   },
   {
     icon: <DarkTheme24Regular />,
-    title: "Switchable theme, brand and direction",
-    body: "data-theme (light / dark), data-brand and dir are DOM attributes — set them on <html> for the whole app or nest them per region through YugenProvider.",
+    title: "Themes set with attributes",
+    body: "data-theme, data-brand and dir go on <html> for the whole app, or on a region through YugenProvider.",
   },
   {
     icon: <Code24Regular />,
-    title: "Code you can take home",
-    body: "Every example and every Block imports only from @/components/ui and @fluentui/react-icons — paste the snippet into your project and it runs.",
-  },
-];
-
-const SECTIONS = [
-  {
-    href: "#/foundations/color",
-    title: "Design language",
-    body: "Color, typography, spacing, corner radius, elevation, motion — where every token comes from, with contrast checkers.",
-  },
-  {
-    href: "#/components/button",
-    title: "Components",
-    body: "100+ components in groups: Actions, Inputs, Navigation, Data display, Feedback, Surfaces & overlays, Layout. Every page has live examples, Do / Don't and a props table.",
-  },
-  {
-    href: "#/blocks",
-    title: "Blocks",
-    body: "Sample screens composed from components (sign-in, stats, scheduling, feedback…). The Code tab shows the whole file, ready to copy.",
-  },
-  {
-    href: "#/theme-designer",
-    title: "Theme Designer",
-    body: "Generate a 16-step brand ramp from one key color, preview it on real components and export a [data-brand] CSS block.",
-  },
-  {
-    href: "#/concepts/quick-start",
-    title: "Concepts",
-    body: "Guides on integration, styling, theming, slots, positioning, RTL, SSR, accessibility and migrating from Fluent UI or shadcn/ui.",
+    title: "Examples you can paste",
+    body: "Examples on component pages are type-checked automatically against imports from yugen-ui.",
   },
 ];
 
@@ -106,21 +111,24 @@ export default function Page() {
       <DocSection
         id="what"
         title="What is Yugen UI?"
-        description="幽玄 (yūgen) is a subtle, profound beauty that suggests more than it says. Yugen UI brings that spirit to interfaces: restrained, clear and deep."
+        description="幽玄 (yūgen) is a quiet, deep kind of beauty that suggests more than it says. Yugen UI follows that idea: restrained and clear."
       >
         <div className="flex flex-col gap-XL">
           <P>
-            Yugen UI is a set of components and tokens for{" "}
-            <strong className="font-semibold text-foreground-1">React 18 + TypeScript + Tailwind CSS v4</strong>, created by{" "}
-            <AuthorLink className="text-link hover:text-link-hover" />. It combines three sources: the token structure and component
-            behavior of Microsoft Fluent 2, the copy-paste distribution model of shadcn/ui, and its own Sakura brand palette.
+            Yugen UI is a set of React components written in TypeScript. It runs on React 18 or 19 with Tailwind CSS v4, or with a
+            precompiled CSS file if you don&apos;t use Tailwind. All components share one set of tokens, so changing the theme, brand color or text
+            direction doesn&apos;t require touching components.
           </P>
-          <div className="grid gap-L md:grid-cols-3">
-            {PILLARS.map((p) => (
-              <Card key={p.title} size="large">
-                <CardHeader image={<IconTile>{p.icon}</IconTile>} header={p.title} description={p.tag} />
-                <CardContent>{p.body}</CardContent>
-              </Card>
+          <div className="grid gap-M sm:grid-cols-2">
+            {INCLUDED.map((s) => (
+              <a
+                key={s.href}
+                href={s.href}
+                className="group flex flex-col gap-XS rounded-xlarge border border-stroke-2 bg-background-1 p-L transition-colors duration-faster hover:bg-subtle-hover"
+              >
+                <span className="text-subtitle2 font-semibold text-foreground-1 group-hover:text-brand-foreground-1">{s.title}</span>
+                <span className="text-body1 text-foreground-2">{s.body}</span>
+              </a>
             ))}
           </div>
           <div className="flex flex-wrap items-center gap-S">
@@ -134,82 +142,80 @@ export default function Page() {
         </div>
       </DocSection>
 
-      <DocSection id="principles" title="Principles" description="Four principles guide every design and code decision.">
-        <div className="flex flex-col gap-XL">
-          <div className="grid gap-L sm:grid-cols-2">
-            {PRINCIPLES.map((p) => (
-              <div key={p.title} className="flex gap-M rounded-xlarge border border-stroke-2 bg-background-1 p-L">
-                <IconTile>{p.icon}</IconTile>
-                <div className="min-w-0 flex-1">
-                  <h3 className="text-subtitle2 font-semibold text-foreground-1">{p.title}</h3>
-                  <p className="mt-XS text-body1 text-foreground-2">{p.body}</p>
-                </div>
-              </div>
-            ))}
+      <DocSection id="ways" title="Choose how to use it" description="All three share the same tokens and themes, and you can mix them in one project.">
+        <div className="flex flex-col gap-L">
+          <div className="overflow-x-auto rounded-xlarge border border-stroke-2 bg-background-1">
+            <table className="w-full border-collapse text-start text-body1">
+              <thead>
+                <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
+                  <th scope="col" className="px-L py-S text-start">
+                    Option
+                  </th>
+                  <th scope="col" className="px-L py-S text-start">
+                    Good when
+                  </th>
+                  <th scope="col" className="px-L py-S text-start">
+                    Updating
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {WAYS.map((w) => (
+                  <tr key={w.way} className="border-b border-stroke-3 align-top last:border-b-0">
+                    <th scope="row" className="px-L py-M text-start font-semibold text-foreground-1">
+                      {w.way}
+                      <span className="mt-XXS block font-mono text-caption1 font-normal whitespace-nowrap text-foreground-3">{w.command}</span>
+                    </th>
+                    <td className="px-L py-M text-foreground-2">{w.when}</td>
+                    <td className="px-L py-M text-foreground-2">{w.update}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
           <P>
-            For example, a primary button's background goes through all three layers. Changing <C>data-brand</C> only swaps the Global
-            layer; the Alias layer and the classes in the component stay the same:
+            Full commands and version requirements are in <A href="#/concepts/quick-start">Quick start</A>.
           </P>
-          <CodeBlock
-            code={`/* 1. Global — raw values, per brand (tokens.css) */
-[data-brand="sakura"] { --brand-80: #c2347a; }
-
-/* 2. Alias — roles, Fluent-style names (tokens.css) */
-[data-theme="light"], [data-brand] { --colorBrandBackground: var(--brand-80); }
-
-/* 3. Utility — the bridge to Tailwind (index.css) */
-@theme inline { --color-brand-background: var(--colorBrandBackground); }
-
-// Components only know utilities
-<button className="bg-brand-background text-foreground-on-brand">Save</button>`}
-          />
         </div>
       </DocSection>
 
-      <DocSection
-        id="structure"
-        title="How the docs are organized"
-        description="The docs go from foundations to details; every page can switch between light and dark themes from the top bar."
-      >
-        <div className="grid gap-M sm:grid-cols-2">
-          {SECTIONS.map((s) => (
-            <a
-              key={s.href}
-              href={s.href}
-              className="group flex flex-col gap-XS rounded-xlarge border border-stroke-2 bg-background-1 p-L transition-colors duration-faster hover:bg-subtle-hover"
-            >
-              <span className="text-subtitle2 font-semibold text-foreground-1 group-hover:text-brand-foreground-1">{s.title}</span>
-              <span className="text-body1 text-foreground-2">{s.body}</span>
-            </a>
+      <DocSection id="principles" title="Principles">
+        <div className="grid gap-L sm:grid-cols-2">
+          {PRINCIPLES.map((p) => (
+            <div key={p.title} className="flex gap-M rounded-xlarge border border-stroke-2 bg-background-1 p-L">
+              <IconTile>{p.icon}</IconTile>
+              <div className="min-w-0 flex-1">
+                <h3 className="text-subtitle2 font-semibold text-foreground-1">{p.title}</h3>
+                <p className="mt-XS text-body1 text-foreground-2">{p.body}</p>
+              </div>
+            </div>
           ))}
+        </div>
+      </DocSection>
+
+      <DocSection id="status" title="Versions and license">
+        <div className="flex flex-col gap-L">
+          <P>
+            Yugen UI is before 1.0. A minor release may contain breaking changes, always listed in <A href="#/news">What&apos;s new</A>; a patch
+            release only fixes bugs. The full rules are in <A href="#/concepts/versioning">Versioning</A>.
+          </P>
+          <P>
+            MIT license. Report bugs in <A href={SITE.links.issues}>GitHub Issues</A>, ask questions and share ideas in{" "}
+            <A href={SITE.links.discussions}>Discussions</A>.
+          </P>
         </div>
       </DocSection>
 
       <DocSection id="credit" title="Credits">
         <div className="flex flex-col gap-L">
           <P>
-            <strong className="font-semibold text-foreground-1">Yugen UI</strong> © <AuthorLink className="text-link hover:text-link-hover" />.
-            Inspired by{" "}
-            <a className="text-link underline hover:text-link-hover" href="https://fluent2.microsoft.design/" target="_blank" rel="noopener noreferrer">
-              Microsoft Fluent 2
-            </a>{" "}
-            and{" "}
-            <a className="text-link underline hover:text-link-hover" href="https://ui.shadcn.com/" target="_blank" rel="noopener noreferrer">
-              shadcn/ui
-            </a>
-            . Icons: Fluent System Icons (MIT). Behavior: Radix UI, cmdk, react-day-picker, react-resizable-panels.
+            Yugen UI is made by <AuthorLink className="text-link hover:text-link-hover" />. The token structure and component behavior are
+            inspired by <A href="https://fluent2.microsoft.design/">Microsoft Fluent 2</A>; the source distribution model comes from{" "}
+            <A href="https://ui.shadcn.com/">shadcn/ui</A>. Complex behavior builds on Radix UI, cmdk, react-day-picker and
+            react-resizable-panels. Icons: Fluent System Icons (MIT).
           </P>
-          <div className="flex flex-wrap gap-S">
-            <Badge appearance="tint" color="brand">React 18</Badge>
-            <Badge appearance="tint" color="brand">TypeScript 5</Badge>
-            <Badge appearance="tint" color="brand">Tailwind CSS 4</Badge>
-            <Badge appearance="tint" color="informative">Radix UI</Badge>
-            <Badge appearance="tint" color="informative">Fluent System Icons</Badge>
-          </div>
-          <MessageBar intent="info" title="Not an official Microsoft product." className="max-w-3xl">
-            Token names and the spacing / typography / radius / elevation / motion scales follow Fluent UI React v9; the Sakura palette,
-            gradients and brand ramps are defined by Yugen UI.
+          <MessageBar intent="info" title="Not a Microsoft product." className="max-w-3xl">
+            The Sakura palette, gradients and brand ramp are defined by Yugen UI.
           </MessageBar>
         </div>
       </DocSection>
