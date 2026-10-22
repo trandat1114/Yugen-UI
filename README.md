@@ -227,7 +227,9 @@ One command copies a template, installs dependencies and starts the dev server �
 [#/templates](https://trandat1114.github.io/Yugen-UI/#/templates), or open one on StackBlitz with nothing to install.
 
 ```bash
-npm create yugen-ui@latest my-app -- --template starter && cd my-app && npm run dev
+npx create-yugen-ui@latest my-app --template starter
+cd my-app
+npm run dev
 # leave out --template to pick from a list · pnpm create yugen-ui · yarn create yugen-ui · bun create yugen-ui
 ```
 
@@ -508,7 +510,9 @@ Một lệnh chép template, cài phụ thuộc và chạy dev server — xem tr
 [#/templates](https://trandat1114.github.io/Yugen-UI/#/templates) hoặc mở thẳng trên StackBlitz.
 
 ```bash
-npm create yugen-ui@latest my-app -- --template starter && cd my-app && npm run dev
+npx create-yugen-ui@latest my-app --template starter
+cd my-app
+npm run dev
 # bỏ --template để chọn từ danh sách · pnpm create yugen-ui · yarn create yugen-ui · bun create yugen-ui
 ```
 

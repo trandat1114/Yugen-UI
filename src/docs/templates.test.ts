@@ -15,10 +15,10 @@ describe("templates", () => {
     expect(docs).toEqual(dirs);
   });
 
-  it("lệnh tạo dự án là một dòng: CLI chép + cài, rồi chạy", () => {
-    expect(templateCommand("vite-blog")).toBe("npm create yugen-ui@latest my-app -- --template blog && cd my-app && npm run dev");
+  it("lệnh tạo dự án: CLI chép + cài, rồi chạy — mỗi lệnh một dòng, không nối bằng && (Windows PowerShell 5.1)", () => {
+    expect(templateCommand("vite-blog")).toBe("npx create-yugen-ui@latest my-app --template blog\ncd my-app\nnpm run dev");
     expect(templateGigetCommand("vite-blog")).toBe(
-      "npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-blog my-app --install && cd my-app && npm run dev",
+      "npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-blog my-app --install\ncd my-app\nnpm run dev",
     );
   });
 

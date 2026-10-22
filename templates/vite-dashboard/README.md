@@ -3,7 +3,7 @@
 Starter template của [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates) — Vite + React + Tailwind CSS v4.
 
 ```bash
-npm create yugen-ui@latest my-app -- --template dashboard
+npx create-yugen-ui@latest my-app --template dashboard
 cd my-app
 npm run dev
 ```

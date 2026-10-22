@@ -121,7 +121,7 @@ function Command({ dir, label }: { dir: string; label: string }) {
     <div className="flex flex-col gap-XS">
       <span className="text-caption1 font-semibold text-foreground-2">{label}</span>
       <div className="flex items-center gap-S rounded-large border border-stroke-2 bg-background-3 py-XS ps-M pe-XS">
-        <code className="min-w-0 flex-1 py-XS font-mono text-caption1 break-all text-foreground-1">{command}</code>
+        <code className="min-w-0 flex-1 py-XS font-mono text-caption1 break-all whitespace-pre-line text-foreground-1">{command}</code>
         <CopyButton text={command} />
       </div>
     </div>

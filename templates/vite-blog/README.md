@@ -4,7 +4,7 @@ Starter template của [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templ
 Tailwind CSS v4. Không cần CMS hay thư viện Markdown: thêm file `.md` là có bài mới.
 
 ```bash
-npm create yugen-ui@latest my-app -- --template blog
+npx create-yugen-ui@latest my-app --template blog
 cd my-app
 npm run dev
 ```
