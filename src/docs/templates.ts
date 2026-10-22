@@ -23,11 +23,11 @@ export const TEMPLATES: TemplateInfo[] = [
       description:
         "Dự án trống, cấu hình sẵn sàng: theme, toast, alias @/ và SEO cơ bản.",
       features: [
-        "Theme sáng / tối / tương phản cao + 3 thương hiệu, ghi nhớ, không nháy khi tải",
+        "Theme sáng / tối / tương phản cao, thương hiệu Sakura và Web, ghi nhớ, không nháy khi tải",
         "YugenProvider bọc sẵn: toast(), Tooltip, focus ring, RTL",
         "Alias @/ → src cho mã của bạn (vite.config + tsconfig)",
         "SEO cơ bản: description, Open Graph, theme-color, favicon, robots.txt",
-        "Trang chào: chữ dọc 幽玄, cánh hoa rơi (tắt khi giảm chuyển động), 6 thẻ component chạy thật",
+        "Trang chào ngắn bằng tiếng Anh (tiếng Việt với --lang vi), chữ trong src/content/",
         "Font Mincho chỉ tải đúng các ký tự Nhật dùng trong trang (vài kB)",
       ],
     },
@@ -35,11 +35,11 @@ export const TEMPLATES: TemplateInfo[] = [
       description:
         "A blank project, ready to go: theme, toast, @/ alias and SEO basics.",
       features: [
-        "Light / dark / high contrast + 3 brands, persisted with no flash on load",
+        "Light / dark / high contrast, Sakura and Web brands, persisted with no flash on load",
         "YugenProvider in place: toast(), Tooltip, focus rings, RTL",
         "@/ → src alias for your code (vite.config + tsconfig)",
         "SEO basics: description, Open Graph, theme-color, favicon, robots.txt",
-        "Welcome page: vertical 幽玄 lettering, falling petals (off with reduced motion), 6 live component cards",
+        "A short English welcome page (Vietnamese with --lang vi), text in src/content/",
         "The Mincho font loads only the Japanese glyphs the page uses (a few kB)",
       ],
     },
