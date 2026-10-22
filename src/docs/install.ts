@@ -9,7 +9,7 @@ export const exportNames = () => [...Object.keys(UI), ...Object.keys(Ramp), ...O
 /**
  * Suy ra lệnh cài cho từng trang component từ `importCode` của docs:
  *   - npm:        import { … } from "yugen-ui"
- *   - yugen CLI:  npx yugen add <item> + import theo từng thư mục component (packages/cli)
+ *   - yugen CLI:  npx @yugen-ui/cli add <item> + import theo từng thư mục component (packages/cli)
  *   - shadcn CLI: npx shadcn@latest add <registry>/r/<item>.json + cùng import đó
  * Bản đồ tên export → thư mục lấy từ chính các module component (cùng module trang docs đã nạp, không tốn thêm).
  */
@@ -68,8 +68,8 @@ export function installSnippets(importCode: string): InstallSnippets {
 
   // Dòng init chỉ chạy một lần mỗi dự án (theme + cn + YugenProvider) — component không tự kéo theme.
   const cliAdd = [
-    "// npx yugen@latest init --mode source   (1×)",
-    `// npx yugen add ${items.map(registryItemName).join(" ")}`,
+    "// npx @yugen-ui/cli@latest init --mode source   (1×)",
+    `// npx @yugen-ui/cli add ${items.map(registryItemName).join(" ")}`,
   ].join("\n");
   const shadcnAdd = [
     `// npx shadcn@latest init ${REGISTRY_URL}/init.json   (1×; Next.js: init-next.json)`,

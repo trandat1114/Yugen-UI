@@ -32,7 +32,7 @@ const PRINCIPLES = [
 // Không import từ ../install (nạp sẵn mọi module component) — trang chủ chỉ cần URL registry.
 // cli: cài gói + thêm dòng theme vào CSS trong một lệnh (packages/cli) — cách ngắn nhất cho dự án có sẵn.
 const INSTALL = {
-  cli: "npx yugen@latest init",
+  cli: "npx @yugen-ui/cli@latest init",
   npm: "npm i yugen-ui",
   shadcn: `npx shadcn@latest init ${homepage.replace(/\/$/, "")}/r/init.json`,
 } as const;

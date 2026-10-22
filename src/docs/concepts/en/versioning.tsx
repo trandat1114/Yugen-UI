@@ -137,7 +137,7 @@ export default function Page() {
             <li>Run your app in development and fix every <C>[yugen-ui]</C> console warning before moving to a new major.</li>
             <li>
               Copied code with the yugen CLI or the shadcn CLI? Commit first, rerun <C>add --overwrite</C>, then review the git diff.{" "}
-              <C>npx yugen doctor</C> tells you when <C>yugen-ui</C> is out of date.
+              <C>npx @yugen-ui/cli doctor</C> tells you when <C>yugen-ui</C> is out of date.
             </li>
           </ol>
           <CodeBlock code={PIN} />

@@ -6,11 +6,11 @@ Yêu cầu: React 18 hoặc 19, TypeScript 5 (khuyên dùng). Tailwind CSS v4 l�
 
 | Cách | Khi nào | Lệnh |
 |---|---|---|
-| **CLI `yugen`** — đơn giản nhất | Dự án có sẵn: cài gói + thêm theme vào CSS trong một lệnh | `npx yugen@latest init` |
+| **CLI `@yugen-ui/cli`** — đơn giản nhất | Dự án có sẵn: cài gói + thêm theme vào CSS trong một lệnh | `npx @yugen-ui/cli@latest init` |
 | **Starter template** | Bắt đầu nhanh một app hoàn chỉnh (starter, SaaS, blog…) | `npm create yugen-ui@latest my-app` |
-| **Chép mã nguồn** | Muốn sở hữu và sửa sâu mã nguồn | `npx yugen@latest init --mode source` rồi `npx yugen add button` |
+| **Chép mã nguồn** | Muốn sở hữu và sửa sâu mã nguồn | `npx @yugen-ui/cli@latest init --mode source` rồi `npx @yugen-ui/cli add button` |
 | **npm + Tailwind v4** (tự làm) | Như dòng đầu, không dùng CLI | `npm install yugen-ui` + `@import "yugen-ui/theme.css"` |
-| **npm, không Tailwind** | Dự án dùng CSS khác | `import "yugen-ui/styles.css"` (hoặc `npx yugen init` tự thêm) |
+| **npm, không Tailwind** | Dự án dùng CSS khác | `import "yugen-ui/styles.css"` (hoặc `npx @yugen-ui/cli init` tự thêm) |
 | **shadcn CLI** | Dự án đã dùng shadcn/ui | `npx shadcn@latest init https://trandat1114.github.io/Yugen-UI/r/init.json` rồi `add …/r/button.json` |
 
 Không dùng CLI để tạo app: `npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-starter my-app --install`.
@@ -19,8 +19,8 @@ Chi tiết: [CLI yugen](https://trandat1114.github.io/Yugen-UI/#/concepts/cli), 
 
 ## 2. Thiết lập tối thiểu (npm + Tailwind v4)
 
-`npx yugen@latest init` (chọn `package`) làm hộ bước CSS bên dưới và in đoạn bọc `YugenProvider`; kiểm tra lại bằng
-`npx yugen doctor`. Tự làm:
+`npx @yugen-ui/cli@latest init` (chọn `package`) làm hộ bước CSS bên dưới và in đoạn bọc `YugenProvider`; kiểm tra lại bằng
+`npx @yugen-ui/cli doctor`. Tự làm:
 
 ```css
 /* src/index.css */

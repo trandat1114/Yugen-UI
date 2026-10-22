@@ -67,7 +67,7 @@ export default function Page() {
           </P>
           <CodeBlock code={TEMPLATE_COMMAND} />
           <MessageBar intent="info" title="Shorter: the yugen CLI" className="max-w-3xl">
-            <C>npx yugen@latest init --mode source</C> and then <C>npx yugen add button</C> copy the same source from the same registry, with
+            <C>npx @yugen-ui/cli@latest init --mode source</C> and then <C>npx @yugen-ui/cli add button</C> copy the same source from the same registry, with
             short names and no components.json or extra <C>@/</C> alias. See <A href="#/concepts/cli">the yugen CLI</A>. This page is for
             projects that already use the shadcn CLI.
           </MessageBar>

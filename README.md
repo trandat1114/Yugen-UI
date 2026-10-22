@@ -47,7 +47,7 @@ blocks, concepts and a Theme Designer (Vietnamese; English docs are on the [road
 
 ## Install
 
-The quickest way is the [CLI](#cli): `npx yugen@latest init` installs the package, adds the theme import to your CSS and
+The quickest way is the [CLI](#cli): `npx @yugen-ui/cli@latest init` installs the package, adds the theme import to your CSS and
 prints the `YugenProvider` wrapper. New app? `npm create yugen-ui@latest`. By hand:
 
 ```bash
@@ -194,8 +194,8 @@ layout because `react-resizable-panels` measures the physical X axis.
 
 ## Copy-paste mode
 
-Prefer owning the code, shadcn-style? The shortest route is the [yugen CLI](#cli): `npx yugen@latest init --mode source`
-once, then `npx yugen add button dialog` — short names, imports rewritten to your alias, no `components.json` needed.
+Prefer owning the code, shadcn-style? The shortest route is the [yugen CLI](#cli): `npx @yugen-ui/cli@latest init --mode source`
+once, then `npx @yugen-ui/cli add button dialog` — short names, imports rewritten to your alias, no `components.json` needed.
 
 The **shadcn CLI** works too — Yugen UI publishes a compatible registry. `init` runs once
 per project: it creates `components.json` if missing, copies the theme, `cn()` and `YugenProvider`, installs npm packages
@@ -343,7 +343,7 @@ khái niệm và Theme Designer. Ảnh chụp màn hình ở [phần tiếng Anh
 
 ### Cài đặt
 
-Nhanh nhất là [CLI](#cli-1): `npx yugen@latest init` cài gói, thêm dòng import theme vào CSS và in đoạn bọc
+Nhanh nhất là [CLI](#cli-1): `npx @yugen-ui/cli@latest init` cài gói, thêm dòng import theme vào CSS và in đoạn bọc
 `YugenProvider`. App mới: `npm create yugen-ui@latest`. Tự làm:
 
 ```bash
@@ -475,8 +475,8 @@ Giới hạn đã biết: nhóm `Resizable` ngang giữ bố cục LTR vì `reac
 
 ### Chế độ copy-paste
 
-Muốn sở hữu mã nguồn như shadcn? Ngắn nhất là [CLI yugen](#cli-1): `npx yugen@latest init --mode source` một lần, rồi
-`npx yugen add button dialog` — tên ngắn, import tự đổi theo alias của dự án, không cần `components.json`.
+Muốn sở hữu mã nguồn như shadcn? Ngắn nhất là [CLI yugen](#cli-1): `npx @yugen-ui/cli@latest init --mode source` một lần, rồi
+`npx @yugen-ui/cli add button dialog` — tên ngắn, import tự đổi theo alias của dự án, không cần `components.json`.
 
 **shadcn CLI** cũng dùng được — Yugen UI có registry tương thích. `init` chạy một lần mỗi dự án:
 tạo `components.json` nếu chưa có, chép theme, `cn()` và `YugenProvider`, cài gói npm và tự thêm `@import` theme vào CSS.

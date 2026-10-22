@@ -28,7 +28,7 @@ const VI = {
   other: "Không cần cả ứng dụng?",
   otherBody: (
     <>
-      Thêm Yugen UI vào dự án có sẵn bằng <code className="font-mono text-caption1">npx yugen@latest init</code> (
+      Thêm Yugen UI vào dự án có sẵn bằng <code className="font-mono text-caption1">npx @yugen-ui/cli@latest init</code> (
       <a className="text-link underline hover:text-link-hover" href="#/concepts/cli">
         CLI yugen
       </a>
@@ -36,7 +36,7 @@ const VI = {
       <a className="text-link underline hover:text-link-hover" href="#/concepts/quick-start">
         Bắt đầu nhanh
       </a>
-      , chép mã nguồn từng component bằng <code className="font-mono text-caption1">npx yugen add</code>, hoặc lấy từng cụm giao
+      , chép mã nguồn từng component bằng <code className="font-mono text-caption1">npx @yugen-ui/cli add</code>, hoặc lấy từng cụm giao
       diện ở{" "}
       <a className="text-link underline hover:text-link-hover" href="#/blocks">
         Blocks
@@ -68,7 +68,7 @@ const EN: typeof VI = {
   other: "Don't need a whole app?",
   otherBody: (
     <>
-      Add Yugen UI to an existing project with <code className="font-mono text-caption1">npx yugen@latest init</code> (
+      Add Yugen UI to an existing project with <code className="font-mono text-caption1">npx @yugen-ui/cli@latest init</code> (
       <a className="text-link underline hover:text-link-hover" href="#/concepts/cli">
         yugen CLI
       </a>
@@ -76,7 +76,7 @@ const EN: typeof VI = {
       <a className="text-link underline hover:text-link-hover" href="#/concepts/quick-start">
         Quick start
       </a>
-      , copy component source with <code className="font-mono text-caption1">npx yugen add</code>, or grab individual pieces
+      , copy component source with <code className="font-mono text-caption1">npx @yugen-ui/cli add</code>, or grab individual pieces
       from{" "}
       <a className="text-link underline hover:text-link-hover" href="#/blocks">
         Blocks

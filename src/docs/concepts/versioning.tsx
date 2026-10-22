@@ -129,7 +129,7 @@ export default function Page() {
             <li>Chạy ứng dụng ở chế độ phát triển và xử lý mọi cảnh báo <C>[yugen-ui]</C> trong console trước khi lên major.</li>
             <li>
               Chép mã bằng CLI yugen hoặc shadcn CLI? Commit trước, chạy lại <C>add --overwrite</C> rồi xem diff của git.{" "}
-              <C>npx yugen doctor</C> báo bản <C>yugen-ui</C> đã cũ.
+              <C>npx @yugen-ui/cli doctor</C> báo bản <C>yugen-ui</C> đã cũ.
             </li>
           </ol>
           <CodeBlock code={PIN} />

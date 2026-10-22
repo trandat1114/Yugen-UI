@@ -12,7 +12,7 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
   },
   "quick-start": {
     title: "Quick start",
-    lead: "One command gives you a running app from a template. For an existing project run npx yugen@latest init, or do the three steps yourself (install yugen-ui, add one CSS line, wrap in YugenProvider).",
+    lead: "One command gives you a running app from a template. For an existing project run npx @yugen-ui/cli@latest init, or do the three steps yourself (install yugen-ui, add one CSS line, wrap in YugenProvider).",
     toc: {
       template: "Fastest: one command",
       existing: "Add to an existing project",
