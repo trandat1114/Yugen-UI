@@ -336,6 +336,15 @@ Chọn tín hiệu theo thời gian **dự kiến**, không theo thói quen (chi
 - Rẽ nhánh theo kích thước bằng `useMediaQuery(query, { defaultValue })` — `defaultValue` là giá trị khi SSR.
 - Khung media dùng `AspectRatio ratio={16 / 9}` để không giật bố cục khi ảnh/video tải.
 
+### 6.7 Giọng văn & thanh công cụ của trang docs
+- Câu ngắn, nói đúng sự việc, có số liệu khi có. Không dùng tính từ quảng cáo ("mạnh mẽ", "liền mạch", "trôi chảy"…),
+  không chêm ý bằng "—", không liệt kê ba vế chỉ để có nhịp, không hướng dẫn điều hiển nhiên ("rê chuột để…").
+- Quy tắc nội bộ (gradient chỉ cho minh hoạ…) nằm trong file này, không đưa lên trang chủ.
+- "Dựa trên Fluent 2" chỉ ghi ở footer và trang chuyển đổi từ Fluent. Không đặt ở hero, sidebar hay meta description.
+- Thanh công cụ không xuống dòng: mỗi nút `shrink-0 whitespace-nowrap`; thiếu chỗ thì chỉ còn icon (chữ thành `sr-only`
+  hoặc `aria-label`), không để chữ bẻ dòng. Mỗi chức năng một nút, không đặt hai nút làm cùng việc.
+- Kiểm tra ở 360 · 390 · 768 · 1024 · 1280px; không được có cuộn ngang toàn trang.
+
 ---
 
 ## 7. Danh mục component (111 trang docs)
