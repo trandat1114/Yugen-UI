@@ -80,6 +80,7 @@
     "check:release": "node scripts/check-release.mjs",
     "check:examples": "vite-node scripts/check-examples.ts",
     "check:props": "vite-node scripts/check-props.ts",
+    "roadmap": "vite-node scripts/sync-roadmap.ts",
     "prepublishOnly": "npm run check:release && npm run typecheck && npm run lint:classes && npm run build:lib",
     "pack:check": "npm pack --dry-run"
   },

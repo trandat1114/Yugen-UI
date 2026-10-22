@@ -1,0 +1,185 @@
+/**
+ * Lộ trình — nguồn duy nhất cho trang Cộng đồng (#/community › Lộ trình) và ROADMAP.md (`npm run roadmap`).
+ * Mỗi bản phát hành ứng với một milestone trên GitHub; chi tiết, ưu tiên và phụ thuộc nằm ở GitHub Project.
+ * Đổi milestone / issue thì sửa ở đây, chạy `npm run roadmap`; roadmap.test.ts báo lỗi nếu ROADMAP.md lệch.
+ */
+import { homepage } from "../../package.json";
+import { NEWS } from "./news";
+import { SITE } from "./site";
+
+export type RoadmapStatus = "done" | "doing" | "planned";
+export type RoadmapStage = "now" | "next" | "later";
+
+export interface RoadmapItem {
+  status: RoadmapStatus;
+  /** Issue (hoặc PR khi không có issue) trên GitHub. */
+  issue?: number;
+  vi: string;
+  en: string;
+}
+
+export interface RoadmapRelease {
+  /** Tên milestone trên GitHub ("0.9.0", "cli 0.3.0"); "Backlog" cho việc chưa xếp lịch. */
+  milestone: string;
+  kind: "patch" | "minor" | "major" | "cli" | "backlog";
+  /** YYYY-MM-DD, hạn dự kiến của milestone. */
+  due?: string;
+  vi: string;
+  en: string;
+  items: RoadmapItem[];
+}
+
+export const ROADMAP_UPDATED = "2026-10-23";
+export const PROJECT_URL = "https://github.com/users/trandat1114/projects/6";
+
+export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
+  now: [
+    {
+      milestone: "0.8.4",
+      kind: "patch",
+      due: "2026-10-30",
+      vi: "Công cụ và docs: E2E nhanh hơn, Node mới, nội dung gọn và đúng tên gọi.",
+      en: "Tooling and docs: faster E2E, current Node.js, shorter copy with the right names.",
+      items: [
+        { status: "done", issue: 43, vi: "E2E từ ~20 còn 4,4 phút: container Playwright, chạy trên bản build, a11y theo theme", en: "E2E from ~20 to 4.4 min: Playwright container, production build, a11y per theme" },
+        { status: "done", issue: 60, vi: "CI trên Node.js 22, 24 và 26", en: "CI on Node.js 22, 24 and 26" },
+        { status: "done", issue: 61, vi: "Có gì mới có tab riêng cho yugen-ui, @yugen-ui/cli và create-yugen-ui", en: "What's new has a tab for yugen-ui, @yugen-ui/cli and create-yugen-ui" },
+        { status: "done", issue: 48, vi: "Trang Giới thiệu viết lại, gọi CLI đúng tên @yugen-ui/cli", en: "Introduction rewritten, the CLI called by its name, @yugen-ui/cli" },
+        { status: "doing", issue: 52, vi: "Quy tắc viết nội dung cho docs, template và CLI", en: "Copy guidelines for docs, templates and the CLI" },
+        { status: "doing", issue: 57, vi: "Mô tả template một dòng", en: "One-line template descriptions" },
+        { status: "doing", issue: 58, vi: "Lộ trình lấy từ một nguồn, trang Cộng đồng đầy đủ tiếng Anh", en: "Roadmap from one source, community page fully in English" },
+      ],
+    },
+    {
+      milestone: "cli 0.2.0",
+      kind: "cli",
+      due: "2026-10-30",
+      vi: "CLI cùng 0.8.4.",
+      en: "CLI alongside 0.8.4.",
+      items: [
+        { status: "done", issue: 60, vi: "Yêu cầu Node.js 22 trở lên", en: "Requires Node.js 22 or later" },
+        { status: "doing", issue: 53, vi: "Tên template ngắn: Starter, SaaS, Blog, Dashboard, AI chat", en: "Short template names: Starter, SaaS, Blog, Dashboard, AI chat" },
+      ],
+    },
+  ],
+  next: [
+    {
+      milestone: "0.9.0",
+      kind: "minor",
+      due: "2026-11-27",
+      vi: "React 19 làm mặc định và thang spacing theo số.",
+      en: "React 19 first and the numeric spacing scale.",
+      items: [
+        { status: "planned", issue: 62, vi: "React 19 cho dev, docs và template; React 18 vẫn hỗ trợ, báo trước ngày ngừng", en: "React 19 for dev, docs and templates; React 18 still supported, end announced" },
+        { status: "planned", issue: 41, vi: "So sánh ảnh chụp trên mọi PR đổi giao diện", en: "Visual comparison on every PR that changes the UI" },
+        { status: "planned", issue: 42, vi: "Spacing theo thang số (p-3, gap-5); class viết hoa vẫn chạy nhưng được đánh dấu deprecated", en: "Numeric spacing scale (p-3, gap-5); upper-case classes still work but are deprecated" },
+        { status: "planned", issue: 39, vi: "E2E cho bàn phím, focus và các luồng chính của docs", en: "E2E for keyboard, focus and the main docs flows" },
+        { status: "planned", issue: 56, vi: "Thẻ demo của starter chuyển thành Blocks", en: "The starter's demo cards become Blocks" },
+        { status: "planned", issue: 59, vi: "CI tự theo lịch phát hành của Node.js", en: "CI follows the Node.js release schedule automatically" },
+      ],
+    },
+    {
+      milestone: "cli 0.3.0",
+      kind: "cli",
+      due: "2026-11-27",
+      vi: "CLI cùng 0.9.0.",
+      en: "CLI alongside 0.9.0.",
+      items: [
+        { status: "planned", issue: 54, vi: "Starter tối giản, tiếng Anh mặc định, hai thương hiệu Sakura và Web", en: "Minimal starter, English by default, Sakura and Web brands" },
+        { status: "planned", issue: 55, vi: "create --lang en|vi chọn ngôn ngữ cho app được tạo", en: "create --lang en|vi picks the language of the generated app" },
+      ],
+    },
+  ],
+  later: [
+    {
+      milestone: "0.10.0",
+      kind: "minor",
+      due: "2027-01-29",
+      vi: "Trải nghiệm docs.",
+      en: "Docs experience.",
+      items: [
+        { status: "planned", issue: 44, vi: "Theme Designer: bo góc, mật độ, font, màu trung tính, bóng, chuyển động", en: "Theme Designer: radius, density, typography, neutrals, elevation, motion" },
+        { status: "planned", issue: 45, vi: "Trang Motion: hướng dẫn theo component, playground, xem trước giảm chuyển động", en: "Motion page: guidance per component, playground, reduced-motion preview" },
+        { status: "planned", issue: 46, vi: "Sidebar docs kéo được độ rộng, thu gọn về dạng icon", en: "Resizable docs sidebar that collapses to icons" },
+        { status: "planned", issue: 40, vi: "Kiểm thử trên Firefox và WebKit theo lịch", en: "Scheduled Firefox and WebKit test runs" },
+      ],
+    },
+    {
+      milestone: "1.0.0",
+      kind: "major",
+      vi: "API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện hoàn tất.",
+      en: "Stable API. No fixed date: ships when the readiness checklist is done.",
+      items: [
+        { status: "planned", issue: 65, vi: "Rà soát API, gỡ deprecation, quyết định về React 18 và class spacing viết hoa", en: "API review, deprecations removed, decisions on React 18 and upper-case spacing" },
+        { status: "planned", issue: 63, vi: "SEO: URL theo đường dẫn, prerender từng trang, sitemap", en: "SEO: path URLs, prerendered pages, sitemap" },
+      ],
+    },
+    {
+      milestone: "Backlog",
+      kind: "backlog",
+      vi: "Chưa xếp lịch.",
+      en: "Not scheduled yet.",
+      items: [
+        { status: "planned", issue: 69, vi: "Docs tiếng Anh cho trang component và các trang khái niệm còn lại", en: "English docs for component pages and the remaining concept pages" },
+        { status: "planned", issue: 64, vi: "CLI giai đoạn 2: diff, update, theme, remove", en: "CLI phase 2: diff, update, theme, remove" },
+        { status: "planned", issue: 68, vi: "Đăng ký @yugen vào danh mục registry của shadcn", en: "Register @yugen in the shadcn registry index" },
+        { status: "planned", vi: "Đang cân nhắc: bộ Figma, gói icon Sakura", en: "Under consideration: Figma kit, Sakura icon set" },
+      ],
+    },
+  ],
+};
+
+export const STAGE_LABEL: Record<RoadmapStage, { vi: string; en: string }> = {
+  now: { vi: "Đang làm", en: "Now" },
+  next: { vi: "Tiếp theo", en: "Next" },
+  later: { vi: "Sau đó", en: "Later" },
+};
+
+export const STATUS_LABEL: Record<RoadmapStatus, { vi: string; en: string }> = {
+  done: { vi: "Đã xong", en: "Done" },
+  doing: { vi: "Đang làm", en: "In progress" },
+  planned: { vi: "Dự kiến", en: "Planned" },
+};
+
+const KIND_LABEL: Record<RoadmapRelease["kind"], { vi: string; en: string }> = {
+  patch: { vi: "bản vá", en: "patch" },
+  minor: { vi: "minor", en: "minor" },
+  major: { vi: "major", en: "major" },
+  cli: { vi: "CLI", en: "CLI" },
+  backlog: { vi: "", en: "" },
+};
+
+/** "0.8.4 · bản vá", "cli 0.2.0", "Backlog". */
+export function releaseTitle(r: RoadmapRelease, lang: "vi" | "en") {
+  if (r.kind === "cli" || r.kind === "backlog") return r.milestone;
+  return `${r.milestone} · ${KIND_LABEL[r.kind][lang]}`;
+}
+
+export const issueUrl = (n: number) => `${SITE.links.repository}/issues/${n}`;
+
+/** Nội dung ROADMAP.md (tiếng Việt) sinh từ ROADMAP + NEWS. */
+export function roadmapMarkdown() {
+  const box: Record<RoadmapStatus, string> = { done: "[x]", doing: "[~]", planned: "[ ]" };
+  const lines = [
+    "# Lộ trình Yugen UI · Roadmap",
+    "",
+    "<!-- Sinh từ src/docs/roadmap.ts bằng `npm run roadmap`. Đừng sửa tay. -->",
+    "",
+    `Kế hoạch theo từng bản phát hành, cập nhật ${ROADMAP_UPDATED}. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và`,
+    `phụ thuộc nằm ở [GitHub Project](${PROJECT_URL}). \`[x]\` đã xong, \`[~]\` đang làm, \`[ ]\` dự kiến.`,
+    "",
+    "Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. English: the community page",
+    `(${homepage}?lang=en#/community) shows the same roadmap.`,
+  ];
+  for (const stage of ["now", "next", "later"] as const) {
+    lines.push("", `## ${STAGE_LABEL[stage].vi}`);
+    for (const r of ROADMAP[stage]) {
+      const due = r.due ? ` · hạn ${r.due}` : "";
+      lines.push("", `### ${releaseTitle(r, "vi")}${due}`, "", r.vi, "");
+      for (const item of r.items) lines.push(`- ${box[item.status]} ${item.vi}${item.issue ? ` (#${item.issue})` : ""}`);
+    }
+  }
+  lines.push("", "## Đã phát hành", "", "Chi tiết ở trang Có gì mới (`#/news`) và `CHANGELOG.md`.", "");
+  for (const n of NEWS) lines.push(`- **${n.version}** (${n.date}): ${n.title}`);
+  return `${lines.join("\n")}\n`;
+}
