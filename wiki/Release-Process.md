@@ -56,8 +56,10 @@ Không dùng Changesets — version và CHANGELOG sửa tay. Docs cho người d
 3. **Template theo `yugen-ui`** — template nằm trong gói CLI và ghim `yugen-ui@^<bản hiện tại>`. Sau mỗi bản minor
    của `yugen-ui`, phát hành `yugen` (patch) để `create` tạo app với bản mới.
 4. **Nhánh** — bản ổn định tag trên `main` (dist-tag `latest`); prerelease `yugen@X.Y.Z-beta.N` tag trên `next`
-   (dist-tag `next`, thử bằng `npx yugen@next`). `create-yugen-ui` chỉ phát hành cùng bản ổn định. Không publish lại
-   một version đã có trên npm.
+   (dist-tag `next`, thử bằng `npx yugen@next`). `create-yugen-ui` chỉ phát hành cùng bản ổn định. Không dùng lại
+   một version đã từng publish, **kể cả bản đã unpublish** — npm chặn vĩnh viễn (`yugen@0.1.0` của một người khác bị
+   unpublish năm 2024, nên CLI bắt đầu từ `0.1.1`). `npm view` không thấy bản đã unpublish; dùng
+   `npm run check:release -- --npm`.
 5. **SemVer của CLI** — `patch`: sửa lỗi, cập nhật template; `minor`: lệnh hoặc tuỳ chọn mới, đổi định dạng
    `yugen.json`. Trước 1.0 thay đổi phá vỡ (đổi tên lệnh / tuỳ chọn, đổi chỗ ghi file) cũng là `minor`, ghi rõ trong
    CHANGELOG.
@@ -74,7 +76,7 @@ git switch main && git pull
 # 2. Thêm mục "## X.Y.Z" lên đầu packages/cli/CHANGELOG.md
 cd packages/cli
 npm install --package-lock-only   # version trong lockfile
-npm run check:release             # quy tắc 1–3
+npm run check:release -- --npm   # quy tắc 1–4 (--npm: version chưa từng dùng trên npm, cần mạng)
 npm test
 npm run smoke                     # npm pack 2 gói → cài từ .tgz → create-yugen-ui mọi template
 ```
@@ -86,7 +88,7 @@ git tag yugen@X.Y.Z
 git push origin yugen@X.Y.Z
 ```
 
-**Release CLI** chạy lại `check-release.mjs --tag` (tag khớp version, chưa có trên npm, đúng nhánh → chọn dist-tag),
+**Release CLI** chạy lại `check-release.mjs --tag` (tag khớp version, chưa từng dùng trên npm, đúng nhánh → chọn dist-tag),
 typecheck, test, smoke, rồi `npm publish --provenance` cho `yugen` và `create-yugen-ui` (bỏ qua nếu version đó đã có).
 `NPM_TOKEN` phải được publish **gói mới** cho lần đầu (token granular "All packages", hoặc classic Automation).
 
@@ -101,8 +103,8 @@ cd smoke-app && npm run build
 Tạo GitHub Release từ tag (dán mục CHANGELOG). Hỏng sau khi publish: sửa trên `main`, phát hành bản patch; bản lỗi thì
 `npm deprecate yugen@X.Y.Z "…"` (không unpublish).
 
-### Lần đầu (0.1.0)
+### Lần đầu (0.1.1)
 
-Mã CLI đang ở `next`. Merge `next` → `main` (cùng lúc với một bản `yugen-ui` hoặc riêng), rồi tag `yugen@0.1.0` trên
-`main`. Muốn thử trước trên npm: đổi version thành `0.1.0-beta.1`, thêm mục CHANGELOG, tag `yugen@0.1.0-beta.1` trên
-`next` → `npx yugen@next`.
+Mã CLI đã ở `main`. Tag `yugen@0.1.1` trên `main` (không dùng `0.1.0`, xem quy tắc 4). `create-yugen-ui` phát hành
+`0.1.0` cùng lúc. Muốn thử trước trên npm: đổi version thành `0.1.1-beta.1`, thêm mục CHANGELOG, tag
+`yugen@0.1.1-beta.1` trên `next` → `npx yugen@next`.
