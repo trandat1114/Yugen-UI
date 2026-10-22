@@ -92,7 +92,7 @@ export default function Page() {
             ]}
           />
           <P>
-            Không cần cài trước: chạy bằng <C>npx @yugen-ui/cli@latest</C> (hoặc <C>pnpm dlx</C>, <C>yarn dlx</C>, <C>bunx</C>). Cần Node.js 20 trở lên.
+            Không cần cài trước: chạy bằng <C>npx @yugen-ui/cli@latest</C> (hoặc <C>pnpm dlx</C>, <C>yarn dlx</C>, <C>bunx</C>). Cần Node.js 22 trở lên.
           </P>
         </div>
       </DocSection>

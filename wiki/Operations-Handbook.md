@@ -39,7 +39,7 @@ Bảo vệ cho `next`, `release/*`, `canary` và tag `v*`: xem [[Branching and R
 
 **Settings → Branches → Branch protection cho `main`:**
 - Require a pull request before merging · Require approvals: 1 · Dismiss stale approvals
-- Require status checks: `Build · Node 22`, `Build · Node 24`, `Unit tests (React 18)`, `React 19`, `E2E (Playwright + axe)`
+- Require status checks: `Build · Node 22`, `Build · Node 24`, `Build · Node 26`, `Unit tests (React 18)`, `React 19`, `E2E (Playwright + axe)`
 - Require conversation resolution · Block force pushes · Do not allow deletions
 
 **Settings → General:** Allow squash merging (mặc định) · Automatically delete head branches · Discussions: bật.
