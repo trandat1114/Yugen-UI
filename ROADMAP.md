@@ -10,17 +10,6 @@ Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. 
 
 ## Đang làm
 
-### cli 0.2.0 · hạn 2026-10-30
-
-CLI đi kèm yugen-ui 0.9.0 (gồm cả việc dự kiến cho cli 0.3.0).
-
-- [x] Yêu cầu Node.js 22 trở lên (#60)
-- [x] create --lang en|vi chọn ngôn ngữ cho app được tạo (#55)
-- [x] Starter tối giản, tiếng Anh mặc định, hai thương hiệu Sakura và Web (#54)
-- [x] Tên template ngắn: Starter, SaaS, Blog, Dashboard, AI chat (#53)
-
-## Tiếp theo
-
 ### 0.10.0 · minor · hạn 2027-01-29
 
 Thang spacing theo số và trải nghiệm docs.
@@ -31,7 +20,7 @@ Thang spacing theo số và trải nghiệm docs.
 - [ ] Sidebar docs kéo được độ rộng, thu gọn về dạng icon (#46)
 - [ ] Kiểm thử trên Firefox và WebKit theo lịch (#40)
 
-## Sau đó
+## Tiếp theo
 
 ### 1.0.0 · major
 
@@ -39,6 +28,8 @@ API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện
 
 - [ ] Rà soát API, gỡ deprecation, quyết định về React 18 và class spacing viết hoa (#65)
 - [ ] SEO: URL theo đường dẫn, prerender từng trang, sitemap (#63)
+
+## Sau đó
 
 ### Backlog
 
