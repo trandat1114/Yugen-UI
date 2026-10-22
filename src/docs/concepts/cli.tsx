@@ -3,6 +3,7 @@ import { MessageBar, PackageManagerTabs } from "@/components/ui";
 import { DocSection } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
 import { REGISTRY_URL } from "../install";
+import { templateGigetCommand } from "../templates";
 import {
   CLI_ADD,
   CLI_CONFIG,
@@ -108,6 +109,8 @@ export default function Page() {
             chọn: <C>-t, --template</C>, <C>--pm npm|pnpm|yarn|bun</C>, <C>--no-install</C>, <C>--no-git</C>, <C>--force</C> (ghi vào thư
             mục không trống).
           </P>
+          <P>Không dùng CLI thì tải thẳng thư mục template từ GitHub:</P>
+          <CodeBlock code={templateGigetCommand("vite-starter")} />
         </div>
       </DocSection>
 

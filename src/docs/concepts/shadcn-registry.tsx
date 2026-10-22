@@ -66,6 +66,11 @@ export default function Page() {
             cần:
           </P>
           <CodeBlock code={TEMPLATE_COMMAND} />
+          <MessageBar intent="info" title="Cách ngắn hơn: CLI yugen" className="max-w-3xl">
+            <C>npx @yugen-ui/cli@latest init --mode source</C> rồi <C>npx @yugen-ui/cli add button</C> chép cùng mã nguồn từ cùng registry, gõ tên ngắn,
+            không cần components.json hay thêm alias <C>@/</C>. Xem <A href="#/concepts/cli">CLI yugen</A>. Trang này dành cho dự án đã
+            dùng shadcn CLI.
+          </MessageBar>
         </div>
       </DocSection>
 

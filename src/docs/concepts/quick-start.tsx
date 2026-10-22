@@ -16,6 +16,9 @@ import { DocSection } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
 import { templateStackBlitzUrl } from "../templates";
 import {
+  CLI_ADD,
+  CLI_INIT,
+  CLI_INIT_SOURCE,
   CSS_PRECOMPILED,
   CSS_TAILWIND,
   PROVIDER_NEXT,
@@ -176,15 +179,15 @@ export default function Page() {
       <DocSection
         id="template"
         title="Nhanh nhất: một lệnh"
-        description="Tải template, cài phụ thuộc và chạy dev server — không cần cấu hình gì thêm."
+        description="CLI chép template, cài phụ thuộc rồi chạy dev server. Không cần cấu hình gì thêm."
       >
         <div className="flex flex-col gap-L">
           <CodeBlock code={TEMPLATE_COMMAND} />
           <P>
             Lệnh trên tạo dự án starter: theme đã ghi nhớ, toast, alias <C>@/</C>, SEO cơ bản và một trang chào để xoá khi bắt đầu viết.
-            Cần nhiều hơn? Đổi <C>vite-starter</C> thành <C>vite-saas</C> (ứng dụng SaaS 8 trang), <C>vite-blog</C> (blog Markdown),{" "}
-            <C>vite-dashboard</C> hoặc <C>vite-ai-chat</C> — xem trước tất cả ở trang Templates. Không muốn cài gì? Mở thẳng trên
-            StackBlitz. Muốn chọn template từ danh sách? Dùng <A href="#/concepts/cli">CLI yugen</A>: <C>npx @yugen-ui/cli@latest create</C>.
+            Cần nhiều hơn? Đổi <C>starter</C> thành <C>saas</C> (ứng dụng SaaS 8 trang), <C>blog</C> (blog Markdown), <C>dashboard</C>{" "}
+            hoặc <C>ai-chat</C>, hoặc bỏ <C>--template</C> để chọn từ danh sách. Xem trước tất cả ở trang Templates; không muốn cài gì thì
+            mở thẳng trên StackBlitz. Các tuỳ chọn khác ở <A href="#/concepts/cli">CLI yugen</A>.
           </P>
           <div className="flex flex-wrap gap-S">
             <Button asChild appearance="primary" icon={<Rocket16Regular />}>
@@ -199,7 +202,13 @@ export default function Page() {
         </div>
       </DocSection>
 
-      <DocSection id="existing" title="Thêm vào dự án có sẵn" description="React 18+ và Tailwind CSS v4 — ba bước, không cần alias hay cấu hình bundler.">
+      <DocSection id="existing" title="Thêm vào dự án có sẵn" description="React 18+ và Tailwind CSS v4. Không cần alias hay cấu hình bundler.">
+        <div className="flex flex-col gap-L">
+          <PackageManagerTabs packages={CLI_INIT} command="dlx" />
+          <P>
+            Chọn <C>package</C> khi được hỏi: CLI cài <C>yugen-ui</C>, thêm dòng theme vào file CSS chính (hoặc <C>styles.css</C> nếu
+            không có Tailwind v4) và in đoạn bọc <C>YugenProvider</C> kèm tên file cần sửa. Muốn tự làm thì theo ba bước dưới đây.
+          </P>
         <Steps
           items={[
             {
@@ -248,20 +257,27 @@ export default function Page() {
             },
           ]}
         />
+        </div>
       </DocSection>
 
       <DocSection
         id="shadcn"
         title="Muốn sở hữu mã nguồn?"
-        description="shadcn CLI chép component vào dự án để bạn sửa từng dòng — hai lệnh, CLI tự lo components.json, theme và gói npm."
+        description="Chép component vào dự án để sửa từng dòng. Hai lệnh: init một lần, rồi add component cần dùng."
       >
         <div className="flex flex-col gap-L">
+          <PackageManagerTabs packages={CLI_INIT_SOURCE} command="dlx" />
+          <PackageManagerTabs packages={CLI_ADD} command="dlx" />
+          <P>
+            CLI ghi theme, <C>cn()</C> và <C>YugenProvider</C>, kéo theo component phụ thuộc, cài gói npm còn thiếu và đổi import theo alias
+            của dự án. Chi tiết ở <A href="#/concepts/cli">CLI yugen</A>.
+          </P>
+          <P>
+            Đã quen shadcn CLI? Registry của Yugen dùng được với nó (Next.js dùng <C>init-next.json</C>, xem{" "}
+            <A href="#/concepts/shadcn-registry">Cài bằng shadcn CLI</A>):
+          </P>
           <PackageManagerTabs packages={SHADCN_INIT} command="dlx" />
           <PackageManagerTabs packages={SHADCN_ADD} command="dlx" />
-          <P>
-            Dự án Next.js dùng <C>init-next.json</C>. Chi tiết, kết quả và cách cập nhật ở trang{" "}
-            <A href="#/concepts/shadcn-registry">Cài bằng shadcn CLI</A>.
-          </P>
         </div>
       </DocSection>
 

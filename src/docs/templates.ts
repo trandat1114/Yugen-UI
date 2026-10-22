@@ -135,8 +135,19 @@ export const TEMPLATES: TemplateInfo[] = [
 
 const REPO = SITE.links.repository.replace(/^https:\/\/github\.com\//, "");
 
-/** Một dòng: tải template, cài phụ thuộc, chạy dev server. */
+/** Tên template trong CLI (`--template`): "vite-saas" → "saas" — khớp templates/templates.json. */
+export const templateName = (dir: string) => dir.replace(/^vite-/, "");
+
+/** CLI chép template và cài phụ thuộc (create-yugen-ui → yugen create). */
+export const templateCreateCommand = (dir: string, folder = "my-app") =>
+  `npm create yugen-ui@latest ${folder} -- --template ${templateName(dir)}`;
+
+/** Một dòng: tạo dự án rồi chạy dev server. */
 export const templateCommand = (dir: string, folder = "my-app") =>
+  `${templateCreateCommand(dir, folder)} && cd ${folder} && npm run dev`;
+
+/** Không qua CLI: tải thẳng thư mục template từ GitHub. */
+export const templateGigetCommand = (dir: string, folder = "my-app") =>
   `npx giget@latest gh:${REPO}/templates/${dir} ${folder} --install && cd ${folder} && npm run dev`;
 
 /** StackBlitz mở thẳng thư mục trên GitHub — không cần cài gì. */
