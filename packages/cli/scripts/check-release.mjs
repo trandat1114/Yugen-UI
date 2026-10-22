@@ -6,7 +6,8 @@
  *   node scripts/check-release.mjs --npm             # thêm: version chưa từng dùng trên npm (cần mạng)
  *   node scripts/check-release.mjs --tag cli@0.2.0   # như --npm, thêm: tag khớp version, đúng nhánh → in dist-tag
  *
- *   1. packages/cli/CHANGELOG.md có mục "## <version>".
+ *   1. packages/cli/CHANGELOG.md có mục "## <version>"; trang Có gì mới (src/docs/news.ts): mục đầu của CLI_NEWS /
+ *      CREATE_NEWS = version của @yugen-ui/cli / create-yugen-ui (prerelease CLI không cần mục tin).
  *   2. create-yugen-ui phụ thuộc "@yugen-ui/cli": "^X.Y.Z" chấp nhận version hiện tại (0.x: ^0.1.0 không nhận 0.2.0).
  *   3. Template đóng gói ghim yugen-ui bằng ^<version yugen-ui ở gốc repo> (đã chạy sync-templates).
  *   4. --npm / --tag: version CLI chưa từng publish, kể cả bản đã unpublish (npm không cho dùng lại);
@@ -42,6 +43,21 @@ const pre = version.includes("-");
 const changelog = fs.readFileSync(path.join(cli, "CHANGELOG.md"), "utf8");
 if (!new RegExp(`^##\\s+${version.replace(/\./g, "\\.")}\\s*$`, "m").test(changelog))
   errors.push(`packages/cli/CHANGELOG.md chưa có mục "## ${version}".`);
+
+// 1b. Trang Có gì mới › tab @yugen-ui/cli và create-yugen-ui
+const news = fs.readFileSync(path.join(repo, "src/docs/news.ts"), "utf8");
+function firstNewsVersion(name) {
+  const start = news.search(new RegExp(`export\\s+const\\s+${name}\\b[^=]*=\\s*\\[`));
+  return start === -1 ? undefined : news.slice(start).match(/\bversion\s*:\s*["'`]([^"'`]+)["'`]/)?.[1];
+}
+for (const [name, want, skip] of [
+  ["CLI_NEWS", version, pre],
+  ["CREATE_NEWS", create.version, false],
+]) {
+  const got = firstNewsVersion(name);
+  if (!skip && got !== want)
+    errors.push(`src/docs/news.ts: mục đầu của ${name} là ${got ?? "(không có)"}, cần ${want} — thêm mục tin lên đầu mảng.`);
+}
 
 // 2. create-yugen-ui → @yugen-ui/cli
 function caretAccepts(range, v) {

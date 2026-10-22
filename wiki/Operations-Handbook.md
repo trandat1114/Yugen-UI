@@ -20,6 +20,7 @@ Cách dự án được vận hành hằng ngày: ai làm gì, khi nào, theo lu
 | Hằng tuần | Phân loại `needs triage` ([[Community and Triage]]), trả lời Q&A tồn đọng, review PR | Triager / maintainer |
 | Hằng tuần | Xem CI trên `main` (phải luôn xanh), PR Dependabot | Maintainer |
 | 2–4 tuần | Phát hành nếu có changeset ([[Release Process]]) | Maintainer |
+| Khi `packages/cli/CHANGELOG.md` có mục `Unreleased` | Phát hành CLI kèm mục tin trên `#/news` ([[Release Process]] › CLI) | Maintainer |
 | Hằng tháng | Cập nhật ROADMAP, gắn `good first issue` mới, chọn Showcase | Maintainer |
 | Hằng quý | Rà dependency lớn (React, Radix, Tailwind), ngân sách dung lượng, audit a11y thủ công với NVDA / VoiceOver | Maintainer |
 
@@ -54,6 +55,7 @@ Bảo vệ cho `next`, `release/*`, `canary` và tag `v*`: xem [[Branching and R
 |---|---|
 | `ci.yml` | Build, test, React 19, e2e, các check, size |
 | `release.yml` | Tag `v*` → kiểm tra nhánh + nhất quán → `npm publish --provenance` (dist-tag theo kênh) |
+| `release-cli.yml` | Tag `cli@*` → `check-release.mjs --tag` (CHANGELOG, mục tin trên `#/news`, version chưa dùng) → publish `@yugen-ui/cli` + `create-yugen-ui` |
 | `canary.yml` | Push vào `canary` → bản `x.y.z-canary-…` với dist-tag `canary` |
 | `sync-next.yml` | Push vào `main` → mở PR `main → next` nếu `next` thiếu commit |
 | `pages.yml` | Deploy docs (+ docs các minor cũ) lên GitHub Pages |

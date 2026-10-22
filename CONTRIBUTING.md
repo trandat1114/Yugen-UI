@@ -180,8 +180,10 @@ npx changeset    # chọn yugen-ui → patch hoặc minor → viết tóm tắt 
    `npm publish --provenance` (cần secret `NPM_TOKEN`). Tag có `-` (vd. `v0.6.0-beta.1`) phát hành với dist-tag `next`.
 
 CLI `@yugen-ui/cli` và `create-yugen-ui` (`packages/`) phát hành riêng bằng tag `cli@X.Y.Z`, không qua Changesets — quy tắc và
-các bước ở wiki › *Release Process* › CLI. Trước khi tag: `npm run check:release --prefix packages/cli -- --npm` và
-`npm run smoke --prefix packages/cli`.
+các bước ở wiki › *Release Process* › CLI. PR đổi `packages/cli` hoặc `packages/create-yugen-ui`: ghi một dòng vào mục
+`## Unreleased` của `packages/cli/CHANGELOG.md`. Mỗi bản phát hành cần mục tin ở đầu `CLI_NEWS` (và `CREATE_NEWS` khi
+`create-yugen-ui` đổi version) trong `src/docs/news.ts`, hiện ở tab riêng trên trang Có gì mới. `check-release` báo lỗi
+nếu thiếu. Trước khi tag: `npm run check:release --prefix packages/cli -- --npm` và `npm run smoke --prefix packages/cli`.
 
 ---
 
@@ -285,5 +287,8 @@ release and removed when the cycle exits pre mode.
    (e.g. `v0.6.0-beta.1`) are published under the `next` dist-tag.
 
 The `@yugen-ui/cli` CLI and `create-yugen-ui` (`packages/`) are released separately with a `cli@X.Y.Z` tag, outside
-Changesets — rules and steps in the wiki › *Release Process* › CLI. Before tagging run
+Changesets — rules and steps in the wiki › *Release Process* › CLI. PRs that change `packages/cli` or
+`packages/create-yugen-ui` add a line under `## Unreleased` in `packages/cli/CHANGELOG.md`. Every release needs a news
+entry at the top of `CLI_NEWS` (and `CREATE_NEWS` when `create-yugen-ui` changes version) in `src/docs/news.ts`, shown
+in its own tab on the What's new page; `check-release` fails without it. Before tagging run
 `npm run check:release --prefix packages/cli -- --npm` and `npm run smoke --prefix packages/cli`.

@@ -52,8 +52,11 @@ scope không bị kiểm tra này; scope `@yugen-ui` là một npm org (miễn p
 
 `packages/cli/scripts/check-release.mjs` kiểm tra tự động các quy tắc 1–4 (chạy trong CI và khi phát hành).
 
-1. **CHANGELOG** — mỗi version có mục `## X.Y.Z` ở **đầu** `packages/cli/CHANGELOG.md`. Thay đổi của cả hai gói ghi
-   chung ở đây.
+1. **CHANGELOG và Có gì mới** — mỗi version có mục `## X.Y.Z` ở **đầu** `packages/cli/CHANGELOG.md` (thay đổi của
+   cả hai gói ghi chung ở đây), và một mục tin ở **đầu** `CLI_NEWS` trong `src/docs/news.ts` (tab `@yugen-ui/cli` trên
+   `#/news`). Khi `create-yugen-ui` đổi version, thêm cả mục ở đầu `CREATE_NEWS` (tab `create-yugen-ui`). Viết tiếng Việt,
+   `href` tới `#/concepts/cli`. Bản prerelease của CLI không cần mục tin. Trong lúc phát triển, PR đổi `packages/cli` ghi
+   một dòng vào mục `## Unreleased` của CHANGELOG; khi phát hành, đổi `Unreleased` thành số version.
 2. **`create-yugen-ui` theo CLI** — `packages/create-yugen-ui/package.json` khai báo `"@yugen-ui/cli": "^X.Y.0"`. Trước
    1.0, `^0.1.0` **không** nhận `0.2.0`: khi CLI lên minor, sửa dependency và tăng version `create-yugen-ui` trong cùng
    commit. Bản patch của CLI không cần phát hành lại `create-yugen-ui`.
@@ -76,7 +79,8 @@ scope không bị kiểm tra này; scope `@yugen-ui` là một npm org (miễn p
 ```bash
 git switch main && git pull
 # 1. Tăng "version" trong packages/cli/package.json (+ packages/create-yugen-ui/package.json khi theo quy tắc 2)
-# 2. Thêm mục "## X.Y.Z" lên đầu packages/cli/CHANGELOG.md
+# 2. Đổi "## Unreleased" thành "## X.Y.Z" ở đầu packages/cli/CHANGELOG.md
+# 3. Thêm mục tin lên đầu CLI_NEWS (và CREATE_NEWS nếu create-yugen-ui đổi version) trong src/docs/news.ts
 cd packages/cli
 npm install --package-lock-only    # version trong lockfile
 npm run check:release -- --npm     # quy tắc 1–4 (--npm cần mạng)
@@ -104,7 +108,8 @@ npx create-yugen-ui@latest smoke-app --template starter
 cd smoke-app && npm run build
 ```
 
-Tạo GitHub Release từ tag (dán mục CHANGELOG). Hỏng sau khi publish: sửa trên `main`, phát hành bản patch; bản lỗi thì
+Docs deploy từ `main` đưa mục tin lên `#/news` (tab `@yugen-ui/cli` / `create-yugen-ui`) và bật chấm "có tin mới" trên
+thanh trên cho người đã xem bản trước. Tạo GitHub Release từ tag (dán mục CHANGELOG). Hỏng sau khi publish: sửa trên `main`, phát hành bản patch; bản lỗi thì
 `npm deprecate @yugen-ui/cli@X.Y.Z "…"` (không unpublish).
 
 ### Lần đầu (`cli@0.1.0`)
