@@ -56,8 +56,9 @@ npm run dev          # trang docs tại http://localhost:5173
   và tải artifact `visual-screenshots` về — workflow không tự commit.
 - `npm run size` — sau `npm run build:lib`. Vượt ngân sách thì tìm nguyên nhân trước (import thừa, dependency mới);
   tăng có chủ đích thì sửa `limit` trong `.size-limit.cjs` và ghi lý do trong PR.
-- CI chạy thêm toàn bộ bằng React 19 (job `react-19`). Muốn thử trên máy: làm trong một bản sao của repo
-  (`npm i --no-save react@^19 react-dom@^19 @types/react@^19 @types/react-dom@^19`), đừng làm bẩn `node_modules` chính.
+- Repo chạy React 19; CI chạy thêm typecheck, test và build:lib bằng React 18.3 (job `react-18`) vì bản này vẫn được
+  hỗ trợ. Muốn thử trên máy: làm trong một bản sao của repo
+  (`npm i --no-save react@^18.3 react-dom@^18.3 @types/react@^18.3 @types/react-dom@^18.3`), đừng làm bẩn `node_modules` chính.
 
 ### Luật bắt buộc (tóm tắt Design.md §0)
 
@@ -209,8 +210,9 @@ repairs them), `build:lib` (library → `dist/`), `build:docs` (docs → `dist-d
   then download the `visual-screenshots` artifact) — it never commits.
 - `npm run size` — size budgets (`.size-limit.cjs`), after `npm run build:lib`. If a budget fails, find the cause
   first; raise a `limit` only on purpose, and say why in the PR.
-- CI also runs typecheck, unit tests and the library build against React 19 (`react-19` job). To try it locally, use
-  a copy of the repo (`npm i --no-save react@^19 react-dom@^19 @types/react@^19 @types/react-dom@^19`).
+- The repo runs React 19; CI also runs typecheck, unit tests and the library build against React 18.3 (`react-18` job),
+  which is still supported. To try it locally, use a copy of the repo
+  (`npm i --no-save react@^18.3 react-dom@^18.3 @types/react@^18.3 @types/react-dom@^18.3`).
 
 ### Rules
 

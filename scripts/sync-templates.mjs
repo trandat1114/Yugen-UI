@@ -346,14 +346,15 @@ function files(t) {
           scripts: { dev: "vite", build: "tsc -b && vite build", preview: "vite preview" },
           dependencies: {
             "@fluentui/react-icons": pkg.dependencies["@fluentui/react-icons"],
-            react: "^18.3.1",
-            "react-dom": "^18.3.1",
+            // React và type theo devDependencies ở gốc repo (cùng bản mà docs và test chạy).
+            react: pkg.devDependencies.react,
+            "react-dom": pkg.devDependencies["react-dom"],
             "yugen-ui": `^${pkg.version}`,
           },
           devDependencies: {
             "@tailwindcss/vite": "^4.0.0",
-            "@types/react": "^18.3.18",
-            "@types/react-dom": "^18.3.5",
+            "@types/react": pkg.devDependencies["@types/react"],
+            "@types/react-dom": pkg.devDependencies["@types/react-dom"],
             "@vitejs/plugin-react": "^4.3.4",
             tailwindcss: "^4.0.0",
             typescript: "^5.7.3",

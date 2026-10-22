@@ -1,6 +1,6 @@
 # Getting Started · Bắt đầu
 
-Yêu cầu: React 18 hoặc 19, TypeScript 5 (khuyên dùng). Tailwind CSS v4 là tuỳ chọn.
+Yêu cầu: React 19 (khuyên dùng) hoặc 18.3, TypeScript 5 (khuyên dùng). Tailwind CSS v4 là tuỳ chọn.
 
 ## 1. Chọn cách dùng
 

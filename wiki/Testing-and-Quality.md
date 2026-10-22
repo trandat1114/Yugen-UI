@@ -20,8 +20,8 @@
 | Job | Chạy |
 |---|---|
 | Build · Node 22 / 24 / 26 | typecheck, lint:classes, các check:*, sync-templates, build lib + docs, pack, size |
-| Unit tests (React 18) | `npm test` |
-| React 19 | cài React 19 tạm thời → typecheck, test, build:lib |
+| Unit tests (React 19) | `npm test` |
+| React 18 | cài React 18.3 tạm thời → typecheck, test, build:lib |
 | E2E (Playwright + axe) | chromium, upload `playwright-report` khi lỗi |
 
 ## Sửa CI đỏ — các ca hay gặp
@@ -37,7 +37,8 @@
 | Visual khác biệt | đổi giao diện có chủ đích | `npm run test:visual -- --update-snapshots`; Linux: workflow **Visual** với `update` |
 | size-limit vượt | thêm dependency / component lớn | tối ưu, hoặc nâng `limit` trong `.size-limit.cjs` kèm lý do trong PR |
 
-## Thử với React 19 trên máy
+## Thử với React 18 trên máy
 
-Đừng cài React 19 vào repo đang làm. Chép repo ra thư mục khác (bỏ `node_modules`), `npm ci`, rồi
-`npm i --no-save react@^19 react-dom@^19 @types/react@^19 @types/react-dom@^19` và chạy `npx tsc -b && npx vitest run`.
+Repo chạy React 19. Muốn kiểm tra React 18.3 (vẫn được hỗ trợ): chép repo ra thư mục khác (bỏ `node_modules`), `npm ci`,
+rồi `npm i --no-save react@^18.3 react-dom@^18.3 @types/react@^18.3 @types/react-dom@^18.3` và chạy
+`npx tsc -b && npx vitest run`.

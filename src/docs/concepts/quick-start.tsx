@@ -199,7 +199,7 @@ export default function Page() {
         </div>
       </DocSection>
 
-      <DocSection id="existing" title="Thêm vào dự án có sẵn" description="React 18+ và Tailwind CSS v4. Không cần alias hay cấu hình bundler.">
+      <DocSection id="existing" title="Thêm vào dự án có sẵn" description="React 19 (hoặc 18.3) và Tailwind CSS v4. Không cần alias hay cấu hình bundler.">
         <div className="flex flex-col gap-L">
           <PackageManagerTabs packages={CLI_INIT} command="dlx" />
           <P>
@@ -306,7 +306,7 @@ export default function Page() {
           <SimpleTable
             head={["Công nghệ", "Phiên bản", "Ghi chú"]}
             rows={[
-              ["React", "18.3+", "Tương thích React 19."],
+              ["React", "19 (khuyên dùng), 18.3", "React 18 vẫn được hỗ trợ; ngày ngừng sẽ báo trước ở Có gì mới."],
               ["Tailwind CSS", "4.x", <>Không bắt buộc nếu dùng <C>yugen-ui/styles.css</C>. Tailwind 3 không được hỗ trợ.</>],
               ["Bundler", "Vite 6, Next.js 14+", <>Vite dùng <C>@tailwindcss/vite</C>; Next.js dùng <C>@tailwindcss/postcss</C>.</>],
               ["TypeScript", "5.x", "Không bắt buộc — gói đã kèm kiểu."],
