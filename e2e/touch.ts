@@ -12,8 +12,11 @@ export interface Point {
  * không phụ thuộc máy chạy test nhanh hay chậm.
  * - `stepMs`: thời gian giữa hai lần di chuyển (nhỏ → vận tốc lớn = cú vuốt nhanh).
  * - `hold`: giữ yên trước khi nhấc tay (ms) — vận tốc khi thả về 0, không bị coi là vuốt.
+ * - `pause: false`: gửi các bước liền nhau, không chờ khung hình — cho cú hất. Chromium trên CI không luôn dùng
+ *   timestamp tổng hợp, nên chờ giữa các bước (cộng độ trễ CDP khi runner bận) kéo dài cú vuốt thật và hạ vận tốc
+ *   dưới ngưỡng hất của Sheet.
  */
-export async function touchDrag(page: Page, from: Point, to: Point, { steps = 10, stepMs = 16, hold = 0 } = {}) {
+export async function touchDrag(page: Page, from: Point, to: Point, { steps = 10, stepMs = 16, hold = 0, pause = true } = {}) {
   const cdp: CDPSession = await page.context().newCDPSession(page);
   // Mốc tổng hợp lùi về quá khứ đủ xa để mọi timestamp đều ≤ giờ thật lúc gửi.
   let t = Date.now() / 1000 - (steps * stepMs + hold + 1000) / 1000;
@@ -29,7 +32,7 @@ export async function touchDrag(page: Page, from: Point, to: Point, { steps = 10
       t += stepMs / 1000;
       await send("touchMove", { x: from.x + ((to.x - from.x) * i) / steps, y: from.y + ((to.y - from.y) * i) / steps });
       // Cho trình duyệt xử lý cuộn / khung hình giữa các bước (carousel cuộn gốc).
-      await page.waitForTimeout(Math.min(stepMs, 16));
+      if (pause) await page.waitForTimeout(Math.min(stepMs, 16));
     }
     t += hold / 1000;
     if (hold > 0) await page.waitForTimeout(Math.min(hold, 100));

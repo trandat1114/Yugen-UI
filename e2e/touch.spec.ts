@@ -65,8 +65,9 @@ test.describe("Sheet — bottom sheet trên mobile", () => {
   test("vuốt nhanh xuống ở nấc thấp nhất thì đóng", async ({ page }) => {
     const { trigger, sheet, handle } = await openFilter(page);
     const start = await handlePoint(handle);
-    // 120px trong ~40ms: vận tốc vượt ngưỡng vuốt dù quãng đường chưa tới nửa sheet.
-    await touchDrag(page, start, { x: start.x, y: start.y + 120 }, { steps: 5, stepMs: 8 });
+    // 120px trong ~40ms: vận tốc vượt ngưỡng vuốt dù quãng đường chưa tới nửa sheet. Không chờ giữa các bước để cú
+    // hất vẫn nhanh khi runner CI bận.
+    await touchDrag(page, start, { x: start.x, y: start.y + 120 }, { steps: 5, stepMs: 8, pause: false });
     await expect(sheet).toBeHidden();
     await expect(trigger).toBeFocused();
   });
