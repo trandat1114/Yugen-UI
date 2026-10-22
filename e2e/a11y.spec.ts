@@ -89,17 +89,11 @@ async function applyAllowlist(page: Page, violations: Result[], route: string, t
   return remaining;
 }
 
-/** Mở trang, chạy axe, lọc allowlist. Thử lại một lần nếu trang bị tải lại giữa chừng (Vite HMR khi file nguồn đổi). */
+/** Mở trang, chạy axe, lọc allowlist. */
 async function scan(page: Page, route: string, theme: Theme, dir: Dir): Promise<Result[]> {
-  for (let attempt = 1; ; attempt++) {
-    try {
-      await openDocs(page, route, { theme, dir });
-      const results: AxeResults = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
-      return await applyAllowlist(page, results.violations, route, theme);
-    } catch (error) {
-      if (attempt >= 2 || !/Execution context was destroyed|navigation/i.test(String(error))) throw error;
-    }
-  }
+  await openDocs(page, route, { theme, dir });
+  const results: AxeResults = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
+  return applyAllowlist(page, results.violations, route, theme);
 }
 
 function formatViolations(violations: Result[]) {
