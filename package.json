@@ -128,7 +128,7 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
     "@changesets/cli": "^2.31.1",
-    "@hookform/resolvers": "^3.10.0",
+    "@hookform/resolvers": "^6.0.0",
     "@playwright/test": "^1.64.1",
     "@size-limit/esbuild": "^14.2.0",
     "@size-limit/file": "^14.2.0",
