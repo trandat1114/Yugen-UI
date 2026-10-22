@@ -35,7 +35,7 @@ const html = `<!doctype html>
   .url { font-size: 24px; color: #8a7480; }
 </style></head><body>
   <div class="brand">${logo}<h1>Yugen UI</h1></div>
-  <p>React + Tailwind CSS v4 components, <b>Fluent 2</b> tokens, Sakura 桜 colours.</p>
+  <p>React components for <b>Tailwind CSS v4</b>.</p>
   <div class="chips">${chips.map((c) => `<span>${c}</span>`).join("")}</div>
   <div class="url">trandat1114.github.io/Yugen-UI</div>
 </body></html>`;

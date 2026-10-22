@@ -25,6 +25,18 @@ export const NEWS_KIND_LABEL: Record<NewsKind, string> = {
 
 export const NEWS: NewsRelease[] = [
   {
+    version: "0.8.1",
+    date: "2026-10-22",
+    title: "Docs gọn hơn trên điện thoại",
+    summary: "Thanh trên, khung ví dụ và trang chủ được làm lại cho màn hình nhỏ. Logo mới. Gói npm không đổi.",
+    items: [
+      { kind: "improved", text: "Thanh trên: một nút Giao diện cho chế độ sáng / tối / tương phản cao, màu và hướng chữ; nút đổi ngôn ngữ hiện ở mọi cỡ màn hình.", href: "#/" },
+      { kind: "improved", text: "Khung ví dụ: thanh công cụ một hàng, màn hình nhỏ chỉ còn icon; nút Code chuyển lên thanh trên.", href: "#/components/button" },
+      { kind: "improved", text: "Trang chủ: hero 幽玄 mới, lệnh cài npm / shadcn có nút copy, danh sách component có ô tìm và chip nhóm; trên điện thoại chạm tên để mở từng demo.", href: "#/" },
+      { kind: "improved", text: "Logo mới: vòng enso nét mực và hoa anh đào; favicon đổi màu theo chế độ sáng / tối của trình duyệt." },
+    ],
+  },
+  {
     version: "0.8.0",
     date: "2026-10-21",
     title: "Templates, shadcn init một lệnh & SEO",

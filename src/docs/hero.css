@@ -1,0 +1,98 @@
+/* Hero trang chủ (chỉ docs, không nằm trong CSS của thư viện): mực loang cho 幽玄, ấn 桜 đóng xuống, cánh hoa rơi. */
+
+.yg-ink {
+  animation: yg-ink 1.8s cubic-bezier(0.33, 0, 0.1, 1) 0.15s both;
+}
+@keyframes yg-ink {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(2600px);
+  }
+}
+
+.yg-bloom {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: yg-bloom 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes yg-bloom {
+  from {
+    opacity: 0;
+    transform: scale(0.85) rotate(-12deg);
+  }
+}
+
+.yg-kana {
+  animation: yg-fade 1s ease-out 0.9s both;
+}
+@keyframes yg-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.yg-stamp {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: yg-stamp 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.2) 1.6s both;
+}
+@keyframes yg-stamp {
+  from {
+    opacity: 0;
+    transform: scale(1.35) rotate(-6deg);
+  }
+}
+
+.yg-petal {
+  position: absolute;
+  top: -24px;
+  opacity: 0;
+  animation: yg-fall var(--d, 14s) linear var(--delay, 0s) infinite;
+}
+.yg-sway {
+  animation: yg-sway 3.2s ease-in-out infinite alternate;
+}
+@keyframes yg-fall {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  10%,
+  80% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate(var(--dx, -100px), 520px);
+    opacity: 0;
+  }
+}
+@keyframes yg-sway {
+  from {
+    transform: translateX(-10px) rotate(-30deg);
+  }
+  to {
+    transform: translateX(10px) rotate(70deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .yg-ink {
+    animation: none;
+    transform: translateY(2600px);
+  }
+  .yg-bloom,
+  .yg-kana,
+  .yg-stamp {
+    animation: none;
+  }
+  .yg-petal,
+  .yg-sway {
+    animation: none;
+  }
+  .yg-petal {
+    opacity: 0.8;
+    top: var(--y, 40px);
+  }
+}

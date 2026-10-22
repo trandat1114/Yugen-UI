@@ -13,9 +13,8 @@ export const en: Record<MessageKey, string> = {
   "nav.concepts": "Concepts",
   "nav.labsConcepts": "Yugen Labs concepts",
   "credit.by": "made by",
-  "credit.inspired": "Inspired by Microsoft Fluent 2",
   "credit.rules": "Full rules:",
-  "footer.note": "Inspired by Microsoft Fluent 2 · Not an official Microsoft product · React + Tailwind CSS v4",
+  "footer.note": "Based on Fluent 2, not a Microsoft product · React + Tailwind CSS v4",
 
   // Top bar
   "topbar.openNav": "Open menu",
@@ -26,10 +25,14 @@ export const en: Record<MessageKey, string> = {
   "topbar.dir": "Text direction",
   "topbar.ltr": "Left to right (LTR)",
   "topbar.rtl": "Right to left (RTL)",
-  "topbar.lang": "Language",
   "version.label": "Docs version: v{version}",
   "version.latest": " (latest)",
   "version.next": " (preview)",
+  "appearance.title": "Appearance",
+  "appearance.mode": "Mode",
+  "appearance.light": "Light",
+  "appearance.dark": "Dark",
+  "appearance.brand": "Brand",
 
   // Sidebar
   "sidebar.search": "Search",
@@ -84,7 +87,7 @@ export const en: Record<MessageKey, string> = {
 
   // What's new
   "news.eyebrow": "Updates",
-  "news.lead": "Every Yugen UI change, release by release — new components, improvements, fixes and changes to watch for when upgrading.",
+  "news.lead": "Changes by release: new components, improvements, fixes and what to check when upgrading.",
   "news.fullIn": "The full log lives in",
   "news.andPage": "and on the",
   "news.filter": "Filter by change type",
@@ -101,16 +104,13 @@ export const en: Record<MessageKey, string> = {
 
   // Home
   "home.releasePill": "What's new in v{version}",
-  "home.taglineBefore": "Make work",
-  "home.taglineHighlight": "flow",
-  "home.intro": "A UI library for React + Tailwind CSS, inspired by Microsoft's Fluent 2. Solid design tokens, {count} ready-to-use components and copy-paste examples.",
-  "home.createdBy": "Created by",
-  "home.inspiredBy": "Inspired by",
+  "home.lead": "React components for Tailwind CSS v4.",
+  "home.install": "Install",
+  "home.intro": "{count} React components for Tailwind CSS v4, with light, dark and high-contrast themes and RTL support. Install from npm or copy the source with shadcn.",
   "home.cardFoundations": "Color, typography, spacing, elevation, motion",
-  "home.cardComponents": "{count} React + Tailwind components with example code",
-  "home.cardBlocks": "Ready-made UI patterns you can copy as a whole",
+  "home.cardComponents": "{count} components, with source code",
+  "home.cardBlocks": "UI patterns built from several components",
   "home.explore": "Explore",
-  "home.exploreDesc": "Hover each group to see real components. Gradients are only used for illustrations like this one — never inside controls.",
   "home.principles": "Principles",
   "home.p1Title": "Three-layer tokens",
   "home.p1Text": "Global → Alias → Utility. Switch brands with a single data-brand attribute.",
@@ -119,8 +119,15 @@ export const en: Record<MessageKey, string> = {
   "home.p3Title": "Accessible",
   "home.p3Text": "Radix primitives, AA contrast, and color is never the only signal.",
   "home.p4Title": "Copy & use",
-  "home.p4Text": "Every example is real code — hover to copy it into your project.",
+  "home.p4Text": "Every example comes with its source code.",
   "home.componentCount": "{count} components",
+  "home.search": "Search components",
+  "home.clear": "Clear",
+  "home.groups": "Component groups",
+  "home.all": "All",
+  "home.noMatch": "No components match “{query}”.",
+  "home.open": "Open {name}",
+  "home.viewComponent": "View component",
 
   // Home — showcase
   "show.actions": "Actions",

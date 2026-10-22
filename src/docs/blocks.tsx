@@ -1,5 +1,6 @@
 import * as React from "react";
 import {
+  Accessibility16Regular,
   Code16Regular,
   CheckmarkCircle20Filled,
   DismissCircle20Filled,
@@ -8,8 +9,10 @@ import {
   ChevronDown16Regular,
   Open16Regular,
 } from "@fluentui/react-icons";
-import { Menu, MenuItemRadio, MenuPopover, MenuRadioGroup, MenuTrigger, YugenProvider, useYugen } from "@/components/ui";
+import { Popover, PopoverSurface, PopoverTrigger, YugenProvider, useYugen, type YugenTheme } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import type { AppBrand } from "@/hooks/useAppearance";
+import { AppearancePicker, BRAND_LABEL, BrandDot } from "./layout/AppearancePicker";
 import { CodeBlock, CopyButton } from "./CodeBlock";
 import { SITE } from "./site";
 import { openInStackBlitz } from "./stackblitz";
@@ -65,23 +68,10 @@ export function DocSection({
   );
 }
 
-/* ---------- Example frame (hero example with theme menu + code) ---------- */
-type FrameTheme = "light" | "dark" | "high-contrast";
+/* ---------- Example frame (hero example with theme picker + code) ---------- */
+type FrameTheme = YugenTheme;
 
-const FRAME_THEMES = [
-  { id: "yugen-light", label: "Yugen Light", theme: "light", brand: "sakura" },
-  { id: "yugen-dark", label: "Yugen Dark", theme: "dark", brand: "sakura" },
-  { id: "web-light", label: "Web Light", theme: "light", brand: "web" },
-  { id: "web-dark", label: "Web Dark", theme: "dark", brand: "web" },
-  { id: "teams-light", label: "Teams Light", theme: "light", brand: "teams" },
-  { id: "teams-dark", label: "Teams Dark", theme: "dark", brand: "teams" },
-  { id: "hc", label: "Tương phản cao", theme: "high-contrast", brand: "sakura" },
-] as const;
-
-function frameIdOf(theme: FrameTheme, brand: string) {
-  if (theme === "high-contrast") return "hc";
-  return `${brand === "sakura" ? "yugen" : brand}-${theme}`;
-}
+const TOOL = "inline-flex h-7 shrink-0 items-center gap-XS whitespace-nowrap rounded-medium px-S text-caption1 font-semibold";
 
 export function ExampleFrame({
   example,
@@ -90,85 +80,75 @@ export function ExampleFrame({
 }: {
   example: Example;
   defaultTheme: FrameTheme;
-  defaultBrand?: string;
+  defaultBrand?: AppBrand;
 }) {
-  const [frameId, setFrameId] = React.useState<string>(() => frameIdOf(defaultTheme, defaultBrand));
+  const [look, setLook] = React.useState({ theme: defaultTheme, brand: defaultBrand });
   const [showCode, setShowCode] = React.useState(false);
-  const current = FRAME_THEMES.find((t) => t.id === frameId) ?? FRAME_THEMES[0];
   const { dir: pageDir } = useYugen();
   const { t } = useLocale();
 
-  React.useEffect(() => setFrameId(frameIdOf(defaultTheme, defaultBrand)), [defaultTheme, defaultBrand]);
+  React.useEffect(() => setLook({ theme: defaultTheme, brand: defaultBrand }), [defaultTheme, defaultBrand]);
+
+  const hc = look.theme === "high-contrast";
+  const lookLabel = hc ? t("theme.highContrast") : `${BRAND_LABEL[look.brand]} · ${look.theme === "dark" ? t("appearance.dark") : t("appearance.light")}`;
+  const codeLabel = showCode ? t("blocks.hideCode") : t("blocks.showCode");
 
   return (
     <div className="overflow-hidden rounded-2xlarge border border-stroke-2 bg-background-1 shadow-2">
-      <div className="flex items-center justify-between gap-S border-b border-stroke-2 px-L py-S">
-        <div className="flex items-center gap-XS text-caption1">
-          <span className="font-semibold text-foreground-1">Theme:</span>
-          <Menu>
-            <MenuTrigger asChild>
-              <button
-                type="button"
-                className="inline-flex h-7 items-center gap-XS rounded-medium px-S text-caption1 font-semibold text-link hover:bg-subtle-hover"
-              >
-                {current.theme === "light" ? <WeatherSunny16Regular /> : <WeatherMoon16Regular />}
-                {current.id === "hc" ? t("theme.highContrast") : current.label}
-                <ChevronDown16Regular />
-              </button>
-            </MenuTrigger>
-            <MenuPopover>
-              <MenuRadioGroup value={frameId} onValueChange={setFrameId}>
-                {FRAME_THEMES.map((ft) => (
-                  <MenuItemRadio
-                    key={ft.id}
-                    value={ft.id}
-                    icon={<span data-brand={ft.brand} className="size-3 shrink-0 rounded-circular bg-brand-background" />}
-                  >
-                    {ft.id === "hc" ? t("theme.highContrast") : ft.label}
-                  </MenuItemRadio>
-                ))}
-              </MenuRadioGroup>
-            </MenuPopover>
-          </Menu>
-        </div>
-        <div className="flex items-center gap-XS">
+      {/* Một hàng, không xuống dòng: dưới sm chỉ còn icon (tên vẫn có cho trình đọc màn hình). */}
+      <div className="flex items-center gap-XS border-b border-stroke-2 px-S py-XS sm:px-L">
+        <Popover>
+          <PopoverTrigger asChild>
+            <button type="button" aria-label={`${t("appearance.title")}: ${lookLabel}`} className={cn(TOOL, "text-foreground-1 hover:bg-subtle-hover")}>
+              {!hc && <BrandDot brand={look.brand} />}
+              {look.theme === "light" ? <WeatherSunny16Regular /> : hc ? <Accessibility16Regular /> : <WeatherMoon16Regular />}
+              <span className="hidden sm:inline">{lookLabel}</span>
+              <ChevronDown16Regular className="text-foreground-3" />
+            </button>
+          </PopoverTrigger>
+          <PopoverSurface align="start" aria-label={t("appearance.title")}>
+            <AppearancePicker value={look} onChange={(patch) => setLook((v) => ({ ...v, ...patch }))} />
+          </PopoverSurface>
+        </Popover>
+
+        <div className="ms-auto flex items-center gap-XS">
+          <button
+            type="button"
+            onClick={() => setShowCode((v) => !v)}
+            aria-expanded={showCode}
+            aria-label={codeLabel}
+            className={cn(TOOL, showCode ? "bg-brand-background-2 text-brand-foreground-1" : "text-foreground-2 hover:bg-subtle-hover hover:text-foreground-1")}
+          >
+            <Code16Regular />
+            <span className="hidden sm:inline">Code</span>
+          </button>
           {SITE.links.npm && (
             <button
               type="button"
+              aria-label="StackBlitz"
               onClick={() =>
-                openInStackBlitz(example.code, { title: example.title, theme: current.theme, brand: current.brand, dir: pageDir, version: SITE.version, setup: example.setup })
+                openInStackBlitz(example.code, { title: example.title, theme: look.theme, brand: look.brand, dir: pageDir, version: SITE.version, setup: example.setup })
               }
-              className="inline-flex h-7 items-center gap-XS rounded-medium px-S text-caption1 font-semibold text-foreground-2 hover:bg-subtle-hover hover:text-foreground-1"
+              className={cn(TOOL, "text-foreground-2 hover:bg-subtle-hover hover:text-foreground-1")}
             >
               <Open16Regular />
-              StackBlitz
+              <span className="hidden sm:inline">StackBlitz</span>
             </button>
           )}
-          <CopyButton text={example.code} />
+          <CopyButton text={example.code} collapse />
         </div>
       </div>
 
       <YugenProvider
-        theme={current.theme}
-        brand={current.brand}
+        theme={look.theme}
+        brand={look.brand}
         dir={pageDir}
         withTooltipProvider={false}
-        className="flex min-h-60 flex-wrap content-center items-center justify-center gap-M bg-background-1 p-XXL transition-colors duration-normal"
+        className="flex min-h-48 flex-wrap content-center items-center justify-center gap-M bg-background-1 p-L transition-colors duration-normal sm:min-h-60 sm:p-XXL"
       >
         {example.render()}
       </YugenProvider>
 
-      <div className="flex items-center border-t border-stroke-2 px-S py-XS">
-        <button
-          type="button"
-          onClick={() => setShowCode((v) => !v)}
-          aria-expanded={showCode}
-          className="inline-flex h-8 items-center gap-SNudge rounded-medium px-S text-body1 font-semibold text-foreground-2 hover:bg-subtle-hover hover:text-foreground-1"
-        >
-          <Code16Regular />
-          {showCode ? t("blocks.hideCode") : t("blocks.showCode")}
-        </button>
-      </div>
       {showCode && <CodeBlock code={example.code} bare className="border-t border-stroke-2" />}
     </div>
   );
@@ -185,7 +165,7 @@ export function ExampleTile({ example }: { example: Example }) {
         {example.render()}
         <CopyButton
           text={example.code}
-          className="absolute top-S inset-e-S bg-background-1 opacity-0 shadow-4 group-hover/tile:opacity-100 focus-visible:opacity-100"
+          className="absolute top-S inset-e-S bg-background-1 opacity-0 shadow-4 group-hover/tile:opacity-100 focus-visible:opacity-100 pointer-coarse:opacity-100"
         />
       </div>
       <div className="mt-M flex items-start justify-between gap-M">
