@@ -33,7 +33,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: main # gốc site luôn là main; next và các minor cũ build thêm bằng git worktree
           fetch-depth: 0 # cần tag và nhánh next
