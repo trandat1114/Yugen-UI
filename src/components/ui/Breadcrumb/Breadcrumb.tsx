@@ -16,9 +16,9 @@ type BreadcrumbSize = "small" | "medium" | "large";
 const BreadcrumbContext = React.createContext<{ size: BreadcrumbSize }>({ size: "medium" });
 
 const BUTTON_SIZE: Record<BreadcrumbSize, string> = {
-  small: "h-6 gap-XS px-XS text-caption1 [&_svg]:size-4",
-  medium: "h-8 gap-XS px-SNudge text-body1 [&_svg]:size-5",
-  large: "h-10 gap-SNudge px-MNudge text-body2 [&_svg]:size-6",
+  small: "h-6 gap-1 px-1 text-caption1 [&_svg]:size-4",
+  medium: "h-8 gap-1 px-1.5 text-body1 [&_svg]:size-5",
+  large: "h-10 gap-1.5 px-2.5 text-body2 [&_svg]:size-6",
 };
 
 const ICON_ONLY: Record<BreadcrumbSize, string> = { small: "w-6 px-0", medium: "w-8 px-0", large: "w-10 px-0" };
@@ -185,7 +185,7 @@ export function BreadcrumbDivider({ className, ...props }: React.LiHTMLAttribute
     <li
       role="presentation"
       aria-hidden
-      className={cn("flex items-center text-foreground-3", size === "small" ? "px-XXS" : "px-XS", className)}
+      className={cn("flex items-center text-foreground-3", size === "small" ? "px-0.5" : "px-1", className)}
       {...props}
     >
       <Icon className={cn("rtl:-scale-x-100", size === "small" ? "size-3" : size === "large" ? "size-5" : "size-4")} />

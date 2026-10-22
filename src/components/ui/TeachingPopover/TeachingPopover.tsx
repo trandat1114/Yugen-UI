@@ -83,7 +83,7 @@ export function TeachingPopoverHeader({
   return (
     <div
       className={cn(
-        "mb-S flex min-h-6 items-center gap-XS text-caption1 font-semibold",
+        "mb-2 flex min-h-6 items-center gap-1 text-caption1 font-semibold",
         brand ? "text-foreground-on-brand" : "text-brand-foreground-1",
         className,
       )}
@@ -103,7 +103,7 @@ export function TeachingPopoverHeader({
             icon={<Dismiss16Regular />}
             aria-label={dismissLabel}
             className={cn(
-              "-me-XS",
+              "-me-1",
               brand
                 ? "text-foreground-on-brand hover:bg-brand-background-hover hover:text-foreground-on-brand active:bg-brand-background-pressed active:text-foreground-on-brand"
                 : "text-foreground-2 hover:text-foreground-1 active:text-foreground-1",
@@ -123,14 +123,14 @@ export interface TeachingPopoverBodyProps extends React.HTMLAttributes<HTMLDivEl
 export function TeachingPopoverBody({ media, className, children, ...props }: TeachingPopoverBodyProps) {
   return (
     <div className={cn("text-body1", className)} {...props}>
-      {media && <div className="mb-M overflow-hidden rounded-medium [&_img]:block [&_img]:w-full">{media}</div>}
+      {media && <div className="mb-3 overflow-hidden rounded-medium [&_img]:block [&_img]:w-full">{media}</div>}
       {children}
     </div>
   );
 }
 
 export function TeachingPopoverTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
-  return <h3 className={cn("mb-XS text-subtitle2 font-semibold", className)} {...props} />;
+  return <h3 className={cn("mb-1 text-subtitle2 font-semibold", className)} {...props} />;
 }
 
 export interface TeachingPopoverFooterProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
@@ -169,7 +169,7 @@ export function TeachingPopoverFooter({
   );
 
   return (
-    <div className={cn("mt-L flex gap-S", vertical ? "flex-col" : "justify-end", className)} {...props}>
+    <div className={cn("mt-4 flex gap-2", vertical ? "flex-col" : "justify-end", className)} {...props}>
       {vertical && (closeOnPrimary ? <PopoverClose asChild>{primaryButton}</PopoverClose> : primaryButton)}
       {secondary != null && (
         <PopoverClose asChild>
@@ -246,7 +246,7 @@ export function TeachingPopoverCarousel({
         </div>
       </div>
 
-      <div className="mt-L flex items-center gap-S">
+      <div className="mt-4 flex items-center gap-2">
         <span className={cn("text-caption1 tabular-nums", brand ? "text-foreground-on-brand" : "text-foreground-3")}>
           {current + 1}/{count}
         </span>
@@ -275,7 +275,7 @@ export function TeachingPopoverCarousel({
             </button>
           ))}
         </div>
-        <div className="ms-auto flex gap-S">
+        <div className="ms-auto flex gap-2">
           {first ? (
             <PopoverClose asChild>
               <Button appearance={buttons.secondary.appearance} className={cn("min-w-0", buttons.secondary.className)}>

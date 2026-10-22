@@ -32,9 +32,9 @@ export const TabsList = React.forwardRef<React.ElementRef<typeof TabsPrimitive.L
 TabsList.displayName = "TabsList";
 
 const SIZE: Record<TabSize, string> = {
-  small: "gap-XS px-SNudge py-XS text-caption1 [&_svg]:size-4 after:inset-x-SNudge",
-  medium: "gap-SNudge px-MNudge py-M text-body1 [&_svg]:size-5 after:inset-x-MNudge",
-  large: "gap-SNudge px-MNudge py-L text-body2 [&_svg]:size-6 after:inset-x-MNudge",
+  small: "gap-1 px-1.5 py-1 text-caption1 [&_svg]:size-4 after:inset-x-1.5",
+  medium: "gap-1.5 px-2.5 py-3 text-body1 [&_svg]:size-5 after:inset-x-2.5",
+  large: "gap-1.5 px-2.5 py-4 text-body2 [&_svg]:size-6 after:inset-x-2.5",
 };
 
 export interface TabsTriggerProps extends React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger> {
@@ -105,6 +105,6 @@ export const TabsContent = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
 >(({ className, ...props }, ref) => (
-  <TabsPrimitive.Content ref={ref} className={cn("pt-M text-body1 text-foreground-2 outline-none", className)} {...props} />
+  <TabsPrimitive.Content ref={ref} className={cn("pt-3 text-body1 text-foreground-2 outline-none", className)} {...props} />
 ));
 TabsContent.displayName = "TabsContent";

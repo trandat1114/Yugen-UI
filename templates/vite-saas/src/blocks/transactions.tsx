@@ -15,11 +15,11 @@ const money = (n: number) => (n > 0 ? "+" : "−") + Math.abs(n).toLocaleString(
 
 export default function TransactionsBlock() {
   return (
-    <Card size="large" className="gap-M rounded-xlarge p-XL">
-      <div className="flex items-start justify-between gap-M">
+    <Card size="large" className="gap-3 rounded-xlarge p-5">
+      <div className="flex items-start justify-between gap-3">
         <div>
           <h3 className="text-subtitle1 font-semibold">Giao dịch gần đây</h3>
-          <p className="mt-XXS text-body1 text-foreground-3">5 giao dịch trong 7 ngày qua.</p>
+          <p className="mt-0.5 text-body1 text-foreground-3">5 giao dịch trong 7 ngày qua.</p>
         </div>
         <Button appearance="transparent" size="small">
           Xem tất cả

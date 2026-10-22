@@ -48,12 +48,12 @@ function NavGroup({
   if (items.length === 0) return null;
 
   return (
-    <div className="border-b border-stroke-2 py-S">
+    <div className="border-b border-stroke-2 py-2">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={expanded}
-        className="flex h-9 w-full items-center gap-S rounded-xlarge px-S text-body1 font-semibold text-foreground-1 hover:bg-subtle-hover"
+        className="flex h-9 w-full items-center gap-2 rounded-xlarge px-2 text-body1 font-semibold text-foreground-1 hover:bg-subtle-hover"
       >
         <ChevronRight16Regular
           className={cn("shrink-0 transition-transform duration-normal ease-easy-ease", expanded && "rotate-90")}
@@ -62,14 +62,14 @@ function NavGroup({
         {count !== undefined && <span className="text-caption1 font-normal text-foreground-3">{count}</span>}
       </button>
       {expanded && (
-        <ul className="mt-XXS flex flex-col gap-XXS">
+        <ul className="mt-0.5 flex flex-col gap-0.5">
           {items.map((item) => (
             <li key={item.href}>
               <a
                 href={item.href}
                 aria-current={item.active ? "page" : undefined}
                 className={cn(
-                  "flex h-9 items-center gap-S rounded-xlarge ps-9 pe-S text-body1 transition-colors duration-faster",
+                  "flex h-9 items-center gap-2 rounded-xlarge ps-9 pe-2 text-body1 transition-colors duration-faster",
                   item.active
                     ? "bg-brand-background-2-hover text-brand-foreground-2"
                     : "text-foreground-2 hover:bg-brand-background-2 hover:text-brand-foreground-2",
@@ -77,7 +77,7 @@ function NavGroup({
               >
                 <span className="flex-1 truncate">{item.label}</span>
                 {item.badge && (
-                  <span className="rounded-circular bg-brand-background px-SNudge text-caption2 font-semibold text-foreground-on-brand">
+                  <span className="rounded-circular bg-brand-background px-1.5 text-caption2 font-semibold text-foreground-on-brand">
                     {item.badge}
                   </span>
                 )}
@@ -182,19 +182,19 @@ export function Sidebar({ route, open, onClose }: { route: Route; open: boolean;
           open ? "translate-x-0 shadow-28" : "max-lg:-translate-x-full max-lg:rtl:translate-x-full",
         )}
       >
-        <div className="flex h-18.5 shrink-0 items-center gap-S border-b border-stroke-2 px-XL">
-          <a href="#/" className="flex items-center gap-S rounded-medium">
+        <div className="flex h-18.5 shrink-0 items-center gap-2 border-b border-stroke-2 px-5">
+          <a href="#/" className="flex items-center gap-2 rounded-medium">
             <YugenMark size={28} />
             <span className="text-subtitle2 font-semibold">Yugen UI</span>
           </a>
-          <div className="ms-auto flex items-center gap-XS">
+          <div className="ms-auto flex items-center gap-1">
             <button
               type="button"
               onClick={openSearch}
-              className="inline-flex h-6 items-center gap-XS rounded-medium bg-background-4 ps-S pe-XXS text-caption2 text-foreground-3 hover:bg-background-5"
+              className="inline-flex h-6 items-center gap-1 rounded-medium bg-background-4 ps-2 pe-0.5 text-caption2 text-foreground-3 hover:bg-background-5"
             >
               {t("sidebar.search")}
-              <kbd className="inline-flex h-4 min-w-4 items-center justify-center rounded-small border border-stroke-1 bg-background-1 px-XXS font-mono text-[10px] text-foreground-2">
+              <kbd className="inline-flex h-4 min-w-4 items-center justify-center rounded-small border border-stroke-1 bg-background-1 px-0.5 font-mono text-[10px] text-foreground-2">
                 /
               </kbd>
             </button>
@@ -218,7 +218,7 @@ export function Sidebar({ route, open, onClose }: { route: Route; open: boolean;
         </div>
 
         {searching && (
-          <div className="flex animate-fade-in items-center gap-S border-b border-stroke-2 px-XL py-S">
+          <div className="flex animate-fade-in items-center gap-2 border-b border-stroke-2 px-5 py-2">
             <Search20Regular className="shrink-0 text-foreground-3" />
             <input
               ref={inputRef}
@@ -240,7 +240,7 @@ export function Sidebar({ route, open, onClose }: { route: Route; open: boolean;
           </div>
         )}
 
-        <nav className="min-h-0 flex-1 overflow-y-auto px-XL pb-XL">
+        <nav className="min-h-0 flex-1 overflow-y-auto px-5 pb-5">
           <NavGroup title={groupLabel("Bắt đầu")} items={start} forceOpen={!!q} />
           {conceptGroups.map((g) => (
             <NavGroup
@@ -254,8 +254,8 @@ export function Sidebar({ route, open, onClose }: { route: Route; open: boolean;
           ))}
           <NavGroup title={t("nav.foundations")} items={foundations} forceOpen={!!q} defaultOpen={false} />
 
-          <div className="py-S">
-            <div className="flex h-9 items-center gap-S rounded-xlarge border border-brand-stroke px-M text-body1 text-brand-foreground-2">
+          <div className="py-2">
+            <div className="flex h-9 items-center gap-2 rounded-xlarge border border-brand-stroke px-3 text-body1 text-brand-foreground-2">
               <BookOpen16Regular className="shrink-0" />
               <span className="flex-1">React · Tailwind</span>
               <ChevronDown16Regular className="shrink-0" />
@@ -265,18 +265,18 @@ export function Sidebar({ route, open, onClose }: { route: Route; open: boolean;
           {groups.map((g) => (
             <NavGroup key={g.category} title={category(g.category)} items={g.items} count={g.total} forceOpen={!!q} defaultOpen={false} />
           ))}
-          {empty && <p className="px-S py-L text-body1 text-foreground-3">{t("sidebar.noResults", { query })}</p>}
+          {empty && <p className="px-2 py-4 text-body1 text-foreground-3">{t("sidebar.noResults", { query })}</p>}
 
-          <div className="px-S pt-L text-caption1 text-foreground-3">
+          <div className="px-2 pt-4 text-caption1 text-foreground-3">
             <p>
               <span className="font-semibold text-foreground-1">Yugen UI</span> · {t("credit.by")}{" "}
               <AuthorLink className="text-brand-foreground-2" />
             </p>
-            <p className="mt-XXS">
+            <p className="mt-0.5">
               {t("credit.rules")} <span className="font-mono text-foreground-2">Design.md</span>
             </p>
             {/* Thanh trên chỉ có menu phiên bản từ lg — màn nhỏ đặt ở đây. */}
-            <div className="mt-S -ms-S lg:hidden">
+            <div className="mt-2 -ms-2 lg:hidden">
               <VersionMenu />
             </div>
           </div>

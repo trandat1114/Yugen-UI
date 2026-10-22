@@ -36,7 +36,7 @@ function TypographyPage() {
       <DocSection id="ramp" title="Type ramp">
         <div className="overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1">
           {TYPE_RAMP.map((t) => (
-            <div key={t.name} className="flex flex-col gap-XS border-b border-stroke-3 px-L py-M last:border-b-0 md:flex-row md:items-baseline md:gap-XL">
+            <div key={t.name} className="flex flex-col gap-1 border-b border-stroke-3 px-4 py-3 last:border-b-0 md:flex-row md:items-baseline md:gap-5">
               <div className="w-44 shrink-0">
                 <p className="text-body1 font-semibold">{t.name}</p>
                 <p className="font-mono text-caption1 text-foreground-3">{t.meta}</p>
@@ -60,16 +60,16 @@ function TypographyPage() {
 }
 
 const SPACING = [
-  ["XXS", "XXS", 2],
-  ["XS", "xs", 4],
-  ["SNudge", "s-nudge", 6],
-  ["S", "s", 8],
-  ["MNudge", "m-nudge", 10],
-  ["M", "m", 12],
-  ["L", "l", 16],
-  ["XL", "xl", 20],
-  ["XXL", "xxl", 24],
-  ["XXXL", "xxxl", 32],
+  ["XXS", "0.5", 2],
+  ["XS", "1", 4],
+  ["SNudge", "1.5", 6],
+  ["S", "2", 8],
+  ["MNudge", "2.5", 10],
+  ["M", "3", 12],
+  ["L", "4", 16],
+  ["XL", "5", 20],
+  ["XXL", "6", 24],
+  ["XXXL", "8", 32],
 ] as const;
 
 function SpacingPage() {
@@ -80,12 +80,12 @@ function SpacingPage() {
         title="Spacing"
         lead="Mọi khoảng cách dựa trên lưới 4px (với hai bậc nudge 6px và 10px để căn chỉnh tinh)."
       />
-      <DocSection id="scale" title="Thang spacing" description="Dùng với mọi utility nhận spacing: p-*, m-*, gap-*, space-*, inset-*.">
+      <DocSection id="scale" title="Thang spacing" description="Thang số của Tailwind, trùng ramp spacing của Fluent. Dùng với p-*, m-*, gap-*, space-*, inset-*.">
         <div className="overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1">
-          {SPACING.map(([name, key, px]) => (
-            <div key={key} className="flex items-center gap-L border-b border-stroke-3 px-L py-S last:border-b-0">
+          {SPACING.map(([name, step, px]) => (
+            <div key={step} className="flex items-center gap-4 border-b border-stroke-3 px-4 py-2 last:border-b-0">
               <span className="w-40 font-mono text-[13px] font-semibold">spacing{name}</span>
-              <span className="w-24 font-mono text-caption1 text-brand-foreground-1">p-{name}</span>
+              <span className="w-24 font-mono text-caption1 text-brand-foreground-1">p-{step}</span>
               <span className="w-12 font-mono text-caption1 text-foreground-3">{px}px</span>
               <span className="h-4 rounded-small bg-brand-background" style={{ width: px * 4 }} />
             </div>
@@ -125,9 +125,9 @@ function RadiusPage() {
         lead="Bo góc tăng theo kích thước bề mặt: control nhỏ dùng Medium (4px), Card dùng Medium–Large, Dialog dùng XLarge (8px)."
       />
       <DocSection id="scale" title="Thang bo góc">
-        <div className="grid grid-cols-2 gap-L sm:grid-cols-4 lg:grid-cols-7">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-7">
           {RADII.map(([name, key, px]) => (
-            <div key={key} className="flex flex-col items-center gap-S">
+            <div key={key} className="flex flex-col items-center gap-2">
               <div className={cn("size-20 border-2 border-brand-stroke bg-brand-background-2", RADIUS_CLASS[key])} />
               <p className="text-body1 font-semibold">{name}</p>
               <p className="font-mono text-caption1 text-foreground-3">
@@ -160,12 +160,12 @@ function ElevationPage() {
         lead="Elevation dùng bóng 2 lớp (key + ambient) để biểu thị độ cao tương đối và tạo phân cấp giữa các bề mặt."
       />
       <DocSection id="ramp" title="Shadow ramp">
-        <div className="grid gap-XL rounded-3xlarge bg-background-3 p-XXL sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-5 rounded-3xlarge bg-background-3 p-6 sm:grid-cols-2 lg:grid-cols-3">
           {SHADOWS.map(([token, utility, usage]) => (
-            <div key={token} className={cn("rounded-xlarge bg-background-1 p-L", utility)}>
+            <div key={token} className={cn("rounded-xlarge bg-background-1 p-4", utility)}>
               <p className="font-mono text-[13px] font-semibold">{token}</p>
               <p className="font-mono text-caption1 text-brand-foreground-1">{utility}</p>
-              <p className="mt-S text-body1 text-foreground-2">{usage}</p>
+              <p className="mt-2 text-body1 text-foreground-2">{usage}</p>
             </div>
           ))}
         </div>
@@ -194,7 +194,7 @@ const CURVES = [
 function MotionRow({ label, sub, note, duration, curve }: { label: string; sub: string; note?: string; duration: string; curve: string }) {
   const [on, setOn] = React.useState(false);
   return (
-    <div className="flex flex-col gap-S border-b border-stroke-3 px-L py-M last:border-b-0 md:flex-row md:items-center md:gap-L">
+    <div className="flex flex-col gap-2 border-b border-stroke-3 px-4 py-3 last:border-b-0 md:flex-row md:items-center md:gap-4">
       <div className="w-56 shrink-0">
         <p className="font-mono text-[13px] font-semibold">{label}</p>
         <p className="font-mono text-caption1 text-brand-foreground-1">{sub}</p>
@@ -240,7 +240,7 @@ function MotionPage() {
             />
           ))}
         </div>
-        <p className="mt-S text-caption1 text-foreground-3">Minh hoạ chạy chậm ×4 để dễ quan sát.</p>
+        <p className="mt-2 text-caption1 text-foreground-3">Minh hoạ chạy chậm ×4 để dễ quan sát.</p>
       </DocSection>
       <DocSection id="curve" title="Easing curve">
         <div className="overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1">
@@ -285,7 +285,7 @@ export function FoundationsPage({ slug, theme }: { slug: string; theme: string }
     );
 
   return (
-    <div className="flex gap-XXXL">
+    <div className="flex gap-8">
       <article key={slug} className="min-w-0 flex-1">
         {page}
       </article>

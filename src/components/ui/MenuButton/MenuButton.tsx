@@ -17,7 +17,7 @@ const OPEN_CLASS: Record<MenuButtonAppearance, string> = {
   danger: "data-[state=open]:brightness-90",
 };
 
-const ICON_ONLY_PADDING = { small: "px-XS", medium: "px-SNudge", large: "px-S" } as const;
+const ICON_ONLY_PADDING = { small: "px-1", medium: "px-1.5", large: "px-2" } as const;
 
 export interface MenuButtonProps extends Omit<ButtonProps, "asChild" | "iconPosition" | "iconOnly"> {
   /** Nội dung menu: MenuItem / MenuItemRadio / MenuDivider… */

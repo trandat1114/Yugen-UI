@@ -47,9 +47,9 @@ const buttonVariants = cva(
         ],
       },
       size: {
-        small: "h-6 min-w-16 gap-XS rounded-small px-S text-caption1 [&_svg]:size-4",
-        medium: "h-8 min-w-24 gap-SNudge rounded-medium px-M text-body1 font-semibold [&_svg]:size-5",
-        large: "h-10 min-w-24 gap-SNudge rounded-large px-L text-body2 font-semibold [&_svg]:size-6",
+        small: "h-6 min-w-16 gap-1 rounded-small px-2 text-caption1 [&_svg]:size-4",
+        medium: "h-8 min-w-24 gap-1.5 rounded-medium px-3 text-body1 font-semibold [&_svg]:size-5",
+        large: "h-10 min-w-24 gap-1.5 rounded-large px-4 text-body2 font-semibold [&_svg]:size-6",
       },
       shape: {
         rounded: "",
@@ -89,9 +89,9 @@ type ButtonSize = "small" | "medium" | "large";
 
 /** Spinner cùng cỡ icon của nút (16 / 20 / 24px) để thay chỗ mà không xê dịch. */
 const LOADING: Record<ButtonSize, { spinner: SpinnerSize; box: string; gap: string }> = {
-  small: { spinner: "extra-tiny", box: "size-4", gap: "gap-XS" },
-  medium: { spinner: "tiny", box: "size-5", gap: "gap-SNudge" },
-  large: { spinner: "extra-small", box: "size-6", gap: "gap-SNudge" },
+  small: { spinner: "extra-tiny", box: "size-4", gap: "gap-1" },
+  medium: { spinner: "tiny", box: "size-5", gap: "gap-1.5" },
+  large: { spinner: "extra-small", box: "size-6", gap: "gap-1.5" },
 };
 
 /** Các lớp con nằm chồng trong cùng một ô lưới → khối rộng bằng lớp lớn nhất, đổi lớp không làm nút đổi kích thước. */

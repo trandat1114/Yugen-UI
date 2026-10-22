@@ -194,7 +194,7 @@ export function Toaster({ position = "bottom-end", toasterId, limit = 5, classNa
       <ToastPrimitive.Viewport
         label="Thông báo ({hotkey})"
         className={cn(
-          "fixed z-100 m-0 flex max-h-dvh max-w-screen list-none gap-S p-L outline-none",
+          "fixed z-100 m-0 flex max-h-dvh max-w-screen list-none gap-2 p-4 outline-none",
           config.viewport,
           className,
         )}
@@ -226,8 +226,8 @@ function ToastItem({
       duration={timeout < 0 ? Infinity : timeout}
       type={intent === "error" || intent === "warning" ? "foreground" : "background"}
       className={cn(
-        "pointer-events-auto grid w-80 max-w-[calc(100vw-32px)] grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-x-S",
-        "rounded-medium border border-transparent bg-background-1 p-M text-body1 text-foreground-1 shadow-16",
+        "pointer-events-auto grid w-80 max-w-[calc(100vw-32px)] grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-x-2",
+        "rounded-medium border border-transparent bg-background-1 p-3 text-body1 text-foreground-1 shadow-16",
         enter,
         exit,
         vertical
@@ -238,8 +238,8 @@ function ToastItem({
       )}
     >
       <Icon aria-hidden className={cn("mt-0.5 size-5 shrink-0", iconClass)} />
-      <div className="flex min-w-0 flex-col gap-XXS py-px">
-        <div className="flex items-baseline gap-S">
+      <div className="flex min-w-0 flex-col gap-0.5 py-px">
+        <div className="flex items-baseline gap-2">
           {title && <ToastPrimitive.Title className="min-w-0 flex-1 font-semibold">{title}</ToastPrimitive.Title>}
           {action && (
             <ToastPrimitive.Action
@@ -258,7 +258,7 @@ function ToastItem({
       ) : (
         <ToastPrimitive.Close
           aria-label="Đóng thông báo"
-          className="-me-XS -mt-XXS inline-flex size-6 shrink-0 items-center justify-center rounded-medium text-foreground-2 hover:bg-subtle-hover hover:text-foreground-1 active:bg-subtle-pressed"
+          className="-me-1 -mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-medium text-foreground-2 hover:bg-subtle-hover hover:text-foreground-1 active:bg-subtle-pressed"
         >
           <Dismiss20Regular className="size-4" />
         </ToastPrimitive.Close>

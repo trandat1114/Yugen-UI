@@ -97,7 +97,7 @@ function UploadProgressDemo() {
   };
 
   return (
-    <div className="flex w-full max-w-120 flex-col gap-M">
+    <div className="flex w-full max-w-120 flex-col gap-3">
       <Checkbox label="Giả lập lỗi mạng" checked={failNetwork} onCheckedChange={(checked) => setFailNetwork(checked === true)} />
       <Field label="Báo cáo quý" hint="Tệp bắt đầu tải lên ngay khi được chọn.">
         <FileUpload
@@ -142,7 +142,7 @@ function RequiredFileDemo() {
   return (
     <form
       noValidate
-      className="flex w-full max-w-120 flex-col gap-M"
+      className="flex w-full max-w-120 flex-col gap-3"
       onSubmit={(event) => {
         event.preventDefault();
         setSubmitted(true);
@@ -221,7 +221,7 @@ function WizardDemo() {
 
   if (done) {
     return (
-      <div className="flex flex-col items-start gap-M">
+      <div className="flex flex-col items-start gap-3">
         <p className="text-body1 text-foreground-1">Đã tạo tài khoản cho {name}.</p>
         <Button onClick={() => setDone(false)}>Làm lại</Button>
       </div>
@@ -237,14 +237,14 @@ function HorizontalDemo() {
   const [step, setStep] = useState(1);
 
   return (
-    <div className="flex w-full flex-col gap-L">
+    <div className="flex w-full flex-col gap-4">
       <Stepper activeStep={step} onStepChange={setStep} aria-label="Đặt hàng">
         <Step title="Giỏ hàng" />
         <Step title="Giao hàng" description="Địa chỉ, thời gian" />
         <Step title="Thanh toán" />
         <Step title="Hoàn tất" />
       </Stepper>
-      <div className="flex gap-S">
+      <div className="flex gap-2">
         <Button disabled={step === 0} onClick={() => setStep(step - 1)}>
           Lùi
         </Button>
@@ -279,8 +279,8 @@ function CompactDemo() {
   const [step, setStep] = useState(1);
 
   return (
-    <div className="flex flex-col items-start gap-M">
-      <div className="w-72 rounded-xlarge border border-stroke-2 p-M">
+    <div className="flex flex-col items-start gap-3">
+      <div className="w-72 rounded-xlarge border border-stroke-2 p-3">
         <Stepper activeStep={step} aria-label="Hồ sơ vay">
           <Step title="Thông tin cá nhân" />
           <Step title="Thu nhập" />
@@ -338,7 +338,7 @@ function SignUpForm() {
   });
 
   return (
-    <form noValidate onSubmit={onSubmit} className="flex w-full max-w-120 flex-col gap-M">
+    <form noValidate onSubmit={onSubmit} className="flex w-full max-w-120 flex-col gap-3">
       <Field label="Họ và tên" required validationState={errors.fullName ? "error" : "none"} validationMessage={errors.fullName?.message}>
         <Input autoComplete="name" {...register("fullName")} />
       </Field>
@@ -429,7 +429,7 @@ function ServerErrorDemo() {
   });
 
   return (
-    <form noValidate onSubmit={onSubmit} className="flex w-full max-w-120 flex-col gap-M">
+    <form noValidate onSubmit={onSubmit} className="flex w-full max-w-120 flex-col gap-3">
       <Field
         label="Email người được mời"
         required
@@ -468,7 +468,7 @@ function WizardFormDemo() {
       // trigger() chỉ kiểm tra các trường của bước này và focus vào trường lỗi đầu tiên.
       validate: () => trigger(["email", "password"], { shouldFocus: true }),
       content: (
-        <div className="flex flex-col gap-M">
+        <div className="flex flex-col gap-3">
           <Field label="Email" required validationState={errors.email ? "error" : "none"} validationMessage={errors.email?.message}>
             <Input type="email" {...register("email")} />
           </Field>
@@ -483,7 +483,7 @@ function WizardFormDemo() {
       description: "Tên, gói dịch vụ",
       validate: () => trigger(["fullName", "plan"], { shouldFocus: true }),
       content: (
-        <div className="flex flex-col gap-M">
+        <div className="flex flex-col gap-3">
           <Field label="Họ và tên" required validationState={errors.fullName ? "error" : "none"} validationMessage={errors.fullName?.message}>
             <Input {...register("fullName")} />
           </Field>
@@ -512,7 +512,7 @@ function WizardFormDemo() {
 
   if (finished) {
     return (
-      <div className="flex flex-col items-start gap-M">
+      <div className="flex flex-col items-start gap-3">
         <p className="text-body1 text-foreground-1">Đã đăng ký cho {fullName}.</p>
         <Button onClick={() => setFinished(false)}>Xem lại</Button>
       </div>

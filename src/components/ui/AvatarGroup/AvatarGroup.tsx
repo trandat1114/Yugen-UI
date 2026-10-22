@@ -19,23 +19,23 @@ const BOX: Record<AvatarGroupSize, string> = {
 };
 
 const SPREAD_GAP: Record<AvatarGroupSize, string> = {
-  20: "gap-XXS",
-  24: "gap-XXS",
-  32: "gap-XS",
-  40: "gap-XS",
-  48: "gap-S",
-  64: "gap-S",
-  96: "gap-M",
+  20: "gap-0.5",
+  24: "gap-0.5",
+  32: "gap-1",
+  40: "gap-1",
+  48: "gap-2",
+  64: "gap-2",
+  96: "gap-3",
 };
 
 const STACK_OVERLAP: Record<AvatarGroupSize, string> = {
-  20: "[&>*+*]:-ms-XXS",
-  24: "[&>*+*]:-ms-XS",
-  32: "[&>*+*]:-ms-XS",
-  40: "[&>*+*]:-ms-SNudge",
-  48: "[&>*+*]:-ms-S",
-  64: "[&>*+*]:-ms-M",
-  96: "[&>*+*]:-ms-L",
+  20: "[&>*+*]:-ms-0.5",
+  24: "[&>*+*]:-ms-1",
+  32: "[&>*+*]:-ms-1",
+  40: "[&>*+*]:-ms-1.5",
+  48: "[&>*+*]:-ms-2",
+  64: "[&>*+*]:-ms-3",
+  96: "[&>*+*]:-ms-4",
 };
 
 interface AvatarGroupContextValue {
@@ -59,7 +59,7 @@ export function AvatarGroupItem({ name, src, color = "colorful", className }: Av
 
   if (inPopover) {
     return (
-      <li className={cn("flex items-center gap-S rounded-medium px-S py-XS text-body1 text-foreground-1", className)}>
+      <li className={cn("flex items-center gap-2 rounded-medium px-2 py-1 text-body1 text-foreground-1", className)}>
         <Avatar name={name} src={src} color={color} size={24} />
         <span className="min-w-0 truncate">{name}</span>
       </li>

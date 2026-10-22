@@ -80,8 +80,8 @@ function HeatmapLegend({
     ? `var(--colorChartDivergingNeg), var(--colorChartDivergingMid) ${+(midFraction * 100).toFixed(1)}%, var(--colorChartDivergingPos)`
     : Array.from({ length: 7 }, (_, i) => `var(--colorChartSequential${i + 1})`).join(", ");
   return (
-    <div className="flex flex-wrap items-center gap-x-L gap-y-XS text-caption1 text-foreground-2">
-      <div className="flex flex-col gap-XXS">
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-caption1 text-foreground-2">
+      <div className="flex flex-col gap-0.5">
         <div aria-hidden className="h-2 w-48 rounded-small" style={{ backgroundImage: `linear-gradient(to ${side}, ${stops})` }} />
         <div className="relative flex w-48 justify-between tabular-nums">
           <bdi>{min}</bdi>
@@ -94,7 +94,7 @@ function HeatmapLegend({
         </div>
       </div>
       {showEmpty && (
-        <span className="inline-flex items-center gap-SNudge">
+        <span className="inline-flex items-center gap-1.5">
           <svg width={12} height={12} aria-hidden className="shrink-0">
             <defs>
               <EmptyPattern id={emptyId} />

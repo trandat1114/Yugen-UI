@@ -40,7 +40,7 @@ export function App() {
 ```
 
 > ⚠ `theme.css` **tắt** scale mặc định của Tailwind (màu, bo góc, bóng, cỡ chữ): `bg-blue-500`, `rounded-lg`, `text-sm`
-> không còn. Dùng utility của Yugen: `bg-background-1`, `text-foreground-2`, `p-M`, `rounded-medium`, `text-body1`.
+> không còn. Dùng utility của Yugen: `bg-background-1`, `text-foreground-2`, `p-3`, `rounded-medium`, `text-body1`.
 
 ## 3. Next.js App Router
 

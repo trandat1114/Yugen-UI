@@ -147,7 +147,7 @@ function SortDemo() {
   const [sortState, setSortState] = useState<DataGridSortState>({ sortColumn: "amount", sortDirection: "descending" });
 
   return (
-    <div className="flex w-full flex-col gap-S">
+    <div className="flex w-full flex-col gap-2">
       <span className="text-caption1 text-foreground-3">
         Đang sắp xếp: {sortState.sortColumn} · {sortState.sortDirection === "ascending" ? "tăng dần" : "giảm dần"}
       </span>
@@ -178,9 +178,9 @@ function SelectionDemo() {
   };
 
   return (
-    <div className="flex w-full flex-col gap-S">
+    <div className="flex w-full flex-col gap-2">
       <Toolbar aria-label="Thao tác với đơn đã chọn" className="rounded-xlarge border border-stroke-2">
-        <span role="status" className="px-S text-body1 font-semibold">
+        <span role="status" className="px-2 text-body1 font-semibold">
           Đã chọn {selected.size} / {orders.length}
         </span>
         <ToolbarDivider />
@@ -212,7 +212,7 @@ function ResizeDemo() {
   const [last, setLast] = useState("Kéo mép phải tiêu đề, hoặc Tab tới tay nắm rồi dùng phím mũi tên.");
 
   return (
-    <div className="flex w-full flex-col gap-S">
+    <div className="flex w-full flex-col gap-2">
       <span className="text-caption1 text-foreground-3">{last}</span>
       <DataGrid
         aria-label="Đơn hàng đổi được độ rộng cột"
@@ -272,8 +272,8 @@ function StatesDemo() {
     });
 
   return (
-    <div className="flex w-full flex-col gap-S">
-      <div className="flex flex-wrap gap-S">
+    <div className="flex w-full flex-col gap-2">
+      <div className="flex flex-wrap gap-2">
         <Button size="small" icon={<ArrowClockwise20Regular />} onClick={() => load("success")}>
           Tải lại
         </Button>

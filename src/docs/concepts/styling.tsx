@@ -21,12 +21,12 @@ function P({ children }: { children: ReactNode }) {
 }
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function Demo({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div className={cn("flex flex-wrap items-center gap-M rounded-2xlarge border border-stroke-2 bg-background-1 p-XXL", className)}>
+    <div className={cn("flex flex-wrap items-center gap-3 rounded-2xlarge border border-stroke-2 bg-background-1 p-6", className)}>
       {children}
     </div>
   );
@@ -39,7 +39,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
             {head.map((h) => (
-              <th key={h} className="px-L py-S text-start">
+              <th key={h} className="px-4 py-2 text-start">
                 {h}
               </th>
             ))}
@@ -49,7 +49,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
           {rows.map((row, i) => (
             <tr key={i} className="border-b border-stroke-3 align-top last:border-b-0">
               {row.map((cell, j) => (
-                <td key={j} className="px-L py-M text-foreground-2">
+                <td key={j} className="px-4 py-3 text-foreground-2">
                   {cell}
                 </td>
               ))}
@@ -64,23 +64,23 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
 /* ---------------------------------------------------------------- cn demo */
 const MERGE_CASES: [string, string][] = [
   ["text-body1 text-foreground-2", "text-foreground-1"],
-  ["px-M py-S", "px-XL"],
+  ["px-3 py-2", "px-5"],
   ["rounded-medium shadow-4", "rounded-circular shadow-16"],
   ["bg-background-1 hover:bg-background-1-hover", "bg-brand-background-2"],
 ];
 
 /* ---------------------------------------------------------------- spacing */
 const SPACING = [
-  { name: "XXS", px: 2, bar: "w-XXS" },
-  { name: "XS", px: 4, bar: "w-XS" },
-  { name: "SNudge", px: 6, bar: "w-SNudge" },
-  { name: "S", px: 8, bar: "w-S" },
-  { name: "MNudge", px: 10, bar: "w-MNudge" },
-  { name: "M", px: 12, bar: "w-M" },
-  { name: "L", px: 16, bar: "w-L" },
-  { name: "XL", px: 20, bar: "w-XL" },
-  { name: "XXL", px: 24, bar: "w-XXL" },
-  { name: "XXXL", px: 32, bar: "w-XXXL" },
+  { step: "0.5", fluent: "XXS", px: 2, bar: "w-0.5" },
+  { step: "1", fluent: "XS", px: 4, bar: "w-1" },
+  { step: "1.5", fluent: "SNudge", px: 6, bar: "w-1.5" },
+  { step: "2", fluent: "S", px: 8, bar: "w-2" },
+  { step: "2.5", fluent: "MNudge", px: 10, bar: "w-2.5" },
+  { step: "3", fluent: "M", px: 12, bar: "w-3" },
+  { step: "4", fluent: "L", px: 16, bar: "w-4" },
+  { step: "5", fluent: "XL", px: 20, bar: "w-5" },
+  { step: "6", fluent: "XXL", px: 24, bar: "w-6" },
+  { step: "8", fluent: "XXXL", px: 32, bar: "w-8" },
 ];
 
 /* ---------------------------------------------------------------- cva demo */
@@ -130,13 +130,13 @@ const PEOPLE = [
   { name: "Lê Hoàng Phúc", role: "Kỹ sư frontend" },
 ];
 
-const MEDIA_CODE = `<div className="flex items-center gap-M">
+const MEDIA_CODE = `<div className="flex items-center gap-3">
   <Avatar name="Trần Minh Anh" color="colorful" size={40} />
   <div className="min-w-0 flex-1">
     <p className="truncate text-body1 font-semibold text-foreground-1">Trần Minh Anh</p>
     <p className="truncate text-caption1 text-foreground-3">Thiết kế sản phẩm · Nhóm Nền tảng…</p>
   </div>
-  <div className="flex shrink-0 items-center gap-XS">
+  <div className="flex shrink-0 items-center gap-1">
     <Button size="small">Nhắn tin</Button>
     <Button size="small" appearance="subtle" icon={<MoreHorizontal20Regular />} aria-label="Thêm thao tác" />
   </div>
@@ -150,17 +150,17 @@ export default function Page() {
         title="className & cn()"
         description="className của bạn luôn được đặt cuối cùng trong cn(...) của component, nên nó thắng mọi class mặc định cùng nhóm."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Demo>
             <Button>Mặc định</Button>
-            <Button className="rounded-circular px-XL">Bo tròn</Button>
+            <Button className="rounded-circular px-5">Bo tròn</Button>
             <Button appearance="primary" className="min-w-40">
               Rộng hơn
             </Button>
             <Badge className="tracking-wide uppercase">Mới</Badge>
           </Demo>
           <CodeBlock
-            code={`<Button className="rounded-circular px-XL">Bo tròn</Button>
+            code={`<Button className="rounded-circular px-5">Bo tròn</Button>
 <Button appearance="primary" className="min-w-40">Rộng hơn</Button>
 <Badge className="tracking-wide uppercase">Mới</Badge>`}
           />
@@ -189,7 +189,7 @@ export default function Page() {
         title="Chỉ dùng utility từ token"
         description="Palette, bo góc, shadow, cỡ chữ và easing mặc định của Tailwind đã bị tắt trong index.css — chỉ còn utility map từ token Fluent."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <SimpleTable
             head={["Cần", "Dùng", "Không dùng"]}
             rows={[
@@ -202,19 +202,25 @@ export default function Page() {
               ["Theme tối", <C key="a">data-theme=&quot;dark&quot;</C>, <C key="b">dark:bg-…</C>],
             ]}
           />
-          <h3 className="text-subtitle1 font-semibold text-foreground-1">Spacing viết hoa</h3>
+          <h3 className="text-subtitle1 font-semibold text-foreground-1">Spacing</h3>
           <P>
-            Spacing dùng hậu tố <strong className="font-semibold">viết hoa</strong> đúng tên token Fluent: <C>spacingHorizontalM</C> →{" "}
-            <C>px-M</C>, <C>spacingVerticalSNudge</C> → <C>py-SNudge</C>. Tên thường như <C>p-xl</C> không tồn tại — nếu thêm vào, biến{" "}
-            <C>--spacing-xl</C> sẽ va chạm thang container của Tailwind và <C>max-w-xl</C> bỗng chỉ còn 20px. Kích thước phần tử (
-            <C>h-8</C>, <C>size-5</C>, <C>w-64</C>) vẫn dùng thang số gốc, bội của 4px.
+            Spacing dùng thang số của Tailwind: <C>p-3</C>, <C>gap-2</C>, <C>mt-6</C>. Mười bậc dưới đây trùng ramp spacing của Fluent, nên
+            khi chuyển từ Fluent UI chỉ cần đổi tên: <C>spacingHorizontalM</C> → <C>px-3</C>. Padding, margin và gap nên nằm trong mười bậc
+            này; kích thước phần tử (<C>h-8</C>, <C>size-5</C>, <C>w-64</C>) dùng các số còn lại.
+          </P>
+          <P>
+            Alias viết hoa cũ (<C>p-M</C>, <C>gap-SNudge</C>) vẫn chạy nhưng đã deprecated từ 0.10 và sẽ bị bỏ ở 1.0. Đổi theo cột bên phải
+            của bảng.
           </P>
           <div className="overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1">
             {SPACING.map((s) => (
-              <div key={s.name} className="flex items-center gap-L border-b border-stroke-3 px-L py-S last:border-b-0">
-                <span className="w-24 font-mono text-caption1 font-semibold text-brand-foreground-1">p-{s.name}</span>
+              <div key={s.step} className="flex items-center gap-4 border-b border-stroke-3 px-4 py-2 last:border-b-0">
+                <span className="w-16 font-mono text-caption1 font-semibold text-brand-foreground-1">p-{s.step}</span>
                 <span className="w-12 font-mono text-caption1 text-foreground-3">{s.px}px</span>
                 <span className={cn("h-3 rounded-small bg-brand-background", s.bar)} />
+                <span className="ms-auto font-mono text-caption1 text-foreground-3">
+                  <span className="sr-only">Alias cũ: </span>p-{s.fluent}
+                </span>
               </div>
             ))}
           </div>
@@ -226,7 +232,7 @@ export default function Page() {
         title="Ghi đè & tạo variant"
         description="Ghi đè một lần thì dùng className; lặp lại nhiều nơi thì đóng gói thành variant bằng class-variance-authority (cva)."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <P>
             Vì mã nguồn nằm trong dự án, cách “chuẩn shadcn” là sửa thẳng bảng <C>variants</C> trong <C>Button.tsx</C>. Khi muốn giữ file
             gốc nguyên vẹn để dễ cập nhật, hãy bọc component và thêm variant bằng <C>cva</C>:
@@ -254,7 +260,7 @@ export default function Page() {
         title="Data-attribute & important"
         description="Radix ghi trạng thái lên DOM bằng data-attribute; style theo trạng thái bằng variant data-[…] thay vì state React."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Demo>
             <Menu>
               <MenuTrigger asChild>
@@ -314,7 +320,7 @@ export default function Page() {
         title="Class dùng chung"
         description="Khi tự viết control mới, ghép từ class dùng chung để giữ đúng đặc trưng Fluent thay vì chép lại chuỗi class."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <SimpleTable
             head={["Class", "Export từ", "Dùng cho"]}
             rows={[
@@ -334,7 +340,7 @@ export default function Page() {
               role="textbox"
               aria-readonly
               aria-label="Mã giới thiệu"
-              className={cn(fieldControlClass, "flex h-8 w-64 items-center px-MNudge font-mono text-body1")}
+              className={cn(fieldControlClass, "flex h-8 w-64 items-center px-2.5 font-mono text-body1")}
             >
               YUGEN-2026-SAKURA
             </div>
@@ -348,7 +354,7 @@ import { cn } from "@/lib/cn";
   role="textbox"
   aria-readonly
   aria-label="Mã giới thiệu"
-  className={cn(fieldControlClass, "flex h-8 w-64 items-center px-MNudge font-mono text-body1")}
+  className={cn(fieldControlClass, "flex h-8 w-64 items-center px-2.5 font-mono text-body1")}
 >
   YUGEN-2026-SAKURA
 </div>`}
@@ -361,10 +367,10 @@ import { cn } from "@/lib/cn";
         title="Công thức media object"
         description="Avatar / icon + khối chữ + thao tác là bố cục gặp ở khắp nơi. Ba class quyết định nó có vỡ hay không."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Demo className="flex-col items-stretch">
             {PEOPLE.map((p) => (
-              <div key={p.name} className="flex w-full max-w-md items-center gap-M">
+              <div key={p.name} className="flex w-full max-w-md items-center gap-3">
                 <Avatar name={p.name} color="colorful" size={40} />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-body1 font-semibold text-foreground-1">{p.name}</p>
@@ -372,7 +378,7 @@ import { cn } from "@/lib/cn";
                     {p.role}
                   </p>
                 </div>
-                <div className="flex shrink-0 items-center gap-XS">
+                <div className="flex shrink-0 items-center gap-1">
                   <Button size="small">Nhắn tin</Button>
                   <Button size="small" appearance="subtle" icon={<MoreHorizontal20Regular />} aria-label="Thêm thao tác" />
                 </div>
@@ -380,7 +386,7 @@ import { cn } from "@/lib/cn";
             ))}
           </Demo>
           <CodeBlock code={MEDIA_CODE} />
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>
               <C>min-w-0 flex-1</C> trên khối chữ: flex item mặc định không co nhỏ hơn nội dung, thiếu <C>min-w-0</C> thì <C>truncate</C>{" "}
               không có tác dụng và hàng bị tràn.
@@ -413,6 +419,6 @@ import { cn } from "@/lib/cn";
 
 function MessageNote({ children }: { children: ReactNode }) {
   return (
-    <div className="max-w-3xl rounded-medium border border-stroke-2 bg-background-3 px-M py-S text-body1 text-foreground-2">{children}</div>
+    <div className="max-w-3xl rounded-medium border border-stroke-2 bg-background-3 px-3 py-2 text-body1 text-foreground-2">{children}</div>
   );
 }

@@ -17,9 +17,9 @@ export function formatDateVi(date: Date) {
 }
 
 const SIZE = {
-  small: "h-6 ps-S pe-XXS text-caption1",
-  medium: "h-8 ps-MNudge pe-XS text-body1",
-  large: "h-10 ps-M pe-S text-body2",
+  small: "h-6 ps-2 pe-0.5 text-caption1",
+  medium: "h-8 ps-2.5 pe-1 text-body1",
+  large: "h-10 ps-3 pe-2 text-body2",
 } as const;
 
 interface PickerBaseProps {
@@ -74,7 +74,7 @@ function PickerShell({
         <div
           data-disabled={disabled ? "true" : undefined}
           data-invalid={invalid ? "true" : undefined}
-          className={cn(fieldControlClass, "flex w-full items-center gap-XXS", SIZE[size], className)}
+          className={cn(fieldControlClass, "flex w-full items-center gap-0.5", SIZE[size], className)}
         >
           <PopoverTrigger asChild>
             <button
@@ -234,7 +234,7 @@ function PresetList({
     <div
       role="group"
       aria-label={label}
-      className="flex flex-wrap gap-XS border-b border-stroke-2 pb-S sm:w-36 sm:shrink-0 sm:flex-col sm:flex-nowrap sm:border-e sm:border-b-0 sm:pe-S sm:pb-0"
+      className="flex flex-wrap gap-1 border-b border-stroke-2 pb-2 sm:w-36 sm:shrink-0 sm:flex-col sm:flex-nowrap sm:border-e sm:border-b-0 sm:pe-2 sm:pb-0"
     >
       {presets.map((preset) => {
         const r = preset.range();
@@ -248,7 +248,7 @@ function PresetList({
             disabled={outOfBounds}
             onClick={() => onPick(r)}
             className={cn(
-              "inline-flex h-8 shrink-0 cursor-pointer items-center rounded-medium px-S text-start text-body1 whitespace-nowrap text-foreground-2",
+              "inline-flex h-8 shrink-0 cursor-pointer items-center rounded-medium px-2 text-start text-body1 whitespace-nowrap text-foreground-2",
               "transition-colors duration-faster ease-easy-ease hover:bg-subtle-hover hover:text-foreground-1 active:bg-subtle-pressed",
               "disabled:cursor-not-allowed disabled:bg-transparent disabled:text-foreground-disabled",
               active && "bg-brand-background-2 font-semibold text-brand-foreground-2 hover:bg-brand-background-2-hover hover:text-brand-foreground-2",
@@ -309,7 +309,7 @@ export function DateRangePicker({
       onClear={clearable ? () => commit(undefined) : undefined}
       surfaceClassName="max-w-[calc(100vw-24px)]"
     >
-      <div className={presets?.length ? "flex flex-col gap-S sm:flex-row" : "contents"}>
+      <div className={presets?.length ? "flex flex-col gap-2 sm:flex-row" : "contents"}>
       {presets?.length ? (
         <PresetList
           presets={presets}

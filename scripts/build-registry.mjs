@@ -135,7 +135,7 @@ for (const t of THEMES) {
     registryDependencies: [],
     files: [{ path: `registry/yugen/${t.target}`, type: "registry:file", target: t.target, content: theme }],
     css: { [`@import "${t.importPath}"`]: {} },
-    docs: "The Yugen theme is now imported into your CSS. It replaces Tailwind's default colour, radius, shadow and font-size scales — use Yugen utilities (bg-background-1, p-M, rounded-medium, text-body1) instead.",
+    docs: "The Yugen theme is now imported into your CSS. It replaces Tailwind's default colour, radius, shadow and font-size scales — use Yugen utilities (bg-background-1, rounded-medium, text-body1) instead; spacing uses the numeric scale (p-3, gap-4).",
   });
 }
 

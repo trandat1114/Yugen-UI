@@ -122,7 +122,7 @@ export const Citation = React.forwardRef<HTMLButtonElement, CitationProps>(
             aria-describedby={descId}
             data-citation={index}
             className={cn(
-              "relative -top-0.5 mx-XXS inline-flex h-4 min-w-4 items-center justify-center rounded-small border border-stroke-2 bg-background-4 px-XXS align-text-top",
+              "relative -top-0.5 mx-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-small border border-stroke-2 bg-background-4 px-0.5 align-text-top",
               "font-sans text-caption2 font-semibold text-foreground-2 tabular-nums no-underline",
               "transition-colors duration-faster ease-easy-ease hover:bg-brand-background-2 hover:text-brand-foreground-2",
               "data-[state=open]:border-brand-stroke data-[state=open]:bg-brand-background-2 data-[state=open]:text-brand-foreground-2",
@@ -169,7 +169,7 @@ export const Citation = React.forwardRef<HTMLButtonElement, CitationProps>(
           size="small"
           tabIndex={-1}
           aria-labelledby={titleId}
-          className="flex w-72 flex-col gap-XS p-M"
+          className="flex w-72 flex-col gap-1 p-3"
           onOpenAutoFocus={(e) => {
             if (modeRef.current === "peek") e.preventDefault();
           }}
@@ -181,7 +181,7 @@ export const Citation = React.forwardRef<HTMLButtonElement, CitationProps>(
             if (e.pointerType === "mouse") leave();
           }}
         >
-          <div className="flex min-w-0 items-center gap-XS text-caption1 text-foreground-3">
+          <div className="flex min-w-0 items-center gap-1 text-caption1 text-foreground-3">
             <SourceIcon domain={domain} title={source.title} />
             <span className="min-w-0 flex-1 truncate">{domain || "Nguồn"}</span>
             <span aria-hidden className="tabular-nums">
@@ -225,18 +225,18 @@ export const CitationList = React.forwardRef<HTMLElement, CitationListProps>(({ 
   const headingId = React.useId();
   if (sources.length === 0) return null;
   return (
-    <section ref={ref} aria-labelledby={headingId} className={cn("flex min-w-0 flex-col gap-S", className)} {...props}>
+    <section ref={ref} aria-labelledby={headingId} className={cn("flex min-w-0 flex-col gap-2", className)} {...props}>
       <p id={headingId} className="text-caption1 font-semibold text-foreground-3">
         {title} <span className="tabular-nums">({sources.length})</span>
       </p>
-      <ol className="grid gap-S sm:grid-cols-2">
+      <ol className="grid gap-2 sm:grid-cols-2">
         {sources.map((source, i) => {
           const domain = getSourceDomain(source);
           const href = sanitizeHref(source.url);
           const inner = (
             <>
-              <span className="flex min-w-0 items-center gap-XS text-caption1 text-foreground-3">
-                <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-small bg-background-4 px-XXS text-caption2 font-semibold text-foreground-2 tabular-nums">
+              <span className="flex min-w-0 items-center gap-1 text-caption1 text-foreground-3">
+                <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-small bg-background-4 px-0.5 text-caption2 font-semibold text-foreground-2 tabular-nums">
                   {i + 1}
                 </span>
                 <SourceIcon domain={domain} title={source.title} />
@@ -245,7 +245,7 @@ export const CitationList = React.forwardRef<HTMLElement, CitationListProps>(({ 
               <span className="line-clamp-2 text-caption1 font-semibold text-foreground-1">{source.title}</span>
             </>
           );
-          const box = "flex h-full min-w-0 flex-col gap-XXS rounded-medium border border-stroke-2 bg-background-1 p-S";
+          const box = "flex h-full min-w-0 flex-col gap-0.5 rounded-medium border border-stroke-2 bg-background-1 p-2";
           return (
             <li key={`${i}-${source.title}`} className="min-w-0">
               {href ? (

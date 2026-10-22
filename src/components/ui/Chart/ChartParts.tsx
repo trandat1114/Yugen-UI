@@ -106,7 +106,7 @@ export const ChartLegend = React.forwardRef<HTMLUListElement, ChartLegendProps>(
       ref={ref}
       className={cn(
         "flex text-caption1 text-foreground-2",
-        orientation === "horizontal" ? "flex-wrap items-center gap-x-L gap-y-XS" : "flex-col gap-S",
+        orientation === "horizontal" ? "flex-wrap items-center gap-x-4 gap-y-1" : "flex-col gap-2",
         className,
       )}
       {...props}
@@ -117,7 +117,7 @@ export const ChartLegend = React.forwardRef<HTMLUListElement, ChartLegendProps>(
             {item.swatch ?? <ChartLegendSwatch slot={item.slot} shape={shape} textured={textured} />}
             <span className={cn("min-w-0", item.hidden && "text-foreground-disabled line-through")}>{item.label}</span>
             {item.value !== undefined && (
-              <span className="ms-auto ps-S font-semibold text-foreground-1 tabular-nums">
+              <span className="ms-auto ps-2 font-semibold text-foreground-1 tabular-nums">
                 <bdi>{item.value}</bdi>
               </span>
             )}
@@ -131,7 +131,7 @@ export const ChartLegend = React.forwardRef<HTMLUListElement, ChartLegendProps>(
                 aria-pressed={!item.hidden}
                 onClick={() => onToggle(item.key)}
                 className={cn(
-                  "-mx-XS inline-flex min-h-6 items-center gap-SNudge rounded-small px-XS",
+                  "-mx-1 inline-flex min-h-6 items-center gap-1.5 rounded-small px-1",
                   "transition-colors duration-faster hover:bg-subtle-hover hover:text-foreground-1",
                   item.hidden && "[&_svg]:opacity-40",
                 )}
@@ -139,7 +139,7 @@ export const ChartLegend = React.forwardRef<HTMLUListElement, ChartLegendProps>(
                 {content}
               </button>
             ) : (
-              <span className="inline-flex w-full min-w-0 items-center gap-SNudge">{content}</span>
+              <span className="inline-flex w-full min-w-0 items-center gap-1.5">{content}</span>
             )}
           </li>
         );
@@ -230,15 +230,15 @@ export const ChartTooltip = React.forwardRef<HTMLDivElement, ChartTooltipProps>(
         aria-hidden
         dir={dir}
         className={cn(
-          "pointer-events-none invisible absolute w-max max-w-64 min-w-32 rounded-medium border border-stroke-2 bg-background-1 px-M py-S shadow-8",
+          "pointer-events-none invisible absolute w-max max-w-64 min-w-32 rounded-medium border border-stroke-2 bg-background-1 px-3 py-2 shadow-8",
           "text-caption1 text-foreground-2",
           className,
         )}
         {...props}
       >
-        {title !== undefined && <div className="mb-XS font-semibold text-foreground-1">{title}</div>}
+        {title !== undefined && <div className="mb-1 font-semibold text-foreground-1">{title}</div>}
         {rows && rows.length > 0 && (
-          <div className="grid grid-cols-[auto_1fr_auto] items-center gap-x-S gap-y-XXS">
+          <div className="grid grid-cols-[auto_1fr_auto] items-center gap-x-2 gap-y-0.5">
             {rows.map((row) => (
               <React.Fragment key={row.key}>
                 {row.swatch ? (
@@ -289,7 +289,7 @@ export const ChartTable = React.forwardRef<HTMLDivElement, ChartTableProps>(({ c
       <TableBody>
         {rows.map((r) => (
           <TableRow key={r.key}>
-            <th scope="row" className="px-S text-start align-middle font-normal whitespace-nowrap text-foreground-1">
+            <th scope="row" className="px-2 text-start align-middle font-normal whitespace-nowrap text-foreground-1">
               {r.header}
             </th>
             {r.cells.map((cell, i) => (
@@ -357,11 +357,11 @@ export const ChartContainer = React.forwardRef<HTMLElement, ChartContainerProps>
         ref={ref}
         aria-labelledby={title !== undefined ? `${id}-title` : undefined}
         aria-describedby={description !== undefined ? `${id}-desc` : undefined}
-        className={cn("flex w-full min-w-0 flex-col gap-M", className)}
+        className={cn("flex w-full min-w-0 flex-col gap-3", className)}
         {...props}
       >
         {hasHeader && (
-          <div className="flex flex-wrap items-start justify-between gap-S">
+          <div className="flex flex-wrap items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
               {title !== undefined && (
                 <div id={`${id}-title`} className="text-subtitle2 font-semibold text-foreground-1">
@@ -369,13 +369,13 @@ export const ChartContainer = React.forwardRef<HTMLElement, ChartContainerProps>
                 </div>
               )}
               {description !== undefined && (
-                <div id={`${id}-desc`} className="mt-XXS text-caption1 text-foreground-3">
+                <div id={`${id}-desc`} className="mt-0.5 text-caption1 text-foreground-3">
                   {description}
                 </div>
               )}
             </div>
             {(toolbar !== undefined || hasToggle) && (
-              <div className="flex shrink-0 items-center gap-XS">
+              <div className="flex shrink-0 items-center gap-1">
                 {toolbar}
                 {hasToggle && (
                   <ToggleButton

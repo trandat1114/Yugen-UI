@@ -50,7 +50,7 @@ export const Radio = React.forwardRef<React.ElementRef<typeof RadioGroupPrimitiv
           ref={ref}
           id={radioId}
           className={cn(
-            "peer m-S inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-circular border border-stroke-accessible bg-transparent outline-none",
+            "peer m-2 inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-circular border border-stroke-accessible bg-transparent outline-none",
             "transition-colors duration-faster ease-easy-ease",
             "data-[state=unchecked]:enabled:group-hover/radio:border-foreground-2 data-[state=unchecked]:enabled:active:border-foreground-1",
             "enabled:data-[state=checked]:border-brand-stroke",
@@ -68,7 +68,7 @@ export const Radio = React.forwardRef<React.ElementRef<typeof RadioGroupPrimitiv
               "cursor-pointer text-body1 text-foreground-3 transition-colors duration-faster ease-easy-ease",
               "peer-data-[state=unchecked]:group-hover/radio:text-foreground-2 peer-data-[state=checked]:text-foreground-1",
               "peer-disabled:cursor-not-allowed peer-disabled:text-foreground-disabled!",
-              stacked ? "px-S pt-XS pb-S text-center" : "py-S pe-S ps-XS",
+              stacked ? "px-2 pt-1 pb-2 text-center" : "py-2 pe-2 ps-1",
             )}
           >
             {label}

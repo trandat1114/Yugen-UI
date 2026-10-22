@@ -126,7 +126,7 @@ export const TableHeaderCell = React.forwardRef<HTMLTableCellElement, TableHeade
           ref={ref}
           scope="col"
           onClick={onClick}
-          className={cn("relative px-S text-start align-middle font-semibold text-foreground-1", className)}
+          className={cn("relative px-2 text-start align-middle font-semibold text-foreground-1", className)}
           {...props}
         >
           {children}
@@ -149,7 +149,7 @@ export const TableHeaderCell = React.forwardRef<HTMLTableCellElement, TableHeade
         <button
           type="button"
           onClick={onClick}
-          className="flex w-full cursor-pointer items-center gap-XS px-S py-XXS text-start font-semibold"
+          className="flex w-full cursor-pointer items-center gap-1 px-2 py-0.5 text-start font-semibold"
         >
           <span className="min-w-0 truncate">{children}</span>
           {sortDirection && (
@@ -165,7 +165,7 @@ TableHeaderCell.displayName = "TableHeaderCell";
 /* ------------------------------------------------------------------ TableCell */
 export const TableCell = React.forwardRef<HTMLTableCellElement, React.TdHTMLAttributes<HTMLTableCellElement>>(
   ({ className, ...props }, ref) => (
-    <td ref={ref} className={cn("relative px-S align-middle", className)} {...props} />
+    <td ref={ref} className={cn("relative px-2 align-middle", className)} {...props} />
   ),
 );
 TableCell.displayName = "TableCell";
@@ -184,7 +184,7 @@ export interface TableCellLayoutProps extends React.HTMLAttributes<HTMLDivElemen
 
 export const TableCellLayout = React.forwardRef<HTMLDivElement, TableCellLayoutProps>(
   ({ media, description, appearance, truncate = false, className, children, ...props }, ref) => (
-    <div ref={ref} className={cn("flex min-w-0 items-center gap-S", className)} {...props}>
+    <div ref={ref} className={cn("flex min-w-0 items-center gap-2", className)} {...props}>
       {media && <span className="flex shrink-0 items-center text-foreground-2">{media}</span>}
       <div className="flex min-w-0 flex-col">
         <span className={cn(appearance === "primary" && "font-semibold", truncate && "truncate")}>{children}</span>
@@ -204,7 +204,7 @@ export const TableCellActions = React.forwardRef<HTMLDivElement, React.HTMLAttri
     <div
       ref={ref}
       className={cn(
-        "absolute inset-e-S top-1/2 flex -translate-y-1/2 items-center gap-XS opacity-0",
+        "absolute inset-e-2 top-1/2 flex -translate-y-1/2 items-center gap-1 opacity-0",
         "transition-opacity duration-faster ease-easy-ease group-hover/row:opacity-100 focus-within:opacity-100",
         className,
       )}

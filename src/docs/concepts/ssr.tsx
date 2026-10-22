@@ -8,7 +8,7 @@ function P({ children }: { children: ReactNode }) {
 }
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 const USE_CLIENT_CODE = `// scripts/use-client.mjs — chạy một lần: node scripts/use-client.mjs
@@ -134,7 +134,7 @@ import { Button, Field, Input, toast } from "@/components/ui";
 export function SettingsForm({ defaultName }: { defaultName: string }) {
   return (
     <form
-      className="flex flex-col gap-M"
+      className="flex flex-col gap-3"
       onSubmit={(e) => {
         e.preventDefault();
         toast({ intent: "success", title: "Đã lưu hồ sơ" });
@@ -158,7 +158,7 @@ export default function Page() {
         title="Client component"
         description="Mọi file trong src/components/ui dùng hook, context hoặc primitive Radix — nghĩa là chúng phải chạy trên client."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <P>
             Site docs này là Vite SPA nên mã nguồn không có chỉ thị <C>&quot;use client&quot;</C>. Khi chép vào Next.js App Router, thêm{" "}
             <C>&quot;use client&quot;;</C> ở dòng đầu mỗi file component. Đoạn script dưới làm việc đó một lần cho cả thư mục:
@@ -177,7 +177,7 @@ export default function Page() {
         title="Cài đặt cho Next.js"
         description="Các bước ở trang Bắt đầu nhanh vẫn đúng; chỉ khác plugin Tailwind và nơi đặt CSS."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <CodeBlock code={SETUP_CODE} />
           <CodeBlock code={POSTCSS_CODE} />
           <CodeBlock code={GLOBALS_CODE} />
@@ -190,10 +190,10 @@ export default function Page() {
         title="Root layout & chống nháy theme"
         description="HTML từ server không biết theme người dùng đã chọn. Script trong <head> đặt data-theme trước lần vẽ đầu; provider client đọc lại cùng giá trị."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <CodeBlock code={LAYOUT_CODE} />
           <CodeBlock code={PROVIDERS_CODE} />
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>
               <C>suppressHydrationWarning</C> chỉ tác động lên chính thẻ <C>{"<html>"}</C> (một cấp), không che lỗi hydrate của phần còn lại.
             </li>
@@ -213,7 +213,7 @@ export default function Page() {
         title="Dùng trong Server Component"
         description="Server Component import và render component Yugen bình thường — chúng là ranh giới client. Điều kiện: props phải tuần tự hoá được."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <CodeBlock code={RSC_CODE} />
           <DoDont
             dos={[
@@ -235,7 +235,7 @@ export default function Page() {
         title="Portal, Toast & hydration"
         description="Những phần chỉ tồn tại trên client không có trong HTML của server."
       >
-        <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+        <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
           <li>
             Portal của Radix (Dialog, Drawer, Menu, Popover, Tooltip, listbox) chỉ gắn vào <C>{"<body>"}</C> sau khi mount. Dialog mở sẵn (
             <C>defaultOpen</C>) xuất hiện sau hydrate — đừng đặt nội dung quan trọng cho SEO bên trong overlay.
@@ -258,8 +258,8 @@ export default function Page() {
         title="Phần chỉ dành cho site docs"
         description="Một vài cơ chế bạn thấy trong repo là để dựng trang tài liệu, không cần trong ứng dụng."
       >
-        <div className="flex flex-col gap-L">
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+        <div className="flex flex-col gap-4">
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>
               <C>import.meta.glob</C> (API riêng của Vite) trong <C>src/docs/registry/index.ts</C>, <C>src/docs/concepts/index.ts</C> và{" "}
               <C>BlocksPage</C> chỉ để tự gom trang tài liệu. Component trong <C>src/components/ui</C> không dùng API nào của Vite, nên chạy

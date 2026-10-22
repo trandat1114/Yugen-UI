@@ -64,9 +64,9 @@ function Timeline({ releases }: { releases: NewsRelease[] }) {
   const itemLang = locale === "en" ? "vi" : undefined;
   const latest = releases.find((r) => !r.upcoming);
   return (
-    <ol className="relative flex flex-col gap-XXXL before:absolute before:inset-y-2 before:inset-s-1.75 before:w-0.5 before:rounded-circular before:bg-stroke-2 md:before:inset-s-41.75">
+    <ol className="relative flex flex-col gap-8 before:absolute before:inset-y-2 before:inset-s-1.75 before:w-0.5 before:rounded-circular before:bg-stroke-2 md:before:inset-s-41.75">
       {releases.map((release) => (
-        <li key={release.version} className="relative grid gap-M ps-XXL md:grid-cols-[160px_minmax(0,1fr)] md:gap-XXL md:ps-0">
+        <li key={release.version} className="relative grid gap-3 ps-6 md:grid-cols-[160px_minmax(0,1fr)] md:gap-6 md:ps-0">
           <span
             aria-hidden
             className={cn(
@@ -74,14 +74,14 @@ function Timeline({ releases }: { releases: NewsRelease[] }) {
               release === latest ? "bg-brand-background" : "bg-stroke-accessible",
             )}
           />
-          <div className="md:pe-XL md:text-end">
+          <div className="md:pe-5 md:text-end">
             <p className="font-display text-title3 font-semibold tabular-nums">v{release.version}</p>
             <time dateTime={release.date} className="text-caption1 text-foreground-3">
               {release.upcoming ? t("news.planned", { date: formatDate(release.date, locale) }) : formatDate(release.date, locale)}
             </time>
           </div>
-          <article className="rounded-2xlarge border border-stroke-2 bg-background-1 p-XL shadow-2 md:ms-XL">
-            <div className="flex flex-wrap items-center gap-S">
+          <article className="rounded-2xlarge border border-stroke-2 bg-background-1 p-5 shadow-2 md:ms-5">
+            <div className="flex flex-wrap items-center gap-2">
               <h2 lang={itemLang} className="font-display text-title3 font-semibold">
                 {release.title}
               </h2>
@@ -97,13 +97,13 @@ function Timeline({ releases }: { releases: NewsRelease[] }) {
                 )
               )}
             </div>
-            <p lang={itemLang} className="mt-S text-body2 text-foreground-2">
+            <p lang={itemLang} className="mt-2 text-body2 text-foreground-2">
               {release.summary}
             </p>
-            <ul className="mt-L flex flex-col gap-S">
+            <ul className="mt-4 flex flex-col gap-2">
               {release.items.map((item) => (
-                <li key={item.text} className="flex items-start gap-M">
-                  <Badge size="large" shape="rounded" className="mt-XXS w-24 shrink-0" {...KIND_BADGE[item.kind]}>
+                <li key={item.text} className="flex items-start gap-3">
+                  <Badge size="large" shape="rounded" className="mt-0.5 w-24 shrink-0" {...KIND_BADGE[item.kind]}>
                     {t(`news.kind.${item.kind}`)}
                   </Badge>
                   <span className="text-body1 text-foreground-1">
@@ -111,7 +111,7 @@ function Timeline({ releases }: { releases: NewsRelease[] }) {
                     {item.href && (
                       <a
                         href={item.href}
-                        className="ms-XS inline-flex items-center gap-XXS whitespace-nowrap text-link hover:text-link-hover hover:underline"
+                        className="ms-1 inline-flex items-center gap-0.5 whitespace-nowrap text-link hover:text-link-hover hover:underline"
                       >
                         {t("news.view")}
                         <ArrowRight16Regular className="rtl:-scale-x-100" />
@@ -135,10 +135,10 @@ export function NewsPage() {
   React.useEffect(() => markNewsSeen(), []);
 
   return (
-    <div className="pb-XXXL">
+    <div className="pb-8">
       <PageHeader eyebrow={t("news.eyebrow")} title={t("nav.news")} lead={t("news.lead")} />
 
-      <Tabs defaultValue={FEEDS[0].id} className="flex flex-col gap-XL">
+      <Tabs defaultValue={FEEDS[0].id} className="flex flex-col gap-5">
         <TabsList aria-label={t("news.packages")}>
           {FEEDS.map((feed) => (
             <TabsTrigger key={feed.id} value={feed.id} className="font-mono">
@@ -147,7 +147,7 @@ export function NewsPage() {
           ))}
         </TabsList>
 
-        <div className="flex flex-wrap items-center gap-M">
+        <div className="flex flex-wrap items-center gap-3">
           <ToggleGroup type="single" value={filter} onValueChange={(v) => v && setFilter(v as typeof filter)} aria-label={t("news.filter")}>
             <ToggleGroupItem value="all">{t("news.all")}</ToggleGroupItem>
             {(Object.keys(NEWS_KIND_LABEL) as NewsKind[]).map((k) => (
@@ -163,7 +163,7 @@ export function NewsPage() {
             .map((r) => ({ ...r, items: filter === "all" ? r.items : r.items.filter((i) => i.kind === filter) }))
             .filter((r) => r.items.length > 0);
           return (
-            <TabsContent key={feed.id} value={feed.id} className="flex flex-col gap-XXL">
+            <TabsContent key={feed.id} value={feed.id} className="flex flex-col gap-6">
               <p className="text-caption1 text-foreground-3">
                 {t("news.current", { version: (feed.releases.find((r) => !r.upcoming) ?? feed.releases[0]).version })} · {t("news.fullIn")}{" "}
                 <a className="text-link underline hover:text-link-hover" href={`${SITE.links.repository}/blob/main/${feed.changelog}`}>
@@ -183,9 +183,9 @@ export function NewsPage() {
 
               {releases.length > 0 ? <Timeline releases={releases} /> : <p className="text-body1 text-foreground-3">{t("news.empty")}</p>}
 
-              <section className="mt-XXL rounded-3xlarge border border-stroke-2 bg-background-2 p-XXL">
+              <section className="mt-6 rounded-3xlarge border border-stroke-2 bg-background-2 p-6">
                 <h2 className="font-display text-title3 font-semibold">{t("news.upgradeTitle")}</h2>
-                <p className="mt-S max-w-2xl text-body2 text-foreground-2">
+                <p className="mt-2 max-w-2xl text-body2 text-foreground-2">
                   {t(feed.upgradeBody)}
                   {feed.id === "yugen-ui" && (
                     <>
@@ -194,7 +194,7 @@ export function NewsPage() {
                     </>
                   )}
                 </p>
-                <CodeBlock className="mt-L" code={feed.upgrade} />
+                <CodeBlock className="mt-4" code={feed.upgrade} />
               </section>
             </TabsContent>
           );

@@ -20,7 +20,7 @@
 - [ ] `npm run typecheck`, `npm run lint:classes`, `npm test` pass
 - [ ] `npm run check:examples` and `npm run check:props` pass (docs changes)
 - [ ] `npm run build:lib` and `npm run build:docs` pass; `npm run size` within budget
-- [ ] Follows [Design.md](../Design.md): token utilities only (no raw HEX/px/ms), upper-case spacing, type-ramp font sizes, `cn()`, no `dark:`, logical properties
+- [ ] Follows [Design.md](../Design.md): token utilities only (no raw HEX/px/ms), numeric spacing on the ramp, type-ramp font sizes, `cn()`, no `dark:`, logical properties
 - [ ] Colour roles respected (neutral / brand / semantic); no brand on large areas; no gradients on controls
 - [ ] Hover / pressed / disabled / focus-visible states; keyboard and screen reader tested
 - [ ] Checked Sakura / Web / Teams × Light / Dark, High contrast and RTL

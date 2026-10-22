@@ -12,16 +12,16 @@ export default function QuantityBlock() {
   const total = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(PRICE * count);
 
   return (
-    <Card className="max-w-md gap-L rounded-xlarge p-XL">
-      <div className="flex items-start justify-between gap-M">
+    <Card className="max-w-md gap-4 rounded-xlarge p-5">
+      <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-subtitle2 font-semibold text-foreground-1">Ấm trà gốm Bát Tràng</p>
           <p className="text-caption1 text-foreground-3">Còn {MAX} sản phẩm</p>
         </div>
         <Button appearance="subtle" icon={<Delete20Regular />} aria-label="Xoá khỏi giỏ" onClick={() => setCount(0)} disabled={count === 0} />
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-M">
-        <div className="flex items-center gap-M">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
           <ButtonGroup>
             <Button icon={<Subtract20Regular />} aria-label="Giảm số lượng" onClick={() => setCount((c) => c - 1)} disabled={count === 0} />
             <Button icon={<Add20Regular />} aria-label="Tăng số lượng" onClick={() => setCount((c) => c + 1)} disabled={count === MAX} />

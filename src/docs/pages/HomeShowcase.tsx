@@ -54,11 +54,11 @@ function ActionsCollage() {
   return (
     <>
       <Float className="top-[12%] inset-s-0">
-        <Card className="flex-row items-center gap-XXS rounded-xlarge p-XS shadow-16">
+        <Card className="flex-row items-center gap-0.5 rounded-xlarge p-1 shadow-16">
           <Button appearance="subtle" icon={<TextBold20Regular />} aria-label={t("show.bold")} />
           <Button appearance="subtle" icon={<TextItalic20Regular />} aria-label={t("show.italic")} />
           <Button appearance="subtle" icon={<TextUnderline20Regular />} aria-label={t("show.underline")} />
-          <span className="mx-XS h-5 w-px bg-stroke-2" />
+          <span className="mx-1 h-5 w-px bg-stroke-2" />
           <Button appearance="primary" icon={<Send20Regular />}>
             {t("show.send")}
           </Button>
@@ -81,7 +81,7 @@ function InputsCollage() {
   return (
     <>
       <Float className="top-[18%] inset-s-0 w-80 max-w-[80%]">
-        <Card className="flex-row items-center gap-M rounded-xlarge px-L py-S shadow-16">
+        <Card className="flex-row items-center gap-3 rounded-xlarge px-4 py-2 shadow-16">
           <Play20Filled className="shrink-0 text-foreground-1" />
           <Slider aria-label={t("show.progress")} defaultValue={[35]} />
           <ArrowMaximize20Regular className="shrink-0 text-foreground-2" />
@@ -93,7 +93,7 @@ function InputsCollage() {
         </SplitButton>
       </Float>
       <Float className="inset-e-[6%] bottom-[8%]">
-        <Card className="gap-XXS rounded-xlarge px-L py-S shadow-16">
+        <Card className="gap-0.5 rounded-xlarge px-4 py-2 shadow-16">
           <Switch label={t("show.captions")} defaultChecked />
           <Checkbox label={t("show.autoplay")} defaultChecked />
         </Card>
@@ -114,7 +114,7 @@ function FeedbackCollage() {
         </div>
       </Float>
       <Float className="top-[42%] inset-s-[8%]">
-        <Card className="flex-row items-center gap-S rounded-xlarge px-L py-M shadow-16">
+        <Card className="flex-row items-center gap-2 rounded-xlarge px-4 py-3 shadow-16">
           <Avatar name="Ngô Lan" color="colorful" presence="available" />
           <Avatar name="Trần Bình" color="colorful" presence="busy" />
           <Avatar name="Lê Hoàng" color="colorful" presence="away" />
@@ -124,7 +124,7 @@ function FeedbackCollage() {
         </Card>
       </Float>
       <Float className="inset-e-[6%] bottom-[10%]">
-        <Card className="flex-row items-center gap-S rounded-xlarge px-M py-S shadow-16">
+        <Card className="flex-row items-center gap-2 rounded-xlarge px-3 py-2 shadow-16">
           <Badge color="danger">3</Badge>
           <span className="text-body1">{t("show.notifications")}</span>
         </Card>
@@ -138,10 +138,10 @@ function SurfacesCollage() {
   return (
     <>
       <Float className="top-[8%] inset-s-0 w-80 max-w-[85%]">
-        <Card className="gap-S rounded-xlarge p-XL shadow-64">
+        <Card className="gap-2 rounded-xlarge p-5 shadow-64">
           <p className="text-subtitle1 font-semibold">{t("show.saveTitle")}</p>
           <p className="text-body1 text-foreground-2">{t("show.saveBody")}</p>
-          <div className="mt-S flex justify-end gap-S">
+          <div className="mt-2 flex justify-end gap-2">
             <Button>{t("show.discard")}</Button>
             <Button appearance="primary">{t("show.save")}</Button>
           </div>
@@ -173,7 +173,7 @@ export function HomeShowcase() {
   const current = SHOWCASE.find((s) => s.id === active) ?? SHOWCASE[0];
 
   return (
-    <div className="grid items-center gap-L lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-XXXL">
+    <div className="grid items-center gap-4 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-8">
       {/* Dưới lg: chip đổi nhóm (chạm không chuyển trang) + link riêng tới component. */}
       <ToggleGroup
         type="single"
@@ -190,7 +190,7 @@ export function HomeShowcase() {
         ))}
       </ToggleGroup>
 
-      <ul className="hidden flex-col gap-S lg:flex">
+      <ul className="hidden flex-col gap-2 lg:flex">
         {SHOWCASE.map((s) => {
           const on = s.id === active;
           return (
@@ -199,7 +199,7 @@ export function HomeShowcase() {
                 href={s.href}
                 onMouseEnter={() => setActive(s.id)}
                 onFocus={() => setActive(s.id)}
-                className="group/item relative inline-block rounded-large pb-S"
+                className="group/item relative inline-block rounded-large pb-2"
               >
                 <span className="font-display text-[clamp(44px,6.5vw,88px)] leading-[1.1] font-normal tracking-[-0.02em]">
                   {on ? (
@@ -235,7 +235,7 @@ export function HomeShowcase() {
 
       <a
         href={current.href}
-        className="inline-flex items-center gap-XS justify-self-start rounded-small text-body1 font-semibold text-brand-foreground-1 hover:underline lg:hidden"
+        className="inline-flex items-center gap-1 justify-self-start rounded-small text-body1 font-semibold text-brand-foreground-1 hover:underline lg:hidden"
       >
         {t("home.viewComponent")}
         <ArrowRight16Regular className="rtl:-scale-x-100" />

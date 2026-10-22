@@ -224,7 +224,7 @@ import "./index.css";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <YugenProvider applyToDocument withToaster theme="${o.theme}" brand="${o.brand}" dir="${o.dir}">
-      <main className="flex min-h-dvh flex-wrap content-center items-center justify-center gap-M bg-background-1 p-XXL">
+      <main className="flex min-h-dvh flex-wrap content-center items-center justify-center gap-3 bg-background-1 p-6">
         <App />
       </main>
     </YugenProvider>

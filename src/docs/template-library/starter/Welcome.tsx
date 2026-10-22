@@ -39,7 +39,7 @@ const BRANDS: { value: YugenBrand; label: string }[] = [
 ];
 
 function Code({ children }: { children: React.ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-[0.9em] text-foreground-1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-[0.9em] text-foreground-1">{children}</code>;
 }
 
 function Text({ parts }: { parts: Rich }) {
@@ -99,12 +99,12 @@ export function Welcome({ appearance, onAppearanceChange, content: t = defaultCo
   return (
     <div lang={t.lang} className={`@container isolate flex flex-col bg-background-1 text-foreground-1 ${embedded ? "h-full overflow-y-auto" : "min-h-dvh"}`}>
       <header className="sticky top-0 z-10 border-b border-stroke-2 bg-background-1/85 backdrop-blur">
-        <div className="mx-auto flex h-14 w-full max-w-5xl items-center gap-M px-L">
-          <span className="flex items-center gap-S font-display text-subtitle2 font-semibold text-foreground-1">
+        <div className="mx-auto flex h-14 w-full max-w-5xl items-center gap-3 px-4">
+          <span className="flex items-center gap-2 font-display text-subtitle2 font-semibold text-foreground-1">
             <Hanko />
             {t.appName}
           </span>
-          <nav aria-label={t.nav.label} className="ms-auto flex items-center gap-XS">
+          <nav aria-label={t.nav.label} className="ms-auto flex items-center gap-1">
             <Button asChild appearance="subtle" className="hidden @md:inline-flex">
               <a href={DOCS} target="_blank" rel="noreferrer">
                 {t.nav.docs}
@@ -123,15 +123,15 @@ export function Welcome({ appearance, onAppearanceChange, content: t = defaultCo
       <Main aria-label={embedded ? t.appName : undefined} className="flex-1">
         <section className="relative overflow-hidden border-b border-stroke-2 bg-hero-glow">
           <SakuraBloom className="pointer-events-none absolute -inset-e-24 -top-24 size-80 opacity-40 @4xl:opacity-60" />
-          <div className="relative mx-auto grid w-full max-w-5xl items-center gap-XXL px-L py-[clamp(40px,7cqi,96px)] @4xl:grid-cols-[minmax(0,1fr)_auto]">
-            <div className="flex flex-col items-start gap-L">
+          <div className="relative mx-auto grid w-full max-w-5xl items-center gap-6 px-4 py-[clamp(40px,7cqi,96px)] @4xl:grid-cols-[minmax(0,1fr)_auto]">
+            <div className="flex flex-col items-start gap-4">
               <Title className="font-display text-[clamp(36px,6cqi,64px)] leading-[1.05] font-semibold tracking-[-0.02em] text-balance text-foreground-1">
                 {t.hero.title}
               </Title>
               <p className="max-w-xl text-subtitle2 font-normal text-foreground-2">
                 <Text parts={t.hero.body} />
               </p>
-              <div className="flex flex-wrap gap-S">
+              <div className="flex flex-wrap gap-2">
                 <Button asChild appearance="primary" size="large" icon={<Open16Regular />} iconPosition="after">
                   <a href={DOCS} target="_blank" rel="noreferrer">
                     {t.hero.docs}
@@ -152,7 +152,7 @@ export function Welcome({ appearance, onAppearanceChange, content: t = defaultCo
               </div>
             </div>
             {/* Vertical 幽玄 (yūgen) with the seal: a calligraphy accent on wide screens. */}
-            <div aria-hidden className="hidden items-start gap-M @4xl:flex">
+            <div aria-hidden className="hidden items-start gap-3 @4xl:flex">
               <span lang="ja" className={`${JP} text-[clamp(88px,11cqi,152px)] leading-none font-bold text-foreground-1 [writing-mode:vertical-rl]`}>
                 幽玄
               </span>
@@ -163,13 +163,13 @@ export function Welcome({ appearance, onAppearanceChange, content: t = defaultCo
           </div>
         </section>
 
-        <section id="next-steps" aria-labelledby="next-steps-title" className="mx-auto w-full max-w-5xl scroll-mt-16 px-L py-XXXL">
+        <section id="next-steps" aria-labelledby="next-steps-title" className="mx-auto w-full max-w-5xl scroll-mt-16 px-4 py-8">
           <Section id="next-steps-title" className="font-display text-title2 font-semibold text-foreground-1">
             {t.steps.title}
           </Section>
-          <ol className="mt-XL grid gap-XL @3xl:grid-cols-3">
+          <ol className="mt-5 grid gap-5 @3xl:grid-cols-3">
             {t.steps.items.map((step, i) => (
-              <li key={step.title} className="flex flex-col gap-S border-t-2 border-brand-stroke pt-L">
+              <li key={step.title} className="flex flex-col gap-2 border-t-2 border-brand-stroke pt-4">
                 <span aria-hidden className="font-display text-title3 font-semibold text-brand-foreground-1 tabular-nums">
                   {i + 1}
                 </span>
@@ -183,20 +183,20 @@ export function Welcome({ appearance, onAppearanceChange, content: t = defaultCo
         </section>
 
         <section aria-labelledby="explore" className="border-t border-stroke-2 bg-background-2">
-          <div className="mx-auto w-full max-w-5xl px-L py-XXXL">
+          <div className="mx-auto w-full max-w-5xl px-4 py-8">
             <Section id="explore" className="font-display text-title2 font-semibold text-foreground-1">
               {t.links.title}
             </Section>
-            <ul className="mt-XL grid gap-L @xl:grid-cols-2 @4xl:grid-cols-4">
+            <ul className="mt-5 grid gap-4 @xl:grid-cols-2 @4xl:grid-cols-4">
               {t.links.items.map((link) => (
                 <li key={link.title}>
                   <a
                     href={`${DOCS}${link.path}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex h-full flex-col gap-XS rounded-xlarge border border-stroke-2 bg-background-1 p-L transition-shadow duration-faster hover:shadow-8"
+                    className="flex h-full flex-col gap-1 rounded-xlarge border border-stroke-2 bg-background-1 p-4 transition-shadow duration-faster hover:shadow-8"
                   >
-                    <span className="flex items-center gap-XS text-subtitle2 font-semibold text-foreground-1">
+                    <span className="flex items-center gap-1 text-subtitle2 font-semibold text-foreground-1">
                       {link.title}
                       <Open16Regular className="text-foreground-3" />
                     </span>
@@ -210,9 +210,9 @@ export function Welcome({ appearance, onAppearanceChange, content: t = defaultCo
       </Main>
 
       <footer className="border-t border-stroke-2 bg-background-2">
-        <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-M px-L py-XL text-caption1 text-foreground-3">
+        <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-5 text-caption1 text-foreground-3">
           <p>
-            <span lang="ja" className={`${JP} me-S text-body1 text-foreground-1`}>
+            <span lang="ja" className={`${JP} me-2 text-body1 text-foreground-1`}>
               幽玄
             </span>
             {t.footer.yugen}

@@ -63,11 +63,11 @@ const DANGER = "#c50f1f";
 
 function Check({ ok, warn, label, value }: { ok: boolean; warn?: boolean; label: string; value: string }) {
   return (
-    <li className="flex items-center justify-between gap-M border-t border-stroke-3 py-S first:border-t-0">
+    <li className="flex items-center justify-between gap-3 border-t border-stroke-3 py-2 first:border-t-0">
       <span className="text-body1">{label}</span>
       <span
         className={cn(
-          "inline-flex items-center gap-XS text-caption1 font-semibold tabular-nums",
+          "inline-flex items-center gap-1 text-caption1 font-semibold tabular-nums",
           ok ? "text-success-foreground-1" : warn ? "text-warning-foreground-1" : "text-danger-foreground-1",
         )}
       >
@@ -80,13 +80,13 @@ function Check({ ok, warn, label, value }: { ok: boolean; warn?: boolean; label:
 
 function Preview({ theme, style }: { theme: "light" | "dark"; style: React.CSSProperties }) {
   return (
-    <div data-theme={theme} data-brand="custom" style={style} className="flex flex-col gap-L rounded-2xlarge border border-stroke-2 bg-background-2 p-XL">
+    <div data-theme={theme} data-brand="custom" style={style} className="flex flex-col gap-4 rounded-2xlarge border border-stroke-2 bg-background-2 p-5">
       <div className="flex items-center justify-between">
         <span className="text-caption1 font-semibold tracking-wide text-foreground-3 uppercase">{theme === "light" ? "Light" : "Dark"}</span>
         <Badge appearance="tint">Mới</Badge>
       </div>
-      <Card className="gap-M">
-        <div className="flex items-center gap-S">
+      <Card className="gap-3">
+        <div className="flex items-center gap-2">
           <span className="inline-flex size-9 items-center justify-center rounded-circular bg-brand-background-2 text-brand-foreground-2">
             <Home20Regular />
           </span>
@@ -104,13 +104,13 @@ function Preview({ theme, style }: { theme: "light" | "dark"; style: React.CSSPr
           </TabsList>
         </Tabs>
         <Input placeholder="Click để thấy thanh brand" />
-        <div className="flex flex-wrap items-center gap-L">
+        <div className="flex flex-wrap items-center gap-4">
           <Checkbox label="Đã chọn" defaultChecked />
           <Switch label="Bật" defaultChecked />
         </div>
         <Slider aria-label="Mẫu slider" defaultValue={[60]} />
         <ProgressBar value={0.62} thickness="large" aria-label="Tiến độ" />
-        <div className="flex flex-wrap gap-S">
+        <div className="flex flex-wrap gap-2">
           <Button appearance="primary">Primary</Button>
           <Button>Secondary</Button>
           <Button appearance="subtle" icon={<Settings20Regular />} aria-label="Cài đặt" />
@@ -160,20 +160,20 @@ export function ThemeDesignerPage() {
   };
 
   return (
-    <div className="pb-XXXL">
+    <div className="pb-8">
       <PageHeader
         eyebrow="Công cụ"
         title="Theme Designer"
         lead="Tạo brand ramp 16 bậc từ một màu key — cùng thuật toán đã sinh ra Sakura. Xem trước trên component thật ở Light/Dark, kiểm tra tương phản rồi copy CSS vào tokens.css."
       />
 
-      <div className="grid gap-XXL xl:grid-cols-[minmax(0,360px)_minmax(0,1fr)]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,360px)_minmax(0,1fr)]">
         {/* ---------- Controls ---------- */}
-        <div className="flex flex-col gap-L xl:sticky xl:top-24 xl:self-start">
-          <Card size="large" className="gap-L rounded-2xlarge p-XL">
+        <div className="flex flex-col gap-4 xl:sticky xl:top-24 xl:self-start">
+          <Card size="large" className="gap-4 rounded-2xlarge p-5">
             <div>
-              <p className="mb-S text-body1 font-semibold">Màu key (brand80)</p>
-              <div className="flex items-end gap-S">
+              <p className="mb-2 text-body1 font-semibold">Màu key (brand80)</p>
+              <div className="flex items-end gap-2">
                 <label className="relative size-10 shrink-0 cursor-pointer overflow-hidden rounded-large border border-stroke-1" style={{ background: key }}>
                   <span className="sr-only">Chọn màu</span>
                   <input
@@ -195,7 +195,7 @@ export function ThemeDesignerPage() {
                   }}
                 />
               </div>
-              <div className="mt-M flex flex-wrap gap-S" role="radiogroup" aria-label="Màu có sẵn">
+              <div className="mt-3 flex flex-wrap gap-2" role="radiogroup" aria-label="Màu có sẵn">
                 {PRESETS.map((p) => (
                   <button
                     key={p.name}
@@ -225,7 +225,7 @@ export function ThemeDesignerPage() {
             <Switch label="Áp dụng thử cho toàn trang" checked={applyGlobally} onCheckedChange={setApplyGlobally} />
           </Card>
 
-          <Card size="large" className="gap-S rounded-2xlarge p-XL">
+          <Card size="large" className="gap-2 rounded-2xlarge p-5">
             <p className="text-body1 font-semibold">Kiểm tra</p>
             <ul>
               <Check ok={onWhite >= 4.5} label="Chữ trắng trên nút primary (light)" value={`${onWhite.toFixed(2)}:1`} />
@@ -257,7 +257,7 @@ export function ThemeDesignerPage() {
                   type="button"
                   title={`Copy ${hex}`}
                   onClick={() => navigator.clipboard.writeText(hex)}
-                  className="group/step flex h-28 flex-1 flex-col items-center justify-end gap-XXS pb-S"
+                  className="group/step flex h-28 flex-1 flex-col items-center justify-end gap-0.5 pb-2"
                   // Nhãn 10px: chữ trắng hoặc đen — bên nào tương phản cao hơn luôn ≥ 4.58:1 (ngưỡng 3:1 cũ để lọt bậc 90 ~3.7:1).
                   style={{ background: hex, color: contrastRatio(hex, "#ffffff") >= contrastRatio(hex, "#000000") ? "#ffffff" : "#000000" }}
                 >
@@ -269,7 +269,7 @@ export function ThemeDesignerPage() {
           </DocSection>
 
           <DocSection id="preview" title="Xem trước" description="Component thật dùng ramp vừa tạo — theme lồng nên không ảnh hưởng phần còn lại của trang.">
-            <div className="grid gap-L lg:grid-cols-2">
+            <div className="grid gap-4 lg:grid-cols-2">
               <Preview theme="light" style={style} />
               <Preview theme="dark" style={style} />
             </div>
@@ -280,9 +280,9 @@ export function ThemeDesignerPage() {
             title="Xuất token"
             description="CSS: dán vào src/styles/tokens.css (sau các block brand có sẵn), rồi đặt data-brand trên <html> hoặc YugenProvider. JSON: nhập vào Figma (Tokens Studio, Variables) hoặc Style Dictionary — kèm alias brand cho light / dark."
           >
-            <div className="flex flex-col gap-M">
+            <div className="flex flex-col gap-3">
               <CodeTabs files={exportFiles} maxHeight={360} />
-              <div className="flex flex-wrap justify-end gap-S">
+              <div className="flex flex-wrap justify-end gap-2">
                 {exportFiles.map((f) => (
                   <Button key={f.name} size="small" icon={<ArrowDownload20Regular />} onClick={() => download(f.name, f.code)}>
                     {f.name}

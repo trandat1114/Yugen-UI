@@ -37,9 +37,9 @@ Bài học rút ra: Radix Popover tự bắt Esc ở cấp document trước ô 
 
 | Sai | Đúng |
 |---|---|
-| `bg-[#c2347a]`, `p-[12px]`, `duration-[200ms]` | `bg-brand-background`, `p-M`, `duration-normal` |
-| `ml-2`, `left-0`, `text-left` | `ms-S`, `inset-s-0`, `text-start` |
-| `start-L`, `data-[disabled]:` | `inset-s-L`, `data-disabled:` (`npm run lint:classes -- --fix`) |
+| `bg-[#c2347a]`, `p-[12px]`, `duration-[200ms]` | `bg-brand-background`, `p-3`, `duration-normal` |
+| `ml-2`, `left-0`, `text-left` | `ms-2`, `inset-s-0`, `text-start` |
+| `start-4`, `data-[disabled]:`, `p-M` | `inset-s-4`, `data-disabled:`, `p-3` (`npm run lint:classes -- --fix`) |
 | `outline-none` không thay thế | giữ focus ring `focus-visible:outline-stroke-focus` |
 | Icon chỉ hướng không lật | `rtl:-scale-x-100` |
 | Đọc `Date.now()` / `window` / `matchMedia` khi render | effect, hoặc `useSyncExternalStore` + server snapshot |

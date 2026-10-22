@@ -60,7 +60,7 @@ export const PAGES: PageDef[] = [
     content: (
       <>
         <StatsBlock />
-        <div className="grid items-start gap-L @3xl:grid-cols-2">
+        <div className="grid items-start gap-4 @3xl:grid-cols-2">
           <TransactionsBlock />
           <SavingsBlock />
         </div>
@@ -137,7 +137,7 @@ export const PAGES: PageDef[] = [
     icon: <Payment20Regular />,
     section: "manage",
     content: (
-      <div className="grid items-start gap-L @3xl:grid-cols-2">
+      <div className="grid items-start gap-4 @3xl:grid-cols-2">
         <PayoutBlock />
         <TransactionsBlock />
       </div>
@@ -151,7 +151,7 @@ export const PAGES: PageDef[] = [
     icon: <Settings20Regular />,
     section: "manage",
     content: (
-      <div className="grid items-start gap-L @3xl:grid-cols-2">
+      <div className="grid items-start gap-4 @3xl:grid-cols-2">
         <PreferencesBlock />
         <FeedbackBlock />
       </div>

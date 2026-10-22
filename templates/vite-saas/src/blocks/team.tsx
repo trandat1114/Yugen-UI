@@ -29,13 +29,13 @@ export default function TeamBlock() {
     setMembers((list) => list.map((m) => (m.email === email ? { ...m, role } : m)));
 
   return (
-    <Card size="large" className="gap-L rounded-xlarge p-XL">
+    <Card size="large" className="gap-4 rounded-xlarge p-5">
       <div>
         <h3 className="text-subtitle1 font-semibold">Thành viên nhóm</h3>
-        <p className="mt-XXS text-body1 text-foreground-3">Mời đồng đội và chọn quyền truy cập.</p>
+        <p className="mt-0.5 text-body1 text-foreground-3">Mời đồng đội và chọn quyền truy cập.</p>
       </div>
 
-      <div className="flex gap-S">
+      <div className="flex gap-2">
         <Input aria-label="Email" placeholder="email@congty.vn" rootClassName="flex-1" />
         <Button appearance="primary" icon={<PersonAdd20Regular />}>
           Mời
@@ -44,7 +44,7 @@ export default function TeamBlock() {
 
       <ul className="flex flex-col">
         {members.map((m) => (
-          <li key={m.email} className="flex items-center gap-M border-t border-stroke-3 py-S first:border-t-0">
+          <li key={m.email} className="flex items-center gap-3 border-t border-stroke-3 py-2 first:border-t-0">
             <Avatar name={m.name} color="colorful" presence={m.presence} />
             <div className="min-w-0 flex-1">
               <p className="truncate text-body1 font-semibold">{m.name}</p>

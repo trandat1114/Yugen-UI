@@ -14,9 +14,9 @@ const cardVariants = cva(
         subtle: "bg-transparent border-transparent",
       },
       size: {
-        small: "gap-S p-S",
-        medium: "gap-M p-M",
-        large: "gap-L p-L",
+        small: "gap-2 p-2",
+        medium: "gap-3 p-3",
+        large: "gap-4 p-4",
       },
       interactive: {
         true: "cursor-pointer",
@@ -51,7 +51,7 @@ export interface CardHeaderProps extends Omit<React.HTMLAttributes<HTMLDivElemen
 
 export function CardHeader({ image, header, description, action, className, ...props }: CardHeaderProps) {
   return (
-    <div className={cn("flex items-center gap-M", className)} {...props}>
+    <div className={cn("flex items-center gap-3", className)} {...props}>
       {image && <div className="shrink-0">{image}</div>}
       <div className="min-w-0 flex-1">
         <div className="text-body1 font-semibold text-foreground-1">{header}</div>
@@ -63,7 +63,7 @@ export function CardHeader({ image, header, description, action, className, ...p
 }
 
 export function CardPreview({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("-mx-M overflow-hidden [&>img]:block [&>img]:w-full", className)} {...props} />;
+  return <div className={cn("-mx-3 overflow-hidden [&>img]:block [&>img]:w-full", className)} {...props} />;
 }
 
 export function CardContent({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
@@ -71,5 +71,5 @@ export function CardContent({ className, ...props }: React.HTMLAttributes<HTMLDi
 }
 
 export function CardFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("flex items-center gap-S", className)} {...props} />;
+  return <div className={cn("flex items-center gap-2", className)} {...props} />;
 }

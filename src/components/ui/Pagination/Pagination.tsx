@@ -31,8 +31,8 @@ function getPageRange(page: number, pageCount: number, siblingCount: number): Pa
 }
 
 const SIZE: Record<PaginationSize, { item: string; nav: string }> = {
-  small: { item: "h-6 min-w-6 rounded-small px-XS text-caption1", nav: "h-6 gap-XXS rounded-small px-XS text-caption1 [&_svg]:size-4" },
-  medium: { item: "h-8 min-w-8 rounded-medium px-XS text-body1", nav: "h-8 gap-XS rounded-medium px-S text-body1 [&_svg]:size-5" },
+  small: { item: "h-6 min-w-6 rounded-small px-1 text-caption1", nav: "h-6 gap-0.5 rounded-small px-1 text-caption1 [&_svg]:size-4" },
+  medium: { item: "h-8 min-w-8 rounded-medium px-1 text-body1", nav: "h-8 gap-1 rounded-medium px-2 text-body1 [&_svg]:size-5" },
 };
 
 const interactive = cn(
@@ -90,7 +90,7 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
 
     return (
       <nav ref={ref} aria-label={ariaLabel} className={cn("flex", className)} {...props}>
-        <ul className="flex flex-wrap items-center gap-XS">
+        <ul className="flex flex-wrap items-center gap-1">
           <li>
             <button
               type="button"

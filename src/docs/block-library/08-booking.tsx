@@ -10,18 +10,18 @@ export default function BookingBlock() {
   const [slot, setSlot] = useState("10:30");
 
   return (
-    <Card size="large" className="gap-L rounded-xlarge p-XL">
+    <Card size="large" className="gap-4 rounded-xlarge p-5">
       <div>
         <h3 className="text-subtitle1 font-semibold">Đặt lịch tư vấn</h3>
-        <p className="mt-XXS text-body1 text-foreground-3">Chọn ngày và khung giờ phù hợp (30 phút).</p>
+        <p className="mt-0.5 text-body1 text-foreground-3">Chọn ngày và khung giờ phù hợp (30 phút).</p>
       </div>
 
-      <div className="flex justify-center rounded-large border border-stroke-2 p-S">
+      <div className="flex justify-center rounded-large border border-stroke-2 p-2">
         <Calendar mode="single" selected={date} onSelect={setDate} disabled={{ before: new Date() }} />
       </div>
 
       <div>
-        <p className="mb-S text-body1 font-semibold">Khung giờ</p>
+        <p className="mb-2 text-body1 font-semibold">Khung giờ</p>
         <ToggleGroup
           type="single"
           value={slot}

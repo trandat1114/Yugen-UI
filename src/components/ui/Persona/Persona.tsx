@@ -41,12 +41,12 @@ const PRESENCE_LABEL: Record<PersonaPresence, string> = {
 };
 
 const GAP: Record<PersonaSize, string> = {
-  "extra-small": "gap-SNudge",
-  small: "gap-S",
-  medium: "gap-S",
-  large: "gap-S",
-  "extra-large": "gap-M",
-  huge: "gap-M",
+  "extra-small": "gap-1.5",
+  small: "gap-2",
+  medium: "gap-2",
+  large: "gap-2",
+  "extra-large": "gap-3",
+  huge: "gap-3",
 };
 
 /** Chiều cao một dòng primaryText (khớp line-height của type ramp). */

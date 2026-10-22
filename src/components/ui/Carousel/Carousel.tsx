@@ -64,11 +64,11 @@ function inlineOffset(track: HTMLElement, slide: HTMLElement, rtl: boolean) {
 
 const GAP_CLASS: Record<CarouselGap, string> = {
   none: "gap-0",
-  XS: "gap-XS",
-  S: "gap-S",
-  M: "gap-M",
-  L: "gap-L",
-  XL: "gap-XL",
+  XS: "gap-1",
+  S: "gap-2",
+  M: "gap-3",
+  L: "gap-4",
+  XL: "gap-5",
 };
 const GAP_VALUE: Record<CarouselGap, string> = {
   none: "0px",
@@ -350,7 +350,7 @@ export const Carousel = React.forwardRef<HTMLElement, CarouselProps>(
         <section
           ref={ref}
           aria-roledescription="carousel"
-          className={cn("relative flex min-w-0 flex-col gap-M", className)}
+          className={cn("relative flex min-w-0 flex-col gap-3", className)}
           onKeyDown={handleKeyDown}
           {...props}
         >
@@ -522,7 +522,7 @@ export function CarouselNavContainer({
   };
 
   return (
-    <div className={cn("flex items-center justify-center gap-S", className)} {...props}>
+    <div className={cn("flex items-center justify-center gap-2", className)} {...props}>
       {showAutoplay && (
         <Button
           appearance="subtle"
@@ -557,7 +557,7 @@ export function CarouselNavContainer({
               aria-label={`Slide ${i + 1} / ${ctx.count}`}
               tabIndex={active ? 0 : -1}
               onClick={() => ctx.goTo(i)}
-              className="group/dot flex h-6 cursor-pointer items-center justify-center rounded-circular px-XS"
+              className="group/dot flex h-6 cursor-pointer items-center justify-center rounded-circular px-1"
             >
               <span
                 className={cn(
@@ -624,7 +624,7 @@ export const CarouselThumbnails = React.forwardRef<HTMLDivElement, CarouselThumb
         }}
         role="tablist"
         aria-label={ariaLabel}
-        className={cn("flex gap-S overflow-x-auto p-XXS scrollbar-none [&::-webkit-scrollbar]:hidden", className)}
+        className={cn("flex gap-2 overflow-x-auto p-0.5 scrollbar-none [&::-webkit-scrollbar]:hidden", className)}
         onKeyDown={(event) => {
           onKeyDown?.(event);
           if (event.defaultPrevented) return;

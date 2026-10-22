@@ -28,9 +28,9 @@ const tagVariants = cva(
         brand: "border-transparent bg-brand-background-2 text-brand-foreground-2",
       },
       size: {
-        medium: "h-8 ps-SNudge pe-SNudge text-body1 [&_svg]:size-5",
-        small: "h-6 ps-XS pe-XS text-caption1 [&_svg]:size-4",
-        "extra-small": "h-5 ps-XS pe-XS text-caption1 [&_svg]:size-3",
+        medium: "h-8 ps-1.5 pe-1.5 text-body1 [&_svg]:size-5",
+        small: "h-6 ps-1 pe-1 text-caption1 [&_svg]:size-4",
+        "extra-small": "h-5 ps-1 pe-1 text-caption1 [&_svg]:size-3",
       },
       shape: {
         rounded: "rounded-medium",
@@ -54,8 +54,8 @@ const INTERACTIVE = {
 } as const;
 
 const DISMISS_ICON = { medium: Dismiss20Regular, small: Dismiss16Regular, "extra-small": Dismiss12Regular } as const;
-const MEDIA_PADDING = { medium: "ps-XS", small: "ps-XXS", "extra-small": "ps-XXS" } as const;
-const DISMISS_PADDING = { medium: "pe-XS", small: "pe-XXS", "extra-small": "pe-XXS" } as const;
+const MEDIA_PADDING = { medium: "ps-1", small: "ps-0.5", "extra-small": "ps-0.5" } as const;
+const DISMISS_PADDING = { medium: "pe-1", small: "pe-0.5", "extra-small": "pe-0.5" } as const;
 
 interface TagVisualProps {
   appearance?: TagAppearance;
@@ -81,14 +81,14 @@ function TagContent({
   return (
     <>
       {media && <span className="flex shrink-0 items-center">{media}</span>}
-      {icon && <span className="flex shrink-0 items-center ps-XXS">{icon}</span>}
+      {icon && <span className="flex shrink-0 items-center ps-0.5">{icon}</span>}
       {secondaryText ? (
-        <span className="flex min-w-0 flex-col px-XXS text-start">
+        <span className="flex min-w-0 flex-col px-0.5 text-start">
           <span className="truncate text-caption1">{children}</span>
           <span className="truncate text-caption2">{secondaryText}</span>
         </span>
       ) : (
-        <span className="min-w-0 truncate px-XXS">{children}</span>
+        <span className="min-w-0 truncate px-0.5">{children}</span>
       )}
     </>
   );
@@ -247,7 +247,7 @@ export const InteractionTag = React.forwardRef<HTMLButtonElement, InteractionTag
             "cursor-pointer transition-colors duration-faster ease-easy-ease disabled:cursor-not-allowed",
             INTERACTIVE[appearance],
             media && MEDIA_PADDING[size],
-            dismissible && "rounded-e-none border-e-0 pe-XXS",
+            dismissible && "rounded-e-none border-e-0 pe-0.5",
           )}
           {...props}
         >
@@ -269,7 +269,7 @@ export const InteractionTag = React.forwardRef<HTMLButtonElement, InteractionTag
               "cursor-pointer rounded-s-none border-s-0 transition-colors duration-faster ease-easy-ease disabled:cursor-not-allowed",
               INTERACTIVE[appearance],
               DISMISS_PADDING[size],
-              "ps-XXS",
+              "ps-0.5",
             )}
           >
             <DismissIcon />
@@ -283,7 +283,7 @@ InteractionTag.displayName = "InteractionTag";
 
 /* ------------------------------------------------------------- TagGroup */
 
-const GROUP_GAP = { medium: "gap-S", small: "gap-SNudge", "extra-small": "gap-XS" } as const;
+const GROUP_GAP = { medium: "gap-2", small: "gap-1.5", "extra-small": "gap-1" } as const;
 
 export interface TagGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   size?: TagSize;

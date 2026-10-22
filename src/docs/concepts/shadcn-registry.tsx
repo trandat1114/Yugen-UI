@@ -10,7 +10,7 @@ function P({ children }: { children: ReactNode }) {
 }
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function A({ href, children }: { href: string; children: ReactNode }) {
@@ -54,7 +54,7 @@ export default function Page() {
   return (
     <>
       <DocSection id="choose" title="npm hay chép mã nguồn">
-        <div className="flex flex-col gap-M">
+        <div className="flex flex-col gap-3">
           <P>
             <strong className="font-semibold text-foreground-1">Gói npm</strong> (<C>npm install yugen-ui</C>) hợp khi bạn muốn nâng cấp
             bằng một lệnh và ít sửa component. <strong className="font-semibold text-foreground-1">shadcn CLI</strong> chép mã nguồn vào dự
@@ -73,19 +73,19 @@ export default function Page() {
         title="Khởi tạo — một lần cho mỗi dự án"
         description="Dự án React có Tailwind CSS v4. Một lệnh tạo components.json (nếu chưa có), chép theme + cn() + YugenProvider, cài gói npm và tự thêm @import vào file CSS chính."
       >
-        <div className="flex flex-col gap-L">
-          <Tabs defaultValue="vite" className="flex flex-col gap-S">
+        <div className="flex flex-col gap-4">
+          <Tabs defaultValue="vite" className="flex flex-col gap-2">
             <TabsList aria-label="Framework">
               <TabsTrigger value="vite">Vite · TanStack Start</TabsTrigger>
               <TabsTrigger value="next">Next.js · React Router</TabsTrigger>
             </TabsList>
-            <TabsContent value="vite" className="flex flex-col gap-S">
+            <TabsContent value="vite" className="flex flex-col gap-2">
               <PackageManagerTabs packages={SHADCN_INIT} command="dlx" />
               <P>
                 Theme nằm ở <C>src/styles/yugen.css</C>, import vào <C>src/index.css</C>.
               </P>
             </TabsContent>
-            <TabsContent value="next" className="flex flex-col gap-S">
+            <TabsContent value="next" className="flex flex-col gap-2">
               <PackageManagerTabs packages={SHADCN_INIT_NEXT} command="dlx" />
               <P>
                 Theme nằm cạnh file CSS chính (<C>app/yugen.css</C> hoặc <C>src/app/yugen.css</C>), import vào <C>globals.css</C>.
@@ -105,7 +105,7 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="add" title="Thêm component" description="CLI tải item, chép file, kéo theo component phụ thuộc và cài gói npm còn thiếu.">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <PackageManagerTabs packages={SHADCN_ADD} command="dlx" />
           <P>Kết quả sau init + add (thư mục giữ nguyên cấu trúc của Yugen để import tương đối giữa các component vẫn chạy):</P>
           <CodeBlock code={RESULT} />
@@ -121,7 +121,7 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="namespace" title="Registry có tên @yugen" description="Gõ ngắn hơn khi thêm nhiều component (tuỳ chọn).">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <P>
             Thêm khối <C>registries</C> vào <C>components.json</C>:
           </P>
@@ -131,7 +131,7 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="existing" title="Dự án đã dùng shadcn/ui">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <P>
             Không cần chạy lại <C>init</C> — thêm item theme cùng component đầu tiên (Next.js dùng <C>theme-next.json</C>):
           </P>
@@ -152,7 +152,7 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="notes" title="Lưu ý">
-        <div className="flex max-w-3xl flex-col gap-M">
+        <div className="flex max-w-3xl flex-col gap-3">
           <MessageBar intent="info" title="cn() riêng của Yugen.">
             Component import <C>cn</C> từ <C>@/lib/cn</C> (đã dạy scale Yugen cho tailwind-merge), không dùng <C>@/lib/utils</C> của
             shadcn.

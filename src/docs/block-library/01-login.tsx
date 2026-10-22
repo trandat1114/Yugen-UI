@@ -5,13 +5,13 @@ export const meta = { title: "Đăng nhập", description: "Form đăng nhập v
 
 export default function LoginBlock() {
   return (
-    <Card size="large" className="mx-auto w-full max-w-sm gap-L rounded-xlarge p-XXL">
+    <Card size="large" className="mx-auto w-full max-w-sm gap-4 rounded-xlarge p-6">
       <div>
         <h3 className="font-display text-title3 font-semibold">Chào mừng trở lại</h3>
-        <p className="mt-XS text-body1 text-foreground-3">Đăng nhập để tiếp tục làm việc với nhóm của bạn.</p>
+        <p className="mt-1 text-body1 text-foreground-3">Đăng nhập để tiếp tục làm việc với nhóm của bạn.</p>
       </div>
 
-      <form className="flex flex-col gap-M" onSubmit={(e) => e.preventDefault()}>
+      <form className="flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}>
         <Input label="Email" type="email" autoComplete="email" placeholder="ten@congty.vn" contentBefore={<Mail20Regular />} required />
         <Input
           label="Mật khẩu"
@@ -32,7 +32,7 @@ export default function LoginBlock() {
         </Button>
       </form>
 
-      <div className="flex items-center gap-M text-caption1 text-foreground-3">
+      <div className="flex items-center gap-3 text-caption1 text-foreground-3">
         <span className="h-px flex-1 bg-stroke-2" />
         hoặc
         <span className="h-px flex-1 bg-stroke-2" />

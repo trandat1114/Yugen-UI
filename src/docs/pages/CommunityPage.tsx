@@ -376,15 +376,15 @@ function Roadmap({ copy }: { copy: Copy }) {
   const { locale } = useLocale();
   const lang = locale === "en" ? "en" : "vi";
   return (
-    <div className="grid items-start gap-L lg:grid-cols-3">
+    <div className="grid items-start gap-4 lg:grid-cols-3">
       {(Object.keys(ROADMAP) as RoadmapStage[]).map((stage) => (
-        <section key={stage} aria-labelledby={`roadmap-${stage}`} className="flex flex-col gap-M rounded-2xlarge border border-stroke-2 bg-background-2 p-L">
+        <section key={stage} aria-labelledby={`roadmap-${stage}`} className="flex flex-col gap-3 rounded-2xlarge border border-stroke-2 bg-background-2 p-4">
           <h3 id={`roadmap-${stage}`} className="text-subtitle2 font-semibold">
             {STAGE_LABEL[stage][lang]}
           </h3>
           {ROADMAP[stage].map((release) => (
-            <article key={release.milestone} className="flex flex-col gap-S rounded-large border border-stroke-2 bg-background-1 p-M shadow-2">
-              <div className="flex flex-wrap items-baseline justify-between gap-x-M gap-y-XXS">
+            <article key={release.milestone} className="flex flex-col gap-2 rounded-large border border-stroke-2 bg-background-1 p-3 shadow-2">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
                 <h4 className="text-body1 font-semibold text-foreground-1">{releaseTitle(release, lang)}</h4>
                 {release.due && (
                   <time dateTime={release.due} className="text-caption1 text-foreground-3">
@@ -393,10 +393,10 @@ function Roadmap({ copy }: { copy: Copy }) {
                 )}
               </div>
               <p className="text-caption1 text-foreground-2">{release[lang]}</p>
-              <ul className="flex flex-col gap-XS">
+              <ul className="flex flex-col gap-1">
                 {release.items.map((item) => (
-                  <li key={item[lang]} className="flex items-start gap-S text-caption1 text-foreground-1">
-                    <Badge size="small" className="mt-XXS shrink-0" {...STATUS_BADGE[item.status]}>
+                  <li key={item[lang]} className="flex items-start gap-2 text-caption1 text-foreground-1">
+                    <Badge size="small" className="mt-0.5 shrink-0" {...STATUS_BADGE[item.status]}>
                       {STATUS_LABEL[item.status][lang]}
                     </Badge>
                     <span>
@@ -426,22 +426,22 @@ export function CommunityPage() {
   const c = locale === "en" ? EN : VI;
 
   return (
-    <div className="pb-XXXL">
+    <div className="pb-8">
       <PageHeader eyebrow={c.eyebrow} title={c.title} lead={c.lead} />
 
       <DocSection id="ways" title={c.waysTitle}>
-        <div className="grid gap-L sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {c.ways.map(({ title, text, action }, i) => {
             const Icon = WAY_ICONS[i];
             const link = WAY_LINKS[i];
             return (
-              <Card key={title} size="large" className="gap-M rounded-2xlarge">
+              <Card key={title} size="large" className="gap-3 rounded-2xlarge">
                 <span className="inline-flex size-10 items-center justify-center rounded-xlarge bg-brand-background-2 text-brand-foreground-2">
                   <Icon />
                 </span>
                 <div className="flex-1">
                   <p className="text-subtitle2 font-semibold">{title}</p>
-                  <p className="mt-XS text-body1 text-foreground-2">{text}</p>
+                  <p className="mt-1 text-body1 text-foreground-2">{text}</p>
                 </div>
                 <div>
                   {link ? (
@@ -461,22 +461,22 @@ export function CommunityPage() {
       </DocSection>
 
       <DocSection id="how" title={c.howTitle} description={c.howDesc}>
-        <div className="grid gap-L sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           {c.how.map(({ title, text, action }, i) => {
             const Icon = HOW_ICONS[i];
             return (
-              <div key={title} className="flex gap-M rounded-2xlarge border border-stroke-2 bg-background-1 p-L">
+              <div key={title} className="flex gap-3 rounded-2xlarge border border-stroke-2 bg-background-1 p-4">
                 <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xlarge bg-background-3 text-foreground-2">
                   <Icon />
                 </span>
-                <div className="flex min-w-0 flex-1 flex-col gap-XS">
+                <div className="flex min-w-0 flex-1 flex-col gap-1">
                   <p className="text-subtitle2 font-semibold">{title}</p>
                   <p className="text-body1 text-foreground-2">{text}</p>
                   <a
                     href={HOW_LINKS[i]}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-XXS self-start text-body1 text-link hover:text-link-hover hover:underline"
+                    className="inline-flex items-center gap-0.5 self-start text-body1 text-link hover:text-link-hover hover:underline"
                   >
                     {action} <ArrowRight16Regular className="rtl:-scale-x-100" />
                   </a>
@@ -489,7 +489,7 @@ export function CommunityPage() {
 
       <DocSection id="start" title={c.startTitle} description={c.startDesc}>
         <CodeBlock code={c.startCode} />
-        <ul className="mt-L flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+        <ul className="mt-4 flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
           <li>
             {c.startComponent[0]} <code className="font-mono text-caption1">src/components/ui/&lt;Name&gt;</code> {c.startComponent[1]}{" "}
             <code className="font-mono text-caption1">src/docs/registry</code>.
@@ -503,7 +503,7 @@ export function CommunityPage() {
 
       <DocSection id="roadmap" title={c.roadmapTitle} description={c.roadmapDesc(formatDate(ROADMAP_UPDATED, locale))}>
         <Roadmap copy={c} />
-        <p className="mt-L text-body1 text-foreground-3">
+        <p className="mt-4 text-body1 text-foreground-3">
           {c.roadmapShipped}{" "}
           <a href="#/news" className="text-link underline hover:text-link-hover">
             {c.roadmapNews}
@@ -537,10 +537,10 @@ export function CommunityPage() {
       </DocSection>
 
       <DocSection id="conduct" title={c.conductTitle} description={c.conductDesc}>
-        <ul className="grid max-w-4xl gap-S sm:grid-cols-2">
+        <ul className="grid max-w-4xl gap-2 sm:grid-cols-2">
           {c.conduct.map((rule) => (
-            <li key={rule} className="flex items-start gap-S rounded-large bg-background-2 p-M text-body1">
-              <HeartPulse20Regular className="mt-XXS shrink-0 text-brand-foreground-1" />
+            <li key={rule} className="flex items-start gap-2 rounded-large bg-background-2 p-3 text-body1">
+              <HeartPulse20Regular className="mt-0.5 shrink-0 text-brand-foreground-1" />
               {rule}
             </li>
           ))}
@@ -548,7 +548,7 @@ export function CommunityPage() {
       </DocSection>
 
       <DocSection id="people" title={c.peopleTitle}>
-        <div className="flex flex-wrap items-center gap-XXL">
+        <div className="flex flex-wrap items-center gap-6">
           <Persona
             name={SITE.author}
             primaryText={<AuthorLink className="text-foreground-1" />}
@@ -582,7 +582,7 @@ export function CommunityPage() {
       </DocSection>
 
       <DocSection id="credits" title={c.creditsTitle}>
-        <ul className="grid max-w-4xl gap-S text-body1 text-foreground-2 sm:grid-cols-2">
+        <ul className="grid max-w-4xl gap-2 text-body1 text-foreground-2 sm:grid-cols-2">
           {c.credits.map((line) => (
             <li key={line}>{line}</li>
           ))}

@@ -88,7 +88,7 @@ export const SwatchPicker = React.forwardRef<HTMLDivElement, SwatchPickerProps>(
           ref={setRef}
           role="radiogroup"
           data-focus-scope={nav["data-focus-scope"]}
-          className={cn(grid ? "inline-grid" : "flex flex-wrap", spacing === "small" ? "gap-XXS" : "gap-XS", className)}
+          className={cn(grid ? "inline-grid" : "flex flex-wrap", spacing === "small" ? "gap-0.5" : "gap-1", className)}
           style={grid ? { gridTemplateColumns: `repeat(${columnCount}, max-content)`, ...style } : style}
           onKeyDown={(event) => {
             onKeyDown?.(event);

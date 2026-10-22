@@ -24,7 +24,7 @@ function P({ children }: { children: ReactNode }) {
 }
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
@@ -34,7 +34,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
             {head.map((h) => (
-              <th key={h} className="px-L py-S text-start">
+              <th key={h} className="px-4 py-2 text-start">
                 {h}
               </th>
             ))}
@@ -44,7 +44,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
           {rows.map((row, i) => (
             <tr key={i} className="border-b border-stroke-3 align-top last:border-b-0">
               {row.map((cell, j) => (
-                <td key={j} className={j === 0 ? "px-L py-M font-semibold whitespace-nowrap text-foreground-1" : "px-L py-M text-foreground-2"}>
+                <td key={j} className={j === 0 ? "px-4 py-3 font-semibold whitespace-nowrap text-foreground-1" : "px-4 py-3 text-foreground-2"}>
                   {cell}
                 </td>
               ))}
@@ -60,7 +60,7 @@ function Stage({ children, className }: { children: ReactNode; className?: strin
   return (
     <div
       className={cn(
-        "flex flex-wrap items-start justify-center gap-L rounded-2xlarge border border-stroke-2 bg-background-2 p-XL",
+        "flex flex-wrap items-start justify-center gap-4 rounded-2xlarge border border-stroke-2 bg-background-2 p-5",
         className,
       )}
     >
@@ -71,7 +71,7 @@ function Stage({ children, className }: { children: ReactNode; className?: strin
 
 function Tile({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <div className="flex min-w-0 flex-1 basis-56 flex-col gap-M rounded-xlarge border border-stroke-2 bg-background-1 p-L">
+    <div className="flex min-w-0 flex-1 basis-56 flex-col gap-3 rounded-xlarge border border-stroke-2 bg-background-1 p-4">
       <span className="text-caption1 font-semibold text-foreground-3">{title}</span>
       {children}
     </div>
@@ -171,7 +171,7 @@ function ThresholdDemo() {
       );
     if (tier === "background")
       waiting = (
-        <p className="flex items-center gap-S text-body1 text-foreground-2">
+        <p className="flex items-center gap-2 text-body1 text-foreground-2">
           <Spinner size="extra-tiny" aria-hidden />
           Đang chạy nền — bạn có thể rời trang này.
         </p>
@@ -179,15 +179,15 @@ function ThresholdDemo() {
   }
 
   return (
-    <div className="flex w-full max-w-lg flex-col gap-M">
-      <div className="flex flex-wrap items-center gap-S">
+    <div className="flex w-full max-w-lg flex-col gap-3">
+      <div className="flex flex-wrap items-center gap-2">
         <Choice label="Thời gian phản hồi" value={scenario} options={SCENARIOS} onChange={setScenario} />
       </div>
-      <div className="flex flex-col gap-M rounded-xlarge border border-stroke-2 bg-background-1 p-L">
+      <div className="flex flex-col gap-3 rounded-xlarge border border-stroke-2 bg-background-1 p-4">
         <Button appearance="primary" className="self-start" loading={tier === "subtle" && delayed} onClick={run}>
           Tạo báo cáo
         </Button>
-        <div className="flex min-h-16 flex-col justify-center gap-S">
+        <div className="flex min-h-16 flex-col justify-center gap-2">
           {waiting}
           <p role="status" className="text-body1 text-foreground-1">
             {!running && result}
@@ -257,17 +257,17 @@ function DelayCompareDemo() {
   ];
 
   return (
-    <div className="flex w-full max-w-xl flex-col gap-L">
-      <div className="flex flex-wrap items-center justify-between gap-S">
+    <div className="flex w-full max-w-xl flex-col gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <Choice label="Thời gian phản hồi" value={duration} options={DURATIONS} onChange={setDuration} />
         <Button appearance="primary" onClick={start}>
           Tải dữ liệu
         </Button>
       </div>
 
-      <div className="grid gap-M sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-2">
         {panels.map((panel) => (
-          <div key={panel.title} className="flex flex-col gap-S rounded-xlarge border border-stroke-2 bg-background-1 p-L">
+          <div key={panel.title} className="flex flex-col gap-2 rounded-xlarge border border-stroke-2 bg-background-1 p-4">
             <span className="text-caption1 font-semibold text-foreground-3">{panel.title}</span>
             <div className="flex h-16 items-center">
               {panel.busy ? (
@@ -289,9 +289,9 @@ function DelayCompareDemo() {
         ))}
       </div>
 
-      <div className="flex flex-col gap-S" aria-hidden>
+      <div className="flex flex-col gap-2" aria-hidden>
         {rows.map((row) => (
-          <div key={row.label} className="grid grid-cols-[7rem_minmax(0,1fr)] items-center gap-S">
+          <div key={row.label} className="grid grid-cols-[7rem_minmax(0,1fr)] items-center gap-2">
             <span className="text-caption1 text-foreground-3">{row.label}</span>
             <div className="relative h-2 rounded-circular bg-background-3">
               {row.to > row.from && (
@@ -303,7 +303,7 @@ function DelayCompareDemo() {
             </div>
           </div>
         ))}
-        <div className="grid grid-cols-[7rem_minmax(0,1fr)] gap-S">
+        <div className="grid grid-cols-[7rem_minmax(0,1fr)] gap-2">
           <span />
           <div className="flex justify-between text-caption2 text-foreground-4 tabular-nums">
             <span>0</span>
@@ -342,9 +342,9 @@ function FidelityCompare() {
   return (
     <Stage>
       <Tile title="Nội dung thật">
-        <ul className="flex flex-col gap-L">
+        <ul className="flex flex-col gap-4">
           {PEOPLE.map((p) => (
-            <li key={p.name} className="flex items-center gap-M">
+            <li key={p.name} className="flex items-center gap-3">
               <Avatar name={p.name} size={40} color="colorful" />
               <div className="flex flex-col">
                 <span className="text-body1 font-semibold text-foreground-1">{p.name}</span>
@@ -358,7 +358,7 @@ function FidelityCompare() {
         <SkeletonList rows={3} />
       </Tile>
       <Tile title="Không nên — khối chung chung">
-        <Skeleton className="gap-M">
+        <Skeleton className="gap-3">
           <SkeletonItem size={64} />
           <SkeletonItem size={64} className="w-4/5" />
         </Skeleton>
@@ -390,11 +390,11 @@ function StarDemo() {
     );
 
   return (
-    <div className="flex w-full max-w-sm flex-col gap-M">
+    <div className="flex w-full max-w-sm flex-col gap-3">
       <Switch label="Giả lập lỗi mạng" checked={fail} onCheckedChange={setFail} />
       <ul className="flex flex-col rounded-xlarge border border-stroke-2 bg-background-1">
         {items.map((p) => (
-          <li key={p.id} className="flex items-center justify-between gap-S border-b border-stroke-2 py-XS ps-L pe-S last:border-b-0">
+          <li key={p.id} className="flex items-center justify-between gap-2 border-b border-stroke-2 py-1 ps-4 pe-2 last:border-b-0">
             <span className="text-body1 text-foreground-1">{p.title}</span>
             <Button
               appearance="subtle"
@@ -482,10 +482,10 @@ function CancelDemo() {
   };
 
   return (
-    <div className="flex w-full max-w-md flex-col gap-M rounded-xlarge border border-stroke-2 bg-background-1 p-L">
+    <div className="flex w-full max-w-md flex-col gap-3 rounded-xlarge border border-stroke-2 bg-background-1 p-4">
       <Switch label="Giới hạn thời gian chờ 3 giây" checked={limit} onCheckedChange={setLimit} disabled={state === "running"} />
       <ProgressBar value={state === "running" || state === "done" ? progress : 0} label="Xuất dữ liệu" description={message[state]} />
-      <div className="flex gap-S">
+      <div className="flex gap-2">
         {state === "running" ? (
           <Button onClick={() => controller.current?.abort(new DOMException("Người dùng huỷ", "AbortError"))}>Huỷ</Button>
         ) : (
@@ -533,7 +533,7 @@ function RetryOnceDemo() {
 
   if (status === "success") {
     return (
-      <div className="flex flex-col items-center gap-S p-XXL text-center">
+      <div className="flex flex-col items-center gap-2 p-6 text-center">
         <p className="text-subtitle2 font-semibold text-foreground-1">Đã tải 24 bình luận</p>
         <Button
           onClick={() => {
@@ -602,7 +602,7 @@ export default function Page() {
         title="Ngưỡng cảm nhận"
         description="Người dùng không đo mili-giây, họ cảm nhận. Mỗi khoảng thời gian cần một loại tín hiệu khác nhau — tín hiệu quá mạnh cho việc nhanh cũng tệ như im lặng cho việc chậm."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <SimpleTable
             head={["Thời gian", "Cảm nhận", "Nên hiển thị", "Trong Yugen"]}
             rows={[
@@ -628,7 +628,7 @@ export default function Page() {
         title="Chọn loại chỉ báo"
         description="Đi từ trên xuống, dừng ở câu trả lời “có” đầu tiên. Các lựa chọn kết hợp được: Button loading cho nút vừa bấm, PageProgress cho trang đang tải."
       >
-        <ol className="flex max-w-3xl flex-col gap-S">
+        <ol className="flex max-w-3xl flex-col gap-2">
           {[
             ["Thao tác gần như luôn thành công và hoàn tác được (thích, tích việc, đổi tên)?", "Optimistic UI", "useOptimisticList"],
             ["Biết tiến độ thật (byte đã gửi, số bước đã xong)?", "Tiến trình xác định", "ProgressBar · PageProgress value"],
@@ -637,13 +637,13 @@ export default function Page() {
             ["Việc chờ gắn với một control vừa bấm?", "Loading tại chỗ", "Button loading"],
             ["Còn lại", "Spinner + nhãn, sau delay", "LoadingOverlay · Spinner + useSpinDelay"],
           ].map(([question, answer, tool], i, all) => (
-            <li key={question} className="flex gap-M">
+            <li key={question} className="flex gap-3">
               <span className="flex size-7 shrink-0 items-center justify-center rounded-circular bg-background-4 text-caption1 font-semibold text-foreground-1">
                 {i + 1}
               </span>
-              <div className="flex min-w-0 flex-1 flex-col gap-XS rounded-xlarge border border-stroke-2 bg-background-1 px-L py-M">
+              <div className="flex min-w-0 flex-1 flex-col gap-1 rounded-xlarge border border-stroke-2 bg-background-1 px-4 py-3">
                 <span className="text-body1 font-semibold text-foreground-1">{question}</span>
-                <span className="flex flex-wrap items-center gap-S text-body1 text-foreground-2">
+                <span className="flex flex-wrap items-center gap-2 text-body1 text-foreground-2">
                   {i < all.length - 1 && <span className="text-caption1 font-semibold text-success-foreground-1">Có</span>}
                   <ArrowRight16Regular aria-hidden className="shrink-0 text-foreground-3 rtl:-scale-x-100" />
                   <span className="font-semibold text-foreground-1">{answer}</span>
@@ -660,7 +660,7 @@ export default function Page() {
         title="Delay & thời gian tối thiểu"
         description="Hai lỗi phổ biến nhất của loader: nháy lên rồi tắt ngay với phản hồi nhanh, và chập chờn khi dữ liệu về ngay sau lúc loader vừa hiện. useSpinDelay sửa cả hai."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Stage>
             <DelayCompareDemo />
           </Stage>
@@ -684,7 +684,7 @@ export default function Page() {
             <C>LoadingOverlay</C> nhận <C>delay</C> để phủ lên nội dung cũ chỉ khi việc làm mới thật sự chậm.
           </P>
           <Stage>
-            <LoadingOverlay loading label="Đang cập nhật…" className="w-72 rounded-xlarge border border-stroke-2 bg-background-1 p-L">
+            <LoadingOverlay loading label="Đang cập nhật…" className="w-72 rounded-xlarge border border-stroke-2 bg-background-1 p-4">
               <p className="text-caption1 text-foreground-3">Doanh thu tháng 10</p>
               <p className="text-title2 font-semibold text-foreground-1">128,4 triệu ₫</p>
               <p className="text-caption1 text-foreground-3">Tăng 12% so với tháng trước</p>
@@ -698,9 +698,9 @@ export default function Page() {
         title="Độ trung thực của khung xương"
         description="Khung xương hứa hẹn bố cục sắp tới. Hứa sai — số cột khác, avatar to hơn, nút nằm chỗ khác — thì lúc nội dung về mọi thứ nhảy chỗ, tệ hơn cả không có khung."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <FidelityCompare />
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>Cùng hình dáng và kích thước: avatar 40 thì SkeletonAvatar 40; dòng bảng 44px thì SkeletonTable cũng 44px.</li>
             <li>Cùng số lượng gần đúng: 3–5 dòng là đủ, đừng vẽ 50 dòng cho danh sách thường có 8 mục.</li>
             <li>Chỉ dựng phần chưa có; tiêu đề trang, nhãn cột, nút điều hướng đã biết thì hiển thị thật ngay.</li>
@@ -715,7 +715,7 @@ export default function Page() {
         title="Optimistic UI & hoàn tác"
         description="Với thao tác gần như luôn thành công, đừng bắt người dùng chờ server: đổi giao diện ngay, gửi phía sau, và chỉ quay lại khi thất bại — kèm lời giải thích."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Stage>
             <StarDemo />
           </Stage>
@@ -740,12 +740,12 @@ export default function Page() {
         title="Huỷ & timeout"
         description="Việc chờ dài phải huỷ được, và không được chờ vô hạn. Huỷ chủ động thì im lặng; quá thời gian thì nói rõ là quá lâu, kèm lựa chọn tiếp theo."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Stage>
             <CancelDemo />
           </Stage>
           <CodeBlock code={CANCEL_CODE} />
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>Từ khoảng 3 giây trở lên, luôn có nút Huỷ cạnh chỉ báo tiến trình.</li>
             <li>Huỷ request cũ khi người dùng đổi bộ lọc / gõ tiếp — kết quả về muộn không được ghi đè kết quả mới.</li>
             <li>
@@ -761,7 +761,7 @@ export default function Page() {
         title="Lỗi & thử lại"
         description="Mọi trạng thái chờ đều có thể kết thúc bằng lỗi. Một trạng thái lỗi tốt trả lời ba câu: chuyện gì đã xảy ra, dữ liệu có mất không, và làm gì tiếp theo."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Stage>
             <div className="w-full max-w-md rounded-xlarge border border-stroke-2 bg-background-1">
               <RetryOnceDemo />
@@ -771,7 +771,7 @@ export default function Page() {
             Nút Thử lại nhận Promise và tự vào trạng thái loading — focus nằm yên trên nút suốt lúc thử. Lần đầu vẫn lỗi (toast giải
             thích), lần hai thành công.
           </P>
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>Giữ lại dữ liệu cũ khi làm mới thất bại; báo lỗi bằng toast hoặc MessageBar thay vì xoá trắng màn hình.</li>
             <li>Tự thử lại 2–3 lần với lùi dần (backoff + jitter) cho lỗi tạm thời; hết lượt mới hiện ErrorState.</li>
             <li>Lỗi khu trú tại vùng hỏng — một widget lỗi không kéo sập cả trang.</li>
@@ -786,7 +786,7 @@ export default function Page() {
         title="Khả năng tiếp cận"
         description="Người dùng trình đọc màn hình không thấy spinner quay. Trạng thái chờ phải được nói ra — vừa đủ, đúng lúc — và không bao giờ được cướp focus."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <SimpleTable
             head={["Nguyên tắc", "Cách làm", "Có sẵn trong"]}
             rows={[

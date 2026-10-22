@@ -140,7 +140,7 @@ export function ChartBrush({ count, positions, lines = [], value, onValueChange,
   );
 
   return (
-    <div className={className ?? "flex flex-col gap-XS"}>
+    <div className={className ?? "flex flex-col gap-1"}>
       <div ref={wrapRef} dir="ltr" className="relative w-full min-w-0 touch-none select-none" style={{ height }}>
         {width > 0 && count > 1 && (
           <svg
@@ -200,7 +200,7 @@ export function ChartBrush({ count, positions, lines = [], value, onValueChange,
           </svg>
         )}
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-S text-caption1 text-foreground-3">
+      <div className="flex flex-wrap items-center justify-between gap-2 text-caption1 text-foreground-3">
         <span className="tabular-nums">
           Đang xem <bdi className="text-foreground-2">{rangeText}</bdi> · {e - s + 1}/{count} mốc
         </span>

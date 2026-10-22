@@ -28,7 +28,7 @@ export const HoverCardContent = React.forwardRef<
         dir={dir}
         sideOffset={sideOffset}
         align={align}
-        className={cn(popoverSurfaceClass, "w-80 max-w-[calc(100vw-24px)] p-L", className)}
+        className={cn(popoverSurfaceClass, "w-80 max-w-[calc(100vw-24px)] p-4", className)}
         {...props}
       >
         {children}

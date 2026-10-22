@@ -38,7 +38,7 @@ function LazyPreview({ slug }: { slug: string }) {
   }, []);
 
   return (
-    <div ref={ref} className="flex max-w-full origin-center scale-75 flex-wrap items-center justify-center gap-S">
+    <div ref={ref} className="flex max-w-full origin-center scale-75 flex-wrap items-center justify-center gap-2">
       {visible ? (
         <Suspense fallback={PREVIEW_PLACEHOLDER}>
           <HeroPreview slug={slug} />
@@ -97,7 +97,7 @@ export function HomeComponents() {
 
   return (
     <>
-      <div className="sticky top-14 z-20 -mx-L flex flex-col gap-S bg-shell/90 px-L py-S backdrop-blur-md md:-mx-12 md:px-12 lg:top-18.5">
+      <div className="sticky top-14 z-20 -mx-4 flex flex-col gap-2 bg-shell/90 px-4 py-2 backdrop-blur-md md:-mx-12 md:px-12 lg:top-18.5">
         <SearchBox
           value={query}
           onValueChange={setQuery}
@@ -113,7 +113,7 @@ export function HomeComponents() {
           value={group}
           onValueChange={(v) => v && setGroup(v)}
           aria-label={t("home.groups")}
-          className="-mx-L w-auto max-w-none overflow-x-auto px-L scrollbar-none sm:mx-0 sm:flex-wrap sm:px-0"
+          className="-mx-4 w-auto max-w-none overflow-x-auto px-4 scrollbar-none sm:mx-0 sm:flex-wrap sm:px-0"
         >
           <ToggleGroupItem value={ALL} className="shrink-0 whitespace-nowrap">
             {t("home.all")}
@@ -126,13 +126,13 @@ export function HomeComponents() {
         </ToggleGroup>
       </div>
 
-      {groups.length === 0 && <p className="mt-XL text-body1 text-foreground-3">{t("home.noMatch", { query })}</p>}
+      {groups.length === 0 && <p className="mt-5 text-body1 text-foreground-3">{t("home.noMatch", { query })}</p>}
 
       {/* Màn nhỏ: danh sách tên, chạm để mở demo — mở mục mới thì mục cũ đóng. */}
-      <div className="mt-L flex flex-col gap-XL sm:hidden">
+      <div className="mt-4 flex flex-col gap-5 sm:hidden">
         {groups.map((g) => (
           <div key={g.category}>
-            <h3 className="flex items-baseline gap-S px-S pb-XS text-subtitle2 font-semibold">
+            <h3 className="flex items-baseline gap-2 px-2 pb-1 text-subtitle2 font-semibold">
               {category(g.category)}
               <span className="text-caption1 font-normal text-foreground-3">{g.items.length}</span>
             </h3>
@@ -142,14 +142,14 @@ export function HomeComponents() {
                   <AccordionHeader data-comp={c.slug}>{c.name}</AccordionHeader>
                   <AccordionPanel>
                     {mounted.has(c.slug) && (
-                      <div className="flex h-40 items-center justify-center overflow-hidden rounded-2xlarge border border-stroke-2 bg-background-3 p-M">
+                      <div className="flex h-40 items-center justify-center overflow-hidden rounded-2xlarge border border-stroke-2 bg-background-3 p-3">
                         <LazyPreview slug={c.slug} />
                       </div>
                     )}
-                    <p className="mt-S text-caption1 text-foreground-3">{c.lead}</p>
+                    <p className="mt-2 text-caption1 text-foreground-3">{c.lead}</p>
                     <a
                       href={`#/components/${c.slug}`}
-                      className="mt-S inline-flex items-center gap-XS rounded-small text-body1 font-semibold text-brand-foreground-1 hover:underline"
+                      className="mt-2 inline-flex items-center gap-1 rounded-small text-body1 font-semibold text-brand-foreground-1 hover:underline"
                     >
                       {t("home.open", { name: c.name })}
                       <ArrowRight16Regular className="rtl:-scale-x-100" />
@@ -163,26 +163,26 @@ export function HomeComponents() {
       </div>
 
       {/* Từ sm: lưới demo. */}
-      <div className="mt-XL hidden flex-col gap-XXXL sm:flex">
+      <div className="mt-5 hidden flex-col gap-8 sm:flex">
         {groups.map((g) => (
           <div key={g.category}>
-            <h3 className="flex items-baseline gap-S border-b border-stroke-2 pb-S text-title3 font-semibold">
+            <h3 className="flex items-baseline gap-2 border-b border-stroke-2 pb-2 text-title3 font-semibold">
               {category(g.category)}
               <span className="text-body1 font-normal text-foreground-3">{g.items.length}</span>
             </h3>
-            <div className="mt-L grid gap-L sm:grid-cols-2 xl:grid-cols-4">
+            <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
               {g.items.map((c) => (
                 <div key={c.slug} className="group/comp relative rounded-3xlarge">
-                  <div className="pointer-events-none flex h-40 items-center justify-center overflow-hidden rounded-3xlarge border border-stroke-2 bg-background-3 p-M transition-shadow duration-normal group-hover/comp:shadow-8">
+                  <div className="pointer-events-none flex h-40 items-center justify-center overflow-hidden rounded-3xlarge border border-stroke-2 bg-background-3 p-3 transition-shadow duration-normal group-hover/comp:shadow-8">
                     <LazyPreview slug={c.slug} />
                   </div>
                   <a
                     href={`#/components/${c.slug}`}
-                    className="mt-S block rounded-small text-subtitle2 font-semibold group-hover/comp:text-brand-foreground-1 after:absolute after:inset-0 after:rounded-3xlarge"
+                    className="mt-2 block rounded-small text-subtitle2 font-semibold group-hover/comp:text-brand-foreground-1 after:absolute after:inset-0 after:rounded-3xlarge"
                   >
                     {c.name}
                   </a>
-                  <p className="mt-XXS line-clamp-2 text-caption1 text-foreground-3">{c.lead}</p>
+                  <p className="mt-0.5 line-clamp-2 text-caption1 text-foreground-3">{c.lead}</p>
                 </div>
               ))}
             </div>

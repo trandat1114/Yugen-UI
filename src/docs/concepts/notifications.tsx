@@ -24,7 +24,7 @@ function P({ children }: { children: ReactNode }) {
 }
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
@@ -34,7 +34,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
             {head.map((h) => (
-              <th key={h} className="px-L py-S text-start">
+              <th key={h} className="px-4 py-2 text-start">
                 {h}
               </th>
             ))}
@@ -44,7 +44,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
           {rows.map((row, i) => (
             <tr key={i} className="border-b border-stroke-3 align-top last:border-b-0">
               {row.map((cell, j) => (
-                <td key={j} className={j === 0 ? "px-L py-M font-semibold text-foreground-1" : "px-L py-M text-foreground-2"}>
+                <td key={j} className={j === 0 ? "px-4 py-3 font-semibold text-foreground-1" : "px-4 py-3 text-foreground-2"}>
                   {cell}
                 </td>
               ))}
@@ -58,7 +58,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
 
 function Tile({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <div className="flex min-w-0 flex-col gap-M rounded-xlarge border border-stroke-2 bg-background-1 p-L">
+    <div className="flex min-w-0 flex-col gap-3 rounded-xlarge border border-stroke-2 bg-background-1 p-4">
       <span className="text-caption1 font-semibold text-foreground-3">{title}</span>
       {children}
     </div>
@@ -101,15 +101,15 @@ function FilterDemo() {
   }, [query, results.length]);
 
   return (
-    <div className="flex w-full max-w-sm flex-col gap-S">
+    <div className="flex w-full max-w-sm flex-col gap-2">
       <SearchBox aria-label="Lọc thành phố" placeholder="Lọc thành phố" value={query} onValueChange={setQuery} />
       <p className="text-caption1 text-foreground-3">{results.length} kết quả</p>
       <p role="status" className="sr-only">
         {announced}
       </p>
-      <ul className="flex flex-wrap gap-XS">
+      <ul className="flex flex-wrap gap-1">
         {results.map((c) => (
-          <li key={c} className="rounded-circular bg-background-3 px-S py-XXS text-caption1 text-foreground-2">
+          <li key={c} className="rounded-circular bg-background-3 px-2 py-0.5 text-caption1 text-foreground-2">
             {c}
           </li>
         ))}
@@ -203,7 +203,7 @@ export default function Page() {
         title="Chọn kênh thông báo"
         description="Mức gián đoạn phải tương xứng với mức quan trọng. Bắt đầu từ kênh ít gián đoạn nhất còn đủ để người dùng không bỏ lỡ."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <SimpleTable
             head={["Kênh", "Khi nào", "Gián đoạn", "Trình đọc màn hình"]}
             rows={[
@@ -214,7 +214,7 @@ export default function Page() {
               ["Live region (AriaLiveAnnouncer)", "Thay đổi không có thông báo nhìn thấy: lọc xong, tải thêm, đếm kết quả.", "Không", "Chỉ đọc, không hiển thị."],
             ]}
           />
-          <div className="grid gap-L md:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2">
             <Tile title="Validation tại chỗ">
               <Field label="Mã giảm giá" validationState="error" validationMessage="Mã đã hết hạn ngày 30/9.">
                 <Input defaultValue="SAKURA30" />
@@ -245,7 +245,7 @@ export default function Page() {
         title="polite & assertive"
         description="Live region quyết định trình đọc màn hình đọc thay đổi lúc nào: polite chờ người dùng rảnh, assertive cắt ngang ngay."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <SimpleTable
             head={["Mức", "Thuộc tính", "Component Yugen", "Dùng cho"]}
             rows={[
@@ -267,8 +267,8 @@ export default function Page() {
         title="Đừng tự đóng điều quan trọng"
         description="Toast mặc định tự đóng sau 3 giây. Người đọc chậm, người phóng to màn hình, người dùng trình đọc màn hình đều có thể bỏ lỡ (WCAG 2.2.1)."
       >
-        <div className="flex flex-col gap-L">
-          <div className="flex flex-wrap items-center gap-M rounded-2xlarge border border-stroke-2 bg-background-1 p-XXL">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-wrap items-center gap-3 rounded-2xlarge border border-stroke-2 bg-background-1 p-6">
             <Button onClick={() => toast({ intent: "success", title: "Đã sao chép liên kết" })}>Toast tự đóng</Button>
             <Button
               onClick={() =>
@@ -285,7 +285,7 @@ export default function Page() {
             </Button>
           </div>
           <CodeBlock code={TIMING_CODE} />
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>Rê chuột hoặc focus vào toast sẽ tạm dừng đồng hồ; F8 đưa focus tới vùng thông báo.</li>
             <li>
               Hành động trong toast phải có cách khác để làm (nút trên trang, menu); <C>altText</C> nói cho người dùng trình đọc màn hình
@@ -301,8 +301,8 @@ export default function Page() {
         title="Kết quả bất đồng bộ"
         description="Khi nội dung thay đổi mà không có thông báo nhìn thấy — lọc danh sách, tải thêm, lưu tự động — hãy đọc kết quả qua live region."
       >
-        <div className="flex flex-col gap-L">
-          <div className="flex flex-wrap items-center gap-M rounded-2xlarge border border-stroke-2 bg-background-1 p-XXL">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-wrap items-center gap-3 rounded-2xlarge border border-stroke-2 bg-background-1 p-6">
             <FilterDemo />
           </div>
           <P>

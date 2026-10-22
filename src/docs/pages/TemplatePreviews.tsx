@@ -75,7 +75,7 @@ function BlogPreview() {
 
 function DashboardPreview() {
   return (
-    <div className="flex flex-col gap-XL bg-shell p-XL">
+    <div className="flex flex-col gap-5 bg-shell p-5">
       <StatsBlock />
       <AnalyticsBlock />
       <TransactionsBlock />
@@ -85,7 +85,7 @@ function DashboardPreview() {
 
 function AiChatPreview() {
   return (
-    <div className="flex justify-center bg-shell p-XL">
+    <div className="flex justify-center bg-shell p-5">
       <AiAssistantBlock />
     </div>
   );

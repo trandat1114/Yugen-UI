@@ -17,10 +17,10 @@ export type RatingColor = "brand" | "marigold" | "neutral";
 export type RatingSize = "small" | "medium" | "large" | "extra-large";
 
 const ICONS = {
-  small: { Filled: Star12Filled, Regular: Star12Regular, icon: "size-3", gap: "gap-XXS", text: "text-caption1" },
-  medium: { Filled: Star16Filled, Regular: Star16Regular, icon: "size-4", gap: "gap-XXS", text: "text-body1" },
-  large: { Filled: Star20Filled, Regular: Star20Regular, icon: "size-5", gap: "gap-XS", text: "text-body2" },
-  "extra-large": { Filled: Star28Filled, Regular: Star28Regular, icon: "size-7", gap: "gap-XS", text: "text-subtitle1" },
+  small: { Filled: Star12Filled, Regular: Star12Regular, icon: "size-3", gap: "gap-0.5", text: "text-caption1" },
+  medium: { Filled: Star16Filled, Regular: Star16Regular, icon: "size-4", gap: "gap-0.5", text: "text-body1" },
+  large: { Filled: Star20Filled, Regular: Star20Regular, icon: "size-5", gap: "gap-1", text: "text-body2" },
+  "extra-large": { Filled: Star28Filled, Regular: Star28Regular, icon: "size-7", gap: "gap-1", text: "text-subtitle1" },
 } as const;
 
 /** Màu sao đã chọn. Marigold: thiếu token colorPaletteMarigoldBorderActive → dùng colorPaletteMarigoldForeground2. */
@@ -219,7 +219,7 @@ export const RatingDisplay = React.forwardRef<HTMLDivElement, RatingDisplayProps
         ref={ref}
         role="img"
         aria-label={label}
-        className={cn("inline-flex items-center gap-XS", text, className)}
+        className={cn("inline-flex items-center gap-1", text, className)}
         {...props}
       >
         <span className={cn("inline-flex items-center", gap)}>
@@ -244,7 +244,7 @@ export const RatingDisplay = React.forwardRef<HTMLDivElement, RatingDisplayProps
           </span>
         )}
         {count !== undefined && (
-          <span aria-hidden className="text-foreground-2 before:pe-XS before:content-['·']">
+          <span aria-hidden className="text-foreground-2 before:pe-1 before:content-['·']">
             {count.toLocaleString()}
           </span>
         )}

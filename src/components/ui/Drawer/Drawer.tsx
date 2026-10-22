@@ -145,7 +145,7 @@ InlineDrawer.displayName = "InlineDrawer";
 /* ------------------------------------------------------------------ parts */
 
 export function DrawerHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("flex flex-col gap-S px-XXL pt-XXL pb-S", className)} {...props} />;
+  return <div className={cn("flex flex-col gap-2 px-6 pt-6 pb-2", className)} {...props} />;
 }
 
 export interface DrawerHeaderTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
@@ -158,7 +158,7 @@ export function DrawerHeaderTitle({ className, action, children, ...props }: Dra
   const titleClass = cn("min-w-0 flex-1 font-display text-subtitle1 font-semibold text-foreground-1", className);
 
   return (
-    <div className="flex items-start gap-S">
+    <div className="flex items-start gap-2">
       {type === "overlay" ? (
         <DialogPrimitive.Title className={titleClass} {...props}>
           {children}
@@ -168,17 +168,17 @@ export function DrawerHeaderTitle({ className, action, children, ...props }: Dra
           {children}
         </h2>
       )}
-      {action && <div className="-me-XS -mt-XXS flex shrink-0 items-center gap-XS">{action}</div>}
+      {action && <div className="-me-1 -mt-0.5 flex shrink-0 items-center gap-1">{action}</div>}
     </div>
   );
 }
 
 export function DrawerBody({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn("min-h-0 flex-1 overflow-y-auto px-XXL py-S text-body1 text-foreground-1", className)} {...props} />
+    <div className={cn("min-h-0 flex-1 overflow-y-auto px-6 py-2 text-body1 text-foreground-1", className)} {...props} />
   );
 }
 
 export function DrawerFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("flex flex-wrap items-center gap-S px-XXL pt-L pb-XXL", className)} {...props} />;
+  return <div className={cn("flex flex-wrap items-center gap-2 px-6 pt-4 pb-6", className)} {...props} />;
 }

@@ -12,11 +12,11 @@ function P({ children }: { children: ReactNode }) {
 }
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function Stage({ children }: { children: ReactNode }) {
-  return <div className="flex flex-wrap items-start justify-center gap-L rounded-2xlarge border border-stroke-2 bg-background-1 p-XL">{children}</div>;
+  return <div className="flex flex-wrap items-start justify-center gap-4 rounded-2xlarge border border-stroke-2 bg-background-1 p-5">{children}</div>;
 }
 
 function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
@@ -27,7 +27,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
             {head.map((h) => (
-              <th key={h} className="px-L py-S text-start">
+              <th key={h} className="px-4 py-2 text-start">
                 {h}
               </th>
             ))}
@@ -37,7 +37,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
           {rows.map((row, i) => (
             <tr key={i} className="border-b border-stroke-3 align-top last:border-b-0">
               {row.map((cell, j) => (
-                <td key={j} className={j === 0 ? "px-L py-M font-semibold text-foreground-1" : "px-L py-M text-foreground-2"}>
+                <td key={j} className={j === 0 ? "px-4 py-3 font-semibold text-foreground-1" : "px-4 py-3 text-foreground-2"}>
                   {cell}
                 </td>
               ))}
@@ -191,7 +191,7 @@ export default function Page() {
         title="Vì sao cần minh bạch"
         description="Một spinner “Đang xử lý…” kéo dài 20 giây khiến người dùng nghi ngờ, bấm lại, hoặc bỏ đi. Một danh sách bước đang tiến triển thì không."
       >
-        <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+        <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
           <li>
             <strong className="font-semibold text-foreground-1">Niềm tin</strong> — người dùng thấy AI đã đọc tài liệu nào, gọi công cụ
             nào trước khi tin vào câu trả lời.
@@ -215,7 +215,7 @@ export default function Page() {
         <SimpleTable
           head={["Trạng thái", "Nhãn", "Khi nào", "Màu"]}
           rows={STATES.map((s) => [
-            <span key="s" className="inline-flex items-center gap-S">
+            <span key="s" className="inline-flex items-center gap-2">
               <TraceStatusIcon status={s.status} />
               <C>{s.status}</C>
             </span>,
@@ -231,7 +231,7 @@ export default function Page() {
         title="Chọn độ chi tiết"
         description="Một bước = một việc người dùng hiểu được. Chi tiết kỹ thuật nằm trong phần mở rộng, không nằm trên dòng tiêu đề."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Stage>
             <Trace size="small" title="Tạo báo cáo tháng 10" duration={9620} className="w-full max-w-xl">
               <TraceStep status="success" title="Lấy dữ liệu bán hàng" duration={2140} metadata={["sales_db", "12 480 dòng"]}>
@@ -249,7 +249,7 @@ export default function Page() {
               <TraceStep status="success" title="Viết nhận xét" duration={4100} metadata={["sakura-1", "2.1k token"]} />
             </Trace>
           </Stage>
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>Tiêu đề bước là động từ + đối tượng (“Lấy dữ liệu bán hàng”); tên hàm / công cụ để trong metadata hoặc details.</li>
             <li>Lồng tối đa 2 cấp. Agent gọi 30 lệnh nhỏ → gộp thành một bước cha “Đọc 30 tệp” với bước con thu gọn.</li>
             <li>metadata cho thông tin quét nhanh: công cụ, model, số token, số dòng, nhánh git.</li>
@@ -263,7 +263,7 @@ export default function Page() {
         title="Cập nhật trực tiếp"
         description="Trace là component hiển thị thuần: bạn giữ danh sách bước trong state và cập nhật theo sự kiện từ agent."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <CodeBlock code={MAPPING_CODE} />
           <PropsTable
             props={[
@@ -282,11 +282,11 @@ export default function Page() {
         title="Khi có lỗi"
         description="Bấm Chạy: bước get_order sẽ hết thời gian chờ ở lần đầu. Các bước sau chuyển sang Đã huỷ, và phần đầu đưa ra hành động tiếp theo."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Stage>
             <AgentRunDemo />
           </Stage>
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>Mô tả lỗi bằng ngôn ngữ người dùng (“không phản hồi sau 5 giây”); log kỹ thuật nằm trong details.</li>
             <li>Đánh dấu các bước phụ thuộc là cancelled — đừng để chúng ở pending như thể vẫn sẽ chạy.</li>
             <li>Cho thử lại từ bước lỗi thay vì chạy lại tất cả khi có thể.</li>

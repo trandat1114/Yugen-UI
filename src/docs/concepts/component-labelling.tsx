@@ -22,16 +22,16 @@ function P({ children }: { children: ReactNode }) {
 }
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function Demo({ children }: { children: ReactNode }) {
-  return <div className="flex flex-wrap items-start gap-XL rounded-2xlarge border border-stroke-2 bg-background-1 p-XXL">{children}</div>;
+  return <div className="flex flex-wrap items-start gap-5 rounded-2xlarge border border-stroke-2 bg-background-1 p-6">{children}</div>;
 }
 
 function Verdict({ kind, children }: { kind: "do" | "dont"; children: ReactNode }) {
   return (
-    <div className="flex min-w-0 flex-1 flex-col gap-M rounded-xlarge border border-stroke-2 bg-background-1 p-L">
+    <div className="flex min-w-0 flex-1 flex-col gap-3 rounded-xlarge border border-stroke-2 bg-background-1 p-4">
       <span className={kind === "do" ? "text-caption1 font-semibold text-success-foreground-1" : "text-caption1 font-semibold text-danger-foreground-1"}>
         {kind === "do" ? "✓ Nên" : "✕ Không nên"}
       </span>
@@ -56,7 +56,7 @@ const VISIBLE_CODE = `<Field label="Họ và tên" required>
 <InfoLabel htmlFor="vat" info="Mã số thuế 10 hoặc 13 chữ số do cơ quan thuế cấp.">Mã số thuế</InfoLabel>
 <Input id="vat" inputMode="numeric" />`;
 
-const ICON_ONLY_CODE = `<div role="toolbar" aria-label="Định dạng văn bản" className="flex gap-XS">
+const ICON_ONLY_CODE = `<div role="toolbar" aria-label="Định dạng văn bản" className="flex gap-1">
   <SimpleTooltip content="Đậm (Ctrl+B)">
     <Button appearance="subtle" icon={<TextBold20Regular />} aria-label="Đậm" aria-keyshortcuts="Control+B" />
   </SimpleTooltip>
@@ -93,7 +93,7 @@ const DOM_CODE = `<!-- HTML mà Field sinh ra -->
 <span id=":r5:-hint">Dùng để đăng nhập và nhận hoá đơn.</span>`;
 
 const GROUP_CODE = `{/* RadioGroup: role="radiogroup" lấy tên từ một nhãn nhìn thấy qua aria-labelledby */}
-<div className="flex flex-col gap-XS">
+<div className="flex flex-col gap-1">
   <Label id="shipping-label" weight="semibold">Phương thức giao hàng</Label>
   <RadioGroup aria-labelledby="shipping-label" defaultValue="standard">
     <Radio value="standard" label="Tiêu chuẩn (3–5 ngày)" />
@@ -103,7 +103,7 @@ const GROUP_CODE = `{/* RadioGroup: role="radiogroup" lấy tên từ một nhã
 
 {/* Nhóm Checkbox: fieldset + legend là cách gốc, không cần ARIA */}
 <fieldset>
-  <legend className="pb-XS text-body1 font-semibold">Nhận thông báo qua</legend>
+  <legend className="pb-1 text-body1 font-semibold">Nhận thông báo qua</legend>
   <div className="flex flex-col">
     <Checkbox label="Email" defaultChecked />
     <Checkbox label="SMS" />
@@ -119,9 +119,9 @@ export default function Page() {
         title="Nhãn nhìn thấy: Field và Label"
         description="Nhãn nhìn thấy giúp mọi người — người dùng chuột, bàn phím, trình đọc màn hình, nhập bằng giọng nói — cùng biết control dùng để làm gì."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Demo>
-            <div className="flex w-72 flex-col gap-L">
+            <div className="flex w-72 flex-col gap-4">
               <Field label="Họ và tên" required>
                 <Input autoComplete="name" />
               </Field>
@@ -129,14 +129,14 @@ export default function Page() {
               <Switch label="Chế độ tiết kiệm pin" />
               <Slider label="Độ sáng" showValue defaultValue={[60]} />
             </div>
-            <div className="flex w-72 flex-col gap-L">
-              <div className="flex flex-col gap-XS">
+            <div className="flex w-72 flex-col gap-4">
+              <div className="flex flex-col gap-1">
                 <Label htmlFor="labelling-bio" size="large">
                   Giới thiệu
                 </Label>
                 <Textarea id="labelling-bio" rows={3} />
               </div>
-              <div className="flex flex-col gap-XS">
+              <div className="flex flex-col gap-1">
                 <InfoLabel htmlFor="labelling-vat" info="Mã số thuế 10 hoặc 13 chữ số do cơ quan thuế cấp.">
                   Mã số thuế
                 </InfoLabel>
@@ -157,9 +157,9 @@ export default function Page() {
         title="Nút chỉ có icon"
         description="Icon không có tên. Mọi nút chỉ có icon phải có aria-label; thêm Tooltip cùng nội dung để người dùng nhìn cũng biết."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Demo>
-            <div role="toolbar" aria-label="Định dạng văn bản" className="flex gap-XS">
+            <div role="toolbar" aria-label="Định dạng văn bản" className="flex gap-1">
               <SimpleTooltip content="Đậm (Ctrl+B)">
                 <Button appearance="subtle" icon={<TextBold20Regular />} aria-label="Đậm" aria-keyshortcuts="Control+B" />
               </SimpleTooltip>
@@ -178,7 +178,7 @@ export default function Page() {
             </SimpleTooltip>
           </Demo>
           <CodeBlock code={ICON_ONLY_CODE} />
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>
               Tooltip <strong className="font-semibold">không</strong> thay nhãn: nó chỉ hiện khi hover / focus và Radix gắn nó làm mô tả
               (<C>aria-describedby</C>). Tên vẫn phải đến từ <C>aria-label</C>.
@@ -196,7 +196,7 @@ export default function Page() {
         title="Mô tả & validation: aria-describedby"
         description="Tên cho biết control là gì; mô tả cho biết thêm điều cần biết. Field nối cả hint lẫn validationMessage vào control."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Demo>
             <div className="w-80">
               <Field
@@ -225,9 +225,9 @@ export default function Page() {
         title="Nhãn cho nhóm: RadioGroup & nhóm Checkbox"
         description="Mỗi lựa chọn có nhãn riêng, nhưng cả nhóm cũng cần một tên — nếu không, người dùng trình đọc màn hình nghe “Tiêu chuẩn” mà không biết đang chọn gì."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Demo>
-            <div className="flex flex-col gap-XS">
+            <div className="flex flex-col gap-1">
               <Label id="labelling-shipping" weight="semibold">
                 Phương thức giao hàng
               </Label>
@@ -237,7 +237,7 @@ export default function Page() {
               </RadioGroup>
             </div>
             <fieldset>
-              <legend className="pb-XS text-body1 font-semibold text-foreground-1">Nhận thông báo qua</legend>
+              <legend className="pb-1 text-body1 font-semibold text-foreground-1">Nhận thông báo qua</legend>
               <div className="flex flex-col">
                 <Checkbox label="Email" defaultChecked />
                 <Checkbox label="SMS" />
@@ -258,8 +258,8 @@ export default function Page() {
         title="Placeholder không phải nhãn"
         description="Placeholder biến mất khi bắt đầu gõ, có tương phản thấp (foreground-4) và không được mọi trình đọc màn hình đọc như tên."
       >
-        <div className="flex flex-col gap-L">
-          <div className="grid gap-L md:grid-cols-2">
+        <div className="flex flex-col gap-4">
+          <div className="grid gap-4 md:grid-cols-2">
             <Verdict kind="dont">
               <Input placeholder="Số điện thoại" aria-label="Số điện thoại" />
               <p className="text-caption1 text-foreground-3">Gõ một ký tự là mất ngữ cảnh; không biết định dạng mong đợi.</p>
