@@ -1,6 +1,6 @@
 {
   "name": "yugen-ui",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "Fluent 2-inspired React component library for Tailwind CSS v4: design tokens, accessible Radix-based components, Sakura brand, light/dark/high-contrast themes and RTL.",
   "keywords": [
     "react",
