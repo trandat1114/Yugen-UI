@@ -404,7 +404,7 @@ function Roadmap({ copy }: { copy: Copy }) {
                       {item.issue && (
                         <>
                           {" "}
-                          <a href={issueUrl(item.issue)} target="_blank" rel="noreferrer" className="whitespace-nowrap text-link hover:text-link-hover hover:underline">
+                          <a href={issueUrl(item.issue)} target="_blank" rel="noreferrer" className="whitespace-nowrap text-link underline hover:text-link-hover">
                             #{item.issue}
                           </a>
                         </>
@@ -505,7 +505,7 @@ export function CommunityPage() {
         <Roadmap copy={c} />
         <p className="mt-L text-body1 text-foreground-3">
           {c.roadmapShipped}{" "}
-          <a href="#/news" className="text-link hover:text-link-hover hover:underline">
+          <a href="#/news" className="text-link underline hover:text-link-hover">
             {c.roadmapNews}
           </a>{" "}
           · {c.roadmapBoard}{" "}
