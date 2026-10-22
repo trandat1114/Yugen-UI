@@ -7,8 +7,8 @@ import type { ComponentCategory, ConceptGroup } from "../../types";
 export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: Record<string, string> }> = {
   introduction: {
     title: "Introduction",
-    lead: "Yugen UI is a design system for React and Tailwind CSS v4: Fluent 2 tokens and behavior, shadcn/ui-style copy-paste distribution, dressed in Sakura 桜 cherry-blossom colors.",
-    toc: { what: "What is Yugen UI?", principles: "Principles", structure: "How the docs are organized", credit: "Credits" },
+    lead: "React components for Tailwind CSS v4, with light, dark and high-contrast themes and RTL support. Use the npm package or copy the source into your project.",
+    toc: { what: "What is Yugen UI?", ways: "Choose how to use it", principles: "Principles", status: "Versions and license", credit: "Credits" },
   },
   "quick-start": {
     title: "Quick start",
