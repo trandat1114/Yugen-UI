@@ -172,7 +172,8 @@ export const AvatarGroup = React.forwardRef<HTMLDivElement, AvatarGroupProps>(
             <PopoverTrigger asChild>
               <button
                 type="button"
-                aria-label={overflowLabel ?? `Xem thêm ${overflow.length} thành viên`}
+                // Số đếm hiển thị phải nằm trong tên accessibility (WCAG 2.5.3): "+2 Xem thêm 2 thành viên".
+                aria-label={overflowIndicator === "icon" ? (overflowLabel ?? `Xem thêm ${overflow.length} thành viên`) : undefined}
                 className={cn(
                   "relative inline-flex shrink-0 items-center justify-center rounded-circular border border-stroke-1 bg-background-1 font-normal text-foreground-1",
                   "transition-colors duration-faster ease-easy-ease hover:bg-background-1-hover active:bg-background-1-pressed",
@@ -181,7 +182,14 @@ export const AvatarGroup = React.forwardRef<HTMLDivElement, AvatarGroupProps>(
                   layout === "stack" && "ring-2 ring-background-1",
                 )}
               >
-                {overflowIndicator === "icon" ? <MoreHorizontal20Regular className="size-1/2" /> : `+${overflow.length}`}
+                {overflowIndicator === "icon" ? (
+                  <MoreHorizontal20Regular className="size-1/2" />
+                ) : (
+                  <>
+                    +{overflow.length}
+                    <span className="sr-only"> {overflowLabel ?? `Xem thêm ${overflow.length} thành viên`}</span>
+                  </>
+                )}
               </button>
             </PopoverTrigger>
             {popoverList}
