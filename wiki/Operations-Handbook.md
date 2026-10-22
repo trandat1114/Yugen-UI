@@ -18,7 +18,7 @@ Cách dự án được vận hành hằng ngày: ai làm gì, khi nào, theo lu
 | Tần suất | Việc | Người làm |
 |---|---|---|
 | Hằng tuần | Phân loại `needs triage` ([[Community and Triage]]), trả lời Q&A tồn đọng, review PR | Triager / maintainer |
-| Hằng tuần | Xem CI trên `main` (phải luôn xanh), PR Dependabot | Maintainer |
+| Hằng tuần | Xem CI trên `main` (phải luôn xanh). Thứ Hai: merge PR Dependabot minor + patch vào `next` nếu xanh; PR major đỏ thì đóng, thêm `ignore` và ghi vào issue migration (#91) | Maintainer |
 | 2–4 tuần | Phát hành nếu có changeset ([[Release Process]]) | Maintainer |
 | Khi `packages/cli/CHANGELOG.md` có mục `Unreleased` | Phát hành CLI kèm mục tin trên `#/news` ([[Release Process]] › CLI) | Maintainer |
 | Hằng tháng | Cập nhật ROADMAP, gắn `good first issue` mới, chọn Showcase | Maintainer |

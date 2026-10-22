@@ -9,6 +9,7 @@ name: Visual regression
 on:
   pull_request:
     branches: [main, next]
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
       # Ảnh chụp gồm trang chủ, Blocks, Màu và trang component: block, registry, i18n hay phụ thuộc đổi đều ảnh hưởng.
       - "src/**"
@@ -36,6 +37,7 @@ concurrency:
 jobs:
   visual:
     name: Visual (${{ inputs.update && 'update' || 'compare' }})
+    if: github.event.pull_request.draft != true
     runs-on: ubuntu-latest
     timeout-minutes: 30
     # Trình duyệt và thư viện hệ thống có sẵn trong image: không `playwright install --with-deps` (apt) mỗi lần chạy.
