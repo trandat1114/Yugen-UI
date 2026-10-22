@@ -1,11 +1,14 @@
-# yugen
+# @yugen-ui/cli
 
 The command-line tool for [Yugen UI](https://trandat1114.github.io/Yugen-UI/): start an app from a template, set up
 Yugen UI in an existing project, copy component source from the registry and check that everything is wired up.
 
 ```bash
-npx yugen@latest <command>
+npx @yugen-ui/cli@latest <command>
 ```
+
+Installed (`npm i -D @yugen-ui/cli`), the command is `yugen`: `npx yugen add button`. The package is scoped because npm
+rejects the name `yugen` as too similar to an existing package.
 
 | Command | What it does |
 |---|---|
@@ -18,7 +21,7 @@ npx yugen@latest <command>
 ## create
 
 ```bash
-npx yugen@latest create my-app --template saas
+npx @yugen-ui/cli@latest create my-app --template saas
 ```
 
 Templates ship inside the CLI, so this works offline apart from installing dependencies. Options: `-t, --template`,
@@ -36,7 +39,7 @@ asks how you want to use Yugen UI:
   alias when there is one, relative paths otherwise. `"use client"` is kept only for Next.js.
 
 ```bash
-npx yugen@latest init --mode source
+npx @yugen-ui/cli@latest init --mode source
 ```
 
 Options: `--mode <package|source>`, `--css <file>`, `--registry <url|dir>`, `--overwrite`, `--no-install`, `-y`.
@@ -44,9 +47,9 @@ Options: `--mode <package|source>`, `--css <file>`, `--registry <url|dir>`, `--o
 ## add
 
 ```bash
-npx yugen add button dialog data-grid
-npx yugen add --all
-npx yugen add select --dry-run
+npx @yugen-ui/cli add button dialog data-grid
+npx @yugen-ui/cli add --all
+npx @yugen-ui/cli add select --dry-run
 ```
 
 Names are matched loosely (`data-grid`, `DataGrid`). Files you have edited are left alone unless you pass

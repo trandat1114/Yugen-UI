@@ -115,6 +115,7 @@ function mainHelp() {
     `${pc.bold("yugen")} ${pc.dim(`v${version}`)} — the Yugen UI CLI`,
     "",
     "Usage: yugen <command> [options]",
+    "       npx @yugen-ui/cli@latest <command> [options]   (without installing)",
     "",
     "Commands:",
     ...Object.entries(COMMANDS).map(([name, c]) => `  ${name.padEnd(width)}   ${c.summary}`),
