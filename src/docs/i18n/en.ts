@@ -100,6 +100,8 @@ export const en: Record<MessageKey, string> = {
   "news.kind.breaking": "Breaking",
   "news.current": "Current version: {version}",
   "news.latest": "Latest",
+  "news.upcoming": "Upcoming",
+  "news.planned": "Planned for {date}",
   "news.view": "View",
   "news.packages": "Packages",
   "news.empty": "No changes of this type yet.",

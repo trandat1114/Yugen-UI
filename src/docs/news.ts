@@ -10,6 +10,12 @@ export interface NewsItem {
 
 export interface NewsRelease {
   version: string;
+  /**
+   * Bản chưa phát hành, viết trên next (wiki › Release Process › Tin cho bản sắp phát hành). Chỉ mục ĐẦU mảng được
+   * đánh dấu; `date` là ngày dự kiến. Commit chore(release) bỏ cờ này và điền ngày thật; `check-release --tag` chặn nếu quên.
+   * Đặt ngay sau `version` (check-release đọc theo thứ tự đó).
+   */
+  upcoming?: true;
   date: string; // YYYY-MM-DD
   title: string;
   summary: string;
@@ -24,6 +30,22 @@ export const NEWS_KIND_LABEL: Record<NewsKind, string> = {
 };
 
 export const NEWS: NewsRelease[] = [
+  {
+    version: "0.9.0",
+    upcoming: true,
+    date: "2026-10-30",
+    title: "React 19 và starter tối giản",
+    summary: "React 19 là mặc định, React 18.3 vẫn được hỗ trợ. Starter tiếng Anh gọn hơn, thêm 5 block, docs và lộ trình cập nhật.",
+    items: [
+      { kind: "improved", text: "React 19 là mặc định cho docs, test và template; React 18.3 vẫn được hỗ trợ và kiểm thử trong CI. Ngày ngừng hỗ trợ React 18 sẽ báo trước ít nhất một bản minor.", href: "#/concepts/quick-start" },
+      { kind: "new", text: "5 block mới: Đăng ký bản tin, Chọn số lượng, Hộp thoại chào mừng, Tiến độ dự án, Đang trực tuyến.", href: "#/blocks" },
+      { kind: "fixed", text: "AvatarGroup: tên đọc của nút “+N” bắt đầu bằng đúng số đang hiển thị (WCAG 2.5.3); overflowLabel được đọc sau số đếm.", href: "#/components/avatargroup" },
+      { kind: "improved", text: "Template có tên ngắn (Starter, SaaS, Blog, Dashboard, AI chat) và mô tả một dòng; starter tối giản bằng tiếng Anh với thương hiệu Sakura và Web.", href: "#/templates" },
+      { kind: "improved", text: "Có gì mới có tab riêng cho yugen-ui, @yugen-ui/cli và create-yugen-ui; tin của bản sắp phát hành mang nhãn Sắp phát hành.", href: "#/news" },
+      { kind: "improved", text: "Trang Giới thiệu viết lại; trang Cộng đồng có lộ trình theo từng bản phát hành và cách dự án vận hành, đủ tiếng Anh.", href: "#/community" },
+      { kind: "improved", text: "Docs gọi CLI đúng tên @yugen-ui/cli và bớt nội dung lặp; footer có GitHub, npm, Thảo luận, Báo lỗi; mục lục không còn sát thông báo trang chưa dịch.", href: "#/concepts/cli" },
+    ],
+  },
   {
     version: "0.8.3",
     date: "2026-10-22",
@@ -173,13 +195,26 @@ export const NEWS: NewsRelease[] = [
   },
 ];
 
-export const LATEST_RELEASE = NEWS[0];
+/** Bản đã phát hành mới nhất (bỏ qua mục `upcoming`). */
+export const LATEST_RELEASE = NEWS.find((r) => !r.upcoming) ?? NEWS[0];
 
 /**
  * Tab @yugen-ui/cli (packages/cli). Mục đầu = version trong packages/cli/package.json — packages/cli/scripts/check-release.mjs
  * kiểm tra cùng CHANGELOG của CLI.
  */
 export const CLI_NEWS: NewsRelease[] = [
+  {
+    version: "0.2.0",
+    upcoming: true,
+    date: "2026-10-30",
+    title: "Node.js 22, --lang và template mới",
+    summary: "create chọn được ngôn ngữ cho starter; cần Node.js 22 trở lên.",
+    items: [
+      { kind: "breaking", text: "Cần Node.js 22 trở lên (Node.js 20 đã hết hỗ trợ).", href: "#/concepts/cli" },
+      { kind: "new", text: "create --lang en|vi chọn ngôn ngữ chữ trong app với template có cả hai (starter). Không truyền thì hỏi khi chạy tương tác; mặc định tiếng Anh.", href: "#/concepts/cli" },
+      { kind: "improved", text: "Template có tên ngắn trong trình chọn; starter tối giản bằng tiếng Anh, chữ nằm trong src/content/; app mới dùng React 19.", href: "#/templates" },
+    ],
+  },
   {
     version: "0.1.0",
     date: "2026-10-22",
@@ -196,6 +231,17 @@ export const CLI_NEWS: NewsRelease[] = [
 
 /** Tab create-yugen-ui (packages/create-yugen-ui) — chỉ phát hành cùng bản CLI ổn định. Mục đầu = version của gói. */
 export const CREATE_NEWS: NewsRelease[] = [
+  {
+    version: "0.2.0",
+    upcoming: true,
+    date: "2026-10-30",
+    title: "Theo @yugen-ui/cli 0.2.0",
+    summary: "Cùng các thay đổi của @yugen-ui/cli 0.2.0.",
+    items: [
+      { kind: "breaking", text: "Cần Node.js 22 trở lên.", href: "#/concepts/cli" },
+      { kind: "new", text: "npx create-yugen-ui@latest my-app --template starter --lang vi tạo starter bằng tiếng Việt.", href: "#/concepts/cli" },
+    ],
+  },
   {
     version: "0.1.0",
     date: "2026-10-22",

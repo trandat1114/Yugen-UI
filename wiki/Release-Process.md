@@ -10,6 +10,24 @@ có thay đổi phá vỡ — luôn ghi rõ.
 `npx changeset` → chọn `patch` (sửa lỗi) / `minor` (tính năng, deprecate) / `major` (từ 1.0, xoá API) → viết một câu cho
 người dùng (tiếng Anh, như CHANGELOG). File nằm ở `.changeset/*.md`.
 
+PR vào `next` có thay đổi người dùng thấy được còn thêm một dòng vào **tin sắp phát hành** (mục dưới).
+
+## Tin cho bản sắp phát hành (next)
+
+Tin của bản kế tiếp được viết dần trên `next`, không đợi tới lúc phát hành.
+
+- Mục **đầu** mảng `NEWS` (hoặc `CLI_NEWS` / `CREATE_NEWS`) mang `upcoming: true`, đặt ngay sau `version`. `version` là số
+  mà bản kế tiếp sẽ có (`npx changeset status`; với CLI theo quy tắc SemVer của CLI), `date` là ngày dự kiến (hạn của
+  milestone).
+- Mỗi PR vào `next` có thay đổi người dùng thấy được thêm một dòng vào mục đó, tạo mục nếu chưa có. Changeset vẫn bắt
+  buộc như cũ; tin là phần dành cho người đọc docs (tiếng Việt, có `href`).
+- Trang Có gì mới hiện mục này với nhãn **Sắp phát hành** và ngày "Dự kiến …". Xem trước ở `/next/`
+  (https://trandat1114.github.io/Yugen-UI/next/): docs build lại từ `next` sau mỗi push.
+- Chỉ mục đầu được là `upcoming`. `check-release` chấp nhận khi version của nó lớn hơn `package.json`, và báo lỗi khi
+  `package.json` đã bằng version đó mà tin vẫn `upcoming` (quên chốt), hoặc khi có tag.
+- Tin `upcoming` tới `main` qua PR `next → main` và được **chốt trong commit `chore(release)`**: bỏ `upcoming`, điền
+  ngày phát hành, rà lại nội dung theo CHANGELOG.
+
 ## Khi phát hành (maintainer)
 
 ```bash
@@ -17,7 +35,8 @@ git pull
 npm run version-packages      # changeset version → bump package.json, ghi CHANGELOG, đồng bộ templates, lockfile
 ```
 
-1. Thêm mục mới **lên đầu** mảng `NEWS` trong `src/docs/news.ts` (tiếng Việt, có `href` tới trang docs).
+1. Mục đầu mảng `NEWS` trong `src/docs/news.ts`: nếu đã có tin `upcoming` (viết trên next) thì bỏ `upcoming`, điền ngày
+   phát hành và rà lại nội dung; nếu chưa có thì thêm mục mới **lên đầu** mảng (tiếng Việt, có `href` tới trang docs).
 2. Thêm link `[x.y.z]: …/releases/tag/vx.y.z` cuối CHANGELOG.
    Cập nhật `src/docs/roadmap.ts`: mục của milestone vừa xong thành `done`, chuyển milestone sang Đã phát hành (bỏ khỏi
    `now`, dời `next` lên) rồi `npm run roadmap` (ghi ROADMAP.md; `roadmap.test.ts` báo lỗi nếu lệch).
@@ -82,7 +101,8 @@ scope không bị kiểm tra này; scope `@yugen-ui` là một npm org (miễn p
 git switch main && git pull
 # 1. Tăng "version" trong packages/cli/package.json (+ packages/create-yugen-ui/package.json khi theo quy tắc 2)
 # 2. Đổi "## Unreleased" thành "## X.Y.Z" ở đầu packages/cli/CHANGELOG.md
-# 3. Thêm mục tin lên đầu CLI_NEWS (và CREATE_NEWS nếu create-yugen-ui đổi version) trong src/docs/news.ts
+# 3. Chốt tin upcoming ở đầu CLI_NEWS (và CREATE_NEWS nếu create-yugen-ui đổi version) trong src/docs/news.ts:
+#    bỏ upcoming, điền ngày phát hành; chưa có thì thêm mục mới lên đầu mảng
 # 4. Cập nhật milestone cli X.Y.Z trong src/docs/roadmap.ts rồi npm run roadmap (ở thư mục gốc repo)
 cd packages/cli
 npm install --package-lock-only    # version trong lockfile

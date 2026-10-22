@@ -44,19 +44,37 @@ const changelog = fs.readFileSync(path.join(cli, "CHANGELOG.md"), "utf8");
 if (!new RegExp(`^##\\s+${version.replace(/\./g, "\\.")}\\s*$`, "m").test(changelog))
   errors.push(`packages/cli/CHANGELOG.md chưa có mục "## ${version}".`);
 
-// 1b. Trang Có gì mới › tab @yugen-ui/cli và create-yugen-ui
-const news = fs.readFileSync(path.join(repo, "src/docs/news.ts"), "utf8");
-function firstNewsVersion(name) {
+// 1b. Trang Có gì mới › tab @yugen-ui/cli và create-yugen-ui. Mục đầu có thể là tin sắp phát hành (`upcoming: true`,
+// viết trên next) với version lớn hơn bản hiện tại; khi có tag thì không được còn mục `upcoming`.
+const news = fs.readFileSync(path.join(repo, "src/docs/news.ts"), "utf8").replace(/\r\n/g, "\n");
+function newsEntries(name) {
   const start = news.search(new RegExp(`export\\s+const\\s+${name}\\b[^=]*=\\s*\\[`));
-  return start === -1 ? undefined : news.slice(start).match(/\bversion\s*:\s*["'`]([^"'`]+)["'`]/)?.[1];
+  if (start === -1) return [];
+  const end = news.indexOf("\n];", start);
+  const body = news.slice(start, end === -1 ? undefined : end);
+  return [...body.matchAll(/\bversion\s*:\s*["'`]([^"'`]+)["'`]([\s\S]*?)(?=\bversion\s*:|$)/g)].map((m) => ({
+    version: m[1],
+    upcoming: /\bupcoming\s*:\s*true\b/.test(m[2]),
+  }));
 }
+const newer = (a, b) => {
+  const [x, y] = [parse(a), parse(b)];
+  for (let i = 0; i < 3; i++) if (x[i] !== y[i]) return x[i] > y[i];
+  return false;
+};
 for (const [name, want, skip] of [
   ["CLI_NEWS", version, pre],
   ["CREATE_NEWS", create.version, false],
 ]) {
-  const got = firstNewsVersion(name);
+  const entries = newsEntries(name);
+  const upcoming = entries[0]?.upcoming ? entries[0] : undefined;
+  const got = entries.find((e) => !e.upcoming)?.version;
+  if (entries.slice(1).some((e) => e.upcoming)) errors.push(`src/docs/news.ts: chỉ mục ĐẦU của ${name} được đánh dấu \`upcoming\`.`);
+  if (upcoming && !newer(upcoming.version, want))
+    errors.push(`src/docs/news.ts: mục ${upcoming.version} của ${name} vẫn là \`upcoming\` nhưng bản hiện tại đã là ${want} — bỏ \`upcoming\`, điền ngày.`);
+  if (upcoming && tag) errors.push(`--tag ${tag}: mục ${upcoming.version} của ${name} vẫn là \`upcoming\` — chốt tin trước khi phát hành.`);
   if (!skip && got !== want)
-    errors.push(`src/docs/news.ts: mục đầu của ${name} là ${got ?? "(không có)"}, cần ${want} — thêm mục tin lên đầu mảng.`);
+    errors.push(`src/docs/news.ts: mục đã phát hành đầu tiên của ${name} là ${got ?? "(không có)"}, cần ${want} — thêm mục tin lên đầu mảng.`);
 }
 
 // 2. create-yugen-ui → @yugen-ui/cli

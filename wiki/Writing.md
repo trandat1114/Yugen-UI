@@ -54,6 +54,7 @@ Lệnh luôn chạy được trên mọi shell: không nối bằng `&&`, không
 
 - **Changeset** (tiếng Anh): một đoạn ngắn cho người dùng gói. Nói đổi gì, ảnh hưởng gì. Không nói chuyện nội bộ (tên file, PR) trừ khi người dùng cần biết.
 - **Có gì mới** (`src/docs/news.ts`, tiếng Việt): tiêu đề vài từ, tóm tắt một câu, mỗi mục một thay đổi kèm `href` tới trang docs. Bản CLI ghi vào `CLI_NEWS` / `CREATE_NEWS`.
+- **Tin sắp phát hành** (`upcoming: true`, viết trên `next`): viết như bản đã phát hành, thì hiện tại, không dùng "sẽ"; mỗi PR vào `next` thêm dòng của mình.
 - Thay đổi phá vỡ: ghi rõ cách chuyển.
 
 ## Checklist cho PR có đổi nội dung
