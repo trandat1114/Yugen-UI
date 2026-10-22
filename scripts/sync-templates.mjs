@@ -25,7 +25,9 @@ const TEMPLATES = [
     dir: "vite-starter",
     /** Mô tả một dòng (tiếng Anh) cho `yugen create` — ghi vào templates/templates.json. */
     hint: "Blank app: theme switcher, toast, @/ alias and a cherry-blossom welcome page",
-    title: "Yugen Starter",
+    /** Tên template (trình chọn của `yugen create`, docs). `appTitle`: <title> và README của app được tạo. */
+    title: "Starter",
+    appTitle: "My app",
     description:
       "Điểm khởi đầu cho ứng dụng React + Tailwind CSS v4 với Yugen UI: theme được ghi nhớ, toast, alias @/ và trang chào hoa anh đào.",
     app: "starter",
@@ -39,7 +41,8 @@ const TEMPLATES = [
   {
     dir: "vite-saas",
     hint: "SaaS workspace: sidebar, Ctrl K command palette, notifications, 8 pages",
-    title: "Sakura Studio · Yugen UI",
+    title: "SaaS",
+    appTitle: "Sakura Studio",
     description:
       "Ứng dụng SaaS dựng bằng Yugen UI: sidebar, bảng lệnh Ctrl K, thông báo, theme sáng / tối / tương phản cao và 8 trang mẫu.",
     app: "saas",
@@ -49,7 +52,8 @@ const TEMPLATES = [
   {
     dir: "vite-blog",
     hint: "Markdown blog: table of contents, tags, search, build-time SEO",
-    title: "Nhật ký Sakura · Yugen UI",
+    title: "Blog",
+    appTitle: "Nhật ký Sakura",
     description: "Blog viết bằng Markdown, dựng bằng Yugen UI: mục lục, thẻ, tìm kiếm, theme tối và SEO sinh sẵn lúc build.",
     app: "blog",
     storageKey: "yugen-blog-theme",
@@ -60,14 +64,14 @@ const TEMPLATES = [
   {
     dir: "vite-dashboard",
     hint: "Dashboard: KPI cards, charts and recent transactions",
-    title: "Yugen UI · Dashboard",
+    title: "Dashboard",
     description: "Dashboard dựng bằng Yugen UI: thẻ KPI, biểu đồ và giao dịch gần đây.",
     blocks: ["02-stats.tsx", "11-analytics.tsx", "06-transactions.tsx"],
   },
   {
     dir: "vite-ai-chat",
     hint: "AI assistant chat UI",
-    title: "Yugen UI · AI chat",
+    title: "AI chat",
     description: "Trợ lý AI dạng chat dựng bằng Yugen UI.",
     blocks: ["12-ai-assistant.tsx"],
   },
@@ -141,10 +145,10 @@ const indexHtml = (t) => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#c2347a" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />${jpFont}
-${t.seoPlugin ? "    <!-- seo -->\n" : ""}    <title>${esc(t.title)}</title>
+${t.seoPlugin ? "    <!-- seo -->\n" : ""}    <title>${esc(t.appTitle ?? t.title)}</title>
     <meta name="description" content="${esc(t.description)}" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="${esc(t.title)}" />
+    <meta property="og:title" content="${esc(t.appTitle ?? t.title)}" />
     <meta property="og:description" content="${esc(t.description)}" />${t.seoPlugin ? "\n    <!-- /seo -->" : ""}${noFlash}
   </head>
   <body>
@@ -198,7 +202,7 @@ const generatedFrom = (t) =>
   `File trong \`src/\` sinh từ \`src/docs/template-library/${t.app}\` (và \`src/docs/block-library\`) bằng \`scripts/sync-templates.mjs\`.`;
 
 const README = {
-  starter: (t) => `# ${t.title}
+  starter: (t) => `# ${t.appTitle ?? t.title}
 
 <p lang="ja">はじまりは、いつも静かに。</p>
 
@@ -236,7 +240,7 @@ src/
 
 ${generatedFrom(t)}
 `,
-  blog: (t) => `# ${t.title}
+  blog: (t) => `# ${t.appTitle ?? t.title}
 
 Starter template của [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates) — blog viết bằng Markdown trên Vite + React +
 Tailwind CSS v4. Không cần CMS hay thư viện Markdown: thêm file \`.md\` là có bài mới.
@@ -274,7 +278,7 @@ vite.config.ts     # plugin blogSeo: HTML tĩnh từng trang, sitemap, RSS
 
 ${generatedFrom(t)}
 `,
-  saas: (t) => `# ${t.title}
+  saas: (t) => `# ${t.appTitle ?? t.title}
 
 Starter template của [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates) — ứng dụng SaaS hoàn chỉnh trên Vite + React +
 Tailwind CSS v4, sẵn sàng thay dữ liệu thật.
@@ -318,7 +322,7 @@ ${generatedFrom(t)}
 const readme = (t) =>
   t.app
     ? README[t.app](t)
-    : `# ${t.title}
+    : `# ${t.appTitle ?? t.title}
 
 Starter template của [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates) — Vite + React + Tailwind CSS v4.
 

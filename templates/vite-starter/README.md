@@ -1,4 +1,4 @@
-# Yugen Starter
+# My app
 
 <p lang="ja">はじまりは、いつも静かに。</p>
 

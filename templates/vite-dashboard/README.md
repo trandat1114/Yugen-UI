@@ -1,4 +1,4 @@
-# Yugen UI · Dashboard
+# Dashboard
 
 Starter template của [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates) — Vite + React + Tailwind CSS v4.
 

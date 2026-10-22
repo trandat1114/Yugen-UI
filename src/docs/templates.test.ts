@@ -23,4 +23,19 @@ describe("templates", () => {
     const manifest = JSON.parse(fs.readFileSync(path.join(root, "templates/templates.json"), "utf8")) as { dir: string; name: string }[];
     expect(TEMPLATES.map((t) => [t.dir, templateName(t.dir)]).sort()).toEqual(manifest.map((t) => [t.dir, t.name]).sort());
   });
+
+  it("tên hiển thị trên docs trùng trình chọn của CLI, không kèm “Yugen UI”", () => {
+    const manifest = JSON.parse(fs.readFileSync(path.join(root, "templates/templates.json"), "utf8")) as { dir: string; title: string }[];
+    expect(TEMPLATES.map((t) => [t.dir, t.name]).sort()).toEqual(manifest.map((t) => [t.dir, t.title]).sort());
+    expect(manifest.filter((t) => /yugen/i.test(t.title))).toEqual([]);
+  });
+
+  it("mô tả template là một câu ngắn, không chêm ý bằng gạch ngang", () => {
+    for (const t of TEMPLATES) {
+      for (const d of [t.vi.description, t.en.description]) {
+        expect(d, t.dir).not.toContain("—");
+        expect(d.length, `${t.dir}: ${d}`).toBeLessThanOrEqual(100);
+      }
+    }
+  });
 });
