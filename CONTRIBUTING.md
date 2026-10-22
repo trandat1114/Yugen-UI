@@ -50,10 +50,10 @@ npm run dev          # trang docs tại http://localhost:5173
 - `npm run test:e2e` — Playwright tự chạy `npm run dev` ở cổng 5200. Trên máy dùng Microsoft Edge đã cài sẵn; CI dùng
   Chromium của Playwright (`npx playwright install chromium`, rồi chạy với `CI=1` nếu máy không có Edge). Báo cáo:
   `npx playwright show-report`.
-- `npm run test:visual` — ảnh gốc nằm trong `e2e/__screenshots__/` và **khác nhau theo hệ điều hành** (hậu tố
-  `-win32` / `-linux`). Cố ý đổi giao diện thì cập nhật bằng `npm run test:visual -- --update-snapshots` rồi xem lại
-  ảnh trước khi commit. Ảnh Linux cho CI: chạy workflow **Visual regression** (Actions → Run workflow, tick `update`)
-  và tải artifact `visual-screenshots` về — workflow không tự commit.
+- `npm run test:visual` — chỉ ảnh Linux (`e2e/__screenshots__/**/*-linux.png`) được commit; CI so sánh trên mọi PR đổi
+  component, style hoặc khung docs. Trên Windows / macOS, lần chạy đầu tạo ảnh riêng cho máy bạn (gitignore). Cố ý đổi
+  giao diện: chạy workflow **Visual regression** trên nhánh của bạn (Actions → Run workflow, tick `update`), tải artifact
+  `visual-screenshots`, chép vào `e2e/__screenshots__/` rồi commit. Workflow không tự commit.
 - `npm run size` — sau `npm run build:lib`. Vượt ngân sách thì tìm nguyên nhân trước (import thừa, dependency mới);
   tăng có chủ đích thì sửa `limit` trong `.size-limit.cjs` và ghi lý do trong PR.
 - CI chạy thêm toàn bộ bằng React 19 (job `react-19`). Muốn thử trên máy: làm trong một bản sao của repo
@@ -203,10 +203,11 @@ repairs them), `build:lib` (library → `dist/`), `build:docs` (docs → `dist-d
 - `npm run test:e2e` — Playwright against the docs site (it starts `npm run dev` on port 5200): axe accessibility,
   mouse drag and emulated touch. Locally it uses the installed Microsoft Edge; CI uses Playwright's Chromium (without
   Edge: `npx playwright install chromium` and run with `CI=1`). Open the report with `npx playwright show-report`.
-- `npm run test:visual` — screenshot comparison. Baselines live in `e2e/__screenshots__/` and are **per platform**
-  (`-win32` / `-linux`). After an intended visual change run `npm run test:visual -- --update-snapshots` and review the
-  images before committing. Linux baselines for CI come from the manual **Visual regression** workflow (tick `update`,
-  then download the `visual-screenshots` artifact) — it never commits.
+- `npm run test:visual` — screenshot comparison. Only Linux baselines (`e2e/__screenshots__/**/*-linux.png`) are
+  committed, and CI compares them on every PR that changes components, styles or the docs layout. On Windows / macOS the
+  first run creates baselines for your machine (gitignored). After an intended visual change, run the **Visual
+  regression** workflow on your branch (tick `update`), download the `visual-screenshots` artifact, copy it into
+  `e2e/__screenshots__/` and commit. The workflow never commits.
 - `npm run size` — size budgets (`.size-limit.cjs`), after `npm run build:lib`. If a budget fails, find the cause
   first; raise a `limit` only on purpose, and say why in the PR.
 - CI also runs typecheck, unit tests and the library build against React 19 (`react-19` job). To try it locally, use

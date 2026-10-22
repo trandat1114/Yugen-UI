@@ -8,7 +8,7 @@
 | `npm run lint:classes` | Class Tailwind ở dạng canonical (`-- --fix` để tự sửa) |
 | `npm test` | Vitest: logic, bàn phím, SSR / hydration (~470 test) |
 | `npm run test:e2e` | Playwright: axe trên mọi trang docs (sáng / tối, + tương phản cao / RTL), kéo-thả, chạm |
-| `npm run test:visual` | So ảnh chụp với bản chuẩn (`e2e/__screenshots__/`, theo hệ điều hành) |
+| `npm run test:visual` | So ảnh chụp với bản chuẩn (chỉ ảnh Linux được commit; CI chạy trên PR đổi giao diện) |
 | `npm run check:examples` | Mọi ví dụ docs typecheck được khi chép ra dùng với `yugen-ui` |
 | `npm run check:props` | Bảng props trên docs khớp type thật |
 | `npm run check:release` | `package.json` = `news.ts` = `CHANGELOG.md` |
@@ -34,7 +34,7 @@
 | `check:release` lỗi | thiếu mục trong `src/docs/news.ts` / CHANGELOG | thêm mục cho version mới |
 | `check:examples` lỗi | ví dụ dùng biến chỉ có trong file docs | thêm `setup: declarationsOf(RAW, [...])` |
 | axe: `aria-allowed-attr` | thuộc tính ARIA không hợp lệ với role (vd. `aria-orientation` trên `<ol>`) | đổi sang `data-*` hoặc đúng role |
-| Visual khác biệt | đổi giao diện có chủ đích | `npm run test:visual -- --update-snapshots`; Linux: workflow **Visual** với `update` |
+| Visual khác biệt | đổi giao diện có chủ đích | Workflow **Visual regression** trên nhánh, tick `update` → tải `visual-screenshots` → chép vào `e2e/__screenshots__/` → commit. Ảnh diff: artifact `visual-test-results` |
 | size-limit vượt | thêm dependency / component lớn | tối ưu, hoặc nâng `limit` trong `.size-limit.cjs` kèm lý do trong PR |
 
 ## Thử với React 19 trên máy
