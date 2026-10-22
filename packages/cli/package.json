@@ -50,6 +50,8 @@
     "build": "node scripts/copy-templates.mjs && tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
+    "check:release": "node scripts/check-release.mjs",
+    "smoke": "node scripts/smoke.mjs",
     "prepack": "npm run build"
   },
   "dependencies": {

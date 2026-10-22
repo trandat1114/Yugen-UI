@@ -78,16 +78,11 @@ jobs:
           cache-dependency-path: packages/cli/package-lock.json
 
       - run: npm ci --prefix packages/cli
+      - run: npm run check:release --prefix packages/cli
       - run: npm run typecheck --prefix packages/cli
       - run: npm test --prefix packages/cli
-      - run: npm run build --prefix packages/cli
-      - name: Smoke — create every template
-        run: |
-          for t in $(node -p "require('./templates/templates.json').map((t) => t.name).join(' ')"); do
-            node packages/cli/dist/index.js create "$RUNNER_TEMP/app-$t" -t "$t" --no-install --no-git -y
-            test -f "$RUNNER_TEMP/app-$t/.gitignore"
-          done
-      - run: npm pack --dry-run ./packages/cli
+      # npm pack yugen + create-yugen-ui, cài từ .tgz, tạo app với mọi template.
+      - run: npm run smoke --prefix packages/cli
 
   react-19:
     name: React 19
