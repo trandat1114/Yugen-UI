@@ -1,6 +1,7 @@
 name: Visual regression
 
-# Compare: on PRs that touch components, styles or the docs layout (not a required check yet). Update: Actions →
+# Compare: on PRs that touch src/ (tests aside), index.html or dependencies (not a required check yet). A UI change
+# that is meant to happen updates the baselines in the same PR. Update: Actions →
 # Visual regression → Run workflow with `update` on your branch; the new Linux baselines
 # (e2e/__screenshots__/**/*-linux.png, the only committed ones) come back as the `visual-screenshots` artifact — copy
 # them into e2e/__screenshots__/ and commit. This workflow never commits.
@@ -9,11 +10,14 @@ on:
   pull_request:
     branches: [main, next]
     paths:
-      - "src/components/**"
-      - "src/styles/**"
-      - "src/index.css"
-      - "src/docs/layout/**"
+      # Ảnh chụp gồm trang chủ, Blocks, Màu và trang component: block, registry, i18n hay phụ thuộc đổi đều ảnh hưởng.
+      - "src/**"
+      - "!src/**/*.test.ts"
+      - "!src/**/*.test.tsx"
+      - "index.html"
+      - "package-lock.json"
       - "e2e/visual.spec.ts"
+      - "e2e/utils.ts"
       - "e2e/__screenshots__/**"
   workflow_dispatch:
     inputs:

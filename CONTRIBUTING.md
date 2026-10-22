@@ -168,6 +168,7 @@ npx changeset    # chọn yugen-ui → patch hoặc minor → viết tóm tắt 
 
 - [ ] `npm run typecheck`, `npm run lint:classes`, `npm test`, `npm run build:lib`, `npm run build:docs` đều pass.
 - [ ] `npm run test:e2e` pass (component có giao diện / tương tác mới); `npm run size` vẫn trong ngân sách.
+- [ ] Check **Visual (compare)** xanh, hoặc đã chụp lại baseline ngay trong PR khi cố ý đổi giao diện.
 - [ ] Không HEX/px/ms tuỳ ý; spacing viết hoa; cỡ chữ theo type ramp; dùng class dùng chung (Design.md §5.7).
 - [ ] Màu đúng vai trò; không brand diện tích lớn; không gradient trên control.
 - [ ] Đủ trạng thái hover / pressed / disabled / focus-visible; bàn phím hoạt động; đã thử RTL.

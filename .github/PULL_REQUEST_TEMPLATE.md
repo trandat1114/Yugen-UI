@@ -27,6 +27,7 @@
 - [ ] New or changed components exported from `src/components/ui/index.ts` and documented in `src/docs/registry/` (example `code` matches `render`)
 - [ ] Changeset added (`npx changeset`) for user-facing changes — do not edit `CHANGELOG.md` by hand
 - [ ] Tests added / updated (unit, keyboard, SSR case or e2e as relevant)
+- [ ] **Visual (compare)** is green, or the baselines are updated in this PR for an intended UI change (Actions → Visual regression → `update`)
 - [ ] Copy follows [wiki › Writing](https://github.com/trandat1114/Yugen-UI/wiki/Writing) (docs, templates, CLI messages, changesets)
 
 <!-- Maintainers review within 7 days (see wiki › Operations Handbook). Big changes need an approved RFC first (GOVERNANCE.md). -->
