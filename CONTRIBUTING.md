@@ -179,8 +179,8 @@ npx changeset    # chọn yugen-ui → patch hoặc minor → viết tóm tắt 
 5. `git tag vX.Y.Z && git push --tags` — workflow `.github/workflows/release.yml` kiểm tra lại, chạy test, build và
    `npm publish --provenance` (cần secret `NPM_TOKEN`). Tag có `-` (vd. `v0.6.0-beta.1`) phát hành với dist-tag `next`.
 
-CLI `yugen` và `create-yugen-ui` (`packages/`) phát hành riêng bằng tag `yugen@X.Y.Z`, không qua Changesets — quy tắc và
-các bước ở wiki › *Release Process* › CLI. Trước khi tag: `npm run check:release --prefix packages/cli` và
+CLI `@yugen-ui/cli` và `create-yugen-ui` (`packages/`) phát hành riêng bằng tag `cli@X.Y.Z`, không qua Changesets — quy tắc và
+các bước ở wiki › *Release Process* › CLI. Trước khi tag: `npm run check:release --prefix packages/cli -- --npm` và
 `npm run smoke --prefix packages/cli`.
 
 ---
@@ -284,6 +284,6 @@ release and removed when the cycle exits pre mode.
    the tests, builds and runs `npm publish --provenance` (needs the `NPM_TOKEN` secret). Tags containing `-`
    (e.g. `v0.6.0-beta.1`) are published under the `next` dist-tag.
 
-The `yugen` CLI and `create-yugen-ui` (`packages/`) are released separately with a `yugen@X.Y.Z` tag, outside
+The `@yugen-ui/cli` CLI and `create-yugen-ui` (`packages/`) are released separately with a `cli@X.Y.Z` tag, outside
 Changesets — rules and steps in the wiki › *Release Process* › CLI. Before tagging run
-`npm run check:release --prefix packages/cli` and `npm run smoke --prefix packages/cli`.
+`npm run check:release --prefix packages/cli -- --npm` and `npm run smoke --prefix packages/cli`.

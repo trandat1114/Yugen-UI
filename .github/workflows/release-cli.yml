@@ -1,13 +1,13 @@
 name: Release CLI
 
-# Phát hành CLI `yugen` + `create-yugen-ui` (packages/) — tách khỏi release.yml của yugen-ui (tag v*).
+# Phát hành `@yugen-ui/cli` + `create-yugen-ui` (packages/) — tách khỏi release.yml của yugen-ui (tag v*).
 # Quy tắc và các bước: wiki › Release Process › CLI. Kiểm tra: packages/cli/scripts/check-release.mjs.
-# Bản ổn định tag trên main (dist-tag latest), prerelease (yugen@X.Y.Z-beta.N) trên next (dist-tag next).
-# create-yugen-ui chỉ publish khi version của nó chưa có trên npm.
+# Bản ổn định tag cli@X.Y.Z trên main (dist-tag latest), prerelease cli@X.Y.Z-beta.N trên next (dist-tag next).
+# Mỗi gói chỉ publish khi version của nó chưa có trên npm → chạy lại được nếu một bước publish lỗi.
 
 on:
   push:
-    tags: ["yugen@*"]
+    tags: ["cli@*"]
 
 permissions:
   contents: read
@@ -39,9 +39,15 @@ jobs:
       - run: npm test --prefix packages/cli
       - run: npm run smoke --prefix packages/cli
 
-      - name: Publish yugen
+      - name: Publish @yugen-ui/cli (if its version is new)
         working-directory: packages/cli
-        run: npm publish --provenance --access public --tag "${{ steps.channel.outputs.dist_tag }}"
+        run: |
+          NAME_VERSION="$(node -p "require('./package.json').name + '@' + require('./package.json').version")"
+          if [ "$(npm view "$NAME_VERSION" version 2>/dev/null)" != "" ]; then
+            echo "$NAME_VERSION is already published — skipping."
+          else
+            npm publish --provenance --access public --tag "${{ steps.channel.outputs.dist_tag }}"
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 

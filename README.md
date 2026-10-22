@@ -246,15 +246,15 @@ Prefer the shadcn CLI? `npx shadcn@latest init https://trandat1114.github.io/Yug
 
 ## CLI
 
-[`yugen`](packages/cli#readme) does all of the above from one tool — templates ship inside it, components come from the
+[`@yugen-ui/cli`](packages/cli#readme) (command `yugen`) does all of the above from one tool — templates ship inside it, components come from the
 same registry:
 
 ```bash
-npm create yugen-ui@latest my-app            # pick a template (= npx yugen@latest create my-app)
-npx yugen@latest init                        # existing project: npm package or source mode, theme import, yugen.json
-npx yugen@latest add button dialog           # copy component source + install its dependencies
-npx yugen@latest list                        # components in the registry
-npx yugen@latest doctor                      # check React, Tailwind v4, the theme import, versions, YugenProvider
+npm create yugen-ui@latest my-app            # pick a template (= npx @yugen-ui/cli@latest create my-app)
+npx @yugen-ui/cli@latest init                        # existing project: npm package or source mode, theme import, yugen.json
+npx @yugen-ui/cli@latest add button dialog           # copy component source + install its dependencies
+npx @yugen-ui/cli@latest list                        # components in the registry
+npx @yugen-ui/cli@latest doctor                      # check React, Tailwind v4, the theme import, versions, YugenProvider
 ```
 
 ## Next.js (App Router)
@@ -527,15 +527,15 @@ Dùng shadcn CLI? `npx shadcn@latest init https://trandat1114.github.io/Yugen-UI
 
 ### CLI
 
-[`yugen`](packages/cli#readme) gom mọi cách trên vào một công cụ — template đóng gói sẵn, component lấy từ cùng
+[`@yugen-ui/cli`](packages/cli#readme) (lệnh `yugen`) gom mọi cách trên vào một công cụ — template đóng gói sẵn, component lấy từ cùng
 registry:
 
 ```bash
-npm create yugen-ui@latest my-app            # chọn template (= npx yugen@latest create my-app)
-npx yugen@latest init                        # dự án có sẵn: gói npm hoặc mã nguồn, import theme, ghi yugen.json
-npx yugen@latest add button dialog           # chép mã nguồn component + cài phụ thuộc
-npx yugen@latest list                        # danh sách component trong registry
-npx yugen@latest doctor                      # kiểm tra React, Tailwind v4, import theme, phiên bản, YugenProvider
+npm create yugen-ui@latest my-app            # chọn template (= npx @yugen-ui/cli@latest create my-app)
+npx @yugen-ui/cli@latest init                        # dự án có sẵn: gói npm hoặc mã nguồn, import theme, ghi yugen.json
+npx @yugen-ui/cli@latest add button dialog           # chép mã nguồn component + cài phụ thuộc
+npx @yugen-ui/cli@latest list                        # danh sách component trong registry
+npx @yugen-ui/cli@latest doctor                      # kiểm tra React, Tailwind v4, import theme, phiên bản, YugenProvider
 ```
 
 ### Next.js (App Router)

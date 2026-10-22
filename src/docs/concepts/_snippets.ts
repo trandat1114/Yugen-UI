@@ -55,15 +55,15 @@ export const NAMESPACE = `{
 
 /* CLI yugen (packages/cli) — trang #/concepts/cli. */
 
-export const CLI_CREATE = "yugen@latest create my-app";
+export const CLI_CREATE = "@yugen-ui/cli@latest create my-app";
 export const CLI_CREATE_PM = `npm create yugen-ui@latest my-app -- --template saas
 pnpm create yugen-ui my-app --template saas
 yarn create yugen-ui my-app --template saas
 bun create yugen-ui my-app --template saas`;
-export const CLI_INIT = "yugen@latest init";
-export const CLI_INIT_SOURCE = "yugen@latest init --mode source";
-export const CLI_ADD = "yugen@latest add button dialog data-grid";
-export const CLI_DOCTOR = "yugen@latest doctor";
+export const CLI_INIT = "@yugen-ui/cli@latest init";
+export const CLI_INIT_SOURCE = "@yugen-ui/cli@latest init --mode source";
+export const CLI_ADD = "@yugen-ui/cli@latest add button dialog data-grid";
+export const CLI_DOCTOR = "@yugen-ui/cli@latest doctor";
 
 export const CLI_CONFIG = `{
   "mode": "source",

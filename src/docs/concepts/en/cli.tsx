@@ -68,13 +68,13 @@ src/
   components/ui/YugenProvider/…       # plus the Toast and Tooltip it uses
   components/ui/Button/Button.tsx     # from yugen add`;
 
-const ADD_MORE = `npx yugen add select --dry-run    # list the files it would write, write nothing
-npx yugen add --all               # every component
-npx yugen add button --overwrite  # also replace files you have edited
-npx yugen list grid               # search the registry, ✓ means already in the project`;
+const ADD_MORE = `npx @yugen-ui/cli add select --dry-run    # list the files it would write, write nothing
+npx @yugen-ui/cli add --all               # every component
+npx @yugen-ui/cli add button --overwrite  # also replace files you have edited
+npx @yugen-ui/cli list grid               # search the registry, ✓ means already in the project`;
 
-const CI = `npx yugen@latest create app -t starter -y --no-git
-npx yugen@latest add button dialog -y --no-install`;
+const CI = `npx @yugen-ui/cli@latest create app -t starter -y --no-git
+npx @yugen-ui/cli@latest add button dialog -y --no-install`;
 
 export default function Page() {
   return (
@@ -92,7 +92,7 @@ export default function Page() {
             ]}
           />
           <P>
-            Nothing to install first: run it with <C>npx yugen@latest</C> (or <C>pnpm dlx</C>, <C>yarn dlx</C>, <C>bunx</C>). Requires Node.js 20
+            Nothing to install first: run it with <C>npx @yugen-ui/cli@latest</C> (or <C>pnpm dlx</C>, <C>yarn dlx</C>, <C>bunx</C>). Requires Node.js 20
             or later.
           </P>
         </div>

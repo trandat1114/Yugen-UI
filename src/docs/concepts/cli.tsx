@@ -68,13 +68,13 @@ src/
   components/ui/YugenProvider/…       # cùng Toast, Tooltip mà provider dùng
   components/ui/Button/Button.tsx     # từ yugen add`;
 
-const ADD_MORE = `npx yugen add select --dry-run    # in danh sách file sẽ ghi, không ghi gì
-npx yugen add --all               # mọi component
-npx yugen add button --overwrite  # ghi đè cả file bạn đã sửa
-npx yugen list grid               # tìm trong registry, ✓ là đã có trong dự án`;
+const ADD_MORE = `npx @yugen-ui/cli add select --dry-run    # in danh sách file sẽ ghi, không ghi gì
+npx @yugen-ui/cli add --all               # mọi component
+npx @yugen-ui/cli add button --overwrite  # ghi đè cả file bạn đã sửa
+npx @yugen-ui/cli list grid               # tìm trong registry, ✓ là đã có trong dự án`;
 
-const CI = `npx yugen@latest create app -t starter -y --no-git
-npx yugen@latest add button dialog -y --no-install`;
+const CI = `npx @yugen-ui/cli@latest create app -t starter -y --no-git
+npx @yugen-ui/cli@latest add button dialog -y --no-install`;
 
 export default function Page() {
   return (
@@ -92,7 +92,7 @@ export default function Page() {
             ]}
           />
           <P>
-            Không cần cài trước: chạy bằng <C>npx yugen@latest</C> (hoặc <C>pnpm dlx</C>, <C>yarn dlx</C>, <C>bunx</C>). Cần Node.js 20 trở lên.
+            Không cần cài trước: chạy bằng <C>npx @yugen-ui/cli@latest</C> (hoặc <C>pnpm dlx</C>, <C>yarn dlx</C>, <C>bunx</C>). Cần Node.js 20 trở lên.
           </P>
         </div>
       </DocSection>
