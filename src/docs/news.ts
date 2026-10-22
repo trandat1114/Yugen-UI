@@ -25,6 +25,16 @@ export const NEWS_KIND_LABEL: Record<NewsKind, string> = {
 
 export const NEWS: NewsRelease[] = [
   {
+    version: "0.8.3",
+    date: "2026-10-22",
+    title: "Lệnh tạo dự án chạy được trên PowerShell",
+    summary: "Lệnh copy từ docs chạy được trên Windows PowerShell. Gói npm không đổi.",
+    items: [
+      { kind: "fixed", text: "Lệnh tạo dự án dùng npx create-yugen-ui@latest my-app --template <tên>: PowerShell bỏ mất dấu -- trong npm create … -- --template nên npm báo “Unknown cli config --template”.", href: "#/concepts/quick-start" },
+      { kind: "fixed", text: "cd my-app và npm run dev nằm trên dòng riêng thay vì nối bằng && (Windows PowerShell 5.1 không chấp nhận).", href: "#/templates" },
+    ],
+  },
+  {
     version: "0.8.2",
     date: "2026-10-22",
     title: "CLI @yugen-ui/cli",
