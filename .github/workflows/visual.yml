@@ -1,11 +1,20 @@
 name: Visual regression
 
-# Manual only (Actions → Visual regression → Run workflow). Screenshots differ per OS, so Linux baselines
-# (e2e/__screenshots__/**/*-linux.png) are produced here. This workflow never commits: with `update` checked it
-# regenerates the baselines and uploads them as the `visual-screenshots` artifact — download it, copy the files into
-# e2e/__screenshots__/ and commit them in a pull request.
+# Compare: on PRs that touch components, styles or the docs layout (not a required check yet). Update: Actions →
+# Visual regression → Run workflow with `update` on your branch; the new Linux baselines
+# (e2e/__screenshots__/**/*-linux.png, the only committed ones) come back as the `visual-screenshots` artifact — copy
+# them into e2e/__screenshots__/ and commit. This workflow never commits.
 
 on:
+  pull_request:
+    branches: [main, next]
+    paths:
+      - "src/components/**"
+      - "src/styles/**"
+      - "src/index.css"
+      - "src/docs/layout/**"
+      - "e2e/visual.spec.ts"
+      - "e2e/__screenshots__/**"
   workflow_dispatch:
     inputs:
       update:
@@ -78,3 +87,14 @@ jobs:
           path: test-results/
           retention-days: 14
           if-no-files-found: ignore
+
+      - name: Explain a failed compare
+        if: failure() && !inputs.update
+        run: |
+          {
+            echo "### Visual differences"
+            echo ""
+            echo "Download **visual-test-results** (diff, actual and expected PNGs) from this run's artifacts."
+            echo "If the change is intended: Actions → Visual regression → Run workflow on this branch with **update**,"
+            echo "then copy the files from **visual-screenshots** into \`e2e/__screenshots__/\` and commit them."
+          } >> "$GITHUB_STEP_SUMMARY"
