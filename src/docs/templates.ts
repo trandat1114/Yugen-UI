@@ -146,10 +146,6 @@ export const templateCreateCommand = (dir: string, folder = "my-app") =>
 export const templateCommand = (dir: string, folder = "my-app") =>
   `${templateCreateCommand(dir, folder)}\ncd ${folder}\nnpm run dev`;
 
-/** Không qua CLI: tải thẳng thư mục template từ GitHub. */
-export const templateGigetCommand = (dir: string, folder = "my-app") =>
-  `npx giget@latest gh:${REPO}/templates/${dir} ${folder} --install\ncd ${folder}\nnpm run dev`;
-
 /** StackBlitz mở thẳng thư mục trên GitHub — không cần cài gì. */
 export const templateStackBlitzUrl = (dir: string) => `https://stackblitz.com/github/${REPO}/tree/main/templates/${dir}`;
 

@@ -305,7 +305,7 @@ export function OnThisPage({ items }: { items: { id: string; label: string }[] }
   }, [items]);
 
   return (
-    <nav aria-label={t("blocks.onThisPage")} className="sticky top-24 hidden w-52 shrink-0 self-start xl:block">
+    <nav aria-label={t("blocks.onThisPage")} className="sticky top-24 mt-XL hidden w-52 shrink-0 self-start xl:block">
       <p className="mb-M text-body1 font-semibold text-foreground-1">{t("blocks.onThisPage")}</p>
       <ul className="flex flex-col border-s border-stroke-2">
         {items.map((item) => (

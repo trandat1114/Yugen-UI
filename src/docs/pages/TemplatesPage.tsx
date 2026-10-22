@@ -28,16 +28,11 @@ const VI = {
   other: "Không cần cả ứng dụng?",
   otherBody: (
     <>
-      Thêm Yugen UI vào dự án có sẵn bằng <code className="font-mono text-caption1">npx @yugen-ui/cli@latest init</code> (
-      <a className="text-link underline hover:text-link-hover" href="#/concepts/cli">
-        CLI yugen
-      </a>
-      ) hoặc theo{" "}
+      Thêm Yugen UI vào dự án có sẵn theo{" "}
       <a className="text-link underline hover:text-link-hover" href="#/concepts/quick-start">
         Bắt đầu nhanh
       </a>
-      , chép mã nguồn từng component bằng <code className="font-mono text-caption1">npx @yugen-ui/cli add</code>, hoặc lấy từng cụm giao
-      diện ở{" "}
+      , hoặc lấy từng cụm giao diện ở{" "}
       <a className="text-link underline hover:text-link-hover" href="#/blocks">
         Blocks
       </a>
@@ -68,16 +63,11 @@ const EN: typeof VI = {
   other: "Don't need a whole app?",
   otherBody: (
     <>
-      Add Yugen UI to an existing project with <code className="font-mono text-caption1">npx @yugen-ui/cli@latest init</code> (
-      <a className="text-link underline hover:text-link-hover" href="#/concepts/cli">
-        yugen CLI
-      </a>
-      ) or by following{" "}
+      Add Yugen UI to an existing project with{" "}
       <a className="text-link underline hover:text-link-hover" href="#/concepts/quick-start">
         Quick start
       </a>
-      , copy component source with <code className="font-mono text-caption1">npx @yugen-ui/cli add</code>, or grab individual pieces
-      from{" "}
+      , or grab individual pieces from{" "}
       <a className="text-link underline hover:text-link-hover" href="#/blocks">
         Blocks
       </a>

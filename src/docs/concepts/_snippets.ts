@@ -53,13 +53,9 @@ export const NAMESPACE = `{
   }
 }`;
 
-/* CLI yugen (packages/cli) — trang #/concepts/cli. */
+/* @yugen-ui/cli (packages/cli) — trang #/concepts/cli. */
 
 export const CLI_CREATE = "@yugen-ui/cli@latest create my-app";
-export const CLI_CREATE_PM = `npx create-yugen-ui@latest my-app --template saas
-pnpm create yugen-ui my-app --template saas
-yarn create yugen-ui my-app --template saas
-bun create yugen-ui my-app --template saas`;
 export const CLI_INIT = "@yugen-ui/cli@latest init";
 export const CLI_INIT_SOURCE = "@yugen-ui/cli@latest init --mode source";
 export const CLI_ADD = "@yugen-ui/cli@latest add button dialog data-grid";

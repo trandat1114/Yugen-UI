@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { TEMPLATES, templateCommand, templateGigetCommand, templateName } from "./templates";
+import { TEMPLATES, templateCommand, templateName } from "./templates";
 
 const root = path.resolve(__dirname, "../..");
 
@@ -17,9 +17,6 @@ describe("templates", () => {
 
   it("lệnh tạo dự án: CLI chép + cài, rồi chạy — mỗi lệnh một dòng, không nối bằng && (Windows PowerShell 5.1)", () => {
     expect(templateCommand("vite-blog")).toBe("npx create-yugen-ui@latest my-app --template blog\ncd my-app\nnpm run dev");
-    expect(templateGigetCommand("vite-blog")).toBe(
-      "npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-blog my-app --install\ncd my-app\nnpm run dev",
-    );
   });
 
   it("tên --template trên docs khớp danh mục CLI (templates/templates.json)", () => {

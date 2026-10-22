@@ -2,7 +2,7 @@ import type { ConceptMeta } from "../types";
 
 export const meta: ConceptMeta = {
   slug: "cli",
-  title: "CLI yugen",
+  title: "@yugen-ui/cli",
   group: "Bắt đầu",
   order: 3,
   lead: "Một công cụ dòng lệnh để tạo app từ template, thiết lập Yugen UI trong dự án có sẵn, chép mã nguồn component và kiểm tra cấu hình.",

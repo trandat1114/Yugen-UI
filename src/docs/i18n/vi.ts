@@ -15,7 +15,9 @@ export const vi = {
   "nav.labsConcepts": "Khái niệm Yugen Labs",
   "credit.by": "tạo bởi",
   "credit.rules": "Quy tắc đầy đủ:",
-  "footer.note": "Dựa trên Fluent 2, không phải sản phẩm của Microsoft · React + Tailwind CSS v4",
+  "footer.links": "Liên kết dự án",
+  "footer.discussions": "Thảo luận",
+  "footer.report": "Báo lỗi",
 
   // Thanh trên
   "topbar.openNav": "Mở menu",
@@ -70,7 +72,7 @@ export const vi = {
   "component.notFound": "Không tìm thấy component “{slug}”.",
   "component.loadError": "Không tải được nội dung trang",
   "component.loadErrorHint": "Kiểm tra kết nối mạng rồi thử lại.",
-  "component.importDesc": "Cài từ npm, chép mã nguồn vào dự án bằng CLI yugen hoặc shadcn CLI, hoặc import thẳng khi làm việc trong repo này.",
+  "component.importDesc": "Cài từ npm, chép mã nguồn vào dự án bằng @yugen-ui/cli hoặc shadcn CLI, hoặc import thẳng khi làm việc trong repo này.",
   "component.repoTab": "Repo Yugen UI",
   "component.variants": "Biến thể",
   "component.variantsDesc": "Mỗi ô là một mẫu độc lập: hover để Copy, hoặc bấm Code để xem mã nguồn.",
@@ -107,7 +109,7 @@ export const vi = {
   "home.releasePill": "{title}",
   "home.lead": "Component React cho Tailwind CSS v4.",
   "home.install": "Cài đặt",
-  "home.intro": "{count} component React cho Tailwind CSS v4, có theme sáng, tối, tương phản cao và hỗ trợ RTL. Cài qua npm hoặc chép mã nguồn bằng CLI yugen.",
+  "home.intro": "{count} component React cho Tailwind CSS v4, có theme sáng, tối, tương phản cao và hỗ trợ RTL. Cài qua npm hoặc chép mã nguồn bằng @yugen-ui/cli.",
   "home.cardFoundations": "Màu, typography, spacing, elevation, motion",
   "home.cardComponents": "{count} component, kèm mã nguồn",
   "home.cardBlocks": "Mẫu giao diện ghép từ nhiều component",

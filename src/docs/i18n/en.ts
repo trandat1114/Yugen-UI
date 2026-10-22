@@ -14,7 +14,9 @@ export const en: Record<MessageKey, string> = {
   "nav.labsConcepts": "Yugen Labs concepts",
   "credit.by": "made by",
   "credit.rules": "Full rules:",
-  "footer.note": "Based on Fluent 2, not a Microsoft product · React + Tailwind CSS v4",
+  "footer.links": "Project links",
+  "footer.discussions": "Discussions",
+  "footer.report": "Report a bug",
 
   // Top bar
   "topbar.openNav": "Open menu",
@@ -69,7 +71,7 @@ export const en: Record<MessageKey, string> = {
   "component.notFound": "Component “{slug}” not found.",
   "component.loadError": "Couldn't load this page",
   "component.loadErrorHint": "Check your connection and try again.",
-  "component.importDesc": "Install from npm, copy the source into your project with the yugen CLI or the shadcn CLI, or import directly when working in this repo.",
+  "component.importDesc": "Install from npm, copy the source into your project with @yugen-ui/cli or the shadcn CLI, or import directly when working in this repo.",
   "component.repoTab": "Yugen UI repo",
   "component.variants": "Variants",
   "component.variantsDesc": "Each tile is a standalone example: hover to copy, or press Code to see the source.",
@@ -106,7 +108,7 @@ export const en: Record<MessageKey, string> = {
   "home.releasePill": "What's new in v{version}",
   "home.lead": "React components for Tailwind CSS v4.",
   "home.install": "Install",
-  "home.intro": "{count} React components for Tailwind CSS v4, with light, dark and high-contrast themes and RTL support. Install from npm or copy the source with the yugen CLI.",
+  "home.intro": "{count} React components for Tailwind CSS v4, with light, dark and high-contrast themes and RTL support. Install from npm or copy the source with @yugen-ui/cli.",
   "home.cardFoundations": "Color, typography, spacing, elevation, motion",
   "home.cardComponents": "{count} components, with source code",
   "home.cardBlocks": "UI patterns built from several components",

@@ -194,7 +194,7 @@ layout because `react-resizable-panels` measures the physical X axis.
 
 ## Copy-paste mode
 
-Prefer owning the code, shadcn-style? The shortest route is the [yugen CLI](#cli): `npx @yugen-ui/cli@latest init --mode source`
+Need to customize components beyond props and `className`? Copy their source with [@yugen-ui/cli](#cli): `npx @yugen-ui/cli@latest init --mode source`
 once, then `npx @yugen-ui/cli add button dialog` — short names, imports rewritten to your alias, no `components.json` needed.
 
 The **shadcn CLI** works too — Yugen UI publishes a compatible registry. `init` runs once
@@ -232,8 +232,6 @@ cd my-app
 npm run dev
 # leave out --template to pick from a list · pnpm create yugen-ui · yarn create yugen-ui · bun create yugen-ui
 ```
-
-Without the CLI: `npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-starter my-app --install`.
 
 | Template | What you get |
 | --- | --- |
@@ -477,7 +475,7 @@ Giới hạn đã biết: nhóm `Resizable` ngang giữ bố cục LTR vì `reac
 
 ### Chế độ copy-paste
 
-Muốn sở hữu mã nguồn như shadcn? Ngắn nhất là [CLI yugen](#cli-1): `npx @yugen-ui/cli@latest init --mode source` một lần, rồi
+Cần sửa component nhiều hơn props và `className`? Chép mã nguồn bằng [@yugen-ui/cli](#cli-1): `npx @yugen-ui/cli@latest init --mode source` một lần, rồi
 `npx @yugen-ui/cli add button dialog` — tên ngắn, import tự đổi theo alias của dự án, không cần `components.json`.
 
 **shadcn CLI** cũng dùng được — Yugen UI có registry tương thích. `init` chạy một lần mỗi dự án:
@@ -515,8 +513,6 @@ cd my-app
 npm run dev
 # bỏ --template để chọn từ danh sách · pnpm create yugen-ui · yarn create yugen-ui · bun create yugen-ui
 ```
-
-Không dùng CLI: `npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-starter my-app --install`.
 
 | Template | Có gì |
 | --- | --- |

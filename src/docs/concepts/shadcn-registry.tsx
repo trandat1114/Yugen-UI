@@ -3,7 +3,7 @@ import { MessageBar, PackageManagerTabs, Tabs, TabsContent, TabsList, TabsTrigge
 import { DocSection } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
 import { REGISTRY_URL } from "../install";
-import { NAMESPACE, SHADCN_ADD, SHADCN_EXISTING, SHADCN_INIT, SHADCN_INIT_NEXT, TEMPLATE_COMMAND } from "./_snippets";
+import { NAMESPACE, SHADCN_ADD, SHADCN_EXISTING, SHADCN_INIT, SHADCN_INIT_NEXT } from "./_snippets";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -57,19 +57,13 @@ export default function Page() {
         <div className="flex flex-col gap-M">
           <P>
             <strong className="font-semibold text-foreground-1">Gói npm</strong> (<C>npm install yugen-ui</C>) hợp khi bạn muốn nâng cấp
-            bằng một lệnh và không sửa sâu component. <strong className="font-semibold text-foreground-1">shadcn CLI</strong> chép mã nguồn
-            vào dự án: bạn sở hữu và sửa thoải mái từng dòng, đổi lại tự chịu trách nhiệm cập nhật. Hai cách dùng cùng token nên có thể
-            kết hợp.
+            bằng một lệnh và ít sửa component. <strong className="font-semibold text-foreground-1">shadcn CLI</strong> chép mã nguồn vào dự
+            án để bạn sửa trực tiếp, đổi lại bạn tự cập nhật khi có bản mới. Hai cách dùng chung token nên có thể kết hợp.
           </P>
-          <P>
-            Dự án mới tinh? Nhanh nhất là một lệnh template (<A href="#/templates">Templates</A>) — rồi chép thêm component bằng CLI nếu
-            cần:
-          </P>
-          <CodeBlock code={TEMPLATE_COMMAND} />
-          <MessageBar intent="info" title="Cách ngắn hơn: CLI yugen" className="max-w-3xl">
+          <MessageBar intent="info" title="Cách ngắn hơn: @yugen-ui/cli" className="max-w-3xl">
             <C>npx @yugen-ui/cli@latest init --mode source</C> rồi <C>npx @yugen-ui/cli add button</C> chép cùng mã nguồn từ cùng registry, gõ tên ngắn,
-            không cần components.json hay thêm alias <C>@/</C>. Xem <A href="#/concepts/cli">CLI yugen</A>. Trang này dành cho dự án đã
-            dùng shadcn CLI.
+            không cần components.json hay alias <C>@/</C>. Chi tiết ở trang <A href="#/concepts/cli">@yugen-ui/cli</A>. Trang này dành cho dự
+            án đã dùng shadcn CLI.
           </MessageBar>
         </div>
       </DocSection>

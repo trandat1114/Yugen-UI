@@ -14,6 +14,7 @@ import { CONCEPT_EN_PAGES } from "@/docs/concepts";
 import { LocaleProvider, useLocale } from "@/docs/i18n";
 import { FallbackNotice } from "@/docs/i18n/FallbackNotice";
 import { DocumentMeta } from "@/docs/seo";
+import { SITE } from "@/docs/site";
 import type { Route } from "@/docs/router";
 
 // Trang ít dùng / nặng nạp lười theo route.
@@ -44,6 +45,13 @@ function VietnameseContent({ children }: { children: ReactNode }) {
   );
 }
 
+const FOOTER_LINKS = [
+  { label: "GitHub", href: SITE.links.repository },
+  { label: "npm", href: SITE.links.npm },
+  { key: "footer.discussions", href: SITE.links.discussions },
+  { key: "footer.report", href: `${SITE.links.issues}/new/choose` },
+] as const;
+
 function Footer() {
   const { t } = useLocale();
   return (
@@ -55,7 +63,13 @@ function Footer() {
           <AuthorLink className="text-foreground-1" />
         </span>
       </span>
-      <span>{t("footer.note")}</span>
+      <nav aria-label={t("footer.links")} className="flex flex-wrap items-center gap-L">
+        {FOOTER_LINKS.map((link) => (
+          <a key={link.href} href={link.href} target="_blank" rel="noreferrer" className="hover:text-foreground-1 hover:underline">
+            {"label" in link ? link.label : t(link.key)}
+          </a>
+        ))}
+      </nav>
     </footer>
   );
 }

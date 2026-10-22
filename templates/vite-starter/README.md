@@ -11,10 +11,9 @@ cd my-app
 npm run dev
 ```
 
-Không dùng CLI: `npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-starter my-app --install`. Không muốn cài gì? Mở thẳng
-trên StackBlitz: https://stackblitz.com/github/trandat1114/Yugen-UI/tree/main/templates/vite-starter
+Không muốn cài gì? Mở thẳng trên StackBlitz: https://stackblitz.com/github/trandat1114/Yugen-UI/tree/main/templates/vite-starter
 
-Kiểm tra cấu hình bất cứ lúc nào: `npx @yugen-ui/cli doctor` (CLI yugen, https://trandat1114.github.io/Yugen-UI/#/concepts/cli).
+Kiểm tra cấu hình bất cứ lúc nào: `npx @yugen-ui/cli doctor` (xem https://trandat1114.github.io/Yugen-UI/#/concepts/cli).
 
 ## Đã có sẵn
 

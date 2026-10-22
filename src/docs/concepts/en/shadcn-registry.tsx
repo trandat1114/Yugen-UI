@@ -3,7 +3,7 @@ import { MessageBar, PackageManagerTabs, Tabs, TabsContent, TabsList, TabsTrigge
 import { DocSection } from "../../blocks";
 import { CodeBlock } from "../../CodeBlock";
 import { REGISTRY_URL } from "../../install";
-import { NAMESPACE, SHADCN_ADD, SHADCN_EXISTING, SHADCN_INIT, SHADCN_INIT_NEXT, TEMPLATE_COMMAND } from "../_snippets";
+import { NAMESPACE, SHADCN_ADD, SHADCN_EXISTING, SHADCN_INIT, SHADCN_INIT_NEXT } from "../_snippets";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -57,19 +57,14 @@ export default function Page() {
         <div className="flex flex-col gap-M">
           <P>
             The <strong className="font-semibold text-foreground-1">npm package</strong> (<C>npm install yugen-ui</C>) suits you when you want
-            one-command upgrades and won't change components deeply. The <strong className="font-semibold text-foreground-1">shadcn CLI</strong>{" "}
-            copies the source into your project: you own and can edit every line, in exchange for handling updates yourself. Both share the
-            same tokens, so you can mix them.
+            one-command upgrades and rarely change components. The <strong className="font-semibold text-foreground-1">shadcn CLI</strong>{" "}
+            copies the source into your project so you can edit it directly, and you handle updates yourself. Both use the same tokens, so
+            you can mix them.
           </P>
-          <P>
-            Brand-new project? The fastest start is a one-command template (<A href="#/templates">Templates</A>) — then copy extra components
-            with the CLI if needed:
-          </P>
-          <CodeBlock code={TEMPLATE_COMMAND} />
-          <MessageBar intent="info" title="Shorter: the yugen CLI" className="max-w-3xl">
+          <MessageBar intent="info" title="Shorter: @yugen-ui/cli" className="max-w-3xl">
             <C>npx @yugen-ui/cli@latest init --mode source</C> and then <C>npx @yugen-ui/cli add button</C> copy the same source from the same registry, with
-            short names and no components.json or extra <C>@/</C> alias. See <A href="#/concepts/cli">the yugen CLI</A>. This page is for
-            projects that already use the shadcn CLI.
+            short names and no components.json or <C>@/</C> alias. Details on the <A href="#/concepts/cli">@yugen-ui/cli</A> page. This page
+            is for projects that already use the shadcn CLI.
           </MessageBar>
         </div>
       </DocSection>

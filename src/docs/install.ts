@@ -9,7 +9,7 @@ export const exportNames = () => [...Object.keys(UI), ...Object.keys(Ramp), ...O
 /**
  * Suy ra lệnh cài cho từng trang component từ `importCode` của docs:
  *   - npm:        import { … } from "yugen-ui"
- *   - yugen CLI:  npx @yugen-ui/cli add <item> + import theo từng thư mục component (packages/cli)
+ *   - @yugen-ui/cli: npx @yugen-ui/cli add <item> + import theo từng thư mục component (packages/cli)
  *   - shadcn CLI: npx shadcn@latest add <registry>/r/<item>.json + cùng import đó
  * Bản đồ tên export → thư mục lấy từ chính các module component (cùng module trang docs đã nạp, không tốn thêm).
  */
@@ -43,7 +43,7 @@ function parseNames(list: string) {
 
 export interface InstallSnippets {
   npm: string;
-  /** CLI yugen (chế độ source); rỗng nếu không suy ra được thư mục component. */
+  /** @yugen-ui/cli (chế độ source); rỗng nếu không suy ra được thư mục component. */
   cli: string;
   shadcn: string;
   /** Thư mục component cần chép (rỗng nếu không suy ra được). */
