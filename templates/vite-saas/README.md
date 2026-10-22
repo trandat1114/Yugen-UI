@@ -1,4 +1,4 @@
-# Sakura Studio · Yugen UI
+# Sakura Studio
 
 Starter template của [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates) — ứng dụng SaaS hoàn chỉnh trên Vite + React +
 Tailwind CSS v4, sẵn sàng thay dữ liệu thật.

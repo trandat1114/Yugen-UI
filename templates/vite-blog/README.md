@@ -1,4 +1,4 @@
-# Nhật ký Sakura · Yugen UI
+# Nhật ký Sakura
 
 Starter template của [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates) — blog viết bằng Markdown trên Vite + React +
 Tailwind CSS v4. Không cần CMS hay thư viện Markdown: thêm file `.md` là có bài mới.

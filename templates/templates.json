@@ -2,31 +2,31 @@
   {
     "dir": "vite-starter",
     "name": "starter",
-    "title": "Yugen Starter",
+    "title": "Starter",
     "hint": "Blank app: theme switcher, toast, @/ alias and a cherry-blossom welcome page"
   },
   {
     "dir": "vite-saas",
     "name": "saas",
-    "title": "Sakura Studio · Yugen UI",
+    "title": "SaaS",
     "hint": "SaaS workspace: sidebar, Ctrl K command palette, notifications, 8 pages"
   },
   {
     "dir": "vite-blog",
     "name": "blog",
-    "title": "Nhật ký Sakura · Yugen UI",
+    "title": "Blog",
     "hint": "Markdown blog: table of contents, tags, search, build-time SEO"
   },
   {
     "dir": "vite-dashboard",
     "name": "dashboard",
-    "title": "Yugen UI · Dashboard",
+    "title": "Dashboard",
     "hint": "Dashboard: KPI cards, charts and recent transactions"
   },
   {
     "dir": "vite-ai-chat",
     "name": "ai-chat",
-    "title": "Yugen UI · AI chat",
+    "title": "AI chat",
     "hint": "AI assistant chat UI"
   }
 ]
