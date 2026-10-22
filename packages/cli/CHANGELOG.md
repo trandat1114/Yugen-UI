@@ -1,5 +1,10 @@
 # @yugen-ui/cli
 
+## Unreleased
+
+- Requires Node.js 22 or later (`engines`); Node.js 20 reached end of life. Release as a minor (0.2.0), and bump
+  `create-yugen-ui` with it.
+
 ## 0.1.0
 
 - First release: `yugen create`, `init` (package / source mode), `add`, `list` and `doctor`.

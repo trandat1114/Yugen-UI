@@ -21,7 +21,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [22, 24]
+        # LTS + Current đang được hỗ trợ (https://github.com/nodejs/Release); bỏ bản đã EOL.
+        node: [22, 24, 26]
     steps:
       - uses: actions/checkout@v7
 
@@ -67,8 +68,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # engines của CLI: node >=20.
-        node: [20, 22, 24]
+        # Cùng các bản Node như Build; engines của CLI: node >=22.
+        node: [22, 24, 26]
     steps:
       - uses: actions/checkout@v7
 

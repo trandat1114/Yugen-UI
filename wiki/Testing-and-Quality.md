@@ -19,7 +19,7 @@
 
 | Job | Chạy |
 |---|---|
-| Build · Node 22 / 24 | typecheck, lint:classes, các check:*, sync-templates, build lib + docs, pack, size |
+| Build · Node 22 / 24 / 26 | typecheck, lint:classes, các check:*, sync-templates, build lib + docs, pack, size |
 | Unit tests (React 18) | `npm test` |
 | React 19 | cài React 19 tạm thời → typecheck, test, build:lib |
 | E2E (Playwright + axe) | chromium, upload `playwright-report` khi lỗi |
