@@ -100,7 +100,7 @@ export default function Page() {
         <div className="flex flex-col gap-L">
           <PackageManagerTabs packages={CLI_CREATE} command="dlx" />
           <P>
-            Options: <C>-t, --template</C>, <C>--pm npm|pnpm|yarn|bun</C>, <C>--no-install</C>, <C>--no-git</C>, <C>--force</C> (write into a
+            Options: <C>-t, --template</C>, <C>--lang en|vi</C> (language of the app's text, for templates that have both; English by default), <C>--pm npm|pnpm|yarn|bun</C>, <C>--no-install</C>, <C>--no-git</C>, <C>--force</C> (write into a
             non-empty directory). <C>npx create-yugen-ui@latest</C> is a shorter way to run the same command. Templates ship inside the
             package, so this works offline. Preview them on <A href="#/templates">Templates</A>.
           </P>
