@@ -1,9 +1,7 @@
 # My app
 
-<p lang="ja">はじまりは、いつも静かに。</p>
-
-Điểm khởi đầu "trắng" của [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates): Vite + React + Tailwind CSS v4 đã nối
-sẵn, kèm một trang chào để bạn thấy thư viện làm được gì — rồi xoá đi khi bắt đầu viết ứng dụng.
+A blank [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates) project: Vite, React and Tailwind CSS v4, set up and
+ready to go.
 
 ```bash
 npx create-yugen-ui@latest my-app --template starter
@@ -11,35 +9,45 @@ cd my-app
 npm run dev
 ```
 
-Không muốn cài gì? Mở thẳng trên StackBlitz: https://stackblitz.com/github/trandat1114/Yugen-UI/tree/main/templates/vite-starter
+Try it without installing anything on StackBlitz: https://stackblitz.com/github/trandat1114/Yugen-UI/tree/main/templates/vite-starter
 
-Kiểm tra cấu hình bất cứ lúc nào: `npx @yugen-ui/cli doctor` (xem https://trandat1114.github.io/Yugen-UI/#/concepts/cli).
+Check your setup any time: `npx @yugen-ui/cli doctor` (see https://trandat1114.github.io/Yugen-UI/#/concepts/cli).
 
-## Đã có sẵn
+## What's included
 
-- `YugenProvider` với theme sáng / tối / tương phản cao và thương hiệu Sakura / Web / Teams, **ghi nhớ** trong `localStorage`
-  và **không nháy** khi tải lại (script nhỏ trong `index.html`).
-- `toast()` dùng được ở mọi nơi, Tooltip, focus ring, RTL.
-- Alias `@/` → `src/` (`vite.config.ts` + `tsconfig.json`).
-- SEO cơ bản: `description`, Open Graph, `theme-color`, favicon, `robots.txt`.
-- Build tách chunk vendor, không cảnh báo dung lượng.
-- Trang chào: hero chữ dọc 幽玄, cánh hoa anh đào rơi (tự tắt khi bật "giảm chuyển động"), sáu thẻ component chạy thật.
+- `YugenProvider` with light, dark and high-contrast themes and the Sakura and Web brands, saved in `localStorage`
+  with no flash on reload (a small script in `index.html`).
+- `toast()` from anywhere, Tooltip, focus rings, RTL.
+- An `@/` → `src/` alias (`vite.config.ts` + `tsconfig.json`).
+- SEO basics: `description`, Open Graph, `theme-color`, favicon, `robots.txt`.
+- Vendor chunks split out, so the build has no size warnings.
+- A short welcome page. Its text lives in `src/content/`: English by default, Vietnamese with
+  `npx create-yugen-ui@latest my-app --template starter --lang vi`.
 
-## Bắt đầu viết ứng dụng
+## Start building
 
-1. Mở `src/App.tsx`, thay `<Welcome />` bằng component của bạn.
-2. Xoá `src/Welcome.tsx` và `src/Sakura.tsx` khi không cần nữa; bỏ thẻ `<link>` font Shippori Mincho trong `index.html`.
-3. Thêm component: `import { Button, DataGrid } from "yugen-ui"` — ví dụ ở [tài liệu](https://trandat1114.github.io/Yugen-UI/).
+1. In `src/App.tsx`, replace `<Welcome />` with your app.
+2. When you no longer need it, delete `src/Welcome.tsx`, `src/Sakura.tsx` and `src/content/`, and remove the
+   Shippori Mincho font `<link>` from `index.html`.
+3. Add components: `import { Button, DataGrid } from "yugen-ui"`. Examples are in the
+   [docs](https://trandat1114.github.io/Yugen-UI/).
 
-## Cấu trúc
+## Brand colour
+
+The appearance menu switches between Sakura and Web. For your own colour, create a palette in
+[Theme Designer](https://trandat1114.github.io/Yugen-UI/#/theme-designer), paste its CSS into `src/index.css`, and
+use its name as the default brand: `"sakura"` in `index.html` (the no-flash script) and in `src/App.tsx`.
+
+## Structure
 
 ```
 src/
-  App.tsx        # YugenProvider, lưu theme — điểm bắt đầu của bạn
-  Welcome.tsx    # trang chào (xoá được)
-  Sakura.tsx     # cánh hoa, bông hoa SVG, font chữ Nhật (xoá được)
-  index.css      # @import "tailwindcss" + theme Yugen
+  App.tsx        # YugenProvider and the saved theme: your starting point
+  Welcome.tsx    # welcome page (safe to delete)
+  content/       # welcome page text, one file per language
+  Sakura.tsx     # blossom SVG and the Japanese font class (safe to delete)
+  index.css      # @import "tailwindcss" + the Yugen theme
   main.tsx
 ```
 
-File trong `src/` sinh từ `src/docs/template-library/starter` (và `src/docs/block-library`) bằng `scripts/sync-templates.mjs`.
+Files in `src/` are generated from `src/docs/template-library/starter` (and `src/docs/block-library`) by `scripts/sync-templates.mjs`.

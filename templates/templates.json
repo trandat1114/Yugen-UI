@@ -3,7 +3,7 @@
     "dir": "vite-starter",
     "name": "starter",
     "title": "Starter",
-    "hint": "Blank app: theme switcher, toast, @/ alias and a cherry-blossom welcome page"
+    "hint": "Blank app: saved theme, toast, @/ alias and a short welcome page"
   },
   {
     "dir": "vite-saas",

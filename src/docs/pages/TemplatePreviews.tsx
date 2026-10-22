@@ -5,6 +5,9 @@ import { MemoryRouter } from "../template-library/blog/router";
 import { AppShell, type Appearance } from "../template-library/saas/AppShell";
 import { Welcome } from "../template-library/starter/Welcome";
 import welcomeSource from "../template-library/starter/Welcome.tsx?raw";
+import starterEn from "../template-library/starter/content/en";
+import starterVi from "../template-library/starter/content/vi";
+import { useLocale } from "../i18n";
 import type { PageId } from "../template-library/saas/pages";
 import StatsBlock from "../block-library/02-stats";
 import TransactionsBlock from "../block-library/06-transactions";
@@ -16,6 +19,8 @@ const JP_FONT_ID = "yugen-starter-jp-font";
 /** Trang chào của templates/vite-starter. Font Mincho nạp giống index.html của template: chỉ các ký tự Nhật có trong trang. */
 function StarterPreview() {
   const docs = useYugen();
+  // Preview theo ngôn ngữ docs; app tạo bằng CLI dùng tiếng Anh, hoặc tiếng Việt với --lang vi.
+  const { locale } = useLocale();
   const [appearance, setAppearance] = useState<Appearance>({ theme: docs.theme, brand: docs.brand });
 
   useEffect(() => {
@@ -31,7 +36,7 @@ function StarterPreview() {
 
   return (
     <YugenProvider theme={appearance.theme} brand={appearance.brand} className="h-full">
-      <Welcome embedded appearance={appearance} onAppearanceChange={(patch) => setAppearance((a) => ({ ...a, ...patch }))} />
+      <Welcome embedded content={locale === "vi" ? starterVi : starterEn} appearance={appearance} onAppearanceChange={(patch) => setAppearance((a) => ({ ...a, ...patch }))} />
     </YugenProvider>
   );
 }
