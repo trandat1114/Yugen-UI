@@ -37,6 +37,13 @@
 | Visual khác biệt | đổi giao diện có chủ đích | `npm run test:visual -- --update-snapshots`; Linux: workflow **Visual** với `update` |
 | size-limit vượt | thêm dependency / component lớn | tối ưu, hoặc nâng `limit` trong `.size-limit.cjs` kèm lý do trong PR |
 
+## Bản Node.js trong CI
+
+Build và CLI chạy trên mọi bản Node.js đã phát hành và chưa EOL (LTS + Current); các job chạy một bản dùng Active LTS
+mới nhất. `node scripts/node-versions.mjs` so workflow với [lịch phát hành](https://github.com/nodejs/Release) (exit 1 nếu
+lệch, `--write` để sửa); workflow `node-versions.yml` chạy hằng tuần và mở PR vào `next`. `engines` của CLI không tự đổi:
+nâng là bản minor của CLI.
+
 ## Thử với React 18 trên máy
 
 Repo chạy React 19. Muốn kiểm tra React 18.3 (vẫn được hỗ trợ): chép repo ra thư mục khác (bỏ `node_modules`), `npm ci`,
