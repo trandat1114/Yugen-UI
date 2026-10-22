@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.2
+
+### Patch Changes
+
+- e3d0dbc: AriaLive: the fallback announcer (used when there is no `AriaLiveAnnouncer`) no longer throws "window is not defined" when its queued timers fire after the window is gone, for example after a test environment is torn down.
+- Docs site: new CLI page (`#/concepts/cli`) for `@yugen-ui/cli` — `npm create yugen-ui@latest` creates an app from a template, `npx @yugen-ui/cli@latest init` sets up an existing project, `add` copies component source. The home page gains a "Start a new project" section and a CLI tab in the install box, component pages a "yugen CLI" import tab, and Quick start, Templates and the template READMEs lead with the CLI. The npm package is unchanged.
+
 ## 0.8.1
 
 ### Patch Changes
@@ -137,7 +144,8 @@ with a user-facing change adds one with `npx changeset`, and `npx changeset vers
 - 11 core components.
 - Documentation site.
 
-[Unreleased]: https://github.com/trandat1114/Yugen-UI/compare/v0.8.1...HEAD
+[Unreleased]: https://github.com/trandat1114/Yugen-UI/compare/v0.8.2...HEAD
+[0.8.2]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.8.2
 [0.8.1]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.8.1
 [0.8.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.8.0
 [0.7.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.7.0

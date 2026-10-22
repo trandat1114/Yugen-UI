@@ -25,6 +25,18 @@ export const NEWS_KIND_LABEL: Record<NewsKind, string> = {
 
 export const NEWS: NewsRelease[] = [
   {
+    version: "0.8.2",
+    date: "2026-10-22",
+    title: "CLI @yugen-ui/cli",
+    summary: "Tạo app, thiết lập dự án và chép mã nguồn component bằng một công cụ dòng lệnh. Sửa một lỗi nhỏ của AriaLive.",
+    items: [
+      { kind: "new", text: "CLI @yugen-ui/cli: npm create yugen-ui@latest tạo app từ template; npx @yugen-ui/cli@latest init thiết lập dự án có sẵn (gói npm hoặc mã nguồn); add chép component kèm phụ thuộc; doctor kiểm tra cấu hình.", href: "#/concepts/cli" },
+      { kind: "improved", text: "Trang chủ có mục Tạo dự án nhanh và tab CLI trong khung cài đặt; mục Import của mỗi component có tab yugen CLI.", href: "#/" },
+      { kind: "improved", text: "Bắt đầu nhanh, Templates và README của template dùng CLI trước; cách cài thủ công và shadcn CLI vẫn giữ.", href: "#/concepts/quick-start" },
+      { kind: "fixed", text: "AriaLive: announcer dự phòng (khi không có AriaLiveAnnouncer) không còn báo lỗi “window is not defined” khi hàng đợi chạy sau lúc window đã mất, vd. sau khi môi trường test bị gỡ.", href: "#/components/arialive" },
+    ],
+  },
+  {
     version: "0.8.1",
     date: "2026-10-22",
     title: "Docs gọn hơn trên điện thoại",
