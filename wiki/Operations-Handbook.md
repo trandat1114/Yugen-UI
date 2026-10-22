@@ -58,6 +58,7 @@ Bảo vệ cho `next`, `release/*`, `canary` và tag `v*`: xem [[Branching and R
 | `release-cli.yml` | Tag `cli@*` → `check-release.mjs --tag` (CHANGELOG, mục tin trên `#/news`, version chưa dùng) → publish `@yugen-ui/cli` + `create-yugen-ui` |
 | `canary.yml` | Push vào `canary` → bản `x.y.z-canary-…` với dist-tag `canary` |
 | `sync-next.yml` | Push vào `main` → mở PR `main → next` nếu `next` thiếu commit |
+| `node-versions.yml` | Hằng tuần → so bản Node.js trong workflow với lịch phát hành (`scripts/node-versions.mjs`), mở PR vào `next` khi lệch rồi chạy CI trên nhánh đó |
 | `pages.yml` | Deploy docs (+ docs các minor cũ) lên GitHub Pages |
 | `wiki.yml` | Đẩy `wiki/` lên GitHub Wiki |
 | `labels.yml` | Đồng bộ nhãn từ `.github/labels.yml` |

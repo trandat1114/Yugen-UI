@@ -5,6 +5,8 @@ on:
     branches: [main, next, "release/**", canary]
   pull_request:
     branches: [main, next, "release/**", canary]
+  # node-versions.yml gọi CI trên nhánh PR nó tạo (PR do GITHUB_TOKEN mở không tự chạy workflow).
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -21,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # LTS + Current đang được hỗ trợ (https://github.com/nodejs/Release); bỏ bản đã EOL.
+        # LTS + Current đang được hỗ trợ (https://github.com/nodejs/Release); node-versions.yml mở PR khi lệch lịch.
         node: [22, 24, 26]
     steps:
       - uses: actions/checkout@v7
