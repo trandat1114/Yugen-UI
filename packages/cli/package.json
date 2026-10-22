@@ -1,6 +1,6 @@
 {
   "name": "yugen",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "CLI for Yugen UI: create an app from a template, set up Yugen UI in an existing project, add component source from the registry and diagnose the setup.",
   "keywords": [
     "yugen-ui",

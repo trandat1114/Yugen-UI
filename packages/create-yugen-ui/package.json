@@ -37,6 +37,6 @@
     "node": ">=20"
   },
   "dependencies": {
-    "yugen": "^0.1.0"
+    "yugen": "^0.1.1"
   }
 }

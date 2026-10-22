@@ -61,7 +61,7 @@ Muốn nhận một mục? Mở issue hoặc bình luận vào issue sẵn có t
 - [x] Trang `#/templates` (preview chạy thật, lệnh `npx giget … --install` một dòng, Open in StackBlitz) + template `vite-starter`, `vite-saas`, `vite-blog` (Markdown, SEO lúc build)
 - [x] CLI `yugen` (`packages/cli`): `create` (template đóng gói sẵn, chọn tương tác), `init` (gói npm / mã nguồn), `add`, `list`, `doctor` — `create-yugen-ui` (`npm create yugen-ui@latest`) gọi `yugen create`
 - [x] Trang docs `#/concepts/cli` (vi + en); quy tắc phát hành CLI (wiki › Release Process › CLI, `check-release.mjs`, `npm run smoke`)
-- [ ] Publish `yugen` + `create-yugen-ui` lên npm (maintainer: merge `next` → `main`, đẩy tag `yugen@0.1.0` → `release-cli.yml`)
+- [ ] Publish `yugen` + `create-yugen-ui` lên npm (maintainer: đẩy tag `yugen@0.1.1` trên `main` → `release-cli.yml`; `0.1.0` không dùng được vì từng bị unpublish trên npm)
 - [ ] CLI giai đoạn 2: `yugen diff` / `update` (so mã local với registry), `yugen theme --brand <hex>` (brandRamp), `yugen remove`, codemod bọc `YugenProvider`, `create --ref <branch>` (template từ GitHub)
 - [ ] Đang cân nhắc: Figma kit, gói icon Sakura
 
