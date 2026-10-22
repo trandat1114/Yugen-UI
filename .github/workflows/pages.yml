@@ -58,7 +58,7 @@ jobs:
       # The router uses the URL hash, so one index.html serves every page; 404.html covers mistyped paths.
       - run: cp dist-docs/index.html dist-docs/404.html
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: dist-docs
 
