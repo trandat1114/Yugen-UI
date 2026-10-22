@@ -9,7 +9,8 @@ async function heroCarousel(page: Page, dir: Dir = "ltr") {
   await carousel.scrollIntoViewIfNeeded();
   return {
     carousel,
-    viewport: carousel.locator(".snap-x"),
+    // Vùng cuộn = cha trực tiếp của các slide (aria-roledescription="slide"), không dựa vào class CSS.
+    viewport: carousel.locator('[aria-roledescription="slide"]').first().locator("xpath=.."),
     current: carousel.getByRole("tab", { selected: true }),
     next: carousel.getByRole("button", { name: "Slide tiếp theo" }),
     prev: carousel.getByRole("button", { name: "Slide trước" }),

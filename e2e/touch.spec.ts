@@ -95,7 +95,7 @@ test.describe("Carousel — vuốt trên màn hình cảm ứng", () => {
       await openDocs(page, "#/components/carousel", { dir });
       const carousel = page.locator('section[aria-label="Điểm nổi bật"]').first();
       await carousel.scrollIntoViewIfNeeded();
-      const viewport = carousel.locator(".snap-x");
+      const viewport = carousel.locator('[aria-roledescription="slide"]').first().locator("xpath=..");
       const current = carousel.getByRole("tab", { selected: true });
       await expect(current).toHaveAttribute("aria-label", "Slide 1 / 4");
 

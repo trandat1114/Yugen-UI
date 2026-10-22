@@ -2,7 +2,8 @@ import { defineConfig, devices, type Project } from "@playwright/test";
 
 /**
  * E2E của site docs Yugen UI.
- * - `npm run test:e2e`    → a11y (axe) + interaction (kéo chuột, desktop) + touch (giả lập mobile).
+ * - `npm run test:e2e`    → a11y (axe) + interaction (kéo chuột, bàn phím / focus, luồng chính của docs; desktop)
+ *                            + touch (giả lập mobile).
  * - `npm run test:visual` → chỉ project `visual` (so sánh ảnh chụp; baseline theo nền tảng trong e2e/__screenshots__).
  * Local dùng Microsoft Edge đã cài sẵn (không cần tải trình duyệt); CI dùng Chromium của Playwright.
  * Mặc định chạy trên bản build (`build:docs` + `vite preview`), giống site đã deploy. `YUGEN_E2E_DEV=1` dùng dev server
@@ -32,7 +33,7 @@ const desktop = {
 
 const projects: Project[] = [
   { name: "a11y", testMatch: /a11y\.spec\.ts/, use: desktop },
-  { name: "interaction", testMatch: /(drag|carousel)\.spec\.ts/, use: desktop },
+  { name: "interaction", testMatch: /(drag|carousel|keyboard|docs-flows)\.spec\.ts/, use: desktop },
   {
     name: "touch",
     testMatch: /(touch|responsive)\.spec\.ts/,
