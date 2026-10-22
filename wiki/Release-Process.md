@@ -100,7 +100,7 @@ version đó đã có trên npm, nên một bước publish lỗi (token, tên g
 
 ```bash
 npx @yugen-ui/cli@latest --version
-npm create yugen-ui@latest smoke-app -- --template starter
+npx create-yugen-ui@latest smoke-app --template starter
 cd smoke-app && npm run build
 ```
 

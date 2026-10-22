@@ -5,7 +5,7 @@ import { CopyButton } from "../CodeBlock";
 import { useLocale } from "../i18n";
 import { TEMPLATES, templateCreateCommand, templateStackBlitzUrl } from "../templates";
 
-/** Trang chủ › Tạo dự án nhanh: chọn template → lệnh `npm create yugen-ui` tương ứng (packages/create-yugen-ui). */
+/** Trang chủ › Tạo dự án nhanh: chọn template → lệnh `npx create-yugen-ui` tương ứng (packages/create-yugen-ui). */
 export function HomeCreate() {
   const { t, locale } = useLocale();
   const [dir, setDir] = useState(TEMPLATES[0].dir);
