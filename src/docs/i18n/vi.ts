@@ -14,9 +14,8 @@ export const vi = {
   "nav.concepts": "Khái niệm",
   "nav.labsConcepts": "Khái niệm Yugen Labs",
   "credit.by": "tạo bởi",
-  "credit.inspired": "Lấy cảm hứng từ Microsoft Fluent 2",
   "credit.rules": "Quy tắc đầy đủ:",
-  "footer.note": "Lấy cảm hứng từ Microsoft Fluent 2 · Không phải sản phẩm chính thức của Microsoft · React + Tailwind CSS v4",
+  "footer.note": "Dựa trên Fluent 2, không phải sản phẩm của Microsoft · React + Tailwind CSS v4",
 
   // Thanh trên
   "topbar.openNav": "Mở menu",
@@ -27,10 +26,14 @@ export const vi = {
   "topbar.dir": "Hướng chữ",
   "topbar.ltr": "Trái sang phải (LTR)",
   "topbar.rtl": "Phải sang trái (RTL)",
-  "topbar.lang": "Ngôn ngữ",
   "version.label": "Phiên bản docs: v{version}",
   "version.latest": " (mới nhất)",
   "version.next": " (xem trước)",
+  "appearance.title": "Giao diện",
+  "appearance.mode": "Chế độ",
+  "appearance.light": "Sáng",
+  "appearance.dark": "Tối",
+  "appearance.brand": "Màu",
 
   // Sidebar
   "sidebar.search": "Tìm kiếm",
@@ -85,7 +88,7 @@ export const vi = {
 
   // Có gì mới
   "news.eyebrow": "Cập nhật",
-  "news.lead": "Mọi thay đổi của Yugen UI theo từng phiên bản — component mới, cải tiến, sửa lỗi và thay đổi cần lưu ý khi nâng cấp.",
+  "news.lead": "Thay đổi theo từng phiên bản: component mới, cải tiến, sửa lỗi và những gì cần lưu ý khi nâng cấp.",
   "news.fullIn": "Bản đầy đủ nằm trong",
   "news.andPage": "và trang",
   "news.filter": "Lọc theo loại thay đổi",
@@ -102,16 +105,13 @@ export const vi = {
 
   // Trang chủ
   "home.releasePill": "{title}",
-  "home.taglineBefore": "Để công việc",
-  "home.taglineHighlight": "trôi chảy",
-  "home.intro": "Thư viện UI cho React + Tailwind CSS, lấy cảm hứng từ Fluent 2 của Microsoft. Token chuẩn, {count} component sẵn dùng, code mẫu copy được.",
-  "home.createdBy": "Tạo bởi",
-  "home.inspiredBy": "Lấy cảm hứng từ",
+  "home.lead": "Component React cho Tailwind CSS v4.",
+  "home.install": "Cài đặt",
+  "home.intro": "{count} component React cho Tailwind CSS v4, có theme sáng, tối, tương phản cao và hỗ trợ RTL. Cài qua npm hoặc chép mã nguồn bằng shadcn.",
   "home.cardFoundations": "Màu, typography, spacing, elevation, motion",
-  "home.cardComponents": "{count} component React + Tailwind kèm code mẫu",
-  "home.cardBlocks": "Mẫu giao diện ghép sẵn để copy cả cụm",
+  "home.cardComponents": "{count} component, kèm mã nguồn",
+  "home.cardBlocks": "Mẫu giao diện ghép từ nhiều component",
   "home.explore": "Khám phá",
-  "home.exploreDesc": "Rê chuột vào từng nhóm để xem component thực tế. Gradient chỉ dùng cho phần minh hoạ như thế này — không dùng trong control.",
   "home.principles": "Nguyên tắc",
   "home.p1Title": "Token 3 lớp",
   "home.p1Text": "Global → Alias → Utility. Đổi brand chỉ bằng data-brand.",
@@ -120,8 +120,15 @@ export const vi = {
   "home.p3Title": "Accessible",
   "home.p3Text": "Radix primitives, tương phản AA, không dùng màu làm tín hiệu duy nhất.",
   "home.p4Title": "Copy & dùng",
-  "home.p4Text": "Mỗi mẫu đều có code thật — hover để copy vào dự án.",
+  "home.p4Text": "Mỗi ví dụ đi kèm mã nguồn.",
   "home.componentCount": "{count} component",
+  "home.search": "Tìm component",
+  "home.clear": "Xoá",
+  "home.groups": "Nhóm component",
+  "home.all": "Tất cả",
+  "home.noMatch": "Không có component nào khớp “{query}”.",
+  "home.open": "Mở trang {name}",
+  "home.viewComponent": "Xem component",
 
   // Trang chủ — showcase
   "show.actions": "Hành động",

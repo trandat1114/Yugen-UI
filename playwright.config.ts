@@ -32,7 +32,7 @@ const projects: Project[] = [
   { name: "interaction", testMatch: /(drag|carousel)\.spec\.ts/, use: desktop },
   {
     name: "touch",
-    testMatch: /touch\.spec\.ts/,
+    testMatch: /(touch|responsive)\.spec\.ts/,
     use: {
       ...devices["Pixel 7"],
       ...browser,

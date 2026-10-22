@@ -15,6 +15,7 @@ import { FOUNDATIONS } from "../foundations";
 import type { Route } from "../router";
 import { AuthorLink } from "../AuthorLink";
 import { useLocale } from "../i18n";
+import { VersionMenu } from "./VersionMenu";
 
 interface NavItem {
   label: string;
@@ -271,10 +272,13 @@ export function Sidebar({ route, open, onClose }: { route: Route; open: boolean;
               <span className="font-semibold text-foreground-1">Yugen UI</span> · {t("credit.by")}{" "}
               <AuthorLink className="text-brand-foreground-2" />
             </p>
-            <p className="mt-XXS">{t("credit.inspired")}</p>
             <p className="mt-XXS">
               {t("credit.rules")} <span className="font-mono text-foreground-2">Design.md</span>
             </p>
+            {/* Thanh trên chỉ có menu phiên bản từ lg — màn nhỏ đặt ở đây. */}
+            <div className="mt-S -ms-S lg:hidden">
+              <VersionMenu />
+            </div>
           </div>
         </nav>
       </aside>

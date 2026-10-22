@@ -1,6 +1,7 @@
 import { Suspense, useState } from "react";
 import { ChevronRight12Regular } from "@fluentui/react-icons";
 import { CodeTabs, ErrorState, PageProgressFallback, SkeletonText, type YugenTheme } from "@/components/ui";
+import type { AppBrand } from "@/hooks/useAppearance";
 import { COMPONENT_META_BY_SLUG, readComponentDoc, retryComponentDoc } from "../registry";
 import { DoDont, DocSection, ExampleFrame, ExampleGrid, OnThisPage, PageHeader, PropsTable } from "../blocks";
 import { installSnippets } from "../install";
@@ -19,7 +20,7 @@ function InstallTabs({ importCode }: { importCode: string }) {
 
 
 /** Phần nạp lười: demo, import, biến thể, cách dùng, props (file registry chứa component). */
-function ComponentBody({ slug, theme, brand, onRetry }: { slug: string; theme: YugenTheme; brand: string; onRetry: () => void }) {
+function ComponentBody({ slug, theme, brand, onRetry }: { slug: string; theme: YugenTheme; brand: AppBrand; onRetry: () => void }) {
   const { doc, error } = readComponentDoc(slug);
   const { t, locale } = useLocale();
   // Nội dung demo / hướng dẫn chưa dịch: lang="vi" cho trình đọc màn hình khi giao diện là tiếng Anh.
@@ -67,7 +68,7 @@ function ComponentDescription({ slug }: { slug: string }) {
   return locale === "en" ? <span lang="vi">{description}</span> : <>{description}</>;
 }
 
-export function ComponentPage({ slug, theme, brand }: { slug: string; theme: YugenTheme; brand: string }) {
+export function ComponentPage({ slug, theme, brand }: { slug: string; theme: YugenTheme; brand: AppBrand }) {
   // Đổi key sau "Thử lại" → mô tả + thân trang render lại và đọc kết quả tải mới.
   const [attempt, setAttempt] = useState(0);
   const { t, locale, category, component } = useLocale();

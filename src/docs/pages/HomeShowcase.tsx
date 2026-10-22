@@ -9,6 +9,7 @@ import {
   Add20Regular,
   Share20Regular,
   Copy20Regular,
+  ArrowRight16Regular,
 } from "@fluentui/react-icons";
 import {
   Avatar,
@@ -25,6 +26,8 @@ import {
   Slider,
   SplitButton,
   Switch,
+  ToggleGroup,
+  ToggleGroupItem,
   WavyUnderline,
 } from "@/components/ui";
 import { cn } from "@/lib/cn";
@@ -170,8 +173,24 @@ export function HomeShowcase() {
   const current = SHOWCASE.find((s) => s.id === active) ?? SHOWCASE[0];
 
   return (
-    <div className="grid items-center gap-XXXL lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
-      <ul className="flex flex-col gap-S">
+    <div className="grid items-center gap-L lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-XXXL">
+      {/* Dưới lg: chip đổi nhóm (chạm không chuyển trang) + link riêng tới component. */}
+      <ToggleGroup
+        type="single"
+        appearance="subtle"
+        value={active}
+        onValueChange={(v) => v && setActive(v)}
+        aria-label={t("home.explore")}
+        className="w-auto max-w-full overflow-x-auto scrollbar-none lg:hidden"
+      >
+        {SHOWCASE.map((s) => (
+          <ToggleGroupItem key={s.id} value={s.id} className="shrink-0 whitespace-nowrap">
+            {t(s.label)}
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
+
+      <ul className="hidden flex-col gap-S lg:flex">
         {SHOWCASE.map((s) => {
           const on = s.id === active;
           return (
@@ -205,7 +224,7 @@ export function HomeShowcase() {
         })}
       </ul>
 
-      <div className="relative h-110">
+      <div className="relative h-80 sm:h-96 lg:h-110">
         <div data-brand="teams" className="absolute inset-y-0 inset-e-0 w-[78%] overflow-hidden rounded-3xlarge rounded-ee-[72px] shadow-8">
           <BloomArt />
         </div>
@@ -213,6 +232,14 @@ export function HomeShowcase() {
           <current.Collage />
         </div>
       </div>
+
+      <a
+        href={current.href}
+        className="inline-flex items-center gap-XS justify-self-start rounded-small text-body1 font-semibold text-brand-foreground-1 hover:underline lg:hidden"
+      >
+        {t("home.viewComponent")}
+        <ArrowRight16Regular className="rtl:-scale-x-100" />
+      </a>
     </div>
   );
 }
