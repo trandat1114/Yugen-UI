@@ -13,6 +13,7 @@ export const vi = {
   "nav.foundations": "Ngôn ngữ thiết kế",
   "nav.concepts": "Khái niệm",
   "nav.labsConcepts": "Khái niệm Yugen Labs",
+  "nav.components": "Component",
   "credit.by": "tạo bởi",
   "credit.rules": "Quy tắc đầy đủ:",
   "footer.links": "Liên kết dự án",
@@ -43,6 +44,9 @@ export const vi = {
   "sidebar.placeholder": "Tìm component, foundation…",
   "sidebar.closeSearch": "Đóng tìm kiếm",
   "sidebar.noResults": "Không tìm thấy “{query}”.",
+  "sidebar.collapse": "Thu gọn thanh bên",
+  "sidebar.expand": "Mở rộng thanh bên",
+  "sidebar.resize": "Độ rộng thanh bên",
 
   // Bảng lệnh
   "palette.title": "Tìm nhanh trong Yugen UI",

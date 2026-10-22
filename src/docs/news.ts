@@ -39,6 +39,7 @@ export const NEWS: NewsRelease[] = [
     items: [
       { kind: "improved", text: "Component, ví dụ, template và registry dùng spacing theo thang số (p-3, gap-2) thay cho alias viết hoa (p-M, gap-S). Giá trị không đổi ở cỡ chữ gốc 16px; thang số tính bằng rem nên co giãn theo cỡ chữ của trình duyệt.", href: "#/concepts/styling" },
       { kind: "improved", text: "Alias spacing viết hoa (p-M, gap-SNudge…) trong theme.css và cn() đã deprecated, vẫn chạy đến 1.0. Đổi theo bảng XXS → 0.5, XS → 1, SNudge → 1.5, S → 2, MNudge → 2.5, M → 3, L → 4, XL → 5, XXL → 6, XXXL → 8.", href: "#/concepts/styling" },
+      { kind: "new", text: "Docs: kéo mép sidebar để đổi độ rộng (240–400px, phím mũi tên, nhấp đúp về mặc định) hoặc thu về dạng icon; trạng thái được nhớ sau khi tải lại." },
     ],
   },
   {

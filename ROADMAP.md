@@ -17,7 +17,7 @@ Thang spacing theo số và trải nghiệm docs.
 - [x] Spacing theo thang số (p-3, gap-5); class viết hoa vẫn chạy nhưng được đánh dấu deprecated (#42)
 - [ ] Theme Designer: bo góc, mật độ, font, màu trung tính, bóng, chuyển động (#44)
 - [ ] Trang Motion: hướng dẫn theo component, playground, xem trước giảm chuyển động (#45)
-- [ ] Sidebar docs kéo được độ rộng, thu gọn về dạng icon (#46)
+- [x] Sidebar docs kéo được độ rộng, thu gọn về dạng icon (#46)
 - [x] Kiểm thử trên Firefox và WebKit theo lịch (#40)
 
 ## Tiếp theo
