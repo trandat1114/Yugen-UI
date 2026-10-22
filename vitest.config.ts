@@ -20,7 +20,8 @@ export default defineConfig({
     setupFiles: ["./src/test/setup.ts"],
     include: ["src/**/*.test.{ts,tsx}"],
     exclude: ["e2e/**", "node_modules/**", "dist/**", "dist-docs/**"],
-    css: false,
+    // Không xử lý CSS trong test, trừ tokens.css: Theme Designer đọc giá trị token gốc qua `?raw` (src/docs/themeAxes.ts).
+    css: { include: [/\/styles\/tokens\.css/] },
     restoreMocks: true,
   },
 });
