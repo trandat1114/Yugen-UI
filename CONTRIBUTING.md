@@ -107,6 +107,8 @@ npm run dev          # trang docs tại http://localhost:5173
 
 Chuỗi giao diện docs nằm ở `src/docs/i18n/vi.ts` (nguồn khoá) và `src/docs/i18n/en.ts`. Tên / mô tả component tiếng Anh: `src/docs/i18n/en/components.ts` (test bắt buộc đủ mọi slug). Trang khái niệm tiếng Anh: thêm `src/docs/concepts/en/<slug>.tsx` cùng cấu trúc mục với bản tiếng Việt. Trang chưa dịch tự hiện thông báo và nội dung gốc.
 
+Viết nội dung (docs, template, thông báo CLI, changeset) theo wiki › *Writing*: ngắn, rõ, không lặp lại thứ đã hiện bên cạnh, gọi đúng tên gói.
+
 ### Nhánh
 
 Sửa lỗi, docs, test → PR vào `main`. Component / prop / token mới và thay đổi phá vỡ → PR vào `next` (nếu đang có; nếu không thì `main`). Tên nhánh: `feat/…`, `fix/…`, `docs/…`, `chore/…`, `exp/…`. Chi tiết kênh `latest` / `next` / `canary` / `release-X.Y`: wiki › *Branching and Release Channels*.
@@ -166,6 +168,7 @@ npx changeset    # chọn yugen-ui → patch hoặc minor → viết tóm tắt 
 - [ ] Đã kiểm tra Sakura / Web / Teams × Light / Dark và High contrast.
 - [ ] Có mục registry (hoặc file block); code mẫu khớp với render.
 - [ ] Đã thêm changeset (`npx changeset`) nếu thay đổi ảnh hưởng người dùng.
+- [ ] Nội dung theo wiki › *Writing* (checklist cuối trang).
 
 ### Phát hành (maintainer)
 
@@ -239,6 +242,8 @@ focus / links, gradients never on controls, WCAG contrast (4.5:1 text, 3:1 UI), 
 ### Translating the docs
 
 UI strings live in `src/docs/i18n/vi.ts` (source of the keys) and `src/docs/i18n/en.ts`. English component names and leads: `src/docs/i18n/en/components.ts` (a test requires every slug). English concept pages: add `src/docs/concepts/en/<slug>.tsx` with the same section ids as the Vietnamese page. Untranslated pages show a notice and the Vietnamese original.
+
+Copy (docs, templates, CLI messages, changesets) follows wiki › *Writing*: short and clear, no repeating what the UI next to it already says, package names as users see them.
 
 ### Branches
 
