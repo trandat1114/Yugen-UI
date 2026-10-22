@@ -62,21 +62,22 @@ function Timeline({ releases }: { releases: NewsRelease[] }) {
   const { t, locale } = useLocale();
   // Nội dung bản tin chưa dịch: lang="vi" khi giao diện là tiếng Anh (App hiện thông báo dịch một phần).
   const itemLang = locale === "en" ? "vi" : undefined;
+  const latest = releases.find((r) => !r.upcoming);
   return (
     <ol className="relative flex flex-col gap-XXXL before:absolute before:inset-y-2 before:inset-s-1.75 before:w-0.5 before:rounded-circular before:bg-stroke-2 md:before:inset-s-41.75">
-      {releases.map((release, index) => (
+      {releases.map((release) => (
         <li key={release.version} className="relative grid gap-M ps-XXL md:grid-cols-[160px_minmax(0,1fr)] md:gap-XXL md:ps-0">
           <span
             aria-hidden
             className={cn(
               "absolute top-1.5 inset-s-0 size-4 rounded-circular border-4 border-shell md:inset-s-40",
-              index === 0 ? "bg-brand-background" : "bg-stroke-accessible",
+              release === latest ? "bg-brand-background" : "bg-stroke-accessible",
             )}
           />
           <div className="md:pe-XL md:text-end">
             <p className="font-display text-title3 font-semibold tabular-nums">v{release.version}</p>
             <time dateTime={release.date} className="text-caption1 text-foreground-3">
-              {formatDate(release.date, locale)}
+              {release.upcoming ? t("news.planned", { date: formatDate(release.date, locale) }) : formatDate(release.date, locale)}
             </time>
           </div>
           <article className="rounded-2xlarge border border-stroke-2 bg-background-1 p-XL shadow-2 md:ms-XL">
@@ -84,10 +85,16 @@ function Timeline({ releases }: { releases: NewsRelease[] }) {
               <h2 lang={itemLang} className="font-display text-title3 font-semibold">
                 {release.title}
               </h2>
-              {index === 0 && (
-                <Badge appearance="filled" color="brand" icon={<Sparkle20Regular />}>
-                  {t("news.latest")}
+              {release.upcoming ? (
+                <Badge appearance="tint" color="warning">
+                  {t("news.upcoming")}
                 </Badge>
+              ) : (
+                release === latest && (
+                  <Badge appearance="filled" color="brand" icon={<Sparkle20Regular />}>
+                    {t("news.latest")}
+                  </Badge>
+                )
               )}
             </div>
             <p lang={itemLang} className="mt-S text-body2 text-foreground-2">
@@ -158,7 +165,7 @@ export function NewsPage() {
           return (
             <TabsContent key={feed.id} value={feed.id} className="flex flex-col gap-XXL">
               <p className="text-caption1 text-foreground-3">
-                {t("news.current", { version: feed.releases[0].version })} · {t("news.fullIn")}{" "}
+                {t("news.current", { version: (feed.releases.find((r) => !r.upcoming) ?? feed.releases[0]).version })} · {t("news.fullIn")}{" "}
                 <a className="text-link underline hover:text-link-hover" href={`${SITE.links.repository}/blob/main/${feed.changelog}`}>
                   {feed.changelog}
                 </a>

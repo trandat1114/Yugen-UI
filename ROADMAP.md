@@ -10,55 +10,43 @@ Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. 
 
 ## Đang làm
 
-### 0.8.4 · bản vá · hạn 2026-10-30
+### 0.9.0 · minor · hạn 2026-10-30
 
-Công cụ và docs: E2E nhanh hơn, Node mới, nội dung gọn và đúng tên gọi.
+React 19 làm mặc định, starter tối giản, E2E nhanh hơn, docs và lộ trình cập nhật (gồm cả việc dự kiến cho 0.8.4).
 
+- [x] React 19 cho dev, docs và template; React 18 vẫn hỗ trợ, báo trước ngày ngừng (#62)
 - [x] E2E từ ~20 còn 4,4 phút: container Playwright, chạy trên bản build, a11y theo theme (#43)
-- [x] CI trên Node.js 22, 24 và 26 (#60)
-- [x] Có gì mới có tab riêng cho yugen-ui, @yugen-ui/cli và create-yugen-ui (#61)
-- [x] Trang Giới thiệu viết lại, gọi CLI đúng tên @yugen-ui/cli (#48)
-- [x] Quy tắc viết nội dung cho docs, template và CLI (#52)
-- [x] Mô tả template một dòng (#57)
+- [x] E2E cho bàn phím, focus và các luồng chính của docs (#39)
+- [x] So sánh ảnh chụp trên mọi PR đổi giao diện (#41)
+- [x] Thẻ demo của starter chuyển thành 5 block mới (#56)
+- [x] CI trên Node.js 22, 24, 26 và tự theo lịch phát hành của Node.js (#59)
+- [x] Có gì mới có tab riêng cho từng gói và tin cho bản sắp phát hành (#61)
 - [x] Lộ trình lấy từ một nguồn, trang Cộng đồng đầy đủ tiếng Anh (#58)
+- [x] Quy tắc viết nội dung cho docs, template và CLI (#52)
+- [x] Tên template ngắn, mô tả một dòng; trang Giới thiệu viết lại (#57)
 
 ### cli 0.2.0 · hạn 2026-10-30
 
-CLI cùng 0.8.4.
+CLI cùng 0.9.0 (gồm cả việc dự kiến cho cli 0.3.0).
 
 - [x] Yêu cầu Node.js 22 trở lên (#60)
+- [x] create --lang en|vi chọn ngôn ngữ cho app được tạo (#55)
+- [x] Starter tối giản, tiếng Anh mặc định, hai thương hiệu Sakura và Web (#54)
 - [x] Tên template ngắn: Starter, SaaS, Blog, Dashboard, AI chat (#53)
 
 ## Tiếp theo
 
-### 0.9.0 · minor · hạn 2026-11-27
-
-React 19 làm mặc định và thang spacing theo số.
-
-- [~] React 19 cho dev, docs và template; React 18 vẫn hỗ trợ, báo trước ngày ngừng (#62)
-- [x] So sánh ảnh chụp trên mọi PR đổi giao diện (#41)
-- [ ] Spacing theo thang số (p-3, gap-5); class viết hoa vẫn chạy nhưng được đánh dấu deprecated (#42)
-- [~] E2E cho bàn phím, focus và các luồng chính của docs (#39)
-- [~] Thẻ demo của starter chuyển thành Blocks (#56)
-- [x] CI tự theo lịch phát hành của Node.js (#59)
-
-### cli 0.3.0 · hạn 2026-11-27
-
-CLI cùng 0.9.0.
-
-- [~] Starter tối giản, tiếng Anh mặc định, hai thương hiệu Sakura và Web (#54)
-- [~] create --lang en|vi chọn ngôn ngữ cho app được tạo (#55)
-
-## Sau đó
-
 ### 0.10.0 · minor · hạn 2027-01-29
 
-Trải nghiệm docs.
+Thang spacing theo số và trải nghiệm docs.
 
+- [ ] Spacing theo thang số (p-3, gap-5); class viết hoa vẫn chạy nhưng được đánh dấu deprecated (#42)
 - [ ] Theme Designer: bo góc, mật độ, font, màu trung tính, bóng, chuyển động (#44)
 - [ ] Trang Motion: hướng dẫn theo component, playground, xem trước giảm chuyển động (#45)
 - [ ] Sidebar docs kéo được độ rộng, thu gọn về dạng icon (#46)
 - [ ] Kiểm thử trên Firefox và WebKit theo lịch (#40)
+
+## Sau đó
 
 ### 1.0.0 · major
 

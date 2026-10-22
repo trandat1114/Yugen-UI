@@ -2,7 +2,9 @@
 /**
  * Kiểm tra phiên bản nhất quán trước khi phát hành (`npm run check:release`; CI và workflow release đều chạy).
  *
- *   (a) `version` trong package.json = `version` của mục ĐẦU TIÊN trong mảng NEWS (src/docs/news.ts).
+ *   (a) `version` trong package.json = `version` của mục ĐÃ PHÁT HÀNH đầu tiên trong mảng NEWS (src/docs/news.ts).
+ *       Mục đầu có thể là tin sắp phát hành (`upcoming: true`, viết trên next) với version lớn hơn package.json;
+ *       khi có tag thì không được còn mục `upcoming`.
  *   (b) CHANGELOG.md có tiêu đề cho phiên bản đó: `## [x.y.z]` (Keep a Changelog) hoặc `## x.y.z` (Changesets).
  *   (c) CHANGELOG.md có link `[x.y.z]: …` — chỉ cảnh báo, và bỏ qua khi tiêu đề ở dạng Changesets.
  *   (d) Khi có tag (`--tag vX.Y.Z`, hoặc GITHUB_REF_NAME bắt đầu bằng "v" trong workflow chạy theo tag): tag = "v" + version.
@@ -46,19 +48,41 @@ if (version && !/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(
 const newsPath = path.join(root, "src/docs/news.ts");
 const news = read(newsPath);
 const newsStart = news.search(/export\s+const\s+NEWS\b[^=]*=\s*\[/);
-let newsVersion = "";
+/** Các mục của NEWS theo thứ tự: version + có `upcoming: true` (viết ngay sau version) hay không. */
+const entries = [];
 if (news && newsStart === -1) {
   errors.push(`${rel(newsPath)}: không tìm thấy \`export const NEWS … = [\`.`);
 } else if (news) {
-  const m = news.slice(newsStart).match(/\bversion\s*:\s*["'`]([^"'`]+)["'`]/);
-  if (!m) errors.push(`${rel(newsPath)}: mảng NEWS không có mục nào có \`version: "x.y.z"\`.`);
-  else newsVersion = m[1];
+  const end = news.indexOf("\n];", newsStart);
+  const body = news.slice(newsStart, end === -1 ? undefined : end);
+  for (const m of body.matchAll(/\bversion\s*:\s*["'`]([^"'`]+)["'`]([\s\S]*?)(?=\bversion\s*:|$)/g)) {
+    entries.push({ version: m[1], upcoming: /\bupcoming\s*:\s*true\b/.test(m[2]) });
+  }
+  if (entries.length === 0) errors.push(`${rel(newsPath)}: mảng NEWS không có mục nào có \`version: "x.y.z"\`.`);
+}
+const upcoming = entries[0]?.upcoming ? entries[0] : undefined;
+const newsVersion = entries.find((e) => !e.upcoming)?.version ?? "";
+const core = (v) => v.split(/[-+]/)[0].split(".").map(Number);
+const greater = (a, b) => {
+  const [x, y] = [core(a), core(b)];
+  for (let i = 0; i < 3; i++) if (x[i] !== y[i]) return x[i] > y[i];
+  return false;
+};
+if (entries.slice(1).some((e) => e.upcoming)) {
+  errors.push(`${rel(newsPath)}: chỉ mục ĐẦU của NEWS được đánh dấu \`upcoming: true\`.`);
+}
+// Tin cho bản sắp phát hành (viết trên next): version phải lớn hơn package.json. Commit chore(release) bỏ `upcoming`.
+if (upcoming && version && !greater(upcoming.version, version)) {
+  errors.push(
+    `${rel(newsPath)}: mục "${upcoming.version}" vẫn đánh dấu \`upcoming\` nhưng package.json đã là "${version}". ` +
+      `Trong commit chore(release): bỏ \`upcoming\`, điền ngày phát hành.`,
+  );
 }
 // Prerelease (0.7.0-next.1, canary…) không cần mục News riêng — trang Có gì mới chỉ ghi bản ổn định.
 const isPrerelease = version.includes("-");
 if (version && newsVersion && newsVersion !== version && !(isPrerelease && newsVersion !== "")) {
   errors.push(
-    `${rel(newsPath)}: mục đầu tiên của NEWS là "${newsVersion}" nhưng package.json là "${version}". ` +
+    `${rel(newsPath)}: mục đã phát hành đầu tiên của NEWS là "${newsVersion}" nhưng package.json là "${version}". ` +
       `Thêm mục mới vào ĐẦU mảng NEWS cho ${version}.`,
   );
 }
@@ -94,6 +118,9 @@ if (!tag && refName.startsWith("v") && (refType === "" || refType === "tag")) ta
 if (tag && version && tag !== `v${version}`) {
   errors.push(`Tag "${tag}" không khớp package.json — cần "v${version}".`);
 }
+if (tag && upcoming) {
+  errors.push(`Tag "${tag}": mục NEWS "${upcoming.version}" vẫn là \`upcoming\` — chốt tin trước khi phát hành.`);
+}
 
 // ---------- Kết quả ----------
 for (const w of warnings) console.warn(`check-release: cảnh báo — ${w}`);
@@ -104,5 +131,5 @@ if (errors.length) {
 }
 console.log(
   `check-release: OK — yugen-ui v${version} (package.json = news.ts = CHANGELOG.md${tag ? ` = tag ${tag}` : ""}` +
-    `${warnings.length ? `, ${warnings.length} cảnh báo` : ""}).`,
+    `${upcoming ? `; tin sắp phát hành ${upcoming.version}` : ""}${warnings.length ? `, ${warnings.length} cảnh báo` : ""}).`,
 );

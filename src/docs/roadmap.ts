@@ -35,75 +35,55 @@ export const PROJECT_URL = "https://github.com/users/trandat1114/projects/6";
 export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
   now: [
     {
-      milestone: "0.8.4",
-      kind: "patch",
+      milestone: "0.9.0",
+      kind: "minor",
       due: "2026-10-30",
-      vi: "Công cụ và docs: E2E nhanh hơn, Node mới, nội dung gọn và đúng tên gọi.",
-      en: "Tooling and docs: faster E2E, current Node.js, shorter copy with the right names.",
+      vi: "React 19 làm mặc định, starter tối giản, E2E nhanh hơn, docs và lộ trình cập nhật (gồm cả việc dự kiến cho 0.8.4).",
+      en: "React 19 first, a minimal starter, faster E2E, updated docs and roadmap (including what was planned for 0.8.4).",
       items: [
+        { status: "done", issue: 62, vi: "React 19 cho dev, docs và template; React 18 vẫn hỗ trợ, báo trước ngày ngừng", en: "React 19 for dev, docs and templates; React 18 still supported, end announced" },
         { status: "done", issue: 43, vi: "E2E từ ~20 còn 4,4 phút: container Playwright, chạy trên bản build, a11y theo theme", en: "E2E from ~20 to 4.4 min: Playwright container, production build, a11y per theme" },
-        { status: "done", issue: 60, vi: "CI trên Node.js 22, 24 và 26", en: "CI on Node.js 22, 24 and 26" },
-        { status: "done", issue: 61, vi: "Có gì mới có tab riêng cho yugen-ui, @yugen-ui/cli và create-yugen-ui", en: "What's new has a tab for yugen-ui, @yugen-ui/cli and create-yugen-ui" },
-        { status: "done", issue: 48, vi: "Trang Giới thiệu viết lại, gọi CLI đúng tên @yugen-ui/cli", en: "Introduction rewritten, the CLI called by its name, @yugen-ui/cli" },
-        { status: "done", issue: 52, vi: "Quy tắc viết nội dung cho docs, template và CLI", en: "Copy guidelines for docs, templates and the CLI" },
-        { status: "done", issue: 57, vi: "Mô tả template một dòng", en: "One-line template descriptions" },
+        { status: "done", issue: 39, vi: "E2E cho bàn phím, focus và các luồng chính của docs", en: "E2E for keyboard, focus and the main docs flows" },
+        { status: "done", issue: 41, vi: "So sánh ảnh chụp trên mọi PR đổi giao diện", en: "Visual comparison on every PR that changes the UI" },
+        { status: "done", issue: 56, vi: "Thẻ demo của starter chuyển thành 5 block mới", en: "The starter's demo cards become 5 new blocks" },
+        { status: "done", issue: 59, vi: "CI trên Node.js 22, 24, 26 và tự theo lịch phát hành của Node.js", en: "CI on Node.js 22, 24, 26, following the Node.js release schedule automatically" },
+        { status: "done", issue: 61, vi: "Có gì mới có tab riêng cho từng gói và tin cho bản sắp phát hành", en: "What's new has a tab per package and news for the upcoming release" },
         { status: "done", issue: 58, vi: "Lộ trình lấy từ một nguồn, trang Cộng đồng đầy đủ tiếng Anh", en: "Roadmap from one source, community page fully in English" },
+        { status: "done", issue: 52, vi: "Quy tắc viết nội dung cho docs, template và CLI", en: "Copy guidelines for docs, templates and the CLI" },
+        { status: "done", issue: 57, vi: "Tên template ngắn, mô tả một dòng; trang Giới thiệu viết lại", en: "Short template names, one-line descriptions; introduction rewritten" },
       ],
     },
     {
       milestone: "cli 0.2.0",
       kind: "cli",
       due: "2026-10-30",
-      vi: "CLI cùng 0.8.4.",
-      en: "CLI alongside 0.8.4.",
+      vi: "CLI cùng 0.9.0 (gồm cả việc dự kiến cho cli 0.3.0).",
+      en: "CLI alongside 0.9.0 (including what was planned for cli 0.3.0).",
       items: [
         { status: "done", issue: 60, vi: "Yêu cầu Node.js 22 trở lên", en: "Requires Node.js 22 or later" },
+        { status: "done", issue: 55, vi: "create --lang en|vi chọn ngôn ngữ cho app được tạo", en: "create --lang en|vi picks the language of the generated app" },
+        { status: "done", issue: 54, vi: "Starter tối giản, tiếng Anh mặc định, hai thương hiệu Sakura và Web", en: "Minimal starter, English by default, Sakura and Web brands" },
         { status: "done", issue: 53, vi: "Tên template ngắn: Starter, SaaS, Blog, Dashboard, AI chat", en: "Short template names: Starter, SaaS, Blog, Dashboard, AI chat" },
       ],
     },
   ],
   next: [
     {
-      milestone: "0.9.0",
-      kind: "minor",
-      due: "2026-11-27",
-      vi: "React 19 làm mặc định và thang spacing theo số.",
-      en: "React 19 first and the numeric spacing scale.",
-      items: [
-        { status: "doing", issue: 62, vi: "React 19 cho dev, docs và template; React 18 vẫn hỗ trợ, báo trước ngày ngừng", en: "React 19 for dev, docs and templates; React 18 still supported, end announced" },
-        { status: "done", issue: 41, vi: "So sánh ảnh chụp trên mọi PR đổi giao diện", en: "Visual comparison on every PR that changes the UI" },
-        { status: "planned", issue: 42, vi: "Spacing theo thang số (p-3, gap-5); class viết hoa vẫn chạy nhưng được đánh dấu deprecated", en: "Numeric spacing scale (p-3, gap-5); upper-case classes still work but are deprecated" },
-        { status: "doing", issue: 39, vi: "E2E cho bàn phím, focus và các luồng chính của docs", en: "E2E for keyboard, focus and the main docs flows" },
-        { status: "doing", issue: 56, vi: "Thẻ demo của starter chuyển thành Blocks", en: "The starter's demo cards become Blocks" },
-        { status: "done", issue: 59, vi: "CI tự theo lịch phát hành của Node.js", en: "CI follows the Node.js release schedule automatically" },
-      ],
-    },
-    {
-      milestone: "cli 0.3.0",
-      kind: "cli",
-      due: "2026-11-27",
-      vi: "CLI cùng 0.9.0.",
-      en: "CLI alongside 0.9.0.",
-      items: [
-        { status: "doing", issue: 54, vi: "Starter tối giản, tiếng Anh mặc định, hai thương hiệu Sakura và Web", en: "Minimal starter, English by default, Sakura and Web brands" },
-        { status: "doing", issue: 55, vi: "create --lang en|vi chọn ngôn ngữ cho app được tạo", en: "create --lang en|vi picks the language of the generated app" },
-      ],
-    },
-  ],
-  later: [
-    {
       milestone: "0.10.0",
       kind: "minor",
       due: "2027-01-29",
-      vi: "Trải nghiệm docs.",
-      en: "Docs experience.",
+      vi: "Thang spacing theo số và trải nghiệm docs.",
+      en: "The numeric spacing scale and the docs experience.",
       items: [
+        { status: "planned", issue: 42, vi: "Spacing theo thang số (p-3, gap-5); class viết hoa vẫn chạy nhưng được đánh dấu deprecated", en: "Numeric spacing scale (p-3, gap-5); upper-case classes still work but are deprecated" },
         { status: "planned", issue: 44, vi: "Theme Designer: bo góc, mật độ, font, màu trung tính, bóng, chuyển động", en: "Theme Designer: radius, density, typography, neutrals, elevation, motion" },
         { status: "planned", issue: 45, vi: "Trang Motion: hướng dẫn theo component, playground, xem trước giảm chuyển động", en: "Motion page: guidance per component, playground, reduced-motion preview" },
         { status: "planned", issue: 46, vi: "Sidebar docs kéo được độ rộng, thu gọn về dạng icon", en: "Resizable docs sidebar that collapses to icons" },
         { status: "planned", issue: 40, vi: "Kiểm thử trên Firefox và WebKit theo lịch", en: "Scheduled Firefox and WebKit test runs" },
       ],
     },
+  ],
+  later: [
     {
       milestone: "1.0.0",
       kind: "major",
@@ -180,6 +160,6 @@ export function roadmapMarkdown() {
     }
   }
   lines.push("", "## Đã phát hành", "", "Chi tiết ở trang Có gì mới (`#/news`) và `CHANGELOG.md`.", "");
-  for (const n of NEWS) lines.push(`- **${n.version}** (${n.date}): ${n.title}`);
+  for (const n of NEWS.filter((r) => !r.upcoming)) lines.push(`- **${n.version}** (${n.date}): ${n.title}`);
   return `${lines.join("\n")}\n`;
 }

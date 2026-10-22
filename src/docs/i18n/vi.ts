@@ -101,6 +101,8 @@ export const vi = {
   "news.kind.breaking": "Thay đổi lớn",
   "news.current": "Phiên bản hiện tại: {version}",
   "news.latest": "Mới nhất",
+  "news.upcoming": "Sắp phát hành",
+  "news.planned": "Dự kiến {date}",
   "news.view": "Xem",
   "news.packages": "Gói",
   "news.empty": "Chưa có thay đổi loại này.",
