@@ -35,21 +35,6 @@ export const PROJECT_URL = "https://github.com/users/trandat1114/projects/6";
 export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
   now: [
     {
-      milestone: "cli 0.2.0",
-      kind: "cli",
-      due: "2026-10-30",
-      vi: "CLI đi kèm yugen-ui 0.9.0 (gồm cả việc dự kiến cho cli 0.3.0).",
-      en: "CLI to go with yugen-ui 0.9.0 (including what was planned for cli 0.3.0).",
-      items: [
-        { status: "done", issue: 60, vi: "Yêu cầu Node.js 22 trở lên", en: "Requires Node.js 22 or later" },
-        { status: "done", issue: 55, vi: "create --lang en|vi chọn ngôn ngữ cho app được tạo", en: "create --lang en|vi picks the language of the generated app" },
-        { status: "done", issue: 54, vi: "Starter tối giản, tiếng Anh mặc định, hai thương hiệu Sakura và Web", en: "Minimal starter, English by default, Sakura and Web brands" },
-        { status: "done", issue: 53, vi: "Tên template ngắn: Starter, SaaS, Blog, Dashboard, AI chat", en: "Short template names: Starter, SaaS, Blog, Dashboard, AI chat" },
-      ],
-    },
-  ],
-  next: [
-    {
       milestone: "0.10.0",
       kind: "minor",
       due: "2027-01-29",
@@ -64,7 +49,7 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       ],
     },
   ],
-  later: [
+  next: [
     {
       milestone: "1.0.0",
       kind: "major",
@@ -75,6 +60,8 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
         { status: "planned", issue: 63, vi: "SEO: URL theo đường dẫn, prerender từng trang, sitemap", en: "SEO: path URLs, prerendered pages, sitemap" },
       ],
     },
+  ],
+  later: [
     {
       milestone: "Backlog",
       kind: "backlog",
