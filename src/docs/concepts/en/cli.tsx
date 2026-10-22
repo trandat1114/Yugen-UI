@@ -174,7 +174,8 @@ export default function Page() {
         <div className="flex flex-col gap-L">
           <P>
             <C>init</C> writes this file at the project root; <C>add</C>, <C>list</C> and <C>doctor</C> read it. You can edit it, for example
-            to change <C>paths.ui</C> and keep components somewhere else.
+            to change <C>paths.ui</C> and keep components somewhere else. Without it, a project that has <C>yugen-ui</C> installed (an app
+            made by <C>create</C>, for example) is treated as package mode.
           </P>
           <CodeBlock code={CLI_CONFIG} />
           <P>

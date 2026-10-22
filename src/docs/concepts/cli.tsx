@@ -173,7 +173,8 @@ export default function Page() {
         <div className="flex flex-col gap-L">
           <P>
             <C>init</C> ghi file này ở gốc dự án; <C>add</C>, <C>list</C> và <C>doctor</C> đọc nó. Có thể sửa tay, ví dụ đổi{" "}
-            <C>paths.ui</C> để đặt component ở thư mục khác.
+            <C>paths.ui</C> để đặt component ở thư mục khác. Không có file này mà dự án đã cài <C>yugen-ui</C> (vd. app tạo bằng{" "}
+            <C>create</C>) thì CLI coi là mode package.
           </P>
           <CodeBlock code={CLI_CONFIG} />
           <P>
