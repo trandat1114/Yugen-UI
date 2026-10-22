@@ -108,7 +108,7 @@ function ControlledMenuButtonDemo() {
   const [open, setOpen] = useState(false);
   const [view, setView] = useState("Lưới");
   return (
-    <div className="flex items-center gap-M">
+    <div className="flex items-center gap-3">
       <MenuButton
         open={open}
         onOpenChange={setOpen}
@@ -130,10 +130,10 @@ function ControlledMenuButtonDemo() {
 function NotificationBadgeDemo() {
   const [count, setCount] = useState(3);
   return (
-    <div className="flex items-center gap-L">
+    <div className="flex items-center gap-4">
       <span className="relative inline-flex">
         <Button appearance="subtle" icon={<Alert20Regular />} aria-label="Thông báo" />
-        <CounterBadge count={count} size="small" color="danger" className="absolute -inset-e-XS -top-XS" />
+        <CounterBadge count={count} size="small" color="danger" className="absolute -inset-e-1 -top-1" />
       </span>
       <Button onClick={() => setCount((c) => c + 1)}>Thêm</Button>
       <Button appearance="subtle" onClick={() => setCount(0)}>
@@ -147,13 +147,13 @@ function SwatchPickerDemo() {
   const [color, setColor] = useState("#C2347A");
   const current = colors.find((c) => c.value === color);
   return (
-    <div className="flex flex-col items-start gap-M">
+    <div className="flex flex-col items-start gap-3">
       <SwatchPicker aria-label="Màu nhấn" selectedValue={color} onSelectionChange={setColor}>
         {colors.map((c) => (
           <ColorSwatch key={c.value} value={c.value} color={c.value} aria-label={c.label} />
         ))}
       </SwatchPicker>
-      <span className="flex items-center gap-S text-body1 text-foreground-2">
+      <span className="flex items-center gap-2 text-body1 text-foreground-2">
         <span className="size-4 rounded-circular" style={{ backgroundColor: color }} />
         Đã chọn: {current?.label}
       </span>
@@ -164,7 +164,7 @@ function SwatchPickerDemo() {
 function FadeDemo() {
   const [visible, setVisible] = useState(true);
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
       <Fade visible={visible}>
         <div className="size-24 rounded-xlarge bg-brand-background shadow-8" />
@@ -176,9 +176,9 @@ function FadeDemo() {
 function FadeDurationDemo() {
   const [visible, setVisible] = useState(true);
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
-      <div className="flex gap-M">
+      <div className="flex gap-3">
         <Fade visible={visible} duration="faster">
           <div className="flex size-20 items-center justify-center rounded-xlarge bg-background-1 text-caption1 shadow-8">faster</div>
         </Fade>
@@ -197,14 +197,14 @@ function FadeUnmountDemo() {
   const [visible, setVisible] = useState(false);
   const [log, setLog] = useState("Chưa chạy");
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
       <Fade
         visible={visible}
         unmountOnExit
         onMotionFinish={(direction) => setLog(direction === "enter" ? "Đã vào xong" : "Đã ra xong — phần tử đã gỡ khỏi DOM")}
       >
-        <div className="rounded-medium bg-background-1 px-L py-M text-body1 shadow-16">Bản nháp đã được lưu</div>
+        <div className="rounded-medium bg-background-1 px-4 py-3 text-body1 shadow-16">Bản nháp đã được lưu</div>
       </Fade>
       <span className="text-caption1 text-foreground-3">{log}</span>
     </div>
@@ -214,10 +214,10 @@ function FadeUnmountDemo() {
 function ScaleDemo() {
   const [visible, setVisible] = useState(true);
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
       <Scale visible={visible}>
-        <div className="flex w-56 flex-col gap-XS rounded-xlarge bg-background-1 p-L shadow-16">
+        <div className="flex w-56 flex-col gap-1 rounded-xlarge bg-background-1 p-4 shadow-16">
           <span className="text-subtitle2 font-semibold">Hộp thoại nhỏ</span>
           <span className="text-body1 text-foreground-2">Scale phóng từ 90% kèm mờ dần.</span>
         </div>
@@ -229,9 +229,9 @@ function ScaleDemo() {
 function ScaleOptionsDemo() {
   const [visible, setVisible] = useState(true);
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
-      <div className="flex gap-M">
+      <div className="flex gap-3">
         <Scale visible={visible} duration="gentle" exitDuration="fast">
           <div className="flex size-24 items-center justify-center rounded-circular bg-brand-background-2 text-caption1 font-semibold text-brand-foreground-2">
             gentle / fast
@@ -250,7 +250,7 @@ function ScaleOptionsDemo() {
 function ScaleAppearDemo() {
   const [run, setRun] = useState(0);
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <Button icon={<ArrowClockwise20Regular />} onClick={() => setRun((r) => r + 1)}>
         Chạy lại
       </Button>
@@ -266,9 +266,9 @@ function ScaleAppearDemo() {
 function SlideDemo() {
   const [visible, setVisible] = useState(true);
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
-      <div className="grid grid-cols-4 gap-M">
+      <div className="grid grid-cols-4 gap-3">
         {(["start", "end", "top", "bottom"] as const).map((from) => (
           <Slide key={from} visible={visible} from={from}>
             <div className="flex size-20 items-center justify-center rounded-xlarge bg-background-1 text-body1 font-semibold shadow-8">
@@ -284,9 +284,9 @@ function SlideDemo() {
 function SlideRtlDemo() {
   const [visible, setVisible] = useState(true);
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
-      <div dir="rtl" className="flex gap-M">
+      <div dir="rtl" className="flex gap-3">
         <Slide visible={visible} from="start">
           <div className="flex h-16 w-32 items-center justify-center rounded-xlarge bg-background-1 text-caption1 shadow-8">
             start → từ phải
@@ -310,7 +310,7 @@ function SlideNoticeDemo() {
         Lưu thay đổi
       </Button>
       <Slide visible={visible} from="bottom" unmountOnExit>
-        <div className="flex w-full items-center gap-S rounded-medium bg-background-1 p-M text-body1 shadow-16">
+        <div className="flex w-full items-center gap-2 rounded-medium bg-background-1 p-3 text-body1 shadow-16">
           <CheckmarkCircle20Regular className="shrink-0 text-success-foreground-1" />
           <span className="flex-1">Đã lưu thay đổi.</span>
           <Button
@@ -329,12 +329,12 @@ function SlideNoticeDemo() {
 function CollapseDemo() {
   const [open, setOpen] = useState(false);
   return (
-    <div className="flex w-80 flex-col items-start gap-S">
+    <div className="flex w-80 flex-col items-start gap-2">
       <Button aria-expanded={open} onClick={() => setOpen((o) => !o)}>
         {open ? "Thu gọn" : "Xem chi tiết"}
       </Button>
       <Collapse visible={open}>
-        <div className="rounded-medium bg-background-1 p-M text-body1 text-foreground-2 shadow-4">
+        <div className="rounded-medium bg-background-1 p-3 text-body1 text-foreground-2 shadow-4">
           Collapse dùng kỹ thuật grid-template-rows 0fr → 1fr nên không cần đo chiều cao nội dung — văn bản dài, ảnh
           hay danh sách đều giãn mượt.
         </div>
@@ -346,7 +346,7 @@ function CollapseDemo() {
 function CollapseHorizontalDemo() {
   const [open, setOpen] = useState(true);
   return (
-    <div className="flex h-40 items-start gap-S">
+    <div className="flex h-40 items-start gap-2">
       <Button
         icon={<Navigation20Regular />}
         aria-label={open ? "Thu gọn điều hướng" : "Mở điều hướng"}
@@ -354,10 +354,10 @@ function CollapseHorizontalDemo() {
         onClick={() => setOpen((o) => !o)}
       />
       <Collapse visible={open} orientation="horizontal" className="h-full">
-        <nav className="flex h-full w-48 flex-col gap-XS rounded-medium bg-background-1 p-S text-body1 shadow-4">
-          <span className="px-S py-XS">Trang chủ</span>
-          <span className="px-S py-XS">Tài liệu</span>
-          <span className="px-S py-XS">Cài đặt</span>
+        <nav className="flex h-full w-48 flex-col gap-1 rounded-medium bg-background-1 p-2 text-body1 shadow-4">
+          <span className="px-2 py-1">Trang chủ</span>
+          <span className="px-2 py-1">Tài liệu</span>
+          <span className="px-2 py-1">Cài đặt</span>
         </nav>
       </Collapse>
     </div>
@@ -367,12 +367,12 @@ function CollapseHorizontalDemo() {
 function CollapseSlowDemo() {
   const [open, setOpen] = useState(true);
   return (
-    <div className="flex w-80 flex-col items-start gap-S">
+    <div className="flex w-80 flex-col items-start gap-2">
       <Button aria-expanded={open} onClick={() => setOpen((o) => !o)}>
         {open ? "Thu gọn" : "Mở rộng"}
       </Button>
       <Collapse visible={open} animateOpacity={false} duration="slow" exitDuration="fast">
-        <ul className="flex flex-col gap-XS rounded-medium bg-background-1 p-M text-body1 shadow-4">
+        <ul className="flex flex-col gap-1 rounded-medium bg-background-1 p-3 text-body1 shadow-4">
           <li>Mở: slow (300ms), giảm tốc</li>
           <li>Đóng: fast (150ms), tăng tốc</li>
           <li>Không đổi opacity</li>
@@ -385,9 +385,9 @@ function CollapseSlowDemo() {
 function BlurRotateDemo() {
   const [visible, setVisible] = useState(true);
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
-      <div className="flex gap-L">
+      <div className="flex gap-4">
         <Blur visible={visible}>
           <div className="flex size-24 items-center justify-center rounded-xlarge bg-background-1 text-subtitle2 font-semibold shadow-8">
             Blur
@@ -428,7 +428,7 @@ function RotateIconDemo() {
 function BlurAppearDemo() {
   const [run, setRun] = useState(0);
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <Button icon={<ArrowClockwise20Regular />} onClick={() => setRun((r) => r + 1)}>
         Chạy lại
       </Button>
@@ -442,12 +442,12 @@ function BlurAppearDemo() {
 function StaggerDemo() {
   const [visible, setVisible] = useState(true);
   return (
-    <div className="flex w-64 flex-col gap-M">
+    <div className="flex w-64 flex-col gap-3">
       <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn danh sách" : "Hiện danh sách"}</Button>
-      <div className="flex flex-col gap-XS">
+      <div className="flex flex-col gap-1">
         <Stagger visible={visible}>
           {tasks.map((task) => (
-            <div key={task} className="rounded-medium bg-background-1 px-M py-S text-body1 shadow-2">
+            <div key={task} className="rounded-medium bg-background-1 px-3 py-2 text-body1 shadow-2">
               {task}
             </div>
           ))}
@@ -460,9 +460,9 @@ function StaggerDemo() {
 function StaggerSlideDemo() {
   const [visible, setVisible] = useState(false);
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
-      <div className="flex gap-S">
+      <div className="flex gap-2">
         <Stagger visible={visible} itemDelay="fast">
           {["桜", "幽", "玄", "和", "風"].map((ch) => (
             <Slide key={ch} visible from="bottom">
@@ -480,11 +480,11 @@ function StaggerSlideDemo() {
 function StaggerAppearDemo() {
   const [run, setRun] = useState(0);
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <Button icon={<ArrowClockwise20Regular />} onClick={() => setRun((r) => r + 1)}>
         Chạy lại
       </Button>
-      <div key={run} className="grid grid-cols-4 gap-S">
+      <div key={run} className="grid grid-cols-4 gap-2">
         <Stagger visible appear itemDelay="faster">
           {Array.from({ length: 8 }, (_, i) => (
             <Scale key={i} visible>
@@ -501,8 +501,8 @@ function AnnounceDemo() {
   const { announce } = useAnnounce();
   const [count, setCount] = useState(0);
   return (
-    <div className="flex flex-col items-center gap-M">
-      <div className="flex gap-S">
+    <div className="flex flex-col items-center gap-3">
+      <div className="flex gap-2">
         <Button
           appearance="primary"
           icon={<Cart20Regular />}
@@ -550,7 +550,7 @@ function SearchAnnounceDemo() {
   const [query, setQuery] = useState("");
   const results = fruits.filter((f) => f.toLowerCase().includes(query.trim().toLowerCase()));
   return (
-    <div className="flex w-72 flex-col gap-S">
+    <div className="flex w-72 flex-col gap-2">
       <SearchBox
         aria-label="Tìm trái cây"
         value={query}
@@ -570,7 +570,7 @@ function SearchAnnounceDemo() {
 function ArrowNavDemo() {
   const nav = useArrowNavigationGroup({ axis: "horizontal", circular: true });
   return (
-    <div {...nav} role="toolbar" aria-label="Định dạng" className="flex gap-XS rounded-medium bg-background-1 p-XS shadow-4">
+    <div {...nav} role="toolbar" aria-label="Định dạng" className="flex gap-1 rounded-medium bg-background-1 p-1 shadow-4">
       <Button appearance="subtle" icon={<TextBold20Regular />} aria-label="Đậm" />
       <Button appearance="subtle" icon={<TextItalic20Regular />} aria-label="Nghiêng" />
       <Button appearance="subtle" icon={<TextUnderline20Regular />} aria-label="Gạch chân" />
@@ -582,7 +582,7 @@ function ArrowNavDemo() {
 function GridNavDemo() {
   const nav = useArrowNavigationGroup({ axis: "grid", memorizeCurrent: true });
   return (
-    <div {...nav} role="group" aria-label="Ứng dụng" className="grid grid-cols-3 gap-S">
+    <div {...nav} role="group" aria-label="Ứng dụng" className="grid grid-cols-3 gap-2">
       {["Thư", "Lịch", "Danh bạ", "Tệp", "Ghi chú", "Việc cần làm", "Ảnh", "Bản đồ", "Cài đặt"].map((app) => (
         <Button key={app} className="w-28">
           {app}
@@ -595,7 +595,7 @@ function GridNavDemo() {
 function VerticalNavDemo() {
   const nav = useArrowNavigationGroup({ axis: "vertical", circular: true });
   return (
-    <div {...nav} role="group" aria-label="Thư mục" className="flex w-56 flex-col gap-XXS rounded-medium bg-background-1 p-XS shadow-4">
+    <div {...nav} role="group" aria-label="Thư mục" className="flex w-56 flex-col gap-0.5 rounded-medium bg-background-1 p-1 shadow-4">
       {["Hộp thư đến", "Đã gửi", "Bản nháp", "Lưu trữ"].map((folder) => (
         <Button key={folder} appearance="subtle" className="justify-start">
           {folder}
@@ -608,9 +608,9 @@ function VerticalNavDemo() {
 function FocusableCard({ title }: { title: string }) {
   const group = useFocusableGroup({ tabBehavior: "limited-trap-focus" });
   return (
-    <div {...group} role="listitem" aria-label={title} className="flex w-56 flex-col gap-S rounded-medium bg-background-1 p-M shadow-4">
+    <div {...group} role="listitem" aria-label={title} className="flex w-56 flex-col gap-2 rounded-medium bg-background-1 p-3 shadow-4">
       <span className="text-subtitle2 font-semibold">{title}</span>
-      <div className="flex gap-XS">
+      <div className="flex gap-1">
         <Button size="small" icon={<Heart20Regular />}>
           Thích
         </Button>
@@ -625,7 +625,7 @@ function FocusableCard({ title }: { title: string }) {
 function CardGroupDemo() {
   const nav = useArrowNavigationGroup({ axis: "horizontal" });
   return (
-    <div {...nav} role="list" aria-label="Bài viết" className="flex gap-M">
+    <div {...nav} role="list" aria-label="Bài viết" className="flex gap-3">
       {["Ra mắt Yugen UI", "Bảng màu Sakura"].map((title) => (
         <FocusableCard key={title} title={title} />
       ))}
@@ -897,7 +897,7 @@ const EXTRAS: ComponentDoc[] = [
   const [open, setOpen] = useState(false);
   const [view, setView] = useState("Lưới");
   return (
-    <div className="flex items-center gap-M">
+    <div className="flex items-center gap-3">
       <MenuButton
         open={open}
         onOpenChange={setOpen}
@@ -1021,10 +1021,10 @@ const EXTRAS: ComponentDoc[] = [
         code: `function NotificationBadgeDemo() {
   const [count, setCount] = useState(3);
   return (
-    <div className="flex items-center gap-L">
+    <div className="flex items-center gap-4">
       <span className="relative inline-flex">
         <Button appearance="subtle" icon={<Alert20Regular />} aria-label="Thông báo" />
-        <CounterBadge count={count} size="small" color="danger" className="absolute -inset-e-XS -top-XS" />
+        <CounterBadge count={count} size="small" color="danger" className="absolute -inset-e-1 -top-1" />
       </span>
       <Button onClick={() => setCount((c) => c + 1)}>Thêm</Button>
       <Button appearance="subtle" onClick={() => setCount(0)}>Đánh dấu đã đọc</Button>
@@ -1088,47 +1088,47 @@ const EXTRAS: ComponentDoc[] = [
       {
         title: "Trạng thái",
         description: "Tám trạng thái; luôn kèm chữ khi không gian cho phép (không chỉ dựa vào màu).",
-        code: `<div className="grid grid-cols-2 gap-x-XL gap-y-S text-body1">
-  <span className="flex items-center gap-S"><PresenceBadge status="available" />Có mặt</span>
-  <span className="flex items-center gap-S"><PresenceBadge status="away" />Vắng mặt</span>
-  <span className="flex items-center gap-S"><PresenceBadge status="busy" />Bận</span>
-  <span className="flex items-center gap-S"><PresenceBadge status="do-not-disturb" />Không làm phiền</span>
-  <span className="flex items-center gap-S"><PresenceBadge status="offline" />Ngoại tuyến</span>
-  <span className="flex items-center gap-S"><PresenceBadge status="out-of-office" />Không ở văn phòng</span>
-  <span className="flex items-center gap-S"><PresenceBadge status="blocked" />Đã chặn</span>
-  <span className="flex items-center gap-S"><PresenceBadge status="unknown" />Không xác định</span>
+        code: `<div className="grid grid-cols-2 gap-x-5 gap-y-2 text-body1">
+  <span className="flex items-center gap-2"><PresenceBadge status="available" />Có mặt</span>
+  <span className="flex items-center gap-2"><PresenceBadge status="away" />Vắng mặt</span>
+  <span className="flex items-center gap-2"><PresenceBadge status="busy" />Bận</span>
+  <span className="flex items-center gap-2"><PresenceBadge status="do-not-disturb" />Không làm phiền</span>
+  <span className="flex items-center gap-2"><PresenceBadge status="offline" />Ngoại tuyến</span>
+  <span className="flex items-center gap-2"><PresenceBadge status="out-of-office" />Không ở văn phòng</span>
+  <span className="flex items-center gap-2"><PresenceBadge status="blocked" />Đã chặn</span>
+  <span className="flex items-center gap-2"><PresenceBadge status="unknown" />Không xác định</span>
 </div>`,
         render: () => (
-          <div className="grid grid-cols-2 gap-x-XL gap-y-S text-body1">
-            <span className="flex items-center gap-S">
+          <div className="grid grid-cols-2 gap-x-5 gap-y-2 text-body1">
+            <span className="flex items-center gap-2">
               <PresenceBadge status="available" />
               Có mặt
             </span>
-            <span className="flex items-center gap-S">
+            <span className="flex items-center gap-2">
               <PresenceBadge status="away" />
               Vắng mặt
             </span>
-            <span className="flex items-center gap-S">
+            <span className="flex items-center gap-2">
               <PresenceBadge status="busy" />
               Bận
             </span>
-            <span className="flex items-center gap-S">
+            <span className="flex items-center gap-2">
               <PresenceBadge status="do-not-disturb" />
               Không làm phiền
             </span>
-            <span className="flex items-center gap-S">
+            <span className="flex items-center gap-2">
               <PresenceBadge status="offline" />
               Ngoại tuyến
             </span>
-            <span className="flex items-center gap-S">
+            <span className="flex items-center gap-2">
               <PresenceBadge status="out-of-office" />
               Không ở văn phòng
             </span>
-            <span className="flex items-center gap-S">
+            <span className="flex items-center gap-2">
               <PresenceBadge status="blocked" />
               Đã chặn
             </span>
-            <span className="flex items-center gap-S">
+            <span className="flex items-center gap-2">
               <PresenceBadge status="unknown" />
               Không xác định
             </span>
@@ -1259,13 +1259,13 @@ function SwatchPickerDemo() {
   const [color, setColor] = useState("#C2347A");
   const current = colors.find((c) => c.value === color);
   return (
-    <div className="flex flex-col items-start gap-M">
+    <div className="flex flex-col items-start gap-3">
       <SwatchPicker aria-label="Màu nhấn" selectedValue={color} onSelectionChange={setColor}>
         {colors.map((c) => (
           <ColorSwatch key={c.value} value={c.value} color={c.value} aria-label={c.label} />
         ))}
       </SwatchPicker>
-      <span className="flex items-center gap-S text-body1 text-foreground-2">
+      <span className="flex items-center gap-2 text-body1 text-foreground-2">
         <span className="size-4 rounded-circular" style={{ backgroundColor: color }} />
         Đã chọn: {current?.label}
       </span>
@@ -1307,7 +1307,7 @@ function SwatchPickerDemo() {
       {
         title: "Kích thước & hình dạng",
         description: "size extra-small 20 · small 24 · medium 28 · large 32px; shape square, rounded, circular.",
-        code: `<div className="flex flex-col gap-M">
+        code: `<div className="flex flex-col gap-3">
   <SwatchPicker size="extra-small" shape="circular" aria-label="Extra small" defaultSelectedValue="#C2347A">
     <ColorSwatch value="#C2347A" color="#C2347A" aria-label="Hồng anh đào" />
     <ColorSwatch value="#6A5AE0" color="#6A5AE0" aria-label="Chàm" />
@@ -1330,7 +1330,7 @@ function SwatchPickerDemo() {
   </SwatchPicker>
 </div>`,
         render: () => (
-          <div className="flex flex-col gap-M">
+          <div className="flex flex-col gap-3">
             <SwatchPicker size="extra-small" shape="circular" aria-label="Extra small" defaultSelectedValue="#C2347A">
               <ColorSwatch value="#C2347A" color="#C2347A" aria-label="Hồng anh đào" />
               <ColorSwatch value="#6A5AE0" color="#6A5AE0" aria-label="Chàm" />
@@ -1600,7 +1600,7 @@ function SwatchPickerDemo() {
       code: `function FadeDemo() {
   const [visible, setVisible] = useState(true);
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
       <Fade visible={visible}>
         <div className="size-24 rounded-xlarge bg-brand-background shadow-8" />
@@ -1617,9 +1617,9 @@ function SwatchPickerDemo() {
         code: `function FadeDurationDemo() {
   const [visible, setVisible] = useState(true);
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
-      <div className="flex gap-M">
+      <div className="flex gap-3">
         <Fade visible={visible} duration="faster">
           <div className="flex size-20 items-center justify-center rounded-xlarge bg-background-1 text-caption1 shadow-8">faster</div>
         </Fade>
@@ -1642,14 +1642,14 @@ function SwatchPickerDemo() {
   const [visible, setVisible] = useState(false);
   const [log, setLog] = useState("Chưa chạy");
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
       <Fade
         visible={visible}
         unmountOnExit
         onMotionFinish={(direction) => setLog(direction === "enter" ? "Đã vào xong" : "Đã ra xong — phần tử đã gỡ khỏi DOM")}
       >
-        <div className="rounded-medium bg-background-1 px-L py-M text-body1 shadow-16">Bản nháp đã được lưu</div>
+        <div className="rounded-medium bg-background-1 px-4 py-3 text-body1 shadow-16">Bản nháp đã được lưu</div>
       </Fade>
       <span className="text-caption1 text-foreground-3">{log}</span>
     </div>
@@ -1690,10 +1690,10 @@ function SwatchPickerDemo() {
       code: `function ScaleDemo() {
   const [visible, setVisible] = useState(true);
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
       <Scale visible={visible}>
-        <div className="flex w-56 flex-col gap-XS rounded-xlarge bg-background-1 p-L shadow-16">
+        <div className="flex w-56 flex-col gap-1 rounded-xlarge bg-background-1 p-4 shadow-16">
           <span className="text-subtitle2 font-semibold">Hộp thoại nhỏ</span>
           <span className="text-body1 text-foreground-2">Scale phóng từ 90% kèm mờ dần.</span>
         </div>
@@ -1710,9 +1710,9 @@ function SwatchPickerDemo() {
         code: `function ScaleOptionsDemo() {
   const [visible, setVisible] = useState(true);
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
-      <div className="flex gap-M">
+      <div className="flex gap-3">
         <Scale visible={visible} duration="gentle" exitDuration="fast">
           <div className="flex size-24 items-center justify-center rounded-circular bg-brand-background-2 text-caption1 font-semibold text-brand-foreground-2">
             gentle / fast
@@ -1735,7 +1735,7 @@ function SwatchPickerDemo() {
         code: `function ScaleAppearDemo() {
   const [run, setRun] = useState(0);
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <Button icon={<ArrowClockwise20Regular />} onClick={() => setRun((r) => r + 1)}>
         Chạy lại
       </Button>
@@ -1772,9 +1772,9 @@ function SwatchPickerDemo() {
       code: `function SlideDemo() {
   const [visible, setVisible] = useState(true);
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
-      <div className="grid grid-cols-4 gap-M">
+      <div className="grid grid-cols-4 gap-3">
         {(["start", "end", "top", "bottom"] as const).map((from) => (
           <Slide key={from} visible={visible} from={from}>
             <div className="flex size-20 items-center justify-center rounded-xlarge bg-background-1 text-body1 font-semibold shadow-8">
@@ -1795,9 +1795,9 @@ function SwatchPickerDemo() {
         code: `function SlideRtlDemo() {
   const [visible, setVisible] = useState(true);
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
-      <div dir="rtl" className="flex gap-M">
+      <div dir="rtl" className="flex gap-3">
         <Slide visible={visible} from="start">
           <div className="flex h-16 w-32 items-center justify-center rounded-xlarge bg-background-1 text-caption1 shadow-8">
             start → từ phải
@@ -1825,7 +1825,7 @@ function SwatchPickerDemo() {
         Lưu thay đổi
       </Button>
       <Slide visible={visible} from="bottom" unmountOnExit>
-        <div className="flex w-full items-center gap-S rounded-medium bg-background-1 p-M text-body1 shadow-16">
+        <div className="flex w-full items-center gap-2 rounded-medium bg-background-1 p-3 text-body1 shadow-16">
           <CheckmarkCircle20Regular className="shrink-0 text-success-foreground-1" />
           <span className="flex-1">Đã lưu thay đổi.</span>
           <Button
@@ -1866,12 +1866,12 @@ function SwatchPickerDemo() {
       code: `function CollapseDemo() {
   const [open, setOpen] = useState(false);
   return (
-    <div className="flex w-80 flex-col items-start gap-S">
+    <div className="flex w-80 flex-col items-start gap-2">
       <Button aria-expanded={open} onClick={() => setOpen((o) => !o)}>
         {open ? "Thu gọn" : "Xem chi tiết"}
       </Button>
       <Collapse visible={open}>
-        <div className="rounded-medium bg-background-1 p-M text-body1 text-foreground-2 shadow-4">
+        <div className="rounded-medium bg-background-1 p-3 text-body1 text-foreground-2 shadow-4">
           Collapse dùng kỹ thuật grid-template-rows 0fr → 1fr nên không cần đo chiều cao nội dung — văn bản dài, ảnh
           hay danh sách đều giãn mượt.
         </div>
@@ -1888,7 +1888,7 @@ function SwatchPickerDemo() {
         code: `function CollapseHorizontalDemo() {
   const [open, setOpen] = useState(true);
   return (
-    <div className="flex h-40 items-start gap-S">
+    <div className="flex h-40 items-start gap-2">
       <Button
         icon={<Navigation20Regular />}
         aria-label={open ? "Thu gọn điều hướng" : "Mở điều hướng"}
@@ -1896,10 +1896,10 @@ function SwatchPickerDemo() {
         onClick={() => setOpen((o) => !o)}
       />
       <Collapse visible={open} orientation="horizontal" className="h-full">
-        <nav className="flex h-full w-48 flex-col gap-XS rounded-medium bg-background-1 p-S text-body1 shadow-4">
-          <span className="px-S py-XS">Trang chủ</span>
-          <span className="px-S py-XS">Tài liệu</span>
-          <span className="px-S py-XS">Cài đặt</span>
+        <nav className="flex h-full w-48 flex-col gap-1 rounded-medium bg-background-1 p-2 text-body1 shadow-4">
+          <span className="px-2 py-1">Trang chủ</span>
+          <span className="px-2 py-1">Tài liệu</span>
+          <span className="px-2 py-1">Cài đặt</span>
         </nav>
       </Collapse>
     </div>
@@ -1913,12 +1913,12 @@ function SwatchPickerDemo() {
         code: `function CollapseSlowDemo() {
   const [open, setOpen] = useState(true);
   return (
-    <div className="flex w-80 flex-col items-start gap-S">
+    <div className="flex w-80 flex-col items-start gap-2">
       <Button aria-expanded={open} onClick={() => setOpen((o) => !o)}>
         {open ? "Thu gọn" : "Mở rộng"}
       </Button>
       <Collapse visible={open} animateOpacity={false} duration="slow" exitDuration="fast">
-        <ul className="flex flex-col gap-XS rounded-medium bg-background-1 p-M text-body1 shadow-4">
+        <ul className="flex flex-col gap-1 rounded-medium bg-background-1 p-3 text-body1 shadow-4">
           <li>Mở: slow (300ms), giảm tốc</li>
           <li>Đóng: fast (150ms), tăng tốc</li>
           <li>Không đổi opacity</li>
@@ -1958,9 +1958,9 @@ function SwatchPickerDemo() {
       code: `function BlurRotateDemo() {
   const [visible, setVisible] = useState(true);
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
-      <div className="flex gap-L">
+      <div className="flex gap-4">
         <Blur visible={visible}>
           <div className="flex size-24 items-center justify-center rounded-xlarge bg-background-1 text-subtitle2 font-semibold shadow-8">
             Blur
@@ -2010,7 +2010,7 @@ function SwatchPickerDemo() {
         code: `function BlurAppearDemo() {
   const [run, setRun] = useState(0);
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <Button icon={<ArrowClockwise20Regular />} onClick={() => setRun((r) => r + 1)}>
         Chạy lại
       </Button>
@@ -2047,12 +2047,12 @@ function SwatchPickerDemo() {
 function StaggerDemo() {
   const [visible, setVisible] = useState(true);
   return (
-    <div className="flex w-64 flex-col gap-M">
+    <div className="flex w-64 flex-col gap-3">
       <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn danh sách" : "Hiện danh sách"}</Button>
-      <div className="flex flex-col gap-XS">
+      <div className="flex flex-col gap-1">
         <Stagger visible={visible}>
           {tasks.map((task) => (
-            <div key={task} className="rounded-medium bg-background-1 px-M py-S text-body1 shadow-2">
+            <div key={task} className="rounded-medium bg-background-1 px-3 py-2 text-body1 shadow-2">
               {task}
             </div>
           ))}
@@ -2070,9 +2070,9 @@ function StaggerDemo() {
         code: `function StaggerSlideDemo() {
   const [visible, setVisible] = useState(false);
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
-      <div className="flex gap-S">
+      <div className="flex gap-2">
         <Stagger visible={visible} itemDelay="fast">
           {["桜", "幽", "玄", "和", "風"].map((ch) => (
             <Slide key={ch} visible from="bottom">
@@ -2094,11 +2094,11 @@ function StaggerDemo() {
         code: `function StaggerAppearDemo() {
   const [run, setRun] = useState(0);
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <Button icon={<ArrowClockwise20Regular />} onClick={() => setRun((r) => r + 1)}>
         Chạy lại
       </Button>
-      <div key={run} className="grid grid-cols-4 gap-S">
+      <div key={run} className="grid grid-cols-4 gap-2">
         <Stagger visible appear itemDelay="faster">
           {Array.from({ length: 8 }, (_, i) => (
             <Scale key={i} visible>
@@ -2148,14 +2148,14 @@ function StaggerDemo() {
       {
         title: "Skip link (focusable)",
         description: "Nhấn Tab vào khung ví dụ: nút ẩn hiện ra khi nhận focus.",
-        code: `<div className="flex flex-col items-start gap-S">
+        code: `<div className="flex flex-col items-start gap-2">
   <VisuallyHidden asChild focusable>
     <Button appearance="primary">Bỏ qua tới nội dung chính</Button>
   </VisuallyHidden>
   <span className="text-body1 text-foreground-2">Nhấn Tab để thấy nút ẩn.</span>
 </div>`,
         render: () => (
-          <div className="flex flex-col items-start gap-S">
+          <div className="flex flex-col items-start gap-2">
             <VisuallyHidden asChild focusable>
               <Button appearance="primary">Bỏ qua tới nội dung chính</Button>
             </VisuallyHidden>
@@ -2206,8 +2206,8 @@ function StaggerDemo() {
   const { announce } = useAnnounce();
   const [count, setCount] = useState(0);
   return (
-    <div className="flex flex-col items-center gap-M">
-      <div className="flex gap-S">
+    <div className="flex flex-col items-center gap-3">
+      <div className="flex gap-2">
         <Button
           appearance="primary"
           icon={<Cart20Regular />}
@@ -2266,7 +2266,7 @@ function SearchAnnounceDemo() {
   const [query, setQuery] = useState("");
   const results = fruits.filter((f) => f.toLowerCase().includes(query.trim().toLowerCase()));
   return (
-    <div className="flex w-72 flex-col gap-S">
+    <div className="flex w-72 flex-col gap-2">
       <SearchBox
         aria-label="Tìm trái cây"
         value={query}
@@ -2317,7 +2317,7 @@ function SearchAnnounceDemo() {
       code: `function ArrowNavDemo() {
   const nav = useArrowNavigationGroup({ axis: "horizontal", circular: true });
   return (
-    <div {...nav} role="toolbar" aria-label="Định dạng" className="flex gap-XS rounded-medium bg-background-1 p-XS shadow-4">
+    <div {...nav} role="toolbar" aria-label="Định dạng" className="flex gap-1 rounded-medium bg-background-1 p-1 shadow-4">
       <Button appearance="subtle" icon={<TextBold20Regular />} aria-label="Đậm" />
       <Button appearance="subtle" icon={<TextItalic20Regular />} aria-label="Nghiêng" />
       <Button appearance="subtle" icon={<TextUnderline20Regular />} aria-label="Gạch chân" />
@@ -2334,7 +2334,7 @@ function SearchAnnounceDemo() {
         code: `function GridNavDemo() {
   const nav = useArrowNavigationGroup({ axis: "grid", memorizeCurrent: true });
   return (
-    <div {...nav} role="group" aria-label="Ứng dụng" className="grid grid-cols-3 gap-S">
+    <div {...nav} role="group" aria-label="Ứng dụng" className="grid grid-cols-3 gap-2">
       {["Thư", "Lịch", "Danh bạ", "Tệp", "Ghi chú", "Việc cần làm", "Ảnh", "Bản đồ", "Cài đặt"].map((app) => (
         <Button key={app} className="w-28">
           {app}
@@ -2351,7 +2351,7 @@ function SearchAnnounceDemo() {
         code: `function VerticalNavDemo() {
   const nav = useArrowNavigationGroup({ axis: "vertical", circular: true });
   return (
-    <div {...nav} role="group" aria-label="Thư mục" className="flex w-56 flex-col gap-XXS rounded-medium bg-background-1 p-XS shadow-4">
+    <div {...nav} role="group" aria-label="Thư mục" className="flex w-56 flex-col gap-0.5 rounded-medium bg-background-1 p-1 shadow-4">
       {["Hộp thư đến", "Đã gửi", "Bản nháp", "Lưu trữ"].map((folder) => (
         <Button key={folder} appearance="subtle" className="justify-start">
           {folder}
@@ -2368,9 +2368,9 @@ function SearchAnnounceDemo() {
         code: `function FocusableCard({ title }: { title: string }) {
   const group = useFocusableGroup({ tabBehavior: "limited-trap-focus" });
   return (
-    <div {...group} role="listitem" aria-label={title} className="flex w-56 flex-col gap-S rounded-medium bg-background-1 p-M shadow-4">
+    <div {...group} role="listitem" aria-label={title} className="flex w-56 flex-col gap-2 rounded-medium bg-background-1 p-3 shadow-4">
       <span className="text-subtitle2 font-semibold">{title}</span>
-      <div className="flex gap-XS">
+      <div className="flex gap-1">
         <Button size="small" icon={<Heart20Regular />}>Thích</Button>
         <Button size="small" icon={<Share20Regular />}>Chia sẻ</Button>
       </div>
@@ -2381,7 +2381,7 @@ function SearchAnnounceDemo() {
 function CardGroupDemo() {
   const nav = useArrowNavigationGroup({ axis: "horizontal" });
   return (
-    <div {...nav} role="list" aria-label="Bài viết" className="flex gap-M">
+    <div {...nav} role="list" aria-label="Bài viết" className="flex gap-3">
       {["Ra mắt Yugen UI", "Bảng màu Sakura"].map((title) => (
         <FocusableCard key={title} title={title} />
       ))}

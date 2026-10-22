@@ -123,8 +123,8 @@ function OverlayDemo() {
   }
 
   return (
-    <div className="flex w-full max-w-md flex-col gap-M">
-      <div className="flex flex-wrap items-center justify-between gap-S">
+    <div className="flex w-full max-w-md flex-col gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <NetworkToggle value={network} onChange={setNetwork} />
         <Button icon={<ArrowClockwise20Regular />} onClick={refresh}>
           Làm mới
@@ -138,7 +138,7 @@ function OverlayDemo() {
       >
         <ul className="flex flex-col">
           {ORDERS.map((order) => (
-            <li key={order.id} className="flex items-center justify-between gap-M border-b border-stroke-2 px-L py-M">
+            <li key={order.id} className="flex items-center justify-between gap-3 border-b border-stroke-2 px-4 py-3">
               <span className="text-body1 text-foreground-1">
                 {order.id} · {order.customer}
               </span>
@@ -146,7 +146,7 @@ function OverlayDemo() {
             </li>
           ))}
         </ul>
-        <p className="px-L py-S text-caption1 text-foreground-3">Cập nhật lúc {updatedAt}</p>
+        <p className="px-4 py-2 text-caption1 text-foreground-3">Cập nhật lúc {updatedAt}</p>
       </LoadingOverlay>
     </div>
   );
@@ -174,18 +174,18 @@ function SpinDelayDemo() {
   ];
 
   return (
-    <div className="flex w-full max-w-md flex-col gap-M">
-      <div className="flex flex-wrap items-center justify-between gap-S">
+    <div className="flex w-full max-w-md flex-col gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <NetworkToggle value={network} onChange={setNetwork} />
         <Button appearance="primary" onClick={load}>
           Tải
         </Button>
       </div>
-      <div className="grid grid-cols-2 gap-M">
+      <div className="grid grid-cols-2 gap-3">
         {panels.map((panel) => (
           <div
             key={panel.title}
-            className="flex h-28 flex-col items-center justify-center gap-S rounded-xlarge border border-stroke-2 bg-background-1 p-M"
+            className="flex h-28 flex-col items-center justify-center gap-2 rounded-xlarge border border-stroke-2 bg-background-1 p-3"
           >
             <span className="text-caption1 font-semibold text-foreground-3">{panel.title}</span>
             {panel.busy ? <Spinner size="small" /> : <span className="text-body1 text-foreground-1">Đã tải {count} lần</span>}
@@ -220,11 +220,11 @@ function AutosaveDemo() {
   }
 
   return (
-    <div className="flex w-full max-w-sm flex-col gap-M">
+    <div className="flex w-full max-w-sm flex-col gap-3">
       <NetworkToggle value={network} onChange={setNetwork} />
-      <div className="flex flex-wrap items-center justify-between gap-M rounded-xlarge border border-stroke-2 bg-background-1 px-L py-S">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xlarge border border-stroke-2 bg-background-1 px-4 py-2">
         <Switch label="Gửi thông báo qua email" checked={enabled} onCheckedChange={change} />
-        <span role="status" className="flex items-center gap-XS text-caption1 text-foreground-3">
+        <span role="status" className="flex items-center gap-1 text-caption1 text-foreground-3">
           {showSaving ? (
             <>
               <Spinner size="extra-tiny" aria-hidden />
@@ -267,11 +267,11 @@ function RouteDemo() {
   }
 
   return (
-    <div className="flex w-full max-w-md flex-col gap-M">
+    <div className="flex w-full max-w-md flex-col gap-3">
       <NetworkToggle value={network} onChange={setNetwork} />
       <div className="relative overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1">
         <PageProgress position="absolute" active={navigating} label="Đang chuyển trang" />
-        <nav aria-label="Trang mẫu" className="flex gap-XS border-b border-stroke-2 p-S">
+        <nav aria-label="Trang mẫu" className="flex gap-1 border-b border-stroke-2 p-2">
           {PAGES.map((name) => (
             <Button
               key={name}
@@ -284,7 +284,7 @@ function RouteDemo() {
             </Button>
           ))}
         </nav>
-        <div className="flex flex-col gap-XS p-L">
+        <div className="flex flex-col gap-1 p-4">
           <h3 className="text-subtitle2 font-semibold text-foreground-1">{page}</h3>
           <p className="text-body1 text-foreground-3">
             {failed
@@ -319,7 +319,7 @@ function UploadDemo() {
   }
 
   return (
-    <div className="relative flex w-full max-w-sm flex-col items-center gap-S overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1 p-XL">
+    <div className="relative flex w-full max-w-sm flex-col items-center gap-2 overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1 p-5">
       <PageProgress position="absolute" thickness="large" active={uploading} value={value} label="Đang tải tệp lên" />
       <Button appearance="primary" loading={uploading} loadingText="Đang tải lên…" onClick={start}>
         Tải tệp lên
@@ -351,7 +351,7 @@ function StoreDemo() {
   }
 
   return (
-    <div className="flex max-w-sm flex-col items-center gap-M text-center">
+    <div className="flex max-w-sm flex-col items-center gap-3 text-center">
       <PageProgress controller={syncProgress} />
       <NetworkToggle value={network} onChange={setNetwork} />
       <Button appearance="primary" icon={<ArrowSync20Regular />} onClick={sync}>
@@ -391,7 +391,7 @@ function SuspenseDemo() {
   }
 
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <PageProgress controller={routeProgress} />
       <Button onClick={open}>Mở bài viết</Button>
       <Suspense fallback={<PageProgressFallback controller={routeProgress} />}>{Page && <Page />}</Suspense>
@@ -429,8 +429,8 @@ function AsyncContentDemo() {
   }
 
   return (
-    <div className="flex w-full max-w-md flex-col gap-M">
-      <div className="flex flex-wrap items-center gap-M">
+    <div className="flex w-full max-w-md flex-col gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <NetworkToggle value={network} onChange={setNetwork} />
         <Switch label="Trả về rỗng" checked={empty} onCheckedChange={setEmpty} />
       </div>
@@ -442,11 +442,11 @@ function AsyncContentDemo() {
         onRetry={load}
         skeleton={<SkeletonList rows={3} />}
         idle={<p className="text-body1 text-foreground-3">Bấm “Tải thành viên” để bắt đầu.</p>}
-        className="min-h-48 rounded-xlarge border border-stroke-2 bg-background-1 p-L"
+        className="min-h-48 rounded-xlarge border border-stroke-2 bg-background-1 p-4"
       >
-        <ul className="flex flex-col gap-L">
+        <ul className="flex flex-col gap-4">
           {members.map((member) => (
-            <li key={member.id} className="flex items-center gap-M">
+            <li key={member.id} className="flex items-center gap-3">
               <Avatar name={member.name} size={40} color="colorful" />
               <div className="flex flex-col">
                 <span className="text-body1 font-semibold text-foreground-1">{member.name}</span>
@@ -466,7 +466,7 @@ function RetryDemo() {
   const [network, setNetwork] = useState<Network>("slow");
 
   return (
-    <div className="flex w-full flex-col items-center gap-S">
+    <div className="flex w-full flex-col items-center gap-2">
       <NetworkToggle value={network} onChange={setNetwork} />
       <ErrorState
         icon={<CloudOff24Regular />}
@@ -503,7 +503,7 @@ function FidelityDemo() {
   }
 
   return (
-    <div className="flex w-72 flex-col gap-M">
+    <div className="flex w-72 flex-col gap-3">
       <NetworkToggle value={network} onChange={setNetwork} />
       <Button icon={<ArrowClockwise20Regular />} className="self-start" onClick={reload}>
         Tải lại thẻ
@@ -512,7 +512,7 @@ function FidelityDemo() {
         <Card>
           <CardHeader image={<Avatar name="Hoa Anh Đào" />} header="Hoa Anh Đào" description="2 giờ trước" />
           <div className="aspect-video rounded-medium bg-gradient-sakura" />
-          <div className="flex flex-col gap-S">
+          <div className="flex flex-col gap-2">
             <p className="text-subtitle1 font-semibold text-foreground-1">Mùa hoa Đà Lạt</p>
             <CardContent>Mai anh đào nở rộ quanh hồ Xuân Hương, đẹp nhất vào sáng sớm.</CardContent>
           </div>
@@ -556,8 +556,8 @@ function TodoDemo() {
     );
 
   return (
-    <div className="flex w-full max-w-md flex-col gap-M">
-      <div className="flex flex-wrap items-center justify-between gap-S">
+    <div className="flex w-full max-w-md flex-col gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <NetworkToggle value={network} onChange={setNetwork} />
         <span role="status" className="text-caption1 text-foreground-3">
           {saving ? "Đang lưu…" : "Mọi thay đổi đã được lưu"}
@@ -565,7 +565,7 @@ function TodoDemo() {
       </div>
       <ul className="flex flex-col rounded-xlarge border border-stroke-2 bg-background-1">
         {items.map((todo) => (
-          <li key={todo.id} className="flex items-center justify-between gap-S border-b border-stroke-2 px-M py-XS last:border-b-0">
+          <li key={todo.id} className="flex items-center justify-between gap-2 border-b border-stroke-2 px-3 py-1 last:border-b-0">
             <Checkbox label={todo.title} checked={todo.done} onCheckedChange={() => toggle(todo.id)} />
             <Button
               appearance="subtle"
@@ -576,7 +576,7 @@ function TodoDemo() {
             />
           </li>
         ))}
-        {items.length === 0 && <li className="px-M py-L text-center text-body1 text-foreground-3">Không còn việc nào.</li>}
+        {items.length === 0 && <li className="px-3 py-4 text-center text-body1 text-foreground-3">Không còn việc nào.</li>}
       </ul>
     </div>
   );
@@ -611,10 +611,10 @@ function CompareDemo() {
     );
 
   return (
-    <div className="flex w-full flex-col items-center gap-M">
+    <div className="flex w-full flex-col items-center gap-3">
       <NetworkToggle value={network} onChange={setNetwork} />
-      <div className="grid w-full max-w-sm grid-cols-2 gap-M">
-        <div className="flex flex-col items-center gap-S rounded-xlarge border border-stroke-2 bg-background-1 p-L">
+      <div className="grid w-full max-w-sm grid-cols-2 gap-3">
+        <div className="flex flex-col items-center gap-2 rounded-xlarge border border-stroke-2 bg-background-1 p-4">
           <span className="text-caption1 font-semibold text-foreground-3">Chờ server</span>
           <Button
             aria-pressed={liked}
@@ -625,7 +625,7 @@ function CompareDemo() {
             Thích
           </Button>
         </div>
-        <div className="flex flex-col items-center gap-S rounded-xlarge border border-stroke-2 bg-background-1 p-L">
+        <div className="flex flex-col items-center gap-2 rounded-xlarge border border-stroke-2 bg-background-1 p-4">
           <span className="text-caption1 font-semibold text-foreground-3">Lạc quan</span>
           <Button
             aria-pressed={optimisticLiked}
@@ -666,16 +666,16 @@ function CommentDemo() {
   }
 
   return (
-    <div className="flex w-full max-w-sm flex-col gap-M">
+    <div className="flex w-full max-w-sm flex-col gap-3">
       <NetworkToggle value={network} onChange={setNetwork} />
-      <ul className="flex flex-col gap-S">
+      <ul className="flex flex-col gap-2">
         {items.map((comment) => (
-          <li key={comment.id} className="rounded-xlarge bg-background-1 px-M py-S text-body1 text-foreground-1 shadow-2">
+          <li key={comment.id} className="rounded-xlarge bg-background-1 px-3 py-2 text-body1 text-foreground-1 shadow-2">
             {comment.text}
           </li>
         ))}
       </ul>
-      <form onSubmit={send} className="flex items-center gap-S">
+      <form onSubmit={send} className="flex items-center gap-2">
         <Input
           aria-label="Bình luận"
           placeholder="Viết bình luận…"
@@ -727,7 +727,7 @@ export const docs: ComponentDoc[] = [
         code: source("staticOverlay"),
         render: () => (
           // #region staticOverlay
-          <LoadingOverlay loading label="Đang cập nhật…" className="w-72 rounded-xlarge border border-stroke-2 bg-background-1 p-L">
+          <LoadingOverlay loading label="Đang cập nhật…" className="w-72 rounded-xlarge border border-stroke-2 bg-background-1 p-4">
             <p className="text-caption1 text-foreground-3">Doanh thu tháng 10</p>
             <p className="text-title2 font-semibold text-foreground-1">128,4 triệu ₫</p>
             <p className="text-caption1 text-foreground-3">Tăng 12% so với tháng trước</p>
@@ -936,7 +936,7 @@ export const docs: ComponentDoc[] = [
         code: source("skeletonText"),
         render: () => (
           // #region skeletonText
-          <div className="flex w-64 flex-col gap-L">
+          <div className="flex w-64 flex-col gap-4">
             <SkeletonText lines={2} size="small" />
             <SkeletonText lines={3} />
             <SkeletonText lines={2} size="large" animation="pulse" />

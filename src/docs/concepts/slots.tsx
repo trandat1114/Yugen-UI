@@ -45,11 +45,11 @@ function P({ children }: { children: ReactNode }) {
 }
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function Demo({ children }: { children: ReactNode }) {
-  return <div className="flex flex-wrap items-center gap-M rounded-2xlarge border border-stroke-2 bg-background-1 p-XXL">{children}</div>;
+  return <div className="flex flex-wrap items-center gap-3 rounded-2xlarge border border-stroke-2 bg-background-1 p-6">{children}</div>;
 }
 
 function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
@@ -59,7 +59,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
             {head.map((h) => (
-              <th key={h} className="px-L py-S text-start">
+              <th key={h} className="px-4 py-2 text-start">
                 {h}
               </th>
             ))}
@@ -69,7 +69,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
           {rows.map((row, i) => (
             <tr key={i} className="border-b border-stroke-3 align-top last:border-b-0">
               {row.map((cell, j) => (
-                <td key={j} className="px-L py-M text-foreground-2">
+                <td key={j} className="px-4 py-3 text-foreground-2">
                   {cell}
                 </td>
               ))}
@@ -151,7 +151,7 @@ const CARD_CODE = `import { Avatar, Badge, Button, Card, CardContent, CardFooter
   />
   <CardContent>Bản phác thảo trang chủ mới đã sẵn sàng để góp ý.</CardContent>
   {/* Chèn bất kỳ phần tử nào giữa các phần — thứ tự do bạn quyết định */}
-  <div className="flex gap-XS">
+  <div className="flex gap-1">
     <Badge appearance="tint" color="brand">Thiết kế</Badge>
     <Badge appearance="tint" color="informative">Bản nháp</Badge>
   </div>
@@ -204,7 +204,7 @@ export default function Page() {
         title="asChild — đổi phần tử gốc"
         description="asChild dùng Slot của Radix: component không render thẻ của nó mà gộp className, ref, sự kiện và aria-* vào đúng một phần tử con bạn truyền vào."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Demo>
             <Button asChild appearance="primary">
               <a href="#/concepts/theming">
@@ -220,7 +220,7 @@ export default function Page() {
             </Popover>
           </Demo>
           <CodeBlock code={AS_CHILD_CODE} />
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>Con phải là <strong className="font-semibold">một</strong> phần tử duy nhất, forward ref và trải (spread) props xuống DOM.</li>
             <li>
               Với <C>{"<Button asChild>"}</C>, prop <C>icon</C> bị bỏ qua (Button chỉ render children) — đặt icon bên trong phần tử con như
@@ -238,7 +238,7 @@ export default function Page() {
         title="Prop nhận ReactNode: icon, contentBefore, media, actions"
         description="Thay vì slot object, các vùng phụ nhận thẳng ReactNode. Component lo căn chỉnh, khoảng cách và cỡ icon."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Demo>
             <Button icon={<Add20Regular />}>Tạo mới</Button>
             <Button icon={<ArrowRight16Regular className="rtl:-scale-x-100" />} iconPosition="after">
@@ -295,7 +295,7 @@ export default function Page() {
         title="Component ghép (compound)"
         description="Card, Dialog, Drawer, Table, Menu được chia thành nhiều phần nhỏ. Bỏ phần không cần, đổi thứ tự, hoặc chèn phần tử của bạn vào giữa."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Demo>
             <Card className="w-full max-w-sm">
               <CardHeader
@@ -305,7 +305,7 @@ export default function Page() {
                 action={<Button appearance="subtle" icon={<MoreHorizontal20Regular />} aria-label="Thêm thao tác" />}
               />
               <CardContent>Bản phác thảo trang chủ mới đã sẵn sàng để góp ý.</CardContent>
-              <div className="flex gap-XS">
+              <div className="flex gap-1">
                 <Badge appearance="tint" color="brand">
                   Thiết kế
                 </Badge>
@@ -338,9 +338,9 @@ export default function Page() {
         title="Render-prop trong Field"
         description="Field nối nhãn, gợi ý và validation với control. Truyền element khi control nhận id trực tiếp; truyền hàm khi bạn cần quyết định props đi vào đâu."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Demo>
-            <div className="flex w-full max-w-md flex-col gap-L">
+            <div className="flex w-full max-w-md flex-col gap-4">
               <Field label="Tên dự án" hint="Hiển thị trên thanh tiêu đề." required>
                 <Input placeholder="Yugen Docs" />
               </Field>
@@ -381,7 +381,7 @@ export default function Page() {
         title="rootClassName & className"
         description="Component có nhiều lớp DOM cho bạn nhắm style vào đúng lớp. Quy tắc chung: className vào phần nhìn thấy chính, rootClassName vào khối bao ngoài."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <SimpleTable
             head={["Component", "className", "Prop phụ"]}
             rows={[

@@ -5,7 +5,7 @@ import { DocSection, DoDont } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
@@ -16,7 +16,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
             {head.map((h) => (
-              <th key={h} className="px-L py-S text-start">
+              <th key={h} className="px-4 py-2 text-start">
                 {h}
               </th>
             ))}
@@ -26,7 +26,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
           {rows.map((row, i) => (
             <tr key={i} className="border-b border-stroke-3 align-top last:border-b-0">
               {row.map((cell, j) => (
-                <td key={j} className="px-L py-M text-foreground-2">
+                <td key={j} className="px-4 py-3 text-foreground-2">
                   {cell}
                 </td>
               ))}
@@ -40,7 +40,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
 
 function Names({ items }: { items: string[] }) {
   return (
-    <span className="inline-flex flex-wrap gap-XS">
+    <span className="inline-flex flex-wrap gap-1">
       {items.map((n) => (
         <C key={n}>{n}</C>
       ))}
@@ -122,7 +122,7 @@ import { Badge, Button, Card, CardContent, CardFooter, CardHeader } from "@/comp
   <CardContent className="text-body1 text-foreground-3">
     Lịch họp nhóm thiết kế đã dời sang 15:00.
   </CardContent>
-  <CardFooter className="gap-S">
+  <CardFooter className="gap-2">
     <Badge appearance="tint" color="informative">Lịch</Badge>
     <Button appearance="outline" size="small" className="ms-auto">Xem tất cả</Button>
   </CardFooter>
@@ -204,10 +204,10 @@ export default function Page() {
         title="Variant & size"
         description="Tên theo Fluent. Khác biệt dễ sót nhất: Button không truyền gì là secondary, không phải primary."
       >
-        <div className="flex flex-col gap-L">
-          <div className="grid gap-M rounded-2xlarge border border-stroke-2 bg-background-1 p-XXL sm:grid-cols-2 lg:grid-cols-3">
+        <div className="flex flex-col gap-4">
+          <div className="grid gap-3 rounded-2xlarge border border-stroke-2 bg-background-1 p-6 sm:grid-cols-2 lg:grid-cols-3">
             {VARIANTS.map((v) => (
-              <div key={v.appearance} className="flex flex-col items-start gap-S">
+              <div key={v.appearance} className="flex flex-col items-start gap-2">
                 <span className="font-mono text-caption1 text-foreground-3">{v.shadcn}</span>
                 <Button appearance={v.appearance}>{v.label}</Button>
                 <span className="font-mono text-caption1 text-brand-foreground-1">appearance=&quot;{v.appearance}&quot;</span>
@@ -227,7 +227,7 @@ export default function Page() {
             ]}
           />
           <CodeBlock code={VARIANT_CODE} />
-          <div className="flex flex-wrap items-center gap-S">
+          <div className="flex flex-wrap items-center gap-2">
             <Button appearance="primary">Lưu</Button>
             <Button appearance="danger" size="small">
               Xoá
@@ -262,16 +262,15 @@ export default function Page() {
             [<C key="a">--chart-1 … 5</C>, "Palette shared", <><C>bg-teal-bg</C>, <C>text-lavender-fg</C>… (dùng tiết kiệm)</>],
           ]}
         />
-        <div className="mt-L">
+        <div className="mt-4">
           <SimpleTable
             head={["Utility shadcn", "Utility Yugen"]}
             rows={[
               [<C key="a">text-xs / text-sm / text-base / text-lg</C>, <C key="b">text-caption1 / text-body1 / text-body2 / text-subtitle1</C>],
               [<C key="a">font-medium</C>, <C key="b">font-semibold (chỉ có normal / semibold)</C>],
-              [<C key="a">gap-2 / p-4 / px-3 / p-6</C>, <C key="b">gap-S / p-L / px-M / p-XXL</C>],
-              [<C key="a">rounded-md / rounded-lg / rounded-full</C>, <C key="b">rounded-medium / rounded-xlarge / rounded-circular</C>],
+                            [<C key="a">rounded-md / rounded-lg / rounded-full</C>, <C key="b">rounded-medium / rounded-xlarge / rounded-circular</C>],
               [<C key="a">shadow-xs / shadow-sm / shadow-md / shadow-lg</C>, <C key="b">shadow-2 / shadow-4 / shadow-8 / shadow-16</C>],
-              [<C key="a">ml-auto / pl-2 / left-0</C>, <C key="b">ms-auto / ps-S / start-0</C>],
+              [<C key="a">ml-auto / pl-2 / left-0</C>, <C key="b">ms-auto / ps-2 / start-0</C>],
             ]}
           />
         </div>
@@ -282,9 +281,9 @@ export default function Page() {
         title="Khác biệt về theming"
         description="shadcn đổi theme bằng class .dark và bộ biến CSS; Yugen dùng hai attribute lồng được và token đã kiểm tra tương phản."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <CodeBlock code={THEME_CODE} />
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>
               Palette mặc định của Tailwind (<C>bg-zinc-900</C>, <C>text-sm</C>, <C>rounded-lg</C>) đã bị tắt — class shadcn chép sang sẽ
               không có tác dụng, cần đổi theo bảng trên.
@@ -305,10 +304,10 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="example" title="Ví dụ chuyển đổi" description="Một Card shadcn và bản Yugen tương ứng.">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <CodeBlock code={BEFORE_CODE} />
           <CodeBlock code={AFTER_CODE} />
-          <div className="flex flex-wrap items-center gap-M rounded-2xlarge border border-stroke-2 bg-background-1 p-XXL">
+          <div className="flex flex-wrap items-center gap-3 rounded-2xlarge border border-stroke-2 bg-background-1 p-6">
             <Card className="w-full max-w-sm">
               <CardHeader
                 header="Thông báo"
@@ -316,7 +315,7 @@ export default function Page() {
                 action={<Button appearance="subtle" icon={<MoreHorizontal20Regular />} aria-label="Thêm thao tác" />}
               />
               <CardContent className="text-body1 text-foreground-3">Lịch họp nhóm thiết kế đã dời sang 15:00.</CardContent>
-              <CardFooter className="gap-S">
+              <CardFooter className="gap-2">
                 <Badge appearance="tint" color="informative">
                   Lịch
                 </Badge>

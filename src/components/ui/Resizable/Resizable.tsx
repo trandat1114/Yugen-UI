@@ -367,8 +367,8 @@ export function ResizableHandle({
             "transition-colors duration-faster ease-easy-ease hover:border-brand-stroke hover:text-brand-foreground-1 active:bg-background-1-pressed",
             // Panel đích đã thu về 0 thì đường chia nằm sát mép nhóm → đẩy nút vào trong để không bị cắt.
             horizontal
-              ? cn("top-M", !isCollapsed ? "left-1/2 -translate-x-1/2" : collapseButton === "before" ? "inset-s-0" : "inset-e-0")
-              : cn("inset-s-M", !isCollapsed ? "top-1/2 -translate-y-1/2" : collapseButton === "before" ? "top-0" : "bottom-0"),
+              ? cn("top-3", !isCollapsed ? "left-1/2 -translate-x-1/2" : collapseButton === "before" ? "inset-s-0" : "inset-e-0")
+              : cn("inset-s-3", !isCollapsed ? "top-1/2 -translate-y-1/2" : collapseButton === "before" ? "top-0" : "bottom-0"),
           )}
         >
           <ChevronIcon className={cn("size-3", horizontal && mirrored && "-scale-x-100")} />

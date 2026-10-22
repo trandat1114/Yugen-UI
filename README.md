@@ -78,9 +78,9 @@ configuration is needed. If your setup does not pick it up, add the path yoursel
 
 > **Heads-up:** like the library itself, `theme.css` turns off Tailwind's default colour, radius, shadow, font-size
 > and easing scales (`--color-*: initial`…), so `bg-blue-500`, `rounded-lg`, `shadow-md` or `text-sm` no longer
-> exist in your app. Use the Yugen utilities instead: `bg-background-1`, `text-foreground-2`, `p-M`, `gap-S`,
-> `text-body1`, `rounded-medium`, `shadow-4`. Spacing tokens use **upper-case** Fluent suffixes
-> (`XXS XS SNudge S MNudge M L XL XXL XXXL`); the numeric Tailwind spacing scale (`p-2`, `h-8`) still works.
+> exist in your app. Use the Yugen utilities instead: `bg-background-1`, `text-foreground-2`, `text-body1`,
+> `rounded-medium`, `shadow-4`. Spacing is Tailwind's numeric scale (`p-3`, `gap-2`), which matches the Fluent ramp.
+> The upper-case aliases (`p-M`, `gap-S`) are deprecated since 0.10 and will be removed in 1.0.
 
 ## Setup B — without Tailwind
 
@@ -372,9 +372,9 @@ trường của bạn không nhận, tự thêm đường dẫn, **tương đố
 
 > **Lưu ý:** giống thư viện, `theme.css` tắt các scale mặc định của Tailwind về màu, bo góc, bóng, cỡ chữ và easing
 > (`--color-*: initial`…), nên `bg-blue-500`, `rounded-lg`, `shadow-md`, `text-sm` sẽ không còn trong ứng dụng của bạn.
-> Dùng utility của Yugen: `bg-background-1`, `text-foreground-2`, `p-M`, `gap-S`, `text-body1`, `rounded-medium`,
-> `shadow-4`. Spacing token dùng hậu tố Fluent **viết hoa** (`XXS XS SNudge S MNudge M L XL XXL XXXL`); thang số
-> của Tailwind (`p-2`, `h-8`) vẫn dùng được.
+> Dùng utility của Yugen: `bg-background-1`, `text-foreground-2`, `text-body1`, `rounded-medium`, `shadow-4`.
+> Spacing dùng thang số của Tailwind (`p-3`, `gap-2`), trùng ramp của Fluent. Alias viết hoa (`p-M`, `gap-S`) đã
+> deprecated từ 0.10 và sẽ bị bỏ ở 1.0.
 
 ### Cách B — không dùng Tailwind
 

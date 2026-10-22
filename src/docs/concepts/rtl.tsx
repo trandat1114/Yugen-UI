@@ -35,7 +35,7 @@ function P({ children }: { children: ReactNode }) {
 }
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
@@ -45,7 +45,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
             {head.map((h) => (
-              <th key={h} className="px-L py-S text-start">
+              <th key={h} className="px-4 py-2 text-start">
                 {h}
               </th>
             ))}
@@ -55,7 +55,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
           {rows.map((row, i) => (
             <tr key={i} className="border-b border-stroke-3 align-top last:border-b-0">
               {row.map((cell, j) => (
-                <td key={j} className="px-L py-M text-foreground-2">
+                <td key={j} className="px-4 py-3 text-foreground-2">
                   {cell}
                 </td>
               ))}
@@ -99,8 +99,8 @@ function DirectionDemo() {
   const t = COPY[dir];
 
   return (
-    <div className="flex flex-col gap-M">
-      <div className="flex flex-wrap items-center gap-M">
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <Label id="rtl-demo-dir" weight="semibold">
           Hướng chữ của khung
         </Label>
@@ -109,10 +109,10 @@ function DirectionDemo() {
           <Radio value="ltr" label="LTR (Tiếng Việt)" />
         </RadioGroup>
       </div>
-      <YugenProvider dir={dir} lang={t.lang} className="flex flex-col gap-L rounded-2xlarge border border-stroke-2 p-XXL">
+      <YugenProvider dir={dir} lang={t.lang} className="flex flex-col gap-4 rounded-2xlarge border border-stroke-2 p-6">
         <h3 className="text-title3 font-semibold text-foreground-1">{t.hello}</h3>
         <Breadcrumb items={t.crumbs.map((label) => ({ label }))} />
-        <div className="flex flex-wrap items-center gap-M">
+        <div className="flex flex-wrap items-center gap-3">
           <Input aria-label={t.search} placeholder={t.search} contentBefore={<Search20Regular />} rootClassName="w-64" />
           <Switch label={t.notify} defaultChecked />
         </div>
@@ -130,7 +130,7 @@ function DirectionDemo() {
           <TabsContent value="2">{t.panel}</TabsContent>
         </Tabs>
         <Pagination pageCount={10} defaultPage={3} />
-        <div className="flex flex-wrap gap-S">
+        <div className="flex flex-wrap gap-2">
           <Button icon={<ArrowLeft20Regular className="rtl:-scale-x-100" />}>{t.back}</Button>
           <Button appearance="primary" icon={<ArrowRight20Regular className="rtl:-scale-x-100" />} iconPosition="after">
             {t.next}
@@ -147,14 +147,14 @@ const ENABLE_CODE = `// Toàn ứng dụng: ghi dir="rtl" lên <html> và cấp 
 </YugenProvider>
 
 // Hoặc chỉ một vùng (ví dụ xem trước bản dịch)
-<YugenProvider dir="rtl" lang="ar" className="rounded-xlarge p-XL">
+<YugenProvider dir="rtl" lang="ar" className="rounded-xlarge p-5">
   <Breadcrumb items={[{ label: "الرئيسية" }, { label: "المستندات" }]} />
 </YugenProvider>`;
 
 const HTML_CODE = `<!-- Đặt sẵn trong HTML để trang không nhảy hướng khi tải -->
 <html lang="ar" dir="rtl" data-theme="light">`;
 
-const DEMO_CODE = `<YugenProvider dir="rtl" lang="ar" className="flex flex-col gap-L rounded-2xlarge border border-stroke-2 p-XXL">
+const DEMO_CODE = `<YugenProvider dir="rtl" lang="ar" className="flex flex-col gap-4 rounded-2xlarge border border-stroke-2 p-6">
   <Breadcrumb items={[{ label: "الرئيسية" }, { label: "المستندات" }, { label: "التقارير" }]} />
   <Input aria-label="ابحث" placeholder="ابحث…" contentBefore={<Search20Regular />} rootClassName="w-64" />
   <Switch label="الإشعارات" defaultChecked />
@@ -210,10 +210,10 @@ export default function Page() {
         title="Bật RTL"
         description="Một prop dir trên YugenProvider: thẻ bao (hoặc <html> khi applyToDocument) nhận dir, và DirectionProvider của Radix truyền hướng chữ cho mọi component."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <CodeBlock code={ENABLE_CODE} />
           <CodeBlock code={HTML_CODE} />
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>
               CSS: thuộc tính <C>dir</C> đảo flex, grid, text-align mặc định và mọi utility logical (<C>ms-*</C>, <C>ps-*</C>, <C>start-*</C>…).
             </li>
@@ -234,7 +234,7 @@ export default function Page() {
         title="Ví dụ trực tiếp"
         description="Đổi hướng chữ của khung bên dưới; thử Tab rồi dùng phím mũi tên trên Tabs và Slider — ← / → đổi vai trò khi RTL."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <DirectionDemo />
           <CodeBlock code={DEMO_CODE} />
         </div>
@@ -245,7 +245,7 @@ export default function Page() {
         title="Utility logical"
         description="Quy tắc cho tác giả component: không dùng hướng vật lý cho bố cục. Utility logical tự đảo theo dir, không cần variant rtl:."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <SimpleTable
             head={["Không dùng (vật lý)", "Dùng (logical)", "CSS"]}
             rows={[
@@ -266,13 +266,13 @@ export default function Page() {
           <div
             dir="rtl"
             lang="ar"
-            className="flex max-w-xl flex-col gap-XS rounded-xlarge border border-stroke-2 bg-background-1 p-L text-body1 text-foreground-1"
+            className="flex max-w-xl flex-col gap-1 rounded-xlarge border border-stroke-2 bg-background-1 p-4 text-body1 text-foreground-1"
           >
             <p>
               اتصل بنا: <bdi>+84 912 345 678</bdi>
             </p>
             <p>
-              الرمز: <code dir="ltr" className="rounded-small bg-background-4 px-XS font-mono text-caption1">npm run dev</code>
+              الرمز: <code dir="ltr" className="rounded-small bg-background-4 px-1 font-mono text-caption1">npm run dev</code>
             </p>
           </div>
         </div>
@@ -283,14 +283,14 @@ export default function Page() {
         title="Lật icon & transform"
         description="Icon biểu thị hướng (tiến, lùi, gửi, thụt lề) phải lật trong RTL; icon biểu thị vật thể hay khái niệm thì giữ nguyên."
       >
-        <div className="flex flex-col gap-L">
-          <div className="grid gap-M sm:grid-cols-2">
+        <div className="flex flex-col gap-4">
+          <div className="grid gap-3 sm:grid-cols-2">
             {(["ltr", "rtl"] as const).map((d) => (
-              <div key={d} dir={d} className="rounded-xlarge border border-stroke-2 bg-background-1 p-L">
-                <p className="mb-S font-mono text-caption1 text-foreground-3">dir=&quot;{d}&quot;</p>
-                <ul className="flex flex-col gap-S">
+              <div key={d} dir={d} className="rounded-xlarge border border-stroke-2 bg-background-1 p-4">
+                <p className="mb-2 font-mono text-caption1 text-foreground-3">dir=&quot;{d}&quot;</p>
+                <ul className="flex flex-col gap-2">
                   {ICONS.map((i) => (
-                    <li key={i.name} className="flex items-center gap-M text-body1 text-foreground-1">
+                    <li key={i.name} className="flex items-center gap-3 text-body1 text-foreground-1">
                       <span className="flex size-8 items-center justify-center rounded-medium bg-background-3 text-foreground-2">{i.icon}</span>
                       <span className="min-w-0 flex-1">{i.name}</span>
                       <span className={cn("text-caption1", i.flip ? "text-brand-foreground-1" : "text-foreground-3")}>
@@ -316,7 +316,7 @@ export default function Page() {
         title="Phím mũi tên"
         description="Component Radix và các component Yugen có điều hướng ngang đã tự đảo ← / →. Khi tự viết, đọc hướng bằng useDirection()."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <CodeBlock code={KEYBOARD_CODE} />
           <P>
             <C>useYugen().dir</C> cho cùng giá trị nhưng <C>useDirection()</C> của <C>@radix-ui/react-direction</C> cũng hoạt động bên ngoài
@@ -326,8 +326,8 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="testing" title="Kiểm thử" description="RTL hỏng thường lộ ra ở khoảng cách, icon và phím — kiểm tra cả ba.">
-        <div className="flex flex-col gap-L">
-          <ol className="flex max-w-3xl list-decimal flex-col gap-XS ps-XL text-body2 text-foreground-2">
+        <div className="flex flex-col gap-4">
+          <ol className="flex max-w-3xl list-decimal flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>Bật nút LTR / RTL trên thanh trên cùng của site docs và lướt qua trang component của bạn.</li>
             <li>So khoảng cách hai bên: icon trong nút, padding của ô nhập, vạch chọn của Nav / Tabs phải đổi phía.</li>
             <li>Đi bằng bàn phím: ← / → trên Tabs, Slider, Toolbar, menu con, Carousel phải theo chiều đọc.</li>

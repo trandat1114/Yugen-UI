@@ -83,7 +83,7 @@ function Caret() {
     <span
       aria-hidden
       data-streaming-caret=""
-      className="ms-XXS inline-block h-4 w-0.5 translate-y-0.5 animate-pulse rounded-circular bg-foreground-2 motion-reduce:animate-none"
+      className="ms-0.5 inline-block h-4 w-0.5 translate-y-0.5 animate-pulse rounded-circular bg-foreground-2 motion-reduce:animate-none"
     />
   );
 }
@@ -115,7 +115,7 @@ function renderInlines(nodes: MdInline[], ctx: RenderContext): React.ReactNode[]
         );
       case "inlineCode":
         return (
-          <code key={i} dir="ltr" className="rounded-small bg-background-4 px-XS font-mono wrap-anywhere">
+          <code key={i} dir="ltr" className="rounded-small bg-background-4 px-1 font-mono wrap-anywhere">
             {node.text}
           </code>
         );
@@ -163,7 +163,7 @@ function CodeFence({ block, ctx }: { block: Extract<MdBlock, { type: "code" }>; 
   const pending = ctx.streaming && !block.closed;
   return (
     <div dir="ltr" className="min-w-0 overflow-hidden rounded-xlarge border border-stroke-2 bg-background-2 text-start">
-      <div className="flex min-h-8 items-center gap-S border-b border-stroke-2 ps-M pe-XS">
+      <div className="flex min-h-8 items-center gap-2 border-b border-stroke-2 ps-3 pe-1">
         <span className="min-w-0 flex-1 truncate font-mono text-caption1 text-foreground-3">{block.lang || "code"}</span>
         {!pending && <CopyCodeButton text={block.text} />}
       </div>
@@ -191,7 +191,7 @@ function BlockView({ block, ctx, caret, depth = 0, bare = false }: BlockProps) {
       const tag = `h${Math.min(6, Math.max(2, block.level + ctx.headingOffset))}` as "h2";
       const Tag = tag;
       return (
-        <Tag className={cn("text-foreground-1 not-first:pt-XS", HEADING_CLASS[ctx.size][Math.min(block.level, 4)])}>
+        <Tag className={cn("text-foreground-1 not-first:pt-1", HEADING_CLASS[ctx.size][Math.min(block.level, 4)])}>
           {renderInlines(block.children, ctx)}
           {tailCaret}
         </Tag>
@@ -203,7 +203,7 @@ function BlockView({ block, ctx, caret, depth = 0, bare = false }: BlockProps) {
       return <hr className="border-stroke-2" />;
     case "blockquote":
       return (
-        <blockquote className="flex flex-col gap-S border-s-3 border-stroke-1 ps-M text-foreground-2">
+        <blockquote className="flex flex-col gap-2 border-s-3 border-stroke-1 ps-3 text-foreground-2">
           {block.children.map((child, i) => (
             <BlockView key={i} block={child} ctx={ctx} caret={caret && i === block.children.length - 1} depth={depth} />
           ))}
@@ -215,8 +215,8 @@ function BlockView({ block, ctx, caret, depth = 0, bare = false }: BlockProps) {
         <ListTag
           start={block.ordered && block.start !== 1 ? block.start : undefined}
           className={cn(
-            "flex flex-col ps-XL marker:text-foreground-3",
-            block.tight ? "gap-XS" : "gap-S",
+            "flex flex-col ps-5 marker:text-foreground-3",
+            block.tight ? "gap-1" : "gap-2",
             block.ordered ? "list-decimal" : LIST_STYLE[Math.min(depth, LIST_STYLE.length - 1)],
           )}
         >
@@ -234,17 +234,17 @@ function BlockView({ block, ctx, caret, depth = 0, bare = false }: BlockProps) {
             ));
             if (item.checked !== null) {
               return (
-                <li key={i} className="-ms-XL flex list-none items-start gap-XS">
-                  <span className="mt-XXS flex shrink-0 text-foreground-3">
+                <li key={i} className="-ms-5 flex list-none items-start gap-1">
+                  <span className="mt-0.5 flex shrink-0 text-foreground-3">
                     {item.checked ? <CheckboxChecked16Regular aria-hidden className="text-brand-foreground-1" /> : <CheckboxUnchecked16Regular aria-hidden />}
                   </span>
                   <span className="sr-only">{item.checked ? "Đã xong: " : "Chưa xong: "}</span>
-                  <div className="flex min-w-0 flex-1 flex-col gap-XS">{content}</div>
+                  <div className="flex min-w-0 flex-1 flex-col gap-1">{content}</div>
                 </li>
               );
             }
             return (
-              <li key={i} className={cn("ps-XXS [&>ol]:mt-XS [&>ul]:mt-XS", !block.tight && "space-y-S")}>
+              <li key={i} className={cn("ps-0.5 [&>ol]:mt-1 [&>ul]:mt-1", !block.tight && "space-y-2")}>
                 {content}
               </li>
             );
@@ -263,7 +263,7 @@ function BlockView({ block, ctx, caret, depth = 0, bare = false }: BlockProps) {
                   <th
                     key={c}
                     scope="col"
-                    className={cn("border-b border-stroke-1 px-M py-S align-bottom font-semibold text-foreground-1", ALIGN_CLASS[block.align[c] ?? "start"])}
+                    className={cn("border-b border-stroke-1 px-3 py-2 align-bottom font-semibold text-foreground-1", ALIGN_CLASS[block.align[c] ?? "start"])}
                   >
                     {renderInlines(cell, ctx)}
                     {caret && lastRow < 0 && c === block.head.length - 1 && <Caret />}
@@ -276,7 +276,7 @@ function BlockView({ block, ctx, caret, depth = 0, bare = false }: BlockProps) {
                 {block.rows.map((row, r) => (
                   <tr key={r} className="border-b border-stroke-2 last:border-b-0">
                     {row.map((cell, c) => (
-                      <td key={c} className={cn("px-M py-S align-top", ALIGN_CLASS[block.align[c] ?? "start"])}>
+                      <td key={c} className={cn("px-3 py-2 align-top", ALIGN_CLASS[block.align[c] ?? "start"])}>
                         {renderInlines(cell, ctx)}
                         {caret && r === lastRow && c === row.length - 1 && <Caret />}
                       </td>
@@ -376,7 +376,7 @@ export const StreamingMarkdown = React.forwardRef<HTMLDivElement, StreamingMarkd
         data-streaming={streaming || undefined}
         className={cn(
           "flex min-w-0 flex-col text-foreground-1 wrap-break-word whitespace-normal",
-          size === "small" ? "gap-S text-caption1" : "gap-M text-body1",
+          size === "small" ? "gap-2 text-caption1" : "gap-3 text-body1",
           className,
         )}
         {...props}

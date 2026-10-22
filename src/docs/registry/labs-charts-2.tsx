@@ -136,8 +136,8 @@ function ControlledZoom() {
     { label: "Tất cả", days: daily.length },
   ];
   return (
-    <div className="flex flex-col gap-M">
-      <div className="flex flex-wrap gap-XS">
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-wrap gap-1">
         {presets.map((p) => (
           <ToggleButton
             key={p.label}

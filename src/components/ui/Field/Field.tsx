@@ -80,8 +80,8 @@ export function Field({
   return (
     <div
       className={cn(
-        orientation === "horizontal" ? "grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)] items-start gap-x-M" : "flex flex-col",
-        "gap-y-XXS",
+        orientation === "horizontal" ? "grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)] items-start gap-x-3" : "flex flex-col",
+        "gap-y-0.5",
         className,
       )}
     >
@@ -92,18 +92,18 @@ export function Field({
           className={cn(
             "text-foreground-1",
             size === "small" ? "text-caption1" : size === "large" ? "text-body2 font-semibold" : "text-body1",
-            orientation === "vertical" ? "pb-XXS" : "pt-SNudge",
+            orientation === "vertical" ? "pb-0.5" : "pt-1.5",
             disabled && "text-foreground-disabled",
           )}
         >
           {label}
-          {required && <span className="ps-XS text-danger-foreground-1">*</span>}
+          {required && <span className="ps-1 text-danger-foreground-1">*</span>}
         </label>
       )}
-      <div className={cn("flex min-w-0 flex-col gap-y-XXS", orientation === "horizontal" && "col-start-2")}>
+      <div className={cn("flex min-w-0 flex-col gap-y-0.5", orientation === "horizontal" && "col-start-2")}>
         {control}
         {validationMessage && (
-          <span id={messageId} role={validationState === "error" ? "alert" : undefined} className={cn("flex items-center gap-XS text-caption1", validation?.className ?? "text-foreground-3")}>
+          <span id={messageId} role={validationState === "error" ? "alert" : undefined} className={cn("flex items-center gap-1 text-caption1", validation?.className ?? "text-foreground-3")}>
             {validation && <validation.icon className="shrink-0" />}
             <span className={validationState === "error" ? undefined : "text-foreground-3"}>{validationMessage}</span>
           </span>

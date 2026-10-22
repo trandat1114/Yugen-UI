@@ -36,7 +36,7 @@ export const ContextMenuItem = React.forwardRef<React.ElementRef<typeof ContextM
     <ContextMenuPrimitive.Item ref={ref} className={cn(menuItemClass, className)} {...props}>
       {icon}
       <span className="min-w-0 flex-1 truncate">{children}</span>
-      {secondaryContent && <span className="ps-L text-caption1 text-foreground-3">{secondaryContent}</span>}
+      {secondaryContent && <span className="ps-4 text-caption1 text-foreground-3">{secondaryContent}</span>}
     </ContextMenuPrimitive.Item>
   ),
 );
@@ -47,13 +47,13 @@ export const ContextMenuCheckboxItem = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.CheckboxItem> & { secondaryContent?: React.ReactNode }
 >(({ className, secondaryContent, children, ...props }, ref) => (
   <ContextMenuPrimitive.CheckboxItem ref={ref} className={cn(menuItemClass, "ps-8", className)} {...props}>
-    <span className="absolute inset-s-S flex size-4 items-center justify-center">
+    <span className="absolute inset-s-2 flex size-4 items-center justify-center">
       <ContextMenuPrimitive.ItemIndicator>
         <Checkmark16Filled className="size-4! text-foreground-1" />
       </ContextMenuPrimitive.ItemIndicator>
     </span>
     <span className="min-w-0 flex-1 truncate">{children}</span>
-    {secondaryContent && <span className="ps-L text-caption1 text-foreground-3">{secondaryContent}</span>}
+    {secondaryContent && <span className="ps-4 text-caption1 text-foreground-3">{secondaryContent}</span>}
   </ContextMenuPrimitive.CheckboxItem>
 ));
 ContextMenuCheckboxItem.displayName = "ContextMenuCheckboxItem";
@@ -63,7 +63,7 @@ export const ContextMenuRadioItem = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.RadioItem>
 >(({ className, children, ...props }, ref) => (
   <ContextMenuPrimitive.RadioItem ref={ref} className={cn(menuItemClass, "ps-8", className)} {...props}>
-    <span className="absolute inset-s-S flex size-4 items-center justify-center">
+    <span className="absolute inset-s-2 flex size-4 items-center justify-center">
       <ContextMenuPrimitive.ItemIndicator>
         <Checkmark16Filled className="size-4! text-foreground-1" />
       </ContextMenuPrimitive.ItemIndicator>
@@ -74,13 +74,13 @@ export const ContextMenuRadioItem = React.forwardRef<
 ContextMenuRadioItem.displayName = "ContextMenuRadioItem";
 
 export function ContextMenuSeparator({ className, ...props }: React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Separator>) {
-  return <ContextMenuPrimitive.Separator className={cn("-mx-XS my-XS h-px bg-stroke-2", className)} {...props} />;
+  return <ContextMenuPrimitive.Separator className={cn("-mx-1 my-1 h-px bg-stroke-2", className)} {...props} />;
 }
 
 export function ContextMenuLabel({ className, ...props }: React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Label>) {
   return (
     <ContextMenuPrimitive.Label
-      className={cn("flex h-8 items-center px-S text-caption1 font-semibold text-foreground-3", className)}
+      className={cn("flex h-8 items-center px-2 text-caption1 font-semibold text-foreground-3", className)}
       {...props}
     />
   );

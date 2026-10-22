@@ -11,7 +11,7 @@ function P({ children }: { children: ReactNode }) {
 }
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function A({ href, children }: { href: string; children: ReactNode }) {
@@ -113,25 +113,25 @@ export default function Page() {
         title="Yugen UI là gì?"
         description="幽玄 (yūgen) là vẻ đẹp sâu lắng, gợi nhiều hơn nói. Giao diện của Yugen UI theo tinh thần đó: tiết chế và rõ ràng."
       >
-        <div className="flex flex-col gap-XL">
+        <div className="flex flex-col gap-5">
           <P>
             Yugen UI là bộ component React viết bằng TypeScript, chạy trên React 18 hoặc 19 với Tailwind CSS v4. Không dùng Tailwind thì
             import file CSS biên dịch sẵn. Mọi component dùng chung một bộ token, nên đổi theme, màu thương hiệu hay hướng chữ không phải
             sửa component.
           </P>
-          <div className="grid gap-M sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2">
             {INCLUDED.map((s) => (
               <a
                 key={s.href}
                 href={s.href}
-                className="group flex flex-col gap-XS rounded-xlarge border border-stroke-2 bg-background-1 p-L transition-colors duration-faster hover:bg-subtle-hover"
+                className="group flex flex-col gap-1 rounded-xlarge border border-stroke-2 bg-background-1 p-4 transition-colors duration-faster hover:bg-subtle-hover"
               >
                 <span className="text-subtitle2 font-semibold text-foreground-1 group-hover:text-brand-foreground-1">{s.title}</span>
                 <span className="text-body1 text-foreground-2">{s.body}</span>
               </a>
             ))}
           </div>
-          <div className="flex flex-wrap items-center gap-S">
+          <div className="flex flex-wrap items-center gap-2">
             <Button asChild appearance="primary">
               <a href="#/concepts/quick-start">Bắt đầu nhanh</a>
             </Button>
@@ -143,18 +143,18 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="ways" title="Chọn cách dùng" description="Ba cách dùng chung token và theme, có thể kết hợp trong một dự án.">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <div className="overflow-x-auto rounded-xlarge border border-stroke-2 bg-background-1">
             <table className="w-full border-collapse text-start text-body1">
               <thead>
                 <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
-                  <th scope="col" className="px-L py-S text-start">
+                  <th scope="col" className="px-4 py-2 text-start">
                     Cách
                   </th>
-                  <th scope="col" className="px-L py-S text-start">
+                  <th scope="col" className="px-4 py-2 text-start">
                     Hợp khi
                   </th>
-                  <th scope="col" className="px-L py-S text-start">
+                  <th scope="col" className="px-4 py-2 text-start">
                     Cập nhật
                   </th>
                 </tr>
@@ -162,12 +162,12 @@ export default function Page() {
               <tbody>
                 {WAYS.map((w) => (
                   <tr key={w.way} className="border-b border-stroke-3 align-top last:border-b-0">
-                    <th scope="row" className="px-L py-M text-start font-semibold text-foreground-1">
+                    <th scope="row" className="px-4 py-3 text-start font-semibold text-foreground-1">
                       {w.way}
-                      <span className="mt-XXS block font-mono text-caption1 font-normal whitespace-nowrap text-foreground-3">{w.command}</span>
+                      <span className="mt-0.5 block font-mono text-caption1 font-normal whitespace-nowrap text-foreground-3">{w.command}</span>
                     </th>
-                    <td className="px-L py-M text-foreground-2">{w.when}</td>
-                    <td className="px-L py-M text-foreground-2">{w.update}</td>
+                    <td className="px-4 py-3 text-foreground-2">{w.when}</td>
+                    <td className="px-4 py-3 text-foreground-2">{w.update}</td>
                   </tr>
                 ))}
               </tbody>
@@ -180,13 +180,13 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="principles" title="Nguyên tắc">
-        <div className="grid gap-L sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           {PRINCIPLES.map((p) => (
-            <div key={p.title} className="flex gap-M rounded-xlarge border border-stroke-2 bg-background-1 p-L">
+            <div key={p.title} className="flex gap-3 rounded-xlarge border border-stroke-2 bg-background-1 p-4">
               <IconTile>{p.icon}</IconTile>
               <div className="min-w-0 flex-1">
                 <h3 className="text-subtitle2 font-semibold text-foreground-1">{p.title}</h3>
-                <p className="mt-XS text-body1 text-foreground-2">{p.body}</p>
+                <p className="mt-1 text-body1 text-foreground-2">{p.body}</p>
               </div>
             </div>
           ))}
@@ -194,7 +194,7 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="status" title="Phiên bản & giấy phép">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <P>
             Yugen UI đang ở giai đoạn trước 1.0. Bản minor có thể có thay đổi phá vỡ và luôn được ghi rõ ở{" "}
             <A href="#/news">Có gì mới</A>; bản patch chỉ sửa lỗi. Quy tắc đầy đủ ở <A href="#/concepts/versioning">Phiên bản</A>.
@@ -207,7 +207,7 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="credit" title="Ghi công">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <P>
             Yugen UI do <AuthorLink className="text-link hover:text-link-hover" /> phát triển. Cấu trúc token và hành vi component lấy cảm
             hứng từ <A href="https://fluent2.microsoft.design/">Microsoft Fluent 2</A>; cách phân phối mã nguồn học từ{" "}

@@ -18,7 +18,7 @@ function P({ children }: { children: ReactNode }) {
 }
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function A({ href, children }: { href: string; children: ReactNode }) {
@@ -36,7 +36,7 @@ function Table({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
             {head.map((h) => (
-              <th key={h} scope="col" className="px-L py-S text-start">
+              <th key={h} scope="col" className="px-4 py-2 text-start">
                 {h}
               </th>
             ))}
@@ -46,7 +46,7 @@ function Table({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
           {rows.map((row, i) => (
             <tr key={i} className="border-b border-stroke-3 align-top last:border-b-0">
               {row.map((cell, j) => (
-                <td key={j} className={j === 0 ? "whitespace-nowrap px-L py-M font-mono text-body1 text-foreground-1" : "px-L py-M text-foreground-2"}>
+                <td key={j} className={j === 0 ? "whitespace-nowrap px-4 py-3 font-mono text-body1 text-foreground-1" : "px-4 py-3 text-foreground-2"}>
                   {cell}
                 </td>
               ))}
@@ -78,7 +78,7 @@ export default function Page() {
   return (
     <>
       <DocSection id="commands" title="Commands">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Table
             head={["Command", "What it does"]}
             rows={[
@@ -97,7 +97,7 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="create" title="Create an app" description="Asks for a directory and a template, copies the files, installs dependencies and runs git init.">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <PackageManagerTabs packages={CLI_CREATE} command="dlx" />
           <P>
             Options: <C>-t, --template</C>, <C>--lang en|vi</C> (language of the app's text, for templates that have both; English by default), <C>--pm npm|pnpm|yarn|bun</C>, <C>--no-install</C>, <C>--no-git</C>, <C>--force</C> (write into a
@@ -112,7 +112,7 @@ export default function Page() {
         title="Set up an existing project"
         description="Detects Vite, Next.js, React Router or TanStack Start, the package manager and the main CSS file, then asks how you want to use Yugen UI."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <PackageManagerTabs packages={CLI_INIT} command="dlx" />
           <Table
             head={["Mode", "What the CLI does"]}
@@ -145,7 +145,7 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="add" title="Add components" description="Source mode. Names can be written either way: data-grid, DataGrid.">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <PackageManagerTabs packages={CLI_ADD} command="dlx" />
           <CodeBlock code={ADD_MORE} />
           <P>
@@ -159,7 +159,7 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="doctor" title="Check the setup" description="Read-only. Exits with code 1 when something is wrong, so it can run in CI.">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <PackageManagerTabs packages={CLI_DOCTOR} command="dlx" />
           <CodeBlock code={CLI_DOCTOR_OUTPUT} />
           <P>
@@ -171,7 +171,7 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="config" title="yugen.json and the registry">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <P>
             <C>init</C> writes this file at the project root; <C>add</C>, <C>list</C> and <C>doctor</C> read it. You can edit it, for example
             to change <C>paths.ui</C> and keep components somewhere else.
@@ -187,7 +187,7 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="options" title="Common options">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Table
             head={["Option", "Meaning"]}
             rows={[

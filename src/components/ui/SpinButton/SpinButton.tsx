@@ -10,8 +10,8 @@ const decimals = (n: number) => {
 };
 
 const SIZE = {
-  small: { root: "h-6 text-caption1", input: "ps-S", button: "w-5", Up: ChevronUp12Regular, Down: ChevronDown12Regular, icon: "size-3" },
-  medium: { root: "h-8 text-body1", input: "ps-M", button: "w-6", Up: ChevronUp16Regular, Down: ChevronDown16Regular, icon: "size-4" },
+  small: { root: "h-6 text-caption1", input: "ps-2", button: "w-5", Up: ChevronUp12Regular, Down: ChevronDown12Regular, icon: "size-3" },
+  medium: { root: "h-8 text-body1", input: "ps-3", button: "w-6", Up: ChevronUp16Regular, Down: ChevronDown16Regular, icon: "size-4" },
 } as const;
 
 export interface SpinButtonProps
@@ -215,7 +215,7 @@ export const SpinButton = React.forwardRef<HTMLInputElement, SpinButtonProps>(
             onBlur?.(e);
           }}
           className={cn(
-            "row-span-2 h-full w-full min-w-0 bg-transparent pe-XS text-foreground-1 outline-none placeholder:text-foreground-4",
+            "row-span-2 h-full w-full min-w-0 bg-transparent pe-1 text-foreground-1 outline-none placeholder:text-foreground-4",
             "disabled:cursor-not-allowed disabled:text-foreground-disabled",
             s.input,
           )}

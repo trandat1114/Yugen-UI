@@ -107,9 +107,9 @@ export const MessageBubble = React.forwardRef<HTMLDivElement, MessageBubbleProps
         data-side={side}
         data-group={position}
         className={cn(
-          "group/message flex w-full gap-S",
+          "group/message flex w-full gap-2",
           outgoing && "flex-row-reverse",
-          startsGroup ? "mt-M first:mt-0" : "mt-XXS",
+          startsGroup ? "mt-3 first:mt-0" : "mt-0.5",
           className,
         )}
         {...props}
@@ -120,14 +120,14 @@ export const MessageBubble = React.forwardRef<HTMLDivElement, MessageBubbleProps
 
         <div className={cn("flex min-w-0 flex-col", outgoing ? "items-end" : "items-start", plain ? "flex-1" : "max-w-[85%]")}>
           {startsGroup && (author || time) && (
-            <div className={cn("mb-XXS flex items-baseline gap-S text-caption1", outgoing && "flex-row-reverse")}>
+            <div className={cn("mb-0.5 flex items-baseline gap-2 text-caption1", outgoing && "flex-row-reverse")}>
               {author && !outgoing && <span className="font-semibold text-foreground-1">{author}</span>}
               {author && outgoing && <span className="sr-only">{author}</span>}
               {timeNode}
             </div>
           )}
 
-          <div className={cn("flex max-w-full items-end gap-XS", outgoing && "flex-row-reverse")}>
+          <div className={cn("flex max-w-full items-end gap-1", outgoing && "flex-row-reverse")}>
             <div
               aria-busy={streaming || undefined}
               className={cn(
@@ -135,7 +135,7 @@ export const MessageBubble = React.forwardRef<HTMLDivElement, MessageBubbleProps
                 plain
                   ? "w-full"
                   : cn(
-                      "rounded-xlarge px-M py-S",
+                      "rounded-xlarge px-3 py-2",
                       outgoing ? "bg-brand-background-2" : "bg-background-1 shadow-2",
                       CORNERS[side][position],
                     ),
@@ -146,7 +146,7 @@ export const MessageBubble = React.forwardRef<HTMLDivElement, MessageBubbleProps
               {streaming && (
                 <span
                   aria-hidden
-                  className="ms-XXS inline-block h-4 w-0.5 translate-y-0.5 animate-pulse rounded-circular bg-foreground-2 motion-reduce:animate-none"
+                  className="ms-0.5 inline-block h-4 w-0.5 translate-y-0.5 animate-pulse rounded-circular bg-foreground-2 motion-reduce:animate-none"
                 />
               )}
             </div>
@@ -154,7 +154,7 @@ export const MessageBubble = React.forwardRef<HTMLDivElement, MessageBubbleProps
             {!startsGroup && time && (
               <time
                 dateTime={dateTime}
-                className="shrink-0 pb-XXS text-caption2 text-foreground-3 opacity-0 transition-opacity duration-faster group-focus-within/message:opacity-100 group-hover/message:opacity-100"
+                className="shrink-0 pb-0.5 text-caption2 text-foreground-3 opacity-0 transition-opacity duration-faster group-focus-within/message:opacity-100 group-hover/message:opacity-100"
               >
                 {time}
               </time>
@@ -162,18 +162,18 @@ export const MessageBubble = React.forwardRef<HTMLDivElement, MessageBubbleProps
           </div>
 
           {reactions && (
-            <div className={cn("relative -mt-XS flex flex-wrap gap-XXS", outgoing ? "pe-S" : "ps-S")}>{reactions}</div>
+            <div className={cn("relative -mt-1 flex flex-wrap gap-0.5", outgoing ? "pe-2" : "ps-2")}>{reactions}</div>
           )}
 
           {status === "error" ? (
-            <div role="alert" className="mt-XXS flex items-center gap-XS text-caption1 text-danger-foreground-1">
+            <div role="alert" className="mt-0.5 flex items-center gap-1 text-caption1 text-danger-foreground-1">
               <ErrorCircle12Filled aria-hidden className="shrink-0" />
               <span>{errorMessage}</span>
               {onRetry && (
                 <button
                   type="button"
                   onClick={onRetry}
-                  className="inline-flex items-center gap-XXS rounded-small font-semibold text-link hover:text-link-hover hover:underline"
+                  className="inline-flex items-center gap-0.5 rounded-small font-semibold text-link hover:text-link-hover hover:underline"
                 >
                   <ArrowClockwise12Regular aria-hidden />
                   Thử lại
@@ -182,7 +182,7 @@ export const MessageBubble = React.forwardRef<HTMLDivElement, MessageBubbleProps
             </div>
           ) : (
             statusMeta && (
-              <div title={statusMeta.label} className="mt-XXS flex items-center gap-XXS text-caption2 text-foreground-3">
+              <div title={statusMeta.label} className="mt-0.5 flex items-center gap-0.5 text-caption2 text-foreground-3">
                 <statusMeta.icon aria-hidden className={cn("shrink-0", status === "read" && "text-brand-foreground-1")} />
                 <span className="sr-only">{statusMeta.label}</span>
               </div>
@@ -214,7 +214,7 @@ export const MessageReaction = React.forwardRef<HTMLButtonElement, MessageReacti
       aria-pressed={selected}
       aria-label={label ? `${label}${count !== undefined ? `: ${count}` : ""}` : undefined}
       className={cn(
-        "inline-flex h-6 items-center gap-XXS rounded-circular border px-SNudge text-caption1 shadow-2",
+        "inline-flex h-6 items-center gap-0.5 rounded-circular border px-1.5 text-caption1 shadow-2",
         "transition-colors duration-faster ease-easy-ease",
         selected
           ? "border-brand-stroke bg-brand-background-2 text-brand-foreground-2 hover:bg-brand-background-2-hover"
@@ -240,7 +240,7 @@ export interface MessageDaySeparatorProps extends React.HTMLAttributes<HTMLDivEl
 /** Mốc ngày giữa các tin nhắn ("Hôm nay", "Thứ Hai, 12/10"). Chữ vẫn được trình đọc màn hình đọc. */
 export const MessageDaySeparator = React.forwardRef<HTMLDivElement, MessageDaySeparatorProps>(
   ({ dateTime, className, children, ...props }, ref) => (
-    <div ref={ref} className={cn("my-M flex items-center gap-M text-caption1 text-foreground-3", className)} {...props}>
+    <div ref={ref} className={cn("my-3 flex items-center gap-3 text-caption1 text-foreground-3", className)} {...props}>
       <span aria-hidden className="h-px flex-1 bg-stroke-2" />
       {dateTime ? <time dateTime={dateTime}>{children}</time> : <span>{children}</span>}
       <span aria-hidden className="h-px flex-1 bg-stroke-2" />
@@ -266,9 +266,9 @@ export const TypingIndicator = React.forwardRef<HTMLDivElement, TypingIndicatorP
   ({ author, avatar, avatarSrc, label, className, ...props }, ref) => {
     const avatarNode = avatar !== undefined ? avatar : author ? <Avatar name={author} src={avatarSrc} size={32} color="colorful" /> : null;
     return (
-      <div ref={ref} role="status" className={cn("mt-M flex w-full items-end gap-S first:mt-0", className)} {...props}>
+      <div ref={ref} role="status" className={cn("mt-3 flex w-full items-end gap-2 first:mt-0", className)} {...props}>
         {avatarNode !== null && avatarNode !== false && <div className="w-8 shrink-0">{avatarNode}</div>}
-        <div aria-hidden className="flex h-9 items-center gap-XS rounded-xlarge rounded-es-small bg-background-1 px-M shadow-2">
+        <div aria-hidden className="flex h-9 items-center gap-1 rounded-xlarge rounded-es-small bg-background-1 px-3 shadow-2">
           {DOT_DELAY.map((delay, i) => (
             <span key={i} className={cn("flex h-3 items-end animate-bounce motion-reduce:animate-none", delay)}>
               <span className={cn("size-1.5 rounded-circular bg-foreground-3", i === 1 && "motion-reduce:opacity-70", i === 2 && "motion-reduce:opacity-40")} />

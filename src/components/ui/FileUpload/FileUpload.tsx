@@ -160,7 +160,7 @@ export const FileUploadItem = React.forwardRef<HTMLLIElement, FileUploadItemProp
         ref={ref}
         data-status={status}
         className={cn(
-          "flex items-center gap-M rounded-medium border border-stroke-2 bg-background-1 p-S",
+          "flex items-center gap-3 rounded-medium border border-stroke-2 bg-background-1 p-2",
           status === "error" && "border-danger-background-3",
           className,
         )}
@@ -169,8 +169,8 @@ export const FileUploadItem = React.forwardRef<HTMLLIElement, FileUploadItemProp
         <span className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-medium bg-background-3 text-foreground-2">
           {thumbnail ? <img src={thumbnail} alt="" className="size-full object-cover" /> : <Icon aria-hidden className="size-6" />}
         </span>
-        <div className="flex min-w-0 flex-1 flex-col gap-XXS">
-          <div className="flex min-w-0 items-baseline gap-S">
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <div className="flex min-w-0 items-baseline gap-2">
             <span className="truncate text-body1 text-foreground-1" title={name}>
               {name}
             </span>
@@ -183,20 +183,20 @@ export const FileUploadItem = React.forwardRef<HTMLLIElement, FileUploadItemProp
             </>
           )}
           {status === "done" && (
-            <span className="flex items-center gap-XS text-caption1 text-success-foreground-1">
+            <span className="flex items-center gap-1 text-caption1 text-success-foreground-1">
               <CheckmarkCircle12Filled aria-hidden className="shrink-0" />
               <span className="text-foreground-3">Đã tải lên</span>
             </span>
           )}
           {status === "error" && (
-            <span className="flex items-center gap-XS text-caption1 text-danger-foreground-1">
+            <span className="flex items-center gap-1 text-caption1 text-danger-foreground-1">
               <ErrorCircle12Filled aria-hidden className="shrink-0" />
               <span>{error ?? "Tải lên thất bại"}</span>
             </span>
           )}
         </div>
         {(onRetry || onRemove) && (
-          <div className="flex shrink-0 items-center gap-XXS">
+          <div className="flex shrink-0 items-center gap-0.5">
             {status === "error" && onRetry && (
               <Button appearance="subtle" size="small" icon={<ArrowClockwise16Regular />} aria-label={`Thử lại tải lên ${name}`} disabled={disabled} onClick={onRetry} />
             )}
@@ -386,14 +386,14 @@ export const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>(
     const invalid = !!ariaInvalid || rejections.length > 0;
 
     return (
-      <div className={cn("flex min-w-0 flex-col gap-S", className)} onPaste={allowPaste ? handlePaste : undefined}>
+      <div className={cn("flex min-w-0 flex-col gap-2", className)} onPaste={allowPaste ? handlePaste : undefined}>
         <label
           htmlFor={inputId}
           data-dragging={dragging || undefined}
           data-invalid={invalid || undefined}
           data-disabled={disabled || undefined}
           className={cn(
-            "flex cursor-pointer flex-col items-center justify-center gap-S rounded-xlarge border border-dashed border-stroke-accessible bg-background-1 px-L py-XL text-center",
+            "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xlarge border border-dashed border-stroke-accessible bg-background-1 px-4 py-5 text-center",
             "transition-[background-color,border-color] duration-faster ease-easy-ease hover:border-brand-stroke hover:bg-background-1-hover",
             "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-stroke-focus",
             "data-invalid:border-danger-background-3",
@@ -471,10 +471,10 @@ export const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>(
         </label>
 
         {rejections.length > 0 && (
-          <ul id={errorsId} role="alert" className="flex flex-col gap-XXS">
+          <ul id={errorsId} role="alert" className="flex flex-col gap-0.5">
             {rejections.map((rejection, index) => (
-              <li key={`${rejection.file.name}-${index}`} className="flex items-start gap-XS text-caption1 text-danger-foreground-1">
-                <ErrorCircle12Filled aria-hidden className="mt-XXS shrink-0" />
+              <li key={`${rejection.file.name}-${index}`} className="flex items-start gap-1 text-caption1 text-danger-foreground-1">
+                <ErrorCircle12Filled aria-hidden className="mt-0.5 shrink-0" />
                 <span>{rejection.message}</span>
               </li>
             ))}
@@ -482,7 +482,7 @@ export const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>(
         )}
 
         {list.length > 0 && (
-          <ul aria-label="Tệp đã chọn" className="flex flex-col gap-S">
+          <ul aria-label="Tệp đã chọn" className="flex flex-col gap-2">
             {list.map((entry) => (
               <FileUploadItem
                 key={entry.id}

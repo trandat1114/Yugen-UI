@@ -22,7 +22,7 @@ export interface PopoverSurfaceProps extends React.ComponentPropsWithoutRef<type
   withArrow?: boolean;
 }
 
-const PADDING = { small: "p-S", medium: "p-L", large: "p-XL" } as const;
+const PADDING = { small: "p-2", medium: "p-4", large: "p-5" } as const;
 const APPEARANCE = {
   normal: "",
   brand: "bg-brand-background text-foreground-on-brand",

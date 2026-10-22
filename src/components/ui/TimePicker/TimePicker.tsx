@@ -211,9 +211,9 @@ function matchIndex(text: string, list: number[], locale: string) {
 /* ------------------------------------------------------------------ TimePicker */
 
 const SIZE = {
-  small: { root: "h-6 ps-S pe-XXS text-caption1", Icon: Clock16Regular, icon: "size-4", button: "w-6" },
-  medium: { root: "h-8 ps-M pe-XXS text-body1", Icon: Clock20Regular, icon: "size-5", button: "w-8" },
-  large: { root: "h-10 ps-M pe-XS text-body2", Icon: Clock24Regular, icon: "size-6", button: "w-9" },
+  small: { root: "h-6 ps-2 pe-0.5 text-caption1", Icon: Clock16Regular, icon: "size-4", button: "w-6" },
+  medium: { root: "h-8 ps-3 pe-0.5 text-body1", Icon: Clock20Regular, icon: "size-5", button: "w-8" },
+  large: { root: "h-10 ps-3 pe-1 text-body2", Icon: Clock24Regular, icon: "size-6", button: "w-9" },
 } as const;
 
 type InputAttrs = Omit<
@@ -445,7 +445,7 @@ export const TimePicker = React.forwardRef<HTMLInputElement, TimePickerProps>((p
           onClick={() => inputRef.current?.focus()}
           className={cn(
             fieldAppearanceClass[appearance],
-            "inline-flex min-w-32 cursor-text items-center gap-XXS",
+            "inline-flex min-w-32 cursor-text items-center gap-0.5",
             open && "after:scale-x-100",
             disabled && "cursor-not-allowed",
             s.root,
@@ -526,12 +526,12 @@ export const TimePicker = React.forwardRef<HTMLInputElement, TimePickerProps>((p
           onMouseDown={(e) => e.preventDefault()}
           className={cn(
             popoverSurfaceClass,
-            "max-h-[min(var(--radix-popover-content-available-height),--spacing(72))] w-(--radix-popover-trigger-width) overflow-y-auto p-XS",
+            "max-h-[min(var(--radix-popover-content-available-height),--spacing(72))] w-(--radix-popover-trigger-width) overflow-y-auto p-1",
             listboxClassName,
           )}
         >
           <div ref={listRef} id={listId} role="listbox" {...listLabelProps}>
-            {options.length === 0 && <div className="px-S py-SNudge text-body1 text-foreground-3">{noOptionsText}</div>}
+            {options.length === 0 && <div className="px-2 py-1.5 text-body1 text-foreground-3">{noOptionsText}</div>}
             {options.map((m, i) => {
               const isSelected = selectedMinutes === m && draft === null;
               return (

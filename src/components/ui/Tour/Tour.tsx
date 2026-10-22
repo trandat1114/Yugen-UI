@@ -325,17 +325,17 @@ export function Tour({
                 <div id={bodyId}>{current.content}</div>
               </TeachingPopoverBody>
             </div>
-            <div className="mt-L flex items-center gap-S">
+            <div className="mt-4 flex items-center gap-2">
               {!last && (
                 <Button
                   appearance="transparent"
-                  className={cn("-ms-S min-w-0", brand && "text-foreground-on-brand hover:text-foreground-on-brand")}
+                  className={cn("-ms-2 min-w-0", brand && "text-foreground-on-brand hover:text-foreground-on-brand")}
                   onClick={() => setOpen(false)}
                 >
                   {skipLabel}
                 </Button>
               )}
-              <div className="ms-auto flex gap-S">
+              <div className="ms-auto flex gap-2">
                 {!first && (
                   <Button appearance={secondaryButton.appearance} className={secondaryButton.className} onClick={() => goTo(step - 1)}>
                     {backLabel}

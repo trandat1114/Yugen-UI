@@ -90,7 +90,7 @@ export const Step = React.forwardRef<HTMLLIElement, StepProps>(
         >
           {status === "complete" ? <Checkmark16Regular /> : status === "error" ? <Important16Filled /> : index + 1}
         </span>
-        <span className={cn("flex min-w-0 flex-col text-start", !horizontal && "pt-XXS")}>
+        <span className={cn("flex min-w-0 flex-col text-start", !horizontal && "pt-0.5")}>
           <span className={cn("text-body1", horizontal && "truncate", TITLE[status], disabled && "text-foreground-disabled")}>
             <span className="sr-only">{`Bước ${index + 1}:`}</span> {title}
             <span className="sr-only">{`, ${STATUS_TEXT[status]}`}</span>
@@ -106,7 +106,7 @@ export const Step = React.forwardRef<HTMLLIElement, StepProps>(
     );
 
     const triggerClass = cn(
-      "flex min-w-0 gap-S rounded-medium p-XS",
+      "flex min-w-0 gap-2 rounded-medium p-1",
       horizontal ? "items-center" : "w-full items-start",
       interactive && "focus-visible:outline-2 focus-visible:outline-stroke-focus",
       interactive && reachable && !isCurrent && "cursor-pointer hover:bg-subtle-hover active:bg-subtle-pressed",
@@ -118,7 +118,7 @@ export const Step = React.forwardRef<HTMLLIElement, StepProps>(
         ref={ref}
         data-status={status}
         className={cn(
-          horizontal ? cn("flex min-w-0 items-center gap-S", last ? "flex-none" : "flex-1") : "relative pb-L last:pb-0",
+          horizontal ? cn("flex min-w-0 items-center gap-2", last ? "flex-none" : "flex-1") : "relative pb-4 last:pb-0",
           className,
         )}
         {...props}
@@ -146,7 +146,7 @@ export const Step = React.forwardRef<HTMLLIElement, StepProps>(
           (horizontal ? (
             <span
               aria-hidden
-              className={cn("h-0.5 min-w-L flex-1 rounded-circular", status === "complete" ? "bg-brand-background" : "bg-stroke-2")}
+              className={cn("h-0.5 min-w-4 flex-1 rounded-circular", status === "complete" ? "bg-brand-background" : "bg-stroke-2")}
             />
           ) : (
             <span
@@ -157,7 +157,7 @@ export const Step = React.forwardRef<HTMLLIElement, StepProps>(
               )}
             />
           ))}
-        {!horizontal && children && <div className="ps-10 pt-XS">{children}</div>}
+        {!horizontal && children && <div className="ps-10 pt-1">{children}</div>}
       </li>
     );
   },
@@ -223,7 +223,7 @@ export const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
       <StepperContext.Provider value={context}>
         <div ref={ref} className={cn(collapse && "@container", className)} {...props}>
           {collapse && total > 0 && (
-            <div className="flex flex-col gap-S @lg:hidden">
+            <div className="flex flex-col gap-2 @lg:hidden">
               <p className="truncate text-body1 text-foreground-1">
                 <span className="font-semibold">{`Bước ${shown + 1}/${total}`}</span>
                 {" · "}
@@ -235,7 +235,7 @@ export const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
           <ol
             aria-label={ariaLabel ?? "Các bước"}
             data-orientation={horizontal ? "horizontal" : "vertical"}
-            className={cn(horizontal ? "items-center gap-S" : "flex-col", collapse ? "hidden @lg:flex" : "flex")}
+            className={cn(horizontal ? "items-center gap-2" : "flex-col", collapse ? "hidden @lg:flex" : "flex")}
             onKeyDown={onStepChange ? onKeyDown : undefined}
           >
             {steps.map((step, index) => (
@@ -386,10 +386,10 @@ export const Wizard = React.forwardRef<HTMLDivElement, WizardProps>(
     return (
       <div
         ref={ref}
-        className={cn("flex flex-col gap-L", orientation === "vertical" && "@container", className)}
+        className={cn("flex flex-col gap-4", orientation === "vertical" && "@container", className)}
         {...props}
       >
-        <div className={cn("flex flex-col gap-L", orientation === "vertical" && "@2xl:flex-row @2xl:gap-XXL")}>
+        <div className={cn("flex flex-col gap-4", orientation === "vertical" && "@2xl:flex-row @2xl:gap-6")}>
           <Stepper
             activeStep={active}
             onStepChange={goTo}
@@ -413,7 +413,7 @@ export const Wizard = React.forwardRef<HTMLDivElement, WizardProps>(
             tabIndex={-1}
             aria-labelledby={labelId}
             aria-busy={pending || undefined}
-            className="flex min-w-0 flex-1 flex-col gap-M rounded-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke-focus"
+            className="flex min-w-0 flex-1 flex-col gap-3 rounded-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke-focus"
           >
             <span id={labelId} className="sr-only">
               {`Bước ${Math.min(active + 1, total)}/${total}: `}
@@ -424,13 +424,13 @@ export const Wizard = React.forwardRef<HTMLDivElement, WizardProps>(
         </div>
 
         {error && (
-          <p role="alert" className="flex items-center gap-XS text-body1 text-danger-foreground-1">
+          <p role="alert" className="flex items-center gap-1 text-body1 text-danger-foreground-1">
             <ErrorCircle16Filled aria-hidden className="shrink-0" />
             {error.message}
           </p>
         )}
 
-        <div className="flex items-center justify-between gap-S border-t border-stroke-2 pt-M">
+        <div className="flex items-center justify-between gap-2 border-t border-stroke-2 pt-3">
           <Button
             appearance="secondary"
             icon={<ArrowLeft20Regular className="rtl:-scale-x-100" />}

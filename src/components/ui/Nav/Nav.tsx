@@ -33,8 +33,8 @@ interface CategoryContextValue {
 const CategoryContext = React.createContext<CategoryContextValue | null>(null);
 
 const ROW: Record<NavDensity, string> = {
-  medium: "min-h-10 gap-S px-M",
-  small: "min-h-8 gap-S px-S",
+  medium: "min-h-10 gap-2 px-3",
+  small: "min-h-8 gap-2 px-2",
 };
 const SUB_INDENT: Record<NavDensity, string> = { medium: "ps-10", small: "ps-9" };
 
@@ -105,7 +105,7 @@ export const Nav = React.forwardRef<HTMLElement, NavProps>(
 
     return (
       <NavContext.Provider value={ctx}>
-        <nav ref={ref} aria-label={ariaLabel} className={cn("flex flex-col gap-XXS", className)} {...props}>
+        <nav ref={ref} aria-label={ariaLabel} className={cn("flex flex-col gap-0.5", className)} {...props}>
           {children}
         </nav>
       </NavContext.Provider>
@@ -298,7 +298,7 @@ export function NavSubItemGroup({ className, ...props }: React.HTMLAttributes<HT
       role="group"
       aria-labelledby={category?.triggerId}
       hidden={!(category?.open ?? true)}
-      className={cn("flex flex-col gap-XXS", className)}
+      className={cn("flex flex-col gap-0.5", className)}
       {...props}
     />
   );
@@ -309,8 +309,8 @@ export function NavSectionHeader({ className, ...props }: React.HTMLAttributes<H
   return (
     <h3
       className={cn(
-        "pt-M pb-XS text-caption1 font-semibold text-foreground-3",
-        density === "small" ? "px-S" : "px-M",
+        "pt-3 pb-1 text-caption1 font-semibold text-foreground-3",
+        density === "small" ? "px-2" : "px-3",
         className,
       )}
       {...props}
@@ -319,5 +319,5 @@ export function NavSectionHeader({ className, ...props }: React.HTMLAttributes<H
 }
 
 export function NavDivider({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div role="separator" className={cn("mx-S my-XS h-px shrink-0 bg-stroke-2", className)} {...props} />;
+  return <div role="separator" className={cn("mx-2 my-1 h-px shrink-0 bg-stroke-2", className)} {...props} />;
 }

@@ -72,7 +72,7 @@ function StreamingAnswerDemo() {
   const { text, streaming, replay } = useStreamedText(ANSWER);
 
   return (
-    <div className="flex w-full max-w-2xl flex-col gap-M">
+    <div className="flex w-full max-w-2xl flex-col gap-3">
       <StreamingMarkdown streaming={streaming}>{text}</StreamingMarkdown>
       <Button className="self-start" disabled={streaming} onClick={replay}>
         Phát lại
@@ -132,7 +132,7 @@ function StreamingAnswerDemo() {
   const { text, streaming, replay } = useStreamedText(ANSWER);
 
   return (
-    <div className="flex w-full max-w-2xl flex-col gap-M">
+    <div className="flex w-full max-w-2xl flex-col gap-3">
       <StreamingMarkdown streaming={streaming}>{text}</StreamingMarkdown>
       <Button className="self-start" disabled={streaming} onClick={replay}>
         Phát lại
@@ -176,7 +176,7 @@ function ReasoningDemo() {
   const { text, streaming, replay } = useStreamedText(THOUGHT, 4, 50);
 
   return (
-    <div className="flex w-full max-w-xl flex-col gap-M">
+    <div className="flex w-full max-w-xl flex-col gap-3">
       <Reasoning streaming={streaming}>{text}</Reasoning>
       {!streaming && <StreamingMarkdown>{"Có — Sakura đạt **5.16:1** trên nền trắng, đủ cho chữ thường (AA)."}</StreamingMarkdown>}
       <Button className="self-start" disabled={streaming} onClick={replay}>
@@ -199,7 +199,7 @@ function ReasoningDemo() {
   const { text, streaming, replay } = useStreamedText(THOUGHT, 4, 50);
 
   return (
-    <div className="flex w-full max-w-xl flex-col gap-M">
+    <div className="flex w-full max-w-xl flex-col gap-3">
       <Reasoning streaming={streaming}>{text}</Reasoning>
       {!streaming && <StreamingMarkdown>{"Có — Sakura đạt **5.16:1** trên nền trắng, đủ cho chữ thường (AA)."}</StreamingMarkdown>}
       <Button className="self-start" disabled={streaming} onClick={replay}>
@@ -220,7 +220,7 @@ function PromptInputDemo() {
   useEffect(() => () => window.clearTimeout(timer.current), []);
 
   return (
-    <div className="flex w-full max-w-xl flex-col gap-S">
+    <div className="flex w-full max-w-xl flex-col gap-2">
       <PromptInput
         accept="image/*,.pdf,.txt,.md"
         maxFiles={4}
@@ -260,7 +260,7 @@ const PROMPT_INPUT_CODE = `function PromptInputDemo() {
   useEffect(() => () => window.clearTimeout(timer.current), []);
 
   return (
-    <div className="flex w-full max-w-xl flex-col gap-S">
+    <div className="flex w-full max-w-xl flex-col gap-2">
       <PromptInput
         accept="image/*,.pdf,.txt,.md"
         maxFiles={4}
@@ -312,8 +312,8 @@ function StartTourButton() {
 function TourDemo() {
   return (
     <Tour steps={TOUR_STEPS}>
-      <div className="flex w-full max-w-xl flex-col gap-L">
-        <div className="flex items-center gap-S rounded-xlarge border border-stroke-2 bg-background-2 p-S">
+      <div className="flex w-full max-w-xl flex-col gap-4">
+        <div className="flex items-center gap-2 rounded-xlarge border border-stroke-2 bg-background-2 p-2">
           <Button id="tour-search" appearance="subtle" icon={<Search20Regular />}>
             Tìm kiếm
           </Button>
@@ -347,8 +347,8 @@ function StartTourButton() {
 function TourDemo() {
   return (
     <Tour steps={TOUR_STEPS}>
-      <div className="flex w-full max-w-xl flex-col gap-L">
-        <div className="flex items-center gap-S rounded-xlarge border border-stroke-2 bg-background-2 p-S">
+      <div className="flex w-full max-w-xl flex-col gap-4">
+        <div className="flex items-center gap-2 rounded-xlarge border border-stroke-2 bg-background-2 p-2">
           <Button id="tour-search" appearance="subtle" icon={<Search20Regular />}>
             Tìm kiếm
           </Button>
@@ -368,8 +368,8 @@ function BrandTourDemo() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="flex w-full max-w-md flex-col items-start gap-M">
-      <div ref={anchor} className="w-full rounded-xlarge border border-stroke-2 bg-background-2 p-L text-body1">
+    <div className="flex w-full max-w-md flex-col items-start gap-3">
+      <div ref={anchor} className="w-full rounded-xlarge border border-stroke-2 bg-background-2 p-4 text-body1">
         Bảng điều khiển của bạn
       </div>
       <Button onClick={() => setOpen(true)}>Xem điểm mới</Button>
@@ -388,8 +388,8 @@ const BRAND_TOUR_CODE = `function BrandTourDemo() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="flex w-full max-w-md flex-col items-start gap-M">
-      <div ref={anchor} className="w-full rounded-xlarge border border-stroke-2 bg-background-2 p-L text-body1">
+    <div className="flex w-full max-w-md flex-col items-start gap-3">
+      <div ref={anchor} className="w-full rounded-xlarge border border-stroke-2 bg-background-2 p-4 text-body1">
         Bảng điều khiển của bạn
       </div>
       <Button onClick={() => setOpen(true)}>Xem điểm mới</Button>
@@ -424,7 +424,7 @@ function NotificationDemo() {
   }
 
   return (
-    <div className="flex items-center gap-M">
+    <div className="flex items-center gap-3">
       <NotificationCenter {...store.bind} footer={<Button appearance="transparent">Xem tất cả</Button>} />
       <Button onClick={simulate}>Giả lập thông báo mới</Button>
     </div>
@@ -450,7 +450,7 @@ function NotificationDemo() {
   }
 
   return (
-    <div className="flex items-center gap-M">
+    <div className="flex items-center gap-3">
       <NotificationCenter {...store.bind} footer={<Button appearance="transparent">Xem tất cả</Button>} />
       <Button onClick={simulate}>Giả lập thông báo mới</Button>
     </div>
@@ -462,7 +462,7 @@ function LoadingNotificationsDemo() {
   const [failed, setFailed] = useState(false);
 
   return (
-    <div className="flex items-center gap-M">
+    <div className="flex items-center gap-3">
       <NotificationCenter
         items={[]}
         loading={loading}
@@ -482,7 +482,7 @@ const LOADING_NOTIFICATIONS_CODE = `function LoadingNotificationsDemo() {
   const [failed, setFailed] = useState(false);
 
   return (
-    <div className="flex items-center gap-M">
+    <div className="flex items-center gap-3">
       <NotificationCenter
         items={[]}
         loading={loading}
@@ -563,7 +563,7 @@ export const docs: ComponentDoc[] = [
     hero: {
         setup: declarationsOf(RAW, ["SOURCES"]),
       title: "Chip nguồn + danh sách",
-      code: `<div className="flex w-full max-w-xl flex-col gap-L">
+      code: `<div className="flex w-full max-w-xl flex-col gap-4">
   <p className="text-body1 text-foreground-1">
     Màu brand chỉ nên dùng cho hành động chính và trạng thái chọn
     <Citation index={1} source={SOURCES[0]} />
@@ -573,7 +573,7 @@ export const docs: ComponentDoc[] = [
   <CitationList sources={SOURCES} />
 </div>`,
       render: () => (
-        <div className="flex w-full max-w-xl flex-col gap-L">
+        <div className="flex w-full max-w-xl flex-col gap-4">
           <p className="text-body1 text-foreground-1">
             Màu brand chỉ nên dùng cho hành động chính và trạng thái chọn
             <Citation index={1} source={SOURCES[0]} />

@@ -57,11 +57,11 @@ export const Quote = React.forwardRef<HTMLElement, QuoteProps>(
       <figure
         ref={ref}
         className={cn(
-          "m-0 flex flex-col gap-M",
-          !emphasis && "border-s-3 ps-L",
+          "m-0 flex flex-col gap-3",
+          !emphasis && "border-s-3 ps-4",
           appearance === "default" && "border-brand-stroke",
           appearance === "subtle" && "border-stroke-1",
-          emphasis && "relative rounded-xlarge bg-background-2 p-XL",
+          emphasis && "relative rounded-xlarge bg-background-2 p-5",
           className,
         )}
         {...props}
@@ -70,7 +70,7 @@ export const Quote = React.forwardRef<HTMLElement, QuoteProps>(
         <blockquote
           cite={cite}
           className={cn(
-            "m-0 flex flex-col gap-S",
+            "m-0 flex flex-col gap-2",
             emphasis ? (size === "small" ? "text-subtitle2" : size === "large" ? "text-title2" : "text-subtitle1") : TEXT[size],
             emphasis ? "font-display font-semibold text-foreground-1" : appearance === "subtle" ? "text-foreground-2" : "text-foreground-1",
           )}
@@ -78,7 +78,7 @@ export const Quote = React.forwardRef<HTMLElement, QuoteProps>(
           {body}
         </blockquote>
         {hasCaption && (
-          <figcaption className="flex items-center gap-S text-caption1 text-foreground-3">
+          <figcaption className="flex items-center gap-2 text-caption1 text-foreground-3">
             {avatar}
             <span className="flex flex-col">
               {author && (

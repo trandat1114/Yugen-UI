@@ -21,7 +21,7 @@ export const Slider = React.forwardRef<React.ElementRef<typeof SliderPrimitive.R
     const small = size === "small";
 
     return (
-      <div className={cn("flex w-full flex-col gap-XXS", rootClassName)}>
+      <div className={cn("flex w-full flex-col gap-0.5", rootClassName)}>
         {(label || showValue) && (
           <div className="flex items-center justify-between text-body1">
             {label && (

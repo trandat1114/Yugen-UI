@@ -27,9 +27,9 @@ export interface TagPickerOption {
 type PickerSize = "medium" | "large" | "extra-large";
 
 const SIZE: Record<PickerSize, { root: string; input: string; tag: TagSize; Icon: typeof ChevronDown20Regular; icon: string }> = {
-  medium: { root: "min-h-8 ps-XS gap-XS", input: "h-6 text-body1", tag: "extra-small", Icon: ChevronDown20Regular, icon: "size-5" },
-  large: { root: "min-h-10 ps-XS gap-XS", input: "h-7 text-body1", tag: "small", Icon: ChevronDown20Regular, icon: "size-5" },
-  "extra-large": { root: "min-h-12 ps-SNudge gap-S", input: "h-8 text-body2", tag: "medium", Icon: ChevronDown24Regular, icon: "size-6" },
+  medium: { root: "min-h-8 ps-1 gap-1", input: "h-6 text-body1", tag: "extra-small", Icon: ChevronDown20Regular, icon: "size-5" },
+  large: { root: "min-h-10 ps-1 gap-1", input: "h-7 text-body1", tag: "small", Icon: ChevronDown20Regular, icon: "size-5" },
+  "extra-large": { root: "min-h-12 ps-1.5 gap-2", input: "h-8 text-body2", tag: "medium", Icon: ChevronDown24Regular, icon: "size-6" },
 };
 
 export interface TagPickerProps
@@ -208,7 +208,7 @@ export const TagPicker = React.forwardRef<HTMLInputElement, TagPickerProps>(
                 className,
               )}
             >
-              <div className="flex min-w-0 flex-1 flex-wrap items-center gap-XS py-XXS">
+              <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1 py-0.5">
                 {selected.length > 0 && (
                   <TagGroup
                     ref={tagsRef}
@@ -268,7 +268,7 @@ export const TagPicker = React.forwardRef<HTMLInputElement, TagPickerProps>(
                   }}
                   onKeyDown={handleKeyDown}
                   className={cn(
-                    "min-w-16 flex-1 bg-transparent px-XS text-foreground-1 outline-none placeholder:text-foreground-4",
+                    "min-w-16 flex-1 bg-transparent px-1 text-foreground-1 outline-none placeholder:text-foreground-4",
                     "disabled:cursor-not-allowed disabled:text-foreground-disabled",
                     s.input,
                   )}
@@ -312,12 +312,12 @@ export const TagPicker = React.forwardRef<HTMLInputElement, TagPickerProps>(
               onMouseDown={(e) => e.preventDefault()}
               className={cn(
                 popoverSurfaceClass,
-                "max-h-[min(var(--radix-popover-content-available-height),--spacing(80))] w-(--radix-popover-trigger-width) overflow-y-auto p-XS",
+                "max-h-[min(var(--radix-popover-content-available-height),--spacing(80))] w-(--radix-popover-trigger-width) overflow-y-auto p-1",
                 listboxClassName,
               )}
             >
               <CommandPrimitive.List ref={setListEl} aria-multiselectable>
-                <CommandPrimitive.Empty className="px-S py-SNudge text-body1 text-foreground-3">
+                <CommandPrimitive.Empty className="px-2 py-1.5 text-body1 text-foreground-3">
                   {freeform && query.trim() ? `Nhấn Enter để thêm “${query.trim()}”` : noResultsText}
                 </CommandPrimitive.Empty>
                 {groupOptions(available).map((group) => {
@@ -327,7 +327,7 @@ export const TagPicker = React.forwardRef<HTMLInputElement, TagPickerProps>(
                       value={item.value}
                       disabled={item.disabled}
                       onSelect={() => add(item.value)}
-                      className={cn(cmdkOptionClass, "gap-S")}
+                      className={cn(cmdkOptionClass, "gap-2")}
                     >
                       {item.media && <span className="flex shrink-0 items-center text-foreground-2 [&_svg]:size-5">{item.media}</span>}
                       <span className="flex min-w-0 flex-1 flex-col">

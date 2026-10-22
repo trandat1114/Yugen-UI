@@ -174,7 +174,7 @@ export const InputOTP = React.forwardRef<HTMLDivElement, InputOTPProps>(
         <React.Fragment key={g}>
           {g > 0 &&
             (separator ?? <span aria-hidden className="h-0.5 w-3 shrink-0 rounded-circular bg-foreground-3" />)}
-          <div className="flex items-center gap-S">
+          <div className="flex items-center gap-2">
             {Array.from({ length: count }, (_, k) => {
               const i = start + k;
               return (
@@ -218,7 +218,7 @@ export const InputOTP = React.forwardRef<HTMLDivElement, InputOTPProps>(
     });
 
     return (
-      <div ref={ref} role="group" className={cn("inline-flex items-center gap-S", className)} {...props}>
+      <div ref={ref} role="group" className={cn("inline-flex items-center gap-2", className)} {...props}>
         {rendered}
         {name && <input type="hidden" name={name} value={current} />}
       </div>

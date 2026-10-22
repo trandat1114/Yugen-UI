@@ -657,7 +657,7 @@ export const docs: ComponentDoc[] = [
 <Input appearance="filled-darker" placeholder="Filled darker" />
 <Input appearance="filled-lighter" placeholder="Filled lighter" />`,
         render: () => (
-          <div className="grid w-full max-w-xs gap-M">
+          <div className="grid w-full max-w-xs gap-3">
             <Input placeholder="Outline" />
             <Input appearance="underline" placeholder="Underline" />
             <Input appearance="filled-darker" placeholder="Filled darker" />
@@ -931,7 +931,7 @@ export const docs: ComponentDoc[] = [
   </TabsList>
 </Tabs>`,
         render: () => (
-          <div className="flex flex-col items-center gap-S">
+          <div className="flex flex-col items-center gap-2">
             <Tabs defaultValue="a">
               <TabsList size="small">
                 <TabsTrigger value="a">Small</TabsTrigger>
@@ -1144,7 +1144,7 @@ export const docs: ComponentDoc[] = [
 <MessageBar intent="warning" title="Chú ý">Phiên bản này sắp ngừng hỗ trợ.</MessageBar>
 <MessageBar intent="error" title="Lỗi">Không thể kết nối máy chủ.</MessageBar>`,
         render: () => (
-          <div className="flex w-full flex-col gap-S">
+          <div className="flex w-full flex-col gap-2">
             <MessageBar intent="info" title="Mẹo">
               Nhấn Ctrl+K để tìm nhanh.
             </MessageBar>

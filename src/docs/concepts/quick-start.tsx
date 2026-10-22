@@ -31,7 +31,7 @@ function P({ children }: { children: ReactNode }) {
 }
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function A({ href, children }: { href: string; children: ReactNode }) {
@@ -45,16 +45,16 @@ function A({ href, children }: { href: string; children: ReactNode }) {
 /** Các bước đánh số — mỗi bước một tiêu đề h3 và nội dung. */
 function Steps({ items }: { items: { title: ReactNode; body: ReactNode }[] }) {
   return (
-    <ol className="flex max-w-4xl flex-col gap-XL">
+    <ol className="flex max-w-4xl flex-col gap-5">
       {items.map((s, i) => (
-        <li key={i} className="grid grid-cols-[2rem_minmax(0,1fr)] gap-M">
+        <li key={i} className="grid grid-cols-[2rem_minmax(0,1fr)] gap-3">
           <span
             aria-hidden
             className="flex size-8 items-center justify-center rounded-circular bg-brand-background-2 text-body1 font-semibold text-brand-foreground-2"
           >
             {i + 1}
           </span>
-          <div className="flex min-w-0 flex-col gap-S pt-XS">
+          <div className="flex min-w-0 flex-col gap-2 pt-1">
             <h3 className="text-subtitle2 font-semibold text-foreground-1">{s.title}</h3>
             {s.body}
           </div>
@@ -71,7 +71,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
             {head.map((h) => (
-              <th key={h} className="px-L py-S text-start">
+              <th key={h} className="px-4 py-2 text-start">
                 {h}
               </th>
             ))}
@@ -81,7 +81,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
           {rows.map((row, i) => (
             <tr key={i} className="border-b border-stroke-3 align-top last:border-b-0">
               {row.map((cell, j) => (
-                <td key={j} className={j === 0 ? "px-L py-M font-semibold text-foreground-1" : "px-L py-M text-foreground-2"}>
+                <td key={j} className={j === 0 ? "px-4 py-3 font-semibold text-foreground-1" : "px-4 py-3 text-foreground-2"}>
                   {cell}
                 </td>
               ))}
@@ -98,7 +98,7 @@ const FIRST = `import { Button, Field, Input, toast } from "yugen-ui";
 export function NewsletterForm() {
   return (
     <form
-      className="flex w-full max-w-sm flex-col gap-M"
+      className="flex w-full max-w-sm flex-col gap-3"
       onSubmit={(e) => {
         e.preventDefault();
         toast({ intent: "success", title: "Đã đăng ký", body: "Hẹn gặp bạn ở số bản tin tiếp theo." });
@@ -117,7 +117,7 @@ export function NewsletterForm() {
 function NewsletterForm() {
   return (
     <form
-      className="flex w-full max-w-sm flex-col gap-M"
+      className="flex w-full max-w-sm flex-col gap-3"
       onSubmit={(e) => {
         e.preventDefault();
         toast({ intent: "success", title: "Đã đăng ký", body: "Hẹn gặp bạn ở số bản tin tiếp theo." });
@@ -179,14 +179,14 @@ export default function Page() {
         title="Nhanh nhất: một lệnh"
         description="CLI chép template, cài phụ thuộc rồi chạy dev server. Không cần cấu hình gì thêm."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <CodeBlock code={TEMPLATE_COMMAND} />
           <P>
             Dự án starter có sẵn: lưu theme người dùng chọn, toast, alias <C>@/</C>, SEO cơ bản và một trang chào để xoá khi bắt đầu.
             Đổi <C>starter</C> thành <C>saas</C> (ứng dụng SaaS 8 trang), <C>blog</C> (blog Markdown), <C>dashboard</C> hoặc{" "}
             <C>ai-chat</C>, hoặc bỏ <C>--template</C> để chọn trong terminal. Các tuỳ chọn khác ở <A href="#/concepts/cli">@yugen-ui/cli</A>.
           </P>
-          <div className="flex flex-wrap gap-S">
+          <div className="flex flex-wrap gap-2">
             <Button asChild appearance="primary" icon={<Rocket16Regular />}>
               <a href="#/templates">Xem các template</a>
             </Button>
@@ -200,7 +200,7 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="existing" title="Thêm vào dự án có sẵn" description="React 19 (hoặc 18.3) và Tailwind CSS v4. Không cần alias hay cấu hình bundler.">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <PackageManagerTabs packages={CLI_INIT} command="dlx" />
           <P>
             Chọn <C>package</C> khi được hỏi: CLI cài <C>yugen-ui</C>, thêm dòng theme vào file CSS chính (hoặc <C>styles.css</C> nếu
@@ -233,7 +233,7 @@ export default function Page() {
               title: "Bọc ứng dụng bằng YugenProvider",
               body: (
                 <>
-                  <Tabs defaultValue="vite" className="flex flex-col gap-S">
+                  <Tabs defaultValue="vite" className="flex flex-col gap-2">
                     <TabsList aria-label="Framework">
                       <TabsTrigger value="vite">Vite</TabsTrigger>
                       <TabsTrigger value="next">Next.js</TabsTrigger>
@@ -262,7 +262,7 @@ export default function Page() {
         title="Cần tuỳ biến sâu?"
         description="Chép mã nguồn component vào dự án để sửa trực tiếp, thay vì dùng bản dựng sẵn trong gói npm. Chạy init một lần, sau đó add từng component."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <PackageManagerTabs packages={CLI_INIT_SOURCE} command="dlx" />
           <PackageManagerTabs packages={CLI_ADD} command="dlx" />
           <P>
@@ -274,8 +274,8 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="first-component" title="Component đầu tiên" description="Field gắn nhãn, gợi ý và aria-* cho Input; toast() hiện phản hồi ngắn sau khi gửi.">
-        <div className="flex flex-col gap-L">
-          <div className="flex flex-wrap items-center gap-M rounded-2xlarge border border-stroke-2 bg-background-1 p-XXL">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-wrap items-center gap-3 rounded-2xlarge border border-stroke-2 bg-background-1 p-6">
             <NewsletterForm />
           </div>
           <CodeBlock code={FIRST} />
@@ -287,7 +287,7 @@ export default function Page() {
         title="Nhớ theme & chống nháy (tuỳ chọn)"
         description="Template đã làm sẵn phần này. Tự dựng thì cần hai mảnh: state lưu lựa chọn và script nhỏ đặt theme trước khi trang hiện."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <CodeBlock code={PERSIST} />
           <P>
             <C>YugenProvider</C> ghi attribute trong <C>useEffect</C> (sau lần vẽ đầu), nên thêm script vào <C>{"<head>"}</C> để không chớp
@@ -302,7 +302,7 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="requirements" title="Yêu cầu">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <SimpleTable
             head={["Công nghệ", "Phiên bản", "Ghi chú"]}
             rows={[
@@ -313,7 +313,7 @@ export default function Page() {
               ["Node.js", "18+", "Theo yêu cầu của Vite 6 và Tailwind 4."],
             ]}
           />
-          <div className="flex flex-wrap gap-S">
+          <div className="flex flex-wrap gap-2">
             <Button asChild>
               <a href="#/concepts/styling">Tuỳ biến style</a>
             </Button>

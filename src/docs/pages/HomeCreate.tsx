@@ -13,7 +13,7 @@ export function HomeCreate() {
   const command = templateCreateCommand(dir);
 
   return (
-    <div className="flex flex-col gap-L rounded-2xlarge border border-stroke-2 bg-background-1 p-L md:p-XL">
+    <div className="flex flex-col gap-4 rounded-2xlarge border border-stroke-2 bg-background-1 p-4 md:p-5">
       <ToggleGroup
         type="single"
         appearance="subtle"
@@ -29,14 +29,14 @@ export function HomeCreate() {
         ))}
       </ToggleGroup>
       <p className="max-w-3xl text-body1 text-foreground-2">{template[locale].description}</p>
-      <div className="flex items-start gap-S rounded-large border border-stroke-2 bg-background-3 py-XS ps-M pe-XS">
-        <code className="min-w-0 flex-1 py-XS font-mono text-body1 wrap-anywhere text-foreground-1">
+      <div className="flex items-start gap-2 rounded-large border border-stroke-2 bg-background-3 py-1 ps-3 pe-1">
+        <code className="min-w-0 flex-1 py-1 font-mono text-body1 wrap-anywhere text-foreground-1">
           <span className="text-foreground-3 select-none">$ </span>
           {command}
         </code>
         <CopyButton text={command} />
       </div>
-      <div className="flex flex-wrap gap-S">
+      <div className="flex flex-wrap gap-2">
         <Button asChild appearance="primary" icon={<Eye16Regular />}>
           <a href="#/templates">{t("home.createPreview")}</a>
         </Button>

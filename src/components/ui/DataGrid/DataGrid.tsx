@@ -439,7 +439,7 @@ function RowViewImpl<T>({
           tabIndex={cellTab(c.colIndex)}
           style={c.stickyOffset !== undefined ? { insetInlineStart: c.stickyOffset } : undefined}
           className={cn(
-            "flex min-w-0 items-center gap-S overflow-hidden px-S",
+            "flex min-w-0 items-center gap-2 overflow-hidden px-2",
             ALIGN[c.column.align ?? "start"],
             FOCUS_RING,
             c.stickyOffset !== undefined && "sticky z-1 bg-inherit",
@@ -868,7 +868,7 @@ function DataGridImpl<T>(
           </div>
         )}
         {resolved.map((c, i) => (
-          <div key={c.column.columnId} className={cn("flex min-w-0 px-S", ALIGN[c.column.align ?? "start"])}>
+          <div key={c.column.columnId} className={cn("flex min-w-0 px-2", ALIGN[c.column.align ?? "start"])}>
             <SkeletonItem size={12} className={SKELETON_WIDTHS[(r + i) % SKELETON_WIDTHS.length]} />
           </div>
         ))}
@@ -995,7 +995,7 @@ function DataGridImpl<T>(
                 tabIndex={headerTab(c.colIndex)}
                 style={c.stickyOffset !== undefined ? { insetInlineStart: c.stickyOffset } : undefined}
                 className={cn(
-                  "group/header relative flex min-w-0 items-center gap-XS px-S font-semibold select-none",
+                  "group/header relative flex min-w-0 items-center gap-1 px-2 font-semibold select-none",
                   ALIGN[c.column.align ?? "start"],
                   FOCUS_RING,
                   c.sortable &&

@@ -494,7 +494,7 @@ export const SheetContent = React.forwardRef<React.ElementRef<typeof DialogPrimi
           {...props}
         >
           {isBottom && handle && (
-            <div className="flex shrink-0 touch-none justify-center pt-S">
+            <div className="flex shrink-0 touch-none justify-center pt-2">
               {snapPoints.length > 1 ? (
                 <button
                   type="button"
@@ -511,7 +511,7 @@ export const SheetContent = React.forwardRef<React.ElementRef<typeof DialogPrimi
                   <span className="h-1 w-9 rounded-circular bg-stroke-accessible transition-colors duration-faster ease-easy-ease group-hover/handle:bg-foreground-3" />
                 </button>
               ) : (
-                <span aria-hidden className="my-MNudge h-1 w-9 rounded-circular bg-stroke-accessible" />
+                <span aria-hidden className="my-2.5 h-1 w-9 rounded-circular bg-stroke-accessible" />
               )}
             </div>
           )}
@@ -533,11 +533,11 @@ export function SheetHeader({ className, action, children, ...props }: SheetHead
   const { isBottom } = useSheet();
   return (
     <div
-      className={cn("flex shrink-0 items-start gap-S px-XXL pt-XXL pb-S", isBottom && "touch-none pt-S", className)}
+      className={cn("flex shrink-0 items-start gap-2 px-6 pt-6 pb-2", isBottom && "touch-none pt-2", className)}
       {...props}
     >
-      <div className="flex min-w-0 flex-1 flex-col gap-XS">{children}</div>
-      {action && <div className="-me-XS -mt-XXS flex shrink-0 items-center gap-XS">{action}</div>}
+      <div className="flex min-w-0 flex-1 flex-col gap-1">{children}</div>
+      {action && <div className="-me-1 -mt-0.5 flex shrink-0 items-center gap-1">{action}</div>}
     </div>
   );
 }
@@ -578,7 +578,7 @@ export const SheetBody = React.forwardRef<HTMLDivElement, React.HTMLAttributes<H
         setRef(ref, el);
       }}
       className={cn(
-        "min-h-0 flex-1 overscroll-contain px-XXL py-S text-body1 text-foreground-1",
+        "min-h-0 flex-1 overscroll-contain px-6 py-2 text-body1 text-foreground-1",
         scrollable ? "overflow-y-auto" : "overflow-hidden",
         isBottom && (scrollable ? "touch-pan-y" : "touch-none"),
         isBottom && "pb-[calc(var(--spacingS)+env(safe-area-inset-bottom))]",
@@ -596,10 +596,10 @@ export function SheetFooter({ className, ...props }: React.HTMLAttributes<HTMLDi
   return (
     <div
       className={cn(
-        "flex shrink-0 flex-wrap items-center gap-S px-XXL pt-L pb-XXL",
+        "flex shrink-0 flex-wrap items-center gap-2 px-6 pt-4 pb-6",
         isBottom &&
           cn(
-            "relative z-10 touch-none border-t border-stroke-2 bg-background-1 pt-M pb-[calc(var(--spacingL)+env(safe-area-inset-bottom))]",
+            "relative z-10 touch-none border-t border-stroke-2 bg-background-1 pt-3 pb-[calc(var(--spacingL)+env(safe-area-inset-bottom))]",
             "-translate-y-(--sheet-offset) transition-[translate] duration-gentle ease-decelerate-mid",
             "group-data-dragging/sheet:transition-none motion-reduce:transition-none",
           ),

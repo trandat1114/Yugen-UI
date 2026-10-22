@@ -47,7 +47,7 @@ export const InfoLabel = React.forwardRef<HTMLLabelElement, InfoLabelProps>(
     const [Rest, Active] = size === "large" ? [Info20Regular, Info20Filled] : [Info16Regular, Info16Filled];
 
     return (
-      <span className={cn("inline-flex items-center gap-XXS align-middle", rootClassName)}>
+      <span className={cn("inline-flex items-center gap-0.5 align-middle", rootClassName)}>
         <label
           ref={ref}
           id={labelId}
@@ -61,7 +61,7 @@ export const InfoLabel = React.forwardRef<HTMLLabelElement, InfoLabelProps>(
         >
           {children}
           {required && (
-            <span aria-hidden className="ps-XS text-danger-foreground-1">
+            <span aria-hidden className="ps-1 text-danger-foreground-1">
               *
             </span>
           )}

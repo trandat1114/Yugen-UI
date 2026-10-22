@@ -11,7 +11,7 @@ export const Empty = React.forwardRef<HTMLDivElement, EmptyProps>(({ variant = "
   <div
     ref={ref}
     className={cn(
-      "flex min-w-0 flex-1 flex-col items-center justify-center gap-L p-XXL text-center text-balance",
+      "flex min-w-0 flex-1 flex-col items-center justify-center gap-4 p-6 text-center text-balance",
       variant === "outline" && "rounded-2xlarge border border-dashed border-stroke-1",
       className,
     )}
@@ -21,7 +21,7 @@ export const Empty = React.forwardRef<HTMLDivElement, EmptyProps>(({ variant = "
 Empty.displayName = "Empty";
 
 export function EmptyHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("flex max-w-sm flex-col items-center gap-S", className)} {...props} />;
+  return <div className={cn("flex max-w-sm flex-col items-center gap-2", className)} {...props} />;
 }
 
 export interface EmptyMediaProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -33,7 +33,7 @@ export function EmptyMedia({ variant = "icon", className, ...props }: EmptyMedia
   return (
     <div
       className={cn(
-        "mb-XS flex shrink-0 items-center justify-center",
+        "mb-1 flex shrink-0 items-center justify-center",
         variant === "icon" && "size-12 rounded-xlarge bg-background-4 text-foreground-2 [&_svg]:size-6",
         className,
       )}
@@ -57,5 +57,5 @@ export function EmptyDescription({ className, ...props }: React.HTMLAttributes<H
 
 /** Vùng hành động (Button, Link…) bên dưới tiêu đề. */
 export function EmptyContent({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("flex w-full max-w-sm flex-wrap items-center justify-center gap-S", className)} {...props} />;
+  return <div className={cn("flex w-full max-w-sm flex-wrap items-center justify-center gap-2", className)} {...props} />;
 }

@@ -16,7 +16,7 @@ export const meta = { title: "Hộp thoại chào mừng", description: "Dialog 
 
 export default function WelcomeDialogBlock() {
   return (
-    <Card className="max-w-md items-start gap-M rounded-xlarge p-XL">
+    <Card className="max-w-md items-start gap-3 rounded-xlarge p-5">
       <p className="text-subtitle2 font-semibold text-foreground-1">Lần đầu đăng nhập</p>
       <p className="text-body1 text-foreground-2">Giới thiệu ngắn trước khi người dùng bắt đầu, có thể để sau.</p>
       <Dialog>

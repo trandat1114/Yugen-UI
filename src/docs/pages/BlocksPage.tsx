@@ -26,14 +26,14 @@ function BlockCard({ meta, Component, source }: (typeof BLOCKS)[number]) {
   const [mode, setMode] = React.useState<"preview" | "code">("preview");
 
   return (
-    <article className="mb-XL flex break-inside-avoid flex-col overflow-hidden rounded-3xlarge border border-stroke-2 bg-background-1 shadow-2">
-      <header className="flex items-center justify-between gap-M border-b border-stroke-2 px-L py-S">
+    <article className="mb-5 flex break-inside-avoid flex-col overflow-hidden rounded-3xlarge border border-stroke-2 bg-background-1 shadow-2">
+      <header className="flex items-center justify-between gap-3 border-b border-stroke-2 px-4 py-2">
         <div className="min-w-0">
           <h2 className="truncate text-subtitle2 font-semibold">{meta.title}</h2>
           <p className="truncate text-caption1 text-foreground-3">{meta.description}</p>
         </div>
-        <div className="flex shrink-0 items-center gap-XS">
-          <div className="inline-flex rounded-medium bg-background-3 p-XXS" role="tablist" aria-label="Chế độ xem">
+        <div className="flex shrink-0 items-center gap-1">
+          <div className="inline-flex rounded-medium bg-background-3 p-0.5" role="tablist" aria-label="Chế độ xem">
             {(["preview", "code"] as const).map((m) => (
               <button
                 key={m}
@@ -56,7 +56,7 @@ function BlockCard({ meta, Component, source }: (typeof BLOCKS)[number]) {
         </div>
       </header>
       {mode === "preview" ? (
-        <div className="flex justify-center bg-background-3 p-XL">
+        <div className="flex justify-center bg-background-3 p-5">
           <div className="w-full">
             <Component />
           </div>
@@ -70,7 +70,7 @@ function BlockCard({ meta, Component, source }: (typeof BLOCKS)[number]) {
 
 export function BlocksPage() {
   return (
-    <div className="pb-XXXL">
+    <div className="pb-8">
       <PageHeader
         eyebrow="Blocks"
         title="Blocks"
@@ -79,7 +79,7 @@ export function BlocksPage() {
         Mỗi block là một file trong <code className="font-mono text-caption1">src/docs/block-library/</code>. Tab “Code” hiển thị đúng
         mã nguồn của file đó.
       </PageHeader>
-      <div className="columns-1 gap-XL lg:columns-2 2xl:columns-3">
+      <div className="columns-1 gap-5 lg:columns-2 2xl:columns-3">
         {BLOCKS.map((b) => (
           <BlockCard key={b.path} {...b} />
         ))}

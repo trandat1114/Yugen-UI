@@ -120,7 +120,7 @@ import type { ComponentDoc } from "../types";
 function MuteDemo() {
   const [muted, setMuted] = useState(false);
   return (
-    <div className="flex items-center gap-S">
+    <div className="flex items-center gap-2">
       <ToggleButton
         checked={muted}
         onCheckedChange={setMuted}
@@ -147,7 +147,7 @@ function AlignDemo() {
 function PaginationDemo() {
   const [page, setPage] = useState(1);
   return (
-    <div className="flex flex-col items-center gap-S">
+    <div className="flex flex-col items-center gap-2">
       <Pagination page={page} pageCount={20} onPageChange={setPage} />
       <span className="text-caption1 text-foreground-3">Trang {page} / 20</span>
     </div>
@@ -275,7 +275,7 @@ function CommandDialogDemo() {
     <>
       <Button icon={<Search20Regular />} onClick={() => setOpen(true)}>
         Mở bảng lệnh
-        <KbdGroup className="ms-XS">
+        <KbdGroup className="ms-1">
           <Kbd>Ctrl</Kbd>
           <Kbd>K</Kbd>
         </KbdGroup>
@@ -464,7 +464,7 @@ export const docs: ComponentDoc[] = [
         description: "checked / onCheckedChange; nhãn aria-label giữ cố định, trạng thái do aria-pressed truyền đạt.",
         code: `const [muted, setMuted] = useState(false);
 
-<div className="flex items-center gap-S">
+<div className="flex items-center gap-2">
   <ToggleButton
     checked={muted}
     onCheckedChange={setMuted}
@@ -695,7 +695,7 @@ export const docs: ComponentDoc[] = [
       {
         title: "Kích thước",
         description: "small và large (medium là mặc định).",
-        code: `<div className="flex flex-col items-center gap-M">
+        code: `<div className="flex flex-col items-center gap-3">
   <Toolbar size="small" aria-label="Toolbar small">
     <ToolbarButton icon={<Cut20Regular />} aria-label="Cắt" />
     <ToolbarButton icon={<Copy20Regular />} aria-label="Sao chép" />
@@ -708,7 +708,7 @@ export const docs: ComponentDoc[] = [
   </Toolbar>
 </div>`,
         render: () => (
-          <div className="flex flex-col items-center gap-M">
+          <div className="flex flex-col items-center gap-3">
             <Toolbar size="small" aria-label="Toolbar small">
               <ToolbarButton icon={<Cut20Regular />} aria-label="Cắt" />
               <ToolbarButton icon={<Copy20Regular />} aria-label="Sao chép" />
@@ -971,7 +971,7 @@ export const docs: ComponentDoc[] = [
       {
         title: "Kích thước & icon",
         description: "small, large; icon đặt ở mục gốc.",
-        code: `<div className="flex flex-col items-center gap-M">
+        code: `<div className="flex flex-col items-center gap-3">
   <Breadcrumb size="small">
     <BreadcrumbItem>
       <BreadcrumbButton icon={<Home20Regular />}>Trang chủ</BreadcrumbButton>
@@ -992,7 +992,7 @@ export const docs: ComponentDoc[] = [
   </Breadcrumb>
 </div>`,
         render: () => (
-          <div className="flex flex-col items-center gap-M">
+          <div className="flex flex-col items-center gap-3">
             <Breadcrumb size="small">
               <BreadcrumbItem>
                 <BreadcrumbButton icon={<Home20Regular />}>Trang chủ</BreadcrumbButton>
@@ -1082,7 +1082,7 @@ export const docs: ComponentDoc[] = [
         title: "Controlled",
         code: `const [page, setPage] = useState(1);
 
-<div className="flex flex-col items-center gap-S">
+<div className="flex flex-col items-center gap-2">
   <Pagination page={page} pageCount={20} onPageChange={setPage} />
   <span className="text-caption1 text-foreground-3">Trang {page} / 20</span>
 </div>`,
@@ -1091,12 +1091,12 @@ export const docs: ComponentDoc[] = [
       {
         title: "siblingCount & ít trang",
         description: "siblingCount={2} hiện thêm trang hai bên; khi ít trang, mọi trang đều hiển thị.",
-        code: `<div className="flex flex-col items-center gap-M">
+        code: `<div className="flex flex-col items-center gap-3">
   <Pagination pageCount={50} defaultPage={25} siblingCount={2} />
   <Pagination pageCount={5} defaultPage={2} />
 </div>`,
         render: () => (
-          <div className="flex flex-col items-center gap-M">
+          <div className="flex flex-col items-center gap-3">
             <Pagination pageCount={50} defaultPage={25} siblingCount={2} />
             <Pagination pageCount={5} defaultPage={2} />
           </div>
@@ -1620,7 +1620,7 @@ useEffect(() => {
 <>
   <Button icon={<Search20Regular />} onClick={() => setOpen(true)}>
     Mở bảng lệnh
-    <KbdGroup className="ms-XS">
+    <KbdGroup className="ms-1">
       <Kbd>Ctrl</Kbd>
       <Kbd>K</Kbd>
     </KbdGroup>

@@ -38,7 +38,7 @@ export function TopBar({
   const ModeIcon = appearance.theme === "high-contrast" ? Accessibility20Regular : appearance.theme === "dark" ? WeatherMoon20Regular : WeatherSunny20Regular;
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-S bg-shell/85 px-M backdrop-blur-md sm:px-L lg:h-18.5 lg:gap-M lg:px-12">
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-2 bg-shell/85 px-3 backdrop-blur-md sm:px-4 lg:h-18.5 lg:gap-3 lg:px-12">
       <button
         type="button"
         onClick={onOpenNav}
@@ -47,7 +47,7 @@ export function TopBar({
       >
         <Navigation20Regular />
       </button>
-      <a href="#/" className="flex shrink-0 items-center gap-S whitespace-nowrap lg:hidden">
+      <a href="#/" className="flex shrink-0 items-center gap-2 whitespace-nowrap lg:hidden">
         <YugenMark size={24} />
         <span className="text-subtitle2 font-semibold">Yugen UI</span>
       </a>
@@ -55,7 +55,7 @@ export function TopBar({
       <button
         type="button"
         onClick={onOpenPalette}
-        className="ms-auto inline-flex size-8 shrink-0 items-center justify-center gap-S rounded-medium text-body1 text-foreground-3 transition-colors duration-faster hover:text-foreground-1 sm:ms-L sm:h-8 sm:w-auto sm:flex-1 sm:justify-start sm:border sm:border-stroke-2 sm:bg-background-1 sm:ps-S sm:pe-XS sm:hover:border-stroke-1-hover md:max-w-72 lg:ms-0 lg:w-72 lg:flex-none"
+        className="ms-auto inline-flex size-8 shrink-0 items-center justify-center gap-2 rounded-medium text-body1 text-foreground-3 transition-colors duration-faster hover:text-foreground-1 sm:ms-4 sm:h-8 sm:w-auto sm:flex-1 sm:justify-start sm:border sm:border-stroke-2 sm:bg-background-1 sm:ps-2 sm:pe-1 sm:hover:border-stroke-1-hover md:max-w-72 lg:ms-0 lg:w-72 lg:flex-none"
       >
         <Search20Regular className="shrink-0" />
         <span className="flex-1 truncate text-start max-sm:sr-only">{t("topbar.search")}</span>
@@ -65,7 +65,7 @@ export function TopBar({
         </KbdGroup>
       </button>
 
-      <div className="flex shrink-0 items-center gap-XS sm:ms-auto">
+      <div className="flex shrink-0 items-center gap-1 sm:ms-auto">
         <div className="hidden lg:block">
           <VersionMenu />
         </div>
@@ -87,7 +87,7 @@ export function TopBar({
             appearance="subtle"
             lang={nextLang}
             onClick={() => onChange({ lang: nextLang })}
-            className="gap-XS px-XS text-caption1 font-semibold"
+            className="gap-1 px-1 text-caption1 font-semibold"
           >
             <LocalLanguage20Regular />
             {LANGS[nextLang].short}

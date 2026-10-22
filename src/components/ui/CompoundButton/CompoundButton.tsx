@@ -8,9 +8,9 @@ type CompoundSize = "small" | "medium" | "large";
 
 /** Cao tự do, icon lớn (32 / 40px), hai dòng chữ. Ghi đè chiều cao/padding của buttonVariants qua cn(). */
 const SIZE: Record<CompoundSize, string> = {
-  small: "h-auto gap-S p-S text-caption1 [&_svg]:size-8",
-  medium: "h-auto gap-M p-M text-body1 [&_svg]:size-10",
-  large: "h-auto gap-M p-L text-body2 [&_svg]:size-10",
+  small: "h-auto gap-2 p-2 text-caption1 [&_svg]:size-8",
+  medium: "h-auto gap-3 p-3 text-body1 [&_svg]:size-10",
+  large: "h-auto gap-3 p-4 text-body2 [&_svg]:size-10",
 };
 
 const SECONDARY_SIZE: Record<CompoundSize, string> = {

@@ -12,7 +12,7 @@ export const MenuSub = MenuPrimitive.Sub;
 
 /** Class dùng chung cho mọi bề mặt menu (Menu, ContextMenu, Menubar). */
 export const menuPopoverClass = cn(
-  "z-50 min-w-40 max-w-80 overflow-hidden rounded-medium border border-transparent bg-background-1 p-XS text-foreground-1 shadow-16",
+  "z-50 min-w-40 max-w-80 overflow-hidden rounded-medium border border-transparent bg-background-1 p-1 text-foreground-1 shadow-16",
   "animate-surface-in data-[state=closed]:animate-fade-out",
 );
 
@@ -38,7 +38,7 @@ MenuPopover.displayName = "MenuPopover";
 
 /** Class dùng chung cho mọi item menu. */
 export const menuItemClass = cn(
-  "relative flex h-8 cursor-pointer items-center gap-S rounded-medium px-S text-body1 text-foreground-2 outline-none select-none",
+  "relative flex h-8 cursor-pointer items-center gap-2 rounded-medium px-2 text-body1 text-foreground-2 outline-none select-none",
   "data-highlighted:bg-background-1-hover data-highlighted:text-foreground-1 active:bg-background-1-pressed",
   "data-disabled:pointer-events-none data-disabled:text-foreground-disabled",
   "[&_svg]:size-5 [&_svg]:shrink-0",
@@ -54,7 +54,7 @@ export const MenuItem = React.forwardRef<React.ElementRef<typeof MenuPrimitive.I
     <MenuPrimitive.Item ref={ref} className={cn(menuItemClass, className)} {...props}>
       {icon}
       <span className="min-w-0 flex-1 truncate">{children}</span>
-      {secondaryContent && <span className="ps-L text-caption1 text-foreground-3">{secondaryContent}</span>}
+      {secondaryContent && <span className="ps-4 text-caption1 text-foreground-3">{secondaryContent}</span>}
     </MenuPrimitive.Item>
   ),
 );
@@ -65,7 +65,7 @@ export const MenuItemRadio = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof MenuPrimitive.RadioItem> & { icon?: React.ReactNode }
 >(({ className, icon, children, ...props }, ref) => (
   <MenuPrimitive.RadioItem ref={ref} className={cn(menuItemClass, "ps-8", className)} {...props}>
-    <span className="absolute inset-s-S flex size-4 items-center justify-center">
+    <span className="absolute inset-s-2 flex size-4 items-center justify-center">
       <MenuPrimitive.ItemIndicator>
         <Checkmark16Filled className="size-4! text-foreground-1" />
       </MenuPrimitive.ItemIndicator>
@@ -81,7 +81,7 @@ export const MenuItemCheckbox = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof MenuPrimitive.CheckboxItem> & { icon?: React.ReactNode }
 >(({ className, icon, children, ...props }, ref) => (
   <MenuPrimitive.CheckboxItem ref={ref} className={cn(menuItemClass, "ps-8", className)} {...props}>
-    <span className="absolute inset-s-S flex size-4 items-center justify-center">
+    <span className="absolute inset-s-2 flex size-4 items-center justify-center">
       <MenuPrimitive.ItemIndicator>
         <Checkmark16Filled className="size-4! text-foreground-1" />
       </MenuPrimitive.ItemIndicator>
@@ -93,13 +93,13 @@ export const MenuItemCheckbox = React.forwardRef<
 MenuItemCheckbox.displayName = "MenuItemCheckbox";
 
 export function MenuDivider({ className }: { className?: string }) {
-  return <MenuPrimitive.Separator className={cn("-mx-XS my-XS h-px bg-stroke-2", className)} />;
+  return <MenuPrimitive.Separator className={cn("-mx-1 my-1 h-px bg-stroke-2", className)} />;
 }
 
 export function MenuGroupHeader({ className, ...props }: React.ComponentPropsWithoutRef<typeof MenuPrimitive.Label>) {
   return (
     <MenuPrimitive.Label
-      className={cn("flex h-8 items-center px-S text-caption1 font-semibold text-foreground-3", className)}
+      className={cn("flex h-8 items-center px-2 text-caption1 font-semibold text-foreground-3", className)}
       {...props}
     />
   );

@@ -92,7 +92,7 @@ export const Reasoning = React.forwardRef<HTMLDivElement, ReasoningProps>(
         <div ref={ref} data-streaming={streaming || undefined} className={cn("flex min-w-0 flex-col", className)} {...props}>
           <CollapsibleTrigger
             className={cn(
-              "group/reasoning -mx-XS inline-flex max-w-full items-center gap-XS self-start rounded-medium px-XS py-XXS text-caption1 text-foreground-3",
+              "group/reasoning -mx-1 inline-flex max-w-full items-center gap-1 self-start rounded-medium px-1 py-0.5 text-caption1 text-foreground-3",
               "transition-colors duration-faster ease-easy-ease hover:bg-subtle-hover hover:text-foreground-1 active:bg-subtle-pressed",
             )}
           >
@@ -110,7 +110,7 @@ export const Reasoning = React.forwardRef<HTMLDivElement, ReasoningProps>(
               className="shrink-0 transition-transform duration-normal ease-easy-ease group-data-[state=open]/reasoning:rotate-180 motion-reduce:transition-none"
             />
           </CollapsibleTrigger>
-          <CollapsibleContent aria-busy={streaming || undefined} className="mt-XS border-s-2 border-stroke-2 ps-M text-foreground-2">
+          <CollapsibleContent aria-busy={streaming || undefined} className="mt-1 border-s-2 border-stroke-2 ps-3 text-foreground-2">
             {typeof children === "string" ? (
               <StreamingMarkdown size="small" streaming={streaming} className="text-foreground-2">
                 {children}

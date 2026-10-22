@@ -62,7 +62,7 @@ function UploadDemo() {
   const done = value >= 1;
 
   return (
-    <div className="flex w-72 flex-col gap-M">
+    <div className="flex w-72 flex-col gap-3">
       <ProgressBar
         value={value}
         color={done ? "success" : "brand"}
@@ -188,12 +188,12 @@ function InlineDrawerDemo() {
           <DrawerHeaderTitle>Điều hướng</DrawerHeaderTitle>
         </DrawerHeader>
         <DrawerBody>
-          <nav className="flex flex-col gap-XXS">
+          <nav className="flex flex-col gap-0.5">
             {["Trang chủ", "Tệp của tôi", "Đã chia sẻ", "Thùng rác"].map((item) => (
               <a
                 key={item}
                 href="#/components/drawer"
-                className="rounded-medium px-S py-SNudge text-foreground-2 hover:bg-subtle-hover hover:text-foreground-1"
+                className="rounded-medium px-2 py-1.5 text-foreground-2 hover:bg-subtle-hover hover:text-foreground-1"
               >
                 {item}
               </a>
@@ -201,7 +201,7 @@ function InlineDrawerDemo() {
           </nav>
         </DrawerBody>
       </InlineDrawer>
-      <div className="flex min-w-0 flex-1 flex-col items-start gap-M p-L">
+      <div className="flex min-w-0 flex-1 flex-col items-start gap-3 p-4">
         <Button icon={<Navigation20Regular />} onClick={() => setOpen((v) => !v)}>
           {open ? "Ẩn điều hướng" : "Hiện điều hướng"}
         </Button>
@@ -231,7 +231,7 @@ function DrawerDemo() {
           </DrawerHeaderTitle>
         </DrawerHeader>
         <DrawerBody>
-          <div className="flex flex-col gap-M">
+          <div className="flex flex-col gap-3">
             <Checkbox label="Chỉ tệp của tôi" defaultChecked />
             <Checkbox label="Được chia sẻ với tôi" />
             <Checkbox label="Đã gắn sao" />
@@ -288,21 +288,21 @@ function CollapsibleDemo() {
   const [open, setOpen] = useState(false);
   return (
     <Collapsible open={open} onOpenChange={setOpen} className="w-72">
-      <ul className="flex flex-col gap-XS text-body1">
-        <li className="rounded-medium bg-background-3 px-M py-S">Báo cáo Q3.docx</li>
-        <li className="rounded-medium bg-background-3 px-M py-S">Kế hoạch 2027.xlsx</li>
+      <ul className="flex flex-col gap-1 text-body1">
+        <li className="rounded-medium bg-background-3 px-3 py-2">Báo cáo Q3.docx</li>
+        <li className="rounded-medium bg-background-3 px-3 py-2">Kế hoạch 2027.xlsx</li>
       </ul>
       <CollapsibleContent>
-        <ul className="flex flex-col gap-XS pt-XS text-body1">
-          <li className="rounded-medium bg-background-3 px-M py-S">Biên bản họp.docx</li>
-          <li className="rounded-medium bg-background-3 px-M py-S">Ngân sách.xlsx</li>
-          <li className="rounded-medium bg-background-3 px-M py-S">Thiết kế.fig</li>
+        <ul className="flex flex-col gap-1 pt-1 text-body1">
+          <li className="rounded-medium bg-background-3 px-3 py-2">Biên bản họp.docx</li>
+          <li className="rounded-medium bg-background-3 px-3 py-2">Ngân sách.xlsx</li>
+          <li className="rounded-medium bg-background-3 px-3 py-2">Thiết kế.fig</li>
         </ul>
       </CollapsibleContent>
       <CollapsibleTrigger asChild>
         <Button
           appearance="transparent"
-          className="mt-S"
+          className="mt-2"
           iconPosition="after"
           icon={<ChevronDown20Regular className={open ? "rotate-180" : undefined} />}
         >
@@ -320,7 +320,7 @@ function CalendarDemo() {
       mode="single"
       selected={date}
       onSelect={setDate}
-      className="rounded-medium bg-background-1 p-S shadow-4"
+      className="rounded-medium bg-background-1 p-2 shadow-4"
     />
   );
 }
@@ -338,7 +338,7 @@ function CalendarRangeDemo() {
 function CalendarMultipleDemo() {
   const [days, setDays] = useState<Date[] | undefined>([]);
   return (
-    <div className="flex flex-col items-center gap-S">
+    <div className="flex flex-col items-center gap-2">
       <Calendar mode="multiple" selected={days} onSelect={setDays} disabled={{ dayOfWeek: [0, 6] }} />
       <span className="text-caption1 text-foreground-3">Đã chọn {days?.length ?? 0} ngày làm việc</span>
     </div>
@@ -397,7 +397,7 @@ const FEEDBACK: Record<string, ComponentDoc> = {
       {
         title: "Màu, độ dày & hình dạng",
         description: "thickness medium (2px) / large (4px); shape rounded / square. Không có label thì đặt aria-label.",
-        code: `<div className="flex w-72 flex-col gap-L">
+        code: `<div className="flex w-72 flex-col gap-4">
   <ProgressBar value={0.4} aria-label="Mặc định" />
   <ProgressBar value={0.4} thickness="large" aria-label="Dày" />
   <ProgressBar value={1} color="success" thickness="large" aria-label="Hoàn tất" />
@@ -405,7 +405,7 @@ const FEEDBACK: Record<string, ComponentDoc> = {
   <ProgressBar value={0.3} color="error" thickness="large" shape="square" aria-label="Lỗi tải lên" />
 </div>`,
         render: () => (
-          <div className="flex w-72 flex-col gap-L">
+          <div className="flex w-72 flex-col gap-4">
             <ProgressBar value={0.4} aria-label="Mặc định" />
             <ProgressBar value={0.4} thickness="large" aria-label="Dày" />
             <ProgressBar value={1} color="success" thickness="large" aria-label="Hoàn tất" />
@@ -434,7 +434,7 @@ const FEEDBACK: Record<string, ComponentDoc> = {
   const done = value >= 1;
 
   return (
-    <div className="flex w-72 flex-col gap-M">
+    <div className="flex w-72 flex-col gap-3">
       <ProgressBar
         value={value}
         color={done ? "success" : "brand"}
@@ -536,11 +536,11 @@ const FEEDBACK: Record<string, ComponentDoc> = {
       {
         title: "Inverted",
         description: "Dùng trên nền brand hoặc nền tối.",
-        code: `<div className="flex items-center rounded-medium bg-brand-background px-L py-M">
+        code: `<div className="flex items-center rounded-medium bg-brand-background px-4 py-3">
   <Spinner appearance="inverted" size="tiny" label="Đang gửi…" />
 </div>`,
         render: () => (
-          <div className="flex items-center rounded-medium bg-brand-background px-L py-M">
+          <div className="flex items-center rounded-medium bg-brand-background px-4 py-3">
             <Spinner appearance="inverted" size="tiny" label="Đang gửi…" />
           </div>
         ),
@@ -580,9 +580,9 @@ const FEEDBACK: Record<string, ComponentDoc> = {
     hero: {
       title: "Skeleton",
       code: `<Skeleton className="w-80" aria-label="Đang tải bài viết">
-  <div className="flex items-center gap-M">
+  <div className="flex items-center gap-3">
     <SkeletonItem shape="circle" size={40} />
-    <div className="flex flex-1 flex-col gap-S">
+    <div className="flex flex-1 flex-col gap-2">
       <SkeletonItem size={12} className="w-1/2" />
       <SkeletonItem size={12} className="w-1/3" />
     </div>
@@ -593,9 +593,9 @@ const FEEDBACK: Record<string, ComponentDoc> = {
 </Skeleton>`,
       render: () => (
         <Skeleton className="w-80" aria-label="Đang tải bài viết">
-          <div className="flex items-center gap-M">
+          <div className="flex items-center gap-3">
             <SkeletonItem shape="circle" size={40} />
-            <div className="flex flex-1 flex-col gap-S">
+            <div className="flex flex-1 flex-col gap-2">
               <SkeletonItem size={12} className="w-1/2" />
               <SkeletonItem size={12} className="w-1/3" />
             </div>
@@ -626,13 +626,13 @@ const FEEDBACK: Record<string, ComponentDoc> = {
       {
         title: "Hình dạng",
         description: "circle, square, rectangle.",
-        code: `<Skeleton className="flex-row items-center gap-L">
+        code: `<Skeleton className="flex-row items-center gap-4">
   <SkeletonItem shape="circle" size={48} />
   <SkeletonItem shape="square" size={48} />
   <SkeletonItem shape="rectangle" size={48} className="w-32" />
 </Skeleton>`,
         render: () => (
-          <Skeleton className="flex-row items-center gap-L">
+          <Skeleton className="flex-row items-center gap-4">
             <SkeletonItem shape="circle" size={48} />
             <SkeletonItem shape="square" size={48} />
             <SkeletonItem shape="rectangle" size={48} className="w-32" />
@@ -642,7 +642,7 @@ const FEEDBACK: Record<string, ComponentDoc> = {
       {
         title: "Translucent",
         description: "Bán trong suốt, dùng trên bề mặt có màu nền.",
-        code: `<div className="rounded-xlarge bg-background-4 p-L">
+        code: `<div className="rounded-xlarge bg-background-4 p-4">
   <Skeleton appearance="translucent" className="w-64">
     <SkeletonItem shape="square" size={64} />
     <SkeletonItem size={12} />
@@ -650,7 +650,7 @@ const FEEDBACK: Record<string, ComponentDoc> = {
   </Skeleton>
 </div>`,
         render: () => (
-          <div className="rounded-xlarge bg-background-4 p-L">
+          <div className="rounded-xlarge bg-background-4 p-4">
             <Skeleton appearance="translucent" className="w-64">
               <SkeletonItem shape="square" size={64} />
               <SkeletonItem size={12} />
@@ -960,14 +960,14 @@ function ToastPositionDemo() {
     importCode: `import { InfoLabel } from "@/components/ui";`,
     hero: {
       title: "InfoLabel",
-      code: `<div className="flex w-72 flex-col gap-XS">
+      code: `<div className="flex w-72 flex-col gap-1">
   <InfoLabel htmlFor="infolabel-email" info="Email này dùng để khôi phục mật khẩu và nhận cảnh báo bảo mật.">
     Email khôi phục
   </InfoLabel>
   <Input id="infolabel-email" type="email" placeholder="ten@congty.vn" />
 </div>`,
       render: () => (
-        <div className="flex w-72 flex-col gap-XS">
+        <div className="flex w-72 flex-col gap-1">
           <InfoLabel htmlFor="infolabel-email" info="Email này dùng để khôi phục mật khẩu và nhận cảnh báo bảo mật.">
             Email khôi phục
           </InfoLabel>
@@ -1064,13 +1064,13 @@ function ToastPositionDemo() {
       </a>
     </HoverCardTrigger>
     <HoverCardContent>
-      <div className="flex gap-M">
+      <div className="flex gap-3">
         <Avatar name="Nguyễn Minh Anh" size={48} color="colorful" presence="available" />
-        <div className="flex min-w-0 flex-col gap-XXS">
+        <div className="flex min-w-0 flex-col gap-0.5">
           <span className="text-subtitle2 font-semibold text-foreground-1">Nguyễn Minh Anh</span>
           <span className="text-caption1 text-foreground-3">Trưởng nhóm thiết kế · Yugen Studio</span>
-          <p className="mt-XS text-body1 text-foreground-2">Phụ trách hệ thống thiết kế và thư viện component cho sản phẩm web.</p>
-          <span className="mt-XS flex items-center gap-XS text-caption1 text-foreground-3">
+          <p className="mt-1 text-body1 text-foreground-2">Phụ trách hệ thống thiết kế và thư viện component cho sản phẩm web.</p>
+          <span className="mt-1 flex items-center gap-1 text-caption1 text-foreground-3">
             <Location16Regular /> Hà Nội, Việt Nam
           </span>
         </div>
@@ -1088,15 +1088,15 @@ function ToastPositionDemo() {
               </a>
             </HoverCardTrigger>
             <HoverCardContent>
-              <div className="flex gap-M">
+              <div className="flex gap-3">
                 <Avatar name="Nguyễn Minh Anh" size={48} color="colorful" presence="available" />
-                <div className="flex min-w-0 flex-col gap-XXS">
+                <div className="flex min-w-0 flex-col gap-0.5">
                   <span className="text-subtitle2 font-semibold text-foreground-1">Nguyễn Minh Anh</span>
                   <span className="text-caption1 text-foreground-3">Trưởng nhóm thiết kế · Yugen Studio</span>
-                  <p className="mt-XS text-body1 text-foreground-2">
+                  <p className="mt-1 text-body1 text-foreground-2">
                     Phụ trách hệ thống thiết kế và thư viện component cho sản phẩm web.
                   </p>
-                  <span className="mt-XS flex items-center gap-XS text-caption1 text-foreground-3">
+                  <span className="mt-1 flex items-center gap-1 text-caption1 text-foreground-3">
                     <Location16Regular /> Hà Nội, Việt Nam
                   </span>
                 </div>
@@ -1112,12 +1112,12 @@ function ToastPositionDemo() {
         description: "openDelay / closeDelay (ms), side, withArrow.",
         code: `<HoverCard openDelay={200} closeDelay={100}>
   <HoverCardTrigger asChild>
-    <a href="#/components/hovercard" className="inline-flex items-center gap-XS text-body1 text-link hover:text-link-hover hover:underline">
+    <a href="#/components/hovercard" className="inline-flex items-center gap-1 text-body1 text-link hover:text-link-hover hover:underline">
       <Link16Regular /> yugen-ui/components
     </a>
   </HoverCardTrigger>
   <HoverCardContent side="top" withArrow className="w-72">
-    <div className="flex flex-col gap-XS">
+    <div className="flex flex-col gap-1">
       <span className="text-body1 font-semibold">yugen-ui/components</span>
       <span className="text-caption1 text-foreground-3">Thư viện component React theo Fluent 2 · cập nhật 2 ngày trước.</span>
     </div>
@@ -1128,13 +1128,13 @@ function ToastPositionDemo() {
             <HoverCardTrigger asChild>
               <a
                 href="#/components/hovercard"
-                className="inline-flex items-center gap-XS text-body1 text-link hover:text-link-hover hover:underline"
+                className="inline-flex items-center gap-1 text-body1 text-link hover:text-link-hover hover:underline"
               >
                 <Link16Regular /> yugen-ui/components
               </a>
             </HoverCardTrigger>
             <HoverCardContent side="top" withArrow className="w-72">
-              <div className="flex flex-col gap-XS">
+              <div className="flex flex-col gap-1">
                 <span className="text-body1 font-semibold">yugen-ui/components</span>
                 <span className="text-caption1 text-foreground-3">
                   Thư viện component React theo Fluent 2 · cập nhật 2 ngày trước.
@@ -1183,12 +1183,12 @@ function ToastPositionDemo() {
           <DrawerHeaderTitle>Điều hướng</DrawerHeaderTitle>
         </DrawerHeader>
         <DrawerBody>
-          <nav className="flex flex-col gap-XXS">
+          <nav className="flex flex-col gap-0.5">
             {["Trang chủ", "Tệp của tôi", "Đã chia sẻ", "Thùng rác"].map((item) => (
               <a
                 key={item}
                 href="#/components/drawer"
-                className="rounded-medium px-S py-SNudge text-foreground-2 hover:bg-subtle-hover hover:text-foreground-1"
+                className="rounded-medium px-2 py-1.5 text-foreground-2 hover:bg-subtle-hover hover:text-foreground-1"
               >
                 {item}
               </a>
@@ -1196,7 +1196,7 @@ function ToastPositionDemo() {
           </nav>
         </DrawerBody>
       </InlineDrawer>
-      <div className="flex min-w-0 flex-1 flex-col items-start gap-M p-L">
+      <div className="flex min-w-0 flex-1 flex-col items-start gap-3 p-4">
         <Button icon={<Navigation20Regular />} onClick={() => setOpen((v) => !v)}>
           {open ? "Ẩn điều hướng" : "Hiện điều hướng"}
         </Button>
@@ -1231,7 +1231,7 @@ function ToastPositionDemo() {
           </DrawerHeaderTitle>
         </DrawerHeader>
         <DrawerBody>
-          <div className="flex flex-col gap-M">
+          <div className="flex flex-col gap-3">
             <Checkbox label="Chỉ tệp của tôi" defaultChecked />
             <Checkbox label="Được chia sẻ với tôi" />
             <Checkbox label="Đã gắn sao" />
@@ -1577,21 +1577,21 @@ function ToastPositionDemo() {
   const [open, setOpen] = useState(false);
   return (
     <Collapsible open={open} onOpenChange={setOpen} className="w-72">
-      <ul className="flex flex-col gap-XS text-body1">
-        <li className="rounded-medium bg-background-3 px-M py-S">Báo cáo Q3.docx</li>
-        <li className="rounded-medium bg-background-3 px-M py-S">Kế hoạch 2027.xlsx</li>
+      <ul className="flex flex-col gap-1 text-body1">
+        <li className="rounded-medium bg-background-3 px-3 py-2">Báo cáo Q3.docx</li>
+        <li className="rounded-medium bg-background-3 px-3 py-2">Kế hoạch 2027.xlsx</li>
       </ul>
       <CollapsibleContent>
-        <ul className="flex flex-col gap-XS pt-XS text-body1">
-          <li className="rounded-medium bg-background-3 px-M py-S">Biên bản họp.docx</li>
-          <li className="rounded-medium bg-background-3 px-M py-S">Ngân sách.xlsx</li>
-          <li className="rounded-medium bg-background-3 px-M py-S">Thiết kế.fig</li>
+        <ul className="flex flex-col gap-1 pt-1 text-body1">
+          <li className="rounded-medium bg-background-3 px-3 py-2">Biên bản họp.docx</li>
+          <li className="rounded-medium bg-background-3 px-3 py-2">Ngân sách.xlsx</li>
+          <li className="rounded-medium bg-background-3 px-3 py-2">Thiết kế.fig</li>
         </ul>
       </CollapsibleContent>
       <CollapsibleTrigger asChild>
         <Button
           appearance="transparent"
-          className="mt-S"
+          className="mt-2"
           iconPosition="after"
           icon={<ChevronDown20Regular className={open ? "rotate-180" : undefined} />}
         >
@@ -1608,7 +1608,7 @@ function ToastPositionDemo() {
         title: "Mở sẵn, nút icon",
         description: "Không cần state: chevron xoay theo data-state của trigger.",
         code: `<Collapsible defaultOpen className="w-80 rounded-medium bg-background-1 shadow-4">
-  <div className="flex items-center justify-between gap-S py-XS ps-M pe-XS">
+  <div className="flex items-center justify-between gap-2 py-1 ps-3 pe-1">
     <span className="text-body1 font-semibold">Chi tiết đơn hàng #1024</span>
     <CollapsibleTrigger asChild>
       <Button
@@ -1620,7 +1620,7 @@ function ToastPositionDemo() {
       />
     </CollapsibleTrigger>
   </div>
-  <CollapsibleContent className="flex flex-col gap-XS px-M pb-M text-body1 text-foreground-2">
+  <CollapsibleContent className="flex flex-col gap-1 px-3 pb-3 text-body1 text-foreground-2">
     <span>2 × Bàn phím cơ — 3.200.000 ₫</span>
     <span>1 × Chuột không dây — 650.000 ₫</span>
     <span className="font-semibold text-foreground-1">Tổng: 3.850.000 ₫</span>
@@ -1628,7 +1628,7 @@ function ToastPositionDemo() {
 </Collapsible>`,
         render: () => (
           <Collapsible defaultOpen className="w-80 rounded-medium bg-background-1 shadow-4">
-            <div className="flex items-center justify-between gap-S py-XS ps-M pe-XS">
+            <div className="flex items-center justify-between gap-2 py-1 ps-3 pe-1">
               <span className="text-body1 font-semibold">Chi tiết đơn hàng #1024</span>
               <CollapsibleTrigger asChild>
                 <Button
@@ -1642,7 +1642,7 @@ function ToastPositionDemo() {
                 />
               </CollapsibleTrigger>
             </div>
-            <CollapsibleContent className="flex flex-col gap-XS px-M pb-M text-body1 text-foreground-2">
+            <CollapsibleContent className="flex flex-col gap-1 px-3 pb-3 text-body1 text-foreground-2">
               <span>2 × Bàn phím cơ — 3.200.000 ₫</span>
               <span>1 × Chuột không dây — 650.000 ₫</span>
               <span className="font-semibold text-foreground-1">Tổng: 3.850.000 ₫</span>
@@ -1684,7 +1684,7 @@ function ToastPositionDemo() {
       mode="single"
       selected={date}
       onSelect={setDate}
-      className="rounded-medium bg-background-1 p-S shadow-4"
+      className="rounded-medium bg-background-1 p-2 shadow-4"
     />
   );
 }`,
@@ -1711,7 +1711,7 @@ function ToastPositionDemo() {
         code: `function CalendarMultipleDemo() {
   const [days, setDays] = useState<Date[] | undefined>([]);
   return (
-    <div className="flex flex-col items-center gap-S">
+    <div className="flex flex-col items-center gap-2">
       <Calendar mode="multiple" selected={days} onSelect={setDays} disabled={{ dayOfWeek: [0, 6] }} />
       <span className="text-caption1 text-foreground-3">Đã chọn {days?.length ?? 0} ngày làm việc</span>
     </div>
@@ -1794,14 +1794,14 @@ function ToastPositionDemo() {
       {
         title: "Kích thước & disabled",
         description: "small 24px, medium 32px, large 40px.",
-        code: `<div className="flex w-64 flex-col gap-M">
+        code: `<div className="flex w-64 flex-col gap-3">
   <DatePicker size="small" aria-label="Ngày (small)" />
   <DatePicker aria-label="Ngày (medium)" />
   <DatePicker size="large" aria-label="Ngày (large)" />
   <DatePicker disabled aria-label="Ngày (disabled)" defaultValue={new Date(2026, 0, 1)} />
 </div>`,
         render: () => (
-          <div className="flex w-64 flex-col gap-M">
+          <div className="flex w-64 flex-col gap-3">
             <DatePicker size="small" aria-label="Ngày (small)" />
             <DatePicker aria-label="Ngày (medium)" />
             <DatePicker size="large" aria-label="Ngày (large)" />

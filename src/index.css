@@ -105,8 +105,8 @@
   --color-steel-bg: var(--colorPaletteSteelBackground2);
   --color-steel-fg: var(--colorPaletteSteelForeground2);
 
-  /* spacing — hậu tố VIẾT HOA đúng như token Fluent (spacingHorizontalXL -> p-XL).
-     Viết hoa để không trùng thang container của Tailwind (max-w-xl, w-xs...). */
+  /* spacing — alias VIẾT HOA theo tên token Fluent (p-XL = p-5). Deprecated từ 0.10 (#42): dùng thang số của
+     Tailwind (p-0.5 … p-8, cùng giá trị ở cỡ chữ gốc 16px); `npm run lint:classes -- --fix` tự đổi. Bỏ ở 1.0. */
   --spacing-XXS: var(--spacingXXS);
   --spacing-XS: var(--spacingXS);
   --spacing-SNudge: var(--spacingSNudge);

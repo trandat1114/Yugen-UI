@@ -83,7 +83,7 @@ function Logo() {
 function SidebarContent({ page, onSelect, embedded }: { page: PageId; onSelect: (page: PageId) => void; embedded?: boolean }) {
   const item = (p: (typeof PAGES)[number]) => (
     <NavItem key={p.id} value={p.id} icon={p.icon} href={embedded ? undefined : `#/${p.id}`}>
-      <span className="flex items-center gap-S">
+      <span className="flex items-center gap-2">
         <span className="min-w-0 truncate">{p.label}</span>
         {p.badge ? <CounterBadge count={p.badge} size="small" className="ms-auto" /> : null}
       </span>
@@ -92,7 +92,7 @@ function SidebarContent({ page, onSelect, embedded }: { page: PageId; onSelect: 
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="min-h-0 flex-1 overflow-y-auto px-S py-M">
+      <div className="min-h-0 flex-1 overflow-y-auto px-2 py-3">
         <Nav selectedValue={page} onNavItemSelect={(v) => isPageId(v) && onSelect(v)} aria-label="Điều hướng chính">
           <NavSectionHeader>Không gian làm việc</NavSectionHeader>
           {PAGES.filter((p) => p.section === "workspace").map(item)}
@@ -100,7 +100,7 @@ function SidebarContent({ page, onSelect, embedded }: { page: PageId; onSelect: 
           {PAGES.filter((p) => p.section === "manage").map(item)}
         </Nav>
       </div>
-      <div className="flex flex-col gap-S border-t border-stroke-2 p-L">
+      <div className="flex flex-col gap-2 border-t border-stroke-2 p-4">
         <div className="flex items-baseline justify-between text-caption1">
           <span className="font-semibold text-foreground-1">Dung lượng</span>
           <span className="text-foreground-3 tabular-nums">6,8 / 10 GB</span>
@@ -108,7 +108,7 @@ function SidebarContent({ page, onSelect, embedded }: { page: PageId; onSelect: 
         <ProgressBar value={0.68} aria-label="Dung lượng đã dùng" />
         <Button
           size="small"
-          className="mt-XS self-start"
+          className="mt-1 self-start"
           onClick={() => toast({ intent: "info", title: "Nâng cấp gói", body: "Nối nút này với trang thanh toán của bạn." })}
         >
           Nâng cấp lên Business
@@ -160,7 +160,7 @@ function UserMenu({ onNavigate, onOpenPalette }: { onNavigate: (page: PageId) =>
         </button>
       </MenuTrigger>
       <MenuPopover align="end" className="min-w-60">
-        <Persona name={USER.name} secondaryText={USER.email} size="medium" avatar={{ color: "brand" }} className="px-S py-S" />
+        <Persona name={USER.name} secondaryText={USER.email} size="medium" avatar={{ color: "brand" }} className="px-2 py-2" />
         <MenuDivider />
         <MenuItem icon={<Person20Regular />} onSelect={() => onNavigate("team")}>
           Hồ sơ & đội ngũ
@@ -219,7 +219,7 @@ export function AppShell({ page, onNavigate, appearance, onAppearanceChange, emb
   return (
     <div className={`@container flex bg-background-2 text-foreground-1 ${embedded ? "h-full" : "h-dvh"}`}>
       <div className="hidden w-64 shrink-0 flex-col border-e border-stroke-2 bg-background-1 @4xl:flex">
-        <div className="flex h-14 shrink-0 items-center gap-S border-b border-stroke-2 px-L">
+        <div className="flex h-14 shrink-0 items-center gap-2 border-b border-stroke-2 px-4">
           <Logo />
           <div className="min-w-0">
             <p className="truncate text-body1 font-semibold">Sakura Studio</p>
@@ -230,14 +230,14 @@ export function AppShell({ page, onNavigate, appearance, onAppearanceChange, emb
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 shrink-0 items-center gap-S border-b border-stroke-2 bg-background-1 px-L">
+        <header className="flex h-14 shrink-0 items-center gap-2 border-b border-stroke-2 bg-background-1 px-4">
           <Button appearance="subtle" icon={<Navigation20Regular />} aria-label="Mở điều hướng" className="@4xl:hidden" onClick={() => setNavOpen(true)} />
           <Breadcrumb
             aria-label="Vị trí"
             className="hidden min-w-0 @xl:flex"
             items={[{ label: "Sakura Studio", onClick: () => navigate("overview") }, { label: current.label }]}
           />
-          <div className="ms-auto flex items-center gap-XS">
+          <div className="ms-auto flex items-center gap-1">
             <Button
               appearance="subtle"
               icon={<Search20Regular />}
@@ -263,11 +263,11 @@ export function AppShell({ page, onNavigate, appearance, onAppearanceChange, emb
         </header>
 
         <Content ref={contentRef} aria-label={embedded ? current.title : undefined} className="@container min-h-0 flex-1 overflow-y-auto">
-          <div className="mx-auto flex w-full max-w-6xl flex-col gap-L p-L @3xl:p-XXL">
-            <div className="flex flex-wrap items-end justify-between gap-M">
+          <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 p-4 @3xl:p-6">
+            <div className="flex flex-wrap items-end justify-between gap-3">
               <div className="min-w-0">
                 <Heading className="font-display text-title2 font-semibold">{current.title}</Heading>
-                <p className="mt-XS text-body1 text-foreground-3">{current.description}</p>
+                <p className="mt-1 text-body1 text-foreground-3">{current.description}</p>
               </div>
               {current.actions}
             </div>
@@ -278,7 +278,7 @@ export function AppShell({ page, onNavigate, appearance, onAppearanceChange, emb
 
       <Drawer open={navOpen} onOpenChange={setNavOpen}>
         <DrawerSurface position="start" size="small" aria-describedby={undefined} className="flex flex-col p-0">
-          <DrawerHeader className="flex-row items-center gap-S border-b border-stroke-2 px-L py-M">
+          <DrawerHeader className="flex-row items-center gap-2 border-b border-stroke-2 px-4 py-3">
             <Logo />
             <DrawerHeaderTitle>Sakura Studio</DrawerHeaderTitle>
           </DrawerHeader>

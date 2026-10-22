@@ -10,14 +10,14 @@ export default function FeedbackBlock() {
   const tooShort = message.trim().length < 10;
 
   return (
-    <Card size="large" className="gap-L rounded-xlarge p-XL">
+    <Card size="large" className="gap-4 rounded-xlarge p-5">
       <div>
         <h3 className="text-subtitle1 font-semibold">Gửi phản hồi</h3>
-        <p className="mt-XXS text-body1 text-foreground-3">Góp ý của bạn giúp Yugen UI tốt hơn mỗi ngày.</p>
+        <p className="mt-0.5 text-body1 text-foreground-3">Góp ý của bạn giúp Yugen UI tốt hơn mỗi ngày.</p>
       </div>
 
       <form
-        className="flex flex-col gap-L"
+        className="flex flex-col gap-4"
         onSubmit={(e) => {
           e.preventDefault();
           setSubmitted(true);
@@ -52,7 +52,7 @@ export default function FeedbackBlock() {
           />
         </Field>
 
-        <div className="flex justify-end gap-S">
+        <div className="flex justify-end gap-2">
           <Button type="button" onClick={() => setMessage("")}>
             Xoá
           </Button>

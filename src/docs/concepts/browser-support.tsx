@@ -3,7 +3,7 @@ import { Badge, MessageBar } from "@/components/ui";
 import { DocSection } from "../blocks";
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
@@ -14,7 +14,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
             {head.map((h) => (
-              <th key={h} className="px-L py-S text-start">
+              <th key={h} className="px-4 py-2 text-start">
                 {h}
               </th>
             ))}
@@ -24,7 +24,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
           {rows.map((row, i) => (
             <tr key={i} className="border-b border-stroke-3 align-top last:border-b-0">
               {row.map((cell, j) => (
-                <td key={j} className={j === 0 ? "px-L py-M font-semibold text-foreground-1" : "px-L py-M text-foreground-2"}>
+                <td key={j} className={j === 0 ? "px-4 py-3 font-semibold text-foreground-1" : "px-4 py-3 text-foreground-2"}>
                   {cell}
                 </td>
               ))}
@@ -55,7 +55,7 @@ export default function Page() {
         title="Trình duyệt"
         description="Hai phiên bản mới nhất của mỗi trình duyệt evergreen. Mốc tối thiểu thực tế là mốc của Tailwind CSS v4."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <SimpleTable
             head={["Trình duyệt", "Phiên bản", "Trạng thái"]}
             rows={[
@@ -118,7 +118,7 @@ export default function Page() {
         title="Chuột, cảm ứng, bàn phím"
         description="Mọi component dùng được bằng cả ba phương thức nhập, và với công nghệ hỗ trợ."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <SimpleTable
             head={["Phương thức", "Hành vi"]}
             rows={[

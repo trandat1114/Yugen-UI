@@ -29,7 +29,7 @@ function QuoteHero() {
 // #region QuoteAppearances
 function QuoteAppearances() {
   return (
-    <div className="flex max-w-xl flex-col gap-XXL">
+    <div className="flex max-w-xl flex-col gap-6">
       <Quote author="Fluent 2" source="Color" cite="https://fluent2.microsoft.design/color">
         Neutral colors form the foundation; brand color highlights what matters.
       </Quote>

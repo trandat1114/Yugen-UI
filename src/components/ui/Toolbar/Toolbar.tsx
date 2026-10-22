@@ -17,9 +17,9 @@ const ToolbarContext = React.createContext<{ size: ToolbarSize; orientation: Too
 const ITEM_SELECTOR = "[data-toolbar-item]:not([disabled]):not([data-disabled])";
 
 const ROOT_SIZE: Record<ToolbarSize, string> = {
-  small: "px-XS",
-  medium: "px-S py-XS",
-  large: "px-XL py-XS",
+  small: "px-1",
+  medium: "px-2 py-1",
+  large: "px-5 py-1",
 };
 
 export interface ToolbarProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -102,7 +102,7 @@ export const Toolbar = React.forwardRef<HTMLDivElement, ToolbarProps>(
           onKeyDown={handleKeyDown}
           onFocus={handleFocus}
           className={cn(
-            "flex gap-XXS",
+            "flex gap-0.5",
             orientation === "vertical" ? "w-fit flex-col items-stretch" : "items-center",
             ROOT_SIZE[size],
             className,
@@ -129,7 +129,7 @@ export const ToolbarButton = React.forwardRef<HTMLButtonElement, ToolbarButtonPr
         data-toolbar-item=""
         appearance={appearance}
         size={size}
-        className={cn("min-w-0", vertical && "h-auto flex-col gap-XXS py-XS", className)}
+        className={cn("min-w-0", vertical && "h-auto flex-col gap-0.5 py-1", className)}
         {...props}
       />
     );
@@ -164,7 +164,7 @@ export function ToolbarDivider({ className, ...props }: React.HTMLAttributes<HTM
       aria-orientation={orientation === "horizontal" ? "vertical" : "horizontal"}
       className={cn(
         "shrink-0 self-stretch bg-stroke-2",
-        orientation === "horizontal" ? "mx-XS my-XS w-px" : "mx-XS my-XS h-px",
+        orientation === "horizontal" ? "mx-1 my-1 w-px" : "mx-1 my-1 h-px",
         className,
       )}
       {...props}
@@ -177,7 +177,7 @@ export function ToolbarGroup({ className, ...props }: React.HTMLAttributes<HTMLD
   return (
     <div
       role="presentation"
-      className={cn("flex gap-XXS", orientation === "vertical" ? "flex-col items-stretch" : "items-center", className)}
+      className={cn("flex gap-0.5", orientation === "vertical" ? "flex-col items-stretch" : "items-center", className)}
       {...props}
     />
   );

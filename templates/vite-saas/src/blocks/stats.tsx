@@ -11,22 +11,22 @@ const STATS = [
 
 export default function StatsBlock() {
   return (
-    <div className="grid gap-M">
+    <div className="grid gap-3">
       {STATS.map((s) => (
-        <Card key={s.label} className="flex-row items-end justify-between gap-L rounded-xlarge p-L">
+        <Card key={s.label} className="flex-row items-end justify-between gap-4 rounded-xlarge p-4">
           <div className="min-w-0">
             <p className="text-caption1 text-foreground-3">{s.label}</p>
-            <p className="mt-XXS font-display text-title2 font-semibold tabular-nums">{s.value}</p>
+            <p className="mt-0.5 font-display text-title2 font-semibold tabular-nums">{s.value}</p>
             <Badge
               appearance="tint"
               color={s.up ? "success" : "danger"}
               icon={s.up ? <ArrowTrending16Regular className="rtl:-scale-x-100" /> : <ArrowTrendingDown16Regular className="rtl:-scale-x-100" />}
-              className="mt-S"
+              className="mt-2"
             >
               {s.delta} so với tháng trước
             </Badge>
           </div>
-          <div className="flex h-16 shrink-0 items-end gap-XXS" aria-hidden>
+          <div className="flex h-16 shrink-0 items-end gap-0.5" aria-hidden>
             {s.bars.map((h, i) => (
               <span
                 key={i}

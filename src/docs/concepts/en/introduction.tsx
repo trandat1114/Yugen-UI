@@ -11,7 +11,7 @@ function P({ children }: { children: ReactNode }) {
 }
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function A({ href, children }: { href: string; children: ReactNode }) {
@@ -113,25 +113,25 @@ export default function Page() {
         title="What is Yugen UI?"
         description="幽玄 (yūgen) is a quiet, deep kind of beauty that suggests more than it says. Yugen UI follows that idea: restrained and clear."
       >
-        <div className="flex flex-col gap-XL">
+        <div className="flex flex-col gap-5">
           <P>
             Yugen UI is a set of React components written in TypeScript. It runs on React 18 or 19 with Tailwind CSS v4, or with a
             precompiled CSS file if you don&apos;t use Tailwind. All components share one set of tokens, so changing the theme, brand color or text
             direction doesn&apos;t require touching components.
           </P>
-          <div className="grid gap-M sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2">
             {INCLUDED.map((s) => (
               <a
                 key={s.href}
                 href={s.href}
-                className="group flex flex-col gap-XS rounded-xlarge border border-stroke-2 bg-background-1 p-L transition-colors duration-faster hover:bg-subtle-hover"
+                className="group flex flex-col gap-1 rounded-xlarge border border-stroke-2 bg-background-1 p-4 transition-colors duration-faster hover:bg-subtle-hover"
               >
                 <span className="text-subtitle2 font-semibold text-foreground-1 group-hover:text-brand-foreground-1">{s.title}</span>
                 <span className="text-body1 text-foreground-2">{s.body}</span>
               </a>
             ))}
           </div>
-          <div className="flex flex-wrap items-center gap-S">
+          <div className="flex flex-wrap items-center gap-2">
             <Button asChild appearance="primary">
               <a href="#/concepts/quick-start">Quick start</a>
             </Button>
@@ -143,18 +143,18 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="ways" title="Choose how to use it" description="All three share the same tokens and themes, and you can mix them in one project.">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <div className="overflow-x-auto rounded-xlarge border border-stroke-2 bg-background-1">
             <table className="w-full border-collapse text-start text-body1">
               <thead>
                 <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
-                  <th scope="col" className="px-L py-S text-start">
+                  <th scope="col" className="px-4 py-2 text-start">
                     Option
                   </th>
-                  <th scope="col" className="px-L py-S text-start">
+                  <th scope="col" className="px-4 py-2 text-start">
                     Good when
                   </th>
-                  <th scope="col" className="px-L py-S text-start">
+                  <th scope="col" className="px-4 py-2 text-start">
                     Updating
                   </th>
                 </tr>
@@ -162,12 +162,12 @@ export default function Page() {
               <tbody>
                 {WAYS.map((w) => (
                   <tr key={w.way} className="border-b border-stroke-3 align-top last:border-b-0">
-                    <th scope="row" className="px-L py-M text-start font-semibold text-foreground-1">
+                    <th scope="row" className="px-4 py-3 text-start font-semibold text-foreground-1">
                       {w.way}
-                      <span className="mt-XXS block font-mono text-caption1 font-normal whitespace-nowrap text-foreground-3">{w.command}</span>
+                      <span className="mt-0.5 block font-mono text-caption1 font-normal whitespace-nowrap text-foreground-3">{w.command}</span>
                     </th>
-                    <td className="px-L py-M text-foreground-2">{w.when}</td>
-                    <td className="px-L py-M text-foreground-2">{w.update}</td>
+                    <td className="px-4 py-3 text-foreground-2">{w.when}</td>
+                    <td className="px-4 py-3 text-foreground-2">{w.update}</td>
                   </tr>
                 ))}
               </tbody>
@@ -180,13 +180,13 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="principles" title="Principles">
-        <div className="grid gap-L sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           {PRINCIPLES.map((p) => (
-            <div key={p.title} className="flex gap-M rounded-xlarge border border-stroke-2 bg-background-1 p-L">
+            <div key={p.title} className="flex gap-3 rounded-xlarge border border-stroke-2 bg-background-1 p-4">
               <IconTile>{p.icon}</IconTile>
               <div className="min-w-0 flex-1">
                 <h3 className="text-subtitle2 font-semibold text-foreground-1">{p.title}</h3>
-                <p className="mt-XS text-body1 text-foreground-2">{p.body}</p>
+                <p className="mt-1 text-body1 text-foreground-2">{p.body}</p>
               </div>
             </div>
           ))}
@@ -194,7 +194,7 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="status" title="Versions and license">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <P>
             Yugen UI is before 1.0. A minor release may contain breaking changes, always listed in <A href="#/news">What&apos;s new</A>; a patch
             release only fixes bugs. The full rules are in <A href="#/concepts/versioning">Versioning</A>.
@@ -207,7 +207,7 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="credit" title="Credits">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <P>
             Yugen UI is made by <AuthorLink className="text-link hover:text-link-hover" />. The token structure and component behavior are
             inspired by <A href="https://fluent2.microsoft.design/">Microsoft Fluent 2</A>; the source distribution model comes from{" "}

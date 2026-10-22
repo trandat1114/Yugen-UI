@@ -55,7 +55,7 @@ function RadioMenuDemo() {
 function VolumeDemo() {
   const [volume, setVolume] = useState([60]);
   return (
-    <div className="flex w-72 items-center gap-S">
+    <div className="flex w-72 items-center gap-2">
       {volume[0] === 0 ? <SpeakerMute20Regular className="shrink-0" /> : <Speaker220Regular className="shrink-0" />}
       <Slider aria-label="Âm lượng" value={volume} onValueChange={setVolume} />
       <span className="w-8 text-end text-body1 tabular-nums">{volume[0]}</span>
@@ -285,7 +285,7 @@ const EXTRA: Record<string, ComponentDoc> = {
         description: "Controlled với value / onValueChange.",
         code: `const [volume, setVolume] = useState([60]);
 
-<div className="flex w-72 items-center gap-S">
+<div className="flex w-72 items-center gap-2">
   <Speaker220Regular />
   <Slider aria-label="Âm lượng" value={volume} onValueChange={setVolume} />
   <span className="w-8 text-end">{volume[0]}</span>
@@ -305,7 +305,7 @@ const EXTRA: Record<string, ComponentDoc> = {
 <Slider aria-label="Medium" defaultValue={[40]} rootClassName="w-56" />
 <Slider aria-label="Disabled" defaultValue={[40]} disabled rootClassName="w-56" />`,
         render: () => (
-          <div className="flex flex-col gap-S">
+          <div className="flex flex-col gap-2">
             <Slider size="small" aria-label="Small" defaultValue={[40]} rootClassName="w-56" />
             <Slider aria-label="Medium" defaultValue={[40]} rootClassName="w-56" />
             <Slider aria-label="Disabled" defaultValue={[40]} disabled rootClassName="w-56" />

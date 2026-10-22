@@ -19,7 +19,7 @@ function P({ children }: { children: ReactNode }) {
 }
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
@@ -30,7 +30,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
             {head.map((h) => (
-              <th key={h} className="px-L py-S text-start">
+              <th key={h} className="px-4 py-2 text-start">
                 {h}
               </th>
             ))}
@@ -40,7 +40,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
           {rows.map((row, i) => (
             <tr key={i} className="border-b border-stroke-3 align-top last:border-b-0">
               {row.map((cell, j) => (
-                <td key={j} className={j === 0 ? "px-L py-M font-semibold text-foreground-1" : "px-L py-M text-foreground-2"}>
+                <td key={j} className={j === 0 ? "px-4 py-3 font-semibold text-foreground-1" : "px-4 py-3 text-foreground-2"}>
                   {cell}
                 </td>
               ))}
@@ -53,7 +53,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
 }
 
 function Stage({ children }: { children: ReactNode }) {
-  return <div className="flex flex-wrap items-start justify-center gap-L rounded-2xlarge border border-stroke-2 bg-background-1 p-XL">{children}</div>;
+  return <div className="flex flex-wrap items-start justify-center gap-4 rounded-2xlarge border border-stroke-2 bg-background-1 p-5">{children}</div>;
 }
 
 /* ---------- Demo: cấu trúc ---------- */
@@ -71,7 +71,7 @@ function AnatomyDemo() {
         </MessageBubble>
         <TypingIndicator author="Sakura Bot" />
       </MessageScroller>
-      <ChatComposer className="m-S" onSend={() => {}} />
+      <ChatComposer className="m-2" onSend={() => {}} />
     </div>
   );
 }
@@ -110,7 +110,7 @@ function StreamDemo() {
   }
 
   return (
-    <div className="flex w-full max-w-md flex-col gap-S">
+    <div className="flex w-full max-w-md flex-col gap-2">
       <MessageScroller className="h-64 rounded-xlarge border border-stroke-2" label="Ví dụ stream">
         <MessageBubble side="outgoing" author="Bạn" time="10:15">
           Làm sao đổi brand?
@@ -125,7 +125,7 @@ function StreamDemo() {
       <button
         type="button"
         onClick={start}
-        className="self-start rounded-medium px-S py-XS text-body1 font-semibold text-link hover:bg-subtle-hover hover:text-link-hover"
+        className="self-start rounded-medium px-2 py-1 text-body1 font-semibold text-link hover:bg-subtle-hover hover:text-link-hover"
       >
         {phase === "idle" ? "Gửi câu hỏi" : "Chạy lại"}
       </button>
@@ -190,7 +190,7 @@ const AI_SOURCES: CitationSource[] = [
 
 function AiAnswerDemo() {
   return (
-    <div className="flex w-full max-w-xl flex-col gap-M">
+    <div className="flex w-full max-w-xl flex-col gap-3">
       <Reasoning duration={8200}>{"Kiểm tra quy tắc brand và ngưỡng tương phản WCAG."}</Reasoning>
       <StreamingMarkdown citations={AI_SOURCES}>
         {"Dùng **brand** cho hành động chính và trạng thái chọn[1]; chữ cần tương phản **≥ 4.5:1**[2].\n\n- Không phủ brand lên nền lớn\n- Luôn kèm icon + chữ cho trạng thái"}
@@ -239,7 +239,7 @@ export default function Page() {
         title="Cấu trúc màn hội thoại"
         description="Một màn chat trong Yugen UI ghép từ năm phần, mỗi phần giữ đúng một trách nhiệm."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Stage>
             <AnatomyDemo />
           </Stage>
@@ -261,7 +261,7 @@ export default function Page() {
         title="Quy tắc cuộn"
         description="Người dùng đang đọc ở đâu thì giữ họ ở đó. Chỉ tự cuộn khi chắc chắn họ muốn thấy tin mới nhất."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <SimpleTable
             head={["Tình huống", "Hành vi"]}
             rows={[
@@ -292,11 +292,11 @@ export default function Page() {
         title="Stream & chỉ báo đang soạn"
         description="Phản hồi AI đến theo từng mẩu. Giao diện phải cho thấy tiến triển mà không giật bố cục, không đọc lắp bắp cho trình đọc màn hình."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Stage>
             <StreamDemo />
           </Stage>
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>Hiện TypingIndicator ngay sau khi gửi — trước token đầu tiên — để người dùng biết yêu cầu đã được nhận.</li>
             <li>Token đầu tiên về: thay TypingIndicator bằng MessageBubble <C>streaming</C> ở đúng vị trí đó.</li>
             <li>Con trỏ nhấp nháy báo “còn tiếp”; ở chế độ giảm chuyển động nó đứng yên.</li>
@@ -311,11 +311,11 @@ export default function Page() {
         title="Lỗi & thử lại"
         description="Lỗi gửi thuộc về chính tin nhắn đó — không phải một toast trôi qua."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Stage>
             <RetryDemo />
           </Stage>
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>Giữ nguyên nội dung tin lỗi; viền và thông báo đỏ kèm icon — không chỉ đổi màu.</li>
             <li>Nút “Thử lại” ngay dưới tin; thông báo lỗi dùng role=alert để được đọc ngay.</li>
             <li>Lỗi của AI (hết hạn mức, bị chặn nội dung) là một tin đến bình thường, giải thích lý do và việc có thể làm.</li>
@@ -329,7 +329,7 @@ export default function Page() {
         title="Live region & trình đọc màn hình"
         description="role=log mặc định đọc mọi thay đổi — với chữ stream, điều đó nghĩa là đọc từng mẩu vài từ. Yugen tách việc hiển thị và việc thông báo."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <CodeBlock code={A11Y_CODE} />
           <SimpleTable
             head={["Sự kiện", "Được đọc", "Cách"]}
@@ -355,7 +355,7 @@ export default function Page() {
           rows={[
             [<Kbd key="k">Enter</Kbd>, "Gửi (khi có nội dung, không busy)."],
             [
-              <span key="k" className="inline-flex items-center gap-XXS">
+              <span key="k" className="inline-flex items-center gap-0.5">
                 <Kbd>Shift</Kbd>+<Kbd>Enter</Kbd>
               </span>,
               "Xuống dòng.",
@@ -372,7 +372,7 @@ export default function Page() {
         title="Minh bạch với Trace"
         description="Trợ lý AI làm nhiều bước ngầm: tìm kiếm, gọi công cụ, đọc tài liệu. Đặt một Trace thu gọn trong câu trả lời để người dùng kiểm chứng được."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Stage>
             <TransparencyDemo />
           </Stage>
@@ -388,11 +388,11 @@ export default function Page() {
         title="Câu trả lời AI: Markdown, nguồn, suy luận"
         description="Bộ AI Kit ghép với MessageScroller để dựng câu trả lời đầy đủ: suy luận thu gọn, Markdown đang stream, chip nguồn và ô soạn có đính kèm."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Stage>
             <AiAnswerDemo />
           </Stage>
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>
               <C>Reasoning</C> đứng trước câu trả lời: mở khi model đang suy nghĩ, tự thu lại kèm “Đã suy luận trong 12s”.
             </li>

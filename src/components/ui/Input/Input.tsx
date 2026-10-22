@@ -27,9 +27,9 @@ const inputRootVariants = cva(
         "filled-lighter": "rounded-medium border border-transparent bg-background-1",
       },
       size: {
-        small: "h-6 gap-XXS px-XS text-caption1 [&_svg]:size-4",
-        medium: "h-8 gap-XXS px-MNudge text-body1 [&_svg]:size-5",
-        large: "h-10 gap-XS px-M text-body2 [&_svg]:size-6",
+        small: "h-6 gap-0.5 px-1 text-caption1 [&_svg]:size-4",
+        medium: "h-8 gap-0.5 px-2.5 text-body1 [&_svg]:size-5",
+        large: "h-10 gap-1 px-3 text-body2 [&_svg]:size-6",
       },
       invalid: {
         true: "border-danger-background-3 hover:border-danger-background-3 border-b-danger-background-3 hover:border-b-danger-background-3",
@@ -87,14 +87,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const validation = validationState !== "none" ? VALIDATION[validationState] : null;
 
     return (
-      <div className={cn("flex flex-col gap-XXS", rootClassName)}>
+      <div className={cn("flex flex-col gap-0.5", rootClassName)}>
         {label && (
           <label
             htmlFor={inputId}
-            className={cn("pb-XXS text-body1 text-foreground-1", disabled && "text-foreground-disabled")}
+            className={cn("pb-0.5 text-body1 text-foreground-1", disabled && "text-foreground-disabled")}
           >
             {label}
-            {required && <span className="ps-XS text-danger-foreground-1">*</span>}
+            {required && <span className="ps-1 text-danger-foreground-1">*</span>}
           </label>
         )}
         <span
@@ -112,7 +112,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             disabled={disabled}
             aria-invalid={validationState === "error" || undefined}
             aria-describedby={cn(validationMessage && messageId, hint && hintId) || undefined}
-            className="h-full w-full min-w-0 grow bg-transparent px-XXS outline-none placeholder:text-foreground-4 disabled:cursor-not-allowed"
+            className="h-full w-full min-w-0 grow bg-transparent px-0.5 outline-none placeholder:text-foreground-4 disabled:cursor-not-allowed"
             {...props}
           />
           {contentAfter && <span className="flex text-foreground-3">{contentAfter}</span>}
@@ -120,7 +120,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {validationMessage && (
           <span
             id={messageId}
-            className={cn("flex items-center gap-XS text-caption1", validation?.className ?? "text-foreground-3")}
+            className={cn("flex items-center gap-1 text-caption1", validation?.className ?? "text-foreground-3")}
           >
             {validation && <validation.icon className="shrink-0" />}
             <span className={validationState === "error" ? undefined : "text-foreground-3"}>{validationMessage}</span>

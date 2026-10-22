@@ -125,7 +125,7 @@ export const docs: ComponentDoc[] = [
   <PopoverTrigger asChild>
     <Button icon={<Settings20Regular />}>Hiển thị</Button>
   </PopoverTrigger>
-  <PopoverSurface withArrow className="flex w-72 flex-col gap-M">
+  <PopoverSurface withArrow className="flex w-72 flex-col gap-3">
     <p className="text-subtitle2 font-semibold">Tuỳ chọn hiển thị</p>
     <Switch label="Chế độ gọn" defaultChecked />
     <Switch label="Hiện ảnh xem trước" />
@@ -141,7 +141,7 @@ export const docs: ComponentDoc[] = [
           <PopoverTrigger asChild>
             <Button icon={<Settings20Regular />}>Hiển thị</Button>
           </PopoverTrigger>
-          <PopoverSurface withArrow className="flex w-72 flex-col gap-M">
+          <PopoverSurface withArrow className="flex w-72 flex-col gap-3">
             <p className="text-subtitle2 font-semibold">Tuỳ chọn hiển thị</p>
             <Switch label="Chế độ gọn" defaultChecked />
             <Switch label="Hiện ảnh xem trước" />
@@ -196,7 +196,7 @@ export const docs: ComponentDoc[] = [
   <PopoverTrigger asChild>
     <Button appearance="subtle" icon={<Info16Regular />}>Đổi tên</Button>
   </PopoverTrigger>
-  <PopoverSurface side="bottom" align="start" className="flex w-72 flex-col gap-S">
+  <PopoverSurface side="bottom" align="start" className="flex w-72 flex-col gap-2">
     <Input label="Tên mới" defaultValue="Báo cáo Q3" />
     <PopoverClose asChild>
       <Button appearance="primary" size="small" className="self-end">Lưu</Button>
@@ -210,7 +210,7 @@ export const docs: ComponentDoc[] = [
                 Đổi tên
               </Button>
             </PopoverTrigger>
-            <PopoverSurface side="bottom" align="start" className="flex w-72 flex-col gap-S">
+            <PopoverSurface side="bottom" align="start" className="flex w-72 flex-col gap-2">
               <Input label="Tên mới" defaultValue="Báo cáo Q3" />
               <PopoverClose asChild>
                 <Button appearance="primary" size="small" className="self-end">

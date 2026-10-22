@@ -6,9 +6,9 @@ const MEMBERS = ["Lê Minh", "Phạm Hà", "Ngô Vy", "Đỗ Quân", "Vũ An", "
 
 export default function OnlineTeamBlock() {
   return (
-    <Card className="max-w-md gap-L rounded-xlarge p-XL">
+    <Card className="max-w-md gap-4 rounded-xlarge p-5">
       <Persona name="Trần Lan" secondaryText="Thiết kế sản phẩm · đang trình bày" presence="available" size="large" />
-      <div className="flex flex-wrap items-center justify-between gap-M">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <AvatarGroup layout="stack" size={32} maxAvatars={5} overflowLabel="Xem tất cả thành viên">
           {MEMBERS.map((name) => (
             <AvatarGroupItem key={name} name={name} />

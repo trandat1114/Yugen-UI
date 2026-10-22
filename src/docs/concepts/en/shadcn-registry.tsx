@@ -10,7 +10,7 @@ function P({ children }: { children: ReactNode }) {
 }
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function A({ href, children }: { href: string; children: ReactNode }) {
@@ -54,7 +54,7 @@ export default function Page() {
   return (
     <>
       <DocSection id="choose" title="npm or copy the source">
-        <div className="flex flex-col gap-M">
+        <div className="flex flex-col gap-3">
           <P>
             The <strong className="font-semibold text-foreground-1">npm package</strong> (<C>npm install yugen-ui</C>) suits you when you want
             one-command upgrades and rarely change components. The <strong className="font-semibold text-foreground-1">shadcn CLI</strong>{" "}
@@ -74,19 +74,19 @@ export default function Page() {
         title="Initialize — once per project"
         description="For a React project with Tailwind CSS v4. One command creates components.json (if missing), copies the theme + cn() + YugenProvider, installs npm packages and adds the @import to your main CSS file."
       >
-        <div className="flex flex-col gap-L">
-          <Tabs defaultValue="vite" className="flex flex-col gap-S">
+        <div className="flex flex-col gap-4">
+          <Tabs defaultValue="vite" className="flex flex-col gap-2">
             <TabsList aria-label="Framework">
               <TabsTrigger value="vite">Vite · TanStack Start</TabsTrigger>
               <TabsTrigger value="next">Next.js · React Router</TabsTrigger>
             </TabsList>
-            <TabsContent value="vite" className="flex flex-col gap-S">
+            <TabsContent value="vite" className="flex flex-col gap-2">
               <PackageManagerTabs packages={SHADCN_INIT} command="dlx" />
               <P>
                 The theme lands in <C>src/styles/yugen.css</C>, imported from <C>src/index.css</C>.
               </P>
             </TabsContent>
-            <TabsContent value="next" className="flex flex-col gap-S">
+            <TabsContent value="next" className="flex flex-col gap-2">
               <PackageManagerTabs packages={SHADCN_INIT_NEXT} command="dlx" />
               <P>
                 The theme sits next to your main CSS file (<C>app/yugen.css</C> or <C>src/app/yugen.css</C>), imported from <C>globals.css</C>.
@@ -106,7 +106,7 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="add" title="Add components" description="The CLI fetches the item, copies its files, pulls in the components it depends on and installs missing npm packages.">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <PackageManagerTabs packages={SHADCN_ADD} command="dlx" />
           <P>Result after init + add (Yugen's folder layout is kept so relative imports between components keep working):</P>
           <CodeBlock code={RESULT} />
@@ -122,7 +122,7 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="namespace" title="The @yugen registry namespace" description="Shorter commands when adding many components (optional).">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <P>
             Add a <C>registries</C> block to <C>components.json</C>:
           </P>
@@ -132,7 +132,7 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="existing" title="Projects already on shadcn/ui">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <P>
             No need to rerun <C>init</C> — add the theme item along with your first component (Next.js uses <C>theme-next.json</C>):
           </P>
@@ -153,7 +153,7 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="notes" title="Notes">
-        <div className="flex max-w-3xl flex-col gap-M">
+        <div className="flex max-w-3xl flex-col gap-3">
           <MessageBar intent="info" title="Yugen's own cn().">
             Components import <C>cn</C> from <C>@/lib/cn</C> (tailwind-merge taught the Yugen scales), not shadcn's <C>@/lib/utils</C>.
           </MessageBar>

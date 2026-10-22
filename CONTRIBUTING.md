@@ -64,7 +64,7 @@ npm run dev          # trang docs tại http://localhost:5173
 
 1. Không hard-code HEX/rgb, px, ms, cubic-bezier trong `.tsx` — chỉ dùng utility map từ token.
 2. Palette mặc định của Tailwind đã tắt (`bg-blue-500`, `rounded-lg`, `shadow-md`, `text-sm` không tồn tại).
-3. Spacing dùng hậu tố Fluent viết hoa: `p-M`, `gap-S`, `px-XL`. Cỡ chữ chỉ dùng type ramp `text-caption2 … text-display`.
+3. Spacing dùng thang số trong ramp Fluent: `p-3`, `gap-2`, `px-5` (Design.md §3.2). Cỡ chữ chỉ dùng type ramp `text-caption2 … text-display`.
 4. Luôn gộp class bằng `cn()` (`src/lib/cn.ts`), không dùng `twMerge` gốc.
 5. Không dùng `dark:`; chỉ dùng thuộc tính logic (`ms/me/ps/pe/start/end`) để RTL hoạt động.
 6. Neutral cho bề mặt/chữ/viền · Brand chỉ cho CTA, trạng thái chọn, focus, link · Semantic chỉ cho trạng thái.
@@ -182,7 +182,7 @@ npx changeset    # chọn yugen-ui → patch hoặc minor → viết tóm tắt 
 - [ ] `npm run typecheck`, `npm run lint:classes`, `npm test`, `npm run build:lib`, `npm run build:docs` đều pass.
 - [ ] `npm run test:e2e` pass (component có giao diện / tương tác mới); `npm run size` vẫn trong ngân sách.
 - [ ] Check **Visual (compare)** xanh, hoặc đã chụp lại baseline ngay trong PR khi cố ý đổi giao diện.
-- [ ] Không HEX/px/ms tuỳ ý; spacing viết hoa; cỡ chữ theo type ramp; dùng class dùng chung (Design.md §5.7).
+- [ ] Không HEX/px/ms tuỳ ý; spacing theo thang số; cỡ chữ theo type ramp; dùng class dùng chung (Design.md §5.7).
 - [ ] Màu đúng vai trò; không brand diện tích lớn; không gradient trên control.
 - [ ] Đủ trạng thái hover / pressed / disabled / focus-visible; bàn phím hoạt động; đã thử RTL.
 - [ ] Đã kiểm tra Sakura / Web / Teams × Light / Dark và High contrast.
@@ -241,7 +241,7 @@ repairs them), `build:lib` (library → `dist/`), `build:docs` (docs → `dist-d
 ### Rules
 
 [Design.md](./Design.md) is mandatory. In short: only token-mapped utilities (no raw HEX/px/ms), Tailwind's
-default palette is disabled, upper-case Fluent spacing (`p-M`, `gap-S`), type-ramp font sizes only, always merge
+default palette is disabled, numeric spacing on the Fluent ramp (`p-3`, `gap-2`), type-ramp font sizes only, always merge
 classes with `cn()`, no `dark:` variant, logical properties only (RTL), brand colour only for CTAs / selection /
 focus / links, gradients never on controls, WCAG contrast (4.5:1 text, 3:1 UI), Radix / `cmdk` /
 `react-day-picker` for behaviour and `@fluentui/react-icons` for icons.

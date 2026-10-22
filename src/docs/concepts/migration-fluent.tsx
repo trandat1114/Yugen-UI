@@ -8,7 +8,7 @@ function P({ children }: { children: ReactNode }) {
 }
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
@@ -19,7 +19,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
             {head.map((h) => (
-              <th key={h} className="px-L py-S text-start">
+              <th key={h} className="px-4 py-2 text-start">
                 {h}
               </th>
             ))}
@@ -29,7 +29,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
           {rows.map((row, i) => (
             <tr key={i} className="border-b border-stroke-3 align-top last:border-b-0">
               {row.map((cell, j) => (
-                <td key={j} className="px-L py-M text-foreground-2">
+                <td key={j} className="px-4 py-3 text-foreground-2">
                   {cell}
                 </td>
               ))}
@@ -44,7 +44,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
 /** Ô chứa danh sách tên component / prop dạng code. */
 function Names({ items }: { items: string[] }) {
   return (
-    <span className="inline-flex flex-wrap gap-XS">
+    <span className="inline-flex flex-wrap gap-1">
       {items.map((n) => (
         <C key={n}>{n}</C>
       ))}
@@ -109,7 +109,7 @@ function Tile() {
 // Yugen UI — cùng token, viết bằng utility
 function Tile() {
   return (
-    <div className="flex flex-col gap-S rounded-medium bg-background-1 px-XL py-L shadow-4 hover:bg-background-1-hover">
+    <div className="flex flex-col gap-2 rounded-medium bg-background-1 px-5 py-4 shadow-4 hover:bg-background-1-hover">
       <h3 className="text-subtitle1 font-semibold text-foreground-1">Doanh thu</h3>
       <span className="text-caption1 text-foreground-3">Cập nhật 5 phút trước</span>
     </div>
@@ -179,7 +179,7 @@ export default function Page() {
         title="Provider & theme"
         description="FluentProvider → YugenProvider. Theme object trở thành hai attribute."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <CodeBlock code={PROVIDER_CODE} />
           <SimpleTable
             head={["Fluent v9", "Yugen UI"]}
@@ -205,7 +205,7 @@ export default function Page() {
         title="makeStyles → utility"
         description="Tên alias token trùng Fluent, nên mỗi tokens.* có một utility tương ứng. Bỏ hook useStyles, viết class trực tiếp."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <CodeBlock code={STYLES_CODE} />
           <SimpleTable
             head={["Fluent token", "Yugen utility", "Ghi chú"]}
@@ -220,8 +220,8 @@ export default function Page() {
               [<C key="a">tokens.colorStrokeFocus2</C>, <C key="b">outline-stroke-focus</C>, "Đã áp sẵn cho :focus-visible"],
               [<C key="a">tokens.colorStatusDangerForeground1</C>, <C key="b">text-danger-foreground-1</C>, "Tương tự success / warning"],
               [<C key="a">tokens.colorPaletteTealBackground2</C>, <C key="b">bg-teal-bg</C>, "cranberry, marigold, teal, lavender, forest, steel"],
-              [<C key="a">tokens.spacingHorizontalM / spacingVerticalM</C>, <C key="b">px-M / py-M, gap-M</C>, "Một thang chung cho hai trục"],
-              [<C key="a">tokens.spacingHorizontalSNudge</C>, <C key="b">px-SNudge</C>, "Hậu tố viết hoa"],
+              [<C key="a">tokens.spacingHorizontalM / spacingVerticalM</C>, <C key="b">px-3 / py-3, gap-3</C>, "Một thang chung cho hai trục"],
+              [<C key="a">tokens.spacingHorizontalSNudge</C>, <C key="b">px-1.5</C>, "Ramp Fluent trùng thang số của Tailwind"],
               [<C key="a">tokens.borderRadiusMedium / Circular</C>, <C key="b">rounded-medium / rounded-circular</C>, ""],
               [<C key="a">tokens.shadow4 / 16 / 64</C>, <C key="b">shadow-4 / shadow-16 / shadow-64</C>, ""],
               [<C key="a">typographyStyles.body1 / subtitle1</C>, <C key="b">text-body1 / text-subtitle1 font-semibold</C>, "Weight tách riêng"],
@@ -243,7 +243,7 @@ export default function Page() {
         title="Bảng tương ứng component"
         description="Đa số giữ nguyên tên và prop (appearance, size, shape, icon, intent). Cột ghi chú nêu khác biệt cần sửa khi chuyển."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <SimpleTable
             head={["Fluent v9", "Yugen UI", "Ghi chú"]}
             rows={[
@@ -317,7 +317,7 @@ export default function Page() {
         title="Chưa có trong Yugen"
         description="Một số component và tiện ích của Fluent v9 chưa có bản tương đương. Đây là cách thay thế khuyến nghị."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <SimpleTable
             head={["Fluent v9", "Thay thế"]}
             rows={[

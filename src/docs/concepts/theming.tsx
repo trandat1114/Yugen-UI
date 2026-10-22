@@ -19,7 +19,7 @@ function P({ children }: { children: ReactNode }) {
 }
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
@@ -29,7 +29,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
             {head.map((h) => (
-              <th key={h} className="px-L py-S text-start">
+              <th key={h} className="px-4 py-2 text-start">
                 {h}
               </th>
             ))}
@@ -39,7 +39,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
           {rows.map((row, i) => (
             <tr key={i} className="border-b border-stroke-3 align-top last:border-b-0">
               {row.map((cell, j) => (
-                <td key={j} className="px-L py-M text-foreground-2">
+                <td key={j} className="px-4 py-3 text-foreground-2">
                   {cell}
                 </td>
               ))}
@@ -63,15 +63,15 @@ function ThemeInfo() {
 
 function Sample() {
   return (
-    <div className="flex flex-col gap-M">
+    <div className="flex flex-col gap-3">
       <ThemeInfo />
-      <div className="flex flex-wrap items-center gap-S">
+      <div className="flex flex-wrap items-center gap-2">
         <Button appearance="primary">Lưu</Button>
         <Button>Huỷ</Button>
         <Badge>3</Badge>
       </div>
       <Input placeholder="Tìm trong dự án" aria-label="Tìm trong dự án" />
-      <div className="flex flex-wrap items-center gap-M">
+      <div className="flex flex-wrap items-center gap-3">
         <Switch label="Đồng bộ" defaultChecked />
         <Checkbox label="Ghi nhớ" defaultChecked />
       </div>
@@ -87,14 +87,14 @@ const PANELS: { theme: YugenTheme; brand: YugenBrand }[] = [
 
 const NESTED_CODE = `import { YugenProvider } from "@/components/ui";
 
-<div className="grid gap-L md:grid-cols-3">
-  <YugenProvider theme="light" brand="sakura" className="rounded-xlarge border border-stroke-2 p-L">
+<div className="grid gap-4 md:grid-cols-3">
+  <YugenProvider theme="light" brand="sakura" className="rounded-xlarge border border-stroke-2 p-4">
     <Sample />
   </YugenProvider>
-  <YugenProvider theme="dark" brand="web" className="rounded-xlarge border border-stroke-2 p-L">
+  <YugenProvider theme="dark" brand="web" className="rounded-xlarge border border-stroke-2 p-4">
     <Sample />
   </YugenProvider>
-  <YugenProvider theme="light" brand="teams" className="rounded-xlarge border border-stroke-2 p-L">
+  <YugenProvider theme="light" brand="teams" className="rounded-xlarge border border-stroke-2 p-4">
     <Sample />
   </YugenProvider>
 </div>`;
@@ -164,7 +164,7 @@ const BRAND_USE_CODE = `// Toàn ứng dụng
 <YugenProvider applyToDocument theme="light" brand="matcha">…</YugenProvider>
 
 // Hoặc chỉ một vùng (ví dụ trang marketing của sản phẩm con)
-<YugenProvider theme="light" brand="matcha" className="rounded-xlarge p-XL">…</YugenProvider>`;
+<YugenProvider theme="light" brand="matcha" className="rounded-xlarge p-5">…</YugenProvider>`;
 
 export default function Page() {
   return (
@@ -174,7 +174,7 @@ export default function Page() {
         title="data-theme & data-brand"
         description="Toàn bộ màu đọc từ CSS custom property. Hai attribute quyết định bộ giá trị: data-theme chọn bảng neutral / semantic, data-brand chọn ramp thương hiệu."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <SimpleTable
             head={["Attribute", "Giá trị", "Ý nghĩa"]}
             rows={[
@@ -209,7 +209,7 @@ export default function Page() {
         title="YugenProvider"
         description="Tương đương FluentProvider: áp theme, brand và hướng chữ cho một cây component, đồng thời gắn DirectionProvider của Radix, TooltipProvider và (tuỳ chọn) Toaster."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <PropsTable
             props={[
               { name: "theme", type: `"light" | "dark" | "high-contrast"`, defaultValue: `"light"`, description: "Ghi vào data-theme." },
@@ -246,7 +246,7 @@ export default function Page() {
         title="Hook useYugen()"
         description="Trả về { theme, brand, dir } của YugenProvider gần nhất — dùng khi component cần đổi nội dung (không phải màu) theo theme hoặc hướng chữ."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <CodeBlock code={HOOK_CODE} />
           <P>
             Đừng dùng <C>useYugen()</C> để chọn màu — màu đã tự đổi qua token. Hãy dùng nó cho nội dung: icon mặt trời / mặt trăng, ảnh
@@ -260,16 +260,16 @@ export default function Page() {
         title="Theme lồng nhau"
         description="Đặt data-theme / data-brand trên bất kỳ phần tử nào để đổi theme cho cả nhánh con — YugenProvider không applyToDocument làm đúng việc đó."
       >
-        <div className="flex flex-col gap-L">
-          <div className="grid gap-L md:grid-cols-3">
+        <div className="flex flex-col gap-4">
+          <div className="grid gap-4 md:grid-cols-3">
             {PANELS.map((p) => (
-              <YugenProvider key={`${p.theme}-${p.brand}`} theme={p.theme} brand={p.brand} className="rounded-xlarge border border-stroke-2 p-L">
+              <YugenProvider key={`${p.theme}-${p.brand}`} theme={p.theme} brand={p.brand} className="rounded-xlarge border border-stroke-2 p-4">
                 <Sample />
               </YugenProvider>
             ))}
           </div>
           <CodeBlock code={NESTED_CODE} />
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>
               Khi lồng một brand bên trong theme khác với <C>{"<html>"}</C>, đặt <strong className="font-semibold">cả hai</strong> attribute
               trên <strong className="font-semibold">cùng một phần tử</strong>: alias brand được tính lại theo cặp{" "}
@@ -289,7 +289,7 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="layers" title="Ba lớp token" description="Global → Alias → Utility. Mỗi lớp chỉ được đọc bởi lớp ngay sau nó.">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <SimpleTable
             head={["Lớp", "Ví dụ", "Ai được dùng"]}
             rows={[
@@ -311,8 +311,8 @@ export default function Page() {
         title="Tạo brand riêng"
         description="Brand là một ramp 16 bậc --brand-10 … --brand-160. Alias (nền nút, link, focus, tint chọn) tự lấy đúng bậc cho light và dark."
       >
-        <div className="flex flex-col gap-L">
-          <ol className="flex max-w-3xl list-decimal flex-col gap-XS ps-XL text-body2 text-foreground-2">
+        <div className="flex flex-col gap-4">
+          <ol className="flex max-w-3xl list-decimal flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>
               Mở <a className="text-link underline hover:text-link-hover" href="#/theme-designer">Theme Designer</a>, nhập màu chủ đạo và
               tên brand. Trang sinh ramp bằng cách giữ đường cong lightness / chroma OKLCH của Communication Blue và đổi hue, xem trước trên

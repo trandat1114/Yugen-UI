@@ -41,7 +41,7 @@ export const CommandInput = React.forwardRef<
   <div
     cmdk-input-wrapper=""
     className={cn(
-      "flex items-center gap-S border-b border-stroke-2 px-M transition-colors duration-normal",
+      "flex items-center gap-2 border-b border-stroke-2 px-3 transition-colors duration-normal",
       "focus-within:border-b-brand-stroke",
       wrapperClassName,
     )}
@@ -66,7 +66,7 @@ export const CommandList = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <CommandPrimitive.List
     ref={ref}
-    className={cn("max-h-80 scroll-py-XS overflow-x-hidden overflow-y-auto p-XS", className)}
+    className={cn("max-h-80 scroll-py-1 overflow-x-hidden overflow-y-auto p-1", className)}
     {...props}
   />
 ));
@@ -76,7 +76,7 @@ export const CommandEmpty = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Empty>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Empty>
 >(({ className, ...props }, ref) => (
-  <CommandPrimitive.Empty ref={ref} className={cn("py-XXL text-center text-body1 text-foreground-3", className)} {...props} />
+  <CommandPrimitive.Empty ref={ref} className={cn("py-6 text-center text-body1 text-foreground-3", className)} {...props} />
 ));
 CommandEmpty.displayName = "CommandEmpty";
 
@@ -88,7 +88,7 @@ export const CommandGroup = React.forwardRef<
     ref={ref}
     className={cn(
       "overflow-hidden text-foreground-1",
-      "**:[[cmdk-group-heading]]:flex **:[[cmdk-group-heading]]:h-8 **:[[cmdk-group-heading]]:items-center **:[[cmdk-group-heading]]:px-S",
+      "**:[[cmdk-group-heading]]:flex **:[[cmdk-group-heading]]:h-8 **:[[cmdk-group-heading]]:items-center **:[[cmdk-group-heading]]:px-2",
       "**:[[cmdk-group-heading]]:text-caption1 **:[[cmdk-group-heading]]:font-semibold **:[[cmdk-group-heading]]:text-foreground-3",
       className,
     )}
@@ -105,7 +105,7 @@ export const CommandItem = React.forwardRef<
     ref={ref}
     className={cn(
       // Cùng giao diện với menuItemClass; cmdk dùng data-selected / data-disabled="true|false".
-      "relative flex h-8 cursor-pointer items-center gap-S rounded-medium px-S text-body1 text-foreground-2 outline-none select-none",
+      "relative flex h-8 cursor-pointer items-center gap-2 rounded-medium px-2 text-body1 text-foreground-2 outline-none select-none",
       "data-[selected=true]:bg-background-1-hover data-[selected=true]:text-foreground-1 active:bg-background-1-pressed",
       "data-[disabled=true]:pointer-events-none data-[disabled=true]:text-foreground-disabled",
       "[&_svg]:size-5 [&_svg]:shrink-0",
@@ -120,7 +120,7 @@ export const CommandItem = React.forwardRef<
 CommandItem.displayName = "CommandItem";
 
 export function CommandShortcut({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) {
-  return <span className={cn("ms-auto ps-L text-caption1 text-foreground-3", className)} {...props} />;
+  return <span className={cn("ms-auto ps-4 text-caption1 text-foreground-3", className)} {...props} />;
 }
 
 export const CommandSeparator = React.forwardRef<
@@ -131,7 +131,7 @@ export const CommandSeparator = React.forwardRef<
   // vẫn ẩn khi đang tìm kiếm như cmdk (trừ alwaysRender).
   const idle = useCommandState((state) => !state.search);
   if (!alwaysRender && !idle) return null;
-  return <div ref={ref} role="none" cmdk-separator="" className={cn("-mx-XS my-XS h-px bg-stroke-2", className)} {...props} />;
+  return <div ref={ref} role="none" cmdk-separator="" className={cn("-mx-1 my-1 h-px bg-stroke-2", className)} {...props} />;
 });
 CommandSeparator.displayName = "CommandSeparator";
 

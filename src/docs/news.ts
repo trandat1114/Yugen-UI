@@ -31,6 +31,17 @@ export const NEWS_KIND_LABEL: Record<NewsKind, string> = {
 
 export const NEWS: NewsRelease[] = [
   {
+    version: "0.10.0",
+    upcoming: true,
+    date: "2027-01-29",
+    title: "Spacing theo thang số",
+    summary: "Spacing dùng thang số của Tailwind; alias viết hoa vẫn chạy nhưng đã deprecated.",
+    items: [
+      { kind: "improved", text: "Component, ví dụ, template và registry dùng spacing theo thang số (p-3, gap-2) thay cho alias viết hoa (p-M, gap-S). Giá trị không đổi ở cỡ chữ gốc 16px; thang số tính bằng rem nên co giãn theo cỡ chữ của trình duyệt.", href: "#/concepts/styling" },
+      { kind: "improved", text: "Alias spacing viết hoa (p-M, gap-SNudge…) trong theme.css và cn() đã deprecated, vẫn chạy đến 1.0. Đổi theo bảng XXS → 0.5, XS → 1, SNudge → 1.5, S → 2, MNudge → 2.5, M → 3, L → 4, XL → 5, XXL → 6, XXXL → 8.", href: "#/concepts/styling" },
+    ],
+  },
+  {
     version: "0.9.0",
     date: "2026-10-23",
     title: "React 19 và starter tối giản",

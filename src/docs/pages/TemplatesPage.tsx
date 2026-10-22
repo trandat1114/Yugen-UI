@@ -89,13 +89,13 @@ const Preview = lazy(() =>
 function BrowserFrame({ url, label, className, children }: { url: string; label: string; className: string; children: ReactNode }) {
   return (
     <section aria-label={label} className="overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1 shadow-8">
-      <div aria-hidden className="flex items-center gap-M border-b border-stroke-2 bg-background-3 px-L py-S">
-        <span className="flex gap-XS">
+      <div aria-hidden className="flex items-center gap-3 border-b border-stroke-2 bg-background-3 px-4 py-2">
+        <span className="flex gap-1">
           <span className="size-2.5 rounded-circular bg-danger-background-3" />
           <span className="size-2.5 rounded-circular bg-warning-background-3" />
           <span className="size-2.5 rounded-circular bg-success-background-3" />
         </span>
-        <span className="mx-auto min-w-0 truncate rounded-medium bg-background-1 px-M py-XXS font-mono text-caption1 text-foreground-3">
+        <span className="mx-auto min-w-0 truncate rounded-medium bg-background-1 px-3 py-0.5 font-mono text-caption1 text-foreground-3">
           {url}
         </span>
         <span className="w-10" />
@@ -108,10 +108,10 @@ function BrowserFrame({ url, label, className, children }: { url: string; label:
 function Command({ dir, label }: { dir: string; label: string }) {
   const command = templateCommand(dir);
   return (
-    <div className="flex flex-col gap-XS">
+    <div className="flex flex-col gap-1">
       <span className="text-caption1 font-semibold text-foreground-2">{label}</span>
-      <div className="flex items-center gap-S rounded-large border border-stroke-2 bg-background-3 py-XS ps-M pe-XS">
-        <code className="min-w-0 flex-1 py-XS font-mono text-caption1 break-all whitespace-pre-line text-foreground-1">{command}</code>
+      <div className="flex items-center gap-2 rounded-large border border-stroke-2 bg-background-3 py-1 ps-3 pe-1">
+        <code className="min-w-0 flex-1 py-1 font-mono text-caption1 break-all whitespace-pre-line text-foreground-1">{command}</code>
         <CopyButton text={command} />
       </div>
     </div>
@@ -120,7 +120,7 @@ function Command({ dir, label }: { dir: string; label: string }) {
 
 function Actions({ t, c }: { t: TemplateInfo; c: typeof VI }) {
   return (
-    <div className="flex flex-wrap gap-S">
+    <div className="flex flex-wrap gap-2">
       <Button asChild appearance="primary" icon={<Open16Regular />}>
         <a href={templateStackBlitzUrl(t.dir)} target="_blank" rel="noreferrer">
           {c.stackblitz}
@@ -139,8 +139,8 @@ function Actions({ t, c }: { t: TemplateInfo; c: typeof VI }) {
 function Header({ t, c, withName }: { t: TemplateInfo; c: typeof VI; withName?: boolean }) {
   const { locale } = useLocale();
   return (
-    <div className="flex flex-col gap-S">
-      <div className="flex flex-wrap items-center gap-S">
+    <div className="flex flex-col gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         {withName && <h3 className="font-display text-title3 font-semibold">{t.name}</h3>}
         {t.featured && (
           <Badge appearance="tint" color="brand">
@@ -150,7 +150,7 @@ function Header({ t, c, withName }: { t: TemplateInfo; c: typeof VI; withName?: 
         <code className="font-mono text-caption1 text-foreground-3">templates/{t.dir}</code>
       </div>
       <p className="max-w-3xl text-body1 text-foreground-2">{t[locale].description}</p>
-      <div className="flex flex-wrap gap-XS">
+      <div className="flex flex-wrap gap-1">
         {t.tags.map((tag) => (
           <Badge key={tag} appearance="outline" color="subtle">
             {tag}
@@ -178,19 +178,19 @@ export function TemplatesPage() {
   const previewLang = locale === "en" ? "vi" : undefined;
 
   return (
-    <div className="pb-XXXL">
+    <div className="pb-8">
       <PageHeader eyebrow="Templates" title={c.title} lead={c.lead}>
         {c.intro}
       </PageHeader>
 
       {featured.map((t) => (
         <DocSection key={t.dir} id={t.dir} title={t.name}>
-          <div className="flex flex-col gap-XL">
-            <div className="flex flex-wrap items-end justify-between gap-L">
+          <div className="flex flex-col gap-5">
+            <div className="flex flex-wrap items-end justify-between gap-4">
               <Header t={t} c={c} />
               <Actions t={t} c={c} />
             </div>
-            <div className="flex flex-col gap-S">
+            <div className="flex flex-col gap-2">
               <BrowserFrame url={`localhost:5173${t.previewPath ?? "/"}`} label={c.previewLabel(t.name)} className="h-190 max-h-[80vh]">
                 <div lang={previewLang} className="h-full">
                   <Suspense fallback={<Fallback label={c.loading} />}>
@@ -200,11 +200,11 @@ export function TemplatesPage() {
               </BrowserFrame>
               <p className="text-caption1 text-foreground-3">{c.previewHint}</p>
             </div>
-            <div className="grid gap-XL lg:grid-cols-2">
-              <ul className="flex flex-col gap-S">
+            <div className="grid gap-5 lg:grid-cols-2">
+              <ul className="flex flex-col gap-2">
                 {t[locale].features.map((f) => (
-                  <li key={f} className="flex gap-S text-body1 text-foreground-2">
-                    <Checkmark16Regular className="mt-XXS shrink-0 text-brand-foreground-1" />
+                  <li key={f} className="flex gap-2 text-body1 text-foreground-2">
+                    <Checkmark16Regular className="mt-0.5 shrink-0 text-brand-foreground-1" />
                     {f}
                   </li>
                 ))}
@@ -216,9 +216,9 @@ export function TemplatesPage() {
       ))}
 
       <DocSection id="more" title={c.more} description={c.moreDesc}>
-        <div className="grid gap-XL xl:grid-cols-2">
+        <div className="grid gap-5 xl:grid-cols-2">
           {rest.map((t) => (
-            <article key={t.dir} className="flex min-w-0 flex-col gap-L rounded-2xlarge border border-stroke-2 bg-background-1 p-XL">
+            <article key={t.dir} className="flex min-w-0 flex-col gap-4 rounded-2xlarge border border-stroke-2 bg-background-1 p-5">
               <Header t={t} c={c} withName />
               <BrowserFrame url="localhost:5173/" label={c.previewLabel(t.name)} className="h-110 overflow-y-auto">
                 <div lang={previewLang}>

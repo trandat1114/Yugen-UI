@@ -24,7 +24,7 @@ import type { ComponentDoc } from "../types";
 function LabelInputDemo() {
   const id = useId();
   return (
-    <div className="flex w-72 flex-col gap-XS">
+    <div className="flex w-72 flex-col gap-1">
       <Label htmlFor={id} required>
         Số điện thoại
       </Label>
@@ -36,7 +36,7 @@ function LabelInputDemo() {
 function DropdownControlledDemo() {
   const [size, setSize] = useState("m");
   return (
-    <div className="flex flex-col gap-S">
+    <div className="flex flex-col gap-2">
       <Dropdown aria-label="Cỡ áo" value={size} onValueChange={setSize}>
         <DropdownOption value="s">S</DropdownOption>
         <DropdownOption value="m">M</DropdownOption>
@@ -51,7 +51,7 @@ function RadioControlledDemo() {
   const labelId = useId();
   const [plan, setPlan] = useState("monthly");
   return (
-    <div className="flex flex-col gap-XS">
+    <div className="flex flex-col gap-1">
       <Label id={labelId}>Chu kỳ thanh toán</Label>
       <RadioGroup aria-labelledby={labelId} value={plan} onValueChange={setPlan}>
         <Radio value="monthly" label="Hằng tháng" />
@@ -65,7 +65,7 @@ function RadioControlledDemo() {
 function ComboboxFreeformDemo() {
   const [dessert, setDessert] = useState("");
   return (
-    <div className="flex flex-col gap-S">
+    <div className="flex flex-col gap-2">
       <Combobox
         freeform
         aria-label="Món tráng miệng"
@@ -82,7 +82,7 @@ function ComboboxFreeformDemo() {
 function TagDismissDemo() {
   const [tags, setTags] = useState(["React", "TypeScript", "Tailwind CSS", "Radix UI"]);
   return (
-    <div className="flex flex-col items-center gap-M">
+    <div className="flex flex-col items-center gap-3">
       <TagGroup aria-label="Bộ lọc" onDismiss={(value) => setTags((t) => t.filter((x) => x !== value))}>
         {tags.map((tag) => (
           <Tag key={tag} value={tag} dismissible>
@@ -102,7 +102,7 @@ function TagDismissDemo() {
 function TagPickerControlledDemo() {
   const [members, setMembers] = useState<string[]>(["Lan", "Hùng"]);
   return (
-    <div className="flex w-96 flex-col gap-S">
+    <div className="flex w-96 flex-col gap-2">
       <TagPicker
         aria-label="Thành viên"
         value={members}
@@ -119,7 +119,7 @@ function TagPickerControlledDemo() {
 function SpinButtonControlledDemo() {
   const [guests, setGuests] = useState<number | null>(2);
   return (
-    <div className="flex flex-col gap-S">
+    <div className="flex flex-col gap-2">
       <SpinButton aria-label="Số khách" value={guests} onValueChange={setGuests} min={1} max={10} className="w-40" />
       <span className="text-caption1 text-foreground-3">Phòng cho {guests ?? 0} khách</span>
     </div>
@@ -141,7 +141,7 @@ function FruitFilterDemo() {
 
   return (
     <div className="w-80 overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1 shadow-4">
-      <div className="flex flex-col gap-XS border-b border-stroke-2 p-M">
+      <div className="flex flex-col gap-1 border-b border-stroke-2 p-3">
         <SearchBox aria-label="Tìm trái cây" aria-controls="fruit-results" value={query} onValueChange={setQuery} />
         <p aria-live="polite" className="text-caption1 text-foreground-3">
           {results.length} / {FRUITS.length} trái cây
@@ -155,12 +155,12 @@ function FruitFilterDemo() {
               media={<Avatar name={f.name} size={32} color="colorful" />}
               title={<HighlightMatch text={f.name} query={query} />}
               description={f.origin}
-              className="px-M"
+              className="px-3"
             />
           ))}
         </List>
       ) : (
-        <p id="fruit-results" className="px-M py-XL text-center text-body1 text-foreground-3">
+        <p id="fruit-results" className="px-3 py-5 text-center text-body1 text-foreground-3">
           Không có trái cây nào khớp “{query}”.
         </p>
       )}
@@ -171,7 +171,7 @@ function FruitFilterDemo() {
 function InputOTPCompleteDemo() {
   const [code, setCode] = useState("");
   return (
-    <div className="flex flex-col items-center gap-S">
+    <div className="flex flex-col items-center gap-2">
       <InputOTP aria-label="Mã OTP" onComplete={setCode} />
       <span className="text-caption1 text-foreground-3">{code ? "Đã nhập mã " + code : "Nhập đủ 6 số"}</span>
     </div>
@@ -181,7 +181,7 @@ function InputOTPCompleteDemo() {
 function RatingHalfDemo() {
   const [score, setScore] = useState(3.5);
   return (
-    <div className="flex flex-col items-center gap-S">
+    <div className="flex flex-col items-center gap-2">
       <Rating step={0.5} value={score} onValueChange={setScore} color="marigold" aria-label="Chất lượng phục vụ" />
       <span className="text-caption1 text-foreground-3">{score} / 5 sao</span>
     </div>
@@ -204,13 +204,13 @@ export const docs: ComponentDoc[] = [
     importCode: `import { Label } from "@/components/ui";`,
     hero: {
       title: "Label",
-      code: `<div className="flex flex-col gap-S">
+      code: `<div className="flex flex-col gap-2">
   <Label>Tên hiển thị</Label>
   <Label weight="semibold">Thông tin liên hệ</Label>
   <Label required>Email công việc</Label>
 </div>`,
       render: () => (
-        <div className="flex flex-col gap-S">
+        <div className="flex flex-col gap-2">
           <Label>Tên hiển thị</Label>
           <Label weight="semibold">Thông tin liên hệ</Label>
           <Label required>Email công việc</Label>
@@ -253,7 +253,7 @@ export const docs: ComponentDoc[] = [
         description: "Liên kết bằng htmlFor + id (useId) để bấm nhãn là focus vào ô.",
         code: `const id = useId();
 
-<div className="flex w-72 flex-col gap-XS">
+<div className="flex w-72 flex-col gap-1">
   <Label htmlFor={id} required>Số điện thoại</Label>
   <Input id={id} type="tel" placeholder="0912 345 678" />
 </div>`,
@@ -303,13 +303,13 @@ export const docs: ComponentDoc[] = [
       {
         title: "Appearance",
         description: "outline (mặc định), filled-darker, filled-lighter — filled dùng trên nền có màu tương phản.",
-        code: `<div className="grid gap-M rounded-xlarge bg-background-1 p-L">
+        code: `<div className="grid gap-3 rounded-xlarge bg-background-1 p-4">
   <Textarea placeholder="Outline" className="w-64" />
   <Textarea appearance="filled-darker" placeholder="Filled darker" className="w-64" />
   <Textarea appearance="filled-lighter" placeholder="Filled lighter" className="w-64" />
 </div>`,
         render: () => (
-          <div className="grid gap-M rounded-xlarge bg-background-1 p-L">
+          <div className="grid gap-3 rounded-xlarge bg-background-1 p-4">
             <Textarea placeholder="Outline" className="w-64" />
             <Textarea appearance="filled-darker" placeholder="Filled darker" className="w-64" />
             <Textarea appearance="filled-lighter" placeholder="Filled lighter" className="w-64" />
@@ -416,14 +416,14 @@ export const docs: ComponentDoc[] = [
       {
         title: "Appearance",
         description: "outline (mặc định), underline, filled-darker, filled-lighter.",
-        code: `<div className="grid w-64 gap-M rounded-xlarge bg-background-1 p-L">
+        code: `<div className="grid w-64 gap-3 rounded-xlarge bg-background-1 p-4">
   <Select aria-label="Outline"><option>Outline</option></Select>
   <Select appearance="underline" aria-label="Underline"><option>Underline</option></Select>
   <Select appearance="filled-darker" aria-label="Filled darker"><option>Filled darker</option></Select>
   <Select appearance="filled-lighter" aria-label="Filled lighter"><option>Filled lighter</option></Select>
 </div>`,
         render: () => (
-          <div className="grid w-64 gap-M rounded-xlarge bg-background-1 p-L">
+          <div className="grid w-64 gap-3 rounded-xlarge bg-background-1 p-4">
             <Select aria-label="Outline">
               <option>Outline</option>
             </Select>
@@ -576,7 +576,7 @@ export const docs: ComponentDoc[] = [
         description: "value / onValueChange.",
         code: `const [size, setSize] = useState("m");
 
-<div className="flex flex-col gap-S">
+<div className="flex flex-col gap-2">
   <Dropdown aria-label="Cỡ áo" value={size} onValueChange={setSize}>
     <DropdownOption value="s">S</DropdownOption>
     <DropdownOption value="m">M</DropdownOption>
@@ -611,7 +611,7 @@ export const docs: ComponentDoc[] = [
       {
         title: "Appearance, kích thước & disabled",
         description: "Cùng bộ appearance / size với Input.",
-        code: `<div className="grid gap-M rounded-xlarge bg-background-1 p-L">
+        code: `<div className="grid gap-3 rounded-xlarge bg-background-1 p-4">
   <Dropdown appearance="underline" size="small" aria-label="Underline" placeholder="Underline · small">
     <DropdownOption value="a">Tuỳ chọn A</DropdownOption>
   </Dropdown>
@@ -626,7 +626,7 @@ export const docs: ComponentDoc[] = [
   </Dropdown>
 </div>`,
         render: () => (
-          <div className="grid gap-M rounded-xlarge bg-background-1 p-L">
+          <div className="grid gap-3 rounded-xlarge bg-background-1 p-4">
             <Dropdown appearance="underline" size="small" aria-label="Underline" placeholder="Underline · small">
               <DropdownOption value="a">Tuỳ chọn A</DropdownOption>
             </Dropdown>
@@ -759,7 +759,7 @@ export const docs: ComponentDoc[] = [
         code: `const labelId = useId();
 const [plan, setPlan] = useState("monthly");
 
-<div className="flex flex-col gap-XS">
+<div className="flex flex-col gap-1">
   <Label id={labelId}>Chu kỳ thanh toán</Label>
   <RadioGroup aria-labelledby={labelId} value={plan} onValueChange={setPlan}>
     <Radio value="monthly" label="Hằng tháng" />
@@ -880,7 +880,7 @@ const [plan, setPlan] = useState("monthly");
         description: "Gõ giá trị không có trong danh sách rồi Enter hoặc rời ô để giữ lại.",
         code: `const [dessert, setDessert] = useState("");
 
-<div className="flex flex-col gap-S">
+<div className="flex flex-col gap-2">
   <Combobox
     freeform
     aria-label="Món tráng miệng"
@@ -896,13 +896,13 @@ const [plan, setPlan] = useState("monthly");
       {
         title: "Appearance, kích thước & disabled",
         description: "Cùng bộ appearance / size với Input.",
-        code: `<div className="grid gap-M rounded-xlarge bg-background-1 p-L">
+        code: `<div className="grid gap-3 rounded-xlarge bg-background-1 p-4">
   <Combobox appearance="underline" size="small" aria-label="Underline" placeholder="Underline · small" options={["Một", "Hai"]} />
   <Combobox appearance="filled-darker" size="large" aria-label="Filled darker" placeholder="Filled darker · large" options={["Một", "Hai"]} />
   <Combobox disabled aria-label="Disabled" placeholder="Disabled" options={["Một", "Hai"]} />
 </div>`,
         render: () => (
-          <div className="grid gap-M rounded-xlarge bg-background-1 p-L">
+          <div className="grid gap-3 rounded-xlarge bg-background-1 p-4">
             <Combobox appearance="underline" size="small" aria-label="Underline" placeholder="Underline · small" options={["Một", "Hai"]} />
             <Combobox
               appearance="filled-darker"
@@ -1022,7 +1022,7 @@ const [plan, setPlan] = useState("monthly");
         description: "Bấm tag hoặc nhấn Delete/Backspace để gỡ; focus tự sang tag kế bên.",
         code: `const [tags, setTags] = useState(["React", "TypeScript", "Tailwind CSS", "Radix UI"]);
 
-<div className="flex flex-col items-center gap-M">
+<div className="flex flex-col items-center gap-3">
   <TagGroup aria-label="Bộ lọc" onDismiss={(value) => setTags((t) => t.filter((x) => x !== value))}>
     {tags.map((tag) => (
       <Tag key={tag} value={tag} dismissible>
@@ -1168,7 +1168,7 @@ const [plan, setPlan] = useState("monthly");
         description: "value / onValueChange; tagAppearance và tagShape đổi kiểu tag.",
         code: `const [members, setMembers] = useState<string[]>(["Lan", "Hùng"]);
 
-<div className="flex w-96 flex-col gap-S">
+<div className="flex w-96 flex-col gap-2">
   <TagPicker
     aria-label="Thành viên"
     value={members}
@@ -1184,13 +1184,13 @@ const [plan, setPlan] = useState("monthly");
       {
         title: "Kích thước",
         description: "medium (tag extra-small), large (tag small), extra-large (tag medium).",
-        code: `<div className="grid w-96 gap-M">
+        code: `<div className="grid w-96 gap-3">
   <TagPicker aria-label="Medium" defaultValue={["A"]} options={["A", "B", "C"]} />
   <TagPicker size="large" aria-label="Large" defaultValue={["A"]} options={["A", "B", "C"]} />
   <TagPicker size="extra-large" aria-label="Extra large" defaultValue={["A"]} options={["A", "B", "C"]} />
 </div>`,
         render: () => (
-          <div className="grid w-96 gap-M">
+          <div className="grid w-96 gap-3">
             <TagPicker aria-label="Medium" defaultValue={["A"]} options={["A", "B", "C"]} />
             <TagPicker size="large" aria-label="Large" defaultValue={["A"]} options={["A", "B", "C"]} />
             <TagPicker size="extra-large" aria-label="Extra large" defaultValue={["A"]} options={["A", "B", "C"]} />
@@ -1259,7 +1259,7 @@ const [plan, setPlan] = useState("monthly");
         description: "value / onValueChange (null khi ô trống).",
         code: `const [guests, setGuests] = useState<number | null>(2);
 
-<div className="flex flex-col gap-S">
+<div className="flex flex-col gap-2">
   <SpinButton aria-label="Số khách" value={guests} onValueChange={setGuests} min={1} max={10} className="w-40" />
   <span className="text-caption1 text-foreground-3">Phòng cho {guests ?? 0} khách</span>
 </div>`,
@@ -1268,7 +1268,7 @@ const [plan, setPlan] = useState("monthly");
       {
         title: "Appearance, kích thước & disabled",
         description: "outline, underline, filled-darker, filled-lighter; size small / medium.",
-        code: `<div className="grid w-48 gap-M rounded-xlarge bg-background-1 p-L">
+        code: `<div className="grid w-48 gap-3 rounded-xlarge bg-background-1 p-4">
   <SpinButton aria-label="Outline" defaultValue={1} />
   <SpinButton appearance="underline" aria-label="Underline" defaultValue={2} />
   <SpinButton appearance="filled-darker" aria-label="Filled darker" defaultValue={3} />
@@ -1276,7 +1276,7 @@ const [plan, setPlan] = useState("monthly");
   <SpinButton disabled aria-label="Disabled" defaultValue={5} />
 </div>`,
         render: () => (
-          <div className="grid w-48 gap-M rounded-xlarge bg-background-1 p-L">
+          <div className="grid w-48 gap-3 rounded-xlarge bg-background-1 p-4">
             <SpinButton aria-label="Outline" defaultValue={1} />
             <SpinButton appearance="underline" aria-label="Underline" defaultValue={2} />
             <SpinButton appearance="filled-darker" aria-label="Filled darker" defaultValue={3} />
@@ -1341,7 +1341,7 @@ function FruitFilterDemo() {
 
   return (
     <div className="w-80 overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1 shadow-4">
-      <div className="flex flex-col gap-XS border-b border-stroke-2 p-M">
+      <div className="flex flex-col gap-1 border-b border-stroke-2 p-3">
         <SearchBox aria-label="Tìm trái cây" aria-controls="fruit-results" value={query} onValueChange={setQuery} />
         <p aria-live="polite" className="text-caption1 text-foreground-3">
           {results.length} / {FRUITS.length} trái cây
@@ -1355,12 +1355,12 @@ function FruitFilterDemo() {
               media={<Avatar name={f.name} size={32} color="colorful" />}
               title={<HighlightMatch text={f.name} query={query} />}
               description={f.origin}
-              className="px-M"
+              className="px-3"
             />
           ))}
         </List>
       ) : (
-        <p id="fruit-results" className="px-M py-XL text-center text-body1 text-foreground-3">
+        <p id="fruit-results" className="px-3 py-5 text-center text-body1 text-foreground-3">
           Không có trái cây nào khớp “{query}”.
         </p>
       )}
@@ -1372,14 +1372,14 @@ function FruitFilterDemo() {
       {
         title: "Appearance",
         description: "outline (mặc định), underline, filled-darker, filled-lighter.",
-        code: `<div className="grid w-72 gap-M rounded-xlarge bg-background-1 p-L">
+        code: `<div className="grid w-72 gap-3 rounded-xlarge bg-background-1 p-4">
   <SearchBox aria-label="Outline" placeholder="Outline" />
   <SearchBox appearance="underline" aria-label="Underline" placeholder="Underline" />
   <SearchBox appearance="filled-darker" aria-label="Filled darker" placeholder="Filled darker" />
   <SearchBox appearance="filled-lighter" aria-label="Filled lighter" placeholder="Filled lighter" />
 </div>`,
         render: () => (
-          <div className="grid w-72 gap-M rounded-xlarge bg-background-1 p-L">
+          <div className="grid w-72 gap-3 rounded-xlarge bg-background-1 p-4">
             <SearchBox aria-label="Outline" placeholder="Outline" />
             <SearchBox appearance="underline" aria-label="Underline" placeholder="Underline" />
             <SearchBox appearance="filled-darker" aria-label="Filled darker" placeholder="Filled darker" />
@@ -1443,7 +1443,7 @@ function FruitFilterDemo() {
         description: "Gọi khi người dùng nhập đủ 6 số.",
         code: `const [code, setCode] = useState("");
 
-<div className="flex flex-col items-center gap-S">
+<div className="flex flex-col items-center gap-2">
   <InputOTP aria-label="Mã OTP" onComplete={setCode} />
   <span className="text-caption1 text-foreground-3">{code ? "Đã nhập mã " + code : "Nhập đủ 6 số"}</span>
 </div>`,
@@ -1519,13 +1519,13 @@ function FruitFilterDemo() {
       {
         title: "Màu",
         description: "neutral (mặc định), brand, marigold.",
-        code: `<div className="flex flex-col items-center gap-S">
+        code: `<div className="flex flex-col items-center gap-2">
   <Rating defaultValue={4} size="large" aria-label="Neutral" />
   <Rating defaultValue={4} size="large" color="brand" aria-label="Brand" />
   <Rating defaultValue={4} size="large" color="marigold" aria-label="Marigold" />
 </div>`,
         render: () => (
-          <div className="flex flex-col items-center gap-S">
+          <div className="flex flex-col items-center gap-2">
             <Rating defaultValue={4} size="large" aria-label="Neutral" />
             <Rating defaultValue={4} size="large" color="brand" aria-label="Brand" />
             <Rating defaultValue={4} size="large" color="marigold" aria-label="Marigold" />
@@ -1537,7 +1537,7 @@ function FruitFilterDemo() {
         description: "step={0.5}: mỗi sao có hai vùng bấm.",
         code: `const [score, setScore] = useState(3.5);
 
-<div className="flex flex-col items-center gap-S">
+<div className="flex flex-col items-center gap-2">
   <Rating step={0.5} value={score} onValueChange={setScore} color="marigold" aria-label="Chất lượng phục vụ" />
   <span className="text-caption1 text-foreground-3">{score} / 5 sao</span>
 </div>`,
@@ -1546,13 +1546,13 @@ function FruitFilterDemo() {
       {
         title: "RatingDisplay",
         description: "Hiển thị chỉ đọc kèm giá trị, số lượt; compact chỉ hiện một sao.",
-        code: `<div className="flex flex-col items-start gap-S">
+        code: `<div className="flex flex-col items-start gap-2">
   <RatingDisplay value={4.5} count={1280} color="marigold" />
   <RatingDisplay value={3} count={86} size="large" />
   <RatingDisplay value={4.2} count={530} compact color="brand" />
 </div>`,
         render: () => (
-          <div className="flex flex-col items-start gap-S">
+          <div className="flex flex-col items-start gap-2">
             <RatingDisplay value={4.5} count={1280} color="marigold" />
             <RatingDisplay value={3} count={86} size="large" />
             <RatingDisplay value={4.2} count={530} compact color="brand" />
@@ -1562,14 +1562,14 @@ function FruitFilterDemo() {
       {
         title: "Kích thước",
         description: "small (12px), medium (16px), large (20px), extra-large (28px, mặc định).",
-        code: `<div className="flex flex-col items-center gap-S">
+        code: `<div className="flex flex-col items-center gap-2">
   <Rating size="small" defaultValue={4} aria-label="Small" />
   <Rating size="medium" defaultValue={4} aria-label="Medium" />
   <Rating size="large" defaultValue={4} aria-label="Large" />
   <Rating size="extra-large" defaultValue={4} aria-label="Extra large" />
 </div>`,
         render: () => (
-          <div className="flex flex-col items-center gap-S">
+          <div className="flex flex-col items-center gap-2">
             <Rating size="small" defaultValue={4} aria-label="Small" />
             <Rating size="medium" defaultValue={4} aria-label="Medium" />
             <Rating size="large" defaultValue={4} aria-label="Large" />

@@ -87,7 +87,7 @@ export const LoadingOverlay = React.forwardRef<HTMLDivElement, LoadingOverlayPro
           <div
             aria-hidden
             className={cn(
-              "absolute inset-0 flex items-center justify-center rounded-[inherit] bg-background-1/80 p-L",
+              "absolute inset-0 flex items-center justify-center rounded-[inherit] bg-background-1/80 p-4",
               overlayClassName,
             )}
           >
@@ -361,7 +361,7 @@ export const ErrorState = React.forwardRef<HTMLDivElement, ErrorStateProps>(
     };
 
     const actions = (onRetry || secondaryAction) && (
-      <div className={cn("flex flex-wrap items-center gap-S", small ? "shrink-0" : "justify-center")}>
+      <div className={cn("flex flex-wrap items-center gap-2", small ? "shrink-0" : "justify-center")}>
         {onRetry && (
           <Button
             appearance={small ? "secondary" : "primary"}
@@ -382,7 +382,7 @@ export const ErrorState = React.forwardRef<HTMLDivElement, ErrorStateProps>(
         <div
           ref={ref}
           role={variant === "alert" ? "alert" : undefined}
-          className={cn("flex min-w-0 flex-wrap items-center gap-M p-M text-start", className)}
+          className={cn("flex min-w-0 flex-wrap items-center gap-3 p-3 text-start", className)}
           {...props}
         >
           <span aria-hidden className="flex shrink-0 text-danger-foreground-1 [&_svg]:size-5">
@@ -401,13 +401,13 @@ export const ErrorState = React.forwardRef<HTMLDivElement, ErrorStateProps>(
       <div
         ref={ref}
         role={variant === "alert" ? "alert" : undefined}
-        className={cn("flex min-w-0 flex-col items-center justify-center gap-L p-XXL text-center text-balance", className)}
+        className={cn("flex min-w-0 flex-col items-center justify-center gap-4 p-6 text-center text-balance", className)}
         {...props}
       >
-        <div className="flex max-w-sm flex-col items-center gap-S">
+        <div className="flex max-w-sm flex-col items-center gap-2">
           <div
             aria-hidden
-            className="mb-XS flex size-12 items-center justify-center rounded-xlarge bg-danger-background-1 text-danger-foreground-1 [&_svg]:size-6"
+            className="mb-1 flex size-12 items-center justify-center rounded-xlarge bg-danger-background-1 text-danger-foreground-1 [&_svg]:size-6"
           >
             {icon ?? <ErrorCircle24Regular />}
           </div>

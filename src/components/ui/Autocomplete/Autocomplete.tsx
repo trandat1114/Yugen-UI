@@ -303,7 +303,7 @@ export const Autocomplete = React.forwardRef<HTMLInputElement, AutocompleteProps
             onMouseDown={(e) => e.preventDefault()}
             className={cn(
               popoverSurfaceClass,
-              "max-h-[min(var(--radix-popover-content-available-height),--spacing(80))] w-(--radix-popover-trigger-width) overflow-y-auto p-XS",
+              "max-h-[min(var(--radix-popover-content-available-height),--spacing(80))] w-(--radix-popover-trigger-width) overflow-y-auto p-1",
               listboxClassName,
             )}
           >
@@ -322,12 +322,12 @@ export const Autocomplete = React.forwardRef<HTMLInputElement, AutocompleteProps
               )}
             </div>
             {showSpinner && (
-              <div className="flex items-center gap-S px-S py-SNudge text-body1 text-foreground-3">
+              <div className="flex items-center gap-2 px-2 py-1.5 text-body1 text-foreground-3">
                 <Spinner size="extra-tiny" />
                 Đang tìm…
               </div>
             )}
-            {showEmpty && <div className="px-S py-SNudge text-body1 text-foreground-3">{emptyMessage}</div>}
+            {showEmpty && <div className="px-2 py-1.5 text-body1 text-foreground-3">{emptyMessage}</div>}
           </PopoverPrimitive.Content>
         </PopoverPrimitive.Portal>
         <span aria-live="polite" className="sr-only">

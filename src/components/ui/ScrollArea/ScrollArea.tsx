@@ -32,7 +32,7 @@ export const ScrollBar = React.forwardRef<
     ref={ref}
     orientation={orientation}
     className={cn(
-      "z-10 flex touch-none p-XXS select-none",
+      "z-10 flex touch-none p-0.5 select-none",
       "data-[state=visible]:animate-fade-in data-[state=hidden]:animate-fade-out",
       orientation === "vertical" ? "h-full w-3" : "h-3 flex-col",
       className,

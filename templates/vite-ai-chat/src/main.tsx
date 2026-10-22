@@ -7,7 +7,7 @@ import "./index.css";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <YugenProvider applyToDocument withToaster theme="light" brand="sakura">
-      <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-XXL bg-shell p-XXL">
+      <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-6 bg-shell p-6">
         <AiAssistantBlock />
       </main>
     </YugenProvider>

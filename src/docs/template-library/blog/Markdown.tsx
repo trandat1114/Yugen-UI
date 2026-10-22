@@ -110,7 +110,7 @@ function Inlines({ nodes }: { nodes: MdInline[] }) {
             );
           case "inlineCode":
             return (
-              <code key={i} className="rounded-small bg-background-4 px-XS font-mono text-[0.9em]">
+              <code key={i} className="rounded-small bg-background-4 px-1 font-mono text-[0.9em]">
                 {node.text}
               </code>
             );
@@ -143,9 +143,9 @@ function Inlines({ nodes }: { nodes: MdInline[] }) {
 }
 
 const HEADING: Record<number, string> = {
-  2: "mt-XL scroll-mt-20 font-display text-title3 font-semibold text-foreground-1",
-  3: "mt-L scroll-mt-20 text-subtitle1 font-semibold text-foreground-1",
-  4: "mt-M text-subtitle2 font-semibold text-foreground-1",
+  2: "mt-5 scroll-mt-20 font-display text-title3 font-semibold text-foreground-1",
+  3: "mt-4 scroll-mt-20 text-subtitle1 font-semibold text-foreground-1",
+  4: "mt-3 text-subtitle2 font-semibold text-foreground-1",
 };
 
 function Block({ block, id }: { block: MdBlock; id?: string }): ReactNode {
@@ -170,7 +170,7 @@ function Block({ block, id }: { block: MdBlock; id?: string }): ReactNode {
       return <CodeBlock code={block.text} language={codeLanguageOf(block.lang)} title={block.lang || undefined} />;
     case "blockquote":
       return (
-        <blockquote className="flex flex-col gap-M border-s-3 border-brand-stroke ps-L text-foreground-2 italic">
+        <blockquote className="flex flex-col gap-3 border-s-3 border-brand-stroke ps-4 text-foreground-2 italic">
           {block.children.map((b, i) => (
             <Block key={i} block={b} />
           ))}
@@ -179,11 +179,11 @@ function Block({ block, id }: { block: MdBlock; id?: string }): ReactNode {
     case "list": {
       const List = block.ordered ? "ol" : "ul";
       return (
-        <List start={block.ordered && block.start !== 1 ? block.start : undefined} className={`flex flex-col gap-XS ps-XL ${block.ordered ? "list-decimal" : "list-disc"}`}>
+        <List start={block.ordered && block.start !== 1 ? block.start : undefined} className={`flex flex-col gap-1 ps-5 ${block.ordered ? "list-decimal" : "list-disc"}`}>
           {block.items.map((item, i) => (
-            <li key={i} className={item.checked === null ? "ps-XXS" : "-ms-XL flex list-none gap-S"}>
+            <li key={i} className={item.checked === null ? "ps-0.5" : "-ms-5 flex list-none gap-2"}>
               {item.checked !== null && <input type="checkbox" checked={item.checked} readOnly aria-label={item.checked ? "Đã xong" : "Chưa xong"} className="mt-1.5" />}
-              <div className="flex min-w-0 flex-col gap-XS">
+              <div className="flex min-w-0 flex-col gap-1">
                 {item.children.map((b, j) =>
                   b.type === "paragraph" && block.tight ? <Inlines key={j} nodes={b.children} /> : <Block key={j} block={b} />,
                 )}
@@ -200,7 +200,7 @@ function Block({ block, id }: { block: MdBlock; id?: string }): ReactNode {
             <thead>
               <tr className="bg-background-3">
                 {block.head.map((cell, i) => (
-                  <th key={i} className="border-b border-stroke-1 px-M py-S text-start font-semibold text-foreground-1">
+                  <th key={i} className="border-b border-stroke-1 px-3 py-2 text-start font-semibold text-foreground-1">
                     <Inlines nodes={cell} />
                   </th>
                 ))}
@@ -210,7 +210,7 @@ function Block({ block, id }: { block: MdBlock; id?: string }): ReactNode {
               {block.rows.map((row, r) => (
                 <tr key={r} className="border-b border-stroke-2 last:border-b-0">
                   {row.map((cell, c) => (
-                    <td key={c} className="px-M py-S align-top">
+                    <td key={c} className="px-3 py-2 align-top">
                       <Inlines nodes={cell} />
                     </td>
                   ))}
@@ -221,18 +221,18 @@ function Block({ block, id }: { block: MdBlock; id?: string }): ReactNode {
         </div>
       );
     case "thematicBreak":
-      return <hr className="my-M border-stroke-2" />;
+      return <hr className="my-3 border-stroke-2" />;
   }
 }
 
 /** Nội dung bài viết — chữ body2 dễ đọc, khoảng cách đều giữa các khối. */
 export function Markdown({ children }: { children: string }) {
   return (
-    <div className="flex flex-col gap-L text-body2 text-foreground-2">
+    <div className="flex flex-col gap-4 text-body2 text-foreground-2">
       {parse(children).map((part, i) =>
         part.type === "image" ? (
-          <figure key={i} className="flex flex-col gap-S">
-            <img src={resolveSrc(part.src)} alt={part.alt} title={part.title} loading="lazy" className="mx-auto max-h-64 w-auto rounded-xlarge border border-stroke-2 bg-background-1 p-XL" />
+          <figure key={i} className="flex flex-col gap-2">
+            <img src={resolveSrc(part.src)} alt={part.alt} title={part.title} loading="lazy" className="mx-auto max-h-64 w-auto rounded-xlarge border border-stroke-2 bg-background-1 p-5" />
             {part.title && <figcaption className="text-center text-caption1 text-foreground-3">{part.title}</figcaption>}
           </figure>
         ) : (

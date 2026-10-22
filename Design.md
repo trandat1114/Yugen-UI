@@ -15,7 +15,7 @@ Tài liệu này là **bộ quy tắc bắt buộc**. Mọi người (và AI) kh
 
 1. **Không hard-code** màu HEX/rgb, px, ms, cubic-bezier trong `.tsx`. Chỉ dùng utility map từ token.
 2. Palette mặc định của Tailwind **đã bị tắt** (`bg-blue-500`, `rounded-lg`, `shadow-md`, `text-sm` không tồn tại).
-3. Spacing dùng **hậu tố viết hoa** đúng tên Fluent: `p-M`, `gap-S`, `px-XL`, `mt-XXXL`, `gap-SNudge`.
+3. Spacing dùng thang số của Tailwind, trong mười bậc của ramp Fluent: `p-3`, `gap-2`, `px-5`, `mt-8`, `gap-1.5` (§3.2).
 4. Cỡ chữ chỉ dùng type ramp: `text-caption2 … text-display`. Weight chỉ `font-normal` / `font-semibold`.
 5. Luôn gộp class bằng `cn()` (`src/lib/cn.ts`) — **không** dùng `twMerge` gốc (sẽ xoá nhầm `text-body1`).
 6. Không dùng `dark:` variant. Theme (light/dark/high-contrast) và brand nằm trong token (`data-theme`, `data-brand`).
@@ -135,12 +135,13 @@ Quy ước: named export trùng tên file, import qua `@/components/ui`, không 
 
 | Utility | Token | px |
 |---|---|---|
-| `*-XXS` / `*-XS` / `*-SNudge` / `*-S` | `spacingXXS` / `XS` / `SNudge` / `S` | 2 / 4 / 6 / 8 |
-| `*-MNudge` / `*-M` / `*-L` | `spacingMNudge` / `M` / `L` | 10 / 12 / 16 |
-| `*-XL` / `*-XXL` / `*-XXXL` | `spacingXL` / `XXL` / `XXXL` | 20 / 24 / 32 |
+| `*-0.5` / `*-1` / `*-1.5` / `*-2` | `spacingXXS` / `XS` / `SNudge` / `S` | 2 / 4 / 6 / 8 |
+| `*-2.5` / `*-3` / `*-4` | `spacingMNudge` / `M` / `L` | 10 / 12 / 16 |
+| `*-5` / `*-6` / `*-8` | `spacingXL` / `XXL` / `XXXL` | 20 / 24 / 32 |
 
-Viết hoa là **bắt buộc**: tên thường (`p-xl`) không tồn tại và nếu thêm sẽ va chạm thang container của Tailwind
-(`max-w-xl` thành 20px). Kích thước phần tử (`h-8`, `size-5`, `w-64`) dùng thang số gốc (bội 4px).
+Padding, margin và gap chỉ dùng mười bậc trên. Kích thước phần tử (`h-8`, `size-5`, `w-64`) dùng các số còn lại.
+Alias viết hoa (`p-M`, `gap-SNudge`) còn trong `theme.css` cho ứng dụng cũ, đã deprecated và sẽ bị bỏ ở 1.0.
+Trong repo, `npm run lint:classes` báo lỗi nếu gặp chúng (`-- --fix` tự đổi).
 
 ### 3.3 Type ramp
 
@@ -438,7 +439,7 @@ Luật riêng của Labs:
 ## 9. Checklist trước khi merge
 
 - [ ] Không có HEX/px/ms tuỳ ý trong `.tsx` (trừ minh hoạ trong `Decorative/`, logo, dữ liệu mẫu của docs).
-- [ ] Spacing viết hoa; cỡ chữ theo type ramp; dùng class dùng chung (§5.7).
+- [ ] Spacing theo thang số trong ramp (§3.2); cỡ chữ theo type ramp; dùng class dùng chung (§5.7).
 - [ ] Màu đúng vai trò (§4); không brand diện tích lớn; không gradient trên control.
 - [ ] Đủ trạng thái hover / pressed / disabled / focus-visible; bàn phím hoạt động.
 - [ ] Kiểm tra Yugen / Web / Teams × Light / Dark và bảng tương phản.

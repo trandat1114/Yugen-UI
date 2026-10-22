@@ -9,7 +9,7 @@ function P({ children }: { children: ReactNode }) {
 }
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
@@ -20,7 +20,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
             {head.map((h) => (
-              <th key={h} scope="col" className="px-L py-S text-start">
+              <th key={h} scope="col" className="px-4 py-2 text-start">
                 {h}
               </th>
             ))}
@@ -30,7 +30,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
           {rows.map((row, i) => (
             <tr key={i} className="border-b border-stroke-3 align-top last:border-b-0">
               {row.map((cell, j) => (
-                <td key={j} className={j === 0 ? "px-L py-M font-semibold text-foreground-1" : "px-L py-M text-foreground-2"}>
+                <td key={j} className={j === 0 ? "px-4 py-3 font-semibold text-foreground-1" : "px-4 py-3 text-foreground-2"}>
                   {cell}
                 </td>
               ))}
@@ -65,13 +65,13 @@ function Swatch({ token, size = 28 }: { token: string; size?: number }) {
 
 function PalettePanel({ theme }: { theme: "light" | "dark" }) {
   return (
-    <div data-theme={theme} className="flex flex-col gap-M rounded-xlarge border border-stroke-2 bg-background-1 p-L">
+    <div data-theme={theme} className="flex flex-col gap-3 rounded-xlarge border border-stroke-2 bg-background-1 p-4">
       <p className="text-caption1 font-semibold text-foreground-3">
         {theme === "light" ? "Light · bề mặt #FFFFFF" : "Dark · bề mặt #292929"}
       </p>
-      <ol className="flex flex-col gap-S">
+      <ol className="flex flex-col gap-2">
         {CATEGORICAL.map((c, i) => (
-          <li key={c.name} className="flex items-center gap-M">
+          <li key={c.name} className="flex items-center gap-3">
             <span className="w-4 text-end text-caption1 text-foreground-3 tabular-nums">{i + 1}</span>
             <Swatch token={`--colorChartCategorical${i + 1}`} />
             <span className="min-w-0 flex-1 truncate text-body1 text-foreground-1">{c.name}</span>
@@ -88,23 +88,23 @@ function PalettePanel({ theme }: { theme: "light" | "dark" }) {
 
 function RampPanel({ theme }: { theme: "light" | "dark" }) {
   return (
-    <div data-theme={theme} className="flex flex-col gap-M rounded-xlarge border border-stroke-2 bg-background-1 p-L">
+    <div data-theme={theme} className="flex flex-col gap-3 rounded-xlarge border border-stroke-2 bg-background-1 p-4">
       <p className="text-caption1 font-semibold text-foreground-3">{theme === "light" ? "Light" : "Dark (neo đảo chiều)"}</p>
-      <div className="flex flex-col gap-XS">
+      <div className="flex flex-col gap-1">
         <span className="text-caption1 text-foreground-2">Tuần tự · nhỏ → lớn</span>
-        <div className="flex gap-XXS">
+        <div className="flex gap-0.5">
           {[1, 2, 3, 4, 5, 6, 7].map((n) => (
             <Swatch key={n} token={`--colorChartSequential${n}`} size={32} />
           ))}
         </div>
       </div>
-      <div className="flex flex-col gap-XS">
+      <div className="flex flex-col gap-1">
         <span className="text-caption1 text-foreground-2">Phân kỳ · âm · giữa · dương</span>
-        <div className="flex gap-XXS">
+        <div className="flex gap-0.5">
           <Swatch token="--colorChartDivergingNeg" size={32} />
           <Swatch token="--colorChartDivergingMid" size={32} />
           <Swatch token="--colorChartDivergingPos" size={32} />
-          <span className="ms-M flex items-center gap-S text-caption1 text-foreground-2">
+          <span className="ms-3 flex items-center gap-2 text-caption1 text-foreground-2">
             <Swatch token="--colorChartOther" size={16} />
             Khác / làm nền
           </span>
@@ -156,7 +156,7 @@ export default function Page() {
         title="Chọn dạng biểu đồ"
         description="Màu đến sau cùng. Trước hết hỏi: người đọc cần làm gì với dữ liệu — so độ lớn, nhận diện chuỗi, thấy dấu âm/dương, hay chỉ cần một con số?"
       >
-        <div className="flex flex-col gap-XL">
+        <div className="flex flex-col gap-5">
           <SimpleTable
             head={["Nhiệm vụ", "Dạng mặc định", "Việc của màu", "Trong Yugen"]}
             rows={[
@@ -176,12 +176,12 @@ export default function Page() {
             Thang số chuỗi: 1–3 chuỗi chỉ màu là đủ; 4 chuỗi bắt buộc nhãn trực tiếp; 5–6 là trần mềm (legend hoặc small multiples); 7–8 là trần
             token. Chuỗi thứ 9 không bao giờ là một màu mới — gộp vào “Khác”, tách small multiples hoặc mã hoá kết hợp.
           </P>
-          <div className="grid gap-L md:grid-cols-2">
-            <div className="flex flex-col gap-S rounded-xlarge border border-stroke-2 bg-background-1 p-L">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="flex flex-col gap-2 rounded-xlarge border border-stroke-2 bg-background-1 p-4">
               <p className="text-caption1 font-semibold text-foreground-3">Câu trả lời là một con số</p>
               <StatTile label="Đơn hàng hôm nay" value={1284} delta={0.064} deltaLabel="so với hôm qua" trend={[820, 910, 870, 990, 1040, 1010, 1120, 1180, 1150, 1210, 1240, 1284]} />
             </div>
-            <div className="flex flex-col gap-S rounded-xlarge border border-stroke-2 bg-background-1 p-L">
+            <div className="flex flex-col gap-2 rounded-xlarge border border-stroke-2 bg-background-1 p-4">
               <p className="text-caption1 font-semibold text-foreground-3">Câu chuyện là một chuỗi</p>
               <LineChart
                 data={demoTrend}
@@ -204,8 +204,8 @@ export default function Page() {
         title="Bảng màu & token"
         description="Mỗi màu làm đúng một việc: phân loại (nhận diện), tuần tự (độ lớn), phân kỳ (dấu), trạng thái (tốt/xấu — dành riêng). Bảng phân loại Yugen dẫn bằng Sakura, thứ tự cố định — chính thứ tự là cơ chế an toàn cho người mù màu."
       >
-        <div className="flex flex-col gap-XL">
-          <div className="grid gap-L lg:grid-cols-2">
+        <div className="flex flex-col gap-5">
+          <div className="grid gap-4 lg:grid-cols-2">
             <PalettePanel theme="light" />
             <PalettePanel theme="dark" />
           </div>
@@ -225,7 +225,7 @@ export default function Page() {
             ]}
           />
           <CodeBlock code={VALIDATE} />
-          <div className="grid gap-L lg:grid-cols-2">
+          <div className="grid gap-4 lg:grid-cols-2">
             <RampPanel theme="light" />
             <RampPanel theme="dark" />
           </div>
@@ -243,7 +243,7 @@ export default function Page() {
         title="Mark & khoảng trắng"
         description="Vẻ tĩnh, có chủ ý đến từ vài thông số cố định và hai khoảng trắng. Chỉ dữ liệu được phép “to tiếng”."
       >
-        <div className="flex flex-col gap-XL">
+        <div className="flex flex-col gap-5">
           <SimpleTable
             head={["Mark", "Thông số"]}
             rows={[
@@ -256,7 +256,7 @@ export default function Page() {
               ["Nhãn", "Chọn lọc: điểm cuối, cực trị, chuỗi là trọng tâm. Chữ luôn dùng token chữ, không dùng màu chuỗi"],
             ]}
           />
-          <div className="rounded-xlarge border border-stroke-2 bg-background-1 p-L">
+          <div className="rounded-xlarge border border-stroke-2 bg-background-1 p-4">
             <BarChart
               title="Doanh thu (triệu ₫)"
               description="Hai chuỗi → có legend; cột mảnh, khe 2px giữa hai cột trong nhóm"
@@ -277,8 +277,8 @@ export default function Page() {
         title="Tương tác"
         description="Biểu đồ HTML/SVG mặc định là tương tác. Tooltip bổ sung, không bao giờ là cách duy nhất để đọc giá trị."
       >
-        <div className="flex flex-col gap-XL">
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+        <div className="flex flex-col gap-5">
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>Đường / vùng: crosshair dọc bám mốc X gần nhất; một tooltip liệt kê mọi chuỗi tại mốc đó.</li>
             <li>Cột / lát: chính mark là vùng chạm (rộng hơn mark, gồm cả khe); mark được chọn nổi lên, các mark khác mờ đi.</li>
             <li>Trong tooltip giá trị đậm và đứng trước về thứ bậc; tên chuỗi là phụ, khoá bằng một nét ngắn màu chuỗi (không phải ô đặc). Legend thì phản chiếu mark: ô cho cột / vùng, nét cho đường.</li>
@@ -289,12 +289,12 @@ export default function Page() {
             head={["Phím", "Hành vi"]}
             rows={[
               [<Kbd key="k">Tab</Kbd>, "Vào biểu đồ (một điểm dừng duy nhất) — tooltip hiện cho điểm đang focus."],
-              [<span key="k" className="inline-flex gap-XS"><Kbd>←</Kbd><Kbd>→</Kbd><Kbd>↑</Kbd><Kbd>↓</Kbd></span>, "Điểm trước / sau (vùng vẽ luôn LTR nên → là tiến, kể cả trang RTL)."],
-              [<span key="k" className="inline-flex gap-XS"><Kbd>Home</Kbd><Kbd>End</Kbd></span>, "Điểm đầu / cuối."],
+              [<span key="k" className="inline-flex gap-1"><Kbd>←</Kbd><Kbd>→</Kbd><Kbd>↑</Kbd><Kbd>↓</Kbd></span>, "Điểm trước / sau (vùng vẽ luôn LTR nên → là tiến, kể cả trang RTL)."],
+              [<span key="k" className="inline-flex gap-1"><Kbd>Home</Kbd><Kbd>End</Kbd></span>, "Điểm đầu / cuối."],
               [<Kbd key="k">Esc</Kbd>, "Ẩn tooltip."],
             ]}
           />
-          <div className="rounded-xlarge border border-stroke-2 bg-background-1 p-L">
+          <div className="rounded-xlarge border border-stroke-2 bg-background-1 p-4">
             <LineChart
               title="Lượt truy cập"
               description="Rê chuột hoặc Tab vào biểu đồ rồi dùng phím mũi tên"
@@ -316,8 +316,8 @@ export default function Page() {
         title="Khả năng tiếp cận"
         description="Nhận diện không bao giờ chỉ dựa vào màu: legend luôn có khi ≥ 2 chuỗi, nhãn trực tiếp khi ≤ 4, và mọi biểu đồ có bảng dữ liệu tương đương."
       >
-        <div className="flex flex-col gap-XL">
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+        <div className="flex flex-col gap-5">
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>
               Khung là <C>figure</C> có tên từ tiêu đề; vùng vẽ SVG mang <C>aria-label</C> tóm tắt dữ liệu; mỗi điểm dữ liệu focus được là{" "}
               <C>role=&quot;img&quot;</C> với nhãn “danh mục, chuỗi: giá trị”.
@@ -333,7 +333,7 @@ export default function Page() {
             <li>Vùng vẽ luôn <C>dir=&quot;ltr&quot;</C> (trục thời gian không đảo); tiêu đề, legend và tooltip theo hướng chữ của trang.</li>
             <li>Animation vào cảnh (cột mọc từ gốc, đường tự vẽ) tắt hẳn khi <C>prefers-reduced-motion</C>.</li>
           </ul>
-          <div className="rounded-xlarge border border-stroke-2 bg-background-1 p-L">
+          <div className="rounded-xlarge border border-stroke-2 bg-background-1 p-4">
             <BarChart
               title="Chế độ bảng"
               description="defaultShowTable mở sẵn bảng; bấm “Bảng dữ liệu” để quay lại biểu đồ"

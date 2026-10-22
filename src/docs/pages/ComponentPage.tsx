@@ -40,7 +40,7 @@ function ComponentBody({ slug, theme, brand, onRetry }: { slug: string; theme: Y
     <>
       <ExampleFrame example={doc.hero} defaultTheme={theme} defaultBrand={brand} />
 
-      <div className="mt-XXXL">
+      <div className="mt-8">
         <DocSection
           id="import"
           title="Import"
@@ -74,7 +74,7 @@ export function ComponentPage({ slug, theme, brand }: { slug: string; theme: Yug
   const [attempt, setAttempt] = useState(0);
   const { t, locale, category, component } = useLocale();
   const meta = COMPONENT_META_BY_SLUG[slug];
-  if (!meta) return <p className="py-XXXL text-body2 text-foreground-3">{t("component.notFound", { slug })}</p>;
+  if (!meta) return <p className="py-8 text-body2 text-foreground-3">{t("component.notFound", { slug })}</p>;
   const { name, lead } = component(meta);
   const toc = [
     { id: "import", label: "Import" },
@@ -86,9 +86,9 @@ export function ComponentPage({ slug, theme, brand }: { slug: string; theme: Yug
   // Header (tên, câu dẫn) lấy từ metadata nạp sẵn → hiện ngay, không nhảy bố cục khi demo nạp xong.
   // data-page-loading: e2e (waitForDocsReady) chờ hết phần đang nạp — commit cùng lúc với h1 nên không có khe hở.
   return (
-    <div className="flex gap-XXXL">
+    <div className="flex gap-8">
       <article key={slug} className="min-w-0 flex-1">
-        <nav className="flex items-center gap-XS pt-XL text-caption1 text-foreground-3">
+        <nav className="flex items-center gap-1 pt-5 text-caption1 text-foreground-3">
           <a href="#/" className="hover:text-foreground-1 hover:underline">
             Components
           </a>

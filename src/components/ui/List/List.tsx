@@ -163,7 +163,7 @@ export const List = React.forwardRef<HTMLUListElement, ListProps>(
           ref={setRefs}
           role={selectionMode === "none" ? "list" : "listbox"}
           aria-multiselectable={selectionMode === "multiselect" || undefined}
-          className={cn("m-0 flex list-none flex-col p-0", variant === "outline" ? "gap-S" : "gap-XXS", className)}
+          className={cn("m-0 flex list-none flex-col p-0", variant === "outline" ? "gap-2" : "gap-0.5", className)}
           onKeyDown={handleKeyDown}
           {...props}
         />
@@ -233,11 +233,11 @@ export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
           }
         }}
         className={cn(
-          "group/list-item relative flex items-center gap-M text-start text-foreground-1",
+          "group/list-item relative flex items-center gap-3 text-start text-foreground-1",
           "transition-[background-color,border-color] duration-faster ease-easy-ease",
           ctx.variant === "outline"
-            ? "rounded-xlarge border border-stroke-2 bg-background-1 p-M"
-            : "rounded-medium border border-transparent px-M py-S",
+            ? "rounded-xlarge border border-stroke-2 bg-background-1 p-3"
+            : "rounded-medium border border-transparent px-3 py-2",
           interactive && "cursor-pointer",
           interactive &&
             (selected
@@ -290,7 +290,7 @@ export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
         )}
         {actions && (
           <span
-            className="ms-auto flex shrink-0 items-center gap-XS"
+            className="ms-auto flex shrink-0 items-center gap-1"
             onClick={(event) => event.stopPropagation()}
           >
             {actions}
