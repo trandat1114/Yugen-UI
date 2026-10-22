@@ -137,7 +137,7 @@ export const CONCEPT_METAS: Record<string, ConceptMeta> = {
     toc: [
       { id: "template", label: "Nhanh nhất: một lệnh" },
       { id: "existing", label: "Thêm vào dự án có sẵn" },
-      { id: "shadcn", label: "Sở hữu mã nguồn" },
+      { id: "shadcn", label: "Tuỳ biến mã nguồn" },
       { id: "first-component", label: "Component đầu tiên" },
       { id: "persist-theme", label: "Nhớ theme & chống nháy" },
       { id: "requirements", label: "Yêu cầu" },

@@ -23,8 +23,6 @@ import {
   CSS_TAILWIND,
   PROVIDER_NEXT,
   PROVIDER_VITE,
-  SHADCN_ADD,
-  SHADCN_INIT,
   TEMPLATE_COMMAND,
 } from "../_snippets";
 
@@ -184,10 +182,9 @@ export default function Page() {
         <div className="flex flex-col gap-L">
           <CodeBlock code={TEMPLATE_COMMAND} />
           <P>
-            That creates the starter: persisted theme, toast, an <C>@/</C> alias, SEO basics and a welcome page to delete once you start
-            building. Need more? Swap <C>starter</C> for <C>saas</C> (8-page SaaS app), <C>blog</C> (Markdown blog), <C>dashboard</C> or{" "}
-            <C>ai-chat</C>, or drop <C>--template</C> to pick from a list. Preview them all on the Templates page, or open one on
-            StackBlitz with nothing to install. More options on <A href="#/concepts/cli">the yugen CLI</A>.
+            The starter comes with a remembered theme choice, toast, an <C>@/</C> alias, SEO basics and a welcome page to delete when you
+            start. Swap <C>starter</C> for <C>saas</C> (8-page SaaS app), <C>blog</C> (Markdown blog), <C>dashboard</C> or <C>ai-chat</C>,
+            or drop <C>--template</C> to pick in the terminal. More options on <A href="#/concepts/cli">@yugen-ui/cli</A>.
           </P>
           <div className="flex flex-wrap gap-S">
             <Button asChild appearance="primary" icon={<Rocket16Regular />}>
@@ -263,22 +260,17 @@ export default function Page() {
 
       <DocSection
         id="shadcn"
-        title="Want to own the source?"
-        description="Copy components into your project and edit every line. Two commands: init once, then add what you need."
+        title="Need deeper customization?"
+        description="Copy component source into your project and edit it directly, instead of using the prebuilt npm package. Run init once, then add each component."
       >
         <div className="flex flex-col gap-L">
           <PackageManagerTabs packages={CLI_INIT_SOURCE} command="dlx" />
           <PackageManagerTabs packages={CLI_ADD} command="dlx" />
           <P>
-            The CLI writes the theme, <C>cn()</C> and <C>YugenProvider</C>, pulls in the components each one depends on, installs missing npm
-            packages and rewrites imports to your project&apos;s alias. Details on <A href="#/concepts/cli">the yugen CLI</A>.
+            The CLI writes the theme, <C>cn()</C> and <C>YugenProvider</C>, copies the components each one depends on, installs missing npm
+            packages and rewrites imports to your project&apos;s alias. Details on <A href="#/concepts/cli">@yugen-ui/cli</A>. Already using
+            the shadcn CLI? See <A href="#/concepts/shadcn-registry">Install with the shadcn CLI</A>.
           </P>
-          <P>
-            Used to the shadcn CLI? The Yugen registry works with it too (Next.js uses <C>init-next.json</C>, see{" "}
-            <A href="#/concepts/shadcn-registry">Install with the shadcn CLI</A>):
-          </P>
-          <PackageManagerTabs packages={SHADCN_INIT} command="dlx" />
-          <PackageManagerTabs packages={SHADCN_ADD} command="dlx" />
         </div>
       </DocSection>
 

@@ -23,8 +23,6 @@ import {
   CSS_TAILWIND,
   PROVIDER_NEXT,
   PROVIDER_VITE,
-  SHADCN_ADD,
-  SHADCN_INIT,
   TEMPLATE_COMMAND,
 } from "./_snippets";
 
@@ -184,10 +182,9 @@ export default function Page() {
         <div className="flex flex-col gap-L">
           <CodeBlock code={TEMPLATE_COMMAND} />
           <P>
-            Lệnh trên tạo dự án starter: theme đã ghi nhớ, toast, alias <C>@/</C>, SEO cơ bản và một trang chào để xoá khi bắt đầu viết.
-            Cần nhiều hơn? Đổi <C>starter</C> thành <C>saas</C> (ứng dụng SaaS 8 trang), <C>blog</C> (blog Markdown), <C>dashboard</C>{" "}
-            hoặc <C>ai-chat</C>, hoặc bỏ <C>--template</C> để chọn từ danh sách. Xem trước tất cả ở trang Templates; không muốn cài gì thì
-            mở thẳng trên StackBlitz. Các tuỳ chọn khác ở <A href="#/concepts/cli">CLI yugen</A>.
+            Dự án starter có sẵn: lưu theme người dùng chọn, toast, alias <C>@/</C>, SEO cơ bản và một trang chào để xoá khi bắt đầu.
+            Đổi <C>starter</C> thành <C>saas</C> (ứng dụng SaaS 8 trang), <C>blog</C> (blog Markdown), <C>dashboard</C> hoặc{" "}
+            <C>ai-chat</C>, hoặc bỏ <C>--template</C> để chọn trong terminal. Các tuỳ chọn khác ở <A href="#/concepts/cli">@yugen-ui/cli</A>.
           </P>
           <div className="flex flex-wrap gap-S">
             <Button asChild appearance="primary" icon={<Rocket16Regular />}>
@@ -262,22 +259,17 @@ export default function Page() {
 
       <DocSection
         id="shadcn"
-        title="Muốn sở hữu mã nguồn?"
-        description="Chép component vào dự án để sửa từng dòng. Hai lệnh: init một lần, rồi add component cần dùng."
+        title="Cần tuỳ biến sâu?"
+        description="Chép mã nguồn component vào dự án để sửa trực tiếp, thay vì dùng bản dựng sẵn trong gói npm. Chạy init một lần, sau đó add từng component."
       >
         <div className="flex flex-col gap-L">
           <PackageManagerTabs packages={CLI_INIT_SOURCE} command="dlx" />
           <PackageManagerTabs packages={CLI_ADD} command="dlx" />
           <P>
-            CLI ghi theme, <C>cn()</C> và <C>YugenProvider</C>, kéo theo component phụ thuộc, cài gói npm còn thiếu và đổi import theo alias
-            của dự án. Chi tiết ở <A href="#/concepts/cli">CLI yugen</A>.
+            CLI ghi theme, <C>cn()</C> và <C>YugenProvider</C>, chép kèm component phụ thuộc, cài gói npm còn thiếu và đổi import theo alias
+            của dự án. Chi tiết ở <A href="#/concepts/cli">@yugen-ui/cli</A>. Dự án đã dùng shadcn CLI thì xem{" "}
+            <A href="#/concepts/shadcn-registry">Cài bằng shadcn CLI</A>.
           </P>
-          <P>
-            Đã quen shadcn CLI? Registry của Yugen dùng được với nó (Next.js dùng <C>init-next.json</C>, xem{" "}
-            <A href="#/concepts/shadcn-registry">Cài bằng shadcn CLI</A>):
-          </P>
-          <PackageManagerTabs packages={SHADCN_INIT} command="dlx" />
-          <PackageManagerTabs packages={SHADCN_ADD} command="dlx" />
         </div>
       </DocSection>
 
