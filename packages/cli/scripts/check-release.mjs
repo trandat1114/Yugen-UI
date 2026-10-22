@@ -1,17 +1,20 @@
 #!/usr/bin/env node
 /**
- * Quy tắc phát hành `yugen` + `create-yugen-ui` (wiki › Release Process › CLI). Chạy trong CI và release-cli.yml.
+ * Quy tắc phát hành `@yugen-ui/cli` + `create-yugen-ui` (wiki › Release Process › CLI). Chạy trong CI và release-cli.yml.
  *
- *   node scripts/check-release.mjs                     # trước khi tag: version, CHANGELOG, phụ thuộc, template
- *   node scripts/check-release.mjs --npm               # thêm: version chưa từng dùng trên npm (cần mạng)
- *   node scripts/check-release.mjs --tag yugen@0.2.0   # như --npm, thêm: tag khớp version, đúng nhánh → in dist-tag
+ *   node scripts/check-release.mjs                   # trước khi tag: version, CHANGELOG, phụ thuộc, template
+ *   node scripts/check-release.mjs --npm             # thêm: version chưa từng dùng trên npm (cần mạng)
+ *   node scripts/check-release.mjs --tag cli@0.2.0   # như --npm, thêm: tag khớp version, đúng nhánh → in dist-tag
  *
  *   1. packages/cli/CHANGELOG.md có mục "## <version>".
- *   2. create-yugen-ui phụ thuộc "yugen": "^X.Y.Z" chấp nhận version hiện tại (0.x: ^0.1.0 không nhận 0.2.0).
+ *   2. create-yugen-ui phụ thuộc "@yugen-ui/cli": "^X.Y.Z" chấp nhận version hiện tại (0.x: ^0.1.0 không nhận 0.2.0).
  *   3. Template đóng gói ghim yugen-ui bằng ^<version yugen-ui ở gốc repo> (đã chạy sync-templates).
- *   4. --npm / --tag: version yugen chưa từng publish — kể cả bản đã unpublish (yugen@0.1.0 bị unpublish năm 2024 nên
- *      không dùng lại được); version create-yugen-ui không nằm trong danh sách đã unpublish.
- *   5. --tag: tag = yugen@<version>; bản ổn định tag trên main, prerelease trên next → "latest" / "next".
+ *   4. --npm / --tag: version CLI chưa từng publish, kể cả bản đã unpublish (npm không cho dùng lại);
+ *      version create-yugen-ui không nằm trong danh sách đã unpublish.
+ *   5. --tag: tag = cli@<version>; bản ổn định tag trên main, prerelease trên next → "latest" / "next".
+ *
+ * Tên gói: không dùng được "yugen" — npm từ chối vì quá giống "hygen" (403 "Package name too similar"). Gói có scope
+ * không bị kiểm tra này.
  */
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
@@ -40,7 +43,7 @@ const changelog = fs.readFileSync(path.join(cli, "CHANGELOG.md"), "utf8");
 if (!new RegExp(`^##\\s+${version.replace(/\./g, "\\.")}\\s*$`, "m").test(changelog))
   errors.push(`packages/cli/CHANGELOG.md chưa có mục "## ${version}".`);
 
-// 2. create-yugen-ui → yugen
+// 2. create-yugen-ui → @yugen-ui/cli
 function caretAccepts(range, v) {
   const m = range?.match(/^\^(\d+)\.(\d+)\.(\d+)$/);
   if (!m) return false;
@@ -52,12 +55,12 @@ function caretAccepts(range, v) {
   if (b > 0) return x === 0 && y === b;
   return x === 0 && y === 0 && z === c;
 }
-const range = create.dependencies?.yugen;
+const range = create.dependencies?.[pkg.name];
 if (pre) log(`(prerelease ${version}: create-yugen-ui chỉ theo bản ổn định, bỏ qua kiểm tra phụ thuộc)`);
 else if (!caretAccepts(range, version)) {
   const [x, y] = parse(version);
   errors.push(
-    `packages/create-yugen-ui/package.json: "yugen": "${range}" không nhận ${version} — đổi thành "^${x}.${x === 0 ? y : 0}.0" và tăng version create-yugen-ui.`,
+    `packages/create-yugen-ui/package.json: "${pkg.name}": "${range}" không nhận ${version} — đổi thành "^${x}.${x === 0 ? y : 0}.0" và tăng version create-yugen-ui.`,
   );
 }
 
@@ -75,7 +78,7 @@ for (const { dir } of templates) {
  * dùng được. Registry trả 404 kèm `time.unpublished` cho gói đã gỡ hết, 404 không có `time` cho gói chưa từng có.
  */
 async function npmVersions(name) {
-  const res = await fetch(`https://registry.npmjs.org/${name}`);
+  const res = await fetch(`https://registry.npmjs.org/${name.replace("/", "%2f")}`);
   if (!res.ok && res.status !== 404) throw new Error(`registry.npmjs.org/${name}: ${res.status}`);
   const doc = await res.json().catch(() => ({}));
   const time = doc.time ?? {};
@@ -85,10 +88,14 @@ async function npmVersions(name) {
 }
 if (checkNpm) {
   try {
-    const cliVersions = await npmVersions("yugen");
-    if (cliVersions.used.has(version))
+    const cliVersions = await npmVersions(pkg.name);
+    // --tag: bản đang có trên npm không phải lỗi — chạy lại workflow (vd. create-yugen-ui lỗi lần trước) thì bước
+    // publish bỏ qua gói đã có. Bản đã unpublish thì không bao giờ publish lại được.
+    if (tag && cliVersions.used.has(version) && !cliVersions.unpublished.has(version))
+      log(`(${pkg.name}@${version} đã có trên npm — bước publish sẽ bỏ qua)`);
+    else if (cliVersions.used.has(version))
       errors.push(
-        `yugen@${version} đã từng được publish trên npm${cliVersions.unpublished.has(version) ? " rồi unpublish" : ""} — npm không cho dùng lại số phiên bản, tăng version.`,
+        `${pkg.name}@${version} đã từng được publish trên npm${cliVersions.unpublished.has(version) ? " rồi unpublish" : ""} — npm không cho dùng lại số phiên bản, tăng version.`,
       );
     const createVersions = await npmVersions("create-yugen-ui");
     if (createVersions.unpublished.has(create.version))
@@ -101,7 +108,7 @@ if (checkNpm) {
 // 5. Tag
 let distTag;
 if (tag) {
-  if (tag !== `yugen@${version}`) errors.push(`tag ${tag} không khớp packages/cli/package.json (yugen@${version}).`);
+  if (tag !== `cli@${version}`) errors.push(`tag ${tag} không khớp packages/cli/package.json (cli@${version}).`);
   const sh = (cmd, cmdArgs) => execFileSync(cmd, cmdArgs, { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
   let branches = [];
   try {
@@ -123,4 +130,6 @@ if (errors.length) {
   process.exitCode = 1;
 } else if (tag) console.log(distTag);
 else
-  console.log(`check-release (cli): OK — yugen ${version}, create-yugen-ui ${create.version} (yugen ${range}), templates → yugen-ui ^${lib.version}`);
+  console.log(
+    `check-release (cli): OK — ${pkg.name} ${version}, create-yugen-ui ${create.version} (${pkg.name} ${range}), templates → yugen-ui ^${lib.version}`,
+  );

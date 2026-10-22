@@ -16,8 +16,10 @@ const cli = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const createDir = path.resolve(cli, "../create-yugen-ui");
 const keep = process.argv.includes("--keep");
 const readJson = (file) => JSON.parse(fs.readFileSync(file, "utf8"));
-const { version } = readJson(path.join(cli, "package.json"));
+const { name, version } = readJson(path.join(cli, "package.json"));
 const createVersion = readJson(path.join(createDir, "package.json")).version;
+/** npm pack: "@yugen-ui/cli" → yugen-ui-cli-<version>.tgz */
+const tarball = (pkgName, v) => `${pkgName.replace(/^@/, "").replace("/", "-")}-${v}.tgz`;
 
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "yugen-smoke-"));
 const sh = (cmd, cwd) => execSync(cmd, { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], env: { ...process.env, CI: "1" } });
@@ -31,20 +33,23 @@ const check = (ok, label) => {
 try {
   sh(`npm pack --pack-destination ${q(tmp)}`, cli);
   sh(`npm pack --pack-destination ${q(tmp)}`, createDir);
-  const tarballs = [`yugen-${version}.tgz`, `create-yugen-ui-${createVersion}.tgz`].map((f) => path.join(tmp, f));
+  const tarballs = [tarball(name, version), tarball("create-yugen-ui", createVersion)].map((f) => path.join(tmp, f));
   check(tarballs.every((f) => fs.existsSync(f)), `npm pack → ${tarballs.map((f) => path.basename(f)).join(", ")}`);
 
   const app = path.join(tmp, "consumer");
   fs.mkdirSync(app);
   fs.writeFileSync(path.join(app, "package.json"), JSON.stringify({ name: "consumer", private: true }));
   sh(`npm install --no-audit --no-fund ${tarballs.map(q).join(" ")}`, app);
-  const yugen = `node ${q(path.join(app, "node_modules/yugen/dist/index.js"))}`;
+  const installed = path.join(app, "node_modules", name);
+  const yugen = `node ${q(path.join(installed, "dist/index.js"))}`;
   const createBin = `node ${q(path.join(app, "node_modules/create-yugen-ui/index.js"))}`;
 
   check(sh(`${yugen} --version`, app).trim() === version, `yugen --version = ${version}`);
   check(sh(`${yugen} --help`, app).includes("Commands:"), "yugen --help");
+  // `npx @yugen-ui/cli` chạy bin duy nhất của gói — bin phải được link với tên "yugen".
+  check(fs.readdirSync(path.join(app, "node_modules/.bin")).some((f) => /^yugen(\.cmd)?$/.test(f)), "bin yugen linked");
 
-  const templates = readJson(path.join(app, "node_modules/yugen/templates/templates.json"));
+  const templates = readJson(path.join(installed, "templates/templates.json"));
   for (const t of templates) {
     const dir = `app-${t.name}`;
     sh(`${createBin} ${dir} -t ${t.name} --no-install --no-git -y`, app);
