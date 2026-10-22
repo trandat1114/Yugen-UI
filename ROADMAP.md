@@ -10,24 +10,9 @@ Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. 
 
 ## Đang làm
 
-### 0.9.0 · minor · hạn 2026-10-30
-
-React 19 làm mặc định, starter tối giản, E2E nhanh hơn, docs và lộ trình cập nhật (gồm cả việc dự kiến cho 0.8.4).
-
-- [x] React 19 cho dev, docs và template; React 18 vẫn hỗ trợ, báo trước ngày ngừng (#62)
-- [x] E2E từ ~20 còn 4,4 phút: container Playwright, chạy trên bản build, a11y theo theme (#43)
-- [x] E2E cho bàn phím, focus và các luồng chính của docs (#39)
-- [x] So sánh ảnh chụp trên mọi PR đổi giao diện (#41)
-- [x] Thẻ demo của starter chuyển thành 5 block mới (#56)
-- [x] CI trên Node.js 22, 24, 26 và tự theo lịch phát hành của Node.js (#59)
-- [x] Có gì mới có tab riêng cho từng gói và tin cho bản sắp phát hành (#61)
-- [x] Lộ trình lấy từ một nguồn, trang Cộng đồng đầy đủ tiếng Anh (#58)
-- [x] Quy tắc viết nội dung cho docs, template và CLI (#52)
-- [x] Tên template ngắn, mô tả một dòng; trang Giới thiệu viết lại (#57)
-
 ### cli 0.2.0 · hạn 2026-10-30
 
-CLI cùng 0.9.0 (gồm cả việc dự kiến cho cli 0.3.0).
+CLI đi kèm yugen-ui 0.9.0 (gồm cả việc dự kiến cho cli 0.3.0).
 
 - [x] Yêu cầu Node.js 22 trở lên (#60)
 - [x] create --lang en|vi chọn ngôn ngữ cho app được tạo (#55)
@@ -68,6 +53,7 @@ Chưa xếp lịch.
 
 Chi tiết ở trang Có gì mới (`#/news`) và `CHANGELOG.md`.
 
+- **0.9.0** (2026-10-23): React 19 và starter tối giản
 - **0.8.3** (2026-10-22): Lệnh tạo dự án chạy được trên PowerShell
 - **0.8.2** (2026-10-22): CLI @yugen-ui/cli
 - **0.8.1** (2026-10-22): Docs gọn hơn trên điện thoại

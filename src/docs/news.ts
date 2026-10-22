@@ -32,8 +32,7 @@ export const NEWS_KIND_LABEL: Record<NewsKind, string> = {
 export const NEWS: NewsRelease[] = [
   {
     version: "0.9.0",
-    upcoming: true,
-    date: "2026-10-30",
+    date: "2026-10-23",
     title: "React 19 và starter tối giản",
     summary: "React 19 là mặc định, React 18.3 vẫn được hỗ trợ. Starter tiếng Anh gọn hơn, thêm 5 block, docs và lộ trình cập nhật.",
     items: [

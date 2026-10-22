@@ -1,25 +1,31 @@
 version: 2
+
+# Ít PR, mỗi PR một lần CI (CONTRIBUTING › Giữ ít PR):
+# - Mọi bản cập nhật vào `next`: kiểm thử cùng việc khác, xem trước ở /next/, lên `main` khi phát hành. Bản vá bảo mật
+#   (security updates) vẫn vào `main` như mặc định của GitHub.
+# - Gộp theo loại: mỗi lần chạy tối đa một PR minor + patch và một PR major cho mỗi thư mục.
+# - cooldown: đợi bản mới ổn định vài ngày trước khi đề xuất (tránh bản lỗi phải gỡ).
+# - Bản major phải sửa code: bỏ qua ở đây và theo dõi trong issue migration (#91); bỏ dòng ignore khi bắt đầu nâng.
 updates:
   - package-ecosystem: npm
     directory: /
+    target-branch: next
     schedule:
       interval: weekly
-    open-pull-requests-limit: 5
+      day: monday
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 2
     labels: ["area: build & package"]
     groups:
-      radix:
-        patterns: ["@radix-ui/*"]
-      testing:
-        patterns: ["vitest", "@vitest/*", "@testing-library/*", "@playwright/test", "@axe-core/*", "jsdom"]
-      build:
-        patterns: ["vite", "vite-node", "@vitejs/*", "tailwindcss", "@tailwindcss/*", "typescript", "tsc-alias"]
-      # @size-limit/* ghim peer size-limit đúng version — phải lên cùng nhau.
-      size-limit:
-        patterns: ["size-limit", "@size-limit/*"]
+      npm-minor-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+      # @size-limit/* ghim peer size-limit đúng version — luôn lên cùng nhau, kể cả major.
+      npm-major:
+        patterns: ["*"]
+        update-types: ["major"]
     ignore:
-      # TypeScript 7 (bản Go) chưa có JS API mà vite.plugins.ts và scripts/check-props.ts dùng.
-      - dependency-name: "typescript"
-        versions: [">=7"]
       # Major của React / Tailwind cần RFC + kiểm thử riêng (GOVERNANCE.md).
       - dependency-name: "react"
         update-types: ["version-update:semver-major"]
@@ -27,17 +33,43 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "tailwindcss"
         update-types: ["version-update:semver-major"]
+      # TypeScript 7 (bản Go) chưa có JS API mà vite.plugins.ts và scripts/check-props.ts dùng.
+      - dependency-name: "typescript"
+        versions: [">=7"]
+      # Cần migration — #91.
+      - dependency-name: "vite"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@vitejs/plugin-react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "vite-node"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "tailwind-merge"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "zod"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@hookform/resolvers"
+        update-types: ["version-update:semver-major"]
+
   - package-ecosystem: npm
     directory: /packages/cli
+    target-branch: next
     schedule:
       interval: monthly
-    open-pull-requests-limit: 3
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 1
     labels: ["area: build & package"]
     groups:
       cli:
         patterns: ["*"]
+
   - package-ecosystem: github-actions
     directory: /
+    target-branch: next
     schedule:
       interval: monthly
+    open-pull-requests-limit: 1
     labels: ["area: ci & tests"]
+    groups:
+      actions:
+        patterns: ["*"]

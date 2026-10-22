@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.9.0
+
+### Minor Changes
+
+- 230a5da: React 19 is now the default. The docs site, the tests and the templates run on React 19, so new apps from `create-yugen-ui` start on it. React 18.3 is still supported and tested in CI. The end of React 18 support will be announced at least one minor release ahead, as the versioning policy requires.
+
+### Patch Changes
+
+- 7d35697: AvatarGroup: the overflow button's accessible name now starts with the count it shows ("+2 Xem thêm 2 thành viên"), as WCAG 2.5.3 Label in Name requires. `overflowLabel` is read after the count instead of replacing it. With `overflowIndicator="icon"`, `overflowLabel` is still the button's whole name.
+- a33235f: Tooling: tests run on Vitest 5 and jsdom 30, size budgets on size-limit 14, and CI on Node 22, 24 and 26 (Node 20 reached end of life). Contributors need Node 24 LTS or 22.22+. The npm package is unchanged.
+
 ## 0.8.3
 
 ### Patch Changes
@@ -150,7 +161,8 @@ with a user-facing change adds one with `npx changeset`, and `npx changeset vers
 - 11 core components.
 - Documentation site.
 
-[Unreleased]: https://github.com/trandat1114/Yugen-UI/compare/v0.8.3...HEAD
+[Unreleased]: https://github.com/trandat1114/Yugen-UI/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.9.0
 [0.8.3]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.8.3
 [0.8.2]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.8.2
 [0.8.1]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.8.1
