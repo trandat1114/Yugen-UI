@@ -2,7 +2,7 @@ import { defineConfig, devices, type Project } from "@playwright/test";
 
 /**
  * E2E của site docs Yugen UI.
- * - `npm run test:e2e`    → a11y (axe) + interaction (kéo chuột, bàn phím / focus, luồng chính của docs; desktop)
+ * - `npm run test:e2e`    → a11y (axe) + interaction (kéo chuột, bàn phím / focus, luồng chính của docs, trang Motion; desktop)
  *                            + touch (giả lập mobile).
  * - `npm run test:visual` → chỉ project `visual` (so sánh ảnh chụp; baseline theo nền tảng trong e2e/__screenshots__).
  * - `npm run test:engines` → interaction trên Firefox và WebKit, touch trên WebKit (iPhone) — #40. Workflow engines.yml
@@ -34,7 +34,7 @@ const desktop = {
   timezoneId: "Asia/Ho_Chi_Minh",
 };
 
-const INTERACTION = /(drag|carousel|keyboard|docs-flows)\.spec\.ts/;
+const INTERACTION = /(drag|carousel|keyboard|docs-flows|motion)\.spec\.ts/;
 const TOUCH = /(touch|responsive)\.spec\.ts/;
 const prefs = { reducedMotion: "reduce" as const, locale: "vi-VN", timezoneId: "Asia/Ho_Chi_Minh" };
 

@@ -30,6 +30,8 @@ function fallbackOf(route: Route): "page" | "partial" | null {
   if (route.kind === "home" || route.kind === "community" || route.kind === "templates") return null;
   if (route.kind === "news") return "partial";
   if (route.kind === "concept") return CONCEPT_EN_PAGES[route.slug] ? null : "page";
+  // Foundations › Motion viết song ngữ ngay trong trang (#45).
+  if (route.kind === "foundation" && route.slug === "motion") return null;
   return "page";
 }
 
@@ -123,11 +125,14 @@ export default function App() {
               {route.kind === "news" && <NewsPage />}
               {route.kind === "community" && <CommunityPage />}
               {route.kind === "concept" && <ConceptPage slug={route.slug} />}
-              {route.kind === "foundation" && (
-                <VietnameseContent>
+              {route.kind === "foundation" &&
+                (route.slug === "motion" ? (
                   <FoundationsPage slug={route.slug} theme={tokenKey} />
-                </VietnameseContent>
-              )}
+                ) : (
+                  <VietnameseContent>
+                    <FoundationsPage slug={route.slug} theme={tokenKey} />
+                  </VietnameseContent>
+                ))}
               {route.kind === "component" && <ComponentPage slug={route.slug} theme={theme} brand={brand} />}
             </Suspense>
           </main>

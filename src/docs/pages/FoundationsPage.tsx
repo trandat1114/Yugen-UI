@@ -1,9 +1,9 @@
-import * as React from "react";
-import { Play16Filled } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { DocSection, OnThisPage, PageHeader } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
 import { COLOR_SECTIONS, ColorPage } from "./ColorPage";
+import { MOTION_SECTIONS, MotionPage } from "./MotionPage";
+import { useLocale } from "../i18n";
 
 
 /* ------------------------------------------------------------- helpers */
@@ -174,85 +174,6 @@ function ElevationPage() {
   );
 }
 
-const DURATIONS = [
-  ["durationUltraFast", "duration-ultra-fast", 50],
-  ["durationFaster", "duration-faster", 100],
-  ["durationFast", "duration-fast", 150],
-  ["durationNormal", "duration-normal", 200],
-  ["durationGentle", "duration-gentle", 250],
-  ["durationSlow", "duration-slow", 300],
-] as const;
-
-const CURVES = [
-  ["curveDecelerateMid", "ease-decelerate-mid", "Phần tử đi vào màn hình"],
-  ["curveAccelerateMid", "ease-accelerate-mid", "Phần tử rời khỏi màn hình"],
-  ["curveEasyEase", "ease-easy-ease", "Thay đổi trạng thái tại chỗ (hover, màu)"],
-  ["curveDecelerateMax", "ease-decelerate-max", "Chuyển động lớn, vào mạnh"],
-  ["curveLinear", "ease-linear", "Progress, xoay vòng"],
-] as const;
-
-function MotionRow({ label, sub, note, duration, curve }: { label: string; sub: string; note?: string; duration: string; curve: string }) {
-  const [on, setOn] = React.useState(false);
-  return (
-    <div className="flex flex-col gap-2 border-b border-stroke-3 px-4 py-3 last:border-b-0 md:flex-row md:items-center md:gap-4">
-      <div className="w-56 shrink-0">
-        <p className="font-mono text-[13px] font-semibold">{label}</p>
-        <p className="font-mono text-caption1 text-brand-foreground-1">{sub}</p>
-        {note && <p className="text-caption1 text-foreground-3">{note}</p>}
-      </div>
-      <button
-        type="button"
-        onClick={() => setOn((v) => !v)}
-        aria-label={`Chạy ${label}`}
-        className="inline-flex size-8 shrink-0 items-center justify-center rounded-circular bg-brand-background text-foreground-on-brand hover:bg-brand-background-hover"
-      >
-        <Play16Filled />
-      </button>
-      <div className="relative h-6 flex-1 rounded-circular bg-background-3">
-        <span
-          className="absolute top-1 size-4 rounded-circular bg-brand-background transition-[inset-inline-start]"
-          style={{ insetInlineStart: on ? "calc(100% - 20px)" : "4px", transitionDuration: duration, transitionTimingFunction: curve }}
-        />
-      </div>
-    </div>
-  );
-}
-
-function MotionPage() {
-  return (
-    <>
-      <PageHeader
-        eyebrow="Foundations"
-        title="Motion"
-        lead="Chuyển động trong Fluent 2 nhanh, có chủ đích và tự nhiên: vào chậm dần (decelerate), ra nhanh dần (accelerate)."
-      >
-        Bấm nút ▶ để xem từng token. Control nhỏ dùng 100–150ms; bề mặt lớn (Dialog, Drawer) dùng 200–300ms.
-      </PageHeader>
-      <DocSection id="duration" title="Duration">
-        <div className="overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1">
-          {DURATIONS.map(([token, utility, ms]) => (
-            <MotionRow
-              key={token}
-              label={token}
-              sub={`${utility} · ${ms}ms`}
-              duration={`${ms * 4}ms`}
-              curve="var(--curveEasyEase)"
-            />
-          ))}
-        </div>
-        <p className="mt-2 text-caption1 text-foreground-3">Minh hoạ chạy chậm ×4 để dễ quan sát.</p>
-      </DocSection>
-      <DocSection id="curve" title="Easing curve">
-        <div className="overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1">
-          {CURVES.map(([token, utility, note]) => (
-            <MotionRow key={token} label={token} sub={utility} note={note} duration="1000ms" curve={`var(--${token})`} />
-          ))}
-        </div>
-      </DocSection>
-    </>
-  );
-}
-
 const SECTIONS: Record<string, { id: string; label: string }[]> = {
   color: COLOR_SECTIONS,
   typography: [
@@ -262,13 +183,10 @@ const SECTIONS: Record<string, { id: string; label: string }[]> = {
   spacing: [{ id: "scale", label: "Thang spacing" }],
   radius: [{ id: "scale", label: "Thang bo góc" }],
   elevation: [{ id: "ramp", label: "Shadow ramp" }],
-  motion: [
-    { id: "duration", label: "Duration" },
-    { id: "curve", label: "Easing curve" },
-  ],
 };
 
 export function FoundationsPage({ slug, theme }: { slug: string; theme: string }) {
+  const { locale } = useLocale();
   const page =
     slug === "color" ? (
       <ColorPage theme={theme} />
@@ -289,7 +207,7 @@ export function FoundationsPage({ slug, theme }: { slug: string; theme: string }
       <article key={slug} className="min-w-0 flex-1">
         {page}
       </article>
-      <OnThisPage key={`toc-${slug}`} items={SECTIONS[slug] ?? []} />
+      <OnThisPage key={`toc-${slug}`} items={slug === "motion" ? MOTION_SECTIONS[locale] : (SECTIONS[slug] ?? [])} />
     </div>
   );
 }
