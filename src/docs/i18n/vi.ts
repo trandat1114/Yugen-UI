@@ -90,7 +90,7 @@ export const vi = {
 
   // Có gì mới
   "news.eyebrow": "Cập nhật",
-  "news.lead": "Thay đổi theo từng phiên bản: component mới, cải tiến, sửa lỗi và những gì cần lưu ý khi nâng cấp.",
+  "news.lead": "Thay đổi theo từng phiên bản của yugen-ui, @yugen-ui/cli và create-yugen-ui: tính năng mới, cải tiến, sửa lỗi và những gì cần lưu ý khi nâng cấp.",
   "news.fullIn": "Bản đầy đủ nằm trong",
   "news.andPage": "và trang",
   "news.filter": "Lọc theo loại thay đổi",
@@ -102,6 +102,10 @@ export const vi = {
   "news.current": "Phiên bản hiện tại: {version}",
   "news.latest": "Mới nhất",
   "news.view": "Xem",
+  "news.packages": "Gói",
+  "news.empty": "Chưa có thay đổi loại này.",
+  "news.cliUpgradeBody": "npx @yugen-ui/cli@latest luôn chạy bản mới nhất. Đã cài toàn cục thì cập nhật bằng lệnh dưới đây.",
+  "news.createUpgradeBody": "Gọi kèm @latest để luôn tạo app bằng bản mới nhất.",
   "news.upgradeTitle": "Nâng cấp lên phiên bản mới",
   "news.upgradeBody": "Dùng gói npm: cập nhật rồi đọc mục “Thay đổi lớn” ở trên. Dùng kiểu copy-paste: chép lại thư mục component cần cập nhật cùng",
 

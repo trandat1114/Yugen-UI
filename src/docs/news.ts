@@ -174,3 +174,35 @@ export const NEWS: NewsRelease[] = [
 ];
 
 export const LATEST_RELEASE = NEWS[0];
+
+/**
+ * Tab @yugen-ui/cli (packages/cli). Mục đầu = version trong packages/cli/package.json — packages/cli/scripts/check-release.mjs
+ * kiểm tra cùng CHANGELOG của CLI.
+ */
+export const CLI_NEWS: NewsRelease[] = [
+  {
+    version: "0.1.0",
+    date: "2026-10-22",
+    title: "Bản đầu tiên",
+    summary: "Tạo app từ template, thiết lập dự án có sẵn và chép mã nguồn component bằng một công cụ dòng lệnh.",
+    items: [
+      { kind: "new", text: "create: tạo app từ template starter, saas, blog, dashboard hoặc ai-chat. Template đóng gói sẵn nên không cần mạng.", href: "#/concepts/cli" },
+      { kind: "new", text: "init: thiết lập dự án React có sẵn bằng gói npm hoặc chép mã nguồn, ghi cấu hình vào yugen.json.", href: "#/concepts/cli" },
+      { kind: "new", text: "add và list: chép component kèm component phụ thuộc, cài gói npm còn thiếu, tìm trong registry.", href: "#/concepts/cli" },
+      { kind: "new", text: "doctor: kiểm tra React, Tailwind CSS v4, import theme, phiên bản yugen-ui và YugenProvider.", href: "#/concepts/cli" },
+    ],
+  },
+];
+
+/** Tab create-yugen-ui (packages/create-yugen-ui) — chỉ phát hành cùng bản CLI ổn định. Mục đầu = version của gói. */
+export const CREATE_NEWS: NewsRelease[] = [
+  {
+    version: "0.1.0",
+    date: "2026-10-22",
+    title: "Bản đầu tiên",
+    summary: "npx create-yugen-ui@latest tạo app từ template, giống lệnh create của @yugen-ui/cli.",
+    items: [
+      { kind: "new", text: "npx create-yugen-ui@latest my-app --template starter chép template, cài phụ thuộc và khởi tạo git.", href: "#/concepts/cli" },
+    ],
+  },
+];

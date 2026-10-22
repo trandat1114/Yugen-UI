@@ -89,7 +89,7 @@ export const en: Record<MessageKey, string> = {
 
   // What's new
   "news.eyebrow": "Updates",
-  "news.lead": "Changes by release: new components, improvements, fixes and what to check when upgrading.",
+  "news.lead": "Changes by release for yugen-ui, @yugen-ui/cli and create-yugen-ui: new features, improvements, fixes and what to check when upgrading.",
   "news.fullIn": "The full log lives in",
   "news.andPage": "and on the",
   "news.filter": "Filter by change type",
@@ -101,6 +101,10 @@ export const en: Record<MessageKey, string> = {
   "news.current": "Current version: {version}",
   "news.latest": "Latest",
   "news.view": "View",
+  "news.packages": "Packages",
+  "news.empty": "No changes of this type yet.",
+  "news.cliUpgradeBody": "npx @yugen-ui/cli@latest always runs the latest version. If you installed it globally, update with the command below.",
+  "news.createUpgradeBody": "Add @latest to always create apps with the newest version.",
   "news.upgradeTitle": "Upgrading to a new version",
   "news.upgradeBody": "Using the npm package: update, then read the “Breaking” items above. Using copy-paste: re-copy the component folders you want to update, together with",
 
