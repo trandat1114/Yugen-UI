@@ -59,9 +59,9 @@ Muốn nhận một mục? Mở issue hoặc bình luận vào issue sẵn có t
 - [ ] Nhãn `good first issue` (maintainer, trên GitHub)
 - [x] Starter template `templates/vite-dashboard`, `templates/vite-ai-chat` (sinh từ block — `node scripts/sync-templates.mjs`); mục showcase trên trang Cộng đồng
 - [x] Trang `#/templates` (preview chạy thật, lệnh `npx giget … --install` một dòng, Open in StackBlitz) + template `vite-starter`, `vite-saas`, `vite-blog` (Markdown, SEO lúc build)
-- [x] CLI `yugen` (`packages/cli`): `create` (template đóng gói sẵn, chọn tương tác), `init` (gói npm / mã nguồn), `add`, `list`, `doctor` — `create-yugen-ui` (`npm create yugen-ui@latest`) gọi `yugen create`
+- [x] CLI `@yugen-ui/cli` (`packages/cli`, lệnh `yugen`): `create` (template đóng gói sẵn, chọn tương tác), `init` (gói npm / mã nguồn), `add`, `list`, `doctor` — `create-yugen-ui` (`npm create yugen-ui@latest`) gọi `yugen create`
 - [x] Trang docs `#/concepts/cli` (vi + en); quy tắc phát hành CLI (wiki › Release Process › CLI, `check-release.mjs`, `npm run smoke`)
-- [ ] Publish `yugen` + `create-yugen-ui` lên npm (maintainer: merge `next` → `main`, đẩy tag `yugen@0.1.0` → `release-cli.yml`)
+- [ ] Publish `@yugen-ui/cli` + `create-yugen-ui` lên npm (maintainer: tạo npm org `yugen-ui`, cấp quyền cho `NPM_TOKEN`, đẩy tag `cli@0.1.0` trên `main`; tên `yugen` bị npm chặn vì giống `hygen`)
 - [ ] CLI giai đoạn 2: `yugen diff` / `update` (so mã local với registry), `yugen theme --brand <hex>` (brandRamp), `yugen remove`, codemod bọc `YugenProvider`, `create --ref <branch>` (template từ GitHub)
 - [ ] Đang cân nhắc: Figma kit, gói icon Sakura
 

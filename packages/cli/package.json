@@ -1,5 +1,5 @@
 {
-  "name": "yugen",
+  "name": "@yugen-ui/cli",
   "version": "0.1.0",
   "description": "CLI for Yugen UI: create an app from a template, set up Yugen UI in an existing project, add component source from the registry and diagnose the setup.",
   "keywords": [
@@ -17,7 +17,7 @@
     "name": "trandat1114",
     "url": "https://github.com/trandat1114"
   },
-  "homepage": "https://github.com/trandat1114/Yugen-UI/tree/main/packages/cli#readme",
+  "homepage": "https://trandat1114.github.io/Yugen-UI/#/concepts/cli",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/trandat1114/Yugen-UI.git",
@@ -28,7 +28,7 @@
   },
   "type": "module",
   "bin": {
-    "yugen": "./dist/index.js"
+    "yugen": "dist/index.js"
   },
   "exports": {
     ".": {

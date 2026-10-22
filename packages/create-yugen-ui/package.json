@@ -16,7 +16,7 @@
     "name": "trandat1114",
     "url": "https://github.com/trandat1114"
   },
-  "homepage": "https://github.com/trandat1114/Yugen-UI/tree/main/packages/create-yugen-ui#readme",
+  "homepage": "https://trandat1114.github.io/Yugen-UI/#/concepts/cli",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/trandat1114/Yugen-UI.git",
@@ -37,6 +37,6 @@
     "node": ">=20"
   },
   "dependencies": {
-    "yugen": "^0.1.0"
+    "@yugen-ui/cli": "^0.1.0"
   }
 }
