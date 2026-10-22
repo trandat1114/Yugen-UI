@@ -1,0 +1,11 @@
+/*
+ * Trang Foundations › Motion: công tắc "Xem trước giảm chuyển động" đặt <html data-motion-preview="reduce">.
+ * Áp đúng các utility motion-reduce:* mà component khai báo (Tailwind chỉ sinh chúng trong @media prefers-reduced-motion),
+ * kể cả nội dung render qua portal. Hành vi viết bằng JavaScript (matchMedia) không đổi theo công tắc này.
+ */
+html[data-motion-preview="reduce"] [class*="motion-reduce:animate-none"] {
+  animation: none !important;
+}
+html[data-motion-preview="reduce"] [class*="motion-reduce:transition-none"] {
+  transition: none !important;
+}
