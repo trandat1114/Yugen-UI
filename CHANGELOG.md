@@ -137,7 +137,8 @@ with a user-facing change adds one with `npx changeset`, and `npx changeset vers
 - 11 core components.
 - Documentation site.
 
-[Unreleased]: https://github.com/trandat1114/Yugen-UI/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/trandat1114/Yugen-UI/compare/v0.8.1...HEAD
+[0.8.1]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.8.1
 [0.8.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.8.0
 [0.7.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.7.0
 [0.6.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.6.0
