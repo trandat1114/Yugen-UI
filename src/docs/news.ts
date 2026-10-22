@@ -204,8 +204,7 @@ export const LATEST_RELEASE = NEWS.find((r) => !r.upcoming) ?? NEWS[0];
 export const CLI_NEWS: NewsRelease[] = [
   {
     version: "0.2.0",
-    upcoming: true,
-    date: "2026-10-30",
+    date: "2026-10-23",
     title: "Node.js 22, --lang và template mới",
     summary: "create chọn được ngôn ngữ cho starter; cần Node.js 22 trở lên.",
     items: [
@@ -232,8 +231,7 @@ export const CLI_NEWS: NewsRelease[] = [
 export const CREATE_NEWS: NewsRelease[] = [
   {
     version: "0.2.0",
-    upcoming: true,
-    date: "2026-10-30",
+    date: "2026-10-23",
     title: "Theo @yugen-ui/cli 0.2.0",
     summary: "Cùng các thay đổi của @yugen-ui/cli 0.2.0.",
     items: [
