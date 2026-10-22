@@ -1,0 +1,64 @@
+{
+  "name": "yugen",
+  "version": "0.1.0",
+  "description": "CLI for Yugen UI: create an app from a template, set up Yugen UI in an existing project, add component source from the registry and diagnose the setup.",
+  "keywords": [
+    "yugen-ui",
+    "cli",
+    "react",
+    "tailwindcss",
+    "components",
+    "registry",
+    "templates",
+    "scaffold"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "trandat1114",
+    "url": "https://github.com/trandat1114"
+  },
+  "homepage": "https://github.com/trandat1114/Yugen-UI/tree/main/packages/cli#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trandat1114/Yugen-UI.git",
+    "directory": "packages/cli"
+  },
+  "bugs": {
+    "url": "https://github.com/trandat1114/Yugen-UI/issues"
+  },
+  "type": "module",
+  "bin": {
+    "yugen": "./dist/index.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/api.d.ts",
+      "import": "./dist/api.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "templates",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/copy-templates.mjs && tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "prepack": "npm run build"
+  },
+  "dependencies": {
+    "@clack/prompts": "^1.8.1",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.7"
+  }
+}

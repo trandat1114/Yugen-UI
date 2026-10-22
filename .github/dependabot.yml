@@ -21,6 +21,15 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "tailwindcss"
         update-types: ["version-update:semver-major"]
+  - package-ecosystem: npm
+    directory: /packages/cli
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 3
+    labels: ["area: build & package"]
+    groups:
+      cli:
+        patterns: ["*"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
