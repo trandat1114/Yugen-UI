@@ -19,6 +19,8 @@ npm run version-packages      # changeset version → bump package.json, ghi CHA
 
 1. Thêm mục mới **lên đầu** mảng `NEWS` trong `src/docs/news.ts` (tiếng Việt, có `href` tới trang docs).
 2. Thêm link `[x.y.z]: …/releases/tag/vx.y.z` cuối CHANGELOG.
+   Cập nhật `src/docs/roadmap.ts`: mục của milestone vừa xong thành `done`, chuyển milestone sang Đã phát hành (bỏ khỏi
+   `now`, dời `next` lên) rồi `npm run roadmap` (ghi ROADMAP.md; `roadmap.test.ts` báo lỗi nếu lệch).
 3. `npm run check:release && npm test && npm run build`
 4. Commit `chore(release): vx.y.z`, push, **đợi CI xanh**.
 5. Tag và đẩy tag:
@@ -81,6 +83,7 @@ git switch main && git pull
 # 1. Tăng "version" trong packages/cli/package.json (+ packages/create-yugen-ui/package.json khi theo quy tắc 2)
 # 2. Đổi "## Unreleased" thành "## X.Y.Z" ở đầu packages/cli/CHANGELOG.md
 # 3. Thêm mục tin lên đầu CLI_NEWS (và CREATE_NEWS nếu create-yugen-ui đổi version) trong src/docs/news.ts
+# 4. Cập nhật milestone cli X.Y.Z trong src/docs/roadmap.ts rồi npm run roadmap (ở thư mục gốc repo)
 cd packages/cli
 npm install --package-lock-only    # version trong lockfile
 npm run check:release -- --npm     # quy tắc 1–4 (--npm cần mạng)
