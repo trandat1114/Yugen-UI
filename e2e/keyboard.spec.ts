@@ -110,7 +110,9 @@ test.describe("Toast", () => {
   test("hiện trong vùng thông báo mà không lấy focus; F8 tới vùng đó; đóng bằng bàn phím", async ({ page }) => {
     await openDocs(page, "#/components/toast");
     const button = page.getByRole("button", { name: "Lưu tài liệu" });
-    await button.click();
+    // Bấm bằng bàn phím: Safari / WebKit không đặt focus vào nút khi click chuột.
+    await button.focus();
+    await page.keyboard.press("Enter");
     // Trang có một Toaster cho mỗi ví dụ: lấy đúng vùng đang chứa toast.
     const toast = page.getByRole("listitem").filter({ hasText: "Đã lưu thay đổi" });
     await expect(toast).toBeVisible();

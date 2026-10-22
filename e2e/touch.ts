@@ -1,4 +1,4 @@
-import type { CDPSession, Page } from "@playwright/test";
+import { test, type CDPSession, type Page } from "@playwright/test";
 
 export interface Point {
   x: number;
@@ -15,8 +15,10 @@ export interface Point {
  * - `pause: false`: gửi các bước liền nhau, không chờ khung hình — cho cú hất. Chromium trên CI không luôn dùng
  *   timestamp tổng hợp, nên chờ giữa các bước (cộng độ trễ CDP khi runner bận) kéo dài cú vuốt thật và hạ vận tốc
  *   dưới ngưỡng hất của Sheet.
+ * CDP chỉ có trên Chromium: test gọi hàm này bị bỏ qua trên WebKit / Firefox (project touch-webkit, #40).
  */
 export async function touchDrag(page: Page, from: Point, to: Point, { steps = 10, stepMs = 16, hold = 0, pause = true } = {}) {
+  test.skip(page.context().browser()?.browserType().name() !== "chromium", "Chạm-kéo đi qua CDP, chỉ Chromium có");
   const cdp: CDPSession = await page.context().newCDPSession(page);
   // Mốc tổng hợp lùi về quá khứ đủ xa để mọi timestamp đều ≤ giờ thật lúc gửi.
   let t = Date.now() / 1000 - (steps * stepMs + hold + 1000) / 1000;

@@ -33,6 +33,7 @@ npm run dev          # trang docs tại http://localhost:5173
 | `npm test` | Unit + tương tác (Vitest + Testing Library, `src/**/*.test.ts(x)`) |
 | `npm run test:e2e` | Playwright trên trang docs: axe (a11y), kéo chuột, chạm mô phỏng |
 | `npm run test:visual` | So sánh ảnh chụp (project `visual` của Playwright) |
+| `npm run test:engines` | E2E tương tác trên Firefox và WebKit (Safari desktop, iPhone) |
 | `npm run size` | Ngân sách dung lượng gói (`size-limit`, chạy sau `build:lib`) |
 | `npm run changeset` | Thêm changeset cho PR (`npx changeset`) |
 | `npm run check:release` | Kiểm tra `package.json` = `src/docs/news.ts` = `CHANGELOG.md` |
@@ -54,6 +55,8 @@ npm run dev          # trang docs tại http://localhost:5173
   component, style hoặc khung docs. Trên Windows / macOS, lần chạy đầu tạo ảnh riêng cho máy bạn (gitignore). Cố ý đổi
   giao diện: chạy workflow **Visual regression** trên nhánh của bạn (Actions → Run workflow, tick `update`), tải artifact
   `visual-screenshots`, chép vào `e2e/__screenshots__/` rồi commit. Workflow không tự commit.
+- `npm run test:engines` — cần `npx playwright install firefox webkit` một lần. CI chạy hằng tuần và trên PR vào `main`
+  (workflow **Browser engines**), không chạy trên mọi PR. Test chạm-kéo dùng CDP nên chỉ chạy trên Chromium.
 - `npm run size` — sau `npm run build:lib`. Vượt ngân sách thì tìm nguyên nhân trước (import thừa, dependency mới);
   tăng có chủ đích thì sửa `limit` trong `.size-limit.cjs` và ghi lý do trong PR.
 - Repo chạy React 19; CI chạy thêm typecheck, test và build:lib bằng React 18.3 (job `react-18`) vì bản này vẫn được
@@ -218,7 +221,7 @@ nếu thiếu. Trước khi tag: `npm run check:release --prefix packages/cli --
 Requires Node.js **24 LTS** (or 22.22+) and npm. Run `npm install`, then `npm run dev` (docs site at http://localhost:5173).
 Scripts: `typecheck`, `lint:classes` (Tailwind canonical classes; `node scripts/canonical-classes.mjs --fix`
 repairs them), `build:lib` (library → `dist/`), `build:docs` (docs → `dist-docs/`), `build` (both), `pack:check`,
-`test`, `test:e2e`, `test:visual`, `size`, `changeset`, `check:release`.
+`test`, `test:e2e`, `test:visual`, `test:engines`, `size`, `changeset`, `check:release`.
 
 ### Tests
 
@@ -232,6 +235,9 @@ repairs them), `build:lib` (library → `dist/`), `build:docs` (docs → `dist-d
   first run creates baselines for your machine (gitignored). After an intended visual change, run the **Visual
   regression** workflow on your branch (tick `update`), download the `visual-screenshots` artifact, copy it into
   `e2e/__screenshots__/` and commit. The workflow never commits.
+- `npm run test:engines` — interaction E2E on Firefox and WebKit (Safari desktop, iPhone); run
+  `npx playwright install firefox webkit` once. CI runs it weekly and on PRs into `main` (the **Browser engines**
+  workflow), not on every PR. Touch-drag tests go through CDP, so they run on Chromium only.
 - `npm run size` — size budgets (`.size-limit.cjs`), after `npm run build:lib`. If a budget fails, find the cause
   first; raise a `limit` only on purpose, and say why in the PR.
 - The repo runs React 19; CI also runs typecheck, unit tests and the library build against React 18.3 (`react-18` job),

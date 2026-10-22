@@ -30,10 +30,18 @@ test("ngôn ngữ và chế độ tối còn giữ sau khi tải lại", async (
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
 });
 
-test("nút copy chép đúng lệnh, chạy được trên PowerShell (không && hay -- --template)", async ({ page, context }) => {
-  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-  // Clipboard của Windows đổi \n thành \r\n.
-  const clipboard = () => page.evaluate(() => navigator.clipboard.readText()).then((s) => s.replace(/\r\n/g, "\n"));
+test("nút copy chép đúng lệnh, chạy được trên PowerShell (không && hay -- --template)", async ({ page }) => {
+  // Ghi lại chuỗi trang gửi vào clipboard thay vì đọc clipboard thật: Firefox và WebKit không cấp quyền clipboard-read
+  // cho Playwright (#40), còn clipboard của Windows đổi \n thành \r\n.
+  await page.addInitScript(() => {
+    const w = window as unknown as { __copied: string };
+    w.__copied = "";
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText: async (text: string) => void (w.__copied = text), readText: async () => w.__copied },
+    });
+  });
+  const clipboard = () => page.evaluate(() => (window as unknown as { __copied: string }).__copied);
 
   await openDocs(page, "#/");
   const create = page.locator("section").filter({ has: page.getByRole("heading", { name: "Tạo dự án nhanh" }) });

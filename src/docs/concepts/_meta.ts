@@ -27,6 +27,7 @@ export const CONCEPT_METAS: Record<string, ConceptMeta> = {
       { id: "css", label: "Tính năng CSS" },
       { id: "stack", label: "React, TypeScript, Tailwind" },
       { id: "input", label: "Chuột, cảm ứng, bàn phím" },
+      { id: "engines", label: "Kiểm thử trên từng engine" },
     ],
   },
   "./component-labelling.tsx": {

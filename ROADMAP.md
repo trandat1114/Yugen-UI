@@ -18,7 +18,7 @@ Thang spacing theo số và trải nghiệm docs.
 - [ ] Theme Designer: bo góc, mật độ, font, màu trung tính, bóng, chuyển động (#44)
 - [ ] Trang Motion: hướng dẫn theo component, playground, xem trước giảm chuyển động (#45)
 - [ ] Sidebar docs kéo được độ rộng, thu gọn về dạng icon (#46)
-- [ ] Kiểm thử trên Firefox và WebKit theo lịch (#40)
+- [x] Kiểm thử trên Firefox và WebKit theo lịch (#40)
 
 ## Tiếp theo
 
