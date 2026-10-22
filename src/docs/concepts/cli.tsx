@@ -99,7 +99,7 @@ export default function Page() {
         <div className="flex flex-col gap-L">
           <PackageManagerTabs packages={CLI_CREATE} command="dlx" />
           <P>
-            Tuỳ chọn: <C>-t, --template</C>, <C>--pm npm|pnpm|yarn|bun</C>, <C>--no-install</C>, <C>--no-git</C>, <C>--force</C> (ghi vào thư
+            Tuỳ chọn: <C>-t, --template</C>, <C>--lang en|vi</C> (ngôn ngữ chữ trong app, với template có cả hai; mặc định tiếng Anh), <C>--pm npm|pnpm|yarn|bun</C>, <C>--no-install</C>, <C>--no-git</C>, <C>--force</C> (ghi vào thư
             mục không trống). <C>npx create-yugen-ui@latest</C> là cách gọi ngắn của lệnh này. Template nằm sẵn trong gói nên không cần
             mạng. Xem trước ở <A href="#/templates">Templates</A>.
           </P>

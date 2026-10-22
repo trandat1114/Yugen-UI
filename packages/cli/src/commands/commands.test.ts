@@ -25,6 +25,23 @@ describe("create", () => {
     expect(read(target, "src/index.css")).toContain('@import "yugen-ui/theme.css"');
   });
 
+  it("--lang keeps one language: content/index.ts, the other file removed, <html lang>", async () => {
+    const cwd = tmpDir();
+    const base = { cwd, template: "starter", install: false, git: false, templatesDir: repoTemplates };
+    const { target: vi } = await create({ ...base, dir: "vi", lang: "vi" }, ctx);
+    expect(read(vi, "src/content/index.ts")).toContain('from "./vi"');
+    expect(fs.existsSync(path.join(vi, "src/content/en.ts"))).toBe(false);
+    expect(read(vi, "index.html")).toContain('<html lang="vi"');
+    // Không truyền --lang (và không tương tác): tiếng Anh.
+    const { target: en } = await create({ ...base, dir: "en" }, ctx);
+    expect(read(en, "src/content/index.ts")).toContain('from "./en"');
+    expect(fs.existsSync(path.join(en, "src/content/vi.ts"))).toBe(false);
+    expect(read(en, "index.html")).toContain('<html lang="en"');
+    await expect(create({ ...base, dir: "fr", lang: "fr" }, ctx)).rejects.toThrow(/no "fr" text/);
+    // Template chưa tách nội dung: chỉ cảnh báo.
+    await expect(create({ ...base, dir: "saas", template: "saas", lang: "en" }, ctx)).resolves.toBeTruthy();
+  });
+
   it("refuses a non-empty directory without --force and unknown templates", async () => {
     const cwd = writeFiles(tmpDir(), { "app/keep.txt": "x" });
     const opts = { cwd, dir: "app", template: "saas", install: false, git: false, templatesDir: repoTemplates };

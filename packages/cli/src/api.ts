@@ -38,6 +38,7 @@ const COMMANDS: Record<string, Command> = {
     options: {
       ...COMMON,
       template: { type: "string", short: "t" },
+      lang: { type: "string" },
       pm: { type: "string" },
       force: { type: "boolean" },
       "no-install": { type: "boolean" },
@@ -45,6 +46,7 @@ const COMMANDS: Record<string, Command> = {
     },
     help: [
       "-t, --template <name>   starter | saas | blog | dashboard | ai-chat",
+      "    --lang <code>       en | vi: language of the app's text (templates that have both; default en)",
       "    --pm <name>         npm | pnpm | yarn | bun (default: the one running the CLI)",
       "    --force             Write into a non-empty directory",
       "    --no-install        Skip installing dependencies",
@@ -177,6 +179,7 @@ export async function run(argv: string[]): Promise<number> {
             cwd,
             dir: positionals[0],
             template: str("template"),
+            lang: str("lang"),
             pm: str("pm"),
             force: bool("force"),
             install: !bool("no-install"),
