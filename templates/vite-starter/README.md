@@ -6,7 +6,7 @@
 sẵn, kèm một trang chào để bạn thấy thư viện làm được gì — rồi xoá đi khi bắt đầu viết ứng dụng.
 
 ```bash
-npm create yugen-ui@latest my-app -- --template starter
+npx create-yugen-ui@latest my-app --template starter
 cd my-app
 npm run dev
 ```

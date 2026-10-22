@@ -9,7 +9,7 @@
  *   node scripts/sync-templates.mjs           # ghi lại templates/
  *   node scripts/sync-templates.mjs --check   # CI: báo lỗi nếu templates/ lệch so với nguồn
  *
- * Dùng: npm create yugen-ui@latest my-app -- --template saas  (hoặc npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-saas my-app --install)
+ * Dùng: npx create-yugen-ui@latest my-app --template saas  (hoặc npx giget@latest gh:trandat1114/Yugen-UI/templates/vite-saas my-app --install)
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -185,7 +185,7 @@ createRoot(document.getElementById("root")!).render(
 `;
 
 const install = (dir) => `\`\`\`bash
-npm create yugen-ui@latest my-app -- --template ${dir.replace(/^vite-/, "")}
+npx create-yugen-ui@latest my-app --template ${dir.replace(/^vite-/, "")}
 cd my-app
 npm run dev
 \`\`\`

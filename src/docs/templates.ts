@@ -138,17 +138,17 @@ const REPO = SITE.links.repository.replace(/^https:\/\/github\.com\//, "");
 /** Tên template trong CLI (`--template`): "vite-saas" → "saas" — khớp templates/templates.json. */
 export const templateName = (dir: string) => dir.replace(/^vite-/, "");
 
-/** CLI chép template và cài phụ thuộc (create-yugen-ui → yugen create). */
+/** CLI chép template và cài phụ thuộc (create-yugen-ui → yugen create). npx thay `npm create … -- --template`: PowerShell nuốt `--` khi gọi npm.ps1. */
 export const templateCreateCommand = (dir: string, folder = "my-app") =>
-  `npm create yugen-ui@latest ${folder} -- --template ${templateName(dir)}`;
+  `npx create-yugen-ui@latest ${folder} --template ${templateName(dir)}`;
 
-/** Một dòng: tạo dự án rồi chạy dev server. */
+/** Tạo dự án rồi chạy dev server — mỗi lệnh một dòng: `&&` không chạy trên Windows PowerShell 5.1. */
 export const templateCommand = (dir: string, folder = "my-app") =>
-  `${templateCreateCommand(dir, folder)} && cd ${folder} && npm run dev`;
+  `${templateCreateCommand(dir, folder)}\ncd ${folder}\nnpm run dev`;
 
 /** Không qua CLI: tải thẳng thư mục template từ GitHub. */
 export const templateGigetCommand = (dir: string, folder = "my-app") =>
-  `npx giget@latest gh:${REPO}/templates/${dir} ${folder} --install && cd ${folder} && npm run dev`;
+  `npx giget@latest gh:${REPO}/templates/${dir} ${folder} --install\ncd ${folder}\nnpm run dev`;
 
 /** StackBlitz mở thẳng thư mục trên GitHub — không cần cài gì. */
 export const templateStackBlitzUrl = (dir: string) => `https://stackblitz.com/github/${REPO}/tree/main/templates/${dir}`;

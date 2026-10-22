@@ -4,7 +4,7 @@ Create a [Yugen UI](https://trandat1114.github.io/Yugen-UI/) app from a template
 
 ```bash
 npm create yugen-ui@latest
-npm create yugen-ui@latest my-app -- --template saas
+npx create-yugen-ui@latest my-app --template saas
 pnpm create yugen-ui my-app --template blog
 ```
 

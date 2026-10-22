@@ -4,7 +4,7 @@ Starter template của [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templ
 Tailwind CSS v4, sẵn sàng thay dữ liệu thật.
 
 ```bash
-npm create yugen-ui@latest my-app -- --template saas
+npx create-yugen-ui@latest my-app --template saas
 cd my-app
 npm run dev
 ```
