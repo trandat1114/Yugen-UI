@@ -9,6 +9,7 @@
 - [[Architecture]]
 - [[Component Guidelines]]
 - [[Testing and Quality]]
+- [[Writing]]
 
 **Dự án**
 - [[Branching and Release Channels]]
