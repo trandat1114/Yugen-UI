@@ -50,6 +50,12 @@ describe("cn — tailwind-merge đã dạy scale của Yugen", () => {
     expect(cn("h-8 rounded-medium px-3 text-body1", "rounded-circular px-4")).toBe("h-8 text-body1 rounded-circular px-4");
   });
 
+  it("cú pháp Tailwind v4: important ở cuối và biến CSS dạng ngắn (tailwind-merge 3)", () => {
+    expect(cn("size-4!", "size-5!")).toBe("size-5!");
+    expect(cn("max-h-80", "max-h-(--radix-popover-content-available-height)")).toBe("max-h-(--radix-popover-content-available-height)");
+    expect(cn("rounded-medium", "rounded-(--my-radius)")).toBe("rounded-(--my-radius)");
+  });
+
   it("nhận điều kiện kiểu clsx", () => {
     const disabled = false as boolean;
     expect(cn("p-3", disabled && "p-4", { "text-body1": true, "text-caption1": false }, ["shadow-4"], null, undefined)).toBe(
