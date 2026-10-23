@@ -167,17 +167,17 @@ test.describe("URL theo đường dẫn (#113)", () => {
     await expect(page.getByRole("heading", { level: 1, name: "@yugen-ui/cli" })).toBeVisible();
   });
 
-  test("trang tiếng Anh prerender có hreflang; trang chưa dịch trỏ canonical về bản tiếng Việt", async ({ page }) => {
+  test("trang tiếng Anh prerender có canonical riêng và hreflang", async ({ page }) => {
     test.skip(process.env.YUGEN_E2E_DEV === "1", "dev server không prerender");
     await page.route(/\/assets\/[^/]+\.js(\?.*)?$/, (route) => route.abort());
     await page.goto("/en/concepts/cli", { waitUntil: "domcontentloaded" });
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://trandat1114.github.io/Yugen-UI/en/concepts/cli");
     await expect(page.locator('link[hreflang="vi"]')).toHaveAttribute("href", "https://trandat1114.github.io/Yugen-UI/concepts/cli");
-    // Foundations › Màu sắc chưa có bản tiếng Anh.
+    // Foundations song ngữ (#138): canonical riêng, có hreflang.
     await page.goto("/en/foundations/color", { waitUntil: "domcontentloaded" });
-    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://trandat1114.github.io/Yugen-UI/foundations/color");
-    await expect(page.locator("link[hreflang]")).toHaveCount(0);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://trandat1114.github.io/Yugen-UI/en/foundations/color");
+    await expect(page.locator('link[hreflang="vi"]')).toHaveAttribute("href", "https://trandat1114.github.io/Yugen-UI/foundations/color");
     // Button đã dịch: canonical riêng.
     await page.goto("/en/components/button", { waitUntil: "domcontentloaded" });
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://trandat1114.github.io/Yugen-UI/en/components/button");

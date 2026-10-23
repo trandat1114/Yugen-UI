@@ -60,6 +60,10 @@ import {
   type ThemeAxes,
 } from "../themeAxes";
 import { docsPath } from "../router";
+import { useLocale, type Locale } from "../i18n";
+
+/** Chữ hiển thị theo ngôn ngữ: tiếng Việt mặc định, tiếng Anh khi locale = "en". CSS / JSON xuất ra không đổi theo ngôn ngữ. */
+const translator = (locale: Locale) => (vi: string, en: string) => (locale === "en" ? en : vi);
 
 /** Tải chuỗi về máy thành file (CSS / JSON). */
 function download(fileName: string, text: string) {
@@ -154,6 +158,7 @@ function initialState() {
 }
 
 function Preview({ theme, style, dir }: { theme: PreviewTheme; style: React.CSSProperties; dir: "ltr" | "rtl" }) {
+  const t = translator(useLocale().locale);
   return (
     <div
       data-theme={theme}
@@ -165,7 +170,7 @@ function Preview({ theme, style, dir }: { theme: PreviewTheme; style: React.CSSP
     >
       <div className="flex items-center justify-between">
         <span className="text-caption1 font-semibold tracking-wide text-foreground-3 uppercase">{PREVIEW_LABEL[theme]}</span>
-        <Badge appearance="tint">Mới</Badge>
+        <Badge appearance="tint">{t("Mới", "New")}</Badge>
       </div>
       <Card className="gap-3">
         <div className="flex items-center gap-2">
@@ -173,65 +178,70 @@ function Preview({ theme, style, dir }: { theme: PreviewTheme; style: React.CSSP
             <Home20Regular />
           </span>
           <div>
-            <p className="text-body1 font-semibold">Không gian làm việc</p>
+            <p className="text-body1 font-semibold">{t("Không gian làm việc", "Workspace")}</p>
             <p className="text-caption1 text-foreground-3">
-              Đã đồng bộ · <a className="text-link hover:underline" href={docsPath("/theme-designer")}>Xem chi tiết</a>
+              {t("Đã đồng bộ", "Synced")} ·{" "}
+              <a className="text-link hover:underline" href={docsPath("/theme-designer")}>
+                {t("Xem chi tiết", "View details")}
+              </a>
             </p>
           </div>
         </div>
         <Tabs defaultValue="a">
           <TabsList size="small">
-            <TabsTrigger value="a">Tổng quan</TabsTrigger>
-            <TabsTrigger value="b">Hoạt động</TabsTrigger>
+            <TabsTrigger value="a">{t("Tổng quan", "Overview")}</TabsTrigger>
+            <TabsTrigger value="b">{t("Hoạt động", "Activity")}</TabsTrigger>
           </TabsList>
         </Tabs>
-        <Input placeholder="Click để thấy thanh brand" />
+        <Input placeholder={t("Click để thấy thanh brand", "Click to see the brand underline")} />
         <div className="flex flex-wrap items-center gap-4">
-          <Checkbox label="Đã chọn" defaultChecked />
-          <Switch label="Bật" defaultChecked />
+          <Checkbox label={t("Đã chọn", "Checked")} defaultChecked />
+          <Switch label={t("Bật", "On")} defaultChecked />
         </div>
-        <Slider aria-label="Mẫu slider" defaultValue={[60]} />
-        <ProgressBar value={0.62} thickness="large" aria-label="Tiến độ" />
+        <Slider aria-label={t("Mẫu slider", "Sample slider")} defaultValue={[60]} />
+        <ProgressBar value={0.62} thickness="large" aria-label={t("Tiến độ", "Progress")} />
         <div className="flex flex-wrap gap-2">
           <Button appearance="primary">Primary</Button>
           <Button>Secondary</Button>
-          <Button appearance="subtle" icon={<Settings20Regular />} aria-label="Cài đặt" />
+          <Button appearance="subtle" icon={<Settings20Regular />} aria-label={t("Cài đặt", "Settings")} />
         </div>
       </Card>
       {/* Bề mặt nổi vẽ tại chỗ (Dialog / Toast thật render qua portal, ra ngoài theme lồng của bản xem trước). */}
       <div className="rounded-xlarge bg-background-1 p-5 shadow-64">
-        <p className="text-subtitle1 font-semibold">Mời thành viên</p>
-        <p className="mt-1 text-body1 text-foreground-2">Lời mời được gửi qua email trong vài phút.</p>
+        <p className="text-subtitle1 font-semibold">{t("Mời thành viên", "Invite members")}</p>
+        <p className="mt-1 text-body1 text-foreground-2">
+          {t("Lời mời được gửi qua email trong vài phút.", "The invitation arrives by email within a few minutes.")}
+        </p>
         <Field label="Email" className="mt-3">
-          <Input type="email" placeholder="ten@congty.vn" />
+          <Input type="email" placeholder={t("ten@congty.vn", "name@company.com")} />
         </Field>
         <div className="mt-4 flex justify-end gap-2">
-          <Button>Huỷ</Button>
-          <Button appearance="primary">Gửi lời mời</Button>
+          <Button>{t("Huỷ", "Cancel")}</Button>
+          <Button appearance="primary">{t("Gửi lời mời", "Send invitation")}</Button>
         </div>
       </div>
       <Card className="p-0">
-        <Table aria-label={`Hoá đơn (${PREVIEW_LABEL[theme]})`}>
+        <Table aria-label={`${t("Hoá đơn", "Invoices")} (${PREVIEW_LABEL[theme]})`}>
           <TableHeader>
             <TableRow>
-              <TableHeaderCell>Hoá đơn</TableHeaderCell>
-              <TableHeaderCell>Trạng thái</TableHeaderCell>
+              <TableHeaderCell>{t("Hoá đơn", "Invoice")}</TableHeaderCell>
+              <TableHeaderCell>{t("Trạng thái", "Status")}</TableHeaderCell>
             </TableRow>
           </TableHeader>
           <TableBody>
             <TableRow>
-              <TableCell>HD-1024</TableCell>
+              <TableCell>{t("HD-1024", "INV-1024")}</TableCell>
               <TableCell>
                 <Badge appearance="tint" color="success">
-                  Đã thanh toán
+                  {t("Đã thanh toán", "Paid")}
                 </Badge>
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>HD-1025</TableCell>
+              <TableCell>{t("HD-1025", "INV-1025")}</TableCell>
               <TableCell>
                 <Badge appearance="tint" color="warning">
-                  Chờ duyệt
+                  {t("Chờ duyệt", "Pending")}
                 </Badge>
               </TableCell>
             </TableRow>
@@ -241,8 +251,8 @@ function Preview({ theme, style, dir }: { theme: PreviewTheme; style: React.CSSP
       <div className="flex items-start gap-3 rounded-medium bg-background-1 p-3 shadow-8">
         <CheckmarkCircle20Filled className="shrink-0 text-success-foreground-1" />
         <div>
-          <p className="text-body1 font-semibold">Đã lưu thay đổi</p>
-          <p className="text-caption1 text-foreground-3">Đã đồng bộ với các thiết bị khác.</p>
+          <p className="text-body1 font-semibold">{t("Đã lưu thay đổi", "Changes saved")}</p>
+          <p className="text-caption1 text-foreground-3">{t("Đã đồng bộ với các thiết bị khác.", "Synced to your other devices.")}</p>
         </div>
       </div>
     </div>
@@ -250,6 +260,7 @@ function Preview({ theme, style, dir }: { theme: PreviewTheme; style: React.CSSP
 }
 
 export function ThemeDesignerPage() {
+  const t = translator(useLocale().locale);
   const [initial] = React.useState(initialState);
   const [key, setKey] = React.useState(initial.key);
   const [hexInput, setHexInput] = React.useState(initial.key);
@@ -325,9 +336,12 @@ export function ThemeDesignerPage() {
   return (
     <div className="pb-8">
       <PageHeader
-        eyebrow="Công cụ"
+        eyebrow={t("Công cụ", "Tools")}
         title="Theme Designer"
-        lead="Tạo theme từ một màu key, rồi chọn bo góc, mật độ, chữ, màu trung tính, độ nổi và chuyển động. Mỗi lựa chọn chỉ có vài bậc đã được kiểm tra; xem trước trên component thật rồi copy CSS."
+        lead={t(
+          "Tạo theme từ một màu key, rồi chọn bo góc, mật độ, chữ, màu trung tính, độ nổi và chuyển động. Các trục ngoài màu chỉ có vài bậc đã được kiểm tra; xem trước trên component thật rồi copy CSS.",
+          "Build a theme from one key color, then choose corner radius, density, type, neutral colors, elevation and motion. Apart from color, each axis has a few tested steps. Preview them on real components, then copy the CSS.",
+        )}
       />
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,360px)_minmax(0,1fr)]">
@@ -335,10 +349,10 @@ export function ThemeDesignerPage() {
         <div className="flex flex-col gap-4 xl:sticky xl:top-24 xl:self-start">
           <Card size="large" className="gap-4 rounded-2xlarge p-5">
             <div>
-              <p className="mb-2 text-body1 font-semibold">Màu key (brand80)</p>
+              <p className="mb-2 text-body1 font-semibold">{t("Màu key (brand80)", "Key color (brand80)")}</p>
               <div className="flex items-end gap-2">
                 <label className="relative size-10 shrink-0 cursor-pointer overflow-hidden rounded-large border border-stroke-1" style={{ background: key }}>
-                  <span className="sr-only">Chọn màu</span>
+                  <span className="sr-only">{t("Chọn màu", "Pick a color")}</span>
                   <input
                     type="color"
                     value={key}
@@ -347,7 +361,7 @@ export function ThemeDesignerPage() {
                   />
                 </label>
                 <Input
-                  aria-label="Mã HEX"
+                  aria-label={t("Mã HEX", "HEX code")}
                   value={hexInput}
                   rootClassName="flex-1"
                   validationState={isHexColor(hexInput) ? "none" : "error"}
@@ -358,7 +372,7 @@ export function ThemeDesignerPage() {
                   }}
                 />
               </div>
-              <div className="mt-3 flex flex-wrap gap-2" role="radiogroup" aria-label="Màu có sẵn">
+              <div className="mt-3 flex flex-wrap gap-2" role="radiogroup" aria-label={t("Màu có sẵn", "Preset colors")}>
                 {PRESETS.map((p) => (
                   <button
                     key={p.name}
@@ -378,60 +392,80 @@ export function ThemeDesignerPage() {
               </div>
             </div>
 
-            <Slider label="Độ rực (vibrancy)" showValue value={vibrancy} onValueChange={setVibrancy} min={50} max={150} step={5} />
-            <Slider label="Xoắn hue (°)" showValue value={torsion} onValueChange={setTorsion} min={-30} max={30} step={1} />
+            <Slider label={t("Độ rực (vibrancy)", "Vibrancy")} showValue value={vibrancy} onValueChange={setVibrancy} min={50} max={150} step={5} />
+            <Slider label={t("Xoắn hue (°)", "Hue torsion (°)")} showValue value={torsion} onValueChange={setTorsion} min={-30} max={30} step={1} />
 
-            <Field label="Tên brand" hint={`Dùng: <html data-brand="${name || "my-brand"}">`}>
+            <Field label={t("Tên brand", "Brand name")} hint={`${t("Dùng", "Use")}: <html data-brand="${name || "my-brand"}">`}>
               <Input value={name} onChange={(e) => setName(e.target.value.replace(/[^a-z0-9-]/gi, "").toLowerCase())} />
             </Field>
 
-            <Switch label="Áp dụng thử cho toàn trang" checked={applyGlobally} onCheckedChange={setApplyGlobally} />
+            <Switch label={t("Áp dụng thử cho toàn trang", "Try it on the whole page")} checked={applyGlobally} onCheckedChange={setApplyGlobally} />
           </Card>
 
           <Card size="large" className="gap-4 rounded-2xlarge p-5">
-            <p className="text-body1 font-semibold">Hình dáng & nhịp</p>
+            <p className="text-body1 font-semibold">{t("Hình dáng & nhịp", "Shape & rhythm")}</p>
             <Axis
-              label="Bo góc"
-              note="Cả ramp đổi cùng tỉ lệ để control, card và dialog giữ tương quan; nút tròn vẫn tròn."
+              label={t("Bo góc", "Corner radius")}
+              note={t(
+                "Cả ramp đổi cùng tỉ lệ để control, card và dialog giữ tương quan; nút tròn vẫn tròn.",
+                "The whole ramp scales by one ratio, so controls, cards and dialogs keep their proportions. Circular buttons stay circular.",
+              )}
               value={axes.radius}
               onChange={(v) => setAxis("radius", v)}
               options={[
-                { value: "none", label: "Không" },
-                { value: "small", label: "Nhỏ" },
-                { value: "medium", label: "Vừa" },
-                { value: "large", label: "Lớn" },
-                { value: "full", label: "Tròn" },
+                { value: "none", label: t("Không", "None") },
+                { value: "small", label: t("Nhỏ", "Small") },
+                { value: "medium", label: t("Vừa", "Medium") },
+                { value: "large", label: t("Lớn", "Large") },
+                { value: "full", label: t("Tròn", "Full") },
               ]}
             />
             <Axis
-              label="Mật độ"
-              note="Một hệ số cho spacing và chiều cao control. Gọn quá thì vùng bấm dưới 24px."
+              label={t("Mật độ", "Density")}
+              note={t(
+                "Một hệ số cho spacing và chiều cao control. Bậc Gọn đưa vùng bấm nhỏ nhất xuống dưới 24px.",
+                "One factor for spacing and control heights. Compact puts the smallest targets below 24px.",
+              )}
               value={axes.density}
               onChange={(v) => setAxis("density", v)}
               options={[
-                { value: "compact", label: "Gọn" },
-                { value: "default", label: "Mặc định" },
-                { value: "comfortable", label: "Thoáng" },
+                { value: "compact", label: t("Gọn", "Compact") },
+                { value: "default", label: t("Mặc định", "Default") },
+                { value: "comfortable", label: t("Thoáng", "Comfortable") },
               ]}
             />
             <div className="flex flex-col gap-1.5">
-              <Field label="Font chữ" hint="Stack nào cũng kết thúc bằng font hệ thống. Font web không đi kèm CSS xuất ra.">
+              <Field
+                label={t("Font chữ", "Font")}
+                hint={t(
+                  "Stack nào cũng kết thúc bằng font hệ thống. Font web không đi kèm CSS xuất ra.",
+                  "Every stack ends with system fonts. Web fonts are not included in the exported CSS.",
+                )}
+              >
                 <Select value={axes.font} onChange={(e) => setAxis("font", e.target.value)}>
                   {FONTS.map((f) => (
                     <option key={f.id} value={f.id}>
                       {f.label}
                     </option>
                   ))}
-                  <option value="custom">Tự nhập…</option>
+                  <option value="custom">{t("Tự nhập…", "Custom…")}</option>
                 </Select>
               </Field>
               {axes.font === "custom" && (
-                <Input aria-label="Tên font" placeholder="Atkinson Hyperlegible" value={axes.customFont} onChange={(e) => setAxis("customFont", e.target.value)} />
+                <Input
+                  aria-label={t("Tên font", "Font name")}
+                  placeholder="Atkinson Hyperlegible"
+                  value={axes.customFont}
+                  onChange={(e) => setAxis("customFont", e.target.value)}
+                />
               )}
             </div>
             <Axis
-              label="Cỡ chữ gốc"
-              note="Cả type ramp nhân theo tỉ lệ; line height được tính lại, không chỉnh riêng."
+              label={t("Cỡ chữ gốc", "Base font size")}
+              note={t(
+                "Cả type ramp nhân theo tỉ lệ; line height được tính lại, không chỉnh riêng.",
+                "The whole type ramp scales by the same ratio. Line heights are recalculated, not set one by one.",
+              )}
               value={String(axes.baseSize) as "14" | "15" | "16"}
               onChange={(v) => setAxis("baseSize", Number(v) as ThemeAxes["baseSize"])}
               options={[
@@ -441,74 +475,106 @@ export function ThemeDesignerPage() {
               ]}
             />
             <Axis
-              label="Màu trung tính"
-              note="Pha nhẹ một sắc vào thang xám ở light và dark; tương phản được kiểm tra lại. High contrast giữ nguyên."
+              label={t("Màu trung tính", "Neutral colors")}
+              note={t(
+                "Pha nhẹ một sắc vào thang xám ở light và dark; tương phản được kiểm tra lại. High contrast giữ nguyên.",
+                "Adds a slight tint to the gray scale in light and dark, and contrast is checked again. High contrast stays unchanged.",
+              )}
               value={axes.neutrals}
               onChange={(v) => setAxis("neutrals", v)}
               options={[
-                { value: "pure", label: "Xám" },
-                { value: "warm", label: "Ấm" },
-                { value: "cool", label: "Lạnh" },
-                { value: "brand", label: "Theo brand" },
+                { value: "pure", label: t("Xám", "Gray") },
+                { value: "warm", label: t("Ấm", "Warm") },
+                { value: "cool", label: t("Lạnh", "Cool") },
+                { value: "brand", label: t("Theo brand", "Brand") },
               ]}
             />
             <Axis
-              label="Độ nổi"
-              note="Cả thang bóng đổi cùng lúc. Phẳng vẫn giữ một nửa bóng cho Menu, Dialog để tách khỏi nền."
+              label={t("Độ nổi", "Elevation")}
+              note={t(
+                "Cả thang bóng đổi cùng lúc. Phẳng vẫn giữ một nửa bóng cho Menu, Dialog để tách khỏi nền.",
+                "The whole shadow scale changes at once. Flat keeps half the shadow on Menu and Dialog so they stand out from the background.",
+              )}
               value={axes.elevation}
               onChange={(v) => setAxis("elevation", v)}
               options={[
-                { value: "flat", label: "Phẳng" },
-                { value: "subtle", label: "Nhẹ" },
-                { value: "default", label: "Mặc định" },
+                { value: "flat", label: t("Phẳng", "Flat") },
+                { value: "subtle", label: t("Nhẹ", "Subtle") },
+                { value: "default", label: t("Mặc định", "Default") },
               ]}
             />
             <Axis
-              label="Chuyển động"
-              note="Nhân thời lượng ×0.75 / ×1 / ×1.25, tối đa 500ms. prefers-reduced-motion vẫn được ưu tiên."
+              label={t("Chuyển động", "Motion")}
+              note={t(
+                "Nhân thời lượng ×0.75 / ×1 / ×1.25, tối đa 500ms. prefers-reduced-motion vẫn được ưu tiên.",
+                "Multiplies durations by ×0.75 / ×1 / ×1.25, up to 500ms. prefers-reduced-motion still takes priority.",
+              )}
               value={axes.motion}
               onChange={(v) => setAxis("motion", v)}
               options={[
-                { value: "reduced", label: "Ít" },
-                { value: "default", label: "Mặc định" },
-                { value: "expressive", label: "Nhiều" },
+                { value: "reduced", label: t("Ít", "Less") },
+                { value: "default", label: t("Mặc định", "Default") },
+                { value: "expressive", label: t("Nhiều", "More") },
               ]}
             />
             <div className="flex flex-wrap items-center gap-2">
               <Button size="small" disabled={JSON.stringify(axes) === JSON.stringify(DEFAULT_AXES)} onClick={() => setAxes(DEFAULT_AXES)}>
-                Về mặc định
+                {t("Về mặc định", "Reset to default")}
               </Button>
               <CopyButton text={shareUrl} className="border border-stroke-1" />
-              <span className="text-caption1 text-foreground-3">Copy link chứa mọi lựa chọn</span>
+              <span className="text-caption1 text-foreground-3">{t("Copy link chứa mọi lựa chọn", "Copy a link with all your choices")}</span>
             </div>
           </Card>
 
           <Card size="large" className="gap-2 rounded-2xlarge p-5">
-            <p className="text-body1 font-semibold">Kiểm tra</p>
+            <p className="text-body1 font-semibold">{t("Kiểm tra", "Checks")}</p>
             <ul>
-              <Check ok={onWhite >= 4.5} label="Chữ trắng trên nút primary (light)" value={`${onWhite.toFixed(2)}:1`} />
-              <Check ok={darkButton >= 4.5} label="Chữ trắng trên nút primary (dark)" value={`${darkButton.toFixed(2)}:1`} />
-              <Check ok={tintText >= 4.5} label="Chữ brand trên nền tint" value={`${tintText.toFixed(2)}:1`} />
-              <Check ok={darkFg >= 4.5} label="Chữ brand trên nền tối" value={`${darkFg.toFixed(2)}:1`} />
-              <Check ok={dangerGap >= 20} warn={dangerGap >= 10} label="Khác hue so với danger" value={`${dangerGap.toFixed(0)}°`} />
-              <Check ok={target >= 24} warn label="Vùng bấm nhỏ nhất (size small)" value={`${target}px`} />
+              <Check
+                ok={onWhite >= 4.5}
+                label={t("Chữ trắng trên nút primary (light)", "White text on the primary button (light)")}
+                value={`${onWhite.toFixed(2)}:1`}
+              />
+              <Check
+                ok={darkButton >= 4.5}
+                label={t("Chữ trắng trên nút primary (dark)", "White text on the primary button (dark)")}
+                value={`${darkButton.toFixed(2)}:1`}
+              />
+              <Check ok={tintText >= 4.5} label={t("Chữ brand trên nền tint", "Brand text on the tint background")} value={`${tintText.toFixed(2)}:1`} />
+              <Check ok={darkFg >= 4.5} label={t("Chữ brand trên nền tối", "Brand text on a dark background")} value={`${darkFg.toFixed(2)}:1`} />
+              <Check
+                ok={dangerGap >= 20}
+                warn={dangerGap >= 10}
+                label={t("Khác hue so với danger", "Hue distance from danger")}
+                value={`${dangerGap.toFixed(0)}°`}
+              />
+              <Check ok={target >= 24} warn label={t("Vùng bấm nhỏ nhất (size small)", "Smallest target (size small)")} value={`${target}px`} />
               {axes.neutrals !== "pure" && (
-                <Check ok={minNeutral >= 4.5} label="Chữ trên nền trung tính (light, dark)" value={`${minNeutral.toFixed(2)}:1`} />
+                <Check
+                  ok={minNeutral >= 4.5}
+                  label={t("Chữ trên nền trung tính (light, dark)", "Text on neutral backgrounds (light, dark)")}
+                  value={`${minNeutral.toFixed(2)}:1`}
+                />
               )}
             </ul>
             {target < 24 && (
-              <MessageBar intent="warning" layout="multiline" title="Control size small dưới 24px">
-                Ở mật độ gọn, control size small còn {target}px. Dùng size medium cho control đứng sát nhau (WCAG 2.5.8).
+              <MessageBar intent="warning" layout="multiline" title={t("Control size small dưới 24px", "Size small controls are below 24px")}>
+                {t(
+                  `Ở mật độ gọn, control size small còn ${target}px. Dùng size medium cho control đứng sát nhau (WCAG 2.5.8).`,
+                  `At compact density, size small controls are ${target}px. Use size medium for controls placed close together (WCAG 2.5.8).`,
+                )}
               </MessageBar>
             )}
             {onWhite < 4.5 && (
               <Button icon={<Wand20Regular />} onClick={() => pickKey(adjustKeyForContrast(key))}>
-                Tự chỉnh key để đạt 4.5:1
+                {t("Tự chỉnh key để đạt 4.5:1", "Adjust the key to reach 4.5:1")}
               </Button>
             )}
             {dangerGap < 20 && (
-              <MessageBar intent="warning" layout="multiline" title="Brand gần màu danger">
-                Nút chính dễ bị nhầm với hành động phá huỷ. Nên chọn hue lệch ≥ 20° so với đỏ #C50F1F.
+              <MessageBar intent="warning" layout="multiline" title={t("Brand gần màu danger", "Brand is close to danger")}>
+                {t(
+                  "Nút chính dễ bị nhầm với hành động phá huỷ. Nên chọn hue lệch ≥ 20° so với đỏ #C50F1F.",
+                  "The primary button can be mistaken for a destructive action. Pick a hue at least 20° away from the red #C50F1F.",
+                )}
               </MessageBar>
             )}
           </Card>
@@ -535,9 +601,22 @@ export function ThemeDesignerPage() {
             </div>
           </DocSection>
 
-          <DocSection id="preview" title="Xem trước" description="Component thật dùng theme vừa tạo — theme lồng nên không ảnh hưởng phần còn lại của trang.">
+          <DocSection
+            id="preview"
+            title={t("Xem trước", "Preview")}
+            description={t(
+              "Component thật dùng theme vừa tạo — theme lồng nên không ảnh hưởng phần còn lại của trang.",
+              "Real components with the new theme. The theme is nested, so the rest of the page is not affected.",
+            )}
+          >
             <div className="flex flex-col gap-4">
-              <ToggleGroup type="single" size="small" aria-label="Hướng chữ của bản xem trước" value={dir} onValueChange={(v) => v && setDir(v as "ltr" | "rtl")}>
+              <ToggleGroup
+                type="single"
+                size="small"
+                aria-label={t("Hướng chữ của bản xem trước", "Preview text direction")}
+                value={dir}
+                onValueChange={(v) => v && setDir(v as "ltr" | "rtl")}
+              >
                 <ToggleGroupItem value="ltr">LTR</ToggleGroupItem>
                 <ToggleGroupItem value="rtl">RTL</ToggleGroupItem>
               </ToggleGroup>
@@ -551,8 +630,11 @@ export function ThemeDesignerPage() {
 
           <DocSection
             id="export"
-            title="Xuất token"
-            description="CSS: dán vào file CSS chính của app, ngay sau @import &quot;yugen-ui/theme.css&quot;, rồi đặt brand cho YugenProvider. Gồm brand ramp và mọi lựa chọn ở Hình dáng & nhịp. JSON (chỉ brand ramp): nhập vào Figma (Tokens Studio, Variables) hoặc Style Dictionary."
+            title={t("Xuất token", "Export tokens")}
+            description={t(
+              'CSS: dán vào file CSS chính của app, ngay sau @import "yugen-ui/theme.css", rồi đặt brand cho YugenProvider. Gồm brand ramp và mọi lựa chọn ở Hình dáng & nhịp. JSON (chỉ brand ramp): nhập vào Figma (Tokens Studio, Variables) hoặc Style Dictionary.',
+              'CSS: paste it into your app\'s main CSS file, right after @import "yugen-ui/theme.css", then set the brand on YugenProvider. It contains the brand ramp and every option under Shape & rhythm. JSON (brand ramp only): import it into Figma (Tokens Studio, Variables) or Style Dictionary.',
+            )}
           >
             <div className="flex flex-col gap-3">
               <CodeTabs files={exportFiles} maxHeight={360} />

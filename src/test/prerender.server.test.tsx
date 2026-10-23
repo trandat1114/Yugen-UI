@@ -45,11 +45,12 @@ describe.skipIf(!version.startsWith("19."))("prerender docs", () => {
     expect(cli.head.image).toBe("og/en/concepts/cli.jpg");
     expect(cli.card.section).toMatch(/^Concepts · /);
 
-    // Foundations › Màu sắc chưa có bản tiếng Anh.
+    // Foundations viết song ngữ trong trang (#138): canonical riêng, nội dung tiếng Anh.
     const color = await render({ kind: "foundation", slug: "color" }, "en");
-    expect(color.head.canonical).toBe("https://trandat1114.github.io/Yugen-UI/foundations/color");
-    expect(color.head.alternates).toEqual([]);
-    expect(color.head.image).toBe("og/foundations/color.jpg");
+    expect(color.head.canonical).toBe("https://trandat1114.github.io/Yugen-UI/en/foundations/color");
+    expect(color.head.alternates.map((a) => a.hreflang)).toEqual(["vi", "en", "x-default"]);
+    const main = color.html.slice(color.html.indexOf("<main"), color.html.indexOf("</main>"));
+    expect(main).not.toMatch(/[ăâđêôơưạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ]/);
 
     // Button đã dịch: canonical riêng, hreflang, mô tả tiếng Anh; demo giữ tiếng Việt và mang lang="vi".
     const button = await render({ kind: "component", slug: "button" }, "en");

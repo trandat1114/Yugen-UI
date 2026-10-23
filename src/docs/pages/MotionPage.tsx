@@ -49,7 +49,7 @@ import "../motion-preview.css";
 
 /**
  * Foundations › Motion (#45): token, utility, chuyển động của từng component (demo thật), playground, xem trước giảm
- * chuyển động, phối hợp, hiệu năng. Viết song ngữ ngay trong trang (các trang Foundations khác chỉ có tiếng Việt).
+ * chuyển động, phối hợp, hiệu năng. Viết song ngữ ngay trong trang, như các trang Foundations khác.
  */
 
 type Text = Record<Locale, string>;

@@ -20,8 +20,8 @@ const PAGES: Record<"blocks" | "templates" | "theme-designer" | "community", Rec
     en: ["Templates", "Ready-made apps built with Yugen UI: SaaS, Markdown blog, dashboard, AI chat — one command gives you a running project."],
   },
   "theme-designer": {
-    vi: ["Theme Designer", "Tạo brand ramp 16 bậc từ một màu, xem trước trên component thật ở sáng / tối và xuất CSS, JSON, Tokens Studio."],
-    en: ["Theme Designer", "Generate a 16-step brand ramp from one color, preview it on real components in light / dark and export CSS, JSON or Tokens Studio."],
+    vi: ["Theme Designer", "Tạo theme từ một màu: brand ramp 16 bậc, bo góc, mật độ, font, màu trung tính, độ nổi, chuyển động. Xem trước ở sáng, tối, tương phản cao và RTL, xuất CSS, JSON, Tokens Studio."],
+    en: ["Theme Designer", "Build a theme from one color: a 16-step brand ramp, radius, density, font, neutrals, elevation and motion. Preview in light, dark, high contrast and RTL, then export CSS, JSON or Tokens Studio."],
   },
   community: {
     vi: ["Cộng đồng", "Đóng góp cho Yugen UI: báo lỗi, gửi block, dịch tài liệu, lộ trình phát triển."],
@@ -64,11 +64,10 @@ export function routeMeta(route: Route, l: LocaleValue): { title?: string; descr
 
 /** Chế độ tiếng Anh: route nào còn hiện nội dung tiếng Việt (toàn trang hoặc một phần). */
 export function fallbackOf(route: Route): "page" | "partial" | null {
-  if (route.kind === "home" || route.kind === "community" || route.kind === "templates") return null;
+  // Trang chủ, Cộng đồng, Templates, Blocks, Theme Designer và Foundations viết song ngữ ngay trong trang (#45, #138).
+  if (route.kind !== "news" && route.kind !== "concept" && route.kind !== "component") return null;
   if (route.kind === "news") return "partial";
   if (route.kind === "concept") return CONCEPT_EN_PAGES[route.slug] ? null : "page";
-  // Foundations › Motion viết song ngữ ngay trong trang (#45).
-  if (route.kind === "foundation" && route.slug === "motion") return null;
   // Trang component đã dịch: phần chữ tiếng Anh, demo (nội dung mẫu) giữ tiếng Việt và được đánh dấu lang="vi".
   if (route.kind === "component" && isTranslated(route.slug)) return null;
   return "page";
