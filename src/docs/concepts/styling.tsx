@@ -402,7 +402,7 @@ import { cn } from "@/lib/cn";
           <DoDont
             dos={[
               "Gộp class bằng cn() và để className của người dùng ở cuối.",
-              "Dùng utility token (text-foreground-2, p-M, rounded-medium, shadow-16).",
+              "Dùng utility token (text-foreground-2, p-3, rounded-medium, shadow-16).",
               "Style trạng thái bằng data-[state=…] do Radix đặt sẵn.",
             ]}
             donts={[

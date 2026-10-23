@@ -128,7 +128,7 @@ const DURATIONS = [
 
 const DURATION_USE: Record<(typeof DURATIONS)[number]["utility"], Text> = {
   "duration-ultra-fast": { vi: "Phản hồi tức thì (nhấn)", en: "Instant feedback (press)" },
-  "duration-faster": { vi: "Hover, đổi màu, icon", en: "Hover, colour, icons" },
+  "duration-faster": { vi: "Hover, đổi màu, icon", en: "Hover, color, icons" },
   "duration-fast": { vi: "Bề mặt rời đi", en: "Surfaces leaving" },
   "duration-normal": { vi: "Mở / đóng nội dung tại chỗ", en: "Expanding content in place" },
   "duration-gentle": { vi: "Bề mặt đi vào (Dialog, Drawer)", en: "Surfaces entering (Dialog, Drawer)" },
@@ -331,9 +331,9 @@ function Patterns() {
 
       <PatternCard
         name="Tabs"
-        enter={t("màu vạch chỉ báo 100ms · easy-ease", "indicator colour 100ms · easy-ease")}
+        enter={t("màu vạch chỉ báo 100ms · easy-ease", "indicator color 100ms · easy-ease")}
         exit={t("không trượt giữa các tab", "no slide between tabs")}
-        reduced={t("Giữ nguyên (chỉ đổi màu).", "Unchanged (colour only).")}
+        reduced={t("Giữ nguyên (chỉ đổi màu).", "Unchanged (color only).")}
       >
         <Tabs defaultValue="a" className="w-full">
           <TabsList>
