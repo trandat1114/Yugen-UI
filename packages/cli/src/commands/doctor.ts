@@ -9,7 +9,9 @@ import { addArgs, commandLine } from "../lib/pm.js";
 import {
   TAILWIND_IMPORT,
   allDeps,
+  appCodeFiles,
   detectPackageManager,
+  findProviderUsage,
   installedVersion,
   majorOf,
   packageMajor,
@@ -84,7 +86,7 @@ export async function diagnose(opts: DoctorOptions): Promise<Check[]> {
   else add("ok", `React ${react}`);
 
   const cssFiles = ["src", "app", "styles"].flatMap((d) => walk(path.join(cwd, d), /\.css$/, 5));
-  const codeFiles = ["src", "app", "pages"].flatMap((d) => walk(path.join(cwd, d), /\.[cm]?[jt]sx?$/, 6));
+  const codeFiles = appCodeFiles(cwd);
   const themeImports = cssFiles.flatMap((file) =>
     cssImports(readText(file))
       .filter((spec) => spec === THEME_PACKAGE || isSourceTheme(spec))
@@ -146,8 +148,7 @@ export async function diagnose(opts: DoctorOptions): Promise<Check[]> {
     if (!exists(path.join(cwd, config.paths.lib, "cn.ts"))) add("error", `${config.paths.lib}/cn.ts not found`, "Run `yugen add cn`.");
   }
 
-  const inUi = (f: string) => !!ui && !path.relative(path.join(cwd, ui), f).startsWith("..");
-  const provider = codeFiles.find((f) => !inUi(f) && /<YugenProvider\b/.test(readText(f)));
+  const provider = findProviderUsage(cwd, ui);
   if (provider) add("ok", `YugenProvider found in ${rel(provider)}`);
   else add("warn", "YugenProvider not found", "Wrap your app once: <YugenProvider applyToDocument withToaster>…</YugenProvider>");
 

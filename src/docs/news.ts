@@ -217,6 +217,19 @@ export const LATEST_RELEASE = NEWS.find((r) => !r.upcoming) ?? NEWS[0];
  */
 export const CLI_NEWS: NewsRelease[] = [
   {
+    version: "0.4.0",
+    upcoming: true,
+    date: "2027-03-31",
+    title: "diff, update, remove và theme",
+    summary: "Cập nhật mã đã chép theo registry, gỡ component, sinh màu thương hiệu và tự bọc YugenProvider.",
+    items: [
+      { kind: "new", text: "yugen diff và yugen update: so mã đã chép với registry, xem diff rồi áp bản mới (update hỏi lại trước khi ghi, --dry-run chỉ xem).", href: "#/concepts/cli" },
+      { kind: "new", text: "yugen remove: xoá file của component, giữ lại file còn được import ở nơi khác.", href: "#/concepts/cli" },
+      { kind: "new", text: "yugen theme --brand <hex>: sinh brand ramp vào yugen-brand.css (cùng thuật toán Theme Designer) và cảnh báo khi tương phản dưới 4.5:1.", href: "#/concepts/cli" },
+      { kind: "improved", text: "yugen init tự bọc app trong YugenProvider (main.tsx của Vite, app/layout.tsx của Next.js); create --ref lấy template từ một nhánh hoặc tag.", href: "#/concepts/cli" },
+    ],
+  },
+  {
     version: "0.3.0",
     date: "2026-10-23",
     title: "Template dùng Vite 8",

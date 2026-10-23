@@ -71,6 +71,15 @@ npx @yugen-ui/cli add --all               # mọi component
 npx @yugen-ui/cli add button --overwrite  # ghi đè cả file bạn đã sửa
 npx @yugen-ui/cli list grid               # tìm trong registry, ✓ là đã có trong dự án`;
 
+const UPDATE = `npx @yugen-ui/cli diff                   # mọi component đã chép: in diff so với registry
+npx @yugen-ui/cli update button --dry-run # xem diff, không ghi
+npx @yugen-ui/cli update                  # áp bản registry (hỏi lại trước khi ghi)
+npx @yugen-ui/cli remove data-grid        # xoá file không còn được import ở đâu`;
+
+const THEME = `npx @yugen-ui/cli theme --brand #0f6cbd --name acme
+# → src/yugen-brand.css: [data-brand="acme"] { --brand-10 … --brand-160 }, import trong src/index.css
+# <YugenProvider applyToDocument withToaster brand="acme">`;
+
 const CI = `npx @yugen-ui/cli@latest create app -t starter -y --no-git
 npx @yugen-ui/cli@latest add button dialog -y --no-install`;
 
@@ -82,9 +91,13 @@ export default function Page() {
           <Table
             head={["Lệnh", "Việc làm"]}
             rows={[
-              ["create [dir]", "Tạo app từ template: starter, saas, blog, dashboard, ai-chat."],
-              ["init", "Thiết lập dự án React có sẵn, dùng gói npm hoặc chép mã nguồn. Ghi yugen.json."],
+              ["create [dir]", "Tạo app từ template: starter, saas, blog, dashboard, ai-chat. --ref <nhánh|tag> lấy template từ repo."],
+              ["init", "Thiết lập dự án React có sẵn, dùng gói npm hoặc chép mã nguồn. Ghi yugen.json, bọc app trong YugenProvider."],
               ["add <tên…>", "Chép component cùng các component phụ thuộc, cài gói npm còn thiếu."],
+              ["diff [tên…]", "So mã đã chép với registry và in diff; không sửa gì."],
+              ["update [tên…]", "Áp bản registry cho mã đã chép: xem diff, hỏi lại rồi ghi."],
+              ["remove <tên…>", "Xoá file của component mà không file nào khác còn import."],
+              ["theme --brand <hex>", "Sinh brand ramp 16 bậc vào yugen-brand.css, cùng thuật toán với Theme Designer."],
               ["list [từ khoá]", "Danh sách component trong registry."],
               ["doctor", "Kiểm tra React, Tailwind CSS v4, import theme, phiên bản yugen-ui và YugenProvider."],
             ]}
@@ -137,8 +150,10 @@ export default function Page() {
           <CodeBlock code={SOURCE_RESULT} />
           <P>
             Import trong mã chép vào dùng alias của tsconfig (<C>@/*</C>, <C>~/*</C>) nếu có, không thì dùng đường dẫn tương đối, nên không phải
-            sửa vite.config. Dòng <C>&quot;use client&quot;</C> chỉ được giữ với Next.js. Cuối cùng CLI in đoạn bọc{" "}
-            <C>{"<YugenProvider applyToDocument withToaster>"}</C> kèm tên file cần sửa.
+            sửa vite.config. Dòng <C>&quot;use client&quot;</C> chỉ được giữ với Next.js. Cuối cùng CLI hỏi để bọc app trong{" "}
+            <C>{"<YugenProvider applyToDocument withToaster>"}</C>: <C>{"<App />"}</C> trong main.tsx (Vite) hoặc <C>{"{children}"}</C>{" "}
+            trong <C>{"<body>"}</C> của app/layout.tsx (Next.js). Cấu trúc khác, hoặc chạy với <C>--no-provider</C>, thì CLI in đoạn cần thêm
+            kèm tên file.
           </P>
         </div>
       </DocSection>
@@ -148,12 +163,42 @@ export default function Page() {
           <PackageManagerTabs packages={CLI_ADD} command="dlx" />
           <CodeBlock code={ADD_MORE} />
           <P>
-            File đã có và khác registry (thường là bạn đã sửa) được giữ nguyên, CLI liệt kê chúng để bạn chạy lại với <C>--overwrite</C> khi
-            muốn cập nhật. Commit trước rồi xem diff của git để giữ phần đã tuỳ biến.
+            File đã có và khác registry (thường là bạn đã sửa) được giữ nguyên, CLI liệt kê chúng. Xem khác ở đâu bằng <C>yugen diff</C>,
+            nhận bản mới bằng <C>yugen update</C> (phần bên dưới).
           </P>
           <MessageBar intent="info" title="Ở chế độ package" className="max-w-3xl">
             Component đã có sẵn trong gói <C>yugen-ui</C>. Lệnh <C>add</C> chỉ in dòng import tương ứng.
           </MessageBar>
+        </div>
+      </DocSection>
+
+      <DocSection
+        id="update"
+        title="Cập nhật và gỡ component"
+        description="Chế độ source. Không ghi tên component thì CLI xét mọi component Yugen có trong dự án."
+      >
+        <div className="flex flex-col gap-4">
+          <CodeBlock code={UPDATE} />
+          <P>
+            <C>update</C> in diff của từng file sẽ đổi, báo file mới (ví dụ phụ thuộc vừa thêm vào registry) rồi hỏi lại trước khi ghi;
+            phần bạn đã sửa trong các file đó bị thay. Commit trước để giữ được phần tuỳ biến. <C>remove</C> quét import trong dự án
+            (đường dẫn tương đối và alias) và giữ lại file còn được dùng, ví dụ Spinner khi Button vẫn import nó. Gói npm không bị gỡ.
+          </P>
+        </div>
+      </DocSection>
+
+      <DocSection
+        id="theme"
+        title="Màu thương hiệu"
+        description="Dùng được ở cả chế độ package và source. Cùng thuật toán với Theme Designer."
+      >
+        <div className="flex flex-col gap-4">
+          <CodeBlock code={THEME} />
+          <P>
+            Tuỳ chọn <C>--vibrancy</C> (50–150) và <C>--torsion</C> (−30…30) như hai thanh trượt của Theme Designer. Chữ trắng trên nút
+            primary dưới 4.5:1 thì CLI cảnh báo và gợi ý một màu key tối hơn đạt chuẩn. Muốn chỉnh thêm bo góc, mật độ, font… thì dùng{" "}
+            <A href="#/theme-designer">Theme Designer</A>.
+          </P>
         </div>
       </DocSection>
 

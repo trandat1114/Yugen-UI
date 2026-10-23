@@ -24,7 +24,7 @@ API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện
 Chưa xếp lịch.
 
 - [ ] Docs tiếng Anh cho trang component và các trang khái niệm còn lại (#69)
-- [ ] CLI giai đoạn 2: diff, update, theme, remove (#64)
+- [x] CLI giai đoạn 2: diff, update, theme, remove (#64)
 - [ ] Đăng ký @yugen vào danh mục registry của shadcn (#68)
 - [ ] Đang cân nhắc: bộ Figma, gói icon Sakura
 
