@@ -174,6 +174,14 @@ test.describe("URL theo đường dẫn (#113)", () => {
     await expect(page).toHaveTitle("Button · Yugen UI");
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://trandat1114.github.io/Yugen-UI/components/button");
   });
+
+  test("sitemap.xml liệt kê mọi trang kèm lastmod (#114)", async ({ request }) => {
+    test.skip(process.env.YUGEN_E2E_DEV === "1", "dev server không prerender");
+    const xml = await (await request.get("/sitemap.xml")).text();
+    expect(xml).toContain("<loc>https://trandat1114.github.io/Yugen-UI/components/button</loc>");
+    expect(xml).toMatch(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/);
+    expect(xml.match(/<url>/g)?.length).toBeGreaterThan(140);
+  });
 });
 
 test("form react-hook-form + zod: lỗi theo schema, focus vào ô lỗi đầu tiên", async ({ page }) => {

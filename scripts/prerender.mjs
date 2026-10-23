@@ -4,9 +4,11 @@
  *   dist-docs/index.html                  trang chủ
  *   dist-docs/components/button.html      mọi route khác — GitHub Pages phục vụ /components/button từ file này
  *   dist-docs/404.html                    khung trống (noindex): đường dẫn lạ, React tự render theo URL
- *   dist-docs/routes.json                 danh sách đường dẫn (sitemap, build-versioned-docs.mjs nhận biết bản dùng đường dẫn)
+ *   dist-docs/routes.json                 danh sách đường dẫn (build-versioned-docs.mjs nhận biết bản dùng đường dẫn)
+ *   dist-docs/sitemap.xml                 chỉ bản chính (next/ và vX.Y/ trỏ canonical về bản chính); lastmod theo git
  * Mỗi trang có <title>, description, canonical và og:* riêng. Xong thì xoá dist-ssr/.
  */
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -45,13 +47,36 @@ function page(html, { title, description, canonical }, body) {
   return replaceOnce(html, /<div id="root"><\/div>/, () => `<div id="root">${body}</div>`);
 }
 
-const { ROUTES, render } = await import(pathToFileURL(path.join(ssr, "entry-server.js")).href);
+const { ROUTES, render, sourcesOf } = await import(pathToFileURL(path.join(ssr, "entry-server.js")).href);
+
+const base = (process.env.DOCS_BASE ?? "/").replace(/\/?$/, "/");
+const mainBuild = !/\/(next|v\d+\.\d+)\/$/.test(base);
+
+/** Ngày commit gần nhất (YYYY-MM-DD) đụng tới các file nguồn của trang; không có git / file → undefined. */
+const lastmodCache = new Map();
+function lastmod(files) {
+  const existing = files.filter((f) => f && fs.existsSync(path.join(root, f)));
+  if (existing.length === 0) return undefined;
+  const key = existing.join("|");
+  if (!lastmodCache.has(key)) {
+    let date;
+    try {
+      date = execFileSync("git", ["log", "-1", "--format=%cs", "--", ...existing], { cwd: root, encoding: "utf8" }).trim() || undefined;
+    } catch {
+      date = undefined;
+    }
+    lastmodCache.set(key, date);
+  }
+  return lastmodCache.get(key);
+}
 
 const started = Date.now();
 const paths = [];
+const sitemap = [];
 const streamed = [];
 for (const route of ROUTES) {
   const { path: routePath, html, head } = await render(route);
+  if (mainBuild) sitemap.push({ loc: head.canonical, lastmod: lastmod(sourcesOf(route)) });
   // Suspense còn treo lúc render → React đặt nội dung ở cuối trang, cần script mới hiện đúng chỗ (crawler không chạy JS thấy lệch).
   if (html.includes('<template id="B:')) streamed.push(routePath || "/");
   const file = path.join(out, routePath === "" ? "index.html" : `${routePath}.html`);
@@ -64,7 +89,14 @@ for (const route of ROUTES) {
 const notFound = replaceOnce(template, /<meta name="viewport"[^>]*>/, (m) => `${m}\n    <meta name="robots" content="noindex" />`);
 fs.writeFileSync(path.join(out, "404.html"), notFound);
 fs.writeFileSync(path.join(out, "routes.json"), JSON.stringify(paths, null, 2) + "\n");
+if (mainBuild) {
+  const urls = sitemap.map(({ loc, lastmod }) => `  <url><loc>${escapeHtml(loc)}</loc>${lastmod ? `<lastmod>${lastmod}</lastmod>` : ""}</url>`);
+  fs.writeFileSync(
+    path.join(out, "sitemap.xml"),
+    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join("\n")}\n</urlset>\n`,
+  );
+}
 fs.rmSync(ssr, { recursive: true, force: true });
 
-console.log(`prerender: ${paths.length} trang trong ${((Date.now() - started) / 1000).toFixed(1)} s`);
+console.log(`prerender: ${paths.length} trang trong ${((Date.now() - started) / 1000).toFixed(1)} s${mainBuild ? ", sitemap.xml" : ""}`);
 if (streamed.length > 0) console.warn(`prerender: ${streamed.length} trang còn Suspense treo (nội dung ghi cuối trang): ${streamed.join(", ")}`);
