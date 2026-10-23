@@ -7,7 +7,8 @@ import { COMPONENTS_TRANSLATED } from "./translated";
 const enFiles = import.meta.glob<{ en: Record<string, ComponentDocEn> }>("./en/*.ts", { eager: true });
 const VIETNAMESE = /[ăâđêôơưạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ]/i;
 
-describe("bản tiếng Anh của trang component", () => {
+// Nạp file registry (demo của cả nhóm component) mất vài giây khi cả bộ test chạy song song.
+describe("bản tiếng Anh của trang component", { timeout: 30_000 }, () => {
   it("COMPONENTS_TRANSLATED khớp đúng các mục trong en/, mỗi mục nằm cùng tên file với registry", () => {
     const found: string[] = [];
     for (const [file, mod] of Object.entries(enFiles)) {
