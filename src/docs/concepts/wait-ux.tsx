@@ -680,7 +680,7 @@ export default function Page() {
           />
           <CodeBlock code={SPIN_DELAY_CODE} />
           <P>
-            Trong lúc chờ delay, giữ nguyên giao diện trước đó — đừng thay bằng vùng trống. <C>AsyncContent</C> làm sẵn việc này; và
+            Trong lúc chờ delay, giữ nguyên giao diện trước đó — đừng thay bằng vùng trống. <C>AsyncContent</C> làm sẵn việc này; và{" "}
             <C>LoadingOverlay</C> nhận <C>delay</C> để phủ lên nội dung cũ chỉ khi việc làm mới thật sự chậm.
           </P>
           <Stage>
