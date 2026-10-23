@@ -677,7 +677,7 @@ function OverflowTagGroupDemo() {
     category: "Nhập liệu",
     lead: "TimePicker là ô nhập kiểu combobox để chọn giờ trong danh sách hoặc gõ tự do.",
     description:
-      "Danh sách giờ cách nhau `increment` phút giữa `startHour` và `endHour`; gõ \"9\", \"930\", \"9h30\", \"21:15\" hay \"9:30 PM\" rồi Enter / rời ô để xác nhận — gõ dở sẽ nhảy tới giờ gần nhất. `onTimeChange(event, { selectedTime, selectedTimeText, errorType })` báo lỗi \"invalid-input\" / \"out-of-start-bound\" / \"out-of-end-bound\" để hiển thị qua `<Field>`. Chu kỳ giờ mặc định theo `locale` (vi-VN → 24 giờ). Dùng chung vỏ ô nhập (`fieldAppearanceClass`) và option của Combobox.",
+      "Danh sách giờ cách nhau `increment` phút giữa `startHour` và `endHour`; gõ \"9\", \"930\", \"9h30\", \"21:15\" hay \"9:30 PM\" rồi Enter / rời ô để xác nhận; trong lúc gõ, danh sách đánh dấu giờ gần nhất. `onTimeChange(event, { selectedTime, selectedTimeText, errorType })` báo lỗi \"invalid-input\" / \"out-of-start-bound\" / \"out-of-end-bound\" để hiển thị qua `<Field>`. Chu kỳ giờ mặc định theo `locale` (vi-VN → 24 giờ). Dùng chung vỏ ô nhập (`fieldAppearanceClass`) và option của Combobox.",
     importCode: `import { TimePicker, Field, formatTime, parseTimeString, getTimesInRange } from "@/components/ui";`,
     hero: {
       title: "Giờ họp",
@@ -904,7 +904,7 @@ function TimePickerDemo() {
     props: [
       { name: "presets", type: "DateRangePreset[]", description: "{ label, range: () => ({ from, to }) } — hiện cạnh lịch, xếp trên lịch khi màn hẹp." },
       { name: "presetsLabel", type: "string", defaultValue: `"Chọn nhanh khoảng ngày"`, description: "Nhãn nhóm preset cho trình đọc màn hình." },
-      { name: "DEFAULT_RANGE_PRESETS", type: "DateRangePreset[]", description: "Hôm nay, 7 ngày qua, 30 ngày qua, Tháng này, Tháng trước." },
+      { name: "DEFAULT_RANGE_PRESETS", type: "DateRangePreset[]", description: "Hôm nay, 7 ngày qua, 30 ngày qua, Tháng này (tới hôm nay), Tháng trước." },
       { name: "numberOfMonths", type: "number", defaultValue: "2", description: "Số tháng hiển thị; nên 1 trên mobile." },
       { name: "value / onSelectRange / minDate / maxDate / clearable…", type: "—", description: "Như DateRangePicker (xem trang DatePicker)." },
     ],
