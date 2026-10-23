@@ -307,10 +307,10 @@ const PLANS = [
 
 const signUpSchema = z.object({
   fullName: z.string().trim().min(2, "Họ tên cần ít nhất 2 ký tự."),
-  email: z.string().trim().min(1, "Vui lòng nhập email.").email("Email chưa đúng định dạng."),
+  email: z.string().trim().min(1, "Vui lòng nhập email.").pipe(z.email("Email chưa đúng định dạng.")),
   password: z.string().min(8, "Mật khẩu cần ít nhất 8 ký tự.").regex(/\d/, "Mật khẩu cần ít nhất một chữ số."),
   plan: z.string().min(1, "Hãy chọn một gói."),
-  birthDate: z.date({ required_error: "Vui lòng chọn ngày sinh." }),
+  birthDate: z.date({ error: "Vui lòng chọn ngày sinh." }),
   terms: z.boolean().refine((accepted) => accepted, "Bạn cần đồng ý điều khoản để tiếp tục."),
 });
 
@@ -403,7 +403,7 @@ function SignUpForm() {
 
 // #region ServerErrorDemo
 const inviteSchema = z.object({
-  email: z.string().trim().min(1, "Vui lòng nhập email.").email("Email chưa đúng định dạng."),
+  email: z.string().trim().min(1, "Vui lòng nhập email.").pipe(z.email("Email chưa đúng định dạng.")),
 });
 
 function ServerErrorDemo() {

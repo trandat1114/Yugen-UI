@@ -147,3 +147,20 @@ test.describe("Sidebar kéo được độ rộng, thu về rail (#46)", () => {
     expect(await root.evaluate((el) => el.style.getPropertyValue("--docs-sidebar-width"))).toBe("56px");
   });
 });
+
+test("form react-hook-form + zod: lỗi theo schema, focus vào ô lỗi đầu tiên", async ({ page }) => {
+  await openDocs(page, "#/components/formvalidation");
+  const form = page.locator("form").first();
+  await form.getByRole("button", { name: "Tạo tài khoản" }).click();
+  await expect(form.getByText("Họ tên cần ít nhất 2 ký tự.")).toBeVisible();
+  await expect(form.getByText("Vui lòng nhập email.")).toBeVisible();
+  await expect(form.getByText("Vui lòng chọn ngày sinh.")).toBeVisible();
+  await expect(form.getByRole("textbox", { name: /Họ và tên/ })).toBeFocused();
+
+  const email = form.getByRole("textbox", { name: /^Email/ });
+  await email.fill("chua-dung");
+  await email.blur();
+  await expect(form.getByText("Email chưa đúng định dạng.")).toBeVisible();
+  await email.fill("ten@congty.vn");
+  await expect(form.getByText("Email chưa đúng định dạng.")).toBeHidden();
+});
