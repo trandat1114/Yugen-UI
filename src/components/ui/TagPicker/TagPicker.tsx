@@ -81,6 +81,9 @@ export const TagPicker = React.forwardRef<HTMLInputElement, TagPickerProps>(
       () => options.map((o) => (typeof o === "string" ? { value: o, label: o } : { ...o, label: o.label ?? o.value })),
       [options],
     );
+    // Chuẩn hoá nhãn một lần cho mỗi bộ option (không phải mỗi phím gõ × mỗi option).
+    const searchText = React.useMemo(() => items.map((i) => normalizeSearchText(i.label)), [items]);
+    const itemByValue = React.useMemo(() => new Map(items.map((i) => [i.value, i])), [items]);
     const [innerSelected, setInnerSelected] = React.useState<string[]>(defaultValue ?? []);
     const selected = value ?? innerSelected;
 
@@ -102,13 +105,14 @@ export const TagPicker = React.forwardRef<HTMLInputElement, TagPickerProps>(
 
     const s = SIZE[size];
     const invalid = inputProps["aria-invalid"] === true || inputProps["aria-invalid"] === "true";
+    const selectedSet = new Set(selected);
     const filterList = (text: string) => {
       const q = normalizeSearchText(text);
-      return items.filter((i) => !selected.includes(i.value) && (!q || normalizeSearchText(i.label).includes(q)));
+      return items.filter((i, k) => !selectedSet.has(i.value) && (!q || searchText[k].includes(q)));
     };
     const available = filterList(query);
     const firstEnabled = (list: NormalizedOption[]) => list.find((i) => !i.disabled)?.value ?? "";
-    const optionOf = (v: string) => items.find((i) => i.value === v);
+    const optionOf = (v: string) => itemByValue.get(v);
 
     useIsomorphicLayoutEffect(() => {
       if (!open || !listEl || !active) {
