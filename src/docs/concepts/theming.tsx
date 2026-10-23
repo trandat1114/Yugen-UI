@@ -296,7 +296,7 @@ export default function Page() {
             rows={[
               ["Global", <C key="a">--grey-14, --brand-80, --red-shade-10</C>, "Chỉ tokens.css (và minh hoạ trang trí, trang bảng màu)."],
               ["Alias", <C key="a">--colorNeutralForeground1, --colorBrandBackground, --spacingM, --shadow16</C>, "index.css (map sang Tailwind) và CSS tuỳ biến khi thật cần."],
-              ["Utility", <C key="a">text-foreground-1, bg-brand-background, p-M, shadow-16</C>, "Mọi file .tsx."],
+              ["Utility", <C key="a">text-foreground-1, bg-brand-background, p-3, shadow-16</C>, "Mọi file .tsx."],
             ]}
           />
           <CodeBlock code={LAYERS_CODE} />
@@ -320,8 +320,9 @@ export default function Page() {
               component thật, kiểm tra tương phản.
             </li>
             <li>
-              Bấm <strong className="font-semibold">Xuất CSS</strong> và dán khối <C>[data-brand=&quot;tên&quot;]</C> vào{" "}
-              <C>src/styles/tokens.css</C>, sau các brand có sẵn.
+              Ở mục <strong className="font-semibold">Xuất token</strong>, chép CSS (hoặc tải file) và dán khối{" "}
+              <C>[data-brand=&quot;tên&quot;]</C> vào file CSS chính của app, ngay sau <C>@import &quot;yugen-ui/theme.css&quot;</C>. Dự án đã
+              chép mã nguồn thì dán vào <C>src/styles/tokens.css</C>, sau các brand có sẵn.
             </li>
             <li>
               Dùng <C>brand=&quot;tên&quot;</C> trên YugenProvider (kiểu <C>YugenBrand</C> nhận chuỗi bất kỳ) hoặc{" "}

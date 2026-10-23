@@ -188,7 +188,7 @@ export default function Page() {
         </div>
       </DocSection>
 
-      <DocSection id="theme" title="Brand colour" description="Works in package and source mode, with the same algorithm as the Theme Designer.">
+      <DocSection id="theme" title="Brand color" description="Works in package and source mode, with the same algorithm as the Theme Designer.">
         <div className="flex flex-col gap-4">
           <CodeBlock code={THEME} />
           <P>

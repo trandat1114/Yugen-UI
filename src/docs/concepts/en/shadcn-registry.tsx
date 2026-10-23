@@ -95,7 +95,7 @@ export default function Page() {
             </TabsContent>
           </Tabs>
           <P>
-            The <C>init</C> item is a style with <C>extends: &quot;none&quot;</C>: the CLI skips the default shadcn/ui style (colour variables,
+            The <C>init</C> item is a style with <C>extends: &quot;none&quot;</C>: the CLI skips the default shadcn/ui style (color variables,
             fonts, lucide icons), so your CSS holds only Tailwind and the Yugen theme. Then wrap your app once:
           </P>
           <CodeBlock code={PROVIDER} />
@@ -139,7 +139,7 @@ export default function Page() {
           </P>
           <PackageManagerTabs packages={SHADCN_EXISTING} command="dlx" />
           <MessageBar intent="warning" title="The Yugen theme replaces Tailwind's default scales." className="max-w-3xl">
-            <C>yugen.css</C> disables the default colour, radius, shadow and font-size scales (<C>bg-blue-500</C>, <C>rounded-lg</C>,{" "}
+            <C>yugen.css</C> disables the default color, radius, shadow and font-size scales (<C>bg-blue-500</C>, <C>rounded-lg</C>,{" "}
             <C>text-sm</C> are gone). Existing shadcn/ui components using those classes lose their styling — migrate gradually (see{" "}
             <A href={docsPath("/concepts/migration-shadcn")}>From shadcn/ui</A>) rather than mixing both themes long term.
           </MessageBar>

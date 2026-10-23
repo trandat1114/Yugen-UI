@@ -21,7 +21,7 @@ const PAGES: Record<"blocks" | "templates" | "theme-designer" | "community", Rec
   },
   "theme-designer": {
     vi: ["Theme Designer", "Tạo brand ramp 16 bậc từ một màu, xem trước trên component thật ở sáng / tối và xuất CSS, JSON, Tokens Studio."],
-    en: ["Theme Designer", "Generate a 16-step brand ramp from one colour, preview it on real components in light / dark and export CSS, JSON or Tokens Studio."],
+    en: ["Theme Designer", "Generate a 16-step brand ramp from one color, preview it on real components in light / dark and export CSS, JSON or Tokens Studio."],
   },
   community: {
     vi: ["Cộng đồng", "Đóng góp cho Yugen UI: báo lỗi, gửi block, dịch tài liệu, lộ trình phát triển."],
