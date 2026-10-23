@@ -8,6 +8,33 @@ export type TreeSize = "small" | "medium";
 export type TreeAppearance = "subtle" | "transparent";
 export type TreeItemType = "branch" | "leaf";
 
+/**
+ * Mục đang giữ tab stop (roving tabindex), để ngoài context: mỗi phím mũi tên chỉ render lại hai mục đổi trạng thái thay vì
+ * mọi mục trong cây.
+ */
+interface ActiveStore {
+  get: () => string | null;
+  set: (value: string) => void;
+  subscribe: (listener: () => void) => () => void;
+}
+
+function createActiveStore(): ActiveStore {
+  let current: string | null = null;
+  const listeners = new Set<() => void>();
+  return {
+    get: () => current,
+    set: (value) => {
+      if (value === current) return;
+      current = value;
+      listeners.forEach((listener) => listener());
+    },
+    subscribe: (listener) => {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    },
+  };
+}
+
 interface TreeRootContextValue {
   size: TreeSize;
   appearance: TreeAppearance;
@@ -16,8 +43,7 @@ interface TreeRootContextValue {
   toggleOpen: (value: string, open?: boolean) => void;
   selectedValue?: string;
   select: (value: string) => void;
-  activeValue: string | null;
-  setActiveValue: (value: string) => void;
+  active: ActiveStore;
 }
 
 const TreeRootContext = React.createContext<TreeRootContextValue | null>(null);
@@ -41,8 +67,7 @@ const NOOP_ROOT: TreeRootContextValue = {
   isOpen: () => false,
   toggleOpen: () => {},
   select: () => {},
-  activeValue: null,
-  setActiveValue: () => {},
+  active: createActiveStore(),
 };
 
 const TREE_ITEM = '[role="treeitem"]';
@@ -121,7 +146,8 @@ const TreeRoot = React.forwardRef<HTMLDivElement, TreeProps>(
     const open = openItems ?? openState;
     const [selectedState, setSelectedState] = React.useState(defaultSelectedValue);
     const selected = selectedValue ?? selectedState;
-    const [activeValue, setActiveValue] = React.useState<string | null>(null);
+    const [active] = React.useState(createActiveStore);
+    const openSet = React.useMemo(() => new Set(open), [open]);
     const innerRef = React.useRef<HTMLDivElement | null>(null);
     const dir = useDirection();
 
@@ -136,14 +162,14 @@ const TreeRoot = React.forwardRef<HTMLDivElement, TreeProps>(
 
     const toggleOpen = React.useCallback(
       (value: string, force?: boolean) => {
-        const isOpen = open.includes(value);
+        const isOpen = openSet.has(value);
         const nextOpen = force ?? !isOpen;
         if (nextOpen === isOpen) return;
         const next = nextOpen ? [...open, value] : open.filter((v) => v !== value);
         if (openItems === undefined) setOpenState(next);
         onOpenChange?.(next, { value, open: nextOpen });
       },
-      [open, openItems, onOpenChange],
+      [open, openSet, openItems, onOpenChange],
     );
 
     const select = React.useCallback(
@@ -160,9 +186,10 @@ const TreeRoot = React.forwardRef<HTMLDivElement, TreeProps>(
       const rootEl = innerRef.current;
       if (!rootEl) return;
       const items = Array.from(rootEl.querySelectorAll<HTMLElement>(TREE_ITEM));
-      if (activeValue !== null && items.some((el) => el.dataset.value === activeValue)) return;
+      const current = active.get();
+      if (current !== null && items.some((el) => el.dataset.value === current)) return;
       const fallback = items.find((el) => el.getAttribute("aria-selected") === "true") ?? items[0];
-      if (fallback?.dataset.value) setActiveValue(fallback.dataset.value);
+      if (fallback?.dataset.value) active.set(fallback.dataset.value);
     });
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -223,14 +250,13 @@ const TreeRoot = React.forwardRef<HTMLDivElement, TreeProps>(
         size,
         appearance,
         selectionMode,
-        isOpen: (value) => open.includes(value),
+        isOpen: (value) => openSet.has(value),
         toggleOpen,
         selectedValue: selected,
         select,
-        activeValue,
-        setActiveValue,
+        active,
       }),
-      [size, appearance, selectionMode, open, toggleOpen, selected, select, activeValue],
+      [size, appearance, selectionMode, openSet, toggleOpen, selected, select, active],
     );
 
     return (
@@ -259,6 +285,7 @@ export const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
     const autoId = React.useId();
     const value = valueProp ?? autoId;
     const open = itemType === "branch" && root.isOpen(value);
+    const isActive = React.useSyncExternalStore(root.active.subscribe, () => root.active.get() === value, () => false);
     const selected = root.selectionMode !== "none" && root.selectedValue === value;
     const itemContext = React.useMemo(
       () => ({ value, level, itemType, open, selected }),
@@ -275,7 +302,7 @@ export const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
           aria-level={level}
           aria-expanded={itemType === "branch" ? open : undefined}
           aria-selected={root.selectionMode !== "none" ? selected : undefined}
-          tabIndex={root.activeValue === value ? 0 : -1}
+          tabIndex={isActive ? 0 : -1}
           style={{ "--tree-level": level, ...style } as React.CSSProperties}
           className={cn(
             "flex flex-col outline-none focus-visible:outline-none",
@@ -285,7 +312,7 @@ export const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
           )}
           onFocus={(event) => {
             onFocus?.(event);
-            if (event.target === event.currentTarget) root.setActiveValue(value);
+            if (event.target === event.currentTarget) root.active.set(value);
           }}
           onClick={(event) => {
             onClick?.(event);
