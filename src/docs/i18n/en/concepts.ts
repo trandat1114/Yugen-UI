@@ -22,6 +22,18 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
       requirements: "Requirements",
     },
   },
+  seo: {
+    title: "SEO with Yugen UI",
+    lead: "Yugen components render plain HTML on the server, so search engines can read the content. What is left is per-page metadata, heading structure, real links and alt text for images.",
+    toc: {
+      server: "What is in the HTML",
+      metadata: "Title and description",
+      headings: "Heading structure",
+      links: "Links crawlers can follow",
+      images: "Images and avatars",
+      checklist: "Before you ship",
+    },
+  },
   cli: {
     title: "@yugen-ui/cli",
     lead: "A command-line tool to create an app from a template, set up Yugen UI in an existing project, copy component source and check the setup.",
