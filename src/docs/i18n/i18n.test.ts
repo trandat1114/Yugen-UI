@@ -25,19 +25,31 @@ describe("docs i18n (en)", () => {
         expect(Object.keys(e.toc ?? {}).sort(), m.slug).toEqual(m.toc.map((i) => i.id).sort());
       }
     }
+    // Còn thiếu: migration-fluent, migration-shadcn (#69).
     expect(Object.keys(CONCEPT_EN_PAGES).sort()).toEqual([
       "accessibility",
+      "adaptive-overlays",
+      "agent-trace",
       "browser-support",
+      "chat-ux",
       "cli",
+      "component-labelling",
+      "data-visualization",
+      "focus-indicator",
       "introduction",
+      "notifications",
+      "positioning",
       "quick-start",
       "rtl",
       "seo",
       "shadcn-registry",
+      "slots",
       "ssr",
       "styling",
       "theming",
+      "truncation",
       "versioning",
+      "wait-ux",
     ]);
   });
 
