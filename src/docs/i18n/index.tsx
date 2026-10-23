@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { ComponentCategory, ConceptGroup, ConceptMeta } from "../types";
 import type { EnBundle } from "./en/bundle";
+import { setLinkLocale } from "../router";
 import { vi, type MessageKey } from "./vi";
 
 export type { MessageKey };
@@ -100,6 +101,8 @@ export function LocaleProvider({ locale, children }: { locale: Locale; children:
 
   const active = wantsEn && bundle ? bundle : null;
   const value = useMemo(() => (active ? createValue(active) : VI_VALUE), [active]);
+  // Link nội bộ (docsPath) theo ngôn ngữ đang hiển thị — đặt trong render để cây con dùng ngay.
+  setLinkLocale(value.locale);
 
   useEffect(() => {
     if (wantsEn && !bundle && !failed) return; // đang nạp: giữ lang hiện tại

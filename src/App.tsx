@@ -1,7 +1,7 @@
-import { Suspense, useEffect, useState, type ReactNode } from "react";
+import { Suspense, useCallback, useEffect, useState, type ReactNode } from "react";
 import { PageProgress, PageProgressFallback, YugenProvider } from "@/components/ui";
-import { useAppearance } from "@/hooks/useAppearance";
-import { useRoute } from "@/docs/router";
+import { useAppearance, type Appearance } from "@/hooks/useAppearance";
+import { hrefOf, navigate, useDocsLocation } from "@/docs/router";
 import { Sidebar } from "@/docs/layout/Sidebar";
 import { TopBar } from "@/docs/layout/TopBar";
 import { DocsCommandPalette } from "@/docs/layout/DocsCommandPalette";
@@ -13,7 +13,7 @@ import { AuthorLink } from "@/docs/AuthorLink";
 import { CONCEPT_BY_SLUG, CONCEPT_EN_PAGES } from "@/docs/concepts";
 import { loadEnglish, LocaleProvider, useLocale, type Locale } from "@/docs/i18n";
 import { FallbackNotice } from "@/docs/i18n/FallbackNotice";
-import { DocumentMeta } from "@/docs/seo";
+import { DocumentMeta, fallbackOf } from "@/docs/seo";
 import { lazyPage } from "@/docs/lazyPage";
 import { preloadComponentDoc } from "@/docs/registry";
 import { SITE } from "@/docs/site";
@@ -50,16 +50,6 @@ export async function preloadRoute(route: Route, lang: Locale) {
   }
   if (route.kind === "component") tasks.push(preloadComponentDoc(route.slug));
   await Promise.allSettled(tasks);
-}
-
-/** Chế độ tiếng Anh: route nào còn hiện nội dung tiếng Việt (toàn trang hoặc một phần). */
-function fallbackOf(route: Route): "page" | "partial" | null {
-  if (route.kind === "home" || route.kind === "community" || route.kind === "templates") return null;
-  if (route.kind === "news") return "partial";
-  if (route.kind === "concept") return CONCEPT_EN_PAGES[route.slug] ? null : "page";
-  // Foundations › Motion viết song ngữ ngay trong trang (#45).
-  if (route.kind === "foundation" && route.slug === "motion") return null;
-  return "page";
 }
 
 /** Trang không có bản dịch nào (nội dung tiếng Việt) — đánh dấu lang="vi" cho trình đọc màn hình khi giao diện là tiếng Anh. */
@@ -105,13 +95,25 @@ function Footer() {
 
 /** `path`: prerender ở Node (scripts/prerender.mjs) truyền đường dẫn thay cho `window.location`. */
 export default function App({ path }: { path?: string }) {
-  const route = useRoute(path);
-  const { theme, brand, dir, lang, update } = useAppearance();
+  const { route, lang } = useDocsLocation(path);
+  const { theme, brand, dir, lang: savedLang, update } = useAppearance();
   const fallback = fallbackOf(route);
   const [navOpen, setNavOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
 
   useEffect(() => setNavOpen(false), [route]);
+  // Ngôn ngữ theo URL (/en/…). Lưu làm lựa chọn: lần sau mở link tiếng Việt, main.tsx chuyển sang bản tiếng Anh.
+  useEffect(() => {
+    if (savedLang !== lang) update({ lang });
+  }, [lang, savedLang, update]);
+  // Đổi ngôn ngữ = sang URL của trang này ở ngôn ngữ kia; theme / brand / hướng chữ đổi tại chỗ.
+  const change = useCallback(
+    ({ lang: nextLang, ...rest }: Partial<Appearance>) => {
+      if (nextLang && nextLang !== lang) navigate(hrefOf(route, nextLang) + window.location.search);
+      if (Object.keys(rest).length > 0) update(rest);
+    },
+    [lang, route, update],
+  );
   // Script trong index.html ẩn HTML prerender khi nó không khớp với trang sẽ hiện (tiếng Anh, RTL, link #/… cũ): hiện lại ở
   // đây. data-docs-ready: React đã thay HTML prerender (e2e chờ dấu này trước khi đo).
   useEffect(() => {
@@ -132,7 +134,7 @@ export default function App({ path }: { path?: string }) {
         <div className="min-h-dvh transition-[padding] duration-normal ease-decelerate-mid in-data-docs-resizing:transition-none motion-reduce:transition-none lg:ps-(--docs-sidebar-width)">
           <TopBar
             appearance={{ theme, brand, dir, lang }}
-            onChange={update}
+            onChange={change}
             onOpenNav={() => setNavOpen(true)}
             onOpenPalette={() => setPaletteOpen(true)}
           />
@@ -140,7 +142,7 @@ export default function App({ path }: { path?: string }) {
             open={paletteOpen}
             onOpenChange={setPaletteOpen}
             appearance={{ theme, brand, dir, lang }}
-            onAppearanceChange={update}
+            onAppearanceChange={change}
           />
           <main className="mx-auto max-w-7xl px-4 md:px-12">
             {fallback && <FallbackNotice partial={fallback === "partial"} />}

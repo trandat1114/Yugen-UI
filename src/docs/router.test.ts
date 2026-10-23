@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { docsPath, hrefOf, legacyHashTarget, parseHash, parsePath, pathOf, type Route } from "./router";
+import { docsPath, hrefOf, legacyHashTarget, localePathOf, parseHash, parseLocation, parsePath, pathOf, type Route } from "./router";
 
 // Vitest chạy với BASE_URL "/" — bản build trên GitHub Pages chỉ khác tiền tố.
 const ROUTES: Route[] = [
@@ -40,8 +40,21 @@ describe("router (URL theo đường dẫn)", () => {
     expect(legacyHashTarget({ hash: "", search: "" })).toBeNull();
   });
 
-  it("docsPath thêm BASE", () => {
+  it("docsPath thêm BASE (và en/ khi xem tiếng Anh)", () => {
     expect(docsPath("/concepts/cli")).toBe("/concepts/cli");
     expect(docsPath("/")).toBe("/");
+    expect(docsPath("/concepts/cli", "en")).toBe("/en/concepts/cli");
+    expect(docsPath("/", "en")).toBe("/en/");
+  });
+
+  it("tiếng Anh nằm dưới /en/", () => {
+    expect(parseLocation("/en/components/button")).toEqual({ route: { kind: "component", slug: "button" }, lang: "en" });
+    expect(parseLocation("/en/")).toEqual({ route: { kind: "home" }, lang: "en" });
+    expect(parseLocation("/en")).toEqual({ route: { kind: "home" }, lang: "en" });
+    expect(parseLocation("/blocks")).toEqual({ route: { kind: "blocks" }, lang: "vi" });
+    // "english" không phải tiền tố ngôn ngữ.
+    expect(parseLocation("/english")).toEqual({ route: { kind: "home" }, lang: "vi" });
+    for (const route of ROUTES) expect(parseLocation(hrefOf(route, "en"))).toEqual({ route, lang: "en" });
+    expect(localePathOf({ kind: "news" }, "en")).toBe("en/news");
   });
 });

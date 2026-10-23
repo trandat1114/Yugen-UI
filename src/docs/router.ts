@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { Locale } from "./i18n";
 
 export type Route =
   | { kind: "home" }
@@ -11,13 +12,19 @@ export type Route =
   | { kind: "foundation"; slug: string }
   | { kind: "component"; slug: string };
 
+/** Trang docs đang xem: route + ngôn ngữ (tiếng Anh nằm dưới /en/). */
+export interface DocsLocation {
+  route: Route;
+  lang: Locale;
+}
+
 /** Gốc của docs: "/" khi dev, "/Yugen-UI/" trên GitHub Pages, "/Yugen-UI/next/" cho bản xem trước. Luôn có "/" cuối. */
 const BASE = import.meta.env.BASE_URL;
 
 const PAGES = ["blocks", "templates", "theme-designer", "news", "community"] as const;
 const SECTIONS = { concepts: "concept", foundations: "foundation", components: "component" } as const;
 
-/** "components/button" (đường dẫn sau BASE, không có "/" đầu) → route; null nếu không phải trang docs. */
+/** "components/button" (đường dẫn sau BASE và sau "en/", không có "/" đầu) → route; null nếu không phải trang docs. */
 function matchSegments(rest: string): Route | null {
   const parts = rest.split("/").filter(Boolean);
   if (parts.length === 0) return { kind: "home" };
@@ -27,10 +34,21 @@ function matchSegments(rest: string): Route | null {
   return null;
 }
 
-/** Route của một pathname trong docs (đã gồm BASE). Đường dẫn lạ → trang chủ. */
+/** Tách tiền tố ngôn ngữ: "en/components/button" → { lang: "en", rest: "components/button" }. */
+function splitLocale(rest: string): { lang: Locale; rest: string } {
+  return rest === "en" || rest.startsWith("en/") ? { lang: "en", rest: rest.slice(3) } : { lang: "vi", rest };
+}
+
+const afterBase = (pathname: string) => (pathname.startsWith(BASE) ? pathname.slice(BASE.length) : pathname.replace(/^\//, ""));
+
+/** Route + ngôn ngữ của một pathname trong docs (đã gồm BASE). Đường dẫn lạ → trang chủ. */
+export function parseLocation(pathname: string): DocsLocation {
+  const { lang, rest } = splitLocale(afterBase(pathname));
+  return { route: matchSegments(rest) ?? { kind: "home" }, lang };
+}
+
 export function parsePath(pathname: string): Route {
-  const rest = pathname.startsWith(BASE) ? pathname.slice(BASE.length) : pathname.replace(/^\//, "");
-  return matchSegments(rest) ?? { kind: "home" };
+  return parseLocation(pathname).route;
 }
 
 /** Link kiểu cũ "#/components/button" (docs ≤ 0.10, demo trong registry) → route. */
@@ -38,7 +56,7 @@ export function parseHash(hash: string): Route {
   return matchSegments(hash.replace(/^#\/?/, "")) ?? { kind: "home" };
 }
 
-/** Đường dẫn của route, không gồm BASE: "" (trang chủ), "components/button"… */
+/** Đường dẫn của route, không gồm BASE và ngôn ngữ: "" (trang chủ), "components/button"… */
 export function pathOf(route: Route): string {
   switch (route.kind) {
     case "home":
@@ -54,13 +72,25 @@ export function pathOf(route: Route): string {
   }
 }
 
-export function hrefOf(route: Route) {
-  return BASE + pathOf(route);
+/** Đường dẫn gồm ngôn ngữ, không gồm BASE: "en/components/button", "en/" (trang chủ tiếng Anh). */
+export function localePathOf(route: Route, lang: Locale) {
+  return (lang === "en" ? "en/" : "") + pathOf(route);
 }
 
-/** Link nội bộ: docsPath("/concepts/cli") → "/Yugen-UI/concepts/cli" (theo BASE của bản build). */
-export function docsPath(path: string) {
-  return BASE + path.replace(/^\//, "");
+export function hrefOf(route: Route, lang: Locale = "vi") {
+  return BASE + localePathOf(route, lang);
+}
+
+// Ngôn ngữ của link nội bộ = ngôn ngữ trang đang render. LocaleProvider đặt giá trị này trong lúc render, trước các
+// component con, nên mọi docsPath() trong cây trỏ đúng bản /en/ hoặc bản tiếng Việt (kể cả khi prerender lần lượt từng trang).
+let linkLocale: Locale = "vi";
+export function setLinkLocale(lang: Locale) {
+  linkLocale = lang;
+}
+
+/** Link nội bộ: docsPath("/concepts/cli") → "/Yugen-UI/concepts/cli", hoặc "/Yugen-UI/en/concepts/cli" khi đang xem tiếng Anh. */
+export function docsPath(path: string, lang: Locale = linkLocale) {
+  return BASE + (lang === "en" ? "en/" : "") + path.replace(/^\//, "");
 }
 
 const NAVIGATE = "yugen-docs:navigate";
@@ -90,21 +120,21 @@ function onDocumentClick(event: MouseEvent) {
   const raw = anchor.getAttribute("href") ?? "";
   if (raw.startsWith("#/")) {
     event.preventDefault();
-    navigate(hrefOf(parseHash(raw)));
+    navigate(docsPath(pathOf(parseHash(raw))));
     return;
   }
   const url = new URL(anchor.href, window.location.href);
   if (url.origin !== window.location.origin || !url.pathname.startsWith(BASE)) return;
   // Cùng trang, chỉ khác #mục: để trình duyệt cuộn.
   if (url.pathname === window.location.pathname && url.hash) return;
-  if (!matchSegments(url.pathname.slice(BASE.length))) return;
+  if (!matchSegments(splitLocale(url.pathname.slice(BASE.length)).rest)) return;
   event.preventDefault();
   navigate(url.href);
 }
 
-/** Route hiện tại. `path` (prerender) thay cho `window.location` khi render ở Node. */
-export function useRoute(path?: string) {
-  const [route, setRoute] = useState<Route>(() => parsePath(path ?? window.location.pathname));
+/** Trang hiện tại. `path` (prerender) thay cho `window.location` khi render ở Node. */
+export function useDocsLocation(path?: string) {
+  const [location, setLocation] = useState<DocsLocation>(() => parseLocation(path ?? window.location.pathname));
 
   useEffect(() => {
     let current = window.location.pathname;
@@ -113,9 +143,12 @@ export function useRoute(path?: string) {
       if (legacy) window.history.replaceState(null, "", legacy);
       // Chỉ đổi #mục (quay lại sau khi bấm mục lục…): không phải trang mới.
       if (window.location.pathname === current) return;
+      const previous = parseLocation(current);
       current = window.location.pathname;
-      setRoute(parsePath(current));
-      window.scrollTo({ top: 0 });
+      const next = parseLocation(current);
+      setLocation(next);
+      // Đổi ngôn ngữ giữ vị trí cuộn; sang trang khác thì lên đầu.
+      if (pathOf(next.route) !== pathOf(previous.route)) window.scrollTo({ top: 0 });
     };
     const onHashChange = () => {
       if (window.location.hash.startsWith("#/")) sync();
@@ -132,5 +165,5 @@ export function useRoute(path?: string) {
     };
   }, []);
 
-  return route;
+  return location;
 }

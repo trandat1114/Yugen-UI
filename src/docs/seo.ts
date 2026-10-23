@@ -1,9 +1,9 @@
 import { useEffect } from "react";
-import { CONCEPT_BY_SLUG } from "./concepts";
+import { CONCEPT_BY_SLUG, CONCEPT_EN_PAGES } from "./concepts";
 import { FOUNDATIONS } from "./foundations";
 import { useLocale, type LocaleValue } from "./i18n";
 import { COMPONENT_META_BY_SLUG, COMPONENTS_META } from "./registry";
-import { pathOf, type Route } from "./router";
+import { localePathOf, pathOf, type Route } from "./router";
 import { SITE } from "./site";
 
 /**
@@ -62,18 +62,48 @@ export function routeMeta(route: Route, l: LocaleValue): { title?: string; descr
   }
 }
 
+/** Chế độ tiếng Anh: route nào còn hiện nội dung tiếng Việt (toàn trang hoặc một phần). */
+export function fallbackOf(route: Route): "page" | "partial" | null {
+  if (route.kind === "home" || route.kind === "community" || route.kind === "templates") return null;
+  if (route.kind === "news") return "partial";
+  if (route.kind === "concept") return CONCEPT_EN_PAGES[route.slug] ? null : "page";
+  // Foundations › Motion viết song ngữ ngay trong trang (#45).
+  if (route.kind === "foundation" && route.slug === "motion") return null;
+  return "page";
+}
+
+export interface DocumentHead {
+  title: string;
+  description: string;
+  canonical: string;
+  /** hreflang → URL; rỗng khi trang chưa có bản tiếng Anh (bản /en/ trỏ canonical về bản tiếng Việt). */
+  alternates: { hreflang: string; href: string }[];
+  /** Ảnh chia sẻ, tính từ gốc site: og/<đường dẫn>.jpg (scripts/og-pages.mjs), trang chủ og.jpg. */
+  image: string;
+}
+
 /**
- * `<title>`, mô tả, URL chuẩn và ảnh chia sẻ của một trang — dùng chung cho prerender (scripts/prerender.mjs) và lúc chuyển
- * trang. Ảnh og/<đường dẫn>.jpg do scripts/og-pages.mjs vẽ lúc deploy; trang chủ dùng og.jpg.
+ * `<title>`, mô tả, URL chuẩn, hreflang và ảnh chia sẻ của một trang theo ngôn ngữ đang hiển thị — dùng chung cho prerender
+ * (scripts/prerender.mjs) và lúc chuyển trang.
  */
-export function documentHead(route: Route, l: LocaleValue) {
+export function documentHead(route: Route, l: LocaleValue): DocumentHead {
   const { title, description } = routeMeta(route, l);
   const path = pathOf(route);
+  const translated = fallbackOf(route) !== "page";
+  // Trang chưa dịch: bản /en/ chỉ khác khung giao diện, nội dung là bản tiếng Việt → canonical về bản tiếng Việt.
+  const own = translated ? localePathOf(route, l.locale) : path;
   return {
     title: title ? `${title} · ${SITE.name}` : `${SITE.name} — React + Tailwind CSS v4`,
     description,
-    canonical: SITE.url + path,
-    image: SITE.url + (path ? `og/${path}.jpg` : "og.jpg"),
+    canonical: SITE.url + own,
+    alternates: translated
+      ? [
+          { hreflang: "vi", href: SITE.url + path },
+          { hreflang: "en", href: SITE.url + localePathOf(route, "en") },
+          { hreflang: "x-default", href: SITE.url + path },
+        ]
+      : [],
+    image: path ? `og/${own}.jpg` : "og.jpg",
   };
 }
 
@@ -81,17 +111,30 @@ function setAttr(selector: string, name: string, value: string) {
   document.head.querySelector(selector)?.setAttribute(name, value);
 }
 
+function setAlternates(alternates: DocumentHead["alternates"]) {
+  document.head.querySelectorAll("link[rel=alternate][hreflang]").forEach((link) => link.remove());
+  // Đặt ngay sau canonical, đúng thứ tự như HTML prerender.
+  let anchor = document.head.querySelector('link[rel="canonical"]');
+  for (const { hreflang, href } of alternates) {
+    const link = Object.assign(document.createElement("link"), { rel: "alternate", hreflang, href });
+    if (anchor) anchor.after(link);
+    else document.head.append(link);
+    anchor = link;
+  }
+}
+
 function useDocumentMeta(route: Route) {
   const l = useLocale();
   useEffect(() => {
-    const { title, description, canonical, image } = documentHead(route, l);
+    const { title, description, canonical, alternates, image } = documentHead(route, l);
     document.title = title;
     setAttr('meta[name="description"]', "content", description);
     setAttr('link[rel="canonical"]', "href", canonical);
+    setAlternates(alternates);
     setAttr('meta[property="og:title"]', "content", title);
     setAttr('meta[property="og:description"]', "content", description);
     setAttr('meta[property="og:url"]', "content", canonical);
-    setAttr('meta[property="og:image"]', "content", image);
+    setAttr('meta[property="og:image"]', "content", SITE.url + image);
   }, [route, l]);
 }
 
