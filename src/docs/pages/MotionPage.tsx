@@ -189,8 +189,17 @@ const ANIMATIONS: { utility: string; keyframes: Text; timing: string }[] = [
     keyframes: { vi: "trượt ra về mép đó", en: "slides out to that edge" },
     timing: "150ms · accelerate-mid",
   },
-  { utility: "animate-shimmer", keyframes: { vi: "dải sáng chạy ngang (Skeleton)", en: "light sweep (Skeleton)" }, timing: "1.8s · linear · ∞" },
-  { utility: "animate-indeterminate", keyframes: { vi: "thanh chạy (ProgressBar không xác định)", en: "moving bar (indeterminate ProgressBar)" }, timing: "3s · linear · ∞" },
+  { utility: "animate-sweep", keyframes: { vi: "dải sáng chạy ngang, bằng transform (Skeleton)", en: "light sweep with transform (Skeleton)" }, timing: "1.8s · linear · ∞" },
+  {
+    utility: "animate-indeterminate-slide",
+    keyframes: { vi: "thanh 1/3 chạy ngang, bằng transform (ProgressBar không xác định)", en: "1/3 bar sliding with transform (indeterminate ProgressBar)" },
+    timing: "3s · linear · ∞",
+  },
+  {
+    utility: "animate-shimmer / animate-indeterminate",
+    keyframes: { vi: "bản cũ đổi background-position / left (vẽ lại mỗi frame)", en: "older versions animating background-position / left (repaint every frame)" },
+    timing: "1.8s / 3s · linear · ∞",
+  },
 ];
 
 /* ---------------------------------------------------------------- patterns */
