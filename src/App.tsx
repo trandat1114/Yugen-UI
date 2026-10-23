@@ -1,4 +1,4 @@
-import { Suspense, useCallback, useEffect, useState, type ReactNode } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { PageProgress, PageProgressFallback, YugenProvider } from "@/components/ui";
 import { useAppearance, type Appearance } from "@/hooks/useAppearance";
 import { hrefOf, navigate, useDocsLocation } from "@/docs/router";
@@ -57,17 +57,6 @@ export async function preloadRoute(route: Route, lang: Locale) {
   await Promise.allSettled(tasks);
 }
 
-/** Trang không có bản dịch nào (nội dung tiếng Việt) — đánh dấu lang="vi" cho trình đọc màn hình khi giao diện là tiếng Anh. */
-function VietnameseContent({ children }: { children: ReactNode }) {
-  const { locale } = useLocale();
-  return locale === "en" ? (
-    <div lang="vi" className="contents">
-      {children}
-    </div>
-  ) : (
-    children
-  );
-}
 
 const FOOTER_LINKS = [
   { label: "GitHub", href: SITE.links.repository },
@@ -175,28 +164,13 @@ export default function App({ path }: { path?: string }) {
             {fallback && <FallbackNotice partial={fallback === "partial"} />}
             <Suspense fallback={<PageProgressFallback />}>
               {route.kind === "home" && <HomePage />}
-              {route.kind === "blocks" && (
-                <VietnameseContent>
-                  <BlocksPage />
-                </VietnameseContent>
-              )}
+              {route.kind === "blocks" && <BlocksPage />}
               {route.kind === "templates" && <TemplatesPage />}
-              {route.kind === "theme-designer" && (
-                <VietnameseContent>
-                  <ThemeDesignerPage />
-                </VietnameseContent>
-              )}
+              {route.kind === "theme-designer" && <ThemeDesignerPage />}
               {route.kind === "news" && <NewsPage />}
               {route.kind === "community" && <CommunityPage />}
               {route.kind === "concept" && <ConceptPage slug={route.slug} />}
-              {route.kind === "foundation" &&
-                (route.slug === "motion" ? (
-                  <FoundationsPage slug={route.slug} theme={tokenKey} />
-                ) : (
-                  <VietnameseContent>
-                    <FoundationsPage slug={route.slug} theme={tokenKey} />
-                  </VietnameseContent>
-                ))}
+              {route.kind === "foundation" && <FoundationsPage slug={route.slug} theme={tokenKey} />}
               {route.kind === "component" && <ComponentPage slug={route.slug} theme={theme} brand={brand} />}
             </Suspense>
           </main>
