@@ -47,6 +47,11 @@ export interface NotificationItem {
 /* ================================================================ Thời gian */
 
 const DAY = 86_400_000;
+// Formatter dùng chung: toLocale*String(…, options) tạo formatter mới cho mỗi thông báo mỗi lần render.
+const TIME = new Intl.DateTimeFormat("vi-VN", { hour: "2-digit", minute: "2-digit" });
+const WEEKDAY = new Intl.DateTimeFormat("vi-VN", { weekday: "long", day: "numeric", month: "numeric" });
+const DAY_MONTH = new Intl.DateTimeFormat("vi-VN", { day: "numeric", month: "numeric" });
+const DAY_MONTH_YEAR = new Intl.DateTimeFormat("vi-VN", { day: "numeric", month: "numeric", year: "numeric" });
 const toDate = (time: NotificationItem["time"]) => (time instanceof Date ? time : new Date(time));
 const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
 
@@ -59,7 +64,7 @@ export function formatRelativeTime(time: NotificationItem["time"], now: Date | n
   if (diff >= 0 && diff < 60_000) return "Vừa xong";
   if (diff >= 0 && diff < 3_600_000) return `${Math.floor(diff / 60_000)} phút trước`;
   if (diff >= 0 && diff < DAY && startOfDay(date) === startOfDay(new Date(ref))) return `${Math.floor(diff / 3_600_000)} giờ trước`;
-  return date.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
+  return TIME.format(date);
 }
 
 /** "Hôm nay" · "Hôm qua" · "Thứ Hai, 12/10" (trong tuần) · "12/10/2025". */
@@ -69,12 +74,8 @@ export function formatNotificationDay(time: NotificationItem["time"], now: Date 
   const days = Math.round((startOfDay(ref) - startOfDay(date)) / DAY);
   if (days === 0) return "Hôm nay";
   if (days === 1) return "Hôm qua";
-  if (days > 1 && days < 7) return date.toLocaleDateString("vi-VN", { weekday: "long", day: "numeric", month: "numeric" });
-  return date.toLocaleDateString("vi-VN", {
-    day: "numeric",
-    month: "numeric",
-    year: date.getFullYear() === ref.getFullYear() ? undefined : "numeric",
-  });
+  if (days > 1 && days < 7) return WEEKDAY.format(date);
+  return (date.getFullYear() === ref.getFullYear() ? DAY_MONTH : DAY_MONTH_YEAR).format(date);
 }
 
 /** Nhóm thông báo theo ngày (mới nhất trước). */
@@ -383,7 +384,8 @@ export const NotificationPanel = React.forwardRef<HTMLDivElement, NotificationPa
               value={which}
               className="min-h-0 flex-1 overflow-y-auto pt-0 focus-visible:-outline-offset-2"
             >
-              {renderList(which === "unread" ? items.filter((n) => !n.read) : items, which)}
+              {/* Chỉ dựng danh sách của tab đang mở (tab ẩn không hiển thị nội dung). */}
+              {which === filter && renderList(which === "unread" ? items.filter((n) => !n.read) : items, which)}
             </TabsContent>
           ))}
         </Tabs>

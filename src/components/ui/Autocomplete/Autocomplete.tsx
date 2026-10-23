@@ -20,13 +20,15 @@ export function highlightRanges(text: string, query: string): [number, number][]
   if (!needle) return [];
   let haystack = "";
   const origin: number[] = [];
-  Array.from(text).forEach((char, i, chars) => {
-    const at = chars.slice(0, i).join("").length;
+  // Vị trí (UTF-16) của từng ký tự trong `text`, cộng dồn thay vì nối lại phần đầu mỗi vòng (trước đây O(n²)).
+  let at = 0;
+  for (const char of text) {
     for (const c of normalizeSearchText(char)) {
       haystack += c;
       origin.push(at);
     }
-  });
+    at += char.length;
+  }
   const ranges: [number, number][] = [];
   for (let from = haystack.indexOf(needle); from !== -1; from = haystack.indexOf(needle, from + needle.length)) {
     const last = from + needle.length - 1;

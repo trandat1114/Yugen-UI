@@ -153,13 +153,19 @@ export const Carousel = React.forwardRef<HTMLElement, CarouselProps>(
     const autoplay = autoplayProp ?? innerAutoplay;
     const [reasons, setReasons] = React.useState<Record<PauseReason, boolean>>({ hover: false, focus: false });
     const [hidden, setHidden] = React.useState(false);
-    const paused = reasons.hover || reasons.focus || hidden;
+    // Cuộn khỏi màn hình thì dừng tự chạy (không tốn CPU cho thứ không ai thấy), quay lại thì chạy tiếp từ chỗ dừng.
+    const [offscreen, setOffscreen] = React.useState(false);
+    // Số vạch tiến độ đang hiện: không có vạch nào thì đồng hồ chỉ cần một setTimeout tới lần chuyển slide.
+    const [progressCount, setProgressCount] = React.useState(0);
+    const paused = reasons.hover || reasons.focus || hidden || offscreen;
     const rotating = autoplay && !paused && count > 1;
     const baseId = React.useId();
     const activeRef = React.useRef(0);
     const targetRef = React.useRef<number | null>(null);
     const frameRef = React.useRef(0);
     const elapsedRef = React.useRef(0);
+    // Lúc đồng hồ được đặt lại (đổi slide): đồng hồ setTimeout chỉ tính thời gian từ mốc này.
+    const resetAtRef = React.useRef(0);
     const progressEls = React.useRef(new Set<HTMLElement>());
     const callbacks = React.useRef({ onActiveIndexChange, onAutoplayChange });
     useIsomorphicLayoutEffect(() => {
@@ -174,9 +180,11 @@ export const Carousel = React.forwardRef<HTMLElement, CarouselProps>(
     const registerProgress = React.useCallback(
       (element: HTMLElement) => {
         progressEls.current.add(element);
+        setProgressCount(progressEls.current.size);
         paintProgress();
         return () => {
           progressEls.current.delete(element);
+          setProgressCount(progressEls.current.size);
         };
       },
       [paintProgress],
@@ -186,6 +194,7 @@ export const Carousel = React.forwardRef<HTMLElement, CarouselProps>(
       if (index === activeRef.current) return;
       activeRef.current = index;
       elapsedRef.current = 0; // slide mới → đồng hồ autoplay chạy lại từ đầu
+      resetAtRef.current = performance.now();
       setActiveIndex(index);
       callbacks.current.onActiveIndexChange?.(index);
     }, []);
@@ -268,23 +277,44 @@ export const Carousel = React.forwardRef<HTMLElement, CarouselProps>(
       return () => document.removeEventListener("visibilitychange", sync);
     }, []);
 
-    // Đồng hồ autoplay bằng requestAnimationFrame: tạm dừng giữ nguyên tiến độ, chạy tiếp từ chỗ dừng.
+    React.useEffect(() => {
+      const el = viewportRef.current;
+      if (!el || typeof IntersectionObserver === "undefined") return;
+      const observer = new IntersectionObserver(([entry]) => setOffscreen(!entry.isIntersecting));
+      observer.observe(el);
+      return () => observer.disconnect();
+    }, []);
+
+    // Đồng hồ autoplay: tạm dừng giữ nguyên tiến độ, chạy tiếp từ chỗ dừng. Có vạch tiến độ thì cập nhật mỗi frame
+    // (requestAnimationFrame); không có thì một setTimeout cho phần thời gian còn lại, không chạy vòng lặp 60 lần/giây.
     React.useEffect(() => {
       paintProgress();
       if (!rotating) return;
       let last = performance.now();
-      let frame = requestAnimationFrame(function tick(now) {
-        elapsedRef.current += now - last;
+      let frame = 0;
+      let timer = 0;
+      const tick = (now: number) => {
+        elapsedRef.current += now - Math.max(last, resetAtRef.current);
         last = now;
         if (elapsedRef.current >= autoplayInterval) {
           elapsedRef.current = 0;
           goTo(activeRef.current + 1 >= count ? 0 : activeRef.current + 1);
         }
         paintProgress();
-        frame = requestAnimationFrame(tick);
-      });
-      return () => cancelAnimationFrame(frame);
-    }, [rotating, count, autoplayInterval, goTo, paintProgress]);
+        schedule();
+      };
+      const schedule = () => {
+        if (progressCount > 0) frame = requestAnimationFrame(tick);
+        else timer = window.setTimeout(() => tick(performance.now()), Math.max(0, autoplayInterval - elapsedRef.current));
+      };
+      schedule();
+      return () => {
+        cancelAnimationFrame(frame);
+        window.clearTimeout(timer);
+        // Giữ phần thời gian đã chạy tới lúc dừng (vd. hover giữa chừng).
+        elapsedRef.current += performance.now() - Math.max(last, resetAtRef.current);
+      };
+    }, [rotating, count, autoplayInterval, goTo, paintProgress, progressCount]);
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
       onKeyDown?.(event);
@@ -476,7 +506,10 @@ export const CarouselCard = React.forwardRef<HTMLDivElement, React.HTMLAttribute
 CarouselCard.displayName = "CarouselCard";
 
 /* ------------------------------------------------------------------ Progress fill */
-/** Vạch tiến độ autoplay: rộng theo --carousel-progress (0…1), mọc từ mép đầu dòng nên tự đúng ở RTL. */
+/**
+ * Vạch tiến độ autoplay: co giãn theo --carousel-progress (0…1) bằng scaleX (không layout lại mỗi frame), mọc từ mép đầu
+ * dòng (origin trái ở LTR, phải ở RTL).
+ */
 function ProgressFill({ className }: { className?: string }) {
   const { registerProgress } = useCarousel();
   const fillRef = React.useRef<HTMLSpanElement>(null);
@@ -487,7 +520,10 @@ function ProgressFill({ className }: { className?: string }) {
     <span
       ref={fillRef}
       aria-hidden
-      className={cn("absolute inset-y-0 inset-s-0 w-[calc(var(--carousel-progress,1)*100%)] bg-brand-background", className)}
+      className={cn(
+        "absolute inset-0 origin-left scale-x-(--carousel-progress,1) bg-brand-background rtl:origin-right",
+        className,
+      )}
     />
   );
 }

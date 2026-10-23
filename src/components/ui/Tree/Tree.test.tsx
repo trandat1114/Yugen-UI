@@ -1,3 +1,4 @@
+import * as React from "react";
 import type { ReactElement } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { render } from "@testing-library/react";
@@ -208,5 +209,32 @@ describe("Tree — RTL", () => {
     // Lên/xuống không đổi trong RTL.
     await user.keyboard("{ArrowDown}");
     expect(item("main")).toHaveFocus();
+  });
+});
+
+describe("Tree — hiệu năng", () => {
+  it("di chuyển bằng phím chỉ render lại hai mục đổi tab stop", async () => {
+    const user = userEvent.setup();
+    const renders = new Set<string>();
+    const Leaf = React.memo(function Leaf({ value }: { value: string }) {
+      return (
+        <React.Profiler id={value} onRender={(id) => renders.add(id)}>
+          <TreeItem itemType="leaf" value={value}>
+            <TreeItemLayout>{value}</TreeItemLayout>
+          </TreeItem>
+        </React.Profiler>
+      );
+    });
+    render(
+      <Tree aria-label="Tệp">
+        {["a", "b", "c", "d"].map((v) => (
+          <Leaf key={v} value={v} />
+        ))}
+      </Tree>,
+    );
+    await user.tab();
+    renders.clear();
+    await user.keyboard("{ArrowDown}");
+    expect([...renders].sort()).toEqual(["a", "b"]);
   });
 });

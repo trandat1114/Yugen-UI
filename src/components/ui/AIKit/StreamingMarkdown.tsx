@@ -161,13 +161,17 @@ interface BlockProps {
 function CodeFence({ block, ctx }: { block: Extract<MdBlock, { type: "code" }>; ctx: RenderContext }) {
   const language = codeLanguageOf(block.lang);
   const pending = ctx.streaming && !block.closed;
+  // Khối code đang stream: CodeBlock tô màu lại toàn bộ code mỗi chunk. Hoãn phần đó (ưu tiên thấp) để chữ stream không bị
+  // chậm; React bỏ qua các bản trung gian khi máy bận.
+  const deferred = React.useDeferredValue(block.text);
+  const code = pending ? deferred : block.text;
   return (
     <div dir="ltr" className="min-w-0 overflow-hidden rounded-xlarge border border-stroke-2 bg-background-2 text-start">
       <div className="flex min-h-8 items-center gap-2 border-b border-stroke-2 ps-3 pe-1">
         <span className="min-w-0 flex-1 truncate font-mono text-caption1 text-foreground-3">{block.lang || "code"}</span>
         {!pending && <CopyCodeButton text={block.text} />}
       </div>
-      <CodeBlock bare code={block.text} language={language} size={ctx.size === "small" ? "small" : "medium"} aria-busy={pending || undefined} />
+      <CodeBlock bare code={code} language={language} size={ctx.size === "small" ? "small" : "medium"} aria-busy={pending || undefined} />
     </div>
   );
 }

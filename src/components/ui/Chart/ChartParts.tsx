@@ -314,8 +314,10 @@ export interface ChartContainerProps extends Omit<React.HTMLAttributes<HTMLEleme
   toolbar?: React.ReactNode;
   /** Legend — hiển thị phía trên vùng vẽ, theo hướng chữ của trang. */
   legend?: React.ReactNode;
-  /** Nội dung chế độ bảng (thường là ChartTable). Có thì hiện nút "Bảng dữ liệu". */
-  table?: React.ReactNode;
+  /**
+   * Nội dung chế độ bảng (thường là ChartTable). Có thì hiện nút "Bảng dữ liệu". Truyền hàm để chỉ dựng bảng khi đang bật.
+   */
+  table?: React.ReactNode | (() => React.ReactNode);
   showTable?: boolean;
   defaultShowTable?: boolean;
   onShowTableChange?: (showTable: boolean) => void;
@@ -394,7 +396,7 @@ export const ChartContainer = React.forwardRef<HTMLElement, ChartContainerProps>
           </div>
         )}
         {tableOn ? (
-          table
+          typeof table === "function" ? table() : table
         ) : (
           <>
             {legend}

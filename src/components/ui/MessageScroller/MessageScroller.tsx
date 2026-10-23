@@ -186,24 +186,30 @@ export const MessageScroller = React.forwardRef<HTMLDivElement, MessageScrollerP
         return;
       }
 
-      // Tin mới = phần tử chưa từng có, nằm sau phần tử cũ cuối cùng còn lại
-      // (TypingIndicator có thể vừa bị thay bằng tin trả lời trong cùng lần render).
-      const prevSet = new Set(prev);
-      let anchorIndex = -1;
-      for (let k = prev.length - 1; k >= 0 && anchorIndex === -1; k--) anchorIndex = keys.lastIndexOf(prev[k]);
-      const appended =
-        prev.length === 0 ? items : anchorIndex >= 0 ? items.slice(anchorIndex + 1).filter((m) => !prevSet.has(String(m.key))) : [];
-      const newMessages = appended.filter(isMessage);
-      const mine = newMessages.some((m) => (m.props as { side?: string }).side === "outgoing");
+      // Cùng danh sách tin (chỉ nội dung đổi, vd. từng token đang stream): không cần dò tin mới hay ép đo layout — ResizeObserver
+      // bên dưới đã bám đáy / giữ chỗ đọc khi nội dung cao lên. Vẫn chạy phần thông báo tin stream xong.
+      const sameKeys = prev.length === keys.length && prev.every((k, i) => k === keys[i]);
+      let newMessages: React.ReactElement[] = [];
+      if (!sameKeys) {
+        // Tin mới = phần tử chưa từng có, nằm sau phần tử cũ cuối cùng còn lại
+        // (TypingIndicator có thể vừa bị thay bằng tin trả lời trong cùng lần render).
+        const prevSet = new Set(prev);
+        let anchorIndex = -1;
+        for (let k = prev.length - 1; k >= 0 && anchorIndex === -1; k--) anchorIndex = keys.lastIndexOf(prev[k]);
+        const appended =
+          prev.length === 0 ? items : anchorIndex >= 0 ? items.slice(anchorIndex + 1).filter((m) => !prevSet.has(String(m.key))) : [];
+        newMessages = appended.filter(isMessage);
+        const mine = newMessages.some((m) => (m.props as { side?: string }).side === "outgoing");
 
-      if (mine) scrollToBottom("auto");
-      else if (atBottomRef.current) el.scrollTop = el.scrollHeight;
-      else {
-        // Đang đọc tin cũ: tin cũ chèn lên đầu không được làm xê dịch chỗ đang đọc.
-        restoreAnchor();
-        if (newMessages.length > 0) setUnread((n) => n + newMessages.length);
+        if (mine) scrollToBottom("auto");
+        else if (atBottomRef.current) el.scrollTop = el.scrollHeight;
+        else {
+          // Đang đọc tin cũ: tin cũ chèn lên đầu không được làm xê dịch chỗ đang đọc.
+          restoreAnchor();
+          if (newMessages.length > 0) setUnread((n) => n + newMessages.length);
+        }
+        captureAnchor();
       }
-      captureAnchor();
 
       // Thông báo tin đến: tin đang stream chỉ đọc khi đã nhận đủ.
       if (announceIncoming) {

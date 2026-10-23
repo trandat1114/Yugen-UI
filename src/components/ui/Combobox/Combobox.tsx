@@ -137,9 +137,21 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
     () => options.map((o) => (typeof o === "string" ? { value: o, label: o } : { ...o, label: o.label ?? o.value })),
     [options],
   );
+  // Chuẩn hoá nhãn một lần cho mỗi bộ option (không phải mỗi phím gõ × mỗi option).
+  const searchText = React.useMemo(() => items.map((i) => normalizeSearchText(i.label)), [items]);
+  const labelByValue = React.useMemo(() => new Map(items.map((i) => [i.value, i.label])), [items]);
+  const filterItems = React.useCallback(
+    (text: string) => {
+      if (!text) return items;
+      const q = normalizeSearchText(text);
+      return items.filter((_, k) => searchText[k].includes(q));
+    },
+    [items, searchText],
+  );
   const [innerSelected, setInnerSelected] = React.useState<string[]>(() => toArray(defaultValue) ?? []);
   const selected = toArray(value) ?? innerSelected;
-  const labelOf = (v: string) => items.find((i) => i.value === v)?.label ?? v;
+  const selectedSet = new Set(selected);
+  const labelOf = (v: string) => labelByValue.get(v) ?? v;
   const displayText = selected.map(labelOf).join(", ");
 
   const [open, setOpen] = React.useState(false);
@@ -155,7 +167,7 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
   const portalTheme = usePortalThemeProps();
   React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
 
-  const filtered = query ? items.filter((i) => normalizeSearchText(i.label).includes(normalizeSearchText(query))) : items;
+  const filtered = React.useMemo(() => filterItems(query ?? ""), [filterItems, query]);
   const firstEnabled = (list: NormalizedOption[]) => list.find((i) => !i.disabled)?.value ?? "";
   const s = SIZE[size];
   const invalid = inputProps["aria-invalid"] === true || inputProps["aria-invalid"] === "true";
@@ -187,7 +199,8 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
     setOpen(false);
     if (query !== null && freeform && !multiselect) {
       const text = query.trim();
-      const exact = items.find((i) => normalizeSearchText(i.label) === normalizeSearchText(text));
+      const q = normalizeSearchText(text);
+      const exact = items.find((_, k) => searchText[k] === q);
       commit(text ? [exact?.value ?? text] : []);
     }
     setQuery(null);
@@ -266,7 +279,7 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
               value={inputValue}
               onChange={(e) => {
                 const text = e.target.value;
-                const next = text ? items.filter((i) => normalizeSearchText(i.label).includes(normalizeSearchText(text))) : items;
+                const next = filterItems(text);
                 setQuery(text);
                 setActive(firstEnabled(next));
                 if (!open) setOpen(true);
@@ -328,7 +341,7 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
               </CommandPrimitive.Empty>
               {groupOptions(filtered).map((group) => {
                 const rendered = group.items.map((item) => {
-                  const checked = selected.includes(item.value);
+                  const checked = selectedSet.has(item.value);
                   return (
                     <CommandPrimitive.Item
                       key={item.value}
