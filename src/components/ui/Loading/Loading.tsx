@@ -261,9 +261,10 @@ export const PageProgress = React.forwardRef<HTMLDivElement, PageProgressProps>(
           )}
           {...props}
         >
+          {/* scaleX thay cho width: chạy trên compositor, không layout lại cả trang mỗi bước tiến độ. */}
           <div
-            className="absolute inset-y-0 inset-s-0 bg-brand-background transition-[width] duration-slow ease-easy-ease motion-reduce:transition-none"
-            style={{ width: `${snap.value * 100}%` }}
+            className="absolute inset-0 origin-left bg-brand-background transition-transform duration-slow ease-easy-ease motion-reduce:transition-none rtl:origin-right"
+            style={{ transform: `scaleX(${snap.value})` }}
           />
         </div>
       </Fade>
