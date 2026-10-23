@@ -2,7 +2,7 @@
  * Đọc bài viết Markdown: frontmatter → metadata, thời gian đọc, sắp xếp mới nhất trước.
  * Thuần TypeScript (không dùng API trình duyệt) để plugin SEO trong vite.config.ts dùng lại lúc build.
  */
-import { SITE } from "./site";
+import { SITE } from "./site.ts";
 
 export interface Post {
   /** Tên file không đuôi .md — dùng trong URL /posts/<slug>/. */

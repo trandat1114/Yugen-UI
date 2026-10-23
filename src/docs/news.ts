@@ -218,12 +218,13 @@ export const LATEST_RELEASE = NEWS.find((r) => !r.upcoming) ?? NEWS[0];
  */
 export const CLI_NEWS: NewsRelease[] = [
   {
-    version: "0.2.1",
+    version: "0.3.0",
     upcoming: true,
-    date: "2026-10-30",
-    title: "doctor nhận app vừa tạo",
-    summary: "App tạo bằng create không còn bị doctor cảnh báo thiếu yugen.json.",
+    date: "2027-01-29",
+    title: "Template dùng Vite 8",
+    summary: "App mới chạy Vite 8 và TypeScript 6; doctor không còn cảnh báo app vừa tạo.",
     items: [
+      { kind: "improved", text: "Mọi template dùng Vite 8 (Rolldown), @vitejs/plugin-react 6 và TypeScript 6; chia chunk bằng codeSplitting thay cho manualChunks đã deprecated, tsconfig không còn baseUrl.", href: "#/templates" },
       { kind: "fixed", text: "doctor, add, list: dự án đã cài yugen-ui mà chưa có yugen.json (app tạo bằng create, hoặc cài tay theo README) được hiểu là mode package; doctor hết cảnh báo, add in sẵn dòng import thay vì đòi chạy yugen init.", href: "#/concepts/cli" },
     ],
   },
@@ -254,6 +255,14 @@ export const CLI_NEWS: NewsRelease[] = [
 
 /** Tab create-yugen-ui (packages/create-yugen-ui) — chỉ phát hành cùng bản CLI ổn định. Mục đầu = version của gói. */
 export const CREATE_NEWS: NewsRelease[] = [
+  {
+    version: "0.3.0",
+    upcoming: true,
+    date: "2027-01-29",
+    title: "Theo @yugen-ui/cli 0.3.0",
+    summary: "Cùng các thay đổi của @yugen-ui/cli 0.3.0: template dùng Vite 8 và TypeScript 6.",
+    items: [{ kind: "improved", text: "npx create-yugen-ui@latest tạo app Vite 8 + TypeScript 6.", href: "#/concepts/cli" }],
+  },
   {
     version: "0.2.0",
     date: "2026-10-23",
