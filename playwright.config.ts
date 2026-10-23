@@ -34,7 +34,7 @@ const desktop = {
   timezoneId: "Asia/Ho_Chi_Minh",
 };
 
-const INTERACTION = /(drag|carousel|keyboard|docs-flows|motion)\.spec\.ts/;
+const INTERACTION = /(drag|carousel|keyboard|docs-flows|motion|theme-designer)\.spec\.ts/;
 const TOUCH = /(touch|responsive)\.spec\.ts/;
 const prefs = { reducedMotion: "reduce" as const, locale: "vi-VN", timezoneId: "Asia/Ho_Chi_Minh" };
 

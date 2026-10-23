@@ -42,7 +42,7 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       en: "The numeric spacing scale and the docs experience.",
       items: [
         { status: "done", issue: 42, vi: "Spacing theo thang số (p-3, gap-5); class viết hoa vẫn chạy nhưng được đánh dấu deprecated", en: "Numeric spacing scale (p-3, gap-5); upper-case classes still work but are deprecated" },
-        { status: "planned", issue: 44, vi: "Theme Designer: bo góc, mật độ, font, màu trung tính, bóng, chuyển động", en: "Theme Designer: radius, density, typography, neutrals, elevation, motion" },
+        { status: "done", issue: 44, vi: "Theme Designer: bo góc, mật độ, font, màu trung tính, bóng, chuyển động", en: "Theme Designer: radius, density, typography, neutrals, elevation, motion" },
         { status: "done", issue: 45, vi: "Trang Motion: hướng dẫn theo component, playground, xem trước giảm chuyển động", en: "Motion page: guidance per component, playground, reduced-motion preview" },
         { status: "done", issue: 46, vi: "Sidebar docs kéo được độ rộng, thu gọn về dạng icon", en: "Resizable docs sidebar that collapses to icons" },
         { status: "done", issue: 40, vi: "Kiểm thử trên Firefox và WebKit theo lịch", en: "Scheduled Firefox and WebKit test runs" },
