@@ -112,7 +112,7 @@ export const en: Record<string, ComponentDocEn> = {
     props: {
       query: "CSS media query, e.g. \"(min-width: 768px)\", \"(prefers-reduced-motion: reduce)\".",
       "options.defaultValue": "Value when there is no window / matchMedia (SSR, tests).",
-      returns: "true while the query matches; updates when that changes.",
+      "(returns)": "true while the query matches; updates when that changes.",
     },
   },
 };
