@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.10.0
+
+### Minor Changes
+
+- b8bdbc1: Spacing uses Tailwind's numeric scale. Components, docs examples, templates and the shadcn registry now use `p-3`, `gap-2`, `mt-6` instead of the upper-case Fluent aliases (`p-M`, `gap-S`, `mt-XXL`). The Fluent spacing ramp is the same as Tailwind's 4px scale, so nothing moves at the default 16px root font size. The numeric scale is in `rem`, so spacing now follows the user's browser font size, as the numeric sizes (`h-8`, `size-5`) already did.
+  
+  Deprecated: the upper-case spacing aliases (`--spacing-XXS` … `--spacing-XXXL` in `theme.css` and the matching group in `cn()`). They still work and will be removed in 1.0. Rename them as XXS → 0.5, XS → 1, SNudge → 1.5, S → 2, MNudge → 2.5, M → 3, L → 4, XL → 5, XXL → 6, XXXL → 8.
+
+### Patch Changes
+
+- 6260f9c: `cn()` uses tailwind-merge 3, the release built for Tailwind CSS v4. Classes with the v4 trailing important modifier now merge (`cn("size-4!", "size-5!")` gives `size-5!`; tailwind-merge 2 kept both). tailwind-merge adds about 2 kB gzipped to `cn`. If your app calls tailwind-merge 2 directly, it keeps working: npm installs each version separately.
+
 ## 0.9.0
 
 ### Minor Changes
@@ -162,6 +174,7 @@ with a user-facing change adds one with `npx changeset`, and `npx changeset vers
 - Documentation site.
 
 [Unreleased]: https://github.com/trandat1114/Yugen-UI/compare/v0.9.0...HEAD
+[0.10.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.10.0
 [0.9.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.9.0
 [0.8.3]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.8.3
 [0.8.2]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.8.2
