@@ -1,4 +1,4 @@
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState, type ReactNode } from "react";
 import { PageProgress, PageProgressFallback, YugenProvider } from "@/components/ui";
 import { useAppearance, type Appearance } from "@/hooks/useAppearance";
 import { hrefOf, navigate, useDocsLocation } from "@/docs/router";
