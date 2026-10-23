@@ -25,7 +25,6 @@ describe("docs i18n (en)", () => {
         expect(Object.keys(e.toc ?? {}).sort(), m.slug).toEqual(m.toc.map((i) => i.id).sort());
       }
     }
-    // Còn thiếu: migration-fluent, migration-shadcn (#69).
     expect(Object.keys(CONCEPT_EN_PAGES).sort()).toEqual([
       "accessibility",
       "adaptive-overlays",
@@ -37,6 +36,8 @@ describe("docs i18n (en)", () => {
       "data-visualization",
       "focus-indicator",
       "introduction",
+      "migration-fluent",
+      "migration-shadcn",
       "notifications",
       "positioning",
       "quick-start",

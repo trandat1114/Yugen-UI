@@ -164,7 +164,7 @@ export default function Page() {
         <SimpleTable
           head={["", "Fluent UI React v9", "Yugen UI"]}
           rows={[
-            ["Phân phối", <C key="a">@fluentui/react-components</C>, "Mã nguồn chép vào dự án (src/components/ui)"],
+            ["Phân phối", <C key="a">@fluentui/react-components</C>, "Gói npm yugen-ui, hoặc chép mã nguồn vào dự án (src/components/ui)"],
             ["Style", "Griffel: makeStyles + tokens (CSS-in-JS lúc chạy / build)", "Tailwind CSS v4 utility, map 1-1 với cùng tên token"],
             ["Theme", <>Object theme (<C>webLightTheme</C>) qua <C>FluentProvider</C></>, <>CSS custom property theo <C>data-theme</C> / <C>data-brand</C> qua <C>YugenProvider</C></>],
             ["Tuỳ biến phần con", "Slot (root, icon, content…)", "asChild, prop ReactNode, component ghép, render-prop (xem trang Slot)"],
