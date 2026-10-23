@@ -1272,6 +1272,7 @@ const [plan, setPlan] = useState("monthly");
   <SpinButton aria-label="Outline" defaultValue={1} />
   <SpinButton appearance="underline" aria-label="Underline" defaultValue={2} />
   <SpinButton appearance="filled-darker" aria-label="Filled darker" defaultValue={3} />
+  <SpinButton appearance="filled-lighter" aria-label="Filled lighter" defaultValue={3} />
   <SpinButton size="small" aria-label="Small" defaultValue={4} />
   <SpinButton disabled aria-label="Disabled" defaultValue={5} />
 </div>`,
@@ -1280,6 +1281,7 @@ const [plan, setPlan] = useState("monthly");
             <SpinButton aria-label="Outline" defaultValue={1} />
             <SpinButton appearance="underline" aria-label="Underline" defaultValue={2} />
             <SpinButton appearance="filled-darker" aria-label="Filled darker" defaultValue={3} />
+            <SpinButton appearance="filled-lighter" aria-label="Filled lighter" defaultValue={3} />
             <SpinButton size="small" aria-label="Small" defaultValue={4} />
             <SpinButton disabled aria-label="Disabled" defaultValue={5} />
           </div>
@@ -1469,7 +1471,7 @@ function FruitFilterDemo() {
       },
       {
         title: "Kích thước & disabled",
-        description: "small (32px), medium (40px), large (48px).",
+        description: "small (32px) và disabled. medium (40px) là mặc định; large (48px) ở ví dụ Chữ và số.",
         code: `<InputOTP aria-label="Small" size="small" length={4} />
 <InputOTP aria-label="Disabled" length={4} defaultValue="42" disabled />`,
         render: () => (

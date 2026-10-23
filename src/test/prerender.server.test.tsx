@@ -45,11 +45,11 @@ describe.skipIf(!version.startsWith("19."))("prerender docs", () => {
     expect(cli.head.image).toBe("og/en/concepts/cli.jpg");
     expect(cli.card.section).toMatch(/^Concepts · /);
 
-    // DataGrid chưa có bản tiếng Anh (#69).
-    const grid = await render({ kind: "component", slug: "datagrid" }, "en");
-    expect(grid.head.canonical).toBe("https://trandat1114.github.io/Yugen-UI/components/datagrid");
-    expect(grid.head.alternates).toEqual([]);
-    expect(grid.head.image).toBe("og/components/datagrid.jpg");
+    // Foundations › Màu sắc chưa có bản tiếng Anh.
+    const color = await render({ kind: "foundation", slug: "color" }, "en");
+    expect(color.head.canonical).toBe("https://trandat1114.github.io/Yugen-UI/foundations/color");
+    expect(color.head.alternates).toEqual([]);
+    expect(color.head.image).toBe("og/foundations/color.jpg");
 
     // Button đã dịch: canonical riêng, hreflang, mô tả tiếng Anh; demo giữ tiếng Việt và mang lang="vi".
     const button = await render({ kind: "component", slug: "button" }, "en");

@@ -174,9 +174,9 @@ test.describe("URL theo đường dẫn (#113)", () => {
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://trandat1114.github.io/Yugen-UI/en/concepts/cli");
     await expect(page.locator('link[hreflang="vi"]')).toHaveAttribute("href", "https://trandat1114.github.io/Yugen-UI/concepts/cli");
-    // DataGrid chưa có bản tiếng Anh (#69).
-    await page.goto("/en/components/datagrid", { waitUntil: "domcontentloaded" });
-    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://trandat1114.github.io/Yugen-UI/components/datagrid");
+    // Foundations › Màu sắc chưa có bản tiếng Anh.
+    await page.goto("/en/foundations/color", { waitUntil: "domcontentloaded" });
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://trandat1114.github.io/Yugen-UI/foundations/color");
     await expect(page.locator("link[hreflang]")).toHaveCount(0);
     // Button đã dịch: canonical riêng.
     await page.goto("/en/components/button", { waitUntil: "domcontentloaded" });

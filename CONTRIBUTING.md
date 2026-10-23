@@ -270,7 +270,7 @@ focus / links, gradients never on controls, WCAG contrast (4.5:1 text, 3:1 UI), 
 
 ### Translating the docs
 
-UI strings live in `src/docs/i18n/vi.ts` (source of the keys) and `src/docs/i18n/en.ts`. English component names and leads: `src/docs/i18n/en/components.ts` (a test requires every slug). English concept pages: add `src/docs/concepts/en/<slug>.tsx` with the same section ids as the Vietnamese page, and its lead and table of contents in `src/docs/i18n/en/concepts.ts`. English component pages: add the entry to `src/docs/registry/en/<registry file>.ts` (description, example titles in the same order, dos / don'ts, a description for every prop; demos and code stay as they are) and its slug to `src/docs/registry/translated.ts`; `registry/en.test.ts` checks the entry is complete. Untranslated pages show a notice and the Vietnamese original.
+UI strings live in `src/docs/i18n/vi.ts` (source of the keys) and `src/docs/i18n/en.ts`. English component names and leads: `src/docs/i18n/en/components.ts` (a test requires every slug). English concept pages: add `src/docs/concepts/en/<slug>.tsx` with the same section ids as the Vietnamese page, and its lead and table of contents in `src/docs/i18n/en/concepts.ts`. English component pages: add the entry to `src/docs/registry/en/<registry file>.ts` (description, example titles in the same order, dos / don'ts, a description for every prop; demos and code stay as they are); the page is marked translated at build time and `registry/en.test.ts` checks the entry is complete. Untranslated pages show a notice and the Vietnamese original.
 
 Copy (docs, templates, CLI messages, changesets) follows wiki › *Writing*: short and clear, no repeating what the UI next to it already says, package names as users see them.
 

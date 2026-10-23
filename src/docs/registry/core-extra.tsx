@@ -314,7 +314,7 @@ const EXTRA: Record<string, ComponentDoc> = {
       },
     ],
     dos: ["Luôn có label hoặc aria-label.", "Hiện giá trị (showValue) khi con số có ý nghĩa với người dùng."],
-    donts: ["Không dùng Slider khi cần nhập số chính xác — dùng Input số.", "Không dùng cho dải quá rộng mà bước nhỏ (khó kéo chính xác)."],
+    donts: ["Không dùng Slider khi cần nhập số chính xác — dùng SpinButton.", "Không dùng cho dải quá rộng mà bước nhỏ (khó kéo chính xác)."],
     props: [
       { name: "value / defaultValue", type: "number[]", description: "Một phần tử = 1 thumb, hai phần tử = khoảng." },
       { name: "onValueChange", type: "(value: number[]) => void", description: "Callback khi kéo." },

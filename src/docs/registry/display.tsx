@@ -499,7 +499,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
     ],
     donts: [
       "Không hiển thị quá 5–6 avatar cùng lúc — dùng maxAvatars.",
-      "Không trộn layout pie với số lượng lớn người mà không cho xem danh sách.",
+      "Không dùng layout pie cho nhóm đông: hình tròn chỉ chia được 2–3 ảnh.",
       "Không dùng AvatarGroup cho một người duy nhất — dùng Avatar hoặc Persona.",
     ],
     props: [

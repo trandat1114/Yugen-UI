@@ -125,6 +125,26 @@ export interface DocMeta {
   lead: string;
   /** Tên file trong src/docs/registry (vd. "core.tsx") — nạp lười theo file. */
   file: string;
+  /** Có bản tiếng Anh trong src/docs/registry/en/<file>.ts. */
+  translated?: true;
+}
+
+/** Slug có trong `export const en = { … }` của một file src/docs/registry/en/*.ts (đọc tĩnh, không chạy file). */
+export function extractEnSlugs(fileName: string, code: string): string[] {
+  const source = ts.createSourceFile(fileName, code, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+  for (const stmt of source.statements) {
+    if (!ts.isVariableStatement(stmt)) continue;
+    for (const decl of stmt.declarationList.declarations) {
+      if (!ts.isIdentifier(decl.name) || decl.name.text !== "en" || !decl.initializer) continue;
+      let init = decl.initializer;
+      while (ts.isAsExpression(init) || ts.isSatisfiesExpression(init) || ts.isParenthesizedExpression(init)) init = init.expression;
+      if (!ts.isObjectLiteralExpression(init)) throw new Error(`[yugen-docs-meta] ${path.basename(fileName)} — export const en phải là object literal.`);
+      return init.properties.flatMap((prop) =>
+        ts.isPropertyAssignment(prop) && (ts.isIdentifier(prop.name) || ts.isStringLiteral(prop.name)) ? [prop.name.text] : [],
+      );
+    }
+  }
+  return [];
 }
 
 /**
@@ -230,9 +250,10 @@ export function extractDocsMeta(fileName: string, code: string): DocMeta[] {
  */
 export function yugenDocsMeta(root: string): Plugin {
   const registryDir = path.join(root, "src", "docs", "registry");
+  const enDir = path.join(registryDir, "en");
   const isRegistryFile = (file: string) => {
     const f = path.resolve(file);
-    return path.dirname(f) === registryDir && f.endsWith(".tsx");
+    return (path.dirname(f) === registryDir && f.endsWith(".tsx")) || (path.dirname(f) === enDir && f.endsWith(".ts"));
   };
   const collect = () =>
     fs
@@ -241,7 +262,11 @@ export function yugenDocsMeta(root: string): Plugin {
       .sort()
       .flatMap((f) => {
         const file = path.join(registryDir, f);
-        return extractDocsMeta(file, fs.readFileSync(file, "utf8"));
+        const enFile = path.join(enDir, f.replace(/\.tsx$/, ".ts"));
+        const translated = new Set(fs.existsSync(enFile) ? extractEnSlugs(enFile, fs.readFileSync(enFile, "utf8")) : []);
+        return extractDocsMeta(file, fs.readFileSync(file, "utf8")).map((meta) =>
+          translated.has(meta.slug) ? { ...meta, translated: true as const } : meta,
+        );
       });
   let server: ViteDevServer | undefined;
   const invalidate = () => {
@@ -263,6 +288,7 @@ export function yugenDocsMeta(root: string): Plugin {
     load(id) {
       if (id !== DOCS_META_RESOLVED) return undefined;
       for (const f of fs.readdirSync(registryDir)) if (f.endsWith(".tsx")) this.addWatchFile(path.join(registryDir, f));
+      if (fs.existsSync(enDir)) for (const f of fs.readdirSync(enDir)) this.addWatchFile(path.join(enDir, f));
       return `export default ${JSON.stringify(collect())};`;
     },
     handleHotUpdate({ file, modules }) {

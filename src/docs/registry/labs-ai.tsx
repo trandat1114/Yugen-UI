@@ -506,7 +506,7 @@ export const docs: ComponentDoc[] = [
     name: "StreamingMarkdown",
     lead: "StreamingMarkdown hiển thị câu trả lời Markdown của AI ngay khi từng token về — không nháy ký hiệu thô, không chèn HTML, và không render lại cả bài mỗi lần có chữ mới.",
     description:
-      "Bộ phân tích tự viết (parseMarkdown, xuất riêng để test) dựng React element trực tiếp: đoạn văn, heading (lệch cấp qua headingOffset — không bao giờ sinh h1), đậm / nghiêng / gạch / code inline, link chỉ http · https · mailto (mở tab mới, rel noreferrer noopener), danh sách lồng và việc cần làm, trích dẫn, bảng GFM có căn lề, đường kẻ và khối code dùng CodeBlock. Khi streaming: fence chưa đóng là khối code đang viết, ** / link / [1] dở dang không lộ ký hiệu, có con trỏ (đứng yên khi giảm chuyển động) và aria-busy; các khối đã ổn định giữ nguyên object nên React.memo bỏ qua render lại.",
+      "Bộ phân tích tự viết (parseMarkdown, xuất riêng để test) dựng React element trực tiếp: đoạn văn, heading (lệch cấp qua headingOffset — không bao giờ sinh h1), đậm / nghiêng / gạch / code inline, link chỉ http · https · mailto (http / https mở tab mới, rel noreferrer noopener), danh sách lồng và việc cần làm, trích dẫn, bảng GFM có căn lề, đường kẻ và khối code dùng CodeBlock. Khi streaming: fence chưa đóng là khối code đang viết, ** / link / [1] dở dang không lộ ký hiệu, có con trỏ (đứng yên khi giảm chuyển động) và aria-busy; các khối đã ổn định giữ nguyên object nên React.memo bỏ qua render lại.",
     importCode: `import { StreamingMarkdown, parseMarkdown } from "@/components/ui";`,
     hero: { title: "Câu trả lời đang stream", code: STREAMING_ANSWER_CODE, render: () => <StreamingAnswerDemo /> },
     examples: [
@@ -753,7 +753,7 @@ export const docs: ComponentDoc[] = [
     examples: [
       {
         title: "Đang tải & lỗi",
-        description: "Khung xương chỉ hiện khi chờ > 300ms; lỗi luôn có nút Thử lại.",
+        description: "Khung xương chỉ hiện khi chờ > 300ms; lỗi có nút Thử lại khi truyền onRetry.",
         code: LOADING_NOTIFICATIONS_CODE,
         render: () => <LoadingNotificationsDemo />,
       },

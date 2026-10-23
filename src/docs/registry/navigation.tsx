@@ -310,7 +310,7 @@ export const docs: ComponentDoc[] = [
     category: "Hành động",
     lead: "ButtonGroup ghép các nút liền kề thành một khối điều khiển thống nhất cho những hành động cùng nhóm.",
     description:
-      "Bo góc bên trong và viền chồng nhau được gộp tự động (-ms-px), theo hướng ngang hoặc dọc. Dùng ButtonGroupSeparator khi các nút không có viền (primary, subtle). Hoạt động cùng Button, ToggleButton và SplitButton.",
+      "Bo góc bên trong và viền chồng nhau được gộp tự động (-ms-px theo hàng ngang, -mt-px theo cột dọc). Dùng ButtonGroupSeparator khi các nút không có viền (primary, subtle). Hoạt động cùng Button, ToggleButton và SplitButton.",
     importCode: `import { ButtonGroup, ButtonGroupSeparator } from "@/components/ui";`,
     hero: {
       title: "ButtonGroup",
