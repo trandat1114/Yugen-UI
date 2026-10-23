@@ -354,7 +354,8 @@ export const BarChart = React.forwardRef<HTMLElement, BarChartProps>(function Ba
       single ? series[0]?.label ?? "" : `${series.length} chuỗi (${series.map((s) => s.label).join(", ")})`
     }. Dùng phím mũi tên để duyệt từng giá trị.`;
 
-  const table = (
+  // Chỉ dựng khi bảng đang bật: hàng của mọi điểm dữ liệu được định dạng lại mỗi lần biểu đồ render.
+  const table = () => (
     <ChartTable
       caption={summary}
       columns={[

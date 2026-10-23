@@ -8,6 +8,7 @@ import {
   CHART_PALETTE_SIZE,
   chartUid,
   clamp,
+  df,
   linearScale,
   makeAxisFormatter,
   makeNumberFormatter,
@@ -172,7 +173,7 @@ export const ScatterChart = React.forwardRef<HTMLElement, ScatterChartProps>(fun
   const fmtX = React.useMemo(() => {
     if (typeof xFormat === "function") return (v: number) => xFormat(isTime ? new Date(v) : v);
     if (isTime) {
-      const f = new Intl.DateTimeFormat(locale, (xFormat as Intl.DateTimeFormatOptions | undefined) ?? { day: "numeric", month: "numeric", year: "numeric" });
+      const f = df(locale, (xFormat as Intl.DateTimeFormatOptions | undefined) ?? { day: "numeric", month: "numeric", year: "numeric" });
       return (v: number) => f.format(new Date(v));
     }
     return makeNumberFormatter(locale, xFormat as Intl.NumberFormatOptions | undefined);
@@ -322,7 +323,8 @@ export const ScatterChart = React.forwardRef<HTMLElement, ScatterChartProps>(fun
       multi ? `, ${groups.list.length} nhóm (${groups.list.map((g) => g.label).join(", ")})` : ""
     }. Dùng phím mũi tên để duyệt các điểm theo thứ tự ${xName}.${trendText}`;
 
-  const table = (
+  // Chỉ dựng khi bảng đang bật: hàng của mọi điểm dữ liệu được định dạng lại mỗi lần biểu đồ render.
+  const table = () => (
     <ChartTable
       caption={summary}
       columns={[

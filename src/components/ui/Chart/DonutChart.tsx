@@ -130,7 +130,8 @@ export const DonutChart = React.forwardRef<HTMLElement, DonutChartProps>(functio
       biggest && total > 0 ? `. Lớn nhất: ${biggest.label} (${pct.format(biggest.value / total)})` : ""
     }. Dùng phím mũi tên để duyệt từng lát.`;
 
-  const table = (
+  // Chỉ dựng khi bảng đang bật: hàng của mọi điểm dữ liệu được định dạng lại mỗi lần biểu đồ render.
+  const table = () => (
     <ChartTable
       caption={summary}
       columns={[
