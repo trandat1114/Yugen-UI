@@ -23,5 +23,8 @@ export default defineConfig({
     // Không xử lý CSS trong test, trừ tokens.css: Theme Designer đọc giá trị token gốc qua `?raw` (src/docs/themeAxes.ts).
     css: { include: [/\/styles\/tokens\.css/] },
     restoreMocks: true,
+    // Cache transform trên đĩa (node_modules/.vitest-cache) giữ kết quả import.meta.glob cũ khi thêm file mới → test pass ở máy
+    // nhưng đỏ trên CI (không có cache). Tắt để máy chạy giống CI.
+    fsModuleCache: false,
   },
 });

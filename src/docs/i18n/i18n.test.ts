@@ -25,7 +25,7 @@ describe("docs i18n (en)", () => {
         expect(Object.keys(e.toc ?? {}).sort(), m.slug).toEqual(m.toc.map((i) => i.id).sort());
       }
     }
-    expect(Object.keys(CONCEPT_EN_PAGES).sort()).toEqual(["cli", "introduction", "quick-start", "shadcn-registry", "versioning"]);
+    expect(Object.keys(CONCEPT_EN_PAGES).sort()).toEqual(["cli", "introduction", "quick-start", "seo", "shadcn-registry", "versioning"]);
   });
 
   it("nhóm, foundation và chuỗi giao diện đủ bản dịch", () => {
