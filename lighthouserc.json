@@ -1,0 +1,32 @@
+{
+  "ci": {
+    "collect": {
+      "startServerCommand": "npx vite preview --port 4173 --strictPort",
+      "startServerReadyPattern": "Local",
+      "url": [
+        "http://localhost:4173/",
+        "http://localhost:4173/components/button",
+        "http://localhost:4173/concepts/quick-start",
+        "http://localhost:4173/foundations/color",
+        "http://localhost:4173/templates"
+      ],
+      "numberOfRuns": 1,
+      "settings": {
+        "preset": "desktop",
+        "chromeFlags": "--no-sandbox",
+        "onlyCategories": ["seo", "accessibility", "best-practices", "performance"]
+      }
+    },
+    "assert": {
+      "assertions": {
+        "categories:seo": ["error", { "minScore": 0.95 }],
+        "meta-description": ["warn", { "minScore": 1 }],
+        "categories:accessibility": ["warn", { "minScore": 0.95 }]
+      }
+    },
+    "upload": {
+      "target": "filesystem",
+      "outputDir": "lighthouse-report"
+    }
+  }
+}

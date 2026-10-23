@@ -83,8 +83,8 @@ export function BlogLayout({ theme, onThemeChange, embedded = false }: BlogLayou
   const headingLevel = embedded ? "h2" : "h1";
   const Main = embedded ? "div" : "main";
   const post = route.name === "post" ? POST_BY_SLUG[route.slug] : undefined;
-  // File sinh lúc build (rss.xml, sitemap.xml) không tồn tại trong preview.
-  const fileHref = (file: string) => (embedded ? undefined : `${import.meta.env.BASE_URL}${file}`);
+  // File sinh lúc build (rss.xml, sitemap.xml) không tồn tại trong preview nhúng: hiện chữ thay cho link không đích.
+  const fileHref = (file: string) => `${import.meta.env.BASE_URL}${file}`;
 
   React.useEffect(() => {
     if (embedded) {
@@ -107,11 +107,17 @@ export function BlogLayout({ theme, onThemeChange, embedded = false }: BlogLayou
             {SITE.title}
           </Link>
           <div className="ms-auto flex items-center gap-1">
-            <Button asChild appearance="subtle" icon={<Rss20Regular />}>
-              <a href={fileHref("rss.xml")} aria-label="RSS">
+            {embedded ? (
+              <Button appearance="subtle" icon={<Rss20Regular />} aria-label="RSS">
                 <span className="hidden sm:inline">RSS</span>
-              </a>
-            </Button>
+              </Button>
+            ) : (
+              <Button asChild appearance="subtle" icon={<Rss20Regular />}>
+                <a href={fileHref("rss.xml")} aria-label="RSS">
+                  <span className="hidden sm:inline">RSS</span>
+                </a>
+              </Button>
+            )}
             <ThemeMenu theme={theme} onChange={onThemeChange} />
           </div>
         </div>
@@ -132,9 +138,13 @@ export function BlogLayout({ theme, onThemeChange, embedded = false }: BlogLayou
               Yugen UI
             </a>
           </span>
-          <a className="text-link underline hover:text-link-hover" href={fileHref("sitemap.xml")}>
-            Sitemap
-          </a>
+          {embedded ? (
+            <span>Sitemap</span>
+          ) : (
+            <a className="text-link underline hover:text-link-hover" href={fileHref("sitemap.xml")}>
+              Sitemap
+            </a>
+          )}
         </div>
       </footer>
     </div>

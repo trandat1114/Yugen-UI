@@ -207,3 +207,32 @@ jobs:
         run: |
           echo "::error::E2E shards: $RESULT. Open the playwright-report artifact (or test-results-<shard>) for details."
           exit 1
+
+  # Lighthouse trên vài trang prerender đại diện (#116, cấu hình ở lighthouserc.json): SEO dưới 0.95 là lỗi; trang thiếu
+  # description hoặc accessibility dưới 0.95 chỉ cảnh báo. Chạy trên PR để bắt lỗi trước khi merge thay vì chặn deploy.
+  lighthouse:
+    name: Lighthouse
+    if: github.event.pull_request.draft != true
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build:docs
+      # Google Chrome có sẵn trên runner.
+      - run: npx --yes @lhci/cli@0.15.1 autorun
+
+      - name: Upload Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: lighthouse-report
+          path: lighthouse-report/
+          retention-days: 14
+          if-no-files-found: ignore
