@@ -23,7 +23,8 @@
 | Build · Node 22 / 24 / 26 | typecheck, lint:classes, các check:*, sync-templates, build lib + docs, pack, size |
 | Unit tests (React 19) | `npm test` |
 | React 18 | cài React 18.3 tạm thời → typecheck, test, build:lib |
-| E2E (Playwright + axe) | chromium, upload `playwright-report` khi lỗi |
+| E2E · shard 1/3 … 3/3 | `test:e2e --shard=n/3` song song (blob report; `test-results-n` khi lỗi) |
+| E2E (Playwright + axe) | gộp blob report thành một báo cáo HTML (`playwright-report`); đỏ nếu một shard đỏ — tên check cố định |
 
 Workflow riêng **Browser engines** (`engines.yml`): `npm run test:engines` hằng tuần (thứ Hai), trên PR vào `main`, trên PR
 vào `next` có đổi `e2e/` / `playwright.config.ts` / chính workflow, và khi gọi tay. Bản chạy theo lịch hỏng thì mở issue "E2E on Firefox / WebKit is failing" (hoặc bình luận nếu đang mở), xanh

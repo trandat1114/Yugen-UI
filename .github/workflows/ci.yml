@@ -120,11 +120,16 @@ jobs:
       - run: npm test
       - run: npm run build:lib
 
+  # E2E chia 3 shard chạy song song (#38); job "E2E (Playwright + axe)" bên dưới gộp báo cáo và là tên check cố định.
   e2e:
-    name: E2E (Playwright + axe)
+    name: E2E · shard ${{ matrix.shard }}/3
     if: github.event.pull_request.draft != true
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
     # Trình duyệt và thư viện hệ thống có sẵn trong image: không `playwright install --with-deps` (apt) mỗi lần chạy.
     # Tag phải khớp @playwright/test trong package-lock.json (src/test/playwright-image.test.ts).
     container:
@@ -141,10 +146,53 @@ jobs:
           cache: npm
 
       - run: npm ci
-      - run: npm run test:e2e
+      # Blob report của từng shard; job e2e-report gộp thành một báo cáo HTML.
+      - run: npm run test:e2e -- --shard=${{ matrix.shard }}/3 --reporter=list,blob
+
+      - name: Upload blob report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: blob-report-${{ matrix.shard }}
+          path: blob-report/
+          retention-days: 3
+          if-no-files-found: ignore
+
+      - name: Upload test results (traces, screenshots)
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results-${{ matrix.shard }}
+          path: test-results/
+          retention-days: 14
+          if-no-files-found: ignore
+
+  e2e-report:
+    name: E2E (Playwright + axe)
+    needs: e2e
+    if: ${{ !cancelled() && github.event.pull_request.draft != true }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: blob-report-*
+          path: all-blob-reports
+          merge-multiple: true
+
+      - name: Merge reports
+        run: npx playwright merge-reports --reporter html ./all-blob-reports
 
       - name: Upload Playwright report
-        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v7
         with:
           name: playwright-report
@@ -152,11 +200,10 @@ jobs:
           retention-days: 14
           if-no-files-found: ignore
 
-      - name: Upload test results (traces, screenshots)
-        if: failure()
-        uses: actions/upload-artifact@v7
-        with:
-          name: test-results
-          path: test-results/
-          retention-days: 14
-          if-no-files-found: ignore
+      - name: Fail when a shard failed
+        if: needs.e2e.result != 'success'
+        env:
+          RESULT: ${{ needs.e2e.result }}
+        run: |
+          echo "::error::E2E shards: $RESULT. Open the playwright-report artifact (or test-results-<shard>) for details."
+          exit 1

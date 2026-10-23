@@ -10,6 +10,8 @@ dist-ssr
 # Playwright
 playwright-report
 test-results
+blob-report
+all-blob-reports
 
 # Registry shadcn sinh bởi scripts/build-registry.mjs (npm run registry)
 public/r/
