@@ -1,7 +1,6 @@
 import meta from "virtual:yugen-docs-meta";
 import { CATEGORIES, type ComponentCategory, type ComponentDoc, type ComponentDocEn, type ComponentMeta } from "../types";
 import type { Locale } from "../i18n";
-import { COMPONENTS_TRANSLATED } from "./translated";
 
 /**
  * Registry trang component, chia 2 phần:
@@ -51,14 +50,17 @@ export async function loadComponentDoc(slug: string): Promise<ComponentDoc> {
 
 const enLoaders = import.meta.glob<{ en: Record<string, ComponentDocEn> }>("./en/*.ts");
 
-/** Bản tiếng Anh của một component đã dịch (COMPONENTS_TRANSLATED); null nếu chưa dịch. */
+/** Component có bản tiếng Anh hay chưa (plugin yugenDocsMeta đọc các file en/ lúc build). */
+export const isTranslated = (slug: string) => COMPONENT_META_BY_SLUG[slug]?.translated === true;
+
+/** Bản tiếng Anh của một component đã dịch; null nếu chưa dịch. */
 export async function loadComponentDocEn(slug: string): Promise<ComponentDocEn | null> {
   const entry = COMPONENT_META_BY_SLUG[slug];
-  if (!entry || !COMPONENTS_TRANSLATED.has(slug)) return null;
-  const load = enLoaders[`./en/${entry.file.replace(/\.tsx$/, ".ts")}`];
-  if (!load) throw new Error(`"${slug}" nằm trong COMPONENTS_TRANSLATED nhưng thiếu en/${entry.file.replace(/\.tsx$/, ".ts")}.`);
-  const en = (await load()).en[slug];
-  if (!en) throw new Error(`"${slug}" nằm trong COMPONENTS_TRANSLATED nhưng en/${entry.file.replace(/\.tsx$/, ".ts")} không có mục này.`);
+  if (!entry?.translated) return null;
+  const file = `./en/${entry.file.replace(/\.tsx$/, ".ts")}`;
+  const load = enLoaders[file];
+  const en = load ? (await load()).en[slug] : undefined;
+  if (!en) throw new Error(`Không đọc được bản tiếng Anh của "${slug}" trong ${file}.`);
   return en;
 }
 

@@ -66,7 +66,11 @@ export interface ComponentDocEn {
  * Phần nạp sẵn của một trang component (sidebar, trang chủ, command palette, header trang) — trích lúc build,
  * không kéo theo demo / code mẫu. `file`: file trong src/docs/registry chứa doc (nạp lười theo file).
  */
-export type ComponentMeta = Pick<ComponentDoc, "slug" | "name" | "category" | "lead"> & { file: string };
+export type ComponentMeta = Pick<ComponentDoc, "slug" | "name" | "category" | "lead"> & {
+  file: string;
+  /** Có bản tiếng Anh (src/docs/registry/en/<file>.ts) — plugin yugenDocsMeta đánh dấu lúc build. */
+  translated?: true;
+};
 
 /** Nhóm trang "Khái niệm" (tương đương mục Concepts của Fluent UI Storybook). */
 export const CONCEPT_GROUPS = ["Bắt đầu", "Nhà phát triển", "Khả năng tiếp cận", "Yugen Labs", "Chuyển đổi"] as const;

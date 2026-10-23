@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import type { ComponentDocEn } from "../types";
-import { COMPONENT_META_BY_SLUG, loadComponentDoc, loadComponentDocEn, readComponentDoc, translateComponentDoc } from "./index";
-import { COMPONENTS_TRANSLATED } from "./translated";
+import { COMPONENT_META_BY_SLUG, COMPONENTS_META, loadComponentDoc, loadComponentDocEn, readComponentDoc, translateComponentDoc } from "./index";
+
+// Plugin yugenDocsMeta đánh dấu `translated` từ các file en/ (đọc tĩnh) — phải khớp với nội dung thật của các file.
+const TRANSLATED = COMPONENTS_META.filter((m) => m.translated).map((m) => m.slug);
 
 // Bản tiếng Anh của trang component (#69): en/<file>.ts cùng tên với file registry chứa component.
 const enFiles = import.meta.glob<{ en: Record<string, ComponentDocEn> }>("./en/*.ts", { eager: true });
@@ -9,7 +11,7 @@ const VIETNAMESE = /[ăâđêôơưạảấầẩẫậắằẳẵặẹẻẽ
 
 // Nạp file registry (demo của cả nhóm component) mất vài giây khi cả bộ test chạy song song.
 describe("bản tiếng Anh của trang component", { timeout: 30_000 }, () => {
-  it("COMPONENTS_TRANSLATED khớp đúng các mục trong en/, mỗi mục nằm cùng tên file với registry", () => {
+  it("meta.translated khớp đúng các mục trong en/, mỗi mục nằm cùng tên file với registry", () => {
     const found: string[] = [];
     for (const [file, mod] of Object.entries(enFiles)) {
       for (const slug of Object.keys(mod.en)) {
@@ -17,10 +19,10 @@ describe("bản tiếng Anh của trang component", { timeout: 30_000 }, () => {
         found.push(slug);
       }
     }
-    expect(found.sort()).toEqual([...COMPONENTS_TRANSLATED].sort());
+    expect(found.sort()).toEqual([...TRANSLATED].sort());
   });
 
-  it.each([...COMPONENTS_TRANSLATED])("%s: đủ mục, không sót tiếng Việt", async (slug) => {
+  it.each(TRANSLATED)("%s: đủ mục, không sót tiếng Việt", async (slug) => {
     const doc = await loadComponentDoc(slug);
     const en = (await loadComponentDocEn(slug))!;
     expect(en.description.trim()).not.toBe("");
@@ -44,7 +46,7 @@ describe("bản tiếng Anh của trang component", { timeout: 30_000 }, () => {
   });
 
   it("trang tiếng Anh dùng bản dịch, giữ demo và code", async () => {
-    const slug = [...COMPONENTS_TRANSLATED][0];
+    const slug = TRANSLATED[0];
     if (!slug) return;
     const doc = await loadComponentDoc(slug);
     const en = translateComponentDoc(doc, (await loadComponentDocEn(slug))!);

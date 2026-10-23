@@ -2,8 +2,7 @@ import { Suspense, useState } from "react";
 import { ChevronRight12Regular } from "@fluentui/react-icons";
 import { CodeTabs, ErrorState, PageProgressFallback, SkeletonText, type YugenTheme } from "@/components/ui";
 import type { AppBrand } from "@/hooks/useAppearance";
-import { COMPONENT_META_BY_SLUG, readComponentDoc, retryComponentDoc } from "../registry";
-import { COMPONENTS_TRANSLATED } from "../registry/translated";
+import { COMPONENT_META_BY_SLUG, isTranslated, readComponentDoc, retryComponentDoc } from "../registry";
 import { DoDont, DocSection, ExampleFrame, ExampleGrid, OnThisPage, PageHeader, PropsTable } from "../blocks";
 import { installSnippets } from "../install";
 import { useLocale } from "../i18n";
@@ -27,7 +26,7 @@ function ComponentBody({ slug, theme, brand, onRetry }: { slug: string; theme: Y
   const { t, locale } = useLocale();
   const { doc, error } = readComponentDoc(slug, locale);
   // Giao diện tiếng Anh: phần chữ chưa dịch và nội dung demo (viết bằng tiếng Việt) mang lang="vi" cho trình đọc màn hình.
-  const contentLang = locale === "en" && !COMPONENTS_TRANSLATED.has(slug) ? "vi" : undefined;
+  const contentLang = locale === "en" && !isTranslated(slug) ? "vi" : undefined;
   const demoLang = locale === "en" ? "vi" : undefined;
   if (!doc)
     return (
@@ -69,7 +68,7 @@ function ComponentDescription({ slug }: { slug: string }) {
   const { locale } = useLocale();
   const description = readComponentDoc(slug, locale).doc?.description;
   // Mô tả chưa dịch: đánh dấu lang="vi" khi giao diện là tiếng Anh.
-  return locale === "en" && !COMPONENTS_TRANSLATED.has(slug) ? <span lang="vi">{description}</span> : <>{description}</>;
+  return locale === "en" && !isTranslated(slug) ? <span lang="vi">{description}</span> : <>{description}</>;
 }
 
 export function ComponentPage({ slug, theme, brand }: { slug: string; theme: YugenTheme; brand: AppBrand }) {
