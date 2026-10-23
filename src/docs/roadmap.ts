@@ -41,7 +41,7 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       en: "Stable API. No fixed date: ships when the readiness checklist is done.",
       items: [
         { status: "planned", issue: 65, vi: "Rà soát API, gỡ deprecation, quyết định về React 18 và class spacing viết hoa", en: "API review, deprecations removed, decisions on React 18 and upper-case spacing" },
-        { status: "doing", issue: 63, vi: "SEO: URL theo đường dẫn, prerender từng trang, sitemap", en: "SEO: path URLs, prerendered pages, sitemap" },
+        { status: "done", issue: 63, vi: "SEO: URL theo đường dẫn, prerender từng trang, sitemap", en: "SEO: path URLs, prerendered pages, sitemap" },
       ],
     },
   ],

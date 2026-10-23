@@ -15,7 +15,7 @@ Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. 
 API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện hoàn tất.
 
 - [ ] Rà soát API, gỡ deprecation, quyết định về React 18 và class spacing viết hoa (#65)
-- [~] SEO: URL theo đường dẫn, prerender từng trang, sitemap (#63)
+- [x] SEO: URL theo đường dẫn, prerender từng trang, sitemap (#63)
 
 ## Tiếp theo
 
