@@ -4,6 +4,10 @@ import { Dismiss16Regular, Lightbulb16Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { Button } from "../Button/Button";
 import { Popover, PopoverClose, PopoverSurface, PopoverTrigger, type PopoverSurfaceProps } from "../Popover/Popover";
+import { useYugenMessages } from "../YugenProvider/context";
+import { teachingPopoverMessages } from "./messages";
+
+export { teachingPopoverMessages, teachingPopoverMessagesEn, type TeachingPopoverMessages } from "./messages";
 
 export type TeachingPopoverAppearance = "normal" | "brand";
 
@@ -68,18 +72,20 @@ export interface TeachingPopoverHeaderProps extends React.HTMLAttributes<HTMLDiv
   icon?: React.ReactNode;
   /** Hiện nút đóng. Mặc định true. */
   dismissible?: boolean;
+  /** aria-label nút đóng. Mặc định lấy từ `messages.teachingPopover.close`. */
   dismissLabel?: string;
 }
 
 export function TeachingPopoverHeader({
   icon = <Lightbulb16Regular />,
   dismissible = true,
-  dismissLabel = "Đóng",
+  dismissLabel,
   className,
   children,
   ...props
 }: TeachingPopoverHeaderProps) {
   const brand = useTeachingAppearance() === "brand";
+  const msg = useYugenMessages("teachingPopover", teachingPopoverMessages);
   return (
     <div
       className={cn(
@@ -101,7 +107,7 @@ export function TeachingPopoverHeader({
             appearance="transparent"
             size="small"
             icon={<Dismiss16Regular />}
-            aria-label={dismissLabel}
+            aria-label={dismissLabel ?? msg.close}
             className={cn(
               "-me-1",
               brand
@@ -194,10 +200,13 @@ export interface TeachingPopoverCarouselProps extends Omit<React.HTMLAttributes<
   onStepChange?: (step: number) => void;
   /** Bấm "Hoàn tất" ở bước cuối (popover tự đóng). */
   onFinish?: () => void;
+  /** Mặc định lấy từ `messages.teachingPopover.next`. */
   nextLabel?: string;
+  /** Mặc định lấy từ `messages.teachingPopover.previous`. */
   previousLabel?: string;
+  /** Mặc định lấy từ `messages.teachingPopover.finish`. */
   finishLabel?: string;
-  /** Nút phụ ở bước đầu (đóng popover). */
+  /** Nút phụ ở bước đầu (đóng popover). Mặc định lấy từ `messages.teachingPopover.later`. */
   dismissLabel?: string;
   /** Mỗi phần tử con là một bước. */
   children: React.ReactNode;
@@ -209,14 +218,15 @@ export function TeachingPopoverCarousel({
   defaultStep = 0,
   onStepChange,
   onFinish,
-  nextLabel = "Tiếp",
-  previousLabel = "Quay lại",
-  finishLabel = "Hoàn tất",
-  dismissLabel = "Để sau",
+  nextLabel,
+  previousLabel,
+  finishLabel,
+  dismissLabel,
   className,
   children,
   ...props
 }: TeachingPopoverCarouselProps) {
+  const msg = useYugenMessages("teachingPopover", teachingPopoverMessages);
   const steps = React.Children.toArray(children);
   const count = steps.length;
   const [uncontrolled, setUncontrolled] = React.useState(defaultStep);
@@ -238,8 +248,8 @@ export function TeachingPopoverCarousel({
         <div
           key={current}
           role="group"
-          aria-roledescription="bước"
-          aria-label={`Bước ${current + 1}/${count}`}
+          aria-roledescription={msg.stepRoleDescription}
+          aria-label={msg.step(current + 1, count)}
           className="animate-fade-in motion-reduce:animate-none"
         >
           {steps[current]}
@@ -255,7 +265,7 @@ export function TeachingPopoverCarousel({
             <button
               key={index}
               type="button"
-              aria-label={`Đến bước ${index + 1}`}
+              aria-label={msg.goToStep(index + 1)}
               aria-current={index === current ? "step" : undefined}
               onClick={() => go(index)}
               className="group/dot flex size-4 items-center justify-center rounded-circular"
@@ -279,7 +289,7 @@ export function TeachingPopoverCarousel({
           {first ? (
             <PopoverClose asChild>
               <Button appearance={buttons.secondary.appearance} className={cn("min-w-0", buttons.secondary.className)}>
-                {dismissLabel}
+                {dismissLabel ?? msg.later}
               </Button>
             </PopoverClose>
           ) : (
@@ -288,13 +298,13 @@ export function TeachingPopoverCarousel({
               className={cn("min-w-0", buttons.secondary.className)}
               onClick={() => go(current - 1)}
             >
-              {previousLabel}
+              {previousLabel ?? msg.previous}
             </Button>
           )}
           {last ? (
             <PopoverClose asChild>
               <Button appearance={buttons.primary.appearance} className={cn("min-w-0", buttons.primary.className)} onClick={onFinish}>
-                {finishLabel}
+                {finishLabel ?? msg.finish}
               </Button>
             </PopoverClose>
           ) : (
@@ -303,7 +313,7 @@ export function TeachingPopoverCarousel({
               className={cn("min-w-0", buttons.primary.className)}
               onClick={() => go(current + 1)}
             >
-              {nextLabel}
+              {nextLabel ?? msg.next}
             </Button>
           )}
         </div>

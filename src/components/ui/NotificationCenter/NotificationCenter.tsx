@@ -24,6 +24,10 @@ import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger 
 import { useMediaQuery } from "../Sheet/useMediaQuery";
 import { SkeletonList } from "../Skeleton/Skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../Tabs/Tabs";
+import { useYugen, useYugenMessages } from "../YugenProvider/context";
+import { notificationCenterMessages, type NotificationCenterMessages } from "./messages";
+
+export { notificationCenterMessages, notificationCenterMessagesEn, type NotificationCenterMessages } from "./messages";
 
 export type NotificationIntent = "info" | "success" | "warning" | "error";
 
@@ -47,43 +51,75 @@ export interface NotificationItem {
 /* ================================================================ Thời gian */
 
 const DAY = 86_400_000;
-// Formatter dùng chung: toLocale*String(…, options) tạo formatter mới cho mỗi thông báo mỗi lần render.
-const TIME = new Intl.DateTimeFormat("vi-VN", { hour: "2-digit", minute: "2-digit" });
-const WEEKDAY = new Intl.DateTimeFormat("vi-VN", { weekday: "long", day: "numeric", month: "numeric" });
-const DAY_MONTH = new Intl.DateTimeFormat("vi-VN", { day: "numeric", month: "numeric" });
-const DAY_MONTH_YEAR = new Intl.DateTimeFormat("vi-VN", { day: "numeric", month: "numeric", year: "numeric" });
+// Formatter dùng chung theo locale: toLocale*String(…, options) tạo formatter mới cho mỗi thông báo mỗi lần render.
+interface DateFormats {
+  time: Intl.DateTimeFormat;
+  weekday: Intl.DateTimeFormat;
+  dayMonth: Intl.DateTimeFormat;
+  dayMonthYear: Intl.DateTimeFormat;
+}
+const FORMATS = new Map<string, DateFormats>();
+function dateFormats(locale: string): DateFormats {
+  let f = FORMATS.get(locale);
+  if (!f) {
+    f = {
+      time: new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit" }),
+      weekday: new Intl.DateTimeFormat(locale, { weekday: "long", day: "numeric", month: "numeric" }),
+      dayMonth: new Intl.DateTimeFormat(locale, { day: "numeric", month: "numeric" }),
+      dayMonthYear: new Intl.DateTimeFormat(locale, { day: "numeric", month: "numeric", year: "numeric" }),
+    };
+    FORMATS.set(locale, f);
+  }
+  return f;
+}
+
+/** Locale Intl và chuỗi thời gian cho các hàm định dạng — mặc định "vi-VN" và `notificationCenterMessages`. */
+export interface NotificationTimeOptions {
+  locale?: string;
+  messages?: Pick<NotificationCenterMessages, "justNow" | "minutesAgo" | "hoursAgo" | "today" | "yesterday">;
+}
+
 const toDate = (time: NotificationItem["time"]) => (time instanceof Date ? time : new Date(time));
 const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
 
 /** "Vừa xong" · "5 phút trước" · "3 giờ trước" · "14:05" (ngày khác). */
-export function formatRelativeTime(time: NotificationItem["time"], now: Date | number): string {
+export function formatRelativeTime(
+  time: NotificationItem["time"],
+  now: Date | number,
+  { locale = "vi-VN", messages = notificationCenterMessages }: NotificationTimeOptions = {},
+): string {
   const date = toDate(time);
   const ref = typeof now === "number" ? now : now.getTime();
   const diff = ref - date.getTime();
   if (Number.isNaN(diff)) return "";
-  if (diff >= 0 && diff < 60_000) return "Vừa xong";
-  if (diff >= 0 && diff < 3_600_000) return `${Math.floor(diff / 60_000)} phút trước`;
-  if (diff >= 0 && diff < DAY && startOfDay(date) === startOfDay(new Date(ref))) return `${Math.floor(diff / 3_600_000)} giờ trước`;
-  return TIME.format(date);
+  if (diff >= 0 && diff < 60_000) return messages.justNow;
+  if (diff >= 0 && diff < 3_600_000) return messages.minutesAgo(Math.floor(diff / 60_000));
+  if (diff >= 0 && diff < DAY && startOfDay(date) === startOfDay(new Date(ref))) return messages.hoursAgo(Math.floor(diff / 3_600_000));
+  return dateFormats(locale).time.format(date);
 }
 
 /** "Hôm nay" · "Hôm qua" · "Thứ Hai, 12/10" (trong tuần) · "12/10/2025". */
-export function formatNotificationDay(time: NotificationItem["time"], now: Date | number): string {
+export function formatNotificationDay(
+  time: NotificationItem["time"],
+  now: Date | number,
+  { locale = "vi-VN", messages = notificationCenterMessages }: NotificationTimeOptions = {},
+): string {
   const date = toDate(time);
   const ref = new Date(typeof now === "number" ? now : now.getTime());
   const days = Math.round((startOfDay(ref) - startOfDay(date)) / DAY);
-  if (days === 0) return "Hôm nay";
-  if (days === 1) return "Hôm qua";
-  if (days > 1 && days < 7) return WEEKDAY.format(date);
-  return (date.getFullYear() === ref.getFullYear() ? DAY_MONTH : DAY_MONTH_YEAR).format(date);
+  if (days === 0) return messages.today;
+  if (days === 1) return messages.yesterday;
+  const f = dateFormats(locale);
+  if (days > 1 && days < 7) return f.weekday.format(date);
+  return (date.getFullYear() === ref.getFullYear() ? f.dayMonth : f.dayMonthYear).format(date);
 }
 
 /** Nhóm thông báo theo ngày (mới nhất trước). */
-export function groupNotificationsByDay(items: NotificationItem[], now: Date | number) {
+export function groupNotificationsByDay(items: NotificationItem[], now: Date | number, options?: NotificationTimeOptions) {
   const sorted = [...items].sort((a, b) => toDate(b.time).getTime() - toDate(a.time).getTime());
   const groups: { label: string; items: NotificationItem[] }[] = [];
   for (const item of sorted) {
-    const label = formatNotificationDay(item.time, now);
+    const label = formatNotificationDay(item.time, now, options);
     const last = groups[groups.length - 1];
     if (last && last.label === label) last.items.push(item);
     else groups.push({ label, items: [item] });
@@ -152,9 +188,11 @@ interface ItemProps {
   onDismiss?: (id: string) => void;
   onItemClick?: (item: NotificationItem) => void;
   onBeforeRemove: (li: HTMLLIElement | null) => void;
+  msg: NotificationCenterMessages;
+  locale: string;
 }
 
-function NotificationRow({ item, now, onMarkRead, onDismiss, onItemClick, onBeforeRemove }: ItemProps) {
+function NotificationRow({ item, now, onMarkRead, onDismiss, onItemClick, onBeforeRemove, msg, locale }: ItemProps) {
   const liRef = React.useRef<HTMLLIElement>(null);
   const unread = !item.read;
   const date = toDate(item.time);
@@ -198,11 +236,11 @@ function NotificationRow({ item, now, onMarkRead, onDismiss, onItemClick, onBefo
           ) : (
             <span className={titleClass}>{item.title}</span>
           )}
-          {unread && <span className="sr-only">, chưa đọc</span>}
+          {unread && <span className="sr-only">{msg.unreadSuffix}</span>}
         </p>
         {item.body && <p className="line-clamp-2 text-caption1 text-foreground-2">{item.body}</p>}
         <time dateTime={Number.isNaN(date.getTime()) ? undefined : date.toISOString()} className="text-caption1 text-foreground-3">
-          {now === null ? "" : formatRelativeTime(date, now)}
+          {now === null ? "" : formatRelativeTime(date, now, { locale, messages: msg })}
         </time>
       </div>
       <div className="relative z-10 flex shrink-0 flex-col items-end gap-1">
@@ -213,8 +251,8 @@ function NotificationRow({ item, now, onMarkRead, onDismiss, onItemClick, onBefo
               size="small"
               appearance="subtle"
               icon={<MailRead16Regular />}
-              aria-label={`Đánh dấu đã đọc: ${item.title}`}
-              title="Đánh dấu đã đọc"
+              aria-label={msg.markReadItem(item.title)}
+              title={msg.markRead}
               onClick={() => onMarkRead(item.id)}
             />
           )}
@@ -223,8 +261,8 @@ function NotificationRow({ item, now, onMarkRead, onDismiss, onItemClick, onBefo
               size="small"
               appearance="subtle"
               icon={<Dismiss16Regular />}
-              aria-label={`Bỏ thông báo: ${item.title}`}
-              title="Bỏ thông báo"
+              aria-label={msg.dismissItem(item.title)}
+              title={msg.dismiss}
               onClick={() => {
                 onBeforeRemove(liRef.current);
                 onDismiss(item.id);
@@ -286,6 +324,8 @@ export const NotificationPanel = React.forwardRef<HTMLDivElement, NotificationPa
   ) => {
     const uid = React.useId();
     const now = useNow(nowProp);
+    const { locale } = useYugen();
+    const msg = useYugenMessages("notificationCenter", notificationCenterMessages);
     const [innerFilter, setInnerFilter] = React.useState<NotificationFilter>(defaultFilter);
     const filter = filterProp ?? innerFilter;
     const showSkeleton = useSpinDelay(loading);
@@ -307,7 +347,7 @@ export const NotificationPanel = React.forwardRef<HTMLDivElement, NotificationPa
     }, [items]);
 
     const renderList = (list: NotificationItem[], which: NotificationFilter) => {
-      if (error) return <ErrorState size="small" title="Không tải được thông báo" description={error} onRetry={onRetry} />;
+      if (error) return <ErrorState size="small" title={msg.loadError} description={error} onRetry={onRetry} />;
       if (loading) return showSkeleton ? <SkeletonList rows={4} avatarSize={32} className="p-4" /> : null;
       if (list.length === 0) {
         return (
@@ -316,26 +356,26 @@ export const NotificationPanel = React.forwardRef<HTMLDivElement, NotificationPa
               <EmptyMedia>
                 <AlertOff20Regular />
               </EmptyMedia>
-              <EmptyTitle className="text-subtitle2">{which === "unread" ? "Bạn đã đọc hết" : "Chưa có thông báo"}</EmptyTitle>
+              <EmptyTitle className="text-subtitle2">{which === "unread" ? msg.emptyUnreadTitle : msg.emptyTitle}</EmptyTitle>
               <EmptyDescription>
-                {which === "unread" ? "Không còn thông báo chưa đọc." : "Thông báo mới sẽ xuất hiện ở đây."}
+                {which === "unread" ? msg.emptyUnreadDescription : msg.emptyDescription}
               </EmptyDescription>
             </EmptyHeader>
           </Empty>
         );
       }
-      const rowProps = { now, onMarkRead, onDismiss, onItemClick, onBeforeRemove };
+      const rowProps = { now, onMarkRead, onDismiss, onItemClick, onBeforeRemove, msg, locale };
       // Chưa biết "bây giờ" (SSR, trước mount) → danh sách phẳng, không nhãn ngày để tránh lệch hydration.
       if (now === null) {
         return (
-          <ul aria-label="Thông báo">
+          <ul aria-label={msg.title}>
             {list.map((item) => (
               <NotificationRow key={item.id} item={item} {...rowProps} />
             ))}
           </ul>
         );
       }
-      return groupNotificationsByDay(list, now).map((group, g) => (
+      return groupNotificationsByDay(list, now, { locale, messages: msg }).map((group, g) => (
         <div key={group.label} role="group" aria-labelledby={`${uid}-${which}-${g}`}>
           <h3
             id={`${uid}-${which}-${g}`}
@@ -358,7 +398,7 @@ export const NotificationPanel = React.forwardRef<HTMLDivElement, NotificationPa
           <div className="min-w-0 flex-1">{heading}</div>
           {onMarkAllRead && (
             <Button size="small" appearance="subtle" icon={<CheckmarkCircle16Regular />} disabled={unread === 0} onClick={onMarkAllRead}>
-              Đánh dấu tất cả đã đọc
+              {msg.markAllRead}
             </Button>
           )}
         </div>
@@ -372,10 +412,11 @@ export const NotificationPanel = React.forwardRef<HTMLDivElement, NotificationPa
           }}
           className="flex min-h-0 flex-1 flex-col"
         >
-          <TabsList size="small" aria-label="Lọc thông báo" className="shrink-0 border-b border-stroke-2 px-2">
-            <TabsTrigger value="all">Tất cả</TabsTrigger>
+          <TabsList size="small" aria-label={msg.filter} className="shrink-0 border-b border-stroke-2 px-2">
+            <TabsTrigger value="all">{msg.all}</TabsTrigger>
             <TabsTrigger value="unread">
-              Chưa đọc{unread > 0 ? ` (${unread})` : ""}
+              {msg.unread}
+              {unread > 0 ? ` (${unread})` : ""}
             </TabsTrigger>
           </TabsList>
           {(["all", "unread"] as const).map((which) => (
@@ -404,7 +445,7 @@ export interface NotificationCenterProps
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
-  /** Tiêu đề bảng và tên nút chuông. Mặc định "Thông báo". */
+  /** Tiêu đề bảng và tên nút chuông. Mặc định lấy từ `messages.notificationCenter.title` ("Thông báo"). */
   title?: string;
   /** auto: Popover khi rộng ≥ breakpoint, bottom sheet khi hẹp hơn. */
   mode?: "auto" | "popover" | "sheet";
@@ -423,7 +464,7 @@ export const NotificationCenter = React.forwardRef<HTMLButtonElement, Notificati
       open: openProp,
       defaultOpen = false,
       onOpenChange,
-      title = "Thông báo",
+      title: titleProp,
       mode = "auto",
       breakpoint = 768,
       announce: announceNew = true,
@@ -437,6 +478,8 @@ export const NotificationCenter = React.forwardRef<HTMLButtonElement, Notificati
     ref,
   ) => {
     const { items } = panelProps;
+    const msg = useYugenMessages("notificationCenter", notificationCenterMessages);
+    const title = titleProp ?? msg.title;
     const [innerOpen, setInnerOpen] = React.useState(defaultOpen);
     const open = openProp ?? innerOpen;
     const setOpen = (next: boolean) => {
@@ -460,18 +503,18 @@ export const NotificationCenter = React.forwardRef<HTMLButtonElement, Notificati
       const fresh = items.filter((n) => !known.has(n.id) && !n.read);
       items.forEach((n) => known.add(n.id));
       if (announceNew && fresh.length > 0) {
-        announce(fresh.length === 1 ? `Thông báo mới: ${fresh[0].title}` : `${fresh.length} thông báo mới`, {
+        announce(fresh.length === 1 ? msg.announceOne(fresh[0].title) : msg.announceMany(fresh.length), {
           batchId: "yugen-notification-center",
         });
       }
-    }, [items, announceNew, announce]);
+    }, [items, announceNew, announce, msg]);
 
     const trigger = (
       <Button
         ref={ref}
         appearance="subtle"
         icon={<Alert20Regular />}
-        aria-label={unread > 0 ? `${title}, ${unread} chưa đọc` : title}
+        aria-label={unread > 0 ? msg.triggerUnread(title, unread) : title}
         title={title}
         disabled={disabled}
         style={style}
@@ -498,7 +541,7 @@ export const NotificationCenter = React.forwardRef<HTMLButtonElement, Notificati
               className="pb-0"
               action={
                 <SheetClose asChild>
-                  <Button appearance="subtle" icon={<Dismiss20Regular />} aria-label="Đóng" />
+                  <Button appearance="subtle" icon={<Dismiss20Regular />} aria-label={msg.close} />
                 </SheetClose>
               }
             >

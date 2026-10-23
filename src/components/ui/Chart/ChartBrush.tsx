@@ -1,6 +1,8 @@
 import * as React from "react";
 import { ArrowReset20Regular } from "@fluentui/react-icons";
 import { Button } from "../Button/Button";
+import { useYugenMessages } from "../YugenProvider/context";
+import { chartMessages } from "./messages";
 import { ChartFocusRing } from "./ChartParts";
 import { linePath, linearScale, slotVar, useElementWidth, type ChartSlot, type Point } from "./chartUtils";
 import { moveDomain, nearestIndex, resizeDomain, type ChartDomain } from "./chartMath";
@@ -39,6 +41,7 @@ type DragMode = "move" | "start" | "end";
  * RTL: dải tổng quan luôn LTR như vùng vẽ (trục thời gian không lật), nên ←/→ luôn đi đúng chiều trên màn hình.
  */
 export function ChartBrush({ count, positions, lines = [], value, onValueChange, labels, height = 48, minSpan = 1, className }: ChartBrushProps) {
+  const msg = useYugenMessages("chart", chartMessages);
   const [wrapRef, width] = useElementWidth<HTMLDivElement>();
   const [focused, setFocused] = React.useState(false);
   const drag = React.useRef<{ mode: DragMode; anchor: number; from: ChartDomain } | null>(null);
@@ -175,8 +178,8 @@ export function ChartBrush({ count, positions, lines = [], value, onValueChange,
             <rect
               role="slider"
               tabIndex={0}
-              aria-label="Vùng xem"
-              aria-roledescription="cửa sổ thu phóng"
+              aria-label={msg.brush}
+              aria-roledescription={msg.brushRoleDescription}
               aria-valuemin={0}
               aria-valuemax={last}
               aria-valuenow={s}
@@ -202,10 +205,10 @@ export function ChartBrush({ count, positions, lines = [], value, onValueChange,
       </div>
       <div className="flex flex-wrap items-center justify-between gap-2 text-caption1 text-foreground-3">
         <span className="tabular-nums">
-          Đang xem <bdi className="text-foreground-2">{rangeText}</bdi> · {e - s + 1}/{count} mốc
+          {msg.brushViewing} <bdi className="text-foreground-2">{rangeText}</bdi> · {msg.brushPoints(e - s + 1, count)}
         </span>
         <Button size="small" appearance="subtle" icon={<ArrowReset20Regular />} disabled={full} onClick={() => onValueChange([0, last])}>
-          Đặt lại
+          {msg.brushReset}
         </Button>
       </div>
     </div>

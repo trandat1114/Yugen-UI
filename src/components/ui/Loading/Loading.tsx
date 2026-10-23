@@ -10,7 +10,32 @@ import { Fade } from "../Motion/Motion";
 import { SkeletonText } from "../Skeleton/Skeleton";
 import { Spinner, type SpinnerSize } from "../Spinner/Spinner";
 import { toast } from "../Toast/Toast";
-import { usePortalThemeProps } from "../YugenProvider/context";
+import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
+import {
+  asyncContentMessages,
+  errorStateMessages,
+  loadingOverlayMessages,
+  optimisticListMessages,
+  pageProgressMessages,
+} from "./messages";
+
+export {
+  asyncContentMessages,
+  asyncContentMessagesEn,
+  errorStateMessages,
+  errorStateMessagesEn,
+  loadingOverlayMessages,
+  loadingOverlayMessagesEn,
+  optimisticListMessages,
+  optimisticListMessagesEn,
+  pageProgressMessages,
+  pageProgressMessagesEn,
+  type AsyncContentMessages,
+  type ErrorStateMessages,
+  type LoadingOverlayMessages,
+  type OptimisticListMessages,
+  type PageProgressMessages,
+} from "./messages";
 
 /** Yugen Labs — Wait UX: các khối dựng cho trải nghiệm chờ (delay, overlay, tiến trình trang, trạng thái bất đồng bộ, optimistic). */
 
@@ -54,7 +79,7 @@ export function useSpinDelay(loading: boolean, { delay = 300, minDuration = 500 
 export interface LoadingOverlayProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Vùng đang tải. Gắn `aria-busy` lên vùng ngay lập tức; lớp phủ hiện theo delay. */
   loading: boolean;
-  /** Nhãn dưới Spinner, đồng thời được đọc cho trình đọc màn hình khi lớp phủ hiện. */
+  /** Nhãn dưới Spinner, đồng thời được đọc cho trình đọc màn hình khi lớp phủ hiện. Mặc định lấy từ `messages.loadingOverlay.label`. */
   label?: React.ReactNode;
   /** Chờ (ms) trước khi phủ. Mặc định 0. */
   delay?: number;
@@ -68,12 +93,14 @@ export interface LoadingOverlayProps extends React.HTMLAttributes<HTMLDivElement
 /** Phủ một vùng (nội dung cũ vẫn giữ chỗ bên dưới) bằng bề mặt mờ + Spinner + nhãn. */
 export const LoadingOverlay = React.forwardRef<HTMLDivElement, LoadingOverlayProps>(
   (
-    { loading, label = "Đang tải…", delay = 0, minDuration, spinnerSize = "medium", overlayClassName, className, children, ...props },
+    { loading, label: labelProp, delay = 0, minDuration, spinnerSize = "medium", overlayClassName, className, children, ...props },
     ref,
   ) => {
+    const msg = useYugenMessages("loadingOverlay", loadingOverlayMessages);
+    const label = labelProp === undefined ? msg.label : labelProp;
     const shown = useSpinDelay(loading, { delay, minDuration: minDuration ?? (delay > 0 ? 500 : 0) });
     const { announce } = useAnnounce();
-    const spoken = typeof label === "string" ? label : "Đang tải";
+    const spoken = typeof label === "string" ? label : msg.announcement;
 
     React.useEffect(() => {
       if (shown) announce(spoken);
@@ -213,16 +240,17 @@ export interface PageProgressProps extends Omit<React.HTMLAttributes<HTMLDivElem
   position?: "fixed" | "absolute";
   /** medium 2px · large 4px. */
   thickness?: "medium" | "large";
-  /** aria-label của progressbar. */
+  /** aria-label của progressbar. Mặc định lấy từ `messages.pageProgress.label`. */
   label?: string;
 }
 
 /** Thanh tiến trình mảnh màu brand ở mép trên trang (chuyển route, tải nền). */
 export const PageProgress = React.forwardRef<HTMLDivElement, PageProgressProps>(
   (
-    { value, active, controller = pageProgress, position = "fixed", thickness = "medium", label = "Đang tải trang", className, ...props },
+    { value, active, controller = pageProgress, position = "fixed", thickness = "medium", label, className, ...props },
     ref,
   ) => {
+    const msg = useYugenMessages("pageProgress", pageProgressMessages);
     const [local] = React.useState(createPageProgress);
     const store = value !== undefined || active !== undefined ? local : controller;
     const themeProps = usePortalThemeProps();
@@ -248,7 +276,7 @@ export const PageProgress = React.forwardRef<HTMLDivElement, PageProgressProps>(
         <div
           ref={ref}
           role="progressbar"
-          aria-label={label}
+          aria-label={label ?? msg.label}
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={snap.trickling ? undefined : Math.round(snap.value * 100)}
@@ -305,10 +333,13 @@ function isThenable(value: unknown): value is PromiseLike<unknown> {
 
 export interface ErrorStateProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
   icon?: React.ReactNode;
+  /** Mặc định lấy từ `messages.errorState.title`. */
   title?: React.ReactNode;
+  /** Mặc định lấy từ `messages.errorState.description`; `null` để ẩn. */
   description?: React.ReactNode;
   /** Hiện nút "Thử lại". Trả về Promise → nút tự ở trạng thái loading tới khi Promise xong. */
   onRetry?: () => void | Promise<unknown>;
+  /** Mặc định lấy từ `messages.errorState.retry`. */
   retryLabel?: React.ReactNode;
   /** Ép nút thử lại ở trạng thái loading (khi trạng thái nằm ở nơi khác). */
   retrying?: boolean;
@@ -325,10 +356,10 @@ export const ErrorState = React.forwardRef<HTMLDivElement, ErrorStateProps>(
   (
     {
       icon,
-      title = "Không tải được nội dung",
-      description = "Đã có lỗi khi kết nối tới máy chủ. Kiểm tra mạng rồi thử lại.",
+      title: titleProp,
+      description: descriptionProp,
       onRetry,
-      retryLabel = "Thử lại",
+      retryLabel: retryLabelProp,
       retrying,
       secondaryAction,
       variant = "default",
@@ -338,6 +369,10 @@ export const ErrorState = React.forwardRef<HTMLDivElement, ErrorStateProps>(
     },
     ref,
   ) => {
+    const msg = useYugenMessages("errorState", errorStateMessages);
+    const title = titleProp === undefined ? msg.title : titleProp;
+    const description = descriptionProp === undefined ? msg.description : descriptionProp;
+    const retryLabel = retryLabelProp === undefined ? msg.retry : retryLabelProp;
     const [pending, setPending] = React.useState(false);
     const mounted = React.useRef(true);
     React.useEffect(() => {
@@ -439,7 +474,7 @@ export interface AsyncContentProps extends Omit<React.HTMLAttributes<HTMLDivElem
   /** Hiển thị khi idle (chưa tải). Mặc định không có gì. */
   idle?: React.ReactNode;
   onRetry?: () => void | Promise<unknown>;
-  /** Câu được đọc cho trình đọc màn hình khi khung xương hiện. */
+  /** Câu được đọc cho trình đọc màn hình khi khung xương hiện. Mặc định lấy từ `messages.asyncContent.loading`. */
   loadingLabel?: string;
   /** Xem useSpinDelay. Mặc định 300. */
   delay?: number;
@@ -448,14 +483,15 @@ export interface AsyncContentProps extends Omit<React.HTMLAttributes<HTMLDivElem
 }
 
 function DefaultEmpty() {
+  const msg = useYugenMessages("asyncContent", asyncContentMessages);
   return (
     <Empty>
       <EmptyHeader>
         <EmptyMedia>
           <DocumentSearch24Regular />
         </EmptyMedia>
-        <EmptyTitle>Chưa có dữ liệu</EmptyTitle>
-        <EmptyDescription>Khi có nội dung mới, chúng sẽ xuất hiện ở đây.</EmptyDescription>
+        <EmptyTitle>{msg.emptyTitle}</EmptyTitle>
+        <EmptyDescription>{msg.emptyDescription}</EmptyDescription>
       </EmptyHeader>
     </Empty>
   );
@@ -475,7 +511,7 @@ export const AsyncContent = React.forwardRef<HTMLDivElement, AsyncContentProps>(
       empty,
       idle = null,
       onRetry,
-      loadingLabel = "Đang tải…",
+      loadingLabel: loadingLabelProp,
       delay = 300,
       minDuration = 500,
       className,
@@ -485,6 +521,8 @@ export const AsyncContent = React.forwardRef<HTMLDivElement, AsyncContentProps>(
     },
     ref,
   ) => {
+    const msg = useYugenMessages("asyncContent", asyncContentMessages);
+    const loadingLabel = loadingLabelProp ?? msg.loading;
     const loading = status === "loading";
     const showLoader = useSpinDelay(loading, { delay, minDuration });
     // Trạng thái đã ổn định gần nhất — hiển thị tiếp trong khoảng delay thay vì nháy trống.
@@ -561,9 +599,9 @@ AsyncContent.displayName = "AsyncContent";
 /* ================================================================ useOptimisticList */
 
 export interface OptimisticOptions {
-  /** Tiêu đề toast khi thất bại. */
+  /** Tiêu đề toast khi thất bại. Mặc định lấy từ `messages.optimisticList.errorTitle`. */
   errorTitle?: React.ReactNode;
-  /** Nội dung toast khi thất bại. */
+  /** Nội dung toast khi thất bại. Mặc định lấy từ `messages.optimisticList.errorBody`. */
   errorBody?: React.ReactNode;
   /** false → không hiện toast (tự xử lý qua onError / giá trị trả về). */
   toast?: boolean;
@@ -584,6 +622,10 @@ export function useOptimisticList<T>(initial: T[] | (() => T[])) {
   const [base, setBase] = React.useState<T[]>(initial);
   const [queue, setQueue] = React.useState<PendingChange<T>[]>([]);
   const nextId = React.useRef(0);
+  // Ref thay cho dependency: `mutate` giữ nguyên tham chiếu kể cả khi messages đổi.
+  const msg = useYugenMessages("optimisticList", optimisticListMessages);
+  const msgRef = React.useRef(msg);
+  msgRef.current = msg;
   const items = React.useMemo(() => queue.reduce((list, change) => change.update(list), base), [base, queue]);
 
   const mutate = React.useCallback(async function run(
@@ -603,12 +645,13 @@ export function useOptimisticList<T>(initial: T[] | (() => T[])) {
       setQueue((q) => q.filter((change) => change.id !== id));
       options.onError?.(error);
       if (options.toast !== false) {
+        const m = msgRef.current;
         toast({
           intent: "error",
-          title: options.errorTitle ?? "Không lưu được thay đổi",
-          body: options.errorBody ?? "Thay đổi đã được hoàn tác.",
+          title: options.errorTitle ?? m.errorTitle,
+          body: options.errorBody ?? m.errorBody,
           timeout: -1,
-          action: { label: "Thử lại", altText: "Thực hiện lại thao tác vừa rồi", onClick: () => void run(update, commit, options) },
+          action: { label: m.retry, altText: m.retryAltText, onClick: () => void run(update, commit, options) },
         });
       }
       return false;

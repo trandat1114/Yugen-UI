@@ -10,12 +10,15 @@ import {
   ChevronDown20Regular,
   ChevronDown24Regular,
 } from "@fluentui/react-icons";
-import { usePortalThemeProps } from "../YugenProvider/context";
+import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { popoverSurfaceClass } from "@/components/ui/Popover/Popover";
 import { fieldAppearanceClass, type FieldAppearance } from "@/components/ui/Select/Select";
 import { listboxOptionClass } from "@/components/ui/Dropdown/Dropdown";
+import { comboboxMessages } from "./messages";
+
+export { comboboxMessages, comboboxMessagesEn, type ComboboxMessages } from "./messages";
 
 export interface ComboboxOption {
   value: string;
@@ -67,7 +70,7 @@ interface ComboboxBaseProps extends InputAttrs {
   size?: "small" | "medium" | "large";
   /** Cho phép giữ văn bản tự gõ không khớp option nào (Enter hoặc rời ô để xác nhận). */
   freeform?: boolean;
-  /** Nội dung khi không có kết quả lọc. */
+  /** Nội dung khi không có kết quả lọc. Mặc định lấy từ `messages.combobox.noResults`. */
   noResultsText?: React.ReactNode;
   /** Class cho bề mặt listbox. */
   listboxClassName?: string;
@@ -119,7 +122,7 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
     appearance = "outline",
     size = "medium",
     freeform = false,
-    noResultsText = "Không tìm thấy kết quả",
+    noResultsText,
     listboxClassName,
     className,
     disabled,
@@ -133,6 +136,7 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
     ...inputProps
   } = props;
 
+  const msg = useYugenMessages("combobox", comboboxMessages);
   const items = React.useMemo<NormalizedOption[]>(
     () => options.map((o) => (typeof o === "string" ? { value: o, label: o } : { ...o, label: o.label ?? o.value })),
     [options],
@@ -295,7 +299,7 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
             <button
               type="button"
               tabIndex={-1}
-              aria-label={open ? "Đóng danh sách" : "Mở danh sách"}
+              aria-label={open ? msg.closeList : msg.openList}
               disabled={disabled}
               onMouseDown={(e) => e.preventDefault()}
               onClick={(e) => {
@@ -337,7 +341,7 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
           >
             <CommandPrimitive.List ref={setListEl} aria-multiselectable={multiselect || undefined}>
               <CommandPrimitive.Empty className="px-2 py-1.5 text-body1 text-foreground-3">
-                {freeform && query?.trim() ? `Nhấn Enter để dùng “${query.trim()}”` : noResultsText}
+                {freeform && query?.trim() ? msg.useFreeform(query.trim()) : noResultsText === undefined ? msg.noResults : noResultsText}
               </CommandPrimitive.Empty>
               {groupOptions(filtered).map((group) => {
                 const rendered = group.items.map((item) => {

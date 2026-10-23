@@ -9,6 +9,10 @@ import {
 } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { Menu, MenuItem, MenuPopover, MenuTrigger } from "../Menu/Menu";
+import { useYugenMessages } from "../YugenProvider/context";
+import { breadcrumbMessages } from "./messages";
+
+export { breadcrumbMessages, breadcrumbMessagesEn, type BreadcrumbMessages } from "./messages";
 
 /** Fluent 2 Breadcrumb — https://fluent2.microsoft.design/components/web/react/core/breadcrumb/usage */
 type BreadcrumbSize = "small" | "medium" | "large";
@@ -49,6 +53,7 @@ export interface BreadcrumbProps extends React.HTMLAttributes<HTMLElement> {
   maxDisplayedItems?: number;
   /** Vị trí chèn nút "…" (số mục đầu được giữ lại). */
   overflowIndex?: number;
+  /** aria-label của nút "…". Mặc định lấy từ `messages.breadcrumb.overflow`. */
   overflowLabel?: string;
 }
 
@@ -60,13 +65,14 @@ export const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(
       items,
       maxDisplayedItems,
       overflowIndex = 1,
-      overflowLabel = "Hiện thêm mục",
+      overflowLabel,
       children,
-      "aria-label": ariaLabel = "Đường dẫn điều hướng",
+      "aria-label": ariaLabel,
       ...props
     },
     ref,
   ) => {
+    const msg = useYugenMessages("breadcrumb", breadcrumbMessages);
     let content: React.ReactNode = children;
 
     if (items) {
@@ -106,7 +112,7 @@ export const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(
 
     return (
       <BreadcrumbContext.Provider value={{ size }}>
-        <nav ref={ref} aria-label={ariaLabel} className={className} {...props}>
+        <nav ref={ref} aria-label={ariaLabel ?? msg.label} className={className} {...props}>
           <ol className="flex flex-wrap items-center">{content}</ol>
         </nav>
       </BreadcrumbContext.Provider>
@@ -196,18 +202,20 @@ export function BreadcrumbDivider({ className, ...props }: React.LiHTMLAttribute
 /** Nút "…" mở menu chứa các mục bị thu gọn. */
 export function BreadcrumbOverflow({
   items,
-  label = "Hiện thêm mục",
+  label,
   className,
 }: {
   items: BreadcrumbItemData[];
+  /** aria-label của nút. Mặc định lấy từ `messages.breadcrumb.overflow`. */
   label?: string;
   className?: string;
 }) {
   const { size } = React.useContext(BreadcrumbContext);
+  const msg = useYugenMessages("breadcrumb", breadcrumbMessages);
   return (
     <Menu>
       <MenuTrigger asChild>
-        <button type="button" aria-label={label} className={cn(buttonBase, BUTTON_SIZE[size], ICON_ONLY[size], buttonInteractive, className)}>
+        <button type="button" aria-label={label ?? msg.overflow} className={cn(buttonBase, BUTTON_SIZE[size], ICON_ONLY[size], buttonInteractive, className)}>
           {size === "small" ? <MoreHorizontal16Regular /> : <MoreHorizontal20Regular />}
         </button>
       </MenuTrigger>

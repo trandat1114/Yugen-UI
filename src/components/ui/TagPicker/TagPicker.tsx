@@ -4,13 +4,16 @@ import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { useDirection } from "@radix-ui/react-direction";
 import { Command as CommandPrimitive } from "cmdk";
 import { ChevronDown20Regular, ChevronDown24Regular } from "@fluentui/react-icons";
-import { usePortalThemeProps } from "../YugenProvider/context";
+import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { popoverSurfaceClass } from "@/components/ui/Popover/Popover";
 import { fieldAppearanceClass, type FieldAppearance } from "@/components/ui/Select/Select";
 import { cmdkGroupClass, cmdkOptionClass, normalizeSearchText } from "@/components/ui/Combobox/Combobox";
 import { Tag, TagGroup, type TagAppearance, type TagShape, type TagSize } from "@/components/ui/Tag/Tag";
+import { tagPickerMessages } from "./messages";
+
+export { tagPickerMessages, tagPickerMessagesEn, type TagPickerMessages } from "./messages";
 
 export interface TagPickerOption {
   value: string;
@@ -45,6 +48,7 @@ export interface TagPickerProps
   tagShape?: TagShape;
   /** Cho phép tạo tag từ văn bản tự gõ (Enter). */
   freeform?: boolean;
+  /** Nội dung khi không có kết quả lọc. Mặc định lấy từ `messages.tagPicker.noResults`. */
   noResultsText?: React.ReactNode;
   /** Class cho bề mặt listbox. */
   listboxClassName?: string;
@@ -67,7 +71,7 @@ export const TagPicker = React.forwardRef<HTMLInputElement, TagPickerProps>(
       tagAppearance,
       tagShape,
       freeform = false,
-      noResultsText = "Không tìm thấy kết quả",
+      noResultsText,
       listboxClassName,
       className,
       disabled,
@@ -77,6 +81,7 @@ export const TagPicker = React.forwardRef<HTMLInputElement, TagPickerProps>(
     },
     ref,
   ) => {
+    const msg = useYugenMessages("tagPicker", tagPickerMessages);
     const items = React.useMemo<NormalizedOption[]>(
       () => options.map((o) => (typeof o === "string" ? { value: o, label: o } : { ...o, label: o.label ?? o.value })),
       [options],
@@ -216,7 +221,7 @@ export const TagPicker = React.forwardRef<HTMLInputElement, TagPickerProps>(
                 {selected.length > 0 && (
                   <TagGroup
                     ref={tagsRef}
-                    aria-label="Mục đã chọn"
+                    aria-label={msg.selectedItems}
                     size={s.tag}
                     appearance={tagAppearance}
                     disabled={disabled}
@@ -244,7 +249,6 @@ export const TagPicker = React.forwardRef<HTMLInputElement, TagPickerProps>(
                           tabIndex={-1}
                           shape={tagShape}
                           media={opt?.media}
-                          dismissLabel="Gỡ"
                         >
                           {opt?.label ?? v}
                         </Tag>
@@ -282,7 +286,7 @@ export const TagPicker = React.forwardRef<HTMLInputElement, TagPickerProps>(
               <button
                 type="button"
                 tabIndex={-1}
-                aria-label={open ? "Đóng danh sách" : "Mở danh sách"}
+                aria-label={open ? msg.closeList : msg.openList}
                 disabled={disabled}
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={(e) => {
@@ -322,7 +326,7 @@ export const TagPicker = React.forwardRef<HTMLInputElement, TagPickerProps>(
             >
               <CommandPrimitive.List ref={setListEl} aria-multiselectable>
                 <CommandPrimitive.Empty className="px-2 py-1.5 text-body1 text-foreground-3">
-                  {freeform && query.trim() ? `Nhấn Enter để thêm “${query.trim()}”` : noResultsText}
+                  {freeform && query.trim() ? msg.addFreeform(query.trim()) : noResultsText === undefined ? msg.noResults : noResultsText}
                 </CommandPrimitive.Empty>
                 {groupOptions(available).map((group) => {
                   const rendered = group.items.map((item) => (

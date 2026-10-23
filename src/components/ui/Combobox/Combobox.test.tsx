@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Combobox, normalizeSearchText, type ComboboxProps } from "./Combobox";
+import { Combobox, comboboxMessagesEn, normalizeSearchText, type ComboboxProps } from "./Combobox";
+import { YugenProvider } from "../YugenProvider/YugenProvider";
 
 const CITIES = ["Hà Nội", "Hồ Chí Minh", "Đà Nẵng", "Huế", { value: "Cần Thơ", disabled: true }];
 
@@ -148,5 +149,19 @@ describe("Combobox", () => {
     expect(input).toBeDisabled();
     await user.click(input);
     expect(input).toHaveAttribute("aria-expanded", "false");
+  });
+});
+
+describe("Combobox messages", () => {
+  it("comboboxMessagesEn đổi nhãn nút và câu không có kết quả", async () => {
+    const user = userEvent.setup();
+    render(
+      <YugenProvider messages={{ combobox: comboboxMessagesEn }}>
+        <Combobox aria-label="City" options={CITIES} />
+      </YugenProvider>,
+    );
+    await user.type(screen.getByRole("combobox", { name: "City" }), "zzz");
+    expect(await screen.findByText("No results found")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Close list", hidden: true })).toBeInTheDocument();
   });
 });

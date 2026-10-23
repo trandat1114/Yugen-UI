@@ -1,6 +1,8 @@
 import * as React from "react";
 import { ArrowTrending16Regular, ArrowTrendingDown16Regular, Subtract16Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
+import { useYugen, useYugenMessages } from "../YugenProvider/context";
+import { chartMessages } from "./messages";
 import { ChartTooltip } from "./ChartParts";
 import {
   linePath,
@@ -29,6 +31,7 @@ export interface SparklineProps extends Omit<React.HTMLAttributes<HTMLSpanElemen
   /** Nhãn từng điểm (vd. tháng) cho tooltip. */
   labels?: string[];
   valueFormat?: ChartNumberFormat;
+  /** Locale cho Intl.NumberFormat. Mặc định lấy từ YugenProvider. */
   locale?: string;
   curve?: "linear" | "monotone";
   /** Mô tả cho trình đọc màn hình; mặc định tự tóm tắt (đầu, cuối, thấp nhất, cao nhất). */
@@ -46,7 +49,7 @@ export const Sparkline = React.forwardRef<HTMLSpanElement, SparklineProps>(funct
     highlightLast = true,
     labels,
     valueFormat,
-    locale = "vi-VN",
+    locale: localeProp,
     curve = "monotone",
     ariaLabel,
     className,
@@ -54,6 +57,9 @@ export const Sparkline = React.forwardRef<HTMLSpanElement, SparklineProps>(funct
   },
   ref,
 ) {
+  const yugen = useYugen();
+  const locale = localeProp ?? yugen.locale;
+  const msg = useYugenMessages("chart", chartMessages);
   const [measureRef, measured] = useElementWidth<HTMLSpanElement>();
   const [hover, setHover] = React.useState<number | null>(null);
   const setRefs = (el: HTMLSpanElement | null) => {
@@ -88,8 +94,8 @@ export const Sparkline = React.forwardRef<HTMLSpanElement, SparklineProps>(funct
   const summary =
     ariaLabel ??
     (values.length
-      ? `Xu hướng ${data.length} điểm: từ ${fmt(values[0])} đến ${fmt(values[values.length - 1])}, thấp nhất ${fmt(min)}, cao nhất ${fmt(max)}`
-      : "Không có dữ liệu");
+      ? msg.sparklineSummary({ points: data.length, first: fmt(values[0]), last: fmt(values[values.length - 1]), min: fmt(min), max: fmt(max) })
+      : msg.noData);
 
   const onPointerMove = (e: React.PointerEvent<SVGSVGElement>) => {
     if (data.length === 0) return;
@@ -154,7 +160,7 @@ export const Sparkline = React.forwardRef<HTMLSpanElement, SparklineProps>(funct
         </svg>
       )}
       {hover != null && hv != null && (
-        <ChartTooltip placement="above" x={x(hover)} y={y(hv)} title={labels?.[hover]} rows={[{ key: "v", label: labels ? "Giá trị" : `#${hover + 1}`, value: fmt(hv) }]} />
+        <ChartTooltip placement="above" x={x(hover)} y={y(hv)} title={labels?.[hover]} rows={[{ key: "v", label: labels ? msg.value : `#${hover + 1}`, value: fmt(hv) }]} />
       )}
     </span>
   );
@@ -168,6 +174,7 @@ export interface StatTileProps extends Omit<React.HTMLAttributes<HTMLDivElement>
   value: number | string;
   /** Mặc định tự rút gọn từ 10.000 (12,9 N; 4,2 Tr…). */
   valueFormat?: ChartNumberFormat;
+  /** Locale cho Intl.NumberFormat. Mặc định lấy từ YugenProvider. */
   locale?: string;
   /** Mức thay đổi có dấu (0.124 = +12,4% với định dạng mặc định). */
   delta?: number;
@@ -190,7 +197,7 @@ export const StatTile = React.forwardRef<HTMLDivElement, StatTileProps>(function
     label,
     value,
     valueFormat,
-    locale = "vi-VN",
+    locale: localeProp,
     delta,
     deltaFormat,
     deltaLabel,
@@ -204,6 +211,9 @@ export const StatTile = React.forwardRef<HTMLDivElement, StatTileProps>(function
   },
   ref,
 ) {
+  const yugen = useYugen();
+  const locale = localeProp ?? yugen.locale;
+  const msg = useYugenMessages("chart", chartMessages);
   const valueText =
     typeof value === "number"
       ? makeNumberFormatter(locale, valueFormat ?? (Math.abs(value) >= 1e4 ? { notation: "compact", maximumFractionDigits: 1 } : { maximumFractionDigits: 2 }))(value)
@@ -216,7 +226,7 @@ export const StatTile = React.forwardRef<HTMLDivElement, StatTileProps>(function
   const tone =
     direction === "flat" || goodDirection === "neutral" ? "neutral" : direction === goodDirection ? "good" : "bad";
   const DeltaIcon = direction === "up" ? ArrowTrending16Regular : direction === "down" ? ArrowTrendingDown16Regular : Subtract16Regular;
-  const directionText = direction === "up" ? "Tăng" : direction === "down" ? "Giảm" : "Không đổi";
+  const directionText = direction === "up" ? msg.increase : direction === "down" ? msg.decrease : msg.noChange;
 
   return (
     <div ref={ref} className={cn("flex min-w-0 flex-col gap-1", className)} {...props}>

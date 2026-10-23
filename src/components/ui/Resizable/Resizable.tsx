@@ -21,6 +21,10 @@ import {
 } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
+import { useYugenMessages } from "../YugenProvider/context";
+import { resizableMessages } from "./messages";
+
+export { resizableMessages, resizableMessagesEn, type ResizableMessages } from "./messages";
 
 /**
  * shadcn Resizable — https://ui.shadcn.com/docs/components/resizable
@@ -253,7 +257,9 @@ export interface ResizableHandleProps extends SeparatorProps {
    * Panel đó phải `collapsible`. Bàn phím: Enter trên đường chia làm cùng việc.
    */
   collapseButton?: "before" | "after";
+  /** Chú thích nút khi panel đang mở. Mặc định lấy từ `messages.resizable.collapse`. */
   collapseLabel?: string;
+  /** Chú thích nút khi panel đã thu gọn. Mặc định lấy từ `messages.resizable.expand`. */
   expandLabel?: string;
 }
 
@@ -266,8 +272,8 @@ function adjacentPanelId(separator: HTMLElement, side: "before" | "after") {
 export function ResizableHandle({
   withHandle = false,
   collapseButton,
-  collapseLabel = "Thu gọn panel",
-  expandLabel = "Mở rộng panel",
+  collapseLabel,
+  expandLabel,
   className,
   elementRef,
   onKeyDownCapture,
@@ -275,6 +281,7 @@ export function ResizableHandle({
   ...props
 }: ResizableHandleProps) {
   const group = React.useContext(ResizableGroupContext);
+  const msg = useYugenMessages("resizable", resizableMessages);
   const orientation = group?.orientation ?? "horizontal";
   const mirrored = group?.mirrored ?? false;
   const [element, setElement] = React.useState<HTMLDivElement | null>(null);
@@ -357,7 +364,7 @@ export function ResizableHandle({
         <span
           aria-hidden
           data-resizable-action=""
-          title={isCollapsed ? expandLabel : collapseLabel}
+          title={isCollapsed ? (expandLabel ?? msg.expand) : (collapseLabel ?? msg.collapse)}
           onClick={() => {
             toggle();
             element?.focus({ preventScroll: true });

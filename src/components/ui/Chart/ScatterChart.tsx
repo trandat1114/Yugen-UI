@@ -1,6 +1,8 @@
 import * as React from "react";
 import { DataTrending20Filled, DataTrending20Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
+import { useYugen, useYugenMessages } from "../YugenProvider/context";
+import { chartMessages } from "./messages";
 import { ToggleButton } from "../ToggleButton/ToggleButton";
 import { ChartContainer, ChartFocusRing, ChartLegend, ChartTable, ChartTooltip, type ChartTooltipRow } from "./ChartParts";
 import { Baseline, GridLines, PlotArea, ValueAxisBottom, ValueAxisLeft, axisTextClass } from "./cartesian";
@@ -142,7 +144,7 @@ export const ScatterChart = React.forwardRef<HTMLElement, ScatterChartProps>(fun
     description,
     toolbar,
     height = 320,
-    locale = "vi-VN",
+    locale: localeProp,
     ariaLabel,
     indexLabel,
     hideTableToggle,
@@ -153,6 +155,10 @@ export const ScatterChart = React.forwardRef<HTMLElement, ScatterChartProps>(fun
   },
   ref,
 ) {
+  const yugen = useYugen();
+  const locale = localeProp ?? yugen.locale;
+  const msg = useYugenMessages("chart", chartMessages);
+  const otherLabel = msg.other;
   const uid = chartUid(React.useId());
   const textured = useChartTexture(texture);
   const [plotRef, width] = useElementWidth<HTMLDivElement>();
@@ -200,13 +206,13 @@ export const ScatterChart = React.forwardRef<HTMLElement, ScatterChartProps>(fun
         list.push(g);
         byValue.set(s.key, g);
       } else {
-        other ??= { key: OTHER_KEY, label: "Khác", slot: "other", shape: MARKER_SHAPES[list.length % MARKER_SHAPES.length] };
+        other ??= { key: OTHER_KEY, label: otherLabel, slot: "other", shape: MARKER_SHAPES[list.length % MARKER_SHAPES.length] };
         byValue.set(s.key, other);
       }
     });
     if (other) list.push(other);
     return { list, of: (d: ChartDatum) => byValue.get(d[group] == null ? "" : String(d[group])) ?? list[0] };
-  }, [data, group, series, yName]);
+  }, [data, group, series, yName, otherLabel]);
 
   const [hidden, toggleGroup] = useSeriesToggle(React.useMemo(() => groups.list.map((g) => g.key), [groups]));
   const useShapes = shapes ?? (textured || (!size && groups.list.length > 3));
@@ -312,24 +318,28 @@ export const ScatterChart = React.forwardRef<HTMLElement, ScatterChartProps>(fun
   const pointAria = (p: ScatterPoint) =>
     [pointTitle(p), ...rowsOf(p).filter((r) => r.key !== "g").map((r) => `${r.label} ${r.value}`)].filter(Boolean).join(", ");
 
-  const trendText = fits.length
-    ? ` Đường xu hướng: ${fits
-        .map(({ g, fit }) => `${multi ? `${g.label} ` : ""}hệ số góc ${fmtY(fit.slope)}, R² ${new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(fit.r2)}`)
-        .join("; ")}.`
-    : "";
   const summary =
     ariaLabel ??
-    `Biểu đồ phân tán: ${allPoints.length} điểm, ${xName} theo ${yName}${size ? `, kích thước theo ${sName}` : ""}${
-      multi ? `, ${groups.list.length} nhóm (${groups.list.map((g) => g.label).join(", ")})` : ""
-    }. Dùng phím mũi tên để duyệt các điểm theo thứ tự ${xName}.${trendText}`;
+    msg.scatterSummary({
+      points: allPoints.length,
+      x: xName,
+      y: yName,
+      size: size ? sName : undefined,
+      groups: multi ? groups.list.map((g) => g.label) : undefined,
+      trends: fits.map(({ g, fit }) => ({
+        group: multi ? g.label : undefined,
+        slope: fmtY(fit.slope),
+        r2: new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(fit.r2),
+      })),
+    });
 
   // Chỉ dựng khi bảng đang bật: hàng của mọi điểm dữ liệu được định dạng lại mỗi lần biểu đồ render.
   const table = () => (
     <ChartTable
       caption={summary}
       columns={[
-        { key: "__index", label: indexLabel ?? (label ? "Tên" : "#") },
-        ...(group ? [{ key: "__group", label: "Nhóm" }] : []),
+        { key: "__index", label: indexLabel ?? (label ? msg.name : "#") },
+        ...(group ? [{ key: "__group", label: msg.group }] : []),
         { key: "__x", label: xName, numeric: true },
         { key: "__y", label: yName, numeric: true },
         ...(size ? [{ key: "__s", label: sName, numeric: true }] : []),
@@ -357,7 +367,7 @@ export const ScatterChart = React.forwardRef<HTMLElement, ScatterChartProps>(fun
       checked={trendOn}
       onCheckedChange={setTrend}
     >
-      Xu hướng
+      {msg.trend}
     </ToggleButton>
   );
 
@@ -404,7 +414,7 @@ export const ScatterChart = React.forwardRef<HTMLElement, ScatterChartProps>(fun
             height={height}
             role="group"
             aria-label={summary}
-            aria-roledescription="biểu đồ"
+            aria-roledescription={msg.roleDescription}
             className="block overflow-visible"
             onPointerMove={onPointerMove}
             onPointerLeave={() => setActive((a) => (a?.kb ? a : null))}
@@ -480,7 +490,7 @@ export const ScatterChart = React.forwardRef<HTMLElement, ScatterChartProps>(fun
 
             {n === 0 && (
               <text x={left + plotW / 2} y={top + plotH / 2} textAnchor="middle" className={axisTextClass}>
-                Không có dữ liệu
+                {msg.noData}
               </text>
             )}
           </svg>

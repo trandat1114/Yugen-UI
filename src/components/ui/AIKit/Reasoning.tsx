@@ -3,7 +3,11 @@ import * as React from "react";
 import { ChevronDown16Regular, Lightbulb16Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../Collapsible/Collapsible";
+import { useYugenMessages } from "../YugenProvider/context";
+import { reasoningMessages } from "./messages";
 import { StreamingMarkdown } from "./StreamingMarkdown";
+
+export { reasoningMessages, reasoningMessagesEn, type ReasoningMessages } from "./messages";
 
 /** Thời lượng gọn theo giây: 12s · 1m 05s. */
 export function formatReasoningDuration(ms: number): string {
@@ -24,7 +28,7 @@ export interface ReasoningProps extends Omit<React.HTMLAttributes<HTMLDivElement
   onOpenChange?: (open: boolean) => void;
   /** Tự mở khi bắt đầu và tự thu gọn khi xong — trừ khi người dùng đã tự bấm. Mặc định true. */
   autoOpen?: boolean;
-  /** Thay nhãn mặc định. */
+  /** Thay nhãn mặc định (`messages.reasoning`). */
   label?: React.ReactNode;
   /** Chuỗi → render bằng StreamingMarkdown (size small); ReactNode tuỳ ý cũng được. */
   children?: React.ReactNode;
@@ -35,6 +39,7 @@ export const Reasoning = React.forwardRef<HTMLDivElement, ReasoningProps>(
     { streaming = false, duration, open: openProp, defaultOpen, onOpenChange, autoOpen = true, label, className, children, ...props },
     ref,
   ) => {
+    const msg = useYugenMessages("reasoning", reasoningMessages);
     const [innerOpen, setInnerOpen] = React.useState(defaultOpen ?? (autoOpen && streaming));
     const open = openProp ?? innerOpen;
     const userToggled = React.useRef(false);
@@ -79,7 +84,7 @@ export const Reasoning = React.forwardRef<HTMLDivElement, ReasoningProps>(
 
     const elapsed = streaming && startedAt !== null && now !== null ? formatReasoningDuration(now - startedAt) : "";
     const total = duration ?? measured;
-    const doneLabel = total != null ? `Đã suy luận trong ${formatReasoningDuration(total)}` : "Đã suy luận";
+    const doneLabel = total != null ? msg.thoughtFor(formatReasoningDuration(total)) : msg.thought;
 
     return (
       <Collapsible
@@ -98,7 +103,7 @@ export const Reasoning = React.forwardRef<HTMLDivElement, ReasoningProps>(
           >
             <Lightbulb16Regular aria-hidden className={cn("shrink-0", streaming && "text-brand-foreground-1")} />
             <span className={cn("truncate", streaming && "animate-pulse motion-reduce:animate-none")}>
-              {label ?? (streaming ? "Đang suy luận…" : doneLabel)}
+              {label ?? (streaming ? msg.thinking : doneLabel)}
             </span>
             {elapsed && (
               <span aria-hidden className="tabular-nums">

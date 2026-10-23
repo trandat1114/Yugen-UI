@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, fireEvent, render, screen } from "@testing-library/react";
-import { AreaChart, Heatmap, LineChart, ScatterChart } from "./Chart";
+import { AreaChart, Heatmap, LineChart, ScatterChart, Sparkline, chartMessagesEn } from "./Chart";
+import { YugenProvider } from "../YugenProvider/YugenProvider";
 import {
   bubbleRadius,
   divergingColor,
@@ -309,5 +310,21 @@ describe("tương tác bàn phím", () => {
     const col = screen.getAllByRole("img")[0];
     expect(col.getAttribute("aria-label")).toMatch(/^T1: A 1 \(25%\), B 3 \(75%\), Tổng 4$/);
     expect(screen.getByRole("group", { name: /vùng chồng 100%/ })).toBeInTheDocument();
+  });
+});
+
+describe("Chart messages", () => {
+  it("messages tiếng Anh + locale của YugenProvider", () => {
+    render(
+      <YugenProvider messages={{ chart: chartMessagesEn }} locale="en-US">
+        <Sparkline data={[1.5, 2, 3]} />
+      </YugenProvider>,
+    );
+    expect(screen.getByRole("img", { name: "Trend over 3 points: from 1.5 to 3, low 1.5, high 3" })).toBeInTheDocument();
+  });
+
+  it("mặc định tiếng Việt", () => {
+    render(<Sparkline data={[1.5, 2, 3]} />);
+    expect(screen.getByRole("img", { name: "Xu hướng 3 điểm: từ 1,5 đến 3, thấp nhất 1,5, cao nhất 3" })).toBeInTheDocument();
   });
 });

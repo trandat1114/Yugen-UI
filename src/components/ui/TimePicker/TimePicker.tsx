@@ -3,12 +3,15 @@ import * as React from "react";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { useDirection } from "@radix-ui/react-direction";
 import { Checkmark16Filled, Clock16Regular, Clock20Regular, Clock24Regular } from "@fluentui/react-icons";
-import { usePortalThemeProps } from "../YugenProvider/context";
+import { usePortalThemeProps, useYugen, useYugenMessages } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { popoverSurfaceClass } from "@/components/ui/Popover/Popover";
 import { fieldAppearanceClass, type FieldAppearance } from "@/components/ui/Select/Select";
 import { cmdkOptionClass } from "@/components/ui/Combobox/Combobox";
+import { timePickerMessages } from "./messages";
+
+export { timePickerMessages, timePickerMessagesEn, type TimePickerMessages } from "./messages";
 
 export type TimePickerHourCycle = "h23" | "h12";
 export type TimeSelectionErrorType = "invalid-input" | "out-of-start-bound" | "out-of-end-bound";
@@ -229,7 +232,7 @@ export interface TimePickerProps extends InputAttrs, TimeRangeOptions {
   onTimeChange?: (event: React.SyntheticEvent<HTMLElement>, data: TimeSelectionData) => void;
   /** "h23" (24 giờ) | "h12" (SA/CH). Mặc định theo `locale` qua Intl. */
   hourCycle?: TimePickerHourCycle;
-  /** Locale cho chu kỳ giờ và nhãn buổi. Mặc định "vi-VN". */
+  /** Locale cho chu kỳ giờ và nhãn buổi. Mặc định `locale` của YugenProvider ("vi-VN"). */
   locale?: string;
   /** Ngày gắn vào giờ trả về. Mặc định ngày của `value`, nếu không thì hôm nay. */
   dateAnchor?: Date;
@@ -239,7 +242,7 @@ export interface TimePickerProps extends InputAttrs, TimeRangeOptions {
   size?: "small" | "medium" | "large";
   /** Class cho bề mặt listbox. */
   listboxClassName?: string;
-  /** Nội dung khi khoảng giờ rỗng. */
+  /** Nội dung khi khoảng giờ rỗng. Mặc định lấy từ `messages.timePicker.noOptions`. */
   noOptionsText?: React.ReactNode;
 }
 
@@ -258,14 +261,14 @@ export const TimePicker = React.forwardRef<HTMLInputElement, TimePickerProps>((p
     minTime,
     maxTime,
     hourCycle,
-    locale = "vi-VN",
+    locale: localeProp,
     dateAnchor,
     formatDateToTimeString,
     appearance = "outline",
     size = "medium",
     listboxClassName,
-    noOptionsText = "Không có giờ phù hợp",
-    placeholder = "Chọn giờ…",
+    noOptionsText,
+    placeholder,
     className,
     disabled,
     onKeyDown,
@@ -274,6 +277,9 @@ export const TimePicker = React.forwardRef<HTMLInputElement, TimePickerProps>((p
     ...inputProps
   } = props;
 
+  const msg = useYugenMessages("timePicker", timePickerMessages);
+  const providerLocale = useYugen().locale;
+  const locale = localeProp ?? providerLocale;
   const controlled = value !== undefined;
   const [inner, setInner] = React.useState<Date | null>(defaultValue);
   const selected = controlled ? value : inner;
@@ -433,7 +439,7 @@ export const TimePicker = React.forwardRef<HTMLInputElement, TimePickerProps>((p
   const activeId = open && active >= 0 ? `${listId}-${active}` : undefined;
   const listLabelProps = inputProps["aria-labelledby"]
     ? { "aria-labelledby": inputProps["aria-labelledby"] }
-    : { "aria-label": inputProps["aria-label"] ?? "Chọn giờ" };
+    : { "aria-label": inputProps["aria-label"] ?? msg.listLabel };
 
   return (
     <PopoverPrimitive.Root open={open} onOpenChange={(o) => (o ? openList() : setOpen(false))}>
@@ -464,7 +470,7 @@ export const TimePicker = React.forwardRef<HTMLInputElement, TimePickerProps>((p
             aria-activedescendant={activeId}
             autoComplete="off"
             disabled={disabled}
-            placeholder={placeholder}
+            placeholder={placeholder ?? msg.placeholder}
             value={text}
             onChange={(e) => {
               const next = e.target.value;
@@ -490,7 +496,7 @@ export const TimePicker = React.forwardRef<HTMLInputElement, TimePickerProps>((p
           <button
             type="button"
             tabIndex={-1}
-            aria-label={open ? "Đóng danh sách giờ" : "Mở danh sách giờ"}
+            aria-label={open ? msg.closeList : msg.openList}
             disabled={disabled}
             onMouseDown={(e) => e.preventDefault()}
             onClick={(e) => {
@@ -531,7 +537,7 @@ export const TimePicker = React.forwardRef<HTMLInputElement, TimePickerProps>((p
           )}
         >
           <div ref={listRef} id={listId} role="listbox" {...listLabelProps}>
-            {options.length === 0 && <div className="px-2 py-1.5 text-body1 text-foreground-3">{noOptionsText}</div>}
+            {options.length === 0 && <div className="px-2 py-1.5 text-body1 text-foreground-3">{noOptionsText === undefined ? msg.noOptions : noOptionsText}</div>}
             {options.map((m, i) => {
               const isSelected = selectedMinutes === m && draft === null;
               return (

@@ -825,7 +825,7 @@ function TimePickerDemo() {
     category: "Nhập liệu",
     lead: "DateRangePicker có danh sách chọn nhanh khoảng ngày cạnh lịch.",
     description:
-      "Truyền `presets` (mảng `{ label, range: () => ({ from, to }) }`) để hiện các lựa chọn nhanh bên cạnh lịch; ở màn hẹp danh sách xếp phía trên. `DEFAULT_RANGE_PRESETS` gồm Hôm nay, 7 ngày qua, 30 ngày qua, Tháng này, Tháng trước — luôn tính theo thời điểm hiện tại. Preset khớp khoảng đang chọn được đánh dấu (aria-pressed); preset vượt minDate / maxDate bị vô hiệu. Mọi prop cũ của DateRangePicker giữ nguyên.",
+      "Truyền `presets` (mảng `{ label, range: () => ({ from, to }) }`) để hiện các lựa chọn nhanh bên cạnh lịch; ở màn hẹp danh sách xếp phía trên. `DEFAULT_RANGE_PRESETS` gồm Hôm nay, 7 ngày qua, 30 ngày qua, Tháng này, Tháng trước, luôn tính theo thời điểm hiện tại; nhãn lấy từ `messages.dateRangePicker` của YugenProvider. Preset khớp khoảng đang chọn được đánh dấu (aria-pressed); preset vượt minDate / maxDate bị vô hiệu. Mọi prop cũ của DateRangePicker giữ nguyên.",
     importCode: `import { DateRangePicker, DEFAULT_RANGE_PRESETS, type DateRangePreset } from "@/components/ui";`,
     hero: {
       title: "Khoảng báo cáo",

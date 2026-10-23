@@ -2,7 +2,8 @@ import { describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { DirectionProvider } from "@radix-ui/react-direction";
-import { Step, Stepper, Wizard, type WizardStep } from "./Stepper";
+import { Step, Stepper, Wizard, stepperMessagesEn, wizardMessagesEn, type WizardStep } from "./Stepper";
+import { YugenProvider } from "../YugenProvider/YugenProvider";
 
 function Basic(props: { activeStep?: number; linear?: boolean; onStepChange?: (i: number) => void; responsive?: boolean }) {
   return (
@@ -137,5 +138,20 @@ describe("Wizard", () => {
     await user.click(screen.getByRole("button", { name: "Tiếp tục" }));
     await user.click(screen.getByRole("button", { name: "Hoàn tất" }));
     expect(onFinish).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("Stepper / Wizard messages", () => {
+  it("stepperMessagesEn + wizardMessagesEn", async () => {
+    const user = userEvent.setup();
+    render(
+      <YugenProvider messages={{ stepper: stepperMessagesEn, wizard: wizardMessagesEn }}>
+        <Wizard steps={[{ title: "Account", content: "A", validate: () => false }, { title: "Done", content: "B" }]} />
+      </YugenProvider>,
+    );
+    expect(screen.getByRole("list", { name: "Steps" })).toBeInTheDocument();
+    expect(screen.getAllByRole("listitem")[0]).toHaveTextContent("Step 1: Account, current step");
+    await user.click(screen.getByRole("button", { name: "Next" }));
+    expect(screen.getByRole("alert")).toHaveTextContent("Check the information in this step.");
   });
 });

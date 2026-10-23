@@ -12,6 +12,10 @@ import { cn } from "@/lib/cn";
 import { Button } from "../Button/Button";
 import { useSpinDelay } from "../Loading/Loading";
 import { ProgressBar } from "../ProgressBar/ProgressBar";
+import { useYugenMessages } from "../YugenProvider/context";
+import { stepperMessages, wizardMessages } from "./messages";
+
+export { stepperMessages, stepperMessagesEn, wizardMessages, wizardMessagesEn, type StepperMessages, type WizardMessages } from "./messages";
 
 /* ------------------------------------------------------------------------------------------------
  * Stepper + Step
@@ -30,13 +34,6 @@ interface StepperContextValue {
 
 const StepperContext = React.createContext<StepperContextValue>({ activeStep: 0, total: 1, orientation: "horizontal", linear: false });
 const StepIndexContext = React.createContext(0);
-
-const STATUS_TEXT: Record<StepStatus, string> = {
-  complete: "đã hoàn thành",
-  current: "bước hiện tại",
-  upcoming: "chưa thực hiện",
-  error: "có lỗi",
-};
 
 const INDICATOR: Record<StepStatus, string> = {
   complete: "border-brand-background bg-brand-background text-foreground-on-brand",
@@ -70,6 +67,7 @@ export const Step = React.forwardRef<HTMLLIElement, StepProps>(
   ({ title, description, status: statusProp, optional, disabled, children, className, ...props }, ref) => {
     const { activeStep, total, orientation, linear, onStepChange } = React.useContext(StepperContext);
     const index = React.useContext(StepIndexContext);
+    const msg = useYugenMessages("stepper", stepperMessages);
     const isCurrent = index === activeStep;
     const status: StepStatus = statusProp ?? (index < activeStep ? "complete" : isCurrent ? "current" : "upcoming");
     const reachable = !disabled && (!linear || index <= activeStep || status === "complete");
@@ -92,13 +90,13 @@ export const Step = React.forwardRef<HTMLLIElement, StepProps>(
         </span>
         <span className={cn("flex min-w-0 flex-col text-start", !horizontal && "pt-0.5")}>
           <span className={cn("text-body1", horizontal && "truncate", TITLE[status], disabled && "text-foreground-disabled")}>
-            <span className="sr-only">{`Bước ${index + 1}:`}</span> {title}
-            <span className="sr-only">{`, ${STATUS_TEXT[status]}`}</span>
+            <span className="sr-only">{`${msg.step(index + 1)}:`}</span> {title}
+            <span className="sr-only">{`, ${msg[status]}`}</span>
           </span>
           {(description || optional) && (
             <span className={cn("text-caption1 text-foreground-3", horizontal && "truncate")}>
               {description}
-              {optional && (description ? " · Tuỳ chọn" : "Tuỳ chọn")}
+              {optional && (description ? ` · ${msg.optional}` : msg.optional)}
             </span>
           )}
         </span>
@@ -187,6 +185,7 @@ export const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
     ref,
   ) => {
     const dir = useDirection();
+    const msg = useYugenMessages("stepper", stepperMessages);
     const steps = React.Children.toArray(children).filter(React.isValidElement) as React.ReactElement<StepProps>[];
     const total = steps.length;
     const horizontal = orientation === "horizontal";
@@ -225,15 +224,15 @@ export const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
           {collapse && total > 0 && (
             <div className="flex flex-col gap-2 @lg:hidden">
               <p className="truncate text-body1 text-foreground-1">
-                <span className="font-semibold">{`Bước ${shown + 1}/${total}`}</span>
+                <span className="font-semibold">{msg.progress(shown + 1, total)}</span>
                 {" · "}
                 {steps[shown]?.props.title}
               </p>
-              <ProgressBar value={shown + 1} max={total} aria-label={`Bước ${shown + 1} trên ${total}`} />
+              <ProgressBar value={shown + 1} max={total} aria-label={msg.progressLabel(shown + 1, total)} />
             </div>
           )}
           <ol
-            aria-label={ariaLabel ?? "Các bước"}
+            aria-label={ariaLabel ?? msg.label}
             data-orientation={horizontal ? "horizontal" : "vertical"}
             className={cn(horizontal ? "items-center gap-2" : "flex-col", collapse ? "hidden @lg:flex" : "flex")}
             onKeyDown={onStepChange ? onKeyDown : undefined}
@@ -280,13 +279,11 @@ export interface WizardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   orientation?: StepperOrientation;
   /** Mặc định `true`: chỉ đi tới bằng nút Tiếp tục (đã kiểm tra). */
   linear?: boolean;
+  /** Nhãn các nút; mặc định lấy từ `messages.wizard` (`back` / `next` / `finish`). */
   backLabel?: React.ReactNode;
   nextLabel?: React.ReactNode;
   finishLabel?: React.ReactNode;
 }
-
-const DEFAULT_INVALID = "Vui lòng kiểm tra lại thông tin ở bước này.";
-const VALIDATE_FAILED = "Không kiểm tra được bước này. Hãy thử lại.";
 
 function isThenable<T>(value: unknown): value is PromiseLike<T> {
   return !!value && typeof (value as PromiseLike<T>).then === "function";
@@ -307,14 +304,15 @@ export const Wizard = React.forwardRef<HTMLDivElement, WizardProps>(
       onFinish,
       orientation = "horizontal",
       linear = true,
-      backLabel = "Quay lại",
-      nextLabel = "Tiếp tục",
-      finishLabel = "Hoàn tất",
+      backLabel,
+      nextLabel,
+      finishLabel,
       className,
       ...props
     },
     ref,
   ) => {
+    const msg = useYugenMessages("wizard", wizardMessages);
     const autoId = React.useId();
     const [innerActive, setInnerActive] = React.useState(defaultActiveStep);
     const active = activeProp ?? innerActive;
@@ -367,10 +365,10 @@ export const Wizard = React.forwardRef<HTMLDivElement, WizardProps>(
       try {
         result = step.validate ? await settle(step.validate) : true;
       } catch {
-        result = VALIDATE_FAILED;
+        result = msg.validateFailed;
       }
       if (result === false || typeof result === "string") {
-        setError({ index: active, message: typeof result === "string" ? result : DEFAULT_INVALID });
+        setError({ index: active, message: typeof result === "string" ? result : msg.invalid });
         return;
       }
       setCompleted((prev) => new Set(prev).add(active));
@@ -416,7 +414,7 @@ export const Wizard = React.forwardRef<HTMLDivElement, WizardProps>(
             className="flex min-w-0 flex-1 flex-col gap-3 rounded-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke-focus"
           >
             <span id={labelId} className="sr-only">
-              {`Bước ${Math.min(active + 1, total)}/${total}: `}
+              {`${msg.panel(Math.min(active + 1, total), total)}: `}
               {step?.title}
             </span>
             {step?.content}
@@ -437,7 +435,7 @@ export const Wizard = React.forwardRef<HTMLDivElement, WizardProps>(
             disabled={isFirst || pending}
             onClick={() => goTo(active - 1)}
           >
-            {backLabel}
+            {backLabel === undefined ? msg.back : backLabel}
           </Button>
           <Button
             appearance="primary"
@@ -446,7 +444,7 @@ export const Wizard = React.forwardRef<HTMLDivElement, WizardProps>(
             iconPosition={isLast ? "before" : "after"}
             onClick={() => void next()}
           >
-            {isLast ? finishLabel : nextLabel}
+            {isLast ? (finishLabel === undefined ? msg.finish : finishLabel) : nextLabel === undefined ? msg.next : nextLabel}
           </Button>
         </div>
       </div>

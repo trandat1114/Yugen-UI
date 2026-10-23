@@ -7,7 +7,10 @@ import { useSpinDelay } from "../Loading/Loading";
 import { popoverSurfaceClass } from "../Popover/Popover";
 import { SearchBox, type SearchBoxProps } from "../SearchBox/SearchBox";
 import { Spinner } from "../Spinner/Spinner";
-import { usePortalThemeProps } from "../YugenProvider/context";
+import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
+import { autocompleteMessages } from "./messages";
+
+export { autocompleteMessages, autocompleteMessagesEn, type AutocompleteMessages } from "./messages";
 
 /* ================================================================ HighlightMatch */
 
@@ -99,14 +102,14 @@ export interface AutocompleteProps extends Omit<SearchBoxProps, "onSelect" | "on
   onSubmit?: (query: string) => void;
   /** Đang tải gợi ý (server). Spinner chỉ hiện nếu chờ > 300ms (Wait UX). */
   loading?: boolean;
-  /** Nội dung khi không có gợi ý nào khớp. null = đóng danh sách. */
+  /** Nội dung khi không có gợi ý nào khớp. null = đóng danh sách. Mặc định lấy từ `messages.autocomplete.empty`. */
   emptyMessage?: React.ReactNode;
   maxSuggestions?: number;
   /** Số ký tự tối thiểu trước khi mở gợi ý (0 = mở ngay khi focus, hợp với "Tìm gần đây"). */
   minChars?: number;
   /** Tô sáng phần khớp trong nhãn. */
   highlight?: boolean;
-  /** aria-label của danh sách gợi ý. */
+  /** aria-label của danh sách gợi ý. Mặc định lấy từ `messages.autocomplete.listLabel`. */
   listLabel?: string;
   listboxClassName?: string;
 }
@@ -128,11 +131,11 @@ export const Autocomplete = React.forwardRef<HTMLInputElement, AutocompleteProps
       onSelect,
       onSubmit,
       loading = false,
-      emptyMessage = "Không có gợi ý phù hợp",
+      emptyMessage,
       maxSuggestions = 8,
       minChars = 1,
       highlight = true,
-      listLabel = "Gợi ý tìm kiếm",
+      listLabel,
       listboxClassName,
       value,
       defaultValue,
@@ -146,6 +149,7 @@ export const Autocomplete = React.forwardRef<HTMLInputElement, AutocompleteProps
     ref,
   ) => {
     const portalTheme = usePortalThemeProps();
+    const msg = useYugenMessages("autocomplete", autocompleteMessages);
     const baseId = React.useId();
     const listId = `${baseId}-list`;
     const optionId = (i: number) => `${baseId}-opt-${i}`;
@@ -309,7 +313,7 @@ export const Autocomplete = React.forwardRef<HTMLInputElement, AutocompleteProps
               listboxClassName,
             )}
           >
-            <div id={listId} role="listbox" aria-label={listLabel} aria-busy={loading || undefined}>
+            <div id={listId} role="listbox" aria-label={listLabel ?? msg.listLabel} aria-busy={loading || undefined}>
               {groups.map(([group, entries]) =>
                 group ? (
                   <div key={group} role="group" aria-labelledby={`${listId}-${group}`}>
@@ -326,14 +330,14 @@ export const Autocomplete = React.forwardRef<HTMLInputElement, AutocompleteProps
             {showSpinner && (
               <div className="flex items-center gap-2 px-2 py-1.5 text-body1 text-foreground-3">
                 <Spinner size="extra-tiny" />
-                Đang tìm…
+                {msg.searching}
               </div>
             )}
-            {showEmpty && <div className="px-2 py-1.5 text-body1 text-foreground-3">{emptyMessage}</div>}
+            {showEmpty && <div className="px-2 py-1.5 text-body1 text-foreground-3">{emptyMessage === undefined ? msg.empty : emptyMessage}</div>}
           </PopoverPrimitive.Content>
         </PopoverPrimitive.Portal>
         <span aria-live="polite" className="sr-only">
-          {open && !loading ? (items.length ? `${items.length} gợi ý` : "") : ""}
+          {open && !loading ? (items.length ? msg.count(items.length) : "") : ""}
         </span>
       </PopoverPrimitive.Root>
     );

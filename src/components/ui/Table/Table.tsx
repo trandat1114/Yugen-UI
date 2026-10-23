@@ -2,6 +2,10 @@ import * as React from "react";
 import { ArrowSortDown20Regular, ArrowSortUp20Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { Checkbox } from "../Checkbox/Checkbox";
+import { useYugenMessages } from "../YugenProvider/context";
+import { tableMessages } from "./messages";
+
+export { tableMessages, tableMessagesEn, type TableMessages } from "./messages";
 
 /** Fluent 2 Table — https://fluent2.microsoft.design/components/web/react/core/table/usage */
 export type TableSize = "extra-small" | "small" | "medium";
@@ -226,6 +230,7 @@ export interface TableSelectionCellProps extends Omit<React.TdHTMLAttributes<HTM
 export const TableSelectionCell = React.forwardRef<HTMLTableCellElement, TableSelectionCellProps>(
   ({ checked = false, onCheckedChange, subtle = false, disabled, className, "aria-label": ariaLabel, ...props }, ref) => {
     const inHeader = React.useContext(TableHeaderContext);
+    const msg = useYugenMessages("table", tableMessages);
     const Cell = (inHeader ? "th" : "td") as "td";
     return (
       <Cell
@@ -241,7 +246,7 @@ export const TableSelectionCell = React.forwardRef<HTMLTableCellElement, TableSe
           checked={checked === "mixed" ? "indeterminate" : checked}
           onCheckedChange={(value) => onCheckedChange?.(value === true)}
           disabled={disabled}
-          aria-label={ariaLabel ?? (inHeader ? "Chọn tất cả hàng" : "Chọn hàng")}
+          aria-label={ariaLabel ?? (inHeader ? msg.selectAllRows : msg.selectRow)}
         />
       </Cell>
     );

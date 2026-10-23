@@ -230,6 +230,12 @@ export default function Page() {
                 defaultValue: "false",
                 description: "Gắn <Toaster /> để toast() hoạt động; vị trí bottom-end (bottom-start khi RTL). Chỉ bật ở provider gốc.",
               },
+              {
+                name: "messages",
+                type: "YugenMessagesInput",
+                description: "Đổi chuỗi có sẵn của component theo namespace, vd. messagesEn cho tiếng Anh. Provider lồng kế thừa rồi ghi đè tiếp. Xem Ngôn ngữ giao diện.",
+              },
+              { name: "locale", type: "string", defaultValue: `"vi-VN"`, description: "Locale Intl cho ngày, giờ và số trong component. Provider lồng kế thừa provider ngoài." },
               { name: "className, …div props", type: "HTMLAttributes<HTMLDivElement>", description: "Truyền xuống thẻ div bao ngoài (ref được forward)." },
             ]}
           />

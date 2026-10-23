@@ -1,10 +1,13 @@
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useDirection } from "@radix-ui/react-direction";
-import { usePortalThemeProps } from "../YugenProvider/context";
+import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { useMediaQuery } from "./useMediaQuery";
+import { sheetMessages } from "./messages";
+
+export { sheetMessages, sheetMessagesEn, type SheetMessages } from "./messages";
 
 export { useMediaQuery, type UseMediaQueryOptions } from "./useMediaQuery";
 
@@ -210,7 +213,7 @@ interface DragState {
 export interface SheetContentProps extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> {
   /** Hiện tay nắm ở dạng bottom sheet (mặc định true). */
   handle?: boolean;
-  /** Nhãn của tay nắm (nút đổi nấc chiều cao). */
+  /** Nhãn của tay nắm (nút đổi nấc chiều cao). Mặc định lấy từ `messages.sheet.handle`. */
   handleLabel?: string;
   overlayClassName?: string;
 }
@@ -221,7 +224,7 @@ export const SheetContent = React.forwardRef<React.ElementRef<typeof DialogPrimi
       className,
       overlayClassName,
       handle = true,
-      handleLabel = "Đổi chiều cao",
+      handleLabel,
       children,
       style,
       onPointerDown,
@@ -242,6 +245,7 @@ export const SheetContent = React.forwardRef<React.ElementRef<typeof DialogPrimi
     const { isBottom, snapPoints, snapPoint, setSnapPoint, dismissible, modal } = ctx;
     const dir = useDirection();
     const portalTheme = usePortalThemeProps();
+    const msg = useYugenMessages("sheet", sheetMessages);
     const [node, setNode] = React.useState<HTMLDivElement | null>(null);
     const nodeRef = React.useRef<HTMLDivElement | null>(null);
     const overlayRef = React.useRef<HTMLDivElement | null>(null);
@@ -498,7 +502,7 @@ export const SheetContent = React.forwardRef<React.ElementRef<typeof DialogPrimi
               {snapPoints.length > 1 ? (
                 <button
                   type="button"
-                  aria-label={`${handleLabel} (${Math.round(snapPoint * 100)}%)`}
+                  aria-label={`${handleLabel ?? msg.handle} (${Math.round(snapPoint * 100)}%)`}
                   onClick={() => cycleSnap(1, true)}
                   onKeyDown={(event) => {
                     if (event.key === "ArrowUp" || event.key === "ArrowDown") {

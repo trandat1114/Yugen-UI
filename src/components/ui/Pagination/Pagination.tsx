@@ -8,6 +8,10 @@ import {
   MoreHorizontal20Regular,
 } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
+import { useYugenMessages } from "../YugenProvider/context";
+import { paginationMessages } from "./messages";
+
+export { paginationMessages, paginationMessagesEn, type PaginationMessages } from "./messages";
 
 /** Pagination (shadcn/ui, giao diện Fluent 2) — https://ui.shadcn.com/docs/components/pagination */
 type PaginationSize = "small" | "medium";
@@ -51,7 +55,7 @@ export interface PaginationProps extends Omit<React.HTMLAttributes<HTMLElement>,
   /** Số trang hiển thị mỗi bên trang hiện tại. */
   siblingCount?: number;
   size?: PaginationSize;
-  /** Hiện chữ "Trước" / "Sau" cạnh mũi tên. */
+  /** Hiện chữ "Trước" / "Sau" (`messages.pagination.previous` / `next`) cạnh mũi tên. */
   showLabels?: boolean;
   disabled?: boolean;
 }
@@ -68,11 +72,12 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
       size = "medium",
       showLabels = true,
       disabled,
-      "aria-label": ariaLabel = "Phân trang",
+      "aria-label": ariaLabel,
       ...props
     },
     ref,
   ) => {
+    const msg = useYugenMessages("pagination", paginationMessages);
     const [innerPage, setInnerPage] = React.useState(defaultPage);
     const current = Math.min(Math.max(page ?? innerPage, 1), Math.max(pageCount, 1));
     const s = SIZE[size];
@@ -89,18 +94,18 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
     const MoreIcon = size === "small" ? MoreHorizontal16Regular : MoreHorizontal20Regular;
 
     return (
-      <nav ref={ref} aria-label={ariaLabel} className={cn("flex", className)} {...props}>
+      <nav ref={ref} aria-label={ariaLabel ?? msg.label} className={cn("flex", className)} {...props}>
         <ul className="flex flex-wrap items-center gap-1">
           <li>
             <button
               type="button"
-              aria-label="Trang trước"
+              aria-label={msg.previousPage}
               disabled={disabled || current <= 1}
               onClick={() => go(current - 1)}
               className={cn(interactive, s.nav, !showLabels && cn(s.item, "px-0"))}
             >
               <PrevIcon className="rtl:-scale-x-100" />
-              {showLabels && <span>Trước</span>}
+              {showLabels && <span>{msg.previous}</span>}
             </button>
           </li>
 
@@ -109,7 +114,7 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
               <li key={entry}>
                 <button
                   type="button"
-                  aria-label={`Trang ${entry}`}
+                  aria-label={msg.page(entry)}
                   aria-current={entry === current ? "page" : undefined}
                   disabled={disabled}
                   onClick={() => go(entry)}
@@ -133,12 +138,12 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
           <li>
             <button
               type="button"
-              aria-label="Trang sau"
+              aria-label={msg.nextPage}
               disabled={disabled || current >= pageCount}
               onClick={() => go(current + 1)}
               className={cn(interactive, s.nav, !showLabels && cn(s.item, "px-0"))}
             >
-              {showLabels && <span>Sau</span>}
+              {showLabels && <span>{msg.next}</span>}
               <NextIcon className="rtl:-scale-x-100" />
             </button>
           </li>
