@@ -30,6 +30,8 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
       create: "Create an app",
       init: "Set up an existing project",
       add: "Add components",
+      update: "Update and remove",
+      theme: "Brand colour",
       doctor: "Check the setup",
       config: "yugen.json and the registry",
       options: "Common options",

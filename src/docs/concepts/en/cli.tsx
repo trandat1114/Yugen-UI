@@ -71,6 +71,15 @@ npx @yugen-ui/cli add --all               # every component
 npx @yugen-ui/cli add button --overwrite  # also replace files you have edited
 npx @yugen-ui/cli list grid               # search the registry, ✓ means already in the project`;
 
+const UPDATE = `npx @yugen-ui/cli diff                   # every copied component: print the diff against the registry
+npx @yugen-ui/cli update button --dry-run # show the diff, write nothing
+npx @yugen-ui/cli update                  # apply the registry version (asks before writing)
+npx @yugen-ui/cli remove data-grid        # delete the files nothing else imports`;
+
+const THEME = `npx @yugen-ui/cli theme --brand #0f6cbd --name acme
+# → src/yugen-brand.css: [data-brand="acme"] { --brand-10 … --brand-160 }, imported from src/index.css
+# <YugenProvider applyToDocument withToaster brand="acme">`;
+
 const CI = `npx @yugen-ui/cli@latest create app -t starter -y --no-git
 npx @yugen-ui/cli@latest add button dialog -y --no-install`;
 
@@ -82,9 +91,13 @@ export default function Page() {
           <Table
             head={["Command", "What it does"]}
             rows={[
-              ["create [dir]", "New app from a template: starter, saas, blog, dashboard, ai-chat."],
-              ["init", "Set up an existing React project with the npm package or with copied source. Writes yugen.json."],
+              ["create [dir]", "New app from a template: starter, saas, blog, dashboard, ai-chat. --ref <branch|tag> takes the templates from the repo."],
+              ["init", "Set up an existing React project with the npm package or with copied source. Writes yugen.json and wraps the app in YugenProvider."],
               ["add <names…>", "Copy components and the components they depend on, install missing npm packages."],
+              ["diff [names…]", "Compare copied source with the registry and print the diff. Changes nothing."],
+              ["update [names…]", "Apply the registry version to copied source: shows the diff, asks, then writes."],
+              ["remove <names…>", "Delete a component's files that nothing else imports."],
+              ["theme --brand <hex>", "Generate a 16-step brand ramp into yugen-brand.css, with the Theme Designer's algorithm."],
               ["list [query]", "Components in the registry."],
               ["doctor", "Check React, Tailwind CSS v4, the theme import, the yugen-ui version and YugenProvider."],
             ]}
@@ -155,6 +168,33 @@ export default function Page() {
           <MessageBar intent="info" title="In package mode" className="max-w-3xl">
             The components are already in the <C>yugen-ui</C> package. <C>add</C> only prints the matching import.
           </MessageBar>
+        </div>
+      </DocSection>
+
+      <DocSection
+        id="update"
+        title="Update and remove components"
+        description="Source mode. Without names, the CLI looks at every Yugen component in the project."
+      >
+        <div className="flex flex-col gap-4">
+          <CodeBlock code={UPDATE} />
+          <P>
+            <C>update</C> prints the diff of every file it would change, lists new files (for example a dependency the registry added),
+            then asks before writing. Your edits in those files are replaced, so commit first. <C>remove</C> scans the project&apos;s imports
+            (relative paths and aliases) and keeps files that are still used, for example Spinner while Button imports it. npm packages are
+            not uninstalled.
+          </P>
+        </div>
+      </DocSection>
+
+      <DocSection id="theme" title="Brand colour" description="Works in package and source mode, with the same algorithm as the Theme Designer.">
+        <div className="flex flex-col gap-4">
+          <CodeBlock code={THEME} />
+          <P>
+            <C>--vibrancy</C> (50–150) and <C>--torsion</C> (−30…30) match the Theme Designer&apos;s two sliders. When white text on the
+            primary button is under 4.5:1, the CLI warns and suggests a darker key that passes. For radius, density, fonts and the rest, use
+            the <A href="#/theme-designer">Theme Designer</A>.
+          </P>
         </div>
       </DocSection>
 

@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { DOCS_URL } from "../lib/constants.js";
 import { CliError } from "../lib/errors.js";
+import { downloadTemplates } from "../lib/remote.js";
 import { copyDir, exists, isEmptyDir, readText, writeJson, writeText } from "../lib/fs.js";
 import { exec, gitAvailable, insideGitRepo, runScript } from "../lib/pm.js";
 import { pmFromUserAgent, type PackageJson, type PackageManager } from "../lib/project.js";
@@ -31,6 +32,8 @@ export interface CreateOptions {
   force?: boolean;
   /** Thư mục chứa templates.json + các template (mặc định: bản đóng gói). */
   templatesDir?: string;
+  /** Nhánh / tag của repo: tải template ở đó thay cho bản đóng gói (thử template chưa phát hành). */
+  ref?: string;
 }
 
 const PMS: PackageManager[] = ["npm", "pnpm", "yarn", "bun"];
@@ -76,7 +79,25 @@ export const toPackageName = (name: string) =>
     .replace(/^-+|-+$/g, "") || "yugen-app";
 
 export async function create(opts: CreateOptions, ctx: Ctx) {
-  const templatesDir = opts.templatesDir ?? BUNDLED_TEMPLATES;
+  if (!opts.ref) return createFrom(opts.templatesDir ?? BUNDLED_TEMPLATES, opts, ctx);
+  const spin = p.spinner();
+  spin.start(`Downloading templates from ${opts.ref}`);
+  let dir: string;
+  try {
+    dir = await downloadTemplates(opts.ref);
+  } catch (e) {
+    spin.error("Could not download the templates");
+    throw e;
+  }
+  spin.stop(`Templates from ${pc.cyan(opts.ref)}`);
+  try {
+    return await createFrom(dir, opts, ctx);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+async function createFrom(templatesDir: string, opts: CreateOptions, ctx: Ctx) {
   const templates = loadTemplates(templatesDir);
 
   const dir =

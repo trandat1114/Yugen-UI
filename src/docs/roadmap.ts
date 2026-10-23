@@ -53,7 +53,7 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       en: "Not scheduled yet.",
       items: [
         { status: "planned", issue: 69, vi: "Docs tiếng Anh cho trang component và các trang khái niệm còn lại", en: "English docs for component pages and the remaining concept pages" },
-        { status: "planned", issue: 64, vi: "CLI giai đoạn 2: diff, update, theme, remove", en: "CLI phase 2: diff, update, theme, remove" },
+        { status: "done", issue: 64, vi: "CLI giai đoạn 2: diff, update, theme, remove", en: "CLI phase 2: diff, update, theme, remove" },
         { status: "planned", issue: 68, vi: "Đăng ký @yugen vào danh mục registry của shadcn", en: "Register @yugen in the shadcn registry index" },
         { status: "planned", vi: "Đang cân nhắc: bộ Figma, gói icon Sakura", en: "Under consideration: Figma kit, Sakura icon set" },
       ],
