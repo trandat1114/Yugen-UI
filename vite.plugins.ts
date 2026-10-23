@@ -46,6 +46,74 @@ export function yugenTypeExports(root: string): Plugin {
   };
 }
 
+const UI_EXPORTS_ID = "virtual:yugen-ui-exports";
+const UI_EXPORTS_RESOLVED = "\0" + UI_EXPORTS_ID;
+
+/** Tên runtime (không phải type) mà một module export, kể cả `export * from "./x"` (đọc tiếp file đó). */
+export function runtimeExports(file: string, seen = new Set<string>()): string[] {
+  if (seen.has(file)) return [];
+  seen.add(file);
+  const source = ts.createSourceFile(file, fs.readFileSync(file, "utf8"), ts.ScriptTarget.Latest, false);
+  const names: string[] = [];
+  const isExported = (node: ts.Node) =>
+    ts.canHaveModifiers(node) && (ts.getModifiers(node) ?? []).some((m) => m.kind === ts.SyntaxKind.ExportKeyword);
+  for (const statement of source.statements) {
+    if (ts.isExportDeclaration(statement)) {
+      if (statement.isTypeOnly) continue;
+      if (statement.exportClause && ts.isNamedExports(statement.exportClause)) {
+        for (const element of statement.exportClause.elements) if (!element.isTypeOnly) names.push(element.name.text);
+      } else if (!statement.exportClause && statement.moduleSpecifier && ts.isStringLiteral(statement.moduleSpecifier)) {
+        const base = path.resolve(path.dirname(file), statement.moduleSpecifier.text);
+        const target = [".tsx", ".ts", "/index.tsx", "/index.ts"].map((ext) => base + ext).find((f) => fs.existsSync(f));
+        if (target) names.push(...runtimeExports(target, seen));
+      }
+    } else if (isExported(statement)) {
+      if (ts.isVariableStatement(statement)) {
+        for (const d of statement.declarationList.declarations) if (ts.isIdentifier(d.name)) names.push(d.name.text);
+      } else if ((ts.isFunctionDeclaration(statement) || ts.isClassDeclaration(statement) || ts.isEnumDeclaration(statement)) && statement.name) {
+        names.push(statement.name.text);
+      }
+    }
+  }
+  return names;
+}
+
+/**
+ * `import uiExports from "virtual:yugen-ui-exports"` → `{ barrel, folders }`: tên runtime mà `yugen-ui` (barrel
+ * src/components/ui/index.ts) export, và thư mục component của từng tên. Docs dùng để suy ra lệnh cài / import StackBlitz mà
+ * không phải nạp cả thư viện lúc chạy (trước đây là import.meta.glob eager mọi module component).
+ */
+export function yugenUiExports(root: string): Plugin {
+  const uiDir = path.join(root, "src", "components", "ui");
+  const collect = () => {
+    const folders: Record<string, string> = {};
+    // Giống thứ tự glob cũ: file sắp theo đường dẫn, tên gặp trước thắng.
+    const files = fs
+      .readdirSync(uiDir, { withFileTypes: true })
+      .filter((d) => d.isDirectory())
+      .flatMap((d) =>
+        fs
+          .readdirSync(path.join(uiDir, d.name))
+          .filter((f) => /\.tsx?$/.test(f) && !/\.(test|spec|stories)\.tsx?$/.test(f) && !f.endsWith(".d.ts"))
+          .map((f) => `${d.name}/${f}`),
+      )
+      .sort();
+    for (const rel of files) {
+      for (const name of runtimeExports(path.join(uiDir, rel))) folders[name] ??= rel.split("/")[0];
+    }
+    return { barrel: [...new Set(runtimeExports(path.join(uiDir, "index.ts")))].sort(), folders };
+  };
+  return {
+    name: "yugen-ui-exports",
+    resolveId: (id) => (id === UI_EXPORTS_ID ? UI_EXPORTS_RESOLVED : undefined),
+    load(id) {
+      if (id !== UI_EXPORTS_RESOLVED) return undefined;
+      this.addWatchFile(uiDir);
+      return `export default ${JSON.stringify(collect())};`;
+    },
+  };
+}
+
 const DOCS_META_ID = "virtual:yugen-docs-meta";
 const DOCS_META_RESOLVED = "\0" + DOCS_META_ID;
 const META_KEYS = ["slug", "name", "category", "lead"] as const;

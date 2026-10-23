@@ -1,25 +1,19 @@
-import * as UI from "@/components/ui";
+import uiExports from "virtual:yugen-ui-exports";
 import * as Ramp from "@/lib/brandRamp";
 import * as Tokens from "@/lib/tokenExport";
 import { homepage } from "../../package.json";
 
 /** Mọi tên runtime mà `import { … } from "yugen-ui"` cung cấp (barrel + cn + brand ramp + token export). */
-export const exportNames = () => [...Object.keys(UI), ...Object.keys(Ramp), ...Object.keys(Tokens), "cn"];
+export const exportNames = () => [...uiExports.barrel, ...Object.keys(Ramp), ...Object.keys(Tokens), "cn"];
 
 /**
  * Suy ra lệnh cài cho từng trang component từ `importCode` của docs:
  *   - npm:        import { … } from "yugen-ui"
  *   - @yugen-ui/cli: npx @yugen-ui/cli add <item> + import theo từng thư mục component (packages/cli)
  *   - shadcn CLI: npx shadcn@latest add <registry>/r/<item>.json + cùng import đó
- * Bản đồ tên export → thư mục lấy từ chính các module component (cùng module trang docs đã nạp, không tốn thêm).
+ * Bản đồ tên export → thư mục đọc tĩnh lúc build (virtual:yugen-ui-exports): không nạp cả thư viện vào mọi trang docs.
  */
-const modules = import.meta.glob<Record<string, unknown>>(["../components/ui/*/*.{ts,tsx}", "!**/*.test.*"], { eager: true });
-
-const FOLDER_OF: Record<string, string> = {};
-for (const [file, mod] of Object.entries(modules)) {
-  const folder = file.split("/")[3];
-  for (const name of Object.keys(mod)) FOLDER_OF[name] ??= folder;
-}
+const FOLDER_OF = uiExports.folders;
 
 export const REGISTRY_URL = `${homepage.replace(/\/$/, "")}/r`;
 

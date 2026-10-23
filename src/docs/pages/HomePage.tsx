@@ -1,4 +1,4 @@
-import { Fragment, useState, type ReactNode } from "react";
+import { Fragment, useState, type CSSProperties, type ReactNode } from "react";
 import {
   ArrowRight20Regular,
   Color24Regular,
@@ -85,14 +85,28 @@ function InstallSnippet({ className }: { className?: string }) {
   );
 }
 
+/**
+ * Giây animation hero đã chạy trên HTML prerender trước khi React thay DOM (chỉ lần render đầu khi trang chủ là trang được
+ * prerender). hero.css trừ khoảng này vào animation-delay để animation chạy tiếp thay vì phát lại từ đầu.
+ */
+function prerenderedHeroElapsed() {
+  if (typeof document === "undefined" || !document.querySelector("#root .yg-ink")) return 0;
+  const firstPaint = performance.getEntriesByName("first-contentful-paint")[0]?.startTime ?? 0;
+  return Math.max(0, (performance.now() - firstPaint) / 1000);
+}
+
 export function HomePage() {
   const { t, foundation } = useLocale();
+  const [heroElapsed] = useState(prerenderedHeroElapsed);
   const count = COMPONENTS_META.length;
 
   return (
     <div className="pb-8">
       {/* Hero */}
-      <section className="relative -mx-4 px-4 pt-5 pb-12 md:-mx-12 md:px-12 md:pt-8 md:pb-16">
+      <section
+        className="relative -mx-4 px-4 pt-5 pb-12 md:-mx-12 md:px-12 md:pt-8 md:pb-16"
+        style={{ "--yg-elapsed": `${heroElapsed}s` } as CSSProperties}
+      >
         {/* Ánh sáng mờ dần ở cả bốn cạnh, không dừng thành khung chữ nhật. */}
         <div aria-hidden className="pointer-events-none absolute inset-0 bg-hero-glow mask-x-from-80% mask-t-from-75% mask-b-from-70%" />
         <FallingPetals />
