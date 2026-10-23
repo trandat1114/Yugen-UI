@@ -4,7 +4,7 @@ import { openDocs, type Dir } from "./utils";
 /** Carousel trên desktop: nút trước / sau, phím mũi tên (đổi vai ở RTL), vòng lặp, autoplay tạm dừng khi hover / focus. */
 
 async function heroCarousel(page: Page, dir: Dir = "ltr") {
-  await openDocs(page, "#/components/carousel", { dir });
+  await openDocs(page, "/components/carousel", { dir });
   const carousel = page.locator('section[aria-label="Điểm nổi bật"]').first();
   await carousel.scrollIntoViewIfNeeded();
   return {

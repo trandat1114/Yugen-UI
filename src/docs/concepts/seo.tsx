@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { DocSection, DoDont } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
+import { docsPath } from "../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -120,7 +121,7 @@ export default function Page() {
             ]}
           />
           <P>
-            Cách dựng Next.js với Yugen ở trang <A href="#/concepts/ssr">Server-Side Rendering &amp; Next.js</A>.
+            Cách dựng Next.js với Yugen ở trang <A href={docsPath("/concepts/ssr")}>Server-Side Rendering &amp; Next.js</A>.
           </P>
         </div>
       </DocSection>

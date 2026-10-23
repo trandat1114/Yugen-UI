@@ -6,7 +6,7 @@
 export interface AllowlistEntry {
   /** Id rule axe, vd. "color-contrast". */
   rule: string;
-  /** Hash route (vd. "#/foundations/color") hoặc RegExp; bỏ trống = mọi route. */
+  /** Route (vd. "/foundations/color") hoặc RegExp; bỏ trống = mọi route. */
   route?: string | RegExp;
   /** Selector CSS mà phần tử vi phạm nằm trong; bỏ trống = mọi phần tử của rule trên route đó. */
   selector?: string;
@@ -18,7 +18,7 @@ export interface AllowlistEntry {
 export const A11Y_ALLOWLIST: AllowlistEntry[] = [
   {
     rule: "color-contrast",
-    route: "#/foundations/color",
+    route: "/foundations/color",
     selector: '[data-contrast-sample="decor"]',
     reason: "Bảng tương phản cố ý vẽ mẫu 'Aa' của cặp token không yêu cầu tỉ lệ (viền trang trí, disabled) để minh hoạ.",
   },

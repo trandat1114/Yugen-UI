@@ -39,6 +39,7 @@ import {
 } from "@/components/ui";
 import { DocSection, DoDont } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
+import { docsPath } from "../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -207,7 +208,7 @@ export default function Page() {
         <div className="flex flex-col gap-4">
           <Demo>
             <Button asChild appearance="primary">
-              <a href="#/concepts/theming">
+              <a href={docsPath("/concepts/theming")}>
                 Đọc về Theming
                 <ArrowRight16Regular className="rtl:-scale-x-100" />
               </a>
@@ -368,7 +369,7 @@ export default function Page() {
             Với element, props đặt trực tiếp trên control <strong className="font-semibold">thắng</strong> props của Field (Field gộp theo
             thứ tự <C>{"{ ...fieldProps, ...child.props }"}</C>). Lưu ý <C>{"<label for>"}</C> không đặt tên được cho{" "}
             <C>role=&quot;radiogroup&quot;</C> — với nhóm lựa chọn, xem cách gắn nhãn nhóm ở trang{" "}
-            <a className="text-link underline hover:text-link-hover" href="#/concepts/component-labelling">
+            <a className="text-link underline hover:text-link-hover" href={docsPath("/concepts/component-labelling")}>
               Gắn nhãn component
             </a>
             .

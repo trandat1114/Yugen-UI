@@ -6,7 +6,7 @@ import { openDocs } from "./utils";
  * được ở 360px, và các phần chọn bằng chạm trên trang chủ.
  */
 const WIDTHS = [360, 768, 1024];
-const ROUTES = ["#/", "#/components/button"];
+const ROUTES = ["/", "/components/button"];
 
 for (const width of WIDTHS) {
   for (const route of ROUTES) {
@@ -21,7 +21,7 @@ for (const width of WIDTHS) {
 
 test("360px: đổi ngôn ngữ và giao diện từ thanh trên", async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 800 });
-  await openDocs(page, "#/");
+  await openDocs(page, "/");
   const header = page.locator("header").first();
 
   await header.getByRole("button", { name: /English/ }).tap();
@@ -33,12 +33,12 @@ test("360px: đổi ngôn ngữ và giao diện từ thanh trên", async ({ page
 });
 
 test("trang chủ: chạm chip đổi nhóm showcase, chạm tên component mở demo và đóng mục cũ", async ({ page }) => {
-  await openDocs(page, "#/");
+  await openDocs(page, "/");
 
   const showcase = page.getByRole("radiogroup", { name: "Khám phá" });
   await showcase.getByRole("radio", { name: "Phản hồi" }).tap();
   await expect(showcase.getByRole("radio", { name: "Phản hồi" })).toHaveAttribute("aria-checked", "true");
-  await expect(page).toHaveURL(/#\/$/);
+  expect(new URL(page.url()).pathname).toBe("/");
 
   const button = page.locator('[data-comp="button"]');
   const link = page.locator('[data-comp="link"]');

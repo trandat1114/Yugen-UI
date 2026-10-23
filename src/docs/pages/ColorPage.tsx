@@ -22,6 +22,7 @@ import {
 import { cn } from "@/lib/cn";
 import { DoDont, DocSection, PageHeader } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
+import { docsPath } from "../router";
 
 /* ======================================================================= helpers */
 
@@ -329,7 +330,7 @@ function BrandSection() {
                 <Button>Để sau</Button>
               </div>
               <p className="text-caption1 font-semibold tracking-wide text-foreground-3 uppercase">Liên kết</p>
-              <a href="#/foundations/color" className="text-body1 text-link underline-offset-2 hover:text-link-hover hover:underline">
+              <a href={docsPath("/foundations/color")} className="text-body1 text-link underline-offset-2 hover:text-link-hover hover:underline">
                 Xem hướng dẫn màu
               </a>
             </div>

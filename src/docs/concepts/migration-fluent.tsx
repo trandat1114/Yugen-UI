@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { MessageBar } from "@/components/ui";
 import { DocSection, DoDont } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
+import { docsPath } from "../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -321,7 +322,7 @@ export default function Page() {
           <SimpleTable
             head={["Fluent v9", "Thay thế"]}
             rows={[
-              [<C key="a">DataGrid</C>, <>Table + mẫu DataTable (lọc, sắp xếp, chọn hàng, phân trang) ở <a className="text-link underline hover:text-link-hover" href="#/components/table">trang Table</a>.</>],
+              [<C key="a">DataGrid</C>, <>Table + mẫu DataTable (lọc, sắp xếp, chọn hàng, phân trang) ở <a className="text-link underline hover:text-link-hover" href={docsPath("/components/table")}>trang Table</a>.</>],
               [<C key="a">Overflow, useOverflowMenu</C>, "Ẩn mục theo breakpoint và gom vào Menu “…”; Breadcrumb có sẵn maxDisplayedItems."],
               [<C key="a">ColorPicker, SwatchPicker</C>, <>Thẻ <C>{'<input type="color">'}</C> trong Field, hoặc ToggleGroup các ô màu.</>],
               [<C key="a">TimePicker (compat)</C>, <>Combobox với danh sách giờ, hoặc <C>{'<Input type="time">'}</C>.</>],

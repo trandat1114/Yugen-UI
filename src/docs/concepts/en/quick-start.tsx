@@ -25,6 +25,7 @@ import {
   PROVIDER_VITE,
   TEMPLATE_COMMAND,
 } from "../_snippets";
+import { docsPath } from "../../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -184,11 +185,11 @@ export default function Page() {
           <P>
             The starter comes with a remembered theme choice, toast, an <C>@/</C> alias, SEO basics and a welcome page to delete when you
             start. Swap <C>starter</C> for <C>saas</C> (8-page SaaS app), <C>blog</C> (Markdown blog), <C>dashboard</C> or <C>ai-chat</C>,
-            or drop <C>--template</C> to pick in the terminal. More options on <A href="#/concepts/cli">@yugen-ui/cli</A>.
+            or drop <C>--template</C> to pick in the terminal. More options on <A href={docsPath("/concepts/cli")}>@yugen-ui/cli</A>.
           </P>
           <div className="flex flex-wrap gap-2">
             <Button asChild appearance="primary" icon={<Rocket16Regular />}>
-              <a href="#/templates">Browse templates</a>
+              <a href={docsPath("/templates")}>Browse templates</a>
             </Button>
             <Button asChild icon={<Open16Regular />}>
               <a href={templateStackBlitzUrl("vite-starter")} target="_blank" rel="noreferrer">
@@ -268,8 +269,8 @@ export default function Page() {
           <PackageManagerTabs packages={CLI_ADD} command="dlx" />
           <P>
             The CLI writes the theme, <C>cn()</C> and <C>YugenProvider</C>, copies the components each one depends on, installs missing npm
-            packages and rewrites imports to your project&apos;s alias. Details on <A href="#/concepts/cli">@yugen-ui/cli</A>. Already using
-            the shadcn CLI? See <A href="#/concepts/shadcn-registry">Install with the shadcn CLI</A>.
+            packages and rewrites imports to your project&apos;s alias. Details on <A href={docsPath("/concepts/cli")}>@yugen-ui/cli</A>. Already using
+            the shadcn CLI? See <A href={docsPath("/concepts/shadcn-registry")}>Install with the shadcn CLI</A>.
           </P>
         </div>
       </DocSection>
@@ -292,7 +293,7 @@ export default function Page() {
           <CodeBlock code={PERSIST} />
           <P>
             <C>YugenProvider</C> writes attributes in <C>useEffect</C> (after the first paint), so add a script to <C>{"<head>"}</C> to avoid
-            a white flash for users who picked the dark theme. For Next.js, see <A href="#/concepts/ssr">SSR & Next.js</A>.
+            a white flash for users who picked the dark theme. For Next.js, see <A href={docsPath("/concepts/ssr")}>SSR & Next.js</A>.
           </P>
           <CodeBlock code={HTML} />
           <MessageBar intent="warning" title="Use the same localStorage key." className="max-w-3xl">
@@ -316,13 +317,13 @@ export default function Page() {
           />
           <div className="flex flex-wrap gap-2">
             <Button asChild>
-              <a href="#/concepts/styling">Styling</a>
+              <a href={docsPath("/concepts/styling")}>Styling</a>
             </Button>
             <Button asChild>
-              <a href="#/concepts/theming">Theming</a>
+              <a href={docsPath("/concepts/theming")}>Theming</a>
             </Button>
             <Button asChild>
-              <a href="#/concepts/accessibility">Accessibility</a>
+              <a href={docsPath("/concepts/accessibility")}>Accessibility</a>
             </Button>
           </div>
         </div>

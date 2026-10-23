@@ -13,6 +13,7 @@ import {
 } from "@/components/ui";
 import { DocSection, DoDont, PropsTable } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
+import { docsPath } from "../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -282,7 +283,7 @@ export default function Page() {
             <li>
               Dialog, Menu, Popover, Tooltip render qua portal vào <C>{"<body>"}</C> nhưng vẫn tự nhận theme / brand / hướng chữ của
               YugenProvider lồng gần nhất (qua <C>usePortalThemeProps()</C>). Chi tiết ở trang{" "}
-              <a className="text-link underline hover:text-link-hover" href="#/concepts/positioning">Định vị</a>.
+              <a className="text-link underline hover:text-link-hover" href={docsPath("/concepts/positioning")}>Định vị</a>.
             </li>
           </ul>
         </div>
@@ -314,7 +315,7 @@ export default function Page() {
         <div className="flex flex-col gap-4">
           <ol className="flex max-w-3xl list-decimal flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>
-              Mở <a className="text-link underline hover:text-link-hover" href="#/theme-designer">Theme Designer</a>, nhập màu chủ đạo và
+              Mở <a className="text-link underline hover:text-link-hover" href={docsPath("/theme-designer")}>Theme Designer</a>, nhập màu chủ đạo và
               tên brand. Trang sinh ramp bằng cách giữ đường cong lightness / chroma OKLCH của Communication Blue và đổi hue, xem trước trên
               component thật, kiểm tra tương phản.
             </li>

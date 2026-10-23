@@ -13,7 +13,7 @@ async function bodyScrollLocked(page: Page) {
 
 test.describe("Dialog", () => {
   test("focus vào trong, Tab không thoát, Esc đóng và trả focus, nền không cuộn", async ({ page }) => {
-    await openDocs(page, "#/components/dialog");
+    await openDocs(page, "/components/dialog");
     const trigger = page.getByRole("button", { name: "Xoá tệp" }).first();
     await trigger.click();
     const dialog = page.getByRole("dialog", { name: /Báo cáo Q3/ });
@@ -35,7 +35,7 @@ test.describe("Dialog", () => {
 
 test.describe("Menu", () => {
   test("Enter mở; mũi tên, Home, End và gõ chữ cái di chuyển; Esc đóng và trả focus", async ({ page }) => {
-    await openDocs(page, "#/components/menu");
+    await openDocs(page, "/components/menu");
     const trigger = page.getByRole("button", { name: "Thao tác" }).first();
     await trigger.focus();
     await page.keyboard.press("Enter");
@@ -62,7 +62,7 @@ test.describe("Menu", () => {
 test.describe("Combobox", () => {
   test("gõ không dấu để lọc, mũi tên duyệt, Enter chọn, Esc đóng; danh sách nằm trong màn 390px", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await openDocs(page, "#/components/combobox");
+    await openDocs(page, "/components/combobox");
     const input = page.getByRole("combobox", { name: "Thành phố" }).first();
     await input.click();
     await input.fill("da nang");
@@ -90,7 +90,7 @@ test.describe("Combobox", () => {
 
 test.describe("DatePicker", () => {
   test("mở bằng bàn phím, mũi tên đổi ngày, Enter chọn, lịch đóng và focus quay về ô", async ({ page }) => {
-    await openDocs(page, "#/components/datepicker");
+    await openDocs(page, "/components/datepicker");
     const field = page.getByRole("combobox", { name: "Ngày bắt đầu" }).first();
     await field.focus();
     await page.keyboard.press("Enter");
@@ -108,7 +108,7 @@ test.describe("DatePicker", () => {
 
 test.describe("Toast", () => {
   test("hiện trong vùng thông báo mà không lấy focus; F8 tới vùng đó; đóng bằng bàn phím", async ({ page }) => {
-    await openDocs(page, "#/components/toast");
+    await openDocs(page, "/components/toast");
     const button = page.getByRole("button", { name: "Lưu tài liệu" });
     // Bấm bằng bàn phím: Safari / WebKit không đặt focus vào nút khi click chuột.
     await button.focus();

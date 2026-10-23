@@ -1,5 +1,5 @@
 /**
- * Lộ trình — nguồn duy nhất cho trang Cộng đồng (#/community › Lộ trình) và ROADMAP.md (`npm run roadmap`).
+ * Lộ trình — nguồn duy nhất cho trang Cộng đồng (/community › Lộ trình) và ROADMAP.md (`npm run roadmap`).
  * Mỗi bản phát hành ứng với một milestone trên GitHub; chi tiết, ưu tiên và phụ thuộc nằm ở GitHub Project.
  * Đổi milestone / issue thì sửa ở đây, chạy `npm run roadmap`; roadmap.test.ts báo lỗi nếu ROADMAP.md lệch.
  */
@@ -41,7 +41,7 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       en: "Stable API. No fixed date: ships when the readiness checklist is done.",
       items: [
         { status: "planned", issue: 65, vi: "Rà soát API, gỡ deprecation, quyết định về React 18 và class spacing viết hoa", en: "API review, deprecations removed, decisions on React 18 and upper-case spacing" },
-        { status: "planned", issue: 63, vi: "SEO: URL theo đường dẫn, prerender từng trang, sitemap", en: "SEO: path URLs, prerendered pages, sitemap" },
+        { status: "doing", issue: 63, vi: "SEO: URL theo đường dẫn, prerender từng trang, sitemap", en: "SEO: path URLs, prerendered pages, sitemap" },
       ],
     },
   ],
@@ -102,7 +102,7 @@ export function roadmapMarkdown() {
     `phụ thuộc nằm ở [GitHub Project](${PROJECT_URL}). \`[x]\` đã xong, \`[~]\` đang làm, \`[ ]\` dự kiến.`,
     "",
     "Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. English: the community page",
-    `(${homepage}?lang=en#/community) shows the same roadmap.`,
+    `(${homepage}community?lang=en) shows the same roadmap.`,
   ];
   for (const stage of ["now", "next", "later"] as const) {
     if (ROADMAP[stage].length === 0) continue;
@@ -113,7 +113,7 @@ export function roadmapMarkdown() {
       for (const item of r.items) lines.push(`- ${box[item.status]} ${item.vi}${item.issue ? ` (#${item.issue})` : ""}`);
     }
   }
-  lines.push("", "## Đã phát hành", "", "Chi tiết ở trang Có gì mới (`#/news`) và `CHANGELOG.md`.", "");
+  lines.push("", "## Đã phát hành", "", "Chi tiết ở trang Có gì mới (`/news`) và `CHANGELOG.md`.", "");
   for (const n of NEWS.filter((r) => !r.upcoming)) lines.push(`- **${n.version}** (${n.date}): ${n.title}`);
   return `${lines.join("\n")}\n`;
 }

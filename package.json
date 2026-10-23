@@ -64,7 +64,7 @@
     "dev": "vite",
     "registry": "node scripts/build-registry.mjs",
     "cli": "npm run build --prefix packages/cli && node packages/cli/dist/index.js",
-    "build:docs": "npm run registry && vite build",
+    "build:docs": "npm run registry && vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.mjs",
     "build:lib": "vite build -c vite.lib.config.ts && tsc -p tsconfig.lib.json && tsc-alias -p tsconfig.lib.json && node scripts/build-css.mjs",
     "build": "npm run build:lib && npm run build:docs",
     "preview": "vite preview",

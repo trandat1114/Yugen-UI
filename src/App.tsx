@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState, type ReactNode } from "react";
+import { Suspense, useEffect, useState, type ReactNode } from "react";
 import { PageProgress, PageProgressFallback, YugenProvider } from "@/components/ui";
 import { useAppearance } from "@/hooks/useAppearance";
 import { useRoute } from "@/docs/router";
@@ -10,20 +10,47 @@ import { ComponentPage } from "@/docs/pages/ComponentPage";
 import { ConceptPage } from "@/docs/pages/ConceptPage";
 import { YugenMark } from "@/docs/YugenMark";
 import { AuthorLink } from "@/docs/AuthorLink";
-import { CONCEPT_EN_PAGES } from "@/docs/concepts";
-import { LocaleProvider, useLocale } from "@/docs/i18n";
+import { CONCEPT_BY_SLUG, CONCEPT_EN_PAGES } from "@/docs/concepts";
+import { loadEnglish, LocaleProvider, useLocale, type Locale } from "@/docs/i18n";
 import { FallbackNotice } from "@/docs/i18n/FallbackNotice";
 import { DocumentMeta } from "@/docs/seo";
+import { lazyPage } from "@/docs/lazyPage";
+import { preloadComponentDoc } from "@/docs/registry";
 import { SITE } from "@/docs/site";
 import type { Route } from "@/docs/router";
 
 // Trang ít dùng / nặng nạp lười theo route.
-const FoundationsPage = lazy(() => import("@/docs/pages/FoundationsPage").then((m) => ({ default: m.FoundationsPage })));
-const BlocksPage = lazy(() => import("@/docs/pages/BlocksPage").then((m) => ({ default: m.BlocksPage })));
-const TemplatesPage = lazy(() => import("@/docs/pages/TemplatesPage").then((m) => ({ default: m.TemplatesPage })));
-const ThemeDesignerPage = lazy(() => import("@/docs/pages/ThemeDesignerPage").then((m) => ({ default: m.ThemeDesignerPage })));
-const NewsPage = lazy(() => import("@/docs/pages/NewsPage").then((m) => ({ default: m.NewsPage })));
-const CommunityPage = lazy(() => import("@/docs/pages/CommunityPage").then((m) => ({ default: m.CommunityPage })));
+const FoundationsPage = lazyPage(() => import("@/docs/pages/FoundationsPage").then((m) => m.FoundationsPage));
+const BlocksPage = lazyPage(() => import("@/docs/pages/BlocksPage").then((m) => m.BlocksPage));
+// Preview của template cũng nạp cùng trang: HTML prerender có sẵn preview, thay bằng khung chờ sẽ nháy.
+const TemplatesPage = lazyPage(() => import("@/docs/pages/TemplatesPage").then((m) => m.Preview.preload().then(() => m.TemplatesPage)));
+const ThemeDesignerPage = lazyPage(() => import("@/docs/pages/ThemeDesignerPage").then((m) => m.ThemeDesignerPage));
+const NewsPage = lazyPage(() => import("@/docs/pages/NewsPage").then((m) => m.NewsPage));
+const CommunityPage = lazyPage(() => import("@/docs/pages/CommunityPage").then((m) => m.CommunityPage));
+
+/**
+ * Nạp trước mọi phần nạp lười mà route cần (trang, nội dung khái niệm, demo, gói tiếng Anh). main.tsx chờ hàm này rồi
+ * mới render, nên HTML prerender được thay bằng trang hoàn chỉnh trong một lần. Lỗi mạng bỏ qua: trang tự nạp lại khi render.
+ */
+export async function preloadRoute(route: Route, lang: Locale) {
+  const pages = {
+    foundation: FoundationsPage,
+    blocks: BlocksPage,
+    templates: TemplatesPage,
+    "theme-designer": ThemeDesignerPage,
+    news: NewsPage,
+    community: CommunityPage,
+  } as const;
+  const tasks: Promise<unknown>[] = [];
+  if (lang === "en") tasks.push(loadEnglish());
+  if (route.kind in pages) tasks.push(pages[route.kind as keyof typeof pages].preload());
+  if (route.kind === "concept") {
+    const page = (lang === "en" && CONCEPT_EN_PAGES[route.slug]) || CONCEPT_BY_SLUG[route.slug]?.Page;
+    if (page) tasks.push(page.preload());
+  }
+  if (route.kind === "component") tasks.push(preloadComponentDoc(route.slug));
+  await Promise.allSettled(tasks);
+}
 
 /** Chế độ tiếng Anh: route nào còn hiện nội dung tiếng Việt (toàn trang hoặc một phần). */
 function fallbackOf(route: Route): "page" | "partial" | null {
@@ -76,14 +103,22 @@ function Footer() {
   );
 }
 
-export default function App() {
-  const route = useRoute();
+/** `path`: prerender ở Node (scripts/prerender.mjs) truyền đường dẫn thay cho `window.location`. */
+export default function App({ path }: { path?: string }) {
+  const route = useRoute(path);
   const { theme, brand, dir, lang, update } = useAppearance();
   const fallback = fallbackOf(route);
   const [navOpen, setNavOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
 
   useEffect(() => setNavOpen(false), [route]);
+  // Script trong index.html ẩn HTML prerender khi nó không khớp với trang sẽ hiện (tiếng Anh, RTL, link #/… cũ): hiện lại ở
+  // đây. data-docs-ready: React đã thay HTML prerender (e2e chờ dấu này trước khi đo).
+  useEffect(() => {
+    const root = document.documentElement;
+    root.removeAttribute("data-pending");
+    root.setAttribute("data-docs-ready", "");
+  }, []);
 
   // Khoá dùng để trang đọc lại giá trị token khi theme / brand đổi.
   const tokenKey = `${theme}-${brand}`;

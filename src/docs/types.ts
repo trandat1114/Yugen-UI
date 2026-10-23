@@ -57,7 +57,7 @@ export const CONCEPT_GROUPS = ["Bắt đầu", "Nhà phát triển", "Khả năn
 export type ConceptGroup = (typeof CONCEPT_GROUPS)[number];
 
 export interface ConceptMeta {
-  /** Dùng trong URL: #/concepts/<slug> */
+  /** Dùng trong URL: /concepts/<slug> */
   slug: string;
   title: string;
   group: ConceptGroup;

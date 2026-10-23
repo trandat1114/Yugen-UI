@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Accessibility24Regular, Eye24Regular, Keyboard24Regular, Speaker224Regular, TextFont24Regular } from "@fluentui/react-icons";
 import { Checkbox, Kbd, KbdGroup, ProgressBar } from "@/components/ui";
 import { DocSection } from "../blocks";
+import { docsPath } from "../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -199,10 +200,10 @@ export default function Page() {
           <P>Đọc tiếp:</P>
           <div className="grid gap-3 sm:grid-cols-2">
             {[
-              { href: "#/concepts/component-labelling", title: "Gắn nhãn component", body: "Field, Label, aria-label, nhãn cho nhóm." },
-              { href: "#/concepts/focus-indicator", title: "Chỉ báo focus", body: ":focus-visible, thanh brand của ô nhập, quản lý focus." },
-              { href: "#/concepts/notifications", title: "Thông báo & live region", body: "MessageBar, Toast, role=status / alert." },
-              { href: "#/concepts/truncation", title: "Cắt chữ", body: "Khi nào cắt, cách cho xem toàn văn." },
+              { href: docsPath("/concepts/component-labelling"), title: "Gắn nhãn component", body: "Field, Label, aria-label, nhãn cho nhóm." },
+              { href: docsPath("/concepts/focus-indicator"), title: "Chỉ báo focus", body: ":focus-visible, thanh brand của ô nhập, quản lý focus." },
+              { href: docsPath("/concepts/notifications"), title: "Thông báo & live region", body: "MessageBar, Toast, role=status / alert." },
+              { href: docsPath("/concepts/truncation"), title: "Cắt chữ", body: "Khi nào cắt, cách cho xem toàn văn." },
             ].map((l) => (
               <a
                 key={l.href}

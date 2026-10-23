@@ -72,6 +72,16 @@ export function readComponentDoc(slug: string): { doc: ComponentDoc; error?: und
   return entry.status === "done" ? { doc: entry.doc } : { error: entry.error };
 }
 
+/** Nạp trước doc của một trang component (main.tsx, trước lần render đầu) — `readComponentDoc` sau đó không treo. */
+export function preloadComponentDoc(slug: string): Promise<void> {
+  try {
+    readComponentDoc(slug);
+    return Promise.resolve();
+  } catch (pending) {
+    return pending as Promise<void>;
+  }
+}
+
 /** Bỏ kết quả lỗi đã cache để `readComponentDoc` tải lại. */
 export function retryComponentDoc(slug: string) {
   if (entries.get(slug)?.status === "error") entries.delete(slug);

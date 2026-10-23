@@ -11,7 +11,7 @@ const computed = (page: Page, selector: string, prop: string) =>
     .evaluate((el, p) => getComputedStyle(el).getPropertyValue(p), prop);
 
 test("bo góc, mật độ và màu trung tính đổi bản xem trước; CSS xuất có đủ khối light / dark", async ({ page }) => {
-  await openDocs(page, "#/theme-designer");
+  await openDocs(page, "/theme-designer");
   const primary = 'button:has-text("Primary")';
   expect(await computed(page, primary, "border-radius")).toBe("4px");
   expect(await computed(page, primary, "height")).toBe("32px");
@@ -36,14 +36,14 @@ test("bo góc, mật độ và màu trung tính đổi bản xem trước; CSS x
 });
 
 test("mật độ gọn báo vùng bấm dưới 24px", async ({ page }) => {
-  await openDocs(page, "#/theme-designer");
+  await openDocs(page, "/theme-designer");
   await page.getByRole("radiogroup", { name: "Mật độ" }).getByRole("radio", { name: "Gọn" }).click();
   await expect(page.getByText("Control size small dưới 24px")).toBeVisible();
   await expect(page.getByText("22.5px").first()).toBeVisible();
 });
 
 test("link chia sẻ khôi phục mọi lựa chọn", async ({ page }) => {
-  await page.goto("/?td-key=03787C&td-radius=full&td-size=16&td-elevation=flat&td-name=acme#/theme-designer", { waitUntil: "domcontentloaded" });
+  await page.goto("/theme-designer?td-key=03787C&td-radius=full&td-size=16&td-elevation=flat&td-name=acme", { waitUntil: "domcontentloaded" });
   await expect(page.getByRole("heading", { level: 1, name: "Theme Designer" })).toBeVisible();
   await expect(page.getByRole("radiogroup", { name: "Bo góc" }).getByRole("radio", { name: "Tròn" })).toBeChecked();
   await expect(page.getByRole("radiogroup", { name: "Cỡ chữ gốc" }).getByRole("radio", { name: "16px" })).toBeChecked();

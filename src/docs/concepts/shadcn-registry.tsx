@@ -4,6 +4,7 @@ import { DocSection } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
 import { REGISTRY_URL } from "../install";
 import { NAMESPACE, SHADCN_ADD, SHADCN_EXISTING, SHADCN_INIT, SHADCN_INIT_NEXT } from "./_snippets";
+import { docsPath } from "../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -62,7 +63,7 @@ export default function Page() {
           </P>
           <MessageBar intent="info" title="Cách ngắn hơn: @yugen-ui/cli" className="max-w-3xl">
             <C>npx @yugen-ui/cli@latest init --mode source</C> rồi <C>npx @yugen-ui/cli add button</C> chép cùng mã nguồn từ cùng registry, gõ tên ngắn,
-            không cần components.json hay alias <C>@/</C>. Chi tiết ở trang <A href="#/concepts/cli">@yugen-ui/cli</A>. Trang này dành cho dự
+            không cần components.json hay alias <C>@/</C>. Chi tiết ở trang <A href={docsPath("/concepts/cli")}>@yugen-ui/cli</A>. Trang này dành cho dự
             án đã dùng shadcn CLI.
           </MessageBar>
         </div>
@@ -138,7 +139,7 @@ export default function Page() {
           <PackageManagerTabs packages={SHADCN_EXISTING} command="dlx" />
           <MessageBar intent="warning" title="Theme Yugen thay scale mặc định của Tailwind." className="max-w-3xl">
             <C>yugen.css</C> tắt bảng màu, bo góc, bóng đổ và cỡ chữ mặc định (<C>bg-blue-500</C>, <C>rounded-lg</C>, <C>text-sm</C> không còn).
-            Component shadcn/ui cũ dùng các class đó sẽ mất style — nên chuyển dần (xem <A href="#/concepts/migration-shadcn">Từ shadcn/ui</A>)
+            Component shadcn/ui cũ dùng các class đó sẽ mất style — nên chuyển dần (xem <A href={docsPath("/concepts/migration-shadcn")}>Từ shadcn/ui</A>)
             thay vì trộn hai theme lâu dài.
           </MessageBar>
         </div>
@@ -146,7 +147,7 @@ export default function Page() {
 
       <DocSection id="update" title="Cập nhật">
         <P>
-          Mã đã chép là của bạn — CLI không tự cập nhật. Khi Yugen phát hành bản mới (xem trang <A href="#/news">Có gì mới</A>), commit thay
+          Mã đã chép là của bạn — CLI không tự cập nhật. Khi Yugen phát hành bản mới (xem trang <A href={docsPath("/news")}>Có gì mới</A>), commit thay
           đổi của bạn trước, chạy lại lệnh <C>add</C> với <C>--overwrite</C>, rồi dùng diff của git để giữ lại phần đã tuỳ biến.
         </P>
       </DocSection>

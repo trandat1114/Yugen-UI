@@ -12,6 +12,7 @@ import {
   CLI_INIT,
   CLI_INIT_SOURCE,
 } from "../_snippets";
+import { docsPath } from "../../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -115,7 +116,7 @@ export default function Page() {
           <P>
             Options: <C>-t, --template</C>, <C>--lang en|vi</C> (language of the app's text, for templates that have both; English by default), <C>--pm npm|pnpm|yarn|bun</C>, <C>--no-install</C>, <C>--no-git</C>, <C>--force</C> (write into a
             non-empty directory). <C>npx create-yugen-ui@latest</C> is a shorter way to run the same command. Templates ship inside the
-            package, so this works offline. Preview them on <A href="#/templates">Templates</A>.
+            package, so this works offline. Preview them on <A href={docsPath("/templates")}>Templates</A>.
           </P>
         </div>
       </DocSection>
@@ -193,7 +194,7 @@ export default function Page() {
           <P>
             <C>--vibrancy</C> (50–150) and <C>--torsion</C> (−30…30) match the Theme Designer&apos;s two sliders. When white text on the
             primary button is under 4.5:1, the CLI warns and suggests a darker key that passes. For radius, density, fonts and the rest, use
-            the <A href="#/theme-designer">Theme Designer</A>.
+            the <A href={docsPath("/theme-designer")}>Theme Designer</A>.
           </P>
         </div>
       </DocSection>
@@ -220,7 +221,7 @@ export default function Page() {
           <CodeBlock code={CLI_CONFIG} />
           <P>
             Components come from the registry at <C>{REGISTRY_URL}</C>, the same source as the{" "}
-            <A href="#/concepts/shadcn-registry">shadcn CLI</A>. Projects that ran <C>shadcn init</C> with the Yugen registry can use{" "}
+            <A href={docsPath("/concepts/shadcn-registry")}>shadcn CLI</A>. Projects that ran <C>shadcn init</C> with the Yugen registry can use{" "}
             <C>yugen add</C> straight away because the CLI reads <C>components.json</C>. Point <C>--registry</C>, or <C>registry</C> in
             yugen.json, at another URL or a local folder (<C>public/r</C> after <C>npm run registry</C> when working on Yugen).
           </P>

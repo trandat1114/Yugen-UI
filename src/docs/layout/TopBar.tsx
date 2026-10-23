@@ -14,6 +14,7 @@ import { useHasUnseenNews } from "../useNews";
 import { useLocale, type Locale } from "../i18n";
 import { VersionMenu } from "./VersionMenu";
 import { AppearancePicker } from "./AppearancePicker";
+import { docsPath } from "../router";
 
 const LANGS: Record<Locale, { short: string; label: string }> = {
   vi: { short: "VI", label: "Tiếng Việt" },
@@ -47,7 +48,7 @@ export function TopBar({
       >
         <Navigation20Regular />
       </button>
-      <a href="#/" className="flex shrink-0 items-center gap-2 whitespace-nowrap lg:hidden">
+      <a href={docsPath("/")} className="flex shrink-0 items-center gap-2 whitespace-nowrap lg:hidden">
         <YugenMark size={24} />
         <span className="text-subtitle2 font-semibold">Yugen UI</span>
       </a>
@@ -71,7 +72,7 @@ export function TopBar({
         </div>
         <SimpleTooltip content={t("nav.news")}>
           <Button asChild appearance="subtle" iconOnly className="relative hidden sm:inline-flex" aria-label={t("nav.news")}>
-            <a href="#/news">
+            <a href={docsPath("/news")}>
               <Megaphone20Regular />
               {hasUnseen && (
                 <span className="absolute top-1 inset-e-1 size-2 rounded-circular bg-brand-background ring-2 ring-shell">

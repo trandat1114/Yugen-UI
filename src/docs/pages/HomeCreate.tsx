@@ -4,6 +4,7 @@ import { Button, ToggleGroup, ToggleGroupItem } from "@/components/ui";
 import { CopyButton } from "../CodeBlock";
 import { useLocale } from "../i18n";
 import { TEMPLATES, templateCreateCommand, templateStackBlitzUrl } from "../templates";
+import { docsPath } from "../router";
 
 /** Trang chủ › Tạo dự án nhanh: chọn template → lệnh `npx create-yugen-ui` tương ứng (packages/create-yugen-ui). */
 export function HomeCreate() {
@@ -38,7 +39,7 @@ export function HomeCreate() {
       </div>
       <div className="flex flex-wrap gap-2">
         <Button asChild appearance="primary" icon={<Eye16Regular />}>
-          <a href="#/templates">{t("home.createPreview")}</a>
+          <a href={docsPath("/templates")}>{t("home.createPreview")}</a>
         </Button>
         <Button asChild icon={<Open16Regular />}>
           <a href={templateStackBlitzUrl(dir)} target="_blank" rel="noreferrer">

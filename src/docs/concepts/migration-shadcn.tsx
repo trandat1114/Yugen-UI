@@ -3,6 +3,7 @@ import { Delete20Regular, MoreHorizontal20Regular } from "@fluentui/react-icons"
 import { Badge, Button, Card, CardContent, CardFooter, CardHeader, MessageBar } from "@/components/ui";
 import { DocSection, DoDont } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
+import { docsPath } from "../router";
 
 function C({ children }: { children: ReactNode }) {
   return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
@@ -294,7 +295,7 @@ export default function Page() {
             <li>
               Màu thương hiệu là một ramp 16 bậc (<C>--brand-10 … 160</C>) thay vì một biến <C>--primary</C>: hover, pressed, tint chọn,
               focus và link đều lấy từ ramp. Tạo ramp ở{" "}
-              <a className="text-link underline hover:text-link-hover" href="#/theme-designer">
+              <a className="text-link underline hover:text-link-hover" href={docsPath("/theme-designer")}>
                 Theme Designer
               </a>
               .

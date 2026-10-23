@@ -25,11 +25,11 @@ import { COMPONENTS_BY_CATEGORY } from "../registry";
 import { CONCEPTS_BY_GROUP } from "../concepts";
 import { SITE } from "../site";
 import { FOUNDATIONS } from "../foundations";
-import type { Route } from "../router";
 import { AuthorLink } from "../AuthorLink";
 import { useLocale } from "../i18n";
 import { VersionMenu } from "./VersionMenu";
 import { SIDEBAR_DEFAULT, SIDEBAR_MAX, SIDEBAR_MIN, SIDEBAR_STEP, setSidebarLayout, useSidebarLayout } from "./sidebarLayout";
+import { docsPath, type Route } from "../router";
 
 const SIDEBAR_ID = "docs-sidebar";
 
@@ -319,18 +319,18 @@ export function Sidebar({
       .filter(({ title }) => match(title))
       .map(({ c, title }) => ({
         label: title,
-        href: `#/concepts/${c.meta.slug}`,
+        href: docsPath(`/concepts/${c.meta.slug}`),
         active: route.kind === "concept" && route.slug === c.meta.slug,
       }));
 
   const start: NavItem[] = [
-    { label: t("nav.overview"), href: "#/", active: route.kind === "home" },
+    { label: t("nav.overview"), href: docsPath("/"), active: route.kind === "home" },
     ...conceptItems("Bắt đầu"),
-    { label: "Templates", href: "#/templates", active: route.kind === "templates" },
-    { label: "Blocks", href: "#/blocks", active: route.kind === "blocks" },
-    { label: "Theme Designer", href: "#/theme-designer", active: route.kind === "theme-designer" },
-    { label: t("nav.news"), href: "#/news", active: route.kind === "news", badge: `v${SITE.version}` },
-    { label: t("nav.community"), href: "#/community", active: route.kind === "community" },
+    { label: "Templates", href: docsPath("/templates"), active: route.kind === "templates" },
+    { label: "Blocks", href: docsPath("/blocks"), active: route.kind === "blocks" },
+    { label: "Theme Designer", href: docsPath("/theme-designer"), active: route.kind === "theme-designer" },
+    { label: t("nav.news"), href: docsPath("/news"), active: route.kind === "news", badge: `v${SITE.version}` },
+    { label: t("nav.community"), href: docsPath("/community"), active: route.kind === "community" },
   ].filter((i) => match(i.label));
   const conceptGroups = (["Nhà phát triển", "Khả năng tiếp cận", "Yugen Labs", "Chuyển đổi"] as const).map((group) => ({
     group,
@@ -338,7 +338,7 @@ export function Sidebar({
   }));
   const foundations: NavItem[] = FOUNDATIONS.map((f) => ({
     label: foundation(f),
-    href: `#/foundations/${f.slug}`,
+    href: docsPath(`/foundations/${f.slug}`),
     active: route.kind === "foundation" && route.slug === f.slug,
   })).filter((i) => match(i.label));
   const groups = COMPONENTS_BY_CATEGORY.map((g) => ({
@@ -349,7 +349,7 @@ export function Sidebar({
       .filter((c) => match(c.name))
       .map((c) => ({
         label: c.name,
-        href: `#/components/${c.slug}`,
+        href: docsPath(`/components/${c.slug}`),
         active: route.kind === "component" && route.slug === c.slug,
       })),
   }));
@@ -384,7 +384,7 @@ export function Sidebar({
         {rail ? (
           <>
             <div className="flex h-18.5 shrink-0 items-center justify-center border-b border-stroke-2">
-              <a href="#/" aria-label="Yugen UI" className="rounded-medium">
+              <a href={docsPath("/")} aria-label="Yugen UI" className="rounded-medium">
                 <YugenMark size={28} />
               </a>
             </div>
@@ -426,7 +426,7 @@ export function Sidebar({
         ) : (
           <>
             <div className="flex h-18.5 shrink-0 items-center gap-2 border-b border-stroke-2 px-5">
-              <a href="#/" className="flex items-center gap-2 rounded-medium">
+              <a href={docsPath("/")} className="flex items-center gap-2 rounded-medium">
                 <YugenMark size={28} />
                 <span className="text-subtitle2 font-semibold">Yugen UI</span>
               </a>

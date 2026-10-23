@@ -12,6 +12,7 @@ import {
   CLI_INIT,
   CLI_INIT_SOURCE,
 } from "./_snippets";
+import { docsPath } from "../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -114,7 +115,7 @@ export default function Page() {
           <P>
             Tuỳ chọn: <C>-t, --template</C>, <C>--lang en|vi</C> (ngôn ngữ chữ trong app, với template có cả hai; mặc định tiếng Anh), <C>--pm npm|pnpm|yarn|bun</C>, <C>--no-install</C>, <C>--no-git</C>, <C>--force</C> (ghi vào thư
             mục không trống). <C>npx create-yugen-ui@latest</C> là cách gọi ngắn của lệnh này. Template nằm sẵn trong gói nên không cần
-            mạng. Xem trước ở <A href="#/templates">Templates</A>.
+            mạng. Xem trước ở <A href={docsPath("/templates")}>Templates</A>.
           </P>
         </div>
       </DocSection>
@@ -197,7 +198,7 @@ export default function Page() {
           <P>
             Tuỳ chọn <C>--vibrancy</C> (50–150) và <C>--torsion</C> (−30…30) như hai thanh trượt của Theme Designer. Chữ trắng trên nút
             primary dưới 4.5:1 thì CLI cảnh báo và gợi ý một màu key tối hơn đạt chuẩn. Muốn chỉnh thêm bo góc, mật độ, font… thì dùng{" "}
-            <A href="#/theme-designer">Theme Designer</A>.
+            <A href={docsPath("/theme-designer")}>Theme Designer</A>.
           </P>
         </div>
       </DocSection>
@@ -223,7 +224,7 @@ export default function Page() {
           </P>
           <CodeBlock code={CLI_CONFIG} />
           <P>
-            Component lấy từ registry <C>{REGISTRY_URL}</C>, cùng nguồn với <A href="#/concepts/shadcn-registry">shadcn CLI</A>. Dự án đã
+            Component lấy từ registry <C>{REGISTRY_URL}</C>, cùng nguồn với <A href={docsPath("/concepts/shadcn-registry")}>shadcn CLI</A>. Dự án đã
             chạy <C>shadcn init</C> với registry Yugen dùng được <C>yugen add</C> ngay vì CLI đọc <C>components.json</C>. Dùng registry khác
             hoặc thư mục local (<C>public/r</C> sau <C>npm run registry</C> khi phát triển Yugen) bằng <C>--registry</C> hoặc trường{" "}
             <C>registry</C> trong yugen.json.

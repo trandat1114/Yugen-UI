@@ -3,6 +3,7 @@ import { ArrowRight16Regular } from "@fluentui/react-icons";
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, SearchBox, ToggleGroup, ToggleGroupItem } from "@/components/ui";
 import { COMPONENTS_BY_CATEGORY, readComponentDoc } from "../registry";
 import { useLocale } from "../i18n";
+import { docsPath } from "../router";
 
 /** Demo hero của một component — nạp file registry chứa nó (treo tới khi xong; lỗi → để trống). */
 function HeroPreview({ slug }: { slug: string }) {
@@ -148,7 +149,7 @@ export function HomeComponents() {
                     )}
                     <p className="mt-2 text-caption1 text-foreground-3">{c.lead}</p>
                     <a
-                      href={`#/components/${c.slug}`}
+                      href={docsPath(`/components/${c.slug}`)}
                       className="mt-2 inline-flex items-center gap-1 rounded-small text-body1 font-semibold text-brand-foreground-1 hover:underline"
                     >
                       {t("home.open", { name: c.name })}
@@ -177,7 +178,7 @@ export function HomeComponents() {
                     <LazyPreview slug={c.slug} />
                   </div>
                   <a
-                    href={`#/components/${c.slug}`}
+                    href={docsPath(`/components/${c.slug}`)}
                     className="mt-2 block rounded-small text-subtitle2 font-semibold group-hover/comp:text-brand-foreground-1 after:absolute after:inset-0 after:rounded-3xlarge"
                   >
                     {c.name}
