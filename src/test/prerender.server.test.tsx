@@ -30,5 +30,14 @@ describe.skipIf(!version.startsWith("19."))("prerender docs", () => {
     expect(page.html).not.toContain('<template id="B:');
     expect(page.head.canonical).toBe(`https://trandat1114.github.io/Yugen-UI/${page.path}`);
     if (route.kind !== "home") expect(page.head.title).toMatch(/ · Yugen UI$/);
+    // Ảnh chia sẻ: og/<đường dẫn>.jpg (scripts/og-pages.mjs), trang chủ dùng og.jpg.
+    expect(page.head.image).toBe(`https://trandat1114.github.io/Yugen-UI/${page.path ? `og/${page.path}.jpg` : "og.jpg"}`);
+    expect(page.card.title).toBe(h1);
+  });
+
+  it("nhóm trang trên ảnh chia sẻ", async () => {
+    expect((await render({ kind: "component", slug: "button" })).card.section).toBe("Component · Hành động");
+    expect((await render({ kind: "concept", slug: "component-labelling" })).card.section).toBe("Khái niệm · Khả năng tiếp cận");
+    expect((await render({ kind: "news" })).card.section).toBe("");
   });
 });

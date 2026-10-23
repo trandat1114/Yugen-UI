@@ -50,6 +50,12 @@ jobs:
         env:
           DOCS_BASE: /${{ github.event.repository.name }}/
 
+      # One Open Graph image per page (dist-docs/og/, read from routes.json), drawn with Playwright's Chromium.
+      - name: Open Graph images
+        run: |
+          npx playwright install --with-deps chromium
+          node scripts/og-pages.mjs
+
       - name: Versioned docs (older minors from tags)
         run: node scripts/build-versioned-docs.mjs
         env:

@@ -62,13 +62,18 @@ export function routeMeta(route: Route, l: LocaleValue): { title?: string; descr
   }
 }
 
-/** `<title>`, mô tả và URL chuẩn của một trang — dùng chung cho prerender (scripts/prerender.mjs) và lúc chuyển trang. */
+/**
+ * `<title>`, mô tả, URL chuẩn và ảnh chia sẻ của một trang — dùng chung cho prerender (scripts/prerender.mjs) và lúc chuyển
+ * trang. Ảnh og/<đường dẫn>.jpg do scripts/og-pages.mjs vẽ lúc deploy; trang chủ dùng og.jpg.
+ */
 export function documentHead(route: Route, l: LocaleValue) {
   const { title, description } = routeMeta(route, l);
+  const path = pathOf(route);
   return {
     title: title ? `${title} · ${SITE.name}` : `${SITE.name} — React + Tailwind CSS v4`,
     description,
-    canonical: SITE.url + pathOf(route),
+    canonical: SITE.url + path,
+    image: SITE.url + (path ? `og/${path}.jpg` : "og.jpg"),
   };
 }
 
@@ -79,13 +84,14 @@ function setAttr(selector: string, name: string, value: string) {
 function useDocumentMeta(route: Route) {
   const l = useLocale();
   useEffect(() => {
-    const { title, description, canonical } = documentHead(route, l);
+    const { title, description, canonical, image } = documentHead(route, l);
     document.title = title;
     setAttr('meta[name="description"]', "content", description);
     setAttr('link[rel="canonical"]', "href", canonical);
     setAttr('meta[property="og:title"]', "content", title);
     setAttr('meta[property="og:description"]', "content", description);
     setAttr('meta[property="og:url"]', "content", canonical);
+    setAttr('meta[property="og:image"]', "content", image);
   }, [route, l]);
 }
 

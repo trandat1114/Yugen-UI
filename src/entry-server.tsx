@@ -4,12 +4,12 @@
  */
 import { renderToReadableStream } from "react-dom/server";
 import App, { preloadRoute } from "./App";
-import { CONCEPTS } from "./docs/concepts";
+import { CONCEPT_BY_SLUG, CONCEPTS } from "./docs/concepts";
 import { FOUNDATIONS } from "./docs/foundations";
-import { localeValue } from "./docs/i18n";
+import { localeValue, type LocaleValue } from "./docs/i18n";
 import { COMPONENT_META_BY_SLUG, COMPONENTS_META } from "./docs/registry";
 import { hrefOf, pathOf, type Route } from "./docs/router";
-import { documentHead } from "./docs/seo";
+import { documentHead, routeMeta } from "./docs/seo";
 
 export const ROUTES: Route[] = [
   { kind: "home" },
@@ -52,11 +52,28 @@ export function sourcesOf(route: Route): string[] {
   }
 }
 
+/** Nội dung ảnh chia sẻ (scripts/og-pages.mjs): nhóm trang, tiêu đề, mô tả. */
+function cardOf(route: Route, l: LocaleValue) {
+  const { title = "Yugen UI", description } = routeMeta(route, l);
+  let section = "";
+  if (route.kind === "component") {
+    const meta = COMPONENT_META_BY_SLUG[route.slug];
+    section = meta ? `${l.t("nav.components")} · ${l.category(meta.category)}` : l.t("nav.components");
+  } else if (route.kind === "concept") {
+    const meta = CONCEPT_BY_SLUG[route.slug]?.meta;
+    section = meta ? `${l.t("nav.concepts")} · ${l.group(meta.group)}` : l.t("nav.concepts");
+  } else if (route.kind === "foundation") {
+    section = l.t("nav.foundations");
+  }
+  return { section, title, description };
+}
+
 export interface RenderedPage {
   /** Đường dẫn sau BASE: "" (trang chủ), "components/button"… */
   path: string;
   html: string;
   head: ReturnType<typeof documentHead>;
+  card: ReturnType<typeof cardOf>;
 }
 
 export async function render(route: Route): Promise<RenderedPage> {
@@ -73,5 +90,6 @@ export async function render(route: Route): Promise<RenderedPage> {
   // Lỗi trong một Suspense không làm render dừng (React để client render lại phần đó) — với docs thì coi là lỗi build.
   if (errors.length > 0) throw errors[0];
   const html = await new Response(stream).text();
-  return { path: pathOf(route), html, head: documentHead(route, localeValue("vi")) };
+  const l = localeValue("vi");
+  return { path: pathOf(route), html, head: documentHead(route, l), card: cardOf(route, l) };
 }
