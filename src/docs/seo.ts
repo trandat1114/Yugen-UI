@@ -3,6 +3,7 @@ import { CONCEPT_BY_SLUG, CONCEPT_EN_PAGES } from "./concepts";
 import { FOUNDATIONS } from "./foundations";
 import { useLocale, type LocaleValue } from "./i18n";
 import { COMPONENT_META_BY_SLUG, COMPONENTS_META } from "./registry";
+import { COMPONENTS_TRANSLATED } from "./registry/translated";
 import { localePathOf, pathOf, type Route } from "./router";
 import { SITE } from "./site";
 
@@ -69,6 +70,8 @@ export function fallbackOf(route: Route): "page" | "partial" | null {
   if (route.kind === "concept") return CONCEPT_EN_PAGES[route.slug] ? null : "page";
   // Foundations › Motion viết song ngữ ngay trong trang (#45).
   if (route.kind === "foundation" && route.slug === "motion") return null;
+  // Trang component đã dịch: phần chữ tiếng Anh, demo (nội dung mẫu) giữ tiếng Việt và được đánh dấu lang="vi".
+  if (route.kind === "component" && COMPONENTS_TRANSLATED.has(route.slug)) return null;
   return "page";
 }
 

@@ -45,10 +45,17 @@ describe.skipIf(!version.startsWith("19."))("prerender docs", () => {
     expect(cli.head.image).toBe("og/en/concepts/cli.jpg");
     expect(cli.card.section).toMatch(/^Concepts · /);
 
+    // DataGrid chưa có bản tiếng Anh (#69).
+    const grid = await render({ kind: "component", slug: "datagrid" }, "en");
+    expect(grid.head.canonical).toBe("https://trandat1114.github.io/Yugen-UI/components/datagrid");
+    expect(grid.head.alternates).toEqual([]);
+    expect(grid.head.image).toBe("og/components/datagrid.jpg");
+
+    // Button đã dịch: canonical riêng, hreflang, mô tả tiếng Anh; demo giữ tiếng Việt và mang lang="vi".
     const button = await render({ kind: "component", slug: "button" }, "en");
-    expect(button.head.canonical).toBe("https://trandat1114.github.io/Yugen-UI/components/button");
-    expect(button.head.alternates).toEqual([]);
-    expect(button.head.image).toBe("og/components/button.jpg");
+    expect(button.head.canonical).toBe("https://trandat1114.github.io/Yugen-UI/en/components/button");
+    expect(button.head.alternates.map((a) => a.hreflang)).toEqual(["vi", "en", "x-default"]);
+    expect(button.html).toContain('lang="vi"');
     // Render tiếng Anh xong không làm lệch link của trang tiếng Việt kế tiếp.
     expect((await render({ kind: "concept", slug: "cli" })).html).toContain('href="/concepts/shadcn-registry"');
   });

@@ -3,6 +3,7 @@ import { ChevronRight12Regular } from "@fluentui/react-icons";
 import { CodeTabs, ErrorState, PageProgressFallback, SkeletonText, type YugenTheme } from "@/components/ui";
 import type { AppBrand } from "@/hooks/useAppearance";
 import { COMPONENT_META_BY_SLUG, readComponentDoc, retryComponentDoc } from "../registry";
+import { COMPONENTS_TRANSLATED } from "../registry/translated";
 import { DoDont, DocSection, ExampleFrame, ExampleGrid, OnThisPage, PageHeader, PropsTable } from "../blocks";
 import { installSnippets } from "../install";
 import { useLocale } from "../i18n";
@@ -23,10 +24,11 @@ function InstallTabs({ importCode }: { importCode: string }) {
 
 /** Phần nạp lười: demo, import, biến thể, cách dùng, props (file registry chứa component). */
 function ComponentBody({ slug, theme, brand, onRetry }: { slug: string; theme: YugenTheme; brand: AppBrand; onRetry: () => void }) {
-  const { doc, error } = readComponentDoc(slug);
   const { t, locale } = useLocale();
-  // Nội dung demo / hướng dẫn chưa dịch: lang="vi" cho trình đọc màn hình khi giao diện là tiếng Anh.
-  const contentLang = locale === "en" ? "vi" : undefined;
+  const { doc, error } = readComponentDoc(slug, locale);
+  // Giao diện tiếng Anh: phần chữ chưa dịch và nội dung demo (viết bằng tiếng Việt) mang lang="vi" cho trình đọc màn hình.
+  const contentLang = locale === "en" && !COMPONENTS_TRANSLATED.has(slug) ? "vi" : undefined;
+  const demoLang = locale === "en" ? "vi" : undefined;
   if (!doc)
     return (
       <ErrorState
@@ -39,7 +41,7 @@ function ComponentBody({ slug, theme, brand, onRetry }: { slug: string; theme: Y
 
   return (
     <>
-      <ExampleFrame example={doc.hero} defaultTheme={theme} defaultBrand={brand} />
+      <ExampleFrame example={doc.hero} defaultTheme={theme} defaultBrand={brand} demoLang={demoLang} />
 
       <div className="mt-8">
         <DocSection
@@ -50,7 +52,7 @@ function ComponentBody({ slug, theme, brand, onRetry }: { slug: string; theme: Y
           <InstallTabs importCode={doc.importCode} />
         </DocSection>
         <DocSection id="variants" title={t("component.variants")} description={t("component.variantsDesc")}>
-          <ExampleGrid examples={doc.examples} lang={contentLang} />
+          <ExampleGrid examples={doc.examples} lang={contentLang} demoLang={demoLang} />
         </DocSection>
         <DocSection id="usage" title={t("component.usage")}>
           <DoDont dos={doc.dos} donts={doc.donts} contentLang={contentLang} />
@@ -65,9 +67,9 @@ function ComponentBody({ slug, theme, brand, onRetry }: { slug: string; theme: Y
 
 function ComponentDescription({ slug }: { slug: string }) {
   const { locale } = useLocale();
-  const description = readComponentDoc(slug).doc?.description;
+  const description = readComponentDoc(slug, locale).doc?.description;
   // Mô tả chưa dịch: đánh dấu lang="vi" khi giao diện là tiếng Anh.
-  return locale === "en" ? <span lang="vi">{description}</span> : <>{description}</>;
+  return locale === "en" && !COMPONENTS_TRANSLATED.has(slug) ? <span lang="vi">{description}</span> : <>{description}</>;
 }
 
 export function ComponentPage({ slug, theme, brand }: { slug: string; theme: YugenTheme; brand: AppBrand }) {
@@ -118,7 +120,7 @@ export function ComponentPage({ slug, theme, brand }: { slug: string; theme: Yug
             theme={theme}
             brand={brand}
             onRetry={() => {
-              retryComponentDoc(slug);
+              retryComponentDoc(slug, locale);
               setAttempt((n) => n + 1);
             }}
           />
