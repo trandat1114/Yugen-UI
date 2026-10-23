@@ -140,7 +140,7 @@ export default function Page() {
         <SimpleTable
           head={["", "shadcn/ui", "Yugen UI"]}
           rows={[
-            ["Cài đặt", <C key="a">npx shadcn add button</C>, "Chép thư mục component (chưa có CLI)"],
+            ["Cài đặt", <C key="a">npx shadcn add button</C>, <C key="b">npx @yugen-ui/cli add button</C>],
             ["Cấu trúc file", <C key="a">components/ui/button.tsx</C>, <><C>components/ui/Button/Button.tsx</C> + barrel <C>@/components/ui</C></>],
             ["Primitive", "Radix, cmdk, react-day-picker, vaul, sonner, embla", "Radix, cmdk, react-day-picker, react-resizable-panels (không vaul / sonner / embla)"],
             ["Ngôn ngữ thiết kế", "Trung tính, tối giản", "Fluent 2: type ramp, elevation, motion, trạng thái theo Fluent"],

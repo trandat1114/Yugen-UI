@@ -117,8 +117,30 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
       management: "Focus management",
     },
   },
-  "migration-fluent": { title: "From Fluent UI React v9" },
-  "migration-shadcn": { title: "From shadcn/ui" },
+  "migration-fluent": {
+    title: "From Fluent UI React v9",
+    lead: "Yugen UI keeps the token names, scales and most of the API of Fluent UI React v9. Migrating is mostly a matter of changing imports and replacing makeStyles with Tailwind utilities.",
+    toc: {
+      differences: "Core differences",
+      provider: "Provider & theme",
+      styles: "makeStyles → utilities",
+      components: "Component mapping",
+      props: "Renamed props",
+      missing: "Not in Yugen yet",
+    },
+  },
+  "migration-shadcn": {
+    title: "From shadcn/ui",
+    lead: "Yugen UI uses the same copy-the-source model and the same Radix primitives as shadcn/ui. The differences are the Fluent variant names, the color tokens and a few renamed components.",
+    toc: {
+      overview: "Similarities & differences",
+      components: "Component mapping",
+      variants: "Variants & sizes",
+      "css-variables": "CSS variables & utilities",
+      theming: "Theming differences",
+      example: "Migration example",
+    },
+  },
   notifications: {
     title: "Notifications & live regions",
     lead: "Pick the right channel (inline validation, MessageBar, Toast or Dialog) and make sure screen readers announce the message at the right time and level.",
