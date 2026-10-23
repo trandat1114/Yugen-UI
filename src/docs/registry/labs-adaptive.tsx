@@ -686,7 +686,7 @@ function PlaceSheetDemo() {
     props: [
       { name: "query", type: "string", description: "Media query CSS, ví dụ \"(min-width: 768px)\", \"(prefers-reduced-motion: reduce)\"." },
       { name: "options.defaultValue", type: "boolean", defaultValue: "false", description: "Giá trị khi không có window / matchMedia (SSR, test)." },
-      { name: "(trả về)", type: "boolean", description: "true khi query đang khớp; tự cập nhật khi đổi." },
+      { name: "returns", type: "boolean", description: "true khi query đang khớp; tự cập nhật khi đổi." },
     ],
   },
 };
