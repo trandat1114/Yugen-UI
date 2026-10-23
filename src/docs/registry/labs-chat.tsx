@@ -1023,7 +1023,7 @@ const LABS_CHAT: Record<string, ComponentDoc> = {
       },
       {
         title: "Pipeline có lỗi",
-        description: "Bước lỗi tự mở phần chi tiết; các bước sau được đánh dấu bỏ qua / đã huỷ.",
+        description: "Bước lỗi tự mở phần chi tiết; ví dụ này đặt các bước sau thành skipped / cancelled.",
         code: `<Trace title="Triển khai sakura-web" duration={48300} size="small" className="w-full">
   <TraceStep status="success" title="Cài phụ thuộc" duration={12400} />
   <TraceStep status="success" title="Kiểm thử" duration={31800} metadata={["212 test"]} />
@@ -1129,7 +1129,7 @@ const LABS_CHAT: Record<string, ComponentDoc> = {
     name: "Questionnaire",
     lead: "Questionnaire dựng khảo sát hoặc form nhiều bước từ một mảng cấu hình — mỗi màn một câu như Typeform, hoặc tất cả trên một trang.",
     description:
-      "Hỗ trợ single, multiple, rating (dùng Rating), scale (NPS 0–10), text, longText, yesNo; required và validate tuỳ chỉnh; thanh tiến độ, Quay lại / Tiếp, Enter để tiếp tục, phím số 1–9 để chọn, chuyển cảnh trượt (tắt khi giảm chuyển động), bước xem lại và màn hoàn tất. Hỗ trợ controlled value / onChange.",
+      "Hỗ trợ single, multiple, rating (dùng Rating), scale (NPS 0–10), text, longText, yesNo; required và validate tuỳ chỉnh; thanh tiến độ, Quay lại / Tiếp, Enter để tiếp tục, phím số (0–9) để chọn, chuyển cảnh trượt (tắt khi giảm chuyển động), bước xem lại và màn hoàn tất. Hỗ trợ controlled value / onChange.",
     importCode: `import { Questionnaire, type Question } from "@/components/ui";`,
     hero: { title: "Khảo sát nhiều bước", code: SURVEY_CODE, render: () => <SurveyDemo /> },
     examples: [
@@ -1295,7 +1295,7 @@ const LABS_CHAT: Record<string, ComponentDoc> = {
     ],
     donts: [
       "Không bắt Ctrl+Enter mới gửi trong chat thông thường — Enter là kỳ vọng mặc định.",
-      "Không xoá nội dung khi gửi thất bại — giữ lại để người dùng thử lại.",
+      "Không bỏ tin gửi thất bại: ChatComposer xoá ô sau onSend, nên giữ tin trong danh sách với trạng thái lỗi và nút Thử lại.",
     ],
     props: [
       { name: "onSend", type: "(text: string) => void", description: "Nhận nội dung đã trim; ô soạn tự xoá." },
