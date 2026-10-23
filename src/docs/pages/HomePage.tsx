@@ -91,11 +91,9 @@ export function HomePage() {
   return (
     <div className="pb-8">
       {/* Hero */}
-      <section className="relative -mx-4 overflow-hidden px-4 pt-5 pb-12 md:-mx-12 md:px-12 md:pt-8 md:pb-16">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-hero-glow mask-[linear-gradient(to_bottom,black_70%,transparent)]"
-        />
+      <section className="relative -mx-4 px-4 pt-5 pb-12 md:-mx-12 md:px-12 md:pt-8 md:pb-16">
+        {/* Ánh sáng mờ dần ở cả bốn cạnh, không dừng thành khung chữ nhật. */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 bg-hero-glow mask-x-from-80% mask-t-from-75% mask-b-from-70%" />
         <FallingPetals />
 
         {/* lg: chữ 幽玄 chiếm 2 hàng — hàng cuối co giãn để khung cài đặt nằm sát dưới mô tả. */}
@@ -115,7 +113,7 @@ export function HomePage() {
             </h1>
             <p className="mt-4 max-w-xl text-subtitle1 font-normal text-foreground-2 md:text-title3 md:font-normal">{t("home.lead")}</p>
           </div>
-          <YugenKanji className="h-36 w-auto sm:h-52 lg:row-span-2 lg:h-75 xl:h-100" />
+          <YugenKanji className="h-40 w-auto sm:h-60 lg:row-span-2 lg:h-88 xl:h-112" />
           <InstallSnippet className="col-span-2 mt-5 max-w-xl lg:col-span-1" />
         </div>
 
