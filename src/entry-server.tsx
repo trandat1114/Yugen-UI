@@ -7,7 +7,7 @@ import App, { preloadRoute } from "./App";
 import { CONCEPTS } from "./docs/concepts";
 import { FOUNDATIONS } from "./docs/foundations";
 import { localeValue } from "./docs/i18n";
-import { COMPONENTS_META } from "./docs/registry";
+import { COMPONENT_META_BY_SLUG, COMPONENTS_META } from "./docs/registry";
 import { hrefOf, pathOf, type Route } from "./docs/router";
 import { documentHead } from "./docs/seo";
 
@@ -22,6 +22,35 @@ export const ROUTES: Route[] = [
   ...FOUNDATIONS.map((f): Route => ({ kind: "foundation", slug: f.slug })),
   ...COMPONENTS_META.map((c): Route => ({ kind: "component", slug: c.slug })),
 ];
+
+/**
+ * File nguồn chính của mỗi trang (tính từ gốc repo) — scripts/prerender.mjs lấy ngày commit gần nhất làm `lastmod` của
+ * sitemap. Đường dẫn không tồn tại được bỏ qua.
+ */
+export function sourcesOf(route: Route): string[] {
+  switch (route.kind) {
+    case "home":
+      return ["src/docs/pages/HomePage.tsx", "src/docs/pages/HomeShowcase.tsx", "src/docs/pages/HomeComponents.tsx"];
+    case "blocks":
+      return ["src/docs/pages/BlocksPage.tsx", "src/docs/block-library"];
+    case "templates":
+      return ["src/docs/pages/TemplatesPage.tsx", "src/docs/template-library"];
+    case "theme-designer":
+      return ["src/docs/pages/ThemeDesignerPage.tsx"];
+    case "news":
+      return ["src/docs/news.ts"];
+    case "community":
+      return ["src/docs/pages/CommunityPage.tsx", "src/docs/roadmap.ts"];
+    case "concept":
+      return [`src/docs/concepts/${route.slug}.tsx`, `src/docs/concepts/en/${route.slug}.tsx`];
+    case "foundation":
+      return ["src/docs/pages/FoundationsPage.tsx", { color: "src/docs/pages/ColorPage.tsx", motion: "src/docs/pages/MotionPage.tsx" }[route.slug] ?? ""];
+    case "component": {
+      const meta = COMPONENT_META_BY_SLUG[route.slug];
+      return meta ? [`src/docs/registry/${meta.file}`, `src/components/ui/${meta.name}`] : [];
+    }
+  }
+}
 
 export interface RenderedPage {
   /** Đường dẫn sau BASE: "" (trang chủ), "components/button"… */
