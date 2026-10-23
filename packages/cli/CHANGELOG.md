@@ -1,6 +1,6 @@
 # @yugen-ui/cli
 
-## Unreleased
+## 0.3.0
 
 - Templates: Vite 8 (Rolldown), `@vitejs/plugin-react` 6 and TypeScript 6. Chunks are split with `codeSplitting`
   instead of the deprecated `manualChunks`; `tsconfig.json` drops `baseUrl` (deprecated in TypeScript 6).

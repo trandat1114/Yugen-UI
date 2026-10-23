@@ -32,10 +32,9 @@ export const NEWS_KIND_LABEL: Record<NewsKind, string> = {
 export const NEWS: NewsRelease[] = [
   {
     version: "0.10.0",
-    upcoming: true,
-    date: "2027-01-29",
-    title: "Spacing theo thang số",
-    summary: "Spacing dùng thang số của Tailwind; alias viết hoa vẫn chạy nhưng đã deprecated.",
+    date: "2026-10-23",
+    title: "Spacing theo thang số, Theme Designer và trang Motion",
+    summary: "Spacing dùng thang số của Tailwind (alias viết hoa đã deprecated), cn() dùng tailwind-merge 3. Docs có Theme Designer nhiều trục, trang Motion mới và sidebar co giãn.",
     items: [
       { kind: "improved", text: "Component, ví dụ, template và registry dùng spacing theo thang số (p-3, gap-2) thay cho alias viết hoa (p-M, gap-S). Giá trị không đổi ở cỡ chữ gốc 16px; thang số tính bằng rem nên co giãn theo cỡ chữ của trình duyệt.", href: "#/concepts/styling" },
       { kind: "improved", text: "Alias spacing viết hoa (p-M, gap-SNudge…) trong theme.css và cn() đã deprecated, vẫn chạy đến 1.0. Đổi theo bảng XXS → 0.5, XS → 1, SNudge → 1.5, S → 2, MNudge → 2.5, M → 3, L → 4, XL → 5, XXL → 6, XXXL → 8.", href: "#/concepts/styling" },
@@ -219,8 +218,7 @@ export const LATEST_RELEASE = NEWS.find((r) => !r.upcoming) ?? NEWS[0];
 export const CLI_NEWS: NewsRelease[] = [
   {
     version: "0.3.0",
-    upcoming: true,
-    date: "2027-01-29",
+    date: "2026-10-23",
     title: "Template dùng Vite 8",
     summary: "App mới chạy Vite 8 và TypeScript 6; doctor không còn cảnh báo app vừa tạo.",
     items: [
@@ -257,8 +255,7 @@ export const CLI_NEWS: NewsRelease[] = [
 export const CREATE_NEWS: NewsRelease[] = [
   {
     version: "0.3.0",
-    upcoming: true,
-    date: "2027-01-29",
+    date: "2026-10-23",
     title: "Theo @yugen-ui/cli 0.3.0",
     summary: "Cùng các thay đổi của @yugen-ui/cli 0.3.0: template dùng Vite 8 và TypeScript 6.",
     items: [{ kind: "improved", text: "npx create-yugen-ui@latest tạo app Vite 8 + TypeScript 6.", href: "#/concepts/cli" }],

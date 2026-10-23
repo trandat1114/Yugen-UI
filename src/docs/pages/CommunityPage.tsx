@@ -377,7 +377,7 @@ function Roadmap({ copy }: { copy: Copy }) {
   const lang = locale === "en" ? "en" : "vi";
   return (
     <div className="grid items-start gap-4 lg:grid-cols-3">
-      {(Object.keys(ROADMAP) as RoadmapStage[]).map((stage) => (
+      {(Object.keys(ROADMAP) as RoadmapStage[]).filter((stage) => ROADMAP[stage].length > 0).map((stage) => (
         <section key={stage} aria-labelledby={`roadmap-${stage}`} className="flex flex-col gap-3 rounded-2xlarge border border-stroke-2 bg-background-2 p-4">
           <h3 id={`roadmap-${stage}`} className="text-subtitle2 font-semibold">
             {STAGE_LABEL[stage][lang]}
