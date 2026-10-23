@@ -25,6 +25,7 @@ import {
   PROVIDER_VITE,
   TEMPLATE_COMMAND,
 } from "./_snippets";
+import { docsPath } from "../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -184,11 +185,11 @@ export default function Page() {
           <P>
             Dự án starter có sẵn: lưu theme người dùng chọn, toast, alias <C>@/</C>, SEO cơ bản và một trang chào để xoá khi bắt đầu.
             Đổi <C>starter</C> thành <C>saas</C> (ứng dụng SaaS 8 trang), <C>blog</C> (blog Markdown), <C>dashboard</C> hoặc{" "}
-            <C>ai-chat</C>, hoặc bỏ <C>--template</C> để chọn trong terminal. Các tuỳ chọn khác ở <A href="#/concepts/cli">@yugen-ui/cli</A>.
+            <C>ai-chat</C>, hoặc bỏ <C>--template</C> để chọn trong terminal. Các tuỳ chọn khác ở <A href={docsPath("/concepts/cli")}>@yugen-ui/cli</A>.
           </P>
           <div className="flex flex-wrap gap-2">
             <Button asChild appearance="primary" icon={<Rocket16Regular />}>
-              <a href="#/templates">Xem các template</a>
+              <a href={docsPath("/templates")}>Xem các template</a>
             </Button>
             <Button asChild icon={<Open16Regular />}>
               <a href={templateStackBlitzUrl("vite-starter")} target="_blank" rel="noreferrer">
@@ -267,8 +268,8 @@ export default function Page() {
           <PackageManagerTabs packages={CLI_ADD} command="dlx" />
           <P>
             CLI ghi theme, <C>cn()</C> và <C>YugenProvider</C>, chép kèm component phụ thuộc, cài gói npm còn thiếu và đổi import theo alias
-            của dự án. Chi tiết ở <A href="#/concepts/cli">@yugen-ui/cli</A>. Dự án đã dùng shadcn CLI thì xem{" "}
-            <A href="#/concepts/shadcn-registry">Cài bằng shadcn CLI</A>.
+            của dự án. Chi tiết ở <A href={docsPath("/concepts/cli")}>@yugen-ui/cli</A>. Dự án đã dùng shadcn CLI thì xem{" "}
+            <A href={docsPath("/concepts/shadcn-registry")}>Cài bằng shadcn CLI</A>.
           </P>
         </div>
       </DocSection>
@@ -291,7 +292,7 @@ export default function Page() {
           <CodeBlock code={PERSIST} />
           <P>
             <C>YugenProvider</C> ghi attribute trong <C>useEffect</C> (sau lần vẽ đầu), nên thêm script vào <C>{"<head>"}</C> để không chớp
-            nền trắng khi người dùng đã chọn theme tối. Với Next.js, xem <A href="#/concepts/ssr">SSR & Next.js</A>.
+            nền trắng khi người dùng đã chọn theme tối. Với Next.js, xem <A href={docsPath("/concepts/ssr")}>SSR & Next.js</A>.
           </P>
           <CodeBlock code={HTML} />
           <MessageBar intent="warning" title="Giữ cùng một khoá localStorage." className="max-w-3xl">
@@ -315,13 +316,13 @@ export default function Page() {
           />
           <div className="flex flex-wrap gap-2">
             <Button asChild>
-              <a href="#/concepts/styling">Tuỳ biến style</a>
+              <a href={docsPath("/concepts/styling")}>Tuỳ biến style</a>
             </Button>
             <Button asChild>
-              <a href="#/concepts/theming">Theming</a>
+              <a href={docsPath("/concepts/theming")}>Theming</a>
             </Button>
             <Button asChild>
-              <a href="#/concepts/accessibility">Khả năng tiếp cận</a>
+              <a href={docsPath("/concepts/accessibility")}>Khả năng tiếp cận</a>
             </Button>
           </div>
         </div>

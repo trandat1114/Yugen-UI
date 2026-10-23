@@ -13,6 +13,7 @@ import { Trace, TraceStep } from "@/components/ui/Trace/Trace";
 import { CitationList, PromptInput, Reasoning, StreamingMarkdown, type CitationSource } from "@/components/ui/AIKit/AIKit";
 import { DocSection, DoDont, PropsTable } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
+import { docsPath } from "../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -378,7 +379,7 @@ export default function Page() {
           </Stage>
           <P>
             Trace trong tin nhắn nên ở <C>size=&quot;small&quot;</C>, dùng <C>appearance=&quot;plain&quot;</C> cho bong bóng chứa nó, và
-            đặt trước câu trả lời. Xem thêm trang <a href="#/concepts/agent-trace" className="text-link underline hover:text-link-hover">Minh bạch tiến trình với Trace</a>.
+            đặt trước câu trả lời. Xem thêm trang <a href={docsPath("/concepts/agent-trace")} className="text-link underline hover:text-link-hover">Minh bạch tiến trình với Trace</a>.
           </P>
         </div>
       </DocSection>

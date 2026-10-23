@@ -53,7 +53,7 @@ export const NAMESPACE = `{
   }
 }`;
 
-/* @yugen-ui/cli (packages/cli) — trang #/concepts/cli. */
+/* @yugen-ui/cli (packages/cli) — trang /concepts/cli. */
 
 export const CLI_CREATE = "@yugen-ui/cli@latest create my-app";
 export const CLI_INIT = "@yugen-ui/cli@latest init";

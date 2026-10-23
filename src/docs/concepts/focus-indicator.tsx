@@ -27,6 +27,7 @@ import {
 } from "@/components/ui";
 import { DocSection, DoDont } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
+import { docsPath } from "../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -180,7 +181,7 @@ export default function Page() {
               <Button appearance="primary">Primary</Button>
               <Button>Secondary</Button>
               <Button appearance="subtle" icon={<Document20Regular />} aria-label="Tài liệu" />
-              <Link href="#/concepts/accessibility">Link</Link>
+              <Link href={docsPath("/concepts/accessibility")}>Link</Link>
               <Checkbox label="Checkbox" defaultChecked />
               <Switch label="Switch" />
             </div>
@@ -275,7 +276,7 @@ export default function Page() {
               {["Báo cáo quý 3.pdf", "Kế hoạch 2027.docx", "Ngân sách.xlsx"].map((f) => (
                 <a
                   key={f}
-                  href="#/concepts/focus-indicator"
+                  href={docsPath("/concepts/focus-indicator")}
                   onClick={(e) => e.preventDefault()}
                   className="flex items-center gap-2 border-b border-stroke-3 px-3 py-2 text-body1 text-foreground-1 last:border-b-0 hover:bg-subtle-hover focus-visible:-outline-offset-2"
                 >

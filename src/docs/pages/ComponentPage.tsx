@@ -6,6 +6,7 @@ import { COMPONENT_META_BY_SLUG, readComponentDoc, retryComponentDoc } from "../
 import { DoDont, DocSection, ExampleFrame, ExampleGrid, OnThisPage, PageHeader, PropsTable } from "../blocks";
 import { installSnippets } from "../install";
 import { useLocale } from "../i18n";
+import { docsPath } from "../router";
 
 function InstallTabs({ importCode }: { importCode: string }) {
   const { npm, cli, shadcn } = installSnippets(importCode);
@@ -89,7 +90,7 @@ export function ComponentPage({ slug, theme, brand }: { slug: string; theme: Yug
     <div className="flex gap-8">
       <article key={slug} className="min-w-0 flex-1">
         <nav className="flex items-center gap-1 pt-5 text-caption1 text-foreground-3">
-          <a href="#/" className="hover:text-foreground-1 hover:underline">
+          <a href={docsPath("/")} className="hover:text-foreground-1 hover:underline">
             Components
           </a>
           <ChevronRight12Regular className="rtl:-scale-x-100" />

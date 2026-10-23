@@ -59,6 +59,7 @@ import {
   themeVars,
   type ThemeAxes,
 } from "../themeAxes";
+import { docsPath } from "../router";
 
 /** Tải chuỗi về máy thành file (CSS / JSON). */
 function download(fileName: string, text: string) {
@@ -136,7 +137,8 @@ function Axis<T extends string>({
 
 /** Giá trị ban đầu: query `td-*` của link chia sẻ, thiếu hoặc sai thì dùng mặc định. */
 function initialState() {
-  const params = new URLSearchParams(window.location.search);
+  // Prerender không có URL: giá trị mặc định (link chia sẻ ?td-… áp khi trang chạy trên trình duyệt).
+  const params = new URLSearchParams(typeof window === "undefined" ? "" : window.location.search);
   const hex = `#${params.get("td-key") ?? ""}`;
   const num = (name: string, fallback: number, min: number, max: number) => {
     const value = Number(params.get(name));
@@ -173,7 +175,7 @@ function Preview({ theme, style, dir }: { theme: PreviewTheme; style: React.CSSP
           <div>
             <p className="text-body1 font-semibold">Không gian làm việc</p>
             <p className="text-caption1 text-foreground-3">
-              Đã đồng bộ · <a className="text-link hover:underline" href="#/theme-designer">Xem chi tiết</a>
+              Đã đồng bộ · <a className="text-link hover:underline" href={docsPath("/theme-designer")}>Xem chi tiết</a>
             </p>
           </div>
         </div>
@@ -272,6 +274,7 @@ export function ThemeDesignerPage() {
   const target = smallestTarget(axes.density);
 
   const shareUrl = React.useMemo(() => {
+    if (typeof window === "undefined") return "";
     const params = new URLSearchParams(window.location.search);
     for (const k of [...params.keys()]) if (k.startsWith("td-")) params.delete(k);
     params.set("td-key", key.replace("#", "").toUpperCase());
@@ -279,7 +282,7 @@ export function ThemeDesignerPage() {
     if (torsion[0] !== 0) params.set("td-torsion", String(torsion[0]));
     if (brandName !== "my-brand") params.set("td-name", brandName);
     axesToParams(axes, params);
-    return `${window.location.origin}${window.location.pathname}?${params}${window.location.hash}`;
+    return `${window.location.origin}${window.location.pathname}?${params}`;
   }, [key, vibrancy, torsion, brandName, axes]);
 
   // Font từ Google Fonts chỉ nạp khi được chọn để xem trước; CSS xuất ra không kèm font.

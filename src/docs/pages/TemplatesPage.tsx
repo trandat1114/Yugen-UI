@@ -1,10 +1,12 @@
-import { lazy, Suspense, type ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import { Checkmark16Regular, Code16Regular, Open16Regular } from "@fluentui/react-icons";
 import { Badge, Button, Spinner } from "@/components/ui";
 import { DocSection, PageHeader } from "../blocks";
 import { CopyButton } from "../CodeBlock";
 import { useLocale } from "../i18n";
 import { TEMPLATES, templateCommand, templateSourceUrl, templateStackBlitzUrl, type TemplateInfo } from "../templates";
+import { lazyPage } from "../lazyPage";
+import { docsPath } from "../router";
 
 const VI = {
   title: "Templates",
@@ -29,11 +31,11 @@ const VI = {
   otherBody: (
     <>
       Thêm Yugen UI vào dự án có sẵn theo{" "}
-      <a className="text-link underline hover:text-link-hover" href="#/concepts/quick-start">
+      <a className="text-link underline hover:text-link-hover" href={docsPath("/concepts/quick-start")}>
         Bắt đầu nhanh
       </a>
       , hoặc lấy từng cụm giao diện ở{" "}
-      <a className="text-link underline hover:text-link-hover" href="#/blocks">
+      <a className="text-link underline hover:text-link-hover" href={docsPath("/blocks")}>
         Blocks
       </a>
       .
@@ -64,11 +66,11 @@ const EN: typeof VI = {
   otherBody: (
     <>
       Add Yugen UI to an existing project with{" "}
-      <a className="text-link underline hover:text-link-hover" href="#/concepts/quick-start">
+      <a className="text-link underline hover:text-link-hover" href={docsPath("/concepts/quick-start")}>
         Quick start
       </a>
       , or grab individual pieces from{" "}
-      <a className="text-link underline hover:text-link-hover" href="#/blocks">
+      <a className="text-link underline hover:text-link-hover" href={docsPath("/blocks")}>
         Blocks
       </a>
       .
@@ -77,13 +79,14 @@ const EN: typeof VI = {
 };
 
 // Preview (AppShell + block) nạp lười: trang hiện lệnh cài ngay, preview tới sau.
-const Preview = lazy(() =>
-  import("./TemplatePreviews").then((m) => ({
-    default: function TemplatePreview({ dir }: { dir: string }) {
-      const Component = m.PREVIEWS[dir];
-      return Component ? <Component /> : null;
-    },
-  })),
+export const Preview = lazyPage(() =>
+  import("./TemplatePreviews").then(
+    (m) =>
+      function TemplatePreview({ dir }: { dir: string }) {
+        const Component = m.PREVIEWS[dir];
+        return Component ? <Component /> : null;
+      },
+  ),
 );
 
 function BrowserFrame({ url, label, className, children }: { url: string; label: string; className: string; children: ReactNode }) {

@@ -16,20 +16,20 @@ interface Shot extends Appearance {
 }
 
 const SHOTS: Shot[] = [
-  { name: "home-light", route: "#/" },
-  { name: "home-dark", route: "#/", theme: "dark" },
-  { name: "home-high-contrast", route: "#/", theme: "high-contrast" },
-  { name: "blocks", route: "#/blocks" },
-  { name: "foundation-color", route: "#/foundations/color" },
-  { name: "button", route: "#/components/button" },
-  { name: "card", route: "#/components/card" },
-  { name: "barchart-dark", route: "#/components/barchart", theme: "dark" },
+  { name: "home-light", route: "/" },
+  { name: "home-dark", route: "/", theme: "dark" },
+  { name: "home-high-contrast", route: "/", theme: "high-contrast" },
+  { name: "blocks", route: "/blocks" },
+  { name: "foundation-color", route: "/foundations/color" },
+  { name: "button", route: "/components/button" },
+  { name: "card", route: "/components/card" },
+  { name: "barchart-dark", route: "/components/barchart", theme: "dark" },
   // Thời lượng / đồng hồ trực tiếp của Trace.
-  { name: "trace", route: "#/components/trace", mask: ["main .tabular-nums"] },
-  { name: "questionnaire", route: "#/components/questionnaire" },
-  { name: "sheet-closed", route: "#/components/sheet" },
+  { name: "trace", route: "/components/trace", mask: ["main .tabular-nums"] },
+  { name: "questionnaire", route: "/components/questionnaire" },
+  { name: "sheet-closed", route: "/components/sheet" },
   // Giờ gửi tin nhắn.
-  { name: "messagescroller-rtl", route: "#/components/messagescroller", dir: "rtl", mask: ["main time"] },
+  { name: "messagescroller-rtl", route: "/components/messagescroller", dir: "rtl", mask: ["main time"] },
 ];
 
 for (const { name, route, mask = [], ...appearance } of SHOTS) {

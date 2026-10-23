@@ -18,19 +18,19 @@ const COLOR_RULES = ["color-contrast", "link-in-text-block"];
 const ROUTES = readDiscoveredRoutes();
 
 /** Trang chủ (sidebar thu gọn) và một trang component (nhóm sidebar đang mở, mục đang chọn). */
-const SHELL_ROUTES = ["#/", "#/components/button"];
+const SHELL_ROUTES = ["/", "/components/button"];
 
 /** Tập đại diện cho tương phản cao / RTL: trang tổng + ~3 khái niệm + component trải đủ các nhóm (kể cả Yugen Labs). */
 const REPRESENTATIVE = [
-  "#/",
-  "#/blocks",
-  "#/theme-designer",
-  "#/news",
-  "#/community",
-  "#/concepts/theming",
-  "#/concepts/rtl",
-  "#/concepts/wait-ux",
-  "#/foundations/color",
+  "/",
+  "/blocks",
+  "/theme-designer",
+  "/news",
+  "/community",
+  "/concepts/theming",
+  "/concepts/rtl",
+  "/concepts/wait-ux",
+  "/foundations/color",
   ...[
     "button",
     "menu",
@@ -48,7 +48,7 @@ const REPRESENTATIVE = [
     "codeblock",
     "barchart",
     "sheet",
-  ].map((slug) => `#/components/${slug}`),
+  ].map((slug) => `/components/${slug}`),
 ];
 
 type Rules = "wcag" | "color";

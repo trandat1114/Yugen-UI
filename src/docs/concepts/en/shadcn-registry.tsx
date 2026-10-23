@@ -4,6 +4,7 @@ import { DocSection } from "../../blocks";
 import { CodeBlock } from "../../CodeBlock";
 import { REGISTRY_URL } from "../../install";
 import { NAMESPACE, SHADCN_ADD, SHADCN_EXISTING, SHADCN_INIT, SHADCN_INIT_NEXT } from "../_snippets";
+import { docsPath } from "../../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -63,7 +64,7 @@ export default function Page() {
           </P>
           <MessageBar intent="info" title="Shorter: @yugen-ui/cli" className="max-w-3xl">
             <C>npx @yugen-ui/cli@latest init --mode source</C> and then <C>npx @yugen-ui/cli add button</C> copy the same source from the same registry, with
-            short names and no components.json or <C>@/</C> alias. Details on the <A href="#/concepts/cli">@yugen-ui/cli</A> page. This page
+            short names and no components.json or <C>@/</C> alias. Details on the <A href={docsPath("/concepts/cli")}>@yugen-ui/cli</A> page. This page
             is for projects that already use the shadcn CLI.
           </MessageBar>
         </div>
@@ -140,14 +141,14 @@ export default function Page() {
           <MessageBar intent="warning" title="The Yugen theme replaces Tailwind's default scales." className="max-w-3xl">
             <C>yugen.css</C> disables the default colour, radius, shadow and font-size scales (<C>bg-blue-500</C>, <C>rounded-lg</C>,{" "}
             <C>text-sm</C> are gone). Existing shadcn/ui components using those classes lose their styling — migrate gradually (see{" "}
-            <A href="#/concepts/migration-shadcn">From shadcn/ui</A>) rather than mixing both themes long term.
+            <A href={docsPath("/concepts/migration-shadcn")}>From shadcn/ui</A>) rather than mixing both themes long term.
           </MessageBar>
         </div>
       </DocSection>
 
       <DocSection id="update" title="Updating">
         <P>
-          Copied code is yours — the CLI doesn't update it. When Yugen ships a new version (see <A href="#/news">What's new</A>), commit your
+          Copied code is yours — the CLI doesn't update it. When Yugen ships a new version (see <A href={docsPath("/news")}>What's new</A>), commit your
           changes first, rerun <C>add</C> with <C>--overwrite</C>, then use git's diff to keep your customizations.
         </P>
       </DocSection>

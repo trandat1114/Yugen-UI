@@ -3,12 +3,12 @@ import { CONCEPT_BY_SLUG } from "./concepts";
 import { FOUNDATIONS } from "./foundations";
 import { useLocale, type LocaleValue } from "./i18n";
 import { COMPONENT_META_BY_SLUG, COMPONENTS_META } from "./registry";
-import type { Route } from "./router";
+import { pathOf, type Route } from "./router";
 import { SITE } from "./site";
 
 /**
- * Tiêu đề tab, <meta name="description"> và og:* theo trang đang xem. Crawler chỉ đọc HTML tĩnh vẫn thấy giá trị mặc định
- * trong index.html — URL theo đường dẫn và prerender từng trang nằm trong ROADMAP (mục SEO).
+ * Tiêu đề tab, <meta name="description">, canonical và og:* theo trang. Bản build ghi sẵn vào HTML prerender của từng
+ * trang (scripts/prerender.mjs); khi chuyển trang trong trình duyệt, DocumentMeta cập nhật lại.
  */
 const PAGES: Record<"blocks" | "templates" | "theme-designer" | "community", Record<"vi" | "en", [string, string]>> = {
   blocks: {
@@ -62,18 +62,30 @@ export function routeMeta(route: Route, l: LocaleValue): { title?: string; descr
   }
 }
 
-function setContent(selector: string, value: string) {
-  document.head.querySelector(selector)?.setAttribute("content", value);
+/** `<title>`, mô tả và URL chuẩn của một trang — dùng chung cho prerender (scripts/prerender.mjs) và lúc chuyển trang. */
+export function documentHead(route: Route, l: LocaleValue) {
+  const { title, description } = routeMeta(route, l);
+  return {
+    title: title ? `${title} · ${SITE.name}` : `${SITE.name} — React + Tailwind CSS v4`,
+    description,
+    canonical: SITE.url + pathOf(route),
+  };
+}
+
+function setAttr(selector: string, name: string, value: string) {
+  document.head.querySelector(selector)?.setAttribute(name, value);
 }
 
 function useDocumentMeta(route: Route) {
   const l = useLocale();
   useEffect(() => {
-    const { title, description } = routeMeta(route, l);
-    document.title = title ? `${title} · ${SITE.name}` : `${SITE.name} — React + Tailwind CSS v4`;
-    setContent('meta[name="description"]', description);
-    setContent('meta[property="og:title"]', document.title);
-    setContent('meta[property="og:description"]', description);
+    const { title, description, canonical } = documentHead(route, l);
+    document.title = title;
+    setAttr('meta[name="description"]', "content", description);
+    setAttr('link[rel="canonical"]', "href", canonical);
+    setAttr('meta[property="og:title"]', "content", title);
+    setAttr('meta[property="og:description"]', "content", description);
+    setAttr('meta[property="og:url"]', "content", canonical);
   }, [route, l]);
 }
 

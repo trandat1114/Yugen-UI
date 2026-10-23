@@ -15,7 +15,10 @@ export interface Appearance {
 /** Cùng key với script chống nháy trong index.html. */
 export const APPEARANCE_STORAGE_KEY = "yugen-ui-appearance";
 
-function initialAppearance(): Appearance {
+/** Giao diện đã lưu (localStorage, ghi đè bằng ?theme=…&lang=…) — main.tsx đọc `lang` để nạp trước gói tiếng Anh. */
+export function readAppearance(): Appearance {
+  // Prerender (Node): giá trị mặc định; script trong index.html áp theme thật trước khi trình duyệt vẽ.
+  if (typeof window === "undefined") return { theme: "light", brand: "sakura", dir: "ltr", lang: "vi" };
   const fallback: Appearance = {
     theme: window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
     brand: "sakura",
@@ -43,7 +46,7 @@ function initialAppearance(): Appearance {
 
 /** Theme / brand / hướng chữ của trang docs (giống thanh addon của Storybook). */
 export function useAppearance() {
-  const [appearance, setAppearance] = useState<Appearance>(initialAppearance);
+  const [appearance, setAppearance] = useState<Appearance>(readAppearance);
 
   useEffect(() => {
     try {

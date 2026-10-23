@@ -21,6 +21,7 @@ import { HomeComponents } from "./HomeComponents";
 import { FallingPetals, YugenKanji } from "../HeroArt";
 import { CopyButton } from "../CodeBlock";
 import { useLocale } from "../i18n";
+import { docsPath } from "../router";
 
 const PRINCIPLES = [
   { icon: Color24Regular, title: "home.p1Title", text: "home.p1Text" },
@@ -99,7 +100,7 @@ export function HomePage() {
         {/* lg: chữ 幽玄 chiếm 2 hàng — hàng cuối co giãn để khung cài đặt nằm sát dưới mô tả. */}
         <div className="relative grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 lg:grid-rows-[auto_auto_1fr] lg:gap-x-6">
           <a
-            href="#/news"
+            href={docsPath("/news")}
             className="group/news col-span-2 mb-5 inline-flex max-w-full items-center gap-2 justify-self-start rounded-circular border border-stroke-2 bg-background-1/80 py-0.5 ps-0.5 pe-3 text-caption1 shadow-2 backdrop-blur transition-colors duration-faster hover:border-brand-stroke"
           >
             <span className="rounded-circular bg-brand-background px-2 py-0.5 font-semibold text-foreground-on-brand">v{LATEST_RELEASE.version}</span>
@@ -119,21 +120,21 @@ export function HomePage() {
 
         <div className="relative mt-6 grid gap-3 md:mt-8 md:grid-cols-2 md:gap-6 xl:grid-cols-3">
           <HeroCard
-            href="#/foundations/color"
+            href={docsPath("/foundations/color")}
             icon={<Color24Regular />}
             title={t("nav.foundations")}
             text={t("home.cardFoundations")}
             tone="bg-lavender-bg text-lavender-fg"
           />
           <HeroCard
-            href="#/components/button"
+            href={docsPath("/components/button")}
             icon={<Code24Regular />}
             title="Components"
             text={t("home.cardComponents", { count })}
             tone="bg-brand-background-2 text-brand-foreground-2"
           />
           <HeroCard
-            href="#/blocks"
+            href={docsPath("/blocks")}
             icon={<Grid24Regular />}
             title="Blocks"
             text={t("home.cardBlocks")}
@@ -182,7 +183,7 @@ export function HomePage() {
           {FOUNDATIONS.map((f) => (
             <a
               key={f.slug}
-              href={`#/foundations/${f.slug}`}
+              href={docsPath(`/foundations/${f.slug}`)}
               className="inline-flex h-10 items-center gap-2 rounded-circular border border-stroke-1 bg-background-1 px-4 text-body1 font-semibold hover:border-stroke-1-hover hover:bg-background-1-hover"
             >
               {foundation(f)}

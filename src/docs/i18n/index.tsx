@@ -60,6 +60,11 @@ export function loadEnglish(): Promise<EnBundle> {
   return enPromise;
 }
 
+/** Giá trị ngôn ngữ ngoài React (prerender): "en" cần `loadEnglish()` xong trước, nếu chưa thì trả tiếng Việt. */
+export function localeValue(locale: Locale): LocaleValue {
+  return locale === "en" && enBundle ? createValue(enBundle) : VI_VALUE;
+}
+
 /**
  * Cung cấp ngôn ngữ cho cây docs và giữ `<html lang>` khớp với nội dung (a11y). Lần đầu mở ở "en": chờ gói tiếng Anh
  * rồi mới render (không nháy tiếng Việt); đổi ngôn ngữ khi đang xem: giữ nội dung hiện tại tới khi gói nạp xong.

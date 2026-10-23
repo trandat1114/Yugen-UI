@@ -3,11 +3,14 @@ import { ChevronDown16Regular } from "@fluentui/react-icons";
 import { Button, Menu, MenuItemRadio, MenuPopover, MenuRadioGroup, MenuTrigger } from "@/components/ui";
 import { SITE } from "../site";
 import { useLocale } from "../i18n";
+import { parsePath, pathOf } from "../router";
 
 interface DocsVersion {
   version: string;
   /** Đường dẫn tương đối với gốc site ("" = bản mới nhất). */
   path: string;
+  /** "path": URL kiểu /components/button (có prerender). Bản cũ (≤ 0.10) không có trường này và dùng #/components/button. */
+  routing?: "path" | "hash";
 }
 
 /** Gốc site: BASE_URL bỏ đi đoạn "vX.Y/" (phiên bản cũ) hoặc "next/" (bản xem trước). */
@@ -34,7 +37,10 @@ export function VersionMenu() {
   if (versions.length < 2) return null;
   const go = (version: string) => {
     const target = versions.find((v) => v.version === version);
-    if (target) window.location.href = `${siteRoot()}${target.path}${window.location.hash}`;
+    if (!target) return;
+    // Giữ trang đang xem khi đổi phiên bản.
+    const page = pathOf(parsePath(window.location.pathname));
+    window.location.href = `${siteRoot()}${target.path}${target.routing === "path" ? page : `#/${page}`}`;
   };
 
   return (

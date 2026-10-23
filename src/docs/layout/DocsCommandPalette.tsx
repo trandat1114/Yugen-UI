@@ -30,6 +30,7 @@ import { CONCEPTS } from "../concepts";
 import { FOUNDATIONS } from "../foundations";
 import { COMPONENTS_BY_CATEGORY } from "../registry";
 import { useLocale } from "../i18n";
+import { docsPath, navigate } from "../router";
 
 /** Bảng lệnh của trang docs: Ctrl/⌘ + K để nhảy tới mọi trang hoặc đổi giao diện. */
 export function DocsCommandPalette({
@@ -56,9 +57,9 @@ export function DocsCommandPalette({
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onOpenChange]);
 
-  const go = (href: string) => {
+  const go = (path: string) => {
     onOpenChange(false);
-    window.location.hash = href.replace(/^#/, "");
+    navigate(docsPath(path));
   };
   const act = (patch: Partial<Appearance>) => {
     onOpenChange(false);
@@ -72,22 +73,22 @@ export function DocsCommandPalette({
         <CommandEmpty>{t("palette.empty")}</CommandEmpty>
 
         <CommandGroup heading={t("palette.pages")}>
-          <CommandItem icon={<Home20Regular />} onSelect={() => go("#/")}>
+          <CommandItem icon={<Home20Regular />} onSelect={() => go("/")}>
             {t("nav.overview")}
           </CommandItem>
-          <CommandItem icon={<Rocket20Regular />} onSelect={() => go("#/templates")} keywords={["template", "starter", "mẫu"]}>
+          <CommandItem icon={<Rocket20Regular />} onSelect={() => go("/templates")} keywords={["template", "starter", "mẫu"]}>
             Templates
           </CommandItem>
-          <CommandItem icon={<Grid20Regular />} onSelect={() => go("#/blocks")}>
+          <CommandItem icon={<Grid20Regular />} onSelect={() => go("/blocks")}>
             Blocks
           </CommandItem>
-          <CommandItem icon={<PaintBrush20Regular />} onSelect={() => go("#/theme-designer")}>
+          <CommandItem icon={<PaintBrush20Regular />} onSelect={() => go("/theme-designer")}>
             Theme Designer
           </CommandItem>
-          <CommandItem icon={<Megaphone20Regular />} onSelect={() => go("#/news")} keywords={["changelog", "news", "cập nhật"]}>
+          <CommandItem icon={<Megaphone20Regular />} onSelect={() => go("/news")} keywords={["changelog", "news", "cập nhật"]}>
             {t("nav.news")}
           </CommandItem>
-          <CommandItem icon={<People20Regular />} onSelect={() => go("#/community")} keywords={["community", "đóng góp"]}>
+          <CommandItem icon={<People20Regular />} onSelect={() => go("/community")} keywords={["community", "đóng góp"]}>
             {t("nav.community")}
           </CommandItem>
         </CommandGroup>
@@ -122,7 +123,7 @@ export function DocsCommandPalette({
 
         <CommandGroup heading={t("nav.foundations")}>
           {FOUNDATIONS.map((f) => (
-            <CommandItem key={f.slug} icon={<Color20Regular />} onSelect={() => go(`#/foundations/${f.slug}`)} keywords={[f.name]}>
+            <CommandItem key={f.slug} icon={<Color20Regular />} onSelect={() => go(`/foundations/${f.slug}`)} keywords={[f.name]}>
               {foundation(f)}
             </CommandItem>
           ))}
@@ -133,7 +134,7 @@ export function DocsCommandPalette({
             <CommandItem
               key={c.meta.slug}
               icon={<Book20Regular />}
-              onSelect={() => go(`#/concepts/${c.meta.slug}`)}
+              onSelect={() => go(`/concepts/${c.meta.slug}`)}
               keywords={[c.meta.title, c.meta.group, group(c.meta.group)]}
             >
               {concept(c.meta).title}
@@ -148,7 +149,7 @@ export function DocsCommandPalette({
               <CommandItem
                 key={c.slug}
                 icon={g.category === "Yugen Labs" ? <PuzzlePiece20Regular /> : <Document20Regular />}
-                onSelect={() => go(`#/components/${c.slug}`)}
+                onSelect={() => go(`/components/${c.slug}`)}
                 keywords={[c.slug, g.category, category(g.category)]}
               >
                 {component(c).name}

@@ -32,6 +32,7 @@ import {
 } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { useLocale, type MessageKey } from "../i18n";
+import { docsPath } from "../router";
 
 function SplitMenu() {
   const { t } = useLocale();
@@ -161,10 +162,10 @@ function SurfacesCollage() {
 }
 
 const SHOWCASE: { id: string; label: MessageKey; gradient: GradientName; href: string; Collage: () => React.ReactNode }[] = [
-  { id: "actions", label: "show.actions", gradient: "sakura", href: "#/components/button", Collage: ActionsCollage },
-  { id: "inputs", label: "show.inputs", gradient: "dusk", href: "#/components/slider", Collage: InputsCollage },
-  { id: "feedback", label: "show.feedback", gradient: "sunset", href: "#/components/messagebar", Collage: FeedbackCollage },
-  { id: "surfaces", label: "show.surfaces", gradient: "brand", href: "#/components/card", Collage: SurfacesCollage },
+  { id: "actions", label: "show.actions", gradient: "sakura", href: docsPath("/components/button"), Collage: ActionsCollage },
+  { id: "inputs", label: "show.inputs", gradient: "dusk", href: docsPath("/components/slider"), Collage: InputsCollage },
+  { id: "feedback", label: "show.feedback", gradient: "sunset", href: docsPath("/components/messagebar"), Collage: FeedbackCollage },
+  { id: "surfaces", label: "show.surfaces", gradient: "brand", href: docsPath("/components/card"), Collage: SurfacesCollage },
 ];
 
 export function HomeShowcase() {

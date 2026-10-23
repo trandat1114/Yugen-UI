@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { DocSection, DoDont } from "../../blocks";
 import { CodeBlock } from "../../CodeBlock";
+import { docsPath } from "../../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -121,7 +122,7 @@ export default function Page() {
             ]}
           />
           <P>
-            Setting up Next.js with Yugen: <A href="#/concepts/ssr">Server-side rendering &amp; Next.js</A>.
+            Setting up Next.js with Yugen: <A href={docsPath("/concepts/ssr")}>Server-side rendering &amp; Next.js</A>.
           </P>
         </div>
       </DocSection>

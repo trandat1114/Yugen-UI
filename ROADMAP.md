@@ -6,7 +6,7 @@ Kế hoạch theo từng bản phát hành, cập nhật 2026-10-23. Mỗi bản
 phụ thuộc nằm ở [GitHub Project](https://github.com/users/trandat1114/projects/6). `[x]` đã xong, `[~]` đang làm, `[ ]` dự kiến.
 
 Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. English: the community page
-(https://trandat1114.github.io/Yugen-UI/?lang=en#/community) shows the same roadmap.
+(https://trandat1114.github.io/Yugen-UI/community?lang=en) shows the same roadmap.
 
 ## Đang làm
 
@@ -15,7 +15,7 @@ Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. 
 API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện hoàn tất.
 
 - [ ] Rà soát API, gỡ deprecation, quyết định về React 18 và class spacing viết hoa (#65)
-- [ ] SEO: URL theo đường dẫn, prerender từng trang, sitemap (#63)
+- [~] SEO: URL theo đường dẫn, prerender từng trang, sitemap (#63)
 
 ## Tiếp theo
 
@@ -30,7 +30,7 @@ Chưa xếp lịch.
 
 ## Đã phát hành
 
-Chi tiết ở trang Có gì mới (`#/news`) và `CHANGELOG.md`.
+Chi tiết ở trang Có gì mới (`/news`) và `CHANGELOG.md`.
 
 - **0.10.0** (2026-10-23): Spacing theo thang số, Theme Designer và trang Motion
 - **0.9.0** (2026-10-23): React 19 và starter tối giản

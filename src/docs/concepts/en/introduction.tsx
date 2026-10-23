@@ -5,6 +5,7 @@ import { DocSection } from "../../blocks";
 import { AuthorLink } from "../../AuthorLink";
 import { COMPONENTS_META } from "../../registry";
 import { SITE } from "../../site";
+import { docsPath } from "../../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -37,22 +38,22 @@ function IconTile({ children }: { children: ReactNode }) {
 
 const INCLUDED = [
   {
-    href: "#/components/button",
+    href: docsPath("/components/button"),
     title: `${COMPONENTS_META.length} components`,
     body: "Each page has live examples, usage guidance and a props table. Yugen Labs adds charts, AI chat UI, Trace and Sheet.",
   },
   {
-    href: "#/blocks",
+    href: docsPath("/blocks"),
     title: "Blocks",
     body: "Screens built from components: sign-in, data tables, scheduling… Copy the whole file into your project.",
   },
   {
-    href: "#/templates",
+    href: docsPath("/templates"),
     title: "Templates",
     body: "Sample apps created with one command: starter, SaaS, blog, dashboard, AI chat.",
   },
   {
-    href: "#/theme-designer",
+    href: docsPath("/theme-designer"),
     title: "Theme Designer",
     body: "Build brand colors from one hex value, check contrast and export the tokens.",
   },
@@ -133,10 +134,10 @@ export default function Page() {
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Button asChild appearance="primary">
-              <a href="#/concepts/quick-start">Quick start</a>
+              <a href={docsPath("/concepts/quick-start")}>Quick start</a>
             </Button>
             <Button asChild>
-              <a href="#/components/button">Browse components</a>
+              <a href={docsPath("/components/button")}>Browse components</a>
             </Button>
           </div>
         </div>
@@ -174,7 +175,7 @@ export default function Page() {
             </table>
           </div>
           <P>
-            Full commands and version requirements are in <A href="#/concepts/quick-start">Quick start</A>.
+            Full commands and version requirements are in <A href={docsPath("/concepts/quick-start")}>Quick start</A>.
           </P>
         </div>
       </DocSection>
@@ -196,8 +197,8 @@ export default function Page() {
       <DocSection id="status" title="Versions and license">
         <div className="flex flex-col gap-4">
           <P>
-            Yugen UI is before 1.0. A minor release may contain breaking changes, always listed in <A href="#/news">What&apos;s new</A>; a patch
-            release only fixes bugs. The full rules are in <A href="#/concepts/versioning">Versioning</A>.
+            Yugen UI is before 1.0. A minor release may contain breaking changes, always listed in <A href={docsPath("/news")}>What&apos;s new</A>; a patch
+            release only fixes bugs. The full rules are in <A href={docsPath("/concepts/versioning")}>Versioning</A>.
           </P>
           <P>
             MIT license. Report bugs in <A href={SITE.links.issues}>GitHub Issues</A>, ask questions and share ideas in{" "}

@@ -47,6 +47,7 @@ import {
   type RoadmapStage,
   type RoadmapStatus,
 } from "../roadmap";
+import { docsPath } from "../router";
 
 const WIKI = `${SITE.links.repository}/wiki`;
 
@@ -450,7 +451,7 @@ export function CommunityPage() {
                     </ExternalOrSoon>
                   ) : (
                     <Button asChild size="small">
-                      <a href="#/blocks">{action}</a>
+                      <a href={docsPath("/blocks")}>{action}</a>
                     </Button>
                   )}
                 </div>
@@ -505,7 +506,7 @@ export function CommunityPage() {
         <Roadmap copy={c} />
         <p className="mt-4 text-body1 text-foreground-3">
           {c.roadmapShipped}{" "}
-          <a href="#/news" className="text-link underline hover:text-link-hover">
+          <a href={docsPath("/news")} className="text-link underline hover:text-link-hover">
             {c.roadmapNews}
           </a>{" "}
           · {c.roadmapBoard}{" "}
