@@ -351,7 +351,7 @@ File trong \`src/blocks/\` sinh từ \`src/docs/block-library\` bằng \`scripts
 
 const ALIAS_CONFIG = `
   // import { Foo } from "@/components/Foo" thay cho đường dẫn tương đối dài (khai báo cả trong tsconfig.json).
-  resolve: { alias: { "@": path.resolve(__dirname, "./src") } },`;
+  resolve: { alias: { "@": path.resolve(import.meta.dirname, "./src") } },`;
 
 function files(t) {
   const { sources, blocks } = t.app ? appSources(t.app) : { sources: {}, blocks: t.blocks };
@@ -377,10 +377,11 @@ function files(t) {
             "@tailwindcss/vite": "^4.0.0",
             "@types/react": pkg.devDependencies["@types/react"],
             "@types/react-dom": pkg.devDependencies["@types/react-dom"],
-            "@vitejs/plugin-react": "^4.3.4",
+            // Bundler và TypeScript theo devDependencies ở gốc repo (cùng bản docs build và typecheck).
+            "@vitejs/plugin-react": pkg.devDependencies["@vitejs/plugin-react"],
             tailwindcss: "^4.0.0",
-            typescript: "^5.7.3",
-            vite: "^6.0.0",
+            typescript: pkg.devDependencies.typescript,
+            vite: pkg.devDependencies.vite,
             ...t.devDependencies,
           },
         },
@@ -395,14 +396,15 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   plugins: [react(), tailwindcss()],${t.alias ? ALIAS_CONFIG : ""}
   build: {
-    rollupOptions: {
+    rolldownOptions: {
       output: {
         // Tách thư viện khỏi mã ứng dụng: sửa trang chỉ làm đổi chunk nhỏ, phần còn lại trình duyệt giữ cache.
         // Icon Fluent để chung vendor: tách riêng tạo vòng import vendor ↔ icons (lỗi TDZ lúc chạy).
-        manualChunks(id) {
-          if (!id.includes("node_modules")) return;
-          if (/[\\\\/]node_modules[\\\\/](react|react-dom|scheduler)[\\\\/]/.test(id)) return "react";
-          return "vendor";
+        codeSplitting: {
+          groups: [
+            { name: "react", test: /[\\\\/]node_modules[\\\\/](react|react-dom|scheduler)[\\\\/]/, priority: 20 },
+            { name: "vendor", test: /[\\\\/]node_modules[\\\\/]/, priority: 10 },
+          ],
         },
       },
     },
@@ -421,8 +423,11 @@ export default defineConfig({
             strict: true,
             skipLibCheck: true,
             noEmit: true,
+            // Import có đuôi .ts: config của Vite nạp kiểu native (không bundle) cần đường dẫn đầy đủ.
+            allowImportingTsExtensions: true,
             types: ["vite/client"],
-            ...(t.alias ? { baseUrl: ".", paths: { "@/*": ["./src/*"] } } : {}),
+            // Không có baseUrl (TypeScript 6 báo deprecated): paths tính theo vị trí tsconfig.json.
+            ...(t.alias ? { paths: { "@/*": ["./src/*"] } } : {}),
           },
           include: ["src"],
         },

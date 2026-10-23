@@ -8,7 +8,7 @@ import path from "node:path";
  * - Mọi import "trần" (react, react/jsx-runtime, @radix-ui/*, react-day-picker/locale/vi…) là external.
  * - Khai báo kiểu: `tsconfig.lib.json` + tsc-alias; CSS: `scripts/build-css.mjs`.
  */
-const src = path.resolve(__dirname, "src");
+const src = path.resolve(import.meta.dirname, "src");
 
 const isExternal = (id: string) =>
   !id.startsWith(".") && !id.startsWith("@/") && !id.startsWith("\0") && !path.isAbsolute(id);
@@ -35,7 +35,7 @@ export default defineConfig({
       entry: path.resolve(src, "lib.ts"),
       formats: ["es"],
     },
-    rollupOptions: {
+    rolldownOptions: {
       external: isExternal,
       output: {
         preserveModules: true,

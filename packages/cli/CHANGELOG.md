@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Templates: Vite 8 (Rolldown), `@vitejs/plugin-react` 6 and TypeScript 6. Chunks are split with `codeSplitting`
+  instead of the deprecated `manualChunks`; `tsconfig.json` drops `baseUrl` (deprecated in TypeScript 6).
 - `doctor`, `add`, `list`: a project with `yugen-ui` in its dependencies and no `yugen.json` (an app made by `create`,
   or one set up by hand from the README) is read as package mode. `doctor` no longer warns on a fresh app, and `add`
   prints the import line instead of asking for `yugen init`.
