@@ -149,10 +149,34 @@ test.describe("Sidebar kéo được độ rộng, thu về rail (#46)", () => {
 });
 
 test.describe("URL theo đường dẫn (#113)", () => {
-  test("link #/… cũ chuyển sang đường dẫn, giữ ?query", async ({ page }) => {
-    await page.goto("/?lang=en#/components/combobox", { waitUntil: "domcontentloaded" });
-    await expect(page).toHaveURL(/\/components\/combobox\?lang=en$/);
+  test("link #/… cũ chuyển sang đường dẫn, ?lang=en sang bản /en/", async ({ page }) => {
+    await page.goto("/?theme=dark&lang=en#/components/combobox", { waitUntil: "domcontentloaded" });
+    await expect(page).toHaveURL(/\/en\/components\/combobox\?theme=dark$/);
     await expect(page.getByRole("heading", { level: 1, name: "Combobox" })).toBeVisible();
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  });
+
+  test("đổi ngôn ngữ sang URL /en/, link nội bộ giữ ngôn ngữ, lựa chọn được nhớ (#123)", async ({ page }) => {
+    await openDocs(page, "/components/button");
+    await page.getByRole("button", { name: /English/ }).click();
+    await expect(page).toHaveURL(/\/en\/components\/button\?/);
+    await expect(page.locator('main a[href="/en/"]').first()).toBeVisible();
+    // Mở link tiếng Việt khi đã chọn tiếng Anh → sang bản /en/.
+    await page.goto("/concepts/cli", { waitUntil: "domcontentloaded" });
+    await expect(page).toHaveURL(/\/en\/concepts\/cli$/);
+    await expect(page.getByRole("heading", { level: 1, name: "@yugen-ui/cli" })).toBeVisible();
+  });
+
+  test("trang tiếng Anh prerender có hreflang; trang chưa dịch trỏ canonical về bản tiếng Việt", async ({ page }) => {
+    test.skip(process.env.YUGEN_E2E_DEV === "1", "dev server không prerender");
+    await page.route(/\/assets\/[^/]+\.js(\?.*)?$/, (route) => route.abort());
+    await page.goto("/en/concepts/cli", { waitUntil: "domcontentloaded" });
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://trandat1114.github.io/Yugen-UI/en/concepts/cli");
+    await expect(page.locator('link[hreflang="vi"]')).toHaveAttribute("href", "https://trandat1114.github.io/Yugen-UI/concepts/cli");
+    await page.goto("/en/components/button", { waitUntil: "domcontentloaded" });
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://trandat1114.github.io/Yugen-UI/components/button");
+    await expect(page.locator("link[hreflang]")).toHaveCount(0);
   });
 
   test("bấm link nội bộ đổi trang không tải lại, Back quay về", async ({ page }) => {

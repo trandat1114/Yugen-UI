@@ -38,22 +38,22 @@ function IconTile({ children }: { children: ReactNode }) {
 
 const INCLUDED = [
   {
-    href: docsPath("/components/button"),
+    href: "/components/button",
     title: `${COMPONENTS_META.length} component`,
     body: "Mỗi trang có ví dụ chạy thật, hướng dẫn dùng và bảng props. Nhóm Yugen Labs có thêm biểu đồ, giao diện chat AI, Trace và Sheet.",
   },
   {
-    href: docsPath("/blocks"),
+    href: "/blocks",
     title: "Blocks",
     body: "Màn hình mẫu ghép từ component: đăng nhập, bảng số liệu, đặt lịch… Chép nguyên file vào dự án.",
   },
   {
-    href: docsPath("/templates"),
+    href: "/templates",
     title: "Templates",
     body: "Ứng dụng mẫu tạo bằng một lệnh: starter, SaaS, blog, dashboard, AI chat.",
   },
   {
-    href: docsPath("/theme-designer"),
+    href: "/theme-designer",
     title: "Theme Designer",
     body: "Tạo màu thương hiệu từ một mã màu, kiểm tra tương phản và xuất token.",
   },
@@ -124,7 +124,7 @@ export default function Page() {
             {INCLUDED.map((s) => (
               <a
                 key={s.href}
-                href={s.href}
+                href={docsPath(s.href)}
                 className="group flex flex-col gap-1 rounded-xlarge border border-stroke-2 bg-background-1 p-4 transition-colors duration-faster hover:bg-subtle-hover"
               >
                 <span className="text-subtitle2 font-semibold text-foreground-1 group-hover:text-brand-foreground-1">{s.title}</span>

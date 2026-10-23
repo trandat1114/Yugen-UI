@@ -6,10 +6,11 @@ import { renderToReadableStream } from "react-dom/server";
 import App, { preloadRoute } from "./App";
 import { CONCEPT_BY_SLUG, CONCEPTS } from "./docs/concepts";
 import { FOUNDATIONS } from "./docs/foundations";
-import { localeValue, type LocaleValue } from "./docs/i18n";
+import { localeValue, type Locale, type LocaleValue } from "./docs/i18n";
 import { COMPONENT_META_BY_SLUG, COMPONENTS_META } from "./docs/registry";
-import { hrefOf, pathOf, type Route } from "./docs/router";
+import { hrefOf, localePathOf, type Route } from "./docs/router";
 import { documentHead, routeMeta } from "./docs/seo";
+import { SITE } from "./docs/site";
 
 export const ROUTES: Route[] = [
   { kind: "home" },
@@ -69,19 +70,22 @@ function cardOf(route: Route, l: LocaleValue) {
 }
 
 export interface RenderedPage {
-  /** Đường dẫn sau BASE: "" (trang chủ), "components/button"… */
+  /** Đường dẫn sau BASE, gồm ngôn ngữ: "" (trang chủ), "components/button", "en/components/button"… */
   path: string;
+  lang: Locale;
   html: string;
   head: ReturnType<typeof documentHead>;
   card: ReturnType<typeof cardOf>;
 }
 
-export async function render(route: Route): Promise<RenderedPage> {
+export { SITE };
+
+export async function render(route: Route, lang: Locale = "vi"): Promise<RenderedPage> {
   // Nạp trước như main.tsx: không Suspense nào treo thì React ghi nội dung tại chỗ. Phần nào còn treo (demo nạp lười lồng
   // bên trong) vẫn đúng, nhưng React ghi nó ở cuối trang kèm script $RC đổi chỗ.
-  await preloadRoute(route, "vi");
+  await preloadRoute(route, lang);
   const errors: unknown[] = [];
-  const stream = await renderToReadableStream(<App path={hrefOf(route)} />, {
+  const stream = await renderToReadableStream(<App path={hrefOf(route, lang)} />, {
     onError: (error) => void errors.push(error),
     // Mặc định React tách Suspense có nội dung lớn ra cuối trang (stream sớm phần khung); HTML tĩnh thì không cần.
     progressiveChunkSize: Number.POSITIVE_INFINITY,
@@ -90,6 +94,6 @@ export async function render(route: Route): Promise<RenderedPage> {
   // Lỗi trong một Suspense không làm render dừng (React để client render lại phần đó) — với docs thì coi là lỗi build.
   if (errors.length > 0) throw errors[0];
   const html = await new Response(stream).text();
-  const l = localeValue("vi");
-  return { path: pathOf(route), html, head: documentHead(route, l), card: cardOf(route, l) };
+  const l = localeValue(lang);
+  return { path: localePathOf(route, lang), lang, html, head: documentHead(route, l), card: cardOf(route, l) };
 }

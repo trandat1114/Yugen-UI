@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Ảnh chia sẻ link (Open Graph) 1200×630 cho từng trang docs → dist-docs/og/<đường dẫn>.jpg, bằng Chromium của Playwright.
+ * Ảnh chia sẻ link (Open Graph) 1200×630 cho từng trang docs → dist-docs/og/<đường dẫn>.jpg (og/en/… cho bản tiếng Anh),
+ * bằng Chromium của Playwright.
  * Chạy sau `npm run build:docs` (đọc dist-docs/routes.json do scripts/prerender.mjs ghi); pages.yml chạy bước này trước khi
  * deploy. Trang chủ giữ public/og.jpg (scripts/og-image.mjs).
  *
@@ -16,7 +17,14 @@ const out = path.join(root, "dist-docs");
 const routesFile = path.join(out, "routes.json");
 if (!fs.existsSync(routesFile)) throw new Error("og-pages: chưa có dist-docs/routes.json — chạy `npm run build:docs` trước.");
 
-const pages = JSON.parse(fs.readFileSync(routesFile, "utf8")).filter((p) => p.path !== "");
+// Mỗi ảnh vẽ một lần: trang chủ dùng og.jpg, bản /en/ của trang chưa dịch dùng chung ảnh của bản tiếng Việt.
+const seen = new Set(["og.jpg"]);
+const pages = [];
+for (const entry of JSON.parse(fs.readFileSync(routesFile, "utf8"))) {
+  if (seen.has(entry.image)) continue;
+  seen.add(entry.image);
+  pages.push(entry);
+}
 const logo = fs.readFileSync(path.join(root, "public/favicon.svg"), "utf8");
 
 // Font tải từ Google Fonts để ảnh giống nhau trên máy local và runner Linux (không có Segoe UI); lỗi mạng → font hệ thống.
@@ -53,7 +61,7 @@ await page.setContent(shell, { waitUntil: "networkidle" });
 await page.evaluate(() => document.fonts.ready);
 
 const started = Date.now();
-for (const { path: routePath, section, title, description } of pages) {
+for (const { path: routePath, image, section, title, description } of pages) {
   await page.evaluate(
     ({ section, title, description, url }) => {
       document.getElementById("section").textContent = section;
@@ -63,7 +71,7 @@ for (const { path: routePath, section, title, description } of pages) {
     },
     { section, title, description, url: `trandat1114.github.io/Yugen-UI/${routePath}` },
   );
-  const file = path.join(out, "og", `${routePath}.jpg`);
+  const file = path.join(out, image);
   fs.mkdirSync(path.dirname(file), { recursive: true });
   await page.screenshot({ path: file, type: "jpeg", quality: 85 });
 }

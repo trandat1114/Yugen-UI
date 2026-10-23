@@ -38,22 +38,22 @@ function IconTile({ children }: { children: ReactNode }) {
 
 const INCLUDED = [
   {
-    href: docsPath("/components/button"),
+    href: "/components/button",
     title: `${COMPONENTS_META.length} components`,
     body: "Each page has live examples, usage guidance and a props table. Yugen Labs adds charts, AI chat UI, Trace and Sheet.",
   },
   {
-    href: docsPath("/blocks"),
+    href: "/blocks",
     title: "Blocks",
     body: "Screens built from components: sign-in, data tables, scheduling… Copy the whole file into your project.",
   },
   {
-    href: docsPath("/templates"),
+    href: "/templates",
     title: "Templates",
     body: "Sample apps created with one command: starter, SaaS, blog, dashboard, AI chat.",
   },
   {
-    href: docsPath("/theme-designer"),
+    href: "/theme-designer",
     title: "Theme Designer",
     body: "Build brand colors from one hex value, check contrast and export the tokens.",
   },
@@ -124,7 +124,7 @@ export default function Page() {
             {INCLUDED.map((s) => (
               <a
                 key={s.href}
-                href={s.href}
+                href={docsPath(s.href)}
                 className="group flex flex-col gap-1 rounded-xlarge border border-stroke-2 bg-background-1 p-4 transition-colors duration-faster hover:bg-subtle-hover"
               >
                 <span className="text-subtitle2 font-semibold text-foreground-1 group-hover:text-brand-foreground-1">{s.title}</span>

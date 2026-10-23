@@ -3,11 +3,13 @@
  * Prerender docs (bước cuối của `npm run build:docs`, sau `vite build` và `vite build --ssr src/entry-server.tsx`):
  *   dist-docs/index.html                  trang chủ
  *   dist-docs/components/button.html      mọi route khác — GitHub Pages phục vụ /components/button từ file này
+ *   dist-docs/en/…                        cùng các trang đó bằng tiếng Anh (/en/, /en/components/button)
  *   dist-docs/404.html                    khung trống (noindex): đường dẫn lạ, React tự render theo URL
  *   dist-docs/routes.json                 mọi trang: đường dẫn + nội dung ảnh chia sẻ (og-pages.mjs); build-versioned-docs.mjs
  *                                         dựa vào file này để biết bản docs dùng URL đường dẫn
- *   dist-docs/sitemap.xml                 chỉ bản chính (next/ và vX.Y/ trỏ canonical về bản chính); lastmod theo git
- * Mỗi trang có <title>, description, canonical và og:* riêng. Xong thì xoá dist-ssr/.
+ *   dist-docs/sitemap.xml                 chỉ bản chính (next/ và vX.Y/ trỏ canonical về bản chính); lastmod theo git,
+ *                                         kèm hreflang vi / en
+ * Mỗi trang có <title>, description, canonical, hreflang và og:* riêng. Xong thì xoá dist-ssr/.
  */
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
@@ -36,21 +38,22 @@ function replaceOnce(html, pattern, value) {
   return next;
 }
 
-function page(html, { title, description, canonical, image }, body) {
+const { ROUTES, SITE, render, sourcesOf } = await import(pathToFileURL(path.join(ssr, "entry-server.js")).href);
+
+function page(html, lang, { title, description, canonical, alternates, image }, body) {
   const attr = (name) => (_, open) => `${open}${escapeHtml(name)}`;
+  const links = alternates.map((a) => `\n    <link rel="alternate" hreflang="${a.hreflang}" href="${escapeHtml(a.href)}" />`).join("");
   html = replaceOnce(html, /<title>[^<]*<\/title>/, `<title>${escapeHtml(title)}</title>`);
   html = replaceOnce(html, /(<meta name="description" content=")[^"]*/, attr(description));
-  html = replaceOnce(html, /(<link rel="canonical" href=")[^"]*/, attr(canonical));
+  html = replaceOnce(html, /(<link rel="canonical" href=")[^"]*(" \/>)/, (_, open, close) => `${open}${escapeHtml(canonical)}${close}${links}`);
   html = replaceOnce(html, /(<meta property="og:title" content=")[^"]*/, attr(title));
   html = replaceOnce(html, /(<meta property="og:description" content=")[^"]*/, attr(description));
   html = replaceOnce(html, /(<meta property="og:url" content=")[^"]*/, attr(canonical));
-  html = replaceOnce(html, /(<meta property="og:image" content=")[^"]*/, attr(image));
+  html = replaceOnce(html, /(<meta property="og:image" content=")[^"]*/, attr(SITE.url + image));
   html = replaceOnce(html, /(<meta property="og:image:alt" content=")[^"]*/, attr(title));
-  html = replaceOnce(html, /<html lang="vi">/, '<html lang="vi" data-prerendered>');
+  html = replaceOnce(html, /<html lang="vi">/, `<html lang="${lang}" data-prerendered>`);
   return replaceOnce(html, /<div id="root"><\/div>/, () => `<div id="root">${body}</div>`);
 }
-
-const { ROUTES, render, sourcesOf } = await import(pathToFileURL(path.join(ssr, "entry-server.js")).href);
 
 const base = (process.env.DOCS_BASE ?? "/").replace(/\/?$/, "/");
 const mainBuild = !/\/(next|v\d+\.\d+)\/$/.test(base);
@@ -78,14 +81,19 @@ const entries = [];
 const sitemap = [];
 const streamed = [];
 for (const route of ROUTES) {
-  const { path: routePath, html, head, card } = await render(route);
-  if (mainBuild) sitemap.push({ loc: head.canonical, lastmod: lastmod(sourcesOf(route)) });
-  // Suspense còn treo lúc render → React đặt nội dung ở cuối trang, cần script mới hiện đúng chỗ (crawler không chạy JS thấy lệch).
-  if (html.includes('<template id="B:')) streamed.push(routePath || "/");
-  const file = path.join(out, routePath === "" ? "index.html" : `${routePath}.html`);
-  fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(file, page(template, head, html));
-  entries.push({ path: routePath, ...card });
+  for (const lang of ["vi", "en"]) {
+    const { path: routePath, html, head, card } = await render(route, lang);
+    // Bản /en/ của trang chưa dịch trỏ canonical về bản tiếng Việt: không đưa vào sitemap.
+    if (mainBuild && head.canonical === SITE.url + routePath) {
+      sitemap.push({ loc: head.canonical, alternates: head.alternates, lastmod: lastmod(sourcesOf(route)) });
+    }
+    // Suspense còn treo lúc render → React đặt nội dung ở cuối trang, cần script mới hiện đúng chỗ (crawler không chạy JS thấy lệch).
+    if (html.includes('<template id="B:')) streamed.push(routePath || "/");
+    const file = path.join(out, routePath === "" || routePath.endsWith("/") ? `${routePath}index.html` : `${routePath}.html`);
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, page(template, lang, head, html));
+    entries.push({ path: routePath, lang, image: head.image, ...card });
+  }
 }
 
 // 404: khung trống như trước khi có prerender, không cho index.
@@ -93,10 +101,18 @@ const notFound = replaceOnce(template, /<meta name="viewport"[^>]*>/, (m) => `${
 fs.writeFileSync(path.join(out, "404.html"), notFound);
 fs.writeFileSync(path.join(out, "routes.json"), JSON.stringify(entries, null, 2) + "\n");
 if (mainBuild) {
-  const urls = sitemap.map(({ loc, lastmod }) => `  <url><loc>${escapeHtml(loc)}</loc>${lastmod ? `<lastmod>${lastmod}</lastmod>` : ""}</url>`);
+  const urls = sitemap.map(({ loc, alternates, lastmod }) =>
+    [
+      `  <url>`,
+      `    <loc>${escapeHtml(loc)}</loc>`,
+      ...(lastmod ? [`    <lastmod>${lastmod}</lastmod>`] : []),
+      ...alternates.map((a) => `    <xhtml:link rel="alternate" hreflang="${a.hreflang}" href="${escapeHtml(a.href)}" />`),
+      `  </url>`,
+    ].join("\n"),
+  );
   fs.writeFileSync(
     path.join(out, "sitemap.xml"),
-    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join("\n")}\n</urlset>\n`,
+    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urls.join("\n")}\n</urlset>\n`,
   );
 }
 fs.rmSync(ssr, { recursive: true, force: true });

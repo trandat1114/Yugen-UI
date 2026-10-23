@@ -45,16 +45,21 @@
         root.setAttribute("data-theme", t);
         root.setAttribute("data-brand", a.brand === "web" || a.brand === "teams" ? a.brand : "sakura");
         root.setAttribute("dir", a.dir === "rtl" ? "rtl" : "ltr");
-        root.setAttribute("lang", a.lang === "en" ? "en" : "vi");
+        // Trang prerender mang sẵn ngôn ngữ của nó (<html lang>, /en/… là tiếng Anh). Cùng thứ tự với src/main.tsx: ?lang=,
+        // rồi trang tiếng Anh, rồi lựa chọn đã lưu (trang tiếng Việt sẽ chuyển sang /en/ nếu đã chọn tiếng Anh).
+        var pre = root.hasAttribute("data-prerendered");
+        var pageLang = root.getAttribute("lang") === "en" ? "en" : "vi";
+        var lang = !q.get("lang") && pre && pageLang === "en" ? "en" : a.lang === "en" ? "en" : "vi";
+        root.setAttribute("lang", lang);
         // Độ rộng / dạng rail của sidebar (cùng key và giới hạn với src/docs/layout/sidebarLayout.ts).
         var s = {};
         try { s = JSON.parse(localStorage.getItem("yugen-docs-sidebar") || "{}"); } catch (e) {}
         var w = typeof s.width === "number" ? Math.min(400, Math.max(240, s.width)) : 320;
         root.style.setProperty("--docs-sidebar-width", (s.collapsed === true ? 56 : w) + "px");
         if (s.collapsed === true) root.setAttribute("data-docs-sidebar", "rail");
-        // HTML prerender là tiếng Việt, LTR, ở trang đường dẫn chỉ tới: ẩn tới khi React render nếu sẽ hiện thứ khác (tiếng
-        // Anh, RTL, link #/… cũ). App bỏ data-pending sau lần render đầu; hẹn giờ phòng khi JS lỗi.
-        if (root.hasAttribute("data-prerendered") && (a.lang === "en" || a.dir === "rtl" || location.hash.indexOf("#/") === 0)) {
+        // HTML prerender dựng theo LTR, ở trang đường dẫn chỉ tới: ẩn tới khi React render nếu sẽ hiện thứ khác (ngôn ngữ kia,
+        // RTL, link #/… cũ). App bỏ data-pending sau lần render đầu; hẹn giờ phòng khi JS lỗi.
+        if (pre && (lang !== pageLang || a.dir === "rtl" || location.hash.indexOf("#/") === 0)) {
           root.setAttribute("data-pending", "");
           setTimeout(function () { root.removeAttribute("data-pending"); }, 5000);
         }
