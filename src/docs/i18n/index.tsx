@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import type { YugenMessages } from "@/components/ui/YugenProvider/context";
 import type { ComponentCategory, ConceptGroup, ConceptMeta } from "../types";
 import type { EnBundle } from "./en/bundle";
 import { setLinkLocale } from "../router";
@@ -20,6 +21,8 @@ export interface LocaleValue {
   component: (m: { slug: string; name: string; lead: string }) => { name: string; lead: string };
   /** Meta trang khái niệm theo ngôn ngữ (tiêu đề luôn dịch; lead / mục lục chỉ khi trang đã có bản dịch). */
   concept: (m: ConceptMeta) => ConceptMeta;
+  /** `messages` cho YugenProvider của docs: chuỗi có sẵn của component theo ngôn ngữ (không có = mặc định tiếng Việt). */
+  ui?: YugenMessages;
 }
 
 const format = (s: string, vars?: Record<string, string | number>) =>
@@ -29,6 +32,7 @@ function createValue(b: EnBundle | null): LocaleValue {
   const messages: Record<MessageKey, string> = b ? b.messages : vi;
   return {
     locale: b ? "en" : "vi",
+    ui: b?.ui,
     t: (key, vars) => format(messages[key], vars),
     category: (c) => b?.categories[c] ?? c,
     group: (g) => b?.groups[g] ?? g,

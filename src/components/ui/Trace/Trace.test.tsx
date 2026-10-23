@@ -1,6 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { Trace, TraceStep, formatTraceDuration } from "./Trace";
+import { traceMessagesEn } from "./messages";
+import { YugenProvider } from "../YugenProvider/YugenProvider";
 
 describe("formatTraceDuration", () => {
   it("dưới 1 giây → ms làm tròn", () => {
@@ -144,5 +146,20 @@ describe("Trace", () => {
       vi.advanceTimersByTime(10);
     });
     expect(screen.getByRole("status")).toBeEmptyDOMElement();
+  });
+});
+
+describe("Trace messages", () => {
+  it("messages tiếng Anh", () => {
+    render(
+      <YugenProvider messages={{ trace: traceMessagesEn }}>
+        <Trace title="Run">
+          <TraceStep title="Search" status="success" />
+          <TraceStep title="Answer" status="running" />
+        </Trace>
+      </YugenProvider>,
+    );
+    expect(screen.getByText(/Running · 1\/2 steps/)).toBeInTheDocument();
+    expect(screen.getByText(", Completed")).toBeInTheDocument();
   });
 });

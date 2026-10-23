@@ -118,7 +118,7 @@ export const en: Record<string, ComponentDocEn> = {
 
   daterangepresets: {
     description:
-      "Pass `presets` (an array of `{ label, range: () => ({ from, to }) }`) to show quick choices next to the calendar; on narrow screens the list sits above it. `DEFAULT_RANGE_PRESETS` contains today, the last 7 days, the last 30 days, this month and last month (with Vietnamese labels), always computed from the current date. The preset that matches the selected range is marked (aria-pressed); presets outside minDate / maxDate are disabled. All existing DateRangePicker props still work.",
+      "Pass `presets` (an array of `{ label, range: () => ({ from, to }) }`) to show quick choices next to the calendar; on narrow screens the list sits above it. `DEFAULT_RANGE_PRESETS` contains today, the last 7 days, the last 30 days, this month and last month, always computed from the current date; their labels follow `messages.dateRangePicker` of YugenProvider. The preset that matches the selected range is marked (aria-pressed); presets outside minDate / maxDate are disabled. All existing DateRangePicker props still work.",
     examples: [
       {
         title: "Custom presets & maxDate",

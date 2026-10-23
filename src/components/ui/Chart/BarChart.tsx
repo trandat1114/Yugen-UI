@@ -1,5 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
+import { useYugen, useYugenMessages } from "../YugenProvider/context";
+import { chartMessages } from "./messages";
 import { ChartContainer, ChartFocusRing, ChartLegend, ChartPatterns, ChartTable, ChartTooltip, type ChartTooltipRow } from "./ChartParts";
 import {
   Baseline,
@@ -112,9 +114,9 @@ export const BarChart = React.forwardRef<HTMLElement, BarChartProps>(function Ba
     description,
     toolbar,
     height,
-    locale = "vi-VN",
+    locale: localeProp,
     ariaLabel,
-    indexLabel = "Danh mục",
+    indexLabel: indexLabelProp,
     hideTableToggle,
     defaultShowTable,
     texture,
@@ -123,6 +125,11 @@ export const BarChart = React.forwardRef<HTMLElement, BarChartProps>(function Ba
   },
   ref,
 ) {
+  const yugen = useYugen();
+  const locale = localeProp ?? yugen.locale;
+  const msg = useYugenMessages("chart", chartMessages);
+  const indexLabel = indexLabelProp ?? msg.category;
+  const totalLabel = msg.total;
   const textured = useChartTexture(texture);
   const uid = chartUid(React.useId());
   const [plotRef, width] = useElementWidth<HTMLDivElement>();
@@ -292,7 +299,7 @@ export const BarChart = React.forwardRef<HTMLElement, BarChartProps>(function Ba
         const rows: ChartTooltipRow[] = vis
           .filter((v) => val(r, v.s.key) != null)
           .map((v) => ({ key: v.s.key, label: v.s.label, value: fmt(val(r, v.s.key) as number), slot: v.slot, shape: "rect" as const }));
-        rows.push({ key: "__total", label: "Tổng", value: fmt(total) });
+        rows.push({ key: "__total", label: totalLabel, value: fmt(total) });
         const endV = totals[r].pos > 0 ? totals[r].pos : totals[r].neg;
         const tip = vScale(endV);
         hits.push({
@@ -349,10 +356,7 @@ export const BarChart = React.forwardRef<HTMLElement, BarChartProps>(function Ba
 
   const usedSlots: ChartSlot[] = useDiverging ? ["pos", "neg"] : vis.map((v) => v.slot);
   const summary =
-    ariaLabel ??
-    `Biểu đồ ${horizontal ? "thanh" : "cột"}${stacked ? " chồng" : ""}: ${n} danh mục, ${
-      single ? series[0]?.label ?? "" : `${series.length} chuỗi (${series.map((s) => s.label).join(", ")})`
-    }. Dùng phím mũi tên để duyệt từng giá trị.`;
+    ariaLabel ?? msg.barSummary({ horizontal, stacked, categories: n, series: series.map((s) => s.label) });
 
   // Chỉ dựng khi bảng đang bật: hàng của mọi điểm dữ liệu được định dạng lại mỗi lần biểu đồ render.
   const table = () => (
@@ -361,7 +365,7 @@ export const BarChart = React.forwardRef<HTMLElement, BarChartProps>(function Ba
       columns={[
         { key: "__index", label: indexLabel },
         ...series.map((s) => ({ key: s.key, label: s.label, numeric: true })),
-        ...(stacked ? [{ key: "__total", label: "Tổng", numeric: true }] : []),
+        ...(stacked ? [{ key: "__total", label: totalLabel, numeric: true }] : []),
       ]}
       rows={data.map((d, r) => ({
         key: String(r),
@@ -404,7 +408,7 @@ export const BarChart = React.forwardRef<HTMLElement, BarChartProps>(function Ba
             height={H}
             role="group"
             aria-label={summary}
-            aria-roledescription="biểu đồ"
+            aria-roledescription={msg.roleDescription}
             className="block overflow-visible"
             onPointerLeave={() => setActive((a) => (a?.kb ? a : null))}
           >

@@ -4,6 +4,7 @@ import { CheckboxChecked16Regular, CheckboxUnchecked16Regular } from "@fluentui/
 import { cn } from "@/lib/cn";
 import { useAnnounce } from "../AriaLive/AriaLive";
 import { CodeBlock, CopyCodeButton, type CodeLanguage } from "../CodeBlock/CodeBlock";
+import { useYugenMessages } from "../YugenProvider/context";
 import { Citation, type CitationSource } from "./Citation";
 import {
   markdownToPlainText,
@@ -13,6 +14,9 @@ import {
   type MdBlock,
   type MdInline,
 } from "./markdown";
+import { streamingMarkdownMessages, type StreamingMarkdownMessages } from "./messages";
+
+export { streamingMarkdownMessages, streamingMarkdownMessagesEn, type StreamingMarkdownMessages } from "./messages";
 
 const LANGUAGE_ALIAS: Record<string, CodeLanguage> = {
   tsx: "tsx",
@@ -57,6 +61,7 @@ interface RenderContext {
   breaks: boolean;
   streaming: boolean;
   citations?: CitationSource[];
+  msg: StreamingMarkdownMessages;
 }
 
 const HEADING_CLASS: Record<Size, Record<number, string>> = {
@@ -130,7 +135,7 @@ function renderInlines(nodes: MdInline[], ctx: RenderContext): React.ReactNode[]
             className="rounded-small text-link underline wrap-anywhere hover:text-link-hover"
           >
             {renderInlines(node.children, ctx)}
-            {external && <span className="sr-only"> (mở tab mới)</span>}
+            {external && <span className="sr-only"> {ctx.msg.newTab}</span>}
           </a>
         );
       }
@@ -242,7 +247,7 @@ function BlockView({ block, ctx, caret, depth = 0, bare = false }: BlockProps) {
                   <span className="mt-0.5 flex shrink-0 text-foreground-3">
                     {item.checked ? <CheckboxChecked16Regular aria-hidden className="text-brand-foreground-1" /> : <CheckboxUnchecked16Regular aria-hidden />}
                   </span>
-                  <span className="sr-only">{item.checked ? "Đã xong: " : "Chưa xong: "}</span>
+                  <span className="sr-only">{item.checked ? ctx.msg.taskDone : ctx.msg.taskTodo} </span>
                   <div className="flex min-w-0 flex-1 flex-col gap-1">{content}</div>
                 </li>
               );
@@ -259,7 +264,7 @@ function BlockView({ block, ctx, caret, depth = 0, bare = false }: BlockProps) {
     case "table": {
       const lastRow = block.rows.length - 1;
       return (
-        <div role="region" aria-label="Bảng" tabIndex={0} className="max-w-full overflow-x-auto rounded-medium border border-stroke-2">
+        <div role="region" aria-label={ctx.msg.table} tabIndex={0} className="max-w-full overflow-x-auto rounded-medium border border-stroke-2">
           <table className="w-full border-collapse text-start">
             <thead>
               <tr className="bg-background-3">
@@ -343,6 +348,7 @@ export const StreamingMarkdown = React.forwardRef<HTMLDivElement, StreamingMarkd
     },
     ref,
   ) => {
+    const msg = useYugenMessages("streamingMarkdown", streamingMarkdownMessages);
     const stateRef = React.useRef<MarkdownParseState | null>(null);
     const parsed = parseMarkdownIncremental(children, streaming, stateRef.current);
     stateRef.current = parsed;
@@ -355,8 +361,8 @@ export const StreamingMarkdown = React.forwardRef<HTMLDivElement, StreamingMarkd
     const stableCitations = citationsRef.current;
 
     const ctx = React.useMemo<RenderContext>(
-      () => ({ size, headingOffset, breaks, streaming, citations: stableCitations }),
-      [size, headingOffset, breaks, streaming, stableCitations],
+      () => ({ size, headingOffset, breaks, streaming, citations: stableCitations, msg }),
+      [size, headingOffset, breaks, streaming, stableCitations, msg],
     );
 
     const { announce } = useAnnounce();

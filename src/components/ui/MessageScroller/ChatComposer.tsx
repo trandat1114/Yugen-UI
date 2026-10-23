@@ -5,6 +5,10 @@ import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { Button } from "../Button/Button";
 import { fieldControlClass } from "../Field/Field";
+import { useYugenMessages } from "../YugenProvider/context";
+import { chatComposerMessages } from "./messages";
+
+export { chatComposerMessages, chatComposerMessagesEn, type ChatComposerMessages } from "./messages";
 
 export interface ChatComposerProps
   extends Omit<React.FormHTMLAttributes<HTMLFormElement>, "onSubmit" | "onChange" | "defaultValue"> {
@@ -13,8 +17,9 @@ export interface ChatComposerProps
   onValueChange?: (value: string) => void;
   /** Gọi với nội dung đã trim; ô soạn tự xoá sau khi gửi. */
   onSend: (text: string) => void;
+  /** Mặc định lấy từ `messages.chatComposer.placeholder`. */
   placeholder?: string;
-  /** Nhãn truy cập cho ô soạn. Mặc định "Tin nhắn". */
+  /** Nhãn truy cập cho ô soạn. Mặc định lấy từ `messages.chatComposer.label` ("Tin nhắn"). */
   label?: string;
   disabled?: boolean;
   /** Giới hạn ký tự. */
@@ -28,6 +33,7 @@ export interface ChatComposerProps
   /** Đang chờ phản hồi (AI) — chặn gửi; có onStop thì nút gửi thành nút Dừng. */
   busy?: boolean;
   onStop?: () => void;
+  /** Tên nút gửi. Mặc định lấy từ `messages.chatComposer.send`. */
   sendLabel?: string;
   /** Hiện gợi ý phím (Enter gửi · Shift+Enter xuống dòng). */
   showHint?: boolean;
@@ -42,8 +48,8 @@ export const ChatComposer = React.forwardRef<HTMLTextAreaElement, ChatComposerPr
       defaultValue = "",
       onValueChange,
       onSend,
-      placeholder = "Nhập tin nhắn…",
-      label = "Tin nhắn",
+      placeholder,
+      label,
       disabled = false,
       maxLength,
       showCount = false,
@@ -51,7 +57,7 @@ export const ChatComposer = React.forwardRef<HTMLTextAreaElement, ChatComposerPr
       actions,
       busy = false,
       onStop,
-      sendLabel = "Gửi",
+      sendLabel,
       showHint = false,
       textareaProps,
       className,
@@ -59,6 +65,7 @@ export const ChatComposer = React.forwardRef<HTMLTextAreaElement, ChatComposerPr
     },
     ref,
   ) => {
+    const msg = useYugenMessages("chatComposer", chatComposerMessages);
     const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
     const counterId = React.useId();
     const hintId = React.useId();
@@ -130,8 +137,8 @@ export const ChatComposer = React.forwardRef<HTMLTextAreaElement, ChatComposerPr
           value={text}
           disabled={disabled}
           maxLength={maxLength}
-          placeholder={placeholder}
-          aria-label={textareaProps?.["aria-label"] ?? label}
+          placeholder={placeholder ?? msg.placeholder}
+          aria-label={textareaProps?.["aria-label"] ?? label ?? msg.label}
           aria-describedby={describedBy}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -145,7 +152,7 @@ export const ChatComposer = React.forwardRef<HTMLTextAreaElement, ChatComposerPr
           {actions && <div className="flex min-w-0 items-center gap-0.5">{actions}</div>}
           {showHint && (
             <span id={hintId} className="hidden min-w-0 truncate ps-1 text-caption1 text-foreground-3 sm:inline">
-              Enter để gửi · Shift+Enter xuống dòng
+              {msg.hint}
             </span>
           )}
           <div className="ms-auto flex shrink-0 items-center gap-2">
@@ -154,20 +161,20 @@ export const ChatComposer = React.forwardRef<HTMLTextAreaElement, ChatComposerPr
                 id={counterId}
                 className={cn("text-caption1 tabular-nums", nearLimit ? "text-warning-foreground-1" : "text-foreground-3")}
               >
-                <span className="sr-only">Đã nhập </span>
+                <span className="sr-only">{msg.countPrefix} </span>
                 {text.length}/{maxLength}
-                <span className="sr-only"> ký tự</span>
+                <span className="sr-only"> {msg.countSuffix}</span>
               </span>
             )}
             {busy && onStop ? (
-              <Button appearance="secondary" icon={<Stop20Filled />} aria-label="Dừng phản hồi" onClick={onStop} />
+              <Button appearance="secondary" icon={<Stop20Filled />} aria-label={msg.stop} onClick={onStop} />
             ) : (
               <Button
                 type="submit"
                 appearance="primary"
                 disabled={!canSend}
                 icon={<Send20Filled className="rtl:-scale-x-100" />}
-                aria-label={sendLabel}
+                aria-label={sendLabel ?? msg.send}
               />
             )}
           </div>

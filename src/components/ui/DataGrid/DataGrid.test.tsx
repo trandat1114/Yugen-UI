@@ -3,6 +3,7 @@ import { act, fireEvent, render, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { YugenProvider } from "../YugenProvider/YugenProvider";
 import { createColumn, DataGrid, sortItems, type DataGridProps } from "./DataGrid";
+import { dataGridMessagesEn } from "./messages";
 
 type Person = { id: string; name: string; age: number };
 
@@ -315,5 +316,17 @@ describe("DataGrid — hiệu năng", () => {
     rerender(grid());
     rerender(grid());
     expect(getRowId).not.toHaveBeenCalled();
+  });
+});
+
+describe("DataGrid messages", () => {
+  it("messages tiếng Anh", () => {
+    const { getByText, getByRole } = render(
+      <YugenProvider messages={{ dataGrid: dataGridMessagesEn }}>
+        <DataGrid aria-label="Empty" items={[] as Person[]} columns={columns} getRowId={(p) => p.id} selectionMode="multiselect" />
+      </YugenProvider>,
+    );
+    expect(getByText("No data")).toBeInTheDocument();
+    expect(getByRole("checkbox", { name: "Select all rows" })).toBeInTheDocument();
   });
 });

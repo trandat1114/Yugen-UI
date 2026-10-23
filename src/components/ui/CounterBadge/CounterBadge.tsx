@@ -3,6 +3,10 @@ import * as React from "react";
 import { cn } from "@/lib/cn";
 import { Badge, type BadgeProps } from "../Badge/Badge";
 import { VisuallyHidden } from "../VisuallyHidden/VisuallyHidden";
+import { useYugenMessages } from "../YugenProvider/context";
+import { counterBadgeMessages } from "./messages";
+
+export { counterBadgeMessages, counterBadgeMessagesEn, type CounterBadgeMessages } from "./messages";
 
 type CounterBadgeSize = "small" | "medium" | "large" | "extra-large";
 type CounterBadgeColor = "brand" | "danger" | "important" | "informative";
@@ -21,7 +25,7 @@ export interface CounterBadgeProps
   color?: CounterBadgeColor;
   shape?: "circular" | "rounded";
   size?: CounterBadgeSize;
-  /** Nhãn cho trình đọc màn hình. Mặc định "{count} thông báo" / "Hơn 99 thông báo" / "Có thông báo mới". */
+  /** Nhãn cho trình đọc màn hình. Mặc định lấy từ `messages.counterBadge` ("{count} thông báo" / "Hơn 99 thông báo" / "Có thông báo mới"). */
   label?: string;
 }
 
@@ -62,11 +66,12 @@ export const CounterBadge = React.forwardRef<HTMLSpanElement, CounterBadgeProps>
     },
     ref,
   ) => {
+    const msg = useYugenMessages("counterBadge", counterBadgeMessages);
     if (!dot && count === 0 && !showZero) return null;
 
     const overflow = count > overflowCount;
     const display = overflow ? `${overflowCount}+` : `${count}`;
-    const srLabel = label ?? (dot ? "Có thông báo mới" : overflow ? `Hơn ${overflowCount} thông báo` : `${count} thông báo`);
+    const srLabel = label ?? (dot ? msg.dot : overflow ? msg.overflow(overflowCount) : msg.count(count));
     const resolvedAppearance = dot ? "filled" : appearance;
 
     return (

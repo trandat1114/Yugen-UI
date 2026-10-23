@@ -14,7 +14,23 @@ import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffec
 import { Badge } from "../Badge/Badge";
 import { Button } from "../Button/Button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../Tabs/Tabs";
-import { useYugen } from "../YugenProvider/context";
+import { useYugen, useYugenMessages } from "../YugenProvider/context";
+import { codeBlockMessages, codeTabsMessages, copyCodeButtonMessages, packageManagerTabsMessages } from "./messages";
+
+export {
+  copyCodeButtonMessages,
+  copyCodeButtonMessagesEn,
+  codeBlockMessages,
+  codeBlockMessagesEn,
+  codeTabsMessages,
+  codeTabsMessagesEn,
+  packageManagerTabsMessages,
+  packageManagerTabsMessagesEn,
+  type CopyCodeButtonMessages,
+  type CodeBlockMessages,
+  type CodeTabsMessages,
+  type PackageManagerTabsMessages,
+} from "./messages";
 
 /* ================================================================ Tokenizer */
 
@@ -401,12 +417,13 @@ async function copyText(text: string) {
 
 export interface CopyCodeButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
   text: string;
-  /** Hiện chữ "Sao chép" cạnh icon. Mặc định true. */
+  /** Hiện chữ "Sao chép" (`messages.copyCodeButton.copy`) cạnh icon. Mặc định true. */
   showLabel?: boolean;
 }
 
 export const CopyCodeButton = React.forwardRef<HTMLButtonElement, CopyCodeButtonProps>(
   ({ text, showLabel = true, className, onClick, ...props }, ref) => {
+    const msg = useYugenMessages("copyCodeButton", copyCodeButtonMessages);
     const [copied, setCopied] = React.useState(false);
     const timer = React.useRef<number | undefined>(undefined);
     React.useEffect(() => () => window.clearTimeout(timer.current), []);
@@ -418,7 +435,7 @@ export const CopyCodeButton = React.forwardRef<HTMLButtonElement, CopyCodeButton
           size="small"
           appearance="subtle"
           icon={copied ? <Checkmark16Regular className="text-success-foreground-1" /> : <Copy16Regular />}
-          aria-label={showLabel ? undefined : copied ? "Đã sao chép" : "Sao chép code"}
+          aria-label={showLabel ? undefined : copied ? msg.copiedLabel : msg.copyLabel}
           onClick={async (e) => {
             onClick?.(e);
             await copyText(text);
@@ -429,10 +446,10 @@ export const CopyCodeButton = React.forwardRef<HTMLButtonElement, CopyCodeButton
           className={cn(!showLabel && "min-w-0", className)}
           {...props}
         >
-          {showLabel ? (copied ? "Đã chép" : "Sao chép") : undefined}
+          {showLabel ? (copied ? msg.copied : msg.copy) : undefined}
         </Button>
         <span role="status" className="sr-only">
-          {copied ? "Đã sao chép vào bộ nhớ tạm" : ""}
+          {copied ? msg.copiedStatus : ""}
         </span>
       </>
     );
@@ -504,6 +521,7 @@ export const CodeBlock = React.forwardRef<HTMLDivElement, CodeBlockProps>(
     ref,
   ) => {
     const preId = React.useId();
+    const msg = useYugenMessages("codeBlock", codeBlockMessages);
     const themeProps = useCodeThemeProps(appearance);
     const [innerWrap, setInnerWrap] = React.useState(defaultWrap);
     const wrap = wrapProp ?? innerWrap;
@@ -554,8 +572,8 @@ export const CodeBlock = React.forwardRef<HTMLDivElement, CodeBlockProps>(
         appearance="subtle"
         icon={wrap ? <TextWrapOff16Regular /> : <TextWrap16Regular />}
         aria-pressed={wrap}
-        aria-label="Xuống dòng"
-        title={wrap ? "Tắt xuống dòng" : "Bật xuống dòng"}
+        aria-label={msg.wrap}
+        title={wrap ? msg.wrapOff : msg.wrapOn}
         onClick={() => setWrap(!wrap)}
       />
     );
@@ -607,7 +625,7 @@ export const CodeBlock = React.forwardRef<HTMLDivElement, CodeBlockProps>(
                     </span>
                   )}
                   <span className={cn("min-w-0 flex-1 pe-4", !showLineNumbers && !marks && "ps-4")}>
-                    {mark !== " " && <span className="sr-only select-none">{mark === "+" ? "Thêm: " : "Xoá: "}</span>}
+                    {mark !== " " && <span className="sr-only select-none">{mark === "+" ? msg.added : msg.removed} </span>}
                     {line.map((token, k) =>
                       token.type === "plain" ? (
                         <React.Fragment key={k}>{token.text}</React.Fragment>
@@ -643,7 +661,7 @@ export const CodeBlock = React.forwardRef<HTMLDivElement, CodeBlockProps>(
         className="flex w-full items-center justify-center gap-1 border-t border-stroke-2 py-1 text-caption1 font-semibold text-link transition-colors duration-faster hover:bg-subtle-hover hover:text-link-hover"
       >
         {expanded ? <ChevronUp16Regular aria-hidden /> : <ChevronDown16Regular aria-hidden />}
-        {expanded ? "Thu gọn" : `Xem thêm (${lines.length} dòng)`}
+        {expanded ? msg.collapse : msg.expand(lines.length)}
       </button>
     );
 
@@ -726,6 +744,7 @@ export const CodeTabs = React.forwardRef<HTMLDivElement, CodeTabsProps>(
     ref,
   ) => {
     const themeProps = useCodeThemeProps(appearance);
+    const msg = useYugenMessages("codeTabs", codeTabsMessages);
     const [inner, setInner] = React.useState(defaultValue ?? files[0]?.name ?? "");
     const active = value ?? inner;
     const activeFile = files.find((f) => f.name === active) ?? files[0];
@@ -741,7 +760,7 @@ export const CodeTabs = React.forwardRef<HTMLDivElement, CodeTabsProps>(
       >
         <div ref={ref} dir="ltr" {...themeProps} className={cn(SURFACE, className)} {...props}>
           <div className="flex min-h-10 items-center gap-2 border-b border-stroke-2 pe-1">
-            <TabsList size="small" aria-label="Tệp" className="min-w-0 flex-wrap ps-1">
+            <TabsList size="small" aria-label={msg.files} className="min-w-0 flex-wrap ps-1">
               {files.map((f) => (
                 <TabsTrigger key={f.name} value={f.name}>
                   {f.name}
@@ -864,6 +883,7 @@ export interface PackageManagerTabsProps extends Omit<React.HTMLAttributes<HTMLD
 export const PackageManagerTabs = React.forwardRef<HTMLDivElement, PackageManagerTabsProps>(
   ({ packages, dev, command = "install", managers = PACKAGE_MANAGERS, appearance = "auto", size, className, ...props }, ref) => {
     const themeProps = useCodeThemeProps(appearance);
+    const msg = useYugenMessages("packageManagerTabs", packageManagerTabsMessages);
     const stored = React.useSyncExternalStore(pmSubscribe, pmRead, () => "npm" as PackageManager);
     const active = managers.includes(stored) ? stored : managers[0];
     const commandText = packageManagerCommand(active, packages, { dev, command });
@@ -872,7 +892,7 @@ export const PackageManagerTabs = React.forwardRef<HTMLDivElement, PackageManage
       <Tabs dir="ltr" value={active} onValueChange={(v) => isPackageManager(v) && pmWrite(v)}>
         <div ref={ref} dir="ltr" {...themeProps} className={cn(SURFACE, className)} {...props}>
           <div className="flex min-h-10 items-center gap-2 border-b border-stroke-2 pe-1">
-            <TabsList size="small" aria-label="Trình quản lý gói" className="min-w-0 flex-wrap ps-1">
+            <TabsList size="small" aria-label={msg.label} className="min-w-0 flex-wrap ps-1">
               {managers.map((pm) => (
                 <TabsTrigger key={pm} value={pm}>
                   {pm}

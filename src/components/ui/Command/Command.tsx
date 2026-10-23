@@ -4,6 +4,10 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Search20Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { Dialog, DialogSurface } from "../Dialog/Dialog";
+import { useYugenMessages } from "../YugenProvider/context";
+import { commandMessages } from "./messages";
+
+export { commandMessages, commandMessagesEn, type CommandMessages } from "./messages";
 
 /** Command (shadcn/ui + cmdk, giao diện Fluent 2 Menu) — https://ui.shadcn.com/docs/components/command */
 export const Command = React.forwardRef<
@@ -139,7 +143,7 @@ export interface CommandDialogProps extends React.ComponentPropsWithoutRef<typeo
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
-  /** Tiêu đề cho trình đọc màn hình (ẩn). */
+  /** Tiêu đề cho trình đọc màn hình (ẩn). Mặc định lấy từ `messages.command.dialogTitle`. */
   title?: string;
 }
 
@@ -148,15 +152,16 @@ export function CommandDialog({
   open,
   defaultOpen,
   onOpenChange,
-  title = "Bảng lệnh",
+  title,
   className,
   children,
   ...props
 }: CommandDialogProps) {
+  const msg = useYugenMessages("command", commandMessages);
   return (
     <Dialog open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
       <DialogSurface aria-describedby={undefined} className="max-w-140 gap-0 overflow-hidden p-0">
-        <DialogPrimitive.Title className="sr-only">{title}</DialogPrimitive.Title>
+        <DialogPrimitive.Title className="sr-only">{title ?? msg.dialogTitle}</DialogPrimitive.Title>
         <Command className={cn("rounded-none bg-transparent", className)} {...props}>
           {children}
         </Command>

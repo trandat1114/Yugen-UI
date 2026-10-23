@@ -22,6 +22,17 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
       requirements: "Requirements",
     },
   },
+  localization: {
+    title: "Interface language",
+    lead: "Text built into components (the close button, screen reader labels, empty states) is Vietnamese by default. One messages prop on YugenProvider switches all of it to English or to another language.",
+    toc: {
+      english: "Switch to English",
+      override: "Change a few strings",
+      locale: "Dates, times and numbers",
+      other: "Other languages",
+      source: "Copied source",
+    },
+  },
   seo: {
     title: "SEO with Yugen UI",
     lead: "Yugen components render plain HTML on the server, so search engines can read the content. What is left is per-page metadata, heading structure, real links and alt text for images.",

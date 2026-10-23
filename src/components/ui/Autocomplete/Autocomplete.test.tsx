@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Autocomplete, HighlightMatch, highlightRanges } from "./Autocomplete";
+import { Autocomplete, HighlightMatch, autocompleteMessagesEn, highlightRanges } from "./Autocomplete";
+import { YugenProvider } from "../YugenProvider/YugenProvider";
 import { Quote } from "../Quote/Quote";
 
 const FRUITS = ["Xoài", "Sầu riêng", "Măng cụt", "Chôm chôm"];
@@ -92,5 +93,21 @@ describe("Quote", () => {
     expect(container.querySelector("figure blockquote")?.getAttribute("cite")).toBe("https://example.com");
     expect(container.querySelector("figcaption cite a")?.getAttribute("href")).toBe("https://example.com");
     expect(container.querySelector("blockquote p")?.textContent).toBe("Nội dung");
+  });
+});
+
+describe("Autocomplete messages", () => {
+  it("autocompleteMessagesEn đổi tên danh sách và câu không có gợi ý", async () => {
+    const user = userEvent.setup();
+    render(
+      <YugenProvider messages={{ autocomplete: autocompleteMessagesEn }}>
+        <Autocomplete aria-label="Fruit" suggestions={FRUITS} />
+      </YugenProvider>,
+    );
+    const input = screen.getByRole("combobox", { name: "Fruit" });
+    await user.type(input, "xo");
+    expect(await screen.findByRole("listbox", { name: "Search suggestions" })).toBeInTheDocument();
+    await user.type(input, "zzz");
+    expect(await screen.findByText("No matching suggestions")).toBeInTheDocument();
   });
 });

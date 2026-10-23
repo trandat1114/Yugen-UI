@@ -1,5 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
+import { useYugen, useYugenMessages } from "../YugenProvider/context";
+import { chartMessages } from "./messages";
 import { ChartContainer, ChartFocusRing, ChartLegend, ChartTable, ChartTooltip, type ChartTooltipRow } from "./ChartParts";
 import { ChartBrush } from "./ChartBrush";
 import { normalizeDomain, stackValues, type ChartDomain } from "./chartMath";
@@ -105,7 +107,7 @@ function SeriesChart({
   description,
   toolbar,
   height = 280,
-  locale = "vi-VN",
+  locale: localeProp,
   ariaLabel,
   indexLabel,
   hideTableToggle,
@@ -115,6 +117,9 @@ function SeriesChart({
   className,
   forwardedRef,
 }: AreaChartProps & { variant: "line" | "area"; forwardedRef: React.ForwardedRef<HTMLElement> }) {
+  const yugen = useYugen();
+  const locale = localeProp ?? yugen.locale;
+  const msg = useYugenMessages("chart", chartMessages);
   const textured = useChartTexture(texture);
   const [plotRef, width] = useElementWidth<HTMLDivElement>();
   const [hidden, toggleSeries] = useSeriesToggle(series.map((s) => s.key));
@@ -268,6 +273,7 @@ function SeriesChart({
         .filter((p): p is { v: (typeof vis)[number]; k: number; value: number } => p.value != null)
     : [];
   const pctFmt = makeNumberFormatter(locale, { style: "percent", maximumFractionDigits: 1 });
+  const totalLabel = msg.total;
   const rowsAt = (r: number): ChartTooltipRow[] => {
     const total = vis.reduce((a, v) => a + (val(r, v.s.key) ?? 0), 0);
     const rows: ChartTooltipRow[] = vis.map((v) => {
@@ -275,7 +281,7 @@ function SeriesChart({
       const text = x == null ? "—" : expand && total > 0 ? `${fmt(x)} (${pctFmt(Math.max(0, x) / total)})` : fmt(x);
       return { key: v.s.key, label: v.s.label, value: text, slot: v.slot, shape: isArea ? "rect" : "line" };
     });
-    if (isStacked) rows.push({ key: "__total", label: "Tổng", value: fmt(total) });
+    if (isStacked) rows.push({ key: "__total", label: totalLabel, value: fmt(total) });
     return rows;
   };
 
@@ -290,19 +296,22 @@ function SeriesChart({
 
   const xLabelIdx = width > 0 ? pickLabelIndices(xs, xLabels, 0, width) : [];
   const showLegend = legend ?? series.length > 1;
-  const kind = isArea ? (isStacked ? (expand ? "vùng chồng 100%" : "vùng chồng") : "vùng") : "đường";
   const summary =
     ariaLabel ??
-    `Biểu đồ ${kind}: ${n} điểm${n ? ` từ ${xLong[0]} đến ${xLong[n - 1]}` : ""}, ${
-      series.length === 1 ? series[0]?.label ?? "" : `${series.length} chuỗi (${series.map((s) => s.label).join(", ")})`
-    }. Dùng phím mũi tên để duyệt từng mốc.`;
+    msg.lineSummary({
+      kind: isArea ? (isStacked ? (expand ? "expand" : "stacked") : "area") : "line",
+      points: n,
+      from: n ? xLong[0] : undefined,
+      to: n ? xLong[n - 1] : undefined,
+      series: series.map((s) => s.label),
+    });
 
   // Chỉ dựng khi bảng đang bật: hàng của mọi điểm dữ liệu được định dạng lại mỗi lần biểu đồ render.
   const table = () => (
     <ChartTable
       caption={summary}
       columns={[
-        { key: "__index", label: indexLabel ?? (isTime ? "Thời gian" : "Danh mục") },
+        { key: "__index", label: indexLabel ?? (isTime ? msg.time : msg.category) },
         ...series.map((s) => ({ key: s.key, label: s.label, numeric: true })),
       ]}
       rows={allData.map((d, r) => ({
@@ -362,7 +371,7 @@ function SeriesChart({
             height={height}
             role="group"
             aria-label={summary}
-            aria-roledescription="biểu đồ"
+            aria-roledescription={msg.roleDescription}
             className="block overflow-visible"
             onPointerLeave={() => setActive((a) => (a?.kb ? a : null))}
           >

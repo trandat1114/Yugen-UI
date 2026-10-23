@@ -5,6 +5,8 @@ import { markdownToPlainText, parseMarkdown, sanitizeHref, type MdBlock, type Md
 import { StreamingMarkdown } from "./StreamingMarkdown";
 import { PromptInput, formatFileSize, validateFiles } from "./PromptInput";
 import { formatReasoningDuration } from "./Reasoning";
+import { promptInputMessagesEn } from "./messages";
+import { YugenProvider } from "../YugenProvider/YugenProvider";
 
 const blocks = (text: string, streaming = false) => parseMarkdown(text, { streaming }).children;
 const first = <T extends MdBlock["type"]>(text: string, type: T, streaming = false) => {
@@ -195,5 +197,23 @@ describe("Reasoning", () => {
     expect(formatReasoningDuration(400)).toBe("1s");
     expect(formatReasoningDuration(12_300)).toBe("12s");
     expect(formatReasoningDuration(65_000)).toBe("1m 05s");
+  });
+});
+
+describe("AIKit messages", () => {
+  it("PromptInput: messages tiếng Anh", () => {
+    render(
+      <YugenProvider messages={{ promptInput: promptInputMessagesEn }} locale="en-US">
+        <PromptInput onSubmit={() => {}} />
+      </YugenProvider>,
+    );
+    expect(screen.getByRole("textbox", { name: "Enter a prompt" })).toHaveAttribute("placeholder", "Ask anything…");
+    expect(screen.getByRole("button", { name: "Send" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Attach files" })).toBeInTheDocument();
+  });
+
+  it("formatFileSize theo locale", () => {
+    expect(formatFileSize(1536, "en-US")).toBe("1.5 KB");
+    expect(formatFileSize(1536)).toBe("1,5 KB");
   });
 });

@@ -34,6 +34,10 @@ import {
   type FluentIcon,
 } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
+import { useYugenMessages } from "../YugenProvider/context";
+import { presenceBadgeMessages, type PresenceBadgeMessages } from "./messages";
+
+export { presenceBadgeMessages, presenceBadgeMessagesEn, type PresenceBadgeMessages } from "./messages";
 
 export type PresenceBadgeStatus =
   | "available"
@@ -115,15 +119,16 @@ const ICON_SIZE: Record<PresenceBadgeSize, 12 | 16 | 20> = {
   "extra-large": 20,
 };
 
-const LABEL: Record<PresenceBadgeStatus, string> = {
-  available: "Có mặt",
-  away: "Vắng mặt",
-  busy: "Bận",
-  "do-not-disturb": "Không làm phiền",
-  offline: "Ngoại tuyến",
-  "out-of-office": "Không ở văn phòng",
-  blocked: "Đã chặn",
-  unknown: "Không xác định",
+/** Trạng thái → khoá trong `messages.presenceBadge`. */
+const LABEL_KEY: Record<PresenceBadgeStatus, keyof PresenceBadgeMessages> = {
+  available: "available",
+  away: "away",
+  busy: "busy",
+  "do-not-disturb": "doNotDisturb",
+  offline: "offline",
+  "out-of-office": "outOfOffice",
+  blocked: "blocked",
+  unknown: "unknown",
 };
 
 export interface PresenceBadgeProps extends Omit<React.HTMLAttributes<HTMLSpanElement>, "children"> {
@@ -133,15 +138,16 @@ export interface PresenceBadgeProps extends Omit<React.HTMLAttributes<HTMLSpanEl
   size?: PresenceBadgeSize;
   /** Viền 2px màu nền — bật khi đặt chồng lên Avatar. */
   ring?: boolean;
-  /** Ghi đè nhãn đọc cho trình đọc màn hình. */
+  /** Ghi đè nhãn đọc cho trình đọc màn hình. Mặc định lấy từ `messages.presenceBadge`. */
   label?: string;
 }
 
 export const PresenceBadge = React.forwardRef<HTMLSpanElement, PresenceBadgeProps>(
   ({ status = "available", outOfOffice = false, size = "medium", ring = false, label, className, ...props }, ref) => {
+    const msg = useYugenMessages("presenceBadge", presenceBadgeMessages);
     const Icon = iconFor(status, outOfOffice)[ICON_SIZE[size]];
     const ariaLabel =
-      label ?? LABEL[status] + (outOfOffice && status !== "out-of-office" ? `, ${LABEL["out-of-office"].toLowerCase()}` : "");
+      label ?? msg[LABEL_KEY[status]] + (outOfOffice && status !== "out-of-office" ? `, ${msg.outOfOffice.toLowerCase()}` : "");
 
     return (
       <span

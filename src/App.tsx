@@ -138,8 +138,8 @@ export default function App({ path }: { path?: string }) {
   const tokenKey = `${theme}-${brand}`;
 
   return (
-    <YugenProvider applyToDocument withToaster theme={theme} brand={brand} dir={dir}>
-      <LocaleProvider locale={lang}>
+    <LocaleProvider locale={lang}>
+      <DocsProvider theme={theme} brand={brand} dir={dir}>
         <DocumentMeta route={route} />
         <PageProgress />
         <Sidebar route={route} open={navOpen} onClose={() => setNavOpen(false)} onOpenPalette={() => setPaletteOpen(true)} />
@@ -176,7 +176,17 @@ export default function App({ path }: { path?: string }) {
           </main>
           <Footer />
         </div>
-      </LocaleProvider>
+      </DocsProvider>
+    </LocaleProvider>
+  );
+}
+
+/** YugenProvider gốc của docs, nằm trong LocaleProvider: demo ở trang /en/ có chuỗi có sẵn và định dạng Intl tiếng Anh. */
+function DocsProvider({ children, ...appearance }: Pick<Appearance, "theme" | "brand" | "dir"> & { children: ReactNode }) {
+  const { ui, locale } = useLocale();
+  return (
+    <YugenProvider applyToDocument withToaster {...appearance} messages={ui} locale={locale === "en" ? "en-US" : "vi-VN"}>
+      {children}
     </YugenProvider>
   );
 }

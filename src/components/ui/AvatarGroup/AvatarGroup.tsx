@@ -3,6 +3,10 @@ import { MoreHorizontal20Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { Avatar, type AvatarProps } from "../Avatar/Avatar";
 import { Popover, PopoverSurface, PopoverTrigger } from "../Popover/Popover";
+import { useYugenMessages } from "../YugenProvider/context";
+import { avatarGroupMessages } from "./messages";
+
+export { avatarGroupMessages, avatarGroupMessagesEn, type AvatarGroupMessages } from "./messages";
 
 /** Fluent 2 AvatarGroup — https://fluent2.microsoft.design/components/web/react/core/avatargroup/usage */
 export type AvatarGroupSize = 20 | 24 | 32 | 40 | 48 | 64 | 96;
@@ -86,7 +90,7 @@ export interface AvatarGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   maxAvatars?: number;
   /** Nút tràn hiện số đếm hay icon "…". */
   overflowIndicator?: "count" | "icon";
-  /** aria-label cho nút mở danh sách đầy đủ. */
+  /** aria-label cho nút mở danh sách đầy đủ. Mặc định lấy từ `messages.avatarGroup.viewAll` / `viewMore`. */
   overflowLabel?: string;
 }
 
@@ -95,6 +99,7 @@ export const AvatarGroup = React.forwardRef<HTMLDivElement, AvatarGroupProps>(
     { layout = "spread", size = 32, maxAvatars = 5, overflowIndicator = "count", overflowLabel, className, children, ...props },
     ref,
   ) => {
+    const msg = useYugenMessages("avatarGroup", avatarGroupMessages);
     const items = React.Children.toArray(children).filter(React.isValidElement) as React.ReactElement<AvatarGroupItemProps>[];
     const isPie = layout === "pie";
     const max = Math.max(1, maxAvatars);
@@ -105,7 +110,7 @@ export const AvatarGroup = React.forwardRef<HTMLDivElement, AvatarGroupProps>(
     const popoverList = (
       <PopoverSurface size="small" align="start" className="w-56">
         <AvatarGroupContext.Provider value={{ layout, size, inPopover: true }}>
-          <ul aria-label="Danh sách thành viên" className="flex max-h-56 flex-col overflow-y-auto">
+          <ul aria-label={msg.list} className="flex max-h-56 flex-col overflow-y-auto">
             {overflow}
           </ul>
         </AvatarGroupContext.Provider>
@@ -128,7 +133,7 @@ export const AvatarGroup = React.forwardRef<HTMLDivElement, AvatarGroupProps>(
               >
                 {/* Tên lấy từ nội dung ẩn thay cho aria-label: chữ viết tắt trong ô ghép (aria-hidden) là hình, không phải
                     nhãn — tránh lệch "nhãn nhìn thấy ⊄ tên truy cập" (WCAG 2.5.3). sr-only nằm absolute, không chiếm ô grid. */}
-                <span className="sr-only">{overflowLabel ?? `Xem ${items.length} thành viên`}</span>
+                <span className="sr-only">{overflowLabel ?? msg.viewAll(items.length)}</span>
                 {inline.map((item, index) => (
                   // Ô ghép chỉ để nhìn — tên nút đã có aria-label, chữ viết tắt không được lọt vào tên truy cập.
                   <span
@@ -173,7 +178,7 @@ export const AvatarGroup = React.forwardRef<HTMLDivElement, AvatarGroupProps>(
               <button
                 type="button"
                 // Số đếm hiển thị phải nằm trong tên accessibility (WCAG 2.5.3): "+2 Xem thêm 2 thành viên".
-                aria-label={overflowIndicator === "icon" ? (overflowLabel ?? `Xem thêm ${overflow.length} thành viên`) : undefined}
+                aria-label={overflowIndicator === "icon" ? (overflowLabel ?? msg.viewMore(overflow.length)) : undefined}
                 className={cn(
                   "relative inline-flex shrink-0 items-center justify-center rounded-circular border border-stroke-1 bg-background-1 font-normal text-foreground-1",
                   "transition-colors duration-faster ease-easy-ease hover:bg-background-1-hover active:bg-background-1-pressed",
@@ -187,7 +192,7 @@ export const AvatarGroup = React.forwardRef<HTMLDivElement, AvatarGroupProps>(
                 ) : (
                   <>
                     +{overflow.length}
-                    <span className="sr-only"> {overflowLabel ?? `Xem thêm ${overflow.length} thành viên`}</span>
+                    <span className="sr-only"> {overflowLabel ?? msg.viewMore(overflow.length)}</span>
                   </>
                 )}
               </button>

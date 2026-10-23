@@ -12,6 +12,10 @@ import {
   Star28Regular,
 } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
+import { useYugen, useYugenMessages } from "../YugenProvider/context";
+import { ratingMessages } from "./messages";
+
+export { ratingMessages, ratingMessagesEn, type RatingMessages } from "./messages";
 
 export type RatingColor = "brand" | "marigold" | "neutral";
 export type RatingSize = "small" | "medium" | "large" | "extra-large";
@@ -80,7 +84,7 @@ export interface RatingProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   disabled?: boolean;
   /** name của nhóm radio (tự sinh nếu bỏ trống). */
   name?: string;
-  /** Nhãn đọc cho từng giá trị. */
+  /** Nhãn đọc cho từng giá trị. Mặc định lấy từ `messages.rating.item`. */
   itemLabel?: (value: number) => string;
 }
 
@@ -97,7 +101,7 @@ export const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
       size = "extra-large",
       disabled,
       name,
-      itemLabel = (v) => `${v.toLocaleString()} sao`,
+      itemLabel,
       className,
       onMouseLeave,
       onKeyDown,
@@ -106,6 +110,9 @@ export const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
     ref,
   ) => {
     const dir = useDirection();
+    const msg = useYugenMessages("rating", ratingMessages);
+    const { locale } = useYugen();
+    const labelOf = itemLabel ?? ((v: number) => msg.item(v, v.toLocaleString(locale)));
     const autoName = React.useId();
     const groupName = name ?? autoName;
     const [inner, setInner] = React.useState(defaultValue);
@@ -140,7 +147,7 @@ export const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
         value={v}
         checked={current === v}
         disabled={disabled}
-        aria-label={itemLabel(v)}
+        aria-label={labelOf(v)}
         onChange={() => select(v)}
         onMouseEnter={() => !disabled && setHover(v)}
         className={cn(
@@ -210,9 +217,11 @@ export const RatingDisplay = React.forwardRef<HTMLDivElement, RatingDisplayProps
   ({ value, max = 5, count, compact, color = "neutral", size = "medium", hideValue, className, ...props }, ref) => {
     const rounded = Math.round(Math.min(Math.max(value, 0), max) * 2) / 2;
     const { gap, text } = ICONS[size];
-    const valueText = value.toLocaleString(undefined, { maximumFractionDigits: 1 });
-    const label =
-      `Đánh giá ${valueText} trên ${max} sao` + (count !== undefined ? `, ${count.toLocaleString()} lượt` : "");
+    const msg = useYugenMessages("rating", ratingMessages);
+    const { locale } = useYugen();
+    const valueText = value.toLocaleString(locale, { maximumFractionDigits: 1 });
+    const countText = count?.toLocaleString(locale);
+    const label = msg.summary(valueText, max) + (count !== undefined ? `, ${msg.count(count, countText ?? "")}` : "");
 
     return (
       <div
@@ -245,7 +254,7 @@ export const RatingDisplay = React.forwardRef<HTMLDivElement, RatingDisplayProps
         )}
         {count !== undefined && (
           <span aria-hidden className="text-foreground-2 before:pe-1 before:content-['·']">
-            {count.toLocaleString()}
+            {countText}
           </span>
         )}
       </div>

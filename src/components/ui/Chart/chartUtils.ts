@@ -36,7 +36,7 @@ export interface ChartFrameProps {
   toolbar?: React.ReactNode;
   /** Chiều cao vùng vẽ (px) — đã gồm dải nhãn trục. */
   height?: number;
-  /** Locale cho Intl.NumberFormat / DateTimeFormat. */
+  /** Locale cho Intl.NumberFormat / DateTimeFormat. Mặc định lấy từ YugenProvider (`locale`, "vi-VN"). */
   locale?: string;
   /** Mô tả cho trình đọc màn hình; mặc định tự sinh từ dữ liệu. */
   ariaLabel?: string;

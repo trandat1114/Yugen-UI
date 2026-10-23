@@ -1,5 +1,9 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
+import { useYugenMessages } from "../YugenProvider/context";
+import { skeletonMessages } from "./messages";
+
+export { skeletonMessages, skeletonMessagesEn, type SkeletonMessages } from "./messages";
 
 /** Fluent 2 Skeleton — https://fluent2.microsoft.design/components/web/react/core/skeleton/usage */
 type SkeletonAnimation = "wave" | "pulse";
@@ -21,20 +25,23 @@ export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
 const SkeletonRootContext = React.createContext(false);
 
 export const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
-  ({ animation = "wave", appearance = "opaque", className, ...props }, ref) => (
-    <SkeletonContext.Provider value={{ animation, appearance }}>
-      <SkeletonRootContext.Provider value>
-        <div
-          ref={ref}
-          role="progressbar"
-          aria-busy="true"
-          aria-label="Đang tải nội dung"
-          className={cn("flex flex-col gap-2", className)}
-          {...props}
-        />
-      </SkeletonRootContext.Provider>
-    </SkeletonContext.Provider>
-  ),
+  ({ animation = "wave", appearance = "opaque", className, ...props }, ref) => {
+    const msg = useYugenMessages("skeleton", skeletonMessages);
+    return (
+      <SkeletonContext.Provider value={{ animation, appearance }}>
+        <SkeletonRootContext.Provider value>
+          <div
+            ref={ref}
+            role="progressbar"
+            aria-busy="true"
+            aria-label={msg.label}
+            className={cn("flex flex-col gap-2", className)}
+            {...props}
+          />
+        </SkeletonRootContext.Provider>
+      </SkeletonContext.Provider>
+    );
+  },
 );
 Skeleton.displayName = "Skeleton";
 

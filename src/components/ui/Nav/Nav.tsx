@@ -2,6 +2,10 @@ import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { ChevronDown16Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
+import { useYugenMessages } from "../YugenProvider/context";
+import { navMessages } from "./messages";
+
+export { navMessages, navMessagesEn, type NavMessages } from "./messages";
 
 /** Fluent 2 Nav — https://fluent2.microsoft.design/components/web/react/core/nav/usage */
 type NavDensity = "medium" | "small";
@@ -76,12 +80,13 @@ export const Nav = React.forwardRef<HTMLElement, NavProps>(
       onNavCategoryItemToggle,
       multiple = true,
       density = "medium",
-      "aria-label": ariaLabel = "Điều hướng chính",
+      "aria-label": ariaLabel,
       children,
       ...props
     },
     ref,
   ) => {
+    const msg = useYugenMessages("nav", navMessages);
     const [innerSelected, setInnerSelected] = React.useState(defaultSelectedValue);
     const [innerOpen, setInnerOpen] = React.useState<string[]>(defaultOpenCategories);
     const selected = selectedValue ?? innerSelected;
@@ -105,7 +110,7 @@ export const Nav = React.forwardRef<HTMLElement, NavProps>(
 
     return (
       <NavContext.Provider value={ctx}>
-        <nav ref={ref} aria-label={ariaLabel} className={cn("flex flex-col gap-0.5", className)} {...props}>
+        <nav ref={ref} aria-label={ariaLabel ?? msg.label} className={cn("flex flex-col gap-0.5", className)} {...props}>
           {children}
         </nav>
       </NavContext.Provider>

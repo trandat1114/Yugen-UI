@@ -8,6 +8,8 @@ import {
   type CodeLanguage,
   type CodeTokenType,
 } from "./CodeBlock";
+import { codeBlockMessagesEn, copyCodeButtonMessagesEn } from "./messages";
+import { YugenProvider } from "../YugenProvider/YugenProvider";
 
 /** Token có nghĩa (bỏ plain) dạng [type, text]. */
 function marks(code: string, language: CodeLanguage) {
@@ -314,5 +316,17 @@ describe("CodeBlock (render)", () => {
     expect(screen.getByText("TSX")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Sao chép" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Xuống dòng" })).toHaveAttribute("aria-pressed", "false");
+  });
+});
+
+describe("CodeBlock messages", () => {
+  it("messages tiếng Anh", () => {
+    render(
+      <YugenProvider messages={{ codeBlock: codeBlockMessagesEn, copyCodeButton: copyCodeButtonMessagesEn }}>
+        <CodeBlock code="const a = 1;" title="Example" />
+      </YugenProvider>,
+    );
+    expect(screen.getByRole("button", { name: "Copy" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Word wrap" })).toHaveAttribute("title", "Turn on word wrap");
   });
 });

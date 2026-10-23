@@ -20,6 +20,10 @@ import { cn } from "@/lib/cn";
 import { Badge } from "../Badge/Badge";
 import { Button } from "../Button/Button";
 import { Spinner } from "../Spinner/Spinner";
+import { useYugenMessages } from "../YugenProvider/context";
+import { traceMessages } from "./messages";
+
+export { traceMessages, traceMessagesEn, type TraceMessages } from "./messages";
 
 /* ================================================================ Trạng thái */
 
@@ -28,16 +32,17 @@ export type TraceSize = "small" | "medium";
 
 type IconComponent = React.ComponentType<{ className?: string }>;
 
+/** `label` là nhãn mặc định (tiếng Việt); component dùng `messages.trace[status]`. */
 export const TRACE_STATUS_META: Record<
   TraceStatus,
   { label: string; color: string; icon16: IconComponent | null; icon20: IconComponent | null }
 > = {
-  pending: { label: "Đang chờ", color: "text-foreground-3", icon16: Circle16Regular, icon20: Circle20Regular },
-  running: { label: "Đang chạy", color: "text-brand-foreground-1", icon16: null, icon20: null },
-  success: { label: "Hoàn tất", color: "text-success-foreground-1", icon16: CheckmarkCircle16Filled, icon20: CheckmarkCircle20Filled },
-  error: { label: "Lỗi", color: "text-danger-foreground-1", icon16: ErrorCircle16Filled, icon20: ErrorCircle20Filled },
-  skipped: { label: "Bỏ qua", color: "text-foreground-3", icon16: SubtractCircle16Regular, icon20: SubtractCircle20Regular },
-  cancelled: { label: "Đã huỷ", color: "text-warning-foreground-1", icon16: Prohibited16Regular, icon20: Prohibited20Regular },
+  pending: { label: traceMessages.pending, color: "text-foreground-3", icon16: Circle16Regular, icon20: Circle20Regular },
+  running: { label: traceMessages.running, color: "text-brand-foreground-1", icon16: null, icon20: null },
+  success: { label: traceMessages.success, color: "text-success-foreground-1", icon16: CheckmarkCircle16Filled, icon20: CheckmarkCircle20Filled },
+  error: { label: traceMessages.error, color: "text-danger-foreground-1", icon16: ErrorCircle16Filled, icon20: ErrorCircle20Filled },
+  skipped: { label: traceMessages.skipped, color: "text-foreground-3", icon16: SubtractCircle16Regular, icon20: SubtractCircle20Regular },
+  cancelled: { label: traceMessages.cancelled, color: "text-warning-foreground-1", icon16: Prohibited16Regular, icon20: Prohibited20Regular },
 };
 
 /** Thứ tự hiển thị trong phần tổng kết. */
@@ -139,7 +144,7 @@ export interface TraceProps extends Omit<React.HTMLAttributes<HTMLElement>, "tit
   hideHeader?: boolean;
   /** Đọc thay đổi trạng thái của từng bước qua live region (polite). Mặc định true. */
   announceChanges?: boolean;
-  /** Nhãn cho danh sách khi không có title. */
+  /** Nhãn cho danh sách khi không có title. Mặc định lấy từ `messages.trace.label`. */
   "aria-label"?: string;
   children?: React.ReactNode;
 }
@@ -174,6 +179,7 @@ export const Trace = React.forwardRef<HTMLElement, TraceProps>(
     ref,
   ) => {
     const titleId = React.useId();
+    const msg = useYugenMessages("trace", traceMessages);
     const [records, setRecords] = React.useState<Record<string, StepRecord>>({});
     const [expandSignal, setExpandSignal] = React.useState({ expanded: false, seq: 0 });
     const [message, setMessage] = React.useState("");
@@ -204,7 +210,7 @@ export const Trace = React.forwardRef<HTMLElement, TraceProps>(
     const notify = React.useCallback(
       (label: string, stepStatus: TraceStatus) => {
         if (!announceChanges) return;
-        queue.current.push(`${label}: ${TRACE_STATUS_META[stepStatus].label}`);
+        queue.current.push(`${label}: ${msg[stepStatus]}`);
         // Gộp các thay đổi cùng nhịp thành một thông báo.
         window.clearTimeout(flushTimer.current);
         flushTimer.current = window.setTimeout(() => {
@@ -212,7 +218,7 @@ export const Trace = React.forwardRef<HTMLElement, TraceProps>(
           queue.current = [];
         }, 0);
       },
-      [announceChanges],
+      [announceChanges, msg],
     );
 
     React.useEffect(() => () => window.clearTimeout(flushTimer.current), []);
@@ -240,7 +246,7 @@ export const Trace = React.forwardRef<HTMLElement, TraceProps>(
         <section
           ref={ref}
           aria-labelledby={title && !hideHeader ? titleId : undefined}
-          aria-label={title && !hideHeader ? undefined : (ariaLabel ?? "Tiến trình")}
+          aria-label={title && !hideHeader ? undefined : (ariaLabel ?? msg.label)}
           className={cn(
             "flex min-w-0 flex-col text-foreground-1",
             appearance === "outline" && "rounded-xlarge border border-stroke-2 bg-background-1",
@@ -264,20 +270,20 @@ export const Trace = React.forwardRef<HTMLElement, TraceProps>(
                     </h3>
                   )}
                   <p className="text-caption1 text-foreground-3">
-                    {TRACE_STATUS_META[current].label}
-                    {total > 0 && ` · ${done}/${total} bước`}
+                    {msg[current]}
+                    {total > 0 && ` · ${msg.steps(done, total)}`}
                     {description && <> · {description}</>}
                   </p>
                 </div>
               </div>
 
               {total > 0 && (
-                <ul aria-label="Tổng kết theo trạng thái" className="flex flex-wrap items-center gap-2 text-caption1 text-foreground-2">
+                <ul aria-label={msg.summary} className="flex flex-wrap items-center gap-2 text-caption1 text-foreground-2">
                   {SUMMARY_ORDER.filter((s) => counts[s] > 0).map((s) => (
                     <li key={s} className="inline-flex items-center gap-0.5 tabular-nums">
                       <TraceStatusIcon status={s} size="small" />
                       <span>{counts[s]}</span>
-                      <span className="sr-only">{TRACE_STATUS_META[s].label}</span>
+                      <span className="sr-only">{msg[s]}</span>
                     </li>
                   ))}
                 </ul>
@@ -286,7 +292,7 @@ export const Trace = React.forwardRef<HTMLElement, TraceProps>(
               {(duration !== undefined || (startedAt !== undefined && current === "running")) && (
                 <span className="inline-flex items-center gap-0.5 text-caption1 text-foreground-2 tabular-nums">
                   <Timer16Regular aria-hidden className="shrink-0" />
-                  <span className="sr-only">Thời lượng: </span>
+                  <span className="sr-only">{msg.duration} </span>
                   {startedAt !== undefined && current === "running" ? (
                     <LiveDuration since={startedAt} />
                   ) : (
@@ -305,7 +311,7 @@ export const Trace = React.forwardRef<HTMLElement, TraceProps>(
                       icon={anyExpanded ? <ArrowMinimizeVertical20Regular /> : <ArrowMaximizeVertical20Regular />}
                       onClick={() => setExpandSignal((s) => ({ expanded: !anyExpanded, seq: s.seq + 1 }))}
                     >
-                      {anyExpanded ? "Thu gọn tất cả" : "Mở rộng tất cả"}
+                      {anyExpanded ? msg.collapseAll : msg.expandAll}
                     </Button>
                   )}
                 </div>
@@ -390,6 +396,7 @@ export const TraceStep = React.forwardRef<HTMLLIElement, TraceStepProps>(
     const ctx = React.useContext(TraceContext);
     const depth = React.useContext(DepthContext);
     const last = React.useContext(LastContext);
+    const msg = useYugenMessages("trace", traceMessages);
     const size = ctx?.size ?? "medium";
     const small = size === "small";
     const id = React.useId();
@@ -441,7 +448,6 @@ export const TraceStep = React.forwardRef<HTMLLIElement, TraceStepProps>(
       if (expandable) setExpanded(signalExpanded);
     }, [seq, signalExpanded, expandable, setExpanded]);
 
-    const meta = TRACE_STATUS_META[status];
     const since = startedAt ?? autoStart;
     const timeText =
       status === "running" && since !== null ? (
@@ -459,7 +465,7 @@ export const TraceStep = React.forwardRef<HTMLLIElement, TraceStepProps>(
     const titleContent = (
       <>
         <span className="min-w-0 wrap-break-word">{title}</span>
-        <span className="sr-only">, {meta.label}</span>
+        <span className="sr-only">, {msg[status]}</span>
       </>
     );
 

@@ -9,6 +9,10 @@ import {
   ChevronUp20Regular,
 } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
+import { useYugenMessages } from "../YugenProvider/context";
+import { calendarMessages } from "./messages";
+
+export { calendarMessages, calendarMessagesEn, type CalendarMessages } from "./messages";
 
 /** Fluent 2 Calendar — https://fluent2.microsoft.design/components/web/react/core/calendar/usage */
 export type CalendarProps = DayPickerProps;
@@ -72,18 +76,20 @@ function CalendarDayButton({ day, modifiers, className, ...props }: DayButtonPro
 /**
  * Lịch tháng theo phong cách Fluent, dựng trên react-day-picker v10. Nhận mọi prop của DayPicker
  * (`mode="single" | "range" | "multiple"`, `selected`, `onSelect`, `disabled`, `numberOfMonths`…).
- * Mặc định dùng locale tiếng Việt và tuần bắt đầu từ Thứ Hai.
+ * Mặc định dùng locale tiếng Việt và tuần bắt đầu từ Thứ Hai; locale mặc định lấy từ `messages.calendar.locale`.
  */
 export function Calendar({
   className,
   classNames,
   components,
   formatters,
-  locale = vi,
+  locale: localeProp,
   showOutsideDays = true,
   dir: dirProp,
   ...props
 }: CalendarProps) {
+  const msg = useYugenMessages("calendar", calendarMessages);
+  const locale = localeProp ?? msg.locale;
   const isVi = locale.code === vi.code;
   // DayPicker dùng `dir` để đảo ArrowLeft/ArrowRight; lấy từ DirectionProvider khi không truyền.
   const contextDir = useDirection();

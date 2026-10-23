@@ -4,6 +4,10 @@ import { cva } from "class-variance-authority";
 import { useDirection } from "@radix-ui/react-direction";
 import { Dismiss12Regular, Dismiss16Regular, Dismiss20Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
+import { useYugenMessages } from "../YugenProvider/context";
+import { tagMessages } from "./messages";
+
+export { tagMessages, tagMessagesEn, type TagMessages } from "./messages";
 
 export type TagAppearance = "filled" | "outline" | "brand";
 export type TagSize = "extra-small" | "small" | "medium";
@@ -110,7 +114,7 @@ export interface TagProps extends TagVisualProps, Omit<React.HTMLAttributes<HTML
   /** Tag thành nút: bấm, Delete hoặc Backspace để gỡ. */
   dismissible?: boolean;
   onDismiss?: (event: React.SyntheticEvent<HTMLElement>, value?: string) => void;
-  /** Mô tả đọc cho trình đọc màn hình khi dismissible. */
+  /** Mô tả đọc cho trình đọc màn hình khi dismissible. Mặc định lấy từ `messages.tag.dismiss`. */
   dismissLabel?: string;
 }
 
@@ -128,7 +132,7 @@ export const Tag = React.forwardRef<HTMLElement, TagProps>(
       value,
       dismissible,
       onDismiss,
-      dismissLabel = "Gỡ",
+      dismissLabel,
       children,
       onClick,
       onKeyDown,
@@ -137,6 +141,7 @@ export const Tag = React.forwardRef<HTMLElement, TagProps>(
     ref,
   ) => {
     const { group, size, appearance, disabled } = useTagContext({ size: sizeProp, appearance: appearanceProp, disabled: disabledProp });
+    const msg = useYugenMessages("tag", tagMessages);
     const classes = cn(
       tagVariants({ appearance, size, shape, disabled }),
       media && MEDIA_PADDING[size],
@@ -184,7 +189,7 @@ export const Tag = React.forwardRef<HTMLElement, TagProps>(
         <TagContent icon={icon} media={media} secondaryText={secondaryText}>
           {children}
         </TagContent>
-        <span className="sr-only">, {dismissLabel}</span>
+        <span className="sr-only">, {dismissLabel ?? msg.dismiss}</span>
         <span
           aria-hidden
           className="flex shrink-0 items-center transition-colors duration-faster group-enabled/tag:group-hover/tag:text-brand-foreground-1 group-enabled/tag:group-active/tag:text-brand-foreground-2"
@@ -205,7 +210,7 @@ export interface InteractionTagProps
   /** Hiện nút X riêng ở bên phải. */
   dismissible?: boolean;
   onDismiss?: (event: React.MouseEvent<HTMLButtonElement>, value?: string) => void;
-  /** aria-label của nút X. */
+  /** aria-label của nút X. Mặc định lấy từ `messages.tag.dismissNamed` / `messages.tag.dismiss`. */
   dismissLabel?: string;
 }
 
@@ -231,9 +236,10 @@ export const InteractionTag = React.forwardRef<HTMLButtonElement, InteractionTag
     ref,
   ) => {
     const { group, size, appearance, disabled } = useTagContext({ size: sizeProp, appearance: appearanceProp, disabled: disabledProp });
+    const msg = useYugenMessages("tag", tagMessages);
     const DismissIcon = DISMISS_ICON[size];
     const base = tagVariants({ appearance, size, shape, disabled });
-    const label = dismissLabel ?? (typeof children === "string" ? `Gỡ ${children}` : "Gỡ");
+    const label = dismissLabel ?? (typeof children === "string" ? msg.dismissNamed(children) : msg.dismiss);
 
     return (
       <span data-tag="" className={cn("inline-flex max-w-full min-w-0 shrink-0 align-middle", className)}>

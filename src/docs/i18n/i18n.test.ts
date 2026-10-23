@@ -36,6 +36,7 @@ describe("docs i18n (en)", () => {
       "data-visualization",
       "focus-indicator",
       "introduction",
+      "localization",
       "migration-fluent",
       "migration-shadcn",
       "notifications",

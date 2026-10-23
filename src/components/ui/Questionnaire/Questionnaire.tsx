@@ -21,6 +21,10 @@ import { RadioGroup } from "../RadioGroup/RadioGroup";
 import { Rating } from "../Rating/Rating";
 import { Spinner } from "../Spinner/Spinner";
 import { Textarea } from "../Textarea/Textarea";
+import { useYugenMessages } from "../YugenProvider/context";
+import { questionnaireMessages, type QuestionnaireMessages } from "./messages";
+
+export { questionnaireMessages, questionnaireMessagesEn, type QuestionnaireMessages } from "./messages";
 
 /* ================================================================ Kiểu cấu hình */
 
@@ -104,37 +108,45 @@ function isEmpty(value: AnswerValue | undefined) {
   );
 }
 
-/** Kiểm tra một câu hỏi; trả về thông báo lỗi hoặc undefined. */
-export function validateQuestion(question: Question, answers: QuestionnaireAnswers): string | undefined {
+/** Kiểm tra một câu hỏi; trả về thông báo lỗi (theo `messages`, mặc định tiếng Việt) hoặc undefined. */
+export function validateQuestion(
+  question: Question,
+  answers: QuestionnaireAnswers,
+  messages: QuestionnaireMessages = questionnaireMessages,
+): string | undefined {
   const value = answers[question.id];
   if (isEmpty(value)) {
     if (!question.required) return undefined;
-    if (question.type === "text" || question.type === "longText") return "Vui lòng nhập câu trả lời.";
-    if (question.type === "rating" || question.type === "scale") return "Vui lòng chọn một mức điểm.";
-    return "Vui lòng chọn một câu trả lời.";
+    if (question.type === "text" || question.type === "longText") return messages.requiredText;
+    if (question.type === "rating" || question.type === "scale") return messages.requiredScore;
+    return messages.requiredChoice;
   }
   if (question.type === "multiple" && Array.isArray(value)) {
-    if (question.min !== undefined && value.length < question.min) return `Chọn ít nhất ${question.min} mục.`;
-    if (question.max !== undefined && value.length > question.max) return `Chọn tối đa ${question.max} mục.`;
+    if (question.min !== undefined && value.length < question.min) return messages.minSelected(question.min);
+    if (question.max !== undefined && value.length > question.max) return messages.maxSelected(question.max);
   }
   const validate = question.validate as ((v: AnswerValue, a: QuestionnaireAnswers) => string | null | undefined) | undefined;
   return validate?.(value as AnswerValue, answers) ?? undefined;
 }
 
-/** Chuỗi hiển thị cho câu trả lời (trang xem lại). */
-export function formatQuestionAnswer(question: Question, value: AnswerValue | undefined): string {
-  if (isEmpty(value)) return "Chưa trả lời";
+/** Chuỗi hiển thị cho câu trả lời (trang xem lại); chữ có sẵn theo `messages`, mặc định tiếng Việt. */
+export function formatQuestionAnswer(
+  question: Question,
+  value: AnswerValue | undefined,
+  messages: QuestionnaireMessages = questionnaireMessages,
+): string {
+  if (isEmpty(value)) return messages.unanswered;
   switch (question.type) {
     case "single":
       return question.options.find((o) => o.value === value)?.label ?? String(value);
     case "multiple":
       return (value as string[]).map((v) => question.options.find((o) => o.value === v)?.label ?? v).join(", ");
     case "rating":
-      return `${value}/${question.max ?? 5} sao`;
+      return messages.ratingAnswer(value as number, question.max ?? 5);
     case "scale":
       return `${value}/${question.max ?? 10}`;
     case "yesNo":
-      return value ? (question.yesLabel ?? "Có") : (question.noLabel ?? "Không");
+      return value ? (question.yesLabel ?? messages.yes) : (question.noLabel ?? messages.no);
     default:
       return String(value);
   }
@@ -207,6 +219,7 @@ interface QuestionControlProps {
 }
 
 function QuestionControl({ question: q, value, onChange, controlProps, showKeys }: QuestionControlProps) {
+  const msg = useYugenMessages("questionnaire", questionnaireMessages);
   const invalid = controlProps["aria-invalid"] === true;
   const aria = {
     id: controlProps.id,
@@ -265,7 +278,7 @@ function QuestionControl({ question: q, value, onChange, controlProps, showKeys 
           })}
           {q.max !== undefined && (
             <span className="text-caption1 text-foreground-3">
-              Đã chọn {selected.length}/{q.max}
+              {msg.selectedCount(selected.length, q.max)}
             </span>
           )}
         </div>
@@ -361,8 +374,8 @@ function QuestionControl({ question: q, value, onChange, controlProps, showKeys 
 
     case "yesNo": {
       const options = [
-        { value: "yes", label: q.yesLabel ?? "Có", key: "Y" },
-        { value: "no", label: q.noLabel ?? "Không", key: "N" },
+        { value: "yes", label: q.yesLabel ?? msg.yes, key: "Y" },
+        { value: "no", label: q.noLabel ?? msg.no, key: "N" },
       ];
       return (
         <RadioGroup
@@ -418,6 +431,7 @@ export interface QuestionnaireProps
   completion?: React.ReactNode | ((answers: QuestionnaireAnswers, restart: () => void) => React.ReactNode);
   title?: React.ReactNode;
   description?: React.ReactNode;
+  /** Mặc định lấy từ `messages.questionnaire.submit`. */
   submitLabel?: string;
   /** outline: khung viền (mặc định) · subtle: không khung. */
   appearance?: "outline" | "subtle";
@@ -438,7 +452,7 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
       completion,
       title,
       description,
-      submitLabel = "Gửi",
+      submitLabel: submitLabelProp,
       appearance = "outline",
       className,
       onKeyDown,
@@ -446,6 +460,8 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
     },
     ref,
   ) => {
+    const msg = useYugenMessages("questionnaire", questionnaireMessages);
+    const submitLabel = submitLabelProp ?? msg.submit;
     const uid = React.useId();
     const [inner, setInner] = React.useState<QuestionnaireAnswers>(defaultValue ?? {});
     const answers = value ?? inner;
@@ -475,7 +491,7 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
       // Đã báo lỗi thì kiểm tra lại ngay khi người dùng sửa.
       if (errors[id]) {
         const q = questions.find((x) => x.id === id);
-        if (q) setErrors((prev) => ({ ...prev, [id]: validateQuestion(q, updated) }));
+        if (q) setErrors((prev) => ({ ...prev, [id]: validateQuestion(q, updated, msg) }));
       }
     };
 
@@ -517,7 +533,7 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
 
     const validateAll = () => {
       const all: Record<string, string | undefined> = {};
-      questions.forEach((q) => (all[q.id] = validateQuestion(q, answers)));
+      questions.forEach((q) => (all[q.id] = validateQuestion(q, answers, msg)));
       setErrors(all);
       return questions.findIndex((q) => all[q.id]);
     };
@@ -536,7 +552,7 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
         setPhase("done");
         requestFocus("done");
       } catch {
-        setSubmitError("Không gửi được câu trả lời. Vui lòng thử lại.");
+        setSubmitError(msg.submitError);
       } finally {
         setSubmitting(false);
       }
@@ -555,7 +571,7 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
 
     const next = () => {
       if (!current) return;
-      const error = validateQuestion(current, answers);
+      const error = validateQuestion(current, answers, msg);
       setErrors((prev) => ({ ...prev, [current.id]: error }));
       if (error) {
         focusQuestion(current.id);
@@ -646,13 +662,13 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
       const error = errors[q.id];
       const keyHint =
         q.type === "single" || q.type === "multiple"
-          ? `Nhấn 1–${Math.min(q.options.length, 9)} để chọn`
+          ? msg.keyHintChoice(Math.min(q.options.length, 9))
           : q.type === "yesNo"
-            ? "Nhấn Y hoặc N để chọn"
+            ? msg.keyHintYesNo
             : q.type === "rating"
-              ? `Nhấn 1–${q.max ?? 5} để chấm điểm`
+              ? msg.keyHintRating(q.max ?? 5)
               : q.type === "scale"
-                ? "Nhấn phím số để chọn"
+                ? msg.keyHintScale
                 : null;
       return (
         <div data-question-id={q.id} className="flex flex-col gap-3">
@@ -668,7 +684,7 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
                   *
                 </span>
               )}
-              {q.required && <span className="sr-only"> (bắt buộc)</span>}
+              {q.required && <span className="sr-only"> {msg.required}</span>}
             </h3>
           </div>
           {q.description && (
@@ -703,9 +719,9 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
       <div className="flex flex-col gap-3">
         <div>
           <h3 data-autofocus tabIndex={-1} className="font-display text-subtitle1 font-semibold text-foreground-1">
-            Xem lại câu trả lời
+            {msg.reviewTitle}
           </h3>
-          <p className="mt-0.5 text-body1 text-foreground-2">Kiểm tra lần cuối trước khi gửi. Chọn “Sửa” để thay đổi.</p>
+          <p className="mt-0.5 text-body1 text-foreground-2">{msg.reviewDescription}</p>
         </div>
         <dl className="flex flex-col divide-y divide-stroke-2 rounded-large border border-stroke-2">
           {questions.map((q, i) => (
@@ -715,13 +731,13 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
               </dt>
               <dd className="flex min-w-0 items-center gap-2">
                 <span className={cn("text-body1 font-semibold wrap-break-word", isEmpty(answers[q.id]) ? "text-foreground-3" : "text-foreground-1")}>
-                  {formatQuestionAnswer(q, answers[q.id])}
+                  {formatQuestionAnswer(q, answers[q.id], msg)}
                 </span>
                 <Button
                   size="small"
                   appearance="subtle"
                   icon={<Edit16Regular />}
-                  aria-label={`Sửa câu ${i + 1}: ${q.title}`}
+                  aria-label={msg.editQuestion(i + 1, q.title)}
                   onClick={() => go(i, "back")}
                 />
               </dd>
@@ -749,10 +765,10 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
       ) : (
         <div data-autofocus tabIndex={-1} className="flex flex-col items-center gap-2 py-5 text-center">
           <CheckmarkCircle48Regular aria-hidden className="text-success-foreground-1" />
-          <h3 className="font-display text-title3 font-semibold text-foreground-1">Cảm ơn bạn!</h3>
-          <p className="max-w-sm text-body1 text-foreground-2">Câu trả lời của bạn đã được ghi nhận.</p>
+          <h3 className="font-display text-title3 font-semibold text-foreground-1">{msg.doneTitle}</h3>
+          <p className="max-w-sm text-body1 text-foreground-2">{msg.doneDescription}</p>
           <Button className="mt-2" onClick={restart}>
-            Làm lại
+            {msg.restart}
           </Button>
         </div>
       );
@@ -760,7 +776,7 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
     const submitButton = (
       <Button appearance="primary" onClick={() => void submit()} disabled={submitting} aria-busy={submitting || undefined}>
         {submitting && <Spinner size="extra-tiny" appearance="inverted" aria-hidden />}
-        {submitting ? "Đang gửi…" : submitLabel}
+        {submitting ? msg.submitting : submitLabel}
       </Button>
     );
 
@@ -817,7 +833,7 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
                 <div className="flex justify-end gap-2">
                   <Button type="submit" appearance="primary" disabled={submitting}>
                     {submitting && <Spinner size="extra-tiny" appearance="inverted" aria-hidden />}
-                    {review ? "Xem lại" : submitting ? "Đang gửi…" : submitLabel}
+                    {review ? msg.review : submitting ? msg.submitting : submitLabel}
                   </Button>
                 </div>
               </form>
@@ -827,7 +843,7 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
                 {reviewView}
                 <div className="flex justify-between gap-2">
                   <Button appearance="subtle" icon={<ArrowLeft20Regular className="rtl:-scale-x-100" />} onClick={() => go(0, "back")}>
-                    Quay lại chỉnh sửa
+                    {msg.backToEdit}
                   </Button>
                   {submitButton}
                 </div>
@@ -850,14 +866,14 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
         {phase !== "done" && (
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between text-caption1 text-foreground-3 tabular-nums">
-              <span>{phase === "review" ? "Xem lại" : `Câu ${index + 1}/${total}`}</span>
+              <span>{phase === "review" ? msg.review : msg.questionOf(index + 1, total)}</span>
               <span>{Math.round(progress * 100)}%</span>
             </div>
             <ProgressBar
               value={progress}
               thickness="large"
-              aria-label="Tiến độ khảo sát"
-              aria-valuetext={phase === "review" ? "Xem lại" : `Câu ${index + 1} trên ${total}`}
+              aria-label={msg.progressLabel}
+              aria-valuetext={phase === "review" ? msg.review : msg.progressValue(index + 1, total)}
             />
           </div>
         )}
@@ -889,12 +905,12 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
               onClick={back}
               disabled={phase === "form" && index === 0}
             >
-              Quay lại
+              {msg.back}
             </Button>
             {phase === "form" ? (
               <div className="flex items-center gap-2">
                 <span className="hidden items-center gap-1 text-caption1 text-foreground-3 sm:inline-flex">
-                  hoặc nhấn <Kbd size="small">Enter ↵</Kbd>
+                  {msg.orPress} <Kbd size="small">Enter ↵</Kbd>
                 </span>
                 <Button
                   appearance="primary"
@@ -903,7 +919,7 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
                   onClick={next}
                   disabled={submitting}
                 >
-                  {isLast ? (review ? "Xem lại" : submitLabel) : "Tiếp"}
+                  {isLast ? (review ? msg.review : submitLabel) : msg.next}
                 </Button>
               </div>
             ) : (
