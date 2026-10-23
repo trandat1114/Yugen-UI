@@ -4,10 +4,6 @@ import { useAppearance, type Appearance } from "@/hooks/useAppearance";
 import { hrefOf, navigate, useDocsLocation } from "@/docs/router";
 import { Sidebar } from "@/docs/layout/Sidebar";
 import { TopBar } from "@/docs/layout/TopBar";
-import { DocsCommandPalette } from "@/docs/layout/DocsCommandPalette";
-import { HomePage } from "@/docs/pages/HomePage";
-import { ComponentPage } from "@/docs/pages/ComponentPage";
-import { ConceptPage } from "@/docs/pages/ConceptPage";
 import { YugenMark } from "@/docs/YugenMark";
 import { AuthorLink } from "@/docs/AuthorLink";
 import { CONCEPT_BY_SLUG, CONCEPT_EN_PAGES } from "@/docs/concepts";
@@ -19,7 +15,13 @@ import { preloadComponentDoc } from "@/docs/registry";
 import { SITE } from "@/docs/site";
 import type { Route } from "@/docs/router";
 
-// Trang ít dùng / nặng nạp lười theo route.
+// Mọi trang nạp lười theo route: phần dùng chung (khung, sidebar) không kéo theo component riêng của từng trang. Trang chủ
+// cũng vậy — showcase của nó dùng lịch, biểu đồ, NotificationCenter…, không nên tải ở mọi trang.
+const HomePage = lazyPage(() => import("@/docs/pages/HomePage").then((m) => m.HomePage));
+const ComponentPage = lazyPage(() => import("@/docs/pages/ComponentPage").then((m) => m.ComponentPage));
+const ConceptPage = lazyPage(() => import("@/docs/pages/ConceptPage").then((m) => m.ConceptPage));
+// Bảng lệnh (cmdk, mọi mục điều hướng) chỉ cần khi mở: nạp lúc trình duyệt rảnh sau lần render đầu, nên lần mở đầu vẫn tức thì.
+const DocsCommandPalette = lazyPage(() => import("@/docs/layout/DocsCommandPalette").then((m) => m.DocsCommandPalette));
 const FoundationsPage = lazyPage(() => import("@/docs/pages/FoundationsPage").then((m) => m.FoundationsPage));
 const BlocksPage = lazyPage(() => import("@/docs/pages/BlocksPage").then((m) => m.BlocksPage));
 // Preview của template cũng nạp cùng trang: HTML prerender có sẵn preview, thay bằng khung chờ sẽ nháy.
@@ -34,6 +36,9 @@ const CommunityPage = lazyPage(() => import("@/docs/pages/CommunityPage").then((
  */
 export async function preloadRoute(route: Route, lang: Locale) {
   const pages = {
+    home: HomePage,
+    component: ComponentPage,
+    concept: ConceptPage,
     foundation: FoundationsPage,
     blocks: BlocksPage,
     templates: TemplatesPage,
@@ -100,6 +105,24 @@ export default function App({ path }: { path?: string }) {
   const fallback = fallbackOf(route);
   const [navOpen, setNavOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
+  // Giữ bảng lệnh trong cây sau lần mở đầu (animation đóng, giữ trạng thái).
+  const [paletteMounted, setPaletteMounted] = useState(false);
+  if (paletteOpen && !paletteMounted) setPaletteMounted(true);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setPaletteOpen((open) => !open);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    const idle = window.requestIdleCallback?.(() => void DocsCommandPalette.preload());
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      if (idle !== undefined) window.cancelIdleCallback(idle);
+    };
+  }, []);
 
   useEffect(() => setNavOpen(false), [route]);
   // Ngôn ngữ theo URL (/en/…). Lưu làm lựa chọn: lần sau mở link tiếng Việt, main.tsx chuyển sang bản tiếng Anh.
@@ -138,12 +161,16 @@ export default function App({ path }: { path?: string }) {
             onOpenNav={() => setNavOpen(true)}
             onOpenPalette={() => setPaletteOpen(true)}
           />
-          <DocsCommandPalette
-            open={paletteOpen}
-            onOpenChange={setPaletteOpen}
-            appearance={{ theme, brand, dir, lang }}
-            onAppearanceChange={change}
-          />
+          {paletteMounted && (
+            <Suspense fallback={null}>
+              <DocsCommandPalette
+                open={paletteOpen}
+                onOpenChange={setPaletteOpen}
+                appearance={{ theme, brand, dir, lang }}
+                onAppearanceChange={change}
+              />
+            </Suspense>
+          )}
           <main className="mx-auto max-w-7xl px-4 md:px-12">
             {fallback && <FallbackNotice partial={fallback === "partial"} />}
             <Suspense fallback={<PageProgressFallback />}>

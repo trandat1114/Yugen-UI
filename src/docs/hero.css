@@ -1,7 +1,8 @@
-/* Hero trang chủ (chỉ docs, không nằm trong CSS của thư viện): mực loang cho 幽玄, ấn 桜 đóng xuống, cánh hoa rơi. */
+/* Hero trang chủ (chỉ docs, không nằm trong CSS của thư viện): mực loang cho 幽玄, ấn 桜 đóng xuống, cánh hoa rơi.
+   --yg-elapsed (HomePage): thời gian animation đã chạy trên HTML prerender, trừ vào delay để không phát lại khi React render. */
 
 .yg-ink {
-  animation: yg-ink 1.8s cubic-bezier(0.33, 0, 0.1, 1) 0.15s both;
+  animation: yg-ink 1.8s cubic-bezier(0.33, 0, 0.1, 1) calc(0.15s - var(--yg-elapsed, 0s)) both;
 }
 @keyframes yg-ink {
   from {
@@ -15,7 +16,7 @@
 .yg-bloom {
   transform-box: fill-box;
   transform-origin: center;
-  animation: yg-bloom 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: yg-bloom 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) calc(0s - var(--yg-elapsed, 0s)) both;
 }
 @keyframes yg-bloom {
   from {
@@ -25,7 +26,7 @@
 }
 
 .yg-kana {
-  animation: yg-fade 1s ease-out 0.9s both;
+  animation: yg-fade 1s ease-out calc(0.9s - var(--yg-elapsed, 0s)) both;
 }
 @keyframes yg-fade {
   from {
@@ -36,7 +37,7 @@
 .yg-stamp {
   transform-box: fill-box;
   transform-origin: center;
-  animation: yg-stamp 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.2) 1.6s both;
+  animation: yg-stamp 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.2) calc(1.6s - var(--yg-elapsed, 0s)) both;
 }
 @keyframes yg-stamp {
   from {
@@ -49,7 +50,7 @@
   position: absolute;
   top: -24px;
   opacity: 0;
-  animation: yg-fall var(--d, 14s) linear var(--delay, 0s) infinite;
+  animation: yg-fall var(--d, 14s) linear calc(var(--delay, 0s) - var(--yg-elapsed, 0s)) infinite;
 }
 .yg-sway {
   animation: yg-sway 3.2s ease-in-out infinite alternate;

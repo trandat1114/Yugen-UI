@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   Accessibility20Regular,
   ArrowSwap20Regular,
@@ -32,7 +31,7 @@ import { COMPONENTS_BY_CATEGORY } from "../registry";
 import { useLocale } from "../i18n";
 import { docsPath, navigate } from "../router";
 
-/** Bảng lệnh của trang docs: Ctrl/⌘ + K để nhảy tới mọi trang hoặc đổi giao diện. */
+/** Bảng lệnh của trang docs: Ctrl/⌘ + K (App lắng nghe phím tắt) để nhảy tới mọi trang hoặc đổi giao diện. */
 export function DocsCommandPalette({
   open,
   onOpenChange,
@@ -45,17 +44,6 @@ export function DocsCommandPalette({
   onAppearanceChange: (patch: Partial<Appearance>) => void;
 }) {
   const { t, locale, category, group, foundation, component, concept } = useLocale();
-
-  React.useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        onOpenChange(!open);
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, onOpenChange]);
 
   const go = (path: string) => {
     onOpenChange(false);
