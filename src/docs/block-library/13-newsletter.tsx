@@ -9,14 +9,14 @@ export default function NewsletterBlock() {
   const [monthly, setMonthly] = useState(true);
 
   return (
-    <Card className="max-w-md gap-L rounded-xlarge p-XL">
+    <Card className="max-w-md gap-4 rounded-xlarge p-5">
       <CardHeader
         image={<Mail20Regular className="text-brand-foreground-1" />}
         header="Bản tin Yugen"
         description="Mỗi tháng một email: component mới và mẹo dùng."
       />
       <form
-        className="flex flex-col gap-M"
+        className="flex flex-col gap-3"
         onSubmit={(e) => {
           e.preventDefault();
           toast({ intent: "success", title: "Đã đăng ký", body: monthly ? `Bản tin sẽ gửi tới ${email}.` : "Bạn sẽ chỉ nhận thông báo quan trọng." });

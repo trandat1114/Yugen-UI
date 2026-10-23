@@ -84,7 +84,7 @@ function FilterSheetDemo() {
           <SheetDescription>Panel bên phải trên màn hình rộng, bottom sheet kéo được trên điện thoại.</SheetDescription>
         </SheetHeader>
         <SheetBody>
-          <div className="flex flex-col gap-M">
+          <div className="flex flex-col gap-3">
             <Checkbox label="Còn hàng" defaultChecked />
             <Checkbox label="Giao trong 2 giờ" />
             <Checkbox label="Miễn phí vận chuyển" defaultChecked />
@@ -119,9 +119,9 @@ function PlaceSheetDemo() {
           </SheetDescription>
         </SheetHeader>
         <SheetBody>
-          <ul className="flex flex-col gap-S">
+          <ul className="flex flex-col gap-2">
             {amenities.map((item) => (
-              <li key={item} className="rounded-medium bg-background-2 px-M py-S text-foreground-2">
+              <li key={item} className="rounded-medium bg-background-2 px-3 py-2 text-foreground-2">
                 {item}
               </li>
             ))}
@@ -150,11 +150,11 @@ function MediaQueryDemo() {
     { query: "(pointer: coarse)", matches: coarsePointer },
   ];
   return (
-    <ul className="flex w-full max-w-md flex-col gap-S">
+    <ul className="flex w-full max-w-md flex-col gap-2">
       {rows.map((row) => (
         <li
           key={row.query}
-          className="flex items-center justify-between gap-M rounded-medium border border-stroke-2 bg-background-1 px-M py-S"
+          className="flex items-center justify-between gap-3 rounded-medium border border-stroke-2 bg-background-1 px-3 py-2"
         >
           <code dir="ltr" className="font-mono text-caption1 text-foreground-2">
             {row.query}
@@ -171,7 +171,7 @@ function MediaQueryDemo() {
 function ResponsiveActionsDemo() {
   const isDesktop = useMediaQuery("(min-width: 768px)");
   return isDesktop ? (
-    <div className="flex gap-S">
+    <div className="flex gap-2">
       <Button icon={<Share20Regular />}>Chia sẻ</Button>
       <Button icon={<ArrowDownload20Regular />}>Tải xuống</Button>
     </div>
@@ -228,7 +228,7 @@ const LABS_ADAPTIVE: Record<string, ComponentDoc> = {
           <SheetDescription>Panel bên phải trên màn hình rộng, bottom sheet kéo được trên điện thoại.</SheetDescription>
         </SheetHeader>
         <SheetBody>
-          <div className="flex flex-col gap-M">
+          <div className="flex flex-col gap-3">
             <Checkbox label="Còn hàng" defaultChecked />
             <Checkbox label="Giao trong 2 giờ" />
             <Checkbox label="Miễn phí vận chuyển" defaultChecked />
@@ -271,9 +271,9 @@ function PlaceSheetDemo() {
           </SheetDescription>
         </SheetHeader>
         <SheetBody>
-          <ul className="flex flex-col gap-S">
+          <ul className="flex flex-col gap-2">
             {amenities.map((item) => (
-              <li key={item} className="rounded-medium bg-background-2 px-M py-S text-foreground-2">
+              <li key={item} className="rounded-medium bg-background-2 px-3 py-2 text-foreground-2">
                 {item}
               </li>
             ))}
@@ -310,7 +310,7 @@ function PlaceSheetDemo() {
       <SheetDescription>Sakura Sakura — Nhạc dân gian Nhật Bản</SheetDescription>
     </SheetHeader>
     <SheetBody>
-      <div className="flex items-center justify-center gap-S">
+      <div className="flex items-center justify-center gap-2">
         <Button appearance="subtle" shape="circular" icon={<Previous20Regular />} aria-label="Bài trước" />
         <Button appearance="primary" shape="circular" size="large" icon={<Pause20Regular />} aria-label="Tạm dừng" />
         <Button appearance="subtle" shape="circular" icon={<Next20Regular />} aria-label="Bài tiếp" />
@@ -335,7 +335,7 @@ function PlaceSheetDemo() {
                 <SheetDescription>Sakura Sakura — Nhạc dân gian Nhật Bản</SheetDescription>
               </SheetHeader>
               <SheetBody>
-                <div className="flex items-center justify-center gap-S">
+                <div className="flex items-center justify-center gap-2">
                   <Button appearance="subtle" shape="circular" icon={<Previous20Regular />} aria-label="Bài trước" />
                   <Button appearance="primary" shape="circular" size="large" icon={<Pause20Regular />} aria-label="Tạm dừng" />
                   <Button appearance="subtle" shape="circular" icon={<Next20Regular />} aria-label="Bài tiếp" />
@@ -442,7 +442,7 @@ function PlaceSheetDemo() {
   <div className="flex size-full items-center justify-center">
     <Button appearance="secondary" shape="circular" size="large" icon={<Play24Filled />} aria-label="Phát video" />
   </div>
-  <span className="absolute inset-e-M bottom-M rounded-small bg-background-inverted px-XS text-caption1 text-foreground-inverted">
+  <span className="absolute inset-e-3 bottom-3 rounded-small bg-background-inverted px-1 text-caption1 text-foreground-inverted">
     4:32
   </span>
 </AspectRatio>`,
@@ -451,7 +451,7 @@ function PlaceSheetDemo() {
           <div className="flex size-full items-center justify-center">
             <Button appearance="secondary" shape="circular" size="large" icon={<Play24Filled />} aria-label="Phát video" />
           </div>
-          <span className="absolute inset-e-M bottom-M rounded-small bg-background-inverted px-XS text-caption1 text-foreground-inverted">
+          <span className="absolute inset-e-3 bottom-3 rounded-small bg-background-inverted px-1 text-caption1 text-foreground-inverted">
             4:32
           </span>
         </AspectRatio>
@@ -461,14 +461,14 @@ function PlaceSheetDemo() {
       {
         title: "4:3 — ảnh minh hoạ",
         description: "Tỉ lệ ảnh chụp cổ điển; hợp cho thẻ bài viết và thumbnail sản phẩm.",
-        code: `<figure className="flex w-full max-w-xs flex-col gap-XS">
+        code: `<figure className="flex w-full max-w-xs flex-col gap-1">
   <AspectRatio ratio={4 / 3} className="rounded-xlarge">
     <BloomArt />
   </AspectRatio>
   <figcaption className="text-caption1 text-foreground-3">Bloom theo brand — 4:3</figcaption>
 </figure>`,
         render: () => (
-          <figure className="flex w-full max-w-xs flex-col gap-XS">
+          <figure className="flex w-full max-w-xs flex-col gap-1">
             <AspectRatio ratio={4 / 3} className="rounded-xlarge">
               <BloomArt />
             </AspectRatio>
@@ -485,7 +485,7 @@ function PlaceSheetDemo() {
   // …
 ];
 
-<ul className="grid w-full max-w-xs grid-cols-4 gap-S">
+<ul className="grid w-full max-w-xs grid-cols-4 gap-2">
   {team.map((person) => (
     <li key={person.name}>
       <AspectRatio ratio={1} className={\`rounded-circular \${person.tone}\`}>
@@ -497,7 +497,7 @@ function PlaceSheetDemo() {
   ))}
 </ul>`,
         render: () => (
-          <ul className="grid w-full max-w-xs grid-cols-4 gap-S">
+          <ul className="grid w-full max-w-xs grid-cols-4 gap-2">
             {team.map((person) => (
               <li key={person.name}>
                 <AspectRatio ratio={1} className={`rounded-circular ${person.tone}`}>
@@ -514,8 +514,8 @@ function PlaceSheetDemo() {
         title: "21:9 — banner",
         description: "Dải hero rộng; chữ đặt trên thẻ neutral để đủ tương phản thay vì trực tiếp trên gradient.",
         code: `<AspectRatio ratio={21 / 9} className="rounded-xlarge bg-gradient-sakura">
-  <div className="flex size-full items-end p-M">
-    <div className="rounded-medium bg-background-1 px-M py-S shadow-4">
+  <div className="flex size-full items-end p-3">
+    <div className="rounded-medium bg-background-1 px-3 py-2 shadow-4">
       <p className="text-subtitle2 font-semibold">Mùa hoa 2026</p>
       <p className="text-caption1 text-foreground-3">Lịch hoa nở theo từng vùng</p>
     </div>
@@ -523,8 +523,8 @@ function PlaceSheetDemo() {
 </AspectRatio>`,
         render: () => (
           <AspectRatio ratio={21 / 9} className="rounded-xlarge bg-gradient-sakura">
-            <div className="flex size-full items-end p-M">
-              <div className="rounded-medium bg-background-1 px-M py-S shadow-4">
+            <div className="flex size-full items-end p-3">
+              <div className="rounded-medium bg-background-1 px-3 py-2 shadow-4">
                 <p className="text-subtitle2 font-semibold">Mùa hoa 2026</p>
                 <p className="text-caption1 text-foreground-3">Lịch hoa nở theo từng vùng</p>
               </div>
@@ -541,23 +541,23 @@ function PlaceSheetDemo() {
   { title: "Hokkaido", tone: "bg-gradient-dusk" },
 ];
 
-<div className="flex gap-S">
+<div className="flex gap-2">
   {stories.map((story) => (
     <AspectRatio key={story.title} ratio={9 / 16} className={\`w-24 rounded-2xlarge \${story.tone}\`}>
-      <div className="flex size-full flex-col justify-between p-S">
+      <div className="flex size-full flex-col justify-between p-2">
         <Star20Filled className="text-foreground-on-brand" />
-        <span className="self-start rounded-small bg-background-1 px-XS text-caption1 font-semibold">{story.title}</span>
+        <span className="self-start rounded-small bg-background-1 px-1 text-caption1 font-semibold">{story.title}</span>
       </div>
     </AspectRatio>
   ))}
 </div>`,
         render: () => (
-          <div className="flex gap-S">
+          <div className="flex gap-2">
             {stories.map((story) => (
               <AspectRatio key={story.title} ratio={9 / 16} className={`w-24 rounded-2xlarge ${story.tone}`}>
-                <div className="flex size-full flex-col justify-between p-S">
+                <div className="flex size-full flex-col justify-between p-2">
                   <Star20Filled className="text-foreground-on-brand" />
-                  <span className="self-start rounded-small bg-background-1 px-XS text-caption1 font-semibold">{story.title}</span>
+                  <span className="self-start rounded-small bg-background-1 px-1 text-caption1 font-semibold">{story.title}</span>
                 </div>
               </AspectRatio>
             ))}
@@ -606,11 +606,11 @@ function PlaceSheetDemo() {
     { query: "(pointer: coarse)", matches: coarsePointer },
   ];
   return (
-    <ul className="flex w-full max-w-md flex-col gap-S">
+    <ul className="flex w-full max-w-md flex-col gap-2">
       {rows.map((row) => (
         <li
           key={row.query}
-          className="flex items-center justify-between gap-M rounded-medium border border-stroke-2 bg-background-1 px-M py-S"
+          className="flex items-center justify-between gap-3 rounded-medium border border-stroke-2 bg-background-1 px-3 py-2"
         >
           <code dir="ltr" className="font-mono text-caption1 text-foreground-2">
             {row.query}
@@ -632,7 +632,7 @@ function PlaceSheetDemo() {
         code: `function ResponsiveActionsDemo() {
   const isDesktop = useMediaQuery("(min-width: 768px)");
   return isDesktop ? (
-    <div className="flex gap-S">
+    <div className="flex gap-2">
       <Button icon={<Share20Regular />}>Chia sẻ</Button>
       <Button icon={<ArrowDownload20Regular />}>Tải xuống</Button>
     </div>
@@ -664,7 +664,7 @@ function PlaceSheetDemo() {
         code: `function WideLayoutText() {
   const isWide = useMediaQuery("(min-width: 1024px)", { defaultValue: true });
   return (
-    <p className="flex items-center gap-XS text-body1 text-foreground-2">
+    <p className="flex items-center gap-1 text-body1 text-foreground-2">
       <Clock20Regular />
       {isWide ? "Bố cục rộng" : "Bố cục gọn"}
     </p>
@@ -694,7 +694,7 @@ function PlaceSheetDemo() {
 function WideLayoutText() {
   const isWide = useMediaQuery("(min-width: 1024px)", { defaultValue: true });
   return (
-    <p className="flex items-center gap-XS text-body1 text-foreground-2">
+    <p className="flex items-center gap-1 text-body1 text-foreground-2">
       <Clock20Regular />
       {isWide ? "Bố cục rộng" : "Bố cục gọn"}
     </p>

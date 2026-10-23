@@ -299,7 +299,7 @@ export const MessageScroller = React.forwardRef<HTMLDivElement, MessageScrollerP
           className="min-h-0 flex-1 overflow-y-auto overscroll-contain [overflow-anchor:none] focus-visible:-outline-offset-2"
           {...props}
         >
-          <div ref={contentRef} className={cn("flex min-h-full flex-col justify-end p-M", contentClassName)}>
+          <div ref={contentRef} className={cn("flex min-h-full flex-col justify-end p-3", contentClassName)}>
             {items.map((el, i) => (
               <MessageGroupContext.Provider key={el.key ?? i} value={positions[i]}>
                 {el}
@@ -310,15 +310,15 @@ export const MessageScroller = React.forwardRef<HTMLDivElement, MessageScrollerP
 
         {/* Nổi trên danh sách (không chèn vào luồng) để không đẩy nội dung khi đang tải. */}
         {loadingOlder && (
-          <div className="pointer-events-none absolute inset-x-0 top-S flex justify-center">
-            <span className="flex items-center rounded-circular bg-background-1 px-M py-XS shadow-8 animate-fade-in motion-reduce:animate-none">
+          <div className="pointer-events-none absolute inset-x-0 top-2 flex justify-center">
+            <span className="flex items-center rounded-circular bg-background-1 px-3 py-1 shadow-8 animate-fade-in motion-reduce:animate-none">
               <Spinner size="extra-tiny" label="Đang tải tin nhắn cũ…" />
             </span>
           </div>
         )}
 
         {!atBottom && (
-          <div className="pointer-events-none absolute inset-x-0 bottom-M flex justify-center">
+          <div className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center">
             <Button
               size="small"
               shape="circular"
@@ -326,7 +326,7 @@ export const MessageScroller = React.forwardRef<HTMLDivElement, MessageScrollerP
               icon={<ArrowDown16Regular />}
               aria-label={unread > 0 ? undefined : "Tới tin nhắn mới nhất"}
               onClick={() => scrollToBottom()}
-              className={cn("pointer-events-auto shadow-8 animate-surface-in motion-reduce:animate-none", unread > 0 && "px-M")}
+              className={cn("pointer-events-auto shadow-8 animate-surface-in motion-reduce:animate-none", unread > 0 && "px-3")}
             >
               {unread > 0 ? `${unread} tin nhắn mới` : undefined}
             </Button>

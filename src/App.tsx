@@ -30,6 +30,8 @@ function fallbackOf(route: Route): "page" | "partial" | null {
   if (route.kind === "home" || route.kind === "community" || route.kind === "templates") return null;
   if (route.kind === "news") return "partial";
   if (route.kind === "concept") return CONCEPT_EN_PAGES[route.slug] ? null : "page";
+  // Foundations › Motion viết song ngữ ngay trong trang (#45).
+  if (route.kind === "foundation" && route.slug === "motion") return null;
   return "page";
 }
 
@@ -55,15 +57,15 @@ const FOOTER_LINKS = [
 function Footer() {
   const { t } = useLocale();
   return (
-    <footer className="mx-auto mt-XXXL flex max-w-7xl flex-wrap items-center justify-between gap-M border-t border-stroke-2 px-L py-XL text-caption1 text-foreground-3 md:px-12">
-      <span className="flex items-center gap-S">
+    <footer className="mx-auto mt-8 flex max-w-7xl flex-wrap items-center justify-between gap-3 border-t border-stroke-2 px-4 py-5 text-caption1 text-foreground-3 md:px-12">
+      <span className="flex items-center gap-2">
         <YugenMark size={18} />
         <span>
           <span className="font-semibold text-foreground-1">Yugen UI</span> © {new Date().getFullYear()} · {t("credit.by")}{" "}
           <AuthorLink className="text-foreground-1" />
         </span>
       </span>
-      <nav aria-label={t("footer.links")} className="flex flex-wrap items-center gap-L">
+      <nav aria-label={t("footer.links")} className="flex flex-wrap items-center gap-4">
         {FOOTER_LINKS.map((link) => (
           <a key={link.href} href={link.href} target="_blank" rel="noreferrer" className="hover:text-foreground-1 hover:underline">
             {"label" in link ? link.label : t(link.key)}
@@ -91,8 +93,8 @@ export default function App() {
       <LocaleProvider locale={lang}>
         <DocumentMeta route={route} />
         <PageProgress />
-        <Sidebar route={route} open={navOpen} onClose={() => setNavOpen(false)} />
-        <div className="min-h-dvh lg:ps-80">
+        <Sidebar route={route} open={navOpen} onClose={() => setNavOpen(false)} onOpenPalette={() => setPaletteOpen(true)} />
+        <div className="min-h-dvh transition-[padding] duration-normal ease-decelerate-mid in-data-docs-resizing:transition-none motion-reduce:transition-none lg:ps-(--docs-sidebar-width)">
           <TopBar
             appearance={{ theme, brand, dir, lang }}
             onChange={update}
@@ -105,7 +107,7 @@ export default function App() {
             appearance={{ theme, brand, dir, lang }}
             onAppearanceChange={update}
           />
-          <main className="mx-auto max-w-7xl px-L md:px-12">
+          <main className="mx-auto max-w-7xl px-4 md:px-12">
             {fallback && <FallbackNotice partial={fallback === "partial"} />}
             <Suspense fallback={<PageProgressFallback />}>
               {route.kind === "home" && <HomePage />}
@@ -123,11 +125,14 @@ export default function App() {
               {route.kind === "news" && <NewsPage />}
               {route.kind === "community" && <CommunityPage />}
               {route.kind === "concept" && <ConceptPage slug={route.slug} />}
-              {route.kind === "foundation" && (
-                <VietnameseContent>
+              {route.kind === "foundation" &&
+                (route.slug === "motion" ? (
                   <FoundationsPage slug={route.slug} theme={tokenKey} />
-                </VietnameseContent>
-              )}
+                ) : (
+                  <VietnameseContent>
+                    <FoundationsPage slug={route.slug} theme={tokenKey} />
+                  </VietnameseContent>
+                ))}
               {route.kind === "component" && <ComponentPage slug={route.slug} theme={theme} brand={brand} />}
             </Suspense>
           </main>

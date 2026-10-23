@@ -328,7 +328,7 @@ function MoodDemo() {
   const answered = Object.values(answers).filter((v) => v !== undefined && v !== "").length;
 
   return (
-    <div className="flex w-full flex-col gap-S">
+    <div className="flex w-full flex-col gap-2">
       <p className="text-caption1 text-foreground-3">Đã trả lời {answered}/2 câu</p>
       <Questionnaire
         appearance="subtle"
@@ -340,7 +340,7 @@ function MoodDemo() {
         value={answers}
         onChange={setAnswers}
         completion={(result, restart) => (
-          <div className="flex flex-col items-start gap-S">
+          <div className="flex flex-col items-start gap-2">
             <p className="text-body1">Cảm ơn! Bạn chấm {String(result.mood)} sao.</p>
             <Button size="small" onClick={restart}>
               Trả lời lại
@@ -357,7 +357,7 @@ const MOOD_CODE = `function MoodDemo() {
   const answered = Object.values(answers).filter((v) => v !== undefined && v !== "").length;
 
   return (
-    <div className="flex w-full flex-col gap-S">
+    <div className="flex w-full flex-col gap-2">
       <p className="text-caption1 text-foreground-3">Đã trả lời {answered}/2 câu</p>
       <Questionnaire
         appearance="subtle"
@@ -369,7 +369,7 @@ const MOOD_CODE = `function MoodDemo() {
         value={answers}
         onChange={setAnswers}
         completion={(result, restart) => (
-          <div className="flex flex-col items-start gap-S">
+          <div className="flex flex-col items-start gap-2">
             <p className="text-body1">Cảm ơn! Bạn chấm {String(result.mood)} sao.</p>
             <Button size="small" onClick={restart}>
               Trả lời lại
@@ -455,7 +455,7 @@ function MiniChatDemo() {
         ))}
         {typing && <TypingIndicator key="typing" author={BOT} />}
       </MessageScroller>
-      <ChatComposer className="m-S" placeholder="Hỏi Sakura Bot…" onSend={send} />
+      <ChatComposer className="m-2" placeholder="Hỏi Sakura Bot…" onSend={send} />
     </div>
   );
 }
@@ -532,7 +532,7 @@ function MiniChatDemo() {
         ))}
         {typing && <TypingIndicator key="typing" author={BOT} />}
       </MessageScroller>
-      <ChatComposer className="m-S" placeholder="Hỏi Sakura Bot…" onSend={send} />
+      <ChatComposer className="m-2" placeholder="Hỏi Sakura Bot…" onSend={send} />
     </div>
   );
 }`;
@@ -676,7 +676,7 @@ function NewMessagesDemo() {
   const [count, setCount] = useState(14);
 
   return (
-    <div className="flex w-full flex-col gap-S">
+    <div className="flex w-full flex-col gap-2">
       <MessageScroller className="h-72 rounded-xlarge border border-stroke-2">
         {Array.from({ length: count }, (_, i) => (
           <MessageBubble key={i} author={i % 2 === 0 ? "Hà" : "Tuấn"}>
@@ -695,7 +695,7 @@ const NEW_MESSAGES_CODE = `function NewMessagesDemo() {
   const [count, setCount] = useState(14);
 
   return (
-    <div className="flex w-full flex-col gap-S">
+    <div className="flex w-full flex-col gap-2">
       <MessageScroller className="h-72 rounded-xlarge border border-stroke-2">
         {Array.from({ length: count }, (_, i) => (
           <MessageBubble key={i} author={i % 2 === 0 ? "Hà" : "Tuấn"}>
@@ -716,7 +716,7 @@ function ComposerDemo() {
   const [sent, setSent] = useState<string[]>([]);
 
   return (
-    <div className="flex w-full max-w-lg flex-col gap-S">
+    <div className="flex w-full max-w-lg flex-col gap-2">
       <ChatComposer
         maxLength={500}
         showCount
@@ -741,7 +741,7 @@ const COMPOSER_CODE = `function ComposerDemo() {
   const [sent, setSent] = useState<string[]>([]);
 
   return (
-    <div className="flex w-full max-w-lg flex-col gap-S">
+    <div className="flex w-full max-w-lg flex-col gap-2">
       <ChatComposer
         maxLength={500}
         showCount
@@ -1341,12 +1341,12 @@ const LABS_CHAT: Record<string, ComponentDoc> = {
       {
         title: "PackageManagerTabs",
         description: "Chọn trình quản lý ở một khối — mọi khối khác trên trang đổi theo và được nhớ cho lần sau.",
-        code: `<div className="flex w-full flex-col gap-S">
+        code: `<div className="flex w-full flex-col gap-2">
   <PackageManagerTabs packages={["@fluentui/react-icons", "class-variance-authority"]} />
   <PackageManagerTabs packages="tailwindcss @tailwindcss/vite" dev />
 </div>`,
         render: () => (
-          <div className="flex w-full flex-col gap-S">
+          <div className="flex w-full flex-col gap-2">
             <PackageManagerTabs packages={["@fluentui/react-icons", "class-variance-authority"]} />
             <PackageManagerTabs packages="tailwindcss @tailwindcss/vite" dev />
           </div>

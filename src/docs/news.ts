@@ -31,6 +31,20 @@ export const NEWS_KIND_LABEL: Record<NewsKind, string> = {
 
 export const NEWS: NewsRelease[] = [
   {
+    version: "0.10.0",
+    date: "2026-10-23",
+    title: "Spacing theo thang số, Theme Designer và trang Motion",
+    summary: "Spacing dùng thang số của Tailwind (alias viết hoa đã deprecated), cn() dùng tailwind-merge 3. Docs có Theme Designer nhiều trục, trang Motion mới và sidebar co giãn.",
+    items: [
+      { kind: "improved", text: "Component, ví dụ, template và registry dùng spacing theo thang số (p-3, gap-2) thay cho alias viết hoa (p-M, gap-S). Giá trị không đổi ở cỡ chữ gốc 16px; thang số tính bằng rem nên co giãn theo cỡ chữ của trình duyệt.", href: "#/concepts/styling" },
+      { kind: "improved", text: "Alias spacing viết hoa (p-M, gap-SNudge…) trong theme.css và cn() đã deprecated, vẫn chạy đến 1.0. Đổi theo bảng XXS → 0.5, XS → 1, SNudge → 1.5, S → 2, MNudge → 2.5, M → 3, L → 4, XL → 5, XXL → 6, XXXL → 8.", href: "#/concepts/styling" },
+      { kind: "new", text: "Theme Designer: ngoài màu brand còn chọn được bo góc, mật độ, font và cỡ chữ gốc, màu trung tính, độ nổi và chuyển động — mỗi trục vài bậc đã kiểm tra tương phản và vùng bấm. Xem trước ở light, dark, high contrast và RTL; CSS xuất gồm mọi lựa chọn; link chia sẻ giữ nguyên thiết lập.", href: "#/theme-designer" },
+      { kind: "improved", text: "Ví dụ Form với react-hook-form + zod viết theo zod 4 (z.email(), tham số error) và @hookform/resolvers 6; ví dụ cần zod 4 trở lên.", href: "#/components/formvalidation" },
+      { kind: "new", text: "Trang Motion viết lại, có bản tiếng Anh: token và animate-*, chuyển động của từng component kèm demo thật, playground so sánh hai thiết lập, xem trước giảm chuyển động, phối hợp và hiệu năng.", href: "#/foundations/motion" },
+      { kind: "new", text: "Docs: kéo mép sidebar để đổi độ rộng (240–400px, phím mũi tên, nhấp đúp về mặc định) hoặc thu về dạng icon; trạng thái được nhớ sau khi tải lại." },
+    ],
+  },
+  {
     version: "0.9.0",
     date: "2026-10-23",
     title: "React 19 và starter tối giản",
@@ -203,6 +217,16 @@ export const LATEST_RELEASE = NEWS.find((r) => !r.upcoming) ?? NEWS[0];
  */
 export const CLI_NEWS: NewsRelease[] = [
   {
+    version: "0.3.0",
+    date: "2026-10-23",
+    title: "Template dùng Vite 8",
+    summary: "App mới chạy Vite 8 và TypeScript 6; doctor không còn cảnh báo app vừa tạo.",
+    items: [
+      { kind: "improved", text: "Mọi template dùng Vite 8 (Rolldown), @vitejs/plugin-react 6 và TypeScript 6; chia chunk bằng codeSplitting thay cho manualChunks đã deprecated, tsconfig không còn baseUrl.", href: "#/templates" },
+      { kind: "fixed", text: "doctor, add, list: dự án đã cài yugen-ui mà chưa có yugen.json (app tạo bằng create, hoặc cài tay theo README) được hiểu là mode package; doctor hết cảnh báo, add in sẵn dòng import thay vì đòi chạy yugen init.", href: "#/concepts/cli" },
+    ],
+  },
+  {
     version: "0.2.0",
     date: "2026-10-23",
     title: "Node.js 22, --lang và template mới",
@@ -229,6 +253,13 @@ export const CLI_NEWS: NewsRelease[] = [
 
 /** Tab create-yugen-ui (packages/create-yugen-ui) — chỉ phát hành cùng bản CLI ổn định. Mục đầu = version của gói. */
 export const CREATE_NEWS: NewsRelease[] = [
+  {
+    version: "0.3.0",
+    date: "2026-10-23",
+    title: "Theo @yugen-ui/cli 0.3.0",
+    summary: "Cùng các thay đổi của @yugen-ui/cli 0.3.0: template dùng Vite 8 và TypeScript 6.",
+    items: [{ kind: "improved", text: "npx create-yugen-ui@latest tạo app Vite 8 + TypeScript 6.", href: "#/concepts/cli" }],
+  },
   {
     version: "0.2.0",
     date: "2026-10-23",

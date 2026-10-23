@@ -60,7 +60,7 @@ export function CopyButton({ text, className, collapse }: { text: string; classN
       type="button"
       onClick={copy}
       className={cn(
-        "inline-flex h-7 shrink-0 items-center gap-XS whitespace-nowrap rounded-medium px-S text-caption1 font-semibold text-foreground-2",
+        "inline-flex h-7 shrink-0 items-center gap-1 whitespace-nowrap rounded-medium px-2 text-caption1 font-semibold text-foreground-2",
         "transition-colors duration-faster hover:bg-subtle-hover hover:text-foreground-1",
         className,
       )}
@@ -81,9 +81,9 @@ export function CodeBlock({ code, className, bare }: { code: string; className?:
         className,
       )}
     >
-      <CopyButton text={code} className="absolute top-S inset-e-S opacity-0 group-hover/code:opacity-100 focus-visible:opacity-100" />
+      <CopyButton text={code} className="absolute top-2 inset-e-2 opacity-0 group-hover/code:opacity-100 focus-visible:opacity-100" />
       {/* tabIndex: khối code cuộn ngang được bằng bàn phím (axe scrollable-region-focusable); outline thụt vào vì khung overflow-hidden. */}
-      <pre dir="ltr" tabIndex={0} className="overflow-x-auto p-L pe-24 text-left font-mono text-[13px] leading-[1.6] text-foreground-1 -outline-offset-2">
+      <pre dir="ltr" tabIndex={0} className="overflow-x-auto p-4 pe-24 text-left font-mono text-[13px] leading-[1.6] text-foreground-1 -outline-offset-2">
         <code>{highlight(code)}</code>
       </pre>
     </div>

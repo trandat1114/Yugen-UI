@@ -9,10 +9,10 @@ export default function PayoutBlock() {
   const [amount, setAmount] = useState([2_500_000]);
 
   return (
-    <Card size="large" className="gap-L rounded-xlarge p-XL">
+    <Card size="large" className="gap-4 rounded-xlarge p-5">
       <div>
         <h3 className="text-subtitle1 font-semibold">Ngưỡng thanh toán</h3>
-        <p className="mt-XXS text-body1 text-foreground-3">Số dư tối thiểu trước khi hệ thống chuyển tiền.</p>
+        <p className="mt-0.5 text-body1 text-foreground-3">Số dư tối thiểu trước khi hệ thống chuyển tiền.</p>
       </div>
 
       <div>
@@ -38,7 +38,7 @@ export default function PayoutBlock() {
 
       <MessageBar intent="info">Số dư vượt ngưỡng sẽ được chuyển vào ngày 15 hằng tháng.</MessageBar>
 
-      <div className="flex justify-end gap-S">
+      <div className="flex justify-end gap-2">
         <Button>Huỷ</Button>
         <Button appearance="primary">Lưu cấu hình</Button>
       </div>

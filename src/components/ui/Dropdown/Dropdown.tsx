@@ -18,15 +18,15 @@ import { fieldAppearanceClass, type FieldAppearance } from "@/components/ui/Sele
  * Trạng thái highlight/disabled do từng component thêm (Radix: `data-highlighted`, cmdk: `data-selected=true`).
  */
 export const listboxOptionClass =
-  "relative flex min-h-8 cursor-pointer items-center gap-XS rounded-medium px-S py-SNudge text-body1 text-foreground-1 outline-none select-none active:bg-background-1-pressed";
+  "relative flex min-h-8 cursor-pointer items-center gap-1 rounded-medium px-2 py-1.5 text-body1 text-foreground-1 outline-none select-none active:bg-background-1-pressed";
 
 /** Class tiêu đề nhóm option. */
-export const listboxGroupLabelClass = "flex h-8 items-center px-S text-caption1 font-semibold text-foreground-3";
+export const listboxGroupLabelClass = "flex h-8 items-center px-2 text-caption1 font-semibold text-foreground-3";
 
 const TRIGGER_SIZE = {
-  small: { root: "h-6 ps-S pe-SNudge text-caption1", Icon: ChevronDown16Regular, icon: "size-4" },
-  medium: { root: "h-8 ps-M pe-MNudge text-body1", Icon: ChevronDown20Regular, icon: "size-5" },
-  large: { root: "h-10 ps-M pe-M text-body2", Icon: ChevronDown24Regular, icon: "size-6" },
+  small: { root: "h-6 ps-2 pe-1.5 text-caption1", Icon: ChevronDown16Regular, icon: "size-4" },
+  medium: { root: "h-8 ps-3 pe-2.5 text-body1", Icon: ChevronDown20Regular, icon: "size-5" },
+  large: { root: "h-10 ps-3 pe-3 text-body2", Icon: ChevronDown24Regular, icon: "size-6" },
 } as const;
 
 export interface DropdownProps extends Omit<SelectPrimitive.SelectProps, "dir"> {
@@ -79,7 +79,7 @@ export const Dropdown = React.forwardRef<HTMLButtonElement, DropdownProps>(
           data-disabled={disabled || undefined}
           className={cn(
             fieldAppearanceClass[appearance],
-            "group/dropdown inline-flex min-w-62.5 cursor-pointer items-center justify-between gap-XS text-start outline-none",
+            "group/dropdown inline-flex min-w-62.5 cursor-pointer items-center justify-between gap-1 text-start outline-none",
             "data-[state=open]:after:scale-x-100 data-[state=open]:after:duration-normal data-[state=open]:after:ease-decelerate-mid",
             "disabled:cursor-not-allowed",
             s.root,
@@ -107,7 +107,7 @@ export const Dropdown = React.forwardRef<HTMLButtonElement, DropdownProps>(
             <SelectPrimitive.ScrollUpButton className="flex h-6 cursor-default items-center justify-center text-foreground-3">
               <ChevronUp16Regular />
             </SelectPrimitive.ScrollUpButton>
-            <SelectPrimitive.Viewport className="flex flex-col p-XS">{children}</SelectPrimitive.Viewport>
+            <SelectPrimitive.Viewport className="flex flex-col p-1">{children}</SelectPrimitive.Viewport>
             <SelectPrimitive.ScrollDownButton className="flex h-6 cursor-default items-center justify-center text-foreground-3">
               <ChevronDown16Regular />
             </SelectPrimitive.ScrollDownButton>
@@ -156,7 +156,7 @@ export const DropdownGroup = React.forwardRef<React.ElementRef<typeof SelectPrim
   ({ className, label, children, ...props }, ref) => (
     <SelectPrimitive.Group
       ref={ref}
-      className={cn("flex flex-col not-last:mb-XS not-last:border-b not-last:border-stroke-2 not-last:pb-XS", className)}
+      className={cn("flex flex-col not-last:mb-1 not-last:border-b not-last:border-stroke-2 not-last:pb-1", className)}
       {...props}
     >
       <SelectPrimitive.Label className={listboxGroupLabelClass}>{label}</SelectPrimitive.Label>
@@ -167,5 +167,5 @@ export const DropdownGroup = React.forwardRef<React.ElementRef<typeof SelectPrim
 DropdownGroup.displayName = "DropdownGroup";
 
 export function DropdownDivider({ className }: { className?: string }) {
-  return <SelectPrimitive.Separator className={cn("-mx-XS my-XS h-px bg-stroke-2", className)} />;
+  return <SelectPrimitive.Separator className={cn("-mx-1 my-1 h-px bg-stroke-2", className)} />;
 }

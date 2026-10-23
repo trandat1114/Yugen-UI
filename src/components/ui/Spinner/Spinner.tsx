@@ -54,7 +54,7 @@ export const Spinner = React.forwardRef<HTMLDivElement, SpinnerProps>(
         role="progressbar"
         aria-labelledby={label ? labelId : undefined}
         aria-label={label ? undefined : "Đang tải"}
-        className={cn("inline-flex items-center justify-center gap-S", vertical && "flex-col", className)}
+        className={cn("inline-flex items-center justify-center gap-2", vertical && "flex-col", className)}
         {...props}
       >
         {labelFirst && labelEl}

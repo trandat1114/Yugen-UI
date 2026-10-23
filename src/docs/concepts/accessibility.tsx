@@ -9,11 +9,11 @@ function P({ children }: { children: ReactNode }) {
 }
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function Keys({ children }: { children: ReactNode }) {
-  return <span className="inline-flex flex-wrap items-center gap-XS">{children}</span>;
+  return <span className="inline-flex flex-wrap items-center gap-1">{children}</span>;
 }
 
 function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
@@ -24,7 +24,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
             {head.map((h) => (
-              <th key={h} className="px-L py-S text-start">
+              <th key={h} className="px-4 py-2 text-start">
                 {h}
               </th>
             ))}
@@ -34,7 +34,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
           {rows.map((row, i) => (
             <tr key={i} className="border-b border-stroke-3 align-top last:border-b-0">
               {row.map((cell, j) => (
-                <td key={j} className={j === 0 ? "px-L py-M font-semibold text-foreground-1" : "px-L py-M text-foreground-2"}>
+                <td key={j} className={j === 0 ? "px-4 py-3 font-semibold text-foreground-1" : "px-4 py-3 text-foreground-2"}>
                   {cell}
                 </td>
               ))}
@@ -92,7 +92,7 @@ function Checklist() {
   const count = done.filter(Boolean).length;
 
   return (
-    <div className="flex flex-col gap-M rounded-2xlarge border border-stroke-2 bg-background-1 p-XL">
+    <div className="flex flex-col gap-3 rounded-2xlarge border border-stroke-2 bg-background-1 p-5">
       <ProgressBar value={count} max={CHECKLIST.length} aria-label="Tiến độ checklist" />
       <p className="text-caption1 text-foreground-3" aria-live="polite">
         Đã hoàn thành {count} / {CHECKLIST.length}
@@ -119,9 +119,9 @@ export default function Page() {
         title="Nguyên tắc"
         description="Component lo phần cơ chế (role, phím, focus); bạn lo phần nội dung (nhãn, tiêu đề, alt, thứ tự trang). Cả hai cần đủ thì giao diện mới tiếp cận được."
       >
-        <div className="grid gap-L sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {PRINCIPLES.map((p) => (
-            <div key={p.title} className="flex flex-col gap-S rounded-xlarge border border-stroke-2 bg-background-1 p-L">
+            <div key={p.title} className="flex flex-col gap-2 rounded-xlarge border border-stroke-2 bg-background-1 p-4">
               <span className="flex size-10 items-center justify-center rounded-large bg-brand-background-2 text-brand-foreground-2">{p.icon}</span>
               <h3 className="text-subtitle2 font-semibold text-foreground-1">{p.title}</h3>
               <p className="text-body1 text-foreground-2">{p.body}</p>
@@ -187,8 +187,8 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="tools" title="Công cụ & trang liên quan">
-        <div className="flex flex-col gap-L">
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+        <div className="flex flex-col gap-4">
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>Kiểm tra tự động: axe DevTools, Accessibility Insights for Web, Lighthouse (phát hiện khoảng 30–40% lỗi — phần còn lại cần kiểm thử tay).</li>
             <li>Trình đọc màn hình: NVDA (Windows, miễn phí), Narrator, VoiceOver (macOS / iOS), TalkBack (Android).</li>
             <li>
@@ -197,7 +197,7 @@ export default function Page() {
             </li>
           </ul>
           <P>Đọc tiếp:</P>
-          <div className="grid gap-M sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2">
             {[
               { href: "#/concepts/component-labelling", title: "Gắn nhãn component", body: "Field, Label, aria-label, nhãn cho nhóm." },
               { href: "#/concepts/focus-indicator", title: "Chỉ báo focus", body: ":focus-visible, thanh brand của ô nhập, quản lý focus." },
@@ -207,7 +207,7 @@ export default function Page() {
               <a
                 key={l.href}
                 href={l.href}
-                className="flex flex-col gap-XXS rounded-xlarge border border-stroke-2 bg-background-1 p-L transition-colors duration-faster hover:bg-subtle-hover"
+                className="flex flex-col gap-0.5 rounded-xlarge border border-stroke-2 bg-background-1 p-4 transition-colors duration-faster hover:bg-subtle-hover"
               >
                 <span className="text-subtitle2 font-semibold text-foreground-1">{l.title}</span>
                 <span className="text-body1 text-foreground-2">{l.body}</span>

@@ -136,19 +136,19 @@ export const ChatComposer = React.forwardRef<HTMLTextAreaElement, ChatComposerPr
           onChange={(e) => setText(e.target.value)}
           onKeyDown={handleKeyDown}
           className={cn(
-            "block w-full resize-none bg-transparent px-M pt-S pb-XS text-body1 text-foreground-1 outline-none",
+            "block w-full resize-none bg-transparent px-3 pt-2 pb-1 text-body1 text-foreground-1 outline-none",
             "placeholder:text-foreground-4 disabled:cursor-not-allowed disabled:text-foreground-disabled",
             textareaProps?.className,
           )}
         />
-        <div className="flex items-center gap-XS px-XS pb-XS">
-          {actions && <div className="flex min-w-0 items-center gap-XXS">{actions}</div>}
+        <div className="flex items-center gap-1 px-1 pb-1">
+          {actions && <div className="flex min-w-0 items-center gap-0.5">{actions}</div>}
           {showHint && (
-            <span id={hintId} className="hidden min-w-0 truncate ps-XS text-caption1 text-foreground-3 sm:inline">
+            <span id={hintId} className="hidden min-w-0 truncate ps-1 text-caption1 text-foreground-3 sm:inline">
               Enter để gửi · Shift+Enter xuống dòng
             </span>
           )}
-          <div className="ms-auto flex shrink-0 items-center gap-S">
+          <div className="ms-auto flex shrink-0 items-center gap-2">
             {showCount && maxLength !== undefined && (
               <span
                 id={counterId}

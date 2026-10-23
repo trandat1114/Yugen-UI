@@ -22,7 +22,7 @@ function P({ children }: { children: ReactNode }) {
 }
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
@@ -33,7 +33,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
             {head.map((h) => (
-              <th key={h} className="px-L py-S text-start">
+              <th key={h} className="px-4 py-2 text-start">
                 {h}
               </th>
             ))}
@@ -43,7 +43,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
           {rows.map((row, i) => (
             <tr key={i} className="border-b border-stroke-3 align-top last:border-b-0">
               {row.map((cell, j) => (
-                <td key={j} className={j === 0 ? "px-L py-M font-semibold text-foreground-1" : "px-L py-M text-foreground-2"}>
+                <td key={j} className={j === 0 ? "px-4 py-3 font-semibold text-foreground-1" : "px-4 py-3 text-foreground-2"}>
                   {cell}
                 </td>
               ))}
@@ -57,7 +57,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
 
 function Bullets({ items }: { items: ReactNode[] }) {
   return (
-    <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+    <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
       {items.map((item, i) => (
         <li key={i}>{item}</li>
       ))}
@@ -67,7 +67,7 @@ function Bullets({ items }: { items: ReactNode[] }) {
 
 function DemoStage({ children }: { children: ReactNode }) {
   return (
-    <div className="flex flex-wrap items-center gap-M rounded-2xlarge border border-stroke-2 bg-background-1 p-XXL">{children}</div>
+    <div className="flex flex-wrap items-center gap-3 rounded-2xlarge border border-stroke-2 bg-background-1 p-6">{children}</div>
   );
 }
 
@@ -94,7 +94,7 @@ function AdaptiveFilterDemo() {
             <SheetDescription>{isDesktop ? "Đang là panel bên cạnh." : "Đang là bottom sheet — kéo tay nắm thử xem."}</SheetDescription>
           </SheetHeader>
           <SheetBody>
-            <div className="flex flex-col gap-M">
+            <div className="flex flex-col gap-3">
               <Checkbox label="Còn hàng" defaultChecked />
               <Checkbox label="Giao trong 2 giờ" />
               <Checkbox label="Miễn phí vận chuyển" />
@@ -133,9 +133,9 @@ function SnapPlaygroundDemo() {
             <SheetDescription>Nấc hiện tại: {Math.round(snap * 100)}% chiều cao màn hình.</SheetDescription>
           </SheetHeader>
           <SheetBody>
-            <ol className="flex flex-col gap-S">
+            <ol className="flex flex-col gap-2">
               {STOPS.map((stop, i) => (
-                <li key={stop} className="flex items-center gap-S rounded-medium bg-background-2 px-M py-S">
+                <li key={stop} className="flex items-center gap-2 rounded-medium bg-background-2 px-3 py-2">
                   <span className="flex size-6 shrink-0 items-center justify-center rounded-circular bg-background-1 text-caption1 font-semibold">
                     {i + 1}
                   </span>
@@ -219,7 +219,7 @@ export default function Page() {
         title="Chọn overlay"
         description="Bắt đầu từ tác vụ, rồi mới tới thiết bị. Overlay càng chặn nhiều thì càng phải xứng đáng với sự gián đoạn đó."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <SimpleTable
             head={["Overlay", "Desktop", "Điện thoại", "Dùng khi"]}
             rows={[
@@ -275,7 +275,7 @@ export default function Page() {
         title="Sheet: một API, hai dạng"
         description="Sheet chọn dạng theo chiều rộng viewport (useMediaQuery) — nội dung, focus và trạng thái giữ nguyên khi người dùng xoay máy hay thu nhỏ cửa sổ."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <DemoStage>
             <AdaptiveFilterDemo />
           </DemoStage>
@@ -297,7 +297,7 @@ export default function Page() {
         title="Công thái học bottom sheet"
         description="Trên điện thoại cầm một tay, phần ba dưới màn hình là vùng ngón cái với tới dễ nhất — bottom sheet đưa nội dung và hành động vào đúng vùng đó."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <DemoStage>
             <SnapPlaygroundDemo />
           </DemoStage>
@@ -344,7 +344,7 @@ export default function Page() {
         title="Bàn phím & trình đọc màn hình"
         description="Mọi cử chỉ đều có cách làm tương đương không cần kéo (WCAG 2.5.1 Pointer Gestures, 2.5.7 Dragging Movements)."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <SimpleTable
             head={["Phím / tình huống", "Kết quả"]}
             rows={[
@@ -369,7 +369,7 @@ export default function Page() {
         title="Vùng an toàn & bàn phím ảo"
         description="Tai thỏ, Dynamic Island và thanh home indicator lấn vào vùng hiển thị — bottom sheet phải chừa chỗ cho chúng."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Bullets
             items={[
               <>
@@ -396,7 +396,7 @@ export default function Page() {
         title="Giảm chuyển động"
         description="Khi hệ điều hành bật “giảm chuyển động”, overlay xuất hiện / biến mất tức thì — nhưng thao tác trực tiếp vẫn bám theo tay."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Bullets
             items={[
               "Trượt vào / ra, mờ lớp phủ và chuyển động về nấc đều tắt (motion-reduce:animate-none, motion-reduce:transition-none).",

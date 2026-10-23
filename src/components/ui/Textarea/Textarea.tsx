@@ -12,9 +12,9 @@ const textareaVariants = cva(
   {
     variants: {
       size: {
-        small: "min-h-10 max-h-50 px-S py-XS text-caption1",
-        medium: "min-h-13 max-h-65 px-M py-SNudge text-body1",
-        large: "min-h-16 max-h-80 px-[calc(var(--spacingM)+var(--spacingXXS))] py-S text-body2",
+        small: "min-h-10 max-h-50 px-2 py-1 text-caption1",
+        medium: "min-h-13 max-h-65 px-3 py-1.5 text-body1",
+        large: "min-h-16 max-h-80 px-[calc(var(--spacingM)+var(--spacingXXS))] py-2 text-body2",
       },
       resize: {
         none: "resize-none",
@@ -43,7 +43,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       <span
         data-disabled={disabled || undefined}
         data-invalid={invalid || undefined}
-        className={cn(fieldAppearanceClass[appearance], "inline-flex pb-XXS", className)}
+        className={cn(fieldAppearanceClass[appearance], "inline-flex pb-0.5", className)}
       >
         <textarea
           ref={ref}

@@ -251,12 +251,12 @@ export const Trace = React.forwardRef<HTMLElement, TraceProps>(
           {!hideHeader && (
             <header
               className={cn(
-                "flex flex-wrap items-center gap-x-M gap-y-S",
-                appearance === "outline" ? "border-b border-stroke-2 px-L py-M" : "pb-M",
+                "flex flex-wrap items-center gap-x-3 gap-y-2",
+                appearance === "outline" ? "border-b border-stroke-2 px-4 py-3" : "pb-3",
               )}
             >
-              <div className="flex min-w-0 flex-1 items-start gap-S">
-                <TraceStatusIcon status={current} size={size} className={small ? undefined : "mt-XXS"} />
+              <div className="flex min-w-0 flex-1 items-start gap-2">
+                <TraceStatusIcon status={current} size={size} className={small ? undefined : "mt-0.5"} />
                 <div className="min-w-0">
                   {title && (
                     <h3 id={titleId} className={cn("font-semibold text-foreground-1", small ? "text-body1" : "text-subtitle2")}>
@@ -272,9 +272,9 @@ export const Trace = React.forwardRef<HTMLElement, TraceProps>(
               </div>
 
               {total > 0 && (
-                <ul aria-label="Tổng kết theo trạng thái" className="flex flex-wrap items-center gap-S text-caption1 text-foreground-2">
+                <ul aria-label="Tổng kết theo trạng thái" className="flex flex-wrap items-center gap-2 text-caption1 text-foreground-2">
                   {SUMMARY_ORDER.filter((s) => counts[s] > 0).map((s) => (
-                    <li key={s} className="inline-flex items-center gap-XXS tabular-nums">
+                    <li key={s} className="inline-flex items-center gap-0.5 tabular-nums">
                       <TraceStatusIcon status={s} size="small" />
                       <span>{counts[s]}</span>
                       <span className="sr-only">{TRACE_STATUS_META[s].label}</span>
@@ -284,7 +284,7 @@ export const Trace = React.forwardRef<HTMLElement, TraceProps>(
               )}
 
               {(duration !== undefined || (startedAt !== undefined && current === "running")) && (
-                <span className="inline-flex items-center gap-XXS text-caption1 text-foreground-2 tabular-nums">
+                <span className="inline-flex items-center gap-0.5 text-caption1 text-foreground-2 tabular-nums">
                   <Timer16Regular aria-hidden className="shrink-0" />
                   <span className="sr-only">Thời lượng: </span>
                   {startedAt !== undefined && current === "running" ? (
@@ -296,7 +296,7 @@ export const Trace = React.forwardRef<HTMLElement, TraceProps>(
               )}
 
               {(actions || expandable.length > 0) && (
-                <div className="flex items-center gap-XS">
+                <div className="flex items-center gap-1">
                   {actions}
                   {expandable.length > 0 && (
                     <Button
@@ -313,7 +313,7 @@ export const Trace = React.forwardRef<HTMLElement, TraceProps>(
             </header>
           )}
 
-          <TraceStepList className={appearance === "outline" ? "px-L pt-M pb-XS" : undefined}>{children}</TraceStepList>
+          <TraceStepList className={appearance === "outline" ? "px-4 pt-3 pb-1" : undefined}>{children}</TraceStepList>
 
           <div role="status" className="sr-only">
             {message}
@@ -485,7 +485,7 @@ export const TraceStep = React.forwardRef<HTMLLIElement, TraceStepProps>(
       <li
         ref={ref}
         data-status={status}
-        className={cn("flex gap-S animate-fade-in motion-reduce:animate-none", className)}
+        className={cn("flex gap-2 animate-fade-in motion-reduce:animate-none", className)}
         {...props}
       >
         {/* Cột icon + đường nối tới bước kế tiếp */}
@@ -493,11 +493,11 @@ export const TraceStep = React.forwardRef<HTMLLIElement, TraceStepProps>(
           <span className={cn("flex items-center justify-center", small ? "h-4" : "h-5")}>
             {icon ?? <TraceStatusIcon status={status} size={size} />}
           </span>
-          {!last && <span className="my-XXS w-px flex-1 bg-stroke-2" />}
+          {!last && <span className="my-0.5 w-px flex-1 bg-stroke-2" />}
         </div>
 
-        <div className={cn("min-w-0 flex-1", last ? "pb-XS" : small ? "pb-S" : "pb-M")}>
-          <div className={cn("flex items-start gap-S", small ? "min-h-4" : "min-h-5")}>
+        <div className={cn("min-w-0 flex-1", last ? "pb-1" : small ? "pb-2" : "pb-3")}>
+          <div className={cn("flex items-start gap-2", small ? "min-h-4" : "min-h-5")}>
             {expandable ? (
               <button
                 type="button"
@@ -505,7 +505,7 @@ export const TraceStep = React.forwardRef<HTMLLIElement, TraceStepProps>(
                 aria-controls={regionId}
                 onClick={() => setExpanded(!expanded)}
                 className={cn(
-                  "-mx-XS flex min-w-0 items-start gap-XXS rounded-medium px-XS text-start",
+                  "-mx-1 flex min-w-0 items-start gap-0.5 rounded-medium px-1 text-start",
                   "transition-colors duration-faster ease-easy-ease hover:bg-subtle-hover active:bg-subtle-pressed",
                   titleClass,
                 )}
@@ -515,7 +515,7 @@ export const TraceStep = React.forwardRef<HTMLLIElement, TraceStepProps>(
                   aria-hidden
                   className={cn(
                     "shrink-0 text-foreground-3 transition-transform duration-normal ease-easy-ease motion-reduce:transition-none rtl:-scale-x-100",
-                    small ? "mt-0 size-4" : "mt-XXS size-4",
+                    small ? "mt-0 size-4" : "mt-0.5 size-4",
                     expanded && "rotate-90 rtl:-rotate-90",
                   )}
                 />
@@ -529,7 +529,7 @@ export const TraceStep = React.forwardRef<HTMLLIElement, TraceStepProps>(
                   "ms-auto shrink-0 tabular-nums",
                   small ? "text-caption2" : "text-caption1",
                   status === "error" ? "text-danger-foreground-1" : "text-foreground-3",
-                  !small && "pt-XXS",
+                  !small && "pt-0.5",
                 )}
               >
                 {timeText}
@@ -538,17 +538,17 @@ export const TraceStep = React.forwardRef<HTMLLIElement, TraceStepProps>(
           </div>
 
           {description && (
-            <p className={cn("mt-XXS text-foreground-2", small ? "text-caption2" : "text-caption1")}>{description}</p>
+            <p className={cn("mt-0.5 text-foreground-2", small ? "text-caption2" : "text-caption1")}>{description}</p>
           )}
 
-          {metadataNode && <div className="mt-XS flex flex-wrap items-center gap-XS">{metadataNode}</div>}
+          {metadataNode && <div className="mt-1 flex flex-wrap items-center gap-1">{metadataNode}</div>}
 
           {expandable && (
-            <div id={regionId} hidden={!expanded} className={cn("mt-S min-w-0", small ? "text-caption1" : "text-body1")}>
+            <div id={regionId} hidden={!expanded} className={cn("mt-2 min-w-0", small ? "text-caption1" : "text-body1")}>
               {details != null && <div className="min-w-0">{details}</div>}
               {hasChildren && (
                 <DepthContext.Provider value={depth + 1}>
-                  <TraceStepList className={details != null ? "mt-S" : undefined}>{children}</TraceStepList>
+                  <TraceStepList className={details != null ? "mt-2" : undefined}>{children}</TraceStepList>
                 </DepthContext.Provider>
               )}
             </div>
@@ -574,7 +574,7 @@ export const TraceLog = React.forwardRef<HTMLPreElement, TraceLogProps>(({ inten
     dir="ltr"
     tabIndex={0}
     className={cn(
-      "max-h-60 overflow-auto rounded-medium border px-M py-S text-start font-mono text-caption1 whitespace-pre-wrap",
+      "max-h-60 overflow-auto rounded-medium border px-3 py-2 text-start font-mono text-caption1 whitespace-pre-wrap",
       intent === "error"
         ? "border-danger-border-1 bg-danger-background-1 text-danger-foreground-1"
         : "border-stroke-2 bg-background-3 text-foreground-2",

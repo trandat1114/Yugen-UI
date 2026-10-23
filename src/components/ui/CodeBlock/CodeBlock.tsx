@@ -568,7 +568,7 @@ export const CodeBlock = React.forwardRef<HTMLDivElement, CodeBlockProps>(
           dir="ltr"
           tabIndex={0}
           className={cn(
-            "m-0 py-M text-start font-mono text-foreground-1 focus-visible:-outline-offset-2",
+            "m-0 py-3 text-start font-mono text-foreground-1 focus-visible:-outline-offset-2",
             size === "small" ? "text-caption1" : "text-body1",
             wrap ? "whitespace-pre-wrap wrap-anywhere" : "overflow-x-auto whitespace-pre",
             collapsed && "overflow-y-hidden",
@@ -591,7 +591,7 @@ export const CodeBlock = React.forwardRef<HTMLDivElement, CodeBlockProps>(
                   )}
                 >
                   {showLineNumbers && (
-                    <span aria-hidden className="w-12 shrink-0 pe-M text-end text-foreground-3 tabular-nums select-none">
+                    <span aria-hidden className="w-12 shrink-0 pe-3 text-end text-foreground-3 tabular-nums select-none">
                       {n}
                     </span>
                   )}
@@ -606,7 +606,7 @@ export const CodeBlock = React.forwardRef<HTMLDivElement, CodeBlockProps>(
                       {mark}
                     </span>
                   )}
-                  <span className={cn("min-w-0 flex-1 pe-L", !showLineNumbers && !marks && "ps-L")}>
+                  <span className={cn("min-w-0 flex-1 pe-4", !showLineNumbers && !marks && "ps-4")}>
                     {mark !== " " && <span className="sr-only select-none">{mark === "+" ? "Thêm: " : "Xoá: "}</span>}
                     {line.map((token, k) =>
                       token.type === "plain" ? (
@@ -628,7 +628,7 @@ export const CodeBlock = React.forwardRef<HTMLDivElement, CodeBlockProps>(
           <CopyCodeButton
             text={copySource}
             showLabel={false}
-            className="absolute inset-e-S top-S bg-background-1 opacity-0 shadow-2 group-hover/code:opacity-100 focus-visible:opacity-100 pointer-coarse:opacity-100"
+            className="absolute inset-e-2 top-2 bg-background-1 opacity-0 shadow-2 group-hover/code:opacity-100 focus-visible:opacity-100 pointer-coarse:opacity-100"
           />
         )}
       </div>
@@ -640,7 +640,7 @@ export const CodeBlock = React.forwardRef<HTMLDivElement, CodeBlockProps>(
         aria-expanded={expanded}
         aria-controls={preId}
         onClick={() => setExpanded((v) => !v)}
-        className="flex w-full items-center justify-center gap-XS border-t border-stroke-2 py-XS text-caption1 font-semibold text-link transition-colors duration-faster hover:bg-subtle-hover hover:text-link-hover"
+        className="flex w-full items-center justify-center gap-1 border-t border-stroke-2 py-1 text-caption1 font-semibold text-link transition-colors duration-faster hover:bg-subtle-hover hover:text-link-hover"
       >
         {expanded ? <ChevronUp16Regular aria-hidden /> : <ChevronDown16Regular aria-hidden />}
         {expanded ? "Thu gọn" : `Xem thêm (${lines.length} dòng)`}
@@ -659,13 +659,13 @@ export const CodeBlock = React.forwardRef<HTMLDivElement, CodeBlockProps>(
     return (
       <div ref={ref} dir="ltr" {...themeProps} className={cn("group/code", SURFACE, className)} {...props}>
         {hasHeader && (
-          <div className="flex min-h-10 items-center gap-S border-b border-stroke-2 ps-M pe-XS">
+          <div className="flex min-h-10 items-center gap-2 border-b border-stroke-2 ps-3 pe-1">
             <Document16Regular aria-hidden className="shrink-0 text-foreground-3" />
             <span className="min-w-0 truncate text-caption1 font-semibold text-foreground-1">{title ?? filename}</span>
             <Badge appearance="tint" color="informative" size="small" shape="rounded">
               {CODE_LANGUAGE_LABEL[language]}
             </Badge>
-            <div className="ms-auto flex shrink-0 items-center gap-XXS">
+            <div className="ms-auto flex shrink-0 items-center gap-0.5">
               {wrapToggle && wrapButton}
               {copyable && <CopyCodeButton text={copySource} />}
             </div>
@@ -740,8 +740,8 @@ export const CodeTabs = React.forwardRef<HTMLDivElement, CodeTabsProps>(
         }}
       >
         <div ref={ref} dir="ltr" {...themeProps} className={cn(SURFACE, className)} {...props}>
-          <div className="flex min-h-10 items-center gap-S border-b border-stroke-2 pe-XS">
-            <TabsList size="small" aria-label="Tệp" className="min-w-0 flex-wrap ps-XS">
+          <div className="flex min-h-10 items-center gap-2 border-b border-stroke-2 pe-1">
+            <TabsList size="small" aria-label="Tệp" className="min-w-0 flex-wrap ps-1">
               {files.map((f) => (
                 <TabsTrigger key={f.name} value={f.name}>
                   {f.name}
@@ -749,7 +749,7 @@ export const CodeTabs = React.forwardRef<HTMLDivElement, CodeTabsProps>(
               ))}
             </TabsList>
             {activeFile && (
-              <div className="ms-auto flex shrink-0 items-center gap-XS">
+              <div className="ms-auto flex shrink-0 items-center gap-1">
                 <Badge appearance="tint" color="informative" size="small" shape="rounded">
                   {CODE_LANGUAGE_LABEL[activeFile.language ?? languageOf(activeFile.name)]}
                 </Badge>
@@ -871,8 +871,8 @@ export const PackageManagerTabs = React.forwardRef<HTMLDivElement, PackageManage
     return (
       <Tabs dir="ltr" value={active} onValueChange={(v) => isPackageManager(v) && pmWrite(v)}>
         <div ref={ref} dir="ltr" {...themeProps} className={cn(SURFACE, className)} {...props}>
-          <div className="flex min-h-10 items-center gap-S border-b border-stroke-2 pe-XS">
-            <TabsList size="small" aria-label="Trình quản lý gói" className="min-w-0 flex-wrap ps-XS">
+          <div className="flex min-h-10 items-center gap-2 border-b border-stroke-2 pe-1">
+            <TabsList size="small" aria-label="Trình quản lý gói" className="min-w-0 flex-wrap ps-1">
               {managers.map((pm) => (
                 <TabsTrigger key={pm} value={pm}>
                   {pm}

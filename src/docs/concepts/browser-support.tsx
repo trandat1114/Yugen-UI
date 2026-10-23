@@ -3,7 +3,7 @@ import { Badge, MessageBar } from "@/components/ui";
 import { DocSection } from "../blocks";
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
@@ -14,7 +14,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
             {head.map((h) => (
-              <th key={h} className="px-L py-S text-start">
+              <th key={h} className="px-4 py-2 text-start">
                 {h}
               </th>
             ))}
@@ -24,7 +24,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
           {rows.map((row, i) => (
             <tr key={i} className="border-b border-stroke-3 align-top last:border-b-0">
               {row.map((cell, j) => (
-                <td key={j} className={j === 0 ? "px-L py-M font-semibold text-foreground-1" : "px-L py-M text-foreground-2"}>
+                <td key={j} className={j === 0 ? "px-4 py-3 font-semibold text-foreground-1" : "px-4 py-3 text-foreground-2"}>
                   {cell}
                 </td>
               ))}
@@ -55,7 +55,7 @@ export default function Page() {
         title="Trình duyệt"
         description="Hai phiên bản mới nhất của mỗi trình duyệt evergreen. Mốc tối thiểu thực tế là mốc của Tailwind CSS v4."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <SimpleTable
             head={["Trình duyệt", "Phiên bản", "Trạng thái"]}
             rows={[
@@ -106,7 +106,7 @@ export default function Page() {
             ["React / React DOM", "19 (mặc định) · 18.3 (vẫn hỗ trợ, CI kiểm thử)", "Dùng forwardRef, useId, useSyncExternalStore; Radix, cmdk, react-day-picker đều hỗ trợ React 19."],
             ["TypeScript", "5.x", "Mã nguồn viết ở chế độ strict; mọi kiểu prop export cùng component (ButtonProps, FieldProps…)."],
             ["Tailwind CSS", "4.x", <>Bắt buộc v4: cấu hình CSS-first (<C>@theme</C>, <C>@utility</C>), cú pháp <C>size-4!</C>, <C>max-h-(--var)</C>.</>],
-            ["Bundler", "Vite 6 · Next.js 14 / 15 · bất kỳ bundler hỗ trợ PostCSS", <>Component không dùng API riêng của bundler; chỉ cần alias <C>@/</C>.</>],
+            ["Bundler", "Vite 6 trở lên · Next.js 14 / 15 · bất kỳ bundler hỗ trợ PostCSS", <>Component không dùng API riêng của bundler; chỉ cần alias <C>@/</C>.</>],
             ["Radix UI", "Theo package.json", "Mỗi primitive là một package riêng — chỉ cài cái bạn dùng."],
             ["Icon", "@fluentui/react-icons 2.x", "Tree-shake theo từng icon; không cần font icon."],
           ]}
@@ -118,7 +118,7 @@ export default function Page() {
         title="Chuột, cảm ứng, bàn phím"
         description="Mọi component dùng được bằng cả ba phương thức nhập, và với công nghệ hỗ trợ."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <SimpleTable
             head={["Phương thức", "Hành vi"]}
             rows={[
@@ -128,6 +128,27 @@ export default function Page() {
               ["Trình đọc màn hình", "Nên kiểm thử với NVDA + Firefox / Chrome, JAWS + Chrome, VoiceOver + Safari (macOS, iOS), TalkBack + Chrome (Android), Narrator + Edge."],
               ["Chế độ tương phản (forced-colors)", <>Bề mặt nổi và nút giữ <C>border-transparent</C> thay vì bỏ viền, nên Windows High Contrast vẫn vẽ đường viền; focus dùng <C>outline</C> nên luôn hiện.</>],
               ["Thu phóng", "Bố cục dùng flex / grid và chiều rộng tối đa theo khung nhìn (calc(100vw - …)) để reflow khi phóng to."],
+            ]}
+          />
+        </div>
+      </DocSection>
+
+      <DocSection
+        id="engines"
+        title="Kiểm thử trên từng engine"
+        description="Mọi PR chạy E2E trên Chromium. Firefox và WebKit chạy hằng tuần và trên PR phát hành vào main."
+      >
+        <div className="flex flex-col gap-4">
+          <p className="max-w-3xl text-body1 text-foreground-2">
+            Trên Firefox và WebKit (Safari desktop, iPhone) chạy các test kéo chuột, Carousel, bàn phím, luồng chính của docs và bố cục
+            mobile. Kiểm tra a11y (axe) chỉ chạy trên Chromium vì kết quả không phụ thuộc engine. Khác biệt đã biết:
+          </p>
+          <SimpleTable
+            head={["Engine", "Khác biệt", "Ảnh hưởng"]}
+            rows={[
+              ["Safari / WebKit", "Click chuột không đặt focus vào nút (hành vi mặc định của macOS).", "Không đổi hành vi component. Khi kiểm thử focus, hãy thao tác bằng bàn phím."],
+              ["Firefox, WebKit", <>Playwright không giả lập được chạm-kéo (<C>Input.dispatchTouchEvent</C> chỉ có trên Chromium).</>, "Kéo Sheet và vuốt Carousel chỉ được kiểm thử tự động trên Chromium; trên iOS cần thử bằng tay."],
+              ["Firefox, WebKit", "Không cho trang đọc clipboard nếu người dùng chưa cho phép.", <>Nút Copy chỉ ghi (<C>navigator.clipboard.writeText</C> trong sự kiện click) nên chạy trên mọi engine.</>],
             ]}
           />
         </div>

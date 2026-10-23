@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { CliError } from "../lib/errors.js";
+import { CONFIG_FILE } from "../lib/constants.js";
 import { tmpDir, viteProject, writeFiles, writeRegistry } from "../test/fixtures.js";
 import { add } from "./add.js";
 import { create, loadTemplates, toPackageName } from "./create.js";
@@ -157,6 +158,14 @@ describe("doctor", () => {
     expect((await diagnose({ cwd, offline: true })).find((c) => c.message.includes("not imported"))?.level).toBe("error");
     fs.writeFileSync(path.join(cwd, "src/index.css"), '@import "yugen-ui/theme.css";\n@import "tailwindcss";\n');
     expect((await diagnose({ cwd, offline: true })).find((c) => c.message.includes("before"))?.level).toBe("error");
+  });
+
+  it("treats an app with yugen-ui installed and no yugen.json as package mode", async () => {
+    const cwd = tmpDir();
+    const { target } = await create({ cwd, dir: "app", template: "starter", install: false, git: false, templatesDir: repoTemplates }, ctx);
+    const checks = await diagnose({ cwd: target, offline: true });
+    expect(checks.find((c) => c.message.includes(CONFIG_FILE))).toMatchObject({ level: "ok", message: expect.stringMatching(/^Package mode/) });
+    await expect(add({ cwd: target, names: ["button"] }, ctx)).resolves.toBeUndefined();
   });
 
   it("compares versions", () => {

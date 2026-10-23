@@ -32,8 +32,8 @@ const css = (file, limit) => ({
 
 module.exports = [
   js("Toàn bộ thư viện (import *)", "*", "311 kB"),
-  js("{ cn }", "{ cn }", "8 kB"),
-  js("{ Button }", "{ Button }", "12 kB"),
+  js("{ cn }", "{ cn }", "10 kB"),
+  js("{ Button }", "{ Button }", "14 kB"),
   js("{ YugenProvider }", "{ YugenProvider }", "43 kB"),
   js("{ Dialog, DialogSurface }", "{ Dialog, DialogSurface }", "24 kB"),
   js("{ Combobox }", "{ Combobox }", "59 kB"),

@@ -18,7 +18,7 @@ export const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
     return (
       <span
         className={cn(
-          "group/checkbox inline-flex items-center gap-S py-SNudge",
+          "group/checkbox inline-flex items-center gap-2 py-1.5",
           labelPosition === "before" && "flex-row-reverse",
           disabled ? "cursor-not-allowed" : "cursor-pointer",
         )}

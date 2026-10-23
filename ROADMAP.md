@@ -10,18 +10,6 @@ Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. 
 
 ## Đang làm
 
-### 0.10.0 · minor · hạn 2027-01-29
-
-Thang spacing theo số và trải nghiệm docs.
-
-- [ ] Spacing theo thang số (p-3, gap-5); class viết hoa vẫn chạy nhưng được đánh dấu deprecated (#42)
-- [ ] Theme Designer: bo góc, mật độ, font, màu trung tính, bóng, chuyển động (#44)
-- [ ] Trang Motion: hướng dẫn theo component, playground, xem trước giảm chuyển động (#45)
-- [ ] Sidebar docs kéo được độ rộng, thu gọn về dạng icon (#46)
-- [ ] Kiểm thử trên Firefox và WebKit theo lịch (#40)
-
-## Tiếp theo
-
 ### 1.0.0 · major
 
 API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện hoàn tất.
@@ -29,7 +17,7 @@ API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện
 - [ ] Rà soát API, gỡ deprecation, quyết định về React 18 và class spacing viết hoa (#65)
 - [ ] SEO: URL theo đường dẫn, prerender từng trang, sitemap (#63)
 
-## Sau đó
+## Tiếp theo
 
 ### Backlog
 
@@ -44,6 +32,7 @@ Chưa xếp lịch.
 
 Chi tiết ở trang Có gì mới (`#/news`) và `CHANGELOG.md`.
 
+- **0.10.0** (2026-10-23): Spacing theo thang số, Theme Designer và trang Motion
 - **0.9.0** (2026-10-23): React 19 và starter tối giản
 - **0.8.3** (2026-10-22): Lệnh tạo dự án chạy được trên PowerShell
 - **0.8.2** (2026-10-22): CLI @yugen-ui/cli

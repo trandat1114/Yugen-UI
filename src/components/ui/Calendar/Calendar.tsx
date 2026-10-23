@@ -57,7 +57,7 @@ function CalendarDayButton({ day, modifiers, className, ...props }: DayButtonPro
         "transition-colors duration-faster ease-easy-ease hover:bg-subtle-hover active:bg-subtle-pressed",
         modifiers.outside && "text-foreground-4",
         modifiers.today &&
-          "font-semibold text-brand-foreground-1 after:absolute after:bottom-XS after:left-1/2 after:h-0.5 after:w-3 after:-translate-x-1/2 after:rounded-circular after:bg-brand-stroke",
+          "font-semibold text-brand-foreground-1 after:absolute after:bottom-1 after:left-1/2 after:h-0.5 after:w-3 after:-translate-x-1/2 after:rounded-circular after:bg-brand-stroke",
         middle && "rounded-none bg-brand-background-2 text-foreground-1 hover:bg-brand-background-2-hover active:bg-brand-background-2-pressed",
         selected &&
           "bg-brand-background text-foreground-on-brand after:bg-foreground-on-brand hover:bg-brand-background-hover active:bg-brand-background-pressed",
@@ -100,15 +100,15 @@ export function Calendar({
         className={cn("w-fit text-body1 text-foreground-1", className)}
         classNames={{
           root: "",
-          months: "relative flex flex-wrap gap-L",
-          month: "flex flex-col gap-S",
-          month_caption: "flex h-8 items-center ps-S pe-18",
-          caption_label: "inline-flex items-center gap-XXS text-body1 font-semibold text-foreground-1",
-          nav: "absolute inset-e-0 top-0 z-10 flex items-center gap-XXS",
+          months: "relative flex flex-wrap gap-4",
+          month: "flex flex-col gap-2",
+          month_caption: "flex h-8 items-center ps-2 pe-18",
+          caption_label: "inline-flex items-center gap-0.5 text-body1 font-semibold text-foreground-1",
+          nav: "absolute inset-e-0 top-0 z-10 flex items-center gap-0.5",
           button_previous: navButtonClass,
           button_next: navButtonClass,
           chevron: "",
-          dropdowns: "flex items-center gap-XS",
+          dropdowns: "flex items-center gap-1",
           dropdown_root: "relative inline-flex items-center",
           dropdown: "absolute inset-0 cursor-pointer opacity-0",
           months_dropdown: "",
@@ -131,7 +131,7 @@ export function Calendar({
           range_middle: "",
           range_end: "",
           hidden: "invisible",
-          footer: "pt-S text-caption1 text-foreground-3",
+          footer: "pt-2 text-caption1 text-foreground-3",
           ...classNames,
         }}
         components={{ Chevron: CalendarChevron, DayButton: CalendarDayButton, ...components }}

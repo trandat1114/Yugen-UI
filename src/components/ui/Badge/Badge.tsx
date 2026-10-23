@@ -22,10 +22,10 @@ const badgeVariants = cva(
         subtle: "",
       },
       size: {
-        small: "h-4 min-w-4 gap-XXS px-XXS text-caption2 [&_svg]:size-3",
-        medium: "h-5 min-w-5 gap-XXS px-XS text-caption1 [&_svg]:size-3",
-        large: "h-6 min-w-6 gap-XXS px-XS text-caption1 [&_svg]:size-4",
-        "extra-large": "h-8 min-w-8 gap-XS px-S text-body1 [&_svg]:size-5",
+        small: "h-4 min-w-4 gap-0.5 px-0.5 text-caption2 [&_svg]:size-3",
+        medium: "h-5 min-w-5 gap-0.5 px-1 text-caption1 [&_svg]:size-3",
+        large: "h-6 min-w-6 gap-0.5 px-1 text-caption1 [&_svg]:size-4",
+        "extra-large": "h-8 min-w-8 gap-1 px-2 text-body1 [&_svg]:size-5",
       },
       shape: {
         circular: "rounded-circular",
@@ -77,7 +77,7 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
   ({ className, appearance, color, size, shape, icon, children, ...props }, ref) => (
     <span ref={ref} className={cn(badgeVariants({ appearance, color, size, shape }), className)} {...props}>
       {icon}
-      {children != null && <span className="px-XXS">{children}</span>}
+      {children != null && <span className="px-0.5">{children}</span>}
     </span>
   ),
 );

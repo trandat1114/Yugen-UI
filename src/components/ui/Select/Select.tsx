@@ -32,9 +32,9 @@ const selectVariants = cva(
   {
     variants: {
       size: {
-        small: "ps-S pe-6 text-caption1",
-        medium: "ps-M pe-9 text-body1",
-        large: "ps-M pe-11 text-body2",
+        small: "ps-2 pe-6 text-caption1",
+        medium: "ps-3 pe-9 text-body1",
+        large: "ps-3 pe-11 text-body2",
       },
     },
     defaultVariants: { size: "medium" },
@@ -42,9 +42,9 @@ const selectVariants = cva(
 );
 
 const ICON = {
-  small: { Icon: ChevronDown16Regular, className: "inset-e-SNudge size-4" },
-  medium: { Icon: ChevronDown20Regular, className: "inset-e-MNudge size-5" },
-  large: { Icon: ChevronDown24Regular, className: "inset-e-M size-6" },
+  small: { Icon: ChevronDown16Regular, className: "inset-e-1.5 size-4" },
+  medium: { Icon: ChevronDown20Regular, className: "inset-e-2.5 size-5" },
+  large: { Icon: ChevronDown24Regular, className: "inset-e-3 size-6" },
 } as const;
 
 const HEIGHT = { small: "h-6", medium: "h-8", large: "h-10" } as const;

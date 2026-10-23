@@ -8,7 +8,7 @@ import { OnThisPage, PageHeader } from "../blocks";
 export function ConceptPage({ slug }: { slug: string }) {
   const { t, locale, group, concept } = useLocale();
   const entry = CONCEPT_BY_SLUG[slug];
-  if (!entry) return <p className="py-XXXL text-body2 text-foreground-3">{t("concept.notFound", { slug })}</p>;
+  if (!entry) return <p className="py-8 text-body2 text-foreground-3">{t("concept.notFound", { slug })}</p>;
 
   // Tiếng Anh: dùng bản dịch nếu có (en/<slug>.tsx), không thì bản gốc tiếng Việt (App hiện thông báo chưa dịch).
   const EnPage = locale === "en" ? CONCEPT_EN_PAGES[slug] : undefined;
@@ -20,9 +20,9 @@ export function ConceptPage({ slug }: { slug: string }) {
   const next = CONCEPTS[index + 1];
 
   return (
-    <div className="flex gap-XXXL">
+    <div className="flex gap-8">
       <article key={slug} className="min-w-0 flex-1">
-        <nav className="flex items-center gap-XS pt-XL text-caption1 text-foreground-3">
+        <nav className="flex items-center gap-1 pt-5 text-caption1 text-foreground-3">
           <span>{t("nav.concepts")}</span>
           <ChevronRight12Regular className="rtl:-scale-x-100" />
           <span>{group(meta.group)}</span>
@@ -30,7 +30,7 @@ export function ConceptPage({ slug }: { slug: string }) {
           <span className="text-foreground-1">{meta.title}</span>
         </nav>
         <PageHeader title={meta.title} lead={meta.lead} />
-        <div lang={untranslated ? "vi" : undefined} className="pb-XXL">
+        <div lang={untranslated ? "vi" : undefined} className="pb-6">
           <Suspense
             fallback={
               <PageProgressFallback>
@@ -41,9 +41,9 @@ export function ConceptPage({ slug }: { slug: string }) {
             <Page />
           </Suspense>
         </div>
-        <div className="grid gap-M border-t border-stroke-2 pt-XL sm:grid-cols-2">
+        <div className="grid gap-3 border-t border-stroke-2 pt-5 sm:grid-cols-2">
           {prev ? (
-            <a href={`#/concepts/${prev.meta.slug}`} className="rounded-xlarge border border-stroke-2 p-L hover:bg-subtle-hover">
+            <a href={`#/concepts/${prev.meta.slug}`} className="rounded-xlarge border border-stroke-2 p-4 hover:bg-subtle-hover">
               <span className="text-caption1 text-foreground-3">{t("concept.prev")}</span>
               <span className="block text-body1 font-semibold">{concept(prev.meta).title}</span>
             </a>
@@ -53,7 +53,7 @@ export function ConceptPage({ slug }: { slug: string }) {
           {next && (
             <a
               href={`#/concepts/${next.meta.slug}`}
-              className="rounded-xlarge border border-stroke-2 p-L text-end hover:bg-subtle-hover"
+              className="rounded-xlarge border border-stroke-2 p-4 text-end hover:bg-subtle-hover"
             >
               <span className="text-caption1 text-foreground-3">{t("concept.next")}</span>
               <span className="block text-body1 font-semibold">{concept(next.meta).title}</span>

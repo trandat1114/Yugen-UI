@@ -26,7 +26,7 @@ Global   --brand-80, --grey-14, --shared-teal          (giá trị thô, chỉ t
   ↓
 Alias    --colorBrandBackground, --spacingM, --shadow16  (tên Fluent UI v9)
   ↓
-Utility  bg-brand-background, p-M, shadow-16            (component chỉ dùng lớp này)
+Utility  bg-brand-background, p-3, shadow-16            (component chỉ dùng lớp này)
 ```
 
 Theme / brand đổi bằng `data-theme` / `data-brand` trên bất kỳ phần tử nào → lồng theme được. Chi tiết: Design.md §2–§4.
@@ -54,7 +54,7 @@ Theme / brand đổi bằng `data-theme` / `data-brand` trên bất kỳ phần 
 | Quyết định | Lý do |
 |---|---|
 | Tailwind v4 CSS-first, reset scale mặc định | Buộc dùng token, không lẫn `bg-blue-500` |
-| Spacing hậu tố viết hoa (`p-M`) | Không va chạm thang container của Tailwind (`max-w-xl`) |
+| Spacing theo thang số của Tailwind (`p-3`) | Ramp Fluent trùng thang 4px của Tailwind; code từ shadcn/ui dùng thẳng được. Alias viết hoa (`p-M`) deprecated từ 0.10 (#42) |
 | Radix + cmdk + react-day-picker | Hành vi & a11y đã được kiểm chứng |
 | Chart SVG tự viết | Kiểm soát màu theo token, a11y (bảng dữ liệu, bàn phím), không thêm dependency nặng |
 | Logical properties + `rtl:` | RTL không cần code riêng |

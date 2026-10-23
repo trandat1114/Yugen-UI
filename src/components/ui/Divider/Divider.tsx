@@ -33,17 +33,17 @@ export const Divider = React.forwardRef<HTMLDivElement, DividerProps>(
           vertical
             ? "min-h-5 shrink-0 grow-0 flex-col self-stretch before:min-h-2 before:border-s after:min-h-2 after:border-s"
             : "w-full grow flex-row before:min-w-2 before:border-t after:min-w-2 after:border-t",
-          hasContent && (vertical ? "before:mb-M after:mt-M" : "before:me-M after:ms-M"),
+          hasContent && (vertical ? "before:mb-3 after:mt-3" : "before:me-3 after:ms-3"),
           alignContent === "start" && (vertical ? "before:max-h-2" : "before:max-w-2"),
           alignContent === "end" && (vertical ? "after:max-h-2" : "after:max-w-2"),
-          inset && (vertical ? "my-M" : "px-M"),
+          inset && (vertical ? "my-3" : "px-3"),
           APPEARANCE[appearance],
           "[&_svg]:size-4 [&_svg]:shrink-0",
           className,
         )}
         {...props}
       >
-        {hasContent && <div className="flex items-center gap-XS">{children}</div>}
+        {hasContent && <div className="flex items-center gap-1">{children}</div>}
       </div>
     );
   },

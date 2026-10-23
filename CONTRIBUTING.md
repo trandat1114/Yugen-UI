@@ -33,6 +33,7 @@ npm run dev          # trang docs tại http://localhost:5173
 | `npm test` | Unit + tương tác (Vitest + Testing Library, `src/**/*.test.ts(x)`) |
 | `npm run test:e2e` | Playwright trên trang docs: axe (a11y), kéo chuột, chạm mô phỏng |
 | `npm run test:visual` | So sánh ảnh chụp (project `visual` của Playwright) |
+| `npm run test:engines` | E2E tương tác trên Firefox và WebKit (Safari desktop, iPhone) |
 | `npm run size` | Ngân sách dung lượng gói (`size-limit`, chạy sau `build:lib`) |
 | `npm run changeset` | Thêm changeset cho PR (`npx changeset`) |
 | `npm run check:release` | Kiểm tra `package.json` = `src/docs/news.ts` = `CHANGELOG.md` |
@@ -54,6 +55,8 @@ npm run dev          # trang docs tại http://localhost:5173
   component, style hoặc khung docs. Trên Windows / macOS, lần chạy đầu tạo ảnh riêng cho máy bạn (gitignore). Cố ý đổi
   giao diện: chạy workflow **Visual regression** trên nhánh của bạn (Actions → Run workflow, tick `update`), tải artifact
   `visual-screenshots`, chép vào `e2e/__screenshots__/` rồi commit. Workflow không tự commit.
+- `npm run test:engines` — cần `npx playwright install firefox webkit` một lần. CI chạy hằng tuần, trên PR vào `main` và
+  trên PR có đổi `e2e/` hoặc `playwright.config.ts` (workflow **Browser engines**), không chạy trên mọi PR. Test chạm-kéo dùng CDP nên chỉ chạy trên Chromium.
 - `npm run size` — sau `npm run build:lib`. Vượt ngân sách thì tìm nguyên nhân trước (import thừa, dependency mới);
   tăng có chủ đích thì sửa `limit` trong `.size-limit.cjs` và ghi lý do trong PR.
 - Repo chạy React 19; CI chạy thêm typecheck, test và build:lib bằng React 18.3 (job `react-18`) vì bản này vẫn được
@@ -64,7 +67,7 @@ npm run dev          # trang docs tại http://localhost:5173
 
 1. Không hard-code HEX/rgb, px, ms, cubic-bezier trong `.tsx` — chỉ dùng utility map từ token.
 2. Palette mặc định của Tailwind đã tắt (`bg-blue-500`, `rounded-lg`, `shadow-md`, `text-sm` không tồn tại).
-3. Spacing dùng hậu tố Fluent viết hoa: `p-M`, `gap-S`, `px-XL`. Cỡ chữ chỉ dùng type ramp `text-caption2 … text-display`.
+3. Spacing dùng thang số trong ramp Fluent: `p-3`, `gap-2`, `px-5` (Design.md §3.2). Cỡ chữ chỉ dùng type ramp `text-caption2 … text-display`.
 4. Luôn gộp class bằng `cn()` (`src/lib/cn.ts`), không dùng `twMerge` gốc.
 5. Không dùng `dark:`; chỉ dùng thuộc tính logic (`ms/me/ps/pe/start/end`) để RTL hoạt động.
 6. Neutral cho bề mặt/chữ/viền · Brand chỉ cho CTA, trạng thái chọn, focus, link · Semantic chỉ cho trạng thái.
@@ -182,7 +185,7 @@ npx changeset    # chọn yugen-ui → patch hoặc minor → viết tóm tắt 
 - [ ] `npm run typecheck`, `npm run lint:classes`, `npm test`, `npm run build:lib`, `npm run build:docs` đều pass.
 - [ ] `npm run test:e2e` pass (component có giao diện / tương tác mới); `npm run size` vẫn trong ngân sách.
 - [ ] Check **Visual (compare)** xanh, hoặc đã chụp lại baseline ngay trong PR khi cố ý đổi giao diện.
-- [ ] Không HEX/px/ms tuỳ ý; spacing viết hoa; cỡ chữ theo type ramp; dùng class dùng chung (Design.md §5.7).
+- [ ] Không HEX/px/ms tuỳ ý; spacing theo thang số; cỡ chữ theo type ramp; dùng class dùng chung (Design.md §5.7).
 - [ ] Màu đúng vai trò; không brand diện tích lớn; không gradient trên control.
 - [ ] Đủ trạng thái hover / pressed / disabled / focus-visible; bàn phím hoạt động; đã thử RTL.
 - [ ] Đã kiểm tra Sakura / Web / Teams × Light / Dark và High contrast.
@@ -218,7 +221,7 @@ nếu thiếu. Trước khi tag: `npm run check:release --prefix packages/cli --
 Requires Node.js **24 LTS** (or 22.22+) and npm. Run `npm install`, then `npm run dev` (docs site at http://localhost:5173).
 Scripts: `typecheck`, `lint:classes` (Tailwind canonical classes; `node scripts/canonical-classes.mjs --fix`
 repairs them), `build:lib` (library → `dist/`), `build:docs` (docs → `dist-docs/`), `build` (both), `pack:check`,
-`test`, `test:e2e`, `test:visual`, `size`, `changeset`, `check:release`.
+`test`, `test:e2e`, `test:visual`, `test:engines`, `size`, `changeset`, `check:release`.
 
 ### Tests
 
@@ -232,6 +235,9 @@ repairs them), `build:lib` (library → `dist/`), `build:docs` (docs → `dist-d
   first run creates baselines for your machine (gitignored). After an intended visual change, run the **Visual
   regression** workflow on your branch (tick `update`), download the `visual-screenshots` artifact, copy it into
   `e2e/__screenshots__/` and commit. The workflow never commits.
+- `npm run test:engines` — interaction E2E on Firefox and WebKit (Safari desktop, iPhone); run
+  `npx playwright install firefox webkit` once. CI runs it weekly, on PRs into `main` and on PRs that change
+  `e2e/` or `playwright.config.ts` (the **Browser engines** workflow), not on every PR. Touch-drag tests go through CDP, so they run on Chromium only.
 - `npm run size` — size budgets (`.size-limit.cjs`), after `npm run build:lib`. If a budget fails, find the cause
   first; raise a `limit` only on purpose, and say why in the PR.
 - The repo runs React 19; CI also runs typecheck, unit tests and the library build against React 18.3 (`react-18` job),
@@ -241,7 +247,7 @@ repairs them), `build:lib` (library → `dist/`), `build:docs` (docs → `dist-d
 ### Rules
 
 [Design.md](./Design.md) is mandatory. In short: only token-mapped utilities (no raw HEX/px/ms), Tailwind's
-default palette is disabled, upper-case Fluent spacing (`p-M`, `gap-S`), type-ramp font sizes only, always merge
+default palette is disabled, numeric spacing on the Fluent ramp (`p-3`, `gap-2`), type-ramp font sizes only, always merge
 classes with `cn()`, no `dark:` variant, logical properties only (RTL), brand colour only for CTAs / selection /
 focus / links, gradients never on controls, WCAG contrast (4.5:1 text, 3:1 UI), Radix / `cmdk` /
 `react-day-picker` for behaviour and `@fluentui/react-icons` for icons.

@@ -10,14 +10,14 @@ function P({ children }: { children: ReactNode }) {
 }
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function Labeled({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div className="flex min-w-0 flex-col gap-S">
+    <div className="flex min-w-0 flex-col gap-2">
       <span className="font-mono text-caption1 text-brand-foreground-1">{label}</span>
-      <div className="w-64 max-w-full rounded-medium border border-dashed border-stroke-1 p-S">{children}</div>
+      <div className="w-64 max-w-full rounded-medium border border-dashed border-stroke-1 p-2">{children}</div>
     </div>
   );
 }
@@ -70,7 +70,7 @@ const HOW_CODE = `{/* Một dòng: cần một chiều rộng giới hạn; tron
 <Text truncate wrap={false} block>…</Text>
 
 {/* Trong flex: thiếu min-w-0 thì truncate không có tác dụng */}
-<div className="flex items-center gap-S">
+<div className="flex items-center gap-2">
   <Document20Regular className="shrink-0" />
   <span className="min-w-0 flex-1 truncate">…</span>
 </div>`;
@@ -107,15 +107,15 @@ export default function Page() {
         title="Ưu tiên xuống dòng"
         description="Chữ bị cắt là nội dung bị giấu: người phóng to màn hình, bản dịch dài hơn (tiếng Việt thường dài hơn tiếng Anh 20–30%) và người dùng cảm ứng là những người mất nhiều nhất."
       >
-        <div className="flex flex-col gap-L">
-          <div className="flex flex-wrap items-start gap-XL rounded-2xlarge border border-stroke-2 bg-background-1 p-XXL">
-            <div className="flex flex-col gap-S">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-wrap items-start gap-5 rounded-2xlarge border border-stroke-2 bg-background-1 p-6">
+            <div className="flex flex-col gap-2">
               <span className="text-caption1 font-semibold text-success-foreground-1">✓ Xuống dòng</span>
               <Card className="w-72">
                 <CardHeader image={<Document20Regular />} header={<span className="wrap-break-word">{LONG_TITLE}</span>} description="Cập nhật hôm qua" />
               </Card>
             </div>
-            <div className="flex flex-col gap-S">
+            <div className="flex flex-col gap-2">
               <span className="text-caption1 font-semibold text-danger-foreground-1">✕ Cắt không cần thiết</span>
               <Card className="w-72">
                 <CardHeader image={<Document20Regular />} header={<span className="block truncate">{LONG_TITLE}</span>} description="Cập nhật hôm qua" />
@@ -135,8 +135,8 @@ export default function Page() {
         title="Cách cắt"
         description="Ba công cụ, cùng một điều kiện: phần tử phải có chiều rộng giới hạn."
       >
-        <div className="flex flex-col gap-L">
-          <div className="flex flex-wrap gap-XL rounded-2xlarge border border-stroke-2 bg-background-1 p-XXL">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-wrap gap-5 rounded-2xlarge border border-stroke-2 bg-background-1 p-6">
             <Labeled label="truncate">
               <p className="truncate text-body1 text-foreground-1">{LONG_TITLE}</p>
             </Labeled>
@@ -149,7 +149,7 @@ export default function Page() {
               </Text>
             </Labeled>
             <Labeled label="flex + min-w-0">
-              <div className="flex items-center gap-S text-body1 text-foreground-1">
+              <div className="flex items-center gap-2 text-body1 text-foreground-1">
                 <Document20Regular className="shrink-0 text-foreground-3" />
                 <span className="min-w-0 flex-1 truncate">{LONG_FILE}</span>
                 <Button size="small" appearance="subtle" icon={<MoreHorizontal20Regular />} aria-label="Thêm thao tác" />
@@ -172,16 +172,16 @@ export default function Page() {
         title="Cho xem toàn văn"
         description="Mỗi chuỗi bị cắt cần một đường tới nội dung đầy đủ, dùng được bằng chuột, bàn phím và cảm ứng."
       >
-        <div className="flex flex-col gap-L">
-          <div className="flex flex-col gap-M rounded-2xlarge border border-stroke-2 bg-background-1 p-XXL">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3 rounded-2xlarge border border-stroke-2 bg-background-1 p-6">
             <p className="text-caption1 text-foreground-3">Rê chuột hoặc Tab tới từng link — chỉ link bị cắt mới hiện tooltip.</p>
-            <div className="flex w-72 max-w-full flex-col gap-S">
+            <div className="flex w-72 max-w-full flex-col gap-2">
               <TruncatedLink href="#/files/1">{LONG_FILE}</TruncatedLink>
               <TruncatedLink href="#/files/2">Ngân-sách-2027.xlsx</TruncatedLink>
             </div>
           </div>
           <CodeBlock code={TOOLTIP_CODE} />
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>
               Đặt tooltip lên phần tử <strong className="font-semibold">vốn đã focus được</strong> (link, nút, ô của bảng có tương tác).
               Đừng thêm <C>tabIndex</C> cho đoạn văn chỉ để có tooltip — hãy cho xuống dòng hoặc mở trang chi tiết.
@@ -199,11 +199,11 @@ export default function Page() {
         title="Không cắt nhãn chính của nút"
         description="“Xoá vĩnh…” hay “Gửi cho người…” biến một hành động rõ ràng thành câu đố. Nút có whitespace-nowrap và chiều rộng tối thiểu để nhãn luôn trọn vẹn."
       >
-        <div className="flex flex-col gap-L">
-          <div className="grid gap-L md:grid-cols-2">
-            <div className="flex flex-col gap-M rounded-xlarge border border-stroke-2 bg-background-1 p-L">
+        <div className="flex flex-col gap-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="flex flex-col gap-3 rounded-xlarge border border-stroke-2 bg-background-1 p-4">
               <span className="text-caption1 font-semibold text-success-foreground-1">✓ Rút gọn câu chữ hoặc dùng icon + tooltip</span>
-              <div className="flex flex-wrap items-center gap-S">
+              <div className="flex flex-wrap items-center gap-2">
                 <Button appearance="primary" icon={<Send20Regular />}>
                   Gửi duyệt
                 </Button>
@@ -212,9 +212,9 @@ export default function Page() {
                 </SimpleTooltip>
               </div>
             </div>
-            <div className="flex flex-col gap-M rounded-xlarge border border-stroke-2 bg-background-1 p-L">
+            <div className="flex flex-col gap-3 rounded-xlarge border border-stroke-2 bg-background-1 p-4">
               <span className="text-caption1 font-semibold text-danger-foreground-1">✕ Cắt nhãn để vừa chỗ</span>
-              <div className="flex flex-wrap items-center gap-S">
+              <div className="flex flex-wrap items-center gap-2">
                 <Button appearance="primary" className="max-w-32">
                   <span className="min-w-0 truncate">Lưu và gửi cho người duyệt</span>
                 </Button>

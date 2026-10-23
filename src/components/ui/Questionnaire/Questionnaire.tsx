@@ -143,7 +143,7 @@ export function formatQuestionAnswer(question: Question, value: AnswerValue | un
 /* ================================================================ Control cho từng loại câu hỏi */
 
 const choiceCardClass = cn(
-  "group/choice flex w-full cursor-pointer items-center gap-M rounded-large border border-stroke-1 bg-background-1 px-M py-S text-start text-foreground-1",
+  "group/choice flex w-full cursor-pointer items-center gap-3 rounded-large border border-stroke-1 bg-background-1 px-3 py-2 text-start text-foreground-1",
   "transition-colors duration-faster ease-easy-ease",
   "hover:border-stroke-1-hover hover:bg-background-1-hover active:bg-background-1-pressed",
   "data-[state=checked]:border-brand-stroke data-[state=checked]:bg-brand-background-2 data-[state=checked]:hover:bg-brand-background-2-hover",
@@ -219,7 +219,7 @@ function QuestionControl({ question: q, value, onChange, controlProps, showKeys 
   switch (q.type) {
     case "single":
       return (
-        <RadioGroup {...aria} value={typeof value === "string" ? value : ""} onValueChange={onChange} className="w-full items-stretch gap-S">
+        <RadioGroup {...aria} value={typeof value === "string" ? value : ""} onValueChange={onChange} className="w-full items-stretch gap-2">
           {q.options.map((option, i) => (
             <RadioGroupPrimitive.Item
               key={option.value}
@@ -239,7 +239,7 @@ function QuestionControl({ question: q, value, onChange, controlProps, showKeys 
       const selected = Array.isArray(value) ? value : [];
       const atMax = q.max !== undefined && selected.length >= q.max;
       return (
-        <div role="group" {...aria} className="flex w-full flex-col gap-S">
+        <div role="group" {...aria} className="flex w-full flex-col gap-2">
           {q.options.map((option, i) => {
             const checked = selected.includes(option.value);
             return (
@@ -289,13 +289,13 @@ function QuestionControl({ question: q, value, onChange, controlProps, showKeys 
       const max = q.max ?? 10;
       const range = Array.from({ length: max - min + 1 }, (_, k) => min + k);
       return (
-        <div className="flex w-full flex-col gap-XS">
+        <div className="flex w-full flex-col gap-1">
           <RadioGroup
             {...aria}
             layout="horizontal"
             value={typeof value === "number" ? String(value) : ""}
             onValueChange={(v) => onChange(Number(v))}
-            className="w-full flex-nowrap gap-XXS"
+            className="w-full flex-nowrap gap-0.5"
           >
             {range.map((n) => (
               <RadioGroupPrimitive.Item
@@ -314,7 +314,7 @@ function QuestionControl({ question: q, value, onChange, controlProps, showKeys 
             ))}
           </RadioGroup>
           {(q.minLabel || q.maxLabel) && (
-            <div aria-hidden className="flex justify-between gap-M text-caption1 text-foreground-3">
+            <div aria-hidden className="flex justify-between gap-3 text-caption1 text-foreground-3">
               <span>{q.minLabel}</span>
               <span className="text-end">{q.maxLabel}</span>
             </div>
@@ -340,7 +340,7 @@ function QuestionControl({ question: q, value, onChange, controlProps, showKeys 
     case "longText": {
       const text = typeof value === "string" ? value : "";
       return (
-        <div className="flex w-full flex-col gap-XXS">
+        <div className="flex w-full flex-col gap-0.5">
           <Textarea
             {...aria}
             className="w-full"
@@ -370,7 +370,7 @@ function QuestionControl({ question: q, value, onChange, controlProps, showKeys 
           layout="horizontal"
           value={value === true ? "yes" : value === false ? "no" : ""}
           onValueChange={(v) => onChange(v === "yes")}
-          className="grid w-full grid-cols-2 gap-S"
+          className="grid w-full grid-cols-2 gap-2"
         >
           {options.map((option) => (
             <RadioGroupPrimitive.Item
@@ -635,7 +635,7 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
     const header = (title || description) && (
       <div>
         {title && <h2 className="font-display text-subtitle1 font-semibold text-foreground-1">{title}</h2>}
-        {description && <p className="mt-XXS text-body1 text-foreground-2">{description}</p>}
+        {description && <p className="mt-0.5 text-body1 text-foreground-2">{description}</p>}
       </div>
     );
 
@@ -655,16 +655,16 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
                 ? "Nhấn phím số để chọn"
                 : null;
       return (
-        <div data-question-id={q.id} className="flex flex-col gap-M">
-          <div className="flex items-start gap-S">
-            <span aria-hidden className="mt-XXS inline-flex shrink-0 items-center gap-XXS text-body1 font-semibold text-brand-foreground-1 tabular-nums">
+        <div data-question-id={q.id} className="flex flex-col gap-3">
+          <div className="flex items-start gap-2">
+            <span aria-hidden className="mt-0.5 inline-flex shrink-0 items-center gap-0.5 text-body1 font-semibold text-brand-foreground-1 tabular-nums">
               {i + 1}
               <ArrowRight20Regular className="size-4 rtl:-scale-x-100" />
             </span>
             <h3 id={labelId} className="font-display text-subtitle1 font-semibold text-foreground-1">
               {q.title}
               {q.required && (
-                <span aria-hidden className="ps-XS text-danger-foreground-1">
+                <span aria-hidden className="ps-1 text-danger-foreground-1">
                   *
                 </span>
               )}
@@ -672,7 +672,7 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
             </h3>
           </div>
           {q.description && (
-            <p id={descId} className="-mt-S text-body1 text-foreground-2">
+            <p id={descId} className="-mt-2 text-body1 text-foreground-2">
               {q.description}
             </p>
           )}
@@ -689,7 +689,7 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
             }}
           />
           {error && (
-            <p id={errId} role="alert" className="flex items-center gap-XS text-caption1 text-danger-foreground-1">
+            <p id={errId} role="alert" className="flex items-center gap-1 text-caption1 text-danger-foreground-1">
               <ErrorCircle12Filled className="shrink-0" />
               {error}
             </p>
@@ -700,20 +700,20 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
     };
 
     const reviewView = (
-      <div className="flex flex-col gap-M">
+      <div className="flex flex-col gap-3">
         <div>
           <h3 data-autofocus tabIndex={-1} className="font-display text-subtitle1 font-semibold text-foreground-1">
             Xem lại câu trả lời
           </h3>
-          <p className="mt-XXS text-body1 text-foreground-2">Kiểm tra lần cuối trước khi gửi. Chọn “Sửa” để thay đổi.</p>
+          <p className="mt-0.5 text-body1 text-foreground-2">Kiểm tra lần cuối trước khi gửi. Chọn “Sửa” để thay đổi.</p>
         </div>
         <dl className="flex flex-col divide-y divide-stroke-2 rounded-large border border-stroke-2">
           {questions.map((q, i) => (
-            <div key={q.id} className="flex flex-wrap items-center gap-x-M gap-y-XXS px-M py-S">
+            <div key={q.id} className="flex flex-wrap items-center gap-x-3 gap-y-0.5 px-3 py-2">
               <dt className="min-w-0 flex-1 basis-60 text-body1 text-foreground-2">
                 {i + 1}. {q.title}
               </dt>
-              <dd className="flex min-w-0 items-center gap-S">
+              <dd className="flex min-w-0 items-center gap-2">
                 <span className={cn("text-body1 font-semibold wrap-break-word", isEmpty(answers[q.id]) ? "text-foreground-3" : "text-foreground-1")}>
                   {formatQuestionAnswer(q, answers[q.id])}
                 </span>
@@ -729,7 +729,7 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
           ))}
         </dl>
         {submitError && (
-          <p role="alert" className="flex items-center gap-XS text-caption1 text-danger-foreground-1">
+          <p role="alert" className="flex items-center gap-1 text-caption1 text-danger-foreground-1">
             <ErrorCircle12Filled className="shrink-0" />
             {submitError}
           </p>
@@ -747,11 +747,11 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
           {completion}
         </div>
       ) : (
-        <div data-autofocus tabIndex={-1} className="flex flex-col items-center gap-S py-XL text-center">
+        <div data-autofocus tabIndex={-1} className="flex flex-col items-center gap-2 py-5 text-center">
           <CheckmarkCircle48Regular aria-hidden className="text-success-foreground-1" />
           <h3 className="font-display text-title3 font-semibold text-foreground-1">Cảm ơn bạn!</h3>
           <p className="max-w-sm text-body1 text-foreground-2">Câu trả lời của bạn đã được ghi nhận.</p>
-          <Button className="mt-S" onClick={restart}>
+          <Button className="mt-2" onClick={restart}>
             Làm lại
           </Button>
         </div>
@@ -765,8 +765,8 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
     );
 
     const rootClass = cn(
-      "flex w-full min-w-0 flex-col gap-L text-foreground-1",
-      appearance === "outline" && "rounded-xlarge border border-stroke-2 bg-background-1 p-XL shadow-2",
+      "flex w-full min-w-0 flex-col gap-4 text-foreground-1",
+      appearance === "outline" && "rounded-xlarge border border-stroke-2 bg-background-1 p-5 shadow-2",
       className,
     );
 
@@ -779,7 +779,7 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
             {phase === "form" && (
               <form
                 noValidate
-                className="flex flex-col gap-XL"
+                className="flex flex-col gap-5"
                 onSubmit={(e) => {
                   e.preventDefault();
                   if (review) toReview();
@@ -809,12 +809,12 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
                   </div>
                 ))}
                 {submitError && (
-                  <p role="alert" className="flex items-center gap-XS text-caption1 text-danger-foreground-1">
+                  <p role="alert" className="flex items-center gap-1 text-caption1 text-danger-foreground-1">
                     <ErrorCircle12Filled className="shrink-0" />
                     {submitError}
                   </p>
                 )}
-                <div className="flex justify-end gap-S">
+                <div className="flex justify-end gap-2">
                   <Button type="submit" appearance="primary" disabled={submitting}>
                     {submitting && <Spinner size="extra-tiny" appearance="inverted" aria-hidden />}
                     {review ? "Xem lại" : submitting ? "Đang gửi…" : submitLabel}
@@ -823,9 +823,9 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
               </form>
             )}
             {phase === "review" && (
-              <div className="flex flex-col gap-L">
+              <div className="flex flex-col gap-4">
                 {reviewView}
-                <div className="flex justify-between gap-S">
+                <div className="flex justify-between gap-2">
                   <Button appearance="subtle" icon={<ArrowLeft20Regular className="rtl:-scale-x-100" />} onClick={() => go(0, "back")}>
                     Quay lại chỉnh sửa
                   </Button>
@@ -848,7 +848,7 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
         {header}
 
         {phase !== "done" && (
-          <div className="flex flex-col gap-XS">
+          <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between text-caption1 text-foreground-3 tabular-nums">
               <span>{phase === "review" ? "Xem lại" : `Câu ${index + 1}/${total}`}</span>
               <span>{Math.round(progress * 100)}%</span>
@@ -862,8 +862,8 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
           </div>
         )}
 
-        {/* Cắt phần trượt ngang; px-XS chừa chỗ cho viền focus. */}
-        <div ref={contentRef} className="-mx-XS min-h-48 overflow-x-clip px-XS">
+        {/* Cắt phần trượt ngang; px-1 chừa chỗ cho viền focus. */}
+        <div ref={contentRef} className="-mx-1 min-h-48 overflow-x-clip px-1">
           {phase === "form" && current && (
             <Slide key={`q-${index}`} visible appear from={direction === "forward" ? "end" : "start"} duration="gentle">
               {renderStepperQuestion(current, index)}
@@ -882,7 +882,7 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
         </div>
 
         {phase !== "done" && (
-          <div className="flex items-center justify-between gap-S">
+          <div className="flex items-center justify-between gap-2">
             <Button
               appearance="subtle"
               icon={<ArrowLeft20Regular className="rtl:-scale-x-100" />}
@@ -892,8 +892,8 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
               Quay lại
             </Button>
             {phase === "form" ? (
-              <div className="flex items-center gap-S">
-                <span className="hidden items-center gap-XS text-caption1 text-foreground-3 sm:inline-flex">
+              <div className="flex items-center gap-2">
+                <span className="hidden items-center gap-1 text-caption1 text-foreground-3 sm:inline-flex">
                   hoặc nhấn <Kbd size="small">Enter ↵</Kbd>
                 </span>
                 <Button

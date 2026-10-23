@@ -34,15 +34,15 @@ export function PageHeader({
   children?: React.ReactNode;
 }) {
   return (
-    <header className="pt-XXXL pb-XL">
+    <header className="pt-8 pb-5">
       {eyebrow && (
-        <p className="mb-S text-caption1 font-semibold tracking-[0.12em] text-foreground-3 uppercase">{eyebrow}</p>
+        <p className="mb-2 text-caption1 font-semibold tracking-[0.12em] text-foreground-3 uppercase">{eyebrow}</p>
       )}
       <h1 className="font-display text-[clamp(40px,6vw,64px)] leading-[1.1] font-semibold tracking-[-0.02em] text-foreground-1">
         {title}
       </h1>
-      <p className="mt-L max-w-3xl text-subtitle1 font-normal text-foreground-1">{lead}</p>
-      {children && <div className="mt-L max-w-3xl text-body2 text-foreground-2">{children}</div>}
+      <p className="mt-4 max-w-3xl text-subtitle1 font-normal text-foreground-1">{lead}</p>
+      {children && <div className="mt-4 max-w-3xl text-body2 text-foreground-2">{children}</div>}
     </header>
   );
 }
@@ -60,10 +60,10 @@ export function DocSection({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} data-doc-section={title} className="scroll-mt-24 border-t border-stroke-2 pt-XXL pb-XXXL first:border-t-0">
+    <section id={id} data-doc-section={title} className="scroll-mt-24 border-t border-stroke-2 pt-6 pb-8 first:border-t-0">
       <h2 className="font-display text-title2 font-semibold text-foreground-1">{title}</h2>
-      {description && <p className="mt-S max-w-3xl text-body2 text-foreground-2">{description}</p>}
-      <div className="mt-XL">{children}</div>
+      {description && <p className="mt-2 max-w-3xl text-body2 text-foreground-2">{description}</p>}
+      <div className="mt-5">{children}</div>
     </section>
   );
 }
@@ -71,7 +71,7 @@ export function DocSection({
 /* ---------- Example frame (hero example with theme picker + code) ---------- */
 type FrameTheme = YugenTheme;
 
-const TOOL = "inline-flex h-7 shrink-0 items-center gap-XS whitespace-nowrap rounded-medium px-S text-caption1 font-semibold";
+const TOOL = "inline-flex h-7 shrink-0 items-center gap-1 whitespace-nowrap rounded-medium px-2 text-caption1 font-semibold";
 
 export function ExampleFrame({
   example,
@@ -96,7 +96,7 @@ export function ExampleFrame({
   return (
     <div className="overflow-hidden rounded-2xlarge border border-stroke-2 bg-background-1 shadow-2">
       {/* Một hàng, không xuống dòng: dưới sm chỉ còn icon (tên vẫn có cho trình đọc màn hình). */}
-      <div className="flex items-center gap-XS border-b border-stroke-2 px-S py-XS sm:px-L">
+      <div className="flex items-center gap-1 border-b border-stroke-2 px-2 py-1 sm:px-4">
         <Popover>
           <PopoverTrigger asChild>
             <button type="button" aria-label={`${t("appearance.title")}: ${lookLabel}`} className={cn(TOOL, "text-foreground-1 hover:bg-subtle-hover")}>
@@ -111,7 +111,7 @@ export function ExampleFrame({
           </PopoverSurface>
         </Popover>
 
-        <div className="ms-auto flex items-center gap-XS">
+        <div className="ms-auto flex items-center gap-1">
           <button
             type="button"
             onClick={() => setShowCode((v) => !v)}
@@ -144,7 +144,7 @@ export function ExampleFrame({
         brand={look.brand}
         dir={pageDir}
         withTooltipProvider={false}
-        className="flex min-h-48 flex-wrap content-center items-center justify-center gap-M bg-background-1 p-L transition-colors duration-normal sm:min-h-60 sm:p-XXL"
+        className="flex min-h-48 flex-wrap content-center items-center justify-center gap-3 bg-background-1 p-4 transition-colors duration-normal sm:min-h-60 sm:p-6"
       >
         {example.render()}
       </YugenProvider>
@@ -161,17 +161,17 @@ export function ExampleTile({ example }: { example: Example }) {
 
   return (
     <div className="flex min-w-0 flex-col">
-      <div className="group/tile relative flex min-h-56 flex-wrap content-center items-center justify-center gap-M rounded-3xlarge border border-stroke-2 bg-background-3 p-XL">
+      <div className="group/tile relative flex min-h-56 flex-wrap content-center items-center justify-center gap-3 rounded-3xlarge border border-stroke-2 bg-background-3 p-5">
         {example.render()}
         <CopyButton
           text={example.code}
-          className="absolute top-S inset-e-S bg-background-1 opacity-0 shadow-4 group-hover/tile:opacity-100 focus-visible:opacity-100 pointer-coarse:opacity-100"
+          className="absolute top-2 inset-e-2 bg-background-1 opacity-0 shadow-4 group-hover/tile:opacity-100 focus-visible:opacity-100 pointer-coarse:opacity-100"
         />
       </div>
-      <div className="mt-M flex items-start justify-between gap-M">
+      <div className="mt-3 flex items-start justify-between gap-3">
         <div>
           <h3 className="text-subtitle2 font-semibold text-foreground-1">{example.title}</h3>
-          {example.description && <p className="mt-XS text-body1 text-foreground-2">{example.description}</p>}
+          {example.description && <p className="mt-1 text-body1 text-foreground-2">{example.description}</p>}
         </div>
         <button
           type="button"
@@ -179,7 +179,7 @@ export function ExampleTile({ example }: { example: Example }) {
           aria-expanded={showCode}
           aria-label={showCode ? t("blocks.hideCode") : t("blocks.viewCode")}
           className={cn(
-            "inline-flex h-7 shrink-0 items-center gap-XS rounded-medium px-S text-caption1 font-semibold",
+            "inline-flex h-7 shrink-0 items-center gap-1 rounded-medium px-2 text-caption1 font-semibold",
             showCode ? "bg-brand-background-2 text-brand-foreground-1" : "text-foreground-2 hover:bg-subtle-hover",
           )}
         >
@@ -187,14 +187,14 @@ export function ExampleTile({ example }: { example: Example }) {
           Code
         </button>
       </div>
-      {showCode && <CodeBlock code={example.code} className="mt-S" />}
+      {showCode && <CodeBlock code={example.code} className="mt-2" />}
     </div>
   );
 }
 
 export function ExampleGrid({ examples, lang }: { examples: Example[]; lang?: string }) {
   return (
-    <div lang={lang} className="grid gap-x-XL gap-y-XXL md:grid-cols-2">
+    <div lang={lang} className="grid gap-x-5 gap-y-6 md:grid-cols-2">
       {examples.map((ex) => (
         <ExampleTile key={ex.title} example={ex} />
       ))}
@@ -208,12 +208,12 @@ export function DoDont({ dos, donts, contentLang }: { dos: string[]; donts: stri
   const column = (kind: "do" | "dont", items: string[]) => (
     <div
       className={cn(
-        "rounded-xlarge border border-stroke-2 bg-background-1 p-L",
+        "rounded-xlarge border border-stroke-2 bg-background-1 p-4",
         "border-t-4",
         kind === "do" ? "border-t-success-background-3" : "border-t-danger-background-3",
       )}
     >
-      <div className="mb-M flex items-center gap-S text-subtitle2 font-semibold">
+      <div className="mb-3 flex items-center gap-2 text-subtitle2 font-semibold">
         {kind === "do" ? (
           <CheckmarkCircle20Filled className="text-success-foreground-1" />
         ) : (
@@ -221,9 +221,9 @@ export function DoDont({ dos, donts, contentLang }: { dos: string[]; donts: stri
         )}
         {kind === "do" ? t("blocks.do") : t("blocks.dont")}
       </div>
-      <ul lang={contentLang} className="flex flex-col gap-S">
+      <ul lang={contentLang} className="flex flex-col gap-2">
         {items.map((item) => (
-          <li key={item} className="flex gap-S text-body1 text-foreground-2">
+          <li key={item} className="flex gap-2 text-body1 text-foreground-2">
             <span className="mt-2 size-1.5 shrink-0 rounded-circular bg-foreground-4" />
             <span>{item}</span>
           </li>
@@ -232,7 +232,7 @@ export function DoDont({ dos, donts, contentLang }: { dos: string[]; donts: stri
     </div>
   );
   return (
-    <div className="grid gap-L md:grid-cols-2">
+    <div className="grid gap-4 md:grid-cols-2">
       {column("do", dos)}
       {column("dont", donts)}
     </div>
@@ -248,21 +248,21 @@ export function PropsTable({ props, contentLang }: { props: PropDoc[]; contentLa
       <table className="w-full border-collapse text-left text-body1">
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
-            <th className="px-L py-S">Prop</th>
-            <th className="px-L py-S">{t("blocks.type")}</th>
-            <th className="px-L py-S">{t("blocks.default")}</th>
-            <th className="px-L py-S">{t("blocks.description")}</th>
+            <th className="px-4 py-2">Prop</th>
+            <th className="px-4 py-2">{t("blocks.type")}</th>
+            <th className="px-4 py-2">{t("blocks.default")}</th>
+            <th className="px-4 py-2">{t("blocks.description")}</th>
           </tr>
         </thead>
         <tbody>
           {props.map((p) => (
             <tr key={p.name} className="border-b border-stroke-3 align-top last:border-b-0">
-              <td className="px-L py-M font-mono text-[13px] font-semibold whitespace-nowrap text-brand-foreground-1">
+              <td className="px-4 py-3 font-mono text-[13px] font-semibold whitespace-nowrap text-brand-foreground-1">
                 {p.name}
               </td>
-              <td className="px-L py-M font-mono text-[13px] text-foreground-2">{p.type}</td>
-              <td className="px-L py-M font-mono text-[13px] whitespace-nowrap text-foreground-3">{p.defaultValue ?? "—"}</td>
-              <td lang={contentLang} className="px-L py-M text-foreground-2">{p.description}</td>
+              <td className="px-4 py-3 font-mono text-[13px] text-foreground-2">{p.type}</td>
+              <td className="px-4 py-3 font-mono text-[13px] whitespace-nowrap text-foreground-3">{p.defaultValue ?? "—"}</td>
+              <td lang={contentLang} className="px-4 py-3 text-foreground-2">{p.description}</td>
             </tr>
           ))}
         </tbody>
@@ -305,8 +305,8 @@ export function OnThisPage({ items }: { items: { id: string; label: string }[] }
   }, [items]);
 
   return (
-    <nav aria-label={t("blocks.onThisPage")} className="sticky top-24 mt-XL hidden w-52 shrink-0 self-start xl:block">
-      <p className="mb-M text-body1 font-semibold text-foreground-1">{t("blocks.onThisPage")}</p>
+    <nav aria-label={t("blocks.onThisPage")} className="sticky top-24 mt-5 hidden w-52 shrink-0 self-start xl:block">
+      <p className="mb-3 text-body1 font-semibold text-foreground-1">{t("blocks.onThisPage")}</p>
       <ul className="flex flex-col border-s border-stroke-2">
         {items.map((item) => (
           <li key={item.id}>
@@ -314,7 +314,7 @@ export function OnThisPage({ items }: { items: { id: string; label: string }[] }
               type="button"
               onClick={() => document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth" })}
               className={cn(
-                "-ms-px w-full border-s-2 py-XS ps-M text-start text-body1 transition-colors duration-faster",
+                "-ms-px w-full border-s-2 py-1 ps-3 text-start text-body1 transition-colors duration-faster",
                 active === item.id
                   ? "border-brand-stroke font-semibold text-foreground-1"
                   : "border-transparent text-foreground-3 hover:text-foreground-1",

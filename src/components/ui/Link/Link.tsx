@@ -55,7 +55,7 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
 
     const externalIcon = external ? (
       <>
-        <Open16Regular aria-hidden className="ms-XXS inline size-4 align-text-bottom" />
+        <Open16Regular aria-hidden className="ms-0.5 inline size-4 align-text-bottom" />
         <span className="sr-only"> (mở trong thẻ mới)</span>
       </>
     ) : null;

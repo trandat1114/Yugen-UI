@@ -8,7 +8,7 @@ function P({ children }: { children: ReactNode }) {
 }
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function Table({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
@@ -18,7 +18,7 @@ function Table({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
             {head.map((h) => (
-              <th key={h} scope="col" className="px-L py-S text-start">
+              <th key={h} scope="col" className="px-4 py-2 text-start">
                 {h}
               </th>
             ))}
@@ -28,7 +28,7 @@ function Table({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
           {rows.map((row, i) => (
             <tr key={i} className="border-b border-stroke-3 align-top last:border-b-0">
               {row.map((cell, j) => (
-                <td key={j} className={j === 0 ? "px-L py-M font-semibold text-foreground-1" : "px-L py-M text-foreground-2"}>
+                <td key={j} className={j === 0 ? "px-4 py-3 font-semibold text-foreground-1" : "px-4 py-3 text-foreground-2"}>
                   {cell}
                 </td>
               ))}
@@ -60,7 +60,7 @@ export default function Page() {
   return (
     <>
       <DocSection id="semver" title="Semantic Versioning" description="MAJOR.MINOR.PATCH — đọc số phiên bản là biết mức rủi ro khi nâng cấp.">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Table
             head={["Phần tăng", "Ý nghĩa", "Ví dụ"]}
             rows={[
@@ -90,8 +90,8 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="deprecation" title="Quy trình deprecate" description="Không có API nào biến mất mà không báo trước ít nhất một bản minor.">
-        <div className="flex flex-col gap-L">
-          <ol className="flex max-w-3xl list-decimal flex-col gap-S ps-XL text-body2 text-foreground-2">
+        <div className="flex flex-col gap-4">
+          <ol className="flex max-w-3xl list-decimal flex-col gap-2 ps-5 text-body2 text-foreground-2">
             <li>
               Bản minor thêm thay thế và đánh dấu API cũ bằng JSDoc <C>@deprecated</C> (gạch ngang trong editor) cùng cảnh báo{" "}
               <C>warnDeprecated()</C> — chỉ ở môi trường phát triển, mỗi API một lần, bị loại khỏi bản build production.
@@ -120,8 +120,8 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="upgrade" title="Nâng cấp an toàn">
-        <div className="flex flex-col gap-L">
-          <ol className="flex max-w-3xl list-decimal flex-col gap-S ps-XL text-body2 text-foreground-2">
+        <div className="flex flex-col gap-4">
+          <ol className="flex max-w-3xl list-decimal flex-col gap-2 ps-5 text-body2 text-foreground-2">
             <li>
               Đọc trang <a className="text-link underline hover:text-link-hover" href="#/news">Có gì mới</a> từ phiên bản hiện tại tới bản mới,
               chú ý mục “Thay đổi lớn”.

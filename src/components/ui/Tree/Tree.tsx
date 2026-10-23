@@ -331,7 +331,7 @@ export const TreeItemLayout = React.forwardRef<HTMLDivElement, TreeItemLayoutPro
         ref={ref}
         data-tree-layout=""
         className={cn(
-          "group/tree-layout relative flex cursor-pointer items-center gap-XS rounded-medium pe-S text-foreground-2",
+          "group/tree-layout relative flex cursor-pointer items-center gap-1 rounded-medium pe-2 text-foreground-2",
           "transition-colors duration-faster ease-easy-ease",
           small ? "min-h-6 text-caption1" : "min-h-8 text-body1",
           branch
@@ -366,10 +366,10 @@ export const TreeItemLayout = React.forwardRef<HTMLDivElement, TreeItemLayoutPro
         {iconBefore && <span className={iconClass}>{iconBefore}</span>}
         <span className="min-w-0 flex-1 truncate">{children}</span>
         {iconAfter && <span className={iconClass}>{iconAfter}</span>}
-        {aside && <span className="flex shrink-0 items-center gap-XS">{aside}</span>}
+        {aside && <span className="flex shrink-0 items-center gap-1">{aside}</span>}
         {actions && (
           <span
-            className="flex shrink-0 items-center gap-XXS opacity-0 transition-opacity duration-faster group-hover/tree-layout:opacity-100 focus-within:opacity-100"
+            className="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity duration-faster group-hover/tree-layout:opacity-100 focus-within:opacity-100"
             onClick={(event) => event.stopPropagation()}
           >
             {actions}

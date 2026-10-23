@@ -14,7 +14,7 @@ export function FallbackNotice({ partial, className }: { partial?: boolean; clas
   const { locale, t } = useLocale();
   if (locale !== "en") return null;
   return (
-    <MessageBar intent="info" className={cn("mt-XL", className)}>
+    <MessageBar intent="info" className={cn("mt-5", className)}>
       {t(partial ? "fallback.partial" : "fallback.page")}{" "}
       {SITE.links.repository && (
         <a href={TRANSLATION_GUIDE_URL} target="_blank" rel="noreferrer" className="text-link underline hover:text-link-hover">

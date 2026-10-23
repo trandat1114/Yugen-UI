@@ -11,7 +11,7 @@ import { cn } from "@/lib/cn";
 
 /** Fluent 2 MessageBar — https://fluent2.microsoft.design/components/web/react/core/messagebar/usage */
 const messageBarVariants = cva(
-  "flex min-h-9 w-full items-start gap-S rounded-medium border px-M py-SNudge text-body1 text-foreground-1",
+  "flex min-h-9 w-full items-start gap-2 rounded-medium border px-3 py-1.5 text-body1 text-foreground-1",
   {
     variants: {
       intent: {
@@ -61,18 +61,18 @@ export function MessageBar({
       {...props}
     >
       <Icon className={cn("mt-0.5 size-5 shrink-0", iconClass)} />
-      <div className={cn("min-w-0 flex-1 py-px", multiline ? "flex flex-col gap-XXS" : "flex flex-wrap items-baseline gap-x-XS")}>
+      <div className={cn("min-w-0 flex-1 py-px", multiline ? "flex flex-col gap-0.5" : "flex flex-wrap items-baseline gap-x-1")}>
         {title && <span className="font-semibold">{title}</span>}
         <span>{children}</span>
-        {multiline && actions && <div className="mt-S flex gap-S">{actions}</div>}
+        {multiline && actions && <div className="mt-2 flex gap-2">{actions}</div>}
       </div>
-      {!multiline && actions && <div className="flex shrink-0 items-center gap-S">{actions}</div>}
+      {!multiline && actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
       {onDismiss && (
         <button
           type="button"
           onClick={onDismiss}
           aria-label="Đóng thông báo"
-          className="-me-SNudge inline-flex size-6 shrink-0 items-center justify-center rounded-medium text-foreground-2 hover:bg-subtle-hover hover:text-foreground-1"
+          className="-me-1.5 inline-flex size-6 shrink-0 items-center justify-center rounded-medium text-foreground-2 hover:bg-subtle-hover hover:text-foreground-1"
         >
           <Dismiss20Regular className="size-4" />
         </button>

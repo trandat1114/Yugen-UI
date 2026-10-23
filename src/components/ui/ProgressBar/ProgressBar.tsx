@@ -88,7 +88,7 @@ export const ProgressBar = React.forwardRef<HTMLDivElement, ProgressBarProps>(
     if (!label && !description) return bar;
 
     return (
-      <div className={cn("flex w-full flex-col gap-XS", rootClassName)}>
+      <div className={cn("flex w-full flex-col gap-1", rootClassName)}>
         {label && (
           <span id={labelId} className="text-body1 text-foreground-1">
             {label}

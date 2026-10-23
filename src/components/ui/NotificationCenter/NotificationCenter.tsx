@@ -170,7 +170,7 @@ function NotificationRow({ item, now, onMarkRead, onDismiss, onItemClick, onBefo
   const intent = INTENT[item.intent ?? "info"];
 
   return (
-    <li ref={liRef} data-unread={unread || undefined} className="group/notification relative flex gap-M px-L py-M hover:bg-subtle-hover">
+    <li ref={liRef} data-unread={unread || undefined} className="group/notification relative flex gap-3 px-4 py-3 hover:bg-subtle-hover">
       <span className="shrink-0">
         {item.icon ? (
           <span aria-hidden className={cn("flex size-8 items-center justify-center rounded-circular [&_svg]:size-5", intent.className)}>
@@ -184,7 +184,7 @@ function NotificationRow({ item, now, onMarkRead, onDismiss, onItemClick, onBefo
           </span>
         )}
       </span>
-      <div className="flex min-w-0 flex-1 flex-col gap-XXS">
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <p className="min-w-0 wrap-break-word">
           {item.href ? (
             <a href={item.href} onClick={activate} className={titleClass}>
@@ -204,9 +204,9 @@ function NotificationRow({ item, now, onMarkRead, onDismiss, onItemClick, onBefo
           {now === null ? "" : formatRelativeTime(date, now)}
         </time>
       </div>
-      <div className="relative z-10 flex shrink-0 flex-col items-end gap-XS">
-        <span aria-hidden className={cn("mt-SNudge size-2 rounded-circular", unread ? "bg-brand-background" : "bg-transparent")} />
-        <div className="flex gap-XXS opacity-0 transition-opacity duration-faster group-focus-within/notification:opacity-100 group-hover/notification:opacity-100 pointer-coarse:opacity-100">
+      <div className="relative z-10 flex shrink-0 flex-col items-end gap-1">
+        <span aria-hidden className={cn("mt-1.5 size-2 rounded-circular", unread ? "bg-brand-background" : "bg-transparent")} />
+        <div className="flex gap-0.5 opacity-0 transition-opacity duration-faster group-focus-within/notification:opacity-100 group-hover/notification:opacity-100 pointer-coarse:opacity-100">
           {unread && onMarkRead && (
             <Button
               size="small"
@@ -307,10 +307,10 @@ export const NotificationPanel = React.forwardRef<HTMLDivElement, NotificationPa
 
     const renderList = (list: NotificationItem[], which: NotificationFilter) => {
       if (error) return <ErrorState size="small" title="Không tải được thông báo" description={error} onRetry={onRetry} />;
-      if (loading) return showSkeleton ? <SkeletonList rows={4} avatarSize={32} className="p-L" /> : null;
+      if (loading) return showSkeleton ? <SkeletonList rows={4} avatarSize={32} className="p-4" /> : null;
       if (list.length === 0) {
         return (
-          <Empty className="p-XL">
+          <Empty className="p-5">
             <EmptyHeader>
               <EmptyMedia>
                 <AlertOff20Regular />
@@ -338,7 +338,7 @@ export const NotificationPanel = React.forwardRef<HTMLDivElement, NotificationPa
         <div key={group.label} role="group" aria-labelledby={`${uid}-${which}-${g}`}>
           <h3
             id={`${uid}-${which}-${g}`}
-            className="sticky top-0 z-20 border-b border-stroke-3 bg-background-1 px-L py-XS text-caption1 font-semibold text-foreground-3"
+            className="sticky top-0 z-20 border-b border-stroke-3 bg-background-1 px-4 py-1 text-caption1 font-semibold text-foreground-3"
           >
             {group.label}
           </h3>
@@ -353,7 +353,7 @@ export const NotificationPanel = React.forwardRef<HTMLDivElement, NotificationPa
 
     return (
       <div ref={ref} aria-busy={loading || undefined} className={cn("flex min-h-0 flex-1 flex-col", className)} {...props}>
-        <div className="flex shrink-0 items-center gap-S px-L pt-M pb-XS">
+        <div className="flex shrink-0 items-center gap-2 px-4 pt-3 pb-1">
           <div className="min-w-0 flex-1">{heading}</div>
           {onMarkAllRead && (
             <Button size="small" appearance="subtle" icon={<CheckmarkCircle16Regular />} disabled={unread === 0} onClick={onMarkAllRead}>
@@ -371,7 +371,7 @@ export const NotificationPanel = React.forwardRef<HTMLDivElement, NotificationPa
           }}
           className="flex min-h-0 flex-1 flex-col"
         >
-          <TabsList size="small" aria-label="Lọc thông báo" className="shrink-0 border-b border-stroke-2 px-S">
+          <TabsList size="small" aria-label="Lọc thông báo" className="shrink-0 border-b border-stroke-2 px-2">
             <TabsTrigger value="all">Tất cả</TabsTrigger>
             <TabsTrigger value="unread">
               Chưa đọc{unread > 0 ? ` (${unread})` : ""}
@@ -387,7 +387,7 @@ export const NotificationPanel = React.forwardRef<HTMLDivElement, NotificationPa
             </TabsContent>
           ))}
         </Tabs>
-        {footer && <div className="flex shrink-0 items-center justify-center border-t border-stroke-2 px-L py-S">{footer}</div>}
+        {footer && <div className="flex shrink-0 items-center justify-center border-t border-stroke-2 px-4 py-2">{footer}</div>}
       </div>
     );
   },
@@ -481,7 +481,7 @@ export const NotificationCenter = React.forwardRef<HTMLButtonElement, Notificati
             count={unread}
             size="small"
             color="danger"
-            className="pointer-events-none absolute -inset-e-XXS -top-XXS"
+            className="pointer-events-none absolute -inset-e-0.5 -top-0.5"
           />
         )}
       </Button>

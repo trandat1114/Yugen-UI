@@ -29,7 +29,7 @@ export const ToggleGroup = React.forwardRef<React.ElementRef<typeof ToggleGroupP
           className={cn(
             joined
               ? buttonGroupVariants({ orientation })
-              : cn("inline-flex w-fit items-stretch gap-XXS align-middle", orientation === "vertical" && "flex-col"),
+              : cn("inline-flex w-fit items-stretch gap-0.5 align-middle", orientation === "vertical" && "flex-col"),
             className,
           )}
           {...props}

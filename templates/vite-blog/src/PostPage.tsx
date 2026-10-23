@@ -11,9 +11,9 @@ function TableOfContents({ post }: { post: Post }) {
   const headings = headingsOf(post.body);
   if (headings.length < 2) return null;
   return (
-    <nav aria-label="Trong bài này" className="flex flex-col gap-S">
+    <nav aria-label="Trong bài này" className="flex flex-col gap-2">
       <p className="text-caption1 font-semibold tracking-wide text-foreground-3 uppercase">Trong bài này</p>
-      <ul className="flex flex-col gap-XS border-s border-stroke-2">
+      <ul className="flex flex-col gap-1 border-s border-stroke-2">
         {headings.map((h) => (
           <li key={h.id}>
             <a
@@ -23,7 +23,7 @@ function TableOfContents({ post }: { post: Post }) {
                 e.preventDefault();
                 document.getElementById(h.id)?.scrollIntoView({ behavior: "smooth", block: "start" });
               }}
-              className={`-ms-px block border-s border-transparent py-XXS text-caption1 text-foreground-2 hover:border-stroke-1 hover:text-foreground-1 ${h.level === 3 ? "ps-XL" : "ps-M"}`}
+              className={`-ms-px block border-s border-transparent py-0.5 text-caption1 text-foreground-2 hover:border-stroke-1 hover:text-foreground-1 ${h.level === 3 ? "ps-5" : "ps-3"}`}
             >
               {h.text}
             </a>
@@ -42,9 +42,9 @@ function Neighbours({ post }: { post: Post }) {
   const card = (p: Post, label: string, align: "start" | "end") => (
     <Link
       to={{ name: "post", slug: p.slug }}
-      className={`flex flex-col gap-XXS rounded-xlarge border border-stroke-2 bg-background-1 p-L hover:bg-background-3 ${align === "end" ? "items-end text-end" : ""}`}
+      className={`flex flex-col gap-0.5 rounded-xlarge border border-stroke-2 bg-background-1 p-4 hover:bg-background-3 ${align === "end" ? "items-end text-end" : ""}`}
     >
-      <span className="flex items-center gap-XS text-caption1 text-foreground-3">
+      <span className="flex items-center gap-1 text-caption1 text-foreground-3">
         {align === "start" && <ArrowLeft16Regular className="rtl:-scale-x-100" />}
         {label}
         {align === "end" && <ArrowRight16Regular className="rtl:-scale-x-100" />}
@@ -53,7 +53,7 @@ function Neighbours({ post }: { post: Post }) {
     </Link>
   );
   return (
-    <nav aria-label="Bài khác" className="grid gap-M @xl:grid-cols-2">
+    <nav aria-label="Bài khác" className="grid gap-3 @xl:grid-cols-2">
       <div>{older && card(older, "Bài trước", "start")}</div>
       <div>{newer && card(newer, "Bài sau", "end")}</div>
     </nav>
@@ -73,13 +73,13 @@ export function PostPage({ post, headingLevel = "h1" }: { post: Post; headingLev
   }
 
   return (
-    <div className="grid gap-XXL @5xl:grid-cols-[minmax(0,1fr)_14rem]">
-      <article className="flex min-w-0 flex-col gap-XL">
-        <header className="flex flex-col gap-M">
+    <div className="grid gap-6 @5xl:grid-cols-[minmax(0,1fr)_14rem]">
+      <article className="flex min-w-0 flex-col gap-5">
+        <header className="flex flex-col gap-3">
           <TagLinks tags={post.tags.map((name) => ({ name, slug: slugify(name) }))} />
           <Heading className="font-display text-[clamp(28px,4vw,44px)] leading-tight font-semibold text-foreground-1">{post.title}</Heading>
           {post.description && <p className="text-subtitle2 font-normal text-foreground-2">{post.description}</p>}
-          <div className="flex flex-wrap items-center justify-between gap-M">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <Persona name={post.author ?? SITE.author} secondaryText={<PostMeta post={post} />} size="medium" avatar={{ color: "colorful" }} />
             <Button appearance="subtle" icon={<Link20Regular />} onClick={copyLink}>
               Sao chép liên kết

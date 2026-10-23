@@ -237,10 +237,10 @@ export type SlideFrom = "start" | "end" | "top" | "bottom";
 
 /** start/end là hướng logic: tự đảo trong RTL. */
 const SLIDE_FROM: Record<SlideFrom, string> = {
-  start: "-translate-x-XL rtl:translate-x-XL",
-  end: "translate-x-XL rtl:-translate-x-XL",
-  top: "-translate-y-XL",
-  bottom: "translate-y-XL",
+  start: "-translate-x-5 rtl:translate-x-5",
+  end: "translate-x-5 rtl:-translate-x-5",
+  top: "-translate-y-5",
+  bottom: "translate-y-5",
 };
 
 export interface SlideProps extends PresenceMotionProps {

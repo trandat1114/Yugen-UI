@@ -35,22 +35,6 @@ export const PROJECT_URL = "https://github.com/users/trandat1114/projects/6";
 export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
   now: [
     {
-      milestone: "0.10.0",
-      kind: "minor",
-      due: "2027-01-29",
-      vi: "Thang spacing theo số và trải nghiệm docs.",
-      en: "The numeric spacing scale and the docs experience.",
-      items: [
-        { status: "planned", issue: 42, vi: "Spacing theo thang số (p-3, gap-5); class viết hoa vẫn chạy nhưng được đánh dấu deprecated", en: "Numeric spacing scale (p-3, gap-5); upper-case classes still work but are deprecated" },
-        { status: "planned", issue: 44, vi: "Theme Designer: bo góc, mật độ, font, màu trung tính, bóng, chuyển động", en: "Theme Designer: radius, density, typography, neutrals, elevation, motion" },
-        { status: "planned", issue: 45, vi: "Trang Motion: hướng dẫn theo component, playground, xem trước giảm chuyển động", en: "Motion page: guidance per component, playground, reduced-motion preview" },
-        { status: "planned", issue: 46, vi: "Sidebar docs kéo được độ rộng, thu gọn về dạng icon", en: "Resizable docs sidebar that collapses to icons" },
-        { status: "planned", issue: 40, vi: "Kiểm thử trên Firefox và WebKit theo lịch", en: "Scheduled Firefox and WebKit test runs" },
-      ],
-    },
-  ],
-  next: [
-    {
       milestone: "1.0.0",
       kind: "major",
       vi: "API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện hoàn tất.",
@@ -61,7 +45,7 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       ],
     },
   ],
-  later: [
+  next: [
     {
       milestone: "Backlog",
       kind: "backlog",
@@ -75,6 +59,7 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       ],
     },
   ],
+  later: [],
 };
 
 export const STAGE_LABEL: Record<RoadmapStage, { vi: string; en: string }> = {
@@ -120,6 +105,7 @@ export function roadmapMarkdown() {
     `(${homepage}?lang=en#/community) shows the same roadmap.`,
   ];
   for (const stage of ["now", "next", "later"] as const) {
+    if (ROADMAP[stage].length === 0) continue;
     lines.push("", `## ${STAGE_LABEL[stage].vi}`);
     for (const r of ROADMAP[stage]) {
       const due = r.due ? ` · hạn ${r.due}` : "";

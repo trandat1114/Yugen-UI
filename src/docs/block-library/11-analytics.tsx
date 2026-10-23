@@ -56,9 +56,9 @@ export default function AnalyticsBlock() {
   const totalVisitors = visitors.reduce((a, d) => a + d.newVisitors + d.returning, 0);
 
   return (
-    <div className="@container flex flex-col gap-M">
+    <div className="@container flex flex-col gap-3">
       {/* Bộ lọc: một hàng phía trên, tác động mọi thẻ bên dưới */}
-      <div className="flex flex-wrap items-center justify-between gap-S">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <h3 className="text-subtitle1 font-semibold">Tổng quan bán hàng</h3>
           <p className="text-caption1 text-foreground-3">Cập nhật 20/10/2026</p>
@@ -78,7 +78,7 @@ export default function AnalyticsBlock() {
         </ToggleGroup>
       </div>
 
-      <div className="grid gap-M @lg:grid-cols-2">
+      <div className="grid gap-3 @lg:grid-cols-2">
         <Card size="large">
           <StatTile
             icon={<Money20Regular />}
@@ -137,7 +137,7 @@ export default function AnalyticsBlock() {
         />
       </Card>
 
-      <div className="grid gap-M @2xl:grid-cols-2">
+      <div className="grid gap-3 @2xl:grid-cols-2">
         <Card size="large">
           <BarChart
             title="Doanh thu theo danh mục"

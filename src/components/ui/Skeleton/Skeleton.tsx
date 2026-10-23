@@ -29,7 +29,7 @@ export const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
           role="progressbar"
           aria-busy="true"
           aria-label="Đang tải nội dung"
-          className={cn("flex flex-col gap-S", className)}
+          className={cn("flex flex-col gap-2", className)}
           {...props}
         />
       </SkeletonRootContext.Provider>
@@ -138,7 +138,7 @@ const SkeletonPresetRoot = React.forwardRef<HTMLDivElement, SkeletonPresetProps>
       <SkeletonContext.Provider
         value={{ animation: animation ?? ctx.animation, appearance: appearance ?? ctx.appearance }}
       >
-        <div ref={ref} className={cn("flex flex-col gap-S", className)} {...props} />
+        <div ref={ref} className={cn("flex flex-col gap-2", className)} {...props} />
       </SkeletonContext.Provider>
     );
   },
@@ -151,9 +151,9 @@ const count = (n: number, min = 0) => Math.max(min, Math.floor(n));
 const WIDTHS = ["w-3/4", "w-1/2", "w-2/3", "w-5/6", "w-2/5"] as const;
 
 const TEXT_SIZE = {
-  small: { item: 12, gap: "gap-S" },
-  medium: { item: 16, gap: "gap-S" },
-  large: { item: 20, gap: "gap-M" },
+  small: { item: 12, gap: "gap-2" },
+  medium: { item: 16, gap: "gap-2" },
+  large: { item: 20, gap: "gap-3" },
 } as const satisfies Record<string, { item: SkeletonItemSize; gap: string }>;
 
 export interface SkeletonTextProps extends SkeletonPresetProps {
@@ -212,27 +212,27 @@ export const SkeletonCard = React.forwardRef<HTMLDivElement, SkeletonCardProps>(
     <SkeletonPresetRoot
       ref={ref}
       className={cn(
-        "w-full gap-M overflow-hidden rounded-medium border border-transparent bg-background-1 p-M shadow-4",
+        "w-full gap-3 overflow-hidden rounded-medium border border-transparent bg-background-1 p-3 shadow-4",
         className,
       )}
       {...props}
     >
       {header && (
-        <div className="flex items-center gap-M">
+        <div className="flex items-center gap-3">
           <SkeletonItem shape="circle" size={32} />
-          <div className="flex min-w-0 flex-1 flex-col gap-XS">
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
             <SkeletonItem size={12} className="w-1/2" />
             <SkeletonItem size={8} className="w-1/3" />
           </div>
         </div>
       )}
       {media && <SkeletonItem className="aspect-video h-auto" />}
-      <div className="flex flex-col gap-S">
+      <div className="flex flex-col gap-2">
         <SkeletonItem size={20} className="w-3/5" />
         {count(lines) > 0 && <SkeletonText lines={lines} size="small" />}
       </div>
       {count(actions) > 0 && (
-        <div className="flex items-center gap-S">
+        <div className="flex items-center gap-2">
           {Array.from({ length: count(actions) }, (_, i) => (
             <SkeletonItem key={i} size={32} className="w-24" />
           ))}
@@ -254,11 +254,11 @@ export interface SkeletonListProps extends SkeletonPresetProps {
 /** Danh sách: mỗi dòng gồm avatar + tiêu đề + mô tả. */
 export const SkeletonList = React.forwardRef<HTMLDivElement, SkeletonListProps>(
   ({ rows = 3, avatarSize = 40, avatarShape = "circular", className, ...props }, ref) => (
-    <SkeletonPresetRoot ref={ref} className={cn("w-full gap-L", className)} {...props}>
+    <SkeletonPresetRoot ref={ref} className={cn("w-full gap-4", className)} {...props}>
       {Array.from({ length: count(rows) }, (_, i) => (
-        <div key={i} className="flex items-center gap-M">
+        <div key={i} className="flex items-center gap-3">
           <SkeletonItem shape={avatarShape === "square" ? "square" : "circle"} size={avatarSize} />
-          <div className="flex min-w-0 flex-1 flex-col gap-SNudge">
+          <div className="flex min-w-0 flex-1 flex-col gap-1.5">
             <SkeletonItem size={16} className={WIDTHS[(i + 1) % WIDTHS.length]} />
             <SkeletonItem size={12} className={WIDTHS[(i + 3) % WIDTHS.length]} />
           </div>
@@ -287,14 +287,14 @@ export const SkeletonTable = React.forwardRef<HTMLDivElement, SkeletonTableProps
     return (
       <SkeletonPresetRoot ref={ref} className={cn("w-full gap-0", className)} {...props}>
         {header && (
-          <div style={grid} className="grid h-11 items-center gap-L border-b border-stroke-2 px-S">
+          <div style={grid} className="grid h-11 items-center gap-4 border-b border-stroke-2 px-2">
             {Array.from({ length: cols }, (_, c) => (
               <SkeletonItem key={c} size={12} className="w-1/2" />
             ))}
           </div>
         )}
         {Array.from({ length: count(rows) }, (_, r) => (
-          <div key={r} style={grid} className="grid h-11 items-center gap-L border-b border-stroke-3 px-S">
+          <div key={r} style={grid} className="grid h-11 items-center gap-4 border-b border-stroke-3 px-2">
             {Array.from({ length: cols }, (_, c) => (
               <SkeletonItem key={c} size={12} className={WIDTHS[(r + c) % WIDTHS.length]} />
             ))}

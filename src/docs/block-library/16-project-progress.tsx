@@ -8,8 +8,8 @@ export default function ProjectProgressBlock() {
   const done = value[0] === 100;
 
   return (
-    <Card className="max-w-md gap-L rounded-xlarge p-XL">
-      <div className="flex items-center justify-between gap-M">
+    <Card className="max-w-md gap-4 rounded-xlarge p-5">
+      <div className="flex items-center justify-between gap-3">
         <p className="text-subtitle2 font-semibold text-foreground-1">Ra mắt website mới</p>
         <Badge appearance="tint" color={done ? "success" : "brand"}>
           {done ? "Hoàn thành" : "Đang làm"}

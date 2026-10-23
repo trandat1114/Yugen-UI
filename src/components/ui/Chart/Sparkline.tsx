@@ -219,12 +219,12 @@ export const StatTile = React.forwardRef<HTMLDivElement, StatTileProps>(function
   const directionText = direction === "up" ? "Tăng" : direction === "down" ? "Giảm" : "Không đổi";
 
   return (
-    <div ref={ref} className={cn("flex min-w-0 flex-col gap-XS", className)} {...props}>
-      <div className="flex items-center gap-S text-body1 text-foreground-2">
+    <div ref={ref} className={cn("flex min-w-0 flex-col gap-1", className)} {...props}>
+      <div className="flex items-center gap-2 text-body1 text-foreground-2">
         {icon && <span className="flex shrink-0 text-foreground-3 [&_svg]:size-5">{icon}</span>}
         <span className="min-w-0 truncate">{label}</span>
       </div>
-      <div className="flex flex-wrap items-end justify-between gap-x-L gap-y-S">
+      <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2">
         <div className="min-w-0">
           <div
             className={cn(
@@ -235,10 +235,10 @@ export const StatTile = React.forwardRef<HTMLDivElement, StatTileProps>(function
             <bdi>{valueText}</bdi>
           </div>
           {delta !== undefined && (
-            <div className="mt-XXS flex flex-wrap items-center gap-x-XS text-caption1">
+            <div className="mt-0.5 flex flex-wrap items-center gap-x-1 text-caption1">
               <span
                 className={cn(
-                  "inline-flex items-center gap-XXS font-semibold",
+                  "inline-flex items-center gap-0.5 font-semibold",
                   tone === "good" ? "text-success-foreground-1" : tone === "bad" ? "text-danger-foreground-1" : "text-foreground-2",
                 )}
               >

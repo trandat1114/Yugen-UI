@@ -14,15 +14,15 @@ describe("cn — tailwind-merge đã dạy scale của Yugen", () => {
     expect(cn("text-foreground-1", "text-foreground-3")).toBe("text-foreground-3");
   });
 
-  it("spacing viết hoa của Fluent", () => {
-    expect(cn("p-M", "p-L")).toBe("p-L");
-    expect(cn("px-S", "px-XXL")).toBe("px-XXL");
-    expect(cn("gap-SNudge", "gap-MNudge")).toBe("gap-MNudge");
-    expect(cn("mt-XS", "mt-XXXL")).toBe("mt-XXXL");
+  it("spacing theo thang số", () => {
+    expect(cn("p-3", "p-4")).toBe("p-4");
+    expect(cn("px-2", "px-6")).toBe("px-6");
+    expect(cn("gap-1.5", "gap-2.5")).toBe("gap-2.5");
+    expect(cn("mt-1", "mt-8")).toBe("mt-8");
     // Trục khác nhau không đè nhau.
-    expect(cn("px-M", "py-S")).toBe("px-M py-S");
+    expect(cn("px-3", "py-2")).toBe("px-3 py-2");
     // p-* đè px-* đứng trước.
-    expect(cn("px-M", "p-L")).toBe("p-L");
+    expect(cn("px-3", "p-4")).toBe("p-4");
   });
 
   it("bo góc", () => {
@@ -47,13 +47,19 @@ describe("cn — tailwind-merge đã dạy scale của Yugen", () => {
   });
 
   it("className người dùng ở cuối thắng biến thể mặc định", () => {
-    expect(cn("h-8 rounded-medium px-M text-body1", "rounded-circular px-L")).toBe("h-8 text-body1 rounded-circular px-L");
+    expect(cn("h-8 rounded-medium px-3 text-body1", "rounded-circular px-4")).toBe("h-8 text-body1 rounded-circular px-4");
+  });
+
+  it("cú pháp Tailwind v4: important ở cuối và biến CSS dạng ngắn (tailwind-merge 3)", () => {
+    expect(cn("size-4!", "size-5!")).toBe("size-5!");
+    expect(cn("max-h-80", "max-h-(--radix-popover-content-available-height)")).toBe("max-h-(--radix-popover-content-available-height)");
+    expect(cn("rounded-medium", "rounded-(--my-radius)")).toBe("rounded-(--my-radius)");
   });
 
   it("nhận điều kiện kiểu clsx", () => {
     const disabled = false as boolean;
-    expect(cn("p-M", disabled && "p-L", { "text-body1": true, "text-caption1": false }, ["shadow-4"], null, undefined)).toBe(
-      "p-M text-body1 shadow-4",
+    expect(cn("p-3", disabled && "p-4", { "text-body1": true, "text-caption1": false }, ["shadow-4"], null, undefined)).toBe(
+      "p-3 text-body1 shadow-4",
     );
   });
 });

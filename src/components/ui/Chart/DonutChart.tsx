@@ -166,7 +166,7 @@ export const DonutChart = React.forwardRef<HTMLElement, DonutChartProps>(functio
       className={className}
       table={table}
     >
-      <div className="relative flex flex-wrap items-center gap-x-XXL gap-y-L">
+      <div className="relative flex flex-wrap items-center gap-x-6 gap-y-4">
         <div ref={ringRef} dir="ltr" className="relative shrink-0" style={{ width: S, height: S }}>
           <svg
             width={S}

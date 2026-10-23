@@ -10,10 +10,10 @@ const SETTINGS = [
 
 export default function PreferencesBlock() {
   return (
-    <Card size="large" className="gap-L rounded-xlarge p-XL">
+    <Card size="large" className="gap-4 rounded-xlarge p-5">
       <div>
         <h3 className="text-subtitle1 font-semibold">Tuỳ chọn</h3>
-        <p className="mt-XXS text-body1 text-foreground-3">Quản lý cài đặt tài khoản và thông báo.</p>
+        <p className="mt-0.5 text-body1 text-foreground-3">Quản lý cài đặt tài khoản và thông báo.</p>
       </div>
 
       <Field label="Tiền tệ mặc định" hint="Áp dụng cho báo cáo và hoá đơn mới.">
@@ -26,9 +26,9 @@ export default function PreferencesBlock() {
 
       <Divider />
 
-      <ul className="flex flex-col gap-M">
+      <ul className="flex flex-col gap-3">
         {SETTINGS.map((s) => (
-          <li key={s.id} className="flex items-start justify-between gap-L">
+          <li key={s.id} className="flex items-start justify-between gap-4">
             <div>
               <p className="text-body1 font-semibold">{s.label}</p>
               <p className="text-caption1 text-foreground-3">{s.hint}</p>

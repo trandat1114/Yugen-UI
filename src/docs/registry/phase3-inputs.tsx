@@ -90,7 +90,7 @@ function ToolbarOverflowMenu({ actions }: { actions: typeof ACTIONS }) {
 function OverflowToolbarDemo() {
   const [width, setWidth] = useState([100]);
   return (
-    <div className="flex w-full flex-col gap-M">
+    <div className="flex w-full flex-col gap-3">
       <Slider label="Độ rộng khung (%)" showValue value={width} onValueChange={setWidth} min={25} max={100} />
       <div style={{ inlineSize: `${width[0]}%` }} className="rounded-xlarge border border-stroke-2">
         <Overflow>
@@ -180,7 +180,7 @@ function BreadcrumbOverflowMenu() {
 
 function OverflowBreadcrumbDemo() {
   return (
-    <div className="w-full max-w-100 resize-x overflow-hidden rounded-xlarge border border-stroke-2 p-XS">
+    <div className="w-full max-w-100 resize-x overflow-hidden rounded-xlarge border border-stroke-2 p-1">
       <Overflow>
         <Breadcrumb>
           {PATH.map((p, i) => {
@@ -283,7 +283,7 @@ function TimePickerDemo() {
   const [time, setTime] = useState<Date | null>(null);
   const [error, setError] = useState<TimeSelectionErrorType>();
   return (
-    <div className="flex w-72 flex-col gap-S">
+    <div className="flex w-72 flex-col gap-2">
       <Field
         label="Giờ họp"
         hint="Gõ 9, 930, 9h30, 21:15 hoặc chọn trong danh sách"
@@ -440,7 +440,7 @@ function ToolbarOverflowMenu({ actions }: { actions: typeof ACTIONS }) {
 function OverflowToolbarDemo() {
   const [width, setWidth] = useState([100]);
   return (
-    <div className="flex w-full flex-col gap-M">
+    <div className="flex w-full flex-col gap-3">
       <Slider label="Độ rộng khung (%)" showValue value={width} onValueChange={setWidth} min={25} max={100} />
       <div style={{ inlineSize: \`\${width[0]}%\` }} className="rounded-xlarge border border-stroke-2">
         <Overflow>
@@ -572,7 +572,7 @@ function BreadcrumbOverflowMenu() {
 
 function OverflowBreadcrumbDemo() {
   return (
-    <div className="w-full max-w-100 resize-x overflow-hidden rounded-xlarge border border-stroke-2 p-XS">
+    <div className="w-full max-w-100 resize-x overflow-hidden rounded-xlarge border border-stroke-2 p-1">
       <Overflow>
         <Breadcrumb>
           {PATH.map((p, i) => {
@@ -691,7 +691,7 @@ function TimePickerDemo() {
   const [time, setTime] = useState<Date | null>(null);
   const [error, setError] = useState<TimeSelectionErrorType>();
   return (
-    <div className="flex w-72 flex-col gap-S">
+    <div className="flex w-72 flex-col gap-2">
       <Field
         label="Giờ họp"
         hint="Gõ 9, 930, 9h30, 21:15 hoặc chọn trong danh sách"
@@ -762,12 +762,12 @@ function TimePickerDemo() {
       {
         title: "12 giờ (SA / CH, AM / PM)",
         description: "hourCycle=\"h12\" dùng nhãn buổi của locale; locale=\"en-US\" mặc định 12 giờ.",
-        code: `<div className="flex w-72 flex-col gap-M">
+        code: `<div className="flex w-72 flex-col gap-3">
   <TimePicker hourCycle="h12" aria-label="Giờ (12 giờ, vi-VN)" defaultValue={new Date(2026, 0, 1, 14, 30)} />
   <TimePicker locale="en-US" aria-label="Time (en-US)" defaultValue={new Date(2026, 0, 1, 9, 0)} />
 </div>`,
         render: () => (
-          <div className="flex w-72 flex-col gap-M">
+          <div className="flex w-72 flex-col gap-3">
             <TimePicker hourCycle="h12" aria-label="Giờ (12 giờ, vi-VN)" defaultValue={new Date(2026, 0, 1, 14, 30)} />
             <TimePicker locale="en-US" aria-label="Time (en-US)" defaultValue={new Date(2026, 0, 1, 9, 0)} />
           </div>
@@ -776,14 +776,14 @@ function TimePickerDemo() {
       {
         title: "Kích thước, appearance & disabled",
         description: "small 24px, medium 32px, large 40px; appearance như Input / Combobox.",
-        code: `<div className="flex w-64 flex-col gap-M">
+        code: `<div className="flex w-64 flex-col gap-3">
   <TimePicker size="small" aria-label="Giờ (small)" />
   <TimePicker appearance="underline" aria-label="Giờ (underline)" />
   <TimePicker appearance="filled-darker" size="large" aria-label="Giờ (filled-darker, large)" />
   <TimePicker disabled aria-label="Giờ (disabled)" defaultValue={new Date(2026, 0, 1, 8, 0)} />
 </div>`,
         render: () => (
-          <div className="flex w-64 flex-col gap-M">
+          <div className="flex w-64 flex-col gap-3">
             <TimePicker size="small" aria-label="Giờ (small)" />
             <TimePicker appearance="underline" aria-label="Giờ (underline)" />
             <TimePicker appearance="filled-darker" size="large" aria-label="Giờ (filled-darker, large)" />

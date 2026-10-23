@@ -17,8 +17,8 @@ export const meta = { title: "Hộp thư trống", description: "Tabs lọc kèm
 
 export default function EmptyInboxBlock() {
   return (
-    <Card size="large" className="gap-M rounded-xlarge p-XL">
-      <div className="flex items-center justify-between gap-M">
+    <Card size="large" className="gap-3 rounded-xlarge p-5">
+      <div className="flex items-center justify-between gap-3">
         <h3 className="text-subtitle1 font-semibold">Thông báo</h3>
         <Button appearance="subtle" size="small" icon={<ArrowClockwise20Regular />} aria-label="Làm mới" />
       </div>

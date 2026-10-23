@@ -63,7 +63,7 @@ function useTokenValue(token: string, theme: string, scopeRef?: React.RefObject<
 }
 
 function Tile({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <div className={cn("overflow-hidden rounded-3xlarge bg-background-3 p-XXL", className)}>{children}</div>;
+  return <div className={cn("overflow-hidden rounded-3xlarge bg-background-3 p-6", className)}>{children}</div>;
 }
 
 /* ======================================================================= data */
@@ -98,7 +98,7 @@ const MOSAIC = ["teal", "blue", "lavender", "magenta", "cranberry", "dark-orange
 function ColorMosaic() {
   return (
     <div className="relative h-72 overflow-hidden rounded-3xlarge bg-linear-to-b from-background-3 to-background-5 perspective-[1400px]">
-      <div className="absolute top-1/2 left-1/2 grid w-190 -translate-x-1/2 -translate-y-1/2 grid-cols-10 gap-S transform-[rotateX(58deg)_rotateZ(-36deg)]">
+      <div className="absolute top-1/2 left-1/2 grid w-190 -translate-x-1/2 -translate-y-1/2 grid-cols-10 gap-2 transform-[rotateX(58deg)_rotateZ(-36deg)]">
         {Array.from({ length: 60 }, (_, i) => {
           const hue = MOSAIC[(i * 7 + Math.floor(i / 10) * 3) % MOSAIC.length];
           const pct = [100, 70, 45, 85, 60][i % 5];
@@ -138,16 +138,16 @@ function PalettesSection() {
     },
   ];
   return (
-    <div className="grid gap-L md:grid-cols-3">
+    <div className="grid gap-4 md:grid-cols-3">
       {cards.map((c) => (
-        <div key={c.title} className="rounded-2xlarge border border-stroke-2 bg-background-1 p-L">
+        <div key={c.title} className="rounded-2xlarge border border-stroke-2 bg-background-1 p-4">
           <div className="flex h-12 overflow-hidden rounded-large">
             {c.swatches.map((s) => (
               <span key={s} className="flex-1" style={{ background: s }} />
             ))}
           </div>
-          <p className="mt-M text-subtitle2 font-semibold">{c.title}</p>
-          <p className="mt-XS text-body1 text-foreground-2">{c.text}</p>
+          <p className="mt-3 text-subtitle2 font-semibold">{c.title}</p>
+          <p className="mt-1 text-body1 text-foreground-2">{c.text}</p>
         </div>
       ))}
     </div>
@@ -157,12 +157,12 @@ function PalettesSection() {
 function NeutralSection() {
   return (
     <>
-      <Tile className="p-XXXL">
+      <Tile className="p-8">
         <div className="flex h-56 overflow-hidden rounded-3xlarge shadow-4">
           {NEUTRAL_STRIP.map((g) => (
             <span
               key={g}
-              className="flex flex-1 items-end justify-center pb-S font-mono text-[10px]"
+              className="flex flex-1 items-end justify-center pb-2 font-mono text-[10px]"
               style={{
                 background: g === 100 ? "var(--white)" : g === 0 ? "var(--black)" : `var(--grey-${g})`,
                 // Nhãn 10px cần ≥ 4.5:1: nền từ grey-48 trở lên dùng chữ đen, tối hơn dùng chữ trắng.
@@ -175,24 +175,24 @@ function NeutralSection() {
         </div>
       </Tile>
 
-      <h3 className="mt-XXL text-title3 font-semibold">Phân cấp thị giác bằng neutral</h3>
-      <p className="mt-S max-w-3xl text-body2 text-foreground-2">
+      <h3 className="mt-6 text-title3 font-semibold">Phân cấp thị giác bằng neutral</h3>
+      <p className="mt-2 max-w-3xl text-body2 text-foreground-2">
         Dùng neutral sáng hơn cho bề mặt cần tập trung. Mắt người dùng sẽ được dẫn tới vùng quan trọng nhất mà không cần
         thêm màu.
       </p>
-      <Tile className="mt-L">
-        <div className="rounded-2xlarge bg-background-4 p-XL">
-          <p className="mb-S font-mono text-caption1 text-foreground-3">bg-background-4 · nền ứng dụng</p>
-          <div className="rounded-xlarge bg-background-2 p-XL shadow-2">
-            <p className="mb-S font-mono text-caption1 text-foreground-3">bg-background-2 · vùng nội dung</p>
-            <div className="grid gap-L sm:grid-cols-2">
-              <div className="rounded-medium bg-background-1 p-L shadow-4">
+      <Tile className="mt-4">
+        <div className="rounded-2xlarge bg-background-4 p-5">
+          <p className="mb-2 font-mono text-caption1 text-foreground-3">bg-background-4 · nền ứng dụng</p>
+          <div className="rounded-xlarge bg-background-2 p-5 shadow-2">
+            <p className="mb-2 font-mono text-caption1 text-foreground-3">bg-background-2 · vùng nội dung</p>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="rounded-medium bg-background-1 p-4 shadow-4">
                 <p className="text-body1 font-semibold">bg-background-1 + shadow-4</p>
-                <p className="mt-XS text-caption1 text-foreground-3">Bề mặt trọng tâm: Card, Dialog</p>
+                <p className="mt-1 text-caption1 text-foreground-3">Bề mặt trọng tâm: Card, Dialog</p>
               </div>
-              <div className="rounded-medium bg-background-1 p-L shadow-4">
+              <div className="rounded-medium bg-background-1 p-4 shadow-4">
                 <p className="text-body1 font-semibold">Sáng nhất = quan trọng nhất</p>
-                <p className="mt-XS text-caption1 text-foreground-3">Tối dần về phía nền</p>
+                <p className="mt-1 text-caption1 text-foreground-3">Tối dần về phía nền</p>
               </div>
             </div>
           </div>
@@ -210,7 +210,7 @@ function SharedSection() {
         ra chức năng giữa các sản phẩm. <strong className="font-semibold text-foreground-1">Dùng tiết kiệm</strong> — chỉ
         để nhấn vào vùng quan trọng.
       </p>
-      <Tile className="mt-L">
+      <Tile className="mt-4">
         <div className="mx-auto grid max-w-3xl grid-cols-12 overflow-hidden rounded-xlarge shadow-8">
           {SHARED_ROWS.map(([pct, withColor]) =>
             SHARED_GRID.map((hue) => (
@@ -220,20 +220,20 @@ function SharedSection() {
         </div>
       </Tile>
 
-      <h3 className="mt-XXL text-title3 font-semibold">Shared color trong dark mode</h3>
-      <p className="mt-S max-w-3xl text-body2 text-foreground-2">
+      <h3 className="mt-6 text-title3 font-semibold">Shared color trong dark mode</h3>
+      <p className="mt-2 max-w-3xl text-body2 text-foreground-2">
         Ở dark mode, shared color dịch chuyển độ bão hoà và độ sáng để giảm mỏi mắt và đảm bảo tương phản — không chỉ đảo
         ngược màu.
       </p>
-      <div className="mt-L grid overflow-hidden rounded-3xlarge sm:grid-cols-2">
-        <div data-theme="light" className="flex justify-center bg-background-3 p-XXL">
+      <div className="mt-4 grid overflow-hidden rounded-3xlarge sm:grid-cols-2">
+        <div data-theme="light" className="flex justify-center bg-background-3 p-6">
           <div className="grid w-full max-w-56 grid-cols-4 overflow-hidden rounded-xlarge shadow-8">
             {SHIFT_HUES.map((hue) =>
               [55, 70, 85, 100].map((pct) => <span key={hue + pct} className="aspect-square" style={{ background: mix(hue, pct, "black") }} />),
             )}
           </div>
         </div>
-        <div data-theme="dark" className="flex justify-center bg-background-2 p-XXL">
+        <div data-theme="dark" className="flex justify-center bg-background-2 p-6">
           <div className="grid w-full max-w-56 grid-cols-4 overflow-hidden rounded-xlarge shadow-8">
             {SHIFT_HUES.map((hue) =>
               [75, 62, 50, 38].map((pct) => <span key={hue + pct} className="aspect-square" style={{ background: mix(hue, pct, "white") }} />),
@@ -242,22 +242,22 @@ function SharedSection() {
         </div>
       </div>
 
-      <h3 className="mt-XXL text-title3 font-semibold">Màu ngữ nghĩa (semantic)</h3>
-      <p className="mt-S max-w-3xl text-body2 text-foreground-2">
+      <h3 className="mt-6 text-title3 font-semibold">Màu ngữ nghĩa (semantic)</h3>
+      <p className="mt-2 max-w-3xl text-body2 text-foreground-2">
         Một số shared color được dành riêng để truyền đạt phản hồi, trạng thái hoặc mức khẩn cấp, dựa trên liên tưởng
         thực tế: <span className="text-danger-foreground-1">đỏ = nguy hiểm</span>,{" "}
         <span className="text-warning-foreground-1">vàng/cam = thận trọng</span>,{" "}
         <span className="text-success-foreground-1">xanh lá = tích cực</span>. Luôn đi kèm icon/chữ để giảm tải nhận thức.
       </p>
-      <Tile className="mt-L">
-        <div className="flex flex-wrap items-center justify-center gap-XXXL">
+      <Tile className="mt-4">
+        <div className="flex flex-wrap items-center justify-center gap-8">
           <CheckmarkCircle48Regular className="size-20 text-success-foreground-1" />
           <ErrorCircle48Regular className="size-20 text-danger-foreground-1" />
           <Info48Regular className="size-20 text-brand-foreground-1" />
           <Warning48Regular className="size-20 text-warning-foreground-1" />
         </div>
       </Tile>
-      <div className="mt-L">
+      <div className="mt-4">
         <DoDont
           dos={[
             "Dùng màu ngữ nghĩa cho thông điệp quan trọng: lỗi, cảnh báo, thành công.",
@@ -281,16 +281,16 @@ function BrandSection() {
       <p className="max-w-3xl text-body2 text-foreground-2">
         Brand color tạo nhận diện tức thì cho sản phẩm. Áp dụng có chủ đích vào <strong className="font-semibold text-foreground-1">vùng cụ thể</strong> để
         tạo điểm nhấn và giữ người dùng định hướng. Mỗi brand là một ramp 16 bậc; đổi brand chỉ cần{" "}
-        <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">data-brand</code>.
+        <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">data-brand</code>.
       </p>
-      <p className="mt-S max-w-3xl text-body2 text-foreground-2">
+      <p className="mt-2 max-w-3xl text-body2 text-foreground-2">
         Brand mặc định của Yugen UI là <strong className="font-semibold text-brand-foreground-1">Sakura 桜 #C2347A</strong> — hồng
         anh đào đậm, tương phản <strong className="font-semibold text-foreground-1">5.16:1</strong> với chữ trắng, và lệch
         hue ~30° so với đỏ <span className="text-danger-foreground-1">danger</span> để nút chính không bao giờ bị nhầm với
         hành động phá huỷ. Bậc nhạt 130–160 chính là sắc cánh hoa (#FFA7C9 → #FDEDF3).
       </p>
 
-      <div className="mt-L flex flex-wrap gap-S" role="radiogroup" aria-label="Chọn brand">
+      <div className="mt-4 flex flex-wrap gap-2" role="radiogroup" aria-label="Chọn brand">
         {BRANDS.map((b) => (
           <button
             key={b.id}
@@ -299,7 +299,7 @@ function BrandSection() {
             aria-checked={brand === b.id}
             onClick={() => setBrand(b.id)}
             className={cn(
-              "inline-flex h-8 items-center gap-S rounded-circular border px-M text-body1 transition-colors duration-faster",
+              "inline-flex h-8 items-center gap-2 rounded-circular border px-3 text-body1 transition-colors duration-faster",
               brand === b.id ? "border-brand-stroke bg-brand-background-2 font-semibold text-brand-foreground-2" : "border-stroke-1 hover:bg-subtle-hover",
             )}
           >
@@ -309,22 +309,22 @@ function BrandSection() {
         ))}
       </div>
 
-      <div data-brand={brand} className="mt-L">
+      <div data-brand={brand} className="mt-4">
         <div className="flex overflow-hidden rounded-2xlarge border border-stroke-2">
           {BRAND_STEPS.map((step) => (
-            <div key={step} className="flex h-24 flex-1 items-end justify-center pb-S" style={{ background: `var(--brand-${step})` }}>
+            <div key={step} className="flex h-24 flex-1 items-end justify-center pb-2" style={{ background: `var(--brand-${step})` }}>
               {/* brand-90 của mọi brand chỉ ~3.7:1 với chữ trắng → từ bậc 90 dùng chữ đen (≥ 4.5:1 cho nhãn 10px). */}
               <span className={cn("font-mono text-[10px]", step < 90 ? "text-(--white)" : "text-(--black)")}>{step}</span>
             </div>
           ))}
         </div>
 
-        <h3 className="mt-XXL text-title3 font-semibold">Brand dùng ở đâu</h3>
-        <Tile className="mt-L">
-          <div className="grid gap-XL md:grid-cols-2">
-            <div className="flex flex-col items-start gap-M">
+        <h3 className="mt-6 text-title3 font-semibold">Brand dùng ở đâu</h3>
+        <Tile className="mt-4">
+          <div className="grid gap-5 md:grid-cols-2">
+            <div className="flex flex-col items-start gap-3">
               <p className="text-caption1 font-semibold tracking-wide text-foreground-3 uppercase">Hành động chính (CTA)</p>
-              <div className="flex gap-S">
+              <div className="flex gap-2">
                 <Button appearance="primary">Bắt đầu</Button>
                 <Button>Để sau</Button>
               </div>
@@ -333,7 +333,7 @@ function BrandSection() {
                 Xem hướng dẫn màu
               </a>
             </div>
-            <div className="flex flex-col items-start gap-M">
+            <div className="flex flex-col items-start gap-3">
               <p className="text-caption1 font-semibold tracking-wide text-foreground-3 uppercase">Trạng thái chọn / bật</p>
               <Tabs defaultValue="a">
                 <TabsList size="small">
@@ -341,7 +341,7 @@ function BrandSection() {
                   <TabsTrigger value="b">Khác</TabsTrigger>
                 </TabsList>
               </Tabs>
-              <div className="flex items-center gap-L">
+              <div className="flex items-center gap-4">
                 <Checkbox label="Đã chọn" defaultChecked />
                 <Switch label="Bật" defaultChecked />
               </div>
@@ -352,7 +352,7 @@ function BrandSection() {
         </Tile>
       </div>
 
-      <div className="mt-L">
+      <div className="mt-4">
         <DoDont
           dos={[
             "Dùng brand cho nút/CTA chính, trạng thái chọn, bật, focus và liên kết.",
@@ -366,7 +366,7 @@ function BrandSection() {
           ]}
         />
       </div>
-      <div className="mt-L">
+      <div className="mt-4">
         <CodeBlock
           code={`// index.html — đổi brand cho toàn ứng dụng
 <html data-brand="web">
@@ -422,7 +422,7 @@ function StateSwatch({ token, theme }: { token: string; theme: string }) {
   const value = useTokenValue(token, theme);
   const isTransparent = token === "transparent";
   return (
-    <div className="flex min-w-0 items-center gap-S">
+    <div className="flex min-w-0 items-center gap-2">
       <span
         className="size-9 shrink-0 rounded-medium border border-stroke-2"
         style={{
@@ -446,46 +446,46 @@ function StatesSection({ theme }: { theme: string }) {
         Trên web, component <strong className="font-semibold text-foreground-1">đậm dần khi tương tác</strong>: sáng nhất
         khi nghỉ, đậm hơn khi hover, đậm nhất khi nhấn/chọn. (Windows làm ngược lại: control sáng dần khi tương tác.)
       </p>
-      <div className="mt-L overflow-x-auto rounded-2xlarge border border-stroke-2 bg-background-1">
+      <div className="mt-4 overflow-x-auto rounded-2xlarge border border-stroke-2 bg-background-1">
         <table className="w-full min-w-170 table-fixed text-left text-body1">
           <thead>
             <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
-              <th className="w-28 px-L py-S">Kiểu</th>
-              <th className="px-L py-S">Rest</th>
-              <th className="px-L py-S">Hover</th>
-              <th className="px-L py-S">Pressed</th>
-              <th className="w-44 px-L py-S">Thử</th>
+              <th className="w-28 px-4 py-2">Kiểu</th>
+              <th className="px-4 py-2">Rest</th>
+              <th className="px-4 py-2">Hover</th>
+              <th className="px-4 py-2">Pressed</th>
+              <th className="w-44 px-4 py-2">Thử</th>
             </tr>
           </thead>
           <tbody>
             {STATE_ROWS.map((row) => (
               <tr key={row.name} className="border-b border-stroke-3 last:border-b-0">
-                <td className="px-L py-M font-semibold">{row.name}</td>
+                <td className="px-4 py-3 font-semibold">{row.name}</td>
                 {row.states.map(([label, token]) => (
-                  <td key={label} className="px-L py-M">
+                  <td key={label} className="px-4 py-3">
                     <StateSwatch token={token} theme={theme} />
                   </td>
                 ))}
-                <td className="px-L py-M">{row.demo}</td>
+                <td className="px-4 py-3">{row.demo}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      <h3 className="mt-XXL text-title3 font-semibold">Trạng thái focus</h3>
-      <p className="mt-S max-w-3xl text-body2 text-foreground-2">
+      <h3 className="mt-6 text-title3 font-semibold">Trạng thái focus</h3>
+      <p className="mt-2 max-w-3xl text-body2 text-foreground-2">
         Khi focus bằng bàn phím, <strong className="font-semibold text-foreground-1">màu control không đổi</strong> — thay
         vào đó khung ngoài có nét dày hơn (2px <code className="font-mono text-caption1">colorStrokeFocus2</code>) để phân
         biệt tương tác bàn phím với chuột. Nhấn Tab để thử.
       </p>
-      <Tile className="mt-L">
-        <div className="flex flex-wrap items-center justify-center gap-XL">
-          <div className="flex flex-col items-center gap-S">
+      <Tile className="mt-4">
+        <div className="flex flex-wrap items-center justify-center gap-5">
+          <div className="flex flex-col items-center gap-2">
             <Button appearance="primary">Rest</Button>
             <span className="text-caption1 text-foreground-3">Bình thường</span>
           </div>
-          <div className="flex flex-col items-center gap-S">
+          <div className="flex flex-col items-center gap-2">
             <Button appearance="primary" className="outline-2 outline-offset-1 outline-stroke-focus outline-solid">
               Focus
             </Button>
@@ -515,29 +515,29 @@ function GradientSection() {
         control hay trạng thái.
       </p>
 
-      <Tile className="mt-L flex flex-col items-center gap-S py-16">
+      <Tile className="mt-4 flex flex-col items-center gap-2 py-16">
         <p className="relative inline-block font-display text-[clamp(48px,7vw,96px)] leading-none font-normal">
           <GradientText gradient="sakura">Yugen UI</GradientText>
           <WavyUnderline gradient="sakura" className="absolute inset-x-0 -bottom-5 h-5" />
         </p>
       </Tile>
 
-      <div className="mt-L grid gap-L sm:grid-cols-2 xl:grid-cols-3">
+      <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {GRADIENTS.map((g) => (
           <div key={g.name} className="overflow-hidden rounded-2xlarge border border-stroke-2 bg-background-1">
             <div className={cn("h-28", g.utility)} />
-            <div className="p-L">
+            <div className="p-4">
               <p className={cn("font-display text-title2 font-semibold", g.text)}>{g.name}</p>
-              <p className="mt-XS font-mono text-caption1 text-brand-foreground-1">
+              <p className="mt-1 font-mono text-caption1 text-brand-foreground-1">
                 {g.utility} · {g.text}
               </p>
-              <p className="mt-XXS font-mono text-caption1 text-foreground-3">{g.tokens}</p>
+              <p className="mt-0.5 font-mono text-caption1 text-foreground-3">{g.tokens}</p>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="mt-L">
+      <div className="mt-4">
         <CodeBlock
           code={`import { GradientText, WavyUnderline, BloomArt } from "@/components/ui";
 
@@ -550,7 +550,7 @@ function GradientSection() {
         />
       </div>
 
-      <div className="mt-L">
+      <div className="mt-4">
         <DoDont
           dos={[
             "Dùng cho hero, minh hoạ, onboarding, empty state, trang marketing.",
@@ -598,7 +598,7 @@ function ContrastRow({ fg, bg, kind, label, theme }: (typeof CONTRAST_PAIRS)[num
 
   return (
     <tr className="border-b border-stroke-3 last:border-b-0">
-      <td className="px-L py-S">
+      <td className="px-4 py-2">
         <span
           // Mẫu "Aa" vẽ đúng cặp token; hàng decor (viền trang trí, disabled) cố ý tương phản thấp — xem e2e/a11y-allowlist.ts.
           data-contrast-sample={kind}
@@ -608,18 +608,18 @@ function ContrastRow({ fg, bg, kind, label, theme }: (typeof CONTRAST_PAIRS)[num
           Aa
         </span>
       </td>
-      <td className="px-L py-S">
+      <td className="px-4 py-2">
         <p className="text-body1">{label}</p>
         <p className="font-mono text-caption2 text-foreground-3">
           {fg} / {bg}
         </p>
       </td>
-      <td className="px-L py-S font-mono text-body1 tabular-nums">{ratio ? `${ratio.toFixed(2)}:1` : "—"}</td>
-      <td className="px-L py-S">
+      <td className="px-4 py-2 font-mono text-body1 tabular-nums">{ratio ? `${ratio.toFixed(2)}:1` : "—"}</td>
+      <td className="px-4 py-2">
         {kind === "decor" ? (
           <span className="text-caption1 text-foreground-3">Không yêu cầu</span>
         ) : (
-          <span className={cn("inline-flex items-center gap-XS text-caption1 font-semibold", pass ? "text-success-foreground-1" : "text-danger-foreground-1")}>
+          <span className={cn("inline-flex items-center gap-1 text-caption1 font-semibold", pass ? "text-success-foreground-1" : "text-danger-foreground-1")}>
             {pass ? <CheckmarkCircle16Filled /> : <DismissCircle16Filled />}
             {pass ? "Đạt" : "Không đạt"} {required}:1
           </span>
@@ -632,24 +632,24 @@ function ContrastRow({ fg, bg, kind, label, theme }: (typeof CONTRAST_PAIRS)[num
 function AccessibilitySection({ theme }: { theme: string }) {
   return (
     <>
-      <ol className="flex max-w-3xl list-decimal flex-col gap-S ps-L text-body2 text-foreground-2">
+      <ol className="flex max-w-3xl list-decimal flex-col gap-2 ps-4 text-body2 text-foreground-2">
         <li>Đảm bảo tương phản đủ cho người thị lực kém hoặc mù màu: chữ ≥ 4.5:1 (chữ lớn ≥ 3:1), thành phần UI ≥ 3:1.</li>
         <li>Khi có thể, cho phép người dùng tự chọn bảng màu (light / dark / brand) phù hợp với họ.</li>
         <li>Không dùng màu làm cách truyền đạt duy nhất — luôn đi kèm chữ, icon hoặc hình dạng.</li>
       </ol>
-      <p className="mt-L text-body1 text-foreground-3">
+      <p className="mt-4 text-body1 text-foreground-3">
         Bảng dưới đây được tính <strong className="font-semibold text-foreground-1">trực tiếp</strong> từ token đang áp
         dụng — đổi theme ở góc trên để kiểm tra dark mode.
       </p>
       {/* tabIndex: bảng cuộn ngang được bằng bàn phím (axe scrollable-region-focusable). */}
-      <div tabIndex={0} className="mt-S overflow-x-auto rounded-2xlarge border border-stroke-2 bg-background-1">
+      <div tabIndex={0} className="mt-2 overflow-x-auto rounded-2xlarge border border-stroke-2 bg-background-1">
         <table className="w-full min-w-160 text-left">
           <thead>
             <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
-              <th className="px-L py-S">Mẫu</th>
-              <th className="px-L py-S">Cặp token</th>
-              <th className="px-L py-S">Tỉ lệ</th>
-              <th className="px-L py-S">WCAG AA</th>
+              <th className="px-4 py-2">Mẫu</th>
+              <th className="px-4 py-2">Cặp token</th>
+              <th className="px-4 py-2">Tỉ lệ</th>
+              <th className="px-4 py-2">WCAG AA</th>
             </tr>
           </thead>
           <tbody>
@@ -666,7 +666,7 @@ function AccessibilitySection({ theme }: { theme: string }) {
 function Swatch({ token, utility, theme }: { token: string; utility: string; theme: string }) {
   const value = useTokenValue(token, theme);
   return (
-    <div className="flex items-center gap-M rounded-xlarge border border-stroke-2 bg-background-1 p-S">
+    <div className="flex items-center gap-3 rounded-xlarge border border-stroke-2 bg-background-1 p-2">
       <div className="size-12 shrink-0 rounded-large border border-stroke-2" style={{ background: `var(--${token})` }} />
       <div className="min-w-0">
         <p className="truncate font-mono text-[13px] font-semibold text-foreground-1">{token}</p>
@@ -727,7 +727,7 @@ const TOKEN_GROUPS: { title: string; tokens: [string, string][] }[] = [
 
 function TokensSection({ theme }: { theme: string }) {
   return (
-    <div className="flex flex-col gap-XXL">
+    <div className="flex flex-col gap-6">
       <p className="max-w-3xl text-body2 text-foreground-2">
         Mỗi giá trị trong bảng màu được lưu thành <strong className="font-semibold text-foreground-1">global token</strong>{" "}
         không ngữ cảnh. <strong className="font-semibold text-foreground-1">Alias token</strong> gắn ngữ cảnh để designer
@@ -735,8 +735,8 @@ function TokensSection({ theme }: { theme: string }) {
       </p>
       {TOKEN_GROUPS.map((group) => (
         <div key={group.title}>
-          <h3 className="mb-M text-subtitle1 font-semibold">{group.title}</h3>
-          <div className="grid gap-S md:grid-cols-2">
+          <h3 className="mb-3 text-subtitle1 font-semibold">{group.title}</h3>
+          <div className="grid gap-2 md:grid-cols-2">
             {group.tokens.map(([token, utility]) => (
               <Swatch key={token} token={token} utility={utility} theme={theme} />
             ))}
@@ -770,7 +770,7 @@ export function ColorPage({ theme }: { theme: string }) {
       />
       <ColorMosaic />
 
-      <div className="mt-XXL">
+      <div className="mt-6">
         <DocSection id="palettes" title="Bảng màu Fluent" description="Fluent định nghĩa ba bảng màu: neutral, shared và brand. Mỗi bảng đảm nhận một vai trò riêng.">
           <PalettesSection />
         </DocSection>

@@ -31,7 +31,7 @@ function P({ children }: { children: ReactNode }) {
 }
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function A({ href, children }: { href: string; children: ReactNode }) {
@@ -45,16 +45,16 @@ function A({ href, children }: { href: string; children: ReactNode }) {
 /** Numbered steps — each with an h3 title and a body. */
 function Steps({ items }: { items: { title: ReactNode; body: ReactNode }[] }) {
   return (
-    <ol className="flex max-w-4xl flex-col gap-XL">
+    <ol className="flex max-w-4xl flex-col gap-5">
       {items.map((s, i) => (
-        <li key={i} className="grid grid-cols-[2rem_minmax(0,1fr)] gap-M">
+        <li key={i} className="grid grid-cols-[2rem_minmax(0,1fr)] gap-3">
           <span
             aria-hidden
             className="flex size-8 items-center justify-center rounded-circular bg-brand-background-2 text-body1 font-semibold text-brand-foreground-2"
           >
             {i + 1}
           </span>
-          <div className="flex min-w-0 flex-col gap-S pt-XS">
+          <div className="flex min-w-0 flex-col gap-2 pt-1">
             <h3 className="text-subtitle2 font-semibold text-foreground-1">{s.title}</h3>
             {s.body}
           </div>
@@ -71,7 +71,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
             {head.map((h) => (
-              <th key={h} className="px-L py-S text-start">
+              <th key={h} className="px-4 py-2 text-start">
                 {h}
               </th>
             ))}
@@ -81,7 +81,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
           {rows.map((row, i) => (
             <tr key={i} className="border-b border-stroke-3 align-top last:border-b-0">
               {row.map((cell, j) => (
-                <td key={j} className={j === 0 ? "px-L py-M font-semibold text-foreground-1" : "px-L py-M text-foreground-2"}>
+                <td key={j} className={j === 0 ? "px-4 py-3 font-semibold text-foreground-1" : "px-4 py-3 text-foreground-2"}>
                   {cell}
                 </td>
               ))}
@@ -98,7 +98,7 @@ const FIRST = `import { Button, Field, Input, toast } from "yugen-ui";
 export function NewsletterForm() {
   return (
     <form
-      className="flex w-full max-w-sm flex-col gap-M"
+      className="flex w-full max-w-sm flex-col gap-3"
       onSubmit={(e) => {
         e.preventDefault();
         toast({ intent: "success", title: "Subscribed", body: "See you in the next issue." });
@@ -117,7 +117,7 @@ export function NewsletterForm() {
 function NewsletterForm() {
   return (
     <form
-      className="flex w-full max-w-sm flex-col gap-M"
+      className="flex w-full max-w-sm flex-col gap-3"
       onSubmit={(e) => {
         e.preventDefault();
         toast({ intent: "success", title: "Subscribed", body: "See you in the next issue." });
@@ -179,14 +179,14 @@ export default function Page() {
         title="Fastest: one command"
         description="The CLI copies a template, installs dependencies and starts the dev server. Nothing else to configure."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <CodeBlock code={TEMPLATE_COMMAND} />
           <P>
             The starter comes with a remembered theme choice, toast, an <C>@/</C> alias, SEO basics and a welcome page to delete when you
             start. Swap <C>starter</C> for <C>saas</C> (8-page SaaS app), <C>blog</C> (Markdown blog), <C>dashboard</C> or <C>ai-chat</C>,
             or drop <C>--template</C> to pick in the terminal. More options on <A href="#/concepts/cli">@yugen-ui/cli</A>.
           </P>
-          <div className="flex flex-wrap gap-S">
+          <div className="flex flex-wrap gap-2">
             <Button asChild appearance="primary" icon={<Rocket16Regular />}>
               <a href="#/templates">Browse templates</a>
             </Button>
@@ -200,7 +200,7 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="existing" title="Add to an existing project" description="React 19 (or 18.3) and Tailwind CSS v4. No aliases or bundler config.">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <PackageManagerTabs packages={CLI_INIT} command="dlx" />
           <P>
             Pick <C>package</C> when asked: the CLI installs <C>yugen-ui</C>, adds the theme line to your main CSS file (or{" "}
@@ -234,7 +234,7 @@ export default function Page() {
               title: "Wrap your app in YugenProvider",
               body: (
                 <>
-                  <Tabs defaultValue="vite" className="flex flex-col gap-S">
+                  <Tabs defaultValue="vite" className="flex flex-col gap-2">
                     <TabsList aria-label="Framework">
                       <TabsTrigger value="vite">Vite</TabsTrigger>
                       <TabsTrigger value="next">Next.js</TabsTrigger>
@@ -263,7 +263,7 @@ export default function Page() {
         title="Need deeper customization?"
         description="Copy component source into your project and edit it directly, instead of using the prebuilt npm package. Run init once, then add each component."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <PackageManagerTabs packages={CLI_INIT_SOURCE} command="dlx" />
           <PackageManagerTabs packages={CLI_ADD} command="dlx" />
           <P>
@@ -275,8 +275,8 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="first-component" title="Your first component" description="Field wires the label, hint and aria-* to the Input; toast() shows brief feedback after submitting.">
-        <div className="flex flex-col gap-L">
-          <div className="flex flex-wrap items-center gap-M rounded-2xlarge border border-stroke-2 bg-background-1 p-XXL">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-wrap items-center gap-3 rounded-2xlarge border border-stroke-2 bg-background-1 p-6">
             <NewsletterForm />
           </div>
           <CodeBlock code={FIRST} />
@@ -288,7 +288,7 @@ export default function Page() {
         title="Remember the theme, no flash (optional)"
         description="Templates already do this. Doing it yourself takes two pieces: state that stores the choice and a tiny script that sets the theme before the page paints."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <CodeBlock code={PERSIST} />
           <P>
             <C>YugenProvider</C> writes attributes in <C>useEffect</C> (after the first paint), so add a script to <C>{"<head>"}</C> to avoid
@@ -303,7 +303,7 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="requirements" title="Requirements">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <SimpleTable
             head={["Technology", "Version", "Notes"]}
             rows={[
@@ -314,7 +314,7 @@ export default function Page() {
               ["Node.js", "18+", "Required by Vite 6 and Tailwind 4."],
             ]}
           />
-          <div className="flex flex-wrap gap-S">
+          <div className="flex flex-wrap gap-2">
             <Button asChild>
               <a href="#/concepts/styling">Styling</a>
             </Button>

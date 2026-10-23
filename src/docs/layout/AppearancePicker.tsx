@@ -31,14 +31,14 @@ export function BrandDot({ brand, className = "size-3" }: { brand: AppBrand; cla
 
 function Section({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div className="flex flex-col gap-XS">
+    <div className="flex flex-col gap-1">
       <span className="text-caption1 font-semibold text-foreground-3">{label}</span>
       {children}
     </div>
   );
 }
 
-const ITEM = "flex-auto gap-XS whitespace-nowrap";
+const ITEM = "flex-auto gap-1 whitespace-nowrap";
 
 /**
  * Chọn giao diện: chế độ (sáng / tối / tương phản cao) và brand tách riêng; hướng chữ chỉ hiện khi có `dir`.
@@ -53,7 +53,7 @@ export function AppearancePicker({ value, onChange }: { value: AppearanceValue; 
       v && onChange({ [key]: v } as Partial<AppearanceValue>);
 
   return (
-    <div className="flex w-80 max-w-full flex-col gap-L">
+    <div className="flex w-80 max-w-full flex-col gap-4">
       <Section label={t("appearance.mode")}>
         <ToggleGroup type="single" size="small" value={value.theme} onValueChange={pick("theme")} aria-label={t("appearance.mode")} className="w-full">
           <ToggleGroupItem value="light" icon={<WeatherSunny16Regular />} className={ITEM}>

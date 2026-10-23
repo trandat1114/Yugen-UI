@@ -5,14 +5,15 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   build: {
-    rollupOptions: {
+    rolldownOptions: {
       output: {
         // Tách thư viện khỏi mã ứng dụng: sửa trang chỉ làm đổi chunk nhỏ, phần còn lại trình duyệt giữ cache.
         // Icon Fluent để chung vendor: tách riêng tạo vòng import vendor ↔ icons (lỗi TDZ lúc chạy).
-        manualChunks(id) {
-          if (!id.includes("node_modules")) return;
-          if (/[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/.test(id)) return "react";
-          return "vendor";
+        codeSplitting: {
+          groups: [
+            { name: "react", test: /[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/, priority: 20 },
+            { name: "vendor", test: /[\\/]node_modules[\\/]/, priority: 10 },
+          ],
         },
       },
     },

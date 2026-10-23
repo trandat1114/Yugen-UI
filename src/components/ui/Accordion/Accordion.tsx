@@ -25,7 +25,7 @@ const AccordionContext = React.createContext<AccordionContextValue>({
 
 const ROOT_APPEARANCE: Record<AccordionAppearance, string> = {
   flush: "",
-  separated: "gap-S",
+  separated: "gap-2",
   // overflow-hidden để hover bo theo góc khung → focus ring của header vẽ vào trong (-outline-offset-2).
   outline: "divide-y divide-stroke-2 overflow-hidden rounded-xlarge border border-stroke-1 bg-background-1",
 };
@@ -37,15 +37,15 @@ const ITEM_APPEARANCE: Record<AccordionAppearance, string> = {
 };
 
 const TRIGGER_APPEARANCE: Record<AccordionAppearance, string> = {
-  flush: "rounded-medium ps-MNudge pe-M",
-  separated: "rounded-xlarge ps-M pe-L data-[state=open]:rounded-b-none",
-  outline: "rounded-none ps-M pe-L focus-visible:-outline-offset-2",
+  flush: "rounded-medium ps-2.5 pe-3",
+  separated: "rounded-xlarge ps-3 pe-4 data-[state=open]:rounded-b-none",
+  outline: "rounded-none ps-3 pe-4 focus-visible:-outline-offset-2",
 };
 
 const PANEL_APPEARANCE: Record<AccordionAppearance, string> = {
-  flush: "px-M pt-XS pb-M",
-  separated: "px-L pt-XS pb-L",
-  outline: "px-L pt-XS pb-L",
+  flush: "px-3 pt-1 pb-3",
+  separated: "px-4 pt-1 pb-4",
+  outline: "px-4 pt-1 pb-4",
 };
 
 export type AccordionProps = React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Root> & {
@@ -81,7 +81,7 @@ export const Accordion = React.forwardRef<React.ElementRef<typeof AccordionPrimi
             "flex flex-col",
             ROOT_APPEARANCE[appearance],
             // Accordion lồng (flush): đường dẫn dọc stroke-2 ở mép đầu dòng thể hiện cấp bậc.
-            nested && appearance === "flush" && "border-s border-stroke-2 ps-XS",
+            nested && appearance === "flush" && "border-s border-stroke-2 ps-1",
             className,
           )}
           {...props}
@@ -141,7 +141,7 @@ export const AccordionHeader = React.forwardRef<React.ElementRef<typeof Accordio
         <AccordionPrimitive.Trigger
           ref={ref}
           className={cn(
-            "group/acc flex w-full flex-1 items-center gap-S py-S text-start text-foreground-1",
+            "group/acc flex w-full flex-1 items-center gap-2 py-2 text-start text-foreground-1",
             "transition-colors duration-faster ease-easy-ease hover:bg-subtle-hover active:bg-subtle-pressed",
             "disabled:pointer-events-none disabled:text-foreground-disabled",
             HEADER_SIZE[size],
@@ -157,7 +157,7 @@ export const AccordionHeader = React.forwardRef<React.ElementRef<typeof Accordio
             </span>
           )}
           {description ? (
-            <span className="flex min-w-0 flex-1 flex-col gap-XXS">
+            <span className="flex min-w-0 flex-1 flex-col gap-0.5">
               <span id={`${id}-title`}>{children}</span>
               <span
                 id={`${id}-description`}

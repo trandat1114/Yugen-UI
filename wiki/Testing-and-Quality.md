@@ -9,6 +9,7 @@
 | `npm test` | Vitest: logic, bàn phím, SSR / hydration (~470 test) |
 | `npm run test:e2e` | Playwright: axe trên mọi trang docs (sáng / tối, + tương phản cao / RTL), kéo-thả, chạm |
 | `npm run test:visual` | So ảnh chụp với bản chuẩn (chỉ ảnh Linux được commit; CI chạy trên PR đổi giao diện) |
+| `npm run test:engines` | Tương tác trên Firefox, Safari desktop và iPhone (WebKit) |
 | `npm run check:examples` | Mọi ví dụ docs typecheck được khi chép ra dùng với `yugen-ui` |
 | `npm run check:props` | Bảng props trên docs khớp type thật |
 | `npm run check:release` | `package.json` = `news.ts` = `CHANGELOG.md` |
@@ -22,7 +23,12 @@
 | Build · Node 22 / 24 / 26 | typecheck, lint:classes, các check:*, sync-templates, build lib + docs, pack, size |
 | Unit tests (React 19) | `npm test` |
 | React 18 | cài React 18.3 tạm thời → typecheck, test, build:lib |
-| E2E (Playwright + axe) | chromium, upload `playwright-report` khi lỗi |
+| E2E · shard 1/3 … 3/3 | `test:e2e --shard=n/3` song song (blob report; `test-results-n` khi lỗi) |
+| E2E (Playwright + axe) | gộp blob report thành một báo cáo HTML (`playwright-report`); đỏ nếu một shard đỏ — tên check cố định |
+
+Workflow riêng **Browser engines** (`engines.yml`): `npm run test:engines` hằng tuần (thứ Hai), trên PR vào `main`, trên PR
+vào `next` có đổi `e2e/` / `playwright.config.ts` / chính workflow, và khi gọi tay. Bản chạy theo lịch hỏng thì mở issue "E2E on Firefox / WebKit is failing" (hoặc bình luận nếu đang mở), xanh
+lại thì tự đóng. Khác biệt giữa engine ghi ở trang docs Trình duyệt & nền tảng › Kiểm thử trên từng engine.
 
 ## Sửa CI đỏ — các ca hay gặp
 

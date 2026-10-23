@@ -354,14 +354,14 @@ export const PromptInput = React.forwardRef<HTMLTextAreaElement, PromptInputProp
         {...props}
       >
         {files.length > 0 && (
-          <ul id={listId} aria-label="Tệp đính kèm" className="flex flex-wrap gap-XS px-S pt-S">
+          <ul id={listId} aria-label="Tệp đính kèm" className="flex flex-wrap gap-1 px-2 pt-2">
             {files.map((file, i) => {
               const Icon = fileIcon(file);
               const preview = previews.get(file);
               return (
                 <li
                   key={`${file.name}-${file.size}-${file.lastModified}-${i}`}
-                  className="flex max-w-60 min-w-0 items-center gap-S rounded-medium border border-stroke-2 bg-background-2 py-XS ps-XS pe-XXS"
+                  className="flex max-w-60 min-w-0 items-center gap-2 rounded-medium border border-stroke-2 bg-background-2 py-1 ps-1 pe-0.5"
                 >
                   {preview ? (
                     <img src={preview} alt="" className="size-8 shrink-0 rounded-small object-cover" />
@@ -420,20 +420,20 @@ export const PromptInput = React.forwardRef<HTMLTextAreaElement, PromptInputProp
             }
           }}
           className={cn(
-            "block w-full resize-none bg-transparent px-M pt-S pb-XS text-body1 text-foreground-1 outline-none",
+            "block w-full resize-none bg-transparent px-3 pt-2 pb-1 text-body1 text-foreground-1 outline-none",
             "placeholder:text-foreground-4 disabled:cursor-not-allowed disabled:text-foreground-disabled",
             textareaProps?.className,
           )}
         />
 
         {errors.length > 0 && (
-          <div id={errorId} role="alert" className="flex items-start gap-XS px-M pb-XS text-caption1 text-danger-foreground-1">
-            <ErrorCircle12Filled aria-hidden className="mt-XXS shrink-0" />
+          <div id={errorId} role="alert" className="flex items-start gap-1 px-3 pb-1 text-caption1 text-danger-foreground-1">
+            <ErrorCircle12Filled aria-hidden className="mt-0.5 shrink-0" />
             <span className="min-w-0">{errors.join(" ")}</span>
           </div>
         )}
 
-        <div className="flex items-center gap-XS px-XS pb-XS">
+        <div className="flex items-center gap-1 px-1 pb-1">
           {allowAttachments && (
             <>
               <input
@@ -458,13 +458,13 @@ export const PromptInput = React.forwardRef<HTMLTextAreaElement, PromptInputProp
               />
             </>
           )}
-          {toolbar && <div className="flex min-w-0 items-center gap-XXS">{toolbar}</div>}
+          {toolbar && <div className="flex min-w-0 items-center gap-0.5">{toolbar}</div>}
           {showHint && (
-            <span id={hintId} className="hidden min-w-0 truncate ps-XS text-caption1 text-foreground-3 sm:inline">
+            <span id={hintId} className="hidden min-w-0 truncate ps-1 text-caption1 text-foreground-3 sm:inline">
               Enter để gửi · Shift+Enter xuống dòng
             </span>
           )}
-          <div className="ms-auto flex shrink-0 items-center gap-S">
+          <div className="ms-auto flex shrink-0 items-center gap-2">
             {streaming && onStop ? (
               <Button appearance="secondary" icon={<Stop20Filled />} aria-label={stopLabel} title={stopLabel} onClick={onStop} />
             ) : (
@@ -483,7 +483,7 @@ export const PromptInput = React.forwardRef<HTMLTextAreaElement, PromptInputProp
         {dragging && (
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center gap-S rounded-medium border-2 border-dashed border-brand-stroke bg-brand-background-2 text-body1 font-semibold text-brand-foreground-2"
+            className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center gap-2 rounded-medium border-2 border-dashed border-brand-stroke bg-brand-background-2 text-body1 font-semibold text-brand-foreground-2"
           >
             <ArrowUpload20Regular />
             Thả tệp để đính kèm

@@ -33,7 +33,7 @@ function P({ children }: { children: ReactNode }) {
 }
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
@@ -44,7 +44,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
             {head.map((h) => (
-              <th key={h} className="px-L py-S text-start">
+              <th key={h} className="px-4 py-2 text-start">
                 {h}
               </th>
             ))}
@@ -54,7 +54,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
           {rows.map((row, i) => (
             <tr key={i} className="border-b border-stroke-3 align-top last:border-b-0">
               {row.map((cell, j) => (
-                <td key={j} className={j === 0 ? "px-L py-M font-semibold text-foreground-1" : "px-L py-M text-foreground-2"}>
+                <td key={j} className={j === 0 ? "px-4 py-3 font-semibold text-foreground-1" : "px-4 py-3 text-foreground-2"}>
                   {cell}
                 </td>
               ))}
@@ -84,13 +84,13 @@ const CUSTOM_CODE = `{/* Phần tử tự viết tự có vòng focus nhờ base
       open();
     }
   }}
-  className="flex items-center gap-S rounded-medium p-M hover:bg-subtle-hover"
+  className="flex items-center gap-2 rounded-medium p-3 hover:bg-subtle-hover"
 >
   …
 </div>
 
 {/* Trong khung overflow-hidden (list, card bo góc): kéo outline vào trong để không bị cắt */}
-<a href="/files/42" className="block px-M py-S hover:bg-subtle-hover focus-visible:-outline-offset-2">…</a>
+<a href="/files/42" className="block px-3 py-2 hover:bg-subtle-hover focus-visible:-outline-offset-2">…</a>
 
 {/* Muốn đổi kiểu viền thì THAY bằng một chỉ báo tương đương, không xoá */}
 <button className="outline-none focus-visible:ring-2 focus-visible:ring-stroke-focus focus-visible:ring-offset-1">…</button>`;
@@ -169,14 +169,14 @@ export default function Page() {
         title="Cách hoạt động"
         description="Một quy tắc toàn cục trong index.css vẽ outline cho :focus-visible — trình duyệt chỉ bật nó khi người dùng di chuyển bằng bàn phím, không bật khi click chuột."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <CodeBlock code={BASE_CSS} />
           <MessageBar intent="info" title="Thử ngay:" className="max-w-3xl">
             bấm vào vùng trống của khung dưới rồi nhấn <strong className="font-semibold">Tab</strong> /{" "}
             <strong className="font-semibold">Shift + Tab</strong>. Bấm chuột vào cùng các control đó — viền không xuất hiện.
           </MessageBar>
-          <div className="flex flex-col gap-L rounded-2xlarge border border-stroke-2 bg-background-1 p-XXL">
-            <div className="flex flex-wrap items-center gap-M">
+          <div className="flex flex-col gap-4 rounded-2xlarge border border-stroke-2 bg-background-1 p-6">
+            <div className="flex flex-wrap items-center gap-3">
               <Button appearance="primary">Primary</Button>
               <Button>Secondary</Button>
               <Button appearance="subtle" icon={<Document20Regular />} aria-label="Tài liệu" />
@@ -184,7 +184,7 @@ export default function Page() {
               <Checkbox label="Checkbox" defaultChecked />
               <Switch label="Switch" />
             </div>
-            <div className="flex flex-wrap items-center gap-XL">
+            <div className="flex flex-wrap items-center gap-5">
               <RadioGroup aria-label="Kích thước" layout="horizontal" defaultValue="m">
                 <Radio value="s" label="Nhỏ" />
                 <Radio value="m" label="Vừa" />
@@ -210,7 +210,7 @@ export default function Page() {
         title="Vì sao màu của control không đổi khi focus"
         description="Fluent tách focus thành một kênh riêng: hover / pressed / selected đổi màu, còn focus chỉ thêm viền."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <SimpleTable
             head={["Trạng thái", "Tín hiệu", "Lý do"]}
             rows={[
@@ -220,7 +220,7 @@ export default function Page() {
               ["Disabled", "Màu disabled, không opacity", "Không tương tác."],
             ]}
           />
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>Một tab vừa được chọn vừa đang focus vẫn đọc được cả hai: vạch brand ở đáy và viền focus bao ngoài.</li>
             <li>
               Đen / trắng luôn đạt ≥ 3:1 với mọi nền neutral của theme, bất kể brand là Sakura, Web hay brand riêng — màu brand thì không
@@ -236,8 +236,8 @@ export default function Page() {
         title="Ô nhập & mục trong danh sách"
         description="Hai ngoại lệ có chủ đích, cả hai đều thay outline bằng một chỉ báo tương đương."
       >
-        <div className="flex flex-col gap-L">
-          <div className="flex flex-wrap items-start gap-XL rounded-2xlarge border border-stroke-2 bg-background-1 p-XXL">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-wrap items-start gap-5 rounded-2xlarge border border-stroke-2 bg-background-1 p-6">
             <Field label="Ô nhập" className="w-64">
               <Input placeholder="Click hoặc Tab vào đây" />
             </Field>
@@ -249,7 +249,7 @@ export default function Page() {
               </Dropdown>
             </Field>
           </div>
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>
               <strong className="font-semibold text-foreground-1">Ô nhập</strong> (Input, Textarea, Select, Dropdown, Combobox, TagPicker,
               SpinButton, DatePicker): thanh brand 2px chạy từ giữa ra ở đáy, theo <C>:focus-within</C> — hiện cả khi click, vì người dùng
@@ -269,15 +269,15 @@ export default function Page() {
         title="Phần tử tự viết"
         description="Vì quy tắc nằm ở base, phần tử tương tác tự viết có vòng focus miễn phí. Việc của bạn là đừng vô tình xoá nó."
       >
-        <div className="flex flex-col gap-L">
-          <div className="flex flex-wrap items-center gap-L rounded-2xlarge border border-stroke-2 bg-background-1 p-XXL">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-wrap items-center gap-4 rounded-2xlarge border border-stroke-2 bg-background-1 p-6">
             <div className="w-64 overflow-hidden rounded-xlarge border border-stroke-2">
               {["Báo cáo quý 3.pdf", "Kế hoạch 2027.docx", "Ngân sách.xlsx"].map((f) => (
                 <a
                   key={f}
                   href="#/concepts/focus-indicator"
                   onClick={(e) => e.preventDefault()}
-                  className="flex items-center gap-S border-b border-stroke-3 px-M py-S text-body1 text-foreground-1 last:border-b-0 hover:bg-subtle-hover focus-visible:-outline-offset-2"
+                  className="flex items-center gap-2 border-b border-stroke-3 px-3 py-2 text-body1 text-foreground-1 last:border-b-0 hover:bg-subtle-hover focus-visible:-outline-offset-2"
                 >
                   <Document20Regular className="shrink-0 text-foreground-3" />
                   <span className="min-w-0 truncate">{f}</span>
@@ -310,8 +310,8 @@ export default function Page() {
         title="Quản lý focus: dialog, menu, popover"
         description="Radix lo phần khó: giữ focus trong Dialog / Drawer, đưa focus vào bề mặt khi mở và trả về trigger khi đóng."
       >
-        <div className="flex flex-col gap-L">
-          <div className="flex flex-wrap items-center gap-M rounded-2xlarge border border-stroke-2 bg-background-1 p-XXL">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-wrap items-center gap-3 rounded-2xlarge border border-stroke-2 bg-background-1 p-6">
             <RenameDialog />
             <p className="text-body1 text-foreground-2">Mở bằng Enter, đóng bằng Esc — focus quay lại nút.</p>
           </div>

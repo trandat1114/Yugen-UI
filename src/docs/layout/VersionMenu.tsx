@@ -40,7 +40,7 @@ export function VersionMenu() {
   return (
     <Menu>
       <MenuTrigger asChild>
-        <Button appearance="subtle" size="small" className="gap-XXS font-normal" aria-label={t("version.label", { version: currentMinor })}>
+        <Button appearance="subtle" size="small" className="gap-0.5 font-normal" aria-label={t("version.label", { version: currentMinor })}>
           {label(currentMinor)}
           <ChevronDown16Regular />
         </Button>

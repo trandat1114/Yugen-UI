@@ -37,8 +37,8 @@ export const DialogSurface = React.forwardRef<React.ElementRef<typeof DialogPrim
             onEscapeKeyDown?.(e);
           }}
           className={cn(
-            "fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100dvh-48px)] w-[calc(100vw-32px)] max-w-150 -translate-x-1/2 -translate-y-1/2 flex-col gap-S",
-            "rounded-xlarge border border-transparent bg-background-1 p-XXL text-foreground-1 shadow-64",
+            "fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100dvh-48px)] w-[calc(100vw-32px)] max-w-150 -translate-x-1/2 -translate-y-1/2 flex-col gap-2",
+            "rounded-xlarge border border-transparent bg-background-1 p-6 text-foreground-1 shadow-64",
             "animate-surface-in data-[state=closed]:animate-surface-out",
             className,
           )}
@@ -60,14 +60,14 @@ export function DialogTitle({
   action?: React.ReactNode | null;
 }) {
   return (
-    <div className="flex items-start gap-S">
+    <div className="flex items-start gap-2">
       <DialogPrimitive.Title className={cn("flex-1 text-subtitle1 font-semibold", className)} {...props}>
         {children}
       </DialogPrimitive.Title>
       {action === undefined ? (
         <DialogPrimitive.Close
           aria-label="Đóng"
-          className="-me-XS inline-flex size-8 shrink-0 items-center justify-center rounded-medium text-foreground-2 hover:bg-subtle-hover hover:text-foreground-1 active:bg-subtle-pressed"
+          className="-me-1 inline-flex size-8 shrink-0 items-center justify-center rounded-medium text-foreground-2 hover:bg-subtle-hover hover:text-foreground-1 active:bg-subtle-pressed"
         >
           <Dismiss24Regular className="size-5" />
         </DialogPrimitive.Close>
@@ -91,5 +91,5 @@ export const DialogDescription = React.forwardRef<
 DialogDescription.displayName = "DialogDescription";
 
 export function DialogActions({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("mt-S flex flex-wrap justify-end gap-S", className)} {...props} />;
+  return <div className={cn("mt-2 flex flex-wrap justify-end gap-2", className)} {...props} />;
 }

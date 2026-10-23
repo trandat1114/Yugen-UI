@@ -70,7 +70,8 @@ export async function diagnose(opts: DoctorOptions): Promise<Check[]> {
   let config: YugenConfig | null = null;
   try {
     config = loadConfig(cwd);
-    if (config) add("ok", `${CONFIG_FILE}: ${config.mode} mode`);
+    if (config && exists(path.join(cwd, CONFIG_FILE))) add("ok", `${CONFIG_FILE}: ${config.mode} mode`);
+    else if (config) add("ok", `${config.mode === "package" ? "Package" : "Source"} mode (no ${CONFIG_FILE}; read from ${config.mode === "package" ? "package.json" : "components.json"})`);
     else add("warn", `${CONFIG_FILE} not found`, "Run `yugen init` to record how Yugen UI is set up.");
   } catch (e) {
     add("error", (e as Error).message, (e as CliError).hint);

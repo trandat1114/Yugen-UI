@@ -102,7 +102,7 @@ const members = [
 function ListSelectionDemo() {
   const [selected, setSelected] = useState(["an"]);
   return (
-    <div className="flex w-full max-w-sm flex-col gap-S">
+    <div className="flex w-full max-w-sm flex-col gap-2">
       <List selectionMode="multiselect" selectedItems={selected} onSelectionChange={setSelected} aria-label="Người tham gia">
         <ListItem value="an" media={<Avatar name="Nguyễn Văn An" color="colorful" />} title="Nguyễn Văn An" description="Kỹ sư phần mềm" />
         <ListItem value="binh" media={<Avatar name="Trần Thị Bình" color="colorful" />} title="Trần Thị Bình" description="Nhà thiết kế" />
@@ -149,7 +149,7 @@ function TableSelectionDemo() {
 function TreeSelectionDemo() {
   const [selected, setSelected] = useState("work");
   return (
-    <div className="flex w-64 flex-col gap-S">
+    <div className="flex w-64 flex-col gap-2">
       <Tree aria-label="Thư mục thư" selectionMode="single" selectedValue={selected} onSelectedChange={setSelected} defaultOpenItems={["inbox"]}>
         <TreeItem itemType="branch" value="inbox">
           <TreeItemLayout iconBefore={<Mail20Regular />}>Hộp thư đến</TreeItemLayout>
@@ -238,8 +238,8 @@ function DataTableDemo() {
   };
 
   return (
-    <div className="flex w-full flex-col gap-M">
-      <div className="flex flex-wrap items-center justify-between gap-S">
+    <div className="flex w-full flex-col gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <Input
           aria-label="Lọc theo khách hàng"
           placeholder="Lọc theo khách hàng…"
@@ -332,11 +332,11 @@ function DataTableDemo() {
         </Table>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-S">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <span className="text-caption1 text-foreground-3">
           Trang {current + 1} / {pageCount} · {sorted.length} kết quả
         </span>
-        <div className="flex gap-S">
+        <div className="flex gap-2">
           <Button size="small" icon={<ChevronLeft20Regular className="rtl:-scale-x-100" />} disabled={current === 0} onClick={() => setPage(current - 1)}>
             Trước
           </Button>
@@ -396,7 +396,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
         description: "spread (mặc định), stack có viền tách nền, pie chia 2–3 avatar trong một vòng tròn.",
         code: `const people = ["Nguyễn Văn An", "Trần Thị Bình", "Lê Hoàng Cường", "Phạm Minh Dũng", "Hoàng Thu Hà", "Vũ Quốc Khánh", "Đặng Mai Linh", "Bùi Thanh Nam"];
 
-<div className="flex flex-col items-start gap-L">
+<div className="flex flex-col items-start gap-4">
   <AvatarGroup layout="spread" aria-label="Spread">
     {people.slice(0, 4).map((name) => <AvatarGroupItem key={name} name={name} />)}
   </AvatarGroup>
@@ -408,7 +408,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
   </AvatarGroup>
 </div>`,
         render: () => (
-          <div className="flex flex-col items-start gap-L">
+          <div className="flex flex-col items-start gap-4">
             <AvatarGroup layout="spread" aria-label="Spread">
               {people.slice(0, 4).map((name) => <AvatarGroupItem key={name} name={name} />)}
             </AvatarGroup>
@@ -424,7 +424,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
       {
         title: "Kích thước",
         description: "Dùng chung thang size của Avatar: 20, 24, 32 (mặc định), 40, 48, 64, 96.",
-        code: `<div className="flex flex-col items-start gap-M">
+        code: `<div className="flex flex-col items-start gap-3">
   <AvatarGroup layout="stack" size={24} aria-label="Cỡ 24">
     {people.slice(0, 5).map((name) => <AvatarGroupItem key={name} name={name} />)}
   </AvatarGroup>
@@ -436,7 +436,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
   </AvatarGroup>
 </div>`,
         render: () => (
-          <div className="flex flex-col items-start gap-M">
+          <div className="flex flex-col items-start gap-3">
             <AvatarGroup layout="stack" size={24} aria-label="Cỡ 24">
               {people.slice(0, 5).map((name) => <AvatarGroupItem key={name} name={name} />)}
             </AvatarGroup>
@@ -452,7 +452,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
       {
         title: "Tràn & danh sách đầy đủ",
         description: "maxAvatars giới hạn số ô (tính cả nút tràn). Bấm “+N” hoặc “…” để xem danh sách trong Popover.",
-        code: `<div className="flex flex-col items-start gap-M">
+        code: `<div className="flex flex-col items-start gap-3">
   <AvatarGroup maxAvatars={3} aria-label="Nhóm thiết kế">
     {people.map((name) => <AvatarGroupItem key={name} name={name} />)}
   </AvatarGroup>
@@ -461,7 +461,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
   </AvatarGroup>
 </div>`,
         render: () => (
-          <div className="flex flex-col items-start gap-M">
+          <div className="flex flex-col items-start gap-3">
             <AvatarGroup maxAvatars={3} aria-label="Nhóm thiết kế">
               {people.map((name) => <AvatarGroupItem key={name} name={name} />)}
             </AvatarGroup>
@@ -546,7 +546,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
       {
         title: "Kích thước",
         description: "extra-small → huge; Avatar 20 → 64px.",
-        code: `<div className="flex flex-col items-start gap-M">
+        code: `<div className="flex flex-col items-start gap-3">
   <Persona size="extra-small" name="Trần Thị Bình" secondaryText="extra-small" presence="available" />
   <Persona size="small" name="Trần Thị Bình" secondaryText="small" presence="busy" />
   <Persona size="medium" name="Trần Thị Bình" secondaryText="medium" presence="away" />
@@ -555,7 +555,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
   <Persona size="huge" name="Trần Thị Bình" secondaryText="huge" presence="available" />
 </div>`,
         render: () => (
-          <div className="flex flex-col items-start gap-M">
+          <div className="flex flex-col items-start gap-3">
             <Persona size="extra-small" name="Trần Thị Bình" secondaryText="extra-small" presence="available" />
             <Persona size="small" name="Trần Thị Bình" secondaryText="small" presence="busy" />
             <Persona size="medium" name="Trần Thị Bình" secondaryText="medium" presence="away" />
@@ -568,13 +568,13 @@ const DISPLAY: Record<string, ComponentDoc> = {
       {
         title: "Vị trí chữ",
         description: "after (mặc định), before, below.",
-        code: `<div className="flex flex-wrap items-start justify-center gap-XL">
+        code: `<div className="flex flex-wrap items-start justify-center gap-5">
   <Persona size="large" name="Lê Hoàng Cường" secondaryText="after" presence="available" avatar={{ color: "colorful" }} />
   <Persona size="large" textPosition="before" name="Lê Hoàng Cường" secondaryText="before" presence="available" avatar={{ color: "colorful" }} />
   <Persona size="large" textPosition="below" textAlignment="center" name="Lê Hoàng Cường" secondaryText="below" presence="available" avatar={{ color: "colorful" }} />
 </div>`,
         render: () => (
-          <div className="flex flex-wrap items-start justify-center gap-XL">
+          <div className="flex flex-wrap items-start justify-center gap-5">
             <Persona size="large" name="Lê Hoàng Cường" secondaryText="after" presence="available" avatar={{ color: "colorful" }} />
             <Persona size="large" textPosition="before" name="Lê Hoàng Cường" secondaryText="before" presence="available" avatar={{ color: "colorful" }} />
             <Persona size="large" textPosition="below" textAlignment="center" name="Lê Hoàng Cường" secondaryText="below" presence="available" avatar={{ color: "colorful" }} />
@@ -584,7 +584,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
       {
         title: "Căn chữ & bốn dòng",
         description: "textAlignment start (mặc định) bám mép trên Avatar; center căn giữa theo chiều dọc.",
-        code: `<div className="flex flex-col items-start gap-L">
+        code: `<div className="flex flex-col items-start gap-4">
   <Persona
     size="extra-large"
     name="Phạm Minh Dũng"
@@ -596,7 +596,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
   <Persona size="extra-large" textAlignment="center" name="Phạm Minh Dũng" secondaryText="Quản lý sản phẩm" presence="busy" />
 </div>`,
         render: () => (
-          <div className="flex flex-col items-start gap-L">
+          <div className="flex flex-col items-start gap-4">
             <Persona
               size="extra-large"
               name="Phạm Minh Dũng"
@@ -612,13 +612,13 @@ const DISPLAY: Record<string, ComponentDoc> = {
       {
         title: "Chỉ trạng thái",
         description: "presenceOnly thay Avatar bằng chấm trạng thái — hợp với danh sách dày.",
-        code: `<div className="flex flex-col items-start gap-M">
+        code: `<div className="flex flex-col items-start gap-3">
   <Persona presenceOnly presence="available" name="Hoàng Thu Hà" secondaryText="Có mặt" />
   <Persona presenceOnly presence="away" name="Vũ Quốc Khánh" secondaryText="Vắng mặt" />
   <Persona presenceOnly presence="offline" name="Đặng Mai Linh" secondaryText="Ngoại tuyến" />
 </div>`,
         render: () => (
-          <div className="flex flex-col items-start gap-M">
+          <div className="flex flex-col items-start gap-3">
             <Persona presenceOnly presence="available" name="Hoàng Thu Hà" secondaryText="Có mặt" />
             <Persona presenceOnly presence="away" name="Vũ Quốc Khánh" secondaryText="Vắng mặt" />
             <Persona presenceOnly presence="offline" name="Đặng Mai Linh" secondaryText="Ngoại tuyến" />
@@ -662,7 +662,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
 } from "@/components/ui";`,
     hero: {
       title: "Text",
-      code: `<div className="flex max-w-xl flex-col gap-S">
+      code: `<div className="flex max-w-xl flex-col gap-2">
   <Caption1Strong className="text-brand-foreground-1">Typography</Caption1Strong>
   <Display>Aa Bb</Display>
   <Title3>Chữ rõ ràng, nhịp đều</Title3>
@@ -671,7 +671,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
   </Body2>
 </div>`,
       render: () => (
-        <div className="flex max-w-xl flex-col gap-S">
+        <div className="flex max-w-xl flex-col gap-2">
           <Caption1Strong className="text-brand-foreground-1">Typography</Caption1Strong>
           <Display>Aa Bb</Display>
           <Title3>Chữ rõ ràng, nhịp đều</Title3>
@@ -685,7 +685,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
       {
         title: "Preset",
         description: "Mỗi preset = một bậc type ramp + weight chuẩn.",
-        code: `<div className="flex flex-col gap-XS">
+        code: `<div className="flex flex-col gap-1">
   <LargeTitle>Large title</LargeTitle>
   <Title1>Title 1</Title1>
   <Title2>Title 2</Title2>
@@ -700,7 +700,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
   <Caption2>Caption 2</Caption2>
 </div>`,
         render: () => (
-          <div className="flex flex-col gap-XS">
+          <div className="flex flex-col gap-1">
             <LargeTitle>Large title</LargeTitle>
             <Title1>Title 1</Title1>
             <Title2>Title 2</Title2>
@@ -719,7 +719,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
       {
         title: "Size & weight",
         description: "size 100–1000; weight regular, medium, semibold, bold.",
-        code: `<div className="flex flex-col gap-XS">
+        code: `<div className="flex flex-col gap-1">
   <Text size={500} weight="regular">size 500 · regular</Text>
   <Text size={500} weight="medium">size 500 · medium</Text>
   <Text size={500} weight="semibold">size 500 · semibold</Text>
@@ -727,7 +727,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
   <Text size={200}>size 200 · regular</Text>
 </div>`,
         render: () => (
-          <div className="flex flex-col gap-XS">
+          <div className="flex flex-col gap-1">
             <Text size={500} weight="regular">size 500 · regular</Text>
             <Text size={500} weight="medium">size 500 · medium</Text>
             <Text size={500} weight="semibold">size 500 · semibold</Text>
@@ -739,7 +739,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
       {
         title: "Định dạng & font",
         description: "italic, underline, strikethrough; font base, monospace, numeric.",
-        code: `<div className="flex flex-col gap-XS">
+        code: `<div className="flex flex-col gap-1">
   <Text italic>Chữ nghiêng</Text>
   <Text underline>Chữ gạch chân</Text>
   <Text strikethrough>Chữ gạch ngang</Text>
@@ -748,7 +748,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
   <Text font="numeric">1.234.567,89 ₫</Text>
 </div>`,
         render: () => (
-          <div className="flex flex-col gap-XS">
+          <div className="flex flex-col gap-1">
             <Text italic>Chữ nghiêng</Text>
             <Text underline>Chữ gạch chân</Text>
             <Text strikethrough>Chữ gạch ngang</Text>
@@ -761,7 +761,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
       {
         title: "Truncate, căn lề & as",
         description: "truncate cần wrap={false} và block; as đổi thẻ HTML mà không đổi style.",
-        code: `<div className="flex w-56 flex-col gap-S">
+        code: `<div className="flex w-56 flex-col gap-2">
   <Text block truncate wrap={false}>
     Đoạn chữ rất dài sẽ bị cắt bằng dấu ba chấm khi vượt quá chiều rộng
   </Text>
@@ -774,7 +774,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
   </Text>
 </div>`,
         render: () => (
-          <div className="flex w-56 flex-col gap-S">
+          <div className="flex w-56 flex-col gap-2">
             <Text block truncate wrap={false}>
               Đoạn chữ rất dài sẽ bị cắt bằng dấu ba chấm khi vượt quá chiều rộng
             </Text>
@@ -822,12 +822,12 @@ const DISPLAY: Record<string, ComponentDoc> = {
     hero: {
       title: "Image",
       code: `// mountain, sunset, landscape, scenery: URL ảnh bất kỳ (ở đây là SVG sinh sẵn).
-<div className="flex flex-wrap items-center justify-center gap-L">
+<div className="flex flex-wrap items-center justify-center gap-4">
   <Image src={mountain} alt="Núi và hồ buổi sáng" shape="rounded" shadow className="w-56" />
   <Image src={sunset} alt="Đồi lúc hoàng hôn" shape="circular" fit="cover" bordered className="size-32" />
 </div>`,
       render: () => (
-        <div className="flex flex-wrap items-center justify-center gap-L">
+        <div className="flex flex-wrap items-center justify-center gap-4">
           <Image src={mountain} alt="Núi và hồ buổi sáng" shape="rounded" shadow className="w-56" />
           <Image src={sunset} alt="Đồi lúc hoàng hôn" shape="circular" fit="cover" bordered className="size-32" />
         </div>
@@ -837,9 +837,9 @@ const DISPLAY: Record<string, ComponentDoc> = {
       {
         title: "Fit",
         description: "Cách ảnh lấp một khung cố định 144 × 112.",
-        code: `<div className="grid grid-cols-2 gap-M">
+        code: `<div className="grid grid-cols-2 gap-3">
   {(["none", "center", "contain", "cover"] as const).map((fit) => (
-    <div key={fit} className="flex flex-col gap-XS">
+    <div key={fit} className="flex flex-col gap-1">
       <div className="h-28 w-36 overflow-hidden rounded-medium border border-stroke-2 bg-background-4">
         <Image src={landscape} alt="" fit={fit} />
       </div>
@@ -848,9 +848,9 @@ const DISPLAY: Record<string, ComponentDoc> = {
   ))}
 </div>`,
         render: () => (
-          <div className="grid grid-cols-2 gap-M">
+          <div className="grid grid-cols-2 gap-3">
             {(["none", "center", "contain", "cover"] as const).map((fit) => (
-              <div key={fit} className="flex flex-col gap-XS">
+              <div key={fit} className="flex flex-col gap-1">
                 <div className="h-28 w-36 overflow-hidden rounded-medium border border-stroke-2 bg-background-4">
                   <Image src={landscape} alt="" fit={fit} />
                 </div>
@@ -863,13 +863,13 @@ const DISPLAY: Record<string, ComponentDoc> = {
       {
         title: "Shape",
         description: "square (mặc định), rounded, circular.",
-        code: `<div className="flex items-center gap-L">
+        code: `<div className="flex items-center gap-4">
   <Image src={sunset} alt="" fit="cover" shape="square" className="size-24" />
   <Image src={sunset} alt="" fit="cover" shape="rounded" className="size-24" />
   <Image src={sunset} alt="" fit="cover" shape="circular" className="size-24" />
 </div>`,
         render: () => (
-          <div className="flex items-center gap-L">
+          <div className="flex items-center gap-4">
             <Image src={sunset} alt="" fit="cover" shape="square" className="size-24" />
             <Image src={sunset} alt="" fit="cover" shape="rounded" className="size-24" />
             <Image src={sunset} alt="" fit="cover" shape="circular" className="size-24" />
@@ -879,12 +879,12 @@ const DISPLAY: Record<string, ComponentDoc> = {
       {
         title: "Viền & bóng",
         description: "bordered thêm viền stroke-1; shadow dùng shadow-4 như Card.",
-        code: `<div className="flex items-center gap-L">
+        code: `<div className="flex items-center gap-4">
   <Image src={mountain} alt="" bordered shape="rounded" className="w-36" />
   <Image src={mountain} alt="" shadow shape="rounded" className="w-36" />
 </div>`,
         render: () => (
-          <div className="flex items-center gap-L">
+          <div className="flex items-center gap-4">
             <Image src={mountain} alt="" bordered shape="rounded" className="w-36" />
             <Image src={mountain} alt="" shadow shape="rounded" className="w-36" />
           </div>
@@ -893,7 +893,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
       {
         title: "AspectRatio",
         description: "Khung 16 / 9 và 1 / 1; nội dung bên trong lấp đầy khung.",
-        code: `<div className="grid w-full grid-cols-2 items-center gap-M">
+        code: `<div className="grid w-full grid-cols-2 items-center gap-3">
   <AspectRatio ratio={16 / 9} className="rounded-xlarge">
     <Image src={mountain} alt="Núi và hồ buổi sáng" fit="cover" />
   </AspectRatio>
@@ -902,7 +902,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
   </AspectRatio>
 </div>`,
         render: () => (
-          <div className="grid w-full grid-cols-2 items-center gap-M">
+          <div className="grid w-full grid-cols-2 items-center gap-3">
             <AspectRatio ratio={16 / 9} className="rounded-xlarge">
               <Image src={mountain} alt="Núi và hồ buổi sáng" fit="cover" />
             </AspectRatio>
@@ -947,7 +947,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
       code: `function ListSelectionDemo() {
   const [selected, setSelected] = useState(["an"]);
   return (
-    <div className="flex w-full max-w-sm flex-col gap-S">
+    <div className="flex w-full max-w-sm flex-col gap-2">
       <List selectionMode="multiselect" selectedItems={selected} onSelectionChange={setSelected} aria-label="Người tham gia">
         <ListItem value="an" media={<Avatar name="Nguyễn Văn An" color="colorful" />} title="Nguyễn Văn An" description="Kỹ sư phần mềm" />
         <ListItem value="binh" media={<Avatar name="Trần Thị Bình" color="colorful" />} title="Trần Thị Bình" description="Nhà thiết kế" />
@@ -1147,8 +1147,8 @@ function DataTableDemo() {
   };
 
   return (
-    <div className="flex w-full flex-col gap-M">
-      <div className="flex flex-wrap items-center justify-between gap-S">
+    <div className="flex w-full flex-col gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <Input
           aria-label="Lọc theo khách hàng"
           placeholder="Lọc theo khách hàng…"
@@ -1241,11 +1241,11 @@ function DataTableDemo() {
         </Table>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-S">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <span className="text-caption1 text-foreground-3">
           Trang {current + 1} / {pageCount} · {sorted.length} kết quả
         </span>
-        <div className="flex gap-S">
+        <div className="flex gap-2">
           <Button size="small" icon={<ChevronLeft20Regular className="rtl:-scale-x-100" />} disabled={current === 0} onClick={() => setPage(current - 1)}>
             Trước
           </Button>
@@ -1331,7 +1331,7 @@ function DataTableDemo() {
       {
         title: "Kích thước",
         description: "extra-small (24px) và small (34px); medium mặc định cao 44px.",
-        code: `<div className="flex w-full flex-col gap-L">
+        code: `<div className="flex w-full flex-col gap-4">
   <Table size="extra-small" aria-label="extra-small">
     <TableHeader>
       <TableRow>
@@ -1370,7 +1370,7 @@ function DataTableDemo() {
   </Table>
 </div>`,
         render: () => (
-          <div className="flex w-full flex-col gap-L">
+          <div className="flex w-full flex-col gap-4">
             <Table size="extra-small" aria-label="extra-small">
               <TableHeader>
                 <TableRow>
@@ -1667,7 +1667,7 @@ function TableSelectionDemo() {
         code: `function TreeSelectionDemo() {
   const [selected, setSelected] = useState("work");
   return (
-    <div className="flex w-64 flex-col gap-S">
+    <div className="flex w-64 flex-col gap-2">
       <Tree aria-label="Thư mục thư" selectionMode="single" selectedValue={selected} onSelectedChange={setSelected} defaultOpenItems={["inbox"]}>
         <TreeItem itemType="branch" value="inbox">
           <TreeItemLayout iconBefore={<Mail20Regular />}>Hộp thư đến</TreeItemLayout>
@@ -1726,14 +1726,14 @@ function TableSelectionDemo() {
     importCode: `import { Divider } from "@/components/ui";`,
     hero: {
       title: "Divider",
-      code: `<div className="flex w-full max-w-md flex-col gap-L">
+      code: `<div className="flex w-full max-w-md flex-col gap-4">
   <Divider />
   <Divider>Hoặc</Divider>
   <Divider alignContent="start">Bắt đầu</Divider>
   <Divider alignContent="end">Kết thúc</Divider>
 </div>`,
       render: () => (
-        <div className="flex w-full max-w-md flex-col gap-L">
+        <div className="flex w-full max-w-md flex-col gap-4">
           <Divider />
           <Divider>Hoặc</Divider>
           <Divider alignContent="start">Bắt đầu</Divider>
@@ -1745,14 +1745,14 @@ function TableSelectionDemo() {
       {
         title: "Appearance",
         description: "default (stroke-2), subtle (stroke-3), brand, strong (stroke-1).",
-        code: `<div className="flex w-full flex-col gap-L">
+        code: `<div className="flex w-full flex-col gap-4">
   <Divider>default</Divider>
   <Divider appearance="subtle">subtle</Divider>
   <Divider appearance="brand">brand</Divider>
   <Divider appearance="strong">strong</Divider>
 </div>`,
         render: () => (
-          <div className="flex w-full flex-col gap-L">
+          <div className="flex w-full flex-col gap-4">
             <Divider>default</Divider>
             <Divider appearance="subtle">subtle</Divider>
             <Divider appearance="brand">brand</Divider>
@@ -1763,7 +1763,7 @@ function TableSelectionDemo() {
       {
         title: "Dọc",
         description: "vertical chia các phần tử trên cùng hàng; cao theo hàng chứa.",
-        code: `<div className="flex h-20 items-center gap-M text-body1">
+        code: `<div className="flex h-20 items-center gap-3 text-body1">
   <span>Thư</span>
   <Divider vertical />
   <span>Lịch</span>
@@ -1771,7 +1771,7 @@ function TableSelectionDemo() {
   <span>Danh bạ</span>
 </div>`,
         render: () => (
-          <div className="flex h-20 items-center gap-M text-body1">
+          <div className="flex h-20 items-center gap-3 text-body1">
             <span>Thư</span>
             <Divider vertical />
             <span>Lịch</span>
@@ -1783,14 +1783,14 @@ function TableSelectionDemo() {
       {
         title: "Icon & inset",
         description: "Nội dung có thể là icon; inset thụt hai đầu 12px.",
-        code: `<div className="flex w-full flex-col gap-L">
+        code: `<div className="flex w-full flex-col gap-4">
   <Divider>
     <Star20Regular />
   </Divider>
   <Divider inset>Thụt hai đầu</Divider>
 </div>`,
         render: () => (
-          <div className="flex w-full flex-col gap-L">
+          <div className="flex w-full flex-col gap-4">
             <Divider>
               <Star20Regular />
             </Divider>
@@ -1829,11 +1829,11 @@ function TableSelectionDemo() {
       code: `const versions = Array.from({ length: 30 }, (_, i) => "v2." + (30 - i) + ".0");
 
 <ScrollArea className="h-72 w-56 rounded-medium border border-stroke-2 bg-background-1">
-  <div className="p-L">
-    <p className="mb-S text-body1 font-semibold">Phiên bản</p>
+  <div className="p-4">
+    <p className="mb-2 text-body1 font-semibold">Phiên bản</p>
     {versions.map((version) => (
       <div key={version}>
-        <div className="py-S text-body1">{version}</div>
+        <div className="py-2 text-body1">{version}</div>
         <Divider appearance="subtle" />
       </div>
     ))}
@@ -1841,11 +1841,11 @@ function TableSelectionDemo() {
 </ScrollArea>`,
       render: () => (
         <ScrollArea className="h-72 w-56 rounded-medium border border-stroke-2 bg-background-1">
-          <div className="p-L">
-            <p className="mb-S text-body1 font-semibold">Phiên bản</p>
+          <div className="p-4">
+            <p className="mb-2 text-body1 font-semibold">Phiên bản</p>
             {versions.map((version) => (
               <div key={version}>
-                <div className="py-S text-body1">{version}</div>
+                <div className="py-2 text-body1">{version}</div>
                 <Divider appearance="subtle" />
               </div>
             ))}
@@ -1859,22 +1859,22 @@ function TableSelectionDemo() {
         description: "orientation=\"horizontal\" cho dải thẻ / ảnh.",
         code: `// mountain, sunset, landscape, scenery: URL ảnh bất kỳ (ở đây là SVG sinh sẵn).
 <ScrollArea orientation="horizontal" className="w-full max-w-sm rounded-medium border border-stroke-2 bg-background-1">
-  <div className="flex w-max gap-M p-M">
+  <div className="flex w-max gap-3 p-3">
     {scenery.map((item) => (
       <figure key={item.title} className="m-0 shrink-0">
         <Image src={item.src} alt={item.title} fit="cover" shape="rounded" className="h-28 w-40" />
-        <figcaption className="pt-XS text-caption1 text-foreground-3">{item.title}</figcaption>
+        <figcaption className="pt-1 text-caption1 text-foreground-3">{item.title}</figcaption>
       </figure>
     ))}
   </div>
 </ScrollArea>`,
         render: () => (
           <ScrollArea orientation="horizontal" className="w-full max-w-sm rounded-medium border border-stroke-2 bg-background-1">
-            <div className="flex w-max gap-M p-M">
+            <div className="flex w-max gap-3 p-3">
               {scenery.map((item) => (
                 <figure key={item.title} className="m-0 shrink-0">
                   <Image src={item.src} alt={item.title} fit="cover" shape="rounded" className="h-28 w-40" />
-                  <figcaption className="pt-XS text-caption1 text-foreground-3">{item.title}</figcaption>
+                  <figcaption className="pt-1 text-caption1 text-foreground-3">{item.title}</figcaption>
                 </figure>
               ))}
             </div>
@@ -1885,7 +1885,7 @@ function TableSelectionDemo() {
         title: "Cả hai chiều",
         description: "orientation=\"both\" cho lưới lớn hơn khung.",
         code: `<ScrollArea orientation="both" className="h-56 w-full max-w-sm rounded-medium border border-stroke-2 bg-background-1">
-  <div className="grid w-max grid-cols-10 gap-S p-M">
+  <div className="grid w-max grid-cols-10 gap-2 p-3">
     {Array.from({ length: 80 }, (_, i) => (
       <div key={i} className="flex size-16 items-center justify-center rounded-medium bg-background-3 text-caption1 text-foreground-2">
         {i + 1}
@@ -1895,7 +1895,7 @@ function TableSelectionDemo() {
 </ScrollArea>`,
         render: () => (
           <ScrollArea orientation="both" className="h-56 w-full max-w-sm rounded-medium border border-stroke-2 bg-background-1">
-            <div className="grid w-max grid-cols-10 gap-S p-M">
+            <div className="grid w-max grid-cols-10 gap-2 p-3">
               {Array.from({ length: 80 }, (_, i) => (
                 <div key={i} className="flex size-16 items-center justify-center rounded-medium bg-background-3 text-caption1 text-foreground-2">
                   {i + 1}
@@ -1939,7 +1939,7 @@ function TableSelectionDemo() {
   <CarouselViewport>
     <CarouselCard>
       <div className="relative h-64 overflow-hidden rounded-xlarge bg-gradient-aurora">
-        <div className="absolute inset-s-L bottom-L max-w-xs rounded-medium bg-background-1 p-M shadow-4">
+        <div className="absolute inset-s-4 bottom-4 max-w-xs rounded-medium bg-background-1 p-3 shadow-4">
           <p className="text-subtitle2 font-semibold">Fluent 2 cho web</p>
           <p className="text-caption1 text-foreground-3">Token, component và tài liệu luôn đồng bộ.</p>
         </div>
@@ -1948,7 +1948,7 @@ function TableSelectionDemo() {
     <CarouselCard>
       <div className="relative h-64 overflow-hidden rounded-xlarge">
         <BloomArt />
-        <div className="absolute inset-s-L bottom-L max-w-xs rounded-medium bg-background-1 p-M shadow-4">
+        <div className="absolute inset-s-4 bottom-4 max-w-xs rounded-medium bg-background-1 p-3 shadow-4">
           <p className="text-subtitle2 font-semibold">Bloom theo brand</p>
           <p className="text-caption1 text-foreground-3">Đổi data-brand là đổi màu minh hoạ.</p>
         </div>
@@ -1956,7 +1956,7 @@ function TableSelectionDemo() {
     </CarouselCard>
     <CarouselCard>
       <div className="relative h-64 overflow-hidden rounded-xlarge bg-gradient-sunset">
-        <div className="absolute inset-s-L bottom-L max-w-xs rounded-medium bg-background-1 p-M shadow-4">
+        <div className="absolute inset-s-4 bottom-4 max-w-xs rounded-medium bg-background-1 p-3 shadow-4">
           <p className="text-subtitle2 font-semibold">Ngôn ngữ biểu cảm</p>
           <p className="text-caption1 text-foreground-3">Gradient chỉ dành cho minh hoạ và hero.</p>
         </div>
@@ -1964,7 +1964,7 @@ function TableSelectionDemo() {
     </CarouselCard>
     <CarouselCard>
       <div className="relative h-64 overflow-hidden rounded-xlarge bg-gradient-brand">
-        <div className="absolute inset-s-L bottom-L max-w-xs rounded-medium bg-background-1 p-M shadow-4">
+        <div className="absolute inset-s-4 bottom-4 max-w-xs rounded-medium bg-background-1 p-3 shadow-4">
           <p className="text-subtitle2 font-semibold">Sáng & tối</p>
           <p className="text-caption1 text-foreground-3">Đổi theme ngay trong khung ví dụ.</p>
         </div>
@@ -1978,7 +1978,7 @@ function TableSelectionDemo() {
           <CarouselViewport>
             <CarouselCard>
               <div className="relative h-64 overflow-hidden rounded-xlarge bg-gradient-aurora">
-                <div className="absolute inset-s-L bottom-L max-w-xs rounded-medium bg-background-1 p-M shadow-4">
+                <div className="absolute inset-s-4 bottom-4 max-w-xs rounded-medium bg-background-1 p-3 shadow-4">
                   <p className="text-subtitle2 font-semibold">Fluent 2 cho web</p>
                   <p className="text-caption1 text-foreground-3">Token, component và tài liệu luôn đồng bộ.</p>
                 </div>
@@ -1987,7 +1987,7 @@ function TableSelectionDemo() {
             <CarouselCard>
               <div className="relative h-64 overflow-hidden rounded-xlarge">
                 <BloomArt />
-                <div className="absolute inset-s-L bottom-L max-w-xs rounded-medium bg-background-1 p-M shadow-4">
+                <div className="absolute inset-s-4 bottom-4 max-w-xs rounded-medium bg-background-1 p-3 shadow-4">
                   <p className="text-subtitle2 font-semibold">Bloom theo brand</p>
                   <p className="text-caption1 text-foreground-3">Đổi data-brand là đổi màu minh hoạ.</p>
                 </div>
@@ -1995,7 +1995,7 @@ function TableSelectionDemo() {
             </CarouselCard>
             <CarouselCard>
               <div className="relative h-64 overflow-hidden rounded-xlarge bg-gradient-sunset">
-                <div className="absolute inset-s-L bottom-L max-w-xs rounded-medium bg-background-1 p-M shadow-4">
+                <div className="absolute inset-s-4 bottom-4 max-w-xs rounded-medium bg-background-1 p-3 shadow-4">
                   <p className="text-subtitle2 font-semibold">Ngôn ngữ biểu cảm</p>
                   <p className="text-caption1 text-foreground-3">Gradient chỉ dành cho minh hoạ và hero.</p>
                 </div>
@@ -2003,7 +2003,7 @@ function TableSelectionDemo() {
             </CarouselCard>
             <CarouselCard>
               <div className="relative h-64 overflow-hidden rounded-xlarge bg-gradient-brand">
-                <div className="absolute inset-s-L bottom-L max-w-xs rounded-medium bg-background-1 p-M shadow-4">
+                <div className="absolute inset-s-4 bottom-4 max-w-xs rounded-medium bg-background-1 p-3 shadow-4">
                   <p className="text-subtitle2 font-semibold">Sáng & tối</p>
                   <p className="text-caption1 text-foreground-3">Đổi theme ngay trong khung ví dụ.</p>
                 </div>
@@ -2024,7 +2024,7 @@ function TableSelectionDemo() {
     {scenery.map((item) => (
       <CarouselCard key={item.title}>
         <Image src={item.src} alt={item.title} fit="cover" shape="rounded" className="h-40" />
-        <p className="pt-XS text-caption1 text-foreground-3">{item.title}</p>
+        <p className="pt-1 text-caption1 text-foreground-3">{item.title}</p>
       </CarouselCard>
     ))}
   </CarouselViewport>
@@ -2036,7 +2036,7 @@ function TableSelectionDemo() {
               {scenery.map((item) => (
                 <CarouselCard key={item.title}>
                   <Image src={item.src} alt={item.title} fit="cover" shape="rounded" className="h-40" />
-                  <p className="pt-XS text-caption1 text-foreground-3">{item.title}</p>
+                  <p className="pt-1 text-caption1 text-foreground-3">{item.title}</p>
                 </CarouselCard>
               ))}
             </CarouselViewport>
@@ -2057,7 +2057,7 @@ function TableSelectionDemo() {
   <CarouselViewport>
     {tips.map((tip) => (
       <CarouselCard key={tip.title}>
-        <div className="flex h-36 flex-col justify-center gap-XS rounded-xlarge border border-stroke-2 bg-background-1 p-L">
+        <div className="flex h-36 flex-col justify-center gap-1 rounded-xlarge border border-stroke-2 bg-background-1 p-4">
           <span className="flex text-brand-foreground-1 [&>svg]:size-6">{tip.icon}</span>
           <p className="text-subtitle2 font-semibold">{tip.title}</p>
           <p className="text-body1 text-foreground-2">{tip.text}</p>
@@ -2072,7 +2072,7 @@ function TableSelectionDemo() {
             <CarouselViewport>
               {tips.map((tip) => (
                 <CarouselCard key={tip.title}>
-                  <div className="flex h-36 flex-col justify-center gap-XS rounded-xlarge border border-stroke-2 bg-background-1 p-L">
+                  <div className="flex h-36 flex-col justify-center gap-1 rounded-xlarge border border-stroke-2 bg-background-1 p-4">
                     <span className="flex text-brand-foreground-1 [&>svg]:size-6">{tip.icon}</span>
                     <p className="text-subtitle2 font-semibold">{tip.title}</p>
                     <p className="text-body1 text-foreground-2">{tip.text}</p>
@@ -2161,17 +2161,17 @@ function TableSelectionDemo() {
       code: `<div className="h-80 w-full max-w-2xl overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1">
   <ResizablePanelGroup orientation="horizontal">
     <ResizablePanel id="ide-sidebar" defaultSize="28%" minSize="18%" collapsible>
-      <div className="flex h-full items-center justify-center bg-background-2 p-L font-semibold">Thanh bên</div>
+      <div className="flex h-full items-center justify-center bg-background-2 p-4 font-semibold">Thanh bên</div>
     </ResizablePanel>
     <ResizableHandle withHandle collapseButton="before" />
     <ResizablePanel id="ide-main" defaultSize="72%">
       <ResizablePanelGroup orientation="vertical">
         <ResizablePanel id="ide-editor" defaultSize="65%">
-          <div className="flex h-full items-center justify-center p-L font-semibold">Nội dung</div>
+          <div className="flex h-full items-center justify-center p-4 font-semibold">Nội dung</div>
         </ResizablePanel>
         <ResizableHandle withHandle collapseButton="after" />
         <ResizablePanel id="ide-terminal" defaultSize="35%" minSize="20%" collapsible>
-          <div className="flex h-full items-center justify-center p-L font-semibold">Terminal</div>
+          <div className="flex h-full items-center justify-center p-4 font-semibold">Terminal</div>
         </ResizablePanel>
       </ResizablePanelGroup>
     </ResizablePanel>
@@ -2181,17 +2181,17 @@ function TableSelectionDemo() {
         <div className="h-80 w-full max-w-2xl overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1">
           <ResizablePanelGroup orientation="horizontal">
             <ResizablePanel id="ide-sidebar" defaultSize="28%" minSize="18%" collapsible>
-              <div className="flex h-full items-center justify-center bg-background-2 p-L font-semibold">Thanh bên</div>
+              <div className="flex h-full items-center justify-center bg-background-2 p-4 font-semibold">Thanh bên</div>
             </ResizablePanel>
             <ResizableHandle withHandle collapseButton="before" />
             <ResizablePanel id="ide-main" defaultSize="72%">
               <ResizablePanelGroup orientation="vertical">
                 <ResizablePanel id="ide-editor" defaultSize="65%">
-                  <div className="flex h-full items-center justify-center p-L font-semibold">Nội dung</div>
+                  <div className="flex h-full items-center justify-center p-4 font-semibold">Nội dung</div>
                 </ResizablePanel>
                 <ResizableHandle withHandle collapseButton="after" />
                 <ResizablePanel id="ide-terminal" defaultSize="35%" minSize="20%" collapsible>
-                  <div className="flex h-full items-center justify-center p-L font-semibold">Terminal</div>
+                  <div className="flex h-full items-center justify-center p-4 font-semibold">Terminal</div>
                 </ResizablePanel>
               </ResizablePanelGroup>
             </ResizablePanel>
@@ -2206,11 +2206,11 @@ function TableSelectionDemo() {
         code: `<div className="h-48 w-full overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1">
   <ResizablePanelGroup orientation="horizontal" persistKey="yugen-docs-mail">
     <ResizablePanel id="mail-folders" defaultSize="35%" minSize="20%">
-      <div className="flex h-full items-center justify-center bg-background-2 p-L font-semibold">Thư mục</div>
+      <div className="flex h-full items-center justify-center bg-background-2 p-4 font-semibold">Thư mục</div>
     </ResizablePanel>
     <ResizableHandle withHandle />
     <ResizablePanel id="mail-messages" defaultSize="65%">
-      <div className="flex h-full items-center justify-center p-L text-center font-semibold">Kéo rồi tải lại trang</div>
+      <div className="flex h-full items-center justify-center p-4 text-center font-semibold">Kéo rồi tải lại trang</div>
     </ResizablePanel>
   </ResizablePanelGroup>
 </div>`,
@@ -2218,11 +2218,11 @@ function TableSelectionDemo() {
           <div className="h-48 w-full overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1">
             <ResizablePanelGroup orientation="horizontal" persistKey="yugen-docs-mail">
               <ResizablePanel id="mail-folders" defaultSize="35%" minSize="20%">
-                <div className="flex h-full items-center justify-center bg-background-2 p-L font-semibold">Thư mục</div>
+                <div className="flex h-full items-center justify-center bg-background-2 p-4 font-semibold">Thư mục</div>
               </ResizablePanel>
               <ResizableHandle withHandle />
               <ResizablePanel id="mail-messages" defaultSize="65%">
-                <div className="flex h-full items-center justify-center p-L text-center font-semibold">Kéo rồi tải lại trang</div>
+                <div className="flex h-full items-center justify-center p-4 text-center font-semibold">Kéo rồi tải lại trang</div>
               </ResizablePanel>
             </ResizablePanelGroup>
           </div>
@@ -2234,11 +2234,11 @@ function TableSelectionDemo() {
         code: `<div className="h-56 w-full overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1">
   <ResizablePanelGroup orientation="vertical">
     <ResizablePanel defaultSize="30%" minSize="20%">
-      <div className="flex h-full items-center justify-center p-L font-semibold">Tiêu đề</div>
+      <div className="flex h-full items-center justify-center p-4 font-semibold">Tiêu đề</div>
     </ResizablePanel>
     <ResizableHandle withHandle />
     <ResizablePanel defaultSize="70%">
-      <div className="flex h-full items-center justify-center p-L font-semibold">Nội dung</div>
+      <div className="flex h-full items-center justify-center p-4 font-semibold">Nội dung</div>
     </ResizablePanel>
   </ResizablePanelGroup>
 </div>`,
@@ -2246,11 +2246,11 @@ function TableSelectionDemo() {
           <div className="h-56 w-full overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1">
             <ResizablePanelGroup orientation="vertical">
               <ResizablePanel defaultSize="30%" minSize="20%">
-                <div className="flex h-full items-center justify-center p-L font-semibold">Tiêu đề</div>
+                <div className="flex h-full items-center justify-center p-4 font-semibold">Tiêu đề</div>
               </ResizablePanel>
               <ResizableHandle withHandle />
               <ResizablePanel defaultSize="70%">
-                <div className="flex h-full items-center justify-center p-L font-semibold">Nội dung</div>
+                <div className="flex h-full items-center justify-center p-4 font-semibold">Nội dung</div>
               </ResizablePanel>
             </ResizablePanelGroup>
           </div>
@@ -2266,11 +2266,11 @@ function TableSelectionDemo() {
   <div dir="rtl" className="h-48 w-full overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1">
     <ResizablePanelGroup orientation="horizontal">
       <ResizablePanel defaultSize="35%" minSize="20%" collapsible>
-        <div className="flex h-full items-center justify-center bg-background-2 p-L font-semibold">الشريط الجانبي</div>
+        <div className="flex h-full items-center justify-center bg-background-2 p-4 font-semibold">الشريط الجانبي</div>
       </ResizablePanel>
       <ResizableHandle withHandle collapseButton="before" />
       <ResizablePanel defaultSize="65%">
-        <div className="flex h-full items-center justify-center p-L font-semibold">المحتوى</div>
+        <div className="flex h-full items-center justify-center p-4 font-semibold">المحتوى</div>
       </ResizablePanel>
     </ResizablePanelGroup>
   </div>
@@ -2280,11 +2280,11 @@ function TableSelectionDemo() {
             <div dir="rtl" className="h-48 w-full overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1">
               <ResizablePanelGroup orientation="horizontal">
                 <ResizablePanel defaultSize="35%" minSize="20%" collapsible>
-                  <div className="flex h-full items-center justify-center bg-background-2 p-L font-semibold">الشريط الجانبي</div>
+                  <div className="flex h-full items-center justify-center bg-background-2 p-4 font-semibold">الشريط الجانبي</div>
                 </ResizablePanel>
                 <ResizableHandle withHandle collapseButton="before" />
                 <ResizablePanel defaultSize="65%">
-                  <div className="flex h-full items-center justify-center p-L font-semibold">المحتوى</div>
+                  <div className="flex h-full items-center justify-center p-4 font-semibold">المحتوى</div>
                 </ResizablePanel>
               </ResizablePanelGroup>
             </div>

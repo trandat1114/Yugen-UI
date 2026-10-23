@@ -20,7 +20,7 @@ function P({ children }: { children: ReactNode }) {
 }
 
 function C({ children }: { children: ReactNode }) {
-  return <code className="rounded-small bg-background-4 px-XS font-mono text-caption1">{children}</code>;
+  return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
 }
 
 function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
@@ -30,7 +30,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
         <thead>
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
             {head.map((h) => (
-              <th key={h} className="px-L py-S text-start">
+              <th key={h} className="px-4 py-2 text-start">
                 {h}
               </th>
             ))}
@@ -40,7 +40,7 @@ function SimpleTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
           {rows.map((row, i) => (
             <tr key={i} className="border-b border-stroke-3 align-top last:border-b-0">
               {row.map((cell, j) => (
-                <td key={j} className="px-L py-M text-foreground-2">
+                <td key={j} className="px-4 py-3 text-foreground-2">
                   {cell}
                 </td>
               ))}
@@ -64,9 +64,9 @@ function Playground() {
   const [offset, setOffset] = React.useState("6");
 
   return (
-    <div className="grid gap-XL rounded-2xlarge border border-stroke-2 bg-background-1 p-XXL lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-      <div className="flex flex-col gap-L">
-        <div className="flex flex-col gap-XS">
+    <div className="grid gap-5 rounded-2xlarge border border-stroke-2 bg-background-1 p-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-1">
           <Label id="pos-side-label" weight="semibold">
             side
           </Label>
@@ -76,7 +76,7 @@ function Playground() {
             ))}
           </RadioGroup>
         </div>
-        <div className="flex flex-col gap-XS">
+        <div className="flex flex-col gap-1">
           <Label id="pos-align-label" weight="semibold">
             align
           </Label>
@@ -86,7 +86,7 @@ function Playground() {
             ))}
           </RadioGroup>
         </div>
-        <div className="flex flex-col gap-XS">
+        <div className="flex flex-col gap-1">
           <Label id="pos-offset-label" weight="semibold">
             sideOffset
           </Label>
@@ -97,7 +97,7 @@ function Playground() {
           </RadioGroup>
         </div>
       </div>
-      <div className="flex min-h-56 items-center justify-center rounded-xlarge bg-background-3 p-XL">
+      <div className="flex min-h-56 items-center justify-center rounded-xlarge bg-background-3 p-5">
         <Popover>
           <PopoverTrigger asChild>
             <Button appearance="primary" className="min-w-40">
@@ -144,7 +144,7 @@ const COLLISION_CODE = `{/* Chừa chỗ cho thanh trên cùng cao 74px và lề
 {/* Bám cố định theo phía đã chọn, chấp nhận bị cắt (hiếm khi cần) */}
 <MenuPopover avoidCollisions={false}>…</MenuPopover>`;
 
-const PORTAL_CODE = `<YugenProvider theme="dark" brand="web" className="p-L">
+const PORTAL_CODE = `<YugenProvider theme="dark" brand="web" className="p-4">
   <Popover>
     <PopoverTrigger asChild>
       <Button appearance="primary">Mở popover</Button>
@@ -170,7 +170,7 @@ export default function Page() {
         title="Các prop định vị"
         description="PopoverSurface, MenuPopover, MenubarContent, TooltipContent, HoverCardContent chuyển thẳng các prop này cho Radix Popper (ContextMenu mở tại con trỏ nên chỉ nhận nhóm prop va chạm)."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <PropsTable
             props={[
               {
@@ -207,9 +207,9 @@ export default function Page() {
         title="Thử side & align"
         description="Chọn giá trị rồi mở popover. Thử side=&quot;right&quot; trên màn hình hẹp để thấy bề mặt tự lật."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <Playground />
-          <div className="flex flex-wrap items-center justify-center gap-M rounded-2xlarge border border-stroke-2 bg-background-1 p-XXL">
+          <div className="flex flex-wrap items-center justify-center gap-3 rounded-2xlarge border border-stroke-2 bg-background-1 p-6">
             {SIDES.map((s) => (
               <SimpleTooltip key={s} content={`side="${s}"`} side={s}>
                 <Button>Tooltip {s}</Button>
@@ -225,9 +225,9 @@ export default function Page() {
         title="Va chạm & tự lật"
         description="Mặc định bề mặt không bao giờ tràn khỏi khung nhìn: thiếu chỗ ở cạnh đã chọn thì lật sang cạnh đối diện, thiếu chỗ theo trục căn thì trượt vào trong."
       >
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <CodeBlock code={COLLISION_CODE} />
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>
               Header sticky không được Radix biết tới — dùng <C>collisionPadding</C> ở cạnh tương ứng để bề mặt không chui dưới header.
             </li>
@@ -250,8 +250,8 @@ export default function Page() {
         title="Portal & theme"
         description="Mọi bề mặt nổi render qua portal vào <body> để thoát overflow: hidden và z-index của cha. Chúng vẫn tự nhận theme, brand và hướng chữ của YugenProvider lồng gần nhất."
       >
-        <div className="flex flex-col gap-L">
-          <YugenProvider theme="dark" brand="web" className="flex flex-wrap items-center gap-M rounded-2xlarge border border-stroke-2 p-XXL">
+        <div className="flex flex-col gap-4">
+          <YugenProvider theme="dark" brand="web" className="flex flex-wrap items-center gap-3 rounded-2xlarge border border-stroke-2 p-6">
             <p className="w-full text-body1 text-foreground-2">Vùng này là YugenProvider theme=&quot;dark&quot; brand=&quot;web&quot;.</p>
             <Popover>
               <PopoverTrigger asChild>
@@ -259,7 +259,7 @@ export default function Page() {
               </PopoverTrigger>
               <PopoverSurface withArrow>
                 <p className="text-body1">Nền tối, brand Web — theo provider lồng.</p>
-                <Button appearance="primary" size="small" className="mt-S">
+                <Button appearance="primary" size="small" className="mt-2">
                   Brand Web
                 </Button>
               </PopoverSurface>
@@ -269,7 +269,7 @@ export default function Page() {
             </SimpleTooltip>
           </YugenProvider>
           <CodeBlock code={PORTAL_CODE} />
-          <ul className="flex max-w-3xl list-disc flex-col gap-XS ps-XL text-body2 text-foreground-2">
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>
               Theme cho cả ứng dụng: luôn dùng <C>{"<YugenProvider applyToDocument>"}</C> ở gốc — attribute nằm trên <C>{"<html>"}</C> nên mọi
               portal tự đúng.
@@ -288,7 +288,7 @@ export default function Page() {
       </DocSection>
 
       <DocSection id="z-index" title="Thang z-index" description="Chỉ dùng vài bậc cố định; các bề mặt cùng bậc xếp chồng theo thứ tự mở (portal mở sau nằm trên).">
-        <div className="flex flex-col gap-L">
+        <div className="flex flex-col gap-4">
           <SimpleTable
             head={["Bậc", "Dùng cho"]}
             rows={[

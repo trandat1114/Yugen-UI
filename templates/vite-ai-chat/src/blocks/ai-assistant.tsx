@@ -101,7 +101,7 @@ export default function AiAssistantBlock() {
       aria-label={ASSISTANT}
       className="flex h-140 w-full max-w-lg flex-col overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1 shadow-4"
     >
-      <header className="flex items-center gap-S border-b border-stroke-2 px-L py-M">
+      <header className="flex items-center gap-2 border-b border-stroke-2 px-4 py-3">
         <Sparkle20Filled className="shrink-0 text-brand-foreground-1" />
         <div className="min-w-0 flex-1">
           <h3 className="text-subtitle2 font-semibold">{ASSISTANT}</h3>
@@ -143,7 +143,7 @@ export default function AiAssistantBlock() {
       </MessageScroller>
 
       {turns.length === 1 && (
-        <div className="flex flex-wrap gap-XS px-M pt-S">
+        <div className="flex flex-wrap gap-1 px-3 pt-2">
           {SUGGESTIONS.map((s) => (
             <Button key={s} size="small" shape="circular" onClick={() => ask(s)}>
               {s}
@@ -153,7 +153,7 @@ export default function AiAssistantBlock() {
       )}
 
       <ChatComposer
-        className="m-M"
+        className="m-3"
         placeholder="Hỏi trợ lý…"
         busy={busy}
         onStop={stop}

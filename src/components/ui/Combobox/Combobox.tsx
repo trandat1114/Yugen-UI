@@ -45,15 +45,15 @@ export const cmdkOptionClass = cn(
 
 /** Class cho cmdk Group: tiêu đề + vạch chia giữa các nhóm. */
 export const cmdkGroupClass = cn(
-  "not-last:mb-XS not-last:border-b not-last:border-stroke-2 not-last:pb-XS",
-  "**:[[cmdk-group-heading]]:flex **:[[cmdk-group-heading]]:h-8 **:[[cmdk-group-heading]]:items-center **:[[cmdk-group-heading]]:px-S",
+  "not-last:mb-1 not-last:border-b not-last:border-stroke-2 not-last:pb-1",
+  "**:[[cmdk-group-heading]]:flex **:[[cmdk-group-heading]]:h-8 **:[[cmdk-group-heading]]:items-center **:[[cmdk-group-heading]]:px-2",
   "**:[[cmdk-group-heading]]:text-caption1 **:[[cmdk-group-heading]]:font-semibold **:[[cmdk-group-heading]]:text-foreground-3",
 );
 
 const SIZE = {
-  small: { root: "h-6 ps-S pe-XXS text-caption1", Icon: ChevronDown16Regular, icon: "size-4", button: "w-6" },
-  medium: { root: "h-8 ps-M pe-XXS text-body1", Icon: ChevronDown20Regular, icon: "size-5", button: "w-8" },
-  large: { root: "h-10 ps-M pe-XS text-body2", Icon: ChevronDown24Regular, icon: "size-6", button: "w-9" },
+  small: { root: "h-6 ps-2 pe-0.5 text-caption1", Icon: ChevronDown16Regular, icon: "size-4", button: "w-6" },
+  medium: { root: "h-8 ps-3 pe-0.5 text-body1", Icon: ChevronDown20Regular, icon: "size-5", button: "w-8" },
+  large: { root: "h-10 ps-3 pe-1 text-body2", Icon: ChevronDown24Regular, icon: "size-6", button: "w-9" },
 } as const;
 
 type InputAttrs = Omit<
@@ -245,7 +245,7 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
             onClick={() => inputRef.current?.focus()}
             className={cn(
               fieldAppearanceClass[appearance],
-              "inline-flex min-w-62.5 cursor-text items-center gap-XXS",
+              "inline-flex min-w-62.5 cursor-text items-center gap-0.5",
               open && "after:scale-x-100",
               disabled && "cursor-not-allowed",
               s.root,
@@ -318,12 +318,12 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
             onMouseDown={(e) => e.preventDefault()}
             className={cn(
               popoverSurfaceClass,
-              "max-h-[min(var(--radix-popover-content-available-height),--spacing(80))] w-(--radix-popover-trigger-width) overflow-y-auto p-XS",
+              "max-h-[min(var(--radix-popover-content-available-height),--spacing(80))] w-(--radix-popover-trigger-width) overflow-y-auto p-1",
               listboxClassName,
             )}
           >
             <CommandPrimitive.List ref={setListEl} aria-multiselectable={multiselect || undefined}>
-              <CommandPrimitive.Empty className="px-S py-SNudge text-body1 text-foreground-3">
+              <CommandPrimitive.Empty className="px-2 py-1.5 text-body1 text-foreground-3">
                 {freeform && query?.trim() ? `Nhấn Enter để dùng “${query.trim()}”` : noResultsText}
               </CommandPrimitive.Empty>
               {groupOptions(filtered).map((group) => {

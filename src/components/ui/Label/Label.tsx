@@ -41,7 +41,7 @@ export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
     >
       {children}
       {required && (
-        <span aria-hidden className={cn("ps-XS", disabled ? "text-foreground-disabled" : "text-danger-foreground-1")}>
+        <span aria-hidden className={cn("ps-1", disabled ? "text-foreground-disabled" : "text-danger-foreground-1")}>
           {required === true ? "*" : required}
         </span>
       )}

@@ -11,12 +11,12 @@ describe("Button", () => {
   });
 
   it("className người dùng thắng biến thể mặc định (cn ở cuối)", () => {
-    render(<Button className="rounded-circular px-L">Lưu</Button>);
+    render(<Button className="rounded-circular px-4">Lưu</Button>);
     const button = screen.getByRole("button");
     expect(button.className).toContain("rounded-circular");
     expect(button.className).not.toContain("rounded-medium");
-    expect(button.className).toContain("px-L");
-    expect(button.className).not.toMatch(/(^|\s)px-M(\s|$)/);
+    expect(button.className).toContain("px-4");
+    expect(button.className).not.toMatch(/(^|\s)px-3(\s|$)/);
   });
 
   it("icon-only có aria-label và lớp vuông", () => {
