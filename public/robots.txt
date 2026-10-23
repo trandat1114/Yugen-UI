@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://trandat1114.github.io/Yugen-UI/sitemap.xml
