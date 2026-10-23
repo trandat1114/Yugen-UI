@@ -1,5 +1,7 @@
 import meta from "virtual:yugen-docs-meta";
-import { CATEGORIES, type ComponentCategory, type ComponentDoc, type ComponentMeta } from "../types";
+import { CATEGORIES, type ComponentCategory, type ComponentDoc, type ComponentDocEn, type ComponentMeta } from "../types";
+import type { Locale } from "../i18n";
+import { COMPONENTS_TRANSLATED } from "./translated";
 
 /**
  * Registry trang component, chia 2 phần:
@@ -45,6 +47,37 @@ export async function loadComponentDoc(slug: string): Promise<ComponentDoc> {
   return doc;
 }
 
+/* ---------- Bản tiếng Anh: en/<file>.ts, nạp lười khi trang đang hiển thị tiếng Anh ---------- */
+
+const enLoaders = import.meta.glob<{ en: Record<string, ComponentDocEn> }>("./en/*.ts");
+
+/** Bản tiếng Anh của một component đã dịch (COMPONENTS_TRANSLATED); null nếu chưa dịch. */
+export async function loadComponentDocEn(slug: string): Promise<ComponentDocEn | null> {
+  const entry = COMPONENT_META_BY_SLUG[slug];
+  if (!entry || !COMPONENTS_TRANSLATED.has(slug)) return null;
+  const load = enLoaders[`./en/${entry.file.replace(/\.tsx$/, ".ts")}`];
+  if (!load) throw new Error(`"${slug}" nằm trong COMPONENTS_TRANSLATED nhưng thiếu en/${entry.file.replace(/\.tsx$/, ".ts")}.`);
+  const en = (await load()).en[slug];
+  if (!en) throw new Error(`"${slug}" nằm trong COMPONENTS_TRANSLATED nhưng en/${entry.file.replace(/\.tsx$/, ".ts")} không có mục này.`);
+  return en;
+}
+
+/** Thay phần chữ của doc bằng bản tiếng Anh (demo, code, tên prop, kiểu giữ nguyên). */
+export function translateComponentDoc(doc: ComponentDoc, en: ComponentDocEn): ComponentDoc {
+  return {
+    ...doc,
+    description: en.description,
+    examples: doc.examples.map((example, i) => ({ ...example, ...en.examples[i] })),
+    dos: en.dos,
+    donts: en.donts,
+    props: doc.props.map((p) => ({
+      ...p,
+      description: en.props[p.name] ?? p.description,
+      defaultValue: en.defaults?.[p.name] ?? p.defaultValue,
+    })),
+  };
+}
+
 /** Mọi doc của mọi file registry (scripts / test) — cùng thứ tự với COMPONENTS_META. */
 export async function loadAllComponentDocs(): Promise<ComponentDoc[]> {
   const all = await Promise.all(Object.keys(loaders).map(loadFile));
@@ -54,28 +87,39 @@ export async function loadAllComponentDocs(): Promise<ComponentDoc[]> {
 type Entry = { status: "pending"; promise: Promise<void> } | { status: "done"; doc: ComponentDoc } | { status: "error"; error: unknown };
 const entries = new Map<string, Entry>();
 
+/** Doc theo ngôn ngữ: tiếng Anh = bản gốc + phần chữ đã dịch (nếu component đã dịch). */
+async function loadLocalizedDoc(slug: string, locale: Locale): Promise<ComponentDoc> {
+  if (locale !== "en") return loadComponentDoc(slug);
+  const [doc, en] = await Promise.all([loadComponentDoc(slug), loadComponentDocEn(slug)]);
+  return en ? translateComponentDoc(doc, en) : doc;
+}
+
 /**
  * Đọc doc trong render, dưới `<Suspense>`: đang tải → treo (throw promise); xong → `{ doc }`; lỗi → `{ error }`
  * (trả về thay vì ném để trang hiện ErrorState có nút thử lại — gọi `retryComponentDoc` trước khi render lại).
  */
-export function readComponentDoc(slug: string): { doc: ComponentDoc; error?: undefined } | { doc?: undefined; error: unknown } {
-  let entry = entries.get(slug);
+export function readComponentDoc(
+  slug: string,
+  locale: Locale = "vi",
+): { doc: ComponentDoc; error?: undefined } | { doc?: undefined; error: unknown } {
+  const key = `${locale}:${slug}`;
+  let entry = entries.get(key);
   if (!entry) {
-    const promise = loadComponentDoc(slug).then(
-      (doc) => void entries.set(slug, { status: "done", doc }),
-      (error: unknown) => void entries.set(slug, { status: "error", error }),
+    const promise = loadLocalizedDoc(slug, locale).then(
+      (doc) => void entries.set(key, { status: "done", doc }),
+      (error: unknown) => void entries.set(key, { status: "error", error }),
     );
     entry = { status: "pending", promise };
-    entries.set(slug, entry);
+    entries.set(key, entry);
   }
   if (entry.status === "pending") throw entry.promise;
   return entry.status === "done" ? { doc: entry.doc } : { error: entry.error };
 }
 
 /** Nạp trước doc của một trang component (main.tsx, trước lần render đầu) — `readComponentDoc` sau đó không treo. */
-export function preloadComponentDoc(slug: string): Promise<void> {
+export function preloadComponentDoc(slug: string, locale: Locale = "vi"): Promise<void> {
   try {
-    readComponentDoc(slug);
+    readComponentDoc(slug, locale);
     return Promise.resolve();
   } catch (pending) {
     return pending as Promise<void>;
@@ -83,8 +127,9 @@ export function preloadComponentDoc(slug: string): Promise<void> {
 }
 
 /** Bỏ kết quả lỗi đã cache để `readComponentDoc` tải lại. */
-export function retryComponentDoc(slug: string) {
-  if (entries.get(slug)?.status === "error") entries.delete(slug);
+export function retryComponentDoc(slug: string, locale: Locale = "vi") {
+  const key = `${locale}:${slug}`;
+  if (entries.get(key)?.status === "error") entries.delete(key);
 }
 
 export type { ComponentDoc, ComponentMeta };

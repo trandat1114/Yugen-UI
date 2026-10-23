@@ -48,7 +48,7 @@ export async function preloadRoute(route: Route, lang: Locale) {
     const page = (lang === "en" && CONCEPT_EN_PAGES[route.slug]) || CONCEPT_BY_SLUG[route.slug]?.Page;
     if (page) tasks.push(page.preload());
   }
-  if (route.kind === "component") tasks.push(preloadComponentDoc(route.slug));
+  if (route.kind === "component") tasks.push(preloadComponentDoc(route.slug, lang));
   await Promise.allSettled(tasks);
 }
 

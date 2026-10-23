@@ -47,6 +47,22 @@ export interface ComponentDoc {
 }
 
 /**
+ * Bản tiếng Anh của phần chữ trên một trang component (src/docs/registry/en/<file>.ts). Demo và code mẫu giữ nguyên; mục
+ * nào bỏ trống thì hiện bản gốc tiếng Việt.
+ */
+export interface ComponentDocEn {
+  description: string;
+  /** Theo thứ tự `examples` của bản gốc. */
+  examples: { title: string; description?: string }[];
+  dos: string[];
+  donts: string[];
+  /** Tên prop → mô tả. */
+  props: Record<string, string>;
+  /** Tên prop → giá trị mặc định, chỉ khi bản gốc viết bằng chữ (vd. "tự suy ra"). */
+  defaults?: Record<string, string>;
+}
+
+/**
  * Phần nạp sẵn của một trang component (sidebar, trang chủ, command palette, header trang) — trích lúc build,
  * không kéo theo demo / code mẫu. `file`: file trong src/docs/registry chứa doc (nạp lười theo file).
  */

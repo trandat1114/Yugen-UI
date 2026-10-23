@@ -99,7 +99,12 @@ function DismissibleMessageBarDemo() {
       </Button>
     );
   return (
-    <MessageBar intent="warning" title="Sắp hết dung lượng" onDismiss={() => setVisible(false)}>
+    <MessageBar
+      intent="warning"
+      title="Sắp hết dung lượng"
+      actions={<Button size="small">Nâng cấp</Button>}
+      onDismiss={() => setVisible(false)}
+    >
       Bạn đã dùng 95% dung lượng lưu trữ.
     </MessageBar>
   );
@@ -578,18 +583,26 @@ export const docs: ComponentDoc[] = [
       {
         title: "Interactive",
         description: "Card bấm được: tăng elevation khi hover. Bọc nội dung trong <a>/<button> để có ngữ nghĩa đúng.",
-        code: `<Card interactive className="w-64" onClick={() => {}}>
+        code: `<Card interactive className="relative w-64">
   <CardHeader
     image={<Avatar name="Báo cáo" shape="square" color="brand" />}
-    header="Báo cáo doanh thu"
+    header={
+      <a href="#bao-cao" className="after:absolute after:inset-0 after:rounded-[inherit]">
+        Báo cáo doanh thu
+      </a>
+    }
     description="Cập nhật hôm qua"
   />
 </Card>`,
         render: () => (
-          <Card interactive className="w-64" onClick={() => {}}>
+          <Card interactive className="relative w-64">
             <CardHeader
               image={<Avatar name="Báo cáo" shape="square" color="brand" />}
-              header="Báo cáo doanh thu"
+              header={
+                <a href="#bao-cao" className="after:absolute after:inset-0 after:rounded-[inherit]">
+                  Báo cáo doanh thu
+                </a>
+              }
               description="Cập nhật hôm qua"
             />
           </Card>
@@ -1165,7 +1178,12 @@ export const docs: ComponentDoc[] = [
         description: "actions cho nút xử lý; onDismiss hiện nút đóng.",
         code: `const [visible, setVisible] = useState(true);
 
-<MessageBar intent="warning" title="Sắp hết dung lượng" onDismiss={() => setVisible(false)}>
+<MessageBar
+  intent="warning"
+  title="Sắp hết dung lượng"
+  actions={<Button size="small">Nâng cấp</Button>}
+  onDismiss={() => setVisible(false)}
+>
   Bạn đã dùng 95% dung lượng lưu trữ.
 </MessageBar>`,
         render: () => (
