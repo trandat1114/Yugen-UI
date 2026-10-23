@@ -59,6 +59,8 @@ Bảo vệ cho `next`, `release/*`, `canary` và tag `v*`: xem [[Branching and R
 | `canary.yml` | Push vào `canary` → bản `x.y.z-canary-…` với dist-tag `canary` |
 | `sync-next.yml` | Push vào `main` → mở PR `main → next` nếu `next` thiếu commit |
 | `node-versions.yml` | Hằng tuần → so bản Node.js trong workflow với lịch phát hành (`scripts/node-versions.mjs`), mở PR vào `next` khi lệch rồi chạy CI trên nhánh đó |
+| `react-share.yml` | Ngày 1 hằng tháng → tỉ lệ tải React theo major (`scripts/react-share.mjs`) bình luận vào #62; React 18 dưới 10% là một trong hai điều kiện để ngừng hỗ trợ |
+| `engines.yml` | Hằng tuần, PR vào `main` và PR đổi `e2e/` → E2E trên Firefox và WebKit; bản chạy theo lịch hỏng thì mở / cập nhật issue, xanh lại thì đóng |
 | `pages.yml` | Deploy docs (+ docs các minor cũ) lên GitHub Pages |
 | `wiki.yml` | Đẩy `wiki/` lên GitHub Wiki |
 | `labels.yml` | Đồng bộ nhãn từ `.github/labels.yml` |
