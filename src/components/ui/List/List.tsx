@@ -10,14 +10,40 @@ import { cn } from "@/lib/cn";
 export type ListSelectionMode = "none" | "single" | "multiselect";
 export type ListNavigationMode = "items" | "composite";
 
+/**
+ * Mục đang giữ tab stop (roving tabindex), để ngoài context: mỗi phím mũi tên chỉ render lại hai mục đổi trạng thái thay vì
+ * mọi mục trong danh sách.
+ */
+interface ActiveStore {
+  get: () => string | null;
+  set: (value: string) => void;
+  subscribe: (listener: () => void) => () => void;
+}
+
+function createActiveStore(): ActiveStore {
+  let current: string | null = null;
+  const listeners = new Set<() => void>();
+  return {
+    get: () => current,
+    set: (value) => {
+      if (value === current) return;
+      current = value;
+      listeners.forEach((listener) => listener());
+    },
+    subscribe: (listener) => {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    },
+  };
+}
+
 interface ListContextValue {
   selectionMode: ListSelectionMode;
   navigationMode?: ListNavigationMode;
   variant: "default" | "outline";
   isSelected: (value: string) => boolean;
   toggle: (value: string) => void;
-  activeValue: string | null;
-  setActiveValue: (value: string) => void;
+  active: ActiveStore;
 }
 
 const ListContext = React.createContext<ListContextValue>({
@@ -25,8 +51,7 @@ const ListContext = React.createContext<ListContextValue>({
   variant: "default",
   isSelected: () => false,
   toggle: () => {},
-  activeValue: null,
-  setActiveValue: () => {},
+  active: createActiveStore(),
 });
 
 const FOCUSABLE =
@@ -61,7 +86,8 @@ export const List = React.forwardRef<HTMLUListElement, ListProps>(
   ) => {
     const [uncontrolled, setUncontrolled] = React.useState<string[]>(defaultSelectedItems ?? []);
     const selected = selectedItems ?? uncontrolled;
-    const [activeValue, setActiveValue] = React.useState<string | null>(null);
+    const [active] = React.useState(createActiveStore);
+    const selectedSet = React.useMemo(() => new Set(selected), [selected]);
     const innerRef = React.useRef<HTMLUListElement | null>(null);
     const dir = useDirection();
     const nav = navigationMode ?? (selectionMode !== "none" ? "items" : undefined);
@@ -92,9 +118,10 @@ export const List = React.forwardRef<HTMLUListElement, ListProps>(
       const root = innerRef.current;
       if (!nav || !root) return;
       const items = Array.from(root.querySelectorAll<HTMLElement>("[data-list-item]"));
-      if (activeValue !== null && items.some((el) => el.dataset.value === activeValue)) return;
+      const current = active.get();
+      if (current !== null && items.some((el) => el.dataset.value === current)) return;
       const fallback = items.find((el) => el.getAttribute("aria-selected") === "true") ?? items[0];
-      if (fallback?.dataset.value) setActiveValue(fallback.dataset.value);
+      if (fallback?.dataset.value) active.set(fallback.dataset.value);
     });
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLUListElement>) => {
@@ -149,12 +176,11 @@ export const List = React.forwardRef<HTMLUListElement, ListProps>(
         selectionMode,
         navigationMode: nav,
         variant,
-        isSelected: (value) => selected.includes(value),
+        isSelected: (value) => selectedSet.has(value),
         toggle,
-        activeValue,
-        setActiveValue,
+        active,
       }),
-      [selectionMode, nav, variant, selected, toggle, activeValue],
+      [selectionMode, nav, variant, selectedSet, toggle, active],
     );
 
     return (
@@ -199,6 +225,7 @@ export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
     const selectable = ctx.selectionMode !== "none";
     const selected = selectable && ctx.isSelected(value);
     const focusable = !!ctx.navigationMode;
+    const isActive = React.useSyncExternalStore(ctx.active.subscribe, () => ctx.active.get() === value, () => false);
     const interactive = !disabled && (selectable || !!onAction);
 
     const activate = (event: React.SyntheticEvent<HTMLLIElement>) => {
@@ -215,10 +242,10 @@ export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
         role={selectable ? "option" : "listitem"}
         aria-selected={selectable ? selected : undefined}
         aria-disabled={disabled || undefined}
-        tabIndex={focusable ? (ctx.activeValue === value ? 0 : -1) : interactive ? 0 : undefined}
+        tabIndex={focusable ? (isActive ? 0 : -1) : interactive ? 0 : undefined}
         onFocus={(event) => {
           onFocus?.(event);
-          if (focusable) ctx.setActiveValue(value);
+          if (focusable) ctx.active.set(value);
         }}
         onClick={(event) => {
           onClick?.(event);

@@ -1,13 +1,13 @@
 import * as React from "react";
-import { fitText, measureText, type ChartDateFormat, type ChartValue } from "./chartUtils";
+import { df, fitText, makeNumberFormatter, measureText, type ChartDateFormat, type ChartValue } from "./chartUtils";
 
 /** Chữ trên trục: caption1, token chữ (không bao giờ dùng màu chuỗi), số thẳng cột. */
 export const axisTextClass = "fill-foreground-3 text-caption1 tabular-nums";
 
 /** Định dạng giá trị của trục danh mục (chuỗi, số hoặc ngày). */
 export function formatCategory(v: ChartValue, locale: string, dateFormat?: Intl.DateTimeFormatOptions): string {
-  if (v instanceof Date) return new Intl.DateTimeFormat(locale, dateFormat ?? { day: "numeric", month: "numeric", year: "numeric" }).format(v);
-  if (typeof v === "number") return new Intl.NumberFormat(locale).format(v);
+  if (v instanceof Date) return df(locale, dateFormat ?? { day: "numeric", month: "numeric", year: "numeric" }).format(v);
+  if (typeof v === "number") return makeNumberFormatter(locale, {})(v);
   return v == null ? "" : String(v);
 }
 
@@ -17,7 +17,7 @@ export function resolveDateFormat(
   fallback: Intl.DateTimeFormatOptions,
 ): (d: Date) => string {
   if (typeof format === "function") return format;
-  const f = new Intl.DateTimeFormat(locale, format ?? fallback);
+  const f = df(locale, format ?? fallback);
   return (d) => f.format(d);
 }
 

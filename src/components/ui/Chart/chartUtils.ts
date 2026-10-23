@@ -111,6 +111,18 @@ function nf(locale: string, options: Intl.NumberFormatOptions) {
   return f;
 }
 
+const dateFormatCache = new Map<string, Intl.DateTimeFormat>();
+/** Intl.DateTimeFormat dùng chung theo locale + tuỳ chọn: tạo mới mỗi lần (mỗi điểm, mỗi lần hover) rất tốn. */
+export function df(locale: string, options: Intl.DateTimeFormatOptions) {
+  const key = `${locale}|${JSON.stringify(options)}`;
+  let f = dateFormatCache.get(key);
+  if (!f) {
+    f = new Intl.DateTimeFormat(locale, options);
+    dateFormatCache.set(key, f);
+  }
+  return f;
+}
+
 export function makeNumberFormatter(locale: string, format?: ChartNumberFormat): (value: number) => string {
   if (typeof format === "function") return format;
   const f = nf(locale, format ?? { maximumFractionDigits: 2 });
@@ -152,7 +164,7 @@ export function makeAxisFormatter(
 
 export function makeDateFormatter(locale: string, format: ChartDateFormat | undefined, fallback: Intl.DateTimeFormatOptions) {
   if (typeof format === "function") return format;
-  const f = new Intl.DateTimeFormat(locale, format ?? fallback);
+  const f = df(locale, format ?? fallback);
   return (d: Date) => f.format(d);
 }
 
@@ -200,6 +212,9 @@ export function clamp(v: number, lo: number, hi: number) {
 
 let measureCtx: CanvasRenderingContext2D | null | undefined;
 let measureFamily = "";
+// Nhãn trục / nhãn cuối được đo lại mỗi lần biểu đồ render (mỗi bước hover): nhớ kết quả, giới hạn số mục.
+const widthCache = new Map<string, number>();
+const WIDTH_CACHE_MAX = 4000;
 
 /** Độ rộng (px) của chữ caption1 (12px) — để chừa lề trục và kiểm tra nhãn có vừa không. */
 export function measureText(text: string, size = 12, weight = 400): number {
@@ -209,8 +224,14 @@ export function measureText(text: string, size = 12, weight = 400): number {
     measureFamily = getComputedStyle(document.body).fontFamily || "sans-serif";
   }
   if (!measureCtx) return text.length * size * 0.6;
+  const key = `${weight}|${size}|${text}`;
+  const cached = widthCache.get(key);
+  if (cached !== undefined) return cached;
   measureCtx.font = `${weight} ${size}px ${measureFamily}`;
-  return measureCtx.measureText(text).width;
+  const width = measureCtx.measureText(text).width;
+  if (widthCache.size >= WIDTH_CACHE_MAX) widthCache.clear();
+  widthCache.set(key, width);
+  return width;
 }
 
 /** Cắt chữ cho vừa `max` px (thêm "…"). */
@@ -366,10 +387,15 @@ export function useRovingPoints(count: number, onActivate: (index: number | null
     focusAt(next);
   };
 
-  const pointProps = (i: number) => ({
-    ref: (el: SVGElement | null) => {
+  // Ref callback cố định cho mỗi điểm: callback mới mỗi render khiến React gỡ rồi gắn lại ref của mọi điểm.
+  const refCallbacks = React.useRef<((el: SVGElement | null) => void)[]>([]);
+  const refAt = (i: number) =>
+    (refCallbacks.current[i] ??= (el) => {
       refs.current[i] = el;
-    },
+    });
+
+  const pointProps = (i: number) => ({
+    ref: refAt(i),
     tabIndex: i === stop ? 0 : -1,
     onKeyDown: (e: React.KeyboardEvent) => onKeyDown(e, i),
     onFocus: () => {

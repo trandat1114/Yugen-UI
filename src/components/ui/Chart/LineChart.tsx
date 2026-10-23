@@ -6,6 +6,7 @@ import { normalizeDomain, stackValues, type ChartDomain } from "./chartMath";
 import { Baseline, CategoryAxisBottom, GridLines, PlotArea, ValueAxisLeft, formatCategory, pickLabelIndices } from "./cartesian";
 import {
   clamp,
+  df,
   linePath,
   linearScale,
   makeAxisFormatter,
@@ -143,13 +144,13 @@ function SeriesChart({
 
   const xAxisText = (v: ChartValue): string => {
     if (typeof xFormat === "function") return xFormat(v);
-    if (v instanceof Date) return new Intl.DateTimeFormat(locale, xFormat ?? { day: "numeric", month: "numeric" }).format(v);
+    if (v instanceof Date) return df(locale, xFormat ?? { day: "numeric", month: "numeric" }).format(v);
     return formatCategory(v, locale);
   };
   const xLongText = (v: ChartValue): string => {
     const f = xTooltipFormat ?? (typeof xFormat === "function" ? xFormat : undefined);
     if (typeof f === "function") return f(v);
-    if (v instanceof Date) return new Intl.DateTimeFormat(locale, f ?? { day: "numeric", month: "long", year: "numeric" }).format(v);
+    if (v instanceof Date) return df(locale, f ?? { day: "numeric", month: "long", year: "numeric" }).format(v);
     return formatCategory(v, locale);
   };
   const xLabels = raw.map(xAxisText);
@@ -296,7 +297,8 @@ function SeriesChart({
       series.length === 1 ? series[0]?.label ?? "" : `${series.length} chuỗi (${series.map((s) => s.label).join(", ")})`
     }. Dùng phím mũi tên để duyệt từng mốc.`;
 
-  const table = (
+  // Chỉ dựng khi bảng đang bật: hàng của mọi điểm dữ liệu được định dạng lại mỗi lần biểu đồ render.
+  const table = () => (
     <ChartTable
       caption={summary}
       columns={[

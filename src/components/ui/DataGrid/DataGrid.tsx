@@ -133,7 +133,7 @@ interface ResolvedColumn<T> {
   maxWidth: number | undefined;
   resizable: boolean;
   sortable: boolean;
-  /** inset-inline-start (CSS) khi cột được ghim. */
+  /** inset-inline-start (CSS) khi cột được ghim: `var(--dg-sticky-<colIndex>)`, giá trị đặt trên root. */
   stickyOffset: string | undefined;
   /** Cột ghim cuối cùng — có vạch ngăn với phần cuộn. */
   stickyLast: boolean;
@@ -335,12 +335,15 @@ function ColumnResizeHandle({
 
 /* ================================================================ Hàng dữ liệu */
 
+/** Phần của cột mà hàng cần — không gồm độ rộng, nên kéo đổi cỡ cột không render lại các hàng. */
+type RowCell<T> = Pick<ResolvedColumn<T>, "column" | "colIndex" | "stickyOffset" | "stickyLast">;
+
 interface RowViewProps<T> {
   item: T;
   rowId: string;
   /** Vị trí theo thứ tự hiển thị (0-based). */
   index: number;
-  cells: readonly ResolvedColumn<T>[];
+  cells: readonly RowCell<T>[];
   selectionMode: DataGridSelectionMode | undefined;
   selected: boolean;
   selectionAppearance: "brand" | "neutral" | "none";
@@ -517,7 +520,9 @@ function DataGridImpl<T>(
     onSortChange,
   });
   const rows = React.useMemo(() => (sortable ? sort(items) : items), [sortable, sort, items]);
-  const rowIds = React.useMemo(() => rows.map((item) => getRowId(item)), [rows, getRowId]);
+  // getRowId thường viết inline (hàm mới mỗi render) nhưng là hàm thuần theo item: chỉ tính lại khi danh sách hàng đổi, không
+  // phải mỗi bước cuộn ảo / mỗi lần đổi focus.
+  const rowIds = React.useMemo(() => rows.map((item) => getRowId(item)), [rows]);
   const selection = useDataGridSelection({ selectionMode, rowIds, selectedItems, defaultSelectedItems, onSelectionChange });
   const hasSelection = selectionMode !== undefined;
   const multiselect = selectionMode === "multiselect";
@@ -558,6 +563,23 @@ function DataGridImpl<T>(
     if (lastSticky) lastSticky.stickyLast = true;
     return list;
   }, [columns, columnSizingOptions, widths, hasSelection, lead, resizableColumns, sortable]);
+
+  // Ô của hàng: chỉ phụ thuộc cột nào được ghim, không phụ thuộc độ rộng — offset ghim đọc từ biến CSS trên root
+  // (--dg-sticky-<colIndex>), nên khi kéo đổi cỡ cột các hàng (React.memo) không render lại.
+  const rowCells = React.useMemo<RowCell<T>[]>(() => {
+    let stickyRun = true;
+    const list = columns.map((column, i): RowCell<T> => {
+      const sticky = stickyRun && column.sticky === "start";
+      if (!sticky) stickyRun = false;
+      return { column, colIndex: i + lead, stickyOffset: sticky ? `var(--dg-sticky-${i + lead})` : undefined, stickyLast: false };
+    });
+    const lastSticky = list.filter((c) => c.stickyOffset !== undefined).pop();
+    if (lastSticky) lastSticky.stickyLast = true;
+    return list;
+  }, [columns, lead]);
+  const stickyVars = Object.fromEntries(
+    resolved.filter((c) => c.stickyOffset !== undefined).map((c) => [`--dg-sticky-${c.colIndex}`, c.stickyOffset]),
+  );
 
   const stickyEnd = resolved.filter((c) => c.stickyOffset !== undefined).reduce((sum, c) => sum + (c.width ?? 0), 0);
   const hasSticky = resolved[0]?.stickyOffset !== undefined;
@@ -844,6 +866,7 @@ function DataGridImpl<T>(
   const rootStyle = {
     "--dg-cols": gridTemplate(hasSelection, resolved as ResolvedColumn<unknown>[]),
     "--dg-min": hasSelection ? `calc(${SELECTION_TRACK} + ${minTotal}px)` : `${minTotal}px`,
+    ...stickyVars,
     height,
     scrollPaddingInlineStart: hasSticky ? (hasSelection ? `calc(${SELECTION_TRACK} + ${stickyEnd}px)` : `${stickyEnd}px`) : undefined,
     ...style,
@@ -908,7 +931,7 @@ function DataGridImpl<T>(
           item={rows[i]}
           rowId={id}
           index={i}
-          cells={resolved}
+          cells={rowCells}
           selectionMode={selectionMode}
           selected={selection.isSelected(id)}
           selectionAppearance={selectionAppearance}

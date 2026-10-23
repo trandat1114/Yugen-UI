@@ -539,13 +539,14 @@ function parseBlocks(lines: string[], from: number, open: boolean): Parsed {
       let j = i + 1;
       let closed = false;
       const closeRe = new RegExp(`^ {0,3}${marker[0] === "`" ? "`" : "~"}{${marker.length},}[ \\t]*$`);
+      const indentRe = new RegExp(`^ {0,${indent}}`);
       while (j < n) {
         if (closeRe.test(lines[j])) {
           closed = true;
           j++;
           break;
         }
-        body.push(lines[j].replace(new RegExp(`^ {0,${indent}}`), ""));
+        body.push(lines[j].replace(indentRe, ""));
         j++;
       }
       // Dấu đóng đang gõ dở ở cuối luồng không thuộc nội dung code.

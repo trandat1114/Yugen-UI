@@ -201,7 +201,8 @@ export const Heatmap = React.forwardRef<HTMLElement, HeatmapProps>(function Heat
       hasEmpty ? `, có ô ${EMPTY_TEXT.toLowerCase()}` : ""
     }. Dùng phím mũi tên để duyệt từng ô.`;
 
-  const table = (
+  // Chỉ dựng khi bảng đang bật: hàng của mọi điểm dữ liệu được định dạng lại mỗi lần biểu đồ render.
+  const table = () => (
     <ChartTable
       caption={summary}
       columns={[{ key: "__index", label: indexLabel ?? "" }, ...columns.map((c) => ({ key: c.key, label: c.label, numeric: true }))]}
