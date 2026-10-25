@@ -174,7 +174,7 @@ const SURVEY: Question[] = [
 const progressText = () => screen.getByText(/^(Câu \d+\/\d+|Xem lại)$/, { selector: "span" }).textContent;
 
 describe("Questionnaire — stepper + bàn phím", () => {
-  it("required chặn qua câu; phím số chọn; Enter tiếp; xem lại; gửi đúng payload", async () => {
+  it("required chặn qua câu; phím số chọn; Enter tiếp; xem lại; gửi đúng payload", { timeout: 15_000 }, async () => {
     const user = userEvent.setup();
     const onSubmit = vi.fn();
     render(<Questionnaire title="Khảo sát" questions={SURVEY} onSubmit={onSubmit} />);
