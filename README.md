@@ -289,7 +289,8 @@ same baseline as Tailwind CSS v4 (cascade layers, `@property`, `color-mix()`).
 
 Contributions are welcome — please read [CONTRIBUTING.md](./CONTRIBUTING.md) and the project rulebook
 [Design.md](./Design.md), and follow the [Code of Conduct](./CODE_OF_CONDUCT.md). Security issues: see
-[SECURITY.md](./SECURITY.md).
+[SECURITY.md](./SECURITY.md). Accessibility commitment, what is tested and how to report a problem:
+[ACCESSIBILITY.md](./ACCESSIBILITY.md).
 
 ```bash
 npm install
@@ -566,7 +567,7 @@ Tailwind CSS v4 (cascade layers, `@property`, `color-mix()`).
 ### Đóng góp
 
 Rất hoan nghênh đóng góp — đọc [CONTRIBUTING.md](./CONTRIBUTING.md) và bộ quy tắc [Design.md](./Design.md), tuân thủ
-[Quy tắc ứng xử](./CODE_OF_CONDUCT.md). Lỗ hổng bảo mật: xem [SECURITY.md](./SECURITY.md).
+[Quy tắc ứng xử](./CODE_OF_CONDUCT.md). Lỗ hổng bảo mật: xem [SECURITY.md](./SECURITY.md). Cam kết khả năng tiếp cận, những gì được kiểm thử và cách báo lỗi: [ACCESSIBILITY.md](./ACCESSIBILITY.md).
 
 **Ghi chú cho maintainer:** trước bản phát hành công khai đầu tiên, thêm `repository`, `homepage`, `bugs` vào
 `package.json` khi đã có URL GitHub chính thức (`npm publish --provenance` yêu cầu `repository.url` khớp với repo chạy

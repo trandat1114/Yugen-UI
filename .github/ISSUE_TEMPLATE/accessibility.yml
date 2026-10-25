@@ -6,13 +6,13 @@ body:
   - type: markdown
     attributes:
       value: |
-        Cảm ơn bạn! Yugen UI cam kết WCAG 2.1 AA (xem `#/concepts/accessibility` trên docs).
+        Cảm ơn bạn! Yugen UI cam kết WCAG 2.1 AA (xem ACCESSIBILITY.md và https://trandat1114.github.io/Yugen-UI/concepts/accessibility).
         Thanks! Yugen UI targets WCAG 2.1 AA. You can write in English or Vietnamese.
   - type: input
     id: component
     attributes:
       label: Component / trang docs
-      placeholder: "Combobox — https://trandat1114.github.io/Yugen-UI/#/components/combobox"
+      placeholder: "Combobox — https://trandat1114.github.io/Yugen-UI/components/combobox"
     validations:
       required: true
   - type: dropdown
