@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ComponentType } from "react";
-import { messagesEn, useYugen, YugenProvider } from "@/components/ui";
+import { useYugen, YugenProvider } from "@/components/ui";
 import AiChatApp from "../template-library/ai-chat/App";
 import { createMockBackend } from "../template-library/ai-chat/api";
 import aiChatEn from "../template-library/ai-chat/content/en";
@@ -30,6 +30,7 @@ function StarterPreview() {
   const docs = useYugen();
   // Preview theo ngôn ngữ docs; app tạo bằng CLI dùng tiếng Anh, hoặc tiếng Việt với --lang vi.
   const { locale } = useLocale();
+  const starter = locale === "vi" ? starterVi : starterEn;
   const [appearance, setAppearance] = useState<Appearance>({ theme: docs.theme, brand: docs.brand });
 
   useEffect(() => {
@@ -44,8 +45,8 @@ function StarterPreview() {
   }, []);
 
   return (
-    <YugenProvider theme={appearance.theme} brand={appearance.brand} className="h-full">
-      <Welcome embedded content={locale === "vi" ? starterVi : starterEn} appearance={appearance} onAppearanceChange={(patch) => setAppearance((a) => ({ ...a, ...patch }))} />
+    <YugenProvider theme={appearance.theme} brand={appearance.brand} messages={starter.messages} className="h-full">
+      <Welcome embedded content={starter} appearance={appearance} onAppearanceChange={(patch) => setAppearance((a) => ({ ...a, ...patch }))} />
     </YugenProvider>
   );
 }
@@ -65,7 +66,7 @@ function SaasPreview() {
     <YugenProvider
       theme={appearance.theme}
       brand={appearance.brand}
-      messages={content.lang === "en" ? messagesEn : undefined}
+      messages={content.messages}
       locale={content.locale}
       className="h-full"
     >
@@ -92,7 +93,7 @@ function BlogPreview() {
     <YugenProvider
       theme={theme}
       brand="sakura"
-      messages={content.lang === "en" ? messagesEn : undefined}
+      messages={content.messages}
       locale={content.locale}
       className="h-full"
     >
@@ -117,7 +118,7 @@ function DashboardPreview() {
     <YugenProvider
       theme={appearance.theme}
       brand={appearance.brand}
-      messages={content.lang === "en" ? messagesEn : undefined}
+      messages={content.messages}
       locale={content.lang === "en" ? "en-US" : "vi-VN"}
       lang={content.lang}
       className="relative h-full min-h-110"

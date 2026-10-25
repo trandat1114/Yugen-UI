@@ -1,5 +1,5 @@
 import * as React from "react";
-import { messagesEn, YugenProvider, type YugenBrand, type YugenTheme } from "yugen-ui";
+import { YugenProvider, type YugenBrand, type YugenTheme } from "yugen-ui";
 import { AppShell, type Appearance } from "./AppShell";
 import content from "./content";
 import { isPageId, preloadPages, type PageId } from "./pages";
@@ -63,7 +63,7 @@ export default function App() {
       withToaster
       theme={appearance.theme}
       brand={appearance.brand}
-      messages={content.lang === "en" ? messagesEn : undefined}
+      messages={content.messages}
       locale={content.locale}
     >
       <AppShell

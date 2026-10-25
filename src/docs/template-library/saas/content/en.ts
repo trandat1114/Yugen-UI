@@ -1,7 +1,9 @@
+import { messagesEn } from "@/components/ui";
 import type { Content } from "./types";
 
 const en: Content = {
   lang: "en",
+  messages: messagesEn,
   locale: "en-US",
   currency: "USD",
   appName: "Sakura Studio",
