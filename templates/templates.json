@@ -27,6 +27,6 @@
     "dir": "vite-ai-chat",
     "name": "ai-chat",
     "title": "AI chat",
-    "hint": "AI assistant chat UI"
+    "hint": "AI chat: saved conversations, streaming answers you can stop, one backend adapter"
   }
 ]
