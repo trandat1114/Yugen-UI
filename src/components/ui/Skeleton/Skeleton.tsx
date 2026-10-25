@@ -68,10 +68,11 @@ const SIZE = {
 export type SkeletonItemSize = keyof typeof SIZE;
 
 // Sóng: dải sáng ::after chạy bằng transform (compositor) thay vì đổi background-position (vẽ lại mỗi frame). Chạy theo
-// chiều đọc: RTL đảo keyframe (phải → trái).
+// chiều đọc: RTL đảo keyframe (phải → trái). Vị trí đầu (-100%) do keyframe `sweep` đặt; đừng thêm -translate-x-*:
+// thuộc tính `translate` cộng dồn với `transform`, dải sáng chỉ đi tới giữa khung rồi bật về (#199).
 const WAVE = cn(
   "relative overflow-hidden bg-stencil-1",
-  "after:absolute after:inset-0 after:-translate-x-full after:animate-sweep",
+  "after:absolute after:inset-0 after:animate-sweep",
   "after:bg-[linear-gradient(to_right,transparent,var(--colorNeutralStencil2),transparent)]",
   "rtl:after:[animation-direction:reverse] motion-reduce:after:hidden",
 );
