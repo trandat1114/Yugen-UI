@@ -8,6 +8,11 @@ import { BlogLayout } from "../template-library/blog/BlogLayout";
 import { MemoryRouter } from "../template-library/blog/router";
 import blogEn from "../template-library/blog/content/en";
 import blogVi from "../template-library/blog/content/vi";
+import { Dashboard } from "../template-library/dashboard/Dashboard";
+import type { Appearance as DashboardAppearance } from "../template-library/dashboard/context";
+import dashboardEn from "../template-library/dashboard/content/en";
+import dashboardVi from "../template-library/dashboard/content/vi";
+import { MemoryRouter as DashboardRouter } from "../template-library/dashboard/router";
 import { AppShell, type Appearance } from "../template-library/saas/AppShell";
 import saasEn from "../template-library/saas/content/en";
 import saasVi from "../template-library/saas/content/vi";
@@ -17,9 +22,6 @@ import starterEn from "../template-library/starter/content/en";
 import starterVi from "../template-library/starter/content/vi";
 import { useLocale } from "../i18n";
 import type { PageId } from "../template-library/saas/pages";
-import StatsBlock from "../block-library/02-stats";
-import TransactionsBlock from "../block-library/06-transactions";
-import AnalyticsBlock from "../block-library/11-analytics";
 
 const JP_FONT_ID = "yugen-starter-jp-font";
 
@@ -101,13 +103,31 @@ function BlogPreview() {
   );
 }
 
+/**
+ * App của templates/vite-dashboard với router trong bộ nhớ, chữ theo ngôn ngữ docs. Cao bằng khung preview (h-full) hoặc
+ * tối thiểu h-110 khi khung không đặt chiều cao cho nội dung.
+ */
 function DashboardPreview() {
+  const docs = useYugen();
+  const { locale } = useLocale();
+  const content = locale === "vi" ? dashboardVi : dashboardEn;
+  const [appearance, setAppearance] = useState<DashboardAppearance>({ theme: docs.theme, brand: docs.brand });
+
   return (
-    <div className="flex flex-col gap-5 bg-shell p-5">
-      <StatsBlock />
-      <AnalyticsBlock />
-      <TransactionsBlock />
-    </div>
+    <YugenProvider
+      theme={appearance.theme}
+      brand={appearance.brand}
+      messages={content.lang === "en" ? messagesEn : undefined}
+      locale={content.lang === "en" ? "en-US" : "vi-VN"}
+      lang={content.lang}
+      className="relative h-full min-h-110"
+    >
+      <div className="absolute inset-0">
+        <DashboardRouter>
+          <Dashboard embedded content={content} appearance={appearance} onAppearanceChange={(patch) => setAppearance((a) => ({ ...a, ...patch }))} />
+        </DashboardRouter>
+      </div>
+    </YugenProvider>
   );
 }
 

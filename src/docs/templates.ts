@@ -110,14 +110,29 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     dir: "vite-dashboard",
     name: "Dashboard",
-    tags: ["Vite", "Charts"],
+    tags: ["Vite", "React 19", "Charts", "4 trang"],
+    previewPath: "/",
     vi: {
-      description: "Một trang dashboard: thẻ KPI, biểu đồ có bộ lọc thời gian và giao dịch gần đây.",
-      features: ["StatTile, AreaChart, BarChart, DonutChart, List", "Một bộ lọc thời gian cho mọi thẻ"],
+      description: "Dashboard bán hàng 4 trang: KPI, biểu đồ và bảng khách hàng, dữ liệu từ API giả lập có độ trễ.",
+      features: [
+        "Tổng quan, Doanh thu, Khách hàng, Cài đặt; sidebar → Drawer trên màn hẹp",
+        "Một khoảng ngày (DateRangePicker có preset) cho mọi thẻ và biểu đồ",
+        "StatTile có sparkline, LineChart, BarChart, DonutChart",
+        "DataGrid: sắp xếp, lọc, tìm kiếm, phân trang, xuất CSV",
+        "Trạng thái đang tải, trống và lỗi từ src/api.ts, chỉnh được trong Cài đặt",
+        "Tiếng Anh, hoặc tiếng Việt với --lang vi; trang tải lười, URL thật bằng History API",
+      ],
     },
     en: {
-      description: "A dashboard page: KPI tiles, charts with a time filter and recent transactions.",
-      features: ["StatTile, AreaChart, BarChart, DonutChart, List", "One time filter for every card"],
+      description: "A 4-page sales dashboard: KPIs, charts and a customer table, fed by a mock API with latency.",
+      features: [
+        "Overview, Revenue, Customers, Settings; sidebar → Drawer on narrow screens",
+        "One date range (DateRangePicker with presets) for every card and chart",
+        "StatTile with sparklines, LineChart, BarChart, DonutChart",
+        "DataGrid: sorting, filters, search, pagination, CSV export",
+        "Loading, empty and error states from src/api.ts, adjustable in Settings",
+        "English, or Vietnamese with --lang vi; lazy pages, real URLs via the History API",
+      ],
     },
   },
   {
