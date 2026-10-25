@@ -1,5 +1,9 @@
-import { useEffect, useState, type ComponentType } from "react";
+import { useEffect, useMemo, useState, type ComponentType } from "react";
 import { useYugen, YugenProvider } from "@/components/ui";
+import AiChatApp from "../template-library/ai-chat/App";
+import { createMockBackend } from "../template-library/ai-chat/api";
+import aiChatEn from "../template-library/ai-chat/content/en";
+import aiChatVi from "../template-library/ai-chat/content/vi";
 import { BlogLayout } from "../template-library/blog/BlogLayout";
 import { MemoryRouter } from "../template-library/blog/router";
 import { messagesEn } from "@/components/ui";
@@ -15,7 +19,6 @@ import starterEn from "../template-library/starter/content/en";
 import starterVi from "../template-library/starter/content/vi";
 import { useLocale } from "../i18n";
 import type { PageId } from "../template-library/saas/pages";
-import AiAssistantBlock from "../block-library/12-ai-assistant";
 
 const JP_FONT_ID = "yugen-starter-jp-font";
 
@@ -104,10 +107,18 @@ function DashboardPreview() {
   );
 }
 
+/**
+ * templates/vite-ai-chat in embedded mode: router and conversations in memory (nothing saved), text and mock replies in
+ * the docs language. Fixed height: the frame of a non-featured template scrolls instead of giving its content a height.
+ */
 function AiChatPreview() {
+  const docs = useYugen();
+  const { locale } = useLocale();
+  const content = locale === "vi" ? aiChatVi : aiChatEn;
+  const send = useMemo(() => createMockBackend(content.mock), [content]);
   return (
-    <div className="flex justify-center bg-shell p-5">
-      <AiAssistantBlock />
+    <div className="h-110">
+      <AiChatApp key={locale} embedded content={content} send={send} defaultAppearance={{ theme: docs.theme, brand: docs.brand }} />
     </div>
   );
 }
