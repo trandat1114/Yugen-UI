@@ -1,4 +1,4 @@
-import type { YugenTheme } from "yugen-ui";
+import type { YugenTheme, YugenMessagesInput } from "yugen-ui";
 import type { CategoryKey, ChannelKey, CustomerStatus, MetricKey, MockLabels, Scenario, SegmentKey } from "../api";
 import type { Bucket } from "../dates";
 import type { PageId } from "../router";
@@ -9,6 +9,9 @@ export type Rich = (string | { code: string })[];
 /** Every string of the dashboard, mock data included. One file per language; `content/index.ts` picks the one the app uses. */
 export interface Content {
   lang: "en" | "vi";
+  /** Chuỗi có sẵn của component Yugen: messagesEn cho tiếng Anh, bỏ trống = mặc định tiếng Việt. Đặt ở file ngôn ngữ để
+   * `create --lang vi` (xoá en.ts) bỏ hẳn bản tiếng Anh khỏi bundle. */
+  messages?: YugenMessagesInput;
   /** ISO 4217 code for money. */
   currency: string;
   appName: string;

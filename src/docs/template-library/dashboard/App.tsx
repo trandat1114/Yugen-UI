@@ -1,5 +1,5 @@
 import * as React from "react";
-import { messagesEn, YugenProvider, type YugenBrand, type YugenTheme } from "@/components/ui";
+import { YugenProvider, type YugenBrand, type YugenTheme } from "@/components/ui";
 import content from "./content";
 import type { Appearance } from "./context";
 import { Dashboard } from "./Dashboard";
@@ -36,7 +36,7 @@ export default function App() {
       theme={appearance.theme}
       brand={appearance.brand}
       // Built-in component strings (close buttons, chart summaries, pagination…) in the app's language.
-      messages={content.lang === "en" ? messagesEn : undefined}
+      messages={content.messages}
       locale={content.lang === "en" ? "en-US" : "vi-VN"}
     >
       <BrowserRouter>

@@ -245,6 +245,7 @@ export const CLI_NEWS: NewsRelease[] = [
       { kind: "new", text: "yugen theme --brand <hex>: sinh brand ramp vào yugen-brand.css (cùng thuật toán Theme Designer) và cảnh báo khi tương phản dưới 4.5:1.", href: "/concepts/cli" },
       { kind: "improved", text: "yugen init tự bọc app trong YugenProvider (main.tsx của Vite, app/layout.tsx của Next.js); create --ref lấy template từ một nhánh hoặc tag.", href: "/concepts/cli" },
       { kind: "improved", text: "create --lang en|vi có thêm template SaaS và Blog; xoá luôn thư mục src/content/<ngôn ngữ kia>/ (bài viết của blog), không chỉ file .ts.", href: "/templates" },
+      { kind: "improved", text: "create --lang ghi luôn tiêu đề, description và thẻ Open Graph của ngôn ngữ đó vào index.html, để bản xem trước khi chia sẻ link và công cụ tìm kiếm thấy đúng ngôn ngữ.", href: "/templates" },
     ],
   },
   {

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { messagesEn, YugenProvider } from "yugen-ui";
+import { YugenProvider } from "yugen-ui";
 import { createMockBackend, sendMessage, type SendMessage } from "./api";
 import type { Appearance } from "./appearance";
 import { ChatLayout } from "./ChatLayout";
@@ -56,7 +56,7 @@ export default function App({ embedded = false, content = defaultContent, defaul
       withToaster={!embedded}
       theme={appearance.theme}
       brand={appearance.brand}
-      messages={content.lang === "en" ? messagesEn : undefined}
+      messages={content.messages}
       locale={content.locale}
       className={embedded ? "h-full" : undefined}
     >

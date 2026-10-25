@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useDirection } from "@radix-ui/react-direction";
-import { DayPicker, type ChevronProps, type DayButtonProps, type DayPickerProps } from "react-day-picker";
+import { DayPicker, labelDayButton, type ChevronProps, type DayButtonProps, type DayPickerProps } from "react-day-picker";
 import { vi } from "react-day-picker/locale/vi";
 import {
   ChevronDown20Regular,
@@ -27,6 +27,22 @@ const CHEVRON = {
 } as const;
 
 const MIRROR = { left: "right", right: "left", up: "up", down: "down" } as const;
+
+/**
+ * Nhãn ô ngày của locale, nhưng ngày viết bằng số thường. en-US đọc "September 27th" trong khi ô hiện "27": điều khiển
+ * bằng giọng nói ("click 27") không khớp và axe báo label-content-name-mismatch (WCAG 2.5.3).
+ */
+const labelDayButtonPlain: typeof labelDayButton = (date, modifiers, options, dateLib) => {
+  const localeLabel = options?.locale?.labels?.labelDayButton;
+  const label =
+    typeof localeLabel === "function"
+      ? localeLabel(date, modifiers, options, dateLib)
+      : (localeLabel ?? labelDayButton(date, modifiers, options, dateLib));
+  if (!dateLib) return label;
+  const ordinal = dateLib.format(date, "do");
+  const plain = dateLib.format(date, "d");
+  return ordinal === plain ? label : label.replace(ordinal, plain);
+};
 
 /** Nav mặc định của DayPicker luôn truyền left/right cố định; trong RTL phải đảo để "tháng trước" chỉ về phía bắt đầu. */
 const CalendarMirrorContext = React.createContext(false);
@@ -83,6 +99,7 @@ export function Calendar({
   classNames,
   components,
   formatters,
+  labels,
   locale: localeProp,
   showOutsideDays = true,
   dir: dirProp,
@@ -102,6 +119,7 @@ export function Calendar({
       <DayPicker
         dir={dir}
         locale={locale}
+        labels={{ labelDayButton: labelDayButtonPlain, ...labels }}
         showOutsideDays={showOutsideDays}
         className={cn("w-fit text-body1 text-foreground-1", className)}
         classNames={{

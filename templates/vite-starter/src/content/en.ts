@@ -1,7 +1,9 @@
+import { messagesEn } from "yugen-ui";
 import type { Content } from "./types";
 
 const en: Content = {
   lang: "en",
+  messages: messagesEn,
   appName: "My app",
   nav: { label: "Links", docs: "Docs", appearance: "Appearance", mode: "Mode", brand: "Brand" },
   themes: { light: "Light", dark: "Dark", "high-contrast": "High contrast" },

@@ -4,7 +4,8 @@ import { SITE } from "./site";
 export interface TemplateInfo {
   dir: string;
   name: string;
-  tags: string[];
+  /** Tag trên thẻ: chuỗi giữ nguyên ở mọi ngôn ngữ (tên công nghệ) hoặc { vi, en }. */
+  tags: (string | { vi: string; en: string })[];
   /** Template nổi bật: preview lớn ở đầu trang. */
   featured?: boolean;
   /** Đường dẫn hiện trên thanh địa chỉ giả của khung preview. */
@@ -17,7 +18,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     dir: "vite-starter",
     name: "Starter",
-    tags: ["Vite", "React 19", "Tailwind v4", "Trang trắng"],
+    tags: ["Vite", "React 19", "Tailwind v4", { vi: "Trang trắng", en: "Blank" }],
     featured: true,
     vi: {
       description:
@@ -47,7 +48,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     dir: "vite-saas",
     name: "SaaS",
-    tags: ["Vite", "React 19", "Tailwind v4", "8 trang"],
+    tags: ["Vite", "React 19", "Tailwind v4", { vi: "8 trang", en: "8 pages" }],
     featured: true,
     previewPath: "/#/overview",
     vi: {
@@ -110,7 +111,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     dir: "vite-dashboard",
     name: "Dashboard",
-    tags: ["Vite", "React 19", "Charts", "4 trang"],
+    tags: ["Vite", "React 19", "Charts", { vi: "4 trang", en: "4 pages" }],
     previewPath: "/",
     vi: {
       description: "Dashboard bán hàng 4 trang: KPI, biểu đồ và bảng khách hàng, dữ liệu từ API giả lập có độ trễ.",

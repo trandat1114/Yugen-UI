@@ -23,6 +23,8 @@ const check = process.argv.includes("--check");
 const TEMPLATES = [
   {
     dir: "vite-starter",
+    /** Tiêu đề và mô tả của index.html khi tạo bằng `--lang vi` (CLI ghi đè lúc tạo app). */
+    vi: { appTitle: "Ứng dụng của tôi", description: "Dự án React + Tailwind CSS v4 trống với Yugen UI: theme được lưu, toast và alias @/." },
     /** Mô tả một dòng (tiếng Anh) cho `yugen create` — ghi vào templates/templates.json. */
     hint: "Blank app: saved theme, toast, @/ alias and a short welcome page",
     /** Tên template (trình chọn của `yugen create`, docs). `appTitle`: <title> và README của app được tạo. */
@@ -41,6 +43,8 @@ const TEMPLATES = [
   },
   {
     dir: "vite-saas",
+    /** Tiêu đề và mô tả của index.html khi tạo bằng `--lang vi` (CLI ghi đè lúc tạo app). */
+    vi: { appTitle: "Sakura Studio", description: "Ứng dụng SaaS dựng bằng Yugen UI: sidebar, bảng lệnh Ctrl K, thông báo, theme sáng / tối / tương phản cao và 8 trang mẫu." },
     hint: "SaaS workspace: sidebar, Ctrl K command palette, notifications, 8 pages",
     title: "SaaS",
     appTitle: "Sakura Studio",
@@ -53,6 +57,8 @@ const TEMPLATES = [
   },
   {
     dir: "vite-blog",
+    /** Tiêu đề và mô tả của index.html khi tạo bằng `--lang vi` (CLI ghi đè lúc tạo app). */
+    vi: { appTitle: "Nhật ký Sakura", description: "Blog viết bằng Markdown, dựng bằng Yugen UI: mục lục, thẻ, tìm kiếm, theme tối và SEO sinh sẵn lúc build." },
     hint: "Markdown blog: table of contents, tags, search, build-time SEO",
     title: "Blog",
     appTitle: "Sakura Notes",
@@ -66,6 +72,8 @@ const TEMPLATES = [
   },
   {
     dir: "vite-dashboard",
+    /** Tiêu đề và mô tả của index.html khi tạo bằng `--lang vi` (CLI ghi đè lúc tạo app). */
+    vi: { appTitle: "Sakura Analytics", description: "Dashboard bán hàng dựng bằng Yugen UI: một khoảng ngày cho mọi biểu đồ, KPI, bảng khách hàng và API giả lập." },
     hint: "Sales dashboard: date range, KPIs, charts, customer table with CSV export, 4 pages",
     title: "Dashboard",
     appTitle: "Sakura Analytics",
@@ -76,6 +84,8 @@ const TEMPLATES = [
   },
   {
     dir: "vite-ai-chat",
+    /** Tiêu đề và mô tả của index.html khi tạo bằng `--lang vi` (CLI ghi đè lúc tạo app). */
+    vi: { appTitle: "Sakura Chat", description: "Ứng dụng chat AI dựng bằng Yugen UI: danh sách hội thoại, trả lời dạng stream dừng được, nối backend của bạn." },
     hint: "AI chat: saved conversations, streaming answers you can stop, one backend adapter",
     title: "AI chat",
     appTitle: "Sakura Chat",
@@ -643,7 +653,20 @@ const BUDGETS = {
   "vite-ai-chat": { js: 175, css: 25 },
 };
 
-const manifest = TEMPLATES.map(({ dir, title, hint }) => ({ dir, name: dir.replace(/^vite-/, ""), title, hint, budget: BUDGETS[dir] }));
+// `meta`: <title> / description của index.html theo từng ngôn ngữ — `create --lang` (packages/cli applyLang) ghi đè.
+const manifest = TEMPLATES.map((t) => ({
+  dir: t.dir,
+  name: t.dir.replace(/^vite-/, ""),
+  title: t.title,
+  hint: t.hint,
+  budget: BUDGETS[t.dir],
+  ...(t.vi && {
+    meta: {
+      [t.lang ?? "vi"]: { title: t.appTitle ?? t.title, description: t.description },
+      vi: { title: t.vi.appTitle ?? t.appTitle ?? t.title, description: t.vi.description },
+    },
+  }),
+}));
 const outputs = [
   ...TEMPLATES.flatMap((t) => Object.entries(files(t)).map(([rel, content]) => [`${t.dir}/${rel}`, content])),
   ["templates.json", JSON.stringify(manifest, null, 2) + "\n"],

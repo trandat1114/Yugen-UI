@@ -1,5 +1,6 @@
 import * as React from "react";
 import { YugenProvider, type YugenBrand, type YugenTheme } from "@/components/ui";
+import content from "./content";
 import { Welcome, type Appearance } from "./Welcome";
 
 /** Cùng khoá với script chống nháy trong index.html. */
@@ -26,7 +27,7 @@ export default function App() {
   }, [appearance]);
 
   return (
-    <YugenProvider applyToDocument withToaster theme={appearance.theme} brand={appearance.brand}>
+    <YugenProvider applyToDocument withToaster theme={appearance.theme} brand={appearance.brand} messages={content.messages}>
       {/* Bắt đầu ứng dụng của bạn ở đây — thay <Welcome /> bằng component của bạn. */}
       <Welcome appearance={appearance} onAppearanceChange={(patch) => setAppearance((a) => ({ ...a, ...patch }))} />
     </YugenProvider>

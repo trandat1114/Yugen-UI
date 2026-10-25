@@ -1,4 +1,4 @@
-import type { AvatarProps, NotificationIntent, YugenTheme } from "yugen-ui";
+import type { AvatarProps, NotificationIntent, YugenTheme, YugenMessagesInput } from "yugen-ui";
 
 export type PageId = "overview" | "analytics" | "assistant" | "inbox" | "calendar" | "team" | "billing" | "settings";
 
@@ -9,6 +9,9 @@ export type Role = "owner" | "editor" | "viewer";
 /** Every string in the app, and the sample data. One file per language; `content/index.ts` picks the one the app uses. */
 export interface Content {
   lang: "en" | "vi";
+  /** Chuỗi có sẵn của component Yugen: messagesEn cho tiếng Anh, bỏ trống = mặc định tiếng Việt. Đặt ở file ngôn ngữ để
+   * `create --lang vi` (xoá en.ts) bỏ hẳn bản tiếng Anh khỏi bundle. */
+  messages?: YugenMessagesInput;
   /** Dates and numbers (also `locale` on YugenProvider). */
   locale: "en-US" | "vi-VN";
   /** Currency of the sample amounts. */

@@ -7,6 +7,16 @@
     "budget": {
       "js": 135,
       "css": 25
+    },
+    "meta": {
+      "en": {
+        "title": "My app",
+        "description": "A blank React + Tailwind CSS v4 project with Yugen UI: saved theme, toast and the @/ alias."
+      },
+      "vi": {
+        "title": "Ứng dụng của tôi",
+        "description": "Dự án React + Tailwind CSS v4 trống với Yugen UI: theme được lưu, toast và alias @/."
+      }
     }
   },
   {
@@ -17,6 +27,16 @@
     "budget": {
       "js": 190,
       "css": 25
+    },
+    "meta": {
+      "en": {
+        "title": "Sakura Studio",
+        "description": "A SaaS app built with Yugen UI: sidebar, Ctrl K command palette, notifications, light / dark / high-contrast themes and 8 sample pages."
+      },
+      "vi": {
+        "title": "Sakura Studio",
+        "description": "Ứng dụng SaaS dựng bằng Yugen UI: sidebar, bảng lệnh Ctrl K, thông báo, theme sáng / tối / tương phản cao và 8 trang mẫu."
+      }
     }
   },
   {
@@ -27,6 +47,16 @@
     "budget": {
       "js": 150,
       "css": 25
+    },
+    "meta": {
+      "en": {
+        "title": "Sakura Notes",
+        "description": "A Markdown blog built with Yugen UI: table of contents, tags, search, dark theme and SEO generated at build time."
+      },
+      "vi": {
+        "title": "Nhật ký Sakura",
+        "description": "Blog viết bằng Markdown, dựng bằng Yugen UI: mục lục, thẻ, tìm kiếm, theme tối và SEO sinh sẵn lúc build."
+      }
     }
   },
   {
@@ -37,6 +67,16 @@
     "budget": {
       "js": 195,
       "css": 25
+    },
+    "meta": {
+      "en": {
+        "title": "Sakura Analytics",
+        "description": "A sales dashboard built with Yugen UI: one date range for every chart, KPIs, a customer table and a mock API."
+      },
+      "vi": {
+        "title": "Sakura Analytics",
+        "description": "Dashboard bán hàng dựng bằng Yugen UI: một khoảng ngày cho mọi biểu đồ, KPI, bảng khách hàng và API giả lập."
+      }
     }
   },
   {
@@ -47,6 +87,16 @@
     "budget": {
       "js": 175,
       "css": 25
+    },
+    "meta": {
+      "en": {
+        "title": "Sakura Chat",
+        "description": "An AI chat app built with Yugen UI: saved conversations, streaming Markdown answers with reasoning, steps and sources, and one adapter for your backend."
+      },
+      "vi": {
+        "title": "Sakura Chat",
+        "description": "Ứng dụng chat AI dựng bằng Yugen UI: danh sách hội thoại, trả lời dạng stream dừng được, nối backend của bạn."
+      }
     }
   }
 ]

@@ -100,6 +100,9 @@ if (smoke) {
     while (queue.length > 0 && pages.length < MAX_PAGES) {
       const url = queue.shift();
       errors = [];
+      // Route kiểu hash ("/#/calendar") đi thẳng từ trang trước chỉ đổi hash: networkidle xong ngay, axe chạy khi trang
+      // lazy chưa render. Qua about:blank để mỗi URL được tải lại từ đầu, như người mở link trực tiếp.
+      await page.goto("about:blank");
       await page.goto(origin + url, { waitUntil: "networkidle" });
       const rendered = await page.locator("#root > *").count();
       const { violations } = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();

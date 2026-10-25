@@ -154,11 +154,14 @@ function Header({ t, c, withName }: { t: TemplateInfo; c: typeof VI; withName?: 
       </div>
       <p className="max-w-3xl text-body1 text-foreground-2">{t[locale].description}</p>
       <div className="flex flex-wrap gap-1">
-        {t.tags.map((tag) => (
-          <Badge key={tag} appearance="outline" color="subtle">
-            {tag}
-          </Badge>
-        ))}
+        {t.tags.map((tag) => {
+          const label = typeof tag === "string" ? tag : tag[locale];
+          return (
+            <Badge key={label} appearance="outline" color="subtle">
+              {label}
+            </Badge>
+          );
+        })}
       </div>
     </div>
   );
