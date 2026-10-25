@@ -10,25 +10,6 @@ Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. 
 
 ## Đang làm
 
-### 0.11.0 · minor · hạn 2026-10-27
-
-Chuỗi giao diện thay được, docs tiếng Anh, template mới.
-
-- [x] messages và locale trên YugenProvider, messagesEn (#137)
-- [x] Docs tiếng Anh cho mọi trang (#69)
-- [x] CI build và kiểm tra từng template (#145)
-- [x] Template Dashboard thành ứng dụng đầy đủ (#148)
-- [x] Template AI chat thành ứng dụng đầy đủ (#149)
-- [~] Mọi template có tiếng Anh và tiếng Việt (#147)
-- [~] messagesEn nhẹ hơn, app tiếng Việt không phải tải (#184)
-
-### cli 0.4.0 · hạn 2026-10-27
-
-Phát hành cùng 0.11.0.
-
-- [x] diff, update, remove, theme; init tự bọc YugenProvider (#64)
-- [~] Template mới và hai ngôn ngữ đóng gói trong CLI (#144)
-
 ### 1.0.0 · major
 
 API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện hoàn tất.
@@ -52,6 +33,7 @@ Chưa xếp lịch.
 
 Chi tiết ở trang Có gì mới (`/news`) và `CHANGELOG.md`.
 
+- **0.11.0** (2026-10-25): Chuỗi giao diện thay được, docs tiếng Anh và template mới
 - **0.10.0** (2026-10-23): Spacing theo thang số, Theme Designer và trang Motion
 - **0.9.0** (2026-10-23): React 19 và starter tối giản
 - **0.8.3** (2026-10-22): Lệnh tạo dự án chạy được trên PowerShell

@@ -116,7 +116,8 @@ describe("Wizard", () => {
     expect(validate).toHaveBeenCalledTimes(1);
     resolve(true);
     expect(await screen.findByText("Nội dung Hồ sơ")).toBeInTheDocument();
-    expect(screen.getByRole("group", { name: "Bước 2/3: Hồ sơ" })).toHaveFocus();
+    // Focus chuyển trong useEffect sau khi nội dung đã render: chờ, đừng kiểm ngay cùng lượt với findByText.
+    await waitFor(() => expect(screen.getByRole("group", { name: "Bước 2/3: Hồ sơ" })).toHaveFocus());
     expect(screen.getAllByRole("listitem")[0]).toHaveAttribute("data-status", "complete");
   });
 

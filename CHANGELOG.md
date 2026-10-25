@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.11.0
+
+### Minor Changes
+
+- 73aa98e: Every built-in component string can be replaced. `YugenProvider` takes `messages` (by component namespace, partial overrides allowed, nested providers inherit) and `locale` (default Intl locale for dates, times and numbers). `messagesEn` switches all built-in strings to English; each component also exports its own `…Messages` defaults and `…MessagesEn`. Vietnamese stays the default, and label props such as `dismissLabel` still take priority. `calendarMessagesEn` leaves `locale` undefined, so Calendar falls back to the en-US locale built into react-day-picker and `messagesEn` adds about 4.5 kB gzip.
+- 899d863: Skeleton (wave) and the indeterminate ProgressBar now animate with transforms, so they no longer repaint or re-layout every frame. Two theme utilities back them: `animate-sweep` and `animate-indeterminate-slide`. `animate-shimmer` and `animate-indeterminate` are unchanged for existing uses.
+
+### Patch Changes
+
+- 7fb8afe: Calendar day buttons name the day with a plain number in every locale. With en-US the name said "October 1st" while the button shows "1", which fails WCAG 2.5.3 (Label in Name) for voice control users.
+- 888d4e2: Performance: less work in the components' busiest paths, no API changes.
+  
+  - Charts: date formatters and label widths are reused instead of rebuilt for every data point on every hover step; the data table is only built while it is shown (`ChartContainer`'s `table` also accepts a function).
+  - DataGrid: resizing a column no longer re-renders every row (pinned-column offsets come from `--dg-sticky-<col>` CSS variables on the grid), and an inline `getRowId` is no longer called for every row on every render.
+  - Tree, List: moving focus with the arrow keys re-renders the two items involved instead of all items.
+  - Combobox, TagPicker, Autocomplete: option labels are normalized once per option list, not on every keystroke.
+  - MessageScroller, MessageBubble, StreamingMarkdown: streamed tokens skip the new-message scan, unchanged bubbles don't re-render, and an open code fence is highlighted at low priority.
+  - NotificationPanel formats only the open tab; Carousel autoplay stops its per-frame loop when there is no progress bar and pauses offscreen; `useMediaQuery` reuses one MediaQueryList per query.
+
 ## 0.10.0
 
 ### Minor Changes
@@ -173,7 +192,8 @@ with a user-facing change adds one with `npx changeset`, and `npx changeset vers
 - 11 core components.
 - Documentation site.
 
-[Unreleased]: https://github.com/trandat1114/Yugen-UI/compare/v0.9.0...HEAD
+[Unreleased]: https://github.com/trandat1114/Yugen-UI/compare/v0.11.0...HEAD
+[0.11.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.11.0
 [0.10.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.10.0
 [0.9.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.9.0
 [0.8.3]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.8.3
