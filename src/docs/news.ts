@@ -31,6 +31,23 @@ export const NEWS_KIND_LABEL: Record<NewsKind, string> = {
 
 export const NEWS: NewsRelease[] = [
   {
+    version: "0.11.0",
+    upcoming: true,
+    date: "2026-10-27",
+    title: "Chuỗi giao diện thay được, docs tiếng Anh và template mới",
+    summary: "Mọi chữ có sẵn trong component đổi được qua YugenProvider (có sẵn bản tiếng Anh). Docs đủ tiếng Anh với URL thật và HTML render sẵn. Dashboard và AI chat thành ứng dụng đầy đủ, mọi template có hai ngôn ngữ.",
+    items: [
+      { kind: "new", text: "YugenProvider nhận messages và locale: đổi nhãn nút, aria-label, thông báo cho trình đọc màn hình của mọi component theo namespace; messagesEn chuyển toàn bộ sang tiếng Anh. Prop nhãn riêng của component vẫn ưu tiên; tiếng Việt vẫn là mặc định.", href: "/concepts/localization" },
+      { kind: "new", text: "Trang component có mục Messages: liệt kê từng khoá, mặc định tiếng Việt và bản tiếng Anh.", href: "/components/toast" },
+      { kind: "improved", text: "Skeleton (wave) và ProgressBar không xác định chạy bằng transform, không vẽ lại mỗi khung hình; thêm utility animate-sweep và animate-indeterminate-slide.", href: "/components/skeleton" },
+      { kind: "improved", text: "Nhanh hơn khi dữ liệu lớn hoặc cập nhật liên tục: Chart, DataGrid, Tree, List, Combobox, TagPicker, Autocomplete, MessageScroller, StreamingMarkdown, Carousel, PageProgress.", href: "/components/datagrid" },
+      { kind: "new", text: "Docs tiếng Anh cho mọi trang ở /en/: khái niệm, 113 component, Foundations, Blocks, Theme Designer. URL theo đường dẫn, HTML render sẵn từng trang, sitemap có hreflang, ảnh Open Graph riêng; trang SEO mới.", href: "/concepts/seo" },
+      { kind: "new", text: "Template Dashboard (4 trang, một khoảng ngày cho mọi biểu đồ, DataGrid xuất CSV) và AI chat (danh sách hội thoại, trả lời dạng stream dừng được, nối backend riêng) thành ứng dụng đầy đủ; SaaS, Blog và các template mới có tiếng Anh và tiếng Việt (create --lang).", href: "/templates" },
+      { kind: "improved", text: "Template nạp từng trang khi cần: lần tải đầu của SaaS giảm khoảng một phần tư. CI build và kiểm tra từng template với chính bản yugen-ui của PR (dung lượng, lỗi console, axe).", href: "/templates" },
+      { kind: "improved", text: "Docs nhẹ hơn: JS lần tải đầu giảm hơn một nửa, trang chủ ít phần tử hơn; hoa anh đào ở trang chủ không còn bị cắt khung." },
+    ],
+  },
+  {
     version: "0.10.0",
     date: "2026-10-23",
     title: "Spacing theo thang số, Theme Designer và trang Motion",
