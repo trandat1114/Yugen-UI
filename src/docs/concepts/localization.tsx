@@ -87,7 +87,8 @@ export default function Page() {
           <CodeBlock code={OVERRIDE_CODE} />
           <P>
             Thứ tự ưu tiên: prop nhãn của chính component (vd. <C>dismissLabel</C> của SearchBox), rồi <C>messages</C> của provider gần
-            nhất, rồi provider ngoài, cuối cùng là mặc định tiếng Việt. Tên namespace và từng khoá có gợi ý kiểu trong editor.
+            nhất, rồi provider ngoài, cuối cùng là mặc định tiếng Việt. Tên namespace và từng khoá có gợi ý kiểu trong editor; mục
+            Messages ở cuối mỗi trang component liệt kê đủ khoá, mặc định tiếng Việt và bản tiếng Anh.
           </P>
         </div>
       </DocSection>

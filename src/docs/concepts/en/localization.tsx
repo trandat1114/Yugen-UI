@@ -86,7 +86,8 @@ export default function Page() {
           <CodeBlock code={OVERRIDE_CODE} />
           <P>
             Priority: the component&apos;s own label prop (such as SearchBox <C>dismissLabel</C>), then <C>messages</C> from the nearest
-            provider, then outer providers, then the Vietnamese default. Editors suggest namespace and key names from the types.
+            provider, then outer providers, then the Vietnamese default. Editors suggest namespace and key names from the types, and
+            the Messages section at the end of each component page lists every key with its Vietnamese and English text.
           </P>
         </div>
       </DocSection>
