@@ -47,3 +47,29 @@ test("bản tiếng Anh: không có thông báo trang chưa dịch, mục lục 
   await expect(page.locator("main [lang=vi]")).toHaveCount(0);
   await expect(page.getByText("This page hasn't been translated yet")).toHaveCount(0);
 });
+
+test("Skeleton wave: dải sáng đi hết bề ngang rồi lặp liền mạch, không dừng giữa chừng (#199)", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await openDocs(page, "/components/skeleton", {}, { freeze: false });
+  const item = page.locator('main [class*="after:animate-sweep"]').first();
+  await expect(item).toBeVisible();
+  // Dừng animation ở 0%, 50% và gần 100% chu kỳ, đọc độ dịch của ::after theo bề ngang khung: phải là -1 → 0 → 1.
+  const result = await item.evaluate((el) => {
+    const anim = el.getAnimations({ subtree: true }).find((a) => (a as CSSAnimation).animationName === "sweep");
+    if (!anim) return null;
+    anim.pause();
+    const duration = Number(anim.effect?.getComputedTiming().duration);
+    const width = el.getBoundingClientRect().width;
+    const offsets = [0, 0.5, 0.999].map((progress) => {
+      anim.currentTime = duration * progress;
+      return new DOMMatrix(getComputedStyle(el, "::after").transform).m41 / width;
+    });
+    return { translate: getComputedStyle(el, "::after").translate, offsets };
+  });
+  expect(result, "không tìm thấy animation sweep trên ::after").not.toBeNull();
+  // Thuộc tính translate (vd. từ class -translate-x-*) cộng dồn với transform của keyframe.
+  expect(result!.translate).toBe("none");
+  expect(result!.offsets[0]).toBeCloseTo(-1, 1);
+  expect(result!.offsets[1]).toBeCloseTo(0, 1);
+  expect(result!.offsets[2]).toBeCloseTo(1, 1);
+});
