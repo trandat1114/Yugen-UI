@@ -3,30 +3,50 @@
     "dir": "vite-starter",
     "name": "starter",
     "title": "Starter",
-    "hint": "Blank app: saved theme, toast, @/ alias and a short welcome page"
+    "hint": "Blank app: saved theme, toast, @/ alias and a short welcome page",
+    "budget": {
+      "js": 135,
+      "css": 25
+    }
   },
   {
     "dir": "vite-saas",
     "name": "saas",
     "title": "SaaS",
-    "hint": "SaaS workspace: sidebar, Ctrl K command palette, notifications, 8 pages"
+    "hint": "SaaS workspace: sidebar, Ctrl K command palette, notifications, 8 pages",
+    "budget": {
+      "js": 180,
+      "css": 25
+    }
   },
   {
     "dir": "vite-blog",
     "name": "blog",
     "title": "Blog",
-    "hint": "Markdown blog: table of contents, tags, search, build-time SEO"
+    "hint": "Markdown blog: table of contents, tags, search, build-time SEO",
+    "budget": {
+      "js": 145,
+      "css": 25
+    }
   },
   {
     "dir": "vite-dashboard",
     "name": "dashboard",
     "title": "Dashboard",
-    "hint": "Sales dashboard: date range, KPIs, charts, customer table with CSV export, 4 pages"
+    "hint": "Sales dashboard: date range, KPIs, charts, customer table with CSV export, 4 pages",
+    "budget": {
+      "js": 195,
+      "css": 25
+    }
   },
   {
     "dir": "vite-ai-chat",
     "name": "ai-chat",
     "title": "AI chat",
-    "hint": "AI assistant chat UI"
+    "hint": "AI assistant chat UI",
+    "budget": {
+      "js": 135,
+      "css": 25
+    }
   }
 ]

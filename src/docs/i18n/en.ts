@@ -71,6 +71,15 @@ export const en: Record<MessageKey, string> = {
   "blocks.description": "Description",
   "blocks.onThisPage": "On this page",
 
+  // Messages table on component pages (MessagesTable.tsx)
+  "messages.desc": "Text built into the component: labels, aria-labels, screen reader announcements.",
+  "messages.intro": "Change it with the messages prop of YugenProvider, by the namespace below; messagesEn has the English set.",
+  "messages.link": "See Interface language.",
+  "messages.key": "Key",
+  "messages.vi": "Default (Vietnamese)",
+  "messages.en": "messagesEn",
+  "messages.seeSource": "Function, see messages.ts",
+
   // Component page
   "component.notFound": "Component “{slug}” not found.",
   "component.loadError": "Couldn't load this page",

@@ -464,12 +464,12 @@ export default defineConfig({
   build: {
     rolldownOptions: {
       output: {
-        // Tách thư viện khỏi mã ứng dụng: sửa trang chỉ làm đổi chunk nhỏ, phần còn lại trình duyệt giữ cache.
-        // Icon Fluent để chung vendor: tách riêng tạo vòng import vendor ↔ icons (lỗi TDZ lúc chạy).
+        // React (trang nào cũng cần) tách riêng để trình duyệt giữ cache khi mã ứng dụng đổi. Không gom mọi node_modules vào
+        // một chunk "vendor": yugen-ui được build theo từng component, để Rolldown tự chia thì trang nạp lười chỉ tải
+        // component của chính nó (lần tải đầu của SaaS giảm ~27%).
         codeSplitting: {
           groups: [
-            { name: "react", test: /[\\\\/]node_modules[\\\\/](react|react-dom|scheduler)[\\\\/]/, priority: 20 },
-            { name: "vendor", test: /[\\\\/]node_modules[\\\\/]/, priority: 10 },
+            { name: "react", test: /[\\\\/]node_modules[\\\\/](react|react-dom|scheduler)[\\\\/]/ },
           ],
         },
       },
@@ -513,7 +513,19 @@ export default defineConfig({
 }
 
 /** Danh mục cho `yugen create` (packages/cli đóng gói templates/ kèm file này). */
-const manifest = TEMPLATES.map(({ dir, title, hint }) => ({ dir, name: dir.replace(/^vite-/, ""), title, hint }));
+/**
+ * Ngân sách lần tải đầu (kB gzip) — CI job "Templates" (scripts/check-template.mjs) báo lỗi khi vượt. JS = <script type=module>
+ * + modulepreload trong dist/index.html (trang lazy không tính). Tăng có chủ đích: sửa ở đây và ghi lý do trong PR.
+ */
+const BUDGETS = {
+  "vite-starter": { js: 135, css: 25 },
+  "vite-saas": { js: 180, css: 25 },
+  "vite-blog": { js: 145, css: 25 },
+  "vite-dashboard": { js: 195, css: 25 },
+  "vite-ai-chat": { js: 135, css: 25 },
+};
+
+const manifest = TEMPLATES.map(({ dir, title, hint }) => ({ dir, name: dir.replace(/^vite-/, ""), title, hint, budget: BUDGETS[dir] }));
 const outputs = [
   ...TEMPLATES.flatMap((t) => Object.entries(files(t)).map(([rel, content]) => [`${t.dir}/${rel}`, content])),
   ["templates.json", JSON.stringify(manifest, null, 2) + "\n"],

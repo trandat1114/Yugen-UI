@@ -97,6 +97,55 @@ jobs:
       # npm pack yugen + create-yugen-ui, cài từ .tgz, tạo app với mọi template.
       - run: npm run smoke --prefix packages/cli
 
+  # Danh sách template cho matrix bên dưới — template mới trong templates.json được kiểm tra mà không cần sửa workflow.
+  templates-list:
+    name: Templates · list
+    if: github.event.pull_request.draft != true
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      dirs: ${{ steps.list.outputs.dirs }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: list
+        run: echo "dirs=$(node -p 'JSON.stringify(require("./templates/templates.json").map((t) => t.dir))')" >> "$GITHUB_OUTPUT"
+
+  # Mỗi template build với yugen-ui của chính PR này (npm pack), rồi scripts/check-template.mjs: ngân sách dung lượng
+  # lần tải đầu + smoke test (mọi link nội bộ render, không lỗi console, không vi phạm axe) (#145).
+  templates:
+    name: Template · ${{ matrix.template }}
+    needs: templates-list
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        template: ${{ fromJSON(needs.templates-list.outputs.dirs) }}
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble
+      options: --user 1001
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build:lib
+      - run: npm pack --pack-destination "$RUNNER_TEMP"
+
+      - name: Build ${{ matrix.template }} with this yugen-ui
+        run: |
+          cp -r "templates/${{ matrix.template }}" "$RUNNER_TEMP/app"
+          cd "$RUNNER_TEMP/app"
+          npm install --no-audit --no-fund
+          npm install --no-audit --no-fund "$RUNNER_TEMP"/yugen-ui-*.tgz
+          npm run build
+
+      - run: node scripts/check-template.mjs "$RUNNER_TEMP/app" --template "${{ matrix.template }}"
+
   # React 18.3 vẫn được hỗ trợ (peer react >=18) cho tới khi #62 quyết định ngừng.
   react-18:
     name: React 18

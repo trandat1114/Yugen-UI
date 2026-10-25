@@ -12,6 +12,7 @@ import { FallbackNotice } from "@/docs/i18n/FallbackNotice";
 import { DocumentMeta, fallbackOf } from "@/docs/seo";
 import { lazyPage } from "@/docs/lazyPage";
 import { preloadComponentDoc } from "@/docs/registry";
+import { preloadComponentMessages } from "@/docs/componentMessages";
 import { SITE } from "@/docs/site";
 import type { Route } from "@/docs/router";
 
@@ -53,7 +54,7 @@ export async function preloadRoute(route: Route, lang: Locale) {
     const page = (lang === "en" && CONCEPT_EN_PAGES[route.slug]) || CONCEPT_BY_SLUG[route.slug]?.Page;
     if (page) tasks.push(page.preload());
   }
-  if (route.kind === "component") tasks.push(preloadComponentDoc(route.slug, lang));
+  if (route.kind === "component") tasks.push(preloadComponentDoc(route.slug, lang), preloadComponentMessages(route.slug));
   await Promise.allSettled(tasks);
 }
 

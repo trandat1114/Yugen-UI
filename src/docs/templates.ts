@@ -17,7 +17,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     dir: "vite-starter",
     name: "Starter",
-    tags: ["Vite", "React 18", "Tailwind v4", "Trang trắng"],
+    tags: ["Vite", "React 19", "Tailwind v4", "Trang trắng"],
     featured: true,
     vi: {
       description:
@@ -47,7 +47,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     dir: "vite-saas",
     name: "SaaS",
-    tags: ["Vite", "React 18", "Tailwind v4", "8 trang"],
+    tags: ["Vite", "React 19", "Tailwind v4", "8 trang"],
     featured: true,
     previewPath: "/#/overview",
     vi: {
