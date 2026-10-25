@@ -55,10 +55,10 @@ Bảo vệ cho `next`, `release/*`, `canary` và tag `v*`: xem [[Branching and R
 | Workflow / file | Làm gì |
 |---|---|
 | `ci.yml` | Build, test (React 19), React 18, e2e, các check, size. Không chạy khi push / PR chỉ đổi tài liệu để đọc (README, wiki, CONTRIBUTING…; danh sách `paths-ignore` trong file); `engines.yml` và `pages.yml` dùng cùng danh sách |
-| `release.yml` | Tag `v*` → kiểm tra nhánh + nhất quán → `npm publish --provenance` (dist-tag theo kênh) |
-| `release-cli.yml` | Tag `cli@*` → `check-release.mjs --tag` (CHANGELOG, mục tin trên `#/news`, version chưa dùng) → publish `@yugen-ui/cli` + `create-yugen-ui` |
+| `release.yml` | Tag `v*` → kiểm tra nhánh + nhất quán → `npm publish --provenance` (dist-tag theo kênh) → GitHub Release từ mục CHANGELOG |
+| `release-cli.yml` | Tag `cli@*` → `check-release.mjs --tag` (CHANGELOG, mục tin trên `#/news`, version chưa dùng, `yugen-ui` đã có trên npm) → publish `@yugen-ui/cli` + `create-yugen-ui` → GitHub Release |
 | `canary.yml` | Push vào `canary` → bản `x.y.z-canary-…` với dist-tag `canary` |
-| `sync-next.yml` | Push vào `main` → mở PR `main → next` nếu `next` thiếu commit |
+| `sync-next.yml` | Push vào `main` → `next` không có việc riêng thì merge thẳng `main` vào `next` (không PR, không CI lại) và chạy lại Docs; có việc riêng thì mở PR `main → next` |
 | `node-versions.yml` | Hằng tuần → so bản Node.js trong workflow với lịch phát hành (`scripts/node-versions.mjs`), mở PR vào `next` khi lệch rồi chạy CI trên nhánh đó |
 | `prune-branches.yml` | Ngày 1 hằng tháng → báo cáo nhánh hết tác dụng (`scripts/prune-branches.mjs`) vào job summary; chạy tay với `apply` để xoá mục "Xoá" |
 | `react-share.yml` | Ngày 1 hằng tháng → tỉ lệ tải React theo major (`scripts/react-share.mjs`) bình luận vào #62; React 18 dưới 10% là một trong hai điều kiện để ngừng hỗ trợ |
