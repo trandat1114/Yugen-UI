@@ -1,6 +1,7 @@
 import * as React from "react";
-import { YugenProvider, type YugenTheme } from "yugen-ui";
+import { messagesEn, YugenProvider, type YugenTheme } from "yugen-ui";
 import { BlogLayout } from "./BlogLayout";
+import content from "./content";
 import { BrowserRouter } from "./router";
 
 /** Cùng khoá với script chống nháy trong index.html. */
@@ -24,7 +25,14 @@ export default function App() {
   }, [theme]);
 
   return (
-    <YugenProvider applyToDocument withToaster theme={theme} brand="sakura">
+    <YugenProvider
+      applyToDocument
+      withToaster
+      theme={theme}
+      brand="sakura"
+      messages={content.lang === "en" ? messagesEn : undefined}
+      locale={content.locale}
+    >
       <BrowserRouter>
         <BlogLayout theme={theme} onThemeChange={setTheme} />
       </BrowserRouter>

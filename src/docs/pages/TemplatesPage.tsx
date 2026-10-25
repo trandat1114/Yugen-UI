@@ -177,8 +177,6 @@ export function TemplatesPage() {
   const c = locale === "en" ? EN : VI;
   const featured = TEMPLATES.filter((t) => t.featured);
   const rest = TEMPLATES.filter((t) => !t.featured);
-  // Nội dung trong template là tiếng Việt — đánh dấu cho trình đọc màn hình khi giao diện là tiếng Anh.
-  const previewLang = locale === "en" ? "vi" : undefined;
 
   return (
     <div className="pb-8">
@@ -195,7 +193,7 @@ export function TemplatesPage() {
             </div>
             <div className="flex flex-col gap-2">
               <BrowserFrame url={`localhost:5173${t.previewPath ?? "/"}`} label={c.previewLabel(t.name)} className="h-190 max-h-[80vh]">
-                <div lang={previewLang} className="h-full">
+                <div className="h-full">
                   <Suspense fallback={<Fallback label={c.loading} />}>
                     <Preview dir={t.dir} />
                   </Suspense>
@@ -224,11 +222,9 @@ export function TemplatesPage() {
             <article key={t.dir} className="flex min-w-0 flex-col gap-4 rounded-2xlarge border border-stroke-2 bg-background-1 p-5">
               <Header t={t} c={c} withName />
               <BrowserFrame url="localhost:5173/" label={c.previewLabel(t.name)} className="h-110 overflow-y-auto">
-                <div lang={previewLang}>
-                  <Suspense fallback={<Fallback label={c.loading} />}>
-                    <Preview dir={t.dir} />
-                  </Suspense>
-                </div>
+                <Suspense fallback={<Fallback label={c.loading} />}>
+                  <Preview dir={t.dir} />
+                </Suspense>
               </BrowserFrame>
               <Command dir={t.dir} label={c.command} />
               <Actions t={t} c={c} />

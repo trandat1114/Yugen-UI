@@ -15,16 +15,17 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-  toast,
   type YugenBrand,
   type YugenTheme,
 } from "@/components/ui";
-import { PAGES, type PageId } from "./pages";
+import type { Content } from "./content/types";
+import { exportReport, PAGES, type PageId } from "./pages";
 
-export const THEMES: { value: YugenTheme; label: string; icon: ReactNode }[] = [
-  { value: "light", label: "Sáng", icon: <WeatherSunny20Regular /> },
-  { value: "dark", label: "Tối", icon: <WeatherMoon20Regular /> },
-  { value: "high-contrast", label: "Tương phản cao", icon: <Accessibility20Regular /> },
+/** Nhãn lấy từ `t.themes`. */
+export const THEMES: { value: YugenTheme; icon: ReactNode }[] = [
+  { value: "light", icon: <WeatherSunny20Regular /> },
+  { value: "dark", icon: <WeatherMoon20Regular /> },
+  { value: "high-contrast", icon: <Accessibility20Regular /> },
 ];
 
 export const BRANDS: { value: YugenBrand; label: string }[] = [
@@ -34,6 +35,7 @@ export const BRANDS: { value: YugenBrand; label: string }[] = [
 ];
 
 export interface CommandPaletteProps {
+  t: Content;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onNavigate: (page: PageId) => void;
@@ -42,46 +44,43 @@ export interface CommandPaletteProps {
 }
 
 /** Bảng lệnh Ctrl/⌘ K: chuyển trang, đổi giao diện, hành động nhanh. */
-export function CommandPalette({ open, onOpenChange, onNavigate, onThemeChange, onBrandChange }: CommandPaletteProps) {
+export function CommandPalette({ t, open, onOpenChange, onNavigate, onThemeChange, onBrandChange }: CommandPaletteProps) {
   const run = (action: () => void) => () => {
     onOpenChange(false);
     action();
   };
 
   return (
-    <CommandDialog open={open} onOpenChange={onOpenChange} title="Bảng lệnh">
-      <CommandInput placeholder="Tìm trang, lệnh…" />
+    <CommandDialog open={open} onOpenChange={onOpenChange} title={t.palette.title}>
+      <CommandInput placeholder={t.palette.placeholder} />
       <CommandList>
-        <CommandEmpty>Không có kết quả.</CommandEmpty>
-        <CommandGroup heading="Trang">
+        <CommandEmpty>{t.palette.empty}</CommandEmpty>
+        <CommandGroup heading={t.palette.pages}>
           {PAGES.map((p) => (
             <CommandItem key={p.id} icon={p.icon} keywords={[p.id]} onSelect={run(() => onNavigate(p.id))}>
-              {p.label}
+              {t.pages[p.id].label}
             </CommandItem>
           ))}
         </CommandGroup>
         <CommandSeparator />
-        <CommandGroup heading="Hành động">
+        <CommandGroup heading={t.palette.actions}>
           <CommandItem icon={<PersonAdd20Regular />} onSelect={run(() => onNavigate("team"))}>
-            Mời thành viên
+            {t.palette.invite}
           </CommandItem>
-          <CommandItem
-            icon={<ArrowDownload20Regular />}
-            onSelect={run(() => toast({ intent: "success", title: "Đã xuất báo cáo", body: "Tệp CSV đang được tải xuống." }))}
-          >
-            Xuất báo cáo
+          <CommandItem icon={<ArrowDownload20Regular />} onSelect={run(() => exportReport(t))}>
+            {t.exportReport.label}
           </CommandItem>
         </CommandGroup>
         <CommandSeparator />
-        <CommandGroup heading="Giao diện">
-          {THEMES.map((t) => (
-            <CommandItem key={t.value} icon={t.icon} keywords={["theme", t.value]} onSelect={run(() => onThemeChange(t.value))}>
-              Chế độ {t.label.toLowerCase()}
+        <CommandGroup heading={t.palette.appearance}>
+          {THEMES.map((theme) => (
+            <CommandItem key={theme.value} icon={theme.icon} keywords={["theme", theme.value]} onSelect={run(() => onThemeChange(theme.value))}>
+              {t.palette.mode(t.themes[theme.value])}
             </CommandItem>
           ))}
           {BRANDS.map((b) => (
             <CommandItem key={b.value} icon={<Color20Regular />} keywords={["brand"]} onSelect={run(() => onBrandChange(b.value))}>
-              Thương hiệu {b.label}
+              {t.palette.brand(b.label)}
             </CommandItem>
           ))}
         </CommandGroup>

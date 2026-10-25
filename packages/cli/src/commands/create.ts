@@ -56,11 +56,17 @@ export function templateLangs(dir: string): string[] {
     .sort();
 }
 
-/** Giữ đúng một ngôn ngữ: content/index.ts trỏ tới nó, xoá file của ngôn ngữ khác, đặt <html lang>. */
+/**
+ * Giữ đúng một ngôn ngữ: content/index.ts trỏ tới nó, xoá file và thư mục của ngôn ngữ khác (content/<lang>.ts,
+ * content/<lang>/ — ví dụ bài viết của blog), đặt <html lang>.
+ */
 export function applyLang(target: string, lang: string, langs: string[]) {
   const content = path.join(target, "src/content");
   writeText(path.join(content, "index.ts"), `export { default } from "./${lang}";\n`);
-  for (const other of langs.filter((l) => l !== lang)) fs.rmSync(path.join(content, `${other}.ts`), { force: true });
+  for (const other of langs.filter((l) => l !== lang)) {
+    fs.rmSync(path.join(content, `${other}.ts`), { force: true });
+    fs.rmSync(path.join(content, other), { recursive: true, force: true });
+  }
   const html = path.join(target, "index.html");
   if (exists(html)) writeText(html, readText(html).replace(/<html lang="[^"]*"/, `<html lang="${lang}"`));
 }

@@ -1,16 +1,17 @@
 import * as React from "react";
 import { Badge, Empty, EmptyDescription, EmptyTitle, SearchBox } from "yugen-ui";
-import type { Post } from "./content";
-import { POSTS, TAGS } from "./posts";
-import { Link } from "./router";
+import type { Post } from "./blog";
 import { formatDate } from "./format";
+import { useBlog } from "./posts";
+import { Link } from "./router";
 
 export function PostMeta({ post }: { post: Post }) {
+  const { t } = useBlog();
   return (
     <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-caption1 text-foreground-3">
-      <time dateTime={post.date}>{formatDate(post.date)}</time>
+      <time dateTime={post.date}>{formatDate(post.date, t.locale)}</time>
       <span aria-hidden>·</span>
-      <span>{post.readingMinutes} phút đọc</span>
+      <span>{t.readingTime(post.readingMinutes)}</span>
     </span>
   );
 }
@@ -35,6 +36,7 @@ export function TagLinks({ tags, current }: { tags: { name: string; slug: string
 }
 
 function PostCard({ post, headingLevel }: { post: Post; headingLevel: "h2" | "h3" }) {
+  const { t } = useBlog();
   const Heading = headingLevel;
   return (
     <article className="group relative flex flex-col gap-2 rounded-xlarge border border-stroke-2 bg-background-1 p-5 transition-shadow duration-faster hover:shadow-8">
@@ -48,7 +50,7 @@ function PostCard({ post, headingLevel }: { post: Post; headingLevel: "h2" | "h3
       <p className="text-body1 text-foreground-2">{post.description}</p>
       {post.draft && (
         <Badge appearance="tint" color="warning" className="self-start">
-          Bản nháp
+          {t.draft}
         </Badge>
       )}
       <div className="relative mt-1 flex flex-wrap gap-1">
@@ -64,10 +66,11 @@ function PostCard({ post, headingLevel }: { post: Post; headingLevel: "h2" | "h3
 
 /** Trang chủ (tất cả bài) hoặc trang thẻ: ô tìm kiếm, bộ lọc thẻ, danh sách bài. */
 export function PostList({ tag, headingLevel = "h1" }: { tag?: string; headingLevel?: "h1" | "h2" }) {
+  const { t, posts: all, tags } = useBlog();
   const [query, setQuery] = React.useState("");
-  const tagName = TAGS.find((t) => t.slug === tag)?.name;
+  const tagName = tags.find((x) => x.slug === tag)?.name;
   const q = query.trim().toLowerCase();
-  const posts = POSTS.filter((p) => !tag || p.tags.some((t) => TAGS.find((x) => x.name === t)?.slug === tag)).filter(
+  const posts = all.filter((p) => !tag || p.tags.some((name) => tags.find((x) => x.name === name)?.slug === tag)).filter(
     (p) => !q || `${p.title} ${p.description} ${p.tags.join(" ")}`.toLowerCase().includes(q),
   );
   const Heading = headingLevel;
@@ -75,19 +78,17 @@ export function PostList({ tag, headingLevel = "h1" }: { tag?: string; headingLe
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-2">
-        <Heading className="font-display text-title1 font-semibold text-foreground-1">{tagName ? `#${tagName}` : "Bài viết mới"}</Heading>
-        <p className="text-body2 text-foreground-2">
-          {tagName ? `${posts.length} bài gắn thẻ ${tagName}.` : "Thiết kế giao diện, React và Tailwind CSS — mỗi tuần một bài."}
-        </p>
+        <Heading className="font-display text-title1 font-semibold text-foreground-1">{tagName ? `#${tagName}` : t.home.title}</Heading>
+        <p className="text-body2 text-foreground-2">{tagName ? t.tagLead(posts.length, tagName) : t.home.lead}</p>
       </div>
       <div className="flex flex-col gap-3">
-        <SearchBox value={query} onValueChange={setQuery} placeholder="Tìm bài viết…" aria-label="Tìm bài viết" className="max-w-md" />
-        <TagLinks tags={TAGS} current={tag} />
+        <SearchBox value={query} onValueChange={setQuery} placeholder={t.search.placeholder} aria-label={t.search.label} className="max-w-md" />
+        <TagLinks tags={tags} current={tag} />
       </div>
       {posts.length === 0 ? (
         <Empty>
-          <EmptyTitle>Không có bài phù hợp</EmptyTitle>
-          <EmptyDescription>Thử từ khoá khác hoặc bỏ bộ lọc thẻ.</EmptyDescription>
+          <EmptyTitle>{t.empty.title}</EmptyTitle>
+          <EmptyDescription>{t.empty.body}</EmptyDescription>
         </Empty>
       ) : (
         <div className="grid gap-4 @3xl:grid-cols-2">
