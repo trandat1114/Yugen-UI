@@ -83,6 +83,8 @@ scope không bị kiểm tra này; scope `@yugen-ui` là một npm org (miễn p
    commit. Bản patch của CLI không cần phát hành lại `create-yugen-ui`.
 3. **Template theo `yugen-ui`** — template nằm trong gói CLI và ghim `yugen-ui@^<bản hiện tại>`. Sau mỗi bản minor
    của `yugen-ui`, phát hành CLI (patch) để `create` tạo app với bản mới.
+   CLI chỉ được publish sau khi `yugen-ui` bản đó đã lên npm: `check-release --tag` chặn nếu chưa có. Trước đó, job
+   `Template · …` của CI build template với gói `npm pack` của chính commit, nên PR release không cần bản đã publish.
 4. **Không dùng lại version** — kể cả bản đã unpublish: npm chặn vĩnh viễn, và `npm view` không thấy bản đã unpublish.
    Kiểm tra bằng `npm run check:release -- --npm`. Bản lỗi thì `npm deprecate`, không unpublish.
 5. **Nhánh** — bản ổn định tag trên `main` (dist-tag `latest`); prerelease `cli@X.Y.Z-beta.N` tag trên `next`
@@ -119,7 +121,7 @@ git tag cli@X.Y.Z
 git push origin cli@X.Y.Z
 ```
 
-**Release CLI** chạy `check-release.mjs --tag` (tag khớp version, đúng nhánh, version chưa bị unpublish → chọn dist-tag),
+**Release CLI** chạy `check-release.mjs --tag` (tag khớp version, đúng nhánh, version chưa bị unpublish, `yugen-ui` mà template ghim đã có trên npm → chọn dist-tag),
 typecheck, test, smoke, rồi `npm publish --provenance` cho `@yugen-ui/cli` và `create-yugen-ui`. Mỗi gói bỏ qua nếu
 version đó đã có trên npm, nên một bước publish lỗi (token, tên gói) thì sửa xong chỉ cần **Re-run** workflow.
 

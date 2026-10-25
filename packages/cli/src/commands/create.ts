@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { DOCS_URL } from "../lib/constants.js";
 import { CliError } from "../lib/errors.js";
+import { downloadTemplates } from "../lib/remote.js";
 import { copyDir, exists, isEmptyDir, readText, writeJson, writeText } from "../lib/fs.js";
 import { exec, gitAvailable, insideGitRepo, runScript } from "../lib/pm.js";
 import { pmFromUserAgent, type PackageJson, type PackageManager } from "../lib/project.js";
@@ -17,6 +18,8 @@ export interface TemplateInfo {
   name: string;
   title: string;
   hint: string;
+  /** <title> và description của index.html theo ngôn ngữ (templates.json); `--lang` ghi đè vào app được tạo. */
+  meta?: Record<string, { title: string; description: string }>;
 }
 
 export interface CreateOptions {
@@ -31,6 +34,8 @@ export interface CreateOptions {
   force?: boolean;
   /** Thư mục chứa templates.json + các template (mặc định: bản đóng gói). */
   templatesDir?: string;
+  /** Nhánh / tag của repo: tải template ở đó thay cho bản đóng gói (thử template chưa phát hành). */
+  ref?: string;
 }
 
 const PMS: PackageManager[] = ["npm", "pnpm", "yarn", "bun"];
@@ -53,13 +58,33 @@ export function templateLangs(dir: string): string[] {
     .sort();
 }
 
-/** Giữ đúng một ngôn ngữ: content/index.ts trỏ tới nó, xoá file của ngôn ngữ khác, đặt <html lang>. */
-export function applyLang(target: string, lang: string, langs: string[]) {
+/**
+ * Giữ đúng một ngôn ngữ: content/index.ts trỏ tới nó, xoá file và thư mục của ngôn ngữ khác (content/<lang>.ts,
+ * content/<lang>/ — ví dụ bài viết của blog), đặt <html lang>.
+ */
+const escAttr = (s: string) => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+
+export function applyLang(target: string, lang: string, langs: string[], meta?: { title: string; description: string }) {
   const content = path.join(target, "src/content");
   writeText(path.join(content, "index.ts"), `export { default } from "./${lang}";\n`);
-  for (const other of langs.filter((l) => l !== lang)) fs.rmSync(path.join(content, `${other}.ts`), { force: true });
+  for (const other of langs.filter((l) => l !== lang)) {
+    fs.rmSync(path.join(content, `${other}.ts`), { force: true });
+    fs.rmSync(path.join(content, other), { recursive: true, force: true });
+  }
   const html = path.join(target, "index.html");
-  if (exists(html)) writeText(html, readText(html).replace(/<html lang="[^"]*"/, `<html lang="${lang}"`));
+  if (!exists(html)) return;
+  let page = readText(html).replace(/<html lang="[^"]*"/, `<html lang="${lang}"`);
+  // Meta tĩnh theo ngôn ngữ: bot và bản xem trước khi chia sẻ link đọc index.html trước khi app chạy.
+  if (meta) {
+    const title = escAttr(meta.title);
+    const description = escAttr(meta.description);
+    page = page
+      .replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`)
+      .replace(/(<meta name="description" content=")[^"]*(")/, `$1${description}$2`)
+      .replace(/(<meta property="og:title" content=")[^"]*(")/, `$1${title}$2`)
+      .replace(/(<meta property="og:description" content=")[^"]*(")/, `$1${description}$2`);
+  }
+  writeText(html, page);
 }
 
 /** Như create-vite, thêm bỏ dấu: "My App" → "my-app", "Ứng dụng" → "ung-dung". */
@@ -76,7 +101,25 @@ export const toPackageName = (name: string) =>
     .replace(/^-+|-+$/g, "") || "yugen-app";
 
 export async function create(opts: CreateOptions, ctx: Ctx) {
-  const templatesDir = opts.templatesDir ?? BUNDLED_TEMPLATES;
+  if (!opts.ref) return createFrom(opts.templatesDir ?? BUNDLED_TEMPLATES, opts, ctx);
+  const spin = p.spinner();
+  spin.start(`Downloading templates from ${opts.ref}`);
+  let dir: string;
+  try {
+    dir = await downloadTemplates(opts.ref);
+  } catch (e) {
+    spin.error("Could not download the templates");
+    throw e;
+  }
+  spin.stop(`Templates from ${pc.cyan(opts.ref)}`);
+  try {
+    return await createFrom(dir, opts, ctx);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+async function createFrom(templatesDir: string, opts: CreateOptions, ctx: Ctx) {
   const templates = loadTemplates(templatesDir);
 
   const dir =
@@ -125,7 +168,7 @@ export async function create(opts: CreateOptions, ctx: Ctx) {
   const pkgFile = path.join(target, "package.json");
   const pkg = JSON.parse(readText(pkgFile)) as PackageJson;
   writeJson(pkgFile, { ...pkg, name: toPackageName(path.basename(target)) });
-  if (lang) applyLang(target, lang, langs);
+  if (lang) applyLang(target, lang, langs, template.meta?.[lang]);
   p.log.success(`Created ${pc.bold(template.title)} in ${pc.cyan(shown)}`);
 
   if (opts.install !== false) {

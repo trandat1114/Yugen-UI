@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { MessageBar } from "@/components/ui";
 import { DocSection, DoDont } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
+import { docsPath } from "../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -163,7 +164,7 @@ export default function Page() {
         <SimpleTable
           head={["", "Fluent UI React v9", "Yugen UI"]}
           rows={[
-            ["Phân phối", <C key="a">@fluentui/react-components</C>, "Mã nguồn chép vào dự án (src/components/ui)"],
+            ["Phân phối", <C key="a">@fluentui/react-components</C>, "Gói npm yugen-ui, hoặc chép mã nguồn vào dự án (src/components/ui)"],
             ["Style", "Griffel: makeStyles + tokens (CSS-in-JS lúc chạy / build)", "Tailwind CSS v4 utility, map 1-1 với cùng tên token"],
             ["Theme", <>Object theme (<C>webLightTheme</C>) qua <C>FluentProvider</C></>, <>CSS custom property theo <C>data-theme</C> / <C>data-brand</C> qua <C>YugenProvider</C></>],
             ["Tuỳ biến phần con", "Slot (root, icon, content…)", "asChild, prop ReactNode, component ghép, render-prop (xem trang Slot)"],
@@ -321,7 +322,7 @@ export default function Page() {
           <SimpleTable
             head={["Fluent v9", "Thay thế"]}
             rows={[
-              [<C key="a">DataGrid</C>, <>Table + mẫu DataTable (lọc, sắp xếp, chọn hàng, phân trang) ở <a className="text-link underline hover:text-link-hover" href="#/components/table">trang Table</a>.</>],
+              [<C key="a">DataGrid</C>, <>Table + mẫu DataTable (lọc, sắp xếp, chọn hàng, phân trang) ở <a className="text-link underline hover:text-link-hover" href={docsPath("/components/table")}>trang Table</a>.</>],
               [<C key="a">Overflow, useOverflowMenu</C>, "Ẩn mục theo breakpoint và gom vào Menu “…”; Breadcrumb có sẵn maxDisplayedItems."],
               [<C key="a">ColorPicker, SwatchPicker</C>, <>Thẻ <C>{'<input type="color">'}</C> trong Field, hoặc ToggleGroup các ô màu.</>],
               [<C key="a">TimePicker (compat)</C>, <>Combobox với danh sách giờ, hoặc <C>{'<Input type="time">'}</C>.</>],

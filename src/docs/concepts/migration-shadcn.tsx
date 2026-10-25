@@ -3,6 +3,7 @@ import { Delete20Regular, MoreHorizontal20Regular } from "@fluentui/react-icons"
 import { Badge, Button, Card, CardContent, CardFooter, CardHeader, MessageBar } from "@/components/ui";
 import { DocSection, DoDont } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
+import { docsPath } from "../router";
 
 function C({ children }: { children: ReactNode }) {
   return <code className="rounded-small bg-background-4 px-1 font-mono text-caption1">{children}</code>;
@@ -139,7 +140,7 @@ export default function Page() {
         <SimpleTable
           head={["", "shadcn/ui", "Yugen UI"]}
           rows={[
-            ["Cài đặt", <C key="a">npx shadcn add button</C>, "Chép thư mục component (chưa có CLI)"],
+            ["Cài đặt", <C key="a">npx shadcn add button</C>, <C key="b">npx @yugen-ui/cli add button</C>],
             ["Cấu trúc file", <C key="a">components/ui/button.tsx</C>, <><C>components/ui/Button/Button.tsx</C> + barrel <C>@/components/ui</C></>],
             ["Primitive", "Radix, cmdk, react-day-picker, vaul, sonner, embla", "Radix, cmdk, react-day-picker, react-resizable-panels (không vaul / sonner / embla)"],
             ["Ngôn ngữ thiết kế", "Trung tính, tối giản", "Fluent 2: type ramp, elevation, motion, trạng thái theo Fluent"],
@@ -294,7 +295,7 @@ export default function Page() {
             <li>
               Màu thương hiệu là một ramp 16 bậc (<C>--brand-10 … 160</C>) thay vì một biến <C>--primary</C>: hover, pressed, tint chọn,
               focus và link đều lấy từ ramp. Tạo ramp ở{" "}
-              <a className="text-link underline hover:text-link-hover" href="#/theme-designer">
+              <a className="text-link underline hover:text-link-hover" href={docsPath("/theme-designer")}>
                 Theme Designer
               </a>
               .

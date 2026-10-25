@@ -2,6 +2,10 @@ import * as React from "react";
 import { Info16Filled, Info16Regular, Info20Filled, Info20Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { Popover, PopoverSurface, PopoverTrigger } from "@/components/ui/Popover/Popover";
+import { useYugenMessages } from "../YugenProvider/context";
+import { infoLabelMessages } from "./messages";
+
+export { infoLabelMessages, infoLabelMessagesEn, type InfoLabelMessages } from "./messages";
 
 /** Fluent 2 InfoLabel — https://fluent2.microsoft.design/components/web/react/core/infolabel/usage */
 const SIZE = {
@@ -17,7 +21,7 @@ export interface InfoLabelProps extends React.LabelHTMLAttributes<HTMLLabelEleme
   weight?: "regular" | "semibold";
   required?: boolean;
   disabled?: boolean;
-  /** aria-label cho nút thông tin. */
+  /** aria-label cho nút thông tin. Mặc định lấy từ `messages.infoLabel.infoButton`. */
   infoButtonLabel?: string;
   /** Class cho khối ngoài (label + nút). */
   rootClassName?: string;
@@ -31,7 +35,7 @@ export const InfoLabel = React.forwardRef<HTMLLabelElement, InfoLabelProps>(
       weight = "regular",
       required,
       disabled,
-      infoButtonLabel = "Thông tin",
+      infoButtonLabel,
       className,
       rootClassName,
       id,
@@ -40,6 +44,7 @@ export const InfoLabel = React.forwardRef<HTMLLabelElement, InfoLabelProps>(
     },
     ref,
   ) => {
+    const msg = useYugenMessages("infoLabel", infoLabelMessages);
     const autoId = React.useId();
     const labelId = id ?? `${autoId}-label`;
     const buttonId = `${autoId}-info`;
@@ -71,7 +76,7 @@ export const InfoLabel = React.forwardRef<HTMLLabelElement, InfoLabelProps>(
             <button
               type="button"
               id={buttonId}
-              aria-label={infoButtonLabel}
+              aria-label={infoButtonLabel ?? msg.infoButton}
               aria-labelledby={`${buttonId} ${labelId}`}
               className={cn(
                 "group/info inline-flex shrink-0 items-center justify-center rounded-small text-foreground-2",

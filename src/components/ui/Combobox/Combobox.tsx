@@ -10,12 +10,15 @@ import {
   ChevronDown20Regular,
   ChevronDown24Regular,
 } from "@fluentui/react-icons";
-import { usePortalThemeProps } from "../YugenProvider/context";
+import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { popoverSurfaceClass } from "@/components/ui/Popover/Popover";
 import { fieldAppearanceClass, type FieldAppearance } from "@/components/ui/Select/Select";
 import { listboxOptionClass } from "@/components/ui/Dropdown/Dropdown";
+import { comboboxMessages } from "./messages";
+
+export { comboboxMessages, comboboxMessagesEn, type ComboboxMessages } from "./messages";
 
 export interface ComboboxOption {
   value: string;
@@ -67,7 +70,7 @@ interface ComboboxBaseProps extends InputAttrs {
   size?: "small" | "medium" | "large";
   /** Cho phép giữ văn bản tự gõ không khớp option nào (Enter hoặc rời ô để xác nhận). */
   freeform?: boolean;
-  /** Nội dung khi không có kết quả lọc. */
+  /** Nội dung khi không có kết quả lọc. Mặc định lấy từ `messages.combobox.noResults`. */
   noResultsText?: React.ReactNode;
   /** Class cho bề mặt listbox. */
   listboxClassName?: string;
@@ -119,7 +122,7 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
     appearance = "outline",
     size = "medium",
     freeform = false,
-    noResultsText = "Không tìm thấy kết quả",
+    noResultsText,
     listboxClassName,
     className,
     disabled,
@@ -133,13 +136,26 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
     ...inputProps
   } = props;
 
+  const msg = useYugenMessages("combobox", comboboxMessages);
   const items = React.useMemo<NormalizedOption[]>(
     () => options.map((o) => (typeof o === "string" ? { value: o, label: o } : { ...o, label: o.label ?? o.value })),
     [options],
   );
+  // Chuẩn hoá nhãn một lần cho mỗi bộ option (không phải mỗi phím gõ × mỗi option).
+  const searchText = React.useMemo(() => items.map((i) => normalizeSearchText(i.label)), [items]);
+  const labelByValue = React.useMemo(() => new Map(items.map((i) => [i.value, i.label])), [items]);
+  const filterItems = React.useCallback(
+    (text: string) => {
+      if (!text) return items;
+      const q = normalizeSearchText(text);
+      return items.filter((_, k) => searchText[k].includes(q));
+    },
+    [items, searchText],
+  );
   const [innerSelected, setInnerSelected] = React.useState<string[]>(() => toArray(defaultValue) ?? []);
   const selected = toArray(value) ?? innerSelected;
-  const labelOf = (v: string) => items.find((i) => i.value === v)?.label ?? v;
+  const selectedSet = new Set(selected);
+  const labelOf = (v: string) => labelByValue.get(v) ?? v;
   const displayText = selected.map(labelOf).join(", ");
 
   const [open, setOpen] = React.useState(false);
@@ -155,7 +171,7 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
   const portalTheme = usePortalThemeProps();
   React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
 
-  const filtered = query ? items.filter((i) => normalizeSearchText(i.label).includes(normalizeSearchText(query))) : items;
+  const filtered = React.useMemo(() => filterItems(query ?? ""), [filterItems, query]);
   const firstEnabled = (list: NormalizedOption[]) => list.find((i) => !i.disabled)?.value ?? "";
   const s = SIZE[size];
   const invalid = inputProps["aria-invalid"] === true || inputProps["aria-invalid"] === "true";
@@ -187,7 +203,8 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
     setOpen(false);
     if (query !== null && freeform && !multiselect) {
       const text = query.trim();
-      const exact = items.find((i) => normalizeSearchText(i.label) === normalizeSearchText(text));
+      const q = normalizeSearchText(text);
+      const exact = items.find((_, k) => searchText[k] === q);
       commit(text ? [exact?.value ?? text] : []);
     }
     setQuery(null);
@@ -266,7 +283,7 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
               value={inputValue}
               onChange={(e) => {
                 const text = e.target.value;
-                const next = text ? items.filter((i) => normalizeSearchText(i.label).includes(normalizeSearchText(text))) : items;
+                const next = filterItems(text);
                 setQuery(text);
                 setActive(firstEnabled(next));
                 if (!open) setOpen(true);
@@ -282,7 +299,7 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
             <button
               type="button"
               tabIndex={-1}
-              aria-label={open ? "Đóng danh sách" : "Mở danh sách"}
+              aria-label={open ? msg.closeList : msg.openList}
               disabled={disabled}
               onMouseDown={(e) => e.preventDefault()}
               onClick={(e) => {
@@ -324,11 +341,11 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
           >
             <CommandPrimitive.List ref={setListEl} aria-multiselectable={multiselect || undefined}>
               <CommandPrimitive.Empty className="px-2 py-1.5 text-body1 text-foreground-3">
-                {freeform && query?.trim() ? `Nhấn Enter để dùng “${query.trim()}”` : noResultsText}
+                {freeform && query?.trim() ? msg.useFreeform(query.trim()) : noResultsText === undefined ? msg.noResults : noResultsText}
               </CommandPrimitive.Empty>
               {groupOptions(filtered).map((group) => {
                 const rendered = group.items.map((item) => {
-                  const checked = selected.includes(item.value);
+                  const checked = selectedSet.has(item.value);
                   return (
                     <CommandPrimitive.Item
                       key={item.value}

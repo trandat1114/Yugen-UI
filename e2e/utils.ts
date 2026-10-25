@@ -9,10 +9,9 @@ export interface Appearance {
   brand?: "sakura" | "web" | "teams";
 }
 
-/** URL docs: query theme/brand/dir (script trong index.html áp trước khi render) + hash route. */
+/** URL docs: đường dẫn trang ("/components/button") + query theme/brand/dir (script trong index.html áp trước khi render). */
 export function docsUrl(route: string, { theme = "light", dir = "ltr", brand = "sakura" }: Appearance = {}) {
-  const hash = route.startsWith("#") ? route : `#${route}`;
-  return `/?theme=${theme}&brand=${brand}&dir=${dir}${hash}`;
+  return `${route}?theme=${theme}&brand=${brand}&dir=${dir}`;
 }
 
 /** CSS tắt mọi animation/transition — trạng thái cuối hiện ngay (axe đo tương phản không bị opacity giữa chừng). */
@@ -26,8 +25,9 @@ export const FREEZE_MOTION_CSS = `
   scroll-behavior: auto !important;
 }`;
 
-/** Chờ trang docs ổn định: có `main h1`, thanh PageProgress (route/concept lười) đã tắt, font đã nạp. */
+/** Chờ trang docs ổn định: React đã thay HTML prerender, có `main h1`, thanh PageProgress (route/concept lười) đã tắt, font đã nạp. */
 export async function waitForDocsReady(page: Page) {
+  await expect(page.locator("html[data-docs-ready]")).toHaveCount(1, { timeout: 30_000 });
   await expect(page.locator("main h1").first()).toBeVisible({ timeout: 30_000 });
   // Nội dung nạp lười (demo component, trang khái niệm): khung xương đánh dấu data-page-loading render cùng h1.
   await expect(page.locator("main [data-page-loading]")).toHaveCount(0, { timeout: 30_000 });
@@ -43,8 +43,8 @@ export async function openDocs(page: Page, route: string, appearance: Appearance
   if (freeze) await page.addStyleTag({ content: FREEZE_MOTION_CSS });
 }
 
-/** Tên ổn định cho test/ảnh chụp từ một hash route: "#/components/button" → "components-button". */
+/** Tên ổn định cho test/ảnh chụp từ một route: "/components/button" → "components-button". */
 export function routeSlug(route: string) {
-  const s = route.replace(/^#\/?/, "").replace(/\//g, "-");
+  const s = route.replace(/^\//, "").replace(/\//g, "-");
   return s || "home";
 }

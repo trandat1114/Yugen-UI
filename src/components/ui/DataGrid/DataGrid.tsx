@@ -7,6 +7,8 @@ import { Checkbox } from "../Checkbox/Checkbox";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "../Empty/Empty";
 import { useSpinDelay } from "../Loading/Loading";
 import { SkeletonItem } from "../Skeleton/Skeleton";
+import { useYugenMessages } from "../YugenProvider/context";
+import { dataGridMessages } from "./messages";
 import {
   useDataGridSelection,
   useDataGridSort,
@@ -21,6 +23,7 @@ import {
 } from "./useDataGrid";
 
 export * from "./useDataGrid";
+export { dataGridMessages, dataGridMessagesEn, type DataGridMessages } from "./messages";
 
 /**
  * Fluent 2 DataGrid — https://react.fluentui.dev/?path=/docs/components-datagrid--docs
@@ -117,7 +120,7 @@ export interface DataGridProps<T> extends Omit<React.HTMLAttributes<HTMLDivEleme
   focusMode?: DataGridFocusMode;
   /** Đang tải: hiện khung xương (sau 300ms, giữ ≥ 500ms — useSpinDelay). Dữ liệu cũ vẫn hiện trong lúc chờ. */
   loading?: boolean;
-  /** Nội dung khi không có hàng nào. Mặc định Empty "Không có dữ liệu". */
+  /** Nội dung khi không có hàng nào. Mặc định Empty với `messages.dataGrid.emptyTitle` / `emptyDescription`. */
   empty?: React.ReactNode;
 }
 
@@ -133,7 +136,7 @@ interface ResolvedColumn<T> {
   maxWidth: number | undefined;
   resizable: boolean;
   sortable: boolean;
-  /** inset-inline-start (CSS) khi cột được ghim. */
+  /** inset-inline-start (CSS) khi cột được ghim: `var(--dg-sticky-<colIndex>)`, giá trị đặt trên root. */
   stickyOffset: string | undefined;
   /** Cột ghim cuối cùng — có vạch ngăn với phần cuộn. */
   stickyLast: boolean;
@@ -196,6 +199,8 @@ interface ResizeHandleProps {
   tabbable: boolean;
   /** id phần tử chứa tên cột — ghép vào nhãn "Đổi độ rộng cột …". */
   headerLabelId: string;
+  /** Nhãn "Đổi độ rộng cột" (messages.dataGrid.resizeColumn). */
+  label: string;
   onResize: (event: React.SyntheticEvent, columnId: string, width: number) => void;
   onAutoSize: (event: React.SyntheticEvent, columnId: string) => void;
 }
@@ -208,6 +213,7 @@ function ColumnResizeHandle({
   rtl,
   tabbable,
   headerLabelId,
+  label,
   onResize,
   onAutoSize,
 }: ResizeHandleProps) {
@@ -318,7 +324,7 @@ function ColumnResizeHandle({
       }}
     >
       <span id={textId} hidden>
-        Đổi độ rộng cột
+        {label}
       </span>
       <span
         aria-hidden
@@ -335,12 +341,15 @@ function ColumnResizeHandle({
 
 /* ================================================================ Hàng dữ liệu */
 
+/** Phần của cột mà hàng cần — không gồm độ rộng, nên kéo đổi cỡ cột không render lại các hàng. */
+type RowCell<T> = Pick<ResolvedColumn<T>, "column" | "colIndex" | "stickyOffset" | "stickyLast">;
+
 interface RowViewProps<T> {
   item: T;
   rowId: string;
   /** Vị trí theo thứ tự hiển thị (0-based). */
   index: number;
-  cells: readonly ResolvedColumn<T>[];
+  cells: readonly RowCell<T>[];
   selectionMode: DataGridSelectionMode | undefined;
   selected: boolean;
   selectionAppearance: "brand" | "neutral" | "none";
@@ -352,6 +361,8 @@ interface RowViewProps<T> {
   rowHeight: number | undefined;
   /** Toạ độ top (px) khi ảo hoá; undefined = hàng nằm theo luồng bình thường. */
   virtualTop: number | undefined;
+  /** Tên ô chọn hàng (messages.dataGrid.selectRow) — chuỗi, nên không phá React.memo. */
+  selectRowLabel: string;
 }
 
 function RowViewImpl<T>({
@@ -368,6 +379,7 @@ function RowViewImpl<T>({
   size,
   rowHeight,
   virtualTop,
+  selectRowLabel,
 }: RowViewProps<T>) {
   const rowMode = focusMode === "row";
   const virtual = virtualTop !== undefined;
@@ -415,7 +427,7 @@ function RowViewImpl<T>({
           )}
         >
           {selectionMode === "multiselect" ? (
-            <Checkbox data-dg-select="" tabIndex={-1} checked={selected} onClick={preventDefault} aria-label="Chọn hàng" />
+            <Checkbox data-dg-select="" tabIndex={-1} checked={selected} onClick={preventDefault} aria-label={selectRowLabel} />
           ) : (
             <span
               aria-hidden
@@ -496,6 +508,7 @@ function DataGridImpl<T>(
 ) {
   const dir = useDirection();
   const rtl = dir === "rtl";
+  const msg = useYugenMessages("dataGrid", dataGridMessages);
   const baseId = React.useId();
   const rootRef = React.useRef<HTMLDivElement | null>(null);
   const headerRef = React.useRef<HTMLDivElement | null>(null);
@@ -517,7 +530,9 @@ function DataGridImpl<T>(
     onSortChange,
   });
   const rows = React.useMemo(() => (sortable ? sort(items) : items), [sortable, sort, items]);
-  const rowIds = React.useMemo(() => rows.map((item) => getRowId(item)), [rows, getRowId]);
+  // getRowId thường viết inline (hàm mới mỗi render) nhưng là hàm thuần theo item: chỉ tính lại khi danh sách hàng đổi, không
+  // phải mỗi bước cuộn ảo / mỗi lần đổi focus.
+  const rowIds = React.useMemo(() => rows.map((item) => getRowId(item)), [rows]);
   const selection = useDataGridSelection({ selectionMode, rowIds, selectedItems, defaultSelectedItems, onSelectionChange });
   const hasSelection = selectionMode !== undefined;
   const multiselect = selectionMode === "multiselect";
@@ -558,6 +573,23 @@ function DataGridImpl<T>(
     if (lastSticky) lastSticky.stickyLast = true;
     return list;
   }, [columns, columnSizingOptions, widths, hasSelection, lead, resizableColumns, sortable]);
+
+  // Ô của hàng: chỉ phụ thuộc cột nào được ghim, không phụ thuộc độ rộng — offset ghim đọc từ biến CSS trên root
+  // (--dg-sticky-<colIndex>), nên khi kéo đổi cỡ cột các hàng (React.memo) không render lại.
+  const rowCells = React.useMemo<RowCell<T>[]>(() => {
+    let stickyRun = true;
+    const list = columns.map((column, i): RowCell<T> => {
+      const sticky = stickyRun && column.sticky === "start";
+      if (!sticky) stickyRun = false;
+      return { column, colIndex: i + lead, stickyOffset: sticky ? `var(--dg-sticky-${i + lead})` : undefined, stickyLast: false };
+    });
+    const lastSticky = list.filter((c) => c.stickyOffset !== undefined).pop();
+    if (lastSticky) lastSticky.stickyLast = true;
+    return list;
+  }, [columns, lead]);
+  const stickyVars = Object.fromEntries(
+    resolved.filter((c) => c.stickyOffset !== undefined).map((c) => [`--dg-sticky-${c.colIndex}`, c.stickyOffset]),
+  );
 
   const stickyEnd = resolved.filter((c) => c.stickyOffset !== undefined).reduce((sum, c) => sum + (c.width ?? 0), 0);
   const hasSticky = resolved[0]?.stickyOffset !== undefined;
@@ -844,6 +876,7 @@ function DataGridImpl<T>(
   const rootStyle = {
     "--dg-cols": gridTemplate(hasSelection, resolved as ResolvedColumn<unknown>[]),
     "--dg-min": hasSelection ? `calc(${SELECTION_TRACK} + ${minTotal}px)` : `${minTotal}px`,
+    ...stickyVars,
     height,
     scrollPaddingInlineStart: hasSticky ? (hasSelection ? `calc(${SELECTION_TRACK} + ${stickyEnd}px)` : `${stickyEnd}px`) : undefined,
     ...style,
@@ -890,8 +923,8 @@ function DataGridImpl<T>(
                 <EmptyMedia>
                   <DocumentSearch24Regular />
                 </EmptyMedia>
-                <EmptyTitle>Không có dữ liệu</EmptyTitle>
-                <EmptyDescription>Chưa có hàng nào để hiển thị.</EmptyDescription>
+                <EmptyTitle>{msg.emptyTitle}</EmptyTitle>
+                <EmptyDescription>{msg.emptyDescription}</EmptyDescription>
               </EmptyHeader>
             </Empty>
           )}
@@ -908,7 +941,7 @@ function DataGridImpl<T>(
           item={rows[i]}
           rowId={id}
           index={i}
-          cells={resolved}
+          cells={rowCells}
           selectionMode={selectionMode}
           selected={selection.isSelected(id)}
           selectionAppearance={selectionAppearance}
@@ -918,6 +951,7 @@ function DataGridImpl<T>(
           size={size}
           rowHeight={virtualized ? rh : rowHeight}
           virtualTop={virtualized ? i * rh : undefined}
+          selectRowLabel={msg.selectRow}
         />
       );
     });
@@ -972,10 +1006,10 @@ function DataGridImpl<T>(
                   checked={headerChecked}
                   onClick={preventDefault}
                   disabled={dataRows === 0}
-                  aria-label="Chọn tất cả hàng"
+                  aria-label={msg.selectAll}
                 />
               ) : (
-                <span className="sr-only">Chọn hàng</span>
+                <span className="sr-only">{msg.selectRow}</span>
               )}
             </div>
           )}
@@ -1010,7 +1044,7 @@ function DataGridImpl<T>(
                 {direction && (
                   <>
                     <SortIcon aria-hidden className={cn("shrink-0 text-foreground-2", sizeClass.icon)} />
-                    <span className="sr-only">{direction === "ascending" ? "(tăng dần)" : "(giảm dần)"}</span>
+                    <span className="sr-only">{direction === "ascending" ? msg.sortAscending : msg.sortDescending}</span>
                   </>
                 )}
                 {c.resizable && (
@@ -1022,6 +1056,7 @@ function DataGridImpl<T>(
                     rtl={rtl}
                     tabbable={activeRow === 0 && activeCol === c.colIndex}
                     headerLabelId={labelId}
+                    label={msg.resizeColumn}
                     onResize={resizeColumn}
                     onAutoSize={autoSizeColumn}
                   />

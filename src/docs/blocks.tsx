@@ -77,10 +77,13 @@ export function ExampleFrame({
   example,
   defaultTheme,
   defaultBrand = "sakura",
+  demoLang,
 }: {
   example: Example;
   defaultTheme: FrameTheme;
   defaultBrand?: AppBrand;
+  /** Ngôn ngữ nội dung demo khi khác trang (demo viết bằng tiếng Việt, trang đang hiện tiếng Anh). */
+  demoLang?: string;
 }) {
   const [look, setLook] = React.useState({ theme: defaultTheme, brand: defaultBrand });
   const [showCode, setShowCode] = React.useState(false);
@@ -143,6 +146,7 @@ export function ExampleFrame({
         theme={look.theme}
         brand={look.brand}
         dir={pageDir}
+        lang={demoLang}
         withTooltipProvider={false}
         className="flex min-h-48 flex-wrap content-center items-center justify-center gap-3 bg-background-1 p-4 transition-colors duration-normal sm:min-h-60 sm:p-6"
       >
@@ -155,13 +159,16 @@ export function ExampleFrame({
 }
 
 /* ---------- Example tile (variants grid, takeaway style) ---------- */
-export function ExampleTile({ example }: { example: Example }) {
+export function ExampleTile({ example, demoLang }: { example: Example; demoLang?: string }) {
   const [showCode, setShowCode] = React.useState(false);
   const { t } = useLocale();
 
   return (
     <div className="flex min-w-0 flex-col">
-      <div className="group/tile relative flex min-h-56 flex-wrap content-center items-center justify-center gap-3 rounded-3xlarge border border-stroke-2 bg-background-3 p-5">
+      <div
+        lang={demoLang}
+        className="group/tile relative flex min-h-56 flex-wrap content-center items-center justify-center gap-3 rounded-3xlarge border border-stroke-2 bg-background-3 p-5"
+      >
         {example.render()}
         <CopyButton
           text={example.code}
@@ -192,11 +199,12 @@ export function ExampleTile({ example }: { example: Example }) {
   );
 }
 
-export function ExampleGrid({ examples, lang }: { examples: Example[]; lang?: string }) {
+/** `lang`: cả lưới (chữ chưa dịch); `demoLang`: chỉ vùng demo (chữ đã dịch, demo giữ tiếng Việt). */
+export function ExampleGrid({ examples, lang, demoLang }: { examples: Example[]; lang?: string; demoLang?: string }) {
   return (
     <div lang={lang} className="grid gap-x-5 gap-y-6 md:grid-cols-2">
-      {examples.map((ex) => (
-        <ExampleTile key={ex.title} example={ex} />
+      {examples.map((ex, i) => (
+        <ExampleTile key={i} example={ex} demoLang={demoLang} />
       ))}
     </div>
   );

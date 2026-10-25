@@ -9,6 +9,7 @@ import { useLocale } from "../i18n";
 import type { MessageKey } from "../i18n/vi";
 import { SITE } from "../site";
 import { markNewsSeen } from "../useNews";
+import { docsPath } from "../router";
 
 const KIND_BADGE: Record<NewsKind, Pick<BadgeProps, "color" | "appearance">> = {
   new: { color: "brand", appearance: "tint" },
@@ -110,7 +111,7 @@ function Timeline({ releases }: { releases: NewsRelease[] }) {
                     {itemLang ? <span lang={itemLang}>{item.text}</span> : item.text}
                     {item.href && (
                       <a
-                        href={item.href}
+                        href={docsPath(item.href)}
                         className="ms-1 inline-flex items-center gap-0.5 whitespace-nowrap text-link hover:text-link-hover hover:underline"
                       >
                         {t("news.view")}

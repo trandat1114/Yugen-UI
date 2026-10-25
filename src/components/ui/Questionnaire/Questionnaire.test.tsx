@@ -7,7 +7,9 @@ import {
   validateQuestion,
   type Question,
   type QuestionnaireAnswers,
+  questionnaireMessagesEn,
 } from "./Questionnaire";
+import { YugenProvider } from "../YugenProvider/YugenProvider";
 
 /* ================================================================ validateQuestion */
 
@@ -172,7 +174,7 @@ const SURVEY: Question[] = [
 const progressText = () => screen.getByText(/^(Câu \d+\/\d+|Xem lại)$/, { selector: "span" }).textContent;
 
 describe("Questionnaire — stepper + bàn phím", () => {
-  it("required chặn qua câu; phím số chọn; Enter tiếp; xem lại; gửi đúng payload", async () => {
+  it("required chặn qua câu; phím số chọn; Enter tiếp; xem lại; gửi đúng payload", { timeout: 15_000 }, async () => {
     const user = userEvent.setup();
     const onSubmit = vi.fn();
     render(<Questionnaire title="Khảo sát" questions={SURVEY} onSubmit={onSubmit} />);
@@ -341,5 +343,20 @@ describe("Questionnaire — chế độ list", () => {
     expect(await screen.findByText("Vui lòng chọn một câu trả lời.")).toBeInTheDocument();
     expect(screen.getByText("Vui lòng chọn một mức điểm.")).toBeInTheDocument();
     expect(screen.queryByText("Xem lại câu trả lời")).not.toBeInTheDocument();
+  });
+});
+
+describe("Questionnaire messages", () => {
+  it("helper nhận messages; component dùng messages.questionnaire", () => {
+    const q = { id: "name", type: "text", title: "Name", required: true } as const;
+    expect(validateQuestion(q, {}, questionnaireMessagesEn)).toBe("Enter an answer.");
+    expect(formatQuestionAnswer({ id: "ok", type: "yesNo", title: "OK" }, true, questionnaireMessagesEn)).toBe("Yes");
+    render(
+      <YugenProvider messages={{ questionnaire: questionnaireMessagesEn }}>
+        <Questionnaire questions={[q]} />
+      </YugenProvider>,
+    );
+    expect(screen.getByText("Question 1 of 1")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Back" })).toBeInTheDocument();
   });
 });

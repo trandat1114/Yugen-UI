@@ -1,5 +1,9 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
+import { useYugenMessages } from "../YugenProvider/context";
+import { skeletonMessages } from "./messages";
+
+export { skeletonMessages, skeletonMessagesEn, type SkeletonMessages } from "./messages";
 
 /** Fluent 2 Skeleton — https://fluent2.microsoft.design/components/web/react/core/skeleton/usage */
 type SkeletonAnimation = "wave" | "pulse";
@@ -21,20 +25,23 @@ export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
 const SkeletonRootContext = React.createContext(false);
 
 export const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
-  ({ animation = "wave", appearance = "opaque", className, ...props }, ref) => (
-    <SkeletonContext.Provider value={{ animation, appearance }}>
-      <SkeletonRootContext.Provider value>
-        <div
-          ref={ref}
-          role="progressbar"
-          aria-busy="true"
-          aria-label="Đang tải nội dung"
-          className={cn("flex flex-col gap-2", className)}
-          {...props}
-        />
-      </SkeletonRootContext.Provider>
-    </SkeletonContext.Provider>
-  ),
+  ({ animation = "wave", appearance = "opaque", className, ...props }, ref) => {
+    const msg = useYugenMessages("skeleton", skeletonMessages);
+    return (
+      <SkeletonContext.Provider value={{ animation, appearance }}>
+        <SkeletonRootContext.Provider value>
+          <div
+            ref={ref}
+            role="progressbar"
+            aria-busy="true"
+            aria-label={msg.label}
+            className={cn("flex flex-col gap-2", className)}
+            {...props}
+          />
+        </SkeletonRootContext.Provider>
+      </SkeletonContext.Provider>
+    );
+  },
 );
 Skeleton.displayName = "Skeleton";
 
@@ -60,23 +67,23 @@ const SIZE = {
 
 export type SkeletonItemSize = keyof typeof SIZE;
 
+// Sóng: dải sáng ::after chạy bằng transform (compositor) thay vì đổi background-position (vẽ lại mỗi frame). Chạy theo
+// chiều đọc: RTL đảo keyframe (phải → trái).
+const WAVE = cn(
+  "relative overflow-hidden bg-stencil-1",
+  "after:absolute after:inset-0 after:-translate-x-full after:animate-sweep",
+  "after:bg-[linear-gradient(to_right,transparent,var(--colorNeutralStencil2),transparent)]",
+  "rtl:after:[animation-direction:reverse] motion-reduce:after:hidden",
+);
+
 const ANIMATION: Record<SkeletonAppearance, Record<SkeletonAnimation, string>> = {
   opaque: {
-    wave: cn(
-      "bg-stencil-1 bg-size-[300%_100%] animate-shimmer",
-      "bg-[linear-gradient(to_right,var(--colorNeutralStencil1)_0%,var(--colorNeutralStencil2)_50%,var(--colorNeutralStencil1)_100%)]",
-      // Sóng chạy theo chiều đọc: RTL chạy ngược keyframe (phải → trái).
-      "rtl:[animation-direction:reverse] motion-reduce:animate-none motion-reduce:bg-none",
-    ),
+    wave: WAVE,
     pulse: "bg-stencil-1 animate-pulse motion-reduce:animate-none",
   },
   // Không có token Stencil*Alpha → dùng chính stencil với độ mờ 50%.
   translucent: {
-    wave: cn(
-      "bg-stencil-1 bg-size-[300%_100%] opacity-50 animate-shimmer",
-      "bg-[linear-gradient(to_right,var(--colorNeutralStencil1)_0%,var(--colorNeutralStencil2)_50%,var(--colorNeutralStencil1)_100%)]",
-      "rtl:[animation-direction:reverse] motion-reduce:animate-none motion-reduce:bg-none",
-    ),
+    wave: cn(WAVE, "opacity-50"),
     pulse: "bg-stencil-1 opacity-50 animate-pulse motion-reduce:animate-none",
   },
 };

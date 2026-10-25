@@ -1,6 +1,6 @@
 {
   "name": "yugen-ui",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Fluent 2-inspired React component library for Tailwind CSS v4: design tokens, accessible Radix-based components, Sakura brand, light/dark/high-contrast themes and RTL.",
   "keywords": [
     "react",
@@ -64,7 +64,7 @@
     "dev": "vite",
     "registry": "node scripts/build-registry.mjs",
     "cli": "npm run build --prefix packages/cli && node packages/cli/dist/index.js",
-    "build:docs": "npm run registry && vite build",
+    "build:docs": "npm run registry && vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.mjs",
     "build:lib": "vite build -c vite.lib.config.ts && tsc -p tsconfig.lib.json && tsc-alias -p tsconfig.lib.json && node scripts/build-css.mjs",
     "build": "npm run build:lib && npm run build:docs",
     "preview": "vite preview",
@@ -78,6 +78,7 @@
     "size": "size-limit",
     "changeset": "changeset",
     "version-packages": "changeset version && node scripts/sync-templates.mjs && npm install --package-lock-only",
+    "branches:prune": "node scripts/prune-branches.mjs",
     "check:release": "node scripts/check-release.mjs",
     "check:examples": "vite-node scripts/check-examples.ts",
     "check:props": "vite-node scripts/check-props.ts",

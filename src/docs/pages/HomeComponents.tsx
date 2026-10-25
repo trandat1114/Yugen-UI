@@ -1,8 +1,9 @@
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowRight16Regular } from "@fluentui/react-icons";
-import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, SearchBox, ToggleGroup, ToggleGroupItem } from "@/components/ui";
+import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, SearchBox, ToggleGroup, ToggleGroupItem, useMediaQuery } from "@/components/ui";
 import { COMPONENTS_BY_CATEGORY, readComponentDoc } from "../registry";
 import { useLocale } from "../i18n";
+import { docsPath } from "../router";
 
 /** Demo hero của một component — nạp file registry chứa nó (treo tới khi xong; lỗi → để trống). */
 function HeroPreview({ slug }: { slug: string }) {
@@ -70,6 +71,9 @@ const ALL = "all";
 /** Danh sách component của trang chủ: ô tìm + chip nhóm; màn nhỏ là Accordion (mở một mục), từ sm là lưới demo. */
 export function HomeComponents() {
   const { t, category, component } = useLocale();
+  // Chỉ dựng bố cục đang hiện (danh sách chạm ở màn nhỏ, lưới demo từ sm): 113 component × 2 bố cục là phần lớn DOM của
+  // trang chủ. HTML prerender mang lưới (tên, mô tả, link tới mọi trang component); màn nhỏ đổi sang danh sách khi React chạy.
+  const wide = useMediaQuery("(min-width: 640px)", { defaultValue: true });
   const [query, setQuery] = useState("");
   const [group, setGroup] = useState(ALL);
   const [open, setOpen] = useState("");
@@ -129,66 +133,73 @@ export function HomeComponents() {
       {groups.length === 0 && <p className="mt-5 text-body1 text-foreground-3">{t("home.noMatch", { query })}</p>}
 
       {/* Màn nhỏ: danh sách tên, chạm để mở demo — mở mục mới thì mục cũ đóng. */}
-      <div className="mt-4 flex flex-col gap-5 sm:hidden">
-        {groups.map((g) => (
-          <div key={g.category}>
-            <h3 className="flex items-baseline gap-2 px-2 pb-1 text-subtitle2 font-semibold">
-              {category(g.category)}
-              <span className="text-caption1 font-normal text-foreground-3">{g.items.length}</span>
-            </h3>
-            <Accordion type="single" collapsible value={open} onValueChange={toggle} expandIconPosition="end">
-              {g.items.map((c) => (
-                <AccordionItem key={c.slug} value={c.slug}>
-                  <AccordionHeader data-comp={c.slug}>{c.name}</AccordionHeader>
-                  <AccordionPanel>
-                    {mounted.has(c.slug) && (
-                      <div className="flex h-40 items-center justify-center overflow-hidden rounded-2xlarge border border-stroke-2 bg-background-3 p-3">
-                        <LazyPreview slug={c.slug} />
-                      </div>
-                    )}
-                    <p className="mt-2 text-caption1 text-foreground-3">{c.lead}</p>
-                    <a
-                      href={`#/components/${c.slug}`}
-                      className="mt-2 inline-flex items-center gap-1 rounded-small text-body1 font-semibold text-brand-foreground-1 hover:underline"
-                    >
-                      {t("home.open", { name: c.name })}
-                      <ArrowRight16Regular className="rtl:-scale-x-100" />
-                    </a>
-                  </AccordionPanel>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </div>
-        ))}
-      </div>
+      {!wide && (
+        <div className="mt-4 flex flex-col gap-5 sm:hidden">
+          {groups.map((g) => (
+            <div key={g.category}>
+              <h3 className="flex items-baseline gap-2 px-2 pb-1 text-subtitle2 font-semibold">
+                {category(g.category)}
+                <span className="text-caption1 font-normal text-foreground-3">{g.items.length}</span>
+              </h3>
+              <Accordion type="single" collapsible value={open} onValueChange={toggle} expandIconPosition="end">
+                {g.items.map((c) => (
+                  <AccordionItem key={c.slug} value={c.slug}>
+                    <AccordionHeader data-comp={c.slug}>{c.name}</AccordionHeader>
+                    {/* Panel đóng vẫn nằm trong DOM (animation chiều cao): chỉ dựng nội dung sau lần mở đầu. */}
+                    <AccordionPanel>
+                      {mounted.has(c.slug) && (
+                        <>
+                          <div className="flex h-40 items-center justify-center overflow-hidden rounded-2xlarge border border-stroke-2 bg-background-3 p-3">
+                            <LazyPreview slug={c.slug} />
+                          </div>
+                          <p className="mt-2 text-caption1 text-foreground-3">{c.lead}</p>
+                          <a
+                            href={docsPath(`/components/${c.slug}`)}
+                            className="mt-2 inline-flex items-center gap-1 rounded-small text-body1 font-semibold text-brand-foreground-1 hover:underline"
+                          >
+                            {t("home.open", { name: c.name })}
+                            <ArrowRight16Regular className="rtl:-scale-x-100" />
+                          </a>
+                        </>
+                      )}
+                    </AccordionPanel>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Từ sm: lưới demo. */}
-      <div className="mt-5 hidden flex-col gap-8 sm:flex">
-        {groups.map((g) => (
-          <div key={g.category}>
-            <h3 className="flex items-baseline gap-2 border-b border-stroke-2 pb-2 text-title3 font-semibold">
-              {category(g.category)}
-              <span className="text-body1 font-normal text-foreground-3">{g.items.length}</span>
-            </h3>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              {g.items.map((c) => (
-                <div key={c.slug} className="group/comp relative rounded-3xlarge">
-                  <div className="pointer-events-none flex h-40 items-center justify-center overflow-hidden rounded-3xlarge border border-stroke-2 bg-background-3 p-3 transition-shadow duration-normal group-hover/comp:shadow-8">
-                    <LazyPreview slug={c.slug} />
+      {wide && (
+        <div className="mt-5 hidden flex-col gap-8 sm:flex">
+          {groups.map((g) => (
+            <div key={g.category}>
+              <h3 className="flex items-baseline gap-2 border-b border-stroke-2 pb-2 text-title3 font-semibold">
+                {category(g.category)}
+                <span className="text-body1 font-normal text-foreground-3">{g.items.length}</span>
+              </h3>
+              <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                {g.items.map((c) => (
+                  <div key={c.slug} className="group/comp relative rounded-3xlarge">
+                    <div className="pointer-events-none flex h-40 items-center justify-center overflow-hidden rounded-3xlarge border border-stroke-2 bg-background-3 p-3 transition-shadow duration-normal group-hover/comp:shadow-8">
+                      <LazyPreview slug={c.slug} />
+                    </div>
+                    <a
+                      href={docsPath(`/components/${c.slug}`)}
+                      className="mt-2 block rounded-small text-subtitle2 font-semibold group-hover/comp:text-brand-foreground-1 after:absolute after:inset-0 after:rounded-3xlarge"
+                    >
+                      {c.name}
+                    </a>
+                    <p className="mt-0.5 line-clamp-2 text-caption1 text-foreground-3">{c.lead}</p>
                   </div>
-                  <a
-                    href={`#/components/${c.slug}`}
-                    className="mt-2 block rounded-small text-subtitle2 font-semibold group-hover/comp:text-brand-foreground-1 after:absolute after:inset-0 after:rounded-3xlarge"
-                  >
-                    {c.name}
-                  </a>
-                  <p className="mt-0.5 line-clamp-2 text-caption1 text-foreground-3">{c.lead}</p>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </>
   );
 }

@@ -10,6 +10,8 @@ export const SITE = {
   version,
   author: "trandat1114",
   packageName: "yugen-ui",
+  /** URL chuẩn (canonical) của bản docs mới nhất — bản next/ và vX.Y/ cũng trỏ canonical về đây. */
+  url: "https://trandat1114.github.io/Yugen-UI/",
   links: {
     /** Trang GitHub cá nhân của tác giả — mọi chỗ hiện "trandat1114" dẫn về đây (AuthorLink). */
     author: "https://github.com/trandat1114",

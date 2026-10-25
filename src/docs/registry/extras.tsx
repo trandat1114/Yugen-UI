@@ -97,7 +97,7 @@ const PRESENCE_PROPS: PropDoc[] = [
     defaultValue: `"normal"`,
     description: "Thời lượng pha vào — map tới token --durationFaster … --durationSlow; easing --curveDecelerateMid.",
   },
-  { name: "exitDuration", type: "như duration", defaultValue: "= duration", description: "Thời lượng pha ra; easing --curveAccelerateMid." },
+  { name: "exitDuration", type: `"faster" | "fast" | "normal" | "gentle" | "slow"`, defaultValue: "= duration", description: "Thời lượng pha ra; easing --curveAccelerateMid." },
   { name: "onMotionFinish", type: `(direction: "enter" | "exit") => void`, description: "Gọi khi một pha chuyển động kết thúc." },
   { name: "children", type: "ReactElement", description: "Một phần tử duy nhất — nhận class chuyển động qua Slot." },
 ];
@@ -643,7 +643,7 @@ const EXTRAS: ComponentDoc[] = [
     category: "Hành động",
     lead: "CompoundButton là nút lớn có icon và hai dòng chữ: nhãn chính và một dòng mô tả giải thích hành động.",
     description:
-      "Dùng chung appearance/size/shape với Button nhưng cao tự do, icon 32px (small) hoặc 40px (medium, large). Dòng phụ dùng caption, màu foreground-2 (trên nền primary là foreground-on-brand). Hỗ trợ asChild, iconPosition và icon-only.",
+      "Dùng chung appearance/size/shape với Button nhưng cao tự do, icon 32px (small) hoặc 40px (medium, large). Dòng phụ nhỏ hơn nhãn một bậc (caption2 / caption1 / body1 theo size), màu foreground-2 (trên nền primary, danger là foreground-on-brand). Hỗ trợ asChild, iconPosition và icon-only.",
     importCode: `import { CompoundButton } from "@/components/ui";`,
     hero: {
       title: "CompoundButton",
@@ -751,12 +751,12 @@ const EXTRAS: ComponentDoc[] = [
       "Không nhồi đoạn văn dài vào secondaryContent.",
     ],
     props: [
-      { name: "secondaryContent", type: "ReactNode", description: "Dòng mô tả thứ hai (caption, foreground-2)." },
+      { name: "secondaryContent", type: "ReactNode", description: "Dòng mô tả thứ hai (nhỏ hơn nhãn một bậc, foreground-2)." },
       { name: "icon", type: "ReactNode", description: "Icon lớn: 32px (small) / 40px (medium, large)." },
       { name: "iconPosition", type: `"before" | "after"`, defaultValue: `"before"`, description: "Vị trí icon." },
       {
         name: "appearance",
-        type: `"secondary" | "primary" | "outline" | "subtle" | "transparent"`,
+        type: `"secondary" | "primary" | "outline" | "subtle" | "transparent" | "danger"`,
         defaultValue: `"secondary"`,
         description: "Giống Button.",
       },
@@ -1017,7 +1017,7 @@ const EXTRAS: ComponentDoc[] = [
       },
       {
         title: "Gắn lên nút icon",
-        description: "Đặt badge tuyệt đối ở góc trên-cuối (logical: -end-XS) để tự đảo trong RTL.",
+        description: "Đặt badge tuyệt đối ở góc trên-cuối (logical: -inset-e-1) để tự đảo trong RTL.",
         code: `function NotificationBadgeDemo() {
   const [count, setCount] = useState(3);
   return (
@@ -1063,7 +1063,7 @@ const EXTRAS: ComponentDoc[] = [
     category: "Hiển thị dữ liệu",
     lead: "PresenceBadge cho biết trạng thái hiện diện của một người: có mặt, bận, vắng mặt, ngoại tuyến…",
     description:
-      "Dùng icon presence của Fluent (đặc cho trạng thái thường, viền khi outOfOffice) và màu theo token trạng thái. role=\"img\" với aria-label tiếng Việt. Thêm `ring` khi đặt chồng lên Avatar để tách khỏi ảnh.",
+      "Dùng icon presence của Fluent (đặc cho available, away, busy, do-not-disturb; viền cho offline, blocked, out-of-office và khi outOfOffice) và màu theo token trạng thái. role=\"img\" với aria-label tiếng Việt. Thêm `ring` khi đặt chồng lên Avatar để tách khỏi ảnh.",
     importCode: `import { PresenceBadge } from "@/components/ui";`,
     hero: {
       title: "PresenceBadge",
@@ -1175,7 +1175,7 @@ const EXTRAS: ComponentDoc[] = [
       },
       {
         title: "Trên Avatar",
-        description: "ring tạo viền 2px màu nền; định vị bằng thuộc tính logical (-end-px) để đúng cả RTL.",
+        description: "ring tạo viền 2px màu nền; định vị bằng thuộc tính logical (-inset-e-px) để đúng cả RTL.",
         code: `<span className="relative inline-flex">
   <Avatar name="Nguyễn Văn An" size={48} color="colorful" />
   <PresenceBadge status="available" ring className="absolute -inset-e-px -bottom-px" />
@@ -1387,7 +1387,7 @@ function SwatchPickerDemo() {
     ],
     donts: [
       "Không dùng SwatchPicker cho lựa chọn không phải màu/chất liệu — dùng RadioGroup.",
-      "Không đặt quá nhiều ô (>40) — cân nhắc ColorPicker hoặc ô nhập HEX.",
+      "Không đặt quá nhiều ô (>40) — cân nhắc ô chọn màu tự do (input type=\"color\") hoặc ô nhập HEX.",
     ],
     props: [
       { name: "selectedValue / defaultSelectedValue", type: "string", description: "Giá trị đang chọn (controlled / uncontrolled)." },
@@ -2183,7 +2183,7 @@ function StaggerDemo() {
       },
     ],
     dos: ["Dùng cho nhãn của nút chỉ icon, chú thích bảng, ngữ cảnh liên kết.", "Đặt focusable cho skip link."],
-    donts: ["Không ẩn nội dung tương tác (trừ skip link focusable).", "Không dùng thay cho aria-label khi phần tử đã hỗ trợ."],
+    donts: ["Không ẩn nội dung tương tác (trừ skip link focusable).", "Không thêm cho phần tử đã có nhãn hiển thị — trình đọc màn hình sẽ đọc hai lần."],
     props: [
       { name: "asChild", type: "boolean", defaultValue: "false", description: "Gộp class sr-only vào phần tử con thay vì render <span>." },
       { name: "focusable", type: "boolean", defaultValue: "false", description: "Hiện lại khi phần tử (hoặc con) nhận focus." },
@@ -2412,7 +2412,7 @@ function CardGroupDemo() {
         defaultValue: `"limited"`,
         description: "limited: Enter vào, Esc ra · trap: Tab xoay vòng bên trong · unlimited: Tab đi xuyên qua.",
       },
-      { name: "Kết quả hook", type: "{ ref, onKeyDown, onFocus, onBlur, … }", description: "Trải lên phần tử chứa; tự gộp nếu cần thêm handler riêng." },
+      { name: "(returns)", type: "{ ref, onKeyDown, onFocus, onBlur, … }", description: "Trải lên phần tử chứa; tự gộp nếu cần thêm handler riêng." },
     ],
   },
 ];

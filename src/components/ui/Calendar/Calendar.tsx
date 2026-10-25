@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useDirection } from "@radix-ui/react-direction";
-import { DayPicker, type ChevronProps, type DayButtonProps, type DayPickerProps } from "react-day-picker";
+import { DayPicker, labelDayButton, type ChevronProps, type DayButtonProps, type DayPickerProps } from "react-day-picker";
 import { vi } from "react-day-picker/locale/vi";
 import {
   ChevronDown20Regular,
@@ -9,6 +9,10 @@ import {
   ChevronUp20Regular,
 } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
+import { useYugenMessages } from "../YugenProvider/context";
+import { calendarMessages } from "./messages";
+
+export { calendarMessages, calendarMessagesEn, type CalendarMessages } from "./messages";
 
 /** Fluent 2 Calendar — https://fluent2.microsoft.design/components/web/react/core/calendar/usage */
 export type CalendarProps = DayPickerProps;
@@ -23,6 +27,22 @@ const CHEVRON = {
 } as const;
 
 const MIRROR = { left: "right", right: "left", up: "up", down: "down" } as const;
+
+/**
+ * Nhãn ô ngày của locale, nhưng ngày viết bằng số thường. en-US đọc "September 27th" trong khi ô hiện "27": điều khiển
+ * bằng giọng nói ("click 27") không khớp và axe báo label-content-name-mismatch (WCAG 2.5.3).
+ */
+const labelDayButtonPlain: typeof labelDayButton = (date, modifiers, options, dateLib) => {
+  const localeLabel = options?.locale?.labels?.labelDayButton;
+  const label =
+    typeof localeLabel === "function"
+      ? localeLabel(date, modifiers, options, dateLib)
+      : (localeLabel ?? labelDayButton(date, modifiers, options, dateLib));
+  if (!dateLib) return label;
+  const ordinal = dateLib.format(date, "do");
+  const plain = dateLib.format(date, "d");
+  return ordinal === plain ? label : label.replace(ordinal, plain);
+};
 
 /** Nav mặc định của DayPicker luôn truyền left/right cố định; trong RTL phải đảo để "tháng trước" chỉ về phía bắt đầu. */
 const CalendarMirrorContext = React.createContext(false);
@@ -72,19 +92,22 @@ function CalendarDayButton({ day, modifiers, className, ...props }: DayButtonPro
 /**
  * Lịch tháng theo phong cách Fluent, dựng trên react-day-picker v10. Nhận mọi prop của DayPicker
  * (`mode="single" | "range" | "multiple"`, `selected`, `onSelect`, `disabled`, `numberOfMonths`…).
- * Mặc định dùng locale tiếng Việt và tuần bắt đầu từ Thứ Hai.
+ * Mặc định dùng locale tiếng Việt và tuần bắt đầu từ Thứ Hai; locale mặc định lấy từ `messages.calendar.locale`.
  */
 export function Calendar({
   className,
   classNames,
   components,
   formatters,
-  locale = vi,
+  labels,
+  locale: localeProp,
   showOutsideDays = true,
   dir: dirProp,
   ...props
 }: CalendarProps) {
-  const isVi = locale.code === vi.code;
+  const msg = useYugenMessages("calendar", calendarMessages);
+  const locale = localeProp ?? msg.locale;
+  const isVi = locale?.code === vi.code;
   // DayPicker dùng `dir` để đảo ArrowLeft/ArrowRight; lấy từ DirectionProvider khi không truyền.
   const contextDir = useDirection();
   const dir = dirProp ?? contextDir;
@@ -96,6 +119,7 @@ export function Calendar({
       <DayPicker
         dir={dir}
         locale={locale}
+        labels={{ labelDayButton: labelDayButtonPlain, ...labels }}
         showOutsideDays={showOutsideDays}
         className={cn("w-fit text-body1 text-foreground-1", className)}
         classNames={{

@@ -1,7 +1,8 @@
 import * as React from "react";
 import { YugenProvider, type YugenBrand, type YugenTheme } from "@/components/ui";
 import { AppShell, type Appearance } from "./AppShell";
-import { PAGE_BY_ID, isPageId, type PageId } from "./pages";
+import content from "./content";
+import { isPageId, preloadPages, type PageId } from "./pages";
 
 /** Cùng khoá với script chống nháy trong index.html. */
 const STORAGE_KEY = "yugen-saas-appearance";
@@ -24,6 +25,12 @@ export default function App() {
   const [page, setPage] = React.useState(pageFromHash);
   const [appearance, setAppearance] = React.useState(initialAppearance);
 
+  // Trang đang mở nạp trước; các trang còn lại nạp khi trình duyệt rảnh.
+  React.useEffect(() => {
+    const id = window.requestIdleCallback?.(preloadPages) ?? window.setTimeout(preloadPages, 1500);
+    return () => (window.cancelIdleCallback ? window.cancelIdleCallback(id) : window.clearTimeout(id));
+  }, []);
+
   React.useEffect(() => {
     const onHashChange = () => setPage(pageFromHash());
     window.addEventListener("hashchange", onHashChange);
@@ -40,8 +47,8 @@ export default function App() {
 
   // Tiêu đề tab và mô tả theo trang — lịch sử trình duyệt, bookmark và bản xem trước khi chia sẻ đều đúng trang.
   React.useEffect(() => {
-    const { title, description } = PAGE_BY_ID[page];
-    document.title = `${title} · Sakura Studio`;
+    const { title, description } = content.pages[page];
+    document.title = `${title} · ${content.appName}`;
     document.querySelector('meta[name="description"]')?.setAttribute("content", description);
   }, [page]);
 
@@ -51,7 +58,14 @@ export default function App() {
   };
 
   return (
-    <YugenProvider applyToDocument withToaster theme={appearance.theme} brand={appearance.brand}>
+    <YugenProvider
+      applyToDocument
+      withToaster
+      theme={appearance.theme}
+      brand={appearance.brand}
+      messages={content.messages}
+      locale={content.locale}
+    >
       <AppShell
         page={page}
         onNavigate={navigate}

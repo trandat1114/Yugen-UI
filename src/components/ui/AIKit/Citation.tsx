@@ -2,7 +2,11 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
 import { Popover, PopoverSurface, PopoverTrigger } from "../Popover/Popover";
+import { useYugenMessages } from "../YugenProvider/context";
 import { sanitizeHref } from "./markdown";
+import { citationMessages } from "./messages";
+
+export { citationMessages, citationMessagesEn, type CitationMessages } from "./messages";
 
 export interface CitationSource {
   title: string;
@@ -57,7 +61,9 @@ function SourceIcon({ domain, title }: { domain: string; title: string }) {
   );
 }
 
-const NEW_TAB = <span className="sr-only"> (mở tab mới)</span>;
+function NewTab({ label }: { label: string }) {
+  return <span className="sr-only"> {label}</span>;
+}
 
 /* ================================================================ Citation */
 
@@ -80,6 +86,7 @@ export const Citation = React.forwardRef<HTMLButtonElement, CitationProps>(
     { index, source, openDelay = 250, closeDelay = 200, className, onPointerEnter, onPointerLeave, onFocus, onBlur, onClick, ...props },
     ref,
   ) => {
+    const msg = useYugenMessages("citation", citationMessages);
     const id = React.useId();
     const descId = `${id}-desc`;
     const titleId = `${id}-title`;
@@ -156,7 +163,7 @@ export const Citation = React.forwardRef<HTMLButtonElement, CitationProps>(
             }}
             {...props}
           >
-            <span className="sr-only">Nguồn </span>
+            <span className="sr-only">{msg.source} </span>
             {index}
             <span id={descId} className="sr-only">
               {`: ${source.title}${domain ? ` — ${domain}` : ""}`}
@@ -183,7 +190,7 @@ export const Citation = React.forwardRef<HTMLButtonElement, CitationProps>(
         >
           <div className="flex min-w-0 items-center gap-1 text-caption1 text-foreground-3">
             <SourceIcon domain={domain} title={source.title} />
-            <span className="min-w-0 flex-1 truncate">{domain || "Nguồn"}</span>
+            <span className="min-w-0 flex-1 truncate">{domain || msg.source}</span>
             <span aria-hidden className="tabular-nums">
               [{index}]
             </span>
@@ -197,7 +204,7 @@ export const Citation = React.forwardRef<HTMLButtonElement, CitationProps>(
                 className="rounded-small text-foreground-1 hover:text-link-hover hover:underline"
               >
                 {source.title}
-                {NEW_TAB}
+                <NewTab label={msg.newTab} />
               </a>
             ) : (
               source.title
@@ -216,18 +223,19 @@ Citation.displayName = "Citation";
 
 export interface CitationListProps extends Omit<React.HTMLAttributes<HTMLElement>, "title"> {
   sources: CitationSource[];
-  /** Tiêu đề danh sách. Mặc định "Nguồn". */
+  /** Tiêu đề danh sách. Mặc định lấy từ `messages.citation.sources` ("Nguồn"). */
   title?: React.ReactNode;
 }
 
 /** Danh sách nguồn dưới câu trả lời: số thứ tự khớp với chip Citation trong bài. */
-export const CitationList = React.forwardRef<HTMLElement, CitationListProps>(({ sources, title = "Nguồn", className, ...props }, ref) => {
+export const CitationList = React.forwardRef<HTMLElement, CitationListProps>(({ sources, title, className, ...props }, ref) => {
+  const msg = useYugenMessages("citation", citationMessages);
   const headingId = React.useId();
   if (sources.length === 0) return null;
   return (
     <section ref={ref} aria-labelledby={headingId} className={cn("flex min-w-0 flex-col gap-2", className)} {...props}>
       <p id={headingId} className="text-caption1 font-semibold text-foreground-3">
-        {title} <span className="tabular-nums">({sources.length})</span>
+        {title ?? msg.sources} <span className="tabular-nums">({sources.length})</span>
       </p>
       <ol className="grid gap-2 sm:grid-cols-2">
         {sources.map((source, i) => {
@@ -256,7 +264,7 @@ export const CitationList = React.forwardRef<HTMLElement, CitationListProps>(({ 
                   className={cn(box, "transition-colors duration-faster ease-easy-ease hover:border-stroke-1-hover hover:bg-background-1-hover")}
                 >
                   {inner}
-                  {NEW_TAB}
+                  <NewTab label={msg.newTab} />
                 </a>
               ) : (
                 <div className={box}>{inner}</div>

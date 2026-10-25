@@ -36,7 +36,7 @@ test.describe("Resizable", () => {
   const sidebarHandle = (page: Page) => page.locator("#ide-sidebar + [role=separator]");
 
   test("kéo chuột đường chia đổi kích thước panel (ngang và dọc)", async ({ page }) => {
-    await openDocs(page, "#/components/resizable");
+    await openDocs(page, "/components/resizable");
     const before = await width(sidebar(page));
     await mouseDrag(page, sidebarHandle(page), 100, 0);
     await expect.poll(() => width(sidebar(page))).toBeGreaterThan(before + 90);
@@ -50,7 +50,7 @@ test.describe("Resizable", () => {
   });
 
   test("bàn phím: focus đường chia, mũi tên đổi kích thước, Enter thu gọn / mở rộng", async ({ page }) => {
-    await openDocs(page, "#/components/resizable");
+    await openDocs(page, "/components/resizable");
     const handle = sidebarHandle(page);
     const start = await width(sidebar(page));
     await handle.focus();
@@ -69,7 +69,7 @@ test.describe("Resizable", () => {
   });
 
   test("nút thu gọn trên đường chia (chuột) thu và mở panel collapsible", async ({ page }) => {
-    await openDocs(page, "#/components/resizable");
+    await openDocs(page, "/components/resizable");
     const toggle = sidebarHandle(page).locator("[data-resizable-action]");
     await expect(toggle).toHaveAttribute("title", "Thu gọn panel");
     await toggle.click();
@@ -82,7 +82,7 @@ test.describe("Resizable", () => {
   });
 
   test("persistKey khôi phục bố cục sau khi tải lại", async ({ page }) => {
-    await openDocs(page, "#/components/resizable");
+    await openDocs(page, "/components/resizable");
     const folders = page.locator("#mail-folders");
     const before = await width(folders);
     await mouseDrag(page, page.locator("#mail-folders + [role=separator]"), 80, 0);
@@ -94,12 +94,12 @@ test.describe("Resizable", () => {
 
     await page.reload();
     await page.locator("main h1").first().waitFor();
-    await expect.poll(() => width(page.locator("#mail-folders"))).toBeGreaterThan(dragged - 3);
-    expect(await width(page.locator("#mail-folders"))).toBeLessThan(dragged + 3);
+    // Bố cục lưu được áp sau lần render đầu: chờ tới khi khớp (±3px) thay vì đọc một lần lúc đang đổi.
+    await expect.poll(async () => Math.abs((await width(page.locator("#mail-folders"))) - dragged)).toBeLessThan(3);
   });
 
   test("RTL: nhóm ngang lật, kéo / phím theo hướng nhìn thấy", async ({ page }) => {
-    await openDocs(page, "#/components/resizable", { dir: "rtl" });
+    await openDocs(page, "/components/resizable", { dir: "rtl" });
     const panel = sidebar(page);
     const handle = sidebarHandle(page);
     await expect(handle).toHaveAttribute("data-mirrored", "true");
@@ -131,7 +131,7 @@ test.describe("Resizable", () => {
   });
 
   test("ví dụ RTL lồng (DirectionProvider) trên trang LTR cũng kéo đúng hướng", async ({ page }) => {
-    await openDocs(page, "#/components/resizable");
+    await openDocs(page, "/components/resizable");
     const handle = page.locator("[role=separator][data-mirrored]");
     await expect(handle).toHaveCount(1);
     // Panel đầu (DOM) đứng ngay trước đường chia, hiển thị bên phải.
@@ -152,7 +152,7 @@ test.describe("Sheet (desktop)", () => {
   }
 
   test("panel trượt từ cạnh cuối (phải ở LTR), Esc đóng và trả focus", async ({ page }) => {
-    await openDocs(page, "#/components/sheet");
+    await openDocs(page, "/components/sheet");
     const { trigger, sheet } = await openFilter(page);
     await expect(sheet).toHaveAttribute("data-sheet", "end");
     const box = (await sheet.boundingBox())!;
@@ -167,7 +167,7 @@ test.describe("Sheet (desktop)", () => {
   });
 
   test("RTL: panel đến từ cạnh trái", async ({ page }) => {
-    await openDocs(page, "#/components/sheet", { dir: "rtl" });
+    await openDocs(page, "/components/sheet", { dir: "rtl" });
     const { sheet } = await openFilter(page);
     await expect(sheet).toHaveAttribute("data-sheet", "end");
     const box = (await sheet.boundingBox())!;

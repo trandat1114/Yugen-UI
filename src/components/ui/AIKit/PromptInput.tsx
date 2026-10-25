@@ -22,11 +22,25 @@ import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffec
 import { useAnnounce } from "../AriaLive/AriaLive";
 import { Button } from "../Button/Button";
 import { fieldControlClass } from "../Field/Field";
+import { useYugen, useYugenMessages } from "../YugenProvider/context";
+import { promptInputMessages, type PromptInputMessages } from "./messages";
+
+export { promptInputMessages, promptInputMessagesEn, type PromptInputMessages } from "./messages";
 
 /* ================================================================ Tệp */
 
-/** 512 B · 12 KB · 1,2 MB (dấu phẩy thập phân kiểu Việt Nam). */
-export function formatFileSize(bytes: number): string {
+const DECIMAL = new Map<string, string>();
+function decimalSeparator(locale: string) {
+  let sep = DECIMAL.get(locale);
+  if (sep === undefined) {
+    sep = new Intl.NumberFormat(locale).formatToParts(1.5).find((p) => p.type === "decimal")?.value ?? ".";
+    DECIMAL.set(locale, sep);
+  }
+  return sep;
+}
+
+/** 512 B · 12 KB · 1,2 MB — dấu thập phân theo `locale` (mặc định "vi-VN": dấu phẩy). */
+export function formatFileSize(bytes: number, locale = "vi-VN"): string {
   if (!Number.isFinite(bytes) || bytes < 0) return "";
   const units = ["B", "KB", "MB", "GB", "TB"];
   let value = bytes;
@@ -35,7 +49,8 @@ export function formatFileSize(bytes: number): string {
     value /= 1024;
     u++;
   }
-  const text = u === 0 || value >= 10 ? String(Math.round(value)) : value.toFixed(1).replace(".", ",").replace(/,0$/, "");
+  const text =
+    u === 0 || value >= 10 ? String(Math.round(value)) : value.toFixed(1).replace(/\.0$/, "").replace(".", decimalSeparator(locale));
   return `${text} ${units[u]}`;
 }
 
@@ -56,6 +71,10 @@ export interface ValidateFilesOptions {
   maxFiles?: number;
   /** Tệp đã đính kèm. */
   existing?: File[];
+  /** Câu báo lỗi; mặc định `promptInputMessages` (tiếng Việt). */
+  messages?: Pick<PromptInputMessages, "duplicate" | "invalidType" | "tooLarge" | "tooMany">;
+  /** Locale cho dung lượng trong câu báo lỗi. Mặc định "vi-VN". */
+  locale?: string;
 }
 
 function matchesAccept(file: File, accept?: string) {
@@ -76,18 +95,21 @@ function matchesAccept(file: File, accept?: string) {
 const sameFile = (a: File, b: File) => a.name === b.name && a.size === b.size && a.lastModified === b.lastModified;
 
 /** Lọc tệp theo accept / maxSize / maxFiles; tệp trùng bị bỏ. Hàm thuần — dùng lại được cho upload khác. */
-export function validateFiles(incoming: File[], { accept, maxSize, maxFiles, existing = [] }: ValidateFilesOptions = {}) {
+export function validateFiles(
+  incoming: File[],
+  { accept, maxSize, maxFiles, existing = [], messages = promptInputMessages, locale = "vi-VN" }: ValidateFilesOptions = {},
+) {
   const accepted: File[] = [];
   const rejected: FileRejection[] = [];
   for (const file of incoming) {
     if ([...existing, ...accepted].some((f) => sameFile(f, file))) {
-      rejected.push({ file, reason: "duplicate", message: `“${file.name}” đã được đính kèm.` });
+      rejected.push({ file, reason: "duplicate", message: messages.duplicate(file.name) });
     } else if (!matchesAccept(file, accept)) {
-      rejected.push({ file, reason: "type", message: `“${file.name}” không đúng định dạng cho phép.` });
+      rejected.push({ file, reason: "type", message: messages.invalidType(file.name) });
     } else if (maxSize !== undefined && file.size > maxSize) {
-      rejected.push({ file, reason: "size", message: `“${file.name}” vượt quá ${formatFileSize(maxSize)}.` });
+      rejected.push({ file, reason: "size", message: messages.tooLarge(file.name, formatFileSize(maxSize, locale)) });
     } else if (maxFiles !== undefined && existing.length + accepted.length >= maxFiles) {
-      rejected.push({ file, reason: "count", message: `Chỉ đính kèm tối đa ${maxFiles} tệp.` });
+      rejected.push({ file, reason: "count", message: messages.tooMany(maxFiles) });
     } else accepted.push(file);
   }
   return { accepted, rejected };
@@ -171,8 +193,9 @@ export interface PromptInputProps
   streaming?: boolean;
   onStop?: () => void;
   disabled?: boolean;
+  /** Mặc định lấy từ `messages.promptInput.placeholder`. */
   placeholder?: string;
-  /** Nhãn truy cập cho ô soạn. Mặc định "Nhập yêu cầu". */
+  /** Nhãn truy cập cho ô soạn. Mặc định lấy từ `messages.promptInput.label` ("Nhập yêu cầu"). */
   label?: string;
   /** Định dạng nhận, như `accept` của input file. */
   accept?: string;
@@ -188,6 +211,7 @@ export interface PromptInputProps
   maxRows?: number;
   /** Hiện gợi ý phím. */
   showHint?: boolean;
+  /** Tên nút gửi / dừng. Mặc định lấy từ `messages.promptInput.send` / `stop`. */
   sendLabel?: string;
   stopLabel?: string;
   textareaProps?: Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "value" | "defaultValue" | "onChange">;
@@ -208,8 +232,8 @@ export const PromptInput = React.forwardRef<HTMLTextAreaElement, PromptInputProp
       streaming = false,
       onStop,
       disabled = false,
-      placeholder = "Hỏi bất cứ điều gì…",
-      label = "Nhập yêu cầu",
+      placeholder,
+      label,
       accept,
       maxFiles,
       maxSize,
@@ -217,14 +241,18 @@ export const PromptInput = React.forwardRef<HTMLTextAreaElement, PromptInputProp
       toolbar,
       maxRows = 8,
       showHint = false,
-      sendLabel = "Gửi",
-      stopLabel = "Dừng phản hồi",
+      sendLabel: sendLabelProp,
+      stopLabel: stopLabelProp,
       textareaProps,
       className,
       ...props
     },
     ref,
   ) => {
+    const msg = useYugenMessages("promptInput", promptInputMessages);
+    const { locale } = useYugen();
+    const sendLabel = sendLabelProp ?? msg.send;
+    const stopLabel = stopLabelProp ?? msg.stop;
     const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
     const inputRef = React.useRef<HTMLInputElement>(null);
     const composing = React.useRef(false);
@@ -278,21 +306,21 @@ export const PromptInput = React.forwardRef<HTMLTextAreaElement, PromptInputProp
 
     const addFiles = (incoming: File[]) => {
       if (!allowAttachments || disabled || incoming.length === 0) return;
-      const { accepted, rejected } = validateFiles(incoming, { accept, maxSize, maxFiles, existing: files });
+      const { accepted, rejected } = validateFiles(incoming, { accept, maxSize, maxFiles, existing: files, messages: msg, locale });
       // Gộp các lỗi "quá số lượng" thành một câu.
       const messages = Array.from(new Set(rejected.map((r) => r.message)));
       setErrors(messages);
       if (rejected.length) onFilesRejected?.(rejected);
       if (accepted.length) {
         setFiles([...files, ...accepted]);
-        announce(accepted.length === 1 ? `Đã đính kèm ${accepted[0].name}` : `Đã đính kèm ${accepted.length} tệp`);
+        announce(accepted.length === 1 ? msg.attachedOne(accepted[0].name) : msg.attachedMany(accepted.length));
       }
     };
 
     const removeFile = (file: File) => {
       setFiles(files.filter((f) => f !== file));
       setErrors([]);
-      announce(`Đã gỡ ${file.name}`);
+      announce(msg.removed(file.name));
       textareaRef.current?.focus();
     };
 
@@ -354,7 +382,7 @@ export const PromptInput = React.forwardRef<HTMLTextAreaElement, PromptInputProp
         {...props}
       >
         {files.length > 0 && (
-          <ul id={listId} aria-label="Tệp đính kèm" className="flex flex-wrap gap-1 px-2 pt-2">
+          <ul id={listId} aria-label={msg.attachments} className="flex flex-wrap gap-1 px-2 pt-2">
             {files.map((file, i) => {
               const Icon = fileIcon(file);
               const preview = previews.get(file);
@@ -374,13 +402,13 @@ export const PromptInput = React.forwardRef<HTMLTextAreaElement, PromptInputProp
                     <span className="truncate text-caption1 font-semibold text-foreground-1" title={file.name}>
                       {file.name}
                     </span>
-                    <span className="text-caption2 text-foreground-3 tabular-nums">{formatFileSize(file.size)}</span>
+                    <span className="text-caption2 text-foreground-3 tabular-nums">{formatFileSize(file.size, locale)}</span>
                   </span>
                   <Button
                     size="small"
                     appearance="subtle"
                     icon={<Dismiss12Regular />}
-                    aria-label={`Gỡ ${file.name}`}
+                    aria-label={msg.remove(file.name)}
                     disabled={disabled}
                     onClick={() => removeFile(file)}
                     className="shrink-0"
@@ -397,8 +425,8 @@ export const PromptInput = React.forwardRef<HTMLTextAreaElement, PromptInputProp
           ref={setRefs}
           value={text}
           disabled={disabled}
-          placeholder={placeholder}
-          aria-label={textareaProps?.["aria-label"] ?? label}
+          placeholder={placeholder ?? msg.placeholder}
+          aria-label={textareaProps?.["aria-label"] ?? label ?? msg.label}
           aria-describedby={describedBy}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -451,8 +479,8 @@ export const PromptInput = React.forwardRef<HTMLTextAreaElement, PromptInputProp
               <Button
                 appearance="subtle"
                 icon={<Attach20Regular />}
-                aria-label="Đính kèm tệp"
-                title="Đính kèm tệp"
+                aria-label={msg.attach}
+                title={msg.attach}
                 disabled={!canAttach}
                 onClick={() => inputRef.current?.click()}
               />
@@ -461,7 +489,7 @@ export const PromptInput = React.forwardRef<HTMLTextAreaElement, PromptInputProp
           {toolbar && <div className="flex min-w-0 items-center gap-0.5">{toolbar}</div>}
           {showHint && (
             <span id={hintId} className="hidden min-w-0 truncate ps-1 text-caption1 text-foreground-3 sm:inline">
-              Enter để gửi · Shift+Enter xuống dòng
+              {msg.hint}
             </span>
           )}
           <div className="ms-auto flex shrink-0 items-center gap-2">
@@ -486,7 +514,7 @@ export const PromptInput = React.forwardRef<HTMLTextAreaElement, PromptInputProp
             className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center gap-2 rounded-medium border-2 border-dashed border-brand-stroke bg-brand-background-2 text-body1 font-semibold text-brand-foreground-2"
           >
             <ArrowUpload20Regular />
-            Thả tệp để đính kèm
+            {msg.dropzone}
           </div>
         )}
       </form>

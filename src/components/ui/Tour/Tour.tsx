@@ -14,8 +14,11 @@ import {
   TeachingPopoverTitle,
   type TeachingPopoverAppearance,
 } from "../TeachingPopover/TeachingPopover";
-import { usePortalThemeProps } from "../YugenProvider/context";
+import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
+import { tourMessages } from "./messages";
+
+export { tourMessages, tourMessagesEn, type TourMessages } from "./messages";
 
 /** Vị trí popover so với phần tử — start / end theo hướng chữ (tự đảo ở RTL). */
 export type TourPlacement = "top" | "bottom" | "start" | "end";
@@ -69,6 +72,7 @@ export interface TourProps {
   spotlightPadding?: number;
   /** Bấm lớp phủ để đóng. Mặc định false. */
   closeOnOverlayClick?: boolean;
+  /** Nhãn các nút; mặc định lấy từ `messages.tour` (`next` / `back` / `skip` / `finish`). */
   nextLabel?: string;
   backLabel?: string;
   skipLabel?: string;
@@ -116,12 +120,13 @@ export function Tour({
   appearance = "normal",
   spotlightPadding = 8,
   closeOnOverlayClick = false,
-  nextLabel = "Tiếp",
-  backLabel = "Quay lại",
-  skipLabel = "Bỏ qua",
-  finishLabel = "Hoàn tất",
+  nextLabel,
+  backLabel,
+  skipLabel,
+  finishLabel,
   children,
 }: TourProps) {
+  const msg = useYugenMessages("tour", tourMessages);
   const total = steps.length;
   const [innerOpen, setInnerOpen] = React.useState(defaultOpen);
   const open = (openProp ?? innerOpen) && total > 0;
@@ -300,7 +305,7 @@ export function Tour({
             updatePositionStrategy="always"
             aria-labelledby={titleId}
             aria-describedby={bodyId}
-            aria-roledescription="hướng dẫn"
+            aria-roledescription={msg.roleDescription}
             className="w-80"
             onOpenAutoFocus={(e) => e.preventDefault()}
             onCloseAutoFocus={(e) => {
@@ -314,7 +319,7 @@ export function Tour({
             }}
           >
             <TeachingPopoverHeader dismissible={false} icon={<Lightbulb16Regular />}>
-              <span className="sr-only">Bước </span>
+              <span className="sr-only">{msg.step} </span>
               <span className="tabular-nums">
                 {step + 1} / {total}
               </span>
@@ -332,13 +337,13 @@ export function Tour({
                   className={cn("-ms-2 min-w-0", brand && "text-foreground-on-brand hover:text-foreground-on-brand")}
                   onClick={() => setOpen(false)}
                 >
-                  {skipLabel}
+                  {skipLabel ?? msg.skip}
                 </Button>
               )}
               <div className="ms-auto flex gap-2">
                 {!first && (
                   <Button appearance={secondaryButton.appearance} className={secondaryButton.className} onClick={() => goTo(step - 1)}>
-                    {backLabel}
+                    {backLabel ?? msg.back}
                   </Button>
                 )}
                 <Button
@@ -346,7 +351,7 @@ export function Tour({
                   className={primaryButton.className}
                   onClick={() => (last ? finish() : goTo(step + 1))}
                 >
-                  {last ? finishLabel : nextLabel}
+                  {last ? (finishLabel ?? msg.finish) : (nextLabel ?? msg.next)}
                 </Button>
               </div>
             </div>

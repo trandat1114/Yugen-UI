@@ -13,6 +13,8 @@
  *   4. --npm / --tag: version CLI chưa từng publish, kể cả bản đã unpublish (npm không cho dùng lại);
  *      version create-yugen-ui không nằm trong danh sách đã unpublish.
  *   5. --tag: tag = cli@<version>; bản ổn định tag trên main, prerelease trên next → "latest" / "next".
+ *   6. --tag: yugen-ui@<version ở gốc repo> đã có trên npm — template ghim ^<version> nên CLI chỉ được publish sau
+ *      yugen-ui. Trước đó (PR release, push lên main) CI build template với gói vừa `npm pack`, không cần npm.
  *
  * Tên gói: không dùng được "yugen" — npm từ chối vì quá giống "hygen" (403 "Package name too similar"). Gói có scope
  * không bị kiểm tra này.
@@ -134,6 +136,13 @@ if (checkNpm) {
     const createVersions = await npmVersions("create-yugen-ui");
     if (createVersions.unpublished.has(create.version))
       errors.push(`create-yugen-ui@${create.version} đã bị unpublish trên npm — không dùng lại được, tăng version.`);
+    if (tag) {
+      const libVersions = await npmVersions("yugen-ui");
+      if (!libVersions.used.has(lib.version) || libVersions.unpublished.has(lib.version))
+        errors.push(
+          `yugen-ui@${lib.version} chưa có trên npm — template ghim "^${lib.version}" nên app tạo bằng CLI sẽ không cài được. Tag v${lib.version}, chờ workflow Release publish xong rồi chạy lại ${tag}.`,
+        );
+    }
   } catch (e) {
     errors.push(`không đọc được registry npm (${e.message}).`);
   }

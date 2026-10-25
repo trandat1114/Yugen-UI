@@ -1,5 +1,6 @@
-import { lazy, type ComponentType, type LazyExoticComponent } from "react";
+import type { ComponentType } from "react";
 import { CONCEPT_GROUPS, type ConceptGroup, type ConceptMeta } from "../types";
+import { lazyPage, type PreloadableComponent } from "../lazyPage";
 import { CONCEPT_METAS } from "./_meta";
 
 /**
@@ -18,7 +19,7 @@ const separateMetas = Object.fromEntries(
 
 export const CONCEPTS = Object.entries({ ...CONCEPT_METAS, ...separateMetas })
   .filter(([file]) => loaders[file])
-  .map(([file, meta]) => ({ meta, Page: lazy(loaders[file]) }))
+  .map(([file, meta]) => ({ meta, Page: lazyPage(() => loaders[file]().then((m) => m.default)) }))
   .sort(
     (a, b) =>
       CONCEPT_GROUPS.indexOf(a.meta.group) - CONCEPT_GROUPS.indexOf(b.meta.group) || a.meta.order - b.meta.order,
@@ -32,9 +33,9 @@ export const CONCEPTS_BY_GROUP: { group: ConceptGroup; items: typeof CONCEPTS }[
 })).filter((g) => g.items.length > 0);
 
 /** Bản tiếng Anh của trang khái niệm (`en/<slug>.tsx`) — nạp lười khi locale là "en"; trang chưa dịch không có mục. */
-export const CONCEPT_EN_PAGES: Record<string, LazyExoticComponent<ComponentType>> = Object.fromEntries(
+export const CONCEPT_EN_PAGES: Record<string, PreloadableComponent<object>> = Object.fromEntries(
   Object.entries(import.meta.glob<{ default: ComponentType }>("./en/*.tsx")).map(([file, load]) => [
     file.replace(/^\.\/en\/(.+)\.tsx$/, "$1"),
-    lazy(load),
+    lazyPage(() => load().then((m) => m.default)),
   ]),
 );

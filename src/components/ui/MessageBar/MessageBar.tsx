@@ -8,6 +8,10 @@ import {
   Dismiss20Regular,
 } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
+import { useYugenMessages } from "../YugenProvider/context";
+import { messageBarMessages } from "./messages";
+
+export { messageBarMessages, messageBarMessagesEn, type MessageBarMessages } from "./messages";
 
 /** Fluent 2 MessageBar — https://fluent2.microsoft.design/components/web/react/core/messagebar/usage */
 const messageBarVariants = cva(
@@ -53,6 +57,7 @@ export function MessageBar({
 }: MessageBarProps) {
   const { icon: Icon, className: iconClass } = ICON[intent ?? "info"];
   const multiline = layout === "multiline";
+  const msg = useYugenMessages("messageBar", messageBarMessages);
 
   return (
     <div
@@ -71,7 +76,7 @@ export function MessageBar({
         <button
           type="button"
           onClick={onDismiss}
-          aria-label="Đóng thông báo"
+          aria-label={msg.dismiss}
           className="-me-1.5 inline-flex size-6 shrink-0 items-center justify-center rounded-medium text-foreground-2 hover:bg-subtle-hover hover:text-foreground-1"
         >
           <Dismiss20Regular className="size-4" />

@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { MessageBar } from "@/components/ui";
 import { DocSection } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
+import { docsPath } from "../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -41,7 +42,7 @@ function Table({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
 }
 
 const WARN = `[yugen-ui] "Button.appearance.transparent" đã lỗi thời và sẽ bị xoá ở v2.0.0:
-dùng appearance="subtle". Xem https://trandat1114.github.io/Yugen-UI/#/concepts/versioning`;
+dùng appearance="subtle". Xem https://trandat1114.github.io/Yugen-UI/concepts/versioning`;
 
 const DEPRECATE = `import { warnDeprecated } from "@/lib/deprecate";
 
@@ -123,7 +124,7 @@ export default function Page() {
         <div className="flex flex-col gap-4">
           <ol className="flex max-w-3xl list-decimal flex-col gap-2 ps-5 text-body2 text-foreground-2">
             <li>
-              Đọc trang <a className="text-link underline hover:text-link-hover" href="#/news">Có gì mới</a> từ phiên bản hiện tại tới bản mới,
+              Đọc trang <a className="text-link underline hover:text-link-hover" href={docsPath("/news")}>Có gì mới</a> từ phiên bản hiện tại tới bản mới,
               chú ý mục “Thay đổi lớn”.
             </li>
             <li>Chạy ứng dụng ở chế độ phát triển và xử lý mọi cảnh báo <C>[yugen-ui]</C> trong console trước khi lên major.</li>

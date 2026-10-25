@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import type { YugenMessages } from "@/components/ui/YugenProvider/context";
 import type { ComponentCategory, ConceptGroup, ConceptMeta } from "../types";
 import type { EnBundle } from "./en/bundle";
+import { setLinkLocale } from "../router";
 import { vi, type MessageKey } from "./vi";
 
 export type { MessageKey };
@@ -19,6 +21,8 @@ export interface LocaleValue {
   component: (m: { slug: string; name: string; lead: string }) => { name: string; lead: string };
   /** Meta trang khái niệm theo ngôn ngữ (tiêu đề luôn dịch; lead / mục lục chỉ khi trang đã có bản dịch). */
   concept: (m: ConceptMeta) => ConceptMeta;
+  /** `messages` cho YugenProvider của docs: chuỗi có sẵn của component theo ngôn ngữ (không có = mặc định tiếng Việt). */
+  ui?: YugenMessages;
 }
 
 const format = (s: string, vars?: Record<string, string | number>) =>
@@ -28,6 +32,7 @@ function createValue(b: EnBundle | null): LocaleValue {
   const messages: Record<MessageKey, string> = b ? b.messages : vi;
   return {
     locale: b ? "en" : "vi",
+    ui: b?.ui,
     t: (key, vars) => format(messages[key], vars),
     category: (c) => b?.categories[c] ?? c,
     group: (g) => b?.groups[g] ?? g,
@@ -58,6 +63,11 @@ export function loadEnglish(): Promise<EnBundle> {
     enPromise.catch(() => (enPromise = null));
   }
   return enPromise;
+}
+
+/** Giá trị ngôn ngữ ngoài React (prerender): "en" cần `loadEnglish()` xong trước, nếu chưa thì trả tiếng Việt. */
+export function localeValue(locale: Locale): LocaleValue {
+  return locale === "en" && enBundle ? createValue(enBundle) : VI_VALUE;
 }
 
 /**
@@ -95,6 +105,8 @@ export function LocaleProvider({ locale, children }: { locale: Locale; children:
 
   const active = wantsEn && bundle ? bundle : null;
   const value = useMemo(() => (active ? createValue(active) : VI_VALUE), [active]);
+  // Link nội bộ (docsPath) theo ngôn ngữ đang hiển thị — đặt trong render để cây con dùng ngay.
+  setLinkLocale(value.locale);
 
   useEffect(() => {
     if (wantsEn && !bundle && !failed) return; // đang nạp: giữ lang hiện tại

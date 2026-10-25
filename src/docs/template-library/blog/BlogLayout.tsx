@@ -10,42 +10,44 @@ import {
   MenuPopover,
   MenuRadioGroup,
   MenuTrigger,
+  SkeletonText,
   type YugenTheme,
 } from "@/components/ui";
-import { pageMeta, type PageKind } from "./content";
+import { pageMeta, type PageKind } from "./blog";
+import defaultContent from "./content";
+import type { Content } from "./content/types";
 import { PostList } from "./PostList";
-import { PostPage } from "./PostPage";
-import { POST_BY_SLUG, TAGS } from "./posts";
+import { BlogContext, postsFor, useBlog, type BlogData } from "./posts";
 import { Link, useRouter, type Route } from "./router";
-import { SITE } from "./site";
 
-const THEMES: { value: YugenTheme; label: string }[] = [
-  { value: "light", label: "Sáng" },
-  { value: "dark", label: "Tối" },
-  { value: "high-contrast", label: "Tương phản cao" },
-];
+// Trang bài viết (Markdown, CodeBlock) nạp lười: danh sách bài mở nhanh hơn; bài viết nạp khi trình duyệt rảnh hoặc khi mở.
+const loadPostPage = () => import("./PostPage");
+const PostPage = React.lazy(() => loadPostPage().then((m) => ({ default: m.PostPage })));
 
-function pageOf(route: Route): PageKind {
-  if (route.name === "post") return POST_BY_SLUG[route.slug] ? { kind: "post", post: POST_BY_SLUG[route.slug] } : { kind: "notFound" };
+const THEMES: YugenTheme[] = ["light", "dark", "high-contrast"];
+
+function pageOf(route: Route, { bySlug, tags }: BlogData): PageKind {
+  if (route.name === "post") return bySlug[route.slug] ? { kind: "post", post: bySlug[route.slug] } : { kind: "notFound" };
   if (route.name === "tag") {
-    const tag = TAGS.find((t) => t.slug === route.tag);
+    const tag = tags.find((t) => t.slug === route.tag);
     return tag ? { kind: "tag", tag: tag.name } : { kind: "notFound" };
   }
   return { kind: route.name };
 }
 
 function ThemeMenu({ theme, onChange }: { theme: YugenTheme; onChange: (theme: YugenTheme) => void }) {
+  const { t } = useBlog();
   const icon = theme === "dark" ? <WeatherMoon20Regular /> : theme === "high-contrast" ? <Accessibility20Regular /> : <WeatherSunny20Regular />;
   return (
     <Menu>
       <MenuTrigger asChild>
-        <Button appearance="subtle" icon={icon} aria-label="Giao diện" />
+        <Button appearance="subtle" icon={icon} aria-label={t.appearance} />
       </MenuTrigger>
       <MenuPopover align="end">
         <MenuRadioGroup value={theme} onValueChange={(v) => onChange(v as YugenTheme)}>
-          {THEMES.map((t) => (
-            <MenuItemRadio key={t.value} value={t.value}>
-              {t.label}
+          {THEMES.map((value) => (
+            <MenuItemRadio key={value} value={value}>
+              {t.themes[value]}
             </MenuItemRadio>
           ))}
         </MenuRadioGroup>
@@ -55,14 +57,15 @@ function ThemeMenu({ theme, onChange }: { theme: YugenTheme; onChange: (theme: Y
 }
 
 function NotFound({ headingLevel }: { headingLevel: "h1" | "h2" }) {
+  const { t } = useBlog();
   const Heading = headingLevel;
   return (
     <Empty className="py-8">
-      <Heading className="font-display text-title3 font-semibold text-foreground-1">Không tìm thấy trang</Heading>
-      <EmptyDescription>Bài viết có thể đã đổi địa chỉ hoặc chưa từng tồn tại.</EmptyDescription>
+      <Heading className="font-display text-title3 font-semibold text-foreground-1">{t.notFound.title}</Heading>
+      <EmptyDescription>{t.notFound.body}</EmptyDescription>
       <EmptyContent>
         <Button asChild appearance="primary">
-          <Link to={{ name: "home" }}>Về trang chủ</Link>
+          <Link to={{ name: "home" }}>{t.notFound.home}</Link>
         </Button>
       </EmptyContent>
     </Empty>
@@ -72,71 +75,99 @@ function NotFound({ headingLevel }: { headingLevel: "h1" | "h2" }) {
 export interface BlogLayoutProps {
   theme: YugenTheme;
   onThemeChange: (theme: YugenTheme) => void;
+  /** Chữ và bài viết; mặc định theo ngôn ngữ chọn trong `content/index.ts`. */
+  content?: Content;
   /** Nhúng trong trang khác (preview): cuộn trong khung, không có landmark <main>, không ghi <head>. */
   embedded?: boolean;
 }
 
 /** Khung blog: thanh trên cùng, nội dung theo route, chân trang. */
-export function BlogLayout({ theme, onThemeChange, embedded = false }: BlogLayoutProps) {
+export function BlogLayout({ theme, onThemeChange, content: t = defaultContent, embedded = false }: BlogLayoutProps) {
   const { route } = useRouter();
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const headingLevel = embedded ? "h2" : "h1";
   const Main = embedded ? "div" : "main";
-  const post = route.name === "post" ? POST_BY_SLUG[route.slug] : undefined;
-  // File sinh lúc build (rss.xml, sitemap.xml) không tồn tại trong preview.
-  const fileHref = (file: string) => (embedded ? undefined : `${import.meta.env.BASE_URL}${file}`);
+  const blog = React.useMemo(() => ({ ...postsFor(t.lang), t }), [t]);
+  const post = route.name === "post" ? blog.bySlug[route.slug] : undefined;
+
+  React.useEffect(() => {
+    const preload = () => void loadPostPage();
+    const id = window.requestIdleCallback?.(preload) ?? window.setTimeout(preload, 1500);
+    return () => (window.cancelIdleCallback ? window.cancelIdleCallback(id) : window.clearTimeout(id));
+  }, []);
+  // File sinh lúc build (rss.xml, sitemap.xml) không tồn tại trong preview nhúng: hiện chữ thay cho link không đích.
+  const fileHref = (file: string) => `${import.meta.env.BASE_URL}${file}`;
 
   React.useEffect(() => {
     if (embedded) {
       scrollRef.current?.scrollTo({ top: 0 });
       return;
     }
-    const { title, description } = pageMeta(pageOf(route));
+    const { title, description } = pageMeta(pageOf(route, blog), t);
     document.title = title;
     document.querySelector('meta[name="description"]')?.setAttribute("content", description);
-  }, [route, embedded]);
+  }, [route, embedded, blog, t]);
 
   return (
-    <div ref={scrollRef} className={`flex flex-col bg-background-2 text-foreground-1 ${embedded ? "h-full overflow-y-auto" : "min-h-dvh"}`}>
-      <header className="sticky top-0 z-10 border-b border-stroke-2 bg-background-1/90 backdrop-blur">
-        <div className="mx-auto flex h-14 w-full max-w-5xl items-center gap-3 px-4">
-          <Link to={{ name: "home" }} className="flex items-center gap-2 font-display text-subtitle2 font-semibold text-foreground-1">
-            <span aria-hidden className="flex size-8 items-center justify-center rounded-medium bg-brand-background text-foreground-on-brand">
-              桜
-            </span>
-            {SITE.title}
-          </Link>
-          <div className="ms-auto flex items-center gap-1">
-            <Button asChild appearance="subtle" icon={<Rss20Regular />}>
-              <a href={fileHref("rss.xml")} aria-label="RSS">
-                <span className="hidden sm:inline">RSS</span>
-              </a>
-            </Button>
-            <ThemeMenu theme={theme} onChange={onThemeChange} />
+    <BlogContext.Provider value={blog}>
+      <div ref={scrollRef} className={`flex flex-col bg-background-2 text-foreground-1 ${embedded ? "h-full overflow-y-auto" : "min-h-dvh"}`}>
+        <header className="sticky top-0 z-10 border-b border-stroke-2 bg-background-1/90 backdrop-blur">
+          <div className="mx-auto flex h-14 w-full max-w-5xl items-center gap-3 px-4">
+            <Link to={{ name: "home" }} className="flex items-center gap-2 font-display text-subtitle2 font-semibold text-foreground-1">
+              <span aria-hidden className="flex size-8 items-center justify-center rounded-medium bg-brand-background text-foreground-on-brand">
+                桜
+              </span>
+              {t.site.title}
+            </Link>
+            <div className="ms-auto flex items-center gap-1">
+              {embedded ? (
+                <Button appearance="subtle" icon={<Rss20Regular />} aria-label="RSS">
+                  <span className="hidden sm:inline">RSS</span>
+                </Button>
+              ) : (
+                <Button asChild appearance="subtle" icon={<Rss20Regular />}>
+                  <a href={fileHref("rss.xml")} aria-label="RSS">
+                    <span className="hidden sm:inline">RSS</span>
+                  </a>
+                </Button>
+              )}
+              <ThemeMenu theme={theme} onChange={onThemeChange} />
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <Main aria-label={embedded ? SITE.title : undefined} className="@container mx-auto w-full max-w-5xl flex-1 px-4 py-6">
-        {route.name === "home" && <PostList headingLevel={headingLevel} />}
-        {route.name === "tag" && <PostList key={route.tag} tag={route.tag} headingLevel={headingLevel} />}
-        {route.name === "post" && (post ? <PostPage key={post.slug} post={post} headingLevel={headingLevel} /> : <NotFound headingLevel={headingLevel} />)}
-        {route.name === "notFound" && <NotFound headingLevel={headingLevel} />}
-      </Main>
+        <Main aria-label={embedded ? t.site.title : undefined} className="@container mx-auto w-full max-w-5xl flex-1 px-4 py-6">
+          {route.name === "home" && <PostList headingLevel={headingLevel} />}
+          {route.name === "tag" && <PostList key={route.tag} tag={route.tag} headingLevel={headingLevel} />}
+          {route.name === "post" &&
+            (post ? (
+              <React.Suspense fallback={<SkeletonText lines={8} className="max-w-3xl" />}>
+                <PostPage key={post.slug} post={post} headingLevel={headingLevel} />
+              </React.Suspense>
+            ) : (
+              <NotFound headingLevel={headingLevel} />
+            ))}
+          {route.name === "notFound" && <NotFound headingLevel={headingLevel} />}
+        </Main>
 
-      <footer className="border-t border-stroke-2 bg-background-1">
-        <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-5 text-caption1 text-foreground-3">
-          <span>
-            © {new Date().getFullYear()} {SITE.author} · Dựng bằng{" "}
-            <a className="text-link underline hover:text-link-hover" href="https://trandat1114.github.io/Yugen-UI/" target="_blank" rel="noreferrer">
-              Yugen UI
-            </a>
-          </span>
-          <a className="text-link underline hover:text-link-hover" href={fileHref("sitemap.xml")}>
-            Sitemap
-          </a>
-        </div>
-      </footer>
-    </div>
+        <footer className="border-t border-stroke-2 bg-background-1">
+          <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-5 text-caption1 text-foreground-3">
+            <span>
+              © {new Date().getFullYear()} {t.site.author} · {t.builtWith}{" "}
+              <a className="text-link underline hover:text-link-hover" href="https://trandat1114.github.io/Yugen-UI/" target="_blank" rel="noreferrer">
+                Yugen UI
+              </a>
+            </span>
+            {embedded ? (
+              <span>Sitemap</span>
+            ) : (
+              <a className="text-link underline hover:text-link-hover" href={fileHref("sitemap.xml")}>
+                Sitemap
+              </a>
+            )}
+          </div>
+        </footer>
+      </div>
+    </BlogContext.Provider>
   );
 }

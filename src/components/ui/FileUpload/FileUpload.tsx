@@ -18,6 +18,10 @@ import { formatFileSize } from "../AIKit/PromptInput";
 import { useAnnounce } from "../AriaLive/AriaLive";
 import { Button } from "../Button/Button";
 import { ProgressBar } from "../ProgressBar/ProgressBar";
+import { useYugen, useYugenMessages } from "../YugenProvider/context";
+import { fileUploadMessages, type FileUploadMessages } from "./messages";
+
+export { fileUploadMessages, fileUploadMessagesEn, type FileUploadMessages } from "./messages";
 
 /* ------------------------------------------------------------------------------------------------
  * Tiện ích thuần
@@ -79,13 +83,18 @@ export function isFileAccepted(file: Pick<File, "name" | "type">, accept?: strin
   );
 }
 
-const GROUP_LABEL: Record<string, string> = { image: "ảnh", video: "video", audio: "âm thanh", text: "văn bản" };
+const GROUP_KEY: Record<string, "typeImage" | "typeVideo" | "typeAudio" | "typeText"> = {
+  image: "typeImage",
+  video: "typeVideo",
+  audio: "typeAudio",
+  text: "typeText",
+};
 
-function describeAccept(accept?: string) {
+function describeAccept(accept: string | undefined, msg: FileUploadMessages) {
   const labels = acceptTokens(accept).map((token) => {
     if (token.startsWith(".")) return token.slice(1).toUpperCase();
     const [group, sub] = token.split("/");
-    if (sub === "*") return GROUP_LABEL[group] ?? group;
+    if (sub === "*") return group in GROUP_KEY ? msg[GROUP_KEY[group]] : group;
     return (sub ?? token).split(/[.+-]/).pop()!.toUpperCase();
   });
   return [...new Set(labels)].join(", ");
@@ -121,7 +130,7 @@ export interface FileUploadItemProps extends Omit<React.LiHTMLAttributes<HTMLLIE
   /** Hiện ảnh thu nhỏ cho tệp ảnh. Mặc định `true`. */
   showThumbnail?: boolean;
   disabled?: boolean;
-  /** Có → hiện nút xoá (icon-only, `aria-label="Xoá tệp …"`). */
+  /** Có → hiện nút xoá (icon-only, aria-label theo `messages.fileUpload.remove`). */
   onRemove?: () => void;
   /** Có + `status="error"` → hiện nút Thử lại. */
   onRetry?: () => void;
@@ -136,6 +145,8 @@ export const FileUploadItem = React.forwardRef<HTMLLIElement, FileUploadItemProp
     { name, size, type, file, previewUrl, status = "idle", progress, error, showThumbnail = true, disabled, onRemove, onRetry, className, ...props },
     ref,
   ) => {
+    const msg = useYugenMessages("fileUpload", fileUploadMessages);
+    const { locale } = useYugen();
     const [objectUrl, setObjectUrl] = React.useState<string>();
     const isImage = (type ?? file?.type ?? "").startsWith("image/");
 
@@ -174,34 +185,34 @@ export const FileUploadItem = React.forwardRef<HTMLLIElement, FileUploadItemProp
             <span className="truncate text-body1 text-foreground-1" title={name}>
               {name}
             </span>
-            <span className="shrink-0 text-caption1 text-foreground-3">{formatFileSize(size)}</span>
+            <span className="shrink-0 text-caption1 text-foreground-3">{formatFileSize(size, locale)}</span>
           </div>
           {status === "uploading" && (
             <>
-              <ProgressBar value={progress} max={1} aria-label={`Tiến trình tải lên ${name}`} />
-              <span className="text-caption1 text-foreground-3">{percent === undefined ? "Đang tải lên…" : `Đang tải lên… ${percent}%`}</span>
+              <ProgressBar value={progress} max={1} aria-label={msg.uploadProgress(name)} />
+              <span className="text-caption1 text-foreground-3">{percent === undefined ? msg.uploading : msg.uploadingPercent(percent)}</span>
             </>
           )}
           {status === "done" && (
             <span className="flex items-center gap-1 text-caption1 text-success-foreground-1">
               <CheckmarkCircle12Filled aria-hidden className="shrink-0" />
-              <span className="text-foreground-3">Đã tải lên</span>
+              <span className="text-foreground-3">{msg.uploaded}</span>
             </span>
           )}
           {status === "error" && (
             <span className="flex items-center gap-1 text-caption1 text-danger-foreground-1">
               <ErrorCircle12Filled aria-hidden className="shrink-0" />
-              <span>{error ?? "Tải lên thất bại"}</span>
+              <span>{error ?? msg.failed}</span>
             </span>
           )}
         </div>
         {(onRetry || onRemove) && (
           <div className="flex shrink-0 items-center gap-0.5">
             {status === "error" && onRetry && (
-              <Button appearance="subtle" size="small" icon={<ArrowClockwise16Regular />} aria-label={`Thử lại tải lên ${name}`} disabled={disabled} onClick={onRetry} />
+              <Button appearance="subtle" size="small" icon={<ArrowClockwise16Regular />} aria-label={msg.retry(name)} disabled={disabled} onClick={onRetry} />
             )}
             {onRemove && (
-              <Button appearance="subtle" size="small" icon={<Dismiss16Regular />} aria-label={`Xoá tệp ${name}`} disabled={disabled} onClick={onRemove} />
+              <Button appearance="subtle" size="small" icon={<Dismiss16Regular />} aria-label={msg.remove(name)} disabled={disabled} onClick={onRemove} />
             )}
           </div>
         )}
@@ -249,7 +260,7 @@ export interface FileUploadProps {
   showThumbnails?: boolean;
   disabled?: boolean;
   required?: boolean;
-  /** Dòng chính trong vùng thả. Mặc định "Kéo thả tệp vào đây hoặc chọn tệp". */
+  /** Dòng chính trong vùng thả. Mặc định lấy từ `messages.fileUpload` ("Kéo thả tệp vào đây hoặc chọn tệp"). */
   label?: React.ReactNode;
   /** Dòng phụ. Mặc định tự sinh từ `accept` / `maxSize` / `maxFiles`. */
   description?: React.ReactNode;
@@ -269,7 +280,7 @@ function assignRef<T>(ref: React.ForwardedRef<T>, value: T | null) {
 /**
  * Vùng kéo thả + danh sách tệp (tương đương FileUpload / Dropzone). Dùng `<input type="file">` thật (ẩn trực quan) nên
  * bàn phím, nhãn của `<Field>` và trình đọc màn hình hoạt động sẵn. Tự kiểm tra `accept` / `maxSize` / `maxFiles`, báo lỗi
- * tiếng Việt ngay dưới vùng thả và đọc "Đã thêm / Đã xoá tệp" qua live region polite. `ref` trỏ tới `<input>`.
+ * (theo `messages.fileUpload`) ngay dưới vùng thả và đọc "Đã thêm / Đã xoá tệp" qua live region polite. `ref` trỏ tới `<input>`.
  */
 export const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>(
   (
@@ -308,6 +319,8 @@ export const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>(
     const inputRef = React.useRef<HTMLInputElement | null>(null);
     const dragDepth = React.useRef(0);
     const { announce } = useAnnounce();
+    const msg = useYugenMessages("fileUpload", fileUploadMessages);
+    const { locale } = useYugen();
 
     const [innerFiles, setInnerFiles] = React.useState<FileUploadEntry[]>(defaultFiles ?? []);
     const controlled = files !== undefined;
@@ -329,16 +342,16 @@ export const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>(
       for (const file of incoming) {
         const custom = validate?.(file);
         if (!isFileAccepted(file, accept)) {
-          rejected.push({ file, code: "file-invalid-type", message: `"${file.name}" không đúng định dạng (chỉ nhận ${describeAccept(accept)}).` });
+          rejected.push({ file, code: "file-invalid-type", message: msg.invalidType(file.name, describeAccept(accept, msg)) });
         } else if (maxSize !== undefined && file.size > maxSize) {
-          rejected.push({ file, code: "file-too-large", message: `"${file.name}" vượt quá dung lượng tối đa ${formatFileSize(maxSize)}.` });
+          rejected.push({ file, code: "file-too-large", message: msg.tooLarge(file.name, formatFileSize(maxSize, locale)) });
         } else if (custom) {
           rejected.push({ file, code: "custom", message: custom });
         } else if (kept.length + accepted.length >= limit) {
           rejected.push({
             file,
             code: "too-many-files",
-            message: multiple ? `Chỉ được chọn tối đa ${limit} tệp — đã bỏ qua "${file.name}".` : `Chỉ được chọn 1 tệp — đã bỏ qua "${file.name}".`,
+            message: multiple ? msg.tooMany(file.name, limit) : msg.onlyOne(file.name),
           });
         } else {
           accepted.push(createFileEntry(file));
@@ -349,7 +362,7 @@ export const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>(
       if (accepted.length === 0) return;
       const removed = multiple ? [] : list;
       commit([...kept, ...accepted], { added: accepted, removed });
-      announce(accepted.length === 1 ? `Đã thêm tệp ${accepted[0].name}.` : `Đã thêm ${accepted.length} tệp.`);
+      announce(accepted.length === 1 ? msg.added(accepted[0].name) : msg.addedCount(accepted.length));
     };
 
     const removeEntry = (entry: FileUploadEntry) => {
@@ -357,7 +370,7 @@ export const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>(
         list.filter((item) => item.id !== entry.id),
         { added: [], removed: [entry] },
       );
-      announce(`Đã xoá tệp ${entry.name}.`);
+      announce(msg.removed(entry.name));
       // Nút xoá biến mất cùng item → trả focus về vùng thả để không rơi về <body>.
       inputRef.current?.focus();
     };
@@ -376,9 +389,9 @@ export const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>(
     const hasFiles = (event: React.DragEvent) => Array.from(event.dataTransfer?.types ?? []).includes("Files");
 
     const autoDescription = [
-      describeAccept(accept),
-      maxSize !== undefined && `tối đa ${formatFileSize(maxSize)} mỗi tệp`,
-      multiple && maxFiles !== undefined && `tối đa ${maxFiles} tệp`,
+      describeAccept(accept, msg),
+      maxSize !== undefined && msg.maxSizeHint(formatFileSize(maxSize, locale)),
+      multiple && maxFiles !== undefined && msg.maxFilesHint(maxFiles),
     ]
       .filter(Boolean)
       .join(" · ");
@@ -454,11 +467,11 @@ export const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>(
           <CloudArrowUp32Regular aria-hidden className={cn("size-8", disabled ? "text-foreground-disabled" : "text-brand-foreground-1")} />
           <span id={titleId} className={cn("text-body1", !disabled && "text-foreground-1")}>
             {dragging ? (
-              <span className="font-semibold">Thả tệp để tải lên</span>
+              <span className="font-semibold">{msg.dropping}</span>
             ) : (
               (label ?? (
                 <>
-                  Kéo thả tệp vào đây hoặc <span className={cn("font-semibold", !disabled && "text-link")}>chọn tệp</span>
+                  {msg.dropzone} <span className={cn("font-semibold", !disabled && "text-link")}>{msg.browse}</span>
                 </>
               ))
             )}
@@ -482,7 +495,7 @@ export const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>(
         )}
 
         {list.length > 0 && (
-          <ul aria-label="Tệp đã chọn" className="flex flex-col gap-2">
+          <ul aria-label={msg.selectedFiles} className="flex flex-col gap-2">
             {list.map((entry) => (
               <FileUploadItem
                 key={entry.id}

@@ -13,7 +13,7 @@ const KANA = [KANA_YU, KANA_U, KANA_GE, KANA_N];
 export function YugenKanji({ className }: { className?: string }) {
   const id = useId().replace(/:/g, "");
   return (
-    <svg viewBox="-270 -20 1570 2020" className={cn("overflow-visible", className)} aria-hidden>
+    <svg viewBox="-270 -480 1830 2480" className={cn("overflow-visible", className)} aria-hidden>
       <defs>
         <linearGradient id={`${id}fade`} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0.9" stopColor="#fff" />
@@ -23,9 +23,9 @@ export function YugenKanji({ className }: { className?: string }) {
           <rect className="yg-ink" x="-300" y="-4600" width="1700" height="4600" fill={`url(#${id}fade)`} />
         </mask>
       </defs>
-      {/* Hoa neo ở góc trên của 幽 (vẽ trước để nằm sau chữ), tránh cột furigana bên trái. */}
+      {/* Hoa neo ở góc trên của 幽 (vẽ trước để nằm sau chữ), tránh cột furigana bên trái; viewBox chứa trọn hoa để không bị cắt. */}
       <g className="yg-bloom">
-        <SakuraBlossom transform="translate(980 40) scale(68) rotate(-10)" stamenWidth={0.14} />
+        <SakuraBlossom transform="translate(1000 110) scale(56) rotate(-10)" stamenWidth={0.14} />
       </g>
       <g className="yg-kana fill-foreground-2">
         {KANA.map((d, i) => (

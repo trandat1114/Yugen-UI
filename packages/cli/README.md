@@ -15,6 +15,10 @@ rejects the name `yugen` as too similar to an existing package.
 | `yugen create [dir]` | New app from a template (`starter`, `saas`, `blog`, `dashboard`, `ai-chat`). Same as `npm create yugen-ui@latest`. |
 | `yugen init` | Set up an existing React project — npm package or source mode. Writes `yugen.json`. |
 | `yugen add <names…>` | Copy components (and everything they depend on) into your project, install their npm dependencies. |
+| `yugen diff [names…]` | Compare copied source with the registry (all installed components without names). |
+| `yugen update [names…]` | Apply the registry version: shows the diff, asks, then writes. `--dry-run` only shows it. |
+| `yugen remove <names…>` | Delete a component's files that nothing else in the project imports. |
+| `yugen theme --brand <hex>` | Generate a brand ramp into `yugen-brand.css` next to your main CSS and import it. |
 | `yugen list [query]` | List the components in the registry; `✓` marks the ones you already have. |
 | `yugen doctor` | Check React, Tailwind CSS v4, the theme import, the `yugen-ui` version and `YugenProvider`. |
 

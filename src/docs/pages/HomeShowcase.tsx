@@ -32,6 +32,7 @@ import {
 } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { useLocale, type MessageKey } from "../i18n";
+import { docsPath } from "../router";
 
 function SplitMenu() {
   const { t } = useLocale();
@@ -161,10 +162,10 @@ function SurfacesCollage() {
 }
 
 const SHOWCASE: { id: string; label: MessageKey; gradient: GradientName; href: string; Collage: () => React.ReactNode }[] = [
-  { id: "actions", label: "show.actions", gradient: "sakura", href: "#/components/button", Collage: ActionsCollage },
-  { id: "inputs", label: "show.inputs", gradient: "dusk", href: "#/components/slider", Collage: InputsCollage },
-  { id: "feedback", label: "show.feedback", gradient: "sunset", href: "#/components/messagebar", Collage: FeedbackCollage },
-  { id: "surfaces", label: "show.surfaces", gradient: "brand", href: "#/components/card", Collage: SurfacesCollage },
+  { id: "actions", label: "show.actions", gradient: "sakura", href: "/components/button", Collage: ActionsCollage },
+  { id: "inputs", label: "show.inputs", gradient: "dusk", href: "/components/slider", Collage: InputsCollage },
+  { id: "feedback", label: "show.feedback", gradient: "sunset", href: "/components/messagebar", Collage: FeedbackCollage },
+  { id: "surfaces", label: "show.surfaces", gradient: "brand", href: "/components/card", Collage: SurfacesCollage },
 ];
 
 export function HomeShowcase() {
@@ -196,7 +197,7 @@ export function HomeShowcase() {
           return (
             <li key={s.id}>
               <a
-                href={s.href}
+                href={docsPath(s.href)}
                 onMouseEnter={() => setActive(s.id)}
                 onFocus={() => setActive(s.id)}
                 className="group/item relative inline-block rounded-large pb-2"
@@ -234,7 +235,7 @@ export function HomeShowcase() {
       </div>
 
       <a
-        href={current.href}
+        href={docsPath(current.href)}
         className="inline-flex items-center gap-1 justify-self-start rounded-small text-body1 font-semibold text-brand-foreground-1 hover:underline lg:hidden"
       >
         {t("home.viewComponent")}

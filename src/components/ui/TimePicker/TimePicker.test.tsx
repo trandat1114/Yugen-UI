@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Field } from "../Field/Field";
+import { YugenProvider } from "../YugenProvider/YugenProvider";
 import {
   TimePicker,
   formatTime,
@@ -9,6 +10,7 @@ import {
   getTimeBoundsError,
   getTimesInRange,
   parseTimeString,
+  timePickerMessagesEn,
   type TimePickerProps,
 } from "./TimePicker";
 
@@ -200,5 +202,21 @@ describe("TimePicker", () => {
       </Field>,
     );
     expect(input).toHaveValue("2:45 PM");
+  });
+});
+
+describe("TimePicker messages", () => {
+  it("locale và chuỗi lấy từ provider; prop locale vẫn ưu tiên", () => {
+    const value = new Date(2026, 9, 20, 21, 30);
+    render(
+      <YugenProvider locale="en-US" messages={{ timePicker: timePickerMessagesEn }}>
+        <TimePicker aria-label="Start" />
+        <TimePicker aria-label="End" defaultValue={value} />
+        <TimePicker aria-label="Giờ" defaultValue={value} locale="vi-VN" />
+      </YugenProvider>,
+    );
+    expect(screen.getByRole("combobox", { name: "Start" })).toHaveAttribute("placeholder", "Select a time…");
+    expect(screen.getByRole("combobox", { name: "End" })).toHaveValue(formatTime(value, { hourCycle: "h12", locale: "en-US" }));
+    expect(screen.getByRole("combobox", { name: "Giờ" })).toHaveValue("21:30");
   });
 });

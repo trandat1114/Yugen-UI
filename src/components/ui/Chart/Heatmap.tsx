@@ -1,6 +1,8 @@
 import * as React from "react";
 import { useDirection } from "@radix-ui/react-direction";
 import { cn } from "@/lib/cn";
+import { useYugen, useYugenMessages } from "../YugenProvider/context";
+import { chartMessages } from "./messages";
 import { ChartContainer, ChartFocusRing, ChartTable, ChartTooltip } from "./ChartParts";
 import { PlotArea, axisTextClass, formatCategory } from "./cartesian";
 import {
@@ -44,7 +46,6 @@ export interface HeatmapProps extends Omit<ChartFrameProps, "height" | "texture"
   legend?: boolean;
 }
 
-const EMPTY_TEXT = "Không có dữ liệu";
 
 /** Ô mẫu hoa văn "không có dữ liệu" — dùng chung cho ô trống và legend. */
 function EmptyPattern({ id }: { id: string }) {
@@ -65,6 +66,7 @@ function HeatmapLegend({
   diverging,
   showEmpty,
   emptyId,
+  emptyText,
 }: {
   min: string;
   max: string;
@@ -73,6 +75,8 @@ function HeatmapLegend({
   diverging: boolean;
   showEmpty: boolean;
   emptyId: string;
+  /** Nhãn ô trống (messages.chart.noData). */
+  emptyText: string;
 }) {
   const dir = useDirection();
   const side = dir === "rtl" ? "left" : "right";
@@ -101,7 +105,7 @@ function HeatmapLegend({
             </defs>
             <rect x={0.5} y={0.5} width={11} height={11} rx={2} strokeWidth={1} style={{ fill: `url(#${emptyId})`, stroke: "var(--colorChartGrid)" }} />
           </svg>
-          {EMPTY_TEXT}
+          {emptyText}
         </span>
       )}
     </div>
@@ -127,7 +131,7 @@ export const Heatmap = React.forwardRef<HTMLElement, HeatmapProps>(function Heat
     title,
     description,
     toolbar,
-    locale = "vi-VN",
+    locale: localeProp,
     ariaLabel,
     indexLabel,
     hideTableToggle,
@@ -137,6 +141,10 @@ export const Heatmap = React.forwardRef<HTMLElement, HeatmapProps>(function Heat
   },
   ref,
 ) {
+  const yugen = useYugen();
+  const locale = localeProp ?? yugen.locale;
+  const msg = useYugenMessages("chart", chartMessages);
+  const emptyText = msg.noData;
   const uid = chartUid(React.useId());
   const emptyId = `${uid}-empty`;
   const [plotRef, width] = useElementWidth<HTMLDivElement>();
@@ -192,16 +200,21 @@ export const Heatmap = React.forwardRef<HTMLElement, HeatmapProps>(function Heat
     focusCell(next[0], next[1]);
   };
 
-  const valueText = (v: number | null) => (v == null ? EMPTY_TEXT : fmt(v));
+  const valueText = (v: number | null) => (v == null ? emptyText : fmt(v));
   const activeValue = active ? values[active.r]?.[active.c] : undefined;
 
   const summary =
     ariaLabel ??
-    `Bản đồ nhiệt: ${rows} hàng × ${cols} cột${nums.length ? `, giá trị từ ${fmt(Math.min(...nums))} đến ${fmt(Math.max(...nums))}` : ""}${
-      hasEmpty ? `, có ô ${EMPTY_TEXT.toLowerCase()}` : ""
-    }. Dùng phím mũi tên để duyệt từng ô.`;
+    msg.heatmapSummary({
+      rows,
+      columns: cols,
+      min: nums.length ? fmt(Math.min(...nums)) : undefined,
+      max: nums.length ? fmt(Math.max(...nums)) : undefined,
+      hasEmpty,
+    });
 
-  const table = (
+  // Chỉ dựng khi bảng đang bật: hàng của mọi điểm dữ liệu được định dạng lại mỗi lần biểu đồ render.
+  const table = () => (
     <ChartTable
       caption={summary}
       columns={[{ key: "__index", label: indexLabel ?? "" }, ...columns.map((c) => ({ key: c.key, label: c.label, numeric: true }))]}
@@ -231,6 +244,7 @@ export const Heatmap = React.forwardRef<HTMLElement, HeatmapProps>(function Heat
             diverging={diverging}
             showEmpty={hasEmpty}
             emptyId={`${uid}-legend-empty`}
+            emptyText={emptyText}
           />
         ) : undefined
       }
@@ -242,7 +256,7 @@ export const Heatmap = React.forwardRef<HTMLElement, HeatmapProps>(function Heat
             height={height}
             role="group"
             aria-label={summary}
-            aria-roledescription="bản đồ nhiệt"
+            aria-roledescription={msg.heatmapRoleDescription}
             className="block overflow-visible"
             onPointerLeave={() => setActive((a) => (a?.kb ? a : null))}
           >
@@ -328,7 +342,7 @@ export const Heatmap = React.forwardRef<HTMLElement, HeatmapProps>(function Heat
             x={cellX(active.c) + cellW / 2}
             y={cellY(active.r)}
             title={`${rowLabels[active.r]} · ${columns[active.c].label}`}
-            rows={[{ key: "v", label: "Giá trị", value: valueText(activeValue ?? null) }]}
+            rows={[{ key: "v", label: msg.value, value: valueText(activeValue ?? null) }]}
           />
         )}
       </PlotArea>

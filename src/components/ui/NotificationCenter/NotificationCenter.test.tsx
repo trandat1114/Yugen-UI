@@ -8,6 +8,8 @@ import {
   useNotifications,
   type NotificationItem,
 } from "./NotificationCenter";
+import { notificationCenterMessagesEn } from "./messages";
+import { YugenProvider } from "../YugenProvider/YugenProvider";
 
 const NOW = new Date(2026, 9, 21, 15, 0).getTime();
 const ITEMS: NotificationItem[] = [
@@ -61,5 +63,21 @@ describe("NotificationCenter", () => {
     await user.click(within(panel).getByRole("button", { name: "Bỏ thông báo: Họp tuần" }));
     expect(within(panel).queryByText("Họp tuần")).toBeNull();
     expect(within(panel).queryByRole("heading", { name: "Hôm qua" })).toBeNull();
+  });
+});
+
+describe("NotificationCenter messages", () => {
+  it("messages tiếng Anh + locale của YugenProvider", async () => {
+    const user = userEvent.setup();
+    render(
+      <YugenProvider messages={{ notificationCenter: notificationCenterMessagesEn }} locale="en-US">
+        <Demo />
+      </YugenProvider>,
+    );
+    await user.click(screen.getByRole("button", { name: "Notifications, 2 unread" }));
+    const panel = await screen.findByRole("dialog", { name: "Notifications" });
+    expect(within(panel).getByRole("heading", { name: "Today" })).toBeInTheDocument();
+    expect(within(panel).getByText("5 minutes ago")).toBeInTheDocument();
+    expect(formatRelativeTime(NOW - 60_000, NOW, { messages: notificationCenterMessagesEn })).toBe("1 minute ago");
   });
 });

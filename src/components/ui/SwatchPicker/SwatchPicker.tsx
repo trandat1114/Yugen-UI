@@ -4,6 +4,10 @@ import { cva } from "class-variance-authority";
 import { Prohibited16Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { useArrowNavigationGroup } from "../FocusManagement/FocusManagement";
+import { useYugenMessages } from "../YugenProvider/context";
+import { swatchPickerMessages } from "./messages";
+
+export { swatchPickerMessages, swatchPickerMessagesEn, type SwatchPickerMessages } from "./messages";
 
 export type SwatchSize = "extra-small" | "small" | "medium" | "large";
 export type SwatchShape = "square" | "rounded" | "circular";
@@ -222,13 +226,14 @@ export type EmptySwatchProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 /** Ô trống (viền đứt) — vd. nút "Thêm màu"; không tham gia lựa chọn. */
 export const EmptySwatch = React.forwardRef<HTMLButtonElement, EmptySwatchProps>(
-  ({ className, children, "aria-label": ariaLabel = "Ô trống", ...props }, ref) => {
+  ({ className, children, "aria-label": ariaLabel, ...props }, ref) => {
     const { size, shape } = React.useContext(SwatchPickerContext);
+    const msg = useYugenMessages("swatchPicker", swatchPickerMessages);
     return (
       <button
         ref={ref}
         type="button"
-        aria-label={ariaLabel}
+        aria-label={ariaLabel ?? msg.emptySwatch}
         className={cn(
           swatchVariants({ size, shape }),
           "border border-dashed border-stroke-accessible text-foreground-3 [&_svg]:size-4",

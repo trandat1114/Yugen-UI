@@ -1,4 +1,4 @@
-import { Fragment, useState, type ReactNode } from "react";
+import { Fragment, useState, type CSSProperties, type ReactNode } from "react";
 import {
   ArrowRight20Regular,
   Color24Regular,
@@ -21,6 +21,7 @@ import { HomeComponents } from "./HomeComponents";
 import { FallingPetals, YugenKanji } from "../HeroArt";
 import { CopyButton } from "../CodeBlock";
 import { useLocale } from "../i18n";
+import { docsPath } from "../router";
 
 const PRINCIPLES = [
   { icon: Color24Regular, title: "home.p1Title", text: "home.p1Text" },
@@ -84,24 +85,36 @@ function InstallSnippet({ className }: { className?: string }) {
   );
 }
 
+/**
+ * Giây animation hero đã chạy trên HTML prerender trước khi React thay DOM (chỉ lần render đầu khi trang chủ là trang được
+ * prerender). hero.css trừ khoảng này vào animation-delay để animation chạy tiếp thay vì phát lại từ đầu.
+ */
+function prerenderedHeroElapsed() {
+  if (typeof document === "undefined" || !document.querySelector("#root .yg-ink")) return 0;
+  const firstPaint = performance.getEntriesByName("first-contentful-paint")[0]?.startTime ?? 0;
+  return Math.max(0, (performance.now() - firstPaint) / 1000);
+}
+
 export function HomePage() {
   const { t, foundation } = useLocale();
+  const [heroElapsed] = useState(prerenderedHeroElapsed);
   const count = COMPONENTS_META.length;
 
   return (
     <div className="pb-8">
       {/* Hero */}
-      <section className="relative -mx-4 overflow-hidden px-4 pt-5 pb-12 md:-mx-12 md:px-12 md:pt-8 md:pb-16">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-hero-glow mask-[linear-gradient(to_bottom,black_70%,transparent)]"
-        />
+      <section
+        className="relative -mx-4 px-4 pt-5 pb-12 md:-mx-12 md:px-12 md:pt-8 md:pb-16"
+        style={{ "--yg-elapsed": `${heroElapsed}s` } as CSSProperties}
+      >
+        {/* Ánh sáng mờ dần ở cả bốn cạnh, không dừng thành khung chữ nhật. */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 bg-hero-glow mask-x-from-80% mask-t-from-75% mask-b-from-70%" />
         <FallingPetals />
 
         {/* lg: chữ 幽玄 chiếm 2 hàng — hàng cuối co giãn để khung cài đặt nằm sát dưới mô tả. */}
         <div className="relative grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 lg:grid-rows-[auto_auto_1fr] lg:gap-x-6">
           <a
-            href="#/news"
+            href={docsPath("/news")}
             className="group/news col-span-2 mb-5 inline-flex max-w-full items-center gap-2 justify-self-start rounded-circular border border-stroke-2 bg-background-1/80 py-0.5 ps-0.5 pe-3 text-caption1 shadow-2 backdrop-blur transition-colors duration-faster hover:border-brand-stroke"
           >
             <span className="rounded-circular bg-brand-background px-2 py-0.5 font-semibold text-foreground-on-brand">v{LATEST_RELEASE.version}</span>
@@ -115,27 +128,27 @@ export function HomePage() {
             </h1>
             <p className="mt-4 max-w-xl text-subtitle1 font-normal text-foreground-2 md:text-title3 md:font-normal">{t("home.lead")}</p>
           </div>
-          <YugenKanji className="h-36 w-auto sm:h-52 lg:row-span-2 lg:h-75 xl:h-100" />
+          <YugenKanji className="h-40 w-auto sm:h-60 lg:row-span-2 lg:h-88 xl:h-112" />
           <InstallSnippet className="col-span-2 mt-5 max-w-xl lg:col-span-1" />
         </div>
 
         <div className="relative mt-6 grid gap-3 md:mt-8 md:grid-cols-2 md:gap-6 xl:grid-cols-3">
           <HeroCard
-            href="#/foundations/color"
+            href={docsPath("/foundations/color")}
             icon={<Color24Regular />}
             title={t("nav.foundations")}
             text={t("home.cardFoundations")}
             tone="bg-lavender-bg text-lavender-fg"
           />
           <HeroCard
-            href="#/components/button"
+            href={docsPath("/components/button")}
             icon={<Code24Regular />}
             title="Components"
             text={t("home.cardComponents", { count })}
             tone="bg-brand-background-2 text-brand-foreground-2"
           />
           <HeroCard
-            href="#/blocks"
+            href={docsPath("/blocks")}
             icon={<Grid24Regular />}
             title="Blocks"
             text={t("home.cardBlocks")}
@@ -184,7 +197,7 @@ export function HomePage() {
           {FOUNDATIONS.map((f) => (
             <a
               key={f.slug}
-              href={`#/foundations/${f.slug}`}
+              href={docsPath(`/foundations/${f.slug}`)}
               className="inline-flex h-10 items-center gap-2 rounded-circular border border-stroke-1 bg-background-1 px-4 text-body1 font-semibold hover:border-stroke-1-hover hover:bg-background-1-hover"
             >
               {foundation(f)}

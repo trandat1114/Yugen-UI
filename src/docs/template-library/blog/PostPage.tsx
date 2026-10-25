@@ -1,18 +1,18 @@
 import { ArrowLeft16Regular, ArrowRight16Regular, Link20Regular } from "@fluentui/react-icons";
 import { Button, Divider, Persona, toast } from "@/components/ui";
-import { slugify, type Post } from "./content";
+import { slugify, type Post } from "./blog";
 import { headingsOf, Markdown } from "./Markdown";
 import { PostMeta, TagLinks } from "./PostList";
-import { POSTS } from "./posts";
+import { useBlog } from "./posts";
 import { Link } from "./router";
-import { SITE } from "./site";
 
 function TableOfContents({ post }: { post: Post }) {
+  const { t } = useBlog();
   const headings = headingsOf(post.body);
   if (headings.length < 2) return null;
   return (
-    <nav aria-label="Trong bài này" className="flex flex-col gap-2">
-      <p className="text-caption1 font-semibold tracking-wide text-foreground-3 uppercase">Trong bài này</p>
+    <nav aria-label={t.post.toc} className="flex flex-col gap-2">
+      <p className="text-caption1 font-semibold tracking-wide text-foreground-3 uppercase">{t.post.toc}</p>
       <ul className="flex flex-col gap-1 border-s border-stroke-2">
         {headings.map((h) => (
           <li key={h.id}>
@@ -35,9 +35,10 @@ function TableOfContents({ post }: { post: Post }) {
 }
 
 function Neighbours({ post }: { post: Post }) {
-  const i = POSTS.findIndex((p) => p.slug === post.slug);
-  const newer = POSTS[i - 1];
-  const older = POSTS[i + 1];
+  const { t, posts } = useBlog();
+  const i = posts.findIndex((p) => p.slug === post.slug);
+  const newer = posts[i - 1];
+  const older = posts[i + 1];
   if (!newer && !older) return null;
   const card = (p: Post, label: string, align: "start" | "end") => (
     <Link
@@ -53,22 +54,23 @@ function Neighbours({ post }: { post: Post }) {
     </Link>
   );
   return (
-    <nav aria-label="Bài khác" className="grid gap-3 @xl:grid-cols-2">
-      <div>{older && card(older, "Bài trước", "start")}</div>
-      <div>{newer && card(newer, "Bài sau", "end")}</div>
+    <nav aria-label={t.post.more} className="grid gap-3 @xl:grid-cols-2">
+      <div>{older && card(older, t.post.older, "start")}</div>
+      <div>{newer && card(newer, t.post.newer, "end")}</div>
     </nav>
   );
 }
 
 export function PostPage({ post, headingLevel = "h1" }: { post: Post; headingLevel?: "h1" | "h2" }) {
+  const { t } = useBlog();
   const Heading = headingLevel;
 
   async function copyLink() {
     try {
       await navigator.clipboard.writeText(window.location.href);
-      toast({ intent: "success", title: "Đã sao chép liên kết" });
+      toast({ intent: "success", title: t.post.copied });
     } catch {
-      toast({ intent: "error", title: "Không sao chép được", body: "Trình duyệt chặn quyền clipboard." });
+      toast({ intent: "error", ...t.post.copyFailed });
     }
   }
 
@@ -80,9 +82,9 @@ export function PostPage({ post, headingLevel = "h1" }: { post: Post; headingLev
           <Heading className="font-display text-[clamp(28px,4vw,44px)] leading-tight font-semibold text-foreground-1">{post.title}</Heading>
           {post.description && <p className="text-subtitle2 font-normal text-foreground-2">{post.description}</p>}
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <Persona name={post.author ?? SITE.author} secondaryText={<PostMeta post={post} />} size="medium" avatar={{ color: "colorful" }} />
+            <Persona name={post.author ?? t.site.author} secondaryText={<PostMeta post={post} />} size="medium" avatar={{ color: "colorful" }} />
             <Button appearance="subtle" icon={<Link20Regular />} onClick={copyLink}>
-              Sao chép liên kết
+              {t.post.copyLink}
             </Button>
           </div>
         </header>

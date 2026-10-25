@@ -3,3 +3,5 @@ export const DEFAULT_REGISTRY = "https://trandat1114.github.io/Yugen-UI/r";
 export const DOCS_URL = "https://trandat1114.github.io/Yugen-UI/";
 export const CONFIG_FILE = "yugen.json";
 export const PACKAGE = "yugen-ui";
+/** Repo GitHub chứa templates/ (`create --ref`). */
+export const REPO = "trandat1114/Yugen-UI";

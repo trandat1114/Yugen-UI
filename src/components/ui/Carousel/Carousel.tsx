@@ -4,6 +4,10 @@ import { ChevronLeft20Regular, ChevronRight20Regular, Pause20Regular, Play20Regu
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { Button } from "../Button/Button";
+import { useYugenMessages } from "../YugenProvider/context";
+import { carouselMessages } from "./messages";
+
+export { carouselMessages, carouselMessagesEn, type CarouselMessages } from "./messages";
 
 /** Fluent 2 Carousel — https://fluent2.microsoft.design/components/web/react/core/carousel/usage (+ Yugen Labs: progress, peek, thumbnails) */
 export type CarouselGap = "none" | "XS" | "S" | "M" | "L" | "XL";
@@ -147,19 +151,26 @@ export const Carousel = React.forwardRef<HTMLElement, CarouselProps>(
     const circular = loop ?? circularProp ?? false;
     const viewportRef = React.useRef<HTMLDivElement | null>(null);
     const dir = useDirection();
+    const msg = useYugenMessages("carousel", carouselMessages);
     const [activeIndex, setActiveIndex] = React.useState(0);
     const [count, setCount] = React.useState(0);
     const [innerAutoplay, setInnerAutoplay] = React.useState(() => defaultAutoplay && !prefersReducedMotion());
     const autoplay = autoplayProp ?? innerAutoplay;
     const [reasons, setReasons] = React.useState<Record<PauseReason, boolean>>({ hover: false, focus: false });
     const [hidden, setHidden] = React.useState(false);
-    const paused = reasons.hover || reasons.focus || hidden;
+    // Cuộn khỏi màn hình thì dừng tự chạy (không tốn CPU cho thứ không ai thấy), quay lại thì chạy tiếp từ chỗ dừng.
+    const [offscreen, setOffscreen] = React.useState(false);
+    // Số vạch tiến độ đang hiện: không có vạch nào thì đồng hồ chỉ cần một setTimeout tới lần chuyển slide.
+    const [progressCount, setProgressCount] = React.useState(0);
+    const paused = reasons.hover || reasons.focus || hidden || offscreen;
     const rotating = autoplay && !paused && count > 1;
     const baseId = React.useId();
     const activeRef = React.useRef(0);
     const targetRef = React.useRef<number | null>(null);
     const frameRef = React.useRef(0);
     const elapsedRef = React.useRef(0);
+    // Lúc đồng hồ được đặt lại (đổi slide): đồng hồ setTimeout chỉ tính thời gian từ mốc này.
+    const resetAtRef = React.useRef(0);
     const progressEls = React.useRef(new Set<HTMLElement>());
     const callbacks = React.useRef({ onActiveIndexChange, onAutoplayChange });
     useIsomorphicLayoutEffect(() => {
@@ -174,9 +185,11 @@ export const Carousel = React.forwardRef<HTMLElement, CarouselProps>(
     const registerProgress = React.useCallback(
       (element: HTMLElement) => {
         progressEls.current.add(element);
+        setProgressCount(progressEls.current.size);
         paintProgress();
         return () => {
           progressEls.current.delete(element);
+          setProgressCount(progressEls.current.size);
         };
       },
       [paintProgress],
@@ -186,6 +199,7 @@ export const Carousel = React.forwardRef<HTMLElement, CarouselProps>(
       if (index === activeRef.current) return;
       activeRef.current = index;
       elapsedRef.current = 0; // slide mới → đồng hồ autoplay chạy lại từ đầu
+      resetAtRef.current = performance.now();
       setActiveIndex(index);
       callbacks.current.onActiveIndexChange?.(index);
     }, []);
@@ -268,23 +282,44 @@ export const Carousel = React.forwardRef<HTMLElement, CarouselProps>(
       return () => document.removeEventListener("visibilitychange", sync);
     }, []);
 
-    // Đồng hồ autoplay bằng requestAnimationFrame: tạm dừng giữ nguyên tiến độ, chạy tiếp từ chỗ dừng.
+    React.useEffect(() => {
+      const el = viewportRef.current;
+      if (!el || typeof IntersectionObserver === "undefined") return;
+      const observer = new IntersectionObserver(([entry]) => setOffscreen(!entry.isIntersecting));
+      observer.observe(el);
+      return () => observer.disconnect();
+    }, []);
+
+    // Đồng hồ autoplay: tạm dừng giữ nguyên tiến độ, chạy tiếp từ chỗ dừng. Có vạch tiến độ thì cập nhật mỗi frame
+    // (requestAnimationFrame); không có thì một setTimeout cho phần thời gian còn lại, không chạy vòng lặp 60 lần/giây.
     React.useEffect(() => {
       paintProgress();
       if (!rotating) return;
       let last = performance.now();
-      let frame = requestAnimationFrame(function tick(now) {
-        elapsedRef.current += now - last;
+      let frame = 0;
+      let timer = 0;
+      const tick = (now: number) => {
+        elapsedRef.current += now - Math.max(last, resetAtRef.current);
         last = now;
         if (elapsedRef.current >= autoplayInterval) {
           elapsedRef.current = 0;
           goTo(activeRef.current + 1 >= count ? 0 : activeRef.current + 1);
         }
         paintProgress();
-        frame = requestAnimationFrame(tick);
-      });
-      return () => cancelAnimationFrame(frame);
-    }, [rotating, count, autoplayInterval, goTo, paintProgress]);
+        schedule();
+      };
+      const schedule = () => {
+        if (progressCount > 0) frame = requestAnimationFrame(tick);
+        else timer = window.setTimeout(() => tick(performance.now()), Math.max(0, autoplayInterval - elapsedRef.current));
+      };
+      schedule();
+      return () => {
+        cancelAnimationFrame(frame);
+        window.clearTimeout(timer);
+        // Giữ phần thời gian đã chạy tới lúc dừng (vd. hover giữa chừng).
+        elapsedRef.current += performance.now() - Math.max(last, resetAtRef.current);
+      };
+    }, [rotating, count, autoplayInterval, goTo, paintProgress, progressCount]);
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
       onKeyDown?.(event);
@@ -349,14 +384,14 @@ export const Carousel = React.forwardRef<HTMLElement, CarouselProps>(
       <CarouselContext.Provider value={context}>
         <section
           ref={ref}
-          aria-roledescription="carousel"
+          aria-roledescription={msg.roleDescription}
           className={cn("relative flex min-w-0 flex-col gap-3", className)}
           onKeyDown={handleKeyDown}
           {...props}
         >
           {children}
           <div aria-live={rotating ? "off" : "polite"} aria-atomic className="sr-only">
-            {count > 0 ? `Slide ${activeIndex + 1} / ${count}` : ""}
+            {count > 0 ? msg.slide(activeIndex + 1, count) : ""}
           </div>
         </section>
       </CarouselContext.Provider>
@@ -453,6 +488,7 @@ CarouselViewport.displayName = "CarouselViewport";
 export const CarouselCard = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, style, ...props }, ref) => {
     const ctx = useCarousel();
+    const msg = useYugenMessages("carousel", carouselMessages);
     const index = React.useContext(SlideIndexContext);
     const perView = ctx.slidesPerView;
     const basis =
@@ -464,8 +500,8 @@ export const CarouselCard = React.forwardRef<HTMLDivElement, React.HTMLAttribute
         ref={ref}
         id={`${ctx.baseId}-slide-${index}`}
         role="group"
-        aria-roledescription="slide"
-        aria-label={`Slide ${index + 1} / ${ctx.count}`}
+        aria-roledescription={msg.slideRoleDescription}
+        aria-label={msg.slide(index + 1, ctx.count)}
         className={cn("min-w-0 shrink-0 grow-0 basis-full snap-start", className)}
         style={basis ? { ...basis, ...style } : style}
         {...props}
@@ -476,7 +512,10 @@ export const CarouselCard = React.forwardRef<HTMLDivElement, React.HTMLAttribute
 CarouselCard.displayName = "CarouselCard";
 
 /* ------------------------------------------------------------------ Progress fill */
-/** Vạch tiến độ autoplay: rộng theo --carousel-progress (0…1), mọc từ mép đầu dòng nên tự đúng ở RTL. */
+/**
+ * Vạch tiến độ autoplay: co giãn theo --carousel-progress (0…1) bằng scaleX (không layout lại mỗi frame), mọc từ mép đầu
+ * dòng (origin trái ở LTR, phải ở RTL).
+ */
 function ProgressFill({ className }: { className?: string }) {
   const { registerProgress } = useCarousel();
   const fillRef = React.useRef<HTMLSpanElement>(null);
@@ -487,7 +526,10 @@ function ProgressFill({ className }: { className?: string }) {
     <span
       ref={fillRef}
       aria-hidden
-      className={cn("absolute inset-y-0 inset-s-0 w-[calc(var(--carousel-progress,1)*100%)] bg-brand-background", className)}
+      className={cn(
+        "absolute inset-0 origin-left scale-x-(--carousel-progress,1) bg-brand-background rtl:origin-right",
+        className,
+      )}
     />
   );
 }
@@ -496,19 +538,22 @@ function ProgressFill({ className }: { className?: string }) {
 export interface CarouselNavContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Hiện nút bật / tắt tự chạy. */
   autoplay?: boolean;
+  /** aria-label nút trước. Mặc định lấy từ `messages.carousel.previous`. */
   prevLabel?: string;
+  /** aria-label nút sau. Mặc định lấy từ `messages.carousel.next`. */
   nextLabel?: string;
 }
 
 /** Nút trước / sau + chấm điều hướng (tablist) + nút autoplay tuỳ chọn. Chấm đang chọn hiện tiến độ autoplay. */
 export function CarouselNavContainer({
   autoplay: showAutoplay = false,
-  prevLabel = "Slide trước",
-  nextLabel = "Slide tiếp theo",
+  prevLabel,
+  nextLabel,
   className,
   ...props
 }: CarouselNavContainerProps) {
   const ctx = useCarousel();
+  const msg = useYugenMessages("carousel", carouselMessages);
   const dir = useDirection();
   const dotRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
   const atStart = !ctx.circular && ctx.activeIndex === 0;
@@ -528,7 +573,7 @@ export function CarouselNavContainer({
           appearance="subtle"
           shape="circular"
           icon={ctx.autoplay ? <Pause20Regular /> : <Play20Regular />}
-          aria-label="Tự động chạy"
+          aria-label={msg.autoplay}
           aria-pressed={ctx.autoplay}
           onClick={() => ctx.setAutoplay(!ctx.autoplay)}
         />
@@ -537,11 +582,11 @@ export function CarouselNavContainer({
         appearance="secondary"
         shape="circular"
         icon={<ChevronLeft20Regular className="rtl:-scale-x-100" />}
-        aria-label={prevLabel}
+        aria-label={prevLabel ?? msg.previous}
         disabled={atStart}
         onClick={ctx.prev}
       />
-      <div role="tablist" aria-label="Chọn slide" className="flex items-center" onKeyDown={onDotsKeyDown}>
+      <div role="tablist" aria-label={msg.chooseSlide} className="flex items-center" onKeyDown={onDotsKeyDown}>
         {Array.from({ length: ctx.count }, (_, i) => {
           const active = i === ctx.activeIndex;
           return (
@@ -554,7 +599,7 @@ export function CarouselNavContainer({
               role="tab"
               aria-selected={active}
               aria-controls={`${ctx.baseId}-slide-${i}`}
-              aria-label={`Slide ${i + 1} / ${ctx.count}`}
+              aria-label={msg.slide(i + 1, ctx.count)}
               tabIndex={active ? 0 : -1}
               onClick={() => ctx.goTo(i)}
               className="group/dot flex h-6 cursor-pointer items-center justify-center rounded-circular px-1"
@@ -577,7 +622,7 @@ export function CarouselNavContainer({
         appearance="secondary"
         shape="circular"
         icon={<ChevronRight20Regular className="rtl:-scale-x-100" />}
-        aria-label={nextLabel}
+        aria-label={nextLabel ?? msg.next}
         disabled={atEnd}
         onClick={ctx.next}
       />
@@ -596,8 +641,9 @@ export type CarouselThumbnailsProps = React.HTMLAttributes<HTMLDivElement>;
  * Dùng thay cho chấm của CarouselNavContainer, không dùng cả hai.
  */
 export const CarouselThumbnails = React.forwardRef<HTMLDivElement, CarouselThumbnailsProps>(
-  ({ className, children, onKeyDown, "aria-label": ariaLabel = "Chọn slide", ...props }, ref) => {
+  ({ className, children, onKeyDown, "aria-label": ariaLabel, ...props }, ref) => {
     const ctx = useCarousel();
+    const msg = useYugenMessages("carousel", carouselMessages);
     const dir = useDirection();
     const stripRef = React.useRef<HTMLDivElement | null>(null);
     const thumbRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
@@ -623,7 +669,7 @@ export const CarouselThumbnails = React.forwardRef<HTMLDivElement, CarouselThumb
           else if (ref) ref.current = node;
         }}
         role="tablist"
-        aria-label={ariaLabel}
+        aria-label={ariaLabel ?? msg.chooseSlide}
         className={cn("flex gap-2 overflow-x-auto p-0.5 scrollbar-none [&::-webkit-scrollbar]:hidden", className)}
         onKeyDown={(event) => {
           onKeyDown?.(event);
@@ -652,6 +698,7 @@ CarouselThumbnails.displayName = "CarouselThumbnails";
 export const CarouselThumbnail = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(
   ({ className, children, onClick, ...props }, ref) => {
     const ctx = useCarousel();
+    const msg = useYugenMessages("carousel", carouselMessages);
     const index = React.useContext(ThumbnailIndexContext);
     const refs = React.useContext(ThumbnailRefsContext);
     const active = index === ctx.activeIndex;
@@ -666,7 +713,7 @@ export const CarouselThumbnail = React.forwardRef<HTMLButtonElement, React.Butto
         role="tab"
         aria-selected={active}
         aria-controls={`${ctx.baseId}-slide-${index}`}
-        aria-label={`Slide ${index + 1} / ${ctx.count}`}
+        aria-label={msg.slide(index + 1, ctx.count)}
         tabIndex={active ? 0 : -1}
         onClick={(event) => {
           onClick?.(event);

@@ -5,6 +5,7 @@ import { DocSection } from "../blocks";
 import { AuthorLink } from "../AuthorLink";
 import { COMPONENTS_META } from "../registry";
 import { SITE } from "../site";
+import { docsPath } from "../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -37,22 +38,22 @@ function IconTile({ children }: { children: ReactNode }) {
 
 const INCLUDED = [
   {
-    href: "#/components/button",
+    href: "/components/button",
     title: `${COMPONENTS_META.length} component`,
     body: "Mỗi trang có ví dụ chạy thật, hướng dẫn dùng và bảng props. Nhóm Yugen Labs có thêm biểu đồ, giao diện chat AI, Trace và Sheet.",
   },
   {
-    href: "#/blocks",
+    href: "/blocks",
     title: "Blocks",
     body: "Màn hình mẫu ghép từ component: đăng nhập, bảng số liệu, đặt lịch… Chép nguyên file vào dự án.",
   },
   {
-    href: "#/templates",
+    href: "/templates",
     title: "Templates",
     body: "Ứng dụng mẫu tạo bằng một lệnh: starter, SaaS, blog, dashboard, AI chat.",
   },
   {
-    href: "#/theme-designer",
+    href: "/theme-designer",
     title: "Theme Designer",
     body: "Tạo màu thương hiệu từ một mã màu, kiểm tra tương phản và xuất token.",
   },
@@ -123,7 +124,7 @@ export default function Page() {
             {INCLUDED.map((s) => (
               <a
                 key={s.href}
-                href={s.href}
+                href={docsPath(s.href)}
                 className="group flex flex-col gap-1 rounded-xlarge border border-stroke-2 bg-background-1 p-4 transition-colors duration-faster hover:bg-subtle-hover"
               >
                 <span className="text-subtitle2 font-semibold text-foreground-1 group-hover:text-brand-foreground-1">{s.title}</span>
@@ -133,10 +134,10 @@ export default function Page() {
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Button asChild appearance="primary">
-              <a href="#/concepts/quick-start">Bắt đầu nhanh</a>
+              <a href={docsPath("/concepts/quick-start")}>Bắt đầu nhanh</a>
             </Button>
             <Button asChild>
-              <a href="#/components/button">Xem component</a>
+              <a href={docsPath("/components/button")}>Xem component</a>
             </Button>
           </div>
         </div>
@@ -174,7 +175,7 @@ export default function Page() {
             </table>
           </div>
           <P>
-            Lệnh đầy đủ và yêu cầu phiên bản ở <A href="#/concepts/quick-start">Bắt đầu nhanh</A>.
+            Lệnh đầy đủ và yêu cầu phiên bản ở <A href={docsPath("/concepts/quick-start")}>Bắt đầu nhanh</A>.
           </P>
         </div>
       </DocSection>
@@ -197,7 +198,7 @@ export default function Page() {
         <div className="flex flex-col gap-4">
           <P>
             Yugen UI đang ở giai đoạn trước 1.0. Bản minor có thể có thay đổi phá vỡ và luôn được ghi rõ ở{" "}
-            <A href="#/news">Có gì mới</A>; bản patch chỉ sửa lỗi. Quy tắc đầy đủ ở <A href="#/concepts/versioning">Phiên bản</A>.
+            <A href={docsPath("/news")}>Có gì mới</A>; bản patch chỉ sửa lỗi. Quy tắc đầy đủ ở <A href={docsPath("/concepts/versioning")}>Phiên bản</A>.
           </P>
           <P>
             Giấy phép MIT. Báo lỗi ở <A href={SITE.links.issues}>GitHub Issues</A>, hỏi đáp và góp ý ở{" "}

@@ -2,7 +2,8 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Field } from "../Field/Field";
-import { createFileEntry, FileUpload, isFileAccepted, type FileUploadEntry } from "./FileUpload";
+import { createFileEntry, FileUpload, fileUploadMessagesEn, isFileAccepted, type FileUploadEntry } from "./FileUpload";
+import { YugenProvider } from "../YugenProvider/YugenProvider";
 
 const pdf = (name = "hop-dong.pdf", bytes = 2048) => new File(["x".repeat(bytes)], name, { type: "application/pdf" });
 const png = (name = "anh.png", bytes = 10) => new File(["x".repeat(bytes)], name, { type: "image/png" });
@@ -136,5 +137,20 @@ describe("FileUpload", () => {
     expect(input).toBeDisabled();
     fireEvent.drop(input.closest("label")!, { dataTransfer: { files: [pdf()], types: ["Files"] } });
     expect(screen.queryByRole("list")).not.toBeInTheDocument();
+  });
+});
+
+describe("FileUpload messages", () => {
+  it("fileUploadMessagesEn đổi vùng thả, mô tả và lỗi", async () => {
+    const user = userEvent.setup({ applyAccept: false });
+    render(
+      <YugenProvider messages={{ fileUpload: fileUploadMessagesEn }}>
+        <FileUpload accept="image/*" />
+      </YugenProvider>,
+    );
+    expect(screen.getByText("Drag files here or")).toBeInTheDocument();
+    expect(screen.getByText("images")).toBeInTheDocument();
+    await user.upload(screen.getByLabelText(/Drag files here/), new File(["x"], "a.txt", { type: "text/plain" }));
+    expect(screen.getByRole("alert")).toHaveTextContent(`"a.txt" isn't a supported file type (accepted: images).`);
   });
 });

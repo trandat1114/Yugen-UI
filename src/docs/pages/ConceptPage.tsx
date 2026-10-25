@@ -4,6 +4,7 @@ import { PageProgressFallback, SkeletonText } from "@/components/ui";
 import { CONCEPT_BY_SLUG, CONCEPT_EN_PAGES, CONCEPTS } from "../concepts";
 import { useLocale } from "../i18n";
 import { OnThisPage, PageHeader } from "../blocks";
+import { docsPath } from "../router";
 
 export function ConceptPage({ slug }: { slug: string }) {
   const { t, locale, group, concept } = useLocale();
@@ -43,7 +44,7 @@ export function ConceptPage({ slug }: { slug: string }) {
         </div>
         <div className="grid gap-3 border-t border-stroke-2 pt-5 sm:grid-cols-2">
           {prev ? (
-            <a href={`#/concepts/${prev.meta.slug}`} className="rounded-xlarge border border-stroke-2 p-4 hover:bg-subtle-hover">
+            <a href={docsPath(`/concepts/${prev.meta.slug}`)} className="rounded-xlarge border border-stroke-2 p-4 hover:bg-subtle-hover">
               <span className="text-caption1 text-foreground-3">{t("concept.prev")}</span>
               <span className="block text-body1 font-semibold">{concept(prev.meta).title}</span>
             </a>
@@ -52,7 +53,7 @@ export function ConceptPage({ slug }: { slug: string }) {
           )}
           {next && (
             <a
-              href={`#/concepts/${next.meta.slug}`}
+              href={docsPath(`/concepts/${next.meta.slug}`)}
               className="rounded-xlarge border border-stroke-2 p-4 text-end hover:bg-subtle-hover"
             >
               <span className="text-caption1 text-foreground-3">{t("concept.next")}</span>

@@ -11,6 +11,7 @@ export { Sparkline, StatTile, type SparklineProps, type StatTileProps } from "./
 export { ScatterChart, type ScatterChartProps, type ScatterXFormat } from "./ScatterChart";
 export { Heatmap, type HeatmapProps, type HeatmapColumn } from "./Heatmap";
 export { ChartBrush, type ChartBrushProps, type ChartBrushLine } from "./ChartBrush";
+export { chartMessages, chartMessagesEn, type ChartMessages } from "./messages";
 export {
   nearestPoint,
   nearestIndex,

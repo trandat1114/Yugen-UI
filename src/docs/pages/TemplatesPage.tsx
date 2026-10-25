@@ -1,10 +1,12 @@
-import { lazy, Suspense, type ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import { Checkmark16Regular, Code16Regular, Open16Regular } from "@fluentui/react-icons";
 import { Badge, Button, Spinner } from "@/components/ui";
 import { DocSection, PageHeader } from "../blocks";
 import { CopyButton } from "../CodeBlock";
 import { useLocale } from "../i18n";
 import { TEMPLATES, templateCommand, templateSourceUrl, templateStackBlitzUrl, type TemplateInfo } from "../templates";
+import { lazyPage } from "../lazyPage";
+import { docsPath } from "../router";
 
 const VI = {
   title: "Templates",
@@ -29,11 +31,11 @@ const VI = {
   otherBody: (
     <>
       Thêm Yugen UI vào dự án có sẵn theo{" "}
-      <a className="text-link underline hover:text-link-hover" href="#/concepts/quick-start">
+      <a className="text-link underline hover:text-link-hover" href={docsPath("/concepts/quick-start")}>
         Bắt đầu nhanh
       </a>
       , hoặc lấy từng cụm giao diện ở{" "}
-      <a className="text-link underline hover:text-link-hover" href="#/blocks">
+      <a className="text-link underline hover:text-link-hover" href={docsPath("/blocks")}>
         Blocks
       </a>
       .
@@ -64,11 +66,11 @@ const EN: typeof VI = {
   otherBody: (
     <>
       Add Yugen UI to an existing project with{" "}
-      <a className="text-link underline hover:text-link-hover" href="#/concepts/quick-start">
+      <a className="text-link underline hover:text-link-hover" href={docsPath("/concepts/quick-start")}>
         Quick start
       </a>
       , or grab individual pieces from{" "}
-      <a className="text-link underline hover:text-link-hover" href="#/blocks">
+      <a className="text-link underline hover:text-link-hover" href={docsPath("/blocks")}>
         Blocks
       </a>
       .
@@ -77,13 +79,14 @@ const EN: typeof VI = {
 };
 
 // Preview (AppShell + block) nạp lười: trang hiện lệnh cài ngay, preview tới sau.
-const Preview = lazy(() =>
-  import("./TemplatePreviews").then((m) => ({
-    default: function TemplatePreview({ dir }: { dir: string }) {
-      const Component = m.PREVIEWS[dir];
-      return Component ? <Component /> : null;
-    },
-  })),
+export const Preview = lazyPage(() =>
+  import("./TemplatePreviews").then(
+    (m) =>
+      function TemplatePreview({ dir }: { dir: string }) {
+        const Component = m.PREVIEWS[dir];
+        return Component ? <Component /> : null;
+      },
+  ),
 );
 
 function BrowserFrame({ url, label, className, children }: { url: string; label: string; className: string; children: ReactNode }) {
@@ -151,11 +154,14 @@ function Header({ t, c, withName }: { t: TemplateInfo; c: typeof VI; withName?: 
       </div>
       <p className="max-w-3xl text-body1 text-foreground-2">{t[locale].description}</p>
       <div className="flex flex-wrap gap-1">
-        {t.tags.map((tag) => (
-          <Badge key={tag} appearance="outline" color="subtle">
-            {tag}
-          </Badge>
-        ))}
+        {t.tags.map((tag) => {
+          const label = typeof tag === "string" ? tag : tag[locale];
+          return (
+            <Badge key={label} appearance="outline" color="subtle">
+              {label}
+            </Badge>
+          );
+        })}
       </div>
     </div>
   );
@@ -174,8 +180,6 @@ export function TemplatesPage() {
   const c = locale === "en" ? EN : VI;
   const featured = TEMPLATES.filter((t) => t.featured);
   const rest = TEMPLATES.filter((t) => !t.featured);
-  // Nội dung trong template là tiếng Việt — đánh dấu cho trình đọc màn hình khi giao diện là tiếng Anh.
-  const previewLang = locale === "en" ? "vi" : undefined;
 
   return (
     <div className="pb-8">
@@ -192,7 +196,7 @@ export function TemplatesPage() {
             </div>
             <div className="flex flex-col gap-2">
               <BrowserFrame url={`localhost:5173${t.previewPath ?? "/"}`} label={c.previewLabel(t.name)} className="h-190 max-h-[80vh]">
-                <div lang={previewLang} className="h-full">
+                <div className="h-full">
                   <Suspense fallback={<Fallback label={c.loading} />}>
                     <Preview dir={t.dir} />
                   </Suspense>
@@ -221,11 +225,9 @@ export function TemplatesPage() {
             <article key={t.dir} className="flex min-w-0 flex-col gap-4 rounded-2xlarge border border-stroke-2 bg-background-1 p-5">
               <Header t={t} c={c} withName />
               <BrowserFrame url="localhost:5173/" label={c.previewLabel(t.name)} className="h-110 overflow-y-auto">
-                <div lang={previewLang}>
-                  <Suspense fallback={<Fallback label={c.loading} />}>
-                    <Preview dir={t.dir} />
-                  </Suspense>
-                </div>
+                <Suspense fallback={<Fallback label={c.loading} />}>
+                  <Preview dir={t.dir} />
+                </Suspense>
               </BrowserFrame>
               <Command dir={t.dir} label={c.command} />
               <Actions t={t} c={c} />

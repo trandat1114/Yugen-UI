@@ -5,18 +5,18 @@ import { docsUrl, openDocs, waitForDocsReady } from "./utils";
 /** Các luồng chính của site docs (#39): bảng lệnh, ngôn ngữ và giao diện còn giữ sau khi tải lại, nút copy lệnh. */
 
 test("Ctrl K mở bảng lệnh, gõ để tìm, Enter chuyển trang", async ({ page }) => {
-  await openDocs(page, "#/");
+  await openDocs(page, "/");
   await page.keyboard.press("Control+K");
   const search = page.getByPlaceholder("Tìm trang, component, khái niệm hoặc lệnh…");
   await expect(search).toBeFocused();
   await search.fill("Combobox");
   await page.keyboard.press("Enter");
-  await expect(page).toHaveURL(/#\/components\/combobox$/);
+  await expect(page).toHaveURL(/\/components\/combobox$/);
   await expect(page.getByRole("heading", { level: 1, name: "Combobox" })).toBeVisible();
 });
 
 test("ngôn ngữ và chế độ tối còn giữ sau khi tải lại", async ({ page }) => {
-  await openDocs(page, "#/");
+  await openDocs(page, "/");
   await page.getByRole("button", { name: /English/ }).click();
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
 
@@ -25,7 +25,7 @@ test("ngôn ngữ và chế độ tối còn giữ sau khi tải lại", async (
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
 
   // Tải lại không kèm ?theme / ?lang: giá trị lấy từ localStorage.
-  await page.goto("/#/", { waitUntil: "domcontentloaded" });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
   await waitForDocsReady(page);
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
@@ -44,12 +44,12 @@ test("nút copy chép đúng lệnh, chạy được trên PowerShell (không &&
   });
   const clipboard = () => page.evaluate(() => (window as unknown as { __copied: string }).__copied);
 
-  await openDocs(page, "#/");
+  await openDocs(page, "/");
   const create = page.locator("section").filter({ has: page.getByRole("heading", { name: "Tạo dự án nhanh" }) });
   await create.getByRole("button", { name: "Copy" }).click();
   expect(await clipboard()).toBe("npx create-yugen-ui@latest my-app --template starter");
 
-  await openDocs(page, "#/concepts/quick-start");
+  await openDocs(page, "/concepts/quick-start");
   const block = page.locator("#template").locator("[class~='group/code']").first();
   await block.hover();
   await block.getByRole("button", { name: "Copy" }).click();
@@ -78,7 +78,7 @@ test.describe("Sidebar kéo được độ rộng, thu về rail (#46)", () => {
   }
 
   test("kéo mép đổi độ rộng trong giới hạn, giữ sau khi tải lại, nhấp đúp về mặc định", async ({ page }) => {
-    await openDocs(page, "#/components/button");
+    await openDocs(page, "/components/button");
     expect(await width(page)).toBe(320);
     await dragBy(page, 60);
     await expect.poll(() => width(page)).toBe(380);
@@ -96,7 +96,7 @@ test.describe("Sidebar kéo được độ rộng, thu về rail (#46)", () => {
   });
 
   test("bàn phím: mũi tên ±16px, Home / End, Enter thu về rail, nút mở rộng trả lại độ rộng cũ", async ({ page }) => {
-    await openDocs(page, "#/");
+    await openDocs(page, "/");
     const handle = separator(page);
     await handle.focus();
     await page.keyboard.press("ArrowRight");
@@ -118,7 +118,7 @@ test.describe("Sidebar kéo được độ rộng, thu về rail (#46)", () => {
   });
 
   test("rail: flyout mở bằng bàn phím và dẫn tới trang; dạng rail có sẵn trước khi app chạy", async ({ page }) => {
-    await openDocs(page, "#/");
+    await openDocs(page, "/");
     await aside(page).getByRole("button", { name: "Thu gọn thanh bên" }).click();
     await expect.poll(() => width(page)).toBe(56);
     expect(await contentOffset(page)).toBe(56);
@@ -135,21 +135,85 @@ test.describe("Sidebar kéo được độ rộng, thu về rail (#46)", () => {
       .analyze();
     expect(scan.violations.map((v) => v.id)).toEqual([]);
     await flyout.getByRole("link", { name: "Combobox", exact: true }).click();
-    await expect(page).toHaveURL(/#\/components\/combobox$/);
+    await expect(page).toHaveURL(/\/components\/combobox$/);
     await expect(flyout).toBeHidden();
     await expect(components).toHaveClass(/text-brand-foreground-2/);
 
     // Script trong index.html đặt độ rộng rail trước khi bundle chạy: chặn JS của app, CSS var vẫn đúng.
     await page.route(/\/(assets\/[^/]+\.js|src\/main\.tsx)(\?.*)?$/, (route) => route.abort());
-    await page.goto(docsUrl("#/"), { waitUntil: "domcontentloaded" });
+    await page.goto(docsUrl("/"), { waitUntil: "domcontentloaded" });
     const root = page.locator("html");
     await expect(root).toHaveAttribute("data-docs-sidebar", "rail");
     expect(await root.evaluate((el) => el.style.getPropertyValue("--docs-sidebar-width"))).toBe("56px");
   });
 });
 
+test.describe("URL theo đường dẫn (#113)", () => {
+  test("link #/… cũ chuyển sang đường dẫn, ?lang=en sang bản /en/", async ({ page }) => {
+    await page.goto("/?theme=dark&lang=en#/components/combobox", { waitUntil: "domcontentloaded" });
+    await expect(page).toHaveURL(/\/en\/components\/combobox\?theme=dark$/);
+    await expect(page.getByRole("heading", { level: 1, name: "Combobox" })).toBeVisible();
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  });
+
+  test("đổi ngôn ngữ sang URL /en/, link nội bộ giữ ngôn ngữ, lựa chọn được nhớ (#123)", async ({ page }) => {
+    await openDocs(page, "/components/button");
+    await page.getByRole("button", { name: /English/ }).click();
+    await expect(page).toHaveURL(/\/en\/components\/button\?/);
+    await expect(page.locator('main a[href="/en/"]').first()).toBeVisible();
+    // Mở link tiếng Việt khi đã chọn tiếng Anh → sang bản /en/.
+    await page.goto("/concepts/cli", { waitUntil: "domcontentloaded" });
+    await expect(page).toHaveURL(/\/en\/concepts\/cli$/);
+    await expect(page.getByRole("heading", { level: 1, name: "@yugen-ui/cli" })).toBeVisible();
+  });
+
+  test("trang tiếng Anh prerender có canonical riêng và hreflang", async ({ page }) => {
+    test.skip(process.env.YUGEN_E2E_DEV === "1", "dev server không prerender");
+    await page.route(/\/assets\/[^/]+\.js(\?.*)?$/, (route) => route.abort());
+    await page.goto("/en/concepts/cli", { waitUntil: "domcontentloaded" });
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://trandat1114.github.io/Yugen-UI/en/concepts/cli");
+    await expect(page.locator('link[hreflang="vi"]')).toHaveAttribute("href", "https://trandat1114.github.io/Yugen-UI/concepts/cli");
+    // Foundations song ngữ (#138): canonical riêng, có hreflang.
+    await page.goto("/en/foundations/color", { waitUntil: "domcontentloaded" });
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://trandat1114.github.io/Yugen-UI/en/foundations/color");
+    await expect(page.locator('link[hreflang="vi"]')).toHaveAttribute("href", "https://trandat1114.github.io/Yugen-UI/foundations/color");
+    // Button đã dịch: canonical riêng.
+    await page.goto("/en/components/button", { waitUntil: "domcontentloaded" });
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://trandat1114.github.io/Yugen-UI/en/components/button");
+  });
+
+  test("bấm link nội bộ đổi trang không tải lại, Back quay về", async ({ page }) => {
+    await openDocs(page, "/components/button");
+    await page.evaluate(() => ((window as unknown as { marker: number }).marker = 1));
+    await page.locator('main a[href="/"]').first().click();
+    await expect(page.getByRole("heading", { level: 1, name: "Yugen UI" })).toBeVisible();
+    expect(new URL(page.url()).pathname).toBe("/");
+    expect(await page.evaluate(() => (window as unknown as { marker?: number }).marker)).toBe(1);
+    await page.goBack();
+    await expect(page.getByRole("heading", { level: 1, name: "Button" })).toBeVisible();
+  });
+
+  test("trang prerender có nội dung và head riêng khi chưa chạy JS", async ({ page }) => {
+    test.skip(process.env.YUGEN_E2E_DEV === "1", "dev server không prerender");
+    await page.route(/\/assets\/[^/]+\.js(\?.*)?$/, (route) => route.abort());
+    await page.goto("/components/button", { waitUntil: "domcontentloaded" });
+    await expect(page.getByRole("heading", { level: 1, name: "Button" })).toBeVisible();
+    await expect(page).toHaveTitle("Button · Yugen UI");
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://trandat1114.github.io/Yugen-UI/components/button");
+  });
+
+  test("sitemap.xml liệt kê mọi trang kèm lastmod (#114)", async ({ request }) => {
+    test.skip(process.env.YUGEN_E2E_DEV === "1", "dev server không prerender");
+    const xml = await (await request.get("/sitemap.xml")).text();
+    expect(xml).toContain("<loc>https://trandat1114.github.io/Yugen-UI/components/button</loc>");
+    expect(xml).toMatch(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/);
+    expect(xml.match(/<url>/g)?.length).toBeGreaterThan(140);
+  });
+});
+
 test("form react-hook-form + zod: lỗi theo schema, focus vào ô lỗi đầu tiên", async ({ page }) => {
-  await openDocs(page, "#/components/formvalidation");
+  await openDocs(page, "/components/formvalidation");
   const form = page.locator("form").first();
   await form.getByRole("button", { name: "Tạo tài khoản" }).click();
   await expect(form.getByText("Họ tên cần ít nhất 2 ký tự.")).toBeVisible();

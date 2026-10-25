@@ -18,3 +18,8 @@ public/r/
 # Ảnh nền visual chỉ commit bản Linux (CI là chuẩn); bản Windows / macOS chụp trên máy, không commit.
 e2e/__screenshots__/**/*-win32.png
 e2e/__screenshots__/**/*-darwin.png
+.lighthouseci
+lighthouse-report
+
+# Worktree tạm của Claude Code (agent chạy song song)
+.claude/worktrees/

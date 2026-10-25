@@ -4,7 +4,7 @@ import { openDocs } from "./utils";
 /** Foundations › Motion (#45): playground, xem trước giảm chuyển động, bản tiếng Anh. */
 
 test("playground: chọn thuộc tính và thời lượng, chạy, chép đúng class", async ({ page }) => {
-  await openDocs(page, "#/foundations/motion");
+  await openDocs(page, "/foundations/motion");
   const playground = page.locator("#playground");
   await playground.getByLabel("Thuộc tính").selectOption("scale");
   await playground.getByLabel("B · Thời lượng").selectOption("duration-slow");
@@ -18,7 +18,7 @@ test("playground: chọn thuộc tính và thời lượng, chạy, chép đúng
 });
 
 test("xem trước giảm chuyển động: Drawer bỏ trượt, Dialog vẫn mờ dần; rời trang thì tắt", async ({ page }) => {
-  await openDocs(page, "#/foundations/motion");
+  await openDocs(page, "/foundations/motion");
   const patterns = page.locator("#patterns");
   const animation = (name: string) =>
     page.getByRole("dialog", { name }).evaluate((el) => getComputedStyle(el).animationName);
@@ -35,12 +35,12 @@ test("xem trước giảm chuyển động: Drawer bỏ trượt, Dialog vẫn m
   expect(await animation("Lưu thay đổi?")).not.toBe("none");
   await page.keyboard.press("Escape");
 
-  await page.goto("/#/foundations/color");
+  await page.goto("/foundations/color");
   await expect(page.locator("html")).not.toHaveAttribute("data-motion-preview", /.*/);
 });
 
 test("bản tiếng Anh: không có thông báo trang chưa dịch, mục lục tiếng Anh", async ({ page }) => {
-  await openDocs(page, "#/foundations/motion");
+  await openDocs(page, "/foundations/motion");
   await page.getByRole("button", { name: /English/ }).click();
   await expect(page.getByRole("heading", { level: 2, name: "Reduced motion" })).toBeVisible();
   await expect(page.getByRole("navigation", { name: "On this page" }).getByRole("button", { name: "Do and don't" })).toBeVisible();

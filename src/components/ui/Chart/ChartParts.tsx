@@ -4,6 +4,8 @@ import { Table20Filled, Table20Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { ToggleButton } from "../ToggleButton/ToggleButton";
 import { Table, TableBody, TableHeader, TableHeaderCell, TableRow, TableCell } from "../Table/Table";
+import { useYugenMessages } from "../YugenProvider/context";
+import { chartMessages } from "./messages";
 import { chartUid, patternId, slotDash, slotFill, slotVar, type ChartSlot } from "./chartUtils";
 
 /* ================================================================== Hoa văn (texture) */
@@ -314,8 +316,10 @@ export interface ChartContainerProps extends Omit<React.HTMLAttributes<HTMLEleme
   toolbar?: React.ReactNode;
   /** Legend — hiển thị phía trên vùng vẽ, theo hướng chữ của trang. */
   legend?: React.ReactNode;
-  /** Nội dung chế độ bảng (thường là ChartTable). Có thì hiện nút "Bảng dữ liệu". */
-  table?: React.ReactNode;
+  /**
+   * Nội dung chế độ bảng (thường là ChartTable). Có thì hiện nút "Bảng dữ liệu". Truyền hàm để chỉ dựng bảng khi đang bật.
+   */
+  table?: React.ReactNode | (() => React.ReactNode);
   showTable?: boolean;
   defaultShowTable?: boolean;
   onShowTableChange?: (showTable: boolean) => void;
@@ -341,6 +345,7 @@ export const ChartContainer = React.forwardRef<HTMLElement, ChartContainerProps>
     },
     ref,
   ) => {
+    const msg = useYugenMessages("chart", chartMessages);
     const id = chartUid(React.useId());
     const [innerTable, setInnerTable] = React.useState(defaultShowTable);
     const tableOn = !!table && (showTable ?? innerTable);
@@ -386,7 +391,7 @@ export const ChartContainer = React.forwardRef<HTMLElement, ChartContainerProps>
                     checked={tableOn}
                     onCheckedChange={setTable}
                   >
-                    Bảng dữ liệu
+                    {msg.dataTable}
                   </ToggleButton>
                 )}
               </div>
@@ -394,7 +399,7 @@ export const ChartContainer = React.forwardRef<HTMLElement, ChartContainerProps>
           </div>
         )}
         {tableOn ? (
-          table
+          typeof table === "function" ? table() : table
         ) : (
           <>
             {legend}

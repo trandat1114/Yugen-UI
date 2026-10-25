@@ -176,6 +176,9 @@
   --animate-surface-out: fade-out var(--durationFast) var(--curveAccelerateMid);
   --animate-shimmer: shimmer 1.8s linear infinite;
   --animate-indeterminate: indeterminate 3s linear infinite;
+  /* Bản chạy bằng transform (compositor, không vẽ lại / layout mỗi frame) — Skeleton và ProgressBar dùng hai bản này. */
+  --animate-sweep: sweep 1.8s linear infinite;
+  --animate-indeterminate-slide: indeterminate-slide 3s linear infinite;
   --animate-slide-in-end: slide-in-end var(--durationGentle) var(--curveDecelerateMid);
   --animate-slide-in-start: slide-in-start var(--durationGentle) var(--curveDecelerateMid);
   --animate-slide-in-bottom: slide-in-bottom var(--durationGentle) var(--curveDecelerateMid);
@@ -198,6 +201,24 @@
   }
   to {
     left: 100%;
+  }
+}
+/* Dải sáng (phần tử phủ rộng bằng khung) chạy từ ngoài mép đầu sang ngoài mép cuối. */
+@keyframes sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+/* Thanh rộng 1/3 khung, đặt ở left: 0: từ ngoài mép trái (-100% chính nó) tới ngoài mép phải (300%). */
+@keyframes indeterminate-slide {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
   }
 }
 /* --yugen-dir = 1 (LTR) | -1 (RTL): "end" là phải ở LTR, trái ở RTL */

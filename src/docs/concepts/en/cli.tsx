@@ -12,6 +12,7 @@ import {
   CLI_INIT,
   CLI_INIT_SOURCE,
 } from "../_snippets";
+import { docsPath } from "../../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -71,6 +72,15 @@ npx @yugen-ui/cli add --all               # every component
 npx @yugen-ui/cli add button --overwrite  # also replace files you have edited
 npx @yugen-ui/cli list grid               # search the registry, ✓ means already in the project`;
 
+const UPDATE = `npx @yugen-ui/cli diff                   # every copied component: print the diff against the registry
+npx @yugen-ui/cli update button --dry-run # show the diff, write nothing
+npx @yugen-ui/cli update                  # apply the registry version (asks before writing)
+npx @yugen-ui/cli remove data-grid        # delete the files nothing else imports`;
+
+const THEME = `npx @yugen-ui/cli theme --brand #0f6cbd --name acme
+# → src/yugen-brand.css: [data-brand="acme"] { --brand-10 … --brand-160 }, imported from src/index.css
+# <YugenProvider applyToDocument withToaster brand="acme">`;
+
 const CI = `npx @yugen-ui/cli@latest create app -t starter -y --no-git
 npx @yugen-ui/cli@latest add button dialog -y --no-install`;
 
@@ -82,9 +92,13 @@ export default function Page() {
           <Table
             head={["Command", "What it does"]}
             rows={[
-              ["create [dir]", "New app from a template: starter, saas, blog, dashboard, ai-chat."],
-              ["init", "Set up an existing React project with the npm package or with copied source. Writes yugen.json."],
+              ["create [dir]", "New app from a template: starter, saas, blog, dashboard, ai-chat. --ref <branch|tag> takes the templates from the repo."],
+              ["init", "Set up an existing React project with the npm package or with copied source. Writes yugen.json and wraps the app in YugenProvider."],
               ["add <names…>", "Copy components and the components they depend on, install missing npm packages."],
+              ["diff [names…]", "Compare copied source with the registry and print the diff. Changes nothing."],
+              ["update [names…]", "Apply the registry version to copied source: shows the diff, asks, then writes."],
+              ["remove <names…>", "Delete a component's files that nothing else imports."],
+              ["theme --brand <hex>", "Generate a 16-step brand ramp into yugen-brand.css, with the Theme Designer's algorithm."],
               ["list [query]", "Components in the registry."],
               ["doctor", "Check React, Tailwind CSS v4, the theme import, the yugen-ui version and YugenProvider."],
             ]}
@@ -102,7 +116,7 @@ export default function Page() {
           <P>
             Options: <C>-t, --template</C>, <C>--lang en|vi</C> (language of the app's text, for templates that have both; English by default), <C>--pm npm|pnpm|yarn|bun</C>, <C>--no-install</C>, <C>--no-git</C>, <C>--force</C> (write into a
             non-empty directory). <C>npx create-yugen-ui@latest</C> is a shorter way to run the same command. Templates ship inside the
-            package, so this works offline. Preview them on <A href="#/templates">Templates</A>.
+            package, so this works offline. Preview them on <A href={docsPath("/templates")}>Templates</A>.
           </P>
         </div>
       </DocSection>
@@ -158,6 +172,33 @@ export default function Page() {
         </div>
       </DocSection>
 
+      <DocSection
+        id="update"
+        title="Update and remove components"
+        description="Source mode. Without names, the CLI looks at every Yugen component in the project."
+      >
+        <div className="flex flex-col gap-4">
+          <CodeBlock code={UPDATE} />
+          <P>
+            <C>update</C> prints the diff of every file it would change, lists new files (for example a dependency the registry added),
+            then asks before writing. Your edits in those files are replaced, so commit first. <C>remove</C> scans the project&apos;s imports
+            (relative paths and aliases) and keeps files that are still used, for example Spinner while Button imports it. npm packages are
+            not uninstalled.
+          </P>
+        </div>
+      </DocSection>
+
+      <DocSection id="theme" title="Brand color" description="Works in package and source mode, with the same algorithm as the Theme Designer.">
+        <div className="flex flex-col gap-4">
+          <CodeBlock code={THEME} />
+          <P>
+            <C>--vibrancy</C> (50–150) and <C>--torsion</C> (−30…30) match the Theme Designer&apos;s two sliders. When white text on the
+            primary button is under 4.5:1, the CLI warns and suggests a darker key that passes. For radius, density, fonts and the rest, use
+            the <A href={docsPath("/theme-designer")}>Theme Designer</A>.
+          </P>
+        </div>
+      </DocSection>
+
       <DocSection id="doctor" title="Check the setup" description="Read-only. Exits with code 1 when something is wrong, so it can run in CI.">
         <div className="flex flex-col gap-4">
           <PackageManagerTabs packages={CLI_DOCTOR} command="dlx" />
@@ -180,7 +221,7 @@ export default function Page() {
           <CodeBlock code={CLI_CONFIG} />
           <P>
             Components come from the registry at <C>{REGISTRY_URL}</C>, the same source as the{" "}
-            <A href="#/concepts/shadcn-registry">shadcn CLI</A>. Projects that ran <C>shadcn init</C> with the Yugen registry can use{" "}
+            <A href={docsPath("/concepts/shadcn-registry")}>shadcn CLI</A>. Projects that ran <C>shadcn init</C> with the Yugen registry can use{" "}
             <C>yugen add</C> straight away because the CLI reads <C>components.json</C>. Point <C>--registry</C>, or <C>registry</C> in
             yugen.json, at another URL or a local folder (<C>public/r</C> after <C>npm run registry</C> when working on Yugen).
           </P>

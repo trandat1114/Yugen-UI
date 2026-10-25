@@ -14,6 +14,7 @@ import {
   detectPackageManager,
   findCssFile,
   findEntryFile,
+  findProviderUsage,
   packageMajor,
   readPkg,
   readTsconfigAlias,
@@ -22,7 +23,8 @@ import {
   type PackageManager,
 } from "../lib/project.js";
 import { installItems, registryFor } from "./add.js";
-import { p, pc, select, text, type Ctx } from "../lib/ui.js";
+import { wrapWithProvider } from "../lib/provider.js";
+import { confirm, p, pc, select, text, type Ctx } from "../lib/ui.js";
 
 export interface InitOptions {
   cwd: string;
@@ -32,6 +34,8 @@ export interface InitOptions {
   overwrite?: boolean;
   /** false: không chạy package manager, chỉ in lệnh. */
   install?: boolean;
+  /** false: không bọc app trong YugenProvider, chỉ in hướng dẫn. */
+  provider?: boolean;
 }
 
 interface Project {
@@ -99,7 +103,7 @@ export async function init(opts: InitOptions, ctx: Ctx): Promise<YugenConfig> {
   const config = mode === "package" ? await initPackage(project, css, opts) : await initSource(project, css!, previous, opts);
   writeConfig(cwd, config);
   p.log.success(`Wrote ${CONFIG_FILE}`);
-  providerNote(project, config);
+  await provider(project, config, opts, ctx);
   return config;
 }
 
@@ -180,18 +184,42 @@ async function initSource(project: Project, css: string, previous: YugenConfig |
 }
 
 /** In đoạn bọc YugenProvider (MVP chưa sửa JSX tự động) nếu file gốc chưa dùng. */
+/** Bọc app trong YugenProvider bằng codemod (hỏi trước); không được thì in hướng dẫn. */
+async function provider(project: Project, config: YugenConfig, opts: InitOptions, ctx: Ctx) {
+  const entry = findEntryFile(project.cwd, project.framework);
+  if (!entry) return providerNote(project, config);
+  const file = path.join(project.cwd, entry);
+  const code = readText(file);
+  // App đã render YugenProvider ở chỗ khác (vd. App.tsx của template): không bọc thêm lớp nữa.
+  if (code.includes("YugenProvider") || findProviderUsage(project.cwd, config.paths?.ui)) return;
+  if (opts.provider !== false && (await confirm(ctx, `Wrap your app in YugenProvider (${entry})?`, true))) {
+    const result = wrapWithProvider(code, project.framework, providerImport(config, entry));
+    if (result.changed) {
+      writeText(file, result.code);
+      p.log.success(`Wrapped the app in YugenProvider — ${entry}`);
+      return;
+    }
+    p.log.warn(`Could not find where to wrap the app in ${entry}.`);
+  }
+  providerNote(project, config);
+}
+
+/** Đường import YugenProvider từ `entry`: gói npm, alias của dự án hoặc đường dẫn tương đối. */
+function providerImport(config: YugenConfig, entry: string | null) {
+  const target = config.paths ? path.posix.join(config.paths.ui, "YugenProvider/YugenProvider") : "";
+  return config.mode === "package"
+    ? PACKAGE
+    : config.aliases
+      ? `${config.aliases.ui}/YugenProvider/YugenProvider`
+      : entry
+        ? path.posix.relative(path.posix.dirname(entry), target).replace(/^(?!\.)/, "./")
+        : `./${target}`;
+}
+
 function providerNote({ cwd, framework }: Project, config: YugenConfig) {
   const entry = findEntryFile(cwd, framework);
-  if (entry && readText(path.join(cwd, entry)).includes("YugenProvider")) return;
-  const target = config.paths ? path.posix.join(config.paths.ui, "YugenProvider/YugenProvider") : "";
-  const from =
-    config.mode === "package"
-      ? PACKAGE
-      : config.aliases
-        ? `${config.aliases.ui}/YugenProvider/YugenProvider`
-        : entry
-          ? path.posix.relative(path.posix.dirname(entry), target).replace(/^(?!\.)/, "./")
-          : `./${target}`;
+  if (findProviderUsage(cwd, config.paths?.ui)) return;
+  const from = providerImport(config, entry);
   p.note(
     [
       pc.cyan(`import { YugenProvider } from "${from}";`),

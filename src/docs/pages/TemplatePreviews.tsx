@@ -1,18 +1,27 @@
-import { useEffect, useState, type ComponentType } from "react";
+import { useEffect, useMemo, useState, type ComponentType } from "react";
 import { useYugen, YugenProvider } from "@/components/ui";
+import AiChatApp from "../template-library/ai-chat/App";
+import { createMockBackend } from "../template-library/ai-chat/api";
+import aiChatEn from "../template-library/ai-chat/content/en";
+import aiChatVi from "../template-library/ai-chat/content/vi";
 import { BlogLayout } from "../template-library/blog/BlogLayout";
 import { MemoryRouter } from "../template-library/blog/router";
+import blogEn from "../template-library/blog/content/en";
+import blogVi from "../template-library/blog/content/vi";
+import { Dashboard } from "../template-library/dashboard/Dashboard";
+import type { Appearance as DashboardAppearance } from "../template-library/dashboard/context";
+import dashboardEn from "../template-library/dashboard/content/en";
+import dashboardVi from "../template-library/dashboard/content/vi";
+import { MemoryRouter as DashboardRouter } from "../template-library/dashboard/router";
 import { AppShell, type Appearance } from "../template-library/saas/AppShell";
+import saasEn from "../template-library/saas/content/en";
+import saasVi from "../template-library/saas/content/vi";
 import { Welcome } from "../template-library/starter/Welcome";
 import welcomeSource from "../template-library/starter/Welcome.tsx?raw";
 import starterEn from "../template-library/starter/content/en";
 import starterVi from "../template-library/starter/content/vi";
 import { useLocale } from "../i18n";
 import type { PageId } from "../template-library/saas/pages";
-import StatsBlock from "../block-library/02-stats";
-import TransactionsBlock from "../block-library/06-transactions";
-import AnalyticsBlock from "../block-library/11-analytics";
-import AiAssistantBlock from "../block-library/12-ai-assistant";
 
 const JP_FONT_ID = "yugen-starter-jp-font";
 
@@ -21,6 +30,7 @@ function StarterPreview() {
   const docs = useYugen();
   // Preview theo ngôn ngữ docs; app tạo bằng CLI dùng tiếng Anh, hoặc tiếng Việt với --lang vi.
   const { locale } = useLocale();
+  const starter = locale === "vi" ? starterVi : starterEn;
   const [appearance, setAppearance] = useState<Appearance>({ theme: docs.theme, brand: docs.brand });
 
   useEffect(() => {
@@ -35,22 +45,35 @@ function StarterPreview() {
   }, []);
 
   return (
-    <YugenProvider theme={appearance.theme} brand={appearance.brand} className="h-full">
-      <Welcome embedded content={locale === "vi" ? starterVi : starterEn} appearance={appearance} onAppearanceChange={(patch) => setAppearance((a) => ({ ...a, ...patch }))} />
+    <YugenProvider theme={appearance.theme} brand={appearance.brand} messages={starter.messages} className="h-full">
+      <Welcome embedded content={starter} appearance={appearance} onAppearanceChange={(patch) => setAppearance((a) => ({ ...a, ...patch }))} />
     </YugenProvider>
   );
 }
 
-/** Chính AppShell của templates/vite-saas, chạy trong provider lồng — đổi theme trong preview không ảnh hưởng trang docs. */
+/**
+ * Chính AppShell của templates/vite-saas, chạy trong provider lồng — đổi theme trong preview không ảnh hưởng trang docs.
+ * Chữ theo ngôn ngữ docs (app tạo bằng CLI: tiếng Anh, tiếng Việt với --lang vi); đổi ngôn ngữ thì dựng lại (thông báo mẫu, state).
+ */
 function SaasPreview() {
   const docs = useYugen();
+  const { locale } = useLocale();
+  const content = locale === "vi" ? saasVi : saasEn;
   const [page, setPage] = useState<PageId>("overview");
   const [appearance, setAppearance] = useState<Appearance>({ theme: docs.theme, brand: docs.brand });
 
   return (
-    <YugenProvider theme={appearance.theme} brand={appearance.brand} className="h-full">
+    <YugenProvider
+      theme={appearance.theme}
+      brand={appearance.brand}
+      messages={content.messages}
+      locale={content.locale}
+      className="h-full"
+    >
       <AppShell
+        key={content.lang}
         embedded
+        content={content}
         page={page}
         onNavigate={setPage}
         appearance={appearance}
@@ -60,33 +83,67 @@ function SaasPreview() {
   );
 }
 
-/** Blog của templates/vite-blog với router trong bộ nhớ — bấm bài, thẻ, mục lục không đổi URL của docs. */
+/** Blog của templates/vite-blog với router trong bộ nhớ — bấm bài, thẻ, mục lục không đổi URL của docs. Chữ và bài theo ngôn ngữ docs. */
 function BlogPreview() {
   const docs = useYugen();
+  const { locale } = useLocale();
+  const content = locale === "vi" ? blogVi : blogEn;
   const [theme, setTheme] = useState(docs.theme);
   return (
-    <YugenProvider theme={theme} brand="sakura" className="h-full">
-      <MemoryRouter>
-        <BlogLayout embedded theme={theme} onThemeChange={setTheme} />
+    <YugenProvider
+      theme={theme}
+      brand="sakura"
+      messages={content.messages}
+      locale={content.locale}
+      className="h-full"
+    >
+      <MemoryRouter key={content.lang}>
+        <BlogLayout embedded content={content} theme={theme} onThemeChange={setTheme} />
       </MemoryRouter>
     </YugenProvider>
   );
 }
 
+/**
+ * App của templates/vite-dashboard với router trong bộ nhớ, chữ theo ngôn ngữ docs. Cao bằng khung preview (h-full) hoặc
+ * tối thiểu h-110 khi khung không đặt chiều cao cho nội dung.
+ */
 function DashboardPreview() {
+  const docs = useYugen();
+  const { locale } = useLocale();
+  const content = locale === "vi" ? dashboardVi : dashboardEn;
+  const [appearance, setAppearance] = useState<DashboardAppearance>({ theme: docs.theme, brand: docs.brand });
+
   return (
-    <div className="flex flex-col gap-5 bg-shell p-5">
-      <StatsBlock />
-      <AnalyticsBlock />
-      <TransactionsBlock />
-    </div>
+    <YugenProvider
+      theme={appearance.theme}
+      brand={appearance.brand}
+      messages={content.messages}
+      locale={content.lang === "en" ? "en-US" : "vi-VN"}
+      lang={content.lang}
+      className="relative h-full min-h-110"
+    >
+      <div className="absolute inset-0">
+        <DashboardRouter>
+          <Dashboard embedded content={content} appearance={appearance} onAppearanceChange={(patch) => setAppearance((a) => ({ ...a, ...patch }))} />
+        </DashboardRouter>
+      </div>
+    </YugenProvider>
   );
 }
 
+/**
+ * templates/vite-ai-chat in embedded mode: router and conversations in memory (nothing saved), text and mock replies in
+ * the docs language. Fixed height: the frame of a non-featured template scrolls instead of giving its content a height.
+ */
 function AiChatPreview() {
+  const docs = useYugen();
+  const { locale } = useLocale();
+  const content = locale === "vi" ? aiChatVi : aiChatEn;
+  const send = useMemo(() => createMockBackend(content.mock), [content]);
   return (
-    <div className="flex justify-center bg-shell p-5">
-      <AiAssistantBlock />
+    <div className="h-110">
+      <AiChatApp key={locale} embedded content={content} send={send} defaultAppearance={{ theme: docs.theme, brand: docs.brand }} />
     </div>
   );
 }

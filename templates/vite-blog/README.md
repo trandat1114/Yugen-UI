@@ -1,7 +1,7 @@
-# Nhật ký Sakura
+# Sakura Notes
 
-Starter template của [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates) — blog viết bằng Markdown trên Vite + React +
-Tailwind CSS v4. Không cần CMS hay thư viện Markdown: thêm file `.md` là có bài mới.
+A Markdown blog built with [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates) on Vite, React and Tailwind CSS
+v4. No CMS or Markdown library: add a `.md` file and the post is live.
 
 ```bash
 npx create-yugen-ui@latest my-app --template blog
@@ -9,37 +9,47 @@ cd my-app
 npm run dev
 ```
 
-Không muốn cài gì? Mở thẳng trên StackBlitz: https://stackblitz.com/github/trandat1114/Yugen-UI/tree/main/templates/vite-blog
+Try it without installing anything on StackBlitz: https://stackblitz.com/github/trandat1114/Yugen-UI/tree/main/templates/vite-blog
 
-Kiểm tra cấu hình bất cứ lúc nào: `npx @yugen-ui/cli doctor` (xem https://trandat1114.github.io/Yugen-UI/#/concepts/cli).
+Check your setup any time: `npx @yugen-ui/cli doctor` (see https://trandat1114.github.io/Yugen-UI/#/concepts/cli).
 
-## Có gì bên trong
+## What's included
 
-- Bài viết là file `src/posts/*.md` có frontmatter (`title`, `description`, `date`, `tags`, `draft`).
-- Markdown hiển thị bằng parser an toàn của Yugen UI: code tô màu có nút sao chép, bảng, trích dẫn, việc cần làm, ảnh, link nội bộ.
-- Trang chủ có tìm kiếm và lọc theo thẻ; trang bài có mục lục, thời gian đọc, bài trước / sau, sao chép liên kết.
-- Định tuyến theo đường dẫn thật (`/posts/<slug>/`) bằng History API — không thêm thư viện.
-- **SEO sinh lúc build** (plugin `blogSeo` trong `vite.config.ts`): mỗi bài / thẻ một file HTML có `<title>`, `description`,
-  canonical, Open Graph, JSON-LD `BlogPosting`; kèm `sitemap.xml`, `rss.xml`, `robots.txt`, `404.html`.
-- Theme sáng / tối / tương phản cao, lưu vào `localStorage`, không nháy khi tải lại.
+- Posts are `src/content/<lang>/posts/*.md` files with frontmatter (`title`, `description`, `date`, `tags`,
+  `draft`).
+- Markdown goes through Yugen UI's safe parser: highlighted code with a copy button, tables, quotes, task lists, images and
+  internal links.
+- The home page has search and tag filters; a post page has a table of contents, reading time, previous / next post and a
+  copy link button.
+- Real paths (`/posts/<slug>/`) with the History API, no router library.
+- **SEO at build time** (the `blogSeo` plugin in `vite.config.ts`): an HTML file per post and tag with `<title>`,
+  `description`, canonical, Open Graph and `BlogPosting` JSON-LD, plus `sitemap.xml`, `rss.xml`, `robots.txt` and
+  `404.html`.
+- Light, dark and high-contrast themes, saved in `localStorage` with no flash on reload.
+- English text and sample posts. For Vietnamese, create the app with
+  `npx create-yugen-ui@latest my-app --template blog --lang vi`.
 
-## Cấu trúc
+## Structure
 
 ```
 src/
-  site.ts          # tên blog, mô tả, domain (SITE.url), tác giả
-  posts/*.md       # bài viết — tên file là đường dẫn
-  content.ts       # đọc frontmatter, thời gian đọc (dùng chung với plugin SEO)
-  Markdown.tsx     # Markdown → component, heading có id cho mục lục
-  BlogLayout.tsx   # thanh trên, nội dung theo route, chân trang
+  site.ts                 # your domain (SITE.url)
+  content/<lang>.ts       # blog name, description, author and interface text
+  content/<lang>/posts/   # posts: the file name is the URL
+  content/index.ts        # the language in use (the app and the SEO plugin read it)
+  blog.ts                 # frontmatter, reading time, page titles (shared with the SEO plugin)
+  posts.ts                # loads the posts of the language in use
+  Markdown.tsx            # Markdown to components, headings with ids for the table of contents
+  BlogLayout.tsx          # top bar, content by route, footer
   PostList.tsx · PostPage.tsx · router.tsx
-vite.config.ts     # plugin blogSeo: HTML tĩnh từng trang, sitemap, RSS
+vite.config.ts            # blogSeo plugin: static HTML for every page, sitemap, RSS
 ```
 
-## Triển khai
+## Deploy
 
-1. Đặt `url` trong `src/site.ts` thành domain thật (build sẽ nhắc nếu còn `example.com`).
-2. `npm run build` → đưa `dist/` lên host tĩnh bất kỳ. Ở thư mục con (GitHub Pages): `BASE=/ten-repo/ npm run build`.
-3. Gửi `sitemap.xml` cho Google Search Console.
+1. Set `url` in `src/site.ts` to your domain (the build warns while it is still `example.com`).
+2. Run `npm run build` and upload `dist/` to any static host. For a subfolder (GitHub Pages):
+   `BASE=/repo-name/ npm run build`.
+3. Submit `sitemap.xml` to Google Search Console.
 
-File trong `src/` sinh từ `src/docs/template-library/blog` (và `src/docs/block-library`) bằng `scripts/sync-templates.mjs`.
+Files in `src/` are generated from `src/docs/template-library/blog` (and `src/docs/block-library`) by `scripts/sync-templates.mjs`.

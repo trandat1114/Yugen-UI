@@ -13,6 +13,7 @@ import {
 } from "@/components/ui";
 import { DocSection, DoDont, PropsTable } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
+import { docsPath } from "../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -229,6 +230,12 @@ export default function Page() {
                 defaultValue: "false",
                 description: "Gắn <Toaster /> để toast() hoạt động; vị trí bottom-end (bottom-start khi RTL). Chỉ bật ở provider gốc.",
               },
+              {
+                name: "messages",
+                type: "YugenMessagesInput",
+                description: "Đổi chuỗi có sẵn của component theo namespace, vd. messagesEn cho tiếng Anh. Provider lồng kế thừa rồi ghi đè tiếp. Xem Ngôn ngữ giao diện.",
+              },
+              { name: "locale", type: "string", defaultValue: `"vi-VN"`, description: "Locale Intl cho ngày, giờ và số trong component. Provider lồng kế thừa provider ngoài." },
               { name: "className, …div props", type: "HTMLAttributes<HTMLDivElement>", description: "Truyền xuống thẻ div bao ngoài (ref được forward)." },
             ]}
           />
@@ -282,7 +289,7 @@ export default function Page() {
             <li>
               Dialog, Menu, Popover, Tooltip render qua portal vào <C>{"<body>"}</C> nhưng vẫn tự nhận theme / brand / hướng chữ của
               YugenProvider lồng gần nhất (qua <C>usePortalThemeProps()</C>). Chi tiết ở trang{" "}
-              <a className="text-link underline hover:text-link-hover" href="#/concepts/positioning">Định vị</a>.
+              <a className="text-link underline hover:text-link-hover" href={docsPath("/concepts/positioning")}>Định vị</a>.
             </li>
           </ul>
         </div>
@@ -295,7 +302,7 @@ export default function Page() {
             rows={[
               ["Global", <C key="a">--grey-14, --brand-80, --red-shade-10</C>, "Chỉ tokens.css (và minh hoạ trang trí, trang bảng màu)."],
               ["Alias", <C key="a">--colorNeutralForeground1, --colorBrandBackground, --spacingM, --shadow16</C>, "index.css (map sang Tailwind) và CSS tuỳ biến khi thật cần."],
-              ["Utility", <C key="a">text-foreground-1, bg-brand-background, p-M, shadow-16</C>, "Mọi file .tsx."],
+              ["Utility", <C key="a">text-foreground-1, bg-brand-background, p-3, shadow-16</C>, "Mọi file .tsx."],
             ]}
           />
           <CodeBlock code={LAYERS_CODE} />
@@ -314,13 +321,14 @@ export default function Page() {
         <div className="flex flex-col gap-4">
           <ol className="flex max-w-3xl list-decimal flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>
-              Mở <a className="text-link underline hover:text-link-hover" href="#/theme-designer">Theme Designer</a>, nhập màu chủ đạo và
+              Mở <a className="text-link underline hover:text-link-hover" href={docsPath("/theme-designer")}>Theme Designer</a>, nhập màu chủ đạo và
               tên brand. Trang sinh ramp bằng cách giữ đường cong lightness / chroma OKLCH của Communication Blue và đổi hue, xem trước trên
               component thật, kiểm tra tương phản.
             </li>
             <li>
-              Bấm <strong className="font-semibold">Xuất CSS</strong> và dán khối <C>[data-brand=&quot;tên&quot;]</C> vào{" "}
-              <C>src/styles/tokens.css</C>, sau các brand có sẵn.
+              Ở mục <strong className="font-semibold">Xuất token</strong>, chép CSS (hoặc tải file) và dán khối{" "}
+              <C>[data-brand=&quot;tên&quot;]</C> vào file CSS chính của app, ngay sau <C>@import &quot;yugen-ui/theme.css&quot;</C>. Dự án đã
+              chép mã nguồn thì dán vào <C>src/styles/tokens.css</C>, sau các brand có sẵn.
             </li>
             <li>
               Dùng <C>brand=&quot;tên&quot;</C> trên YugenProvider (kiểu <C>YugenBrand</C> nhận chuỗi bất kỳ) hoặc{" "}

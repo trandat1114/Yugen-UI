@@ -109,6 +109,16 @@ const ENTRY_CANDIDATES: Record<Framework, string[]> = {
   other: ["src/main.tsx", "src/main.jsx", "src/index.tsx", "src/index.jsx", "src/App.tsx"],
 };
 
+/** Mã của ứng dụng (src, app, pages), dùng cho doctor và codemod. */
+export const appCodeFiles = (cwd: string) => ["src", "app", "pages"].flatMap((d) => walk(path.join(cwd, d), /\.[cm]?[jt]sx?$/, 6));
+
+/** File của app đã render <YugenProvider> (bỏ qua chính thư mục component `ui` ở chế độ source), hoặc null. */
+export function findProviderUsage(cwd: string, ui?: string): string | null {
+  const uiAbs = ui ? path.join(cwd, ui) : null;
+  const inUi = (f: string) => !!uiAbs && !path.relative(uiAbs, f).startsWith("..");
+  return appCodeFiles(cwd).find((f) => !inUi(f) && /<YugenProvider\b/.test(readText(f))) ?? null;
+}
+
 /** File gốc nơi bọc YugenProvider / import CSS (main.tsx, app/layout.tsx…). */
 export function findEntryFile(cwd: string, framework: Framework): string | null {
   return ENTRY_CANDIDATES[framework].find((f) => exists(path.join(cwd, f))) ?? null;

@@ -5,6 +5,8 @@ import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { Button } from "../Button/Button";
 import { Spinner } from "../Spinner/Spinner";
+import { useYugenMessages } from "../YugenProvider/context";
+import { messageScrollerMessages } from "./messages";
 import {
   MessageBubble,
   MessageDaySeparator,
@@ -16,6 +18,7 @@ import {
 
 export * from "./MessageBubble";
 export * from "./ChatComposer";
+export { messageScrollerMessages, messageScrollerMessagesEn, type MessageScrollerMessages } from "./messages";
 
 /* ================================================================ Tiện ích */
 
@@ -64,7 +67,7 @@ function groupPositions(items: React.ReactElement[]): (MessageGroupPosition | nu
 export interface MessageScrollerProps extends React.HTMLAttributes<HTMLDivElement> {
   /** MessageBubble, MessageDaySeparator, TypingIndicator… — mỗi phần tử cần `key` ổn định. */
   children?: React.ReactNode;
-  /** Nhãn của vùng hội thoại. Mặc định "Cuộc trò chuyện". */
+  /** Nhãn của vùng hội thoại. Mặc định lấy từ `messages.messageScroller.label` ("Cuộc trò chuyện"). */
   label?: string;
   /** Gọi khi cuộn chạm đầu danh sách; trả Promise để chặn gọi lặp khi đang tải. */
   onLoadOlder?: () => void | Promise<void>;
@@ -85,7 +88,7 @@ export const MessageScroller = React.forwardRef<HTMLDivElement, MessageScrollerP
   (
     {
       children,
-      label = "Cuộc trò chuyện",
+      label: labelProp,
       onLoadOlder,
       hasOlder,
       loadingOlder = false,
@@ -99,6 +102,8 @@ export const MessageScroller = React.forwardRef<HTMLDivElement, MessageScrollerP
     },
     ref,
   ) => {
+    const msg = useYugenMessages("messageScroller", messageScrollerMessages);
+    const label = labelProp ?? msg.label;
     const viewportRef = React.useRef<HTMLDivElement | null>(null);
     const contentRef = React.useRef<HTMLDivElement>(null);
     const atBottomRef = React.useRef(true);
@@ -186,24 +191,30 @@ export const MessageScroller = React.forwardRef<HTMLDivElement, MessageScrollerP
         return;
       }
 
-      // Tin mới = phần tử chưa từng có, nằm sau phần tử cũ cuối cùng còn lại
-      // (TypingIndicator có thể vừa bị thay bằng tin trả lời trong cùng lần render).
-      const prevSet = new Set(prev);
-      let anchorIndex = -1;
-      for (let k = prev.length - 1; k >= 0 && anchorIndex === -1; k--) anchorIndex = keys.lastIndexOf(prev[k]);
-      const appended =
-        prev.length === 0 ? items : anchorIndex >= 0 ? items.slice(anchorIndex + 1).filter((m) => !prevSet.has(String(m.key))) : [];
-      const newMessages = appended.filter(isMessage);
-      const mine = newMessages.some((m) => (m.props as { side?: string }).side === "outgoing");
+      // Cùng danh sách tin (chỉ nội dung đổi, vd. từng token đang stream): không cần dò tin mới hay ép đo layout — ResizeObserver
+      // bên dưới đã bám đáy / giữ chỗ đọc khi nội dung cao lên. Vẫn chạy phần thông báo tin stream xong.
+      const sameKeys = prev.length === keys.length && prev.every((k, i) => k === keys[i]);
+      let newMessages: React.ReactElement[] = [];
+      if (!sameKeys) {
+        // Tin mới = phần tử chưa từng có, nằm sau phần tử cũ cuối cùng còn lại
+        // (TypingIndicator có thể vừa bị thay bằng tin trả lời trong cùng lần render).
+        const prevSet = new Set(prev);
+        let anchorIndex = -1;
+        for (let k = prev.length - 1; k >= 0 && anchorIndex === -1; k--) anchorIndex = keys.lastIndexOf(prev[k]);
+        const appended =
+          prev.length === 0 ? items : anchorIndex >= 0 ? items.slice(anchorIndex + 1).filter((m) => !prevSet.has(String(m.key))) : [];
+        newMessages = appended.filter(isMessage);
+        const mine = newMessages.some((m) => (m.props as { side?: string }).side === "outgoing");
 
-      if (mine) scrollToBottom("auto");
-      else if (atBottomRef.current) el.scrollTop = el.scrollHeight;
-      else {
-        // Đang đọc tin cũ: tin cũ chèn lên đầu không được làm xê dịch chỗ đang đọc.
-        restoreAnchor();
-        if (newMessages.length > 0) setUnread((n) => n + newMessages.length);
+        if (mine) scrollToBottom("auto");
+        else if (atBottomRef.current) el.scrollTop = el.scrollHeight;
+        else {
+          // Đang đọc tin cũ: tin cũ chèn lên đầu không được làm xê dịch chỗ đang đọc.
+          restoreAnchor();
+          if (newMessages.length > 0) setUnread((n) => n + newMessages.length);
+        }
+        captureAnchor();
       }
-      captureAnchor();
 
       // Thông báo tin đến: tin đang stream chỉ đọc khi đã nhận đủ.
       if (announceIncoming) {
@@ -312,7 +323,7 @@ export const MessageScroller = React.forwardRef<HTMLDivElement, MessageScrollerP
         {loadingOlder && (
           <div className="pointer-events-none absolute inset-x-0 top-2 flex justify-center">
             <span className="flex items-center rounded-circular bg-background-1 px-3 py-1 shadow-8 animate-fade-in motion-reduce:animate-none">
-              <Spinner size="extra-tiny" label="Đang tải tin nhắn cũ…" />
+              <Spinner size="extra-tiny" label={msg.loadingOlder} />
             </span>
           </div>
         )}
@@ -324,11 +335,11 @@ export const MessageScroller = React.forwardRef<HTMLDivElement, MessageScrollerP
               shape="circular"
               appearance={unread > 0 ? "primary" : "secondary"}
               icon={<ArrowDown16Regular />}
-              aria-label={unread > 0 ? undefined : "Tới tin nhắn mới nhất"}
+              aria-label={unread > 0 ? undefined : msg.jumpToLatest}
               onClick={() => scrollToBottom()}
               className={cn("pointer-events-auto shadow-8 animate-surface-in motion-reduce:animate-none", unread > 0 && "px-3")}
             >
-              {unread > 0 ? `${unread} tin nhắn mới` : undefined}
+              {unread > 0 ? msg.newMessages(unread) : undefined}
             </Button>
           </div>
         )}

@@ -1,0 +1,29 @@
+name: React 18 share
+
+# Đầu mỗi tháng: tỉ lệ tải React theo bản major (scripts/react-share.mjs) bình luận vào #62 — một trong hai điều kiện để
+# ngừng hỗ trợ React 18 là bản 18 xuống dưới 10% lượt tải. Chỉ đọc api.npmjs.org, không sửa gì trong repo.
+
+on:
+  schedule:
+    - cron: "0 5 1 * *"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Comment on #62
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          node scripts/react-share.mjs | tee "$RUNNER_TEMP/report.md" >> "$GITHUB_STEP_SUMMARY"
+          gh issue comment 62 -R "$GITHUB_REPOSITORY" --body-file "$RUNNER_TEMP/report.md"

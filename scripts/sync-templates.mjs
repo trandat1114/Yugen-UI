@@ -23,6 +23,8 @@ const check = process.argv.includes("--check");
 const TEMPLATES = [
   {
     dir: "vite-starter",
+    /** Tiêu đề và mô tả của index.html khi tạo bằng `--lang vi` (CLI ghi đè lúc tạo app). */
+    vi: { appTitle: "Ứng dụng của tôi", description: "Dự án React + Tailwind CSS v4 trống với Yugen UI: theme được lưu, toast và alias @/." },
     /** Mô tả một dòng (tiếng Anh) cho `yugen create` — ghi vào templates/templates.json. */
     hint: "Blank app: saved theme, toast, @/ alias and a short welcome page",
     /** Tên template (trình chọn của `yugen create`, docs). `appTitle`: <title> và README của app được tạo. */
@@ -41,21 +43,27 @@ const TEMPLATES = [
   },
   {
     dir: "vite-saas",
+    /** Tiêu đề và mô tả của index.html khi tạo bằng `--lang vi` (CLI ghi đè lúc tạo app). */
+    vi: { appTitle: "Sakura Studio", description: "Ứng dụng SaaS dựng bằng Yugen UI: sidebar, bảng lệnh Ctrl K, thông báo, theme sáng / tối / tương phản cao và 8 trang mẫu." },
     hint: "SaaS workspace: sidebar, Ctrl K command palette, notifications, 8 pages",
     title: "SaaS",
     appTitle: "Sakura Studio",
     description:
-      "Ứng dụng SaaS dựng bằng Yugen UI: sidebar, bảng lệnh Ctrl K, thông báo, theme sáng / tối / tương phản cao và 8 trang mẫu.",
+      "A SaaS app built with Yugen UI: sidebar, Ctrl K command palette, notifications, light / dark / high-contrast themes and 8 sample pages.",
+    lang: "en",
     app: "saas",
     /** Khoá localStorage của script chống nháy — trùng STORAGE_KEY trong App.tsx. */
     storageKey: "yugen-saas-appearance",
   },
   {
     dir: "vite-blog",
+    /** Tiêu đề và mô tả của index.html khi tạo bằng `--lang vi` (CLI ghi đè lúc tạo app). */
+    vi: { appTitle: "Nhật ký Sakura", description: "Blog viết bằng Markdown, dựng bằng Yugen UI: mục lục, thẻ, tìm kiếm, theme tối và SEO sinh sẵn lúc build." },
     hint: "Markdown blog: table of contents, tags, search, build-time SEO",
     title: "Blog",
-    appTitle: "Nhật ký Sakura",
-    description: "Blog viết bằng Markdown, dựng bằng Yugen UI: mục lục, thẻ, tìm kiếm, theme tối và SEO sinh sẵn lúc build.",
+    appTitle: "Sakura Notes",
+    description: "A Markdown blog built with Yugen UI: table of contents, tags, search, dark theme and SEO generated at build time.",
+    lang: "en",
     app: "blog",
     storageKey: "yugen-blog-theme",
     devDependencies: { "@types/node": "^22.0.0" },
@@ -64,17 +72,28 @@ const TEMPLATES = [
   },
   {
     dir: "vite-dashboard",
-    hint: "Dashboard: KPI cards, charts and recent transactions",
+    /** Tiêu đề và mô tả của index.html khi tạo bằng `--lang vi` (CLI ghi đè lúc tạo app). */
+    vi: { appTitle: "Sakura Analytics", description: "Dashboard bán hàng dựng bằng Yugen UI: một khoảng ngày cho mọi biểu đồ, KPI, bảng khách hàng và API giả lập." },
+    hint: "Sales dashboard: date range, KPIs, charts, customer table with CSV export, 4 pages",
     title: "Dashboard",
-    description: "Dashboard dựng bằng Yugen UI: thẻ KPI, biểu đồ và giao dịch gần đây.",
-    blocks: ["02-stats.tsx", "11-analytics.tsx", "06-transactions.tsx"],
+    appTitle: "Sakura Analytics",
+    description: "A sales dashboard built with Yugen UI: one date range for every chart, KPIs, a customer table and a mock API.",
+    lang: "en",
+    app: "dashboard",
+    storageKey: "yugen-dashboard-appearance",
   },
   {
     dir: "vite-ai-chat",
-    hint: "AI assistant chat UI",
+    /** Tiêu đề và mô tả của index.html khi tạo bằng `--lang vi` (CLI ghi đè lúc tạo app). */
+    vi: { appTitle: "Sakura Chat", description: "Ứng dụng chat AI dựng bằng Yugen UI: danh sách hội thoại, trả lời dạng stream dừng được, nối backend của bạn." },
+    hint: "AI chat: saved conversations, streaming answers you can stop, one backend adapter",
     title: "AI chat",
-    description: "Trợ lý AI dạng chat dựng bằng Yugen UI.",
-    blocks: ["12-ai-assistant.tsx"],
+    appTitle: "Sakura Chat",
+    description:
+      "An AI chat app built with Yugen UI: saved conversations, streaming Markdown answers with reasoning, steps and sources, and one adapter for your backend.",
+    lang: "en",
+    app: "ai-chat",
+    storageKey: "yugen-ai-chat-appearance",
   },
 ];
 
@@ -260,78 +279,251 @@ ${generatedFrom(t)}
 `,
   blog: (t) => `# ${t.appTitle ?? t.title}
 
-Starter template của [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates) — blog viết bằng Markdown trên Vite + React +
-Tailwind CSS v4. Không cần CMS hay thư viện Markdown: thêm file \`.md\` là có bài mới.
+A Markdown blog built with [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates) on Vite, React and Tailwind CSS
+v4. No CMS or Markdown library: add a \`.md\` file and the post is live.
 
-${install(t.dir)}
+${install(t.dir, "en")}
 
-## Có gì bên trong
+## What's included
 
-- Bài viết là file \`src/posts/*.md\` có frontmatter (\`title\`, \`description\`, \`date\`, \`tags\`, \`draft\`).
-- Markdown hiển thị bằng parser an toàn của Yugen UI: code tô màu có nút sao chép, bảng, trích dẫn, việc cần làm, ảnh, link nội bộ.
-- Trang chủ có tìm kiếm và lọc theo thẻ; trang bài có mục lục, thời gian đọc, bài trước / sau, sao chép liên kết.
-- Định tuyến theo đường dẫn thật (\`/posts/<slug>/\`) bằng History API — không thêm thư viện.
-- **SEO sinh lúc build** (plugin \`blogSeo\` trong \`vite.config.ts\`): mỗi bài / thẻ một file HTML có \`<title>\`, \`description\`,
-  canonical, Open Graph, JSON-LD \`BlogPosting\`; kèm \`sitemap.xml\`, \`rss.xml\`, \`robots.txt\`, \`404.html\`.
-- Theme sáng / tối / tương phản cao, lưu vào \`localStorage\`, không nháy khi tải lại.
+- Posts are \`src/content/<lang>/posts/*.md\` files with frontmatter (\`title\`, \`description\`, \`date\`, \`tags\`,
+  \`draft\`).
+- Markdown goes through Yugen UI's safe parser: highlighted code with a copy button, tables, quotes, task lists, images and
+  internal links.
+- The home page has search and tag filters; a post page has a table of contents, reading time, previous / next post and a
+  copy link button.
+- Real paths (\`/posts/<slug>/\`) with the History API, no router library.
+- **SEO at build time** (the \`blogSeo\` plugin in \`vite.config.ts\`): an HTML file per post and tag with \`<title>\`,
+  \`description\`, canonical, Open Graph and \`BlogPosting\` JSON-LD, plus \`sitemap.xml\`, \`rss.xml\`, \`robots.txt\` and
+  \`404.html\`.
+- Light, dark and high-contrast themes, saved in \`localStorage\` with no flash on reload.
+- English text and sample posts. For Vietnamese, create the app with
+  \`npx create-yugen-ui@latest my-app --template blog --lang vi\`.
 
-## Cấu trúc
+## Structure
 
 \`\`\`
 src/
-  site.ts          # tên blog, mô tả, domain (SITE.url), tác giả
-  posts/*.md       # bài viết — tên file là đường dẫn
-  content.ts       # đọc frontmatter, thời gian đọc (dùng chung với plugin SEO)
-  Markdown.tsx     # Markdown → component, heading có id cho mục lục
-  BlogLayout.tsx   # thanh trên, nội dung theo route, chân trang
+  site.ts                 # your domain (SITE.url)
+  content/<lang>.ts       # blog name, description, author and interface text
+  content/<lang>/posts/   # posts: the file name is the URL
+  content/index.ts        # the language in use (the app and the SEO plugin read it)
+  blog.ts                 # frontmatter, reading time, page titles (shared with the SEO plugin)
+  posts.ts                # loads the posts of the language in use
+  Markdown.tsx            # Markdown to components, headings with ids for the table of contents
+  BlogLayout.tsx          # top bar, content by route, footer
   PostList.tsx · PostPage.tsx · router.tsx
-vite.config.ts     # plugin blogSeo: HTML tĩnh từng trang, sitemap, RSS
+vite.config.ts            # blogSeo plugin: static HTML for every page, sitemap, RSS
 \`\`\`
 
-## Triển khai
+## Deploy
 
-1. Đặt \`url\` trong \`src/site.ts\` thành domain thật (build sẽ nhắc nếu còn \`example.com\`).
-2. \`npm run build\` → đưa \`dist/\` lên host tĩnh bất kỳ. Ở thư mục con (GitHub Pages): \`BASE=/ten-repo/ npm run build\`.
-3. Gửi \`sitemap.xml\` cho Google Search Console.
+1. Set \`url\` in \`src/site.ts\` to your domain (the build warns while it is still \`example.com\`).
+2. Run \`npm run build\` and upload \`dist/\` to any static host. For a subfolder (GitHub Pages):
+   \`BASE=/repo-name/ npm run build\`.
+3. Submit \`sitemap.xml\` to Google Search Console.
 
 ${generatedFrom(t)}
 `,
   saas: (t) => `# ${t.appTitle ?? t.title}
 
-Starter template của [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates) — ứng dụng SaaS hoàn chỉnh trên Vite + React +
-Tailwind CSS v4, sẵn sàng thay dữ liệu thật.
+A complete SaaS app built with [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates) on Vite, React and Tailwind
+CSS v4, ready for your own data.
 
-${install(t.dir)}
+${install(t.dir, "en")}
 
-## Có gì bên trong
+## What's included
 
-- Sidebar \`Nav\` có nhóm và số đếm; trên màn hẹp chuyển thành \`Drawer\` (container query, không cần JS đo kích thước).
-- Bảng lệnh **Ctrl / ⌘ K**: chuyển trang, đổi theme / thương hiệu, hành động nhanh.
-- \`NotificationCenter\`, menu tài khoản, breadcrumb, nút xuất báo cáo có \`toast\`.
-- Theme sáng / tối / tương phản cao + thương hiệu Sakura / Web / Teams, lưu vào \`localStorage\`, **không nháy** khi tải lại
-  (script nhỏ trong \`index.html\`).
-- 8 trang mẫu ghép từ block: Tổng quan, Phân tích, Trợ lý AI, Hộp thư, Lịch hẹn, Đội ngũ, Thanh toán, Cài đặt.
-- Định tuyến bằng hash (\`#/analytics\`) không thêm thư viện; tiêu đề tab và \`<meta name="description">\` đổi theo trang.
-- Sẵn cho SEO cơ bản: \`description\`, Open Graph, \`theme-color\`, \`robots.txt\`.
+- A sidebar \`Nav\` with groups and counts; on narrow screens it becomes a \`Drawer\` (container queries, no JS measuring).
+- A **Ctrl / ⌘ K** command palette: go to a page, switch theme or brand, quick actions.
+- \`NotificationCenter\`, an account menu, a breadcrumb and an export button with a \`toast\`.
+- Light, dark and high-contrast themes and the Sakura, Web and Teams brands, saved in \`localStorage\` with **no flash** on
+  reload (a small script in \`index.html\`).
+- 8 sample pages: Overview, Analytics, AI assistant, Inbox, Calendar, Team, Billing and Settings. Each page loads on
+  demand; the others are fetched while the browser is idle.
+- Hash routing (\`#/analytics\`) with no extra library; the tab title and \`<meta name="description">\` follow the page.
+- SEO basics: \`description\`, Open Graph, \`theme-color\`, \`robots.txt\`.
+- English text and sample data in \`src/content/\`. For Vietnamese, create the app with
+  \`npx create-yugen-ui@latest my-app --template saas --lang vi\`.
 
-## Cấu trúc
+## Structure
 
 \`\`\`
 src/
-  App.tsx             # gốc: YugenProvider, định tuyến hash, lưu theme, tiêu đề trang
-  AppShell.tsx        # khung: sidebar, thanh trên, Drawer, nội dung
-  CommandPalette.tsx  # bảng lệnh Ctrl K
-  pages.tsx           # danh sách trang — thêm một mục là có trang mới trên sidebar & bảng lệnh
-  blocks/             # các block giao diện, sửa thoải mái
+  App.tsx             # root: YugenProvider, hash routing, saved theme, page title
+  AppShell.tsx        # layout: sidebar, top bar, Drawer, content
+  CommandPalette.tsx  # Ctrl K command palette
+  pages.tsx           # page list: one entry per page in the sidebar and the command palette
+  pages/              # one file per page, loaded on demand
+  content/            # all text and sample data, one file per language; index.ts picks the language
+  format.ts           # amounts in the content's currency and locale
 \`\`\`
 
-## Tuỳ biến nhanh
+## Customize
 
-- **Thêm trang**: thêm một mục vào \`PAGES\` trong \`src/pages.tsx\`.
-- **Đổi thương hiệu mặc định**: sửa \`"sakura"\` trong \`index.html\` và \`App.tsx\`; tự tạo bảng màu ở
+- **Add a page**: create \`src/pages/<id>.tsx\`, add the id to \`PageId\` in \`src/content/types.ts\` and its text to
+  \`pages\` in \`src/content/<lang>.ts\`, then add an entry to \`PAGES\` in \`src/pages.tsx\`.
+- **Change the default brand**: replace \`"sakura"\` in \`index.html\` and \`App.tsx\`; make your own palette in
   [Theme Designer](https://trandat1114.github.io/Yugen-UI/#/theme-designer).
-- **Dùng router thật** (React Router, TanStack Router): thay \`pageFromHash\` / \`navigate\` trong \`App.tsx\`, truyền \`href\` của
-  router vào \`NavItem\` (\`asChild\`).
+- **Use a real router** (React Router, TanStack Router): replace \`pageFromHash\` / \`navigate\` in \`App.tsx\` and pass the
+  router's \`href\` to \`NavItem\` (\`asChild\`).
+
+${generatedFrom(t)}
+`,
+  dashboard: (t) => `# ${t.appTitle ?? t.title}
+
+A [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates) sales dashboard: Vite, React and Tailwind CSS v4, with
+four pages and a mock API you replace with your own.
+
+${install(t.dir, "en")}
+
+## What's included
+
+- Overview, Revenue, Customers and Settings. The sidebar becomes a \`Drawer\` on narrow screens (container queries).
+- One date range for the whole app (\`DateRangePicker\` with presets). Every card and chart reloads when it changes.
+- KPI \`StatTile\`s with the change against the previous period and a sparkline; \`LineChart\`, stacked and horizontal
+  \`BarChart\`, \`DonutChart\`. Each chart has a data table view.
+- A customer \`DataGrid\`: sorting, segment and status filters, search from the top bar, pagination and CSV export.
+- Loading skeletons, empty and error states driven by \`src/api.ts\`. Settings has a response time slider and can make
+  every response empty or failed.
+- Pages load on demand (\`React.lazy\`); hovering a nav item starts the download. Real URLs (\`/revenue\`) through the
+  History API, with the tab title per page.
+- Light, dark and high-contrast themes and three brands, saved in \`localStorage\` with no flash on reload.
+- English text in \`src/content/\`; Vietnamese with \`npx create-yugen-ui@latest my-app --template dashboard --lang vi\`.
+  Built-in component strings follow through \`messagesEn\` and \`locale\` on \`YugenProvider\`.
+
+## Connect your data
+
+\`src/api.ts\` generates about 18 months of orders in the browser and answers after a short delay. Keep the
+\`DashboardApi\` interface and return an object that calls your backend:
+
+\`\`\`ts
+const api: DashboardApi = {
+  getKpis: (range, signal) => fetch(\`/api/kpis?\${query(range)}\`, { signal }).then((r) => r.json()),
+  // getTimeseries, getBreakdown, getRecentOrders, getCustomers
+};
+\`\`\`
+
+Create it in \`src/Dashboard.tsx\` instead of \`createMockApi\`, and delete the mock API card in \`src/pages/Settings.tsx\`.
+\`useQuery\` (\`src/useQuery.ts\`) cancels stale requests; swap it for TanStack Query or SWR if you need caching.
+
+## Deploy
+
+\`npm run build\`, then put \`dist/\` on any static host. Pages are real paths, so let the host serve \`index.html\` for
+unknown paths (Netlify \`_redirects\`, Vercel rewrites, or a copy of \`index.html\` as \`404.html\` on GitHub Pages).
+
+## Size
+
+\`npm run build\` with yugen-ui 0.10, gzip: about 217 kB of JavaScript on first load (React 68 kB, other libraries
+138 kB, app 10 kB) and 22 kB of CSS. Opening a page adds 1 to 4 kB.
+
+## Structure
+
+\`\`\`
+src/
+  App.tsx          # YugenProvider, saved theme, router
+  Dashboard.tsx    # shell: sidebar, top bar, date range, lazy pages
+  pages/           # Overview, Revenue, Customers, Settings
+  api.ts           # mock data layer (replace with your backend)
+  ui.tsx           # data cards, KPI tiles, number and date formats
+  router.tsx       # History API router, Link
+  content/         # all text, one file per language
+  useQuery.ts · dates.ts · csv.ts · context.ts
+\`\`\`
+
+${generatedFrom(t)}
+`,
+  "ai-chat": (t) => `# ${t.appTitle ?? t.title}
+
+An AI chat app from [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates): Vite, React and Tailwind CSS v4.
+Replies come from a local mock until you connect your own backend.
+
+${install(t.dir, "en")}
+
+## What's included
+
+- Conversations: new, rename, delete, saved in \`localStorage\`. On narrow screens the list moves into a Drawer.
+- Streaming answers: Markdown that renders as it arrives (\`StreamingMarkdown\`), a collapsible \`Reasoning\` block, the
+  agent's steps in a \`Trace\`, and \`Citation\` chips with a list of sources.
+- Stop a reply with the Stop button or Esc. Copy or regenerate an answer.
+- \`PromptInput\` with attachments (button, drag and drop, paste). Enter sends, Shift+Enter adds a new line.
+- Routes with the History API: \`/\` (new chat), \`/c/<id>\` (a conversation), \`/settings\`. Each page loads on demand.
+- Light, dark and high-contrast themes and three brands, saved with no flash on reload.
+- All text, mock replies included, lives in \`src/content/\`: English by default, Vietnamese with
+  \`npx create-yugen-ui@latest my-app --template ai-chat --lang vi\`.
+
+## Connect your backend
+
+The chat calls one function: \`sendMessage(messages, { signal })\` in \`src/api.ts\`. It gets the conversation, oldest
+message first, and returns the reply as an async iterable of chunks:
+
+\`\`\`ts
+type ChatChunk =
+  | { type: "text"; text: string } // Markdown added to the answer
+  | { type: "reasoning"; text: string } // shown in the Reasoning block
+  | { type: "step"; id: string; title: string; status: TraceStatus } // adds or updates a Trace step
+  | { type: "sources"; sources: CitationSource[] }; // for [1], [2] in the text
+\`\`\`
+
+\`signal\` aborts when the user stops the reply. If the iterable throws, the answer shows the error and a Try again
+button. Only \`text\` is required; the other chunks are optional.
+
+Model API keys must stay on a server. Add an endpoint there that streams one JSON chunk per line, then point
+\`sendMessage\` at it with the helper in \`src/api.ts\`:
+
+\`\`\`ts
+export function sendMessage(messages: ChatMessage[], options: SendOptions) {
+  return streamFromEndpoint("/api/chat", messages, options);
+}
+\`\`\`
+
+The endpoint can use any model provider and any server that speaks the Web \`Request\` / \`Response\` API (Hono, Next.js
+route handlers, Cloudflare Workers, Deno, Bun):
+
+\`\`\`ts
+// POST /api/chat → newline-delimited JSON, one ChatChunk per line
+export async function POST(request: Request) {
+  const { messages } = await request.json();
+  const encoder = new TextEncoder();
+  const body = new ReadableStream({
+    async start(controller) {
+      const send = (chunk: object) => controller.enqueue(encoder.encode(JSON.stringify(chunk) + "\\n"));
+      // Call your model here with the API key from the server's environment and forward its stream.
+      for await (const text of streamFromYourModel(messages, request.signal)) send({ type: "text", text });
+      controller.close();
+    },
+  });
+  return new Response(body, { headers: { "Content-Type": "application/x-ndjson" } });
+}
+\`\`\`
+
+- In development, forward \`/api\` to that server with \`server.proxy\` in \`vite.config.ts\`.
+- Attachments: each message has the files' \`name\`, \`size\` and \`type\`, plus \`file\` (the \`File\`) for messages
+  sent in this session. JSON can't carry files: upload them first, for example with \`FormData\`, and send a reference.
+- Settings > Backend > Fail replies makes the mock throw, so you can check the error state.
+
+## Deploy
+
+\`npm run build\` and upload \`dist/\` to any static host. The app uses real paths such as \`/c/<id>\`, so the host must
+answer unknown paths with \`index.html\`: on Netlify add \`/* /index.html 200\` to \`public/_redirects\`, on Vercel add a
+rewrite to \`/index.html\`, on GitHub Pages copy \`dist/index.html\` to \`dist/404.html\`. Under a sub-path, build with
+\`npx vite build --base=/my-app/\`.
+
+## Structure
+
+\`\`\`
+src/
+  App.tsx            # YugenProvider, saved theme, router
+  ChatLayout.tsx     # sidebar (Drawer on narrow screens), header, the page for the route
+  ChatPage.tsx       # messages, answers, prompt input
+  SettingsPage.tsx · NotFoundPage.tsx
+  Sidebar.tsx        # conversation list
+  api.ts             # sendMessage: the backend adapter, a mock by default
+  useChat.ts         # streaming loop: stop, regenerate
+  conversations.ts   # conversation data and localStorage
+  router.tsx         # / · /c/<id> · /settings
+  content/           # every string, one file per language
+\`\`\`
 
 ${generatedFrom(t)}
 `,
@@ -398,12 +590,12 @@ export default defineConfig({
   build: {
     rolldownOptions: {
       output: {
-        // Tách thư viện khỏi mã ứng dụng: sửa trang chỉ làm đổi chunk nhỏ, phần còn lại trình duyệt giữ cache.
-        // Icon Fluent để chung vendor: tách riêng tạo vòng import vendor ↔ icons (lỗi TDZ lúc chạy).
+        // React (trang nào cũng cần) tách riêng để trình duyệt giữ cache khi mã ứng dụng đổi. Không gom mọi node_modules vào
+        // một chunk "vendor": yugen-ui được build theo từng component, để Rolldown tự chia thì trang nạp lười chỉ tải
+        // component của chính nó (lần tải đầu của SaaS giảm ~27%).
         codeSplitting: {
           groups: [
-            { name: "react", test: /[\\\\/]node_modules[\\\\/](react|react-dom|scheduler)[\\\\/]/, priority: 20 },
-            { name: "vendor", test: /[\\\\/]node_modules[\\\\/]/, priority: 10 },
+            { name: "react", test: /[\\\\/]node_modules[\\\\/](react|react-dom|scheduler)[\\\\/]/ },
           ],
         },
       },
@@ -447,7 +639,34 @@ export default defineConfig({
 }
 
 /** Danh mục cho `yugen create` (packages/cli đóng gói templates/ kèm file này). */
-const manifest = TEMPLATES.map(({ dir, title, hint }) => ({ dir, name: dir.replace(/^vite-/, ""), title, hint }));
+/**
+ * Ngân sách lần tải đầu (kB gzip) — CI job "Templates" (scripts/check-template.mjs) báo lỗi khi vượt. JS = <script type=module>
+ * + modulepreload trong dist/index.html (trang lazy không tính). Tăng có chủ đích: sửa ở đây và ghi lý do trong PR.
+ */
+const BUDGETS = {
+  "vite-starter": { js: 135, css: 25 },
+  // SaaS, Blog: +messagesEn (chuỗi tiếng Anh của mọi component, ~13–17 kB gzip) khi có hai ngôn ngữ (#147); thư mục
+  // templates/vite-blog còn chứa bài mẫu của cả hai ngôn ngữ (~1,7 kB, `create --lang` chỉ giữ một).
+  "vite-saas": { js: 190, css: 25 },
+  "vite-blog": { js: 150, css: 25 },
+  "vite-dashboard": { js: 195, css: 25 },
+  "vite-ai-chat": { js: 175, css: 25 },
+};
+
+// `meta`: <title> / description của index.html theo từng ngôn ngữ — `create --lang` (packages/cli applyLang) ghi đè.
+const manifest = TEMPLATES.map((t) => ({
+  dir: t.dir,
+  name: t.dir.replace(/^vite-/, ""),
+  title: t.title,
+  hint: t.hint,
+  budget: BUDGETS[t.dir],
+  ...(t.vi && {
+    meta: {
+      [t.lang ?? "vi"]: { title: t.appTitle ?? t.title, description: t.description },
+      vi: { title: t.vi.appTitle ?? t.appTitle ?? t.title, description: t.vi.description },
+    },
+  }),
+}));
 const outputs = [
   ...TEMPLATES.flatMap((t) => Object.entries(files(t)).map(([rel, content]) => [`${t.dir}/${rel}`, content])),
   ["templates.json", JSON.stringify(manifest, null, 2) + "\n"],

@@ -3,6 +3,10 @@ import * as React from "react";
 import { Dismiss16Regular, Dismiss20Regular, Dismiss24Regular, Search16Regular, Search20Regular, Search24Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { Input, type InputProps } from "@/components/ui/Input/Input";
+import { useYugenMessages } from "../YugenProvider/context";
+import { searchBoxMessages } from "./messages";
+
+export { searchBoxMessages, searchBoxMessagesEn, type SearchBoxMessages } from "./messages";
 
 const ICONS = {
   small: { Search: Search16Regular, Dismiss: Dismiss16Regular },
@@ -13,7 +17,7 @@ const ICONS = {
 export interface SearchBoxProps extends Omit<InputProps, "type"> {
   /** Gọi khi nội dung đổi — kể cả khi bấm X hoặc Esc để xoá. */
   onValueChange?: (value: string) => void;
-  /** aria-label của nút xoá. */
+  /** aria-label của nút xoá. Mặc định lấy từ `messages.searchBox.dismiss`. */
   dismissLabel?: string;
 }
 
@@ -31,13 +35,14 @@ export const SearchBox = React.forwardRef<HTMLInputElement, SearchBoxProps>(
       size,
       disabled,
       readOnly,
-      dismissLabel = "Xoá nội dung tìm kiếm",
+      dismissLabel,
       className,
-      placeholder = "Tìm kiếm",
+      placeholder,
       ...props
     },
     ref,
   ) => {
+    const msg = useYugenMessages("searchBox", searchBoxMessages);
     const inputRef = React.useRef<HTMLInputElement>(null);
     React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
     const [inner, setInner] = React.useState(defaultValue === undefined ? "" : String(defaultValue));
@@ -61,7 +66,7 @@ export const SearchBox = React.forwardRef<HTMLInputElement, SearchBoxProps>(
           {showDismiss && (
             <button
               type="button"
-              aria-label={dismissLabel}
+              aria-label={dismissLabel ?? msg.dismiss}
               onClick={clear}
               className="flex cursor-pointer items-center justify-center rounded-small text-foreground-3 transition-colors duration-faster hover:text-foreground-2 active:text-foreground-1"
             >
@@ -80,7 +85,7 @@ export const SearchBox = React.forwardRef<HTMLInputElement, SearchBoxProps>(
         size={size}
         disabled={disabled}
         readOnly={readOnly}
-        placeholder={placeholder}
+        placeholder={placeholder ?? msg.placeholder}
         value={current}
         onChange={(e) => {
           if (value === undefined) setInner(e.target.value);

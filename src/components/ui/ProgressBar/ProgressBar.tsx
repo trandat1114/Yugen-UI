@@ -76,8 +76,8 @@ export const ProgressBar = React.forwardRef<HTMLDivElement, ProgressBarProps>(
             radius,
             COLOR[color],
             indeterminate
-              ? // Keyframe animate `left` vật lý → RTL chạy ngược để thanh đi từ phải sang trái.
-                "w-1/3 animate-indeterminate rtl:[animation-direction:reverse] motion-reduce:inset-s-0 motion-reduce:w-full motion-reduce:animate-pulse"
+              ? // Thanh 1/3 đặt ở left-0 vật lý, chạy bằng transform (compositor) → RTL chạy ngược để đi từ phải sang trái.
+                "left-0 w-1/3 animate-indeterminate-slide rtl:[animation-direction:reverse] motion-reduce:inset-s-0 motion-reduce:w-full motion-reduce:animate-pulse"
               : "inset-s-0 transition-[width] duration-normal ease-easy-ease motion-reduce:transition-none",
           )}
           style={indeterminate ? undefined : { width: `${(clamped / safeMax) * 100}%` }}

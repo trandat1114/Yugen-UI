@@ -2,11 +2,11 @@
 
 <!-- Sinh từ src/docs/roadmap.ts bằng `npm run roadmap`. Đừng sửa tay. -->
 
-Kế hoạch theo từng bản phát hành, cập nhật 2026-10-23. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và
+Kế hoạch theo từng bản phát hành, cập nhật 2026-10-25. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và
 phụ thuộc nằm ở [GitHub Project](https://github.com/users/trandat1114/projects/6). `[x]` đã xong, `[~]` đang làm, `[ ]` dự kiến.
 
 Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. English: the community page
-(https://trandat1114.github.io/Yugen-UI/?lang=en#/community) shows the same roadmap.
+(https://trandat1114.github.io/Yugen-UI/community?lang=en) shows the same roadmap.
 
 ## Đang làm
 
@@ -15,7 +15,8 @@ Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. 
 API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện hoàn tất.
 
 - [ ] Rà soát API, gỡ deprecation, quyết định về React 18 và class spacing viết hoa (#65)
-- [ ] SEO: URL theo đường dẫn, prerender từng trang, sitemap (#63)
+- [x] SEO: URL theo đường dẫn, prerender từng trang, sitemap (#63)
+- [ ] Đề xuất cho 1.0 (đang chờ duyệt): AppShell, Form, NavigationMenu, block 2.0, codemod, kiểm thử (#160)
 
 ## Tiếp theo
 
@@ -23,15 +24,16 @@ API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện
 
 Chưa xếp lịch.
 
-- [ ] Docs tiếng Anh cho trang component và các trang khái niệm còn lại (#69)
-- [ ] CLI giai đoạn 2: diff, update, theme, remove (#64)
+- [ ] Template mới: Landing, Admin, Next.js, Docs, Storefront, Glass (#151)
+- [ ] Vật liệu glass cho thanh điều hướng và control (lấy cảm hứng từ Liquid Glass) (#178)
 - [ ] Đăng ký @yugen vào danh mục registry của shadcn (#68)
 - [ ] Đang cân nhắc: bộ Figma, gói icon Sakura
 
 ## Đã phát hành
 
-Chi tiết ở trang Có gì mới (`#/news`) và `CHANGELOG.md`.
+Chi tiết ở trang Có gì mới (`/news`) và `CHANGELOG.md`.
 
+- **0.11.0** (2026-10-25): Chuỗi giao diện thay được, docs tiếng Anh và template mới
 - **0.10.0** (2026-10-23): Spacing theo thang số, Theme Designer và trang Motion
 - **0.9.0** (2026-10-23): React 19 và starter tối giản
 - **0.8.3** (2026-10-22): Lệnh tạo dự án chạy được trên PowerShell

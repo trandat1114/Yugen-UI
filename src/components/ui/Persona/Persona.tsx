@@ -1,6 +1,8 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
 import { Avatar, type AvatarProps } from "../Avatar/Avatar";
+import { useYugenMessages } from "../YugenProvider/context";
+import { presenceBadgeMessages } from "../PresenceBadge/messages";
 
 /** Fluent 2 Persona — https://fluent2.microsoft.design/components/web/react/core/persona/usage */
 export type PersonaSize = "extra-small" | "small" | "medium" | "large" | "extra-large" | "huge";
@@ -31,13 +33,6 @@ const PRESENCE_COLOR: Record<PersonaPresence, string> = {
   busy: "bg-danger-background-3",
   away: "bg-warning-background-3",
   offline: "bg-background-1 ring-[1.5px] ring-inset ring-foreground-3",
-};
-
-const PRESENCE_LABEL: Record<PersonaPresence, string> = {
-  available: "Có mặt",
-  busy: "Bận",
-  away: "Vắng mặt",
-  offline: "Ngoại tuyến",
 };
 
 const GAP: Record<PersonaSize, string> = {
@@ -104,6 +99,8 @@ export const Persona = React.forwardRef<HTMLDivElement, PersonaProps>(
     },
     ref,
   ) => {
+    // Tên trạng thái dùng chung với PresenceBadge (`messages.presenceBadge`).
+    const msg = useYugenMessages("presenceBadge", presenceBadgeMessages);
     const below = textPosition === "below";
     const secondaryClass = cn("truncate text-foreground-2", size === "huge" ? "text-body1" : "text-caption1");
 
@@ -112,7 +109,7 @@ export const Persona = React.forwardRef<HTMLDivElement, PersonaProps>(
       <span className={cn("flex shrink-0 items-center", LINE[size])}>
         <span
           role="img"
-          aria-label={PRESENCE_LABEL[presence ?? "offline"]}
+          aria-label={msg[presence ?? "offline"]}
           className={cn("rounded-circular", PRESENCE_SIZE[size], PRESENCE_COLOR[presence ?? "offline"])}
         />
       </span>

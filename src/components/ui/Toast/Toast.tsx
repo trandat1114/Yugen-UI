@@ -8,7 +8,11 @@ import {
   Info20Filled,
   Warning20Filled,
 } from "@fluentui/react-icons";
+import { useYugenMessages } from "../YugenProvider/context";
+import { toastMessages } from "./messages";
 import { cn } from "@/lib/cn";
+
+export { toastMessages, toastMessagesEn, type ToastMessages } from "./messages";
 
 /** Fluent 2 Toast — https://fluent2.microsoft.design/components/web/react/core/toast/usage */
 export type ToastIntent = "info" | "success" | "warning" | "error";
@@ -171,6 +175,7 @@ export interface ToasterProps {
 export function Toaster({ position = "bottom-end", toasterId, limit = 5, className }: ToasterProps) {
   const all = React.useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
   const items = all.filter((t) => t.toasterId === toasterId);
+  const msg = useYugenMessages("toast", toastMessages);
   // Giữ nguyên thứ tự DOM; chỉ `limit` toast mở mới nhất được hiển thị, toast đang đóng vẫn render để chạy animation.
   const visibleIds = new Set(
     items
@@ -185,14 +190,14 @@ export function Toaster({ position = "bottom-end", toasterId, limit = 5, classNa
     config.swipe === "start" ? (rtl ? "right" : "left") : config.swipe === "end" ? (rtl ? "left" : "right") : config.swipe;
 
   return (
-    <ToastPrimitive.Provider swipeDirection={swipeDirection} label="Thông báo">
+    <ToastPrimitive.Provider swipeDirection={swipeDirection} label={msg.region}>
       {items
         .filter((t) => !t.open || visibleIds.has(t.id))
         .map((t) => (
-          <ToastItem key={t.id} record={t} enter={config.enter} exit={config.exit} vertical={vertical} />
+          <ToastItem key={t.id} record={t} enter={config.enter} exit={config.exit} vertical={vertical} dismissLabel={msg.dismiss} />
         ))}
       <ToastPrimitive.Viewport
-        label="Thông báo ({hotkey})"
+        label={msg.regionHotkey}
         className={cn(
           "fixed z-100 m-0 flex max-h-dvh max-w-screen list-none gap-2 p-4 outline-none",
           config.viewport,
@@ -208,11 +213,13 @@ function ToastItem({
   enter,
   exit,
   vertical,
+  dismissLabel,
 }: {
   record: ToastRecord;
   enter: string;
   exit: string;
   vertical: boolean;
+  dismissLabel: string;
 }) {
   const { id, open, intent = "info", title, body, action, timeout = 3000, hideDismiss } = record;
   const { icon: Icon, className: iconClass } = ICON[intent];
@@ -257,7 +264,7 @@ function ToastItem({
         <span />
       ) : (
         <ToastPrimitive.Close
-          aria-label="Đóng thông báo"
+          aria-label={dismissLabel}
           className="-me-1 -mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-medium text-foreground-2 hover:bg-subtle-hover hover:text-foreground-1 active:bg-subtle-pressed"
         >
           <Dismiss20Regular className="size-4" />

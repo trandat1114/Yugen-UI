@@ -3,6 +3,7 @@ import { act, fireEvent, render, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { YugenProvider } from "../YugenProvider/YugenProvider";
 import { createColumn, DataGrid, sortItems, type DataGridProps } from "./DataGrid";
+import { dataGridMessagesEn } from "./messages";
 
 type Person = { id: string; name: string; age: number };
 
@@ -271,5 +272,61 @@ describe("DataGrid — trạng thái", () => {
     });
     expect(grid).not.toHaveAttribute("aria-busy");
     expect(within(grid).getAllByRole("row")).toHaveLength(5);
+  });
+});
+
+describe("DataGrid — hiệu năng", () => {
+  it("đổi độ rộng cột không render lại các hàng; cột ghim lấy offset từ biến CSS", async () => {
+    const user = userEvent.setup();
+    const renderCell = vi.fn((p: Person) => p.name);
+    const cols = [
+      createColumn<Person>({ columnId: "name", sticky: "start", renderHeaderCell: () => "Tên", renderCell }),
+      createColumn<Person>({ columnId: "age", renderHeaderCell: () => "Tuổi", renderCell: (p) => p.age }),
+    ];
+    const { getByRole } = render(
+      <DataGrid
+        aria-label="Người"
+        items={people}
+        columns={cols}
+        getRowId={(p) => p.id}
+        resizableColumns
+        selectionMode="multiselect"
+        columnSizingOptions={{ name: { defaultWidth: 200 }, age: { defaultWidth: 120 } }}
+      />,
+    );
+    const grid = getByRole("grid");
+    const stickyCell = grid.querySelector<HTMLElement>('[data-row-index="1"] [data-col-index="1"]')!;
+    expect(stickyCell.style.insetInlineStart).toBe("var(--dg-sticky-1)");
+    expect(grid.style.getPropertyValue("--dg-sticky-1")).not.toBe("");
+
+    renderCell.mockClear();
+    const handle = within(grid).getAllByRole("separator")[0];
+    handle.focus();
+    await user.keyboard("{ArrowRight}{ArrowRight}");
+    expect(handle).toHaveAttribute("aria-valuenow", "220");
+    expect(renderCell).not.toHaveBeenCalled();
+  });
+
+  it("getRowId viết inline không bị gọi lại cho mọi hàng ở mỗi lần render", () => {
+    const getRowId = vi.fn((p: Person) => p.id);
+    const grid = () => <DataGrid aria-label="Người" items={people} columns={columns} getRowId={(p) => getRowId(p)} />;
+    const { rerender } = render(grid());
+    getRowId.mockClear();
+    // Component cha render lại: getRowId là hàm mới nhưng danh sách hàng không đổi.
+    rerender(grid());
+    rerender(grid());
+    expect(getRowId).not.toHaveBeenCalled();
+  });
+});
+
+describe("DataGrid messages", () => {
+  it("messages tiếng Anh", () => {
+    const { getByText, getByRole } = render(
+      <YugenProvider messages={{ dataGrid: dataGridMessagesEn }}>
+        <DataGrid aria-label="Empty" items={[] as Person[]} columns={columns} getRowId={(p) => p.id} selectionMode="multiselect" />
+      </YugenProvider>,
+    );
+    expect(getByText("No data")).toBeInTheDocument();
+    expect(getByRole("checkbox", { name: "Select all rows" })).toBeInTheDocument();
   });
 });

@@ -4,7 +4,8 @@ import { SITE } from "./site";
 export interface TemplateInfo {
   dir: string;
   name: string;
-  tags: string[];
+  /** Tag trên thẻ: chuỗi giữ nguyên ở mọi ngôn ngữ (tên công nghệ) hoặc { vi, en }. */
+  tags: (string | { vi: string; en: string })[];
   /** Template nổi bật: preview lớn ở đầu trang. */
   featured?: boolean;
   /** Đường dẫn hiện trên thanh địa chỉ giả của khung preview. */
@@ -17,7 +18,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     dir: "vite-starter",
     name: "Starter",
-    tags: ["Vite", "React 18", "Tailwind v4", "Trang trắng"],
+    tags: ["Vite", "React 19", "Tailwind v4", { vi: "Trang trắng", en: "Blank" }],
     featured: true,
     vi: {
       description:
@@ -47,7 +48,7 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     dir: "vite-saas",
     name: "SaaS",
-    tags: ["Vite", "React 18", "Tailwind v4", "8 trang"],
+    tags: ["Vite", "React 19", "Tailwind v4", { vi: "8 trang", en: "8 pages" }],
     featured: true,
     previewPath: "/#/overview",
     vi: {
@@ -57,9 +58,9 @@ export const TEMPLATES: TemplateInfo[] = [
         "Sidebar Nav → Drawer trên màn hẹp (container query)",
         "Bảng lệnh Ctrl / ⌘ K: chuyển trang, đổi theme, hành động nhanh",
         "Sáng / tối / tương phản cao + 3 thương hiệu, lưu lại, không nháy khi tải",
-        "Định tuyến hash, tiêu đề & meta description theo trang",
+        "Định tuyến hash, tiêu đề & meta description theo trang; mỗi trang nạp lười",
         "SEO cơ bản: description, Open Graph, theme-color, robots.txt",
-        "Tách sẵn chunk vendor, build không cảnh báo",
+        "Chữ và dữ liệu mẫu bằng tiếng Anh (tiếng Việt với --lang vi), nằm trong src/content/",
       ],
     },
     en: {
@@ -69,9 +70,9 @@ export const TEMPLATES: TemplateInfo[] = [
         "Sidebar Nav → Drawer on narrow screens (container queries)",
         "Ctrl / ⌘ K command palette: navigate, switch theme, quick actions",
         "Light / dark / high contrast + 3 brands, persisted with no flash on load",
-        "Hash routing, per-page title & meta description",
+        "Hash routing, per-page title & meta description; every page loads on demand",
         "SEO basics: description, Open Graph, theme-color, robots.txt",
-        "Vendor chunks split out, so the build has no warnings",
+        "English text and sample data (Vietnamese with --lang vi), kept in src/content/",
       ],
     },
   },
@@ -84,51 +85,83 @@ export const TEMPLATES: TemplateInfo[] = [
       description:
         "Blog viết bằng Markdown: tìm kiếm, thẻ, mục lục và SEO sinh sẵn cho từng bài.",
       features: [
-        "Thêm file src/posts/*.md là có bài (frontmatter: title, date, tags, draft)",
+        "Thêm file src/content/<lang>/posts/*.md là có bài (frontmatter: title, date, tags, draft)",
         "Parser an toàn của Yugen UI: code tô màu, bảng, trích dẫn, ảnh, link nội bộ",
         "URL thật /posts/<slug>/ bằng History API, không thêm router",
         "Mỗi bài một file HTML: title, description, canonical, Open Graph, JSON-LD",
         "Tự sinh sitemap.xml, rss.xml, robots.txt, 404.html; chạy trên mọi host tĩnh",
         "Theme sáng / tối / tương phản cao, không nháy khi tải",
+        "Chữ và bài mẫu bằng tiếng Anh (tiếng Việt với --lang vi); SEO, RSS theo ngôn ngữ đó",
       ],
     },
     en: {
       description:
         "A Markdown blog: search, tags, table of contents and build-time SEO for every post.",
       features: [
-        "Add src/posts/*.md to publish (frontmatter: title, date, tags, draft)",
+        "Add src/content/<lang>/posts/*.md to publish (frontmatter: title, date, tags, draft)",
         "Yugen UI's safe parser: highlighted code, tables, quotes, images, internal links",
         "Real URLs /posts/<slug>/ via the History API, no router library",
         "One HTML file per post: title, description, canonical, Open Graph, JSON-LD",
         "Generates sitemap.xml, rss.xml, robots.txt and 404.html; runs on any static host",
         "Light / dark / high contrast, no flash on load",
+        "English text and sample posts (Vietnamese with --lang vi); SEO and RSS follow that language",
       ],
     },
   },
   {
     dir: "vite-dashboard",
     name: "Dashboard",
-    tags: ["Vite", "Charts"],
+    tags: ["Vite", "React 19", "Charts", { vi: "4 trang", en: "4 pages" }],
+    previewPath: "/",
     vi: {
-      description: "Một trang dashboard: thẻ KPI, biểu đồ có bộ lọc thời gian và giao dịch gần đây.",
-      features: ["StatTile, AreaChart, BarChart, DonutChart, List", "Một bộ lọc thời gian cho mọi thẻ"],
+      description: "Dashboard bán hàng 4 trang: KPI, biểu đồ và bảng khách hàng, dữ liệu từ API giả lập có độ trễ.",
+      features: [
+        "Tổng quan, Doanh thu, Khách hàng, Cài đặt; sidebar → Drawer trên màn hẹp",
+        "Một khoảng ngày (DateRangePicker có preset) cho mọi thẻ và biểu đồ",
+        "StatTile có sparkline, LineChart, BarChart, DonutChart",
+        "DataGrid: sắp xếp, lọc, tìm kiếm, phân trang, xuất CSV",
+        "Trạng thái đang tải, trống và lỗi từ src/api.ts, chỉnh được trong Cài đặt",
+        "Tiếng Anh, hoặc tiếng Việt với --lang vi; trang tải lười, URL thật bằng History API",
+      ],
     },
     en: {
-      description: "A dashboard page: KPI tiles, charts with a time filter and recent transactions.",
-      features: ["StatTile, AreaChart, BarChart, DonutChart, List", "One time filter for every card"],
+      description: "A 4-page sales dashboard: KPIs, charts and a customer table, fed by a mock API with latency.",
+      features: [
+        "Overview, Revenue, Customers, Settings; sidebar → Drawer on narrow screens",
+        "One date range (DateRangePicker with presets) for every card and chart",
+        "StatTile with sparklines, LineChart, BarChart, DonutChart",
+        "DataGrid: sorting, filters, search, pagination, CSV export",
+        "Loading, empty and error states from src/api.ts, adjustable in Settings",
+        "English, or Vietnamese with --lang vi; lazy pages, real URLs via the History API",
+      ],
     },
   },
   {
     dir: "vite-ai-chat",
     name: "AI chat",
-    tags: ["Vite", "Yugen Labs"],
+    tags: ["Vite", "React 19", "Yugen Labs", "Streaming"],
+    previewPath: "/",
     vi: {
-      description: "Giao diện chat với trợ lý AI: tin nhắn tự cuộn, đính kèm tệp và Trace từng bước.",
-      features: ["MessageScroller, MessageBubble, ChatComposer", "Trace: các bước của agent theo thời gian thực"],
+      description: "Ứng dụng chat AI: lưu hội thoại, câu trả lời stream dừng được, kèm suy luận, các bước và nguồn.",
+      features: [
+        "Danh sách hội thoại: tạo, đổi tên, xoá, lưu trong localStorage; Drawer trên màn hẹp",
+        "Câu trả lời Markdown dạng stream kèm Reasoning, Trace từng bước và nguồn Citation",
+        "Dừng bằng nút hoặc phím Esc; sao chép và tạo lại câu trả lời",
+        "PromptInput có đính kèm (nút, kéo thả, dán); Enter gửi, Shift+Enter xuống dòng",
+        "Một adapter sendMessage(messages, { signal }): mặc định là mock, nối endpoint của bạn bằng một dòng",
+        "Route /, /c/:id, /settings nạp lười; chữ tiếng Anh, tiếng Việt với --lang vi",
+      ],
     },
     en: {
-      description: "An AI assistant chat: auto-scrolling thread, attachments and a step-by-step Trace.",
-      features: ["MessageScroller, MessageBubble, ChatComposer", "Trace: the agent's steps in real time"],
+      description: "An AI chat app: saved conversations and streaming answers with reasoning, steps and sources.",
+      features: [
+        "Conversation list: new, rename, delete, saved in localStorage; Drawer on narrow screens",
+        "Streaming Markdown answers with Reasoning, a step-by-step Trace and Citation sources",
+        "Stop with the button or Esc; copy and regenerate answers",
+        "PromptInput with attachments (button, drag and drop, paste); Enter sends, Shift+Enter adds a line",
+        "One sendMessage(messages, { signal }) adapter: a mock by default, your endpoint in one line",
+        "Lazy routes /, /c/:id, /settings; English text, Vietnamese with --lang vi",
+      ],
     },
   },
 ];

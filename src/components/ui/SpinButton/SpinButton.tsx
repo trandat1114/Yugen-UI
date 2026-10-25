@@ -3,6 +3,10 @@ import * as React from "react";
 import { ChevronDown12Regular, ChevronDown16Regular, ChevronUp12Regular, ChevronUp16Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { fieldAppearanceClass, type FieldAppearance } from "@/components/ui/Select/Select";
+import { useYugenMessages } from "../YugenProvider/context";
+import { spinButtonMessages } from "./messages";
+
+export { spinButtonMessages, spinButtonMessagesEn, type SpinButtonMessages } from "./messages";
 
 const decimals = (n: number) => {
   const [, frac = ""] = String(n).split(".");
@@ -39,7 +43,9 @@ export interface SpinButtonProps
   parseValue?: (text: string) => number | null;
   appearance?: FieldAppearance;
   size?: "small" | "medium";
+  /** aria-label nút tăng. Mặc định lấy từ `messages.spinButton.increment`. */
   incrementLabel?: string;
+  /** aria-label nút giảm. Mặc định lấy từ `messages.spinButton.decrement`. */
   decrementLabel?: string;
 }
 
@@ -67,8 +73,8 @@ export const SpinButton = React.forwardRef<HTMLInputElement, SpinButtonProps>(
       parseValue = defaultParse,
       appearance = "outline",
       size = "medium",
-      incrementLabel = "Tăng giá trị",
-      decrementLabel = "Giảm giá trị",
+      incrementLabel,
+      decrementLabel,
       className,
       disabled,
       readOnly,
@@ -78,6 +84,7 @@ export const SpinButton = React.forwardRef<HTMLInputElement, SpinButtonProps>(
     },
     ref,
   ) => {
+    const msg = useYugenMessages("spinButton", spinButtonMessages);
     const [inner, setInner] = React.useState<number | null>(defaultValue);
     const current = value !== undefined ? value : inner;
     const [text, setTextState] = React.useState<string | null>(null);
@@ -224,7 +231,7 @@ export const SpinButton = React.forwardRef<HTMLInputElement, SpinButtonProps>(
         <button
           type="button"
           tabIndex={-1}
-          aria-label={incrementLabel}
+          aria-label={incrementLabel ?? msg.increment}
           disabled={disabled || readOnly || atMax}
           onPointerDown={startSpin(step)}
           onPointerUp={stopSpin}
@@ -237,7 +244,7 @@ export const SpinButton = React.forwardRef<HTMLInputElement, SpinButtonProps>(
         <button
           type="button"
           tabIndex={-1}
-          aria-label={decrementLabel}
+          aria-label={decrementLabel ?? msg.decrement}
           disabled={disabled || readOnly || atMin}
           onPointerDown={startSpin(-step)}
           onPointerUp={stopSpin}

@@ -1,5 +1,28 @@
 # @yugen-ui/cli
 
+## 0.4.0
+
+- `yugen diff [names…]`: compare copied component source with the registry and print a unified diff. Without names it
+  checks every Yugen component found in the project.
+- `yugen update [names…]`: apply the registry version, with the diff shown first and a confirmation; `--dry-run` only
+  shows it. New files and npm dependencies of updated components are added.
+- `yugen remove <names…>`: delete a component's files unless something else in the project still imports them
+  (relative imports and aliases are followed).
+- `yugen theme --brand <hex> [--name] [--vibrancy] [--torsion]`: generate the 16-step brand ramp (the Theme Designer's
+  algorithm) into `yugen-brand.css` next to the main CSS file and import it. Warns when white text on the primary button is
+  under 4.5:1 and suggests a key that passes.
+- `yugen init` wraps the app in `YugenProvider`: `<App />` in Vite's `main.tsx`, `{children}` in Next.js
+  `app/layout.tsx`. `--no-provider` keeps the printed instructions instead.
+- `create --ref <branch|tag>`: take the templates from a branch or tag of the repository instead of the bundled copy.
+- `create --lang en|vi` also works for the SaaS and Blog templates. It now removes the other language's
+  `src/content/<lang>/` folder (the blog's posts) as well as `src/content/<lang>.ts`.
+- `create --lang` also writes that language's `<title>`, description and Open Graph tags into `index.html` (from
+  `templates.json`), so link previews and crawlers see the right language before the app runs.
+- Templates: Dashboard (4 pages, one date range for every chart, DataGrid with CSV export) and AI chat (conversation
+  list, streamed replies you can stop, your own backend) are full apps. With `--lang en` the built-in component strings
+  are English too (`messagesEn` in `src/content/en.ts`); `--lang vi` ships nothing extra. Pages load lazily. Templates
+  depend on `yugen-ui@^0.11.0`.
+
 ## 0.3.0
 
 - Templates: Vite 8 (Rolldown), `@vitejs/plugin-react` 6 and TypeScript 6. Chunks are split with `codeSplitting`

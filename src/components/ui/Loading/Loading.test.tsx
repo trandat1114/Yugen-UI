@@ -3,7 +3,8 @@ import { act, render, renderHook, screen, waitFor } from "@testing-library/react
 import userEvent from "@testing-library/user-event";
 import { setMediaQueries } from "@/test/matchMedia";
 import { Toaster } from "../Toast/Toast";
-import { createPageProgress, useOptimisticList, useSpinDelay, type SpinDelayOptions } from "./Loading";
+import { createPageProgress, ErrorState, errorStateMessagesEn, useOptimisticList, useSpinDelay, type SpinDelayOptions } from "./Loading";
+import { YugenProvider } from "../YugenProvider/YugenProvider";
 
 /* ================================================================ useSpinDelay */
 
@@ -380,5 +381,19 @@ describe("useOptimisticList", () => {
     await user.click(screen.getByRole("button", { name: /Thử lại/ }));
     await waitFor(() => expect(screen.getByText("Hai")).toBeInTheDocument());
     expect(attempts).toBe(2);
+  });
+});
+
+describe("Loading messages", () => {
+  it("errorStateMessagesEn; description={null} vẫn ẩn mô tả", () => {
+    render(
+      <YugenProvider messages={{ errorState: errorStateMessagesEn }}>
+        <ErrorState onRetry={() => {}} />
+        <ErrorState title="Riêng" description={null} />
+      </YugenProvider>,
+    );
+    expect(screen.getByRole("heading", { name: "Couldn't load content" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Retry" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Riêng" }).nextElementSibling).toBeNull();
   });
 });

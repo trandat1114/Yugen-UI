@@ -1,5 +1,5 @@
 /**
- * Lộ trình — nguồn duy nhất cho trang Cộng đồng (#/community › Lộ trình) và ROADMAP.md (`npm run roadmap`).
+ * Lộ trình — nguồn duy nhất cho trang Cộng đồng (/community › Lộ trình) và ROADMAP.md (`npm run roadmap`).
  * Mỗi bản phát hành ứng với một milestone trên GitHub; chi tiết, ưu tiên và phụ thuộc nằm ở GitHub Project.
  * Đổi milestone / issue thì sửa ở đây, chạy `npm run roadmap`; roadmap.test.ts báo lỗi nếu ROADMAP.md lệch.
  */
@@ -29,7 +29,7 @@ export interface RoadmapRelease {
   items: RoadmapItem[];
 }
 
-export const ROADMAP_UPDATED = "2026-10-23";
+export const ROADMAP_UPDATED = "2026-10-25";
 export const PROJECT_URL = "https://github.com/users/trandat1114/projects/6";
 
 export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
@@ -41,7 +41,8 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       en: "Stable API. No fixed date: ships when the readiness checklist is done.",
       items: [
         { status: "planned", issue: 65, vi: "Rà soát API, gỡ deprecation, quyết định về React 18 và class spacing viết hoa", en: "API review, deprecations removed, decisions on React 18 and upper-case spacing" },
-        { status: "planned", issue: 63, vi: "SEO: URL theo đường dẫn, prerender từng trang, sitemap", en: "SEO: path URLs, prerendered pages, sitemap" },
+        { status: "done", issue: 63, vi: "SEO: URL theo đường dẫn, prerender từng trang, sitemap", en: "SEO: path URLs, prerendered pages, sitemap" },
+        { status: "planned", issue: 160, vi: "Đề xuất cho 1.0 (đang chờ duyệt): AppShell, Form, NavigationMenu, block 2.0, codemod, kiểm thử", en: "1.0 proposal (under review): AppShell, Form, NavigationMenu, blocks 2.0, codemods, testing" },
       ],
     },
   ],
@@ -52,8 +53,8 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       vi: "Chưa xếp lịch.",
       en: "Not scheduled yet.",
       items: [
-        { status: "planned", issue: 69, vi: "Docs tiếng Anh cho trang component và các trang khái niệm còn lại", en: "English docs for component pages and the remaining concept pages" },
-        { status: "planned", issue: 64, vi: "CLI giai đoạn 2: diff, update, theme, remove", en: "CLI phase 2: diff, update, theme, remove" },
+        { status: "planned", issue: 151, vi: "Template mới: Landing, Admin, Next.js, Docs, Storefront, Glass", en: "New templates: Landing, Admin, Next.js, Docs, Storefront, Glass" },
+        { status: "planned", issue: 178, vi: "Vật liệu glass cho thanh điều hướng và control (lấy cảm hứng từ Liquid Glass)", en: "Glass material for navigation and controls (inspired by Liquid Glass)" },
         { status: "planned", issue: 68, vi: "Đăng ký @yugen vào danh mục registry của shadcn", en: "Register @yugen in the shadcn registry index" },
         { status: "planned", vi: "Đang cân nhắc: bộ Figma, gói icon Sakura", en: "Under consideration: Figma kit, Sakura icon set" },
       ],
@@ -102,7 +103,7 @@ export function roadmapMarkdown() {
     `phụ thuộc nằm ở [GitHub Project](${PROJECT_URL}). \`[x]\` đã xong, \`[~]\` đang làm, \`[ ]\` dự kiến.`,
     "",
     "Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. English: the community page",
-    `(${homepage}?lang=en#/community) shows the same roadmap.`,
+    `(${homepage}community?lang=en) shows the same roadmap.`,
   ];
   for (const stage of ["now", "next", "later"] as const) {
     if (ROADMAP[stage].length === 0) continue;
@@ -113,7 +114,7 @@ export function roadmapMarkdown() {
       for (const item of r.items) lines.push(`- ${box[item.status]} ${item.vi}${item.issue ? ` (#${item.issue})` : ""}`);
     }
   }
-  lines.push("", "## Đã phát hành", "", "Chi tiết ở trang Có gì mới (`#/news`) và `CHANGELOG.md`.", "");
+  lines.push("", "## Đã phát hành", "", "Chi tiết ở trang Có gì mới (`/news`) và `CHANGELOG.md`.", "");
   for (const n of NEWS.filter((r) => !r.upcoming)) lines.push(`- **${n.version}** (${n.date}): ${n.title}`);
   return `${lines.join("\n")}\n`;
 }

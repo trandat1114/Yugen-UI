@@ -1,5 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
+import { useYugen, useYugenMessages } from "../YugenProvider/context";
+import { chartMessages } from "./messages";
 import { ChartContainer, ChartLegend, ChartPatterns, ChartTable, ChartTooltip } from "./ChartParts";
 import {
   chartUid,
@@ -27,9 +29,10 @@ export interface DonutChartProps extends Omit<ChartFrameProps, "height"> {
   data: DonutDatum[];
   /** Tối đa số lát; phần còn lại gộp vào "Khác" (xám). Không vượt quá 6. */
   maxSlices?: number;
+  /** Tên lát gộp. Mặc định lấy từ `messages.chart.other` ("Khác"). */
   otherLabel?: string;
   valueFormat?: ChartNumberFormat;
-  /** Nhãn giữa vòng (mặc định "Tổng"). */
+  /** Nhãn giữa vòng. Mặc định lấy từ `messages.chart.total` ("Tổng"). */
   centerLabel?: React.ReactNode;
   /** Giá trị giữa vòng (mặc định tổng đã định dạng). */
   centerValue?: React.ReactNode;
@@ -55,9 +58,9 @@ export const DonutChart = React.forwardRef<HTMLElement, DonutChartProps>(functio
   {
     data,
     maxSlices = 6,
-    otherLabel = "Khác",
+    otherLabel: otherLabelProp,
     valueFormat,
-    centerLabel = "Tổng",
+    centerLabel: centerLabelProp,
     centerValue,
     size = 200,
     thickness,
@@ -65,9 +68,9 @@ export const DonutChart = React.forwardRef<HTMLElement, DonutChartProps>(functio
     title,
     description,
     toolbar,
-    locale = "vi-VN",
+    locale: localeProp,
     ariaLabel,
-    indexLabel = "Nhóm",
+    indexLabel: indexLabelProp,
     hideTableToggle,
     defaultShowTable,
     texture,
@@ -76,6 +79,12 @@ export const DonutChart = React.forwardRef<HTMLElement, DonutChartProps>(functio
   },
   ref,
 ) {
+  const yugen = useYugen();
+  const locale = localeProp ?? yugen.locale;
+  const msg = useYugenMessages("chart", chartMessages);
+  const otherLabel = otherLabelProp ?? msg.other;
+  const centerLabel = centerLabelProp ?? msg.total;
+  const indexLabel = indexLabelProp ?? msg.group;
   const textured = useChartTexture(texture);
   const uid = chartUid(React.useId());
   const [active, setActive] = React.useState<{ i: number; kb: boolean } | null>(null);
@@ -126,21 +135,24 @@ export const DonutChart = React.forwardRef<HTMLElement, DonutChartProps>(functio
   const biggest = [...items].sort((a, b) => b.value - a.value)[0];
   const summary =
     ariaLabel ??
-    `Biểu đồ donut: ${items.length} nhóm, tổng ${fmt(total)}${
-      biggest && total > 0 ? `. Lớn nhất: ${biggest.label} (${pct.format(biggest.value / total)})` : ""
-    }. Dùng phím mũi tên để duyệt từng lát.`;
+    msg.donutSummary({
+      groups: items.length,
+      total: fmt(total),
+      largest: biggest && total > 0 ? { label: biggest.label, share: pct.format(biggest.value / total) } : undefined,
+    });
 
-  const table = (
+  // Chỉ dựng khi bảng đang bật: hàng của mọi điểm dữ liệu được định dạng lại mỗi lần biểu đồ render.
+  const table = () => (
     <ChartTable
       caption={summary}
       columns={[
         { key: "__index", label: indexLabel },
-        { key: "value", label: "Giá trị", numeric: true },
-        { key: "share", label: "Tỉ lệ", numeric: true },
+        { key: "value", label: msg.value, numeric: true },
+        { key: "share", label: msg.share, numeric: true },
       ]}
       rows={[
         ...items.map((d) => ({ key: d.key, header: d.label, cells: [fmt(d.value), total > 0 ? pct.format(d.value / total) : "—"] })),
-        { key: "__total", header: "Tổng", cells: [fmt(total), total > 0 ? pct.format(1) : "—"] },
+        { key: "__total", header: msg.total, cells: [fmt(total), total > 0 ? pct.format(1) : "—"] },
       ]}
     />
   );
@@ -173,7 +185,7 @@ export const DonutChart = React.forwardRef<HTMLElement, DonutChartProps>(functio
             height={S}
             role="group"
             aria-label={summary}
-            aria-roledescription="biểu đồ"
+            aria-roledescription={msg.roleDescription}
             className="block overflow-visible"
             onPointerLeave={() => setActive((a) => (a?.kb ? a : null))}
           >
@@ -247,8 +259,8 @@ export const DonutChart = React.forwardRef<HTMLElement, DonutChartProps>(functio
             y={anchor[1]}
             title={activeSlice.label}
             rows={[
-              { key: "v", label: "Giá trị", value: fmt(activeSlice.value) },
-              { key: "p", label: "Tỉ lệ", value: pct.format(total > 0 ? activeSlice.value / total : 0) },
+              { key: "v", label: msg.value, value: fmt(activeSlice.value) },
+              { key: "p", label: msg.share, value: pct.format(total > 0 ? activeSlice.value / total : 0) },
             ]}
           />
         )}

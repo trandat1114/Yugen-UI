@@ -7,7 +7,8 @@ import {
   type MdBlock,
   type MdInline,
 } from "yugen-ui";
-import { slugify } from "./content";
+import { slugify } from "./blog";
+import { useBlog } from "./posts";
 import { Link, parsePath } from "./router";
 
 /**
@@ -53,7 +54,7 @@ export interface Heading {
 function headingIds() {
   const seen = new Map<string, number>();
   return (text: string) => {
-    const base = slugify(text) || "muc";
+    const base = slugify(text) || "section";
     const n = seen.get(base) ?? 0;
     seen.set(base, n + 1);
     return n ? `${base}-${n}` : base;
@@ -149,6 +150,7 @@ const HEADING: Record<number, string> = {
 };
 
 function Block({ block, id }: { block: MdBlock; id?: string }): ReactNode {
+  const { t } = useBlog();
   switch (block.type) {
     case "paragraph":
       return (
@@ -182,7 +184,7 @@ function Block({ block, id }: { block: MdBlock; id?: string }): ReactNode {
         <List start={block.ordered && block.start !== 1 ? block.start : undefined} className={`flex flex-col gap-1 ps-5 ${block.ordered ? "list-decimal" : "list-disc"}`}>
           {block.items.map((item, i) => (
             <li key={i} className={item.checked === null ? "ps-0.5" : "-ms-5 flex list-none gap-2"}>
-              {item.checked !== null && <input type="checkbox" checked={item.checked} readOnly aria-label={item.checked ? "Đã xong" : "Chưa xong"} className="mt-1.5" />}
+              {item.checked !== null && <input type="checkbox" checked={item.checked} readOnly aria-label={item.checked ? t.markdown.done : t.markdown.todo} className="mt-1.5" />}
               <div className="flex min-w-0 flex-col gap-1">
                 {item.children.map((b, j) =>
                   b.type === "paragraph" && block.tight ? <Inlines key={j} nodes={b.children} /> : <Block key={j} block={b} />,
@@ -195,7 +197,7 @@ function Block({ block, id }: { block: MdBlock; id?: string }): ReactNode {
     }
     case "table":
       return (
-        <div role="region" aria-label="Bảng" tabIndex={0} className="overflow-x-auto rounded-large border border-stroke-2">
+        <div role="region" aria-label={t.markdown.table} tabIndex={0} className="overflow-x-auto rounded-large border border-stroke-2">
           <table className="w-full border-collapse text-start text-body1">
             <thead>
               <tr className="bg-background-3">

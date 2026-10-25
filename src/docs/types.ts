@@ -47,17 +47,37 @@ export interface ComponentDoc {
 }
 
 /**
+ * Bản tiếng Anh của phần chữ trên một trang component (src/docs/registry/en/<file>.ts). Demo và code mẫu giữ nguyên; mục
+ * nào bỏ trống thì hiện bản gốc tiếng Việt.
+ */
+export interface ComponentDocEn {
+  description: string;
+  /** Theo thứ tự `examples` của bản gốc. */
+  examples: { title: string; description?: string }[];
+  dos: string[];
+  donts: string[];
+  /** Tên prop → mô tả. */
+  props: Record<string, string>;
+  /** Tên prop → giá trị mặc định, chỉ khi bản gốc viết bằng chữ (vd. "tự suy ra"). */
+  defaults?: Record<string, string>;
+}
+
+/**
  * Phần nạp sẵn của một trang component (sidebar, trang chủ, command palette, header trang) — trích lúc build,
  * không kéo theo demo / code mẫu. `file`: file trong src/docs/registry chứa doc (nạp lười theo file).
  */
-export type ComponentMeta = Pick<ComponentDoc, "slug" | "name" | "category" | "lead"> & { file: string };
+export type ComponentMeta = Pick<ComponentDoc, "slug" | "name" | "category" | "lead"> & {
+  file: string;
+  /** Có bản tiếng Anh (src/docs/registry/en/<file>.ts) — plugin yugenDocsMeta đánh dấu lúc build. */
+  translated?: true;
+};
 
 /** Nhóm trang "Khái niệm" (tương đương mục Concepts của Fluent UI Storybook). */
 export const CONCEPT_GROUPS = ["Bắt đầu", "Nhà phát triển", "Khả năng tiếp cận", "Yugen Labs", "Chuyển đổi"] as const;
 export type ConceptGroup = (typeof CONCEPT_GROUPS)[number];
 
 export interface ConceptMeta {
-  /** Dùng trong URL: #/concepts/<slug> */
+  /** Dùng trong URL: /concepts/<slug> */
   slug: string;
   title: string;
   group: ConceptGroup;

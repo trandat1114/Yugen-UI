@@ -3,6 +3,10 @@ import * as React from "react";
 import { useDirection } from "@radix-ui/react-direction";
 import { cn } from "@/lib/cn";
 import { fieldControlClass } from "@/components/ui/Field/Field";
+import { useYugenMessages } from "../YugenProvider/context";
+import { inputOTPMessages } from "./messages";
+
+export { inputOTPMessages, inputOTPMessagesEn, type InputOTPMessages } from "./messages";
 
 const PATTERNS = {
   digits: /^\d$/,
@@ -67,6 +71,7 @@ export const InputOTP = React.forwardRef<HTMLDivElement, InputOTPProps>(
     const isValid = (ch: string) => regex.test(ch);
     const sanitize = (text: string) => text.split("").filter(isValid).join("");
 
+    const msg = useYugenMessages("inputOTP", inputOTPMessages);
     const [inner, setInner] = React.useState(() => sanitize(defaultValue).slice(0, length));
     const current = (value !== undefined ? value : inner).slice(0, length);
     const inputs = React.useRef<(HTMLInputElement | null)[]>([]);
@@ -195,7 +200,7 @@ export const InputOTP = React.forwardRef<HTMLDivElement, InputOTPProps>(
                     autoFocus={autoFocus && i === 0}
                     disabled={disabled}
                     required={required && i === 0}
-                    aria-label={`Ký tự ${i + 1} trên ${length}`}
+                    aria-label={msg.slot(i + 1, length)}
                     aria-invalid={invalid || undefined}
                     aria-describedby={ariaDescribedby}
                     value={current[i] ?? ""}

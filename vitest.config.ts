@@ -1,7 +1,7 @@
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import path from "node:path";
-import { yugenDocsMeta, yugenTypeExports } from "./vite.plugins.ts";
+import { yugenDocsMeta, yugenMessages, yugenTypeExports, yugenUiExports } from "./vite.plugins.ts";
 
 /**
  * Vitest — unit, tương tác (Testing Library) và SSR / hydration.
@@ -9,7 +9,7 @@ import { yugenDocsMeta, yugenTypeExports } from "./vite.plugins.ts";
  * Playwright (e2e/) chạy riêng bằng `npm run test:e2e`.
  */
 export default defineConfig({
-  plugins: [react(), yugenTypeExports(import.meta.dirname), yugenDocsMeta(import.meta.dirname)],
+  plugins: [react(), yugenTypeExports(import.meta.dirname), yugenUiExports(import.meta.dirname), yugenDocsMeta(import.meta.dirname), yugenMessages(import.meta.dirname)],
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),
@@ -23,5 +23,8 @@ export default defineConfig({
     // Không xử lý CSS trong test, trừ tokens.css: Theme Designer đọc giá trị token gốc qua `?raw` (src/docs/themeAxes.ts).
     css: { include: [/\/styles\/tokens\.css/] },
     restoreMocks: true,
+    // Cache transform trên đĩa (node_modules/.vitest-cache) giữ kết quả import.meta.glob cũ khi thêm file mới → test pass ở máy
+    // nhưng đỏ trên CI (không có cache). Tắt để máy chạy giống CI.
+    fsModuleCache: false,
   },
 });

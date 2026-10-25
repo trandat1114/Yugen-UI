@@ -49,7 +49,7 @@ import "../motion-preview.css";
 
 /**
  * Foundations › Motion (#45): token, utility, chuyển động của từng component (demo thật), playground, xem trước giảm
- * chuyển động, phối hợp, hiệu năng. Viết song ngữ ngay trong trang (các trang Foundations khác chỉ có tiếng Việt).
+ * chuyển động, phối hợp, hiệu năng. Viết song ngữ ngay trong trang, như các trang Foundations khác.
  */
 
 type Text = Record<Locale, string>;
@@ -128,7 +128,7 @@ const DURATIONS = [
 
 const DURATION_USE: Record<(typeof DURATIONS)[number]["utility"], Text> = {
   "duration-ultra-fast": { vi: "Phản hồi tức thì (nhấn)", en: "Instant feedback (press)" },
-  "duration-faster": { vi: "Hover, đổi màu, icon", en: "Hover, colour, icons" },
+  "duration-faster": { vi: "Hover, đổi màu, icon", en: "Hover, color, icons" },
   "duration-fast": { vi: "Bề mặt rời đi", en: "Surfaces leaving" },
   "duration-normal": { vi: "Mở / đóng nội dung tại chỗ", en: "Expanding content in place" },
   "duration-gentle": { vi: "Bề mặt đi vào (Dialog, Drawer)", en: "Surfaces entering (Dialog, Drawer)" },
@@ -189,8 +189,17 @@ const ANIMATIONS: { utility: string; keyframes: Text; timing: string }[] = [
     keyframes: { vi: "trượt ra về mép đó", en: "slides out to that edge" },
     timing: "150ms · accelerate-mid",
   },
-  { utility: "animate-shimmer", keyframes: { vi: "dải sáng chạy ngang (Skeleton)", en: "light sweep (Skeleton)" }, timing: "1.8s · linear · ∞" },
-  { utility: "animate-indeterminate", keyframes: { vi: "thanh chạy (ProgressBar không xác định)", en: "moving bar (indeterminate ProgressBar)" }, timing: "3s · linear · ∞" },
+  { utility: "animate-sweep", keyframes: { vi: "dải sáng chạy ngang, bằng transform (Skeleton)", en: "light sweep with transform (Skeleton)" }, timing: "1.8s · linear · ∞" },
+  {
+    utility: "animate-indeterminate-slide",
+    keyframes: { vi: "thanh 1/3 chạy ngang, bằng transform (ProgressBar không xác định)", en: "1/3 bar sliding with transform (indeterminate ProgressBar)" },
+    timing: "3s · linear · ∞",
+  },
+  {
+    utility: "animate-shimmer / animate-indeterminate",
+    keyframes: { vi: "bản cũ đổi background-position / left (vẽ lại mỗi frame)", en: "older versions animating background-position / left (repaint every frame)" },
+    timing: "1.8s / 3s · linear · ∞",
+  },
 ];
 
 /* ---------------------------------------------------------------- patterns */
@@ -331,9 +340,9 @@ function Patterns() {
 
       <PatternCard
         name="Tabs"
-        enter={t("màu vạch chỉ báo 100ms · easy-ease", "indicator colour 100ms · easy-ease")}
+        enter={t("màu vạch chỉ báo 100ms · easy-ease", "indicator color 100ms · easy-ease")}
         exit={t("không trượt giữa các tab", "no slide between tabs")}
-        reduced={t("Giữ nguyên (chỉ đổi màu).", "Unchanged (colour only).")}
+        reduced={t("Giữ nguyên (chỉ đổi màu).", "Unchanged (color only).")}
       >
         <Tabs defaultValue="a" className="w-full">
           <TabsList>

@@ -5,15 +5,38 @@ import { cn } from "@/lib/cn";
 import { Calendar } from "@/components/ui/Calendar/Calendar";
 import { fieldControlClass } from "@/components/ui/Field/Field";
 import { Popover, PopoverAnchor, PopoverSurface, PopoverTrigger } from "@/components/ui/Popover/Popover";
+import { useYugen, useYugenMessages } from "../YugenProvider/context";
+import { datePickerMessages, dateRangePickerMessages, type DateRangePickerMessages } from "./messages";
+
+export {
+  datePickerMessages,
+  datePickerMessagesEn,
+  dateRangePickerMessages,
+  dateRangePickerMessagesEn,
+  type DatePickerMessages,
+  type DateRangePickerMessages,
+} from "./messages";
 
 /** Fluent 2 DatePicker — https://fluent2.microsoft.design/components/web/react/core/datepicker/usage */
 export type { DateRange };
 
-/** Định dạng mặc định dd/MM/yyyy. */
+/** Định dạng dd/MM/yyyy (như vi-VN). */
 export function formatDateVi(date: Date) {
   const dd = String(date.getDate()).padStart(2, "0");
   const mm = String(date.getMonth() + 1).padStart(2, "0");
   return `${dd}/${mm}/${date.getFullYear()}`;
+}
+
+/** Định dạng ngày dạng số theo locale (vi-VN: dd/MM/yyyy) — một Intl.DateTimeFormat cho mỗi locale. */
+const dateFormatCache = new Map<string, (date: Date) => string>();
+function numericDateFormat(locale: string) {
+  let format = dateFormatCache.get(locale);
+  if (!format) {
+    const f = new Intl.DateTimeFormat(locale, { day: "2-digit", month: "2-digit", year: "numeric" });
+    format = (date: Date) => f.format(date);
+    dateFormatCache.set(locale, format);
+  }
+  return format;
 }
 
 const SIZE = {
@@ -25,6 +48,7 @@ const SIZE = {
 interface PickerBaseProps {
   /** id cho nút kích hoạt (Field tự gắn). */
   id?: string;
+  /** Mặc định lấy từ `messages.datePicker.placeholder` / `messages.dateRangePicker.placeholder`. */
   placeholder?: string;
   /** Hiện nút xoá khi đã có giá trị. */
   clearable?: boolean;
@@ -34,7 +58,7 @@ interface PickerBaseProps {
   /** Ngày nhỏ nhất / lớn nhất được chọn. */
   minDate?: Date;
   maxDate?: Date;
-  /** Hàm định dạng hiển thị; mặc định dd/MM/yyyy. */
+  /** Hàm định dạng hiển thị; mặc định ngày dạng số theo `locale` của YugenProvider (vi-VN: dd/MM/yyyy). */
   formatDate?: (date: Date) => string;
   className?: string;
   "aria-label"?: string;
@@ -45,6 +69,7 @@ interface PickerBaseProps {
 
 interface PickerShellProps extends Omit<PickerBaseProps, "formatDate" | "minDate" | "maxDate"> {
   display: string;
+  clearLabel: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onClear?: () => void;
@@ -63,6 +88,7 @@ function PickerShell({
   open,
   onOpenChange,
   onClear,
+  clearLabel,
   surfaceClassName,
   children,
   ...aria
@@ -96,7 +122,7 @@ function PickerShell({
           {onClear && display && !disabled && (
             <button
               type="button"
-              aria-label="Xoá giá trị"
+              aria-label={clearLabel}
               onClick={onClear}
               className="inline-flex size-6 shrink-0 items-center justify-center rounded-small text-foreground-3 hover:bg-subtle-hover hover:text-foreground-1 active:bg-subtle-pressed"
             >
@@ -138,13 +164,16 @@ export function DatePicker({
   value,
   defaultValue = null,
   onSelectDate,
-  placeholder = "Chọn ngày…",
+  placeholder,
   clearable = false,
-  formatDate = formatDateVi,
+  formatDate,
   minDate,
   maxDate,
   ...props
 }: DatePickerProps) {
+  const msg = useYugenMessages("datePicker", datePickerMessages);
+  const { locale } = useYugen();
+  const format = formatDate ?? numericDateFormat(locale);
   const [open, setOpen] = React.useState(false);
   const [inner, setInner] = React.useState<Date | null>(defaultValue);
   const current = (value !== undefined ? value : inner) ?? undefined;
@@ -157,11 +186,12 @@ export function DatePicker({
   return (
     <PickerShell
       {...props}
-      placeholder={placeholder}
-      display={current ? formatDate(current) : ""}
+      placeholder={placeholder ?? msg.placeholder}
+      display={current ? format(current) : ""}
       open={open}
       onOpenChange={setOpen}
       onClear={clearable ? () => commit(undefined) : undefined}
+      clearLabel={msg.clear}
     >
       <Calendar
         mode="single"
@@ -192,26 +222,34 @@ const lastDays = (n: number) => {
   return { from: new Date(to.getFullYear(), to.getMonth(), to.getDate() - (n - 1)), to };
 };
 
-/** Preset mặc định: Hôm nay, 7 ngày qua, 30 ngày qua, Tháng này (đến hôm nay), Tháng trước. */
+/**
+ * Preset mặc định: Hôm nay, 7 ngày qua, 30 ngày qua, Tháng này (đến hôm nay), Tháng trước. Nhãn hiển thị lấy theo
+ * `messages.dateRangePicker` (`label` ở đây là bản tiếng Việt).
+ */
 export const DEFAULT_RANGE_PRESETS: DateRangePreset[] = [
-  { label: "Hôm nay", range: () => lastDays(1) },
-  { label: "7 ngày qua", range: () => lastDays(7) },
-  { label: "30 ngày qua", range: () => lastDays(30) },
+  { label: dateRangePickerMessages.today, range: () => lastDays(1) },
+  { label: dateRangePickerMessages.last7Days, range: () => lastDays(7) },
+  { label: dateRangePickerMessages.last30Days, range: () => lastDays(30) },
   {
-    label: "Tháng này",
+    label: dateRangePickerMessages.thisMonth,
     range: () => {
       const to = startOfDay(new Date());
       return { from: new Date(to.getFullYear(), to.getMonth(), 1), to };
     },
   },
   {
-    label: "Tháng trước",
+    label: dateRangePickerMessages.lastMonth,
     range: () => {
       const now = new Date();
       return { from: new Date(now.getFullYear(), now.getMonth() - 1, 1), to: new Date(now.getFullYear(), now.getMonth(), 0) };
     },
   },
 ];
+
+/** Preset mặc định → khoá nhãn trong `messages.dateRangePicker` (nhận theo tham chiếu, kể cả khi trộn với preset riêng). */
+const DEFAULT_PRESET_KEY = new Map<DateRangePreset, keyof DateRangePickerMessages>(
+  (["today", "last7Days", "last30Days", "thisMonth", "lastMonth"] as const).map((key, i) => [DEFAULT_RANGE_PRESETS[i], key]),
+);
 
 const sameDay = (a?: Date, b?: Date) => !!a && !!b && startOfDay(a).getTime() === startOfDay(b).getTime();
 
@@ -230,6 +268,7 @@ function PresetList({
   label: string;
   onPick: (range: { from: Date; to: Date }) => void;
 }) {
+  const msg = useYugenMessages("dateRangePicker", dateRangePickerMessages);
   return (
     <div
       role="group"
@@ -240,6 +279,7 @@ function PresetList({
         const r = preset.range();
         const active = sameDay(current?.from, r.from) && sameDay(current?.to, r.to);
         const outOfBounds = (!!minDate && r.from < startOfDay(minDate)) || (!!maxDate && startOfDay(r.to) > startOfDay(maxDate));
+        const key = DEFAULT_PRESET_KEY.get(preset);
         return (
           <button
             key={preset.label}
@@ -254,7 +294,7 @@ function PresetList({
               active && "bg-brand-background-2 font-semibold text-brand-foreground-2 hover:bg-brand-background-2-hover hover:text-brand-foreground-2",
             )}
           >
-            {preset.label}
+            {key ? msg[key] : preset.label}
           </button>
         );
       })}
@@ -270,7 +310,7 @@ export interface DateRangePickerProps extends PickerBaseProps {
   numberOfMonths?: number;
   /** Lựa chọn nhanh hiển thị cạnh lịch (xếp trên lịch ở màn hẹp), vd. `DEFAULT_RANGE_PRESETS`. */
   presets?: DateRangePreset[];
-  /** Nhãn nhóm preset cho trình đọc màn hình. */
+  /** Nhãn nhóm preset cho trình đọc màn hình. Mặc định lấy từ `messages.dateRangePicker.presets`. */
   presetsLabel?: string;
 }
 
@@ -278,16 +318,19 @@ export function DateRangePicker({
   value,
   defaultValue = null,
   onSelectRange,
-  placeholder = "Chọn khoảng ngày…",
+  placeholder,
   clearable = false,
-  formatDate = formatDateVi,
+  formatDate,
   minDate,
   maxDate,
   numberOfMonths = 2,
   presets,
-  presetsLabel = "Chọn nhanh khoảng ngày",
+  presetsLabel,
   ...props
 }: DateRangePickerProps) {
+  const msg = useYugenMessages("dateRangePicker", dateRangePickerMessages);
+  const { locale } = useYugen();
+  const format = formatDate ?? numericDateFormat(locale);
   const [open, setOpen] = React.useState(false);
   const [inner, setInner] = React.useState<DateRange | null>(defaultValue);
   const current = (value !== undefined ? value : inner) ?? undefined;
@@ -297,16 +340,17 @@ export function DateRangePicker({
     onSelectRange?.(range);
   };
 
-  const display = current?.from ? `${formatDate(current.from)} – ${current.to ? formatDate(current.to) : "…"}` : "";
+  const display = current?.from ? `${format(current.from)} – ${current.to ? format(current.to) : "…"}` : "";
 
   return (
     <PickerShell
       {...props}
-      placeholder={placeholder}
+      placeholder={placeholder ?? msg.placeholder}
       display={display}
       open={open}
       onOpenChange={setOpen}
       onClear={clearable ? () => commit(undefined) : undefined}
+      clearLabel={msg.clear}
       surfaceClassName="max-w-[calc(100vw-24px)]"
     >
       <div className={presets?.length ? "flex flex-col gap-2 sm:flex-row" : "contents"}>
@@ -316,7 +360,7 @@ export function DateRangePicker({
           current={current}
           minDate={minDate}
           maxDate={maxDate}
-          label={presetsLabel}
+          label={presetsLabel ?? msg.presets}
           onPick={(r) => {
             commit({ from: r.from, to: r.to });
             setOpen(false);

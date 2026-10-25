@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { MessageBar } from "@/components/ui";
 import { DocSection } from "../../blocks";
 import { CodeBlock } from "../../CodeBlock";
+import { docsPath } from "../../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -42,7 +43,7 @@ function Table({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
 
 // Console output stays as the library prints it (Vietnamese message from warnDeprecated).
 const WARN = `[yugen-ui] "Button.appearance.transparent" đã lỗi thời và sẽ bị xoá ở v2.0.0:
-dùng appearance="subtle". Xem https://trandat1114.github.io/Yugen-UI/#/concepts/versioning`;
+dùng appearance="subtle". Xem https://trandat1114.github.io/Yugen-UI/concepts/versioning`;
 
 const DEPRECATE = `import { warnDeprecated } from "@/lib/deprecate";
 
@@ -129,7 +130,7 @@ export default function Page() {
           <ol className="flex max-w-3xl list-decimal flex-col gap-2 ps-5 text-body2 text-foreground-2">
             <li>
               Read{" "}
-              <a className="text-link underline hover:text-link-hover" href="#/news">
+              <a className="text-link underline hover:text-link-hover" href={docsPath("/news")}>
                 What's new
               </a>{" "}
               from your current version to the new one, paying attention to “Breaking” items.
