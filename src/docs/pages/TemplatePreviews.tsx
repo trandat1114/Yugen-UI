@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState, type ComponentType } from "react";
-import { messagesEn, useYugen, YugenProvider } from "@/components/ui";
+import { useEffect, useState, type ComponentType } from "react";
+import { useYugen, YugenProvider } from "@/components/ui";
 import { BlogLayout } from "../template-library/blog/BlogLayout";
 import { MemoryRouter } from "../template-library/blog/router";
+import { messagesEn } from "@/components/ui";
 import { Dashboard } from "../template-library/dashboard/Dashboard";
 import type { Appearance as DashboardAppearance } from "../template-library/dashboard/context";
 import dashboardEn from "../template-library/dashboard/content/en";
@@ -84,7 +85,6 @@ function DashboardPreview() {
   const { locale } = useLocale();
   const content = locale === "vi" ? dashboardVi : dashboardEn;
   const [appearance, setAppearance] = useState<DashboardAppearance>({ theme: docs.theme, brand: docs.brand });
-  const onAppearanceChange = useCallback((patch: Partial<DashboardAppearance>) => setAppearance((a) => ({ ...a, ...patch })), []);
 
   return (
     <YugenProvider
@@ -97,7 +97,7 @@ function DashboardPreview() {
     >
       <div className="absolute inset-0">
         <DashboardRouter>
-          <Dashboard embedded content={content} appearance={appearance} onAppearanceChange={onAppearanceChange} />
+          <Dashboard embedded content={content} appearance={appearance} onAppearanceChange={(patch) => setAppearance((a) => ({ ...a, ...patch }))} />
         </DashboardRouter>
       </div>
     </YugenProvider>
