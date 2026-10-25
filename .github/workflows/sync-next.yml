@@ -1,7 +1,9 @@
 name: Sync main → next
 
-# Sau mỗi push vào main: nếu có nhánh next và next đang thiếu commit của main, mở (hoặc giữ) PR "main → next"
-# để bản sửa lỗi trên main có mặt trong bản phát hành kế tiếp. Merge bằng "Create a merge commit" (không squash).
+# Sau mỗi push vào main: đưa commit mới của main vào next để bản sửa lỗi có mặt trong bản phát hành kế tiếp.
+# - next không có thay đổi nào ngoài main (thường gặp ngay sau khi phát hành): merge thẳng main vào next, không mở PR.
+#   Kết quả trùng cây của main, nơi CI đã chạy; push bằng GITHUB_TOKEN không kích hoạt CI nên không build lại lần nữa.
+# - next có việc riêng: mở (hoặc giữ) PR "main → next" để CI kiểm tra kết quả merge. Merge bằng "Create a merge commit".
 
 on:
   push:
@@ -9,8 +11,9 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write # merge thẳng vào next
   pull-requests: write
+  actions: write # chạy lại Docs để cập nhật /next/
 
 jobs:
   sync:
@@ -20,7 +23,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Open PR main → next
+      - name: Sync main → next
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -29,6 +32,20 @@ jobs:
           fi
           if [ "$(git rev-list --count origin/next..origin/main)" = "0" ]; then
             echo "next đã có mọi commit của main."; exit 0
+          fi
+          # Thay đổi của next kể từ điểm chung với main rỗng → merge main vào next cho ra đúng cây của main.
+          if git diff --quiet origin/main...origin/next; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git switch -c next origin/next
+            git merge --no-edit -m "chore: sync main → next" origin/main
+            if [ "$(git rev-parse 'HEAD^{tree}')" != "$(git rev-parse 'origin/main^{tree}')" ]; then
+              echo "::error::Merge không cho ra cây của main — dừng, không push."; exit 1
+            fi
+            git push origin next
+            # PR "main → next" đang mở (nếu có) tự chuyển sang merged vì next đã chứa main.
+            gh workflow run pages.yml --ref main -R "$GITHUB_REPOSITORY"
+            echo "Đã merge main vào next (không cần PR)."; exit 0
           fi
           if [ -n "$(gh pr list --base next --head main --state open --json number -q '.[].number')" ]; then
             echo "PR main → next đã mở."; exit 0

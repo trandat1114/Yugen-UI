@@ -18,6 +18,11 @@
 
 ## CI (`.github/workflows/ci.yml`)
 
+Push / PR chỉ đổi tài liệu để đọc (README, wiki, CONTRIBUTING, PR / issue template…) không chạy CI, Browser engines và
+Docs (`paths-ignore`). `CHANGELOG.md`, `ROADMAP.md` và Markdown trong `src/` / `templates/` vẫn chạy CI vì có check đọc
+chúng. Thêm file docs mới vào danh sách trong cả ba workflow. Nếu sau này bật required status checks, check của workflow
+bị bỏ qua sẽ treo ở "Expected": khi đó chuyển sang lọc trong job thay vì `paths-ignore`.
+
 | Job | Chạy |
 |---|---|
 | Build · Node 22 / 24 / 26 | typecheck, lint:classes, các check:*, sync-templates, build lib + docs, pack, size |

@@ -14,7 +14,7 @@ Nhánh ngắn hạn (xoá sau khi merge): `feat/<scope>-<mô-tả>`, `fix/…`, 
 ```
 feat/datagrid-grouping ──PR──▶ next ──(0.7.0-next.N)──▶ … ──PR "release 0.7.0"──▶ main ──tag v0.7.0──▶ latest
 fix/tabs-focus ─────────PR──▶ main ──tag v0.6.1──▶ latest
-                               main ──PR tự động "sync main → next"──▶ next   (bản sửa không bị thiếu ở 0.7)
+                               main ──tự động "sync main → next"──▶ next   (bản sửa không bị thiếu ở 0.7)
                        tag v0.6.x ──▶ release/0.6 ──fix──▶ tag v0.6.5 ──▶ release-0.6
 bất kỳ nhánh ──push / reset──▶ canary ──▶ yugen-ui@canary
 ```
@@ -22,6 +22,11 @@ bất kỳ nhánh ──push / reset──▶ canary ──▶ yugen-ui@canary
 Docs của `next` (https://trandat1114.github.io/Yugen-UI/next/) build lại sau mỗi push vào `next`, kèm tin sắp phát hành
 (`upcoming`) trên trang Có gì mới: kiểm tra ở đó trước khi mở PR `next → main` ([[Release Process]] › Tin cho bản sắp
 phát hành).
+
+**Sync main → next** (`sync-next.yml`, sau mỗi push vào `main`): nếu `next` không có thay đổi nào ngoài `main` (thường gặp
+ngay sau khi phát hành), workflow merge thẳng `main` vào `next`. Cây kết quả trùng cây của `main` mà CI đã kiểm tra, nên
+không có PR và không chạy CI lần nữa; workflow chạy lại Docs để cập nhật `/next/`. Nếu `next` có việc riêng, workflow mở
+PR "chore: sync main → next" để CI kiểm tra kết quả merge; merge bằng **Create a merge commit**.
 
 ## PR vào nhánh nào?
 

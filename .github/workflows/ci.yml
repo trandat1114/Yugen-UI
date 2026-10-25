@@ -1,16 +1,39 @@
 name: CI
 
+# Push / PR chỉ đổi tài liệu để đọc thì không chạy. Danh sách cố ý không có file mà CI đọc: CHANGELOG.md (check:release),
+# ROADMAP.md (roadmap.test.ts), packages/cli/CHANGELOG.md (check-release của CLI), Markdown trong src/ và templates/ (bài
+# blog của template, README do sync-templates sinh). Cùng danh sách ở engines.yml và pages.yml.
 on:
   push:
     branches: [main, next, "release/**", canary]
+    paths-ignore:
+      - "wiki/**"
+      - "README.md"
+      - "CONTRIBUTING.md"
+      - "CODE_OF_CONDUCT.md"
+      - "GOVERNANCE.md"
+      - "SECURITY.md"
+      - "Design.md"
+      - "LICENSE"
+      - ".github/PULL_REQUEST_TEMPLATE.md"
+      - ".github/ISSUE_TEMPLATE/**"
+      - "packages/*/README.md"
   pull_request:
     branches: [main, next, "release/**", canary]
-    # PR draft không chạy CI (bấm "Ready for review" để chạy một lần); PR chỉ đổi Markdown / wiki cũng không chạy.
+    # PR draft không chạy CI (bấm "Ready for review" để chạy một lần).
     types: [opened, synchronize, reopened, ready_for_review]
     paths-ignore:
-      - "**/*.md"
       - "wiki/**"
+      - "README.md"
+      - "CONTRIBUTING.md"
+      - "CODE_OF_CONDUCT.md"
+      - "GOVERNANCE.md"
+      - "SECURITY.md"
+      - "Design.md"
+      - "LICENSE"
+      - ".github/PULL_REQUEST_TEMPLATE.md"
       - ".github/ISSUE_TEMPLATE/**"
+      - "packages/*/README.md"
   # node-versions.yml gọi CI trên nhánh PR nó tạo (PR do GITHUB_TOKEN mở không tự chạy workflow).
   workflow_dispatch:
 

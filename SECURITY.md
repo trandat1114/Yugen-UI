@@ -2,12 +2,13 @@
 
 ## Supported versions
 
-Yugen UI is pre-1.0. Security fixes are released for the latest minor version only.
+Yugen UI is pre-1.0. Security fixes are released for the latest minor version only
+([npm](https://www.npmjs.com/package/yugen-ui) shows the current one).
 
 | Version | Supported |
 |---|---|
-| 0.5.x | Yes |
-| < 0.5 | No |
+| Latest minor (`0.x.y` with the highest `x`) | Yes |
+| Older minors | No |
 
 ## Reporting a vulnerability
 

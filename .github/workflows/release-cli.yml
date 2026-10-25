@@ -10,7 +10,7 @@ on:
     tags: ["cli@*"]
 
 permissions:
-  contents: read
+  contents: write # GitHub Release
   id-token: write # npm provenance
 
 jobs:
@@ -63,3 +63,25 @@ jobs:
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # GitHub Release từ packages/cli/CHANGELOG.md. Không đánh dấu "Latest" để trang repo vẫn chỉ bản yugen-ui.
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DIST_TAG: ${{ steps.channel.outputs.dist_tag }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            echo "Release $GITHUB_REF_NAME đã có — bỏ qua."; exit 0
+          fi
+          VERSION="${GITHUB_REF_NAME#cli@}"
+          CREATE="$(node -p "require('./packages/create-yugen-ui/package.json').version")"
+          {
+            if [ "$DIST_TAG" = "latest" ]; then echo "\`@yugen-ui/cli\` $VERSION and \`create-yugen-ui\` $CREATE."; else echo "\`@yugen-ui/cli\` $VERSION (\`npx @yugen-ui/cli@next\`)."; fi
+            echo
+            node scripts/release-notes.mjs packages/cli/CHANGELOG.md "$VERSION"
+            echo
+            echo "Full notes: [packages/cli/CHANGELOG.md]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/blob/$GITHUB_REF_NAME/packages/cli/CHANGELOG.md) · [News](https://trandat1114.github.io/Yugen-UI/en/news)"
+          } > "$RUNNER_TEMP/notes.md"
+          FLAGS="--latest=false"
+          [ "$DIST_TAG" = "latest" ] || FLAGS="$FLAGS --prerelease"
+          gh release create "$GITHUB_REF_NAME" --verify-tag --title "@yugen-ui/cli $VERSION" --notes-file "$RUNNER_TEMP/notes.md" $FLAGS
