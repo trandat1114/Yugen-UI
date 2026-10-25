@@ -90,7 +90,7 @@ export function Calendar({
 }: CalendarProps) {
   const msg = useYugenMessages("calendar", calendarMessages);
   const locale = localeProp ?? msg.locale;
-  const isVi = locale.code === vi.code;
+  const isVi = locale?.code === vi.code;
   // DayPicker dùng `dir` để đảo ArrowLeft/ArrowRight; lấy từ DirectionProvider khi không truyền.
   const contextDir = useDirection();
   const dir = dirProp ?? contextDir;

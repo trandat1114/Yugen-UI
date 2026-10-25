@@ -45,6 +45,7 @@ module.exports = [
   js("{ CodeBlock }", "{ CodeBlock }", "33 kB"),
   js("{ DataGrid }", "{ DataGrid }", "36 kB"),
   js("{ StreamingMarkdown, PromptInput }", "{ StreamingMarkdown, PromptInput }", "70 kB"),
+  js("{ messagesEn }", "{ messagesEn }", "5 kB"),
   css("styles.css", "24 kB"),
   css("theme.css", "11 kB"),
   css("tokens.css", "8 kB"),
