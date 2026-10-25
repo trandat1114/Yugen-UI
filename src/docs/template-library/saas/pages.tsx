@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { lazy, type ReactNode } from "react";
 import {
   ArrowDownload20Regular,
   Board20Regular,
@@ -11,17 +11,37 @@ import {
   Sparkle20Regular,
 } from "@fluentui/react-icons";
 import { Button, toast } from "@/components/ui";
-import StatsBlock from "@/docs/block-library/02-stats";
-import PayoutBlock from "@/docs/block-library/03-payout";
-import TeamBlock from "@/docs/block-library/04-team";
-import PreferencesBlock from "@/docs/block-library/05-preferences";
-import TransactionsBlock from "@/docs/block-library/06-transactions";
-import SavingsBlock from "@/docs/block-library/07-savings";
-import BookingBlock from "@/docs/block-library/08-booking";
-import FeedbackBlock from "@/docs/block-library/09-feedback";
-import EmptyInboxBlock from "@/docs/block-library/10-empty-inbox";
-import AnalyticsBlock from "@/docs/block-library/11-analytics";
-import AiAssistantBlock from "@/docs/block-library/12-ai-assistant";
+
+// Block của từng trang nạp lười: lần tải đầu chỉ có trang đang mở, các trang khác nạp khi trình duyệt rảnh (preloadPages).
+const BLOCKS = {
+  stats: () => import("@/docs/block-library/02-stats"),
+  payout: () => import("@/docs/block-library/03-payout"),
+  team: () => import("@/docs/block-library/04-team"),
+  preferences: () => import("@/docs/block-library/05-preferences"),
+  transactions: () => import("@/docs/block-library/06-transactions"),
+  savings: () => import("@/docs/block-library/07-savings"),
+  booking: () => import("@/docs/block-library/08-booking"),
+  feedback: () => import("@/docs/block-library/09-feedback"),
+  emptyInbox: () => import("@/docs/block-library/10-empty-inbox"),
+  analytics: () => import("@/docs/block-library/11-analytics"),
+  aiAssistant: () => import("@/docs/block-library/12-ai-assistant"),
+};
+const StatsBlock = lazy(BLOCKS.stats);
+const PayoutBlock = lazy(BLOCKS.payout);
+const TeamBlock = lazy(BLOCKS.team);
+const PreferencesBlock = lazy(BLOCKS.preferences);
+const TransactionsBlock = lazy(BLOCKS.transactions);
+const SavingsBlock = lazy(BLOCKS.savings);
+const BookingBlock = lazy(BLOCKS.booking);
+const FeedbackBlock = lazy(BLOCKS.feedback);
+const EmptyInboxBlock = lazy(BLOCKS.emptyInbox);
+const AnalyticsBlock = lazy(BLOCKS.analytics);
+const AiAssistantBlock = lazy(BLOCKS.aiAssistant);
+
+/** Nạp trước block của mọi trang — App gọi khi trình duyệt rảnh sau lần render đầu, để chuyển trang không phải chờ. */
+export function preloadPages() {
+  for (const load of Object.values(BLOCKS)) void load();
+}
 
 export type PageId = "overview" | "analytics" | "assistant" | "inbox" | "calendar" | "team" | "billing" | "settings";
 

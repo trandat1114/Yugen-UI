@@ -10,12 +10,12 @@ export default defineConfig({
   build: {
     rolldownOptions: {
       output: {
-        // Tách thư viện khỏi mã ứng dụng: sửa trang chỉ làm đổi chunk nhỏ, phần còn lại trình duyệt giữ cache.
-        // Icon Fluent để chung vendor: tách riêng tạo vòng import vendor ↔ icons (lỗi TDZ lúc chạy).
+        // React (trang nào cũng cần) tách riêng để trình duyệt giữ cache khi mã ứng dụng đổi. Không gom mọi node_modules vào
+        // một chunk "vendor": yugen-ui được build theo từng component, để Rolldown tự chia thì trang nạp lười chỉ tải
+        // component của chính nó (lần tải đầu của SaaS giảm ~27%).
         codeSplitting: {
           groups: [
-            { name: "react", test: /[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/, priority: 20 },
-            { name: "vendor", test: /[\\/]node_modules[\\/]/, priority: 10 },
+            { name: "react", test: /[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/ },
           ],
         },
       },
