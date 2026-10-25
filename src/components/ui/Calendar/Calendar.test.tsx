@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { YugenProvider } from "../YugenProvider/YugenProvider";
+import { vi } from "react-day-picker/locale/vi";
 import { Calendar, calendarMessagesEn } from "./Calendar";
 
 const month = new Date(2026, 9, 1);
@@ -20,5 +21,15 @@ describe("Calendar messages", () => {
     );
     expect(screen.getByRole("button", { name: "Go to the Previous Month" })).toBeInTheDocument();
     expect(container.querySelector("th")).toHaveAttribute("aria-label", "Sunday");
+  });
+
+  it("prop locale vẫn ưu tiên hơn calendarMessagesEn", () => {
+    const { container } = render(
+      <YugenProvider messages={{ calendar: calendarMessagesEn }}>
+        <Calendar defaultMonth={month} locale={vi} />
+      </YugenProvider>,
+    );
+    expect(screen.getByRole("button", { name: "Đến tháng trước" })).toBeInTheDocument();
+    expect(container.querySelector("th")).toHaveTextContent("T2");
   });
 });
