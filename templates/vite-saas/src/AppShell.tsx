@@ -44,6 +44,8 @@ import {
   type YugenTheme,
 } from "yugen-ui";
 import { BRANDS, CommandPalette, THEMES } from "./CommandPalette";
+import defaultContent from "./content";
+import type { Content } from "./content/types";
 import { PAGE_BY_ID, PAGES, isPageId, type PageId } from "./pages";
 
 export interface Appearance {
@@ -56,6 +58,8 @@ export interface AppShellProps {
   onNavigate: (page: PageId) => void;
   appearance: Appearance;
   onAppearanceChange: (patch: Partial<Appearance>) => void;
+  /** Chữ và dữ liệu mẫu; mặc định theo ngôn ngữ chọn trong `content/index.ts`. */
+  content?: Content;
   /**
    * Nhúng trong một trang khác (ví dụ khung preview): cao theo khối cha thay vì cả màn hình, không có landmark <main>,
    * không bắt phím tắt toàn cục và link không đổi URL.
@@ -63,14 +67,8 @@ export interface AppShellProps {
   embedded?: boolean;
 }
 
-const USER = { name: "Trần Đạt", email: "dat@sakura.studio" };
-
-function seedNotifications(now: number): NotificationItem[] {
-  return [
-    { id: "1", title: "Trần Lan đã nhắc bạn", body: "Xem giúp số liệu tháng 10 trước buổi họp nhé.", author: "Trần Lan", time: now - 5 * 60_000 },
-    { id: "2", title: "Đơn #1042 đã thanh toán", body: "2.450.000 ₫ qua chuyển khoản.", intent: "success", time: now - 2 * 3_600_000 },
-    { id: "3", title: "Dung lượng sắp đầy", body: "Đã dùng 68% bộ nhớ của nhóm.", intent: "warning", time: now - 26 * 3_600_000, read: true },
-  ];
+function seedNotifications(t: Content, now: number): NotificationItem[] {
+  return t.notifications.map(({ minutesAgo, ...n }) => ({ ...n, time: now - minutesAgo * 60_000 }));
 }
 
 function Logo() {
@@ -81,11 +79,11 @@ function Logo() {
   );
 }
 
-function SidebarContent({ page, onSelect, embedded }: { page: PageId; onSelect: (page: PageId) => void; embedded?: boolean }) {
+function SidebarContent({ t, page, onSelect, embedded }: { t: Content; page: PageId; onSelect: (page: PageId) => void; embedded?: boolean }) {
   const item = (p: (typeof PAGES)[number]) => (
     <NavItem key={p.id} value={p.id} icon={p.icon} href={embedded ? undefined : `#/${p.id}`}>
       <span className="flex items-center gap-2">
-        <span className="min-w-0 truncate">{p.label}</span>
+        <span className="min-w-0 truncate">{t.pages[p.id].label}</span>
         {p.badge ? <CounterBadge count={p.badge} size="small" className="ms-auto" /> : null}
       </span>
     </NavItem>
@@ -94,50 +92,46 @@ function SidebarContent({ page, onSelect, embedded }: { page: PageId; onSelect: 
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className="min-h-0 flex-1 overflow-y-auto px-2 py-3">
-        <Nav selectedValue={page} onNavItemSelect={(v) => isPageId(v) && onSelect(v)} aria-label="Điều hướng chính">
-          <NavSectionHeader>Không gian làm việc</NavSectionHeader>
+        <Nav selectedValue={page} onNavItemSelect={(v) => isPageId(v) && onSelect(v)} aria-label={t.shell.nav}>
+          <NavSectionHeader>{t.shell.workspace}</NavSectionHeader>
           {PAGES.filter((p) => p.section === "workspace").map(item)}
-          <NavSectionHeader>Quản lý</NavSectionHeader>
+          <NavSectionHeader>{t.shell.manage}</NavSectionHeader>
           {PAGES.filter((p) => p.section === "manage").map(item)}
         </Nav>
       </div>
       <div className="flex flex-col gap-2 border-t border-stroke-2 p-4">
         <div className="flex items-baseline justify-between text-caption1">
-          <span className="font-semibold text-foreground-1">Dung lượng</span>
-          <span className="text-foreground-3 tabular-nums">6,8 / 10 GB</span>
+          <span className="font-semibold text-foreground-1">{t.shell.storage}</span>
+          <span className="text-foreground-3 tabular-nums">{t.shell.storageUsed}</span>
         </div>
-        <ProgressBar value={0.68} aria-label="Dung lượng đã dùng" />
-        <Button
-          size="small"
-          className="mt-1 self-start"
-          onClick={() => toast({ intent: "info", title: "Nâng cấp gói", body: "Nối nút này với trang thanh toán của bạn." })}
-        >
-          Nâng cấp lên Business
+        <ProgressBar value={0.68} aria-label={t.shell.storageLabel} />
+        <Button size="small" className="mt-1 self-start" onClick={() => toast({ intent: "info", ...t.shell.upgradeToast })}>
+          {t.shell.upgrade}
         </Button>
       </div>
     </div>
   );
 }
 
-function ThemeMenu({ appearance, onChange }: { appearance: Appearance; onChange: (patch: Partial<Appearance>) => void }) {
+function ThemeMenu({ t, appearance, onChange }: { t: Content; appearance: Appearance; onChange: (patch: Partial<Appearance>) => void }) {
   const icon =
     appearance.theme === "dark" ? <WeatherMoon20Regular /> : appearance.theme === "high-contrast" ? <Accessibility20Regular /> : <WeatherSunny20Regular />;
   return (
     <Menu>
       <MenuTrigger asChild>
-        <Button appearance="subtle" icon={icon} aria-label="Giao diện" />
+        <Button appearance="subtle" icon={icon} aria-label={t.shell.appearance} />
       </MenuTrigger>
       <MenuPopover align="end" className="min-w-52">
-        <MenuGroupHeader>Chế độ</MenuGroupHeader>
+        <MenuGroupHeader>{t.shell.mode}</MenuGroupHeader>
         <MenuRadioGroup value={appearance.theme} onValueChange={(v) => onChange({ theme: v as YugenTheme })}>
-          {THEMES.map((t) => (
-            <MenuItemRadio key={t.value} value={t.value}>
-              {t.label}
+          {THEMES.map((theme) => (
+            <MenuItemRadio key={theme.value} value={theme.value}>
+              {t.themes[theme.value]}
             </MenuItemRadio>
           ))}
         </MenuRadioGroup>
         <MenuDivider />
-        <MenuGroupHeader>Thương hiệu</MenuGroupHeader>
+        <MenuGroupHeader>{t.shell.brand}</MenuGroupHeader>
         <MenuRadioGroup value={appearance.brand} onValueChange={(v) => onChange({ brand: v })}>
           {BRANDS.map((b) => (
             <MenuItemRadio key={b.value} value={b.value}>
@@ -150,34 +144,31 @@ function ThemeMenu({ appearance, onChange }: { appearance: Appearance; onChange:
   );
 }
 
-function UserMenu({ onNavigate, onOpenPalette }: { onNavigate: (page: PageId) => void; onOpenPalette: () => void }) {
+function UserMenu({ t, onNavigate, onOpenPalette }: { t: Content; onNavigate: (page: PageId) => void; onOpenPalette: () => void }) {
   return (
     <Menu>
       <MenuTrigger asChild>
         {/* Tên đọc từ nội dung ("Tài khoản: " + nhãn của Avatar) — aria-label riêng sẽ lệch với chữ cái tắt đang hiện. */}
         <button type="button" className="rounded-circular">
-          <span className="sr-only">Tài khoản: </span>
-          <Avatar name={USER.name} size={32} color="brand" />
+          <span className="sr-only">{t.shell.account}</span>
+          <Avatar name={t.user.name} size={32} color="brand" />
         </button>
       </MenuTrigger>
       <MenuPopover align="end" className="min-w-60">
-        <Persona name={USER.name} secondaryText={USER.email} size="medium" avatar={{ color: "brand" }} className="px-2 py-2" />
+        <Persona name={t.user.name} secondaryText={t.user.email} size="medium" avatar={{ color: "brand" }} className="px-2 py-2" />
         <MenuDivider />
         <MenuItem icon={<Person20Regular />} onSelect={() => onNavigate("team")}>
-          Hồ sơ & đội ngũ
+          {t.shell.profile}
         </MenuItem>
         <MenuItem icon={<Settings20Regular />} onSelect={() => onNavigate("settings")}>
-          Cài đặt
+          {t.shell.settings}
         </MenuItem>
         <MenuItem icon={<Keyboard20Regular />} secondaryContent="Ctrl K" onSelect={onOpenPalette}>
-          Bảng lệnh
+          {t.shell.palette}
         </MenuItem>
         <MenuDivider />
-        <MenuItem
-          icon={<SignOut20Regular />}
-          onSelect={() => toast({ intent: "info", title: "Đăng xuất", body: "Nối mục này với hệ thống đăng nhập của bạn." })}
-        >
-          Đăng xuất
+        <MenuItem icon={<SignOut20Regular />} onSelect={() => toast({ intent: "info", ...t.shell.signOutToast })}>
+          {t.shell.signOut}
         </MenuItem>
       </MenuPopover>
     </Menu>
@@ -185,11 +176,12 @@ function UserMenu({ onNavigate, onOpenPalette }: { onNavigate: (page: PageId) =>
 }
 
 /** Khung ứng dụng: sidebar (Drawer trên màn hẹp), thanh trên cùng, bảng lệnh và nội dung trang. */
-export function AppShell({ page, onNavigate, appearance, onAppearanceChange, embedded = false }: AppShellProps) {
+export function AppShell({ page, onNavigate, appearance, onAppearanceChange, content: t = defaultContent, embedded = false }: AppShellProps) {
   const [navOpen, setNavOpen] = React.useState(false);
   const [paletteOpen, setPaletteOpen] = React.useState(false);
-  const notifications = useNotifications(() => seedNotifications(Date.now()));
+  const notifications = useNotifications(() => seedNotifications(t, Date.now()));
   const current = PAGE_BY_ID[page];
+  const text = t.pages[page];
   const contentRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -223,26 +215,26 @@ export function AppShell({ page, onNavigate, appearance, onAppearanceChange, emb
         <div className="flex h-14 shrink-0 items-center gap-2 border-b border-stroke-2 px-4">
           <Logo />
           <div className="min-w-0">
-            <p className="truncate text-body1 font-semibold">Sakura Studio</p>
-            <p className="truncate text-caption1 text-foreground-3">Gói Pro</p>
+            <p className="truncate text-body1 font-semibold">{t.appName}</p>
+            <p className="truncate text-caption1 text-foreground-3">{t.plan}</p>
           </div>
         </div>
-        <SidebarContent page={page} onSelect={navigate} embedded={embedded} />
+        <SidebarContent t={t} page={page} onSelect={navigate} embedded={embedded} />
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-14 shrink-0 items-center gap-2 border-b border-stroke-2 bg-background-1 px-4">
-          <Button appearance="subtle" icon={<Navigation20Regular />} aria-label="Mở điều hướng" className="@4xl:hidden" onClick={() => setNavOpen(true)} />
+          <Button appearance="subtle" icon={<Navigation20Regular />} aria-label={t.shell.openNav} className="@4xl:hidden" onClick={() => setNavOpen(true)} />
           <Breadcrumb
-            aria-label="Vị trí"
+            aria-label={t.shell.breadcrumb}
             className="hidden min-w-0 @xl:flex"
-            items={[{ label: "Sakura Studio", onClick: () => navigate("overview") }, { label: current.label }]}
+            items={[{ label: t.appName, onClick: () => navigate("overview") }, { label: text.label }]}
           />
           <div className="ms-auto flex items-center gap-1">
             <Button
               appearance="subtle"
               icon={<Search20Regular />}
-              aria-label="Tìm kiếm (Ctrl K)"
+              aria-label={t.shell.searchLabel}
               className="@2xl:hidden"
               onClick={() => setPaletteOpen(true)}
             />
@@ -251,26 +243,26 @@ export function AppShell({ page, onNavigate, appearance, onAppearanceChange, emb
               className="hidden w-56 justify-start text-foreground-3 @2xl:inline-flex"
               onClick={() => setPaletteOpen(true)}
             >
-              <span className="flex-1 text-start">Tìm kiếm…</span>
+              <span className="flex-1 text-start">{t.shell.search}</span>
               <KbdGroup>
                 <Kbd>Ctrl</Kbd>
                 <Kbd>K</Kbd>
               </KbdGroup>
             </Button>
-            <ThemeMenu appearance={appearance} onChange={onAppearanceChange} />
+            <ThemeMenu t={t} appearance={appearance} onChange={onAppearanceChange} />
             <NotificationCenter {...notifications.bind} />
-            <UserMenu onNavigate={navigate} onOpenPalette={() => setPaletteOpen(true)} />
+            <UserMenu t={t} onNavigate={navigate} onOpenPalette={() => setPaletteOpen(true)} />
           </div>
         </header>
 
-        <Content ref={contentRef} aria-label={embedded ? current.title : undefined} className="@container min-h-0 flex-1 overflow-y-auto">
+        <Content ref={contentRef} aria-label={embedded ? text.title : undefined} className="@container min-h-0 flex-1 overflow-y-auto">
           <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 p-4 @3xl:p-6">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div className="min-w-0">
-                <Heading className="font-display text-title2 font-semibold">{current.title}</Heading>
-                <p className="mt-1 text-body1 text-foreground-3">{current.description}</p>
+                <Heading className="font-display text-title2 font-semibold">{text.title}</Heading>
+                <p className="mt-1 text-body1 text-foreground-3">{text.description}</p>
               </div>
-              {current.actions}
+              {current.actions?.(t)}
             </div>
             <React.Suspense
               fallback={
@@ -280,7 +272,7 @@ export function AppShell({ page, onNavigate, appearance, onAppearanceChange, emb
                 </div>
               }
             >
-              {current.content}
+              <current.Page t={t} />
             </React.Suspense>
           </div>
         </Content>
@@ -290,15 +282,16 @@ export function AppShell({ page, onNavigate, appearance, onAppearanceChange, emb
         <DrawerSurface position="start" size="small" aria-describedby={undefined} className="flex flex-col p-0">
           <DrawerHeader className="flex-row items-center gap-2 border-b border-stroke-2 px-4 py-3">
             <Logo />
-            <DrawerHeaderTitle>Sakura Studio</DrawerHeaderTitle>
+            <DrawerHeaderTitle>{t.appName}</DrawerHeaderTitle>
           </DrawerHeader>
           <DrawerBody className="min-h-0 flex-1 p-0">
-            <SidebarContent page={page} onSelect={navigate} embedded={embedded} />
+            <SidebarContent t={t} page={page} onSelect={navigate} embedded={embedded} />
           </DrawerBody>
         </DrawerSurface>
       </Drawer>
 
       <CommandPalette
+        t={t}
         open={paletteOpen}
         onOpenChange={setPaletteOpen}
         onNavigate={navigate}

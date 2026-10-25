@@ -39,8 +39,30 @@ describe("create", () => {
     expect(fs.existsSync(path.join(en, "src/content/vi.ts"))).toBe(false);
     expect(read(en, "index.html")).toContain('<html lang="en"');
     await expect(create({ ...base, dir: "fr", lang: "fr" }, ctx)).rejects.toThrow(/no "fr" text/);
-    // Template chưa tách nội dung: chỉ cảnh báo.
-    await expect(create({ ...base, dir: "saas", template: "saas", lang: "en" }, ctx)).resolves.toBeTruthy();
+    // Template chưa tách nội dung: chỉ cảnh báo, giữ nguyên file.
+    const plain = writeFiles(tmpDir(), {
+      "templates.json": JSON.stringify([{ dir: "vite-plain", name: "plain", title: "Plain", hint: "" }]),
+      "vite-plain/package.json": JSON.stringify({ name: "vite-plain" }),
+      "vite-plain/index.html": '<html lang="vi">',
+    });
+    const { target: kept } = await create({ ...base, dir: "plain", template: "plain", lang: "en", templatesDir: plain }, ctx);
+    expect(read(kept, "index.html")).toBe('<html lang="vi">');
+  });
+
+  it("--lang also removes the other language's folder (blog posts in src/content/<lang>/posts)", async () => {
+    const cwd = tmpDir();
+    const base = { cwd, template: "blog", install: false, git: false, templatesDir: repoTemplates };
+    const { target: vi } = await create({ ...base, dir: "vi", lang: "vi" }, ctx);
+    expect(read(vi, "src/content/index.ts")).toContain('from "./vi"');
+    expect(fs.readdirSync(path.join(vi, "src/content")).sort()).toEqual(["index.ts", "types.ts", "vi", "vi.ts"]);
+    expect(fs.readdirSync(path.join(vi, "src/content/vi/posts")).length).toBeGreaterThan(0);
+    expect(read(vi, "index.html")).toContain('<html lang="vi"');
+    const { target: en } = await create({ ...base, dir: "en" }, ctx);
+    expect(fs.readdirSync(path.join(en, "src/content")).sort()).toEqual(["en", "en.ts", "index.ts", "types.ts"]);
+    expect(fs.readdirSync(path.join(en, "src/content/en/posts")).length).toBeGreaterThan(0);
+    // SaaS: chỉ có file theo ngôn ngữ.
+    const { target: saas } = await create({ ...base, dir: "saas", template: "saas", lang: "vi" }, ctx);
+    expect(fs.readdirSync(path.join(saas, "src/content")).sort()).toEqual(["index.ts", "types.ts", "vi.ts"]);
   });
 
   it("refuses a non-empty directory without --force and unknown templates", async () => {

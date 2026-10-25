@@ -34,7 +34,7 @@ const RouterContext = React.createContext<RouterValue | null>(null);
 
 export function useRouter() {
   const value = React.useContext(RouterContext);
-  if (!value) throw new Error("useRouter phải nằm trong BrowserRouter hoặc MemoryRouter");
+  if (!value) throw new Error("useRouter() must be used inside <BrowserRouter> or <MemoryRouter>");
   return value;
 }
 

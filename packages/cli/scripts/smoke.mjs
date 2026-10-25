@@ -70,6 +70,15 @@ try {
       fs.readFileSync(path.join(vi, "index.html"), "utf8").includes('<html lang="vi"'),
     "create-yugen-ui -t starter --lang vi",
   );
+  // Blog: bài viết theo ngôn ngữ trong src/content/<lang>/posts — thư mục của ngôn ngữ kia bị xoá.
+  sh(`${createBin} blog-vi -t blog --lang vi --no-install --no-git -y`, app);
+  const blogVi = path.join(app, "blog-vi");
+  check(
+    fs.existsSync(path.join(blogVi, "src/content/vi/posts")) &&
+      !fs.existsSync(path.join(blogVi, "src/content/en")) &&
+      !fs.existsSync(path.join(blogVi, "src/content/en.ts")),
+    "create-yugen-ui -t blog --lang vi",
+  );
 
   let unknownFails = false;
   try {

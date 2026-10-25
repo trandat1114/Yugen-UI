@@ -14,6 +14,8 @@
 - `yugen init` wraps the app in `YugenProvider`: `<App />` in Vite's `main.tsx`, `{children}` in Next.js
   `app/layout.tsx`. `--no-provider` keeps the printed instructions instead.
 - `create --ref <branch|tag>`: take the templates from a branch or tag of the repository instead of the bundled copy.
+- `create --lang en|vi` also works for the SaaS and Blog templates. It now removes the other language's
+  `src/content/<lang>/` folder (the blog's posts) as well as `src/content/<lang>.ts`.
 
 ## 0.3.0
 

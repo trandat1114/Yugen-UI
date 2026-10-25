@@ -45,7 +45,8 @@ const TEMPLATES = [
     title: "SaaS",
     appTitle: "Sakura Studio",
     description:
-      "Ứng dụng SaaS dựng bằng Yugen UI: sidebar, bảng lệnh Ctrl K, thông báo, theme sáng / tối / tương phản cao và 8 trang mẫu.",
+      "A SaaS app built with Yugen UI: sidebar, Ctrl K command palette, notifications, light / dark / high-contrast themes and 8 sample pages.",
+    lang: "en",
     app: "saas",
     /** Khoá localStorage của script chống nháy — trùng STORAGE_KEY trong App.tsx. */
     storageKey: "yugen-saas-appearance",
@@ -54,8 +55,9 @@ const TEMPLATES = [
     dir: "vite-blog",
     hint: "Markdown blog: table of contents, tags, search, build-time SEO",
     title: "Blog",
-    appTitle: "Nhật ký Sakura",
-    description: "Blog viết bằng Markdown, dựng bằng Yugen UI: mục lục, thẻ, tìm kiếm, theme tối và SEO sinh sẵn lúc build.",
+    appTitle: "Sakura Notes",
+    description: "A Markdown blog built with Yugen UI: table of contents, tags, search, dark theme and SEO generated at build time.",
+    lang: "en",
     app: "blog",
     storageKey: "yugen-blog-theme",
     devDependencies: { "@types/node": "^22.0.0" },
@@ -260,78 +262,94 @@ ${generatedFrom(t)}
 `,
   blog: (t) => `# ${t.appTitle ?? t.title}
 
-Starter template của [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates) — blog viết bằng Markdown trên Vite + React +
-Tailwind CSS v4. Không cần CMS hay thư viện Markdown: thêm file \`.md\` là có bài mới.
+A Markdown blog built with [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates) on Vite, React and Tailwind CSS
+v4. No CMS or Markdown library: add a \`.md\` file and the post is live.
 
-${install(t.dir)}
+${install(t.dir, "en")}
 
-## Có gì bên trong
+## What's included
 
-- Bài viết là file \`src/posts/*.md\` có frontmatter (\`title\`, \`description\`, \`date\`, \`tags\`, \`draft\`).
-- Markdown hiển thị bằng parser an toàn của Yugen UI: code tô màu có nút sao chép, bảng, trích dẫn, việc cần làm, ảnh, link nội bộ.
-- Trang chủ có tìm kiếm và lọc theo thẻ; trang bài có mục lục, thời gian đọc, bài trước / sau, sao chép liên kết.
-- Định tuyến theo đường dẫn thật (\`/posts/<slug>/\`) bằng History API — không thêm thư viện.
-- **SEO sinh lúc build** (plugin \`blogSeo\` trong \`vite.config.ts\`): mỗi bài / thẻ một file HTML có \`<title>\`, \`description\`,
-  canonical, Open Graph, JSON-LD \`BlogPosting\`; kèm \`sitemap.xml\`, \`rss.xml\`, \`robots.txt\`, \`404.html\`.
-- Theme sáng / tối / tương phản cao, lưu vào \`localStorage\`, không nháy khi tải lại.
+- Posts are \`src/content/<lang>/posts/*.md\` files with frontmatter (\`title\`, \`description\`, \`date\`, \`tags\`,
+  \`draft\`).
+- Markdown goes through Yugen UI's safe parser: highlighted code with a copy button, tables, quotes, task lists, images and
+  internal links.
+- The home page has search and tag filters; a post page has a table of contents, reading time, previous / next post and a
+  copy link button.
+- Real paths (\`/posts/<slug>/\`) with the History API, no router library.
+- **SEO at build time** (the \`blogSeo\` plugin in \`vite.config.ts\`): an HTML file per post and tag with \`<title>\`,
+  \`description\`, canonical, Open Graph and \`BlogPosting\` JSON-LD, plus \`sitemap.xml\`, \`rss.xml\`, \`robots.txt\` and
+  \`404.html\`.
+- Light, dark and high-contrast themes, saved in \`localStorage\` with no flash on reload.
+- English text and sample posts. For Vietnamese, create the app with
+  \`npx create-yugen-ui@latest my-app --template blog --lang vi\`.
 
-## Cấu trúc
+## Structure
 
 \`\`\`
 src/
-  site.ts          # tên blog, mô tả, domain (SITE.url), tác giả
-  posts/*.md       # bài viết — tên file là đường dẫn
-  content.ts       # đọc frontmatter, thời gian đọc (dùng chung với plugin SEO)
-  Markdown.tsx     # Markdown → component, heading có id cho mục lục
-  BlogLayout.tsx   # thanh trên, nội dung theo route, chân trang
+  site.ts                 # your domain (SITE.url)
+  content/<lang>.ts       # blog name, description, author and interface text
+  content/<lang>/posts/   # posts: the file name is the URL
+  content/index.ts        # the language in use (the app and the SEO plugin read it)
+  blog.ts                 # frontmatter, reading time, page titles (shared with the SEO plugin)
+  posts.ts                # loads the posts of the language in use
+  Markdown.tsx            # Markdown to components, headings with ids for the table of contents
+  BlogLayout.tsx          # top bar, content by route, footer
   PostList.tsx · PostPage.tsx · router.tsx
-vite.config.ts     # plugin blogSeo: HTML tĩnh từng trang, sitemap, RSS
+vite.config.ts            # blogSeo plugin: static HTML for every page, sitemap, RSS
 \`\`\`
 
-## Triển khai
+## Deploy
 
-1. Đặt \`url\` trong \`src/site.ts\` thành domain thật (build sẽ nhắc nếu còn \`example.com\`).
-2. \`npm run build\` → đưa \`dist/\` lên host tĩnh bất kỳ. Ở thư mục con (GitHub Pages): \`BASE=/ten-repo/ npm run build\`.
-3. Gửi \`sitemap.xml\` cho Google Search Console.
+1. Set \`url\` in \`src/site.ts\` to your domain (the build warns while it is still \`example.com\`).
+2. Run \`npm run build\` and upload \`dist/\` to any static host. For a subfolder (GitHub Pages):
+   \`BASE=/repo-name/ npm run build\`.
+3. Submit \`sitemap.xml\` to Google Search Console.
 
 ${generatedFrom(t)}
 `,
   saas: (t) => `# ${t.appTitle ?? t.title}
 
-Starter template của [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates) — ứng dụng SaaS hoàn chỉnh trên Vite + React +
-Tailwind CSS v4, sẵn sàng thay dữ liệu thật.
+A complete SaaS app built with [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates) on Vite, React and Tailwind
+CSS v4, ready for your own data.
 
-${install(t.dir)}
+${install(t.dir, "en")}
 
-## Có gì bên trong
+## What's included
 
-- Sidebar \`Nav\` có nhóm và số đếm; trên màn hẹp chuyển thành \`Drawer\` (container query, không cần JS đo kích thước).
-- Bảng lệnh **Ctrl / ⌘ K**: chuyển trang, đổi theme / thương hiệu, hành động nhanh.
-- \`NotificationCenter\`, menu tài khoản, breadcrumb, nút xuất báo cáo có \`toast\`.
-- Theme sáng / tối / tương phản cao + thương hiệu Sakura / Web / Teams, lưu vào \`localStorage\`, **không nháy** khi tải lại
-  (script nhỏ trong \`index.html\`).
-- 8 trang mẫu ghép từ block: Tổng quan, Phân tích, Trợ lý AI, Hộp thư, Lịch hẹn, Đội ngũ, Thanh toán, Cài đặt.
-- Định tuyến bằng hash (\`#/analytics\`) không thêm thư viện; tiêu đề tab và \`<meta name="description">\` đổi theo trang.
-- Sẵn cho SEO cơ bản: \`description\`, Open Graph, \`theme-color\`, \`robots.txt\`.
+- A sidebar \`Nav\` with groups and counts; on narrow screens it becomes a \`Drawer\` (container queries, no JS measuring).
+- A **Ctrl / ⌘ K** command palette: go to a page, switch theme or brand, quick actions.
+- \`NotificationCenter\`, an account menu, a breadcrumb and an export button with a \`toast\`.
+- Light, dark and high-contrast themes and the Sakura, Web and Teams brands, saved in \`localStorage\` with **no flash** on
+  reload (a small script in \`index.html\`).
+- 8 sample pages: Overview, Analytics, AI assistant, Inbox, Calendar, Team, Billing and Settings. Each page loads on
+  demand; the others are fetched while the browser is idle.
+- Hash routing (\`#/analytics\`) with no extra library; the tab title and \`<meta name="description">\` follow the page.
+- SEO basics: \`description\`, Open Graph, \`theme-color\`, \`robots.txt\`.
+- English text and sample data in \`src/content/\`. For Vietnamese, create the app with
+  \`npx create-yugen-ui@latest my-app --template saas --lang vi\`.
 
-## Cấu trúc
+## Structure
 
 \`\`\`
 src/
-  App.tsx             # gốc: YugenProvider, định tuyến hash, lưu theme, tiêu đề trang
-  AppShell.tsx        # khung: sidebar, thanh trên, Drawer, nội dung
-  CommandPalette.tsx  # bảng lệnh Ctrl K
-  pages.tsx           # danh sách trang — thêm một mục là có trang mới trên sidebar & bảng lệnh
-  blocks/             # các block giao diện, sửa thoải mái
+  App.tsx             # root: YugenProvider, hash routing, saved theme, page title
+  AppShell.tsx        # layout: sidebar, top bar, Drawer, content
+  CommandPalette.tsx  # Ctrl K command palette
+  pages.tsx           # page list: one entry per page in the sidebar and the command palette
+  pages/              # one file per page, loaded on demand
+  content/            # all text and sample data, one file per language; index.ts picks the language
+  format.ts           # amounts in the content's currency and locale
 \`\`\`
 
-## Tuỳ biến nhanh
+## Customize
 
-- **Thêm trang**: thêm một mục vào \`PAGES\` trong \`src/pages.tsx\`.
-- **Đổi thương hiệu mặc định**: sửa \`"sakura"\` trong \`index.html\` và \`App.tsx\`; tự tạo bảng màu ở
+- **Add a page**: create \`src/pages/<id>.tsx\`, add the id to \`PageId\` in \`src/content/types.ts\` and its text to
+  \`pages\` in \`src/content/<lang>.ts\`, then add an entry to \`PAGES\` in \`src/pages.tsx\`.
+- **Change the default brand**: replace \`"sakura"\` in \`index.html\` and \`App.tsx\`; make your own palette in
   [Theme Designer](https://trandat1114.github.io/Yugen-UI/#/theme-designer).
-- **Dùng router thật** (React Router, TanStack Router): thay \`pageFromHash\` / \`navigate\` trong \`App.tsx\`, truyền \`href\` của
-  router vào \`NavItem\` (\`asChild\`).
+- **Use a real router** (React Router, TanStack Router): replace \`pageFromHash\` / \`navigate\` in \`App.tsx\` and pass the
+  router's \`href\` to \`NavItem\` (\`asChild\`).
 
 ${generatedFrom(t)}
 `,
@@ -453,8 +471,10 @@ export default defineConfig({
  */
 const BUDGETS = {
   "vite-starter": { js: 135, css: 25 },
-  "vite-saas": { js: 180, css: 25 },
-  "vite-blog": { js: 145, css: 25 },
+  // SaaS, Blog: +messagesEn (chuỗi tiếng Anh của mọi component, ~13–17 kB gzip) khi có hai ngôn ngữ (#147); thư mục
+  // templates/vite-blog còn chứa bài mẫu của cả hai ngôn ngữ (~1,7 kB, `create --lang` chỉ giữ một).
+  "vite-saas": { js: 190, css: 25 },
+  "vite-blog": { js: 150, css: 25 },
   "vite-dashboard": { js: 150, css: 25 },
   "vite-ai-chat": { js: 135, css: 25 },
 };

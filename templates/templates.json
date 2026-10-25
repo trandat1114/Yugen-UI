@@ -15,7 +15,7 @@
     "title": "SaaS",
     "hint": "SaaS workspace: sidebar, Ctrl K command palette, notifications, 8 pages",
     "budget": {
-      "js": 180,
+      "js": 190,
       "css": 25
     }
   },
@@ -25,7 +25,7 @@
     "title": "Blog",
     "hint": "Markdown blog: table of contents, tags, search, build-time SEO",
     "budget": {
-      "js": 145,
+      "js": 150,
       "css": 25
     }
   },

@@ -1,9 +1,12 @@
-import { SITE } from "./site";
+const formats = new Map<string, Intl.DateTimeFormat>();
 
-const DATE = new Intl.DateTimeFormat(SITE.locale, { day: "numeric", month: "long", year: "numeric" });
-
-/** "2026-10-21" → "21 tháng 10, 2026" (theo SITE.locale). Đọc như ngày địa phương để không lệch múi giờ. */
-export const formatDate = (iso: string) => {
+/** "2026-10-21" → "21 tháng 10, 2026" (vi-VN) · "October 21, 2026" (en-US). Đọc như ngày địa phương để không lệch múi giờ. */
+export const formatDate = (iso: string, locale: string) => {
+  let format = formats.get(locale);
+  if (!format) {
+    format = new Intl.DateTimeFormat(locale, { day: "numeric", month: "long", year: "numeric" });
+    formats.set(locale, format);
+  }
   const [y, m, d] = iso.split("-").map(Number);
-  return DATE.format(new Date(y, m - 1, d));
+  return format.format(new Date(y, m - 1, d));
 };
