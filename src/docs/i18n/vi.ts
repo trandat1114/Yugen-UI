@@ -72,6 +72,15 @@ export const vi = {
   "blocks.description": "Mô tả",
   "blocks.onThisPage": "Trên trang này",
 
+  // Bảng Messages trên trang component (MessagesTable.tsx)
+  "messages.desc": "Chữ có sẵn của component: nhãn, aria-label, thông báo cho trình đọc màn hình.",
+  "messages.intro": "Đổi qua prop messages của YugenProvider, theo namespace bên dưới; messagesEn chứa bản tiếng Anh.",
+  "messages.link": "Xem Ngôn ngữ giao diện.",
+  "messages.key": "Khoá",
+  "messages.vi": "Mặc định (tiếng Việt)",
+  "messages.en": "messagesEn",
+  "messages.seeSource": "Hàm, xem messages.ts",
+
   // Trang component
   "component.notFound": "Không tìm thấy component “{slug}”.",
   "component.loadError": "Không tải được nội dung trang",
