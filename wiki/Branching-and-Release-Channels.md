@@ -71,6 +71,38 @@ Workflow `canary.yml` chạy typecheck + test + build rồi phát hành `x.y.z-c
 - Tag phải trùng `package.json`; `check:release` kiểm tra CHANGELOG (+ News với bản ổn định).
 - Không bao giờ force-push `main`, `next`, `release/*`. Chỉ `canary` được ghi đè.
 
+## Dọn nhánh
+
+Nhánh ngắn hạn xoá ngay khi PR merge. GitHub tự làm việc này khi bật Settings → General → **Automatically delete head
+branches**. Phần còn lại dọn bằng `scripts/prune-branches.mjs`, theo bảng sau (PR mới nhất của nhánh quyết định):
+
+| Nhánh | Kết luận |
+|---|---|
+| `main`, `next`, `canary`, `gh-pages`, `release/*`, nhánh mặc định | Không bao giờ xoá |
+| Có PR đang mở | Giữ |
+| Commit cuối đã nằm trong `main` hoặc `next` | Xoá |
+| PR đã merge đúng commit cuối (squash nên commit không nằm trong `main`) | Xoá |
+| Có commit sau khi PR merge | Cần xem |
+| PR đóng không merge từ 14 ngày trở lên | Xoá (đầu PR vẫn còn ở `refs/pull/<số>/head`) |
+| Không có PR, 30 ngày không có commit (`exp/`: 60 ngày) | Cần xem |
+| Còn lại | Giữ |
+
+```bash
+node scripts/prune-branches.mjs                                # báo cáo, không xoá gì
+node scripts/prune-branches.mjs --apply                        # xoá mục "Xoá"
+node scripts/prune-branches.mjs --apply --include-abandoned    # xoá thêm mục "Cần xem"
+node scripts/prune-branches.mjs --local --apply                # thêm nhánh local đã merge, git worktree prune
+```
+
+- Cần `gh` đã đăng nhập. Mỗi nhánh bị xoá được in kèm SHA; khôi phục bằng `git push origin <sha>:refs/heads/<nhánh>`.
+- Mục "Cần xem" không bao giờ tự xoá. Xem `git log origin/next..origin/<nhánh>` trước: còn việc dở thì mở draft PR,
+  hết dùng thì xoá với `--include-abandoned`.
+- Workflow **Prune branches** chạy ngày 1 hằng tháng và chỉ ghi báo cáo vào job summary. Chạy tay (Run workflow, tick
+  `apply`) để xoá mục "Xoá".
+- Worktree: gỡ worktree (`git worktree remove`) trước khi xoá nhánh của nó. Worktree có `node_modules` là junction trỏ về
+  repo chính thì xoá junction trước (PowerShell: `(Get-Item <worktree>
+ode_modules).Delete()`), rồi mới gỡ worktree.
+
 ## Bảo vệ nhánh (Settings → Branches → Add rule)
 
 | Pattern | Luật |

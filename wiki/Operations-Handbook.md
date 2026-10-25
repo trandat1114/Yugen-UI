@@ -22,6 +22,7 @@ Cách dự án được vận hành hằng ngày: ai làm gì, khi nào, theo lu
 | 2–4 tuần | Phát hành nếu có changeset ([[Release Process]]) | Maintainer |
 | Khi `packages/cli/CHANGELOG.md` có mục `Unreleased` | Phát hành CLI kèm mục tin trên `#/news` ([[Release Process]] › CLI) | Maintainer |
 | Hằng tháng | Cập nhật ROADMAP, gắn `good first issue` mới, chọn Showcase | Maintainer |
+| Hằng tháng | Đọc báo cáo **Prune branches** (ngày 1); mục "Xoá" đúng thì chạy lại với `apply`, mục "Cần xem" xử lý tay ([[Branching and Release Channels]] › Dọn nhánh) | Maintainer |
 | Hằng quý | Rà dependency lớn (React, Radix, Tailwind), ngân sách dung lượng, audit a11y thủ công với NVDA / VoiceOver | Maintainer |
 
 ## 3. Luật review & merge
@@ -59,6 +60,7 @@ Bảo vệ cho `next`, `release/*`, `canary` và tag `v*`: xem [[Branching and R
 | `canary.yml` | Push vào `canary` → bản `x.y.z-canary-…` với dist-tag `canary` |
 | `sync-next.yml` | Push vào `main` → mở PR `main → next` nếu `next` thiếu commit |
 | `node-versions.yml` | Hằng tuần → so bản Node.js trong workflow với lịch phát hành (`scripts/node-versions.mjs`), mở PR vào `next` khi lệch rồi chạy CI trên nhánh đó |
+| `prune-branches.yml` | Ngày 1 hằng tháng → báo cáo nhánh hết tác dụng (`scripts/prune-branches.mjs`) vào job summary; chạy tay với `apply` để xoá mục "Xoá" |
 | `react-share.yml` | Ngày 1 hằng tháng → tỉ lệ tải React theo major (`scripts/react-share.mjs`) bình luận vào #62; React 18 dưới 10% là một trong hai điều kiện để ngừng hỗ trợ |
 | `engines.yml` | Hằng tuần, PR vào `main` và PR đổi `e2e/` → E2E trên Firefox và WebKit; bản chạy theo lịch hỏng thì mở / cập nhật issue, xanh lại thì đóng |
 | `pages.yml` | Deploy docs (+ docs các minor cũ) lên GitHub Pages |
