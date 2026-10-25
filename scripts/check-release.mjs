@@ -8,6 +8,8 @@
  *   (b) CHANGELOG.md có tiêu đề cho phiên bản đó: `## [x.y.z]` (Keep a Changelog) hoặc `## x.y.z` (Changesets).
  *   (c) CHANGELOG.md có link `[x.y.z]: …` — chỉ cảnh báo, và bỏ qua khi tiêu đề ở dạng Changesets.
  *   (d) Khi có tag (`--tag vX.Y.Z`, hoặc GITHUB_REF_NAME bắt đầu bằng "v" trong workflow chạy theo tag): tag = "v" + version.
+ *   (e) Bản major ổn định (1.0.0, 2.0.0…): README.md có `<!-- readme-reviewed: X.0.0 -->` — đã rà README cho bản này
+ *       (wiki › Release Process › Bản major), kể cả khi không phải sửa gì.
  *
  * Không có dependency. Thoát mã 1 kèm thông báo rõ ràng khi có lỗi; in một dòng OK khi mọi thứ khớp.
  *
@@ -120,6 +122,21 @@ if (tag && version && tag !== `v${version}`) {
 }
 if (tag && upcoming) {
   errors.push(`Tag "${tag}": mục NEWS "${upcoming.version}" vẫn là \`upcoming\` — chốt tin trước khi phát hành.`);
+}
+
+// ---------- (e) README cho bản major ----------
+// README là trang đầu trên GitHub và npm: bản major đổi cài đặt, yêu cầu và API nên phải rà lại. Dấu ghi nhận việc đã rà,
+// không bắt sửa nếu không cần. Minor, patch và prerelease không cần.
+const [major, minor, patch] = version ? core(version) : [];
+if (version && !isPrerelease && major >= 1 && minor === 0 && patch === 0) {
+  const readmePath = path.join(root, "README.md");
+  const reviewed = read(readmePath).match(/<!--\s*readme-reviewed:\s*(\S+)\s*-->/)?.[1];
+  if (reviewed !== version)
+    errors.push(
+      `${rel(readmePath)}: bản major ${version} — rà README (cài đặt, yêu cầu, ví dụ, danh sách tính năng, link docs và ` +
+        `hướng dẫn chuyển đổi), sửa nếu cần, rồi ghi \`<!-- readme-reviewed: ${version} -->\` ở đầu file` +
+        `${reviewed ? ` (đang là ${reviewed})` : ""}. Xem wiki › Release Process › Bản major.`,
+    );
 }
 
 // ---------- Kết quả ----------

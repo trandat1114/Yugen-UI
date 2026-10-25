@@ -54,7 +54,7 @@ Bảo vệ cho `next`, `release/*`, `canary` và tag `v*`: xem [[Branching and R
 
 | Workflow / file | Làm gì |
 |---|---|
-| `ci.yml` | Build, test (React 19), React 18, e2e, các check, size |
+| `ci.yml` | Build, test (React 19), React 18, e2e, các check, size. Không chạy khi push / PR chỉ đổi tài liệu để đọc (README, wiki, CONTRIBUTING…; danh sách `paths-ignore` trong file); `engines.yml` và `pages.yml` dùng cùng danh sách |
 | `release.yml` | Tag `v*` → kiểm tra nhánh + nhất quán → `npm publish --provenance` (dist-tag theo kênh) |
 | `release-cli.yml` | Tag `cli@*` → `check-release.mjs --tag` (CHANGELOG, mục tin trên `#/news`, version chưa dùng) → publish `@yugen-ui/cli` + `create-yugen-ui` |
 | `canary.yml` | Push vào `canary` → bản `x.y.z-canary-…` với dist-tag `canary` |

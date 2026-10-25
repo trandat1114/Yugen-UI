@@ -6,6 +6,23 @@ name: Docs
 on:
   push:
     branches: [main, next] # push vào next → job redispatch chạy lại trên main để cập nhật /next/
+    # Như ci.yml, thêm các file docs không hiển thị: tin lấy từ news.ts, lộ trình từ roadmap.ts.
+    paths-ignore:
+      - "wiki/**"
+      - "README.md"
+      - "CONTRIBUTING.md"
+      - "CODE_OF_CONDUCT.md"
+      - "GOVERNANCE.md"
+      - "SECURITY.md"
+      - "Design.md"
+      - "LICENSE"
+      - ".github/PULL_REQUEST_TEMPLATE.md"
+      - ".github/ISSUE_TEMPLATE/**"
+      - "packages/*/README.md"
+      - "CHANGELOG.md"
+      - "ROADMAP.md"
+      - "packages/*/CHANGELOG.md"
+      - ".changeset/**"
   workflow_dispatch:
 
 permissions:
