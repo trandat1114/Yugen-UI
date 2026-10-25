@@ -1,9 +1,10 @@
 @import "tailwindcss";
 @import "./styles/tokens.css";
 @import "./styles/charts.css";
-@source not "../Design.md";
+/* Tài liệu Markdown không sinh class: sửa README / CHANGELOG không đổi CSS của docs (CI và Docs bỏ qua các file đó). */
+@source not "../*.md";
 @source not "../wiki";
-@source not "../ROADMAP.md";
+@source not "../.github";
 
 /* Tắt palette/scale mặc định của Tailwind để không ai dùng được bg-blue-500, rounded-lg, shadow-md...
    Chỉ còn lại các utility map từ token Fluent bên dưới. */
