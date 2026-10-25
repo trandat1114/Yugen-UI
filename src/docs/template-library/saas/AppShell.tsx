@@ -36,6 +36,7 @@ import {
   NotificationCenter,
   Persona,
   ProgressBar,
+  SkeletonCard,
   toast,
   useNotifications,
   type NotificationItem,
@@ -271,7 +272,16 @@ export function AppShell({ page, onNavigate, appearance, onAppearanceChange, emb
               </div>
               {current.actions}
             </div>
-            {current.content}
+            <React.Suspense
+              fallback={
+                <div className="grid items-start gap-4 @3xl:grid-cols-2">
+                  <SkeletonCard media={false} lines={4} actions={0} />
+                  <SkeletonCard media={false} lines={4} actions={0} />
+                </div>
+              }
+            >
+              {current.content}
+            </React.Suspense>
           </div>
         </Content>
       </div>

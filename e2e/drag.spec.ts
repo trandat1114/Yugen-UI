@@ -94,8 +94,8 @@ test.describe("Resizable", () => {
 
     await page.reload();
     await page.locator("main h1").first().waitFor();
-    await expect.poll(() => width(page.locator("#mail-folders"))).toBeGreaterThan(dragged - 3);
-    expect(await width(page.locator("#mail-folders"))).toBeLessThan(dragged + 3);
+    // Bố cục lưu được áp sau lần render đầu: chờ tới khi khớp (±3px) thay vì đọc một lần lúc đang đổi.
+    await expect.poll(async () => Math.abs((await width(page.locator("#mail-folders"))) - dragged)).toBeLessThan(3);
   });
 
   test("RTL: nhóm ngang lật, kéo / phím theo hướng nhìn thấy", async ({ page }) => {

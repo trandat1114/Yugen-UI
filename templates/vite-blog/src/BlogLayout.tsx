@@ -10,14 +10,18 @@ import {
   MenuPopover,
   MenuRadioGroup,
   MenuTrigger,
+  SkeletonText,
   type YugenTheme,
 } from "yugen-ui";
 import { pageMeta, type PageKind } from "./content";
 import { PostList } from "./PostList";
-import { PostPage } from "./PostPage";
 import { POST_BY_SLUG, TAGS } from "./posts";
 import { Link, useRouter, type Route } from "./router";
 import { SITE } from "./site";
+
+// Trang bài viết (Markdown, CodeBlock) nạp lười: danh sách bài mở nhanh hơn; bài viết nạp khi trình duyệt rảnh hoặc khi mở.
+const loadPostPage = () => import("./PostPage");
+const PostPage = React.lazy(() => loadPostPage().then((m) => ({ default: m.PostPage })));
 
 const THEMES: { value: YugenTheme; label: string }[] = [
   { value: "light", label: "Sáng" },
@@ -83,6 +87,12 @@ export function BlogLayout({ theme, onThemeChange, embedded = false }: BlogLayou
   const headingLevel = embedded ? "h2" : "h1";
   const Main = embedded ? "div" : "main";
   const post = route.name === "post" ? POST_BY_SLUG[route.slug] : undefined;
+
+  React.useEffect(() => {
+    const preload = () => void loadPostPage();
+    const id = window.requestIdleCallback?.(preload) ?? window.setTimeout(preload, 1500);
+    return () => (window.cancelIdleCallback ? window.cancelIdleCallback(id) : window.clearTimeout(id));
+  }, []);
   // File sinh lúc build (rss.xml, sitemap.xml) không tồn tại trong preview nhúng: hiện chữ thay cho link không đích.
   const fileHref = (file: string) => `${import.meta.env.BASE_URL}${file}`;
 
@@ -126,7 +136,14 @@ export function BlogLayout({ theme, onThemeChange, embedded = false }: BlogLayou
       <Main aria-label={embedded ? SITE.title : undefined} className="@container mx-auto w-full max-w-5xl flex-1 px-4 py-6">
         {route.name === "home" && <PostList headingLevel={headingLevel} />}
         {route.name === "tag" && <PostList key={route.tag} tag={route.tag} headingLevel={headingLevel} />}
-        {route.name === "post" && (post ? <PostPage key={post.slug} post={post} headingLevel={headingLevel} /> : <NotFound headingLevel={headingLevel} />)}
+        {route.name === "post" &&
+          (post ? (
+            <React.Suspense fallback={<SkeletonText lines={8} className="max-w-3xl" />}>
+              <PostPage key={post.slug} post={post} headingLevel={headingLevel} />
+            </React.Suspense>
+          ) : (
+            <NotFound headingLevel={headingLevel} />
+          ))}
         {route.name === "notFound" && <NotFound headingLevel={headingLevel} />}
       </Main>
 
