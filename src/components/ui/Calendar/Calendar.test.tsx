@@ -23,6 +23,17 @@ describe("Calendar messages", () => {
     expect(container.querySelector("th")).toHaveAttribute("aria-label", "Sunday");
   });
 
+  it("nhãn ô ngày chứa đúng số hiện trên ô (en-US không dùng số thứ tự)", () => {
+    render(
+      <YugenProvider messages={{ calendar: calendarMessagesEn }}>
+        <Calendar mode="single" defaultMonth={month} />
+      </YugenProvider>,
+    );
+    const day = screen.getByRole("button", { name: /October 1, 2026/ });
+    expect(day).toHaveTextContent("1");
+    expect(day.getAttribute("aria-label")).not.toMatch(/1st/);
+  });
+
   it("prop locale vẫn ưu tiên hơn calendarMessagesEn", () => {
     const { container } = render(
       <YugenProvider messages={{ calendar: calendarMessagesEn }}>
