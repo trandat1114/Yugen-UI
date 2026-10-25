@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { lazy, type ReactNode } from "react";
 import {
   ArrowDownload20Regular,
   Board20Regular,
@@ -11,17 +11,37 @@ import {
   Sparkle20Regular,
 } from "@fluentui/react-icons";
 import { Button, toast } from "yugen-ui";
-import StatsBlock from "./blocks/stats";
-import PayoutBlock from "./blocks/payout";
-import TeamBlock from "./blocks/team";
-import PreferencesBlock from "./blocks/preferences";
-import TransactionsBlock from "./blocks/transactions";
-import SavingsBlock from "./blocks/savings";
-import BookingBlock from "./blocks/booking";
-import FeedbackBlock from "./blocks/feedback";
-import EmptyInboxBlock from "./blocks/empty-inbox";
-import AnalyticsBlock from "./blocks/analytics";
-import AiAssistantBlock from "./blocks/ai-assistant";
+
+// Block của từng trang nạp lười: lần tải đầu chỉ có trang đang mở, các trang khác nạp khi trình duyệt rảnh (preloadPages).
+const BLOCKS = {
+  stats: () => import("./blocks/stats"),
+  payout: () => import("./blocks/payout"),
+  team: () => import("./blocks/team"),
+  preferences: () => import("./blocks/preferences"),
+  transactions: () => import("./blocks/transactions"),
+  savings: () => import("./blocks/savings"),
+  booking: () => import("./blocks/booking"),
+  feedback: () => import("./blocks/feedback"),
+  emptyInbox: () => import("./blocks/empty-inbox"),
+  analytics: () => import("./blocks/analytics"),
+  aiAssistant: () => import("./blocks/ai-assistant"),
+};
+const StatsBlock = lazy(BLOCKS.stats);
+const PayoutBlock = lazy(BLOCKS.payout);
+const TeamBlock = lazy(BLOCKS.team);
+const PreferencesBlock = lazy(BLOCKS.preferences);
+const TransactionsBlock = lazy(BLOCKS.transactions);
+const SavingsBlock = lazy(BLOCKS.savings);
+const BookingBlock = lazy(BLOCKS.booking);
+const FeedbackBlock = lazy(BLOCKS.feedback);
+const EmptyInboxBlock = lazy(BLOCKS.emptyInbox);
+const AnalyticsBlock = lazy(BLOCKS.analytics);
+const AiAssistantBlock = lazy(BLOCKS.aiAssistant);
+
+/** Nạp trước block của mọi trang — App gọi khi trình duyệt rảnh sau lần render đầu, để chuyển trang không phải chờ. */
+export function preloadPages() {
+  for (const load of Object.values(BLOCKS)) void load();
+}
 
 export type PageId = "overview" | "analytics" | "assistant" | "inbox" | "calendar" | "team" | "billing" | "settings";
 

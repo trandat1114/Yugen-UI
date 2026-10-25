@@ -1,7 +1,7 @@
 import * as React from "react";
 import { YugenProvider, type YugenBrand, type YugenTheme } from "@/components/ui";
 import { AppShell, type Appearance } from "./AppShell";
-import { PAGE_BY_ID, isPageId, type PageId } from "./pages";
+import { PAGE_BY_ID, isPageId, preloadPages, type PageId } from "./pages";
 
 /** Cùng khoá với script chống nháy trong index.html. */
 const STORAGE_KEY = "yugen-saas-appearance";
@@ -23,6 +23,12 @@ function initialAppearance(): Appearance {
 export default function App() {
   const [page, setPage] = React.useState(pageFromHash);
   const [appearance, setAppearance] = React.useState(initialAppearance);
+
+  // Trang đang mở nạp trước; các trang còn lại nạp khi trình duyệt rảnh.
+  React.useEffect(() => {
+    const id = window.requestIdleCallback?.(preloadPages) ?? window.setTimeout(preloadPages, 1500);
+    return () => (window.cancelIdleCallback ? window.cancelIdleCallback(id) : window.clearTimeout(id));
+  }, []);
 
   React.useEffect(() => {
     const onHashChange = () => setPage(pageFromHash());
