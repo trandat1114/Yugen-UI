@@ -33,9 +33,9 @@
     "dir": "vite-dashboard",
     "name": "dashboard",
     "title": "Dashboard",
-    "hint": "Dashboard: KPI cards, charts and recent transactions",
+    "hint": "Sales dashboard: date range, KPIs, charts, customer table with CSV export, 4 pages",
     "budget": {
-      "js": 150,
+      "js": 195,
       "css": 25
     }
   },

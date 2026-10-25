@@ -1,15 +1,26 @@
 <!doctype html>
-<html lang="vi" data-theme="light" data-brand="sakura" dir="ltr">
+<html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#c2347a" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>Dashboard</title>
-    <meta name="description" content="Dashboard dựng bằng Yugen UI: thẻ KPI, biểu đồ và giao dịch gần đây." />
+    <title>Sakura Analytics</title>
+    <meta name="description" content="A sales dashboard built with Yugen UI: one date range for every chart, KPIs, a customer table and a mock API." />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Dashboard" />
-    <meta property="og:description" content="Dashboard dựng bằng Yugen UI: thẻ KPI, biểu đồ và giao dịch gần đây." />
+    <meta property="og:title" content="Sakura Analytics" />
+    <meta property="og:description" content="A sales dashboard built with Yugen UI: one date range for every chart, KPIs, a customer table and a mock API." />
+    <script>
+      // Áp theme / brand đã lưu trước khi React render để không nháy nền (cùng khoá với App.tsx).
+      (function () {
+        var a = {};
+        try { a = JSON.parse(localStorage.getItem("yugen-dashboard-appearance") || "{}"); } catch (e) {}
+        var t = a.theme === "light" || a.theme === "dark" || a.theme === "high-contrast" ? a.theme
+          : matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", t);
+        document.documentElement.setAttribute("data-brand", a.brand === "web" || a.brand === "teams" ? a.brand : "sakura");
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
