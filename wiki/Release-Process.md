@@ -55,6 +55,22 @@ Workflow **Release** kiểm tra tag khớp `package.json` và nằm đúng nhán
 Sau đó: workflow **Docs** build lại site (kèm docs các minor cũ ở `/vX.Y/`); tạo GitHub Release từ tag (dán phần CHANGELOG)
 và đăng tóm tắt ở Discussions **Announcements**.
 
+## Bản major (1.0.0, 2.0.0…)
+
+README là trang đầu trên GitHub và npm, nên bản major phải rà lại trước khi phát hành. Thêm vào commit
+`chore(release)`, sau bước 2 ở trên:
+
+- **Cài đặt và yêu cầu:** lệnh cài, peer dependency (React, Tailwind CSS), Node.js tối thiểu đúng với bản mới.
+- **Ví dụ:** code trong README chạy được với API mới, không còn API đã xoá hay deprecated.
+- **Tính năng:** danh sách tính năng, số component, theme và brand khớp docs.
+- **Link:** docs, hướng dẫn chuyển đổi từ bản major trước, CHANGELOG, npm.
+- Sửa nếu cần, rồi ghi `<!-- readme-reviewed: X.0.0 -->` ở đầu `README.md`, kể cả khi không phải sửa gì.
+  `check:release` chặn PR release của bản major nếu thiếu dấu này hoặc dấu còn là bản major trước. Minor, patch và
+  prerelease (`-rc.N`) không cần.
+
+Bản major của CLI làm tương tự với `packages/cli/README.md` (lệnh, tuỳ chọn, yêu cầu Node.js, ví dụ); `check-release`
+của CLI kiểm cùng dấu.
+
 ## Sửa nhanh sau phát hành (hotfix)
 
 Sửa trên `main` → changeset `patch` → lặp lại quy trình (vd. `0.6.1`). Không publish lại cùng số phiên bản — npm không cho phép.

@@ -13,7 +13,8 @@
  *   4. --npm / --tag: version CLI chưa từng publish, kể cả bản đã unpublish (npm không cho dùng lại);
  *      version create-yugen-ui không nằm trong danh sách đã unpublish.
  *   5. --tag: tag = cli@<version>; bản ổn định tag trên main, prerelease trên next → "latest" / "next".
- *   6. --tag: yugen-ui@<version ở gốc repo> đã có trên npm — template ghim ^<version> nên CLI chỉ được publish sau
+ *   6. Bản major ổn định của CLI (1.0.0, 2.0.0…): packages/cli/README.md có `<!-- readme-reviewed: X.0.0 -->`.
+ *   7. --tag: yugen-ui@<version ở gốc repo> đã có trên npm — template ghim ^<version> nên CLI chỉ được publish sau
  *      yugen-ui. Trước đó (PR release, push lên main) CI build template với gói vừa `npm pack`, không cần npm.
  *
  * Tên gói: không dùng được "yugen" — npm từ chối vì quá giống "hygen" (403 "Package name too similar"). Gói có scope
@@ -165,6 +166,18 @@ if (tag) {
   const want = pre ? "next" : "main";
   if (!branches.includes(want)) errors.push(`${pre ? "prerelease" : "bản ổn định"} ${tag} phải được tag trên ${want} (đang ở: ${branches.join(", ") || "?"}).`);
   distTag = pre ? "next" : "latest";
+}
+
+// 6. README cho bản major (như check-release ở gốc repo): đã rà README của CLI cho bản này, kể cả khi không phải sửa.
+{
+  const [major, minor, patch] = parse(version);
+  if (!pre && major >= 1 && minor === 0 && patch === 0) {
+    const reviewed = fs.readFileSync(path.join(cli, "README.md"), "utf8").match(/<!--\s*readme-reviewed:\s*(\S+)\s*-->/)?.[1];
+    if (reviewed !== version)
+      errors.push(
+        `packages/cli/README.md: bản major ${version} — rà README (lệnh, tuỳ chọn, yêu cầu Node, ví dụ), sửa nếu cần, rồi ghi \`<!-- readme-reviewed: ${version} -->\` ở đầu file${reviewed ? ` (đang là ${reviewed})` : ""}.`,
+      );
+  }
 }
 
 // exitCode thay vì process.exit(): thoát khi fetch còn giữ socket làm Node trên Windows crash (UV_HANDLE_CLOSING).
