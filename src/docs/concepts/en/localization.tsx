@@ -115,13 +115,13 @@ export default function Page() {
         </div>
       </DocSection>
 
-      <DocSection id="source" title="Copied source" description="Each component has a messages.ts file next to it.">
+      <DocSection id="source" title="Copied source" description="Each component has messages.ts (Vietnamese) and messages.en.ts (English) next to it.">
         <div className="flex flex-col gap-4">
           <CodeBlock code={SOURCE_CODE} />
           <P>
             <C>messagesEn</C> is only in the npm package. With source copied by <A href={docsPath("/concepts/cli")}>@yugen-ui/cli</A> or
             shadcn, combine the <C>…MessagesEn</C> objects of the components you have; the <C>YugenMessages</C> type only lists those
-            components too. To change a default for good, edit <C>messages.ts</C> directly.
+            components too. To change a string for good, edit <C>messages.ts</C> or <C>messages.en.ts</C> directly.
           </P>
           <DoDont
             dos={[

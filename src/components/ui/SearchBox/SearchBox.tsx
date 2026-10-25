@@ -6,7 +6,8 @@ import { Input, type InputProps } from "@/components/ui/Input/Input";
 import { useYugenMessages } from "../YugenProvider/context";
 import { searchBoxMessages } from "./messages";
 
-export { searchBoxMessages, searchBoxMessagesEn, type SearchBoxMessages } from "./messages";
+export { searchBoxMessages, type SearchBoxMessages } from "./messages";
+export { searchBoxMessagesEn } from "./messages.en";
 
 const ICONS = {
   small: { Search: Search16Regular, Dismiss: Dismiss16Regular },

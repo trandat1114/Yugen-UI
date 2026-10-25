@@ -1,0 +1,28 @@
+import type { FileUploadMessages } from "./messages";
+
+export const fileUploadMessagesEn: FileUploadMessages = {
+  dropzone: "Drag files here or",
+  browse: "browse",
+  dropping: "Drop files to upload",
+  selectedFiles: "Selected files",
+  typeImage: "images",
+  typeVideo: "videos",
+  typeAudio: "audio",
+  typeText: "text",
+  maxSizeHint: (size) => `up to ${size} per file`,
+  maxFilesHint: (count) => (count === 1 ? "up to 1 file" : `up to ${count} files`),
+  invalidType: (name, accepted) => `"${name}" isn't a supported file type (accepted: ${accepted}).`,
+  tooLarge: (name, size) => `"${name}" is larger than the ${size} limit.`,
+  tooMany: (name, limit) => `You can select up to ${limit === 1 ? "1 file" : `${limit} files`}. "${name}" was skipped.`,
+  onlyOne: (name) => `You can select only 1 file. "${name}" was skipped.`,
+  added: (name) => `Added ${name}.`,
+  addedCount: (count) => `Added ${count} files.`,
+  removed: (name) => `Removed ${name}.`,
+  uploadProgress: (name) => `Upload progress for ${name}`,
+  uploading: "Uploading…",
+  uploadingPercent: (percent) => `Uploading… ${percent}%`,
+  uploaded: "Uploaded",
+  failed: "Upload failed",
+  retry: (name) => `Retry uploading ${name}`,
+  remove: (name) => `Remove ${name}`,
+};

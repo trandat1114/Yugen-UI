@@ -5,7 +5,8 @@ import { Checkbox } from "../Checkbox/Checkbox";
 import { useYugenMessages } from "../YugenProvider/context";
 import { tableMessages } from "./messages";
 
-export { tableMessages, tableMessagesEn, type TableMessages } from "./messages";
+export { tableMessages, type TableMessages } from "./messages";
+export { tableMessagesEn } from "./messages.en";
 
 /** Fluent 2 Table — https://fluent2.microsoft.design/components/web/react/core/table/usage */
 export type TableSize = "extra-small" | "small" | "medium";

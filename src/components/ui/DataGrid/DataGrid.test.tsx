@@ -3,7 +3,7 @@ import { act, fireEvent, render, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { YugenProvider } from "../YugenProvider/YugenProvider";
 import { createColumn, DataGrid, sortItems, type DataGridProps } from "./DataGrid";
-import { dataGridMessagesEn } from "./messages";
+import { dataGridMessagesEn } from "./messages.en";
 
 type Person = { id: string; name: string; age: number };
 

@@ -15,7 +15,8 @@ import { ProgressBar } from "../ProgressBar/ProgressBar";
 import { useYugenMessages } from "../YugenProvider/context";
 import { stepperMessages, wizardMessages } from "./messages";
 
-export { stepperMessages, stepperMessagesEn, wizardMessages, wizardMessagesEn, type StepperMessages, type WizardMessages } from "./messages";
+export { stepperMessages, wizardMessages, type StepperMessages, type WizardMessages } from "./messages";
+export { stepperMessagesEn, wizardMessagesEn } from "./messages.en";
 
 /* ------------------------------------------------------------------------------------------------
  * Stepper + Step

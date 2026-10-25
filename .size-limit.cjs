@@ -35,6 +35,7 @@ module.exports = [
   js("{ cn }", "{ cn }", "10 kB"),
   js("{ Button }", "{ Button }", "14 kB"),
   js("{ YugenProvider }", "{ YugenProvider }", "43 kB"),
+  js("{ messagesEn }", "{ messagesEn }", "11.5 kB"),
   js("{ Dialog, DialogSurface }", "{ Dialog, DialogSurface }", "24 kB"),
   js("{ Combobox }", "{ Combobox }", "59 kB"),
   js("{ DatePicker }", "{ DatePicker }", "68 kB"),

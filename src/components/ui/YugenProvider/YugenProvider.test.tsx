@@ -5,7 +5,10 @@ import { Dialog, DialogSurface, DialogTitle } from "../Dialog/Dialog";
 import { messagesEn } from "../messages-en";
 import * as ui from "../index";
 
-const MESSAGE_MODULES = import.meta.glob<Record<string, unknown>>("../*/messages.ts", { eager: true });
+const MESSAGE_MODULES = import.meta.glob<Record<string, unknown>>(["../*/messages.ts", "../*/messages.en.ts"], { eager: true });
+const VI_SOURCES = import.meta.glob<string>("../*/messages.ts", { eager: true, query: "?raw", import: "default" });
+const EN_SOURCES = import.meta.glob<string>("../*/messages.en.ts", { eager: true, query: "?raw", import: "default" });
+const VI = /[ăâđêôơưạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ]/i;
 
 function OpenDialog() {
   return (
@@ -75,7 +78,6 @@ describe("YugenProvider messages", () => {
   });
 
   it("messagesEn không còn chữ tiếng Việt", () => {
-    const VI = /[ăâđêôơưạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ]/i;
     for (const [namespace, messages] of Object.entries(messagesEn)) {
       for (const [key, value] of Object.entries(messages as Record<string, unknown>)) {
         expect(VI.test(String(value)), `${namespace}.${key}`).toBe(false);
@@ -83,7 +85,18 @@ describe("YugenProvider messages", () => {
     }
   });
 
-  it("gói xuất mọi messages.ts và messagesEn gom đủ bản tiếng Anh", () => {
+  it("bản tiếng Anh nằm riêng trong messages.en.ts, chỉ import kiểu từ messages.ts (#184)", () => {
+    const folders = (files: Record<string, string>) => Object.keys(files).map((f) => f.split("/")[1]).sort();
+    expect(folders(EN_SOURCES)).toEqual(folders(VI_SOURCES));
+    for (const [file, code] of Object.entries(EN_SOURCES)) {
+      expect(VI.test(code), file).toBe(false);
+      expect(code, file).not.toMatch(/^import\s+(?!type\b)[^;]*from\s+["']\.\/messages["']/m);
+    }
+    for (const [file, mod] of Object.entries(MESSAGE_MODULES))
+      if (file.endsWith("/messages.ts")) expect(Object.keys(mod).filter((name) => name.endsWith("MessagesEn")), file).toEqual([]);
+  });
+
+  it("gói xuất mọi messages.ts / messages.en.ts và messagesEn gom đủ bản tiếng Anh", () => {
     const namespaces: string[] = [];
     for (const [file, mod] of Object.entries(MESSAGE_MODULES)) {
       for (const [name, value] of Object.entries(mod)) {

@@ -6,7 +6,8 @@ import { Popover, PopoverSurface, PopoverTrigger } from "../Popover/Popover";
 import { useYugenMessages } from "../YugenProvider/context";
 import { avatarGroupMessages } from "./messages";
 
-export { avatarGroupMessages, avatarGroupMessagesEn, type AvatarGroupMessages } from "./messages";
+export { avatarGroupMessages, type AvatarGroupMessages } from "./messages";
+export { avatarGroupMessagesEn } from "./messages.en";
 
 /** Fluent 2 AvatarGroup — https://fluent2.microsoft.design/components/web/react/core/avatargroup/usage */
 export type AvatarGroupSize = 20 | 24 | 32 | 40 | 48 | 64 | 96;

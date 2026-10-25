@@ -12,7 +12,8 @@ import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
 import { calendarMessages } from "./messages";
 
-export { calendarMessages, calendarMessagesEn, type CalendarMessages } from "./messages";
+export { calendarMessages, type CalendarMessages } from "./messages";
+export { calendarMessagesEn } from "./messages.en";
 
 /** Fluent 2 Calendar — https://fluent2.microsoft.design/components/web/react/core/calendar/usage */
 export type CalendarProps = DayPickerProps;

@@ -11,5 +11,3 @@ declare module "../YugenProvider/context" {
 }
 
 export const sheetMessages: SheetMessages = { handle: "Đổi chiều cao" };
-
-export const sheetMessagesEn: SheetMessages = { handle: "Change height" };

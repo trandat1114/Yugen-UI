@@ -8,14 +8,8 @@ import { Popover, PopoverAnchor, PopoverSurface, PopoverTrigger } from "@/compon
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
 import { datePickerMessages, dateRangePickerMessages, type DateRangePickerMessages } from "./messages";
 
-export {
-  datePickerMessages,
-  datePickerMessagesEn,
-  dateRangePickerMessages,
-  dateRangePickerMessagesEn,
-  type DatePickerMessages,
-  type DateRangePickerMessages,
-} from "./messages";
+export { datePickerMessages, dateRangePickerMessages, type DatePickerMessages, type DateRangePickerMessages } from "./messages";
+export { datePickerMessagesEn, dateRangePickerMessagesEn } from "./messages.en";
 
 /** Fluent 2 DatePicker — https://fluent2.microsoft.design/components/web/react/core/datepicker/usage */
 export type { DateRange };

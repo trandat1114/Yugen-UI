@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { Trace, TraceStep, formatTraceDuration } from "./Trace";
-import { traceMessagesEn } from "./messages";
+import { traceMessagesEn } from "./messages.en";
 import { YugenProvider } from "../YugenProvider/YugenProvider";
 
 describe("formatTraceDuration", () => {

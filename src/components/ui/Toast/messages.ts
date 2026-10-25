@@ -19,9 +19,3 @@ export const toastMessages: ToastMessages = {
   regionHotkey: "Thông báo ({hotkey})",
   dismiss: "Đóng thông báo",
 };
-
-export const toastMessagesEn: ToastMessages = {
-  region: "Notifications",
-  regionHotkey: "Notifications ({hotkey})",
-  dismiss: "Dismiss notification",
-};

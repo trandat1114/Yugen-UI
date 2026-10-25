@@ -15,12 +15,11 @@ import { messageBubbleMessages, typingIndicatorMessages } from "./messages";
 
 export {
   messageBubbleMessages,
-  messageBubbleMessagesEn,
   typingIndicatorMessages,
-  typingIndicatorMessagesEn,
   type MessageBubbleMessages,
   type TypingIndicatorMessages,
 } from "./messages";
+export { messageBubbleMessagesEn, typingIndicatorMessagesEn } from "./messages.en";
 
 export type MessageSide = "incoming" | "outgoing";
 export type MessageStatus = "sending" | "sent" | "delivered" | "read" | "error";

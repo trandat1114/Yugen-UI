@@ -16,8 +16,3 @@ export const breadcrumbMessages: BreadcrumbMessages = {
   label: "Đường dẫn điều hướng",
   overflow: "Hiện thêm mục",
 };
-
-export const breadcrumbMessagesEn: BreadcrumbMessages = {
-  label: "Breadcrumb",
-  overflow: "More items",
-};

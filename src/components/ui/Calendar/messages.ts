@@ -1,6 +1,5 @@
 import type { Locale } from "react-day-picker";
 import { vi } from "react-day-picker/locale/vi";
-import { enUS } from "react-day-picker/locale/en-US";
 
 /** Chuỗi giao diện có sẵn của Calendar. Đổi qua `messages.calendar` của YugenProvider. */
 export interface CalendarMessages {
@@ -18,5 +17,3 @@ declare module "../YugenProvider/context" {
 }
 
 export const calendarMessages: CalendarMessages = { locale: vi };
-
-export const calendarMessagesEn: CalendarMessages = { locale: enUS };

@@ -6,7 +6,8 @@ import { Menu, MenuPopover, MenuTrigger } from "../Menu/Menu";
 import { useYugenMessages } from "../YugenProvider/context";
 import { splitButtonMessages } from "./messages";
 
-export { splitButtonMessages, splitButtonMessagesEn, type SplitButtonMessages } from "./messages";
+export { splitButtonMessages, type SplitButtonMessages } from "./messages";
+export { splitButtonMessagesEn } from "./messages.en";
 
 /** Fluent 2 SplitButton — https://fluent2.microsoft.design/components/web/react/core/splitbutton/usage */
 export interface SplitButtonProps extends Omit<ButtonProps, "appearance" | "asChild" | "iconOnly" | "shape"> {

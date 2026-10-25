@@ -16,8 +16,3 @@ export const tagMessages: TagMessages = {
   dismiss: "Gỡ",
   dismissNamed: (name) => `Gỡ ${name}`,
 };
-
-export const tagMessagesEn: TagMessages = {
-  dismiss: "Remove",
-  dismissNamed: (name) => `Remove ${name}`,
-};

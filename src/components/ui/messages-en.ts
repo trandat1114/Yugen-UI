@@ -4,66 +4,66 @@ import {
   promptInputMessagesEn,
   reasoningMessagesEn,
   streamingMarkdownMessagesEn,
-} from "./AIKit/messages";
-import { autocompleteMessagesEn } from "./Autocomplete/messages";
-import { avatarGroupMessagesEn } from "./AvatarGroup/messages";
-import { breadcrumbMessagesEn } from "./Breadcrumb/messages";
-import { calendarMessagesEn } from "./Calendar/messages";
-import { carouselMessagesEn } from "./Carousel/messages";
-import { chartMessagesEn } from "./Chart/messages";
+} from "./AIKit/messages.en";
+import { autocompleteMessagesEn } from "./Autocomplete/messages.en";
+import { avatarGroupMessagesEn } from "./AvatarGroup/messages.en";
+import { breadcrumbMessagesEn } from "./Breadcrumb/messages.en";
+import { calendarMessagesEn } from "./Calendar/messages.en";
+import { carouselMessagesEn } from "./Carousel/messages.en";
+import { chartMessagesEn } from "./Chart/messages.en";
 import {
   codeBlockMessagesEn,
   codeTabsMessagesEn,
   copyCodeButtonMessagesEn,
   packageManagerTabsMessagesEn,
-} from "./CodeBlock/messages";
-import { comboboxMessagesEn } from "./Combobox/messages";
-import { commandMessagesEn } from "./Command/messages";
-import { counterBadgeMessagesEn } from "./CounterBadge/messages";
-import { dataGridMessagesEn } from "./DataGrid/messages";
-import { datePickerMessagesEn, dateRangePickerMessagesEn } from "./DatePicker/messages";
-import { dialogMessagesEn } from "./Dialog/messages";
-import { fileUploadMessagesEn } from "./FileUpload/messages";
-import { infoLabelMessagesEn } from "./InfoLabel/messages";
-import { inputOTPMessagesEn } from "./InputOTP/messages";
-import { linkMessagesEn } from "./Link/messages";
+} from "./CodeBlock/messages.en";
+import { comboboxMessagesEn } from "./Combobox/messages.en";
+import { commandMessagesEn } from "./Command/messages.en";
+import { counterBadgeMessagesEn } from "./CounterBadge/messages.en";
+import { dataGridMessagesEn } from "./DataGrid/messages.en";
+import { datePickerMessagesEn, dateRangePickerMessagesEn } from "./DatePicker/messages.en";
+import { dialogMessagesEn } from "./Dialog/messages.en";
+import { fileUploadMessagesEn } from "./FileUpload/messages.en";
+import { infoLabelMessagesEn } from "./InfoLabel/messages.en";
+import { inputOTPMessagesEn } from "./InputOTP/messages.en";
+import { linkMessagesEn } from "./Link/messages.en";
 import {
   asyncContentMessagesEn,
   errorStateMessagesEn,
   loadingOverlayMessagesEn,
   optimisticListMessagesEn,
   pageProgressMessagesEn,
-} from "./Loading/messages";
-import { messageBarMessagesEn } from "./MessageBar/messages";
+} from "./Loading/messages.en";
+import { messageBarMessagesEn } from "./MessageBar/messages.en";
 import {
   chatComposerMessagesEn,
   messageBubbleMessagesEn,
   messageScrollerMessagesEn,
   typingIndicatorMessagesEn,
-} from "./MessageScroller/messages";
-import { navMessagesEn } from "./Nav/messages";
-import { notificationCenterMessagesEn } from "./NotificationCenter/messages";
-import { paginationMessagesEn } from "./Pagination/messages";
-import { presenceBadgeMessagesEn } from "./PresenceBadge/messages";
-import { questionnaireMessagesEn } from "./Questionnaire/messages";
-import { ratingMessagesEn } from "./Rating/messages";
-import { resizableMessagesEn } from "./Resizable/messages";
-import { searchBoxMessagesEn } from "./SearchBox/messages";
-import { sheetMessagesEn } from "./Sheet/messages";
-import { skeletonMessagesEn } from "./Skeleton/messages";
-import { spinButtonMessagesEn } from "./SpinButton/messages";
-import { spinnerMessagesEn } from "./Spinner/messages";
-import { splitButtonMessagesEn } from "./SplitButton/messages";
-import { stepperMessagesEn, wizardMessagesEn } from "./Stepper/messages";
-import { swatchPickerMessagesEn } from "./SwatchPicker/messages";
-import { tableMessagesEn } from "./Table/messages";
-import { tagMessagesEn } from "./Tag/messages";
-import { tagPickerMessagesEn } from "./TagPicker/messages";
-import { teachingPopoverMessagesEn } from "./TeachingPopover/messages";
-import { timePickerMessagesEn } from "./TimePicker/messages";
-import { toastMessagesEn } from "./Toast/messages";
-import { tourMessagesEn } from "./Tour/messages";
-import { traceMessagesEn } from "./Trace/messages";
+} from "./MessageScroller/messages.en";
+import { navMessagesEn } from "./Nav/messages.en";
+import { notificationCenterMessagesEn } from "./NotificationCenter/messages.en";
+import { paginationMessagesEn } from "./Pagination/messages.en";
+import { presenceBadgeMessagesEn } from "./PresenceBadge/messages.en";
+import { questionnaireMessagesEn } from "./Questionnaire/messages.en";
+import { ratingMessagesEn } from "./Rating/messages.en";
+import { resizableMessagesEn } from "./Resizable/messages.en";
+import { searchBoxMessagesEn } from "./SearchBox/messages.en";
+import { sheetMessagesEn } from "./Sheet/messages.en";
+import { skeletonMessagesEn } from "./Skeleton/messages.en";
+import { spinButtonMessagesEn } from "./SpinButton/messages.en";
+import { spinnerMessagesEn } from "./Spinner/messages.en";
+import { splitButtonMessagesEn } from "./SplitButton/messages.en";
+import { stepperMessagesEn, wizardMessagesEn } from "./Stepper/messages.en";
+import { swatchPickerMessagesEn } from "./SwatchPicker/messages.en";
+import { tableMessagesEn } from "./Table/messages.en";
+import { tagMessagesEn } from "./Tag/messages.en";
+import { tagPickerMessagesEn } from "./TagPicker/messages.en";
+import { teachingPopoverMessagesEn } from "./TeachingPopover/messages.en";
+import { timePickerMessagesEn } from "./TimePicker/messages.en";
+import { toastMessagesEn } from "./Toast/messages.en";
+import { tourMessagesEn } from "./Tour/messages.en";
+import { traceMessagesEn } from "./Trace/messages.en";
 
 /**
  * Chuỗi giao diện có sẵn của mọi component, bằng tiếng Anh: `<YugenProvider messages={messagesEn} locale="en-US">`.

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { YugenProvider } from "../YugenProvider/YugenProvider";
 import { ChatComposer, MessageBubble, TypingIndicator } from "./MessageScroller";
-import { chatComposerMessagesEn, messageBubbleMessagesEn, typingIndicatorMessagesEn } from "./messages";
+import { chatComposerMessagesEn, messageBubbleMessagesEn, typingIndicatorMessagesEn } from "./messages.en";
 
 describe("MessageScroller messages", () => {
   it("mặc định tiếng Việt", () => {

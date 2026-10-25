@@ -16,8 +16,3 @@ export const tableMessages: TableMessages = {
   selectAllRows: "Chọn tất cả hàng",
   selectRow: "Chọn hàng",
 };
-
-export const tableMessagesEn: TableMessages = {
-  selectAllRows: "Select all rows",
-  selectRow: "Select row",
-};

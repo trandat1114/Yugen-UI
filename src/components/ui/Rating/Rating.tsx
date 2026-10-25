@@ -15,7 +15,8 @@ import { cn } from "@/lib/cn";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
 import { ratingMessages } from "./messages";
 
-export { ratingMessages, ratingMessagesEn, type RatingMessages } from "./messages";
+export { ratingMessages, type RatingMessages } from "./messages";
+export { ratingMessagesEn } from "./messages.en";
 
 export type RatingColor = "brand" | "marigold" | "neutral";
 export type RatingSize = "small" | "medium" | "large" | "extra-large";

@@ -22,10 +22,3 @@ export const comboboxMessages: ComboboxMessages = {
   closeList: "Đóng danh sách",
   openList: "Mở danh sách",
 };
-
-export const comboboxMessagesEn: ComboboxMessages = {
-  noResults: "No results found",
-  useFreeform: (query) => `Press Enter to use “${query}”`,
-  closeList: "Close list",
-  openList: "Open list",
-};

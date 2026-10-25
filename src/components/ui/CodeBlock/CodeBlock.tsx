@@ -19,18 +19,15 @@ import { codeBlockMessages, codeTabsMessages, copyCodeButtonMessages, packageMan
 
 export {
   copyCodeButtonMessages,
-  copyCodeButtonMessagesEn,
   codeBlockMessages,
-  codeBlockMessagesEn,
   codeTabsMessages,
-  codeTabsMessagesEn,
   packageManagerTabsMessages,
-  packageManagerTabsMessagesEn,
   type CopyCodeButtonMessages,
   type CodeBlockMessages,
   type CodeTabsMessages,
   type PackageManagerTabsMessages,
 } from "./messages";
+export { copyCodeButtonMessagesEn, codeBlockMessagesEn, codeTabsMessagesEn, packageManagerTabsMessagesEn } from "./messages.en";
 
 /* ================================================================ Tokenizer */
 

@@ -7,7 +7,8 @@ import { Button } from "../Button/Button";
 import { useYugenMessages } from "../YugenProvider/context";
 import { carouselMessages } from "./messages";
 
-export { carouselMessages, carouselMessagesEn, type CarouselMessages } from "./messages";
+export { carouselMessages, type CarouselMessages } from "./messages";
+export { carouselMessagesEn } from "./messages.en";
 
 /** Fluent 2 Carousel — https://fluent2.microsoft.design/components/web/react/core/carousel/usage (+ Yugen Labs: progress, peek, thumbnails) */
 export type CarouselGap = "none" | "XS" | "S" | "M" | "L" | "XL";

@@ -7,7 +7,8 @@ import { Popover, PopoverClose, PopoverSurface, PopoverTrigger, type PopoverSurf
 import { useYugenMessages } from "../YugenProvider/context";
 import { teachingPopoverMessages } from "./messages";
 
-export { teachingPopoverMessages, teachingPopoverMessagesEn, type TeachingPopoverMessages } from "./messages";
+export { teachingPopoverMessages, type TeachingPopoverMessages } from "./messages";
+export { teachingPopoverMessagesEn } from "./messages.en";
 
 export type TeachingPopoverAppearance = "normal" | "brand";
 

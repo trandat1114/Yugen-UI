@@ -49,18 +49,6 @@ export const stepperMessages: StepperMessages = {
   progressLabel: (current, total) => `Bước ${current} trên ${total}`,
 };
 
-export const stepperMessagesEn: StepperMessages = {
-  label: "Steps",
-  step: (index) => `Step ${index}`,
-  complete: "completed",
-  current: "current step",
-  upcoming: "not started",
-  error: "error",
-  optional: "Optional",
-  progress: (current, total) => `Step ${current} of ${total}`,
-  progressLabel: (current, total) => `Step ${current} of ${total}`,
-};
-
 export const wizardMessages: WizardMessages = {
   back: "Quay lại",
   next: "Tiếp tục",
@@ -68,13 +56,4 @@ export const wizardMessages: WizardMessages = {
   invalid: "Vui lòng kiểm tra lại thông tin ở bước này.",
   validateFailed: "Không kiểm tra được bước này. Hãy thử lại.",
   panel: (current, total) => `Bước ${current}/${total}`,
-};
-
-export const wizardMessagesEn: WizardMessages = {
-  back: "Back",
-  next: "Next",
-  finish: "Finish",
-  invalid: "Check the information in this step.",
-  validateFailed: "Couldn't validate this step. Try again.",
-  panel: (current, total) => `Step ${current} of ${total}`,
 };

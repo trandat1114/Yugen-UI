@@ -11,5 +11,3 @@ declare module "../YugenProvider/context" {
 }
 
 export const messageBarMessages: MessageBarMessages = { dismiss: "Đóng thông báo" };
-
-export const messageBarMessagesEn: MessageBarMessages = { dismiss: "Dismiss" };

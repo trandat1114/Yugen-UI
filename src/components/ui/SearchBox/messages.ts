@@ -16,8 +16,3 @@ export const searchBoxMessages: SearchBoxMessages = {
   dismiss: "Xoá nội dung tìm kiếm",
   placeholder: "Tìm kiếm",
 };
-
-export const searchBoxMessagesEn: SearchBoxMessages = {
-  dismiss: "Clear search",
-  placeholder: "Search",
-};

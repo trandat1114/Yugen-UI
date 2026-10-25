@@ -10,7 +10,8 @@ import { Spinner } from "../Spinner/Spinner";
 import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
 import { autocompleteMessages } from "./messages";
 
-export { autocompleteMessages, autocompleteMessagesEn, type AutocompleteMessages } from "./messages";
+export { autocompleteMessages, type AutocompleteMessages } from "./messages";
+export { autocompleteMessagesEn } from "./messages.en";
 
 /* ================================================================ HighlightMatch */
 

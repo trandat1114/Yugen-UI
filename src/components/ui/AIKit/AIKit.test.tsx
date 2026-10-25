@@ -5,7 +5,7 @@ import { markdownToPlainText, parseMarkdown, sanitizeHref, type MdBlock, type Md
 import { StreamingMarkdown } from "./StreamingMarkdown";
 import { PromptInput, formatFileSize, validateFiles } from "./PromptInput";
 import { formatReasoningDuration } from "./Reasoning";
-import { promptInputMessagesEn } from "./messages";
+import { promptInputMessagesEn } from "./messages.en";
 import { YugenProvider } from "../YugenProvider/YugenProvider";
 
 const blocks = (text: string, streaming = false) => parseMarkdown(text, { streaming }).children;

@@ -6,7 +6,8 @@ import { fieldAppearanceClass, type FieldAppearance } from "@/components/ui/Sele
 import { useYugenMessages } from "../YugenProvider/context";
 import { spinButtonMessages } from "./messages";
 
-export { spinButtonMessages, spinButtonMessagesEn, type SpinButtonMessages } from "./messages";
+export { spinButtonMessages, type SpinButtonMessages } from "./messages";
+export { spinButtonMessagesEn } from "./messages.en";
 
 const decimals = (n: number) => {
   const [, frac = ""] = String(n).split(".");

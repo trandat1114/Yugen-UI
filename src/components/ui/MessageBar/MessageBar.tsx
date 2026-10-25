@@ -11,7 +11,8 @@ import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
 import { messageBarMessages } from "./messages";
 
-export { messageBarMessages, messageBarMessagesEn, type MessageBarMessages } from "./messages";
+export { messageBarMessages, type MessageBarMessages } from "./messages";
+export { messageBarMessagesEn } from "./messages.en";
 
 /** Fluent 2 MessageBar — https://fluent2.microsoft.design/components/web/react/core/messagebar/usage */
 const messageBarVariants = cva(

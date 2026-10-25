@@ -7,7 +7,8 @@ import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
 import { tagMessages } from "./messages";
 
-export { tagMessages, tagMessagesEn, type TagMessages } from "./messages";
+export { tagMessages, type TagMessages } from "./messages";
+export { tagMessagesEn } from "./messages.en";
 
 export type TagAppearance = "filled" | "outline" | "brand";
 export type TagSize = "extra-small" | "small" | "medium";

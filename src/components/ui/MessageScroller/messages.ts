@@ -60,13 +60,6 @@ export const messageScrollerMessages: MessageScrollerMessages = {
   newMessages: (count) => `${count} tin nhắn mới`,
 };
 
-export const messageScrollerMessagesEn: MessageScrollerMessages = {
-  label: "Conversation",
-  loadingOlder: "Loading earlier messages…",
-  jumpToLatest: "Jump to latest message",
-  newMessages: (count) => (count === 1 ? "1 new message" : `${count} new messages`),
-};
-
 export const messageBubbleMessages: MessageBubbleMessages = {
   sending: "Đang gửi",
   sent: "Đã gửi",
@@ -76,21 +69,8 @@ export const messageBubbleMessages: MessageBubbleMessages = {
   retry: "Thử lại",
 };
 
-export const messageBubbleMessagesEn: MessageBubbleMessages = {
-  sending: "Sending",
-  sent: "Sent",
-  delivered: "Delivered",
-  read: "Seen",
-  error: "Couldn't send.",
-  retry: "Retry",
-};
-
 export const typingIndicatorMessages: TypingIndicatorMessages = {
   label: (author) => `${author ?? "Đối phương"} đang soạn tin…`,
-};
-
-export const typingIndicatorMessagesEn: TypingIndicatorMessages = {
-  label: (author) => `${author ?? "Someone"} is typing…`,
 };
 
 export const chatComposerMessages: ChatComposerMessages = {
@@ -101,14 +81,4 @@ export const chatComposerMessages: ChatComposerMessages = {
   hint: "Enter để gửi · Shift+Enter xuống dòng",
   countPrefix: "Đã nhập",
   countSuffix: "ký tự",
-};
-
-export const chatComposerMessagesEn: ChatComposerMessages = {
-  placeholder: "Type a message…",
-  label: "Message",
-  send: "Send",
-  stop: "Stop responding",
-  hint: "Enter to send · Shift+Enter for a new line",
-  countPrefix: "Typed",
-  countSuffix: "characters",
 };

@@ -1,6 +1,5 @@
 // Provider
 export * from "./YugenProvider/YugenProvider";
-export * from "./messages-en";
 
 // Hành động
 export * from "./Button/Button";
@@ -114,3 +113,7 @@ export * from "./NotificationCenter/NotificationCenter";
 
 // Trang trí (chỉ cho minh hoạ)
 export * from "./Decorative/Decorative";
+
+// Bản tiếng Anh của mọi chuỗi có sẵn. Đặt cuối để bản build giữ `…MessagesEn` của từng component ngay sau bản tiếng Việt
+// (gzip nén tốt hơn khi hai bản nằm gần nhau).
+export * from "./messages-en";

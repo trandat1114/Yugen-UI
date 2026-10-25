@@ -16,8 +16,3 @@ export const resizableMessages: ResizableMessages = {
   collapse: "Thu gọn panel",
   expand: "Mở rộng panel",
 };
-
-export const resizableMessagesEn: ResizableMessages = {
-  collapse: "Collapse panel",
-  expand: "Expand panel",
-};

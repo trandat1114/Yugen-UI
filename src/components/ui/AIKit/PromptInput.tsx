@@ -25,7 +25,8 @@ import { fieldControlClass } from "../Field/Field";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
 import { promptInputMessages, type PromptInputMessages } from "./messages";
 
-export { promptInputMessages, promptInputMessagesEn, type PromptInputMessages } from "./messages";
+export { promptInputMessages, type PromptInputMessages } from "./messages";
+export { promptInputMessagesEn } from "./messages.en";
 
 /* ================================================================ Tệp */
 

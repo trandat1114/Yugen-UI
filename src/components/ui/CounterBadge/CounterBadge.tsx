@@ -6,7 +6,8 @@ import { VisuallyHidden } from "../VisuallyHidden/VisuallyHidden";
 import { useYugenMessages } from "../YugenProvider/context";
 import { counterBadgeMessages } from "./messages";
 
-export { counterBadgeMessages, counterBadgeMessagesEn, type CounterBadgeMessages } from "./messages";
+export { counterBadgeMessages, type CounterBadgeMessages } from "./messages";
+export { counterBadgeMessagesEn } from "./messages.en";
 
 type CounterBadgeSize = "small" | "medium" | "large" | "extra-large";
 type CounterBadgeColor = "brand" | "danger" | "important" | "informative";

@@ -21,7 +21,8 @@ import { ProgressBar } from "../ProgressBar/ProgressBar";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
 import { fileUploadMessages, type FileUploadMessages } from "./messages";
 
-export { fileUploadMessages, fileUploadMessagesEn, type FileUploadMessages } from "./messages";
+export { fileUploadMessages, type FileUploadMessages } from "./messages";
+export { fileUploadMessagesEn } from "./messages.en";
 
 /* ------------------------------------------------------------------------------------------------
  * Tiện ích thuần

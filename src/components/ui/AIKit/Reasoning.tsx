@@ -7,7 +7,8 @@ import { useYugenMessages } from "../YugenProvider/context";
 import { reasoningMessages } from "./messages";
 import { StreamingMarkdown } from "./StreamingMarkdown";
 
-export { reasoningMessages, reasoningMessagesEn, type ReasoningMessages } from "./messages";
+export { reasoningMessages, type ReasoningMessages } from "./messages";
+export { reasoningMessagesEn } from "./messages.en";
 
 /** Thời lượng gọn theo giây: 12s · 1m 05s. */
 export function formatReasoningDuration(ms: number): string {

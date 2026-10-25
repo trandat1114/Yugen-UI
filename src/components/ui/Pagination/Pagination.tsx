@@ -11,7 +11,8 @@ import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
 import { paginationMessages } from "./messages";
 
-export { paginationMessages, paginationMessagesEn, type PaginationMessages } from "./messages";
+export { paginationMessages, type PaginationMessages } from "./messages";
+export { paginationMessagesEn } from "./messages.en";
 
 /** Pagination (shadcn/ui, giao diện Fluent 2) — https://ui.shadcn.com/docs/components/pagination */
 type PaginationSize = "small" | "medium";

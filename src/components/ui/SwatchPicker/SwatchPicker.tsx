@@ -7,7 +7,8 @@ import { useArrowNavigationGroup } from "../FocusManagement/FocusManagement";
 import { useYugenMessages } from "../YugenProvider/context";
 import { swatchPickerMessages } from "./messages";
 
-export { swatchPickerMessages, swatchPickerMessagesEn, type SwatchPickerMessages } from "./messages";
+export { swatchPickerMessages, type SwatchPickerMessages } from "./messages";
+export { swatchPickerMessagesEn } from "./messages.en";
 
 export type SwatchSize = "extra-small" | "small" | "medium" | "large";
 export type SwatchShape = "square" | "rounded" | "circular";

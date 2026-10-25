@@ -18,7 +18,8 @@ import { fieldAppearanceClass, type FieldAppearance } from "@/components/ui/Sele
 import { listboxOptionClass } from "@/components/ui/Dropdown/Dropdown";
 import { comboboxMessages } from "./messages";
 
-export { comboboxMessages, comboboxMessagesEn, type ComboboxMessages } from "./messages";
+export { comboboxMessages, type ComboboxMessages } from "./messages";
+export { comboboxMessagesEn } from "./messages.en";
 
 export interface ComboboxOption {
   value: string;

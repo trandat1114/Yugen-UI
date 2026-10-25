@@ -8,7 +8,8 @@ import { fieldControlClass } from "../Field/Field";
 import { useYugenMessages } from "../YugenProvider/context";
 import { chatComposerMessages } from "./messages";
 
-export { chatComposerMessages, chatComposerMessagesEn, type ChatComposerMessages } from "./messages";
+export { chatComposerMessages, type ChatComposerMessages } from "./messages";
+export { chatComposerMessagesEn } from "./messages.en";
 
 export interface ChatComposerProps
   extends Omit<React.FormHTMLAttributes<HTMLFormElement>, "onSubmit" | "onChange" | "defaultValue"> {

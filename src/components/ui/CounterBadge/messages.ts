@@ -19,9 +19,3 @@ export const counterBadgeMessages: CounterBadgeMessages = {
   count: (count) => `${count} thông báo`,
   overflow: (overflowCount) => `Hơn ${overflowCount} thông báo`,
 };
-
-export const counterBadgeMessagesEn: CounterBadgeMessages = {
-  dot: "New notifications",
-  count: (count) => (count === 1 ? "1 notification" : `${count} notifications`),
-  overflow: (overflowCount) => `More than ${overflowCount} notifications`,
-};

@@ -21,21 +21,23 @@ import {
 
 export {
   asyncContentMessages,
-  asyncContentMessagesEn,
   errorStateMessages,
-  errorStateMessagesEn,
   loadingOverlayMessages,
-  loadingOverlayMessagesEn,
   optimisticListMessages,
-  optimisticListMessagesEn,
   pageProgressMessages,
-  pageProgressMessagesEn,
   type AsyncContentMessages,
   type ErrorStateMessages,
   type LoadingOverlayMessages,
   type OptimisticListMessages,
   type PageProgressMessages,
 } from "./messages";
+export {
+  asyncContentMessagesEn,
+  errorStateMessagesEn,
+  loadingOverlayMessagesEn,
+  optimisticListMessagesEn,
+  pageProgressMessagesEn,
+} from "./messages.en";
 
 /** Yugen Labs — Wait UX: các khối dựng cho trải nghiệm chờ (delay, overlay, tiến trình trang, trạng thái bất đồng bộ, optimistic). */
 

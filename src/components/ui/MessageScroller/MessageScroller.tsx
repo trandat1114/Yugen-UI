@@ -18,7 +18,8 @@ import {
 
 export * from "./MessageBubble";
 export * from "./ChatComposer";
-export { messageScrollerMessages, messageScrollerMessagesEn, type MessageScrollerMessages } from "./messages";
+export { messageScrollerMessages, type MessageScrollerMessages } from "./messages";
+export { messageScrollerMessagesEn } from "./messages.en";
 
 /* ================================================================ Tiện ích */
 

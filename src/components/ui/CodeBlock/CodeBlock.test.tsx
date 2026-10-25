@@ -8,7 +8,7 @@ import {
   type CodeLanguage,
   type CodeTokenType,
 } from "./CodeBlock";
-import { codeBlockMessagesEn, copyCodeButtonMessagesEn } from "./messages";
+import { codeBlockMessagesEn, copyCodeButtonMessagesEn } from "./messages.en";
 import { YugenProvider } from "../YugenProvider/YugenProvider";
 
 /** Token có nghĩa (bỏ plain) dạng [type, text]. */

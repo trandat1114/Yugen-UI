@@ -11,5 +11,3 @@ declare module "../YugenProvider/context" {
 }
 
 export const dialogMessages: DialogMessages = { close: "Đóng" };
-
-export const dialogMessagesEn: DialogMessages = { close: "Close" };

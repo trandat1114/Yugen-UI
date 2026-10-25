@@ -27,7 +27,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../Tabs/Tabs";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
 import { notificationCenterMessages, type NotificationCenterMessages } from "./messages";
 
-export { notificationCenterMessages, notificationCenterMessagesEn, type NotificationCenterMessages } from "./messages";
+export { notificationCenterMessages, type NotificationCenterMessages } from "./messages";
+export { notificationCenterMessagesEn } from "./messages.en";
 
 export type NotificationIntent = "info" | "success" | "warning" | "error";
 

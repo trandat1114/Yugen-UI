@@ -11,5 +11,3 @@ declare module "../YugenProvider/context" {
 }
 
 export const splitButtonMessages: SplitButtonMessages = { menu: "Thêm tuỳ chọn" };
-
-export const splitButtonMessagesEn: SplitButtonMessages = { menu: "More options" };

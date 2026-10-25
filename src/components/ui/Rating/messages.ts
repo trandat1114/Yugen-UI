@@ -19,9 +19,3 @@ export const ratingMessages: RatingMessages = {
   summary: (valueText, max) => `Đánh giá ${valueText} trên ${max} sao`,
   count: (_count, countText) => `${countText} lượt`,
 };
-
-export const ratingMessagesEn: RatingMessages = {
-  item: (value, valueText) => (value === 1 ? `${valueText} star` : `${valueText} stars`),
-  summary: (valueText, max) => `Rated ${valueText} out of ${max} stars`,
-  count: (count, countText) => (count === 1 ? `${countText} rating` : `${countText} ratings`),
-};

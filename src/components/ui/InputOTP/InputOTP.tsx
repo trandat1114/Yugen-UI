@@ -6,7 +6,8 @@ import { fieldControlClass } from "@/components/ui/Field/Field";
 import { useYugenMessages } from "../YugenProvider/context";
 import { inputOTPMessages } from "./messages";
 
-export { inputOTPMessages, inputOTPMessagesEn, type InputOTPMessages } from "./messages";
+export { inputOTPMessages, type InputOTPMessages } from "./messages";
+export { inputOTPMessagesEn } from "./messages.en";
 
 const PATTERNS = {
   digits: /^\d$/,

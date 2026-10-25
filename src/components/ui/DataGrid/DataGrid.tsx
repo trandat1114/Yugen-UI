@@ -23,7 +23,8 @@ import {
 } from "./useDataGrid";
 
 export * from "./useDataGrid";
-export { dataGridMessages, dataGridMessagesEn, type DataGridMessages } from "./messages";
+export { dataGridMessages, type DataGridMessages } from "./messages";
+export { dataGridMessagesEn } from "./messages.en";
 
 /**
  * Fluent 2 DataGrid — https://react.fluentui.dev/?path=/docs/components-datagrid--docs

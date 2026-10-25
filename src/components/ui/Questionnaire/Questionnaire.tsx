@@ -24,7 +24,8 @@ import { Textarea } from "../Textarea/Textarea";
 import { useYugenMessages } from "../YugenProvider/context";
 import { questionnaireMessages, type QuestionnaireMessages } from "./messages";
 
-export { questionnaireMessages, questionnaireMessagesEn, type QuestionnaireMessages } from "./messages";
+export { questionnaireMessages, type QuestionnaireMessages } from "./messages";
+export { questionnaireMessagesEn } from "./messages.en";
 
 /* ================================================================ Kiểu cấu hình */
 

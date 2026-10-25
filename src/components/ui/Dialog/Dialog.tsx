@@ -6,7 +6,8 @@ import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context"
 import { dialogMessages } from "./messages";
 import { cn } from "@/lib/cn";
 
-export { dialogMessages, dialogMessagesEn, type DialogMessages } from "./messages";
+export { dialogMessages, type DialogMessages } from "./messages";
+export { dialogMessagesEn } from "./messages.en";
 
 /** Fluent 2 Dialog — https://fluent2.microsoft.design/components/web/react/core/dialog/usage */
 export const Dialog = DialogPrimitive.Root;

@@ -24,7 +24,8 @@ import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffec
 import { useYugenMessages } from "../YugenProvider/context";
 import { resizableMessages } from "./messages";
 
-export { resizableMessages, resizableMessagesEn, type ResizableMessages } from "./messages";
+export { resizableMessages, type ResizableMessages } from "./messages";
+export { resizableMessagesEn } from "./messages.en";
 
 /**
  * shadcn Resizable — https://ui.shadcn.com/docs/components/resizable

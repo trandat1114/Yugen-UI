@@ -5,7 +5,8 @@ import { Popover, PopoverSurface, PopoverTrigger } from "@/components/ui/Popover
 import { useYugenMessages } from "../YugenProvider/context";
 import { infoLabelMessages } from "./messages";
 
-export { infoLabelMessages, infoLabelMessagesEn, type InfoLabelMessages } from "./messages";
+export { infoLabelMessages, type InfoLabelMessages } from "./messages";
+export { infoLabelMessagesEn } from "./messages.en";
 
 /** Fluent 2 InfoLabel — https://fluent2.microsoft.design/components/web/react/core/infolabel/usage */
 const SIZE = {

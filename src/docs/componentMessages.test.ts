@@ -3,7 +3,9 @@ import namespaces from "virtual:yugen-messages";
 import { ALL_MESSAGE_NAMESPACES, messageNamespacesFor } from "./componentMessages";
 import { COMPONENTS_META } from "./registry";
 
-const MODULES = import.meta.glob<Record<string, Record<string, unknown>>>("../components/ui/*/messages.ts", { eager: true });
+const MODULES = import.meta.glob<Record<string, Record<string, unknown>>>(["../components/ui/*/messages.ts", "../components/ui/*/messages.en.ts"], {
+  eager: true,
+});
 
 describe("bảng Messages trên trang component (#156)", () => {
   it("mọi namespace hiện trên ít nhất một trang", () => {
@@ -20,12 +22,12 @@ describe("bảng Messages trên trang component (#156)", () => {
   });
 
   it("dữ liệu đọc tĩnh khớp object thật: đủ khoá, chuỗi literal đúng giá trị", () => {
+    const all: Record<string, Record<string, unknown>> = Object.assign({}, ...Object.values(MODULES));
     const runtime = new Map<string, { vi: Record<string, unknown>; en: Record<string, unknown> }>();
-    for (const mod of Object.values(MODULES))
-      for (const [name, value] of Object.entries(mod)) {
-        const ns = name.match(/^(\w+?)Messages$/)?.[1];
-        if (ns) runtime.set(ns, { vi: value, en: mod[`${ns}MessagesEn`] });
-      }
+    for (const [name, value] of Object.entries(all)) {
+      const ns = name.match(/^(\w+?)Messages$/)?.[1];
+      if (ns) runtime.set(ns, { vi: value, en: all[`${ns}MessagesEn`] });
+    }
     expect(namespaces.map((n) => n.namespace).sort()).toEqual([...runtime.keys()].sort());
     for (const ns of namespaces) {
       const { vi, en } = runtime.get(ns.namespace)!;

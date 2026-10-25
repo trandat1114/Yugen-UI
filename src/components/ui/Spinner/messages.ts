@@ -11,5 +11,3 @@ declare module "../YugenProvider/context" {
 }
 
 export const spinnerMessages: SpinnerMessages = { label: "Đang tải" };
-
-export const spinnerMessagesEn: SpinnerMessages = { label: "Loading" };

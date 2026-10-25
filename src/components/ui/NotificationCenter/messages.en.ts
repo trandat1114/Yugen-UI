@@ -1,0 +1,28 @@
+import type { NotificationCenterMessages } from "./messages";
+
+export const notificationCenterMessagesEn: NotificationCenterMessages = {
+  title: "Notifications",
+  triggerUnread: (title, unread) => `${title}, ${unread} unread`,
+  close: "Close",
+  markAllRead: "Mark all as read",
+  filter: "Filter notifications",
+  all: "All",
+  unread: "Unread",
+  loadError: "Couldn't load notifications",
+  emptyTitle: "No notifications yet",
+  emptyDescription: "New notifications will appear here.",
+  emptyUnreadTitle: "You're all caught up",
+  emptyUnreadDescription: "No unread notifications.",
+  unreadSuffix: ", unread",
+  markRead: "Mark as read",
+  markReadItem: (title) => `Mark as read: ${title}`,
+  dismiss: "Dismiss",
+  dismissItem: (title) => `Dismiss: ${title}`,
+  announceOne: (title) => `New notification: ${title}`,
+  announceMany: (count) => (count === 1 ? "1 new notification" : `${count} new notifications`),
+  justNow: "Just now",
+  minutesAgo: (minutes) => (minutes === 1 ? "1 minute ago" : `${minutes} minutes ago`),
+  hoursAgo: (hours) => (hours === 1 ? "1 hour ago" : `${hours} hours ago`),
+  today: "Today",
+  yesterday: "Yesterday",
+};

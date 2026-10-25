@@ -8,7 +8,7 @@ import {
   useNotifications,
   type NotificationItem,
 } from "./NotificationCenter";
-import { notificationCenterMessagesEn } from "./messages";
+import { notificationCenterMessagesEn } from "./messages.en";
 import { YugenProvider } from "../YugenProvider/YugenProvider";
 
 const NOW = new Date(2026, 9, 21, 15, 0).getTime();

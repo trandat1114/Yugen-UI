@@ -23,7 +23,8 @@ import { Spinner } from "../Spinner/Spinner";
 import { useYugenMessages } from "../YugenProvider/context";
 import { traceMessages } from "./messages";
 
-export { traceMessages, traceMessagesEn, type TraceMessages } from "./messages";
+export { traceMessages, type TraceMessages } from "./messages";
+export { traceMessagesEn } from "./messages.en";
 
 /* ================================================================ Trạng thái */
 

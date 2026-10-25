@@ -54,14 +54,6 @@ export const copyCodeButtonMessages: CopyCodeButtonMessages = {
   copiedStatus: "Đã sao chép vào bộ nhớ tạm",
 };
 
-export const copyCodeButtonMessagesEn: CopyCodeButtonMessages = {
-  copy: "Copy",
-  copied: "Copied",
-  copyLabel: "Copy code",
-  copiedLabel: "Copied",
-  copiedStatus: "Copied to clipboard",
-};
-
 export const codeBlockMessages: CodeBlockMessages = {
   wrap: "Xuống dòng",
   wrapOn: "Bật xuống dòng",
@@ -72,20 +64,6 @@ export const codeBlockMessages: CodeBlockMessages = {
   expand: (lines) => `Xem thêm (${lines} dòng)`,
 };
 
-export const codeBlockMessagesEn: CodeBlockMessages = {
-  wrap: "Word wrap",
-  wrapOn: "Turn on word wrap",
-  wrapOff: "Turn off word wrap",
-  added: "Added:",
-  removed: "Removed:",
-  collapse: "Show less",
-  expand: (lines) => `Show more (${lines} ${lines === 1 ? "line" : "lines"})`,
-};
-
 export const codeTabsMessages: CodeTabsMessages = { files: "Tệp" };
 
-export const codeTabsMessagesEn: CodeTabsMessages = { files: "Files" };
-
 export const packageManagerTabsMessages: PackageManagerTabsMessages = { label: "Trình quản lý gói" };
-
-export const packageManagerTabsMessagesEn: PackageManagerTabsMessages = { label: "Package manager" };

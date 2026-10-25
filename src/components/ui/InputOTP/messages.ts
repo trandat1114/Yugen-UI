@@ -13,7 +13,3 @@ declare module "../YugenProvider/context" {
 export const inputOTPMessages: InputOTPMessages = {
   slot: (position, length) => `Ký tự ${position} trên ${length}`,
 };
-
-export const inputOTPMessagesEn: InputOTPMessages = {
-  slot: (position, length) => `Character ${position} of ${length}`,
-};

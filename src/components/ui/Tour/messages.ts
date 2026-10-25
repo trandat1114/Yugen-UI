@@ -24,12 +24,3 @@ export const tourMessages: TourMessages = {
   roleDescription: "hướng dẫn",
   step: "Bước",
 };
-
-export const tourMessagesEn: TourMessages = {
-  next: "Next",
-  back: "Back",
-  skip: "Skip",
-  finish: "Finish",
-  roleDescription: "tour",
-  step: "Step",
-};

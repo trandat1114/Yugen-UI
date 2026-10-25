@@ -5,7 +5,8 @@ import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
 import { navMessages } from "./messages";
 
-export { navMessages, navMessagesEn, type NavMessages } from "./messages";
+export { navMessages, type NavMessages } from "./messages";
+export { navMessagesEn } from "./messages.en";
 
 /** Fluent 2 Nav — https://fluent2.microsoft.design/components/web/react/core/nav/usage */
 type NavDensity = "medium" | "small";

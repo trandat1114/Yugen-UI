@@ -7,7 +7,8 @@ import { Dialog, DialogSurface } from "../Dialog/Dialog";
 import { useYugenMessages } from "../YugenProvider/context";
 import { commandMessages } from "./messages";
 
-export { commandMessages, commandMessagesEn, type CommandMessages } from "./messages";
+export { commandMessages, type CommandMessages } from "./messages";
+export { commandMessagesEn } from "./messages.en";
 
 /** Command (shadcn/ui + cmdk, giao diện Fluent 2 Menu) — https://ui.shadcn.com/docs/components/command */
 export const Command = React.forwardRef<

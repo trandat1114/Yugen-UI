@@ -116,13 +116,13 @@ export default function Page() {
         </div>
       </DocSection>
 
-      <DocSection id="source" title="Khi copy source" description="Mỗi component có file messages.ts cạnh file component.">
+      <DocSection id="source" title="Khi copy source" description="Mỗi component có messages.ts (tiếng Việt) và messages.en.ts (tiếng Anh) cạnh file component.">
         <div className="flex flex-col gap-4">
           <CodeBlock code={SOURCE_CODE} />
           <P>
             <C>messagesEn</C> chỉ có trong gói npm. Với source copy bằng <A href={docsPath("/concepts/cli")}>@yugen-ui/cli</A> hoặc shadcn,
             ghép các <C>…MessagesEn</C> của những component bạn có; kiểu <C>YugenMessages</C> cũng chỉ gồm các component đó. Muốn đổi hẳn
-            mặc định thì sửa trực tiếp <C>messages.ts</C>.
+            chuỗi thì sửa trực tiếp <C>messages.ts</C> hoặc <C>messages.en.ts</C>.
           </P>
           <DoDont
             dos={[

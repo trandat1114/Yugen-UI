@@ -6,7 +6,8 @@ import { useYugenMessages } from "../YugenProvider/context";
 import { sanitizeHref } from "./markdown";
 import { citationMessages } from "./messages";
 
-export { citationMessages, citationMessagesEn, type CitationMessages } from "./messages";
+export { citationMessages, type CitationMessages } from "./messages";
+export { citationMessagesEn } from "./messages.en";
 
 export interface CitationSource {
   title: string;

@@ -37,7 +37,8 @@ import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
 import { presenceBadgeMessages, type PresenceBadgeMessages } from "./messages";
 
-export { presenceBadgeMessages, presenceBadgeMessagesEn, type PresenceBadgeMessages } from "./messages";
+export { presenceBadgeMessages, type PresenceBadgeMessages } from "./messages";
+export { presenceBadgeMessagesEn } from "./messages.en";
 
 export type PresenceBadgeStatus =
   | "available"

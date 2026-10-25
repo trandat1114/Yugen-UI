@@ -3,7 +3,8 @@ import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
 import { spinnerMessages } from "./messages";
 
-export { spinnerMessages, spinnerMessagesEn, type SpinnerMessages } from "./messages";
+export { spinnerMessages, type SpinnerMessages } from "./messages";
+export { spinnerMessagesEn } from "./messages.en";
 
 /** Fluent 2 Spinner — https://fluent2.microsoft.design/components/web/react/core/spinner/usage */
 const SIZE = {

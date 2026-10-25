@@ -22,10 +22,3 @@ export const autocompleteMessages: AutocompleteMessages = {
   searching: "Đang tìm…",
   count: (count) => `${count} gợi ý`,
 };
-
-export const autocompleteMessagesEn: AutocompleteMessages = {
-  empty: "No matching suggestions",
-  listLabel: "Search suggestions",
-  searching: "Searching…",
-  count: (count) => (count === 1 ? "1 suggestion" : `${count} suggestions`),
-};

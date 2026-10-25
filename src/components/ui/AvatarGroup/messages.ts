@@ -19,9 +19,3 @@ export const avatarGroupMessages: AvatarGroupMessages = {
   viewAll: (count) => `Xem ${count} thành viên`,
   viewMore: (count) => `Xem thêm ${count} thành viên`,
 };
-
-export const avatarGroupMessagesEn: AvatarGroupMessages = {
-  list: "Members",
-  viewAll: (count) => (count === 1 ? "View 1 member" : `View ${count} members`),
-  viewMore: (count) => (count === 1 ? "View 1 more member" : `View ${count} more members`),
-};

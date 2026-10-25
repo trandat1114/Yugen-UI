@@ -16,7 +16,8 @@ import {
 } from "./markdown";
 import { streamingMarkdownMessages, type StreamingMarkdownMessages } from "./messages";
 
-export { streamingMarkdownMessages, streamingMarkdownMessagesEn, type StreamingMarkdownMessages } from "./messages";
+export { streamingMarkdownMessages, type StreamingMarkdownMessages } from "./messages";
+export { streamingMarkdownMessagesEn } from "./messages.en";
 
 const LANGUAGE_ALIAS: Record<string, CodeLanguage> = {
   tsx: "tsx",

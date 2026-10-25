@@ -3,7 +3,8 @@ import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
 import { skeletonMessages } from "./messages";
 
-export { skeletonMessages, skeletonMessagesEn, type SkeletonMessages } from "./messages";
+export { skeletonMessages, type SkeletonMessages } from "./messages";
+export { skeletonMessagesEn } from "./messages.en";
 
 /** Fluent 2 Skeleton — https://fluent2.microsoft.design/components/web/react/core/skeleton/usage */
 type SkeletonAnimation = "wave" | "pulse";

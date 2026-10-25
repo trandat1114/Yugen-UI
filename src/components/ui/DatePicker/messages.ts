@@ -34,11 +34,6 @@ export const datePickerMessages: DatePickerMessages = {
   clear: "Xoá giá trị",
 };
 
-export const datePickerMessagesEn: DatePickerMessages = {
-  placeholder: "Select a date…",
-  clear: "Clear",
-};
-
 export const dateRangePickerMessages: DateRangePickerMessages = {
   placeholder: "Chọn khoảng ngày…",
   clear: "Xoá giá trị",
@@ -48,15 +43,4 @@ export const dateRangePickerMessages: DateRangePickerMessages = {
   last30Days: "30 ngày qua",
   thisMonth: "Tháng này",
   lastMonth: "Tháng trước",
-};
-
-export const dateRangePickerMessagesEn: DateRangePickerMessages = {
-  placeholder: "Select a date range…",
-  clear: "Clear",
-  presets: "Date range presets",
-  today: "Today",
-  last7Days: "Last 7 days",
-  last30Days: "Last 30 days",
-  thisMonth: "This month",
-  lastMonth: "Last month",
 };

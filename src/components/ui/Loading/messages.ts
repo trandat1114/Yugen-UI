@@ -51,22 +51,12 @@ declare module "../YugenProvider/context" {
 
 export const loadingOverlayMessages: LoadingOverlayMessages = { label: "Đang tải…", announcement: "Đang tải" };
 
-export const loadingOverlayMessagesEn: LoadingOverlayMessages = { label: "Loading…", announcement: "Loading" };
-
 export const pageProgressMessages: PageProgressMessages = { label: "Đang tải trang" };
-
-export const pageProgressMessagesEn: PageProgressMessages = { label: "Loading page" };
 
 export const errorStateMessages: ErrorStateMessages = {
   title: "Không tải được nội dung",
   description: "Đã có lỗi khi kết nối tới máy chủ. Kiểm tra mạng rồi thử lại.",
   retry: "Thử lại",
-};
-
-export const errorStateMessagesEn: ErrorStateMessages = {
-  title: "Couldn't load content",
-  description: "Something went wrong while connecting to the server. Check your connection and try again.",
-  retry: "Retry",
 };
 
 export const asyncContentMessages: AsyncContentMessages = {
@@ -75,22 +65,9 @@ export const asyncContentMessages: AsyncContentMessages = {
   emptyDescription: "Khi có nội dung mới, chúng sẽ xuất hiện ở đây.",
 };
 
-export const asyncContentMessagesEn: AsyncContentMessages = {
-  loading: "Loading…",
-  emptyTitle: "No data yet",
-  emptyDescription: "New content will appear here.",
-};
-
 export const optimisticListMessages: OptimisticListMessages = {
   errorTitle: "Không lưu được thay đổi",
   errorBody: "Thay đổi đã được hoàn tác.",
   retry: "Thử lại",
   retryAltText: "Thực hiện lại thao tác vừa rồi",
-};
-
-export const optimisticListMessagesEn: OptimisticListMessages = {
-  errorTitle: "Couldn't save changes",
-  errorBody: "Your changes were undone.",
-  retry: "Retry",
-  retryAltText: "Retry the last action",
 };

@@ -18,7 +18,8 @@ import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context"
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { tourMessages } from "./messages";
 
-export { tourMessages, tourMessagesEn, type TourMessages } from "./messages";
+export { tourMessages, type TourMessages } from "./messages";
+export { tourMessagesEn } from "./messages.en";
 
 /** Vị trí popover so với phần tử — start / end theo hướng chữ (tự đảo ở RTL). */
 export type TourPlacement = "top" | "bottom" | "start" | "end";

@@ -321,11 +321,15 @@ export interface MessagesNamespaceDoc {
 
 /**
  * Đọc tĩnh một `<Folder>/messages.ts`: namespace (khối `declare module`), interface của nó (khoá, kiểu, JSDoc) và hai object
- * `xMessages` / `xMessagesEn`. Không chạy file, nên mã nguồn hàm giữ nguyên như khi viết.
+ * `xMessages` / `xMessagesEn` (bản tiếng Anh ở `messages.en.ts` cạnh bên, #184). Không chạy file, nên mã nguồn hàm giữ
+ * nguyên như khi viết.
  */
 export function extractMessages(file: string, folder: string): MessagesNamespaceDoc[] {
-  const source = ts.createSourceFile(file, fs.readFileSync(file, "utf8"), ts.ScriptTarget.Latest, true);
-  const text = (node: ts.Node) => node.getText(source).replace(/\s+/g, " ").trim();
+  const parse = (f: string) => ts.createSourceFile(f, fs.readFileSync(f, "utf8"), ts.ScriptTarget.Latest, true);
+  const source = parse(file);
+  const enFile = file.replace(/\.ts$/, ".en.ts");
+  const sources = fs.existsSync(enFile) ? [source, parse(enFile)] : [source];
+  const text = (node: ts.Node) => node.getText(node.getSourceFile()).replace(/\s+/g, " ").trim();
   const interfaces = new Map<string, ts.InterfaceDeclaration>();
   const objects = new Map<string, ts.ObjectLiteralExpression>();
   const namespaces: { namespace: string; iface: string }[] = [];
@@ -340,10 +344,12 @@ export function extractMessages(file: string, folder: string): MessagesNamespace
             namespaces.push({ namespace: member.name.getText(source), iface: member.type.typeName.getText(source) });
         }
       }
-    } else if (ts.isVariableStatement(statement)) {
-      for (const d of statement.declarationList.declarations) {
-        if (ts.isIdentifier(d.name) && d.initializer && ts.isObjectLiteralExpression(d.initializer)) objects.set(d.name.text, d.initializer);
-      }
+    }
+  }
+  for (const statement of sources.flatMap((s) => s.statements)) {
+    if (!ts.isVariableStatement(statement)) continue;
+    for (const d of statement.declarationList.declarations) {
+      if (ts.isIdentifier(d.name) && d.initializer && ts.isObjectLiteralExpression(d.initializer)) objects.set(d.name.text, d.initializer);
     }
   }
 
@@ -352,7 +358,7 @@ export function extractMessages(file: string, folder: string): MessagesNamespace
     for (const p of objects.get(name)?.properties ?? []) {
       if (ts.isPropertyAssignment(p)) {
         const v = p.initializer;
-        out.set(p.name.getText(source).replace(/^["']|["']$/g, ""), ts.isStringLiteralLike(v) ? JSON.stringify(v.text) : text(v));
+        out.set(p.name.getText(p.getSourceFile()).replace(/^["']|["']$/g, ""), ts.isStringLiteralLike(v) ? JSON.stringify(v.text) : text(v));
       } else if (ts.isShorthandPropertyAssignment(p)) out.set(p.name.text, p.name.text);
     }
     return out;

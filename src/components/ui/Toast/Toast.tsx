@@ -12,7 +12,8 @@ import { useYugenMessages } from "../YugenProvider/context";
 import { toastMessages } from "./messages";
 import { cn } from "@/lib/cn";
 
-export { toastMessages, toastMessagesEn, type ToastMessages } from "./messages";
+export { toastMessages, type ToastMessages } from "./messages";
+export { toastMessagesEn } from "./messages.en";
 
 /** Fluent 2 Toast — https://fluent2.microsoft.design/components/web/react/core/toast/usage */
 export type ToastIntent = "info" | "success" | "warning" | "error";

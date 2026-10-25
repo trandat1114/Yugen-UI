@@ -7,7 +7,8 @@ import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffec
 import { useMediaQuery } from "./useMediaQuery";
 import { sheetMessages } from "./messages";
 
-export { sheetMessages, sheetMessagesEn, type SheetMessages } from "./messages";
+export { sheetMessages, type SheetMessages } from "./messages";
+export { sheetMessagesEn } from "./messages.en";
 
 export { useMediaQuery, type UseMediaQueryOptions } from "./useMediaQuery";
 

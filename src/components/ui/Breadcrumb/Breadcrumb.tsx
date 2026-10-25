@@ -12,7 +12,8 @@ import { Menu, MenuItem, MenuPopover, MenuTrigger } from "../Menu/Menu";
 import { useYugenMessages } from "../YugenProvider/context";
 import { breadcrumbMessages } from "./messages";
 
-export { breadcrumbMessages, breadcrumbMessagesEn, type BreadcrumbMessages } from "./messages";
+export { breadcrumbMessages, type BreadcrumbMessages } from "./messages";
+export { breadcrumbMessagesEn } from "./messages.en";
 
 /** Fluent 2 Breadcrumb — https://fluent2.microsoft.design/components/web/react/core/breadcrumb/usage */
 type BreadcrumbSize = "small" | "medium" | "large";

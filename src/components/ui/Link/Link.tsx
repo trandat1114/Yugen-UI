@@ -6,7 +6,8 @@ import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
 import { linkMessages } from "./messages";
 
-export { linkMessages, linkMessagesEn, type LinkMessages } from "./messages";
+export { linkMessages, type LinkMessages } from "./messages";
+export { linkMessagesEn } from "./messages.en";
 
 /** Fluent 2 Link — https://fluent2.microsoft.design/components/web/react/core/link/usage */
 const linkVariants = cva(

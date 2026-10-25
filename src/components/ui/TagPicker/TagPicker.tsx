@@ -13,7 +13,8 @@ import { cmdkGroupClass, cmdkOptionClass, normalizeSearchText } from "@/componen
 import { Tag, TagGroup, type TagAppearance, type TagShape, type TagSize } from "@/components/ui/Tag/Tag";
 import { tagPickerMessages } from "./messages";
 
-export { tagPickerMessages, tagPickerMessagesEn, type TagPickerMessages } from "./messages";
+export { tagPickerMessages, type TagPickerMessages } from "./messages";
+export { tagPickerMessagesEn } from "./messages.en";
 
 export interface TagPickerOption {
   value: string;

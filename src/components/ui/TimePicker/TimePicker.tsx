@@ -11,7 +11,8 @@ import { fieldAppearanceClass, type FieldAppearance } from "@/components/ui/Sele
 import { cmdkOptionClass } from "@/components/ui/Combobox/Combobox";
 import { timePickerMessages } from "./messages";
 
-export { timePickerMessages, timePickerMessagesEn, type TimePickerMessages } from "./messages";
+export { timePickerMessages, type TimePickerMessages } from "./messages";
+export { timePickerMessagesEn } from "./messages.en";
 
 export type TimePickerHourCycle = "h23" | "h12";
 export type TimeSelectionErrorType = "invalid-input" | "out-of-start-bound" | "out-of-end-bound";

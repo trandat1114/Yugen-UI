@@ -11,5 +11,3 @@ declare module "../YugenProvider/context" {
 }
 
 export const navMessages: NavMessages = { label: "Điều hướng chính" };
-
-export const navMessagesEn: NavMessages = { label: "Main navigation" };

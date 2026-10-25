@@ -11,5 +11,3 @@ declare module "../YugenProvider/context" {
 }
 
 export const commandMessages: CommandMessages = { dialogTitle: "Bảng lệnh" };
-
-export const commandMessagesEn: CommandMessages = { dialogTitle: "Command palette" };
