@@ -10,7 +10,7 @@ on:
     tags: ["v*"]
 
 permissions:
-  contents: read
+  contents: write # GitHub Release
   id-token: write # npm provenance
 
 jobs:
@@ -58,3 +58,23 @@ jobs:
         run: npm publish --provenance --access public --tag "${{ steps.channel.outputs.dist_tag }}"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # GitHub Release từ mục CHANGELOG của bản này. Đã có release cho tag (chạy lại workflow) thì bỏ qua.
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DIST_TAG: ${{ steps.channel.outputs.dist_tag }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            echo "Release $GITHUB_REF_NAME đã có — bỏ qua."; exit 0
+          fi
+          VERSION="${GITHUB_REF_NAME#v}"
+          {
+            node scripts/release-notes.mjs CHANGELOG.md "$VERSION"
+            echo
+            echo "Full notes: [CHANGELOG.md]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/blob/$GITHUB_REF_NAME/CHANGELOG.md) · [News](https://trandat1114.github.io/Yugen-UI/en/news)"
+          } > "$RUNNER_TEMP/notes.md"
+          FLAGS="--latest=false"
+          [ "$DIST_TAG" = "latest" ] && FLAGS="--latest"
+          case "$VERSION" in *-*) FLAGS="$FLAGS --prerelease" ;; esac
+          gh release create "$GITHUB_REF_NAME" --verify-tag --title "yugen-ui $VERSION" --notes-file "$RUNNER_TEMP/notes.md" $FLAGS

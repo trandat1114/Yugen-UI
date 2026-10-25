@@ -52,8 +52,9 @@ git push origin vx.y.z
 Workflow **Release** kiểm tra tag khớp `package.json` và nằm đúng nhánh, chạy test, build và `npm publish --provenance`
 (cần secret `NPM_TOKEN`). Dist-tag do `scripts/release-channel.mjs` chọn: `latest`, `next` (prerelease) hoặc `release-X.Y`.
 
-Sau đó: workflow **Docs** build lại site (kèm docs các minor cũ ở `/vX.Y/`); tạo GitHub Release từ tag (dán phần CHANGELOG)
-và đăng tóm tắt ở Discussions **Announcements**.
+Sau khi publish, workflow tự tạo GitHub Release cho tag từ mục CHANGELOG của bản đó (`scripts/release-notes.mjs`; bản
+`latest` được đánh dấu Latest, prerelease đánh dấu Pre-release). Workflow **Docs** build lại site (kèm docs các minor cũ ở
+`/vX.Y/`). Maintainer đăng tóm tắt ở Discussions **Announcements**.
 
 ## Bản major (1.0.0, 2.0.0…)
 
@@ -150,7 +151,8 @@ cd smoke-app && npm run build
 ```
 
 Docs deploy từ `main` đưa mục tin lên `#/news` (tab `@yugen-ui/cli` / `create-yugen-ui`) và bật chấm "có tin mới" trên
-thanh trên cho người đã xem bản trước. Tạo GitHub Release từ tag (dán mục CHANGELOG). Hỏng sau khi publish: sửa trên `main`, phát hành bản patch; bản lỗi thì
+thanh trên cho người đã xem bản trước. **Release CLI** tự tạo GitHub Release cho tag từ mục của `packages/cli/CHANGELOG.md`
+(không đánh dấu Latest, để trang repo vẫn chỉ bản `yugen-ui`). Hỏng sau khi publish: sửa trên `main`, phát hành bản patch; bản lỗi thì
 `npm deprecate @yugen-ui/cli@X.Y.Z "…"` (không unpublish).
 
 ### Lần đầu (`cli@0.1.0`)
