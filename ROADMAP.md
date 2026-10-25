@@ -2,7 +2,7 @@
 
 <!-- Sinh từ src/docs/roadmap.ts bằng `npm run roadmap`. Đừng sửa tay. -->
 
-Kế hoạch theo từng bản phát hành, cập nhật 2026-10-23. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và
+Kế hoạch theo từng bản phát hành, cập nhật 2026-10-25. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và
 phụ thuộc nằm ở [GitHub Project](https://github.com/users/trandat1114/projects/6). `[x]` đã xong, `[~]` đang làm, `[ ]` dự kiến.
 
 Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. English: the community page
@@ -10,12 +10,32 @@ Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. 
 
 ## Đang làm
 
+### 0.11.0 · minor · hạn 2026-10-27
+
+Chuỗi giao diện thay được, docs tiếng Anh, template mới.
+
+- [x] messages và locale trên YugenProvider, messagesEn (#137)
+- [x] Docs tiếng Anh cho mọi trang (#69)
+- [x] CI build và kiểm tra từng template (#145)
+- [x] Template Dashboard thành ứng dụng đầy đủ (#148)
+- [x] Template AI chat thành ứng dụng đầy đủ (#149)
+- [~] Mọi template có tiếng Anh và tiếng Việt (#147)
+- [~] messagesEn nhẹ hơn, app tiếng Việt không phải tải (#184)
+
+### cli 0.4.0 · hạn 2026-10-27
+
+Phát hành cùng 0.11.0.
+
+- [x] diff, update, remove, theme; init tự bọc YugenProvider (#64)
+- [~] Template mới và hai ngôn ngữ đóng gói trong CLI (#144)
+
 ### 1.0.0 · major
 
 API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện hoàn tất.
 
 - [ ] Rà soát API, gỡ deprecation, quyết định về React 18 và class spacing viết hoa (#65)
 - [x] SEO: URL theo đường dẫn, prerender từng trang, sitemap (#63)
+- [ ] Đề xuất cho 1.0 (đang chờ duyệt): AppShell, Form, NavigationMenu, block 2.0, codemod, kiểm thử (#160)
 
 ## Tiếp theo
 
@@ -23,8 +43,8 @@ API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện
 
 Chưa xếp lịch.
 
-- [~] Docs tiếng Anh cho trang component và các trang khái niệm còn lại (#69)
-- [x] CLI giai đoạn 2: diff, update, theme, remove (#64)
+- [ ] Template mới: Landing, Admin, Next.js, Docs, Storefront, Glass (#151)
+- [ ] Vật liệu glass cho thanh điều hướng và control (lấy cảm hứng từ Liquid Glass) (#178)
 - [ ] Đăng ký @yugen vào danh mục registry của shadcn (#68)
 - [ ] Đang cân nhắc: bộ Figma, gói icon Sakura
 

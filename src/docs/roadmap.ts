@@ -29,11 +29,38 @@ export interface RoadmapRelease {
   items: RoadmapItem[];
 }
 
-export const ROADMAP_UPDATED = "2026-10-23";
+export const ROADMAP_UPDATED = "2026-10-25";
 export const PROJECT_URL = "https://github.com/users/trandat1114/projects/6";
 
 export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
   now: [
+    {
+      milestone: "0.11.0",
+      kind: "minor",
+      due: "2026-10-27",
+      vi: "Chuỗi giao diện thay được, docs tiếng Anh, template mới.",
+      en: "Replaceable built-in strings, English docs, new templates.",
+      items: [
+        { status: "done", issue: 137, vi: "messages và locale trên YugenProvider, messagesEn", en: "messages and locale on YugenProvider, messagesEn" },
+        { status: "done", issue: 69, vi: "Docs tiếng Anh cho mọi trang", en: "English docs for every page" },
+        { status: "done", issue: 145, vi: "CI build và kiểm tra từng template", en: "CI builds and checks every template" },
+        { status: "done", issue: 148, vi: "Template Dashboard thành ứng dụng đầy đủ", en: "Dashboard template as a full app" },
+        { status: "done", issue: 149, vi: "Template AI chat thành ứng dụng đầy đủ", en: "AI chat template as a full app" },
+        { status: "doing", issue: 147, vi: "Mọi template có tiếng Anh và tiếng Việt", en: "Every template in English and Vietnamese" },
+        { status: "doing", issue: 184, vi: "messagesEn nhẹ hơn, app tiếng Việt không phải tải", en: "Smaller messagesEn, not loaded by Vietnamese apps" },
+      ],
+    },
+    {
+      milestone: "cli 0.4.0",
+      kind: "cli",
+      due: "2026-10-27",
+      vi: "Phát hành cùng 0.11.0.",
+      en: "Ships with 0.11.0.",
+      items: [
+        { status: "done", issue: 64, vi: "diff, update, remove, theme; init tự bọc YugenProvider", en: "diff, update, remove, theme; init wraps YugenProvider" },
+        { status: "doing", issue: 144, vi: "Template mới và hai ngôn ngữ đóng gói trong CLI", en: "New and bilingual templates bundled in the CLI" },
+      ],
+    },
     {
       milestone: "1.0.0",
       kind: "major",
@@ -42,6 +69,7 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       items: [
         { status: "planned", issue: 65, vi: "Rà soát API, gỡ deprecation, quyết định về React 18 và class spacing viết hoa", en: "API review, deprecations removed, decisions on React 18 and upper-case spacing" },
         { status: "done", issue: 63, vi: "SEO: URL theo đường dẫn, prerender từng trang, sitemap", en: "SEO: path URLs, prerendered pages, sitemap" },
+        { status: "planned", issue: 160, vi: "Đề xuất cho 1.0 (đang chờ duyệt): AppShell, Form, NavigationMenu, block 2.0, codemod, kiểm thử", en: "1.0 proposal (under review): AppShell, Form, NavigationMenu, blocks 2.0, codemods, testing" },
       ],
     },
   ],
@@ -52,8 +80,8 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       vi: "Chưa xếp lịch.",
       en: "Not scheduled yet.",
       items: [
-        { status: "doing", issue: 69, vi: "Docs tiếng Anh cho trang component và các trang khái niệm còn lại", en: "English docs for component pages and the remaining concept pages" },
-        { status: "done", issue: 64, vi: "CLI giai đoạn 2: diff, update, theme, remove", en: "CLI phase 2: diff, update, theme, remove" },
+        { status: "planned", issue: 151, vi: "Template mới: Landing, Admin, Next.js, Docs, Storefront, Glass", en: "New templates: Landing, Admin, Next.js, Docs, Storefront, Glass" },
+        { status: "planned", issue: 178, vi: "Vật liệu glass cho thanh điều hướng và control (lấy cảm hứng từ Liquid Glass)", en: "Glass material for navigation and controls (inspired by Liquid Glass)" },
         { status: "planned", issue: 68, vi: "Đăng ký @yugen vào danh mục registry của shadcn", en: "Register @yugen in the shadcn registry index" },
         { status: "planned", vi: "Đang cân nhắc: bộ Figma, gói icon Sakura", en: "Under consideration: Figma kit, Sakura icon set" },
       ],
