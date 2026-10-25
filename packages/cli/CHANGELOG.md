@@ -1,6 +1,6 @@
 # @yugen-ui/cli
 
-## Unreleased
+## 0.4.0
 
 - `yugen diff [names…]`: compare copied component source with the registry and print a unified diff. Without names it
   checks every Yugen component found in the project.
@@ -18,6 +18,10 @@
   `src/content/<lang>/` folder (the blog's posts) as well as `src/content/<lang>.ts`.
 - `create --lang` also writes that language's `<title>`, description and Open Graph tags into `index.html` (from
   `templates.json`), so link previews and crawlers see the right language before the app runs.
+- Templates: Dashboard (4 pages, one date range for every chart, DataGrid with CSV export) and AI chat (conversation
+  list, streamed replies you can stop, your own backend) are full apps. With `--lang en` the built-in component strings
+  are English too (`messagesEn` in `src/content/en.ts`); `--lang vi` ships nothing extra. Pages load lazily. Templates
+  depend on `yugen-ui@^0.11.0`.
 
 ## 0.3.0
 

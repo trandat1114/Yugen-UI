@@ -32,8 +32,7 @@ export const NEWS_KIND_LABEL: Record<NewsKind, string> = {
 export const NEWS: NewsRelease[] = [
   {
     version: "0.11.0",
-    upcoming: true,
-    date: "2026-10-27",
+    date: "2026-10-25",
     title: "Chuỗi giao diện thay được, docs tiếng Anh và template mới",
     summary: "Mọi chữ có sẵn trong component đổi được qua YugenProvider (có sẵn bản tiếng Anh). Docs đủ tiếng Anh với URL thật và HTML render sẵn. Dashboard và AI chat thành ứng dụng đầy đủ, mọi template có hai ngôn ngữ.",
     items: [
@@ -45,6 +44,7 @@ export const NEWS: NewsRelease[] = [
       { kind: "new", text: "Template Dashboard (4 trang, một khoảng ngày cho mọi biểu đồ, DataGrid xuất CSV) và AI chat (danh sách hội thoại, trả lời dạng stream dừng được, nối backend riêng) thành ứng dụng đầy đủ; SaaS, Blog và các template mới có tiếng Anh và tiếng Việt (create --lang).", href: "/templates" },
       { kind: "improved", text: "Template nạp từng trang khi cần: lần tải đầu của SaaS giảm khoảng một phần tư. CI build và kiểm tra từng template với chính bản yugen-ui của PR (dung lượng, lỗi console, axe).", href: "/templates" },
       { kind: "improved", text: "Docs nhẹ hơn: JS lần tải đầu giảm hơn một nửa, trang chủ ít phần tử hơn; hoa anh đào ở trang chủ không còn bị cắt khung." },
+      { kind: "fixed", text: "Calendar: ô ngày ở tiếng Anh đọc ngày bằng số thường (\"October 1, 2026\" thay vì \"October 1st\"), khớp số hiện trên ô, nên điều khiển bằng giọng nói chọn được ngày (WCAG 2.5.3).", href: "/components/calendar" },
     ],
   },
   {
@@ -235,9 +235,8 @@ export const LATEST_RELEASE = NEWS.find((r) => !r.upcoming) ?? NEWS[0];
 export const CLI_NEWS: NewsRelease[] = [
   {
     version: "0.4.0",
-    upcoming: true,
-    date: "2027-03-31",
-    title: "diff, update, remove và theme",
+    date: "2026-10-25",
+    title: "diff, update, remove, theme và template mới",
     summary: "Cập nhật mã đã chép theo registry, gỡ component, sinh màu thương hiệu và tự bọc YugenProvider.",
     items: [
       { kind: "new", text: "yugen diff và yugen update: so mã đã chép với registry, xem diff rồi áp bản mới (update hỏi lại trước khi ghi, --dry-run chỉ xem).", href: "/concepts/cli" },
@@ -246,6 +245,7 @@ export const CLI_NEWS: NewsRelease[] = [
       { kind: "improved", text: "yugen init tự bọc app trong YugenProvider (main.tsx của Vite, app/layout.tsx của Next.js); create --ref lấy template từ một nhánh hoặc tag.", href: "/concepts/cli" },
       { kind: "improved", text: "create --lang en|vi có thêm template SaaS và Blog; xoá luôn thư mục src/content/<ngôn ngữ kia>/ (bài viết của blog), không chỉ file .ts.", href: "/templates" },
       { kind: "improved", text: "create --lang ghi luôn tiêu đề, description và thẻ Open Graph của ngôn ngữ đó vào index.html, để bản xem trước khi chia sẻ link và công cụ tìm kiếm thấy đúng ngôn ngữ.", href: "/templates" },
+      { kind: "new", text: "Template Dashboard (4 trang, DataGrid xuất CSV) và AI chat (danh sách hội thoại, trả lời dạng stream, nối backend riêng) thành ứng dụng đầy đủ. Với --lang en, chuỗi có sẵn của component cũng là tiếng Anh; --lang vi không tải thêm gì. Template dùng yugen-ui 0.11.", href: "/templates" },
     ],
   },
   {
@@ -285,6 +285,16 @@ export const CLI_NEWS: NewsRelease[] = [
 
 /** Tab create-yugen-ui (packages/create-yugen-ui) — chỉ phát hành cùng bản CLI ổn định. Mục đầu = version của gói. */
 export const CREATE_NEWS: NewsRelease[] = [
+  {
+    version: "0.4.0",
+    date: "2026-10-25",
+    title: "Theo @yugen-ui/cli 0.4.0",
+    summary: "Cùng các thay đổi của @yugen-ui/cli 0.4.0: template Dashboard và AI chat đầy đủ, mọi template có tiếng Anh và tiếng Việt.",
+    items: [
+      { kind: "new", text: "npx create-yugen-ui@latest có template Dashboard và AI chat đầy đủ; --lang en|vi dùng được cho mọi template.", href: "/templates" },
+      { kind: "improved", text: "--lang ghi đúng ngôn ngữ vào index.html (tiêu đề, description, Open Graph) và chuỗi có sẵn của component.", href: "/concepts/cli" },
+    ],
+  },
   {
     version: "0.3.0",
     date: "2026-10-23",
