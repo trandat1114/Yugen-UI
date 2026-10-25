@@ -78,6 +78,7 @@
     "size": "size-limit",
     "changeset": "changeset",
     "version-packages": "changeset version && node scripts/sync-templates.mjs && npm install --package-lock-only",
+    "branches:prune": "node scripts/prune-branches.mjs",
     "check:release": "node scripts/check-release.mjs",
     "check:examples": "vite-node scripts/check-examples.ts",
     "check:props": "vite-node scripts/check-props.ts",

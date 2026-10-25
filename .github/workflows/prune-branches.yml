@@ -1,0 +1,35 @@
+name: Prune branches
+
+# Ngày 1 hằng tháng: báo cáo nhánh đã hết tác dụng (scripts/prune-branches.mjs) vào job summary, không xoá gì.
+# Chạy tay với apply để xoá các nhánh ở mục "Xoá". Luật: wiki › Branching and Release Channels › Dọn nhánh.
+
+on:
+  schedule:
+    - cron: "0 5 1 * *"
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: Xoá các nhánh ở mục "Xoá" (không bao giờ xoá mục "Cần xem")
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  prune:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Report${{ inputs.apply && ' and delete' || '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/prune-branches.mjs ${{ inputs.apply && '--apply' || '' }} >> "$GITHUB_STEP_SUMMARY"
