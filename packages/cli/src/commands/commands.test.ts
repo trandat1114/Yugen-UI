@@ -33,11 +33,18 @@ describe("create", () => {
     expect(read(vi, "src/content/index.ts")).toContain('from "./vi"');
     expect(fs.existsSync(path.join(vi, "src/content/en.ts"))).toBe(false);
     expect(read(vi, "index.html")).toContain('<html lang="vi"');
+    // Meta tĩnh theo ngôn ngữ từ templates.json.
+    const meta = (JSON.parse(read(repoTemplates, "templates.json")) as { name: string; meta: Record<string, { title: string; description: string }> }[])
+      .find((t) => t.name === "starter")!.meta;
+    expect(read(vi, "index.html")).toContain(`<title>${meta.vi.title}</title>`);
+    expect(read(vi, "index.html")).toContain(`<meta name="description" content="${meta.vi.description.replace(/&/g, "&amp;")}"`);
+    expect(read(vi, "index.html")).toContain(`<meta property="og:title" content="${meta.vi.title}"`);
     // Không truyền --lang (và không tương tác): tiếng Anh.
     const { target: en } = await create({ ...base, dir: "en" }, ctx);
     expect(read(en, "src/content/index.ts")).toContain('from "./en"');
     expect(fs.existsSync(path.join(en, "src/content/vi.ts"))).toBe(false);
     expect(read(en, "index.html")).toContain('<html lang="en"');
+    expect(read(en, "index.html")).toContain(`<title>${meta.en.title}</title>`);
     await expect(create({ ...base, dir: "fr", lang: "fr" }, ctx)).rejects.toThrow(/no "fr" text/);
     // Template chưa tách nội dung: chỉ cảnh báo, giữ nguyên file.
     const plain = writeFiles(tmpDir(), {

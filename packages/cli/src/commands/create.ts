@@ -18,6 +18,8 @@ export interface TemplateInfo {
   name: string;
   title: string;
   hint: string;
+  /** <title> và description của index.html theo ngôn ngữ (templates.json); `--lang` ghi đè vào app được tạo. */
+  meta?: Record<string, { title: string; description: string }>;
 }
 
 export interface CreateOptions {
@@ -60,7 +62,9 @@ export function templateLangs(dir: string): string[] {
  * Giữ đúng một ngôn ngữ: content/index.ts trỏ tới nó, xoá file và thư mục của ngôn ngữ khác (content/<lang>.ts,
  * content/<lang>/ — ví dụ bài viết của blog), đặt <html lang>.
  */
-export function applyLang(target: string, lang: string, langs: string[]) {
+const escAttr = (s: string) => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+
+export function applyLang(target: string, lang: string, langs: string[], meta?: { title: string; description: string }) {
   const content = path.join(target, "src/content");
   writeText(path.join(content, "index.ts"), `export { default } from "./${lang}";\n`);
   for (const other of langs.filter((l) => l !== lang)) {
@@ -68,7 +72,19 @@ export function applyLang(target: string, lang: string, langs: string[]) {
     fs.rmSync(path.join(content, other), { recursive: true, force: true });
   }
   const html = path.join(target, "index.html");
-  if (exists(html)) writeText(html, readText(html).replace(/<html lang="[^"]*"/, `<html lang="${lang}"`));
+  if (!exists(html)) return;
+  let page = readText(html).replace(/<html lang="[^"]*"/, `<html lang="${lang}"`);
+  // Meta tĩnh theo ngôn ngữ: bot và bản xem trước khi chia sẻ link đọc index.html trước khi app chạy.
+  if (meta) {
+    const title = escAttr(meta.title);
+    const description = escAttr(meta.description);
+    page = page
+      .replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`)
+      .replace(/(<meta name="description" content=")[^"]*(")/, `$1${description}$2`)
+      .replace(/(<meta property="og:title" content=")[^"]*(")/, `$1${title}$2`)
+      .replace(/(<meta property="og:description" content=")[^"]*(")/, `$1${description}$2`);
+  }
+  writeText(html, page);
 }
 
 /** Như create-vite, thêm bỏ dấu: "My App" → "my-app", "Ứng dụng" → "ung-dung". */
@@ -152,7 +168,7 @@ async function createFrom(templatesDir: string, opts: CreateOptions, ctx: Ctx) {
   const pkgFile = path.join(target, "package.json");
   const pkg = JSON.parse(readText(pkgFile)) as PackageJson;
   writeJson(pkgFile, { ...pkg, name: toPackageName(path.basename(target)) });
-  if (lang) applyLang(target, lang, langs);
+  if (lang) applyLang(target, lang, langs, template.meta?.[lang]);
   p.log.success(`Created ${pc.bold(template.title)} in ${pc.cyan(shown)}`);
 
   if (opts.install !== false) {
