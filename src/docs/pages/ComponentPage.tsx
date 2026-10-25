@@ -5,6 +5,7 @@ import type { AppBrand } from "@/hooks/useAppearance";
 import { COMPONENT_META_BY_SLUG, isTranslated, readComponentDoc, retryComponentDoc } from "../registry";
 import { DoDont, DocSection, ExampleFrame, ExampleGrid, OnThisPage, PageHeader, PropsTable } from "../blocks";
 import { installSnippets } from "../install";
+import { MessagesTable, messageNamespacesFor } from "../componentMessages";
 import { useLocale } from "../i18n";
 import { docsPath } from "../router";
 
@@ -28,6 +29,7 @@ function ComponentBody({ slug, theme, brand, onRetry }: { slug: string; theme: Y
   // Giao diện tiếng Anh: phần chữ chưa dịch và nội dung demo (viết bằng tiếng Việt) mang lang="vi" cho trình đọc màn hình.
   const contentLang = locale === "en" && !isTranslated(slug) ? "vi" : undefined;
   const demoLang = locale === "en" ? "vi" : undefined;
+  const messages = messageNamespacesFor(slug);
   if (!doc)
     return (
       <ErrorState
@@ -59,6 +61,13 @@ function ComponentBody({ slug, theme, brand, onRetry }: { slug: string; theme: Y
         <DocSection id="props" title="Props">
           <PropsTable props={doc.props} contentLang={contentLang} />
         </DocSection>
+        {messages.length > 0 && (
+          <DocSection id="messages" title="Messages" description={t("messages.desc")}>
+            <Suspense fallback={<SkeletonText lines={4} />}>
+              <MessagesTable names={messages} />
+            </Suspense>
+          </DocSection>
+        )}
       </div>
     </>
   );
@@ -83,6 +92,7 @@ export function ComponentPage({ slug, theme, brand }: { slug: string; theme: Yug
     { id: "variants", label: t("component.variants") },
     { id: "usage", label: t("component.usage") },
     { id: "props", label: "Props" },
+    ...(messageNamespacesFor(slug).length > 0 ? [{ id: "messages", label: "Messages" }] : []),
   ];
 
   // Header (tên, câu dẫn) lấy từ metadata nạp sẵn → hiện ngay, không nhảy bố cục khi demo nạp xong.

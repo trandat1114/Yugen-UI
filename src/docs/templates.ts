@@ -123,14 +123,29 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     dir: "vite-ai-chat",
     name: "AI chat",
-    tags: ["Vite", "Yugen Labs"],
+    tags: ["Vite", "React 19", "Yugen Labs", "Streaming"],
+    previewPath: "/",
     vi: {
-      description: "Giao diện chat với trợ lý AI: tin nhắn tự cuộn, đính kèm tệp và Trace từng bước.",
-      features: ["MessageScroller, MessageBubble, ChatComposer", "Trace: các bước của agent theo thời gian thực"],
+      description: "Ứng dụng chat AI: lưu hội thoại, câu trả lời stream dừng được, kèm suy luận, các bước và nguồn.",
+      features: [
+        "Danh sách hội thoại: tạo, đổi tên, xoá, lưu trong localStorage; Drawer trên màn hẹp",
+        "Câu trả lời Markdown dạng stream kèm Reasoning, Trace từng bước và nguồn Citation",
+        "Dừng bằng nút hoặc phím Esc; sao chép và tạo lại câu trả lời",
+        "PromptInput có đính kèm (nút, kéo thả, dán); Enter gửi, Shift+Enter xuống dòng",
+        "Một adapter sendMessage(messages, { signal }): mặc định là mock, nối endpoint của bạn bằng một dòng",
+        "Route /, /c/:id, /settings nạp lười; chữ tiếng Anh, tiếng Việt với --lang vi",
+      ],
     },
     en: {
-      description: "An AI assistant chat: auto-scrolling thread, attachments and a step-by-step Trace.",
-      features: ["MessageScroller, MessageBubble, ChatComposer", "Trace: the agent's steps in real time"],
+      description: "An AI chat app: saved conversations and streaming answers with reasoning, steps and sources.",
+      features: [
+        "Conversation list: new, rename, delete, saved in localStorage; Drawer on narrow screens",
+        "Streaming Markdown answers with Reasoning, a step-by-step Trace and Citation sources",
+        "Stop with the button or Esc; copy and regenerate answers",
+        "PromptInput with attachments (button, drag and drop, paste); Enter sends, Shift+Enter adds a line",
+        "One sendMessage(messages, { signal }) adapter: a mock by default, your endpoint in one line",
+        "Lazy routes /, /c/:id, /settings; English text, Vietnamese with --lang vi",
+      ],
     },
   },
 ];

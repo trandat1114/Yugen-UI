@@ -298,3 +298,106 @@ export function yugenDocsMeta(root: string): Plugin {
     },
   };
 }
+
+const MESSAGES_INDEX_ID = "virtual:yugen-messages-index";
+const MESSAGES_ID = "virtual:yugen-messages";
+
+export interface MessageKeyDoc {
+  key: string;
+  /** Kiểu trong interface: `string` hoặc chữ ký hàm. */
+  type: string;
+  /** JSDoc của khoá (tiếng Việt), rỗng nếu không có. */
+  doc: string;
+  /** Mã nguồn giá trị mặc định (tiếng Việt) và bản tiếng Anh; chuỗi literal được trả về dạng JSON (có dấu nháy). */
+  vi: string;
+  en: string;
+}
+
+export interface MessagesNamespaceDoc {
+  namespace: string;
+  folder: string;
+  keys: MessageKeyDoc[];
+}
+
+/**
+ * Đọc tĩnh một `<Folder>/messages.ts`: namespace (khối `declare module`), interface của nó (khoá, kiểu, JSDoc) và hai object
+ * `xMessages` / `xMessagesEn`. Không chạy file, nên mã nguồn hàm giữ nguyên như khi viết.
+ */
+export function extractMessages(file: string, folder: string): MessagesNamespaceDoc[] {
+  const source = ts.createSourceFile(file, fs.readFileSync(file, "utf8"), ts.ScriptTarget.Latest, true);
+  const text = (node: ts.Node) => node.getText(source).replace(/\s+/g, " ").trim();
+  const interfaces = new Map<string, ts.InterfaceDeclaration>();
+  const objects = new Map<string, ts.ObjectLiteralExpression>();
+  const namespaces: { namespace: string; iface: string }[] = [];
+
+  for (const statement of source.statements) {
+    if (ts.isInterfaceDeclaration(statement)) interfaces.set(statement.name.text, statement);
+    else if (ts.isModuleDeclaration(statement) && statement.body && ts.isModuleBlock(statement.body)) {
+      for (const inner of statement.body.statements) {
+        if (!ts.isInterfaceDeclaration(inner) || inner.name.text !== "YugenMessages") continue;
+        for (const member of inner.members) {
+          if (ts.isPropertySignature(member) && member.type && ts.isTypeReferenceNode(member.type))
+            namespaces.push({ namespace: member.name.getText(source), iface: member.type.typeName.getText(source) });
+        }
+      }
+    } else if (ts.isVariableStatement(statement)) {
+      for (const d of statement.declarationList.declarations) {
+        if (ts.isIdentifier(d.name) && d.initializer && ts.isObjectLiteralExpression(d.initializer)) objects.set(d.name.text, d.initializer);
+      }
+    }
+  }
+
+  const values = (name: string) => {
+    const out = new Map<string, string>();
+    for (const p of objects.get(name)?.properties ?? []) {
+      if (ts.isPropertyAssignment(p)) {
+        const v = p.initializer;
+        out.set(p.name.getText(source).replace(/^["']|["']$/g, ""), ts.isStringLiteralLike(v) ? JSON.stringify(v.text) : text(v));
+      } else if (ts.isShorthandPropertyAssignment(p)) out.set(p.name.text, p.name.text);
+    }
+    return out;
+  };
+
+  return namespaces.map(({ namespace, iface }) => {
+    const vi = values(`${namespace}Messages`);
+    const en = values(`${namespace}MessagesEn`);
+    const keys: MessageKeyDoc[] = [];
+    for (const member of interfaces.get(iface)?.members ?? []) {
+      if (!ts.isPropertySignature(member) || !member.type) continue;
+      const key = member.name.getText(source).replace(/^["']|["']$/g, "");
+      const doc = ts
+        .getJSDocCommentsAndTags(member)
+        .map((d) => (typeof d.comment === "string" ? d.comment : ""))
+        .join(" ")
+        .replace(/\s+/g, " ")
+        .trim();
+      keys.push({ key, type: text(member.type), doc, vi: vi.get(key) ?? "", en: en.get(key) ?? "" });
+    }
+    return { namespace, folder, keys };
+  });
+}
+
+/**
+ * Chuỗi giao diện có sẵn của component cho trang docs (#156):
+ * - `virtual:yugen-messages-index` → `[{ namespace, folder }]` (nhỏ, trang component dùng để biết có mục Messages không);
+ * - `virtual:yugen-messages` → `MessagesNamespaceDoc[]` đầy đủ (nạp lười cùng bảng Messages).
+ */
+export function yugenMessages(root: string): Plugin {
+  const uiDir = path.join(root, "src", "components", "ui");
+  const collect = () =>
+    fs
+      .readdirSync(uiDir, { withFileTypes: true })
+      .filter((d) => d.isDirectory() && fs.existsSync(path.join(uiDir, d.name, "messages.ts")))
+      .flatMap((d) => extractMessages(path.join(uiDir, d.name, "messages.ts"), d.name));
+  return {
+    name: "yugen-messages",
+    resolveId: (id) => (id === MESSAGES_INDEX_ID || id === MESSAGES_ID ? "\0" + id : undefined),
+    load(id) {
+      if (id !== "\0" + MESSAGES_INDEX_ID && id !== "\0" + MESSAGES_ID) return undefined;
+      this.addWatchFile(uiDir);
+      const all = collect();
+      const data = id === "\0" + MESSAGES_ID ? all : all.map(({ namespace, folder }) => ({ namespace, folder }));
+      return `export default ${JSON.stringify(data)};`;
+    },
+  };
+}

@@ -16,3 +16,22 @@ declare module "virtual:yugen-docs-meta" {
   const meta: ComponentMeta[];
   export default meta;
 }
+
+declare module "virtual:yugen-messages-index" {
+  /** Namespace `messages` của mọi component và thư mục chứa nó (yugenMessages trong vite.plugins.ts). */
+  const index: { namespace: string; folder: string }[];
+  export default index;
+}
+
+declare module "virtual:yugen-messages" {
+  /**
+   * Khoá, kiểu, JSDoc (tiếng Việt), mặc định tiếng Việt và bản tiếng Anh của từng namespace — đọc tĩnh các messages.ts.
+   * `vi` / `en`: chuỗi literal ở dạng JSON (có dấu nháy), giá trị khác (hàm…) là mã nguồn.
+   */
+  const namespaces: {
+    namespace: string;
+    folder: string;
+    keys: { key: string; type: string; doc: string; vi: string; en: string }[];
+  }[];
+  export default namespaces;
+}
