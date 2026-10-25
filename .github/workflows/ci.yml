@@ -9,6 +9,7 @@ on:
     paths-ignore:
       - "wiki/**"
       - "README.md"
+      - "ACCESSIBILITY.md"
       - "CONTRIBUTING.md"
       - "CODE_OF_CONDUCT.md"
       - "GOVERNANCE.md"
@@ -25,6 +26,7 @@ on:
     paths-ignore:
       - "wiki/**"
       - "README.md"
+      - "ACCESSIBILITY.md"
       - "CONTRIBUTING.md"
       - "CODE_OF_CONDUCT.md"
       - "GOVERNANCE.md"
