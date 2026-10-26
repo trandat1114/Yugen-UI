@@ -430,7 +430,7 @@ function RowViewImpl<T>({
             firstSticky && "sticky inset-s-0 z-1 bg-inherit",
             subtleSelection &&
               !selected &&
-              "*:opacity-0 *:transition-opacity *:duration-faster group-hover/row:*:opacity-100 group-focus-within/row:*:opacity-100",
+              "*:opacity-0 *:transition-opacity *:duration-faster group-hover/row:*:opacity-100 group-focus-within/row:*:opacity-100 pointer-coarse:*:opacity-100",
           )}
         >
           {selectionMode === "multiselect" ? (
@@ -1025,7 +1025,7 @@ function DataGridImpl<T>(
       aria-busy={loading || undefined}
       data-size={size}
       className={cn(
-        "relative isolate w-full min-w-0 overflow-auto bg-background-1 text-body1 text-foreground-1",
+        "relative isolate w-full min-w-0 overflow-auto bg-background-1 text-body1 text-foreground-1 tabular-nums",
         sizeClass.scroll,
         virtualized && height === undefined && "h-100",
         className,

@@ -47,7 +47,11 @@ export const Table = React.forwardRef<HTMLTableElement, TableProps>(
       <TableContext.Provider value={context}>
         <table
           ref={ref}
-          className={cn("w-full table-fixed border-collapse text-start align-middle text-foreground-1", TEXT[size], className)}
+          className={cn(
+            "w-full table-fixed border-collapse text-start align-middle text-foreground-1 tabular-nums",
+            TEXT[size],
+            className,
+          )}
           {...props}
         />
       </TableContext.Provider>
@@ -209,7 +213,8 @@ export const TableCellActions = React.forwardRef<HTMLDivElement, React.HTMLAttri
       ref={ref}
       className={cn(
         "absolute inset-e-2 top-1/2 flex -translate-y-1/2 items-center gap-1 opacity-0",
-        "transition-opacity duration-faster ease-easy-ease group-hover/row:opacity-100 focus-within:opacity-100",
+        // Màn hình cảm ứng không có hover: luôn hiện.
+        "transition-opacity duration-faster ease-easy-ease group-hover/row:opacity-100 focus-within:opacity-100 pointer-coarse:opacity-100",
         className,
       )}
       {...props}
@@ -237,7 +242,9 @@ export const TableSelectionCell = React.forwardRef<HTMLTableCellElement, TableSe
         ref={ref}
         className={cn(
           "w-11 px-0 text-center align-middle [&>span]:py-0",
-          subtle && !checked && "opacity-0 transition-opacity duration-faster group-hover/row:opacity-100 focus-within:opacity-100",
+          subtle &&
+            !checked &&
+            "opacity-0 transition-opacity duration-faster group-hover/row:opacity-100 focus-within:opacity-100 pointer-coarse:opacity-100",
           className,
         )}
         {...props}

@@ -181,7 +181,7 @@ export const en: Record<string, ComponentDocEn> = {
       },
     ],
     dos: [
-      "Align column headers with their data; use tabular-nums for numbers.",
+      "Align column headers with their data; align number columns to the end.",
       "Allow sorting on columns people often compare; the header shows the sort direction.",
       "Put row actions in a “…” Menu or in TableCellActions to keep the table compact.",
     ],

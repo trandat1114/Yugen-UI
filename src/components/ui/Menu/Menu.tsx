@@ -10,9 +10,12 @@ export const MenuTrigger = MenuPrimitive.Trigger;
 export const MenuRadioGroup = MenuPrimitive.RadioGroup;
 export const MenuSub = MenuPrimitive.Sub;
 
-/** Class dùng chung cho mọi bề mặt menu (Menu, ContextMenu, Menubar). */
+/**
+ * Class dùng chung cho mọi bề mặt menu (Menu, ContextMenu, Menubar, menu con). Menu dài cuộn bên trong thay vì tràn khỏi
+ * màn hình: popper của Radix đặt --radix-popper-available-height cho mọi loại menu (ngoài popper thì max-height = none).
+ */
 export const menuPopoverClass = cn(
-  "z-50 min-w-40 max-w-80 overflow-hidden rounded-medium border border-transparent bg-background-1 p-1 text-foreground-1 shadow-16",
+  "z-50 max-h-(--radix-popper-available-height) min-w-40 max-w-80 overflow-y-auto rounded-medium border border-transparent bg-background-1 p-1 text-foreground-1 shadow-16",
   "animate-surface-in data-[state=closed]:animate-fade-out",
 );
 
@@ -28,8 +31,7 @@ export const MenuPopover = React.forwardRef<
         {...portalTheme}
         sideOffset={sideOffset}
         align={align}
-        // Menu dài (vd. danh sách cột) cuộn bên trong thay vì tràn khỏi màn hình.
-        className={cn(menuPopoverClass, "max-h-(--radix-dropdown-menu-content-available-height) overflow-y-auto", className)}
+        className={cn(menuPopoverClass, className)}
         {...props}
       />
     </MenuPrimitive.Portal>

@@ -346,8 +346,8 @@ function DataTableDemo() {
                     {STATUS[row.status].label}
                   </Badge>
                 </TableCell>
-                <TableCell className="tabular-nums">{row.date.split("-").reverse().join("/")}</TableCell>
-                <TableCell className="tabular-nums">{vnd.format(row.amount)}</TableCell>
+                <TableCell>{row.date.split("-").reverse().join("/")}</TableCell>
+                <TableCell>{vnd.format(row.amount)}</TableCell>
                 <TableCell>
                   <Menu>
                     <MenuTrigger asChild>
@@ -1255,8 +1255,8 @@ function DataTableDemo() {
                     {STATUS[row.status].label}
                   </Badge>
                 </TableCell>
-                <TableCell className="tabular-nums">{row.date.split("-").reverse().join("/")}</TableCell>
-                <TableCell className="tabular-nums">{vnd.format(row.amount)}</TableCell>
+                <TableCell>{row.date.split("-").reverse().join("/")}</TableCell>
+                <TableCell>{vnd.format(row.amount)}</TableCell>
                 <TableCell>
                   <Menu>
                     <MenuTrigger asChild>
@@ -1549,7 +1549,7 @@ function TableColumnsDemo() {
       },
     ],
     dos: [
-      "Căn tiêu đề cột cùng phía với dữ liệu; dùng tabular-nums cho số.",
+      "Căn tiêu đề cột cùng phía với dữ liệu; cột số căn về cuối dòng.",
       "Cho phép sắp xếp ở cột người dùng hay so sánh; header phản ánh hướng sắp xếp.",
       "Đặt thao tác hàng vào Menu “…” hoặc TableCellActions để bảng gọn.",
     ],

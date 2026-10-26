@@ -29,11 +29,24 @@ export interface RoadmapRelease {
   items: RoadmapItem[];
 }
 
-export const ROADMAP_UPDATED = "2026-10-25";
+export const ROADMAP_UPDATED = "2026-10-26";
 export const PROJECT_URL = "https://github.com/users/trandat1114/projects/6";
 
 export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
   now: [
+    {
+      milestone: "0.12.0",
+      kind: "minor",
+      due: "2026-11-27",
+      vi: "Chọn cột hiển thị trong DataGrid, cùng các sửa lỗi giao diện nhỏ.",
+      en: "Choosing DataGrid columns, plus small UI fixes.",
+      items: [
+        { status: "done", issue: 203, vi: "DataGrid: người dùng tự chọn cột hiển thị (DataGridColumnPicker)", en: "DataGrid: people choose which columns are shown (DataGridColumnPicker)" },
+        { status: "done", issue: 205, vi: "ContextMenu, Menubar và menu con cuộn trong màn hình", en: "ContextMenu, Menubar and submenus scroll inside the viewport" },
+        { status: "done", issue: 206, vi: "Nút chỉ hiện khi rê chuột luôn hiện trên màn hình cảm ứng", en: "Hover-only buttons always visible on touch screens" },
+        { status: "done", issue: 207, vi: "Số trong DataGrid và Table thẳng hàng", en: "Numbers line up in DataGrid and Table" },
+      ],
+    },
     {
       milestone: "1.0.0",
       kind: "major",

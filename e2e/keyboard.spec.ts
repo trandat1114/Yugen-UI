@@ -59,6 +59,50 @@ test.describe("Menu", () => {
   });
 });
 
+test.describe("Menu dài", () => {
+  test("nằm gọn trong khung nhìn thấp và cuộn bên trong (ContextMenu, Menu)", async ({ page }) => {
+    // Thấp hơn cả hai menu (ContextMenu demo ~145px, menu chọn cột ~260px) để buộc phải cuộn.
+    await page.setViewportSize({ width: 1280, height: 120 });
+    const scrollsInsideViewport = (menu: Locator) =>
+      menu.evaluate((el) => {
+        const box = el.getBoundingClientRect();
+        return box.top >= 0 && box.bottom <= window.innerHeight && el.scrollHeight > el.clientHeight;
+      });
+
+    // Khung thấp tới mức header dính che vùng bấm: mở bằng sự kiện contextmenu / bàn phím thay vì click chuột.
+    await openDocs(page, "/components/contextmenu");
+    const area = page.getByText("Nhấp chuột phải vào đây").first();
+    await area.scrollIntoViewIfNeeded();
+    const box = (await area.boundingBox())!;
+    await area.dispatchEvent("contextmenu", { clientX: box.x + box.width / 2, clientY: box.y + box.height / 2, button: 2 });
+    const contextMenu = page.getByRole("menu");
+    await expect(contextMenu).toBeVisible();
+    expect(await scrollsInsideViewport(contextMenu)).toBe(true);
+    await page.keyboard.press("Escape");
+
+    await openDocs(page, "/components/datagrid");
+    const trigger = page.getByRole("button", { name: "Cột", exact: true });
+    await trigger.focus();
+    await page.keyboard.press("Enter");
+    const menu = page.getByRole("menu");
+    await expect(menu).toBeVisible();
+    expect(await scrollsInsideViewport(menu)).toBe(true);
+  });
+});
+
+test.describe("Table — thao tác hàng trên desktop", () => {
+  test("nút thao tác và checkbox subtle ẩn tới khi rê chuột vào hàng", async ({ page }) => {
+    await openDocs(page, "/components/table");
+    const actions = page.getByRole("button", { name: "Sửa Nguyễn Văn An" }).locator("xpath=..");
+    const checkboxCell = page.getByRole("checkbox", { name: "Chọn Nguyễn Văn An" }).locator("xpath=ancestor::td[1]");
+    await expect(actions).toHaveCSS("opacity", "0");
+    await expect(checkboxCell).toHaveCSS("opacity", "0");
+    await checkboxCell.locator("xpath=..").hover();
+    await expect(actions).toHaveCSS("opacity", "1");
+    await expect(checkboxCell).toHaveCSS("opacity", "1");
+  });
+});
+
 test.describe("DataGridColumnPicker", () => {
   test("Space ẩn cột mà menu vẫn mở, cột đang sắp xếp có tên kèm chiều, lựa chọn còn sau khi tải lại", async ({ page }) => {
     await openDocs(page, "/components/datagrid");
@@ -66,6 +110,7 @@ test.describe("DataGridColumnPicker", () => {
     // Menu mở là modal (phần còn lại bị aria-hidden) nên đếm tiêu đề bằng CSS, không theo role.
     const headers = page.locator('[role="grid"][aria-label="Đơn hàng theo cột đã chọn"] [role="columnheader"]');
     await expect(headers).toHaveText(["Khách hàng", "Trạng thái", /^Ngày/, "Số tiền"]);
+    await expect(headers.first()).toHaveCSS("font-variant-numeric", "tabular-nums");
     await expect(trigger).toHaveAccessibleDescription("1 cột đang ẩn");
 
     await trigger.focus();
