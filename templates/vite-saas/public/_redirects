@@ -1,0 +1,2 @@
+# Netlify: unknown paths get the app (real files still win). See Deploy in README.md.
+/*    /index.html   200
