@@ -15,6 +15,8 @@ const OPEN_CLASS: Record<MenuButtonAppearance, string> = {
   subtle: "data-[state=open]:bg-subtle-pressed data-[state=open]:text-foreground-1",
   transparent: "data-[state=open]:text-brand-foreground-1",
   danger: "data-[state=open]:brightness-90",
+  glass: "data-[state=open]:[--glass-bg:var(--colorGlassBackgroundPressed)]",
+  "glass-prominent": "data-[state=open]:[--glass-bg:var(--colorGlassTintedPressed)]",
 };
 
 const ICON_ONLY_PADDING = { small: "px-1", medium: "px-1.5", large: "px-2" } as const;

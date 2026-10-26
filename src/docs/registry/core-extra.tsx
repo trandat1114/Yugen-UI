@@ -262,6 +262,7 @@ const EXTRA: Record<string, ComponentDoc> = {
       { name: "MenuItem.icon", type: "ReactNode", description: "Icon cỡ 20." },
       { name: "MenuItem.secondaryContent", type: "ReactNode", description: "Phím tắt / thông tin phụ ở cuối item. MenuItemCheckbox và MenuItemRadio cũng có." },
       { name: "MenuPopover.align", type: `"start" | "center" | "end"`, defaultValue: `"start"`, description: "Căn với trigger." },
+      { name: "MenuPopover.material", type: `"glass" | "glass-clear"`, description: "Yugen Labs — menu bằng glass, thường mở từ thanh glass. MenuSubPopover cũng có." },
       { name: "MenuRadioGroup.value / onValueChange", type: "string", description: "Lựa chọn radio." },
       { name: "MenuItemCheckbox.checked / defaultChecked", type: "boolean", description: "Bật/tắt." },
     ],

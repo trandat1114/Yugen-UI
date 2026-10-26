@@ -38,9 +38,11 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       milestone: "0.12.0",
       kind: "minor",
       due: "2026-11-27",
-      vi: "Chọn cột hiển thị trong DataGrid, sửa lỗi giao diện nhỏ và các template mới.",
-      en: "Choosing DataGrid columns, small UI fixes and new templates.",
+      vi: "Vật liệu glass, chọn cột hiển thị trong DataGrid, sửa lỗi giao diện nhỏ và các template mới.",
+      en: "Glass material, choosing DataGrid columns, small UI fixes and new templates.",
       items: [
+        { status: "done", issue: 178, vi: "Vật liệu glass cho lớp điều hướng (Yugen Labs)", en: "Glass material for the navigation layer (Yugen Labs)" },
+        { status: "planned", issue: 179, vi: "Template Glass: nhật ký du lịch với điều hướng glass trên ảnh", en: "Glass template: a travel journal with glass navigation over photos" },
         { status: "done", issue: 203, vi: "DataGrid: người dùng tự chọn cột hiển thị (DataGridColumnPicker)", en: "DataGrid: people choose which columns are shown (DataGridColumnPicker)" },
         { status: "done", issue: 205, vi: "ContextMenu, Menubar và menu con cuộn trong màn hình", en: "ContextMenu, Menubar and submenus scroll inside the viewport" },
         { status: "done", issue: 206, vi: "Nút chỉ hiện khi rê chuột luôn hiện trên màn hình cảm ứng", en: "Hover-only buttons always visible on touch screens" },
@@ -68,7 +70,7 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       vi: "Chưa xếp lịch.",
       en: "Not scheduled yet.",
       items: [
-        { status: "planned", issue: 178, vi: "Vật liệu glass cho thanh điều hướng và control (lấy cảm hứng từ Liquid Glass)", en: "Glass material for navigation and controls (inspired by Liquid Glass)" },
+        { status: "planned", issue: 210, vi: "Glass phần 2: menu mọc từ nút, nút kéo glass, hiệu ứng khúc xạ, xem trước trong Theme Designer", en: "Glass part 2: menus that grow from the button, glass thumbs, refraction, Theme Designer preview" },
         { status: "planned", issue: 68, vi: "Đăng ký @yugen vào danh mục registry của shadcn", en: "Register @yugen in the shadcn registry index" },
         { status: "planned", vi: "Đang cân nhắc: bộ Figma, gói icon Sakura", en: "Under consideration: Figma kit, Sakura icon set" },
       ],

@@ -207,6 +207,7 @@ export const en: Record<string, ComponentDocEn> = {
       "DrawerSurface / OverlayDrawer.position": "Edge the drawer slides in from.",
       "DrawerSurface / OverlayDrawer.size": "320 / 592 / 940px / full screen (width, or height when bottom).",
       "DrawerSurface.modalType": "alert: doesn't close on a backdrop click or Esc.",
+      "DrawerSurface.material": "Yugen Labs — a glass surface.",
       "OverlayDrawer.open / onOpenChange": "Controls the open state (the Drawer root accepts these props too).",
       "InlineDrawer.open / position / size": "Drawer inside the layout; animates its width.",
       "InlineDrawer.separator": "stroke-2 divider between the drawer and the content.",

@@ -20,6 +20,8 @@ export interface PopoverSurfaceProps extends React.ComponentPropsWithoutRef<type
   size?: "small" | "medium" | "large";
   appearance?: "normal" | "brand" | "inverted";
   withArrow?: boolean;
+  /** Yugen Labs — bề mặt glass. glass-clear: trên ảnh / media (đặt glass-scrim lên media bên dưới). */
+  material?: "glass" | "glass-clear";
 }
 
 const PADDING = { small: "p-2", medium: "p-4", large: "p-5" } as const;
@@ -31,7 +33,10 @@ const APPEARANCE = {
 const ARROW = { normal: "fill-background-1", brand: "fill-brand-background", inverted: "fill-background-inverted" } as const;
 
 export const PopoverSurface = React.forwardRef<React.ElementRef<typeof PopoverPrimitive.Content>, PopoverSurfaceProps>(
-  ({ className, size = "medium", appearance = "normal", withArrow = false, sideOffset = 6, align = "center", children, ...props }, ref) => {
+  (
+    { className, size = "medium", appearance = "normal", withArrow = false, material, sideOffset = 6, align = "center", children, ...props },
+    ref,
+  ) => {
     // Portal render vào <body>: gắn `dir` để bề mặt (và căn align start/end) theo hướng chữ của provider lồng.
     const dir = useDirection();
     const portalTheme = usePortalThemeProps();
@@ -43,11 +48,20 @@ export const PopoverSurface = React.forwardRef<React.ElementRef<typeof PopoverPr
           dir={dir}
           sideOffset={sideOffset}
           align={align}
-          className={cn(popoverSurfaceClass, PADDING[size], APPEARANCE[appearance], "max-w-[min(360px,calc(100vw-24px))]", className)}
+          className={cn(
+            popoverSurfaceClass,
+            PADDING[size],
+            APPEARANCE[appearance],
+            material,
+            "max-w-[min(360px,calc(100vw-24px))]",
+            className,
+          )}
           {...props}
         >
           {children}
-          {withArrow && <PopoverPrimitive.Arrow width={14} height={7} className={ARROW[appearance]} />}
+          {withArrow && (
+            <PopoverPrimitive.Arrow width={14} height={7} className={material ? "fill-(--glass-tint)" : ARROW[appearance]} />
+          )}
         </PopoverPrimitive.Content>
       </PopoverPrimitive.Portal>
     );

@@ -43,6 +43,8 @@ export const en: Record<string, ComponentDocEn> = {
       modal: "false: no backdrop, no focus trap or scroll lock, and no closing on an outside click.",
       dismissible: "false: blocks closing with Esc, a backdrop click or swiping down.",
       "SheetContent.handle / handleLabel": "Bottom sheet handle; it is a button (Enter, ↑ / ↓) when there are 2 or more snap points.",
+      "SheetContent.material":
+        "Yugen Labs — a glass surface. A glass bottom sheet is inset from the screen edges, rounded on all four corners, and turns opaque at the highest snap point.",
       "SheetHeader.action": "Element at the end of the header row, usually a close button.",
       "data-sheet-no-drag": "Add it to a child element so touches on it don't drag the sheet.",
     },

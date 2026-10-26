@@ -34,9 +34,10 @@ export const NEWS: NewsRelease[] = [
     version: "0.12.0",
     upcoming: true,
     date: "2026-11-27",
-    title: "Chọn cột hiển thị trong DataGrid",
-    summary: "Người dùng tự ẩn và hiện cột của DataGrid (và Table). Menu dài không còn tràn khỏi màn hình; trên màn hình cảm ứng, các nút vốn chỉ hiện khi rê chuột giờ hiện sẵn.",
+    title: "Glass và chọn cột hiển thị trong DataGrid",
+    summary: "Vật liệu glass (Yugen Labs) cho thanh công cụ, thanh tab, sidebar và menu nổi trên nội dung. Người dùng tự ẩn và hiện cột của DataGrid (và Table). Menu dài không còn tràn khỏi màn hình; trên màn hình cảm ứng, các nút vốn chỉ hiện khi rê chuột giờ hiện sẵn.",
     items: [
+      { kind: "new", text: "Glass (Yugen Labs, lấy cảm hứng từ Liquid Glass): material=\"glass\" | \"glass-clear\" trên Toolbar, TabsList, Nav, MenuPopover, PopoverSurface, TooltipContent, DialogSurface, DrawerSurface, SheetContent; Button appearance=\"glass\" | \"glass-prominent\"; Input / SearchBox appearance=\"glass\". TabsList có minimized và hook useScrollMinimize cho thanh tab thu gọn khi cuộn. Utility glass, glass-clear, glass-tinted, glass-scrim, scroll-edge, rounded-concentric. Chữ giữ ≥ 4.5:1 trên mọi nền phía sau; nền đặc khi giảm trong suốt, tăng tương phản, tương phản cao hoặc forced colors. Tên có thể đổi trước 1.0.", href: "/foundations/glass" },
       { kind: "new", text: "DataGrid nhận hiddenColumns; DataGridColumnPicker là nút “Cột” mở menu ô tích, dùng được cả với Table. Menu không đóng khi tích từng cột, cột hideable: false và cột hiện cuối cùng không ẩn được, cột đang sắp xếp vẫn sắp xếp hàng khi bị ẩn. Cột ẩn giữ độ rộng đã kéo; lưu lựa chọn bằng onHiddenColumnsChange.", href: "/components/datagrid" },
       { kind: "improved", text: "DataGrid: cột chỉ cần label, renderHeaderCell thành tuỳ chọn. Logic ẩn / hiện cột dùng riêng được qua useDataGridColumnVisibility và getVisibleColumns.", href: "/components/datagrid" },
       { kind: "improved", text: "DataGrid và Table dùng chữ số đều chiều rộng, nên số trong một cột thẳng hàng mà không cần thêm class.", href: "/components/table" },

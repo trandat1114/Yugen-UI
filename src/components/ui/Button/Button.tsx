@@ -45,6 +45,17 @@ const buttonVariants = cva(
           "hover:brightness-110 active:brightness-90",
           "disabled:bg-background-disabled disabled:border-stroke-disabled disabled:text-foreground-disabled",
         ],
+        // Yugen Labs: nút nổi trên nội dung (thanh công cụ, ảnh). glass-prominent cho một hành động chính.
+        glass: [
+          "glass border-transparent text-foreground-1",
+          "hover:[--glass-bg:var(--colorGlassBackgroundHover)] active:[--glass-bg:var(--colorGlassBackgroundPressed)]",
+          "disabled:text-foreground-disabled",
+        ],
+        "glass-prominent": [
+          "glass-tinted border-transparent",
+          "hover:[--glass-bg:var(--colorGlassTintedHover)] active:[--glass-bg:var(--colorGlassTintedPressed)]",
+          "disabled:glass disabled:text-foreground-disabled",
+        ],
       },
       size: {
         small: "h-6 min-w-16 gap-1 rounded-small px-2 text-caption1 [&_svg]:size-4",
@@ -154,7 +165,11 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         <Spinner
           aria-hidden
           size={s.spinner}
-          appearance={(appearance === "primary" || appearance === "danger") && !props.disabled ? "inverted" : "primary"}
+          appearance={
+            (appearance === "primary" || appearance === "danger" || appearance === "glass-prominent") && !props.disabled
+              ? "inverted"
+              : "primary"
+          }
         />
       );
       const rest = (

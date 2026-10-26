@@ -12,8 +12,10 @@ Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. 
 
 ### 0.12.0 · minor · hạn 2026-11-27
 
-Chọn cột hiển thị trong DataGrid, sửa lỗi giao diện nhỏ và các template mới.
+Vật liệu glass, chọn cột hiển thị trong DataGrid, sửa lỗi giao diện nhỏ và các template mới.
 
+- [x] Vật liệu glass cho lớp điều hướng (Yugen Labs) (#178)
+- [ ] Template Glass: nhật ký du lịch với điều hướng glass trên ảnh (#179)
 - [x] DataGrid: người dùng tự chọn cột hiển thị (DataGridColumnPicker) (#203)
 - [x] ContextMenu, Menubar và menu con cuộn trong màn hình (#205)
 - [x] Nút chỉ hiện khi rê chuột luôn hiện trên màn hình cảm ứng (#206)
@@ -35,7 +37,7 @@ API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện
 
 Chưa xếp lịch.
 
-- [ ] Vật liệu glass cho thanh điều hướng và control (lấy cảm hứng từ Liquid Glass) (#178)
+- [ ] Glass phần 2: menu mọc từ nút, nút kéo glass, hiệu ứng khúc xạ, xem trước trong Theme Designer (#210)
 - [ ] Đăng ký @yugen vào danh mục registry của shadcn (#68)
 - [ ] Đang cân nhắc: bộ Figma, gói icon Sakura
 

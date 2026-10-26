@@ -1304,6 +1304,7 @@ function ToastPositionDemo() {
       { name: "DrawerSurface / OverlayDrawer.position", type: `"start" | "end" | "bottom"`, defaultValue: `"end"`, description: "Cạnh trượt vào." },
       { name: "DrawerSurface / OverlayDrawer.size", type: `"small" | "medium" | "large" | "full"`, defaultValue: `"small"`, description: "320 / 592 / 940px / toàn màn hình (rộng, hoặc cao khi bottom)." },
       { name: "DrawerSurface.modalType", type: `"modal" | "alert"`, defaultValue: `"modal"`, description: "alert: không đóng khi bấm lớp phủ / Esc." },
+      { name: "DrawerSurface.material", type: `"glass" | "glass-clear"`, description: "Yugen Labs — bề mặt glass." },
       { name: "OverlayDrawer.open / onOpenChange", type: "boolean / (open) => void", description: "Điều khiển trạng thái (Drawer root cũng nhận các prop này)." },
       { name: "InlineDrawer.open / position / size", type: "boolean / DrawerPosition / DrawerSize", defaultValue: `false / "start" / "small"`, description: "Drawer trong bố cục, chuyển động độ rộng." },
       { name: "InlineDrawer.separator", type: "boolean", defaultValue: "false", description: "Vạch ngăn stroke-2 với nội dung." },

@@ -19,10 +19,13 @@ export const menuPopoverClass = cn(
   "animate-surface-in data-[state=closed]:animate-fade-out",
 );
 
-export const MenuPopover = React.forwardRef<
-  React.ElementRef<typeof MenuPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof MenuPrimitive.Content>
->(({ className, sideOffset = 4, align = "start", ...props }, ref) => {
+export interface MenuPopoverProps extends React.ComponentPropsWithoutRef<typeof MenuPrimitive.Content> {
+  /** Yugen Labs — bề mặt glass. glass-clear: trên ảnh / media (đặt glass-scrim lên media bên dưới). */
+  material?: "glass" | "glass-clear";
+}
+
+export const MenuPopover = React.forwardRef<React.ElementRef<typeof MenuPrimitive.Content>, MenuPopoverProps>(
+  ({ className, sideOffset = 4, align = "start", material, ...props }, ref) => {
   const portalTheme = usePortalThemeProps();
   return (
     <MenuPrimitive.Portal>
@@ -31,12 +34,13 @@ export const MenuPopover = React.forwardRef<
         {...portalTheme}
         sideOffset={sideOffset}
         align={align}
-        className={cn(menuPopoverClass, className)}
+        className={cn(menuPopoverClass, material, className)}
         {...props}
       />
     </MenuPrimitive.Portal>
   );
-});
+  },
+);
 MenuPopover.displayName = "MenuPopover";
 
 /** Class dùng chung cho mọi item menu. */
@@ -133,11 +137,15 @@ export function MenuSubTrigger({
   );
 }
 
-export function MenuSubPopover({ className, ...props }: React.ComponentPropsWithoutRef<typeof MenuPrimitive.SubContent>) {
+export function MenuSubPopover({
+  className,
+  material,
+  ...props
+}: React.ComponentPropsWithoutRef<typeof MenuPrimitive.SubContent> & Pick<MenuPopoverProps, "material">) {
   const portalTheme = usePortalThemeProps();
   return (
     <MenuPrimitive.Portal>
-      <MenuPrimitive.SubContent {...portalTheme} sideOffset={4} className={cn(menuPopoverClass, className)} {...props} />
+      <MenuPrimitive.SubContent {...portalTheme} sideOffset={4} className={cn(menuPopoverClass, material, className)} {...props} />
     </MenuPrimitive.Portal>
   );
 }

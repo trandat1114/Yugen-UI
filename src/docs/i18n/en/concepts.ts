@@ -342,4 +342,5 @@ export const FOUNDATIONS_EN: Record<string, string> = {
   radius: "Corner radius",
   elevation: "Elevation",
   motion: "Motion",
+  glass: "Glass",
 };

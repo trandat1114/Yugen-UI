@@ -16,10 +16,12 @@ export const DialogClose = DialogPrimitive.Close;
 export interface DialogSurfaceProps extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> {
   /** "modal" đóng khi click nền; "alert" bắt buộc chọn hành động. */
   modalType?: "modal" | "alert";
+  /** Yugen Labs — bề mặt glass. glass-clear: trên ảnh / media (đặt glass-scrim lên media bên dưới). */
+  material?: "glass" | "glass-clear";
 }
 
 export const DialogSurface = React.forwardRef<React.ElementRef<typeof DialogPrimitive.Content>, DialogSurfaceProps>(
-  ({ className, modalType = "modal", onPointerDownOutside, onEscapeKeyDown, ...props }, ref) => {
+  ({ className, modalType = "modal", material, onPointerDownOutside, onEscapeKeyDown, ...props }, ref) => {
     // Portal render vào <body>: gắn `dir` để nội dung theo hướng chữ của provider lồng.
     const dir = useDirection();
     const portalTheme = usePortalThemeProps();
@@ -43,6 +45,7 @@ export const DialogSurface = React.forwardRef<React.ElementRef<typeof DialogPrim
             "fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100dvh-48px)] w-[calc(100vw-32px)] max-w-150 -translate-x-1/2 -translate-y-1/2 flex-col gap-2",
             "rounded-xlarge border border-transparent bg-background-1 p-6 text-foreground-1 shadow-64",
             "animate-surface-in data-[state=closed]:animate-surface-out",
+            material,
             className,
           )}
           {...props}

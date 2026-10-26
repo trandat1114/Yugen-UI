@@ -216,6 +216,11 @@ export interface SheetContentProps extends React.ComponentPropsWithoutRef<typeof
   /** Nhãn của tay nắm (nút đổi nấc chiều cao). Mặc định lấy từ `messages.sheet.handle`. */
   handleLabel?: string;
   overlayClassName?: string;
+  /**
+   * Yugen Labs — bề mặt glass. Bottom sheet glass nằm lồi vào trong mép màn hình, bo cả bốn góc, và đặc dần khi kéo lên
+   * nấc cao nhất (nội dung dài cần nền đặc để dễ đọc). glass-clear: trên ảnh / media.
+   */
+  material?: "glass" | "glass-clear";
 }
 
 export const SheetContent = React.forwardRef<React.ElementRef<typeof DialogPrimitive.Content>, SheetContentProps>(
@@ -223,6 +228,7 @@ export const SheetContent = React.forwardRef<React.ElementRef<typeof DialogPrimi
     {
       className,
       overlayClassName,
+      material,
       handle = true,
       handleLabel,
       children,
@@ -382,6 +388,7 @@ export const SheetContent = React.forwardRef<React.ElementRef<typeof DialogPrimi
           ref={setRefs}
           dir={dir}
           data-sheet={isBottom ? "bottom" : ctx.side}
+          data-expanded={(material && isBottom && snapPoint === maxSnap) || undefined}
           {...(ctx.hasDescription ? {} : { "aria-describedby": undefined })}
           style={
             isBottom
@@ -493,6 +500,13 @@ export const SheetContent = React.forwardRef<React.ElementRef<typeof DialogPrimi
                   "after:pointer-events-none after:absolute after:inset-x-0 after:top-full after:h-[50dvh] after:bg-background-1",
                 )
               : cn("max-w-screen", SIDE_POSITION[ctx.side], SIDE_WIDTH[ctx.size]),
+            material,
+            material &&
+              isBottom &&
+              cn(
+                "inset-x-2 bottom-2 w-auto max-h-[calc(100dvh-var(--spacing)*4)] rounded-4xlarge after:hidden",
+                "transition-[translate,background-color] data-expanded:[--glass-bg:var(--glass-solid)]",
+              ),
             className,
           )}
           {...props}

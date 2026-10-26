@@ -19,11 +19,16 @@ const ROOT_SIZE: Record<ToolbarSize, string> = {
 export interface ToolbarProps extends React.HTMLAttributes<HTMLDivElement> {
   size?: ToolbarSize;
   orientation?: ToolbarOrientation;
+  /**
+   * Yugen Labs — thanh nổi bằng glass, bo tròn hai đầu; nút bên trong bo đồng tâm. glass-clear: trên ảnh / media
+   * (đặt glass-scrim lên media bên dưới).
+   */
+  material?: "glass" | "glass-clear";
 }
 
 /** Thanh công cụ có roving focus: Tab vào/ra một lần, phím mũi tên / Home / End di chuyển giữa các mục. */
 export const Toolbar = React.forwardRef<HTMLDivElement, ToolbarProps>(
-  ({ className, size = "medium", orientation = "horizontal", onKeyDown, onFocus, ...props }, forwardedRef) => {
+  ({ className, size = "medium", orientation = "horizontal", material, onKeyDown, onFocus, ...props }, forwardedRef) => {
     const rootRef = React.useRef<HTMLDivElement | null>(null);
     const activeRef = React.useRef<HTMLElement | null>(null);
     const dir = useDirection();
@@ -99,6 +104,13 @@ export const Toolbar = React.forwardRef<HTMLDivElement, ToolbarProps>(
             "flex gap-0.5",
             orientation === "vertical" ? "w-fit flex-col items-stretch" : "items-center",
             ROOT_SIZE[size],
+            material &&
+              cn(
+                material,
+                "rounded-circular border border-transparent p-1 shadow-8",
+                "[--concentric-padding:--spacing(1)] [--concentric-radius:var(--borderRadiusCircular)]",
+                "**:data-toolbar-item:rounded-concentric",
+              ),
             className,
           )}
           {...props}
