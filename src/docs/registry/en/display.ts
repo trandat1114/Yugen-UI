@@ -175,6 +175,10 @@ export const en: Record<string, ComponentDocEn> = {
         title: "Row selection & actions",
         description: "A subtle TableSelectionCell shows its checkbox only on hover; TableCellActions shows buttons when the row is hovered or focused.",
       },
+      {
+        title: "Choosing columns",
+        description: "Table has no column definitions: keep the set of hidden column ids in state, render cells conditionally and use DataGridColumnPicker as the column button. A hideable: false column is always shown.",
+      },
     ],
     dos: [
       "Align column headers with their data; use tabular-nums for numbers.",

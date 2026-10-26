@@ -26,6 +26,7 @@ import {
 import { Avatar } from "@/components/ui/Avatar/Avatar";
 import { Badge } from "@/components/ui/Badge/Badge";
 import { Button } from "@/components/ui/Button/Button";
+import { DataGridColumnPicker } from "@/components/ui/DataGridColumnPicker/DataGridColumnPicker";
 import { Input } from "@/components/ui/Input/Input";
 import { Menu, MenuDivider, MenuItem, MenuPopover, MenuTrigger } from "@/components/ui/Menu/Menu";
 import { BloomArt } from "@/components/ui/Decorative/Decorative";
@@ -143,6 +144,51 @@ function TableSelectionDemo() {
         ))}
       </TableBody>
     </Table>
+  );
+}
+
+const staff = [
+  { id: "an", name: "Nguyễn Văn An", role: "Kỹ sư phần mềm", team: "Nền tảng" },
+  { id: "binh", name: "Trần Thị Bình", role: "Nhà thiết kế", team: "Trải nghiệm" },
+  { id: "cuong", name: "Lê Hoàng Cường", role: "Quản lý sản phẩm", team: "Tăng trưởng" },
+];
+
+const staffColumns = [
+  { columnId: "name", label: "Thành viên", hideable: false },
+  { columnId: "role", label: "Vai trò" },
+  { columnId: "team", label: "Nhóm" },
+];
+
+function TableColumnsDemo() {
+  const [hiddenColumns, setHiddenColumns] = useState<ReadonlySet<string>>(() => new Set(["team"]));
+  const shown = (columnId: string) => !hiddenColumns.has(columnId);
+
+  return (
+    <div className="flex w-full flex-col items-end gap-2">
+      <DataGridColumnPicker
+        columns={staffColumns}
+        hiddenColumns={hiddenColumns}
+        onHiddenColumnsChange={(_, data) => setHiddenColumns(data.hiddenColumns)}
+      />
+      <Table aria-label="Thành viên" className="w-full">
+        <TableHeader>
+          <TableRow>
+            <TableHeaderCell>Thành viên</TableHeaderCell>
+            {shown("role") && <TableHeaderCell>Vai trò</TableHeaderCell>}
+            {shown("team") && <TableHeaderCell>Nhóm</TableHeaderCell>}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {staff.map((person) => (
+            <TableRow key={person.id}>
+              <TableCell>{person.name}</TableCell>
+              {shown("role") && <TableCell>{person.role}</TableCell>}
+              {shown("team") && <TableCell>{person.team}</TableCell>}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
 
@@ -1451,6 +1497,55 @@ function TableSelectionDemo() {
   );
 }`,
         render: () => <TableSelectionDemo />,
+      },
+      {
+        title: "Chọn cột hiển thị",
+        description: "Table không có định nghĩa cột: giữ tập id cột ẩn trong state, render ô theo điều kiện và dùng DataGridColumnPicker làm nút chọn cột. Cột hideable: false luôn hiện.",
+        code: `const staff = [
+  { id: "an", name: "Nguyễn Văn An", role: "Kỹ sư phần mềm", team: "Nền tảng" },
+  { id: "binh", name: "Trần Thị Bình", role: "Nhà thiết kế", team: "Trải nghiệm" },
+  { id: "cuong", name: "Lê Hoàng Cường", role: "Quản lý sản phẩm", team: "Tăng trưởng" },
+];
+
+const staffColumns = [
+  { columnId: "name", label: "Thành viên", hideable: false },
+  { columnId: "role", label: "Vai trò" },
+  { columnId: "team", label: "Nhóm" },
+];
+
+function TableColumnsDemo() {
+  const [hiddenColumns, setHiddenColumns] = useState<ReadonlySet<string>>(() => new Set(["team"]));
+  const shown = (columnId: string) => !hiddenColumns.has(columnId);
+
+  return (
+    <div className="flex w-full flex-col items-end gap-2">
+      <DataGridColumnPicker
+        columns={staffColumns}
+        hiddenColumns={hiddenColumns}
+        onHiddenColumnsChange={(_, data) => setHiddenColumns(data.hiddenColumns)}
+      />
+      <Table aria-label="Thành viên" className="w-full">
+        <TableHeader>
+          <TableRow>
+            <TableHeaderCell>Thành viên</TableHeaderCell>
+            {shown("role") && <TableHeaderCell>Vai trò</TableHeaderCell>}
+            {shown("team") && <TableHeaderCell>Nhóm</TableHeaderCell>}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {staff.map((person) => (
+            <TableRow key={person.id}>
+              <TableCell>{person.name}</TableCell>
+              {shown("role") && <TableCell>{person.role}</TableCell>}
+              {shown("team") && <TableCell>{person.team}</TableCell>}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+}`,
+        render: () => <TableColumnsDemo />,
       },
     ],
     dos: [

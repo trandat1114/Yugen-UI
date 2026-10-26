@@ -28,7 +28,8 @@ export const MenuPopover = React.forwardRef<
         {...portalTheme}
         sideOffset={sideOffset}
         align={align}
-        className={cn(menuPopoverClass, className)}
+        // Menu dài (vd. danh sách cột) cuộn bên trong thay vì tràn khỏi màn hình.
+        className={cn(menuPopoverClass, "max-h-(--radix-dropdown-menu-content-available-height) overflow-y-auto", className)}
         {...props}
       />
     </MenuPrimitive.Portal>
@@ -49,12 +50,17 @@ export interface MenuItemProps extends React.ComponentPropsWithoutRef<typeof Men
   secondaryContent?: React.ReactNode;
 }
 
+/** Nội dung phụ ở cuối item (phím tắt, trạng thái…). */
+function SecondaryContent({ children }: { children: React.ReactNode }) {
+  return <span className="flex shrink-0 items-center gap-1 ps-4 text-caption1 text-foreground-3">{children}</span>;
+}
+
 export const MenuItem = React.forwardRef<React.ElementRef<typeof MenuPrimitive.Item>, MenuItemProps>(
   ({ className, icon, secondaryContent, children, ...props }, ref) => (
     <MenuPrimitive.Item ref={ref} className={cn(menuItemClass, className)} {...props}>
       {icon}
       <span className="min-w-0 flex-1 truncate">{children}</span>
-      {secondaryContent && <span className="ps-4 text-caption1 text-foreground-3">{secondaryContent}</span>}
+      {secondaryContent && <SecondaryContent>{secondaryContent}</SecondaryContent>}
     </MenuPrimitive.Item>
   ),
 );
@@ -62,8 +68,8 @@ MenuItem.displayName = "MenuItem";
 
 export const MenuItemRadio = React.forwardRef<
   React.ElementRef<typeof MenuPrimitive.RadioItem>,
-  React.ComponentPropsWithoutRef<typeof MenuPrimitive.RadioItem> & { icon?: React.ReactNode }
->(({ className, icon, children, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof MenuPrimitive.RadioItem> & Pick<MenuItemProps, "icon" | "secondaryContent">
+>(({ className, icon, secondaryContent, children, ...props }, ref) => (
   <MenuPrimitive.RadioItem ref={ref} className={cn(menuItemClass, "ps-8", className)} {...props}>
     <span className="absolute inset-s-2 flex size-4 items-center justify-center">
       <MenuPrimitive.ItemIndicator>
@@ -72,14 +78,15 @@ export const MenuItemRadio = React.forwardRef<
     </span>
     {icon}
     <span className="min-w-0 flex-1 truncate">{children}</span>
+    {secondaryContent && <SecondaryContent>{secondaryContent}</SecondaryContent>}
   </MenuPrimitive.RadioItem>
 ));
 MenuItemRadio.displayName = "MenuItemRadio";
 
 export const MenuItemCheckbox = React.forwardRef<
   React.ElementRef<typeof MenuPrimitive.CheckboxItem>,
-  React.ComponentPropsWithoutRef<typeof MenuPrimitive.CheckboxItem> & { icon?: React.ReactNode }
->(({ className, icon, children, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof MenuPrimitive.CheckboxItem> & Pick<MenuItemProps, "icon" | "secondaryContent">
+>(({ className, icon, secondaryContent, children, ...props }, ref) => (
   <MenuPrimitive.CheckboxItem ref={ref} className={cn(menuItemClass, "ps-8", className)} {...props}>
     <span className="absolute inset-s-2 flex size-4 items-center justify-center">
       <MenuPrimitive.ItemIndicator>
@@ -88,6 +95,7 @@ export const MenuItemCheckbox = React.forwardRef<
     </span>
     {icon}
     <span className="min-w-0 flex-1 truncate">{children}</span>
+    {secondaryContent && <SecondaryContent>{secondaryContent}</SecondaryContent>}
   </MenuPrimitive.CheckboxItem>
 ));
 MenuItemCheckbox.displayName = "MenuItemCheckbox";

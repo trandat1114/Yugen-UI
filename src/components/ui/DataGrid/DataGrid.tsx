@@ -10,6 +10,7 @@ import { SkeletonItem } from "../Skeleton/Skeleton";
 import { useYugenMessages } from "../YugenProvider/context";
 import { dataGridMessages } from "./messages";
 import {
+  getVisibleColumns,
   useDataGridSelection,
   useDataGridSort,
   type DataGridColumn,
@@ -28,7 +29,8 @@ export { dataGridMessages, dataGridMessagesEn, type DataGridMessages } from "./m
 /**
  * Fluent 2 DataGrid — https://react.fluentui.dev/?path=/docs/components-datagrid--docs
  * Lưới dữ liệu `role="grid"`: sắp xếp, chọn hàng, kéo đổi độ rộng cột, ảo hoá hàng (10 000+ hàng) và điều hướng
- * bàn phím (roving tabindex, đảo ArrowLeft / ArrowRight trong RTL). Cột khai báo bằng `createColumn<T>()`.
+ * bàn phím (roving tabindex, đảo ArrowLeft / ArrowRight trong RTL). Cột khai báo bằng `createColumn<T>()`; ẩn / hiện cột
+ * bằng `hiddenColumns` (+ DataGridColumnPicker).
  */
 
 /* ================================================================ Hằng số */
@@ -77,8 +79,13 @@ const preventDefault = (event: React.SyntheticEvent) => event.preventDefault();
 export interface DataGridProps<T> extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
   /** Dữ liệu (theo thứ tự gốc — DataGrid tự sắp xếp khi `sortable`). */
   items: readonly T[];
-  /** Định nghĩa cột, tạo bằng `createColumn<T>()`. */
+  /** Định nghĩa cột, tạo bằng `createColumn<T>()`. Giữ cùng một mảng giữa các lần render (khai báo ngoài component). */
   columns: readonly DataGridColumn<T>[];
+  /**
+   * Id các cột không hiển thị (thường từ DataGridColumnPicker). Cột `hideable: false` luôn hiện; ẩn hết thì giữ cột đầu.
+   * Cột ẩn vẫn giữ độ rộng đã kéo và vẫn là cột sắp xếp nếu đang được sắp xếp.
+   */
+  hiddenColumns?: ReadonlySet<string>;
   /** Id ổn định của một hàng — dùng cho key, lựa chọn và chọn theo khoảng. */
   getRowId: (item: T) => string;
   /** Mật độ hàng: small 34px · medium 44px · large 56px. */
@@ -472,7 +479,8 @@ const RowView = React.memo(RowViewImpl) as typeof RowViewImpl;
 function DataGridImpl<T>(
   {
     items,
-    columns,
+    columns: allColumns,
+    hiddenColumns,
     getRowId,
     size = "medium",
     sortable = false,
@@ -499,6 +507,7 @@ function DataGridImpl<T>(
     style,
     onKeyDown,
     onFocus,
+    onBlur,
     onClick,
     onMouseDown,
     onScroll,
@@ -524,7 +533,7 @@ function DataGridImpl<T>(
 
   /* ---------------------------------------------------------- sắp xếp & chọn */
   const { getSortDirection, toggleColumnSort, sort } = useDataGridSort({
-    columns,
+    columns: allColumns,
     sortState,
     defaultSortState,
     onSortChange,
@@ -537,6 +546,11 @@ function DataGridImpl<T>(
   const hasSelection = selectionMode !== undefined;
   const multiselect = selectionMode === "multiselect";
   const lead = hasSelection ? 1 : 0;
+  // Cột ẩn không render; aria-colcount / aria-colindex chỉ đếm cột đang hiện. hiddenColumns hay được viết inline (Set mới
+  // mỗi render): chỉ đổi mảng cột khi danh sách cột hiện thật sự đổi, để các hàng (React.memo) không render lại.
+  const visible = getVisibleColumns(allColumns, hiddenColumns);
+  const visibleKey = visible === allColumns ? "" : visible.map((c) => c.columnId).join("\u0000");
+  const columns = React.useMemo(() => visible, [allColumns, visibleKey]);
   const colCount = columns.length + lead;
 
   /* ---------------------------------------------------------- kích thước cột */
@@ -658,6 +672,8 @@ function DataGridImpl<T>(
   const [active, setActive] = React.useState<Position>({ row: 0, col: 0 });
   const headerCol = React.useRef(0);
   const pendingFocus = React.useRef(false);
+  /** Phần tử trong lưới đang giữ focus (null khi focus đã rời lưới) — để biết focus có rơi mất vì ô bị gỡ khỏi DOM. */
+  const focused = React.useRef<HTMLElement | null>(null);
   const rowMode = focusMode === "row";
   const activeRow = Math.min(active.row, dataRows);
   const activeCol =
@@ -671,6 +687,38 @@ function DataGridImpl<T>(
     pendingFocus.current = false;
     if (document.activeElement !== el) el.focus();
   });
+
+  // Bộ cột hiện đổi (hiddenColumns, columns mới, bật / tắt cột chọn): giữ vị trí focus trên đúng cột theo columnId chứ
+  // không theo chỉ số. Cột đó bị ẩn → cột kế tiếp còn hiện (hết thì cột gần nhất phía trước). Nếu focus rơi khỏi lưới vì
+  // ô đang focus bị gỡ khỏi DOM thì đưa focus sang ô thay thế.
+  const layout = React.useMemo(() => ({ ids: columns.map((c) => c.columnId), lead }), [columns, lead]);
+  const prevLayout = React.useRef(layout);
+  useIsomorphicLayoutEffect(() => {
+    const prev = prevLayout.current;
+    prevLayout.current = layout;
+    if (prev === layout) return;
+    const remap = (col: number) => {
+      const from = col - prev.lead;
+      if (from < 0) return col;
+      const nearest = [...prev.ids.slice(from), ...prev.ids.slice(0, from).reverse()];
+      for (const id of nearest) {
+        const at = layout.ids.indexOf(id);
+        if (at >= 0) return at + layout.lead;
+      }
+      return col;
+    };
+    // Vị trí cũ chưa bị kẹp theo số cột mới (activeCol của lần render này đã kẹp).
+    const oldCol = rowMode && activeRow >= 1 ? -1 : active.col < 0 ? headerCol.current : active.col;
+    headerCol.current = remap(headerCol.current);
+    setActive((p) => {
+      const col = remap(p.col);
+      return col === p.col ? p : { row: p.row, col };
+    });
+    const lost = focused.current && !focused.current.isConnected;
+    if (lost && (!document.activeElement || document.activeElement === document.body)) {
+      findNav(rootRef.current, { row: activeRow, col: remap(oldCol) })?.focus();
+    }
+  }, [layout]);
 
   const visibleCount = Math.ceil(viewportHeight / rh) + 1;
   const first = Math.min(firstRow, Math.max(0, dataRows - 1));
@@ -816,8 +864,16 @@ function DataGridImpl<T>(
     if (!root) return;
     const pos = positionOf(event.target, root);
     if (!pos) return;
+    focused.current = event.target as HTMLElement;
     if (pos.row === 0) headerCol.current = pos.col;
     setActive((prev) => (prev.row === pos.row && prev.col === pos.col ? prev : pos));
+  };
+
+  const handleBlur = (event: React.FocusEvent<HTMLDivElement>) => {
+    onBlur?.(event);
+    // Focus sang chỗ khác ngoài lưới (không phải do ô bị gỡ khỏi DOM) → không kéo focus về khi cột đổi sau đó.
+    const next = event.relatedTarget as Node | null;
+    if (!rootRef.current?.contains(next) && (event.target as HTMLElement).isConnected) focused.current = null;
   };
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -977,6 +1033,7 @@ function DataGridImpl<T>(
       style={rootStyle}
       onKeyDown={handleKeyDown}
       onFocus={handleFocus}
+      onBlur={handleBlur}
       onClick={handleClick}
       onMouseDown={handleMouseDown}
       onScroll={handleScroll}
@@ -1039,7 +1096,7 @@ function DataGridImpl<T>(
                 )}
               >
                 <span id={labelId} className="min-w-0 truncate">
-                  {c.column.renderHeaderCell()}
+                  {c.column.renderHeaderCell ? c.column.renderHeaderCell() : (c.column.label ?? c.column.columnId)}
                 </span>
                 {direction && (
                   <>

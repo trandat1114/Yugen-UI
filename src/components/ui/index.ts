@@ -63,6 +63,7 @@ export * from "./Image/Image";
 export * from "./List/List";
 export * from "./Table/Table";
 export * from "./DataGrid/DataGrid";
+export * from "./DataGridColumnPicker/DataGridColumnPicker";
 export * from "./Tree/Tree";
 export * from "./Carousel/Carousel";
 

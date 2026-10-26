@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
-import { act, fireEvent, render, within } from "@testing-library/react";
+import { act, fireEvent, render, renderHook, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { YugenProvider } from "../YugenProvider/YugenProvider";
-import { createColumn, DataGrid, sortItems, type DataGridProps } from "./DataGrid";
+import { createColumn, DataGrid, sortItems, useDataGridColumnVisibility, type DataGridProps } from "./DataGrid";
 import { dataGridMessagesEn } from "./messages";
 
 type Person = { id: string; name: string; age: number };
@@ -307,6 +307,21 @@ describe("DataGrid — hiệu năng", () => {
     expect(renderCell).not.toHaveBeenCalled();
   });
 
+  it("hiddenColumns viết inline (Set mới mỗi lần render) không render lại các hàng", () => {
+    const renderCell = vi.fn((p: Person) => p.name);
+    const cols = [
+      createColumn<Person>({ columnId: "name", label: "Tên", renderCell }),
+      createColumn<Person>({ columnId: "age", label: "Tuổi", renderCell: (p) => p.age }),
+    ];
+    const grid = () => (
+      <DataGrid aria-label="Người" items={people} columns={cols} getRowId={(p) => p.id} hiddenColumns={new Set(["age"])} />
+    );
+    const { rerender } = render(grid());
+    renderCell.mockClear();
+    rerender(grid());
+    expect(renderCell).not.toHaveBeenCalled();
+  });
+
   it("getRowId viết inline không bị gọi lại cho mọi hàng ở mỗi lần render", () => {
     const getRowId = vi.fn((p: Person) => p.id);
     const grid = () => <DataGrid aria-label="Người" items={people} columns={columns} getRowId={(p) => getRowId(p)} />;
@@ -316,6 +331,148 @@ describe("DataGrid — hiệu năng", () => {
     rerender(grid());
     rerender(grid());
     expect(getRowId).not.toHaveBeenCalled();
+  });
+});
+
+describe("DataGrid — ẩn / hiện cột", () => {
+  const wide = [
+    createColumn<Person>({ columnId: "name", label: "Tên", renderCell: (p) => p.name }),
+    createColumn<Person>({ columnId: "age", label: "Tuổi", renderCell: (p) => p.age, compare: (a, b) => a.age - b.age }),
+    createColumn<Person>({ columnId: "code", label: "Mã", renderCell: (p) => p.id.toUpperCase() }),
+  ];
+  const headers = (grid: HTMLElement) => within(grid).getAllByRole("columnheader").map((h) => h.textContent);
+
+  it("không render cột ẩn; aria-colcount / aria-colindex chỉ đếm cột đang hiện; tiêu đề lấy label", () => {
+    const { grid } = setup({ columns: wide, hiddenColumns: new Set(["age"]) });
+    expect(headers(grid)).toEqual(["Tên", "Mã"]);
+    expect(grid).toHaveAttribute("aria-colcount", "2");
+    expect(within(grid).getAllByRole("columnheader").map((h) => h.getAttribute("aria-colindex"))).toEqual(["1", "2"]);
+    expect(grid.querySelectorAll('[data-row-index="1"] [role="gridcell"]')).toHaveLength(2);
+  });
+
+  it("hideable: false luôn hiện, id lạ bị bỏ qua, ẩn hết thì giữ cột đầu", () => {
+    const locked = [{ ...wide[0], hideable: false }, wide[1], wide[2]];
+    const a = setup({ columns: locked, hiddenColumns: new Set(["name", "code", "nope"]) });
+    expect(headers(a.grid)).toEqual(["Tên", "Tuổi"]);
+    a.unmount();
+    const b = setup({ columns: wide, hiddenColumns: new Set(["name", "age", "code"]) });
+    expect(headers(b.grid)).toEqual(["Tên"]);
+  });
+
+  it("ẩn cột đang sắp xếp vẫn giữ thứ tự hàng", () => {
+    const { names } = setup({
+      columns: wide,
+      sortable: true,
+      defaultSortState: { sortColumn: "age", sortDirection: "ascending" },
+      hiddenColumns: new Set(["age"]),
+    });
+    expect(names()).toEqual(["Dũng", "An", "Cường", "Bình"]);
+  });
+
+  it("hiện lại cột giữ độ rộng đã kéo; offset cột ghim tính lại theo cột đang hiện", async () => {
+    const user = userEvent.setup();
+    const cols = [
+      createColumn<Person>({ columnId: "name", label: "Tên", sticky: "start", width: 150, renderCell: (p) => p.name }),
+      createColumn<Person>({ columnId: "code", label: "Mã", sticky: "start", width: 100, renderCell: (p) => p.id }),
+      createColumn<Person>({ columnId: "age", label: "Tuổi", renderCell: (p) => p.age }),
+    ];
+    const ui = (hidden?: ReadonlySet<string>) => (
+      <DataGrid aria-label="Người" items={people} columns={cols} getRowId={(p) => p.id} resizableColumns hiddenColumns={hidden} />
+    );
+    const { getByRole, rerender } = render(ui());
+    const grid = getByRole("grid");
+    expect(grid.style.getPropertyValue("--dg-sticky-1")).toBe("150px");
+    within(grid).getAllByRole("separator")[1].focus();
+    await user.keyboard("{ArrowRight}");
+
+    rerender(ui(new Set(["name"])));
+    expect(grid.style.getPropertyValue("--dg-sticky-0")).toBe("0px");
+    expect(grid.style.getPropertyValue("--dg-cols")).toMatch(/^110px /);
+
+    rerender(ui(new Set()));
+    expect(grid.style.getPropertyValue("--dg-cols")).toMatch(/^150px 110px /);
+  });
+
+  it("focus đi theo cột: ẩn cột phía trước giữ đúng ô, ẩn chính cột đang focus thì sang cột kế tiếp", () => {
+    const ui = (hidden?: ReadonlySet<string>) => (
+      <DataGrid aria-label="Người" items={people} columns={wide} getRowId={(p) => p.id} hiddenColumns={hidden} />
+    );
+    const { getByRole, rerender } = render(ui());
+    const grid = getByRole("grid");
+    const cell = (row: number, col: number) =>
+      grid.querySelector<HTMLElement>(`[data-row-index="${row}"] [data-col-index="${col}"]`)!;
+
+    act(() => cell(1, 1).focus()); // Tuổi của hàng đầu
+    rerender(ui(new Set(["name"])));
+    expect(cell(1, 0)).toHaveTextContent("30");
+    expect(cell(1, 0)).toHaveFocus();
+    expect(cell(1, 0)).toHaveAttribute("tabindex", "0");
+
+    rerender(ui(new Set(["name", "age"])));
+    expect(cell(1, 0)).toHaveTextContent("A");
+    expect(cell(1, 0)).toHaveFocus();
+    expect(cell(1, 0)).toHaveAttribute("tabindex", "0");
+  });
+
+  it("ẩn cùng lúc cột cuối đang focus và cột đầu: focus sang cột gần nhất phía trước", () => {
+    const four = [...wide, createColumn<Person>({ columnId: "tag", label: "Nhãn", renderCell: (p) => `#${p.id}` })];
+    const ui = (hidden?: ReadonlySet<string>) => (
+      <DataGrid aria-label="Người" items={people} columns={four} getRowId={(p) => p.id} hiddenColumns={hidden} />
+    );
+    const { getByRole, rerender } = render(ui());
+    const grid = getByRole("grid");
+    const cell = (row: number, col: number) =>
+      grid.querySelector<HTMLElement>(`[data-row-index="${row}"] [data-col-index="${col}"]`)!;
+
+    act(() => cell(1, 3).focus()); // Nhãn của hàng đầu
+    rerender(ui(new Set(["name", "tag"])));
+    expect(cell(1, 1)).toHaveTextContent("A");
+    expect(cell(1, 1)).toHaveFocus();
+  });
+
+  it("focus đã rời lưới thì không bị kéo về khi cột đổi", () => {
+    const ui = (hidden?: ReadonlySet<string>) => (
+      <DataGrid aria-label="Người" items={people} columns={wide} getRowId={(p) => p.id} hiddenColumns={hidden} />
+    );
+    const { getByRole, rerender } = render(ui());
+    const cell = getByRole("grid").querySelector<HTMLElement>('[data-row-index="1"] [data-col-index="1"]')!;
+    act(() => cell.focus());
+    act(() => cell.blur());
+    rerender(ui(new Set(["age"])));
+    expect(document.body).toHaveFocus();
+  });
+});
+
+describe("useDataGridColumnVisibility", () => {
+  const cols = [
+    { columnId: "name", label: "Tên", hideable: false },
+    { columnId: "age", label: "Tuổi" },
+    { columnId: "code", label: "Mã" },
+  ];
+
+  it("giữ id của cột không có trong columns khi lưu; khoá cột hideable: false và cột hiện cuối cùng", () => {
+    const onHiddenColumnsChange = vi.fn();
+    const { result } = renderHook(() =>
+      useDataGridColumnVisibility({ columns: cols, defaultHiddenColumns: ["ghost", "code"], onHiddenColumnsChange }),
+    );
+    expect(result.current.visibleColumns.map((c) => c.columnId)).toEqual(["name", "age"]);
+    expect(result.current.canToggleColumn("name")).toBe(false);
+    act(() => result.current.toggleColumn(undefined, "age"));
+    expect(onHiddenColumnsChange).toHaveBeenLastCalledWith(undefined, { hiddenColumns: new Set(["ghost", "code", "age"]) });
+    expect(result.current.visibleColumns.map((c) => c.columnId)).toEqual(["name"]);
+    act(() => result.current.showAllColumns(undefined));
+    expect(result.current.hiddenColumns.size).toBe(0);
+  });
+
+  it("cột chỉ hiện nhờ quy tắc giữ cột đầu vẫn hiện khi bật cột khác", () => {
+    const plain = cols.map((c) => ({ ...c, hideable: true }));
+    const { result } = renderHook(() =>
+      useDataGridColumnVisibility({ columns: plain, defaultHiddenColumns: ["name", "age", "code"] }),
+    );
+    expect(result.current.visibleColumns.map((c) => c.columnId)).toEqual(["name"]);
+    expect(result.current.canToggleColumn("name")).toBe(false);
+    act(() => result.current.setColumnVisible(undefined, "code", true));
+    expect(result.current.visibleColumns.map((c) => c.columnId)).toEqual(["name", "code"]);
   });
 });
 
