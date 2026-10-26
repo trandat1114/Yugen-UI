@@ -59,6 +59,39 @@ test.describe("Menu", () => {
   });
 });
 
+test.describe("DataGridColumnPicker", () => {
+  test("Space ẩn cột mà menu vẫn mở, cột đang sắp xếp có tên kèm chiều, lựa chọn còn sau khi tải lại", async ({ page }) => {
+    await openDocs(page, "/components/datagrid");
+    const trigger = page.getByRole("button", { name: "Cột", exact: true });
+    // Menu mở là modal (phần còn lại bị aria-hidden) nên đếm tiêu đề bằng CSS, không theo role.
+    const headers = page.locator('[role="grid"][aria-label="Đơn hàng theo cột đã chọn"] [role="columnheader"]');
+    await expect(headers).toHaveText(["Khách hàng", "Trạng thái", /^Ngày/, "Số tiền"]);
+    await expect(trigger).toHaveAccessibleDescription("1 cột đang ẩn");
+
+    await trigger.focus();
+    await page.keyboard.press("Enter");
+    const menu = page.getByRole("menu");
+    await expect(menu).toBeVisible();
+    await expect(menu.getByRole("menuitemcheckbox", { name: "Khách hàng" })).toHaveAttribute("aria-disabled", "true");
+    await expect(menu.getByRole("menuitemcheckbox", { name: "Ngày (giảm dần)" })).toBeVisible();
+
+    const status = menu.getByRole("menuitemcheckbox", { name: "Trạng thái" });
+    await status.focus();
+    await page.keyboard.press("Space");
+    await expect(status).toHaveAttribute("aria-checked", "false");
+    await expect(status).toBeFocused();
+    await expect(headers).toHaveText(["Khách hàng", /^Ngày/, "Số tiền"]);
+
+    await page.keyboard.press("Escape");
+    await expect(menu).toBeHidden();
+    await expect(trigger).toBeFocused();
+    await expect(trigger).toHaveAccessibleDescription("2 cột đang ẩn");
+
+    await page.reload();
+    await expect(headers).toHaveText(["Khách hàng", /^Ngày/, "Số tiền"]);
+  });
+});
+
 test.describe("Combobox", () => {
   test("gõ không dấu để lọc, mũi tên duyệt, Enter chọn, Esc đóng; danh sách nằm trong màn 390px", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });

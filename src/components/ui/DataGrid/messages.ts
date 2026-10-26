@@ -11,6 +11,12 @@ export interface DataGridMessages {
   resizeColumn: string;
   emptyTitle: string;
   emptyDescription: string;
+  /** Nhãn nút của DataGridColumnPicker. */
+  columns: string;
+  /** Mục cuối menu của DataGridColumnPicker. */
+  showAllColumns: string;
+  /** Mô tả nút DataGridColumnPicker khi có cột bị ẩn. */
+  hiddenColumns: (count: number) => string;
 }
 
 declare module "../YugenProvider/context" {
@@ -27,6 +33,9 @@ export const dataGridMessages: DataGridMessages = {
   resizeColumn: "Đổi độ rộng cột",
   emptyTitle: "Không có dữ liệu",
   emptyDescription: "Chưa có hàng nào để hiển thị.",
+  columns: "Cột",
+  showAllColumns: "Hiện tất cả cột",
+  hiddenColumns: (count) => `${count} cột đang ẩn`,
 };
 
 export const dataGridMessagesEn: DataGridMessages = {
@@ -37,4 +46,7 @@ export const dataGridMessagesEn: DataGridMessages = {
   resizeColumn: "Resize column",
   emptyTitle: "No data",
   emptyDescription: "There are no rows to display.",
+  columns: "Columns",
+  showAllColumns: "Show all columns",
+  hiddenColumns: (count) => (count === 1 ? "1 column hidden" : `${count} columns hidden`),
 };

@@ -4,15 +4,9 @@ import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { Button, type ButtonProps } from "../Button/Button";
 import { ToggleButton, type ToggleButtonProps } from "../ToggleButton/ToggleButton";
+import { TOOLBAR_DEFAULTS, ToolbarContext, type ToolbarOrientation, type ToolbarSize } from "./context";
 
 /** Fluent 2 Toolbar — https://fluent2.microsoft.design/components/web/react/core/toolbar/usage */
-type ToolbarSize = "small" | "medium" | "large";
-type ToolbarOrientation = "horizontal" | "vertical";
-
-const ToolbarContext = React.createContext<{ size: ToolbarSize; orientation: ToolbarOrientation }>({
-  size: "medium",
-  orientation: "horizontal",
-});
 
 const ITEM_SELECTOR = "[data-toolbar-item]:not([disabled]):not([data-disabled])";
 
@@ -122,7 +116,7 @@ export interface ToolbarButtonProps extends Omit<ButtonProps, "size"> {
 
 export const ToolbarButton = React.forwardRef<HTMLButtonElement, ToolbarButtonProps>(
   ({ appearance = "subtle", vertical, className, ...props }, ref) => {
-    const { size } = React.useContext(ToolbarContext);
+    const { size } = React.useContext(ToolbarContext) ?? TOOLBAR_DEFAULTS;
     return (
       <Button
         ref={ref}
@@ -141,7 +135,7 @@ export type ToolbarToggleButtonProps = Omit<ToggleButtonProps, "size">;
 
 export const ToolbarToggleButton = React.forwardRef<HTMLButtonElement, ToolbarToggleButtonProps>(
   ({ appearance = "subtle", className, ...props }, ref) => {
-    const { size } = React.useContext(ToolbarContext);
+    const { size } = React.useContext(ToolbarContext) ?? TOOLBAR_DEFAULTS;
     return (
       <ToggleButton
         ref={ref}
@@ -157,7 +151,7 @@ export const ToolbarToggleButton = React.forwardRef<HTMLButtonElement, ToolbarTo
 ToolbarToggleButton.displayName = "ToolbarToggleButton";
 
 export function ToolbarDivider({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  const { orientation } = React.useContext(ToolbarContext);
+  const { orientation } = React.useContext(ToolbarContext) ?? TOOLBAR_DEFAULTS;
   return (
     <div
       role="separator"
@@ -173,7 +167,7 @@ export function ToolbarDivider({ className, ...props }: React.HTMLAttributes<HTM
 }
 
 export function ToolbarGroup({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  const { orientation } = React.useContext(ToolbarContext);
+  const { orientation } = React.useContext(ToolbarContext) ?? TOOLBAR_DEFAULTS;
   return (
     <div
       role="presentation"

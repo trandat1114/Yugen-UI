@@ -8,6 +8,7 @@ import {
   Button,
   createColumn,
   DataGrid,
+  DataGridColumnPicker,
   TableCellLayout,
   Toolbar,
   ToolbarButton,
@@ -78,7 +79,8 @@ const vnd = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" 
 const orderColumns = [
   createColumn<Order>({
     columnId: "customer",
-    renderHeaderCell: () => "Khách hàng",
+    label: "Khách hàng",
+    hideable: false,
     renderCell: (order) => (
       <TableCellLayout truncate media={<Avatar name={order.customer} size={24} color="colorful" />}>
         {order.customer}
@@ -89,14 +91,14 @@ const orderColumns = [
   }),
   createColumn<Order>({
     columnId: "id",
-    renderHeaderCell: () => "Mã đơn",
+    label: "Mã đơn",
     renderCell: (order) => order.id,
     compare: (a, b) => a.id.localeCompare(b.id),
     width: 104,
   }),
   createColumn<Order>({
     columnId: "status",
-    renderHeaderCell: () => "Trạng thái",
+    label: "Trạng thái",
     renderCell: (order) => (
       <Badge appearance="tint" color={STATUS[order.status].color}>
         {STATUS[order.status].label}
@@ -107,14 +109,14 @@ const orderColumns = [
   }),
   createColumn<Order>({
     columnId: "date",
-    renderHeaderCell: () => "Ngày",
+    label: "Ngày",
     renderCell: (order) => order.date.split("-").reverse().join("/"),
     compare: (a, b) => a.date.localeCompare(b.date),
     width: 112,
   }),
   createColumn<Order>({
     columnId: "amount",
-    renderHeaderCell: () => "Số tiền",
+    label: "Số tiền",
     renderCell: (order) => vnd.format(order.amount),
     compare: (a, b) => a.amount - b.amount,
     width: 130,
@@ -199,6 +201,55 @@ function SelectionDemo() {
         selectionMode="multiselect"
         selectedItems={selected}
         onSelectionChange={(_, data) => setSelected(data.selectedItems)}
+        size="small"
+        className="rounded-xlarge border border-stroke-2"
+      />
+    </div>
+  );
+}
+// #endregion
+
+// #region ColumnsDemo
+const HIDDEN_COLUMNS_KEY = "orders.hiddenColumns";
+
+function loadHiddenColumns(): ReadonlySet<string> {
+  try {
+    return new Set(JSON.parse(localStorage.getItem(HIDDEN_COLUMNS_KEY) ?? '["id"]'));
+  } catch {
+    return new Set(["id"]);
+  }
+}
+
+function ColumnsDemo() {
+  const [hiddenColumns, setHiddenColumns] = useState(loadHiddenColumns);
+  const [sortState, setSortState] = useState<DataGridSortState>({ sortColumn: "date", sortDirection: "descending" });
+
+  return (
+    <div className="flex w-full flex-col gap-2">
+      <Toolbar aria-label="Bảng đơn hàng" className="justify-end px-0">
+        <DataGridColumnPicker
+          columns={orderColumns}
+          hiddenColumns={hiddenColumns}
+          onHiddenColumnsChange={(_, data) => {
+            setHiddenColumns(data.hiddenColumns);
+            try {
+              localStorage.setItem(HIDDEN_COLUMNS_KEY, JSON.stringify([...data.hiddenColumns]));
+            } catch {
+              // Không lưu được (chế độ riêng tư, hết dung lượng): lựa chọn vẫn dùng được trong phiên này.
+            }
+          }}
+          sortState={sortState}
+        />
+      </Toolbar>
+      <DataGrid
+        aria-label="Đơn hàng theo cột đã chọn"
+        items={ORDERS.slice(0, 6)}
+        columns={orderColumns}
+        getRowId={(order) => order.id}
+        hiddenColumns={hiddenColumns}
+        sortable
+        sortState={sortState}
+        onSortChange={(_, next) => setSortState(next)}
         size="small"
         className="rounded-xlarge border border-stroke-2"
       />
@@ -310,11 +361,11 @@ const CITIES: City[] = [
 ];
 
 const cityColumns = [
-  createColumn<City>({ columnId: "name", renderHeaderCell: () => "المدينة", renderCell: (c) => c.name, compare: (a, b) => a.name.localeCompare(b.name, "ar") }),
-  createColumn<City>({ columnId: "country", renderHeaderCell: () => "الدولة", renderCell: (c) => c.country }),
+  createColumn<City>({ columnId: "name", label: "المدينة", renderCell: (c) => c.name, compare: (a, b) => a.name.localeCompare(b.name, "ar") }),
+  createColumn<City>({ columnId: "country", label: "الدولة", renderCell: (c) => c.country }),
   createColumn<City>({
     columnId: "population",
-    renderHeaderCell: () => "السكان (ألف)",
+    label: "السكان (ألف)",
     renderCell: (c) => c.population.toLocaleString("ar"),
     compare: (a, b) => a.population - b.population,
     align: "end",
@@ -349,9 +400,10 @@ export const docs: ComponentDoc[] = [
     category: "Hiển thị dữ liệu",
     lead: "DataGrid là lưới dữ liệu tương tác: sắp xếp, chọn hàng, kéo đổi độ rộng cột và ảo hoá cho hàng chục nghìn hàng.",
     description:
-      "Tương đương DataGrid của Fluent 2. Khai báo cột bằng createColumn<T>() (renderHeaderCell, renderCell, compare, width…), truyền items + getRowId. Lưới có role=\"grid\" với aria-rowcount / aria-rowindex đúng cả khi ảo hoá, một tab stop duy nhất (roving tabindex): mũi tên đi từng ô (đảo trái / phải trong RTL), Home / End, Ctrl + Home / End, PageUp / PageDown; Space chọn hàng, Shift + mũi tên hoặc Shift + click chọn theo khoảng. Tiêu đề sticky; loading hiện khung xương theo Wait UX (useSpinDelay), không có hàng thì hiện Empty. Logic dùng lại được qua useDataGridSort, useDataGridSelection và hàm thuần sortItems.",
+      "Tương đương DataGrid của Fluent 2. Khai báo cột bằng createColumn<T>() (label, renderCell, compare, width…), truyền items + getRowId. Lưới có role=\"grid\" với aria-rowcount / aria-rowindex đúng cả khi ảo hoá, một tab stop duy nhất (roving tabindex): mũi tên đi từng ô (đảo trái / phải trong RTL), Home / End, Ctrl + Home / End, PageUp / PageDown; Space chọn hàng, Shift + mũi tên hoặc Shift + click chọn theo khoảng. Người dùng tự chọn cột hiển thị bằng DataGridColumnPicker (hiddenColumns). Tiêu đề sticky; loading hiện khung xương theo Wait UX (useSpinDelay), không có hàng thì hiện Empty. Logic dùng lại được qua useDataGridSort, useDataGridSelection, useDataGridColumnVisibility và các hàm thuần sortItems, getVisibleColumns.",
     importCode: `import {
-  DataGrid, createColumn, sortItems, useDataGridSort, useDataGridSelection,
+  DataGrid, DataGridColumnPicker, createColumn, sortItems, getVisibleColumns,
+  useDataGridSort, useDataGridSelection, useDataGridColumnVisibility,
   type DataGridColumn, type DataGridSortState,
 } from "@/components/ui";`,
     hero: {
@@ -374,6 +426,13 @@ export const docs: ComponentDoc[] = [
         code: source("SelectionDemo"),
         setup: source("data"),
         render: () => <SelectionDemo />,
+      },
+      {
+        title: "Chọn cột hiển thị",
+        description: "DataGridColumnPicker và DataGrid dùng chung hiddenColumns, lựa chọn được lưu vào localStorage. Menu không đóng khi tích từng cột; cột hideable: false (Khách hàng) và cột hiện cuối cùng không bỏ tích được. Ẩn cột đang sắp xếp không đổi thứ tự hàng; menu vẫn hiện mũi tên ở cột đó.",
+        code: source("ColumnsDemo"),
+        setup: source("data"),
+        render: () => <ColumnsDemo />,
       },
       {
         title: "Đổi độ rộng cột, ghim cột đầu",
@@ -416,7 +475,8 @@ export const docs: ComponentDoc[] = [
     ],
     props: [
       { name: "items", type: "readonly T[]", description: "Dữ liệu theo thứ tự gốc; T được suy ra cho columns và getRowId." },
-      { name: "columns", type: "DataGridColumn<T>[]", description: "Tạo bằng createColumn<T>({ columnId, renderHeaderCell, renderCell, compare?, width?, minWidth?, maxWidth?, resizable?, align?, sticky? })." },
+      { name: "columns", type: "DataGridColumn<T>[]", description: "Tạo bằng createColumn<T>({ columnId, label?, renderHeaderCell?, renderCell, compare?, width?, minWidth?, maxWidth?, resizable?, align?, sticky?, hideable? }). label là tiêu đề dạng chữ và tên trong DataGridColumnPicker; renderHeaderCell khi tiêu đề cần hơn chữ." },
+      { name: "hiddenColumns", type: "ReadonlySet<string>", description: "Id các cột không hiển thị. Cột hideable: false luôn hiện; ẩn hết thì giữ cột đầu. Cột ẩn giữ độ rộng đã kéo và vẫn sắp xếp nếu đang là cột sắp xếp; focus chuyển sang cột kế bên khi cột đang focus bị ẩn." },
       { name: "getRowId", type: "(item: T) => string", description: "Id ổn định của hàng (key, lựa chọn)." },
       { name: "size", type: `"small" | "medium" | "large"`, defaultValue: `"medium"`, description: "Chiều cao hàng 34 / 44 / 56px." },
       { name: "sortable", type: "boolean", defaultValue: "false", description: "Bấm / Enter / Space trên tiêu đề cột có compare để sắp xếp (cùng cột → đảo chiều)." },
@@ -437,7 +497,12 @@ export const docs: ComponentDoc[] = [
       { name: "focusMode", type: `"cell" | "row"`, defaultValue: `"cell"`, description: "Mũi tên đi từng ô hoặc từng hàng." },
       { name: "loading", type: "boolean", defaultValue: "false", description: "Khung xương sau 300ms, giữ ≥ 500ms (useSpinDelay); aria-busy trên lưới." },
       { name: "empty", type: "ReactNode", description: "Nội dung khi không có hàng; mặc định Empty \"Không có dữ liệu\"." },
-      { name: "useDataGridSort / useDataGridSelection / sortItems", type: "hook / hook / (items, columns, sortState) => T[]", description: "Logic dùng riêng được — ví dụ để sắp xếp phía server hoặc điều khiển lựa chọn từ toolbar." },
+      { name: "DataGridColumnPicker.columns", type: "DataGridColumn<T>[] | { columnId, label?, hideable? }[]", description: "Cùng mảng cột truyền cho DataGrid; với Table là mảng { columnId, label }. Tên trong menu là label." },
+      { name: "DataGridColumnPicker.hiddenColumns", type: "ReadonlySet<string>", description: "Id các cột đang ẩn — cùng giá trị truyền cho DataGrid." },
+      { name: "DataGridColumnPicker.onHiddenColumnsChange", type: "(event, { hiddenColumns: Set<string> }) => void", description: "Gọi khi người dùng tích / bỏ tích hoặc chọn Hiện tất cả cột. Id của cột tạm không có trong columns được giữ nguyên để lưu lại." },
+      { name: "DataGridColumnPicker.sortState", type: "DataGridSortState", description: "Cột đang sắp xếp có mũi tên trong menu, kể cả khi đang ẩn." },
+      { name: "DataGridColumnPicker.align", type: `"start" | "center" | "end"`, defaultValue: `"end"`, description: "Căn menu theo nút. Trong Toolbar nút tự lấy size của Toolbar và appearance subtle." },
+      { name: "useDataGridSort / useDataGridSelection / useDataGridColumnVisibility / sortItems / getVisibleColumns", type: "hook / hook / hook / (items, columns, sortState) => T[] / (columns, hiddenColumns) => columns", description: "Logic dùng riêng được — ví dụ để sắp xếp phía server, điều khiển lựa chọn từ toolbar hoặc tự làm nút chọn cột." },
     ],
   },
 ];
