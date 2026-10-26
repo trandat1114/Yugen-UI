@@ -12,12 +12,14 @@ Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. 
 
 ### 0.12.0 · minor · hạn 2026-11-27
 
-Chọn cột hiển thị trong DataGrid, cùng các sửa lỗi giao diện nhỏ.
+Chọn cột hiển thị trong DataGrid, sửa lỗi giao diện nhỏ và các template mới.
 
 - [x] DataGrid: người dùng tự chọn cột hiển thị (DataGridColumnPicker) (#203)
 - [x] ContextMenu, Menubar và menu con cuộn trong màn hình (#205)
 - [x] Nút chỉ hiện khi rê chuột luôn hiện trên màn hình cảm ứng (#206)
 - [x] Số trong DataGrid và Table thẳng hàng (#207)
+- [ ] Template mới: Landing, Admin, Next.js, Docs, Storefront, Glass (#151)
+- [ ] Template SaaS có URL theo đường dẫn, cấu hình deploy cho host tĩnh (#150)
 
 ### 1.0.0 · major
 
@@ -33,7 +35,6 @@ API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện
 
 Chưa xếp lịch.
 
-- [ ] Template mới: Landing, Admin, Next.js, Docs, Storefront, Glass (#151)
 - [ ] Vật liệu glass cho thanh điều hướng và control (lấy cảm hứng từ Liquid Glass) (#178)
 - [ ] Đăng ký @yugen vào danh mục registry của shadcn (#68)
 - [ ] Đang cân nhắc: bộ Figma, gói icon Sakura

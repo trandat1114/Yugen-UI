@@ -38,13 +38,15 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       milestone: "0.12.0",
       kind: "minor",
       due: "2026-11-27",
-      vi: "Chọn cột hiển thị trong DataGrid, cùng các sửa lỗi giao diện nhỏ.",
-      en: "Choosing DataGrid columns, plus small UI fixes.",
+      vi: "Chọn cột hiển thị trong DataGrid, sửa lỗi giao diện nhỏ và các template mới.",
+      en: "Choosing DataGrid columns, small UI fixes and new templates.",
       items: [
         { status: "done", issue: 203, vi: "DataGrid: người dùng tự chọn cột hiển thị (DataGridColumnPicker)", en: "DataGrid: people choose which columns are shown (DataGridColumnPicker)" },
         { status: "done", issue: 205, vi: "ContextMenu, Menubar và menu con cuộn trong màn hình", en: "ContextMenu, Menubar and submenus scroll inside the viewport" },
         { status: "done", issue: 206, vi: "Nút chỉ hiện khi rê chuột luôn hiện trên màn hình cảm ứng", en: "Hover-only buttons always visible on touch screens" },
         { status: "done", issue: 207, vi: "Số trong DataGrid và Table thẳng hàng", en: "Numbers line up in DataGrid and Table" },
+        { status: "planned", issue: 151, vi: "Template mới: Landing, Admin, Next.js, Docs, Storefront, Glass", en: "New templates: Landing, Admin, Next.js, Docs, Storefront, Glass" },
+        { status: "planned", issue: 150, vi: "Template SaaS có URL theo đường dẫn, cấu hình deploy cho host tĩnh", en: "Path URLs in the SaaS template, deploy configs for static hosts" },
       ],
     },
     {
@@ -66,7 +68,6 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       vi: "Chưa xếp lịch.",
       en: "Not scheduled yet.",
       items: [
-        { status: "planned", issue: 151, vi: "Template mới: Landing, Admin, Next.js, Docs, Storefront, Glass", en: "New templates: Landing, Admin, Next.js, Docs, Storefront, Glass" },
         { status: "planned", issue: 178, vi: "Vật liệu glass cho thanh điều hướng và control (lấy cảm hứng từ Liquid Glass)", en: "Glass material for navigation and controls (inspired by Liquid Glass)" },
         { status: "planned", issue: 68, vi: "Đăng ký @yugen vào danh mục registry của shadcn", en: "Register @yugen in the shadcn registry index" },
         { status: "planned", vi: "Đang cân nhắc: bộ Figma, gói icon Sakura", en: "Under consideration: Figma kit, Sakura icon set" },
