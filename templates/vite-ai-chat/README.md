@@ -77,10 +77,16 @@ export async function POST(request: Request) {
 
 ## Deploy
 
-`npm run build` and upload `dist/` to any static host. The app uses real paths such as `/c/<id>`, so the host must
-answer unknown paths with `index.html`: on Netlify add `/* /index.html 200` to `public/_redirects`, on Vercel add a
-rewrite to `/index.html`, on GitHub Pages copy `dist/index.html` to `dist/404.html`. Under a sub-path, build with
-`npx vite build --base=/my-app/`.
+`npm run build` and upload `dist/` to a static host. Pages are real paths, so a deep link such as `/settings` must
+get the app back from the host:
+
+- **Netlify**: nothing to do, `public/_redirects` sends unknown paths to `index.html`.
+- **Vercel**: nothing to do, `vercel.json` has the same rewrite.
+- **Cloudflare Pages**: nothing to do, it serves the app for unknown paths when there is no `404.html`.
+- **GitHub Pages**: `npm run build:gh-pages` also writes `dist/404.html`, which GitHub Pages serves for unknown
+  paths. For a project site, add the repository name: `npm run build:gh-pages -- --base=/my-repo/`.
+
+Under a sub-path on another host, build with `npm run build -- --base=/my-app/`.
 
 ## Structure
 

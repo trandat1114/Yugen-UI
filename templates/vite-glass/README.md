@@ -43,6 +43,19 @@ from the [Lorem Picsum](https://picsum.photos) list, in AVIF at 640 and 1280px w
 Yoni Kaplan-Nadel, Margaret Barley, Go Wild, Jeffrey Kam, Jerry Adney and Paul Jarvis. Replace them with your own in
 `src/photos.ts`.
 
+## Deploy
+
+`npm run build` and upload `dist/` to a static host. Pages are real paths, so a deep link such as `/settings` must
+get the app back from the host:
+
+- **Netlify**: nothing to do, `public/_redirects` sends unknown paths to `index.html`.
+- **Vercel**: nothing to do, `vercel.json` has the same rewrite.
+- **Cloudflare Pages**: nothing to do, it serves the app for unknown paths when there is no `404.html`.
+- **GitHub Pages**: `npm run build:gh-pages` also writes `dist/404.html`, which GitHub Pages serves for unknown
+  paths. For a project site, add the repository name: `npm run build:gh-pages -- --base=/my-repo/`.
+
+Under a sub-path on another host, build with `npm run build -- --base=/my-app/`.
+
 ## Structure
 
 ```

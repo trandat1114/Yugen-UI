@@ -45,8 +45,16 @@ Create it in `src/Dashboard.tsx` instead of `createMockApi`, and delete the mock
 
 ## Deploy
 
-`npm run build`, then put `dist/` on any static host. Pages are real paths, so let the host serve `index.html` for
-unknown paths (Netlify `_redirects`, Vercel rewrites, or a copy of `index.html` as `404.html` on GitHub Pages).
+`npm run build` and upload `dist/` to a static host. Pages are real paths, so a deep link such as `/settings` must
+get the app back from the host:
+
+- **Netlify**: nothing to do, `public/_redirects` sends unknown paths to `index.html`.
+- **Vercel**: nothing to do, `vercel.json` has the same rewrite.
+- **Cloudflare Pages**: nothing to do, it serves the app for unknown paths when there is no `404.html`.
+- **GitHub Pages**: `npm run build:gh-pages` also writes `dist/404.html`, which GitHub Pages serves for unknown
+  paths. For a project site, add the repository name: `npm run build:gh-pages -- --base=/my-repo/`.
+
+Under a sub-path on another host, build with `npm run build -- --base=/my-app/`.
 
 ## Size
 

@@ -53,6 +53,8 @@ const TEMPLATES = [
       "A SaaS app built with Yugen UI: sidebar, Ctrl K command palette, notifications, light / dark / high-contrast themes and 8 sample pages.",
     lang: "en",
     app: "saas",
+    /** Route là đường dẫn thật, app một trang: kèm _redirects, vercel.json, build:gh-pages và mục Deploy (#150). */
+    spa: true,
     /** Khoá localStorage của script chống nháy — trùng STORAGE_KEY trong App.tsx. */
     storageKey: "yugen-saas-appearance",
   },
@@ -81,6 +83,7 @@ const TEMPLATES = [
     description: "A sales dashboard built with Yugen UI: one date range for every chart, KPIs, a customer table and a mock API.",
     lang: "en",
     app: "dashboard",
+    spa: true,
     storageKey: "yugen-dashboard-appearance",
   },
   {
@@ -94,6 +97,7 @@ const TEMPLATES = [
       "An AI chat app built with Yugen UI: saved conversations, streaming Markdown answers with reasoning, steps and sources, and one adapter for your backend.",
     lang: "en",
     app: "ai-chat",
+    spa: true,
     storageKey: "yugen-ai-chat-appearance",
   },
   {
@@ -109,6 +113,7 @@ const TEMPLATES = [
       "A travel journal built with Yugen UI: full-bleed photos with a glass sidebar, tab bar, toolbars and sheets floating above them, opaque when transparency is reduced.",
     lang: "en",
     app: "glass",
+    spa: true,
     storageKey: "yugen-glass-appearance",
   },
 ];
@@ -253,6 +258,21 @@ const generatedFrom = (t) =>
     ? `Files in \`src/\` are generated from \`src/docs/template-library/${t.app}\` (and \`src/docs/block-library\`) by \`scripts/sync-templates.mjs\`.`
     : `File trong \`src/\` sinh từ \`src/docs/template-library/${t.app}\` (và \`src/docs/block-library\`) bằng \`scripts/sync-templates.mjs\`.`;
 
+/** Mục "Deploy" của template SPA: route là đường dẫn thật, nên host phải trả app cho đường dẫn lạ (#150). */
+const deploy = () => `## Deploy
+
+\`npm run build\` and upload \`dist/\` to a static host. Pages are real paths, so a deep link such as \`/settings\` must
+get the app back from the host:
+
+- **Netlify**: nothing to do, \`public/_redirects\` sends unknown paths to \`index.html\`.
+- **Vercel**: nothing to do, \`vercel.json\` has the same rewrite.
+- **Cloudflare Pages**: nothing to do, it serves the app for unknown paths when there is no \`404.html\`.
+- **GitHub Pages**: \`npm run build:gh-pages\` also writes \`dist/404.html\`, which GitHub Pages serves for unknown
+  paths. For a project site, add the repository name: \`npm run build:gh-pages -- --base=/my-repo/\`.
+
+Under a sub-path on another host, build with \`npm run build -- --base=/my-app/\`.
+`;
+
 const README = {
   starter: (t) => `# ${t.appTitle ?? t.title}
 
@@ -364,7 +384,8 @@ ${install(t.dir, "en")}
   reload (a small script in \`index.html\`).
 - 8 sample pages: Overview, Analytics, AI assistant, Inbox, Calendar, Team, Billing and Settings. Each page loads on
   demand; the others are fetched while the browser is idle.
-- Hash routing (\`#/analytics\`) with no extra library; the tab title and \`<meta name="description">\` follow the page.
+- Real paths with the History API (\`/analytics\`, \`/settings\`), no extra library; old \`#/analytics\` links still open
+  the right page. The tab title and \`<meta name="description">\` follow the page.
 - SEO basics: \`description\`, Open Graph, \`theme-color\`, \`robots.txt\`.
 - English text and sample data in \`src/content/\`. For Vietnamese, create the app with
   \`npx create-yugen-ui@latest my-app --template saas --lang vi\`.
@@ -373,7 +394,8 @@ ${install(t.dir, "en")}
 
 \`\`\`
 src/
-  App.tsx             # root: YugenProvider, hash routing, saved theme, page title
+  App.tsx             # root: YugenProvider, routing, saved theme, page title
+  routes.ts           # / · /<page>: path ⇄ page
   AppShell.tsx        # layout: sidebar, top bar, Drawer, content
   CommandPalette.tsx  # Ctrl K command palette
   pages.tsx           # page list: one entry per page in the sidebar and the command palette
@@ -388,9 +410,10 @@ src/
   \`pages\` in \`src/content/<lang>.ts\`, then add an entry to \`PAGES\` in \`src/pages.tsx\`.
 - **Change the default brand**: replace \`"sakura"\` in \`index.html\` and \`App.tsx\`; make your own palette in
   [Theme Designer](https://trandat1114.github.io/Yugen-UI/#/theme-designer).
-- **Use a real router** (React Router, TanStack Router): replace \`pageFromHash\` / \`navigate\` in \`App.tsx\` and pass the
-  router's \`href\` to \`NavItem\` (\`asChild\`).
+- **Use a router library** (React Router, TanStack Router): replace \`initialPage\` / \`navigate\` in \`App.tsx\` and
+  pass the router's link to \`NavItem\` (\`asChild\`).
 
+${deploy()}
 ${generatedFrom(t)}
 `,
   dashboard: (t) => `# ${t.appTitle ?? t.title}
@@ -430,11 +453,7 @@ const api: DashboardApi = {
 Create it in \`src/Dashboard.tsx\` instead of \`createMockApi\`, and delete the mock API card in \`src/pages/Settings.tsx\`.
 \`useQuery\` (\`src/useQuery.ts\`) cancels stale requests; swap it for TanStack Query or SWR if you need caching.
 
-## Deploy
-
-\`npm run build\`, then put \`dist/\` on any static host. Pages are real paths, so let the host serve \`index.html\` for
-unknown paths (Netlify \`_redirects\`, Vercel rewrites, or a copy of \`index.html\` as \`404.html\` on GitHub Pages).
-
+${deploy()}
 ## Size
 
 \`npm run build\` with yugen-ui 0.10, gzip: about 217 kB of JavaScript on first load (React 68 kB, other libraries
@@ -525,13 +544,7 @@ export async function POST(request: Request) {
   sent in this session. JSON can't carry files: upload them first, for example with \`FormData\`, and send a reference.
 - Settings > Backend > Fail replies makes the mock throw, so you can check the error state.
 
-## Deploy
-
-\`npm run build\` and upload \`dist/\` to any static host. The app uses real paths such as \`/c/<id>\`, so the host must
-answer unknown paths with \`index.html\`: on Netlify add \`/* /index.html 200\` to \`public/_redirects\`, on Vercel add a
-rewrite to \`/index.html\`, on GitHub Pages copy \`dist/index.html\` to \`dist/404.html\`. Under a sub-path, build with
-\`npx vite build --base=/my-app/\`.
-
+${deploy()}
 ## Structure
 
 \`\`\`
@@ -587,6 +600,7 @@ from the [Lorem Picsum](https://picsum.photos) list, in AVIF at 640 and 1280px w
 Yoni Kaplan-Nadel, Margaret Barley, Go Wild, Jeffrey Kam, Jerry Adney and Paul Jarvis. Replace them with your own in
 \`src/photos.ts\`.
 
+${deploy()}
 ## Structure
 
 \`\`\`
@@ -617,6 +631,29 @@ ${install(t.dir)}
 File trong \`src/blocks/\` sinh từ \`src/docs/block-library\` bằng \`scripts/sync-templates.mjs\` — sửa thoải mái trong dự án của bạn.
 `;
 
+/** Plugin trong vite.config.ts của template SPA: `npm run build:gh-pages` chép index.html thành 404.html (#150). */
+const GH_PAGES_PLUGIN = `
+/**
+ * \`npm run build:gh-pages\` (mode gh-pages): GitHub Pages answers unknown paths with 404.html, so the app is copied
+ * there too and a deep link such as /settings opens the right page. Other hosts: see Deploy in README.md.
+ */
+function githubPagesFallback(): Plugin {
+  let outDir = "dist";
+  let enabled = false;
+  return {
+    name: "github-pages-fallback",
+    apply: "build",
+    configResolved(config) {
+      outDir = path.resolve(config.root, config.build.outDir);
+      enabled = config.mode === "gh-pages";
+    },
+    closeBundle() {
+      if (enabled) fs.copyFileSync(path.join(outDir, "index.html"), path.join(outDir, "404.html"));
+    },
+  };
+}
+`;
+
 const ALIAS_CONFIG = `
   // import { Foo } from "@/components/Foo" thay cho đường dẫn tương đối dài (khai báo cả trong tsconfig.json).
   resolve: { alias: { "@": path.resolve(import.meta.dirname, "./src") } },`;
@@ -633,7 +670,12 @@ function files(t) {
           name: t.dir,
           private: true,
           type: "module",
-          scripts: { dev: "vite", build: "tsc -b && vite build", preview: "vite preview" },
+          scripts: {
+            dev: "vite",
+            build: "tsc -b && vite build",
+            ...(t.spa && { "build:gh-pages": "tsc -b && vite build --mode gh-pages" }),
+            preview: "vite preview",
+          },
           dependencies: {
             "@fluentui/react-icons": pkg.dependencies["@fluentui/react-icons"],
             // React và type theo devDependencies ở gốc repo (cùng bản mà docs và test chạy).
@@ -657,12 +699,12 @@ function files(t) {
         2,
       ) + "\n",
     "index.html": indexHtml({ ...t, jpChars }),
-    "vite.config.ts": `${t.alias ? 'import path from "node:path";\n' : ""}import { defineConfig } from "vite";
+    "vite.config.ts": `${t.spa ? 'import fs from "node:fs";\n' : ""}${t.alias || t.spa ? 'import path from "node:path";\n' : ""}import { defineConfig${t.spa ? ", type Plugin" : ""} } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
-
+${t.spa ? GH_PAGES_PLUGIN : ""}
 export default defineConfig({
-  plugins: [react(), tailwindcss()],${t.alias ? ALIAS_CONFIG : ""}
+  plugins: [react(), tailwindcss()${t.spa ? ", githubPagesFallback()" : ""}],${t.alias ? ALIAS_CONFIG : ""}
   build: {
     rolldownOptions: {
       output: {
@@ -703,6 +745,10 @@ export default defineConfig({
         2,
       ) + "\n",
     ".gitignore": "node_modules\ndist\n*.local\n",
+    ...(t.spa && {
+      "public/_redirects": "# Netlify: unknown paths get the app (real files still win). See Deploy in README.md.\n/*    /index.html   200\n",
+      "vercel.json": JSON.stringify({ rewrites: [{ source: "/(.*)", destination: "/index.html" }] }, null, 2) + "\n",
+    }),
     "public/favicon.svg": read(path.join(root, "public/favicon.svg")),
     "public/robots.txt": "User-agent: *\nAllow: /\n",
     "src/index.css": `@import "tailwindcss";\n@import "yugen-ui/theme.css";\n`,

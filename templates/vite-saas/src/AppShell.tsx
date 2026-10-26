@@ -46,7 +46,8 @@ import {
 import { BRANDS, CommandPalette, THEMES } from "./CommandPalette";
 import defaultContent from "./content";
 import type { Content } from "./content/types";
-import { PAGE_BY_ID, PAGES, isPageId, type PageId } from "./pages";
+import { PAGE_BY_ID, PAGES, type PageId } from "./pages";
+import { isPlainClick, pathOf } from "./routes";
 
 export interface Appearance {
   theme: YugenTheme;
@@ -81,7 +82,19 @@ function Logo() {
 
 function SidebarContent({ t, page, onSelect, embedded }: { t: Content; page: PageId; onSelect: (page: PageId) => void; embedded?: boolean }) {
   const item = (p: (typeof PAGES)[number]) => (
-    <NavItem key={p.id} value={p.id} icon={p.icon} href={embedded ? undefined : `#/${p.id}`}>
+    <NavItem
+      key={p.id}
+      value={p.id}
+      icon={p.icon}
+      href={embedded ? undefined : pathOf(p.id)}
+      // Click thường: đổi trang ngay trong app (không tải lại); Ctrl / ⌘ + click vẫn mở tab mới với đường dẫn thật.
+      onClick={(e) => {
+        if (embedded || isPlainClick(e)) {
+          e.preventDefault();
+          onSelect(p.id);
+        }
+      }}
+    >
       <span className="flex items-center gap-2">
         <span className="min-w-0 truncate">{t.pages[p.id].label}</span>
         {p.badge ? <CounterBadge count={p.badge} size="small" className="ms-auto" /> : null}
@@ -92,7 +105,7 @@ function SidebarContent({ t, page, onSelect, embedded }: { t: Content; page: Pag
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className="min-h-0 flex-1 overflow-y-auto px-2 py-3">
-        <Nav selectedValue={page} onNavItemSelect={(v) => isPageId(v) && onSelect(v)} aria-label={t.shell.nav}>
+        <Nav selectedValue={page} aria-label={t.shell.nav}>
           <NavSectionHeader>{t.shell.workspace}</NavSectionHeader>
           {PAGES.filter((p) => p.section === "workspace").map(item)}
           <NavSectionHeader>{t.shell.manage}</NavSectionHeader>

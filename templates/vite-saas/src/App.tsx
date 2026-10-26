@@ -2,15 +2,18 @@ import * as React from "react";
 import { YugenProvider, type YugenBrand, type YugenTheme } from "yugen-ui";
 import { AppShell, type Appearance } from "./AppShell";
 import content from "./content";
-import { isPageId, preloadPages, type PageId } from "./pages";
+import { preloadPages, type PageId } from "./pages";
+import { pageFromLegacyHash, pageFromPath, pathOf } from "./routes";
 
 /** Cùng khoá với script chống nháy trong index.html. */
 const STORAGE_KEY = "yugen-saas-appearance";
 
-const pageFromHash = (): PageId => {
-  const id = window.location.hash.replace(/^#\/?/, "");
-  return isPageId(id) ? id : "overview";
-};
+/** Trang lúc mở app. Link kiểu cũ `#/billing` và đường dẫn lạ được thay bằng đường dẫn đúng (không thêm mục lịch sử). */
+function initialPage(): PageId {
+  const page = pageFromLegacyHash(window.location.hash) ?? pageFromPath(window.location.pathname) ?? "overview";
+  if (window.location.pathname !== pathOf(page) || window.location.hash) window.history.replaceState(null, "", pathOf(page));
+  return page;
+}
 
 function initialAppearance(): Appearance {
   // Script trong index.html đã đặt data-theme / data-brand trước khi React chạy — đọc lại cho khớp.
@@ -22,7 +25,7 @@ function initialAppearance(): Appearance {
 }
 
 export default function App() {
-  const [page, setPage] = React.useState(pageFromHash);
+  const [page, setPage] = React.useState(initialPage);
   const [appearance, setAppearance] = React.useState(initialAppearance);
 
   // Trang đang mở nạp trước; các trang còn lại nạp khi trình duyệt rảnh.
@@ -31,10 +34,11 @@ export default function App() {
     return () => (window.cancelIdleCallback ? window.cancelIdleCallback(id) : window.clearTimeout(id));
   }, []);
 
+  // Back / Forward của trình duyệt.
   React.useEffect(() => {
-    const onHashChange = () => setPage(pageFromHash());
-    window.addEventListener("hashchange", onHashChange);
-    return () => window.removeEventListener("hashchange", onHashChange);
+    const onPopState = () => setPage(pageFromPath(window.location.pathname) ?? "overview");
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
   }, []);
 
   React.useEffect(() => {
@@ -53,7 +57,7 @@ export default function App() {
   }, [page]);
 
   const navigate = (next: PageId) => {
-    if (window.location.hash !== `#/${next}`) window.location.hash = `/${next}`;
+    if (window.location.pathname !== pathOf(next)) window.history.pushState(null, "", pathOf(next));
     setPage(next);
   };
 

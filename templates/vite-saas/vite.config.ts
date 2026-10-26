@@ -1,9 +1,31 @@
-import { defineConfig } from "vite";
+import fs from "node:fs";
+import path from "node:path";
+import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
+/**
+ * `npm run build:gh-pages` (mode gh-pages): GitHub Pages answers unknown paths with 404.html, so the app is copied
+ * there too and a deep link such as /settings opens the right page. Other hosts: see Deploy in README.md.
+ */
+function githubPagesFallback(): Plugin {
+  let outDir = "dist";
+  let enabled = false;
+  return {
+    name: "github-pages-fallback",
+    apply: "build",
+    configResolved(config) {
+      outDir = path.resolve(config.root, config.build.outDir);
+      enabled = config.mode === "gh-pages";
+    },
+    closeBundle() {
+      if (enabled) fs.copyFileSync(path.join(outDir, "index.html"), path.join(outDir, "404.html"));
+    },
+  };
+}
+
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), githubPagesFallback()],
   build: {
     rolldownOptions: {
       output: {
