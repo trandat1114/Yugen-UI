@@ -178,6 +178,10 @@ export default function Page() {
         description="Các bước ở trang Bắt đầu nhanh vẫn đúng; chỉ khác plugin Tailwind và nơi đặt CSS."
       >
         <div className="flex flex-col gap-4">
+          <MessageBar intent="info" title="Có sẵn template:" className="max-w-3xl">
+            <C>npx create-yugen-ui@latest my-app --template next-starter</C> tạo app App Router đã làm sẵn các bước dưới đây,
+            theme lưu trong cookie để server render đúng theme ngay từ HTML đầu tiên.
+          </MessageBar>
           <CodeBlock code={SETUP_CODE} />
           <CodeBlock code={POSTCSS_CODE} />
           <CodeBlock code={GLOBALS_CODE} />

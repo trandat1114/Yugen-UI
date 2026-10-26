@@ -33,7 +33,8 @@ describe.skipIf(!version.startsWith("19."))("prerender docs", () => {
     // Ảnh chia sẻ: og/<đường dẫn>.jpg (scripts/og-pages.mjs), trang chủ dùng og.jpg.
     expect(page.head.image).toBe(page.path ? `og/${page.path}.jpg` : "og.jpg");
     expect(page.card.title).toBe(h1);
-  });
+    // Trang Templates render mọi bản xem trước template: quá 5 s khi cả bộ test chạy song song.
+  }, 15_000);
 
   it("bản tiếng Anh: link nội bộ giữ /en/, hreflang; trang chưa dịch trỏ canonical về bản tiếng Việt (#123)", async () => {
     const cli = await render({ kind: "concept", slug: "cli" }, "en");

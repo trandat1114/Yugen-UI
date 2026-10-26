@@ -118,5 +118,25 @@
         "description": "Nhật ký du lịch dựng bằng Yugen UI: ảnh tràn viền, sidebar, thanh tab và menu glass nổi trên ảnh, nền đặc khi giảm trong suốt."
       }
     }
+  },
+  {
+    "dir": "next-starter",
+    "name": "next-starter",
+    "title": "Next.js starter",
+    "hint": "Next.js App Router: theme in a cookie (no flash), metadata per page, next/font",
+    "budget": {
+      "js": 265,
+      "css": 27
+    },
+    "meta": {
+      "en": {
+        "title": "My app",
+        "description": "A Next.js App Router project with Yugen UI: theme in a cookie so the server renders it, metadata per page, next/font."
+      },
+      "vi": {
+        "title": "Ứng dụng của tôi",
+        "description": "Dự án Next.js App Router với Yugen UI: theme lưu trong cookie để server render đúng, metadata theo trang, next/font."
+      }
+    }
   }
 ]

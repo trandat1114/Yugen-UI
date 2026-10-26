@@ -1,0 +1,8 @@
+@import "tailwindcss";
+@import "yugen-ui/theme.css";
+
+/* Yugen's base font becomes Noto Sans from next/font (src/app/layout.tsx), with the usual system fonts as fallback.
+   Remove this block to keep the Fluent font stack. */
+:root {
+  --fontFamilyBase: var(--font-noto-sans), "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+}
