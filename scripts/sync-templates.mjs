@@ -3,7 +3,8 @@
  * Sinh starter template trong templates/ từ mã có sẵn trên docs, đổi import "@/components/ui" → "yugen-ui":
  *   - blocks: các block trong src/docs/block-library xếp dọc trong main.tsx
  *   - app:    một ứng dụng đầy đủ trong src/docs/template-library/<app>/ (App.tsx là gốc) — block nó import được chép kèm.
- *             Mọi file (kể cả thư mục con như posts/*.md) vào src/, trừ vite.config.ts → gốc template (import "./x" → "./src/x").
+ *             Mọi file (kể cả thư mục con như posts/*.md, ảnh như photos/*.avif) vào src/, trừ vite.config.ts → gốc
+ *             template (import "./x" → "./src/x"). Ảnh được chép nguyên byte.
  * Template luôn khớp docs (trang #/templates xem trước chính các file này); sửa nguồn rồi chạy lại script.
  *
  *   node scripts/sync-templates.mjs           # ghi lại templates/
@@ -95,6 +96,21 @@ const TEMPLATES = [
     app: "ai-chat",
     storageKey: "yugen-ai-chat-appearance",
   },
+  {
+    dir: "vite-glass",
+    vi: {
+      appTitle: "Sakura Journeys",
+      description: "Nhật ký du lịch dựng bằng Yugen UI: ảnh tràn viền, sidebar, thanh tab và menu glass nổi trên ảnh, nền đặc khi giảm trong suốt.",
+    },
+    hint: "Travel journal: full-bleed photos with glass navigation (Yugen Labs)",
+    title: "Glass",
+    appTitle: "Sakura Journeys",
+    description:
+      "A travel journal built with Yugen UI: full-bleed photos with a glass sidebar, tab bar, toolbars and sheets floating above them, opaque when transparency is reduced.",
+    lang: "en",
+    app: "glass",
+    storageKey: "yugen-glass-appearance",
+  },
 ];
 
 const BLOCK_DIR = path.join(root, "src/docs/block-library");
@@ -102,6 +118,9 @@ const APP_DIR = path.join(root, "src/docs/template-library");
 const BLOCK_IMPORT = /(["'])@\/docs\/block-library\/(?:\d+-)?([\w-]+?)(?:\.tsx)?\1/g;
 
 const read = (file) => fs.readFileSync(file, "utf8").replace(/\r\n/g, "\n");
+/** Ảnh của template app: chép nguyên byte (Buffer), không qua toYugen. */
+const ASSET = /\.(avif|webp|png|jpe?g|svg)$/;
+const isText = (content) => typeof content === "string";
 const toYugen = (code) =>
   code
     .replace(/(["'])@\/components\/ui(?:\/[^"']*)?\1/g, '"yugen-ui"')
@@ -121,15 +140,19 @@ function appSources(app) {
     fs
       .readdirSync(dir, { recursive: true })
       .map((f) => String(f).split(path.sep).join("/"))
-      .filter((f) => /\.(tsx?|md)$/.test(f) && !/\.test\.tsx?$/.test(f))
+      .filter((f) => (/\.(tsx?|md)$/.test(f) || ASSET.test(f)) && !/\.test\.tsx?$/.test(f))
       .sort()
       .map((f) =>
         f === "vite.config.ts"
           ? [f, read(path.join(dir, f)).replace(/from "\.\/(?!src\/)/g, 'from "./src/')]
-          : [`src/${f}`, read(path.join(dir, f))],
+          : [`src/${f}`, ASSET.test(f) ? fs.readFileSync(path.join(dir, f)) : read(path.join(dir, f))],
       ),
   );
-  const blockNames = new Set(Object.values(sources).flatMap((code) => [...code.matchAll(BLOCK_IMPORT)].map((m) => m[2])));
+  const blockNames = new Set(
+    Object.values(sources)
+      .filter(isText)
+      .flatMap((code) => [...code.matchAll(BLOCK_IMPORT)].map((m) => m[2])),
+  );
   const blocks = fs.readdirSync(BLOCK_DIR).filter((f) => blockNames.has(f.replace(/^\d+-/, "").replace(/\.tsx$/, "")));
   return { sources, blocks };
 }
@@ -527,6 +550,59 @@ src/
 
 ${generatedFrom(t)}
 `,
+  glass: (t) => `# ${t.appTitle ?? t.title}
+
+A travel journal from [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates): Vite, React and Tailwind CSS v4.
+Photos fill the screen and the navigation floats above them in glass, a Yugen Labs material (names may change before
+Yugen UI 1.0).
+
+${install(t.dir, "en")}
+
+## What's included
+
+- Journal (\`/\`): an edge-to-edge photo under the floating bars, then the trips.
+- Trip (\`/trips/<id>\`): a glass toolbar with grouped actions, a photo gallery, the story, and the details in a glass
+  bottom sheet with snap points (inset from the edges, opaque at the top snap point).
+- Explore (\`/explore\`): one full-screen picture with every trip as a pin, filters, zoom and a search field floating
+  over it in clear glass, on a dimmed photo (\`glass-scrim\`).
+- Settings (\`/settings\`): theme, brand, glass or solid bars, clear or regular controls over photos, photo credits.
+- Navigation: a glass sidebar from 768px (an icon rail until 1024px); below that, a header and a tab bar that shrinks
+  while you scroll down (\`useScrollMinimize\`). Breakpoints are container queries.
+- Search in a glass dialog, from the sidebar, the header or the tab bar.
+- All text lives in \`src/content/\`: English by default, Vietnamese with
+  \`npx create-yugen-ui@latest my-app --template glass --lang vi\`.
+
+## Glass and accessibility
+
+Glass is opt-in per component: \`material="glass"\` on \`Toolbar\`, \`Nav\`, \`TabsList\`, \`MenuPopover\`,
+\`PopoverSurface\`, \`DialogSurface\` and \`SheetContent\`, \`appearance="glass-prominent"\` on one \`Button\`, and the
+\`glass\` utilities for your own bars. Text on glass keeps a 4.5:1 contrast over any photo. Reduce transparency, Increase
+contrast, forced colors and the high-contrast theme make it opaque; the Solid setting shows that look. Use the clear
+variant only over a photo dimmed with \`glass-scrim\`.
+
+## Photos
+
+Sample photos from [Unsplash](https://unsplash.com) under the [Unsplash License](https://unsplash.com/license), picked
+from the [Lorem Picsum](https://picsum.photos) list, in AVIF at 640 and 1280px wide (\`src/photos/\`):
+Yoni Kaplan-Nadel, Margaret Barley, Go Wild, Jeffrey Kam, Jerry Adney and Paul Jarvis. Replace them with your own in
+\`src/photos.ts\`.
+
+## Structure
+
+\`\`\`
+src/
+  App.tsx            # YugenProvider, saved appearance, router
+  Layout.tsx         # glass sidebar / header / tab bar, search, the page for the route
+  HomePage.tsx · TripPage.tsx · ExplorePage.tsx · SettingsPage.tsx · NotFoundPage.tsx
+  SearchDialog.tsx   # glass dialog with live results
+  trips.ts           # trips: photos, dates, pins (text is in content/)
+  photos.ts          # photo imports and credits
+  router.tsx         # / · /trips/<id> · /explore · /settings
+  content/           # every string, one file per language
+\`\`\`
+
+${generatedFrom(t)}
+`,
 };
 
 const readme = (t) =>
@@ -548,8 +624,8 @@ const ALIAS_CONFIG = `
 function files(t) {
   const { sources, blocks } = t.app ? appSources(t.app) : { sources: {}, blocks: t.blocks };
   const blockFiles = Object.fromEntries(blocks.map((b) => [blockTarget(b), toYugen(read(path.join(BLOCK_DIR, b)))]));
-  const appFiles = Object.fromEntries(Object.entries(sources).map(([rel, code]) => [rel, toYugen(code)]));
-  const jpChars = [...new Set(Object.values(sources).join("").match(/[\u3040-\u30ff\u3400-\u9fff]/g) ?? [])].sort().join("");
+  const appFiles = Object.fromEntries(Object.entries(sources).map(([rel, code]) => [rel, isText(code) ? toYugen(code) : code]));
+  const jpChars = [...new Set(Object.values(sources).filter(isText).join("").match(/[\u3040-\u30ff\u3400-\u9fff]/g) ?? [])].sort().join("");
   return {
     "package.json":
       JSON.stringify(
@@ -651,6 +727,7 @@ const BUDGETS = {
   "vite-blog": { js: 150, css: 25 },
   "vite-dashboard": { js: 195, css: 25 },
   "vite-ai-chat": { js: 175, css: 25 },
+  "vite-glass": { js: 160, css: 26 },
 };
 
 // `meta`: <title> / description của index.html theo từng ngôn ngữ — `create --lang` (packages/cli applyLang) ghi đè.
@@ -675,7 +752,7 @@ const outputs = [
 let drift = 0;
 for (const [rel, content] of outputs) {
   const file = path.join(root, "templates", rel);
-  const same = fs.existsSync(file) && read(file) === content;
+  const same = fs.existsSync(file) && (isText(content) ? read(file) === content : fs.readFileSync(file).equals(content));
   if (check) {
     if (!same) {
       drift++;
