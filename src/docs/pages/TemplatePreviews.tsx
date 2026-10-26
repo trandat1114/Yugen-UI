@@ -1,7 +1,10 @@
 import { useEffect, useMemo, useState, type ComponentType } from "react";
-import { useYugen, YugenProvider } from "@/components/ui";
+import { Settings20Regular } from "@fluentui/react-icons";
+import { Badge, Button, Card, CardHeader, useYugen, YugenProvider } from "@/components/ui";
 import AiChatApp from "../template-library/ai-chat/App";
 import GlassApp from "../template-library/glass/App";
+import nextEn from "../template-library/next-starter/content/en";
+import nextVi from "../template-library/next-starter/content/vi";
 import glassEn from "../template-library/glass/content/en";
 import glassVi from "../template-library/glass/content/vi";
 import { createMockBackend } from "../template-library/ai-chat/api";
@@ -167,6 +170,59 @@ function GlassPreview() {
   );
 }
 
+/**
+ * templates/next-starter can't run inside this Vite page: a static copy of its home page (same text and components,
+ * header included) in the docs language and theme.
+ */
+function NextStarterPreview() {
+  const docs = useYugen();
+  const { locale } = useLocale();
+  const t = locale === "vi" ? nextVi : nextEn;
+  return (
+    <YugenProvider theme={docs.theme} brand={docs.brand} messages={t.messages} locale={t.locale} className="min-h-full bg-background-2">
+      <div className="border-b border-stroke-2 bg-background-1">
+        <div className="flex h-14 items-center gap-4 px-4">
+          <span className="flex items-center gap-2 font-display text-subtitle2 font-semibold">
+            <span aria-hidden className="flex size-8 items-center justify-center rounded-medium bg-brand-background text-foreground-on-brand">
+              Y
+            </span>
+            {t.appName}
+          </span>
+          <span className="ms-auto flex gap-1 text-body1">
+            <span className="rounded-medium px-3 py-1.5 font-semibold">{t.nav.home}</span>
+            <span className="rounded-medium px-3 py-1.5 text-foreground-2">{t.nav.settings}</span>
+          </span>
+        </div>
+      </div>
+      <div className="flex flex-col gap-6 p-6">
+        <div className="flex flex-col items-start gap-3">
+          <h3 className="font-display text-title2 font-semibold">{t.home.title}</h3>
+          <p className="max-w-2xl text-body1 text-foreground-2">{t.home.lead}</p>
+          <div className="flex flex-wrap gap-2">
+            <Button appearance="primary" icon={<Settings20Regular />}>
+              {t.home.settings}
+            </Button>
+            <Button>{t.home.docs}</Button>
+          </div>
+        </div>
+        <div className="rounded-xlarge border border-stroke-2 bg-background-1 p-4">
+          <Badge appearance="tint" color="brand">
+            {t.home.serverTitle}
+          </Badge>
+          <p className="mt-2 text-body1 text-foreground-2">{t.home.renderedAt("09:41")}</p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {t.home.features.map((feature) => (
+            <Card key={feature.title}>
+              <CardHeader header={<h4 className="text-subtitle2 font-semibold">{feature.title}</h4>} description={feature.body} />
+            </Card>
+          ))}
+        </div>
+      </div>
+    </YugenProvider>
+  );
+}
+
 /** Theo `dir` trong src/docs/templates.ts. */
 export const PREVIEWS: Record<string, ComponentType> = {
   "vite-starter": StarterPreview,
@@ -175,4 +231,5 @@ export const PREVIEWS: Record<string, ComponentType> = {
   "vite-dashboard": DashboardPreview,
   "vite-ai-chat": AiChatPreview,
   "vite-glass": GlassPreview,
+  "next-starter": NextStarterPreview,
 };

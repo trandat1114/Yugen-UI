@@ -26,6 +26,21 @@ describe("create", () => {
     expect(read(target, "src/index.css")).toContain('@import "yugen-ui/theme.css"');
   });
 
+  it("next-starter: a Next.js app; --lang works without index.html; doctor finds the theme and the provider", async () => {
+    const cwd = tmpDir();
+    const base = { cwd, template: "next-starter", install: false, git: false, templatesDir: repoTemplates };
+    const { target } = await create({ ...base, dir: "next-app" }, ctx);
+    expect(json(target, "package.json")).toMatchObject({ name: "next-app", scripts: { build: "next build" } });
+    expect(read(target, "src/app/globals.css")).toContain('@import "yugen-ui/theme.css"');
+    const checks = await diagnose({ cwd: target, offline: true });
+    expect(checks.find((c) => c.message.startsWith("Theme imported"))?.message).toContain("src/app/globals.css");
+    expect(checks.find((c) => c.message.startsWith("YugenProvider found"))?.level).toBe("ok");
+
+    const { target: vi } = await create({ ...base, dir: "next-vi", lang: "vi" }, ctx);
+    expect(read(vi, "src/content/index.ts")).toBe('export { default } from "./vi";\n');
+    expect(fs.existsSync(path.join(vi, "src/content/en.ts"))).toBe(false);
+  });
+
   it("--lang keeps one language: content/index.ts, the other file removed, <html lang>", async () => {
     const cwd = tmpDir();
     const base = { cwd, template: "starter", install: false, git: false, templatesDir: repoTemplates };
@@ -82,7 +97,7 @@ describe("create", () => {
   });
 
   it("lists every template from the manifest", () => {
-    expect(loadTemplates(repoTemplates).map((t) => t.name)).toEqual(["starter", "saas", "blog", "dashboard", "ai-chat", "glass"]);
+    expect(loadTemplates(repoTemplates).map((t) => t.name)).toEqual(["starter", "saas", "blog", "dashboard", "ai-chat", "glass", "next-starter"]);
     expect(toPackageName("  Ứng dụng Đẹp ")).toBe("ung-dung-dep");
     expect(toPackageName(".hidden App")).toBe("hidden-app");
   });
