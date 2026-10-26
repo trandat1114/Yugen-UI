@@ -33,6 +33,7 @@ Chưa xếp lịch.
 
 Chi tiết ở trang Có gì mới (`/news`) và `CHANGELOG.md`.
 
+- **0.11.1** (2026-10-26): Hiệu ứng wave của Skeleton chạy mượt trở lại
 - **0.11.0** (2026-10-25): Chuỗi giao diện thay được, docs tiếng Anh và template mới
 - **0.10.0** (2026-10-23): Spacing theo thang số, Theme Designer và trang Motion
 - **0.9.0** (2026-10-23): React 19 và starter tối giản
