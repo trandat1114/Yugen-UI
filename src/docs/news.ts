@@ -31,6 +31,15 @@ export const NEWS_KIND_LABEL: Record<NewsKind, string> = {
 
 export const NEWS: NewsRelease[] = [
   {
+    version: "0.11.1",
+    date: "2026-10-26",
+    title: "Hiệu ứng wave của Skeleton chạy mượt trở lại",
+    summary: "Dải sáng của Skeleton chạy hết bề ngang và lặp liền mạch, ở mọi hình dạng và kiểu translucent.",
+    items: [
+      { kind: "fixed", text: "Skeleton: từ 0.11.0, dải sáng của hiệu ứng wave chỉ hiện ở 1/4 cuối mỗi chu kỳ, dừng giữa khung rồi bật về đầu. Giờ dải sáng chạy hết bề ngang và lặp liền mạch, ở mọi hình dạng (rectangle, circle, square) và kiểu translucent.", href: "/components/skeleton" },
+    ],
+  },
+  {
     version: "0.11.0",
     date: "2026-10-25",
     title: "Chuỗi giao diện thay được, docs tiếng Anh và template mới",
