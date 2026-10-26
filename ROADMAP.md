@@ -2,13 +2,22 @@
 
 <!-- Sinh từ src/docs/roadmap.ts bằng `npm run roadmap`. Đừng sửa tay. -->
 
-Kế hoạch theo từng bản phát hành, cập nhật 2026-10-25. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và
+Kế hoạch theo từng bản phát hành, cập nhật 2026-10-26. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và
 phụ thuộc nằm ở [GitHub Project](https://github.com/users/trandat1114/projects/6). `[x]` đã xong, `[~]` đang làm, `[ ]` dự kiến.
 
 Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. English: the community page
 (https://trandat1114.github.io/Yugen-UI/community?lang=en) shows the same roadmap.
 
 ## Đang làm
+
+### 0.12.0 · minor · hạn 2026-11-27
+
+Chọn cột hiển thị trong DataGrid, cùng các sửa lỗi giao diện nhỏ.
+
+- [x] DataGrid: người dùng tự chọn cột hiển thị (DataGridColumnPicker) (#203)
+- [x] ContextMenu, Menubar và menu con cuộn trong màn hình (#205)
+- [x] Nút chỉ hiện khi rê chuột luôn hiện trên màn hình cảm ứng (#206)
+- [x] Số trong DataGrid và Table thẳng hàng (#207)
 
 ### 1.0.0 · major
 
