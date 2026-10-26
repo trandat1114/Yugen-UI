@@ -42,7 +42,7 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       en: "Glass material, choosing DataGrid columns, small UI fixes and new templates.",
       items: [
         { status: "done", issue: 178, vi: "Vật liệu glass cho lớp điều hướng (Yugen Labs)", en: "Glass material for the navigation layer (Yugen Labs)" },
-        { status: "planned", issue: 179, vi: "Template Glass: nhật ký du lịch với điều hướng glass trên ảnh", en: "Glass template: a travel journal with glass navigation over photos" },
+        { status: "done", issue: 179, vi: "Template Glass: nhật ký du lịch với điều hướng glass trên ảnh", en: "Glass template: a travel journal with glass navigation over photos" },
         { status: "done", issue: 203, vi: "DataGrid: người dùng tự chọn cột hiển thị (DataGridColumnPicker)", en: "DataGrid: people choose which columns are shown (DataGridColumnPicker)" },
         { status: "done", issue: 205, vi: "ContextMenu, Menubar và menu con cuộn trong màn hình", en: "ContextMenu, Menubar and submenus scroll inside the viewport" },
         { status: "done", issue: 206, vi: "Nút chỉ hiện khi rê chuột luôn hiện trên màn hình cảm ứng", en: "Hover-only buttons always visible on touch screens" },

@@ -240,6 +240,7 @@ npm run dev
 | `vite-blog` | Markdown blog: tags, search, TOC; build-time HTML per post, sitemap.xml, rss.xml |
 | `vite-dashboard` | KPI tiles, charts, recent transactions |
 | `vite-ai-chat` | AI assistant chat with agent trace |
+| `vite-glass` | Travel journal with glass navigation over photos (Yugen Labs) |
 
 Prefer the shadcn CLI? `npx shadcn@latest init https://trandat1114.github.io/Yugen-UI/r/init.json` sets up the theme,
 `cn()` and `YugenProvider` in one step.
@@ -522,6 +523,7 @@ npm run dev
 | `vite-blog` | Blog Markdown: thẻ, tìm kiếm, mục lục; HTML tĩnh từng bài, sitemap.xml, rss.xml lúc build |
 | `vite-dashboard` | Thẻ KPI, biểu đồ, giao dịch gần đây |
 | `vite-ai-chat` | Trợ lý AI dạng chat, Trace các bước agent |
+| `vite-glass` | Nhật ký du lịch, điều hướng glass trên ảnh (Yugen Labs) |
 
 Dùng shadcn CLI? `npx shadcn@latest init https://trandat1114.github.io/Yugen-UI/r/init.json` cài theme, `cn()` và
 `YugenProvider` trong một bước.

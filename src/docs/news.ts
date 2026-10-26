@@ -39,6 +39,7 @@ export const NEWS: NewsRelease[] = [
     items: [
       { kind: "new", text: "Glass (Yugen Labs, lấy cảm hứng từ Liquid Glass): material=\"glass\" | \"glass-clear\" trên Toolbar, TabsList, Nav, MenuPopover, PopoverSurface, TooltipContent, DialogSurface, DrawerSurface, SheetContent; Button appearance=\"glass\" | \"glass-prominent\"; Input / SearchBox appearance=\"glass\". TabsList có minimized và hook useScrollMinimize cho thanh tab thu gọn khi cuộn. Utility glass, glass-clear, glass-tinted, glass-scrim, scroll-edge, rounded-concentric. Chữ giữ ≥ 4.5:1 trên mọi nền phía sau; nền đặc khi giảm trong suốt, tăng tương phản, tương phản cao hoặc forced colors. Tên có thể đổi trước 1.0.", href: "/foundations/glass" },
       { kind: "new", text: "DataGrid nhận hiddenColumns; DataGridColumnPicker là nút “Cột” mở menu ô tích, dùng được cả với Table. Menu không đóng khi tích từng cột, cột hideable: false và cột hiện cuối cùng không ẩn được, cột đang sắp xếp vẫn sắp xếp hàng khi bị ẩn. Cột ẩn giữ độ rộng đã kéo; lưu lựa chọn bằng onHiddenColumnsChange.", href: "/components/datagrid" },
+      { kind: "new", text: "Template Glass: nhật ký du lịch với ảnh tràn viền, sidebar và thanh tab glass (thu gọn khi cuộn), trang Khám phá với ghim và bộ lọc nổi bằng glass clear, bottom sheet glass, cài đặt glass / đặc. Ảnh mẫu Unsplash dạng AVIF.", href: "/templates" },
       { kind: "improved", text: "DataGrid: cột chỉ cần label, renderHeaderCell thành tuỳ chọn. Logic ẩn / hiện cột dùng riêng được qua useDataGridColumnVisibility và getVisibleColumns.", href: "/components/datagrid" },
       { kind: "improved", text: "DataGrid và Table dùng chữ số đều chiều rộng, nên số trong một cột thẳng hàng mà không cần thêm class.", href: "/components/table" },
       { kind: "improved", text: "MenuItemCheckbox và MenuItemRadio nhận secondaryContent như MenuItem.", href: "/components/menu" },
@@ -260,6 +261,16 @@ export const LATEST_RELEASE = NEWS.find((r) => !r.upcoming) ?? NEWS[0];
  */
 export const CLI_NEWS: NewsRelease[] = [
   {
+    version: "0.5.0",
+    upcoming: true,
+    date: "2026-11-27",
+    title: "Template Glass",
+    summary: "Thêm template Glass: nhật ký du lịch với điều hướng glass nổi trên ảnh.",
+    items: [
+      { kind: "new", text: "create --template glass: nhật ký du lịch với sidebar, thanh tab, toolbar và bottom sheet bằng glass nổi trên ảnh; tiếng Anh hoặc tiếng Việt (--lang vi).", href: "/templates" },
+    ],
+  },
+  {
     version: "0.4.0",
     date: "2026-10-25",
     title: "diff, update, remove, theme và template mới",
@@ -311,6 +322,14 @@ export const CLI_NEWS: NewsRelease[] = [
 
 /** Tab create-yugen-ui (packages/create-yugen-ui) — chỉ phát hành cùng bản CLI ổn định. Mục đầu = version của gói. */
 export const CREATE_NEWS: NewsRelease[] = [
+  {
+    version: "0.5.0",
+    upcoming: true,
+    date: "2026-11-27",
+    title: "Theo @yugen-ui/cli 0.5.0",
+    summary: "Cùng các thay đổi của @yugen-ui/cli 0.5.0: template Glass.",
+    items: [{ kind: "new", text: "npx create-yugen-ui@latest my-app --template glass.", href: "/templates" }],
+  },
   {
     version: "0.4.0",
     date: "2026-10-25",

@@ -1,5 +1,9 @@
 # @yugen-ui/cli
 
+## Unreleased
+
+- New template: `glass` (`create --template glass`), a travel journal with glass navigation over photos.
+
 ## 0.4.0
 
 - `yugen diff [names…]`: compare copied component source with the registry and print a unified diff. Without names it

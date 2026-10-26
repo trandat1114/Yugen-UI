@@ -15,7 +15,7 @@ Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. 
 Vật liệu glass, chọn cột hiển thị trong DataGrid, sửa lỗi giao diện nhỏ và các template mới.
 
 - [x] Vật liệu glass cho lớp điều hướng (Yugen Labs) (#178)
-- [ ] Template Glass: nhật ký du lịch với điều hướng glass trên ảnh (#179)
+- [x] Template Glass: nhật ký du lịch với điều hướng glass trên ảnh (#179)
 - [x] DataGrid: người dùng tự chọn cột hiển thị (DataGridColumnPicker) (#203)
 - [x] ContextMenu, Menubar và menu con cuộn trong màn hình (#205)
 - [x] Nút chỉ hiện khi rê chuột luôn hiện trên màn hình cảm ứng (#206)

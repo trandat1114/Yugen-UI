@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState, type ComponentType } from "react";
 import { useYugen, YugenProvider } from "@/components/ui";
 import AiChatApp from "../template-library/ai-chat/App";
+import GlassApp from "../template-library/glass/App";
+import glassEn from "../template-library/glass/content/en";
+import glassVi from "../template-library/glass/content/vi";
 import { createMockBackend } from "../template-library/ai-chat/api";
 import aiChatEn from "../template-library/ai-chat/content/en";
 import aiChatVi from "../template-library/ai-chat/content/vi";
@@ -148,6 +151,22 @@ function AiChatPreview() {
   );
 }
 
+/** templates/vite-glass in embedded mode: router in memory, nothing saved, text in the docs language. */
+function GlassPreview() {
+  const docs = useYugen();
+  const { locale } = useLocale();
+  return (
+    <div className="h-110">
+      <GlassApp
+        key={locale}
+        embedded
+        content={locale === "vi" ? glassVi : glassEn}
+        defaultAppearance={{ theme: docs.theme, brand: docs.brand, material: "glass", overMedia: "clear" }}
+      />
+    </div>
+  );
+}
+
 /** Theo `dir` trong src/docs/templates.ts. */
 export const PREVIEWS: Record<string, ComponentType> = {
   "vite-starter": StarterPreview,
@@ -155,4 +174,5 @@ export const PREVIEWS: Record<string, ComponentType> = {
   "vite-blog": BlogPreview,
   "vite-dashboard": DashboardPreview,
   "vite-ai-chat": AiChatPreview,
+  "vite-glass": GlassPreview,
 };
