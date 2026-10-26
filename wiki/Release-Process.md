@@ -155,6 +155,21 @@ thanh trên cho người đã xem bản trước. **Release CLI** tự tạo Git
 (không đánh dấu Latest, để trang repo vẫn chỉ bản `yugen-ui`). Hỏng sau khi publish: sửa trên `main`, phát hành bản patch; bản lỗi thì
 `npm deprecate @yugen-ui/cli@X.Y.Z "…"` (không unpublish).
 
+### Trusted publishing (OIDC, #202)
+
+npm hạn chế token bỏ qua 2FA. Hai workflow phát hành đã dùng npm ≥ 11.5.1 và có `permissions: id-token: write`, nên
+npm tự đổi sang OIDC khi gói khai báo trusted publisher:
+
+1. Trên npmjs.com, mỗi gói › **Settings** › **Trusted Publisher** › GitHub Actions: repository `trandat1114/Yugen-UI`,
+   workflow `release.yml` cho `yugen-ui`; `release-cli.yml` cho `@yugen-ui/cli` và `create-yugen-ui`. Không cần
+   environment.
+2. Phát hành bản kế tiếp như bình thường. Log "Publish to npm" không còn thông báo token bỏ qua 2FA; trang gói trên
+   npm hiện provenance.
+3. Sau bản đầu tiên chạy bằng OIDC: xoá `NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}` khỏi các bước publish, xoá secret
+   `NPM_TOKEN` và thu hồi token trên npmjs.com.
+
+Trước bước 1, npm vẫn dùng `NPM_TOKEN` như cũ, nên phát hành không bị gián đoạn.
+
 ### Lần đầu (`cli@0.1.0`)
 
 1. Trên npmjs.com: **Add Organization** → tên `yugen-ui` (gói public, miễn phí).
