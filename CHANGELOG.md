@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.11.1
+
+### Patch Changes
+
+- 0d825b8: Skeleton: the wave highlight crosses the whole shape and loops smoothly again. Since 0.11.0 it only showed in the last quarter of each cycle, stopped halfway and jumped back, in every shape and in the translucent appearance.
+
 ## 0.11.0
 
 ### Minor Changes
@@ -192,7 +198,8 @@ with a user-facing change adds one with `npx changeset`, and `npx changeset vers
 - 11 core components.
 - Documentation site.
 
-[Unreleased]: https://github.com/trandat1114/Yugen-UI/compare/v0.11.0...HEAD
+[Unreleased]: https://github.com/trandat1114/Yugen-UI/compare/v0.11.1...HEAD
+[0.11.1]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.11.1
 [0.11.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.11.0
 [0.10.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.10.0
 [0.9.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.9.0
