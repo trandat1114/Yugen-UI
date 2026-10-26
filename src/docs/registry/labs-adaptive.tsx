@@ -422,6 +422,7 @@ function PlaceSheetDemo() {
       { name: "modal", type: "boolean", defaultValue: "true", description: "false: không lớp phủ, không bẫy focus / khoá cuộn, không tự đóng khi bấm ra ngoài." },
       { name: "dismissible", type: "boolean", defaultValue: "true", description: "false: chặn Esc, bấm lớp phủ và vuốt xuống để đóng." },
       { name: "SheetContent.handle / handleLabel", type: "boolean / string", defaultValue: `true / "Đổi chiều cao"`, description: "Tay nắm bottom sheet; là nút (Enter, ↑ / ↓) khi có từ 2 nấc." },
+      { name: "SheetContent.material", type: `"glass" | "glass-clear"`, description: "Yugen Labs — bề mặt glass. Bottom sheet glass lồi vào trong mép màn hình, bo bốn góc và đặc dần ở nấc cao nhất." },
       { name: "SheetHeader.action", type: "ReactNode", description: "Phần tử cuối hàng tiêu đề, thường là nút đóng." },
       { name: "data-sheet-no-drag", type: "attribute", description: "Gắn lên phần tử con để cú chạm ở đó không kéo sheet." },
     ],

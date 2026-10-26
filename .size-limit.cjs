@@ -47,6 +47,7 @@ module.exports = [
   js("{ StreamingMarkdown, PromptInput }", "{ StreamingMarkdown, PromptInput }", "70 kB"),
   js("{ messagesEn }", "{ messagesEn }", "5 kB"),
   css("styles.css", "24 kB"),
-  css("theme.css", "11 kB"),
-  css("tokens.css", "8 kB"),
+  // Glass (#178): token + utility + fallback trợ năng (12.49 / 8.15 kB khi thêm).
+  css("theme.css", "14 kB"),
+  css("tokens.css", "9 kB"),
 ];

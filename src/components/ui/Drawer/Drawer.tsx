@@ -30,11 +30,16 @@ export interface DrawerSurfaceProps extends React.ComponentPropsWithoutRef<typeo
   size?: DrawerSize;
   /** "modal" đóng khi click lớp phủ / Esc; "alert" bắt buộc chọn hành động. */
   modalType?: "modal" | "alert";
+  /** Yugen Labs — bề mặt glass. glass-clear: trên ảnh / media (đặt glass-scrim lên media bên dưới). */
+  material?: "glass" | "glass-clear";
 }
 
 /** Bề mặt Drawer dạng overlay (portal + lớp phủ). Đặt trong `<Drawer>`. */
 export const DrawerSurface = React.forwardRef<React.ElementRef<typeof DialogPrimitive.Content>, DrawerSurfaceProps>(
-  ({ className, position = "end", size = "small", modalType = "modal", onPointerDownOutside, onEscapeKeyDown, ...props }, ref) => {
+  (
+    { className, position = "end", size = "small", modalType = "modal", material, onPointerDownOutside, onEscapeKeyDown, ...props },
+    ref,
+  ) => {
     // Portal render vào <body>: gắn `dir` để start/end và animation slide theo hướng chữ của provider lồng.
     const dir = useDirection();
     const portalTheme = usePortalThemeProps();
@@ -62,6 +67,7 @@ export const DrawerSurface = React.forwardRef<React.ElementRef<typeof DialogPrim
               "motion-reduce:animate-none",
               OVERLAY_POSITION[position],
               position === "bottom" ? OVERLAY_HEIGHT[size] : OVERLAY_WIDTH[size],
+              material,
               className,
             )}
             {...props}

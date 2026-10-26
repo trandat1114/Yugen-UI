@@ -42,6 +42,7 @@ export const en: Record<string, ComponentDocEn> = {
       "MenuItem.icon": "Icon, size 20.",
       "MenuItem.secondaryContent": "Shortcut or secondary information at the end of the item. MenuItemCheckbox and MenuItemRadio have it too.",
       "MenuPopover.align": "Alignment with the trigger.",
+      "MenuPopover.material": "Yugen Labs — a glass menu, usually opened from a glass bar. MenuSubPopover has it too.",
       "MenuRadioGroup.value / onValueChange": "Selected radio item.",
       "MenuItemCheckbox.checked / defaultChecked": "On/off state.",
     },

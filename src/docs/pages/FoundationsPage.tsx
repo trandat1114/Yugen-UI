@@ -2,6 +2,7 @@ import { cn } from "@/lib/cn";
 import { DocSection, OnThisPage, PageHeader } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
 import { COLOR_SECTIONS, ColorPage } from "./ColorPage";
+import { GLASS_SECTIONS, GlassPage } from "./GlassPage";
 import { MOTION_SECTIONS, MotionPage } from "./MotionPage";
 import { useLocale, type Locale } from "../i18n";
 
@@ -229,6 +230,7 @@ const SECTIONS: Record<string, Record<Locale, { id: string; label: string }[]>> 
   radius: { vi: [{ id: "scale", label: "Thang bo góc" }], en: [{ id: "scale", label: "Radius scale" }] },
   elevation: { vi: [{ id: "ramp", label: "Shadow ramp" }], en: [{ id: "ramp", label: "Shadow ramp" }] },
   motion: MOTION_SECTIONS,
+  glass: GLASS_SECTIONS,
 };
 
 export function FoundationsPage({ slug, theme }: { slug: string; theme: string }) {
@@ -244,6 +246,8 @@ export function FoundationsPage({ slug, theme }: { slug: string; theme: string }
       <RadiusPage />
     ) : slug === "elevation" ? (
       <ElevationPage />
+    ) : slug === "glass" ? (
+      <GlassPage />
     ) : (
       <MotionPage />
     );

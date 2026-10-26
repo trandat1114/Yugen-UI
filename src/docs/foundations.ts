@@ -6,4 +6,5 @@ export const FOUNDATIONS = [
   { slug: "radius", name: "Bo góc" },
   { slug: "elevation", name: "Elevation" },
   { slug: "motion", name: "Motion" },
+  { slug: "glass", name: "Glass" },
 ] as const;

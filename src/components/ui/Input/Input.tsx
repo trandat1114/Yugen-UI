@@ -25,6 +25,11 @@ const inputRootVariants = cva(
         underline: "rounded-none border-b border-stroke-accessible bg-transparent after:rounded-none",
         "filled-darker": "rounded-medium border border-transparent bg-background-3",
         "filled-lighter": "rounded-medium border border-transparent bg-background-1",
+        // Yugen Labs: ô nhập trong thanh glass (Toolbar / Nav material="glass"). Viền focus thay cho thanh brand ở đáy.
+        glass: [
+          "rounded-circular border border-transparent bg-(--glass-field,var(--colorGlassField)) after:hidden",
+          "focus-within:outline-2 focus-within:outline-stroke-focus",
+        ],
       },
       size: {
         small: "h-6 gap-0.5 px-1 text-caption1 [&_svg]:size-4",

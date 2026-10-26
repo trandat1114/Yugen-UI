@@ -35,7 +35,7 @@ export const en: Record<string, ComponentDocEn> = {
       "Don't leave an icon-only Button without an aria-label or Tooltip.",
     ],
     props: {
-      appearance: "How much emphasis the action gets.",
+      appearance: "How much emphasis the action gets. glass / glass-prominent (Yugen Labs): a button over content, see Foundations › Glass.",
       size: "Height 24 / 32 / 40px.",
       shape: "Corner rounding.",
       icon: "Fluent icon (@fluentui/react-icons, size 20).",
@@ -122,7 +122,7 @@ export const en: Record<string, ComponentDocEn> = {
     donts: ["Don't use a placeholder in place of a label.", "Don't show vague errors such as “Invalid”."],
     props: {
       label: "Label linked to the input through htmlFor.",
-      appearance: "Input style.",
+      appearance: "Input style. glass (Yugen Labs): a rounded field inside a glass bar.",
       size: "Height 24 / 32 / 40px.",
       validationState: "Validation state.",
       validationMessage: "Message shown with validationState.",
@@ -179,6 +179,9 @@ export const en: Record<string, ComponentDocEn> = {
       "Tabs.orientation": "Orientation.",
       "TabsList.appearance": "Background on hover.",
       "TabsList.size": "Tab size.",
+      "TabsList.material": "Yugen Labs — a floating glass tab bar; the selected tab is a rounded fill.",
+      "TabsList.minimized":
+        "Tabs with an icon keep only the icon (the name is still read out, and shows again on focus). Use with useScrollMinimize({ target?, threshold?, topOffset? }).",
       "TabsTrigger.icon": "Icon before the label (brand-colored when active).",
     },
   },
@@ -196,6 +199,7 @@ export const en: Record<string, ComponentDocEn> = {
       appearance: "Light background or inverted colors.",
       side: "Position relative to the trigger.",
       withArrow: "Shows the arrow.",
+      material: "Yugen Labs — a glass tooltip.",
     },
   },
 
@@ -212,6 +216,7 @@ export const en: Record<string, ComponentDocEn> = {
     props: {
       "Dialog.open / onOpenChange": "Controls the open state.",
       "DialogSurface.modalType": "How the dialog can be closed.",
+      "DialogSurface.material": "Yugen Labs — a glass surface.",
       "DialogTitle.action": "Pass null to hide the close button.",
       DialogActions: "Right-aligned row of buttons at the bottom.",
     },

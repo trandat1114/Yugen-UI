@@ -235,6 +235,27 @@ Mỗi gradient có biến thể dark sáng hơn. Mọi stop light đạt **≥ 3
 3. Không dùng màu làm cách truyền đạt duy nhất.
 4. Kiểm tra mọi cặp màu mới ở trang **Màu sắc › Khả năng tiếp cận** (tính trực tiếp từ token, light & dark).
 
+### 4.7 Glass — vật liệu cho lớp điều hướng (Yugen Labs)
+Bật trên từng component: `material="glass" | "glass-clear"` (Toolbar, TabsList, Nav, MenuPopover, PopoverSurface,
+TooltipContent, DialogSurface, DrawerSurface, SheetContent), `appearance="glass" | "glass-prominent"` (Button),
+`appearance="glass"` (Input / SearchBox). Utility: `glass`, `glass-clear`, `glass-tinted`, `glass-scrim`,
+`scroll-edge`, `scroll-edge-above`, `rounded-concentric`. Trang docs: **Foundations › Glass**.
+
+| Token | Light | Dark | Ghi chú |
+|---|---|---|---|
+| `--colorGlassBackground` | trắng 80% | xám 16 82% | fg1 / fg2 ≥ 4.5:1 trên nền trắng hay đen hoàn toàn |
+| `--colorGlassBrandForeground` | brand60 | brand140 | brand bên trong glass |
+| `--colorGlassClearBackground` | đen 40% | đen 40% | luôn kèm `--colorGlassScrim` (đen 35%) trên ảnh |
+| `--colorGlassTinted` | brand70 90% | brand70 90% | chữ trắng ≥ 4.5:1 ở mọi trạng thái |
+| `--glassBlur` / `--glassSaturation` | 24px / 180% | | `--glassFilter: none` ở tương phản cao |
+
+- Bên trong `glass`, foreground-3/-4 dùng màu foreground-2, brand dùng sắc đậm hơn, hover / pressed thành lớp phủ trong
+  suốt. `src/test/glass.test.tsx` tính tương phản từ `tokens.css` cho cả 3 brand — sửa token glass phải giữ test xanh.
+- Nền đặc, không blur: `prefers-reduced-transparency`, `prefers-contrast: more` (thêm viền), theme tương phản cao,
+  `forced-colors`, trình duyệt không có `backdrop-filter`. Glass lồng trong glass tự tắt blur.
+- ✅ Thanh công cụ, thanh tab, sidebar, menu, bề mặt tạm nổi trên nội dung; một hành động `glass-prominent` mỗi màn hình.
+- ❌ Không glass cho nội dung (Card, hàng List, ô DataGrid); không chồng glass; không `glass-clear` trên ảnh sáng thiếu scrim.
+
 ---
 
 ## 5. Quy tắc viết component

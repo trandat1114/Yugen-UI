@@ -38,6 +38,7 @@ export const en: Record<string, ComponentDocEn> = {
       "PopoverSurface.size": "Padding 8 / 16 / 20px.",
       "PopoverSurface.appearance": "Surface color.",
       "PopoverSurface.withArrow": "Shows the arrow.",
+      "PopoverSurface.material": "Yugen Labs — a glass surface (the arrow matches it).",
       "PopoverSurface.side / align": "Position relative to the trigger.",
     },
   },

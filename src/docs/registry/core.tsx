@@ -290,7 +290,7 @@ export const docs: ComponentDoc[] = [
       "Không để icon-only Button thiếu aria-label hoặc Tooltip.",
     ],
     props: [
-      { name: "appearance", type: `"secondary" | "primary" | "outline" | "subtle" | "transparent" | "danger"`, defaultValue: `"secondary"`, description: "Mức độ nhấn mạnh của hành động." },
+      { name: "appearance", type: `"secondary" | "primary" | "outline" | "subtle" | "transparent" | "danger" | "glass" | "glass-prominent"`, defaultValue: `"secondary"`, description: "Mức độ nhấn mạnh của hành động. glass / glass-prominent (Yugen Labs): nút nổi trên nội dung, xem Foundations › Glass." },
       { name: "size", type: `"small" | "medium" | "large"`, defaultValue: `"medium"`, description: "Chiều cao 24 / 32 / 40px." },
       { name: "shape", type: `"rounded" | "circular" | "square"`, defaultValue: `"rounded"`, description: "Bo góc." },
       { name: "icon", type: "ReactNode", description: "Icon Fluent (@fluentui/react-icons, cỡ 20)." },
@@ -756,7 +756,7 @@ export const docs: ComponentDoc[] = [
     donts: ["Không dùng placeholder thay cho label.", "Không báo lỗi chung chung như “Không hợp lệ”."],
     props: [
       { name: "label", type: "ReactNode", description: "Nhãn liên kết với input qua htmlFor." },
-      { name: "appearance", type: `"outline" | "underline" | "filled-darker" | "filled-lighter"`, defaultValue: `"outline"`, description: "Kiểu ô nhập." },
+      { name: "appearance", type: `"outline" | "underline" | "filled-darker" | "filled-lighter" | "glass"`, defaultValue: `"outline"`, description: "Kiểu ô nhập. glass (Yugen Labs): ô nhập bo tròn trong thanh glass." },
       { name: "size", type: `"small" | "medium" | "large"`, defaultValue: `"medium"`, description: "Chiều cao 24 / 32 / 40px." },
       { name: "validationState", type: `"none" | "error" | "warning" | "success"`, defaultValue: `"none"`, description: "Trạng thái kiểm tra." },
       { name: "validationMessage", type: "ReactNode", description: "Thông điệp đi kèm validationState." },
@@ -988,6 +988,8 @@ export const docs: ComponentDoc[] = [
       { name: "Tabs.orientation", type: `"horizontal" | "vertical"`, defaultValue: `"horizontal"`, description: "Hướng." },
       { name: "TabsList.appearance", type: `"transparent" | "subtle"`, defaultValue: `"transparent"`, description: "Nền khi hover." },
       { name: "TabsList.size", type: `"small" | "medium" | "large"`, defaultValue: `"medium"`, description: "Kích thước tab." },
+      { name: "TabsList.material", type: `"glass" | "glass-clear"`, description: "Yugen Labs — thanh tab nổi bằng glass; tab đang chọn là nền bo tròn." },
+      { name: "TabsList.minimized", type: "boolean", defaultValue: "false", description: "Tab có icon chỉ còn icon (tên vẫn đọc được, hiện lại khi focus). Dùng với useScrollMinimize({ target?, threshold?, topOffset? })." },
       { name: "TabsTrigger.icon", type: "ReactNode", description: "Icon trước nhãn (tô màu brand khi active)." },
     ],
   },
@@ -1063,6 +1065,7 @@ export const docs: ComponentDoc[] = [
       { name: "appearance", type: `"normal" | "inverted"`, defaultValue: `"normal"`, description: "Nền sáng hoặc đảo màu." },
       { name: "side", type: `"top" | "right" | "bottom" | "left"`, defaultValue: `"top"`, description: "Vị trí so với trigger." },
       { name: "withArrow", type: "boolean", defaultValue: "true", description: "Hiện mũi tên." },
+      { name: "material", type: `"glass" | "glass-clear"`, description: "Yugen Labs — tooltip bằng glass." },
     ],
   },
 
@@ -1125,6 +1128,7 @@ export const docs: ComponentDoc[] = [
     props: [
       { name: "Dialog.open / onOpenChange", type: "boolean / (open) => void", description: "Điều khiển trạng thái." },
       { name: "DialogSurface.modalType", type: `"modal" | "alert"`, defaultValue: `"modal"`, description: "Cách đóng dialog." },
+      { name: "DialogSurface.material", type: `"glass" | "glass-clear"`, description: "Yugen Labs — bề mặt glass." },
       { name: "DialogTitle.action", type: "ReactNode | null", defaultValue: "nút X", description: "Truyền null để ẩn nút đóng." },
       { name: "DialogActions", type: "—", description: "Hàng nút căn phải ở cuối." },
     ],
