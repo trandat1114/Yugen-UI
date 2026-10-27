@@ -8,6 +8,7 @@ export const meta: ConceptMeta = {
   lead: "Yugen UI theo Semantic Versioning. Thay đổi phá vỡ luôn được báo trước bằng cảnh báo deprecate, ghi trong CHANGELOG và trang Có gì mới — để bạn nâng cấp có kế hoạch, không bất ngờ.",
   toc: [
     { id: "semver", label: "Semantic Versioning" },
+    { id: "numbers", label: "Quy tắc cho từng số" },
     { id: "breaking", label: "Thế nào là thay đổi phá vỡ" },
     { id: "deprecation", label: "Quy trình deprecate" },
     { id: "support", label: "Phạm vi hỗ trợ" },

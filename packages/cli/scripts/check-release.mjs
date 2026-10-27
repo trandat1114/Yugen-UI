@@ -16,6 +16,7 @@
  *   6. Bản major ổn định của CLI (1.0.0, 2.0.0…): packages/cli/README.md có `<!-- readme-reviewed: X.0.0 -->`.
  *   7. --tag: yugen-ui@<version ở gốc repo> đã có trên npm — template ghim ^<version> nên CLI chỉ được publish sau
  *      yugen-ui. Trước đó (PR release, push lên main) CI build template với gói vừa `npm pack`, không cần npm.
+ *   8. Quy tắc cho từng số (scripts/release-rules.mjs ở gốc repo) với mục CLI_NEWS của bản hiện tại và tin sắp phát hành.
  *
  * Tên gói: không dùng được "yugen" — npm từ chối vì quá giống "hygen" (403 "Package name too similar"). Gói có scope
  * không bị kiểm tra này.
@@ -24,6 +25,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { newsEntries, releaseRuleErrors } from "../../../scripts/release-rules.mjs";
 
 const cli = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const repo = path.resolve(cli, "../..");
@@ -50,16 +52,6 @@ if (!new RegExp(`^##\\s+${version.replace(/\./g, "\\.")}\\s*$`, "m").test(change
 // 1b. Trang Có gì mới › tab @yugen-ui/cli và create-yugen-ui. Mục đầu có thể là tin sắp phát hành (`upcoming: true`,
 // viết trên next) với version lớn hơn bản hiện tại; khi có tag thì không được còn mục `upcoming`.
 const news = fs.readFileSync(path.join(repo, "src/docs/news.ts"), "utf8").replace(/\r\n/g, "\n");
-function newsEntries(name) {
-  const start = news.search(new RegExp(`export\\s+const\\s+${name}\\b[^=]*=\\s*\\[`));
-  if (start === -1) return [];
-  const end = news.indexOf("\n];", start);
-  const body = news.slice(start, end === -1 ? undefined : end);
-  return [...body.matchAll(/\bversion\s*:\s*["'`]([^"'`]+)["'`]([\s\S]*?)(?=\bversion\s*:|$)/g)].map((m) => ({
-    version: m[1],
-    upcoming: /\bupcoming\s*:\s*true\b/.test(m[2]),
-  }));
-}
 const newer = (a, b) => {
   const [x, y] = [parse(a), parse(b)];
   for (let i = 0; i < 3; i++) if (x[i] !== y[i]) return x[i] > y[i];
@@ -69,7 +61,7 @@ for (const [name, want, skip] of [
   ["CLI_NEWS", version, pre],
   ["CREATE_NEWS", create.version, false],
 ]) {
-  const entries = newsEntries(name);
+  const entries = newsEntries(news, name) ?? [];
   const upcoming = entries[0]?.upcoming ? entries[0] : undefined;
   const got = entries.find((e) => !e.upcoming)?.version;
   if (entries.slice(1).some((e) => e.upcoming)) errors.push(`src/docs/news.ts: chỉ mục ĐẦU của ${name} được đánh dấu \`upcoming\`.`);
@@ -177,6 +169,16 @@ if (tag) {
       errors.push(
         `packages/cli/README.md: bản major ${version} — rà README (lệnh, tuỳ chọn, yêu cầu Node, ví dụ), sửa nếu cần, rồi ghi \`<!-- readme-reviewed: ${version} -->\` ở đầu file${reviewed ? ` (đang là ${reviewed})` : ""}.`,
       );
+  }
+}
+
+// 8. Quy tắc cho từng số (như check-release ở gốc repo) với CLI_NEWS. create-yugen-ui không theo: version của nó đi theo
+// minor của CLI (quy tắc 2).
+{
+  const entries = newsEntries(news, "CLI_NEWS") ?? [];
+  for (const [i, entry] of entries.entries()) {
+    if (entry.upcoming || entry.version === version) errors.push(...releaseRuleErrors(entry, entries.slice(i + 1), "CLI_NEWS"));
+    if (!entry.upcoming) break;
   }
 }
 

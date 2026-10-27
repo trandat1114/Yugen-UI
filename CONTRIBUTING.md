@@ -36,7 +36,8 @@ npm run dev          # trang docs tại http://localhost:5173
 | `npm run test:engines` | E2E tương tác trên Firefox và WebKit (Safari desktop, iPhone) |
 | `npm run size` | Ngân sách dung lượng gói (`size-limit`, chạy sau `build:lib`) |
 | `npm run changeset` | Thêm changeset cho PR (`npx changeset`) |
-| `npm run check:release` | Kiểm tra `package.json` = `src/docs/news.ts` = `CHANGELOG.md` |
+| `npm run check:release` | Kiểm tra `package.json` = `src/docs/news.ts` = `CHANGELOG.md` và quy tắc cho từng số |
+| `npm run check:changesets` | Loại bump của changeset đúng quy tắc cho từng số |
 | `npm run check:examples` | Mọi ví dụ docs typecheck được khi chép ra dùng với `yugen-ui` |
 | `npm run check:props` | Bảng props trên docs khớp type thật |
 | `npm run registry` | Sinh registry shadcn vào `public/r/` (tự chạy trong `build:docs`) |
@@ -160,6 +161,11 @@ npx changeset    # chọn yugen-ui → patch hoặc minor → viết tóm tắt 
 
 - `patch`: sửa lỗi, cải tiến nhỏ. `minor`: component / prop / token mới, và — khi còn `0.x` — cả thay đổi phá vỡ API
   (mở đầu tóm tắt bằng "**Breaking:**" kèm cách chuyển đổi).
+- Số phiên bản theo **quy tắc cho từng số** (docs › Phiên bản › Quy tắc cho từng số): chỉ có API mới mới là `minor`,
+  còn lại là `patch`; PR vào `main` hoặc `release/*` chỉ mang `patch`; `major` chỉ từ 1.0. `npm run check:changesets`
+  (CI) chặn changeset sai loại: tóm tắt mở đầu bằng "Fix" mà là `minor`, "New" mà là `patch`, "**Breaking:**" mà là
+  `patch`. `check:release` kiểm tin trong `src/docs/news.ts`: bản patch không có mục `new` / `breaking`, bản minor có
+  ít nhất một mục `new`, không nhảy số, minor cách nhau ≥ 14 ngày, major ≥ 180 ngày.
 - Tóm tắt viết cho người dùng gói (tiếng Anh, như CHANGELOG): "`Combobox`: keep focus when a tag is removed with
   Backspace.", không phải "fix bug".
 - Commit file `.changeset/*.md` vừa tạo cùng PR; sửa lại nội dung file được nếu cần.
@@ -221,7 +227,7 @@ nếu thiếu. Trước khi tag: `npm run check:release --prefix packages/cli --
 Requires Node.js **24 LTS** (or 22.22+) and npm. Run `npm install`, then `npm run dev` (docs site at http://localhost:5173).
 Scripts: `typecheck`, `lint:classes` (Tailwind canonical classes; `node scripts/canonical-classes.mjs --fix`
 repairs them), `build:lib` (library → `dist/`), `build:docs` (docs → `dist-docs/`), `build` (both), `pack:check`,
-`test`, `test:e2e`, `test:visual`, `test:engines`, `size`, `changeset`, `check:release`.
+`test`, `test:e2e`, `test:visual`, `test:engines`, `size`, `changeset`, `check:release`, `check:changesets`.
 
 ### Tests
 
@@ -315,6 +321,12 @@ Use `patch` for fixes and small improvements, `minor` for new components / props
 `0.x` — for breaking changes too (start the summary with "**Breaking:**" and explain the migration). Write the summary
 for package users ("`Combobox`: keep focus when a tag is removed with Backspace."), then commit the generated
 `.changeset/*.md` file with your PR.
+
+Version numbers follow the **rules for each number** (docs › Versioning › Rules for each number): only new API is
+`minor`, everything else is `patch`; PRs into `main` or `release/*` carry `patch` only; `major` starts at 1.0.
+`npm run check:changesets` (CI) rejects a summary starting with "Fix" on a `minor`, "New" on a `patch` and
+"**Breaking:**" on a `patch`. `check:release` checks the news in `src/docs/news.ts`: no `new` / `breaking` item in a
+patch, at least one `new` item in a minor, no skipped numbers, ≥ 14 days between minors and ≥ 180 days between majors.
 
 One changeset per change (two new components → two files). Needs a changeset: anything people installing `yugen-ui`
 receive (components, props, exports, tokens, CSS, fixes, a11y). No changeset: docs pages / examples, tests, CI, wiki.
