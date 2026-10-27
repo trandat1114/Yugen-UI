@@ -220,6 +220,34 @@ export const TEMPLATES: TemplateInfo[] = [
     },
   },
   {
+    dir: "vite-landing",
+    name: "Landing",
+    tags: ["Vite", "React 19", "SEO", "Lighthouse 95+"],
+    previewPath: "/",
+    vi: {
+      description: "Trang giới thiệu sản phẩm: bảng giá, hỏi đáp, form đăng ký; HTML và SEO sinh sẵn lúc build.",
+      features: [
+        "Hero hai lời kêu gọi, hàng logo, lưới tính năng, nhận xét, hỏi đáp bằng Accordion, chân trang",
+        "Bảng giá đổi theo tháng / năm; giá và gói nằm trong src/content/, cũng là offers trong JSON-LD",
+        "Form đăng ký dùng Field và một hàm kiểm tra nhỏ, không thư viện form; báo thành công bằng toast",
+        "Plugin Vite ghi title, description, canonical, Open Graph, JSON-LD và màn hình đầu vào index.html",
+        "Lighthouse trên di động từ 95 điểm ở cả bốn mục: phần dưới màn hình đầu nạp sau, không xê dịch bố cục",
+        "Sáng / tối / tương phản cao; chữ tiếng Anh, tiếng Việt (giá VND) với --lang vi",
+      ],
+    },
+    en: {
+      description: "A product landing page: pricing, FAQ and a sign-up form, with HTML and SEO built ahead of time.",
+      features: [
+        "Hero with two calls to action, logo row, feature grid, testimonials, an Accordion FAQ, footer",
+        "Pricing with a monthly / yearly switch; plans and prices live in src/content/ and feed the JSON-LD offers",
+        "Sign-up form with Field and a small validation function, no form library; a toast on success",
+        "A Vite plugin writes title, description, canonical, Open Graph, JSON-LD and the first screen into index.html",
+        "Lighthouse 95+ on mobile in all four categories: what is below the first screen loads after it, no layout shift",
+        "Light / dark / high contrast; English text, Vietnamese (prices in VND) with --lang vi",
+      ],
+    },
+  },
+  {
     dir: "vite-admin",
     name: "Admin",
     tags: ["Vite", "React 19", "CRUD", { vi: "Đăng nhập", en: "Sign-in" }],

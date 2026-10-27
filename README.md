@@ -241,6 +241,7 @@ npm run dev
 | `vite-dashboard` | KPI tiles, charts, recent transactions |
 | `vite-ai-chat` | AI assistant chat with agent trace |
 | `vite-glass` | Travel journal with glass navigation over photos (Yugen Labs) |
+| `vite-landing` | Product landing page: pricing, FAQ, sign-up form; static first screen and SEO at build time |
 | `vite-admin` | Admin / CRUD: server-paged DataGrid, drawer forms, optimistic updates, sign-in with OTP |
 | `next-starter` | Next.js App Router starter, theme in a cookie (no flash) |
 
@@ -526,6 +527,7 @@ npm run dev
 | `vite-dashboard` | Thẻ KPI, biểu đồ, giao dịch gần đây |
 | `vite-ai-chat` | Trợ lý AI dạng chat, Trace các bước agent |
 | `vite-glass` | Nhật ký du lịch, điều hướng glass trên ảnh (Yugen Labs) |
+| `vite-landing` | Trang giới thiệu sản phẩm: bảng giá, hỏi đáp, form đăng ký; màn hình đầu và SEO sinh sẵn lúc build |
 | `vite-admin` | Trang quản trị: DataGrid phân trang trên server, form trong Drawer, cập nhật lạc quan, đăng nhập OTP |
 | `next-starter` | Next.js App Router, theme lưu trong cookie (không nháy) |
 

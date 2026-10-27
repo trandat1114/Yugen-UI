@@ -120,6 +120,27 @@
     }
   },
   {
+    "dir": "vite-landing",
+    "name": "landing",
+    "title": "Landing",
+    "hint": "Product landing page: pricing, FAQ, sign-up form, build-time SEO, Lighthouse 95+",
+    "budget": {
+      "js": 2,
+      "css": 27,
+      "totalJs": 165
+    },
+    "meta": {
+      "en": {
+        "title": "Sakura Notes",
+        "description": "A product landing page built with Yugen UI: pricing with a monthly / yearly switch, FAQ, a sign-up form and SEO generated at build time."
+      },
+      "vi": {
+        "title": "Sakura Notes",
+        "description": "Trang giới thiệu sản phẩm dựng bằng Yugen UI: bảng giá theo tháng / năm, hỏi đáp, form đăng ký và SEO sinh sẵn lúc build."
+      }
+    }
+  },
+  {
     "dir": "vite-admin",
     "name": "admin",
     "title": "Admin",

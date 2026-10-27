@@ -92,7 +92,7 @@ export default function Page() {
           <Table
             head={["Command", "What it does"]}
             rows={[
-              ["create [dir]", "New app from a template: starter, saas, blog, dashboard, ai-chat, glass, admin, next-starter. --ref <branch|tag> takes the templates from the repo."],
+              ["create [dir]", "New app from a template: starter, saas, blog, dashboard, ai-chat, glass, landing, admin, next-starter. --ref <branch|tag> takes the templates from the repo."],
               ["init", "Set up an existing React project with the npm package or with copied source. Writes yugen.json and wraps the app in YugenProvider."],
               ["add <names…>", "Copy components and the components they depend on, install missing npm packages."],
               ["diff [names…]", "Compare copied source with the registry and print the diff. Changes nothing."],

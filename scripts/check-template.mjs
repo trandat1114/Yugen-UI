@@ -46,6 +46,9 @@ function checkBudget(measured) {
   else {
     if (sizes.js > budget.js) failures.push(`JS lần tải đầu ${sizes.js.toFixed(1)} kB > budget ${budget.js} kB`);
     if (sizes.css > budget.css) failures.push(`CSS ${sizes.css.toFixed(1)} kB > budget ${budget.css} kB`);
+    // Trang prerender nạp app sau lần vẽ đầu (Landing): JS đầu gần như 0, nên chặn thêm tổng JS.
+    if (budget.totalJs !== undefined && sizes.totalJs > budget.totalJs)
+      failures.push(`JS tổng ${sizes.totalJs.toFixed(1)} kB > budget ${budget.totalJs} kB`);
   }
   const total = sizes.totalJs === undefined ? "" : `, JS tổng ${sizes.totalJs.toFixed(1)} kB`;
   console.log(
@@ -173,7 +176,7 @@ if (process.env.GITHUB_STEP_SUMMARY) {
       "",
       "| Initial JS (gzip) | CSS (gzip) | All JS (gzip) | Pages checked |",
       "|---|---|---|---|",
-      `| ${ok(sizes?.js, budget?.js)} | ${ok(sizes?.css, budget?.css)} | ${ok(sizes?.totalJs)} | ${smoke ? pages.length : "skipped"} |`,
+      `| ${ok(sizes?.js, budget?.js)} | ${ok(sizes?.css, budget?.css)} | ${ok(sizes?.totalJs, budget?.totalJs)} | ${smoke ? pages.length : "skipped"} |`,
       "",
       ...(failures.length ? ["**Problems**", "", ...failures.map((f) => `- ${f}`), ""] : []),
     ].join("\n"),
