@@ -179,6 +179,10 @@ export default function Page() {
         description="The steps in Quick start still apply; only the Tailwind plugin and the location of the CSS differ."
       >
         <div className="flex flex-col gap-4">
+          <MessageBar intent="info" title="There is a template:" className="max-w-3xl">
+            <C>npx create-yugen-ui@latest my-app --template next-starter</C> creates an App Router app with the steps below
+            done, and the theme in a cookie so the server renders it in the first HTML.
+          </MessageBar>
           <CodeBlock code={SETUP_CODE} />
           <CodeBlock code={POSTCSS_CODE} />
           <CodeBlock code={GLOBALS_CODE} />

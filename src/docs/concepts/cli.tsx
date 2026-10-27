@@ -92,7 +92,7 @@ export default function Page() {
           <Table
             head={["Lệnh", "Việc làm"]}
             rows={[
-              ["create [dir]", "Tạo app từ template: starter, saas, blog, dashboard, ai-chat, glass. --ref <nhánh|tag> lấy template từ repo."],
+              ["create [dir]", "Tạo app từ template: starter, saas, blog, dashboard, ai-chat, glass, admin, next-starter. --ref <nhánh|tag> lấy template từ repo."],
               ["init", "Thiết lập dự án React có sẵn, dùng gói npm hoặc chép mã nguồn. Ghi yugen.json, bọc app trong YugenProvider."],
               ["add <tên…>", "Chép component cùng các component phụ thuộc, cài gói npm còn thiếu."],
               ["diff [tên…]", "So mã đã chép với registry và in diff; không sửa gì."],

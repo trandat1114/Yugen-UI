@@ -137,6 +137,39 @@ const TEMPLATES = [
      */
     seoPlugin: true,
   },
+  {
+    dir: "vite-admin",
+    vi: {
+      appTitle: "Sakura Admin",
+      description: "Trang quản trị dựng bằng Yugen UI: bảng khách hàng phân trang trên server, sửa trong Drawer có kiểm tra, cập nhật lạc quan, đăng nhập có mã OTP.",
+    },
+    hint: "Admin / CRUD: server-paged DataGrid, drawer forms, optimistic updates, sign-in with OTP",
+    title: "Admin",
+    appTitle: "Sakura Admin",
+    description:
+      "An admin app built with Yugen UI: a server-paged customer DataGrid, create and edit in a validated drawer, optimistic updates that roll back, and sign-in with a one-time code.",
+    lang: "en",
+    app: "admin",
+    spa: true,
+    storageKey: "yugen-admin-appearance",
+    /** Form validation (src/validation.ts). Not @hookform/resolvers: its optional peers break `npm install` on npm 11. */
+    dependencies: { "react-hook-form": pkg.devDependencies["react-hook-form"], zod: pkg.devDependencies.zod },
+  },
+  {
+    dir: "next-starter",
+    vi: {
+      appTitle: "Ứng dụng của tôi",
+      description: "Dự án Next.js App Router với Yugen UI: theme lưu trong cookie để server render đúng, metadata theo trang, next/font.",
+    },
+    hint: "Next.js App Router: theme in a cookie (no flash), metadata per page, next/font",
+    title: "Next.js starter",
+    appTitle: "My app",
+    description: "A Next.js App Router project with Yugen UI: theme in a cookie so the server renders it, metadata per page, next/font.",
+    lang: "en",
+    app: "next-starter",
+    /** Next.js App Router thay cho Vite (#153): xem nextFiles(). Không có bản xem trước nhúng trong docs. */
+    framework: "next",
+  },
 ];
 
 const BLOCK_DIR = path.join(root, "src/docs/block-library");
@@ -166,7 +199,7 @@ function appSources(app) {
     fs
       .readdirSync(dir, { recursive: true })
       .map((f) => String(f).split(path.sep).join("/"))
-      .filter((f) => (/\.(tsx?|md)$/.test(f) || ASSET.test(f)) && !/\.test\.tsx?$/.test(f))
+      .filter((f) => (/\.(tsx?|md|css)$/.test(f) || ASSET.test(f)) && !/\.test\.tsx?$/.test(f))
       .sort()
       .map((f) =>
         f === "vite.config.ts"
@@ -695,7 +728,127 @@ vite.config.ts           # landingSeo plugin: head tags and the static first scr
 
 ${generatedFrom(t)}
 `,
+  admin: (t) => `# ${t.appTitle ?? t.title}
+
+An admin app from [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates): Vite, React and Tailwind CSS v4.
+Customers and their orders, the screens most back offices start with, on a mock API you replace with your own.
+
+${install(t.dir, "en")}
+
+## What's included
+
+- Customers (\`/customers\`): a \`DataGrid\` paged, sorted and filtered by the server (one page plus the total per
+  request), search, status and plan filters, a column picker (\`DataGridColumnPicker\`), and row selection with bulk
+  export to CSV and bulk delete.
+- Create and edit in a \`Drawer\`, validated with react-hook-form and zod (\`src/validation.ts\`); delete after a
+  confirm \`Dialog\`.
+- Optimistic updates (\`useOptimisticList\`): changes show at once, a toast confirms them, and a failed request puts
+  the list back as it was, with a Retry button.
+- Customer page (\`/customers/<id>\`) with the details and the customer's orders; Orders (\`/orders\`), read-only.
+- Sign in, forgot password and a one-time code step (\`InputOTP\`). Pages other than these need a session: without
+  one you land on the sign-in page and come back to the page you asked for.
+- Settings: theme, brand, the mock API's response time and a switch for random errors.
+- Pages load on demand (\`React.lazy\`), with real URLs and the tab title per page. Light, dark and high-contrast
+  themes, saved with no flash on reload. English text in \`src/content/\`; Vietnamese with
+  \`npx create-yugen-ui@latest my-app --template admin --lang vi\`.
+
+## Demo account
+
+The first visit in a tab starts signed in, so the app opens on its data. Sign out (avatar menu or Settings) to try
+the sign-in flow with \`admin@sakura.dev\` / \`sakura-admin\` and the code \`246810\`. The session lives in
+\`sessionStorage\`. To turn off the automatic sign-in, set \`DEMO_AUTO_SIGN_IN\` to \`false\` in \`src/auth.tsx\`.
+
+## Connect your back end
+
+\`src/api.ts\` generates 120 customers and their orders in the browser and answers after a short delay; with random
+errors on, about one save or delete in five fails. Keep the \`AdminApi\` interface and return an object that calls
+your server:
+
+\`\`\`ts
+const api: AdminApi = {
+  listCustomers: (query, signal) => fetch(\`/api/customers?\${toParams(query)}\`, { signal }).then((r) => r.json()),
+  updateCustomer: (id, input) => fetch(\`/api/customers/\${id}\`, { method: "PUT", body: JSON.stringify(input) }).then((r) => r.json()),
+  // getCustomer, createCustomer, deleteCustomers, listOrders, signIn, verifyCode, requestPasswordReset
 };
+\`\`\`
+
+Create it in \`src/App.tsx\` instead of \`createMockApi\`, then delete the mock API card in
+\`src/pages/SettingsPage.tsx\` and the demo account notes on the sign-in pages. List calls take a page, a page size,
+a sort and the filters, and return \`{ rows, total }\`. Reject with an error when a request fails: the optimistic
+update rolls back on its own.
+
+Validation uses a small zod resolver in \`src/validation.ts\` instead of \`@hookform/resolvers\`, whose optional
+peer dependencies make \`npm install\` fail on npm 11. You can switch to it once that is fixed.
+
+${deploy()}
+## Structure
+
+\`\`\`
+src/
+  App.tsx              # YugenProvider, saved appearance, mock API, session, router
+  Layout.tsx           # top bar, sidebar, sign-in redirect, lazy pages
+  pages/               # Customers, Customer, Orders, Settings, SignIn, Verify, ForgotPassword, NotFound
+  CustomerDrawer.tsx   # create / edit drawer and the delete dialog
+  CustomerForm.tsx     # the form (react-hook-form + zod), loaded when a drawer opens
+  OrderList.tsx        # paged orders, for /orders and the customer page
+  api.ts               # mock back end (replace with yours)
+  auth.tsx             # session in sessionStorage, demo sign-in
+  validation.ts        # zod schemas and the resolver
+  router.tsx           # History API router, Link, next= after sign-in
+  content/             # every string, one file per language
+  ui.tsx · useQuery.ts · csv.ts · context.ts · appearance.ts
+\`\`\`
+
+${generatedFrom(t)}
+`,
+};
+
+README["next-starter"] = (t) => `# ${t.appTitle ?? t.title}
+
+A [Next.js](https://nextjs.org) App Router project with [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates)
+and Tailwind CSS v4.
+
+${install(t.dir, "en")}
+
+## What's included
+
+- \`YugenProvider\` in one Client Component (\`src/app/providers.tsx\`), wrapped around the app in \`src/app/layout.tsx\`.
+- The theme and brand live in cookies. The root layout reads them and writes \`data-theme\` / \`data-brand\` on \`<html>\`,
+  so the first HTML is already in the right theme, with no flash. On a first visit, a tiny script picks light or dark
+  from the OS before the first paint. Reading cookies renders pages per request; for a fully static site, drop the
+  cookies and keep only the script.
+- \`src/app/page.tsx\` is a Server Component that renders Yugen components (no \`"use client"\`): their props are text and
+  elements. \`src/components/AppearanceForm.tsx\` is a Client Component because it has state and event handlers.
+- Fluent icons run style code when they load, so Server Components import them from \`src/components/icons.ts\` (a
+  \`"use client"\` file that re-exports the ones you use), not from \`@fluentui/react-icons\` directly.
+- \`metadata\` per page with a title template, \`next/font\` (Noto Sans, self-hosted, Vietnamese glyphs) as Yugen's base
+  font in \`src/app/globals.css\`, a not-found page and a skip link.
+- All text in \`src/content/\`: English by default, Vietnamese with
+  \`npx create-yugen-ui@latest my-app --template next-starter --lang vi\`.
+
+## Structure
+
+\`\`\`
+src/
+  app/
+    layout.tsx        # <html> with the saved theme, metadata, next/font, header
+    providers.tsx     # "use client": YugenProvider, theme and brand state, cookies
+    page.tsx          # Server Component home page
+    settings/page.tsx # Server Component page with a Client Component form
+    not-found.tsx
+    globals.css       # Tailwind + yugen-ui/theme.css, base font
+  components/         # SiteHeader (server), NavLinks and AppearanceForm (client)
+  appearance.ts       # cookie names and the first-visit script
+  content/            # every string, one file per language
+\`\`\`
+
+## Deploy
+
+\`npm run build\` then \`npm start\` on any Node host, or push to Vercel. The pages read cookies, so they render on the
+server; a static export (\`output: "export"\`) needs the cookies removed first.
+
+${generatedFrom(t)}
+`;
 
 const readme = (t) =>
   t.app
@@ -736,10 +889,87 @@ const ALIAS_CONFIG = `
   // import { Foo } from "@/components/Foo" thay cho đường dẫn tương đối dài (khai báo cả trong tsconfig.json).
   resolve: { alias: { "@": path.resolve(import.meta.dirname, "./src") } },`;
 
+/** Next.js cho template Next (#153): cùng dòng với bản Vercel đang dùng. */
+const NEXT_VERSION = "^16.4.3";
+
+/** Template Next.js App Router (#153): Tailwind qua PostCSS, mã từ template-library/<app>/ vào src/ (src/app/…). */
+function nextFiles(t, appFiles) {
+  return {
+    "package.json":
+      JSON.stringify(
+        {
+          name: t.dir,
+          private: true,
+          scripts: { dev: "next dev", build: "next build", start: "next start" },
+          dependencies: {
+            "@fluentui/react-icons": pkg.dependencies["@fluentui/react-icons"],
+            next: NEXT_VERSION,
+            react: pkg.devDependencies.react,
+            "react-dom": pkg.devDependencies["react-dom"],
+            "yugen-ui": `^${pkg.version}`,
+          },
+          devDependencies: {
+            "@tailwindcss/postcss": "^4.0.0",
+            "@types/node": "^22.0.0",
+            "@types/react": pkg.devDependencies["@types/react"],
+            "@types/react-dom": pkg.devDependencies["@types/react-dom"],
+            tailwindcss: "^4.0.0",
+            typescript: pkg.devDependencies.typescript,
+          },
+        },
+        null,
+        2,
+      ) + "\n",
+    "next.config.ts": `import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {};
+
+export default nextConfig;
+`,
+    "postcss.config.mjs": `// Tailwind CSS v4 runs through PostCSS in Next.js.
+export default {
+  plugins: { "@tailwindcss/postcss": {} },
+};
+`,
+    "tsconfig.json":
+      JSON.stringify(
+        {
+          compilerOptions: {
+            target: "ES2022",
+            lib: ["dom", "dom.iterable", "esnext"],
+            allowJs: false,
+            skipLibCheck: true,
+            strict: true,
+            noEmit: true,
+            esModuleInterop: true,
+            module: "esnext",
+            moduleResolution: "bundler",
+            resolveJsonModule: true,
+            isolatedModules: true,
+            jsx: "react-jsx",
+            incremental: true,
+            plugins: [{ name: "next" }],
+            paths: { "@/*": ["./src/*"] },
+          },
+          include: ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", ".next/dev/types/**/*.ts"],
+          exclude: ["node_modules"],
+        },
+        null,
+        2,
+      ) + "\n",
+    ".gitignore": "node_modules\n.next\nout\nnext-env.d.ts\n*.tsbuildinfo\n*.local\n",
+    "public/favicon.svg": read(path.join(root, "public/favicon.svg")),
+    "public/robots.txt": "User-agent: *\nAllow: /\n",
+    "README.md": readme(t),
+    ...appFiles,
+  };
+}
+
 function files(t) {
   const { sources, blocks } = t.app ? appSources(t.app) : { sources: {}, blocks: t.blocks };
   const blockFiles = Object.fromEntries(blocks.map((b) => [blockTarget(b), toYugen(read(path.join(BLOCK_DIR, b)))]));
   const appFiles = Object.fromEntries(Object.entries(sources).map(([rel, code]) => [rel, isText(code) ? toYugen(code) : code]));
+  if (t.framework === "next") return nextFiles(t, appFiles);
   const jpChars = [...new Set(Object.values(sources).filter(isText).join("").match(/[\u3040-\u30ff\u3400-\u9fff]/g) ?? [])].sort().join("");
   return {
     "package.json":
@@ -754,13 +984,17 @@ function files(t) {
             ...(t.spa && { "build:gh-pages": "tsc -b && vite build --mode gh-pages" }),
             preview: "vite preview",
           },
-          dependencies: {
-            "@fluentui/react-icons": pkg.dependencies["@fluentui/react-icons"],
-            // React và type theo devDependencies ở gốc repo (cùng bản mà docs và test chạy).
-            react: pkg.devDependencies.react,
-            "react-dom": pkg.devDependencies["react-dom"],
-            "yugen-ui": `^${pkg.version}`,
-          },
+          // `t.dependencies`: thư viện runtime riêng của template (vd. admin: react-hook-form, zod), xếp theo tên như npm.
+          dependencies: Object.fromEntries(
+            Object.entries({
+              "@fluentui/react-icons": pkg.dependencies["@fluentui/react-icons"],
+              // React và type theo devDependencies ở gốc repo (cùng bản mà docs và test chạy).
+              react: pkg.devDependencies.react,
+              "react-dom": pkg.devDependencies["react-dom"],
+              "yugen-ui": `^${pkg.version}`,
+              ...t.dependencies,
+            }).sort(([a], [b]) => (a < b ? -1 : 1)),
+          ),
           devDependencies: {
             "@tailwindcss/vite": "^4.0.0",
             "@types/react": pkg.devDependencies["@types/react"],
@@ -853,6 +1087,9 @@ const BUDGETS = {
   "vite-ai-chat": { js: 175, css: 25 },
   "vite-glass": { js: 160, css: 26 },
   "vite-landing": { js: 160, css: 26 },
+  "vite-admin": { js: 167, css: 26 },
+  // Next.js: react-dom + runtime của Next ~157 kB trước cả mã của app.
+  "next-starter": { js: 265, css: 27 },
 };
 
 // `meta`: <title> / description của index.html theo từng ngôn ngữ — `create --lang` (packages/cli applyLang) ghi đè.

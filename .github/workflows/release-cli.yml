@@ -29,6 +29,11 @@ jobs:
           cache-dependency-path: packages/cli/package-lock.json
           registry-url: https://registry.npmjs.org
 
+      # npm trusted publishing (OIDC, #202) cần npm ≥ 11.5.1. npm dùng OIDC khi gói đã khai báo trusted publisher trên
+      # npmjs.com và chỉ quay về NODE_AUTH_TOKEN khi chưa có — giữ token tới bản phát hành đầu tiên chạy bằng OIDC.
+      - name: npm with trusted publishing
+        run: npm install -g npm@11 && npm --version
+
       - run: npm ci --prefix packages/cli
 
       - name: Check release rules (tag, version, CHANGELOG, branch) and choose dist-tag

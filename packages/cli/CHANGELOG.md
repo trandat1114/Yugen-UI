@@ -3,6 +3,10 @@
 ## Unreleased
 
 - New template: `glass` (`create --template glass`), a travel journal with glass navigation over photos.
+- New template: `admin` (`create --template admin`), customers and orders with a server-paged DataGrid, drawer forms
+  with validation, optimistic updates, and sign-in with a one-time code.
+- New template: `next-starter` (`create --template next-starter`), a Next.js App Router project with the theme in a
+  cookie so the server renders it. `create --lang` works without an `index.html`.
 
 ## 0.4.0
 

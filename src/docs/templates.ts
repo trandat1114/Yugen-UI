@@ -165,6 +165,33 @@ export const TEMPLATES: TemplateInfo[] = [
     },
   },
   {
+    dir: "next-starter",
+    name: "Next.js starter",
+    tags: ["Next.js 16", "App Router", "React 19", "Tailwind v4"],
+    vi: {
+      description: "Dự án Next.js App Router: theme lưu trong cookie để server render đúng, không nháy.",
+      features: [
+        "YugenProvider trong một Client Component (src/app/providers.tsx), bọc app ở layout.tsx",
+        "Theme và brand trong cookie: server ghi sẵn data-theme lên <html>; lần đầu theo cài đặt hệ điều hành",
+        "Trang chủ là Server Component dùng component Yugen; form Cài đặt là Client Component",
+        "Icon Fluent qua một file \"use client\" để Server Component dùng được",
+        "metadata theo trang, next/font (Noto Sans, đủ dấu tiếng Việt), trang 404",
+        "Chữ tiếng Anh, tiếng Việt với --lang vi; CI build bằng next build và kiểm tra từng trang",
+      ],
+    },
+    en: {
+      description: "A Next.js App Router project: theme in a cookie so the server renders it, no flash.",
+      features: [
+        "YugenProvider in one Client Component (src/app/providers.tsx), wrapped around the app in layout.tsx",
+        "Theme and brand in cookies: the server writes data-theme on <html>; a first visit follows the OS setting",
+        "The home page is a Server Component using Yugen components; the Settings form is a Client Component",
+        "Fluent icons through a \"use client\" file so Server Components can use them",
+        "metadata per page, next/font (Noto Sans with Vietnamese glyphs), a 404 page",
+        "English text, Vietnamese with --lang vi; CI builds it with next build and checks every page",
+      ],
+    },
+  },
+  {
     dir: "vite-glass",
     name: "Glass",
     tags: ["Vite", "React 19", "Yugen Labs", "Glass"],
@@ -189,6 +216,34 @@ export const TEMPLATES: TemplateInfo[] = [
         "Explore: a full-screen picture, pins that open popovers, filters, zoom and search floating in clear glass",
         "Settings: theme, brand, glass or solid, clear or regular over photos; Unsplash photo credits",
         "Lazy routes /, /trips/:id, /explore, /settings; English text, Vietnamese with --lang vi",
+      ],
+    },
+  },
+  {
+    dir: "vite-admin",
+    name: "Admin",
+    tags: ["Vite", "React 19", "CRUD", { vi: "Đăng nhập", en: "Sign-in" }],
+    previewPath: "/customers",
+    vi: {
+      description: "Trang quản trị khách hàng và đơn hàng: bảng phân trang trên server, form có kiểm tra, đăng nhập OTP.",
+      features: [
+        "DataGrid phân trang, sắp xếp và lọc trên server; tìm kiếm, chọn cột hiển thị",
+        "Chọn nhiều hàng để xuất CSV hoặc xoá; xoá luôn hỏi lại bằng Dialog",
+        "Thêm và sửa trong Drawer, kiểm tra bằng react-hook-form + zod",
+        "Cập nhật lạc quan với useOptimisticList: lỗi thì hoàn tác, toast có nút Thử lại",
+        "Đăng nhập, quên mật khẩu, mã OTP (InputOTP); trang cần đăng nhập đưa về đúng chỗ sau khi đăng nhập",
+        "API giả lập có độ trễ và lỗi ngẫu nhiên trong một file; tiếng Anh, tiếng Việt với --lang vi",
+      ],
+    },
+    en: {
+      description: "Customers and orders: a server-paged table, validated forms and sign-in with a one-time code.",
+      features: [
+        "DataGrid paged, sorted and filtered by the server; search and a column picker",
+        "Select rows to export them as CSV or delete them; deletes are confirmed in a Dialog",
+        "Create and edit in a Drawer, validated with react-hook-form + zod",
+        "Optimistic updates with useOptimisticList: a failed request rolls back, with Retry in the toast",
+        "Sign in, forgot password, one-time code (InputOTP); protected pages bring you back after sign-in",
+        "A mock API with latency and random errors in one file; English, Vietnamese with --lang vi",
       ],
     },
   },
