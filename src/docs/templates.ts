@@ -165,6 +165,33 @@ export const TEMPLATES: TemplateInfo[] = [
     },
   },
   {
+    dir: "next-starter",
+    name: "Next.js starter",
+    tags: ["Next.js 16", "App Router", "React 19", "Tailwind v4"],
+    vi: {
+      description: "Dự án Next.js App Router: theme lưu trong cookie để server render đúng, không nháy.",
+      features: [
+        "YugenProvider trong một Client Component (src/app/providers.tsx), bọc app ở layout.tsx",
+        "Theme và brand trong cookie: server ghi sẵn data-theme lên <html>; lần đầu theo cài đặt hệ điều hành",
+        "Trang chủ là Server Component dùng component Yugen; form Cài đặt là Client Component",
+        "Icon Fluent qua một file \"use client\" để Server Component dùng được",
+        "metadata theo trang, next/font (Noto Sans, đủ dấu tiếng Việt), trang 404",
+        "Chữ tiếng Anh, tiếng Việt với --lang vi; CI build bằng next build và kiểm tra từng trang",
+      ],
+    },
+    en: {
+      description: "A Next.js App Router project: theme in a cookie so the server renders it, no flash.",
+      features: [
+        "YugenProvider in one Client Component (src/app/providers.tsx), wrapped around the app in layout.tsx",
+        "Theme and brand in cookies: the server writes data-theme on <html>; a first visit follows the OS setting",
+        "The home page is a Server Component using Yugen components; the Settings form is a Client Component",
+        "Fluent icons through a \"use client\" file so Server Components can use them",
+        "metadata per page, next/font (Noto Sans with Vietnamese glyphs), a 404 page",
+        "English text, Vietnamese with --lang vi; CI builds it with next build and checks every page",
+      ],
+    },
+  },
+  {
     dir: "vite-glass",
     name: "Glass",
     tags: ["Vite", "React 19", "Yugen Labs", "Glass"],
