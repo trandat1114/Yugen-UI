@@ -35,6 +35,18 @@ export const PROJECT_URL = "https://github.com/users/trandat1114/projects/6";
 export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
   now: [
     {
+      milestone: "0.13.0",
+      kind: "minor",
+      due: "2026-11-10",
+      vi: "Khúc xạ cho glass và mùa hoa anh đào trong template Glass.",
+      en: "Glass refraction and cherry blossom season in the Glass template.",
+      items: [
+        { status: "doing", issue: 227, vi: "GlassRefraction: mép bề mặt glass bẻ cong nền phía sau (Chromium); template Glass có chuyến đi ở Nhật Bản và xem trước trên ảnh", en: "GlassRefraction: glass edges bend what is behind them (Chromium); Japan trips and a photo preview in the Glass template" },
+        { status: "done", issue: 224, vi: "Trang Templates: xem toàn màn hình, một khung lớn cho các template khác", en: "Templates page: full-screen preview, one large view for the other templates" },
+        { status: "done", issue: 223, vi: "Checkbox, Switch, Field: input ẩn của form không kéo dài trang", en: "Checkbox, Switch, Field: the hidden form input no longer stretches the page" },
+      ],
+    },
+    {
       milestone: "1.0.0",
       kind: "major",
       vi: "API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện hoàn tất.",
@@ -53,7 +65,7 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       vi: "Chưa xếp lịch.",
       en: "Not scheduled yet.",
       items: [
-        { status: "planned", issue: 210, vi: "Glass phần 2: menu mọc từ nút, nút kéo glass, hiệu ứng khúc xạ, xem trước trong Theme Designer", en: "Glass part 2: menus that grow from the button, glass thumbs, refraction, Theme Designer preview" },
+        { status: "planned", issue: 210, vi: "Glass phần 2: menu mọc từ nút, nút kéo glass, xem trước trong Theme Designer", en: "Glass part 2: menus that grow from the button, glass thumbs, Theme Designer preview" },
         { status: "planned", issue: 68, vi: "Đăng ký @yugen vào danh mục registry của shadcn", en: "Register @yugen in the shadcn registry index" },
         { status: "planned", vi: "Đang cân nhắc: bộ Figma, gói icon Sakura", en: "Under consideration: Figma kit, Sakura icon set" },
       ],

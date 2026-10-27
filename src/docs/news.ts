@@ -31,12 +31,14 @@ export const NEWS_KIND_LABEL: Record<NewsKind, string> = {
 
 export const NEWS: NewsRelease[] = [
   {
-    version: "0.12.1",
+    version: "0.13.0",
     upcoming: true,
-    date: "2026-10-28",
-    title: "Xem template toàn màn hình, form trong vùng cuộn không còn kéo dài trang",
-    summary: "Trang Templates có nút xem toàn màn hình và một khung lớn cho các template khác. Checkbox, Switch và Dropdown trong Field không còn kéo dài trang khi nằm trong form ở một vùng cuộn.",
+    date: "2026-11-10",
+    title: "Khúc xạ cho glass, mùa hoa anh đào trong template Glass",
+    summary: "Mép của bề mặt glass bẻ cong ảnh phía sau như vành thấu kính (GlassRefraction, trình duyệt Chromium). Template Glass có thêm Kyoto, Tokyo, Hirosaki và núi Phú Sĩ mùa hoa nở. Trang Templates có chế độ toàn màn hình; Checkbox, Switch và Dropdown trong Field không còn kéo dài trang khi nằm trong form ở một vùng cuộn.",
     items: [
+      { kind: "new", text: "GlassRefraction (Yugen Labs): đặt một lần ở gốc app, mép của mọi bề mặt glass bẻ cong phần nền phía sau như vành thấu kính, phần giữa vẫn mờ nên chữ giữ tương phản. Chỉ trình duyệt Chromium vẽ được; Safari và Firefox giữ glass như cũ. Tắt cùng blur khi giảm trong suốt, tăng tương phản, forced colors và theme tương phản cao.", href: "/foundations/glass" },
+      { kind: "improved", text: "Template Glass: bốn chuyến đi mùa hoa anh đào ở Kyoto, Tokyo, Hirosaki và quanh núi Phú Sĩ (ảnh Wikimedia Commons, ghi nguồn và giấy phép); trang Cài đặt có khung xem trước thanh và nút điều khiển trên ảnh sáng, ảnh hoa và ảnh đêm.", href: "/templates" },
       { kind: "improved", text: "Trang Templates: nút toàn màn hình trên mỗi preview, chọn khổ máy tính, máy tính bảng hoặc điện thoại; link ?preview=<template> mở thẳng chế độ này. Các template khác chọn bằng tab và xem trong một khung lớn bằng template nổi bật; link #<template> chọn sẵn template.", href: "/templates" },
       { kind: "fixed", text: "Checkbox, Switch và Dropdown trong Field: khi nằm trong <form> ở một vùng cuộn, input ẩn dùng để gửi form không còn kéo dài trang và để lại khoảng trống phía dưới.", href: "/components/checkbox" },
     ],
@@ -277,6 +279,16 @@ export const LATEST_RELEASE = NEWS.find((r) => !r.upcoming) ?? NEWS[0];
  * kiểm tra cùng CHANGELOG của CLI.
  */
 export const CLI_NEWS: NewsRelease[] = [
+  {
+    version: "0.5.1",
+    upcoming: true,
+    date: "2026-11-10",
+    title: "Template Glass: mùa hoa anh đào ở Nhật Bản",
+    summary: "Template Glass có thêm bốn chuyến đi ở Nhật Bản, khúc xạ ở mép glass và khung xem trước trên ảnh trong trang Cài đặt.",
+    items: [
+      { kind: "improved", text: "npx create-yugen-ui@latest my-app --template glass: chuyến đi ở Kyoto, Tokyo, Hirosaki và quanh núi Phú Sĩ, GlassRefraction ở gốc app, trang Cài đặt xem trước trên ảnh sáng, ảnh hoa và ảnh đêm. Template ghim yugen-ui@^0.13.0.", href: "/templates" },
+    ],
+  },
   {
     version: "0.5.0",
     date: "2026-10-27",

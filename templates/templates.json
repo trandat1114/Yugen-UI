@@ -103,7 +103,7 @@
     "dir": "vite-glass",
     "name": "glass",
     "title": "Glass",
-    "hint": "Travel journal: full-bleed photos with glass navigation (Yugen Labs)",
+    "hint": "Travel journal: cherry blossoms in Japan, glass navigation with refraction (Yugen Labs)",
     "budget": {
       "js": 160,
       "css": 26
@@ -111,11 +111,11 @@
     "meta": {
       "en": {
         "title": "Sakura Journeys",
-        "description": "A travel journal built with Yugen UI: full-bleed photos with a glass sidebar, tab bar, toolbars and sheets floating above them, opaque when transparency is reduced."
+        "description": "A journal of cherry blossom season in Japan, built with Yugen UI: full-bleed photos with a glass sidebar, tab bar, toolbars and sheets floating above them, opaque when transparency is reduced."
       },
       "vi": {
         "title": "Sakura Journeys",
-        "description": "Nhật ký du lịch dựng bằng Yugen UI: ảnh tràn viền, sidebar, thanh tab và menu glass nổi trên ảnh, nền đặc khi giảm trong suốt."
+        "description": "Nhật ký mùa hoa anh đào ở Nhật Bản dựng bằng Yugen UI: ảnh tràn viền, sidebar, thanh tab và menu glass nổi trên ảnh, nền đặc khi giảm trong suốt."
       }
     }
   },

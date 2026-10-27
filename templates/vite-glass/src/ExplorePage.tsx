@@ -21,7 +21,7 @@ import { Link } from "./router";
 import { searchTrips } from "./SearchDialog";
 import { TRIPS, type Category } from "./trips";
 
-const FILTERS: ("all" | Category)[] = ["all", "coast", "mountains", "desert", "forest"];
+const FILTERS: ("all" | Category)[] = ["all", "sakura", "coast", "mountains", "desert", "forest"];
 const ZOOM = { min: 1, max: 2, step: 0.25 };
 
 /**
@@ -46,7 +46,7 @@ export default function ExplorePage({ t, appearance, embedded }: PageProps) {
         className="absolute inset-0 -z-10 origin-center transition-transform duration-gentle ease-easy-ease motion-reduce:transition-none"
         style={{ transform: `scale(${zoom})` }}
       >
-        <PhotoImage photo={PHOTOS.paintedHills} alt={t.explore.picture} sizes="100vw" eager className="size-full" />
+        <PhotoImage photo={PHOTOS.gionWeeping} alt={t.explore.picture} sizes="100vw" eager className="size-full" />
         {clear && <div aria-hidden className="glass-scrim absolute inset-0" />}
         {FILTERS.map((value) => (
           <TabsContent key={value} value={value} className="absolute inset-0 pt-0">

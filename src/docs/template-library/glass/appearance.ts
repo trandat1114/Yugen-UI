@@ -25,6 +25,7 @@ export const BRANDS: { value: YugenBrand; label: string }[] = [
  */
 export const SOLID_MATERIAL = {
   "--glassFilter": "none",
+  "--glassLensFilter": "none",
   "--glassEdgeFilter": "none",
   "--colorGlassBackground": "var(--colorGlassBackgroundSolid)",
   "--colorGlassClearBackground": "var(--colorGlassClearBackgroundSolid)",

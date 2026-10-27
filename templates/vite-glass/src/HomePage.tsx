@@ -25,7 +25,7 @@ export default function HomePage({ t, appearance, embedded }: PageProps) {
     <div>
       {/* Content layer: the photo runs edge to edge, under the sidebar and the header. */}
       <section className="relative isolate flex min-h-104 items-end @3xl/app:min-h-128">
-        <PhotoImage photo={PHOTOS.coastCliff} alt="" sizes="100vw" eager className="absolute inset-0 -z-10 size-full" />
+        <PhotoImage photo={PHOTOS.kawaguchikoFuji} alt="" sizes="100vw" eager className="absolute inset-0 -z-10 size-full" />
         {media === "glass-clear" && <div aria-hidden className="glass-scrim absolute inset-0 -z-10" />}
         <div className={cn("w-full pt-24", PAGE_INSET, "pb-6 @3xl/app:pb-8")}>
           <div className={cn(media, "max-w-xl rounded-4xlarge border border-transparent p-5 shadow-16 @3xl/app:p-6")}>

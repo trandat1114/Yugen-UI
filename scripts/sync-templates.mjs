@@ -104,13 +104,13 @@ const TEMPLATES = [
     dir: "vite-glass",
     vi: {
       appTitle: "Sakura Journeys",
-      description: "Nhật ký du lịch dựng bằng Yugen UI: ảnh tràn viền, sidebar, thanh tab và menu glass nổi trên ảnh, nền đặc khi giảm trong suốt.",
+      description: "Nhật ký mùa hoa anh đào ở Nhật Bản dựng bằng Yugen UI: ảnh tràn viền, sidebar, thanh tab và menu glass nổi trên ảnh, nền đặc khi giảm trong suốt.",
     },
-    hint: "Travel journal: full-bleed photos with glass navigation (Yugen Labs)",
+    hint: "Travel journal: cherry blossoms in Japan, glass navigation with refraction (Yugen Labs)",
     title: "Glass",
     appTitle: "Sakura Journeys",
     description:
-      "A travel journal built with Yugen UI: full-bleed photos with a glass sidebar, tab bar, toolbars and sheets floating above them, opaque when transparency is reduced.",
+      "A journal of cherry blossom season in Japan, built with Yugen UI: full-bleed photos with a glass sidebar, tab bar, toolbars and sheets floating above them, opaque when transparency is reduced.",
     lang: "en",
     app: "glass",
     spa: true,
@@ -663,12 +663,14 @@ ${install(t.dir, "en")}
 
 ## What's included
 
-- Journal (\`/\`): an edge-to-edge photo under the floating bars, then the trips.
+- Journal (\`/\`): an edge-to-edge photo under the floating bars, then the trips: cherry blossom season in Kyoto,
+  Tokyo, Hirosaki and around Mount Fuji, and a few hikes.
 - Trip (\`/trips/<id>\`): a glass toolbar with grouped actions, a photo gallery, the story, and the details in a glass
   bottom sheet with snap points (inset from the edges, opaque at the top snap point).
 - Explore (\`/explore\`): one full-screen picture with every trip as a pin, filters, zoom and a search field floating
   over it in clear glass, on a dimmed photo (\`glass-scrim\`).
-- Settings (\`/settings\`): theme, brand, glass or solid bars, clear or regular controls over photos, photo credits.
+- Settings (\`/settings\`): a preview of the bars and controls over a bright, a dense and a night photo, then theme,
+  brand, glass or solid bars, clear or regular controls over photos, and the photo credits.
 - Navigation: a glass sidebar from 768px (an icon rail until 1024px); below that, a header and a tab bar that shrinks
   while you scroll down (\`useScrollMinimize\`). Breakpoints are container queries.
 - Search in a glass dialog, from the sidebar, the header or the tab bar.
@@ -683,12 +685,21 @@ Glass is opt-in per component: \`material="glass"\` on \`Toolbar\`, \`Nav\`, \`T
 contrast, forced colors and the high-contrast theme make it opaque; the Solid setting shows that look. Use the clear
 variant only over a photo dimmed with \`glass-scrim\`.
 
+\`<GlassRefraction />\` in \`App.tsx\` makes the edges of every glass surface bend the photo behind them, like the rim
+of a lens, while the middle stays frosted. Chromium browsers draw it; Safari and Firefox keep the regular glass. It turns
+off with everything that turns off the blur.
+
 ## Photos
 
-Sample photos from [Unsplash](https://unsplash.com) under the [Unsplash License](https://unsplash.com/license), picked
-from the [Lorem Picsum](https://picsum.photos) list, in AVIF at 640 and 1280px wide (\`src/photos/\`):
-Yoni Kaplan-Nadel, Margaret Barley, Go Wild, Jeffrey Kam, Jerry Adney and Paul Jarvis. Replace them with your own in
-\`src/photos.ts\`.
+Sample photos in AVIF at 640 and 1280px wide (\`src/photos/\`), credited on the Settings page and in \`src/photos.ts\`:
+
+- Japan: [Wikimedia Commons](https://commons.wikimedia.org), CC BY 2.0 / 3.0 / 4.0 or public domain: rumpleteaser,
+  Raita Futo, mko294, Midori, Mocchy and Guilhem Vellut. CC BY needs the credit wherever you show the photo.
+- Nature: [Unsplash](https://unsplash.com) under the [Unsplash License](https://unsplash.com/license), picked from the
+  [Lorem Picsum](https://picsum.photos) list: Yoni Kaplan-Nadel, Margaret Barley, Go Wild, Jeffrey Kam, Jerry Adney
+  and Paul Jarvis.
+
+Replace them with your own in \`src/photos.ts\`.
 
 ${deploy()}
 ## Structure

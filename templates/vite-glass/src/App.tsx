@@ -1,5 +1,5 @@
 import * as React from "react";
-import { YugenProvider } from "yugen-ui";
+import { GlassRefraction, YugenProvider } from "yugen-ui";
 import { DEFAULT_APPEARANCE, type Appearance } from "./appearance";
 import defaultContent from "./content";
 import type { Content } from "./content/types";
@@ -68,6 +68,8 @@ export default function App({ embedded = false, content = defaultContent, defaul
       locale={content.locale}
       className={embedded ? "h-full" : undefined}
     >
+      {/* Edges of every glass surface bend the photo behind them (Chromium); elsewhere glass stays as it is. */}
+      <GlassRefraction />
       {embedded ? <MemoryRouter initial={initialRoute}>{layout}</MemoryRouter> : <BrowserRouter>{layout}</BrowserRouter>}
     </YugenProvider>
   );

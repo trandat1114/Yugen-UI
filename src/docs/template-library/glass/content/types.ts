@@ -65,6 +65,10 @@ export interface Content {
   settings: {
     title: string;
     appearance: string;
+    preview: string;
+    previewHint: string;
+    previewPhoto: string;
+    previewPhotos: { day: string; petals: string; night: string };
     theme: string;
     themes: Record<YugenTheme, string>;
     brand: string;
@@ -78,7 +82,7 @@ export interface Content {
     accessibilityItems: string[];
     credits: string;
     creditsLead: string;
-    photoBy: (author: string) => string;
+    photoBy: (author: string, license: string) => string;
   };
   notFound: { title: string; body: string; action: string };
   categories: Record<Category, string>;
