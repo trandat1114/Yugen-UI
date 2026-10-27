@@ -1,5 +1,5 @@
 import * as React from "react";
-import { LAND, LAND_COARSE } from "./land";
+import { LAND_COARSE } from "./land";
 import {
   clampView,
   fitView,
@@ -39,10 +39,16 @@ const LOOKAHEAD = 150;
 
 const easeInOut = (p: number) => (p < 0.5 ? 4 * p ** 3 : 1 - (-2 * p + 2) ** 3 / 2);
 
-// Each parsed once, when first drawn (the detailed one ahead of time, when the browser is idle): a canvas fills a Path2D
-// in one pass, where an SVG this size is drawn again for every tile of the screen.
-const paths: { coarse?: Path2D; fine?: Path2D } = {};
-const landPath = (level: "coarse" | "fine") => (paths[level] ??= new Path2D(level === "coarse" ? LAND_COARSE : LAND));
+// Each parsed once: a canvas fills a Path2D in one pass, where an SVG this size is drawn again for every tile of the
+// screen. The detailed land (60 kB gzip) is a separate chunk, fetched when the browser is idle or the map zooms in; the
+// coarse land stands in until it arrives.
+let coarse: Path2D | null = null;
+let fine: Path2D | null = null;
+let detail: Promise<void> | null = null;
+const loadDetail = () =>
+  (detail ??= import("./land-detail").then(({ LAND }) => {
+    fine = new Path2D(LAND);
+  }));
 const reducedMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
 
 interface Screen {
@@ -141,7 +147,9 @@ export function useMapView(trips: Trip[], { wheel, onMoveStart }: MapViewOptions
     const top = (next.y - height / 2 / next.k) * MAP.pathScale;
     const span = (width / next.k) * MAP.pathScale;
     const world = MAP.width * MAP.pathScale;
-    const land = landPath(next.k < MAP.coarseBelow ? "coarse" : "fine");
+    const wantsDetail = next.k >= MAP.coarseBelow;
+    if (wantsDetail && !fine) void loadDetail().then(() => live.current && drawLand(live.current));
+    const land = wantsDetail && fine ? fine : (coarse ??= new Path2D(LAND_COARSE));
     const style = getComputedStyle(canvas);
     ctx.fillStyle = style.color;
     ctx.strokeStyle = style.borderTopColor;
@@ -275,7 +283,7 @@ export function useMapView(trips: Trip[], { wheel, onMoveStart }: MapViewOptions
   };
 
   React.useEffect(() => {
-    const parse = () => landPath("fine");
+    const parse = () => void loadDetail();
     if (typeof requestIdleCallback === "undefined") {
       const timer = setTimeout(parse, 300);
       return () => clearTimeout(timer);
