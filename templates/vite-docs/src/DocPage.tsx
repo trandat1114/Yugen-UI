@@ -5,7 +5,7 @@ import { cn } from "yugen-ui";
 import { headingsOf, type DocPage as Page, type Heading } from "./docs";
 import { routeOf } from "./HomePage";
 import { Markdown } from "./Markdown";
-import { useSite } from "./pages";
+import { readPromise, useSite } from "./pages";
 import { Link, useRouter, type Route } from "./router";
 
 /** Distance from the top of the scroll area at which a heading counts as the current one (below the sticky header). */
@@ -124,7 +124,7 @@ export interface DocPageProps {
 export default function DocPage({ page, text, target, headingLevel, scrollRoot }: DocPageProps) {
   const { docs } = useSite();
   const { memory } = useRouter();
-  const markdown = React.use(text);
+  const markdown = readPromise(text);
   const headings = React.useMemo(() => headingsOf(markdown), [markdown]);
   const toc = React.useMemo(() => headings.filter((h) => h.level <= 3), [headings]);
   const articleRef = React.useRef<HTMLElement>(null);

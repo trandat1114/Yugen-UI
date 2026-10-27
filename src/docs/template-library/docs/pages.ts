@@ -27,7 +27,7 @@ export function docsFor(lang: string): Docs {
 
 const texts = new Map<string, Promise<string>>();
 
-/** Markdown of a page without its front matter. Cached: React's use() needs the same promise on every render. */
+/** Markdown of a page without its front matter. Cached: readPromise() needs the same promise on every render. */
 export function loadPage(lang: string, page: DocPage): Promise<string> {
   const file = `./content/${lang}/docs/${page.key}.md`;
   let text = texts.get(file);
@@ -37,6 +37,28 @@ export function loadPage(lang: string, page: DocPage): Promise<string> {
     texts.set(file, text);
   }
   return text;
+}
+
+const settled = new WeakMap<Promise<unknown>, { done: boolean; value?: unknown; error?: unknown; failed?: boolean }>();
+
+/**
+ * Read a promise inside a Suspense boundary, on React 18 and 19 alike (React.use is React 19 only): throws the promise
+ * while it is pending, then returns its value or throws its error. The promise must be cached (loadPage caches per file).
+ */
+export function readPromise<T>(promise: Promise<T>): T {
+  let state = settled.get(promise);
+  if (!state) {
+    const entry: { done: boolean; value?: unknown; error?: unknown; failed?: boolean } = { done: false };
+    settled.set(promise, entry);
+    promise.then(
+      (value) => Object.assign(entry, { done: true, value }),
+      (error) => Object.assign(entry, { done: true, failed: true, error }),
+    );
+    state = entry;
+  }
+  if (!state.done) throw promise;
+  if (state.failed) throw state.error;
+  return state.value as T;
 }
 
 export interface Site {
