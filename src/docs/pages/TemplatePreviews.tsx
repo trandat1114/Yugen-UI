@@ -2,6 +2,9 @@ import { useEffect, useMemo, useState, type ComponentType } from "react";
 import { Settings20Regular } from "@fluentui/react-icons";
 import { Badge, Button, Card, CardHeader, useYugen, YugenProvider } from "@/components/ui";
 import AiChatApp from "../template-library/ai-chat/App";
+import DocsApp from "../template-library/docs/App";
+import docsEn from "../template-library/docs/content/en";
+import docsVi from "../template-library/docs/content/vi";
 import GlassApp from "../template-library/glass/App";
 import nextEn from "../template-library/next-starter/content/en";
 import nextVi from "../template-library/next-starter/content/vi";
@@ -223,6 +226,17 @@ function NextStarterPreview() {
   );
 }
 
+/** templates/vite-docs in embedded mode: router in memory, nothing saved, text and pages in the docs language. */
+function DocsPreview() {
+  const host = useYugen();
+  const { locale } = useLocale();
+  return (
+    <div className="h-110">
+      <DocsApp key={locale} embedded content={locale === "vi" ? docsVi : docsEn} defaultTheme={host.theme} />
+    </div>
+  );
+}
+
 /** Theo `dir` trong src/docs/templates.ts. */
 export const PREVIEWS: Record<string, ComponentType> = {
   "vite-starter": StarterPreview,
@@ -232,4 +246,5 @@ export const PREVIEWS: Record<string, ComponentType> = {
   "vite-ai-chat": AiChatPreview,
   "vite-glass": GlassPreview,
   "next-starter": NextStarterPreview,
+  "vite-docs": DocsPreview,
 };

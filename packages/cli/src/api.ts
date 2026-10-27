@@ -50,7 +50,7 @@ const COMMANDS: Record<string, Command> = {
       "no-git": { type: "boolean" },
     },
     help: [
-      "-t, --template <name>   starter | saas | blog | dashboard | ai-chat | glass | next-starter",
+      "-t, --template <name>   starter | saas | blog | dashboard | ai-chat | glass | next-starter | docs",
       "    --ref <branch|tag>  Templates from this branch or tag of the repo instead of the bundled copy",
       "    --lang <code>       en | vi: language of the app's text (templates that have both; default en)",
       "    --pm <name>         npm | pnpm | yarn | bun (default: the one running the CLI)",

@@ -41,6 +41,7 @@ export const NEWS: NewsRelease[] = [
       { kind: "new", text: "DataGrid nhận hiddenColumns; DataGridColumnPicker là nút “Cột” mở menu ô tích, dùng được cả với Table. Menu không đóng khi tích từng cột, cột hideable: false và cột hiện cuối cùng không ẩn được, cột đang sắp xếp vẫn sắp xếp hàng khi bị ẩn. Cột ẩn giữ độ rộng đã kéo; lưu lựa chọn bằng onHiddenColumnsChange.", href: "/components/datagrid" },
       { kind: "new", text: "Template Glass: nhật ký du lịch với ảnh tràn viền, sidebar và thanh tab glass (thu gọn khi cuộn), trang Khám phá với ghim và bộ lọc nổi bằng glass clear, bottom sheet glass, cài đặt glass / đặc. Ảnh mẫu Unsplash dạng AVIF.", href: "/templates" },
       { kind: "new", text: "Template Next.js starter (App Router): YugenProvider trong một Client Component, theme và brand lưu trong cookie để server render đúng theme (không nháy), trang chủ là Server Component dùng component Yugen, metadata theo trang, next/font. Trang SSR có liên kết tới template.", href: "/concepts/ssr" },
+      { kind: "new", text: "Template Docs: trang tài liệu từ file Markdown, mỗi thư mục là một phần của sidebar. Mục lục đánh dấu đề mục đang đọc, tìm kiếm Ctrl K trên tiêu đề và đề mục, code gộp tab theo ngôn ngữ, tab npm / pnpm / yarn / bun cho lệnh cài. Mỗi trang có file HTML riêng với title, description và Open Graph, kèm sitemap.xml và 404.html.", href: "/templates" },
       { kind: "improved", text: "Template SaaS dùng đường dẫn thật (/analytics) thay cho #/analytics, link cũ vẫn mở đúng trang. SaaS, Dashboard, AI chat và Glass có sẵn cấu hình deploy: _redirects cho Netlify, vercel.json, npm run build:gh-pages cho GitHub Pages; Cloudflare Pages không cần gì thêm.", href: "/templates" },
       { kind: "improved", text: "DataGrid: cột chỉ cần label, renderHeaderCell thành tuỳ chọn. Logic ẩn / hiện cột dùng riêng được qua useDataGridColumnVisibility và getVisibleColumns.", href: "/components/datagrid" },
       { kind: "improved", text: "DataGrid và Table dùng chữ số đều chiều rộng, nên số trong một cột thẳng hàng mà không cần thêm class.", href: "/components/table" },
@@ -271,6 +272,7 @@ export const CLI_NEWS: NewsRelease[] = [
     items: [
       { kind: "new", text: "create --template next-starter: dự án Next.js App Router, theme lưu trong cookie để server render đúng theme ngay từ HTML đầu tiên; có tiếng Việt với --lang vi.", href: "/concepts/ssr" },
       { kind: "new", text: "create --template glass: nhật ký du lịch với sidebar, thanh tab, toolbar và bottom sheet bằng glass nổi trên ảnh; tiếng Anh hoặc tiếng Việt (--lang vi).", href: "/templates" },
+      { kind: "new", text: "create --template docs: trang tài liệu từ Markdown với sidebar theo thư mục, tìm kiếm Ctrl K và HTML sinh sẵn cho từng trang; tiếng Anh hoặc tiếng Việt (--lang vi).", href: "/templates" },
     ],
   },
   {
@@ -334,6 +336,7 @@ export const CREATE_NEWS: NewsRelease[] = [
     items: [
       { kind: "new", text: "npx create-yugen-ui@latest my-app --template glass.", href: "/templates" },
       { kind: "new", text: "npx create-yugen-ui@latest my-app --template next-starter.", href: "/concepts/ssr" },
+      { kind: "new", text: "npx create-yugen-ui@latest my-app --template docs.", href: "/templates" },
     ],
   },
   {

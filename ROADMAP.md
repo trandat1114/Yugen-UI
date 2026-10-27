@@ -22,6 +22,7 @@ Vật liệu glass, chọn cột hiển thị trong DataGrid, sửa lỗi giao d
 - [x] Số trong DataGrid và Table thẳng hàng (#207)
 - [ ] Template mới: Landing, Admin, Next.js, Docs, Storefront, Glass (#151)
 - [x] Template SaaS có URL theo đường dẫn, cấu hình deploy cho host tĩnh (#150)
+- [x] Template Docs: trang tài liệu từ Markdown, tìm kiếm Ctrl K, HTML tĩnh từng trang (#154)
 
 ### 1.0.0 · major
 

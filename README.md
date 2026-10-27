@@ -242,6 +242,7 @@ npm run dev
 | `vite-ai-chat` | AI assistant chat with agent trace |
 | `vite-glass` | Travel journal with glass navigation over photos (Yugen Labs) |
 | `next-starter` | Next.js App Router starter, theme in a cookie (no flash) |
+| `vite-docs` | Docs site from Markdown: sidebar sections, Ctrl K search, TOC; build-time HTML per page, sitemap.xml |
 
 Prefer the shadcn CLI? `npx shadcn@latest init https://trandat1114.github.io/Yugen-UI/r/init.json` sets up the theme,
 `cn()` and `YugenProvider` in one step.
@@ -526,6 +527,7 @@ npm run dev
 | `vite-ai-chat` | Trợ lý AI dạng chat, Trace các bước agent |
 | `vite-glass` | Nhật ký du lịch, điều hướng glass trên ảnh (Yugen Labs) |
 | `next-starter` | Next.js App Router, theme lưu trong cookie (không nháy) |
+| `vite-docs` | Trang tài liệu từ Markdown: phần trong sidebar, tìm kiếm Ctrl K, mục lục; HTML tĩnh từng trang, sitemap.xml |
 
 Dùng shadcn CLI? `npx shadcn@latest init https://trandat1114.github.io/Yugen-UI/r/init.json` cài theme, `cn()` và
 `YugenProvider` trong một bước.

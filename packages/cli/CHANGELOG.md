@@ -5,6 +5,8 @@
 - New template: `glass` (`create --template glass`), a travel journal with glass navigation over photos.
 - New template: `next-starter` (`create --template next-starter`), a Next.js App Router project with the theme in a
   cookie so the server renders it. `create --lang` works without an `index.html`.
+- New template: `docs` (`create --template docs`), a documentation site built from Markdown files, with Ctrl K search
+  and an HTML file for every page.
 
 ## 0.4.0
 
