@@ -12,7 +12,7 @@ rejects the name `yugen` as too similar to an existing package.
 
 | Command | What it does |
 |---|---|
-| `yugen create [dir]` | New app from a template (`starter`, `saas`, `blog`, `dashboard`, `ai-chat`, `glass`, `next-starter`). Same as `npm create yugen-ui@latest`. |
+| `yugen create [dir]` | New app from a template (`starter`, `saas`, `blog`, `dashboard`, `ai-chat`, `glass`, `admin`, `next-starter`). Same as `npm create yugen-ui@latest`. |
 | `yugen init` | Set up an existing React project — npm package or source mode. Writes `yugen.json`. |
 | `yugen add <names…>` | Copy components (and everything they depend on) into your project, install their npm dependencies. |
 | `yugen diff [names…]` | Compare copied source with the registry (all installed components without names). |

@@ -1008,7 +1008,7 @@ const BUDGETS = {
   "vite-dashboard": { js: 195, css: 25 },
   "vite-ai-chat": { js: 175, css: 25 },
   "vite-glass": { js: 160, css: 26 },
-  "vite-admin": { js: 200, css: 26 },
+  "vite-admin": { js: 167, css: 26 },
   // Next.js: react-dom + runtime của Next ~157 kB trước cả mã của app.
   "next-starter": { js: 265, css: 27 },
 };

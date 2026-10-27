@@ -125,7 +125,7 @@
     "title": "Admin",
     "hint": "Admin / CRUD: server-paged DataGrid, drawer forms, optimistic updates, sign-in with OTP",
     "budget": {
-      "js": 200,
+      "js": 167,
       "css": 26
     },
     "meta": {

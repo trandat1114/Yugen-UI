@@ -2,6 +2,9 @@ import { useEffect, useMemo, useState, type ComponentType } from "react";
 import { Settings20Regular } from "@fluentui/react-icons";
 import { Badge, Button, Card, CardHeader, useYugen, YugenProvider } from "@/components/ui";
 import AiChatApp from "../template-library/ai-chat/App";
+import AdminApp from "../template-library/admin/App";
+import adminEn from "../template-library/admin/content/en";
+import adminVi from "../template-library/admin/content/vi";
 import GlassApp from "../template-library/glass/App";
 import nextEn from "../template-library/next-starter/content/en";
 import nextVi from "../template-library/next-starter/content/vi";
@@ -171,6 +174,25 @@ function GlassPreview() {
 }
 
 /**
+ * templates/vite-admin in embedded mode: router, session and data in memory (nothing saved), signed in as the demo user,
+ * text in the docs language. The create / edit drawer and the delete dialog open over the docs page.
+ */
+function AdminPreview() {
+  const docs = useYugen();
+  const { locale } = useLocale();
+  return (
+    <div className="h-110">
+      <AdminApp
+        key={locale}
+        embedded
+        content={locale === "vi" ? adminVi : adminEn}
+        defaultAppearance={{ theme: docs.theme, brand: docs.brand }}
+      />
+    </div>
+  );
+}
+
+/**
  * templates/next-starter can't run inside this Vite page: a static copy of its home page (same text and components,
  * header included) in the docs language and theme.
  */
@@ -231,5 +253,6 @@ export const PREVIEWS: Record<string, ComponentType> = {
   "vite-dashboard": DashboardPreview,
   "vite-ai-chat": AiChatPreview,
   "vite-glass": GlassPreview,
+  "vite-admin": AdminPreview,
   "next-starter": NextStarterPreview,
 };
