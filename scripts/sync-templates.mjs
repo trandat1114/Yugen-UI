@@ -116,6 +116,24 @@ const TEMPLATES = [
     spa: true,
     storageKey: "yugen-glass-appearance",
   },
+  {
+    dir: "vite-admin",
+    vi: {
+      appTitle: "Sakura Admin",
+      description: "Trang quản trị dựng bằng Yugen UI: bảng khách hàng phân trang trên server, sửa trong Drawer có kiểm tra, cập nhật lạc quan, đăng nhập có mã OTP.",
+    },
+    hint: "Admin / CRUD: server-paged DataGrid, drawer forms, optimistic updates, sign-in with OTP",
+    title: "Admin",
+    appTitle: "Sakura Admin",
+    description:
+      "An admin app built with Yugen UI: a server-paged customer DataGrid, create and edit in a validated drawer, optimistic updates that roll back, and sign-in with a one-time code.",
+    lang: "en",
+    app: "admin",
+    spa: true,
+    storageKey: "yugen-admin-appearance",
+    /** Form validation (src/validation.ts). Not @hookform/resolvers: its optional peers break `npm install` on npm 11. */
+    dependencies: { "react-hook-form": pkg.devDependencies["react-hook-form"], zod: pkg.devDependencies.zod },
+  },
 ];
 
 const BLOCK_DIR = path.join(root, "src/docs/block-library");
@@ -617,6 +635,79 @@ src/
 
 ${generatedFrom(t)}
 `,
+  admin: (t) => `# ${t.appTitle ?? t.title}
+
+An admin app from [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates): Vite, React and Tailwind CSS v4.
+Customers and their orders, the screens most back offices start with, on a mock API you replace with your own.
+
+${install(t.dir, "en")}
+
+## What's included
+
+- Customers (\`/customers\`): a \`DataGrid\` paged, sorted and filtered by the server (one page plus the total per
+  request), search, status and plan filters, a column picker (\`DataGridColumnPicker\`), and row selection with bulk
+  export to CSV and bulk delete.
+- Create and edit in a \`Drawer\`, validated with react-hook-form and zod (\`src/validation.ts\`); delete after a
+  confirm \`Dialog\`.
+- Optimistic updates (\`useOptimisticList\`): changes show at once, a toast confirms them, and a failed request puts
+  the list back as it was, with a Retry button.
+- Customer page (\`/customers/<id>\`) with the details and the customer's orders; Orders (\`/orders\`), read-only.
+- Sign in, forgot password and a one-time code step (\`InputOTP\`). Pages other than these need a session: without
+  one you land on the sign-in page and come back to the page you asked for.
+- Settings: theme, brand, the mock API's response time and a switch for random errors.
+- Pages load on demand (\`React.lazy\`), with real URLs and the tab title per page. Light, dark and high-contrast
+  themes, saved with no flash on reload. English text in \`src/content/\`; Vietnamese with
+  \`npx create-yugen-ui@latest my-app --template admin --lang vi\`.
+
+## Demo account
+
+The first visit in a tab starts signed in, so the app opens on its data. Sign out (avatar menu or Settings) to try
+the sign-in flow with \`admin@sakura.dev\` / \`sakura-admin\` and the code \`246810\`. The session lives in
+\`sessionStorage\`. To turn off the automatic sign-in, set \`DEMO_AUTO_SIGN_IN\` to \`false\` in \`src/auth.tsx\`.
+
+## Connect your back end
+
+\`src/api.ts\` generates 120 customers and their orders in the browser and answers after a short delay; with random
+errors on, about one save or delete in five fails. Keep the \`AdminApi\` interface and return an object that calls
+your server:
+
+\`\`\`ts
+const api: AdminApi = {
+  listCustomers: (query, signal) => fetch(\`/api/customers?\${toParams(query)}\`, { signal }).then((r) => r.json()),
+  updateCustomer: (id, input) => fetch(\`/api/customers/\${id}\`, { method: "PUT", body: JSON.stringify(input) }).then((r) => r.json()),
+  // getCustomer, createCustomer, deleteCustomers, listOrders, signIn, verifyCode, requestPasswordReset
+};
+\`\`\`
+
+Create it in \`src/App.tsx\` instead of \`createMockApi\`, then delete the mock API card in
+\`src/pages/SettingsPage.tsx\` and the demo account notes on the sign-in pages. List calls take a page, a page size,
+a sort and the filters, and return \`{ rows, total }\`. Reject with an error when a request fails: the optimistic
+update rolls back on its own.
+
+Validation uses a small zod resolver in \`src/validation.ts\` instead of \`@hookform/resolvers\`, whose optional
+peer dependencies make \`npm install\` fail on npm 11. You can switch to it once that is fixed.
+
+${deploy()}
+## Structure
+
+\`\`\`
+src/
+  App.tsx              # YugenProvider, saved appearance, mock API, session, router
+  Layout.tsx           # top bar, sidebar, sign-in redirect, lazy pages
+  pages/               # Customers, Customer, Orders, Settings, SignIn, Verify, ForgotPassword, NotFound
+  CustomerDrawer.tsx   # create / edit drawer and the delete dialog
+  CustomerForm.tsx     # the form (react-hook-form + zod), loaded when a drawer opens
+  OrderList.tsx        # paged orders, for /orders and the customer page
+  api.ts               # mock back end (replace with yours)
+  auth.tsx             # session in sessionStorage, demo sign-in
+  validation.ts        # zod schemas and the resolver
+  router.tsx           # History API router, Link, next= after sign-in
+  content/             # every string, one file per language
+  ui.tsx · useQuery.ts · csv.ts · context.ts · appearance.ts
+\`\`\`
+
+${generatedFrom(t)}
+`,
 };
 
 const readme = (t) =>
@@ -676,13 +767,17 @@ function files(t) {
             ...(t.spa && { "build:gh-pages": "tsc -b && vite build --mode gh-pages" }),
             preview: "vite preview",
           },
-          dependencies: {
-            "@fluentui/react-icons": pkg.dependencies["@fluentui/react-icons"],
-            // React và type theo devDependencies ở gốc repo (cùng bản mà docs và test chạy).
-            react: pkg.devDependencies.react,
-            "react-dom": pkg.devDependencies["react-dom"],
-            "yugen-ui": `^${pkg.version}`,
-          },
+          // `t.dependencies`: thư viện runtime riêng của template (vd. admin: react-hook-form, zod), xếp theo tên như npm.
+          dependencies: Object.fromEntries(
+            Object.entries({
+              "@fluentui/react-icons": pkg.dependencies["@fluentui/react-icons"],
+              // React và type theo devDependencies ở gốc repo (cùng bản mà docs và test chạy).
+              react: pkg.devDependencies.react,
+              "react-dom": pkg.devDependencies["react-dom"],
+              "yugen-ui": `^${pkg.version}`,
+              ...t.dependencies,
+            }).sort(([a], [b]) => (a < b ? -1 : 1)),
+          ),
           devDependencies: {
             "@tailwindcss/vite": "^4.0.0",
             "@types/react": pkg.devDependencies["@types/react"],
@@ -774,6 +869,7 @@ const BUDGETS = {
   "vite-dashboard": { js: 195, css: 25 },
   "vite-ai-chat": { js: 175, css: 25 },
   "vite-glass": { js: 160, css: 26 },
+  "vite-admin": { js: 200, css: 26 },
 };
 
 // `meta`: <title> / description của index.html theo từng ngôn ngữ — `create --lang` (packages/cli applyLang) ghi đè.
