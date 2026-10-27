@@ -13,7 +13,7 @@
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-hook-form": "^7.90.0",
-    "yugen-ui": "^0.11.1",
+    "yugen-ui": "^0.12.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {

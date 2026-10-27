@@ -2,30 +2,13 @@
 
 <!-- Sinh từ src/docs/roadmap.ts bằng `npm run roadmap`. Đừng sửa tay. -->
 
-Kế hoạch theo từng bản phát hành, cập nhật 2026-10-26. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và
+Kế hoạch theo từng bản phát hành, cập nhật 2026-10-27. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và
 phụ thuộc nằm ở [GitHub Project](https://github.com/users/trandat1114/projects/6). `[x]` đã xong, `[~]` đang làm, `[ ]` dự kiến.
 
 Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. English: the community page
 (https://trandat1114.github.io/Yugen-UI/community?lang=en) shows the same roadmap.
 
 ## Đang làm
-
-### 0.12.0 · minor · hạn 2026-11-27
-
-Vật liệu glass, chọn cột hiển thị trong DataGrid, sửa lỗi giao diện nhỏ và các template mới.
-
-- [x] Vật liệu glass cho lớp điều hướng (Yugen Labs) (#178)
-- [x] Template Glass: nhật ký du lịch với điều hướng glass trên ảnh (#179)
-- [x] Template Landing: trang giới thiệu sản phẩm, Lighthouse từ 95 điểm trên di động (#151)
-- [x] Template Admin: CRUD khách hàng với DataGrid phân trang trên server, form có kiểm tra, đăng nhập OTP (#152)
-- [x] DataGrid: người dùng tự chọn cột hiển thị (DataGridColumnPicker) (#203)
-- [x] ContextMenu, Menubar và menu con cuộn trong màn hình (#205)
-- [x] Nút chỉ hiện khi rê chuột luôn hiện trên màn hình cảm ứng (#206)
-- [x] Số trong DataGrid và Table thẳng hàng (#207)
-- [x] Template SaaS có URL theo đường dẫn, cấu hình deploy cho host tĩnh (#150)
-- [x] Template Next.js starter: App Router, theme lưu trong cookie để server render đúng (#153)
-- [x] Template Docs: trang tài liệu từ Markdown, tìm kiếm Ctrl K, HTML tĩnh từng trang (#154)
-- [x] Template Store: cửa hàng nhỏ với bộ lọc trong URL, giỏ hàng trong Sheet, thanh toán nhiều bước (#155)
 
 ### 1.0.0 · major
 
@@ -49,6 +32,7 @@ Chưa xếp lịch.
 
 Chi tiết ở trang Có gì mới (`/news`) và `CHANGELOG.md`.
 
+- **0.12.0** (2026-10-27): Glass, sáu template mới và chọn cột trong DataGrid
 - **0.11.1** (2026-10-26): Hiệu ứng wave của Skeleton chạy mượt trở lại
 - **0.11.0** (2026-10-25): Chuỗi giao diện thay được, docs tiếng Anh và template mới
 - **0.10.0** (2026-10-23): Spacing theo thang số, Theme Designer và trang Motion

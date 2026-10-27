@@ -32,10 +32,9 @@ export const NEWS_KIND_LABEL: Record<NewsKind, string> = {
 export const NEWS: NewsRelease[] = [
   {
     version: "0.12.0",
-    upcoming: true,
-    date: "2026-11-27",
-    title: "Glass và chọn cột hiển thị trong DataGrid",
-    summary: "Vật liệu glass (Yugen Labs) cho thanh công cụ, thanh tab, sidebar và menu nổi trên nội dung. Người dùng tự ẩn và hiện cột của DataGrid (và Table). Menu dài không còn tràn khỏi màn hình; trên màn hình cảm ứng, các nút vốn chỉ hiện khi rê chuột giờ hiện sẵn.",
+    date: "2026-10-27",
+    title: "Glass, sáu template mới và chọn cột trong DataGrid",
+    summary: "Vật liệu glass (Yugen Labs) cho thanh công cụ, thanh tab, sidebar và menu nổi trên nội dung. Sáu template mới: Glass, Landing, Admin, Docs, Store và Next.js starter; SaaS dùng đường dẫn thật và mọi template một trang có sẵn cấu hình deploy. Người dùng tự ẩn và hiện cột của DataGrid. Menu dài không còn tràn khỏi màn hình; trên màn hình cảm ứng, các nút vốn chỉ hiện khi rê chuột giờ hiện sẵn.",
     items: [
       { kind: "new", text: "Glass (Yugen Labs, lấy cảm hứng từ Liquid Glass): material=\"glass\" | \"glass-clear\" trên Toolbar, TabsList, Nav, MenuPopover, PopoverSurface, TooltipContent, DialogSurface, DrawerSurface, SheetContent; Button appearance=\"glass\" | \"glass-prominent\"; Input / SearchBox appearance=\"glass\". TabsList có minimized và hook useScrollMinimize cho thanh tab thu gọn khi cuộn. Utility glass, glass-clear, glass-tinted, glass-scrim, scroll-edge, rounded-concentric. Chữ giữ ≥ 4.5:1 trên mọi nền phía sau; nền đặc khi giảm trong suốt, tăng tương phản, tương phản cao hoặc forced colors. Tên có thể đổi trước 1.0.", href: "/foundations/glass" },
       { kind: "new", text: "DataGrid nhận hiddenColumns; DataGridColumnPicker là nút “Cột” mở menu ô tích, dùng được cả với Table. Menu không đóng khi tích từng cột, cột hideable: false và cột hiện cuối cùng không ẩn được, cột đang sắp xếp vẫn sắp xếp hàng khi bị ẩn. Cột ẩn giữ độ rộng đã kéo; lưu lựa chọn bằng onHiddenColumnsChange.", href: "/components/datagrid" },
@@ -268,8 +267,7 @@ export const LATEST_RELEASE = NEWS.find((r) => !r.upcoming) ?? NEWS[0];
 export const CLI_NEWS: NewsRelease[] = [
   {
     version: "0.5.0",
-    upcoming: true,
-    date: "2026-11-27",
+    date: "2026-10-27",
     title: "Template Glass, Landing, Admin và Next.js",
     summary: "Thêm template Glass (nhật ký du lịch với điều hướng glass), Landing (trang giới thiệu sản phẩm), Admin (trang quản trị khách hàng và đơn hàng) và Next.js starter (App Router).",
     items: [
@@ -335,8 +333,7 @@ export const CLI_NEWS: NewsRelease[] = [
 export const CREATE_NEWS: NewsRelease[] = [
   {
     version: "0.5.0",
-    upcoming: true,
-    date: "2026-11-27",
+    date: "2026-10-27",
     title: "Theo @yugen-ui/cli 0.5.0",
     summary: "Cùng các thay đổi của @yugen-ui/cli 0.5.0: template Glass, Landing, Admin và Next.js starter.",
     items: [

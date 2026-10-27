@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.12.0
+
+### Minor Changes
+
+- 52ebbf9: DataGrid: people can choose which columns are shown. The new `hiddenColumns` prop hides columns; `DataGridColumnPicker` is the "Columns" button that edits it, and it also works with Table. The menu stays open while columns are checked, a `hideable: false` column and the last visible column can't be hidden, and the sorted column keeps sorting the rows (with an arrow in the menu) while hidden. Hidden columns keep their resized width, pinned columns are re-measured, and keyboard focus stays on the same column instead of the same index. Columns can now set `label` instead of `renderHeaderCell`. `useDataGridColumnVisibility` and `getVisibleColumns` expose the logic.
+  
+  Menu: long menus scroll inside the viewport instead of overflowing it, and `MenuItemCheckbox` / `MenuItemRadio` accept `secondaryContent` like `MenuItem`.
+- 070891c: Glass (Yugen Labs): a translucent material for the navigation layer that floats above content, inspired by Liquid Glass. Turn it on per component with `material="glass" | "glass-clear"` on Toolbar, TabsList, Nav, MenuPopover, PopoverSurface, TooltipContent, DialogSurface, DrawerSurface and SheetContent, `appearance="glass" | "glass-prominent"` on Button and `appearance="glass"` on Input / SearchBox. TabsList gets `minimized` and the `useScrollMinimize` hook for tab bars that shrink while scrolling down. New utilities: `glass`, `glass-clear`, `glass-tinted`, `glass-scrim`, `scroll-edge`, `scroll-edge-above`, `rounded-concentric`. Text keeps 4.5:1 over any backdrop; glass turns opaque with reduced transparency, increased contrast, the high-contrast theme, forced colors or without `backdrop-filter`. Names may change before 1.0.
+
+### Patch Changes
+
+- b354766: ContextMenu, Menubar and every submenu scroll inside the viewport when they are long, like Menu. On touch screens, where there is no hover, Table row actions, subtle selection checkboxes (Table and DataGrid) and Tree item actions are always visible. DataGrid and Table use tabular figures, so numbers line up in a column.
+
 ## 0.11.1
 
 ### Patch Changes
@@ -199,6 +212,7 @@ with a user-facing change adds one with `npx changeset`, and `npx changeset vers
 - Documentation site.
 
 [Unreleased]: https://github.com/trandat1114/Yugen-UI/compare/v0.11.1...HEAD
+[0.12.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.12.0
 [0.11.1]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.11.1
 [0.11.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.11.0
 [0.10.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.10.0

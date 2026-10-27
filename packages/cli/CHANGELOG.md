@@ -1,6 +1,6 @@
 # @yugen-ui/cli
 
-## Unreleased
+## 0.5.0
 
 - New template: `glass` (`create --template glass`), a travel journal with glass navigation over photos.
 - New template: `landing` (`create --template landing`), a product landing page with pricing, FAQ and a sign-up
@@ -13,6 +13,9 @@
   and an HTML file for every page.
 - New template: `store` (`create --template store`), a small shop with filters kept in the URL, a cart in a Sheet and a
   validated multi-step checkout; prices in US dollars, or dong with `--lang vi`.
+- Templates pin `yugen-ui@^0.12.0`. The SaaS template uses real paths (`/analytics`) instead of `#/analytics`, and the
+  single-page templates ship deploy configs: `public/_redirects` (Netlify), `vercel.json` and `npm run build:gh-pages`
+  (GitHub Pages).
 
 ## 0.4.0
 
