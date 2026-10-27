@@ -5,6 +5,9 @@ import AiChatApp from "../template-library/ai-chat/App";
 import AdminApp from "../template-library/admin/App";
 import adminEn from "../template-library/admin/content/en";
 import adminVi from "../template-library/admin/content/vi";
+import DocsApp from "../template-library/docs/App";
+import docsEn from "../template-library/docs/content/en";
+import docsVi from "../template-library/docs/content/vi";
 import GlassApp from "../template-library/glass/App";
 import nextEn from "../template-library/next-starter/content/en";
 import nextVi from "../template-library/next-starter/content/vi";
@@ -267,6 +270,17 @@ function NextStarterPreview() {
   );
 }
 
+/** templates/vite-docs in embedded mode: router in memory, nothing saved, text and pages in the docs language. */
+function DocsPreview() {
+  const host = useYugen();
+  const { locale } = useLocale();
+  return (
+    <div className="h-110">
+      <DocsApp key={locale} embedded content={locale === "vi" ? docsVi : docsEn} defaultTheme={host.theme} />
+    </div>
+  );
+}
+
 /** Theo `dir` trong src/docs/templates.ts. */
 export const PREVIEWS: Record<string, ComponentType> = {
   "vite-starter": StarterPreview,
@@ -278,4 +292,5 @@ export const PREVIEWS: Record<string, ComponentType> = {
   "vite-landing": LandingPreview,
   "vite-admin": AdminPreview,
   "next-starter": NextStarterPreview,
+  "vite-docs": DocsPreview,
 };

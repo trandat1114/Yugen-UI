@@ -185,8 +185,8 @@ export default function Page() {
           <P>
             The starter comes with a remembered theme choice, toast, an <C>@/</C> alias, SEO basics and a welcome page to delete when you
             start. Swap <C>starter</C> for <C>saas</C> (8-page SaaS app), <C>blog</C> (Markdown blog), <C>dashboard</C>, <C>ai-chat</C>,
-            <C>glass</C> (travel journal with glass navigation), <C>landing</C> (product landing page), <C>admin</C> (back office: tables, forms, sign-in) or
-            <C>next-starter</C> (Next.js App Router), or drop <C>--template</C> to pick in the terminal. More options on <A href={docsPath("/concepts/cli")}>@yugen-ui/cli</A>.
+            <C>glass</C> (travel journal with glass navigation), <C>landing</C> (product landing page), <C>admin</C> (back office: tables, forms, sign-in),
+            <C>next-starter</C> (Next.js App Router) or <C>docs</C> (Markdown documentation site), or drop <C>--template</C> to pick in the terminal. More options on <A href={docsPath("/concepts/cli")}>@yugen-ui/cli</A>.
           </P>
           <div className="flex flex-wrap gap-2">
             <Button asChild appearance="primary" icon={<Rocket16Regular />}>

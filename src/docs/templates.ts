@@ -275,6 +275,36 @@ export const TEMPLATES: TemplateInfo[] = [
       ],
     },
   },
+  {
+    dir: "vite-docs",
+    name: "Docs",
+    tags: ["Vite", "Markdown", "SEO", { vi: "Tìm kiếm", en: "Search" }],
+    previewPath: "/",
+    vi: {
+      description: "Trang tài liệu từ Markdown: mục lục, tìm kiếm Ctrl K và HTML sinh sẵn cho từng trang.",
+      features: [
+        "Mỗi thư mục trong src/content/<lang>/docs/ là một phần của sidebar, mỗi file .md là một trang, thứ tự theo front matter",
+        "Sidebar Nav → Drawer trên màn hẹp; mục lục tô đậm đề mục đang đọc; trang trước / trang sau",
+        "Tìm kiếm Ctrl / ⌘ K trên tiêu đề trang và đề mục h2 / h3, không phân biệt dấu; chỉ mục chỉ tải khi mở",
+        "Code có nút sao chép, gộp nhiều ngôn ngữ thành tab, tab npm / pnpm / yarn / bun cho lệnh cài; khối lưu ý",
+        "Mỗi trang một file HTML: title, description, canonical, Open Graph; tự sinh sitemap.xml và 404.html",
+        "Lần tải đầu chỉ có front matter, nội dung từng trang tải khi mở",
+        "Chữ và 10 trang mẫu bằng tiếng Anh (tiếng Việt với --lang vi); theme sáng / tối / tương phản cao",
+      ],
+    },
+    en: {
+      description: "A Markdown documentation site: table of contents, Ctrl K search and static HTML per page.",
+      features: [
+        "Each folder in src/content/<lang>/docs/ is a sidebar section, each .md file a page, ordered by front matter",
+        "Sidebar Nav → Drawer on narrow screens; a table of contents that highlights the current heading; previous / next",
+        "Ctrl / ⌘ K search over page titles and h2 / h3 headings, accents ignored; the index loads when it opens",
+        "Code with a copy button, tabs across languages, npm / pnpm / yarn / bun tabs for install commands; callouts",
+        "One HTML file per page: title, description, canonical, Open Graph; generates sitemap.xml and 404.html",
+        "The first load holds the front matter only; each page's text loads when it opens",
+        "English text and 10 sample pages (Vietnamese with --lang vi); light / dark / high contrast",
+      ],
+    },
+  },
 ];
 
 const REPO = SITE.links.repository.replace(/^https:\/\/github\.com\//, "");

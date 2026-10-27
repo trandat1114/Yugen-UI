@@ -23,6 +23,7 @@ Vật liệu glass, chọn cột hiển thị trong DataGrid, sửa lỗi giao d
 - [x] Nút chỉ hiện khi rê chuột luôn hiện trên màn hình cảm ứng (#206)
 - [x] Số trong DataGrid và Table thẳng hàng (#207)
 - [x] Template SaaS có URL theo đường dẫn, cấu hình deploy cho host tĩnh (#150)
+- [x] Template Docs: trang tài liệu từ Markdown, tìm kiếm Ctrl K, HTML tĩnh từng trang (#154)
 
 ### 1.0.0 · major
 

@@ -50,6 +50,7 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
         { status: "done", issue: 206, vi: "Nút chỉ hiện khi rê chuột luôn hiện trên màn hình cảm ứng", en: "Hover-only buttons always visible on touch screens" },
         { status: "done", issue: 207, vi: "Số trong DataGrid và Table thẳng hàng", en: "Numbers line up in DataGrid and Table" },
         { status: "done", issue: 150, vi: "Template SaaS có URL theo đường dẫn, cấu hình deploy cho host tĩnh", en: "Path URLs in the SaaS template, deploy configs for static hosts" },
+        { status: "done", issue: 154, vi: "Template Docs: trang tài liệu từ Markdown, tìm kiếm Ctrl K, HTML tĩnh từng trang", en: "Docs template: a documentation site from Markdown, Ctrl K search, static HTML per page" },
       ],
     },
     {
