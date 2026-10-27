@@ -49,6 +49,7 @@ export const NEWS: NewsRelease[] = [
       { kind: "improved", text: "DataGrid: cột chỉ cần label, renderHeaderCell thành tuỳ chọn. Logic ẩn / hiện cột dùng riêng được qua useDataGridColumnVisibility và getVisibleColumns.", href: "/components/datagrid" },
       { kind: "improved", text: "DataGrid và Table dùng chữ số đều chiều rộng, nên số trong một cột thẳng hàng mà không cần thêm class.", href: "/components/table" },
       { kind: "improved", text: "MenuItemCheckbox và MenuItemRadio nhận secondaryContent như MenuItem.", href: "/components/menu" },
+      { kind: "improved", text: "Trang Phiên bản có quy tắc cho từng số: phần lớn thay đổi ra ở bản patch, minor chỉ tăng khi có API mới và cách nhau ít nhất 14 ngày, major cách nhau ít nhất 180 ngày. Áp dụng từ sau 0.12.0.", href: "/concepts/versioning" },
       { kind: "fixed", text: "DataGrid: khi bộ cột thay đổi, focus bàn phím ở lại đúng cột thay vì nhảy sang cột khác cùng vị trí; ô đang focus bị gỡ thì focus sang cột gần nhất.", href: "/components/datagrid" },
       { kind: "fixed", text: "Menu, ContextMenu, Menubar và menu con: menu dài cuộn bên trong màn hình thay vì tràn ra ngoài, nên mục cuối luôn chọn được.", href: "/components/contextmenu" },
       { kind: "fixed", text: "Màn hình cảm ứng: nút thao tác của hàng, checkbox chọn kiểu subtle (Table, DataGrid) và thao tác của Tree luôn hiện, vì không có hover để làm chúng hiện ra.", href: "/components/table" },

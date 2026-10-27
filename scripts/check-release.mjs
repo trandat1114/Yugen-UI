@@ -10,6 +10,8 @@
  *   (d) Khi có tag (`--tag vX.Y.Z`, hoặc GITHUB_REF_NAME bắt đầu bằng "v" trong workflow chạy theo tag): tag = "v" + version.
  *   (e) Bản major ổn định (1.0.0, 2.0.0…): README.md có `<!-- readme-reviewed: X.0.0 -->` — đã rà README cho bản này
  *       (wiki › Release Process › Bản major), kể cả khi không phải sửa gì.
+ *   (f) Quy tắc cho từng số (scripts/release-rules.mjs) với mục NEWS của bản hiện tại và tin sắp phát hành: patch không
+ *       có mục "new" / "breaking", minor có mục "new", major có mục "breaking", không nhảy số, nhịp minor / major.
  *
  * Không có dependency. Thoát mã 1 kèm thông báo rõ ràng khi có lỗi; in một dòng OK khi mọi thứ khớp.
  *
@@ -18,6 +20,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { core, newsEntries, releaseRuleErrors } from "./release-rules.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const rel = (file) => path.relative(root, file).split(path.sep).join("/");
@@ -49,22 +52,13 @@ if (version && !/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(
 // ---------- (a) src/docs/news.ts ----------
 const newsPath = path.join(root, "src/docs/news.ts");
 const news = read(newsPath);
-const newsStart = news.search(/export\s+const\s+NEWS\b[^=]*=\s*\[/);
-/** Các mục của NEWS theo thứ tự: version + có `upcoming: true` (viết ngay sau version) hay không. */
-const entries = [];
-if (news && newsStart === -1) {
-  errors.push(`${rel(newsPath)}: không tìm thấy \`export const NEWS … = [\`.`);
-} else if (news) {
-  const end = news.indexOf("\n];", newsStart);
-  const body = news.slice(newsStart, end === -1 ? undefined : end);
-  for (const m of body.matchAll(/\bversion\s*:\s*["'`]([^"'`]+)["'`]([\s\S]*?)(?=\bversion\s*:|$)/g)) {
-    entries.push({ version: m[1], upcoming: /\bupcoming\s*:\s*true\b/.test(m[2]) });
-  }
-  if (entries.length === 0) errors.push(`${rel(newsPath)}: mảng NEWS không có mục nào có \`version: "x.y.z"\`.`);
-}
+/** Các mục của NEWS theo thứ tự (mới trước): version, `upcoming` (viết ngay sau version), date, kind của từng tin. */
+const parsed = news ? newsEntries(news, "NEWS") : [];
+const entries = parsed ?? [];
+if (!parsed) errors.push(`${rel(newsPath)}: không tìm thấy \`export const NEWS … = [\`.`);
+else if (news && entries.length === 0) errors.push(`${rel(newsPath)}: mảng NEWS không có mục nào có \`version: "x.y.z"\`.`);
 const upcoming = entries[0]?.upcoming ? entries[0] : undefined;
 const newsVersion = entries.find((e) => !e.upcoming)?.version ?? "";
-const core = (v) => v.split(/[-+]/)[0].split(".").map(Number);
 const greater = (a, b) => {
   const [x, y] = [core(a), core(b)];
   for (let i = 0; i < 3; i++) if (x[i] !== y[i]) return x[i] > y[i];
@@ -137,6 +131,13 @@ if (version && !isPrerelease && major >= 1 && minor === 0 && patch === 0) {
         `hướng dẫn chuyển đổi), sửa nếu cần, rồi ghi \`<!-- readme-reviewed: ${version} -->\` ở đầu file` +
         `${reviewed ? ` (đang là ${reviewed})` : ""}. Xem wiki › Release Process › Bản major.`,
     );
+}
+
+// ---------- (f) Quy tắc cho từng số ----------
+// Kiểm cả tin sắp phát hành trên next, để biết sớm thay vì tới PR release.
+for (const [i, entry] of entries.entries()) {
+  if (entry.upcoming || entry.version === version) errors.push(...releaseRuleErrors(entry, entries.slice(i + 1), "NEWS"));
+  if (!entry.upcoming) break;
 }
 
 // ---------- Kết quả ----------

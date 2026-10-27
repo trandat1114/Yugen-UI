@@ -68,6 +68,8 @@ jobs:
       - run: npm run lint:classes
       # package.json = news.ts = CHANGELOG.md (scripts/check-release.mjs)
       - run: npm run check:release
+      # Loại bump của changeset; PR vào main / release/* chỉ mang patch (scripts/check-changesets.mjs)
+      - run: npm run check:changesets
       - run: npm run check:examples
       - run: npm run check:props
       - run: node scripts/sync-templates.mjs --check
