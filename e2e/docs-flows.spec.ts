@@ -228,3 +228,20 @@ test("form react-hook-form + zod: lỗi theo schema, focus vào ô lỗi đầu 
   await email.fill("ten@congty.vn");
   await expect(form.getByText("Email chưa đúng định dạng.")).toBeHidden();
 });
+
+for (const viewport of [
+  { width: 1440, height: 900 },
+  { width: 390, height: 844 },
+]) {
+  test(`/templates kết thúc ở footer, không có khoảng trống phía dưới (${viewport.width}px, #223)`, async ({ page }) => {
+    await page.setViewportSize(viewport);
+    await openDocs(page, "/templates");
+    // Form đăng ký của preview Landing có Checkbox: input ẩn của nó từng thoát khỏi khung preview và kéo dài trang.
+    await expect(page.locator('input[name="consent"]')).toHaveCount(1, { timeout: 30_000 });
+    const gap = await page.evaluate(() => {
+      const root = document.getElementById("root")!;
+      return document.documentElement.scrollHeight - (root.getBoundingClientRect().bottom + window.scrollY);
+    });
+    expect(gap).toBeLessThanOrEqual(1);
+  });
+}

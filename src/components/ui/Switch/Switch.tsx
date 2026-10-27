@@ -16,7 +16,8 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
     return (
       <span
         className={cn(
-          "group/switch inline-flex items-center gap-2 py-1.5",
+          // relative: input ẩn của Radix trong <form> nằm trong component (xem Checkbox, #223).
+          "group/switch relative inline-flex items-center gap-2 py-1.5",
           labelPosition === "before" && "flex-row-reverse",
         )}
       >
