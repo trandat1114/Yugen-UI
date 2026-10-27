@@ -158,5 +158,25 @@
         "description": "Dự án Next.js App Router với Yugen UI: theme lưu trong cookie để server render đúng, metadata theo trang, next/font."
       }
     }
+  },
+  {
+    "dir": "vite-store",
+    "name": "store",
+    "title": "Store",
+    "hint": "Storefront: filters in the URL, product variants, cart in a Sheet, multi-step checkout",
+    "budget": {
+      "js": 165,
+      "css": 26
+    },
+    "meta": {
+      "en": {
+        "title": "Sakura Goods",
+        "description": "A small shop built with Yugen UI: a product grid with filters kept in the URL, product pages with variants, a cart in a Sheet and a validated multi-step checkout."
+      },
+      "vi": {
+        "title": "Sakura Goods",
+        "description": "Cửa hàng nhỏ dựng bằng Yugen UI: bộ lọc lưu trong URL, trang sản phẩm có biến thể, giỏ hàng trong Sheet, thanh toán nhiều bước có kiểm tra."
+      }
+    }
   }
 ]

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#c2347a" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Sakura Goods</title>
+    <meta name="description" content="A small shop built with Yugen UI: a product grid with filters kept in the URL, product pages with variants, a cart in a Sheet and a validated multi-step checkout." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Sakura Goods" />
+    <meta property="og:description" content="A small shop built with Yugen UI: a product grid with filters kept in the URL, product pages with variants, a cart in a Sheet and a validated multi-step checkout." />
+    <script>
+      // Áp theme / brand đã lưu trước khi React render để không nháy nền (cùng khoá với App.tsx).
+      (function () {
+        var a = {};
+        try { a = JSON.parse(localStorage.getItem("yugen-store-appearance") || "{}"); } catch (e) {}
+        var t = a.theme === "light" || a.theme === "dark" || a.theme === "high-contrast" ? a.theme
+          : matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", t);
+        document.documentElement.setAttribute("data-brand", a.brand === "web" || a.brand === "teams" ? a.brand : "sakura");
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
