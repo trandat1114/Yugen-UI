@@ -35,14 +35,15 @@ const en: Content = {
   },
   explore: {
     title: "Explore",
-    lead: "Every trip on one picture. Pick a pin to open it.",
-    picture: "Map of the trips over a weeping cherry tree",
+    lead: "Every trip on one map. Pick a pin to open it.",
+    picture: "World map with the trips",
     controls: "Map controls",
     search: "Filter places",
     filters: "Kind of trip",
     categories: { all: "All", sakura: "Cherry blossoms", coast: "Coast", mountains: "Mountains", desert: "Desert", forest: "Forest" },
     zoomIn: "Zoom in",
     zoomOut: "Zoom out",
+    group: (titles) => `Zoom in on ${titles.length} trips: ${titles.join(", ")}`,
     openTrip: "Open trip",
     noMatch: "No place matches the filter.",
   },
@@ -119,17 +120,17 @@ const en: Content = {
     },
     headland: {
       title: "Headland trail at golden hour",
-      place: "Western headlands",
+      place: "Rota Vicentina, Portugal",
       summary: "Four days along the cliffs, sleeping where the trail meets the sea.",
       story: [
-        "The trail leaves the last village on a dirt track and climbs straight onto the headland. From there it follows the edge for most of the day, with the sea always on the left.",
+        "The trail leaves the last village on a dirt track and climbs straight onto the headland. From there it follows the edge for most of the day, with the sea always on the right.",
         "We timed each stage to reach the next cove before sunset. The light turns everything gold for twenty minutes, then the wind picks up and it's time for the tent.",
       ],
       highlights: ["Sunset on the third cove", "Pine forest down to the water", "A pebble beach with no one on it"],
     },
     island: {
       title: "Six days in the island town",
-      place: "The white island",
+      place: "Santorini, Greece",
       summary: "Whitewashed lanes, ferries at dawn and long lunches by the harbor.",
       story: [
         "The ferry arrives early and the lanes are still empty. Every staircase seems to lead to a terrace with a view of the caldera.",
@@ -139,7 +140,7 @@ const en: Content = {
     },
     ridge: {
       title: "Snow on the high ridge",
-      place: "Northern range",
+      place: "High Tatras, Slovakia",
       summary: "Late-winter traverse with crampons, hut to hut.",
       story: [
         "Snow still covered the ridge in late February, hard in the morning and soft by noon. We started each day before the sun reached the slopes.",
@@ -149,7 +150,7 @@ const en: Content = {
     },
     hills: {
       title: "Painted hills",
-      place: "The dry basin",
+      place: "Death Valley, California",
       summary: "Three days of open ground, bright colors and very long views.",
       story: [
         "The hills change color with the light: red at dawn, pale at noon, purple after sunset. There is almost no shade, so we walked early and late.",
@@ -159,7 +160,7 @@ const en: Content = {
     },
     river: {
       title: "Down the forest river",
-      place: "Green valley",
+      place: "Olympic Peninsula, Washington",
       summary: "Following the river from its source through old forest.",
       story: [
         "The path keeps close to the river, crossing it on stones and fallen trunks. The forest is so dense that the light stays green all day.",
@@ -169,7 +170,7 @@ const en: Content = {
     },
     valley: {
       title: "Misty valley weekend",
-      place: "Lake valley",
+      place: "Triglav Lakes, Slovenia",
       summary: "Two slow days in the fog, walking from lake to lake.",
       story: [
         "Fog sat on the valley the whole weekend. It made everything quiet and close: the lakes, the river, the edge of the forest.",

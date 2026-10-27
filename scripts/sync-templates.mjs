@@ -667,8 +667,10 @@ ${install(t.dir, "en")}
   Tokyo, Hirosaki and around Mount Fuji, and a few hikes.
 - Trip (\`/trips/<id>\`): a glass toolbar with grouped actions, a photo gallery, the story, and the details in a glass
   bottom sheet with snap points (inset from the edges, opaque at the top snap point).
-- Explore (\`/explore\`): one full-screen picture with every trip as a pin, filters, zoom and a search field floating
-  over it in clear glass, on a dimmed photo (\`glass-scrim\`).
+- Explore (\`/explore\`): a full-screen world map with every trip pinned at its coordinates. It flies to the trips of
+  the filter and the search; drag it (it glides on), pinch, scroll or double-click to zoom, and pins too close together
+  join into one that zooms in on them. Filters, zoom and search float over it in glass. The land is drawn on a canvas
+  and moved as one layer between redraws, so the map keeps 60 fps under the glass bars (\`src/useMapView.ts\`).
 - Settings (\`/settings\`): a preview of the bars and controls over a bright, a dense and a night photo, then theme,
   brand, glass or solid bars, clear or regular controls over photos, and the photo credits.
 - Navigation: a glass sidebar from 768px (an icon rail until 1024px); below that, a header and a tab bar that shrinks
@@ -701,6 +703,10 @@ Sample photos in AVIF at 640 and 1280px wide (\`src/photos/\`), credited on the 
 
 Replace them with your own in \`src/photos.ts\`.
 
+The Explore map draws the land of [Natural Earth](https://www.naturalearthdata.com) at 1:50m (public domain), from the
+[world-atlas](https://github.com/topojson/world-atlas) files, in \`src/land.ts\`. Pins come from \`coords\` in
+\`src/trips.ts\` (degrees, north and east positive); the projection is in \`src/map.ts\`.
+
 ${deploy()}
 ## Structure
 
@@ -710,7 +716,9 @@ src/
   Layout.tsx         # glass sidebar / header / tab bar, search, the page for the route
   HomePage.tsx · TripPage.tsx · ExplorePage.tsx · SettingsPage.tsx · NotFoundPage.tsx
   SearchDialog.tsx   # glass dialog with live results
-  trips.ts           # trips: photos, dates, pins (text is in content/)
+  trips.ts           # trips: photos, dates, coordinates (text is in content/)
+  map.ts · land.ts   # map projection, fit, zoom and flights · land outlines
+  useMapView.ts      # the Explore map: drawing, gestures, pins
   photos.ts          # photo imports and credits
   router.tsx         # / · /trips/<id> · /explore · /settings
   content/           # every string, one file per language

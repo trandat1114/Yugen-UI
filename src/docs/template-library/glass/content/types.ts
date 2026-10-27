@@ -59,6 +59,8 @@ export interface Content {
     categories: Record<"all" | Category, string>;
     zoomIn: string;
     zoomOut: string;
+    /** Label of a pin that groups trips too close to tell apart: zooms in on them. */
+    group: (titles: string[]) => string;
     openTrip: string;
     noMatch: string;
   };

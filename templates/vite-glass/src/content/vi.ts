@@ -33,14 +33,15 @@ const vi: Content = {
   },
   explore: {
     title: "Khám phá",
-    lead: "Mọi chuyến đi trên một bức ảnh. Chọn một điểm để mở.",
-    picture: "Bản đồ các chuyến đi trên nền cây anh đào rủ",
+    lead: "Mọi chuyến đi trên một bản đồ. Chọn một điểm để mở.",
+    picture: "Bản đồ thế giới với các chuyến đi",
     controls: "Điều khiển bản đồ",
     search: "Lọc địa điểm",
     filters: "Loại chuyến đi",
     categories: { all: "Tất cả", sakura: "Hoa anh đào", coast: "Biển", mountains: "Núi", desert: "Sa mạc", forest: "Rừng" },
     zoomIn: "Phóng to",
     zoomOut: "Thu nhỏ",
+    group: (titles) => `Phóng to ${titles.length} chuyến đi: ${titles.join(", ")}`,
     openTrip: "Mở chuyến đi",
     noMatch: "Không có địa điểm nào khớp bộ lọc.",
   },
@@ -117,17 +118,17 @@ const vi: Content = {
     },
     headland: {
       title: "Đường mũi đất lúc hoàng hôn",
-      place: "Mũi đất phía tây",
+      place: "Rota Vicentina, Bồ Đào Nha",
       summary: "Bốn ngày dọc vách đá, ngủ ở nơi con đường chạm biển.",
       story: [
-        "Con đường rời ngôi làng cuối cùng bằng một lối đất rồi leo thẳng lên mũi đất. Từ đó nó men theo mép vách gần như cả ngày, biển luôn ở bên trái.",
+        "Con đường rời ngôi làng cuối cùng bằng một lối đất rồi leo thẳng lên mũi đất. Từ đó nó men theo mép vách gần như cả ngày, biển luôn ở bên phải.",
         "Chúng tôi tính từng chặng để tới vịnh kế tiếp trước hoàng hôn. Ánh sáng nhuộm vàng mọi thứ trong hai mươi phút, rồi gió nổi lên và đã đến lúc dựng lều.",
       ],
       highlights: ["Hoàng hôn ở vịnh thứ ba", "Rừng thông chạy xuống tận mép nước", "Bãi sỏi không một bóng người"],
     },
     island: {
       title: "Sáu ngày ở thị trấn đảo",
-      place: "Hòn đảo trắng",
+      place: "Santorini, Hy Lạp",
       summary: "Những con ngõ quét vôi trắng, chuyến phà lúc bình minh và bữa trưa dài bên cảng.",
       story: [
         "Phà cập bến sớm, các con ngõ vẫn còn vắng. Cầu thang nào cũng như dẫn tới một sân thượng nhìn ra miệng núi lửa.",
@@ -137,7 +138,7 @@ const vi: Content = {
     },
     ridge: {
       title: "Tuyết trên sống núi cao",
-      place: "Dãy núi phía bắc",
+      place: "Núi Tatra, Slovakia",
       summary: "Băng qua sống núi cuối đông bằng đinh leo băng, đi từ lán này sang lán khác.",
       story: [
         "Cuối tháng Hai tuyết vẫn phủ sống núi, cứng vào buổi sáng và mềm dần tới trưa. Mỗi ngày chúng tôi xuất phát trước khi nắng chạm sườn núi.",
@@ -147,7 +148,7 @@ const vi: Content = {
     },
     hills: {
       title: "Những ngọn đồi sơn màu",
-      place: "Lòng chảo khô",
+      place: "Thung lũng Chết, California",
       summary: "Ba ngày trên đất trống, màu sắc rực rỡ và tầm nhìn rất xa.",
       story: [
         "Những ngọn đồi đổi màu theo ánh sáng: đỏ lúc bình minh, nhạt lúc trưa, tím sau hoàng hôn. Gần như không có bóng râm nên chúng tôi đi sớm và về muộn.",
@@ -157,7 +158,7 @@ const vi: Content = {
     },
     river: {
       title: "Xuôi dòng sông trong rừng",
-      place: "Thung lũng xanh",
+      place: "Bán đảo Olympic, Washington",
       summary: "Theo dòng sông từ đầu nguồn qua những cánh rừng già.",
       story: [
         "Lối đi bám sát dòng sông, băng qua nó trên những tảng đá và thân cây đổ. Rừng dày tới mức ánh sáng xanh suốt cả ngày.",
@@ -167,7 +168,7 @@ const vi: Content = {
     },
     valley: {
       title: "Cuối tuần ở thung lũng sương",
-      place: "Thung lũng hồ",
+      place: "Hồ Triglav, Slovenia",
       summary: "Hai ngày chậm rãi trong sương, đi từ hồ này sang hồ khác.",
       story: [
         "Sương phủ thung lũng suốt cuối tuần. Mọi thứ trở nên yên tĩnh và gần lại: những mặt hồ, dòng sông, bìa rừng.",
