@@ -3,6 +3,7 @@ import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { useDirection } from "@radix-ui/react-direction";
 import { usePortalThemeProps } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
+import { morphClass, morphFromTrigger } from "../_internal/morph";
 
 /** Fluent 2 Popover — https://fluent2.microsoft.design/components/web/react/core/popover/usage */
 export const Popover = PopoverPrimitive.Root;
@@ -53,10 +54,15 @@ export const PopoverSurface = React.forwardRef<React.ElementRef<typeof PopoverPr
             PADDING[size],
             APPEARANCE[appearance],
             material,
+            material && morphClass,
             "max-w-[min(360px,calc(100vw-24px))]",
             className,
           )}
           {...props}
+          onAnimationStart={(event) => {
+            if (material) morphFromTrigger(event);
+            props.onAnimationStart?.(event);
+          }}
         >
           {children}
           {withArrow && (

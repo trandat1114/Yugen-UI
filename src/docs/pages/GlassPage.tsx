@@ -377,7 +377,8 @@ export function GlassPage() {
             ["Nav", <C key="p">material</C>, t("Sidebar nổi có đệm và bo góc.", "Floating sidebar with padding and rounded corners.")],
             ["SearchBox / Input", <C key="p">appearance="glass"</C>, t("Ô nhập trong thanh glass.", "A field inside a glass bar.")],
             ["Button", <C key="p">appearance="glass" · "glass-prominent"</C>, t("Nút nổi trên nội dung; prominent là màu brand.", "A button over content; prominent uses the brand color.")],
-            ["MenuPopover · PopoverSurface · TooltipContent", <C key="p">material</C>, t("Bề mặt tạm mở từ thanh glass.", "Transient surfaces opened from a glass bar.")],
+            ["MenuPopover · PopoverSurface · TooltipContent", <C key="p">material</C>, t("Bề mặt tạm mở từ thanh glass. Menu và Popover mọc ra từ nút mở và thu về đó khi đóng (trừ khi giảm chuyển động).", "Transient surfaces opened from a glass bar. Menu and Popover grow out of the button that opens them and shrink back into it (unless motion is reduced).")],
+            ["Slider · Switch", <C key="p">material="glass"</C>, t("Thumb thành glass khi đang nhấn hoặc kéo: Slider to ra, Switch dài ra.", "The thumb turns to glass while pressed or dragged: larger on Slider, longer on Switch.")],
             ["GlassRefraction", "—", t("Đặt một lần ở gốc app: mép của mọi bề mặt glass khúc xạ (Chromium).", "Render once at the app root: the edges of every glass surface refract (Chromium).")],
             ["DialogSurface · DrawerSurface · SheetContent", <C key="p">material</C>, t("Bottom sheet glass lồi vào trong mép màn hình và đặc dần khi kéo lên nấc cao nhất.", "A glass bottom sheet is inset from the screen edges and turns opaque at the highest snap point.")],
           ]}

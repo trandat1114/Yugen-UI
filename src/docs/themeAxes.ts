@@ -13,6 +13,8 @@ export type BaseSize = 14 | 15 | 16;
 export type NeutralTone = "pure" | "warm" | "cool" | "brand";
 export type ElevationStep = "flat" | "subtle" | "default";
 export type MotionStep = "reduced" | "default" | "expressive";
+export type GlassStep = "airy" | "default" | "frosted";
+export type GlassTint = "neutral" | "brand";
 
 export interface ThemeAxes {
   radius: RadiusStep;
@@ -24,6 +26,9 @@ export interface ThemeAxes {
   neutrals: NeutralTone;
   elevation: ElevationStep;
   motion: MotionStep;
+  /** Glass (Yugen Labs): blur, bão hoà màu và độ đục đi cùng nhau. */
+  glass: GlassStep;
+  glassTint: GlassTint;
 }
 
 export const DEFAULT_AXES: ThemeAxes = {
@@ -35,6 +40,8 @@ export const DEFAULT_AXES: ThemeAxes = {
   neutrals: "pure",
   elevation: "default",
   motion: "default",
+  glass: "default",
+  glassTint: "neutral",
 };
 
 export const RADIUS_FACTOR: Record<RadiusStep, number> = { none: 0, small: 0.5, medium: 1, large: 1.5, full: 2.5 };
@@ -43,6 +50,18 @@ export const ELEVATION_FACTOR: Record<ElevationStep, number> = { flat: 0.5, subt
 export const MOTION_FACTOR: Record<MotionStep, number> = { reduced: 0.75, default: 1, expressive: 1.25 };
 /** Không token thời lượng nào vượt mốc này sau khi nhân hệ số. */
 export const MOTION_CAP_MS = 500;
+
+/**
+ * Các bậc glass. Độ đục là rào chắn: mức thấp nhất để fg1 và fg2 giữ 4.5:1 khi phía sau đen hoặc trắng hoàn toàn
+ * (light: glass trắng trên nền đen; dark: xám 16 trên nền trắng), kiểm bằng glassChecks và test.
+ */
+export const GLASS: Record<GlassStep, { blur: number; saturation: number; alpha: { light: number; dark: number } }> = {
+  airy: { blur: 16, saturation: 200, alpha: { light: 0.72, dark: 0.78 } },
+  default: { blur: 24, saturation: 180, alpha: { light: 0.8, dark: 0.82 } },
+  frosted: { blur: 36, saturation: 150, alpha: { light: 0.9, dark: 0.9 } },
+};
+/** Màu gốc của glass: trung tính, hoặc một bậc của ramp brand (rất sáng ở light, rất tối ở dark). */
+const GLASS_BASE = { light: { neutral: "#ffffff", ramp: 160 }, dark: { neutral: "#292929", ramp: 20 } } as const;
 
 const FALLBACK = 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif';
 
@@ -143,6 +162,11 @@ export function sharedVars(axes: ThemeAxes): Record<string, string> {
 
   const m = MOTION_FACTOR[axes.motion];
   if (m !== 1) for (const name of DURATIONS) vars[`--${name}`] = `${Math.min(MOTION_CAP_MS, round(px(name) * m))}ms`;
+
+  if (axes.glass !== "default") {
+    vars["--glassBlur"] = `${GLASS[axes.glass].blur}px`;
+    vars["--glassSaturation"] = `${GLASS[axes.glass].saturation}%`;
+  }
   return vars;
 }
 
@@ -163,6 +187,17 @@ export function themeVars(axes: ThemeAxes, theme: "light" | "dark", brandHex: st
   const vars: Record<string, string> = {};
   const hue = neutralHue(axes.neutrals, brandHex);
   if (hue !== null) for (const [name, hex] of GREYS) vars[`--${name}`] = tintGrey(hex, hue);
+
+  if (axes.glass !== "default" || axes.glassTint !== "neutral") {
+    const alpha = GLASS[axes.glass].alpha[theme];
+    // Pha brand: bậc ramp qua relative color syntax, để glass theo brand ở nơi dán CSS.
+    const base =
+      axes.glassTint === "brand"
+        ? (a: number) => `rgb(from var(--brand-${GLASS_BASE[theme].ramp}) r g b / ${fmt(a)})`
+        : (a: number) => `rgb(${hexRgb(GLASS_BASE[theme].neutral).join(" ")} / ${fmt(a)})`;
+    vars["--colorGlassBackground"] = base(alpha);
+    vars["--colorGlassBackgroundHover"] = base(Math.min(0.96, alpha + 0.08));
+  }
 
   const e = ELEVATION_FACTOR[axes.elevation];
   if (e !== 1) {
@@ -213,6 +248,38 @@ export function neutralChecks(axes: ThemeAxes, brandHex: string): NeutralCheck[]
   });
 }
 
+const hexRgb = (hex: string) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+
+export interface GlassCheck {
+  theme: "light" | "dark";
+  /** Token chữ và nền phía sau glass. */
+  pair: string;
+  ratio: number;
+}
+
+/**
+ * Tương phản của fg1 và fg2 trên glass với nền phía sau xấu nhất: đen và trắng hoàn toàn (blur không đổi một màu phẳng).
+ * `ramp`: ramp brand, cho kiểu pha brand.
+ */
+export function glassChecks(axes: ThemeAxes, brandHex: string, ramp: string[]): GlassCheck[] {
+  return (["light", "dark"] as const).flatMap((theme) => {
+    const block = theme === "light" ? LIGHT : DARK;
+    const greys = themeVars(axes, theme, brandHex);
+    const alpha = GLASS[axes.glass].alpha[theme];
+    const glass = hexRgb(axes.glassTint === "brand" ? ramp[RAMP_INDEX[GLASS_BASE[theme].ramp]] : GLASS_BASE[theme].neutral);
+    return ["colorNeutralForeground1", "colorNeutralForeground2"].flatMap((fg) => {
+      const text = resolve(block, fg, greys);
+      if (!text) return [];
+      return (["#000000", "#ffffff"] as const).map((backdrop) => {
+        const mixed = hexRgb(backdrop).map((b, i) => Math.round(alpha * glass[i] + (1 - alpha) * b));
+        const hex = `#${mixed.map((c) => c.toString(16).padStart(2, "0")).join("")}`;
+        return { theme, pair: `${fg.replace("colorNeutral", "")} / glass on ${backdrop === "#000000" ? "black" : "white"}`, ratio: contrastRatio(text, hex) };
+      });
+    });
+  });
+}
+const RAMP_INDEX: Record<number, number> = { 20: 1, 160: 15 };
+
 /** Control nhỏ nhất của thư viện (size small, h-6) ở mật độ đã chọn, tính bằng px. */
 export const smallestTarget = (density: DensityStep) => 24 * DENSITY_FACTOR[density];
 
@@ -250,6 +317,8 @@ const PARAM = {
   neutrals: "td-neutrals",
   elevation: "td-elevation",
   motion: "td-motion",
+  glass: "td-glass",
+  glassTint: "td-glass-tint",
 } as const satisfies Record<keyof ThemeAxes, string>;
 
 const ALLOWED: { [K in keyof ThemeAxes]?: readonly ThemeAxes[K][] } = {
@@ -259,6 +328,8 @@ const ALLOWED: { [K in keyof ThemeAxes]?: readonly ThemeAxes[K][] } = {
   neutrals: ["pure", "warm", "cool", "brand"],
   elevation: ["flat", "subtle", "default"],
   motion: ["reduced", "default", "expressive"],
+  glass: ["airy", "default", "frosted"],
+  glassTint: ["neutral", "brand"],
 };
 
 /** Chỉ ghi trục khác mặc định để link ngắn. */
