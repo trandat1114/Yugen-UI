@@ -52,7 +52,7 @@ export function useCopy(text: string) {
 }
 
 /** `collapse`: dưới sm chỉ còn icon (chữ chuyển thành sr-only). */
-export function CopyButton({ text, className, collapse }: { text: string; className?: string; collapse?: boolean }) {
+export function CopyButton({ text, label, className, collapse }: { text: string; label?: string; className?: string; collapse?: boolean }) {
   const { copied, copy } = useCopy(text);
   const { t } = useLocale();
   return (
@@ -66,7 +66,7 @@ export function CopyButton({ text, className, collapse }: { text: string; classN
       )}
     >
       {copied ? <Checkmark16Regular className="text-success-foreground-1" /> : <Copy16Regular />}
-      <span className={cn(collapse && "max-sm:sr-only")}>{copied ? t("copy.copied") : t("copy.copy")}</span>
+      <span className={cn(collapse && "max-sm:sr-only")}>{copied ? t("copy.copied") : (label ?? t("copy.copy"))}</span>
     </button>
   );
 }
