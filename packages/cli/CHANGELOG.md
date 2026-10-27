@@ -7,6 +7,8 @@
   with validation, optimistic updates, and sign-in with a one-time code.
 - New template: `next-starter` (`create --template next-starter`), a Next.js App Router project with the theme in a
   cookie so the server renders it. `create --lang` works without an `index.html`.
+- New template: `store` (`create --template store`), a small shop with filters kept in the URL, a cart in a Sheet and a
+  validated multi-step checkout; prices in US dollars, or dong with `--lang vi`.
 
 ## 0.4.0
 
