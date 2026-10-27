@@ -2,6 +2,9 @@ import { useEffect, useMemo, useState, type ComponentType } from "react";
 import { Settings20Regular } from "@fluentui/react-icons";
 import { Badge, Button, Card, CardHeader, useYugen, YugenProvider } from "@/components/ui";
 import AiChatApp from "../template-library/ai-chat/App";
+import AdminApp from "../template-library/admin/App";
+import adminEn from "../template-library/admin/content/en";
+import adminVi from "../template-library/admin/content/vi";
 import DocsApp from "../template-library/docs/App";
 import docsEn from "../template-library/docs/content/en";
 import docsVi from "../template-library/docs/content/vi";
@@ -10,6 +13,9 @@ import nextEn from "../template-library/next-starter/content/en";
 import nextVi from "../template-library/next-starter/content/vi";
 import glassEn from "../template-library/glass/content/en";
 import glassVi from "../template-library/glass/content/vi";
+import LandingApp from "../template-library/landing/App";
+import landingEn from "../template-library/landing/content/en";
+import landingVi from "../template-library/landing/content/vi";
 import { createMockBackend } from "../template-library/ai-chat/api";
 import aiChatEn from "../template-library/ai-chat/content/en";
 import aiChatVi from "../template-library/ai-chat/content/vi";
@@ -174,6 +180,44 @@ function GlassPreview() {
 }
 
 /**
+ * templates/vite-landing in embedded mode: the page scrolls inside the frame (in-page links too), nothing saved, text in
+ * the docs language. The sign-up toast uses the docs Toaster.
+ */
+function LandingPreview() {
+  const docs = useYugen();
+  const { locale } = useLocale();
+  return (
+    <div className="h-110">
+      <LandingApp
+        key={locale}
+        embedded
+        content={locale === "vi" ? landingVi : landingEn}
+        defaultAppearance={{ theme: docs.theme, brand: docs.brand }}
+      />
+    </div>
+  );
+}
+
+/**
+ * templates/vite-admin in embedded mode: router, session and data in memory (nothing saved), signed in as the demo user,
+ * text in the docs language. The create / edit drawer and the delete dialog open over the docs page.
+ */
+function AdminPreview() {
+  const docs = useYugen();
+  const { locale } = useLocale();
+  return (
+    <div className="h-110">
+      <AdminApp
+        key={locale}
+        embedded
+        content={locale === "vi" ? adminVi : adminEn}
+        defaultAppearance={{ theme: docs.theme, brand: docs.brand }}
+      />
+    </div>
+  );
+}
+
+/**
  * templates/next-starter can't run inside this Vite page: a static copy of its home page (same text and components,
  * header included) in the docs language and theme.
  */
@@ -245,6 +289,8 @@ export const PREVIEWS: Record<string, ComponentType> = {
   "vite-dashboard": DashboardPreview,
   "vite-ai-chat": AiChatPreview,
   "vite-glass": GlassPreview,
+  "vite-landing": LandingPreview,
+  "vite-admin": AdminPreview,
   "next-starter": NextStarterPreview,
   "vite-docs": DocsPreview,
 };

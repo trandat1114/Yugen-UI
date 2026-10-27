@@ -43,11 +43,12 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       items: [
         { status: "done", issue: 178, vi: "Vật liệu glass cho lớp điều hướng (Yugen Labs)", en: "Glass material for the navigation layer (Yugen Labs)" },
         { status: "done", issue: 179, vi: "Template Glass: nhật ký du lịch với điều hướng glass trên ảnh", en: "Glass template: a travel journal with glass navigation over photos" },
+        { status: "done", issue: 151, vi: "Template Landing: trang giới thiệu sản phẩm, Lighthouse từ 95 điểm trên di động", en: "Landing template: a product page that scores 95+ on Lighthouse mobile" },
+        { status: "done", issue: 152, vi: "Template Admin: CRUD khách hàng với DataGrid phân trang trên server, form có kiểm tra, đăng nhập OTP", en: "Admin template: customer CRUD with a server-paged DataGrid, validated forms, sign-in with OTP" },
         { status: "done", issue: 203, vi: "DataGrid: người dùng tự chọn cột hiển thị (DataGridColumnPicker)", en: "DataGrid: people choose which columns are shown (DataGridColumnPicker)" },
         { status: "done", issue: 205, vi: "ContextMenu, Menubar và menu con cuộn trong màn hình", en: "ContextMenu, Menubar and submenus scroll inside the viewport" },
         { status: "done", issue: 206, vi: "Nút chỉ hiện khi rê chuột luôn hiện trên màn hình cảm ứng", en: "Hover-only buttons always visible on touch screens" },
         { status: "done", issue: 207, vi: "Số trong DataGrid và Table thẳng hàng", en: "Numbers line up in DataGrid and Table" },
-        { status: "planned", issue: 151, vi: "Template mới: Landing, Admin, Next.js, Docs, Storefront, Glass", en: "New templates: Landing, Admin, Next.js, Docs, Storefront, Glass" },
         { status: "done", issue: 150, vi: "Template SaaS có URL theo đường dẫn, cấu hình deploy cho host tĩnh", en: "Path URLs in the SaaS template, deploy configs for static hosts" },
         { status: "done", issue: 154, vi: "Template Docs: trang tài liệu từ Markdown, tìm kiếm Ctrl K, HTML tĩnh từng trang", en: "Docs template: a documentation site from Markdown, Ctrl K search, static HTML per page" },
       ],

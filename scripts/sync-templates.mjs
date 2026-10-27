@@ -117,6 +117,45 @@ const TEMPLATES = [
     storageKey: "yugen-glass-appearance",
   },
   {
+    dir: "vite-landing",
+    vi: {
+      appTitle: "Sakura Notes",
+      description: "Trang giới thiệu sản phẩm dựng bằng Yugen UI: bảng giá theo tháng / năm, hỏi đáp, form đăng ký và SEO sinh sẵn lúc build.",
+    },
+    hint: "Product landing page: pricing, FAQ, sign-up form, build-time SEO, Lighthouse 95+",
+    title: "Landing",
+    appTitle: "Sakura Notes",
+    description:
+      "A product landing page built with Yugen UI: pricing with a monthly / yearly switch, FAQ, a sign-up form and SEO generated at build time.",
+    lang: "en",
+    app: "landing",
+    storageKey: "yugen-landing-appearance",
+    devDependencies: { "@types/node": "^22.0.0" },
+    /**
+     * vite.config.ts của app thay khối <!-- seo --> … <!-- /seo --> trong index.html bằng thẻ lấy từ content/, và sau khi
+     * build thì render màn hình đầu vào <div id="root"> (src/main.tsx của app hydrate nó).
+     */
+    seoPlugin: true,
+  },
+  {
+    dir: "vite-admin",
+    vi: {
+      appTitle: "Sakura Admin",
+      description: "Trang quản trị dựng bằng Yugen UI: bảng khách hàng phân trang trên server, sửa trong Drawer có kiểm tra, cập nhật lạc quan, đăng nhập có mã OTP.",
+    },
+    hint: "Admin / CRUD: server-paged DataGrid, drawer forms, optimistic updates, sign-in with OTP",
+    title: "Admin",
+    appTitle: "Sakura Admin",
+    description:
+      "An admin app built with Yugen UI: a server-paged customer DataGrid, create and edit in a validated drawer, optimistic updates that roll back, and sign-in with a one-time code.",
+    lang: "en",
+    app: "admin",
+    spa: true,
+    storageKey: "yugen-admin-appearance",
+    /** Form validation (src/validation.ts). Not @hookform/resolvers: its optional peers break `npm install` on npm 11. */
+    dependencies: { "react-hook-form": pkg.devDependencies["react-hook-form"], zod: pkg.devDependencies.zod },
+  },
+  {
     dir: "next-starter",
     vi: {
       appTitle: "Ứng dụng của tôi",
@@ -650,6 +689,136 @@ src/
 
 ${generatedFrom(t)}
 `,
+  landing: (t) => `# ${t.appTitle ?? t.title}
+
+A product landing page from [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates): Vite, React and Tailwind CSS
+v4. One fast page for a made-up notes app, ready for your own product.
+
+${install(t.dir, "en")}
+
+## What's included
+
+- Hero with two calls to action, a product picture drawn in HTML (no image to download), a row of customer logos.
+- Feature grid, pricing with a monthly / yearly switch, testimonials, FAQ (\`Accordion\`), sign-up section and footer.
+- A sign-up form with Yugen \`Field\` components and a small validation function (no form library): messages after the
+  first submit, focus on the first field to fix, a loading button and a success \`toast\`.
+- **SEO at build time** (the \`landingSeo\` plugin in \`vite.config.ts\`): \`<title>\`, \`description\`, canonical, Open
+  Graph and \`SoftwareApplication\` JSON-LD with one offer per plan, written into \`index.html\` from \`src/content/\`.
+- **Static first screen**: the same plugin renders the header, hero and footer into \`index.html\`, so the page shows
+  before any JavaScript runs. React loads after that first paint and attaches to the HTML (\`src/main.tsx\`); the
+  sections below and the theme menu load next, one section per frame.
+- Built for Lighthouse 95+ on mobile in all four categories (checked in this repo's CI): no web fonts, no images to
+  wait for, no layout shift.
+- Light, dark and high-contrast themes, saved in \`localStorage\` with no flash on reload.
+- English text; Vietnamese (with prices in VND) with \`npx create-yugen-ui@latest my-app --template landing --lang vi\`.
+
+## Make it yours
+
+1. Text, plans and prices: \`src/content/<lang>.ts\`. The SEO tags and the JSON-LD offers follow them.
+2. Your domain: \`url\` in \`src/site.ts\` (the build warns while it is still \`example.com\`).
+3. The form: replace \`submitSignUp\` in \`src/signUp.ts\` with a call to your backend or form service.
+4. The picture: swap \`<ProductShot />\` for a screenshot, an \`<img>\` with \`width\` and \`height\` so nothing moves while
+   it loads.
+5. The first screen is rendered at build time, so it must not depend on the visitor (saved theme, date, \`window\`):
+   React would find different HTML when it attaches. Read those in an effect, or put that part below the fold.
+
+## Deploy
+
+\`npm run build\` and upload \`dist/\` to any static host. Under a sub-path (GitHub Pages project site):
+\`npm run build -- --base=/my-repo/\`.
+
+## Structure
+
+\`\`\`
+src/
+  main.tsx · start.tsx   # paint the static HTML first, then load React and attach it
+  App.tsx                # YugenProvider, saved theme
+  LandingPage.tsx        # header, hero, footer; loads BelowTheFold and ThemeMenu after the first paint
+  BelowTheFold.tsx       # Features · Pricing · Testimonials · Faq · SignUpSection, one per frame
+  ProductShot.tsx        # the product picture in HTML
+  Logos.tsx              # product mark and customer wordmarks (SVG)
+  signUp.ts              # validateSignUp and submitSignUp
+  seo.ts                 # head tags and JSON-LD, used by vite.config.ts
+  site.ts                # your domain (SITE.url)
+  content/               # every string and the plans, one file per language
+vite.config.ts           # landingSeo plugin: head tags and the static first screen
+\`\`\`
+
+${generatedFrom(t)}
+`,
+  admin: (t) => `# ${t.appTitle ?? t.title}
+
+An admin app from [Yugen UI](https://trandat1114.github.io/Yugen-UI/#/templates): Vite, React and Tailwind CSS v4.
+Customers and their orders, the screens most back offices start with, on a mock API you replace with your own.
+
+${install(t.dir, "en")}
+
+## What's included
+
+- Customers (\`/customers\`): a \`DataGrid\` paged, sorted and filtered by the server (one page plus the total per
+  request), search, status and plan filters, a column picker (\`DataGridColumnPicker\`), and row selection with bulk
+  export to CSV and bulk delete.
+- Create and edit in a \`Drawer\`, validated with react-hook-form and zod (\`src/validation.ts\`); delete after a
+  confirm \`Dialog\`.
+- Optimistic updates (\`useOptimisticList\`): changes show at once, a toast confirms them, and a failed request puts
+  the list back as it was, with a Retry button.
+- Customer page (\`/customers/<id>\`) with the details and the customer's orders; Orders (\`/orders\`), read-only.
+- Sign in, forgot password and a one-time code step (\`InputOTP\`). Pages other than these need a session: without
+  one you land on the sign-in page and come back to the page you asked for.
+- Settings: theme, brand, the mock API's response time and a switch for random errors.
+- Pages load on demand (\`React.lazy\`), with real URLs and the tab title per page. Light, dark and high-contrast
+  themes, saved with no flash on reload. English text in \`src/content/\`; Vietnamese with
+  \`npx create-yugen-ui@latest my-app --template admin --lang vi\`.
+
+## Demo account
+
+The first visit in a tab starts signed in, so the app opens on its data. Sign out (avatar menu or Settings) to try
+the sign-in flow with \`admin@sakura.dev\` / \`sakura-admin\` and the code \`246810\`. The session lives in
+\`sessionStorage\`. To turn off the automatic sign-in, set \`DEMO_AUTO_SIGN_IN\` to \`false\` in \`src/auth.tsx\`.
+
+## Connect your back end
+
+\`src/api.ts\` generates 120 customers and their orders in the browser and answers after a short delay; with random
+errors on, about one save or delete in five fails. Keep the \`AdminApi\` interface and return an object that calls
+your server:
+
+\`\`\`ts
+const api: AdminApi = {
+  listCustomers: (query, signal) => fetch(\`/api/customers?\${toParams(query)}\`, { signal }).then((r) => r.json()),
+  updateCustomer: (id, input) => fetch(\`/api/customers/\${id}\`, { method: "PUT", body: JSON.stringify(input) }).then((r) => r.json()),
+  // getCustomer, createCustomer, deleteCustomers, listOrders, signIn, verifyCode, requestPasswordReset
+};
+\`\`\`
+
+Create it in \`src/App.tsx\` instead of \`createMockApi\`, then delete the mock API card in
+\`src/pages/SettingsPage.tsx\` and the demo account notes on the sign-in pages. List calls take a page, a page size,
+a sort and the filters, and return \`{ rows, total }\`. Reject with an error when a request fails: the optimistic
+update rolls back on its own.
+
+Validation uses a small zod resolver in \`src/validation.ts\` instead of \`@hookform/resolvers\`, whose optional
+peer dependencies make \`npm install\` fail on npm 11. You can switch to it once that is fixed.
+
+${deploy()}
+## Structure
+
+\`\`\`
+src/
+  App.tsx              # YugenProvider, saved appearance, mock API, session, router
+  Layout.tsx           # top bar, sidebar, sign-in redirect, lazy pages
+  pages/               # Customers, Customer, Orders, Settings, SignIn, Verify, ForgotPassword, NotFound
+  CustomerDrawer.tsx   # create / edit drawer and the delete dialog
+  CustomerForm.tsx     # the form (react-hook-form + zod), loaded when a drawer opens
+  OrderList.tsx        # paged orders, for /orders and the customer page
+  api.ts               # mock back end (replace with yours)
+  auth.tsx             # session in sessionStorage, demo sign-in
+  validation.ts        # zod schemas and the resolver
+  router.tsx           # History API router, Link, next= after sign-in
+  content/             # every string, one file per language
+  ui.tsx · useQuery.ts · csv.ts · context.ts · appearance.ts
+\`\`\`
+
+${generatedFrom(t)}
+`,
 };
 
 README["next-starter"] = (t) => `# ${t.appTitle ?? t.title}
@@ -910,13 +1079,17 @@ function files(t) {
             ...(t.spa && { "build:gh-pages": "tsc -b && vite build --mode gh-pages" }),
             preview: "vite preview",
           },
-          dependencies: {
-            "@fluentui/react-icons": pkg.dependencies["@fluentui/react-icons"],
-            // React và type theo devDependencies ở gốc repo (cùng bản mà docs và test chạy).
-            react: pkg.devDependencies.react,
-            "react-dom": pkg.devDependencies["react-dom"],
-            "yugen-ui": `^${pkg.version}`,
-          },
+          // `t.dependencies`: thư viện runtime riêng của template (vd. admin: react-hook-form, zod), xếp theo tên như npm.
+          dependencies: Object.fromEntries(
+            Object.entries({
+              "@fluentui/react-icons": pkg.dependencies["@fluentui/react-icons"],
+              // React và type theo devDependencies ở gốc repo (cùng bản mà docs và test chạy).
+              react: pkg.devDependencies.react,
+              "react-dom": pkg.devDependencies["react-dom"],
+              "yugen-ui": `^${pkg.version}`,
+              ...t.dependencies,
+            }).sort(([a], [b]) => (a < b ? -1 : 1)),
+          ),
           devDependencies: {
             "@tailwindcss/vite": "^4.0.0",
             "@types/react": pkg.devDependencies["@types/react"],
@@ -997,7 +1170,8 @@ export default defineConfig({
 /** Danh mục cho `yugen create` (packages/cli đóng gói templates/ kèm file này). */
 /**
  * Ngân sách lần tải đầu (kB gzip) — CI job "Templates" (scripts/check-template.mjs) báo lỗi khi vượt. JS = <script type=module>
- * + modulepreload trong dist/index.html (trang lazy không tính). Tăng có chủ đích: sửa ở đây và ghi lý do trong PR.
+ * + modulepreload trong dist/index.html (trang lazy không tính); `totalJs` (tuỳ chọn) chặn cả JS trong dist/assets. Tăng có
+ * chủ đích: sửa ở đây và ghi lý do trong PR.
  */
 const BUDGETS = {
   "vite-starter": { js: 135, css: 25 },
@@ -1008,6 +1182,9 @@ const BUDGETS = {
   "vite-dashboard": { js: 195, css: 25 },
   "vite-ai-chat": { js: 175, css: 25 },
   "vite-glass": { js: 160, css: 26 },
+  // Landing: index.html đã có màn hình đầu (prerender), JS đầu chỉ là main.tsx; React và app (~150 kB) nạp sau lần vẽ đầu.
+  "vite-landing": { js: 2, css: 27, totalJs: 165 },
+  "vite-admin": { js: 167, css: 26 },
   // Next.js: react-dom + runtime của Next ~157 kB trước cả mã của app.
   "next-starter": { js: 265, css: 27 },
   // Docs: chỉ front matter của các trang nằm trong lần tải đầu; nội dung từng trang và chỉ mục tìm kiếm là chunk riêng.

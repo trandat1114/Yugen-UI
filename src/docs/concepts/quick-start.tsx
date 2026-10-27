@@ -184,8 +184,9 @@ export default function Page() {
           <CodeBlock code={TEMPLATE_COMMAND} />
           <P>
             Dự án starter có sẵn: lưu theme người dùng chọn, toast, alias <C>@/</C>, SEO cơ bản và một trang chào để xoá khi bắt đầu.
-            Đổi <C>starter</C> thành <C>saas</C> (ứng dụng SaaS 8 trang), <C>blog</C> (blog Markdown), <C>dashboard</C>, <C>ai-chat</C>{" "}
-            <C>glass</C> (nhật ký du lịch với điều hướng glass), <C>next-starter</C> (Next.js App Router) hoặc <C>docs</C> (trang tài liệu từ Markdown), hoặc bỏ <C>--template</C> để chọn trong terminal. Các tuỳ chọn khác ở <A href={docsPath("/concepts/cli")}>@yugen-ui/cli</A>.
+            Đổi <C>starter</C> thành <C>saas</C> (ứng dụng SaaS 8 trang), <C>blog</C> (blog Markdown), <C>dashboard</C>, <C>ai-chat</C>,{" "}
+            <C>glass</C> (nhật ký du lịch với điều hướng glass), <C>landing</C> (trang giới thiệu sản phẩm), <C>admin</C> (trang quản trị: bảng, form, đăng nhập),{" "}
+            <C>next-starter</C> (Next.js App Router) hoặc <C>docs</C> (trang tài liệu từ Markdown), hoặc bỏ <C>--template</C> để chọn trong terminal. Các tuỳ chọn khác ở <A href={docsPath("/concepts/cli")}>@yugen-ui/cli</A>.
           </P>
           <div className="flex flex-wrap gap-2">
             <Button asChild appearance="primary" icon={<Rocket16Regular />}>
