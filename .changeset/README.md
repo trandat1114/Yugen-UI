@@ -9,6 +9,8 @@ npx changeset          # chọn patch / minor, viết một câu tóm tắt cho 
 
 - `patch`: sửa lỗi, cải tiến nhỏ không đổi API. `minor`: component / prop / token mới — và, khi còn `0.x`, cả thay đổi
   phá vỡ API (ghi rõ "**Breaking:**" ở đầu tóm tắt). `major` dành cho 1.0 trở đi.
+- Không chắc thì chọn `patch`: số minor chỉ tăng khi có API mới. `npm run check:changesets` kiểm loại bump (docs ›
+  Phiên bản › Quy tắc cho từng số).
 - Lúc phát hành, maintainer chạy `npx changeset version`: gộp mọi file ở đây vào `CHANGELOG.md` (mục `## x.y.z` mới
   chèn ngay dưới tiêu đề `# Changelog`), tăng `version` trong `package.json` rồi xoá các file đã dùng. Quy trình đầy
   đủ: [CONTRIBUTING.md](../CONTRIBUTING.md) và Design.md §8.

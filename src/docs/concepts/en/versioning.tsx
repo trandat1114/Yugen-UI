@@ -78,6 +78,44 @@ export default function Page() {
         </div>
       </DocSection>
 
+      <DocSection id="numbers" title="Rules for each number" description="Most changes ship in a patch release. Minor and major only go up for a reason.">
+        <div className="flex flex-col gap-4">
+          <Table
+            head={["Number", "Goes up for", "Never for", "Cadence"]}
+            rows={[
+              [
+                "PATCH x.y.Z",
+                "Bug fixes (regressions included), accessibility, performance, wrong TypeScript types, small visual tweaks.",
+                "New API, breaking changes.",
+                "No limit. Fixes that land close together ship in one release.",
+              ],
+              [
+                "MINOR x.Y.0",
+                "At least one new API: component, prop, prop value, token, export, template. Deprecations. Before 1.0, breaking changes too.",
+                "Fixes or tweaks only.",
+                "One per milestone, at least 14 days after the previous minor.",
+              ],
+              [
+                "MAJOR X.0.0",
+                "Breaking changes, from 1.0. All deprecated APIs are removed together, with a migration guide.",
+                "Non-breaking features.",
+                "At least 180 days after the previous major. It stays 0 before 1.0.",
+              ],
+            ]}
+          />
+          <ul className="flex max-w-3xl list-disc flex-col gap-2 ps-5 text-body2 text-foreground-2">
+            <li>No skipped numbers: after 0.12.0 comes 0.12.1 or 0.13.0.</li>
+            <li>Changes to the docs site, tests or CI alone don't make a release. The docs deploy on their own.</li>
+            <li>
+              <C>main</C> and <C>release/X.Y</C> only ship patch releases. Features go to <C>next</C> and ship with a milestone.
+            </li>
+            <li>Prereleases (<C>-next.N</C>, canary) don't count.</li>
+            <li>@yugen-ui/cli follows the same rules with its own numbers. create-yugen-ui moves to a new minor with it.</li>
+          </ul>
+          <P>These rules apply to releases after 0.12.0.</P>
+        </div>
+      </DocSection>
+
       <DocSection
         id="breaking"
         title="What counts as breaking"

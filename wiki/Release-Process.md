@@ -5,6 +5,35 @@ Trang này mô tả kênh ổn định (`main` → `latest`). Bản thử nghi�
 Phiên bản theo [SemVer](https://trandat1114.github.io/Yugen-UI/#/concepts/versioning). Trước 1.0, bản minor có thể
 có thay đổi phá vỡ — luôn ghi rõ.
 
+## Quy tắc cho từng số
+
+Áp dụng cho các bản phát hành sau 0.12.0 (`RULES_SINCE` trong `scripts/release-rules.mjs`), cho `yugen-ui` và
+`@yugen-ui/cli`. Mục tiêu: phần lớn thay đổi ra ở bản patch, số minor và major không tăng vì những thay đổi nhỏ.
+
+| Số | Tăng khi | Không tăng cho | Nhịp |
+| --- | --- | --- | --- |
+| PATCH `x.y.Z` | Sửa lỗi (kể cả lỗi do bản trước), a11y, hiệu năng, kiểu TS sai, tinh chỉnh giao diện nhỏ | API mới, thay đổi phá vỡ | Không giới hạn; gom các sửa lỗi gần nhau |
+| MINOR `x.Y.0` | Ít nhất một API mới (component, prop, giá trị prop, token, export, template); deprecate; trước 1.0 cả thay đổi phá vỡ | Chỉ sửa lỗi / tinh chỉnh | Mỗi milestone một bản, cách minor trước ≥ 14 ngày |
+| MAJOR `X.0.0` | Thay đổi phá vỡ, từ 1.0; xoá cùng lúc mọi API đã deprecate, kèm hướng dẫn chuyển đổi | Tính năng không phá vỡ | Cách major trước ≥ 180 ngày |
+
+- Không nhảy số: sau `0.12.0` là `0.12.1` hoặc `0.13.0`.
+- Chỉ đổi docs site, test, CI thì không phát hành; workflow **Docs** deploy riêng.
+- `main` và `release/X.Y` chỉ ra bản patch (hotfix). Tính năng vào `next`, phát hành khi đóng milestone.
+- Prerelease (`-next.N`, `cli@X.Y.Z-beta.N`, canary) không tính.
+- `create-yugen-ui` không theo nhịp riêng: lên minor cùng `@yugen-ui/cli` (quy tắc 2 của CLI).
+
+Kiểm tra tự động:
+
+- `npm run check:changesets` (CI): `major` trước 1.0; `major` thiếu "**Breaking:**"; "**Breaking:**" ở `patch`; tóm tắt
+  mở đầu bằng "Fix" ở `minor`, "New" ở `patch`; PR vào `main` / `release/*` (trừ `next → main`) có `minor` / `major`.
+- `check:release` (gốc repo và CLI) đọc `kind` của các tin trong `src/docs/news.ts` — mục của bản hiện tại và tin
+  `upcoming` trên next: bản patch không có `new` / `breaking`; bản minor có ít nhất một `new` (trước 1.0: hoặc
+  `breaking`); từ 1.0, `breaking` chỉ ở bản major; major có ít nhất một `breaking`; không nhảy số; nhịp minor / major
+  tính theo `date` của tin.
+
+Muốn phát hành minor sớm hơn 14 ngày: không có cách vượt qua trong script. Tính năng chờ milestone; sửa lỗi phát hành
+bằng bản patch.
+
 ## Trong mỗi PR
 
 `npx changeset` → chọn `patch` (sửa lỗi) / `minor` (tính năng, deprecate) / `major` (từ 1.0, xoá API) → viết một câu cho
@@ -75,6 +104,7 @@ của CLI kiểm cùng dấu.
 ## Sửa nhanh sau phát hành (hotfix)
 
 Sửa trên `main` → changeset `patch` → lặp lại quy trình (vd. `0.6.1`). Không publish lại cùng số phiên bản — npm không cho phép.
+Hotfix chỉ là bản patch: `check:changesets` chặn changeset `minor` / `major` trong PR vào `main`.
 
 ## CLI: `@yugen-ui/cli` và `create-yugen-ui`
 
@@ -107,8 +137,8 @@ scope không bị kiểm tra này; scope `@yugen-ui` là một npm org (miễn p
 5. **Nhánh** — bản ổn định tag trên `main` (dist-tag `latest`); prerelease `cli@X.Y.Z-beta.N` tag trên `next`
    (dist-tag `next`, thử bằng `npx @yugen-ui/cli@next`). `create-yugen-ui` chỉ phát hành cùng bản ổn định.
 6. **SemVer của CLI** — `patch`: sửa lỗi, cập nhật template; `minor`: lệnh hoặc tuỳ chọn mới, đổi định dạng
-   `yugen.json`. Trước 1.0 thay đổi phá vỡ (đổi tên lệnh / tuỳ chọn, đổi chỗ ghi file) cũng là `minor`, ghi rõ trong
-   CHANGELOG.
+   `yugen.json`, template mới. Trước 1.0 thay đổi phá vỡ (đổi tên lệnh / tuỳ chọn, đổi chỗ ghi file) cũng là `minor`,
+   ghi rõ trong CHANGELOG. Nhịp và tin theo [quy tắc cho từng số](#quy-tắc-cho-từng-số) (`CLI_NEWS`).
 7. **Registry là hợp đồng** — `yugen add` / `init` đọc `public/r` do `scripts/build-registry.mjs` sinh (tên item,
    đường dẫn `registry/yugen/{ui,lib}/…`, import `@/lib` / `@/components/ui`, item `theme`, `cn`, `yugen-provider`,
    `all`). Đổi các thứ đó thì phát hành CLI tương thích **trước** khi docs (và registry) deploy.

@@ -77,6 +77,44 @@ export default function Page() {
         </div>
       </DocSection>
 
+      <DocSection id="numbers" title="Quy tắc cho từng số" description="Phần lớn thay đổi ra ở bản patch. Minor và major chỉ tăng khi có lý do.">
+        <div className="flex flex-col gap-4">
+          <Table
+            head={["Số", "Tăng khi", "Không tăng cho", "Nhịp phát hành"]}
+            rows={[
+              [
+                "PATCH x.y.Z",
+                "Sửa lỗi (kể cả lỗi do bản trước gây ra), a11y, hiệu năng, kiểu TypeScript sai, tinh chỉnh giao diện nhỏ.",
+                "API mới, thay đổi phá vỡ.",
+                "Không giới hạn. Các sửa lỗi gần nhau ra chung một bản.",
+              ],
+              [
+                "MINOR x.Y.0",
+                "Có ít nhất một API mới: component, prop, giá trị prop, token, export, template. Đánh dấu deprecate. Trước 1.0: cả thay đổi phá vỡ.",
+                "Chỉ sửa lỗi hoặc tinh chỉnh.",
+                "Mỗi milestone một bản, cách bản minor trước ít nhất 14 ngày.",
+              ],
+              [
+                "MAJOR X.0.0",
+                "Thay đổi phá vỡ, từ 1.0. Mọi API đã deprecate được xoá cùng lúc, kèm hướng dẫn chuyển đổi.",
+                "Tính năng không phá vỡ.",
+                "Cách bản major trước ít nhất 180 ngày. Trước 1.0 số này là 0.",
+              ],
+            ]}
+          />
+          <ul className="flex max-w-3xl list-disc flex-col gap-2 ps-5 text-body2 text-foreground-2">
+            <li>Không nhảy số: sau 0.12.0 là 0.12.1 hoặc 0.13.0.</li>
+            <li>Chỉ đổi trang docs, test hoặc CI thì không ra bản mới. Docs được deploy riêng.</li>
+            <li>
+              <C>main</C> và <C>release/X.Y</C> chỉ ra bản patch. Tính năng vào <C>next</C> và phát hành theo milestone.
+            </li>
+            <li>Bản thử nghiệm (<C>-next.N</C>, canary) không tính.</li>
+            <li>@yugen-ui/cli theo cùng quy tắc với số riêng. create-yugen-ui lên minor cùng @yugen-ui/cli.</li>
+          </ul>
+          <P>Áp dụng cho các bản phát hành sau 0.12.0.</P>
+        </div>
+      </DocSection>
+
       <DocSection id="breaking" title="Thế nào là thay đổi phá vỡ" description="Mọi thứ khiến mã đang chạy đúng phải sửa mới chạy tiếp, hoặc đổi giao diện ngoài ý muốn.">
         <Table
           head={["Phá vỡ (chỉ ở major)", "Không phá vỡ (minor / patch)"]}

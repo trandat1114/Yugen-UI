@@ -78,6 +78,7 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
     lead: "Yugen UI follows Semantic Versioning. Breaking changes are always announced ahead with deprecation warnings and recorded in the CHANGELOG and on What's new — so upgrades are planned, never surprises.",
     toc: {
       semver: "Semantic Versioning",
+      numbers: "Rules for each number",
       breaking: "What counts as breaking",
       deprecation: "Deprecation process",
       support: "Support matrix",

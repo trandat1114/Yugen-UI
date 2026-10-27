@@ -80,6 +80,7 @@
     "version-packages": "changeset version && node scripts/sync-templates.mjs && npm install --package-lock-only",
     "branches:prune": "node scripts/prune-branches.mjs",
     "check:release": "node scripts/check-release.mjs",
+    "check:changesets": "node scripts/check-changesets.mjs",
     "check:examples": "vite-node scripts/check-examples.ts",
     "check:props": "vite-node scripts/check-props.ts",
     "roadmap": "vite-node scripts/sync-roadmap.ts",
