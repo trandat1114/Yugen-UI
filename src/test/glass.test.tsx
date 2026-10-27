@@ -110,6 +110,7 @@ describe("glass — tương phản tính từ tokens.css", () => {
   it("tương phản cao: glass đặc, không blur", () => {
     const hc = block('[data-theme="high-contrast"]');
     expect(hc["--glassFilter"]).toBe("none");
+    expect(hc["--glassLensFilter"]).toBe("none");
     expect(hc["--colorGlassBackground"]).toBe("#000000");
     expect(hc["--colorGlassClearBackground"]).toBe("#000000");
   });

@@ -333,11 +333,16 @@
 /* ---------- Glass (Yugen Labs — Design.md §4.7): vật liệu cho lớp điều hướng nổi trên nội dung ----------
    glass: dùng chung · glass-clear: trên ảnh / media, kèm glass-scrim · glass-tinted: một nút chính (brand).
    Bên trong glass, chữ phụ và brand đổi sang sắc đậm hơn, nền hover / pressed thành lớp phủ trong suốt, để giữ
-   tương phản trên mọi nền phía sau. --glass-bg đổi nền theo trạng thái (Button glass); shadow-* vẫn cộng thêm được. */
+   tương phản trên mọi nền phía sau. --glass-bg đổi nền theo trạng thái (Button glass); shadow-* vẫn cộng thêm được.
+   [data-glass-lens]: <GlassRefraction> (Chromium) gắn bộ lọc khúc xạ qua --glass-lens; blur nằm trong bộ lọc đó. Mọi chỗ
+   tắt blur cũng đặt --glassLensFilter: none, và "none url(…)" không hợp lệ nên backdrop-filter về none. */
 @utility glass {
   background-color: var(--glass-bg, var(--colorGlassBackground));
   -webkit-backdrop-filter: var(--glassFilter);
   backdrop-filter: var(--glassFilter);
+  &[data-glass-lens] {
+    backdrop-filter: var(--glassLensFilter) var(--glass-lens);
+  }
   --tw-inset-shadow: inset 0 1px 0 0 var(--colorGlassEdge);
   --tw-inset-ring-shadow: inset 0 0 0 1px var(--colorGlassStroke);
   box-shadow:
@@ -362,6 +367,9 @@
   background-color: var(--glass-bg, var(--colorGlassClearBackground));
   -webkit-backdrop-filter: var(--glassFilter);
   backdrop-filter: var(--glassFilter);
+  &[data-glass-lens] {
+    backdrop-filter: var(--glassLensFilter) var(--glass-lens);
+  }
   --tw-inset-shadow: inset 0 1px 0 0 var(--colorGlassClearEdge);
   --tw-inset-ring-shadow: inset 0 0 0 1px var(--colorGlassClearStroke);
   box-shadow:
@@ -391,6 +399,9 @@
   background-color: var(--glass-bg, var(--colorGlassTinted));
   -webkit-backdrop-filter: var(--glassFilter);
   backdrop-filter: var(--glassFilter);
+  &[data-glass-lens] {
+    backdrop-filter: var(--glassLensFilter) var(--glass-lens);
+  }
   --tw-inset-shadow: inset 0 1px 0 0 var(--colorGlassClearEdge);
   box-shadow:
     var(--tw-inset-shadow), var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000),
@@ -475,6 +486,7 @@
   [data-brand],
   [data-brand][data-theme] {
     --glassFilter: none;
+    --glassLensFilter: none;
     --glassEdgeFilter: none;
     --colorGlassBackground: var(--colorGlassBackgroundSolid);
     --colorGlassBackgroundHover: var(--colorNeutralBackground1Hover);
@@ -514,12 +526,14 @@
   :root,
   [data-theme] {
     --glassFilter: none;
+    --glassLensFilter: none;
     --glassEdgeFilter: none;
   }
 }
 /* Glass lồng trong glass: chỉ còn lớp màu, không blur lần hai (đỡ tốn GPU). */
 :is(.glass, .glass-clear, .glass-tinted) :is(.glass, .glass-clear, .glass-tinted) {
   --glassFilter: none;
+  --glassLensFilter: none;
 }
 
 @layer base {

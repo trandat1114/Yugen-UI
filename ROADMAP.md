@@ -10,6 +10,14 @@ Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. 
 
 ## Đang làm
 
+### 0.13.0 · minor · hạn 2026-11-10
+
+Khúc xạ cho glass và mùa hoa anh đào trong template Glass.
+
+- [~] GlassRefraction: mép bề mặt glass bẻ cong nền phía sau (Chromium); template Glass có chuyến đi ở Nhật Bản và xem trước trên ảnh (#227)
+- [x] Trang Templates: xem toàn màn hình, một khung lớn cho các template khác (#224)
+- [x] Checkbox, Switch, Field: input ẩn của form không kéo dài trang (#223)
+
 ### 1.0.0 · major
 
 API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện hoàn tất.
@@ -24,7 +32,7 @@ API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện
 
 Chưa xếp lịch.
 
-- [ ] Glass phần 2: menu mọc từ nút, nút kéo glass, hiệu ứng khúc xạ, xem trước trong Theme Designer (#210)
+- [ ] Glass phần 2: menu mọc từ nút, nút kéo glass, xem trước trong Theme Designer (#210)
 - [ ] Đăng ký @yugen vào danh mục registry của shadcn (#68)
 - [ ] Đang cân nhắc: bộ Figma, gói icon Sakura
 

@@ -13,6 +13,7 @@ import {
 import {
   Badge,
   Button,
+  GlassRefraction,
   Menu,
   MenuItem,
   MenuPopover,
@@ -35,11 +36,13 @@ import { DocSection, DoDont, PageHeader } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
 import { useLocale, type Locale } from "../i18n";
 import { scenery, sunset } from "../sample-assets";
+import { PHOTOS } from "../template-library/glass/photos";
 
 export const GLASS_SECTIONS: Record<Locale, { id: string; label: string }[]> = {
   vi: [
     { id: "overview", label: "Tổng quan" },
     { id: "variants", label: "Biến thể" },
+    { id: "refraction", label: "Khúc xạ" },
     { id: "components", label: "Component" },
     { id: "utilities", label: "Utility" },
     { id: "accessibility", label: "Trợ năng" },
@@ -49,6 +52,7 @@ export const GLASS_SECTIONS: Record<Locale, { id: string; label: string }[]> = {
   en: [
     { id: "overview", label: "Overview" },
     { id: "variants", label: "Variants" },
+    { id: "refraction", label: "Refraction" },
     { id: "components", label: "Components" },
     { id: "utilities", label: "Utilities" },
     { id: "accessibility", label: "Accessibility" },
@@ -60,6 +64,7 @@ export const GLASS_SECTIONS: Record<Locale, { id: string; label: string }[]> = {
 /** Mô phỏng "giảm trong suốt" trong khung demo: cùng token mà fallback CSS đặt khi người dùng bật tuỳ chọn hệ thống. */
 const SOLID_PREVIEW = {
   "--glassFilter": "none",
+  "--glassLensFilter": "none",
   "--glassEdgeFilter": "none",
   "--colorGlassBackground": "var(--colorGlassBackgroundSolid)",
   "--colorGlassClearBackground": "var(--colorGlassClearBackgroundSolid)",
@@ -204,6 +209,47 @@ function MediaDemo({ en, solid }: { en: boolean; solid: boolean }) {
   );
 }
 
+/** Khúc xạ bật / tắt trên cùng một ảnh: mép thanh và thẻ glass bẻ cong cây cầu và hàng cây phía sau. */
+function RefractionDemo({ en }: { en: boolean }) {
+  const t = (vi: string, e: string) => (en ? e : vi);
+  const [on, setOn] = React.useState(true);
+  return (
+    <div className="flex flex-col gap-3">
+      <Switch checked={on} onCheckedChange={setOn} label={t("Khúc xạ (Chromium)", "Refraction (Chromium)")} />
+      <div
+        className={cn(
+          "relative isolate h-72 overflow-hidden rounded-3xlarge",
+          !on && "**:data-glass-lens:[backdrop-filter:var(--glassFilter)]!",
+        )}
+      >
+        <img src={PHOTOS.hirosakiBridge.large} alt="" className="absolute inset-0 -z-10 size-full object-cover" />
+        <div aria-hidden className="glass-scrim absolute inset-0 -z-10" />
+        <div className="flex h-full flex-col justify-between p-4">
+          <Toolbar material="glass-clear" aria-label={t("Điều khiển ảnh", "Photo controls")} className="self-start">
+            <ToolbarButton icon={<ArrowLeft20Regular className="rtl:-scale-x-100" />} aria-label={t("Quay lại", "Back")} />
+            <span className="px-2 text-body1 font-semibold">{t("Công viên thành Hirosaki", "Hirosaki Castle park")}</span>
+          </Toolbar>
+          <div className="glass max-w-72 self-end rounded-3xlarge border border-transparent p-4 shadow-16">
+            <p className="text-body1 font-semibold">{t("Cầu đỏ bắc qua hào", "The red bridge over the moat")}</p>
+            <p className="text-caption1 text-foreground-3">{t("Ảnh: mko294, CC BY 4.0", "Photo: mko294, CC BY 4.0")}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const REFRACTION = `import { GlassRefraction, YugenProvider } from "yugen-ui";
+
+export function App() {
+  return (
+    <YugenProvider>
+      <GlassRefraction />
+      {/* … app … */}
+    </YugenProvider>
+  );
+}`;
+
 const USAGE = `import { Toolbar, ToolbarButton, TabsList, TabsTrigger, Tabs, useScrollMinimize } from "yugen-ui";
 
 function TripBars() {
@@ -245,6 +291,7 @@ export function GlassPage() {
 
   return (
     <>
+      <GlassRefraction />
       <PageHeader
         eyebrow="Foundations · Yugen Labs"
         title="Glass"
@@ -287,6 +334,40 @@ export function GlassPage() {
         <MediaDemo en={en} solid={solid} />
       </DocSection>
 
+      <DocSection
+        id="refraction"
+        title={t("Khúc xạ", "Refraction")}
+        description={t(
+          "Như ánh sáng đi qua vành ly, mép của bề mặt glass bẻ cong phần nền phía sau; phần giữa vẫn mờ để chữ giữ tương phản. Rõ nhất trên ảnh.",
+          "Like light through the rim of a glass, the edges of a glass surface bend what is behind them; the middle stays frosted so text keeps its contrast. It shows best over photos.",
+        )}
+      >
+        <div className="flex flex-col gap-4">
+          <RefractionDemo en={en} />
+          <CodeBlock code={REFRACTION} />
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body1 text-foreground-2">
+            <li>
+              {t(
+                "Đặt <GlassRefraction /> một lần ở gốc app. Nó theo dõi mọi phần tử glass, glass-clear và glass-tinted (cả trong portal) và tạo một bộ lọc SVG cho mỗi kích thước và độ bo góc.",
+                "Render <GlassRefraction /> once at the root of the app. It watches every glass, glass-clear and glass-tinted element (portals included) and builds one SVG filter per size and corner radius.",
+              )}
+            </li>
+            <li>
+              {t(
+                "Chỉ trình duyệt Chromium vẽ được bộ lọc SVG trong backdrop-filter. Safari và Firefox giữ glass như cũ, không cần làm gì thêm.",
+                "Only Chromium browsers draw SVG filters in backdrop-filter. Safari and Firefox keep the regular glass; nothing else to do.",
+              )}
+            </li>
+            <li>
+              {t(
+                "Tắt cùng blur: giảm trong suốt, tăng tương phản, forced colors, theme tương phản cao, glass lồng trong glass. Bề mặt lớn hơn 400.000 px² giữ glass thường.",
+                "Off wherever blur is off: Reduce transparency, Increase contrast, forced colors, the high-contrast theme, glass inside glass. Surfaces larger than 400,000 px² keep the regular glass.",
+              )}
+            </li>
+          </ul>
+        </div>
+      </DocSection>
+
       <DocSection id="components" title={t("Component", "Components")}>
         <Table
           head={[t("Component", "Component"), "Prop", t("Ghi chú", "Notes")]}
@@ -297,6 +378,7 @@ export function GlassPage() {
             ["SearchBox / Input", <C key="p">appearance="glass"</C>, t("Ô nhập trong thanh glass.", "A field inside a glass bar.")],
             ["Button", <C key="p">appearance="glass" · "glass-prominent"</C>, t("Nút nổi trên nội dung; prominent là màu brand.", "A button over content; prominent uses the brand color.")],
             ["MenuPopover · PopoverSurface · TooltipContent", <C key="p">material</C>, t("Bề mặt tạm mở từ thanh glass.", "Transient surfaces opened from a glass bar.")],
+            ["GlassRefraction", "—", t("Đặt một lần ở gốc app: mép của mọi bề mặt glass khúc xạ (Chromium).", "Render once at the app root: the edges of every glass surface refract (Chromium).")],
             ["DialogSurface · DrawerSurface · SheetContent", <C key="p">material</C>, t("Bottom sheet glass lồi vào trong mép màn hình và đặc dần khi kéo lên nấc cao nhất.", "A glass bottom sheet is inset from the screen edges and turns opaque at the highest snap point.")],
           ]}
         />
@@ -352,6 +434,12 @@ export function GlassPage() {
           <li>{t("Một backdrop-filter cho mỗi thanh: nút bên trong dùng chung, không tự có glass.", "One backdrop-filter per bar: the buttons inside share it instead of having their own.")}</li>
           <li>{t("Tránh glass trên vùng lớn đổi liên tục (video, canvas animate): blur tính lại mỗi khung hình.", "Avoid glass over large areas that change every frame (video, animated canvas): the blur is recomputed each frame.")}</li>
           <li>{t("Glass lồng nhau tự tắt blur ở lớp trong.", "Nested glass turns off the inner blur on its own.")}</li>
+          <li>
+            {t(
+              "Khúc xạ: bộ lọc dùng chung cho các bề mặt cùng kích thước; bản đồ chỉ tính lại khi kích thước đổi xong. Như blur, nó tính lại khi nền phía sau đổi.",
+              "Refraction: surfaces of the same size share a filter, and the map is only rebuilt once a size change settles. Like blur, it is recomputed when the content behind changes.",
+            )}
+          </li>
         </ul>
       </DocSection>
 

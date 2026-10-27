@@ -7,7 +7,8 @@ import { TRIPS } from "./trips";
 
 /** Trips whose title, place or highlights contain every word of the query (case and accents ignored). */
 export function searchTrips(t: Content, query: string) {
-  const fold = (s: string) => s.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
+  // Without accents: "anh dao" finds "anh đào" (đ has no combining mark to strip).
+  const fold = (s: string) => s.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/đ/g, "d");
   const words = fold(query).split(/\s+/).filter(Boolean);
   return TRIPS.filter((trip) => {
     const text = t.trips[trip.id];

@@ -112,6 +112,7 @@ export * from "./CodeBlock/CodeBlock";
 export * from "./AIKit/AIKit";
 export * from "./Tour/Tour";
 export * from "./NotificationCenter/NotificationCenter";
+export * from "./GlassRefraction/GlassRefraction";
 
 // Trang trí (chỉ cho minh hoạ)
 export * from "./Decorative/Decorative";

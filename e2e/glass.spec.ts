@@ -25,12 +25,17 @@ function alpha(color: string) {
 }
 
 test.describe("Glass", () => {
-  test("blur và nền trong mờ; tab bar thu gọn khi cuộn xuống, mở lại khi cuộn lên", async ({ page }) => {
+  test("blur và nền trong mờ; tab bar thu gọn khi cuộn xuống, mở lại khi cuộn lên", async ({ page, browserName }) => {
     await openDocs(page, ROUTE);
     const toolbar = page.getByRole("toolbar", { name: "Thao tác với chuyến đi" });
-    const glass = await material(toolbar);
-    expect(glass.filter).toContain("blur(24px)");
-    expect(alpha(glass.background)).toBeCloseTo(0.8, 2);
+    if (browserName === "chromium") {
+      // <GlassRefraction> trên trang: blur nằm trong bộ lọc khúc xạ.
+      await expect(toolbar).toHaveAttribute("data-glass-lens", "");
+      expect((await material(toolbar)).filter).toMatch(/^saturate\(1\.8\) url\("#yugen-lens-\d+"\)$/);
+    } else {
+      expect((await material(toolbar)).filter).toContain("blur(24px)");
+    }
+    expect(alpha((await material(toolbar)).background)).toBeCloseTo(0.8, 2);
 
     const region = page.getByRole("region", { name: /Demo glass/ });
     const tabs = page.getByRole("tablist", { name: "Điều hướng" });
@@ -45,6 +50,27 @@ test.describe("Glass", () => {
     // Công tắc xem trước "Giảm trong suốt" của trang.
     await page.getByRole("switch", { name: "Xem như khi bật Giảm trong suốt" }).click();
     expect((await material(toolbar)).filter).toBe("none");
+  });
+
+  test("khúc xạ (Chromium): bộ lọc theo kích thước và bo góc của từng bề mặt, glass lồng nhau thì không", async ({ page, browserName }) => {
+    test.skip(browserName !== "chromium", "Chỉ Chromium vẽ SVG filter trong backdrop-filter");
+    await openDocs(page, ROUTE);
+    const toolbar = page.getByRole("toolbar", { name: "Thao tác với chuyến đi" });
+    await expect(toolbar).toHaveAttribute("data-glass-lens", "");
+    const lens = await toolbar.evaluate((el) => {
+      const id = getComputedStyle(el).getPropertyValue("--glass-lens").match(/#([\w-]+)/)?.[1] ?? "";
+      const filter = document.getElementById(id);
+      const map = filter?.querySelector("feImage");
+      return {
+        size: [Math.round((el as HTMLElement).offsetWidth), Math.round((el as HTMLElement).offsetHeight)],
+        map: [Number(map?.getAttribute("width")), Number(map?.getAttribute("height"))],
+        primitives: [...(filter?.children ?? [])].map((n) => n.localName),
+        nested: [...el.querySelectorAll(".glass, .glass-clear, .glass-tinted")].filter((n) => n.hasAttribute("data-glass-lens")).length,
+      };
+    });
+    expect(lens.map).toEqual(lens.size);
+    expect(lens.primitives).toEqual(["feGaussianBlur", "feColorMatrix", "feImage", "feDisplacementMap", "feImage", "feComposite", "feComposite"]);
+    expect(lens.nested).toBe(0);
   });
 
   test("giảm trong suốt và tăng tương phản → nền đặc, không blur", async ({ page, browserName }) => {

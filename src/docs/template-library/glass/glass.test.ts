@@ -30,5 +30,14 @@ describe("glass template", () => {
     expect(searchTrips(en, "coast").map((t) => t.id)).toEqual(["headland", "island"]);
     expect(searchTrips(en, "")).toHaveLength(TRIPS.length);
     expect(searchTrips(en, "zzz")).toHaveLength(0);
+    expect(searchTrips(vi, "hoa anh dao").map((t) => t.id)).toEqual(["hirosaki", "fuji", "kyoto", "tokyo"]);
+    expect(searchTrips(en, "cherry blossoms kyoto").map((t) => t.id)).toEqual(["kyoto"]);
+  });
+
+  it("photos: every one has a license and a source page", () => {
+    for (const [key, photo] of Object.entries(PHOTOS)) {
+      expect(photo.license, key).toMatch(/^(Unsplash License|CC BY [234]\.0|Public domain)$/);
+      expect(photo.source, key).toMatch(/^https:\/\/(unsplash\.com\/photos|commons\.wikimedia\.org\/wiki\/File:)/);
+    }
   });
 });
