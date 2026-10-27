@@ -56,8 +56,9 @@ Sample photos in AVIF at 640 and 1280px wide (`src/photos/`), credited on the Se
 
 Replace them with your own in `src/photos.ts`.
 
-The Explore map draws the land of [Natural Earth](https://www.naturalearthdata.com) at 1:50m (public domain), from the
-[world-atlas](https://github.com/topojson/world-atlas) files, in `src/land.ts`. Pins come from `coords` in
+The Explore map draws the land of [Natural Earth](https://www.naturalearthdata.com) (public domain), from the
+[world-atlas](https://github.com/topojson/world-atlas) files: `src/land.ts` (1:110m) and `src/land-detail.ts`
+(1:50m, loaded once the page shows). Pins come from `coords` in
 `src/trips.ts` (degrees, north and east positive); the projection is in `src/map.ts`.
 
 ## Deploy
@@ -82,7 +83,8 @@ src/
   HomePage.tsx · TripPage.tsx · ExplorePage.tsx · SettingsPage.tsx · NotFoundPage.tsx
   SearchDialog.tsx   # glass dialog with live results
   trips.ts           # trips: photos, dates, coordinates (text is in content/)
-  map.ts · land.ts   # map projection, fit, zoom and flights · land outlines
+  map.ts             # map projection, fit, zoom and flights
+  land.ts · land-detail.ts  # land outlines, coarse and detailed
   useMapView.ts      # the Explore map: drawing, gestures, pins
   photos.ts          # photo imports and credits
   router.tsx         # / · /trips/<id> · /explore · /settings

@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import en from "./content/en";
 import vi from "./content/vi";
-import { LAND, LAND_COARSE } from "./land";
+import { LAND_COARSE } from "./land";
+import { LAND } from "./land-detail";
 import { clampView, fitView, flight, groupPins, MAP, pinchView, project, toMap, toScreen, ZOOM, zoomView } from "./map";
 import { PHOTOS } from "./photos";
 import { parsePath, pathOf } from "./router";
