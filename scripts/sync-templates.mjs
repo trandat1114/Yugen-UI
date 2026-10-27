@@ -1086,7 +1086,8 @@ const BUDGETS = {
   "vite-dashboard": { js: 195, css: 25 },
   "vite-ai-chat": { js: 175, css: 25 },
   "vite-glass": { js: 160, css: 26 },
-  "vite-landing": { js: 160, css: 26 },
+  // Landing: index.html đã có màn hình đầu (prerender), JS đầu chỉ là main.tsx; React và app (~150 kB) nạp sau lần vẽ đầu.
+  "vite-landing": { js: 2, css: 27 },
   "vite-admin": { js: 167, css: 26 },
   // Next.js: react-dom + runtime của Next ~157 kB trước cả mã của app.
   "next-starter": { js: 265, css: 27 },

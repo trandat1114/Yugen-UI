@@ -97,7 +97,7 @@ describe("create", () => {
   });
 
   it("lists every template from the manifest", () => {
-    expect(loadTemplates(repoTemplates).map((t) => t.name)).toEqual(["starter", "saas", "blog", "dashboard", "ai-chat", "glass", "admin", "next-starter"]);
+    expect(loadTemplates(repoTemplates).map((t) => t.name)).toEqual(["starter", "saas", "blog", "dashboard", "ai-chat", "glass", "landing", "admin", "next-starter"]);
     expect(toPackageName("  Ứng dụng Đẹp ")).toBe("ung-dung-dep");
     expect(toPackageName(".hidden App")).toBe("hidden-app");
   });

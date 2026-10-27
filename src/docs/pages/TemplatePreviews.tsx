@@ -10,6 +10,9 @@ import nextEn from "../template-library/next-starter/content/en";
 import nextVi from "../template-library/next-starter/content/vi";
 import glassEn from "../template-library/glass/content/en";
 import glassVi from "../template-library/glass/content/vi";
+import LandingApp from "../template-library/landing/App";
+import landingEn from "../template-library/landing/content/en";
+import landingVi from "../template-library/landing/content/vi";
 import { createMockBackend } from "../template-library/ai-chat/api";
 import aiChatEn from "../template-library/ai-chat/content/en";
 import aiChatVi from "../template-library/ai-chat/content/vi";
@@ -174,6 +177,25 @@ function GlassPreview() {
 }
 
 /**
+ * templates/vite-landing in embedded mode: the page scrolls inside the frame (in-page links too), nothing saved, text in
+ * the docs language. The sign-up toast uses the docs Toaster.
+ */
+function LandingPreview() {
+  const docs = useYugen();
+  const { locale } = useLocale();
+  return (
+    <div className="h-110">
+      <LandingApp
+        key={locale}
+        embedded
+        content={locale === "vi" ? landingVi : landingEn}
+        defaultAppearance={{ theme: docs.theme, brand: docs.brand }}
+      />
+    </div>
+  );
+}
+
+/**
  * templates/vite-admin in embedded mode: router, session and data in memory (nothing saved), signed in as the demo user,
  * text in the docs language. The create / edit drawer and the delete dialog open over the docs page.
  */
@@ -253,6 +275,7 @@ export const PREVIEWS: Record<string, ComponentType> = {
   "vite-dashboard": DashboardPreview,
   "vite-ai-chat": AiChatPreview,
   "vite-glass": GlassPreview,
+  "vite-landing": LandingPreview,
   "vite-admin": AdminPreview,
   "next-starter": NextStarterPreview,
 };

@@ -46,7 +46,7 @@ export function LogoRow({ label }: { label: string }) {
     <ul aria-label={label} className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-foreground-3">
       {WORDMARKS.map(({ name, glyph }) => {
         // Room for the glyph, a gap and the name at 18px.
-        const width = Math.round(36 + name.length * 10.5);
+        const width = Math.round(44 + name.length * 10.5);
         return (
           <li key={name}>
             <svg role="img" aria-label={name} viewBox={`0 0 ${width} 30`} width={width} height="30" className="h-7 w-auto">
