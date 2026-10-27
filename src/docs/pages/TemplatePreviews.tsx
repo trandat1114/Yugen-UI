@@ -152,7 +152,7 @@ function DashboardPreview() {
 
 /**
  * templates/vite-ai-chat in embedded mode: router and conversations in memory (nothing saved), text and mock replies in
- * the docs language. Fixed height: the frame of a non-featured template scrolls instead of giving its content a height.
+ * the docs language. Fills the frame, or h-110 when the frame gives its content no height.
  */
 function AiChatPreview() {
   const docs = useYugen();
@@ -160,7 +160,7 @@ function AiChatPreview() {
   const content = locale === "vi" ? aiChatVi : aiChatEn;
   const send = useMemo(() => createMockBackend(content.mock), [content]);
   return (
-    <div className="h-110">
+    <div className="h-full min-h-110">
       <AiChatApp key={locale} embedded content={content} send={send} defaultAppearance={{ theme: docs.theme, brand: docs.brand }} />
     </div>
   );
@@ -171,7 +171,7 @@ function GlassPreview() {
   const docs = useYugen();
   const { locale } = useLocale();
   return (
-    <div className="h-110">
+    <div className="h-full min-h-110">
       <GlassApp
         key={locale}
         embedded
@@ -190,7 +190,7 @@ function LandingPreview() {
   const docs = useYugen();
   const { locale } = useLocale();
   return (
-    <div className="h-110">
+    <div className="h-full min-h-110">
       <LandingApp
         key={locale}
         embedded
@@ -209,7 +209,7 @@ function AdminPreview() {
   const docs = useYugen();
   const { locale } = useLocale();
   return (
-    <div className="h-110">
+    <div className="h-full min-h-110">
       <AdminApp
         key={locale}
         embedded
@@ -278,7 +278,7 @@ function DocsPreview() {
   const host = useYugen();
   const { locale } = useLocale();
   return (
-    <div className="h-110">
+    <div className="h-full min-h-110">
       <DocsApp key={locale} embedded content={locale === "vi" ? docsVi : docsEn} defaultTheme={host.theme} />
     </div>
   );
@@ -292,7 +292,7 @@ function StorePreview() {
   const docs = useYugen();
   const { locale } = useLocale();
   return (
-    <div className="h-110">
+    <div className="h-full min-h-110">
       <StoreApp key={locale} embedded content={locale === "vi" ? storeVi : storeEn} defaultAppearance={{ theme: docs.theme, brand: docs.brand }} />
     </div>
   );

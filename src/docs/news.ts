@@ -34,9 +34,10 @@ export const NEWS: NewsRelease[] = [
     version: "0.12.1",
     upcoming: true,
     date: "2026-10-28",
-    title: "Không còn khoảng trống cuối trang khi form nằm trong vùng cuộn",
-    summary: "Checkbox, Switch và Dropdown trong Field không còn kéo dài trang khi nằm trong form ở một vùng cuộn.",
+    title: "Xem template toàn màn hình, form trong vùng cuộn không còn kéo dài trang",
+    summary: "Trang Templates có nút xem toàn màn hình và một khung lớn cho các template khác. Checkbox, Switch và Dropdown trong Field không còn kéo dài trang khi nằm trong form ở một vùng cuộn.",
     items: [
+      { kind: "improved", text: "Trang Templates: nút toàn màn hình trên mỗi preview, chọn khổ máy tính, máy tính bảng hoặc điện thoại; link ?preview=<template> mở thẳng chế độ này. Các template khác chọn bằng tab và xem trong một khung lớn bằng template nổi bật; link #<template> chọn sẵn template.", href: "/templates" },
       { kind: "fixed", text: "Checkbox, Switch và Dropdown trong Field: khi nằm trong <form> ở một vùng cuộn, input ẩn dùng để gửi form không còn kéo dài trang và để lại khoảng trống phía dưới.", href: "/components/checkbox" },
     ],
   },
