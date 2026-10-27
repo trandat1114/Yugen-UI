@@ -5,13 +5,14 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:gh-pages": "tsc -b && vite build --mode gh-pages",
     "preview": "vite preview"
   },
   "dependencies": {
     "@fluentui/react-icons": "^2.0.264",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "yugen-ui": "^0.11.1"
+    "yugen-ui": "^0.12.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.0",

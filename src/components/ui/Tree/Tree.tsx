@@ -396,7 +396,7 @@ export const TreeItemLayout = React.forwardRef<HTMLDivElement, TreeItemLayoutPro
         {aside && <span className="flex shrink-0 items-center gap-1">{aside}</span>}
         {actions && (
           <span
-            className="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity duration-faster group-hover/tree-layout:opacity-100 focus-within:opacity-100"
+            className="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity duration-faster group-hover/tree-layout:opacity-100 focus-within:opacity-100 pointer-coarse:opacity-100"
             onClick={(event) => event.stopPropagation()}
           >
             {actions}

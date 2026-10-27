@@ -175,9 +175,13 @@ export const en: Record<string, ComponentDocEn> = {
         title: "Row selection & actions",
         description: "A subtle TableSelectionCell shows its checkbox only on hover; TableCellActions shows buttons when the row is hovered or focused.",
       },
+      {
+        title: "Choosing columns",
+        description: "Table has no column definitions: keep the set of hidden column ids in state, render cells conditionally and use DataGridColumnPicker as the column button. A hideable: false column is always shown.",
+      },
     ],
     dos: [
-      "Align column headers with their data; use tabular-nums for numbers.",
+      "Align column headers with their data; align number columns to the end.",
       "Allow sorting on columns people often compare; the header shows the sort direction.",
       "Put row actions in a “…” Menu or in TableCellActions to keep the table compact.",
     ],

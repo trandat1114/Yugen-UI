@@ -12,10 +12,12 @@ export const TooltipTrigger = TooltipPrimitive.Trigger;
 export interface TooltipContentProps extends React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content> {
   appearance?: "normal" | "inverted";
   withArrow?: boolean;
+  /** Yugen Labs — bề mặt glass. glass-clear: trên ảnh / media (đặt glass-scrim lên media bên dưới). */
+  material?: "glass" | "glass-clear";
 }
 
 export const TooltipContent = React.forwardRef<React.ElementRef<typeof TooltipPrimitive.Content>, TooltipContentProps>(
-  ({ className, appearance = "normal", withArrow = true, sideOffset = 4, children, ...props }, ref) => {
+  ({ className, appearance = "normal", withArrow = true, material, sideOffset = 4, children, ...props }, ref) => {
     // Portal render vào <body>: gắn `dir` để tooltip theo hướng chữ của provider lồng.
     const dir = useDirection();
     const portalTheme = usePortalThemeProps();
@@ -32,6 +34,7 @@ export const TooltipContent = React.forwardRef<React.ElementRef<typeof TooltipPr
             appearance === "inverted"
               ? "border-transparent bg-background-inverted text-foreground-inverted"
               : "border-transparent bg-background-1 text-foreground-1",
+            material && cn(material, "text-foreground-1"),
             className,
           )}
           {...props}
@@ -41,7 +44,9 @@ export const TooltipContent = React.forwardRef<React.ElementRef<typeof TooltipPr
             <TooltipPrimitive.Arrow
               width={12}
               height={6}
-              className={appearance === "inverted" ? "fill-background-inverted" : "fill-background-1"}
+              className={
+                material ? "fill-(--glass-tint)" : appearance === "inverted" ? "fill-background-inverted" : "fill-background-1"
+              }
             />
           )}
         </TooltipPrimitive.Content>

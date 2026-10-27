@@ -31,6 +31,30 @@ export const NEWS_KIND_LABEL: Record<NewsKind, string> = {
 
 export const NEWS: NewsRelease[] = [
   {
+    version: "0.12.0",
+    date: "2026-10-27",
+    title: "Glass, sáu template mới và chọn cột trong DataGrid",
+    summary: "Vật liệu glass (Yugen Labs) cho thanh công cụ, thanh tab, sidebar và menu nổi trên nội dung. Sáu template mới: Glass, Landing, Admin, Docs, Store và Next.js starter; SaaS dùng đường dẫn thật và mọi template một trang có sẵn cấu hình deploy. Người dùng tự ẩn và hiện cột của DataGrid. Menu dài không còn tràn khỏi màn hình; trên màn hình cảm ứng, các nút vốn chỉ hiện khi rê chuột giờ hiện sẵn.",
+    items: [
+      { kind: "new", text: "Glass (Yugen Labs, lấy cảm hứng từ Liquid Glass): material=\"glass\" | \"glass-clear\" trên Toolbar, TabsList, Nav, MenuPopover, PopoverSurface, TooltipContent, DialogSurface, DrawerSurface, SheetContent; Button appearance=\"glass\" | \"glass-prominent\"; Input / SearchBox appearance=\"glass\". TabsList có minimized và hook useScrollMinimize cho thanh tab thu gọn khi cuộn. Utility glass, glass-clear, glass-tinted, glass-scrim, scroll-edge, rounded-concentric. Chữ giữ ≥ 4.5:1 trên mọi nền phía sau; nền đặc khi giảm trong suốt, tăng tương phản, tương phản cao hoặc forced colors. Tên có thể đổi trước 1.0.", href: "/foundations/glass" },
+      { kind: "new", text: "DataGrid nhận hiddenColumns; DataGridColumnPicker là nút “Cột” mở menu ô tích, dùng được cả với Table. Menu không đóng khi tích từng cột, cột hideable: false và cột hiện cuối cùng không ẩn được, cột đang sắp xếp vẫn sắp xếp hàng khi bị ẩn. Cột ẩn giữ độ rộng đã kéo; lưu lựa chọn bằng onHiddenColumnsChange.", href: "/components/datagrid" },
+      { kind: "new", text: "Template Glass: nhật ký du lịch với ảnh tràn viền, sidebar và thanh tab glass (thu gọn khi cuộn), trang Khám phá với ghim và bộ lọc nổi bằng glass clear, bottom sheet glass, cài đặt glass / đặc. Ảnh mẫu Unsplash dạng AVIF.", href: "/templates" },
+      { kind: "new", text: "Template Landing: trang giới thiệu sản phẩm với bảng giá theo tháng / năm, hỏi đáp, nhận xét và form đăng ký có kiểm tra. Màn hình đầu, title, Open Graph và JSON-LD của sản phẩm được ghi sẵn vào index.html lúc build; Lighthouse trên di động từ 95 điểm ở cả bốn mục, kiểm tra trong CI.", href: "/templates" },
+      { kind: "new", text: "Template Next.js starter (App Router): YugenProvider trong một Client Component, theme và brand lưu trong cookie để server render đúng theme (không nháy), trang chủ là Server Component dùng component Yugen, metadata theo trang, next/font. Trang SSR có liên kết tới template.", href: "/concepts/ssr" },
+      { kind: "new", text: "Template Admin: khách hàng và đơn hàng trên API giả lập. DataGrid phân trang, sắp xếp và lọc trên server, chọn cột hiển thị, chọn nhiều hàng để xuất CSV hoặc xoá; thêm và sửa trong Drawer có kiểm tra bằng react-hook-form + zod; cập nhật lạc quan, lỗi thì hoàn tác kèm toast. Có trang đăng nhập, quên mật khẩu, nhập mã OTP và trang cần đăng nhập mới xem được.", href: "/templates" },
+      { kind: "new", text: "Template Docs: trang tài liệu từ file Markdown, mỗi thư mục là một phần của sidebar. Mục lục đánh dấu đề mục đang đọc, tìm kiếm Ctrl K trên tiêu đề và đề mục, code gộp tab theo ngôn ngữ, tab npm / pnpm / yarn / bun cho lệnh cài. Mỗi trang có file HTML riêng với title, description và Open Graph, kèm sitemap.xml và 404.html.", href: "/templates" },
+      { kind: "new", text: "Template Store: cửa hàng nhỏ bán trà, đồ gốm và văn phòng phẩm. Lưới sản phẩm lọc theo danh mục, khoảng giá và sắp xếp, bộ lọc lưu trong URL; trang sản phẩm có Carousel, chọn màu, cỡ và số lượng; giỏ hàng trong Sheet lưu trong localStorage; thanh toán bằng Wizard bốn bước có kiểm tra và trang xác nhận đơn. Giá định dạng theo ngôn ngữ (USD hoặc VND), thanh toán chỉ là giả lập.", href: "/templates" },
+      { kind: "improved", text: "Template SaaS dùng đường dẫn thật (/analytics) thay cho #/analytics, link cũ vẫn mở đúng trang. SaaS, Dashboard, AI chat và Glass có sẵn cấu hình deploy: _redirects cho Netlify, vercel.json, npm run build:gh-pages cho GitHub Pages; Cloudflare Pages không cần gì thêm.", href: "/templates" },
+      { kind: "improved", text: "DataGrid: cột chỉ cần label, renderHeaderCell thành tuỳ chọn. Logic ẩn / hiện cột dùng riêng được qua useDataGridColumnVisibility và getVisibleColumns.", href: "/components/datagrid" },
+      { kind: "improved", text: "DataGrid và Table dùng chữ số đều chiều rộng, nên số trong một cột thẳng hàng mà không cần thêm class.", href: "/components/table" },
+      { kind: "improved", text: "MenuItemCheckbox và MenuItemRadio nhận secondaryContent như MenuItem.", href: "/components/menu" },
+      { kind: "improved", text: "Trang Phiên bản có quy tắc cho từng số: phần lớn thay đổi ra ở bản patch, minor chỉ tăng khi có API mới và cách nhau ít nhất 14 ngày, major cách nhau ít nhất 180 ngày. Áp dụng từ sau 0.12.0.", href: "/concepts/versioning" },
+      { kind: "fixed", text: "DataGrid: khi bộ cột thay đổi, focus bàn phím ở lại đúng cột thay vì nhảy sang cột khác cùng vị trí; ô đang focus bị gỡ thì focus sang cột gần nhất.", href: "/components/datagrid" },
+      { kind: "fixed", text: "Menu, ContextMenu, Menubar và menu con: menu dài cuộn bên trong màn hình thay vì tràn ra ngoài, nên mục cuối luôn chọn được.", href: "/components/contextmenu" },
+      { kind: "fixed", text: "Màn hình cảm ứng: nút thao tác của hàng, checkbox chọn kiểu subtle (Table, DataGrid) và thao tác của Tree luôn hiện, vì không có hover để làm chúng hiện ra.", href: "/components/table" },
+    ],
+  },
+  {
     version: "0.11.1",
     date: "2026-10-26",
     title: "Hiệu ứng wave của Skeleton chạy mượt trở lại",
@@ -243,6 +267,20 @@ export const LATEST_RELEASE = NEWS.find((r) => !r.upcoming) ?? NEWS[0];
  */
 export const CLI_NEWS: NewsRelease[] = [
   {
+    version: "0.5.0",
+    date: "2026-10-27",
+    title: "Template Glass, Landing, Admin và Next.js",
+    summary: "Thêm template Glass (nhật ký du lịch với điều hướng glass), Landing (trang giới thiệu sản phẩm), Admin (trang quản trị khách hàng và đơn hàng) và Next.js starter (App Router).",
+    items: [
+      { kind: "new", text: "create --template landing: trang giới thiệu sản phẩm với bảng giá, hỏi đáp và form đăng ký; màn hình đầu và thẻ SEO sinh sẵn lúc build; tiếng Anh hoặc tiếng Việt (--lang vi).", href: "/templates" },
+      { kind: "new", text: "create --template admin: trang quản trị với DataGrid phân trang trên server, form trong Drawer có kiểm tra, cập nhật lạc quan và đăng nhập có mã OTP; tiếng Anh hoặc tiếng Việt (--lang vi).", href: "/templates" },
+      { kind: "new", text: "create --template next-starter: dự án Next.js App Router, theme lưu trong cookie để server render đúng theme ngay từ HTML đầu tiên; có tiếng Việt với --lang vi.", href: "/concepts/ssr" },
+      { kind: "new", text: "create --template glass: nhật ký du lịch với sidebar, thanh tab, toolbar và bottom sheet bằng glass nổi trên ảnh; tiếng Anh hoặc tiếng Việt (--lang vi).", href: "/templates" },
+      { kind: "new", text: "create --template docs: trang tài liệu từ Markdown với sidebar theo thư mục, tìm kiếm Ctrl K và HTML sinh sẵn cho từng trang; tiếng Anh hoặc tiếng Việt (--lang vi).", href: "/templates" },
+      { kind: "new", text: "create --template store: cửa hàng nhỏ với bộ lọc trong URL, giỏ hàng trong Sheet và thanh toán nhiều bước có kiểm tra; giá theo USD hoặc VND tuỳ ngôn ngữ (--lang vi).", href: "/templates" },
+    ],
+  },
+  {
     version: "0.4.0",
     date: "2026-10-25",
     title: "diff, update, remove, theme và template mới",
@@ -294,6 +332,20 @@ export const CLI_NEWS: NewsRelease[] = [
 
 /** Tab create-yugen-ui (packages/create-yugen-ui) — chỉ phát hành cùng bản CLI ổn định. Mục đầu = version của gói. */
 export const CREATE_NEWS: NewsRelease[] = [
+  {
+    version: "0.5.0",
+    date: "2026-10-27",
+    title: "Theo @yugen-ui/cli 0.5.0",
+    summary: "Cùng các thay đổi của @yugen-ui/cli 0.5.0: template Glass, Landing, Admin và Next.js starter.",
+    items: [
+      { kind: "new", text: "npx create-yugen-ui@latest my-app --template glass.", href: "/templates" },
+      { kind: "new", text: "npx create-yugen-ui@latest my-app --template landing.", href: "/templates" },
+      { kind: "new", text: "npx create-yugen-ui@latest my-app --template admin.", href: "/templates" },
+      { kind: "new", text: "npx create-yugen-ui@latest my-app --template next-starter.", href: "/concepts/ssr" },
+      { kind: "new", text: "npx create-yugen-ui@latest my-app --template docs.", href: "/templates" },
+      { kind: "new", text: "npx create-yugen-ui@latest my-app --template store.", href: "/templates" },
+    ],
+  },
   {
     version: "0.4.0",
     date: "2026-10-25",

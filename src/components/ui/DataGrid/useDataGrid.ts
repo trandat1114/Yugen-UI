@@ -1,8 +1,8 @@
 import * as React from "react";
 
 /**
- * Logic thuần của DataGrid (sắp xếp, chọn hàng) — tách khỏi giao diện để test dễ và để người dùng tự điều khiển
- * trạng thái từ bên ngoài (toolbar, URL, server…). Tương đương `useTableSort` / `useTableSelection` của Fluent.
+ * Logic thuần của DataGrid (sắp xếp, chọn hàng, ẩn / hiện cột) — tách khỏi giao diện để test dễ và để người dùng tự
+ * điều khiển trạng thái từ bên ngoài (toolbar, URL, server…). Tương đương `useTableSort` / `useTableSelection` của Fluent.
  */
 
 /* ================================================================ Kiểu dữ liệu */
@@ -21,10 +21,12 @@ export interface DataGridSortState {
 
 /** Định nghĩa một cột — tạo bằng `createColumn<T>()` để TypeScript suy ra kiểu của `item`. */
 export interface DataGridColumn<T> {
-  /** Định danh duy nhất của cột (dùng cho sortState, columnSizingOptions, onColumnResize). */
+  /** Định danh duy nhất của cột (dùng cho sortState, columnSizingOptions, onColumnResize, hiddenColumns). */
   columnId: string;
-  /** Nội dung ô tiêu đề. */
-  renderHeaderCell: () => React.ReactNode;
+  /** Tên cột dạng chữ: tiêu đề khi không có `renderHeaderCell` và tên trong DataGridColumnPicker. Mặc định `columnId`. */
+  label?: string;
+  /** Nội dung ô tiêu đề khi cần hơn chữ (icon, Tooltip…). Bỏ trống = `label`. */
+  renderHeaderCell?: () => React.ReactNode;
   /** Nội dung ô của một hàng. Chuỗi / số tự cắt bằng "…" khi cột hẹp. */
   renderCell: (item: T) => React.ReactNode;
   /** Hàm so sánh tăng dần (như `Array.prototype.sort`). Có `compare` thì cột mới sắp xếp được. */
@@ -41,6 +43,8 @@ export interface DataGridColumn<T> {
   align?: DataGridColumnAlign;
   /** Ghim cột ở đầu dòng khi cuộn ngang — chỉ áp dụng cho các cột liền nhau ở đầu. */
   sticky?: "start";
+  /** `false`: cột luôn hiện, `hiddenColumns` không ẩn được (cột chính, vd. tên). Mặc định true. */
+  hideable?: boolean;
 }
 
 /** Ghi đè kích thước theo `columnId` (giống `columnSizingOptions` của Fluent). */
@@ -312,5 +316,114 @@ export function useDataGridSelection({
     toggleAllItems,
     selectAllItems,
     clearSelection,
+  };
+}
+
+/* ================================================================ Ẩn / hiện cột */
+
+/** Phần của cột mà việc ẩn / hiện cần. `DataGridColumn<T>` thoả mãn; với Table, truyền mảng `{ columnId, label }`. */
+export type DataGridColumnVisibilityItem = Pick<DataGridColumn<unknown>, "columnId" | "label" | "hideable">;
+
+export interface DataGridColumnVisibilityData {
+  hiddenColumns: Set<string>;
+}
+
+/**
+ * Các cột được hiện, theo thứ tự `columns`. Cột `hideable: false` luôn hiện, id không có trong `columns` bị bỏ qua, và
+ * lưới không bao giờ trống: ẩn hết thì giữ cột đầu. Không có gì bị ẩn → trả về chính `columns` (giữ tham chiếu).
+ */
+export function getVisibleColumns<C extends DataGridColumnVisibilityItem>(
+  columns: readonly C[],
+  hiddenColumns: ReadonlySet<string> | undefined,
+): readonly C[] {
+  if (!hiddenColumns || hiddenColumns.size === 0) return columns;
+  const visible = columns.filter((c) => c.hideable === false || !hiddenColumns.has(c.columnId));
+  if (visible.length === columns.length) return columns;
+  return visible.length > 0 ? visible : columns.slice(0, 1);
+}
+
+export interface UseDataGridColumnVisibilityOptions<C extends DataGridColumnVisibilityItem> {
+  columns: readonly C[];
+  /** Id các cột đang ẩn (điều khiển từ ngoài). */
+  hiddenColumns?: ReadonlySet<string>;
+  defaultHiddenColumns?: Iterable<string>;
+  onHiddenColumnsChange?: (event: React.SyntheticEvent | undefined, data: DataGridColumnVisibilityData) => void;
+}
+
+export interface UseDataGridColumnVisibilityResult<C extends DataGridColumnVisibilityItem> {
+  /** Tập id đang ẩn, nguyên như đã nhận — kể cả id của cột tạm không có trong `columns` — để lưu lại không mất gì. */
+  hiddenColumns: ReadonlySet<string>;
+  /** Cột đang hiện, theo thứ tự `columns` (getVisibleColumns). */
+  visibleColumns: readonly C[];
+  isColumnVisible: (columnId: string) => boolean;
+  /** false với cột `hideable: false` và với cột đang hiện cuối cùng. */
+  canToggleColumn: (columnId: string) => boolean;
+  setColumnVisible: (event: React.SyntheticEvent | undefined, columnId: string, visible: boolean) => void;
+  toggleColumn: (event: React.SyntheticEvent | undefined, columnId: string) => void;
+  showAllColumns: (event: React.SyntheticEvent | undefined) => void;
+}
+
+export function useDataGridColumnVisibility<C extends DataGridColumnVisibilityItem>({
+  columns,
+  hiddenColumns,
+  defaultHiddenColumns,
+  onHiddenColumnsChange,
+}: UseDataGridColumnVisibilityOptions<C>): UseDataGridColumnVisibilityResult<C> {
+  const [hidden, setHidden] = useControllableState<ReadonlySet<string>>(
+    hiddenColumns,
+    () => new Set(defaultHiddenColumns ?? []),
+  );
+  const visibleColumns = React.useMemo(() => getVisibleColumns(columns, hidden), [columns, hidden]);
+  const visibleIds = React.useMemo(() => new Set(visibleColumns.map((c) => c.columnId)), [visibleColumns]);
+
+  const isColumnVisible = React.useCallback((columnId: string) => visibleIds.has(columnId), [visibleIds]);
+
+  const canToggleColumn = React.useCallback(
+    (columnId: string) => {
+      const column = columns.find((c) => c.columnId === columnId);
+      if (!column || column.hideable === false) return false;
+      return !visibleIds.has(columnId) || visibleIds.size > 1;
+    },
+    [columns, visibleIds],
+  );
+
+  const setColumnVisible = React.useCallback(
+    (event: React.SyntheticEvent | undefined, columnId: string, visible: boolean) => {
+      if (visible === visibleIds.has(columnId) || !canToggleColumn(columnId)) return;
+      // Cột đang hiện thì giữ hiện — kể cả cột chỉ hiện nhờ quy tắc "ẩn hết thì giữ cột đầu".
+      const next = new Set(hidden);
+      visibleIds.forEach((id) => next.delete(id));
+      if (visible) next.delete(columnId);
+      else next.add(columnId);
+      setHidden(next);
+      onHiddenColumnsChange?.(event, { hiddenColumns: next });
+    },
+    [hidden, visibleIds, canToggleColumn, setHidden, onHiddenColumnsChange],
+  );
+
+  const toggleColumn = React.useCallback(
+    (event: React.SyntheticEvent | undefined, columnId: string) =>
+      setColumnVisible(event, columnId, !visibleIds.has(columnId)),
+    [setColumnVisible, visibleIds],
+  );
+
+  const showAllColumns = React.useCallback(
+    (event: React.SyntheticEvent | undefined) => {
+      if (hidden.size === 0) return;
+      const next = new Set<string>();
+      setHidden(next);
+      onHiddenColumnsChange?.(event, { hiddenColumns: next });
+    },
+    [hidden, setHidden, onHiddenColumnsChange],
+  );
+
+  return {
+    hiddenColumns: hidden,
+    visibleColumns,
+    isColumnVisible,
+    canToggleColumn,
+    setColumnVisible,
+    toggleColumn,
+    showAllColumns,
   };
 }

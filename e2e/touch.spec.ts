@@ -3,7 +3,8 @@ import { center, touchDrag } from "./touch";
 import { openDocs } from "./utils";
 
 /**
- * Giả lập điện thoại (390×844, hasTouch, isMobile): bottom sheet kéo / vuốt và carousel vuốt.
+ * Giả lập điện thoại (390×844, hasTouch, isMobile): bottom sheet kéo / vuốt, carousel vuốt và các nút vốn chỉ hiện khi
+ * rê chuột.
  * Cử chỉ đi qua CDP touch thật (xem ./touch.ts), không phải PointerEvent tự dựng.
  */
 
@@ -107,4 +108,14 @@ test.describe("Carousel — vuốt trên màn hình cảm ứng", () => {
       await expect(current).toHaveAttribute("aria-label", "Slide 1 / 4");
     });
   }
+});
+
+test.describe("Table — thao tác hàng trên màn hình cảm ứng", () => {
+  test("nút thao tác và checkbox subtle hiện sẵn, không cần hover", async ({ page }) => {
+    await openDocs(page, "/components/table");
+    const actions = page.getByRole("button", { name: "Sửa Nguyễn Văn An" }).locator("xpath=..");
+    const checkboxCell = page.getByRole("checkbox", { name: "Chọn Nguyễn Văn An" }).locator("xpath=ancestor::td[1]");
+    await expect(actions).toHaveCSS("opacity", "1");
+    await expect(checkboxCell).toHaveCSS("opacity", "1");
+  });
 });

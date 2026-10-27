@@ -240,6 +240,12 @@ npm run dev
 | `vite-blog` | Markdown blog: tags, search, TOC; build-time HTML per post, sitemap.xml, rss.xml |
 | `vite-dashboard` | KPI tiles, charts, recent transactions |
 | `vite-ai-chat` | AI assistant chat with agent trace |
+| `vite-glass` | Travel journal with glass navigation over photos (Yugen Labs) |
+| `vite-landing` | Product landing page: pricing, FAQ, sign-up form; static first screen and SEO at build time |
+| `vite-admin` | Admin / CRUD: server-paged DataGrid, drawer forms, optimistic updates, sign-in with OTP |
+| `next-starter` | Next.js App Router starter, theme in a cookie (no flash) |
+| `vite-docs` | Docs site from Markdown: sidebar sections, Ctrl K search, TOC; build-time HTML per page, sitemap.xml |
+| `vite-store` | Storefront: filters in the URL, product variants, cart in a Sheet, multi-step checkout |
 
 Prefer the shadcn CLI? `npx shadcn@latest init https://trandat1114.github.io/Yugen-UI/r/init.json` sets up the theme,
 `cn()` and `YugenProvider` in one step.
@@ -522,6 +528,12 @@ npm run dev
 | `vite-blog` | Blog Markdown: thẻ, tìm kiếm, mục lục; HTML tĩnh từng bài, sitemap.xml, rss.xml lúc build |
 | `vite-dashboard` | Thẻ KPI, biểu đồ, giao dịch gần đây |
 | `vite-ai-chat` | Trợ lý AI dạng chat, Trace các bước agent |
+| `vite-glass` | Nhật ký du lịch, điều hướng glass trên ảnh (Yugen Labs) |
+| `vite-landing` | Trang giới thiệu sản phẩm: bảng giá, hỏi đáp, form đăng ký; màn hình đầu và SEO sinh sẵn lúc build |
+| `vite-admin` | Trang quản trị: DataGrid phân trang trên server, form trong Drawer, cập nhật lạc quan, đăng nhập OTP |
+| `next-starter` | Next.js App Router, theme lưu trong cookie (không nháy) |
+| `vite-docs` | Trang tài liệu từ Markdown: phần trong sidebar, tìm kiếm Ctrl K, mục lục; HTML tĩnh từng trang, sitemap.xml |
+| `vite-store` | Cửa hàng: bộ lọc trong URL, biến thể sản phẩm, giỏ hàng trong Sheet, thanh toán nhiều bước |
 
 Dùng shadcn CLI? `npx shadcn@latest init https://trandat1114.github.io/Yugen-UI/r/init.json` cài theme, `cn()` và
 `YugenProvider` trong một bước.

@@ -21,6 +21,8 @@ const SHOTS: Shot[] = [
   { name: "home-high-contrast", route: "/", theme: "high-contrast" },
   { name: "blocks", route: "/blocks" },
   { name: "foundation-color", route: "/foundations/color" },
+  { name: "foundation-glass", route: "/foundations/glass" },
+  { name: "foundation-glass-dark", route: "/foundations/glass", theme: "dark" },
   { name: "button", route: "/components/button" },
   { name: "card", route: "/components/card" },
   { name: "barchart-dark", route: "/components/barchart", theme: "dark" },

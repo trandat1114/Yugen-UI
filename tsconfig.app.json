@@ -21,5 +21,7 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src"],
+  // Template Next.js (#153): import "next" không có ở gốc repo; `next build` trong CI typecheck nó.
+  "exclude": ["src/docs/template-library/next-starter"]
 }

@@ -146,6 +146,8 @@ export const en: Record<string, ComponentDocEn> = {
     props: {
       size: "Applies to every ToolbarButton inside.",
       orientation: "Bar direction and arrow keys.",
+      material:
+        "Yugen Labs — a floating capsule bar in glass; buttons inside get concentric corners. Use glass-clear over images, with glass-scrim.",
       "aria-label": "Toolbar name for screen readers.",
       ToolbarButton:
         'A Button with appearance="subtle" by default; vertical puts the icon above the label.',
@@ -329,6 +331,7 @@ export const en: Record<string, ComponentDocEn> = {
       onNavCategoryItemToggle: "Called when a category opens or closes.",
       multiple: "Allows several categories to be open at once.",
       density: "Item height 40 / 32px.",
+      material: "Yugen Labs — a floating glass sidebar (rounded corners, padding, shadow).",
       "NavItem.value / icon / href / asChild":
         "With href it renders an <a>; asChild for router links.",
       "NavCategory.value": "Group key (used in openCategories).",

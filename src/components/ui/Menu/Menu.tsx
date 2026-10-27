@@ -10,16 +10,22 @@ export const MenuTrigger = MenuPrimitive.Trigger;
 export const MenuRadioGroup = MenuPrimitive.RadioGroup;
 export const MenuSub = MenuPrimitive.Sub;
 
-/** Class dùng chung cho mọi bề mặt menu (Menu, ContextMenu, Menubar). */
+/**
+ * Class dùng chung cho mọi bề mặt menu (Menu, ContextMenu, Menubar, menu con). Menu dài cuộn bên trong thay vì tràn khỏi
+ * màn hình: popper của Radix đặt --radix-popper-available-height cho mọi loại menu (ngoài popper thì max-height = none).
+ */
 export const menuPopoverClass = cn(
-  "z-50 min-w-40 max-w-80 overflow-hidden rounded-medium border border-transparent bg-background-1 p-1 text-foreground-1 shadow-16",
+  "z-50 max-h-(--radix-popper-available-height) min-w-40 max-w-80 overflow-y-auto rounded-medium border border-transparent bg-background-1 p-1 text-foreground-1 shadow-16",
   "animate-surface-in data-[state=closed]:animate-fade-out",
 );
 
-export const MenuPopover = React.forwardRef<
-  React.ElementRef<typeof MenuPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof MenuPrimitive.Content>
->(({ className, sideOffset = 4, align = "start", ...props }, ref) => {
+export interface MenuPopoverProps extends React.ComponentPropsWithoutRef<typeof MenuPrimitive.Content> {
+  /** Yugen Labs — bề mặt glass. glass-clear: trên ảnh / media (đặt glass-scrim lên media bên dưới). */
+  material?: "glass" | "glass-clear";
+}
+
+export const MenuPopover = React.forwardRef<React.ElementRef<typeof MenuPrimitive.Content>, MenuPopoverProps>(
+  ({ className, sideOffset = 4, align = "start", material, ...props }, ref) => {
   const portalTheme = usePortalThemeProps();
   return (
     <MenuPrimitive.Portal>
@@ -28,12 +34,13 @@ export const MenuPopover = React.forwardRef<
         {...portalTheme}
         sideOffset={sideOffset}
         align={align}
-        className={cn(menuPopoverClass, className)}
+        className={cn(menuPopoverClass, material, className)}
         {...props}
       />
     </MenuPrimitive.Portal>
   );
-});
+  },
+);
 MenuPopover.displayName = "MenuPopover";
 
 /** Class dùng chung cho mọi item menu. */
@@ -49,12 +56,17 @@ export interface MenuItemProps extends React.ComponentPropsWithoutRef<typeof Men
   secondaryContent?: React.ReactNode;
 }
 
+/** Nội dung phụ ở cuối item (phím tắt, trạng thái…). */
+function SecondaryContent({ children }: { children: React.ReactNode }) {
+  return <span className="flex shrink-0 items-center gap-1 ps-4 text-caption1 text-foreground-3">{children}</span>;
+}
+
 export const MenuItem = React.forwardRef<React.ElementRef<typeof MenuPrimitive.Item>, MenuItemProps>(
   ({ className, icon, secondaryContent, children, ...props }, ref) => (
     <MenuPrimitive.Item ref={ref} className={cn(menuItemClass, className)} {...props}>
       {icon}
       <span className="min-w-0 flex-1 truncate">{children}</span>
-      {secondaryContent && <span className="ps-4 text-caption1 text-foreground-3">{secondaryContent}</span>}
+      {secondaryContent && <SecondaryContent>{secondaryContent}</SecondaryContent>}
     </MenuPrimitive.Item>
   ),
 );
@@ -62,8 +74,8 @@ MenuItem.displayName = "MenuItem";
 
 export const MenuItemRadio = React.forwardRef<
   React.ElementRef<typeof MenuPrimitive.RadioItem>,
-  React.ComponentPropsWithoutRef<typeof MenuPrimitive.RadioItem> & { icon?: React.ReactNode }
->(({ className, icon, children, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof MenuPrimitive.RadioItem> & Pick<MenuItemProps, "icon" | "secondaryContent">
+>(({ className, icon, secondaryContent, children, ...props }, ref) => (
   <MenuPrimitive.RadioItem ref={ref} className={cn(menuItemClass, "ps-8", className)} {...props}>
     <span className="absolute inset-s-2 flex size-4 items-center justify-center">
       <MenuPrimitive.ItemIndicator>
@@ -72,14 +84,15 @@ export const MenuItemRadio = React.forwardRef<
     </span>
     {icon}
     <span className="min-w-0 flex-1 truncate">{children}</span>
+    {secondaryContent && <SecondaryContent>{secondaryContent}</SecondaryContent>}
   </MenuPrimitive.RadioItem>
 ));
 MenuItemRadio.displayName = "MenuItemRadio";
 
 export const MenuItemCheckbox = React.forwardRef<
   React.ElementRef<typeof MenuPrimitive.CheckboxItem>,
-  React.ComponentPropsWithoutRef<typeof MenuPrimitive.CheckboxItem> & { icon?: React.ReactNode }
->(({ className, icon, children, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof MenuPrimitive.CheckboxItem> & Pick<MenuItemProps, "icon" | "secondaryContent">
+>(({ className, icon, secondaryContent, children, ...props }, ref) => (
   <MenuPrimitive.CheckboxItem ref={ref} className={cn(menuItemClass, "ps-8", className)} {...props}>
     <span className="absolute inset-s-2 flex size-4 items-center justify-center">
       <MenuPrimitive.ItemIndicator>
@@ -88,6 +101,7 @@ export const MenuItemCheckbox = React.forwardRef<
     </span>
     {icon}
     <span className="min-w-0 flex-1 truncate">{children}</span>
+    {secondaryContent && <SecondaryContent>{secondaryContent}</SecondaryContent>}
   </MenuPrimitive.CheckboxItem>
 ));
 MenuItemCheckbox.displayName = "MenuItemCheckbox";
@@ -123,11 +137,15 @@ export function MenuSubTrigger({
   );
 }
 
-export function MenuSubPopover({ className, ...props }: React.ComponentPropsWithoutRef<typeof MenuPrimitive.SubContent>) {
+export function MenuSubPopover({
+  className,
+  material,
+  ...props
+}: React.ComponentPropsWithoutRef<typeof MenuPrimitive.SubContent> & Pick<MenuPopoverProps, "material">) {
   const portalTheme = usePortalThemeProps();
   return (
     <MenuPrimitive.Portal>
-      <MenuPrimitive.SubContent {...portalTheme} sideOffset={4} className={cn(menuPopoverClass, className)} {...props} />
+      <MenuPrimitive.SubContent {...portalTheme} sideOffset={4} className={cn(menuPopoverClass, material, className)} {...props} />
     </MenuPrimitive.Portal>
   );
 }

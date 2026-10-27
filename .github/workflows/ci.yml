@@ -68,6 +68,8 @@ jobs:
       - run: npm run lint:classes
       # package.json = news.ts = CHANGELOG.md (scripts/check-release.mjs)
       - run: npm run check:release
+      # Loại bump của changeset; PR vào main / release/* chỉ mang patch (scripts/check-changesets.mjs)
+      - run: npm run check:changesets
       - run: npm run check:examples
       - run: npm run check:props
       - run: node scripts/sync-templates.mjs --check
@@ -171,6 +173,29 @@ jobs:
           npm run build
 
       - run: node scripts/check-template.mjs "$RUNNER_TEMP/app" --template "${{ matrix.template }}"
+
+      # Landing (#151): Lighthouse on mobile, performance / accessibility / best practices / SEO ≥ 95, on `vite preview` of
+      # the build (scripts/lighthouse-landing.json). Chrome is Playwright's Chromium from the image; --no-sandbox in the config.
+      - name: Lighthouse (mobile, all categories ≥ 95)
+        if: matrix.template == 'vite-landing'
+        run: |
+          export CHROME_PATH="$(node -p "require('playwright-core').chromium.executablePath()")"
+          cd "$RUNNER_TEMP/app"
+          npx --yes @lhci/cli@0.15.1 autorun --config="$GITHUB_WORKSPACE/scripts/lighthouse-landing.json"
+
+      - name: Lighthouse scores
+        if: always() && matrix.template == 'vite-landing'
+        run: |
+          cd "$RUNNER_TEMP/app"
+          node -e '
+            const fs = require("fs");
+            const runs = fs.readdirSync(".lighthouseci").filter((f) => /^lhr-.*\.json$/.test(f))
+              .map((f) => JSON.parse(fs.readFileSync(".lighthouseci/" + f, "utf8")));
+            const rows = runs.map((r) => "| " + Object.values(r.categories).map((c) => Math.round(c.score * 100)).join(" | ") + " | " + Math.round(r.environment.benchmarkIndex) + " |");
+            const text = ["### Lighthouse (mobile)", "", "| Performance | Accessibility | Best practices | SEO | Benchmark index |", "|---|---|---|---|---|", ...rows, ""].join("\n");
+            console.log(text);
+            if (process.env.GITHUB_STEP_SUMMARY) fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, text + "\n");
+          '
 
   # React 18.3 vẫn được hỗ trợ (peer react >=18) cho tới khi #62 quyết định ngừng.
   react-18:

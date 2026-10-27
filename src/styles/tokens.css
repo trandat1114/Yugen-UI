@@ -187,6 +187,25 @@
   --curveEasyEase: cubic-bezier(0.33, 0, 0.67, 1);
   --curveEasyEaseMax: cubic-bezier(0.8, 0, 0.2, 1);
   --curveLinear: cubic-bezier(0, 0, 1, 1);
+
+  /* ===== ALIAS: glass (Yugen Labs) — vật liệu cho lớp điều hướng nổi trên nội dung (Design.md §4.7) ===== */
+  --glassBlur: 24px;
+  --glassSaturation: 180%;
+  --glassFilter: blur(var(--glassBlur)) saturate(var(--glassSaturation));
+  /* Hiệu ứng mép cuộn (scroll-edge) dưới / trên thanh glass. */
+  --glassEdgeFilter: blur(8px);
+  /* clear: trên ảnh / media, không theo theme. Luôn đặt glass-scrim lên media bên dưới: chữ trắng ≥ 4.5:1 cả khi ảnh trắng. */
+  --colorGlassClearBackground: rgb(0 0 0 / 0.4);
+  --colorGlassClearBackgroundHover: rgb(0 0 0 / 0.5);
+  --colorGlassClearBackgroundPressed: rgb(0 0 0 / 0.58);
+  --colorGlassClearBackgroundSolid: var(--grey-16);
+  --colorGlassClearForeground: #ffffff;
+  --colorGlassClearEdge: rgb(255 255 255 / 0.22);
+  --colorGlassClearStroke: rgb(255 255 255 / 0.14);
+  --colorGlassClearHover: rgb(255 255 255 / 0.1);
+  --colorGlassClearPressed: rgb(0 0 0 / 0.2);
+  --colorGlassClearSelected: rgb(0 0 0 / 0.3);
+  --colorGlassScrim: rgb(0 0 0 / 0.35);
 }
 
 /* ===================== GLOBAL: BRAND THEMES =====================
@@ -282,6 +301,18 @@
   --colorSubtleBackgroundHover: var(--grey-96);
   --colorSubtleBackgroundPressed: var(--grey-88);
   --colorBackgroundOverlay: rgb(0 0 0 / 0.4);
+
+  /* Glass: đủ đục để chữ fg1 / fg2 (và brand đậm bên trong glass) đạt ≥ 4.5:1 cả khi phía sau trắng hay đen hoàn toàn. */
+  --colorGlassBackground: rgb(255 255 255 / 0.8);
+  --colorGlassBackgroundHover: rgb(255 255 255 / 0.9);
+  --colorGlassBackgroundPressed: rgb(240 240 240 / 0.9);
+  --colorGlassBackgroundSolid: var(--white);
+  --colorGlassEdge: rgb(255 255 255 / 0.7);
+  --colorGlassStroke: rgb(0 0 0 / 0.08);
+  --colorGlassHover: rgb(0 0 0 / 0.05);
+  --colorGlassPressed: rgb(0 0 0 / 0.1);
+  --colorGlassSelected: rgb(0 0 0 / 0.08);
+  --colorGlassField: rgb(0 0 0 / 0.05);
 
   --colorNeutralStroke1: var(--grey-82);
   --colorNeutralStroke1Hover: var(--grey-78);
@@ -415,6 +446,17 @@
   --colorPaletteSteelBackground2: var(--palette-steel-shade);
   --colorPaletteSteelForeground2: var(--palette-steel-tint);
 
+  --colorGlassBackground: rgb(41 41 41 / 0.82);
+  --colorGlassBackgroundHover: rgb(61 61 61 / 0.88);
+  --colorGlassBackgroundPressed: rgb(31 31 31 / 0.88);
+  --colorGlassBackgroundSolid: var(--grey-16);
+  --colorGlassEdge: rgb(255 255 255 / 0.14);
+  --colorGlassStroke: rgb(0 0 0 / 0.32);
+  --colorGlassHover: rgb(255 255 255 / 0.07);
+  --colorGlassPressed: rgb(0 0 0 / 0.12);
+  --colorGlassSelected: rgb(255 255 255 / 0.1);
+  --colorGlassField: rgb(255 255 255 / 0.08);
+
   --shadow2: 0 0 2px rgb(0 0 0 / 0.24), 0 1px 2px rgb(0 0 0 / 0.28);
   --shadow4: 0 0 2px rgb(0 0 0 / 0.24), 0 2px 4px rgb(0 0 0 / 0.28);
   --shadow8: 0 0 2px rgb(0 0 0 / 0.24), 0 4px 8px rgb(0 0 0 / 0.28);
@@ -462,6 +504,11 @@
   --colorBrandBackground2Pressed: var(--brand-130);
   --colorCompoundBrandStroke: var(--brand-80);
   --colorBrandStroke2: var(--brand-140);
+  --colorGlassBrandForeground: var(--brand-60);
+  --colorGlassBrandStroke: var(--brand-80);
+  --colorGlassTinted: color-mix(in srgb, var(--brand-70) 90%, transparent);
+  --colorGlassTintedHover: color-mix(in srgb, var(--brand-60) 92%, transparent);
+  --colorGlassTintedPressed: color-mix(in srgb, var(--brand-40) 92%, transparent);
   --gradientBrand: linear-gradient(110deg, var(--brand-50), var(--brand-80), var(--brand-90));
 }
 
@@ -481,6 +528,11 @@
   --colorBrandBackground2Pressed: var(--brand-10);
   --colorCompoundBrandStroke: var(--brand-100);
   --colorBrandStroke2: var(--brand-50);
+  --colorGlassBrandForeground: var(--brand-140);
+  --colorGlassBrandStroke: var(--brand-120);
+  --colorGlassTinted: color-mix(in srgb, var(--brand-70) 90%, transparent);
+  --colorGlassTintedHover: color-mix(in srgb, var(--brand-80) 92%, transparent);
+  --colorGlassTintedPressed: color-mix(in srgb, var(--brand-40) 92%, transparent);
   --gradientBrand: linear-gradient(110deg, var(--brand-90), var(--brand-110), var(--brand-130));
 }
 
@@ -499,6 +551,11 @@
   --colorBrandBackground2Pressed: var(--brand-130);
   --colorCompoundBrandStroke: var(--brand-80);
   --colorBrandStroke2: var(--brand-140);
+  --colorGlassBrandForeground: var(--brand-60);
+  --colorGlassBrandStroke: var(--brand-80);
+  --colorGlassTinted: color-mix(in srgb, var(--brand-70) 90%, transparent);
+  --colorGlassTintedHover: color-mix(in srgb, var(--brand-60) 92%, transparent);
+  --colorGlassTintedPressed: color-mix(in srgb, var(--brand-40) 92%, transparent);
   --gradientBrand: linear-gradient(110deg, var(--brand-50), var(--brand-80), var(--brand-90));
 }
 
@@ -558,6 +615,29 @@
   --colorNeutralBackgroundInverted: #ffffff;
   --colorNeutralStencil1: #ffffff;
   --colorNeutralStencil2: #000000;
+
+  /* Glass ở tương phản cao: nền đặc, viền trắng, không blur. */
+  --glassFilter: none;
+  --glassEdgeFilter: none;
+  --colorGlassBackground: #000000;
+  --colorGlassBackgroundHover: #1a1a1a;
+  --colorGlassBackgroundPressed: #262626;
+  --colorGlassBackgroundSolid: #000000;
+  --colorGlassEdge: transparent;
+  --colorGlassStroke: #ffffff;
+  --colorGlassHover: #1a1a1a;
+  --colorGlassPressed: #262626;
+  --colorGlassSelected: #262626;
+  --colorGlassField: #000000;
+  --colorGlassClearBackground: #000000;
+  --colorGlassClearBackgroundHover: #1a1a1a;
+  --colorGlassClearBackgroundPressed: #262626;
+  --colorGlassClearBackgroundSolid: #000000;
+  --colorGlassClearEdge: transparent;
+  --colorGlassClearStroke: #ffffff;
+  --colorGlassClearHover: #1a1a1a;
+  --colorGlassClearPressed: #262626;
+  --colorGlassClearSelected: #262626;
   --colorSubtleBackgroundHover: #1a1a1a;
   --colorSubtleBackgroundPressed: #262626;
   --colorBackgroundOverlay: rgb(0 0 0 / 0.8);
@@ -642,5 +722,10 @@
   --colorBrandBackground2Pressed: #004650;
   --colorCompoundBrandStroke: #1aebff;
   --colorBrandStroke2: #1aebff;
+  --colorGlassBrandForeground: #1aebff;
+  --colorGlassBrandStroke: #1aebff;
+  --colorGlassTinted: #1aebff;
+  --colorGlassTintedHover: #6ff1ff;
+  --colorGlassTintedPressed: #00c2d6;
   --gradientBrand: linear-gradient(110deg, #ffffff, #ffffff);
 }

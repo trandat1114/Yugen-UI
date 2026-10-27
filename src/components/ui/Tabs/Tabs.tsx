@@ -2,13 +2,23 @@ import * as React from "react";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
 import { cn } from "@/lib/cn";
 
+export { useScrollMinimize, type UseScrollMinimizeOptions } from "./useScrollMinimize";
+
 /** Fluent 2 TabList — https://fluent2.microsoft.design/components/web/react/core/tablist/usage */
 type TabSize = "small" | "medium" | "large";
 type TabAppearance = "transparent" | "subtle";
 
-const TabsContext = React.createContext<{ size: TabSize; appearance: TabAppearance }>({
+type TabMaterial = "glass" | "glass-clear";
+
+const TabsContext = React.createContext<{
+  size: TabSize;
+  appearance: TabAppearance;
+  material?: TabMaterial;
+  minimized: boolean;
+}>({
   size: "medium",
   appearance: "transparent",
+  minimized: false,
 });
 
 export const Tabs = TabsPrimitive.Root;
@@ -16,14 +26,30 @@ export const Tabs = TabsPrimitive.Root;
 export interface TabsListProps extends React.ComponentPropsWithoutRef<typeof TabsPrimitive.List> {
   size?: TabSize;
   appearance?: TabAppearance;
+  /**
+   * Yugen Labs — thanh tab nổi bằng glass: tab đang chọn là nền bo tròn thay cho thanh chỉ báo. glass-clear: trên ảnh /
+   * media (đặt glass-scrim lên media bên dưới).
+   */
+  material?: TabMaterial;
+  /** Thu gọn: tab có icon chỉ còn icon, tên vẫn đọc được cho trình đọc màn hình (vd. khi cuộn xuống — useScrollMinimize). */
+  minimized?: boolean;
 }
 
 export const TabsList = React.forwardRef<React.ElementRef<typeof TabsPrimitive.List>, TabsListProps>(
-  ({ className, size = "medium", appearance = "transparent", ...props }, ref) => (
-    <TabsContext.Provider value={{ size, appearance }}>
+  ({ className, size = "medium", appearance = "transparent", material, minimized = false, ...props }, ref) => (
+    <TabsContext.Provider value={{ size, appearance, material, minimized }}>
       <TabsPrimitive.List
         ref={ref}
-        className={cn("flex items-center data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch", className)}
+        data-minimized={minimized || undefined}
+        className={cn(
+          "group/tablist flex items-center data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch",
+          material &&
+            cn(
+              material,
+              "w-fit gap-0.5 rounded-circular border border-transparent p-1 shadow-16 data-[orientation=vertical]:rounded-3xlarge",
+            ),
+          className,
+        )}
         {...props}
       />
     </TabsContext.Provider>
@@ -37,13 +63,16 @@ const SIZE: Record<TabSize, string> = {
   large: "gap-1.5 px-2.5 py-4 text-body2 [&_svg]:size-6 after:inset-x-2.5",
 };
 
+/** Tab trong thanh glass: thấp hơn, vì nền bo tròn thay cho thanh chỉ báo ở đáy. */
+const GLASS_SIZE: Record<TabSize, string> = { small: "py-1", medium: "py-1.5", large: "py-2" };
+
 export interface TabsTriggerProps extends React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger> {
   icon?: React.ReactNode;
 }
 
 export const TabsTrigger = React.forwardRef<React.ElementRef<typeof TabsPrimitive.Trigger>, TabsTriggerProps>(
   ({ className, icon, children, ...props }, ref) => {
-    const { size, appearance } = React.useContext(TabsContext);
+    const { size, appearance, material, minimized } = React.useContext(TabsContext);
     const innerRef = React.useRef<HTMLButtonElement | null>(null);
     const controlsRef = React.useRef<string | null>(null);
     const setRefs = React.useCallback(
@@ -82,6 +111,12 @@ export const TabsTrigger = React.forwardRef<React.ElementRef<typeof TabsPrimitiv
           appearance === "subtle" && "hover:bg-subtle-hover active:bg-subtle-pressed",
           "disabled:cursor-not-allowed disabled:text-foreground-disabled disabled:after:bg-transparent",
           SIZE[size],
+          material &&
+            cn(
+              "rounded-circular after:hidden hover:bg-subtle-hover active:bg-subtle-pressed",
+              "data-[state=active]:bg-(--glass-selected) data-[state=active]:hover:bg-(--glass-selected)",
+              GLASS_SIZE[size],
+            ),
           className,
         )}
         {...props}
@@ -89,7 +124,8 @@ export const TabsTrigger = React.forwardRef<React.ElementRef<typeof TabsPrimitiv
         {icon}
         {/* Giữ chỗ cho chữ đậm để tab không bị nhảy độ rộng khi active. Chữ thật luôn hiển thị (đậm theo trigger)
             để tab active vẫn có tên truy cập; bản sao đậm chỉ chiếm chỗ, luôn ẩn. */}
-        <span className="inline-grid">
+        {/* Thu gọn: chỉ còn icon; hiện lại tên khi bàn phím đang ở trong thanh tab. */}
+        <span className={cn("inline-grid", minimized && icon !== undefined && "sr-only group-focus-within/tablist:not-sr-only")}>
           <span className="col-start-1 row-start-1">{children}</span>
           <span aria-hidden className="invisible col-start-1 row-start-1 font-semibold">
             {children}

@@ -28,6 +28,11 @@ jobs:
           cache: npm
           registry-url: https://registry.npmjs.org
 
+      # npm trusted publishing (OIDC, #202) cần npm ≥ 11.5.1. npm dùng OIDC khi gói đã khai báo trusted publisher trên
+      # npmjs.com và chỉ quay về NODE_AUTH_TOKEN khi chưa có — giữ token tới bản phát hành đầu tiên chạy bằng OIDC.
+      - name: npm with trusted publishing
+        run: npm install -g npm@11 && npm --version
+
       - name: Check tag matches package.json version
         run: |
           PKG_VERSION="v$(node -p "require('./package.json').version")"

@@ -29,7 +29,7 @@ export interface RoadmapRelease {
   items: RoadmapItem[];
 }
 
-export const ROADMAP_UPDATED = "2026-10-25";
+export const ROADMAP_UPDATED = "2026-10-27";
 export const PROJECT_URL = "https://github.com/users/trandat1114/projects/6";
 
 export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
@@ -53,8 +53,7 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       vi: "Chưa xếp lịch.",
       en: "Not scheduled yet.",
       items: [
-        { status: "planned", issue: 151, vi: "Template mới: Landing, Admin, Next.js, Docs, Storefront, Glass", en: "New templates: Landing, Admin, Next.js, Docs, Storefront, Glass" },
-        { status: "planned", issue: 178, vi: "Vật liệu glass cho thanh điều hướng và control (lấy cảm hứng từ Liquid Glass)", en: "Glass material for navigation and controls (inspired by Liquid Glass)" },
+        { status: "planned", issue: 210, vi: "Glass phần 2: menu mọc từ nút, nút kéo glass, hiệu ứng khúc xạ, xem trước trong Theme Designer", en: "Glass part 2: menus that grow from the button, glass thumbs, refraction, Theme Designer preview" },
         { status: "planned", issue: 68, vi: "Đăng ký @yugen vào danh mục registry của shadcn", en: "Register @yugen in the shadcn registry index" },
         { status: "planned", vi: "Đang cân nhắc: bộ Figma, gói icon Sakura", en: "Under consideration: Figma kit, Sakura icon set" },
       ],

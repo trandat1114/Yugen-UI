@@ -1,5 +1,22 @@
 # @yugen-ui/cli
 
+## 0.5.0
+
+- New template: `glass` (`create --template glass`), a travel journal with glass navigation over photos.
+- New template: `landing` (`create --template landing`), a product landing page with pricing, FAQ and a sign-up
+  form; the first screen and the SEO tags are written into `index.html` at build time.
+- New template: `admin` (`create --template admin`), customers and orders with a server-paged DataGrid, drawer forms
+  with validation, optimistic updates, and sign-in with a one-time code.
+- New template: `next-starter` (`create --template next-starter`), a Next.js App Router project with the theme in a
+  cookie so the server renders it. `create --lang` works without an `index.html`.
+- New template: `docs` (`create --template docs`), a documentation site built from Markdown files, with Ctrl K search
+  and an HTML file for every page.
+- New template: `store` (`create --template store`), a small shop with filters kept in the URL, a cart in a Sheet and a
+  validated multi-step checkout; prices in US dollars, or dong with `--lang vi`.
+- Templates pin `yugen-ui@^0.12.0`. The SaaS template uses real paths (`/analytics`) instead of `#/analytics`, and the
+  single-page templates ship deploy configs: `public/_redirects` (Netlify), `vercel.json` and `npm run build:gh-pages`
+  (GitHub Pages).
+
 ## 0.4.0
 
 - `yugen diff [names…]`: compare copied component source with the registry and print a unified diff. Without names it

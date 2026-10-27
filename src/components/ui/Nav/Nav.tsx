@@ -66,6 +66,11 @@ export interface NavProps extends React.HTMLAttributes<HTMLElement> {
   /** Cho phép mở nhiều category cùng lúc. */
   multiple?: boolean;
   density?: NavDensity;
+  /**
+   * Yugen Labs — sidebar nổi bằng glass trên nội dung (bo góc, đổ bóng, có đệm).
+   * Đặt khoảng cách với mép màn hình ở phần tử bao ngoài.
+   */
+  material?: "glass" | "glass-clear";
 }
 
 export const Nav = React.forwardRef<HTMLElement, NavProps>(
@@ -80,6 +85,7 @@ export const Nav = React.forwardRef<HTMLElement, NavProps>(
       onNavCategoryItemToggle,
       multiple = true,
       density = "medium",
+      material,
       "aria-label": ariaLabel,
       children,
       ...props
@@ -110,7 +116,17 @@ export const Nav = React.forwardRef<HTMLElement, NavProps>(
 
     return (
       <NavContext.Provider value={ctx}>
-        <nav ref={ref} aria-label={ariaLabel ?? msg.label} className={cn("flex flex-col gap-0.5", className)} {...props}>
+        <nav
+          ref={ref}
+          aria-label={ariaLabel ?? msg.label}
+          className={cn(
+            "flex flex-col gap-0.5",
+            // 3xlarge (16px) − đệm 8px = rounded-xlarge của hàng: góc đồng tâm sẵn.
+            material && cn(material, "rounded-3xlarge border border-transparent p-2 shadow-16"),
+            className,
+          )}
+          {...props}
+        >
           {children}
         </nav>
       </NavContext.Provider>
