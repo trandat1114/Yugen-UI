@@ -126,7 +126,8 @@
     "hint": "Product landing page: pricing, FAQ, sign-up form, build-time SEO, Lighthouse 95+",
     "budget": {
       "js": 2,
-      "css": 27
+      "css": 27,
+      "totalJs": 165
     },
     "meta": {
       "en": {

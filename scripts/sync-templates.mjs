@@ -1075,7 +1075,8 @@ export default defineConfig({
 /** Danh mục cho `yugen create` (packages/cli đóng gói templates/ kèm file này). */
 /**
  * Ngân sách lần tải đầu (kB gzip) — CI job "Templates" (scripts/check-template.mjs) báo lỗi khi vượt. JS = <script type=module>
- * + modulepreload trong dist/index.html (trang lazy không tính). Tăng có chủ đích: sửa ở đây và ghi lý do trong PR.
+ * + modulepreload trong dist/index.html (trang lazy không tính); `totalJs` (tuỳ chọn) chặn cả JS trong dist/assets. Tăng có
+ * chủ đích: sửa ở đây và ghi lý do trong PR.
  */
 const BUDGETS = {
   "vite-starter": { js: 135, css: 25 },
@@ -1087,7 +1088,7 @@ const BUDGETS = {
   "vite-ai-chat": { js: 175, css: 25 },
   "vite-glass": { js: 160, css: 26 },
   // Landing: index.html đã có màn hình đầu (prerender), JS đầu chỉ là main.tsx; React và app (~150 kB) nạp sau lần vẽ đầu.
-  "vite-landing": { js: 2, css: 27 },
+  "vite-landing": { js: 2, css: 27, totalJs: 165 },
   "vite-admin": { js: 167, css: 26 },
   // Next.js: react-dom + runtime của Next ~157 kB trước cả mã của app.
   "next-starter": { js: 265, css: 27 },
