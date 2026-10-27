@@ -224,7 +224,6 @@ export function Layout({ t, theme, onThemeChange, embedded }: LayoutProps) {
             ref={mainRef}
             id={embedded ? undefined : "content"}
             tabIndex={embedded ? undefined : -1}
-            aria-label={embedded ? t.site.title : undefined}
             className={cn("flex min-w-0 flex-1 flex-col outline-none", embedded && "overflow-y-auto")}
           >
             <div className="flex-1 px-4 py-8 @3xl/docs:px-10">
