@@ -310,7 +310,7 @@ export default function Page() {
           <SimpleTable
             head={["Technology", "Version", "Notes"]}
             rows={[
-              ["React", "19 (recommended), 18.3", "React 18 is still supported; the end date will be announced on What's new."],
+              ["React", "19 (recommended), 18.3", "React 18.3 is supported until the end of 0.x; from 1.0, React 19 only."],
               ["Tailwind CSS", "4.x", <>Optional when using <C>yugen-ui/styles.css</C>. Tailwind 3 is not supported.</>],
               ["Bundler", "Vite 6, Next.js 14+", <>Vite uses <C>@tailwindcss/vite</C>; Next.js uses <C>@tailwindcss/postcss</C>.</>],
               ["TypeScript", "5.x", "Optional — types ship with the package."],

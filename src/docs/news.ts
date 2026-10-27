@@ -43,6 +43,7 @@ export const NEWS: NewsRelease[] = [
       { kind: "improved", text: "Theme Designer: trục Glass (trong, mặc định, mờ đục) và sắc glass theo brand, xem trước trên ảnh, kiểm tra chữ trên glass vẫn ≥ 4.5:1 khi phía sau đen hoặc trắng; CSS xuất kèm các biến glass.", href: "/theme-designer" },
       { kind: "improved", text: "Template Glass: bốn chuyến đi mùa hoa anh đào ở Kyoto, Tokyo, Hirosaki và quanh núi Phú Sĩ (ảnh Wikimedia Commons, ghi nguồn và giấy phép); trang Cài đặt có khung xem trước thanh và nút điều khiển trên ảnh sáng, ảnh hoa và ảnh đêm; trang Khám phá là bản đồ thế giới (Natural Earth), mỗi chuyến đi ghim đúng toạ độ, ghim gần nhau gộp lại và phóng tới khi chọn.", href: "/templates" },
       { kind: "improved", text: "Trang Templates: nút toàn màn hình trên mỗi preview, chọn khổ máy tính, máy tính bảng hoặc điện thoại; link ?preview=<template> mở thẳng chế độ này. Các template khác chọn bằng tab và xem trong một khung lớn bằng template nổi bật; link #<template> chọn sẵn template.", href: "/templates" },
+      { kind: "improved", text: "Báo trước: React 18.3 vẫn được hỗ trợ đến hết 0.x; từ 1.0, Yugen UI chỉ hỗ trợ React 19. Nếu app còn dùng React 18, hãy lên React 19 trước khi cập nhật lên 1.0.", href: "/concepts/quick-start" },
       { kind: "fixed", text: "Checkbox, Switch và Dropdown trong Field: khi nằm trong <form> ở một vùng cuộn, input ẩn dùng để gửi form không còn kéo dài trang và để lại khoảng trống phía dưới.", href: "/components/checkbox" },
     ],
   },
