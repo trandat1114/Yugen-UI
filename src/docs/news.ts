@@ -31,6 +31,16 @@ export const NEWS_KIND_LABEL: Record<NewsKind, string> = {
 
 export const NEWS: NewsRelease[] = [
   {
+    version: "0.12.1",
+    upcoming: true,
+    date: "2026-10-28",
+    title: "Không còn khoảng trống cuối trang khi form nằm trong vùng cuộn",
+    summary: "Checkbox, Switch và Dropdown trong Field không còn kéo dài trang khi nằm trong form ở một vùng cuộn.",
+    items: [
+      { kind: "fixed", text: "Checkbox, Switch và Dropdown trong Field: khi nằm trong <form> ở một vùng cuộn, input ẩn dùng để gửi form không còn kéo dài trang và để lại khoảng trống phía dưới.", href: "/components/checkbox" },
+    ],
+  },
+  {
     version: "0.12.0",
     date: "2026-10-27",
     title: "Glass, sáu template mới và chọn cột trong DataGrid",
