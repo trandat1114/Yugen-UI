@@ -309,7 +309,7 @@ export default function Page() {
           <SimpleTable
             head={["Công nghệ", "Phiên bản", "Ghi chú"]}
             rows={[
-              ["React", "19 (khuyên dùng), 18.3", "React 18 vẫn được hỗ trợ; ngày ngừng sẽ báo trước ở Có gì mới."],
+              ["React", "19 (khuyên dùng), 18.3", "React 18.3 được hỗ trợ đến hết 0.x; từ 1.0 chỉ còn React 19."],
               ["Tailwind CSS", "4.x", <>Không bắt buộc nếu dùng <C>yugen-ui/styles.css</C>. Tailwind 3 không được hỗ trợ.</>],
               ["Bundler", "Vite 6, Next.js 14+", <>Vite dùng <C>@tailwindcss/vite</C>; Next.js dùng <C>@tailwindcss/postcss</C>.</>],
               ["TypeScript", "5.x", "Không bắt buộc — gói đã kèm kiểu."],
