@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
+import { generateBrandRamp } from "@/lib/brandRamp";
 import {
   DEFAULT_AXES,
   axesToCss,
   axesToParams,
+  GLASS,
+  glassChecks,
   neutralChecks,
   paramsToAxes,
   sanitizeFontName,
@@ -90,5 +93,19 @@ describe("Theme Designer — các trục ngoài màu brand", () => {
     expect([...params.keys()]).toEqual(["td-radius", "td-font", "td-font-name", "td-size"]);
     expect(paramsToAxes(params)).toEqual(value);
     expect(paramsToAxes(new URLSearchParams("td-radius=huge&td-size=99&td-font=comic"))).toEqual(DEFAULT_AXES);
+  });
+
+  it("glass: mỗi bậc giữ fg1 / fg2 ≥ 4.5:1 trên nền đen và trắng; pha brand qua biến ramp; mặc định không sinh biến", () => {
+    const ramp = generateBrandRamp(SAKURA);
+    for (const glass of Object.keys(GLASS) as (keyof typeof GLASS)[]) {
+      const checks = glassChecks(axes({ glass }), SAKURA, ramp);
+      expect(checks).toHaveLength(8);
+      for (const check of checks) expect(check.ratio, `${glass} ${check.theme} ${check.pair}`).toBeGreaterThanOrEqual(4.5);
+    }
+    expect(sharedVars(axes({ glass: "frosted" }))).toMatchObject({ "--glassBlur": "36px", "--glassSaturation": "150%" });
+    expect(themeVars(axes({ glass: "airy" }), "dark", SAKURA)["--colorGlassBackground"]).toBe("rgb(41 41 41 / 0.78)");
+    expect(themeVars(axes({ glassTint: "brand" }), "light", SAKURA)["--colorGlassBackground"]).toBe("rgb(from var(--brand-160) r g b / 0.8)");
+    expect(themeVars(DEFAULT_AXES, "light", SAKURA)["--colorGlassBackground"]).toBeUndefined();
+    expect(paramsToAxes(axesToParams(axes({ glass: "airy", glassTint: "brand" })))).toEqual(axes({ glass: "airy", glassTint: "brand" }));
   });
 });

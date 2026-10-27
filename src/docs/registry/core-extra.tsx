@@ -262,7 +262,7 @@ const EXTRA: Record<string, ComponentDoc> = {
       { name: "MenuItem.icon", type: "ReactNode", description: "Icon cỡ 20." },
       { name: "MenuItem.secondaryContent", type: "ReactNode", description: "Phím tắt / thông tin phụ ở cuối item. MenuItemCheckbox và MenuItemRadio cũng có." },
       { name: "MenuPopover.align", type: `"start" | "center" | "end"`, defaultValue: `"start"`, description: "Căn với trigger." },
-      { name: "MenuPopover.material", type: `"glass" | "glass-clear"`, description: "Yugen Labs — menu bằng glass, thường mở từ thanh glass. MenuSubPopover cũng có." },
+      { name: "MenuPopover.material", type: `"glass" | "glass-clear"`, description: "Yugen Labs — menu bằng glass, thường mở từ thanh glass, mọc ra từ nút mở. MenuSubPopover cũng có." },
       { name: "MenuRadioGroup.value / onValueChange", type: "string", description: "Lựa chọn radio." },
       { name: "MenuItemCheckbox.checked / defaultChecked", type: "boolean", description: "Bật/tắt." },
     ],
@@ -313,6 +313,12 @@ const EXTRA: Record<string, ComponentDoc> = {
           </div>
         ),
       },
+      {
+        title: "Glass (Yugen Labs)",
+        description: "Nhấn hoặc kéo: thumb thành glass và to ra, thấy thanh trượt qua nó.",
+        code: `<Slider label="Âm lượng" material="glass" defaultValue={[60]} rootClassName="w-72" />`,
+        render: () => <Slider label="Âm lượng" material="glass" defaultValue={[60]} rootClassName="w-72" />,
+      },
     ],
     dos: ["Luôn có label hoặc aria-label.", "Hiện giá trị (showValue) khi con số có ý nghĩa với người dùng."],
     donts: ["Không dùng Slider khi cần nhập số chính xác — dùng SpinButton.", "Không dùng cho dải quá rộng mà bước nhỏ (khó kéo chính xác)."],
@@ -323,6 +329,7 @@ const EXTRA: Record<string, ComponentDoc> = {
       { name: "size", type: `"small" | "medium"`, defaultValue: `"medium"`, description: "Thumb 16 / 20px." },
       { name: "label / showValue", type: "ReactNode / boolean", description: "Nhãn và giá trị hiển thị phía trên." },
       { name: "rootClassName", type: "string", description: "Class cho khối ngoài (đặt width)." },
+      { name: "material", type: `"glass"`, description: "Yugen Labs — thumb thành glass và to ra khi đang nhấn / kéo." },
     ],
   },
 };

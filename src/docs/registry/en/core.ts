@@ -154,6 +154,7 @@ export const en: Record<string, ComponentDocEn> = {
     examples: [
       { title: "States", description: "off, on, disabled." },
       { title: "Label before", description: "Suits settings lists aligned to the right." },
+      { title: "Glass (Yugen Labs)", description: "Press and hold: the thumb turns to glass and stretches, like a switch on a glass bar." },
     ],
     dos: ["The label names what gets turned on, not the action (“Wi-Fi”, not “Turn on Wi-Fi”)."],
     donts: ["Don't use Switch in a form that has a Submit button. Use Checkbox."],
@@ -162,6 +163,7 @@ export const en: Record<string, ComponentDocEn> = {
       "checked / defaultChecked": "Controlled / uncontrolled.",
       onCheckedChange: "Called when the value changes.",
       labelPosition: "Label position.",
+      material: "Yugen Labs — the thumb turns to glass and stretches while pressed.",
     },
   },
 

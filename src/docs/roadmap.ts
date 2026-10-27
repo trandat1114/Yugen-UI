@@ -41,7 +41,8 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       vi: "Khúc xạ cho glass và mùa hoa anh đào trong template Glass.",
       en: "Glass refraction and cherry blossom season in the Glass template.",
       items: [
-        { status: "doing", issue: 227, vi: "GlassRefraction: mép bề mặt glass bẻ cong nền phía sau (Chromium); template Glass có chuyến đi ở Nhật Bản và xem trước trên ảnh", en: "GlassRefraction: glass edges bend what is behind them (Chromium); Japan trips and a photo preview in the Glass template" },
+        { status: "done", issue: 210, vi: "Glass phần 2: menu mọc từ nút, thumb glass cho Slider và Switch, trục Glass trong Theme Designer", en: "Glass part 2: menus that grow from the button, glass thumbs on Slider and Switch, a Glass axis in the Theme Designer" },
+        { status: "done", issue: 227, vi: "GlassRefraction: mép bề mặt glass bẻ cong nền phía sau (Chromium); template Glass có chuyến đi ở Nhật Bản và xem trước trên ảnh", en: "GlassRefraction: glass edges bend what is behind them (Chromium); Japan trips and a photo preview in the Glass template" },
         { status: "done", issue: 224, vi: "Trang Templates: xem toàn màn hình, một khung lớn cho các template khác", en: "Templates page: full-screen preview, one large view for the other templates" },
         { status: "done", issue: 223, vi: "Checkbox, Switch, Field: input ẩn của form không kéo dài trang", en: "Checkbox, Switch, Field: the hidden form input no longer stretches the page" },
       ],
@@ -65,7 +66,7 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       vi: "Chưa xếp lịch.",
       en: "Not scheduled yet.",
       items: [
-        { status: "planned", issue: 210, vi: "Glass phần 2: menu mọc từ nút, nút kéo glass, xem trước trong Theme Designer", en: "Glass part 2: menus that grow from the button, glass thumbs, Theme Designer preview" },
+        { status: "planned", issue: 230, vi: "Glass: YugenProvider đổi mọi component điều hướng sang glass (sau #171)", en: "Glass: a YugenProvider default that switches navigation components to glass (after #171)" },
         { status: "planned", issue: 68, vi: "Đăng ký @yugen vào danh mục registry của shadcn", en: "Register @yugen in the shadcn registry index" },
         { status: "planned", vi: "Đang cân nhắc: bộ Figma, gói icon Sakura", en: "Under consideration: Figma kit, Sakura icon set" },
       ],

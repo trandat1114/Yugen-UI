@@ -175,6 +175,9 @@
   --animate-fade-out: fade-out var(--durationFast) var(--curveAccelerateMid);
   --animate-surface-in: surface-in var(--durationGentle) var(--curveDecelerateMid);
   --animate-surface-out: fade-out var(--durationFast) var(--curveAccelerateMid);
+  /* Glass (Yugen Labs): bề mặt mọc ra từ nút mở nó — --morph-from do morphFromTrigger đặt (_internal/morph.ts). */
+  --animate-morph-in: morph-in var(--durationSlow) var(--curveDecelerateMax);
+  --animate-morph-out: morph-out var(--durationNormal) var(--curveAccelerateMid);
   --animate-shimmer: shimmer 1.8s linear infinite;
   --animate-indeterminate: indeterminate 3s linear infinite;
   /* Bản chạy bằng transform (compositor, không vẽ lại / layout mỗi frame) — Skeleton và ProgressBar dùng hai bản này. */
@@ -475,6 +478,21 @@
   from {
     opacity: 0;
     scale: 0.96;
+  }
+}
+@keyframes morph-in {
+  from {
+    opacity: 0;
+    transform: var(--morph-from, scale(0.9));
+  }
+  40% {
+    opacity: 1;
+  }
+}
+@keyframes morph-out {
+  to {
+    opacity: 0;
+    transform: var(--morph-from, scale(0.9));
   }
 }
 

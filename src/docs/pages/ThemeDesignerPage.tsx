@@ -33,6 +33,8 @@ import {
   TabsTrigger,
   ToggleGroup,
   ToggleGroupItem,
+  Toolbar,
+  ToolbarButton,
 } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import {
@@ -50,8 +52,10 @@ import { CodeBlock, CopyButton } from "../CodeBlock";
 import {
   DEFAULT_AXES,
   FONTS,
+  GLASS,
   axesToCss,
   axesToParams,
+  glassChecks,
   neutralChecks,
   paramsToAxes,
   sharedVars,
@@ -60,6 +64,7 @@ import {
   type ThemeAxes,
 } from "../themeAxes";
 import { docsPath } from "../router";
+import { PHOTOS } from "../template-library/glass/photos";
 import { useLocale, type Locale } from "../i18n";
 
 /** Chữ hiển thị theo ngôn ngữ: tiếng Việt mặc định, tiếng Anh khi locale = "en". CSS / JSON xuất ra không đổi theo ngôn ngữ. */
@@ -248,6 +253,15 @@ function Preview({ theme, style, dir }: { theme: PreviewTheme; style: React.CSSP
           </TableBody>
         </Table>
       </Card>
+      {/* Glass trên ảnh: blur, bão hoà và độ đục theo trục Glass (high contrast: nền đặc). */}
+      <div className="relative isolate flex h-32 items-end overflow-hidden rounded-xlarge p-3">
+        <img src={PHOTOS.gionWeeping.small} alt="" className="absolute inset-0 -z-10 size-full object-cover" />
+        <Toolbar material="glass" aria-label={`Glass (${PREVIEW_LABEL[theme]})`} className="w-full">
+          <span className="px-2 text-body1 font-semibold">{t("Thanh glass", "Glass bar")}</span>
+          <ToolbarButton icon={<Home20Regular />} aria-label={t("Trang chủ", "Home")} className="ms-auto" />
+          <ToolbarButton icon={<Settings20Regular />} aria-label={t("Cài đặt", "Settings")} />
+        </Toolbar>
+      </div>
       <div className="flex items-start gap-3 rounded-medium bg-background-1 p-3 shadow-8">
         <CheckmarkCircle20Filled className="shrink-0 text-success-foreground-1" />
         <div>
@@ -282,6 +296,7 @@ export function ThemeDesignerPage() {
   const css = axesToCss(`[data-brand="${brandName}"]`, axes, key, rampToStyle(ramp));
   const neutral = neutralChecks(axes, key);
   const minNeutral = Math.min(...neutral.map((c) => c.ratio));
+  const minGlass = Math.min(...glassChecks(axes, key, ramp).map((c) => c.ratio));
   const target = smallestTarget(axes.density);
 
   const shareUrl = React.useMemo(() => {
@@ -517,6 +532,33 @@ export function ThemeDesignerPage() {
                 { value: "expressive", label: t("Nhiều", "More") },
               ]}
             />
+            <Axis
+              label="Glass (Yugen Labs)"
+              note={t(
+                `Blur ${GLASS[axes.glass].blur}px, bão hoà ${GLASS[axes.glass].saturation}%, độ đục ${GLASS[axes.glass].alpha.light} / ${GLASS[axes.glass].alpha.dark} (light / dark). Độ đục không xuống dưới mức giữ chữ 4.5:1 trên nền đen hay trắng.`,
+                `Blur ${GLASS[axes.glass].blur}px, saturation ${GLASS[axes.glass].saturation}%, opacity ${GLASS[axes.glass].alpha.light} / ${GLASS[axes.glass].alpha.dark} (light / dark). Opacity never goes below what keeps text at 4.5:1 over black or white.`,
+              )}
+              value={axes.glass}
+              onChange={(v) => setAxis("glass", v)}
+              options={[
+                { value: "airy", label: t("Trong", "Airy") },
+                { value: "default", label: t("Mặc định", "Default") },
+                { value: "frosted", label: t("Mờ đục", "Frosted") },
+              ]}
+            />
+            <Axis
+              label={t("Sắc của glass", "Glass tint")}
+              note={t(
+                "Theo brand: nền glass lấy bậc 160 (light) hoặc 20 (dark) của ramp. Cần trình duyệt có relative color syntax.",
+                "Brand: the glass takes step 160 (light) or 20 (dark) of the ramp. Needs a browser with relative color syntax.",
+              )}
+              value={axes.glassTint}
+              onChange={(v) => setAxis("glassTint", v)}
+              options={[
+                { value: "neutral", label: t("Trung tính", "Neutral") },
+                { value: "brand", label: t("Theo brand", "Brand") },
+              ]}
+            />
             <div className="flex flex-wrap items-center gap-2">
               <Button size="small" disabled={JSON.stringify(axes) === JSON.stringify(DEFAULT_AXES)} onClick={() => setAxes(DEFAULT_AXES)}>
                 {t("Về mặc định", "Reset to default")}
@@ -555,6 +597,11 @@ export function ThemeDesignerPage() {
                   value={`${minNeutral.toFixed(2)}:1`}
                 />
               )}
+              <Check
+                ok={minGlass >= 4.5}
+                label={t("Chữ trên glass, nền sau đen hoặc trắng (light, dark)", "Text on glass over black or white (light, dark)")}
+                value={`${minGlass.toFixed(2)}:1`}
+              />
             </ul>
             {target < 24 && (
               <MessageBar intent="warning" layout="multiline" title={t("Control size small dưới 24px", "Size small controls are below 24px")}>

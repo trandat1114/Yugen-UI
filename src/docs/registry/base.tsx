@@ -229,7 +229,7 @@ export const docs: ComponentDoc[] = [
       { name: "PopoverSurface.size", type: `"small" | "medium" | "large"`, defaultValue: `"medium"`, description: "Padding 8 / 16 / 20px." },
       { name: "PopoverSurface.appearance", type: `"normal" | "brand" | "inverted"`, defaultValue: `"normal"`, description: "Màu bề mặt." },
       { name: "PopoverSurface.withArrow", type: "boolean", defaultValue: "false", description: "Hiện mũi tên." },
-      { name: "PopoverSurface.material", type: `"glass" | "glass-clear"`, description: "Yugen Labs — bề mặt glass (mũi tên cùng màu)." },
+      { name: "PopoverSurface.material", type: `"glass" | "glass-clear"`, description: "Yugen Labs — bề mặt glass (mũi tên cùng màu), mọc ra từ nút mở khi mở." },
       { name: "PopoverSurface.side / align", type: "Radix", defaultValue: `"bottom" / "center"`, description: "Vị trí so với trigger." },
     ],
   },

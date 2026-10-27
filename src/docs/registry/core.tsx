@@ -854,6 +854,12 @@ export const docs: ComponentDoc[] = [
         code: `<Switch label="Chế độ máy bay" labelPosition="before" />`,
         render: () => <Switch label="Chế độ máy bay" labelPosition="before" />,
       },
+      {
+        title: "Glass (Yugen Labs)",
+        description: "Nhấn giữ: thumb thành glass và dài ra, như công tắc trên thanh glass.",
+        code: `<Switch label="Wi-Fi" material="glass" defaultChecked />`,
+        render: () => <Switch label="Wi-Fi" material="glass" defaultChecked />,
+      },
     ],
     dos: ["Label mô tả thứ được bật, không mô tả hành động (“Wi-Fi”, không phải “Bật Wi-Fi”)."],
     donts: ["Không dùng Switch trong form cần bấm Gửi — dùng Checkbox."],
@@ -862,6 +868,7 @@ export const docs: ComponentDoc[] = [
       { name: "checked / defaultChecked", type: "boolean", description: "Controlled / uncontrolled." },
       { name: "onCheckedChange", type: "(checked: boolean) => void", description: "Callback khi đổi." },
       { name: "labelPosition", type: `"after" | "before"`, defaultValue: `"after"`, description: "Vị trí label." },
+      { name: "material", type: `"glass"`, description: "Yugen Labs — thumb thành glass và dài ra khi đang nhấn." },
     ],
   },
 

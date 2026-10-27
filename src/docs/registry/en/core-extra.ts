@@ -42,7 +42,7 @@ export const en: Record<string, ComponentDocEn> = {
       "MenuItem.icon": "Icon, size 20.",
       "MenuItem.secondaryContent": "Shortcut or secondary information at the end of the item. MenuItemCheckbox and MenuItemRadio have it too.",
       "MenuPopover.align": "Alignment with the trigger.",
-      "MenuPopover.material": "Yugen Labs — a glass menu, usually opened from a glass bar. MenuSubPopover has it too.",
+      "MenuPopover.material": "Yugen Labs — a glass menu, usually opened from a glass bar, that grows out of the button that opens it. MenuSubPopover has it too.",
       "MenuRadioGroup.value / onValueChange": "Selected radio item.",
       "MenuItemCheckbox.checked / defaultChecked": "On/off state.",
     },
@@ -55,6 +55,7 @@ export const en: Record<string, ComponentDocEn> = {
       { title: "With icon & value", description: "Controlled with value / onValueChange." },
       { title: "Range & step", description: "Two thumbs select a range; step makes the thumbs move in increments." },
       { title: "Size & disabled", description: "small, medium (default)." },
+      { title: "Glass (Yugen Labs)", description: "Press or drag: the thumb turns to glass and grows, so the track shows through it." },
     ],
     dos: ["Always provide a label or aria-label.", "Show the value (showValue) when the number means something to people."],
     donts: [
@@ -68,6 +69,7 @@ export const en: Record<string, ComponentDocEn> = {
       size: "Thumb 16 / 20px.",
       "label / showValue": "Label and value shown above the track.",
       rootClassName: "Class for the outer wrapper (set the width here).",
+      material: "Yugen Labs — the thumb turns to glass and grows while pressed or dragged.",
     },
   },
 };
