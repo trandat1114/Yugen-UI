@@ -8,7 +8,7 @@ npx create-yugen-ui@latest my-app --template saas
 pnpm create yugen-ui my-app --template blog
 ```
 
-Templates: `starter`, `saas`, `blog`, `dashboard`, `ai-chat`, `glass`, `landing`, `admin`, `next-starter`, `docs` — previews at
+Templates: `starter`, `saas`, `blog`, `dashboard`, `ai-chat`, `glass`, `landing`, `admin`, `next-starter`, `docs`, `store` — previews at
 [#/templates](https://trandat1114.github.io/Yugen-UI/#/templates).
 
 This is a thin wrapper around [`yugen create`](https://github.com/trandat1114/Yugen-UI/tree/main/packages/cli#readme);

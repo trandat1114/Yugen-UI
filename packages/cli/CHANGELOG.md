@@ -11,6 +11,8 @@
   cookie so the server renders it. `create --lang` works without an `index.html`.
 - New template: `docs` (`create --template docs`), a documentation site built from Markdown files, with Ctrl K search
   and an HTML file for every page.
+- New template: `store` (`create --template store`), a small shop with filters kept in the URL, a cart in a Sheet and a
+  validated multi-step checkout; prices in US dollars, or dong with `--lang vi`.
 
 ## 0.4.0
 

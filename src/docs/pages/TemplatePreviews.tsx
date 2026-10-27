@@ -35,6 +35,9 @@ import { Welcome } from "../template-library/starter/Welcome";
 import welcomeSource from "../template-library/starter/Welcome.tsx?raw";
 import starterEn from "../template-library/starter/content/en";
 import starterVi from "../template-library/starter/content/vi";
+import StoreApp from "../template-library/store/App";
+import storeEn from "../template-library/store/content/en";
+import storeVi from "../template-library/store/content/vi";
 import { useLocale } from "../i18n";
 import type { PageId } from "../template-library/saas/pages";
 
@@ -281,6 +284,20 @@ function DocsPreview() {
   );
 }
 
+/**
+ * templates/vite-store in embedded mode: router, cart and orders in memory (nothing saved), the demo cart filled, text in
+ * the docs language. The cart Sheet opens over the docs page.
+ */
+function StorePreview() {
+  const docs = useYugen();
+  const { locale } = useLocale();
+  return (
+    <div className="h-110">
+      <StoreApp key={locale} embedded content={locale === "vi" ? storeVi : storeEn} defaultAppearance={{ theme: docs.theme, brand: docs.brand }} />
+    </div>
+  );
+}
+
 /** Theo `dir` trong src/docs/templates.ts. */
 export const PREVIEWS: Record<string, ComponentType> = {
   "vite-starter": StarterPreview,
@@ -293,4 +310,5 @@ export const PREVIEWS: Record<string, ComponentType> = {
   "vite-admin": AdminPreview,
   "next-starter": NextStarterPreview,
   "vite-docs": DocsPreview,
+  "vite-store": StorePreview,
 };

@@ -305,6 +305,34 @@ export const TEMPLATES: TemplateInfo[] = [
       ],
     },
   },
+  {
+    dir: "vite-store",
+    name: "Store",
+    tags: ["Vite", "React 19", { vi: "Cửa hàng", en: "Shop" }, { vi: "Thanh toán", en: "Checkout" }],
+    previewPath: "/",
+    vi: {
+      description: "Cửa hàng nhỏ: bộ lọc lưu trong URL, giỏ hàng trong Sheet và thanh toán nhiều bước có kiểm tra.",
+      features: [
+        "Lưới sản phẩm lọc theo danh mục (TagPicker), khoảng giá (Slider) và sắp xếp; bộ lọc nằm trong URL",
+        "Trang sản phẩm: Carousel ảnh, đánh giá, màu bằng SwatchPicker, cỡ, số lượng bằng SpinButton",
+        "Giỏ hàng trong Sheet: panel bên trên màn rộng, bottom sheet trên điện thoại; lưu trong localStorage",
+        "Thanh toán bằng Wizard bốn bước, mỗi bước kiểm tra bằng react-hook-form + zod; thanh toán giả lập",
+        "Trang xác nhận đơn hàng; giá định dạng bằng Intl theo ngôn ngữ (USD hoặc VND)",
+        "Minh hoạ sản phẩm bằng SVG, không cần ảnh; tiếng Anh, tiếng Việt với --lang vi",
+      ],
+    },
+    en: {
+      description: "A small shop: filters kept in the URL, a cart in a Sheet and a validated multi-step checkout.",
+      features: [
+        "Product grid filtered by category (TagPicker), price range (Slider) and sort; filters live in the URL",
+        "Product page: Carousel gallery, rating, colours in a SwatchPicker, sizes, quantity in a SpinButton",
+        "Cart in a Sheet: a side panel on wide screens, a bottom sheet on phones; saved in localStorage",
+        "Checkout in a four-step Wizard, each step checked with react-hook-form + zod; a pretend payment",
+        "Order confirmation page; prices formatted with Intl for the language (USD or VND)",
+        "Products drawn in SVG, no photos needed; English, Vietnamese with --lang vi",
+      ],
+    },
+  },
 ];
 
 const REPO = SITE.links.repository.replace(/^https:\/\/github\.com\//, "");

@@ -51,6 +51,7 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
         { status: "done", issue: 207, vi: "Số trong DataGrid và Table thẳng hàng", en: "Numbers line up in DataGrid and Table" },
         { status: "done", issue: 150, vi: "Template SaaS có URL theo đường dẫn, cấu hình deploy cho host tĩnh", en: "Path URLs in the SaaS template, deploy configs for static hosts" },
         { status: "done", issue: 154, vi: "Template Docs: trang tài liệu từ Markdown, tìm kiếm Ctrl K, HTML tĩnh từng trang", en: "Docs template: a documentation site from Markdown, Ctrl K search, static HTML per page" },
+        { status: "done", issue: 155, vi: "Template Store: cửa hàng nhỏ với bộ lọc trong URL, giỏ hàng trong Sheet, thanh toán nhiều bước", en: "Store template: a small shop with filters in the URL, a cart in a Sheet, a multi-step checkout" },
       ],
     },
     {
