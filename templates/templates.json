@@ -118,5 +118,25 @@
         "description": "Nhật ký du lịch dựng bằng Yugen UI: ảnh tràn viền, sidebar, thanh tab và menu glass nổi trên ảnh, nền đặc khi giảm trong suốt."
       }
     }
+  },
+  {
+    "dir": "vite-landing",
+    "name": "landing",
+    "title": "Landing",
+    "hint": "Product landing page: pricing, FAQ, sign-up form, build-time SEO, Lighthouse 95+",
+    "budget": {
+      "js": 160,
+      "css": 26
+    },
+    "meta": {
+      "en": {
+        "title": "Sakura Notes",
+        "description": "A product landing page built with Yugen UI: pricing with a monthly / yearly switch, FAQ, a sign-up form and SEO generated at build time."
+      },
+      "vi": {
+        "title": "Sakura Notes",
+        "description": "Trang giới thiệu sản phẩm dựng bằng Yugen UI: bảng giá theo tháng / năm, hỏi đáp, form đăng ký và SEO sinh sẵn lúc build."
+      }
+    }
   }
 ]
