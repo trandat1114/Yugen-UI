@@ -219,6 +219,34 @@ export const TEMPLATES: TemplateInfo[] = [
       ],
     },
   },
+  {
+    dir: "vite-admin",
+    name: "Admin",
+    tags: ["Vite", "React 19", "CRUD", { vi: "Đăng nhập", en: "Sign-in" }],
+    previewPath: "/customers",
+    vi: {
+      description: "Trang quản trị khách hàng và đơn hàng: bảng phân trang trên server, form có kiểm tra, đăng nhập OTP.",
+      features: [
+        "DataGrid phân trang, sắp xếp và lọc trên server; tìm kiếm, chọn cột hiển thị",
+        "Chọn nhiều hàng để xuất CSV hoặc xoá; xoá luôn hỏi lại bằng Dialog",
+        "Thêm và sửa trong Drawer, kiểm tra bằng react-hook-form + zod",
+        "Cập nhật lạc quan với useOptimisticList: lỗi thì hoàn tác, toast có nút Thử lại",
+        "Đăng nhập, quên mật khẩu, mã OTP (InputOTP); trang cần đăng nhập đưa về đúng chỗ sau khi đăng nhập",
+        "API giả lập có độ trễ và lỗi ngẫu nhiên trong một file; tiếng Anh, tiếng Việt với --lang vi",
+      ],
+    },
+    en: {
+      description: "Customers and orders: a server-paged table, validated forms and sign-in with a one-time code.",
+      features: [
+        "DataGrid paged, sorted and filtered by the server; search and a column picker",
+        "Select rows to export them as CSV or delete them; deletes are confirmed in a Dialog",
+        "Create and edit in a Drawer, validated with react-hook-form + zod",
+        "Optimistic updates with useOptimisticList: a failed request rolls back, with Retry in the toast",
+        "Sign in, forgot password, one-time code (InputOTP); protected pages bring you back after sign-in",
+        "A mock API with latency and random errors in one file; English, Vietnamese with --lang vi",
+      ],
+    },
+  },
 ];
 
 const REPO = SITE.links.repository.replace(/^https:\/\/github\.com\//, "");

@@ -120,6 +120,26 @@
     }
   },
   {
+    "dir": "vite-admin",
+    "name": "admin",
+    "title": "Admin",
+    "hint": "Admin / CRUD: server-paged DataGrid, drawer forms, optimistic updates, sign-in with OTP",
+    "budget": {
+      "js": 167,
+      "css": 26
+    },
+    "meta": {
+      "en": {
+        "title": "Sakura Admin",
+        "description": "An admin app built with Yugen UI: a server-paged customer DataGrid, create and edit in a validated drawer, optimistic updates that roll back, and sign-in with a one-time code."
+      },
+      "vi": {
+        "title": "Sakura Admin",
+        "description": "Trang quản trị dựng bằng Yugen UI: bảng khách hàng phân trang trên server, sửa trong Drawer có kiểm tra, cập nhật lạc quan, đăng nhập có mã OTP."
+      }
+    }
+  },
+  {
     "dir": "next-starter",
     "name": "next-starter",
     "title": "Next.js starter",
