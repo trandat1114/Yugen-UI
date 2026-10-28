@@ -23,9 +23,11 @@ export interface ChartMessages {
   other: string;
   /** Nút bật đường xu hướng của ScatterChart. */
   trend: string;
-  /** Chữ ẩn chỉ chiều thay đổi của StatTile. */
+  /** @deprecated StatTile đọc `messages.stat` (Stat); ba chuỗi này không còn được dùng, sẽ bỏ ở 1.0. */
   increase: string;
+  /** @deprecated Dùng `messages.stat.decrease`. */
   decrease: string;
+  /** @deprecated Dùng `messages.stat.noChange`. */
   noChange: string;
   /** ChartBrush: tên cửa sổ thu phóng, dòng "Đang xem … · n/N mốc", nút đặt lại. */
   brush: string;

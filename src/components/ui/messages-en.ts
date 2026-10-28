@@ -22,6 +22,7 @@ import { commandMessagesEn } from "./Command/messages";
 import { counterBadgeMessagesEn } from "./CounterBadge/messages";
 import { dataGridMessagesEn } from "./DataGrid/messages";
 import { datePickerMessagesEn, dateRangePickerMessagesEn } from "./DatePicker/messages";
+import { descriptionListMessagesEn } from "./DescriptionList/messages";
 import { dialogMessagesEn } from "./Dialog/messages";
 import { fileUploadMessagesEn } from "./FileUpload/messages";
 import { infoLabelMessagesEn } from "./InfoLabel/messages";
@@ -51,8 +52,10 @@ import { resizableMessagesEn } from "./Resizable/messages";
 import { searchBoxMessagesEn } from "./SearchBox/messages";
 import { sheetMessagesEn } from "./Sheet/messages";
 import { skeletonMessagesEn } from "./Skeleton/messages";
+import { sonnerMessagesEn } from "./Sonner/messages";
 import { spinButtonMessagesEn } from "./SpinButton/messages";
 import { spinnerMessagesEn } from "./Spinner/messages";
+import { statMessagesEn } from "./Stat/messages";
 import { splitButtonMessagesEn } from "./SplitButton/messages";
 import { stepperMessagesEn, wizardMessagesEn } from "./Stepper/messages";
 import { swatchPickerMessagesEn } from "./SwatchPicker/messages";
@@ -88,6 +91,7 @@ export const messagesEn: YugenMessages = {
   dataGrid: dataGridMessagesEn,
   datePicker: datePickerMessagesEn,
   dateRangePicker: dateRangePickerMessagesEn,
+  descriptionList: descriptionListMessagesEn,
   dialog: dialogMessagesEn,
   errorState: errorStateMessagesEn,
   fileUpload: fileUploadMessagesEn,
@@ -113,9 +117,11 @@ export const messagesEn: YugenMessages = {
   searchBox: searchBoxMessagesEn,
   sheet: sheetMessagesEn,
   skeleton: skeletonMessagesEn,
+  sonner: sonnerMessagesEn,
   spinButton: spinButtonMessagesEn,
   spinner: spinnerMessagesEn,
   splitButton: splitButtonMessagesEn,
+  stat: statMessagesEn,
   stepper: stepperMessagesEn,
   streamingMarkdown: streamingMarkdownMessagesEn,
   swatchPicker: swatchPickerMessagesEn,

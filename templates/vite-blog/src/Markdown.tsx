@@ -4,6 +4,7 @@ import {
   codeLanguageOf,
   markdownToPlainText,
   parseMarkdown,
+  Prose,
   type MdBlock,
   type MdInline,
 } from "yugen-ui";
@@ -93,7 +94,7 @@ function Inlines({ nodes }: { nodes: MdInline[] }) {
             return node.text;
           case "strong":
             return (
-              <strong key={i} className="font-semibold text-foreground-1">
+              <strong key={i}>
                 <Inlines nodes={node.children} />
               </strong>
             );
@@ -111,22 +112,21 @@ function Inlines({ nodes }: { nodes: MdInline[] }) {
             );
           case "inlineCode":
             return (
-              <code key={i} className="rounded-small bg-background-4 px-1 font-mono text-[0.9em]">
+              <code key={i}>
                 {node.text}
               </code>
             );
           case "link": {
-            const className = "text-link underline underline-offset-2 hover:text-link-hover";
             if (node.href.startsWith(INTERNAL)) {
               return (
-                <Link key={i} to={parsePath(`/${node.href.slice(INTERNAL.length)}`)} className={className} title={node.title}>
+                <Link key={i} to={parsePath(`/${node.href.slice(INTERNAL.length)}`)} title={node.title}>
                   <Inlines nodes={node.children} />
                 </Link>
               );
             }
             const external = node.href.startsWith("http");
             return (
-              <a key={i} href={node.href} title={node.title} className={className} {...(external ? { target: "_blank", rel: "noreferrer" } : {})}>
+              <a key={i} href={node.href} title={node.title} {...(external ? { target: "_blank", rel: "noreferrer" } : {})}>
                 <Inlines nodes={node.children} />
               </a>
             );
@@ -143,10 +143,10 @@ function Inlines({ nodes }: { nodes: MdInline[] }) {
   );
 }
 
+// Cỡ chữ, độ đậm, khoảng cách do Prose lo; ở đây chỉ thêm phần riêng của blog.
 const HEADING: Record<number, string> = {
-  2: "mt-5 scroll-mt-20 font-display text-title3 font-semibold text-foreground-1",
-  3: "mt-4 scroll-mt-20 text-subtitle1 font-semibold text-foreground-1",
-  4: "mt-3 text-subtitle2 font-semibold text-foreground-1",
+  2: "scroll-mt-20 font-display",
+  3: "scroll-mt-20",
 };
 
 function Block({ block, id }: { block: MdBlock; id?: string }): ReactNode {
@@ -163,7 +163,7 @@ function Block({ block, id }: { block: MdBlock; id?: string }): ReactNode {
       const level = Math.min(6, Math.max(2, block.level));
       const Tag = `h${level}` as "h2";
       return (
-        <Tag id={id} className={HEADING[Math.min(level, 4)]}>
+        <Tag id={id} className={HEADING[level]}>
           <Inlines nodes={block.children} />
         </Tag>
       );
@@ -172,7 +172,7 @@ function Block({ block, id }: { block: MdBlock; id?: string }): ReactNode {
       return <CodeBlock code={block.text} language={codeLanguageOf(block.lang)} title={block.lang || undefined} />;
     case "blockquote":
       return (
-        <blockquote className="flex flex-col gap-3 border-s-3 border-brand-stroke ps-4 text-foreground-2 italic">
+        <blockquote>
           {block.children.map((b, i) => (
             <Block key={i} block={b} />
           ))}
@@ -181,9 +181,9 @@ function Block({ block, id }: { block: MdBlock; id?: string }): ReactNode {
     case "list": {
       const List = block.ordered ? "ol" : "ul";
       return (
-        <List start={block.ordered && block.start !== 1 ? block.start : undefined} className={`flex flex-col gap-1 ps-5 ${block.ordered ? "list-decimal" : "list-disc"}`}>
+        <List start={block.ordered && block.start !== 1 ? block.start : undefined}>
           {block.items.map((item, i) => (
-            <li key={i} className={item.checked === null ? "ps-0.5" : "-ms-5 flex list-none gap-2"}>
+            <li key={i} className={item.checked === null ? undefined : "-ms-5 flex list-none gap-2"}>
               {item.checked !== null && <input type="checkbox" checked={item.checked} readOnly aria-label={item.checked ? t.markdown.done : t.markdown.todo} className="mt-1.5" />}
               <div className="flex min-w-0 flex-col gap-1">
                 {item.children.map((b, j) =>
@@ -198,11 +198,11 @@ function Block({ block, id }: { block: MdBlock; id?: string }): ReactNode {
     case "table":
       return (
         <div role="region" aria-label={t.markdown.table} tabIndex={0} className="overflow-x-auto rounded-large border border-stroke-2">
-          <table className="w-full border-collapse text-start text-body1">
+          <table>
             <thead>
               <tr className="bg-background-3">
                 {block.head.map((cell, i) => (
-                  <th key={i} className="border-b border-stroke-1 px-3 py-2 text-start font-semibold text-foreground-1">
+                  <th key={i}>
                     <Inlines nodes={cell} />
                   </th>
                 ))}
@@ -210,9 +210,9 @@ function Block({ block, id }: { block: MdBlock; id?: string }): ReactNode {
             </thead>
             <tbody>
               {block.rows.map((row, r) => (
-                <tr key={r} className="border-b border-stroke-2 last:border-b-0">
+                <tr key={r}>
                   {row.map((cell, c) => (
-                    <td key={c} className="px-3 py-2 align-top">
+                    <td key={c}>
                       <Inlines nodes={cell} />
                     </td>
                   ))}
@@ -223,24 +223,24 @@ function Block({ block, id }: { block: MdBlock; id?: string }): ReactNode {
         </div>
       );
     case "thematicBreak":
-      return <hr className="my-3 border-stroke-2" />;
+      return <hr />;
   }
 }
 
-/** Nội dung bài viết — chữ body2 dễ đọc, khoảng cách đều giữa các khối. */
+/** Nội dung bài viết: Prose cỡ large (body2), khoảng cách đều giữa các khối. */
 export function Markdown({ children }: { children: string }) {
   return (
-    <div className="flex flex-col gap-4 text-body2 text-foreground-2">
+    <Prose size="large">
       {parse(children).map((part, i) =>
         part.type === "image" ? (
-          <figure key={i} className="flex flex-col gap-2">
+          <figure key={i}>
             <img src={resolveSrc(part.src)} alt={part.alt} title={part.title} loading="lazy" className="mx-auto max-h-64 w-auto rounded-xlarge border border-stroke-2 bg-background-1 p-5" />
-            {part.title && <figcaption className="text-center text-caption1 text-foreground-3">{part.title}</figcaption>}
+            {part.title && <figcaption>{part.title}</figcaption>}
           </figure>
         ) : (
           part.blocks.map(({ block, id }, j) => <Block key={`${i}-${j}`} block={block} id={id || undefined} />)
         ),
       )}
-    </div>
+    </Prose>
   );
 }

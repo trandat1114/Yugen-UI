@@ -6,6 +6,7 @@ import {
   codeLanguageOf,
   PackageManagerTabs,
   parseMarkdown,
+  Prose,
   type CodeTabsFile,
   type MdBlock,
   type MdInline,
@@ -111,7 +112,7 @@ function Inlines({ nodes }: { nodes: MdInline[] }) {
             return node.text;
           case "strong":
             return (
-              <strong key={i} className="font-semibold text-foreground-1">
+              <strong key={i}>
                 <Inlines nodes={node.children} />
               </strong>
             );
@@ -129,23 +130,22 @@ function Inlines({ nodes }: { nodes: MdInline[] }) {
             );
           case "inlineCode":
             return (
-              <code key={i} className="rounded-small bg-background-4 px-1 font-mono text-[0.9em] text-foreground-1">
+              <code key={i}>
                 {node.text}
               </code>
             );
           case "link": {
-            const className = "text-link underline underline-offset-2 hover:text-link-hover";
             if (node.href.startsWith(INTERNAL)) {
               const [path, hash = ""] = node.href.slice(INTERNAL.length).split("#");
               return (
-                <Link key={i} to={parsePath(`${import.meta.env.BASE_URL}${path}`, hash)} className={className} title={node.title}>
+                <Link key={i} to={parsePath(`${import.meta.env.BASE_URL}${path}`, hash)} title={node.title}>
                   <Inlines nodes={node.children} />
                 </Link>
               );
             }
             const external = node.href.startsWith("http");
             return (
-              <a key={i} href={node.href} title={node.title} className={className} {...(external ? { target: "_blank", rel: "noreferrer" } : {})}>
+              <a key={i} href={node.href} title={node.title} {...(external ? { target: "_blank", rel: "noreferrer" } : {})}>
                 <Inlines nodes={node.children} />
               </a>
             );
@@ -162,10 +162,11 @@ function Inlines({ nodes }: { nodes: MdInline[] }) {
   );
 }
 
+// Font size, weight and spacing come from Prose; only the docs-specific parts here.
 const HEADING: Record<number, string> = {
-  2: "mt-6 scroll-mt-20 font-display text-title3 font-semibold text-foreground-1",
-  3: "mt-3 scroll-mt-20 text-subtitle1 font-semibold text-foreground-1",
-  4: "mt-2 scroll-mt-20 text-subtitle2 font-semibold text-foreground-1",
+  2: "scroll-mt-20 font-display",
+  3: "scroll-mt-20",
+  4: "scroll-mt-20",
 };
 
 const CALLOUTS = {
@@ -228,7 +229,7 @@ function Block({ block, id }: { block: MdBlock; id?: string }): ReactNode {
         );
       }
       return (
-        <blockquote className="flex flex-col gap-3 border-s-3 border-brand-stroke ps-4 text-foreground-2">
+        <blockquote className="not-italic">
           {block.children.map((b, i) => (
             <Block key={i} block={b} />
           ))}
@@ -238,9 +239,9 @@ function Block({ block, id }: { block: MdBlock; id?: string }): ReactNode {
     case "list": {
       const List = block.ordered ? "ol" : "ul";
       return (
-        <List start={block.ordered && block.start !== 1 ? block.start : undefined} className={`flex flex-col gap-1 ps-5 ${block.ordered ? "list-decimal" : "list-disc"}`}>
+        <List start={block.ordered && block.start !== 1 ? block.start : undefined}>
           {block.items.map((item, i) => (
-            <li key={i} className={item.checked === null ? "ps-0.5" : "-ms-5 flex list-none gap-2"}>
+            <li key={i} className={item.checked === null ? undefined : "-ms-5 flex list-none gap-2"}>
               {item.checked !== null && <input type="checkbox" checked={item.checked} readOnly aria-label={item.checked ? t.markdown.done : t.markdown.todo} className="mt-1.5" />}
               <div className="flex min-w-0 flex-col gap-1">
                 {item.children.map((b, j) =>
@@ -255,11 +256,11 @@ function Block({ block, id }: { block: MdBlock; id?: string }): ReactNode {
     case "table":
       return (
         <div role="region" aria-label={t.markdown.table} tabIndex={0} className="overflow-x-auto rounded-large border border-stroke-2">
-          <table className="w-full border-collapse text-start text-body1">
+          <table>
             <thead>
               <tr className="bg-background-3">
                 {block.head.map((cell, i) => (
-                  <th key={i} className="border-b border-stroke-1 px-3 py-2 text-start font-semibold text-foreground-1">
+                  <th key={i}>
                     <Inlines nodes={cell} />
                   </th>
                 ))}
@@ -267,9 +268,9 @@ function Block({ block, id }: { block: MdBlock; id?: string }): ReactNode {
             </thead>
             <tbody>
               {block.rows.map((row, r) => (
-                <tr key={r} className="border-b border-stroke-2 last:border-b-0">
+                <tr key={r}>
                   {row.map((cell, c) => (
-                    <td key={c} className="px-3 py-2 align-top">
+                    <td key={c}>
                       <Inlines nodes={cell} />
                     </td>
                   ))}
@@ -280,26 +281,26 @@ function Block({ block, id }: { block: MdBlock; id?: string }): ReactNode {
         </div>
       );
     case "thematicBreak":
-      return <hr className="my-3 border-stroke-2" />;
+      return <hr />;
   }
 }
 
-/** Text of a page: body2 for reading, even spacing between blocks. `headings` = headingsOf(markdown). */
+/** Text of a page: Prose at size large (body2), even spacing between blocks. `headings` = headingsOf(markdown). */
 export function Markdown({ children, headings }: { children: string; headings: Heading[] }) {
   return (
-    <div className="flex flex-col gap-4 text-body2 text-foreground-2">
+    <Prose size="large">
       {items(children, headings).map((item, i) => {
         if (item.type === "image") {
           return (
-            <figure key={i} className="flex flex-col gap-2">
+            <figure key={i}>
               <img src={resolveSrc(item.src)} alt={item.alt} title={item.title} loading="lazy" className="mx-auto max-h-80 w-auto rounded-xlarge border border-stroke-2 bg-background-1" />
-              {item.title && <figcaption className="text-center text-caption1 text-foreground-3">{item.title}</figcaption>}
+              {item.title && <figcaption>{item.title}</figcaption>}
             </figure>
           );
         }
         if (item.type === "tabs") return <CodeTabs key={i} files={item.files} />;
         return <Block key={i} block={item.block} id={item.id} />;
       })}
-    </div>
+    </Prose>
   );
 }
