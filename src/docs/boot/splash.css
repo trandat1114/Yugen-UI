@@ -1,4 +1,5 @@
-/* Màn chờ (#236): nền theo theme ngay lần vẽ đầu, enso vẽ bằng mực theo tiến độ tải, số Hán 〇–百 ở góc. */
+/* Màn chờ (#236): nền theo theme ngay lần vẽ đầu. Giữa là nét cọ chạy theo tiến độ tải và chữ "Đang tải"; số Hán 〇–百 viết
+   dọc ở mép trên; logo enso vẽ bằng mực ở góc dưới, nở hoa khi xong. */
 #yugen-boot {
   display: none;
 }
@@ -25,42 +26,49 @@ html[data-boot="done"] #yugen-boot {
   opacity: 0;
   pointer-events: none;
 }
-/* Tải nhanh (< 200 ms) thì chỉ thấy nền, logo không kịp chớp lên. */
-#yugen-boot .yb-body,
-#yugen-boot .yb-num {
+/* Tải nhanh (< 200 ms) thì chỉ thấy nền, nội dung không kịp chớp lên. */
+#yugen-boot .yb-corner,
+#yugen-boot .yb-center,
+#yugen-boot .yb-side {
   animation: yb-in 320ms 200ms both;
-}
-#yugen-boot .yb-body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 @keyframes yb-in {
   from {
     opacity: 0;
   }
 }
-#yugen-boot .yb-mark {
-  width: clamp(120px, 26vmin, 200px);
-  height: auto;
-  overflow: visible;
-}
-#yugen-boot .yb-ghost {
-  opacity: 0.08;
-}
-html[data-theme="dark"] #yugen-boot .yb-ghost {
-  opacity: 0.14;
-}
-#yugen-boot .yb-petal,
-#yugen-boot .yb-heart {
-  opacity: 0;
-}
 #yugen-boot p {
   margin: 0;
 }
-/* Chữ giãn rộng: lùi nửa khoảng giãn ở đầu để cụm chữ vẫn nằm giữa dưới logo. */
+
+/* Giữa: nét cọ, chữ dưới nét. */
+#yugen-boot .yb-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: clamp(220px, 56vw, 760px);
+}
+#yugen-boot .yb-stroke {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+/* Bút chạy từ đầu dòng. */
+html[dir="rtl"] #yugen-boot .yb-stroke {
+  transform: scaleX(-1);
+}
+#yugen-boot .yb-stroke {
+  fill: currentColor;
+}
+#yugen-boot .yb-track {
+  opacity: 0.1;
+}
+html[data-theme="dark"] #yugen-boot .yb-track {
+  opacity: 0.12;
+}
+/* Chữ giãn rộng: lùi nửa khoảng giãn ở đầu để cụm chữ vẫn nằm giữa dưới nét. */
 #yugen-boot .yb-label {
-  margin-top: clamp(20px, 4vmin, 36px);
+  margin-top: clamp(16px, 3vmin, 28px);
   padding-inline-start: 0.42em;
   font-size: 13px;
   line-height: 20px;
@@ -74,16 +82,45 @@ html[data-theme="dark"] #yugen-boot .yb-ghost {
     opacity: 0.45;
   }
 }
-/* Số Hán viết bằng font Mincho (nét mảnh như bút lông) nếu máy có; không có thì serif. */
-#yugen-boot .yb-num {
+
+/* Góc dưới, đầu dòng: logo. */
+#yugen-boot .yb-corner {
   position: absolute;
-  inset-inline-start: clamp(20px, 5vmin, 64px);
-  bottom: clamp(16px, 4vmin, 48px);
+  inset-inline-start: clamp(20px, 7vmin, 80px);
+  bottom: clamp(20px, 7vmin, 80px);
+}
+#yugen-boot .yb-mark {
+  display: block;
+  width: clamp(56px, 13vmin, 120px);
+  height: auto;
+  overflow: visible;
+}
+#yugen-boot .yb-ghost {
+  opacity: 0.08;
+}
+html[data-theme="dark"] #yugen-boot .yb-ghost {
+  opacity: 0.14;
+}
+#yugen-boot .yb-petal,
+#yugen-boot .yb-heart {
+  opacity: 0;
+}
+
+/* Mép trên, cuối dòng: số Hán viết dọc (tategaki), font Mincho nét mảnh như bút lông nếu máy có, không thì serif. Vị trí đặt ở
+   khung bọc vì với chữ dọc, inset-inline của chính phần tử là trục dọc. */
+#yugen-boot .yb-side {
+  position: absolute;
+  inset-inline-end: clamp(20px, 7vmin, 80px);
+  top: clamp(20px, 7vmin, 80px);
+  /* Rộng đúng một cột chữ: để tự co, Chrome tính sai bề rộng của chữ dọc nằm trong khung chữ ngang và số tràn ra mép. */
+  width: 1em;
+  font-size: clamp(56px, 15vmin, 180px);
+}
+#yugen-boot .yb-num {
+  writing-mode: vertical-rl;
   font-family: "Yu Mincho", YuMincho, "Hiragino Mincho ProN", "Noto Serif JP", "Noto Serif CJK JP", "Source Han Serif JP", serif;
-  font-size: clamp(72px, 20vmin, 216px);
   font-weight: 300;
   line-height: 1;
-  letter-spacing: -0.02em;
   color: #616161;
 }
 html[data-theme="dark"] #yugen-boot .yb-num,
@@ -94,11 +131,14 @@ html[data-theme="high-contrast"] #yugen-boot .yb-num,
 html[data-theme="high-contrast"] #yugen-boot .yb-label {
   color: #ffffff;
 }
+
+/* Lỗi: thông báo thay chữ "Đang tải", nét cọ dừng ở chỗ treo. */
 #yugen-boot .yb-error {
   display: none;
-  margin-top: clamp(20px, 4vmin, 36px);
+  margin-top: clamp(16px, 3vmin, 28px);
   font-size: 16px;
   line-height: 22px;
+  text-align: center;
 }
 #yugen-boot .yb-error a {
   color: inherit;
@@ -113,8 +153,9 @@ html[data-boot="error"] #yugen-boot .yb-error {
 }
 @media (prefers-reduced-motion: reduce) {
   html[data-boot] #yugen-boot,
-  #yugen-boot .yb-body,
-  #yugen-boot .yb-num,
+  #yugen-boot .yb-corner,
+  #yugen-boot .yb-center,
+  #yugen-boot .yb-side,
   #yugen-boot .yb-label {
     transition: none;
     animation: none;

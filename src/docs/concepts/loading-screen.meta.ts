@@ -10,7 +10,7 @@ export const meta: ConceptMeta = {
     { id: "when", label: "Khi nào cần" },
     { id: "lab", label: "Phòng thử concept" },
     { id: "progress", label: "Tiến độ đo thật" },
-    { id: "numerals", label: "Số Hán & chữ" },
+    { id: "numerals", label: "Bố cục, số Hán & chữ" },
     { id: "motion", label: "Giảm chuyển động" },
     { id: "a11y", label: "Khả năng tiếp cận" },
     { id: "rules", label: "Nên & không nên" },

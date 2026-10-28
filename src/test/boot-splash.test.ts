@@ -34,6 +34,16 @@ describe("màn chờ docs", () => {
     for (const d of shapes) expect(splash).toContain(`d="${d}"`);
   });
 
+  it("nét cọ ở giữa khớp với phòng thử Labs (src/docs/boot/ink.tsx)", () => {
+    const ink = read("src/docs/boot/ink.tsx");
+    const splash = read("src/docs/boot/splash.html");
+    for (const name of ["STROKE_BODY", "STROKE_DRY", "STROKE_HAIRS"]) {
+      const d = ink.match(new RegExp(`export const ${name} = "([^"]+)";`))![1];
+      expect(splash, name).toContain(`d="${d}"`);
+    }
+    expect(splash).toContain(`<path class="yb-track" d="${ink.match(/export const STROKE_BODY = "([^"]+)";/)![1]}"`);
+  });
+
   it("dev: chèn markup sau #root và style / script vào <head>", () => {
     const { emitted, result } = setup("serve");
     expect(emitted).toEqual([]);

@@ -77,7 +77,7 @@ export default function LoadingScreenPage() {
       <DocSection
         id="lab"
         title="Concept lab"
-        description="Four concepts run on the same simulated load. Change the speed, turn on reduced motion or view each concept full screen."
+        description="Two sets of layouts: Kanji (including the one in use) and Latin, for products that don't use kanji. Every concept runs on the same simulated load so they compare at the same progress, and holds the last frame when done. Change the speed, turn on reduced motion, or go full screen (replay stays available in the toolbar)."
       >
         <LoadingLab />
       </DocSection>
@@ -95,22 +95,27 @@ export default function LoadingScreenPage() {
         </P>
       </DocSection>
 
-      <DocSection id="numerals" title="Kanji numerals & text">
+      <DocSection id="numerals" title="Layout, kanji numerals & text">
         <P>
-          Progress is written in kanji numerals to match the ensō mark, in a Mincho font when the device has one (Yu Mincho, Hiragino
-          Mincho, Noto Serif JP) and serif otherwise. No % sign: the numeral sets the rhythm, and the exact value goes through ARIA.
+          A brush stroke across the middle follows progress, with “Loading” right under it. The number runs down the top edge
+          (tategaki) in kanji numerals to match the ensō mark, in a Mincho font when the device has one (Yu Mincho, Hiragino Mincho,
+          Noto Serif JP) and serif otherwise. The mark in the bottom corner is inked at the same pace and blooms at 100. No % sign: the
+          numeral sets the rhythm, and the exact value goes through ARIA.
         </P>
         <SimpleTable
           head={["Number", "Written"]}
           rows={SAMPLES.map((n) => [n, <span key={n} className="text-subtitle1" style={{ fontFamily: MINCHO }}>{kanji(n)}</span>])}
         />
-        <P>“Loading” sits under the mark, widely tracked and slowly fading in and out. Vietnamese pages show “Đang tải”.</P>
+        <P>
+          “Loading” is widely tracked and slowly fades in and out; Vietnamese pages show “Đang tải”. In RTL the stroke runs from the
+          right and the number and mark swap sides. On failure, the message takes the label's place and the stroke stays where it stalled.
+        </P>
       </DocSection>
 
       <DocSection id="motion" title="Reduced motion">
         <P>
-          With reduced motion on (<C>prefers-reduced-motion: reduce</C>), the ink darkens in place instead of following the brush
-          stroke, “Loading” stays still, and the screen closes at once instead of fading. Progress is still shown in full; only the
+          With reduced motion on (<C>prefers-reduced-motion: reduce</C>), the ink (stroke and mark) darkens in place instead of following
+          the brush, “Loading” stays still, and the screen closes at once instead of fading. Progress is still shown in full; only the
           movement goes.
         </P>
       </DocSection>

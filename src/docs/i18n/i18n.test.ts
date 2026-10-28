@@ -48,6 +48,7 @@ describe("docs i18n (en)", () => {
       "shadcn-registry",
       "slots",
       "ssr",
+      "status-pages",
       "styling",
       "theming",
       "truncation",

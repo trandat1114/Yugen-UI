@@ -77,7 +77,7 @@ export default function LoadingScreenPage() {
       <DocSection
         id="lab"
         title="Phòng thử concept"
-        description="Bốn concept chạy cùng một lần tải mô phỏng. Đổi tốc độ, bật giảm chuyển động hoặc xem từng concept toàn màn hình."
+        description="Hai bộ bố cục: Kanji (gồm concept đang dùng) và Latin cho sản phẩm không dùng chữ Hán. Mọi concept chạy cùng một lần tải mô phỏng để so ở cùng tiến độ, xong thì giữ ở khung cuối. Đổi tốc độ, bật giảm chuyển động, hoặc xem toàn màn hình (vẫn chạy lại được từ thanh điều khiển)."
       >
         <LoadingLab />
       </DocSection>
@@ -94,23 +94,25 @@ export default function LoadingScreenPage() {
         </P>
       </DocSection>
 
-      <DocSection id="numerals" title="Số Hán & chữ">
+      <DocSection id="numerals" title="Bố cục, số Hán & chữ">
         <P>
-          Số tiến độ viết bằng số Hán cho hợp với logo enso, dùng font Mincho nếu máy có (Yu Mincho, Hiragino Mincho, Noto Serif JP),
-          không có thì serif. Không cần dấu %: số chỉ là nhịp, còn con số chính xác đi qua thuộc tính ARIA.
+          Giữa khung là một nét cọ chạy theo tiến độ, chữ “Đang tải” ngay dưới. Số tiến độ viết dọc ở mép trên (tategaki) bằng số Hán
+          cho hợp với logo enso, font Mincho nếu máy có (Yu Mincho, Hiragino Mincho, Noto Serif JP), không có thì serif. Logo ở góc dưới
+          vẽ bằng mực cùng nhịp và nở hoa khi đủ 100. Không cần dấu %: số chỉ là nhịp, con số chính xác đi qua thuộc tính ARIA.
         </P>
         <SimpleTable
           head={["Số", "Viết"]}
           rows={SAMPLES.map((n) => [n, <span key={n} className="text-subtitle1" style={{ fontFamily: MINCHO }}>{kanji(n)}</span>])}
         />
         <P>
-          Chữ “Đang tải” nằm dưới logo, giãn chữ rộng và mờ tỏ chậm. Trang tiếng Anh hiện “Loading”.
+          Chữ “Đang tải” giãn rộng và mờ tỏ chậm; trang tiếng Anh hiện “Loading”. Ở RTL, nét cọ chạy từ phải sang, số và logo đổi bên.
+          Khi lỗi, thông báo thay chỗ chữ và nét cọ dừng ở chỗ treo.
         </P>
       </DocSection>
 
       <DocSection id="motion" title="Giảm chuyển động">
         <P>
-          Khi hệ điều hành bật giảm chuyển động (<C>prefers-reduced-motion: reduce</C>), mực không chạy theo nét bút mà đậm dần tại chỗ,
+          Khi hệ điều hành bật giảm chuyển động (<C>prefers-reduced-motion: reduce</C>), mực (nét cọ và logo) không chạy theo nét bút mà đậm dần tại chỗ,
           chữ “Đang tải” đứng yên, và màn chờ đóng ngay thay vì mờ dần. Tiến độ vẫn hiện đầy đủ, chỉ bỏ phần chuyển động.
         </P>
       </DocSection>

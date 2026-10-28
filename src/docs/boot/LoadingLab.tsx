@@ -1,21 +1,21 @@
 import * as React from "react";
-import { ArrowClockwise16Regular, FullScreenMaximize16Regular } from "@fluentui/react-icons";
+import { ArrowClockwise16Regular } from "@fluentui/react-icons";
 import { Switch, ToggleGroup, ToggleGroupItem } from "@/components/ui";
 import { Button } from "@/components/ui/Button/Button";
 import { cn } from "@/lib/cn";
 import { useLocale } from "../i18n";
-import { ENSO, FLOWER, KASURE, PETAL, PETALS, STAMENS } from "../YugenMark";
+import { PETAL, PETALS } from "../YugenMark";
+import { Blossom, BrushStroke, clamp, InkEnso, PetalGradient, Tategaki } from "./ink";
 import { kanji, MINCHO } from "./kanji";
+import { LabStage } from "./LabStage";
 
-// Phòng thử màn chờ khởi động (trang Yugen Labs "loading-screen"). Concept "Enso mực" là bản đang chạy thật trong
-// splash.{html,css,js}; các concept khác để so sánh trước khi đổi. Mọi kích thước theo cqmin để xem toàn màn hình vẫn đúng tỉ lệ.
-
-/** Đường tâm nét enso cho mặt nạ mực, như #yb-brush trong splash.html. */
-const BRUSH = "M31.10 10.94A16.2 16.2 0 1 1 20.63 9.65";
-
-const clamp = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
+// Phòng thử màn chờ khởi động (trang Yugen Labs "loading-screen"). Concept "Tategaki nét cọ" là bản đang chạy thật trong
+// splash.{html,css,js}; các concept khác để so sánh trước khi đổi. Hai bộ bố cục: số Hán (kanji) và số Latin cho sản phẩm không
+// dùng chữ Hán. Mọi concept chạy chung một lần tải mô phỏng để so ở cùng tiến độ; kích thước theo cqmin để xem toàn màn hình vẫn
+// đúng tỉ lệ. Xong thì giữ ở khung cuối (bản thật mờ đi nhường trang) để còn nhìn được concept lúc đủ 100.
 
 type Scenario = "fast" | "normal" | "slow" | "stalled";
+type Script = "kanji" | "latin";
 
 /** Thời gian tới khi App render (ms); "stalled" dừng ở 62% rồi báo lỗi — splash thật đợi 15 s, ở đây rút ngắn. */
 const SCENARIOS: Record<Scenario, { ms: number; stallAt?: number }> = {
@@ -34,13 +34,28 @@ const STRINGS = {
     scenarios: { fast: "Nhanh", normal: "Vừa", slow: "Chậm", stalled: "Treo" } satisfies Record<Scenario, string>,
     reduce: "Giảm chuyển động",
     replay: "Chạy lại",
-    fullscreen: (name: string) => `Xem ${name} toàn màn hình`,
-    status: (n: number, failed: boolean, done: boolean) => (failed ? "Lỗi sau khi treo" : done ? "Trang đã sẵn sàng" : `Đã tải ${n}%`),
+    script: "Kiểu số",
+    status: (n: number, failed: boolean, done: boolean) =>
+      failed ? "Lỗi sau khi treo" : done ? "Xong, giữ ở khung cuối" : `Đã tải ${n}%`,
+    live: {
+      name: "Tategaki nét cọ",
+      note: "Đang dùng. Nét cọ ở giữa chạy theo tiến độ, số Hán viết dọc ở mép, logo vẽ bằng mực ở góc và nở hoa khi xong.",
+    },
     concepts: [
-      { name: "Enso mực", note: "Đang dùng. Mực chạy theo nét bút, số Hán ở góc, hoa nở ở cuối." },
       { name: "Tategaki", note: "Số viết dọc ở mép, vạch mực chảy xuống theo tiến độ." },
+      { name: "Enso mực", note: "Bản trước. Mực chạy theo nét enso ở giữa, số Hán ở góc." },
       { name: "Nét cọ", note: "Một nét cọ ngang thay thanh tiến độ, số đi theo đầu bút." },
       { name: "Hoa nở", note: "Mỗi 20% nở một cánh; đủ năm cánh thì nhị hiện." },
+    ],
+    latinLive: {
+      name: "Nét cọ Latin",
+      note: "Bản Latin của concept đang dùng: nét cọ và chữ ở giữa, số lớn ở góc dưới đối diện logo.",
+    },
+    latin: [
+      { name: "Số lớn", note: "Số 0–100 thật lớn ở giữa, nét cọ gạch chân chạy theo tiến độ." },
+      { name: "Gáy sách", note: "Số và chữ xoay dọc theo mép như gáy sách, vạch mực chảy xuống." },
+      { name: "Vòng enso", note: "Logo enso lớn ở giữa, số nằm trong vòng." },
+      { name: "Đầu bút", note: "Nét cọ ngang, số đi theo đầu bút." },
     ],
   },
   en: {
@@ -51,13 +66,28 @@ const STRINGS = {
     scenarios: { fast: "Fast", normal: "Medium", slow: "Slow", stalled: "Stalled" } satisfies Record<Scenario, string>,
     reduce: "Reduce motion",
     replay: "Replay",
-    fullscreen: (name: string) => `View ${name} full screen`,
-    status: (n: number, failed: boolean, done: boolean) => (failed ? "Failed after stalling" : done ? "Page ready" : `Loaded ${n}%`),
+    script: "Numerals",
+    status: (n: number, failed: boolean, done: boolean) =>
+      failed ? "Failed after stalling" : done ? "Done, holding the last frame" : `Loaded ${n}%`,
+    live: {
+      name: "Tategaki brush",
+      note: "In use. A brush stroke in the middle follows progress, kanji numerals run down the edge, the mark is inked in the corner and blooms at the end.",
+    },
     concepts: [
-      { name: "Ink ensō", note: "In use. Ink follows the brush stroke, kanji numerals in the corner, a blossom at the end." },
       { name: "Tategaki", note: "Numerals written vertically at the edge, an ink rule running down with progress." },
+      { name: "Ink ensō", note: "Previous version. Ink follows the ensō in the middle, kanji numerals in the corner." },
       { name: "Brush stroke", note: "One horizontal brush stroke instead of a progress bar; the number rides the brush tip." },
       { name: "Bloom", note: "One petal opens every 20%; the stamens appear with the fifth." },
+    ],
+    latinLive: {
+      name: "Latin brush",
+      note: "The Latin counterpart of the live concept: brush stroke and label in the middle, a large number in the bottom corner across from the mark.",
+    },
+    latin: [
+      { name: "Big counter", note: "A very large 0–100 in the middle, underlined by a brush stroke that follows progress." },
+      { name: "Spine", note: "Number and label turned sideways along the edge like a book spine, with an ink rule running down." },
+      { name: "Ensō ring", note: "A large ensō in the middle with the number inside the ring." },
+      { name: "Brush tip", note: "A horizontal brush stroke with the number riding the brush tip." },
     ],
   },
 };
@@ -97,99 +127,6 @@ function useBootSimulation(scenario: Scenario, reduced: boolean, run: number) {
   return state;
 }
 
-/* ------------------------------------------------------------------ hình vẽ */
-
-function PetalGradient({ id }: { id: string }) {
-  return (
-    <radialGradient id={id} cx="0" cy="0" r="10" gradientUnits="userSpaceOnUse">
-      <stop stopColor="#c02a6f" />
-      <stop offset="0.3" stopColor="#ef77a9" />
-      <stop offset="0.7" stopColor="#f8bcd4" />
-      <stop offset="1" stopColor="#fde8f0" />
-    </radialGradient>
-  );
-}
-
-/** Bông anh đào của logo, mỗi cánh một độ mờ (`petal(i)` 0–1); `grow`: cánh nở từ nhỏ ra. */
-function Blossom({ transform, fill, petal, heart, grow }: { transform?: string; fill: string; petal: (i: number) => number; heart: boolean; grow?: boolean }) {
-  return (
-    <g transform={transform}>
-      {PETALS.map(([a, s], i) => {
-        const o = petal(i);
-        return (
-          <path
-            key={a}
-            d={PETAL}
-            transform={`rotate(${a - 8}) scale(${grow ? s * (0.55 + 0.45 * o) : s})`}
-            fill={fill}
-            stroke="#d9588f"
-            strokeOpacity="0.45"
-            strokeWidth="0.35"
-            opacity={o}
-          />
-        );
-      })}
-      <g opacity={heart ? 1 : 0}>
-        {STAMENS.map(([x, y], i) => (
-          <g key={i}>
-            <line x2={x} y2={y} stroke="#b8236a" strokeWidth="0.32" strokeLinecap="round" />
-            <circle cx={x} cy={y} r="0.55" fill="#f3b33d" />
-          </g>
-        ))}
-        <circle r="1.1" fill="#b8236a" />
-      </g>
-    </g>
-  );
-}
-
-/** Mép nét mực loang nhẹ, như #yb-wet. */
-function WetFilter({ id }: { id: string }) {
-  return (
-    <filter id={id} x="-20%" y="-20%" width="140%" height="140%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n" />
-      <feDisplacementMap in="SourceGraphic" in2="n" scale="1.6" />
-      <feGaussianBlur stdDeviation="0.3" />
-    </filter>
-  );
-}
-
-/** Logo vẽ bằng mực theo tiến độ — bản React của SVG trong splash.html. */
-export function InkEnso({ p, reduced, blossom = true, className }: { p: number; reduced: boolean; blossom?: boolean; className?: string }) {
-  const id = React.useId().replace(/:/g, "");
-  const ink = clamp(p / 0.9);
-  return (
-    <svg viewBox="0 0 48 48" className={cn("overflow-visible", className)} aria-hidden>
-      <defs>
-        <WetFilter id={`${id}wet`} />
-        <mask id={`${id}draw`} maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48">
-          <path
-            d={BRUSH}
-            pathLength={100}
-            strokeDasharray="100 100"
-            strokeDashoffset={reduced ? 0 : 100 - 100 * ink}
-            fill="none"
-            stroke="#fff"
-            strokeWidth="9"
-            filter={`url(#${id}wet)`}
-          />
-        </mask>
-        <mask id={`${id}dry`} maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48">
-          <rect width="48" height="48" fill="#fff" />
-          {KASURE.map((d) => (
-            <path key={d} d={d} fill="none" stroke="#000" strokeWidth="0.45" strokeLinecap="round" />
-          ))}
-        </mask>
-        <PetalGradient id={`${id}p`} />
-      </defs>
-      <g mask={`url(#${id}dry)`} fill="currentColor">
-        <path d={ENSO} opacity={0.1} />
-        <path d={ENSO} mask={`url(#${id}draw)`} opacity={reduced ? 0.15 + 0.85 * ink : 1} />
-      </g>
-      {blossom && <Blossom transform={FLOWER} fill={`url(#${id}p)`} petal={(i) => clamp((p - 0.9 - i * 0.018) / 0.018)} heart={p >= 1} />}
-    </svg>
-  );
-}
-
 /* ----------------------------------------------------------------- concept */
 
 interface FrameProps {
@@ -215,11 +152,52 @@ function Label({ failed, reduced, text, className }: Pick<FrameProps, "failed" |
   );
 }
 
-function Numeral({ n, className, vertical, style }: { n: number; className?: string; vertical?: boolean; style?: React.CSSProperties }) {
+function Numeral({ n, className, style }: { n: number; className?: string; style?: React.CSSProperties }) {
   return (
-    <p className={cn("leading-none font-light text-foreground-3", className)} style={{ fontFamily: MINCHO, writingMode: vertical ? "vertical-rl" : undefined, ...style }}>
+    <p className={cn("leading-none font-light text-foreground-3", className)} style={{ fontFamily: MINCHO, ...style }}>
       {kanji(n)}
     </p>
+  );
+}
+
+/** Số Latin: chữ không chân nét mảnh, chữ số đều bề rộng để số không nhảy khi đổi; dấu % nhỏ treo ở đỉnh. */
+function LatinNumber({ n, className, style }: { n: number; className?: string; style?: React.CSSProperties }) {
+  return (
+    <p className={cn("flex items-start leading-none font-extralight tracking-tight text-foreground-3 tabular-nums", className)} style={style}>
+      {n}
+      <span className="ms-[0.06em] mt-[0.1em] text-[0.26em] font-light tracking-normal">%</span>
+    </p>
+  );
+}
+
+/** Bản đang dùng (splash.html): nét cọ + chữ ở giữa, số dọc ở mép trên, logo ở góc dưới. */
+function LiveFrame({ p, n, reduced, failed, text }: FrameProps) {
+  return (
+    <div className="grid h-full place-items-center">
+      {!failed && <Tategaki className="absolute inset-e-[7cqmin] top-[7cqmin] text-[15cqmin]">{kanji(n)}</Tategaki>}
+      <div className="flex w-[56%] flex-col items-center gap-[4cqmin]">
+        <BrushStroke segments={[[0, reduced ? 1 : p]]} opacity={reduced ? 0.15 + 0.85 * p : 1} className="w-full" />
+        <Label failed={failed} reduced={reduced} text={text} className="text-center" />
+      </div>
+      <div className="absolute inset-s-[7cqmin] bottom-[7cqmin]">
+        <InkEnso p={p} reduced={reduced} className="w-[13cqmin]" />
+      </div>
+    </div>
+  );
+}
+
+function TategakiFrame({ p, n, reduced, failed, text }: FrameProps) {
+  return (
+    <div className="relative h-full">
+      {!failed && <Tategaki className="absolute inset-e-[9cqmin] top-[7cqmin] text-[15cqmin]">{kanji(n)}</Tategaki>}
+      <div className="absolute inset-e-[5cqmin] top-[7cqmin] bottom-[7cqmin] w-[0.6cqmin] rounded-circular bg-foreground-1/10">
+        <div className="w-full rounded-circular bg-foreground-1" style={{ height: `${p * 100}%` }} />
+      </div>
+      <div className="absolute inset-s-[7cqmin] bottom-[7cqmin] flex items-center gap-[3cqmin]">
+        <InkEnso p={p} reduced={reduced} className="w-[13cqmin]" />
+        <Label failed={failed} reduced={reduced} text={text} />
+      </div>
+    </div>
   );
 }
 
@@ -235,28 +213,7 @@ function EnsoFrame({ p, n, reduced, failed, text }: FrameProps) {
   );
 }
 
-function TategakiFrame({ p, n, reduced, failed, text }: FrameProps) {
-  return (
-    <div className="relative h-full">
-      {/* Vị trí đặt ở khung bọc: với chữ dọc, inset-inline của chính phần tử là trục dọc. */}
-      {!failed && (
-        <div className="absolute inset-e-[9cqmin] top-[7cqmin]">
-          <Numeral vertical n={n} className="text-[15cqmin]" />
-        </div>
-      )}
-      <div className="absolute inset-e-[5cqmin] top-[7cqmin] bottom-[7cqmin] w-[0.6cqmin] rounded-circular bg-foreground-1/10">
-        <div className="w-full rounded-circular bg-foreground-1" style={{ height: `${p * 100}%` }} />
-      </div>
-      <div className="absolute inset-s-[7cqmin] bottom-[7cqmin] flex items-center gap-[3cqmin]">
-        <InkEnso p={p} reduced={reduced} className="w-[13cqmin]" />
-        <Label failed={failed} reduced={reduced} text={text} />
-      </div>
-    </div>
-  );
-}
-
 function BrushFrame({ p, n, reduced, failed, text }: FrameProps) {
-  const id = React.useId().replace(/:/g, "");
   const ink = clamp(p / 0.97);
   return (
     <div className="grid h-full place-items-center">
@@ -266,27 +223,10 @@ function BrushFrame({ p, n, reduced, failed, text }: FrameProps) {
             n={n}
             className="absolute bottom-full mb-[2cqmin] -translate-x-1/2 text-[11cqmin] whitespace-nowrap rtl:translate-x-1/2"
             // Số đi theo đầu bút; bút chạy từ đầu dòng nên vị trí theo hướng chữ.
-            style={{ insetInlineStart: `${4 + 92 * ink}%` }}
+            style={{ insetInlineStart: `${Math.min(94, -2 + 104 * ink)}%` }}
           />
         )}
-        <svg viewBox="0 0 100 16" className="w-full overflow-visible text-foreground-1 rtl:-scale-x-100" aria-hidden>
-          <defs>
-            <WetFilter id={`${id}wet`} />
-          </defs>
-          <path d="M4 9.5C24 7 46 10.5 68 8.6S90 8.2 96 7.6" fill="none" stroke="currentColor" strokeOpacity="0.1" strokeWidth="3.4" strokeLinecap="round" />
-          <path
-            d="M4 9.5C24 7 46 10.5 68 8.6S90 8.2 96 7.6"
-            pathLength={100}
-            strokeDasharray="100 100"
-            strokeDashoffset={reduced ? 0 : 100 - 100 * ink}
-            opacity={reduced ? 0.15 + 0.85 * ink : 1}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="3.4"
-            strokeLinecap="round"
-            filter={`url(#${id}wet)`}
-          />
-        </svg>
+        <BrushStroke segments={[[0, reduced ? 1 : ink]]} opacity={reduced ? 0.15 + 0.85 * ink : 1} className="w-full" />
         <Label failed={failed} reduced={reduced} text={text} className="mt-[5cqmin] text-center" />
       </div>
     </div>
@@ -314,65 +254,119 @@ function BloomFrame({ p, n, reduced, failed, text }: FrameProps) {
   );
 }
 
-const FRAMES = [EnsoFrame, TategakiFrame, BrushFrame, BloomFrame];
+/* ------------------------------------------------------------ bố cục Latin */
 
-/** Khung trang giả nằm dưới màn chờ, để thấy lúc màn chờ mờ đi nhường chỗ. */
-function MockPage() {
+/** Bản Latin của concept đang dùng: số lớn ở góc dưới cuối dòng, đối diện logo. */
+function LatinLiveFrame({ p, n, reduced, failed, text }: FrameProps) {
   return (
-    <div className="flex h-full gap-[4cqmin] p-[5cqmin]">
-      <div className="hidden w-[22%] flex-col gap-[2cqmin] @[28rem]:flex">
-        {[70, 55, 80, 60, 45].map((w) => (
-          <div key={w} className="h-[2.4cqmin] rounded-circular bg-background-4" style={{ width: `${w}%` }} />
-        ))}
+    <div className="grid h-full place-items-center">
+      <div className="flex w-[56%] flex-col items-center gap-[4cqmin]">
+        <BrushStroke segments={[[0, reduced ? 1 : p]]} opacity={reduced ? 0.15 + 0.85 * p : 1} className="w-full" />
+        <Label failed={failed} reduced={reduced} text={text} className="text-center" />
       </div>
-      <div className="flex flex-1 flex-col gap-[3cqmin]">
-        <div className="h-[6cqmin] w-1/2 rounded-medium bg-background-4" />
-        <div className="h-[2.4cqmin] w-11/12 rounded-circular bg-background-3" />
-        <div className="h-[2.4cqmin] w-4/5 rounded-circular bg-background-3" />
-        <div className="mt-[2cqmin] flex-1 rounded-large bg-background-3" />
+      <div className="absolute inset-s-[7cqmin] bottom-[7cqmin]">
+        <InkEnso p={p} reduced={reduced} className="w-[13cqmin]" />
+      </div>
+      {!failed && <LatinNumber n={n} className="absolute inset-e-[6cqmin] bottom-[5cqmin] text-[20cqmin]" />}
+    </div>
+  );
+}
+
+function CounterFrame({ p, n, reduced, failed, text }: FrameProps) {
+  return (
+    <div className="grid h-full place-items-center">
+      <div className="flex w-[64%] flex-col items-center gap-[5cqmin]">
+        {!failed && <LatinNumber n={n} className="text-[34cqmin] text-foreground-1" />}
+        <BrushStroke segments={[[0, reduced ? 1 : p]]} opacity={reduced ? 0.15 + 0.85 * p : 1} className="w-[80%]" />
+        <Label failed={failed} reduced={reduced} text={text} className="mt-[2cqmin] text-center" />
+      </div>
+      <div className="absolute inset-s-[6cqmin] bottom-[6cqmin]">
+        <InkEnso p={p} reduced={reduced} className="w-[10cqmin]" />
       </div>
     </div>
   );
 }
 
-function Stage({ name, note, done, reduced, fullscreenLabel, children }: { name: string; note: string; done: boolean; reduced: boolean; fullscreenLabel: string; children: React.ReactNode }) {
-  const ref = React.useRef<HTMLDivElement>(null);
-  const [canFullscreen, setCanFullscreen] = React.useState(false);
-  React.useEffect(() => setCanFullscreen(document.fullscreenEnabled), []);
+/** Chữ Latin xoay dọc như gáy sách (vertical-rl đặt chữ Latin nằm nghiêng); khung rộng 1em như Tategaki. */
+function Spine({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <figure className="flex min-w-0 flex-col gap-2">
-      <div
-        ref={ref}
-        aria-hidden
-        className="relative aspect-16/10 overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1 @container-size [&:fullscreen]:rounded-none [&:fullscreen]:border-0"
-      >
-        <MockPage />
-        <div className={cn("absolute inset-0 bg-background-1 text-foreground-1", !reduced && "transition-opacity duration-slow", done && "opacity-0")}>{children}</div>
-      </div>
-      <figcaption className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="text-body1 font-semibold text-foreground-1">{name}</p>
-          <p className="text-caption1 text-foreground-2">{note}</p>
-        </div>
-        {canFullscreen && (
-          <Button
-            appearance="subtle"
-            size="small"
-            icon={<FullScreenMaximize16Regular />}
-            aria-label={fullscreenLabel}
-            title={fullscreenLabel}
-            onClick={() => void ref.current?.requestFullscreen()}
-          />
-        )}
-      </figcaption>
-    </figure>
+    <div className={cn("w-[1em]", className)}>
+      <p className="leading-none [writing-mode:vertical-rl]">{children}</p>
+    </div>
   );
 }
 
-/** Bốn concept màn chờ chạy cùng một lần tải mô phỏng, để so sánh ở cùng tiến độ. */
+function SpineFrame({ p, n, reduced, failed, text }: FrameProps) {
+  return (
+    <div className="relative h-full">
+      {!failed && (
+        <Spine className="absolute inset-e-[9cqmin] top-[7cqmin] text-[15cqmin] font-extralight tracking-tight text-foreground-3 tabular-nums">
+          {n}
+        </Spine>
+      )}
+      <div className="absolute inset-e-[5cqmin] top-[7cqmin] bottom-[7cqmin] w-[0.6cqmin] rounded-circular bg-foreground-1/10">
+        <div className="w-full rounded-circular bg-foreground-1" style={{ height: `${p * 100}%` }} />
+      </div>
+      {failed ? (
+        <Label failed reduced={reduced} text={text} className="absolute inset-s-[7cqmin] top-[7cqmin]" />
+      ) : (
+        <Spine className="absolute inset-e-[9cqmin] bottom-[7cqmin] text-[max(8px,1.9cqmin)] tracking-[0.42em] text-foreground-3 uppercase">
+          <span className={cn(!reduced && "animate-pulse")}>{text.loading}</span>
+        </Spine>
+      )}
+      <div className="absolute inset-s-[7cqmin] bottom-[7cqmin]">
+        <InkEnso p={p} reduced={reduced} className="w-[13cqmin]" />
+      </div>
+    </div>
+  );
+}
+
+function RingFrame({ p, n, reduced, failed, text }: FrameProps) {
+  return (
+    <div className="grid h-full place-items-center">
+      <div className="flex flex-col items-center gap-[3cqmin]">
+        <div className="relative">
+          <InkEnso p={p} reduced={reduced} className="w-[40cqmin]" />
+          {/* Tâm vòng enso ở (24, 25.5) trong hệ 48×48, hơi thấp hơn giữa khung. */}
+          {!failed && (
+            <LatinNumber n={n} className="absolute inset-s-1/2 top-[53%] -translate-1/2 text-[9cqmin] text-foreground-2 rtl:translate-x-1/2" />
+          )}
+        </div>
+        <Label failed={failed} reduced={reduced} text={text} />
+      </div>
+    </div>
+  );
+}
+
+function TipFrame({ p, n, reduced, failed, text }: FrameProps) {
+  const ink = clamp(p / 0.97);
+  return (
+    <div className="grid h-full place-items-center">
+      <div className="relative w-[78%]">
+        {!failed && (
+          <LatinNumber
+            n={n}
+            className="absolute bottom-full mb-[2cqmin] -translate-x-1/2 text-[11cqmin] whitespace-nowrap rtl:translate-x-1/2"
+            style={{ insetInlineStart: `${Math.min(94, -2 + 104 * ink)}%` }}
+          />
+        )}
+        <BrushStroke segments={[[0, reduced ? 1 : ink]]} opacity={reduced ? 0.15 + 0.85 * ink : 1} className="w-full" />
+        <Label failed={failed} reduced={reduced} text={text} className="mt-[5cqmin] text-center" />
+      </div>
+    </div>
+  );
+}
+
+const SETS: Record<Script, { live: React.ComponentType<FrameProps>; frames: React.ComponentType<FrameProps>[] }> = {
+  kanji: { live: LiveFrame, frames: [TategakiFrame, EnsoFrame, BrushFrame, BloomFrame] },
+  latin: { live: LatinLiveFrame, frames: [CounterFrame, SpineFrame, RingFrame, TipFrame] },
+};
+
+/** Năm concept màn chờ (theo kiểu số) chạy cùng một lần tải mô phỏng, để so sánh ở cùng tiến độ. */
 export function LoadingLab() {
   const { locale } = useLocale();
   const text = STRINGS[locale === "en" ? "en" : "vi"];
+  const [script, setScript] = React.useState<Script>("kanji");
   const [scenario, setScenario] = React.useState<Scenario>("normal");
   const [reduced, setReduced] = React.useState(false);
   const [run, setRun] = React.useState(0);
@@ -380,28 +374,58 @@ export function LoadingLab() {
   const { p, failed } = useBootSimulation(scenario, reduced, run);
   const n = p >= 1 ? 100 : Math.min(99, Math.floor(p * 100));
   const done = p >= 1;
+  const frame = { p, n, reduced, failed, text };
+
+  const speed = (
+    <ToggleGroup type="single" size="small" aria-label={text.scenario} value={scenario} onValueChange={(next) => next && setScenario(next as Scenario)}>
+      {(Object.keys(SCENARIOS) as Scenario[]).map((key) => (
+        <ToggleGroupItem key={key} value={key}>
+          {text.scenarios[key]}
+        </ToggleGroupItem>
+      ))}
+    </ToggleGroup>
+  );
+  const scriptToggle = (
+    <ToggleGroup type="single" size="small" aria-label={text.script} value={script} onValueChange={(next) => next && setScript(next as Script)}>
+      <ToggleGroupItem value="kanji">Kanji</ToggleGroupItem>
+      <ToggleGroupItem value="latin">Latin</ToggleGroupItem>
+    </ToggleGroup>
+  );
+  const replay = (
+    <Button size="small" icon={<ArrowClockwise16Regular />} onClick={() => setRun((r) => r + 1)}>
+      {text.replay}
+    </Button>
+  );
+  const status = <p className="text-caption1 text-foreground-2 tabular-nums">{text.status(n, failed, done)}</p>;
+  // Thanh nổi khi xem toàn màn hình: đủ để chạy lại và đổi tốc độ mà không phải thoát ra.
+  const controls = (
+    <>
+      {speed}
+      {replay}
+      {status}
+    </>
+  );
+  const { live: Live, frames } = SETS[script];
+  const live = script === "kanji" ? text.live : text.latinLive;
+  const notes = script === "kanji" ? text.concepts : text.latin;
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-        <ToggleGroup type="single" size="small" aria-label={text.scenario} value={scenario} onValueChange={(next) => next && setScenario(next as Scenario)}>
-          {(Object.keys(SCENARIOS) as Scenario[]).map((key) => (
-            <ToggleGroupItem key={key} value={key}>
-              {text.scenarios[key]}
-            </ToggleGroupItem>
-          ))}
-        </ToggleGroup>
+        {scriptToggle}
+        {speed}
         <Switch label={text.reduce} checked={reduced} onCheckedChange={setReduced} />
-        <Button size="small" icon={<ArrowClockwise16Regular />} onClick={() => setRun((r) => r + 1)}>
-          {text.replay}
-        </Button>
-        <p className="text-caption1 text-foreground-2 tabular-nums">{text.status(n, failed, done)}</p>
+        {replay}
+        {status}
       </div>
+      <LabStage {...live} controls={controls}>
+        <Live {...frame} />
+      </LabStage>
       <div className="grid gap-6 md:grid-cols-2">
-        {FRAMES.map((Frame, i) => (
-          <Stage key={i} {...text.concepts[i]} done={done} reduced={reduced} fullscreenLabel={text.fullscreen(text.concepts[i].name)}>
-            <Frame p={p} n={n} reduced={reduced} failed={failed} text={text} />
-          </Stage>
+        {frames.map((Frame, i) => (
+          <LabStage key={`${script}-${i}`} {...notes[i]} controls={controls}>
+            <Frame {...frame} />
+          </LabStage>
         ))}
       </div>
     </div>

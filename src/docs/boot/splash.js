@@ -6,7 +6,8 @@
 //
 // Tiến độ là thật: đếm file cùng origin (module JS, CSS) đã tải xong, so với số file của lần tải trước (localStorage). Thanh
 // dừng ở 95% tới khi App render xong (html[data-docs-ready], đặt trong App.tsx) rồi mới chạy nốt tới 100. Lần đầu chưa có số
-// đo thì lấy FIRST_GUESS. Giảm chuyển động: mực đậm dần tại chỗ thay vì chạy theo nét bút, không mờ dần khi đóng.
+// đo thì lấy FIRST_GUESS. Tiến độ vẽ ra hai chỗ: nét cọ ở giữa và logo enso ở góc (hoa nở khi đủ 100); số Hán viết dọc ở mép.
+// Giảm chuyển động: mực đậm dần tại chỗ thay vì chạy theo nét bút, không mờ dần khi đóng.
 (function () {
   var root = document.documentElement;
   if (!window.PerformanceObserver || !window.requestAnimationFrame) return;
@@ -86,6 +87,9 @@
       n: box.querySelector("#yb-n"),
       brush: box.querySelector("#yb-brush"),
       ink: box.querySelector("#yb-ink"),
+      stroke: box.querySelector("#yb-stroke"),
+      revealA: box.querySelector("#yb-reveal-a"),
+      revealB: box.querySelector("#yb-reveal-b"),
       petals: box.querySelectorAll(".yb-petal"),
       heart: box.querySelector(".yb-heart"),
       label: box.querySelector("#yb-label"),
@@ -93,14 +97,25 @@
     };
     box.setAttribute("aria-label", en ? "Loading Yugen UI" : "Đang mở Yugen UI");
     if (en) parts.label.textContent = "Loading";
-    if (reduce) parts.brush.setAttribute("stroke-dashoffset", "0");
+    if (reduce) {
+      parts.brush.setAttribute("stroke-dashoffset", "0");
+      parts.revealA.setAttribute("offset", "1");
+      parts.revealB.setAttribute("offset", "1");
+    }
     return parts;
   }
 
   function paint(p) {
     var ink = clamp(p / 0.9);
-    if (reduce) el.ink.style.opacity = String(0.15 + 0.85 * ink);
-    else el.brush.setAttribute("stroke-dashoffset", String(100 - 100 * ink));
+    if (reduce) {
+      el.ink.style.opacity = String(0.15 + 0.85 * ink);
+      el.stroke.style.opacity = String(0.15 + 0.85 * p);
+    } else {
+      el.brush.setAttribute("stroke-dashoffset", String(100 - 100 * ink));
+      // Đầu mực ở p, mép mềm ngay sau (cùng SOFT với src/docs/boot/ink.tsx).
+      el.revealA.setAttribute("offset", String(Math.max(0, p - 0.024)));
+      el.revealB.setAttribute("offset", String(p));
+    }
     // Mực chạy tới đuôi thì hoa anh đào nở từng cánh; nhị hiện khi đủ 100.
     for (var i = 0; i < el.petals.length; i++) el.petals[i].style.opacity = String(clamp((p - 0.9 - i * 0.018) / 0.018));
     el.heart.style.opacity = p >= 1 ? "1" : "0";

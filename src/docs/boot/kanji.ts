@@ -11,3 +11,8 @@ export function kanji(n: number): string {
   if (!tens) return DIGITS[ones];
   return (tens > 1 ? DIGITS[tens] : "") + "十" + (ones ? DIGITS[ones] : "");
 }
+
+/** Mã số đọc từng chữ số, như cách ghi số hiệu trong chữ dọc: 404 → 四〇四, 503 → 五〇三. */
+export function kanjiDigits(code: number): string {
+  return [...String(code)].map((d) => DIGITS[Number(d)]).join("");
+}
