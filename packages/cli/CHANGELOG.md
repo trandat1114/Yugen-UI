@@ -1,6 +1,6 @@
 # @yugen-ui/cli
 
-## Unreleased
+## 0.5.1
 
 - Template `glass`: cherry blossom trips in Kyoto, Tokyo, Hirosaki and around Mount Fuji (photos from Wikimedia Commons,
   credited with their license), `<GlassRefraction />` at the app root, a Settings preview of the bars over a bright,
