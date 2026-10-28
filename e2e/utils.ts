@@ -32,6 +32,8 @@ export async function waitForDocsReady(page: Page) {
   // Nội dung nạp lười (demo component, trang khái niệm): khung xương đánh dấu data-page-loading render cùng h1.
   await expect(page.locator("main [data-page-loading]")).toHaveCount(0, { timeout: 30_000 });
   await expect(page.getByRole("progressbar", { name: "Đang tải trang" })).toHaveCount(0, { timeout: 30_000 });
+  // Màn chờ của dev server (#236, src/docs/boot): tự gỡ sau khi chạy nốt tới 100.
+  await expect(page.locator("#yugen-boot")).toHaveCount(0, { timeout: 30_000 });
   await page.evaluate(() => document.fonts.ready.then(() => undefined));
 }
 

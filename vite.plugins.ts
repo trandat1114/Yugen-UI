@@ -401,3 +401,32 @@ export function yugenMessages(root: string): Plugin {
     },
   };
 }
+
+/**
+ * Màn chờ khi chạy dev server (#236): `npm run dev` không có HTML prerender, nên trước khi React render chỉ là trang trắng.
+ * Chèn src/docs/boot/splash.{css,js,html} vào index.html — chỉ ở dev; bản build đã có nội dung prerender ngay lần vẽ đầu.
+ * Sửa các file đó thì trang tự tải lại.
+ */
+export function yugenBootSplash(root: string): Plugin {
+  const dir = path.join(root, "src", "docs", "boot");
+  const read = (file: string) => fs.readFileSync(path.join(dir, file), "utf8");
+  return {
+    name: "yugen-boot-splash",
+    apply: "serve",
+    configureServer(server) {
+      server.watcher.add(dir);
+      server.watcher.on("change", (file) => {
+        if (path.resolve(file).startsWith(dir)) server.ws.send({ type: "full-reload" });
+      });
+    },
+    transformIndexHtml(html) {
+      return {
+        html: html.replace('<div id="root"></div>', `<div id="root"></div>\n${read("splash.html")}`),
+        tags: [
+          { tag: "style", children: read("splash.css"), injectTo: "head" },
+          { tag: "script", children: read("splash.js"), injectTo: "head" },
+        ],
+      };
+    },
+  };
+}
