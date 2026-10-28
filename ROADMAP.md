@@ -32,7 +32,7 @@ Chưa xếp lịch.
 
 Chi tiết ở trang Có gì mới (`/news`) và `CHANGELOG.md`.
 
-- **0.13.0** (2026-11-10): Khúc xạ cho glass, mùa hoa anh đào trong template Glass
+- **0.13.0** (2026-10-28): Khúc xạ cho glass, mùa hoa anh đào trong template Glass
 - **0.12.0** (2026-10-27): Glass, sáu template mới và chọn cột trong DataGrid
 - **0.11.1** (2026-10-26): Hiệu ứng wave của Skeleton chạy mượt trở lại
 - **0.11.0** (2026-10-25): Chuỗi giao diện thay được, docs tiếng Anh và template mới

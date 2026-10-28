@@ -10,8 +10,11 @@
  * Bản prerelease (-next.N, canary) và bản phát hành trước RULES_SINCE không bị kiểm tra.
  */
 
-/** Ngày các quy tắc có hiệu lực: bản phát hành (hoặc dự kiến) từ ngày này trở đi. */
-export const RULES_SINCE = "2026-10-28";
+/**
+ * Ngày các quy tắc có hiệu lực: bản phát hành (hoặc dự kiến) từ ngày này trở đi. 0.13.0 phát hành ngày 28/10, một ngày sau
+ * 0.12.0 và cùng ngày quy tắc ra đời (maintainer quyết định không chờ), nên quy tắc áp dụng từ bản sau đó.
+ */
+export const RULES_SINCE = "2026-10-29";
 /** Số ngày tối thiểu giữa hai bản cùng cấp. Patch không giới hạn. */
 export const MIN_DAYS = { minor: 14, major: 180 };
 

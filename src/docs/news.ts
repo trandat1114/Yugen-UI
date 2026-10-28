@@ -32,7 +32,7 @@ export const NEWS_KIND_LABEL: Record<NewsKind, string> = {
 export const NEWS: NewsRelease[] = [
   {
     version: "0.13.0",
-    date: "2026-11-10",
+    date: "2026-10-28",
     title: "Khúc xạ cho glass, mùa hoa anh đào trong template Glass",
     summary: "Mép của bề mặt glass bẻ cong ảnh phía sau như vành thấu kính (GlassRefraction, trình duyệt Chromium). Template Glass có thêm Kyoto, Tokyo, Hirosaki và núi Phú Sĩ mùa hoa nở. Thêm Sonner (thông báo xếp chồng) và bốn component hiển thị: Timeline, DescriptionList, Stat, Prose. Trang Templates có chế độ toàn màn hình; Checkbox, Switch và Dropdown trong Field không còn kéo dài trang khi nằm trong form ở một vùng cuộn. Yugen Labs có thêm màn chờ khởi động (nét cọ thư pháp, số Hán hoặc Latin) và trang trạng thái HTTP (404, 500, bảo trì, mất mạng…).",
     items: [
@@ -289,7 +289,7 @@ export const LATEST_RELEASE = NEWS.find((r) => !r.upcoming) ?? NEWS[0];
 export const CLI_NEWS: NewsRelease[] = [
   {
     version: "0.5.1",
-    date: "2026-11-10",
+    date: "2026-10-28",
     title: "Template Glass: mùa hoa anh đào ở Nhật Bản",
     summary: "Template Glass có thêm bốn chuyến đi ở Nhật Bản, khúc xạ ở mép glass, khung xem trước trên ảnh trong trang Cài đặt và bản đồ thế giới ở trang Khám phá. Template Blog và Docs định dạng bài viết bằng Prose.",
     items: [
