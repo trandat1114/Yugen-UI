@@ -35,7 +35,7 @@ export const NEWS: NewsRelease[] = [
     upcoming: true,
     date: "2026-11-10",
     title: "Khúc xạ cho glass, mùa hoa anh đào trong template Glass",
-    summary: "Mép của bề mặt glass bẻ cong ảnh phía sau như vành thấu kính (GlassRefraction, trình duyệt Chromium). Template Glass có thêm Kyoto, Tokyo, Hirosaki và núi Phú Sĩ mùa hoa nở. Thêm Sonner (thông báo xếp chồng) và bốn component hiển thị: Timeline, DescriptionList, Stat, Prose. Trang Templates có chế độ toàn màn hình; Checkbox, Switch và Dropdown trong Field không còn kéo dài trang khi nằm trong form ở một vùng cuộn.",
+    summary: "Mép của bề mặt glass bẻ cong ảnh phía sau như vành thấu kính (GlassRefraction, trình duyệt Chromium). Template Glass có thêm Kyoto, Tokyo, Hirosaki và núi Phú Sĩ mùa hoa nở. Thêm Sonner (thông báo xếp chồng) và bốn component hiển thị: Timeline, DescriptionList, Stat, Prose. Trang Templates có chế độ toàn màn hình; Checkbox, Switch và Dropdown trong Field không còn kéo dài trang khi nằm trong form ở một vùng cuộn. Yugen Labs có thêm màn chờ khởi động (nét cọ thư pháp, số Hán hoặc Latin) và trang trạng thái HTTP (404, 500, bảo trì, mất mạng…).",
     items: [
       { kind: "new", text: "Sonner: thông báo xếp chồng ở góc màn hình, trỏ chuột hoặc focus vào thì xoè ra. Gọi sonner(\"…\") hoặc sonner.success / info / warning / error / loading ở bất kỳ đâu; sonner.promise đổi tại chỗ từ loading sang success hoặc error; gọi lại với cùng id để cập nhật. Có nút hành động và nút huỷ, richColors, vuốt để đóng, F8 để tới vùng thông báo. Dựng trên Radix Toast, không thêm dependency.", href: "/components/sonner" },
       { kind: "new", text: "Timeline (lịch sử, nhật ký hoạt động; detailed và compact), DescriptionList (cặp nhãn / giá trị, tự bớt cột khi hẹp, nút sao chép), Stat (con số chính, delta, ô biểu đồ nhỏ — StatTile giờ dựng trên Stat) và Prose (kiểu chữ cho Markdown / HTML từ CMS, thoát bằng not-prose).", href: "/components/timeline" },
@@ -293,9 +293,10 @@ export const CLI_NEWS: NewsRelease[] = [
     upcoming: true,
     date: "2026-11-10",
     title: "Template Glass: mùa hoa anh đào ở Nhật Bản",
-    summary: "Template Glass có thêm bốn chuyến đi ở Nhật Bản, khúc xạ ở mép glass, khung xem trước trên ảnh trong trang Cài đặt và bản đồ thế giới ở trang Khám phá.",
+    summary: "Template Glass có thêm bốn chuyến đi ở Nhật Bản, khúc xạ ở mép glass, khung xem trước trên ảnh trong trang Cài đặt và bản đồ thế giới ở trang Khám phá. Template Blog và Docs định dạng bài viết bằng Prose.",
     items: [
       { kind: "improved", text: "npx create-yugen-ui@latest my-app --template glass: chuyến đi ở Kyoto, Tokyo, Hirosaki và quanh núi Phú Sĩ, GlassRefraction ở gốc app, trang Cài đặt xem trước trên ảnh sáng, ảnh hoa và ảnh đêm, trang Khám phá là bản đồ thế giới với ghim theo toạ độ thật. Template ghim yugen-ui@^0.13.0.", href: "/templates" },
+      { kind: "improved", text: "Template blog và docs: bài viết Markdown định dạng bằng Prose của yugen-ui thay cho class riêng trên từng thẻ.", href: "/components/prose" },
     ],
   },
   {

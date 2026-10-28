@@ -12,7 +12,7 @@ Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. 
 
 ### 0.13.0 · minor · hạn 2026-11-10
 
-Khúc xạ cho glass, mùa hoa anh đào trong template Glass, Sonner và bốn component hiển thị.
+Khúc xạ cho glass, mùa hoa anh đào trong template Glass, Sonner và bốn component hiển thị; màn chờ và trang trạng thái HTTP trong Yugen Labs.
 
 - [x] Glass phần 2: menu mọc từ nút, thumb glass cho Slider và Switch, trục Glass trong Theme Designer (#210)
 - [x] GlassRefraction: mép bề mặt glass bẻ cong nền phía sau (Chromium); template Glass có chuyến đi ở Nhật Bản và xem trước trên ảnh (#227)
@@ -20,6 +20,8 @@ Khúc xạ cho glass, mùa hoa anh đào trong template Glass, Sonner và bốn 
 - [x] Checkbox, Switch, Field: input ẩn của form không kéo dài trang (#223)
 - [x] Sonner: thông báo xếp chồng, theo promise từ loading tới success / error (#234)
 - [x] Timeline, DescriptionList, Stat và Prose; template Blog và Docs dùng Prose (#174)
+- [x] Màn chờ khởi động cho trang chưa có gì để hiện (dev, 404, prerender đang ẩn); phòng thử concept Kanji và Latin trong Labs (#236)
+- [x] Trang trạng thái HTTP trong Yugen Labs: 11 trạng thái, danh mục nội dung vi / en, đếm ngược theo Retry-After (#238)
 
 ### 1.0.0 · major
 

@@ -38,8 +38,8 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       milestone: "0.13.0",
       kind: "minor",
       due: "2026-11-10",
-      vi: "Khúc xạ cho glass, mùa hoa anh đào trong template Glass, Sonner và bốn component hiển thị.",
-      en: "Glass refraction, cherry blossom season in the Glass template, Sonner and four display components.",
+      vi: "Khúc xạ cho glass, mùa hoa anh đào trong template Glass, Sonner và bốn component hiển thị; màn chờ và trang trạng thái HTTP trong Yugen Labs.",
+      en: "Glass refraction, cherry blossom season in the Glass template, Sonner and four display components; a boot loading screen and HTTP status pages in Yugen Labs.",
       items: [
         { status: "done", issue: 210, vi: "Glass phần 2: menu mọc từ nút, thumb glass cho Slider và Switch, trục Glass trong Theme Designer", en: "Glass part 2: menus that grow from the button, glass thumbs on Slider and Switch, a Glass axis in the Theme Designer" },
         { status: "done", issue: 227, vi: "GlassRefraction: mép bề mặt glass bẻ cong nền phía sau (Chromium); template Glass có chuyến đi ở Nhật Bản và xem trước trên ảnh", en: "GlassRefraction: glass edges bend what is behind them (Chromium); Japan trips and a photo preview in the Glass template" },
@@ -47,6 +47,8 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
         { status: "done", issue: 223, vi: "Checkbox, Switch, Field: input ẩn của form không kéo dài trang", en: "Checkbox, Switch, Field: the hidden form input no longer stretches the page" },
         { status: "done", issue: 234, vi: "Sonner: thông báo xếp chồng, theo promise từ loading tới success / error", en: "Sonner: stacked notifications that follow a promise from loading to success / error" },
         { status: "done", issue: 174, vi: "Timeline, DescriptionList, Stat và Prose; template Blog và Docs dùng Prose", en: "Timeline, DescriptionList, Stat and Prose; the Blog and Docs templates use Prose" },
+        { status: "done", issue: 236, vi: "Màn chờ khởi động cho trang chưa có gì để hiện (dev, 404, prerender đang ẩn); phòng thử concept Kanji và Latin trong Labs", en: "Boot loading screen for pages with nothing to show yet (dev, 404, hidden prerender); a Kanji and Latin concept lab in Labs" },
+        { status: "done", issue: 238, vi: "Trang trạng thái HTTP trong Yugen Labs: 11 trạng thái, danh mục nội dung vi / en, đếm ngược theo Retry-After", en: "HTTP status pages in Yugen Labs: 11 states, vi / en copy catalog, Retry-After countdowns" },
       ],
     },
     {
