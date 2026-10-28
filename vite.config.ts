@@ -13,6 +13,13 @@ export default defineConfig({
       "@": path.resolve(import.meta.dirname, "./src"),
     },
   },
+  // Watcher mặc định duyệt cả thư mục gốc lúc khởi động; worktree của agent (.claude/worktrees, hàng chục nghìn file) và
+  // thư mục build làm HTML đầu tiên về chậm 2–10 s — trang trắng trước khi màn chờ kịp hiện (#236).
+  server: {
+    watch: {
+      ignored: ["**/.claude/**", "**/dist/**", "**/dist-docs/**", "**/dist-ssr/**"],
+    },
+  },
   build: {
     outDir: "dist-docs",
     // Demo + code mẫu nạp lười: mỗi file src/docs/registry/*.tsx thành một chunk riêng (registry/index.ts); entry chỉ giữ metadata.

@@ -1,5 +1,8 @@
-// Màn chờ của docs khi chạy dev server (#236) — plugin yugenBootSplash (vite.plugins.ts) chèn nguyên văn vào <head>, sau
-// script áp theme / ngôn ngữ của index.html. Script thường (không phải module): chạy ngay, trước mọi file của app.
+// Màn chờ của docs (#236), script thường (không phải module) nên chạy ngay, trước mọi file của app.
+// - Dev: plugin yugenBootSplash (vite.plugins.ts) chèn nguyên văn vào <head>, sau script áp theme / ngôn ngữ của index.html;
+//   markup và CSS có sẵn trong HTML.
+// - Bản build: chỉ nạp khi trang không có HTML prerender để hiện (404.html, hoặc data-pending: prerender bị ẩn vì khác
+//   ngôn ngữ / RTL). Plugin bọc script trong hàm nhận YB_CSS, YB_MARKUP và script tự gắn chúng vào trang.
 //
 // Tiến độ là thật: đếm file cùng origin (module JS, CSS) đã tải xong, so với số file của lần tải trước (localStorage). Thanh
 // dừng ở 95% tới khi App render xong (html[data-docs-ready], đặt trong App.tsx) rồi mới chạy nốt tới 100. Lần đầu chưa có số
@@ -7,17 +10,27 @@
 (function () {
   var root = document.documentElement;
   if (!window.PerformanceObserver || !window.requestAnimationFrame) return;
+  var BUILD = typeof YB_MARKUP === "string";
+  if (BUILD) {
+    var style = document.createElement("style");
+    style.textContent = YB_CSS;
+    document.head.appendChild(style);
+    var holder = document.createElement("div");
+    holder.innerHTML = YB_MARKUP;
+    (document.body || root).appendChild(holder.firstElementChild);
+  }
   root.setAttribute("data-boot", "");
 
-  var KEY = "yugen-docs-boot";
-  // Số file trang chủ tải ở dev trước lần render đầu (10/2026); lần tải sau dùng số đo thật.
-  var FIRST_GUESS = 280;
+  var KEY = BUILD ? "yugen-docs-boot-build" : "yugen-docs-boot";
+  // Số file trang chủ tải trước lần render đầu (10/2026): dev phục vụ từng module, bản build gộp thành chunk.
+  var FIRST_GUESS = BUILD ? 64 : 280;
   var expected = FIRST_GUESS;
   try {
     expected = Number(localStorage.getItem(KEY)) || FIRST_GUESS;
   } catch (e) {}
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   var en = root.getAttribute("lang") === "en";
+  var prerendered = root.hasAttribute("data-prerendered");
   var start = performance.now();
   var count = 0;
   var lastLoad = start;
@@ -45,6 +58,15 @@
   function clamp(v) {
     return v < 0 ? 0 : v > 1 ? 1 : v;
   }
+  var DIGITS = "〇一二三四五六七八九";
+  /** 0–100 bằng số Hán: 〇, 七, 十二, 四十, 九十九, 百 (cùng quy tắc với src/docs/boot/kanji.ts). */
+  function kanji(n) {
+    if (n >= 100) return "百";
+    var tens = Math.floor(n / 10);
+    var ones = n % 10;
+    if (!tens) return DIGITS[ones];
+    return (tens > 1 ? DIGITS[tens] : "") + "十" + (ones ? DIGITS[ones] : "");
+  }
 
   var el = null;
   var shown = 0;
@@ -54,6 +76,26 @@
   var finish = 0;
   var number = -1;
   var failed = false;
+
+  /** Chỉ lấy phần tử khi markup đã đọc xong (#yb-n ở cuối): HTML về chậm thì frame đầu có thể chạy khi mới có một nửa. */
+  function find() {
+    var box = document.getElementById("yugen-boot");
+    if (!box || !box.querySelector("#yb-n")) return null;
+    var parts = {
+      box: box,
+      n: box.querySelector("#yb-n"),
+      brush: box.querySelector("#yb-brush"),
+      ink: box.querySelector("#yb-ink"),
+      petals: box.querySelectorAll(".yb-petal"),
+      heart: box.querySelector(".yb-heart"),
+      label: box.querySelector("#yb-label"),
+      error: box.querySelector("#yb-error"),
+    };
+    box.setAttribute("aria-label", en ? "Loading Yugen UI" : "Đang mở Yugen UI");
+    if (en) parts.label.textContent = "Loading";
+    if (reduce) parts.brush.setAttribute("stroke-dashoffset", "0");
+    return parts;
+  }
 
   function paint(p) {
     var ink = clamp(p / 0.9);
@@ -65,13 +107,14 @@
     var n = p >= 1 ? 100 : Math.min(99, Math.floor(p * 100));
     if (n !== number) {
       number = n;
-      el.n.textContent = String(n);
+      el.n.textContent = kanji(n);
       el.box.setAttribute("aria-valuenow", String(n));
     }
   }
 
   function remove() {
-    if (el) el.box.remove();
+    var box = document.getElementById("yugen-boot");
+    if (box) box.remove();
     root.removeAttribute("data-boot");
   }
 
@@ -86,30 +129,17 @@
   }
 
   function frame(now) {
-    if (!el) {
-      var box = document.getElementById("yugen-boot");
-      if (box) {
-        el = {
-          box: box,
-          n: box.querySelector("#yb-n"),
-          brush: box.querySelector("#yb-brush"),
-          ink: box.querySelector("#yb-ink"),
-          petals: box.querySelectorAll(".yb-petal"),
-          heart: box.querySelector(".yb-heart"),
-          error: box.querySelector("#yb-error"),
-        };
-        box.setAttribute("aria-label", en ? "Loading Yugen UI" : "Đang mở Yugen UI");
-        if (reduce) el.brush.setAttribute("stroke-dashoffset", "0");
-      }
-    }
+    if (!el) el = find();
     // Lỗi biên dịch: nhường chỗ cho overlay lỗi của Vite.
     if (document.querySelector("vite-error-overlay")) return remove();
 
-    if (!doneAt && root.hasAttribute("data-docs-ready")) {
+    // Trang prerender hiện lại khi hết data-pending: App đã render, hoặc hẹn giờ trong index.html bỏ ẩn vì JS lỗi.
+    var ready = root.hasAttribute("data-docs-ready") || (prerendered && !root.hasAttribute("data-pending"));
+    if (!doneAt && ready) {
       doneAt = now;
       from = shown;
       observer.disconnect();
-      if (count > 0) {
+      if (count > 0 && root.hasAttribute("data-docs-ready")) {
         try {
           localStorage.setItem(KEY, String(count));
         } catch (e) {}
