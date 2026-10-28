@@ -1,8 +1,8 @@
 import * as React from "react";
-import { ArrowTrending16Regular, ArrowTrendingDown16Regular, Subtract16Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
 import { chartMessages } from "./messages";
+import { Stat, type StatProps } from "../Stat/Stat";
 import { ChartTooltip } from "./ChartParts";
 import {
   linePath,
@@ -168,102 +168,36 @@ export const Sparkline = React.forwardRef<HTMLSpanElement, SparklineProps>(funct
 
 /* ================================================================== StatTile */
 
-export interface StatTileProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
-  /** Nhãn viết hoa chữ đầu câu, không dấu hai chấm. */
-  label: React.ReactNode;
-  value: number | string;
-  /** Mặc định tự rút gọn từ 10.000 (12,9 N; 4,2 Tr…). */
-  valueFormat?: ChartNumberFormat;
-  /** Locale cho Intl.NumberFormat. Mặc định lấy từ YugenProvider. */
-  locale?: string;
-  /** Mức thay đổi có dấu (0.124 = +12,4% với định dạng mặc định). */
-  delta?: number;
-  deltaFormat?: ChartNumberFormat;
-  /** So với kỳ nào — vd. "so với tháng trước". */
-  deltaLabel?: React.ReactNode;
-  /** Chiều nào là tốt: quyết định màu success / danger của delta. */
-  goodDirection?: "up" | "down" | "neutral";
+export interface StatTileProps extends Omit<StatProps, "chart"> {
   /** Chuỗi xu hướng (≈ 12 điểm) — vẽ Sparkline xám, điểm hiện tại tô màu nhấn. */
   trend?: (number | null)[];
   trendLabels?: string[];
-  /** medium 28px · large 40px · hero 68px (một hero mỗi màn hình). */
-  size?: "medium" | "large" | "hero";
-  icon?: React.ReactNode;
 }
 
-/** StatTile — "đôi khi câu trả lời không phải biểu đồ": con số lớn + delta + sparkline tuỳ chọn. */
+/** StatTile — Stat kèm Sparkline vẽ từ `trend`. Ngoài biểu đồ, dùng thẳng `Stat` (ổn định, không thuộc Labs). */
 export const StatTile = React.forwardRef<HTMLDivElement, StatTileProps>(function StatTile(
-  {
-    label,
-    value,
-    valueFormat,
-    locale: localeProp,
-    delta,
-    deltaFormat,
-    deltaLabel,
-    goodDirection = "up",
-    trend,
-    trendLabels,
-    size = "medium",
-    icon,
-    className,
-    ...props
-  },
+  { trend, trendLabels, size = "medium", locale, valueFormat, ...props },
   ref,
 ) {
-  const yugen = useYugen();
-  const locale = localeProp ?? yugen.locale;
-  const msg = useYugenMessages("chart", chartMessages);
-  const valueText =
-    typeof value === "number"
-      ? makeNumberFormatter(locale, valueFormat ?? (Math.abs(value) >= 1e4 ? { notation: "compact", maximumFractionDigits: 1 } : { maximumFractionDigits: 2 }))(value)
-      : value;
-  const deltaText =
-    delta === undefined
-      ? ""
-      : makeNumberFormatter(locale, deltaFormat ?? { style: "percent", maximumFractionDigits: 1, signDisplay: "exceptZero" })(delta);
-  const direction = delta === undefined || delta === 0 ? "flat" : delta > 0 ? "up" : "down";
-  const tone =
-    direction === "flat" || goodDirection === "neutral" ? "neutral" : direction === goodDirection ? "good" : "bad";
-  const DeltaIcon = direction === "up" ? ArrowTrending16Regular : direction === "down" ? ArrowTrendingDown16Regular : Subtract16Regular;
-  const directionText = direction === "up" ? msg.increase : direction === "down" ? msg.decrease : msg.noChange;
-
   return (
-    <div ref={ref} className={cn("flex min-w-0 flex-col gap-1", className)} {...props}>
-      <div className="flex items-center gap-2 text-body1 text-foreground-2">
-        {icon && <span className="flex shrink-0 text-foreground-3 [&_svg]:size-5">{icon}</span>}
-        <span className="min-w-0 truncate">{label}</span>
-      </div>
-      <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2">
-        <div className="min-w-0">
-          <div
-            className={cn(
-              "font-sans font-semibold text-foreground-1",
-              size === "hero" ? "text-display" : size === "large" ? "text-large-title" : "text-title2",
-            )}
-          >
-            <bdi>{valueText}</bdi>
-          </div>
-          {delta !== undefined && (
-            <div className="mt-0.5 flex flex-wrap items-center gap-x-1 text-caption1">
-              <span
-                className={cn(
-                  "inline-flex items-center gap-0.5 font-semibold",
-                  tone === "good" ? "text-success-foreground-1" : tone === "bad" ? "text-danger-foreground-1" : "text-foreground-2",
-                )}
-              >
-                <DeltaIcon aria-hidden className="shrink-0 rtl:-scale-x-100" />
-                <span className="sr-only">{directionText}</span>
-                <bdi>{deltaText}</bdi>
-              </span>
-              {deltaLabel && <span className="text-foreground-3">{deltaLabel}</span>}
-            </div>
-          )}
-        </div>
-        {trend && trend.length > 1 && (
-          <Sparkline data={trend} labels={trendLabels} width={size === "medium" ? 112 : 160} height={size === "medium" ? 36 : 48} locale={locale} valueFormat={valueFormat} />
-        )}
-      </div>
-    </div>
+    <Stat
+      ref={ref}
+      size={size}
+      locale={locale}
+      valueFormat={valueFormat}
+      chart={
+        trend && trend.length > 1 ? (
+          <Sparkline
+            data={trend}
+            labels={trendLabels}
+            width={size === "medium" ? 112 : 160}
+            height={size === "medium" ? 36 : 48}
+            locale={locale}
+            valueFormat={valueFormat}
+          />
+        ) : undefined
+      }
+      {...props}
+    />
   );
 });

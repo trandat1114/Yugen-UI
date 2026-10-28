@@ -1275,14 +1275,16 @@ export default defineConfig({
  * + modulepreload trong dist/index.html (trang lazy không tính); `totalJs` (tuỳ chọn) chặn cả JS trong dist/assets. Tăng có
  * chủ đích: sửa ở đây và ghi lý do trong PR.
  */
+// CSS: theme.css quét mọi component của yugen-ui, nên mỗi component mới làm mọi template nặng thêm (#169). 25 → 26 kB khi
+// thêm Sonner, Timeline, DescriptionList, Stat, Prose (#174, #234): +0,9 kB.
 const BUDGETS = {
-  "vite-starter": { js: 135, css: 25 },
+  "vite-starter": { js: 135, css: 26 },
   // SaaS, Blog: +messagesEn (chuỗi tiếng Anh của mọi component, ~13–17 kB gzip) khi có hai ngôn ngữ (#147); thư mục
   // templates/vite-blog còn chứa bài mẫu của cả hai ngôn ngữ (~1,7 kB, `create --lang` chỉ giữ một).
-  "vite-saas": { js: 190, css: 25 },
-  "vite-blog": { js: 150, css: 25 },
-  "vite-dashboard": { js: 195, css: 25 },
-  "vite-ai-chat": { js: 175, css: 25 },
+  "vite-saas": { js: 190, css: 26 },
+  "vite-blog": { js: 150, css: 26 },
+  "vite-dashboard": { js: 195, css: 26 },
+  "vite-ai-chat": { js: 175, css: 26 },
   "vite-glass": { js: 160, css: 26 },
   // Landing: index.html đã có màn hình đầu (prerender), JS đầu chỉ là main.tsx; React và app (~150 kB) nạp sau lần vẽ đầu.
   "vite-landing": { js: 2, css: 27, totalJs: 165 },

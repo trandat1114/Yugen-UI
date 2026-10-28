@@ -48,7 +48,7 @@ export const Table = React.forwardRef<HTMLTableElement, TableProps>(
         <table
           ref={ref}
           className={cn(
-            "w-full table-fixed border-collapse text-start align-middle text-foreground-1 tabular-nums",
+            "not-prose w-full table-fixed border-collapse text-start align-middle text-foreground-1 tabular-nums",
             TEXT[size],
             className,
           )}

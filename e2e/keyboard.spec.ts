@@ -208,3 +208,33 @@ test.describe("Toast", () => {
     await expect(toast).toBeHidden();
   });
 });
+
+test.describe("Sonner", () => {
+  test("xếp chồng, xoè khi trỏ chuột hoặc focus, Esc đóng toast đang focus", async ({ page }) => {
+    await openDocs(page, "/components/sonner");
+    const add = page.getByRole("button", { name: "Thêm thông báo" });
+    for (let i = 0; i < 3; i++) await add.click();
+    const toasts = page.locator("li[data-type][data-state=open]");
+    await expect(toasts).toHaveCount(3);
+    const front = page.locator("li[data-front=true]");
+    await expect(front).toContainText("Thông báo 3");
+    /** Khoảng cách dọc giữa mép trên của toast cao nhất và thấp nhất. */
+    const spread = async () => {
+      const ys = await Promise.all((await toasts.all()).map(async (t) => (await t.boundingBox())!.y));
+      return Math.max(...ys) - Math.min(...ys);
+    };
+    await expect.poll(spread).toBeLessThan(40);
+
+    await front.hover();
+    await expect(front).toHaveAttribute("data-expanded", "true");
+    await expect.poll(spread).toBeGreaterThan(100);
+    await page.mouse.move(0, 0);
+    await expect(front).toHaveAttribute("data-expanded", "false");
+
+    // Trang docs có nhiều Sonner nên F8 tới vùng của demo khác; focus thẳng vào toast thay cho F8.
+    await front.focus();
+    await expect(front).toHaveAttribute("data-expanded", "true");
+    await page.keyboard.press("Escape");
+    await expect(toasts).toHaveCount(2);
+  });
+});

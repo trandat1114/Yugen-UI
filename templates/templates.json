@@ -6,7 +6,7 @@
     "hint": "Blank app: saved theme, toast, @/ alias and a short welcome page",
     "budget": {
       "js": 135,
-      "css": 25
+      "css": 26
     },
     "meta": {
       "en": {
@@ -26,7 +26,7 @@
     "hint": "SaaS workspace: sidebar, Ctrl K command palette, notifications, 8 pages",
     "budget": {
       "js": 190,
-      "css": 25
+      "css": 26
     },
     "meta": {
       "en": {
@@ -46,7 +46,7 @@
     "hint": "Markdown blog: table of contents, tags, search, build-time SEO",
     "budget": {
       "js": 150,
-      "css": 25
+      "css": 26
     },
     "meta": {
       "en": {
@@ -66,7 +66,7 @@
     "hint": "Sales dashboard: date range, KPIs, charts, customer table with CSV export, 4 pages",
     "budget": {
       "js": 195,
-      "css": 25
+      "css": 26
     },
     "meta": {
       "en": {
@@ -86,7 +86,7 @@
     "hint": "AI chat: saved conversations, streaming answers you can stop, one backend adapter",
     "budget": {
       "js": 175,
-      "css": 25
+      "css": 26
     },
     "meta": {
       "en": {

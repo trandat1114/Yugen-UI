@@ -2,7 +2,7 @@
 
 <!-- Sinh từ src/docs/roadmap.ts bằng `npm run roadmap`. Đừng sửa tay. -->
 
-Kế hoạch theo từng bản phát hành, cập nhật 2026-10-27. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và
+Kế hoạch theo từng bản phát hành, cập nhật 2026-10-28. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và
 phụ thuộc nằm ở [GitHub Project](https://github.com/users/trandat1114/projects/6). `[x]` đã xong, `[~]` đang làm, `[ ]` dự kiến.
 
 Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. English: the community page
@@ -12,12 +12,14 @@ Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. 
 
 ### 0.13.0 · minor · hạn 2026-11-10
 
-Khúc xạ cho glass và mùa hoa anh đào trong template Glass.
+Khúc xạ cho glass, mùa hoa anh đào trong template Glass, Sonner và bốn component hiển thị.
 
 - [x] Glass phần 2: menu mọc từ nút, thumb glass cho Slider và Switch, trục Glass trong Theme Designer (#210)
 - [x] GlassRefraction: mép bề mặt glass bẻ cong nền phía sau (Chromium); template Glass có chuyến đi ở Nhật Bản và xem trước trên ảnh (#227)
 - [x] Trang Templates: xem toàn màn hình, một khung lớn cho các template khác (#224)
 - [x] Checkbox, Switch, Field: input ẩn của form không kéo dài trang (#223)
+- [x] Sonner: thông báo xếp chồng, theo promise từ loading tới success / error (#234)
+- [x] Timeline, DescriptionList, Stat và Prose; template Blog và Docs dùng Prose (#174)
 
 ### 1.0.0 · major
 
