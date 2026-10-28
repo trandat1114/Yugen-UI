@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/Button/Button";
 import { cn } from "@/lib/cn";
 import { useLocale } from "../i18n";
 import { PETAL, PETALS } from "../YugenMark";
-import { Blossom, BrushStroke, clamp, InkEnso, PetalGradient, Tategaki } from "./ink";
+import { Blossom, clamp, createProgress, InkEnso, LiveBrushStroke, PetalGradient, Tategaki, type ProgressSource } from "./ink";
 import { kanji, MINCHO } from "./kanji";
 import { LabStage } from "./LabStage";
 
@@ -92,9 +92,13 @@ const STRINGS = {
   },
 };
 
-/** Mô phỏng đúng cách splash.js chạy: tiến độ đo được (tối đa 95%) làm mượt theo thời gian, render xong thì chạy nốt 400 ms. */
-function useBootSimulation(scenario: Scenario, reduced: boolean, run: number) {
-  const [state, setState] = React.useState({ p: 0, failed: false });
+/**
+ * Mô phỏng đúng cách splash.js chạy: tiến độ đo được (tối đa 95%) làm mượt theo thời gian, render xong thì chạy nốt 400 ms.
+ * Tiến độ liên tục đi qua `progress` (nét cọ, vạch mực đổi transform từng khung hình); state React chỉ đổi khi số % đổi — tối đa
+ * 101 lần mỗi lần chạy thay vì 60 lần mỗi giây cho cả năm khung.
+ */
+function useBootSimulation(scenario: Scenario, reduced: boolean, run: number, progress: ProgressSource) {
+  const [state, setState] = React.useState({ n: 0, failed: false });
   React.useEffect(() => {
     const { ms, stallAt } = SCENARIOS[scenario];
     const start = performance.now();
@@ -103,6 +107,7 @@ function useBootSimulation(scenario: Scenario, reduced: boolean, run: number) {
     let doneAt = 0;
     let from = 0;
     let frame = 0;
+    let n = 0;
     const tick = (now: number) => {
       const t = now - start;
       // Module về theo đợt: nhanh lúc đầu, chậm dần khi còn các file lớn.
@@ -117,20 +122,29 @@ function useBootSimulation(scenario: Scenario, reduced: boolean, run: number) {
       if (doneAt) shown = reduced ? 1 : from + (1 - from) * clamp((now - doneAt) / 400);
       else shown = Math.max(shown, shown + (measured - shown) * (1 - Math.exp(-dt / 220)));
       const failed = stallAt !== undefined && t > ms;
-      setState({ p: shown, failed });
+      progress.set(shown);
+      const next = shown >= 1 ? 100 : Math.min(99, Math.floor(shown * 100));
+      if (next !== n || failed) {
+        n = next;
+        setState({ n, failed });
+      }
       if (shown < 1 && !failed) frame = requestAnimationFrame(tick);
     };
-    setState({ p: 0, failed: false });
+    progress.set(0);
+    setState({ n: 0, failed: false });
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, [scenario, reduced, run]);
+  }, [scenario, reduced, run, progress]);
   return state;
 }
 
 /* ----------------------------------------------------------------- concept */
 
 interface FrameProps {
+  /** Tiến độ theo từng % (state React): logo, số, hoa. */
   p: number;
+  /** Tiến độ liên tục từng khung hình: nét cọ, vạch mực. */
+  progress: ProgressSource;
   n: number;
   reduced: boolean;
   failed: boolean;
@@ -149,6 +163,24 @@ function Label({ failed, reduced, text, className }: Pick<FrameProps, "failed" |
     <p className={cn("ps-[0.42em] text-[max(8px,1.9cqmin)] tracking-[0.42em] text-foreground-3 uppercase", !reduced && "animate-pulse", className)}>
       {text.loading}
     </p>
+  );
+}
+
+/** Vạch mực chảy xuống theo tiến độ: scaleY theo `progress` từng khung hình (giảm chuyển động: theo từng %). */
+function InkRule({ progress, p, reduced }: { progress: ProgressSource; p: number; reduced: boolean }) {
+  const ref = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    if (reduced) return;
+    return progress.subscribe((value) => {
+      if (ref.current) ref.current.style.transform = `scaleY(${value})`;
+    });
+  }, [progress, reduced]);
+  return (
+    <div
+      ref={ref}
+      className="h-full w-full origin-top rounded-circular bg-foreground-1 will-change-transform"
+      style={{ transform: `scaleY(${reduced ? p : progress.value})` }}
+    />
   );
 }
 
@@ -171,12 +203,12 @@ function LatinNumber({ n, className, style }: { n: number; className?: string; s
 }
 
 /** Bản đang dùng (splash.html): nét cọ + chữ ở giữa, số dọc ở mép trên, logo ở góc dưới. */
-function LiveFrame({ p, n, reduced, failed, text }: FrameProps) {
+function LiveFrame({ p, n, reduced, failed, text, progress }: FrameProps) {
   return (
     <div className="grid h-full place-items-center">
       {!failed && <Tategaki className="absolute inset-e-[7cqmin] top-[7cqmin] text-[15cqmin]">{kanji(n)}</Tategaki>}
       <div className="flex w-[56%] flex-col items-center gap-[4cqmin]">
-        <BrushStroke segments={[[0, reduced ? 1 : p]]} opacity={reduced ? 0.15 + 0.85 * p : 1} className="w-full" />
+        <LiveBrushStroke progress={progress} p={p} reduced={reduced} className="w-full" />
         <Label failed={failed} reduced={reduced} text={text} className="text-center" />
       </div>
       <div className="absolute inset-s-[7cqmin] bottom-[7cqmin]">
@@ -186,12 +218,12 @@ function LiveFrame({ p, n, reduced, failed, text }: FrameProps) {
   );
 }
 
-function TategakiFrame({ p, n, reduced, failed, text }: FrameProps) {
+function TategakiFrame({ p, n, reduced, failed, text, progress }: FrameProps) {
   return (
     <div className="relative h-full">
       {!failed && <Tategaki className="absolute inset-e-[9cqmin] top-[7cqmin] text-[15cqmin]">{kanji(n)}</Tategaki>}
       <div className="absolute inset-e-[5cqmin] top-[7cqmin] bottom-[7cqmin] w-[0.6cqmin] rounded-circular bg-foreground-1/10">
-        <div className="w-full rounded-circular bg-foreground-1" style={{ height: `${p * 100}%` }} />
+        <InkRule progress={progress} p={p} reduced={reduced} />
       </div>
       <div className="absolute inset-s-[7cqmin] bottom-[7cqmin] flex items-center gap-[3cqmin]">
         <InkEnso p={p} reduced={reduced} className="w-[13cqmin]" />
@@ -213,8 +245,7 @@ function EnsoFrame({ p, n, reduced, failed, text }: FrameProps) {
   );
 }
 
-function BrushFrame({ p, n, reduced, failed, text }: FrameProps) {
-  const ink = clamp(p / 0.97);
+function BrushFrame({ p, n, reduced, failed, text, progress }: FrameProps) {
   return (
     <div className="grid h-full place-items-center">
       <div className="relative w-[78%]">
@@ -223,10 +254,10 @@ function BrushFrame({ p, n, reduced, failed, text }: FrameProps) {
             n={n}
             className="absolute bottom-full mb-[2cqmin] -translate-x-1/2 text-[11cqmin] whitespace-nowrap rtl:translate-x-1/2"
             // Số đi theo đầu bút; bút chạy từ đầu dòng nên vị trí theo hướng chữ.
-            style={{ insetInlineStart: `${Math.min(94, -2 + 104 * ink)}%` }}
+            style={{ insetInlineStart: `${Math.min(94, -2 + 104 * p)}%` }}
           />
         )}
-        <BrushStroke segments={[[0, reduced ? 1 : ink]]} opacity={reduced ? 0.15 + 0.85 * ink : 1} className="w-full" />
+        <LiveBrushStroke progress={progress} p={p} reduced={reduced} className="w-full" />
         <Label failed={failed} reduced={reduced} text={text} className="mt-[5cqmin] text-center" />
       </div>
     </div>
@@ -257,11 +288,11 @@ function BloomFrame({ p, n, reduced, failed, text }: FrameProps) {
 /* ------------------------------------------------------------ bố cục Latin */
 
 /** Bản Latin của concept đang dùng: số lớn ở góc dưới cuối dòng, đối diện logo. */
-function LatinLiveFrame({ p, n, reduced, failed, text }: FrameProps) {
+function LatinLiveFrame({ p, n, reduced, failed, text, progress }: FrameProps) {
   return (
     <div className="grid h-full place-items-center">
       <div className="flex w-[56%] flex-col items-center gap-[4cqmin]">
-        <BrushStroke segments={[[0, reduced ? 1 : p]]} opacity={reduced ? 0.15 + 0.85 * p : 1} className="w-full" />
+        <LiveBrushStroke progress={progress} p={p} reduced={reduced} className="w-full" />
         <Label failed={failed} reduced={reduced} text={text} className="text-center" />
       </div>
       <div className="absolute inset-s-[7cqmin] bottom-[7cqmin]">
@@ -272,12 +303,12 @@ function LatinLiveFrame({ p, n, reduced, failed, text }: FrameProps) {
   );
 }
 
-function CounterFrame({ p, n, reduced, failed, text }: FrameProps) {
+function CounterFrame({ p, n, reduced, failed, text, progress }: FrameProps) {
   return (
     <div className="grid h-full place-items-center">
       <div className="flex w-[64%] flex-col items-center gap-[5cqmin]">
         {!failed && <LatinNumber n={n} className="text-[34cqmin] text-foreground-1" />}
-        <BrushStroke segments={[[0, reduced ? 1 : p]]} opacity={reduced ? 0.15 + 0.85 * p : 1} className="w-[80%]" />
+        <LiveBrushStroke progress={progress} p={p} reduced={reduced} className="w-[80%]" />
         <Label failed={failed} reduced={reduced} text={text} className="mt-[2cqmin] text-center" />
       </div>
       <div className="absolute inset-s-[6cqmin] bottom-[6cqmin]">
@@ -296,7 +327,7 @@ function Spine({ children, className }: { children: React.ReactNode; className?:
   );
 }
 
-function SpineFrame({ p, n, reduced, failed, text }: FrameProps) {
+function SpineFrame({ p, n, reduced, failed, text, progress }: FrameProps) {
   return (
     <div className="relative h-full">
       {!failed && (
@@ -305,7 +336,7 @@ function SpineFrame({ p, n, reduced, failed, text }: FrameProps) {
         </Spine>
       )}
       <div className="absolute inset-e-[5cqmin] top-[7cqmin] bottom-[7cqmin] w-[0.6cqmin] rounded-circular bg-foreground-1/10">
-        <div className="w-full rounded-circular bg-foreground-1" style={{ height: `${p * 100}%` }} />
+        <InkRule progress={progress} p={p} reduced={reduced} />
       </div>
       {failed ? (
         <Label failed reduced={reduced} text={text} className="absolute inset-s-[7cqmin] top-[7cqmin]" />
@@ -338,8 +369,7 @@ function RingFrame({ p, n, reduced, failed, text }: FrameProps) {
   );
 }
 
-function TipFrame({ p, n, reduced, failed, text }: FrameProps) {
-  const ink = clamp(p / 0.97);
+function TipFrame({ p, n, reduced, failed, text, progress }: FrameProps) {
   return (
     <div className="grid h-full place-items-center">
       <div className="relative w-[78%]">
@@ -347,10 +377,10 @@ function TipFrame({ p, n, reduced, failed, text }: FrameProps) {
           <LatinNumber
             n={n}
             className="absolute bottom-full mb-[2cqmin] -translate-x-1/2 text-[11cqmin] whitespace-nowrap rtl:translate-x-1/2"
-            style={{ insetInlineStart: `${Math.min(94, -2 + 104 * ink)}%` }}
+            style={{ insetInlineStart: `${Math.min(94, -2 + 104 * p)}%` }}
           />
         )}
-        <BrushStroke segments={[[0, reduced ? 1 : ink]]} opacity={reduced ? 0.15 + 0.85 * ink : 1} className="w-full" />
+        <LiveBrushStroke progress={progress} p={p} reduced={reduced} className="w-full" />
         <Label failed={failed} reduced={reduced} text={text} className="mt-[5cqmin] text-center" />
       </div>
     </div>
@@ -371,10 +401,11 @@ export function LoadingLab() {
   const [reduced, setReduced] = React.useState(false);
   const [run, setRun] = React.useState(0);
   React.useEffect(() => setReduced(matchMedia("(prefers-reduced-motion: reduce)").matches), []);
-  const { p, failed } = useBootSimulation(scenario, reduced, run);
-  const n = p >= 1 ? 100 : Math.min(99, Math.floor(p * 100));
+  const progress = React.useMemo(createProgress, []);
+  const { n, failed } = useBootSimulation(scenario, reduced, run, progress);
+  const p = n / 100;
   const done = p >= 1;
-  const frame = { p, n, reduced, failed, text };
+  const frame = { p, n, reduced, failed, text, progress };
 
   const speed = (
     <ToggleGroup type="single" size="small" aria-label={text.scenario} value={scenario} onValueChange={(next) => next && setScenario(next as Scenario)}>

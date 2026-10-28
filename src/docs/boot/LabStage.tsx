@@ -13,6 +13,17 @@ const TEXT = {
 const IDLE_MS = 2500;
 
 /**
+ * Giữ lần render cuối khi khung ra khỏi màn hình: các khung chạy chung một lần tải mô phỏng, nên khung không ai nhìn thấy
+ * khỏi phải dựng lại và vẽ lại 60 lần mỗi giây. Cuộn vào thì render lại ngay với tiến độ hiện tại.
+ */
+const Hold = React.memo(
+  function Hold({ children }: { active: boolean; children: React.ReactNode }) {
+    return <>{children}</>;
+  },
+  (_, next) => !next.active,
+);
+
+/**
  * Khung xem trước của các phòng thử Yugen Labs: tỉ lệ 16:10, nội dung là hình minh hoạ (inert, aria-hidden) với kích thước theo
  * cqmin nên xem toàn màn hình vẫn đúng tỉ lệ. Trình duyệt chỉ vẽ phần tử đang toàn màn hình, nên khi đó `controls` hiện trong
  * một thanh nổi ở góc trên của chính khung; thanh tự ẩn khi không di chuột, focus bằng bàn phím thì hiện lại.
@@ -36,6 +47,7 @@ export function LabStage({
   const [canFullscreen, setCanFullscreen] = React.useState(false);
   const [full, setFull] = React.useState(false);
   const [idle, setIdle] = React.useState(false);
+  const [onScreen, setOnScreen] = React.useState(true);
   const timer = React.useRef<number | undefined>(undefined);
 
   const wake = React.useCallback(() => {
@@ -59,6 +71,14 @@ export function LabStage({
     };
   }, [wake]);
 
+  React.useEffect(() => {
+    const node = ref.current;
+    if (!node || !window.IntersectionObserver) return;
+    const observer = new IntersectionObserver(([entry]) => setOnScreen(entry.isIntersecting));
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   const inert = React.useCallback((node: HTMLDivElement | null) => node?.setAttribute("inert", ""), []);
 
   return (
@@ -73,7 +93,7 @@ export function LabStage({
         )}
       >
         <div ref={inert} aria-hidden className="absolute inset-0">
-          {children}
+          <Hold active={onScreen || full}>{children}</Hold>
         </div>
         {full && (
           <div

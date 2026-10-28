@@ -88,8 +88,7 @@
       brush: box.querySelector("#yb-brush"),
       ink: box.querySelector("#yb-ink"),
       stroke: box.querySelector("#yb-stroke"),
-      revealA: box.querySelector("#yb-reveal-a"),
-      revealB: box.querySelector("#yb-reveal-b"),
+      cover: box.querySelector("#yb-cover"),
       petals: box.querySelectorAll(".yb-petal"),
       heart: box.querySelector(".yb-heart"),
       label: box.querySelector("#yb-label"),
@@ -97,34 +96,34 @@
     };
     box.setAttribute("aria-label", en ? "Loading Yugen UI" : "Đang mở Yugen UI");
     if (en) parts.label.textContent = "Loading";
-    if (reduce) {
-      parts.brush.setAttribute("stroke-dashoffset", "0");
-      parts.revealA.setAttribute("offset", "1");
-      parts.revealB.setAttribute("offset", "1");
-    }
+    if (reduce) parts.brush.setAttribute("stroke-dashoffset", "0");
     return parts;
   }
 
+  /**
+   * Mỗi khung hình chỉ dời tấm che nét cọ (transform: compositor làm, luồng chính không phải vẽ lại). Phần phải vẽ lại — mực của
+   * logo (mặt nạ có filter), số, hoa — chỉ đổi khi số % đổi: tối đa 100 lần cho cả lần tải, thay vì 60 lần mỗi giây.
+   */
   function paint(p) {
+    // Mép mềm của tấm che dài 2.5% bề rộng nét, tấm che rộng 110%: đầu mực ở 104·p% (nét trải từ -2 tới 102).
+    if (!reduce) el.cover.style.transform = "translateX(" + (104 * p - 2.5) / 1.1 + "%)";
+    // Mực chạy tới đuôi thì hoa anh đào nở từng cánh (từng khung hình cho mượt, chỉ ở 10% cuối); nhị hiện khi đủ 100.
+    if (p >= 0.9) {
+      for (var i = 0; i < el.petals.length; i++) el.petals[i].style.opacity = String(clamp((p - 0.9 - i * 0.018) / 0.018));
+      el.heart.style.opacity = p >= 1 ? "1" : "0";
+    }
+    var n = p >= 1 ? 100 : Math.min(99, Math.floor(p * 100));
+    if (n === number) return;
+    number = n;
     var ink = clamp(p / 0.9);
     if (reduce) {
       el.ink.style.opacity = String(0.15 + 0.85 * ink);
       el.stroke.style.opacity = String(0.15 + 0.85 * p);
     } else {
       el.brush.setAttribute("stroke-dashoffset", String(100 - 100 * ink));
-      // Đầu mực ở p, mép mềm ngay sau (cùng SOFT với src/docs/boot/ink.tsx).
-      el.revealA.setAttribute("offset", String(Math.max(0, p - 0.024)));
-      el.revealB.setAttribute("offset", String(p));
     }
-    // Mực chạy tới đuôi thì hoa anh đào nở từng cánh; nhị hiện khi đủ 100.
-    for (var i = 0; i < el.petals.length; i++) el.petals[i].style.opacity = String(clamp((p - 0.9 - i * 0.018) / 0.018));
-    el.heart.style.opacity = p >= 1 ? "1" : "0";
-    var n = p >= 1 ? 100 : Math.min(99, Math.floor(p * 100));
-    if (n !== number) {
-      number = n;
-      el.n.textContent = kanji(n);
-      el.box.setAttribute("aria-valuenow", String(n));
-    }
+    el.n.textContent = kanji(n);
+    el.box.setAttribute("aria-valuenow", String(n));
   }
 
   function remove() {

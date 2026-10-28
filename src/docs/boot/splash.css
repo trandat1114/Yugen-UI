@@ -9,17 +9,19 @@ html[data-boot] #yugen-boot {
   z-index: 9999;
   display: grid;
   place-items: center;
-  background: #fffbfc;
+  /* Màu nền cũng là màu tấm che nét cọ (.yb-cover). */
+  --yb-bg: #fffbfc;
+  background: var(--yb-bg);
   color: #242424;
   font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
   transition: opacity 360ms cubic-bezier(0.33, 0, 0.67, 1);
 }
 html[data-theme="dark"] #yugen-boot {
-  background: #1c191b;
+  --yb-bg: #1c191b;
   color: #ffffff;
 }
 html[data-theme="high-contrast"] #yugen-boot {
-  background: #000000;
+  --yb-bg: #000000;
   color: #ffffff;
 }
 html[data-boot="done"] #yugen-boot {
@@ -48,19 +50,34 @@ html[data-boot="done"] #yugen-boot {
   align-items: center;
   width: clamp(220px, 56vw, 760px);
 }
-#yugen-boot .yb-stroke {
+/* Nét vẽ sẵn; tấm che màu nền trượt sang để hiện nét. Cắt ở khung để tấm che không đè lên số ở mép. Bút chạy từ đầu dòng. */
+#yugen-boot .yb-line {
+  position: relative;
   width: 100%;
-  height: auto;
-  overflow: visible;
+  overflow: hidden;
 }
-/* Bút chạy từ đầu dòng. */
-html[dir="rtl"] #yugen-boot .yb-stroke {
+html[dir="rtl"] #yugen-boot .yb-line {
   transform: scaleX(-1);
 }
 #yugen-boot .yb-stroke {
+  display: block;
+  width: 100%;
+  height: auto;
   fill: currentColor;
 }
+#yugen-boot .yb-cover {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 110%;
+  /* Mép trái mềm (2.5% bề rộng nét) là đầu mực. */
+  background: linear-gradient(to right, transparent, var(--yb-bg) 2.27%);
+  transform: translateX(-2.27%);
+  will-change: transform;
+}
 #yugen-boot .yb-track {
+  position: absolute;
+  inset: 0;
   opacity: 0.1;
 }
 html[data-theme="dark"] #yugen-boot .yb-track {
@@ -152,6 +169,10 @@ html[data-boot="error"] #yugen-boot .yb-error {
   display: block;
 }
 @media (prefers-reduced-motion: reduce) {
+  /* Mực đậm dần tại chỗ (splash.js) thay vì tấm che trượt. */
+  #yugen-boot .yb-cover {
+    display: none;
+  }
   html[data-boot] #yugen-boot,
   #yugen-boot .yb-corner,
   #yugen-boot .yb-center,
@@ -163,8 +184,11 @@ html[data-boot="error"] #yugen-boot .yb-error {
 }
 @media (forced-colors: active) {
   html[data-boot] #yugen-boot {
-    background: Canvas;
+    --yb-bg: Canvas;
     color: CanvasText;
+  }
+  #yugen-boot .yb-cover {
+    forced-color-adjust: none;
   }
   #yugen-boot .yb-num,
   #yugen-boot .yb-label {

@@ -41,7 +41,9 @@ describe("màn chờ docs", () => {
       const d = ink.match(new RegExp(`export const ${name} = "([^"]+)";`))![1];
       expect(splash, name).toContain(`d="${d}"`);
     }
-    expect(splash).toContain(`<path class="yb-track" d="${ink.match(/export const STROKE_BODY = "([^"]+)";/)![1]}"`);
+    // Vệt mờ của cả nét (nằm trên tấm che) cũng là thân nét.
+    const body = ink.match(/export const STROKE_BODY = "([^"]+)";/)![1];
+    expect(splash.match(/<svg class="yb-stroke yb-track"[^>]*>\s*<path d="([^"]+)"/)![1]).toBe(body);
   });
 
   it("dev: chèn markup sau #root và style / script vào <head>", () => {

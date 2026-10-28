@@ -198,6 +198,82 @@ export function BrushStroke({ segments, opacity = 1, className }: { segments: [n
 }
 
 /**
+ * Tiến độ chạy liên tục mà không qua state React: vòng rAF ghi `value` và báo cho người nghe, người nghe tự đổi `transform`.
+ * React chỉ render lại khi số % đổi — như splash.js.
+ */
+export interface ProgressSource {
+  readonly value: number;
+  set(value: number): void;
+  subscribe(listener: (value: number) => void): () => void;
+}
+
+export function createProgress(): ProgressSource {
+  const listeners = new Set<(value: number) => void>();
+  let value = 0;
+  return {
+    get value() {
+      return value;
+    },
+    set(next) {
+      value = next;
+      listeners.forEach((listener) => listener(next));
+    },
+    subscribe(listener) {
+      listeners.add(listener);
+      return () => void listeners.delete(listener);
+    },
+  };
+}
+
+/** Vị trí tấm che của LiveBrushStroke: mép mềm dài 2.5% bề rộng nét, tấm che rộng 110%, đầu mực ở 104·p% (như splash.js). */
+const coverAt = (p: number) => `translateX(${(104 * p - 2.5) / 1.1}%)`;
+
+/**
+ * Nét cọ chạy theo tiến độ, cùng cách với splash.html: nét vẽ sẵn không đổi, tấm che màu nền trượt sang bằng transform (chạy
+ * trên compositor, không phải vẽ lại từng khung hình), vệt mờ của cả nét nằm trên tấm che. Tấm che lấy màu nền của khung
+ * (background-1). Giảm chuyển động: không có tấm che, mực đậm dần theo `p` (đổi theo từng %).
+ */
+export function LiveBrushStroke({ progress, p, reduced, className }: { progress: ProgressSource; p: number; reduced: boolean; className?: string }) {
+  const id = React.useId().replace(/:/g, "");
+  const cover = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    if (reduced) return;
+    return progress.subscribe((value) => {
+      if (cover.current) cover.current.style.transform = coverAt(value);
+    });
+  }, [progress, reduced]);
+  return (
+    <div className={cn("relative overflow-hidden text-foreground-1 rtl:-scale-x-100", className)}>
+      <svg viewBox="0 0 100 18" className="block w-full" aria-hidden>
+        <defs>
+          <mask id={`${id}dry`} maskUnits="userSpaceOnUse" x="-2" y="-2" width="104" height="22">
+            <rect x="-2" y="-2" width="104" height="22" fill="#fff" />
+            <path d={STROKE_DRY} fill="#000" />
+          </mask>
+        </defs>
+        <g fill="currentColor" opacity={reduced ? 0.15 + 0.85 * p : 1}>
+          <path d={STROKE_BODY} mask={`url(#${id}dry)`} />
+          <path d={STROKE_HAIRS} />
+          {STROKE_DOTS.map(([cx, cy, r]) => (
+            <circle key={cx} cx={cx} cy={cy} r={r} />
+          ))}
+        </g>
+      </svg>
+      {!reduced && (
+        <div
+          ref={cover}
+          className="absolute inset-y-0 left-0 w-[110%] will-change-transform"
+          style={{ background: "linear-gradient(to right, transparent, var(--color-background-1) 2.27%)", transform: coverAt(progress.value) }}
+        />
+      )}
+      <svg viewBox="0 0 100 18" className="absolute inset-0 w-full" aria-hidden>
+        <path d={STROKE_BODY} fill="currentColor" opacity={0.1} />
+      </svg>
+    </div>
+  );
+}
+
+/**
  * Chữ dọc (tategaki) bằng font Mincho. `className` là vị trí và cỡ chữ của khung bọc: với chữ dọc, inset-inline của chính
  * phần tử là trục dọc, nên đặt chỗ ở khung ngang bên ngoài. Khung rộng đúng 1em vì để tự co thì Chrome tính sai bề rộng của
  * chữ dọc trong khung chữ ngang, và chữ tràn ra mép (như .yb-side trong splash.css).
