@@ -1,7 +1,8 @@
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import ts from "typescript";
-import type { Plugin, ViteDevServer } from "vite";
+import type { Plugin, ResolvedConfig, ViteDevServer } from "vite";
 
 const VIRTUAL_ID = "virtual:yugen-type-exports";
 const RESOLVED_ID = "\0" + VIRTUAL_ID;
@@ -398,6 +399,56 @@ export function yugenMessages(root: string): Plugin {
       const all = collect();
       const data = id === "\0" + MESSAGES_ID ? all : all.map(({ namespace, folder }) => ({ namespace, folder }));
       return `export default ${JSON.stringify(data)};`;
+    },
+  };
+}
+
+/**
+ * Màn chờ của docs (#236), từ src/docs/boot/splash.{css,js,html}.
+ * - Dev: `npm run dev` không có HTML prerender, trước khi React render chỉ là trang trắng — chèn cả ba vào index.html.
+ *   Sửa các file đó thì trang tự tải lại.
+ * - Build: trang prerender có nội dung ngay lần vẽ đầu nên không cần màn chờ. Chỉ thêm một script nhỏ: trang không có HTML
+ *   prerender để hiện (404.html, hoặc data-pending vì khác ngôn ngữ / RTL) thì nạp assets/boot-<hash>.js (CSS + markup + script).
+ */
+export function yugenBootSplash(root: string): Plugin {
+  const dir = path.join(root, "src", "docs", "boot");
+  const read = (file: string) => fs.readFileSync(path.join(dir, file), "utf8");
+  const isSplash = (file: string) => path.dirname(path.resolve(file)) === dir && /^splash\.(html|css|js)$/.test(path.basename(file));
+  let config: ResolvedConfig;
+  let fileName = "";
+  return {
+    name: "yugen-boot-splash",
+    configResolved(resolved) {
+      config = resolved;
+    },
+    configureServer(server) {
+      server.watcher.on("change", (file) => {
+        if (isSplash(file)) server.ws.send({ type: "full-reload" });
+      });
+    },
+    buildStart() {
+      if (config.command !== "build" || config.build.ssr) return;
+      const source =
+        "(function (YB_CSS, YB_MARKUP) {\n" +
+        read("splash.js") +
+        `})(${JSON.stringify(read("splash.css"))}, ${JSON.stringify(read("splash.html").trim())});\n`;
+      fileName = `${config.build.assetsDir}/boot-${createHash("sha256").update(source).digest("hex").slice(0, 8)}.js`;
+      this.emitFile({ type: "asset", fileName, source });
+    },
+    transformIndexHtml(html) {
+      if (config.command === "serve") {
+        return {
+          html: html.replace('<div id="root"></div>', `<div id="root"></div>
+${read("splash.html")}`),
+          tags: [
+            { tag: "style", children: read("splash.css"), injectTo: "head" },
+            { tag: "script", children: read("splash.js"), injectTo: "head" },
+          ],
+        };
+      }
+      if (!fileName) return html;
+      const loader = `(function () { var r = document.documentElement; if (r.hasAttribute("data-prerendered") && !r.hasAttribute("data-pending")) return; var s = document.createElement("script"); s.src = ${JSON.stringify(config.base + fileName)}; document.head.appendChild(s); })();`;
+      return [{ tag: "script", children: loader, injectTo: "head" }];
     },
   };
 }

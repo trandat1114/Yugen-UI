@@ -298,6 +298,33 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
       "anti-patterns": "Common mistakes",
     },
   },
+  "loading-screen": {
+    title: "Boot loading screen",
+    lead: "A full-page loading screen belongs only where the page has nothing to show yet. When you use one, measure progress from real loading, close it as soon as the page is ready and give it a way out when something fails.",
+    toc: {
+      when: "When to use it",
+      lab: "Concept lab",
+      progress: "Real progress",
+      numerals: "Layout, kanji numerals & text",
+      motion: "Reduced motion",
+      a11y: "Accessibility",
+      rules: "Do and don't",
+    },
+  },
+  "status-pages": {
+    title: "HTTP status pages",
+    lead: "404, 500, maintenance, offline: when a whole page can't render, say what happened, offer one next step and recover on its own when it can, in the same layout as the boot loading screen.",
+    toc: {
+      when: "When a page of its own",
+      lab: "Lab",
+      catalog: "Status catalog",
+      copy: "Writing the copy",
+      art: "Mark & vertical code",
+      recovery: "Recovering on its own",
+      a11y: "Accessibility",
+      rules: "Do and don't",
+    },
+  },
   "wait-ux": {
     title: "Wait UX",
     lead: "Waiting can't be avoided, but how it feels can be designed. Pick the right signal for each duration, keep loaders from flashing, keep content still, and always offer a way out when something fails.",

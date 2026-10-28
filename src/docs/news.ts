@@ -31,6 +31,27 @@ export const NEWS_KIND_LABEL: Record<NewsKind, string> = {
 
 export const NEWS: NewsRelease[] = [
   {
+    version: "0.13.0",
+    date: "2026-11-10",
+    title: "Khúc xạ cho glass, mùa hoa anh đào trong template Glass",
+    summary: "Mép của bề mặt glass bẻ cong ảnh phía sau như vành thấu kính (GlassRefraction, trình duyệt Chromium). Template Glass có thêm Kyoto, Tokyo, Hirosaki và núi Phú Sĩ mùa hoa nở. Thêm Sonner (thông báo xếp chồng) và bốn component hiển thị: Timeline, DescriptionList, Stat, Prose. Trang Templates có chế độ toàn màn hình; Checkbox, Switch và Dropdown trong Field không còn kéo dài trang khi nằm trong form ở một vùng cuộn. Yugen Labs có thêm màn chờ khởi động (nét cọ thư pháp, số Hán hoặc Latin) và trang trạng thái HTTP (404, 500, bảo trì, mất mạng…).",
+    items: [
+      { kind: "new", text: "Sonner: thông báo xếp chồng ở góc màn hình, trỏ chuột hoặc focus vào thì xoè ra. Gọi sonner(\"…\") hoặc sonner.success / info / warning / error / loading ở bất kỳ đâu; sonner.promise đổi tại chỗ từ loading sang success hoặc error; gọi lại với cùng id để cập nhật. Có nút hành động và nút huỷ, richColors, vuốt để đóng, F8 để tới vùng thông báo. Dựng trên Radix Toast, không thêm dependency.", href: "/components/sonner" },
+      { kind: "new", text: "Timeline (lịch sử, nhật ký hoạt động; detailed và compact), DescriptionList (cặp nhãn / giá trị, tự bớt cột khi hẹp, nút sao chép), Stat (con số chính, delta, ô biểu đồ nhỏ — StatTile giờ dựng trên Stat) và Prose (kiểu chữ cho Markdown / HTML từ CMS, thoát bằng not-prose).", href: "/components/timeline" },
+      { kind: "improved", text: "Template Blog và Docs định dạng bài viết bằng Prose thay cho class riêng trên từng thẻ.", href: "/templates" },
+      { kind: "new", text: "GlassRefraction (Yugen Labs): đặt một lần ở gốc app, mép của mọi bề mặt glass bẻ cong phần nền phía sau như vành thấu kính, phần giữa vẫn mờ nên chữ giữ tương phản. Chỉ trình duyệt Chromium vẽ được; Safari và Firefox giữ glass như cũ. Tắt cùng blur khi giảm trong suốt, tăng tương phản, forced colors và theme tương phản cao.", href: "/foundations/glass" },
+      { kind: "new", text: "Slider và Switch có material=\"glass\" (Yugen Labs): khi đang nhấn hoặc kéo, thumb thành glass, to ra trên Slider để thấy thanh trượt qua nó, dài ra trên Switch.", href: "/components/slider" },
+      { kind: "improved", text: "MenuPopover và PopoverSurface glass mọc ra từ nút mở và thu về đó khi đóng; khi giảm chuyển động vẫn chỉ mờ dần như cũ.", href: "/foundations/glass" },
+      { kind: "improved", text: "Theme Designer: trục Glass (trong, mặc định, mờ đục) và sắc glass theo brand, xem trước trên ảnh, kiểm tra chữ trên glass vẫn ≥ 4.5:1 khi phía sau đen hoặc trắng; CSS xuất kèm các biến glass.", href: "/theme-designer" },
+      { kind: "improved", text: "Template Glass: bốn chuyến đi mùa hoa anh đào ở Kyoto, Tokyo, Hirosaki và quanh núi Phú Sĩ (ảnh Wikimedia Commons, ghi nguồn và giấy phép); trang Cài đặt có khung xem trước thanh và nút điều khiển trên ảnh sáng, ảnh hoa và ảnh đêm; trang Khám phá là bản đồ thế giới (Natural Earth), mỗi chuyến đi ghim đúng toạ độ, ghim gần nhau gộp lại và phóng tới khi chọn.", href: "/templates" },
+      { kind: "improved", text: "Trang Templates: nút toàn màn hình trên mỗi preview, chọn khổ máy tính, máy tính bảng hoặc điện thoại; link ?preview=<template> mở thẳng chế độ này. Các template khác chọn bằng tab và xem trong một khung lớn bằng template nổi bật; link #<template> chọn sẵn template.", href: "/templates" },
+      { kind: "new", text: "Màn chờ khởi động (Yugen Labs): nét cọ ở giữa chạy theo tiến độ tải thật, số Hán 〇–百 viết dọc ở mép, logo enso vẽ bằng mực ở góc và nở hoa khi xong. Hiện ở npm run dev, 404.html và trang prerender đang bị ẩn vì khác ngôn ngữ hoặc RTL. Trang Labs có phòng thử các concept màn chờ theo hai kiểu số Kanji và Latin, xem được toàn màn hình.", href: "/concepts/loading-screen" },
+      { kind: "new", text: "Trang trạng thái HTTP (Yugen Labs): 400, 401, 403, 404, 410, 429, 500, 503, 504, mất mạng và bản mới trong cùng bố cục với màn chờ, logo đổi theo trạng thái, đếm ngược theo Retry-After; kèm danh mục nội dung và cách tự khôi phục.", href: "/concepts/status-pages" },
+      { kind: "improved", text: "Báo trước: React 18.3 vẫn được hỗ trợ đến hết 0.x; từ 1.0, Yugen UI chỉ hỗ trợ React 19. Nếu app còn dùng React 18, hãy lên React 19 trước khi cập nhật lên 1.0.", href: "/concepts/quick-start" },
+      { kind: "fixed", text: "Checkbox, Switch và Dropdown trong Field: khi nằm trong <form> ở một vùng cuộn, input ẩn dùng để gửi form không còn kéo dài trang và để lại khoảng trống phía dưới.", href: "/components/checkbox" },
+    ],
+  },
+  {
     version: "0.12.0",
     date: "2026-10-27",
     title: "Glass, sáu template mới và chọn cột trong DataGrid",
@@ -266,6 +287,16 @@ export const LATEST_RELEASE = NEWS.find((r) => !r.upcoming) ?? NEWS[0];
  * kiểm tra cùng CHANGELOG của CLI.
  */
 export const CLI_NEWS: NewsRelease[] = [
+  {
+    version: "0.5.1",
+    date: "2026-11-10",
+    title: "Template Glass: mùa hoa anh đào ở Nhật Bản",
+    summary: "Template Glass có thêm bốn chuyến đi ở Nhật Bản, khúc xạ ở mép glass, khung xem trước trên ảnh trong trang Cài đặt và bản đồ thế giới ở trang Khám phá. Template Blog và Docs định dạng bài viết bằng Prose.",
+    items: [
+      { kind: "improved", text: "npx create-yugen-ui@latest my-app --template glass: chuyến đi ở Kyoto, Tokyo, Hirosaki và quanh núi Phú Sĩ, GlassRefraction ở gốc app, trang Cài đặt xem trước trên ảnh sáng, ảnh hoa và ảnh đêm, trang Khám phá là bản đồ thế giới với ghim theo toạ độ thật. Template ghim yugen-ui@^0.13.0.", href: "/templates" },
+      { kind: "improved", text: "Template blog và docs: bài viết Markdown định dạng bằng Prose của yugen-ui thay cho class riêng trên từng thẻ.", href: "/components/prose" },
+    ],
+  },
   {
     version: "0.5.0",
     date: "2026-10-27",

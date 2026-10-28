@@ -9,7 +9,7 @@ const vi: Content = {
   search: { title: "Tìm chuyến đi", placeholder: "Địa điểm, chuyến đi hoặc điểm nhấn", trips: "Chuyến đi", empty: "Không có chuyến đi nào khớp." },
   home: {
     title: "Những nơi đáng đi đường vòng",
-    lead: "Nhật ký về bờ biển, sống núi và thung lũng yên tĩnh. Ảnh là chính; các nút điều khiển nổi bên trên.",
+    lead: "Nhật ký về mùa hoa anh đào ở Nhật Bản, bờ biển, sống núi và thung lũng yên tĩnh. Ảnh là chính; các nút điều khiển nổi bên trên.",
     cta: "Xem bản đồ",
     tripsTitle: "Chuyến đi",
     tripsSummary: (trips, km) => `${trips} chuyến · ${km} km đi bộ`,
@@ -33,20 +33,25 @@ const vi: Content = {
   },
   explore: {
     title: "Khám phá",
-    lead: "Mọi chuyến đi trên một bức ảnh. Chọn một điểm để mở.",
-    picture: "Bản đồ các chuyến đi",
+    lead: "Mọi chuyến đi trên một bản đồ. Chọn một điểm để mở.",
+    picture: "Bản đồ thế giới với các chuyến đi",
     controls: "Điều khiển bản đồ",
     search: "Lọc địa điểm",
     filters: "Loại chuyến đi",
-    categories: { all: "Tất cả", coast: "Biển", mountains: "Núi", desert: "Sa mạc", forest: "Rừng" },
+    categories: { all: "Tất cả", sakura: "Hoa anh đào", coast: "Biển", mountains: "Núi", desert: "Sa mạc", forest: "Rừng" },
     zoomIn: "Phóng to",
     zoomOut: "Thu nhỏ",
+    group: (titles) => `Phóng to ${titles.length} chuyến đi: ${titles.join(", ")}`,
     openTrip: "Mở chuyến đi",
     noMatch: "Không có địa điểm nào khớp bộ lọc.",
   },
   settings: {
     title: "Cài đặt",
     appearance: "Giao diện",
+    preview: "Xem trước",
+    previewHint: "Thanh và nút điều khiển trên ảnh, theo các tuỳ chọn bên dưới.",
+    previewPhoto: "Ảnh phía sau",
+    previewPhotos: { day: "Ban ngày", petals: "Hoa", night: "Ban đêm" },
     theme: "Theme",
     themes: { light: "Sáng", dark: "Tối", "high-contrast": "Tương phản cao" },
     brand: "Brand",
@@ -59,30 +64,71 @@ const vi: Content = {
     accessibility: "Trợ năng",
     accessibilityItems: [
       "Chữ trên glass giữ tương phản 4.5:1 trên mọi bức ảnh.",
+      "Trên trình duyệt Chromium, mép glass bẻ cong ảnh phía sau như vành thấu kính; phần giữa vẫn mờ nên chữ giữ tương phản. Bật Giảm trong suốt thì hiệu ứng tắt.",
       "Giảm trong suốt, Tăng tương phản và chế độ màu cưỡng bức đổi glass thành nền đặc.",
       "Theme tương phản cao dùng nền đen đặc, viền trắng.",
       "Thanh tab thu gọn khi cuộn xuống và hiện lại khi cuộn lên; trình đọc màn hình vẫn đọc được tên tab.",
     ],
     credits: "Nguồn ảnh",
-    creditsLead: "Ảnh mẫu từ Unsplash (Unsplash License).",
-    photoBy: (author) => `Ảnh của ${author}`,
+    creditsLead: "Ảnh thiên nhiên từ Unsplash (Unsplash License), ảnh Nhật Bản từ Wikimedia Commons theo giấy phép ghi kèm.",
+    photoBy: (author, license) => `Ảnh của ${author} (${license})`,
   },
   notFound: { title: "Không tìm thấy trang", body: "Trang này không tồn tại hoặc đã được chuyển.", action: "Về nhật ký" },
-  categories: { coast: "Biển", mountains: "Núi", desert: "Sa mạc", forest: "Rừng" },
+  categories: { sakura: "Hoa anh đào", coast: "Biển", mountains: "Núi", desert: "Sa mạc", forest: "Rừng" },
   trips: {
+    hirosaki: {
+      title: "Công viên thành Hirosaki",
+      place: "Hirosaki, Aomori",
+      summary: "Hơn hai nghìn cây anh đào quanh hào thành, một cây cầu đỏ và những lối đi phủ cánh hoa.",
+      story: [
+        "Hirosaki nở muộn, khi mùa hoa ở phía nam đã qua. Công viên quanh thành có hơn hai nghìn cây, và mặt hào chuyển hồng khi cánh hoa bắt đầu rơi.",
+        "Chúng tôi quay lại khi trời tối để xem đèn: cây cầu đỏ và bóng của nó dưới nước, giữa hàng cây được chiếu sáng từ dưới lên.",
+      ],
+      highlights: ["Cây cầu đỏ bắc qua hào", "Hào ngoài phủ kín cánh hoa", "Đèn chiếu sáng buổi tối"],
+    },
+    fuji: {
+      title: "Núi Phú Sĩ bên hồ Kawaguchi",
+      place: "Vùng năm hồ Phú Sĩ",
+      summary: "Hàng anh đào ven hồ, và ngọn núi hiện rõ ngay buổi sáng đầu tiên.",
+      story: [
+        "Phú Sĩ ẩn sau mây phần lớn các ngày, nên chúng tôi dành ba buổi sáng ở hồ và may mắn ngay hôm đầu. Con đường dọc bờ bắc đi dưới tán anh đào suốt chặng.",
+        "Ngày cuối, chúng tôi xuống phía nam tới sông Urui, nơi hàng cây chạy dọc hai bờ và ngọn núi nằm cuối thung lũng.",
+      ],
+      highlights: ["Bình minh ở bờ bắc", "Lối đi dưới hàng anh đào ven hồ", "Hai bờ sông Urui"],
+    },
+    kyoto: {
+      title: "Kyoto mùa hoa nở rộ",
+      place: "Higashiyama, Kyoto",
+      summary: "Cổng chùa, cây anh đào rủ ở công viên Maruyama và chùa Kiyomizu-dera thắp đèn ban đêm.",
+      story: [
+        "Chúng tôi ở gần Gion và đi bộ khắp nơi: sáng theo các con dốc lên Kiyomizu-dera, chiều xuống công viên Maruyama, lúc cây anh đào rủ già đẹp nhất.",
+        "Mùa hoa, các chùa mở cửa lại vào buổi tối. Hàng cây sáng lên trên sườn đồi tối, dòng người chậm rãi đi dọc sàn gỗ của Kiyomizu-dera.",
+      ],
+      highlights: ["Cây anh đào rủ ở công viên Maruyama", "Kiyomizu-dera ban đêm", "Những con phố vắng lúc sáng sớm"],
+    },
+    tokyo: {
+      title: "Ngắm hoa ở Tokyo",
+      place: "Chiyoda và Meguro, Tokyo",
+      summary: "Thuyền chèo dưới hàng anh đào ở Chidorigafuchi, rồi dạo tối dọc sông Meguro.",
+      story: [
+        "Suốt một tuần, hào nước quanh Hoàng cung ở Chidorigafuchi là nơi đông nhất Tokyo. Chúng tôi thuê thuyền trước khi hàng người kéo dài, rồi trôi dưới những cành hoa chạm mặt nước.",
+        "Buổi tối, sông Meguro yên hơn chúng tôi nghĩ: đèn lồng, quầy đồ ăn và cánh hoa trôi giữa các toà nhà.",
+      ],
+      highlights: ["Thuyền trên hào Chidorigafuchi", "Sông Meguro lúc chạng vạng", "Dã ngoại dưới tán cây"],
+    },
     headland: {
       title: "Đường mũi đất lúc hoàng hôn",
-      place: "Mũi đất phía tây",
+      place: "Rota Vicentina, Bồ Đào Nha",
       summary: "Bốn ngày dọc vách đá, ngủ ở nơi con đường chạm biển.",
       story: [
-        "Con đường rời ngôi làng cuối cùng bằng một lối đất rồi leo thẳng lên mũi đất. Từ đó nó men theo mép vách gần như cả ngày, biển luôn ở bên trái.",
+        "Con đường rời ngôi làng cuối cùng bằng một lối đất rồi leo thẳng lên mũi đất. Từ đó nó men theo mép vách gần như cả ngày, biển luôn ở bên phải.",
         "Chúng tôi tính từng chặng để tới vịnh kế tiếp trước hoàng hôn. Ánh sáng nhuộm vàng mọi thứ trong hai mươi phút, rồi gió nổi lên và đã đến lúc dựng lều.",
       ],
       highlights: ["Hoàng hôn ở vịnh thứ ba", "Rừng thông chạy xuống tận mép nước", "Bãi sỏi không một bóng người"],
     },
     island: {
       title: "Sáu ngày ở thị trấn đảo",
-      place: "Hòn đảo trắng",
+      place: "Santorini, Hy Lạp",
       summary: "Những con ngõ quét vôi trắng, chuyến phà lúc bình minh và bữa trưa dài bên cảng.",
       story: [
         "Phà cập bến sớm, các con ngõ vẫn còn vắng. Cầu thang nào cũng như dẫn tới một sân thượng nhìn ra miệng núi lửa.",
@@ -92,7 +138,7 @@ const vi: Content = {
     },
     ridge: {
       title: "Tuyết trên sống núi cao",
-      place: "Dãy núi phía bắc",
+      place: "Núi Tatra, Slovakia",
       summary: "Băng qua sống núi cuối đông bằng đinh leo băng, đi từ lán này sang lán khác.",
       story: [
         "Cuối tháng Hai tuyết vẫn phủ sống núi, cứng vào buổi sáng và mềm dần tới trưa. Mỗi ngày chúng tôi xuất phát trước khi nắng chạm sườn núi.",
@@ -102,7 +148,7 @@ const vi: Content = {
     },
     hills: {
       title: "Những ngọn đồi sơn màu",
-      place: "Lòng chảo khô",
+      place: "Thung lũng Chết, California",
       summary: "Ba ngày trên đất trống, màu sắc rực rỡ và tầm nhìn rất xa.",
       story: [
         "Những ngọn đồi đổi màu theo ánh sáng: đỏ lúc bình minh, nhạt lúc trưa, tím sau hoàng hôn. Gần như không có bóng râm nên chúng tôi đi sớm và về muộn.",
@@ -112,7 +158,7 @@ const vi: Content = {
     },
     river: {
       title: "Xuôi dòng sông trong rừng",
-      place: "Thung lũng xanh",
+      place: "Bán đảo Olympic, Washington",
       summary: "Theo dòng sông từ đầu nguồn qua những cánh rừng già.",
       story: [
         "Lối đi bám sát dòng sông, băng qua nó trên những tảng đá và thân cây đổ. Rừng dày tới mức ánh sáng xanh suốt cả ngày.",
@@ -122,7 +168,7 @@ const vi: Content = {
     },
     valley: {
       title: "Cuối tuần ở thung lũng sương",
-      place: "Thung lũng hồ",
+      place: "Hồ Triglav, Slovenia",
       summary: "Hai ngày chậm rãi trong sương, đi từ hồ này sang hồ khác.",
       story: [
         "Sương phủ thung lũng suốt cuối tuần. Mọi thứ trở nên yên tĩnh và gần lại: những mặt hồ, dòng sông, bìa rừng.",

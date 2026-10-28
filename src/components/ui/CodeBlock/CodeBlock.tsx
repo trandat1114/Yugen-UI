@@ -10,6 +10,7 @@ import {
   TextWrapOff16Regular,
 } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
+import { copyText } from "../_internal/copyText";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { Badge } from "../Badge/Badge";
 import { Button } from "../Button/Button";
@@ -397,24 +398,6 @@ export const CODE_LANGUAGE_LABEL: Record<CodeLanguage, string> = {
 
 /* ================================================================ Copy */
 
-async function copyText(text: string) {
-  try {
-    await navigator.clipboard.writeText(text);
-    return;
-  } catch {
-    // Ngữ cảnh không an toàn / bị chặn quyền → dùng textarea tạm.
-  }
-  const ta = document.createElement("textarea");
-  ta.value = text;
-  ta.setAttribute("readonly", "");
-  ta.style.position = "fixed";
-  ta.style.opacity = "0";
-  document.body.appendChild(ta);
-  ta.select();
-  document.execCommand("copy");
-  ta.remove();
-}
-
 export interface CopyCodeButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
   text: string;
   /** Hiện chữ "Sao chép" (`messages.copyCodeButton.copy`) cạnh icon. Mặc định true. */
@@ -465,7 +448,8 @@ function useCodeThemeProps(appearance: "auto" | "dark") {
   return appearance === "dark" && theme !== "high-contrast" ? { "data-theme": "dark" as const } : {};
 }
 
-const SURFACE = "min-w-0 overflow-hidden rounded-xlarge border border-stroke-2 bg-background-2 text-start text-foreground-1";
+// not-prose: đặt trong <Prose> vẫn giữ kiểu riêng của khối code.
+const SURFACE = "not-prose min-w-0 overflow-hidden rounded-xlarge border border-stroke-2 bg-background-2 text-start text-foreground-1";
 
 /* ================================================================ CodeBlock */
 

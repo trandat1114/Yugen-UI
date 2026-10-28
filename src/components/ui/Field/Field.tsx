@@ -100,7 +100,8 @@ export function Field({
           {required && <span className="ps-1 text-danger-foreground-1">*</span>}
         </label>
       )}
-      <div className={cn("flex min-w-0 flex-col gap-y-0.5", orientation === "horizontal" && "col-start-2")}>
+      {/* relative: giữ phần tử ẩn mà control thêm cho <form> (select ẩn của Dropdown) trong Field, không thoát khỏi vùng cuộn (#223). */}
+      <div className={cn("relative flex min-w-0 flex-col gap-y-0.5", orientation === "horizontal" && "col-start-2")}>
         {control}
         {validationMessage && (
           <span id={messageId} role={validationState === "error" ? "alert" : undefined} className={cn("flex items-center gap-1 text-caption1", validation?.className ?? "text-foreground-3")}>

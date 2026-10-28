@@ -175,6 +175,9 @@
   --animate-fade-out: fade-out var(--durationFast) var(--curveAccelerateMid);
   --animate-surface-in: surface-in var(--durationGentle) var(--curveDecelerateMid);
   --animate-surface-out: fade-out var(--durationFast) var(--curveAccelerateMid);
+  /* Glass (Yugen Labs): bề mặt mọc ra từ nút mở nó — --morph-from do morphFromTrigger đặt (_internal/morph.ts). */
+  --animate-morph-in: morph-in var(--durationSlow) var(--curveDecelerateMax);
+  --animate-morph-out: morph-out var(--durationNormal) var(--curveAccelerateMid);
   --animate-shimmer: shimmer 1.8s linear infinite;
   --animate-indeterminate: indeterminate 3s linear infinite;
   /* Bản chạy bằng transform (compositor, không vẽ lại / layout mỗi frame) — Skeleton và ProgressBar dùng hai bản này. */
@@ -333,11 +336,16 @@
 /* ---------- Glass (Yugen Labs — Design.md §4.7): vật liệu cho lớp điều hướng nổi trên nội dung ----------
    glass: dùng chung · glass-clear: trên ảnh / media, kèm glass-scrim · glass-tinted: một nút chính (brand).
    Bên trong glass, chữ phụ và brand đổi sang sắc đậm hơn, nền hover / pressed thành lớp phủ trong suốt, để giữ
-   tương phản trên mọi nền phía sau. --glass-bg đổi nền theo trạng thái (Button glass); shadow-* vẫn cộng thêm được. */
+   tương phản trên mọi nền phía sau. --glass-bg đổi nền theo trạng thái (Button glass); shadow-* vẫn cộng thêm được.
+   [data-glass-lens]: <GlassRefraction> (Chromium) gắn bộ lọc khúc xạ qua --glass-lens; blur nằm trong bộ lọc đó. Mọi chỗ
+   tắt blur cũng đặt --glassLensFilter: none, và "none url(…)" không hợp lệ nên backdrop-filter về none. */
 @utility glass {
   background-color: var(--glass-bg, var(--colorGlassBackground));
   -webkit-backdrop-filter: var(--glassFilter);
   backdrop-filter: var(--glassFilter);
+  &[data-glass-lens] {
+    backdrop-filter: var(--glassLensFilter) var(--glass-lens);
+  }
   --tw-inset-shadow: inset 0 1px 0 0 var(--colorGlassEdge);
   --tw-inset-ring-shadow: inset 0 0 0 1px var(--colorGlassStroke);
   box-shadow:
@@ -362,6 +370,9 @@
   background-color: var(--glass-bg, var(--colorGlassClearBackground));
   -webkit-backdrop-filter: var(--glassFilter);
   backdrop-filter: var(--glassFilter);
+  &[data-glass-lens] {
+    backdrop-filter: var(--glassLensFilter) var(--glass-lens);
+  }
   --tw-inset-shadow: inset 0 1px 0 0 var(--colorGlassClearEdge);
   --tw-inset-ring-shadow: inset 0 0 0 1px var(--colorGlassClearStroke);
   box-shadow:
@@ -391,6 +402,9 @@
   background-color: var(--glass-bg, var(--colorGlassTinted));
   -webkit-backdrop-filter: var(--glassFilter);
   backdrop-filter: var(--glassFilter);
+  &[data-glass-lens] {
+    backdrop-filter: var(--glassLensFilter) var(--glass-lens);
+  }
   --tw-inset-shadow: inset 0 1px 0 0 var(--colorGlassClearEdge);
   box-shadow:
     var(--tw-inset-shadow), var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000),
@@ -436,6 +450,87 @@
     mask-image: linear-gradient(to top, #000 50%, transparent);
   }
 }
+/*
+ * Kiểu chữ cho Markdown / HTML từ CMS (component Prose). Mọi selector nằm trong :where() → độ ưu tiên 0: class đặt trên
+ * từng thẻ luôn thắng. Phần tử là (hoặc nằm trong) .not-prose được bỏ qua — CodeBlock, Table, Quote, Timeline gắn sẵn.
+ */
+@utility yugen-prose {
+  :where(& :is(h1, h2, h3, h4):not(.not-prose, .not-prose *)) {
+    @apply font-semibold text-balance text-foreground-1;
+  }
+  :where(& h1:not(.not-prose, .not-prose *)) {
+    @apply text-title2;
+  }
+  :where(& h2:not(.not-prose, .not-prose *)) {
+    @apply text-title3;
+  }
+  :where(& h3:not(.not-prose, .not-prose *)) {
+    @apply text-subtitle1;
+  }
+  :where(& h4:not(.not-prose, .not-prose *)) {
+    @apply text-subtitle2;
+  }
+  :where(& h2:not(:first-child, .not-prose, .not-prose *)) {
+    @apply mt-4;
+  }
+  :where(& h3:not(:first-child, .not-prose, .not-prose *)) {
+    @apply mt-2;
+  }
+  :where(& a:not(.not-prose, .not-prose *)) {
+    @apply text-link underline underline-offset-2 hover:decoration-2;
+  }
+  :where(& :is(strong, b):not(.not-prose, .not-prose *)) {
+    @apply font-semibold text-foreground-1;
+  }
+  :where(& :not(pre) > code:not(.not-prose, .not-prose *)) {
+    @apply rounded-small bg-background-4 px-1 font-mono text-[0.9em] text-foreground-1;
+  }
+  :where(& pre:not(.not-prose, .not-prose *)) {
+    @apply overflow-x-auto rounded-large border border-stroke-2 bg-background-2 px-4 py-3 font-mono text-[0.9em] text-foreground-1;
+  }
+  :where(& :is(ul, ol):not(.not-prose, .not-prose *)) {
+    @apply flex flex-col gap-1 ps-5;
+  }
+  :where(& ul:not(.not-prose, .not-prose *)) {
+    @apply list-disc;
+  }
+  :where(& ol:not(.not-prose, .not-prose *)) {
+    @apply list-decimal;
+  }
+  :where(& li:not(.not-prose, .not-prose *)) {
+    @apply ps-0.5 marker:text-foreground-3;
+  }
+  :where(& li > * + *:not(.not-prose, .not-prose *)) {
+    @apply mt-1;
+  }
+  :where(& blockquote:not(.not-prose, .not-prose *)) {
+    @apply flex flex-col gap-3 border-s-3 border-brand-stroke ps-4 italic;
+  }
+  :where(& hr:not(.not-prose, .not-prose *)) {
+    @apply border-stroke-2;
+  }
+  :where(& img:not(.not-prose, .not-prose *)) {
+    @apply h-auto max-w-full rounded-large;
+  }
+  :where(& figure:not(.not-prose, .not-prose *)) {
+    @apply flex flex-col gap-2;
+  }
+  :where(& figcaption:not(.not-prose, .not-prose *)) {
+    @apply text-center text-caption1 text-foreground-3;
+  }
+  :where(& table:not(.not-prose, .not-prose *)) {
+    @apply w-full border-collapse text-body1;
+  }
+  :where(& :is(th, td):not(.not-prose, .not-prose *)) {
+    @apply px-3 py-2 text-start align-top;
+  }
+  :where(& th:not(.not-prose, .not-prose *)) {
+    @apply border-b border-stroke-1 font-semibold text-foreground-1;
+  }
+  :where(& tr:not(:last-child) > td:not(.not-prose, .not-prose *)) {
+    @apply border-b border-stroke-2;
+  }
+}
 /* Bo góc đồng tâm: góc trong = góc ngoài − khoảng đệm. Phần tử cha đặt --concentric-radius và --concentric-padding. */
 @utility rounded-concentric {
   border-radius: max(
@@ -466,6 +561,21 @@
     scale: 0.96;
   }
 }
+@keyframes morph-in {
+  from {
+    opacity: 0;
+    transform: var(--morph-from, scale(0.9));
+  }
+  40% {
+    opacity: 1;
+  }
+}
+@keyframes morph-out {
+  to {
+    opacity: 0;
+    transform: var(--morph-from, scale(0.9));
+  }
+}
 
 /* Glass: nền đặc, không blur khi người dùng giảm trong suốt hoặc tăng tương phản, và khi trình duyệt không có
    backdrop-filter. Cùng bộ selector với token theme + brand: file này đứng sau tokens.css nên thắng khi ngang độ ưu tiên. */
@@ -475,6 +585,7 @@
   [data-brand],
   [data-brand][data-theme] {
     --glassFilter: none;
+    --glassLensFilter: none;
     --glassEdgeFilter: none;
     --colorGlassBackground: var(--colorGlassBackgroundSolid);
     --colorGlassBackgroundHover: var(--colorNeutralBackground1Hover);
@@ -514,12 +625,14 @@
   :root,
   [data-theme] {
     --glassFilter: none;
+    --glassLensFilter: none;
     --glassEdgeFilter: none;
   }
 }
 /* Glass lồng trong glass: chỉ còn lớp màu, không blur lần hai (đỡ tốn GPU). */
 :is(.glass, .glass-clear, .glass-tinted) :is(.glass, .glass-clear, .glass-tinted) {
   --glassFilter: none;
+  --glassLensFilter: none;
 }
 
 @layer base {

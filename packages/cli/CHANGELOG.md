@@ -1,5 +1,12 @@
 # @yugen-ui/cli
 
+## 0.5.1
+
+- Template `glass`: cherry blossom trips in Kyoto, Tokyo, Hirosaki and around Mount Fuji (photos from Wikimedia Commons,
+  credited with their license), `<GlassRefraction />` at the app root, a Settings preview of the bars over a bright,
+  a blossom and a night photo, and a world map on Explore with every trip pinned at its coordinates.
+- Templates `blog` and `docs`: Markdown articles are styled with `Prose` from yugen-ui instead of classes on every tag.
+
 ## 0.5.0
 
 - New template: `glass` (`create --template glass`), a travel journal with glass navigation over photos.

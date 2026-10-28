@@ -3,6 +3,7 @@ import * as MenuPrimitive from "@radix-ui/react-dropdown-menu";
 import { Checkmark16Filled, ChevronRight16Regular } from "@fluentui/react-icons";
 import { usePortalThemeProps } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
+import { morphClass, morphFromTrigger } from "../_internal/morph";
 
 /** Fluent 2 Menu — https://fluent2.microsoft.design/components/web/react/core/menu/usage */
 export const Menu = MenuPrimitive.Root;
@@ -34,8 +35,12 @@ export const MenuPopover = React.forwardRef<React.ElementRef<typeof MenuPrimitiv
         {...portalTheme}
         sideOffset={sideOffset}
         align={align}
-        className={cn(menuPopoverClass, material, className)}
+        className={cn(menuPopoverClass, material, material && morphClass, className)}
         {...props}
+        onAnimationStart={(event) => {
+          if (material) morphFromTrigger(event);
+          props.onAnimationStart?.(event);
+        }}
       />
     </MenuPrimitive.Portal>
   );

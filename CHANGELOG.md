@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.13.0
+
+### Minor Changes
+
+- 7996f8d: Glass, part 2 (Yugen Labs). `MenuPopover` and `PopoverSurface` with `material` grow out of the button that opens them and shrink back into it when they close (scale and position from the trigger, read when the animation starts); with reduced motion they keep the plain fade. New `material="glass"` on `Slider` and `Switch`: while pressed or dragged the thumb turns to glass, larger on Slider so the track shows through it, longer on Switch. Names may change before 1.0.
+- 1c3f5fd: New `GlassRefraction` (Yugen Labs): render it once at the app root and the edges of every `glass`, `glass-clear` and `glass-tinted` surface bend what is behind them, like the rim of a lens, while the middle stays frosted so text keeps its contrast. Each size and corner radius gets one SVG filter (a displacement map from Snell's law over a convex rim), applied through `backdrop-filter`; only Chromium browsers draw it, Safari and Firefox keep the regular glass. It turns off wherever the blur does (Reduce transparency, Increase contrast, forced colors, the high-contrast theme, glass inside glass) through the new `--glassLensFilter` token. Names may change before 1.0.
+- 6f0ad27: New `Sonner`: notifications that stack in a corner, newest in front, and fan out into a list on hover or keyboard focus. Call `sonner("…")`, `sonner.success / info / warning / error / loading` from anywhere; `sonner.promise` turns a loading notification into success or error in place, and calling again with the same `id` updates it. Action and cancel buttons, `richColors`, `closeButton`, swipe to dismiss, F8 to reach the region. Built on Radix Toast, no new dependency. Strings in `messages.sonner`.
+  
+  New display components (#174): `Timeline` / `TimelineItem` (detailed and compact), `DescriptionList` / `DescriptionItem` (columns that drop on narrow containers, inline layout, copy button; strings in `messages.descriptionList`), `Stat` (the stable version of `StatTile`, with a `chart` slot; strings in `messages.stat`) and `Prose` (typography for Markdown and CMS HTML through the new `yugen-prose` theme utility, zero-specificity selectors, opt out with `not-prose`). `StatTile` is now `Stat` plus a Sparkline and reads `messages.stat`; `messages.chart.increase / decrease / noChange` are deprecated. `CodeBlock`, `Table`, `Quote` and `Timeline` carry `not-prose`.
+
+### Patch Changes
+
+- 8739ba8: `Checkbox`, `Switch` and `Field`: inside a `<form>`, the hidden input (or the hidden `<select>` of `Dropdown`) that Radix adds for form submission stays inside the control. It used to escape a scrolling container and add blank space at the bottom of the page.
+- 24daed1: Notice: React 18.3 stays supported for the rest of 0.x; from 1.0, Yugen UI supports React 19 only. Apps still on React 18 should move to React 19 before updating to 1.0.
+
 ## 0.12.0
 
 ### Minor Changes
@@ -212,6 +227,7 @@ with a user-facing change adds one with `npx changeset`, and `npx changeset vers
 - Documentation site.
 
 [Unreleased]: https://github.com/trandat1114/Yugen-UI/compare/v0.11.1...HEAD
+[0.13.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.13.0
 [0.12.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.12.0
 [0.11.1]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.11.1
 [0.11.0]: https://github.com/trandat1114/Yugen-UI/releases/tag/v0.11.0

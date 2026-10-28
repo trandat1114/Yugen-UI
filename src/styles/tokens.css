@@ -192,6 +192,8 @@
   --glassBlur: 24px;
   --glassSaturation: 180%;
   --glassFilter: blur(var(--glassBlur)) saturate(var(--glassSaturation));
+  /* Có <GlassRefraction> (Chromium): blur nằm trong bộ lọc khúc xạ, CSS chỉ còn bão hoà màu. */
+  --glassLensFilter: saturate(var(--glassSaturation));
   /* Hiệu ứng mép cuộn (scroll-edge) dưới / trên thanh glass. */
   --glassEdgeFilter: blur(8px);
   /* clear: trên ảnh / media, không theo theme. Luôn đặt glass-scrim lên media bên dưới: chữ trắng ≥ 4.5:1 cả khi ảnh trắng. */
@@ -618,6 +620,7 @@
 
   /* Glass ở tương phản cao: nền đặc, viền trắng, không blur. */
   --glassFilter: none;
+  --glassLensFilter: none;
   --glassEdgeFilter: none;
   --colorGlassBackground: #000000;
   --colorGlassBackgroundHover: #1a1a1a;

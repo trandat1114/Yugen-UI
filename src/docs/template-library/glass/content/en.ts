@@ -11,7 +11,7 @@ const en: Content = {
   search: { title: "Search trips", placeholder: "Place, trip or highlight", trips: "Trips", empty: "No trip matches." },
   home: {
     title: "Places worth the long way round",
-    lead: "A journal of coasts, ridges and quiet valleys. Photos first; the controls float above them.",
+    lead: "A journal of cherry blossom season in Japan, coasts, ridges and quiet valleys. Photos first; the controls float above them.",
     cta: "Explore the map",
     tripsTitle: "Trips",
     tripsSummary: (trips, km) => `${trips} trips · ${km} km on foot`,
@@ -35,20 +35,25 @@ const en: Content = {
   },
   explore: {
     title: "Explore",
-    lead: "Every trip on one picture. Pick a pin to open it.",
-    picture: "Map of the trips",
+    lead: "Every trip on one map. Pick a pin to open it.",
+    picture: "World map with the trips",
     controls: "Map controls",
     search: "Filter places",
     filters: "Kind of trip",
-    categories: { all: "All", coast: "Coast", mountains: "Mountains", desert: "Desert", forest: "Forest" },
+    categories: { all: "All", sakura: "Cherry blossoms", coast: "Coast", mountains: "Mountains", desert: "Desert", forest: "Forest" },
     zoomIn: "Zoom in",
     zoomOut: "Zoom out",
+    group: (titles) => `Zoom in on ${titles.length} trips: ${titles.join(", ")}`,
     openTrip: "Open trip",
     noMatch: "No place matches the filter.",
   },
   settings: {
     title: "Settings",
     appearance: "Appearance",
+    preview: "Preview",
+    previewHint: "Bars and controls over a photo, as the options below set them.",
+    previewPhoto: "Photo behind",
+    previewPhotos: { day: "Day", petals: "Blossoms", night: "Night" },
     theme: "Theme",
     themes: { light: "Light", dark: "Dark", "high-contrast": "High contrast" },
     brand: "Brand",
@@ -62,29 +67,70 @@ const en: Content = {
     accessibilityItems: [
       "Text on glass keeps a 4.5:1 contrast over any photo.",
       "Reduce transparency, Increase contrast and forced colors turn glass opaque.",
+      "In Chromium browsers the edges of glass bend the photo behind them like the rim of a lens; the middle stays frosted, so text keeps its contrast. Reduce transparency turns it off.",
       "The high-contrast theme uses solid black surfaces with white borders.",
       "The tab bar shrinks while you scroll down and comes back when you scroll up; tab names stay readable by screen readers.",
     ],
     credits: "Photo credits",
-    creditsLead: "Sample photos from Unsplash (Unsplash License).",
-    photoBy: (author) => `Photo by ${author}`,
+    creditsLead: "Nature photos from Unsplash (Unsplash License), photos of Japan from Wikimedia Commons under the license shown.",
+    photoBy: (author, license) => `Photo by ${author} (${license})`,
   },
   notFound: { title: "Page not found", body: "This page doesn't exist or has moved.", action: "Back to the journal" },
-  categories: { coast: "Coast", mountains: "Mountains", desert: "Desert", forest: "Forest" },
+  categories: { sakura: "Cherry blossoms", coast: "Coast", mountains: "Mountains", desert: "Desert", forest: "Forest" },
   trips: {
+    hirosaki: {
+      title: "Hirosaki Castle park",
+      place: "Hirosaki, Aomori",
+      summary: "More than two thousand cherry trees around the castle moats, a red bridge and paths covered in petals.",
+      story: [
+        "Hirosaki blooms late, when the season is over further south. The park around the castle has more than two thousand trees, and the moats turn pink as the petals start to fall.",
+        "We came back after dark for the illuminations: the red bridge and its reflection, between trees lit from below.",
+      ],
+      highlights: ["The red bridge over the moat", "Petals covering the outer moat", "Illuminations after dark"],
+    },
+    fuji: {
+      title: "Mount Fuji over Lake Kawaguchi",
+      place: "Fuji Five Lakes",
+      summary: "Cherry trees along the lake, and the mountain clear on the first morning.",
+      story: [
+        "Fuji hides behind clouds most days, so we planned three mornings at the lake and got lucky on the first. The path along the northern shore runs under cherry trees the whole way.",
+        "On the last day we went south to the Urui River, where the trees line both banks and the mountain sits at the end of the valley.",
+      ],
+      highlights: ["Sunrise on the northern shore", "The cherry path along the lake", "The banks of the Urui River"],
+    },
+    kyoto: {
+      title: "Kyoto in full bloom",
+      place: "Higashiyama, Kyoto",
+      summary: "Temple gates, the weeping cherry of Maruyama Park and Kiyomizu-dera lit up at night.",
+      story: [
+        "We stayed near Gion and walked everywhere: up the lanes to Kiyomizu-dera in the morning, down through Maruyama Park in the afternoon, when the old weeping cherry looks its best.",
+        "During the bloom the temples open again in the evening. The trees glow against the dark hillside and the crowd moves slowly along the wooden stage of Kiyomizu-dera.",
+      ],
+      highlights: ["The weeping cherry in Maruyama Park", "Kiyomizu-dera at night", "Empty lanes early in the morning"],
+    },
+    tokyo: {
+      title: "Hanami in Tokyo",
+      place: "Chiyoda and Meguro, Tokyo",
+      summary: "Rowing boats under the cherries of Chidorigafuchi, then an evening walk along the Meguro River.",
+      story: [
+        "For one week the moat of the Imperial Palace at Chidorigafuchi is the busiest place in Tokyo. We rented a boat before the queue started and drifted under branches that touch the water.",
+        "In the evening the Meguro River was calmer than we expected: lanterns, food stalls and petals floating between the buildings.",
+      ],
+      highlights: ["A boat on the Chidorigafuchi moat", "The Meguro River at dusk", "Picnics under the trees"],
+    },
     headland: {
       title: "Headland trail at golden hour",
-      place: "Western headlands",
+      place: "Rota Vicentina, Portugal",
       summary: "Four days along the cliffs, sleeping where the trail meets the sea.",
       story: [
-        "The trail leaves the last village on a dirt track and climbs straight onto the headland. From there it follows the edge for most of the day, with the sea always on the left.",
+        "The trail leaves the last village on a dirt track and climbs straight onto the headland. From there it follows the edge for most of the day, with the sea always on the right.",
         "We timed each stage to reach the next cove before sunset. The light turns everything gold for twenty minutes, then the wind picks up and it's time for the tent.",
       ],
       highlights: ["Sunset on the third cove", "Pine forest down to the water", "A pebble beach with no one on it"],
     },
     island: {
       title: "Six days in the island town",
-      place: "The white island",
+      place: "Santorini, Greece",
       summary: "Whitewashed lanes, ferries at dawn and long lunches by the harbor.",
       story: [
         "The ferry arrives early and the lanes are still empty. Every staircase seems to lead to a terrace with a view of the caldera.",
@@ -94,7 +140,7 @@ const en: Content = {
     },
     ridge: {
       title: "Snow on the high ridge",
-      place: "Northern range",
+      place: "High Tatras, Slovakia",
       summary: "Late-winter traverse with crampons, hut to hut.",
       story: [
         "Snow still covered the ridge in late February, hard in the morning and soft by noon. We started each day before the sun reached the slopes.",
@@ -104,7 +150,7 @@ const en: Content = {
     },
     hills: {
       title: "Painted hills",
-      place: "The dry basin",
+      place: "Death Valley, California",
       summary: "Three days of open ground, bright colors and very long views.",
       story: [
         "The hills change color with the light: red at dawn, pale at noon, purple after sunset. There is almost no shade, so we walked early and late.",
@@ -114,7 +160,7 @@ const en: Content = {
     },
     river: {
       title: "Down the forest river",
-      place: "Green valley",
+      place: "Olympic Peninsula, Washington",
       summary: "Following the river from its source through old forest.",
       story: [
         "The path keeps close to the river, crossing it on stones and fallen trunks. The forest is so dense that the light stays green all day.",
@@ -124,7 +170,7 @@ const en: Content = {
     },
     valley: {
       title: "Misty valley weekend",
-      place: "Lake valley",
+      place: "Triglav Lakes, Slovenia",
       summary: "Two slow days in the fog, walking from lake to lake.",
       story: [
         "Fog sat on the valley the whole weekend. It made everything quiet and close: the lakes, the river, the edge of the forest.",

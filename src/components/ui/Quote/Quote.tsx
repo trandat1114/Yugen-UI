@@ -57,7 +57,7 @@ export const Quote = React.forwardRef<HTMLElement, QuoteProps>(
       <figure
         ref={ref}
         className={cn(
-          "m-0 flex flex-col gap-3",
+          "not-prose m-0 flex flex-col gap-3",
           !emphasis && "border-s-3 ps-4",
           appearance === "default" && "border-brand-stroke",
           appearance === "subtle" && "border-stroke-1",

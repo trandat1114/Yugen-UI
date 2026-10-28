@@ -71,6 +71,10 @@ export const COMPONENTS_EN: Record<string, { lead: string; name?: string }> = {
   table: { lead: "Table arranges data in rows and columns so people can scan, compare and act on each record." },
   text: { lead: "Text renders type on the Fluent 2 type ramp, with presets for every role from Display to Caption2." },
   tree: { lead: "Tree shows hierarchical data as expandable / collapsible branches, like a folder tree or a navigation catalog." },
+  timeline: { lead: "Timeline lists events over time: an order history, an activity log, the steps a request has gone through." },
+  descriptionlist: { lead: "DescriptionList shows label / value pairs: order details, a profile, a summary of settings." },
+  stat: { lead: "Stat shows one key number with its change and an optional small chart." },
+  prose: { lead: "Prose styles long content from Markdown or a CMS: headings, paragraphs, lists, tables, code, quotes and images on the Yugen type ramp." },
 
   // Feedback
   empty: { lead: "Empty shows a blank state when there's no data yet, with an explanation and a next step." },
@@ -80,6 +84,7 @@ export const COMPONENTS_EN: Record<string, { lead: string; name?: string }> = {
   skeleton: { lead: "Skeleton is a placeholder sketch of upcoming content that makes loading feel shorter." },
   spinner: { lead: "Spinner shows that the system is working on a task of unknown duration." },
   toast: { lead: "Toast is a short, non-blocking notification that appears in a corner of the screen and dismisses itself." },
+  sonner: { lead: "Sonner stacks short notifications in a corner: the newest in front, older ones behind, fanning out on hover." },
 
   // Surfaces & overlays
   card: { lead: "Card is a surface that groups information and actions about a single subject." },

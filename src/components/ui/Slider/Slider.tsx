@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { cn } from "@/lib/cn";
+import { usePressed } from "../_internal/usePressed";
 
 /** Fluent 2 Slider — https://fluent2.microsoft.design/components/web/react/core/slider/usage */
 export interface SliderProps extends Omit<React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root>, "aria-label"> {
@@ -11,11 +12,18 @@ export interface SliderProps extends Omit<React.ComponentPropsWithoutRef<typeof 
   /** Hiện giá trị hiện tại bên phải label. */
   showValue?: boolean;
   rootClassName?: string;
+  /** Yugen Labs — thumb thành glass và to ra khi đang nhấn / kéo, để thấy thanh trượt qua nó (#210). */
+  material?: "glass";
 }
 
 export const Slider = React.forwardRef<React.ElementRef<typeof SliderPrimitive.Root>, SliderProps>(
-  ({ className, rootClassName, size = "medium", label, showValue, value, defaultValue, onValueChange, disabled, ...props }, ref) => {
+  (
+    { className, rootClassName, size = "medium", label, showValue, value, defaultValue, onValueChange, disabled, material, onPointerDown, ...props },
+    ref,
+  ) => {
     const labelId = React.useId();
+    const pressed = usePressed();
+    const lens = material === "glass" && pressed.value;
     const [inner, setInner] = React.useState<number[]>(value ?? defaultValue ?? [props.min ?? 0]);
     const current = value ?? inner;
     const small = size === "small";
@@ -41,6 +49,10 @@ export const Slider = React.forwardRef<React.ElementRef<typeof SliderPrimitive.R
             setInner(v);
             onValueChange?.(v);
           }}
+          onPointerDown={(event) => {
+            if (material) pressed.start();
+            onPointerDown?.(event);
+          }}
           className={cn(
             "group/slider relative flex w-full touch-none items-center select-none data-disabled:pointer-events-none",
             small ? "h-6" : "h-8",
@@ -62,13 +74,18 @@ export const Slider = React.forwardRef<React.ElementRef<typeof SliderPrimitive.R
               aria-label={props["aria-label"]}
               aria-labelledby={label ? labelId : undefined}
               className={cn(
-                "block cursor-grab rounded-circular border border-stroke-1 bg-brand-background active:cursor-grabbing",
-                "transition-colors duration-faster ease-easy-ease",
-                "hover:bg-brand-background-hover active:bg-brand-background-pressed",
-                "group-data-disabled/slider:bg-foreground-disabled group-data-disabled/slider:border-stroke-disabled",
-                small
-                  ? "size-4 shadow-[inset_0_0_0_3px_var(--colorNeutralBackground1)]"
-                  : "size-5 shadow-[inset_0_0_0_4px_var(--colorNeutralBackground1)]",
+                "block cursor-grab rounded-circular border active:cursor-grabbing",
+                "transition-[background-color,box-shadow,scale] duration-faster ease-easy-ease",
+                small ? "size-4" : "size-5",
+                lens
+                  ? "glass scale-160 border-transparent shadow-8"
+                  : cn(
+                      "border-stroke-1 bg-brand-background hover:bg-brand-background-hover active:bg-brand-background-pressed",
+                      "group-data-disabled/slider:bg-foreground-disabled group-data-disabled/slider:border-stroke-disabled",
+                      small
+                        ? "shadow-[inset_0_0_0_3px_var(--colorNeutralBackground1)]"
+                        : "shadow-[inset_0_0_0_4px_var(--colorNeutralBackground1)]",
+                    ),
               )}
             />
           ))}

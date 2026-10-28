@@ -59,12 +59,18 @@ export interface Content {
     categories: Record<"all" | Category, string>;
     zoomIn: string;
     zoomOut: string;
+    /** Label of a pin that groups trips too close to tell apart: zooms in on them. */
+    group: (titles: string[]) => string;
     openTrip: string;
     noMatch: string;
   };
   settings: {
     title: string;
     appearance: string;
+    preview: string;
+    previewHint: string;
+    previewPhoto: string;
+    previewPhotos: { day: string; petals: string; night: string };
     theme: string;
     themes: Record<YugenTheme, string>;
     brand: string;
@@ -78,7 +84,7 @@ export interface Content {
     accessibilityItems: string[];
     credits: string;
     creditsLead: string;
-    photoBy: (author: string) => string;
+    photoBy: (author: string, license: string) => string;
   };
   notFound: { title: string; body: string; action: string };
   categories: Record<Category, string>;

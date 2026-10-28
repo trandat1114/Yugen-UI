@@ -2,7 +2,7 @@
 
 <!-- Sinh từ src/docs/roadmap.ts bằng `npm run roadmap`. Đừng sửa tay. -->
 
-Kế hoạch theo từng bản phát hành, cập nhật 2026-10-27. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và
+Kế hoạch theo từng bản phát hành, cập nhật 2026-10-28. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và
 phụ thuộc nằm ở [GitHub Project](https://github.com/users/trandat1114/projects/6). `[x]` đã xong, `[~]` đang làm, `[ ]` dự kiến.
 
 Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. English: the community page
@@ -24,7 +24,7 @@ API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện
 
 Chưa xếp lịch.
 
-- [ ] Glass phần 2: menu mọc từ nút, nút kéo glass, hiệu ứng khúc xạ, xem trước trong Theme Designer (#210)
+- [ ] Glass: YugenProvider đổi mọi component điều hướng sang glass (sau #171) (#230)
 - [ ] Đăng ký @yugen vào danh mục registry của shadcn (#68)
 - [ ] Đang cân nhắc: bộ Figma, gói icon Sakura
 
@@ -32,6 +32,7 @@ Chưa xếp lịch.
 
 Chi tiết ở trang Có gì mới (`/news`) và `CHANGELOG.md`.
 
+- **0.13.0** (2026-11-10): Khúc xạ cho glass, mùa hoa anh đào trong template Glass
 - **0.12.0** (2026-10-27): Glass, sáu template mới và chọn cột trong DataGrid
 - **0.11.1** (2026-10-26): Hiệu ứng wave của Skeleton chạy mượt trở lại
 - **0.11.0** (2026-10-25): Chuỗi giao diện thay được, docs tiếng Anh và template mới

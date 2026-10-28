@@ -1,22 +1,28 @@
 import * as React from "react";
 import * as SwitchPrimitive from "@radix-ui/react-switch";
 import { cn } from "@/lib/cn";
+import { usePressed } from "../_internal/usePressed";
 
 /** Fluent 2 Switch — https://fluent2.microsoft.design/components/web/react/core/switch/usage */
 export interface SwitchProps extends SwitchPrimitive.SwitchProps {
   label?: React.ReactNode;
   labelPosition?: "after" | "before";
+  /** Yugen Labs — thumb thành glass và dài ra khi đang nhấn (#210). */
+  material?: "glass";
 }
 
 export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
-  ({ className, label, labelPosition = "after", id, disabled, ...props }, ref) => {
+  ({ className, label, labelPosition = "after", id, disabled, material, onPointerDown, ...props }, ref) => {
     const autoId = React.useId();
     const switchId = id ?? autoId;
+    const pressed = usePressed();
+    const lens = material === "glass" && pressed.value;
 
     return (
       <span
         className={cn(
-          "group/switch inline-flex items-center gap-2 py-1.5",
+          // relative: input ẩn của Radix trong <form> nằm trong component (xem Checkbox, #223).
+          "group/switch relative inline-flex items-center gap-2 py-1.5",
           labelPosition === "before" && "flex-row-reverse",
         )}
       >
@@ -34,14 +40,23 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
             className,
           )}
           {...props}
+          onPointerDown={(event) => {
+            if (material) pressed.start();
+            onPointerDown?.(event);
+          }}
         >
           <SwitchPrimitive.Thumb
             className={cn(
-              "pointer-events-none block size-3.5 translate-x-0.5 rounded-circular bg-foreground-3 rtl:-translate-x-0.5",
-              "transition-transform duration-normal ease-easy-ease",
-              "group-hover/switch:bg-foreground-2",
-              "data-[state=checked]:translate-x-5.5 data-[state=checked]:bg-foreground-on-brand rtl:data-[state=checked]:-translate-x-5.5",
-              "group-has-disabled/switch:bg-foreground-disabled",
+              "pointer-events-none block translate-x-0.5 rounded-circular rtl:-translate-x-0.5",
+              "transition-[translate,width,height,background-color] duration-normal ease-easy-ease",
+              // Glass khi nhấn: thumb dài ra (16 × 24px) và vẫn nằm trong track ở cả hai phía.
+              lens
+                ? "glass h-4 w-6 shadow-4 data-[state=checked]:translate-x-3 rtl:data-[state=checked]:-translate-x-3"
+                : cn(
+                    "size-3.5 bg-foreground-3 group-hover/switch:bg-foreground-2",
+                    "data-[state=checked]:translate-x-5.5 data-[state=checked]:bg-foreground-on-brand rtl:data-[state=checked]:-translate-x-5.5",
+                    "group-has-disabled/switch:bg-foreground-disabled",
+                  ),
             )}
           />
         </SwitchPrimitive.Root>

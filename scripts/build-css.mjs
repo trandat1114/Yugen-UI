@@ -69,8 +69,8 @@ const input = [
   themeBody,
   '@source "./components/ui";',
   '@source "./lib";',
-  // Utility glass (Yugen Labs) dùng thẳng trong app, không chỉ qua component: phải có sẵn trong bản biên dịch.
-  '@source inline("glass glass-clear glass-tinted glass-scrim scroll-edge scroll-edge-above rounded-concentric");',
+  // Utility glass (Yugen Labs) và yugen-prose dùng thẳng trong app, không chỉ qua component: phải có sẵn trong bản biên dịch.
+  '@source inline("glass glass-clear glass-tinted glass-scrim scroll-edge scroll-edge-above rounded-concentric yugen-prose");',
 ].join("\n\n");
 
 const compiler = await compile(input, { base: src, onDependency: () => {} });

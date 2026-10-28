@@ -1,6 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import { AxeBuilder } from "@axe-core/playwright";
-import { docsUrl, openDocs, waitForDocsReady } from "./utils";
+import { docsUrl, FREEZE_MOTION_CSS, openDocs, waitForDocsReady } from "./utils";
 
 /** Các luồng chính của site docs (#39): bảng lệnh, ngôn ngữ và giao diện còn giữ sau khi tải lại, nút copy lệnh. */
 
@@ -227,4 +227,67 @@ test("form react-hook-form + zod: lỗi theo schema, focus vào ô lỗi đầu 
   await expect(form.getByText("Email chưa đúng định dạng.")).toBeVisible();
   await email.fill("ten@congty.vn");
   await expect(form.getByText("Email chưa đúng định dạng.")).toBeHidden();
+});
+
+for (const viewport of [
+  { width: 1440, height: 900 },
+  { width: 390, height: 844 },
+]) {
+  test(`/templates kết thúc ở footer, không có khoảng trống phía dưới (${viewport.width}px, #223)`, async ({ page }) => {
+    await page.setViewportSize(viewport);
+    // Form đăng ký của preview Landing có Checkbox: input ẩn của nó từng thoát khỏi khung preview và kéo dài trang.
+    await openTemplates(page, "", "#vite-landing");
+    await expect(page.locator('input[name="consent"]')).toHaveCount(1, { timeout: 30_000 });
+    const gap = await page.evaluate(() => {
+      const root = document.getElementById("root")!;
+      return document.documentElement.scrollHeight - (root.getBoundingClientRect().bottom + window.scrollY);
+    });
+    expect(gap).toBeLessThanOrEqual(1);
+  });
+}
+
+/** /templates kèm ?query hoặc #mục: docsUrl() nối ?theme… vào cuối, nên tự ghép URL. */
+async function openTemplates(page: Page, query = "", hash = "") {
+  await page.goto(`/templates?theme=light&brand=sakura&dir=ltr${query}${hash}`, { waitUntil: "domcontentloaded" });
+  await waitForDocsReady(page);
+  await page.addStyleTag({ content: FREEZE_MOTION_CSS });
+}
+
+test("/templates: bộ chọn chạy một template, #<dir> chọn template, phóng to mở toàn màn hình (#224)", async ({ page }) => {
+  await openTemplates(page, "", "#vite-admin");
+  const more = page.locator("#more");
+  await expect(more.getByRole("tab", { name: "Admin" })).toHaveAttribute("aria-selected", "true");
+  // Chỉ template đang chọn chạy preview: khung của template khác không có nội dung.
+  await expect(more.getByRole("tabpanel")).toHaveCount(1);
+  await expect(more.getByRole("region", { name: "Xem trước template Admin" }).getByRole("heading", { name: "Khách hàng" })).toBeVisible({
+    timeout: 30_000,
+  });
+
+  await more.getByRole("tab", { name: "Store" }).click();
+  await expect(page).toHaveURL(/#vite-store$/);
+  const expand = more.getByRole("button", { name: "Xem Store toàn màn hình" });
+  await expand.click();
+  await expect(page).toHaveURL(/[?&]preview=vite-store/);
+  const dialog = page.getByRole("dialog", { name: "Store" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole("button", { name: "Đóng" })).toBeFocused();
+  // Khung trên trang không chạy bản thứ hai khi đang xem toàn màn hình.
+  await expect(more.getByText("Đang mở toàn màn hình.")).toBeVisible();
+  const scan = await new AxeBuilder({ page }).include("[role=dialog]").withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
+  expect(scan.violations.map((v) => v.id)).toEqual([]);
+
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await expect(page).toHaveURL(/#vite-store$/);
+  expect(new URL(page.url()).searchParams.has("preview")).toBe(false);
+  await expect(expand).toBeFocused();
+});
+
+test("/templates?preview=<dir> mở thẳng toàn màn hình; Đóng bỏ ?preview (#224)", async ({ page }) => {
+  await openTemplates(page, "&preview=vite-saas");
+  const dialog = page.getByRole("dialog", { name: "SaaS" });
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole("button", { name: "Đóng" }).click();
+  await expect(dialog).toBeHidden();
+  expect(new URL(page.url()).searchParams.has("preview")).toBe(false);
 });
