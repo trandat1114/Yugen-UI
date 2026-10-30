@@ -49,6 +49,10 @@ jobs:
   build:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: read # scripts/contributors.mjs
+      pull-requests: read
     steps:
       - uses: actions/checkout@v7
         with:
@@ -61,6 +65,13 @@ jobs:
           cache: npm
 
       - run: npm ci
+
+      # Contributors page (#248): refresh src/docs/contributors.json from merged PRs, issues and reviews. Keeps the committed
+      # snapshot when the API fails, so a GitHub outage never blocks a deploy.
+      - name: Contributors
+        run: node scripts/contributors.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
       - name: Build docs
         run: npm run build:docs

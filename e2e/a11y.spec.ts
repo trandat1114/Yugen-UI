@@ -15,7 +15,10 @@ const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"];
 /** Rule axe cho kết quả khác nhau giữa các theme. */
 const COLOR_RULES = ["color-contrast", "link-in-text-block"];
 
-const ROUTES = readDiscoveredRoutes();
+/** Trang không có trong sidebar (vào từ link trong trang, footer, bảng lệnh): quét thêm như route của sidebar. */
+const OFF_SIDEBAR = ["/contributors"];
+
+const ROUTES = [...readDiscoveredRoutes(), ...OFF_SIDEBAR];
 
 /** Trang chủ (sidebar thu gọn) và một trang component (nhóm sidebar đang mở, mục đang chọn). */
 const SHELL_ROUTES = ["/", "/components/button"];
@@ -27,6 +30,7 @@ const REPRESENTATIVE = [
   "/theme-designer",
   "/news",
   "/community",
+  "/contributors",
   "/concepts/theming",
   "/concepts/rtl",
   "/concepts/wait-ux",

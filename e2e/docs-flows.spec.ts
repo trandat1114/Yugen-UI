@@ -291,3 +291,28 @@ test("/templates?preview=<dir> mở thẳng toàn màn hình; Đóng bỏ ?previ
   await expect(dialog).toBeHidden();
   expect(new URL(page.url()).searchParams.has("preview")).toBe(false);
 });
+
+test("Cộng đồng → Người đóng góp: mỗi người một bông hoa, trỏ hoặc focus vào thẻ làm bông đó nở to (#248)", async ({ page }) => {
+  await openDocs(page, "/community");
+  await page.getByRole("link", { name: "Xem người đóng góp" }).click();
+  await expect(page).toHaveURL(/\/contributors$/);
+  await expect(page.getByRole("heading", { level: 1, name: "Người đóng góp" })).toBeVisible();
+  const flowers = page.locator(".cb-flower");
+  const cards = page.locator("#people ul.grid > li");
+  const people = await flowers.count();
+  expect(people).toBeGreaterThan(0);
+  // Mỗi người một thẻ, cộng ô mời ở cuối.
+  await expect(cards).toHaveCount(people + 1);
+
+  await cards.first().hover();
+  await expect(flowers.first()).toHaveAttribute("data-active", "");
+  await expect(page.locator(".cb-art[data-dim]")).toHaveCount(1);
+  await page.mouse.move(0, 0);
+  await expect(page.locator(".cb-art[data-dim]")).toHaveCount(0);
+
+  await cards.nth(people - 1).getByRole("link").first().focus();
+  await expect(flowers.nth(people - 1)).toHaveAttribute("data-active", "");
+  // Trang không cuộn ngang trên điện thoại (cành dùng preserveAspectRatio slice).
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+});
