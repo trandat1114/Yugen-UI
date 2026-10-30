@@ -1,0 +1,41 @@
+{
+  "updated": "2026-10-30",
+  "people": [
+    {
+      "login": "trandat1114",
+      "name": "Trần Phú Đạt",
+      "avatar": "https://avatars.githubusercontent.com/u/88397960?u=1536b607c6b24251c0f403833bc956776eae27c2&v=4",
+      "first": "2026-10-20",
+      "counts": {
+        "code": 103,
+        "templates": 28,
+        "docs": 103,
+        "translation": 54,
+        "bug": 16,
+        "a11y": 4,
+        "idea": 60
+      },
+      "maintainer": true
+    },
+    {
+      "login": "giabao12-hali",
+      "name": "Nguyễn Gia Bảo",
+      "avatar": "https://avatars.githubusercontent.com/u/73122721?u=02b625304d485e56f68b21ece646056ce325016b&v=4",
+      "first": "2026-10-30",
+      "counts": {
+        "bug": 1
+      },
+      "items": [
+        {
+          "types": [
+            "bug"
+          ],
+          "number": 246,
+          "title": "Japanese (and some other languages) have their endings cut off when opened in full-screen mode.",
+          "date": "2026-10-30",
+          "url": "https://github.com/trandat1114/Yugen-UI/issues/246"
+        }
+      ]
+    }
+  ]
+}

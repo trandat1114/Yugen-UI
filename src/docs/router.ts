@@ -8,6 +8,7 @@ export type Route =
   | { kind: "theme-designer" }
   | { kind: "news" }
   | { kind: "community" }
+  | { kind: "contributors" }
   | { kind: "concept"; slug: string }
   | { kind: "foundation"; slug: string }
   | { kind: "component"; slug: string };
@@ -21,7 +22,7 @@ export interface DocsLocation {
 /** Gốc của docs: "/" khi dev, "/Yugen-UI/" trên GitHub Pages, "/Yugen-UI/next/" cho bản xem trước. Luôn có "/" cuối. */
 const BASE = import.meta.env.BASE_URL;
 
-const PAGES = ["blocks", "templates", "theme-designer", "news", "community"] as const;
+const PAGES = ["blocks", "templates", "theme-designer", "news", "community", "contributors"] as const;
 const SECTIONS = { concepts: "concept", foundations: "foundation", components: "component" } as const;
 
 /** "components/button" (đường dẫn sau BASE và sau "en/", không có "/" đầu) → route; null nếu không phải trang docs. */

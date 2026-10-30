@@ -1,7 +1,7 @@
 import { Suspense, useCallback, useEffect, useState, type ReactNode } from "react";
 import { PageProgress, PageProgressFallback, YugenProvider } from "@/components/ui";
 import { useAppearance, type Appearance } from "@/hooks/useAppearance";
-import { hrefOf, navigate, useDocsLocation } from "@/docs/router";
+import { docsPath, hrefOf, navigate, useDocsLocation } from "@/docs/router";
 import { Sidebar } from "@/docs/layout/Sidebar";
 import { TopBar } from "@/docs/layout/TopBar";
 import { YugenMark } from "@/docs/YugenMark";
@@ -30,6 +30,7 @@ const TemplatesPage = lazyPage(() => import("@/docs/pages/TemplatesPage").then((
 const ThemeDesignerPage = lazyPage(() => import("@/docs/pages/ThemeDesignerPage").then((m) => m.ThemeDesignerPage));
 const NewsPage = lazyPage(() => import("@/docs/pages/NewsPage").then((m) => m.NewsPage));
 const CommunityPage = lazyPage(() => import("@/docs/pages/CommunityPage").then((m) => m.CommunityPage));
+const ContributorsPage = lazyPage(() => import("@/docs/pages/ContributorsPage").then((m) => m.ContributorsPage));
 
 /**
  * Nạp trước mọi phần nạp lười mà route cần (trang, nội dung khái niệm, demo, gói tiếng Anh). main.tsx chờ hàm này rồi
@@ -46,6 +47,7 @@ export async function preloadRoute(route: Route, lang: Locale) {
     "theme-designer": ThemeDesignerPage,
     news: NewsPage,
     community: CommunityPage,
+    contributors: ContributorsPage,
   } as const;
   const tasks: Promise<unknown>[] = [];
   if (lang === "en") tasks.push(loadEnglish());
@@ -78,6 +80,9 @@ function Footer() {
         </span>
       </span>
       <nav aria-label={t("footer.links")} className="flex flex-wrap items-center gap-4">
+        <a href={docsPath("/contributors")} className="hover:text-foreground-1 hover:underline">
+          {t("nav.contributors")}
+        </a>
         {FOOTER_LINKS.map((link) => (
           <a key={link.href} href={link.href} target="_blank" rel="noreferrer" className="hover:text-foreground-1 hover:underline">
             {"label" in link ? link.label : t(link.key)}
@@ -170,6 +175,7 @@ export default function App({ path }: { path?: string }) {
               {route.kind === "theme-designer" && <ThemeDesignerPage />}
               {route.kind === "news" && <NewsPage />}
               {route.kind === "community" && <CommunityPage />}
+              {route.kind === "contributors" && <ContributorsPage />}
               {route.kind === "concept" && <ConceptPage slug={route.slug} />}
               {route.kind === "foundation" && <FoundationsPage slug={route.slug} theme={tokenKey} />}
               {route.kind === "component" && <ComponentPage slug={route.slug} theme={theme} brand={brand} />}

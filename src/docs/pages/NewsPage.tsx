@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ArrowRight16Regular, Sparkle20Regular } from "@fluentui/react-icons";
-import { Badge, type BadgeProps, Tabs, TabsContent, TabsList, TabsTrigger, ToggleGroup, ToggleGroupItem } from "@/components/ui";
+import { Avatar, Badge, type BadgeProps, Tabs, TabsContent, TabsList, TabsTrigger, ToggleGroup, ToggleGroupItem } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { PageHeader } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
@@ -10,6 +10,7 @@ import type { MessageKey } from "../i18n/vi";
 import { SITE } from "../site";
 import { markNewsSeen } from "../useNews";
 import { docsPath } from "../router";
+import { avatarOf, creditsBetween, profileUrl } from "../contributors";
 
 const KIND_BADGE: Record<NewsKind, Pick<BadgeProps, "color" | "appearance">> = {
   new: { color: "brand", appearance: "tint" },
@@ -55,11 +56,43 @@ const FEEDS: {
   },
 ];
 
+/**
+ * Người đóng góp của từng bản yugen-ui (#248): đóng góp sau ngày của bản trước, tới ngày của bản này (bản sắp ra: ngày dự
+ * kiến). Maintainer không được liệt kê.
+ */
+const CREDITS = new Map(NEWS.map((release, i) => [release.version, creditsBetween(NEWS[i + 1]?.date, release.date)]));
+
+function ReleaseCredits({ credits }: { credits: ReturnType<typeof creditsBetween> }) {
+  const { t } = useLocale();
+  return (
+    <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-stroke-2 pt-3 text-caption1 text-foreground-2">
+      <span>{t("news.thanks")}</span>
+      {credits.map(({ person, items }) => (
+        <span key={person.login} className="inline-flex items-center gap-1.5">
+          <span aria-hidden>
+            <Avatar name={person.name} src={avatarOf(person, 40)} size={20} color="colorful" />
+          </span>
+          <a href={profileUrl(person.login)} target="_blank" rel="noreferrer" className="font-semibold text-foreground-1 hover:underline">
+            {person.name}
+          </a>
+          {items
+            .filter((item) => item.number && item.url)
+            .map((item) => (
+              <a key={item.number} href={item.url} target="_blank" rel="noreferrer" className="text-link tabular-nums hover:text-link-hover hover:underline">
+                #{item.number}
+              </a>
+            ))}
+        </span>
+      ))}
+    </p>
+  );
+}
+
 function formatDate(date: string, locale: string) {
   return new Intl.DateTimeFormat(locale === "en" ? "en-US" : "vi-VN", { day: "2-digit", month: "long", year: "numeric" }).format(new Date(date));
 }
 
-function Timeline({ releases }: { releases: NewsRelease[] }) {
+function Timeline({ releases, credits }: { releases: NewsRelease[]; credits?: typeof CREDITS }) {
   const { t, locale } = useLocale();
   // Nội dung bản tin chưa dịch: lang="vi" khi giao diện là tiếng Anh (App hiện thông báo dịch một phần).
   const itemLang = locale === "en" ? "vi" : undefined;
@@ -122,6 +155,7 @@ function Timeline({ releases }: { releases: NewsRelease[] }) {
                 </li>
               ))}
             </ul>
+            {!!credits?.get(release.version)?.length && <ReleaseCredits credits={credits.get(release.version)!} />}
           </article>
         </li>
       ))}
@@ -182,7 +216,7 @@ export function NewsPage() {
                 .
               </p>
 
-              {releases.length > 0 ? <Timeline releases={releases} /> : <p className="text-body1 text-foreground-3">{t("news.empty")}</p>}
+              {releases.length > 0 ? <Timeline releases={releases} credits={feed.id === "yugen-ui" ? CREDITS : undefined} /> : <p className="text-body1 text-foreground-3">{t("news.empty")}</p>}
 
               <section className="mt-6 rounded-3xlarge border border-stroke-2 bg-background-2 p-6">
                 <h2 className="font-display text-title3 font-semibold">{t("news.upgradeTitle")}</h2>

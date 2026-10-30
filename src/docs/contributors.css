@@ -1,0 +1,55 @@
+/* Cành anh đào trang Người đóng góp (SakuraBranch, chỉ docs): mực chảy từ gốc ra ngọn, rồi từng bông nở theo thứ tự.
+   --cb-elapsed: thời gian animation đã chạy trên HTML prerender, trừ vào delay để không phát lại khi React render. */
+
+.cb-reveal {
+  transform: translateX(1300px);
+  animation: cb-reveal 1.6s cubic-bezier(0.33, 0, 0.1, 1) calc(0.1s - var(--cb-elapsed, 0s)) both;
+}
+@keyframes cb-reveal {
+  from {
+    transform: translateX(0);
+  }
+}
+
+.cb-bloom {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cb-bloom 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) calc(var(--cb-delay, 0s) - var(--cb-elapsed, 0s)) both;
+}
+@keyframes cb-bloom {
+  from {
+    opacity: 0;
+    transform: scale(0.2) rotate(-40deg);
+  }
+}
+
+/* Thẻ người đóng góp đang được trỏ / focus: bông của người đó nở to, các bông khác nhạt đi. */
+.cb-flower {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 240ms ease-out;
+}
+.cb-art[data-dim] .cb-flower {
+  opacity: 0.35;
+}
+.cb-art[data-dim] .cb-flower[data-active] {
+  opacity: 1;
+  transform: scale(1.6);
+}
+
+/* Nền tối: mực trắng tinh quá gắt, dùng xám nhạt như mực pha loãng. */
+[data-theme="dark"] .cb-art {
+  color: var(--color-foreground-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cb-reveal,
+  .cb-bloom {
+    animation: none;
+  }
+  .cb-flower {
+    transition: none;
+  }
+}

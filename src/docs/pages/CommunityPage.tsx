@@ -19,6 +19,8 @@ import {
   AccordionHeader,
   AccordionItem,
   AccordionPanel,
+  AvatarGroup,
+  AvatarGroupItem,
   Badge,
   type BadgeProps,
   Button,
@@ -48,6 +50,7 @@ import {
   type RoadmapStatus,
 } from "../roadmap";
 import { docsPath } from "../router";
+import { avatarOf, CONTRIBUTORS } from "../contributors";
 
 const WIKI = `${SITE.links.repository}/wiki`;
 
@@ -140,7 +143,8 @@ npm run build:lib      # build gói npm vào dist/`,
   ],
   peopleTitle: "Người đóng góp",
   authorRole: "Tác giả & maintainer",
-  peopleNote: "Danh sách người đóng góp được cập nhật theo các PR đã merge. Bạn có thể là người tiếp theo.",
+  peopleNote: "PR được merge, issue báo lỗi hay đề xuất và review đều được ghi tên ở trang Người đóng góp.",
+  peopleAction: "Xem người đóng góp",
   faqTitle: "Câu hỏi thường gặp",
   /** `a`: các đoạn văn; câu trả lời có 2 đoạn chèn tên tác giả (có link) ở giữa. */
   faq: [
@@ -280,7 +284,8 @@ npm run build:lib      # build the npm package into dist/`,
   ],
   peopleTitle: "Contributors",
   authorRole: "Author & maintainer",
-  peopleNote: "The contributor list grows with every merged PR. You could be next.",
+  peopleNote: "Merged pull requests, bug reports, ideas and reviews are all credited on the Contributors page.",
+  peopleAction: "See all contributors",
   faqTitle: "FAQ",
   faq: [
     {
@@ -422,6 +427,9 @@ function Roadmap({ copy }: { copy: Copy }) {
   );
 }
 
+const maintainer = CONTRIBUTORS.find((person) => person.maintainer);
+const others = CONTRIBUTORS.filter((person) => !person.maintainer);
+
 export function CommunityPage() {
   const { locale } = useLocale();
   const c = locale === "en" ? EN : VI;
@@ -554,10 +562,22 @@ export function CommunityPage() {
             name={SITE.author}
             primaryText={<AuthorLink className="text-foreground-1" />}
             secondaryText={c.authorRole}
-            avatar={{ color: "brand" }}
+            avatar={{ color: "brand", src: maintainer && avatarOf(maintainer, 96) }}
             size="large"
           />
-          <p className="max-w-md text-body1 text-foreground-3">{c.peopleNote}</p>
+          {others.length > 0 && (
+            <AvatarGroup layout="stack" size={32} maxAvatars={8}>
+              {others.map((person) => (
+                <AvatarGroupItem key={person.login} name={person.name} src={avatarOf(person, 64)} />
+              ))}
+            </AvatarGroup>
+          )}
+          <div className="flex max-w-md flex-col items-start gap-3">
+            <p className="text-body1 text-foreground-3">{c.peopleNote}</p>
+            <Button asChild size="small">
+              <a href={docsPath("/contributors")}>{c.peopleAction}</a>
+            </Button>
+          </div>
         </div>
       </DocSection>
 
