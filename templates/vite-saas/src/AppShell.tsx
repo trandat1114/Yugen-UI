@@ -2,7 +2,6 @@ import * as React from "react";
 import {
   Accessibility20Regular,
   Keyboard20Regular,
-  Navigation20Regular,
   Person20Regular,
   Search20Regular,
   Settings20Regular,
@@ -11,15 +10,13 @@ import {
   WeatherSunny20Regular,
 } from "@fluentui/react-icons";
 import {
+  AppShell as Shell,
+  AppShellHeader,
+  AppShellMain,
   Avatar,
   Breadcrumb,
   Button,
   CounterBadge,
-  Drawer,
-  DrawerBody,
-  DrawerHeader,
-  DrawerHeaderTitle,
-  DrawerSurface,
   Kbd,
   KbdGroup,
   Menu,
@@ -36,6 +33,11 @@ import {
   NotificationCenter,
   Persona,
   ProgressBar,
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarTrigger,
   SkeletonCard,
   toast,
   useNotifications,
@@ -80,16 +82,19 @@ function Logo() {
   );
 }
 
-function SidebarContent({ t, page, onSelect, embedded }: { t: Content; page: PageId; onSelect: (page: PageId) => void; embedded?: boolean }) {
+/** Sidebar: thu về icon trên màn rộng, Drawer trên màn hẹp (đóng khi chọn trang). */
+function AppSidebar({ t, page, onSelect, embedded }: { t: Content; page: PageId; onSelect: (page: PageId) => void; embedded?: boolean }) {
   const item = (p: (typeof PAGES)[number]) => (
     <NavItem
       key={p.id}
       value={p.id}
       icon={p.icon}
+      tooltip={t.pages[p.id].label}
       href={embedded ? undefined : pathOf(p.id)}
       // Click thường: đổi trang ngay trong app (không tải lại); Ctrl / ⌘ + click vẫn mở tab mới với đường dẫn thật.
       onClick={(e) => {
-        if (embedded || isPlainClick(e)) {
+        if (embedded) onSelect(p.id);
+        else if (isPlainClick(e)) {
           e.preventDefault();
           onSelect(p.id);
         }
@@ -103,16 +108,23 @@ function SidebarContent({ t, page, onSelect, embedded }: { t: Content; page: Pag
   );
 
   return (
-    <div className="flex h-full min-h-0 flex-col">
-      <div className="min-h-0 flex-1 overflow-y-auto px-2 py-3">
+    <Sidebar label={t.appName}>
+      <SidebarHeader>
+        <Logo />
+        <div className="min-w-0 in-data-rail:hidden">
+          <p className="truncate text-body1 font-semibold">{t.appName}</p>
+          <p className="truncate text-caption1 text-foreground-3">{t.plan}</p>
+        </div>
+      </SidebarHeader>
+      <SidebarContent>
         <Nav selectedValue={page} aria-label={t.shell.nav}>
           <NavSectionHeader>{t.shell.workspace}</NavSectionHeader>
           {PAGES.filter((p) => p.section === "workspace").map(item)}
           <NavSectionHeader>{t.shell.manage}</NavSectionHeader>
           {PAGES.filter((p) => p.section === "manage").map(item)}
         </Nav>
-      </div>
-      <div className="flex flex-col gap-2 border-t border-stroke-2 p-4">
+      </SidebarContent>
+      <SidebarFooter className="p-4 in-data-rail:hidden">
         <div className="flex items-baseline justify-between text-caption1">
           <span className="font-semibold text-foreground-1">{t.shell.storage}</span>
           <span className="text-foreground-3 tabular-nums">{t.shell.storageUsed}</span>
@@ -121,8 +133,8 @@ function SidebarContent({ t, page, onSelect, embedded }: { t: Content; page: Pag
         <Button size="small" className="mt-1 self-start" onClick={() => toast({ intent: "info", ...t.shell.upgradeToast })}>
           {t.shell.upgrade}
         </Button>
-      </div>
-    </div>
+      </SidebarFooter>
+    </Sidebar>
   );
 }
 
@@ -190,12 +202,11 @@ function UserMenu({ t, onNavigate, onOpenPalette }: { t: Content; onNavigate: (p
 
 /** Khung ứng dụng: sidebar (Drawer trên màn hẹp), thanh trên cùng, bảng lệnh và nội dung trang. */
 export function AppShell({ page, onNavigate, appearance, onAppearanceChange, content: t = defaultContent, embedded = false }: AppShellProps) {
-  const [navOpen, setNavOpen] = React.useState(false);
   const [paletteOpen, setPaletteOpen] = React.useState(false);
   const notifications = useNotifications(() => seedNotifications(t, Date.now()));
   const current = PAGE_BY_ID[page];
   const text = t.pages[page];
-  const contentRef = React.useRef<HTMLDivElement>(null);
+  const contentRef = React.useRef<HTMLElement>(null);
 
   React.useEffect(() => {
     if (embedded) return;
@@ -214,61 +225,53 @@ export function AppShell({ page, onNavigate, appearance, onAppearanceChange, con
     contentRef.current?.scrollTo({ top: 0 });
   }, [page]);
 
-  const navigate = (next: PageId) => {
-    setNavOpen(false);
-    onNavigate(next);
-  };
-
-  const Content = embedded ? "div" : "main";
+  const Main = embedded ? "div" : "main";
   const Heading = embedded ? "h2" : "h1";
 
   return (
-    <div className={`@container flex bg-background-2 text-foreground-1 ${embedded ? "h-full" : "h-dvh"}`}>
-      <div className="hidden w-64 shrink-0 flex-col border-e border-stroke-2 bg-background-1 @4xl:flex">
-        <div className="flex h-14 shrink-0 items-center gap-2 border-b border-stroke-2 px-4">
-          <Logo />
-          <div className="min-w-0">
-            <p className="truncate text-body1 font-semibold">{t.appName}</p>
-            <p className="truncate text-caption1 text-foreground-3">{t.plan}</p>
-          </div>
-        </div>
-        <SidebarContent t={t} page={page} onSelect={navigate} embedded={embedded} />
-      </div>
+    <Shell
+      // Nhúng: cao theo khối cha, không phím tắt toàn cục, không skip link, không lưu trạng thái sidebar.
+      className={embedded ? "h-full" : undefined}
+      persistKey={embedded ? undefined : "saas-sidebar"}
+      shortcut={embedded ? false : undefined}
+      skipLink={!embedded}
+    >
+      <AppSidebar t={t} page={page} onSelect={onNavigate} embedded={embedded} />
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 shrink-0 items-center gap-2 border-b border-stroke-2 bg-background-1 px-4">
-          <Button appearance="subtle" icon={<Navigation20Regular />} aria-label={t.shell.openNav} className="@4xl:hidden" onClick={() => setNavOpen(true)} />
-          <Breadcrumb
-            aria-label={t.shell.breadcrumb}
-            className="hidden min-w-0 @xl:flex"
-            items={[{ label: t.appName, onClick: () => navigate("overview") }, { label: text.label }]}
+      <AppShellHeader>
+        <SidebarTrigger />
+        <Breadcrumb
+          aria-label={t.shell.breadcrumb}
+          className="hidden min-w-0 @xl:flex"
+          items={[{ label: t.appName, onClick: () => onNavigate("overview") }, { label: text.label }]}
+        />
+        <div className="ms-auto flex items-center gap-1">
+          <Button
+            appearance="subtle"
+            icon={<Search20Regular />}
+            aria-label={t.shell.searchLabel}
+            className="@2xl:hidden"
+            onClick={() => setPaletteOpen(true)}
           />
-          <div className="ms-auto flex items-center gap-1">
-            <Button
-              appearance="subtle"
-              icon={<Search20Regular />}
-              aria-label={t.shell.searchLabel}
-              className="@2xl:hidden"
-              onClick={() => setPaletteOpen(true)}
-            />
-            <Button
-              icon={<Search20Regular />}
-              className="hidden w-56 justify-start text-foreground-3 @2xl:inline-flex"
-              onClick={() => setPaletteOpen(true)}
-            >
-              <span className="flex-1 text-start">{t.shell.search}</span>
-              <KbdGroup>
-                <Kbd>Ctrl</Kbd>
-                <Kbd>K</Kbd>
-              </KbdGroup>
-            </Button>
-            <ThemeMenu t={t} appearance={appearance} onChange={onAppearanceChange} />
-            <NotificationCenter {...notifications.bind} />
-            <UserMenu t={t} onNavigate={navigate} onOpenPalette={() => setPaletteOpen(true)} />
-          </div>
-        </header>
+          <Button
+            icon={<Search20Regular />}
+            className="hidden w-56 justify-start text-foreground-3 @2xl:inline-flex"
+            onClick={() => setPaletteOpen(true)}
+          >
+            <span className="flex-1 text-start">{t.shell.search}</span>
+            <KbdGroup>
+              <Kbd>Ctrl</Kbd>
+              <Kbd>K</Kbd>
+            </KbdGroup>
+          </Button>
+          <ThemeMenu t={t} appearance={appearance} onChange={onAppearanceChange} />
+          <NotificationCenter {...notifications.bind} />
+          <UserMenu t={t} onNavigate={onNavigate} onOpenPalette={() => setPaletteOpen(true)} />
+        </div>
+      </AppShellHeader>
 
-        <Content ref={contentRef} aria-label={embedded ? text.title : undefined} className="@container min-h-0 flex-1 overflow-y-auto">
+      <AppShellMain asChild ref={contentRef} className="@container">
+        <Main aria-label={embedded ? text.title : undefined}>
           <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 p-4 @3xl:p-6">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div className="min-w-0">
@@ -288,29 +291,17 @@ export function AppShell({ page, onNavigate, appearance, onAppearanceChange, con
               <current.Page t={t} />
             </React.Suspense>
           </div>
-        </Content>
-      </div>
-
-      <Drawer open={navOpen} onOpenChange={setNavOpen}>
-        <DrawerSurface position="start" size="small" aria-describedby={undefined} className="flex flex-col p-0">
-          <DrawerHeader className="flex-row items-center gap-2 border-b border-stroke-2 px-4 py-3">
-            <Logo />
-            <DrawerHeaderTitle>{t.appName}</DrawerHeaderTitle>
-          </DrawerHeader>
-          <DrawerBody className="min-h-0 flex-1 p-0">
-            <SidebarContent t={t} page={page} onSelect={navigate} embedded={embedded} />
-          </DrawerBody>
-        </DrawerSurface>
-      </Drawer>
+        </Main>
+      </AppShellMain>
 
       <CommandPalette
         t={t}
         open={paletteOpen}
         onOpenChange={setPaletteOpen}
-        onNavigate={navigate}
+        onNavigate={onNavigate}
         onThemeChange={(theme) => onAppearanceChange({ theme })}
         onBrandChange={(brand) => onAppearanceChange({ brand })}
       />
-    </div>
+    </Shell>
   );
 }

@@ -29,7 +29,7 @@ export interface RoadmapRelease {
   items: RoadmapItem[];
 }
 
-export const ROADMAP_UPDATED = "2026-10-28";
+export const ROADMAP_UPDATED = "2026-11-02";
 export const PROJECT_URL = "https://github.com/users/trandat1114/projects/6";
 
 export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
@@ -43,6 +43,7 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
         { status: "planned", issue: 65, vi: "Rà soát API, gỡ deprecation, quyết định về React 18 và class spacing viết hoa", en: "API review, deprecations removed, decisions on React 18 and upper-case spacing" },
         { status: "done", issue: 63, vi: "SEO: URL theo đường dẫn, prerender từng trang, sitemap", en: "SEO: path URLs, prerendered pages, sitemap" },
         { status: "planned", issue: 160, vi: "Đề xuất cho 1.0 (đang chờ duyệt): AppShell, Form, NavigationMenu, block 2.0, codemod, kiểm thử", en: "1.0 proposal (under review): AppShell, Form, NavigationMenu, blocks 2.0, codemods, testing" },
+        { status: "done", issue: 161, vi: "AppShell và Sidebar: thu về icon trên màn rộng, Drawer trên màn hẹp; template SaaS, Dashboard, AI chat dùng chung", en: "AppShell and Sidebar: an icon rail on wide screens, a Drawer on narrow ones; shared by the SaaS, Dashboard and AI chat templates" },
         { status: "planned", issue: 243, vi: "Khóa cuộn: chọn giữ hay ẩn thanh cuộn khi mở Menu, ContextMenu, Dropdown", en: "Scroll lock: keep or hide the page scrollbar while Menu, ContextMenu or Dropdown is open" },
         { status: "planned", issue: 244, vi: "Typography: trang Typeset tinh chỉnh Prose (font, cỡ chữ, khoảng cách) và copy CSS", en: "Typography: a Typeset page to tune Prose (fonts, size, spacing) and copy the CSS" },
       ],

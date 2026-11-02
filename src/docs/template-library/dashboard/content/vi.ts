@@ -8,11 +8,9 @@ const vi: Content = {
   user: { name: "Trần Minh Anh", email: "minhanh@example.com", role: "Chủ cửa hàng" },
 
   nav: {
-    skip: "Chuyển tới nội dung",
     label: "Chính",
     reports: "Báo cáo",
     workspace: "Không gian làm việc",
-    open: "Mở điều hướng",
     appearance: "Giao diện",
     mode: "Chế độ",
     brand: "Thương hiệu",

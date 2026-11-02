@@ -9,7 +9,6 @@ const en: Content = {
   assistantName: "Sakura",
   you: "You",
   nav: {
-    open: "Open conversations",
     label: "Conversations",
     newChat: "New chat",
     settings: "Settings",

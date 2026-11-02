@@ -1241,7 +1241,7 @@ export const docs: ComponentDoc[] = [
       { name: "multiple", type: "boolean", defaultValue: "true", description: "Cho phép mở nhiều category cùng lúc." },
       { name: "density", type: `"medium" | "small"`, defaultValue: `"medium"`, description: "Mục cao 40 / 32px." },
       { name: "material", type: `"glass" | "glass-clear"`, description: "Yugen Labs — sidebar nổi bằng glass (bo góc, đệm, đổ bóng)." },
-      { name: "NavItem.value / icon / href / asChild", type: "string / ReactNode / string / boolean", description: "Có href → thẻ <a>; asChild cho link router." },
+      { name: "NavItem.value / icon / href / asChild / tooltip", type: "string / ReactNode / string / boolean / ReactNode", description: "Có href → thẻ <a>; asChild cho link router; tooltip là nhãn hiện khi sidebar của AppShell thu về icon (mặc định: chữ của mục)." },
       { name: "NavCategory.value", type: "string", description: "Khoá của nhóm (dùng trong openCategories)." },
     ],
   },

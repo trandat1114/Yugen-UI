@@ -31,7 +31,6 @@ export interface Content {
     storageLabel: string;
     upgrade: string;
     upgradeToast: { title: string; body: string };
-    openNav: string;
     breadcrumb: string;
     search: string;
     searchLabel: string;

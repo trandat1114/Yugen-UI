@@ -7,7 +7,6 @@ const vi: Content = {
   assistantName: "Sakura",
   you: "Bạn",
   nav: {
-    open: "Mở danh sách hội thoại",
     label: "Hội thoại",
     newChat: "Trò chuyện mới",
     settings: "Cài đặt",

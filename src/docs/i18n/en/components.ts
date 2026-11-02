@@ -96,6 +96,7 @@ export const COMPONENTS_EN: Record<string, { lead: string; name?: string }> = {
   tooltip: { lead: "Tooltip shows brief supplementary information when people hover or focus an element." },
 
   // Layout
+  appshell: { lead: "AppShell is the frame of an app: a sidebar that collapses to icons or opens as a Drawer, a header and the main content." },
   accordion: { lead: "Accordion organizes content into expandable / collapsible sections to reduce information overload." },
   aspectratio: { lead: "AspectRatio keeps a frame at a fixed width-to-height ratio at any width, for video, images, banners or stories." },
   collapsible: { lead: "Collapsible shows or hides a region with a toggle control, animating its height." },

@@ -7,6 +7,8 @@ export interface Example {
   /** Code dùng chung (dữ liệu / hàm mẫu) cần thêm vào trước `code` để chạy độc lập — StackBlitz, check:examples. */
   setup?: string;
   render: () => ReactNode;
+  /** Demo cần cả chiều ngang (bố cục ứng dụng): chiếm hai cột của lưới ví dụ. */
+  wide?: boolean;
 }
 
 export interface PropDoc {

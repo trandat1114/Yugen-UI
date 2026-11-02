@@ -2,7 +2,7 @@
 
 <!-- Sinh từ src/docs/roadmap.ts bằng `npm run roadmap`. Đừng sửa tay. -->
 
-Kế hoạch theo từng bản phát hành, cập nhật 2026-10-28. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và
+Kế hoạch theo từng bản phát hành, cập nhật 2026-11-02. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và
 phụ thuộc nằm ở [GitHub Project](https://github.com/users/trandat1114/projects/6). `[x]` đã xong, `[~]` đang làm, `[ ]` dự kiến.
 
 Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. English: the community page
@@ -17,6 +17,7 @@ API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện
 - [ ] Rà soát API, gỡ deprecation, quyết định về React 18 và class spacing viết hoa (#65)
 - [x] SEO: URL theo đường dẫn, prerender từng trang, sitemap (#63)
 - [ ] Đề xuất cho 1.0 (đang chờ duyệt): AppShell, Form, NavigationMenu, block 2.0, codemod, kiểm thử (#160)
+- [x] AppShell và Sidebar: thu về icon trên màn rộng, Drawer trên màn hẹp; template SaaS, Dashboard, AI chat dùng chung (#161)
 - [ ] Khóa cuộn: chọn giữ hay ẩn thanh cuộn khi mở Menu, ContextMenu, Dropdown (#243)
 - [ ] Typography: trang Typeset tinh chỉnh Prose (font, cỡ chữ, khoảng cách) và copy CSS (#244)
 
