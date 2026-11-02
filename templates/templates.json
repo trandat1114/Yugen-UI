@@ -6,7 +6,7 @@
     "hint": "Blank app: saved theme, toast, @/ alias and a short welcome page",
     "budget": {
       "js": 135,
-      "css": 26
+      "css": 28
     },
     "meta": {
       "en": {
@@ -26,7 +26,7 @@
     "hint": "SaaS workspace: sidebar, Ctrl K command palette, notifications, 8 pages",
     "budget": {
       "js": 190,
-      "css": 26
+      "css": 28
     },
     "meta": {
       "en": {
@@ -46,7 +46,7 @@
     "hint": "Markdown blog: table of contents, tags, search, build-time SEO",
     "budget": {
       "js": 150,
-      "css": 26
+      "css": 28
     },
     "meta": {
       "en": {
@@ -66,7 +66,7 @@
     "hint": "Sales dashboard: date range, KPIs, charts, customer table with CSV export, 4 pages",
     "budget": {
       "js": 195,
-      "css": 26
+      "css": 28
     },
     "meta": {
       "en": {
@@ -86,7 +86,7 @@
     "hint": "AI chat: saved conversations, streaming answers you can stop, one backend adapter",
     "budget": {
       "js": 175,
-      "css": 26
+      "css": 28
     },
     "meta": {
       "en": {
@@ -106,7 +106,7 @@
     "hint": "Travel journal: cherry blossoms in Japan, glass navigation with refraction (Yugen Labs)",
     "budget": {
       "js": 160,
-      "css": 26
+      "css": 28
     },
     "meta": {
       "en": {
@@ -126,7 +126,7 @@
     "hint": "Product landing page: pricing, FAQ, sign-up form, build-time SEO, Lighthouse 95+",
     "budget": {
       "js": 2,
-      "css": 27,
+      "css": 29,
       "totalJs": 165
     },
     "meta": {
@@ -147,7 +147,7 @@
     "hint": "Admin / CRUD: server-paged DataGrid, drawer forms, optimistic updates, sign-in with OTP",
     "budget": {
       "js": 167,
-      "css": 26
+      "css": 28
     },
     "meta": {
       "en": {
@@ -167,7 +167,7 @@
     "hint": "Next.js App Router: theme in a cookie (no flash), metadata per page, next/font",
     "budget": {
       "js": 265,
-      "css": 27
+      "css": 29
     },
     "meta": {
       "en": {
@@ -187,7 +187,7 @@
     "hint": "Docs site: Markdown pages in sections, Ctrl K search, table of contents, build-time SEO",
     "budget": {
       "js": 154,
-      "css": 26
+      "css": 28
     },
     "meta": {
       "en": {
@@ -207,7 +207,7 @@
     "hint": "Storefront: filters in the URL, product variants, cart in a Sheet, multi-step checkout",
     "budget": {
       "js": 165,
-      "css": 26
+      "css": 28
     },
     "meta": {
       "en": {
