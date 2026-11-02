@@ -185,6 +185,16 @@ npx changeset    # chọn yugen-ui → patch hoặc minor → viết tóm tắt 
 - **Trên nhánh `next` (chế độ prerelease)**: `.changeset/pre.json` chỉ tồn tại ở `next` — commit nó ở đó, không sửa tay,
   không đưa sang `main`. Khi phát hành `-next.N`, các file changeset **được giữ lại** (bình thường); chúng chỉ bị xoá khi
   thoát chế độ pre và ra bản ổn định. Chi tiết: wiki › *Branching and Release Channels*.
+- Cảm ơn người không có commit trong PR (vd. người báo lỗi): thêm dòng `Thanks: @tên` cuối tóm tắt, CHANGELOG ghi
+  "Thanks [@tên](…)!". Tác giả PR được cảm ơn tự động khi `npm run version-packages` chạy có `GITHUB_TOKEN`
+  (vd. `gh auth token`). Maintainer không được liệt kê.
+
+### Ghi tên người đóng góp
+
+Trang `/contributors` liệt kê mọi người có PR được merge, issue (báo lỗi, báo lỗi tiếp cận, đề xuất) hay review, lấy
+từ GitHub API: `npm run contributors` (cần `GITHUB_TOKEN`) ghi `src/docs/contributors.json`, workflow Docs chạy lại mỗi
+lần deploy. Đóng góp ngoài GitHub (thiết kế, ý tưởng) ghi tay vào `src/docs/contributors.extra.json`. Muốn bỏ tên khỏi
+trang: mở issue hoặc nhắn maintainer, maintainer thêm login vào `exclude` trong file đó.
 
 ### Checklist PR
 
@@ -333,6 +343,18 @@ receive (components, props, exports, tokens, CSS, fixes, a11y). No changeset: do
 `npx changeset status` previews the bump. On the `next` branch (prerelease mode) `.changeset/pre.json` lives only on
 `next` — commit it there, never edit it by hand or bring it to `main`; changeset files are kept after each `-next.N`
 release and removed when the cycle exits pre mode.
+
+To thank someone with no commit in the PR (a bug reporter, say), end the summary with a `Thanks: @name` line; the
+CHANGELOG then reads "Thanks [@name](…)!". The PR author is thanked automatically when `npm run version-packages` runs
+with `GITHUB_TOKEN` set (for example from `gh auth token`). Maintainers are not listed.
+
+### Contributor credit
+
+The `/contributors` page lists everyone with a merged pull request, an issue (bug report, accessibility report, idea)
+or a review, read from the GitHub API: `npm run contributors` (needs `GITHUB_TOKEN`) writes
+`src/docs/contributors.json`, and the Docs workflow refreshes it on every deploy. Contributions outside GitHub (design,
+ideas) go by hand into `src/docs/contributors.extra.json`. To take your name off the page, open an issue or contact a
+maintainer, who adds your login to `exclude` in that file.
 
 ### Releasing (maintainers)
 

@@ -1,0 +1,6 @@
+{
+  "$comment": "Ghi tay cho scripts/contributors.mjs (#248). maintainers: đứng đầu trang. exclude: login xin bỏ tên. people: đóng góp API không thấy (thiết kế, ý tưởng ngoài GitHub…): { login, name?, types: [design|idea|translation|…], title, date: YYYY-MM-DD, url? }.",
+  "maintainers": ["trandat1114"],
+  "exclude": [],
+  "people": []
+}

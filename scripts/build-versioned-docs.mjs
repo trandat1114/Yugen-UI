@@ -46,6 +46,9 @@ function buildRef(ref, sub, label) {
   try {
     console.log(`\n▶ docs ${label} → ${sub}`);
     run("git", ["worktree", "add", "--detach", dir, ref], root);
+    // Danh sách người đóng góp vừa làm mới ở bản chính (pages.yml › Contributors) dùng chung cho bản có trang này.
+    const contributors = "src/docs/contributors.json";
+    if (fs.existsSync(path.join(dir, contributors))) fs.copyFileSync(path.join(root, contributors), path.join(dir, contributors));
     run("npm", ["ci", "--no-audit", "--no-fund"], dir);
     run("npm", ["run", "build:docs"], dir, { DOCS_BASE: `${base}${sub}` });
     fs.cpSync(path.join(dir, "dist-docs"), path.join(out, sub), { recursive: true });

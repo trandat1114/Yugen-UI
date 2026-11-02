@@ -19,6 +19,7 @@ describe("seo: trang chưa dịch", () => {
       { kind: "templates" },
       { kind: "theme-designer" },
       { kind: "community" },
+      { kind: "contributors" },
       { kind: "foundation", slug: "color" },
       { kind: "foundation", slug: "motion" },
       { kind: "component", slug: "button" },

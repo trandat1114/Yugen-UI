@@ -19,6 +19,7 @@ export const ROUTES: Route[] = [
   { kind: "theme-designer" },
   { kind: "news" },
   { kind: "community" },
+  { kind: "contributors" },
   ...CONCEPTS.map((c): Route => ({ kind: "concept", slug: c.meta.slug })),
   ...FOUNDATIONS.map((f): Route => ({ kind: "foundation", slug: f.slug })),
   ...COMPONENTS_META.map((c): Route => ({ kind: "component", slug: c.slug })),
@@ -42,6 +43,8 @@ export function sourcesOf(route: Route): string[] {
       return ["src/docs/news.ts"];
     case "community":
       return ["src/docs/pages/CommunityPage.tsx", "src/docs/roadmap.ts"];
+    case "contributors":
+      return ["src/docs/pages/ContributorsPage.tsx", "src/docs/contributors.json"];
     case "concept":
       return [`src/docs/concepts/${route.slug}.tsx`, `src/docs/concepts/en/${route.slug}.tsx`];
     case "foundation":

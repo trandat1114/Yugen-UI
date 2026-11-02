@@ -10,7 +10,7 @@ import { SITE } from "./site";
  * Tiêu đề tab, <meta name="description">, canonical và og:* theo trang. Bản build ghi sẵn vào HTML prerender của từng
  * trang (scripts/prerender.mjs); khi chuyển trang trong trình duyệt, DocumentMeta cập nhật lại.
  */
-const PAGES: Record<"blocks" | "templates" | "theme-designer" | "community", Record<"vi" | "en", [string, string]>> = {
+const PAGES: Record<"blocks" | "templates" | "theme-designer" | "community" | "contributors", Record<"vi" | "en", [string, string]>> = {
   blocks: {
     vi: ["Blocks", "Cụm giao diện ghép sẵn từ component Yugen UI — đăng nhập, cài đặt, thống kê, danh sách — copy nguyên khối vào dự án."],
     en: ["Blocks", "Ready-made UI sections built from Yugen UI components — sign-in, settings, stats, lists — copy whole blocks into your project."],
@@ -26,6 +26,10 @@ const PAGES: Record<"blocks" | "templates" | "theme-designer" | "community", Rec
   community: {
     vi: ["Cộng đồng", "Đóng góp cho Yugen UI: báo lỗi, gửi block, dịch tài liệu, lộ trình phát triển."],
     en: ["Community", "Contribute to Yugen UI: report bugs, share blocks, translate the docs, follow the roadmap."],
+  },
+  contributors: {
+    vi: ["Người đóng góp", "Những người đã giúp Yugen UI bằng code, tài liệu, bản dịch, báo lỗi và review."],
+    en: ["Contributors", "The people who helped Yugen UI with code, docs, translations, bug reports and reviews."],
   },
 };
 
@@ -53,7 +57,8 @@ export function routeMeta(route: Route, l: LocaleValue): { title?: string; descr
     case "blocks":
     case "templates":
     case "theme-designer":
-    case "community": {
+    case "community":
+    case "contributors": {
       const [title, description] = PAGES[route.kind][l.locale];
       return { title, description };
     }
@@ -64,7 +69,7 @@ export function routeMeta(route: Route, l: LocaleValue): { title?: string; descr
 
 /** Chế độ tiếng Anh: route nào còn hiện nội dung tiếng Việt (toàn trang hoặc một phần). */
 export function fallbackOf(route: Route): "page" | "partial" | null {
-  // Trang chủ, Cộng đồng, Templates, Blocks, Theme Designer và Foundations viết song ngữ ngay trong trang (#45, #138).
+  // Trang chủ, Cộng đồng, Người đóng góp, Templates, Blocks, Theme Designer và Foundations viết song ngữ ngay trong trang (#45, #138).
   if (route.kind !== "news" && route.kind !== "concept" && route.kind !== "component") return null;
   if (route.kind === "news") return "partial";
   if (route.kind === "concept") return CONCEPT_EN_PAGES[route.slug] ? null : "page";

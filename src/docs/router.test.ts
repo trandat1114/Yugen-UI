@@ -9,6 +9,7 @@ const ROUTES: Route[] = [
   { kind: "theme-designer" },
   { kind: "news" },
   { kind: "community" },
+  { kind: "contributors" },
   { kind: "concept", slug: "cli" },
   { kind: "foundation", slug: "color" },
   { kind: "component", slug: "button" },
