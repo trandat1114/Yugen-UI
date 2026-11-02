@@ -21,6 +21,38 @@ import type { ComponentDoc } from "../types";
 
 /* ------------------------------------------------------------------ demos */
 
+function RouterLinkDemo() {
+  const [path, setPath] = useState("/");
+  return (
+    <div className="flex flex-col gap-2">
+      <Markdown
+        renderLink={({ href, title, children, external }) =>
+          external ? (
+            <a href={href} title={title} target="_blank" rel="noopener noreferrer">
+              {children}
+            </a>
+          ) : (
+            // Trong app: navigate(href) của router.
+            <a
+              href={href}
+              title={title}
+              onClick={(e) => {
+                e.preventDefault();
+                setPath(href);
+              }}
+            >
+              {children}
+            </a>
+          )
+        }
+      >
+        {"Đọc [hướng dẫn cài đặt](/concepts/quick-start) hoặc [Prose](/components/prose). Mã nguồn trên [GitHub](https://github.com)."}
+      </Markdown>
+      <p className="text-caption1 text-foreground-3">Đường dẫn: {path}</p>
+    </div>
+  );
+}
+
 const API_NOTES = `## Bắt đầu với API
 
 Mọi yêu cầu cần **khoá API** trong header \`Authorization\`. Tạo khoá ở trang [Cài đặt](#cai-dat).
@@ -826,25 +858,33 @@ Mọi yêu cầu cần **khoá API** trong header \\\`Authorization\\\`. Tạo k
       },
       {
         title: "Link qua router",
-        description: "renderLink nhận href, nhãn và external; link nội bộ đi qua router của app thay vì tải lại trang.",
-        code: `<Markdown
-  renderLink={({ href, children, external }) =>
-    external ? <a href={href} target="_blank" rel="noopener noreferrer">{children}</a> : <Link to={href}>{children}</Link>
-  }
->
-  {"Đọc [hướng dẫn cài đặt](/concepts/quick-start) hoặc mã nguồn trên [GitHub](https://github.com)."}
-</Markdown>`,
-        render: () => (
-          <Markdown
-            renderLink={({ href, children, external }) => (
-              <a href={href} {...(external ? { target: "_blank", rel: "noopener noreferrer" } : { onClick: (e) => e.preventDefault() })}>
-                {children}
-              </a>
-            )}
-          >
-            {"Đọc [hướng dẫn cài đặt](/concepts/quick-start) hoặc mã nguồn trên [GitHub](https://github.com)."}
-          </Markdown>
-        ),
+        description:
+          "renderLink nhận href, title, nhãn và external; link nội bộ đi qua router của app (router.navigate, <Link to> của router) thay vì tải lại trang. Ví dụ thay router bằng state.",
+        code: `function RouterLinkDemo() {
+  const [path, setPath] = useState("/");
+  return (
+    <div className="flex flex-col gap-2">
+      <Markdown
+        renderLink={({ href, title, children, external }) =>
+          external ? (
+            <a href={href} title={title} target="_blank" rel="noopener noreferrer">
+              {children}
+            </a>
+          ) : (
+            // Trong app: navigate(href) của router.
+            <a href={href} title={title} onClick={(e) => { e.preventDefault(); setPath(href); }}>
+              {children}
+            </a>
+          )
+        }
+      >
+        {"Đọc [hướng dẫn cài đặt](/concepts/quick-start) hoặc [Prose](/components/prose). Mã nguồn trên [GitHub](https://github.com)."}
+      </Markdown>
+      <p className="text-caption1 text-foreground-3">Đường dẫn: {path}</p>
+    </div>
+  );
+}`,
+        render: () => <RouterLinkDemo />,
       },
       {
         title: "Nội dung không tin cậy",

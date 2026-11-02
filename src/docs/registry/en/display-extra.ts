@@ -169,7 +169,11 @@ export const en: Record<string, ComponentDocEn> = {
       "Pass a Markdown string as children. Supports CommonMark and the common parts of GFM: headings, paragraphs, lists, task lists, quotes, tables, code fences (highlighted by CodeBlock), bold, italic, strikethrough, code and links. No HTML: tags show as text, and `javascript:` or `data:` links keep only their label. Relative links (`/path`, `#id`) are kept; external links open in a new tab. `inline` is for one-line text: inline Markdown only, in a `<span>`. `renderLink` hands links to the app's router. For text that arrives token by token (AI answers), use StreamingMarkdown.",
     examples: [
       { title: "Inline", description: "inline renders inline Markdown in a <span>, without a <p>: for list items, table cells, one-line descriptions." },
-      { title: "Links through a router", description: "renderLink gets href, the label and external; internal links go through the app's router instead of reloading the page." },
+      {
+        title: "Links through a router",
+        description:
+          "renderLink gets href, title, the label and external; internal links go through the app's router (router.navigate, the router's <Link to>) instead of reloading the page. The example stands in state for the router.",
+      },
       { title: "Untrusted content", description: "HTML shows as text and a javascript: link keeps only its label; no need to sanitize first." },
     ],
     dos: [
