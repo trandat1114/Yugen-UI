@@ -3,7 +3,7 @@ import { ChevronRight12Regular } from "@fluentui/react-icons";
 import { CodeTabs, ErrorState, PageProgressFallback, SkeletonText, type YugenTheme } from "@/components/ui";
 import type { AppBrand } from "@/hooks/useAppearance";
 import { COMPONENT_META_BY_SLUG, isTranslated, readComponentDoc, retryComponentDoc } from "../registry";
-import { DoDont, DocSection, ExampleFrame, ExampleGrid, OnThisPage, PageHeader, PropsTable } from "../blocks";
+import { DoDont, DocSection, ExampleFrame, ExampleGrid, OnThisPage, PageHeader, PropsTable, withCode } from "../blocks";
 import { installSnippets } from "../install";
 import { MessagesTable, messageNamespacesFor } from "../componentMessages";
 import { useLocale } from "../i18n";
@@ -75,7 +75,8 @@ function ComponentBody({ slug, theme, brand, onRetry }: { slug: string; theme: Y
 
 function ComponentDescription({ slug }: { slug: string }) {
   const { locale } = useLocale();
-  const description = readComponentDoc(slug, locale).doc?.description;
+  const text = readComponentDoc(slug, locale).doc?.description;
+  const description = text && withCode(text);
   // Mô tả chưa dịch: đánh dấu lang="vi" khi giao diện là tiếng Anh.
   return locale === "en" && !isTranslated(slug) ? <span lang="vi">{description}</span> : <>{description}</>;
 }
