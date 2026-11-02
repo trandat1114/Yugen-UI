@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import ts from "typescript";
 import type { Plugin, ResolvedConfig, ViteDevServer } from "vite";
+import { FEEDS, localizeFeed, NEWS_DIR, readNews } from "./scripts/news.mjs";
 
 const VIRTUAL_ID = "virtual:yugen-type-exports";
 const RESOLVED_ID = "\0" + VIRTUAL_ID;
@@ -399,6 +400,67 @@ export function yugenMessages(root: string): Plugin {
       const all = collect();
       const data = id === "\0" + MESSAGES_ID ? all : all.map(({ namespace, folder }) => ({ namespace, folder }));
       return `export default ${JSON.stringify(data)};`;
+    },
+  };
+}
+
+const NEWS_IDS: Record<string, "index" | "vi" | "en"> = {
+  "virtual:yugen-news-index": "index",
+  "virtual:yugen-news-vi": "vi",
+  "virtual:yugen-news-en": "en",
+};
+
+/**
+ * Tin của trang Có gì mới (#261), từ src/docs/news/<gói>/<version>.<vi|en>.md qua scripts/news.mjs:
+ * - `virtual:yugen-news-index` → `{ NEWS, CLI_NEWS, CREATE_NEWS }` chỉ có version, ngày, `upcoming` và tiêu đề hai ngôn ngữ
+ *   (chấm ở thanh trên, nút tin ở trang chủ, ROADMAP.md);
+ * - `virtual:yugen-news-vi` / `virtual:yugen-news-en` → đầy đủ theo một ngôn ngữ, nạp cùng trang Có gì mới.
+ * File sai định dạng hoặc lệch giữa hai ngôn ngữ làm build (và dev) báo lỗi kèm file:dòng.
+ */
+export function yugenNews(root: string): Plugin {
+  const newsDir = path.join(root, NEWS_DIR);
+  const isNewsFile = (file: string) => path.resolve(file).startsWith(newsDir + path.sep) && file.endsWith(".md");
+  let server: ViteDevServer | undefined;
+  const invalidate = () =>
+    Object.keys(NEWS_IDS).flatMap((id) => {
+      const mod = server?.moduleGraph.getModuleById("\0" + id);
+      if (mod) server!.moduleGraph.invalidateModule(mod);
+      return mod ? [mod] : [];
+    });
+  return {
+    name: "yugen-news",
+    configureServer(s) {
+      server = s;
+      const onChange = (file: string) => {
+        if (isNewsFile(file) && invalidate().length) s.ws.send({ type: "full-reload" });
+      };
+      s.watcher.on("add", onChange);
+      s.watcher.on("unlink", onChange);
+    },
+    resolveId: (id) => (id in NEWS_IDS ? "\0" + id : undefined),
+    load(id) {
+      const which = id.startsWith("\0") ? NEWS_IDS[id.slice(1)] : undefined;
+      if (!which) return undefined;
+      for (const dir of Object.values(FEEDS)) {
+        const feedDir = path.join(newsDir, dir);
+        if (fs.existsSync(feedDir)) for (const f of fs.readdirSync(feedDir)) this.addWatchFile(path.join(feedDir, f));
+      }
+      const { feeds, errors } = readNews(root);
+      if (errors.length) this.error(`Tin trong ${NEWS_DIR}:\n${errors.join("\n")}`);
+      const data = Object.fromEntries(
+        Object.entries(feeds).map(([name, releases]) => [
+          name,
+          which === "index"
+            ? releases.map(({ version, date, upcoming, vi, en }) => ({ version, ...(upcoming ? { upcoming: true } : {}), date, title: { vi: vi.title, en: en.title } }))
+            : localizeFeed(releases, which),
+        ]),
+      );
+      return `export default ${JSON.stringify(data)};`;
+    },
+    handleHotUpdate({ file, modules }) {
+      if (!isNewsFile(file)) return;
+      const mods = invalidate();
+      return mods.length ? [...modules, ...mods] : undefined;
     },
   };
 }

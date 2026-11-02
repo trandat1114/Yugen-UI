@@ -6,7 +6,7 @@
  *   node scripts/check-release.mjs --npm             # thêm: version chưa từng dùng trên npm (cần mạng)
  *   node scripts/check-release.mjs --tag cli@0.2.0   # như --npm, thêm: tag khớp version, đúng nhánh → in dist-tag
  *
- *   1. packages/cli/CHANGELOG.md có mục "## <version>"; trang Có gì mới (src/docs/news.ts): mục đầu của CLI_NEWS /
+ *   1. packages/cli/CHANGELOG.md có mục "## <version>"; trang Có gì mới (src/docs/news/cli, create-yugen-ui): bản mới nhất của CLI_NEWS /
  *      CREATE_NEWS = version của @yugen-ui/cli / create-yugen-ui (prerelease CLI không cần mục tin).
  *   2. create-yugen-ui phụ thuộc "@yugen-ui/cli": "^X.Y.Z" chấp nhận version hiện tại (0.x: ^0.1.0 không nhận 0.2.0).
  *   3. Template đóng gói ghim yugen-ui bằng ^<version yugen-ui ở gốc repo> (đã chạy sync-templates).
@@ -25,6 +25,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { FEEDS, NEWS_DIR } from "../../../scripts/news.mjs";
 import { newsEntries, releaseRuleErrors } from "../../../scripts/release-rules.mjs";
 
 const cli = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -51,7 +52,6 @@ if (!new RegExp(`^##\\s+${version.replace(/\./g, "\\.")}\\s*$`, "m").test(change
 
 // 1b. Trang Có gì mới › tab @yugen-ui/cli và create-yugen-ui. Mục đầu có thể là tin sắp phát hành (`upcoming: true`,
 // viết trên next) với version lớn hơn bản hiện tại; khi có tag thì không được còn mục `upcoming`.
-const news = fs.readFileSync(path.join(repo, "src/docs/news.ts"), "utf8").replace(/\r\n/g, "\n");
 const newer = (a, b) => {
   const [x, y] = [parse(a), parse(b)];
   for (let i = 0; i < 3; i++) if (x[i] !== y[i]) return x[i] > y[i];
@@ -61,15 +61,16 @@ for (const [name, want, skip] of [
   ["CLI_NEWS", version, pre],
   ["CREATE_NEWS", create.version, false],
 ]) {
-  const entries = newsEntries(news, name) ?? [];
+  const at = `${NEWS_DIR}/${FEEDS[name]}`;
+  const entries = newsEntries(repo, name);
   const upcoming = entries[0]?.upcoming ? entries[0] : undefined;
   const got = entries.find((e) => !e.upcoming)?.version;
-  if (entries.slice(1).some((e) => e.upcoming)) errors.push(`src/docs/news.ts: chỉ mục ĐẦU của ${name} được đánh dấu \`upcoming\`.`);
+  if (entries.slice(1).some((e) => e.upcoming)) errors.push(`${at}: chỉ bản mới nhất được đánh dấu \`upcoming\`.`);
   if (upcoming && !newer(upcoming.version, want))
-    errors.push(`src/docs/news.ts: mục ${upcoming.version} của ${name} vẫn là \`upcoming\` nhưng bản hiện tại đã là ${want} — bỏ \`upcoming\`, điền ngày.`);
-  if (upcoming && tag) errors.push(`--tag ${tag}: mục ${upcoming.version} của ${name} vẫn là \`upcoming\` — chốt tin trước khi phát hành.`);
+    errors.push(`${at}/${upcoming.version}: vẫn là \`upcoming\` nhưng bản hiện tại đã là ${want} — bỏ \`upcoming\`, điền ngày (cả bản vi và en).`);
+  if (upcoming && tag) errors.push(`--tag ${tag}: ${at}/${upcoming.version} vẫn là \`upcoming\` — chốt tin trước khi phát hành.`);
   if (!skip && got !== want)
-    errors.push(`src/docs/news.ts: mục đã phát hành đầu tiên của ${name} là ${got ?? "(không có)"}, cần ${want} — thêm mục tin lên đầu mảng.`);
+    errors.push(`${at}: bản đã phát hành mới nhất là ${got ?? "(không có)"}, cần ${want} — thêm ${want}.vi.md và ${want}.en.md.`);
 }
 
 // 2. create-yugen-ui → @yugen-ui/cli
@@ -175,7 +176,7 @@ if (tag) {
 // 8. Quy tắc cho từng số (như check-release ở gốc repo) với CLI_NEWS. create-yugen-ui không theo: version của nó đi theo
 // minor của CLI (quy tắc 2).
 {
-  const entries = newsEntries(news, "CLI_NEWS") ?? [];
+  const entries = newsEntries(repo, "CLI_NEWS");
   for (const [i, entry] of entries.entries()) {
     if (entry.upcoming || entry.version === version) errors.push(...releaseRuleErrors(entry, entries.slice(i + 1), "CLI_NEWS"));
     if (!entry.upcoming) break;

@@ -64,7 +64,7 @@ src/
     blocks.tsx, CodeBlock.tsx  # ExampleFrame, ExampleTile, DoDont, PropsTable, OnThisPage…
     pages/, layout/            # HomePage, ComponentPage, BlocksPage, NewsPage, CommunityPage · Sidebar, TopBar, DocsCommandPalette
     site.ts                    # Tên, phiên bản, tác giả, link repo/issues/discussions/npm (để trống = hiện "Sắp có")
-    news.ts                    # Dữ liệu trang "Có gì mới" (#/news) — cập nhật cùng CHANGELOG.md mỗi lần phát hành
+    news/                      # Tin trang "Có gì mới" (/news): <gói>/<version>.<vi|en>.md, cập nhật cùng CHANGELOG.md
     YugenMark.tsx              # Logo enso + hoa anh đào
 scripts/
   canonical-classes.mjs        # Kiểm tra / sửa class Tailwind không canonical (npm run lint:classes)
@@ -448,9 +448,9 @@ Luật riêng của Labs:
    `CHANGELOG.md` do Changesets sinh — không sửa tay.
 1. `npm run version-packages` (= `changeset version` + đồng bộ `templates/` + lockfile) — gộp changeset vào `CHANGELOG.md`, tăng `version` trong `package.json` (theo SemVer; khi còn
    `0.x`, đổi API = minor + `breaking`). `SITE.version` của site docs đọc thẳng từ `package.json`, không cần sửa.
-2. Thêm mục mới vào **đầu** mảng `NEWS` trong `src/docs/news.ts` (`kind`: `new` | `improved` | `fixed` | `breaking`, kèm `href`
-   tới trang docs). Chấm báo "Có gì mới" trên thanh trên tự hiện cho người chưa xem.
-3. `npm install --package-lock-only` → `npm run check:release` (`package.json` = `news.ts` = `CHANGELOG.md`) →
+2. Thêm `<version>.vi.md` và `<version>.en.md` vào `src/docs/news/yugen-ui` (mục `## Mới` / `Cải tiến` / `Sửa lỗi` /
+   `Thay đổi lớn`, mỗi tin kèm `[→](/đường-dẫn)` tới trang docs; wiki › Release Process › Tin trên trang Có gì mới). Chấm báo "Có gì mới" trên thanh trên tự hiện cho người chưa xem.
+3. `npm install --package-lock-only` → `npm run check:release` (`package.json` = `src/docs/news` = `CHANGELOG.md`) →
    `npm run typecheck && npm test && npm run build && npm run size` → `npm run pack:check` để xem trước nội dung gói.
 4. Commit rồi `git tag vX.Y.Z && git push --tags` — workflow `.github/workflows/release.yml` kiểm tra tag, chạy test,
    build và `npm publish --provenance` (cần secret `NPM_TOKEN`; tag có `-` → dist-tag `next`).
@@ -493,7 +493,7 @@ npm run test:e2e       # Playwright: axe × theme × hướng chữ, kéo chuộ
 npm run test:visual    # so sánh ảnh chụp (baseline theo nền tảng trong e2e/__screenshots__)
 npm run size           # ngân sách dung lượng (size-limit, sau build:lib)
 npx changeset          # thêm changeset cho PR · `npm run version-packages` khi phát hành
-npm run check:release  # package.json = news.ts = CHANGELOG.md (thêm --tag vX.Y.Z để so cả tag)
+npm run check:release  # package.json = src/docs/news = CHANGELOG.md (thêm --tag vX.Y.Z để so cả tag)
 ```
 
 ### Dùng gói npm `yugen-ui`

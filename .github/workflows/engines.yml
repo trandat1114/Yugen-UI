@@ -24,6 +24,7 @@ on:
       - ".github/PULL_REQUEST_TEMPLATE.md"
       - ".github/ISSUE_TEMPLATE/**"
       - "packages/*/README.md"
+      - "src/docs/news/**" # tin dạng Markdown: news.yml kiểm tra, pages.yml build lại docs
   workflow_dispatch:
 
 permissions:

@@ -16,9 +16,10 @@ interface Shot extends Appearance {
 }
 
 const SHOTS: Shot[] = [
-  { name: "home-light", route: "/" },
-  { name: "home-dark", route: "/", theme: "dark" },
-  { name: "home-high-contrast", route: "/", theme: "high-contrast" },
+  // Nút tin hiện version và tiêu đề bản mới nhất: đổi mỗi lần phát hành, và PR chỉ sửa tin không chạy visual (#261).
+  { name: "home-light", route: "/", mask: ["[data-release-pill]"] },
+  { name: "home-dark", route: "/", theme: "dark", mask: ["[data-release-pill]"] },
+  { name: "home-high-contrast", route: "/", theme: "high-contrast", mask: ["[data-release-pill]"] },
   { name: "blocks", route: "/blocks" },
   { name: "foundation-color", route: "/foundations/color" },
   { name: "foundation-glass", route: "/foundations/glass" },

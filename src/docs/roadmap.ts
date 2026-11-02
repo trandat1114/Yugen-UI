@@ -4,7 +4,7 @@
  * Đổi milestone / issue thì sửa ở đây, chạy `npm run roadmap`; roadmap.test.ts báo lỗi nếu ROADMAP.md lệch.
  */
 import { homepage } from "../../package.json";
-import { NEWS } from "./news";
+import { NEWS_INDEX } from "./news";
 import { SITE } from "./site";
 
 export type RoadmapStatus = "done" | "doing" | "planned";
@@ -45,6 +45,8 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
         { status: "planned", issue: 160, vi: "Đề xuất cho 1.0 (đã duyệt): Form, NavigationMenu, block 2.0, codemod, kiểm thử", en: "1.0 proposals (approved): Form, NavigationMenu, blocks 2.0, codemods, testing" },
         { status: "done", issue: 161, vi: "AppShell và Sidebar: thu về icon trên màn rộng, Drawer trên màn hẹp; các template dựng trên nó", en: "AppShell and Sidebar: an icon rail on wide screens, a Drawer on narrow ones; the templates are built on it" },
         { status: "done", issue: 175, vi: "Sortable: sắp xếp lại bằng kéo thả hoặc bàn phím; thứ tự cột của DataGrid, thứ tự tag của TagPicker, Kanban trong template Admin", en: "Sortable: reorder by drag and drop or keyboard; DataGrid column order, TagPicker tag order, a Kanban board in the Admin template" },
+        { status: "done", issue: 263, vi: "Markdown: hiển thị Markdown tĩnh (bài viết, ghi chú phát hành, CMS) theo kiểu chữ của Prose", en: "Markdown: render static Markdown (articles, release notes, CMS fields) with Prose typography" },
+        { status: "done", issue: 261, vi: "Có gì mới bằng tiếng Anh; tin viết bằng Markdown, CI nhẹ cho PR chỉ sửa tin", en: "What's new in English; release notes in Markdown, a light CI check for news-only PRs" },
         { status: "planned", issue: 243, vi: "Khóa cuộn: chọn giữ hay ẩn thanh cuộn khi mở Menu, ContextMenu, Dropdown", en: "Scroll lock: keep or hide the page scrollbar while Menu, ContextMenu or Dropdown is open" },
         { status: "planned", issue: 244, vi: "Typography: trang Typeset tinh chỉnh Prose (font, cỡ chữ, khoảng cách) và copy CSS", en: "Typography: a Typeset page to tune Prose (fonts, size, spacing) and copy the CSS" },
       ],
@@ -118,6 +120,6 @@ export function roadmapMarkdown() {
     }
   }
   lines.push("", "## Đã phát hành", "", "Chi tiết ở trang Có gì mới (`/news`) và `CHANGELOG.md`.", "");
-  for (const n of NEWS.filter((r) => !r.upcoming)) lines.push(`- **${n.version}** (${n.date}): ${n.title}`);
+  for (const n of NEWS_INDEX.NEWS.filter((r) => !r.upcoming)) lines.push(`- **${n.version}** (${n.date}): ${n.title.vi}`);
   return `${lines.join("\n")}\n`;
 }

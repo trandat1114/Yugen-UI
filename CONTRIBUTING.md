@@ -36,7 +36,7 @@ npm run dev          # trang docs tại http://localhost:5173
 | `npm run test:engines` | E2E tương tác trên Firefox và WebKit (Safari desktop, iPhone) |
 | `npm run size` | Ngân sách dung lượng gói (`size-limit`, chạy sau `build:lib`) |
 | `npm run changeset` | Thêm changeset cho PR (`npx changeset`) |
-| `npm run check:release` | Kiểm tra `package.json` = `src/docs/news.ts` = `CHANGELOG.md` và quy tắc cho từng số |
+| `npm run check:release` | Kiểm tra `package.json` = `src/docs/news` = `CHANGELOG.md` và quy tắc cho từng số |
 | `npm run check:changesets` | Loại bump của changeset đúng quy tắc cho từng số |
 | `npm run check:examples` | Mọi ví dụ docs typecheck được khi chép ra dùng với `yugen-ui` |
 | `npm run check:props` | Bảng props trên docs khớp type thật |
@@ -150,10 +150,10 @@ Từ 0.6.0, `CHANGELOG.md` do [Changesets](https://github.com/changesets/changes
 thay đổi người dùng thấy được (component, prop, token, CSS, sửa lỗi) thêm một changeset; PR chỉ đổi docs / test / CI
 thì không cần.
 
-PR vào `next` có thay đổi người dùng thấy được (kể cả docs) còn thêm một dòng vào **tin sắp phát hành**: mục đầu của
-`NEWS` trong `src/docs/news.ts` mang `upcoming: true` (tạo mục nếu chưa có, `version` theo `npx changeset status`). Bản
-CLI ghi vào `CLI_NEWS` / `CREATE_NEWS`. Xem trước ở docs `/next/`. Chi tiết: wiki › *Release Process* › Tin cho bản sắp
-phát hành.
+PR vào `next` có thay đổi người dùng thấy được (kể cả docs) còn thêm một mục vào **tin sắp phát hành**: hai file
+`src/docs/news/yugen-ui/<version>.vi.md` và `.en.md` mang `upcoming: true` (tạo nếu chưa có, `version` theo
+`npx changeset status`). Bản CLI ghi vào `src/docs/news/cli` / `create-yugen-ui`. `node scripts/check-news.mjs` kiểm tra
+định dạng; xem trước ở docs `/next/`. Chi tiết: wiki › *Release Process* › Tin trên trang Có gì mới.
 
 ```bash
 npx changeset    # chọn yugen-ui → patch hoặc minor → viết tóm tắt cho người dùng
@@ -164,7 +164,7 @@ npx changeset    # chọn yugen-ui → patch hoặc minor → viết tóm tắt 
 - Số phiên bản theo **quy tắc cho từng số** (docs › Phiên bản › Quy tắc cho từng số): chỉ có API mới mới là `minor`,
   còn lại là `patch`; PR vào `main` hoặc `release/*` chỉ mang `patch`; `major` chỉ từ 1.0. `npm run check:changesets`
   (CI) chặn changeset sai loại: tóm tắt mở đầu bằng "Fix" mà là `minor`, "New" mà là `patch`, "**Breaking:**" mà là
-  `patch`. `check:release` kiểm tin trong `src/docs/news.ts`: bản patch không có mục `new` / `breaking`, bản minor có
+  `patch`. `check:release` kiểm tin trong `src/docs/news`: bản patch không có mục `new` / `breaking`, bản minor có
   ít nhất một mục `new`, không nhảy số, minor cách nhau ≥ 14 ngày, major ≥ 180 ngày.
 - Tóm tắt viết cho người dùng gói (tiếng Anh, như CHANGELOG): "`Combobox`: keep focus when a tag is removed with
   Backspace.", không phải "fix bug".
@@ -208,24 +208,24 @@ trang: mở issue hoặc nhắn maintainer, maintainer thêm login vào `exclude
 - [ ] Có mục registry (hoặc file block); code mẫu khớp với render.
 - [ ] Đã thêm changeset (`npx changeset`) nếu thay đổi ảnh hưởng người dùng.
 - [ ] Nội dung theo wiki › *Writing* (checklist cuối trang).
-- [ ] PR vào `next`: đã thêm dòng vào tin sắp phát hành (`upcoming`) trong `src/docs/news.ts`.
+- [ ] PR vào `next`: đã thêm mục vào tin sắp phát hành (`upcoming`) trong `src/docs/news`, cả bản vi và en.
 
 ### Phát hành (maintainer)
 
 1. `npm run version-packages` (= `changeset version` + đồng bộ `templates/` + lockfile — thiếu bước đồng bộ thì CI đỏ) — gộp các changeset vào `CHANGELOG.md` (mục mới ở đầu file), tăng `version` trong
    `package.json` và xoá file đã dùng. Xem lại phần CHANGELOG vừa sinh.
-2. Chốt tin: bỏ `upcoming` khỏi mục đầu mảng `NEWS` trong `src/docs/news.ts` và điền ngày phát hành (chưa có tin
-   `upcoming` thì thêm mục mới lên đầu). Số phiên bản trên site docs lấy thẳng từ `package.json`, không cần sửa.
+2. Chốt tin: bỏ `upcoming` khỏi hai file tin mới nhất trong `src/docs/news/yugen-ui` và điền ngày phát hành (chưa có tin
+   `upcoming` thì thêm `<version>.vi.md` và `.en.md`). Số phiên bản trên site docs lấy thẳng từ `package.json`, không cần sửa.
 3. `npm install --package-lock-only` (đồng bộ `version` trong `package-lock.json`) rồi `npm run check:release`
-   (`package.json` = `news.ts` = `CHANGELOG.md`).
+   (`package.json` = `src/docs/news` = `CHANGELOG.md`).
 4. Commit (`chore(release): vX.Y.Z`), mở PR hoặc đẩy lên `main`.
 5. `git tag vX.Y.Z && git push --tags` — workflow `.github/workflows/release.yml` kiểm tra lại, chạy test, build và
    `npm publish --provenance` (cần secret `NPM_TOKEN`). Tag có `-` (vd. `v0.6.0-beta.1`) phát hành với dist-tag `next`.
 
 CLI `@yugen-ui/cli` và `create-yugen-ui` (`packages/`) phát hành riêng bằng tag `cli@X.Y.Z`, không qua Changesets — quy tắc và
 các bước ở wiki › *Release Process* › CLI. PR đổi `packages/cli` hoặc `packages/create-yugen-ui`: ghi một dòng vào mục
-`## Unreleased` của `packages/cli/CHANGELOG.md`. Mỗi bản phát hành cần mục tin ở đầu `CLI_NEWS` (và `CREATE_NEWS` khi
-`create-yugen-ui` đổi version) trong `src/docs/news.ts`, hiện ở tab riêng trên trang Có gì mới. `check-release` báo lỗi
+`## Unreleased` của `packages/cli/CHANGELOG.md`. Mỗi bản phát hành cần tin trong `src/docs/news/cli` (và `src/docs/news/create-yugen-ui`
+khi `create-yugen-ui` đổi version), cả bản vi và en, hiện ở tab riêng trên trang Có gì mới. `check-release` báo lỗi
 nếu thiếu. Trước khi tag: `npm run check:release --prefix packages/cli -- --npm` và `npm run smoke --prefix packages/cli`.
 
 ---
@@ -318,10 +318,11 @@ From 0.6.0, `CHANGELOG.md` is generated by [Changesets](https://github.com/chang
 hand. A PR with a user-facing change (component, prop, token, CSS, bug fix) adds a changeset; docs / test / CI-only
 PRs do not need one.
 
-A PR into `next` with a user-facing change (docs included) also adds a line to the **upcoming news entry**: the first
-`NEWS` entry in `src/docs/news.ts`, marked `upcoming: true` (create it if missing, with the version from
-`npx changeset status`). CLI changes go to `CLI_NEWS` / `CREATE_NEWS`. Preview it on the `/next/` docs. Details: wiki ›
-*Release Process* › Tin cho bản sắp phát hành.
+A PR into `next` with a user-facing change (docs included) also adds an item to the **upcoming news entry**: the two
+files `src/docs/news/yugen-ui/<version>.vi.md` and `.en.md` marked `upcoming: true` (create them if missing, with the
+version from `npx changeset status`). CLI changes go to `src/docs/news/cli` / `create-yugen-ui`. `node
+scripts/check-news.mjs` checks the format; preview it on the `/next/` docs. Details: wiki › *Release Process* › Tin trên
+trang Có gì mới.
 
 ```bash
 npx changeset    # pick yugen-ui → patch or minor → write a user-facing summary
@@ -335,7 +336,7 @@ for package users ("`Combobox`: keep focus when a tag is removed with Backspace.
 Version numbers follow the **rules for each number** (docs › Versioning › Rules for each number): only new API is
 `minor`, everything else is `patch`; PRs into `main` or `release/*` carry `patch` only; `major` starts at 1.0.
 `npm run check:changesets` (CI) rejects a summary starting with "Fix" on a `minor`, "New" on a `patch` and
-"**Breaking:**" on a `patch`. `check:release` checks the news in `src/docs/news.ts`: no `new` / `breaking` item in a
+"**Breaking:**" on a `patch`. `check:release` checks the news in `src/docs/news`: no `new` / `breaking` item in a
 patch, at least one `new` item in a minor, no skipped numbers, ≥ 14 days between minors and ≥ 180 days between majors.
 
 One changeset per change (two new components → two files). Needs a changeset: anything people installing `yugen-ui`
@@ -360,10 +361,10 @@ maintainer, who adds your login to `exclude` in that file.
 
 1. `npm run version-packages` (= `changeset version` + syncs `templates/` and the lockfile — skipping it turns CI red) — writes the pending changesets into `CHANGELOG.md` (new section at the top), bumps
    `version` in `package.json` and deletes the used changeset files. Review the generated entry.
-2. Finalize the news: remove `upcoming` from the first `NEWS` entry in `src/docs/news.ts` and set the release date (add a
-   new entry at the top if there is none). The docs site reads its version from `package.json` automatically.
+2. Finalize the news: remove `upcoming` from the two newest files in `src/docs/news/yugen-ui` and set the release date
+   (add `<version>.vi.md` and `.en.md` if there is no upcoming entry). The docs site reads its version from `package.json` automatically.
 3. `npm install --package-lock-only` (syncs the version in `package-lock.json`), then `npm run check:release`
-   (`package.json` = `news.ts` = `CHANGELOG.md`).
+   (`package.json` = `src/docs/news` = `CHANGELOG.md`).
 4. Commit (`chore(release): vX.Y.Z`) and merge to `main`.
 5. `git tag vX.Y.Z && git push --tags` — `.github/workflows/release.yml` re-checks the version against the tag, runs
    the tests, builds and runs `npm publish --provenance` (needs the `NPM_TOKEN` secret). Tags containing `-`
@@ -371,7 +372,7 @@ maintainer, who adds your login to `exclude` in that file.
 
 The `@yugen-ui/cli` CLI and `create-yugen-ui` (`packages/`) are released separately with a `cli@X.Y.Z` tag, outside
 Changesets — rules and steps in the wiki › *Release Process* › CLI. PRs that change `packages/cli` or
-`packages/create-yugen-ui` add a line under `## Unreleased` in `packages/cli/CHANGELOG.md`. Every release needs a news
-entry at the top of `CLI_NEWS` (and `CREATE_NEWS` when `create-yugen-ui` changes version) in `src/docs/news.ts`, shown
-in its own tab on the What's new page; `check-release` fails without it. Before tagging run
+`packages/create-yugen-ui` add a line under `## Unreleased` in `packages/cli/CHANGELOG.md`. Every release needs news
+in `src/docs/news/cli` (and `src/docs/news/create-yugen-ui` when `create-yugen-ui` changes version), in Vietnamese and
+English, shown in its own tab on the What's new page; `check-release` fails without it. Before tagging run
 `npm run check:release --prefix packages/cli -- --npm` and `npm run smoke --prefix packages/cli`.

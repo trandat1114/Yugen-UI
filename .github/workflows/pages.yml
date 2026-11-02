@@ -6,7 +6,8 @@ name: Docs
 on:
   push:
     branches: [main, next] # push vào next → job redispatch chạy lại trên main để cập nhật /next/
-    # Như ci.yml, thêm các file docs không hiển thị: tin lấy từ news.ts, lộ trình từ roadmap.ts.
+    # Như ci.yml, thêm các file docs không hiển thị: tin lấy từ src/docs/news, lộ trình từ roadmap.ts. Riêng src/docs/news
+    # (ci.yml bỏ qua) vẫn build lại docs: tin chỉ lên trang sau khi build.
     paths-ignore:
       - "wiki/**"
       - "README.md"

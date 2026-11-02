@@ -67,11 +67,11 @@ export function routeMeta(route: Route, l: LocaleValue): { title?: string; descr
   }
 }
 
-/** Chế độ tiếng Anh: route nào còn hiện nội dung tiếng Việt (toàn trang hoặc một phần). */
-export function fallbackOf(route: Route): "page" | "partial" | null {
-  // Trang chủ, Cộng đồng, Người đóng góp, Templates, Blocks, Theme Designer và Foundations viết song ngữ ngay trong trang (#45, #138).
-  if (route.kind !== "news" && route.kind !== "concept" && route.kind !== "component") return null;
-  if (route.kind === "news") return "partial";
+/** Chế độ tiếng Anh: route nào còn hiện trang tiếng Việt. */
+export function fallbackOf(route: Route): "page" | null {
+  // Trang chủ, Cộng đồng, Người đóng góp, Templates, Blocks, Theme Designer và Foundations viết song ngữ ngay trong trang
+  // (#45, #138); Có gì mới đọc tin theo ngôn ngữ (#261).
+  if (route.kind !== "concept" && route.kind !== "component") return null;
   if (route.kind === "concept") return CONCEPT_EN_PAGES[route.slug] ? null : "page";
   // Trang component đã dịch: phần chữ tiếng Anh, demo (nội dung mẫu) giữ tiếng Việt và được đánh dấu lang="vi".
   if (route.kind === "component" && isTranslated(route.slug)) return null;

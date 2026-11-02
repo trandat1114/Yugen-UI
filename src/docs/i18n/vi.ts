@@ -99,7 +99,6 @@ export const vi = {
 
   // Trang chưa dịch (chỉ hiện ở chế độ tiếng Anh)
   "fallback.page": "Trang này chưa được dịch — đang hiện bản gốc tiếng Việt.",
-  "fallback.partial": "Một phần trang này chưa được dịch — đang hiện bản gốc tiếng Việt.",
   "fallback.help": "Giúp dịch",
 
   // Có gì mới
