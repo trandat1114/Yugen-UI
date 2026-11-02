@@ -115,6 +115,7 @@ export const COMPONENTS_EN: Record<string, { lead: string; name?: string }> = {
 
   // Utilities
   arialive: { lead: "AriaLiveAnnouncer and useAnnounce read dynamic announcements to screen reader users." },
+  sortable: { lead: "Sortable reorders lists by drag and drop or with the keyboard; every step is announced to screen readers." },
   focusmanagement: { lead: "useArrowNavigationGroup and useFocusableGroup manage keyboard focus for groups of elements, like Fluent's Tabster." },
   usemediaquery: { lead: "useMediaQuery tracks a CSS media query (breakpoint, dark mode, reduced motion, pointer type) and re-renders when it changes." },
   visuallyhidden: { lead: "VisuallyHidden hides content from the screen while keeping it available to screen readers." },

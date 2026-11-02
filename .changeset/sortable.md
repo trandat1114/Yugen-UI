@@ -1,0 +1,5 @@
+---
+"yugen-ui": minor
+---
+
+New `Sortable` (#175): `Sortable`, `SortableItem`, `SortableHandle` and `SortableGroup` reorder lists with a mouse, pen, finger or the keyboard (Space or Enter on the handle picks the item up, arrow keys move it, Space or Enter drops it, Escape cancels), and announce every step through `useAnnounce`. Without dragging, click a handle to pick its item up and another item's handle to put it there. Vertical, horizontal (RTL-aware) and grid lists; `SortableGroup` moves items between lists (Kanban columns); the nearest scroll container scrolls near its edges; items slide into place unless reduced motion is on. `onValueChange` runs during the drag, `onSortEnd` once on drop. `SortableItem handle` makes the whole item the drag source and `shortcuts` moves it with Alt + arrow keys, for items that already use Space / Enter. `arrayMove` helper, strings in `messages.sortable`. Written in-house: about 6.5 kB gzip, no drag-and-drop dependency. `DataGrid` gains `columnOrder` (and `getOrderedColumns`); `DataGridColumnPicker` reorders columns when `onColumnOrderChange` is set (drag an item or Alt + ↑ ↓). `TagPicker` gains `reorderable`.

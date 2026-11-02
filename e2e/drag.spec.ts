@@ -2,8 +2,8 @@ import { test, expect, type Locator, type Page } from "@playwright/test";
 import { openDocs } from "./utils";
 
 /**
- * Tương tác chuột / bàn phím trên desktop: Resizable (kéo, phím mũi tên, thu gọn, persistKey, RTL lật) và
- * Sheet dạng panel cạnh (LTR từ phải, RTL từ trái).
+ * Tương tác chuột / bàn phím trên desktop: Resizable (kéo, phím mũi tên, thu gọn, persistKey, RTL lật),
+ * Sheet dạng panel cạnh (LTR từ phải, RTL từ trái) và Sortable (kéo đổi chỗ theo bố cục thật, bàn phím, Kanban).
  */
 
 async function width(locator: Locator) {
@@ -174,5 +174,66 @@ test.describe("Sheet (desktop)", () => {
     expect(Math.abs(box.x)).toBeLessThanOrEqual(1);
     await sheet.getByRole("button", { name: "Huỷ" }).click();
     await expect(sheet).toBeHidden();
+  });
+});
+
+test.describe("Sortable", () => {
+  const tasks = (page: Page) => page.getByRole("list", { name: "Việc cần làm" }).first();
+  const handles = (list: Locator) => list.getByRole("button", { name: /^Sắp xếp lại / });
+  const order = (list: Locator) =>
+    handles(list).evaluateAll((els) => els.map((el) => el.getAttribute("aria-label")!.replace("Sắp xếp lại ", "")));
+  const START = ["Màn hình đăng nhập", "Danh sách đơn hàng", "Thanh toán", "Tài liệu phát hành"];
+
+  test("kéo chuột: mục đi quá nửa mục bên cạnh thì đổi chỗ, thả xong mục về đúng chỗ mới", async ({ page }) => {
+    await openDocs(page, "/components/sortable");
+    const list = tasks(page);
+    expect(await order(list)).toEqual(START);
+    // Giữa khung nhìn: sát mép thì trang tự cuộn trong lúc kéo và mục đi xa hơn quãng chuột.
+    await list.evaluate((el) => el.scrollIntoView({ block: "center" }));
+    const items = list.locator("[data-sortable-item]");
+    const first = await items.nth(0).boundingBox();
+    const second = await items.nth(1).boundingBox();
+    if (!first || !second) throw new Error("Không thấy mục");
+    // Hai bước (cao + khoảng cách): qua nửa mục thứ ba, chưa tới nửa mục thứ tư.
+    await mouseDrag(page, handles(list).first(), 0, 2 * (second.y - first.y));
+    await expect.poll(() => order(list)).toEqual(["Danh sách đơn hàng", "Thanh toán", "Màn hình đăng nhập", "Tài liệu phát hành"]);
+    await expect(items.nth(2)).not.toHaveAttribute("data-dragging");
+    await expect.poll(() => items.nth(2).evaluate((el) => el.style.transform)).toBe("");
+  });
+
+  test("bàn phím: Space nhấc, ↓ di chuyển, Space thả; Esc huỷ; focus ở lại tay nắm, mỗi bước được đọc", async ({ page }) => {
+    await openDocs(page, "/components/sortable");
+    const list = tasks(page);
+    const login = list.getByRole("button", { name: "Sắp xếp lại Màn hình đăng nhập" });
+    await login.focus();
+    await page.keyboard.press("Space");
+    await expect(login).toHaveAttribute("aria-pressed", "true");
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("ArrowDown");
+    await expect(login).toBeFocused();
+    await page.keyboard.press("Space");
+    expect(await order(list)).toEqual(["Danh sách đơn hàng", "Thanh toán", "Màn hình đăng nhập", "Tài liệu phát hành"]);
+    await expect(page.locator('[data-yugen-live-region="assertive"]')).toHaveText("Đã thả Màn hình đăng nhập ở vị trí 3 trên 4.");
+
+    await page.keyboard.press("Enter");
+    await page.keyboard.press("Home");
+    expect(await order(list)).toEqual(START);
+    await page.keyboard.press("Escape");
+    expect(await order(list)).toEqual(["Danh sách đơn hàng", "Thanh toán", "Màn hình đăng nhập", "Tài liệu phát hành"]);
+    await expect(login).toBeFocused();
+    await expect(login).toHaveAttribute("aria-pressed", "false");
+  });
+
+  test("Kanban: kéo thẻ sang cột khác, onSortEnd chạy một lần khi thả", async ({ page }) => {
+    await openDocs(page, "/components/sortable");
+    const done = page.getByRole("list", { name: "Xong" });
+    const handle = page.getByRole("button", { name: "Sắp xếp lại Tìm kiếm" });
+    await done.evaluate((el) => el.scrollIntoView({ block: "center" }));
+    const from = await handle.boundingBox();
+    const to = await done.boundingBox();
+    if (!from || !to) throw new Error("Không thấy thẻ hoặc cột");
+    await mouseDrag(page, handle, to.x + to.width / 2 - (from.x + from.width / 2), to.y + to.height - 4 - (from.y + from.height / 2));
+    await expect(done.getByRole("button", { name: "Sắp xếp lại Tìm kiếm" })).toBeVisible();
+    await expect(page.getByText("Đã lưu: Tìm kiếm ở cột Xong.")).toBeVisible();
   });
 });

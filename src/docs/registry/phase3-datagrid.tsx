@@ -210,18 +210,26 @@ function SelectionDemo() {
 // #endregion
 
 // #region ColumnsDemo
-const HIDDEN_COLUMNS_KEY = "orders.hiddenColumns";
-
-function loadHiddenColumns(): ReadonlySet<string> {
+function load<T>(key: string, fallback: T): T {
   try {
-    return new Set(JSON.parse(localStorage.getItem(HIDDEN_COLUMNS_KEY) ?? '["id"]'));
+    const saved = localStorage.getItem(key);
+    return saved ? JSON.parse(saved) : fallback;
   } catch {
-    return new Set(["id"]);
+    return fallback;
+  }
+}
+
+function save(key: string, value: unknown) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Không lưu được (chế độ riêng tư, hết dung lượng): lựa chọn vẫn dùng được trong phiên này.
   }
 }
 
 function ColumnsDemo() {
-  const [hiddenColumns, setHiddenColumns] = useState(loadHiddenColumns);
+  const [hiddenColumns, setHiddenColumns] = useState<ReadonlySet<string>>(() => new Set(load("orders.hiddenColumns", ["id"])));
+  const [columnOrder, setColumnOrder] = useState<string[]>(() => load("orders.columnOrder", []));
   const [sortState, setSortState] = useState<DataGridSortState>({ sortColumn: "date", sortDirection: "descending" });
 
   return (
@@ -232,11 +240,12 @@ function ColumnsDemo() {
           hiddenColumns={hiddenColumns}
           onHiddenColumnsChange={(_, data) => {
             setHiddenColumns(data.hiddenColumns);
-            try {
-              localStorage.setItem(HIDDEN_COLUMNS_KEY, JSON.stringify([...data.hiddenColumns]));
-            } catch {
-              // Không lưu được (chế độ riêng tư, hết dung lượng): lựa chọn vẫn dùng được trong phiên này.
-            }
+            save("orders.hiddenColumns", [...data.hiddenColumns]);
+          }}
+          columnOrder={columnOrder}
+          onColumnOrderChange={(_, data) => {
+            setColumnOrder(data.columnOrder);
+            save("orders.columnOrder", data.columnOrder);
           }}
           sortState={sortState}
         />
@@ -247,6 +256,7 @@ function ColumnsDemo() {
         columns={orderColumns}
         getRowId={(order) => order.id}
         hiddenColumns={hiddenColumns}
+        columnOrder={columnOrder}
         sortable
         sortState={sortState}
         onSortChange={(_, next) => setSortState(next)}
@@ -400,9 +410,9 @@ export const docs: ComponentDoc[] = [
     category: "Hiển thị dữ liệu",
     lead: "DataGrid là lưới dữ liệu tương tác: sắp xếp, chọn hàng, kéo đổi độ rộng cột và ảo hoá cho hàng chục nghìn hàng.",
     description:
-      "Tương đương DataGrid của Fluent 2. Khai báo cột bằng createColumn<T>() (label, renderCell, compare, width…), truyền items + getRowId. Lưới có role=\"grid\" với aria-rowcount / aria-rowindex đúng cả khi ảo hoá, một tab stop duy nhất (roving tabindex): mũi tên đi từng ô (đảo trái / phải trong RTL), Home / End, Ctrl + Home / End, PageUp / PageDown; Space chọn hàng, Shift + mũi tên hoặc Shift + click chọn theo khoảng. Người dùng tự chọn cột hiển thị bằng DataGridColumnPicker (hiddenColumns). Tiêu đề sticky; loading hiện khung xương theo Wait UX (useSpinDelay), không có hàng thì hiện Empty. Logic dùng lại được qua useDataGridSort, useDataGridSelection, useDataGridColumnVisibility và các hàm thuần sortItems, getVisibleColumns.",
+      "Tương đương DataGrid của Fluent 2. Khai báo cột bằng createColumn<T>() (label, renderCell, compare, width…), truyền items + getRowId. Lưới có role=\"grid\" với aria-rowcount / aria-rowindex đúng cả khi ảo hoá, một tab stop duy nhất (roving tabindex): mũi tên đi từng ô (đảo trái / phải trong RTL), Home / End, Ctrl + Home / End, PageUp / PageDown; Space chọn hàng, Shift + mũi tên hoặc Shift + click chọn theo khoảng. Người dùng tự chọn cột hiển thị và thứ tự cột bằng DataGridColumnPicker (hiddenColumns, columnOrder). Tiêu đề sticky; loading hiện khung xương theo Wait UX (useSpinDelay), không có hàng thì hiện Empty. Logic dùng lại được qua useDataGridSort, useDataGridSelection, useDataGridColumnVisibility và các hàm thuần sortItems, getVisibleColumns, getOrderedColumns.",
     importCode: `import {
-  DataGrid, DataGridColumnPicker, createColumn, sortItems, getVisibleColumns,
+  DataGrid, DataGridColumnPicker, createColumn, sortItems, getVisibleColumns, getOrderedColumns,
   useDataGridSort, useDataGridSelection, useDataGridColumnVisibility,
   type DataGridColumn, type DataGridSortState,
 } from "@/components/ui";`,
@@ -428,8 +438,8 @@ export const docs: ComponentDoc[] = [
         render: () => <SelectionDemo />,
       },
       {
-        title: "Chọn cột hiển thị",
-        description: "DataGridColumnPicker và DataGrid dùng chung hiddenColumns, lựa chọn được lưu vào localStorage. Menu không đóng khi tích từng cột; cột hideable: false (Khách hàng) và cột hiện cuối cùng không bỏ tích được. Ẩn cột đang sắp xếp không đổi thứ tự hàng; menu vẫn hiện mũi tên ở cột đó.",
+        title: "Chọn và sắp xếp cột",
+        description: "DataGridColumnPicker và DataGrid dùng chung hiddenColumns và columnOrder, cả hai được lưu vào localStorage. Menu không đóng khi tích từng cột; cột hideable: false (Khách hàng) và cột hiện cuối cùng không bỏ tích được. Kéo một mục trong menu (hoặc Alt + ↑ ↓) để đổi thứ tự cột, lưới đổi theo ngay. Ẩn cột đang sắp xếp không đổi thứ tự hàng; menu vẫn hiện mũi tên ở cột đó.",
         code: source("ColumnsDemo"),
         setup: source("data"),
         render: () => <ColumnsDemo />,
@@ -476,6 +486,7 @@ export const docs: ComponentDoc[] = [
     props: [
       { name: "items", type: "readonly T[]", description: "Dữ liệu theo thứ tự gốc; T được suy ra cho columns và getRowId." },
       { name: "columns", type: "DataGridColumn<T>[]", description: "Tạo bằng createColumn<T>({ columnId, label?, renderHeaderCell?, renderCell, compare?, width?, minWidth?, maxWidth?, resizable?, align?, sticky?, hideable? }). label là tiêu đề dạng chữ và tên trong DataGridColumnPicker; renderHeaderCell khi tiêu đề cần hơn chữ." },
+      { name: "columnOrder", type: "string[]", description: "Thứ tự hiển thị của cột (id cột). Cột không có trong mảng đứng sau, theo thứ tự columns; id lạ bị bỏ qua." },
       { name: "hiddenColumns", type: "ReadonlySet<string>", description: "Id các cột không hiển thị. Cột hideable: false luôn hiện; ẩn hết thì giữ cột đầu. Cột ẩn giữ độ rộng đã kéo và vẫn sắp xếp nếu đang là cột sắp xếp; focus chuyển sang cột kế bên khi cột đang focus bị ẩn." },
       { name: "getRowId", type: "(item: T) => string", description: "Id ổn định của hàng (key, lựa chọn)." },
       { name: "size", type: `"small" | "medium" | "large"`, defaultValue: `"medium"`, description: "Chiều cao hàng 34 / 44 / 56px." },
@@ -500,9 +511,11 @@ export const docs: ComponentDoc[] = [
       { name: "DataGridColumnPicker.columns", type: "DataGridColumn<T>[] | { columnId, label?, hideable? }[]", description: "Cùng mảng cột truyền cho DataGrid; với Table là mảng { columnId, label }. Tên trong menu là label." },
       { name: "DataGridColumnPicker.hiddenColumns", type: "ReadonlySet<string>", description: "Id các cột đang ẩn — cùng giá trị truyền cho DataGrid." },
       { name: "DataGridColumnPicker.onHiddenColumnsChange", type: "(event, { hiddenColumns: Set<string> }) => void", description: "Gọi khi người dùng tích / bỏ tích hoặc chọn Hiện tất cả cột. Id của cột tạm không có trong columns được giữ nguyên để lưu lại." },
+      { name: "DataGridColumnPicker.columnOrder", type: "string[]", description: "Thứ tự cột — cùng giá trị truyền cho DataGrid." },
+      { name: "DataGridColumnPicker.onColumnOrderChange", type: "(event, { columnOrder: string[] }) => void", description: "Có thì mục trong menu kéo được (hoặc Alt + ↑ ↓) để đổi thứ tự cột. Gọi cả trong lúc kéo để lưới đổi theo." },
       { name: "DataGridColumnPicker.sortState", type: "DataGridSortState", description: "Cột đang sắp xếp có mũi tên trong menu, kể cả khi đang ẩn." },
       { name: "DataGridColumnPicker.align", type: `"start" | "center" | "end"`, defaultValue: `"end"`, description: "Căn menu theo nút. Trong Toolbar nút tự lấy size của Toolbar và appearance subtle." },
-      { name: "useDataGridSort / useDataGridSelection / useDataGridColumnVisibility / sortItems / getVisibleColumns", type: "hook / hook / hook / (items, columns, sortState) => T[] / (columns, hiddenColumns) => columns", description: "Logic dùng riêng được — ví dụ để sắp xếp phía server, điều khiển lựa chọn từ toolbar hoặc tự làm nút chọn cột." },
+      { name: "useDataGridSort / useDataGridSelection / useDataGridColumnVisibility / sortItems / getVisibleColumns / getOrderedColumns", type: "hook / hook / hook / (items, columns, sortState) => T[] / (columns, hiddenColumns) => columns / (columns, columnOrder) => columns", description: "Logic dùng riêng được — ví dụ để sắp xếp phía server, điều khiển lựa chọn từ toolbar hoặc tự làm nút chọn cột." },
     ],
   },
 ];

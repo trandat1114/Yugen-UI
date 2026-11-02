@@ -31,7 +31,8 @@ const css = (file, limit) => ({
 });
 
 module.exports = [
-  js("Toàn bộ thư viện (import *)", "*", "311 kB"),
+  // Sortable (#175): 304.4 → 310.8 kB.
+  js("Toàn bộ thư viện (import *)", "*", "318 kB"),
   js("{ cn }", "{ cn }", "10 kB"),
   js("{ Button }", "{ Button }", "14 kB"),
   js("{ YugenProvider }", "{ YugenProvider }", "43 kB"),
@@ -44,6 +45,8 @@ module.exports = [
   js("{ MessageScroller }", "{ MessageScroller }", "23 kB"),
   js("{ CodeBlock }", "{ CodeBlock }", "33 kB"),
   js("{ DataGrid }", "{ DataGrid }", "36 kB"),
+  // Sortable tự viết (#175): 20.76 kB khi thêm, phần riêng ~6.5 kB (dnd-kit core + sortable: 16.6 kB).
+  js("{ Sortable, SortableItem, SortableHandle }", "{ Sortable, SortableItem, SortableHandle }", "23 kB"),
   js("{ StreamingMarkdown, PromptInput }", "{ StreamingMarkdown, PromptInput }", "70 kB"),
   js("{ messagesEn }", "{ messagesEn }", "5 kB"),
   // Sonner, Timeline, DescriptionList, Stat, utility yugen-prose (#174, #234): 24.6 kB khi thêm.

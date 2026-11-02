@@ -66,6 +66,7 @@ export * from "./Table/Table";
 export * from "./DataGrid/DataGrid";
 export * from "./DataGridColumnPicker/DataGridColumnPicker";
 export * from "./Tree/Tree";
+export * from "./Sortable/Sortable";
 export * from "./Timeline/Timeline";
 export * from "./DescriptionList/DescriptionList";
 export * from "./Stat/Stat";

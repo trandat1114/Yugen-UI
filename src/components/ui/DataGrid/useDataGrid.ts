@@ -329,6 +329,32 @@ export function getVisibleColumns<C extends DataGridColumnVisibilityItem>(
   return visible.length > 0 ? visible : columns.slice(0, 1);
 }
 
+/* ================================================================ Thứ tự cột */
+
+export interface DataGridColumnOrderData {
+  columnOrder: string[];
+}
+
+/**
+ * Cột theo `order` (id cột): id không có trong `columns` bị bỏ qua, cột không có trong `order` giữ thứ tự định nghĩa và đứng
+ * sau cùng (cột mới thêm vẫn hiện). Không đổi gì → trả về chính `columns` (giữ tham chiếu).
+ */
+export function getOrderedColumns<C extends Pick<DataGridColumn<unknown>, "columnId">>(
+  columns: readonly C[],
+  order: readonly string[] | undefined,
+): readonly C[] {
+  if (!order || order.length === 0) return columns;
+  const byId = new Map(columns.map((c) => [c.columnId, c]));
+  const ordered: C[] = [];
+  for (const id of new Set(order)) {
+    const column = byId.get(id);
+    if (column) ordered.push(column);
+    byId.delete(id);
+  }
+  ordered.push(...byId.values());
+  return ordered.every((c, i) => c === columns[i]) ? columns : ordered;
+}
+
 export interface UseDataGridColumnVisibilityOptions<C extends DataGridColumnVisibilityItem> {
   columns: readonly C[];
   /** Id các cột đang ẩn (điều khiển từ ngoài). */

@@ -12,10 +12,12 @@
 export const CUSTOMER_STATUSES = ["active", "invited", "suspended"] as const;
 export const PLANS = ["free", "pro", "business"] as const;
 export const ORDER_STATUSES = ["pending", "paid", "shipped", "refunded"] as const;
+export const TASK_STATUSES = ["todo", "doing", "done"] as const;
 
 export type CustomerStatus = (typeof CUSTOMER_STATUSES)[number];
 export type Plan = (typeof PLANS)[number];
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
+export type TaskStatus = (typeof TASK_STATUSES)[number];
 
 export interface Customer {
   id: string;
@@ -47,6 +49,15 @@ export interface Order {
   total: number;
   status: OrderStatus;
 }
+
+/** A card on the team board. */
+export interface Task {
+  id: string;
+  title: string;
+}
+
+/** The board: the tasks of each column, in the order the team arranged them. */
+export type TaskBoard = Record<TaskStatus, Task[]>;
 
 export type SortDirection = "ascending" | "descending";
 export type CustomerSortKey = "name" | "company" | "status" | "plan" | "phone" | "orders" | "spent" | "createdAt";
@@ -94,6 +105,9 @@ export interface AdminApi {
   /** Deletes the customers and their orders. */
   deleteCustomers(ids: string[]): Promise<void>;
   listOrders(query: OrderQuery, signal?: AbortSignal): Promise<PageResult<Order>>;
+  listTasks(signal?: AbortSignal): Promise<TaskBoard>;
+  /** Puts a task in a column at a position (counted after the move). Rejects with 404 for an unknown task. */
+  moveTask(id: string, status: TaskStatus, index: number): Promise<void>;
   /** First step of sign-in: checks the password, then "sends" a code. Rejects with 401. */
   signIn(email: string, password: string): Promise<void>;
   /** Second step: the code from the email. Rejects with 401. */
@@ -137,6 +151,8 @@ export interface MockLabels {
   companies: string[];
   /** Start of generated phone numbers, e.g. "+1 555". */
   phonePrefix: string;
+  /** Cards of the team board; `{customer}` becomes a customer's name. */
+  tasks: string[];
 }
 
 export interface MockApiConfig {
@@ -280,6 +296,14 @@ function paginate<T>(rows: T[], page: number, pageSize: number): PageResult<T> {
 export function createMockApi({ labels, locale, options = () => DEFAULT_MOCK_OPTIONS, now = () => new Date(), random = Math.random }: MockApiConfig): AdminApi {
   const data = generate(labels, now());
   let nextId = data.customers.length + 1;
+  // Board: the first five cards to do, the next three in progress, the rest done.
+  const tasks = new Map<string, Task>();
+  const board: Record<TaskStatus, string[]> = { todo: [], doing: [], done: [] };
+  labels.tasks.forEach((title, i) => {
+    const id = `t-${i + 1}`;
+    tasks.set(id, { id, title: title.replace("{customer}", data.customers[(i * 17) % data.customers.length].name) });
+    board[i < 5 ? "todo" : i < 8 ? "doing" : "done"].push(id);
+  });
   const collator = new Intl.Collator(locale, { sensitivity: "base", numeric: true });
 
   /** Customers with their order count and total, worked out from the orders. */
@@ -398,6 +422,19 @@ export function createMockApi({ labels, locale, options = () => DEFAULT_MOCK_OPT
         const sign = query.sort.direction === "descending" ? -1 : 1;
         rows.sort((a, b) => sign * compare(a, b) || a.id.localeCompare(b.id));
         return paginate(rows, query.page, query.pageSize);
+      }),
+
+    listTasks: (signal) =>
+      later(options().latency, signal, () => {
+        const column = (status: TaskStatus) => board[status].map((id) => ({ ...tasks.get(id)! }));
+        return { todo: column("todo"), doing: column("doing"), done: column("done") };
+      }),
+
+    moveTask: (id, status, index) =>
+      write(() => {
+        if (!tasks.has(id)) throw new ApiError(404, `No task ${id}.`);
+        for (const s of TASK_STATUSES) board[s] = board[s].filter((t) => t !== id);
+        board[status].splice(Math.max(0, Math.min(index, board[status].length)), 0, id);
       }),
 
     signIn: (email, password) =>

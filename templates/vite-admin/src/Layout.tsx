@@ -1,5 +1,7 @@
 import * as React from "react";
 import {
+  Board20Filled,
+  Board20Regular,
   People20Filled,
   People20Regular,
   Receipt20Filled,
@@ -39,6 +41,7 @@ const loaders = {
   customers: () => import("./pages/CustomersPage"),
   customer: () => import("./pages/CustomerPage"),
   orders: () => import("./pages/OrdersPage"),
+  board: () => import("./pages/BoardPage"),
   settings: () => import("./pages/SettingsPage"),
   signIn: () => import("./pages/SignInPage"),
   forgotPassword: () => import("./pages/ForgotPasswordPage"),
@@ -48,22 +51,24 @@ const loaders = {
 const CustomersPage = React.lazy(loaders.customers);
 const CustomerPage = React.lazy(loaders.customer);
 const OrdersPage = React.lazy(loaders.orders);
+const BoardPage = React.lazy(loaders.board);
 const SettingsPage = React.lazy(loaders.settings);
 const SignInPage = React.lazy(loaders.signIn);
 const ForgotPasswordPage = React.lazy(loaders.forgotPassword);
 const VerifyPage = React.lazy(loaders.verify);
 const NotFoundPage = React.lazy(loaders.notFound);
 
-type Section = "customers" | "orders";
+type Section = "customers" | "orders" | "board";
 
 const SECTIONS: { id: Section; icon: React.ReactNode; activeIcon: React.ReactNode }[] = [
   { id: "customers", icon: <People20Regular />, activeIcon: <People20Filled /> },
   { id: "orders", icon: <Receipt20Regular />, activeIcon: <Receipt20Filled /> },
+  { id: "board", icon: <Board20Regular />, activeIcon: <Board20Filled /> },
 ];
 
 function sectionOf(route: Route): Section | undefined {
   if (route.name === "customers" || route.name === "customer") return "customers";
-  if (route.name === "orders") return "orders";
+  if (route.name === "orders" || route.name === "board") return route.name;
   return undefined;
 }
 
@@ -220,6 +225,8 @@ function titleOf(route: Route, t: ReturnType<typeof useAdmin>["t"]) {
       return t.customer.title;
     case "orders":
       return t.orders.title;
+    case "board":
+      return t.board.title;
     case "settings":
       return t.settings.title;
     case "signIn":
@@ -261,6 +268,8 @@ export function Layout() {
       <CustomerPage key={route.id} id={route.id} />
     ) : route.name === "orders" ? (
       <OrdersPage />
+    ) : route.name === "board" ? (
+      <BoardPage />
     ) : route.name === "settings" ? (
       <SettingsPage />
     ) : route.name === "signIn" ? (

@@ -667,6 +667,11 @@
     outline-offset: 1px;
     border-radius: var(--borderRadiusMedium);
   }
+  /* Sortable: mục đang kéo nổi trên các mục khác và có nền để chữ không chồng lên nhau; class position / bg-* của mục thắng. */
+  [data-sortable-item][data-dragging] {
+    position: relative;
+    background-color: var(--colorNeutralBackground1);
+  }
   ::selection {
     background-color: var(--colorBrandBackground);
     color: var(--colorNeutralForegroundOnBrand);

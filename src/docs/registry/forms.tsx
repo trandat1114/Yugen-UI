@@ -1182,6 +1182,26 @@ const [plan, setPlan] = useState("monthly");
         render: () => <TagPickerControlledDemo />,
       },
       {
+        title: "Sắp xếp tag",
+        description: "reorderable: kéo tag, hoặc focus tag (← từ ô nhập) rồi Alt + ← → để đổi thứ tự. Bấm tag mà không kéo thì vẫn gỡ tag.",
+        code: `<TagPicker
+  reorderable
+  aria-label="Tiêu chí, theo thứ tự ưu tiên"
+  className="w-96"
+  defaultValue={["Giá", "Độ bền", "Thiết kế"]}
+  options={["Giá", "Độ bền", "Thiết kế", "Bảo hành", "Tốc độ giao"]}
+/>`,
+        render: () => (
+          <TagPicker
+            reorderable
+            aria-label="Tiêu chí, theo thứ tự ưu tiên"
+            className="w-96"
+            defaultValue={["Giá", "Độ bền", "Thiết kế"]}
+            options={["Giá", "Độ bền", "Thiết kế", "Bảo hành", "Tốc độ giao"]}
+          />
+        ),
+      },
+      {
         title: "Kích thước",
         description: "medium (tag extra-small), large (tag small), extra-large (tag medium).",
         code: `<div className="grid w-96 gap-3">
@@ -1215,6 +1235,7 @@ const [plan, setPlan] = useState("monthly");
       { name: "appearance", type: `"outline" | "underline" | "filled-darker" | "filled-lighter"`, defaultValue: `"outline"`, description: "Kiểu ô." },
       { name: "tagAppearance / tagShape", type: "TagAppearance / TagShape", description: "Kiểu của tag đã chọn." },
       { name: "freeform", type: "boolean", defaultValue: "false", description: "Enter để tạo tag từ văn bản tự gõ." },
+      { name: "reorderable", type: "boolean", defaultValue: "false", description: "Kéo tag, hoặc Alt + phím mũi tên khi focus ở tag, để đổi thứ tự (Sortable)." },
       { name: "noResultsText", type: "ReactNode", description: "Hiện khi không còn gợi ý phù hợp." },
     ],
   },

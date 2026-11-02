@@ -8,6 +8,7 @@ export type Route =
   | { name: "customers" }
   | { name: "customer"; id: string }
   | { name: "orders" }
+  | { name: "board" }
   | { name: "settings" }
   /** `next`: where to go once signed in (a path of this app). */
   | { name: "signIn"; next?: string }
@@ -28,6 +29,8 @@ export function pathOf(route: Route): string {
       return `${BASE}customers/${encodeURIComponent(route.id)}`;
     case "orders":
       return `${BASE}orders`;
+    case "board":
+      return `${BASE}board`;
     case "settings":
       return `${BASE}settings`;
     case "signIn":
@@ -57,6 +60,8 @@ export function parseLocation(pathname: string, search = ""): Route {
       return { name: "customers" };
     case "orders":
       return { name: "orders" };
+    case "board":
+      return { name: "board" };
     case "settings":
       return { name: "settings" };
     case "sign-in": {
