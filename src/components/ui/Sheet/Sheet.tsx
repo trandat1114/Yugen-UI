@@ -4,12 +4,10 @@ import { useDirection } from "@radix-ui/react-direction";
 import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
-import { useMediaQuery } from "./useMediaQuery";
+import { useMediaQuery } from "../Hooks/useMediaQuery";
 import { sheetMessages } from "./messages";
 
 export { sheetMessages, sheetMessagesEn, type SheetMessages } from "./messages";
-
-export { useMediaQuery, type UseMediaQueryOptions } from "./useMediaQuery";
 
 /**
  * Yugen Labs — Sheet: MỘT overlay thích ứng. Màn hình rộng → panel trượt từ cạnh (như Drawer);

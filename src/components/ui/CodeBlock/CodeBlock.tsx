@@ -10,7 +10,7 @@ import {
   TextWrapOff16Regular,
 } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
-import { copyText } from "../_internal/copyText";
+import { useClipboard } from "../Hooks/useClipboard";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { Badge } from "../Badge/Badge";
 import { Button } from "../Button/Button";
@@ -407,9 +407,7 @@ export interface CopyCodeButtonProps extends Omit<React.ButtonHTMLAttributes<HTM
 export const CopyCodeButton = React.forwardRef<HTMLButtonElement, CopyCodeButtonProps>(
   ({ text, showLabel = true, className, onClick, ...props }, ref) => {
     const msg = useYugenMessages("copyCodeButton", copyCodeButtonMessages);
-    const [copied, setCopied] = React.useState(false);
-    const timer = React.useRef<number | undefined>(undefined);
-    React.useEffect(() => () => window.clearTimeout(timer.current), []);
+    const { copy, copied } = useClipboard();
 
     return (
       <>
@@ -421,10 +419,7 @@ export const CopyCodeButton = React.forwardRef<HTMLButtonElement, CopyCodeButton
           aria-label={showLabel ? undefined : copied ? msg.copiedLabel : msg.copyLabel}
           onClick={async (e) => {
             onClick?.(e);
-            await copyText(text);
-            setCopied(true);
-            window.clearTimeout(timer.current);
-            timer.current = window.setTimeout(() => setCopied(false), 1600);
+            await copy(text);
           }}
           className={cn(!showLabel && "min-w-0", className)}
           {...props}
