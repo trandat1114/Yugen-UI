@@ -1,6 +1,10 @@
 import * as React from "react";
 import { Accessibility20Regular, Cart20Regular, WeatherMoon20Regular, WeatherSunny20Regular } from "@fluentui/react-icons";
 import {
+  AppShell,
+  AppShellFooter,
+  AppShellHeader,
+  AppShellMain,
   Button,
   CounterBadge,
   Menu,
@@ -98,7 +102,7 @@ function CategoryLinks() {
   const Nav = embedded ? "div" : "nav";
   const only = route.name === "shop" && route.query.categories.length === 1 ? route.query.categories[0] : undefined;
   return (
-    <Nav aria-label={embedded ? undefined : t.nav.categories} className="hidden items-center gap-1 @3xl/app:flex">
+    <Nav aria-label={embedded ? undefined : t.nav.categories} className="hidden items-center gap-1 @3xl/app-shell:flex">
       {CATEGORIES.map((category) => (
         <Link
           key={category}
@@ -196,49 +200,50 @@ export function Layout() {
     );
 
   return (
-    <div
+    <AppShell
       ref={rootRef}
-      className={cn("@container/app flex flex-col bg-background-2 text-foreground-1", embedded ? "h-full overflow-y-auto" : "min-h-dvh")}
+      scroll="page"
+      // Embedded: scrolls inside the preview, no skip link.
+      className={embedded ? "h-full min-h-0 overflow-y-auto" : undefined}
+      skipLink={!embedded}
     >
-      {!embedded && (
-        <a
-          href="#content"
-          className="sr-only rounded-medium bg-background-1 px-3 py-2 text-body1 font-semibold shadow-8 focus:not-sr-only focus:fixed focus:inset-s-2 focus:top-2 focus:z-50"
-        >
-          {t.nav.skip}
-        </a>
-      )}
-      <Header className="sticky top-0 z-10 border-b border-stroke-2 bg-background-1">
-        <div className="mx-auto flex h-14 w-full max-w-6xl items-center gap-2 px-3 @3xl/app:px-6">
-          <Link to={SHOP} className="flex min-w-0 items-center gap-2 rounded-medium pe-1" onPointerEnter={() => void loaders.shop()}>
-            <Logo />
-            <span className="truncate text-body1 font-semibold">{t.appName}</span>
-          </Link>
-          <div className="ms-4">
-            <CategoryLinks />
+      <AppShellHeader asChild className="px-0 @lg/app-shell:px-0">
+        <Header>
+          <div className="mx-auto flex h-full w-full max-w-6xl items-center gap-2 px-3 @3xl/app-shell:px-6">
+            <Link to={SHOP} className="flex min-w-0 items-center gap-2 rounded-medium pe-1" onPointerEnter={() => void loaders.shop()}>
+              <Logo />
+              <span className="truncate text-body1 font-semibold">{t.appName}</span>
+            </Link>
+            <div className="ms-4">
+              <CategoryLinks />
+            </div>
+            <div className="ms-auto flex shrink-0 items-center gap-1">
+              <ThemeMenu />
+              <CartButton onIntent={loadCartSheet} />
+            </div>
           </div>
-          <div className="ms-auto flex shrink-0 items-center gap-1">
-            <ThemeMenu />
-            <CartButton onIntent={loadCartSheet} />
+        </Header>
+      </AppShellHeader>
+
+      <AppShellMain asChild>
+        <Main>
+          <div className="mx-auto w-full max-w-6xl px-4 py-6 @3xl/app-shell:px-6 @3xl/app-shell:py-8">
+            <React.Suspense fallback={<PageFallback />}>{page}</React.Suspense>
           </div>
-        </div>
-      </Header>
+        </Main>
+      </AppShellMain>
 
-      <Main id={embedded ? undefined : "content"} tabIndex={embedded ? undefined : -1} className="flex-1 outline-none">
-        <div className="mx-auto w-full max-w-6xl px-4 py-6 @3xl/app:px-6 @3xl/app:py-8">
-          <React.Suspense fallback={<PageFallback />}>{page}</React.Suspense>
-        </div>
-      </Main>
-
-      <Footer className="border-t border-stroke-2 bg-background-1">
-        <p className="mx-auto w-full max-w-6xl px-4 py-5 text-caption1 text-foreground-3 @3xl/app:px-6">{t.footer}</p>
-      </Footer>
+      <AppShellFooter asChild>
+        <Footer>
+          <p className="mx-auto w-full max-w-6xl px-4 py-5 text-caption1 text-foreground-3 @3xl/app-shell:px-6">{t.footer}</p>
+        </Footer>
+      </AppShellFooter>
 
       {(cartLoaded || cartOpen) && (
         <React.Suspense fallback={null}>
           <CartSheet />
         </React.Suspense>
       )}
-    </div>
+    </AppShell>
   );
 }

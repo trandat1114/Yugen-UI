@@ -1,6 +1,10 @@
 import * as React from "react";
 import { Accessibility20Regular, ArrowRight16Regular, Open16Regular, WeatherMoon20Regular, WeatherSunny20Regular } from "@fluentui/react-icons";
 import {
+  AppShell,
+  AppShellFooter,
+  AppShellHeader,
+  AppShellMain,
   Button,
   Menu,
   MenuDivider,
@@ -97,9 +101,15 @@ export function Welcome({ appearance, onAppearanceChange, content: t = defaultCo
   const Section = embedded ? "h3" : "h2";
 
   return (
-    <div lang={t.lang} className={`@container isolate flex flex-col bg-background-1 text-foreground-1 ${embedded ? "h-full overflow-y-auto" : "min-h-dvh"}`}>
-      <header className="sticky top-0 z-10 border-b border-stroke-2 bg-background-1/85 backdrop-blur">
-        <div className="mx-auto flex h-14 w-full max-w-5xl items-center gap-3 px-4">
+    <AppShell
+      lang={t.lang}
+      scroll="page"
+      // Embedded: scrolls inside the preview, no skip link.
+      className={`isolate bg-background-1 ${embedded ? "h-full min-h-0 overflow-y-auto" : ""}`}
+      skipLink={!embedded}
+    >
+      <AppShellHeader className="bg-background-1/85 px-0 backdrop-blur @lg/app-shell:px-0">
+        <div className="mx-auto flex h-full w-full max-w-5xl items-center gap-3 px-4">
           <span className="flex items-center gap-2 font-display text-subtitle2 font-semibold text-foreground-1">
             <Hanko />
             {t.appName}
@@ -118,98 +128,100 @@ export function Welcome({ appearance, onAppearanceChange, content: t = defaultCo
             <AppearanceMenu appearance={appearance} onChange={onAppearanceChange} t={t} />
           </nav>
         </div>
-      </header>
+      </AppShellHeader>
 
-      <Main aria-label={embedded ? t.appName : undefined} className="flex-1">
-        <section className="relative overflow-hidden border-b border-stroke-2 bg-hero-glow">
-          <SakuraBloom className="pointer-events-none absolute -inset-e-24 -top-24 size-80 opacity-40 @4xl:opacity-60" />
-          <div className="relative mx-auto grid w-full max-w-5xl items-center gap-6 px-4 py-[clamp(40px,7cqi,96px)] @4xl:grid-cols-[minmax(0,1fr)_auto]">
-            <div className="flex flex-col items-start gap-4">
-              <Title className="font-display text-[clamp(36px,6cqi,64px)] leading-[1.05] font-semibold tracking-[-0.02em] text-balance text-foreground-1">
-                {t.hero.title}
-              </Title>
-              <p className="max-w-xl text-subtitle2 font-normal text-foreground-2">
-                <Text parts={t.hero.body} />
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <Button asChild appearance="primary" size="large" icon={<Open16Regular />} iconPosition="after">
-                  <a href={DOCS} target="_blank" rel="noreferrer">
-                    {t.hero.docs}
-                  </a>
-                </Button>
-                <Button asChild size="large" icon={<ArrowRight16Regular className="rtl:-scale-x-100" />} iconPosition="after">
-                  <a
-                    href="#next-steps"
-                    onClick={(e) => {
-                      // Scroll with JS: also works inside a preview frame whose router uses the hash.
-                      e.preventDefault();
-                      document.getElementById("next-steps")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                    }}
-                  >
-                    {t.hero.next}
-                  </a>
-                </Button>
+      <AppShellMain asChild>
+        <Main aria-label={embedded ? t.appName : undefined}>
+          <section className="relative overflow-hidden border-b border-stroke-2 bg-hero-glow">
+            <SakuraBloom className="pointer-events-none absolute -inset-e-24 -top-24 size-80 opacity-40 @4xl:opacity-60" />
+            <div className="relative mx-auto grid w-full max-w-5xl items-center gap-6 px-4 py-[clamp(40px,7cqi,96px)] @4xl:grid-cols-[minmax(0,1fr)_auto]">
+              <div className="flex flex-col items-start gap-4">
+                <Title className="font-display text-[clamp(36px,6cqi,64px)] leading-[1.05] font-semibold tracking-[-0.02em] text-balance text-foreground-1">
+                  {t.hero.title}
+                </Title>
+                <p className="max-w-xl text-subtitle2 font-normal text-foreground-2">
+                  <Text parts={t.hero.body} />
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <Button asChild appearance="primary" size="large" icon={<Open16Regular />} iconPosition="after">
+                    <a href={DOCS} target="_blank" rel="noreferrer">
+                      {t.hero.docs}
+                    </a>
+                  </Button>
+                  <Button asChild size="large" icon={<ArrowRight16Regular className="rtl:-scale-x-100" />} iconPosition="after">
+                    <a
+                      href="#next-steps"
+                      onClick={(e) => {
+                        // Scroll with JS: also works inside a preview frame whose router uses the hash.
+                        e.preventDefault();
+                        document.getElementById("next-steps")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                      }}
+                    >
+                      {t.hero.next}
+                    </a>
+                  </Button>
+                </div>
+              </div>
+              {/* Vertical 幽玄 (yūgen) with the seal: a calligraphy accent on wide screens. */}
+              <div aria-hidden className="hidden items-start gap-3 @4xl:flex">
+                <span lang="ja" className={`${JP} text-[clamp(88px,11cqi,152px)] leading-none font-bold text-foreground-1 [writing-mode:vertical-rl]`}>
+                  幽玄
+                </span>
+                <span className="self-end">
+                  <Hanko size="size-12" />
+                </span>
               </div>
             </div>
-            {/* Vertical 幽玄 (yūgen) with the seal: a calligraphy accent on wide screens. */}
-            <div aria-hidden className="hidden items-start gap-3 @4xl:flex">
-              <span lang="ja" className={`${JP} text-[clamp(88px,11cqi,152px)] leading-none font-bold text-foreground-1 [writing-mode:vertical-rl]`}>
-                幽玄
-              </span>
-              <span className="self-end">
-                <Hanko size="size-12" />
-              </span>
-            </div>
-          </div>
-        </section>
+          </section>
 
-        <section id="next-steps" aria-labelledby="next-steps-title" className="mx-auto w-full max-w-5xl scroll-mt-16 px-4 py-8">
-          <Section id="next-steps-title" className="font-display text-title2 font-semibold text-foreground-1">
-            {t.steps.title}
-          </Section>
-          <ol className="mt-5 grid gap-5 @3xl:grid-cols-3">
-            {t.steps.items.map((step, i) => (
-              <li key={step.title} className="flex flex-col gap-2 border-t-2 border-brand-stroke pt-4">
-                <span aria-hidden className="font-display text-title3 font-semibold text-brand-foreground-1 tabular-nums">
-                  {i + 1}
-                </span>
-                <h3 className="text-subtitle1 font-semibold text-foreground-1">{step.title}</h3>
-                <p className="text-body1 text-foreground-2">
-                  <Text parts={step.body} />
-                </p>
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        <section aria-labelledby="explore" className="border-t border-stroke-2 bg-background-2">
-          <div className="mx-auto w-full max-w-5xl px-4 py-8">
-            <Section id="explore" className="font-display text-title2 font-semibold text-foreground-1">
-              {t.links.title}
+          <section id="next-steps" aria-labelledby="next-steps-title" className="mx-auto w-full max-w-5xl scroll-mt-16 px-4 py-8">
+            <Section id="next-steps-title" className="font-display text-title2 font-semibold text-foreground-1">
+              {t.steps.title}
             </Section>
-            <ul className="mt-5 grid gap-4 @xl:grid-cols-2 @4xl:grid-cols-4">
-              {t.links.items.map((link) => (
-                <li key={link.title}>
-                  <a
-                    href={`${DOCS}${link.path}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex h-full flex-col gap-1 rounded-xlarge border border-stroke-2 bg-background-1 p-4 transition-shadow duration-faster hover:shadow-8"
-                  >
-                    <span className="flex items-center gap-1 text-subtitle2 font-semibold text-foreground-1">
-                      {link.title}
-                      <Open16Regular className="text-foreground-3" />
-                    </span>
-                    <span className="text-body1 text-foreground-2">{link.body}</span>
-                  </a>
+            <ol className="mt-5 grid gap-5 @3xl:grid-cols-3">
+              {t.steps.items.map((step, i) => (
+                <li key={step.title} className="flex flex-col gap-2 border-t-2 border-brand-stroke pt-4">
+                  <span aria-hidden className="font-display text-title3 font-semibold text-brand-foreground-1 tabular-nums">
+                    {i + 1}
+                  </span>
+                  <h3 className="text-subtitle1 font-semibold text-foreground-1">{step.title}</h3>
+                  <p className="text-body1 text-foreground-2">
+                    <Text parts={step.body} />
+                  </p>
                 </li>
               ))}
-            </ul>
-          </div>
-        </section>
-      </Main>
+            </ol>
+          </section>
 
-      <footer className="border-t border-stroke-2 bg-background-2">
+          <section aria-labelledby="explore" className="border-t border-stroke-2 bg-background-2">
+            <div className="mx-auto w-full max-w-5xl px-4 py-8">
+              <Section id="explore" className="font-display text-title2 font-semibold text-foreground-1">
+                {t.links.title}
+              </Section>
+              <ul className="mt-5 grid gap-4 @xl:grid-cols-2 @4xl:grid-cols-4">
+                {t.links.items.map((link) => (
+                  <li key={link.title}>
+                    <a
+                      href={`${DOCS}${link.path}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex h-full flex-col gap-1 rounded-xlarge border border-stroke-2 bg-background-1 p-4 transition-shadow duration-faster hover:shadow-8"
+                    >
+                      <span className="flex items-center gap-1 text-subtitle2 font-semibold text-foreground-1">
+                        {link.title}
+                        <Open16Regular className="text-foreground-3" />
+                      </span>
+                      <span className="text-body1 text-foreground-2">{link.body}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        </Main>
+      </AppShellMain>
+
+      <AppShellFooter className="bg-background-2">
         <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-5 text-caption1 text-foreground-3">
           <p>
             <span lang="ja" className={`${JP} me-2 text-body1 text-foreground-1`}>
@@ -225,7 +237,7 @@ export function Welcome({ appearance, onAppearanceChange, content: t = defaultCo
             · Vite · React · Tailwind CSS v4
           </p>
         </div>
-      </footer>
-    </div>
+      </AppShellFooter>
+    </AppShell>
   );
 }

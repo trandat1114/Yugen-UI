@@ -1,6 +1,10 @@
 import * as React from "react";
 import { Accessibility20Regular, Rss20Regular, WeatherMoon20Regular, WeatherSunny20Regular } from "@fluentui/react-icons";
 import {
+  AppShell,
+  AppShellFooter,
+  AppShellHeader,
+  AppShellMain,
   Button,
   Empty,
   EmptyContent,
@@ -110,9 +114,15 @@ export function BlogLayout({ theme, onThemeChange, content: t = defaultContent, 
 
   return (
     <BlogContext.Provider value={blog}>
-      <div ref={scrollRef} className={`flex flex-col bg-background-2 text-foreground-1 ${embedded ? "h-full overflow-y-auto" : "min-h-dvh"}`}>
-        <header className="sticky top-0 z-10 border-b border-stroke-2 bg-background-1/90 backdrop-blur">
-          <div className="mx-auto flex h-14 w-full max-w-5xl items-center gap-3 px-4">
+      <AppShell
+        ref={scrollRef}
+        scroll="page"
+        // Nhúng: cuộn trong khung preview, không có skip link.
+        className={embedded ? "h-full min-h-0 overflow-y-auto" : undefined}
+        skipLink={!embedded}
+      >
+        <AppShellHeader className="bg-background-1/90 px-0 backdrop-blur @lg/app-shell:px-0">
+          <div className="mx-auto flex h-full w-full max-w-5xl items-center gap-3 px-4">
             <Link to={{ name: "home" }} className="flex items-center gap-2 font-display text-subtitle2 font-semibold text-foreground-1">
               <span aria-hidden className="flex size-8 items-center justify-center rounded-medium bg-brand-background text-foreground-on-brand">
                 桜
@@ -134,23 +144,25 @@ export function BlogLayout({ theme, onThemeChange, content: t = defaultContent, 
               <ThemeMenu theme={theme} onChange={onThemeChange} />
             </div>
           </div>
-        </header>
+        </AppShellHeader>
 
-        <Main aria-label={embedded ? t.site.title : undefined} className="@container mx-auto w-full max-w-5xl flex-1 px-4 py-6">
-          {route.name === "home" && <PostList headingLevel={headingLevel} />}
-          {route.name === "tag" && <PostList key={route.tag} tag={route.tag} headingLevel={headingLevel} />}
-          {route.name === "post" &&
-            (post ? (
-              <React.Suspense fallback={<SkeletonText lines={8} className="max-w-3xl" />}>
-                <PostPage key={post.slug} post={post} headingLevel={headingLevel} />
-              </React.Suspense>
-            ) : (
-              <NotFound headingLevel={headingLevel} />
-            ))}
-          {route.name === "notFound" && <NotFound headingLevel={headingLevel} />}
-        </Main>
+        <AppShellMain asChild>
+          <Main aria-label={embedded ? t.site.title : undefined} className="@container mx-auto w-full max-w-5xl px-4 py-6">
+            {route.name === "home" && <PostList headingLevel={headingLevel} />}
+            {route.name === "tag" && <PostList key={route.tag} tag={route.tag} headingLevel={headingLevel} />}
+            {route.name === "post" &&
+              (post ? (
+                <React.Suspense fallback={<SkeletonText lines={8} className="max-w-3xl" />}>
+                  <PostPage key={post.slug} post={post} headingLevel={headingLevel} />
+                </React.Suspense>
+              ) : (
+                <NotFound headingLevel={headingLevel} />
+              ))}
+            {route.name === "notFound" && <NotFound headingLevel={headingLevel} />}
+          </Main>
+        </AppShellMain>
 
-        <footer className="border-t border-stroke-2 bg-background-1">
+        <AppShellFooter>
           <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-5 text-caption1 text-foreground-3">
             <span>
               © {new Date().getFullYear()} {t.site.author} · {t.builtWith}{" "}
@@ -166,8 +178,8 @@ export function BlogLayout({ theme, onThemeChange, content: t = defaultContent, 
               </a>
             )}
           </div>
-        </footer>
-      </div>
+        </AppShellFooter>
+      </AppShell>
     </BlogContext.Provider>
   );
 }

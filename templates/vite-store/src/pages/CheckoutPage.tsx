@@ -69,7 +69,7 @@ function AddressStep({ form }: { form: UseFormReturn<AddressValues> }) {
         <Field label={c.name} required {...check(errors, "name")}>
           <Input autoComplete="name" {...register("name")} />
         </Field>
-        <div className="grid gap-4 @xl/app:grid-cols-2">
+        <div className="grid gap-4 @xl/app-shell:grid-cols-2">
           <Field label={c.email} required {...check(errors, "email")}>
             <Input type="email" autoComplete="email" {...register("email")} />
           </Field>
@@ -85,7 +85,7 @@ function AddressStep({ form }: { form: UseFormReturn<AddressValues> }) {
         <Field label={c.line2} {...check(errors, "line2")}>
           <Input autoComplete="address-line2" {...register("line2")} />
         </Field>
-        <div className="grid gap-4 @xl/app:grid-cols-3">
+        <div className="grid gap-4 @xl/app-shell:grid-cols-3">
           <Field label={c.city} required {...check(errors, "city")}>
             <Input autoComplete="address-level2" {...register("city")} />
           </Field>
@@ -272,7 +272,7 @@ function Summary({ lines, shipping }: { lines: LineView[]; shipping: number | un
     </div>
   );
   return (
-    <Card size="large" role="region" aria-labelledby={headingId} className="gap-4 @4xl/app:sticky @4xl/app:top-20">
+    <Card size="large" role="region" aria-labelledby={headingId} className="gap-4 @4xl/app-shell:sticky @4xl/app-shell:top-20">
       <H2 id={headingId} className="text-subtitle2 font-semibold">
         {t.checkout.summary}
       </H2>
@@ -398,8 +398,8 @@ export default function CheckoutPage() {
         {c.back}
       </Link>
       <H1 className="font-display text-title2 font-semibold">{c.title}</H1>
-      <div className="grid items-start gap-6 @4xl/app:grid-cols-[1fr_22rem]">
-        <form noValidate onSubmit={(event) => event.preventDefault()} className="min-w-0 rounded-large bg-background-1 p-4 shadow-4 @3xl/app:p-6">
+      <div className="grid items-start gap-6 @4xl/app-shell:grid-cols-[1fr_22rem]">
+        <form noValidate onSubmit={(event) => event.preventDefault()} className="min-w-0 rounded-large bg-background-1 p-4 shadow-4 @3xl/app-shell:p-6">
           <Wizard steps={steps} activeStep={step} onStepChange={setStep} onFinish={place} finishLabel={c.placeOrder} />
         </form>
         <Summary lines={lines} shipping={step >= 1 ? shippingCost(method, subtotal, price) : undefined} />

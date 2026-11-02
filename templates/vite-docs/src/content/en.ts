@@ -12,8 +12,7 @@ const en: Content = {
   },
   themes: { light: "Light", dark: "Dark", "high-contrast": "High contrast" },
   appearance: "Appearance",
-  skipToContent: "Skip to content",
-  nav: { label: "Documentation", open: "Open navigation", home: "Home" },
+  nav: { label: "Documentation", home: "Home" },
   search: {
     button: "Search docs",
     title: "Search the documentation",

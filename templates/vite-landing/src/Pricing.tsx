@@ -36,9 +36,9 @@ export function Pricing() {
   const p = t.pricing;
 
   return (
-    <section id={sectionId("pricing")} aria-labelledby={`${sectionId("pricing")}-title`} className="scroll-mt-16 px-4 py-16 @3xl/landing:py-24">
+    <section id={sectionId("pricing")} aria-labelledby={`${sectionId("pricing")}-title`} className="scroll-mt-16 px-4 py-16 @3xl/app-shell:py-24">
       <div className="mx-auto flex max-w-6xl flex-col items-center text-center">
-        <H2 id={`${sectionId("pricing")}-title`} className="font-display text-title2 font-semibold text-foreground-1 @3xl/landing:text-title1">
+        <H2 id={`${sectionId("pricing")}-title`} className="font-display text-title2 font-semibold text-foreground-1 @3xl/app-shell:text-title1">
           {p.title}
         </H2>
         <p className="mt-3 max-w-xl text-body2 text-foreground-2">{p.lead}</p>
@@ -60,7 +60,7 @@ export function Pricing() {
         </ToggleGroup>
       </div>
 
-      <ul className="mx-auto mt-10 grid max-w-6xl gap-4 @4xl/landing:grid-cols-3">
+      <ul className="mx-auto mt-10 grid max-w-6xl gap-4 @4xl/app-shell:grid-cols-3">
         {p.plans.map((plan) => {
           const price = plan.price[period];
           return (

@@ -30,7 +30,6 @@ export interface Content {
   /** Document title of a page: "Checkout · Sakura Goods". */
   pageTitle: (page: string) => string;
   nav: {
-    skip: string;
     categories: string;
     /** Name of the cart button: "Cart, 3 items". */
     cart: (count: number) => string;

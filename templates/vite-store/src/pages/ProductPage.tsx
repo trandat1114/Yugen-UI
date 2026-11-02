@@ -38,7 +38,7 @@ function Gallery({ product, color }: { product: Product; color: ColorId }) {
       <CarouselViewport className="rounded-large">
         {VIEWS.map((view) => (
           <CarouselCard key={view}>
-            <div className="aspect-square rounded-large bg-background-3 p-6 @3xl/app:p-10">
+            <div className="aspect-square rounded-large bg-background-3 p-6 @3xl/app-shell:p-10">
               <ProductArt product={product} color={color} view={view} label={alt(view)} />
             </div>
           </CarouselCard>
@@ -93,7 +93,7 @@ function ProductView({ product }: { product: Product }) {
         {t.product.back}
       </Link>
 
-      <div className="grid gap-6 @3xl/app:grid-cols-2 @3xl/app:gap-10">
+      <div className="grid gap-6 @3xl/app-shell:grid-cols-2 @3xl/app-shell:gap-10">
         <Gallery product={product} color={color} />
 
         <div className="flex min-w-0 flex-col gap-5">
