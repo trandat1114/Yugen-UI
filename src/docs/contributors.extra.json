@@ -2,5 +2,14 @@
   "$comment": "Ghi tay cho scripts/contributors.mjs (#248). maintainers: đứng đầu trang. exclude: login xin bỏ tên. people: đóng góp API không thấy (thiết kế, ý tưởng ngoài GitHub…): { login, name?, types: [design|idea|translation|…], title, date: YYYY-MM-DD, url? }.",
   "maintainers": ["trandat1114"],
   "exclude": [],
-  "people": []
+  "people": [
+    {
+      "login": "giabao12-hali",
+      "name": "Nguyễn Gia Bảo",
+      "types": ["code", "docs"],
+      "title": "Hooks dùng chung (#172)",
+      "date": "2026-11-02",
+      "url": "https://github.com/trandat1114/Yugen-UI/pull/253"
+    }
+  ]
 }

@@ -12,11 +12,11 @@ import {
   makeNumberFormatter,
   measureText,
   toNumber,
-  useElementWidth,
   type ChartDatum,
   type ChartFrameProps,
   type ChartNumberFormat,
 } from "./chartUtils";
+import { useElementSize } from "../hooks/useElementSize";
 import { heatmapColor, heatmapDomain, heatmapPosition } from "./chartMath";
 
 export interface HeatmapColumn {
@@ -147,7 +147,7 @@ export const Heatmap = React.forwardRef<HTMLElement, HeatmapProps>(function Heat
   const emptyText = msg.noData;
   const uid = chartUid(React.useId());
   const emptyId = `${uid}-empty`;
-  const [plotRef, width] = useElementWidth<HTMLDivElement>();
+  const { ref: plotRef, width } = useElementSize<HTMLDivElement>();
   const [active, setActive] = React.useState<{ r: number; c: number; kb: boolean } | null>(null);
   const [stop, setStop] = React.useState<[number, number]>([0, 0]);
   const cellRefs = React.useRef<(SVGRectElement | null)[]>([]);

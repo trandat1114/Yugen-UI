@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import type { DateRange } from "react-day-picker";
 import { Calendar20Regular, Dismiss16Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
@@ -175,11 +176,12 @@ export function DatePicker({
   const { locale } = useYugen();
   const format = formatDate ?? numericDateFormat(locale);
   const [open, setOpen] = React.useState(false);
-  const [inner, setInner] = React.useState<Date | null>(defaultValue);
-  const current = (value !== undefined ? value : inner) ?? undefined;
+  // onSelectDate nhận undefined khi xoá (không phải null) nên gọi riêng, không qua hook.
+  const [selected, setSelected] = useControllableState<Date | null>({ value, defaultValue });
+  const current = selected ?? undefined;
 
   const commit = (date: Date | undefined) => {
-    if (value === undefined) setInner(date ?? null);
+    setSelected(date ?? null);
     onSelectDate?.(date);
   };
 
@@ -332,11 +334,11 @@ export function DateRangePicker({
   const { locale } = useYugen();
   const format = formatDate ?? numericDateFormat(locale);
   const [open, setOpen] = React.useState(false);
-  const [inner, setInner] = React.useState<DateRange | null>(defaultValue);
-  const current = (value !== undefined ? value : inner) ?? undefined;
+  const [selected, setSelected] = useControllableState<DateRange | null>({ value, defaultValue });
+  const current = selected ?? undefined;
 
   const commit = (range: DateRange | undefined) => {
-    if (value === undefined) setInner(range ?? null);
+    setSelected(range ?? null);
     onSelectRange?.(range);
   };
 

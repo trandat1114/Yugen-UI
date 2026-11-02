@@ -129,6 +129,7 @@ export const COMPONENTS_EN: Record<string, { lead: string; name?: string }> = {
   donutchart: { lead: "DonutChart gives a quick part-to-whole view with up to 6 slices; the tail is grouped into “Other” and the total sits in the middle." },
   heatmap: { lead: "Heatmap colors a row × column matrix by magnitude, for hour / day patterns, cohort comparisons or retention tables." },
   linechart: { lead: "LineChart and AreaChart show trends over time or across ordered categories, with several series on one axis." },
+  hooks: { lead: "Nine shared hooks that Yugen UI's own components use: state, screen, storage, shortcuts and measuring." },
   loading: { lead: "Show loaders at the right moment and only over the region that is loading: no flash for fast responses, no flicker for slow ones." },
   messagescroller: { lead: "MessageScroller is a conversation scroll area that sticks to the bottom for new messages, shows “N new messages” while you read older ones, and keeps your place when history loads." },
   notificationcenter: { lead: "NotificationCenter is a bell with an unread count. It opens a panel of notifications grouped by day: a Popover on desktop, a bottom sheet on mobile." },

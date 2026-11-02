@@ -1,5 +1,6 @@
 /** Fluent 2 TagPicker — https://fluent2.microsoft.design/components/web/react/core/tagpicker/usage */
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { useDirection } from "@radix-ui/react-direction";
 import { Command as CommandPrimitive } from "cmdk";
@@ -89,8 +90,7 @@ export const TagPicker = React.forwardRef<HTMLInputElement, TagPickerProps>(
     // Chuẩn hoá nhãn một lần cho mỗi bộ option (không phải mỗi phím gõ × mỗi option).
     const searchText = React.useMemo(() => items.map((i) => normalizeSearchText(i.label)), [items]);
     const itemByValue = React.useMemo(() => new Map(items.map((i) => [i.value, i])), [items]);
-    const [innerSelected, setInnerSelected] = React.useState<string[]>(defaultValue ?? []);
-    const selected = value ?? innerSelected;
+    const [selected, commit] = useControllableState({ value, defaultValue: defaultValue ?? [], onChange: onValueChange });
 
     const [open, setOpen] = React.useState(false);
     const [query, setQuery] = React.useState("");
@@ -128,11 +128,6 @@ export const TagPicker = React.forwardRef<HTMLInputElement, TagPickerProps>(
       setActiveId(el?.id);
       el?.scrollIntoView({ block: "nearest" });
     }, [open, listEl, active, query, selected.length]);
-
-    const commit = (next: string[]) => {
-      if (value === undefined) setInnerSelected(next);
-      onValueChange?.(next);
-    };
 
     const openList = () => {
       if (disabled || open) return;

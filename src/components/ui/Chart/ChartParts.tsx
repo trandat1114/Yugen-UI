@@ -5,6 +5,7 @@ import { cn } from "@/lib/cn";
 import { ToggleButton } from "../ToggleButton/ToggleButton";
 import { Table, TableBody, TableHeader, TableHeaderCell, TableRow, TableCell } from "../Table/Table";
 import { useYugenMessages } from "../YugenProvider/context";
+import { useControllableState } from "../hooks/useControllableState";
 import { chartMessages } from "./messages";
 import { chartUid, patternId, slotDash, slotFill, slotVar, type ChartSlot } from "./chartUtils";
 
@@ -347,15 +348,10 @@ export const ChartContainer = React.forwardRef<HTMLElement, ChartContainerProps>
   ) => {
     const msg = useYugenMessages("chart", chartMessages);
     const id = chartUid(React.useId());
-    const [innerTable, setInnerTable] = React.useState(defaultShowTable);
-    const tableOn = !!table && (showTable ?? innerTable);
+    const [tableState, setTable] = useControllableState({ value: showTable, defaultValue: defaultShowTable, onChange: onShowTableChange });
+    const tableOn = !!table && tableState;
     const hasToggle = !!table && !hideTableToggle;
     const hasHeader = title !== undefined || description !== undefined || toolbar !== undefined || hasToggle;
-
-    const setTable = (next: boolean) => {
-      if (showTable === undefined) setInnerTable(next);
-      onShowTableChange?.(next);
-    };
 
     return (
       <figure

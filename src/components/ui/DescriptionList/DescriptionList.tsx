@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Checkmark16Regular, Copy16Regular } from "@fluentui/react-icons";
-import { copyText } from "../_internal/copyText";
+import { useClipboard } from "../hooks/useClipboard";
 import { Button } from "../Button/Button";
 import { useYugenMessages } from "../YugenProvider/context";
 import { descriptionListMessages } from "./messages";
@@ -108,9 +108,7 @@ export const DescriptionItem = React.forwardRef<HTMLDivElement, DescriptionItemP
 function CopyButton({ labelId, getText }: { labelId: string; getText: () => string }) {
   const msg = useYugenMessages("descriptionList", descriptionListMessages);
   const id = React.useId();
-  const [copied, setCopied] = React.useState(false);
-  const timer = React.useRef<number | undefined>(undefined);
-  React.useEffect(() => () => window.clearTimeout(timer.current), []);
+  const { copy, copied } = useClipboard();
 
   return (
     <>
@@ -122,10 +120,7 @@ function CopyButton({ labelId, getText }: { labelId: string; getText: () => stri
         aria-labelledby={`${id} ${labelId}`}
         icon={copied ? <Checkmark16Regular className="text-success-foreground-1" /> : <Copy16Regular />}
         onClick={async () => {
-          await copyText(getText());
-          setCopied(true);
-          window.clearTimeout(timer.current);
-          timer.current = window.setTimeout(() => setCopied(false), 1600);
+          await copy(getText());
         }}
         className="-my-1 shrink-0 text-foreground-3"
       />

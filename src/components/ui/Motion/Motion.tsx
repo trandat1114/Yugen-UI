@@ -2,6 +2,7 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cn } from "@/lib/cn";
+import { matchesMedia } from "../hooks/useMediaQuery";
 
 /** Thời lượng theo token `--duration*` (faster 100 · fast 150 · normal 200 · gentle 250 · slow 300 ms). */
 export type MotionDuration = "faster" | "fast" | "normal" | "gentle" | "slow";
@@ -41,11 +42,7 @@ function getDurationMs(duration: MotionDuration): number {
 }
 
 function prefersReducedMotion() {
-  return (
-    typeof window !== "undefined" &&
-    typeof window.matchMedia === "function" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches
-  );
+  return matchesMedia("(prefers-reduced-motion: reduce)");
 }
 
 /* ================================================================ usePresence */

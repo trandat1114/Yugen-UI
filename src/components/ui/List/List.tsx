@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import { useDirection } from "@radix-ui/react-direction";
 import { Checkmark12Filled, Checkmark20Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
@@ -84,8 +85,11 @@ export const List = React.forwardRef<HTMLUListElement, ListProps>(
     },
     ref,
   ) => {
-    const [uncontrolled, setUncontrolled] = React.useState<string[]>(defaultSelectedItems ?? []);
-    const selected = selectedItems ?? uncontrolled;
+    const [selected, setSelected] = useControllableState<string[]>({
+      value: selectedItems,
+      defaultValue: defaultSelectedItems ?? [],
+      onChange: onSelectionChange,
+    });
     const [active] = React.useState(createActiveStore);
     const selectedSet = React.useMemo(() => new Set(selected), [selected]);
     const innerRef = React.useRef<HTMLUListElement | null>(null);
@@ -107,10 +111,9 @@ export const List = React.forwardRef<HTMLUListElement, ListProps>(
         const has = selected.includes(value);
         const next =
           selectionMode === "single" ? (has ? [] : [value]) : has ? selected.filter((v) => v !== value) : [...selected, value];
-        if (selectedItems === undefined) setUncontrolled(next);
-        onSelectionChange?.(next);
+        setSelected(next);
       },
-      [selectionMode, selected, selectedItems, onSelectionChange],
+      [selectionMode, selected, setSelected],
     );
 
     // Roving tabindex: luôn có đúng một item nhận Tab (mục đang chọn hoặc mục đầu tiên).

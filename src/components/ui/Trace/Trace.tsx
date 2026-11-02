@@ -405,6 +405,7 @@ export const TraceStep = React.forwardRef<HTMLLIElement, TraceStepProps>(
     const hasChildren = React.Children.toArray(children).some(React.isValidElement);
     const expandable = details != null || hasChildren;
 
+    // Không dùng useControllableState: tự mở khi chạy / lỗi (effect bên dưới) chỉ đổi state trong, không gọi onExpandedChange.
     const [innerExpanded, setInnerExpanded] = React.useState(
       defaultExpanded ?? (status === "running" || status === "error"),
     );

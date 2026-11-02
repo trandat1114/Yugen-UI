@@ -1,5 +1,6 @@
 /** Fluent 2 Combobox — https://fluent2.microsoft.design/components/web/react/core/combobox/usage */
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { useDirection } from "@radix-ui/react-direction";
 import { Command as CommandPrimitive } from "cmdk";
@@ -152,8 +153,11 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
     },
     [items, searchText],
   );
-  const [innerSelected, setInnerSelected] = React.useState<string[]>(() => toArray(defaultValue) ?? []);
-  const selected = toArray(value) ?? innerSelected;
+  // onValueChange nhận string hoặc string[] tuỳ multiselect nên gọi riêng (trong commit), không qua hook.
+  const [selected, setSelected] = useControllableState<string[]>({
+    value: toArray(value),
+    defaultValue: () => toArray(defaultValue) ?? [],
+  });
   const selectedSet = new Set(selected);
   const labelOf = (v: string) => labelByValue.get(v) ?? v;
   const displayText = selected.map(labelOf).join(", ");
@@ -188,7 +192,7 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
   }, [open, listEl, active, query]);
 
   const commit = (next: string[]) => {
-    if (value === undefined) setInnerSelected(next);
+    setSelected(next);
     if (multiselect) (onValueChange as ((v: string[]) => void) | undefined)?.(next);
     else (onValueChange as ((v: string) => void) | undefined)?.(next[0] ?? "");
   };

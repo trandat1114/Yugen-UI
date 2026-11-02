@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import { Slot } from "@radix-ui/react-slot";
 import { useDirection } from "@radix-ui/react-direction";
 import { ChevronDown16Regular } from "@fluentui/react-icons";
@@ -100,16 +101,15 @@ export const Nav = React.forwardRef<HTMLElement, NavProps>(
   ) => {
     const msg = useYugenMessages("nav", navMessages);
     const host = React.useContext(NavHostContext);
-    const [innerSelected, setInnerSelected] = React.useState(defaultSelectedValue);
-    const [innerOpen, setInnerOpen] = React.useState<string[]>(defaultOpenCategories);
-    const selected = selectedValue ?? innerSelected;
-    const open = openCategories ?? innerOpen;
+    // Callback có thêm tham số (categoryValue, open) nên tự gọi, không truyền làm onChange.
+    const [selected, setSelected] = useControllableState({ value: selectedValue, defaultValue: defaultSelectedValue });
+    const [open, setOpen] = useControllableState({ value: openCategories, defaultValue: defaultOpenCategories });
 
     const ctx: NavContextValue = {
       selectedValue: selected,
       density,
       select: (value, categoryValue) => {
-        if (selectedValue === undefined) setInnerSelected(value);
+        setSelected(value);
         onNavItemSelect?.(value, { categoryValue });
         host?.onSelect?.();
       },
@@ -117,7 +117,7 @@ export const Nav = React.forwardRef<HTMLElement, NavProps>(
       toggle: (value) => {
         const willOpen = !open.includes(value);
         const next = willOpen ? (multiple ? [...open, value] : [value]) : open.filter((v) => v !== value);
-        if (openCategories === undefined) setInnerOpen(next);
+        setOpen(next);
         onNavCategoryItemToggle?.(value, willOpen);
       },
     };

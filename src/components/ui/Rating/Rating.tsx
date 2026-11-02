@@ -1,5 +1,6 @@
 /** Fluent 2 Rating — https://fluent2.microsoft.design/components/web/react/core/rating/usage */
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import { useDirection } from "@radix-ui/react-direction";
 import {
   Star12Filled,
@@ -115,16 +116,10 @@ export const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
     const labelOf = itemLabel ?? ((v: number) => msg.item(v, v.toLocaleString(locale)));
     const autoName = React.useId();
     const groupName = name ?? autoName;
-    const [inner, setInner] = React.useState(defaultValue);
-    const current = value !== undefined ? value : inner;
+    const [current, select] = useControllableState({ value, defaultValue, onChange: onValueChange });
     const [hover, setHover] = React.useState<number | null>(null);
     const shown = hover ?? current;
     const { gap } = ICONS[size];
-
-    const select = (v: number) => {
-      if (value === undefined) setInner(v);
-      onValueChange?.(v);
-    };
 
     // Radio gốc xử lý ArrowLeft/Right khác nhau giữa trình duyệt khi RTL → tự xử lý theo chiều hiển thị.
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import {
   ArrowClockwise16Regular,
   CheckmarkCircle12Filled,
@@ -322,14 +323,13 @@ export const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>(
     const msg = useYugenMessages("fileUpload", fileUploadMessages);
     const { locale } = useYugen();
 
-    const [innerFiles, setInnerFiles] = React.useState<FileUploadEntry[]>(defaultFiles ?? []);
-    const controlled = files !== undefined;
-    const list = controlled ? files : innerFiles;
+    // onFilesChange có thêm `details` nên gọi riêng (trong commit), không qua hook.
+    const [list, setList] = useControllableState({ value: files, defaultValue: defaultFiles ?? [] });
     const [rejections, setRejections] = React.useState<FileUploadRejection[]>([]);
     const [dragging, setDragging] = React.useState(false);
 
     const commit = (next: FileUploadEntry[], details: FileUploadChangeDetails) => {
-      if (!controlled) setInnerFiles(next);
+      setList(next);
       onFilesChange?.(next, details);
     };
 

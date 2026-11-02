@@ -1,5 +1,6 @@
 /** Yugen Labs · ChatComposer — ô soạn tin tự giãn: Enter gửi, Shift+Enter xuống dòng. */
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import { Send20Filled, Stop20Filled } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
@@ -69,14 +70,8 @@ export const ChatComposer = React.forwardRef<HTMLTextAreaElement, ChatComposerPr
     const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
     const counterId = React.useId();
     const hintId = React.useId();
-    const [inner, setInner] = React.useState(defaultValue);
-    const text = value ?? inner;
+    const [text, setText] = useControllableState({ value, defaultValue, onChange: onValueChange });
     const canSend = text.trim().length > 0 && !disabled && !busy;
-
-    const setText = (next: string) => {
-      if (value === undefined) setInner(next);
-      onValueChange?.(next);
-    };
 
     const setRefs = React.useCallback(
       (node: HTMLTextAreaElement | null) => {

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { cn } from "@/lib/cn";
 import { normalizeSearchText } from "../Combobox/Combobox";
@@ -155,12 +156,11 @@ export const Autocomplete = React.forwardRef<HTMLInputElement, AutocompleteProps
     const optionId = (i: number) => `${baseId}-opt-${i}`;
     const anchorRef = React.useRef<HTMLDivElement>(null);
 
-    const [inner, setInner] = React.useState(defaultValue === undefined ? "" : String(defaultValue));
-    const query = value !== undefined ? String(value) : inner;
-    const setQuery = (next: string) => {
-      if (value === undefined) setInner(next);
-      onValueChange?.(next);
-    };
+    const [query, setQuery] = useControllableState({
+      value: value === undefined ? undefined : String(value),
+      defaultValue: defaultValue === undefined ? "" : String(defaultValue),
+      onChange: onValueChange,
+    });
 
     const [focused, setFocused] = React.useState(false);
     const [dismissed, setDismissed] = React.useState(false);

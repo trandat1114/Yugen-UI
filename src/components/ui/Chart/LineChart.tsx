@@ -20,7 +20,6 @@ import {
   slotVar,
   toNumber,
   useChartTexture,
-  useElementWidth,
   useRovingPoints,
   useSeriesToggle,
   type ChartDatum,
@@ -31,6 +30,8 @@ import {
   type ChartValue,
   type Point,
 } from "./chartUtils";
+import { useElementSize } from "../hooks/useElementSize";
+import { useControllableState } from "../hooks/useControllableState";
 
 export type ChartXFormat = Intl.DateTimeFormatOptions | ((value: ChartValue) => string);
 
@@ -121,7 +122,7 @@ function SeriesChart({
   const locale = localeProp ?? yugen.locale;
   const msg = useYugenMessages("chart", chartMessages);
   const textured = useChartTexture(texture);
-  const [plotRef, width] = useElementWidth<HTMLDivElement>();
+  const { ref: plotRef, width } = useElementSize<HTMLDivElement>();
   const [hidden, toggleSeries] = useSeriesToggle(series.map((s) => s.key));
   const [active, setActive] = React.useState<{ i: number; kb: boolean } | null>(null);
 
@@ -130,15 +131,15 @@ function SeriesChart({
   const expand = isStacked && stackOffset === "expand";
 
   /* ---------- miền zoom (brush) ---------- */
-  const [innerDomain, setInnerDomain] = React.useState<ChartDomain | undefined>(defaultDomain);
-  const domainRaw = domainProp ?? innerDomain;
+  const [domainRaw, setDomainRaw] = useControllableState<ChartDomain | undefined>({
+    value: domainProp,
+    defaultValue: defaultDomain,
+    onChange: (next) => next && onDomainChange?.(next),
+  });
   const nAll = allData.length;
   const [ds, de] = normalizeDomain(domainRaw, nAll);
   const zoomed = domainRaw !== undefined && nAll > 1;
-  const setDomain = (next: ChartDomain) => {
-    if (domainProp === undefined) setInnerDomain(next);
-    onDomainChange?.(next);
-  };
+  const setDomain = (next: ChartDomain) => setDomainRaw(next);
   const data = zoomed ? allData.slice(ds, de + 1) : allData;
   const rawAll = allData.map((d) => d[index]);
 

@@ -38,7 +38,7 @@ module.exports = [
   js("{ Dialog, DialogSurface }", "{ Dialog, DialogSurface }", "24 kB"),
   js("{ Combobox }", "{ Combobox }", "59 kB"),
   js("{ DatePicker }", "{ DatePicker }", "68 kB"),
-  js("{ BarChart, LineChart }", "{ BarChart, LineChart }", "37 kB"),
+  js("{ BarChart, LineChart }", "{ BarChart, LineChart }", "38 kB"),
   js("{ Sheet }", "{ Sheet }", "28 kB"),
   js("{ Trace }", "{ Trace }", "21 kB"),
   js("{ MessageScroller }", "{ MessageScroller }", "23 kB"),
