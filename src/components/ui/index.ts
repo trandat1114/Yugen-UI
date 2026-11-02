@@ -92,6 +92,7 @@ export * from "./Tooltip/Tooltip";
 
 // Bố cục
 export * from "./AppShell/AppShell";
+export * from "./AppShell/Sidebar";
 export * from "./Accordion/Accordion";
 export * from "./Collapsible/Collapsible";
 export * from "./Divider/Divider";

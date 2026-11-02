@@ -13,14 +13,9 @@ import {
   AppShellFooter,
   AppShellHeader,
   AppShellMain,
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarRail,
-  SidebarTrigger,
   useAppShell,
 } from "@/components/ui/AppShell/AppShell";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail, SidebarTrigger } from "@/components/ui/AppShell/Sidebar";
 import { Button } from "@/components/ui/Button/Button";
 import { Nav, NavItem, NavSectionHeader } from "@/components/ui/Nav/Nav";
 import type { ComponentDoc } from "../types";

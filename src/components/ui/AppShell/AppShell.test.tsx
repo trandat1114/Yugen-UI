@@ -8,14 +8,9 @@ import {
   AppShellHeader,
   AppShellMain,
   readAppShellCookie,
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarRail,
-  SidebarTrigger,
   type AppShellProps,
-  type SidebarProps,
 } from "./AppShell";
+import { Sidebar, SidebarContent, SidebarHeader, SidebarRail, SidebarTrigger, type SidebarProps } from "./Sidebar";
 import { appShellMessagesEn } from "./messages";
 
 const KEY = "test-shell";

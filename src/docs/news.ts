@@ -42,6 +42,7 @@ export const NEWS: NewsRelease[] = [
       { kind: "improved", text: "NavItem có thêm tooltip: nhãn hiện khi sidebar thu về icon.", href: "/components/nav" },
       { kind: "new", text: "Trang Người đóng góp: mỗi người là một bông hoa trên cành anh đào, nở theo thứ tự lần đầu đóng góp. Mỗi người có số đóng góp theo loại (code, tài liệu, bản dịch, báo lỗi, review…) và các đóng góp gần đây.", href: "/contributors" },
       { kind: "improved", text: "Mỗi bản phát hành ghi tên người đóng góp ở trang Có gì mới và trong CHANGELOG." },
+      { kind: "fixed", text: "Màn chờ khởi động (Yugen Labs): số Hán ở khung Enso và Bloom không còn bị cắt chân chữ khi xem toàn màn hình.", href: "/concepts/loading-screen" },
     ],
   },
   {
