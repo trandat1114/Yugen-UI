@@ -10,7 +10,7 @@ import {
   TextWrapOff16Regular,
 } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
-import { useClipboard } from "../Hooks/useClipboard";
+import { useClipboard } from "../hooks/useClipboard";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { Badge } from "../Badge/Badge";
 import { Button } from "../Button/Button";

@@ -37,6 +37,7 @@ export const NEWS: NewsRelease[] = [
     title: "Trang Người đóng góp",
     summary: "Trang Người đóng góp ghi tên những người đã giúp Yugen UI: PR được merge, báo lỗi, đề xuất và review, lấy từ GitHub mỗi lần docs được deploy. Mỗi bản phát hành cũng ghi tên người đóng góp ở trang này và trong CHANGELOG.",
     items: [
+      { kind: "new", text: "Hooks dùng chung: useControllableState, useDisclosure, useMediaQuery, useLocalStorage (an toàn SSR, đồng bộ giữa các tab), useClipboard, useHotkeys (bỏ qua ô nhập, mũi tên theo chiều chữ khi RTL), useDebouncedValue, useIntersection và useElementSize. Chính các component dùng chúng, nên ứng dụng không cần thêm thư viện hook thứ hai.", href: "/components/hooks" },
       { kind: "new", text: "Trang Người đóng góp: mỗi người là một bông hoa trên cành anh đào, nở theo thứ tự lần đầu đóng góp. Mỗi người có số đóng góp theo loại (code, tài liệu, bản dịch, báo lỗi, review…) và các đóng góp gần đây.", href: "/contributors" },
       { kind: "improved", text: "Mỗi bản phát hành ghi tên người đóng góp ở trang Có gì mới và trong CHANGELOG." },
     ],

@@ -4,7 +4,7 @@ import { useDirection } from "@radix-ui/react-direction";
 import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
-import { useMediaQuery } from "../Hooks/useMediaQuery";
+import { useMediaQuery } from "../hooks/useMediaQuery";
 import { sheetMessages } from "./messages";
 
 export { sheetMessages, sheetMessagesEn, type SheetMessages } from "./messages";

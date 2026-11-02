@@ -21,7 +21,7 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "..
 import { ErrorState, useSpinDelay } from "../Loading/Loading";
 import { Popover, PopoverSurface, PopoverTrigger } from "../Popover/Popover";
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../Sheet/Sheet";
-import { useMediaQuery } from "../Hooks/useMediaQuery";
+import { useMediaQuery } from "../hooks/useMediaQuery";
 import { SkeletonList } from "../Skeleton/Skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../Tabs/Tabs";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";

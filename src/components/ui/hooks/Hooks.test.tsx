@@ -359,5 +359,47 @@ describe("useElementSize", () => {
   });
 });
 
+describe("StrictMode (mount, cleanup, mount lại)", () => {
+  const strict = ({ children }: { children: React.ReactNode }) => <React.StrictMode>{children}</React.StrictMode>;
+
+  it("useHotkeys: mỗi phím chỉ gọi hàm một lần và gỡ listener khi unmount", () => {
+    const onKey = vi.fn();
+    const { unmount } = renderHook(() => useHotkeys({ escape: onKey }), { wrapper: strict });
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(onKey).toHaveBeenCalledTimes(1);
+    unmount();
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(onKey).toHaveBeenCalledTimes(1);
+  });
+
+  it("useLocalStorage: gỡ listener storage khi unmount", () => {
+    const remove = vi.spyOn(window, "removeEventListener");
+    const { unmount } = renderHook(() => useLocalStorage("strict", 1), { wrapper: strict });
+    unmount();
+    expect(remove.mock.calls.filter(([type]) => type === "storage").length).toBeGreaterThan(0);
+  });
+
+  it("useClipboard: không còn timer sau unmount", async () => {
+    vi.useFakeTimers();
+    Object.defineProperty(navigator, "clipboard", { value: { writeText: vi.fn().mockResolvedValue(undefined) }, configurable: true });
+    const { result, unmount } = renderHook(() => useClipboard(), { wrapper: strict });
+    const before = vi.getTimerCount();
+    await act(async () => {
+      await result.current.copy("x");
+    });
+    expect(vi.getTimerCount()).toBe(before + 1);
+    unmount();
+    expect(vi.getTimerCount()).toBe(before);
+  });
+
+  it("useDebouncedValue: không để timer treo sau unmount", () => {
+    vi.useFakeTimers();
+    const { rerender, unmount } = renderHook(({ v }) => useDebouncedValue(v, 100), { wrapper: strict, initialProps: { v: 1 } });
+    rerender({ v: 2 });
+    unmount();
+    expect(vi.getTimerCount()).toBe(0);
+  });
+});
+
 // Giữ `React` được dùng để JSX trong file test không bị lint báo thừa import khi cấu hình thay đổi.
 void React;

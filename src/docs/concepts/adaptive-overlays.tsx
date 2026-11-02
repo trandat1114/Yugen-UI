@@ -13,7 +13,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/Sheet/Sheet";
-import { useMediaQuery } from "@/components/ui/Hooks/useMediaQuery";
+import { useMediaQuery } from "@/components/ui/hooks/useMediaQuery";
 import { DocSection, DoDont, PropsTable } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
 

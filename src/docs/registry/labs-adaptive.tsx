@@ -30,7 +30,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/Sheet/Sheet";
-import { useMediaQuery } from "@/components/ui/Hooks/useMediaQuery";
+import { useMediaQuery } from "@/components/ui/hooks/useMediaQuery";
 import type { ComponentDoc } from "../types";
 
 /* ================================================================== Dữ liệu mẫu */

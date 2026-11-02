@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useControllableState } from "../Hooks/useControllableState";
+import { useControllableState } from "../hooks/useControllableState";
 import {
   ChevronLeft16Regular,
   ChevronLeft20Regular,

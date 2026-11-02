@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useMediaQuery } from "../Hooks/useMediaQuery";
+import { useMediaQuery } from "../hooks/useMediaQuery";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { useYugen } from "../YugenProvider/context";
 

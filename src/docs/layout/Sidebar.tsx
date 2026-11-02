@@ -18,7 +18,7 @@ import {
   Search20Regular,
 } from "@fluentui/react-icons";
 import { Popover, PopoverSurface, PopoverTrigger, Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui";
-import { useMediaQuery } from "@/components/ui/Hooks/useMediaQuery";
+import { useMediaQuery } from "@/components/ui/hooks/useMediaQuery";
 import { cn } from "@/lib/cn";
 import { YugenMark } from "../YugenMark";
 import { COMPONENTS_BY_CATEGORY } from "../registry";
