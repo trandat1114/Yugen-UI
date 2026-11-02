@@ -9,6 +9,7 @@
  *
  * Bản prerelease (-next.N, canary) và bản phát hành trước RULES_SINCE không bị kiểm tra.
  */
+import { FEEDS, NEWS_DIR } from "./news.mjs";
 
 /**
  * Ngày các quy tắc có hiệu lực: bản phát hành (hoặc dự kiến) từ ngày này trở đi. 0.13.0 phát hành ngày 28/10, một ngày sau
@@ -26,22 +27,8 @@ export function level(version) {
   return z > 0 ? "patch" : y > 0 || x === 0 ? "minor" : "major";
 }
 
-/**
- * Các mục của một mảng tin (`NEWS`, `CLI_NEWS`…) trong src/docs/news.ts, theo thứ tự trong file (mới trước).
- * `upcoming: true` phải viết ngay sau `version`, nên mỗi mục được cắt từ `version:` này tới `version:` kế tiếp.
- */
-export function newsEntries(source, name) {
-  const start = source.search(new RegExp(`export\\s+const\\s+${name}\\b[^=]*=\\s*\\[`));
-  if (start === -1) return undefined;
-  const end = source.indexOf("\n];", start);
-  const body = source.slice(start, end === -1 ? undefined : end);
-  return [...body.matchAll(/\bversion\s*:\s*["'`]([^"'`]+)["'`]([\s\S]*?)(?=\bversion\s*:|$)/g)].map((m) => ({
-    version: m[1],
-    upcoming: /\bupcoming\s*:\s*true\b/.test(m[2]),
-    date: m[2].match(/\bdate\s*:\s*["'`](\d{4}-\d{2}-\d{2})["'`]/)?.[1] ?? "",
-    kinds: [...m[2].matchAll(/\bkind\s*:\s*["'`](\w+)["'`]/g)].map((k) => k[1]),
-  }));
-}
+/** Các mục của một mảng tin (`NEWS`, `CLI_NEWS`…): `{ version, upcoming, date, kinds }[]`, mới trước. Đọc từ src/docs/news. */
+export { newsEntries } from "./news.mjs";
 
 const days = (from, to) => Math.round((Date.parse(to) - Date.parse(from)) / 86_400_000);
 
@@ -53,7 +40,7 @@ export function releaseRuleErrors(entry, older, name) {
   const { version, date, kinds } = entry;
   if (version.includes("-") || !date || date < RULES_SINCE) return [];
   const errors = [];
-  const at = `src/docs/news.ts › ${name} ${version}`;
+  const at = `${NEWS_DIR}/${FEEDS[name] ?? name}/${version}`;
   const [x, y, z] = core(version);
   const kind = level(version);
   const released = older.filter((e) => !e.upcoming && !e.version.includes("-"));

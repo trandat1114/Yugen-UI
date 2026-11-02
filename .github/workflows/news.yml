@@ -1,0 +1,33 @@
+name: News
+
+# Tin của trang Có gì mới viết bằng Markdown (src/docs/news, #261). CI đầy đủ bỏ qua PR chỉ sửa tin; workflow này kiểm tra
+# định dạng, bản vi / en khớp nhau và quy tắc cho từng số (scripts/check-news.mjs). Không cần npm ci: script chỉ dùng Node.
+on:
+  pull_request:
+    branches: [main, next, "release/**", canary]
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - "src/docs/news/**"
+      - "scripts/news.mjs"
+      - "scripts/check-news.mjs"
+      - "scripts/release-rules.mjs"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: news-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Check news
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: node scripts/check-news.mjs

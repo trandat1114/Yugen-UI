@@ -98,7 +98,6 @@ export const en: Record<MessageKey, string> = {
 
   // Untranslated pages
   "fallback.page": "This page hasn't been translated yet — showing the Vietnamese original.",
-  "fallback.partial": "Parts of this page haven't been translated yet — showing the Vietnamese original.",
   "fallback.help": "Help translate",
 
   // What's new

@@ -164,4 +164,35 @@ export const en: Record<string, ComponentDocEn> = {
       asChild: "Renders into its only child (for example <article>).",
     },
   },
+  markdown: {
+    description:
+      "Pass a Markdown string as children. Supports CommonMark and the common parts of GFM: headings, paragraphs, lists, task lists, quotes, tables, code fences (highlighted by CodeBlock), bold, italic, strikethrough, code and links. No HTML: tags show as text, and `javascript:` or `data:` links keep only their label. Relative links (`/path`, `#id`) are kept; external links open in a new tab. `inline` is for one-line text: inline Markdown only, in a `<span>`. `renderLink` hands links to the app's router. For text that arrives token by token (AI answers), use StreamingMarkdown.",
+    examples: [
+      { title: "Inline", description: "inline renders inline Markdown in a <span>, without a <p>: for list items, table cells, one-line descriptions." },
+      {
+        title: "Links through a router",
+        description:
+          "renderLink gets href, title, the label and external; internal links go through the app's router (router.navigate, the router's <Link to>) instead of reloading the page. The example stands in state for the router.",
+      },
+      { title: "Untrusted content", description: "HTML shows as text and a javascript: link keeps only its label; no need to sanitize first." },
+    ],
+    dos: [
+      "Use Markdown for written or CMS content; use StreamingMarkdown for text that arrives token by token.",
+      "Use inline for one-line text inside another layout (list items, table cells).",
+      "Turn on headingIds when the page has a table of contents or links to headings.",
+    ],
+    donts: [
+      "Don't use Markdown to show HTML from a CMS: the HTML shows as text. Use Prose with sanitized HTML.",
+      "Don't put Markdown inside Prose: Markdown already wraps itself in Prose.",
+    ],
+    props: {
+      children: "Markdown content. No HTML.",
+      inline: "Inline Markdown only (bold, italic, strikethrough, code, links) in a <span>, without paragraphs.",
+      size: "Prose text size: body1 (14px) or body2 (16px).",
+      headingOffset: "Added to heading levels: by default # renders as h2.",
+      headingIds: "Gives headings an id from their text (accents removed, -2, -3 for duplicates); pass a function to make your own ids.",
+      breaks: "Single newlines become <br>.",
+      renderLink: "Renders every link yourself; MarkdownLink has href, title, children and external.",
+    },
+  },
 };

@@ -20,12 +20,12 @@ describe("seo: trang chưa dịch", () => {
       { kind: "theme-designer" },
       { kind: "community" },
       { kind: "contributors" },
+      { kind: "news" },
       { kind: "foundation", slug: "color" },
       { kind: "foundation", slug: "motion" },
       { kind: "component", slug: "button" },
       { kind: "concept", slug: "cli" },
     ] as const)
       expect(fallbackOf(route), JSON.stringify(route)).toBeNull();
-    expect(fallbackOf({ kind: "news" })).toBe("partial");
   });
 });

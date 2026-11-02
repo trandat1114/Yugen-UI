@@ -5,6 +5,8 @@
 @source not "../*.md";
 @source not "../wiki";
 @source not "../.github";
+/* Tin của trang Có gì mới (#261): chữ thường, không có class. */
+@source not "./docs/news";
 
 /* Tắt palette/scale mặc định của Tailwind để không ai dùng được bg-blue-500, rounded-lg, shadow-md...
    Chỉ còn lại các utility map từ token Fluent bên dưới. */

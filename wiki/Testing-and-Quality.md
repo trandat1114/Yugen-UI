@@ -12,7 +12,7 @@
 | `npm run test:engines` | Tương tác trên Firefox, Safari desktop và iPhone (WebKit) |
 | `npm run check:examples` | Mọi ví dụ docs typecheck được khi chép ra dùng với `yugen-ui` |
 | `npm run check:props` | Bảng props trên docs khớp type thật |
-| `npm run check:release` | `package.json` = `news.ts` = `CHANGELOG.md` |
+| `npm run check:release` | `package.json` = `src/docs/news` = `CHANGELOG.md` |
 | `npm run size` | Ngân sách dung lượng (gzip) — sau `npm run build:lib` |
 | `node scripts/sync-templates.mjs --check` | Template khớp block |
 
@@ -42,7 +42,7 @@ lại thì tự đóng. Khác biệt giữa engine ghi ở trang docs Trình duy
 | React 19: `Type '…' is not assignable to type 'Ref<…>'` | ref callback trả về giá trị (`ref={(el) => list.push(el)}`) | viết thân hàm `{ list.push(el); }` |
 | React 19: `Expected 1 arguments` ở `useRef` | `useRef<T>()` không có giá trị đầu | `useRef<T \| undefined>(undefined)` |
 | `sync-templates --check` lệch | đổi block hoặc version mà chưa sinh lại | `node scripts/sync-templates.mjs` |
-| `check:release` lỗi | thiếu mục trong `src/docs/news.ts` / CHANGELOG | thêm mục cho version mới |
+| `check:release` lỗi | thiếu tin trong `src/docs/news` / CHANGELOG | thêm `<version>.vi.md` và `.en.md`, mục CHANGELOG |
 | `check:examples` lỗi | ví dụ dùng biến chỉ có trong file docs | thêm `setup: declarationsOf(RAW, [...])` |
 | axe: `aria-allowed-attr` | thuộc tính ARIA không hợp lệ với role (vd. `aria-orientation` trên `<ol>`) | đổi sang `data-*` hoặc đúng role |
 | Visual khác biệt | đổi giao diện có chủ đích | Workflow **Visual regression** trên nhánh, tick `update` → tải `visual-screenshots` → chép vào `e2e/__screenshots__/` → commit. Ảnh diff: artifact `visual-test-results` |

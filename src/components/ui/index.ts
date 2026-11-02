@@ -60,6 +60,7 @@ export * from "./Kbd/Kbd";
 export * from "./Text/Text";
 export * from "./Quote/Quote";
 export * from "./Prose/Prose";
+export * from "./Markdown/Markdown";
 export * from "./Image/Image";
 export * from "./List/List";
 export * from "./Table/Table";

@@ -26,7 +26,7 @@ Kiểm tra tự động:
 
 - `npm run check:changesets` (CI): `major` trước 1.0; `major` thiếu "**Breaking:**"; "**Breaking:**" ở `patch`; tóm tắt
   mở đầu bằng "Fix" ở `minor`, "New" ở `patch`; PR vào `main` / `release/*` (trừ `next → main`) có `minor` / `major`.
-- `check:release` (gốc repo và CLI) đọc `kind` của các tin trong `src/docs/news.ts` — mục của bản hiện tại và tin
+- `check:release` (gốc repo và CLI) đọc loại (`## Mới`, `## Sửa lỗi`…) của các tin trong `src/docs/news` — bản hiện tại và tin
   `upcoming` trên next: bản patch không có `new` / `breaking`; bản minor có ít nhất một `new` (trước 1.0: hoặc
   `breaking`); từ 1.0, `breaking` chỉ ở bản major; major có ít nhất một `breaking`; không nhảy số; nhịp minor / major
   tính theo `date` của tin.
@@ -41,21 +41,52 @@ người dùng (tiếng Anh, như CHANGELOG). File nằm ở `.changeset/*.md`.
 
 PR vào `next` có thay đổi người dùng thấy được còn thêm một dòng vào **tin sắp phát hành** (mục dưới).
 
+## Tin trên trang Có gì mới
+
+Mỗi bản phát hành là hai file Markdown, tiếng Việt và tiếng Anh, trong `src/docs/news/<gói>/` (`yugen-ui`, `cli`,
+`create-yugen-ui`): `0.14.0.vi.md` và `0.14.0.en.md`. Số version lấy từ tên file.
+
+```md
+---
+date: 2026-11-11
+upcoming: true
+---
+
+# AppShell, Sortable và trang Người đóng góp
+
+Một đoạn tóm tắt.
+
+## Mới
+
+- AppShell và Sidebar: … `layout="header"` cho thanh trên cùng trải ngang. [→](/components/appshell)
+
+## Sửa lỗi
+
+- …
+```
+
+- Loại thay đổi là heading `##`: `Mới`, `Cải tiến`, `Sửa lỗi`, `Thay đổi lớn` (bản en: `New`, `Improved`, `Fixed`,
+  `Breaking`). Mỗi mục một dòng `- …`; `[→](/đường-dẫn)` ở cuối là nút "Xem" tới trang docs.
+- Trong mục dùng được Markdown inline: `` `code` `` cho prop, hàm, file, lệnh; tên component để chữ thường.
+- Bản vi và en phải khớp: cùng `date`, `upcoming`, số mục, loại và link theo cùng thứ tự. `node scripts/check-news.mjs`
+  kiểm tra (vài giây, không cần `npm ci`); build docs báo cùng lỗi kèm file và dòng.
+- PR chỉ sửa `src/docs/news/**` không chạy CI đầy đủ, chỉ chạy workflow `News`. Sau khi merge, Pages build lại docs.
+
 ## Tin cho bản sắp phát hành (next)
 
 Tin của bản kế tiếp được viết dần trên `next`, không đợi tới lúc phát hành.
 
-- Mục **đầu** mảng `NEWS` (hoặc `CLI_NEWS` / `CREATE_NEWS`) mang `upcoming: true`, đặt ngay sau `version`. `version` là số
+- File của bản mới nhất trong thư mục của gói mang `upcoming: true` trong frontmatter, ở cả bản vi và en. Tên file là số
   mà bản kế tiếp sẽ có (`npx changeset status`; với CLI theo quy tắc SemVer của CLI), `date` là ngày dự kiến (hạn của
   milestone).
-- Mỗi PR vào `next` có thay đổi người dùng thấy được thêm một dòng vào mục đó, tạo mục nếu chưa có. Changeset vẫn bắt
-  buộc như cũ; tin là phần dành cho người đọc docs (tiếng Việt, có `href`).
+- Mỗi PR vào `next` có thay đổi người dùng thấy được thêm một mục vào cả hai file, tạo file nếu chưa có. Changeset vẫn
+  bắt buộc như cũ; tin là phần dành cho người đọc docs.
 - Trang Có gì mới hiện mục này với nhãn **Sắp phát hành** và ngày "Dự kiến …". Xem trước ở `/next/`
   (https://trandat1114.github.io/Yugen-UI/next/): docs build lại từ `next` sau mỗi push.
-- Chỉ mục đầu được là `upcoming`. `check-release` chấp nhận khi version của nó lớn hơn `package.json`, và báo lỗi khi
+- Chỉ bản mới nhất được là `upcoming`. `check-release` chấp nhận khi version của nó lớn hơn `package.json`, và báo lỗi khi
   `package.json` đã bằng version đó mà tin vẫn `upcoming` (quên chốt), hoặc khi có tag.
 - Tin `upcoming` tới `main` qua PR `next → main` và được **chốt trong commit `chore(release)`**: bỏ `upcoming`, điền
-  ngày phát hành, rà lại nội dung theo CHANGELOG.
+  ngày phát hành ở cả hai file, rà lại nội dung theo CHANGELOG.
 
 ## Khi phát hành (maintainer)
 
@@ -64,8 +95,9 @@ git pull
 npm run version-packages      # changeset version → bump package.json, ghi CHANGELOG, đồng bộ templates, lockfile
 ```
 
-1. Mục đầu mảng `NEWS` trong `src/docs/news.ts`: nếu đã có tin `upcoming` (viết trên next) thì bỏ `upcoming`, điền ngày
-   phát hành và rà lại nội dung; nếu chưa có thì thêm mục mới **lên đầu** mảng (tiếng Việt, có `href` tới trang docs).
+1. Tin trong `src/docs/news/yugen-ui`: nếu đã có tin `upcoming` (viết trên next) thì bỏ `upcoming`, điền ngày phát hành
+   ở cả `.vi.md` và `.en.md` và rà lại nội dung; nếu chưa có thì thêm hai file cho version mới (mục
+   [Tin trên trang Có gì mới](#tin-trên-trang-có-gì-mới)).
 2. Thêm link `[x.y.z]: …/releases/tag/vx.y.z` cuối CHANGELOG.
    Cập nhật `src/docs/roadmap.ts`: mục của milestone vừa xong thành `done`, chuyển milestone sang Đã phát hành (bỏ khỏi
    `now`, dời `next` lên) rồi `npm run roadmap` (ghi ROADMAP.md; `roadmap.test.ts` báo lỗi nếu lệch).
@@ -121,9 +153,9 @@ scope không bị kiểm tra này; scope `@yugen-ui` là một npm org (miễn p
 `packages/cli/scripts/check-release.mjs` kiểm tra tự động các quy tắc 1–4 (chạy trong CI và khi phát hành).
 
 1. **CHANGELOG và Có gì mới** — mỗi version có mục `## X.Y.Z` ở **đầu** `packages/cli/CHANGELOG.md` (thay đổi của
-   cả hai gói ghi chung ở đây), và một mục tin ở **đầu** `CLI_NEWS` trong `src/docs/news.ts` (tab `@yugen-ui/cli` trên
-   `#/news`). Khi `create-yugen-ui` đổi version, thêm cả mục ở đầu `CREATE_NEWS` (tab `create-yugen-ui`). Viết tiếng Việt,
-   `href` tới `#/concepts/cli`. Bản prerelease của CLI không cần mục tin. Trong lúc phát triển, PR đổi `packages/cli` ghi
+   cả hai gói ghi chung ở đây), và tin trong `src/docs/news/cli` (tab `@yugen-ui/cli` trên
+   `/news`). Khi `create-yugen-ui` đổi version, thêm cả tin trong `src/docs/news/create-yugen-ui`. Viết cả tiếng Việt và
+   tiếng Anh, link tới `/concepts/cli`. Bản prerelease của CLI không cần mục tin. Trong lúc phát triển, PR đổi `packages/cli` ghi
    một dòng vào mục `## Unreleased` của CHANGELOG; khi phát hành, đổi `Unreleased` thành số version.
 2. **`create-yugen-ui` theo CLI** — `packages/create-yugen-ui/package.json` khai báo `"@yugen-ui/cli": "^X.Y.0"`. Trước
    1.0, `^0.1.0` **không** nhận `0.2.0`: khi CLI lên minor, sửa dependency và tăng version `create-yugen-ui` trong cùng
@@ -138,7 +170,7 @@ scope không bị kiểm tra này; scope `@yugen-ui` là một npm org (miễn p
    (dist-tag `next`, thử bằng `npx @yugen-ui/cli@next`). `create-yugen-ui` chỉ phát hành cùng bản ổn định.
 6. **SemVer của CLI** — `patch`: sửa lỗi, cập nhật template; `minor`: lệnh hoặc tuỳ chọn mới, đổi định dạng
    `yugen.json`, template mới. Trước 1.0 thay đổi phá vỡ (đổi tên lệnh / tuỳ chọn, đổi chỗ ghi file) cũng là `minor`,
-   ghi rõ trong CHANGELOG. Nhịp và tin theo [quy tắc cho từng số](#quy-tắc-cho-từng-số) (`CLI_NEWS`).
+   ghi rõ trong CHANGELOG. Nhịp và tin theo [quy tắc cho từng số](#quy-tắc-cho-từng-số) (`src/docs/news/cli`).
 7. **Registry là hợp đồng** — `yugen add` / `init` đọc `public/r` do `scripts/build-registry.mjs` sinh (tên item,
    đường dẫn `registry/yugen/{ui,lib}/…`, import `@/lib` / `@/components/ui`, item `theme`, `cn`, `yugen-provider`,
    `all`). Đổi các thứ đó thì phát hành CLI tương thích **trước** khi docs (và registry) deploy.
@@ -150,8 +182,8 @@ scope không bị kiểm tra này; scope `@yugen-ui` là một npm org (miễn p
 git switch main && git pull
 # 1. Tăng "version" trong packages/cli/package.json (+ packages/create-yugen-ui/package.json khi theo quy tắc 2)
 # 2. Đổi "## Unreleased" thành "## X.Y.Z" ở đầu packages/cli/CHANGELOG.md
-# 3. Chốt tin upcoming ở đầu CLI_NEWS (và CREATE_NEWS nếu create-yugen-ui đổi version) trong src/docs/news.ts:
-#    bỏ upcoming, điền ngày phát hành; chưa có thì thêm mục mới lên đầu mảng
+# 3. Chốt tin upcoming trong src/docs/news/cli (và news/create-yugen-ui nếu create-yugen-ui đổi version):
+#    bỏ upcoming, điền ngày phát hành ở cả .vi.md và .en.md; chưa có thì thêm hai file cho version mới
 # 4. Cập nhật milestone cli X.Y.Z trong src/docs/roadmap.ts rồi npm run roadmap (ở thư mục gốc repo)
 cd packages/cli
 npm install --package-lock-only    # version trong lockfile

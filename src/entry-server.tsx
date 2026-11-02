@@ -40,7 +40,7 @@ export function sourcesOf(route: Route): string[] {
     case "theme-designer":
       return ["src/docs/pages/ThemeDesignerPage.tsx"];
     case "news":
-      return ["src/docs/news.ts"];
+      return ["src/docs/news"];
     case "community":
       return ["src/docs/pages/CommunityPage.tsx", "src/docs/roadmap.ts"];
     case "contributors":

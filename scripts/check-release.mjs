@@ -2,7 +2,8 @@
 /**
  * Kiểm tra phiên bản nhất quán trước khi phát hành (`npm run check:release`; CI và workflow release đều chạy).
  *
- *   (a) `version` trong package.json = `version` của mục ĐÃ PHÁT HÀNH đầu tiên trong mảng NEWS (src/docs/news.ts).
+ *   (a) `version` trong package.json = `version` của bản ĐÃ PHÁT HÀNH mới nhất trong src/docs/news/yugen-ui (tin dạng
+ *       Markdown, scripts/news.mjs).
  *       Mục đầu có thể là tin sắp phát hành (`upcoming: true`, viết trên next) với version lớn hơn package.json;
  *       khi có tag thì không được còn mục `upcoming`.
  *   (b) CHANGELOG.md có tiêu đề cho phiên bản đó: `## [x.y.z]` (Keep a Changelog) hoặc `## x.y.z` (Changesets).
@@ -20,6 +21,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { FEEDS, NEWS_DIR, readFeed } from "./news.mjs";
 import { core, newsEntries, releaseRuleErrors } from "./release-rules.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -49,14 +51,14 @@ if (version && !/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(
   errors.push(`package.json: version "${version}" không đúng SemVer (x.y.z[-pre]).`);
 }
 
-// ---------- (a) src/docs/news.ts ----------
-const newsPath = path.join(root, "src/docs/news.ts");
-const news = read(newsPath);
-/** Các mục của NEWS theo thứ tự (mới trước): version, `upcoming` (viết ngay sau version), date, kind của từng tin. */
-const parsed = news ? newsEntries(news, "NEWS") : [];
-const entries = parsed ?? [];
-if (!parsed) errors.push(`${rel(newsPath)}: không tìm thấy \`export const NEWS … = [\`.`);
-else if (news && entries.length === 0) errors.push(`${rel(newsPath)}: mảng NEWS không có mục nào có \`version: "x.y.z"\`.`);
+// ---------- (a) src/docs/news/yugen-ui ----------
+const newsPath = path.join(root, NEWS_DIR, FEEDS.NEWS);
+/** Các bản của yugen-ui theo thứ tự (mới trước): version, `upcoming`, date, kind của từng tin. */
+const newsErrors = [];
+readFeed(root, "NEWS", newsErrors);
+errors.push(...newsErrors);
+const entries = newsEntries(root, "NEWS");
+if (entries.length === 0) errors.push(`${rel(newsPath)}: chưa có tin nào (<version>.vi.md và <version>.en.md).`);
 const upcoming = entries[0]?.upcoming ? entries[0] : undefined;
 const newsVersion = entries.find((e) => !e.upcoming)?.version ?? "";
 const greater = (a, b) => {
@@ -65,7 +67,7 @@ const greater = (a, b) => {
   return false;
 };
 if (entries.slice(1).some((e) => e.upcoming)) {
-  errors.push(`${rel(newsPath)}: chỉ mục ĐẦU của NEWS được đánh dấu \`upcoming: true\`.`);
+  errors.push(`${rel(newsPath)}: chỉ bản mới nhất được đánh dấu \`upcoming: true\`.`);
 }
 // Tin cho bản sắp phát hành (viết trên next): version phải lớn hơn package.json. Commit chore(release) bỏ `upcoming`.
 if (upcoming && version && !greater(upcoming.version, version)) {
@@ -78,8 +80,8 @@ if (upcoming && version && !greater(upcoming.version, version)) {
 const isPrerelease = version.includes("-");
 if (version && newsVersion && newsVersion !== version && !(isPrerelease && newsVersion !== "")) {
   errors.push(
-    `${rel(newsPath)}: mục đã phát hành đầu tiên của NEWS là "${newsVersion}" nhưng package.json là "${version}". ` +
-      `Thêm mục mới vào ĐẦU mảng NEWS cho ${version}.`,
+    `${rel(newsPath)}: bản đã phát hành mới nhất là "${newsVersion}" nhưng package.json là "${version}". ` +
+      `Thêm ${version}.vi.md và ${version}.en.md.`,
   );
 }
 
@@ -148,6 +150,6 @@ if (errors.length) {
   process.exit(1);
 }
 console.log(
-  `check-release: OK — yugen-ui v${version} (package.json = news.ts = CHANGELOG.md${tag ? ` = tag ${tag}` : ""}` +
+  `check-release: OK — yugen-ui v${version} (package.json = news = CHANGELOG.md${tag ? ` = tag ${tag}` : ""}` +
     `${upcoming ? `; tin sắp phát hành ${upcoming.version}` : ""}${warnings.length ? `, ${warnings.length} cảnh báo` : ""}).`,
 );

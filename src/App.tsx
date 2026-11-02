@@ -13,6 +13,7 @@ import { DocumentMeta, fallbackOf } from "@/docs/seo";
 import { lazyPage } from "@/docs/lazyPage";
 import { preloadComponentDoc } from "@/docs/registry";
 import { preloadComponentMessages } from "@/docs/componentMessages";
+import { preloadNews } from "@/docs/news";
 import { SITE } from "@/docs/site";
 import type { Route } from "@/docs/router";
 
@@ -57,6 +58,7 @@ export async function preloadRoute(route: Route, lang: Locale) {
     if (page) tasks.push(page.preload());
   }
   if (route.kind === "component") tasks.push(preloadComponentDoc(route.slug, lang), preloadComponentMessages(route.slug));
+  if (route.kind === "news") tasks.push(preloadNews(lang));
   await Promise.allSettled(tasks);
 }
 
@@ -167,7 +169,7 @@ export default function App({ path }: { path?: string }) {
             </Suspense>
           )}
           <main className="mx-auto max-w-7xl px-4 md:px-12">
-            {fallback && <FallbackNotice partial={fallback === "partial"} />}
+            {fallback && <FallbackNotice />}
             <Suspense fallback={<PageProgressFallback />}>
               {route.kind === "home" && <HomePage />}
               {route.kind === "blocks" && <BlocksPage />}
