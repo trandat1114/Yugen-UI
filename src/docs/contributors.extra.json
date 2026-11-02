@@ -10,6 +10,22 @@
       "title": "Hooks dùng chung (#172)",
       "date": "2026-11-02",
       "url": "https://github.com/trandat1114/Yugen-UI/pull/253"
+    },
+    {
+      "login": "dave-otf",
+      "name": "Dave Kurian",
+      "types": ["review", "a11y"],
+      "title": "Góp ý AppShell: chỉ lưu trạng thái màn rộng, focus khi qua breakpoint, phím tắt khi gõ IME (#161)",
+      "date": "2026-10-30",
+      "url": "https://github.com/trandat1114/Yugen-UI/issues/161#issuecomment-6532308797"
+    },
+    {
+      "login": "dave-otf",
+      "name": "Dave Kurian",
+      "types": ["review", "idea"],
+      "title": "Xem lại AppShell sau khi làm xong, đề xuất ghi chú về breakpoint trong docs (#161)",
+      "date": "2026-11-02",
+      "url": "https://github.com/trandat1114/Yugen-UI/issues/161#issuecomment-6569261947"
     }
   ]
 }

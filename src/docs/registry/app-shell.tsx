@@ -70,6 +70,12 @@ function NewChatButton() {
   );
 }
 
+/** Dòng trạng thái cho demo đổi breakpoint: sidebar đang ở dạng nào. */
+function BreakpointStatus() {
+  const { narrow } = useAppShell();
+  return <p>{narrow ? "Khung hẹp hơn 42rem: sidebar mở trong Drawer." : "Khung từ 42rem: sidebar nằm trong bố cục."}</p>;
+}
+
 const NAV_CODE = `      <SidebarContent>
         <Nav defaultSelectedValue="home" aria-label="Ứng dụng">
           <NavItem value="home" icon={<Home20Regular />}>Trang chủ</NavItem>
@@ -186,6 +192,65 @@ ${NAV_CODE}
               </AppShellHeader>
               <AppShellMain asChild>
                 <div className="p-4">Nội dung trang</div>
+              </AppShellMain>
+            </AppShell>
+          </div>
+        ),
+      },
+      {
+        title: "Đổi breakpoint",
+        wide: true,
+        description:
+          "breakpoint=\"2xl\" (42rem). Mốc đo theo độ rộng của AppShell chứ không theo màn hình: kéo góc dưới của khung để thử. Qua mốc khi Drawer đang mở thì Drawer đóng, focus về SidebarTrigger, nút bị ẩn thì về nội dung; trạng thái thu gọn giữ nguyên. Phần tự làm cần đổi cùng lúc thì dùng `@2xl/app-shell:…`, hoặc `useAppShell().narrow` cho hành vi (luôn là false khi render ở server). `md:` và useMediaQuery theo màn hình nên sẽ lệch mốc.",
+        code: `function BreakpointStatus() {
+  const { narrow } = useAppShell();
+  return <p>{narrow ? "Khung hẹp hơn 42rem: sidebar mở trong Drawer." : "Khung từ 42rem: sidebar nằm trong bố cục."}</p>;
+}
+
+function ResizableShell() {
+  return (
+    <div className="h-72 w-full min-w-64 max-w-full resize-x overflow-hidden rounded-large border border-stroke-2">
+      <AppShell breakpoint="2xl" className="h-full" skipLink={false}>
+        <Sidebar>
+${NAV_CODE.replace(/^/gm, "    ")}
+        </Sidebar>
+        <AppShellHeader>
+          <SidebarTrigger />
+          <span className="font-semibold">Trang chủ</span>
+        </AppShellHeader>
+        <AppShellMain asChild>
+          <div className="space-y-3 p-4">
+            <BreakpointStatus />
+            <div className="grid gap-3 @2xl/app-shell:grid-cols-2">
+              <div className="h-20 rounded-large border border-stroke-2 bg-background-1" />
+              <div className="h-20 rounded-large border border-stroke-2 bg-background-1" />
+            </div>
+          </div>
+        </AppShellMain>
+      </AppShell>
+    </div>
+  );
+}`,
+        render: () => (
+          <div className="h-72 w-full min-w-64 max-w-full resize-x overflow-hidden rounded-large border border-stroke-2">
+            <AppShell breakpoint="2xl" className="h-full" skipLink={false}>
+              <Sidebar>
+                <SidebarContent>
+                  <AppNav />
+                </SidebarContent>
+              </Sidebar>
+              <AppShellHeader>
+                <SidebarTrigger />
+                <span className="font-semibold">Trang chủ</span>
+              </AppShellHeader>
+              <AppShellMain asChild>
+                <div className="space-y-3 p-4">
+                  <BreakpointStatus />
+                  <div className="grid gap-3 @2xl/app-shell:grid-cols-2">
+                    <div className="h-20 rounded-large border border-stroke-2 bg-background-1" />
+                    <div className="h-20 rounded-large border border-stroke-2 bg-background-1" />
+                  </div>
+                </div>
               </AppShellMain>
             </AppShell>
           </div>
@@ -414,12 +479,12 @@ function ChatShell() {
       "Không đổi Ctrl+B sang phím trùng phím tắt của trình duyệt hay của ô soạn thảo.",
     ],
     props: [
-      { name: "breakpoint", type: `"lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl"`, defaultValue: `"4xl"`, description: "Độ rộng khung (32 / 36 / 42 / 48 / 56 / 64rem) từ đó sidebar nằm trong bố cục; hẹp hơn là Drawer." },
+      { name: "breakpoint", type: `"lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl"`, defaultValue: `"4xl"`, description: "Độ rộng của AppShell (không phải màn hình) từ đó sidebar nằm trong bố cục và AppShellAside hiện: 32 / 36 / 42 / 48 / 56 / 64rem, trùng mốc container query `@lg` … `@5xl`. Hẹp hơn là Drawer." },
       { name: "layout", type: `"sidebar" | "header"`, defaultValue: `"sidebar"`, description: "sidebar: sidebar cao hết khung, thanh trên cùng bên cạnh. header: thanh trên cùng trải ngang, sidebar bên dưới." },
       { name: "scroll", type: `"main" | "page"`, defaultValue: `"main"`, description: "main: khung cao bằng màn hình, AppShellMain tự cuộn (ứng dụng). page: cả trang cuộn, thanh trên cùng và sidebar dính lại (site nội dung)." },
       { name: "collapsed / defaultCollapsed", type: "boolean", defaultValue: "false", description: "Sidebar thu gọn trên màn rộng." },
       { name: "onCollapsedChange", type: "(collapsed: boolean) => void", description: "Gọi khi thu gọn / mở rộng." },
-      { name: "persistKey", type: "string", description: "Tên cookie lưu trạng thái thu gọn và độ rộng; giá trị đã lưu thắng defaultCollapsed." },
+      { name: "persistKey", type: "string", description: "Tên cookie lưu trạng thái thu gọn và độ rộng; giá trị đã lưu thắng defaultCollapsed, cookie thiếu hoặc hỏng thì dùng defaultCollapsed. Cookie đặt ở path=/, nên mỗi ứng dụng cùng domain cần một tên riêng." },
       { name: "shortcut", type: "string | false", defaultValue: `"b"`, description: "Phím đi cùng Ctrl / ⌘; false để tắt. Nhiều AppShell trên một trang: chỉ khung đang được focus hoặc vừa được bấm vào nhận phím." },
       { name: "skipLink", type: "boolean", defaultValue: "true", description: "Link “Chuyển tới nội dung” hiện khi được focus." },
       { name: "Sidebar.collapsible", type: `"icon" | "offcanvas" | "none"`, defaultValue: `"icon"`, description: "Thu về rail chỉ icon, ẩn hẳn, hoặc luôn mở." },
