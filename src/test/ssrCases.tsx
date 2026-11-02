@@ -220,10 +220,34 @@ import {
   TreeItem,
   TreeItemLayout,
   TypingIndicator,
+  useControllableState,
+  useElementSize,
+  useIntersection,
+  useLocalStorage,
+  useMediaQuery,
   VisuallyHidden,
   WavyUnderline,
   YugenProvider,
 } from "@/components/ui";
+
+/**
+ * Giá trị của các hook (#172) nằm thẳng trong markup: server và lượt hydrate phải ra "ban đầu · hẹp · 0 · ẩn", sau hydrate client
+ * mới đổi sang giá trị thật (ssr.test.tsx lưu "ssr-hooks" và cho query min-width khớp).
+ */
+export function HooksProbe() {
+  const [saved] = useLocalStorage("ssr-hooks", "ban đầu");
+  const wide = useMediaQuery("(min-width: 768px)");
+  const { ref, width } = useElementSize<HTMLDivElement>();
+  const { ref: seenRef, isIntersecting } = useIntersection<HTMLParagraphElement>();
+  const [open] = useControllableState({ defaultValue: true });
+  return (
+    <div ref={ref} data-open={open}>
+      <p ref={seenRef}>
+        {saved} · {wide ? "rộng" : "hẹp"} · {Math.round(width)} · {isIntersecting ? "thấy" : "ẩn"}
+      </p>
+    </div>
+  );
+}
 
 export interface SsrCase {
   name: string;
@@ -978,4 +1002,7 @@ export const SSR_CASES: SsrCase[] = [
       </div>
     ),
   },
+
+  /* ---------- Hooks ---------- */
+  { name: "Hooks (useLocalStorage, useMediaQuery, useElementSize, useIntersection)", render: () => <HooksProbe /> },
 ];

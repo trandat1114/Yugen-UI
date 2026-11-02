@@ -65,9 +65,9 @@ function parseCombo(combo: string): Combo {
   return result;
 }
 
+/** Ô nhập, hoặc phần tử con của vùng contenteditable (giống cách AppShell bỏ qua Ctrl+B khi đang gõ). */
 function isEditable(target: EventTarget | null) {
-  if (!(target instanceof HTMLElement)) return false;
-  return target.isContentEditable || /^(input|textarea|select)$/i.test(target.tagName);
+  return target instanceof Element && target.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"])') !== null;
 }
 
 function isRtl(target: EventTarget | null) {

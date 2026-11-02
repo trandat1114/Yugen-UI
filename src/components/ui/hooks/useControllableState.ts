@@ -4,8 +4,8 @@ import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffec
 export interface UseControllableStateOptions<T> {
   /** Giá trị do bên ngoài giữ (controlled). `undefined` = không điều khiển, hook tự giữ state. */
   value?: T;
-  /** Giá trị ban đầu khi không điều khiển. */
-  defaultValue: T;
+  /** Giá trị ban đầu khi không điều khiển. Truyền hàm để chỉ tính một lần, như `useState(() => …)`. */
+  defaultValue: T | (() => T);
   /** Gọi mỗi khi giá trị đổi — cả khi controlled (để cha cập nhật `value`) lẫn uncontrolled. */
   onChange?: (value: T) => void;
 }

@@ -334,9 +334,10 @@ export const docs: ComponentDoc[] = [
         description: "Giá trị khi chưa có window (server, test). Dựa trên useSyncExternalStore nên không nháy.",
       },
       {
-        name: "useLocalStorage(key, initialValue)",
+        name: "useLocalStorage(key, initialValue, { serialize, deserialize })",
         type: "[T, set, remove]",
-        description: "`set` nhận giá trị hoặc hàm cập nhật; `remove()` xoá khoá và về giá trị ban đầu. Dữ liệu hỏng hoặc localStorage bị chặn vẫn không gây lỗi.",
+        description:
+          "`set` nhận giá trị hoặc hàm cập nhật; `remove()` xoá khoá và về giá trị ban đầu. Dữ liệu hỏng hoặc localStorage bị chặn vẫn không gây lỗi. Mặc định lưu JSON; `serialize` / `deserialize` để đọc khoá có sẵn ở dạng khác.",
       },
       {
         name: "useClipboard({ timeout })",
@@ -365,7 +366,7 @@ export const docs: ComponentDoc[] = [
         name: "useElementSize({ box })",
         type: "{ ref, width, height }",
         defaultValue: `"content-box"`,
-        description: "Chưa đo được (server, lần render đầu) thì là 0 × 0. Dùng được cả với chữ viết dọc.",
+        description: "Chưa đo được (server, lần render đầu) thì là 0 × 0. Đo lần đầu trước khi trình duyệt vẽ nên không nháy. Dùng được cả với chữ viết dọc.",
       },
     ],
   },

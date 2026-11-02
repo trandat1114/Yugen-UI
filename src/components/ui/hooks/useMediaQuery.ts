@@ -25,6 +25,14 @@ function mediaQueryList(query: string): MediaQueryList | null {
 }
 
 /**
+ * Đọc một media query đúng một lần, lúc xử lý sự kiện hay khởi tạo state (không theo dõi, không cache). Không có window → false.
+ * Nội bộ: component gọi hàm này thay vì gọi thẳng `matchMedia`, để mọi chỗ đọc media query nằm trong file này.
+ */
+export function matchesMedia(query: string): boolean {
+  return typeof window !== "undefined" && typeof window.matchMedia === "function" && window.matchMedia(query).matches;
+}
+
+/**
  * Theo dõi một CSS media query, tự cập nhật khi khớp / hết khớp (resize, xoay máy, đổi cài đặt hệ điều hành).
  * Dựa trên `useSyncExternalStore` nên không nháy giữa hai giá trị khi render lại.
  *

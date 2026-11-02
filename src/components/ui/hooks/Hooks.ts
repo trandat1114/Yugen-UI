@@ -2,7 +2,7 @@
 export { useControllableState, type UseControllableStateOptions } from "./useControllableState";
 export { useDisclosure, type UseDisclosureOptions, type UseDisclosureResult } from "./useDisclosure";
 export { useMediaQuery, type UseMediaQueryOptions } from "./useMediaQuery";
-export { useLocalStorage, type UseLocalStorageResult } from "./useLocalStorage";
+export { useLocalStorage, type UseLocalStorageOptions, type UseLocalStorageResult } from "./useLocalStorage";
 export { useClipboard, type UseClipboardOptions, type UseClipboardResult } from "./useClipboard";
 export { useHotkeys, type HotkeyHandler, type UseHotkeysOptions } from "./useHotkeys";
 export { useDebouncedValue } from "./useDebouncedValue";

@@ -58,13 +58,20 @@ function subscribe(key: string, listener: Listener) {
   };
 }
 
-function parse<T>(raw: string | null, fallback: T): T {
+function parse<T>(raw: string | null, fallback: T, deserialize: (raw: string) => T): T {
   if (raw === null) return fallback;
   try {
-    return JSON.parse(raw) as T;
+    return deserialize(raw);
   } catch {
-    return fallback; // giá trị không phải JSON (do app khác ghi) → dùng giá trị ban đầu
+    return fallback; // dữ liệu hỏng (do app khác ghi) → dùng giá trị ban đầu
   }
+}
+
+export interface UseLocalStorageOptions<T> {
+  /** Đổi giá trị thành chuỗi để lưu. Mặc định `JSON.stringify`. */
+  serialize?: (value: T) => string;
+  /** Đọc chuỗi đã lưu; ném lỗi thì dùng `initialValue`. Mặc định `JSON.parse`. Dùng cặp này để đọc khoá có sẵn không phải JSON. */
+  deserialize?: (raw: string) => T;
 }
 
 /** `[value, setValue, remove]`. */
@@ -80,10 +87,15 @@ export type UseLocalStorageResult<T> = [T, (next: React.SetStateAction<T>) => vo
  * const [sidebarOpen, setSidebarOpen, resetSidebar] = useLocalStorage("sidebar-open", true);
  * ```
  *
- * Trả về `[value, setValue, remove]`; `remove()` xoá khoá và đưa về `initialValue`.
+ * Trả về `[value, setValue, remove]`; `remove()` xoá khoá và đưa về `initialValue`. Giá trị không lưu được (`undefined`) cũng
+ * xoá khoá.
  */
-export function useLocalStorage<T>(key: string, initialValue: T): UseLocalStorageResult<T> {
+export function useLocalStorage<T>(key: string, initialValue: T, options: UseLocalStorageOptions<T> = {}): UseLocalStorageResult<T> {
   const initial = React.useRef(initialValue);
+  // Hàm chuyển đổi đọc qua ref: object options mới mỗi lần render không làm đăng ký lại.
+  const codec = React.useRef(options);
+  codec.current = options;
+  const decode = React.useCallback((raw: string) => (codec.current.deserialize ?? JSON.parse)(raw) as T, []);
   const sub = React.useCallback((listener: Listener) => subscribe(key, listener), [key]);
   const raw = React.useSyncExternalStore(
     sub,
@@ -91,14 +103,15 @@ export function useLocalStorage<T>(key: string, initialValue: T): UseLocalStorag
     () => null,
   );
   // `raw` là chuỗi (so sánh theo giá trị) nên object parse ra giữ nguyên identity tới khi dữ liệu lưu thật sự đổi.
-  const value = React.useMemo(() => parse(raw, initial.current), [raw]);
+  const value = React.useMemo(() => parse(raw, initial.current, decode), [raw, decode]);
 
   const set = React.useCallback(
     (next: React.SetStateAction<T>) => {
-      const resolved = typeof next === "function" ? (next as (prev: T) => T)(parse(readRaw(key), initial.current)) : next;
-      writeRaw(key, JSON.stringify(resolved));
+      const resolved = typeof next === "function" ? (next as (prev: T) => T)(parse(readRaw(key), initial.current, decode)) : next;
+      const encoded = (codec.current.serialize ?? JSON.stringify)(resolved) as string | undefined;
+      writeRaw(key, encoded ?? null);
     },
-    [key],
+    [key, decode],
   );
   const remove = React.useCallback(() => writeRaw(key, null), [key]);
 

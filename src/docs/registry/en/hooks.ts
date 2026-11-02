@@ -58,14 +58,14 @@ export const en: Record<string, ComponentDocEn> = {
         "The setter has stable identity and does nothing when the value is unchanged. `value === undefined` means uncontrolled.",
       "useDisclosure({ open, defaultOpen, onOpenChange })": "Open / closed state; also works in controlled mode.",
       "useMediaQuery(query, { defaultValue })": "The value when there is no window (server, tests). Built on useSyncExternalStore, so it doesn't flash.",
-      "useLocalStorage(key, initialValue)":
-        "`set` takes a value or an updater; `remove()` deletes the key and returns to the initial value. Corrupt data or blocked localStorage never throws.",
+      "useLocalStorage(key, initialValue, { serialize, deserialize })":
+        "`set` takes a value or an updater; `remove()` deletes the key and returns to the initial value. Corrupt data or blocked localStorage never throws. Values are stored as JSON; `serialize` / `deserialize` read an existing key in another format.",
       "useClipboard({ timeout })": "`timeout` (ms) is how long `copied` stays true.",
       "useHotkeys(hotkeys, options)":
         "options: target (document by default), enabled (true), enableOnFormTags (false), preventDefault (true), repeat (false: a held key counts once). Valid keys: mod / ctrl / meta / alt / shift + a key, plus the aliases esc, space, up, down, left, right, start, end.",
       "useDebouncedValue(value, delay)": "Returns the value at once on the first render; afterwards it only changes once `value` has been still for `delay` ms.",
       "useIntersection({ root, rootMargin, threshold, once })": "Attach `ref` to the element. Without IntersectionObserver it is always false.",
-      "useElementSize({ box })": "0 × 0 until measured (server, first render). Also works with vertical writing modes.",
+      "useElementSize({ box })": "0 × 0 until measured (server, first render). The first measure runs before the browser paints, so nothing flashes. Also works with vertical writing modes.",
     },
   },
 };
