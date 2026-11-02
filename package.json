@@ -56,6 +56,8 @@
       "default": "./dist/lib.js"
     },
     "./theme.css": "./dist/theme.css",
+    "./theme-core.css": "./dist/theme-core.css",
+    "./sources/*": "./dist/sources/*",
     "./styles.css": "./dist/styles.css",
     "./tokens.css": "./dist/tokens.css",
     "./package.json": "./package.json"

@@ -364,6 +364,47 @@ import { cn } from "@/lib/cn";
       </DocSection>
 
       <DocSection
+        id="lean-css"
+        title="Only the CSS of the components you use"
+        description="theme.css makes Tailwind scan every component in the package, so every app carries the CSS of every component. For a lighter app, use theme-core.css and add one file per component the app uses."
+      >
+        <div className="flex flex-col gap-4">
+          <CodeBlock code={`@import "tailwindcss";
+@import "yugen-ui/theme-core.css";
+/* One line per component the app uses: the folder it lives in. */
+@import "yugen-ui/sources/YugenProvider.css";
+@import "yugen-ui/sources/Button.css";
+@import "yugen-ui/sources/Dialog.css";
+@import "yugen-ui/sources/DataGrid.css";`} />
+          <SimpleTable
+            head={["Template", "Component folders", "theme.css", "theme-core.css + sources"]}
+            rows={[
+              ["Starter", "4", "25.4 kB", "13.9 kB"],
+              ["Landing", "14", "25.5 kB", "14.9 kB"],
+              ["Admin", "30", "25.1 kB", "17.1 kB"],
+              ["SaaS", "34", "25.0 kB", "19.4 kB"],
+            ]}
+          />
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
+            <li>CSS gzip, including the app's own classes, measured with <C>scripts/measure-css.mjs</C>.</li>
+            <li>
+              Each file already includes the components that component uses inside (<C>SplitButton.css</C> has Menu and Button), so list only
+              the components you import.
+            </li>
+            <li>
+              The file is named after the component's folder: <C>NavItem</C> is in <C>sources/Nav.css</C>, <C>toast</C> in{" "}
+              <C>sources/Toast.css</C>. The export → file table is in <C>yugen-ui/sources/index.json</C>.
+            </li>
+            <li>A missing file leaves that component unstyled. When in doubt, use theme.css.</li>
+            <li>
+              Not needed when you copy component source (shadcn registry, <C>@yugen-ui/cli add</C>): Tailwind already scans the app&apos;s
+              folders. <C>styles.css</C> (no Tailwind) always contains every component.
+            </li>
+          </ul>
+        </div>
+      </DocSection>
+
+      <DocSection
         id="media-object"
         title="The media object pattern"
         description="Avatar or icon, a text block and actions: a layout found everywhere. Three classes decide whether it breaks."
