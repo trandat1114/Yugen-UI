@@ -45,7 +45,7 @@ export default function SettingsPage() {
   return (
     <>
       <PageHeader title={s.title} description={s.description} />
-      <div className="grid items-start gap-4 @5xl/app:grid-cols-2">
+      <div className="grid items-start gap-4 @5xl/app-shell:grid-cols-2">
         <Section title={s.appearance}>
           <Choice
             label={s.theme}

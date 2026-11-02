@@ -14,8 +14,6 @@ const vi: Content = {
     account: "Tài khoản",
     signOut: "Đăng xuất",
     signedOut: "Đã đăng xuất",
-    skip: "Bỏ qua, tới nội dung",
-    open: "Mở menu điều hướng",
   },
   common: {
     all: "Tất cả",

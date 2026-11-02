@@ -4,6 +4,7 @@ import { YugenProvider } from "../YugenProvider/YugenProvider";
 import { Nav, NavCategory, NavCategoryItem, NavItem, NavSubItem, NavSubItemGroup } from "../Nav/Nav";
 import {
   AppShell,
+  AppShellFooter,
   AppShellHeader,
   AppShellMain,
   readAppShellCookie,
@@ -197,12 +198,24 @@ describe("AppShell on a wide frame", () => {
     expect(name(b)).toHaveAccessibleName("Mở rộng thanh bên");
   });
 
+  it("shows the label and the shortcut in the trigger's tooltip", () => {
+    render(<Layout />);
+    resizeTo(1200);
+    act(() => trigger().focus());
+    const tooltip = screen.getByRole("tooltip");
+    expect(tooltip).toHaveTextContent("Thu gọn thanh bên");
+    expect(within(tooltip).getByText("Ctrl")).toBeInTheDocument();
+    expect(within(tooltip).getByText("B")).toBeInTheDocument();
+  });
+
   it("can turn the shortcut off", () => {
     render(<Layout shortcut={false} />);
     resizeTo(1200);
     ctrlB();
     expect(trigger()).toHaveAccessibleName("Thu gọn thanh bên");
     expect(trigger()).not.toHaveAttribute("aria-keyshortcuts");
+    act(() => trigger().focus());
+    expect(screen.getByRole("tooltip")).not.toHaveTextContent("Ctrl");
   });
 
   it("moves focus out of the sidebar when the frame becomes narrow", () => {
@@ -276,6 +289,58 @@ describe("AppShell on a narrow frame", () => {
     resizeTo(1200);
     expect(screen.queryByRole("dialog")).toBeNull();
     await waitFor(() => expect(screen.getByRole("main")).toHaveFocus());
+  });
+});
+
+describe("AppShell layout and scroll", () => {
+  it("layout=\"header\" spans the header across and puts the sidebar below it", () => {
+    render(<Layout layout="header" />);
+    expect(screen.getByRole("banner")).toHaveClass("col-span-full");
+    expect(document.querySelector("[data-collapsible]")).toHaveClass("row-[2/-1]");
+  });
+
+  it("scroll=\"page\" lets the page scroll: sticky header and sidebar, main without its own scroll, footer last", () => {
+    render(
+      <AppShell scroll="page">
+        <Sidebar>
+          <SidebarContent>Nav</SidebarContent>
+        </Sidebar>
+        <AppShellHeader>Header</AppShellHeader>
+        <AppShellMain>Nội dung</AppShellMain>
+        <AppShellFooter>Footer</AppShellFooter>
+      </AppShell>,
+    );
+    expect(screen.getByRole("banner")).toHaveClass("sticky", "top-0");
+    expect(document.querySelector("[data-collapsible]")).toHaveClass("sticky", "self-start");
+    expect(screen.getByRole("main")).not.toHaveClass("overflow-y-auto");
+    expect(screen.getByRole("contentinfo")).toHaveClass("row-start-3");
+    expect(document.querySelector("[data-app-shell]")).toHaveClass("min-h-dvh");
+  });
+
+  it("without a Sidebar, Ctrl+B is left to the browser", () => {
+    render(
+      <AppShell>
+        <AppShellHeader>Header</AppShellHeader>
+        <AppShellMain>Nội dung</AppShellMain>
+      </AppShell>,
+    );
+    resizeTo(1200);
+    // fireEvent trả false khi sự kiện bị preventDefault.
+    expect(ctrlB()).toBe(true);
+  });
+
+  it("inside its own scroll area, sticky parts follow the height of that area", () => {
+    const height = vi.spyOn(HTMLElement.prototype, "clientHeight", "get").mockReturnValue(480);
+    render(
+      <AppShell scroll="page" style={{ overflowY: "auto" }} className="h-full min-h-0">
+        <AppShellMain>Nội dung</AppShellMain>
+      </AppShell>,
+    );
+    resizeTo(900);
+    const root = document.querySelector<HTMLElement>("[data-app-shell]")!;
+    expect(root.style.getPropertyValue("--app-shell-viewport")).toBe("480px");
+    expect(root).not.toHaveClass("min-h-dvh");
+    height.mockRestore();
   });
 });
 

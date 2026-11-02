@@ -18,8 +18,6 @@ const en: Content = {
     account: "Account",
     signOut: "Sign out",
     signedOut: "Signed out",
-    skip: "Skip to content",
-    open: "Open navigation",
   },
   common: {
     all: "All",

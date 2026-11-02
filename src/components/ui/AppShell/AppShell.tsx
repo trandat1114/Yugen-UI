@@ -7,7 +7,8 @@ import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
 import { Button, type ButtonProps } from "../Button/Button";
 import { Drawer, DrawerSurface } from "../Drawer/Drawer";
-import { TooltipProvider } from "../Tooltip/Tooltip";
+import { Kbd, KbdGroup } from "../Kbd/Kbd";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../Tooltip/Tooltip";
 import { NavHostContext, type NavHostValue } from "../Nav/context";
 import { useComposedRefs } from "../_internal/composeRefs";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
@@ -24,6 +25,10 @@ export { appShellMessages, appShellMessagesEn, type AppShellMessages } from "./m
 export type AppShellBreakpoint = "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl";
 /** icon: thu về rail chỉ icon · offcanvas: ẩn hẳn · none: luôn mở trên màn rộng. */
 export type SidebarCollapsible = "icon" | "offcanvas" | "none";
+/** sidebar: sidebar cao hết khung, thanh trên cùng bên cạnh · header: thanh trên cùng trải ngang, sidebar bên dưới. */
+export type AppShellLayout = "sidebar" | "header";
+/** main: khung cao bằng màn hình, nội dung cuộn bên trong · page: cả trang cuộn, thanh trên cùng và sidebar dính lại. */
+export type AppShellScroll = "main" | "page";
 
 const BREAKPOINT_REM: Record<AppShellBreakpoint, number> = { lg: 32, xl: 36, "2xl": 42, "3xl": 48, "4xl": 56, "5xl": 64 };
 /** Hiện từ breakpoint: sidebar, cột phụ, icon thu gọn của SidebarTrigger. */
@@ -44,6 +49,21 @@ const HIDE_WIDE: Record<AppShellBreakpoint, string> = {
   "4xl": "@4xl/app-shell:hidden",
   "5xl": "@5xl/app-shell:hidden",
 };
+
+/*
+ * Vị trí trong lưới theo bố cục. Chiều cao thanh trên cùng (`--app-shell-header`, mặc định 3.5rem) và phần trang còn
+ * thấy (`--app-shell-viewport`, mặc định 100dvh) là biến CSS để các phần dính khớp nhau.
+ */
+const HEADER_AREA: Record<AppShellLayout, string> = { sidebar: "col-[2/-1]", header: "col-span-full" };
+const SIDEBAR_AREA: Record<AppShellLayout, string> = { sidebar: "row-span-full", header: "row-[2/-1]" };
+/** Cuộn cả trang: sidebar dính ở mép trên (hoặc dưới thanh trên cùng), cao bằng phần trang còn thấy. */
+const SIDEBAR_STICKY: Record<AppShellLayout, string> = {
+  sidebar: "sticky top-0 h-(--app-shell-viewport,100dvh) self-start",
+  header:
+    "sticky top-(--app-shell-header,3.5rem) h-[calc(var(--app-shell-viewport,100dvh)-var(--app-shell-header,3.5rem))] self-start",
+};
+const ASIDE_STICKY =
+  "sticky top-(--app-shell-header,3.5rem) max-h-[calc(var(--app-shell-viewport,100dvh)-var(--app-shell-header,3.5rem))] self-start";
 
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
@@ -121,8 +141,11 @@ interface AppShellContextValue {
   setDrawerOpen: (open: boolean) => void;
   toggleSidebar: () => void;
   breakpoint: AppShellBreakpoint;
-  collapsible: SidebarCollapsible;
-  setCollapsible: (collapsible: SidebarCollapsible) => void;
+  layout: AppShellLayout;
+  scroll: AppShellScroll;
+  /** null: không có Sidebar (chỉ thanh trên cùng). */
+  collapsible: SidebarCollapsible | null;
+  setCollapsible: (collapsible: SidebarCollapsible | null) => void;
   shortcut: string | false;
   shellId: string;
   mainId: string;
@@ -211,12 +234,21 @@ export interface AppShellProps extends React.HTMLAttributes<HTMLDivElement> {
   shortcut?: string | false;
   /** Skip link tới AppShellMain, hiện khi được focus. */
   skipLink?: boolean;
+  /** sidebar: sidebar cao hết khung · header: thanh trên cùng trải ngang, sidebar bên dưới. */
+  layout?: AppShellLayout;
+  /**
+   * main: khung cao bằng màn hình, AppShellMain cuộn (ứng dụng). page: cả trang cuộn, thanh trên cùng và sidebar dính lại
+   * (site nội dung). Đặt khung trong một vùng tự cuộn (`h-full min-h-0 overflow-y-auto`) thì vùng đó thay cho cửa sổ.
+   */
+  scroll?: AppShellScroll;
 }
 
 export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
   (
     {
       breakpoint = "4xl",
+      layout = "sidebar",
+      scroll = "main",
       collapsed: collapsedProp,
       defaultCollapsed,
       onCollapsedChange,
@@ -238,7 +270,7 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
     const collapsed = collapsedProp ?? innerCollapsed;
     const [drawerOpen, setDrawerOpenState] = React.useState(false);
     const [narrow, setNarrow] = React.useState(false);
-    const [collapsible, setCollapsible] = React.useState<SidebarCollapsible>("icon");
+    const [collapsible, setCollapsible] = React.useState<SidebarCollapsible | null>(null);
 
     const rootRef = React.useRef<HTMLDivElement>(null);
     const refs = useComposedRefs(ref, rootRef);
@@ -281,16 +313,23 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
       else mainRef.current?.focus();
     }, []);
 
+    // Có gì để mở / đóng không: cần một Sidebar, và trên màn rộng nó phải thu gọn được.
+    const canToggle = collapsible !== null && (narrow || collapsible !== "none");
     const toggleSidebar = React.useCallback(() => {
+      if (!canToggle) return;
       if (narrow) setDrawerOpen(!drawerOpen);
-      else if (collapsible !== "none") setCollapsed(!collapsed);
-    }, [narrow, drawerOpen, collapsible, collapsed, setDrawerOpen, setCollapsed]);
+      else setCollapsed(!collapsed);
+    }, [canToggle, narrow, drawerOpen, collapsed, setDrawerOpen, setCollapsed]);
 
     // Đo khung (cùng mốc rem với container query) để biết sidebar đang là Drawer hay nằm trong bố cục.
     useIsomorphicLayoutEffect(() => {
       const el = rootRef.current;
       if (!el) return;
       const update = (width: number) => {
+        // Cuộn cả trang trong một vùng tự cuộn (preview nhúng): phần còn thấy là chiều cao vùng đó, không phải màn hình.
+        if (scroll === "page" && /auto|scroll/.test(getComputedStyle(el).overflowY)) {
+          el.style.setProperty("--app-shell-viewport", `${el.clientHeight}px`);
+        } else el.style.removeProperty("--app-shell-viewport");
         // 0: chưa có layout (khối cha display: none, jsdom) — giữ giá trị cũ.
         if (width <= 0) return;
         const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
@@ -304,7 +343,7 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
       });
       observer.observe(el);
       return () => observer.disconnect();
-    }, [breakpoint]);
+    }, [breakpoint, scroll]);
 
     // Qua breakpoint: Drawer chỉ có trên màn hẹp nên đóng lại (focus về trigger hoặc nội dung qua onCloseAutoFocus);
     // sidebar trên màn rộng bị ẩn khi thu hẹp, nên focus đang ở trong nó chuyển ra trigger hoặc nội dung.
@@ -325,8 +364,10 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
     }, [narrow, focusTriggerOrMain]);
 
     const toggleRef = React.useRef(toggleSidebar);
+    const canToggleRef = React.useRef(canToggle);
     React.useEffect(() => {
       toggleRef.current = toggleSidebar;
+      canToggleRef.current = canToggle;
     });
     React.useEffect(() => {
       if (!shortcut) return;
@@ -338,7 +379,8 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
         if (e.defaultPrevented || e.repeat || e.isComposing || e.keyCode === 229) return;
         if (!(e.ctrlKey || e.metaKey) || e.altKey || e.shiftKey) return;
         if (e.key.toLowerCase() !== key && e.code !== code) return;
-        if (isTextEntry(e.target) || shortcutOwner(e.target) !== id) return;
+        // Không có gì để đổi (chưa có Sidebar): để phím cho trình duyệt.
+        if (!canToggleRef.current || isTextEntry(e.target) || shortcutOwner(e.target) !== id) return;
         e.preventDefault();
         toggleRef.current();
       };
@@ -359,6 +401,8 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
         setDrawerOpen,
         toggleSidebar,
         breakpoint,
+        layout,
+        scroll,
         collapsible,
         setCollapsible,
         shortcut,
@@ -374,7 +418,23 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
         persistWidth,
         focusTriggerOrMain,
       }),
-      [narrow, collapsed, setCollapsed, drawerOpen, setDrawerOpen, toggleSidebar, breakpoint, collapsible, shortcut, id, saved, persistWidth, focusTriggerOrMain],
+      [
+        narrow,
+        collapsed,
+        setCollapsed,
+        drawerOpen,
+        setDrawerOpen,
+        toggleSidebar,
+        breakpoint,
+        layout,
+        scroll,
+        collapsible,
+        shortcut,
+        id,
+        saved,
+        persistWidth,
+        focusTriggerOrMain,
+      ],
     );
 
     return (
@@ -382,8 +442,11 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
         <div
           ref={refs}
           data-app-shell={id}
+          data-scroll={scroll}
           className={cn(
-            "@container/app-shell grid h-dvh grid-cols-[auto_minmax(0,1fr)_auto] grid-rows-[auto_minmax(0,1fr)] bg-background-2 text-foreground-1",
+            "@container/app-shell grid grid-cols-[auto_minmax(0,1fr)_auto] bg-background-2 text-foreground-1",
+            // Hàng giữa của "page" lớn theo nội dung (trang dài ra); của "main" bị giới hạn để AppShellMain tự cuộn.
+            scroll === "page" ? "min-h-dvh grid-rows-[auto_1fr_auto]" : "h-dvh grid-rows-[auto_minmax(0,1fr)_auto]",
             className,
           )}
           {...props}
@@ -415,14 +478,17 @@ type PartProps = React.HTMLAttributes<HTMLElement> & {
   asChild?: boolean;
 };
 
-/** Thanh trên cùng, bên cạnh sidebar. */
+/** Thanh trên cùng: bên cạnh sidebar, hoặc trải ngang với `layout="header"`. Cao `--app-shell-header` (3.5rem). */
 export const AppShellHeader = React.forwardRef<HTMLElement, PartProps>(({ asChild, className, ...props }, ref) => {
+  const shell = useShell("AppShellHeader");
   const Comp = asChild ? Slot : "header";
   return (
     <Comp
       ref={ref}
       className={cn(
-        "col-[2/-1] row-start-1 flex h-14 min-w-0 items-center gap-2 border-b border-stroke-2 bg-background-1 px-3 @lg/app-shell:px-4",
+        "row-start-1 flex h-(--app-shell-header,3.5rem) min-w-0 items-center gap-2 border-b border-stroke-2 bg-background-1 px-3 @lg/app-shell:px-4",
+        HEADER_AREA[shell.layout],
+        shell.scroll === "page" && "sticky top-0 z-10",
         className,
       )}
       {...props}
@@ -441,7 +507,7 @@ export const AppShellMain = React.forwardRef<HTMLElement, PartProps>(({ asChild,
       ref={refs}
       id={shell.mainId}
       tabIndex={-1}
-      className={cn("col-start-2 row-start-2 min-h-0 min-w-0 overflow-y-auto outline-none", className)}
+      className={cn("col-start-2 row-start-2 min-w-0 outline-none", shell.scroll === "main" && "min-h-0 overflow-y-auto", className)}
       {...props}
     />
   );
@@ -456,7 +522,8 @@ export const AppShellAside = React.forwardRef<HTMLElement, PartProps>(({ asChild
     <Comp
       ref={ref}
       className={cn(
-        "col-start-3 row-start-2 hidden min-h-0 w-72 flex-col overflow-y-auto border-s border-stroke-2 bg-background-1",
+        "col-start-3 row-start-2 hidden w-72 flex-col overflow-y-auto border-s border-stroke-2 bg-background-1",
+        shell.scroll === "page" ? ASIDE_STICKY : "min-h-0",
         SHOW_WIDE[shell.breakpoint],
         className,
       )}
@@ -465,6 +532,19 @@ export const AppShellAside = React.forwardRef<HTMLElement, PartProps>(({ asChild
   );
 });
 AppShellAside.displayName = "AppShellAside";
+
+/** Cuối trang, dưới nội dung và cột phụ. `scroll="page"`: ở cuối trang; `"main"`: luôn thấy ở đáy khung. */
+export const AppShellFooter = React.forwardRef<HTMLElement, PartProps>(({ asChild, className, ...props }, ref) => {
+  const Comp = asChild ? Slot : "footer";
+  return (
+    <Comp
+      ref={ref}
+      className={cn("col-[2/-1] row-start-3 min-w-0 border-t border-stroke-2 bg-background-1", className)}
+      {...props}
+    />
+  );
+});
+AppShellFooter.displayName = "AppShellFooter";
 
 export interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   collapsible?: SidebarCollapsible;
@@ -510,7 +590,10 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
     const [resizing, setResizing] = React.useState(false);
 
     const { setCollapsible, setCollapsed, setDrawerOpen, persistWidth } = shell;
-    useIsomorphicLayoutEffect(() => setCollapsible(collapsible), [collapsible, setCollapsible]);
+    useIsomorphicLayoutEffect(() => {
+      setCollapsible(collapsible);
+      return () => setCollapsible(null);
+    }, [collapsible, setCollapsible]);
 
     const collapsed = collapsible !== "none" && shell.collapsed;
     const rail = collapsed && collapsible === "icon";
@@ -556,7 +639,9 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
               onBlur?.(e);
             }}
             className={cn(
-              "relative col-start-1 row-span-full hidden min-h-0 flex-col border-e border-stroke-2 bg-background-1 text-foreground-1",
+              "col-start-1 hidden min-h-0 flex-col border-e border-stroke-2 bg-background-1 text-foreground-1",
+              SIDEBAR_AREA[shell.layout],
+              shell.scroll === "page" ? SIDEBAR_STICKY[shell.layout] : "relative",
               !resizing && "transition-[width,visibility] duration-normal ease-easy-ease motion-reduce:transition-none",
               SHOW_WIDE[shell.breakpoint],
               rail ? "w-14" : offcanvas ? "invisible w-0 border-e-0" : "w-(--app-shell-sidebar-width)",
@@ -608,7 +693,7 @@ export const SidebarHeader = React.forwardRef<HTMLDivElement, React.HTMLAttribut
   <div
     ref={ref}
     className={cn(
-      "flex h-14 shrink-0 items-center gap-2 border-b border-stroke-2 px-4 in-data-rail:justify-center in-data-rail:px-0",
+      "flex h-(--app-shell-header,3.5rem) shrink-0 items-center gap-2 border-b border-stroke-2 px-4 in-data-rail:justify-center in-data-rail:px-0",
       className,
     )}
     {...props}
@@ -655,42 +740,69 @@ export const SidebarGroup = React.forwardRef<HTMLDivElement, SidebarGroupProps>(
 });
 SidebarGroup.displayName = "SidebarGroup";
 
-/** Nút mở / thu gọn sidebar: màn hẹp mở Drawer, màn rộng thu về rail (hoặc ẩn khi `collapsible="offcanvas"`). */
+/** ⌘ trên máy Apple, Ctrl ở nơi khác. Đọc sau khi mount để HTML render ở server và lần hydrate đầu giống nhau. */
+function useModifierKey() {
+  const [mac, setMac] = React.useState(false);
+  React.useEffect(() => setMac(/Mac|iPhone|iPad/.test(navigator.userAgent)), []);
+  return mac ? "⌘" : "Ctrl";
+}
+
+/**
+ * Nút mở / thu gọn sidebar: màn hẹp mở Drawer, màn rộng thu về rail (hoặc ẩn khi `collapsible="offcanvas"`). Tooltip
+ * mang nhãn và phím tắt.
+ */
 export const SidebarTrigger = React.forwardRef<HTMLButtonElement, ButtonProps>(({ className, onClick, ...props }, ref) => {
   const shell = useShell("SidebarTrigger");
   const msg = useYugenMessages("appShell", appShellMessages);
   const refs = useComposedRefs(ref, shell.triggerRef);
+  const modifier = useModifierKey();
   const WideIcon = shell.collapsed ? PanelLeftExpand20Regular : PanelLeftContract20Regular;
   const key = shell.shortcut ? shell.shortcut.toUpperCase() : undefined;
+  const label = shell.narrow ? msg.openSidebar : shell.collapsed ? msg.expandSidebar : msg.collapseSidebar;
   return (
-    <Button
-      ref={refs}
-      appearance="subtle"
-      // Icon theo container query (đúng ngay từ lần vẽ đầu); nhãn theo kích thước đo được. Ẩn / hiện bằng span bọc
-      // ngoài: CSS của icon Fluent không nằm trong layer nên thắng `hidden` đặt thẳng lên svg.
-      icon={
-        <>
-          <span className={cn("flex", HIDE_WIDE[shell.breakpoint])}>
-            <Navigation20Regular />
-          </span>
-          <span className={cn("hidden", SHOW_WIDE[shell.breakpoint])}>
-            <WideIcon className="rtl:-scale-x-100" />
-          </span>
-        </>
-      }
-      aria-label={shell.narrow ? msg.openSidebar : shell.collapsed ? msg.expandSidebar : msg.collapseSidebar}
-      aria-expanded={shell.narrow ? shell.drawerOpen : !shell.collapsed}
-      aria-controls={shell.narrow ? undefined : shell.sidebarId}
-      aria-keyshortcuts={key ? `Control+${key} Meta+${key}` : undefined}
-      className={cn(shell.collapsible === "none" && HIDE_WIDE[shell.breakpoint], className)}
-      onClick={(e) => {
-        onClick?.(e);
-        if (e.defaultPrevented) return;
-        shell.triggerRef.current = e.currentTarget;
-        shell.toggleSidebar();
-      }}
-      {...props}
-    />
+    <TooltipProvider delayDuration={300}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            ref={refs}
+            appearance="subtle"
+            // Icon theo container query (đúng ngay từ lần vẽ đầu); nhãn theo kích thước đo được. Ẩn / hiện bằng span
+            // bọc ngoài: CSS của icon Fluent không nằm trong layer nên thắng `hidden` đặt thẳng lên svg.
+            icon={
+              <>
+                <span className={cn("flex", HIDE_WIDE[shell.breakpoint])}>
+                  <Navigation20Regular />
+                </span>
+                <span className={cn("hidden", SHOW_WIDE[shell.breakpoint])}>
+                  <WideIcon className="rtl:-scale-x-100" />
+                </span>
+              </>
+            }
+            aria-label={label}
+            aria-expanded={shell.narrow ? shell.drawerOpen : !shell.collapsed}
+            aria-controls={shell.narrow ? undefined : shell.sidebarId}
+            aria-keyshortcuts={key ? `Control+${key} Meta+${key}` : undefined}
+            className={cn(shell.collapsible === "none" && HIDE_WIDE[shell.breakpoint], className)}
+            onClick={(e) => {
+              onClick?.(e);
+              if (e.defaultPrevented) return;
+              shell.triggerRef.current = e.currentTarget;
+              shell.toggleSidebar();
+            }}
+            {...props}
+          />
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="flex items-center gap-2">
+          {label}
+          {key && (
+            <KbdGroup>
+              <Kbd size="small">{modifier}</Kbd>
+              <Kbd size="small">{key}</Kbd>
+            </KbdGroup>
+          )}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 });
 SidebarTrigger.displayName = "SidebarTrigger";

@@ -1,12 +1,11 @@
 import * as React from "react";
-import { Accessibility20Regular, Navigation20Regular, Search20Regular, WeatherMoon20Regular, WeatherSunny20Regular } from "@fluentui/react-icons";
+import { Accessibility20Regular, Search20Regular, WeatherMoon20Regular, WeatherSunny20Regular } from "@fluentui/react-icons";
 import {
+  AppShell,
+  AppShellFooter,
+  AppShellHeader,
+  AppShellMain,
   Button,
-  Drawer,
-  DrawerBody,
-  DrawerHeader,
-  DrawerHeaderTitle,
-  DrawerSurface,
   Kbd,
   KbdGroup,
   Menu,
@@ -17,10 +16,13 @@ import {
   Nav,
   NavItem,
   NavSectionHeader,
+  Sidebar,
+  SidebarContent,
+  SidebarTrigger,
   SkeletonText,
+  useAppShell,
   type YugenTheme,
 } from "@/components/ui";
-import { cn } from "@/lib/cn";
 import type { Content } from "./content/types";
 import { pageMeta, type DocPage as Page, type PageKind } from "./docs";
 import { HomePage, NotFound, routeOf } from "./HomePage";
@@ -67,25 +69,39 @@ function ThemeMenu({ theme, onChange }: { theme: YugenTheme; onChange: (theme: Y
   );
 }
 
-/** Sections and pages from the Markdown folders, in front matter order. */
-function Sidebar({ current, onNavigate }: { current?: string; onNavigate?: () => void }) {
+/**
+ * Sections and pages from the Markdown folders, in front matter order. Pages have no icons, so collapsing hides the
+ * sidebar instead of leaving a rail; on narrow screens it opens as a Drawer.
+ */
+function DocsSidebar({ current }: { current?: string }) {
   const { t, docs } = useSite();
   return (
-    <Nav selectedValue={current} aria-label={t.nav.label} density="small" className="px-3 pt-3 pb-6">
-      {docs.sections.map((section) => (
-        <React.Fragment key={section.slug}>
-          <NavSectionHeader>{section.title}</NavSectionHeader>
-          {section.pages.map((page) => (
-            <NavItem key={page.key} value={page.key} asChild>
-              <Link to={routeOf(page)} onClick={onNavigate}>
-                <span className="min-w-0 flex-1 truncate">{page.title}</span>
-              </Link>
-            </NavItem>
+    <Sidebar collapsible="offcanvas" label={t.site.title}>
+      <SidebarContent className="px-3 pt-3 pb-6">
+        <Nav selectedValue={current} aria-label={t.nav.label} density="small">
+          {docs.sections.map((section) => (
+            <React.Fragment key={section.slug}>
+              <NavSectionHeader>{section.title}</NavSectionHeader>
+              {section.pages.map((page) => (
+                <NavItem key={page.key} value={page.key} asChild>
+                  <Link to={routeOf(page)}>
+                    <span className="min-w-0 flex-1 truncate">{page.title}</span>
+                  </Link>
+                </NavItem>
+              ))}
+            </React.Fragment>
           ))}
-        </React.Fragment>
-      ))}
-    </Nav>
+        </Nav>
+      </SidebarContent>
+    </Sidebar>
   );
+}
+
+/** Closes the Drawer when a search result opens another page (links in the sidebar close it themselves). */
+function CloseDrawerOn({ value }: { value: unknown }) {
+  const { setDrawerOpen } = useAppShell();
+  React.useEffect(() => setDrawerOpen(false), [value, setDrawerOpen]);
+  return null;
 }
 
 export interface LayoutProps {
@@ -97,15 +113,15 @@ export interface LayoutProps {
 }
 
 /**
- * Site frame: top bar, sidebar (a Drawer below 896px), the page and a footer. The window scrolls, so the sidebar and the
- * table of contents are sticky; embedded, the content column scrolls inside the frame. Breakpoints are container queries.
+ * Site frame: top bar across, sidebar below it (a Drawer below 896px), the page and a footer. The page scrolls, so the
+ * top bar, the sidebar and the table of contents are sticky; embedded, the frame scrolls instead of the window.
+ * Breakpoints are container queries on the AppShell (`@…/app-shell:`).
  */
 export function Layout({ t, theme, onThemeChange, embedded }: LayoutProps) {
   const { route, navigate } = useRouter();
   const docs = docsFor(t.lang);
   const site = React.useMemo(() => ({ t, docs }), [t, docs]);
-  const mainRef = React.useRef<HTMLDivElement>(null);
-  const [navOpen, setNavOpen] = React.useState(false);
+  const frameRef = React.useRef<HTMLDivElement>(null);
   const [searchOpen, setSearchOpen] = React.useState(false);
   // The palette chunk loads on first use (or when the pointer reaches the search button).
   const [searchUsed, setSearchUsed] = React.useState(false);
@@ -146,7 +162,7 @@ export function Layout({ t, theme, onThemeChange, embedded }: LayoutProps) {
   // A new page starts at the top; a link to a heading is scrolled by the page once its text is there.
   React.useEffect(() => {
     if (route.name === "page" && route.hash) return;
-    if (embedded) mainRef.current?.scrollTo({ top: 0 });
+    if (embedded) frameRef.current?.scrollTo({ top: 0 });
     else window.scrollTo({ top: 0 });
   }, [route, embedded]);
 
@@ -159,24 +175,24 @@ export function Layout({ t, theme, onThemeChange, embedded }: LayoutProps) {
   }, [page, route.name, embedded, t]);
 
   const onSearchSelect = (entry: SearchEntry) => {
-    setNavOpen(false);
     navigate({ ...routeOf(entry.page), ...(entry.hash && { hash: entry.hash }) });
   };
 
   return (
     <SiteContext.Provider value={site}>
-      <div className={cn("@container/docs flex flex-col bg-background-1 text-foreground-1", embedded ? "h-full" : "min-h-dvh")}>
-        {!embedded && (
-          <a
-            href="#content"
-            className="sr-only focus:not-sr-only focus:fixed focus:inset-s-3 focus:top-3 focus:z-30 focus:rounded-medium focus:bg-background-1 focus:px-3 focus:py-2 focus:shadow-8"
-          >
-            {t.skipToContent}
-          </a>
-        )}
-        <Header className={cn("z-20 shrink-0 border-b border-stroke-2 bg-background-1", !embedded && "sticky top-0")}>
-          <div className="mx-auto flex h-14 max-w-7xl items-center gap-2 px-4">
-            <Button appearance="subtle" icon={<Navigation20Regular />} aria-label={t.nav.open} className="@4xl/docs:hidden" onClick={() => setNavOpen(true)} />
+      <AppShell
+        ref={frameRef}
+        layout="header"
+        scroll="page"
+        // Embedded: the frame scrolls, no skip link, sidebar state not saved.
+        className={embedded ? "h-full min-h-0 overflow-y-auto bg-background-1" : "bg-background-1"}
+        persistKey={embedded ? undefined : "docs-sidebar"}
+        skipLink={!embedded}
+      >
+        <CloseDrawerOn value={route} />
+        <AppShellHeader asChild>
+          <Header>
+            <SidebarTrigger />
             <Link to={{ name: "home" }} className="flex min-w-0 items-center gap-2 rounded-medium font-display text-subtitle2 font-semibold text-foreground-1">
               <Logo />
               <span className="truncate">{t.site.title}</span>
@@ -186,13 +202,13 @@ export function Layout({ t, theme, onThemeChange, embedded }: LayoutProps) {
                 appearance="subtle"
                 icon={<Search20Regular />}
                 aria-label={t.search.button}
-                className="@2xl/docs:hidden"
+                className="@2xl/app-shell:hidden"
                 onClick={openSearch}
                 onPointerEnter={() => void loadSearch()}
               />
               <Button
                 icon={<Search20Regular />}
-                className="hidden w-60 justify-start text-foreground-3 @2xl/docs:inline-flex"
+                className="hidden w-60 justify-start text-foreground-3 @2xl/app-shell:inline-flex"
                 onClick={openSearch}
                 onPointerEnter={() => void loadSearch()}
                 onFocus={() => void loadSearch()}
@@ -207,76 +223,56 @@ export function Layout({ t, theme, onThemeChange, embedded }: LayoutProps) {
               </Button>
               <ThemeMenu theme={theme} onChange={onThemeChange} />
             </div>
-          </div>
-        </Header>
+          </Header>
+        </AppShellHeader>
 
-        <div className={cn("mx-auto flex w-full max-w-7xl flex-1", embedded && "min-h-0")}>
-          <div
-            className={cn(
-              "hidden w-64 shrink-0 overflow-y-auto border-e border-stroke-2 @4xl/docs:block",
-              !embedded && "sticky top-14 h-[calc(100dvh-3.5rem)] self-start",
-            )}
-          >
-            <Sidebar current={page?.key} />
-          </div>
+        <DocsSidebar current={page?.key} />
 
-          <Main
-            ref={mainRef}
-            id={embedded ? undefined : "content"}
-            tabIndex={embedded ? undefined : -1}
-            className={cn("flex min-w-0 flex-1 flex-col outline-none", embedded && "overflow-y-auto")}
-          >
-            <div className="flex-1 px-4 py-8 @3xl/docs:px-10">
+        <AppShellMain asChild>
+          <Main>
+            {/* 64rem: the content column keeps the width it had beside the sidebar in the 80rem frame. */}
+            <div className="mx-auto w-full max-w-5xl px-4 py-8 @3xl/app-shell:px-10">
               {route.name === "home" && <HomePage headingLevel={headingLevel} />}
               {route.name === "page" &&
                 (page && text ? (
                   <React.Suspense fallback={<SkeletonText lines={8} className="max-w-3xl" />}>
-                    <DocPage key={page.key} page={page} text={text} target={route} headingLevel={headingLevel} scrollRoot={embedded ? mainRef : undefined} />
+                    <DocPage key={page.key} page={page} text={text} target={route} headingLevel={headingLevel} scrollRoot={embedded ? frameRef : undefined} />
                   </React.Suspense>
                 ) : (
                   <NotFound headingLevel={headingLevel} />
                 ))}
               {route.name === "notFound" && <NotFound headingLevel={headingLevel} />}
             </div>
-            <Footer className="border-t border-stroke-2">
-              <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-5 text-caption1 text-foreground-3 @3xl/docs:px-10">
-                <span>
-                  © {new Date().getFullYear()} {t.site.product} · {t.footer.builtWith}{" "}
-                  <a className="text-link underline hover:text-link-hover" href="https://trandat1114.github.io/Yugen-UI/" target="_blank" rel="noreferrer">
-                    Yugen UI
-                  </a>
-                </span>
-                {/* Generated at build time: not there in the embedded preview. */}
-                {embedded ? (
-                  <span>Sitemap</span>
-                ) : (
-                  <a className="text-link underline hover:text-link-hover" href={`${BASE}sitemap.xml`}>
-                    Sitemap
-                  </a>
-                )}
-              </div>
-            </Footer>
           </Main>
-        </div>
+        </AppShellMain>
 
-        <Drawer open={navOpen} onOpenChange={setNavOpen}>
-          <DrawerSurface position="start" size="small" aria-describedby={undefined} className="flex flex-col p-0">
-            <DrawerHeader className="flex-row items-center gap-2 border-b border-stroke-2 px-4 py-3">
-              <Logo />
-              <DrawerHeaderTitle>{t.site.title}</DrawerHeaderTitle>
-            </DrawerHeader>
-            <DrawerBody className="min-h-0 flex-1 p-0">
-              <Sidebar current={page?.key} onNavigate={() => setNavOpen(false)} />
-            </DrawerBody>
-          </DrawerSurface>
-        </Drawer>
+        <AppShellFooter asChild>
+          <Footer>
+            <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-5 text-caption1 text-foreground-3 @3xl/app-shell:px-10">
+              <span>
+                © {new Date().getFullYear()} {t.site.product} · {t.footer.builtWith}{" "}
+                <a className="text-link underline hover:text-link-hover" href="https://trandat1114.github.io/Yugen-UI/" target="_blank" rel="noreferrer">
+                  Yugen UI
+                </a>
+              </span>
+              {/* Generated at build time: not there in the embedded preview. */}
+              {embedded ? (
+                <span>Sitemap</span>
+              ) : (
+                <a className="text-link underline hover:text-link-hover" href={`${BASE}sitemap.xml`}>
+                  Sitemap
+                </a>
+              )}
+            </div>
+          </Footer>
+        </AppShellFooter>
 
         {searchUsed && (
           <React.Suspense fallback={null}>
             <SearchPalette open={searchOpen} onOpenChange={setSearchOpen} onSelect={onSearchSelect} />
           </React.Suspense>
         )}
-      </div>
+      </AppShell>
     </SiteContext.Provider>
   );
 }

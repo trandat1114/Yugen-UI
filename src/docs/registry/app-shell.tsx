@@ -10,6 +10,7 @@ import {
 import {
   AppShell,
   AppShellAside,
+  AppShellFooter,
   AppShellHeader,
   AppShellMain,
   Sidebar,
@@ -92,9 +93,9 @@ export const docs: ComponentDoc[] = [
     category: "Bố cục",
     lead: "AppShell là khung của ứng dụng: sidebar thu về icon hoặc mở thành Drawer, thanh trên cùng và nội dung chính.",
     description:
-      "AppShell xếp các phần vào lưới: Sidebar bên trái, AppShellHeader phía trên, AppShellMain ở giữa và AppShellAside bên phải; phần nào không dùng thì không chiếm chỗ. Từ `breakpoint` (container query, theo độ rộng khung chứ không theo màn hình) sidebar nằm trong bố cục và SidebarTrigger thu nó về rail chỉ còn icon, tên mục hiện trong Tooltip. Hẹp hơn, cùng nội dung mở trong Drawer: theo một link hoặc chọn một mục Nav là Drawer đóng, focus quay về nút đã mở. Ctrl+B (⌘B) làm việc giống SidebarTrigger, trừ khi đang gõ trong ô nhập hoặc bằng bộ gõ; trang có nhiều AppShell (như trang này) thì chỉ khung đang được focus hoặc vừa được bấm vào nhận phím. `persistKey` lưu trạng thái thu gọn (và độ rộng) vào cookie; Drawer không bao giờ được lưu. Render ở server: đọc cookie bằng `readAppShellCookie(cookieHeader, key)` rồi truyền `defaultCollapsed` để không nháy. Các demo dưới đây nằm trong trang docs nên AppShellMain dùng `asChild` với `div` (một trang chỉ có một `<main>`).",
+      "AppShell xếp các phần vào lưới: Sidebar bên trái, AppShellHeader phía trên, AppShellMain ở giữa và AppShellAside bên phải; phần nào không dùng thì không chiếm chỗ. Từ `breakpoint` (container query, theo độ rộng khung chứ không theo màn hình) sidebar nằm trong bố cục và SidebarTrigger thu nó về rail chỉ còn icon, tên mục hiện trong Tooltip. Hẹp hơn, cùng nội dung mở trong Drawer: theo một link hoặc chọn một mục Nav là Drawer đóng, focus quay về nút đã mở. Ctrl+B (⌘B) làm việc giống SidebarTrigger, trừ khi đang gõ trong ô nhập hoặc bằng bộ gõ; trang có nhiều AppShell (như trang này) thì chỉ khung đang được focus hoặc vừa được bấm vào nhận phím. `persistKey` lưu trạng thái thu gọn (và độ rộng) vào cookie; Drawer không bao giờ được lưu. Render ở server: đọc cookie bằng `readAppShellCookie(cookieHeader, key)` rồi truyền `defaultCollapsed` để không nháy. AppShell là container tên `app-shell`: phần nào cần theo độ rộng khung thì dùng `@3xl/app-shell:…`. Chiều cao thanh trên cùng đổi qua biến `--app-shell-header` (mặc định 3.5rem), SidebarHeader và các phần dính theo cùng biến. Nút SidebarTrigger có Tooltip mang nhãn và phím tắt. Các demo dưới đây nằm trong trang docs nên AppShellMain dùng `asChild` với `div` (một trang chỉ có một `<main>`).",
     importCode: `import {
-  AppShell, AppShellHeader, AppShellMain, AppShellAside,
+  AppShell, AppShellHeader, AppShellMain, AppShellAside, AppShellFooter,
   Sidebar, SidebarHeader, SidebarContent, SidebarFooter, SidebarGroup, SidebarTrigger, SidebarRail,
   useAppShell, readAppShellCookie,
 } from "@/components/ui";`,
@@ -242,33 +243,90 @@ ${NAV_CODE}
         ),
       },
       {
-        title: "Chỉ thanh trên cùng",
+        title: "Trang nội dung: cả trang cuộn",
         wide: true,
-        description: "Không có Sidebar: cột của nó rộng 0, AppShellHeader trải hết chiều ngang.",
+        description:
+          "Không có Sidebar, cột của nó rộng 0. scroll=\"page\" cho site nội dung (blog, cửa hàng, landing): cả trang cuộn, thanh trên cùng dính lại, AppShellFooter ở cuối trang. Trong một vùng tự cuộn như khung này, vùng đó thay cho cửa sổ.",
         code: `<div className="h-72 w-full overflow-hidden rounded-large border border-stroke-2">
-  <AppShell className="h-full" skipLink={false}>
+  <AppShell scroll="page" className="h-full min-h-0 overflow-y-auto" skipLink={false}>
     <AppShellHeader>
       <span className="me-auto font-semibold">Sakura</span>
       <Button appearance="subtle">Sản phẩm</Button>
-      <Button appearance="subtle">Bảng giá</Button>
       <Button appearance="primary">Đăng nhập</Button>
     </AppShellHeader>
     <AppShellMain asChild>
-      <div className="p-4">Nội dung trang</div>
+      <div className="flex flex-col gap-3 p-4">
+        <div className="h-40 rounded-large border border-stroke-2 bg-background-1" />
+        <div className="h-40 rounded-large border border-stroke-2 bg-background-1" />
+      </div>
     </AppShellMain>
+    <AppShellFooter asChild>
+      <div className="p-4 text-caption1 text-foreground-3">© Sakura</div>
+    </AppShellFooter>
   </AppShell>
 </div>`,
         render: () => (
           <div className="h-72 w-full overflow-hidden rounded-large border border-stroke-2">
-            <AppShell className="h-full" skipLink={false}>
+            <AppShell scroll="page" className="h-full min-h-0 overflow-y-auto" skipLink={false}>
               <AppShellHeader>
                 <span className="me-auto font-semibold">Sakura</span>
                 <Button appearance="subtle">Sản phẩm</Button>
-                <Button appearance="subtle">Bảng giá</Button>
                 <Button appearance="primary">Đăng nhập</Button>
               </AppShellHeader>
               <AppShellMain asChild>
-                <div className="p-4">Nội dung trang</div>
+                <div className="flex flex-col gap-3 p-4">
+                  <div className="h-40 rounded-large border border-stroke-2 bg-background-1" />
+                  <div className="h-40 rounded-large border border-stroke-2 bg-background-1" />
+                </div>
+              </AppShellMain>
+              <AppShellFooter asChild>
+                <div className="p-4 text-caption1 text-foreground-3">© Sakura</div>
+              </AppShellFooter>
+            </AppShell>
+          </div>
+        ),
+      },
+      {
+        title: "Thanh trên cùng trải ngang",
+        wide: true,
+        description: "layout=\"header\": thanh trên cùng (logo, tìm kiếm, tài khoản) trải hết chiều ngang, sidebar nằm bên dưới. Hợp với trang quản trị.",
+        code: `<div className="h-104 w-full overflow-hidden rounded-large border border-stroke-2">
+  <AppShell layout="header" breakpoint="lg" className="h-full" skipLink={false}>
+    <AppShellHeader>
+      <SidebarTrigger />
+      <Logo />
+      <span className="font-semibold">Sakura Admin</span>
+    </AppShellHeader>
+    <Sidebar defaultWidth={224}>
+${NAV_CODE}
+    </Sidebar>
+    <AppShellMain asChild>
+      <div className="p-4">Danh sách khách hàng</div>
+    </AppShellMain>
+  </AppShell>
+</div>`,
+        setup: `function Logo() {
+  return (
+    <span aria-hidden className="flex size-8 shrink-0 items-center justify-center rounded-medium bg-brand-background font-semibold text-foreground-on-brand">
+      桜
+    </span>
+  );
+}`,
+        render: () => (
+          <div className={FRAME}>
+            <AppShell layout="header" breakpoint="lg" className="h-full" skipLink={false}>
+              <AppShellHeader>
+                <SidebarTrigger />
+                <Logo />
+                <span className="font-semibold">Sakura Admin</span>
+              </AppShellHeader>
+              <Sidebar defaultWidth={224}>
+                <SidebarContent>
+                  <AppNav />
+                </SidebarContent>
+              </Sidebar>
+              <AppShellMain asChild>
+                <div className="p-4">Danh sách khách hàng</div>
               </AppShellMain>
             </AppShell>
           </div>
@@ -362,6 +420,8 @@ function ChatShell() {
     ],
     props: [
       { name: "breakpoint", type: `"lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl"`, defaultValue: `"4xl"`, description: "Độ rộng khung (32 / 36 / 42 / 48 / 56 / 64rem) từ đó sidebar nằm trong bố cục; hẹp hơn là Drawer." },
+      { name: "layout", type: `"sidebar" | "header"`, defaultValue: `"sidebar"`, description: "sidebar: sidebar cao hết khung, thanh trên cùng bên cạnh. header: thanh trên cùng trải ngang, sidebar bên dưới." },
+      { name: "scroll", type: `"main" | "page"`, defaultValue: `"main"`, description: "main: khung cao bằng màn hình, AppShellMain tự cuộn (ứng dụng). page: cả trang cuộn, thanh trên cùng và sidebar dính lại (site nội dung)." },
       { name: "collapsed / defaultCollapsed", type: "boolean", defaultValue: "false", description: "Sidebar thu gọn trên màn rộng." },
       { name: "onCollapsedChange", type: "(collapsed: boolean) => void", description: "Gọi khi thu gọn / mở rộng." },
       { name: "persistKey", type: "string", description: "Tên cookie lưu trạng thái thu gọn và độ rộng; giá trị đã lưu thắng defaultCollapsed." },
@@ -372,7 +432,7 @@ function ChatShell() {
       { name: "Sidebar.defaultWidth / minWidth / maxWidth", type: "number", defaultValue: "256 / 200 / 400", description: "Độ rộng khi mở, px." },
       { name: "Sidebar.label", type: "string", description: "Tên của Drawer trên màn hẹp." },
       { name: "SidebarGroup.label", type: "ReactNode", description: "Tên nhóm; trong rail chỉ còn cho trình đọc màn hình." },
-      { name: "AppShellHeader / AppShellMain / AppShellAside.asChild", type: "boolean", description: "Đổi thẻ header / main / aside sang phần tử con." },
+      { name: "AppShellHeader / AppShellMain / AppShellAside / AppShellFooter.asChild", type: "boolean", description: "Đổi thẻ header / main / aside / footer sang phần tử con." },
       { name: "useAppShell()", type: "AppShellState", description: "narrow, collapsed, setCollapsed, drawerOpen, setDrawerOpen, toggleSidebar, rail." },
       { name: "readAppShellCookie(cookie, persistKey)", type: "{ collapsed, width? } | undefined", description: "Đọc trạng thái đã lưu từ document.cookie hoặc header Cookie khi render ở server." },
     ],

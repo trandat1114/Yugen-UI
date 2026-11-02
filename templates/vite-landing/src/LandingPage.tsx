@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ArrowRight20Regular, DarkTheme20Regular } from "@fluentui/react-icons";
-import { Badge, Button, type YugenTheme } from "yugen-ui";
+import { AppShell, AppShellFooter, AppShellHeader, AppShellMain, Badge, Button, type YugenTheme } from "yugen-ui";
 import { cn } from "yugen-ui";
 import type { Content } from "./content/types";
 import { LandingContext, SectionLink, type SectionId } from "./context";
@@ -79,126 +79,135 @@ export function LandingPage({ t, theme, onThemeChange, embedded }: LandingPagePr
 
   return (
     <LandingContext.Provider value={context}>
-      <div
+      <AppShell
         ref={frameRef}
-        className={cn("@container/landing bg-background-1 text-foreground-1", embedded ? "h-full overflow-y-auto" : "min-h-dvh")}
+        scroll="page"
+        // Embedded: scrolls inside the preview, no skip link.
+        className={cn("bg-background-1", embedded && "h-full min-h-0 overflow-y-auto")}
+        skipLink={!embedded}
       >
-        <Header className="sticky top-0 z-10 border-b border-stroke-2 bg-background-1">
-          <div className="mx-auto flex h-14 max-w-6xl items-center gap-2 px-4">
-            <SectionLink to="top" className="flex items-center gap-2 rounded-medium pe-1 font-display text-subtitle2 font-semibold">
-              <Logo />
-              {t.product.name}
-            </SectionLink>
-            <nav aria-label={t.nav.label} className="ms-6 hidden @2xl/landing:block">
-              <ul className="flex items-center gap-1">
-                {NAV.map((section) => (
-                  <li key={section}>
-                    <SectionLink
-                      to={section}
-                      className="flex h-8 items-center rounded-medium px-3 text-body1 text-foreground-2 hover:bg-subtle-hover hover:text-foreground-1"
-                    >
-                      {labels[section]}
-                    </SectionLink>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-            <div className="ms-auto flex items-center gap-1">
-              {/* The same button stands in while the menu loads. */}
-              {painted ? (
-                <React.Suspense fallback={themeButton}>
-                  <ThemeMenu t={t} theme={theme} onChange={onThemeChange} trigger={themeButton} />
-                </React.Suspense>
-              ) : (
-                themeButton
-              )}
-              <Button asChild appearance="primary" className="ms-1">
-                <SectionLink to="signup">{t.nav.signUp}</SectionLink>
-              </Button>
-            </div>
-          </div>
-        </Header>
-
-        <Main>
-          <section
-            id={context.sectionId("top")}
-            aria-labelledby={`${context.sectionId("top")}-title`}
-            className="bg-linear-to-b from-brand-background-2 to-background-1 px-4 pt-12 pb-16 @3xl/landing:pt-20 @3xl/landing:pb-24"
-          >
-            <div className="mx-auto grid max-w-6xl items-center gap-12 @5xl/landing:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
-              <div className="flex flex-col items-start">
-                <Badge appearance="tint" color="brand" size="large" shape="circular" className="px-2.5">
-                  {t.hero.badge}
-                </Badge>
-                <H1
-                  id={`${context.sectionId("top")}-title`}
-                  className="mt-4 font-display text-title1 font-semibold text-balance text-foreground-1 @3xl/landing:text-large-title"
-                >
-                  {t.hero.title}
-                </H1>
-                <p className="mt-4 max-w-xl text-body2 text-foreground-2 @3xl/landing:text-subtitle1 @3xl/landing:font-normal">
-                  {t.hero.lead}
-                </p>
-                <div className="mt-8 flex flex-wrap gap-3">
-                  <Button asChild appearance="primary" size="large">
-                    <SectionLink to="signup">
-                      {t.hero.primary}
-                      <ArrowRight20Regular aria-hidden className="rtl:-scale-x-100" />
-                    </SectionLink>
-                  </Button>
-                  <Button asChild size="large">
-                    <SectionLink to="pricing">{t.hero.secondary}</SectionLink>
-                  </Button>
-                </div>
-                <p className="mt-4 text-caption1 text-foreground-3">{t.hero.note}</p>
-              </div>
-              <ProductShot shot={t.hero.shot} />
-            </div>
-          </section>
-
-          <div className="px-4 pb-16">
-            <p className="mb-6 text-center text-body1 text-foreground-3">{t.logos.title}</p>
-            <LogoRow label={t.logos.title} />
-          </div>
-
-          {painted ? (
-            <React.Suspense fallback={belowTheFoldFallback}>
-              <BelowTheFold />
-            </React.Suspense>
-          ) : (
-            belowTheFoldFallback
-          )}
-        </Main>
-
-        <Footer className="border-t border-stroke-2 px-4 py-10">
-          <div className="mx-auto flex max-w-6xl flex-col gap-6 @3xl/landing:flex-row @3xl/landing:items-start @3xl/landing:justify-between">
-            <div className="flex flex-col gap-2">
-              <span className="flex items-center gap-2 font-display text-subtitle2 font-semibold">
+        <AppShellHeader asChild className="px-0 @lg/app-shell:px-0">
+          <Header>
+            <div className="mx-auto flex h-full w-full max-w-6xl items-center gap-2 px-4">
+              <SectionLink to="top" className="flex items-center gap-2 rounded-medium pe-1 font-display text-subtitle2 font-semibold">
                 <Logo />
                 {t.product.name}
-              </span>
-              <p className="text-body1 text-foreground-2">{t.footer.tagline}</p>
+              </SectionLink>
+              <nav aria-label={t.nav.label} className="ms-6 hidden @2xl/app-shell:block">
+                <ul className="flex items-center gap-1">
+                  {NAV.map((section) => (
+                    <li key={section}>
+                      <SectionLink
+                        to={section}
+                        className="flex h-8 items-center rounded-medium px-3 text-body1 text-foreground-2 hover:bg-subtle-hover hover:text-foreground-1"
+                      >
+                        {labels[section]}
+                      </SectionLink>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+              <div className="ms-auto flex items-center gap-1">
+                {/* The same button stands in while the menu loads. */}
+                {painted ? (
+                  <React.Suspense fallback={themeButton}>
+                    <ThemeMenu t={t} theme={theme} onChange={onThemeChange} trigger={themeButton} />
+                  </React.Suspense>
+                ) : (
+                  themeButton
+                )}
+                <Button asChild appearance="primary" className="ms-1">
+                  <SectionLink to="signup">{t.nav.signUp}</SectionLink>
+                </Button>
+              </div>
             </div>
-            <nav aria-label={t.nav.footer}>
-              <ul className="flex flex-wrap gap-x-6 gap-y-2">
-                {(["features", "pricing", "faq", "signup"] as const).map((section) => (
-                  <li key={section}>
-                    <SectionLink to={section} className="rounded-small text-body1 text-foreground-2 hover:text-foreground-1 hover:underline">
-                      {labels[section]}
-                    </SectionLink>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          </div>
-          <p className="mx-auto mt-8 max-w-6xl text-caption1 text-foreground-3">
-            © {t.product.name} · {t.footer.sample} ·{" "}
-            <a href="https://trandat1114.github.io/Yugen-UI/" className="rounded-small text-link underline hover:text-link-hover">
-              {t.footer.madeWith}
-            </a>
-          </p>
-        </Footer>
-      </div>
+          </Header>
+        </AppShellHeader>
+
+        <AppShellMain asChild>
+          <Main>
+            <section
+              id={context.sectionId("top")}
+              aria-labelledby={`${context.sectionId("top")}-title`}
+              className="bg-linear-to-b from-brand-background-2 to-background-1 px-4 pt-12 pb-16 @3xl/app-shell:pt-20 @3xl/app-shell:pb-24"
+            >
+              <div className="mx-auto grid max-w-6xl items-center gap-12 @5xl/app-shell:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+                <div className="flex flex-col items-start">
+                  <Badge appearance="tint" color="brand" size="large" shape="circular" className="px-2.5">
+                    {t.hero.badge}
+                  </Badge>
+                  <H1
+                    id={`${context.sectionId("top")}-title`}
+                    className="mt-4 font-display text-title1 font-semibold text-balance text-foreground-1 @3xl/app-shell:text-large-title"
+                  >
+                    {t.hero.title}
+                  </H1>
+                  <p className="mt-4 max-w-xl text-body2 text-foreground-2 @3xl/app-shell:text-subtitle1 @3xl/app-shell:font-normal">
+                    {t.hero.lead}
+                  </p>
+                  <div className="mt-8 flex flex-wrap gap-3">
+                    <Button asChild appearance="primary" size="large">
+                      <SectionLink to="signup">
+                        {t.hero.primary}
+                        <ArrowRight20Regular aria-hidden className="rtl:-scale-x-100" />
+                      </SectionLink>
+                    </Button>
+                    <Button asChild size="large">
+                      <SectionLink to="pricing">{t.hero.secondary}</SectionLink>
+                    </Button>
+                  </div>
+                  <p className="mt-4 text-caption1 text-foreground-3">{t.hero.note}</p>
+                </div>
+                <ProductShot shot={t.hero.shot} />
+              </div>
+            </section>
+
+            <div className="px-4 pb-16">
+              <p className="mb-6 text-center text-body1 text-foreground-3">{t.logos.title}</p>
+              <LogoRow label={t.logos.title} />
+            </div>
+
+            {painted ? (
+              <React.Suspense fallback={belowTheFoldFallback}>
+                <BelowTheFold />
+              </React.Suspense>
+            ) : (
+              belowTheFoldFallback
+            )}
+          </Main>
+        </AppShellMain>
+
+        <AppShellFooter asChild className="px-4 py-10">
+          <Footer>
+            <div className="mx-auto flex max-w-6xl flex-col gap-6 @3xl/app-shell:flex-row @3xl/app-shell:items-start @3xl/app-shell:justify-between">
+              <div className="flex flex-col gap-2">
+                <span className="flex items-center gap-2 font-display text-subtitle2 font-semibold">
+                  <Logo />
+                  {t.product.name}
+                </span>
+                <p className="text-body1 text-foreground-2">{t.footer.tagline}</p>
+              </div>
+              <nav aria-label={t.nav.footer}>
+                <ul className="flex flex-wrap gap-x-6 gap-y-2">
+                  {(["features", "pricing", "faq", "signup"] as const).map((section) => (
+                    <li key={section}>
+                      <SectionLink to={section} className="rounded-small text-body1 text-foreground-2 hover:text-foreground-1 hover:underline">
+                        {labels[section]}
+                      </SectionLink>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
+            <p className="mx-auto mt-8 max-w-6xl text-caption1 text-foreground-3">
+              © {t.product.name} · {t.footer.sample} ·{" "}
+              <a href="https://trandat1114.github.io/Yugen-UI/" className="rounded-small text-link underline hover:text-link-hover">
+                {t.footer.madeWith}
+              </a>
+            </p>
+          </Footer>
+        </AppShellFooter>
+      </AppShell>
     </LandingContext.Provider>
   );
 }

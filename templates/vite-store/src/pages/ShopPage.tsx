@@ -120,7 +120,7 @@ export default function ShopPage({ query }: { query: ShopQuery }) {
         <p className="text-body1 text-foreground-3">{t.shop.lead}</p>
       </div>
 
-      <div className="grid gap-6 @3xl/app:grid-cols-[16rem_1fr] @3xl/app:items-start">
+      <div className="grid gap-6 @3xl/app-shell:grid-cols-[16rem_1fr] @3xl/app-shell:items-start">
         <Filters query={query} ceiling={ceiling} onChange={update} />
 
         <div className="flex min-w-0 flex-col gap-4">
@@ -147,7 +147,7 @@ export default function ShopPage({ query }: { query: ShopQuery }) {
           </div>
 
           {products.length > 0 ? (
-            <ul className="grid grid-cols-2 gap-3 @xl/app:grid-cols-3 @3xl/app:gap-4 @6xl/app:grid-cols-4">
+            <ul className="grid grid-cols-2 gap-3 @xl/app-shell:grid-cols-3 @3xl/app-shell:gap-4 @6xl/app-shell:grid-cols-4">
               {products.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}

@@ -11,10 +11,10 @@ export function SignUpSection() {
   const titleId = `${sectionId("signup")}-title`;
 
   return (
-    <section id={sectionId("signup")} aria-labelledby={titleId} className="scroll-mt-16 px-4 pb-16 @3xl/landing:pb-24">
-      <div className="mx-auto grid max-w-6xl gap-10 rounded-4xlarge bg-brand-background-2 p-6 @3xl/landing:p-10 @4xl/landing:grid-cols-2 @4xl/landing:p-14">
+    <section id={sectionId("signup")} aria-labelledby={titleId} className="scroll-mt-16 px-4 pb-16 @3xl/app-shell:pb-24">
+      <div className="mx-auto grid max-w-6xl gap-10 rounded-4xlarge bg-brand-background-2 p-6 @3xl/app-shell:p-10 @4xl/app-shell:grid-cols-2 @4xl/app-shell:p-14">
         <div>
-          <H2 id={titleId} className="font-display text-title2 font-semibold text-foreground-1 @3xl/landing:text-title1">
+          <H2 id={titleId} className="font-display text-title2 font-semibold text-foreground-1 @3xl/app-shell:text-title1">
             {t.signUp.title}
           </H2>
           <p className="mt-3 text-body2 text-foreground-2">{t.signUp.lead}</p>

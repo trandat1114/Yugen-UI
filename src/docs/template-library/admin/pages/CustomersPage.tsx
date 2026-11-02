@@ -294,7 +294,7 @@ export default function CustomersPage() {
               placeholder={c.searchPlaceholder}
               value={search}
               onValueChange={setSearch}
-              rootClassName="w-full @2xl/app:w-64"
+              rootClassName="w-full @2xl/app-shell:w-64"
             />
             <Field label={c.columns.status}>
               <Dropdown value={status} onValueChange={(v) => setStatus(v as CustomerStatus | "all")} className="w-40 min-w-0">

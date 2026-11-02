@@ -4,7 +4,7 @@ import type { ComponentDocEn } from "../../types";
 export const en: Record<string, ComponentDocEn> = {
   appshell: {
     description:
-      "AppShell places its parts on a grid: Sidebar on the start side, AppShellHeader on top, AppShellMain in the middle and AppShellAside on the end side; a part you leave out takes no space. From `breakpoint` up (a container query, so it follows the frame, not the screen) the sidebar sits in the layout and SidebarTrigger collapses it to an icon rail, with item names in Tooltips. Below it, the same content opens in a Drawer: following a link or choosing a Nav item closes it and focus returns to the button that opened it. Ctrl+B (⌘B) works like SidebarTrigger, except while typing in a field or composing with an IME; on a page with several AppShells (like this one) only the frame that has focus or was clicked last responds. `persistKey` saves the collapsed state (and width) in a cookie; the Drawer is never saved. With server rendering, read the cookie with `readAppShellCookie(cookieHeader, key)` and pass `defaultCollapsed` so nothing flashes. The demos below sit inside the docs page, so AppShellMain uses `asChild` with a `div` (a page has one `<main>`).",
+      "AppShell places its parts on a grid: Sidebar on the start side, AppShellHeader on top, AppShellMain in the middle and AppShellAside on the end side; a part you leave out takes no space. From `breakpoint` up (a container query, so it follows the frame, not the screen) the sidebar sits in the layout and SidebarTrigger collapses it to an icon rail, with item names in Tooltips. Below it, the same content opens in a Drawer: following a link or choosing a Nav item closes it and focus returns to the button that opened it. Ctrl+B (⌘B) works like SidebarTrigger, except while typing in a field or composing with an IME; on a page with several AppShells (like this one) only the frame that has focus or was clicked last responds. `persistKey` saves the collapsed state (and width) in a cookie; the Drawer is never saved. With server rendering, read the cookie with `readAppShellCookie(cookieHeader, key)` and pass `defaultCollapsed` so nothing flashes. AppShell is a container named `app-shell`: parts that follow the frame width use `@3xl/app-shell:…`. The top bar height is the `--app-shell-header` variable (3.5rem by default); SidebarHeader and the sticky parts follow it. SidebarTrigger has a Tooltip with its label and shortcut. The demos below sit inside the docs page, so AppShellMain uses `asChild` with a `div` (a page has one `<main>`).",
     examples: [
       {
         title: "Narrow frame",
@@ -16,8 +16,13 @@ export const en: Record<string, ComponentDocEn> = {
           "AppShellAside sits after the content and shows from the breakpoint up. On narrow frames, move its content to a Sheet or its own page.",
       },
       {
-        title: "Header only",
-        description: "No Sidebar: its column is 0 wide and AppShellHeader spans the full width.",
+        title: "Content page: the whole page scrolls",
+        description:
+          "No Sidebar, so its column is 0 wide. scroll=\"page\" suits content sites (blog, store, landing): the whole page scrolls, the top bar sticks and AppShellFooter sits at the end of the page. Inside an area that scrolls itself, like this frame, that area takes the place of the window.",
+      },
+      {
+        title: "Top bar across",
+        description: "layout=\"header\": the top bar (logo, search, account) spans the full width and the sidebar sits below it. Suits admin pages.",
       },
       {
         title: "Hidden sidebar & useAppShell",
@@ -37,6 +42,8 @@ export const en: Record<string, ComponentDocEn> = {
     ],
     props: {
       breakpoint: "Frame width (32 / 36 / 42 / 48 / 56 / 64rem) from which the sidebar sits in the layout; below it, a Drawer.",
+      layout: "sidebar: the sidebar runs the full height with the top bar beside it. header: the top bar spans the full width with the sidebar below it.",
+      scroll: "main: the frame is as tall as the screen and AppShellMain scrolls (apps). page: the whole page scrolls, the top bar and sidebar stick (content sites).",
       "collapsed / defaultCollapsed": "Sidebar collapsed on wide frames.",
       onCollapsedChange: "Called when the sidebar collapses or expands.",
       persistKey: "Cookie name for the collapsed state and width; a saved value wins over defaultCollapsed.",
@@ -47,7 +54,7 @@ export const en: Record<string, ComponentDocEn> = {
       "Sidebar.defaultWidth / minWidth / maxWidth": "Open width in px.",
       "Sidebar.label": "Name of the Drawer on narrow frames.",
       "SidebarGroup.label": "Group name; in the rail it is kept for screen readers only.",
-      "AppShellHeader / AppShellMain / AppShellAside.asChild": "Render the header / main / aside as the child element.",
+      "AppShellHeader / AppShellMain / AppShellAside / AppShellFooter.asChild": "Render the header / main / aside / footer as the child element.",
       "useAppShell()": "narrow, collapsed, setCollapsed, drawerOpen, setDrawerOpen, toggleSidebar, rail.",
       "readAppShellCookie(cookie, persistKey)": "Reads the saved state from document.cookie, or from the Cookie header when rendering on the server.",
     },
