@@ -10,11 +10,9 @@ const en: Content = {
   user: { name: "Alex Morgan", email: "alex@example.com", role: "Store owner" },
 
   nav: {
-    skip: "Skip to content",
     label: "Main",
     reports: "Reports",
     workspace: "Workspace",
-    open: "Open navigation",
     appearance: "Appearance",
     mode: "Mode",
     brand: "Brand",

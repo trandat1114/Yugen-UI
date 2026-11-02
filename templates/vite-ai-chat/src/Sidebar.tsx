@@ -1,6 +1,20 @@
 import * as React from "react";
 import { Compose20Regular, Delete20Regular, Edit20Regular, MoreHorizontal20Regular, Settings20Regular } from "@fluentui/react-icons";
-import { Button, Menu, MenuItem, MenuPopover, MenuTrigger, Nav, NavItem, NavSectionHeader } from "yugen-ui";
+import {
+  Button,
+  Menu,
+  MenuItem,
+  MenuPopover,
+  MenuTrigger,
+  Nav,
+  NavItem,
+  NavSectionHeader,
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+} from "yugen-ui";
+import { Logo } from "./Brand";
 import { groupConversations, type Conversation } from "./conversations";
 import type { Content } from "./content/types";
 import { Link, useRouter } from "./router";
@@ -37,16 +51,17 @@ export function ConversationMenu({
   );
 }
 
-export interface SidebarProps extends ConversationActions {
+export interface ChatSidebarProps extends ConversationActions {
   t: Content;
   conversations: Conversation[];
   streaming: ReadonlySet<string>;
-  /** Called after any link in the sidebar is followed (closes the Drawer). */
-  onNavigate: () => void;
 }
 
-/** New chat, conversations grouped by date, and Settings. Same content in the wide sidebar and the Drawer. */
-export function Sidebar({ t, conversations, streaming, onNavigate, onRename, onDelete }: SidebarProps) {
+/**
+ * New chat, conversations grouped by date, and Settings. Hidden completely when collapsed (titles have no icons for a
+ * rail); on narrow screens the same content opens in a Drawer that closes when a link is followed.
+ */
+export function ChatSidebar({ t, conversations, streaming, onRename, onDelete }: ChatSidebarProps) {
   const { route } = useRouter();
   const selected = route.name === "chat" ? route.id : undefined;
   // Date groups need the current time; it only has to be right to the day.
@@ -54,17 +69,21 @@ export function Sidebar({ t, conversations, streaming, onNavigate, onRename, onD
   const groups = groupConversations(conversations, now);
 
   return (
-    <div className="flex h-full min-h-0 flex-col">
+    <Sidebar collapsible="offcanvas" defaultWidth={272} label={t.appName}>
+      <SidebarHeader>
+        <Logo />
+        <span className="truncate text-body1 font-semibold">{t.appName}</span>
+      </SidebarHeader>
       <div className="p-3">
         <Button asChild className="w-full justify-start">
-          <Link to={{ name: "new" }} onClick={onNavigate} aria-current={route.name === "new" ? "page" : undefined}>
+          <Link to={{ name: "new" }} aria-current={route.name === "new" ? "page" : undefined}>
             <Compose20Regular aria-hidden />
             {t.nav.newChat}
           </Link>
         </Button>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-2 pb-3">
+      <SidebarContent className="pt-0">
         <Nav aria-label={t.nav.label} selectedValue={selected}>
           {groups.map((group) => (
             <React.Fragment key={group.key}>
@@ -72,7 +91,7 @@ export function Sidebar({ t, conversations, streaming, onNavigate, onRename, onD
               {group.items.map((c) => (
                 <div key={c.id} className="group/row relative">
                   <NavItem value={c.id} asChild className="pe-10">
-                    <Link to={{ name: "chat", id: c.id }} onClick={onNavigate}>
+                    <Link to={{ name: "chat", id: c.id }}>
                       <span className="min-w-0 flex-1 truncate">{c.title}</span>
                       {streaming.has(c.id) && (
                         <>
@@ -97,16 +116,16 @@ export function Sidebar({ t, conversations, streaming, onNavigate, onRename, onD
           ))}
         </Nav>
         {groups.length === 0 && <p className="px-3 py-2 text-caption1 text-foreground-3">{t.nav.empty}</p>}
-      </div>
+      </SidebarContent>
 
-      <div className="border-t border-stroke-2 p-2">
+      <SidebarFooter>
         <Button asChild appearance="subtle" className="w-full justify-start">
-          <Link to={{ name: "settings" }} onClick={onNavigate} aria-current={route.name === "settings" ? "page" : undefined}>
+          <Link to={{ name: "settings" }} aria-current={route.name === "settings" ? "page" : undefined}>
             <Settings20Regular aria-hidden />
             {t.nav.settings}
           </Link>
         </Button>
-      </div>
-    </div>
+      </SidebarFooter>
+    </Sidebar>
   );
 }

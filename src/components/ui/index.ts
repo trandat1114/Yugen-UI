@@ -91,6 +91,7 @@ export * from "./TeachingPopover/TeachingPopover";
 export * from "./Tooltip/Tooltip";
 
 // Bố cục
+export * from "./AppShell/AppShell";
 export * from "./Accordion/Accordion";
 export * from "./Collapsible/Collapsible";
 export * from "./Divider/Divider";

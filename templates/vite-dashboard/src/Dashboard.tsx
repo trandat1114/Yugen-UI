@@ -3,7 +3,6 @@ import {
   Accessibility20Regular,
   Board20Regular,
   Money20Regular,
-  Navigation20Regular,
   People20Regular,
   Settings20Regular,
   SignOut20Regular,
@@ -11,15 +10,13 @@ import {
   WeatherSunny20Regular,
 } from "@fluentui/react-icons";
 import {
+  AppShell,
+  AppShellHeader,
+  AppShellMain,
   Avatar,
   Button,
   DateRangePicker,
   DEFAULT_RANGE_PRESETS,
-  Drawer,
-  DrawerBody,
-  DrawerHeader,
-  DrawerHeaderTitle,
-  DrawerSurface,
   Menu,
   MenuDivider,
   MenuGroupHeader,
@@ -34,6 +31,10 @@ import {
   PageProgressFallback,
   Persona,
   SearchBox,
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarTrigger,
   Skeleton,
   SkeletonItem,
   toast,
@@ -92,26 +93,36 @@ function Logo() {
   );
 }
 
-function Sidebar({ onNavigate }: { onNavigate: () => void }) {
+/** Collapses to icons on wide screens and opens as a Drawer on narrow ones (following a link closes it). */
+function AppSidebar() {
   const { content: t } = useDashboard();
   const { route } = useRouter();
   const item = (id: PageId) => (
-    <NavItem key={id} value={id} asChild>
-      <Link to={id} onClick={onNavigate} onPointerEnter={() => void loaders[id]()} onFocus={() => void loaders[id]()}>
+    <NavItem key={id} value={id} asChild tooltip={t.pages[id].label}>
+      <Link to={id} onPointerEnter={() => void loaders[id]()} onFocus={() => void loaders[id]()}>
         {ICONS[id]}
         <span className="min-w-0 flex-1 truncate">{t.pages[id].label}</span>
       </Link>
     </NavItem>
   );
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto px-2 py-3">
-      <Nav selectedValue={route === "notFound" ? undefined : route} aria-label={t.nav.label}>
-        <NavSectionHeader>{t.nav.reports}</NavSectionHeader>
-        {(["overview", "revenue", "customers"] as const).map(item)}
-        <NavSectionHeader>{t.nav.workspace}</NavSectionHeader>
-        {item("settings")}
-      </Nav>
-    </div>
+    <Sidebar defaultWidth={240} label={t.appName}>
+      <SidebarHeader>
+        <Logo />
+        <div className="min-w-0 in-data-rail:hidden">
+          <p className="truncate text-body1 font-semibold">{t.appName}</p>
+          <p className="truncate text-caption1 text-foreground-3">{t.storeName}</p>
+        </div>
+      </SidebarHeader>
+      <SidebarContent>
+        <Nav selectedValue={route === "notFound" ? undefined : route} aria-label={t.nav.label}>
+          <NavSectionHeader>{t.nav.reports}</NavSectionHeader>
+          {(["overview", "revenue", "customers"] as const).map(item)}
+          <NavSectionHeader>{t.nav.workspace}</NavSectionHeader>
+          {item("settings")}
+        </Nav>
+      </SidebarContent>
+    </Sidebar>
   );
 }
 
@@ -234,8 +245,7 @@ export function Dashboard({ content: t, appearance, onAppearanceChange, embedded
   const [range, setRange] = React.useState<DateRange>(() => lastDays(30));
   const [query, setQuery] = React.useState("");
   const [mock, setMock] = React.useState<MockOptions>(DEFAULT_MOCK_OPTIONS);
-  const [navOpen, setNavOpen] = React.useState(false);
-  const scrollRef = React.useRef<HTMLDivElement>(null);
+  const scrollRef = React.useRef<HTMLElement>(null);
   const api = React.useMemo(() => createMockApi(t.mock, mock), [t.mock, mock]);
 
   const value = React.useMemo<DashboardValue>(
@@ -272,53 +282,35 @@ export function Dashboard({ content: t, appearance, onAppearanceChange, embedded
 
   return (
     <DashboardContext.Provider value={value}>
-      <div className={`@container flex bg-background-2 text-foreground-1 ${embedded ? "h-full" : "h-dvh"}`}>
-        {!embedded && (
-          <a
-            href="#content"
-            className="sr-only rounded-medium bg-background-1 px-3 py-2 text-body1 font-semibold shadow-8 focus:not-sr-only focus:fixed focus:inset-s-2 focus:top-2 focus:z-50"
-          >
-            {t.nav.skip}
-          </a>
-        )}
+      <AppShell
+        // Embedded: fills the preview, no global shortcut or skip link, sidebar state not saved.
+        className={embedded ? "h-full" : undefined}
+        persistKey={embedded ? undefined : "dashboard-sidebar"}
+        shortcut={embedded ? false : undefined}
+        skipLink={!embedded}
+      >
+        <AppSidebar />
 
-        <div className="hidden w-60 shrink-0 flex-col border-e border-stroke-2 bg-background-1 @4xl:flex">
-          <div className="flex h-14 shrink-0 items-center gap-2 border-b border-stroke-2 px-4">
-            <Logo />
-            <div className="min-w-0">
-              <p className="truncate text-body1 font-semibold">{t.appName}</p>
-              <p className="truncate text-caption1 text-foreground-3">{t.storeName}</p>
-            </div>
+        <AppShellHeader>
+          <SidebarTrigger />
+          <form
+            role="search"
+            className="min-w-0 flex-1 @lg:max-w-80"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (route !== "customers") navigate("customers");
+            }}
+          >
+            <SearchBox aria-label={t.search.label} placeholder={t.search.placeholder} value={query} onValueChange={setQuery} />
+          </form>
+          <div className="ms-auto flex shrink-0 items-center gap-1">
+            <ThemeMenu />
+            <UserMenu />
           </div>
-          <Sidebar onNavigate={() => setNavOpen(false)} />
-        </div>
+        </AppShellHeader>
 
-        <div className="flex min-w-0 flex-1 flex-col">
-          <header className="flex h-14 shrink-0 items-center gap-2 border-b border-stroke-2 bg-background-1 px-3 @lg:px-4">
-            <Button appearance="subtle" icon={<Navigation20Regular />} aria-label={t.nav.open} className="@4xl:hidden" onClick={() => setNavOpen(true)} />
-            <form
-              role="search"
-              className="min-w-0 flex-1 @lg:max-w-80"
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (route !== "customers") navigate("customers");
-              }}
-            >
-              <SearchBox aria-label={t.search.label} placeholder={t.search.placeholder} value={query} onValueChange={setQuery} />
-            </form>
-            <div className="ms-auto flex shrink-0 items-center gap-1">
-              <ThemeMenu />
-              <UserMenu />
-            </div>
-          </header>
-
-          <Main
-            ref={scrollRef}
-            id={embedded ? undefined : "content"}
-            tabIndex={embedded ? undefined : -1}
-            aria-label={embedded ? t.appName : undefined}
-            className="@container min-h-0 flex-1 overflow-y-auto outline-none"
-          >
+        <AppShellMain asChild ref={scrollRef} className="@container">
+          <Main aria-label={embedded ? t.appName : undefined}>
             <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 p-4 @3xl:p-6">
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div className="min-w-0">
@@ -346,20 +338,8 @@ export function Dashboard({ content: t, appearance, onAppearanceChange, embedded
               )}
             </div>
           </Main>
-        </div>
-
-        <Drawer open={navOpen} onOpenChange={setNavOpen}>
-          <DrawerSurface position="start" size="small" aria-describedby={undefined} className="flex flex-col p-0">
-            <DrawerHeader className="flex-row items-center gap-2 border-b border-stroke-2 px-4 py-3">
-              <Logo />
-              <DrawerHeaderTitle>{t.appName}</DrawerHeaderTitle>
-            </DrawerHeader>
-            <DrawerBody className="flex min-h-0 flex-1 flex-col p-0">
-              <Sidebar onNavigate={() => setNavOpen(false)} />
-            </DrawerBody>
-          </DrawerSurface>
-        </Drawer>
-      </div>
+        </AppShellMain>
+      </AppShell>
     </DashboardContext.Provider>
   );
 }

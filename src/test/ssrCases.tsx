@@ -17,6 +17,16 @@ import {
 import {
   Accordion,
   AccordionHeader,
+  AppShell,
+  AppShellAside,
+  AppShellHeader,
+  AppShellMain,
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarRail,
+  SidebarTrigger,
   AccordionItem,
   AccordionPanel,
   AreaChart,
@@ -446,6 +456,35 @@ export const SSR_CASES: SsrCase[] = [
           </NavItem>
         </Nav>
       </div>
+    ),
+  },
+  {
+    name: "AppShell / Sidebar (rail)",
+    render: () => (
+      <AppShell defaultCollapsed className="h-96" shortcut={false}>
+        <Sidebar resizable>
+          <SidebarHeader>Yugen</SidebarHeader>
+          <SidebarContent>
+            <Nav defaultSelectedValue="home" aria-label="Ứng dụng">
+              <NavItem value="home" icon={<Home20Regular />}>
+                Trang chủ
+              </NavItem>
+              <NavItem value="mail" icon={<Mail20Regular />}>
+                Thư
+              </NavItem>
+            </Nav>
+          </SidebarContent>
+          <SidebarFooter>An</SidebarFooter>
+          <SidebarRail />
+        </Sidebar>
+        <AppShellHeader>
+          <SidebarTrigger />
+        </AppShellHeader>
+        <AppShellMain asChild>
+          <div>Nội dung</div>
+        </AppShellMain>
+        <AppShellAside>Chi tiết</AppShellAside>
+      </AppShell>
     ),
   },
   {

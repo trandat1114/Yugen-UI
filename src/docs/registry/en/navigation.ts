@@ -332,8 +332,8 @@ export const en: Record<string, ComponentDocEn> = {
       multiple: "Allows several categories to be open at once.",
       density: "Item height 40 / 32px.",
       material: "Yugen Labs — a floating glass sidebar (rounded corners, padding, shadow).",
-      "NavItem.value / icon / href / asChild":
-        "With href it renders an <a>; asChild for router links.",
+      "NavItem.value / icon / href / asChild / tooltip":
+        "With href it renders an <a>; asChild for router links; tooltip is the label shown when an AppShell sidebar is collapsed to icons (defaults to the item text).",
       "NavCategory.value": "Group key (used in openCategories).",
     },
   },

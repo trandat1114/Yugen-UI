@@ -5,6 +5,7 @@ import {
   reasoningMessagesEn,
   streamingMarkdownMessagesEn,
 } from "./AIKit/messages";
+import { appShellMessagesEn } from "./AppShell/messages";
 import { autocompleteMessagesEn } from "./Autocomplete/messages";
 import { avatarGroupMessagesEn } from "./AvatarGroup/messages";
 import { breadcrumbMessagesEn } from "./Breadcrumb/messages";
@@ -73,6 +74,7 @@ import { traceMessagesEn } from "./Trace/messages";
  * Kiểu `YugenMessages` đầy đủ: component mới thêm namespace mà quên bản tiếng Anh ở đây thì typecheck báo lỗi.
  */
 export const messagesEn: YugenMessages = {
+  appShell: appShellMessagesEn,
   asyncContent: asyncContentMessagesEn,
   autocomplete: autocompleteMessagesEn,
   avatarGroup: avatarGroupMessagesEn,

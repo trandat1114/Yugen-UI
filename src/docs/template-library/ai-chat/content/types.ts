@@ -45,7 +45,6 @@ export interface Content {
   assistantName: string;
   you: string;
   nav: {
-    open: string;
     label: string;
     newChat: string;
     settings: string;

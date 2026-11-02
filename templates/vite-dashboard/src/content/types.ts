@@ -19,11 +19,9 @@ export interface Content {
   user: { name: string; email: string; role: string };
 
   nav: {
-    skip: string;
     label: string;
     reports: string;
     workspace: string;
-    open: string;
     appearance: string;
     mode: string;
     brand: string;

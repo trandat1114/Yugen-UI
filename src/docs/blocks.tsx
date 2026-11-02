@@ -164,7 +164,7 @@ export function ExampleTile({ example, demoLang }: { example: Example; demoLang?
   const { t } = useLocale();
 
   return (
-    <div className="flex min-w-0 flex-col">
+    <div className={cn("flex min-w-0 flex-col", example.wide && "md:col-span-2")}>
       <div
         lang={demoLang}
         className="group/tile relative flex min-h-56 flex-wrap content-center items-center justify-center gap-3 rounded-3xlarge border border-stroke-2 bg-background-3 p-5"

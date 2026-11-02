@@ -27,7 +27,6 @@ const vi: Content = {
     storageLabel: "Dung lượng đã dùng",
     upgrade: "Nâng cấp lên Business",
     upgradeToast: { title: "Nâng cấp gói", body: "Nối nút này với trang thanh toán của bạn." },
-    openNav: "Mở điều hướng",
     breadcrumb: "Vị trí",
     search: "Tìm kiếm…",
     searchLabel: "Tìm kiếm (Ctrl K)",
