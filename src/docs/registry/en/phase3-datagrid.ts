@@ -4,7 +4,7 @@ import type { ComponentDocEn } from "../../types";
 export const en: Record<string, ComponentDocEn> = {
   datagrid: {
     description:
-      'The equivalent of Fluent 2\'s DataGrid. Define columns with createColumn<T>() (label, renderCell, compare, width…) and pass items + getRowId. The grid has role="grid" with correct aria-rowcount / aria-rowindex even when virtualized, and a single tab stop (roving tabindex): the arrow keys move cell by cell (left / right swap in RTL), plus Home / End, Ctrl + Home / End and PageUp / PageDown. Space selects a row; Shift + arrow or Shift + click selects a range. People choose which columns to show with DataGridColumnPicker (hiddenColumns). The header is sticky. loading shows a skeleton following Wait UX (useSpinDelay), and a grid with no rows shows Empty. The logic is reusable through useDataGridSort, useDataGridSelection, useDataGridColumnVisibility and the pure functions sortItems and getVisibleColumns.',
+      'The equivalent of Fluent 2\'s DataGrid. Define columns with createColumn<T>() (label, renderCell, compare, width…) and pass items + getRowId. The grid has role="grid" with correct aria-rowcount / aria-rowindex even when virtualized, and a single tab stop (roving tabindex): the arrow keys move cell by cell (left / right swap in RTL), plus Home / End, Ctrl + Home / End and PageUp / PageDown. Space selects a row; Shift + arrow or Shift + click selects a range. People choose which columns to show, and their order, with DataGridColumnPicker (hiddenColumns, columnOrder). The header is sticky. loading shows a skeleton following Wait UX (useSpinDelay), and a grid with no rows shows Empty. The logic is reusable through useDataGridSort, useDataGridSelection, useDataGridColumnVisibility and the pure functions sortItems, getVisibleColumns and getOrderedColumns.',
     examples: [
       {
         title: "Sorting (controlled)",
@@ -17,9 +17,9 @@ export const en: Record<string, ComponentDocEn> = {
           "selectedItems / onSelectionChange is a Set<string> of ids. The header checkbox has an indeterminate state.",
       },
       {
-        title: "Choosing columns",
+        title: "Choosing and ordering columns",
         description:
-          "DataGridColumnPicker and DataGrid share hiddenColumns, and the choice is saved to localStorage. The menu stays open while you check columns; the hideable: false column (Customer) and the last visible column can't be unchecked. Hiding the sorted column keeps the row order, and the menu still shows the arrow on that column.",
+          "DataGridColumnPicker and DataGrid share hiddenColumns and columnOrder, both saved to localStorage. The menu stays open while you check columns; the hideable: false column (Customer) and the last visible column can't be unchecked. Drag an item in the menu (or press Alt + ↑ ↓) to change the column order; the grid follows right away. Hiding the sorted column keeps the row order, and the menu still shows the arrow on that column.",
       },
       {
         title: "Column resizing, pinned first column",
@@ -57,6 +57,7 @@ export const en: Record<string, ComponentDocEn> = {
         "Data in its original order; T is inferred for columns and getRowId.",
       columns:
         "Created with createColumn<T>({ columnId, label?, renderHeaderCell?, renderCell, compare?, width?, minWidth?, maxWidth?, resizable?, align?, sticky?, hideable? }). label is the plain-text header and the name in DataGridColumnPicker; use renderHeaderCell when the header needs more than text.",
+      columnOrder: "Display order of the columns (column ids). Columns missing from the array come after, in columns order; unknown ids are ignored.",
       hiddenColumns:
         "Ids of the columns not shown. A hideable: false column is always shown; hiding every column keeps the first one. A hidden column keeps its resized width and still sorts the rows if it is the sort column; focus moves to the next column when the focused one is hidden.",
       getRowId: "Stable row id (key, selection).",
@@ -93,12 +94,15 @@ export const en: Record<string, ComponentDocEn> = {
       "DataGridColumnPicker.columns":
         "The same column array passed to DataGrid; for Table, an array of { columnId, label }. The menu shows label.",
       "DataGridColumnPicker.hiddenColumns": "Ids of the hidden columns, the same value passed to DataGrid.",
+      "DataGridColumnPicker.columnOrder": "Column order, the same value passed to DataGrid.",
+      "DataGridColumnPicker.onColumnOrderChange":
+        "When set, menu items can be dragged (or moved with Alt + ↑ ↓) to change the column order. Also called during the drag so the grid follows.",
       "DataGridColumnPicker.onHiddenColumnsChange":
         "Called when a column is checked / unchecked or Show all columns is chosen. Ids of columns that are not in columns right now are kept, so they can be saved.",
       "DataGridColumnPicker.sortState": "The sorted column shows an arrow in the menu, even while hidden.",
       "DataGridColumnPicker.align":
         "Menu alignment relative to the button. Inside a Toolbar, the button takes the Toolbar size and the subtle appearance.",
-      "useDataGridSort / useDataGridSelection / useDataGridColumnVisibility / sortItems / getVisibleColumns":
+      "useDataGridSort / useDataGridSelection / useDataGridColumnVisibility / sortItems / getVisibleColumns / getOrderedColumns":
         "Logic you can use on its own, for example for server-side sorting, to drive the selection from a toolbar, or to build your own column picker.",
     },
   },

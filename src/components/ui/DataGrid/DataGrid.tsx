@@ -10,6 +10,7 @@ import { SkeletonItem } from "../Skeleton/Skeleton";
 import { useYugenMessages } from "../YugenProvider/context";
 import { dataGridMessages } from "./messages";
 import {
+  getOrderedColumns,
   getVisibleColumns,
   useDataGridSelection,
   useDataGridSort,
@@ -86,6 +87,11 @@ export interface DataGridProps<T> extends Omit<React.HTMLAttributes<HTMLDivEleme
    * Cột ẩn vẫn giữ độ rộng đã kéo và vẫn là cột sắp xếp nếu đang được sắp xếp.
    */
   hiddenColumns?: ReadonlySet<string>;
+  /**
+   * Thứ tự hiển thị của cột (id cột, thường từ DataGridColumnPicker). Cột không có trong mảng đứng sau, theo thứ tự
+   * `columns`. Bỏ trống: thứ tự `columns`.
+   */
+  columnOrder?: readonly string[];
   /** Id ổn định của một hàng — dùng cho key, lựa chọn và chọn theo khoảng. */
   getRowId: (item: T) => string;
   /** Mật độ hàng: small 34px · medium 44px · large 56px. */
@@ -481,6 +487,7 @@ function DataGridImpl<T>(
     items,
     columns: allColumns,
     hiddenColumns,
+    columnOrder,
     getRowId,
     size = "medium",
     sortable = false,
@@ -548,7 +555,7 @@ function DataGridImpl<T>(
   const lead = hasSelection ? 1 : 0;
   // Cột ẩn không render; aria-colcount / aria-colindex chỉ đếm cột đang hiện. hiddenColumns hay được viết inline (Set mới
   // mỗi render): chỉ đổi mảng cột khi danh sách cột hiện thật sự đổi, để các hàng (React.memo) không render lại.
-  const visible = getVisibleColumns(allColumns, hiddenColumns);
+  const visible = getVisibleColumns(getOrderedColumns(allColumns, columnOrder), hiddenColumns);
   const visibleKey = visible === allColumns ? "" : visible.map((c) => c.columnId).join("\u0000");
   const columns = React.useMemo(() => visible, [allColumns, visibleKey]);
   const colCount = columns.length + lead;

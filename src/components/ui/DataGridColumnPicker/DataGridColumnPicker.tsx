@@ -1,22 +1,31 @@
 import * as React from "react";
-import { ArrowSortDown20Regular, ArrowSortUp20Regular, ColumnTriple20Regular } from "@fluentui/react-icons";
+import {
+  ArrowSortDown20Regular,
+  ArrowSortUp20Regular,
+  ColumnTriple20Regular,
+  ReOrderDotsVertical16Regular,
+} from "@fluentui/react-icons";
 import { CounterBadge } from "../CounterBadge/CounterBadge";
 import { dataGridMessages } from "../DataGrid/messages";
 import {
+  getOrderedColumns,
   useDataGridColumnVisibility,
+  type DataGridColumnOrderData,
   type DataGridColumnVisibilityData,
   type DataGridColumnVisibilityItem,
   type DataGridSortState,
 } from "../DataGrid/useDataGrid";
 import { MenuDivider, MenuItem, MenuItemCheckbox } from "../Menu/Menu";
 import { MenuButton, type MenuButtonProps } from "../MenuButton/MenuButton";
+import { Sortable, SortableItem } from "../Sortable/Sortable";
 import { ToolbarContext } from "../Toolbar/context";
 import { useYugenMessages } from "../YugenProvider/context";
 
 /**
  * Nút "Cột" mở danh sách cột để người dùng chọn cột hiển thị. Đặt trên toolbar của DataGrid (hoặc Table) và dùng chung
  * `hiddenColumns` với lưới. Menu không đóng khi tích từng cột; cột `hideable: false` và cột hiện cuối cùng bị khoá.
- * Nằm trong Toolbar thì tự thành mục của Toolbar (phím mũi tên, size, appearance subtle).
+ * Nằm trong Toolbar thì tự thành mục của Toolbar (phím mũi tên, size, appearance subtle). Có `onColumnOrderChange` thì kéo
+ * mục (hoặc Alt + ↑ ↓) để đổi thứ tự cột.
  */
 
 export interface DataGridColumnPickerProps<C extends DataGridColumnVisibilityItem>
@@ -26,6 +35,10 @@ export interface DataGridColumnPickerProps<C extends DataGridColumnVisibilityIte
   /** Id các cột đang ẩn — cùng giá trị truyền cho DataGrid. */
   hiddenColumns: ReadonlySet<string>;
   onHiddenColumnsChange: (event: React.SyntheticEvent | undefined, data: DataGridColumnVisibilityData) => void;
+  /** Thứ tự cột — cùng giá trị truyền cho DataGrid. */
+  columnOrder?: readonly string[];
+  /** Có thì mục trong menu kéo được (hoặc Alt + ↑ ↓) để đổi thứ tự cột; gọi cả trong lúc kéo để lưới đổi theo. */
+  onColumnOrderChange?: (event: React.SyntheticEvent | undefined, data: DataGridColumnOrderData) => void;
   /** Trạng thái sắp xếp của lưới: cột đang sắp xếp có mũi tên trong menu, kể cả khi đang ẩn. */
   sortState?: DataGridSortState;
   /** Nhãn nút. Mặc định `messages.dataGrid.columns` ("Cột"). */
@@ -40,6 +53,8 @@ function DataGridColumnPickerImpl<C extends DataGridColumnVisibilityItem>(
     columns,
     hiddenColumns,
     onHiddenColumnsChange,
+    columnOrder,
+    onColumnOrderChange,
     sortState,
     children,
     icon,
@@ -54,32 +69,59 @@ function DataGridColumnPickerImpl<C extends DataGridColumnVisibilityItem>(
   const msg = useYugenMessages("dataGrid", dataGridMessages);
   const toolbar = React.useContext(ToolbarContext);
   const countId = React.useId();
-  const visibility = useDataGridColumnVisibility({ columns, hiddenColumns, onHiddenColumnsChange });
+  const ordered = getOrderedColumns(columns, columnOrder);
+  const visibility = useDataGridColumnVisibility({ columns: ordered, hiddenColumns, onHiddenColumnsChange });
   const hiddenCount = columns.length - visibility.visibleColumns.length;
+
+  const columnItem = (column: C) => {
+    const label = column.label ?? column.columnId;
+    const direction = sortState?.sortColumn === column.columnId ? sortState.sortDirection : undefined;
+    const SortIcon = direction === "ascending" ? ArrowSortUp20Regular : ArrowSortDown20Regular;
+    return (
+      <MenuItemCheckbox
+        key={column.columnId}
+        checked={visibility.isColumnVisible(column.columnId)}
+        disabled={!visibility.canToggleColumn(column.columnId)}
+        onSelect={keepOpen}
+        onClick={(event) => visibility.toggleColumn(event, column.columnId)}
+        // Tên ghép rõ ràng: trình duyệt không chắc chèn khoảng trắng giữa chữ và phần đọc riêng cho trình đọc màn hình.
+        aria-label={
+          direction && `${label} ${direction === "ascending" ? msg.sortAscending : msg.sortDescending}`
+        }
+        icon={onColumnOrderChange && <ReOrderDotsVertical16Regular aria-hidden className="size-4! shrink-0 text-foreground-3" />}
+        secondaryContent={direction && <SortIcon aria-hidden className="size-4!" />}
+      >
+        {label}
+      </MenuItemCheckbox>
+    );
+  };
 
   const menu = (
     <>
-      {columns.map((column) => {
-        const label = column.label ?? column.columnId;
-        const direction = sortState?.sortColumn === column.columnId ? sortState.sortDirection : undefined;
-        const SortIcon = direction === "ascending" ? ArrowSortUp20Regular : ArrowSortDown20Regular;
-        return (
-          <MenuItemCheckbox
-            key={column.columnId}
-            checked={visibility.isColumnVisible(column.columnId)}
-            disabled={!visibility.canToggleColumn(column.columnId)}
-            onSelect={keepOpen}
-            onClick={(event) => visibility.toggleColumn(event, column.columnId)}
-            // Tên ghép rõ ràng: trình duyệt không chắc chèn khoảng trắng giữa chữ và phần đọc riêng cho trình đọc màn hình.
-            aria-label={
-              direction && `${label} ${direction === "ascending" ? msg.sortAscending : msg.sortDescending}`
-            }
-            secondaryContent={direction && <SortIcon aria-hidden className="size-4!" />}
-          >
-            {label}
-          </MenuItemCheckbox>
-        );
-      })}
+      {onColumnOrderChange ? (
+        // Cả mục là tay nắm (Space đã dùng để tích cột); bàn phím: Alt + ↑ ↓.
+        <Sortable
+          role="group"
+          aria-label={typeof children === "string" ? children : msg.columns}
+          value={ordered.map((c) => c.columnId)}
+          onValueChange={(order) => onColumnOrderChange(undefined, { columnOrder: order })}
+        >
+          {ordered.map((column) => (
+            <SortableItem
+              key={column.columnId}
+              value={column.columnId}
+              label={column.label ?? column.columnId}
+              asChild
+              handle
+              shortcuts
+            >
+              {columnItem(column)}
+            </SortableItem>
+          ))}
+        </Sortable>
+      ) : (
+        ordered.map(columnItem)
+      )}
       <MenuDivider />
       <MenuItem disabled={hiddenCount === 0} onSelect={keepOpen} onClick={visibility.showAllColumns}>
         {msg.showAllColumns}

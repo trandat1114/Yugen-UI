@@ -14,6 +14,7 @@ const en: Content = {
     label: "Main",
     customers: "Customers",
     orders: "Orders",
+    board: "Board",
     settings: "Settings",
     account: "Account",
     signOut: "Sign out",
@@ -94,6 +95,12 @@ const en: Content = {
     ofCustomerDescription: "Newest first. Refunded orders don't count toward the total.",
     noMatch: "No order matches",
     empty: "No orders yet",
+  },
+  board: {
+    title: "Board",
+    description: "The team's work. Drag a card, or focus its handle and press Space, to move it; the order is saved when you drop it.",
+    columns: { todo: "To do", doing: "In progress", done: "Done" },
+    moveFailed: (task) => `Couldn't move "${task}"`,
   },
   form: {
     createTitle: "New customer",
@@ -193,6 +200,18 @@ const en: Content = {
     familyFirst: false,
     companies: ["Northwind", "Lumen Labs", "Brightline", "Harbor & Co", "Kite Studio", "Pinecrest", "Orbital", "Fieldwork", "Copperleaf", "Tidewater"],
     phonePrefix: "+1 555",
+    tasks: [
+      "Call back {customer} about the invoice",
+      "Refund the damaged order of {customer}",
+      "Check stock before the sale",
+      "Answer last week's reviews",
+      "Set up the Business plan for {customer}",
+      "Update shipping rates",
+      "Onboard {customer}",
+      "Write the holiday newsletter",
+      "Fix the address of {customer}",
+      "Close the October books",
+    ],
   },
 };
 

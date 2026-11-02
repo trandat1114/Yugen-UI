@@ -1,5 +1,5 @@
 import type { YugenMessagesInput, YugenTheme } from "@/components/ui";
-import type { CustomerStatus, MockLabels, OrderStatus, Plan } from "../api";
+import type { CustomerStatus, MockLabels, OrderStatus, Plan, TaskStatus } from "../api";
 
 /** Every string in the app. One file per language; `content/index.ts` picks the one the app uses. */
 export interface Content {
@@ -18,6 +18,7 @@ export interface Content {
     label: string;
     customers: string;
     orders: string;
+    board: string;
     settings: string;
     account: string;
     signOut: string;
@@ -89,6 +90,12 @@ export interface Content {
     ofCustomerDescription: string;
     noMatch: string;
     empty: string;
+  };
+  board: {
+    title: string;
+    description: string;
+    columns: Record<TaskStatus, string>;
+    moveFailed: (task: string) => string;
   };
   form: {
     createTitle: string;

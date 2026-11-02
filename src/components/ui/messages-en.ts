@@ -54,6 +54,7 @@ import { searchBoxMessagesEn } from "./SearchBox/messages";
 import { sheetMessagesEn } from "./Sheet/messages";
 import { skeletonMessagesEn } from "./Skeleton/messages";
 import { sonnerMessagesEn } from "./Sonner/messages";
+import { sortableMessagesEn } from "./Sortable/messages";
 import { spinButtonMessagesEn } from "./SpinButton/messages";
 import { spinnerMessagesEn } from "./Spinner/messages";
 import { statMessagesEn } from "./Stat/messages";
@@ -120,6 +121,7 @@ export const messagesEn: YugenMessages = {
   sheet: sheetMessagesEn,
   skeleton: skeletonMessagesEn,
   sonner: sonnerMessagesEn,
+  sortable: sortableMessagesEn,
   spinButton: spinButtonMessagesEn,
   spinner: spinnerMessagesEn,
   splitButton: splitButtonMessagesEn,
