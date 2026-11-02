@@ -240,7 +240,7 @@ function EnsoFrame({ p, n, reduced, failed, text }: FrameProps) {
         <InkEnso p={p} reduced={reduced} className="w-[24cqmin]" />
         <Label failed={failed} reduced={reduced} text={text} />
       </div>
-      {!failed && <Numeral n={n} className="absolute inset-s-[5cqmin] bottom-[4cqmin] text-[20cqmin]" />}
+      {!failed && <Numeral n={n} className="absolute inset-s-[5cqmin] bottom-[4cqmin] text-[20cqmin] leading-[1.2]" />}
     </div>
   );
 }
@@ -280,7 +280,7 @@ function BloomFrame({ p, n, reduced, failed, text }: FrameProps) {
         </svg>
         <Label failed={failed} reduced={reduced} text={text} />
       </div>
-      {!failed && <Numeral n={n} className="absolute inset-s-[5cqmin] bottom-[4cqmin] text-[14cqmin]" />}
+      {!failed && <Numeral n={n} className="absolute inset-s-[5cqmin] bottom-[4cqmin] text-[14cqmin] leading-[1.2]" />}
     </div>
   );
 }
