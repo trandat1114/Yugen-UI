@@ -11,6 +11,11 @@ export const en: Record<string, ComponentDocEn> = {
         description: "Below the breakpoint, SidebarTrigger opens the sidebar in a Drawer. Choosing an item closes it.",
       },
       {
+        title: "Changing the breakpoint",
+        description:
+          "breakpoint=\"2xl\" (42rem). The breakpoint is measured against the AppShell's own width, not the screen: drag the frame's bottom corner to try it. Crossing it while the Drawer is open closes the Drawer and moves focus to SidebarTrigger, or to the content when the trigger is hidden; the collapsed state is kept. For your own parts that should switch at the same point, use `@2xl/app-shell:…`, or `useAppShell().narrow` for behavior (always false during server rendering). `md:` and useMediaQuery follow the screen, so they won't line up.",
+      },
+      {
         title: "Sidebar + aside",
         description:
           "AppShellAside sits after the content and shows from the breakpoint up. On narrow frames, move its content to a Sheet or its own page.",
@@ -41,12 +46,14 @@ export const en: Record<string, ComponentDocEn> = {
       "Don't change Ctrl+B to a key the browser or an editor already uses.",
     ],
     props: {
-      breakpoint: "Frame width (32 / 36 / 42 / 48 / 56 / 64rem) from which the sidebar sits in the layout; below it, a Drawer.",
+      breakpoint:
+        "AppShell width (not the screen width) from which the sidebar sits in the layout and AppShellAside shows: 32 / 36 / 42 / 48 / 56 / 64rem, the same sizes as the `@lg` … `@5xl` container queries. Below it, a Drawer.",
       layout: "sidebar: the sidebar runs the full height with the top bar beside it. header: the top bar spans the full width with the sidebar below it.",
       scroll: "main: the frame is as tall as the screen and AppShellMain scrolls (apps). page: the whole page scrolls, the top bar and sidebar stick (content sites).",
       "collapsed / defaultCollapsed": "Sidebar collapsed on wide frames.",
       onCollapsedChange: "Called when the sidebar collapses or expands.",
-      persistKey: "Cookie name for the collapsed state and width; a saved value wins over defaultCollapsed.",
+      persistKey:
+        "Cookie name for the collapsed state and width; a saved value wins over defaultCollapsed, and a missing or malformed cookie falls back to it. The cookie is set on path=/, so each app on the same domain needs its own name.",
       shortcut: "Key used with Ctrl / ⌘; false turns it off. With several AppShells on a page, only the one that has focus or was clicked last responds.",
       skipLink: "A “Skip to content” link shown on focus.",
       "Sidebar.collapsible": "Collapse to an icon rail, hide completely, or always stay open.",
