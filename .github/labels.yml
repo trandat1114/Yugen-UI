@@ -57,6 +57,9 @@
 - name: blocked
   color: b60205
   description: Chờ việc khác hoặc thư viện bên ngoài
+- name: on hold
+  color: fef2c0
+  description: Tạm dừng theo quyết định của maintainer, sẽ xem lại
 - name: stale
   color: d4c5f9
   description: Im lặng quá lâu — sẽ tự đóng (workflow stale.yml)
