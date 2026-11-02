@@ -87,6 +87,32 @@ function isTextEntry(target: EventTarget | null) {
   return target instanceof Element && target.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"])') !== null;
 }
 
+/*
+ * Một trang có thể có nhiều AppShell (docs, trang demo): phím tắt chỉ đổi một khung. Khung gốc và Drawer (nằm trong
+ * portal) mang `data-app-shell` = id của khung.
+ */
+const shortcutShells = new Set<string>();
+let lastPointerShell: string | null = null;
+let trackingPointer = false;
+
+function shellOf(target: EventTarget | null) {
+  return target instanceof Element ? (target.closest("[data-app-shell]")?.getAttribute("data-app-shell") ?? null) : null;
+}
+
+function trackPointer() {
+  if (trackingPointer) return;
+  trackingPointer = true;
+  document.addEventListener("pointerdown", (e) => (lastPointerShell = shellOf(e.target)), true);
+}
+
+/** Khung nhận phím tắt: khung đang chứa focus; không có thì khung vừa được bấm vào; trang chỉ có một khung thì khung đó. */
+function shortcutOwner(target: EventTarget | null) {
+  const focused = shellOf(target);
+  if (focused) return focused;
+  if (lastPointerShell && shortcutShells.has(lastPointerShell)) return lastPointerShell;
+  return shortcutShells.size === 1 ? [...shortcutShells][0] : null;
+}
+
 interface AppShellContextValue {
   narrow: boolean;
   collapsed: boolean;
@@ -98,6 +124,7 @@ interface AppShellContextValue {
   collapsible: SidebarCollapsible;
   setCollapsible: (collapsible: SidebarCollapsible) => void;
   shortcut: string | false;
+  shellId: string;
   mainId: string;
   sidebarId: string;
   mainRef: React.MutableRefObject<HTMLElement | null>;
@@ -177,7 +204,10 @@ export interface AppShellProps extends React.HTMLAttributes<HTMLDivElement> {
    * Render ở server: đọc bằng `readAppShellCookie()` rồi truyền `defaultCollapsed` để không nháy.
    */
   persistKey?: string;
-  /** Phím đi cùng Ctrl / ⌘ để mở / đóng sidebar; `false` để tắt. Bỏ qua khi đang gõ trong ô nhập hoặc bằng bộ gõ. */
+  /**
+   * Phím đi cùng Ctrl / ⌘ để mở / đóng sidebar; `false` để tắt. Bỏ qua khi đang gõ trong ô nhập hoặc bằng bộ gõ.
+   * Trang có nhiều AppShell: chỉ khung đang chứa focus (hoặc vừa được bấm vào) nhận phím.
+   */
   shortcut?: string | false;
   /** Skip link tới AppShellMain, hiện khi được focus. */
   skipLink?: boolean;
@@ -302,17 +332,23 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
       if (!shortcut) return;
       const key = shortcut.toLowerCase();
       const code = /^[a-z]$/.test(key) ? `Key${key.toUpperCase()}` : undefined;
+      shortcutShells.add(id);
+      trackPointer();
       const onKeyDown = (e: KeyboardEvent) => {
         if (e.defaultPrevented || e.repeat || e.isComposing || e.keyCode === 229) return;
         if (!(e.ctrlKey || e.metaKey) || e.altKey || e.shiftKey) return;
         if (e.key.toLowerCase() !== key && e.code !== code) return;
-        if (isTextEntry(e.target)) return;
+        if (isTextEntry(e.target) || shortcutOwner(e.target) !== id) return;
         e.preventDefault();
         toggleRef.current();
       };
       window.addEventListener("keydown", onKeyDown);
-      return () => window.removeEventListener("keydown", onKeyDown);
-    }, [shortcut]);
+      return () => {
+        shortcutShells.delete(id);
+        if (lastPointerShell === id) lastPointerShell = null;
+        window.removeEventListener("keydown", onKeyDown);
+      };
+    }, [shortcut, id]);
 
     const ctx = React.useMemo<AppShellContextValue>(
       () => ({
@@ -326,6 +362,7 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
         collapsible,
         setCollapsible,
         shortcut,
+        shellId: id,
         mainId: `${id}-main`,
         sidebarId: `${id}-sidebar`,
         mainRef,
@@ -344,6 +381,7 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
       <AppShellContext.Provider value={ctx}>
         <div
           ref={refs}
+          data-app-shell={id}
           className={cn(
             "@container/app-shell grid h-dvh grid-cols-[auto_minmax(0,1fr)_auto] grid-rows-[auto_minmax(0,1fr)] bg-background-2 text-foreground-1",
             className,
@@ -539,6 +577,7 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           <DrawerSurface
             position="start"
             size="small"
+            data-app-shell={shell.shellId}
             onClick={(e) => {
               // Theo một link (kể cả link router chặn tải lại trang) là rời trang hiện tại: đóng Drawer.
               if (e.target instanceof Element && e.target.closest("a[href]")) setDrawerOpen(false);

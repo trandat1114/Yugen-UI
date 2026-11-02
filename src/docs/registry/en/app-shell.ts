@@ -4,7 +4,7 @@ import type { ComponentDocEn } from "../../types";
 export const en: Record<string, ComponentDocEn> = {
   appshell: {
     description:
-      "AppShell places its parts on a grid: Sidebar on the start side, AppShellHeader on top, AppShellMain in the middle and AppShellAside on the end side; a part you leave out takes no space. From `breakpoint` up (a container query, so it follows the frame, not the screen) the sidebar sits in the layout and SidebarTrigger collapses it to an icon rail, with item names in Tooltips. Below it, the same content opens in a Drawer: following a link or choosing a Nav item closes it and focus returns to the button that opened it. Ctrl+B (⌘B) works like SidebarTrigger, except while typing in a field or composing with an IME. `persistKey` saves the collapsed state (and width) in a cookie; the Drawer is never saved. With server rendering, read the cookie with `readAppShellCookie(cookieHeader, key)` and pass `defaultCollapsed` so nothing flashes. The demos below sit inside the docs page, so AppShellMain uses `asChild` with a `div` (a page has one `<main>`).",
+      "AppShell places its parts on a grid: Sidebar on the start side, AppShellHeader on top, AppShellMain in the middle and AppShellAside on the end side; a part you leave out takes no space. From `breakpoint` up (a container query, so it follows the frame, not the screen) the sidebar sits in the layout and SidebarTrigger collapses it to an icon rail, with item names in Tooltips. Below it, the same content opens in a Drawer: following a link or choosing a Nav item closes it and focus returns to the button that opened it. Ctrl+B (⌘B) works like SidebarTrigger, except while typing in a field or composing with an IME; on a page with several AppShells (like this one) only the frame that has focus or was clicked last responds. `persistKey` saves the collapsed state (and width) in a cookie; the Drawer is never saved. With server rendering, read the cookie with `readAppShellCookie(cookieHeader, key)` and pass `defaultCollapsed` so nothing flashes. The demos below sit inside the docs page, so AppShellMain uses `asChild` with a `div` (a page has one `<main>`).",
     examples: [
       {
         title: "Narrow frame",
@@ -40,7 +40,7 @@ export const en: Record<string, ComponentDocEn> = {
       "collapsed / defaultCollapsed": "Sidebar collapsed on wide frames.",
       onCollapsedChange: "Called when the sidebar collapses or expands.",
       persistKey: "Cookie name for the collapsed state and width; a saved value wins over defaultCollapsed.",
-      shortcut: "Key used with Ctrl / ⌘; false turns it off.",
+      shortcut: "Key used with Ctrl / ⌘; false turns it off. With several AppShells on a page, only the one that has focus or was clicked last responds.",
       skipLink: "A “Skip to content” link shown on focus.",
       "Sidebar.collapsible": "Collapse to an icon rail, hide completely, or always stay open.",
       "Sidebar.resizable": "SidebarRail becomes a splitter that resizes the sidebar (arrow keys, Home / End, Enter collapses).",

@@ -230,10 +230,9 @@ export function AppShell({ page, onNavigate, appearance, onAppearanceChange, con
 
   return (
     <Shell
-      // Nhúng: cao theo khối cha, không phím tắt toàn cục, không skip link, không lưu trạng thái sidebar.
+      // Nhúng: cao theo khối cha, không skip link, không lưu trạng thái sidebar.
       className={embedded ? "h-full" : undefined}
       persistKey={embedded ? undefined : "saas-sidebar"}
-      shortcut={embedded ? false : undefined}
       skipLink={!embedded}
     >
       <AppSidebar t={t} page={page} onSelect={onNavigate} embedded={embedded} />

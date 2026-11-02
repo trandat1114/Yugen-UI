@@ -164,6 +164,39 @@ describe("AppShell on a wide frame", () => {
     expect(trigger()).toHaveAccessibleName("Thu gọn thanh bên");
   });
 
+  it("with several shells on a page, only the focused or last clicked one takes the shortcut", () => {
+    render(
+      <>
+        <div data-testid="a">
+          <Layout />
+        </div>
+        <div data-testid="b">
+          <Layout />
+        </div>
+      </>,
+    );
+    resizeTo(1200);
+    const a = within(screen.getByTestId("a"));
+    const b = within(screen.getByTestId("b"));
+    const name = (scope: typeof a) => scope.getByRole("button", { name: /thanh bên/ });
+
+    // Không khung nào được chọn: không đổi khung nào.
+    ctrlB(document.body);
+    expect(name(a)).toHaveAccessibleName("Thu gọn thanh bên");
+    expect(name(b)).toHaveAccessibleName("Thu gọn thanh bên");
+
+    // Focus trong khung B.
+    ctrlB(b.getByRole("main"));
+    expect(name(a)).toHaveAccessibleName("Thu gọn thanh bên");
+    expect(name(b)).toHaveAccessibleName("Mở rộng thanh bên");
+
+    // Bấm vào khung A (vùng không nhận focus), rồi phím tắt với focus ở body.
+    fireEvent.pointerDown(a.getByText("Logo"));
+    ctrlB(document.body);
+    expect(name(a)).toHaveAccessibleName("Mở rộng thanh bên");
+    expect(name(b)).toHaveAccessibleName("Mở rộng thanh bên");
+  });
+
   it("can turn the shortcut off", () => {
     render(<Layout shortcut={false} />);
     resizeTo(1200);
