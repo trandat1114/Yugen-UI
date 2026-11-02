@@ -36,6 +36,7 @@ import {
   optimisticListMessagesEn,
   pageProgressMessagesEn,
 } from "./Loading/messages";
+import { markdownMessagesEn } from "./Markdown/messages";
 import { messageBarMessagesEn } from "./MessageBar/messages";
 import {
   chatComposerMessagesEn,
@@ -102,6 +103,7 @@ export const messagesEn: YugenMessages = {
   inputOTP: inputOTPMessagesEn,
   link: linkMessagesEn,
   loadingOverlay: loadingOverlayMessagesEn,
+  markdown: markdownMessagesEn,
   messageBar: messageBarMessagesEn,
   messageBubble: messageBubbleMessagesEn,
   messageScroller: messageScrollerMessagesEn,

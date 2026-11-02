@@ -11,6 +11,7 @@ import { Avatar } from "@/components/ui/Avatar/Avatar";
 import { Button } from "@/components/ui/Button/Button";
 import { Sparkline } from "@/components/ui/Chart/Chart";
 import { DescriptionItem, DescriptionList } from "@/components/ui/DescriptionList/DescriptionList";
+import { Markdown } from "@/components/ui/Markdown/Markdown";
 import { Prose } from "@/components/ui/Prose/Prose";
 import { Sonner, sonner, type SonnerPosition } from "@/components/ui/Sonner/Sonner";
 import { Stat } from "@/components/ui/Stat/Stat";
@@ -19,6 +20,20 @@ import { Timeline, TimelineItem } from "@/components/ui/Timeline/Timeline";
 import type { ComponentDoc } from "../types";
 
 /* ------------------------------------------------------------------ demos */
+
+const API_NOTES = `## Bắt đầu với API
+
+Mọi yêu cầu cần **khoá API** trong header \`Authorization\`. Tạo khoá ở trang [Cài đặt](#cai-dat).
+
+1. Tạo khoá với quyền chỉ đọc.
+2. Lưu khoá vào biến môi trường.
+3. Gọi thử \`GET /v1/orders\`.
+
+| Gói      | Yêu cầu / phút |
+| -------- | -------------: |
+| Miễn phí |             60 |
+| Pro      |          1.200 |
+`;
 
 function SonnerDemo() {
   return (
@@ -759,6 +774,102 @@ function ArticleDemo() {
     props: [
       { name: "size", type: `"medium" | "large"`, defaultValue: `"medium"`, description: "Cỡ chữ nền: body1 (14px) hoặc body2 (16px)." },
       { name: "asChild", type: "boolean", defaultValue: "false", description: "Render vào phần tử con duy nhất (vd. <article>)." },
+    ],
+  },
+
+  /* ---------------------------------------------------------------- Markdown */
+  markdown: {
+    slug: "markdown",
+    name: "Markdown",
+    category: "Hiển thị dữ liệu",
+    lead: "Markdown hiển thị nội dung viết bằng Markdown (bài viết, ghi chú phát hành, mô tả từ CMS) theo kiểu chữ của Prose, an toàn với nội dung không tin cậy.",
+    description:
+      "Truyền chuỗi Markdown làm children. Hỗ trợ CommonMark và phần GFM hay dùng: heading, đoạn văn, danh sách, danh sách việc, trích dẫn, bảng, code fence (tô màu bằng CodeBlock), đậm, nghiêng, gạch, code và link. Không nhận HTML: thẻ HTML hiện như chữ, link `javascript:` hay `data:` chỉ còn nhãn. Link tương đối (`/path`, `#id`) được giữ; link ngoài mở tab mới. `inline` cho đoạn một dòng: chỉ phần inline, trong một `<span>`. `renderLink` giao link cho router của app. Nội dung đang về theo từng token (câu trả lời AI) dùng StreamingMarkdown.",
+    importCode: `import { Markdown } from "@/components/ui";`,
+    hero: {
+      title: "Markdown",
+      code: `const NOTES = \`## Bắt đầu với API
+
+Mọi yêu cầu cần **khoá API** trong header \\\`Authorization\\\`. Tạo khoá ở trang [Cài đặt](#cai-dat).
+
+1. Tạo khoá với quyền chỉ đọc.
+2. Lưu khoá vào biến môi trường.
+3. Gọi thử \\\`GET /v1/orders\\\`.
+
+| Gói      | Yêu cầu / phút |
+| -------- | -------------: |
+| Miễn phí |             60 |
+| Pro      |          1.200 |
+\`;
+
+<Markdown className="w-full max-w-prose">{NOTES}</Markdown>`,
+      render: () => <Markdown className="w-full max-w-prose">{API_NOTES}</Markdown>,
+    },
+    examples: [
+      {
+        title: "Inline",
+        description: "inline render phần inline trong một <span>, không bọc <p>: hợp với mục danh sách, ô bảng, mô tả một dòng.",
+        code: `<ul className="flex flex-col gap-2 text-body1">
+  <li><Markdown inline>{"Gọi \`sonner.promise\` để đổi **loading** thành kết quả."}</Markdown></li>
+  <li><Markdown inline>{"HTML từ CMS: xem [Prose](#prose)."}</Markdown></li>
+</ul>`,
+        render: () => (
+          <ul className="flex flex-col gap-2 text-body1">
+            <li>
+              <Markdown inline>{"Gọi `sonner.promise` để đổi **loading** thành kết quả."}</Markdown>
+            </li>
+            <li>
+              <Markdown inline>{"HTML từ CMS: xem [Prose](#prose)."}</Markdown>
+            </li>
+          </ul>
+        ),
+      },
+      {
+        title: "Link qua router",
+        description: "renderLink nhận href, nhãn và external; link nội bộ đi qua router của app thay vì tải lại trang.",
+        code: `<Markdown
+  renderLink={({ href, children, external }) =>
+    external ? <a href={href} target="_blank" rel="noopener noreferrer">{children}</a> : <Link to={href}>{children}</Link>
+  }
+>
+  {"Đọc [hướng dẫn cài đặt](/concepts/quick-start) hoặc mã nguồn trên [GitHub](https://github.com)."}
+</Markdown>`,
+        render: () => (
+          <Markdown
+            renderLink={({ href, children, external }) => (
+              <a href={href} {...(external ? { target: "_blank", rel: "noopener noreferrer" } : { onClick: (e) => e.preventDefault() })}>
+                {children}
+              </a>
+            )}
+          >
+            {"Đọc [hướng dẫn cài đặt](/concepts/quick-start) hoặc mã nguồn trên [GitHub](https://github.com)."}
+          </Markdown>
+        ),
+      },
+      {
+        title: "Nội dung không tin cậy",
+        description: "HTML hiện như chữ, link javascript: chỉ còn nhãn; không cần sanitize trước.",
+        code: `<Markdown>{'<img src=x onerror="alert(1)"> và [bấm vào đây](javascript:alert(1))'}</Markdown>`,
+        render: () => <Markdown>{'<img src=x onerror="alert(1)"> và [bấm vào đây](javascript:alert(1))'}</Markdown>,
+      },
+    ],
+    dos: [
+      "Dùng Markdown cho nội dung viết sẵn hoặc từ CMS; dùng StreamingMarkdown cho chữ đang về theo từng token.",
+      "Dùng inline cho đoạn một dòng nằm trong bố cục khác (mục danh sách, ô bảng).",
+      "Bật headingIds khi trang có mục lục hoặc link tới từng heading.",
+    ],
+    donts: [
+      "Không dùng Markdown để hiện HTML từ CMS: HTML hiện như chữ. Dùng Prose với HTML đã sanitize.",
+      "Không đặt Markdown trong Prose: Markdown đã bọc Prose.",
+    ],
+    props: [
+      { name: "children", type: "string", description: "Nội dung Markdown. Không nhận HTML." },
+      { name: "inline", type: "boolean", defaultValue: "false", description: "Chỉ phần inline (đậm, nghiêng, gạch, code, link) trong một <span>, không đoạn văn." },
+      { name: "size", type: `"medium" | "large"`, defaultValue: `"medium"`, description: "Cỡ chữ của Prose: body1 (14px) hoặc body2 (16px)." },
+      { name: "headingOffset", type: "number", defaultValue: "1", description: "Cộng vào cấp heading: mặc định # → h2." },
+      { name: "headingIds", type: "boolean | ((text: string) => string)", defaultValue: "false", description: "Gắn id cho heading từ chữ của nó (bỏ dấu, khử trùng bằng -2, -3); truyền hàm để tự tạo id." },
+      { name: "breaks", type: "boolean", defaultValue: "false", description: "Xuống dòng đơn thành <br>." },
+      { name: "renderLink", type: "(link: MarkdownLink) => ReactNode", description: "Tự render mọi link; MarkdownLink gồm href, title, children, external." },
     ],
   },
 };
