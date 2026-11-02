@@ -220,6 +220,7 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
       variants: "Overrides & variants",
       state: "Data attributes & important",
       shared: "Shared classes",
+      "lean-css": "Only the CSS you use",
       "media-object": "The media object pattern",
     },
   },
