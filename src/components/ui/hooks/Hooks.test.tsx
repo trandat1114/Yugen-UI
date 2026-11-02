@@ -274,7 +274,36 @@ describe("useHotkeys", () => {
     const onKey = vi.fn();
     render(<Probe onKey={onKey} />);
     fireEvent.keyDown(document, { key: "Escape", isComposing: true });
+    // Safari: keydown chốt chữ IME có isComposing = false nhưng keyCode 229.
+    fireEvent.keyDown(document, { key: "Escape", keyCode: 229 });
     expect(onKey).not.toHaveBeenCalled();
+  });
+
+  it("giữ phím chỉ tính một lần, trừ khi bật repeat", () => {
+    const onKey = vi.fn();
+    const { rerender } = render(<Probe onKey={onKey} />);
+    fireEvent.keyDown(document, { key: "ArrowLeft" });
+    const notCancelled = fireEvent.keyDown(document, { key: "ArrowLeft", repeat: true });
+    expect(onKey).toHaveBeenCalledTimes(1);
+    // Không xử lý thì không chặn hành vi mặc định (cuộn trang khi giữ mũi tên).
+    expect(notCancelled).toBe(true);
+    rerender(<Probe onKey={onKey} repeat />);
+    fireEvent.keyDown(document, { key: "ArrowLeft", repeat: true });
+    expect(onKey).toHaveBeenCalledTimes(2);
+  });
+
+  it("mod là ⌘ trên Apple, Ctrl ở nơi khác", () => {
+    const onKey = vi.fn();
+    const platform = vi.spyOn(navigator, "platform", "get").mockReturnValue("MacIntel");
+    try {
+      render(<Probe onKey={onKey} />);
+      fireEvent.keyDown(document, ctrlK);
+      expect(onKey).not.toHaveBeenCalled();
+      fireEvent.keyDown(document, { key: "k", metaKey: true });
+      expect(onKey).toHaveBeenCalledTimes(1);
+    } finally {
+      platform.mockRestore();
+    }
   });
 });
 

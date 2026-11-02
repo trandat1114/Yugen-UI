@@ -9,6 +9,9 @@ import { sheetMessages } from "./messages";
 
 export { sheetMessages, sheetMessagesEn, type SheetMessages } from "./messages";
 
+// useMediaQuery đã chuyển sang hooks/ (#172); giữ export cũ cho mã import từ Sheet.
+export { useMediaQuery, type UseMediaQueryOptions } from "../hooks/useMediaQuery";
+
 /**
  * Yugen Labs — Sheet: MỘT overlay thích ứng. Màn hình rộng → panel trượt từ cạnh (như Drawer);
  * màn hình hẹp → bottom sheet kéo được, có snap point, vuốt xuống để đóng.

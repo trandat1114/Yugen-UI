@@ -142,16 +142,22 @@ function ClipboardDemo() {
 function HotkeysDemo() {
   const [log, setLog] = useState<string[]>([]);
   const push = (name: string) => setLog((prev) => [name, ...prev].slice(0, 4));
-  useHotkeys({
-    "mod+k": () => push("⌘/Ctrl + K"),
-    "shift+?": () => push("?"),
-    start: () => push("← theo chiều chữ (start)"),
-    end: () => push("→ theo chiều chữ (end)"),
-  });
+  // Chỉ nghe trong khung này: phím tắt trên document sẽ chặn cả mũi tên cuộn trang.
+  const [area, setArea] = useState<HTMLDivElement | null>(null);
+  useHotkeys(
+    {
+      "mod+k": () => push("⌘/Ctrl + K"),
+      "?": () => push("?"),
+      start: () => push("← theo chiều chữ (start)"),
+      end: () => push("→ theo chiều chữ (end)"),
+    },
+    { target: area },
+  );
   return (
-    <div className="flex max-w-sm flex-col gap-3">
+    <div ref={setArea} tabIndex={0} role="group" aria-label="Khung thử phím tắt" className="flex max-w-sm flex-col gap-3 rounded-large p-1">
       <p className="text-body1 text-foreground-2">
-        Nhấn <Kbd>Ctrl</Kbd> + <Kbd>K</Kbd>, <Kbd>?</Kbd> hoặc mũi tên. Gõ trong ô dưới: phím thường bị bỏ qua, phím có Ctrl vẫn chạy.
+        Bấm vào khung này rồi nhấn <Kbd>Ctrl</Kbd> / <Kbd>⌘</Kbd> + <Kbd>K</Kbd>, <Kbd>?</Kbd> hoặc mũi tên. Gõ trong ô dưới: phím
+        thường bị bỏ qua, phím có Ctrl / ⌘ vẫn chạy.
       </p>
       <Input aria-label="Ô thử" placeholder="Gõ ? ở đây — không kích hoạt" />
       <ul className="min-h-24 text-body1 text-foreground-1">
@@ -192,7 +198,7 @@ function IntersectionDemo() {
       <Badge appearance={isIntersecting ? "filled" : "outline"}>{isIntersecting ? "Thẻ đang hiện trong khung" : "Thẻ ngoài khung"}</Badge>
       <div className="h-40 overflow-auto rounded-large border border-stroke-2 p-3" tabIndex={0} aria-label="Vùng cuộn thử">
         <div className="h-48 text-caption1 text-foreground-3">Cuộn xuống…</div>
-        <div ref={ref} className="rounded-medium bg-brand-background-2 p-4 text-center text-foreground-on-brand">
+        <div ref={ref} className="rounded-medium bg-brand-background p-4 text-center text-foreground-on-brand">
           Thẻ được theo dõi
         </div>
         <div className="h-48" />
@@ -342,7 +348,7 @@ export const docs: ComponentDoc[] = [
         name: "useHotkeys(hotkeys, options)",
         type: "void",
         description:
-          "options: target (mặc định document), enabled (true), enableOnFormTags (false), preventDefault (true). Khoá hợp lệ: mod / ctrl / meta / alt / shift + phím, cùng alias esc, space, up, down, left, right, start, end.",
+          "options: target (mặc định document), enabled (true), enableOnFormTags (false), preventDefault (true), repeat (false: giữ phím chỉ tính một lần). Khoá hợp lệ: mod / ctrl / meta / alt / shift + phím, cùng alias esc, space, up, down, left, right, start, end.",
       },
       {
         name: "useDebouncedValue(value, delay)",

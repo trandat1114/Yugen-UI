@@ -62,7 +62,7 @@ export const en: Record<string, ComponentDocEn> = {
         "`set` takes a value or an updater; `remove()` deletes the key and returns to the initial value. Corrupt data or blocked localStorage never throws.",
       "useClipboard({ timeout })": "`timeout` (ms) is how long `copied` stays true.",
       "useHotkeys(hotkeys, options)":
-        "options: target (document by default), enabled (true), enableOnFormTags (false), preventDefault (true). Valid keys: mod / ctrl / meta / alt / shift + a key, plus the aliases esc, space, up, down, left, right, start, end.",
+        "options: target (document by default), enabled (true), enableOnFormTags (false), preventDefault (true), repeat (false: a held key counts once). Valid keys: mod / ctrl / meta / alt / shift + a key, plus the aliases esc, space, up, down, left, right, start, end.",
       "useDebouncedValue(value, delay)": "Returns the value at once on the first render; afterwards it only changes once `value` has been still for `delay` ms.",
       "useIntersection({ root, rootMargin, threshold, once })": "Attach `ref` to the element. Without IntersectionObserver it is always false.",
       "useElementSize({ box })": "0 × 0 until measured (server, first render). Also works with vertical writing modes.",

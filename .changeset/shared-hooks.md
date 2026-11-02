@@ -2,4 +2,4 @@
 "yugen-ui": minor
 ---
 
-Export nhóm hook dùng chung mà chính các component dùng: `useControllableState`, `useDisclosure`, `useLocalStorage` (an toàn SSR, đồng bộ giữa các tab), `useClipboard`, `useHotkeys` (bỏ qua ô nhập, mũi tên theo chiều chữ khi RTL), `useDebouncedValue`, `useIntersection` và `useElementSize`, cùng `useMediaQuery` (trước nằm trong Sheet). Trang docs "Hooks" có ví dụ cho từng hook; ToggleButton, Pagination, CodeBlock và DescriptionList chuyển sang dùng bản chung.
+New shared hooks, the ones the components use themselves (#172): `useControllableState`, `useDisclosure`, `useLocalStorage` (synced across hooks with the same key and across tabs), `useClipboard`, `useHotkeys` (`mod` is ⌘ on Apple and Ctrl elsewhere; skips form fields, IME composition and held keys; `start` / `end` arrows follow RTL), `useDebouncedValue`, `useIntersection` and `useElementSize`. `useMediaQuery` moves next to them; importing it from `yugen-ui` or from Sheet still works. Docs page "Hooks". ToggleButton, Pagination, List, Reasoning, TeachingPopover, CodeBlock and DescriptionList use the shared versions, with no change in behaviour.

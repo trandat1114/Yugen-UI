@@ -8,7 +8,7 @@ export interface UseDisclosureOptions {
   onOpenChange?: (open: boolean) => void;
 }
 
-export interface UseDisclosureReturn {
+export interface UseDisclosureResult {
   open: boolean;
   setOpen: (open: boolean) => void;
   onOpen: () => void;
@@ -26,7 +26,7 @@ export interface UseDisclosureReturn {
  * <Dialog open={open} onOpenChange={setOpen}>…</Dialog>
  * ```
  */
-export function useDisclosure({ open, defaultOpen = false, onOpenChange }: UseDisclosureOptions = {}): UseDisclosureReturn {
+export function useDisclosure({ open, defaultOpen = false, onOpenChange }: UseDisclosureOptions = {}): UseDisclosureResult {
   const [isOpen, setOpen] = useControllableState({ value: open, defaultValue: defaultOpen, onChange: onOpenChange });
   const onOpen = React.useCallback(() => setOpen(true), [setOpen]);
   const onClose = React.useCallback(() => setOpen(false), [setOpen]);

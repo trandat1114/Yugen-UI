@@ -67,6 +67,9 @@ function parse<T>(raw: string | null, fallback: T): T {
   }
 }
 
+/** `[value, setValue, remove]`. */
+export type UseLocalStorageResult<T> = [T, (next: React.SetStateAction<T>) => void, () => void];
+
 /**
  * State lưu vào `localStorage` dưới dạng JSON, an toàn cho SSR và đồng bộ giữa các tab.
  * - Server và lần render hydrate đầu tiên dùng `initialValue`, sau đó mới đọc giá trị đã lưu — không lệch HTML.
@@ -79,10 +82,7 @@ function parse<T>(raw: string | null, fallback: T): T {
  *
  * Trả về `[value, setValue, remove]`; `remove()` xoá khoá và đưa về `initialValue`.
  */
-export function useLocalStorage<T>(
-  key: string,
-  initialValue: T,
-): [T, (next: React.SetStateAction<T>) => void, () => void] {
+export function useLocalStorage<T>(key: string, initialValue: T): UseLocalStorageResult<T> {
   const initial = React.useRef(initialValue);
   const sub = React.useCallback((listener: Listener) => subscribe(key, listener), [key]);
   const raw = React.useSyncExternalStore(

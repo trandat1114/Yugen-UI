@@ -591,7 +591,7 @@ function PlaceSheetDemo() {
     category: "Tiện ích",
     lead: "useMediaQuery theo dõi một CSS media query và render lại khi nó đổi — breakpoint, chế độ tối, giảm chuyển động, loại con trỏ.",
     description:
-      "Dựa trên useSyncExternalStore và matchMedia: không nháy giữa hai giá trị, tự huỷ đăng ký khi unmount, an toàn khi không có window (trả về defaultValue). Sheet dùng hook này để chọn panel hay bottom sheet. Chỉ dùng khi cần đổi hành vi hoặc component; đổi bố cục thuần tuý vẫn nên dùng biến thể responsive của Tailwind (md:…).",
+      "Dựa trên useSyncExternalStore và matchMedia: không nháy giữa hai giá trị, tự huỷ đăng ký khi unmount, an toàn khi không có window (trả về defaultValue). Sheet dùng hook này để chọn panel hay bottom sheet. Chỉ dùng khi cần đổi hành vi hoặc component; đổi bố cục thuần tuý vẫn nên dùng biến thể responsive của Tailwind (md:…). Đây là một trong các hook dùng chung; các hook còn lại ở trang Hooks.",
     importCode: `import { useMediaQuery } from "@/components/ui";`,
     hero: {
       title: "Giá trị trực tiếp",

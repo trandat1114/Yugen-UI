@@ -9,7 +9,7 @@ export interface UseIntersectionOptions {
   once?: boolean;
 }
 
-export interface UseIntersectionReturn<T extends Element> {
+export interface UseIntersectionResult<T extends Element> {
   /** Gắn vào phần tử cần theo dõi. */
   ref: (node: T | null) => void;
   isIntersecting: boolean;
@@ -30,7 +30,7 @@ export function useIntersection<T extends Element = Element>({
   rootMargin,
   threshold,
   once = false,
-}: UseIntersectionOptions = {}): UseIntersectionReturn<T> {
+}: UseIntersectionOptions = {}): UseIntersectionResult<T> {
   const [node, setNode] = React.useState<T | null>(null);
   const [entry, setEntry] = React.useState<IntersectionObserverEntry | null>(null);
   // threshold dạng mảng đổi identity mỗi lần render: so theo giá trị.

@@ -10,6 +10,11 @@ export interface UseElementSizeOptions {
   box?: "content-box" | "border-box";
 }
 
+export interface UseElementSizeResult<T extends Element> extends ElementSize {
+  /** Gắn vào phần tử cần đo. */
+  ref: (node: T | null) => void;
+}
+
 const EMPTY: ElementSize = { width: 0, height: 0 };
 
 /**
@@ -20,9 +25,7 @@ const EMPTY: ElementSize = { width: 0, height: 0 };
  * <div ref={ref}>{width < 480 ? <Compact /> : <Full />}</div>
  * ```
  */
-export function useElementSize<T extends Element = Element>({ box = "content-box" }: UseElementSizeOptions = {}): ElementSize & {
-  ref: (node: T | null) => void;
-} {
+export function useElementSize<T extends Element = Element>({ box = "content-box" }: UseElementSizeOptions = {}): UseElementSizeResult<T> {
   const [node, setNode] = React.useState<T | null>(null);
   const [size, setSize] = React.useState<ElementSize>(EMPTY);
 

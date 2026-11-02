@@ -86,7 +86,7 @@ export const en: Record<string, ComponentDocEn> = {
 
   usemediaquery: {
     description:
-      "Built on useSyncExternalStore and matchMedia, so it doesn't flicker between two values and unsubscribes on unmount. Without window it returns defaultValue. Sheet uses this hook to choose between the panel and the bottom sheet. Use it only when the behavior or the component changes; for pure layout changes, Tailwind's responsive variants (md:…) are still the better fit.",
+      "Built on useSyncExternalStore and matchMedia, so it doesn't flicker between two values and unsubscribes on unmount. Without window it returns defaultValue. Sheet uses this hook to choose between the panel and the bottom sheet. Use it only when the behavior or the component changes; for pure layout changes, Tailwind's responsive variants (md:…) are still the better fit. It is one of the shared hooks; the others are on the Hooks page.",
     examples: [
       {
         title: "Switch components at a breakpoint",

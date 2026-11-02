@@ -6,7 +6,7 @@ export interface UseClipboardOptions {
   timeout?: number;
 }
 
-export interface UseClipboardReturn {
+export interface UseClipboardResult {
   /** Chép `text` vào bộ nhớ tạm; trả về true khi thành công. Không bao giờ ném lỗi. */
   copy: (text: string) => Promise<boolean>;
   /** true trong `timeout` ms sau lần chép thành công — đổi icon / nhãn nút và báo qua live region. */
@@ -24,7 +24,7 @@ export interface UseClipboardReturn {
  * <Button onClick={() => copy(token)}>{copied ? "Đã chép" : "Chép"}</Button>
  * ```
  */
-export function useClipboard({ timeout = 1600 }: UseClipboardOptions = {}): UseClipboardReturn {
+export function useClipboard({ timeout = 1600 }: UseClipboardOptions = {}): UseClipboardResult {
   const [copied, setCopied] = React.useState(false);
   const timer = React.useRef<number | undefined>(undefined);
   React.useEffect(() => () => window.clearTimeout(timer.current), []);

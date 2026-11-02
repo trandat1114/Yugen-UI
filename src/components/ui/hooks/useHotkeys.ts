@@ -11,6 +11,8 @@ export interface UseHotkeysOptions {
   enableOnFormTags?: boolean;
   /** Gọi `preventDefault()` khi khớp. Mặc định true. */
   preventDefault?: boolean;
+  /** Chạy lại khi giữ phím (`event.repeat`), ví dụ mũi tên di chuyển liên tục. Mặc định false: giữ phím chỉ tính một lần. */
+  repeat?: boolean;
 }
 
 interface Combo {
@@ -95,7 +97,7 @@ function matches(e: KeyboardEvent, combo: Combo) {
  * - `mod` = ⌘ trên Mac, Ctrl ở nơi khác: `"mod+k"`, `"mod+shift+p"`, `"escape"`, `"?"`.
  * - Phím tắt thường (không Ctrl / Alt / ⌘) bị bỏ qua khi đang gõ trong ô nhập, trừ khi bật `enableOnFormTags`.
  * - `start` / `end` là mũi tên theo chiều chữ: giao diện RTL tự đảo (`"start"` = mũi tên phải); `"left"` / `"right"` luôn là vật lý.
- * - Bỏ qua phím đang gõ dở bằng IME (`isComposing`) và `repeat` không bị chặn.
+ * - Bỏ qua phím đang gõ dở bằng IME (`isComposing`, keyCode 229) và phím đang giữ (`repeat`), trừ khi bật `repeat`.
  * - Hàm xử lý luôn là bản mới nhất nên không cần `useCallback`.
  *
  * ```tsx
@@ -103,7 +105,7 @@ function matches(e: KeyboardEvent, combo: Combo) {
  * ```
  */
 export function useHotkeys(hotkeys: Record<string, HotkeyHandler>, options: UseHotkeysOptions = {}) {
-  const { enabled = true, enableOnFormTags = false, preventDefault = true } = options;
+  const { enabled = true, enableOnFormTags = false, preventDefault = true, repeat = false } = options;
   const target = options.target === undefined ? (typeof document === "undefined" ? null : document) : options.target;
 
   const handlers = React.useRef(hotkeys);
@@ -118,7 +120,9 @@ export function useHotkeys(hotkeys: Record<string, HotkeyHandler>, options: UseH
     const combos = signature.split("\n").map((name) => [name, parseCombo(name)] as const);
     const onKeyDown = (event: Event) => {
       const e = event as KeyboardEvent;
-      if (e.isComposing || e.defaultPrevented) return;
+      // Safari báo keydown khi chốt chữ IME với isComposing = false nhưng keyCode 229.
+      if (e.isComposing || e.keyCode === 229 || e.defaultPrevented) return;
+      if (e.repeat && !repeat) return;
       const editing = isEditable(e.target);
       for (const [name, combo] of combos) {
         if (!matches(e, combo)) continue;
@@ -131,5 +135,5 @@ export function useHotkeys(hotkeys: Record<string, HotkeyHandler>, options: UseH
     };
     target.addEventListener("keydown", onKeyDown);
     return () => target.removeEventListener("keydown", onKeyDown);
-  }, [signature, target, enabled, enableOnFormTags, preventDefault]);
+  }, [signature, target, enabled, enableOnFormTags, preventDefault, repeat]);
 }
