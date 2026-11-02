@@ -28,7 +28,6 @@ import {
   slotOf,
   toNumber,
   useChartTexture,
-  useElementWidth,
   useRovingPoints,
   useSeriesToggle,
   type ChartDatum,
@@ -38,6 +37,7 @@ import {
   type ChartSlot,
   type ChartValue,
 } from "./chartUtils";
+import { useElementSize } from "../hooks/useElementSize";
 
 export interface BarChartProps extends ChartFrameProps {
   data: ChartDatum[];
@@ -132,7 +132,7 @@ export const BarChart = React.forwardRef<HTMLElement, BarChartProps>(function Ba
   const totalLabel = msg.total;
   const textured = useChartTexture(texture);
   const uid = chartUid(React.useId());
-  const [plotRef, width] = useElementWidth<HTMLDivElement>();
+  const { ref: plotRef, width } = useElementSize<HTMLDivElement>();
   const [hidden, toggleSeries] = useSeriesToggle(series.map((s) => s.key));
   const [active, setActive] = React.useState<{ i: number; kb: boolean } | null>(null);
 

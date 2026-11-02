@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import { Slot } from "@radix-ui/react-slot";
 import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
@@ -179,8 +180,11 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
     const [saved] = React.useState(() =>
       persistKey && typeof document !== "undefined" ? readAppShellCookie(document.cookie, persistKey) : undefined,
     );
-    const [innerCollapsed, setInnerCollapsed] = React.useState(saved?.collapsed ?? defaultCollapsed ?? false);
-    const collapsed = collapsedProp ?? innerCollapsed;
+    const [collapsed, setCollapsedState] = useControllableState({
+      value: collapsedProp,
+      defaultValue: saved?.collapsed ?? defaultCollapsed ?? false,
+      onChange: onCollapsedChange,
+    });
     const [drawerOpen, setDrawerOpenState] = React.useState(false);
     const [narrow, setNarrow] = React.useState(false);
     const [collapsible, setCollapsible] = React.useState<SidebarCollapsible | null>(null);
@@ -196,12 +200,11 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
 
     const setCollapsed = React.useCallback(
       (next: boolean) => {
-        if (collapsedProp === undefined) setInnerCollapsed(next);
         persisted.current = { ...persisted.current, collapsed: next };
         if (persistKey) writeAppShellCookie(persistKey, persisted.current);
-        onCollapsedChange?.(next);
+        setCollapsedState(next);
       },
-      [collapsedProp, persistKey, onCollapsedChange],
+      [persistKey, setCollapsedState],
     );
 
     const persistWidth = React.useCallback(

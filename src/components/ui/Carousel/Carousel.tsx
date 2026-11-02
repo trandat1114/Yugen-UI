@@ -1,8 +1,10 @@
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import { useDirection } from "@radix-ui/react-direction";
 import { ChevronLeft20Regular, ChevronRight20Regular, Pause20Regular, Play20Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
+import { matchesMedia } from "../hooks/useMediaQuery";
 import { Button } from "../Button/Button";
 import { useYugenMessages } from "../YugenProvider/context";
 import { carouselMessages } from "./messages";
@@ -48,7 +50,7 @@ function useCarousel() {
 }
 
 function prefersReducedMotion() {
-  return typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  return matchesMedia("(prefers-reduced-motion: reduce)");
 }
 
 function isRtl(element: HTMLElement) {
@@ -154,8 +156,11 @@ export const Carousel = React.forwardRef<HTMLElement, CarouselProps>(
     const msg = useYugenMessages("carousel", carouselMessages);
     const [activeIndex, setActiveIndex] = React.useState(0);
     const [count, setCount] = React.useState(0);
-    const [innerAutoplay, setInnerAutoplay] = React.useState(() => defaultAutoplay && !prefersReducedMotion());
-    const autoplay = autoplayProp ?? innerAutoplay;
+    const [autoplay, setAutoplayState] = useControllableState({
+      value: autoplayProp,
+      defaultValue: () => defaultAutoplay && !prefersReducedMotion(),
+      onChange: onAutoplayChange,
+    });
     const [reasons, setReasons] = React.useState<Record<PauseReason, boolean>>({ hover: false, focus: false });
     const [hidden, setHidden] = React.useState(false);
     // Cuộn khỏi màn hình thì dừng tự chạy (không tốn CPU cho thứ không ai thấy), quay lại thì chạy tiếp từ chỗ dừng.
@@ -172,9 +177,9 @@ export const Carousel = React.forwardRef<HTMLElement, CarouselProps>(
     // Lúc đồng hồ được đặt lại (đổi slide): đồng hồ setTimeout chỉ tính thời gian từ mốc này.
     const resetAtRef = React.useRef(0);
     const progressEls = React.useRef(new Set<HTMLElement>());
-    const callbacks = React.useRef({ onActiveIndexChange, onAutoplayChange });
+    const callbacks = React.useRef({ onActiveIndexChange });
     useIsomorphicLayoutEffect(() => {
-      callbacks.current = { onActiveIndexChange, onAutoplayChange };
+      callbacks.current = { onActiveIndexChange };
     });
 
     const paintProgress = React.useCallback(() => {
@@ -226,11 +231,10 @@ export const Carousel = React.forwardRef<HTMLElement, CarouselProps>(
 
     const setAutoplay = React.useCallback(
       (value: boolean) => {
-        if (autoplayProp === undefined) setInnerAutoplay(value);
         elapsedRef.current = 0;
-        callbacks.current.onAutoplayChange?.(value);
+        setAutoplayState(value);
       },
-      [autoplayProp],
+      [setAutoplayState],
     );
 
     const setPauseReason = React.useCallback((reason: PauseReason, active: boolean) => {

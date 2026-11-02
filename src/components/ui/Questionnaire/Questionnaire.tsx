@@ -1,5 +1,6 @@
 /** Yugen Labs · Questionnaire — khảo sát / form nhiều bước kiểu Typeform, sinh từ cấu hình `questions`. */
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import {
@@ -463,8 +464,8 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
     const msg = useYugenMessages("questionnaire", questionnaireMessages);
     const submitLabel = submitLabelProp ?? msg.submit;
     const uid = React.useId();
-    const [inner, setInner] = React.useState<QuestionnaireAnswers>(defaultValue ?? {});
-    const answers = value ?? inner;
+    // onChange có thêm questionId, còn restart() đặt lại mà không báo ra ngoài → gọi riêng, không qua hook.
+    const [answers, setAnswers] = useControllableState<QuestionnaireAnswers>({ value, defaultValue: defaultValue ?? {} });
     const [errors, setErrors] = React.useState<Record<string, string | undefined>>({});
     const [phase, setPhase] = React.useState<Phase>("form");
     const [index, setIndex] = React.useState(0);
@@ -486,7 +487,7 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
 
     const setAnswer = (id: string, next: AnswerValue | undefined) => {
       const updated = { ...answers, [id]: next };
-      if (value === undefined) setInner(updated);
+      setAnswers(updated);
       onChange?.(updated, id);
       // Đã báo lỗi thì kiểm tra lại ngay khi người dùng sửa.
       if (errors[id]) {
@@ -588,7 +589,7 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
     };
 
     const restart = () => {
-      if (value === undefined) setInner(defaultValue ?? {});
+      setAnswers(defaultValue ?? {});
       setErrors({});
       setSubmitError(null);
       go(0, "back");

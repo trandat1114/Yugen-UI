@@ -6,6 +6,7 @@ import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffec
 import { useAnnounce } from "../AriaLive/AriaLive";
 import { Button } from "../Button/Button";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "../Empty/Empty";
+import { matchesMedia } from "../hooks/useMediaQuery";
 import { Fade } from "../Motion/Motion";
 import { SkeletonText } from "../Skeleton/Skeleton";
 import { Spinner, type SpinnerSize } from "../Spinner/Spinner";
@@ -158,10 +159,6 @@ const TRICKLE_INTERVAL = 250;
 /** Bằng durationSlow — thời gian thanh chạy nốt tới 100% trước khi mờ đi. */
 const COMPLETE_HOLD = 300;
 
-function reducedMotion() {
-  return typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-}
-
 /** Tạo một bộ điều khiển tiến trình độc lập (không cần React context). */
 export function createPageProgress(): PageProgressController {
   let snapshot: PageProgressSnapshot = { status: "idle", value: 0, trickling: false };
@@ -195,7 +192,7 @@ export function createPageProgress(): PageProgressController {
       else if (!snapshot.trickling) update({ trickling: true });
       trickleTimer ??= window.setInterval(
         () => update({ value: snapshot.value + (TRICKLE_MAX - snapshot.value) * TRICKLE_RATE }),
-        reducedMotion() ? TRICKLE_INTERVAL * 4 : TRICKLE_INTERVAL,
+        matchesMedia("(prefers-reduced-motion: reduce)") ? TRICKLE_INTERVAL * 4 : TRICKLE_INTERVAL,
       );
     },
     done() {

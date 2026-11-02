@@ -1,5 +1,6 @@
 /** Yugen Labs · NotificationCenter — chuông thông báo + bảng thông báo (Popover trên desktop, bottom sheet trên mobile). */
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import {
   Alert20Regular,
   AlertOff20Regular,
@@ -326,8 +327,7 @@ export const NotificationPanel = React.forwardRef<HTMLDivElement, NotificationPa
     const now = useNow(nowProp);
     const { locale } = useYugen();
     const msg = useYugenMessages("notificationCenter", notificationCenterMessages);
-    const [innerFilter, setInnerFilter] = React.useState<NotificationFilter>(defaultFilter);
-    const filter = filterProp ?? innerFilter;
+    const [filter, setFilter] = useControllableState({ value: filterProp, defaultValue: defaultFilter, onChange: onFilterChange });
     const showSkeleton = useSpinDelay(loading);
     const unread = items.filter((n) => !n.read).length;
     const focusAfterRemove = React.useRef<HTMLElement | null>(null);
@@ -405,11 +405,7 @@ export const NotificationPanel = React.forwardRef<HTMLDivElement, NotificationPa
         <Tabs
           ref={listRef}
           value={filter}
-          onValueChange={(v) => {
-            const next = v as NotificationFilter;
-            if (filterProp === undefined) setInnerFilter(next);
-            onFilterChange?.(next);
-          }}
+          onValueChange={(v) => setFilter(v as NotificationFilter)}
           className="flex min-h-0 flex-1 flex-col"
         >
           <TabsList size="small" aria-label={msg.filter} className="shrink-0 border-b border-stroke-2 px-2">
@@ -480,12 +476,7 @@ export const NotificationCenter = React.forwardRef<HTMLButtonElement, Notificati
     const { items } = panelProps;
     const msg = useYugenMessages("notificationCenter", notificationCenterMessages);
     const title = titleProp ?? msg.title;
-    const [innerOpen, setInnerOpen] = React.useState(defaultOpen);
-    const open = openProp ?? innerOpen;
-    const setOpen = (next: boolean) => {
-      if (openProp === undefined) setInnerOpen(next);
-      onOpenChange?.(next);
-    };
+    const [open, setOpen] = useControllableState({ value: openProp, defaultValue: defaultOpen, onChange: onOpenChange });
     const wide = useMediaQuery(`(min-width: ${breakpoint}px)`, { defaultValue: true });
     const asSheet = mode === "sheet" || (mode === "auto" && !wide);
     const headingId = React.useId();

@@ -1,5 +1,6 @@
 /** Yugen Labs · Tour — hướng dẫn sản phẩm nhiều bước: spotlight làm nổi phần tử, TeachingPopover chỉ dẫn, Tiếp / Quay lại / Bỏ qua. */
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import { createPortal } from "react-dom";
 import { useDirection } from "@radix-ui/react-direction";
 import { Lightbulb16Regular } from "@fluentui/react-icons";
@@ -16,6 +17,7 @@ import {
 } from "../TeachingPopover/TeachingPopover";
 import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
+import { matchesMedia } from "../hooks/useMediaQuery";
 import { tourMessages } from "./messages";
 
 export { tourMessages, tourMessagesEn, type TourMessages } from "./messages";
@@ -101,7 +103,7 @@ function resolveTarget(target: TourStep["target"]): HTMLElement | null {
 }
 
 function prefersReducedMotion() {
-  return typeof window !== "undefined" && !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  return matchesMedia("(prefers-reduced-motion: reduce)");
 }
 
 const raf = (fn: () => void) =>
@@ -128,10 +130,10 @@ export function Tour({
 }: TourProps) {
   const msg = useYugenMessages("tour", tourMessages);
   const total = steps.length;
-  const [innerOpen, setInnerOpen] = React.useState(defaultOpen);
-  const open = (openProp ?? innerOpen) && total > 0;
-  const [innerStep, setInnerStep] = React.useState(defaultStep);
-  const step = Math.min(Math.max(stepProp ?? innerStep, 0), Math.max(total - 1, 0));
+  const [rawOpen, setOpen] = useControllableState({ value: openProp, defaultValue: defaultOpen, onChange: onOpenChange });
+  const open = rawOpen && total > 0;
+  const [rawStep, setStep] = useControllableState({ value: stepProp, defaultValue: defaultStep, onChange: onStepChange });
+  const step = Math.min(Math.max(rawStep, 0), Math.max(total - 1, 0));
   const current = steps[step];
 
   const dir = useDirection();
@@ -146,26 +148,12 @@ export function Tour({
 
   React.useEffect(() => setMounted(true), []);
 
-  const callbacks = React.useRef({ onOpenChange, onStepChange, onFinish });
+  const callbacks = React.useRef({ onFinish });
   useIsomorphicLayoutEffect(() => {
-    callbacks.current = { onOpenChange, onStepChange, onFinish };
+    callbacks.current = { onFinish };
   });
 
-  const setOpen = React.useCallback(
-    (next: boolean) => {
-      if (openProp === undefined) setInnerOpen(next);
-      callbacks.current.onOpenChange?.(next);
-    },
-    [openProp],
-  );
-  const goTo = React.useCallback(
-    (next: number) => {
-      const clamped = Math.min(Math.max(next, 0), Math.max(total - 1, 0));
-      if (stepProp === undefined) setInnerStep(clamped);
-      callbacks.current.onStepChange?.(clamped);
-    },
-    [stepProp, total],
-  );
+  const goTo = React.useCallback((next: number) => setStep(Math.min(Math.max(next, 0), Math.max(total - 1, 0))), [setStep, total]);
 
   const context = React.useMemo<TourContextValue>(
     () => ({

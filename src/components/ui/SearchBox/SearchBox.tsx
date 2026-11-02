@@ -1,5 +1,6 @@
 /** Fluent 2 SearchBox — https://fluent2.microsoft.design/components/web/react/core/searchbox/usage */
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import { Dismiss16Regular, Dismiss20Regular, Dismiss24Regular, Search16Regular, Search20Regular, Search24Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { Input, type InputProps } from "@/components/ui/Input/Input";
@@ -45,8 +46,11 @@ export const SearchBox = React.forwardRef<HTMLInputElement, SearchBoxProps>(
     const msg = useYugenMessages("searchBox", searchBoxMessages);
     const inputRef = React.useRef<HTMLInputElement>(null);
     React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
-    const [inner, setInner] = React.useState(defaultValue === undefined ? "" : String(defaultValue));
-    const current = value !== undefined ? String(value) : inner;
+    const [current, setCurrent] = useControllableState({
+      value: value === undefined ? undefined : String(value),
+      defaultValue: defaultValue === undefined ? "" : String(defaultValue),
+      onChange: onValueChange,
+    });
     const icons = ICONS[size ?? "medium"];
 
     /** Xoá bằng cách phát sự kiện input gốc → onChange của React chạy như khi người dùng gõ. */
@@ -88,9 +92,8 @@ export const SearchBox = React.forwardRef<HTMLInputElement, SearchBoxProps>(
         placeholder={placeholder ?? msg.placeholder}
         value={current}
         onChange={(e) => {
-          if (value === undefined) setInner(e.target.value);
           onChange?.(e);
-          onValueChange?.(e.target.value);
+          setCurrent(e.target.value);
         }}
         onKeyDown={(e) => {
           onKeyDown?.(e);

@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useMediaQuery } from "../hooks/useMediaQuery";
-import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { useYugen } from "../YugenProvider/context";
 
 /* ================================================================== Kiểu dữ liệu */
@@ -334,24 +333,6 @@ export function ringPath(cx: number, cy: number, r0: number, r1: number) {
 }
 
 /* ================================================================== Hook */
-
-/** Độ rộng phần tử theo ResizeObserver. */
-export function useElementWidth<T extends HTMLElement>(): [(el: T | null) => void, number] {
-  const [el, setEl] = React.useState<T | null>(null);
-  const [width, setWidth] = React.useState(0);
-  useIsomorphicLayoutEffect(() => {
-    if (!el) return;
-    setWidth(el.getBoundingClientRect().width);
-    if (typeof ResizeObserver === "undefined") return;
-    const ro = new ResizeObserver((entries) => {
-      const w = entries[0]?.contentRect.width ?? 0;
-      setWidth((prev) => (Math.abs(prev - w) < 0.5 ? prev : w));
-    });
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [el]);
-  return [setEl, width];
-}
 
 /** Bật hoa văn khi: prop texture, theme tương phản cao, hoặc forced-colors của hệ điều hành. */
 export function useChartTexture(texture?: boolean): boolean {

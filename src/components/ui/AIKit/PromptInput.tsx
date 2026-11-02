@@ -1,5 +1,6 @@
 /** Yugen Labs · PromptInput — ô soạn prompt cho AI: tự giãn, đính kèm (nút, kéo thả, dán ảnh), kiểm tra tệp, Gửi / Dừng. */
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import {
   ArrowUpload20Regular,
   Attach20Regular,
@@ -262,25 +263,14 @@ export const PromptInput = React.forwardRef<HTMLTextAreaElement, PromptInputProp
     const listId = React.useId();
     const { announce } = useAnnounce();
 
-    const [innerText, setInnerText] = React.useState(defaultValue);
-    const text = value ?? innerText;
-    const [innerFiles, setInnerFiles] = React.useState<File[]>(defaultFiles);
-    const files = filesProp ?? innerFiles;
+    const [text, setText] = useControllableState({ value, defaultValue, onChange: onValueChange });
+    const [files, setFiles] = useControllableState({ value: filesProp, defaultValue: defaultFiles, onChange: onFilesChange });
     const [errors, setErrors] = React.useState<string[]>([]);
     const [dragging, setDragging] = React.useState(false);
     const previews = useFilePreviews(files);
 
     const canSend = (text.trim().length > 0 || files.length > 0) && !disabled && !streaming;
     const canAttach = allowAttachments && !disabled && (maxFiles === undefined || files.length < maxFiles);
-
-    const setText = (next: string) => {
-      if (value === undefined) setInnerText(next);
-      onValueChange?.(next);
-    };
-    const setFiles = (next: File[]) => {
-      if (filesProp === undefined) setInnerFiles(next);
-      onFilesChange?.(next);
-    };
 
     const setRefs = React.useCallback(
       (node: HTMLTextAreaElement | null) => {

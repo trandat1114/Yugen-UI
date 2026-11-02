@@ -1,5 +1,6 @@
 /** InputOTP — ô nhập mã một lần (kiểu shadcn), giao diện theo Fluent 2 Input: https://fluent2.microsoft.design/components/web/react/core/input/usage */
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import { useDirection } from "@radix-ui/react-direction";
 import { cn } from "@/lib/cn";
 import { fieldControlClass } from "@/components/ui/Field/Field";
@@ -72,8 +73,12 @@ export const InputOTP = React.forwardRef<HTMLDivElement, InputOTPProps>(
     const sanitize = (text: string) => text.split("").filter(isValid).join("");
 
     const msg = useYugenMessages("inputOTP", inputOTPMessages);
-    const [inner, setInner] = React.useState(() => sanitize(defaultValue).slice(0, length));
-    const current = (value !== undefined ? value : inner).slice(0, length);
+    const [rawValue, setValue] = useControllableState({
+      value,
+      defaultValue: () => sanitize(defaultValue).slice(0, length),
+      onChange: onValueChange,
+    });
+    const current = rawValue.slice(0, length);
     const inputs = React.useRef<(HTMLInputElement | null)[]>([]);
     const dir = useDirection();
 
@@ -89,8 +94,7 @@ export const InputOTP = React.forwardRef<HTMLDivElement, InputOTPProps>(
     const update = (next: string, focusIndex?: number) => {
       const clipped = next.slice(0, length);
       if (clipped !== current) {
-        if (value === undefined) setInner(clipped);
-        onValueChange?.(clipped);
+        setValue(clipped);
         if (clipped.length === length) onComplete?.(clipped);
       }
       if (focusIndex !== undefined) requestAnimationFrame(() => focusAt(focusIndex));

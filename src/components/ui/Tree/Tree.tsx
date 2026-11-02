@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import { useDirection } from "@radix-ui/react-direction";
 import { ChevronRight12Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
@@ -142,10 +143,9 @@ const TreeRoot = React.forwardRef<HTMLDivElement, TreeProps>(
     },
     ref,
   ) => {
-    const [openState, setOpenState] = React.useState<string[]>(defaultOpenItems ?? []);
-    const open = openItems ?? openState;
-    const [selectedState, setSelectedState] = React.useState(defaultSelectedValue);
-    const selected = selectedValue ?? selectedState;
+    // Tự gọi callback: onOpenChange có thêm `data`, onSelectedChange chạy cả khi chọn lại mục đang chọn.
+    const [open, setOpen] = useControllableState({ value: openItems, defaultValue: defaultOpenItems ?? [] });
+    const [selected, setSelected] = useControllableState({ value: selectedValue, defaultValue: defaultSelectedValue });
     const [active] = React.useState(createActiveStore);
     const openSet = React.useMemo(() => new Set(open), [open]);
     const innerRef = React.useRef<HTMLDivElement | null>(null);
@@ -166,19 +166,19 @@ const TreeRoot = React.forwardRef<HTMLDivElement, TreeProps>(
         const nextOpen = force ?? !isOpen;
         if (nextOpen === isOpen) return;
         const next = nextOpen ? [...open, value] : open.filter((v) => v !== value);
-        if (openItems === undefined) setOpenState(next);
+        setOpen(next);
         onOpenChange?.(next, { value, open: nextOpen });
       },
-      [open, openSet, openItems, onOpenChange],
+      [open, openSet, setOpen, onOpenChange],
     );
 
     const select = React.useCallback(
       (value: string) => {
         if (selectionMode === "none") return;
-        if (selectedValue === undefined) setSelectedState(value);
+        setSelected(value);
         onSelectedChange?.(value);
       },
-      [selectionMode, selectedValue, onSelectedChange],
+      [selectionMode, setSelected, onSelectedChange],
     );
 
     // Roving tabindex: luôn có đúng một treeitem nhận Tab (mục đang chọn hoặc mục đầu tiên).

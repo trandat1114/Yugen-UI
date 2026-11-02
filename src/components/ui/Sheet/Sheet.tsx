@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useDirection } from "@radix-ui/react-direction";
 import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
@@ -108,11 +109,12 @@ export function Sheet({
   const isDesktop = useMediaQuery(`(min-width: ${breakpoint}px)`);
   const isBottom = mode === "bottom" || (mode === "auto" && !isDesktop);
 
-  const callbacks = React.useRef({ onOpenChange, onSnapPointChange });
+  const callbacks = React.useRef({ onSnapPointChange });
   useIsomorphicLayoutEffect(() => {
-    callbacks.current = { onOpenChange, onSnapPointChange };
+    callbacks.current = { onSnapPointChange };
   });
 
+  // Không dùng useControllableState: mở lại phải về nấc mặc định mà không gọi onSnapPointChange.
   const [innerSnap, setInnerSnap] = React.useState(initialSnap);
   const snapControlled = snapPointProp !== undefined;
   const snapPoint = nearest(snapPoints, snapControlled ? snapPointProp : innerSnap);
@@ -126,8 +128,7 @@ export function Sheet({
     [snapControlled],
   );
 
-  const [innerOpen, setInnerOpen] = React.useState(defaultOpen);
-  const open = openProp ?? innerOpen;
+  const [open, setOpenState] = useControllableState({ value: openProp, defaultValue: defaultOpen, onChange: onOpenChange });
   const openRef = React.useRef(open);
   openRef.current = open;
   const setOpen = React.useCallback(
@@ -135,10 +136,9 @@ export function Sheet({
       if (next === openRef.current) return;
       // Mỗi lần mở (uncontrolled) bắt đầu lại từ nấc mặc định.
       if (next && !snapControlled) setInnerSnap(initialSnap);
-      if (openProp === undefined) setInnerOpen(next);
-      callbacks.current.onOpenChange?.(next);
+      setOpenState(next);
     },
-    [openProp, snapControlled, initialSnap],
+    [snapControlled, initialSnap, setOpenState],
   );
 
   const bodyRef = React.useRef<HTMLDivElement | null>(null);

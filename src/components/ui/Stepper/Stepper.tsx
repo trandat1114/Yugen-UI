@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import { useDirection } from "@radix-ui/react-direction";
 import {
   ArrowLeft20Regular,
@@ -314,8 +315,7 @@ export const Wizard = React.forwardRef<HTMLDivElement, WizardProps>(
   ) => {
     const msg = useYugenMessages("wizard", wizardMessages);
     const autoId = React.useId();
-    const [innerActive, setInnerActive] = React.useState(defaultActiveStep);
-    const active = activeProp ?? innerActive;
+    const [active, setActive] = useControllableState({ value: activeProp, defaultValue: defaultActiveStep, onChange: onStepChange });
     const [completed, setCompleted] = React.useState<ReadonlySet<number>>(() => new Set());
     const [error, setError] = React.useState<{ index: number; message: string } | null>(null);
     const [pending, setPending] = React.useState(false);
@@ -340,8 +340,7 @@ export const Wizard = React.forwardRef<HTMLDivElement, WizardProps>(
       if (pendingRef.current || index === active || index < 0 || index >= total) return;
       setError(null);
       focusPanel.current = true;
-      if (activeProp === undefined) setInnerActive(index);
-      onStepChange?.(index);
+      setActive(index);
     };
 
     /** Chạy hàm có thể trả Promise; chỉ bật `pending` khi thật sự bất đồng bộ (không chớp loader cho validate đồng bộ). */

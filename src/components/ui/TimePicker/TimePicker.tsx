@@ -1,5 +1,6 @@
 /** Fluent 2 TimePicker — https://react.fluentui.dev/?path=/docs/components-timepicker--docs */
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { useDirection } from "@radix-ui/react-direction";
 import { Checkmark16Filled, Clock16Regular, Clock20Regular, Clock24Regular } from "@fluentui/react-icons";
@@ -281,8 +282,8 @@ export const TimePicker = React.forwardRef<HTMLInputElement, TimePickerProps>((p
   const providerLocale = useYugen().locale;
   const locale = localeProp ?? providerLocale;
   const controlled = value !== undefined;
-  const [inner, setInner] = React.useState<Date | null>(defaultValue);
-  const selected = controlled ? value : inner;
+  // onTimeChange có event + data và chỉ phát khi thật sự đổi (xem selectTime) nên gọi riêng, không qua hook.
+  const [selected, setSelected] = useControllableState<Date | null>({ value, defaultValue });
   /** Chữ người dùng đang gõ (hoặc chữ không hợp lệ đã xác nhận); null = hiển thị giờ đã chọn. */
   const [draft, setDraft] = React.useState<string | null>(null);
   const [open, setOpen] = React.useState(false);
@@ -337,14 +338,14 @@ export const TimePicker = React.forwardRef<HTMLInputElement, TimePickerProps>((p
     const changed = selected?.getTime() !== time.getTime() || invalidRef.current;
     invalidRef.current = false;
     setDraft(null);
-    if (!controlled) setInner(time);
+    setSelected(time);
     if (changed) emit(event, { selectedTime: time, selectedTimeText: format(time) });
   };
 
   const fail = (event: React.SyntheticEvent<HTMLElement>, text: string, errorType: TimeSelectionErrorType) => {
     invalidRef.current = true;
     setDraft(text);
-    if (!controlled) setInner(null);
+    setSelected(null);
     emit(event, { selectedTime: null, selectedTimeText: text, errorType });
   };
 
@@ -355,7 +356,7 @@ export const TimePicker = React.forwardRef<HTMLInputElement, TimePickerProps>((p
       const changed = selected !== null || invalidRef.current;
       invalidRef.current = false;
       setDraft(null);
-      if (!controlled) setInner(null);
+      setSelected(null);
       if (changed) emit(event, { selectedTime: null, selectedTimeText: "" });
       return;
     }

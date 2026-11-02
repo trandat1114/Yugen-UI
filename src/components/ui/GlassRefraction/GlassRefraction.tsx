@@ -1,4 +1,5 @@
 import * as React from "react";
+import { matchesMedia } from "../hooks/useMediaQuery";
 import { bezelWidth, lensMap, maxShift, refractionProfile, type LensGeometry } from "./lens";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
@@ -20,7 +21,7 @@ export function supportsGlassRefraction() {
 
 /** Người dùng muốn bớt hiệu ứng: CSS đã tắt blur và khúc xạ, không cần tính bản đồ. */
 function prefersPlainGlass() {
-  return window.matchMedia("(prefers-reduced-transparency: reduce), (prefers-contrast: more), (forced-colors: active)").matches;
+  return matchesMedia("(prefers-reduced-transparency: reduce), (prefers-contrast: more), (forced-colors: active)");
 }
 
 function mapUrl(geometry: LensGeometry, profile: Float32Array) {
