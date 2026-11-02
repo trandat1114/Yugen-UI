@@ -21,8 +21,7 @@ export interface Content {
   site: { title: string; product: string; description: string };
   themes: Record<YugenTheme, string>;
   appearance: string;
-  skipToContent: string;
-  nav: { label: string; open: string; home: string };
+  nav: { label: string; home: string };
   search: { button: string; title: string; placeholder: string; empty: string };
   home: {
     eyebrow: string;

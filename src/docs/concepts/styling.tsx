@@ -363,6 +363,47 @@ import { cn } from "@/lib/cn";
       </DocSection>
 
       <DocSection
+        id="lean-css"
+        title="Chỉ CSS của component bạn dùng"
+        description="theme.css cho Tailwind quét mọi component của gói, nên app nào cũng mang CSS của mọi component. App muốn nhẹ hơn dùng theme-core.css và thêm một file cho mỗi component nó dùng."
+      >
+        <div className="flex flex-col gap-4">
+          <CodeBlock code={`@import "tailwindcss";
+@import "yugen-ui/theme-core.css";
+/* Một dòng cho mỗi component app dùng: thư mục chứa nó. */
+@import "yugen-ui/sources/YugenProvider.css";
+@import "yugen-ui/sources/Button.css";
+@import "yugen-ui/sources/Dialog.css";
+@import "yugen-ui/sources/DataGrid.css";`} />
+          <SimpleTable
+            head={["Template", "Thư mục component", "theme.css", "theme-core.css + sources"]}
+            rows={[
+              ["Starter", "4", "25.4 kB", "13.9 kB"],
+              ["Landing", "14", "25.5 kB", "14.9 kB"],
+              ["Admin", "30", "25.1 kB", "17.1 kB"],
+              ["SaaS", "34", "25.0 kB", "19.4 kB"],
+            ]}
+          />
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
+            <li>CSS gzip, gồm cả class của chính app, đo bằng <C>scripts/measure-css.mjs</C>.</li>
+            <li>
+              Mỗi file đã gồm các component mà component đó dùng bên trong (<C>SplitButton.css</C> có Menu và Button), nên chỉ cần liệt kê
+              component bạn import.
+            </li>
+            <li>
+              Tên file là thư mục chứa component: <C>NavItem</C> ở <C>sources/Nav.css</C>, <C>toast</C> ở <C>sources/Toast.css</C>. Bảng
+              export → file nằm trong <C>yugen-ui/sources/index.json</C>.
+            </li>
+            <li>Thiếu một file thì component đó không có style. Chưa chắc thì dùng theme.css.</li>
+            <li>
+              Copy mã nguồn component (shadcn registry, <C>@yugen-ui/cli add</C>) thì không cần: Tailwind đã quét thư mục của app.{" "}
+              <C>styles.css</C> (không dùng Tailwind) luôn chứa mọi component.
+            </li>
+          </ul>
+        </div>
+      </DocSection>
+
+      <DocSection
         id="media-object"
         title="Công thức media object"
         description="Avatar / icon + khối chữ + thao tác là bố cục gặp ở khắp nơi. Ba class quyết định nó có vỡ hay không."

@@ -157,10 +157,9 @@ export function ChatLayout({
       lang={t.lang}
       breakpoint="3xl"
       onKeyDown={embedded ? stopOnEscape : undefined}
-      // Embedded: fills the preview, no global shortcut or skip link, sidebar state not saved.
+      // Embedded: fills the preview, no skip link, sidebar state not saved.
       className={embedded ? "h-full" : undefined}
       persistKey={embedded ? undefined : "chat-sidebar"}
-      shortcut={embedded ? false : undefined}
       skipLink={!embedded}
     >
       {!embedded && <PageProgress />}

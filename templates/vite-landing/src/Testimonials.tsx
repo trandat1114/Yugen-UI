@@ -8,12 +8,12 @@ export function Testimonials() {
   const titleId = `${sectionId("top")}-testimonials`;
 
   return (
-    <section aria-labelledby={titleId} className="bg-background-2 px-4 py-16 @3xl/landing:py-24">
+    <section aria-labelledby={titleId} className="bg-background-2 px-4 py-16 @3xl/app-shell:py-24">
       <div className="mx-auto max-w-6xl">
-        <H2 id={titleId} className="font-display text-title2 font-semibold text-foreground-1 @3xl/landing:text-title1">
+        <H2 id={titleId} className="font-display text-title2 font-semibold text-foreground-1 @3xl/app-shell:text-title1">
           {t.testimonials.title}
         </H2>
-        <ul className="mt-10 grid gap-4 @4xl/landing:grid-cols-3">
+        <ul className="mt-10 grid gap-4 @4xl/app-shell:grid-cols-3">
           {t.testimonials.items.map((item) => (
             <li key={item.name} className="flex rounded-2xlarge border border-stroke-2 bg-background-1 p-6 shadow-2">
               <Quote

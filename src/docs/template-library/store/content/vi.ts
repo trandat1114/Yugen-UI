@@ -9,7 +9,6 @@ const vi: Content = {
   appName: "Sakura Goods",
   pageTitle: (page) => `${page} · Sakura Goods`,
   nav: {
-    skip: "Bỏ qua, tới nội dung",
     categories: "Danh mục",
     cart: (count) => (count === 0 ? "Giỏ hàng, trống" : `Giỏ hàng, ${count} sản phẩm`),
     appearance: "Giao diện",

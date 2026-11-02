@@ -78,7 +78,7 @@ export function OrderList({ customerId }: { customerId?: string }) {
     <>
       {!customerId && (
         <div className="flex flex-wrap items-end gap-3">
-          <SearchBox label={o.search} placeholder={o.searchPlaceholder} value={search} onValueChange={setSearch} rootClassName="w-full @2xl/app:w-64" />
+          <SearchBox label={o.search} placeholder={o.searchPlaceholder} value={search} onValueChange={setSearch} rootClassName="w-full @2xl/app-shell:w-64" />
           <Field label={o.columns.status}>
             <Dropdown value={status} onValueChange={(v) => setStatus(v as OrderStatus | "all")} className="w-40 min-w-0">
               <DropdownOption value="all">{t.common.all}</DropdownOption>

@@ -22,8 +22,6 @@ export interface Content {
     account: string;
     signOut: string;
     signedOut: string;
-    skip: string;
-    open: string;
   };
   common: {
     all: string;

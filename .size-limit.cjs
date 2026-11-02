@@ -47,8 +47,9 @@ module.exports = [
   js("{ StreamingMarkdown, PromptInput }", "{ StreamingMarkdown, PromptInput }", "70 kB"),
   js("{ messagesEn }", "{ messagesEn }", "5 kB"),
   // Sonner, Timeline, DescriptionList, Stat, utility yugen-prose (#174, #234): 24.6 kB khi thêm.
-  // AppShell / Sidebar + rail của Nav (#161): 24.97 kB khi thêm.
-  css("styles.css", "27 kB"),
+  // AppShell / Sidebar + rail của Nav (#161): 24.97 kB khi thêm; 25.08 kB với layout / scroll / footer. 28 kB: chỗ cho vài
+  // component nữa (styles.css luôn chứa mọi component, #169 không làm nó nhỏ đi).
+  css("styles.css", "28 kB"),
   // Glass (#178): token + utility + fallback trợ năng (12.49 / 8.15 kB khi thêm).
   css("theme.css", "14 kB"),
   css("tokens.css", "9 kB"),

@@ -8,10 +8,10 @@ export function Faq() {
   const titleId = `${sectionId("faq")}-title`;
 
   return (
-    <section id={sectionId("faq")} aria-labelledby={titleId} className="scroll-mt-16 px-4 py-16 @3xl/landing:py-24">
-      <div className="mx-auto grid max-w-6xl gap-8 @4xl/landing:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] @4xl/landing:gap-16">
+    <section id={sectionId("faq")} aria-labelledby={titleId} className="scroll-mt-16 px-4 py-16 @3xl/app-shell:py-24">
+      <div className="mx-auto grid max-w-6xl gap-8 @4xl/app-shell:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] @4xl/app-shell:gap-16">
         <div>
-          <H2 id={titleId} className="font-display text-title2 font-semibold text-foreground-1 @3xl/landing:text-title1">
+          <H2 id={titleId} className="font-display text-title2 font-semibold text-foreground-1 @3xl/app-shell:text-title1">
             {t.faq.title}
           </H2>
           <p className="mt-3 text-body2 text-foreground-2">

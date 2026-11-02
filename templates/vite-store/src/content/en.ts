@@ -13,7 +13,6 @@ const en: Content = {
   appName: "Sakura Goods",
   pageTitle: (page) => `${page} · Sakura Goods`,
   nav: {
-    skip: "Skip to content",
     categories: "Categories",
     cart: (count) => (count === 0 ? "Cart, empty" : `Cart, ${plural(count, "item", "items")}`),
     appearance: "Appearance",

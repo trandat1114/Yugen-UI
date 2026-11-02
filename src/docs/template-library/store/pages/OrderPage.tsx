@@ -74,7 +74,7 @@ function OrderView({ order }: { order: Order }) {
       </div>
 
       <Card size="large" className="gap-5">
-        <dl className="grid gap-3 @xl/app:grid-cols-2">
+        <dl className="grid gap-3 @xl/app-shell:grid-cols-2">
           <div>
             <dt className="text-caption1 text-foreground-3">{t.order.number}</dt>
             <dd className="font-mono text-subtitle2 font-semibold">{order.id}</dd>
@@ -87,7 +87,7 @@ function OrderView({ order }: { order: Order }) {
 
         {block(t.order.items, <LineList lines={lines} money={format.money} />)}
 
-        <div className="grid gap-5 border-t border-stroke-2 pt-4 @xl/app:grid-cols-2">
+        <div className="grid gap-5 border-t border-stroke-2 pt-4 @xl/app-shell:grid-cols-2">
           {block(
             t.order.delivery,
             <div className="text-body1 text-foreground-2">
