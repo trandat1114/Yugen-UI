@@ -77,7 +77,7 @@ export const en: Record<string, ComponentDocEn> = {
 
   counterbadge: {
     description:
-      "Hidden when count = 0 (unless showZero); above overflowCount it shows \"99+\". In dot mode the dot is always shown. Screen readers don't read the visible number; they read a label such as “5 thông báo” (5 notifications) instead, which you can change with the label prop.",
+      "Hidden when count = 0 (unless showZero); above overflowCount it shows \"99+\". In dot mode the dot is always shown. Screen readers don't read the visible number; they read a label such as “5 notifications” instead, which you can change with the label prop.",
     examples: [
       { title: "Appearance & color", description: "filled (default) / ghost × brand, danger, important, informative." },
       { title: "Size & shape", description: "small, medium, large, extra-large; shape circular (default) or rounded." },
@@ -102,7 +102,7 @@ export const en: Record<string, ComponentDocEn> = {
       color: "important = inverted background (foreground-1).",
       shape: "Shape.",
       size: "Same as Badge.",
-      label: "Screen reader label; defaults to “{count} thông báo” ({count} notifications).",
+      label: "Screen reader label; defaults to “{count} notifications”.",
     },
   },
 
@@ -129,10 +129,10 @@ export const en: Record<string, ComponentDocEn> = {
     ],
     props: {
       status: "Presence status.",
-      outOfOffice: "Out of office: outlined icon, and “không ở văn phòng” (out of office) is added to the label.",
+      outOfOffice: "Out of office: outlined icon, and “Out of office” is added to the label.",
       size: "6 / 10 / 12 / 16 / 20 / 28px.",
       ring: "ring-2 ring-background-1 border for use on an Avatar.",
-      label: "Overrides the aria-label (default: “Có mặt” (Available), “Bận” (Busy)…).",
+      label: "Overrides the aria-label (default: “Available”, “Busy”…).",
     },
   },
 
@@ -172,7 +172,7 @@ export const en: Record<string, ComponentDocEn> = {
 
   teachingpopover: {
     description:
-      "Built on Popover (shadow-16, with an arrow). It has a Header (icon, small title and close button), a Body (optional illustration, title and content), a Footer (primary and secondary buttons) and a Carousel for several steps (\"1/3\", navigation dots, “Quay lại” (Back) / “Tiếp” (Next) / “Hoàn tất” (Done)). appearance=\"brand\" fills this small surface with the brand color.",
+      "Built on Popover (shadow-16, with an arrow). It has a Header (icon, small title and close button), a Body (optional illustration, title and content), a Footer (primary and secondary buttons) and a Carousel for several steps (\"1/3\", navigation dots, “Back” / “Next” / “Finish”). appearance=\"brand\" fills this small surface with the brand color.",
     examples: [
       { title: "Brand & illustration", description: "appearance=\"brand\" on TeachingPopover; media appears above the content." },
       { title: "Vertical footer", description: "layout=\"vertical\" stacks the two buttons at full width, which suits long labels." },
@@ -201,7 +201,7 @@ export const en: Record<string, ComponentDocEn> = {
       "TeachingPopoverFooter.closeOnPrimary / layout": "Closes the popover when the primary button is clicked; button layout.",
       "TeachingPopoverCarousel.step / defaultStep / onStepChange": "Current step (starting at 0).",
       "TeachingPopoverCarousel.onFinish / *Label":
-        "onFinish runs when “Hoàn tất” (Done) is clicked. nextLabel / previousLabel / finishLabel / dismissLabel replace “Tiếp” (Next) / “Quay lại” (Back) / “Hoàn tất” (Done) / “Để sau” (Later).",
+        "onFinish runs when “Finish” is clicked. nextLabel / previousLabel / finishLabel / dismissLabel replace “Next” / “Back” / “Finish” / “Not now”.",
     },
     defaults: { "TeachingPopoverHeader.icon / dismissible": "lightbulb / true" },
   },

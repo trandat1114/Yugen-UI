@@ -144,9 +144,6 @@ export const en: Record<string, ComponentDocEn> = {
       numberOfMonths: "Number of months shown; 1 works better on mobile.",
       "value / onValueChange / minDate / maxDate / clearable…":
         "As in DateRangePicker (see the DatePicker page).",
-    },
-    defaults: {
-      presetsLabel: "“Chọn nhanh khoảng ngày” (quick date range picks)",
-    },
+    },
   },
 };

@@ -18,7 +18,6 @@ export const en: Record<string, ComponentDocEn> = {
       menuLabel: "aria-label for the button that opens the menu.",
       "icon, onClick, disabled…": "Passed to the main button.",
     },
-    defaults: { menuLabel: "“Thêm tuỳ chọn” (More options)" },
   },
 
   menu: {

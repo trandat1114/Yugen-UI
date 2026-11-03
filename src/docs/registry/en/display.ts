@@ -316,7 +316,6 @@ export const en: Record<string, ComponentDocEn> = {
       "CarouselNavContainer.previousLabel / nextLabel": "aria-label of the navigation buttons. The old name prevLabel is deprecated (removed in 1.0).",
       "CarouselThumbnails / CarouselThumbnail": "Thumbnail tablist; each CarouselThumbnail matches the slide at the same position.",
     },
-    defaults: { "CarouselNavContainer.previousLabel / nextLabel": "“Slide trước” (Previous slide) / “Slide tiếp theo” (Next slide)" },
   },
 
   resizable: {
@@ -359,6 +358,5 @@ export const en: Record<string, ComponentDocEn> = {
       "ResizableHandle.collapseLabel / expandLabel": "Tooltip text (title) of the button.",
       "ResizableHandle.disabled / disableDoubleClick": "Locks the divider / turns off the double-click reset.",
     },
-    defaults: { "ResizableHandle.collapseLabel / expandLabel": "“Thu gọn panel” (Collapse panel) / “Mở rộng panel” (Expand panel)" },
   },
 };

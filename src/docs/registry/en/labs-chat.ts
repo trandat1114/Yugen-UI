@@ -74,7 +74,7 @@ export const en: Record<string, ComponentDocEn> = {
       "value / defaultValue": "Record<id, string | string[] | number | boolean>.",
       onChange: "Called whenever an answer changes.",
       onSubmit:
-        "Called when every question is valid; with a Promise the Submit button shows “Đang gửi…” (Sending…), and an error shows a retry message.",
+        "Called when every question is valid; with a Promise the Submit button shows “Submitting…”, and an error shows a retry message.",
       review: "Adds a review step before submitting.",
       completion: "Replaces the default completion screen.",
       "title / description / submitLabel": "Header and submit button label.",
@@ -82,9 +82,8 @@ export const en: Record<string, ComponentDocEn> = {
       "SingleQuestion / MultipleQuestion": "Option cards; multiple is limited by min / max.",
       "RatingQuestion / ScaleQuestion": "Stars (Rating) or a segmented scale (0–10 by default).",
       "TextQuestion / LongTextQuestion": "Single-line Input / Textarea with a counter (when maxLength is set).",
-      YesNoQuestion: "Yes / No, labeled “Có” / “Không” by default; keys Y, N (or C, K).",
+      YesNoQuestion: "Yes / No, labeled “Yes” / “No” by default; keys Y, N (or C, K).",
     },
-    defaults: { "title / description / submitLabel": "— / — / “Gửi” (Submit)" },
   },
 
   messagescroller: {
@@ -132,7 +131,6 @@ export const en: Record<string, ComponentDocEn> = {
       MessageReaction: "Reaction button (aria-pressed).",
       TypingIndicator: "Three dots (static with reduced motion), role=status.",
     },
-    defaults: { "MessageScroller.label": "“Cuộc trò chuyện” (Conversation)" },
   },
 
   chatcomposer: {
@@ -164,11 +162,7 @@ export const en: Record<string, ComponentDocEn> = {
       "busy / onStop": "Blocks sending while waiting; Stop button.",
       "showHint / sendLabel / disabled": "Key hint, Send button label, disabled.",
       textareaProps: "Extra attributes for the textarea.",
-    },
-    defaults: {
-      "placeholder / label": "“Nhập tin nhắn…” (Type a message…) / “Tin nhắn” (Message)",
-      "showHint / sendLabel / disabled": "false / “Gửi” (Send) / false",
-    },
+    },
   },
 
   codeblock: {

@@ -64,7 +64,7 @@ export const en: Record<string, ComponentDocEn> = {
 
   stepper: {
     description:
-      'Stepper is an ordered list (horizontal or vertical). The current step has aria-current="step", and the number / check mark / exclamation mark indicator always comes with hidden text (“đã hoàn thành” for completed, “có lỗi” for an error…), so the state doesn\'t rely on color. States are derived from activeStep or set explicitly with status. With onStepChange the steps become buttons with a single tab stop, arrow keys (reversed in RTL) and Home / End; linear blocks jumping to steps not yet reached. The connector is a flex element, so it reverses in RTL. The horizontal version collapses to “Bước 2/4 · Tên bước” (Step 2/4 · step title) plus a ProgressBar when its container is narrower than 32rem (container query). Wizard runs validate (sync or a Promise) before moving to the next step. If that takes longer than 300ms the button shows a Spinner (Button loading); errors show with role="alert" and the step switches to the error state.',
+      'Stepper is an ordered list (horizontal or vertical). The current step has aria-current="step", and the number / check mark / exclamation mark indicator always comes with hidden text (“completed”, “error”…), so the state doesn\'t rely on color. States are derived from activeStep or set explicitly with status. With onStepChange the steps become buttons with a single tab stop, arrow keys (reversed in RTL) and Home / End; linear blocks jumping to steps not yet reached. The connector is a flex element, so it reverses in RTL. The horizontal version collapses to “Step 2 of 4 · step title” plus a ProgressBar when its container is narrower than 32rem (container query). Wizard runs validate (sync or a Promise) before moving to the next step. If that takes longer than 300ms the button shows a Spinner (Button loading); errors show with role="alert" and the step switches to the error state.',
     examples: [
       {
         title: "Horizontal, controlled, non-linear",
@@ -89,7 +89,7 @@ export const en: Record<string, ComponentDocEn> = {
     ],
     donts: [
       "Don't use Stepper in place of Tabs for independent sections with no order.",
-      'Don\'t signal errors with color alone. Use status="error", which adds an exclamation mark and the hidden text “có lỗi” (has an error).',
+      'Don\'t signal errors with color alone. Use status="error", which adds an exclamation mark and the hidden text “error”.',
       "Don't clear entered data when people go back.",
     ],
     props: {
@@ -100,11 +100,11 @@ export const en: Record<string, ComponentDocEn> = {
       linear:
         "Only allows going back or to completed steps; other steps get aria-disabled.",
       responsive:
-        "Horizontal + container < 32rem → “Bước n/N · Tên” (Step n/N · title) plus a ProgressBar.",
+        "Horizontal + container < 32rem → “Step n of N · title” plus a ProgressBar.",
       "Step.title / description": "Step title and short description.",
       "Step.status": "Overrides the state derived from the step's position.",
       "Step.optional / disabled":
-        "Shows “Tuỳ chọn” (Optional) / prevents moving to the step.",
+        "Shows “Optional” / prevents moving to the step.",
       "Wizard.steps":
         "{ id?, title, description?, optional?, content, validate? }.",
       "WizardStep.validate":
@@ -114,10 +114,6 @@ export const en: Record<string, ComponentDocEn> = {
       "Wizard.onFinish":
         "Called when the last step passes validate; a Promise puts the Finish button in loading.",
       "Wizard.backLabel / nextLabel / finishLabel": "Wizard button labels.",
-    },
-    defaults: {
-      "Wizard.backLabel / nextLabel / finishLabel":
-        "“Quay lại” / “Tiếp tục” / “Hoàn tất” (Back / Next / Finish)",
     },
   },
 

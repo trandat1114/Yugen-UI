@@ -444,3 +444,22 @@ test("ví dụ: mở code thì ô chiếm cả hàng của lưới, đóng lại
   expect(await tileWidth()).toBeLessThan(gridWidth * 0.6);
   await expect(toggle).toBeInViewport();
 });
+
+test("ví dụ: z-index trong demo (header sticky của AppShell) không phủ lên nút Copy", async ({ page }) => {
+  await openDocs(page, "/components/appshell");
+  const tiles = page.locator("#variants > div > div.grid > div > div.relative");
+  await expect(tiles.first()).toBeVisible();
+  for (let i = 0; i < (await tiles.count()); i++) {
+    const tile = tiles.nth(i);
+    await tile.hover();
+    const covered = await tile.evaluate((el) => {
+      const button = el.querySelector(":scope > button")!;
+      const box = button.getBoundingClientRect();
+      return [
+        [box.left + 4, box.bottom - 4],
+        [box.right - 4, box.bottom - 4],
+      ].some(([x, y]) => !button.contains(document.elementFromPoint(x, y)));
+    });
+    expect(covered, `ô ${i + 1}`).toBe(false);
+  }
+});

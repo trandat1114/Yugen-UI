@@ -6,6 +6,7 @@ export const meta = {
   title: "Analytics",
   description: "KPIs, trends, rankings and shares, with one time filter for every card",
   order: 11,
+  wide: true,
 };
 
 type Range = "7" | "30" | "90";
