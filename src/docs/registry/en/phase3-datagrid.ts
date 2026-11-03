@@ -90,7 +90,7 @@ export const en: Record<string, ComponentDocEn> = {
       loading:
         "Skeleton after 300ms, kept for at least 500ms (useSpinDelay); aria-busy on the grid.",
       empty:
-        "Content when there are no rows; defaults to an Empty reading “Không có dữ liệu” (No data).",
+        "Content when there are no rows; defaults to an Empty reading “No data”.",
       "DataGridColumnPicker.columns":
         "The same column array passed to DataGrid; for Table, an array of { columnId, label }. The menu shows label.",
       "DataGridColumnPicker.hiddenColumns": "Ids of the hidden columns, the same value passed to DataGrid.",

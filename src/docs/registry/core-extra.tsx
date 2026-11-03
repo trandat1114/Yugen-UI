@@ -150,7 +150,7 @@ const EXTRA: Record<string, ComponentDoc> = {
       { name: "appearance", type: `"primary" | "secondary" | "outline" | "subtle"`, defaultValue: `"secondary"`, description: "Áp dụng cho cả hai nửa." },
       { name: "size", type: `"small" | "medium" | "large"`, defaultValue: `"medium"`, description: "Kích thước." },
       { name: "menu", type: "ReactNode", description: "MenuItem / MenuItemRadio / MenuDivider." },
-      { name: "menuLabel", type: "string", defaultValue: `"Thêm tuỳ chọn"`, description: "aria-label cho nút mở menu." },
+      { name: "menuLabel", type: "string", defaultValue: `"More options"`, description: "aria-label cho nút mở menu." },
       { name: "icon, onClick, disabled…", type: "ButtonProps", description: "Truyền cho nút chính." },
     ],
   },

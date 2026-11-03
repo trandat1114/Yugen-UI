@@ -4,7 +4,7 @@ import type { ComponentDocEn } from "../../types";
 export const en: Record<string, ComponentDocEn> = {
   barchart: {
     description:
-      "Hand-written SVG following the dataviz method: bars ≤ 24px thick, a 4px radius at the data end and square at the baseline, a 2px surface gap between bars / stacked segments, a single Y axis and a thin grid kept in the background. Hover the chart, or Tab into it and use the arrow keys, to see the tooltip; the “Bảng dữ liệu” (Data table) button switches to an equivalent table for screen readers.",
+      "Hand-written SVG following the dataviz method: bars ≤ 24px thick, a 4px radius at the data end and square at the baseline, a 2px surface gap between bars / stacked segments, a single Y axis and a thin grid kept in the background. Hover the chart, or Tab into it and use the arrow keys, to see the tooltip; the “Data table” button switches to an equivalent table for screen readers.",
     examples: [
       {
         title: "Horizontal bars & value labels",
@@ -127,7 +127,7 @@ export const en: Record<string, ComponentDocEn> = {
       legend: "Legend with percentages beside the ring.",
       "valueFormat, locale, title, description, texture…": "Same as BarChart.",
     },
-    defaults: { otherLabel: "“Khác” (Other)", "centerValue / centerLabel": "total / “Tổng” (Total)" },
+    defaults: { "centerValue / centerLabel": 'total / "Total"' },
   },
 
   sparkline: {

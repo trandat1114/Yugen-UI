@@ -41,7 +41,7 @@ export const en: Record<string, ComponentDocEn> = {
       spinnerSize: "Spinner size.",
       overlayClassName: "Class for the overlay (opacity, padding…).",
     },
-    defaults: { label: "“Đang tải…” (Loading…)", "delay / minDuration": "0 / 500 when delay is set" },
+    defaults: { "delay / minDuration": "0 / 500 when delay is set" },
   },
 
   pageprogress: {
@@ -83,7 +83,6 @@ export const en: Record<string, ComponentDocEn> = {
         "Imperative control; start/done calls are counted. createPageProgress() creates a separate controller.",
       "PageProgressFallback / usePageProgress(active?)": "Runs the bar while mounted (as a Suspense fallback) or while active.",
     },
-    defaults: { label: "“Đang tải trang” (Loading page)" },
   },
 
   asynccontent: {
@@ -121,7 +120,7 @@ export const en: Record<string, ComponentDocEn> = {
       "ErrorState.secondaryAction": "Secondary action (Report a problem, Go back…).",
       "ErrorState.variant / size": "alert adds role=\"alert\"; small is a compact single line.",
     },
-    defaults: { skeleton: "SkeletonText, 3 lines", loadingLabel: "“Đang tải…” (Loading…)" },
+    defaults: { skeleton: "SkeletonText, 3 lines" },
   },
 
   skeletonpresets: {
@@ -188,6 +187,5 @@ export const en: Record<string, ComponentDocEn> = {
       setItems: "Replaces the base data (e.g. after reloading from the server).",
       pending: "There are pending changes; combine it with useSpinDelay for a “Saving…” line.",
     },
-    defaults: { "options.errorTitle / errorBody": "“Không lưu được thay đổi” (Couldn't save changes)" },
   },
 };
