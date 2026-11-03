@@ -1,6 +1,6 @@
 import type { ComponentType } from "react";
 
-export type PreloadableComponent<P> = ComponentType<P> & { preload: () => Promise<void> };
+export type PreloadableComponent<P> = ComponentType<P> & { preload: () => Promise<void>; prefetch: () => void };
 
 /**
  * Như `React.lazy` nhưng nạp trước được: sau khi `preload()` xong, lần render đầu không treo. main.tsx nạp trước phần của
@@ -21,6 +21,15 @@ export function lazyPage<P extends object>(load: () => Promise<ComponentType<P>>
       },
     ));
 
+  // Nạp trước khi người dùng trỏ / focus vào link (#305): như preload nhưng lỗi không giữ lại — lần render thật tự nạp lại.
+  const prefetch = () => {
+    if (Loaded || pending) return;
+    void load().then(
+      (component) => void (Loaded ??= component),
+      () => {},
+    );
+  };
+
   function LazyPage(props: P) {
     if (failure) {
       const { error } = failure;
@@ -30,5 +39,5 @@ export function lazyPage<P extends object>(load: () => Promise<ComponentType<P>>
     if (!Loaded) throw preload();
     return <Loaded {...props} />;
   }
-  return Object.assign(LazyPage, { preload });
+  return Object.assign(LazyPage, { preload, prefetch });
 }

@@ -3,17 +3,16 @@ import { PageProgress, PageProgressFallback, YugenProvider } from "@/components/
 import { useAppearance, type Appearance } from "@/hooks/useAppearance";
 import { docsPath, hrefOf, navigate, useDocsLocation } from "@/docs/router";
 import { Sidebar } from "@/docs/layout/Sidebar";
-import { TopBar } from "@/docs/layout/TopBar";
+import { AppearancePicker, TopBar } from "@/docs/layout/TopBar";
 import { dismissLanguageSuggestion, LanguageSuggestion } from "@/docs/layout/LanguageSuggestion";
 import { YugenMark } from "@/docs/YugenMark";
 import { AuthorLink } from "@/docs/AuthorLink";
 import { CONCEPT_BY_SLUG, CONCEPT_EN_PAGES } from "@/docs/concepts";
-import { loadEnglish, LocaleProvider, useLocale, type Locale } from "@/docs/i18n";
+import { loadLocale, LocaleProvider, useLocale, type Locale } from "@/docs/i18n";
 import { FallbackNotice } from "@/docs/i18n/FallbackNotice";
 import { DocumentMeta, fallbackOf } from "@/docs/seo";
 import { lazyPage } from "@/docs/lazyPage";
 import { preloadComponentDoc } from "@/docs/registry";
-import { preloadComponentMessages } from "@/docs/componentMessages";
 import { preloadNews } from "@/docs/news";
 import { SITE } from "@/docs/site";
 import type { Route } from "@/docs/router";
@@ -35,7 +34,7 @@ const CommunityPage = lazyPage(() => import("@/docs/pages/CommunityPage").then((
 const ContributorsPage = lazyPage(() => import("@/docs/pages/ContributorsPage").then((m) => m.ContributorsPage));
 
 /**
- * Nạp trước mọi phần nạp lười mà route cần (trang, nội dung khái niệm, demo, gói tiếng Anh). main.tsx chờ hàm này rồi
+ * Nạp trước mọi phần nạp lười mà route cần (trang, nội dung khái niệm, demo, gói ngôn ngữ). main.tsx chờ hàm này rồi
  * mới render, nên HTML prerender được thay bằng trang hoàn chỉnh trong một lần. Lỗi mạng bỏ qua: trang tự nạp lại khi render.
  */
 export async function preloadRoute(route: Route, lang: Locale) {
@@ -51,14 +50,17 @@ export async function preloadRoute(route: Route, lang: Locale) {
     community: CommunityPage,
     contributors: ContributorsPage,
   } as const;
-  const tasks: Promise<unknown>[] = [];
-  if (lang === "en") tasks.push(loadEnglish());
+  const tasks: Promise<unknown>[] = [loadLocale(lang)];
   if (route.kind in pages) tasks.push(pages[route.kind as keyof typeof pages].preload());
   if (route.kind === "concept") {
     const page = (lang === "en" && CONCEPT_EN_PAGES[route.slug]) || CONCEPT_BY_SLUG[route.slug]?.Page;
     if (page) tasks.push(page.preload());
   }
-  if (route.kind === "component") tasks.push(preloadComponentDoc(route.slug, lang), preloadComponentMessages(route.slug));
+  if (route.kind === "component") {
+    const { slug } = route;
+    // Bảng Messages (danh sách namespace, export của thư viện) chỉ trang component cần: không nằm trong chunk chính (#307).
+    tasks.push(preloadComponentDoc(slug, lang), import("@/docs/componentMessages").then((m) => m.preloadComponentMessages(slug)));
+  }
   if (route.kind === "news") tasks.push(preloadNews(lang));
   await Promise.allSettled(tasks);
 }
@@ -115,7 +117,10 @@ export default function App({ path }: { path?: string }) {
       }
     };
     window.addEventListener("keydown", onKey);
-    const idle = window.requestIdleCallback?.(() => void DocsCommandPalette.preload());
+    const idle = window.requestIdleCallback?.(() => {
+      DocsCommandPalette.prefetch();
+      AppearancePicker.prefetch();
+    });
     return () => {
       window.removeEventListener("keydown", onKey);
       if (idle !== undefined) window.cancelIdleCallback(idle);
