@@ -4,7 +4,7 @@ import { Slot } from "@radix-ui/react-slot";
 import { useDirection } from "@radix-ui/react-direction";
 import { ChevronDown16Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../Tooltip/Tooltip";
 import { useComposedRefs } from "../_internal/composeRefs";
 import { NavHostContext, type NavHostValue } from "./context";
@@ -14,6 +14,9 @@ export { navMessages, navMessagesVi, navMessagesEn, type NavMessages } from "./m
 
 /** Fluent 2 Nav — https://fluent2.microsoft.design/components/web/react/core/nav/usage */
 type NavDensity = "medium" | "small";
+
+/** YugenProvider density="compact": hàng của Nav dùng density small (#171). */
+const NAV_COMPACT = { density: "small" } as const;
 
 interface NavContextValue {
   selectedValue?: string;
@@ -80,22 +83,23 @@ export interface NavProps extends React.HTMLAttributes<HTMLElement> {
   material?: "glass" | "glass-clear";
 }
 
-export function Nav({
-  className,
-  selectedValue,
-  defaultSelectedValue,
-  onNavItemSelect,
-  openCategories,
-  defaultOpenCategories = [],
-  onNavCategoryItemToggle,
-  multiple = true,
-  density = "medium",
-  material,
-  "aria-label": ariaLabel,
-  children,
-  ref,
-  ...props
-}: NavProps & { ref?: React.Ref<HTMLElement> }) {
+export function Nav(inProps: NavProps & { ref?: React.Ref<HTMLElement> }) {
+  const {
+    className,
+    selectedValue,
+    defaultSelectedValue,
+    onNavItemSelect,
+    openCategories,
+    defaultOpenCategories = [],
+    onNavCategoryItemToggle,
+    multiple = true,
+    density = "medium",
+    material,
+    "aria-label": ariaLabel,
+    children,
+    ref,
+    ...props
+  } = useComponentDefaults("Nav", inProps, NAV_COMPACT);
   const msg = useYugenMessages("nav", navMessagesEn);
   const host = React.useContext(NavHostContext);
   // Callback có thêm tham số (categoryValue, open) nên tự gọi, không truyền làm onChange.
@@ -426,4 +430,10 @@ export function NavSectionHeader({ className, children, ...props }: React.HTMLAt
 
 export function NavDivider({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return <div role="separator" className={cn("mx-2 my-1 h-px shrink-0 bg-stroke-2", className)} {...props} />;
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Nav: NavProps;
+  }
 }

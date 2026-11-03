@@ -2,6 +2,7 @@
 import * as React from "react";
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import { cn } from "@/lib/cn";
+import { useComponentDefaults } from "../YugenProvider/context";
 
 type RadioLayout = "vertical" | "horizontal" | "horizontal-stacked";
 
@@ -12,12 +13,13 @@ export interface RadioGroupProps extends Omit<RadioGroupPrimitive.RadioGroupProp
   layout?: RadioLayout;
 }
 
-export function RadioGroup({
-  className,
-  layout = "vertical",
-  ref,
-  ...props
-}: RadioGroupProps & { ref?: React.Ref<React.ComponentRef<typeof RadioGroupPrimitive.Root>> }) {
+export function RadioGroup(inProps: RadioGroupProps & { ref?: React.Ref<React.ComponentRef<typeof RadioGroupPrimitive.Root>> }) {
+  const {
+    className,
+    layout = "vertical",
+    ref,
+    ...props
+  } = useComponentDefaults("RadioGroup", inProps);
   return (
     <LayoutContext.Provider value={layout}>
       <RadioGroupPrimitive.Root
@@ -85,4 +87,10 @@ export function Radio({
       )}
     </span>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    RadioGroup: RadioGroupProps;
+  }
 }

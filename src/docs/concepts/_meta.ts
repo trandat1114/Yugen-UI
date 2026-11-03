@@ -215,6 +215,7 @@ export const CONCEPT_METAS: Record<string, ConceptMeta> = {
     toc: [
       { id: "attributes", label: "data-theme & data-brand" },
       { id: "provider", label: "YugenProvider" },
+      { id: "defaults", label: "Props mặc định & mật độ" },
       { id: "use-yugen", label: "Hook useYugen()" },
       { id: "nested", label: "Theme lồng nhau" },
       { id: "layers", label: "Ba lớp token" },

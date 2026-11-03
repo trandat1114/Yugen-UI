@@ -7,7 +7,7 @@ import { Checkbox } from "../Checkbox/Checkbox";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "../Empty/Empty";
 import { useSpinDelay } from "../Loading/Loading";
 import { SkeletonItem } from "../Skeleton/Skeleton";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { dataGridMessagesEn } from "./messages";
 import { useComposedRefs } from "../_internal/composeRefs";
 import {
@@ -484,44 +484,45 @@ const RowView = React.memo(RowViewImpl) as typeof RowViewImpl;
 /* ================================================================ DataGrid */
 
 /** Lưới dữ liệu — generic theo kiểu `item` (suy ra từ `items`). */
-export function DataGrid<T>({
-  items,
-  columns: allColumns,
-  hiddenColumns,
-  columnOrder,
-  getRowId,
-  size = "medium",
-  sortable = false,
-  sortState,
-  defaultSortState,
-  onSortChange,
-  selectionMode,
-  selectedItems,
-  defaultSelectedItems,
-  onSelectionChange,
-  selectionAppearance = "brand",
-  subtleSelection = false,
-  resizableColumns = false,
-  columnSizingOptions,
-  onColumnResize,
-  virtualized = false,
-  rowHeight,
-  height,
-  overscan = DEFAULT_OVERSCAN,
-  focusMode = "cell",
-  loading = false,
-  empty,
-  className,
-  style,
-  onKeyDown,
-  onFocus,
-  onBlur,
-  onClick,
-  onMouseDown,
-  onScroll,
-  ref,
-  ...props
-}: DataGridProps<T> & { ref?: React.Ref<HTMLDivElement> }) {
+export function DataGrid<T>(inProps: DataGridProps<T> & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    items,
+    columns: allColumns,
+    hiddenColumns,
+    columnOrder,
+    getRowId,
+    size = "medium",
+    sortable = false,
+    sortState,
+    defaultSortState,
+    onSortChange,
+    selectionMode,
+    selectedItems,
+    defaultSelectedItems,
+    onSelectionChange,
+    selectionAppearance = "brand",
+    subtleSelection = false,
+    resizableColumns = false,
+    columnSizingOptions,
+    onColumnResize,
+    virtualized = false,
+    rowHeight,
+    height,
+    overscan = DEFAULT_OVERSCAN,
+    focusMode = "cell",
+    loading = false,
+    empty,
+    className,
+    style,
+    onKeyDown,
+    onFocus,
+    onBlur,
+    onClick,
+    onMouseDown,
+    onScroll,
+    ref,
+    ...props
+  } = useComponentDefaults("DataGrid", inProps, COMPACT_SIZE);
   const dir = useDirection();
   const rtl = dir === "rtl";
   const msg = useYugenMessages("dataGrid", dataGridMessagesEn);
@@ -1133,4 +1134,10 @@ export function DataGrid<T>({
       </div>
     </div>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    DataGrid: DataGridProps<unknown>;
+  }
 }

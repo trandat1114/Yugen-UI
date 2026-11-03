@@ -4,7 +4,7 @@ import { useControllableState } from "../hooks/useControllableState";
 import { useDirection } from "@radix-ui/react-direction";
 import { cn } from "@/lib/cn";
 import { fieldControlClass } from "@/components/ui/Field/Field";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { inputOTPMessagesEn } from "./messages";
 
 export { inputOTPMessages, inputOTPMessagesVi, inputOTPMessagesEn, type InputOTPMessages } from "./messages";
@@ -44,27 +44,28 @@ export interface InputOTPProps extends Omit<React.HTMLAttributes<HTMLDivElement>
 }
 
 /** InputOTP: N ô một ký tự — tự nhảy ô, Backspace lùi ô, dán điền tất cả, gọi onComplete khi đủ. */
-export function InputOTP({
-  length = 6,
-  value,
-  defaultValue = "",
-  onValueChange,
-  onComplete,
-  pattern = "digits",
-  groups,
-  separator,
-  size = "medium",
-  disabled,
-  autoFocus,
-  name,
-  required,
-  id,
-  className,
-  "aria-invalid": ariaInvalid,
-  "aria-describedby": ariaDescribedby,
-  ref,
-  ...props
-}: InputOTPProps & { ref?: React.Ref<HTMLDivElement> }) {
+export function InputOTP(inProps: InputOTPProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    length = 6,
+    value,
+    defaultValue = "",
+    onValueChange,
+    onComplete,
+    pattern = "digits",
+    groups,
+    separator,
+    size = "medium",
+    disabled,
+    autoFocus,
+    name,
+    required,
+    id,
+    className,
+    "aria-invalid": ariaInvalid,
+    "aria-describedby": ariaDescribedby,
+    ref,
+    ...props
+  } = useComponentDefaults("InputOTP", inProps, COMPACT_SIZE);
   const regex = typeof pattern === "string" ? PATTERNS[pattern] : pattern;
   const isValid = (ch: string) => regex.test(ch);
   const sanitize = (text: string) => text.split("").filter(isValid).join("");
@@ -229,4 +230,10 @@ export function InputOTP({
       {name && <input type="hidden" name={name} value={current} />}
     </div>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    InputOTP: InputOTPProps;
+  }
 }

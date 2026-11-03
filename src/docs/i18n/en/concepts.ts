@@ -240,6 +240,7 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
     toc: {
       attributes: "data-theme & data-brand",
       provider: "YugenProvider",
+      defaults: "Default props & density",
       "use-yugen": "The useYugen() hook",
       nested: "Nested themes",
       layers: "Three token layers",

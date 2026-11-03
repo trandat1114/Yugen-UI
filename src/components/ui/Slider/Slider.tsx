@@ -3,6 +3,7 @@ import { useControllableState } from "../hooks/useControllableState";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { cn } from "@/lib/cn";
 import { usePressed } from "../_internal/usePressed";
+import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
 /** Fluent 2 Slider — https://fluent2.microsoft.design/components/web/react/core/slider/usage */
 export interface SliderProps extends Omit<React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root>, "aria-label"> {
@@ -17,21 +18,22 @@ export interface SliderProps extends Omit<React.ComponentPropsWithoutRef<typeof 
   material?: "glass";
 }
 
-export function Slider({
-  className,
-  rootClassName,
-  size = "medium",
-  label,
-  showValue,
-  value,
-  defaultValue,
-  onValueChange,
-  disabled,
-  material,
-  onPointerDown,
-  ref,
-  ...props
-}: SliderProps & { ref?: React.Ref<React.ComponentRef<typeof SliderPrimitive.Root>> }) {
+export function Slider(inProps: SliderProps & { ref?: React.Ref<React.ComponentRef<typeof SliderPrimitive.Root>> }) {
+  const {
+    className,
+    rootClassName,
+    size = "medium",
+    label,
+    showValue,
+    value,
+    defaultValue,
+    onValueChange,
+    disabled,
+    material,
+    onPointerDown,
+    ref,
+    ...props
+  } = useComponentDefaults("Slider", inProps, COMPACT_SIZE);
   const labelId = React.useId();
   const pressed = usePressed();
   const lens = material === "glass" && pressed.value;
@@ -104,4 +106,10 @@ export function Slider({
       </SliderPrimitive.Root>
     </div>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Slider: SliderProps;
+  }
 }

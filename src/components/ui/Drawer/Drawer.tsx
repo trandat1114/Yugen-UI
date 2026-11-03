@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useDirection } from "@radix-ui/react-direction";
-import { usePortalThemeProps } from "../YugenProvider/context";
+import { usePortalThemeProps, useComponentDefaults } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 
 /** Fluent 2 Drawer — https://fluent2.microsoft.design/components/web/react/core/drawer/usage */
@@ -35,17 +35,18 @@ export interface DrawerSurfaceProps extends React.ComponentPropsWithoutRef<typeo
 }
 
 /** Bề mặt Drawer dạng overlay (portal + lớp phủ). Đặt trong `<Drawer>`. */
-export function DrawerSurface({
-  className,
-  position = "end",
-  size = "small",
-  modalType = "modal",
-  material,
-  onPointerDownOutside,
-  onEscapeKeyDown,
-  ref,
-  ...props
-}: DrawerSurfaceProps & { ref?: React.Ref<React.ComponentRef<typeof DialogPrimitive.Content>> }) {
+export function DrawerSurface(inProps: DrawerSurfaceProps & { ref?: React.Ref<React.ComponentRef<typeof DialogPrimitive.Content>> }) {
+  const {
+    className,
+    position = "end",
+    size = "small",
+    modalType = "modal",
+    material,
+    onPointerDownOutside,
+    onEscapeKeyDown,
+    ref,
+    ...props
+  } = useComponentDefaults("DrawerSurface", inProps);
   // Portal render vào <body>: gắn `dir` để start/end và animation slide theo hướng chữ của provider lồng.
   const dir = useDirection();
   const portalTheme = usePortalThemeProps();
@@ -90,13 +91,14 @@ export interface OverlayDrawerProps extends DrawerSurfaceProps {
 }
 
 /** Tiện ích kiểu Fluent: `<OverlayDrawer open onOpenChange position size>` = Drawer + DrawerSurface. */
-export function OverlayDrawer({
-  open,
-  defaultOpen,
-  onOpenChange,
-  ref,
-  ...props
-}: OverlayDrawerProps & { ref?: React.Ref<React.ComponentRef<typeof DialogPrimitive.Content>> }) {
+export function OverlayDrawer(inProps: OverlayDrawerProps & { ref?: React.Ref<React.ComponentRef<typeof DialogPrimitive.Content>> }) {
+  const {
+    open,
+    defaultOpen,
+    onOpenChange,
+    ref,
+    ...props
+  } = useComponentDefaults("OverlayDrawer", inProps);
   return (
     <Drawer open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
       <DrawerSurface ref={ref} {...props} />
@@ -123,16 +125,17 @@ export interface InlineDrawerProps extends React.HTMLAttributes<HTMLDivElement> 
 }
 
 /** Drawer nằm trong bố cục (không modal, không lớp phủ) — đẩy nội dung bên cạnh khi mở. */
-export function InlineDrawer({
-  open = false,
-  position = "start",
-  size = "small",
-  separator = false,
-  className,
-  children,
-  ref,
-  ...props
-}: InlineDrawerProps & { ref?: React.Ref<HTMLDivElement> }) {
+export function InlineDrawer(inProps: InlineDrawerProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    open = false,
+    position = "start",
+    size = "small",
+    separator = false,
+    className,
+    children,
+    ref,
+    ...props
+  } = useComponentDefaults("InlineDrawer", inProps);
   const vertical = position === "bottom";
   return (
     <DrawerContext.Provider value={{ type: "inline" }}>
@@ -202,4 +205,12 @@ export function DrawerBody({ className, ...props }: React.HTMLAttributes<HTMLDiv
 
 export function DrawerFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return <div className={cn("flex flex-wrap items-center gap-2 px-6 pt-4 pb-6", className)} {...props} />;
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    DrawerSurface: DrawerSurfaceProps;
+    OverlayDrawer: OverlayDrawerProps;
+    InlineDrawer: InlineDrawerProps;
+  }
 }

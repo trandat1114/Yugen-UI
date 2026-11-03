@@ -1,6 +1,7 @@
 import * as React from "react";
 import { ErrorCircle12Filled, CheckmarkCircle12Filled, Warning12Filled } from "../_internal/icons";
 import { cn } from "@/lib/cn";
+import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
 /** Fluent 2 Field — https://fluent2.microsoft.design/components/web/react/core/field/usage */
 export type ValidationState = "none" | "error" | "warning" | "success";
@@ -40,19 +41,20 @@ export interface FieldProps {
   children: React.ReactElement | ((props: FieldControlProps) => React.ReactNode);
 }
 
-export function Field({
-  label,
-  hint,
-  required,
-  disabled,
-  validationState = "none",
-  validationMessage,
-  orientation = "vertical",
-  size = "medium",
-  className,
-  id,
-  children,
-}: FieldProps) {
+export function Field(inProps: FieldProps) {
+  const {
+    label,
+    hint,
+    required,
+    disabled,
+    validationState = "none",
+    validationMessage,
+    orientation = "vertical",
+    size = "medium",
+    className,
+    id,
+    children,
+  } = useComponentDefaults("Field", inProps, COMPACT_SIZE);
   const autoId = React.useId();
   const controlId = id ?? autoId;
   const messageId = `${controlId}-message`;
@@ -134,3 +136,9 @@ export const fieldControlClass = cn(
   "data-[invalid=true]:border-danger-background-3 data-[invalid=true]:border-b-danger-background-3",
   "data-[disabled=true]:border-stroke-disabled data-[disabled=true]:bg-transparent data-[disabled=true]:text-foreground-disabled data-[disabled=true]:after:hidden",
 );
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Field: FieldProps;
+  }
+}

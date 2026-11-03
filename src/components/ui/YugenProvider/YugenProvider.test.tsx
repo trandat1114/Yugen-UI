@@ -1,6 +1,10 @@
+import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { YugenProvider, useYugen } from "./YugenProvider";
+import { YugenContext } from "./context";
+import { Button } from "../Button/Button";
+import { Input } from "../Input/Input";
 import { Dialog, DialogSurface, DialogTitle } from "../Dialog/Dialog";
 import { messagesEn } from "../messages-en";
 import { messagesVi } from "../messages-vi";
@@ -113,5 +117,108 @@ describe("YugenProvider messages", () => {
     }
     expect(Object.keys(messagesEn).sort()).toEqual(namespaces.En.sort());
     expect(Object.keys(messagesVi).sort()).toEqual(namespaces.Vi.sort());
+  });
+});
+
+describe("YugenProvider defaults & density (#171)", () => {
+  const button = (name: string) => screen.getByRole("button", { name });
+
+  it("defaults áp cho mọi instance; prop của instance thắng", () => {
+    render(
+      <YugenProvider defaults={{ Button: { shape: "circular", size: "large" } }}>
+        <Button>Mặc định</Button>
+        <Button size="small">Riêng</Button>
+      </YugenProvider>,
+    );
+    expect(button("Mặc định")).toHaveClass("rounded-circular", "h-10");
+    expect(button("Riêng")).toHaveClass("rounded-circular", "h-6");
+  });
+
+  it("provider lồng gộp defaults theo từng component", () => {
+    render(
+      <YugenProvider defaults={{ Button: { shape: "circular" }, Input: { appearance: "filled-darker" } }}>
+        <YugenProvider defaults={{ Button: { size: "small" } }}>
+          <Button>Lồng</Button>
+          <Input aria-label="Tìm" />
+        </YugenProvider>
+      </YugenProvider>,
+    );
+    expect(button("Lồng")).toHaveClass("rounded-circular", "h-6");
+    expect(screen.getByRole("textbox", { name: "Tìm" }).parentElement).toHaveClass("bg-background-3");
+  });
+
+  it("density compact: control mặc định size small, size của instance và defaults vẫn thắng", () => {
+    render(
+      <YugenProvider density="compact">
+        <Button>Gọn</Button>
+        <Button size="large">To</Button>
+        <YugenProvider defaults={{ Button: { size: "medium" } }}>
+          <Button>Vừa</Button>
+        </YugenProvider>
+      </YugenProvider>,
+    );
+    expect(button("Gọn")).toHaveClass("h-6");
+    expect(button("To")).toHaveClass("h-10");
+    expect(button("Vừa")).toHaveClass("h-8");
+  });
+
+  it("density ghi data-density lên thẻ bao; provider lồng kế thừa, useYugen() trả về density", () => {
+    function Density() {
+      return <span data-testid="density">{useYugen().density}</span>;
+    }
+    const { container, rerender } = renderBare(<Density />);
+    expect(screen.getByTestId("density")).toHaveTextContent("default");
+    rerender(
+      <YugenProvider density="comfortable">
+        <YugenProvider>
+          <Density />
+        </YugenProvider>
+      </YugenProvider>,
+    );
+    expect(screen.getByTestId("density")).toHaveTextContent("comfortable");
+    expect(container.querySelectorAll("[data-density]")).toHaveLength(1);
+    expect(container.querySelector("[data-density]")).toHaveAttribute("data-density", "comfortable");
+  });
+
+  it("applyToDocument ghi data-density lên <html> và gỡ khi unmount", () => {
+    const { unmount } = render(<YugenProvider applyToDocument density="compact" />);
+    expect(document.documentElement).toHaveAttribute("data-density", "compact");
+    unmount();
+    expect(document.documentElement).not.toHaveAttribute("data-density");
+  });
+
+  it("bề mặt portal của provider lồng mang data-density", () => {
+    render(
+      <YugenProvider density="compact">
+        <OpenDialog />
+      </YugenProvider>,
+    );
+    expect(screen.getByRole("dialog")).toHaveAttribute("data-density", "compact");
+  });
+
+  it("defaults viết thẳng trong JSX: provider render lại với object bằng nhau không đổi context", () => {
+    const seen: unknown[] = [];
+    function Probe() {
+      seen.push(React.useContext(YugenContext));
+      return null;
+    }
+    const MemoProbe = React.memo(Probe);
+    const { rerender } = render(
+      <YugenProvider defaults={{ Button: { size: "small" } }}>
+        <MemoProbe />
+      </YugenProvider>,
+    );
+    rerender(
+      <YugenProvider defaults={{ Button: { size: "small" } }}>
+        <MemoProbe />
+      </YugenProvider>,
+    );
+    expect(seen).toHaveLength(1);
+    rerender(
+      <YugenProvider defaults={{ Button: { size: "large" } }}>
+        <MemoProbe />
+      </YugenProvider>,
+    );
+    expect(seen).toHaveLength(2);
   });
 });

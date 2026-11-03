@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { skeletonMessagesEn } from "./messages";
 
 export { skeletonMessages, skeletonMessagesVi, skeletonMessagesEn, type SkeletonMessages } from "./messages";
@@ -24,13 +24,14 @@ export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
 /** true khi đang nằm trong một Skeleton — preset lồng bên trong không tạo thêm role="progressbar". */
 const SkeletonRootContext = React.createContext(false);
 
-export function Skeleton({
-  animation = "wave",
-  appearance = "opaque",
-  className,
-  ref,
-  ...props
-}: SkeletonProps & { ref?: React.Ref<HTMLDivElement> }) {
+export function Skeleton(inProps: SkeletonProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    animation = "wave",
+    appearance = "opaque",
+    className,
+    ref,
+    ...props
+  } = useComponentDefaults("Skeleton", inProps);
   const msg = useYugenMessages("skeleton", skeletonMessagesEn);
   return (
     <SkeletonContext.Provider value={{ animation, appearance }}>
@@ -348,4 +349,10 @@ export function SkeletonTable({
       ))}
     </SkeletonPresetRoot>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Skeleton: SkeletonProps;
+  }
 }

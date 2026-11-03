@@ -3,7 +3,7 @@ import { Slot, Slottable } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Open16Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { linkMessagesEn } from "./messages";
 
 export { linkMessages, linkMessagesVi, linkMessagesEn, type LinkMessages } from "./messages";
@@ -39,21 +39,22 @@ export interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement>
   asChild?: boolean;
 }
 
-export function Link({
-  className,
-  appearance,
-  inline,
-  disabled,
-  external,
-  asChild,
-  href,
-  target,
-  rel,
-  onClick,
-  children,
-  ref,
-  ...props
-}: LinkProps & { ref?: React.Ref<HTMLAnchorElement> }) {
+export function Link(inProps: LinkProps & { ref?: React.Ref<HTMLAnchorElement> }) {
+  const {
+    className,
+    appearance,
+    inline,
+    disabled,
+    external,
+    asChild,
+    href,
+    target,
+    rel,
+    onClick,
+    children,
+    ref,
+    ...props
+  } = useComponentDefaults("Link", inProps);
   const msg = useYugenMessages("link", linkMessagesEn);
   const shared = {
     href: disabled ? undefined : href,
@@ -96,3 +97,9 @@ export function Link({
 }
 
 export { linkVariants };
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Link: LinkProps;
+  }
+}

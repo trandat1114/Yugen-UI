@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
+import { useComponentDefaults } from "../YugenProvider/context";
 
 /** Fluent 2 Divider — https://fluent2.microsoft.design/components/web/react/core/divider/usage */
 export interface DividerProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -19,16 +20,17 @@ const APPEARANCE = {
   strong: "text-foreground-1 before:border-stroke-1 after:border-stroke-1",
 } as const;
 
-export function Divider({
-  vertical = false,
-  alignContent = "center",
-  appearance = "default",
-  inset = false,
-  className,
-  children,
-  ref,
-  ...props
-}: DividerProps & { ref?: React.Ref<HTMLDivElement> }) {
+export function Divider(inProps: DividerProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    vertical = false,
+    alignContent = "center",
+    appearance = "default",
+    inset = false,
+    className,
+    children,
+    ref,
+    ...props
+  } = useComponentDefaults("Divider", inProps);
   const hasContent = children != null && children !== false;
   return (
     <div
@@ -54,4 +56,10 @@ export function Divider({
       {hasContent && <div className="flex items-center gap-1">{children}</div>}
     </div>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Divider: DividerProps;
+  }
 }

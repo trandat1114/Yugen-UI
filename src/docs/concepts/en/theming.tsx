@@ -1,3 +1,4 @@
+import * as React from "react";
 import type { ReactNode } from "react";
 import {
   Badge,
@@ -6,8 +7,14 @@ import {
   Input,
   MessageBar,
   Switch,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  ToggleGroup,
+  ToggleGroupItem,
   YugenProvider,
   type YugenBrand,
+  type YugenDensity,
   type YugenTheme,
   useYugen,
 } from "@/components/ui";
@@ -167,6 +174,64 @@ const BRAND_USE_CODE = `// The whole app
 // Or one region only (for example the marketing page of a sub-product)
 <YugenProvider theme="light" brand="matcha" className="rounded-xlarge p-5">…</YugenProvider>`;
 
+const DEFAULTS_CODE = `<YugenProvider
+  applyToDocument
+  density="compact"
+  defaults={{
+    Button: { shape: "circular" },
+    Input: { appearance: "filled-darker" },
+  }}
+>
+  <App />
+</YugenProvider>
+
+// An explicit prop still wins
+<Button size="medium">Export</Button>`;
+
+const DENSITIES: { value: YugenDensity; label: string }[] = [
+  { value: "compact", label: "Compact" },
+  { value: "default", label: "Default" },
+  { value: "comfortable", label: "Comfortable" },
+];
+
+function DensityDemo() {
+  const [density, setDensity] = React.useState<YugenDensity>("compact");
+  return (
+    <div className="flex flex-col gap-3">
+      <ToggleGroup
+        type="single"
+        size="small"
+        aria-label="Density"
+        value={density}
+        onValueChange={(v) => v && setDensity(v as YugenDensity)}
+        className="self-start"
+      >
+        {DENSITIES.map((d) => (
+          <ToggleGroupItem key={d.value} value={d.value}>
+            {d.label}
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
+      <YugenProvider density={density} defaults={{ Button: { shape: "circular" } }} className="rounded-xlarge border border-stroke-2 p-4">
+        <div className="flex flex-col gap-3">
+          <Tabs defaultValue="files">
+            <TabsList>
+              <TabsTrigger value="files">Files</TabsTrigger>
+              <TabsTrigger value="activity">Activity</TabsTrigger>
+            </TabsList>
+          </Tabs>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button appearance="primary">Save</Button>
+            <Button>Cancel</Button>
+            <Button size="medium">Always medium</Button>
+          </div>
+          <Input placeholder="Search the project" aria-label="Search the project" />
+        </div>
+      </YugenProvider>
+    </div>
+  );
+}
+
 export default function Page() {
   return (
     <>
@@ -238,6 +303,17 @@ export default function Page() {
                 description: "Replaces components' built-in strings (English by default) by namespace, such as messagesVi for Vietnamese. Nested providers inherit, then override. See Interface language.",
               },
               { name: "locale", type: "string", defaultValue: `"en-US"`, description: "Intl locale for dates, times and numbers in components. Nested providers inherit it." },
+              {
+                name: "defaults",
+                type: "YugenDefaultsInput",
+                description: "Default props by component, such as { Button: { shape: \"circular\" } }. A prop on the instance wins. Nested providers merge per component. See Default props & density below.",
+              },
+              {
+                name: "density",
+                type: `"compact" | "default" | "comfortable"`,
+                defaultValue: `"default"`,
+                description: "compact: controls default to size small and spacing scales by 0.9375. comfortable: spacing scales by 1.125. Written to data-density (and to <html> with applyToDocument). Nested providers inherit it.",
+              },
               { name: "className, …div props", type: "HTMLAttributes<HTMLDivElement>", description: "Passed to the wrapping div (the ref is forwarded)." },
             ]}
           />
@@ -247,6 +323,44 @@ export default function Page() {
   <App />
 </YugenProvider>`}
           />
+        </div>
+      </DocSection>
+
+      <DocSection
+        id="defaults"
+        title="Default props & density"
+        description="defaults sets props for every instance of a component in one part of the UI. density makes that part tighter or roomier. A prop on the instance always wins."
+      >
+        <div className="flex flex-col gap-4">
+          <DensityDemo />
+          <CodeBlock code={DEFAULTS_CODE} />
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
+            <li>
+              Order: the prop on the instance, then <C>defaults</C> of the nearest provider (nested providers merge per component), then
+              density, then the component&apos;s own default.
+            </li>
+            <li>
+              <C>density=&quot;compact&quot;</C> gives buttons, fields, pickers, tabs, toolbars, tables, Tree and Nav size small by default and
+              scales spacing by 0.9375. <C>&quot;comfortable&quot;</C> scales spacing by 1.125 and keeps the sizes. Spacing comes from{" "}
+              <C>data-density</C> in CSS (<C>--spacing</C> and the spacing tokens, the same factors as the Theme Designer), so prerendered
+              HTML is right before hydration.
+            </li>
+            <li>
+              At compact density, size small controls are 22.5px high. Leave room between controls placed close together (WCAG 2.5.8).
+            </li>
+            <li>
+              Components with style props (size, appearance, shape, material) read their defaults. Parts such as TabsTrigger or
+              ToolbarButton follow their parent. Defaults also reach components used inside others, such as the close button of a Dialog,
+              so prefer size, shape and material over appearance.
+            </li>
+            <li>
+              <C>defaults</C> is typed per component. An object written inline in JSX is compared by value, so re-rendering the provider
+              with the same defaults does not re-render the tree.
+            </li>
+            <li>
+              Source mode (shadcn registry, <C>yugen add</C>): you can also change <C>defaultVariants</C> in the copied file.
+            </li>
+          </ul>
         </div>
       </DocSection>
 

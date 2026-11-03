@@ -5,7 +5,7 @@ import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { useDirection } from "@radix-ui/react-direction";
 import { Command as CommandPrimitive } from "cmdk";
 import { ChevronDown20Regular, ChevronDown24Regular } from "../_internal/icons";
-import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
+import { usePortalThemeProps, useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { popoverSurfaceClass } from "@/components/ui/Popover/Popover";
@@ -63,26 +63,27 @@ interface NormalizedOption extends TagPickerOption {
 }
 
 /** TagPicker: chọn nhiều mục, mỗi mục là một Tag trong ô nhập; gõ để lọc danh sách gợi ý. */
-export function TagPicker({
-  options,
-  value,
-  defaultValue,
-  onValueChange,
-  appearance = "outline",
-  size = "medium",
-  tagAppearance,
-  tagShape,
-  freeform = false,
-  reorderable = false,
-  noResultsText,
-  listboxClassName,
-  className,
-  disabled,
-  placeholder,
-  onKeyDown,
-  ref,
-  ...inputProps
-}: TagPickerProps & { ref?: React.Ref<HTMLInputElement> }) {
+export function TagPicker(inProps: TagPickerProps & { ref?: React.Ref<HTMLInputElement> }) {
+  const {
+    options,
+    value,
+    defaultValue,
+    onValueChange,
+    appearance = "outline",
+    size = "medium",
+    tagAppearance,
+    tagShape,
+    freeform = false,
+    reorderable = false,
+    noResultsText,
+    listboxClassName,
+    className,
+    disabled,
+    placeholder,
+    onKeyDown,
+    ref,
+    ...inputProps
+  } = useComponentDefaults("TagPicker", inProps);
   const msg = useYugenMessages("tagPicker", tagPickerMessagesEn);
   const items = React.useMemo<NormalizedOption[]>(
     () => options.map((o) => (typeof o === "string" ? { value: o, label: o } : { ...o, label: o.label ?? o.value })),
@@ -383,4 +384,10 @@ function groupOptions(items: NormalizedOption[]) {
     else groups.push({ name: item.group, items: [item] });
   }
   return groups;
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    TagPicker: TagPickerProps;
+  }
 }

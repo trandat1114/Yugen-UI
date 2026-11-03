@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ArrowTrending16Regular, ArrowTrendingDown16Regular, Subtract16Regular } from "../_internal/icons";
-import { useYugen, useYugenMessages } from "../YugenProvider/context";
+import { useYugen, useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { statMessagesEn } from "./messages";
 import { cn } from "@/lib/cn";
 
@@ -47,22 +47,23 @@ export interface StatProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "t
 }
 
 /** Stat — con số chính + mức thay đổi + biểu đồ nhỏ tuỳ chọn. */
-export function Stat({
-  label,
-  value,
-  valueFormat,
-  locale: localeProp,
-  delta,
-  deltaFormat,
-  deltaLabel,
-  goodDirection = "up",
-  size = "medium",
-  icon,
-  chart,
-  className,
-  ref,
-  ...props
-}: StatProps & { ref?: React.Ref<HTMLDivElement> }) {
+export function Stat(inProps: StatProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    label,
+    value,
+    valueFormat,
+    locale: localeProp,
+    delta,
+    deltaFormat,
+    deltaLabel,
+    goodDirection = "up",
+    size = "medium",
+    icon,
+    chart,
+    className,
+    ref,
+    ...props
+  } = useComponentDefaults("Stat", inProps);
   const yugen = useYugen();
   const locale = localeProp ?? yugen.locale;
   const msg = useYugenMessages("stat", statMessagesEn);
@@ -114,4 +115,10 @@ export function Stat({
       </div>
     </div>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Stat: StatProps;
+  }
 }

@@ -4,7 +4,7 @@ import { useControllableState } from "../hooks/useControllableState";
 import { ChevronDown12Regular, ChevronDown16Regular, ChevronUp12Regular, ChevronUp16Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { fieldAppearanceClass, type FieldAppearance } from "@/components/ui/Select/Select";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { spinButtonMessagesEn } from "./messages";
 
 export { spinButtonMessages, spinButtonMessagesVi, spinButtonMessagesEn, type SpinButtonMessages } from "./messages";
@@ -58,30 +58,31 @@ const defaultParse = (text: string) => {
 };
 
 /** SpinButton: nhập số, tăng/giảm theo bước bằng nút hoặc bàn phím. */
-export function SpinButton({
-  value,
-  defaultValue = null,
-  onValueChange,
-  min,
-  max,
-  step = 1,
-  stepPage,
-  precision,
-  displayValue,
-  formatValue,
-  parseValue = defaultParse,
-  appearance = "outline",
-  size = "medium",
-  incrementLabel,
-  decrementLabel,
-  className,
-  disabled,
-  readOnly,
-  onKeyDown,
-  onBlur,
-  ref,
-  ...props
-}: SpinButtonProps & { ref?: React.Ref<HTMLInputElement> }) {
+export function SpinButton(inProps: SpinButtonProps & { ref?: React.Ref<HTMLInputElement> }) {
+  const {
+    value,
+    defaultValue = null,
+    onValueChange,
+    min,
+    max,
+    step = 1,
+    stepPage,
+    precision,
+    displayValue,
+    formatValue,
+    parseValue = defaultParse,
+    appearance = "outline",
+    size = "medium",
+    incrementLabel,
+    decrementLabel,
+    className,
+    disabled,
+    readOnly,
+    onKeyDown,
+    onBlur,
+    ref,
+    ...props
+  } = useComponentDefaults("SpinButton", inProps, COMPACT_SIZE);
   const msg = useYugenMessages("spinButton", spinButtonMessagesEn);
   const [current, setCurrent] = useControllableState<number | null>({ value, defaultValue, onChange: onValueChange });
   const [text, setTextState] = React.useState<string | null>(null);
@@ -250,4 +251,10 @@ export function SpinButton({
       </button>
     </span>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    SpinButton: SpinButtonProps;
+  }
 }

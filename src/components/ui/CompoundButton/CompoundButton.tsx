@@ -3,6 +3,7 @@ import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cn } from "@/lib/cn";
 import { buttonVariants, type ButtonProps } from "../Button/Button";
+import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
 type CompoundSize = "small" | "medium" | "large";
 
@@ -24,21 +25,22 @@ export interface CompoundButtonProps extends ButtonProps {
   secondaryContent?: React.ReactNode;
 }
 
-export function CompoundButton({
-  className,
-  appearance = "secondary",
-  size = "medium",
-  shape,
-  iconOnly,
-  icon,
-  iconPosition = "before",
-  secondaryContent,
-  asChild,
-  children,
-  type,
-  ref,
-  ...props
-}: CompoundButtonProps & { ref?: React.Ref<HTMLButtonElement> }) {
+export function CompoundButton(inProps: CompoundButtonProps & { ref?: React.Ref<HTMLButtonElement> }) {
+  const {
+    className,
+    appearance = "secondary",
+    size = "medium",
+    shape,
+    iconOnly,
+    icon,
+    iconPosition = "before",
+    secondaryContent,
+    asChild,
+    children,
+    type,
+    ref,
+    ...props
+  } = useComponentDefaults("CompoundButton", inProps, COMPACT_SIZE);
   const resolvedSize = size ?? "medium";
   const onBrand = appearance === "primary" || appearance === "danger";
   const child = asChild && React.isValidElement<{ children?: React.ReactNode }>(children) ? children : null;
@@ -90,4 +92,10 @@ export function CompoundButton({
       {content}
     </button>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    CompoundButton: CompoundButtonProps;
+  }
 }

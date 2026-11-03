@@ -670,6 +670,48 @@
   --glassLensFilter: none;
 }
 
+/* Mật độ (#171): YugenProvider density ghi data-density. Cùng hệ số với trục Mật độ của Theme Designer (compact ×0.9375,
+   comfortable ×1.125) cho --spacing của Tailwind (p-*, gap-*, h-*…) và token spacing; "default" đặt lại cho provider lồng. */
+[data-density="compact"] {
+  --spacing: 0.2344rem;
+  --spacingXXS: 1.875px;
+  --spacingXS: 3.75px;
+  --spacingSNudge: 5.625px;
+  --spacingS: 7.5px;
+  --spacingMNudge: 9.375px;
+  --spacingM: 11.25px;
+  --spacingL: 15px;
+  --spacingXL: 18.75px;
+  --spacingXXL: 22.5px;
+  --spacingXXXL: 30px;
+}
+[data-density="default"] {
+  --spacing: 0.25rem;
+  --spacingXXS: 2px;
+  --spacingXS: 4px;
+  --spacingSNudge: 6px;
+  --spacingS: 8px;
+  --spacingMNudge: 10px;
+  --spacingM: 12px;
+  --spacingL: 16px;
+  --spacingXL: 20px;
+  --spacingXXL: 24px;
+  --spacingXXXL: 32px;
+}
+[data-density="comfortable"] {
+  --spacing: 0.2813rem;
+  --spacingXXS: 2.25px;
+  --spacingXS: 4.5px;
+  --spacingSNudge: 6.75px;
+  --spacingS: 9px;
+  --spacingMNudge: 11.25px;
+  --spacingM: 13.5px;
+  --spacingL: 18px;
+  --spacingXL: 22.5px;
+  --spacingXXL: 27px;
+  --spacingXXXL: 36px;
+}
+
 @layer base {
   :root,
   [dir="ltr"] {

@@ -4,6 +4,7 @@ import * as TogglePrimitive from "@radix-ui/react-toggle";
 import { cva } from "class-variance-authority";
 import { cn } from "@/lib/cn";
 import { buttonVariants } from "../Button/Button";
+import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
 /** Fluent 2 ToggleButton — https://fluent2.microsoft.design/components/web/react/core/togglebutton/usage */
 export type ToggleButtonAppearance = "secondary" | "primary" | "outline" | "subtle" | "transparent";
@@ -74,22 +75,23 @@ export interface ToggleButtonProps
   iconOnly?: boolean;
 }
 
-export function ToggleButton({
-  className,
-  appearance = "secondary",
-  size = "medium",
-  shape = "rounded",
-  checked,
-  defaultChecked = false,
-  onCheckedChange,
-  icon,
-  checkedIcon,
-  iconPosition = "before",
-  iconOnly,
-  children,
-  ref,
-  ...props
-}: ToggleButtonProps & { ref?: React.Ref<HTMLButtonElement> }) {
+export function ToggleButton(inProps: ToggleButtonProps & { ref?: React.Ref<HTMLButtonElement> }) {
+  const {
+    className,
+    appearance = "secondary",
+    size = "medium",
+    shape = "rounded",
+    checked,
+    defaultChecked = false,
+    onCheckedChange,
+    icon,
+    checkedIcon,
+    iconPosition = "before",
+    iconOnly,
+    children,
+    ref,
+    ...props
+  } = useComponentDefaults("ToggleButton", inProps, COMPACT_SIZE);
   const [isChecked, setChecked] = useControllableState({ value: checked, defaultValue: defaultChecked, onChange: onCheckedChange });
   const currentIcon = isChecked && checkedIcon ? checkedIcon : icon;
   const isIconOnly = iconOnly ?? (!!currentIcon && !children);
@@ -107,4 +109,10 @@ export function ToggleButton({
       {currentIcon && iconPosition === "after" && currentIcon}
     </TogglePrimitive.Root>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    ToggleButton: ToggleButtonProps;
+  }
 }

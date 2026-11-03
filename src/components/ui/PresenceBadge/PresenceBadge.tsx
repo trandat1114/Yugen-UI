@@ -34,7 +34,7 @@ import {
   type IconComponent,
 } from "../_internal/icons";
 import { cn } from "@/lib/cn";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { presenceBadgeMessagesEn, type PresenceBadgeMessages } from "./messages";
 
 export { presenceBadgeMessages, presenceBadgeMessagesVi, presenceBadgeMessagesEn, type PresenceBadgeMessages } from "./messages";
@@ -142,16 +142,17 @@ export interface PresenceBadgeProps extends Omit<React.HTMLAttributes<HTMLSpanEl
   label?: string;
 }
 
-export function PresenceBadge({
-  status = "available",
-  outOfOffice = false,
-  size = "medium",
-  ring = false,
-  label,
-  className,
-  ref,
-  ...props
-}: PresenceBadgeProps & { ref?: React.Ref<HTMLSpanElement> }) {
+export function PresenceBadge(inProps: PresenceBadgeProps & { ref?: React.Ref<HTMLSpanElement> }) {
+  const {
+    status = "available",
+    outOfOffice = false,
+    size = "medium",
+    ring = false,
+    label,
+    className,
+    ref,
+    ...props
+  } = useComponentDefaults("PresenceBadge", inProps);
   const msg = useYugenMessages("presenceBadge", presenceBadgeMessagesEn);
   const Icon = iconFor(status, outOfOffice)[ICON_SIZE[size]];
   const ariaLabel =
@@ -174,4 +175,10 @@ export function PresenceBadge({
       <Icon aria-hidden="true" />
     </span>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    PresenceBadge: PresenceBadgeProps;
+  }
 }
