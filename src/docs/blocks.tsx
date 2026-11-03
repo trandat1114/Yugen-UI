@@ -112,7 +112,7 @@ export function ExampleFrame({
   example: Example;
   defaultTheme: FrameTheme;
   defaultBrand?: AppBrand;
-  /** Ngôn ngữ nội dung demo khi khác trang (demo viết bằng tiếng Anh, trang đang hiện tiếng Việt); `example.lang` thắng. */
+  /** Ngôn ngữ nội dung demo khi khác phần chữ bao quanh (demo tiếng Anh giữa phần chữ chưa dịch); `example.lang` thắng. */
   demoLang?: string;
 }) {
   const [look, setLook] = React.useState({ theme: defaultTheme, brand: defaultBrand });
@@ -243,7 +243,7 @@ export function ExampleTile({ example, demoLang }: { example: Example; demoLang?
   );
 }
 
-/** `lang`: cả lưới (chữ chưa dịch); `demoLang`: chỉ vùng demo (demo viết bằng tiếng Anh, trang tiếng Việt). */
+/** `lang`: cả lưới (chữ chưa dịch); `demoLang`: chỉ vùng demo (demo tiếng Anh giữa phần chữ chưa dịch). */
 export function ExampleGrid({ examples, lang, demoLang }: { examples: Example[]; lang?: string; demoLang?: string }) {
   return (
     <div lang={lang} className="grid gap-x-5 gap-y-6 md:grid-cols-2">

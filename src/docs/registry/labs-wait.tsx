@@ -710,14 +710,14 @@ export const docs: ComponentDoc[] = [
     importCode: `import { LoadingOverlay, useSpinDelay } from "@/components/ui";`,
     hero: {
       title: "LoadingOverlay",
-      description: "Đổi tốc độ mạng rồi bấm Refresh: mạng nhanh không có lớp phủ nào nháy lên; mạng chậm phủ sau 300ms.",
+      description: "Đổi tốc độ mạng rồi bấm Làm mới: mạng nhanh không có lớp phủ nào nháy lên; mạng chậm phủ sau 300ms.",
       code: source("network", "OverlayDemo"),
       render: () => <OverlayDemo />,
     },
     examples: [
       {
         title: "Có và không có useSpinDelay",
-        description: "Chọn “Fast” rồi bấm Load vài lần: bên trái nháy spinner 150ms, bên phải đứng yên. Chọn “Slow”: bên phải trễ 300ms rồi giữ ổn định.",
+        description: "Chọn “Nhanh” rồi bấm Tải vài lần: bên trái nháy spinner 150ms, bên phải đứng yên. Chọn “Chậm”: bên phải trễ 300ms rồi giữ ổn định.",
         code: source("network", "SpinDelayDemo"),
         render: () => <SpinDelayDemo />,
       },
@@ -737,7 +737,7 @@ export const docs: ComponentDoc[] = [
       },
       {
         title: "Chỉ báo nhỏ cũng cần delay",
-        description: "Dòng “Saving…” của thao tác tự lưu dùng chung useSpinDelay — lưu nhanh thì chỉ thấy “Saved”.",
+        description: "Dòng “Đang lưu…” của thao tác tự lưu dùng chung useSpinDelay — lưu nhanh thì chỉ thấy “Đã lưu”.",
         code: source("network", "AutosaveDemo"),
         render: () => <AutosaveDemo />,
       },
@@ -831,7 +831,7 @@ export const docs: ComponentDoc[] = [
     importCode: `import { AsyncContent, ErrorState, type AsyncStatus } from "@/components/ui";`,
     hero: {
       title: "AsyncContent",
-      description: "Thử cả ba tốc độ mạng và công tắc “Return empty”.",
+      description: "Thử cả ba tốc độ mạng và công tắc “Trả về rỗng”.",
       code: source("network", "AsyncContentDemo"),
       render: () => <AsyncContentDemo />,
     },
@@ -1006,7 +1006,7 @@ export const docs: ComponentDoc[] = [
     importCode: `import { useOptimisticList } from "@/components/ui";`,
     hero: {
       title: "useOptimisticList",
-      description: "Chọn “Error” rồi tích / xoá vài mục liên tiếp: từng thay đổi được hoàn tác riêng, kèm toast.",
+      description: "Chọn “Lỗi” rồi tích / xoá vài mục liên tiếp: từng thay đổi được hoàn tác riêng, kèm toast.",
       code: source("network", "TodoDemo"),
       render: () => <TodoDemo />,
     },

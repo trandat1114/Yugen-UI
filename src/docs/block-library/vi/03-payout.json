@@ -1,0 +1,11 @@
+{
+  "en-US": "vi-VN",
+  "Payout threshold": "Ngưỡng thanh toán",
+  "The minimum balance before we send a payout.": "Số dư tối thiểu trước khi hệ thống chuyển tiền.",
+  "Minimum amount": "Số tiền tối thiểu",
+  "Note": "Ghi chú",
+  "Add a note for this setting…": "Thêm ghi chú cho cấu hình này…",
+  "Balances above the threshold are paid out on the 15th of each month.": "Số dư vượt ngưỡng sẽ được chuyển vào ngày 15 hằng tháng.",
+  "Cancel": "Huỷ",
+  "Save": "Lưu cấu hình"
+}

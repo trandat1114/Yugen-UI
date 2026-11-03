@@ -2165,7 +2165,7 @@ function StaggerDemo() {
       },
       {
         title: "Bổ sung ngữ cảnh cho liên kết",
-        description: "Người nhìn thấy \"Read more\"; trình đọc màn hình nghe \"Read more about version 2.0\".",
+        description: "Người nhìn thấy \"Đọc thêm\"; trình đọc màn hình nghe \"Đọc thêm về bản phát hành 2.0\".",
         code: `<p className="text-body1 text-foreground-2">
   Version 2.0 is out.{" "}
   <Link href="#/components/visuallyhidden">

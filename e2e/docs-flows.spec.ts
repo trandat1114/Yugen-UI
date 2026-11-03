@@ -277,18 +277,18 @@ test.describe("URL theo đường dẫn (#113)", () => {
 test("form react-hook-form + zod: lỗi theo schema, focus vào ô lỗi đầu tiên", async ({ page }) => {
   await openDocs(page, "/components/formvalidation");
   const form = page.locator("form").first();
-  await form.getByRole("button", { name: "Create account" }).click();
-  await expect(form.getByText("Name must be at least 2 characters.")).toBeVisible();
-  await expect(form.getByText("Enter your email.")).toBeVisible();
-  await expect(form.getByText("Pick your date of birth.")).toBeVisible();
-  await expect(form.getByRole("textbox", { name: /Full name/ })).toBeFocused();
+  await form.getByRole("button", { name: "Tạo tài khoản" }).click();
+  await expect(form.getByText("Họ tên cần ít nhất 2 ký tự.")).toBeVisible();
+  await expect(form.getByText("Vui lòng nhập email.")).toBeVisible();
+  await expect(form.getByText("Vui lòng chọn ngày sinh.")).toBeVisible();
+  await expect(form.getByRole("textbox", { name: /Họ và tên/ })).toBeFocused();
 
   const email = form.getByRole("textbox", { name: /^Email/ });
   await email.fill("not-an-email");
   await email.blur();
-  await expect(form.getByText("Enter a valid email address.")).toBeVisible();
+  await expect(form.getByText("Email chưa đúng định dạng.")).toBeVisible();
   await email.fill("name@company.com");
-  await expect(form.getByText("Enter a valid email address.")).toBeHidden();
+  await expect(form.getByText("Email chưa đúng định dạng.")).toBeHidden();
 });
 
 for (const viewport of [
