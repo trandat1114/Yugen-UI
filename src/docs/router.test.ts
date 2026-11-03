@@ -7,6 +7,7 @@ const ROUTES: Route[] = [
   { kind: "blocks" },
   { kind: "templates" },
   { kind: "theme-designer" },
+  { kind: "typeset" },
   { kind: "news" },
   { kind: "community" },
   { kind: "contributors" },

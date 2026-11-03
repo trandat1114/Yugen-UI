@@ -13,6 +13,7 @@ import {
   Grid20Regular,
   Rocket20Regular,
   PaintBrush20Regular,
+  TextFont20Regular,
   Translate20Regular,
 } from "@fluentui/react-icons";
 import {
@@ -85,6 +86,9 @@ export function DocsCommandPalette({
           </CommandItem>
           <CommandItem icon={<PaintBrush20Regular />} {...nav("/theme-designer")}>
             Theme Designer
+          </CommandItem>
+          <CommandItem icon={<TextFont20Regular />} {...nav("/typeset")} keywords={["prose", "typography", "font", "kiểu chữ"]}>
+            Typeset
           </CommandItem>
           <CommandItem icon={<Megaphone20Regular />} {...nav("/news")} keywords={["changelog", "news", "cập nhật"]}>
             {t("nav.news")}

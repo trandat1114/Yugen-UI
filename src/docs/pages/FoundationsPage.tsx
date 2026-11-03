@@ -5,6 +5,7 @@ import { COLOR_SECTIONS, ColorPage } from "./ColorPage";
 import { GLASS_SECTIONS, GlassPage } from "./GlassPage";
 import { MOTION_SECTIONS, MotionPage } from "./MotionPage";
 import { useLocale, type Locale } from "../i18n";
+import { docsPath } from "../router";
 
 
 /* ------------------------------------------------------------- helpers */
@@ -45,7 +46,12 @@ function TypographyPage() {
         {t(
           "Luôn dùng một style trong ramp — không tự đặt font-size / line-height. Weight chỉ dùng Regular (400) và Semibold (600).",
           "Always use a style from the ramp; don't set font-size or line-height yourself. Use only Regular (400) and Semibold (600).",
-        )}
+        )}{" "}
+        {t("Nội dung dài (Markdown, bài viết): chỉnh font và nhịp chữ của Prose ở ", "For long-form text (Markdown, articles), tune Prose's fonts and rhythm in ")}
+        <a className="text-link underline hover:text-link-hover" href={docsPath("/typeset")}>
+          Typeset
+        </a>
+        .
       </PageHeader>
       <DocSection id="ramp" title="Type ramp">
         <div className="overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1">

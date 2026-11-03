@@ -10,7 +10,7 @@ import { SITE } from "./site";
  * Tiêu đề tab, <meta name="description">, canonical và og:* theo trang. Bản build ghi sẵn vào HTML prerender của từng
  * trang (scripts/prerender.mjs); khi chuyển trang trong trình duyệt, DocumentMeta cập nhật lại.
  */
-const PAGES: Record<"blocks" | "templates" | "theme-designer" | "community" | "contributors", Record<"vi" | "en", [string, string]>> = {
+const PAGES: Record<"blocks" | "templates" | "theme-designer" | "typeset" | "community" | "contributors", Record<"vi" | "en", [string, string]>> = {
   blocks: {
     vi: ["Blocks", "Cụm giao diện ghép sẵn từ component Yugen UI — đăng nhập, cài đặt, thống kê, danh sách — copy nguyên khối vào dự án."],
     en: ["Blocks", "Ready-made UI sections built from Yugen UI components — sign-in, settings, stats, lists — copy whole blocks into your project."],
@@ -22,6 +22,10 @@ const PAGES: Record<"blocks" | "templates" | "theme-designer" | "community" | "c
   "theme-designer": {
     vi: ["Theme Designer", "Tạo theme từ một màu: brand ramp 16 bậc, bo góc, mật độ, font, màu trung tính, độ nổi, chuyển động. Xem trước ở sáng, tối, tương phản cao và RTL, xuất CSS, JSON, Tokens Studio."],
     en: ["Theme Designer", "Build a theme from one color: a 16-step brand ramp, radius, density, font, neutrals, elevation and motion. Preview in light, dark, high contrast and RTL, then export CSS, JSON or Tokens Studio."],
+  },
+  typeset: {
+    vi: ["Typeset", "Chỉnh font, cỡ chữ, line-height, khoảng cách khối và độ rộng dòng cho Prose trên nội dung thật, rồi copy CSS preset."],
+    en: ["Typeset", "Tune fonts, size, line height, block spacing and line length for Prose on real content, then copy the preset CSS."],
   },
   community: {
     vi: ["Cộng đồng", "Đóng góp cho Yugen UI: báo lỗi, gửi block, dịch tài liệu, lộ trình phát triển."],
@@ -57,6 +61,7 @@ export function routeMeta(route: Route, l: LocaleValue): { title?: string; descr
     case "blocks":
     case "templates":
     case "theme-designer":
+    case "typeset":
     case "community":
     case "contributors": {
       const [title, description] = PAGES[route.kind][l.locale];
