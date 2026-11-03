@@ -38,9 +38,10 @@ export function VersionMenu() {
   const go = (version: string) => {
     const target = versions.find((v) => v.version === version);
     if (!target) return;
-    // Giữ trang và ngôn ngữ đang xem khi đổi phiên bản (bản cũ: #/… và ?lang=en).
+    // Giữ trang và ngôn ngữ đang xem khi đổi phiên bản. ?lang= ghi rõ ngôn ngữ vì bản ≤ 0.13 mặc định tiếng Việt, bản mới
+    // mặc định tiếng Anh (#277); mọi bản đều đọc ?lang= và #/….
     const { route, lang } = parseLocation(window.location.pathname);
-    const page = target.routing === "path" ? localePathOf(route, lang) : `${lang === "en" ? "?lang=en" : ""}#/${pathOf(route)}`;
+    const page = target.routing === "path" ? localePathOf(route, lang) : `?lang=${lang}#/${pathOf(route)}`;
     window.location.href = `${siteRoot()}${target.path}${page}`;
   };
 

@@ -43,7 +43,7 @@ test("mật độ gọn báo vùng bấm dưới 24px", async ({ page }) => {
 });
 
 test("link chia sẻ khôi phục mọi lựa chọn", async ({ page }) => {
-  await page.goto("/theme-designer?td-key=03787C&td-radius=full&td-size=16&td-elevation=flat&td-name=acme", { waitUntil: "domcontentloaded" });
+  await page.goto("/vi/theme-designer?td-key=03787C&td-radius=full&td-size=16&td-elevation=flat&td-name=acme", { waitUntil: "domcontentloaded" });
   await expect(page.getByRole("heading", { level: 1, name: "Theme Designer" })).toBeVisible();
   await expect(page.getByRole("radiogroup", { name: "Bo góc" }).getByRole("radio", { name: "Tròn" })).toBeChecked();
   await expect(page.getByRole("radiogroup", { name: "Cỡ chữ gốc" }).getByRole("radio", { name: "16px" })).toBeChecked();
