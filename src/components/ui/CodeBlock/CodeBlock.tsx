@@ -264,11 +264,20 @@ const HTML_GRAMMAR: Grammar = {
 
 /* ---------- Bash ---------- */
 
-/** Từ đầu tiên của lệnh: đầu dòng, sau prompt `$`, sau `|`, `&&`, `||`, `;`, `(`, `sudo`. */
+/**
+ * Từ đầu tiên của lệnh: đầu dòng, sau prompt `$`, sau `|`, `&&`, `||`, `;`, `(`, `sudo`. Chỉ nhìn lùi vài ký tự (không cắt
+ * cả dòng) để một dòng rất dài vẫn tô màu trong thời gian tuyến tính (#165).
+ */
 function bashCommandPosition(code: string, index: number) {
-  const lineStart = code.lastIndexOf("\n", index - 1) + 1;
-  const before = code.slice(lineStart, index).trimEnd();
-  return before === "" || before === "$" || /(?:\|\||&&|[|;(]|\bsudo)$/.test(before);
+  const blank = (c: string | undefined) => c === " " || c === "\t";
+  let k = index - 1;
+  while (k >= 0 && blank(code[k])) k--;
+  if (k < 0 || code[k] === "\n") return true;
+  const c = code[k];
+  if (c === "|" || c === ";" || c === "(") return true;
+  if (c === "&") return code[k - 1] === "&";
+  if (c === "$") return k === 0 || code[k - 1] === "\n";
+  return code.slice(Math.max(0, k - 3), k + 1) === "sudo" && (k < 4 || !/\w/.test(code[k - 4]));
 }
 
 const BASH_GRAMMAR: Grammar = {
@@ -277,7 +286,8 @@ const BASH_GRAMMAR: Grammar = {
     { re: /^\$(?= )/my, type: "punct" },
     { re: /"(?:[^"\\]|\\[\s\S])*"?/y, type: "string" },
     { re: /'[^']*'?/y, type: "string" },
-    { re: /\$\{[^}\n]*\}|\$[\w@#?*!$-]+/y, type: "variable" },
+    // `${…}` giới hạn 200 ký tự: không có `}` thì không quét tới cuối input cho mỗi `${` (#165).
+    { re: /\$\{[^}\n]{0,200}\}|\$[\w@#?*!$-]+/y, type: "variable" },
     { re: /[A-Za-z_./~@][\w./~@:+-]*/y, type: "function", when: bashCommandPosition },
     { re: /--?[\w-]+(?:=[^\s]*)?/y, type: "attr", when: (c, i) => /\s/.test(c[i - 1] ?? " ") },
     { re: /\b\d+\b/y, type: "number" },
@@ -308,12 +318,13 @@ const MD_GRAMMAR: Grammar = {
     { re: /^>[^\n]*/my, type: "comment" },
     { re: /^(?:-{3,}|\*{3,}|_{3,})[ \t]*$/my, type: "punct" },
     { re: /^[ \t]*(?:[-*+]|\d+[.)])(?=[ \t])/my, type: "keyword" },
-    { re: /`[^`\n]+`/y, type: "string" },
-    { re: /\*\*[^*\n]+\*\*|__[^_\n]+__/y, type: "strong" },
-    { re: /\*[^*\n]+\*/y, type: "emphasis" },
-    { re: /_[^_\n]+_/y, type: "emphasis", when: (c, i) => !/\w/.test(c[i - 1] ?? "") },
-    { re: /!?\[[^\]\n]*\]\([^)\n]*\)/y, type: "link" },
-    { re: /<\/?[A-Za-z][^>\n]*>/y, type: "tag" },
+    // Phần inline giới hạn độ dài: dòng dài toàn dấu mở chưa đóng không bị quét lại tới cuối dòng ở mỗi ký tự (#165).
+    { re: /`[^`\n]{1,1000}`/y, type: "string" },
+    { re: /\*\*[^*\n]{1,1000}\*\*|__[^_\n]{1,1000}__/y, type: "strong" },
+    { re: /\*[^*\n]{1,1000}\*/y, type: "emphasis" },
+    { re: /_[^_\n]{1,1000}_/y, type: "emphasis", when: (c, i) => !/\w/.test(c[i - 1] ?? "") },
+    { re: /!?\[[^\]\n]{0,1000}\]\([^)\n]{0,2000}\)/y, type: "link" },
+    { re: /<\/?[A-Za-z][^>\n]{0,1000}>/y, type: "tag" },
     { re: /[^`*_[!<\n]+/y, type: null },
   ],
 };
