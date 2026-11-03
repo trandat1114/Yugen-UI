@@ -6,14 +6,14 @@
 
 | Command | What it checks |
 |---|---|
-| `npm run typecheck` | Strict TypeScript (app + config) |
-| `npm run lint:classes` | Tailwind classes in canonical form (`-- --fix` to fix them automatically) |
+| `npm run typecheck` | Strict TypeScript 7, the native compiler (app + config) |
+| `npm run lint:classes` | Tailwind classes in canonical form (`-- --fix` to fix them automatically). Results are cached in `node_modules/.cache/` by the CSS in `src`, the Tailwind version and the script: ~1 s cached, ~25 s cold |
 | `npm test` | Vitest: logic, keyboard, SSR / hydration (~470 tests) |
 | `npm run test:e2e` | Playwright: axe on every docs page (light / dark, + high contrast / RTL), drag and drop, touch |
 | `npm run test:visual` | Compares screenshots with the baselines (only Linux screenshots are committed; CI runs it on PRs that change the UI) |
 | `npm run test:engines` | Interaction on Firefox, desktop Safari and iPhone (WebKit) |
 | `npm run check:examples` | Every docs example typechecks when copied out and used with `yugen-ui` |
-| `npm run check:props` | Props tables in the docs match the real types |
+| `npm run check:props` | Props tables in the docs match the real types (asks TypeScript 7's type checker through `typescript/unstable/sync`) |
 | `npm run check:release` | `package.json` = `src/docs/news` = `CHANGELOG.md` |
 | `npm run size` | Size budget (gzip), after `npm run build:lib` |
 | `node scripts/sync-templates.mjs --check` | Templates match the blocks |

@@ -6,14 +6,14 @@
 
 | Lệnh | Kiểm tra gì |
 |---|---|
-| `npm run typecheck` | TypeScript strict (app + config) |
-| `npm run lint:classes` | Class Tailwind ở dạng canonical (`-- --fix` để tự sửa) |
+| `npm run typecheck` | TypeScript 7 strict, trình biên dịch native (app + config) |
+| `npm run lint:classes` | Class Tailwind ở dạng canonical (`-- --fix` để tự sửa). Kết quả cache trong `node_modules/.cache/` theo CSS trong `src`, bản Tailwind và script: ~1 s khi có cache, ~25 s khi chưa |
 | `npm test` | Vitest: logic, bàn phím, SSR / hydration (~470 test) |
 | `npm run test:e2e` | Playwright: axe trên mọi trang docs (sáng / tối, + tương phản cao / RTL), kéo-thả, chạm |
 | `npm run test:visual` | So ảnh chụp với bản chuẩn (chỉ ảnh Linux được commit; CI chạy trên PR đổi giao diện) |
 | `npm run test:engines` | Tương tác trên Firefox, Safari desktop và iPhone (WebKit) |
 | `npm run check:examples` | Mọi ví dụ docs typecheck được khi chép ra dùng với `yugen-ui` |
-| `npm run check:props` | Bảng props trên docs khớp type thật |
+| `npm run check:props` | Bảng props trên docs khớp type thật (hỏi type checker của TypeScript 7 qua `typescript/unstable/sync`) |
 | `npm run check:release` | `package.json` = `src/docs/news` = `CHANGELOG.md` |
 | `npm run size` | Ngân sách dung lượng (gzip) — sau `npm run build:lib` |
 | `node scripts/sync-templates.mjs --check` | Template khớp block |

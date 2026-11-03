@@ -20,7 +20,7 @@ Cách dự án được vận hành hằng ngày: ai làm gì, khi nào, theo lu
 | Tần suất | Việc | Người làm |
 |---|---|---|
 | Hằng tuần | Phân loại `needs triage` ([Community and Triage](Community-and-Triage-vi)), trả lời Q&A tồn đọng, review PR | Triager / maintainer |
-| Hằng tuần | Xem CI trên `main` (phải luôn xanh). Thứ Hai: merge PR Dependabot minor + patch vào `next` nếu xanh; PR major đỏ thì đóng, thêm `ignore` và ghi vào issue migration (#91) | Maintainer |
+| Hằng tuần | Xem CI trên `main` (phải luôn xanh). Thứ Hai: merge PR Dependabot minor + patch vào `next` nếu xanh; PR major đỏ thì đóng, thêm `ignore` và ghi vào issue migration (#91). TypeScript ra PR riêng: `check:props` dùng API unstable của TypeScript 7, nên gốc repo ghim `~7.0.x`, bản minor mới chỉ merge khi CI xanh | Maintainer |
 | 2–4 tuần | Phát hành nếu có changeset ([Release Process](Release-Process-vi)) | Maintainer |
 | Khi `packages/cli/CHANGELOG.md` có mục `Unreleased` | Phát hành CLI kèm mục tin trên `#/news` ([Release Process](Release-Process-vi) › CLI) | Maintainer |
 | Hằng tháng | Cập nhật ROADMAP, gắn `good first issue` mới, chọn Showcase | Maintainer |
@@ -66,6 +66,7 @@ Bảo vệ cho `next`, `release/*`, `canary` và tag `v*`: xem [Branching and Re
 | `engines.yml` | Hằng tuần, PR vào `main` và PR đổi `e2e/` → E2E trên Firefox và WebKit; bản chạy theo lịch hỏng thì mở / cập nhật issue, xanh lại thì đóng |
 | `pages.yml` | Deploy docs (+ docs các minor cũ) lên GitHub Pages |
 | `wiki.yml` | Đẩy `wiki/` lên GitHub Wiki |
+| ImgBot (GitHub app, `.imgbotconfig`) | Mở PR vào `main` nén ảnh không mất dữ liệu. Bỏ qua ảnh baseline visual và SVG (workflow tự tạo lại baseline; SVG viết tay). Merge khi CI xanh |
 | `labels.yml` | Đồng bộ nhãn từ `.github/labels.yml` |
 | `pr-labeler.yml` | Tự gắn nhãn `area: …` cho PR theo đường dẫn file (`.github/labeler.yml`) |
 | `stale.yml` | Issue `needs reproduction` im lặng 14 ngày → nhắc, thêm 7 ngày → đóng |

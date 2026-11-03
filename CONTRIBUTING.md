@@ -67,7 +67,8 @@ npm run dev          # docs site at http://localhost:5173
 
 - `npm test` — unit and interaction tests (Vitest + Testing Library, jsdom), colocated as
   `src/components/ui/<Name>/<Name>.test.tsx`; `npm run test:watch` while writing them.
-- `npm run test:e2e` — Playwright against the docs site (it starts `npm run dev` on port 5200): axe accessibility,
+- `npm run test:e2e` — Playwright against the docs site (it builds the docs and serves them with `vite preview` on port
+  5200; `YUGEN_E2E_DEV=1` uses the dev server instead, faster for a single spec): axe accessibility,
   mouse drag and emulated touch. Locally it uses the installed Microsoft Edge; CI uses Playwright's Chromium (without
   Edge: `npx playwright install chromium` and run with `CI=1`). Open the report with `npx playwright show-report`.
 - `npm run test:visual` — screenshot comparison. Only Linux baselines (`e2e/__screenshots__/**/*-linux.png`) are
@@ -114,6 +115,9 @@ npm run dev          # docs site at http://localhost:5173
 3. Write the docs page: add a `ComponentDoc` to a file in `src/docs/registry/` (`slug`, `name`, `category`, `lead`,
    `description`, `importCode`, `hero`, `examples` — **`code` must match the JSX in `render` exactly**, `dos` / `donts`,
    `props`). The sidebar, search and home page are generated from the registry.
+   - A prop whose default is a built-in string (aria-label, placeholder…) shows the English value in **Default**, the
+     library default since 0.14 (`"Breadcrumb"`, not the Vietnamese one); `registry.test.ts` fails on a quoted
+     Vietnamese default.
    - `slug`, `name`, `category` and `lead` must be **string literals** (they are extracted at build time to lazy-load
      the page).
    - Examples with state or data: write a demo component in the file and slice its code with `// #region Name` …
@@ -134,8 +138,11 @@ npm run dev          # docs site at http://localhost:5173
 ### Adding a block
 
 1. Create `src/docs/block-library/NN-name.tsx` with `export const meta = { title, description, order }` and
-   `export default function …`.
+   `export default function …`. Add `wide: true` to `meta` for a block with several cards inside (it spans two columns
+   on `/blocks`).
 2. Import only from `@/components/ui` and `@fluentui/react-icons`, so people can copy the whole file.
+3. Add its Vietnamese title to `META_VI` in `src/docs/pages/BlocksPage.tsx` and its strings to
+   `src/docs/block-library/vi/NN-name.json`.
 
 ### Translating the docs
 
@@ -336,7 +343,8 @@ npm run dev          # trang docs tại http://localhost:5173
 
 - `npm test` — Vitest (jsdom). Test đặt cạnh component: `src/components/ui/<Name>/<Name>.test.tsx`. Chạy
   `npm run test:watch` khi đang viết test.
-- `npm run test:e2e` — Playwright tự chạy `npm run dev` ở cổng 5200. Trên máy dùng Microsoft Edge đã cài sẵn; CI dùng
+- `npm run test:e2e` — Playwright tự build docs và chạy `vite preview` ở cổng 5200 (`YUGEN_E2E_DEV=1` dùng dev server,
+  nhanh hơn khi chỉ chạy một spec). Trên máy dùng Microsoft Edge đã cài sẵn; CI dùng
   Chromium của Playwright (`npx playwright install chromium`, rồi chạy với `CI=1` nếu máy không có Edge). Báo cáo:
   `npx playwright show-report`.
 - `npm run test:visual` — chỉ ảnh Linux (`e2e/__screenshots__/**/*-linux.png`) được commit; CI so sánh trên mọi PR đổi
@@ -376,6 +384,9 @@ npm run dev          # trang docs tại http://localhost:5173
 3. Viết trang docs: thêm một `ComponentDoc` vào file trong `src/docs/registry/` (`slug`, `name`, `category`, `lead`,
    `description`, `importCode`, `hero`, `examples` — **`code` phải giống hệt JSX trong `render`**, `dos`/`donts`,
    `props`). Sidebar, tìm kiếm, trang chủ tự sinh từ registry.
+   - Prop có mặc định là chuỗi có sẵn (aria-label, placeholder…) ghi giá trị tiếng Anh ở cột **Mặc định**, vì đó là mặc
+     định của thư viện từ 0.14 (`"Breadcrumb"`, không phải bản tiếng Việt); `registry.test.ts` báo lỗi nếu gặp chuỗi
+     tiếng Việt trong ngoặc kép.
    - `slug`, `name`, `category`, `lead` phải là **chuỗi literal** (được trích lúc build để nạp lười trang).
    - Ví dụ có state / dữ liệu: viết component demo trong file rồi cắt code bằng `// #region Tên` … `// #endregion`
      (xem `src/docs/registry/content-search.tsx`) để `code` luôn trùng `render`.
@@ -395,8 +406,11 @@ npm run dev          # trang docs tại http://localhost:5173
 ### Thêm block
 
 1. Tạo `src/docs/block-library/NN-ten.tsx` với `export const meta = { title, description, order }` và
-   `export default function …`.
+   `export default function …`. Block có nhiều thẻ bên trong thì thêm `wide: true` vào `meta` (chiếm hai cột trên
+   `/blocks`).
 2. Chỉ import từ `@/components/ui` và `@fluentui/react-icons` để người dùng copy được nguyên file.
+3. Thêm tên tiếng Việt vào `META_VI` trong `src/docs/pages/BlocksPage.tsx` và các chuỗi vào
+   `src/docs/block-library/vi/NN-ten.json`.
 
 ### Dịch tài liệu
 

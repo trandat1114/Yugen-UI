@@ -40,7 +40,7 @@ Tài liệu này là **bộ quy tắc bắt buộc**. Mọi người (và AI) kh
 
 | Hạng mục | Lựa chọn |
 |---|---|
-| Build | Vite 6 + React 18 + TypeScript strict |
+| Build | Vite 8 (Rolldown) + React 19 (vẫn hỗ trợ 18.3) + TypeScript 7 strict |
 | Style | Tailwind CSS v4 (CSS-first, **không** có `tailwind.config.js`) |
 | Hành vi / a11y | `@radix-ui/react-*`, `cmdk` (Command, Combobox, TagPicker), `react-day-picker` v10 (Calendar), `react-resizable-panels` v4 |
 | Biến thể | `class-variance-authority` |
