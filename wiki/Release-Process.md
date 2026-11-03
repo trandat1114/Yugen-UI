@@ -113,7 +113,7 @@ git push origin vx.y.z
 ```
 
 The **Release** workflow checks that the tag matches `package.json` and is on the right branch, runs the tests, builds and runs
-`npm publish --provenance` (requires the `NPM_TOKEN` secret). The dist-tag is chosen by `scripts/release-channel.mjs`: `latest`, `next` (prerelease) or `release-X.Y`.
+`npm publish --provenance` through npm trusted publishing (no token). The dist-tag is chosen by `scripts/release-channel.mjs`: `latest`, `next` (prerelease) or `release-X.Y`.
 
 After publishing, the workflow creates a GitHub Release for the tag from that version's CHANGELOG entry (`scripts/release-notes.mjs`;
 the `latest` release is marked Latest, prereleases are marked Pre-release). The **Docs** workflow rebuilds the site (including docs for
@@ -148,7 +148,7 @@ Two packages in `packages/` (`packages/cli` → npm `@yugen-ui/cli`, the command
 User docs: `#/concepts/cli`.
 
 The unscoped name `yugen` can't be used: npm returns 403 *"Package name too similar to existing package hygen"*. Scoped packages
-are not subject to this check; the `@yugen-ui` scope is an npm org (free), and `NPM_TOKEN` must have write access to that org.
+are not subject to this check; the `@yugen-ui` scope is an npm org (free).
 
 ### Rules
 
@@ -221,22 +221,21 @@ in the top bar for people who saw the previous version. **Release CLI** creates 
 
 ### Trusted publishing (OIDC, #202)
 
-npm restricts tokens that bypass 2FA. Both release workflows already use npm ≥ 11.5.1 and have `permissions: id-token: write`, so
-npm switches to OIDC on its own once a package declares a trusted publisher:
+Since 0.14.0 and CLI 0.6.0 every publish goes through OIDC; the repository has no npm token. Both release workflows use
+npm ≥ 11.5.1 and `permissions: id-token: write`. On npmjs.com, each package › **Settings** › **Trusted Publisher** › GitHub
+Actions:
 
-1. On npmjs.com, each package › **Settings** › **Trusted Publisher** › GitHub Actions: repository `trandat1114/Yugen-UI`,
-   workflow `release.yml` for `yugen-ui`; `release-cli.yml` for `@yugen-ui/cli` and `create-yugen-ui`. No
-   environment needed.
-2. Release the next version as usual. The "Publish to npm" log no longer shows the notice about tokens that bypass 2FA; the package
-   page on npm shows provenance.
-3. After the first release that runs through OIDC: remove `NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}` from the publish steps, delete
-   the `NPM_TOKEN` secret and revoke the token on npmjs.com.
+- repository `trandat1114/Yugen-UI`, workflow `release.yml` for `yugen-ui` (stable, prerelease and canary builds);
+  `release-cli.yml` for `@yugen-ui/cli` and `create-yugen-ui`. No environment.
+- **Allow npm publish** checked. Without it the publish step fails with `E403 … OIDC permission denied for this action`.
+- **Allow npm dist-tag** unchecked: dist-tags are set by `npm publish --tag`.
 
-Until step 1 is done, npm keeps using `NPM_TOKEN` as before, so releases are not interrupted.
+npm accepts one trusted publisher workflow per package, which is why the canary job lives in `release.yml`. A new package
+needs a first manual `npm publish` before its trusted publisher can be set.
 
 ### First time (`cli@0.1.0`)
 
 1. On npmjs.com: **Add Organization** → name `yugen-ui` (public packages, free).
-2. `NPM_TOKEN`: a granular token with **Read and write** for **All packages** and for the `yugen-ui` org (or a classic
-   Automation token); update the secret in Settings › Secrets › Actions.
+2. Publish the first version by hand (`npm publish --access public` with 2FA), then declare `release-cli.yml` as the
+   trusted publisher (see above).
 3. Tag `cli@0.1.0` on `main` as above.

@@ -57,9 +57,8 @@ Protection for `next`, `release/*`, `canary` and `v*` tags: see [[Branching and 
 | Workflow / file | What it does |
 |---|---|
 | `ci.yml` | Build, test (React 19), React 18, e2e, the checks, size. Doesn't run when a push / PR only changes reading material (README, wiki, CONTRIBUTING…; the `paths-ignore` list in the file); `engines.yml` and `pages.yml` use the same list |
-| `release.yml` | Tag `v*` → check the branch + consistency → `npm publish --provenance` (dist-tag by channel) → GitHub Release from the CHANGELOG entry |
+| `release.yml` | Tag `v*` → check the branch + consistency → `npm publish --provenance` (dist-tag by channel) → GitHub Release from the CHANGELOG entry. Push to `canary` (or a manual run) → an `x.y.z-canary-…` version with the `canary` dist-tag |
 | `release-cli.yml` | Tag `cli@*` → `check-release.mjs --tag` (CHANGELOG, news entry on `#/news`, unused version, `yugen-ui` already on npm) → publish `@yugen-ui/cli` + `create-yugen-ui` → GitHub Release |
-| `canary.yml` | Push to `canary` → an `x.y.z-canary-…` version with the `canary` dist-tag |
 | `sync-next.yml` | Push to `main` → if `next` has no work of its own, merge `main` straight into `next` (no PR, no CI rerun) and rerun Docs; otherwise open a `main → next` PR |
 | `node-versions.yml` | Weekly → compare the Node.js versions in workflows with the release schedule (`scripts/node-versions.mjs`), open a PR into `next` when they differ, then run CI on that branch |
 | `prune-branches.yml` | 1st of every month → report stale branches (`scripts/prune-branches.mjs`) in the job summary; run manually with `apply` to delete the "Xoá" entries |
@@ -79,7 +78,7 @@ Protection for `next`, `release/*`, `canary` and `v*` tags: see [[Branching and 
 | Incident | Do right away |
 |---|---|
 | Broken release (severe build / runtime error) | `npm deprecate yugen-ui@x.y.z "Broken …, use x.y.z+1"` → fix → release a patch. **Don't** `npm unpublish` (it breaks other people's projects) |
-| Leaked secret (`NPM_TOKEN`…) | Revoke the token on npmjs.com right away, create a new token, update the secret, check recent publishes |
+| Leaked secret | Revoke it right away (npm publishes through trusted publishing, so there is no npm token to leak), replace the secret, check recent publishes and workflow runs |
 | Security vulnerability reported | Confirm it in a private Security Advisory, build the fix in a private fork, release, publish the advisory + a CVE if needed |
 | `main` is red | Fix it before any other PR; revert the offending commit if it can't be fixed within 1 day |
 | Docs site broken | Rerun the Docs workflow on the last good commit (`workflow_dispatch`) |

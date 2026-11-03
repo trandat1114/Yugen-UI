@@ -113,7 +113,7 @@ git push origin vx.y.z
 ```
 
 Workflow **Release** kiểm tra tag khớp `package.json` và nằm đúng nhánh, chạy test, build và `npm publish --provenance`
-(cần secret `NPM_TOKEN`). Dist-tag do `scripts/release-channel.mjs` chọn: `latest`, `next` (prerelease) hoặc `release-X.Y`.
+qua npm trusted publishing (không cần token). Dist-tag do `scripts/release-channel.mjs` chọn: `latest`, `next` (prerelease) hoặc `release-X.Y`.
 
 Sau khi publish, workflow tự tạo GitHub Release cho tag từ mục CHANGELOG của bản đó (`scripts/release-notes.mjs`; bản
 `latest` được đánh dấu Latest, prerelease đánh dấu Pre-release). Workflow **Docs** build lại site (kèm docs các minor cũ ở
@@ -148,7 +148,7 @@ Hai gói trong `packages/` (`packages/cli` → npm `@yugen-ui/cli`, lệnh sau k
 người dùng: `#/concepts/cli`.
 
 Tên `yugen` (không scope) không dùng được: npm trả 403 *"Package name too similar to existing package hygen"*. Gói có
-scope không bị kiểm tra này; scope `@yugen-ui` là một npm org (miễn phí) và `NPM_TOKEN` phải có quyền ghi trên org đó.
+scope không bị kiểm tra này; scope `@yugen-ui` là một npm org (miễn phí).
 
 ### Quy tắc
 
@@ -221,22 +221,21 @@ thanh trên cho người đã xem bản trước. **Release CLI** tự tạo Git
 
 ### Trusted publishing (OIDC, #202)
 
-npm hạn chế token bỏ qua 2FA. Hai workflow phát hành đã dùng npm ≥ 11.5.1 và có `permissions: id-token: write`, nên
-npm tự đổi sang OIDC khi gói khai báo trusted publisher:
+Từ 0.14.0 và CLI 0.6.0 mọi lần publish đều qua OIDC; repository không giữ npm token. Hai workflow phát hành dùng
+npm ≥ 11.5.1 và `permissions: id-token: write`. Trên npmjs.com, mỗi gói › **Settings** › **Trusted Publisher** › GitHub
+Actions:
 
-1. Trên npmjs.com, mỗi gói › **Settings** › **Trusted Publisher** › GitHub Actions: repository `trandat1114/Yugen-UI`,
-   workflow `release.yml` cho `yugen-ui`; `release-cli.yml` cho `@yugen-ui/cli` và `create-yugen-ui`. Không cần
-   environment.
-2. Phát hành bản kế tiếp như bình thường. Log "Publish to npm" không còn thông báo token bỏ qua 2FA; trang gói trên
-   npm hiện provenance.
-3. Sau bản đầu tiên chạy bằng OIDC: xoá `NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}` khỏi các bước publish, xoá secret
-   `NPM_TOKEN` và thu hồi token trên npmjs.com.
+- repository `trandat1114/Yugen-UI`, workflow `release.yml` cho `yugen-ui` (bản ổn định, prerelease và canary);
+  `release-cli.yml` cho `@yugen-ui/cli` và `create-yugen-ui`. Không cần environment.
+- Chọn **Allow npm publish**. Thiếu nó, bước publish lỗi `E403 … OIDC permission denied for this action`.
+- Bỏ chọn **Allow npm dist-tag**: dist-tag do `npm publish --tag` đặt.
 
-Trước bước 1, npm vẫn dùng `NPM_TOKEN` như cũ, nên phát hành không bị gián đoạn.
+npm chỉ nhận một workflow trusted publisher cho mỗi gói, nên job canary nằm trong `release.yml`. Gói mới cần một lần
+`npm publish` bằng tay trước khi khai báo được trusted publisher.
 
 ### Lần đầu (`cli@0.1.0`)
 
 1. Trên npmjs.com: **Add Organization** → tên `yugen-ui` (gói public, miễn phí).
-2. `NPM_TOKEN`: token granular có quyền **Read and write** cho **All packages** và cho org `yugen-ui` (hoặc token
-   classic Automation) — cập nhật secret trong Settings › Secrets › Actions.
+2. Publish bản đầu tiên bằng tay (`npm publish --access public` kèm 2FA), rồi khai báo `release-cli.yml` làm trusted
+   publisher (xem trên).
 3. Tag `cli@0.1.0` trên `main` như trên.

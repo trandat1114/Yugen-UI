@@ -29,8 +29,8 @@ jobs:
           cache-dependency-path: packages/cli/package-lock.json
           registry-url: https://registry.npmjs.org
 
-      # npm trusted publishing (OIDC, #202) cần npm ≥ 11.5.1. npm dùng OIDC khi gói đã khai báo trusted publisher trên
-      # npmjs.com và chỉ quay về NODE_AUTH_TOKEN khi chưa có — giữ token tới bản phát hành đầu tiên chạy bằng OIDC.
+      # npm trusted publishing (OIDC, #202) cần npm ≥ 11.5.1. Không dùng npm token từ CLI 0.6.0: cả hai gói khai báo
+      # repository này và release-cli.yml là trusted publisher trên npmjs.com.
       - name: npm with trusted publishing
         run: npm install -g npm@11 && npm --version
 
@@ -53,8 +53,6 @@ jobs:
           else
             npm publish --provenance --access public --tag "${{ steps.channel.outputs.dist_tag }}"
           fi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish create-yugen-ui (if its version is new; stable releases only)
         if: steps.channel.outputs.dist_tag == 'latest'
@@ -66,8 +64,6 @@ jobs:
           else
             npm publish --provenance --access public
           fi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       # GitHub Release từ packages/cli/CHANGELOG.md. Không đánh dấu "Latest" để trang repo vẫn chỉ bản yugen-ui.
       - name: Create GitHub Release

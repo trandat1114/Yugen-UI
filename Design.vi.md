@@ -455,7 +455,7 @@ Luật riêng của Labs:
 3. `npm install --package-lock-only` → `npm run check:release` (`package.json` = `src/docs/news` = `CHANGELOG.md`) →
    `npm run typecheck && npm test && npm run build && npm run size` → `npm run pack:check` để xem trước nội dung gói.
 4. Commit rồi `git tag vX.Y.Z && git push --tags` — workflow `.github/workflows/release.yml` kiểm tra tag, chạy test,
-   build và `npm publish --provenance` (cần secret `NPM_TOKEN`; tag có `-` → dist-tag `next`).
+   build và `npm publish --provenance` (npm trusted publishing, không cần token; tag có `-` → dist-tag `next`).
 
 ---
 
