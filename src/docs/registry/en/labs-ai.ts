@@ -58,7 +58,6 @@ export const en: Record<string, ComponentDocEn> = {
       "CitationList.sources": "List of sources (2-column grid from sm).",
       "CitationList.title": "Heading, followed by the count.",
     },
-    defaults: { "CitationList.title": "“Nguồn” (Sources)" },
   },
 
   reasoning: {
@@ -168,6 +167,5 @@ export const en: Record<string, ComponentDocEn> = {
       "title / footer / announce": "Title, panel footer, announcing new notifications.",
       "useNotifications(initial)": "Small store for demos; spread bind into NotificationCenter.",
     },
-    defaults: { "title / footer / announce": "“Thông báo” (Notifications) / — / true" },
   },
 };

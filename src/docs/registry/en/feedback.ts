@@ -55,7 +55,7 @@ export const en: Record<string, ComponentDocEn> = {
     props: {
       size: "16 / 20 / 24 / 28 / 32 / 36 / 40 / 44px.",
       appearance: "Color of the arc and track.",
-      label: "Label (linked through aria-labelledby). Without a label, the aria-label is “Đang tải” (Loading).",
+      label: "Label (linked through aria-labelledby). Without a label, the aria-label is “Loading”.",
       labelPosition: "Label position.",
     },
   },
@@ -166,7 +166,6 @@ export const en: Record<string, ComponentDocEn> = {
       infoButtonLabel: "aria-label of the (i) button.",
       "htmlFor, …": "Passed to the <label> element.",
     },
-    defaults: { infoButtonLabel: "“Thông tin” (Info)" },
   },
 
   hovercard: {
@@ -330,6 +329,5 @@ export const en: Record<string, ComponentDocEn> = {
       "disabled / required / id / aria-*": "Passed automatically by Field when wrapped in <Field>.",
       "DateRangePicker.value / onSelectRange": "Range { from, to }; numberOfMonths defaults to 2.",
     },
-    defaults: { placeholder: "“Chọn ngày…” (Pick a date…)" },
   },
 };

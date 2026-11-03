@@ -1040,7 +1040,7 @@ function ToastPositionDemo() {
       { name: "size", type: `"small" | "medium" | "large"`, defaultValue: `"medium"`, description: "Cỡ chữ nhãn và nút." },
       { name: "weight", type: `"regular" | "semibold"`, defaultValue: `"regular"`, description: "Độ đậm nhãn." },
       { name: "required / disabled", type: "boolean", description: "Dấu * đỏ; chữ disabled." },
-      { name: "infoButtonLabel", type: "string", defaultValue: `"Thông tin"`, description: "aria-label cho nút (i)." },
+      { name: "infoButtonLabel", type: "string", defaultValue: `"Information"`, description: "aria-label cho nút (i)." },
       { name: "htmlFor, …", type: "LabelHTMLAttributes", description: "Truyền cho phần tử <label>." },
     ],
   },
@@ -1823,7 +1823,7 @@ function ToastPositionDemo() {
     props: [
       { name: "value / defaultValue", type: "Date | null", description: "Ngày đã chọn (controlled / uncontrolled)." },
       { name: "onSelectDate", type: "(date: Date | undefined) => void", description: "Gọi khi chọn hoặc xoá." },
-      { name: "placeholder", type: "string", defaultValue: `"Chọn ngày…"`, description: "Chữ gợi ý khi trống." },
+      { name: "placeholder", type: "string", defaultValue: `"Select a date…"`, description: "Chữ gợi ý khi trống." },
       { name: "clearable", type: "boolean", defaultValue: "false", description: "Hiện nút xoá khi có giá trị." },
       { name: "minDate / maxDate", type: "Date", description: "Giới hạn ngày chọn được." },
       { name: "formatDate", type: "(date: Date) => string", defaultValue: "dd/MM/yyyy", description: "Định dạng hiển thị." },

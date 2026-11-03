@@ -4,7 +4,7 @@ import type { ComponentDocEn } from "../../types";
 export const en: Record<string, ComponentDocEn> = {
   scatterchart: {
     description:
-      "Markers are ≥ 8px with a 2px surface-colored ring, so overlapping points stay distinct. The tooltip follows the point nearest the pointer (Voronoi-style lookup), so there's no need to hit a small dot. Keyboard: Tab into the chart, then use the arrows to step through the points in X order. size turns points into bubbles whose area (not radius) is proportional to the value; the “Xu hướng” (Trend) button draws a least-squares line for each group and adds the slope and R² to the accessible description.",
+      "Markers are ≥ 8px with a 2px surface-colored ring, so overlapping points stay distinct. The tooltip follows the point nearest the pointer (Voronoi-style lookup), so there's no need to hit a small dot. Keyboard: Tab into the chart, then use the arrows to step through the points in X order. size turns points into bubbles whose area (not radius) is proportional to the value; the “Trend” button draws a least-squares line for each group and adds the slope and R² to the accessible description.",
     examples: [
       {
         title: "Bubbles",
@@ -35,7 +35,7 @@ export const en: Record<string, ComponentDocEn> = {
       "data / x / y": "X field (number or Date) and Y field (number).",
       size: "Size field → bubbles (area ∝ value).",
       maxRadius: "Radius of the largest bubble (px); the smallest is 5px (≥ 8px dot + 2px ring).",
-      "group / series": "Group field, and the order / labels / colors of the groups. The 9th group and beyond are merged into “Khác” (Other).",
+      "group / series": "Group field, and the order / labels / colors of the groups. The 9th group and beyond are merged into “Other”.",
       label: "Point name field (tooltip title, first table column).",
       "xLabel / yLabel / sizeLabel": "Measure names in the tooltip, table and description.",
       xType: "A Date → time.",
@@ -44,17 +44,17 @@ export const en: Record<string, ComponentDocEn> = {
       includeZero: "Y axis starts at 0.",
       shapes: "Also tells groups apart by marker shape.",
       "trendLine / defaultTrendLine / onTrendLineChange": "Least-squares trend line.",
-      hideTrendToggle: "Hides the “Xu hướng” (Trend) button.",
+      hideTrendToggle: "Hides the “Trend” button.",
       legend: "Legend that toggles groups.",
       "title, description, toolbar, locale, ariaLabel, indexLabel…":
-        "Same as BarChart: frame, “Bảng dữ liệu” (Data table) button, texture, animate (off under reduced motion).",
+        "Same as BarChart: frame, “Data table” button, texture, animate (off under reduced motion).",
     },
     defaults: { xType: "auto", shapes: "texture or > 3 groups", legend: "≥ 2 groups" },
   },
 
   heatmap: {
     description:
-      "By default it uses a single-hue sequential scale (light = small, dark = large); diverging switches to two poles around midpoint, with neutral gray at the middle. Cells are 2px apart, and row / column labels are truncated to fit (the full text is in the tooltip and table). Empty cells get a neutral hatch pattern and are read as “Không có dữ liệu” (No data). The legend is a color gradient with min / max labels. Keyboard: Tab into the matrix, arrows move between cells, Home/End go to the start/end of the row.",
+      "By default it uses a single-hue sequential scale (light = small, dark = large); diverging switches to two poles around midpoint, with neutral gray at the middle. Cells are 2px apart, and row / column labels are truncated to fit (the full text is in the tooltip and table). Empty cells get a neutral hatch pattern and are read as “No data”. The legend is a color gradient with min / max labels. Keyboard: Tab into the matrix, arrows move between cells, Home/End go to the start/end of the row.",
     examples: [
       {
         title: "Diverging",
@@ -85,14 +85,14 @@ export const en: Record<string, ComponentDocEn> = {
       rowHeight: "Height of each row (px); the total height is computed.",
       legend: "Color gradient with min / max labels (and the midpoint).",
       "title, description, toolbar, locale, ariaLabel, indexLabel…":
-        "Same as BarChart: frame, “Bảng dữ liệu” (Data table) button, texture, animate (off under reduced motion).",
+        "Same as BarChart: frame, “Data table” button, texture, animate (off under reduced motion).",
     },
     defaults: { domain: "from the data" },
   },
 
   chartzoom: {
     description:
-      "The overview strip draws all the data with thin lines; the bright window is the visible range and the rest is dimmed. Drag the window to move it, drag the handles at either edge to resize it, or click outside it to jump there. The window is a slider: ←/→ move by one point, Shift+←/→ shrink/grow, PageUp/PageDown move by one window, Home/End go to either end. The strip is always LTR like the plot area, so on RTL pages the arrow keys still move in the on-screen direction. The range is a pair of indexes [start, end]: domain / defaultDomain / onDomainChange; the “Đặt lại” (Reset) button returns to the full range. This page also covers 100% stacked areas (stackOffset=\"expand\").",
+      "The overview strip draws all the data with thin lines; the bright window is the visible range and the rest is dimmed. Drag the window to move it, drag the handles at either edge to resize it, or click outside it to jump there. The window is a slider: ←/→ move by one point, Shift+←/→ shrink/grow, PageUp/PageDown move by one window, Home/End go to either end. The strip is always LTR like the plot area, so on RTL pages the arrow keys still move in the on-screen direction. The range is a pair of indexes [start, end]: domain / defaultDomain / onDomainChange; the “Reset” button returns to the full range. This page also covers 100% stacked areas (stackOffset=\"expand\").",
     examples: [
       {
         title: "Stacked areas + brush",
@@ -118,7 +118,7 @@ export const en: Record<string, ComponentDocEn> = {
     props: {
       brush: "Overview strip + draggable window under the plot area (LineChart, AreaChart).",
       "domain / defaultDomain": "Visible index range (both ends included).",
-      onDomainChange: "Called on drag, on key presses or when “Đặt lại” (Reset) is clicked.",
+      onDomainChange: "Called on drag, on key presses or when “Reset” is clicked.",
       "AreaChart.stacked": "AreaChart only: stacks the areas; the tooltip gets a total row.",
       "AreaChart.stackOffset": "AreaChart only, when stacked: expand = 100%.",
       "…": "Every other prop is the same as on the LineChart page.",

@@ -48,7 +48,6 @@ export const en: Record<string, ComponentDocEn> = {
       "SheetHeader.action": "Element at the end of the header row, usually a close button.",
       "data-sheet-no-drag": "Add it to a child element so touches on it don't drag the sheet.",
     },
-    defaults: { "SheetContent.handle / handleLabel": "true / “Đổi chiều cao” (Change height)" },
   },
 
   aspectratio: {
