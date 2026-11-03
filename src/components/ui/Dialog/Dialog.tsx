@@ -2,7 +2,7 @@ import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useDirection } from "@radix-ui/react-direction";
 import { Dismiss24Regular } from "../_internal/icons";
-import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
+import { usePortalThemeProps, useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { dialogMessagesEn } from "./messages";
 import { cn } from "@/lib/cn";
 
@@ -20,15 +20,16 @@ export interface DialogSurfaceProps extends React.ComponentPropsWithoutRef<typeo
   material?: "glass" | "glass-clear";
 }
 
-export function DialogSurface({
-  className,
-  modalType = "modal",
-  material,
-  onPointerDownOutside,
-  onEscapeKeyDown,
-  ref,
-  ...props
-}: DialogSurfaceProps & { ref?: React.Ref<React.ComponentRef<typeof DialogPrimitive.Content>> }) {
+export function DialogSurface(inProps: DialogSurfaceProps & { ref?: React.Ref<React.ComponentRef<typeof DialogPrimitive.Content>> }) {
+  const {
+    className,
+    modalType = "modal",
+    material,
+    onPointerDownOutside,
+    onEscapeKeyDown,
+    ref,
+    ...props
+  } = useComponentDefaults("DialogSurface", inProps);
   // Portal render vào <body>: gắn `dir` để nội dung theo hướng chữ của provider lồng.
   const dir = useDirection();
   const portalTheme = usePortalThemeProps();
@@ -104,4 +105,10 @@ export function DialogDescription({
 
 export function DialogActions({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return <div className={cn("mt-2 flex flex-wrap justify-end gap-2", className)} {...props} />;
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    DialogSurface: DialogSurfaceProps;
+  }
 }

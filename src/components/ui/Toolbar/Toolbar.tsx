@@ -6,6 +6,7 @@ import { Button, type ButtonProps } from "../Button/Button";
 import { ToggleButton, type ToggleButtonProps } from "../ToggleButton/ToggleButton";
 import { TOOLBAR_DEFAULTS, ToolbarContext, type ToolbarOrientation, type ToolbarSize } from "./context";
 import { useComposedRefs } from "../_internal/composeRefs";
+import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
 /** Fluent 2 Toolbar — https://fluent2.microsoft.design/components/web/react/core/toolbar/usage */
 
@@ -28,16 +29,17 @@ export interface ToolbarProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 /** Thanh công cụ có roving focus: Tab vào/ra một lần, phím mũi tên / Home / End di chuyển giữa các mục. */
-export function Toolbar({
-  className,
-  size = "medium",
-  orientation = "horizontal",
-  material,
-  onKeyDown,
-  onFocus,
-  ref: forwardedRef,
-  ...props
-}: ToolbarProps & { ref?: React.Ref<HTMLDivElement> }) {
+export function Toolbar(inProps: ToolbarProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    className,
+    size = "medium",
+    orientation = "horizontal",
+    material,
+    onKeyDown,
+    onFocus,
+    ref: forwardedRef,
+    ...props
+  } = useComponentDefaults("Toolbar", inProps, COMPACT_SIZE);
   const rootRef = React.useRef<HTMLDivElement | null>(null);
   const activeRef = React.useRef<HTMLElement | null>(null);
   const dir = useDirection();
@@ -192,4 +194,10 @@ export function ToolbarGroup({ className, ...props }: React.HTMLAttributes<HTMLD
       {...props}
     />
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Toolbar: ToolbarProps;
+  }
 }

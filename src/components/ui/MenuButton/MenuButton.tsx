@@ -4,6 +4,7 @@ import { ChevronDown20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Button, type ButtonProps } from "../Button/Button";
 import { Menu, MenuPopover, MenuTrigger } from "../Menu/Menu";
+import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
 type MenuButtonAppearance = NonNullable<ButtonProps["appearance"]>;
 
@@ -33,22 +34,23 @@ export interface MenuButtonProps extends Omit<ButtonProps, "asChild" | "iconPosi
   align?: "start" | "center" | "end";
 }
 
-export function MenuButton({
-  menu,
-  menuIcon,
-  open,
-  defaultOpen,
-  onOpenChange,
-  align = "start",
-  appearance = "secondary",
-  size = "medium",
-  icon,
-  disabled,
-  className,
-  children,
-  ref,
-  ...props
-}: MenuButtonProps & { ref?: React.Ref<HTMLButtonElement> }) {
+export function MenuButton(inProps: MenuButtonProps & { ref?: React.Ref<HTMLButtonElement> }) {
+  const {
+    menu,
+    menuIcon,
+    open,
+    defaultOpen,
+    onOpenChange,
+    align = "start",
+    appearance = "secondary",
+    size = "medium",
+    icon,
+    disabled,
+    className,
+    children,
+    ref,
+    ...props
+  } = useComponentDefaults("MenuButton", inProps, COMPACT_SIZE);
   const hasLabel = children !== undefined && children !== null && children !== false && children !== "";
   const resolvedSize = size ?? "medium";
   const resolvedAppearance = appearance ?? "secondary";
@@ -83,4 +85,10 @@ export function MenuButton({
       <MenuPopover align={align}>{menu}</MenuPopover>
     </Menu>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    MenuButton: MenuButtonProps;
+  }
 }

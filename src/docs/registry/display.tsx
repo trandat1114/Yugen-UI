@@ -1859,20 +1859,20 @@ function TableColumnsDemo() {
       },
       {
         title: "Dọc",
-        description: "vertical chia các phần tử trên cùng hàng; cao theo hàng chứa.",
+        description: "orientation=\"vertical\" chia các phần tử trên cùng hàng; cao theo hàng chứa.",
         code: `<div className="flex h-20 items-center gap-3 text-body1">
   <span>Mail</span>
-  <Divider vertical />
+  <Divider orientation="vertical" />
   <span>Calendar</span>
-  <Divider vertical>or</Divider>
+  <Divider orientation="vertical">or</Divider>
   <span>People</span>
 </div>`,
         render: () => (
           <div className="flex h-20 items-center gap-3 text-body1">
             <span>Mail</span>
-            <Divider vertical />
+            <Divider orientation="vertical" />
             <span>Calendar</span>
-            <Divider vertical>or</Divider>
+            <Divider orientation="vertical">or</Divider>
             <span>People</span>
           </div>
         ),
@@ -1905,7 +1905,7 @@ function TableColumnsDemo() {
       "Không dùng appearance brand tràn lan — chỉ để nhấn một ranh giới quan trọng.",
     ],
     props: [
-      { name: "vertical", type: "boolean", defaultValue: "false", description: "Đường kẻ dọc." },
+      { name: "orientation", type: `"horizontal" | "vertical"`, defaultValue: `"horizontal"`, description: "Hướng đường kẻ. Tên cũ vertical (boolean) đã lỗi thời (bỏ ở 1.0)." },
       { name: "alignContent", type: `"start" | "center" | "end"`, defaultValue: `"center"`, description: "Vị trí chữ / icon trên đường kẻ." },
       { name: "appearance", type: `"default" | "subtle" | "brand" | "strong"`, defaultValue: `"default"`, description: "Màu đường kẻ và chữ." },
       { name: "inset", type: "boolean", defaultValue: "false", description: "Thụt hai đầu 12px." },
@@ -2068,7 +2068,7 @@ function TableColumnsDemo() {
       </div>
     </CarouselCard>
   </CarouselViewport>
-  <CarouselNavContainer autoplay />
+  <CarouselNavContainer showAutoplayToggle />
 </Carousel>`,
       render: () => (
         <Carousel loop aria-label="Highlights" className="w-full max-w-2xl">
@@ -2107,7 +2107,7 @@ function TableColumnsDemo() {
               </div>
             </CarouselCard>
           </CarouselViewport>
-          <CarouselNavContainer autoplay />
+          <CarouselNavContainer showAutoplayToggle />
         </Carousel>
       ),
     },
@@ -2162,7 +2162,7 @@ function TableColumnsDemo() {
       </CarouselCard>
     ))}
   </CarouselViewport>
-  <CarouselNavContainer autoplay />
+  <CarouselNavContainer showAutoplayToggle />
 </Carousel>`,
         render: () => (
           <Carousel loop defaultAutoplay autoplayInterval={5000} aria-label="Tips" className="w-full">
@@ -2177,7 +2177,7 @@ function TableColumnsDemo() {
                 </CarouselCard>
               ))}
             </CarouselViewport>
-            <CarouselNavContainer autoplay />
+            <CarouselNavContainer showAutoplayToggle />
           </Carousel>
         ),
       },
@@ -2223,7 +2223,7 @@ function TableColumnsDemo() {
     dos: [
       "Đặt aria-label cho Carousel; mỗi slide tự có nhãn “Slide x / n”, thumbnail nên có aria-label riêng.",
       "Giữ 3–6 slide cùng loại; dùng slidesPerView lẻ (1.15, 2.5) để gợi ý còn nội dung phía sau.",
-      "Khi bật autoplay, luôn hiện nút tạm dừng (CarouselNavContainer autoplay).",
+      "Khi bật autoplay, luôn hiện nút tạm dừng (CarouselNavContainer showAutoplayToggle).",
     ],
     donts: [
       "Không đặt thông tin quan trọng duy nhất trong slide ẩn.",
@@ -2238,7 +2238,7 @@ function TableColumnsDemo() {
       { name: "autoplayInterval", type: "number", defaultValue: "4000", description: "Thời gian mỗi slide (ms); tiến độ hiện trong chấm / thumbnail đang chọn." },
       { name: "activeIndex / defaultActiveIndex / onActiveIndexChange", type: "number / number / (index: number) => void", defaultValue: "— / 0", description: "Slide hiện tại, đếm từ 0 (controlled / uncontrolled); gọi khi slide hiện tại thay đổi." },
       { name: "CarouselCard.className", type: "string", description: "basis-full mặc định; basis-4/5 hoặc basis-1/2 khi không dùng slidesPerView." },
-      { name: "CarouselNavContainer.autoplay", type: "boolean", defaultValue: "false", description: "Hiện nút bật / tắt tự chạy." },
+      { name: "CarouselNavContainer.showAutoplayToggle", type: "boolean", defaultValue: "false", description: "Hiện nút bật / tắt tự chạy. Tên cũ autoplay đã lỗi thời (bỏ ở 1.0)." },
       { name: "CarouselNavContainer.previousLabel / nextLabel", type: "string", defaultValue: `"Previous slide" / "Next slide"`, description: "aria-label cho nút điều hướng. Tên cũ prevLabel đã lỗi thời (bỏ ở 1.0)." },
       { name: "CarouselThumbnails / CarouselThumbnail", type: "HTMLAttributes / ButtonHTMLAttributes", description: "Tablist ảnh thu nhỏ; mỗi CarouselThumbnail ứng với slide cùng vị trí." },
     ],

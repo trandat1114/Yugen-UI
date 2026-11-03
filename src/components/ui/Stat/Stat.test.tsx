@@ -4,6 +4,7 @@ import { YugenProvider } from "../YugenProvider/YugenProvider";
 import { StatTile } from "../Chart/Sparkline";
 import { Stat } from "./Stat";
 import { statMessagesEn } from "./messages";
+import { watchDeprecations } from "@/test/deprecation";
 
 describe("Stat", () => {
   it("formats the value and delta with the locale and names the direction", () => {
@@ -32,5 +33,20 @@ describe("Stat", () => {
     render(<StatTile label="Phiên" value={5} delta={0.1} trend={[1, 2, 3]} />);
     expect(screen.getByText("Phiên")).toBeInTheDocument();
     expect(screen.getByText("Tăng")).toBeInTheDocument();
+  });
+});
+
+describe("Stat size", () => {
+  it("extra-large là cỡ 68px; hero (giá trị cũ) vẫn chạy và cảnh báo một lần", () => {
+    const warnings = watchDeprecations();
+    render(
+      <>
+        <Stat label="Mới" value="1" size="extra-large" />
+        <Stat label="Cũ" value="2" size="hero" />
+        <StatTile label="Cũ 2" value="3" size="hero" />
+      </>,
+    );
+    for (const v of ["1", "2", "3"]) expect(screen.getByText(v).parentElement).toHaveClass("text-display");
+    expect(warnings('Stat.size="hero"')).toBe(1);
   });
 });

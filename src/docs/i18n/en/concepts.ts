@@ -182,6 +182,7 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
       playground: "Try side & align",
       collision: "Collisions & flipping",
       portals: "Portals & theme",
+      "scroll-lock": "Scroll lock",
       "z-index": "z-index scale",
     },
   },
@@ -240,6 +241,7 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
     toc: {
       attributes: "data-theme & data-brand",
       provider: "YugenProvider",
+      defaults: "Default props & density",
       "use-yugen": "The useYugen() hook",
       nested: "Nested themes",
       layers: "Three token layers",

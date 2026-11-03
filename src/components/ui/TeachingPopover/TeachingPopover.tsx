@@ -3,6 +3,7 @@ import * as React from "react";
 import { useControllableState } from "../hooks/useControllableState";
 import { Dismiss16Regular, Lightbulb16Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
+import { warnDeprecated } from "@/lib/deprecate";
 import { Button } from "../Button/Button";
 import { Popover, PopoverClose, PopoverSurface, PopoverTrigger, type PopoverSurfaceProps } from "../Popover/Popover";
 import { useYugenMessages } from "../YugenProvider/context";
@@ -152,6 +153,8 @@ export interface TeachingPopoverFooterProps extends Omit<React.HTMLAttributes<HT
   /** Đóng popover sau khi bấm nút chính. Mặc định false. */
   closeOnPrimary?: boolean;
   /** horizontal: hai nút cạnh nhau ở cuối · vertical: xếp chồng, rộng hết. */
+  orientation?: "horizontal" | "vertical";
+  /** @deprecated Use `orientation`. Will be removed in v1.0.0. */
   layout?: "horizontal" | "vertical";
 }
 
@@ -161,12 +164,14 @@ export function TeachingPopoverFooter({
   onPrimaryClick,
   onSecondaryClick,
   closeOnPrimary = false,
-  layout = "horizontal",
+  orientation,
+  layout,
   className,
   ...props
 }: TeachingPopoverFooterProps) {
+  if (layout !== undefined) warnDeprecated("TeachingPopoverFooter.layout", "use orientation", "1.0.0");
   const buttons = useTeachingButtons();
-  const vertical = layout === "vertical";
+  const vertical = (orientation ?? layout) === "vertical";
   const primaryButton = (
     <Button
       appearance={buttons.primary.appearance}

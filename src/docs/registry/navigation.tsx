@@ -1495,6 +1495,12 @@ const [sort, setSort] = useState("name");
     ],
     props: [
       { name: "ContextMenu.onOpenChange", type: "(open: boolean) => void", description: "Gọi khi mở / đóng." },
+      {
+        name: "ContextMenu.modal",
+        type: "boolean",
+        defaultValue: "true",
+        description: `true: khi menu mở, trang bị khoá cuộn, bấm ra ngoài chỉ đóng menu và phần còn lại của trang ẩn khỏi trình đọc màn hình. false: trang vẫn cuộn được, bấm ra ngoài tới trang ngay. Xem [Khoá cuộn](/concepts/positioning#scroll-lock).`,
+      },
       { name: "ContextMenuTrigger.asChild", type: "boolean", description: "Gắn vào phần tử con làm vùng nhấp chuột phải." },
       { name: "ContextMenuItem.icon / secondaryContent", type: "ReactNode", description: "Icon cỡ 20 và phím tắt bên phải." },
       { name: "ContextMenuCheckboxItem.checked / onCheckedChange", type: "boolean", description: "Bật/tắt (controlled)." },

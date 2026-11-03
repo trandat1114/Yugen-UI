@@ -1,12 +1,14 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
+import { useComponentDefaults } from "../YugenProvider/context";
 
 /** Kbd (shadcn/ui, giao diện Fluent 2) — https://ui.shadcn.com/docs/components/kbd */
 export interface KbdProps extends React.HTMLAttributes<HTMLElement> {
   size?: "small" | "medium";
 }
 
-export function Kbd({ className, size = "medium", ref, ...props }: KbdProps & { ref?: React.Ref<HTMLElement> }) {
+export function Kbd(inProps: KbdProps & { ref?: React.Ref<HTMLElement> }) {
+  const { className, size = "medium", ref, ...props } = useComponentDefaults("Kbd", inProps);
   return (
     <kbd
       ref={ref}
@@ -34,4 +36,10 @@ export function KbdGroup({
       {...props}
     />
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Kbd: KbdProps;
+  }
 }

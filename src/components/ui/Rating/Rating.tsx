@@ -14,7 +14,7 @@ import {
 } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { warnDeprecated } from "@/lib/deprecate";
-import { useYugen, useYugenMessages } from "../YugenProvider/context";
+import { useYugen, useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { ratingMessagesEn } from "./messages";
 
 export { ratingMessages, ratingMessagesVi, ratingMessagesEn, type RatingMessages } from "./messages";
@@ -91,23 +91,24 @@ export interface RatingProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
 }
 
 /** Rating tương tác — bản chất là nhóm radio: Tab vào, phím mũi tên đổi giá trị, rê chuột để xem trước. */
-export function Rating({
-  value,
-  defaultValue = 0,
-  onValueChange,
-  max = 5,
-  step = 1,
-  color = "neutral",
-  size = "extra-large",
-  disabled,
-  name,
-  itemLabel,
-  className,
-  onMouseLeave,
-  onKeyDown,
-  ref,
-  ...props
-}: RatingProps & { ref?: React.Ref<HTMLDivElement> }) {
+export function Rating(inProps: RatingProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    value,
+    defaultValue = 0,
+    onValueChange,
+    max = 5,
+    step = 1,
+    color = "neutral",
+    size = "extra-large",
+    disabled,
+    name,
+    itemLabel,
+    className,
+    onMouseLeave,
+    onKeyDown,
+    ref,
+    ...props
+  } = useComponentDefaults("Rating", inProps);
   const dir = useDirection();
   const msg = useYugenMessages("rating", ratingMessagesEn);
   const { locale } = useYugen();
@@ -265,4 +266,10 @@ export function RatingDisplay({
       )}
     </div>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Rating: RatingProps;
+  }
 }

@@ -413,9 +413,9 @@ function SonnerPositionDemo() {
       },
       {
         title: "Intent không icon",
-        description: "Không có icon thì là chấm tròn theo intent: neutral, brand, success, warning, danger.",
+        description: "Không có icon thì là chấm tròn theo intent: neutral, brand, success, warning, error.",
         code: `<Timeline aria-label="Deployment history" className="w-full max-w-md">
-  <TimelineItem intent="danger" title="Deploy of v2.4.1 failed" time="14:02">
+  <TimelineItem intent="error" title="Deploy of v2.4.1 failed" time="14:02">
     Health check failed after 3 attempts; rolled back to v2.4.0.
   </TimelineItem>
   <TimelineItem intent="warning" title="Response time up 30%" time="13:48" />
@@ -424,7 +424,7 @@ function SonnerPositionDemo() {
 </Timeline>`,
         render: () => (
           <Timeline aria-label="Deployment history" className="w-full max-w-md">
-            <TimelineItem intent="danger" title="Deploy of v2.4.1 failed" time="14:02">
+            <TimelineItem intent="error" title="Deploy of v2.4.1 failed" time="14:02">
               Health check failed after 3 attempts; rolled back to v2.4.0.
             </TimelineItem>
             <TimelineItem intent="warning" title="Response time up 30%" time="13:48" />
@@ -449,7 +449,7 @@ function SonnerPositionDemo() {
       { name: "TimelineItem.time", type: "ReactNode", description: "Thời gian hiển thị." },
       { name: "TimelineItem.dateTime", type: "string", description: "Thời điểm ISO 8601 → thẻ <time dateTime>." },
       { name: "TimelineItem.icon", type: "ReactNode", description: "Icon hoặc Avatar; bỏ trống = chấm tròn." },
-      { name: "TimelineItem.intent", type: `"neutral" | "brand" | "success" | "warning" | "danger"`, defaultValue: `"neutral"`, description: "Màu ô icon / chấm." },
+      { name: "TimelineItem.intent", type: `"neutral" | "brand" | "success" | "warning" | "error"`, defaultValue: `"neutral"`, description: "Màu ô icon / chấm. Giá trị cũ \"danger\" đã lỗi thời (bỏ ở 1.0)." },
       { name: "TimelineItem.children", type: "ReactNode", description: "Nội dung thêm: bình luận, tệp, thẻ." },
     ],
   },
@@ -629,17 +629,17 @@ function SonnerPositionDemo() {
       },
       {
         title: "Kích thước",
-        description: "medium 28px, large 40px, hero 68px — tối đa một hero mỗi màn hình.",
+        description: "medium 28px, large 40px, extra-large 68px — mỗi màn hình tối đa một con số cỡ extra-large.",
         code: `<div className="flex flex-wrap items-end gap-10">
   <Stat size="medium" label="Medium" value={4_210} />
   <Stat size="large" label="Large" value={4_210} />
-  <Stat size="hero" label="Hero" value={4_210} />
+  <Stat size="extra-large" label="Extra large" value={4_210} />
 </div>`,
         render: () => (
           <div className="flex flex-wrap items-end gap-10">
             <Stat size="medium" label="Medium" value={4_210} />
             <Stat size="large" label="Large" value={4_210} />
-            <Stat size="hero" label="Hero" value={4_210} />
+            <Stat size="extra-large" label="Extra large" value={4_210} />
           </div>
         ),
       },
@@ -661,7 +661,7 @@ function SonnerPositionDemo() {
       { name: "deltaFormat", type: "Intl.NumberFormatOptions | (value) => string", defaultValue: "phần trăm", description: "Định dạng delta." },
       { name: "deltaLabel", type: "ReactNode", description: "Mốc so sánh." },
       { name: "goodDirection", type: `"up" | "down" | "neutral"`, defaultValue: `"up"`, description: "Chiều tốt: quyết định màu success / danger." },
-      { name: "size", type: `"medium" | "large" | "hero"`, defaultValue: `"medium"`, description: "Cỡ con số 28 / 40 / 68px." },
+      { name: "size", type: `"medium" | "large" | "extra-large"`, defaultValue: `"medium"`, description: "Cỡ con số 28 / 40 / 68px. Giá trị cũ \"hero\" đã lỗi thời (bỏ ở 1.0)." },
       { name: "icon", type: "ReactNode", description: "Icon trước nhãn." },
       { name: "chart", type: "ReactNode", description: "Biểu đồ nhỏ cạnh con số, thường là Sparkline." },
       { name: "locale", type: "string", description: "Locale cho Intl.NumberFormat; mặc định theo YugenProvider." },
@@ -675,7 +675,7 @@ function SonnerPositionDemo() {
     category: "Hiển thị dữ liệu",
     lead: "Prose định dạng nội dung dài từ Markdown hoặc CMS: tiêu đề, đoạn văn, danh sách, bảng, code, trích dẫn và ảnh theo thang chữ Yugen.",
     description:
-      "Bọc nội dung trong `<Prose>` (hoặc thêm class `yugen-prose` của theme); các thẻ HTML bên trong được định dạng mà không cần class. Selector có độ ưu tiên 0, nên class đặt trên từng thẻ luôn thắng; thêm class `not-prose` cho phần nào cần thoát hẳn. CodeBlock, Table, Quote và Timeline đã có sẵn `not-prose`. size large (16px) cho bài viết dài, medium (14px) cho docs và ghi chú. Prose không làm sạch HTML: nội dung từ người dùng phải được sanitize trước.",
+      "Bọc nội dung trong `<Prose>` (hoặc thêm class `yugen-prose` của theme). Font và nhịp chữ đọc từ biến `--prose-font-body`, `--prose-font-heading`, `--prose-font-mono`, `--prose-size`, `--prose-leading`, `--prose-flow`; preset có sẵn `yugen-prose-docs`, `yugen-prose-article`, `yugen-prose-chat`, `yugen-prose-compact`, hoặc tạo preset riêng ở trang Typeset (/typeset). các thẻ HTML bên trong được định dạng mà không cần class. Selector có độ ưu tiên 0, nên class đặt trên từng thẻ luôn thắng; thêm class `not-prose` cho phần nào cần thoát hẳn. CodeBlock, Table, Quote và Timeline đã có sẵn `not-prose`. size large (16px) cho bài viết dài, medium (14px) cho docs và ghi chú. Prose không làm sạch HTML: nội dung từ người dùng phải được sanitize trước.",
     importCode: `import { Prose } from "@/components/ui";`,
     hero: {
       title: "Prose",

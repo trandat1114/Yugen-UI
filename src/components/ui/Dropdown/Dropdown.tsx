@@ -8,7 +8,7 @@ import {
   ChevronDown24Regular,
   ChevronUp16Regular,
 } from "../_internal/icons";
-import { usePortalThemeProps } from "../YugenProvider/context";
+import { usePortalThemeProps, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { popoverSurfaceClass } from "@/components/ui/Popover/Popover";
 import { fieldAppearanceClass, type FieldAppearance } from "@/components/ui/Select/Select";
@@ -45,22 +45,23 @@ export interface DropdownProps extends Omit<SelectPrimitive.SelectProps, "dir"> 
 }
 
 /** Dropdown: listbox tuỳ biến (Radix Select) — chọn một giá trị trong danh sách, không cho gõ tự do. */
-export function Dropdown({
-  placeholder,
-  appearance = "outline",
-  size = "medium",
-  className,
-  listboxClassName,
-  id,
-  disabled,
-  children,
-  "aria-label": ariaLabel,
-  "aria-labelledby": ariaLabelledby,
-  "aria-describedby": ariaDescribedby,
-  "aria-invalid": ariaInvalid,
-  ref,
-  ...props
-}: DropdownProps & { ref?: React.Ref<HTMLButtonElement> }) {
+export function Dropdown(inProps: DropdownProps & { ref?: React.Ref<HTMLButtonElement> }) {
+  const {
+    placeholder,
+    appearance = "outline",
+    size = "medium",
+    className,
+    listboxClassName,
+    id,
+    disabled,
+    children,
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledby,
+    "aria-describedby": ariaDescribedby,
+    "aria-invalid": ariaInvalid,
+    ref,
+    ...props
+  } = useComponentDefaults("Dropdown", inProps, COMPACT_SIZE);
   const s = TRIGGER_SIZE[size];
   const portalTheme = usePortalThemeProps();
   return (
@@ -173,4 +174,10 @@ export function DropdownGroup({
 
 export function DropdownDivider({ className }: { className?: string }) {
   return <SelectPrimitive.Separator className={cn("-mx-1 my-1 h-px bg-stroke-2", className)} />;
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Dropdown: DropdownProps;
+  }
 }

@@ -582,6 +582,8 @@ function ProgressFill({ className }: { className?: string }) {
 /* ------------------------------------------------------------------ CarouselNavContainer */
 export interface CarouselNavContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Hiện nút bật / tắt tự chạy. */
+  showAutoplayToggle?: boolean;
+  /** @deprecated Use `showAutoplayToggle` (`autoplay` on Carousel is the autoplay state). Will be removed in v1.0.0. */
   autoplay?: boolean;
   /** aria-label nút trước. Mặc định lấy từ `messages.carousel.previous`. */
   previousLabel?: string;
@@ -593,7 +595,8 @@ export interface CarouselNavContainerProps extends React.HTMLAttributes<HTMLDivE
 
 /** Nút trước / sau + chấm điều hướng (tablist) + nút autoplay tuỳ chọn. Chấm đang chọn hiện tiến độ autoplay. */
 export function CarouselNavContainer({
-  autoplay: showAutoplay = false,
+  showAutoplayToggle,
+  autoplay: autoplayLegacy,
   previousLabel,
   prevLabel,
   nextLabel,
@@ -601,6 +604,8 @@ export function CarouselNavContainer({
   ...props
 }: CarouselNavContainerProps) {
   if (prevLabel !== undefined) warnDeprecated("CarouselNavContainer.prevLabel", "use previousLabel", "1.0.0");
+  if (autoplayLegacy !== undefined) warnDeprecated("CarouselNavContainer.autoplay", "use showAutoplayToggle", "1.0.0");
+  const showAutoplay = showAutoplayToggle ?? autoplayLegacy ?? false;
   const ctx = useCarousel();
   const msg = useYugenMessages("carousel", carouselMessagesEn);
   const dir = useDirection();

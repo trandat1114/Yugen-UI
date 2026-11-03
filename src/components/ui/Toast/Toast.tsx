@@ -77,8 +77,17 @@ function getSnapshot() {
   return records;
 }
 
-/** Hiển thị toast; trả về id để đóng sau. */
+/**
+ * Hiển thị toast; trả về id để đóng sau.
+ * @deprecated Use `toast(options)` or `useToast(toasterId).dispatchToast(options)`. Will be removed from the package
+ * exports in v1.0.0.
+ */
 export function dispatchToast(options: ToastOptions): string {
+  warnDeprecated("dispatchToast", "use toast() or useToast().dispatchToast", "1.0.0");
+  return showToast(options);
+}
+
+function showToast(options: ToastOptions): string {
   if (options.hideDismiss !== undefined) warnDeprecated("ToastOptions.hideDismiss", "use dismissible: false", "1.0.0");
   const id = options.toastId ?? `toast-${++counter}`;
   records = [...records.filter((t) => t.id !== id), { ...options, id, open: true }];
@@ -108,14 +117,14 @@ export function dismissAllToasts(toasterId?: string) {
 
 /** Helper tĩnh: `toast({ intent: "success", title: "Đã lưu" })` → Toaster mặc định. */
 export function toast(options: ToastOptions) {
-  return dispatchToast(options);
+  return showToast(options);
 }
 
 /** API mệnh lệnh kiểu Fluent `useToastController(toasterId)`. */
 export function useToast(toasterId?: string) {
   return React.useMemo(
     () => ({
-      dispatchToast: (options: ToastOptions) => dispatchToast({ toasterId, ...options }),
+      dispatchToast: (options: ToastOptions) => showToast({ toasterId, ...options }),
       dismissToast,
       dismissAllToasts: () => dismissAllToasts(toasterId),
     }),

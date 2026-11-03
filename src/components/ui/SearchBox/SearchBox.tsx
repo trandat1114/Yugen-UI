@@ -4,7 +4,7 @@ import { useControllableState } from "../hooks/useControllableState";
 import { Dismiss16Regular, Dismiss20Regular, Dismiss24Regular, Search16Regular, Search20Regular, Search24Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Input, type InputProps } from "@/components/ui/Input/Input";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { searchBoxMessagesEn } from "./messages";
 
 export { searchBoxMessages, searchBoxMessagesVi, searchBoxMessagesEn, type SearchBoxMessages } from "./messages";
@@ -23,23 +23,24 @@ export interface SearchBoxProps extends Omit<InputProps, "type"> {
 }
 
 /** SearchBox: Input có icon tìm kiếm và nút xoá; Esc để xoá nhanh. Hỗ trợ controlled & uncontrolled. */
-export function SearchBox({
-  value,
-  defaultValue,
-  onChange,
-  onValueChange,
-  onKeyDown,
-  contentBefore,
-  contentAfter,
-  size,
-  disabled,
-  readOnly,
-  dismissLabel,
-  className,
-  placeholder,
-  ref,
-  ...props
-}: SearchBoxProps & { ref?: React.Ref<HTMLInputElement> }) {
+export function SearchBox(inProps: SearchBoxProps & { ref?: React.Ref<HTMLInputElement> }) {
+  const {
+    value,
+    defaultValue,
+    onChange,
+    onValueChange,
+    onKeyDown,
+    contentBefore,
+    contentAfter,
+    size,
+    disabled,
+    readOnly,
+    dismissLabel,
+    className,
+    placeholder,
+    ref,
+    ...props
+  } = useComponentDefaults("SearchBox", inProps, COMPACT_SIZE);
   const msg = useYugenMessages("searchBox", searchBoxMessagesEn);
   const inputRef = React.useRef<HTMLInputElement>(null);
   React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
@@ -108,4 +109,10 @@ export function SearchBox({
       {...props}
     />
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    SearchBox: SearchBoxProps;
+  }
 }

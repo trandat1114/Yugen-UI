@@ -1,8 +1,9 @@
 import * as React from "react";
 import { ArrowTrending16Regular, ArrowTrendingDown16Regular, Subtract16Regular } from "../_internal/icons";
-import { useYugen, useYugenMessages } from "../YugenProvider/context";
+import { useYugen, useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { statMessagesEn } from "./messages";
 import { cn } from "@/lib/cn";
+import { warnDeprecated } from "@/lib/deprecate";
 
 export { statMessages, statMessagesVi, statMessagesEn, type StatMessages } from "./messages";
 
@@ -22,7 +23,9 @@ function formatNumber(value: number, locale: string, format: StatNumberFormat) {
   return f.format(value);
 }
 
-const VALUE_SIZE = { medium: "text-title2", large: "text-large-title", hero: "text-display" } as const;
+const VALUE_SIZE = { medium: "text-title2", large: "text-large-title", "extra-large": "text-display" } as const;
+/** @deprecated Use "extra-large". Will be removed in v1.0.0. */
+type StatSizeLegacy = "hero";
 
 export interface StatProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
   /** Nhãn viết hoa chữ đầu câu, không dấu hai chấm. */
@@ -39,30 +42,33 @@ export interface StatProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "t
   deltaLabel?: React.ReactNode;
   /** Chiều nào là tốt: quyết định màu success / danger của delta. */
   goodDirection?: "up" | "down" | "neutral";
-  /** medium 28px · large 40px · hero 68px (một hero mỗi màn hình). */
-  size?: "medium" | "large" | "hero";
+  /** medium 28px · large 40px · extra-large 68px (một con số như vậy mỗi màn hình). "hero" cũ đã lỗi thời (bỏ ở 1.0). */
+  size?: keyof typeof VALUE_SIZE | StatSizeLegacy;
   icon?: React.ReactNode;
   /** Biểu đồ nhỏ cạnh con số, thường là `<Sparkline />`. */
   chart?: React.ReactNode;
 }
 
 /** Stat — con số chính + mức thay đổi + biểu đồ nhỏ tuỳ chọn. */
-export function Stat({
-  label,
-  value,
-  valueFormat,
-  locale: localeProp,
-  delta,
-  deltaFormat,
-  deltaLabel,
-  goodDirection = "up",
-  size = "medium",
-  icon,
-  chart,
-  className,
-  ref,
-  ...props
-}: StatProps & { ref?: React.Ref<HTMLDivElement> }) {
+export function Stat(inProps: StatProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    label,
+    value,
+    valueFormat,
+    locale: localeProp,
+    delta,
+    deltaFormat,
+    deltaLabel,
+    goodDirection = "up",
+    size = "medium",
+    icon,
+    chart,
+    className,
+    ref,
+    ...props
+  } = useComponentDefaults("Stat", inProps);
+  if (size === "hero") warnDeprecated('Stat.size="hero"', 'use size="extra-large"', "1.0.0");
+  const valueSize = size === "hero" ? "extra-large" : size;
   const yugen = useYugen();
   const locale = localeProp ?? yugen.locale;
   const msg = useYugenMessages("stat", statMessagesEn);
@@ -91,7 +97,7 @@ export function Stat({
       </div>
       <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2">
         <div className="min-w-0">
-          <div className={cn("font-sans font-semibold text-foreground-1 tabular-nums", VALUE_SIZE[size])}>
+          <div className={cn("font-sans font-semibold text-foreground-1 tabular-nums", VALUE_SIZE[valueSize])}>
             <bdi>{valueText}</bdi>
           </div>
           {delta !== undefined && (
@@ -114,4 +120,10 @@ export function Stat({
       </div>
     </div>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Stat: StatProps;
+  }
 }

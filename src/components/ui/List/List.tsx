@@ -5,6 +5,7 @@ import { Checkmark12Filled, Checkmark20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { warnDeprecated } from "@/lib/deprecate";
 import { useComposedRefs } from "../_internal/composeRefs";
+import { useComponentDefaults } from "../YugenProvider/context";
 
 /**
  * Fluent 2 List — https://fluent2.microsoft.design/components/web/react/core/list/usage
@@ -76,19 +77,20 @@ export interface ListProps extends React.HTMLAttributes<HTMLUListElement> {
   variant?: ListAppearance;
 }
 
-export function List({
-  navigationMode,
-  selectionMode = "none",
-  selectedItems,
-  defaultSelectedItems,
-  onSelectionChange,
-  appearance: appearanceProp,
-  variant,
-  className,
-  onKeyDown,
-  ref,
-  ...props
-}: ListProps & { ref?: React.Ref<HTMLUListElement> }) {
+export function List(inProps: ListProps & { ref?: React.Ref<HTMLUListElement> }) {
+  const {
+    navigationMode,
+    selectionMode = "none",
+    selectedItems,
+    defaultSelectedItems,
+    onSelectionChange,
+    appearance: appearanceProp,
+    variant,
+    className,
+    onKeyDown,
+    ref,
+    ...props
+  } = useComponentDefaults("List", inProps);
   if (variant !== undefined) warnDeprecated("List.variant", "use appearance", "1.0.0");
   const appearance = appearanceProp ?? variant ?? "default";
   const [selected, setSelected] = useControllableState<string[]>({
@@ -336,4 +338,10 @@ export function ListItem({
       )}
     </li>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    List: ListProps;
+  }
 }

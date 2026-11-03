@@ -4,7 +4,7 @@ import type { DateRange } from "react-day-picker";
 import { cn } from "@/lib/cn";
 import { warnDeprecated } from "@/lib/deprecate";
 import { Calendar } from "@/components/ui/Calendar/Calendar";
-import { useYugen, useYugenMessages } from "../YugenProvider/context";
+import { useYugen, useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { PickerShell, boundsOf, numericDateFormat, type PickerBaseProps } from "./pickerShell";
 import { datePickerMessagesEn, dateRangePickerMessagesEn, type DateRangePickerMessages } from "./messages";
 
@@ -48,18 +48,19 @@ export interface DatePickerProps extends PickerBaseProps {
   onSelectDate?: (date: Date | undefined) => void;
 }
 
-export function DatePicker({
-  value,
-  defaultValue = null,
-  onValueChange,
-  onSelectDate,
-  placeholder,
-  clearable = false,
-  formatDate,
-  minDate,
-  maxDate,
-  ...props
-}: DatePickerProps) {
+export function DatePicker(inProps: DatePickerProps) {
+  const {
+    value,
+    defaultValue = null,
+    onValueChange,
+    onSelectDate,
+    placeholder,
+    clearable = false,
+    formatDate,
+    minDate,
+    maxDate,
+    ...props
+  } = useComponentDefaults("DatePicker", inProps, COMPACT_SIZE);
   const msg = useYugenMessages("datePicker", datePickerMessagesEn);
   const { locale } = useYugen();
   const format = formatDate ?? numericDateFormat(locale);
@@ -209,21 +210,22 @@ export interface DateRangePickerProps extends PickerBaseProps {
   presetsLabel?: string;
 }
 
-export function DateRangePicker({
-  value,
-  defaultValue = null,
-  onValueChange,
-  onSelectRange,
-  placeholder,
-  clearable = false,
-  formatDate,
-  minDate,
-  maxDate,
-  numberOfMonths = 2,
-  presets,
-  presetsLabel,
-  ...props
-}: DateRangePickerProps) {
+export function DateRangePicker(inProps: DateRangePickerProps) {
+  const {
+    value,
+    defaultValue = null,
+    onValueChange,
+    onSelectRange,
+    placeholder,
+    clearable = false,
+    formatDate,
+    minDate,
+    maxDate,
+    numberOfMonths = 2,
+    presets,
+    presetsLabel,
+    ...props
+  } = useComponentDefaults("DateRangePicker", inProps, COMPACT_SIZE);
   const msg = useYugenMessages("dateRangePicker", dateRangePickerMessagesEn);
   const { locale } = useYugen();
   const format = formatDate ?? numericDateFormat(locale);
@@ -281,4 +283,11 @@ export function DateRangePicker({
       </div>
     </PickerShell>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    DatePicker: DatePickerProps;
+    DateRangePicker: DateRangePickerProps;
+  }
 }

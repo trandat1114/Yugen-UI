@@ -30,6 +30,7 @@ const BlocksPage = lazyPage(() => import("@/docs/pages/BlocksPage").then((m) => 
 // Preview của template cũng nạp cùng trang: HTML prerender có sẵn preview, thay bằng khung chờ sẽ nháy.
 const TemplatesPage = lazyPage(() => import("@/docs/pages/TemplatesPage").then((m) => m.Preview.preload().then(() => m.TemplatesPage)));
 const ThemeDesignerPage = lazyPage(() => import("@/docs/pages/ThemeDesignerPage").then((m) => m.ThemeDesignerPage));
+const TypesetPage = lazyPage(() => import("@/docs/pages/TypesetPage").then((m) => m.TypesetPage));
 const NewsPage = lazyPage(() => import("@/docs/pages/NewsPage").then((m) => m.NewsPage));
 const CommunityPage = lazyPage(() => import("@/docs/pages/CommunityPage").then((m) => m.CommunityPage));
 const ContributorsPage = lazyPage(() => import("@/docs/pages/ContributorsPage").then((m) => m.ContributorsPage));
@@ -42,6 +43,7 @@ const PAGES = {
   blocks: BlocksPage,
   templates: TemplatesPage,
   "theme-designer": ThemeDesignerPage,
+  typeset: TypesetPage,
   news: NewsPage,
   community: CommunityPage,
   contributors: ContributorsPage,
@@ -212,6 +214,7 @@ export default function App({ path }: { path?: string }) {
               {route.kind === "blocks" && <BlocksPage />}
               {route.kind === "templates" && <TemplatesPage />}
               {route.kind === "theme-designer" && <ThemeDesignerPage />}
+              {route.kind === "typeset" && <TypesetPage />}
               {route.kind === "news" && <NewsPage />}
               {route.kind === "community" && <CommunityPage />}
               {route.kind === "contributors" && <ContributorsPage />}

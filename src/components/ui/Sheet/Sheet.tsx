@@ -2,7 +2,7 @@ import * as React from "react";
 import { useControllableState } from "../hooks/useControllableState";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useDirection } from "@radix-ui/react-direction";
-import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
+import { usePortalThemeProps, useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { useComposedRefs } from "../_internal/composeRefs";
@@ -84,22 +84,23 @@ export interface SheetProps {
   dismissible?: boolean;
 }
 
-export function Sheet({
-  children,
-  open: openProp,
-  defaultOpen = false,
-  onOpenChange,
-  side = "end",
-  size = "small",
-  mode = "auto",
-  breakpoint = "3xl",
-  snapPoints: snapPointsProp = [0.5, 0.9],
-  snapPoint: snapPointProp,
-  defaultSnapPoint,
-  onSnapPointChange,
-  modal = true,
-  dismissible = true,
-}: SheetProps) {
+export function Sheet(inProps: SheetProps) {
+  const {
+    children,
+    open: openProp,
+    defaultOpen = false,
+    onOpenChange,
+    side = "end",
+    size = "small",
+    mode = "auto",
+    breakpoint = "3xl",
+    snapPoints: snapPointsProp = [0.5, 0.9],
+    snapPoint: snapPointProp,
+    defaultSnapPoint,
+    onSnapPointChange,
+    modal = true,
+    dismissible = true,
+  } = useComponentDefaults("Sheet", inProps);
   const snapKey = snapPointsProp.join(",");
   const snapPoints = React.useMemo(() => {
     const points = Array.from(new Set(snapPointsProp.filter((p) => p > 0 && p <= 1))).sort((a, b) => a - b);
@@ -227,27 +228,28 @@ export interface SheetContentProps extends React.ComponentPropsWithoutRef<typeof
   material?: "glass" | "glass-clear";
 }
 
-export function SheetContent({
-  className,
-  overlayClassName,
-  material,
-  handle = true,
-  handleLabel,
-  children,
-  style,
-  onPointerDown,
-  onPointerMove,
-  onPointerUp,
-  onPointerCancel,
-  onClickCapture,
-  onFocus,
-  onOpenAutoFocus,
-  onEscapeKeyDown,
-  onPointerDownOutside,
-  onInteractOutside,
-  ref,
-  ...props
-}: SheetContentProps & { ref?: React.Ref<React.ComponentRef<typeof DialogPrimitive.Content>> }) {
+export function SheetContent(inProps: SheetContentProps & { ref?: React.Ref<React.ComponentRef<typeof DialogPrimitive.Content>> }) {
+  const {
+    className,
+    overlayClassName,
+    material,
+    handle = true,
+    handleLabel,
+    children,
+    style,
+    onPointerDown,
+    onPointerMove,
+    onPointerUp,
+    onPointerCancel,
+    onClickCapture,
+    onFocus,
+    onOpenAutoFocus,
+    onEscapeKeyDown,
+    onPointerDownOutside,
+    onInteractOutside,
+    ref,
+    ...props
+  } = useComponentDefaults("SheetContent", inProps);
   const ctx = useSheet();
   const { isBottom, snapPoints, snapPoint, setSnapPoint, dismissible, modal } = ctx;
   const dir = useDirection();
@@ -621,4 +623,11 @@ export function SheetFooter({ className, ...props }: React.HTMLAttributes<HTMLDi
       {...props}
     />
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Sheet: SheetProps;
+    SheetContent: SheetContentProps;
+  }
 }

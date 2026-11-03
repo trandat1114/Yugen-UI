@@ -18,6 +18,7 @@ describe("seo: trang chưa dịch", () => {
       { kind: "blocks" },
       { kind: "templates" },
       { kind: "theme-designer" },
+      { kind: "typeset" },
       { kind: "community" },
       { kind: "contributors" },
       { kind: "news" },

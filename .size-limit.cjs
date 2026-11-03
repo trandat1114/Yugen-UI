@@ -62,6 +62,6 @@ module.exports = [
   // component nữa (styles.css luôn chứa mọi component, #169 không làm nó nhỏ đi).
   css("styles.css", "28 kB"),
   // Glass (#178): token + utility + fallback trợ năng (12.49 / 8.15 kB khi thêm).
-  css("theme.css", "14 kB"),
+  css("theme.css", "15 kB"), // Prose: biến --prose-* và 4 preset (#244)
   css("tokens.css", "9 kB"),
 ];

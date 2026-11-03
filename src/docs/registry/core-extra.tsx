@@ -259,6 +259,12 @@ const EXTRA: Record<string, ComponentDoc> = {
     dos: ["Nhãn là động từ ngắn, viết hoa chữ đầu.", "Nhóm lệnh liên quan bằng MenuDivider / MenuGroupHeader.", "Đặt lệnh phá huỷ ở cuối, tách bằng divider."],
     donts: ["Không quá ~10 mục trong một menu.", "Không lồng submenu quá 1 cấp.", "Không đặt nội dung tương tác phức tạp (form) trong menu — dùng Popover."],
     props: [
+      {
+        name: "Menu.modal",
+        type: "boolean",
+        defaultValue: "true",
+        description: `true: khi menu mở, trang bị khoá cuộn, bấm ra ngoài chỉ đóng menu và phần còn lại của trang ẩn khỏi trình đọc màn hình. false: trang vẫn cuộn được, bấm ra ngoài tới trang ngay. Xem [Khoá cuộn](/concepts/positioning#scroll-lock).`,
+      },
       { name: "MenuItem.icon", type: "ReactNode", description: "Icon cỡ 20." },
       { name: "MenuItem.secondaryContent", type: "ReactNode", description: "Phím tắt / thông tin phụ ở cuối item. MenuItemCheckbox và MenuItemRadio cũng có." },
       { name: "MenuPopover.align", type: `"start" | "center" | "end"`, defaultValue: `"start"`, description: "Căn với trigger." },

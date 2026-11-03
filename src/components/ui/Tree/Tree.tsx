@@ -5,6 +5,7 @@ import { ChevronRight12Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { warnDeprecated } from "@/lib/deprecate";
 import { useComposedRefs } from "../_internal/composeRefs";
+import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
 /** Fluent 2 Tree — https://fluent2.microsoft.design/components/web/react/core/tree/usage */
 export type TreeSize = "small" | "medium";
@@ -94,7 +95,8 @@ export interface TreeProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 /** Tree gốc (`role="tree"`); đặt bên trong TreeItem nhánh thì thành subtree (`role="group"`). */
-export function Tree({ ref, ...props }: TreeProps & { ref?: React.Ref<HTMLDivElement> }) {
+export function Tree(inProps: TreeProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const { ref, ...props } = useComponentDefaults("Tree", inProps, COMPACT_SIZE);
   const root = React.useContext(TreeRootContext);
   const parentItem = React.useContext(TreeItemContext);
   if (root && parentItem) return <Subtree ref={ref} {...props} />;
@@ -411,4 +413,10 @@ export function TreeItemLayout({
       )}
     </div>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Tree: TreeProps;
+  }
 }

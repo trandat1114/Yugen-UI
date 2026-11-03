@@ -2,6 +2,7 @@ import * as React from "react";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { ChevronRight20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
+import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
 /** Fluent 2 Accordion — https://fluent2.microsoft.design/components/web/react/core/accordion/usage */
 type AccordionSize = "small" | "medium" | "large" | "extra-large";
@@ -57,17 +58,19 @@ export type AccordionProps = React.ComponentPropsWithoutRef<typeof AccordionPrim
   appearance?: AccordionAppearance;
 };
 
-export function Accordion({
-  size,
-  expandIconPosition,
-  appearance = "flush",
-  className,
-  ref,
-  ...props
-}: AccordionProps & { ref?: React.Ref<React.ComponentRef<typeof AccordionPrimitive.Root>> }) {
+export function Accordion(inProps: AccordionProps & { ref?: React.Ref<React.ComponentRef<typeof AccordionPrimitive.Root>> }) {
   const parent = React.useContext(AccordionContext);
   const level = parent.level + 1;
   const nested = level > 1;
+  // Accordion lồng theo cỡ của Accordion cha trước, rồi mới tới mặc định của YugenProvider.
+  const {
+    size,
+    expandIconPosition,
+    appearance = "flush",
+    className,
+    ref,
+    ...props
+  } = useComponentDefaults("Accordion", nested && inProps.size === undefined ? { ...inProps, size: parent.size } : inProps, COMPACT_SIZE);
   const value = React.useMemo<AccordionContextValue>(
     () => ({
       size: size ?? (nested ? parent.size : "medium"),
@@ -204,4 +207,10 @@ export function AccordionPanel({
       </div>
     </AccordionPrimitive.Content>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Accordion: AccordionProps;
+  }
 }

@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
+import { useComponentDefaults } from "../YugenProvider/context";
 
 /** Fluent 2 ProgressBar — https://fluent2.microsoft.design/components/web/react/core/progressbar/usage */
 const COLOR = {
@@ -26,20 +27,21 @@ export interface ProgressBarProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   rootClassName?: string;
 }
 
-export function ProgressBar({
-  value,
-  max = 1,
-  thickness = "medium",
-  shape = "rounded",
-  color = "brand",
-  label,
-  description,
-  className,
-  rootClassName,
-  id,
-  ref,
-  ...props
-}: ProgressBarProps & { ref?: React.Ref<HTMLDivElement> }) {
+export function ProgressBar(inProps: ProgressBarProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    value,
+    max = 1,
+    thickness = "medium",
+    shape = "rounded",
+    color = "brand",
+    label,
+    description,
+    className,
+    rootClassName,
+    id,
+    ref,
+    ...props
+  } = useComponentDefaults("ProgressBar", inProps);
   const autoId = React.useId();
   const barId = id ?? autoId;
   const labelId = `${barId}-label`;
@@ -99,4 +101,10 @@ export function ProgressBar({
       )}
     </div>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    ProgressBar: ProgressBarProps;
+  }
 }

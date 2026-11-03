@@ -2,6 +2,7 @@
 import * as React from "react";
 import { flushSync } from "react-dom";
 import { cn } from "@/lib/cn";
+import { warnDeprecated } from "@/lib/deprecate";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { useComposedRefs } from "../_internal/composeRefs";
 
@@ -150,8 +151,20 @@ export function computeOverflow({
   };
 }
 
-/** Trạng thái từng nhóm sau khi tính (nhóm không có trong kết quả = "visible"). */
+/**
+ * Trạng thái từng nhóm sau khi tính (nhóm không có trong kết quả = "visible").
+ * @deprecated Internal helper of `Overflow`; read group state with `useIsOverflowGroupVisible(groupId)`. Will be
+ * removed from the package exports in v1.0.0.
+ */
 export function getOverflowGroups(
+  items: Pick<OverflowMeasuredItem, "id" | "groupId">[],
+  hiddenIds: readonly string[],
+): Record<string, OverflowGroupVisibility> {
+  warnDeprecated("getOverflowGroups", "use useIsOverflowGroupVisible(groupId)", "1.0.0");
+  return overflowGroups(items, hiddenIds);
+}
+
+function overflowGroups(
   items: Pick<OverflowMeasuredItem, "id" | "groupId">[],
   hiddenIds: readonly string[],
 ): Record<string, OverflowGroupVisibility> {
@@ -373,7 +386,7 @@ export function Overflow({
       minimumVisible,
       overflowDirection,
     });
-    const next: OverflowState = { ...result, groups: getOverflowGroups(measuredItems, result.hiddenIds) };
+    const next: OverflowState = { ...result, groups: overflowGroups(measuredItems, result.hiddenIds) };
     if (sameState(stateRef.current, next)) return;
 
     // Chốt chặn vòng lặp: tối đa 12 lần đổi trạng thái trong một khung hình.
