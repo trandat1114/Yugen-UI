@@ -9,6 +9,11 @@ export interface Example {
   render: () => ReactNode;
   /** Demo cần cả chiều ngang (bố cục ứng dụng): chiếm hai cột của lưới ví dụ. */
   wide?: boolean;
+  /**
+   * Ngôn ngữ của nội dung demo khi không phải tiếng Anh (demo viết bằng tiếng Anh): "vi" cho dữ liệu tiếng Việt cố ý
+   * (tìm kiếm bỏ dấu), "ar" cho demo RTL. Vùng demo mang lang này cho trình đọc màn hình.
+   */
+  lang?: string;
 }
 
 export interface PropDoc {

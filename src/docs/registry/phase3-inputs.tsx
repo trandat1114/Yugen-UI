@@ -763,12 +763,12 @@ function TimePickerDemo() {
         title: "12 giờ (SA / CH, AM / PM)",
         description: "hourCycle=\"h12\" dùng nhãn buổi của locale; locale=\"en-US\" mặc định 12 giờ.",
         code: `<div className="flex w-72 flex-col gap-3">
-  <TimePicker locale="vi-VN" hourCycle="h12" aria-label="Giờ (12 giờ, vi-VN)" defaultValue={new Date(2026, 0, 1, 14, 30)} />
+  <TimePicker locale="vi-VN" lang="vi" hourCycle="h12" aria-label="Giờ (12 giờ, vi-VN)" defaultValue={new Date(2026, 0, 1, 14, 30)} />
   <TimePicker locale="en-US" aria-label="Time (en-US)" defaultValue={new Date(2026, 0, 1, 9, 0)} />
 </div>`,
         render: () => (
           <div className="flex w-72 flex-col gap-3">
-            <TimePicker locale="vi-VN" hourCycle="h12" aria-label="Giờ (12 giờ, vi-VN)" defaultValue={new Date(2026, 0, 1, 14, 30)} />
+            <TimePicker locale="vi-VN" lang="vi" hourCycle="h12" aria-label="Giờ (12 giờ, vi-VN)" defaultValue={new Date(2026, 0, 1, 14, 30)} />
             <TimePicker locale="en-US" aria-label="Time (en-US)" defaultValue={new Date(2026, 0, 1, 9, 0)} />
           </div>
         ),
@@ -850,7 +850,7 @@ function TimePickerDemo() {
     examples: [
       {
         title: "Preset tuỳ biến & maxDate",
-        description: "maxDate = hôm nay nên \"30 ngày tới\" bị vô hiệu.",
+        description: "maxDate = hôm nay nên \"Next 30 days\" bị vô hiệu.",
         code: `const QUARTER_PRESETS: DateRangePreset[] = [
   {
     label: "This quarter",

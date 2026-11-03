@@ -468,6 +468,7 @@ export const docs: ComponentDoc[] = [
       },
       {
         title: "RTL",
+        lang: "ar",
         description: "Cột xếp phải → trái, ArrowLeft đi về cuối dòng, kéo tay nắm sang trái để nới rộng cột. Không cần prop riêng — đọc từ DirectionProvider / YugenProvider.",
         code: source("RtlDemo"),
         setup: source("data"),

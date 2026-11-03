@@ -1,26 +1,26 @@
 import { Button, Card, Divider, Field, Select, Switch, toast } from "@/components/ui";
 
-export const meta = { title: "Tuỳ chọn", description: "Cài đặt tài khoản với Select, Switch và Toast", order: 5 };
+export const meta = { title: "Preferences", description: "Account settings with Select, Switch and Toast", order: 5 };
 
 const SETTINGS = [
-  { id: "public", label: "Thống kê công khai", hint: "Cho phép người khác xem tổng số lượt nghe của bạn.", on: true },
-  { id: "email", label: "Thông báo qua email", hint: "Báo cáo hằng tháng và cập nhật thanh toán.", on: true },
-  { id: "beta", label: "Tính năng thử nghiệm", hint: "Dùng sớm các tính năng đang phát triển.", on: false },
+  { id: "public", label: "Public stats", hint: "Let others see your total plays.", on: true },
+  { id: "email", label: "Email notifications", hint: "Monthly reports and billing updates.", on: true },
+  { id: "beta", label: "Beta features", hint: "Try features that are still in development.", on: false },
 ];
 
 export default function PreferencesBlock() {
   return (
     <Card size="large" className="gap-4 rounded-xlarge p-5">
       <div>
-        <h3 className="text-subtitle1 font-semibold">Tuỳ chọn</h3>
-        <p className="mt-0.5 text-body1 text-foreground-3">Quản lý cài đặt tài khoản và thông báo.</p>
+        <h3 className="text-subtitle1 font-semibold">Preferences</h3>
+        <p className="mt-0.5 text-body1 text-foreground-3">Manage your account and notification settings.</p>
       </div>
 
-      <Field label="Tiền tệ mặc định" hint="Áp dụng cho báo cáo và hoá đơn mới.">
-        <Select defaultValue="vnd">
-          <option value="vnd">VND — Đồng Việt Nam</option>
-          <option value="usd">USD — Đô la Mỹ</option>
-          <option value="jpy">JPY — Yên Nhật</option>
+      <Field label="Default currency" hint="Used for new reports and invoices.">
+        <Select defaultValue="usd">
+          <option value="usd">USD — US dollar</option>
+          <option value="eur">EUR — Euro</option>
+          <option value="jpy">JPY — Japanese yen</option>
         </Select>
       </Field>
 
@@ -41,9 +41,9 @@ export default function PreferencesBlock() {
       <div className="flex justify-end">
         <Button
           appearance="primary"
-          onClick={() => toast({ intent: "success", title: "Đã lưu tuỳ chọn", body: "Thay đổi có hiệu lực ngay." })}
+          onClick={() => toast({ intent: "success", title: "Preferences saved", body: "Your changes apply right away." })}
         >
-          Lưu thay đổi
+          Save changes
         </Button>
       </div>
     </Card>

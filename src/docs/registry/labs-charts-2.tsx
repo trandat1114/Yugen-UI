@@ -30,20 +30,20 @@ function source(...names: string[]) {
 
 // #region products
 const products = [
-  { name: "Kaze headphones", group: "Audio", price: 450, rating: 3.8 },
-  { name: "Kaze Pro headphones", group: "Audio", price: 1290, rating: 4.4 },
-  { name: "Oto Mini speaker", group: "Audio", price: 690, rating: 4.1 },
-  { name: "Oto Max speaker", group: "Audio", price: 2450, rating: 4.6 },
-  { name: "Hibiki headphones", group: "Audio", price: 1890, rating: 4.0 },
-  { name: "Sora 24 monitor", group: "Monitors", price: 2890, rating: 4.2 },
-  { name: "Sora 27 monitor", group: "Monitors", price: 4190, rating: 4.5 },
-  { name: "Sora 32 monitor", group: "Monitors", price: 6490, rating: 4.3 },
-  { name: "Kumo 24 monitor", group: "Monitors", price: 2190, rating: 3.6 },
-  { name: "Ame keyboard", group: "Keyboards", price: 590, rating: 3.9 },
-  { name: "Ame TKL keyboard", group: "Keyboards", price: 990, rating: 4.3 },
-  { name: "Yuki keyboard", group: "Keyboards", price: 1590, rating: 4.7 },
-  { name: "Yuki Lite keyboard", group: "Keyboards", price: 1190, rating: 4.4 },
-  { name: "Hana keyboard", group: "Keyboards", price: 350, rating: 3.4 },
+  { name: "Kaze headphones", group: "Audio", price: 45, rating: 3.8 },
+  { name: "Kaze Pro headphones", group: "Audio", price: 129, rating: 4.4 },
+  { name: "Oto Mini speaker", group: "Audio", price: 69, rating: 4.1 },
+  { name: "Oto Max speaker", group: "Audio", price: 245, rating: 4.6 },
+  { name: "Hibiki headphones", group: "Audio", price: 189, rating: 4.0 },
+  { name: "Sora 24 monitor", group: "Monitors", price: 289, rating: 4.2 },
+  { name: "Sora 27 monitor", group: "Monitors", price: 419, rating: 4.5 },
+  { name: "Sora 32 monitor", group: "Monitors", price: 649, rating: 4.3 },
+  { name: "Kumo 24 monitor", group: "Monitors", price: 219, rating: 3.6 },
+  { name: "Ame keyboard", group: "Keyboards", price: 59, rating: 3.9 },
+  { name: "Ame TKL keyboard", group: "Keyboards", price: 99, rating: 4.3 },
+  { name: "Yuki keyboard", group: "Keyboards", price: 159, rating: 4.7 },
+  { name: "Yuki Lite keyboard", group: "Keyboards", price: 119, rating: 4.4 },
+  { name: "Hana keyboard", group: "Keyboards", price: 35, rating: 3.4 },
 ];
 // #endregion
 

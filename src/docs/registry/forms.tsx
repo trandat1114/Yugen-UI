@@ -801,6 +801,7 @@ const [plan, setPlan] = useState("monthly");
     importCode: `import { Combobox } from "@/components/ui";`,
     hero: {
       title: "Combobox",
+      lang: "vi",
       code: `<Field label="City" className="w-72">
   <Combobox
     placeholder="Pick or type to search"
@@ -1349,6 +1350,7 @@ const [plan, setPlan] = useState("monthly");
       {
         title: "Lọc danh sách (controlled)",
         description: "Kết quả nằm trong khung danh sách có số đếm, tô sáng phần khớp (không dấu: gõ “xoai” vẫn ra “Xoài”) và trạng thái rỗng. onValueChange chạy cả khi bấm X hoặc Esc.",
+        lang: "vi",
         code: `const FRUITS = [
   { name: "Xoài cát Hoà Lộc", origin: "Tiền Giang" },
   { name: "Sầu riêng Ri6", origin: "Bến Tre" },

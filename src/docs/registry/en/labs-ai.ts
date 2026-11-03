@@ -8,7 +8,7 @@ export const en: Record<string, ComponentDocEn> = {
     examples: [
       {
         title: "Task list & unsafe links",
-        description: "A `- [x]` item gets an icon plus the hidden text “Đã xong” (Done). A javascript: link is removed and only its label remains.",
+        description: "A `- [x]` item gets an icon plus the hidden text “Done:”. A javascript: link is removed and only its label remains.",
       },
       { title: "Small size", description: "size=\"small\" uses caption1, for notes, reasoning blocks and cards in a panel." },
     ],

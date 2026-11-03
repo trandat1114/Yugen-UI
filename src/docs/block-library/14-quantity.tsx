@@ -2,32 +2,32 @@ import { useState } from "react";
 import { Add20Regular, Delete20Regular, Subtract20Regular } from "@fluentui/react-icons";
 import { Button, ButtonGroup, Card } from "@/components/ui";
 
-export const meta = { title: "Chọn số lượng", description: "ButtonGroup tăng / giảm có nhãn, giới hạn min / max và aria-live", order: 14 };
+export const meta = { title: "Quantity picker", description: "Labeled ButtonGroup to add / remove, with min / max limits and aria-live", order: 14 };
 
-const PRICE = 189_000;
+const PRICE = 38;
 const MAX = 10;
 
 export default function QuantityBlock() {
   const [count, setCount] = useState(1);
-  const total = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(PRICE * count);
+  const total = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(PRICE * count);
 
   return (
     <Card className="max-w-md gap-4 rounded-xlarge p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-subtitle2 font-semibold text-foreground-1">Ấm trà gốm Bát Tràng</p>
-          <p className="text-caption1 text-foreground-3">Còn {MAX} sản phẩm</p>
+          <p className="text-subtitle2 font-semibold text-foreground-1">Ceramic teapot</p>
+          <p className="text-caption1 text-foreground-3">{MAX} left in stock</p>
         </div>
-        <Button appearance="subtle" icon={<Delete20Regular />} aria-label="Xoá khỏi giỏ" onClick={() => setCount(0)} disabled={count === 0} />
+        <Button appearance="subtle" icon={<Delete20Regular />} aria-label="Remove from cart" onClick={() => setCount(0)} disabled={count === 0} />
       </div>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <ButtonGroup>
-            <Button icon={<Subtract20Regular />} aria-label="Giảm số lượng" onClick={() => setCount((c) => c - 1)} disabled={count === 0} />
-            <Button icon={<Add20Regular />} aria-label="Tăng số lượng" onClick={() => setCount((c) => c + 1)} disabled={count === MAX} />
+            <Button icon={<Subtract20Regular />} aria-label="Decrease quantity" onClick={() => setCount((c) => c - 1)} disabled={count === 0} />
+            <Button icon={<Add20Regular />} aria-label="Increase quantity" onClick={() => setCount((c) => c + 1)} disabled={count === MAX} />
           </ButtonGroup>
           <p className="min-w-8 text-center font-display text-title3 font-semibold tabular-nums" aria-live="polite">
-            <span className="sr-only">Số lượng: </span>
+            <span className="sr-only">Quantity: </span>
             {count}
           </p>
         </div>

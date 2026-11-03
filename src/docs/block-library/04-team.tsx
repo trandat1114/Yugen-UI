@@ -12,14 +12,14 @@ import {
   MenuTrigger,
 } from "@/components/ui";
 
-export const meta = { title: "Thành viên nhóm", description: "Mời thành viên và phân quyền bằng Menu", order: 4 };
+export const meta = { title: "Team members", description: "Invite members and set roles with a Menu", order: 4 };
 
-const ROLES = ["Chủ sở hữu", "Chỉnh sửa", "Chỉ xem"];
+const ROLES = ["Owner", "Editor", "Viewer"];
 
 const INITIAL = [
-  { name: "Nguyễn Minh Anh", email: "anh.nguyen@congty.vn", role: "Chủ sở hữu", presence: "available" as const },
-  { name: "Trần Quốc Bảo", email: "bao.tran@congty.vn", role: "Chỉnh sửa", presence: "busy" as const },
-  { name: "Lê Thu Hà", email: "ha.le@congty.vn", role: "Chỉ xem", presence: "away" as const },
+  { name: "Alex Chen", email: "alex@sakura.dev", role: "Owner", presence: "available" as const },
+  { name: "Maria Garcia", email: "maria@sakura.dev", role: "Editor", presence: "busy" as const },
+  { name: "Sam Lee", email: "sam@sakura.dev", role: "Viewer", presence: "away" as const },
 ];
 
 export default function TeamBlock() {
@@ -31,14 +31,14 @@ export default function TeamBlock() {
   return (
     <Card size="large" className="gap-4 rounded-xlarge p-5">
       <div>
-        <h3 className="text-subtitle1 font-semibold">Thành viên nhóm</h3>
-        <p className="mt-0.5 text-body1 text-foreground-3">Mời đồng đội và chọn quyền truy cập.</p>
+        <h3 className="text-subtitle1 font-semibold">Team members</h3>
+        <p className="mt-0.5 text-body1 text-foreground-3">Invite teammates and choose their access.</p>
       </div>
 
       <div className="flex gap-2">
-        <Input aria-label="Email" placeholder="email@congty.vn" rootClassName="flex-1" />
+        <Input aria-label="Email" placeholder="name@sakura.dev" rootClassName="flex-1" />
         <Button appearance="primary" icon={<PersonAdd20Regular />}>
-          Mời
+          Invite
         </Button>
       </div>
 
