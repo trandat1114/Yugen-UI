@@ -30,6 +30,7 @@ import {
   SkeletonText,
   SimpleTooltip,
   toast,
+  ErrorBoundary,
 } from "yugen-ui";
 import { cn } from "yugen-ui";
 import { useAuth } from "./auth";
@@ -281,6 +282,10 @@ export function Layout() {
     ) : (
       <NotFoundPage />
     );
-  const content = <React.Suspense fallback={<PageFallback />}>{page}</React.Suspense>;
+  const content = (
+    <ErrorBoundary resetKeys={[JSON.stringify(route)]}>
+      <React.Suspense fallback={<PageFallback />}>{page}</React.Suspense>
+    </ErrorBoundary>
+  );
   return open ? <AuthFrame>{content}</AuthFrame> : <Shell>{content}</Shell>;
 }

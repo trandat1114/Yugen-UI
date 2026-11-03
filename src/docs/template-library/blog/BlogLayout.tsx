@@ -16,6 +16,7 @@ import {
   MenuTrigger,
   SkeletonText,
   type YugenTheme,
+  ErrorBoundary,
 } from "@/components/ui";
 import { pageMeta, type PageKind } from "./blog";
 import defaultContent from "./content";
@@ -148,6 +149,7 @@ export function BlogLayout({ theme, onThemeChange, content: t = defaultContent, 
 
         <AppShellMain asChild>
           <Main aria-label={embedded ? t.site.title : undefined} className="@container mx-auto w-full max-w-5xl px-4 py-6">
+            <ErrorBoundary resetKeys={[JSON.stringify(route)]} statusPageProps={{ headingAs: headingLevel }}>
             {route.name === "home" && <PostList headingLevel={headingLevel} />}
             {route.name === "tag" && <PostList key={route.tag} tag={route.tag} headingLevel={headingLevel} />}
             {route.name === "post" &&
@@ -159,6 +161,7 @@ export function BlogLayout({ theme, onThemeChange, content: t = defaultContent, 
                 <NotFound headingLevel={headingLevel} />
               ))}
             {route.name === "notFound" && <NotFound headingLevel={headingLevel} />}
+            </ErrorBoundary>
           </Main>
         </AppShellMain>
 
