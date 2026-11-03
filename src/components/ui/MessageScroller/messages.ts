@@ -112,3 +112,15 @@ export const chatComposerMessagesEn: ChatComposerMessages = {
   countPrefix: "Typed",
   countSuffix: "characters",
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `messageScrollerMessagesEn` (mặc định). `messageScrollerMessages` giữ cho code cũ. */
+export const messageScrollerMessagesVi = messageScrollerMessages;
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `messageBubbleMessagesEn` (mặc định). `messageBubbleMessages` giữ cho code cũ. */
+export const messageBubbleMessagesVi = messageBubbleMessages;
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `typingIndicatorMessagesEn` (mặc định). `typingIndicatorMessages` giữ cho code cũ. */
+export const typingIndicatorMessagesVi = typingIndicatorMessages;
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `chatComposerMessagesEn` (mặc định). `chatComposerMessages` giữ cho code cũ. */
+export const chatComposerMessagesVi = chatComposerMessages;

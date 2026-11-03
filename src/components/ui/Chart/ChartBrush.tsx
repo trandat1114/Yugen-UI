@@ -2,7 +2,7 @@ import * as React from "react";
 import { ArrowReset20Regular } from "@fluentui/react-icons";
 import { Button } from "../Button/Button";
 import { useYugenMessages } from "../YugenProvider/context";
-import { chartMessages } from "./messages";
+import { chartMessagesEn } from "./messages";
 import { ChartFocusRing } from "./ChartParts";
 import { linePath, linearScale, slotVar, type ChartSlot, type Point } from "./chartUtils";
 import { useElementSize } from "../hooks/useElementSize";
@@ -42,7 +42,7 @@ type DragMode = "move" | "start" | "end";
  * RTL: dải tổng quan luôn LTR như vùng vẽ (trục thời gian không lật), nên ←/→ luôn đi đúng chiều trên màn hình.
  */
 export function ChartBrush({ count, positions, lines = [], value, onValueChange, labels, height = 48, minSpan = 1, className }: ChartBrushProps) {
-  const msg = useYugenMessages("chart", chartMessages);
+  const msg = useYugenMessages("chart", chartMessagesEn);
   const { ref: wrapRef, width } = useElementSize<HTMLDivElement>();
   const [focused, setFocused] = React.useState(false);
   const drag = React.useRef<{ mode: DragMode; anchor: number; from: ChartDomain } | null>(null);

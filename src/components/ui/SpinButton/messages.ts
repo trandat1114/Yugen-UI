@@ -21,3 +21,6 @@ export const spinButtonMessagesEn: SpinButtonMessages = {
   increment: "Increment value",
   decrement: "Decrement value",
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `spinButtonMessagesEn` (mặc định). `spinButtonMessages` giữ cho code cũ. */
+export const spinButtonMessagesVi = spinButtonMessages;

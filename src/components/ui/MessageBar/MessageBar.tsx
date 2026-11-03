@@ -9,9 +9,9 @@ import {
 } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
-import { messageBarMessages } from "./messages";
+import { messageBarMessagesEn } from "./messages";
 
-export { messageBarMessages, messageBarMessagesEn, type MessageBarMessages } from "./messages";
+export { messageBarMessages, messageBarMessagesVi, messageBarMessagesEn, type MessageBarMessages } from "./messages";
 
 /** Fluent 2 MessageBar — https://fluent2.microsoft.design/components/web/react/core/messagebar/usage */
 const messageBarVariants = cva(
@@ -57,7 +57,7 @@ export function MessageBar({
 }: MessageBarProps) {
   const { icon: Icon, className: iconClass } = ICON[intent ?? "info"];
   const multiline = layout === "multiline";
-  const msg = useYugenMessages("messageBar", messageBarMessages);
+  const msg = useYugenMessages("messageBar", messageBarMessagesEn);
 
   return (
     <div

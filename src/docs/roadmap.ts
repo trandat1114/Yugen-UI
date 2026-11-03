@@ -48,7 +48,9 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
         { status: "done", issue: 263, vi: "Markdown: hiển thị Markdown tĩnh (bài viết, ghi chú phát hành, CMS) theo kiểu chữ của Prose", en: "Markdown: render static Markdown (articles, release notes, CMS fields) with Prose typography" },
         { status: "done", issue: 248, vi: "Trang Người đóng góp: ghi tên người gửi PR, báo lỗi, đề xuất và review", en: "Contributors page: credits merged PRs, bug reports, suggestions and reviews" },
         { status: "done", issue: 261, vi: "Có gì mới bằng tiếng Anh; tin viết bằng Markdown, CI nhẹ cho PR chỉ sửa tin", en: "What's new in English; release notes in Markdown, a light CI check for news-only PRs" },
-        { status: "doing", issue: 266, vi: "Docs trên điện thoại: bảng props và bảng Messages không cuộn ngang, mọi trang component vừa 375px", en: "Docs on phones: the props and Messages tables never scroll sideways, every component page fits 375px" },
+        { status: "done", issue: 266, vi: "Docs trên điện thoại: bảng props và bảng Messages không cuộn ngang, mọi trang component vừa 375px", en: "Docs on phones: the props and Messages tables never scroll sideways, every component page fits 375px" },
+        { status: "doing", issue: 277, vi: "Tiếng Anh mặc định: docs ở gốc (tiếng Việt dưới /vi/, có gợi ý cho trình duyệt tiếng Việt) và chữ có sẵn của component (messagesVi cho tiếng Việt)", en: "English by default: the docs at the root (Vietnamese under /vi/, with a suggestion for Vietnamese browsers) and components' built-in text (messagesVi for Vietnamese)" },
+        { status: "doing", issue: 275, vi: "Ảnh người đóng góp trong CONTRIBUTING.md và README, cập nhật vài phút sau mỗi đóng góp", en: "Contributor avatars in CONTRIBUTING.md and the README, updated a few minutes after each contribution" },
       ],
     },
     {
@@ -61,6 +63,8 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
         { status: "done", issue: 63, vi: "SEO: URL theo đường dẫn, prerender từng trang, sitemap", en: "SEO: path URLs, prerendered pages, sitemap" },
         { status: "planned", issue: 160, vi: "Đề xuất cho 1.0 (đã duyệt): Form, NavigationMenu, block 2.0, codemod, kiểm thử", en: "1.0 proposals (approved): Form, NavigationMenu, blocks 2.0, codemods, testing" },
         { status: "planned", issue: 169, vi: "@yugen-ui/cli ghi các dòng @import của CSS theo component (init, doctor)", en: "@yugen-ui/cli writes the @import lines for per-component CSS (init, doctor)" },
+        { status: "doing", issue: 276, vi: "Tài liệu repo tiếng Anh trước, tiếng Việt bên dưới: CONTRIBUTING, README, ROADMAP, template issue / PR, Design.md, wiki", en: "Repository documents in English first, Vietnamese below: CONTRIBUTING, README, ROADMAP, issue / PR templates, Design.md, wiki" },
+        { status: "planned", issue: 278, vi: "Nội dung demo bằng tiếng Anh: ví dụ trên docs, block và template", en: "Demo content in English: docs examples, blocks and templates" },
         { status: "planned", issue: 243, vi: "Khóa cuộn: chọn giữ hay ẩn thanh cuộn khi mở Menu, ContextMenu, Dropdown", en: "Scroll lock: keep or hide the page scrollbar while Menu, ContextMenu or Dropdown is open" },
         { status: "planned", issue: 244, vi: "Typography: trang Typeset tinh chỉnh Prose (font, cỡ chữ, khoảng cách) và copy CSS", en: "Typography: a Typeset page to tune Prose (fonts, size, spacing) and copy the CSS" },
       ],
@@ -110,30 +114,58 @@ export function releaseTitle(r: RoadmapRelease, lang: "vi" | "en") {
 
 export const issueUrl = (n: number) => `${SITE.links.repository}/issues/${n}`;
 
-/** Nội dung ROADMAP.md (tiếng Việt) sinh từ ROADMAP + NEWS. */
+/** Nội dung ROADMAP.md sinh từ ROADMAP + NEWS: tiếng Anh trước, tiếng Việt bên dưới (#276). */
 export function roadmapMarkdown() {
   const box: Record<RoadmapStatus, string> = { done: "[x]", doing: "[~]", planned: "[ ]" };
+  const released = NEWS_INDEX.NEWS.filter((r) => !r.upcoming);
+  const stages = (lang: "vi" | "en", h: string) => {
+    const out: string[] = [];
+    for (const stage of ["now", "next", "later"] as const) {
+      if (ROADMAP[stage].length === 0) continue;
+      out.push("", `${h} ${STAGE_LABEL[stage][lang]}`);
+      for (const r of ROADMAP[stage]) {
+        const due = r.due ? (lang === "en" ? ` · due ${r.due}` : ` · hạn ${r.due}`) : "";
+        out.push("", `${h}# ${releaseTitle(r, lang)}${due}`, "", r[lang], "");
+        for (const item of r.items) out.push(`- ${box[item.status]} ${item[lang]}${item.issue ? ` (#${item.issue})` : ""}`);
+      }
+    }
+    return out;
+  };
   const lines = [
-    "# Lộ trình Yugen UI · Roadmap",
+    "# Yugen UI Roadmap",
     "",
     "<!-- Sinh từ src/docs/roadmap.ts bằng `npm run roadmap`. Đừng sửa tay. -->",
+    "",
+    "*Tiếng Việt: [xem bên dưới](#tiếng-việt).*",
+    "",
+    `Plans for each release, updated ${ROADMAP_UPDATED}. Each release is a GitHub milestone; priority, size and`,
+    `dependencies are in the [GitHub Project](${PROJECT_URL}). \`[x]\` done, \`[~]\` in progress, \`[ ]\` planned.`,
+    "",
+    `Want to pick something up? Comment on the issue before you start. The same roadmap is on the`,
+    `[community page](${homepage}community).`,
+    ...stages("en", "##"),
+    "",
+    "## Released",
+    "",
+    "Details on What's new (`/news`) and in `CHANGELOG.md`.",
+    "",
+    ...released.map((n) => `- **${n.version}** (${n.date}): ${n.title.en}`),
+    "",
+    "---",
+    "",
+    "## Tiếng Việt",
     "",
     `Kế hoạch theo từng bản phát hành, cập nhật ${ROADMAP_UPDATED}. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và`,
     `phụ thuộc nằm ở [GitHub Project](${PROJECT_URL}). \`[x]\` đã xong, \`[~]\` đang làm, \`[ ]\` dự kiến.`,
     "",
-    "Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. English: the community page",
-    `(${homepage}community?lang=en) shows the same roadmap.`,
+    `Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. Trang [Cộng đồng](${homepage}vi/community) có cùng lộ trình.`,
+    ...stages("vi", "###"),
+    "",
+    "### Đã phát hành",
+    "",
+    "Chi tiết ở trang Có gì mới (`/news`) và `CHANGELOG.md`.",
+    "",
+    ...released.map((n) => `- **${n.version}** (${n.date}): ${n.title.vi}`),
   ];
-  for (const stage of ["now", "next", "later"] as const) {
-    if (ROADMAP[stage].length === 0) continue;
-    lines.push("", `## ${STAGE_LABEL[stage].vi}`);
-    for (const r of ROADMAP[stage]) {
-      const due = r.due ? ` · hạn ${r.due}` : "";
-      lines.push("", `### ${releaseTitle(r, "vi")}${due}`, "", r.vi, "");
-      for (const item of r.items) lines.push(`- ${box[item.status]} ${item.vi}${item.issue ? ` (#${item.issue})` : ""}`);
-    }
-  }
-  lines.push("", "## Đã phát hành", "", "Chi tiết ở trang Có gì mới (`/news`) và `CHANGELOG.md`.", "");
-  for (const n of NEWS_INDEX.NEWS.filter((r) => !r.upcoming)) lines.push(`- **${n.version}** (${n.date}): ${n.title.vi}`);
   return `${lines.join("\n")}\n`;
 }

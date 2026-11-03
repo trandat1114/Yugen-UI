@@ -54,3 +54,6 @@ export const traceMessagesEn: TraceMessages = {
   collapseAll: "Collapse all",
   expandAll: "Expand all",
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `traceMessagesEn` (mặc định). `traceMessages` giữ cho code cũ. */
+export const traceMessagesVi = traceMessages;

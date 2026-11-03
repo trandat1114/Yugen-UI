@@ -6,7 +6,7 @@ import { ToggleButton } from "../ToggleButton/ToggleButton";
 import { Table, TableBody, TableHeader, TableHeaderCell, TableRow, TableCell } from "../Table/Table";
 import { useYugenMessages } from "../YugenProvider/context";
 import { useControllableState } from "../hooks/useControllableState";
-import { chartMessages } from "./messages";
+import { chartMessagesEn } from "./messages";
 import { chartUid, patternId, slotDash, slotFill, slotVar, type ChartSlot } from "./chartUtils";
 
 /* ================================================================== Hoa văn (texture) */
@@ -346,7 +346,7 @@ export const ChartContainer = React.forwardRef<HTMLElement, ChartContainerProps>
     },
     ref,
   ) => {
-    const msg = useYugenMessages("chart", chartMessages);
+    const msg = useYugenMessages("chart", chartMessagesEn);
     const id = chartUid(React.useId());
     const [tableState, setTable] = useControllableState({ value: showTable, defaultValue: defaultShowTable, onChange: onShowTableChange });
     const tableOn = !!table && tableState;

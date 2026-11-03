@@ -35,9 +35,9 @@ import {
 } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
-import { presenceBadgeMessages, type PresenceBadgeMessages } from "./messages";
+import { presenceBadgeMessagesEn, type PresenceBadgeMessages } from "./messages";
 
-export { presenceBadgeMessages, presenceBadgeMessagesEn, type PresenceBadgeMessages } from "./messages";
+export { presenceBadgeMessages, presenceBadgeMessagesVi, presenceBadgeMessagesEn, type PresenceBadgeMessages } from "./messages";
 
 export type PresenceBadgeStatus =
   | "available"
@@ -144,7 +144,7 @@ export interface PresenceBadgeProps extends Omit<React.HTMLAttributes<HTMLSpanEl
 
 export const PresenceBadge = React.forwardRef<HTMLSpanElement, PresenceBadgeProps>(
   ({ status = "available", outOfOffice = false, size = "medium", ring = false, label, className, ...props }, ref) => {
-    const msg = useYugenMessages("presenceBadge", presenceBadgeMessages);
+    const msg = useYugenMessages("presenceBadge", presenceBadgeMessagesEn);
     const Icon = iconFor(status, outOfOffice)[ICON_SIZE[size]];
     const ariaLabel =
       label ?? msg[LABEL_KEY[status]] + (outOfOffice && status !== "out-of-office" ? `, ${msg.outOfOffice.toLowerCase()}` : "");

@@ -96,7 +96,8 @@ test("trang chủ: chạm chip đổi nhóm showcase, chạm tên component mở
   const showcase = page.getByRole("radiogroup", { name: "Khám phá" });
   await showcase.getByRole("radio", { name: "Phản hồi" }).tap();
   await expect(showcase.getByRole("radio", { name: "Phản hồi" })).toHaveAttribute("aria-checked", "true");
-  expect(new URL(page.url()).pathname).toBe("/");
+  // Chạm chip không đổi trang (trang chủ tiếng Việt ở /vi/, #277).
+  expect(new URL(page.url()).pathname).toBe("/vi/");
 
   const button = page.locator('[data-comp="button"]');
   const link = page.locator('[data-comp="link"]');

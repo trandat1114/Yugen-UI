@@ -1,10 +1,7 @@
-import { messagesEn } from "@/components/ui";
 import type { Content } from "./types";
 
 const en: Content = {
-  lang: "en",
-  messages: messagesEn,
-  locale: "en-US",
+  lang: "en",  locale: "en-US",
   site: {
     title: "Sakura Notes",
     description: "Notes on interface design, React and Tailwind CSS. Written in Markdown, built with Yugen UI.",

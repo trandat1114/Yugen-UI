@@ -9,9 +9,9 @@ import { popoverSurfaceClass } from "../Popover/Popover";
 import { SearchBox, type SearchBoxProps } from "../SearchBox/SearchBox";
 import { Spinner } from "../Spinner/Spinner";
 import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
-import { autocompleteMessages } from "./messages";
+import { autocompleteMessagesEn } from "./messages";
 
-export { autocompleteMessages, autocompleteMessagesEn, type AutocompleteMessages } from "./messages";
+export { autocompleteMessages, autocompleteMessagesVi, autocompleteMessagesEn, type AutocompleteMessages } from "./messages";
 
 /* ================================================================ HighlightMatch */
 
@@ -150,7 +150,7 @@ export const Autocomplete = React.forwardRef<HTMLInputElement, AutocompleteProps
     ref,
   ) => {
     const portalTheme = usePortalThemeProps();
-    const msg = useYugenMessages("autocomplete", autocompleteMessages);
+    const msg = useYugenMessages("autocomplete", autocompleteMessagesEn);
     const baseId = React.useId();
     const listId = `${baseId}-list`;
     const optionId = (i: number) => `${baseId}-opt-${i}`;

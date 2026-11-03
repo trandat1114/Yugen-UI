@@ -36,7 +36,7 @@ export interface SeedConversation {
 /** Every string in the app. One file per language; `content/index.ts` picks the one the app uses. */
 export interface Content {
   lang: "en" | "vi";
-  /** Chuỗi có sẵn của component Yugen: messagesEn cho tiếng Anh, bỏ trống = mặc định tiếng Việt. Đặt ở file ngôn ngữ để
+  /** Chuỗi có sẵn của component Yugen: messagesVi cho tiếng Việt, bỏ trống = mặc định tiếng Anh. Đặt ở file ngôn ngữ để
    * `create --lang vi` (xoá en.ts) bỏ hẳn bản tiếng Anh khỏi bundle. */
   messages?: YugenMessagesInput;
   /** Intl locale for dates, times and numbers. */

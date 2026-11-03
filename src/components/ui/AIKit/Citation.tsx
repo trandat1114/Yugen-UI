@@ -4,9 +4,9 @@ import { cn } from "@/lib/cn";
 import { Popover, PopoverSurface, PopoverTrigger } from "../Popover/Popover";
 import { useYugenMessages } from "../YugenProvider/context";
 import { sanitizeHref } from "./markdown";
-import { citationMessages } from "./messages";
+import { citationMessagesEn } from "./messages";
 
-export { citationMessages, citationMessagesEn, type CitationMessages } from "./messages";
+export { citationMessages, citationMessagesVi, citationMessagesEn, type CitationMessages } from "./messages";
 
 export interface CitationSource {
   title: string;
@@ -86,7 +86,7 @@ export const Citation = React.forwardRef<HTMLButtonElement, CitationProps>(
     { index, source, openDelay = 250, closeDelay = 200, className, onPointerEnter, onPointerLeave, onFocus, onBlur, onClick, ...props },
     ref,
   ) => {
-    const msg = useYugenMessages("citation", citationMessages);
+    const msg = useYugenMessages("citation", citationMessagesEn);
     const id = React.useId();
     const descId = `${id}-desc`;
     const titleId = `${id}-title`;
@@ -229,7 +229,7 @@ export interface CitationListProps extends Omit<React.HTMLAttributes<HTMLElement
 
 /** Danh sách nguồn dưới câu trả lời: số thứ tự khớp với chip Citation trong bài. */
 export const CitationList = React.forwardRef<HTMLElement, CitationListProps>(({ sources, title, className, ...props }, ref) => {
-  const msg = useYugenMessages("citation", citationMessages);
+  const msg = useYugenMessages("citation", citationMessagesEn);
   const headingId = React.useId();
   if (sources.length === 0) return null;
   return (

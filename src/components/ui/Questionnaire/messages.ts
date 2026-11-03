@@ -122,3 +122,6 @@ export const questionnaireMessagesEn: QuestionnaireMessages = {
   next: "Next",
   orPress: "or press",
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `questionnaireMessagesEn` (mặc định). `questionnaireMessages` giữ cho code cũ. */
+export const questionnaireMessagesVi = questionnaireMessages;

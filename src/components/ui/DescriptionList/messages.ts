@@ -21,3 +21,6 @@ export const descriptionListMessagesEn: DescriptionListMessages = {
   copy: "Copy",
   copied: "Copied to clipboard",
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `descriptionListMessagesEn` (mặc định). `descriptionListMessages` giữ cho code cũ. */
+export const descriptionListMessagesVi = descriptionListMessages;

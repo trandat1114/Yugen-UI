@@ -10,9 +10,9 @@ import {
 import { cn } from "@/lib/cn";
 import { Menu, MenuItem, MenuPopover, MenuTrigger } from "../Menu/Menu";
 import { useYugenMessages } from "../YugenProvider/context";
-import { breadcrumbMessages } from "./messages";
+import { breadcrumbMessagesEn } from "./messages";
 
-export { breadcrumbMessages, breadcrumbMessagesEn, type BreadcrumbMessages } from "./messages";
+export { breadcrumbMessages, breadcrumbMessagesVi, breadcrumbMessagesEn, type BreadcrumbMessages } from "./messages";
 
 /** Fluent 2 Breadcrumb — https://fluent2.microsoft.design/components/web/react/core/breadcrumb/usage */
 type BreadcrumbSize = "small" | "medium" | "large";
@@ -72,7 +72,7 @@ export const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(
     },
     ref,
   ) => {
-    const msg = useYugenMessages("breadcrumb", breadcrumbMessages);
+    const msg = useYugenMessages("breadcrumb", breadcrumbMessagesEn);
     let content: React.ReactNode = children;
 
     if (items) {
@@ -211,7 +211,7 @@ export function BreadcrumbOverflow({
   className?: string;
 }) {
   const { size } = React.useContext(BreadcrumbContext);
-  const msg = useYugenMessages("breadcrumb", breadcrumbMessages);
+  const msg = useYugenMessages("breadcrumb", breadcrumbMessagesEn);
   return (
     <Menu>
       <MenuTrigger asChild>

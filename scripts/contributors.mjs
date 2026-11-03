@@ -5,11 +5,12 @@
  * src/docs/contributors.extra.json, ghi ra src/docs/contributors.json.
  *
  *   npm run contributors        (cần GITHUB_TOKEN; trên máy: GITHUB_TOKEN=$(gh auth token) npm run contributors)
- *   node scripts/contributors.mjs --out <file> --strict
+ *   node scripts/contributors.mjs --out <file> --strict [--svg <dir>]
  *
  * pages.yml chạy lệnh này trước khi build docs (snapshot cho prerender); contributors.yml chạy với --out --strict sau mỗi
- * issue, bình luận, PR đóng và hằng ngày, đẩy kết quả lên nhánh contributors-data để trang tải bản mới. Không có token
- * hoặc API lỗi: mặc định giữ snapshot và chỉ cảnh báo (không làm hỏng lần deploy); --strict thì thoát với mã 1.
+ * issue, bình luận, PR đóng và hằng ngày, đẩy kết quả lên nhánh contributors-data để trang tải bản mới. --svg vẽ thêm
+ * ảnh đại diện từng nhóm (contributors-code.svg, contributors-ideas.svg) cho CONTRIBUTING.md và README (#275). Không có
+ * token hoặc API lỗi: mặc định giữ snapshot và chỉ cảnh báo (không làm hỏng lần deploy); --strict thì thoát với mã 1.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -61,6 +62,79 @@ export function issueType(labels) {
   if (labels.includes("bug") || labels.includes("documentation")) return "bug";
   if (labels.includes("enhancement")) return "idea";
   return null;
+}
+
+/** Hai nhóm của trang /contributors; giống CONTRIBUTION_GROUPS trong src/docs/contributors.ts (test giữ hai bản khớp nhau). */
+export const GROUPS = {
+  code: ["code", "templates", "docs", "translation"],
+  ideas: ["design", "review", "discussion", "bug", "a11y", "idea"],
+};
+
+/** Người có đóng góp thuộc nhóm, theo thứ tự của danh sách (maintainer trước, rồi theo lần đóng góp đầu). */
+export const inGroup = (people, group) => people.filter((person) => GROUPS[group].some((type) => person.counts[type]));
+
+const AVATAR = 48;
+const GAP = 12;
+const escapeXml = (text) => text.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;" })[c]);
+/** Màu nền cố định theo login cho ảnh dự phòng (chữ trắng đọc được trên mọi màu này). */
+const FALLBACK_HUES = [340, 200, 150, 30, 270, 0, 180, 90];
+const hueOf = (login) => FALLBACK_HUES[[...login].reduce((sum, c) => sum + c.charCodeAt(0), 0) % FALLBACK_HUES.length];
+
+/**
+ * Ảnh đại diện của một nhóm, cho CONTRIBUTING.md và README (#275). `avatars`: login → data URI; SVG hiện qua <img> không
+ * tải được ảnh ngoài nên ảnh phải nhúng sẵn, người không có ảnh thì là vòng tròn màu với chữ cái đầu. Không có chữ nào
+ * phụ thuộc nền (nút "+N" có màu riêng), nên một file dùng được cả theme sáng lẫn tối; tiêu đề nhóm là chữ Markdown bên
+ * ngoài. Quá `max` người thì hiện `max - 1` người đầu và một nụ "+N".
+ */
+export function renderAvatarsSvg(people, avatars = new Map(), { perRow = 14, max = 56 } = {}) {
+  const shown = people.length > max ? people.slice(0, max - 1) : people;
+  const rest = people.length - shown.length;
+  const slots = Math.max(shown.length + (rest ? 1 : 0), 1);
+  const step = AVATAR + GAP;
+  // 2px lề để viền và bông hoa nhỏ không bị cắt.
+  const width = Math.min(slots, perRow) * step - GAP + 4;
+  const height = Math.ceil(slots / perRow) * step - GAP + 4;
+  const at = (i) => `translate(${(i % perRow) * step + 2} ${Math.floor(i / perRow) * step + 2})`;
+  const petals = [0, 72, 144, 216, 288].map((a) => `<ellipse cy="-3.2" rx="2.4" ry="3.4" transform="rotate(${a})"/>`).join("");
+  const parts = shown.map((person, i) => {
+    const name = escapeXml(person.name === person.login ? `@${person.login}` : `${person.name} (@${person.login})`);
+    const src = avatars.get(person.login);
+    const face = src
+      ? `<image href="${escapeXml(src)}" width="${AVATAR}" height="${AVATAR}" clip-path="url(#round)" preserveAspectRatio="xMidYMid slice"/>`
+      : `<circle cx="24" cy="24" r="24" fill="hsl(${hueOf(person.login)} 45% 42%)"/><text x="24" y="24" dy="0.35em" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" font-weight="600" fill="#fff">${escapeXml([...person.name][0]?.toUpperCase() ?? "?")}</text>`;
+    return `<g transform="${at(i)}"><title>${name}</title>${face}<circle cx="24" cy="24" r="23.5" fill="none" stroke="#808080" stroke-opacity="0.35"/><g transform="translate(41 41)" fill="#ef8db6">${petals}<circle r="1.4" fill="#d9588f"/></g></g>`;
+  });
+  if (rest) {
+    parts.push(
+      `<g transform="${at(shown.length)}"><title>+${rest}</title><circle cx="24" cy="24" r="23.5" fill="#fbe3ee" stroke="#ef8db6"/><text x="24" y="24" dy="0.35em" text-anchor="middle" font-family="system-ui, sans-serif" font-size="15" font-weight="600" fill="#8a1f4f">+${rest}</text></g>`,
+    );
+  }
+  return [
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">`,
+    `<defs><clipPath id="round"><circle cx="24" cy="24" r="24"/></clipPath></defs>`,
+    ...parts,
+    "</svg>",
+    "",
+  ].join("\n");
+}
+
+/** Ảnh đại diện 96px (gấp đôi cỡ hiện) dạng data URI; lỗi thì bỏ qua người đó (SVG dùng chữ cái đầu). */
+async function fetchAvatars(people) {
+  const entries = await Promise.all(
+    people.map(async (person) => {
+      try {
+        const url = new URL(person.avatar);
+        url.searchParams.set("s", "96");
+        const res = await fetch(url, { redirect: "follow" });
+        const type = (res.headers.get("content-type") ?? "").split(";")[0];
+        if (!res.ok || !type.startsWith("image/")) return null;
+        return [person.login, `data:${type};base64,${Buffer.from(await res.arrayBuffer()).toString("base64")}`];
+      } catch {
+        return null;
+      }
+    }),
+  );
+  return new Map(entries.filter(Boolean));
 }
 
 const isPerson = (actor) => actor?.__typename === "User" && !actor.login.endsWith("[bot]");
@@ -244,12 +318,15 @@ async function fetchAll(query, token, variables = {}) {
 
 /** `--out <file>` (mặc định src/docs/contributors.json) và `--strict` (API lỗi thì thoát với mã 1). */
 export function parseArgs(argv) {
-  const at = argv.indexOf("--out");
-  return { out: at >= 0 && argv[at + 1] ? path.resolve(argv[at + 1]) : OUT, strict: argv.includes("--strict") };
+  const value = (flag) => {
+    const at = argv.indexOf(flag);
+    return at >= 0 && argv[at + 1] ? path.resolve(argv[at + 1]) : null;
+  };
+  return { out: value("--out") ?? OUT, strict: argv.includes("--strict"), svg: value("--svg") };
 }
 
 async function main() {
-  const { out, strict } = parseArgs(process.argv.slice(2));
+  const { out, strict, svg } = parseArgs(process.argv.slice(2));
   const fail = (message) => {
     if (!strict) return console.warn(`⚠ contributors: ${message}, giữ snapshot hiện có.`);
     console.error(`✖ contributors: ${message}.`);
@@ -268,6 +345,14 @@ async function main() {
     const data = { updated: new Date().toISOString().slice(0, 10), people };
     fs.mkdirSync(path.dirname(out), { recursive: true });
     fs.writeFileSync(out, JSON.stringify(data, null, 2) + "\n");
+    if (svg) {
+      const avatars = await fetchAvatars(people);
+      fs.mkdirSync(svg, { recursive: true });
+      for (const group of Object.keys(GROUPS)) {
+        fs.writeFileSync(path.join(svg, `contributors-${group}.svg`), renderAvatarsSvg(inGroup(people, group), avatars));
+      }
+      console.log(`contributors: ảnh đại diện ${avatars.size}/${people.length} → ${path.relative(root, svg) || "."}/contributors-{code,ideas}.svg`);
+    }
     const cost = pulls.cost + issues.cost + commits.cost;
     console.log(
       `contributors: ${people.length} người (${pulls.nodes.length} PR, ${issues.nodes.length} issue, ${commits.nodes.length} commit; ${cost} điểm GraphQL) → ${path.relative(root, out)}`,

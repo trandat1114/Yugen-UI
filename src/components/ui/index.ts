@@ -1,6 +1,7 @@
 // Provider
 export * from "./YugenProvider/YugenProvider";
 export * from "./messages-en";
+export * from "./messages-vi";
 
 // Hành động
 export * from "./Button/Button";

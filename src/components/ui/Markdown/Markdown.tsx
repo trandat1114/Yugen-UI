@@ -7,9 +7,9 @@ import { parseInlineMarkdown, parseMarkdown, type MdAlign, type MdBlock, type Md
 import { CodeBlock } from "../CodeBlock/CodeBlock";
 import { Prose, type ProseProps } from "../Prose/Prose";
 import { useYugenMessages } from "../YugenProvider/context";
-import { markdownMessages, type MarkdownMessages } from "./messages";
+import { markdownMessagesEn, type MarkdownMessages } from "./messages";
 
-export { markdownMessages, markdownMessagesEn, type MarkdownMessages } from "./messages";
+export { markdownMessages, markdownMessagesVi, markdownMessagesEn, type MarkdownMessages } from "./messages";
 
 export interface MarkdownLink {
   href: string;
@@ -198,7 +198,7 @@ export const Markdown = React.forwardRef<HTMLElement, MarkdownProps>(function Ma
   { children = "", inline = false, size = "medium", headingOffset = 1, headingIds = false, breaks = false, renderLink, className, ...props },
   ref,
 ) {
-  const msg = useYugenMessages("markdown", markdownMessages);
+  const msg = useYugenMessages("markdown", markdownMessagesEn);
   const parsed = React.useMemo(
     () => (inline ? parseInlineMarkdown(children, { relativeLinks: true }) : parseMarkdown(children, { relativeLinks: true }).children),
     [children, inline],

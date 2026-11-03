@@ -48,3 +48,6 @@ export const sortableMessagesEn: SortableMessages = {
   droppedIn: "Dropped {item} in {list}, position {position} of {total}.",
   canceled: "Canceled. {item} is back at position {position} of {total}.",
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `sortableMessagesEn` (mặc định). `sortableMessages` giữ cho code cũ. */
+export const sortableMessagesVi = sortableMessages;

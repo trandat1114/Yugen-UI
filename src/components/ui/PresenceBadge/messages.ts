@@ -41,3 +41,6 @@ export const presenceBadgeMessagesEn: PresenceBadgeMessages = {
   blocked: "Blocked",
   unknown: "Unknown",
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `presenceBadgeMessagesEn` (mặc định). `presenceBadgeMessages` giữ cho code cũ. */
+export const presenceBadgeMessagesVi = presenceBadgeMessages;

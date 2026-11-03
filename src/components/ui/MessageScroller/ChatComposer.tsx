@@ -7,9 +7,9 @@ import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffec
 import { Button } from "../Button/Button";
 import { fieldControlClass } from "../Field/Field";
 import { useYugenMessages } from "../YugenProvider/context";
-import { chatComposerMessages } from "./messages";
+import { chatComposerMessagesEn } from "./messages";
 
-export { chatComposerMessages, chatComposerMessagesEn, type ChatComposerMessages } from "./messages";
+export { chatComposerMessages, chatComposerMessagesVi, chatComposerMessagesEn, type ChatComposerMessages } from "./messages";
 
 export interface ChatComposerProps
   extends Omit<React.FormHTMLAttributes<HTMLFormElement>, "onSubmit" | "onChange" | "defaultValue"> {
@@ -66,7 +66,7 @@ export const ChatComposer = React.forwardRef<HTMLTextAreaElement, ChatComposerPr
     },
     ref,
   ) => {
-    const msg = useYugenMessages("chatComposer", chatComposerMessages);
+    const msg = useYugenMessages("chatComposer", chatComposerMessagesEn);
     const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
     const counterId = React.useId();
     const hintId = React.useId();

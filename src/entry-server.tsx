@@ -8,7 +8,7 @@ import { CONCEPT_BY_SLUG, CONCEPTS } from "./docs/concepts";
 import { FOUNDATIONS } from "./docs/foundations";
 import { localeValue, type Locale, type LocaleValue } from "./docs/i18n";
 import { COMPONENT_META_BY_SLUG, COMPONENTS_META } from "./docs/registry";
-import { hrefOf, localePathOf, type Route } from "./docs/router";
+import { DEFAULT_LOCALE, hrefOf, LEGACY_PREFIX, localePathOf, PREFIXED_LOCALE, pathOf, type Route } from "./docs/router";
 import { documentHead, routeMeta } from "./docs/seo";
 import { SITE } from "./docs/site";
 
@@ -81,9 +81,9 @@ export interface RenderedPage {
   card: ReturnType<typeof cardOf>;
 }
 
-export { SITE };
+export { SITE, DEFAULT_LOCALE, PREFIXED_LOCALE, LEGACY_PREFIX, pathOf, hrefOf };
 
-export async function render(route: Route, lang: Locale = "vi"): Promise<RenderedPage> {
+export async function render(route: Route, lang: Locale = DEFAULT_LOCALE): Promise<RenderedPage> {
   // Nạp trước như main.tsx: không Suspense nào treo thì React ghi nội dung tại chỗ. Phần nào còn treo (demo nạp lười lồng
   // bên trong) vẫn đúng, nhưng React ghi nó ở cuối trang kèm script $RC đổi chỗ.
   await preloadRoute(route, lang);

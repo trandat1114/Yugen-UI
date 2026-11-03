@@ -14,7 +14,8 @@ export default async function globalSetup(config: FullConfig) {
   const browser = await chromium.launch(process.env.CI ? {} : { channel: "msedge" });
   try {
     const page = await browser.newPage({ baseURL, viewport: { width: 1280, height: 800 } });
-    await page.goto(docsUrl("/"));
+    // Bản tiếng Anh ở gốc: link sidebar không có tiền tố ngôn ngữ, openDocs() tự thêm /vi khi cần.
+    await page.goto(docsUrl("/", { lang: "en" }));
     await waitForDocsReady(page);
     const routes = await collectSidebarRoutes(page);
     if (routes.length < 20) throw new Error(`Chỉ tìm thấy ${routes.length} route trong sidebar — sidebar đổi cấu trúc?`);

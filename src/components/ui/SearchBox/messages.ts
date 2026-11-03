@@ -21,3 +21,6 @@ export const searchBoxMessagesEn: SearchBoxMessages = {
   dismiss: "Clear search",
   placeholder: "Search",
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `searchBoxMessagesEn` (mặc định). `searchBoxMessages` giữ cho code cũ. */
+export const searchBoxMessagesVi = searchBoxMessages;

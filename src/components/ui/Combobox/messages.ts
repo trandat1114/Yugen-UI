@@ -29,3 +29,6 @@ export const comboboxMessagesEn: ComboboxMessages = {
   closeList: "Close list",
   openList: "Open list",
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `comboboxMessagesEn` (mặc định). `comboboxMessages` giữ cho code cũ. */
+export const comboboxMessagesVi = comboboxMessages;

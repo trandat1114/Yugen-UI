@@ -10,9 +10,9 @@ import {
 } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
-import { paginationMessages } from "./messages";
+import { paginationMessagesEn } from "./messages";
 
-export { paginationMessages, paginationMessagesEn, type PaginationMessages } from "./messages";
+export { paginationMessages, paginationMessagesVi, paginationMessagesEn, type PaginationMessages } from "./messages";
 
 /** Pagination (shadcn/ui, giao diện Fluent 2) — https://ui.shadcn.com/docs/components/pagination */
 type PaginationSize = "small" | "medium";
@@ -78,7 +78,7 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
     },
     ref,
   ) => {
-    const msg = useYugenMessages("pagination", paginationMessages);
+    const msg = useYugenMessages("pagination", paginationMessagesEn);
     const [rawPage, setPage] = useControllableState({ value: page, defaultValue: defaultPage, onChange: onPageChange });
     const current = Math.min(Math.max(rawPage, 1), Math.max(pageCount, 1));
     const s = SIZE[size];

@@ -41,3 +41,6 @@ export const carouselMessagesEn: CarouselMessages = {
   autoplay: "Autoplay",
   chooseSlide: "Choose slide",
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `carouselMessagesEn` (mặc định). `carouselMessages` giữ cho code cũ. */
+export const carouselMessagesVi = carouselMessages;

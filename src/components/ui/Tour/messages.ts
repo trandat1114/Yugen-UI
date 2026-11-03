@@ -33,3 +33,6 @@ export const tourMessagesEn: TourMessages = {
   roleDescription: "tour",
   step: "Step",
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `tourMessagesEn` (mặc định). `tourMessages` giữ cho code cũ. */
+export const tourMessagesVi = tourMessages;

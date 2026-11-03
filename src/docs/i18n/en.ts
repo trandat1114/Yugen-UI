@@ -74,11 +74,11 @@ export const en: Record<MessageKey, string> = {
 
   // Messages table on component pages (MessagesTable.tsx)
   "messages.desc": "Text built into the component: labels, aria-labels, screen reader announcements.",
-  "messages.intro": "Change it with the messages prop of YugenProvider, by the namespace below; messagesEn has the English set.",
+  "messages.intro": "English by default. Change it with the messages prop of YugenProvider, by the namespace below; messagesVi has the Vietnamese set.",
   "messages.link": "See Interface language.",
   "messages.key": "Key",
-  "messages.vi": "Default (Vietnamese)",
-  "messages.en": "messagesEn",
+  "messages.vi": "messagesVi",
+  "messages.en": "Default (English)",
   "messages.seeSource": "Function, see messages.ts",
 
   // Component page

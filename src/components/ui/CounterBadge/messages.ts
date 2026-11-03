@@ -25,3 +25,6 @@ export const counterBadgeMessagesEn: CounterBadgeMessages = {
   count: (count) => (count === 1 ? "1 notification" : `${count} notifications`),
   overflow: (overflowCount) => `More than ${overflowCount} notifications`,
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `counterBadgeMessagesEn` (mặc định). `counterBadgeMessages` giữ cho code cũ. */
+export const counterBadgeMessagesVi = counterBadgeMessages;

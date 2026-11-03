@@ -13,3 +13,6 @@ declare module "../YugenProvider/context" {
 export const infoLabelMessages: InfoLabelMessages = { infoButton: "Thông tin" };
 
 export const infoLabelMessagesEn: InfoLabelMessages = { infoButton: "Information" };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `infoLabelMessagesEn` (mặc định). `infoLabelMessages` giữ cho code cũ. */
+export const infoLabelMessagesVi = infoLabelMessages;

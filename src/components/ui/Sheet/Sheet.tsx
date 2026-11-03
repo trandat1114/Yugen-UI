@@ -6,9 +6,9 @@ import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context"
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { useMediaQuery } from "../hooks/useMediaQuery";
-import { sheetMessages } from "./messages";
+import { sheetMessagesEn } from "./messages";
 
-export { sheetMessages, sheetMessagesEn, type SheetMessages } from "./messages";
+export { sheetMessages, sheetMessagesVi, sheetMessagesEn, type SheetMessages } from "./messages";
 
 // useMediaQuery đã chuyển sang hooks/ (#172); giữ export cũ cho mã import từ Sheet.
 export { useMediaQuery, type UseMediaQueryOptions } from "../hooks/useMediaQuery";
@@ -252,7 +252,7 @@ export const SheetContent = React.forwardRef<React.ElementRef<typeof DialogPrimi
     const { isBottom, snapPoints, snapPoint, setSnapPoint, dismissible, modal } = ctx;
     const dir = useDirection();
     const portalTheme = usePortalThemeProps();
-    const msg = useYugenMessages("sheet", sheetMessages);
+    const msg = useYugenMessages("sheet", sheetMessagesEn);
     const [node, setNode] = React.useState<HTMLDivElement | null>(null);
     const nodeRef = React.useRef<HTMLDivElement | null>(null);
     const overlayRef = React.useRef<HTMLDivElement | null>(null);

@@ -32,11 +32,11 @@ export interface YugenProviderProps extends React.HTMLAttributes<HTMLDivElement>
   /** Gắn sẵn <Toaster /> để dùng toast() (mặc định false — chỉ bật ở provider gốc). */
   withToaster?: boolean;
   /**
-   * Ghi đè chuỗi giao diện có sẵn của component (mặc định tiếng Việt), theo namespace: `messages={messagesEn}` cho tiếng
-   * Anh, hoặc chỉ vài chuỗi `{ toast: { close: "Close" } }`. Provider lồng kế thừa và ghi đè tiếp lên của provider ngoài.
+   * Ghi đè chuỗi giao diện có sẵn của component (mặc định tiếng Anh), theo namespace: `messages={messagesVi}` cho tiếng
+   * Việt, hoặc chỉ vài chuỗi `{ toast: { close: "Đóng" } }`. Provider lồng kế thừa và ghi đè tiếp lên của provider ngoài.
    */
   messages?: YugenMessagesInput;
-  /** Locale cho Intl (ngày, giờ, số) của component, vd. "en-US". Mặc định kế thừa provider ngoài, không có thì "vi-VN". */
+  /** Locale cho Intl (ngày, giờ, số) của component, vd. "vi-VN". Mặc định kế thừa provider ngoài, không có thì "en-US". */
   locale?: string;
 }
 
@@ -68,7 +68,7 @@ export const YugenProvider = React.forwardRef<HTMLDivElement, YugenProviderProps
   ) => {
     const parent = React.useContext(YugenContext);
     const messages = React.useMemo(() => mergeMessages(parent?.messages, messagesProp), [parent?.messages, messagesProp]);
-    const locale = localeProp ?? parent?.locale ?? "vi-VN";
+    const locale = localeProp ?? parent?.locale ?? "en-US";
     React.useEffect(() => {
       if (!applyToDocument) return;
       const root = document.documentElement;

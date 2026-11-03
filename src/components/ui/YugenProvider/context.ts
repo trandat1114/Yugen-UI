@@ -19,11 +19,11 @@ export interface YugenContextValue {
   theme: YugenTheme;
   brand: YugenBrand;
   dir: YugenDir;
-  /** Locale cho Intl (ngày, giờ, số) của component — mặc định "vi-VN". */
+  /** Locale cho Intl (ngày, giờ, số) của component — mặc định "en-US". */
   locale: string;
 }
 
-const DEFAULT_VALUE: YugenContextValue = { theme: "light", brand: "sakura", dir: "ltr", locale: "vi-VN" };
+const DEFAULT_VALUE: YugenContextValue = { theme: "light", brand: "sakura", dir: "ltr", locale: "en-US" };
 export const YugenContext = React.createContext<(YugenContextValue & { scoped: boolean; messages?: YugenMessagesInput }) | null>(null);
 
 /** Đọc theme / brand / hướng chữ / locale của YugenProvider gần nhất. */
@@ -32,7 +32,7 @@ export function useYugen(): YugenContextValue {
 }
 
 /**
- * Chuỗi giao diện của một component: mặc định (tiếng Việt) của component, ghi đè bằng `messages` của YugenProvider gần
+ * Chuỗi giao diện của một component: mặc định (tiếng Anh) của component, ghi đè bằng `messages` của YugenProvider gần
  * nhất. Prop nhãn riêng của component (vd. `dismissLabel`) vẫn ưu tiên hơn cả hai.
  */
 export function useYugenMessages<K extends keyof YugenMessages>(namespace: K, defaults: YugenMessages[K]): YugenMessages[K] {

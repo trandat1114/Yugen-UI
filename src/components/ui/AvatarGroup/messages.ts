@@ -25,3 +25,6 @@ export const avatarGroupMessagesEn: AvatarGroupMessages = {
   viewAll: (count) => (count === 1 ? "View 1 member" : `View ${count} members`),
   viewMore: (count) => (count === 1 ? "View 1 more member" : `View ${count} more members`),
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `avatarGroupMessagesEn` (mặc định). `avatarGroupMessages` giữ cho code cũ. */
+export const avatarGroupMessagesVi = avatarGroupMessages;

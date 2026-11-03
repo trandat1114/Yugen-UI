@@ -3,7 +3,7 @@ import type { YugenMessagesInput, YugenTheme } from "yugen-ui";
 /** Every string in the app. One file per language; `content/index.ts` picks the one the app uses. */
 export interface Content {
   lang: "en" | "vi";
-  /** Built-in strings of Yugen components: messagesEn for English, empty = Vietnamese defaults. Only the client
+  /** Built-in strings of Yugen components: messagesVi for Vietnamese, empty = English defaults. Only the client
    * provider reads it (functions can't cross from a Server Component to a Client Component). */
   messages?: YugenMessagesInput;
   locale: string;

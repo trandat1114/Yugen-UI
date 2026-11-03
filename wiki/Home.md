@@ -4,7 +4,8 @@
 
 **Yugen UI** is a React + Tailwind CSS v4 component library inspired by Microsoft Fluent 2, with the Sakura 桜 brand, created by
 [trandat1114](https://github.com/trandat1114). This wiki is for **advanced users and contributors**: architecture,
-workflows, debugging, releases. Usage guides for each component are on the [docs site](https://trandat1114.github.io/Yugen-UI/).
+workflows, debugging, releases. Usage guides for each component are on the [docs site](https://trandat1114.github.io/Yugen-UI/)
+(English at the root, Vietnamese under `/vi/`).
 
 ## Where to start
 

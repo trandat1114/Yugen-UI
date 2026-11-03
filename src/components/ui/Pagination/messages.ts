@@ -37,3 +37,6 @@ export const paginationMessagesEn: PaginationMessages = {
   next: "Next",
   page: (page) => `Page ${page}`,
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `paginationMessagesEn` (mặc định). `paginationMessages` giữ cho code cũ. */
+export const paginationMessagesVi = paginationMessages;

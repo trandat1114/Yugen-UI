@@ -6,9 +6,9 @@ import { Prohibited16Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { useArrowNavigationGroup } from "../FocusManagement/FocusManagement";
 import { useYugenMessages } from "../YugenProvider/context";
-import { swatchPickerMessages } from "./messages";
+import { swatchPickerMessagesEn } from "./messages";
 
-export { swatchPickerMessages, swatchPickerMessagesEn, type SwatchPickerMessages } from "./messages";
+export { swatchPickerMessages, swatchPickerMessagesVi, swatchPickerMessagesEn, type SwatchPickerMessages } from "./messages";
 
 export type SwatchSize = "extra-small" | "small" | "medium" | "large";
 export type SwatchShape = "square" | "rounded" | "circular";
@@ -227,7 +227,7 @@ export type EmptySwatchProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 export const EmptySwatch = React.forwardRef<HTMLButtonElement, EmptySwatchProps>(
   ({ className, children, "aria-label": ariaLabel, ...props }, ref) => {
     const { size, shape } = React.useContext(SwatchPickerContext);
-    const msg = useYugenMessages("swatchPicker", swatchPickerMessages);
+    const msg = useYugenMessages("swatchPicker", swatchPickerMessagesEn);
     return (
       <button
         ref={ref}
