@@ -31,8 +31,17 @@ export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> 
   disabled?: boolean;
 }
 
-export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
-  ({ className, size, weight, required, disabled, children, ...props }, ref) => (
+export function Label({
+  className,
+  size,
+  weight,
+  required,
+  disabled,
+  children,
+  ref,
+  ...props
+}: LabelProps & { ref?: React.Ref<HTMLLabelElement> }) {
+  return (
     <label
       ref={ref}
       aria-disabled={disabled || undefined}
@@ -46,6 +55,5 @@ export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
         </span>
       )}
     </label>
-  ),
-);
-Label.displayName = "Label";
+  );
+}

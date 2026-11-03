@@ -13,12 +13,15 @@ export interface VisuallyHiddenProps extends React.HTMLAttributes<HTMLSpanElemen
   focusable?: boolean;
 }
 
-export const VisuallyHidden = React.forwardRef<HTMLSpanElement, VisuallyHiddenProps>(
-  ({ asChild, focusable = false, className, ...props }, ref) => {
-    // focusable: chỉ ẩn khi không có focus bên trong — khi focus, phần tử giữ nguyên style của chính nó.
-    const classes = cn(focusable ? "not-focus-within:sr-only" : visuallyHiddenClass, className);
-    if (asChild) return <Slot ref={ref} className={classes} {...props} />;
-    return <span ref={ref} className={classes} {...props} />;
-  },
-);
-VisuallyHidden.displayName = "VisuallyHidden";
+export function VisuallyHidden({
+  asChild,
+  focusable = false,
+  className,
+  ref,
+  ...props
+}: VisuallyHiddenProps & { ref?: React.Ref<HTMLSpanElement> }) {
+  // focusable: chỉ ẩn khi không có focus bên trong — khi focus, phần tử giữ nguyên style của chính nó.
+  const classes = cn(focusable ? "not-focus-within:sr-only" : visuallyHiddenClass, className);
+  if (asChild) return <Slot ref={ref} className={classes} {...props} />;
+  return <span ref={ref} className={classes} {...props} />;
+}

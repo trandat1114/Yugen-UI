@@ -80,68 +80,63 @@ export interface NavProps extends React.HTMLAttributes<HTMLElement> {
   material?: "glass" | "glass-clear";
 }
 
-export const Nav = React.forwardRef<HTMLElement, NavProps>(
-  (
-    {
-      className,
-      selectedValue,
-      defaultSelectedValue,
-      onNavItemSelect,
-      openCategories,
-      defaultOpenCategories = [],
-      onNavCategoryItemToggle,
-      multiple = true,
-      density = "medium",
-      material,
-      "aria-label": ariaLabel,
-      children,
-      ...props
+export function Nav({
+  className,
+  selectedValue,
+  defaultSelectedValue,
+  onNavItemSelect,
+  openCategories,
+  defaultOpenCategories = [],
+  onNavCategoryItemToggle,
+  multiple = true,
+  density = "medium",
+  material,
+  "aria-label": ariaLabel,
+  children,
+  ref,
+  ...props
+}: NavProps & { ref?: React.Ref<HTMLElement> }) {
+  const msg = useYugenMessages("nav", navMessagesEn);
+  const host = React.useContext(NavHostContext);
+  // Callback có thêm tham số (categoryValue, open) nên tự gọi, không truyền làm onChange.
+  const [selected, setSelected] = useControllableState({ value: selectedValue, defaultValue: defaultSelectedValue });
+  const [open, setOpen] = useControllableState({ value: openCategories, defaultValue: defaultOpenCategories });
+
+  const ctx: NavContextValue = {
+    selectedValue: selected,
+    density,
+    select: (value, categoryValue) => {
+      setSelected(value);
+      onNavItemSelect?.(value, { categoryValue });
+      host?.onSelect?.();
     },
-    ref,
-  ) => {
-    const msg = useYugenMessages("nav", navMessagesEn);
-    const host = React.useContext(NavHostContext);
-    // Callback có thêm tham số (categoryValue, open) nên tự gọi, không truyền làm onChange.
-    const [selected, setSelected] = useControllableState({ value: selectedValue, defaultValue: defaultSelectedValue });
-    const [open, setOpen] = useControllableState({ value: openCategories, defaultValue: defaultOpenCategories });
+    isOpen: (value) => open.includes(value),
+    toggle: (value) => {
+      const willOpen = !open.includes(value);
+      const next = willOpen ? (multiple ? [...open, value] : [value]) : open.filter((v) => v !== value);
+      setOpen(next);
+      onNavCategoryItemToggle?.(value, willOpen);
+    },
+  };
 
-    const ctx: NavContextValue = {
-      selectedValue: selected,
-      density,
-      select: (value, categoryValue) => {
-        setSelected(value);
-        onNavItemSelect?.(value, { categoryValue });
-        host?.onSelect?.();
-      },
-      isOpen: (value) => open.includes(value),
-      toggle: (value) => {
-        const willOpen = !open.includes(value);
-        const next = willOpen ? (multiple ? [...open, value] : [value]) : open.filter((v) => v !== value);
-        setOpen(next);
-        onNavCategoryItemToggle?.(value, willOpen);
-      },
-    };
-
-    return (
-      <NavContext.Provider value={ctx}>
-        <nav
-          ref={ref}
-          aria-label={ariaLabel ?? msg.label}
-          className={cn(
-            "flex flex-col gap-0.5",
-            // 3xlarge (16px) − đệm 8px = rounded-xlarge của hàng: góc đồng tâm sẵn.
-            material && cn(material, "rounded-3xlarge border border-transparent p-2 shadow-16"),
-            className,
-          )}
-          {...props}
-        >
-          {children}
-        </nav>
-      </NavContext.Provider>
-    );
-  },
-);
-Nav.displayName = "Nav";
+  return (
+    <NavContext.Provider value={ctx}>
+      <nav
+        ref={ref}
+        aria-label={ariaLabel ?? msg.label}
+        className={cn(
+          "flex flex-col gap-0.5",
+          // 3xlarge (16px) − đệm 8px = rounded-xlarge của hàng: góc đồng tâm sẵn.
+          material && cn(material, "rounded-3xlarge border border-transparent p-2 shadow-16"),
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </nav>
+    </NavContext.Provider>
+  );
+}
 
 export interface NavItemProps extends React.HTMLAttributes<HTMLElement> {
   value: string;
@@ -200,10 +195,15 @@ function HostTooltip({
 
 type NavRowProps = React.HTMLAttributes<HTMLElement> & { href?: string; asChild?: boolean; selected: boolean };
 
-const NavRow = React.forwardRef<HTMLElement, NavRowProps>(function NavRow(
-  { href, asChild, selected, className, children, ...props },
-  forwardedRef,
-) {
+function NavRow({
+  href,
+  asChild,
+  selected,
+  className,
+  children,
+  ref: forwardedRef,
+  ...props
+}: NavRowProps & { ref?: React.Ref<HTMLElement> }) {
   const shared = {
     "aria-current": selected ? ("page" as const) : undefined,
     "data-selected": selected || undefined,
@@ -229,63 +229,77 @@ const NavRow = React.forwardRef<HTMLElement, NavRowProps>(function NavRow(
       {children}
     </button>
   );
-});
+}
 
-export const NavItem = React.forwardRef<HTMLElement, NavItemProps>(
-  ({ className, value, icon, href, asChild, tooltip, onClick, children, ...props }, ref) => {
-    const { nav, selected, handleClick } = useNavRow(value, onClick);
-    const host = React.useContext(NavHostContext);
-    const rowRef = React.useRef<HTMLElement>(null);
-    const refs = useComposedRefs(ref, rowRef);
-    return (
-      <HostTooltip host={host} label={tooltip ?? (asChild ? undefined : children)} rowRef={rowRef}>
-        <NavRow
-          ref={refs}
-          href={href}
-          asChild={asChild}
-          selected={selected}
-          onClick={handleClick}
-          className={cn(rowBase, host?.rail ? RAIL_ROW : ROW[nav.density], selected && rowSelected, className)}
-          {...props}
-        >
-          {asChild ? (
-            children
-          ) : (
-            <>
-              {icon}
-              <span className={host?.rail ? "sr-only" : "min-w-0 flex-1 truncate"}>{children}</span>
-            </>
-          )}
-        </NavRow>
-      </HostTooltip>
-    );
-  },
-);
-NavItem.displayName = "NavItem";
-
-export const NavSubItem = React.forwardRef<HTMLElement, Omit<NavItemProps, "icon" | "tooltip">>(
-  ({ className, value, href, asChild, onClick, children, ...props }, ref) => {
-    const { nav, category, selected, handleClick } = useNavRow(value, onClick);
-    const register = category?.register;
-
-    React.useEffect(() => register?.(value), [register, value]);
-
-    return (
+export function NavItem({
+  className,
+  value,
+  icon,
+  href,
+  asChild,
+  tooltip,
+  onClick,
+  children,
+  ref,
+  ...props
+}: NavItemProps & { ref?: React.Ref<HTMLElement> }) {
+  const { nav, selected, handleClick } = useNavRow(value, onClick);
+  const host = React.useContext(NavHostContext);
+  const rowRef = React.useRef<HTMLElement>(null);
+  const refs = useComposedRefs(ref, rowRef);
+  return (
+    <HostTooltip host={host} label={tooltip ?? (asChild ? undefined : children)} rowRef={rowRef}>
       <NavRow
-        ref={ref}
+        ref={refs}
         href={href}
         asChild={asChild}
         selected={selected}
         onClick={handleClick}
-        className={cn(rowBase, ROW[nav.density], SUB_INDENT[nav.density], selected && rowSelected, className)}
+        className={cn(rowBase, host?.rail ? RAIL_ROW : ROW[nav.density], selected && rowSelected, className)}
         {...props}
       >
-        {asChild ? children : <span className="min-w-0 flex-1 truncate">{children}</span>}
+        {asChild ? (
+          children
+        ) : (
+          <>
+            {icon}
+            <span className={host?.rail ? "sr-only" : "min-w-0 flex-1 truncate"}>{children}</span>
+          </>
+        )}
       </NavRow>
-    );
-  },
-);
-NavSubItem.displayName = "NavSubItem";
+    </HostTooltip>
+  );
+}
+
+export function NavSubItem({
+  className,
+  value,
+  href,
+  asChild,
+  onClick,
+  children,
+  ref,
+  ...props
+}: Omit<NavItemProps, "icon" | "tooltip"> & { ref?: React.Ref<HTMLElement> }) {
+  const { nav, category, selected, handleClick } = useNavRow(value, onClick);
+  const register = category?.register;
+
+  React.useEffect(() => register?.(value), [register, value]);
+
+  return (
+    <NavRow
+      ref={ref}
+      href={href}
+      asChild={asChild}
+      selected={selected}
+      onClick={handleClick}
+      className={cn(rowBase, ROW[nav.density], SUB_INDENT[nav.density], selected && rowSelected, className)}
+      {...props}
+    >
+      {asChild ? children : <span className="min-w-0 flex-1 truncate">{children}</span>}
+    </NavRow>
+  );
+}
 
 export interface NavCategoryProps {
   value: string;
@@ -319,52 +333,56 @@ export interface NavCategoryItemProps extends React.ButtonHTMLAttributes<HTMLBut
   icon?: React.ReactNode;
 }
 
-export const NavCategoryItem = React.forwardRef<HTMLButtonElement, NavCategoryItemProps>(
-  ({ className, icon, onClick, children, ...props }, ref) => {
-    const nav = React.useContext(NavContext);
-    const category = React.useContext(CategoryContext);
-    const host = React.useContext(NavHostContext);
-    const rail = !!host?.rail;
-    const open = category?.open ?? false;
-    // Rail không hiện nhóm con: mục chọn nằm trong nhóm thì category mang chỉ báo.
-    const showSelected = (!open || rail) && !!category?.containsSelected;
-    const rowRef = React.useRef<HTMLButtonElement>(null);
-    const refs = useComposedRefs(ref, rowRef);
+export function NavCategoryItem({
+  className,
+  icon,
+  onClick,
+  children,
+  ref,
+  ...props
+}: NavCategoryItemProps & { ref?: React.Ref<HTMLButtonElement> }) {
+  const nav = React.useContext(NavContext);
+  const category = React.useContext(CategoryContext);
+  const host = React.useContext(NavHostContext);
+  const rail = !!host?.rail;
+  const open = category?.open ?? false;
+  // Rail không hiện nhóm con: mục chọn nằm trong nhóm thì category mang chỉ báo.
+  const showSelected = (!open || rail) && !!category?.containsSelected;
+  const rowRef = React.useRef<HTMLButtonElement>(null);
+  const refs = useComposedRefs(ref, rowRef);
 
-    return (
-      <HostTooltip host={host} label={children} rowRef={rowRef}>
-        <button
-          ref={refs}
-          type="button"
-          id={category?.triggerId}
-          aria-expanded={rail ? false : open}
-          aria-controls={category?.groupId}
-          onClick={(e) => {
-            onClick?.(e);
-            if (e.defaultPrevented || !category) return;
-            // Rail: mở rộng sidebar và mở nhóm để thấy các mục con.
-            if (rail) {
-              host?.expand();
-              if (!open) nav.toggle(category.value);
-            } else nav.toggle(category.value);
-          }}
-          className={cn(rowBase, rail ? RAIL_ROW : ROW[nav.density], showSelected && rowSelected, className)}
-          {...props}
-        >
-          {icon}
-          <span className={rail ? "sr-only" : "min-w-0 flex-1 truncate"}>{children}</span>
-          {!rail && (
-            <ChevronDown16Regular
-              aria-hidden
-              className={cn("size-4! transition-transform duration-normal ease-easy-ease", open && "rotate-180")}
-            />
-          )}
-        </button>
-      </HostTooltip>
-    );
-  },
-);
-NavCategoryItem.displayName = "NavCategoryItem";
+  return (
+    <HostTooltip host={host} label={children} rowRef={rowRef}>
+      <button
+        ref={refs}
+        type="button"
+        id={category?.triggerId}
+        aria-expanded={rail ? false : open}
+        aria-controls={category?.groupId}
+        onClick={(e) => {
+          onClick?.(e);
+          if (e.defaultPrevented || !category) return;
+          // Rail: mở rộng sidebar và mở nhóm để thấy các mục con.
+          if (rail) {
+            host?.expand();
+            if (!open) nav.toggle(category.value);
+          } else nav.toggle(category.value);
+        }}
+        className={cn(rowBase, rail ? RAIL_ROW : ROW[nav.density], showSelected && rowSelected, className)}
+        {...props}
+      >
+        {icon}
+        <span className={rail ? "sr-only" : "min-w-0 flex-1 truncate"}>{children}</span>
+        {!rail && (
+          <ChevronDown16Regular
+            aria-hidden
+            className={cn("size-4! transition-transform duration-normal ease-easy-ease", open && "rotate-180")}
+          />
+        )}
+      </button>
+    </HostTooltip>
+  );
+}
 
 export function NavSubItemGroup({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   const category = React.useContext(CategoryContext);

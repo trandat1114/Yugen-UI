@@ -3,6 +3,7 @@ import * as React from "react";
 import { flushSync } from "react-dom";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
+import { useComposedRefs } from "../_internal/composeRefs";
 
 export type OverflowAxis = "horizontal" | "vertical";
 /** Phía bị thu gọn trước khi các item cùng priority: "end" (mặc định) ẩn từ cuối, "start" ẩn từ đầu. */
@@ -227,16 +228,6 @@ function getElementRef(element: React.ReactElement): React.Ref<unknown> | undefi
   return (element.props as { ref?: React.Ref<unknown> }).ref;
 }
 
-function setRef<T>(ref: React.Ref<T> | undefined, value: T) {
-  if (typeof ref === "function") ref(value);
-  else if (ref) (ref as React.MutableRefObject<T>).current = value;
-}
-
-function useMergedRef<T>(...refs: (React.Ref<T> | undefined)[]) {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  return React.useCallback((node: T) => refs.forEach((ref) => setRef(ref, node)), refs);
-}
-
 const byDomOrder = (a: { element: HTMLElement }, b: { element: HTMLElement }) =>
   a.element === b.element ? 0 : a.element.compareDocumentPosition(b.element) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1;
 
@@ -282,218 +273,220 @@ export interface OverflowProps {
  * để hiện trong menu "…" (`useOverflowMenu` + `useOverflowItems`).
  * Đo bằng ResizeObserver, cache kích thước item khi còn hiển thị; render đầu (và SSR) luôn hiện đủ mọi item.
  */
-export const Overflow = React.forwardRef<HTMLElement, OverflowProps>(
-  (
-    { children, overflowAxis = "horizontal", overflowDirection = "end", minimumVisible = 0, padding = 0, onOverflowChange },
-    forwardedRef,
-  ) => {
-    const containerRef = React.useRef<HTMLElement | null>(null);
-    const itemsRef = React.useRef(new Map<string, ItemEntry>());
-    const dividersRef = React.useRef(new Map<HTMLElement, DividerEntry>());
-    const menuRef = React.useRef<HTMLElement | null>(null);
-    const sizeCache = React.useRef(new WeakMap<Element, number>());
-    const menuSizeRef = React.useRef(0);
-    const observerRef = React.useRef<ResizeObserver | null>(null);
-    const stateRef = React.useRef<OverflowState>(EMPTY_STATE);
-    const guardRef = React.useRef({ changes: 0, frame: 0 });
-    const [state, setState] = React.useState<OverflowState>(EMPTY_STATE);
-    const [version, bump] = React.useReducer((x: number) => x + 1, 0);
+export function Overflow({
+  children,
+  overflowAxis = "horizontal",
+  overflowDirection = "end",
+  minimumVisible = 0,
+  padding = 0,
+  onOverflowChange,
+  ref: forwardedRef,
+}: OverflowProps & { ref?: React.Ref<HTMLElement> }) {
+  const containerRef = React.useRef<HTMLElement | null>(null);
+  const itemsRef = React.useRef(new Map<string, ItemEntry>());
+  const dividersRef = React.useRef(new Map<HTMLElement, DividerEntry>());
+  const menuRef = React.useRef<HTMLElement | null>(null);
+  const sizeCache = React.useRef(new WeakMap<Element, number>());
+  const menuSizeRef = React.useRef(0);
+  const observerRef = React.useRef<ResizeObserver | null>(null);
+  const stateRef = React.useRef<OverflowState>(EMPTY_STATE);
+  const guardRef = React.useRef({ changes: 0, frame: 0 });
+  const [state, setState] = React.useState<OverflowState>(EMPTY_STATE);
+  const [version, bump] = React.useReducer((x: number) => x + 1, 0);
 
-    const observe = React.useCallback((el: Element | null) => {
-      if (!el || typeof ResizeObserver === "undefined") return;
-      observerRef.current ??= new ResizeObserver(() => updateRef.current(true));
-      observerRef.current.observe(el);
-    }, []);
-    const unobserve = React.useCallback((el: Element | null) => {
-      if (el) observerRef.current?.unobserve(el);
-    }, []);
+  const observe = React.useCallback((el: Element | null) => {
+    if (!el || typeof ResizeObserver === "undefined") return;
+    observerRef.current ??= new ResizeObserver(() => updateRef.current(true));
+    observerRef.current.observe(el);
+  }, []);
+  const unobserve = React.useCallback((el: Element | null) => {
+    if (el) observerRef.current?.unobserve(el);
+  }, []);
 
-    const update = (sync: boolean) => {
-      const container = containerRef.current;
-      if (!container || !container.isConnected) return;
-      const horizontal = overflowAxis === "horizontal";
-      const rect = container.getBoundingClientRect();
-      const raw = horizontal ? rect.width : rect.height;
-      // Container chưa hiển thị (display:none, tab đang ẩn…) → giữ nguyên, đo lại khi ResizeObserver báo.
-      if (raw <= 0) return;
-      const offset = horizontal ? container.offsetWidth : container.offsetHeight;
-      const scale = offset > 0 ? raw / offset : 1;
-      const cs = getComputedStyle(container);
-      const edges = horizontal
-        ? px(cs.paddingLeft) + px(cs.paddingRight) + px(cs.borderLeftWidth) + px(cs.borderRightWidth)
-        : px(cs.paddingTop) + px(cs.paddingBottom) + px(cs.borderTopWidth) + px(cs.borderBottomWidth);
-      const available = raw / scale - edges;
+  const update = (sync: boolean) => {
+    const container = containerRef.current;
+    if (!container || !container.isConnected) return;
+    const horizontal = overflowAxis === "horizontal";
+    const rect = container.getBoundingClientRect();
+    const raw = horizontal ? rect.width : rect.height;
+    // Container chưa hiển thị (display:none, tab đang ẩn…) → giữ nguyên, đo lại khi ResizeObserver báo.
+    if (raw <= 0) return;
+    const offset = horizontal ? container.offsetWidth : container.offsetHeight;
+    const scale = offset > 0 ? raw / offset : 1;
+    const cs = getComputedStyle(container);
+    const edges = horizontal
+      ? px(cs.paddingLeft) + px(cs.paddingRight) + px(cs.borderLeftWidth) + px(cs.borderRightWidth)
+      : px(cs.paddingTop) + px(cs.paddingBottom) + px(cs.borderTopWidth) + px(cs.borderBottomWidth);
+    const available = raw / scale - edges;
 
-      const items = [...itemsRef.current.values()].filter((e) => e.element.isConnected).sort(byDomOrder);
-      const dividers = [...dividersRef.current.values()].filter((e) => e.element.isConnected);
-      const line = items[0]?.element.parentElement ?? container;
-      const lineStyle = getComputedStyle(line);
-      const gap = px(horizontal ? lineStyle.columnGap : lineStyle.rowGap);
+    const items = [...itemsRef.current.values()].filter((e) => e.element.isConnected).sort(byDomOrder);
+    const dividers = [...dividersRef.current.values()].filter((e) => e.element.isConnected);
+    const line = items[0]?.element.parentElement ?? container;
+    const lineStyle = getComputedStyle(line);
+    const gap = px(horizontal ? lineStyle.columnGap : lineStyle.rowGap);
 
-      // Item đang ẩn không đo được → dùng kích thước đã cache lúc còn hiển thị.
-      const measure = (el: HTMLElement) => {
-        if (el.hasAttribute("data-overflowing")) return sizeCache.current.get(el) ?? 0;
-        const size = outerSize(el, horizontal, scale);
-        sizeCache.current.set(el, size);
-        return size;
-      };
-
-      const menu = menuRef.current?.isConnected ? menuRef.current : null;
-      const menuBox = menu ? ((Array.from(line.children).find((c) => c.contains(menu)) as HTMLElement | undefined) ?? menu) : null;
-      if (menuBox) {
-        const size = outerSize(menuBox, horizontal, scale);
-        if (size > 0) menuSizeRef.current = size;
-      }
-
-      // Phần tử khác cùng hàng (không phải item / divider / menu) chiếm chỗ cố định.
-      const registered = new Set<Element>([...items.map((i) => i.element), ...dividers.map((d) => d.element)]);
-      let fixedSize = 0;
-      let fixedCount = 0;
-      for (const child of Array.from(line.children)) {
-        if (registered.has(child) || child === menuBox) continue;
-        const position = getComputedStyle(child).position;
-        if (position === "absolute" || position === "fixed") continue;
-        const size = outerSize(child, horizontal, scale);
-        if (size > 0) {
-          fixedSize += size;
-          fixedCount += 1;
-        }
-      }
-      if (line !== container) {
-        fixedSize += horizontal
-          ? px(lineStyle.paddingLeft) + px(lineStyle.paddingRight) + px(lineStyle.borderLeftWidth) + px(lineStyle.borderRightWidth)
-          : px(lineStyle.paddingTop) + px(lineStyle.paddingBottom) + px(lineStyle.borderTopWidth) + px(lineStyle.borderBottomWidth);
-      }
-
-      const measuredItems = items.map((e) => ({ id: e.id, size: measure(e.element), priority: e.priority, groupId: e.groupId }));
-      const result = computeOverflow({
-        available,
-        items: measuredItems,
-        dividers: dividers.map((d) => ({ groupId: d.groupId, size: measure(d.element) })),
-        menuSize: menuSizeRef.current,
-        fixedSize,
-        fixedCount,
-        gap,
-        padding,
-        minimumVisible,
-        overflowDirection,
-      });
-      const next: OverflowState = { ...result, groups: getOverflowGroups(measuredItems, result.hiddenIds) };
-      if (sameState(stateRef.current, next)) return;
-
-      // Chốt chặn vòng lặp: tối đa 12 lần đổi trạng thái trong một khung hình.
-      const now = typeof performance !== "undefined" ? Math.floor(performance.now() / 16) : 0;
-      if (guardRef.current.frame !== now) guardRef.current = { changes: 0, frame: now };
-      if (++guardRef.current.changes > 12) return;
-
-      stateRef.current = next;
-      if (sync) flushSync(() => setState(next));
-      else setState(next);
-      onOverflowChangeRef.current?.({ hiddenIds: next.hiddenIds, visibleIds: next.visibleIds });
+    // Item đang ẩn không đo được → dùng kích thước đã cache lúc còn hiển thị.
+    const measure = (el: HTMLElement) => {
+      if (el.hasAttribute("data-overflowing")) return sizeCache.current.get(el) ?? 0;
+      const size = outerSize(el, horizontal, scale);
+      sizeCache.current.set(el, size);
+      return size;
     };
 
-    const updateRef = React.useRef(update);
-    updateRef.current = update;
-    const onOverflowChangeRef = React.useRef(onOverflowChange);
-    onOverflowChangeRef.current = onOverflowChange;
+    const menu = menuRef.current?.isConnected ? menuRef.current : null;
+    const menuBox = menu ? ((Array.from(line.children).find((c) => c.contains(menu)) as HTMLElement | undefined) ?? menu) : null;
+    if (menuBox) {
+      const size = outerSize(menuBox, horizontal, scale);
+      if (size > 0) menuSizeRef.current = size;
+    }
 
-    const registerItem = React.useCallback(
-      (entry: ItemEntry) => {
-        const prev = itemsRef.current.get(entry.id);
-        if (prev && prev.element === entry.element && prev.priority === entry.priority && prev.groupId === entry.groupId) return;
-        if (prev && prev.element !== entry.element) unobserve(prev.element);
-        itemsRef.current.set(entry.id, entry);
-        if (prev?.element !== entry.element) observe(entry.element);
-        bump();
-      },
-      [observe, unobserve],
-    );
-    const unregisterItem = React.useCallback(
-      (id: string) => {
-        const prev = itemsRef.current.get(id);
-        if (!prev) return;
-        itemsRef.current.delete(id);
-        unobserve(prev.element);
-        bump();
-      },
-      [unobserve],
-    );
-    const registerDivider = React.useCallback(
-      (entry: DividerEntry) => {
-        const prev = dividersRef.current.get(entry.element);
-        if (prev && prev.groupId === entry.groupId) return;
-        dividersRef.current.set(entry.element, entry);
-        if (!prev) observe(entry.element);
-        bump();
-      },
-      [observe],
-    );
-    const unregisterDivider = React.useCallback(
-      (element: HTMLElement) => {
-        if (!dividersRef.current.delete(element)) return;
-        unobserve(element);
-        bump();
-      },
-      [unobserve],
-    );
-    const registerMenu = React.useCallback(
-      (element: HTMLElement | null) => {
-        if (menuRef.current === element) return;
-        unobserve(menuRef.current);
-        menuRef.current = element;
-        observe(element);
-        bump();
-      },
-      [observe, unobserve],
-    );
+    // Phần tử khác cùng hàng (không phải item / divider / menu) chiếm chỗ cố định.
+    const registered = new Set<Element>([...items.map((i) => i.element), ...dividers.map((d) => d.element)]);
+    let fixedSize = 0;
+    let fixedCount = 0;
+    for (const child of Array.from(line.children)) {
+      if (registered.has(child) || child === menuBox) continue;
+      const position = getComputedStyle(child).position;
+      if (position === "absolute" || position === "fixed") continue;
+      const size = outerSize(child, horizontal, scale);
+      if (size > 0) {
+        fixedSize += size;
+        fixedCount += 1;
+      }
+    }
+    if (line !== container) {
+      fixedSize += horizontal
+        ? px(lineStyle.paddingLeft) + px(lineStyle.paddingRight) + px(lineStyle.borderLeftWidth) + px(lineStyle.borderRightWidth)
+        : px(lineStyle.paddingTop) + px(lineStyle.paddingBottom) + px(lineStyle.borderTopWidth) + px(lineStyle.borderBottomWidth);
+    }
 
-    // Đo lại sau mỗi lần đăng ký / đổi cấu hình — trong layout effect nên không nháy.
-    useIsomorphicLayoutEffect(() => {
-      updateRef.current(false);
-    }, [version, overflowAxis, overflowDirection, minimumVisible, padding]);
+    const measuredItems = items.map((e) => ({ id: e.id, size: measure(e.element), priority: e.priority, groupId: e.groupId }));
+    const result = computeOverflow({
+      available,
+      items: measuredItems,
+      dividers: dividers.map((d) => ({ groupId: d.groupId, size: measure(d.element) })),
+      menuSize: menuSizeRef.current,
+      fixedSize,
+      fixedCount,
+      gap,
+      padding,
+      minimumVisible,
+      overflowDirection,
+    });
+    const next: OverflowState = { ...result, groups: getOverflowGroups(measuredItems, result.hiddenIds) };
+    if (sameState(stateRef.current, next)) return;
 
-    useIsomorphicLayoutEffect(() => {
-      // (Re)mount — StrictMode chạy effect hai lần: quan sát lại mọi phần tử đã đăng ký.
-      observe(containerRef.current);
-      itemsRef.current.forEach((e) => observe(e.element));
-      dividersRef.current.forEach((e) => observe(e.element));
-      observe(menuRef.current);
-      return () => {
-        observerRef.current?.disconnect();
-        observerRef.current = null;
-      };
-    }, [observe]);
+    // Chốt chặn vòng lặp: tối đa 12 lần đổi trạng thái trong một khung hình.
+    const now = typeof performance !== "undefined" ? Math.floor(performance.now() / 16) : 0;
+    if (guardRef.current.frame !== now) guardRef.current = { changes: 0, frame: now };
+    if (++guardRef.current.changes > 12) return;
 
-    const hidden = React.useMemo(() => new Set(state.hiddenIds), [state.hiddenIds]);
-    const ctx = React.useMemo<OverflowContextValue>(
-      () => ({ state, hidden, registerItem, unregisterItem, registerDivider, unregisterDivider, registerMenu }),
-      [state, hidden, registerItem, unregisterItem, registerDivider, unregisterDivider, registerMenu],
-    );
+    stateRef.current = next;
+    if (sync) flushSync(() => setState(next));
+    else setState(next);
+    onOverflowChangeRef.current?.({ hiddenIds: next.hiddenIds, visibleIds: next.visibleIds });
+  };
 
-    const child = React.Children.only(children) as React.ReactElement<{ className?: string }>;
-    const setContainer = React.useCallback(
-      (node: HTMLElement | null) => {
-        if (containerRef.current && containerRef.current !== node) unobserve(containerRef.current);
-        containerRef.current = node;
-        observe(node);
-      },
-      [observe, unobserve],
-    );
-    const ref = useMergedRef<HTMLElement | null>(setContainer, getElementRef(child) as React.Ref<HTMLElement | null>, forwardedRef);
-    const classes = CONTAINER_CLASS[overflowAxis];
+  const updateRef = React.useRef(update);
+  updateRef.current = update;
+  const onOverflowChangeRef = React.useRef(onOverflowChange);
+  onOverflowChangeRef.current = onOverflowChange;
 
-    return (
-      <OverflowContext.Provider value={ctx}>
-        {React.cloneElement(child, {
-          ref,
-          "data-overflow-container": "",
-          className: cn(classes.size, child.props.className, classes.base),
-        } as Record<string, unknown>)}
-      </OverflowContext.Provider>
-    );
-  },
-);
-Overflow.displayName = "Overflow";
+  const registerItem = React.useCallback(
+    (entry: ItemEntry) => {
+      const prev = itemsRef.current.get(entry.id);
+      if (prev && prev.element === entry.element && prev.priority === entry.priority && prev.groupId === entry.groupId) return;
+      if (prev && prev.element !== entry.element) unobserve(prev.element);
+      itemsRef.current.set(entry.id, entry);
+      if (prev?.element !== entry.element) observe(entry.element);
+      bump();
+    },
+    [observe, unobserve],
+  );
+  const unregisterItem = React.useCallback(
+    (id: string) => {
+      const prev = itemsRef.current.get(id);
+      if (!prev) return;
+      itemsRef.current.delete(id);
+      unobserve(prev.element);
+      bump();
+    },
+    [unobserve],
+  );
+  const registerDivider = React.useCallback(
+    (entry: DividerEntry) => {
+      const prev = dividersRef.current.get(entry.element);
+      if (prev && prev.groupId === entry.groupId) return;
+      dividersRef.current.set(entry.element, entry);
+      if (!prev) observe(entry.element);
+      bump();
+    },
+    [observe],
+  );
+  const unregisterDivider = React.useCallback(
+    (element: HTMLElement) => {
+      if (!dividersRef.current.delete(element)) return;
+      unobserve(element);
+      bump();
+    },
+    [unobserve],
+  );
+  const registerMenu = React.useCallback(
+    (element: HTMLElement | null) => {
+      if (menuRef.current === element) return;
+      unobserve(menuRef.current);
+      menuRef.current = element;
+      observe(element);
+      bump();
+    },
+    [observe, unobserve],
+  );
+
+  // Đo lại sau mỗi lần đăng ký / đổi cấu hình — trong layout effect nên không nháy.
+  useIsomorphicLayoutEffect(() => {
+    updateRef.current(false);
+  }, [version, overflowAxis, overflowDirection, minimumVisible, padding]);
+
+  useIsomorphicLayoutEffect(() => {
+    // (Re)mount — StrictMode chạy effect hai lần: quan sát lại mọi phần tử đã đăng ký.
+    observe(containerRef.current);
+    itemsRef.current.forEach((e) => observe(e.element));
+    dividersRef.current.forEach((e) => observe(e.element));
+    observe(menuRef.current);
+    return () => {
+      observerRef.current?.disconnect();
+      observerRef.current = null;
+    };
+  }, [observe]);
+
+  const hidden = React.useMemo(() => new Set(state.hiddenIds), [state.hiddenIds]);
+  const ctx = React.useMemo<OverflowContextValue>(
+    () => ({ state, hidden, registerItem, unregisterItem, registerDivider, unregisterDivider, registerMenu }),
+    [state, hidden, registerItem, unregisterItem, registerDivider, unregisterDivider, registerMenu],
+  );
+
+  const child = React.Children.only(children) as React.ReactElement<{ className?: string }>;
+  const setContainer = React.useCallback(
+    (node: HTMLElement | null) => {
+      if (containerRef.current && containerRef.current !== node) unobserve(containerRef.current);
+      containerRef.current = node;
+      observe(node);
+    },
+    [observe, unobserve],
+  );
+  const ref = useComposedRefs<HTMLElement>(setContainer, getElementRef(child) as React.Ref<HTMLElement>, forwardedRef);
+  const classes = CONTAINER_CLASS[overflowAxis];
+
+  return (
+    <OverflowContext.Provider value={ctx}>
+      {React.cloneElement(child, {
+        ref,
+        "data-overflow-container": "",
+        className: cn(classes.size, child.props.className, classes.base),
+      } as Record<string, unknown>)}
+    </OverflowContext.Provider>
+  );
+}
 
 /* ------------------------------------------------------------------ OverflowItem */
 
@@ -512,11 +505,17 @@ export interface OverflowItemProps {
 }
 
 /** Bọc một item có thể bị thu vào menu. Không thêm phần tử DOM — gắn ref + thuộc tính lên chính element con. */
-export const OverflowItem = React.forwardRef<HTMLElement, OverflowItemProps>(({ id, priority = 0, groupId, children }, forwardedRef) => {
+export function OverflowItem({
+  id,
+  priority = 0,
+  groupId,
+  children,
+  ref: forwardedRef,
+}: OverflowItemProps & { ref?: React.Ref<HTMLElement> }) {
   const ctx = React.useContext(OverflowContext);
   const elementRef = React.useRef<HTMLElement | null>(null);
   const child = React.Children.only(children);
-  const ref = useMergedRef<HTMLElement | null>(elementRef, getElementRef(child) as React.Ref<HTMLElement | null>, forwardedRef);
+  const ref = useComposedRefs<HTMLElement>(elementRef, getElementRef(child) as React.Ref<HTMLElement>, forwardedRef);
   const register = ctx?.registerItem;
   const unregister = ctx?.unregisterItem;
 
@@ -528,8 +527,7 @@ export const OverflowItem = React.forwardRef<HTMLElement, OverflowItemProps>(({ 
 
   const isHidden = ctx?.hidden.has(id) ?? false;
   return React.cloneElement(child, { ref, "data-overflow-item": id, ...(isHidden ? HIDDEN_PROPS : null) } as Record<string, unknown>);
-});
-OverflowItem.displayName = "OverflowItem";
+}
 
 /* ------------------------------------------------------------------ OverflowDivider */
 
@@ -544,16 +542,18 @@ export interface OverflowDividerProps {
  * Divider thường không chuyển tiếp ref → tìm phần tử qua một `<template>` đánh dấu ngay sau nó
  * (`<template>` hợp lệ trong `<ol>`/`<ul>`, không hiển thị, không vào cây trợ năng).
  */
-export const OverflowDivider = React.forwardRef<HTMLElement, OverflowDividerProps>(({ groupId, children }, forwardedRef) => {
+export function OverflowDivider({
+  groupId,
+  children,
+  ref: forwardedRef,
+}: OverflowDividerProps & { ref?: React.Ref<HTMLElement> }) {
   const ctx = React.useContext(OverflowContext);
   const elementRef = React.useRef<HTMLElement | null>(null);
   const markerRef = React.useRef<HTMLTemplateElement | null>(null);
   const registeredRef = React.useRef<HTMLElement | null>(null);
   const child = React.Children.only(children);
-  const ref = useMergedRef<HTMLElement | null>(elementRef, getElementRef(child) as React.Ref<HTMLElement | null>, forwardedRef);
-  // Function component thường (không forwardRef) không nhận ref — React sẽ cảnh báo nếu truyền.
-  const type: unknown = child.type;
-  const acceptsRef = typeof type !== "function" || !!(type as { prototype?: { isReactComponent?: unknown } }).prototype?.isReactComponent;
+  // React 19: mọi component nhận `ref` như một prop; component không gắn nó vào DOM thì dùng `<template>` đánh dấu.
+  const ref = useComposedRefs<HTMLElement>(elementRef, getElementRef(child) as React.Ref<HTMLElement>, forwardedRef);
   const register = ctx?.registerDivider;
   const unregister = ctx?.unregisterDivider;
 
@@ -576,15 +576,14 @@ export const OverflowDivider = React.forwardRef<HTMLElement, OverflowDividerProp
   return (
     <>
       {React.cloneElement(child, {
-        ...(acceptsRef ? { ref } : null),
+        ref,
         "data-overflow-divider": groupId,
         ...(isHidden ? HIDDEN_PROPS : null),
       } as Record<string, unknown>)}
       <template ref={markerRef} data-overflow-marker="" />
     </>
   );
-});
-OverflowDivider.displayName = "OverflowDivider";
+}
 
 /* ------------------------------------------------------------------ Hooks */
 

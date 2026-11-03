@@ -36,23 +36,29 @@ export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextArea
 }
 
 /** Textarea nhập văn bản nhiều dòng; đặt trong `<Field>` để có label / hint / validation. */
-export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, textareaClassName, appearance = "outline", size = "medium", resize = "none", disabled, ...props }, ref) => {
-    const invalid = props["aria-invalid"] === true || props["aria-invalid"] === "true";
-    return (
-      <span
-        data-disabled={disabled || undefined}
-        data-invalid={invalid || undefined}
-        className={cn(fieldAppearanceClass[appearance], "inline-flex pb-0.5", className)}
-      >
-        <textarea
-          ref={ref}
-          disabled={disabled}
-          className={cn(textareaVariants({ size, resize }), textareaClassName)}
-          {...props}
-        />
-      </span>
-    );
-  },
-);
-Textarea.displayName = "Textarea";
+export function Textarea({
+  className,
+  textareaClassName,
+  appearance = "outline",
+  size = "medium",
+  resize = "none",
+  disabled,
+  ref,
+  ...props
+}: TextareaProps & { ref?: React.Ref<HTMLTextAreaElement> }) {
+  const invalid = props["aria-invalid"] === true || props["aria-invalid"] === "true";
+  return (
+    <span
+      data-disabled={disabled || undefined}
+      data-invalid={invalid || undefined}
+      className={cn(fieldAppearanceClass[appearance], "inline-flex pb-0.5", className)}
+    >
+      <textarea
+        ref={ref}
+        disabled={disabled}
+        className={cn(textareaVariants({ size, resize }), textareaClassName)}
+        {...props}
+      />
+    </span>
+  );
+}

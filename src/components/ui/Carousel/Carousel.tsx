@@ -9,6 +9,7 @@ import { matchesMedia } from "../hooks/useMediaQuery";
 import { Button } from "../Button/Button";
 import { useYugenMessages } from "../YugenProvider/context";
 import { carouselMessagesEn } from "./messages";
+import { useComposedRefs } from "../_internal/composeRefs";
 
 export { carouselMessages, carouselMessagesVi, carouselMessagesEn, type CarouselMessages } from "./messages";
 
@@ -157,405 +158,403 @@ export interface CarouselProps extends React.HTMLAttributes<HTMLElement> {
   onActiveIndexChange?: (index: number) => void;
 }
 
-export const Carousel = React.forwardRef<HTMLElement, CarouselProps>(
-  (
-    {
-      loop,
-      circular: circularProp,
-      autoplay: autoplayProp,
-      defaultAutoplay = false,
-      onAutoplayChange,
-      autoplayInterval = 4000,
-      slidesPerView,
-      gap: gapProp = "small",
-      activeIndex: activeIndexProp,
-      defaultActiveIndex = 0,
-      onActiveIndexChange,
-      className,
-      onKeyDown,
-      children,
-      ...props
-    },
-    ref,
-  ) => {
-    if (circularProp !== undefined) warnDeprecated("Carousel.circular", "use loop", "1.0.0");
-    const wrap = loop ?? circularProp ?? false;
-    const gap = resolveGap(gapProp);
-    const viewportRef = React.useRef<HTMLDivElement | null>(null);
-    const dir = useDirection();
-    const msg = useYugenMessages("carousel", carouselMessagesEn);
-    const [activeIndex, setActiveIndex] = useControllableState({
-      value: activeIndexProp,
-      defaultValue: defaultActiveIndex,
-      onChange: onActiveIndexChange,
-    });
-    const [count, setCount] = React.useState(0);
-    const [autoplay, setAutoplayState] = useControllableState({
-      value: autoplayProp,
-      defaultValue: () => defaultAutoplay && !prefersReducedMotion(),
-      onChange: onAutoplayChange,
-    });
-    const [reasons, setReasons] = React.useState<Record<PauseReason, boolean>>({ hover: false, focus: false });
-    const [hidden, setHidden] = React.useState(false);
-    // Cuộn khỏi màn hình thì dừng tự chạy (không tốn CPU cho thứ không ai thấy), quay lại thì chạy tiếp từ chỗ dừng.
-    const [offscreen, setOffscreen] = React.useState(false);
-    // Số vạch tiến độ đang hiện: không có vạch nào thì đồng hồ chỉ cần một setTimeout tới lần chuyển slide.
-    const [progressCount, setProgressCount] = React.useState(0);
-    const paused = reasons.hover || reasons.focus || hidden || offscreen;
-    const rotating = autoplay && !paused && count > 1;
-    const baseId = React.useId();
-    // Slide mà track đang cuộn tới / đang dừng ở đó. Khác `activeIndex` khi giá trị controlled đổi từ bên ngoài hoặc lúc
-    // mount với defaultActiveIndex: effect bên dưới cuộn track tới đúng slide.
-    const activeRef = React.useRef(0);
-    const targetRef = React.useRef<number | null>(null);
-    const frameRef = React.useRef(0);
-    const elapsedRef = React.useRef(0);
-    // Lúc đồng hồ được đặt lại (đổi slide): đồng hồ setTimeout chỉ tính thời gian từ mốc này.
-    const resetAtRef = React.useRef(0);
-    const progressEls = React.useRef(new Set<HTMLElement>());
+export function Carousel({
+  loop,
+  circular: circularProp,
+  autoplay: autoplayProp,
+  defaultAutoplay = false,
+  onAutoplayChange,
+  autoplayInterval = 4000,
+  slidesPerView,
+  gap: gapProp = "small",
+  activeIndex: activeIndexProp,
+  defaultActiveIndex = 0,
+  onActiveIndexChange,
+  className,
+  onKeyDown,
+  children,
+  ref,
+  ...props
+}: CarouselProps & { ref?: React.Ref<HTMLElement> }) {
+  if (circularProp !== undefined) warnDeprecated("Carousel.circular", "use loop", "1.0.0");
+  const wrap = loop ?? circularProp ?? false;
+  const gap = resolveGap(gapProp);
+  const viewportRef = React.useRef<HTMLDivElement | null>(null);
+  const dir = useDirection();
+  const msg = useYugenMessages("carousel", carouselMessagesEn);
+  const [activeIndex, setActiveIndex] = useControllableState({
+    value: activeIndexProp,
+    defaultValue: defaultActiveIndex,
+    onChange: onActiveIndexChange,
+  });
+  const [count, setCount] = React.useState(0);
+  const [autoplay, setAutoplayState] = useControllableState({
+    value: autoplayProp,
+    defaultValue: () => defaultAutoplay && !prefersReducedMotion(),
+    onChange: onAutoplayChange,
+  });
+  const [reasons, setReasons] = React.useState<Record<PauseReason, boolean>>({ hover: false, focus: false });
+  const [hidden, setHidden] = React.useState(false);
+  // Cuộn khỏi màn hình thì dừng tự chạy (không tốn CPU cho thứ không ai thấy), quay lại thì chạy tiếp từ chỗ dừng.
+  const [offscreen, setOffscreen] = React.useState(false);
+  // Số vạch tiến độ đang hiện: không có vạch nào thì đồng hồ chỉ cần một setTimeout tới lần chuyển slide.
+  const [progressCount, setProgressCount] = React.useState(0);
+  const paused = reasons.hover || reasons.focus || hidden || offscreen;
+  const rotating = autoplay && !paused && count > 1;
+  const baseId = React.useId();
+  // Slide mà track đang cuộn tới / đang dừng ở đó. Khác `activeIndex` khi giá trị controlled đổi từ bên ngoài hoặc lúc
+  // mount với defaultActiveIndex: effect bên dưới cuộn track tới đúng slide.
+  const activeRef = React.useRef(0);
+  const targetRef = React.useRef<number | null>(null);
+  const frameRef = React.useRef(0);
+  const elapsedRef = React.useRef(0);
+  // Lúc đồng hồ được đặt lại (đổi slide): đồng hồ setTimeout chỉ tính thời gian từ mốc này.
+  const resetAtRef = React.useRef(0);
+  const progressEls = React.useRef(new Set<HTMLElement>());
 
-    const paintProgress = React.useCallback(() => {
-      const value = autoplay ? Math.min(1, elapsedRef.current / autoplayInterval) : 1;
-      progressEls.current.forEach((el) => el.style.setProperty("--carousel-progress", String(value)));
-    }, [autoplay, autoplayInterval]);
+  const paintProgress = React.useCallback(() => {
+    const value = autoplay ? Math.min(1, elapsedRef.current / autoplayInterval) : 1;
+    progressEls.current.forEach((el) => el.style.setProperty("--carousel-progress", String(value)));
+  }, [autoplay, autoplayInterval]);
 
-    const registerProgress = React.useCallback(
-      (element: HTMLElement) => {
-        progressEls.current.add(element);
-        setProgressCount(progressEls.current.size);
-        paintProgress();
-        return () => {
-          progressEls.current.delete(element);
-          setProgressCount(progressEls.current.size);
-        };
-      },
-      [paintProgress],
-    );
-
-    const updateActive = React.useCallback((index: number) => {
-      if (index === activeRef.current) return;
-      activeRef.current = index;
-      elapsedRef.current = 0; // slide mới → đồng hồ autoplay chạy lại từ đầu
-      resetAtRef.current = performance.now();
-      setActiveIndex(index);
-    }, [setActiveIndex]);
-
-    const goTo = React.useCallback(
-      (index: number, instant = false) => {
-        const track = viewportRef.current;
-        if (!track || count === 0) return;
-        const i = wrap ? (index + count) % count : Math.max(0, Math.min(count - 1, index));
-        const slide = track.children[i] as HTMLElement | undefined;
-        if (!slide) return;
-        targetRef.current = instant ? null : i;
-        // RTL: scrollLeft bằng 0 ở đầu và âm dần khi tiến về sau.
-        const rtl = isRtl(track);
-        const offset = inlineOffset(track, slide, rtl);
-        const behavior = instant || prefersReducedMotion() ? "auto" : "smooth";
-        track.scrollTo({ left: track.scrollLeft + (rtl ? -offset : offset), behavior });
-        updateActive(i);
-      },
-      [count, wrap, updateActive],
-    );
-
-    // activeIndex đổi từ bên ngoài (controlled) hoặc defaultActiveIndex lúc mount → cuộn track tới slide đó.
-    // Lần đầu nhảy thẳng, không chạy hiệu ứng cuộn.
-    const syncedRef = React.useRef(false);
-    useIsomorphicLayoutEffect(() => {
-      if (count === 0) return;
-      const first = !syncedRef.current;
-      syncedRef.current = true;
-      if (activeIndex !== activeRef.current) goTo(activeIndex, first);
-    }, [activeIndex, count, goTo]);
-
-    const next = React.useCallback(() => goTo(activeRef.current + 1), [goTo]);
-    const prev = React.useCallback(() => goTo(activeRef.current - 1), [goTo]);
-
-    const setAutoplay = React.useCallback(
-      (value: boolean) => {
-        elapsedRef.current = 0;
-        setAutoplayState(value);
-      },
-      [setAutoplayState],
-    );
-
-    const setPauseReason = React.useCallback((reason: PauseReason, active: boolean) => {
-      setReasons((current) => (current[reason] === active ? current : { ...current, [reason]: active }));
-    }, []);
-    const setPaused = React.useCallback((value: boolean) => setPauseReason("hover", value), [setPauseReason]);
-
-    const onViewportScroll = React.useCallback(() => {
-      cancelAnimationFrame(frameRef.current);
-      frameRef.current = requestAnimationFrame(() => {
-        const track = viewportRef.current;
-        if (!track) return;
-        const slides = Array.from(track.children) as HTMLElement[];
-        if (slides.length === 0) return;
-        let best = 0;
-        const rtl = isRtl(track);
-        if (Math.abs(track.scrollLeft) + track.clientWidth >= track.scrollWidth - 2) {
-          best = slides.length - 1;
-        } else {
-          let min = Number.POSITIVE_INFINITY;
-          slides.forEach((slide, i) => {
-            const distance = Math.abs(inlineOffset(track, slide, rtl));
-            if (distance < min) {
-              min = distance;
-              best = i;
-            }
-          });
-        }
-        // Đang cuộn tới slide do nút / chấm yêu cầu: bỏ qua các vị trí trung gian.
-        if (targetRef.current !== null) {
-          if (best !== targetRef.current) return;
-          targetRef.current = null;
-        }
-        updateActive(best);
-      });
-    }, [updateActive]);
-
-    const cancelProgrammaticScroll = React.useCallback(() => {
-      targetRef.current = null;
-    }, []);
-
-    React.useEffect(() => () => cancelAnimationFrame(frameRef.current), []);
-
-    // Tab bị ẩn (chuyển tab, khoá máy) → dừng tự chạy.
-    React.useEffect(() => {
-      const sync = () => setHidden(document.hidden);
-      sync();
-      document.addEventListener("visibilitychange", sync);
-      return () => document.removeEventListener("visibilitychange", sync);
-    }, []);
-
-    React.useEffect(() => {
-      const el = viewportRef.current;
-      if (!el || typeof IntersectionObserver === "undefined") return;
-      const observer = new IntersectionObserver(([entry]) => setOffscreen(!entry.isIntersecting));
-      observer.observe(el);
-      return () => observer.disconnect();
-    }, []);
-
-    // Đồng hồ autoplay: tạm dừng giữ nguyên tiến độ, chạy tiếp từ chỗ dừng. Có vạch tiến độ thì cập nhật mỗi frame
-    // (requestAnimationFrame); không có thì một setTimeout cho phần thời gian còn lại, không chạy vòng lặp 60 lần/giây.
-    React.useEffect(() => {
+  const registerProgress = React.useCallback(
+    (element: HTMLElement) => {
+      progressEls.current.add(element);
+      setProgressCount(progressEls.current.size);
       paintProgress();
-      if (!rotating) return;
-      let last = performance.now();
-      let frame = 0;
-      let timer = 0;
-      const tick = (now: number) => {
-        elapsedRef.current += now - Math.max(last, resetAtRef.current);
-        last = now;
-        if (elapsedRef.current >= autoplayInterval) {
-          elapsedRef.current = 0;
-          goTo(activeRef.current + 1 >= count ? 0 : activeRef.current + 1);
-        }
-        paintProgress();
-        schedule();
-      };
-      const schedule = () => {
-        if (progressCount > 0) frame = requestAnimationFrame(tick);
-        else timer = window.setTimeout(() => tick(performance.now()), Math.max(0, autoplayInterval - elapsedRef.current));
-      };
-      schedule();
       return () => {
-        cancelAnimationFrame(frame);
-        window.clearTimeout(timer);
-        // Giữ phần thời gian đã chạy tới lúc dừng (vd. hover giữa chừng).
-        elapsedRef.current += performance.now() - Math.max(last, resetAtRef.current);
+        progressEls.current.delete(element);
+        setProgressCount(progressEls.current.size);
       };
-    }, [rotating, count, autoplayInterval, goTo, paintProgress, progressCount]);
+    },
+    [paintProgress],
+  );
 
-    const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
-      onKeyDown?.(event);
-      if (event.defaultPrevented) return;
-      const tag = (event.target as HTMLElement).tagName;
-      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
-      const nextKey = dir === "rtl" ? "ArrowLeft" : "ArrowRight";
-      const prevKey = dir === "rtl" ? "ArrowRight" : "ArrowLeft";
-      if (event.key === nextKey) {
-        event.preventDefault();
-        next();
-      } else if (event.key === prevKey) {
-        event.preventDefault();
-        prev();
+  const updateActive = React.useCallback((index: number) => {
+    if (index === activeRef.current) return;
+    activeRef.current = index;
+    elapsedRef.current = 0; // slide mới → đồng hồ autoplay chạy lại từ đầu
+    resetAtRef.current = performance.now();
+    setActiveIndex(index);
+  }, [setActiveIndex]);
+
+  const goTo = React.useCallback(
+    (index: number, instant = false) => {
+      const track = viewportRef.current;
+      if (!track || count === 0) return;
+      const i = wrap ? (index + count) % count : Math.max(0, Math.min(count - 1, index));
+      const slide = track.children[i] as HTMLElement | undefined;
+      if (!slide) return;
+      targetRef.current = instant ? null : i;
+      // RTL: scrollLeft bằng 0 ở đầu và âm dần khi tiến về sau.
+      const rtl = isRtl(track);
+      const offset = inlineOffset(track, slide, rtl);
+      const behavior = instant || prefersReducedMotion() ? "auto" : "smooth";
+      track.scrollTo({ left: track.scrollLeft + (rtl ? -offset : offset), behavior });
+      updateActive(i);
+    },
+    [count, wrap, updateActive],
+  );
+
+  // activeIndex đổi từ bên ngoài (controlled) hoặc defaultActiveIndex lúc mount → cuộn track tới slide đó.
+  // Lần đầu nhảy thẳng, không chạy hiệu ứng cuộn.
+  const syncedRef = React.useRef(false);
+  useIsomorphicLayoutEffect(() => {
+    if (count === 0) return;
+    const first = !syncedRef.current;
+    syncedRef.current = true;
+    if (activeIndex !== activeRef.current) goTo(activeIndex, first);
+  }, [activeIndex, count, goTo]);
+
+  const next = React.useCallback(() => goTo(activeRef.current + 1), [goTo]);
+  const prev = React.useCallback(() => goTo(activeRef.current - 1), [goTo]);
+
+  const setAutoplay = React.useCallback(
+    (value: boolean) => {
+      elapsedRef.current = 0;
+      setAutoplayState(value);
+    },
+    [setAutoplayState],
+  );
+
+  const setPauseReason = React.useCallback((reason: PauseReason, active: boolean) => {
+    setReasons((current) => (current[reason] === active ? current : { ...current, [reason]: active }));
+  }, []);
+  const setPaused = React.useCallback((value: boolean) => setPauseReason("hover", value), [setPauseReason]);
+
+  const onViewportScroll = React.useCallback(() => {
+    cancelAnimationFrame(frameRef.current);
+    frameRef.current = requestAnimationFrame(() => {
+      const track = viewportRef.current;
+      if (!track) return;
+      const slides = Array.from(track.children) as HTMLElement[];
+      if (slides.length === 0) return;
+      let best = 0;
+      const rtl = isRtl(track);
+      if (Math.abs(track.scrollLeft) + track.clientWidth >= track.scrollWidth - 2) {
+        best = slides.length - 1;
+      } else {
+        let min = Number.POSITIVE_INFINITY;
+        slides.forEach((slide, i) => {
+          const distance = Math.abs(inlineOffset(track, slide, rtl));
+          if (distance < min) {
+            min = distance;
+            best = i;
+          }
+        });
       }
+      // Đang cuộn tới slide do nút / chấm yêu cầu: bỏ qua các vị trí trung gian.
+      if (targetRef.current !== null) {
+        if (best !== targetRef.current) return;
+        targetRef.current = null;
+      }
+      updateActive(best);
+    });
+  }, [updateActive]);
+
+  const cancelProgrammaticScroll = React.useCallback(() => {
+    targetRef.current = null;
+  }, []);
+
+  React.useEffect(() => () => cancelAnimationFrame(frameRef.current), []);
+
+  // Tab bị ẩn (chuyển tab, khoá máy) → dừng tự chạy.
+  React.useEffect(() => {
+    const sync = () => setHidden(document.hidden);
+    sync();
+    document.addEventListener("visibilitychange", sync);
+    return () => document.removeEventListener("visibilitychange", sync);
+  }, []);
+
+  React.useEffect(() => {
+    const el = viewportRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(([entry]) => setOffscreen(!entry.isIntersecting));
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // Đồng hồ autoplay: tạm dừng giữ nguyên tiến độ, chạy tiếp từ chỗ dừng. Có vạch tiến độ thì cập nhật mỗi frame
+  // (requestAnimationFrame); không có thì một setTimeout cho phần thời gian còn lại, không chạy vòng lặp 60 lần/giây.
+  React.useEffect(() => {
+    paintProgress();
+    if (!rotating) return;
+    let last = performance.now();
+    let frame = 0;
+    let timer = 0;
+    const tick = (now: number) => {
+      elapsedRef.current += now - Math.max(last, resetAtRef.current);
+      last = now;
+      if (elapsedRef.current >= autoplayInterval) {
+        elapsedRef.current = 0;
+        goTo(activeRef.current + 1 >= count ? 0 : activeRef.current + 1);
+      }
+      paintProgress();
+      schedule();
     };
+    const schedule = () => {
+      if (progressCount > 0) frame = requestAnimationFrame(tick);
+      else timer = window.setTimeout(() => tick(performance.now()), Math.max(0, autoplayInterval - elapsedRef.current));
+    };
+    schedule();
+    return () => {
+      cancelAnimationFrame(frame);
+      window.clearTimeout(timer);
+      // Giữ phần thời gian đã chạy tới lúc dừng (vd. hover giữa chừng).
+      elapsedRef.current += performance.now() - Math.max(last, resetAtRef.current);
+    };
+  }, [rotating, count, autoplayInterval, goTo, paintProgress, progressCount]);
 
-    const context = React.useMemo<CarouselContextValue>(
-      () => ({
-        activeIndex,
-        count,
-        setCount,
-        goTo,
-        next,
-        prev,
-        loop: wrap,
-        autoplay,
-        setAutoplay,
-        setPaused,
-        setPauseReason,
-        rotating,
-        registerProgress,
-        slidesPerView,
-        gap,
-        viewportRef,
-        onViewportScroll,
-        cancelProgrammaticScroll,
-        baseId,
-      }),
-      [
-        activeIndex,
-        count,
-        goTo,
-        next,
-        prev,
-        wrap,
-        autoplay,
-        setAutoplay,
-        setPaused,
-        setPauseReason,
-        rotating,
-        registerProgress,
-        slidesPerView,
-        gap,
-        onViewportScroll,
-        cancelProgrammaticScroll,
-        baseId,
-      ],
-    );
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+    onKeyDown?.(event);
+    if (event.defaultPrevented) return;
+    const tag = (event.target as HTMLElement).tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+    const nextKey = dir === "rtl" ? "ArrowLeft" : "ArrowRight";
+    const prevKey = dir === "rtl" ? "ArrowRight" : "ArrowLeft";
+    if (event.key === nextKey) {
+      event.preventDefault();
+      next();
+    } else if (event.key === prevKey) {
+      event.preventDefault();
+      prev();
+    }
+  };
 
-    return (
-      <CarouselContext.Provider value={context}>
-        <section
-          ref={ref}
-          aria-roledescription={msg.roleDescription}
-          className={cn("relative flex min-w-0 flex-col gap-3", className)}
-          onKeyDown={handleKeyDown}
-          {...props}
-        >
-          {children}
-          <div aria-live={rotating ? "off" : "polite"} aria-atomic className="sr-only">
-            {count > 0 ? msg.slide(activeIndex + 1, count) : ""}
-          </div>
-        </section>
-      </CarouselContext.Provider>
-    );
-  },
-);
-Carousel.displayName = "Carousel";
+  const context = React.useMemo<CarouselContextValue>(
+    () => ({
+      activeIndex,
+      count,
+      setCount,
+      goTo,
+      next,
+      prev,
+      loop: wrap,
+      autoplay,
+      setAutoplay,
+      setPaused,
+      setPauseReason,
+      rotating,
+      registerProgress,
+      slidesPerView,
+      gap,
+      viewportRef,
+      onViewportScroll,
+      cancelProgrammaticScroll,
+      baseId,
+    }),
+    [
+      activeIndex,
+      count,
+      goTo,
+      next,
+      prev,
+      wrap,
+      autoplay,
+      setAutoplay,
+      setPaused,
+      setPauseReason,
+      rotating,
+      registerProgress,
+      slidesPerView,
+      gap,
+      onViewportScroll,
+      cancelProgrammaticScroll,
+      baseId,
+    ],
+  );
+
+  return (
+    <CarouselContext.Provider value={context}>
+      <section
+        ref={ref}
+        aria-roledescription={msg.roleDescription}
+        className={cn("relative flex min-w-0 flex-col gap-3", className)}
+        onKeyDown={handleKeyDown}
+        {...props}
+      >
+        {children}
+        <div aria-live={rotating ? "off" : "polite"} aria-atomic className="sr-only">
+          {count > 0 ? msg.slide(activeIndex + 1, count) : ""}
+        </div>
+      </section>
+    </CarouselContext.Provider>
+  );
+}
 
 /* ------------------------------------------------------------------ CarouselViewport */
 /** Track cuộn ngang (CSS scroll-snap); mỗi con trực tiếp là một CarouselCard. */
-export const CarouselViewport = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  (
-    { className, style, children, onScroll, onPointerDown, onWheel, onTouchStart, onMouseEnter, onMouseLeave, onFocus, onBlur, ...props },
-    ref,
-  ) => {
-    const ctx = useCarousel();
-    const slides = React.Children.toArray(children).filter(React.isValidElement);
-    const total = slides.length;
-    const { setCount, viewportRef, setPauseReason } = ctx;
+export function CarouselViewport({
+  className,
+  style,
+  children,
+  onScroll,
+  onPointerDown,
+  onWheel,
+  onTouchStart,
+  onMouseEnter,
+  onMouseLeave,
+  onFocus,
+  onBlur,
+  ref,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> & { ref?: React.Ref<HTMLDivElement> }) {
+  const ctx = useCarousel();
+  const slides = React.Children.toArray(children).filter(React.isValidElement);
+  const total = slides.length;
+  const { setCount, viewportRef, setPauseReason } = ctx;
 
-    React.useEffect(() => setCount(total), [total, setCount]);
+  React.useEffect(() => setCount(total), [total, setCount]);
 
-    const setRefs = React.useCallback(
-      (node: HTMLDivElement | null) => {
-        viewportRef.current = node;
-        if (typeof ref === "function") ref(node);
-        else if (ref) ref.current = node;
-      },
-      [ref, viewportRef],
-    );
+  const setRefs = useComposedRefs(viewportRef, ref);
 
-    return (
-      <div
-        ref={setRefs}
-        tabIndex={0}
-        className={cn(
-          "relative flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain rounded-xlarge",
-          "scrollbar-none [&::-webkit-scrollbar]:hidden",
-          GAP_CLASS[ctx.gap],
-          className,
-        )}
-        style={{ "--carousel-gap": GAP_VALUE[ctx.gap], ...style } as React.CSSProperties}
-        onScroll={(event) => {
-          onScroll?.(event);
-          ctx.onViewportScroll();
-        }}
-        onPointerDown={(event) => {
-          onPointerDown?.(event);
-          ctx.cancelProgrammaticScroll();
-        }}
-        onWheel={(event) => {
-          onWheel?.(event);
-          ctx.cancelProgrammaticScroll();
-        }}
-        onTouchStart={(event) => {
-          onTouchStart?.(event);
-          ctx.cancelProgrammaticScroll();
-        }}
-        // Tạm dừng autoplay khi người dùng đang xem / thao tác với slide.
-        onMouseEnter={(event) => {
-          onMouseEnter?.(event);
-          setPauseReason("hover", true);
-        }}
-        onMouseLeave={(event) => {
-          onMouseLeave?.(event);
-          setPauseReason("hover", false);
-        }}
-        onFocus={(event) => {
-          onFocus?.(event);
-          setPauseReason("focus", true);
-        }}
-        onBlur={(event) => {
-          onBlur?.(event);
-          if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setPauseReason("focus", false);
-        }}
-        {...props}
-      >
-        {slides.map((child, index) => (
-          <SlideIndexContext.Provider key={child.key ?? index} value={index}>
-            {child}
-          </SlideIndexContext.Provider>
-        ))}
-      </div>
-    );
-  },
-);
-CarouselViewport.displayName = "CarouselViewport";
+  return (
+    <div
+      ref={setRefs}
+      tabIndex={0}
+      className={cn(
+        "relative flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain rounded-xlarge",
+        "scrollbar-none [&::-webkit-scrollbar]:hidden",
+        GAP_CLASS[ctx.gap],
+        className,
+      )}
+      style={{ "--carousel-gap": GAP_VALUE[ctx.gap], ...style } as React.CSSProperties}
+      onScroll={(event) => {
+        onScroll?.(event);
+        ctx.onViewportScroll();
+      }}
+      onPointerDown={(event) => {
+        onPointerDown?.(event);
+        ctx.cancelProgrammaticScroll();
+      }}
+      onWheel={(event) => {
+        onWheel?.(event);
+        ctx.cancelProgrammaticScroll();
+      }}
+      onTouchStart={(event) => {
+        onTouchStart?.(event);
+        ctx.cancelProgrammaticScroll();
+      }}
+      // Tạm dừng autoplay khi người dùng đang xem / thao tác với slide.
+      onMouseEnter={(event) => {
+        onMouseEnter?.(event);
+        setPauseReason("hover", true);
+      }}
+      onMouseLeave={(event) => {
+        onMouseLeave?.(event);
+        setPauseReason("hover", false);
+      }}
+      onFocus={(event) => {
+        onFocus?.(event);
+        setPauseReason("focus", true);
+      }}
+      onBlur={(event) => {
+        onBlur?.(event);
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setPauseReason("focus", false);
+      }}
+      {...props}
+    >
+      {slides.map((child, index) => (
+        <SlideIndexContext.Provider key={child.key ?? index} value={index}>
+          {child}
+        </SlideIndexContext.Provider>
+      ))}
+    </div>
+  );
+}
 
 /* ------------------------------------------------------------------ CarouselCard */
 /**
  * Một slide. Mặc định rộng 100% viewport; đặt `slidesPerView` trên Carousel (vd. 1.15) hoặc
  * `className="basis-4/5"` để lộ một phần slide kế.
  */
-export const CarouselCard = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, style, ...props }, ref) => {
-    const ctx = useCarousel();
-    const msg = useYugenMessages("carousel", carouselMessagesEn);
-    const index = React.useContext(SlideIndexContext);
-    const perView = ctx.slidesPerView;
-    const basis =
-      perView && perView > 0
-        ? { flexBasis: `calc((100% - var(--carousel-gap) * ${Math.max(0, Math.ceil(perView) - 1)}) / ${perView})` }
-        : undefined;
-    return (
-      <div
-        ref={ref}
-        id={`${ctx.baseId}-slide-${index}`}
-        role="group"
-        aria-roledescription={msg.slideRoleDescription}
-        aria-label={msg.slide(index + 1, ctx.count)}
-        className={cn("min-w-0 shrink-0 grow-0 basis-full snap-start", className)}
-        style={basis ? { ...basis, ...style } : style}
-        {...props}
-      />
-    );
-  },
-);
-CarouselCard.displayName = "CarouselCard";
+export function CarouselCard({
+  className,
+  style,
+  ref,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> & { ref?: React.Ref<HTMLDivElement> }) {
+  const ctx = useCarousel();
+  const msg = useYugenMessages("carousel", carouselMessagesEn);
+  const index = React.useContext(SlideIndexContext);
+  const perView = ctx.slidesPerView;
+  const basis =
+    perView && perView > 0
+      ? { flexBasis: `calc((100% - var(--carousel-gap) * ${Math.max(0, Math.ceil(perView) - 1)}) / ${perView})` }
+      : undefined;
+  return (
+    <div
+      ref={ref}
+      id={`${ctx.baseId}-slide-${index}`}
+      role="group"
+      aria-roledescription={msg.slideRoleDescription}
+      aria-label={msg.slide(index + 1, ctx.count)}
+      className={cn("min-w-0 shrink-0 grow-0 basis-full snap-start", className)}
+      style={basis ? { ...basis, ...style } : style}
+      {...props}
+    />
+  );
+}
 
 /* ------------------------------------------------------------------ Progress fill */
 /**
@@ -690,101 +689,108 @@ export type CarouselThumbnailsProps = React.HTMLAttributes<HTMLDivElement>;
  * Điều hướng bằng ảnh thu nhỏ (tablist). Mỗi con trực tiếp là một CarouselThumbnail theo đúng thứ tự slide.
  * Dùng thay cho chấm của CarouselNavContainer, không dùng cả hai.
  */
-export const CarouselThumbnails = React.forwardRef<HTMLDivElement, CarouselThumbnailsProps>(
-  ({ className, children, onKeyDown, "aria-label": ariaLabel, ...props }, ref) => {
-    const ctx = useCarousel();
-    const msg = useYugenMessages("carousel", carouselMessagesEn);
-    const dir = useDirection();
-    const stripRef = React.useRef<HTMLDivElement | null>(null);
-    const thumbRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
-    const items = React.Children.toArray(children).filter(React.isValidElement);
+export function CarouselThumbnails({
+  className,
+  children,
+  onKeyDown,
+  "aria-label": ariaLabel,
+  ref,
+  ...props
+}: CarouselThumbnailsProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const ctx = useCarousel();
+  const msg = useYugenMessages("carousel", carouselMessagesEn);
+  const dir = useDirection();
+  const stripRef = React.useRef<HTMLDivElement | null>(null);
+  const setRefs = useComposedRefs(stripRef, ref);
+  const thumbRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
+  const items = React.Children.toArray(children).filter(React.isValidElement);
 
-    // Giữ thumbnail đang chọn trong vùng nhìn của dải (chỉ cuộn dải, không cuộn trang).
-    React.useEffect(() => {
-      const strip = stripRef.current;
-      const thumb = thumbRefs.current[ctx.activeIndex];
-      if (!strip || !thumb) return;
-      const s = strip.getBoundingClientRect();
-      const t = thumb.getBoundingClientRect();
-      const behavior: ScrollBehavior = prefersReducedMotion() ? "auto" : "smooth";
-      if (t.left < s.left) strip.scrollBy({ left: t.left - s.left, behavior });
-      else if (t.right > s.right) strip.scrollBy({ left: t.right - s.right, behavior });
-    }, [ctx.activeIndex]);
+  // Giữ thumbnail đang chọn trong vùng nhìn của dải (chỉ cuộn dải, không cuộn trang).
+  React.useEffect(() => {
+    const strip = stripRef.current;
+    const thumb = thumbRefs.current[ctx.activeIndex];
+    if (!strip || !thumb) return;
+    const s = strip.getBoundingClientRect();
+    const t = thumb.getBoundingClientRect();
+    const behavior: ScrollBehavior = prefersReducedMotion() ? "auto" : "smooth";
+    if (t.left < s.left) strip.scrollBy({ left: t.left - s.left, behavior });
+    else if (t.right > s.right) strip.scrollBy({ left: t.right - s.right, behavior });
+  }, [ctx.activeIndex]);
 
-    return (
-      <div
-        ref={(node) => {
-          stripRef.current = node;
-          if (typeof ref === "function") ref(node);
-          else if (ref) ref.current = node;
-        }}
-        role="tablist"
-        aria-label={ariaLabel ?? msg.chooseSlide}
-        className={cn("flex gap-2 overflow-x-auto p-0.5 scrollbar-none [&::-webkit-scrollbar]:hidden", className)}
-        onKeyDown={(event) => {
-          onKeyDown?.(event);
-          if (event.defaultPrevented) return;
-          const target = tabTarget(event, ctx, dir);
-          if (target === null) return;
-          ctx.goTo(target);
-          thumbRefs.current[target]?.focus();
-        }}
-        {...props}
-      >
-        <ThumbnailRefsContext.Provider value={thumbRefs}>
-          {items.map((child, index) => (
-            <ThumbnailIndexContext.Provider key={child.key ?? index} value={index}>
-              {child}
-            </ThumbnailIndexContext.Provider>
-          ))}
-        </ThumbnailRefsContext.Provider>
-      </div>
-    );
-  },
-);
-CarouselThumbnails.displayName = "CarouselThumbnails";
+  return (
+    <div
+      ref={setRefs}
+      role="tablist"
+      aria-label={ariaLabel ?? msg.chooseSlide}
+      className={cn("flex gap-2 overflow-x-auto p-0.5 scrollbar-none [&::-webkit-scrollbar]:hidden", className)}
+      onKeyDown={(event) => {
+        onKeyDown?.(event);
+        if (event.defaultPrevented) return;
+        const target = tabTarget(event, ctx, dir);
+        if (target === null) return;
+        ctx.goTo(target);
+        thumbRefs.current[target]?.focus();
+      }}
+      {...props}
+    >
+      <ThumbnailRefsContext.Provider value={thumbRefs}>
+        {items.map((child, index) => (
+          <ThumbnailIndexContext.Provider key={child.key ?? index} value={index}>
+            {child}
+          </ThumbnailIndexContext.Provider>
+        ))}
+      </ThumbnailRefsContext.Provider>
+    </div>
+  );
+}
 
 /** Một ảnh thu nhỏ (role="tab"). Con thường là `<Image fit="cover">` (lấp đầy khung); nhãn mặc định "Slide x / n". */
-export const CarouselThumbnail = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(
-  ({ className, children, onClick, ...props }, ref) => {
-    const ctx = useCarousel();
-    const msg = useYugenMessages("carousel", carouselMessagesEn);
-    const index = React.useContext(ThumbnailIndexContext);
-    const refs = React.useContext(ThumbnailRefsContext);
-    const active = index === ctx.activeIndex;
-    return (
-      <button
-        ref={(node) => {
-          if (refs) refs.current[index] = node;
-          if (typeof ref === "function") ref(node);
-          else if (ref) ref.current = node;
-        }}
-        type="button"
-        role="tab"
-        aria-selected={active}
-        aria-controls={`${ctx.baseId}-slide-${index}`}
-        aria-label={msg.slide(index + 1, ctx.count)}
-        tabIndex={active ? 0 : -1}
-        onClick={(event) => {
-          onClick?.(event);
-          if (!event.defaultPrevented) ctx.goTo(index);
-        }}
-        className={cn(
-          "relative h-14 w-20 shrink-0 cursor-pointer overflow-hidden rounded-medium border-2 bg-background-3",
-          "transition-[border-color,opacity] duration-faster ease-easy-ease motion-reduce:transition-none",
-          active ? "border-brand-stroke" : "border-transparent opacity-70 hover:border-stroke-1-hover hover:opacity-100",
-          className,
-        )}
-        {...props}
-      >
-        {children}
-        {active && ctx.autoplay && (
-          <span aria-hidden className="absolute inset-x-0 bottom-0 h-1 bg-stroke-accessible">
-            <ProgressFill />
-          </span>
-        )}
-      </button>
-    );
-  },
-);
-CarouselThumbnail.displayName = "CarouselThumbnail";
+export function CarouselThumbnail({
+  className,
+  children,
+  onClick,
+  ref,
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & { ref?: React.Ref<HTMLButtonElement> }) {
+  const ctx = useCarousel();
+  const msg = useYugenMessages("carousel", carouselMessagesEn);
+  const index = React.useContext(ThumbnailIndexContext);
+  const refs = React.useContext(ThumbnailRefsContext);
+  const setThumb = React.useCallback(
+    (node: HTMLButtonElement | null) => {
+      if (refs) refs.current[index] = node;
+    },
+    [refs, index],
+  );
+  const setRefs = useComposedRefs(setThumb, ref);
+  const active = index === ctx.activeIndex;
+  return (
+    <button
+      ref={setRefs}
+      type="button"
+      role="tab"
+      aria-selected={active}
+      aria-controls={`${ctx.baseId}-slide-${index}`}
+      aria-label={msg.slide(index + 1, ctx.count)}
+      tabIndex={active ? 0 : -1}
+      onClick={(event) => {
+        onClick?.(event);
+        if (!event.defaultPrevented) ctx.goTo(index);
+      }}
+      className={cn(
+        "relative h-14 w-20 shrink-0 cursor-pointer overflow-hidden rounded-medium border-2 bg-background-3",
+        "transition-[border-color,opacity] duration-faster ease-easy-ease motion-reduce:transition-none",
+        active ? "border-brand-stroke" : "border-transparent opacity-70 hover:border-stroke-1-hover hover:opacity-100",
+        className,
+      )}
+      {...props}
+    >
+      {children}
+      {active && ctx.autoplay && (
+        <span aria-hidden className="absolute inset-x-0 bottom-0 h-1 bg-stroke-accessible">
+          <ProgressFill />
+        </span>
+      )}
+    </button>
+  );
+}

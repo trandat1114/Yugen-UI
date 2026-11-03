@@ -4,6 +4,7 @@ import { useDirection } from "@radix-ui/react-direction";
 import { Checkmark12Filled, Checkmark20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { warnDeprecated } from "@/lib/deprecate";
+import { useComposedRefs } from "../_internal/composeRefs";
 
 /**
  * Fluent 2 List — https://fluent2.microsoft.design/components/web/react/core/list/usage
@@ -75,140 +76,128 @@ export interface ListProps extends React.HTMLAttributes<HTMLUListElement> {
   variant?: ListAppearance;
 }
 
-export const List = React.forwardRef<HTMLUListElement, ListProps>(
-  (
-    {
-      navigationMode,
-      selectionMode = "none",
-      selectedItems,
-      defaultSelectedItems,
-      onSelectionChange,
-      appearance: appearanceProp,
-      variant,
-      className,
-      onKeyDown,
-      ...props
+export function List({
+  navigationMode,
+  selectionMode = "none",
+  selectedItems,
+  defaultSelectedItems,
+  onSelectionChange,
+  appearance: appearanceProp,
+  variant,
+  className,
+  onKeyDown,
+  ref,
+  ...props
+}: ListProps & { ref?: React.Ref<HTMLUListElement> }) {
+  if (variant !== undefined) warnDeprecated("List.variant", "use appearance", "1.0.0");
+  const appearance = appearanceProp ?? variant ?? "default";
+  const [selected, setSelected] = useControllableState<string[]>({
+    value: selectedItems,
+    defaultValue: defaultSelectedItems ?? [],
+    onChange: onSelectionChange,
+  });
+  const [active] = React.useState(createActiveStore);
+  const selectedSet = React.useMemo(() => new Set(selected), [selected]);
+  const innerRef = React.useRef<HTMLUListElement | null>(null);
+  const dir = useDirection();
+  const nav = navigationMode ?? (selectionMode !== "none" ? "items" : undefined);
+
+  const setRefs = useComposedRefs(innerRef, ref);
+
+  const toggle = React.useCallback(
+    (value: string) => {
+      if (selectionMode === "none") return;
+      const has = selected.includes(value);
+      const next =
+        selectionMode === "single" ? (has ? [] : [value]) : has ? selected.filter((v) => v !== value) : [...selected, value];
+      setSelected(next);
     },
-    ref,
-  ) => {
-    if (variant !== undefined) warnDeprecated("List.variant", "use appearance", "1.0.0");
-    const appearance = appearanceProp ?? variant ?? "default";
-    const [selected, setSelected] = useControllableState<string[]>({
-      value: selectedItems,
-      defaultValue: defaultSelectedItems ?? [],
-      onChange: onSelectionChange,
-    });
-    const [active] = React.useState(createActiveStore);
-    const selectedSet = React.useMemo(() => new Set(selected), [selected]);
-    const innerRef = React.useRef<HTMLUListElement | null>(null);
-    const dir = useDirection();
-    const nav = navigationMode ?? (selectionMode !== "none" ? "items" : undefined);
+    [selectionMode, selected, setSelected],
+  );
 
-    const setRefs = React.useCallback(
-      (node: HTMLUListElement | null) => {
-        innerRef.current = node;
-        if (typeof ref === "function") ref(node);
-        else if (ref) ref.current = node;
-      },
-      [ref],
-    );
+  // Roving tabindex: luôn có đúng một item nhận Tab (mục đang chọn hoặc mục đầu tiên).
+  React.useEffect(() => {
+    const root = innerRef.current;
+    if (!nav || !root) return;
+    const items = Array.from(root.querySelectorAll<HTMLElement>("[data-list-item]"));
+    const current = active.get();
+    if (current !== null && items.some((el) => el.dataset.value === current)) return;
+    const fallback = items.find((el) => el.getAttribute("aria-selected") === "true") ?? items[0];
+    if (fallback?.dataset.value) active.set(fallback.dataset.value);
+  });
 
-    const toggle = React.useCallback(
-      (value: string) => {
-        if (selectionMode === "none") return;
-        const has = selected.includes(value);
-        const next =
-          selectionMode === "single" ? (has ? [] : [value]) : has ? selected.filter((v) => v !== value) : [...selected, value];
-        setSelected(next);
-      },
-      [selectionMode, selected, setSelected],
-    );
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLUListElement>) => {
+    onKeyDown?.(event);
+    const root = innerRef.current;
+    if (event.defaultPrevented || !nav || !root) return;
+    const target = event.target as HTMLElement;
+    const item = target.closest<HTMLElement>("[data-list-item]");
+    if (!item || !root.contains(item)) return;
+    // Composite: phím về phía cuối dòng đi vào item, phím về phía đầu dòng thoát ra (đảo trong RTL).
+    const enterKey = dir === "rtl" ? "ArrowLeft" : "ArrowRight";
+    const exitKey = dir === "rtl" ? "ArrowRight" : "ArrowLeft";
 
-    // Roving tabindex: luôn có đúng một item nhận Tab (mục đang chọn hoặc mục đầu tiên).
-    React.useEffect(() => {
-      const root = innerRef.current;
-      if (!nav || !root) return;
-      const items = Array.from(root.querySelectorAll<HTMLElement>("[data-list-item]"));
-      const current = active.get();
-      if (current !== null && items.some((el) => el.dataset.value === current)) return;
-      const fallback = items.find((el) => el.getAttribute("aria-selected") === "true") ?? items[0];
-      if (fallback?.dataset.value) active.set(fallback.dataset.value);
-    });
+    // Focus đang ở phần tử con bên trong item (chế độ composite).
+    if (target !== item) {
+      if (nav === "composite" && (event.key === "Escape" || event.key === exitKey)) {
+        event.preventDefault();
+        item.focus();
+      }
+      return;
+    }
 
-    const handleKeyDown = (event: React.KeyboardEvent<HTMLUListElement>) => {
-      onKeyDown?.(event);
-      const root = innerRef.current;
-      if (event.defaultPrevented || !nav || !root) return;
-      const target = event.target as HTMLElement;
-      const item = target.closest<HTMLElement>("[data-list-item]");
-      if (!item || !root.contains(item)) return;
-      // Composite: phím về phía cuối dòng đi vào item, phím về phía đầu dòng thoát ra (đảo trong RTL).
-      const enterKey = dir === "rtl" ? "ArrowLeft" : "ArrowRight";
-      const exitKey = dir === "rtl" ? "ArrowRight" : "ArrowLeft";
-
-      // Focus đang ở phần tử con bên trong item (chế độ composite).
-      if (target !== item) {
-        if (nav === "composite" && (event.key === "Escape" || event.key === exitKey)) {
-          event.preventDefault();
-          item.focus();
-        }
+    const items = Array.from(root.querySelectorAll<HTMLElement>("[data-list-item]"));
+    const index = items.indexOf(item);
+    let next: HTMLElement | undefined;
+    switch (event.key) {
+      case "ArrowDown":
+        next = items[Math.min(index + 1, items.length - 1)];
+        break;
+      case "ArrowUp":
+        next = items[Math.max(index - 1, 0)];
+        break;
+      case "Home":
+        next = items[0];
+        break;
+      case "End":
+        next = items[items.length - 1];
+        break;
+      case enterKey:
+        if (nav === "composite") next = item.querySelector<HTMLElement>(FOCUSABLE) ?? undefined;
+        break;
+      default:
         return;
-      }
+    }
+    if (!next) return;
+    event.preventDefault();
+    next.focus();
+  };
 
-      const items = Array.from(root.querySelectorAll<HTMLElement>("[data-list-item]"));
-      const index = items.indexOf(item);
-      let next: HTMLElement | undefined;
-      switch (event.key) {
-        case "ArrowDown":
-          next = items[Math.min(index + 1, items.length - 1)];
-          break;
-        case "ArrowUp":
-          next = items[Math.max(index - 1, 0)];
-          break;
-        case "Home":
-          next = items[0];
-          break;
-        case "End":
-          next = items[items.length - 1];
-          break;
-        case enterKey:
-          if (nav === "composite") next = item.querySelector<HTMLElement>(FOCUSABLE) ?? undefined;
-          break;
-        default:
-          return;
-      }
-      if (!next) return;
-      event.preventDefault();
-      next.focus();
-    };
+  const context = React.useMemo<ListContextValue>(
+    () => ({
+      selectionMode,
+      navigationMode: nav,
+      appearance,
+      isSelected: (value) => selectedSet.has(value),
+      toggle,
+      active,
+    }),
+    [selectionMode, nav, appearance, selectedSet, toggle, active],
+  );
 
-    const context = React.useMemo<ListContextValue>(
-      () => ({
-        selectionMode,
-        navigationMode: nav,
-        appearance,
-        isSelected: (value) => selectedSet.has(value),
-        toggle,
-        active,
-      }),
-      [selectionMode, nav, appearance, selectedSet, toggle, active],
-    );
-
-    return (
-      <ListContext.Provider value={context}>
-        <ul
-          ref={setRefs}
-          role={selectionMode === "none" ? "list" : "listbox"}
-          aria-multiselectable={selectionMode === "multiselect" || undefined}
-          className={cn("m-0 flex list-none flex-col p-0", appearance === "outline" ? "gap-2" : "gap-0.5", className)}
-          onKeyDown={handleKeyDown}
-          {...props}
-        />
-      </ListContext.Provider>
-    );
-  },
-);
-List.displayName = "List";
+  return (
+    <ListContext.Provider value={context}>
+      <ul
+        ref={setRefs}
+        role={selectionMode === "none" ? "list" : "listbox"}
+        aria-multiselectable={selectionMode === "multiselect" || undefined}
+        className={cn("m-0 flex list-none flex-col p-0", appearance === "outline" ? "gap-2" : "gap-0.5", className)}
+        onKeyDown={handleKeyDown}
+        {...props}
+      />
+    </ListContext.Provider>
+  );
+}
 
 /* ------------------------------------------------------------------ ListItem */
 export interface ListItemProps extends Omit<React.LiHTMLAttributes<HTMLLIElement>, "title" | "value"> {
@@ -225,117 +214,126 @@ export interface ListItemProps extends Omit<React.LiHTMLAttributes<HTMLLIElement
   disabled?: boolean;
 }
 
-export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
-  (
-    { value: valueProp, media, title, description, actions, onAction, disabled = false, className, children, onClick, onKeyDown, onFocus, ...props },
-    ref,
-  ) => {
-    const ctx = React.useContext(ListContext);
-    const autoId = React.useId();
-    const value = valueProp ?? autoId;
-    const selectable = ctx.selectionMode !== "none";
-    const selected = selectable && ctx.isSelected(value);
-    const focusable = !!ctx.navigationMode;
-    const isActive = React.useSyncExternalStore(ctx.active.subscribe, () => ctx.active.get() === value, () => false);
-    const interactive = !disabled && (selectable || !!onAction);
+export function ListItem({
+  value: valueProp,
+  media,
+  title,
+  description,
+  actions,
+  onAction,
+  disabled = false,
+  className,
+  children,
+  onClick,
+  onKeyDown,
+  onFocus,
+  ref,
+  ...props
+}: ListItemProps & { ref?: React.Ref<HTMLLIElement> }) {
+  const ctx = React.useContext(ListContext);
+  const autoId = React.useId();
+  const value = valueProp ?? autoId;
+  const selectable = ctx.selectionMode !== "none";
+  const selected = selectable && ctx.isSelected(value);
+  const focusable = !!ctx.navigationMode;
+  const isActive = React.useSyncExternalStore(ctx.active.subscribe, () => ctx.active.get() === value, () => false);
+  const interactive = !disabled && (selectable || !!onAction);
 
-    const activate = (event: React.SyntheticEvent<HTMLLIElement>) => {
-      if (!interactive) return;
-      onAction?.(event);
-      if (selectable) ctx.toggle(value);
-    };
+  const activate = (event: React.SyntheticEvent<HTMLLIElement>) => {
+    if (!interactive) return;
+    onAction?.(event);
+    if (selectable) ctx.toggle(value);
+  };
 
-    return (
-      <li
-        ref={ref}
-        data-list-item=""
-        data-value={value}
-        role={selectable ? "option" : "listitem"}
-        aria-selected={selectable ? selected : undefined}
-        aria-disabled={disabled || undefined}
-        tabIndex={focusable ? (isActive ? 0 : -1) : interactive ? 0 : undefined}
-        onFocus={(event) => {
-          onFocus?.(event);
-          if (focusable) ctx.active.set(value);
-        }}
-        onClick={(event) => {
-          onClick?.(event);
-          if (!event.defaultPrevented) activate(event);
-        }}
-        onKeyDown={(event) => {
-          onKeyDown?.(event);
-          if (event.defaultPrevented || event.target !== event.currentTarget) return;
-          if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            activate(event);
-          }
-        }}
-        className={cn(
-          "group/list-item relative flex items-center gap-3 text-start text-foreground-1",
-          "transition-[background-color,border-color] duration-faster ease-easy-ease",
-          ctx.appearance === "outline"
-            ? "rounded-xlarge border border-stroke-2 bg-background-1 p-3"
-            : "rounded-medium border border-transparent px-3 py-2",
-          interactive && "cursor-pointer",
-          interactive &&
-            (selected
-              ? "bg-brand-background-2 hover:bg-brand-background-2-hover active:bg-brand-background-2-pressed"
-              : "hover:bg-subtle-hover active:bg-subtle-pressed"),
-          selected && ctx.appearance === "outline" && "border-brand-stroke",
-          disabled && "cursor-not-allowed text-foreground-disabled",
-          className,
-        )}
-        {...props}
-      >
-        {ctx.selectionMode === "multiselect" && (
-          // Chỉ là hình checkbox (giống Checkbox): option không được chứa control tương tác, kể cả tabIndex -1.
-          <span
-            aria-hidden
-            className={cn(
-              "inline-flex size-4 shrink-0 items-center justify-center rounded-small border text-foreground-on-brand",
-              disabled
-                ? "border-stroke-disabled text-foreground-disabled"
-                : selected
-                  ? "border-brand-background bg-brand-background"
-                  : "border-stroke-accessible",
-            )}
-          >
-            {selected && <Checkmark12Filled className="size-3" />}
-          </span>
-        )}
-        {media && (
-          <span className={cn("flex shrink-0 items-center [&>svg]:size-5", disabled ? "text-foreground-disabled" : "text-foreground-2")}>
-            {media}
-          </span>
-        )}
-        {(title != null || description != null || children != null) && (
-          <span className="flex min-w-0 flex-1 flex-col">
-            {title != null && (
-              <span className={cn("truncate text-body1 font-semibold", disabled ? "text-foreground-disabled" : "text-foreground-1")}>
-                {title}
-              </span>
-            )}
-            {description != null && (
-              <span className={cn("line-clamp-2 text-caption1", disabled ? "text-foreground-disabled" : "text-foreground-3")}>
-                {description}
-              </span>
-            )}
-            {children}
-          </span>
-        )}
-        {ctx.selectionMode === "single" && selected && (
-          <Checkmark20Regular aria-hidden className="ms-auto shrink-0 text-brand-foreground-1" />
-        )}
-        {actions && (
-          <span
-            className="ms-auto flex shrink-0 items-center gap-1"
-            onClick={(event) => event.stopPropagation()}
-          >
-            {actions}
-          </span>
-        )}
-      </li>
-    );
-  },
-);
-ListItem.displayName = "ListItem";
+  return (
+    <li
+      ref={ref}
+      data-list-item=""
+      data-value={value}
+      role={selectable ? "option" : "listitem"}
+      aria-selected={selectable ? selected : undefined}
+      aria-disabled={disabled || undefined}
+      tabIndex={focusable ? (isActive ? 0 : -1) : interactive ? 0 : undefined}
+      onFocus={(event) => {
+        onFocus?.(event);
+        if (focusable) ctx.active.set(value);
+      }}
+      onClick={(event) => {
+        onClick?.(event);
+        if (!event.defaultPrevented) activate(event);
+      }}
+      onKeyDown={(event) => {
+        onKeyDown?.(event);
+        if (event.defaultPrevented || event.target !== event.currentTarget) return;
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          activate(event);
+        }
+      }}
+      className={cn(
+        "group/list-item relative flex items-center gap-3 text-start text-foreground-1",
+        "transition-[background-color,border-color] duration-faster ease-easy-ease",
+        ctx.appearance === "outline"
+          ? "rounded-xlarge border border-stroke-2 bg-background-1 p-3"
+          : "rounded-medium border border-transparent px-3 py-2",
+        interactive && "cursor-pointer",
+        interactive &&
+          (selected
+            ? "bg-brand-background-2 hover:bg-brand-background-2-hover active:bg-brand-background-2-pressed"
+            : "hover:bg-subtle-hover active:bg-subtle-pressed"),
+        selected && ctx.appearance === "outline" && "border-brand-stroke",
+        disabled && "cursor-not-allowed text-foreground-disabled",
+        className,
+      )}
+      {...props}
+    >
+      {ctx.selectionMode === "multiselect" && (
+        // Chỉ là hình checkbox (giống Checkbox): option không được chứa control tương tác, kể cả tabIndex -1.
+        <span
+          aria-hidden
+          className={cn(
+            "inline-flex size-4 shrink-0 items-center justify-center rounded-small border text-foreground-on-brand",
+            disabled
+              ? "border-stroke-disabled text-foreground-disabled"
+              : selected
+                ? "border-brand-background bg-brand-background"
+                : "border-stroke-accessible",
+          )}
+        >
+          {selected && <Checkmark12Filled className="size-3" />}
+        </span>
+      )}
+      {media && (
+        <span className={cn("flex shrink-0 items-center [&>svg]:size-5", disabled ? "text-foreground-disabled" : "text-foreground-2")}>
+          {media}
+        </span>
+      )}
+      {(title != null || description != null || children != null) && (
+        <span className="flex min-w-0 flex-1 flex-col">
+          {title != null && (
+            <span className={cn("truncate text-body1 font-semibold", disabled ? "text-foreground-disabled" : "text-foreground-1")}>
+              {title}
+            </span>
+          )}
+          {description != null && (
+            <span className={cn("line-clamp-2 text-caption1", disabled ? "text-foreground-disabled" : "text-foreground-3")}>
+              {description}
+            </span>
+          )}
+          {children}
+        </span>
+      )}
+      {ctx.selectionMode === "single" && selected && (
+        <Checkmark20Regular aria-hidden className="ms-auto shrink-0 text-brand-foreground-1" />
+      )}
+      {actions && (
+        <span
+          className="ms-auto flex shrink-0 items-center gap-1"
+          onClick={(event) => event.stopPropagation()}
+        >
+          {actions}
+        </span>
+      )}
+    </li>
+  );
+}

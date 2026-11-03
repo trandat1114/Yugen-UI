@@ -60,13 +60,15 @@ export const TeachingPopoverTrigger = PopoverTrigger;
 
 export type TeachingPopoverSurfaceProps = Omit<PopoverSurfaceProps, "appearance">;
 
-export const TeachingPopoverSurface = React.forwardRef<React.ElementRef<typeof PopoverSurface>, TeachingPopoverSurfaceProps>(
-  ({ className, withArrow = true, ...props }, ref) => {
-    const appearance = useTeachingAppearance();
-    return <PopoverSurface ref={ref} appearance={appearance} withArrow={withArrow} className={cn("w-80", className)} {...props} />;
-  },
-);
-TeachingPopoverSurface.displayName = "TeachingPopoverSurface";
+export function TeachingPopoverSurface({
+  className,
+  withArrow = true,
+  ref,
+  ...props
+}: TeachingPopoverSurfaceProps & { ref?: React.Ref<React.ComponentRef<typeof PopoverSurface>> }) {
+  const appearance = useTeachingAppearance();
+  return <PopoverSurface ref={ref} appearance={appearance} withArrow={withArrow} className={cn("w-80", className)} {...props} />;
+}
 
 export interface TeachingPopoverHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Icon trước tiêu đề; null để ẩn. Mặc định bóng đèn. */

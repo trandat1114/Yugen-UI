@@ -253,7 +253,7 @@ export interface TimePickerProps extends InputAttrs, TimeRangeOptions {
  * TimePicker: ô nhập kiểu combobox liệt kê giờ theo `increment`; gõ tự do (9, 930, 9h30, 9:30 PM…) rồi Enter / rời ô
  * để xác nhận, gõ dở sẽ nhảy tới giờ gần nhất. ArrowDown mở / di chuyển, Enter chọn, Escape đóng.
  */
-export const TimePicker = React.forwardRef<HTMLInputElement, TimePickerProps>((props, ref) => {
+export function TimePicker({ ref, ...props }: TimePickerProps & { ref?: React.Ref<HTMLInputElement> }) {
   const {
     value,
     defaultValue = null,
@@ -574,5 +574,4 @@ export const TimePicker = React.forwardRef<HTMLInputElement, TimePickerProps>((p
       </PopoverPrimitive.Portal>
     </PopoverPrimitive.Root>
   );
-});
-TimePicker.displayName = "TimePicker";
+}

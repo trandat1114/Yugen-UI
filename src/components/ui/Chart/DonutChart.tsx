@@ -54,31 +54,29 @@ interface Slice {
 }
 
 /** DonutChart — phần–tổng nhìn nhanh, ≤ 6 lát (còn lại gộp "Khác"), khe 2px, tổng ở giữa. */
-export const DonutChart = React.forwardRef<HTMLElement, DonutChartProps>(function DonutChart(
-  {
-    data,
-    maxSlices = 6,
-    otherLabel: otherLabelProp,
-    valueFormat,
-    centerLabel: centerLabelProp,
-    centerValue,
-    size = 200,
-    thickness,
-    legend = true,
-    title,
-    description,
-    toolbar,
-    locale: localeProp,
-    ariaLabel,
-    indexLabel: indexLabelProp,
-    hideTableToggle,
-    defaultShowTable,
-    texture,
-    animate = true,
-    className,
-  },
+export function DonutChart({
+  data,
+  maxSlices = 6,
+  otherLabel: otherLabelProp,
+  valueFormat,
+  centerLabel: centerLabelProp,
+  centerValue,
+  size = 200,
+  thickness,
+  legend = true,
+  title,
+  description,
+  toolbar,
+  locale: localeProp,
+  ariaLabel,
+  indexLabel: indexLabelProp,
+  hideTableToggle,
+  defaultShowTable,
+  texture,
+  animate = true,
+  className,
   ref,
-) {
+}: DonutChartProps & { ref?: React.Ref<HTMLElement> }) {
   const yugen = useYugen();
   const locale = localeProp ?? yugen.locale;
   const msg = useYugenMessages("chart", chartMessagesEn);
@@ -267,4 +265,4 @@ export const DonutChart = React.forwardRef<HTMLElement, DonutChartProps>(functio
       </div>
     </ChartContainer>
   );
-});
+}

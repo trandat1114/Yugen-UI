@@ -103,7 +103,7 @@ export default function Page() {
         <SimpleTable
           head={["Technology", "Version", "Notes"]}
           rows={[
-            ["React / React DOM", "19 or later (React 18 was supported until 0.14)", "Uses forwardRef, useId, useSyncExternalStore; Radix, cmdk and react-day-picker all support React 19."],
+            ["React / React DOM", "19 or later (React 18 was supported until 0.14)", "Takes ref as a prop, uses useId and useSyncExternalStore; Radix, cmdk and react-day-picker all support React 19."],
             ["TypeScript", "5.x", "The source is written in strict mode; every prop type is exported with its component (ButtonProps, FieldProps…)."],
             ["Tailwind CSS", "4.x", <>v4 is required: CSS-first config (<C>@theme</C>, <C>@utility</C>), syntax such as <C>size-4!</C> and <C>max-h-(--var)</C>.</>],
             ["Bundler", "Vite 6 or later · Next.js 14 / 15 · any bundler with PostCSS support", <>Components use no bundler-specific APIs; only the <C>@/</C> alias is needed.</>],
