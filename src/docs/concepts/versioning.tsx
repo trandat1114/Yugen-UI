@@ -145,6 +145,14 @@ export default function Page() {
         </div>
       </DocSection>
 
+      <DocSection id="labs" title="Yugen Labs" description="Component thử nghiệm, nằm ngoài SemVer.">
+        <P>
+          Component trong nhóm Yugen Labs còn đang hoàn thiện, và trang của chúng có ghi rõ. API có thể đổi ở một bản minor;
+          CHANGELOG và trang Có gì mới ghi lại thay đổi. Component rời Labs khi đã có test, được một template dùng và API không
+          cần đổi thêm. Từ đó nó theo các quy tắc ở trên.
+        </P>
+      </DocSection>
+
       <DocSection id="support" title="Phạm vi hỗ trợ">
         <Table
           head={["Hạng mục", "Hỗ trợ", "Ghi chú"]}

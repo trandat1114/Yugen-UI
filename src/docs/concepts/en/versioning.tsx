@@ -150,6 +150,14 @@ export default function Page() {
         </div>
       </DocSection>
 
+      <DocSection id="labs" title="Yugen Labs" description="Experimental components, outside SemVer.">
+        <P>
+          Components in the Yugen Labs group are still settling, and their pages say so. Their API can change in a minor release;
+          the CHANGELOG and What&apos;s new list what changed. A component leaves Labs when it has tests, a template uses it and
+          its API needs no more changes. From then on it follows the rules above.
+        </P>
+      </DocSection>
+
       <DocSection id="support" title="Support matrix">
         <Table
           head={["Area", "Supported", "Notes"]}

@@ -81,6 +81,7 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
       numbers: "Rules for each number",
       breaking: "What counts as breaking",
       deprecation: "Deprecation process",
+      labs: "Yugen Labs",
       support: "Support matrix",
       upgrade: "Upgrading safely",
     },

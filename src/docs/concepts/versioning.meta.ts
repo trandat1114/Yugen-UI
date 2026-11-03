@@ -11,6 +11,7 @@ export const meta: ConceptMeta = {
     { id: "numbers", label: "Quy tắc cho từng số" },
     { id: "breaking", label: "Thế nào là thay đổi phá vỡ" },
     { id: "deprecation", label: "Quy trình deprecate" },
+    { id: "labs", label: "Yugen Labs" },
     { id: "support", label: "Phạm vi hỗ trợ" },
     { id: "upgrade", label: "Nâng cấp an toàn" },
   ],
