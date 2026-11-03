@@ -4,7 +4,7 @@ import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
 import { ChevronDown12Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { popoverSurfaceClass } from "@/components/ui/Popover/Popover";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { navigationMenuMessagesEn } from "./messages";
 
 export { navigationMenuMessagesVi, navigationMenuMessagesEn, type NavigationMenuMessages } from "./messages";
@@ -44,14 +44,15 @@ export interface NavigationMenuProps extends React.ComponentPropsWithoutRef<type
  * Tab đi qua các mục, Enter / Space mở, mũi tên trái / phải chuyển mục, Esc đóng. Bảng nằm trong một khung nổi đổi cỡ
  * theo nội dung. Trên màn hình hẹp, đặt các link vào Drawer (xem trang docs).
  */
-export function NavigationMenu({
-  className,
-  viewportClassName,
-  children,
-  "aria-label": ariaLabel,
-  ref,
-  ...props
-}: NavigationMenuProps & { ref?: React.Ref<HTMLElement> }) {
+export function NavigationMenu(inProps: NavigationMenuProps & { ref?: React.Ref<HTMLElement> }) {
+  const {
+    className,
+    viewportClassName,
+    children,
+    "aria-label": ariaLabel,
+    ref,
+    ...props
+  } = useComponentDefaults("NavigationMenu", inProps);
   const msg = useYugenMessages("navigationMenu", navigationMenuMessagesEn);
   return (
     <NavigationMenuPrimitive.Root
@@ -182,4 +183,10 @@ export function NavigationMenuIndicator({
       <div className="relative top-[60%] size-2 rotate-45 rounded-tl-small bg-background-1 shadow-4" />
     </NavigationMenuPrimitive.Indicator>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    NavigationMenu: NavigationMenuProps;
+  }
 }

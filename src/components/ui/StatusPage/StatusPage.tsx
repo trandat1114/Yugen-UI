@@ -3,7 +3,7 @@ import { ArrowClockwise20Regular, ArrowSync24Regular, Checkmark16Regular, Copy16
 import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button/Button";
 import { useClipboard } from "../hooks/useClipboard";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { statusPageMessagesEn, type StatusPageMessages } from "./messages";
 
 export { statusPageMessagesVi, statusPageMessagesEn, type StatusPageMessages } from "./messages";
@@ -70,23 +70,24 @@ export interface StatusPageProps extends Omit<React.HTMLAttributes<HTMLDivElemen
  * chuyện gì xảy ra, mô tả nói làm gì tiếp, kèm hành động và mã lỗi chép được. Không tự điều hướng: truyền link / nút
  * của router vào `primaryAction` / `secondaryAction`.
  */
-export function StatusPage({
-  status,
-  code: codeProp,
-  title: titleProp,
-  description: descriptionProp,
-  primaryAction,
-  secondaryAction,
-  illustration,
-  errorId,
-  headingAs: Heading = "h1",
-  autoFocus = false,
-  fullscreen = false,
-  className,
-  children,
-  ref,
-  ...props
-}: StatusPageProps & { ref?: React.Ref<HTMLDivElement> }) {
+export function StatusPage(inProps: StatusPageProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    status,
+    code: codeProp,
+    title: titleProp,
+    description: descriptionProp,
+    primaryAction,
+    secondaryAction,
+    illustration,
+    errorId,
+    headingAs: Heading = "h1",
+    autoFocus = false,
+    fullscreen = false,
+    className,
+    children,
+    ref,
+    ...props
+  } = useComponentDefaults("StatusPage", inProps);
   const msg = useYugenMessages("statusPage", statusPageMessagesEn);
   const copy = status !== undefined ? statusPageCopy(status, msg) : undefined;
   const title = titleProp ?? copy?.title;
@@ -246,5 +247,11 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     if (typeof fallback === "function") return fallback(props);
     if (fallback !== undefined) return fallback;
     return <DefaultFallback {...props} statusPageProps={statusPageProps} />;
+  }
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    StatusPage: StatusPageProps;
   }
 }
