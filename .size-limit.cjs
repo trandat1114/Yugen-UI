@@ -49,8 +49,9 @@ module.exports = [
   js("{ Sortable, SortableItem, SortableHandle }", "{ Sortable, SortableItem, SortableHandle }", "23 kB"),
   js("{ StreamingMarkdown, PromptInput }", "{ StreamingMarkdown, PromptInput }", "70 kB"),
   js("{ messagesEn }", "{ messagesEn }", "5 kB"),
-  // Bộ tiếng Việt (#277: mặc định là tiếng Anh): gồm locale vi của react-day-picker cho Calendar / DatePicker.
-  js("{ messagesVi }", "{ messagesVi }", "12 kB"),
+  // Bộ tiếng Việt, chỉ khi import (#277: mặc định là tiếng Anh): 17.7 kB khi thêm, phần lớn là locale vi của
+  // react-day-picker cho Calendar / DatePicker.
+  js("{ messagesVi }", "{ messagesVi }", "18.5 kB"),
   // Sonner, Timeline, DescriptionList, Stat, utility yugen-prose (#174, #234): 24.6 kB khi thêm.
   // AppShell / Sidebar + rail của Nav (#161): 24.97 kB khi thêm; 25.08 kB với layout / scroll / footer. 28 kB: chỗ cho vài
   // component nữa (styles.css luôn chứa mọi component, #169 không làm nó nhỏ đi).
