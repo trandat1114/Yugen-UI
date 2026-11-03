@@ -23,7 +23,7 @@ describe("bảng Messages trên trang component (#156)", () => {
     const runtime = new Map<string, { vi: Record<string, unknown>; en: Record<string, unknown> }>();
     for (const mod of Object.values(MODULES))
       for (const [name, value] of Object.entries(mod)) {
-        const ns = name.match(/^(\w+?)Messages$/)?.[1];
+        const ns = name.match(/^(\w+?)MessagesVi$/)?.[1];
         if (ns) runtime.set(ns, { vi: value, en: mod[`${ns}MessagesEn`] });
       }
     expect(namespaces.map((n) => n.namespace).sort()).toEqual([...runtime.keys()].sort());
