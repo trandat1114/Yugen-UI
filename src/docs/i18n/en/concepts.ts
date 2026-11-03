@@ -98,7 +98,7 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
   },
   "browser-support": {
     title: "Browsers & platforms",
-    lead: "Yugen UI targets evergreen browsers and React 18 or later. The modern CSS features Tailwind CSS v4 relies on need no polyfills.",
+    lead: "Yugen UI targets evergreen browsers and React 19 or later. The modern CSS features Tailwind CSS v4 relies on need no polyfills.",
     toc: {
       browsers: "Browsers",
       css: "CSS features",

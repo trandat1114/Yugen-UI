@@ -251,7 +251,7 @@ export default function Page() {
             <C>Toaster</C> uses a client-side store; only call <C>toast()</C> from event handlers or effects.
           </li>
           <li>
-            Field, Input, Checkbox… generate ids with React 18&apos;s <C>useId</C>, so server and client ids match and <C>htmlFor</C> /{" "}
+            Field, Input, Checkbox… generate ids with React&apos;s <C>useId</C>, so server and client ids match and <C>htmlFor</C> /{" "}
             <C>aria-describedby</C> stay in sync.
           </li>
           <li>

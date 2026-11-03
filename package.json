@@ -93,8 +93,8 @@
     "pack:check": "npm pack --dry-run"
   },
   "peerDependencies": {
-    "react": ">=18",
-    "react-dom": ">=18",
+    "react": ">=19",
+    "react-dom": ">=19",
     "tailwindcss": "^4.0.0"
   },
   "peerDependenciesMeta": {

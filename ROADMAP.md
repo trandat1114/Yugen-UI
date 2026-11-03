@@ -4,7 +4,7 @@
 
 *Tiếng Việt: [xem bên dưới](#tiếng-việt).*
 
-Plans for each release, updated 2026-11-03. Each release is a GitHub milestone; priority, size and
+Plans for each release, updated 2026-11-04. Each release is a GitHub milestone; priority, size and
 dependencies are in the [GitHub Project](https://github.com/users/trandat1114/projects/6). `[x]` done, `[~]` in progress, `[ ]` planned.
 
 Want to pick something up? Comment on the issue before you start. The same roadmap is on the
@@ -22,6 +22,8 @@ Reviews before 1.0 (API, Labs, security), default props and density from YugenPr
 - [ ] Glass as a default for navigation components, through default props (#230)
 - [ ] Scroll lock: keep or hide the page scrollbar while Menu, ContextMenu or Dropdown is open (#243)
 - [ ] Security review of components that render untrusted content (#165)
+- [x] Built-in icons: installing yugen-ui is ~180 MB lighter (#320)
+- [x] React 19 only: React 18 leaves the peer dependencies and CI (#62)
 
 ### 0.16.0 · minor · due 2026-12-09
 
@@ -38,7 +40,7 @@ The missing pieces of a complete kit.
 
 Stable API. No fixed date: ships when the readiness checklist is done.
 
-- [ ] API review, deprecations removed, decisions on React 18 and upper-case spacing (#65)
+- [ ] API review, deprecations removed, decision on upper-case spacing (#65)
 - [x] SEO: path URLs, prerendered pages, sitemap (#63)
 - [ ] 1.0 proposals (approved): Form, NavigationMenu, blocks 2.0, codemods, testing (#160)
 - [ ] @yugen-ui/cli writes the @import lines for per-component CSS (init, doctor) (#169)
@@ -80,7 +82,7 @@ Details on What's new (`/news`) and in `CHANGELOG.md`.
 
 ## Tiếng Việt
 
-Kế hoạch theo từng bản phát hành, cập nhật 2026-11-03. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và
+Kế hoạch theo từng bản phát hành, cập nhật 2026-11-04. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và
 phụ thuộc nằm ở [GitHub Project](https://github.com/users/trandat1114/projects/6). `[x]` đã xong, `[~]` đang làm, `[ ]` dự kiến.
 
 Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. Trang [Cộng đồng](https://trandat1114.github.io/Yugen-UI/vi/community) có cùng lộ trình.
@@ -97,6 +99,8 @@ Rà soát trước 1.0 (API, Labs, bảo mật), prop mặc định và mật đ
 - [ ] Glass làm mặc định cho component điều hướng, qua prop mặc định (#230)
 - [ ] Khóa cuộn: chọn giữ hay ẩn thanh cuộn khi mở Menu, ContextMenu, Dropdown (#243)
 - [ ] Rà soát bảo mật các component hiển thị nội dung không tin cậy (#165)
+- [x] Icon có sẵn trong thư viện: cài yugen-ui nhẹ hơn ~180 MB (#320)
+- [x] Chỉ hỗ trợ React 19: bỏ React 18 khỏi peer dependency và CI (#62)
 
 #### 0.16.0 · minor · hạn 2026-12-09
 
@@ -113,7 +117,7 @@ Những phần còn thiếu của một bộ component đầy đủ.
 
 API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện hoàn tất.
 
-- [ ] Rà soát API, gỡ deprecation, quyết định về React 18 và class spacing viết hoa (#65)
+- [ ] Rà soát API, gỡ deprecation, quyết định về class spacing viết hoa (#65)
 - [x] SEO: URL theo đường dẫn, prerender từng trang, sitemap (#63)
 - [ ] Đề xuất cho 1.0 (đã duyệt): Form, NavigationMenu, block 2.0, codemod, kiểm thử (#160)
 - [ ] @yugen-ui/cli ghi các dòng @import của CSS theo component (init, doctor) (#169)

@@ -116,7 +116,7 @@ export default function Page() {
       >
         <div className="flex flex-col gap-5">
           <P>
-            Yugen UI là bộ component React viết bằng TypeScript, chạy trên React 18 hoặc 19 với Tailwind CSS v4. Không dùng Tailwind thì
+            Yugen UI là bộ component React viết bằng TypeScript, chạy trên React 19 với Tailwind CSS v4. Không dùng Tailwind thì
             import file CSS biên dịch sẵn. Mọi component dùng chung một bộ token, nên đổi theme, màu thương hiệu hay hướng chữ không phải
             sửa component.
           </P>

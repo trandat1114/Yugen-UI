@@ -208,7 +208,7 @@ export default function Page() {
           <PackageManagerTabs packages={CLI_DOCTOR} command="dlx" />
           <CodeBlock code={CLI_DOCTOR_OUTPUT} />
           <P>
-            Các mục kiểm tra: React 18 trở lên, Tailwind CSS v4 khi dùng theme, theme được import đúng một lần và đứng sau{" "}
+            Các mục kiểm tra: React 19 trở lên, Tailwind CSS v4 khi dùng theme, theme được import đúng một lần và đứng sau{" "}
             <C>@import &quot;tailwindcss&quot;</C>, bản <C>yugen-ui</C> đã cài so với bản mới nhất trên npm, thư mục component và{" "}
             <C>cn.ts</C> ở chế độ source, có dùng <C>YugenProvider</C>.
           </P>

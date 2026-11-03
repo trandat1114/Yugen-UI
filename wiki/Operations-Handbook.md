@@ -29,7 +29,7 @@ How the project runs day to day: who does what, when, and under which rules. Rol
 
 ## 3. Review & merge rules
 
-1. Every change to `main` goes through a PR; CI **must be green** (build, unit, React 18, e2e).
+1. Every change to `main` goes through a PR; CI **must be green** (build, unit, e2e).
 2. At least **1 approval** from a maintainer (PR authors don't approve their own PRs, unless there is only one maintainer; in that case
    they merge after CI is green and after re-reviewing the diff the next day).
 3. User-facing change → a changeset. Breaking change → an accepted RFC + a "Thay đổi lớn" (Breaking) entry + a migration guide.
@@ -43,7 +43,7 @@ Protection for `next`, `release/*`, `canary` and `v*` tags: see [[Branching and 
 
 **Settings → Branches → Branch protection for `main`:**
 - Require a pull request before merging · Require approvals: 1 · Dismiss stale approvals
-- Require status checks: `Build · Node 24`, `Build · Node 26`, `Unit tests (React 19)`, `React 18`, `E2E (Playwright + axe)`
+- Require status checks: `Build · Node 24`, `Build · Node 26`, `Unit tests (React 19)`, `E2E (Playwright + axe)`
 - Require conversation resolution · Block force pushes · Do not allow deletions
 
 **Settings → General:** Allow squash merging (default) · Automatically delete head branches · Discussions: on.
@@ -56,13 +56,12 @@ Protection for `next`, `release/*`, `canary` and `v*` tags: see [[Branching and 
 
 | Workflow / file | What it does |
 |---|---|
-| `ci.yml` | Build, test (React 19), React 18, e2e, the checks, size. Doesn't run when a push / PR only changes reading material (README, wiki, CONTRIBUTING…; the `paths-ignore` list in the file); `engines.yml` and `pages.yml` use the same list |
+| `ci.yml` | Build, test (React 19), e2e, the checks, size. Doesn't run when a push / PR only changes reading material (README, wiki, CONTRIBUTING…; the `paths-ignore` list in the file); `engines.yml` and `pages.yml` use the same list |
 | `release.yml` | Tag `v*` → check the branch + consistency → `npm publish --provenance` (dist-tag by channel) → GitHub Release from the CHANGELOG entry. Push to `canary` (or a manual run) → an `x.y.z-canary-…` version with the `canary` dist-tag |
 | `release-cli.yml` | Tag `cli@*` → `check-release.mjs --tag` (CHANGELOG, news entry on `#/news`, unused version, `yugen-ui` already on npm) → publish `@yugen-ui/cli` + `create-yugen-ui` → GitHub Release |
 | `sync-next.yml` | Push to `main` → if `next` has no work of its own, merge `main` straight into `next` (no PR, no CI rerun) and rerun Docs; otherwise open a `main → next` PR |
 | `node-versions.yml` | Weekly → compare the Node.js versions in workflows with the release schedule (`scripts/node-versions.mjs`), open a PR into `next` when they differ, then run CI on that branch |
 | `prune-branches.yml` | 1st of every month → report stale branches (`scripts/prune-branches.mjs`) in the job summary; run manually with `apply` to delete the "Xoá" entries |
-| `react-share.yml` | 1st of every month → React download share by major (`scripts/react-share.mjs`) as a comment on #62; React 18 below 10% is one of the two conditions for dropping its support |
 | `engines.yml` | Weekly, on PRs into `main` and on PRs that change `e2e/` → E2E on Firefox and WebKit; when a scheduled run fails, open / update an issue, close it when green again |
 | `pages.yml` | Deploy the docs (+ docs for older minors) to GitHub Pages |
 | `wiki.yml` | Push `wiki/` to the GitHub Wiki |

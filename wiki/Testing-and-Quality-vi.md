@@ -29,7 +29,6 @@ bị bỏ qua sẽ treo ở "Expected": khi đó chuyển sang lọc trong job t
 |---|---|
 | Build · Node 24 / 26 | typecheck, lint:classes, các check:*, sync-templates, build lib + docs, pack, size |
 | Unit tests (React 19) | `npm test` |
-| React 18 | cài React 18.3 tạm thời → typecheck, test, build:lib |
 | E2E · shard 1/4 … 4/4 | `test:e2e --shard=n/4` song song (blob report; `test-results-n` khi lỗi) |
 | E2E (Playwright + axe) | gộp blob report thành một báo cáo HTML (`playwright-report`); đỏ nếu một shard đỏ — tên check cố định |
 
@@ -47,7 +46,7 @@ lại thì tự đóng. Khác biệt giữa engine ghi ở trang docs Trình duy
 | `check:release` lỗi | thiếu tin trong `src/docs/news` / CHANGELOG | thêm `<version>.vi.md` và `.en.md`, mục CHANGELOG |
 | `check:examples` lỗi | ví dụ dùng biến chỉ có trong file docs | thêm `setup: declarationsOf(RAW, [...])` |
 | axe: `aria-allowed-attr` | thuộc tính ARIA không hợp lệ với role (vd. `aria-orientation` trên `<ol>`) | đổi sang `data-*` hoặc đúng role |
-| Visual khác biệt | đổi giao diện có chủ đích | Workflow **Visual regression** trên nhánh, tick `update` → tải `visual-screenshots` → chép vào `e2e/__screenshots__/` → commit. Ảnh diff: artifact `visual-test-results` |
+| Visual khác biệt | đổi giao diện có chủ đích | Workflow **Visual regression** trên nhánh, tick `update` (ghi lại mọi ảnh) → tải `visual-screenshots` → chép vào `e2e/__screenshots__/` → commit. Ảnh diff: artifact `visual-test-results` |
 | size-limit vượt | thêm dependency / component lớn | tối ưu, hoặc nâng `limit` trong `.size-limit.cjs` kèm lý do trong PR |
 
 ## Bản Node.js trong CI
@@ -56,9 +55,3 @@ Build và CLI chạy trên mọi bản Node.js đã phát hành và chưa EOL (L
 mới nhất. `node scripts/node-versions.mjs` so workflow với [lịch phát hành](https://github.com/nodejs/Release) (exit 1 nếu
 lệch, `--write` để sửa); workflow `node-versions.yml` chạy hằng tuần và mở PR vào `next`. `engines` của CLI không tự đổi:
 nâng là bản minor của CLI.
-
-## Thử với React 18 trên máy
-
-Repo chạy React 19. Muốn kiểm tra React 18.3 (vẫn được hỗ trợ): chép repo ra thư mục khác (bỏ `node_modules`), `npm ci`,
-rồi `npm i --no-save react@^18.3 react-dom@^18.3 @types/react@^18.3 @types/react-dom@^18.3` và chạy
-`npm run typecheck && npx vitest run`.

@@ -21,7 +21,7 @@ export const CONCEPT_METAS: Record<string, ConceptMeta> = {
     title: "Trình duyệt & nền tảng",
     group: "Nhà phát triển",
     order: 7,
-    lead: "Yugen UI nhắm tới trình duyệt evergreen và React 18 trở lên; không cần polyfill cho các tính năng CSS hiện đại mà Tailwind CSS v4 dựa vào.",
+    lead: "Yugen UI nhắm tới trình duyệt evergreen và React 19 trở lên; không cần polyfill cho các tính năng CSS hiện đại mà Tailwind CSS v4 dựa vào.",
     toc: [
       { id: "browsers", label: "Trình duyệt" },
       { id: "css", label: "Tính năng CSS" },

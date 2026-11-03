@@ -75,17 +75,15 @@ npm run dev          # docs site at http://localhost:5173
   committed, and CI compares them on every PR that changes components, styles or the docs layout. On Windows / macOS the
   first run creates baselines for your machine (gitignored). After an intended visual change, run the **Visual
   regression** workflow on your branch (Actions → Run workflow, tick `update`), download the `visual-screenshots`
-  artifact, copy it into `e2e/__screenshots__/` and commit. The workflow never commits.
+  artifact, copy it into `e2e/__screenshots__/`, look at the files git shows as changed, and commit those. The update
+  rewrites every baseline, so screenshots that drifted below the 1% tolerance are refreshed too. The workflow never
+  commits.
 - `npm run test:engines` — interaction E2E on Firefox and WebKit (Safari desktop, iPhone); run
   `npx playwright install firefox webkit` once. CI runs it weekly, on PRs into `main` and on PRs that change
   `e2e/` or `playwright.config.ts` (the **Browser engines** workflow), not on every PR. Touch-drag tests go through CDP,
   so they run on Chromium only.
 - `npm run size` — size budgets (`.size-limit.cjs`), after `npm run build:lib`. If a budget fails, find the cause first
   (an extra import, a new dependency); raise a `limit` only on purpose, and say why in the PR.
-- The repo runs React 19; CI also runs typecheck, unit tests and the library build against React 18.3 (`react-18` job),
-  which is still supported. To try it locally, use a copy of the repo
-  (`npm i --no-save react@^18.3 react-dom@^18.3 @types/react@^18.3 @types/react-dom@^18.3`), not your main
-  `node_modules`.
 
 ### Rules (summary of Design.md §0)
 
@@ -350,14 +348,12 @@ npm run dev          # trang docs tại http://localhost:5173
 - `npm run test:visual` — chỉ ảnh Linux (`e2e/__screenshots__/**/*-linux.png`) được commit; CI so sánh trên mọi PR đổi
   component, style hoặc khung docs. Trên Windows / macOS, lần chạy đầu tạo ảnh riêng cho máy bạn (gitignore). Cố ý đổi
   giao diện: chạy workflow **Visual regression** trên nhánh của bạn (Actions → Run workflow, tick `update`), tải artifact
-  `visual-screenshots`, chép vào `e2e/__screenshots__/` rồi commit. Workflow không tự commit.
+  `visual-screenshots`, chép vào `e2e/__screenshots__/`, xem các file git báo đổi rồi commit chúng. Lần update ghi lại
+  mọi ảnh, nên ảnh lệch dưới ngưỡng 1% cũng được làm mới. Workflow không tự commit.
 - `npm run test:engines` — cần `npx playwright install firefox webkit` một lần. CI chạy hằng tuần, trên PR vào `main` và
   trên PR có đổi `e2e/` hoặc `playwright.config.ts` (workflow **Browser engines**), không chạy trên mọi PR. Test chạm-kéo dùng CDP nên chỉ chạy trên Chromium.
 - `npm run size` — sau `npm run build:lib`. Vượt ngân sách thì tìm nguyên nhân trước (import thừa, dependency mới);
   tăng có chủ đích thì sửa `limit` trong `.size-limit.cjs` và ghi lý do trong PR.
-- Repo chạy React 19; CI chạy thêm typecheck, test và build:lib bằng React 18.3 (job `react-18`) vì bản này vẫn được
-  hỗ trợ. Muốn thử trên máy: làm trong một bản sao của repo
-  (`npm i --no-save react@^18.3 react-dom@^18.3 @types/react@^18.3 @types/react-dom@^18.3`), đừng làm bẩn `node_modules` chính.
 
 ### Luật bắt buộc (tóm tắt Design.md §0)
 

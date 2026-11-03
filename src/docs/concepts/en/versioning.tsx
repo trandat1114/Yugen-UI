@@ -156,7 +156,7 @@ export default function Page() {
           rows={[
             ["React", "18 and 19", "CI runs typecheck, unit tests and the build on both"],
             ["Tailwind CSS", "v4", "Not needed if you use the precompiled styles.css"],
-            ["TypeScript", "5.x, strict", "Types are checked against @types/react 18 and 19"],
+            ["TypeScript", "5.x, strict", "Types are checked against @types/react 19"],
             ["Next.js", "App Router & Pages Router", "Every component file has \"use client\""],
             ["Browsers", "Evergreen (last 2 versions of Chrome, Edge, Firefox, Safari)", "See Browsers & platforms"],
           ]}

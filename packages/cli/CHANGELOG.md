@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- `doctor` reports React 18 as an error: yugen-ui 0.15 needs React 19 or later.
+- Template `docs` reads its pages with `React.use`.
 - Vite templates use TypeScript 7 (`^7.0.2`, the native compiler): `npm run build` type-checks several times
   faster. `next-starter` stays on TypeScript 6, because `next build` type-checks through TypeScript's JavaScript API.
 

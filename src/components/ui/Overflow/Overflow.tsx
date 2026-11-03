@@ -222,13 +222,9 @@ function outerSize(el: Element, horizontal: boolean, scale: number) {
   return raw / scale + margin;
 }
 
-/** ref của element con (React 18: `element.ref`; React 19: `props.ref`) — giống cách Radix Slot đọc. */
+/** ref của element con: React 19 đặt ref trong props. */
 function getElementRef(element: React.ReactElement): React.Ref<unknown> | undefined {
-  let getter = Object.getOwnPropertyDescriptor(element.props, "ref")?.get as { isReactWarning?: boolean } | undefined;
-  if (getter && "isReactWarning" in getter && getter.isReactWarning) return (element as unknown as { ref: React.Ref<unknown> }).ref;
-  getter = Object.getOwnPropertyDescriptor(element, "ref")?.get as { isReactWarning?: boolean } | undefined;
-  if (getter && "isReactWarning" in getter && getter.isReactWarning) return (element.props as { ref?: React.Ref<unknown> }).ref;
-  return (element.props as { ref?: React.Ref<unknown> }).ref ?? (element as unknown as { ref?: React.Ref<unknown> }).ref;
+  return (element.props as { ref?: React.Ref<unknown> }).ref;
 }
 
 function setRef<T>(ref: React.Ref<T> | undefined, value: T) {
