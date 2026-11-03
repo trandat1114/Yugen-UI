@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { ArrowRight16Regular } from "@fluentui/react-icons";
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, SearchBox, ToggleGroup, ToggleGroupItem, useMediaQuery } from "@/components/ui";
 import { COMPONENTS_BY_CATEGORY, readComponentDoc } from "../registry";
@@ -11,7 +11,10 @@ function HeroPreview({ slug }: { slug: string }) {
   return <>{doc?.hero.render()}</>;
 }
 
-const PREVIEW_PLACEHOLDER = <span className="h-8 w-40 animate-pulse rounded-medium bg-stencil-1 motion-reduce:animate-none" />;
+// Chỉ nhấp nháy khi đang nạp thật. Ô chưa tới gần màn hình đứng yên: ~110 ô cùng chạy animation tốn ~3 s tính lại style
+// mỗi 5 s ở CPU 4× (#308).
+const PREVIEW_PLACEHOLDER = <span className="h-8 w-40 rounded-medium bg-stencil-1" />;
+const PREVIEW_LOADING = <span className="h-8 w-40 animate-pulse rounded-medium bg-stencil-1 motion-reduce:animate-none" />;
 
 /**
  * Chỉ nạp + render demo khi tile sắp vào màn hình — trang chủ có ~110 demo, chia theo file registry (chunk lười).
@@ -41,7 +44,7 @@ function LazyPreview({ slug }: { slug: string }) {
   return (
     <div ref={ref} className="flex max-w-full origin-center scale-75 flex-wrap items-center justify-center gap-2">
       {visible ? (
-        <Suspense fallback={PREVIEW_PLACEHOLDER}>
+        <Suspense fallback={PREVIEW_LOADING}>
           <HeroPreview slug={slug} />
         </Suspense>
       ) : (
@@ -171,11 +174,19 @@ export function HomeComponents() {
         </div>
       )}
 
-      {/* Từ sm: lưới demo. */}
+      {/*
+        Từ sm: lưới demo. Mỗi nhóm `content-visibility: auto` (#308): ~110 ô dưới màn hình đầu là phần lớn layout của trang
+        chủ. Chỗ giữ chỗ theo số hàng (2 cột, 4 cột từ xl; ~15rem mỗi hàng); padding 0.75rem bù bằng margin âm để bóng khi
+        trỏ và viền focus của ô sát mép không bị cắt.
+      */}
       {wide && (
         <div className="mt-5 hidden flex-col gap-8 sm:flex">
           {groups.map((g) => (
-            <div key={g.category}>
+            <div
+              key={g.category}
+              className="-mx-3 -mb-3 px-3 pb-3 [contain-intrinsic-size:auto_none_auto_calc(var(--rows-2)*15rem+4.5rem)] [content-visibility:auto] xl:[contain-intrinsic-size:auto_none_auto_calc(var(--rows-4)*15rem+4.5rem)]"
+              style={{ "--rows-2": Math.ceil(g.items.length / 2), "--rows-4": Math.ceil(g.items.length / 4) } as CSSProperties}
+            >
               <h3 className="flex items-baseline gap-2 border-b border-stroke-2 pb-2 text-title3 font-semibold">
                 {category(g.category)}
                 <span className="text-body1 font-normal text-foreground-3">{g.items.length}</span>

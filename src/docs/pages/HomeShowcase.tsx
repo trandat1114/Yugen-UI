@@ -211,8 +211,10 @@ export function HomeShowcase() {
                     </span>
                   )}
                 </span>
+                {/* Chỉ sóng đang hiện mới chạy: animation trên phần tử SVG không chạy được trên compositor (#308). */}
                 <WavyUnderline
                   gradient={s.gradient}
+                  animated={on}
                   thickness={5}
                   className={cn(
                     "absolute inset-x-0 -bottom-1 h-5 origin-left rtl:origin-right transition-[opacity,scale] duration-gentle ease-decelerate-mid",

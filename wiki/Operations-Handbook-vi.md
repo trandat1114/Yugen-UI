@@ -82,6 +82,23 @@ Bảo vệ cho `next`, `release/*`, `canary` và tag `v*`: xem [Branching and Re
 | Lỗ hổng bảo mật được báo | Xác nhận trong Security Advisory riêng, tạo bản vá trong fork riêng tư, phát hành, công bố advisory + CVE nếu cần |
 | `main` đỏ | Ưu tiên sửa trước mọi PR khác; revert commit gây lỗi nếu không sửa được trong 1 ngày |
 | Docs site hỏng | Chạy lại workflow Docs với commit tốt gần nhất (`workflow_dispatch`) |
+| Docs hiện trang cũ hoặc hỏng mà deploy lại không hết (service worker) | Tắt service worker: xem bên dưới |
+
+### Service worker của docs
+
+Docs đăng ký một service worker (`src/docs/sw/sw.js`, `vite.perf.ts` ghi ra `<base>/sw.js`). Nó lấy file có hash trong
+`assets/` từ cache, tải trang từ mạng trước và trả bản đã cất của đúng trang đó khi mất mạng. Mọi thứ khác không đụng tới
+(`versions.json`, ảnh, `r/*.json`, origin khác như dữ liệu người đóng góp), và bỏ qua các bản docs trong thư mục con
+(`next/`, `vX.Y/`). Mỗi lần deploy có `sw.js` mới: bỏ các trang đã cất của bản trước và các chunk không còn trong bản
+build. Không đăng ký khi chạy dev ở máy và khi chạy E2E.
+
+Tắt khẩn cấp:
+
+1. Repository **Settings → Secrets and variables → Actions → Variables**: thêm `DOCS_SW` = `off`.
+2. Chạy lại workflow Docs (`workflow_dispatch`).
+
+`sw.js` của bản build đó xoá cache của docs, tự gỡ đăng ký và tải lại các tab đang mở ở lần kế tiếp người xem mở một trang
+docs; trang cũng thôi đăng ký. Xoá biến rồi chạy lại workflow để bật lại.
 
 ## 7. Kiểm duyệt cộng đồng
 

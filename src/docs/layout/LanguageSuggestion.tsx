@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Button, MessageBar } from "@/components/ui";
 import { useLocale } from "../i18n";
+import type { LanguageSuggestionBarProps } from "./LanguageSuggestionBar";
 
 const DISMISSED_KEY = "yugen-docs-language-suggestion";
 
@@ -17,11 +17,12 @@ const prefersVietnamese = () => (navigator.languages?.length ? navigator.languag
 
 /**
  * Docs mặc định tiếng Anh (#277). Trình duyệt đặt tiếng Việt mà đang xem bản tiếng Anh thì gợi ý một lần, không tự chuyển
- * trang (crawler và cache cần mỗi URL một ngôn ngữ). Chỉ hiện sau khi mount nên HTML prerender không đổi.
+ * trang (crawler và cache cần mỗi URL một ngôn ngữ). Chỉ hiện sau khi mount nên HTML prerender không đổi. Thanh gợi ý
+ * (MessageBar) nạp lười, chỉ khi cần hiện (#307).
  */
 export function LanguageSuggestion({ onChoose }: { onChoose: () => void }) {
   const { locale } = useLocale();
-  const [show, setShow] = React.useState(false);
+  const [Bar, setBar] = React.useState<React.ComponentType<LanguageSuggestionBarProps> | null>(null);
 
   React.useEffect(() => {
     let dismissed = false;
@@ -30,38 +31,32 @@ export function LanguageSuggestion({ onChoose }: { onChoose: () => void }) {
     } catch {
       dismissed = false;
     }
-    setShow(locale === "en" && !dismissed && prefersVietnamese());
+    if (locale !== "en" || dismissed || !prefersVietnamese()) {
+      setBar(null);
+      return;
+    }
+    let alive = true;
+    import("./LanguageSuggestionBar").then(
+      (m) => alive && setBar(() => m.LanguageSuggestionBar),
+      () => {},
+    );
+    return () => {
+      alive = false;
+    };
   }, [locale]);
 
-  if (!show) return null;
+  if (!Bar) return null;
   const close = () => {
     dismissLanguageSuggestion();
-    setShow(false);
+    setBar(null);
   };
   return (
-    <MessageBar
-      lang="vi"
-      intent="info"
-      className="mt-5"
-      actions={
-        <>
-          <Button
-            size="small"
-            appearance="primary"
-            onClick={() => {
-              close();
-              onChoose();
-            }}
-          >
-            Xem bằng tiếng Việt
-          </Button>
-          <Button size="small" appearance="subtle" lang="vi" onClick={close}>
-            Giữ tiếng Anh
-          </Button>
-        </>
-      }
-    >
-      Trang này có bản tiếng Việt.
-    </MessageBar>
+    <Bar
+      onChoose={() => {
+        close();
+        onChoose();
+      }}
+      onClose={close}
+    />
   );
 }

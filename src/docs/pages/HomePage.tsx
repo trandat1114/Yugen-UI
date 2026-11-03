@@ -1,4 +1,4 @@
-import { Fragment, useState, type CSSProperties, type ReactNode } from "react";
+import { Fragment, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import {
   ArrowRight20Regular,
   Color24Regular,
@@ -95,15 +95,34 @@ function prerenderedHeroElapsed() {
   return Math.max(0, (performance.now() - firstPaint) / 1000);
 }
 
+/**
+ * Animation lặp vô hạn (cánh hoa rơi, sóng dưới chữ) tạm dừng khi phần chứa nó ra khỏi màn hình: không thì trình duyệt tính
+ * lại style mỗi khung hình cho thứ không ai thấy (#308). hero.css: `[data-offscreen]`.
+ */
+function usePauseOffscreen() {
+  const ref = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(([entry]) => el.toggleAttribute("data-offscreen", !entry.isIntersecting));
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return ref;
+}
+
 export function HomePage() {
   const { t, foundation, locale } = useLocale();
   const [heroElapsed] = useState(prerenderedHeroElapsed);
   const count = COMPONENTS_META.length;
+  const heroRef = usePauseOffscreen();
+  const showcaseRef = usePauseOffscreen();
 
   return (
     <div className="pb-8">
       {/* Hero */}
       <section
+        ref={heroRef}
         className="relative -mx-4 px-4 pt-5 pb-12 md:-mx-12 md:px-12 md:pt-8 md:pb-16"
         style={{ "--yg-elapsed": `${heroElapsed}s` } as CSSProperties}
       >
@@ -168,7 +187,7 @@ export function HomePage() {
       </section>
 
       {/* Showcase */}
-      <section className="mt-12 md:mt-16 lg:mt-20">
+      <section ref={showcaseRef} className="mt-12 md:mt-16 lg:mt-20">
         <h2 className="font-display text-title1 font-semibold">{t("home.explore")}</h2>
         <div className="mt-4 md:mt-6">
           <HomeShowcase />

@@ -31,6 +31,14 @@ import { FOUNDATIONS } from "../foundations";
 import { COMPONENTS_BY_CATEGORY } from "../registry";
 import { useLocale } from "../i18n";
 import { docsPath, navigate } from "../router";
+import { prefetchHref } from "../prefetch";
+
+/** Mục đang chọn đổi (phím mũi tên, gõ tìm): nạp trước trang của mục đó. cmdk đặt data-selected sau lần render này. */
+const prefetchSelected = () =>
+  requestAnimationFrame(() => {
+    const href = document.querySelector("[cmdk-item][data-selected='true']")?.getAttribute("data-href");
+    if (href) prefetchHref(href);
+  });
 
 /** Bảng lệnh của trang docs: Ctrl/⌘ + K (App lắng nghe phím tắt) để nhảy tới mọi trang hoặc đổi giao diện. */
 export function DocsCommandPalette({
@@ -46,41 +54,45 @@ export function DocsCommandPalette({
 }) {
   const { t, locale, category, group, foundation, component, concept } = useLocale();
 
-  const go = (path: string) => {
-    onOpenChange(false);
-    navigate(docsPath(path));
-  };
+  // Mục điều hướng: `data-href` để nạp trước trang khi trỏ chuột vào mục hoặc khi mục được chọn bằng bàn phím (#305).
+  const nav = (path: string) => ({
+    "data-href": docsPath(path),
+    onSelect: () => {
+      onOpenChange(false);
+      navigate(docsPath(path));
+    },
+  });
   const act = (patch: Partial<Appearance>) => {
     onOpenChange(false);
     onAppearanceChange(patch);
   };
 
   return (
-    <CommandDialog open={open} onOpenChange={onOpenChange} title={t("palette.title")}>
+    <CommandDialog open={open} onOpenChange={onOpenChange} title={t("palette.title")} onValueChange={prefetchSelected}>
       <CommandInput placeholder={t("palette.placeholder")} />
       <CommandList className="max-h-[min(60vh,440px)]">
         <CommandEmpty>{t("palette.empty")}</CommandEmpty>
 
         <CommandGroup heading={t("palette.pages")}>
-          <CommandItem icon={<Home20Regular />} onSelect={() => go("/")}>
+          <CommandItem icon={<Home20Regular />} {...nav("/")}>
             {t("nav.overview")}
           </CommandItem>
-          <CommandItem icon={<Rocket20Regular />} onSelect={() => go("/templates")} keywords={["template", "starter", "mẫu"]}>
+          <CommandItem icon={<Rocket20Regular />} {...nav("/templates")} keywords={["template", "starter", "mẫu"]}>
             Templates
           </CommandItem>
-          <CommandItem icon={<Grid20Regular />} onSelect={() => go("/blocks")}>
+          <CommandItem icon={<Grid20Regular />} {...nav("/blocks")}>
             Blocks
           </CommandItem>
-          <CommandItem icon={<PaintBrush20Regular />} onSelect={() => go("/theme-designer")}>
+          <CommandItem icon={<PaintBrush20Regular />} {...nav("/theme-designer")}>
             Theme Designer
           </CommandItem>
-          <CommandItem icon={<Megaphone20Regular />} onSelect={() => go("/news")} keywords={["changelog", "news", "cập nhật"]}>
+          <CommandItem icon={<Megaphone20Regular />} {...nav("/news")} keywords={["changelog", "news", "cập nhật"]}>
             {t("nav.news")}
           </CommandItem>
-          <CommandItem icon={<People20Regular />} onSelect={() => go("/community")} keywords={["community", "đóng góp"]}>
+          <CommandItem icon={<People20Regular />} {...nav("/community")} keywords={["community", "đóng góp"]}>
             {t("nav.community")}
           </CommandItem>
-          <CommandItem icon={<PeopleStar20Regular />} onSelect={() => go("/contributors")} keywords={["contributors", "người đóng góp", "cảm ơn"]}>
+          <CommandItem icon={<PeopleStar20Regular />} {...nav("/contributors")} keywords={["contributors", "người đóng góp", "cảm ơn"]}>
             {t("nav.contributors")}
           </CommandItem>
         </CommandGroup>
@@ -115,7 +127,7 @@ export function DocsCommandPalette({
 
         <CommandGroup heading={t("nav.foundations")}>
           {FOUNDATIONS.map((f) => (
-            <CommandItem key={f.slug} icon={<Color20Regular />} onSelect={() => go(`/foundations/${f.slug}`)} keywords={[f.name]}>
+            <CommandItem key={f.slug} icon={<Color20Regular />} {...nav(`/foundations/${f.slug}`)} keywords={[f.name]}>
               {foundation(f)}
             </CommandItem>
           ))}
@@ -126,7 +138,7 @@ export function DocsCommandPalette({
             <CommandItem
               key={c.meta.slug}
               icon={<Book20Regular />}
-              onSelect={() => go(`/concepts/${c.meta.slug}`)}
+              {...nav(`/concepts/${c.meta.slug}`)}
               keywords={[c.meta.title, c.meta.group, group(c.meta.group)]}
             >
               {concept(c.meta).title}
@@ -141,7 +153,7 @@ export function DocsCommandPalette({
               <CommandItem
                 key={c.slug}
                 icon={g.category === "Yugen Labs" ? <PuzzlePiece20Regular /> : <Document20Regular />}
-                onSelect={() => go(`/components/${c.slug}`)}
+                {...nav(`/components/${c.slug}`)}
                 keywords={[c.slug, g.category, category(g.category)]}
               >
                 {component(c).name}
