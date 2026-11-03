@@ -381,9 +381,9 @@ Choose the signal by **expected** duration, not by habit (details: `#/concepts/w
 | **Provider** | YugenProvider (+ `useYugen`, `usePortalThemeProps`) |
 | **Actions** (9) | Button (+ `loading`, `loadingText`), CompoundButton, MenuButton, SplitButton, ButtonGroup, ToggleButton, ToggleGroup, Toolbar, Link |
 | **Inputs** (25) | Field, Label, Input, Textarea, SearchBox, Select (native), Dropdown, Combobox, Tag (+TagGroup), TagPicker, Checkbox, RadioGroup, Switch, Slider, SpinButton, InputOTP, Rating, SwatchPicker, Calendar, DatePicker, TimePicker, DateRangePicker `presets`, FileUpload, Form (react-hook-form + zod, example only) |
-| **Navigation** (9) | Tabs, Breadcrumb, Pagination, Nav, Menu, Menubar, ContextMenu, Command, Stepper / Wizard |
+| **Navigation** (10) | Tabs, Breadcrumb, Pagination, Nav, NavigationMenu, Menu, Menubar, ContextMenu, Command, Stepper / Wizard |
 | **Data display** (14) | Avatar, AvatarGroup, Persona, PresenceBadge, Badge, CounterBadge, Kbd, Text, Image, List, Table (+DataTable example), Tree, Carousel (loop, autoplay with progress, `slidesPerView`, `CarouselThumbnails`), DataGrid (sorting, row selection, column resizing, virtualization) |
-| **Feedback** (7) | MessageBar, Toast, ProgressBar, Spinner, Skeleton (+ `SkeletonText/Avatar/Card/List/Table`), Empty, InfoLabel |
+| **Feedback** (8) | MessageBar, Toast, ProgressBar, Spinner, Skeleton (+ `SkeletonText/Avatar/Card/List/Table`), Empty, StatusPage (+ `ErrorBoundary`), InfoLabel |
 | **Surfaces & overlays** (7) | Card, Dialog, Drawer (overlay + inline), Popover, TeachingPopover, HoverCard, Tooltip |
 | **Layout** (7) | Accordion (`appearance` flush / separated / outline), AspectRatio, Collapsible, Divider, ScrollArea, Resizable (`collapsible`, `persistKey`), Overflow |
 | **Motion** (6) | Fade, Scale, Slide, Collapse, Blur & Rotate, Stagger (+ `usePresence` hook) |

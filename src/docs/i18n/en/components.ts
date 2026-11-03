@@ -52,6 +52,7 @@ export const COMPONENTS_EN: Record<string, { lead: string; name?: string }> = {
   menu: { lead: "Menu shows a list of commands or options when people interact with a button." },
   menubar: { lead: "Menubar is a persistent horizontal, desktop-style menu bar holding command groups like File, Edit, View…" },
   nav: { lead: "Nav is an app's vertical navigation, moving people between its main areas." },
+  navigationmenu: { lead: "NavigationMenu is a website header menu: links and triggers that open dropdown panels (mega menus)." },
   pagination: { lead: "Pagination splits long content into pages and lets people move between them quickly." },
   stepper: { lead: "Stepper shows which step of a multi-step process people are on; Wizard pairs it with each step's content and Back / Next buttons." },
   tabs: { lead: "TabList switches between sibling content panels without leaving the page." },
@@ -84,6 +85,9 @@ export const COMPONENTS_EN: Record<string, { lead: string; name?: string }> = {
   progressbar: { lead: "ProgressBar shows the progress of a running task, with a known percentage or as indeterminate." },
   skeleton: { lead: "Skeleton is a placeholder sketch of upcoming content that makes loading feel shorter." },
   spinner: { lead: "Spinner shows that the system is working on a task of unknown duration." },
+  statuspage: {
+    lead: "StatusPage is a page for HTTP errors (404, 500, 503…), being offline and new versions; ErrorBoundary shows it when its children fail.",
+  },
   toast: { lead: "Toast is a short, non-blocking notification that appears in a corner of the screen and dismisses itself." },
   sonner: { lead: "Sonner stacks short notifications in a corner: the newest in front, older ones behind, fanning out on hover." },
 

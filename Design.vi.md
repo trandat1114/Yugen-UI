@@ -381,9 +381,9 @@ Chọn tín hiệu theo thời gian **dự kiến**, không theo thói quen (chi
 | **Provider** | YugenProvider (+ `useYugen`, `usePortalThemeProps`) |
 | **Hành động** (9) | Button (+ `loading`, `loadingText`), CompoundButton, MenuButton, SplitButton, ButtonGroup, ToggleButton, ToggleGroup, Toolbar, Link |
 | **Nhập liệu** (25) | Field, Label, Input, Textarea, SearchBox, Select (native), Dropdown, Combobox, Tag (+TagGroup), TagPicker, Checkbox, RadioGroup, Switch, Slider, SpinButton, InputOTP, Rating, SwatchPicker, Calendar, DatePicker, TimePicker, DateRangePicker `presets`, FileUpload, Form (react-hook-form + zod, chỉ ví dụ) |
-| **Điều hướng** (9) | Tabs, Breadcrumb, Pagination, Nav, Menu, Menubar, ContextMenu, Command, Stepper / Wizard |
+| **Điều hướng** (10) | Tabs, Breadcrumb, Pagination, Nav, NavigationMenu, Menu, Menubar, ContextMenu, Command, Stepper / Wizard |
 | **Hiển thị dữ liệu** (14) | Avatar, AvatarGroup, Persona, PresenceBadge, Badge, CounterBadge, Kbd, Text, Image, List, Table (+DataTable mẫu), Tree, Carousel (loop, autoplay có tiến độ, `slidesPerView`, `CarouselThumbnails`), DataGrid (sort, chọn dòng, đổi cỡ cột, ảo hoá) |
-| **Phản hồi** (7) | MessageBar, Toast, ProgressBar, Spinner, Skeleton (+ `SkeletonText/Avatar/Card/List/Table`), Empty, InfoLabel |
+| **Phản hồi** (8) | MessageBar, Toast, ProgressBar, Spinner, Skeleton (+ `SkeletonText/Avatar/Card/List/Table`), Empty, StatusPage (+ `ErrorBoundary`), InfoLabel |
 | **Bề mặt & overlay** (7) | Card, Dialog, Drawer (overlay + inline), Popover, TeachingPopover, HoverCard, Tooltip |
 | **Bố cục** (7) | Accordion (`appearance` flush / separated / outline), AspectRatio, Collapsible, Divider, ScrollArea, Resizable (`collapsible`, `persistKey`), Overflow |
 | **Chuyển động** (6) | Fade, Scale, Slide, Collapse, Blur & Rotate, Stagger (+ hook `usePresence`) |
