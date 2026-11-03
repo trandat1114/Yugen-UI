@@ -96,6 +96,15 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
       tools: "Tools & related pages",
     },
   },
+  security: {
+    title: "Security",
+    lead: "Which components show untrusted content (Markdown from users or a model, code, links, files), what Yugen UI cleans up, and what your app still has to do.",
+    toc: {
+      handled: "What Yugen UI handles",
+      app: "What your app must do",
+      report: "Reporting a vulnerability",
+    },
+  },
   "browser-support": {
     title: "Browsers & platforms",
     lead: "Yugen UI targets evergreen browsers and React 19 or later. The modern CSS features Tailwind CSS v4 relies on need no polyfills.",

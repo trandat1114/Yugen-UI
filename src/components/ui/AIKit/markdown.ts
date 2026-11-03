@@ -139,7 +139,30 @@ function canClose(src: string, k: number, m: number, ch: string) {
 type CloserMemo = Map<string, number>;
 
 /** Tìm dãy đóng cho dấu nhấn mạnh dài `n` — bỏ qua code span, escape và cặp lồng bên trong. */
-function findCloser(src: string, from: number, ch: string, n: number, memo: CloserMemo): number {
+/** Vị trí run cuối cùng (ký tự `ch`, dài ≥ n) có thể là dấu đóng; -1 nếu không có. Tính một lần cho mỗi đoạn. */
+function lastCloser(src: string, ch: string, n: number, memo: CloserMemo): number {
+  const key = `last:${ch}${n}`;
+  let last = memo.get(key);
+  if (last === undefined) {
+    last = -1;
+    for (let k = 0; k < src.length; ) {
+      if (src[k] !== ch) {
+        k++;
+        continue;
+      }
+      let m = 0;
+      while (src[k + m] === ch) m++;
+      if (m >= n && canClose(src, k, m, ch)) last = k;
+      k += m;
+    }
+    memo.set(key, last);
+  }
+  return last;
+}
+
+function findCloser(src: string, from: number, ch: string, n: number, memo: CloserMemo, depth = 0): number {
+  // Không còn dấu đóng nào phía sau: dừng ngay (giữ chuỗi `**a **a …` không có dấu đóng ở chi phí tuyến tính).
+  if (from > lastCloser(src, ch, n, memo)) return -1;
   const key = `${ch}${n}@${from}`;
   const cached = memo.get(key);
   if (cached !== undefined) return cached;
@@ -165,8 +188,9 @@ function findCloser(src: string, from: number, ch: string, n: number, memo: Clos
       result = k;
       break;
     }
-    if (m <= 3 && canOpen(src, k, m, ch)) {
-      const nested = findCloser(src, k + m, ch, m, memo);
+    // Dấu mở lồng bên trong: tìm dấu đóng của nó trước (tối đa MAX_INLINE_DEPTH mức, sâu hơn thì coi như chữ).
+    if (m <= 3 && depth < MAX_INLINE_DEPTH && canOpen(src, k, m, ch)) {
+      const nested = findCloser(src, k + m, ch, m, memo, depth + 1);
       if (nested !== -1) {
         k = nested + m;
         continue;
@@ -239,8 +263,20 @@ function trimUrl(url: string) {
   return out;
 }
 
-/** Tách nội dung inline. `open`: đoạn này chạm tới cuối văn bản đang stream. */
-export function parseInlines(src: string, open = false): MdInline[] {
+/*
+ * Giới hạn cho nội dung không tin cậy (#165): Markdown lồng quá sâu hay ngoặc không đóng không được làm tràn stack hoặc
+ * tốn thời gian bậc hai. Quá giới hạn thì phần còn lại hiện như chữ thường.
+ */
+/** Độ sâu lồng inline (nhấn mạnh, nhãn link). */
+export const MAX_INLINE_DEPTH = 16;
+/** Độ sâu lồng khối (blockquote, mục danh sách). */
+export const MAX_BLOCK_DEPTH = 32;
+/** Nhãn link dài tối đa (ký tự) và số `[` lồng tối đa khi tìm `]` đóng. */
+const MAX_LABEL = 2000;
+const MAX_BRACKET_DEPTH = 32;
+
+/** Tách nội dung inline. `open`: đoạn này chạm tới cuối văn bản đang stream. `depth`: mức lồng (dùng nội bộ). */
+export function parseInlines(src: string, open = false, depth = 0): MdInline[] {
   const out: MdInline[] = [];
   const memo: CloserMemo = new Map();
   let buf = "";
@@ -310,16 +346,16 @@ export function parseInlines(src: string, open = false): MdInline[] {
     if (ch === "*" || ch === "_" || ch === "~") {
       let n = 0;
       while (src[i + n] === ch) n++;
-      const valid = ch === "~" ? n === 2 : n <= 3;
+      const valid = (ch === "~" ? n === 2 : n <= 3) && depth < MAX_INLINE_DEPTH;
       if (valid && canOpen(src, i, n, ch)) {
         const closer = findCloser(src, i + n, ch, n, memo);
         if (closer !== -1) {
-          push([wrapEmphasis(ch, n, parseInlines(src.slice(i + n, closer), false))]);
+          push([wrapEmphasis(ch, n, parseInlines(src.slice(i + n, closer), false, depth + 1))]);
           i = closer + n;
           continue;
         }
         if (open) {
-          const inner = parseInlines(src.slice(i + n), true);
+          const inner = parseInlines(src.slice(i + n), true, depth + 1);
           if (inner.length) push([wrapEmphasis(ch, n, inner)]);
           else flush();
           i = src.length;
@@ -366,9 +402,9 @@ export function parseInlines(src: string, open = false): MdInline[] {
       }
     }
 
-    if (ch === "[" || (ch === "!" && src[i + 1] === "[")) {
+    if ((ch === "[" || (ch === "!" && src[i + 1] === "[")) && depth < MAX_INLINE_DEPTH) {
       const start = ch === "!" ? i + 1 : i;
-      const result = parseBracket(src, start, open);
+      const result = parseBracket(src, start, open, depth);
       if (result) {
         push(result.nodes);
         i = result.end;
@@ -386,10 +422,12 @@ export function parseInlines(src: string, open = false): MdInline[] {
   return out;
 }
 
-function parseBracket(src: string, i: number, open: boolean): { nodes: MdInline[]; end: number } | null {
+function parseBracket(src: string, i: number, open: boolean, inlineDepth: number): { nodes: MdInline[]; end: number } | null {
   let depth = 0;
   let k = i;
   for (; k < src.length; k++) {
+    // Nhãn quá dài hay quá nhiều `[` lồng: không phải link (giữ chi phí tuyến tính với chuỗi `[[[…` không đóng).
+    if (k - i > MAX_LABEL || depth > MAX_BRACKET_DEPTH) return null;
     const c = src[k];
     if (c === "\\") {
       k++;
@@ -410,7 +448,7 @@ function parseBracket(src: string, i: number, open: boolean): { nodes: MdInline[
   const label = src.slice(i + 1, k);
   if (src[k + 1] === "(") {
     const dest = parseDestination(src, k + 2);
-    const children = parseInlines(label, false);
+    const children = parseInlines(label, false, inlineDepth + 1);
     if (dest) {
       const href = sanitizeHref(dest.href, { relative: keepRelative });
       return {
@@ -533,7 +571,7 @@ interface Parsed {
 }
 
 /** `open`: dòng cuối của `lines` là cuối văn bản đang stream. */
-function parseBlocks(lines: string[], from: number, open: boolean): Parsed {
+function parseBlocks(lines: string[], from: number, open: boolean, depth = 0): Parsed {
   const blocks: MdBlock[] = [];
   const starts: number[] = [];
   const n = lines.length;
@@ -591,7 +629,7 @@ function parseBlocks(lines: string[], from: number, open: boolean): Parsed {
       continue;
     }
 
-    if (QUOTE.test(line)) {
+    if (QUOTE.test(line) && depth < MAX_BLOCK_DEPTH) {
       const inner: string[] = [];
       let j = i;
       while (j < n) {
@@ -602,13 +640,13 @@ function parseBlocks(lines: string[], from: number, open: boolean): Parsed {
         j++;
       }
       add(
-        { type: "blockquote", raw: lines.slice(i, j).join("\n"), children: parseBlocks(inner, 0, open && j === n).blocks },
+        { type: "blockquote", raw: lines.slice(i, j).join("\n"), children: parseBlocks(inner, 0, open && j === n, depth + 1).blocks },
         j,
       );
       continue;
     }
 
-    const first = matchListItem(line);
+    const first = depth < MAX_BLOCK_DEPTH ? matchListItem(line) : null;
     if (first) {
       const items: MdListItem[] = [];
       let tight = true;
@@ -649,7 +687,7 @@ function parseBlocks(lines: string[], from: number, open: boolean): Parsed {
         const task = /^\[([ xX])\](?:[ \t]+|$)/.exec(itemLines[0]);
         if (task) itemLines[0] = itemLines[0].slice(task[0].length);
         const itemOpen = open && j === n;
-        items.push({ checked: task ? task[1] !== " " : null, children: parseBlocks(itemLines, 0, itemOpen).blocks });
+        items.push({ checked: task ? task[1] !== " " : null, children: parseBlocks(itemLines, 0, itemOpen, depth + 1).blocks });
         if (blankInside) tight = false;
 
         const next = j < n ? matchListItem(lines[j]) : null;
