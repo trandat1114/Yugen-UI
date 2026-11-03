@@ -51,19 +51,19 @@ function DialogDemo() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button icon={<Delete20Regular />}>Xoá tệp</Button>
+        <Button icon={<Delete20Regular />}>Delete file</Button>
       </DialogTrigger>
       <DialogSurface>
-        <DialogTitle>Xoá "Báo cáo Q3.docx"?</DialogTitle>
+        <DialogTitle>Delete "Q3 report.docx"?</DialogTitle>
         <DialogDescription>
-          Tệp sẽ được chuyển vào Thùng rác và tự động xoá vĩnh viễn sau 30 ngày.
+          The file moves to the Recycle Bin and is permanently deleted after 30 days.
         </DialogDescription>
         <DialogActions>
           <DialogClose asChild>
-            <Button>Huỷ</Button>
+            <Button>Cancel</Button>
           </DialogClose>
           <Button appearance="primary" onClick={() => setOpen(false)}>
-            Xoá
+            Delete
           </Button>
         </DialogActions>
       </DialogSurface>
@@ -75,14 +75,14 @@ function AlertDialogDemo() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button appearance="outline">Phiên sắp hết hạn</Button>
+        <Button appearance="outline">Session expiring</Button>
       </DialogTrigger>
       <DialogSurface modalType="alert">
-        <DialogTitle action={null}>Phiên làm việc sắp hết hạn</DialogTitle>
-        <DialogDescription>Bạn sẽ bị đăng xuất sau 60 giây. Tiếp tục làm việc?</DialogDescription>
+        <DialogTitle action={null}>Your session is about to expire</DialogTitle>
+        <DialogDescription>You'll be signed out in 60 seconds. Keep working?</DialogDescription>
         <DialogActions>
           <DialogClose asChild>
-            <Button appearance="primary">Tiếp tục</Button>
+            <Button appearance="primary">Continue</Button>
           </DialogClose>
         </DialogActions>
       </DialogSurface>
@@ -95,17 +95,17 @@ function DismissibleMessageBarDemo() {
   if (!visible)
     return (
       <Button size="small" onClick={() => setVisible(true)}>
-        Hiện lại
+        Show again
       </Button>
     );
   return (
     <MessageBar
       intent="warning"
-      title="Sắp hết dung lượng"
-      actions={<Button size="small">Nâng cấp</Button>}
+      title="Storage almost full"
+      actions={<Button size="small">Upgrade</Button>}
       onDismiss={() => setVisible(false)}
     >
-      Bạn đã dùng 95% dung lượng lưu trữ.
+      You've used 95% of your storage.
     </MessageBar>
   );
 }
@@ -121,13 +121,13 @@ function ButtonLoadingDemo() {
   return (
     <>
       <Button appearance="primary" loading={saving} onClick={save}>
-        Lưu thay đổi
+        Save changes
       </Button>
       <Button icon={<ArrowDownload20Regular />} loading={saving} onClick={save}>
-        Tải xuống
+        Download
       </Button>
-      <Button appearance="outline" loading={saving} loadingText="Đang gửi…" onClick={save}>
-        Gửi
+      <Button appearance="outline" loading={saving} loadingText="Sending…" onClick={save}>
+        Send
       </Button>
     </>
   );
@@ -146,12 +146,12 @@ export const docs: ComponentDoc[] = [
     importCode: `import { Button } from "@/components/ui";`,
     hero: {
       title: "Button",
-      code: `<Button appearance="primary">Lưu thay đổi</Button>
-<Button>Huỷ</Button>`,
+      code: `<Button appearance="primary">Save changes</Button>
+<Button>Cancel</Button>`,
       render: () => (
         <>
-          <Button appearance="primary">Lưu thay đổi</Button>
-          <Button>Huỷ</Button>
+          <Button appearance="primary">Save changes</Button>
+          <Button>Cancel</Button>
         </>
       ),
     },
@@ -191,18 +191,18 @@ export const docs: ComponentDoc[] = [
       {
         title: "Kèm icon",
         description: "Icon đứng trước nhãn để bổ nghĩa; icon-only bắt buộc có aria-label.",
-        code: `<Button appearance="primary" icon={<Send20Regular className="rtl:-scale-x-100" />}>Gửi</Button>
-<Button icon={<ArrowDownload20Regular />}>Tải xuống</Button>
-<Button appearance="subtle" icon={<Edit20Regular />} aria-label="Sửa" />
-<Button appearance="subtle" icon={<MoreHorizontal20Regular />} aria-label="Thêm" />`,
+        code: `<Button appearance="primary" icon={<Send20Regular className="rtl:-scale-x-100" />}>Send</Button>
+<Button icon={<ArrowDownload20Regular />}>Download</Button>
+<Button appearance="subtle" icon={<Edit20Regular />} aria-label="Edit" />
+<Button appearance="subtle" icon={<MoreHorizontal20Regular />} aria-label="More" />`,
         render: () => (
           <>
             <Button appearance="primary" icon={<Send20Regular className="rtl:-scale-x-100" />}>
-              Gửi
+              Send
             </Button>
-            <Button icon={<ArrowDownload20Regular />}>Tải xuống</Button>
-            <Button appearance="subtle" icon={<Edit20Regular />} aria-label="Sửa" />
-            <Button appearance="subtle" icon={<MoreHorizontal20Regular />} aria-label="Thêm" />
+            <Button icon={<ArrowDownload20Regular />}>Download</Button>
+            <Button appearance="subtle" icon={<Edit20Regular />} aria-label="Edit" />
+            <Button appearance="subtle" icon={<MoreHorizontal20Regular />} aria-label="More" />
           </>
         ),
       },
@@ -212,13 +212,13 @@ export const docs: ComponentDoc[] = [
         code: `<Button shape="rounded">Rounded</Button>
 <Button shape="circular">Circular</Button>
 <Button shape="square">Square</Button>
-<Button appearance="primary" shape="circular" icon={<Add20Regular />} aria-label="Tạo mới" />`,
+<Button appearance="primary" shape="circular" icon={<Add20Regular />} aria-label="Create" />`,
         render: () => (
           <>
             <Button shape="rounded">Rounded</Button>
             <Button shape="circular">Circular</Button>
             <Button shape="square">Square</Button>
-            <Button appearance="primary" shape="circular" icon={<Add20Regular />} aria-label="Tạo mới" />
+            <Button appearance="primary" shape="circular" icon={<Add20Regular />} aria-label="Create" />
           </>
         ),
       },
@@ -243,10 +243,10 @@ export const docs: ComponentDoc[] = [
       {
         title: "Danger",
         description: "Phần mở rộng của bộ này (không có trong Fluent gốc) cho hành động phá huỷ không thể hoàn tác.",
-        code: `<Button appearance="danger" icon={<Delete20Regular />}>Xoá vĩnh viễn</Button>`,
+        code: `<Button appearance="danger" icon={<Delete20Regular />}>Delete permanently</Button>`,
         render: () => (
           <Button appearance="danger" icon={<Delete20Regular />}>
-            Xoá vĩnh viễn
+            Delete permanently
           </Button>
         ),
       },
@@ -265,13 +265,13 @@ export const docs: ComponentDoc[] = [
   return (
     <>
       <Button appearance="primary" loading={saving} onClick={save}>
-        Lưu thay đổi
+        Save changes
       </Button>
       <Button icon={<ArrowDownload20Regular />} loading={saving} onClick={save}>
-        Tải xuống
+        Download
       </Button>
-      <Button appearance="outline" loading={saving} loadingText="Đang gửi…" onClick={save}>
-        Gửi
+      <Button appearance="outline" loading={saving} loadingText="Sending…" onClick={save}>
+        Send
       </Button>
     </>
   );
@@ -311,14 +311,14 @@ export const docs: ComponentDoc[] = [
     importCode: `import { Badge } from "@/components/ui";`,
     hero: {
       title: "Badge",
-      code: `<Badge>Mới</Badge>
-<Badge appearance="tint" color="success">Đang hoạt động</Badge>
+      code: `<Badge>New</Badge>
+<Badge appearance="tint" color="success">Active</Badge>
 <Badge color="danger">12</Badge>`,
       render: () => (
         <>
-          <Badge>Mới</Badge>
+          <Badge>New</Badge>
           <Badge appearance="tint" color="success">
-            Đang hoạt động
+            Active
           </Badge>
           <Badge color="danger">12</Badge>
         </>
@@ -364,23 +364,23 @@ export const docs: ComponentDoc[] = [
       {
         title: "Tint theo trạng thái",
         description: "Ít tương phản hơn filled — phù hợp cho bảng/danh sách dày đặc.",
-        code: `<Badge appearance="tint" color="success">Đã duyệt</Badge>
-<Badge appearance="tint" color="warning">Chờ xử lý</Badge>
-<Badge appearance="tint" color="danger">Bị từ chối</Badge>
-<Badge appearance="tint" color="informative">Nháp</Badge>`,
+        code: `<Badge appearance="tint" color="success">Approved</Badge>
+<Badge appearance="tint" color="warning">Pending</Badge>
+<Badge appearance="tint" color="danger">Rejected</Badge>
+<Badge appearance="tint" color="informative">Draft</Badge>`,
         render: () => (
           <>
             <Badge appearance="tint" color="success">
-              Đã duyệt
+              Approved
             </Badge>
             <Badge appearance="tint" color="warning">
-              Chờ xử lý
+              Pending
             </Badge>
             <Badge appearance="tint" color="danger">
-              Bị từ chối
+              Rejected
             </Badge>
             <Badge appearance="tint" color="informative">
-              Nháp
+              Draft
             </Badge>
           </>
         ),
@@ -391,7 +391,7 @@ export const docs: ComponentDoc[] = [
         code: `<Badge size="small">5</Badge>
 <Badge size="medium">12</Badge>
 <Badge size="large" shape="rounded">99+</Badge>
-<Badge size="extra-large" shape="rounded" icon={<Star20Filled />}>Nổi bật</Badge>`,
+<Badge size="extra-large" shape="rounded" icon={<Star20Filled />}>Featured</Badge>`,
         render: () => (
           <>
             <Badge size="small">5</Badge>
@@ -400,7 +400,7 @@ export const docs: ComponentDoc[] = [
               99+
             </Badge>
             <Badge size="extra-large" shape="rounded" icon={<Star20Filled />}>
-              Nổi bật
+              Featured
             </Badge>
           </>
         ),
@@ -426,14 +426,14 @@ export const docs: ComponentDoc[] = [
     importCode: `import { Avatar } from "@/components/ui";`,
     hero: {
       title: "Avatar",
-      code: `<Avatar name="Nguyễn Văn An" size={48} color="colorful" presence="available" />
-<Avatar name="Trần Thị Bình" size={48} color="colorful" presence="busy" />
-<Avatar name="Lê Hoàng" size={48} color="colorful" presence="away" />`,
+      code: `<Avatar name="Alex Chen" size={48} color="colorful" presence="available" />
+<Avatar name="Maria Garcia" size={48} color="colorful" presence="busy" />
+<Avatar name="Sam Lee" size={48} color="colorful" presence="away" />`,
       render: () => (
         <>
-          <Avatar name="Nguyễn Văn An" size={48} color="colorful" presence="available" />
-          <Avatar name="Trần Thị Bình" size={48} color="colorful" presence="busy" />
-          <Avatar name="Lê Hoàng" size={48} color="colorful" presence="away" />
+          <Avatar name="Alex Chen" size={48} color="colorful" presence="available" />
+          <Avatar name="Maria Garcia" size={48} color="colorful" presence="busy" />
+          <Avatar name="Sam Lee" size={48} color="colorful" presence="away" />
         </>
       ),
     },
@@ -441,64 +441,64 @@ export const docs: ComponentDoc[] = [
       {
         title: "Kích thước",
         description: "20, 24, 32 (mặc định), 40, 48, 64, 96.",
-        code: `<Avatar name="Phạm Minh" size={24} />
-<Avatar name="Phạm Minh" size={32} />
-<Avatar name="Phạm Minh" size={40} />
-<Avatar name="Phạm Minh" size={48} />
-<Avatar name="Phạm Minh" size={64} />`,
+        code: `<Avatar name="Priya Patel" size={24} />
+<Avatar name="Priya Patel" size={32} />
+<Avatar name="Priya Patel" size={40} />
+<Avatar name="Priya Patel" size={48} />
+<Avatar name="Priya Patel" size={64} />`,
         render: () => (
           <>
-            <Avatar name="Phạm Minh" size={24} />
-            <Avatar name="Phạm Minh" size={32} />
-            <Avatar name="Phạm Minh" size={40} />
-            <Avatar name="Phạm Minh" size={48} />
-            <Avatar name="Phạm Minh" size={64} />
+            <Avatar name="Priya Patel" size={24} />
+            <Avatar name="Priya Patel" size={32} />
+            <Avatar name="Priya Patel" size={40} />
+            <Avatar name="Priya Patel" size={48} />
+            <Avatar name="Priya Patel" size={64} />
           </>
         ),
       },
       {
         title: "Màu",
         description: "neutral (mặc định), brand, colorful (màu ổn định theo hash của name).",
-        code: `<Avatar name="Đỗ Quang" size={40} />
-<Avatar name="Đỗ Quang" size={40} color="brand" />
-<Avatar name="Vũ Thu" size={40} color="colorful" />
-<Avatar name="Hà My" size={40} color="colorful" />
-<Avatar name="Bùi Khánh" size={40} color="colorful" />`,
+        code: `<Avatar name="Jordan Kim" size={40} />
+<Avatar name="Jordan Kim" size={40} color="brand" />
+<Avatar name="Taylor Nguyen" size={40} color="colorful" />
+<Avatar name="Chris Novak" size={40} color="colorful" />
+<Avatar name="Hana Sato" size={40} color="colorful" />`,
         render: () => (
           <>
-            <Avatar name="Đỗ Quang" size={40} />
-            <Avatar name="Đỗ Quang" size={40} color="brand" />
-            <Avatar name="Vũ Thu" size={40} color="colorful" />
-            <Avatar name="Hà My" size={40} color="colorful" />
-            <Avatar name="Bùi Khánh" size={40} color="colorful" />
+            <Avatar name="Jordan Kim" size={40} />
+            <Avatar name="Jordan Kim" size={40} color="brand" />
+            <Avatar name="Taylor Nguyen" size={40} color="colorful" />
+            <Avatar name="Chris Novak" size={40} color="colorful" />
+            <Avatar name="Hana Sato" size={40} color="colorful" />
           </>
         ),
       },
       {
         title: "Presence",
         description: "available, busy, away, offline.",
-        code: `<Avatar name="Ngô Lan" size={40} color="colorful" presence="available" />
-<Avatar name="Ngô Lan" size={40} color="colorful" presence="busy" />
-<Avatar name="Ngô Lan" size={40} color="colorful" presence="away" />
-<Avatar name="Ngô Lan" size={40} color="colorful" presence="offline" />`,
+        code: `<Avatar name="Maria Garcia" size={40} color="colorful" presence="available" />
+<Avatar name="Maria Garcia" size={40} color="colorful" presence="busy" />
+<Avatar name="Maria Garcia" size={40} color="colorful" presence="away" />
+<Avatar name="Maria Garcia" size={40} color="colorful" presence="offline" />`,
         render: () => (
           <>
-            <Avatar name="Ngô Lan" size={40} color="colorful" presence="available" />
-            <Avatar name="Ngô Lan" size={40} color="colorful" presence="busy" />
-            <Avatar name="Ngô Lan" size={40} color="colorful" presence="away" />
-            <Avatar name="Ngô Lan" size={40} color="colorful" presence="offline" />
+            <Avatar name="Maria Garcia" size={40} color="colorful" presence="available" />
+            <Avatar name="Maria Garcia" size={40} color="colorful" presence="busy" />
+            <Avatar name="Maria Garcia" size={40} color="colorful" presence="away" />
+            <Avatar name="Maria Garcia" size={40} color="colorful" presence="offline" />
           </>
         ),
       },
       {
         title: "Shape",
         description: "circular cho người; square cho nhóm, ứng dụng, bot.",
-        code: `<Avatar name="Nhóm Thiết kế" size={48} shape="square" color="brand" />
-<Avatar name="Bot Hỗ trợ" size={48} shape="square" color="colorful" />`,
+        code: `<Avatar name="Design Team" size={48} shape="square" color="brand" />
+<Avatar name="Support Bot" size={48} shape="square" color="colorful" />`,
         render: () => (
           <>
-            <Avatar name="Nhóm Thiết kế" size={48} shape="square" color="brand" />
-            <Avatar name="Bot Hỗ trợ" size={48} shape="square" color="colorful" />
+            <Avatar name="Design Team" size={48} shape="square" color="brand" />
+            <Avatar name="Support Bot" size={48} shape="square" color="colorful" />
           </>
         ),
       },
@@ -526,31 +526,31 @@ export const docs: ComponentDoc[] = [
       title: "Card",
       code: `<Card className="w-80">
   <CardHeader
-    image={<Avatar name="Lê Hằng" color="colorful" />}
-    header="Lê Hằng đã chia sẻ một tệp"
-    description="5 phút trước"
-    action={<Button appearance="transparent" icon={<MoreHorizontal20Regular />} aria-label="Thêm" />}
+    image={<Avatar name="Priya Patel" color="colorful" />}
+    header="Priya Patel shared a file"
+    description="5 minutes ago"
+    action={<Button appearance="transparent" icon={<MoreHorizontal20Regular />} aria-label="More" />}
   />
-  <CardContent>Kế hoạch ra mắt sản phẩm quý IV — vui lòng xem và góp ý trước thứ Sáu.</CardContent>
+  <CardContent>Q4 product launch plan. Please review and share feedback by Friday.</CardContent>
   <CardFooter>
-    <Button appearance="primary" icon={<Share20Regular />}>Mở</Button>
-    <Button>Bỏ qua</Button>
+    <Button appearance="primary" icon={<Share20Regular />}>Open</Button>
+    <Button>Dismiss</Button>
   </CardFooter>
 </Card>`,
       render: () => (
         <Card className="w-80">
           <CardHeader
-            image={<Avatar name="Lê Hằng" color="colorful" />}
-            header="Lê Hằng đã chia sẻ một tệp"
-            description="5 phút trước"
-            action={<Button appearance="transparent" icon={<MoreHorizontal20Regular />} aria-label="Thêm" />}
+            image={<Avatar name="Priya Patel" color="colorful" />}
+            header="Priya Patel shared a file"
+            description="5 minutes ago"
+            action={<Button appearance="transparent" icon={<MoreHorizontal20Regular />} aria-label="More" />}
           />
-          <CardContent>Kế hoạch ra mắt sản phẩm quý IV — vui lòng xem và góp ý trước thứ Sáu.</CardContent>
+          <CardContent>Q4 product launch plan. Please review and share feedback by Friday.</CardContent>
           <CardFooter>
             <Button appearance="primary" icon={<Share20Regular />}>
-              Mở
+              Open
             </Button>
-            <Button>Bỏ qua</Button>
+            <Button>Dismiss</Button>
           </CardFooter>
         </Card>
       ),
@@ -585,25 +585,25 @@ export const docs: ComponentDoc[] = [
         description: "Card bấm được: tăng elevation khi hover. Bọc nội dung trong <a>/<button> để có ngữ nghĩa đúng.",
         code: `<Card interactive className="relative w-64">
   <CardHeader
-    image={<Avatar name="Báo cáo" shape="square" color="brand" />}
+    image={<Avatar name="Reports" shape="square" color="brand" />}
     header={
-      <a href="#bao-cao" className="after:absolute after:inset-0 after:rounded-[inherit]">
-        Báo cáo doanh thu
+      <a href="#reports" className="after:absolute after:inset-0 after:rounded-[inherit]">
+        Revenue report
       </a>
     }
-    description="Cập nhật hôm qua"
+    description="Updated yesterday"
   />
 </Card>`,
         render: () => (
           <Card interactive className="relative w-64">
             <CardHeader
-              image={<Avatar name="Báo cáo" shape="square" color="brand" />}
+              image={<Avatar name="Reports" shape="square" color="brand" />}
               header={
-                <a href="#bao-cao" className="after:absolute after:inset-0 after:rounded-[inherit]">
-                  Báo cáo doanh thu
+                <a href="#reports" className="after:absolute after:inset-0 after:rounded-[inherit]">
+                  Revenue report
                 </a>
               }
-              description="Cập nhật hôm qua"
+              description="Updated yesterday"
             />
           </Card>
         ),
@@ -615,14 +615,14 @@ export const docs: ComponentDoc[] = [
   <CardPreview>
     <div className="h-28 bg-brand-background-2" />
   </CardPreview>
-  <CardHeader header="Thiết kế hệ thống" description="Figma · 12 trang" />
+  <CardHeader header="Design system" description="Figma · 12 pages" />
 </Card>`,
         render: () => (
           <Card className="w-64">
             <CardPreview>
               <div className="h-28 bg-brand-background-2" />
             </CardPreview>
-            <CardHeader header="Thiết kế hệ thống" description="Figma · 12 trang" />
+            <CardHeader header="Design system" description="Figma · 12 pages" />
           </Card>
         ),
       },
@@ -647,16 +647,16 @@ export const docs: ComponentDoc[] = [
     hero: {
       title: "Input",
       code: `<Input
-  label="Email công việc"
-  placeholder="ten@congty.vn"
-  hint="Chúng tôi sẽ gửi liên kết xác minh đến email này."
+  label="Work email"
+  placeholder="name@company.com"
+  hint="We'll send a verification link to this address."
   rootClassName="w-80"
 />`,
       render: () => (
         <Input
-          label="Email công việc"
-          placeholder="ten@congty.vn"
-          hint="Chúng tôi sẽ gửi liên kết xác minh đến email này."
+          label="Work email"
+          placeholder="name@company.com"
+          hint="We'll send a verification link to this address."
           rootClassName="w-80"
         />
       ),
@@ -682,37 +682,37 @@ export const docs: ComponentDoc[] = [
         title: "Validation",
         description: "validationState + validationMessage. Lỗi luôn phải nói rõ cách sửa.",
         code: `<Input
-  label="Mật khẩu"
+  label="Password"
   type="password"
   required
   defaultValue="123"
   validationState="error"
-  validationMessage="Mật khẩu cần ít nhất 8 ký tự."
+  validationMessage="Password must be at least 8 characters."
   rootClassName="w-64"
 />
 <Input
-  label="Tên người dùng"
-  defaultValue="an.nguyen"
+  label="Username"
+  defaultValue="alex.chen"
   validationState="success"
-  validationMessage="Tên này khả dụng."
+  validationMessage="This username is available."
   rootClassName="w-64"
 />`,
         render: () => (
           <>
             <Input
-              label="Mật khẩu"
+              label="Password"
               type="password"
               required
               defaultValue="123"
               validationState="error"
-              validationMessage="Mật khẩu cần ít nhất 8 ký tự."
+              validationMessage="Password must be at least 8 characters."
               rootClassName="w-64"
             />
             <Input
-              label="Tên người dùng"
-              defaultValue="an.nguyen"
+              label="Username"
+              defaultValue="alex.chen"
               validationState="success"
-              validationMessage="Tên này khả dụng."
+              validationMessage="This username is available."
               rootClassName="w-64"
             />
           </>
@@ -721,15 +721,15 @@ export const docs: ComponentDoc[] = [
       {
         title: "Content before / after",
         description: "Icon hoặc đơn vị đặt trong ô nhập.",
-        code: `<Input contentBefore={<Search20Regular />} placeholder="Tìm kiếm" rootClassName="w-64" />
-<Input contentBefore={<Person20Regular />} contentAfter={<span className="text-caption1">@congty.vn</span>} placeholder="ten" rootClassName="w-64" />`,
+        code: `<Input contentBefore={<Search20Regular />} placeholder="Search" rootClassName="w-64" />
+<Input contentBefore={<Person20Regular />} contentAfter={<span className="text-caption1">@company.com</span>} placeholder="name" rootClassName="w-64" />`,
         render: () => (
           <>
-            <Input contentBefore={<Search20Regular />} placeholder="Tìm kiếm" rootClassName="w-64" />
+            <Input contentBefore={<Search20Regular />} placeholder="Search" rootClassName="w-64" />
             <Input
               contentBefore={<Person20Regular />}
-              contentAfter={<span className="text-caption1">@congty.vn</span>}
-              placeholder="ten"
+              contentAfter={<span className="text-caption1">@company.com</span>}
+              placeholder="name"
               rootClassName="w-64"
             />
           </>
@@ -775,22 +775,22 @@ export const docs: ComponentDoc[] = [
     importCode: `import { Checkbox } from "@/components/ui";`,
     hero: {
       title: "Checkbox",
-      code: `<Checkbox label="Ghi nhớ đăng nhập" defaultChecked />`,
-      render: () => <Checkbox label="Ghi nhớ đăng nhập" defaultChecked />,
+      code: `<Checkbox label="Keep me signed in" defaultChecked />`,
+      render: () => <Checkbox label="Keep me signed in" defaultChecked />,
     },
     examples: [
       {
         title: "Trạng thái",
         description: "unchecked, checked, indeterminate, disabled.",
-        code: `<Checkbox label="Chưa chọn" />
-<Checkbox label="Đã chọn" defaultChecked />
-<Checkbox label="Một phần" checked="indeterminate" />
+        code: `<Checkbox label="Unchecked" />
+<Checkbox label="Checked" defaultChecked />
+<Checkbox label="Indeterminate" checked="indeterminate" />
 <Checkbox label="Disabled" disabled />`,
         render: () => (
           <div className="flex flex-col">
-            <Checkbox label="Chưa chọn" />
-            <Checkbox label="Đã chọn" defaultChecked />
-            <Checkbox label="Một phần" checked="indeterminate" />
+            <Checkbox label="Unchecked" />
+            <Checkbox label="Checked" defaultChecked />
+            <Checkbox label="Indeterminate" checked="indeterminate" />
             <Checkbox label="Disabled" disabled />
           </div>
         ),
@@ -799,11 +799,11 @@ export const docs: ComponentDoc[] = [
         title: "Kích thước & vị trí label",
         description: "medium (16px), large (20px); label trước hoặc sau.",
         code: `<Checkbox label="Large" size="large" defaultChecked />
-<Checkbox label="Label trước" labelPosition="before" />`,
+<Checkbox label="Label before" labelPosition="before" />`,
         render: () => (
           <div className="flex flex-col">
             <Checkbox label="Large" size="large" defaultChecked />
-            <Checkbox label="Label trước" labelPosition="before" />
+            <Checkbox label="Label before" labelPosition="before" />
           </div>
         ),
       },
@@ -828,31 +828,31 @@ export const docs: ComponentDoc[] = [
     importCode: `import { Switch } from "@/components/ui";`,
     hero: {
       title: "Switch",
-      code: `<Switch label="Nhận thông báo" defaultChecked />`,
-      render: () => <Switch label="Nhận thông báo" defaultChecked />,
+      code: `<Switch label="Notifications" defaultChecked />`,
+      render: () => <Switch label="Notifications" defaultChecked />,
     },
     examples: [
       {
         title: "Trạng thái",
         description: "off, on, disabled.",
-        code: `<Switch label="Tắt" />
-<Switch label="Bật" defaultChecked />
+        code: `<Switch label="Off" />
+<Switch label="On" defaultChecked />
 <Switch label="Disabled" disabled />
-<Switch label="Disabled bật" disabled defaultChecked />`,
+<Switch label="Disabled on" disabled defaultChecked />`,
         render: () => (
           <div className="flex flex-col">
-            <Switch label="Tắt" />
-            <Switch label="Bật" defaultChecked />
+            <Switch label="Off" />
+            <Switch label="On" defaultChecked />
             <Switch label="Disabled" disabled />
-            <Switch label="Disabled bật" disabled defaultChecked />
+            <Switch label="Disabled on" disabled defaultChecked />
           </div>
         ),
       },
       {
         title: "Label trước",
         description: "Phù hợp cho danh sách cài đặt căn phải.",
-        code: `<Switch label="Chế độ máy bay" labelPosition="before" />`,
-        render: () => <Switch label="Chế độ máy bay" labelPosition="before" />,
+        code: `<Switch label="Airplane mode" labelPosition="before" />`,
+        render: () => <Switch label="Airplane mode" labelPosition="before" />,
       },
       {
         title: "Glass (Yugen Labs)",
@@ -883,34 +883,34 @@ export const docs: ComponentDoc[] = [
       title: "Tabs",
       code: `<Tabs defaultValue="mail">
   <TabsList>
-    <TabsTrigger value="mail" icon={<Mail20Regular />}>Thư</TabsTrigger>
-    <TabsTrigger value="calendar" icon={<Calendar20Regular />}>Lịch</TabsTrigger>
-    <TabsTrigger value="people" icon={<People20Regular />}>Danh bạ</TabsTrigger>
-    <TabsTrigger value="settings" icon={<Settings20Regular />} disabled>Cài đặt</TabsTrigger>
+    <TabsTrigger value="mail" icon={<Mail20Regular />}>Mail</TabsTrigger>
+    <TabsTrigger value="calendar" icon={<Calendar20Regular />}>Calendar</TabsTrigger>
+    <TabsTrigger value="people" icon={<People20Regular />}>People</TabsTrigger>
+    <TabsTrigger value="settings" icon={<Settings20Regular />} disabled>Settings</TabsTrigger>
   </TabsList>
-  <TabsContent value="mail">Bạn có 3 thư chưa đọc.</TabsContent>
-  <TabsContent value="calendar">Không có sự kiện hôm nay.</TabsContent>
-  <TabsContent value="people">128 liên hệ.</TabsContent>
+  <TabsContent value="mail">You have 3 unread messages.</TabsContent>
+  <TabsContent value="calendar">No events today.</TabsContent>
+  <TabsContent value="people">128 contacts.</TabsContent>
 </Tabs>`,
       render: () => (
         <Tabs defaultValue="mail">
           <TabsList>
             <TabsTrigger value="mail" icon={<Mail20Regular />}>
-              Thư
+              Mail
             </TabsTrigger>
             <TabsTrigger value="calendar" icon={<Calendar20Regular />}>
-              Lịch
+              Calendar
             </TabsTrigger>
             <TabsTrigger value="people" icon={<People20Regular />}>
-              Danh bạ
+              People
             </TabsTrigger>
             <TabsTrigger value="settings" icon={<Settings20Regular />} disabled>
-              Cài đặt
+              Settings
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="mail">Bạn có 3 thư chưa đọc.</TabsContent>
-          <TabsContent value="calendar">Không có sự kiện hôm nay.</TabsContent>
-          <TabsContent value="people">128 liên hệ.</TabsContent>
+          <TabsContent value="mail">You have 3 unread messages.</TabsContent>
+          <TabsContent value="calendar">No events today.</TabsContent>
+          <TabsContent value="people">128 contacts.</TabsContent>
         </Tabs>
       ),
     },
@@ -920,17 +920,17 @@ export const docs: ComponentDoc[] = [
         description: "Có nền khi hover — dùng trên thanh công cụ.",
         code: `<Tabs defaultValue="a">
   <TabsList appearance="subtle">
-    <TabsTrigger value="a">Tổng quan</TabsTrigger>
-    <TabsTrigger value="b">Hoạt động</TabsTrigger>
-    <TabsTrigger value="c">Thành viên</TabsTrigger>
+    <TabsTrigger value="a">Overview</TabsTrigger>
+    <TabsTrigger value="b">Activity</TabsTrigger>
+    <TabsTrigger value="c">Members</TabsTrigger>
   </TabsList>
 </Tabs>`,
         render: () => (
           <Tabs defaultValue="a">
             <TabsList appearance="subtle">
-              <TabsTrigger value="a">Tổng quan</TabsTrigger>
-              <TabsTrigger value="b">Hoạt động</TabsTrigger>
-              <TabsTrigger value="c">Thành viên</TabsTrigger>
+              <TabsTrigger value="a">Overview</TabsTrigger>
+              <TabsTrigger value="b">Activity</TabsTrigger>
+              <TabsTrigger value="c">Members</TabsTrigger>
             </TabsList>
           </Tabs>
         ),
@@ -972,17 +972,17 @@ export const docs: ComponentDoc[] = [
         description: "orientation=\"vertical\" cho điều hướng phụ trong trang cài đặt.",
         code: `<Tabs defaultValue="a" orientation="vertical">
   <TabsList>
-    <TabsTrigger value="a">Tài khoản</TabsTrigger>
-    <TabsTrigger value="b">Bảo mật</TabsTrigger>
-    <TabsTrigger value="c">Thanh toán</TabsTrigger>
+    <TabsTrigger value="a">Account</TabsTrigger>
+    <TabsTrigger value="b">Security</TabsTrigger>
+    <TabsTrigger value="c">Billing</TabsTrigger>
   </TabsList>
 </Tabs>`,
         render: () => (
           <Tabs defaultValue="a" orientation="vertical">
             <TabsList>
-              <TabsTrigger value="a">Tài khoản</TabsTrigger>
-              <TabsTrigger value="b">Bảo mật</TabsTrigger>
-              <TabsTrigger value="c">Thanh toán</TabsTrigger>
+              <TabsTrigger value="a">Account</TabsTrigger>
+              <TabsTrigger value="b">Security</TabsTrigger>
+              <TabsTrigger value="c">Billing</TabsTrigger>
             </TabsList>
           </Tabs>
         ),
@@ -1010,19 +1010,19 @@ export const docs: ComponentDoc[] = [
     importCode: `import { SimpleTooltip, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui";`,
     hero: {
       title: "Tooltip",
-      code: `<SimpleTooltip content="Chia sẻ với người khác">
-  <Button appearance="subtle" icon={<Share20Regular />} aria-label="Chia sẻ" />
+      code: `<SimpleTooltip content="Share with others">
+  <Button appearance="subtle" icon={<Share20Regular />} aria-label="Share" />
 </SimpleTooltip>
-<SimpleTooltip content="Tải xuống bản PDF" appearance="inverted">
-  <Button appearance="subtle" icon={<ArrowDownload20Regular />} aria-label="Tải xuống" />
+<SimpleTooltip content="Download as PDF" appearance="inverted">
+  <Button appearance="subtle" icon={<ArrowDownload20Regular />} aria-label="Download" />
 </SimpleTooltip>`,
       render: () => (
         <>
-          <SimpleTooltip content="Chia sẻ với người khác">
-            <Button appearance="subtle" icon={<Share20Regular />} aria-label="Chia sẻ" />
+          <SimpleTooltip content="Share with others">
+            <Button appearance="subtle" icon={<Share20Regular />} aria-label="Share" />
           </SimpleTooltip>
-          <SimpleTooltip content="Tải xuống bản PDF" appearance="inverted">
-            <Button appearance="subtle" icon={<ArrowDownload20Regular />} aria-label="Tải xuống" />
+          <SimpleTooltip content="Download as PDF" appearance="inverted">
+            <Button appearance="subtle" icon={<ArrowDownload20Regular />} aria-label="Download" />
           </SimpleTooltip>
         </>
       ),
@@ -1031,22 +1031,22 @@ export const docs: ComponentDoc[] = [
       {
         title: "Vị trí",
         description: "side: top (mặc định), right, bottom, left.",
-        code: `<SimpleTooltip content="Trên" side="top"><Button>Top</Button></SimpleTooltip>
-<SimpleTooltip content="Phải" side="right"><Button>Right</Button></SimpleTooltip>
-<SimpleTooltip content="Dưới" side="bottom"><Button>Bottom</Button></SimpleTooltip>
-<SimpleTooltip content="Trái" side="left"><Button>Left</Button></SimpleTooltip>`,
+        code: `<SimpleTooltip content="Shown above" side="top"><Button>Top</Button></SimpleTooltip>
+<SimpleTooltip content="Shown on the right" side="right"><Button>Right</Button></SimpleTooltip>
+<SimpleTooltip content="Shown below" side="bottom"><Button>Bottom</Button></SimpleTooltip>
+<SimpleTooltip content="Shown on the left" side="left"><Button>Left</Button></SimpleTooltip>`,
         render: () => (
           <>
-            <SimpleTooltip content="Trên" side="top">
+            <SimpleTooltip content="Shown above" side="top">
               <Button>Top</Button>
             </SimpleTooltip>
-            <SimpleTooltip content="Phải" side="right">
+            <SimpleTooltip content="Shown on the right" side="right">
               <Button>Right</Button>
             </SimpleTooltip>
-            <SimpleTooltip content="Dưới" side="bottom">
+            <SimpleTooltip content="Shown below" side="bottom">
               <Button>Bottom</Button>
             </SimpleTooltip>
-            <SimpleTooltip content="Trái" side="left">
+            <SimpleTooltip content="Shown on the left" side="left">
               <Button>Left</Button>
             </SimpleTooltip>
           </>
@@ -1055,12 +1055,12 @@ export const docs: ComponentDoc[] = [
       {
         title: "Không mũi tên",
         description: "withArrow={false} khi tooltip nằm sát phần tử nhỏ.",
-        code: `<SimpleTooltip content="Gửi thư" withArrow={false}>
-  <Button appearance="primary" icon={<Send20Regular className="rtl:-scale-x-100" />} aria-label="Gửi" />
+        code: `<SimpleTooltip content="Send message" withArrow={false}>
+  <Button appearance="primary" icon={<Send20Regular className="rtl:-scale-x-100" />} aria-label="Send" />
 </SimpleTooltip>`,
         render: () => (
-          <SimpleTooltip content="Gửi thư" withArrow={false}>
-            <Button appearance="primary" icon={<Send20Regular className="rtl:-scale-x-100" />} aria-label="Gửi" />
+          <SimpleTooltip content="Send message" withArrow={false}>
+            <Button appearance="primary" icon={<Send20Regular className="rtl:-scale-x-100" />} aria-label="Send" />
           </SimpleTooltip>
         ),
       },
@@ -1092,18 +1092,18 @@ export const docs: ComponentDoc[] = [
 
 <Dialog open={open} onOpenChange={setOpen}>
   <DialogTrigger asChild>
-    <Button icon={<Delete20Regular />}>Xoá tệp</Button>
+    <Button icon={<Delete20Regular />}>Delete file</Button>
   </DialogTrigger>
   <DialogSurface>
-    <DialogTitle>Xoá "Báo cáo Q3.docx"?</DialogTitle>
+    <DialogTitle>Delete "Q3 report.docx"?</DialogTitle>
     <DialogDescription>
-      Tệp sẽ được chuyển vào Thùng rác và tự động xoá vĩnh viễn sau 30 ngày.
+      The file moves to the Recycle Bin and is permanently deleted after 30 days.
     </DialogDescription>
     <DialogActions>
       <DialogClose asChild>
-        <Button>Huỷ</Button>
+        <Button>Cancel</Button>
       </DialogClose>
-      <Button appearance="primary" onClick={() => setOpen(false)}>Xoá</Button>
+      <Button appearance="primary" onClick={() => setOpen(false)}>Delete</Button>
     </DialogActions>
   </DialogSurface>
 </Dialog>`,
@@ -1115,14 +1115,14 @@ export const docs: ComponentDoc[] = [
         description: "Không có nút X, không đóng bằng Esc/click nền.",
         code: `<Dialog>
   <DialogTrigger asChild>
-    <Button appearance="outline">Phiên sắp hết hạn</Button>
+    <Button appearance="outline">Session expiring</Button>
   </DialogTrigger>
   <DialogSurface modalType="alert">
-    <DialogTitle action={null}>Phiên làm việc sắp hết hạn</DialogTitle>
-    <DialogDescription>Bạn sẽ bị đăng xuất sau 60 giây. Tiếp tục làm việc?</DialogDescription>
+    <DialogTitle action={null}>Your session is about to expire</DialogTitle>
+    <DialogDescription>You'll be signed out in 60 seconds. Keep working?</DialogDescription>
     <DialogActions>
       <DialogClose asChild>
-        <Button appearance="primary">Tiếp tục</Button>
+        <Button appearance="primary">Continue</Button>
       </DialogClose>
     </DialogActions>
   </DialogSurface>
@@ -1150,11 +1150,11 @@ export const docs: ComponentDoc[] = [
     importCode: `import { MessageBar } from "@/components/ui";`,
     hero: {
       title: "MessageBar",
-      code: `<MessageBar intent="success" title="Đã lưu">Thay đổi của bạn đã được đồng bộ.</MessageBar>`,
+      code: `<MessageBar intent="success" title="Saved">Your changes have been synced.</MessageBar>`,
       render: () => (
         <div className="w-full max-w-xl">
-          <MessageBar intent="success" title="Đã lưu">
-            Thay đổi của bạn đã được đồng bộ.
+          <MessageBar intent="success" title="Saved">
+            Your changes have been synced.
           </MessageBar>
         </div>
       ),
@@ -1163,23 +1163,23 @@ export const docs: ComponentDoc[] = [
       {
         title: "Intent",
         description: "info, success, warning, error.",
-        code: `<MessageBar intent="info" title="Mẹo">Nhấn Ctrl+K để tìm nhanh.</MessageBar>
-<MessageBar intent="success" title="Thành công">Đã gửi lời mời.</MessageBar>
-<MessageBar intent="warning" title="Chú ý">Phiên bản này sắp ngừng hỗ trợ.</MessageBar>
-<MessageBar intent="error" title="Lỗi">Không thể kết nối máy chủ.</MessageBar>`,
+        code: `<MessageBar intent="info" title="Tip">Press Ctrl+K to search.</MessageBar>
+<MessageBar intent="success" title="Success">Invitation sent.</MessageBar>
+<MessageBar intent="warning" title="Heads up">This version will soon reach end of support.</MessageBar>
+<MessageBar intent="error" title="Error">Can't connect to the server.</MessageBar>`,
         render: () => (
           <div className="flex w-full flex-col gap-2">
-            <MessageBar intent="info" title="Mẹo">
-              Nhấn Ctrl+K để tìm nhanh.
+            <MessageBar intent="info" title="Tip">
+              Press Ctrl+K to search.
             </MessageBar>
-            <MessageBar intent="success" title="Thành công">
-              Đã gửi lời mời.
+            <MessageBar intent="success" title="Success">
+              Invitation sent.
             </MessageBar>
-            <MessageBar intent="warning" title="Chú ý">
-              Phiên bản này sắp ngừng hỗ trợ.
+            <MessageBar intent="warning" title="Heads up">
+              This version will soon reach end of support.
             </MessageBar>
-            <MessageBar intent="error" title="Lỗi">
-              Không thể kết nối máy chủ.
+            <MessageBar intent="error" title="Error">
+              Can't connect to the server.
             </MessageBar>
           </div>
         ),
@@ -1191,11 +1191,11 @@ export const docs: ComponentDoc[] = [
 
 <MessageBar
   intent="warning"
-  title="Sắp hết dung lượng"
-  actions={<Button size="small">Nâng cấp</Button>}
+  title="Storage almost full"
+  actions={<Button size="small">Upgrade</Button>}
   onDismiss={() => setVisible(false)}
 >
-  Bạn đã dùng 95% dung lượng lưu trữ.
+  You've used 95% of your storage.
 </MessageBar>`,
         render: () => (
           <div className="w-full">
@@ -1209,27 +1209,27 @@ export const docs: ComponentDoc[] = [
         code: `<MessageBar
   intent="error"
   layout="multiline"
-  title="Thanh toán thất bại"
-  actions={<><Button size="small" appearance="primary">Thử lại</Button><Button size="small">Đổi thẻ</Button></>}
+  title="Payment failed"
+  actions={<><Button size="small" appearance="primary">Try again</Button><Button size="small">Change card</Button></>}
 >
-  Ngân hàng từ chối giao dịch. Kiểm tra số dư hoặc dùng phương thức thanh toán khác.
+  Your bank declined the transaction. Check your balance or use a different payment method.
 </MessageBar>`,
         render: () => (
           <div className="w-full">
             <MessageBar
               intent="error"
               layout="multiline"
-              title="Thanh toán thất bại"
+              title="Payment failed"
               actions={
                 <>
                   <Button size="small" appearance="primary">
-                    Thử lại
+                    Try again
                   </Button>
-                  <Button size="small">Đổi thẻ</Button>
+                  <Button size="small">Change card</Button>
                 </>
               }
             >
-              Ngân hàng từ chối giao dịch. Kiểm tra số dư hoặc dùng phương thức thanh toán khác.
+              Your bank declined the transaction. Check your balance or use a different payment method.
             </MessageBar>
           </div>
         ),

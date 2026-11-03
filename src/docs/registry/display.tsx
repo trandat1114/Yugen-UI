@@ -82,35 +82,35 @@ import { landscape, mountain, people, scenery, sunset } from "../sample-assets";
 
 
 
-// mountain, sunset, landscape, scenery: URL ảnh bất kỳ (ở đây là SVG sinh sẵn — xem ../sample-assets).
+// mountain, sunset, landscape, scenery: any image URL (generated SVGs here, see ../sample-assets).
 
 const versions = Array.from({ length: 30 }, (_, i) => "v2." + (30 - i) + ".0");
 
 const tips = [
-  { title: "Phím tắt", text: "Nhấn Ctrl + K để mở bảng lệnh ở bất kỳ đâu.", icon: <Keyboard20Regular /> },
-  { title: "Chủ đề tối", text: "Đổi Web Light / Web Dark ngay trong khung ví dụ.", icon: <WeatherMoon20Regular /> },
-  { title: "Brand cục bộ", text: "Đặt data-brand trên phần tử để đổi màu cho một vùng.", icon: <Color20Regular /> },
+  { title: "Shortcuts", text: "Press Ctrl + K to open the command palette from anywhere.", icon: <Keyboard20Regular /> },
+  { title: "Dark theme", text: "Switch between Web Light and Web Dark right in the example frame.", icon: <WeatherMoon20Regular /> },
+  { title: "Local brand", text: "Set data-brand on an element to recolor just that area.", icon: <Color20Regular /> },
 ];
 
 const members = [
-  { id: "an", name: "Nguyễn Văn An" },
-  { id: "binh", name: "Trần Thị Bình" },
-  { id: "cuong", name: "Lê Hoàng Cường" },
+  { id: "alex", name: "Alex Chen" },
+  { id: "maria", name: "Maria Garcia" },
+  { id: "sam", name: "Sam Lee" },
 ];
 
 /* ================================================================== Demo có state */
 
 function ListSelectionDemo() {
-  const [selected, setSelected] = useState(["an"]);
+  const [selected, setSelected] = useState(["alex"]);
   return (
     <div className="flex w-full max-w-sm flex-col gap-2">
-      <List selectionMode="multiselect" selectedItems={selected} onSelectionChange={setSelected} aria-label="Người tham gia">
-        <ListItem value="an" media={<Avatar name="Nguyễn Văn An" color="colorful" />} title="Nguyễn Văn An" description="Kỹ sư phần mềm" />
-        <ListItem value="binh" media={<Avatar name="Trần Thị Bình" color="colorful" />} title="Trần Thị Bình" description="Nhà thiết kế" />
-        <ListItem value="cuong" media={<Avatar name="Lê Hoàng Cường" color="colorful" />} title="Lê Hoàng Cường" description="Quản lý sản phẩm" />
-        <ListItem value="ha" media={<Avatar name="Hoàng Thu Hà" color="colorful" />} title="Hoàng Thu Hà" description="Kiểm thử" />
+      <List selectionMode="multiselect" selectedItems={selected} onSelectionChange={setSelected} aria-label="Attendees">
+        <ListItem value="alex" media={<Avatar name="Alex Chen" color="colorful" />} title="Alex Chen" description="Software engineer" />
+        <ListItem value="maria" media={<Avatar name="Maria Garcia" color="colorful" />} title="Maria Garcia" description="Designer" />
+        <ListItem value="sam" media={<Avatar name="Sam Lee" color="colorful" />} title="Sam Lee" description="Product manager" />
+        <ListItem value="jordan" media={<Avatar name="Jordan Kim" color="colorful" />} title="Jordan Kim" description="QA engineer" />
       </List>
-      <span className="text-caption1 text-foreground-3">Đã chọn {selected.length} người · dùng ↑ ↓ và Space để chọn</span>
+      <span className="text-caption1 text-foreground-3">{selected.length} selected · use ↑ ↓ and Space to select</span>
     </div>
   );
 }
@@ -120,24 +120,24 @@ function TableSelectionDemo() {
   const toggle = (id: string) =>
     setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   return (
-    <Table aria-label="Thành viên" className="w-full">
+    <Table aria-label="Members" className="w-full">
       <TableHeader>
         <TableRow>
           <TableSelectionCell
             checked={selected.length === 0 ? false : selected.length === members.length ? true : "mixed"}
             onCheckedChange={(checked) => setSelected(checked ? members.map((m) => m.id) : [])}
           />
-          <TableHeaderCell>Thành viên</TableHeaderCell>
+          <TableHeaderCell>Member</TableHeaderCell>
         </TableRow>
       </TableHeader>
       <TableBody>
         {members.map((m) => (
           <TableRow key={m.id} selected={selected.includes(m.id)}>
-            <TableSelectionCell subtle checked={selected.includes(m.id)} onCheckedChange={() => toggle(m.id)} aria-label={"Chọn " + m.name} />
+            <TableSelectionCell subtle checked={selected.includes(m.id)} onCheckedChange={() => toggle(m.id)} aria-label={"Select " + m.name} />
             <TableCell>
               <TableCellLayout media={<Avatar name={m.name} size={24} color="colorful" />}>{m.name}</TableCellLayout>
               <TableCellActions>
-                <Button appearance="subtle" size="small" icon={<Edit20Regular />} aria-label={"Sửa " + m.name} />
+                <Button appearance="subtle" size="small" icon={<Edit20Regular />} aria-label={"Edit " + m.name} />
               </TableCellActions>
             </TableCell>
           </TableRow>
@@ -148,15 +148,15 @@ function TableSelectionDemo() {
 }
 
 const staff = [
-  { id: "an", name: "Nguyễn Văn An", role: "Kỹ sư phần mềm", team: "Nền tảng" },
-  { id: "binh", name: "Trần Thị Bình", role: "Nhà thiết kế", team: "Trải nghiệm" },
-  { id: "cuong", name: "Lê Hoàng Cường", role: "Quản lý sản phẩm", team: "Tăng trưởng" },
+  { id: "alex", name: "Alex Chen", role: "Software engineer", team: "Platform" },
+  { id: "maria", name: "Maria Garcia", role: "Designer", team: "Experience" },
+  { id: "sam", name: "Sam Lee", role: "Product manager", team: "Growth" },
 ];
 
 const staffColumns = [
-  { columnId: "name", label: "Thành viên", hideable: false },
-  { columnId: "role", label: "Vai trò" },
-  { columnId: "team", label: "Nhóm" },
+  { columnId: "name", label: "Member", hideable: false },
+  { columnId: "role", label: "Role" },
+  { columnId: "team", label: "Team" },
 ];
 
 function TableColumnsDemo() {
@@ -170,12 +170,12 @@ function TableColumnsDemo() {
         hiddenColumns={hiddenColumns}
         onHiddenColumnsChange={(_, data) => setHiddenColumns(data.hiddenColumns)}
       />
-      <Table aria-label="Thành viên" className="w-full">
+      <Table aria-label="Members" className="w-full">
         <TableHeader>
           <TableRow>
-            <TableHeaderCell>Thành viên</TableHeaderCell>
-            {shown("role") && <TableHeaderCell>Vai trò</TableHeaderCell>}
-            {shown("team") && <TableHeaderCell>Nhóm</TableHeaderCell>}
+            <TableHeaderCell>Member</TableHeaderCell>
+            {shown("role") && <TableHeaderCell>Role</TableHeaderCell>}
+            {shown("team") && <TableHeaderCell>Team</TableHeaderCell>}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -196,26 +196,26 @@ function TreeSelectionDemo() {
   const [selected, setSelected] = useState("work");
   return (
     <div className="flex w-64 flex-col gap-2">
-      <Tree aria-label="Thư mục thư" selectionMode="single" selectedValue={selected} onSelectedChange={setSelected} defaultOpenItems={["inbox"]}>
+      <Tree aria-label="Mail folders" selectionMode="single" selectedValue={selected} onSelectedChange={setSelected} defaultOpenItems={["inbox"]}>
         <TreeItem itemType="branch" value="inbox">
-          <TreeItemLayout iconBefore={<Mail20Regular />}>Hộp thư đến</TreeItemLayout>
+          <TreeItemLayout iconBefore={<Mail20Regular />}>Inbox</TreeItemLayout>
           <Tree>
             <TreeItem itemType="leaf" value="work">
-              <TreeItemLayout>Công việc</TreeItemLayout>
+              <TreeItemLayout>Work</TreeItemLayout>
             </TreeItem>
             <TreeItem itemType="leaf" value="family">
-              <TreeItemLayout>Gia đình</TreeItemLayout>
+              <TreeItemLayout>Family</TreeItemLayout>
             </TreeItem>
           </Tree>
         </TreeItem>
         <TreeItem itemType="leaf" value="sent">
-          <TreeItemLayout iconBefore={<Send20Regular className="rtl:-scale-x-100" />}>Đã gửi</TreeItemLayout>
+          <TreeItemLayout iconBefore={<Send20Regular className="rtl:-scale-x-100" />}>Sent</TreeItemLayout>
         </TreeItem>
         <TreeItem itemType="leaf" value="archive">
-          <TreeItemLayout iconBefore={<Archive20Regular />}>Lưu trữ</TreeItemLayout>
+          <TreeItemLayout iconBefore={<Archive20Regular />}>Archive</TreeItemLayout>
         </TreeItem>
       </Tree>
-      <span className="text-caption1 text-foreground-3">Đang chọn: {selected}</span>
+      <span className="text-caption1 text-foreground-3">Selected: {selected}</span>
     </div>
   );
 }
@@ -231,28 +231,29 @@ type Invoice = {
 };
 
 const invoices: Invoice[] = [
-  { id: "HD-1042", customer: "Nguyễn Văn An", email: "an.nguyen@contoso.vn", status: "paid", amount: 2490000, date: "2026-10-18" },
-  { id: "HD-1041", customer: "Trần Thị Bình", email: "binh.tran@contoso.vn", status: "pending", amount: 1350000, date: "2026-10-17" },
-  { id: "HD-1040", customer: "Lê Hoàng Cường", email: "cuong.le@contoso.vn", status: "paid", amount: 5820000, date: "2026-10-15" },
-  { id: "HD-1039", customer: "Phạm Minh Dũng", email: "dung.pham@contoso.vn", status: "failed", amount: 760000, date: "2026-10-14" },
-  { id: "HD-1038", customer: "Hoàng Thu Hà", email: "ha.hoang@contoso.vn", status: "paid", amount: 3150000, date: "2026-10-12" },
-  { id: "HD-1037", customer: "Vũ Quốc Khánh", email: "khanh.vu@contoso.vn", status: "pending", amount: 980000, date: "2026-10-11" },
-  { id: "HD-1036", customer: "Đặng Mai Linh", email: "linh.dang@contoso.vn", status: "paid", amount: 4200000, date: "2026-10-09" },
-  { id: "HD-1035", customer: "Bùi Thanh Nam", email: "nam.bui@contoso.vn", status: "paid", amount: 1890000, date: "2026-10-08" },
-  { id: "HD-1034", customer: "Đỗ Ngọc Oanh", email: "oanh.do@contoso.vn", status: "failed", amount: 640000, date: "2026-10-06" },
-  { id: "HD-1033", customer: "Ngô Đức Phúc", email: "phuc.ngo@contoso.vn", status: "pending", amount: 2750000, date: "2026-10-05" },
-  { id: "HD-1032", customer: "Dương Bảo Quyên", email: "quyen.duong@contoso.vn", status: "paid", amount: 3600000, date: "2026-10-03" },
-  { id: "HD-1031", customer: "Lý Gia Sơn", email: "son.ly@contoso.vn", status: "paid", amount: 1120000, date: "2026-10-01" },
+  { id: "INV-1042", customer: "Alex Chen", email: "alex.chen@contoso.com", status: "paid", amount: 2490, date: "2026-10-18" },
+  { id: "INV-1041", customer: "Maria Garcia", email: "maria.garcia@contoso.com", status: "pending", amount: 1350, date: "2026-10-17" },
+  { id: "INV-1040", customer: "Sam Lee", email: "sam.lee@contoso.com", status: "paid", amount: 5820, date: "2026-10-15" },
+  { id: "INV-1039", customer: "Priya Patel", email: "priya.patel@contoso.com", status: "failed", amount: 760, date: "2026-10-14" },
+  { id: "INV-1038", customer: "Jordan Kim", email: "jordan.kim@contoso.com", status: "paid", amount: 3150, date: "2026-10-12" },
+  { id: "INV-1037", customer: "Taylor Nguyen", email: "taylor.nguyen@contoso.com", status: "pending", amount: 980, date: "2026-10-11" },
+  { id: "INV-1036", customer: "Chris Novak", email: "chris.novak@contoso.com", status: "paid", amount: 4200, date: "2026-10-09" },
+  { id: "INV-1035", customer: "Hana Sato", email: "hana.sato@contoso.com", status: "paid", amount: 1890, date: "2026-10-08" },
+  { id: "INV-1034", customer: "Ben Carter", email: "ben.carter@contoso.com", status: "failed", amount: 640, date: "2026-10-06" },
+  { id: "INV-1033", customer: "Ines Duarte", email: "ines.duarte@contoso.com", status: "pending", amount: 2750, date: "2026-10-05" },
+  { id: "INV-1032", customer: "Leo Rossi", email: "leo.rossi@contoso.com", status: "paid", amount: 3600, date: "2026-10-03" },
+  { id: "INV-1031", customer: "Mia Wong", email: "mia.wong@contoso.com", status: "paid", amount: 1120, date: "2026-10-01" },
 ];
 
 const STATUS = {
-  paid: { label: "Đã thanh toán", color: "success" },
-  pending: { label: "Đang xử lý", color: "warning" },
-  failed: { label: "Thất bại", color: "danger" },
+  paid: { label: "Paid", color: "success" },
+  pending: { label: "Pending", color: "warning" },
+  failed: { label: "Failed", color: "danger" },
 } as const;
 
 const PAGE_SIZE = 5;
-const vnd = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
+const usd = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
+const dateFormat = new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeZone: "UTC" });
 
 type SortKey = "customer" | "date" | "amount";
 
@@ -265,7 +266,7 @@ function DataTableDemo() {
   const filtered = invoices.filter((row) => row.customer.toLowerCase().includes(query.trim().toLowerCase()));
   const sorted = [...filtered].sort((a, b) => {
     const { key, direction } = sort;
-    const diff = key === "amount" ? a.amount - b.amount : a[key].localeCompare(b[key], "vi");
+    const diff = key === "amount" ? a.amount - b.amount : a[key].localeCompare(b[key], "en");
     return direction === "ascending" ? diff : -diff;
   });
   const pageCount = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
@@ -287,8 +288,8 @@ function DataTableDemo() {
     <div className="flex w-full flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <Input
-          aria-label="Lọc theo khách hàng"
-          placeholder="Lọc theo khách hàng…"
+          aria-label="Filter by customer"
+          placeholder="Filter by customer…"
           contentBefore={<Search20Regular />}
           value={query}
           onChange={(e) => {
@@ -298,33 +299,33 @@ function DataTableDemo() {
           rootClassName="w-full max-w-72"
         />
         <span className="text-caption1 text-foreground-3">
-          Đã chọn {selected.length} / {invoices.length} hoá đơn
+          {selected.length} of {invoices.length} invoices selected
         </span>
       </div>
 
       <div className="overflow-x-auto rounded-xlarge border border-stroke-2">
-        <Table sortable aria-label="Hoá đơn" className="min-w-180">
+        <Table sortable aria-label="Invoices" className="min-w-180">
           <TableHeader>
             <TableRow>
               <TableSelectionCell
                 checked={selectedOnPage === 0 ? false : selectedOnPage === rows.length ? true : "mixed"}
                 onCheckedChange={togglePage}
-                aria-label="Chọn tất cả hàng trên trang"
+                aria-label="Select all rows on this page"
               />
               <TableHeaderCell sortDirection={directionOf("customer")} onClick={() => toggleSort("customer")}>
-                Khách hàng
+                Customer
               </TableHeaderCell>
               <TableHeaderCell sortable={false} className="w-36">
-                Trạng thái
+                Status
               </TableHeaderCell>
               <TableHeaderCell sortDirection={directionOf("date")} onClick={() => toggleSort("date")} className="w-28">
-                Ngày
+                Date
               </TableHeaderCell>
               <TableHeaderCell sortDirection={directionOf("amount")} onClick={() => toggleSort("amount")} className="w-36">
-                Số tiền
+                Amount
               </TableHeaderCell>
               <TableHeaderCell sortable={false} className="w-14">
-                <span className="sr-only">Thao tác</span>
+                <span className="sr-only">Actions</span>
               </TableHeaderCell>
             </TableRow>
           </TableHeader>
@@ -334,7 +335,7 @@ function DataTableDemo() {
                 <TableSelectionCell
                   checked={selected.includes(row.id)}
                   onCheckedChange={() => toggleRow(row.id)}
-                  aria-label={"Chọn " + row.id}
+                  aria-label={"Select " + row.id}
                 />
                 <TableCell>
                   <TableCellLayout truncate media={<Avatar name={row.customer} color="colorful" />} description={row.email}>
@@ -346,21 +347,21 @@ function DataTableDemo() {
                     {STATUS[row.status].label}
                   </Badge>
                 </TableCell>
-                <TableCell>{row.date.split("-").reverse().join("/")}</TableCell>
-                <TableCell>{vnd.format(row.amount)}</TableCell>
+                <TableCell>{dateFormat.format(new Date(row.date))}</TableCell>
+                <TableCell>{usd.format(row.amount)}</TableCell>
                 <TableCell>
                   <Menu>
                     <MenuTrigger asChild>
-                      <Button appearance="subtle" icon={<MoreHorizontal20Regular />} aria-label={"Thao tác cho " + row.id} />
+                      <Button appearance="subtle" icon={<MoreHorizontal20Regular />} aria-label={"Actions for " + row.id} />
                     </MenuTrigger>
                     <MenuPopover align="end">
-                      <MenuItem icon={<Eye20Regular />}>Xem chi tiết</MenuItem>
+                      <MenuItem icon={<Eye20Regular />}>View details</MenuItem>
                       <MenuItem icon={<Copy20Regular />} onSelect={() => navigator.clipboard?.writeText(row.id)}>
-                        Sao chép mã hoá đơn
+                        Copy invoice ID
                       </MenuItem>
                       <MenuDivider />
                       <MenuItem icon={<ArrowUndo20Regular className="rtl:-scale-x-100" />} disabled={row.status !== "paid"}>
-                        Hoàn tiền
+                        Refund
                       </MenuItem>
                     </MenuPopover>
                   </Menu>
@@ -370,7 +371,7 @@ function DataTableDemo() {
             {rows.length === 0 && (
               <TableRow>
                 <TableCell colSpan={6} className="h-24 text-center text-foreground-3">
-                  Không có kết quả phù hợp.
+                  No matching results.
                 </TableCell>
               </TableRow>
             )}
@@ -380,11 +381,11 @@ function DataTableDemo() {
 
       <div className="flex flex-wrap items-center justify-between gap-2">
         <span className="text-caption1 text-foreground-3">
-          Trang {current + 1} / {pageCount} · {sorted.length} kết quả
+          Page {current + 1} of {pageCount} · {sorted.length} results
         </span>
         <div className="flex gap-2">
           <Button size="small" icon={<ChevronLeft20Regular className="rtl:-scale-x-100" />} disabled={current === 0} onClick={() => setPage(current - 1)}>
-            Trước
+            Previous
           </Button>
           <Button
             size="small"
@@ -393,7 +394,7 @@ function DataTableDemo() {
             disabled={current >= pageCount - 1}
             onClick={() => setPage(current + 1)}
           >
-            Sau
+            Next
           </Button>
         </div>
       </div>
@@ -415,24 +416,24 @@ const DISPLAY: Record<string, ComponentDoc> = {
     importCode: `import { AvatarGroup, AvatarGroupItem } from "@/components/ui";`,
     hero: {
       title: "AvatarGroup",
-      code: `<AvatarGroup layout="stack" size={40} maxAvatars={4} aria-label="Thành viên dự án">
-  <AvatarGroupItem name="Nguyễn Văn An" />
-  <AvatarGroupItem name="Trần Thị Bình" />
-  <AvatarGroupItem name="Lê Hoàng Cường" />
-  <AvatarGroupItem name="Phạm Minh Dũng" />
-  <AvatarGroupItem name="Hoàng Thu Hà" />
-  <AvatarGroupItem name="Vũ Quốc Khánh" />
-  <AvatarGroupItem name="Đặng Mai Linh" />
+      code: `<AvatarGroup layout="stack" size={40} maxAvatars={4} aria-label="Project members">
+  <AvatarGroupItem name="Alex Chen" />
+  <AvatarGroupItem name="Maria Garcia" />
+  <AvatarGroupItem name="Sam Lee" />
+  <AvatarGroupItem name="Priya Patel" />
+  <AvatarGroupItem name="Jordan Kim" />
+  <AvatarGroupItem name="Taylor Nguyen" />
+  <AvatarGroupItem name="Chris Novak" />
 </AvatarGroup>`,
       render: () => (
-        <AvatarGroup layout="stack" size={40} maxAvatars={4} aria-label="Thành viên dự án">
-          <AvatarGroupItem name="Nguyễn Văn An" />
-          <AvatarGroupItem name="Trần Thị Bình" />
-          <AvatarGroupItem name="Lê Hoàng Cường" />
-          <AvatarGroupItem name="Phạm Minh Dũng" />
-          <AvatarGroupItem name="Hoàng Thu Hà" />
-          <AvatarGroupItem name="Vũ Quốc Khánh" />
-          <AvatarGroupItem name="Đặng Mai Linh" />
+        <AvatarGroup layout="stack" size={40} maxAvatars={4} aria-label="Project members">
+          <AvatarGroupItem name="Alex Chen" />
+          <AvatarGroupItem name="Maria Garcia" />
+          <AvatarGroupItem name="Sam Lee" />
+          <AvatarGroupItem name="Priya Patel" />
+          <AvatarGroupItem name="Jordan Kim" />
+          <AvatarGroupItem name="Taylor Nguyen" />
+          <AvatarGroupItem name="Chris Novak" />
         </AvatarGroup>
       ),
     },
@@ -440,7 +441,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
       {
         title: "Layout",
         description: "spread (mặc định), stack có viền tách nền, pie chia 2–3 avatar trong một vòng tròn.",
-        code: `const people = ["Nguyễn Văn An", "Trần Thị Bình", "Lê Hoàng Cường", "Phạm Minh Dũng", "Hoàng Thu Hà", "Vũ Quốc Khánh", "Đặng Mai Linh", "Bùi Thanh Nam"];
+        code: `const people = ["Alex Chen", "Maria Garcia", "Sam Lee", "Priya Patel", "Jordan Kim", "Taylor Nguyen", "Chris Novak", "Hana Sato"];
 
 <div className="flex flex-col items-start gap-4">
   <AvatarGroup layout="spread" aria-label="Spread">
@@ -471,25 +472,25 @@ const DISPLAY: Record<string, ComponentDoc> = {
         title: "Kích thước",
         description: "Dùng chung thang size của Avatar: 20, 24, 32 (mặc định), 40, 48, 64, 96.",
         code: `<div className="flex flex-col items-start gap-3">
-  <AvatarGroup layout="stack" size={24} aria-label="Cỡ 24">
+  <AvatarGroup layout="stack" size={24} aria-label="Size 24">
     {people.slice(0, 5).map((name) => <AvatarGroupItem key={name} name={name} />)}
   </AvatarGroup>
-  <AvatarGroup layout="stack" size={32} aria-label="Cỡ 32">
+  <AvatarGroup layout="stack" size={32} aria-label="Size 32">
     {people.slice(0, 5).map((name) => <AvatarGroupItem key={name} name={name} />)}
   </AvatarGroup>
-  <AvatarGroup layout="stack" size={48} aria-label="Cỡ 48">
+  <AvatarGroup layout="stack" size={48} aria-label="Size 48">
     {people.slice(0, 5).map((name) => <AvatarGroupItem key={name} name={name} />)}
   </AvatarGroup>
 </div>`,
         render: () => (
           <div className="flex flex-col items-start gap-3">
-            <AvatarGroup layout="stack" size={24} aria-label="Cỡ 24">
+            <AvatarGroup layout="stack" size={24} aria-label="Size 24">
               {people.slice(0, 5).map((name) => <AvatarGroupItem key={name} name={name} />)}
             </AvatarGroup>
-            <AvatarGroup layout="stack" size={32} aria-label="Cỡ 32">
+            <AvatarGroup layout="stack" size={32} aria-label="Size 32">
               {people.slice(0, 5).map((name) => <AvatarGroupItem key={name} name={name} />)}
             </AvatarGroup>
-            <AvatarGroup layout="stack" size={48} aria-label="Cỡ 48">
+            <AvatarGroup layout="stack" size={48} aria-label="Size 48">
               {people.slice(0, 5).map((name) => <AvatarGroupItem key={name} name={name} />)}
             </AvatarGroup>
           </div>
@@ -499,19 +500,19 @@ const DISPLAY: Record<string, ComponentDoc> = {
         title: "Tràn & danh sách đầy đủ",
         description: "maxAvatars giới hạn số ô (tính cả nút tràn). Bấm “+N” hoặc “…” để xem danh sách trong Popover.",
         code: `<div className="flex flex-col items-start gap-3">
-  <AvatarGroup maxAvatars={3} aria-label="Nhóm thiết kế">
+  <AvatarGroup maxAvatars={3} aria-label="Design team">
     {people.map((name) => <AvatarGroupItem key={name} name={name} />)}
   </AvatarGroup>
-  <AvatarGroup layout="stack" maxAvatars={3} overflowIndicator="icon" aria-label="Nhóm kỹ thuật">
+  <AvatarGroup layout="stack" maxAvatars={3} overflowIndicator="icon" aria-label="Engineering team">
     {people.map((name) => <AvatarGroupItem key={name} name={name} />)}
   </AvatarGroup>
 </div>`,
         render: () => (
           <div className="flex flex-col items-start gap-3">
-            <AvatarGroup maxAvatars={3} aria-label="Nhóm thiết kế">
+            <AvatarGroup maxAvatars={3} aria-label="Design team">
               {people.map((name) => <AvatarGroupItem key={name} name={name} />)}
             </AvatarGroup>
-            <AvatarGroup layout="stack" maxAvatars={3} overflowIndicator="icon" aria-label="Nhóm kỹ thuật">
+            <AvatarGroup layout="stack" maxAvatars={3} overflowIndicator="icon" aria-label="Engineering team">
               {people.map((name) => <AvatarGroupItem key={name} name={name} />)}
             </AvatarGroup>
           </div>
@@ -520,18 +521,18 @@ const DISPLAY: Record<string, ComponentDoc> = {
       {
         title: "Pie",
         description: "Gọn nhất cho không gian hẹp; cả vòng tròn là nút mở danh sách thành viên.",
-        code: `<AvatarGroup layout="pie" size={48} aria-label="Hai thành viên">
+        code: `<AvatarGroup layout="pie" size={48} aria-label="Two members">
   {people.slice(0, 2).map((name) => <AvatarGroupItem key={name} name={name} />)}
 </AvatarGroup>
-<AvatarGroup layout="pie" size={64} aria-label="Năm thành viên">
+<AvatarGroup layout="pie" size={64} aria-label="Five members">
   {people.slice(2, 7).map((name) => <AvatarGroupItem key={name} name={name} />)}
 </AvatarGroup>`,
         render: () => (
           <>
-            <AvatarGroup layout="pie" size={48} aria-label="Hai thành viên">
+            <AvatarGroup layout="pie" size={48} aria-label="Two members">
               {people.slice(0, 2).map((name) => <AvatarGroupItem key={name} name={name} />)}
             </AvatarGroup>
-            <AvatarGroup layout="pie" size={64} aria-label="Năm thành viên">
+            <AvatarGroup layout="pie" size={64} aria-label="Five members">
               {people.slice(2, 7).map((name) => <AvatarGroupItem key={name} name={name} />)}
             </AvatarGroup>
           </>
@@ -571,18 +572,18 @@ const DISPLAY: Record<string, ComponentDoc> = {
       title: "Persona",
       code: `<Persona
   size="huge"
-  name="Nguyễn Văn An"
-  secondaryText="Trưởng nhóm thiết kế"
-  tertiaryText="Hà Nội · 09:30"
+  name="Alex Chen"
+  secondaryText="Design lead"
+  tertiaryText="Kyoto · 9:30 AM"
   presence="available"
   avatar={{ color: "colorful" }}
 />`,
       render: () => (
         <Persona
           size="huge"
-          name="Nguyễn Văn An"
-          secondaryText="Trưởng nhóm thiết kế"
-          tertiaryText="Hà Nội · 09:30"
+          name="Alex Chen"
+          secondaryText="Design lead"
+          tertiaryText="Kyoto · 9:30 AM"
           presence="available"
           avatar={{ color: "colorful" }}
         />
@@ -593,21 +594,21 @@ const DISPLAY: Record<string, ComponentDoc> = {
         title: "Kích thước",
         description: "extra-small → huge; Avatar 20 → 64px.",
         code: `<div className="flex flex-col items-start gap-3">
-  <Persona size="extra-small" name="Trần Thị Bình" secondaryText="extra-small" presence="available" />
-  <Persona size="small" name="Trần Thị Bình" secondaryText="small" presence="busy" />
-  <Persona size="medium" name="Trần Thị Bình" secondaryText="medium" presence="away" />
-  <Persona size="large" name="Trần Thị Bình" secondaryText="large" presence="offline" />
-  <Persona size="extra-large" name="Trần Thị Bình" secondaryText="extra-large" presence="available" />
-  <Persona size="huge" name="Trần Thị Bình" secondaryText="huge" presence="available" />
+  <Persona size="extra-small" name="Maria Garcia" secondaryText="extra-small" presence="available" />
+  <Persona size="small" name="Maria Garcia" secondaryText="small" presence="busy" />
+  <Persona size="medium" name="Maria Garcia" secondaryText="medium" presence="away" />
+  <Persona size="large" name="Maria Garcia" secondaryText="large" presence="offline" />
+  <Persona size="extra-large" name="Maria Garcia" secondaryText="extra-large" presence="available" />
+  <Persona size="huge" name="Maria Garcia" secondaryText="huge" presence="available" />
 </div>`,
         render: () => (
           <div className="flex flex-col items-start gap-3">
-            <Persona size="extra-small" name="Trần Thị Bình" secondaryText="extra-small" presence="available" />
-            <Persona size="small" name="Trần Thị Bình" secondaryText="small" presence="busy" />
-            <Persona size="medium" name="Trần Thị Bình" secondaryText="medium" presence="away" />
-            <Persona size="large" name="Trần Thị Bình" secondaryText="large" presence="offline" />
-            <Persona size="extra-large" name="Trần Thị Bình" secondaryText="extra-large" presence="available" />
-            <Persona size="huge" name="Trần Thị Bình" secondaryText="huge" presence="available" />
+            <Persona size="extra-small" name="Maria Garcia" secondaryText="extra-small" presence="available" />
+            <Persona size="small" name="Maria Garcia" secondaryText="small" presence="busy" />
+            <Persona size="medium" name="Maria Garcia" secondaryText="medium" presence="away" />
+            <Persona size="large" name="Maria Garcia" secondaryText="large" presence="offline" />
+            <Persona size="extra-large" name="Maria Garcia" secondaryText="extra-large" presence="available" />
+            <Persona size="huge" name="Maria Garcia" secondaryText="huge" presence="available" />
           </div>
         ),
       },
@@ -615,15 +616,15 @@ const DISPLAY: Record<string, ComponentDoc> = {
         title: "Vị trí chữ",
         description: "after (mặc định), before, below.",
         code: `<div className="flex flex-wrap items-start justify-center gap-5">
-  <Persona size="large" name="Lê Hoàng Cường" secondaryText="after" presence="available" avatar={{ color: "colorful" }} />
-  <Persona size="large" textPosition="before" name="Lê Hoàng Cường" secondaryText="before" presence="available" avatar={{ color: "colorful" }} />
-  <Persona size="large" textPosition="below" textAlignment="center" name="Lê Hoàng Cường" secondaryText="below" presence="available" avatar={{ color: "colorful" }} />
+  <Persona size="large" name="Sam Lee" secondaryText="after" presence="available" avatar={{ color: "colorful" }} />
+  <Persona size="large" textPosition="before" name="Sam Lee" secondaryText="before" presence="available" avatar={{ color: "colorful" }} />
+  <Persona size="large" textPosition="below" textAlignment="center" name="Sam Lee" secondaryText="below" presence="available" avatar={{ color: "colorful" }} />
 </div>`,
         render: () => (
           <div className="flex flex-wrap items-start justify-center gap-5">
-            <Persona size="large" name="Lê Hoàng Cường" secondaryText="after" presence="available" avatar={{ color: "colorful" }} />
-            <Persona size="large" textPosition="before" name="Lê Hoàng Cường" secondaryText="before" presence="available" avatar={{ color: "colorful" }} />
-            <Persona size="large" textPosition="below" textAlignment="center" name="Lê Hoàng Cường" secondaryText="below" presence="available" avatar={{ color: "colorful" }} />
+            <Persona size="large" name="Sam Lee" secondaryText="after" presence="available" avatar={{ color: "colorful" }} />
+            <Persona size="large" textPosition="before" name="Sam Lee" secondaryText="before" presence="available" avatar={{ color: "colorful" }} />
+            <Persona size="large" textPosition="below" textAlignment="center" name="Sam Lee" secondaryText="below" presence="available" avatar={{ color: "colorful" }} />
           </div>
         ),
       },
@@ -633,25 +634,25 @@ const DISPLAY: Record<string, ComponentDoc> = {
         code: `<div className="flex flex-col items-start gap-4">
   <Persona
     size="extra-large"
-    name="Phạm Minh Dũng"
-    secondaryText="Quản lý sản phẩm"
-    tertiaryText="Đang họp"
-    quaternaryText="Rảnh lúc 15:00"
+    name="Priya Patel"
+    secondaryText="Product manager"
+    tertiaryText="In a meeting"
+    quaternaryText="Free at 3:00 PM"
     presence="busy"
   />
-  <Persona size="extra-large" textAlignment="center" name="Phạm Minh Dũng" secondaryText="Quản lý sản phẩm" presence="busy" />
+  <Persona size="extra-large" textAlignment="center" name="Priya Patel" secondaryText="Product manager" presence="busy" />
 </div>`,
         render: () => (
           <div className="flex flex-col items-start gap-4">
             <Persona
               size="extra-large"
-              name="Phạm Minh Dũng"
-              secondaryText="Quản lý sản phẩm"
-              tertiaryText="Đang họp"
-              quaternaryText="Rảnh lúc 15:00"
+              name="Priya Patel"
+              secondaryText="Product manager"
+              tertiaryText="In a meeting"
+              quaternaryText="Free at 3:00 PM"
               presence="busy"
             />
-            <Persona size="extra-large" textAlignment="center" name="Phạm Minh Dũng" secondaryText="Quản lý sản phẩm" presence="busy" />
+            <Persona size="extra-large" textAlignment="center" name="Priya Patel" secondaryText="Product manager" presence="busy" />
           </div>
         ),
       },
@@ -659,15 +660,15 @@ const DISPLAY: Record<string, ComponentDoc> = {
         title: "Chỉ trạng thái",
         description: "presenceOnly thay Avatar bằng chấm trạng thái — hợp với danh sách dày.",
         code: `<div className="flex flex-col items-start gap-3">
-  <Persona presenceOnly presence="available" name="Hoàng Thu Hà" secondaryText="Có mặt" />
-  <Persona presenceOnly presence="away" name="Vũ Quốc Khánh" secondaryText="Vắng mặt" />
-  <Persona presenceOnly presence="offline" name="Đặng Mai Linh" secondaryText="Ngoại tuyến" />
+  <Persona presenceOnly presence="available" name="Jordan Kim" secondaryText="Available" />
+  <Persona presenceOnly presence="away" name="Taylor Nguyen" secondaryText="Away" />
+  <Persona presenceOnly presence="offline" name="Chris Novak" secondaryText="Offline" />
 </div>`,
         render: () => (
           <div className="flex flex-col items-start gap-3">
-            <Persona presenceOnly presence="available" name="Hoàng Thu Hà" secondaryText="Có mặt" />
-            <Persona presenceOnly presence="away" name="Vũ Quốc Khánh" secondaryText="Vắng mặt" />
-            <Persona presenceOnly presence="offline" name="Đặng Mai Linh" secondaryText="Ngoại tuyến" />
+            <Persona presenceOnly presence="available" name="Jordan Kim" secondaryText="Available" />
+            <Persona presenceOnly presence="away" name="Taylor Nguyen" secondaryText="Away" />
+            <Persona presenceOnly presence="offline" name="Chris Novak" secondaryText="Offline" />
           </div>
         ),
       },
@@ -711,18 +712,18 @@ const DISPLAY: Record<string, ComponentDoc> = {
       code: `<div className="flex max-w-xl flex-col gap-2">
   <Caption1Strong className="text-brand-foreground-1">Typography</Caption1Strong>
   <Display>Aa Bb</Display>
-  <Title3>Chữ rõ ràng, nhịp đều</Title3>
+  <Title3>Clear type, steady rhythm</Title3>
   <Body2 className="text-foreground-2">
-    Text và các preset ánh xạ thẳng vào type ramp của Fluent 2 — cỡ chữ, line-height và độ đậm luôn đồng bộ.
+    Text and its presets map straight to the Fluent 2 type ramp, so size, line height and weight stay in sync.
   </Body2>
 </div>`,
       render: () => (
         <div className="flex max-w-xl flex-col gap-2">
           <Caption1Strong className="text-brand-foreground-1">Typography</Caption1Strong>
           <Display>Aa Bb</Display>
-          <Title3>Chữ rõ ràng, nhịp đều</Title3>
+          <Title3>Clear type, steady rhythm</Title3>
           <Body2 className="text-foreground-2">
-            Text và các preset ánh xạ thẳng vào type ramp của Fluent 2 — cỡ chữ, line-height và độ đậm luôn đồng bộ.
+            Text and its presets map straight to the Fluent 2 type ramp, so size, line height and weight stay in sync.
           </Body2>
         </div>
       ),
@@ -786,21 +787,21 @@ const DISPLAY: Record<string, ComponentDoc> = {
         title: "Định dạng & font",
         description: "italic, underline, strikethrough; font base, monospace, numeric.",
         code: `<div className="flex flex-col gap-1">
-  <Text italic>Chữ nghiêng</Text>
-  <Text underline>Chữ gạch chân</Text>
-  <Text strikethrough>Chữ gạch ngang</Text>
-  <Text underline strikethrough>Gạch chân và gạch ngang</Text>
+  <Text italic>Italic text</Text>
+  <Text underline>Underlined text</Text>
+  <Text strikethrough>Strikethrough text</Text>
+  <Text underline strikethrough>Underline and strikethrough</Text>
   <Text font="monospace">npm install @fluentui/react-icons</Text>
-  <Text font="numeric">1.234.567,89 ₫</Text>
+  <Text font="numeric">$1,234,567.89</Text>
 </div>`,
         render: () => (
           <div className="flex flex-col gap-1">
-            <Text italic>Chữ nghiêng</Text>
-            <Text underline>Chữ gạch chân</Text>
-            <Text strikethrough>Chữ gạch ngang</Text>
-            <Text underline strikethrough>Gạch chân và gạch ngang</Text>
+            <Text italic>Italic text</Text>
+            <Text underline>Underlined text</Text>
+            <Text strikethrough>Strikethrough text</Text>
+            <Text underline strikethrough>Underline and strikethrough</Text>
             <Text font="monospace">npm install @fluentui/react-icons</Text>
-            <Text font="numeric">1.234.567,89 ₫</Text>
+            <Text font="numeric">$1,234,567.89</Text>
           </div>
         ),
       },
@@ -809,27 +810,27 @@ const DISPLAY: Record<string, ComponentDoc> = {
         description: "truncate cần wrap={false} và block; as đổi thẻ HTML mà không đổi style.",
         code: `<div className="flex w-56 flex-col gap-2">
   <Text block truncate wrap={false}>
-    Đoạn chữ rất dài sẽ bị cắt bằng dấu ba chấm khi vượt quá chiều rộng
+    This long line of text is cut off with an ellipsis when it runs out of room
   </Text>
-  <Text block>Đoạn chữ dài mặc định xuống dòng tự nhiên trong khung chứa.</Text>
+  <Text block>Long text wraps naturally inside its container by default.</Text>
   <Text as="h3" size={400} weight="semibold" block>
-    Tiêu đề dùng thẻ h3
+    Heading rendered as h3
   </Text>
   <Text as="p" block align="end" className="text-foreground-3">
-    Căn phải (align="end")
+    Aligned to the end (align="end")
   </Text>
 </div>`,
         render: () => (
           <div className="flex w-56 flex-col gap-2">
             <Text block truncate wrap={false}>
-              Đoạn chữ rất dài sẽ bị cắt bằng dấu ba chấm khi vượt quá chiều rộng
+              This long line of text is cut off with an ellipsis when it runs out of room
             </Text>
-            <Text block>Đoạn chữ dài mặc định xuống dòng tự nhiên trong khung chứa.</Text>
+            <Text block>Long text wraps naturally inside its container by default.</Text>
             <Text as="h3" size={400} weight="semibold" block>
-              Tiêu đề dùng thẻ h3
+              Heading rendered as h3
             </Text>
             <Text as="p" block align="end" className="text-foreground-3">
-              Căn phải (align="end")
+              Aligned to the end (align="end")
             </Text>
           </div>
         ),
@@ -867,15 +868,15 @@ const DISPLAY: Record<string, ComponentDoc> = {
     importCode: `import { Image, AspectRatio } from "@/components/ui";`,
     hero: {
       title: "Image",
-      code: `// mountain, sunset, landscape, scenery: URL ảnh bất kỳ (ở đây là SVG sinh sẵn).
+      code: `// mountain, sunset, landscape, scenery: any image URL (generated SVGs here).
 <div className="flex flex-wrap items-center justify-center gap-4">
-  <Image src={mountain} alt="Núi và hồ buổi sáng" shape="rounded" shadow className="w-56" />
-  <Image src={sunset} alt="Đồi lúc hoàng hôn" shape="circular" fit="cover" bordered className="size-32" />
+  <Image src={mountain} alt="Mountains and a lake in the morning" shape="rounded" shadow className="w-56" />
+  <Image src={sunset} alt="Hills at sunset" shape="circular" fit="cover" bordered className="size-32" />
 </div>`,
       render: () => (
         <div className="flex flex-wrap items-center justify-center gap-4">
-          <Image src={mountain} alt="Núi và hồ buổi sáng" shape="rounded" shadow className="w-56" />
-          <Image src={sunset} alt="Đồi lúc hoàng hôn" shape="circular" fit="cover" bordered className="size-32" />
+          <Image src={mountain} alt="Mountains and a lake in the morning" shape="rounded" shadow className="w-56" />
+          <Image src={sunset} alt="Hills at sunset" shape="circular" fit="cover" bordered className="size-32" />
         </div>
       ),
     },
@@ -941,7 +942,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
         description: "Khung 16 / 9 và 1 / 1; nội dung bên trong lấp đầy khung.",
         code: `<div className="grid w-full grid-cols-2 items-center gap-3">
   <AspectRatio ratio={16 / 9} className="rounded-xlarge">
-    <Image src={mountain} alt="Núi và hồ buổi sáng" fit="cover" />
+    <Image src={mountain} alt="Mountains and a lake in the morning" fit="cover" />
   </AspectRatio>
   <AspectRatio ratio={1} className="rounded-xlarge">
     <BloomArt />
@@ -950,7 +951,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
         render: () => (
           <div className="grid w-full grid-cols-2 items-center gap-3">
             <AspectRatio ratio={16 / 9} className="rounded-xlarge">
-              <Image src={mountain} alt="Núi và hồ buổi sáng" fit="cover" />
+              <Image src={mountain} alt="Mountains and a lake in the morning" fit="cover" />
             </AspectRatio>
             <AspectRatio ratio={1} className="rounded-xlarge">
               <BloomArt />
@@ -991,16 +992,16 @@ const DISPLAY: Record<string, ComponentDoc> = {
     hero: {
       title: "List",
       code: `function ListSelectionDemo() {
-  const [selected, setSelected] = useState(["an"]);
+  const [selected, setSelected] = useState(["alex"]);
   return (
     <div className="flex w-full max-w-sm flex-col gap-2">
-      <List selectionMode="multiselect" selectedItems={selected} onSelectionChange={setSelected} aria-label="Người tham gia">
-        <ListItem value="an" media={<Avatar name="Nguyễn Văn An" color="colorful" />} title="Nguyễn Văn An" description="Kỹ sư phần mềm" />
-        <ListItem value="binh" media={<Avatar name="Trần Thị Bình" color="colorful" />} title="Trần Thị Bình" description="Nhà thiết kế" />
-        <ListItem value="cuong" media={<Avatar name="Lê Hoàng Cường" color="colorful" />} title="Lê Hoàng Cường" description="Quản lý sản phẩm" />
-        <ListItem value="ha" media={<Avatar name="Hoàng Thu Hà" color="colorful" />} title="Hoàng Thu Hà" description="Kiểm thử" />
+      <List selectionMode="multiselect" selectedItems={selected} onSelectionChange={setSelected} aria-label="Attendees">
+        <ListItem value="alex" media={<Avatar name="Alex Chen" color="colorful" />} title="Alex Chen" description="Software engineer" />
+        <ListItem value="maria" media={<Avatar name="Maria Garcia" color="colorful" />} title="Maria Garcia" description="Designer" />
+        <ListItem value="sam" media={<Avatar name="Sam Lee" color="colorful" />} title="Sam Lee" description="Product manager" />
+        <ListItem value="jordan" media={<Avatar name="Jordan Kim" color="colorful" />} title="Jordan Kim" description="QA engineer" />
       </List>
-      <span className="text-caption1 text-foreground-3">Đã chọn {selected.length} người · dùng ↑ ↓ và Space để chọn</span>
+      <span className="text-caption1 text-foreground-3">{selected.length} selected · use ↑ ↓ and Space to select</span>
     </div>
   );
 }`,
@@ -1010,83 +1011,83 @@ const DISPLAY: Record<string, ComponentDoc> = {
       {
         title: "Cơ bản",
         description: "List tĩnh với icon, tiêu đề và mô tả.",
-        code: `<List aria-label="Tệp gần đây" className="w-full max-w-sm">
-  <ListItem media={<Document20Regular />} title="Báo cáo quý 3.docx" description="Sửa 2 giờ trước" />
-  <ListItem media={<Image20Regular />} title="Ảnh bìa.png" description="Sửa hôm qua" />
-  <ListItem media={<DocumentPdf20Regular />} title="Hợp đồng.pdf" description="Sửa 3 ngày trước" />
+        code: `<List aria-label="Recent files" className="w-full max-w-sm">
+  <ListItem media={<Document20Regular />} title="Q3 report.docx" description="Edited 2 hours ago" />
+  <ListItem media={<Image20Regular />} title="Cover image.png" description="Edited yesterday" />
+  <ListItem media={<DocumentPdf20Regular />} title="Contract.pdf" description="Edited 3 days ago" />
 </List>`,
         render: () => (
-          <List aria-label="Tệp gần đây" className="w-full max-w-sm">
-            <ListItem media={<Document20Regular />} title="Báo cáo quý 3.docx" description="Sửa 2 giờ trước" />
-            <ListItem media={<Image20Regular />} title="Ảnh bìa.png" description="Sửa hôm qua" />
-            <ListItem media={<DocumentPdf20Regular />} title="Hợp đồng.pdf" description="Sửa 3 ngày trước" />
+          <List aria-label="Recent files" className="w-full max-w-sm">
+            <ListItem media={<Document20Regular />} title="Q3 report.docx" description="Edited 2 hours ago" />
+            <ListItem media={<Image20Regular />} title="Cover image.png" description="Edited yesterday" />
+            <ListItem media={<DocumentPdf20Regular />} title="Contract.pdf" description="Edited 3 days ago" />
           </List>
         ),
       },
       {
         title: "Chọn một",
         description: "selectionMode=\"single\": mục chọn có nền tint brand và dấu tick.",
-        code: `<List selectionMode="single" defaultSelectedItems={["week"]} aria-label="Khoảng thời gian" className="w-full max-w-xs">
-  <ListItem value="day" title="Hôm nay" />
-  <ListItem value="week" title="7 ngày qua" />
-  <ListItem value="month" title="30 ngày qua" />
+        code: `<List selectionMode="single" defaultSelectedItems={["week"]} aria-label="Time range" className="w-full max-w-xs">
+  <ListItem value="day" title="Today" />
+  <ListItem value="week" title="Last 7 days" />
+  <ListItem value="month" title="Last 30 days" />
 </List>`,
         render: () => (
-          <List selectionMode="single" defaultSelectedItems={["week"]} aria-label="Khoảng thời gian" className="w-full max-w-xs">
-            <ListItem value="day" title="Hôm nay" />
-            <ListItem value="week" title="7 ngày qua" />
-            <ListItem value="month" title="30 ngày qua" />
+          <List selectionMode="single" defaultSelectedItems={["week"]} aria-label="Time range" className="w-full max-w-xs">
+            <ListItem value="day" title="Today" />
+            <ListItem value="week" title="Last 7 days" />
+            <ListItem value="month" title="Last 30 days" />
           </List>
         ),
       },
       {
         title: "Outline & actions",
         description: "variant=\"outline\" biến mỗi item thành thẻ; composite: → vào nút, ← / Esc quay lại item.",
-        code: `<List navigationMode="composite" variant="outline" aria-label="Hộp thư" className="w-full max-w-sm">
+        code: `<List navigationMode="composite" variant="outline" aria-label="Inbox" className="w-full max-w-sm">
   <ListItem
-    media={<Avatar name="Trần Thị Bình" color="colorful" />}
-    title="Trần Thị Bình"
-    description="Gửi bạn bản thiết kế mới cho trang chủ, xem giúp mình nhé."
+    media={<Avatar name="Maria Garcia" color="colorful" />}
+    title="Maria Garcia"
+    description="Here's the new homepage design. Could you take a look?"
     actions={
       <>
-        <Button appearance="subtle" size="small" icon={<Mail20Regular />} aria-label="Trả lời" />
-        <Button appearance="subtle" size="small" icon={<Delete20Regular />} aria-label="Xoá" />
+        <Button appearance="subtle" size="small" icon={<Mail20Regular />} aria-label="Reply" />
+        <Button appearance="subtle" size="small" icon={<Delete20Regular />} aria-label="Delete" />
       </>
     }
   />
   <ListItem
-    media={<Avatar name="Lê Hoàng Cường" color="colorful" />}
-    title="Lê Hoàng Cường"
-    description="Lịch họp sprint chuyển sang 10:00 thứ Năm."
+    media={<Avatar name="Sam Lee" color="colorful" />}
+    title="Sam Lee"
+    description="Sprint planning moved to Thursday at 10:00 AM."
     actions={
       <>
-        <Button appearance="subtle" size="small" icon={<Mail20Regular />} aria-label="Trả lời" />
-        <Button appearance="subtle" size="small" icon={<Delete20Regular />} aria-label="Xoá" />
+        <Button appearance="subtle" size="small" icon={<Mail20Regular />} aria-label="Reply" />
+        <Button appearance="subtle" size="small" icon={<Delete20Regular />} aria-label="Delete" />
       </>
     }
   />
 </List>`,
         render: () => (
-          <List navigationMode="composite" variant="outline" aria-label="Hộp thư" className="w-full max-w-sm">
+          <List navigationMode="composite" variant="outline" aria-label="Inbox" className="w-full max-w-sm">
             <ListItem
-              media={<Avatar name="Trần Thị Bình" color="colorful" />}
-              title="Trần Thị Bình"
-              description="Gửi bạn bản thiết kế mới cho trang chủ, xem giúp mình nhé."
+              media={<Avatar name="Maria Garcia" color="colorful" />}
+              title="Maria Garcia"
+              description="Here's the new homepage design. Could you take a look?"
               actions={
                 <>
-                  <Button appearance="subtle" size="small" icon={<Mail20Regular />} aria-label="Trả lời" />
-                  <Button appearance="subtle" size="small" icon={<Delete20Regular />} aria-label="Xoá" />
+                  <Button appearance="subtle" size="small" icon={<Mail20Regular />} aria-label="Reply" />
+                  <Button appearance="subtle" size="small" icon={<Delete20Regular />} aria-label="Delete" />
                 </>
               }
             />
             <ListItem
-              media={<Avatar name="Lê Hoàng Cường" color="colorful" />}
-              title="Lê Hoàng Cường"
-              description="Lịch họp sprint chuyển sang 10:00 thứ Năm."
+              media={<Avatar name="Sam Lee" color="colorful" />}
+              title="Sam Lee"
+              description="Sprint planning moved to Thursday at 10:00 AM."
               actions={
                 <>
-                  <Button appearance="subtle" size="small" icon={<Mail20Regular />} aria-label="Trả lời" />
-                  <Button appearance="subtle" size="small" icon={<Delete20Regular />} aria-label="Xoá" />
+                  <Button appearance="subtle" size="small" icon={<Mail20Regular />} aria-label="Reply" />
+                  <Button appearance="subtle" size="small" icon={<Delete20Regular />} aria-label="Delete" />
                 </>
               }
             />
@@ -1140,28 +1141,29 @@ const DISPLAY: Record<string, ComponentDoc> = {
 };
 
 const invoices: Invoice[] = [
-  { id: "HD-1042", customer: "Nguyễn Văn An", email: "an.nguyen@contoso.vn", status: "paid", amount: 2490000, date: "2026-10-18" },
-  { id: "HD-1041", customer: "Trần Thị Bình", email: "binh.tran@contoso.vn", status: "pending", amount: 1350000, date: "2026-10-17" },
-  { id: "HD-1040", customer: "Lê Hoàng Cường", email: "cuong.le@contoso.vn", status: "paid", amount: 5820000, date: "2026-10-15" },
-  { id: "HD-1039", customer: "Phạm Minh Dũng", email: "dung.pham@contoso.vn", status: "failed", amount: 760000, date: "2026-10-14" },
-  { id: "HD-1038", customer: "Hoàng Thu Hà", email: "ha.hoang@contoso.vn", status: "paid", amount: 3150000, date: "2026-10-12" },
-  { id: "HD-1037", customer: "Vũ Quốc Khánh", email: "khanh.vu@contoso.vn", status: "pending", amount: 980000, date: "2026-10-11" },
-  { id: "HD-1036", customer: "Đặng Mai Linh", email: "linh.dang@contoso.vn", status: "paid", amount: 4200000, date: "2026-10-09" },
-  { id: "HD-1035", customer: "Bùi Thanh Nam", email: "nam.bui@contoso.vn", status: "paid", amount: 1890000, date: "2026-10-08" },
-  { id: "HD-1034", customer: "Đỗ Ngọc Oanh", email: "oanh.do@contoso.vn", status: "failed", amount: 640000, date: "2026-10-06" },
-  { id: "HD-1033", customer: "Ngô Đức Phúc", email: "phuc.ngo@contoso.vn", status: "pending", amount: 2750000, date: "2026-10-05" },
-  { id: "HD-1032", customer: "Dương Bảo Quyên", email: "quyen.duong@contoso.vn", status: "paid", amount: 3600000, date: "2026-10-03" },
-  { id: "HD-1031", customer: "Lý Gia Sơn", email: "son.ly@contoso.vn", status: "paid", amount: 1120000, date: "2026-10-01" },
+  { id: "INV-1042", customer: "Alex Chen", email: "alex.chen@contoso.com", status: "paid", amount: 2490, date: "2026-10-18" },
+  { id: "INV-1041", customer: "Maria Garcia", email: "maria.garcia@contoso.com", status: "pending", amount: 1350, date: "2026-10-17" },
+  { id: "INV-1040", customer: "Sam Lee", email: "sam.lee@contoso.com", status: "paid", amount: 5820, date: "2026-10-15" },
+  { id: "INV-1039", customer: "Priya Patel", email: "priya.patel@contoso.com", status: "failed", amount: 760, date: "2026-10-14" },
+  { id: "INV-1038", customer: "Jordan Kim", email: "jordan.kim@contoso.com", status: "paid", amount: 3150, date: "2026-10-12" },
+  { id: "INV-1037", customer: "Taylor Nguyen", email: "taylor.nguyen@contoso.com", status: "pending", amount: 980, date: "2026-10-11" },
+  { id: "INV-1036", customer: "Chris Novak", email: "chris.novak@contoso.com", status: "paid", amount: 4200, date: "2026-10-09" },
+  { id: "INV-1035", customer: "Hana Sato", email: "hana.sato@contoso.com", status: "paid", amount: 1890, date: "2026-10-08" },
+  { id: "INV-1034", customer: "Ben Carter", email: "ben.carter@contoso.com", status: "failed", amount: 640, date: "2026-10-06" },
+  { id: "INV-1033", customer: "Ines Duarte", email: "ines.duarte@contoso.com", status: "pending", amount: 2750, date: "2026-10-05" },
+  { id: "INV-1032", customer: "Leo Rossi", email: "leo.rossi@contoso.com", status: "paid", amount: 3600, date: "2026-10-03" },
+  { id: "INV-1031", customer: "Mia Wong", email: "mia.wong@contoso.com", status: "paid", amount: 1120, date: "2026-10-01" },
 ];
 
 const STATUS = {
-  paid: { label: "Đã thanh toán", color: "success" },
-  pending: { label: "Đang xử lý", color: "warning" },
-  failed: { label: "Thất bại", color: "danger" },
+  paid: { label: "Paid", color: "success" },
+  pending: { label: "Pending", color: "warning" },
+  failed: { label: "Failed", color: "danger" },
 } as const;
 
 const PAGE_SIZE = 5;
-const vnd = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
+const usd = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
+const dateFormat = new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeZone: "UTC" });
 
 type SortKey = "customer" | "date" | "amount";
 
@@ -1174,7 +1176,7 @@ function DataTableDemo() {
   const filtered = invoices.filter((row) => row.customer.toLowerCase().includes(query.trim().toLowerCase()));
   const sorted = [...filtered].sort((a, b) => {
     const { key, direction } = sort;
-    const diff = key === "amount" ? a.amount - b.amount : a[key].localeCompare(b[key], "vi");
+    const diff = key === "amount" ? a.amount - b.amount : a[key].localeCompare(b[key], "en");
     return direction === "ascending" ? diff : -diff;
   });
   const pageCount = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
@@ -1196,8 +1198,8 @@ function DataTableDemo() {
     <div className="flex w-full flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <Input
-          aria-label="Lọc theo khách hàng"
-          placeholder="Lọc theo khách hàng…"
+          aria-label="Filter by customer"
+          placeholder="Filter by customer…"
           contentBefore={<Search20Regular />}
           value={query}
           onChange={(e) => {
@@ -1207,33 +1209,33 @@ function DataTableDemo() {
           rootClassName="w-full max-w-72"
         />
         <span className="text-caption1 text-foreground-3">
-          Đã chọn {selected.length} / {invoices.length} hoá đơn
+          {selected.length} of {invoices.length} invoices selected
         </span>
       </div>
 
       <div className="overflow-x-auto rounded-xlarge border border-stroke-2">
-        <Table sortable aria-label="Hoá đơn" className="min-w-180">
+        <Table sortable aria-label="Invoices" className="min-w-180">
           <TableHeader>
             <TableRow>
               <TableSelectionCell
                 checked={selectedOnPage === 0 ? false : selectedOnPage === rows.length ? true : "mixed"}
                 onCheckedChange={togglePage}
-                aria-label="Chọn tất cả hàng trên trang"
+                aria-label="Select all rows on this page"
               />
               <TableHeaderCell sortDirection={directionOf("customer")} onClick={() => toggleSort("customer")}>
-                Khách hàng
+                Customer
               </TableHeaderCell>
               <TableHeaderCell sortable={false} className="w-36">
-                Trạng thái
+                Status
               </TableHeaderCell>
               <TableHeaderCell sortDirection={directionOf("date")} onClick={() => toggleSort("date")} className="w-28">
-                Ngày
+                Date
               </TableHeaderCell>
               <TableHeaderCell sortDirection={directionOf("amount")} onClick={() => toggleSort("amount")} className="w-36">
-                Số tiền
+                Amount
               </TableHeaderCell>
               <TableHeaderCell sortable={false} className="w-14">
-                <span className="sr-only">Thao tác</span>
+                <span className="sr-only">Actions</span>
               </TableHeaderCell>
             </TableRow>
           </TableHeader>
@@ -1243,7 +1245,7 @@ function DataTableDemo() {
                 <TableSelectionCell
                   checked={selected.includes(row.id)}
                   onCheckedChange={() => toggleRow(row.id)}
-                  aria-label={"Chọn " + row.id}
+                  aria-label={"Select " + row.id}
                 />
                 <TableCell>
                   <TableCellLayout truncate media={<Avatar name={row.customer} color="colorful" />} description={row.email}>
@@ -1255,21 +1257,21 @@ function DataTableDemo() {
                     {STATUS[row.status].label}
                   </Badge>
                 </TableCell>
-                <TableCell>{row.date.split("-").reverse().join("/")}</TableCell>
-                <TableCell>{vnd.format(row.amount)}</TableCell>
+                <TableCell>{dateFormat.format(new Date(row.date))}</TableCell>
+                <TableCell>{usd.format(row.amount)}</TableCell>
                 <TableCell>
                   <Menu>
                     <MenuTrigger asChild>
-                      <Button appearance="subtle" icon={<MoreHorizontal20Regular />} aria-label={"Thao tác cho " + row.id} />
+                      <Button appearance="subtle" icon={<MoreHorizontal20Regular />} aria-label={"Actions for " + row.id} />
                     </MenuTrigger>
                     <MenuPopover align="end">
-                      <MenuItem icon={<Eye20Regular />}>Xem chi tiết</MenuItem>
+                      <MenuItem icon={<Eye20Regular />}>View details</MenuItem>
                       <MenuItem icon={<Copy20Regular />} onSelect={() => navigator.clipboard?.writeText(row.id)}>
-                        Sao chép mã hoá đơn
+                        Copy invoice ID
                       </MenuItem>
                       <MenuDivider />
                       <MenuItem icon={<ArrowUndo20Regular className="rtl:-scale-x-100" />} disabled={row.status !== "paid"}>
-                        Hoàn tiền
+                        Refund
                       </MenuItem>
                     </MenuPopover>
                   </Menu>
@@ -1279,7 +1281,7 @@ function DataTableDemo() {
             {rows.length === 0 && (
               <TableRow>
                 <TableCell colSpan={6} className="h-24 text-center text-foreground-3">
-                  Không có kết quả phù hợp.
+                  No matching results.
                 </TableCell>
               </TableRow>
             )}
@@ -1289,11 +1291,11 @@ function DataTableDemo() {
 
       <div className="flex flex-wrap items-center justify-between gap-2">
         <span className="text-caption1 text-foreground-3">
-          Trang {current + 1} / {pageCount} · {sorted.length} kết quả
+          Page {current + 1} of {pageCount} · {sorted.length} results
         </span>
         <div className="flex gap-2">
           <Button size="small" icon={<ChevronLeft20Regular className="rtl:-scale-x-100" />} disabled={current === 0} onClick={() => setPage(current - 1)}>
-            Trước
+            Previous
           </Button>
           <Button
             size="small"
@@ -1302,7 +1304,7 @@ function DataTableDemo() {
             disabled={current >= pageCount - 1}
             onClick={() => setPage(current + 1)}
           >
-            Sau
+            Next
           </Button>
         </div>
       </div>
@@ -1315,60 +1317,60 @@ function DataTableDemo() {
       {
         title: "Cơ bản",
         description: "TableCellLayout ghép icon với nội dung chính.",
-        code: `<Table aria-label="Tệp" className="w-full">
+        code: `<Table aria-label="Files" className="w-full">
   <TableHeader>
     <TableRow>
-      <TableHeaderCell>Tệp</TableHeaderCell>
-      <TableHeaderCell className="w-32">Sửa lần cuối</TableHeaderCell>
+      <TableHeaderCell>File</TableHeaderCell>
+      <TableHeaderCell className="w-32">Last modified</TableHeaderCell>
     </TableRow>
   </TableHeader>
   <TableBody>
     <TableRow>
       <TableCell>
-        <TableCellLayout truncate media={<Document20Regular />}>Báo cáo quý 3.docx</TableCellLayout>
+        <TableCellLayout truncate media={<Document20Regular />}>Q3 report.docx</TableCellLayout>
       </TableCell>
-      <TableCell className="text-foreground-2">2 giờ trước</TableCell>
+      <TableCell className="text-foreground-2">2 hours ago</TableCell>
     </TableRow>
     <TableRow>
       <TableCell>
-        <TableCellLayout truncate media={<Folder20Regular />}>Tài liệu dự án</TableCellLayout>
+        <TableCellLayout truncate media={<Folder20Regular />}>Project docs</TableCellLayout>
       </TableCell>
-      <TableCell className="text-foreground-2">Hôm qua</TableCell>
+      <TableCell className="text-foreground-2">Yesterday</TableCell>
     </TableRow>
     <TableRow>
       <TableCell>
-        <TableCellLayout truncate media={<DocumentPdf20Regular />}>Hợp đồng.pdf</TableCellLayout>
+        <TableCellLayout truncate media={<DocumentPdf20Regular />}>Contract.pdf</TableCellLayout>
       </TableCell>
-      <TableCell className="text-foreground-2">3 ngày trước</TableCell>
+      <TableCell className="text-foreground-2">3 days ago</TableCell>
     </TableRow>
   </TableBody>
 </Table>`,
         render: () => (
-          <Table aria-label="Tệp" className="w-full">
+          <Table aria-label="Files" className="w-full">
             <TableHeader>
               <TableRow>
-                <TableHeaderCell>Tệp</TableHeaderCell>
-                <TableHeaderCell className="w-32">Sửa lần cuối</TableHeaderCell>
+                <TableHeaderCell>File</TableHeaderCell>
+                <TableHeaderCell className="w-32">Last modified</TableHeaderCell>
               </TableRow>
             </TableHeader>
             <TableBody>
               <TableRow>
                 <TableCell>
-                  <TableCellLayout truncate media={<Document20Regular />}>Báo cáo quý 3.docx</TableCellLayout>
+                  <TableCellLayout truncate media={<Document20Regular />}>Q3 report.docx</TableCellLayout>
                 </TableCell>
-                <TableCell className="text-foreground-2">2 giờ trước</TableCell>
+                <TableCell className="text-foreground-2">2 hours ago</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>
-                  <TableCellLayout truncate media={<Folder20Regular />}>Tài liệu dự án</TableCellLayout>
+                  <TableCellLayout truncate media={<Folder20Regular />}>Project docs</TableCellLayout>
                 </TableCell>
-                <TableCell className="text-foreground-2">Hôm qua</TableCell>
+                <TableCell className="text-foreground-2">Yesterday</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>
-                  <TableCellLayout truncate media={<DocumentPdf20Regular />}>Hợp đồng.pdf</TableCellLayout>
+                  <TableCellLayout truncate media={<DocumentPdf20Regular />}>Contract.pdf</TableCellLayout>
                 </TableCell>
-                <TableCell className="text-foreground-2">3 ngày trước</TableCell>
+                <TableCell className="text-foreground-2">3 days ago</TableCell>
               </TableRow>
             </TableBody>
           </Table>
@@ -1381,36 +1383,36 @@ function DataTableDemo() {
   <Table size="extra-small" aria-label="extra-small">
     <TableHeader>
       <TableRow>
-        <TableHeaderCell>Tên</TableHeaderCell>
-        <TableHeaderCell>Vai trò</TableHeaderCell>
+        <TableHeaderCell>Name</TableHeaderCell>
+        <TableHeaderCell>Role</TableHeaderCell>
       </TableRow>
     </TableHeader>
     <TableBody>
       <TableRow>
-        <TableCell>Nguyễn Văn An</TableCell>
-        <TableCell>Kỹ sư</TableCell>
+        <TableCell>Alex Chen</TableCell>
+        <TableCell>Engineer</TableCell>
       </TableRow>
       <TableRow>
-        <TableCell>Trần Thị Bình</TableCell>
-        <TableCell>Thiết kế</TableCell>
+        <TableCell>Maria Garcia</TableCell>
+        <TableCell>Designer</TableCell>
       </TableRow>
     </TableBody>
   </Table>
   <Table size="small" aria-label="small">
     <TableHeader>
       <TableRow>
-        <TableHeaderCell>Tên</TableHeaderCell>
-        <TableHeaderCell>Vai trò</TableHeaderCell>
+        <TableHeaderCell>Name</TableHeaderCell>
+        <TableHeaderCell>Role</TableHeaderCell>
       </TableRow>
     </TableHeader>
     <TableBody>
       <TableRow>
-        <TableCell>Nguyễn Văn An</TableCell>
-        <TableCell>Kỹ sư</TableCell>
+        <TableCell>Alex Chen</TableCell>
+        <TableCell>Engineer</TableCell>
       </TableRow>
       <TableRow>
-        <TableCell>Trần Thị Bình</TableCell>
-        <TableCell>Thiết kế</TableCell>
+        <TableCell>Maria Garcia</TableCell>
+        <TableCell>Designer</TableCell>
       </TableRow>
     </TableBody>
   </Table>
@@ -1420,36 +1422,36 @@ function DataTableDemo() {
             <Table size="extra-small" aria-label="extra-small">
               <TableHeader>
                 <TableRow>
-                  <TableHeaderCell>Tên</TableHeaderCell>
-                  <TableHeaderCell>Vai trò</TableHeaderCell>
+                  <TableHeaderCell>Name</TableHeaderCell>
+                  <TableHeaderCell>Role</TableHeaderCell>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 <TableRow>
-                  <TableCell>Nguyễn Văn An</TableCell>
-                  <TableCell>Kỹ sư</TableCell>
+                  <TableCell>Alex Chen</TableCell>
+                  <TableCell>Engineer</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>Trần Thị Bình</TableCell>
-                  <TableCell>Thiết kế</TableCell>
+                  <TableCell>Maria Garcia</TableCell>
+                  <TableCell>Designer</TableCell>
                 </TableRow>
               </TableBody>
             </Table>
             <Table size="small" aria-label="small">
               <TableHeader>
                 <TableRow>
-                  <TableHeaderCell>Tên</TableHeaderCell>
-                  <TableHeaderCell>Vai trò</TableHeaderCell>
+                  <TableHeaderCell>Name</TableHeaderCell>
+                  <TableHeaderCell>Role</TableHeaderCell>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 <TableRow>
-                  <TableCell>Nguyễn Văn An</TableCell>
-                  <TableCell>Kỹ sư</TableCell>
+                  <TableCell>Alex Chen</TableCell>
+                  <TableCell>Engineer</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>Trần Thị Bình</TableCell>
-                  <TableCell>Thiết kế</TableCell>
+                  <TableCell>Maria Garcia</TableCell>
+                  <TableCell>Designer</TableCell>
                 </TableRow>
               </TableBody>
             </Table>
@@ -1460,9 +1462,9 @@ function DataTableDemo() {
         title: "Chọn hàng & thao tác",
         description: "TableSelectionCell subtle chỉ hiện checkbox khi hover; TableCellActions hiện nút khi hover / focus hàng.",
         code: `const members = [
-  { id: "an", name: "Nguyễn Văn An" },
-  { id: "binh", name: "Trần Thị Bình" },
-  { id: "cuong", name: "Lê Hoàng Cường" },
+  { id: "alex", name: "Alex Chen" },
+  { id: "maria", name: "Maria Garcia" },
+  { id: "sam", name: "Sam Lee" },
 ];
 
 function TableSelectionDemo() {
@@ -1470,24 +1472,24 @@ function TableSelectionDemo() {
   const toggle = (id: string) =>
     setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   return (
-    <Table aria-label="Thành viên" className="w-full">
+    <Table aria-label="Members" className="w-full">
       <TableHeader>
         <TableRow>
           <TableSelectionCell
             checked={selected.length === 0 ? false : selected.length === members.length ? true : "mixed"}
             onCheckedChange={(checked) => setSelected(checked ? members.map((m) => m.id) : [])}
           />
-          <TableHeaderCell>Thành viên</TableHeaderCell>
+          <TableHeaderCell>Member</TableHeaderCell>
         </TableRow>
       </TableHeader>
       <TableBody>
         {members.map((m) => (
           <TableRow key={m.id} selected={selected.includes(m.id)}>
-            <TableSelectionCell subtle checked={selected.includes(m.id)} onCheckedChange={() => toggle(m.id)} aria-label={"Chọn " + m.name} />
+            <TableSelectionCell subtle checked={selected.includes(m.id)} onCheckedChange={() => toggle(m.id)} aria-label={"Select " + m.name} />
             <TableCell>
               <TableCellLayout media={<Avatar name={m.name} size={24} color="colorful" />}>{m.name}</TableCellLayout>
               <TableCellActions>
-                <Button appearance="subtle" size="small" icon={<Edit20Regular />} aria-label={"Sửa " + m.name} />
+                <Button appearance="subtle" size="small" icon={<Edit20Regular />} aria-label={"Edit " + m.name} />
               </TableCellActions>
             </TableCell>
           </TableRow>
@@ -1502,15 +1504,15 @@ function TableSelectionDemo() {
         title: "Chọn cột hiển thị",
         description: "Table không có định nghĩa cột: giữ tập id cột ẩn trong state, render ô theo điều kiện và dùng DataGridColumnPicker làm nút chọn cột. Cột hideable: false luôn hiện.",
         code: `const staff = [
-  { id: "an", name: "Nguyễn Văn An", role: "Kỹ sư phần mềm", team: "Nền tảng" },
-  { id: "binh", name: "Trần Thị Bình", role: "Nhà thiết kế", team: "Trải nghiệm" },
-  { id: "cuong", name: "Lê Hoàng Cường", role: "Quản lý sản phẩm", team: "Tăng trưởng" },
+  { id: "alex", name: "Alex Chen", role: "Software engineer", team: "Platform" },
+  { id: "maria", name: "Maria Garcia", role: "Designer", team: "Experience" },
+  { id: "sam", name: "Sam Lee", role: "Product manager", team: "Growth" },
 ];
 
 const staffColumns = [
-  { columnId: "name", label: "Thành viên", hideable: false },
-  { columnId: "role", label: "Vai trò" },
-  { columnId: "team", label: "Nhóm" },
+  { columnId: "name", label: "Member", hideable: false },
+  { columnId: "role", label: "Role" },
+  { columnId: "team", label: "Team" },
 ];
 
 function TableColumnsDemo() {
@@ -1524,12 +1526,12 @@ function TableColumnsDemo() {
         hiddenColumns={hiddenColumns}
         onHiddenColumnsChange={(_, data) => setHiddenColumns(data.hiddenColumns)}
       />
-      <Table aria-label="Thành viên" className="w-full">
+      <Table aria-label="Members" className="w-full">
         <TableHeader>
           <TableRow>
-            <TableHeaderCell>Thành viên</TableHeaderCell>
-            {shown("role") && <TableHeaderCell>Vai trò</TableHeaderCell>}
-            {shown("team") && <TableHeaderCell>Nhóm</TableHeaderCell>}
+            <TableHeaderCell>Member</TableHeaderCell>
+            {shown("role") && <TableHeaderCell>Role</TableHeaderCell>}
+            {shown("team") && <TableHeaderCell>Team</TableHeaderCell>}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -1580,7 +1582,7 @@ function TableColumnsDemo() {
     importCode: `import { Tree, TreeItem, TreeItemLayout } from "@/components/ui";`,
     hero: {
       title: "Tree",
-      code: `<Tree aria-label="Tệp dự án" defaultOpenItems={["src", "components"]} className="w-72">
+      code: `<Tree aria-label="Project files" defaultOpenItems={["src", "components"]} className="w-72">
   <TreeItem itemType="branch" value="src">
     <TreeItemLayout iconBefore={<Folder20Regular />}>src</TreeItemLayout>
     <Tree>
@@ -1625,7 +1627,7 @@ function TableColumnsDemo() {
   </TreeItem>
 </Tree>`,
       render: () => (
-        <Tree aria-label="Tệp dự án" defaultOpenItems={["src", "components"]} className="w-72">
+        <Tree aria-label="Project files" defaultOpenItems={["src", "components"]} className="w-72">
           <TreeItem itemType="branch" value="src">
             <TreeItemLayout iconBefore={<Folder20Regular />}>src</TreeItemLayout>
             <Tree>
@@ -1675,37 +1677,37 @@ function TableColumnsDemo() {
       {
         title: "Kích thước small",
         description: "Hàng cao 24px, chữ caption1, icon 16px.",
-        code: `<Tree size="small" aria-label="Tài liệu" defaultOpenItems={["docs"]} className="w-60">
+        code: `<Tree size="small" aria-label="Documents" defaultOpenItems={["docs"]} className="w-60">
   <TreeItem itemType="branch" value="docs">
-    <TreeItemLayout iconBefore={<Folder20Regular />}>Tài liệu</TreeItemLayout>
+    <TreeItemLayout iconBefore={<Folder20Regular />}>Documents</TreeItemLayout>
     <Tree>
       <TreeItem itemType="leaf">
-        <TreeItemLayout iconBefore={<Document20Regular />}>Kế hoạch.docx</TreeItemLayout>
+        <TreeItemLayout iconBefore={<Document20Regular />}>Plan.docx</TreeItemLayout>
       </TreeItem>
       <TreeItem itemType="leaf">
-        <TreeItemLayout iconBefore={<DocumentPdf20Regular />}>Hợp đồng.pdf</TreeItemLayout>
+        <TreeItemLayout iconBefore={<DocumentPdf20Regular />}>Contract.pdf</TreeItemLayout>
       </TreeItem>
     </Tree>
   </TreeItem>
   <TreeItem itemType="leaf">
-    <TreeItemLayout iconBefore={<Image20Regular />}>Ảnh bìa.png</TreeItemLayout>
+    <TreeItemLayout iconBefore={<Image20Regular />}>Cover image.png</TreeItemLayout>
   </TreeItem>
 </Tree>`,
         render: () => (
-          <Tree size="small" aria-label="Tài liệu" defaultOpenItems={["docs"]} className="w-60">
+          <Tree size="small" aria-label="Documents" defaultOpenItems={["docs"]} className="w-60">
             <TreeItem itemType="branch" value="docs">
-              <TreeItemLayout iconBefore={<Folder20Regular />}>Tài liệu</TreeItemLayout>
+              <TreeItemLayout iconBefore={<Folder20Regular />}>Documents</TreeItemLayout>
               <Tree>
                 <TreeItem itemType="leaf">
-                  <TreeItemLayout iconBefore={<Document20Regular />}>Kế hoạch.docx</TreeItemLayout>
+                  <TreeItemLayout iconBefore={<Document20Regular />}>Plan.docx</TreeItemLayout>
                 </TreeItem>
                 <TreeItem itemType="leaf">
-                  <TreeItemLayout iconBefore={<DocumentPdf20Regular />}>Hợp đồng.pdf</TreeItemLayout>
+                  <TreeItemLayout iconBefore={<DocumentPdf20Regular />}>Contract.pdf</TreeItemLayout>
                 </TreeItem>
               </Tree>
             </TreeItem>
             <TreeItem itemType="leaf">
-              <TreeItemLayout iconBefore={<Image20Regular />}>Ảnh bìa.png</TreeItemLayout>
+              <TreeItemLayout iconBefore={<Image20Regular />}>Cover image.png</TreeItemLayout>
             </TreeItem>
           </Tree>
         ),
@@ -1713,43 +1715,43 @@ function TableColumnsDemo() {
       {
         title: "Transparent & actions",
         description: "appearance=\"transparent\" bỏ nền hover; actions chỉ hiện khi hover hoặc focus.",
-        code: `<Tree appearance="transparent" aria-label="Kênh" defaultOpenItems={["design"]} className="w-64">
+        code: `<Tree appearance="transparent" aria-label="Channels" defaultOpenItems={["design"]} className="w-64">
   <TreeItem itemType="branch" value="design">
     <TreeItemLayout
       iconBefore={<People20Regular />}
-      actions={<Button appearance="subtle" size="small" icon={<MoreHorizontal20Regular />} aria-label="Tuỳ chọn nhóm" />}
+      actions={<Button appearance="subtle" size="small" icon={<MoreHorizontal20Regular />} aria-label="Team options" />}
     >
-      Nhóm thiết kế
+      Design team
     </TreeItemLayout>
     <Tree>
       <TreeItem itemType="leaf">
-        <TreeItemLayout actions={<Button appearance="subtle" size="small" icon={<MoreHorizontal20Regular />} aria-label="Tuỳ chọn kênh" />}>
-          Chung
+        <TreeItemLayout actions={<Button appearance="subtle" size="small" icon={<MoreHorizontal20Regular />} aria-label="Channel options" />}>
+          General
         </TreeItemLayout>
       </TreeItem>
       <TreeItem itemType="leaf">
-        <TreeItemLayout iconAfter={<Star20Regular />}>Thông báo</TreeItemLayout>
+        <TreeItemLayout iconAfter={<Star20Regular />}>Announcements</TreeItemLayout>
       </TreeItem>
     </Tree>
   </TreeItem>
 </Tree>`,
         render: () => (
-          <Tree appearance="transparent" aria-label="Kênh" defaultOpenItems={["design"]} className="w-64">
+          <Tree appearance="transparent" aria-label="Channels" defaultOpenItems={["design"]} className="w-64">
             <TreeItem itemType="branch" value="design">
               <TreeItemLayout
                 iconBefore={<People20Regular />}
-                actions={<Button appearance="subtle" size="small" icon={<MoreHorizontal20Regular />} aria-label="Tuỳ chọn nhóm" />}
+                actions={<Button appearance="subtle" size="small" icon={<MoreHorizontal20Regular />} aria-label="Team options" />}
               >
-                Nhóm thiết kế
+                Design team
               </TreeItemLayout>
               <Tree>
                 <TreeItem itemType="leaf">
-                  <TreeItemLayout actions={<Button appearance="subtle" size="small" icon={<MoreHorizontal20Regular />} aria-label="Tuỳ chọn kênh" />}>
-                    Chung
+                  <TreeItemLayout actions={<Button appearance="subtle" size="small" icon={<MoreHorizontal20Regular />} aria-label="Channel options" />}>
+                    General
                   </TreeItemLayout>
                 </TreeItem>
                 <TreeItem itemType="leaf">
-                  <TreeItemLayout iconAfter={<Star20Regular />}>Thông báo</TreeItemLayout>
+                  <TreeItemLayout iconAfter={<Star20Regular />}>Announcements</TreeItemLayout>
                 </TreeItem>
               </Tree>
             </TreeItem>
@@ -1763,26 +1765,26 @@ function TableColumnsDemo() {
   const [selected, setSelected] = useState("work");
   return (
     <div className="flex w-64 flex-col gap-2">
-      <Tree aria-label="Thư mục thư" selectionMode="single" selectedValue={selected} onSelectedChange={setSelected} defaultOpenItems={["inbox"]}>
+      <Tree aria-label="Mail folders" selectionMode="single" selectedValue={selected} onSelectedChange={setSelected} defaultOpenItems={["inbox"]}>
         <TreeItem itemType="branch" value="inbox">
-          <TreeItemLayout iconBefore={<Mail20Regular />}>Hộp thư đến</TreeItemLayout>
+          <TreeItemLayout iconBefore={<Mail20Regular />}>Inbox</TreeItemLayout>
           <Tree>
             <TreeItem itemType="leaf" value="work">
-              <TreeItemLayout>Công việc</TreeItemLayout>
+              <TreeItemLayout>Work</TreeItemLayout>
             </TreeItem>
             <TreeItem itemType="leaf" value="family">
-              <TreeItemLayout>Gia đình</TreeItemLayout>
+              <TreeItemLayout>Family</TreeItemLayout>
             </TreeItem>
           </Tree>
         </TreeItem>
         <TreeItem itemType="leaf" value="sent">
-          <TreeItemLayout iconBefore={<Send20Regular className="rtl:-scale-x-100" />}>Đã gửi</TreeItemLayout>
+          <TreeItemLayout iconBefore={<Send20Regular className="rtl:-scale-x-100" />}>Sent</TreeItemLayout>
         </TreeItem>
         <TreeItem itemType="leaf" value="archive">
-          <TreeItemLayout iconBefore={<Archive20Regular />}>Lưu trữ</TreeItemLayout>
+          <TreeItemLayout iconBefore={<Archive20Regular />}>Archive</TreeItemLayout>
         </TreeItem>
       </Tree>
-      <span className="text-caption1 text-foreground-3">Đang chọn: {selected}</span>
+      <span className="text-caption1 text-foreground-3">Selected: {selected}</span>
     </div>
   );
 }`,
@@ -1823,16 +1825,16 @@ function TableColumnsDemo() {
       title: "Divider",
       code: `<div className="flex w-full max-w-md flex-col gap-4">
   <Divider />
-  <Divider>Hoặc</Divider>
-  <Divider alignContent="start">Bắt đầu</Divider>
-  <Divider alignContent="end">Kết thúc</Divider>
+  <Divider>Or</Divider>
+  <Divider alignContent="start">Start</Divider>
+  <Divider alignContent="end">End</Divider>
 </div>`,
       render: () => (
         <div className="flex w-full max-w-md flex-col gap-4">
           <Divider />
-          <Divider>Hoặc</Divider>
-          <Divider alignContent="start">Bắt đầu</Divider>
-          <Divider alignContent="end">Kết thúc</Divider>
+          <Divider>Or</Divider>
+          <Divider alignContent="start">Start</Divider>
+          <Divider alignContent="end">End</Divider>
         </div>
       ),
     },
@@ -1859,19 +1861,19 @@ function TableColumnsDemo() {
         title: "Dọc",
         description: "vertical chia các phần tử trên cùng hàng; cao theo hàng chứa.",
         code: `<div className="flex h-20 items-center gap-3 text-body1">
-  <span>Thư</span>
+  <span>Mail</span>
   <Divider vertical />
-  <span>Lịch</span>
-  <Divider vertical>hoặc</Divider>
-  <span>Danh bạ</span>
+  <span>Calendar</span>
+  <Divider vertical>or</Divider>
+  <span>People</span>
 </div>`,
         render: () => (
           <div className="flex h-20 items-center gap-3 text-body1">
-            <span>Thư</span>
+            <span>Mail</span>
             <Divider vertical />
-            <span>Lịch</span>
-            <Divider vertical>hoặc</Divider>
-            <span>Danh bạ</span>
+            <span>Calendar</span>
+            <Divider vertical>or</Divider>
+            <span>People</span>
           </div>
         ),
       },
@@ -1882,14 +1884,14 @@ function TableColumnsDemo() {
   <Divider>
     <Star20Regular />
   </Divider>
-  <Divider inset>Thụt hai đầu</Divider>
+  <Divider inset>Inset</Divider>
 </div>`,
         render: () => (
           <div className="flex w-full flex-col gap-4">
             <Divider>
               <Star20Regular />
             </Divider>
-            <Divider inset>Thụt hai đầu</Divider>
+            <Divider inset>Inset</Divider>
           </div>
         ),
       },
@@ -1925,7 +1927,7 @@ function TableColumnsDemo() {
 
 <ScrollArea className="h-72 w-56 rounded-medium border border-stroke-2 bg-background-1">
   <div className="p-4">
-    <p className="mb-2 text-body1 font-semibold">Phiên bản</p>
+    <p className="mb-2 text-body1 font-semibold">Versions</p>
     {versions.map((version) => (
       <div key={version}>
         <div className="py-2 text-body1">{version}</div>
@@ -1937,7 +1939,7 @@ function TableColumnsDemo() {
       render: () => (
         <ScrollArea className="h-72 w-56 rounded-medium border border-stroke-2 bg-background-1">
           <div className="p-4">
-            <p className="mb-2 text-body1 font-semibold">Phiên bản</p>
+            <p className="mb-2 text-body1 font-semibold">Versions</p>
             {versions.map((version) => (
               <div key={version}>
                 <div className="py-2 text-body1">{version}</div>
@@ -1952,7 +1954,7 @@ function TableColumnsDemo() {
       {
         title: "Ngang",
         description: "orientation=\"horizontal\" cho dải thẻ / ảnh.",
-        code: `// mountain, sunset, landscape, scenery: URL ảnh bất kỳ (ở đây là SVG sinh sẵn).
+        code: `// mountain, sunset, landscape, scenery: any image URL (generated SVGs here).
 <ScrollArea orientation="horizontal" className="w-full max-w-sm rounded-medium border border-stroke-2 bg-background-1">
   <div className="flex w-max gap-3 p-3">
     {scenery.map((item) => (
@@ -2030,13 +2032,13 @@ function TableColumnsDemo() {
 } from "@/components/ui";`,
     hero: {
       title: "Carousel",
-      code: `<Carousel loop aria-label="Điểm nổi bật" className="w-full max-w-2xl">
+      code: `<Carousel loop aria-label="Highlights" className="w-full max-w-2xl">
   <CarouselViewport>
     <CarouselCard>
       <div className="relative h-64 overflow-hidden rounded-xlarge bg-gradient-aurora">
         <div className="absolute inset-s-4 bottom-4 max-w-xs rounded-medium bg-background-1 p-3 shadow-4">
-          <p className="text-subtitle2 font-semibold">Fluent 2 cho web</p>
-          <p className="text-caption1 text-foreground-3">Token, component và tài liệu luôn đồng bộ.</p>
+          <p className="text-subtitle2 font-semibold">Fluent 2 for the web</p>
+          <p className="text-caption1 text-foreground-3">Tokens, components and docs stay in sync.</p>
         </div>
       </div>
     </CarouselCard>
@@ -2044,24 +2046,24 @@ function TableColumnsDemo() {
       <div className="relative h-64 overflow-hidden rounded-xlarge">
         <BloomArt />
         <div className="absolute inset-s-4 bottom-4 max-w-xs rounded-medium bg-background-1 p-3 shadow-4">
-          <p className="text-subtitle2 font-semibold">Bloom theo brand</p>
-          <p className="text-caption1 text-foreground-3">Đổi data-brand là đổi màu minh hoạ.</p>
+          <p className="text-subtitle2 font-semibold">Bloom follows your brand</p>
+          <p className="text-caption1 text-foreground-3">Change data-brand and the illustration follows.</p>
         </div>
       </div>
     </CarouselCard>
     <CarouselCard>
       <div className="relative h-64 overflow-hidden rounded-xlarge bg-gradient-sunset">
         <div className="absolute inset-s-4 bottom-4 max-w-xs rounded-medium bg-background-1 p-3 shadow-4">
-          <p className="text-subtitle2 font-semibold">Ngôn ngữ biểu cảm</p>
-          <p className="text-caption1 text-foreground-3">Gradient chỉ dành cho minh hoạ và hero.</p>
+          <p className="text-subtitle2 font-semibold">Expressive style</p>
+          <p className="text-caption1 text-foreground-3">Gradients are for illustrations and heroes only.</p>
         </div>
       </div>
     </CarouselCard>
     <CarouselCard>
       <div className="relative h-64 overflow-hidden rounded-xlarge bg-gradient-brand">
         <div className="absolute inset-s-4 bottom-4 max-w-xs rounded-medium bg-background-1 p-3 shadow-4">
-          <p className="text-subtitle2 font-semibold">Sáng & tối</p>
-          <p className="text-caption1 text-foreground-3">Đổi theme ngay trong khung ví dụ.</p>
+          <p className="text-subtitle2 font-semibold">Light & dark</p>
+          <p className="text-caption1 text-foreground-3">Switch themes right in the example frame.</p>
         </div>
       </div>
     </CarouselCard>
@@ -2069,13 +2071,13 @@ function TableColumnsDemo() {
   <CarouselNavContainer autoplay />
 </Carousel>`,
       render: () => (
-        <Carousel loop aria-label="Điểm nổi bật" className="w-full max-w-2xl">
+        <Carousel loop aria-label="Highlights" className="w-full max-w-2xl">
           <CarouselViewport>
             <CarouselCard>
               <div className="relative h-64 overflow-hidden rounded-xlarge bg-gradient-aurora">
                 <div className="absolute inset-s-4 bottom-4 max-w-xs rounded-medium bg-background-1 p-3 shadow-4">
-                  <p className="text-subtitle2 font-semibold">Fluent 2 cho web</p>
-                  <p className="text-caption1 text-foreground-3">Token, component và tài liệu luôn đồng bộ.</p>
+                  <p className="text-subtitle2 font-semibold">Fluent 2 for the web</p>
+                  <p className="text-caption1 text-foreground-3">Tokens, components and docs stay in sync.</p>
                 </div>
               </div>
             </CarouselCard>
@@ -2083,24 +2085,24 @@ function TableColumnsDemo() {
               <div className="relative h-64 overflow-hidden rounded-xlarge">
                 <BloomArt />
                 <div className="absolute inset-s-4 bottom-4 max-w-xs rounded-medium bg-background-1 p-3 shadow-4">
-                  <p className="text-subtitle2 font-semibold">Bloom theo brand</p>
-                  <p className="text-caption1 text-foreground-3">Đổi data-brand là đổi màu minh hoạ.</p>
+                  <p className="text-subtitle2 font-semibold">Bloom follows your brand</p>
+                  <p className="text-caption1 text-foreground-3">Change data-brand and the illustration follows.</p>
                 </div>
               </div>
             </CarouselCard>
             <CarouselCard>
               <div className="relative h-64 overflow-hidden rounded-xlarge bg-gradient-sunset">
                 <div className="absolute inset-s-4 bottom-4 max-w-xs rounded-medium bg-background-1 p-3 shadow-4">
-                  <p className="text-subtitle2 font-semibold">Ngôn ngữ biểu cảm</p>
-                  <p className="text-caption1 text-foreground-3">Gradient chỉ dành cho minh hoạ và hero.</p>
+                  <p className="text-subtitle2 font-semibold">Expressive style</p>
+                  <p className="text-caption1 text-foreground-3">Gradients are for illustrations and heroes only.</p>
                 </div>
               </div>
             </CarouselCard>
             <CarouselCard>
               <div className="relative h-64 overflow-hidden rounded-xlarge bg-gradient-brand">
                 <div className="absolute inset-s-4 bottom-4 max-w-xs rounded-medium bg-background-1 p-3 shadow-4">
-                  <p className="text-subtitle2 font-semibold">Sáng & tối</p>
-                  <p className="text-caption1 text-foreground-3">Đổi theme ngay trong khung ví dụ.</p>
+                  <p className="text-subtitle2 font-semibold">Light & dark</p>
+                  <p className="text-caption1 text-foreground-3">Switch themes right in the example frame.</p>
                 </div>
               </div>
             </CarouselCard>
@@ -2113,8 +2115,8 @@ function TableColumnsDemo() {
       {
         title: "Peek & vòng lặp",
         description: "slidesPerView={1.15} lộ 15% slide kế, gap=\"M\" giãn khoảng cách; loop quay vòng ở hai đầu.",
-        code: `// scenery: { title, src }[] — URL ảnh bất kỳ (ở đây là SVG sinh sẵn).
-<Carousel loop slidesPerView={1.15} gap="M" aria-label="Phong cảnh" className="w-full">
+        code: `// scenery: { title, src }[] with any image URL (generated SVGs here).
+<Carousel loop slidesPerView={1.15} gap="M" aria-label="Scenery" className="w-full">
   <CarouselViewport>
     {scenery.map((item) => (
       <CarouselCard key={item.title}>
@@ -2126,7 +2128,7 @@ function TableColumnsDemo() {
   <CarouselNavContainer />
 </Carousel>`,
         render: () => (
-          <Carousel loop slidesPerView={1.15} gap="M" aria-label="Phong cảnh" className="w-full">
+          <Carousel loop slidesPerView={1.15} gap="M" aria-label="Scenery" className="w-full">
             <CarouselViewport>
               {scenery.map((item) => (
                 <CarouselCard key={item.title}>
@@ -2143,12 +2145,12 @@ function TableColumnsDemo() {
         title: "Autoplay có tiến độ",
         description: "Chấm đang chọn dài ra và đầy dần theo autoplayInterval; rê chuột / focus vào slide hoặc ẩn tab là tạm dừng.",
         code: `const tips = [
-  { title: "Phím tắt", text: "Nhấn Ctrl + K để mở bảng lệnh ở bất kỳ đâu.", icon: <Keyboard20Regular /> },
-  { title: "Chủ đề tối", text: "Đổi Web Light / Web Dark ngay trong khung ví dụ.", icon: <WeatherMoon20Regular /> },
-  { title: "Brand cục bộ", text: "Đặt data-brand trên phần tử để đổi màu cho một vùng.", icon: <Color20Regular /> },
+  { title: "Shortcuts", text: "Press Ctrl + K to open the command palette from anywhere.", icon: <Keyboard20Regular /> },
+  { title: "Dark theme", text: "Switch between Web Light and Web Dark right in the example frame.", icon: <WeatherMoon20Regular /> },
+  { title: "Local brand", text: "Set data-brand on an element to recolor just that area.", icon: <Color20Regular /> },
 ];
 
-<Carousel loop defaultAutoplay autoplayInterval={5000} aria-label="Mẹo sử dụng" className="w-full">
+<Carousel loop defaultAutoplay autoplayInterval={5000} aria-label="Tips" className="w-full">
   <CarouselViewport>
     {tips.map((tip) => (
       <CarouselCard key={tip.title}>
@@ -2163,7 +2165,7 @@ function TableColumnsDemo() {
   <CarouselNavContainer autoplay />
 </Carousel>`,
         render: () => (
-          <Carousel loop defaultAutoplay autoplayInterval={5000} aria-label="Mẹo sử dụng" className="w-full">
+          <Carousel loop defaultAutoplay autoplayInterval={5000} aria-label="Tips" className="w-full">
             <CarouselViewport>
               {tips.map((tip) => (
                 <CarouselCard key={tip.title}>
@@ -2182,7 +2184,7 @@ function TableColumnsDemo() {
       {
         title: "Ảnh thu nhỏ",
         description: "CarouselThumbnails thay cho chấm: tablist ảnh nhỏ, tự cuộn tới ảnh đang chọn; đặt aria-label từng ảnh.",
-        code: `<Carousel aria-label="Thư viện ảnh" className="w-full">
+        code: `<Carousel aria-label="Photo gallery" className="w-full">
   <CarouselViewport>
     {scenery.map((item) => (
       <CarouselCard key={item.title}>
@@ -2190,7 +2192,7 @@ function TableColumnsDemo() {
       </CarouselCard>
     ))}
   </CarouselViewport>
-  <CarouselThumbnails aria-label="Chọn ảnh" className="mx-auto w-fit max-w-full">
+  <CarouselThumbnails aria-label="Choose a photo" className="mx-auto w-fit max-w-full">
     {scenery.map((item) => (
       <CarouselThumbnail key={item.title} aria-label={item.title}>
         <Image src={item.src} alt="" fit="cover" />
@@ -2199,7 +2201,7 @@ function TableColumnsDemo() {
   </CarouselThumbnails>
 </Carousel>`,
         render: () => (
-          <Carousel aria-label="Thư viện ảnh" className="w-full">
+          <Carousel aria-label="Photo gallery" className="w-full">
             <CarouselViewport>
               {scenery.map((item) => (
                 <CarouselCard key={item.title}>
@@ -2207,7 +2209,7 @@ function TableColumnsDemo() {
                 </CarouselCard>
               ))}
             </CarouselViewport>
-            <CarouselThumbnails aria-label="Chọn ảnh" className="mx-auto w-fit max-w-full">
+            <CarouselThumbnails aria-label="Choose a photo" className="mx-auto w-fit max-w-full">
               {scenery.map((item) => (
                 <CarouselThumbnail key={item.title} aria-label={item.title}>
                   <Image src={item.src} alt="" fit="cover" />
@@ -2256,13 +2258,13 @@ function TableColumnsDemo() {
       code: `<div className="h-80 w-full max-w-2xl overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1">
   <ResizablePanelGroup orientation="horizontal">
     <ResizablePanel id="ide-sidebar" defaultSize="28%" minSize="18%" collapsible>
-      <div className="flex h-full items-center justify-center bg-background-2 p-4 font-semibold">Thanh bên</div>
+      <div className="flex h-full items-center justify-center bg-background-2 p-4 font-semibold">Sidebar</div>
     </ResizablePanel>
     <ResizableHandle withHandle collapseButton="before" />
     <ResizablePanel id="ide-main" defaultSize="72%">
       <ResizablePanelGroup orientation="vertical">
         <ResizablePanel id="ide-editor" defaultSize="65%">
-          <div className="flex h-full items-center justify-center p-4 font-semibold">Nội dung</div>
+          <div className="flex h-full items-center justify-center p-4 font-semibold">Content</div>
         </ResizablePanel>
         <ResizableHandle withHandle collapseButton="after" />
         <ResizablePanel id="ide-terminal" defaultSize="35%" minSize="20%" collapsible>
@@ -2276,13 +2278,13 @@ function TableColumnsDemo() {
         <div className="h-80 w-full max-w-2xl overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1">
           <ResizablePanelGroup orientation="horizontal">
             <ResizablePanel id="ide-sidebar" defaultSize="28%" minSize="18%" collapsible>
-              <div className="flex h-full items-center justify-center bg-background-2 p-4 font-semibold">Thanh bên</div>
+              <div className="flex h-full items-center justify-center bg-background-2 p-4 font-semibold">Sidebar</div>
             </ResizablePanel>
             <ResizableHandle withHandle collapseButton="before" />
             <ResizablePanel id="ide-main" defaultSize="72%">
               <ResizablePanelGroup orientation="vertical">
                 <ResizablePanel id="ide-editor" defaultSize="65%">
-                  <div className="flex h-full items-center justify-center p-4 font-semibold">Nội dung</div>
+                  <div className="flex h-full items-center justify-center p-4 font-semibold">Content</div>
                 </ResizablePanel>
                 <ResizableHandle withHandle collapseButton="after" />
                 <ResizablePanel id="ide-terminal" defaultSize="35%" minSize="20%" collapsible>
@@ -2301,11 +2303,11 @@ function TableColumnsDemo() {
         code: `<div className="h-48 w-full overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1">
   <ResizablePanelGroup orientation="horizontal" persistKey="yugen-docs-mail">
     <ResizablePanel id="mail-folders" defaultSize="35%" minSize="20%">
-      <div className="flex h-full items-center justify-center bg-background-2 p-4 font-semibold">Thư mục</div>
+      <div className="flex h-full items-center justify-center bg-background-2 p-4 font-semibold">Folders</div>
     </ResizablePanel>
     <ResizableHandle withHandle />
     <ResizablePanel id="mail-messages" defaultSize="65%">
-      <div className="flex h-full items-center justify-center p-4 text-center font-semibold">Kéo rồi tải lại trang</div>
+      <div className="flex h-full items-center justify-center p-4 text-center font-semibold">Drag, then reload the page</div>
     </ResizablePanel>
   </ResizablePanelGroup>
 </div>`,
@@ -2313,11 +2315,11 @@ function TableColumnsDemo() {
           <div className="h-48 w-full overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1">
             <ResizablePanelGroup orientation="horizontal" persistKey="yugen-docs-mail">
               <ResizablePanel id="mail-folders" defaultSize="35%" minSize="20%">
-                <div className="flex h-full items-center justify-center bg-background-2 p-4 font-semibold">Thư mục</div>
+                <div className="flex h-full items-center justify-center bg-background-2 p-4 font-semibold">Folders</div>
               </ResizablePanel>
               <ResizableHandle withHandle />
               <ResizablePanel id="mail-messages" defaultSize="65%">
-                <div className="flex h-full items-center justify-center p-4 text-center font-semibold">Kéo rồi tải lại trang</div>
+                <div className="flex h-full items-center justify-center p-4 text-center font-semibold">Drag, then reload the page</div>
               </ResizablePanel>
             </ResizablePanelGroup>
           </div>
@@ -2329,11 +2331,11 @@ function TableColumnsDemo() {
         code: `<div className="h-56 w-full overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1">
   <ResizablePanelGroup orientation="vertical">
     <ResizablePanel defaultSize="30%" minSize="20%">
-      <div className="flex h-full items-center justify-center p-4 font-semibold">Tiêu đề</div>
+      <div className="flex h-full items-center justify-center p-4 font-semibold">Header</div>
     </ResizablePanel>
     <ResizableHandle withHandle />
     <ResizablePanel defaultSize="70%">
-      <div className="flex h-full items-center justify-center p-4 font-semibold">Nội dung</div>
+      <div className="flex h-full items-center justify-center p-4 font-semibold">Content</div>
     </ResizablePanel>
   </ResizablePanelGroup>
 </div>`,
@@ -2341,11 +2343,11 @@ function TableColumnsDemo() {
           <div className="h-56 w-full overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1">
             <ResizablePanelGroup orientation="vertical">
               <ResizablePanel defaultSize="30%" minSize="20%">
-                <div className="flex h-full items-center justify-center p-4 font-semibold">Tiêu đề</div>
+                <div className="flex h-full items-center justify-center p-4 font-semibold">Header</div>
               </ResizablePanel>
               <ResizableHandle withHandle />
               <ResizablePanel defaultSize="70%">
-                <div className="flex h-full items-center justify-center p-4 font-semibold">Nội dung</div>
+                <div className="flex h-full items-center justify-center p-4 font-semibold">Content</div>
               </ResizablePanel>
             </ResizablePanelGroup>
           </div>

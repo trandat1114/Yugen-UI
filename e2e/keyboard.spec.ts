@@ -14,9 +14,9 @@ async function bodyScrollLocked(page: Page) {
 test.describe("Dialog", () => {
   test("focus vào trong, Tab không thoát, Esc đóng và trả focus, nền không cuộn", async ({ page }) => {
     await openDocs(page, "/components/dialog");
-    const trigger = page.getByRole("button", { name: "Xoá tệp" }).first();
+    const trigger = page.getByRole("button", { name: "Delete file" }).first();
     await trigger.click();
-    const dialog = page.getByRole("dialog", { name: /Báo cáo Q3/ });
+    const dialog = page.getByRole("dialog", { name: /Q3 report/ });
     await expect(dialog).toBeVisible();
     await expect.poll(() => containsFocus(dialog)).toBe(true);
     expect(await bodyScrollLocked(page)).toBe(true);
@@ -93,8 +93,8 @@ test.describe("Menu dài", () => {
 test.describe("Table — thao tác hàng trên desktop", () => {
   test("nút thao tác và checkbox subtle ẩn tới khi rê chuột vào hàng", async ({ page }) => {
     await openDocs(page, "/components/table");
-    const actions = page.getByRole("button", { name: "Sửa Nguyễn Văn An" }).locator("xpath=..");
-    const checkboxCell = page.getByRole("checkbox", { name: "Chọn Nguyễn Văn An" }).locator("xpath=ancestor::td[1]");
+    const actions = page.getByRole("button", { name: "Edit Alex Chen" }).locator("xpath=..");
+    const checkboxCell = page.getByRole("checkbox", { name: "Select Alex Chen" }).locator("xpath=ancestor::td[1]");
     await expect(actions).toHaveCSS("opacity", "0");
     await expect(checkboxCell).toHaveCSS("opacity", "0");
     await checkboxCell.locator("xpath=..").hover();
