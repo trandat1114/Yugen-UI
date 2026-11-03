@@ -46,21 +46,21 @@ type Order = {
 };
 
 const CUSTOMERS = [
-  "Nguyễn Văn An", "Trần Thị Bình", "Lê Hoàng Cường", "Phạm Minh Dũng", "Hoàng Thu Hà",
-  "Vũ Quốc Khánh", "Đặng Mai Linh", "Bùi Thanh Nam", "Đỗ Ngọc Oanh", "Ngô Đức Phúc",
+  "Alex Chen", "Maria Garcia", "Sam Lee", "Priya Patel", "Jordan Kim",
+  "Taylor Nguyen", "Chris Novak", "Hana Sato", "Ben Carter", "Ines Duarte",
 ];
 const STATUSES = ["paid", "pending", "paid", "failed", "paid"] as const;
 
-/** Sinh dữ liệu tất định (không random) — cùng kết quả ở mọi lần render và trên server. */
+/** Deterministic data (no random): the same result on every render and on the server. */
 function makeOrders(count: number): Order[] {
   return Array.from({ length: count }, (_, i) => {
     const customer = CUSTOMERS[(i * 7) % CUSTOMERS.length];
     return {
-      id: "DH-" + String(10001 + i),
+      id: "ORD-" + String(10001 + i),
       customer,
-      email: "kh" + ((i * 7) % CUSTOMERS.length) + "@contoso.vn",
+      email: customer.toLowerCase().replace(" ", ".") + "@contoso.com",
       status: STATUSES[(i * 3) % STATUSES.length],
-      amount: 150000 + ((i * 7919) % 97) * 65000,
+      amount: 150 + ((i * 7919) % 97) * 65,
       date: "2026-" + String(1 + (i % 12)).padStart(2, "0") + "-" + String(1 + ((i * 11) % 28)).padStart(2, "0"),
     };
   });
@@ -69,36 +69,37 @@ function makeOrders(count: number): Order[] {
 const ORDERS = makeOrders(20);
 
 const STATUS = {
-  paid: { label: "Đã thanh toán", color: "success" },
-  pending: { label: "Đang xử lý", color: "warning" },
-  failed: { label: "Thất bại", color: "danger" },
+  paid: { label: "Paid", color: "success" },
+  pending: { label: "Pending", color: "warning" },
+  failed: { label: "Failed", color: "danger" },
 } as const;
 
-const vnd = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
+const usd = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
+const dateFormat = new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeZone: "UTC" });
 
 const orderColumns = [
   createColumn<Order>({
     columnId: "customer",
-    label: "Khách hàng",
+    label: "Customer",
     hideable: false,
     renderCell: (order) => (
       <TableCellLayout truncate media={<Avatar name={order.customer} size={24} color="colorful" />}>
         {order.customer}
       </TableCellLayout>
     ),
-    compare: (a, b) => a.customer.localeCompare(b.customer, "vi"),
+    compare: (a, b) => a.customer.localeCompare(b.customer, "en"),
     minWidth: 160,
   }),
   createColumn<Order>({
     columnId: "id",
-    label: "Mã đơn",
+    label: "Order ID",
     renderCell: (order) => order.id,
     compare: (a, b) => a.id.localeCompare(b.id),
     width: 104,
   }),
   createColumn<Order>({
     columnId: "status",
-    label: "Trạng thái",
+    label: "Status",
     renderCell: (order) => (
       <Badge appearance="tint" color={STATUS[order.status].color}>
         {STATUS[order.status].label}
@@ -109,15 +110,15 @@ const orderColumns = [
   }),
   createColumn<Order>({
     columnId: "date",
-    label: "Ngày",
-    renderCell: (order) => order.date.split("-").reverse().join("/"),
+    label: "Date",
+    renderCell: (order) => dateFormat.format(new Date(order.date)),
     compare: (a, b) => a.date.localeCompare(b.date),
     width: 112,
   }),
   createColumn<Order>({
     columnId: "amount",
-    label: "Số tiền",
-    renderCell: (order) => vnd.format(order.amount),
+    label: "Amount",
+    renderCell: (order) => usd.format(order.amount),
     compare: (a, b) => a.amount - b.amount,
     width: 130,
     align: "end",
@@ -129,7 +130,7 @@ const orderColumns = [
 function HeroDemo() {
   return (
     <DataGrid
-      aria-label="Đơn hàng"
+      aria-label="Orders"
       items={ORDERS}
       columns={orderColumns}
       getRowId={(order) => order.id}
@@ -151,10 +152,10 @@ function SortDemo() {
   return (
     <div className="flex w-full flex-col gap-2">
       <span className="text-caption1 text-foreground-3">
-        Đang sắp xếp: {sortState.sortColumn} · {sortState.sortDirection === "ascending" ? "tăng dần" : "giảm dần"}
+        Sorted by: {sortState.sortColumn} · {sortState.sortDirection}
       </span>
       <DataGrid
-        aria-label="Đơn hàng sắp xếp"
+        aria-label="Sorted orders"
         items={ORDERS.slice(0, 6)}
         columns={orderColumns}
         getRowId={(order) => order.id}
@@ -172,7 +173,7 @@ function SortDemo() {
 // #region SelectionDemo
 function SelectionDemo() {
   const [orders, setOrders] = useState(() => ORDERS.slice(0, 8));
-  const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set(["DH-10002"]));
+  const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set(["ORD-10002"]));
 
   const remove = () => {
     setOrders((prev) => prev.filter((order) => !selected.has(order.id)));
@@ -181,20 +182,20 @@ function SelectionDemo() {
 
   return (
     <div className="flex w-full flex-col gap-2">
-      <Toolbar aria-label="Thao tác với đơn đã chọn" className="rounded-xlarge border border-stroke-2">
+      <Toolbar aria-label="Actions for selected orders" className="rounded-xlarge border border-stroke-2">
         <span role="status" className="px-2 text-body1 font-semibold">
-          Đã chọn {selected.size} / {orders.length}
+          {selected.size} of {orders.length} selected
         </span>
         <ToolbarDivider />
         <ToolbarButton icon={<Mail20Regular />} disabled={selected.size === 0}>
-          Gửi email
+          Send email
         </ToolbarButton>
         <ToolbarButton icon={<Delete20Regular />} disabled={selected.size === 0} onClick={remove}>
-          Xoá
+          Delete
         </ToolbarButton>
       </Toolbar>
       <DataGrid
-        aria-label="Đơn hàng có thể chọn"
+        aria-label="Selectable orders"
         items={orders}
         columns={orderColumns.slice(0, 3)}
         getRowId={(order) => order.id}
@@ -223,7 +224,7 @@ function save(key: string, value: unknown) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch {
-    // Không lưu được (chế độ riêng tư, hết dung lượng): lựa chọn vẫn dùng được trong phiên này.
+    // Storage unavailable (private mode, quota exceeded): the choice still works for this session.
   }
 }
 
@@ -234,7 +235,7 @@ function ColumnsDemo() {
 
   return (
     <div className="flex w-full flex-col gap-2">
-      <Toolbar aria-label="Bảng đơn hàng" className="justify-end px-0">
+      <Toolbar aria-label="Orders table" className="justify-end px-0">
         <DataGridColumnPicker
           columns={orderColumns}
           hiddenColumns={hiddenColumns}
@@ -251,7 +252,7 @@ function ColumnsDemo() {
         />
       </Toolbar>
       <DataGrid
-        aria-label="Đơn hàng theo cột đã chọn"
+        aria-label="Orders with chosen columns"
         items={ORDERS.slice(0, 6)}
         columns={orderColumns}
         getRowId={(order) => order.id}
@@ -270,19 +271,19 @@ function ColumnsDemo() {
 
 // #region ResizeDemo
 function ResizeDemo() {
-  const [last, setLast] = useState("Kéo mép phải tiêu đề, hoặc Tab tới tay nắm rồi dùng phím mũi tên.");
+  const [last, setLast] = useState("Drag the right edge of a header, or Tab to the handle and use the arrow keys.");
 
   return (
     <div className="flex w-full flex-col gap-2">
       <span className="text-caption1 text-foreground-3">{last}</span>
       <DataGrid
-        aria-label="Đơn hàng đổi được độ rộng cột"
+        aria-label="Orders with resizable columns"
         items={ORDERS.slice(0, 5)}
         columns={orderColumns.map((column, i) => (i === 0 ? { ...column, sticky: "start" as const, width: 200 } : column))}
         getRowId={(order) => order.id}
         selectionMode="single"
         resizableColumns
-        onColumnResize={(_, data) => setLast(`Cột ${data.columnId}: ${data.width}px`)}
+        onColumnResize={(_, data) => setLast(`Column ${data.columnId}: ${data.width}px`)}
         className="rounded-xlarge border border-stroke-2"
       />
     </div>
@@ -296,7 +297,7 @@ const MANY_ORDERS = makeOrders(10000);
 function VirtualDemo() {
   return (
     <DataGrid
-      aria-label="10 000 đơn hàng"
+      aria-label="10,000 orders"
       items={MANY_ORDERS}
       columns={orderColumns}
       getRowId={(order) => order.id}
@@ -336,18 +337,18 @@ function StatesDemo() {
     <div className="flex w-full flex-col gap-2">
       <div className="flex flex-wrap gap-2">
         <Button size="small" icon={<ArrowClockwise20Regular />} onClick={() => load("success")}>
-          Tải lại
+          Reload
         </Button>
         <Button size="small" onClick={() => load("empty")}>
-          Trả về rỗng
+          Return empty
         </Button>
         <Button size="small" onClick={() => load("error")}>
-          Giả lập lỗi
+          Simulate error
         </Button>
       </div>
       <AsyncContent status={failed ? "error" : "success"} onRetry={() => load(scenario === "error" ? "success" : scenario)}>
         <DataGrid
-          aria-label="Đơn hàng từ máy chủ"
+          aria-label="Orders from the server"
           items={orders}
           columns={orderColumns.slice(0, 3)}
           getRowId={(order) => order.id}

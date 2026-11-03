@@ -19,8 +19,8 @@ function source(...names: string[]) {
 // #region QuoteHero
 function QuoteHero() {
   return (
-    <Quote author="Lê Thu Hà" authorTitle="Trưởng nhóm thiết kế, Sakura Bank" className="max-w-lg">
-      Từ khi chuyển sang Yugen UI, đội mình ra mắt màn hình mới nhanh gấp đôi mà vẫn đạt chuẩn tương phản.
+    <Quote author="Hana Sato" authorTitle="Design lead, Sakura Bank" className="max-w-lg">
+      Since we moved to Yugen UI, our team ships new screens twice as fast and still meets contrast requirements.
     </Quote>
   );
 }
@@ -34,15 +34,15 @@ function QuoteAppearances() {
         Neutral colors form the foundation; brand color highlights what matters.
       </Quote>
       <Quote appearance="subtle" size="small" source="Design.md §4.3">
-        Không phủ brand lên diện tích lớn; không dùng brand cho chữ thân bài.
+        Don't cover large areas with brand color; don't use brand color for body text.
       </Quote>
       <Quote
         appearance="emphasis"
-        author="Nguyễn Minh Khoa"
-        authorTitle="CTO, Hoa Đào Studio"
-        avatar={<Avatar name="Nguyễn Minh Khoa" size={40} color="colorful" />}
+        author="Alex Chen"
+        authorTitle="CTO, Sakura Studio"
+        avatar={<Avatar name="Alex Chen" size={40} color="colorful" />}
       >
-        Một thư viện mà dark mode, RTL và trình đọc màn hình đều chạy đúng ngay từ đầu.
+        A library where dark mode, RTL and screen readers all work right from the start.
       </Quote>
     </div>
   );
@@ -56,13 +56,13 @@ function AutocompleteHero() {
   const [query, setQuery] = useState("");
   return (
     <Autocomplete
-      aria-label="Tìm trong docs"
-      placeholder="Tìm component…"
+      aria-label="Search docs"
+      placeholder="Search components…"
       suggestions={PAGES}
       value={query}
       onValueChange={setQuery}
-      onSelect={(s) => toast({ title: `Mở trang ${s.value}` })}
-      onSubmit={(q) => toast({ title: `Tìm “${q}”` })}
+      onSelect={(s) => toast({ title: `Open ${s.value}` })}
+      onSubmit={(q) => toast({ title: `Search “${q}”` })}
       rootClassName="w-80"
     />
   );
@@ -71,23 +71,23 @@ function AutocompleteHero() {
 
 // #region AutocompleteGroups
 const RECENT: AutocompleteSuggestion[] = [
-  { value: "hoá đơn tháng 9", group: "Tìm gần đây", icon: <Clock20Regular /> },
-  { value: "Trần Thị Bình", group: "Tìm gần đây", icon: <Clock20Regular /> },
+  { value: "september invoices", group: "Recent searches", icon: <Clock20Regular /> },
+  { value: "Maria Garcia", group: "Recent searches", icon: <Clock20Regular /> },
 ];
 const ENTITIES: AutocompleteSuggestion[] = [
-  { value: "Trần Thị Bình", description: "Kế toán · Hà Nội", group: "Người", icon: <People20Regular /> },
-  { value: "Lê Hoàng Cường", description: "Kỹ sư · Đà Nẵng", group: "Người", icon: <People20Regular /> },
-  { value: "Hoá đơn #2026-091", description: "12.400.000 ₫ · đã thanh toán", group: "Tài liệu", icon: <DocumentText20Regular /> },
-  { value: "Hợp đồng thuê văn phòng", description: "Hết hạn 31/12", group: "Tài liệu", icon: <DocumentText20Regular /> },
-  { value: "Báo cáo quý 3 (lưu trữ)", description: "Chỉ đọc", group: "Tài liệu", icon: <DocumentText20Regular />, disabled: true },
+  { value: "Maria Garcia", description: "Accountant · Main office", group: "People", icon: <People20Regular /> },
+  { value: "Sam Lee", description: "Engineer · Kyoto office", group: "People", icon: <People20Regular /> },
+  { value: "Invoice INV-2026-091", description: "$12,400.00 · paid", group: "Documents", icon: <DocumentText20Regular /> },
+  { value: "Office lease", description: "Expires Dec 31", group: "Documents", icon: <DocumentText20Regular /> },
+  { value: "Q3 report (archived)", description: "Read-only", group: "Documents", icon: <DocumentText20Regular />, disabled: true },
 ];
 
 function AutocompleteGroups() {
   const [query, setQuery] = useState("");
   return (
     <Autocomplete
-      aria-label="Tìm người hoặc tài liệu"
-      placeholder="Tìm người, tài liệu…"
+      aria-label="Search people or documents"
+      placeholder="Search people, documents…"
       minChars={0}
       suggestions={query.trim() ? ENTITIES : RECENT}
       value={query}
@@ -99,7 +99,7 @@ function AutocompleteGroups() {
 // #endregion
 
 // #region AutocompleteAsync
-const CITIES = ["Hà Nội", "Hải Phòng", "Huế", "Hội An", "Hạ Long", "Hà Giang", "Hồ Chí Minh", "Cần Thơ", "Đà Lạt", "Đà Nẵng"];
+const CITIES = ["Hakodate", "Hamamatsu", "Himeji", "Hiroshima", "Kanazawa", "Kobe", "Kyoto", "Nagoya", "Nara", "Osaka"];
 
 function AutocompleteAsync() {
   const [query, setQuery] = useState("");
@@ -109,7 +109,7 @@ function AutocompleteAsync() {
   const search = (q: string) => {
     setQuery(q);
     setLoading(true);
-    // Giả lập gọi API 600ms — thực tế nên debounce và huỷ request cũ.
+    // Fakes a 600ms API call. In a real app, debounce and cancel the previous request.
     window.setTimeout(() => {
       const needle = q.trim().toLowerCase();
       setResults(CITIES.filter((c) => c.toLowerCase().startsWith(needle)));
@@ -119,14 +119,14 @@ function AutocompleteAsync() {
 
   return (
     <Autocomplete
-      aria-label="Thành phố"
-      placeholder="Gõ tên thành phố (có dấu)…"
+      aria-label="City"
+      placeholder="Type a city name…"
       suggestions={results}
       filter={false}
       loading={loading}
       value={query}
       onValueChange={search}
-      emptyMessage="Không tìm thấy thành phố"
+      emptyMessage="No cities found"
       rootClassName="w-80"
     />
   );

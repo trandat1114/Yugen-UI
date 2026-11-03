@@ -178,11 +178,11 @@ test.describe("Sheet (desktop)", () => {
 });
 
 test.describe("Sortable", () => {
-  const tasks = (page: Page) => page.getByRole("list", { name: "Việc cần làm" }).first();
+  const tasks = (page: Page) => page.getByRole("list", { name: "Tasks" }).first();
   const handles = (list: Locator) => list.getByRole("button", { name: /^Sắp xếp lại / });
   const order = (list: Locator) =>
     handles(list).evaluateAll((els) => els.map((el) => el.getAttribute("aria-label")!.replace("Sắp xếp lại ", "")));
-  const START = ["Màn hình đăng nhập", "Danh sách đơn hàng", "Thanh toán", "Tài liệu phát hành"];
+  const START = ["Sign-in screen", "Order list", "Payment", "Release notes"];
 
   test("kéo chuột: mục đi quá nửa mục bên cạnh thì đổi chỗ, thả xong mục về đúng chỗ mới", async ({ page }) => {
     await openDocs(page, "/components/sortable");
@@ -196,7 +196,7 @@ test.describe("Sortable", () => {
     if (!first || !second) throw new Error("Không thấy mục");
     // Hai bước (cao + khoảng cách): qua nửa mục thứ ba, chưa tới nửa mục thứ tư.
     await mouseDrag(page, handles(list).first(), 0, 2 * (second.y - first.y));
-    await expect.poll(() => order(list)).toEqual(["Danh sách đơn hàng", "Thanh toán", "Màn hình đăng nhập", "Tài liệu phát hành"]);
+    await expect.poll(() => order(list)).toEqual(["Order list", "Payment", "Sign-in screen", "Release notes"]);
     await expect(items.nth(2)).not.toHaveAttribute("data-dragging");
     await expect.poll(() => items.nth(2).evaluate((el) => el.style.transform)).toBe("");
   });
@@ -204,7 +204,7 @@ test.describe("Sortable", () => {
   test("bàn phím: Space nhấc, ↓ di chuyển, Space thả; Esc huỷ; focus ở lại tay nắm, mỗi bước được đọc", async ({ page }) => {
     await openDocs(page, "/components/sortable");
     const list = tasks(page);
-    const login = list.getByRole("button", { name: "Sắp xếp lại Màn hình đăng nhập" });
+    const login = list.getByRole("button", { name: "Sắp xếp lại Sign-in screen" });
     await login.focus();
     await page.keyboard.press("Space");
     await expect(login).toHaveAttribute("aria-pressed", "true");
@@ -212,28 +212,28 @@ test.describe("Sortable", () => {
     await page.keyboard.press("ArrowDown");
     await expect(login).toBeFocused();
     await page.keyboard.press("Space");
-    expect(await order(list)).toEqual(["Danh sách đơn hàng", "Thanh toán", "Màn hình đăng nhập", "Tài liệu phát hành"]);
-    await expect(page.locator('[data-yugen-live-region="assertive"]')).toHaveText("Đã thả Màn hình đăng nhập ở vị trí 3 trên 4.");
+    expect(await order(list)).toEqual(["Order list", "Payment", "Sign-in screen", "Release notes"]);
+    await expect(page.locator('[data-yugen-live-region="assertive"]')).toHaveText("Đã thả Sign-in screen ở vị trí 3 trên 4.");
 
     await page.keyboard.press("Enter");
     await page.keyboard.press("Home");
     expect(await order(list)).toEqual(START);
     await page.keyboard.press("Escape");
-    expect(await order(list)).toEqual(["Danh sách đơn hàng", "Thanh toán", "Màn hình đăng nhập", "Tài liệu phát hành"]);
+    expect(await order(list)).toEqual(["Order list", "Payment", "Sign-in screen", "Release notes"]);
     await expect(login).toBeFocused();
     await expect(login).toHaveAttribute("aria-pressed", "false");
   });
 
   test("Kanban: kéo thẻ sang cột khác, onSortEnd chạy một lần khi thả", async ({ page }) => {
     await openDocs(page, "/components/sortable");
-    const done = page.getByRole("list", { name: "Xong" });
-    const handle = page.getByRole("button", { name: "Sắp xếp lại Tìm kiếm" });
+    const done = page.getByRole("list", { name: "Done", exact: true });
+    const handle = page.getByRole("button", { name: "Sắp xếp lại Search" });
     await done.evaluate((el) => el.scrollIntoView({ block: "center" }));
     const from = await handle.boundingBox();
     const to = await done.boundingBox();
     if (!from || !to) throw new Error("Không thấy thẻ hoặc cột");
     await mouseDrag(page, handle, to.x + to.width / 2 - (from.x + from.width / 2), to.y + to.height - 4 - (from.y + from.height / 2));
-    await expect(done.getByRole("button", { name: "Sắp xếp lại Tìm kiếm" })).toBeVisible();
-    await expect(page.getByText("Đã lưu: Tìm kiếm ở cột Xong.")).toBeVisible();
+    await expect(done.getByRole("button", { name: "Sắp xếp lại Search" })).toBeVisible();
+    await expect(page.getByText("Saved: Search in Done.")).toBeVisible();
   });
 });

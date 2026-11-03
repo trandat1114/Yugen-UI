@@ -71,7 +71,7 @@ test.describe("Menu dài", () => {
 
     // Khung thấp tới mức header dính che vùng bấm: mở bằng sự kiện contextmenu / bàn phím thay vì click chuột.
     await openDocs(page, "/components/contextmenu");
-    const area = page.getByText("Nhấp chuột phải vào đây").first();
+    const area = page.getByText("Right-click here").first();
     await area.scrollIntoViewIfNeeded();
     const box = (await area.boundingBox())!;
     await area.dispatchEvent("contextmenu", { clientX: box.x + box.width / 2, clientY: box.y + box.height / 2, button: 2 });
@@ -108,8 +108,8 @@ test.describe("DataGridColumnPicker", () => {
     await openDocs(page, "/components/datagrid");
     const trigger = page.getByRole("button", { name: "Cột", exact: true });
     // Menu mở là modal (phần còn lại bị aria-hidden) nên đếm tiêu đề bằng CSS, không theo role.
-    const headers = page.locator('[role="grid"][aria-label="Đơn hàng theo cột đã chọn"] [role="columnheader"]');
-    await expect(headers).toHaveText(["Khách hàng", "Trạng thái", /^Ngày/, "Số tiền"]);
+    const headers = page.locator('[role="grid"][aria-label="Orders with chosen columns"] [role="columnheader"]');
+    await expect(headers).toHaveText(["Customer", "Status", /^Date/, "Amount"]);
     await expect(headers.first()).toHaveCSS("font-variant-numeric", "tabular-nums");
     await expect(trigger).toHaveAccessibleDescription("1 cột đang ẩn");
 
@@ -117,15 +117,15 @@ test.describe("DataGridColumnPicker", () => {
     await page.keyboard.press("Enter");
     const menu = page.getByRole("menu");
     await expect(menu).toBeVisible();
-    await expect(menu.getByRole("menuitemcheckbox", { name: "Khách hàng" })).toHaveAttribute("aria-disabled", "true");
-    await expect(menu.getByRole("menuitemcheckbox", { name: "Ngày (giảm dần)" })).toBeVisible();
+    await expect(menu.getByRole("menuitemcheckbox", { name: "Customer" })).toHaveAttribute("aria-disabled", "true");
+    await expect(menu.getByRole("menuitemcheckbox", { name: "Date (giảm dần)" })).toBeVisible();
 
-    const status = menu.getByRole("menuitemcheckbox", { name: "Trạng thái" });
+    const status = menu.getByRole("menuitemcheckbox", { name: "Status" });
     await status.focus();
     await page.keyboard.press("Space");
     await expect(status).toHaveAttribute("aria-checked", "false");
     await expect(status).toBeFocused();
-    await expect(headers).toHaveText(["Khách hàng", /^Ngày/, "Số tiền"]);
+    await expect(headers).toHaveText(["Customer", /^Date/, "Amount"]);
 
     await page.keyboard.press("Escape");
     await expect(menu).toBeHidden();
@@ -133,7 +133,7 @@ test.describe("DataGridColumnPicker", () => {
     await expect(trigger).toHaveAccessibleDescription("2 cột đang ẩn");
 
     await page.reload();
-    await expect(headers).toHaveText(["Khách hàng", /^Ngày/, "Số tiền"]);
+    await expect(headers).toHaveText(["Customer", /^Date/, "Amount"]);
   });
 });
 
