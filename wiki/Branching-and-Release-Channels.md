@@ -83,7 +83,7 @@ branches**. Phần còn lại dọn bằng `scripts/prune-branches.mjs`, theo b�
 
 | Nhánh | Kết luận |
 |---|---|
-| `main`, `next`, `canary`, `gh-pages`, `release/*`, nhánh mặc định | Không bao giờ xoá |
+| `main`, `next`, `canary`, `gh-pages`, `issue-assets` (ảnh chụp nhúng trong issue / PR), `release/*`, nhánh mặc định | Không bao giờ xoá |
 | Có PR đang mở | Giữ |
 | Commit cuối đã nằm trong `main` hoặc `next` | Xoá |
 | PR đã merge đúng commit cuối (squash nên commit không nằm trong `main`) | Xoá |

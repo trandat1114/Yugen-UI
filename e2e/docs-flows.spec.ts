@@ -316,3 +316,25 @@ test("Cộng đồng → Người đóng góp: mỗi người một bông hoa, t
   await page.setViewportSize({ width: 390, height: 844 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
 });
+
+test("ví dụ: mở code thì ô chiếm cả hàng của lưới, đóng lại về một cột (#259)", async ({ page }) => {
+  await openDocs(page, "/components/button");
+  const grid = page.locator("#variants > div > div.grid");
+  // Ô thứ hai nằm ở cột phải: khi giãn nó xuống hàng mới, nút vừa bấm vẫn phải còn trong khung nhìn.
+  const tile = grid.locator("> div").nth(1);
+  const toggle = tile.locator("button[aria-expanded]");
+  const gridWidth = (await grid.boundingBox())!.width;
+  const tileWidth = async () => (await tile.boundingBox())!.width;
+
+  expect(await tileWidth()).toBeLessThan(gridWidth * 0.6);
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("aria-expanded", "true");
+  await expect(tile.locator("pre")).toBeVisible();
+  expect(await tileWidth()).toBeGreaterThan(gridWidth * 0.98);
+  await expect(toggle).toBeInViewport();
+
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  expect(await tileWidth()).toBeLessThan(gridWidth * 0.6);
+  await expect(toggle).toBeInViewport();
+});
