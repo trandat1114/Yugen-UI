@@ -1,62 +1,64 @@
-# Testing and Quality · Kiểm thử & CI
+# Testing and Quality
 
-## Lệnh
+*Tiếng Việt: [Testing-and-Quality-vi](Testing-and-Quality-vi).*
 
-| Lệnh | Kiểm tra gì |
+## Commands
+
+| Command | What it checks |
 |---|---|
-| `npm run typecheck` | TypeScript strict (app + config) |
-| `npm run lint:classes` | Class Tailwind ở dạng canonical (`-- --fix` để tự sửa) |
-| `npm test` | Vitest: logic, bàn phím, SSR / hydration (~470 test) |
-| `npm run test:e2e` | Playwright: axe trên mọi trang docs (sáng / tối, + tương phản cao / RTL), kéo-thả, chạm |
-| `npm run test:visual` | So ảnh chụp với bản chuẩn (chỉ ảnh Linux được commit; CI chạy trên PR đổi giao diện) |
-| `npm run test:engines` | Tương tác trên Firefox, Safari desktop và iPhone (WebKit) |
-| `npm run check:examples` | Mọi ví dụ docs typecheck được khi chép ra dùng với `yugen-ui` |
-| `npm run check:props` | Bảng props trên docs khớp type thật |
+| `npm run typecheck` | Strict TypeScript (app + config) |
+| `npm run lint:classes` | Tailwind classes in canonical form (`-- --fix` to fix them automatically) |
+| `npm test` | Vitest: logic, keyboard, SSR / hydration (~470 tests) |
+| `npm run test:e2e` | Playwright: axe on every docs page (light / dark, + high contrast / RTL), drag and drop, touch |
+| `npm run test:visual` | Compares screenshots with the baselines (only Linux screenshots are committed; CI runs it on PRs that change the UI) |
+| `npm run test:engines` | Interaction on Firefox, desktop Safari and iPhone (WebKit) |
+| `npm run check:examples` | Every docs example typechecks when copied out and used with `yugen-ui` |
+| `npm run check:props` | Props tables in the docs match the real types |
 | `npm run check:release` | `package.json` = `src/docs/news` = `CHANGELOG.md` |
-| `npm run size` | Ngân sách dung lượng (gzip) — sau `npm run build:lib` |
-| `node scripts/sync-templates.mjs --check` | Template khớp block |
+| `npm run size` | Size budget (gzip), after `npm run build:lib` |
+| `node scripts/sync-templates.mjs --check` | Templates match the blocks |
 
 ## CI (`.github/workflows/ci.yml`)
 
-Push / PR chỉ đổi tài liệu để đọc (README, wiki, CONTRIBUTING, PR / issue template…) không chạy CI, Browser engines và
-Docs (`paths-ignore`). `CHANGELOG.md`, `ROADMAP.md` và Markdown trong `src/` / `templates/` vẫn chạy CI vì có check đọc
-chúng. Thêm file docs mới vào danh sách trong cả ba workflow. Nếu sau này bật required status checks, check của workflow
-bị bỏ qua sẽ treo ở "Expected": khi đó chuyển sang lọc trong job thay vì `paths-ignore`.
+Pushes / PRs that only change reading material (README, wiki, CONTRIBUTING, PR / issue templates…) don't run CI, Browser
+engines or Docs (`paths-ignore`). `CHANGELOG.md`, `ROADMAP.md` and Markdown in `src/` / `templates/` still run CI because
+checks read them. Add new docs files to the list in all three workflows. If required status checks are turned on later,
+checks from a skipped workflow will hang at "Expected": then switch to filtering inside the job instead of `paths-ignore`.
 
-| Job | Chạy |
+| Job | Runs |
 |---|---|
-| Build · Node 22 / 24 / 26 | typecheck, lint:classes, các check:*, sync-templates, build lib + docs, pack, size |
+| Build · Node 22 / 24 / 26 | typecheck, lint:classes, the check:* scripts, sync-templates, build lib + docs, pack, size |
 | Unit tests (React 19) | `npm test` |
-| React 18 | cài React 18.3 tạm thời → typecheck, test, build:lib |
-| E2E · shard 1/3 … 3/3 | `test:e2e --shard=n/3` song song (blob report; `test-results-n` khi lỗi) |
-| E2E (Playwright + axe) | gộp blob report thành một báo cáo HTML (`playwright-report`); đỏ nếu một shard đỏ — tên check cố định |
+| React 18 | temporarily installs React 18.3 → typecheck, test, build:lib |
+| E2E · shard 1/3 … 3/3 | `test:e2e --shard=n/3` in parallel (blob report; `test-results-n` on failure) |
+| E2E (Playwright + axe) | merges the blob reports into one HTML report (`playwright-report`); red if any shard is red; fixed check name |
 
-Workflow riêng **Browser engines** (`engines.yml`): `npm run test:engines` hằng tuần (thứ Hai), trên PR vào `main`, trên PR
-vào `next` có đổi `e2e/` / `playwright.config.ts` / chính workflow, và khi gọi tay. Bản chạy theo lịch hỏng thì mở issue "E2E on Firefox / WebKit is failing" (hoặc bình luận nếu đang mở), xanh
-lại thì tự đóng. Khác biệt giữa engine ghi ở trang docs Trình duyệt & nền tảng › Kiểm thử trên từng engine.
+Separate workflow **Browser engines** (`engines.yml`): `npm run test:engines` weekly (Monday), on PRs into `main`, on PRs
+into `next` that change `e2e/` / `playwright.config.ts` / the workflow itself, and when run manually. When a scheduled run fails, it opens the issue "E2E on Firefox / WebKit is failing" (or comments on it if it is already open), and closes it when the run turns green
+again. Differences between engines are recorded on the docs page Browsers & platforms › Testing on each engine.
 
-## Sửa CI đỏ — các ca hay gặp
+## Fixing a red CI: common cases
 
-| Triệu chứng | Nguyên nhân thường gặp | Cách sửa |
+| Symptom | Usual cause | Fix |
 |---|---|---|
-| React 19: `Type '…' is not assignable to type 'Ref<…>'` | ref callback trả về giá trị (`ref={(el) => list.push(el)}`) | viết thân hàm `{ list.push(el); }` |
-| React 19: `Expected 1 arguments` ở `useRef` | `useRef<T>()` không có giá trị đầu | `useRef<T \| undefined>(undefined)` |
-| `sync-templates --check` lệch | đổi block hoặc version mà chưa sinh lại | `node scripts/sync-templates.mjs` |
-| `check:release` lỗi | thiếu tin trong `src/docs/news` / CHANGELOG | thêm `<version>.vi.md` và `.en.md`, mục CHANGELOG |
-| `check:examples` lỗi | ví dụ dùng biến chỉ có trong file docs | thêm `setup: declarationsOf(RAW, [...])` |
-| axe: `aria-allowed-attr` | thuộc tính ARIA không hợp lệ với role (vd. `aria-orientation` trên `<ol>`) | đổi sang `data-*` hoặc đúng role |
-| Visual khác biệt | đổi giao diện có chủ đích | Workflow **Visual regression** trên nhánh, tick `update` → tải `visual-screenshots` → chép vào `e2e/__screenshots__/` → commit. Ảnh diff: artifact `visual-test-results` |
-| size-limit vượt | thêm dependency / component lớn | tối ưu, hoặc nâng `limit` trong `.size-limit.cjs` kèm lý do trong PR |
+| React 19: `Type '…' is not assignable to type 'Ref<…>'` | a ref callback returns a value (`ref={(el) => list.push(el)}`) | write a function body `{ list.push(el); }` |
+| React 19: `Expected 1 arguments` on `useRef` | `useRef<T>()` with no initial value | `useRef<T \| undefined>(undefined)` |
+| `sync-templates --check` out of sync | a block or version changed without regenerating | `node scripts/sync-templates.mjs` |
+| `check:release` fails | missing news in `src/docs/news` / CHANGELOG | add `<version>.vi.md` and `.en.md`, a CHANGELOG entry |
+| `check:examples` fails | the example uses a variable that only exists in the docs file | add `setup: declarationsOf(RAW, [...])` |
+| axe: `aria-allowed-attr` | an ARIA attribute not valid for the role (e.g. `aria-orientation` on `<ol>`) | switch to `data-*` or the correct role |
+| Visual differences | an intentional UI change | **Visual regression** workflow on the branch, tick `update` → download `visual-screenshots` → copy into `e2e/__screenshots__/` → commit. Diff images: the `visual-test-results` artifact |
+| size-limit exceeded | a large dependency / component was added | optimize, or raise `limit` in `.size-limit.cjs` with the reason in the PR |
 
-## Bản Node.js trong CI
+## Node.js versions in CI
 
-Build và CLI chạy trên mọi bản Node.js đã phát hành và chưa EOL (LTS + Current); các job chạy một bản dùng Active LTS
-mới nhất. `node scripts/node-versions.mjs` so workflow với [lịch phát hành](https://github.com/nodejs/Release) (exit 1 nếu
-lệch, `--write` để sửa); workflow `node-versions.yml` chạy hằng tuần và mở PR vào `next`. `engines` của CLI không tự đổi:
-nâng là bản minor của CLI.
+Build and CLI run on every released Node.js version that has not reached EOL (LTS + Current); jobs that run a single version
+use the latest Active LTS. `node scripts/node-versions.mjs` compares the workflows with the [release schedule](https://github.com/nodejs/Release) (exit 1 if
+they differ, `--write` to fix them); the `node-versions.yml` workflow runs weekly and opens a PR into `next`. The CLI's `engines`
+doesn't change automatically: raising it is a CLI minor release.
 
-## Thử với React 18 trên máy
+## Trying React 18 locally
 
-Repo chạy React 19. Muốn kiểm tra React 18.3 (vẫn được hỗ trợ): chép repo ra thư mục khác (bỏ `node_modules`), `npm ci`,
-rồi `npm i --no-save react@^18.3 react-dom@^18.3 @types/react@^18.3 @types/react-dom@^18.3` và chạy
+The repo runs React 19. To check React 18.3 (still supported): copy the repo to another folder (without `node_modules`), `npm ci`,
+then `npm i --no-save react@^18.3 react-dom@^18.3 @types/react@^18.3 @types/react-dom@^18.3` and run
 `npx tsc -b && npx vitest run`.

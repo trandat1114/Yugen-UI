@@ -1,38 +1,36 @@
 # Yugen UI Wiki 幽玄
 
-**Yugen UI** là thư viện component React + Tailwind CSS v4 lấy cảm hứng từ Microsoft Fluent 2, brand Sakura 桜, do
-[trandat1114](https://github.com/trandat1114) tạo. Wiki này dành cho **người dùng nâng cao và người đóng góp**: kiến trúc,
-quy trình, cách debug, cách phát hành. Hướng dẫn dùng từng component nằm ở [trang docs](https://trandat1114.github.io/Yugen-UI/).
+*Tiếng Việt: [Home-vi](Home-vi).*
 
-> **English:** this wiki covers architecture, workflows and maintenance. Pages are written in Vietnamese (English
-> versions are planned, #276); the component docs are in English at <https://trandat1114.github.io/Yugen-UI/>, with
-> Vietnamese under `/vi/`. Questions in English are welcome in
-> [Discussions](https://github.com/trandat1114/Yugen-UI/discussions).
+**Yugen UI** is a React + Tailwind CSS v4 component library inspired by Microsoft Fluent 2, with the Sakura 桜 brand, created by
+[trandat1114](https://github.com/trandat1114). This wiki is for **advanced users and contributors**: architecture,
+workflows, debugging, releases. Usage guides for each component are on the [docs site](https://trandat1114.github.io/Yugen-UI/)
+(English at the root, Vietnamese under `/vi/`).
 
-## Bắt đầu từ đâu
+## Where to start
 
-| Bạn muốn… | Đọc |
+| You want to… | Read |
 |---|---|
-| Cài và dùng thử | [[Getting Started]] |
-| Hiểu cấu trúc repo, token, cách build | [[Architecture]] |
-| Đổi theme / brand, xuất token sang Figma | [[Theming and Tokens]] |
-| Viết hoặc sửa component | [[Component Guidelines]] |
-| Chạy test, hiểu CI, sửa CI đỏ | [[Testing and Quality]] |
-| Nhánh nào cho việc gì, kênh latest / next / canary | [[Branching and Release Channels]] |
-| Phát hành phiên bản mới | [[Release Process]] |
-| Hỏi đáp, báo lỗi, gắn nhãn issue | [[Community and Triage]] |
-| Vận hành: phản hồi, review, sự cố, kiểm duyệt | [[Operations Handbook]] |
-| Vai trò & cách ra quyết định, RFC | [GOVERNANCE.md](https://github.com/trandat1114/Yugen-UI/blob/main/GOVERNANCE.md) |
-| Câu hỏi thường gặp | [[FAQ]] |
+| Install and try it | [[Getting Started]] |
+| Understand the repo layout, tokens, how it builds | [[Architecture]] |
+| Change the theme / brand, export tokens to Figma | [[Theming and Tokens]] |
+| Write or change a component | [[Component Guidelines]] |
+| Run tests, understand CI, fix a red CI | [[Testing and Quality]] |
+| Which branch is for what, the latest / next / canary channels | [[Branching and Release Channels]] |
+| Release a new version | [[Release Process]] |
+| Ask questions, report bugs, label issues | [[Community and Triage]] |
+| Operations: response times, review, incidents, moderation | [[Operations Handbook]] |
+| Roles & decision making, RFCs | [GOVERNANCE.md](https://github.com/trandat1114/Yugen-UI/blob/main/GOVERNANCE.md) |
+| Frequently asked questions | [[FAQ]] |
 
-## Nguồn sự thật
+## Source of truth
 
-Wiki chỉ tóm tắt và chỉ đường. Khi có mâu thuẫn, các file trong repo thắng:
+The wiki only summarizes and points the way. When they disagree, the files in the repo win:
 
-- [`Design.md`](https://github.com/trandat1114/Yugen-UI/blob/main/Design.md) — luật thiết kế & code bắt buộc.
-- [`CONTRIBUTING.md`](https://github.com/trandat1114/Yugen-UI/blob/main/CONTRIBUTING.md) — quy trình đóng góp.
-- [`ROADMAP.md`](https://github.com/trandat1114/Yugen-UI/blob/main/ROADMAP.md) — lộ trình tới 1.0.
-- [`CHANGELOG.md`](https://github.com/trandat1114/Yugen-UI/blob/main/CHANGELOG.md) — thay đổi từng phiên bản.
+- [`Design.md`](https://github.com/trandat1114/Yugen-UI/blob/main/Design.md) — required design & code rules.
+- [`CONTRIBUTING.md`](https://github.com/trandat1114/Yugen-UI/blob/main/CONTRIBUTING.md) — contribution workflow.
+- [`ROADMAP.md`](https://github.com/trandat1114/Yugen-UI/blob/main/ROADMAP.md) — roadmap to 1.0.
+- [`CHANGELOG.md`](https://github.com/trandat1114/Yugen-UI/blob/main/CHANGELOG.md) — changes in each version.
 
-> Wiki được sinh từ thư mục `wiki/` trong repo (workflow `wiki.yml`). Muốn sửa trang? Mở PR sửa file trong `wiki/`
-> — sửa trực tiếp trên GitHub Wiki sẽ bị ghi đè ở lần đồng bộ sau.
+> The wiki is generated from the `wiki/` folder in the repo (`wiki.yml` workflow). Want to edit a page? Open a PR that changes
+> the file in `wiki/`. Edits made directly on the GitHub Wiki are overwritten at the next sync.

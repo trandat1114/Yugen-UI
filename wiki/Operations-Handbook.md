@@ -1,101 +1,103 @@
-# Operations Handbook · Sổ tay vận hành
+# Operations Handbook
 
-Cách dự án được vận hành hằng ngày: ai làm gì, khi nào, theo luật nào. Vai trò và quyền quyết định: [`GOVERNANCE.md`](https://github.com/trandat1114/Yugen-UI/blob/main/GOVERNANCE.md).
+*Tiếng Việt: [Operations-Handbook-vi](Operations-Handbook-vi).*
 
-## 1. Cam kết thời gian phản hồi (mục tiêu, không phải hợp đồng)
+How the project runs day to day: who does what, when, and under which rules. Roles and decision rights: [`GOVERNANCE.md`](https://github.com/trandat1114/Yugen-UI/blob/main/GOVERNANCE.md).
 
-| Việc | Phản hồi đầu tiên | Ghi chú |
+## 1. Response time commitments (goals, not a contract)
+
+| Item | First response | Notes |
 |---|---|---|
-| Báo lỗ hổng bảo mật | 3 ngày | Bản vá ưu tiên cao nhất, phát hành patch ngay khi sẵn sàng |
-| Bug chặn sử dụng (crash, build hỏng, a11y nghiêm trọng) | 3 ngày | Gắn `confirmed` + mức ưu tiên trong bình luận |
-| Bug thường, issue a11y khác | 7 ngày | |
-| PR | 7 ngày review đầu tiên | Không có phản hồi? nhắc lịch sự trong PR sau 7 ngày |
-| Discussions Q&A | 7 ngày | Cộng đồng trả lời trước càng tốt |
-| Feature request / Ideas | 14 ngày | Có thể trả lời "để sau 1.0" |
+| Security vulnerability report | 3 days | The fix has top priority; a patch is released as soon as it is ready |
+| Blocking bug (crash, broken build, severe a11y problem) | 3 days | Add `confirmed` + the priority in a comment |
+| Regular bug, other a11y issues | 7 days | |
+| PR | 7 days to the first review | No response? Politely ping in the PR after 7 days |
+| Discussions Q&A | 7 days | Better still if the community answers first |
+| Feature request / Ideas | 14 days | The answer may be "after 1.0" |
 
-## 2. Lịch vận hành
+## 2. Operations schedule
 
-| Tần suất | Việc | Người làm |
+| Frequency | Task | Who |
 |---|---|---|
-| Hằng tuần | Phân loại `needs triage` ([[Community and Triage]]), trả lời Q&A tồn đọng, review PR | Triager / maintainer |
-| Hằng tuần | Xem CI trên `main` (phải luôn xanh). Thứ Hai: merge PR Dependabot minor + patch vào `next` nếu xanh; PR major đỏ thì đóng, thêm `ignore` và ghi vào issue migration (#91) | Maintainer |
-| 2–4 tuần | Phát hành nếu có changeset ([[Release Process]]) | Maintainer |
-| Khi `packages/cli/CHANGELOG.md` có mục `Unreleased` | Phát hành CLI kèm mục tin trên `#/news` ([[Release Process]] › CLI) | Maintainer |
-| Hằng tháng | Cập nhật ROADMAP, gắn `good first issue` mới, chọn Showcase | Maintainer |
-| Hằng tháng | Đọc báo cáo **Prune branches** (ngày 1); mục "Xoá" đúng thì chạy lại với `apply`, mục "Cần xem" xử lý tay ([[Branching and Release Channels]] › Dọn nhánh) | Maintainer |
-| Hằng quý | Rà dependency lớn (React, Radix, Tailwind), ngân sách dung lượng, audit a11y thủ công với NVDA / VoiceOver | Maintainer |
+| Weekly | Triage `needs triage` ([[Community and Triage]]), answer pending Q&A, review PRs | Triager / maintainer |
+| Weekly | Watch CI on `main` (must always be green). Monday: merge Dependabot minor + patch PRs into `next` if green; close red major PRs, add an `ignore` and note it in the migration issue (#91) | Maintainer |
+| Every 2–4 weeks | Release if there are changesets ([[Release Process]]) | Maintainer |
+| When `packages/cli/CHANGELOG.md` has an `Unreleased` section | Release the CLI with a news entry on `#/news` ([[Release Process]] › CLI) | Maintainer |
+| Monthly | Update the ROADMAP, label new `good first issue`s, pick Showcase entries | Maintainer |
+| Monthly | Read the **Prune branches** report (on the 1st); if the "Xoá" (delete) entries are right, rerun with `apply`; handle "Cần xem" (review) entries by hand ([[Branching and Release Channels]] › Branch cleanup) | Maintainer |
+| Quarterly | Review major dependencies (React, Radix, Tailwind), the size budget, manual a11y audit with NVDA / VoiceOver | Maintainer |
 
-## 3. Luật review & merge
+## 3. Review & merge rules
 
-1. Mọi thay đổi vào `main` qua PR; CI **phải xanh** (build, unit, React 18, e2e).
-2. Ít nhất **1 approve** của maintainer (người viết PR không tự approve, trừ khi chỉ có một maintainer — khi đó tự merge
-   sau khi CI xanh và đã tự review lại diff ngày hôm sau).
-3. Thay đổi người dùng thấy → có changeset. Thay đổi phá vỡ → RFC đã chấp nhận + mục "Thay đổi lớn" + hướng dẫn chuyển đổi.
-4. Merge kiểu **Squash and merge**, tiêu đề theo Conventional Commits (`feat(datagrid): …`).
-5. Không merge khi còn thread chưa giải quyết, hoặc khi axe / visual đỏ mà chưa giải thích.
-6. Review theo thứ tự: đúng hành vi & a11y → API (tên prop, mặc định) → tuân thủ Design.md → test → phong cách code.
+1. Every change to `main` goes through a PR; CI **must be green** (build, unit, React 18, e2e).
+2. At least **1 approval** from a maintainer (PR authors don't approve their own PRs, unless there is only one maintainer; in that case
+   they merge after CI is green and after re-reviewing the diff the next day).
+3. User-facing change → a changeset. Breaking change → an accepted RFC + a "Thay đổi lớn" (Breaking) entry + a migration guide.
+4. Merge with **Squash and merge**, with a Conventional Commits title (`feat(datagrid): …`).
+5. Don't merge while threads are unresolved, or while axe / visual is red without an explanation.
+6. Review in this order: correct behavior & a11y → API (prop names, defaults) → Design.md compliance → tests → code style.
 
-## 4. Cấu hình GitHub khuyến nghị (làm một lần)
+## 4. Recommended GitHub settings (one time)
 
-Bảo vệ cho `next`, `release/*`, `canary` và tag `v*`: xem [[Branching and Release Channels]].
+Protection for `next`, `release/*`, `canary` and `v*` tags: see [[Branching and Release Channels]].
 
-**Settings → Branches → Branch protection cho `main`:**
+**Settings → Branches → Branch protection for `main`:**
 - Require a pull request before merging · Require approvals: 1 · Dismiss stale approvals
 - Require status checks: `Build · Node 22`, `Build · Node 24`, `Build · Node 26`, `Unit tests (React 19)`, `React 18`, `E2E (Playwright + axe)`
 - Require conversation resolution · Block force pushes · Do not allow deletions
 
-**Settings → General:** Allow squash merging (mặc định) · Automatically delete head branches · Discussions: bật.
+**Settings → General:** Allow squash merging (default) · Automatically delete head branches · Discussions: on.
 
 **Settings → Code security:** Dependabot alerts + security updates · Private vulnerability reporting · Secret scanning.
 
-**Discussions → Categories:** Announcements (chỉ maintainer đăng), General, Ideas (dùng cho RFC), Q&A (có đánh dấu trả lời), Polls, Show and tell.
+**Discussions → Categories:** Announcements (only maintainers post), General, Ideas (used for RFCs), Q&A (with marked answers), Polls, Show and tell.
 
-## 5. Tự động hoá đang chạy
+## 5. Automation in place
 
-| Workflow / file | Làm gì |
+| Workflow / file | What it does |
 |---|---|
-| `ci.yml` | Build, test (React 19), React 18, e2e, các check, size. Không chạy khi push / PR chỉ đổi tài liệu để đọc (README, wiki, CONTRIBUTING…; danh sách `paths-ignore` trong file); `engines.yml` và `pages.yml` dùng cùng danh sách |
-| `release.yml` | Tag `v*` → kiểm tra nhánh + nhất quán → `npm publish --provenance` (dist-tag theo kênh) → GitHub Release từ mục CHANGELOG |
-| `release-cli.yml` | Tag `cli@*` → `check-release.mjs --tag` (CHANGELOG, mục tin trên `#/news`, version chưa dùng, `yugen-ui` đã có trên npm) → publish `@yugen-ui/cli` + `create-yugen-ui` → GitHub Release |
-| `canary.yml` | Push vào `canary` → bản `x.y.z-canary-…` với dist-tag `canary` |
-| `sync-next.yml` | Push vào `main` → `next` không có việc riêng thì merge thẳng `main` vào `next` (không PR, không CI lại) và chạy lại Docs; có việc riêng thì mở PR `main → next` |
-| `node-versions.yml` | Hằng tuần → so bản Node.js trong workflow với lịch phát hành (`scripts/node-versions.mjs`), mở PR vào `next` khi lệch rồi chạy CI trên nhánh đó |
-| `prune-branches.yml` | Ngày 1 hằng tháng → báo cáo nhánh hết tác dụng (`scripts/prune-branches.mjs`) vào job summary; chạy tay với `apply` để xoá mục "Xoá" |
-| `react-share.yml` | Ngày 1 hằng tháng → tỉ lệ tải React theo major (`scripts/react-share.mjs`) bình luận vào #62; React 18 dưới 10% là một trong hai điều kiện để ngừng hỗ trợ |
-| `engines.yml` | Hằng tuần, PR vào `main` và PR đổi `e2e/` → E2E trên Firefox và WebKit; bản chạy theo lịch hỏng thì mở / cập nhật issue, xanh lại thì đóng |
-| `pages.yml` | Deploy docs (+ docs các minor cũ) lên GitHub Pages |
-| `wiki.yml` | Đẩy `wiki/` lên GitHub Wiki |
-| `labels.yml` | Đồng bộ nhãn từ `.github/labels.yml` |
-| `pr-labeler.yml` | Tự gắn nhãn `area: …` cho PR theo đường dẫn file (`.github/labeler.yml`) |
-| `stale.yml` | Issue `needs reproduction` im lặng 14 ngày → nhắc, thêm 7 ngày → đóng |
-| `welcome.yml` | Chào người mở issue / PR lần đầu, chỉ đường tới CONTRIBUTING |
-| `visual.yml` | Chạy tay: so ảnh / tạo ảnh chuẩn Linux |
-| `CODEOWNERS` | Tự yêu cầu review của maintainer |
+| `ci.yml` | Build, test (React 19), React 18, e2e, the checks, size. Doesn't run when a push / PR only changes reading material (README, wiki, CONTRIBUTING…; the `paths-ignore` list in the file); `engines.yml` and `pages.yml` use the same list |
+| `release.yml` | Tag `v*` → check the branch + consistency → `npm publish --provenance` (dist-tag by channel) → GitHub Release from the CHANGELOG entry |
+| `release-cli.yml` | Tag `cli@*` → `check-release.mjs --tag` (CHANGELOG, news entry on `#/news`, unused version, `yugen-ui` already on npm) → publish `@yugen-ui/cli` + `create-yugen-ui` → GitHub Release |
+| `canary.yml` | Push to `canary` → an `x.y.z-canary-…` version with the `canary` dist-tag |
+| `sync-next.yml` | Push to `main` → if `next` has no work of its own, merge `main` straight into `next` (no PR, no CI rerun) and rerun Docs; otherwise open a `main → next` PR |
+| `node-versions.yml` | Weekly → compare the Node.js versions in workflows with the release schedule (`scripts/node-versions.mjs`), open a PR into `next` when they differ, then run CI on that branch |
+| `prune-branches.yml` | 1st of every month → report stale branches (`scripts/prune-branches.mjs`) in the job summary; run manually with `apply` to delete the "Xoá" entries |
+| `react-share.yml` | 1st of every month → React download share by major (`scripts/react-share.mjs`) as a comment on #62; React 18 below 10% is one of the two conditions for dropping its support |
+| `engines.yml` | Weekly, on PRs into `main` and on PRs that change `e2e/` → E2E on Firefox and WebKit; when a scheduled run fails, open / update an issue, close it when green again |
+| `pages.yml` | Deploy the docs (+ docs for older minors) to GitHub Pages |
+| `wiki.yml` | Push `wiki/` to the GitHub Wiki |
+| `labels.yml` | Sync labels from `.github/labels.yml` |
+| `pr-labeler.yml` | Add `area: …` labels to PRs by file path (`.github/labeler.yml`) |
+| `stale.yml` | `needs reproduction` issues silent for 14 days → reminder, 7 more days → close |
+| `welcome.yml` | Greet first-time issue / PR authors, point them to CONTRIBUTING |
+| `visual.yml` | Manual: compare screenshots / create Linux baselines |
+| `CODEOWNERS` | Request maintainer review automatically |
 
-## 6. Xử lý sự cố
+## 6. Incident response
 
-| Sự cố | Làm ngay |
+| Incident | Do right away |
 |---|---|
-| Bản phát hành hỏng (lỗi build / runtime nghiêm trọng) | `npm deprecate yugen-ui@x.y.z "Lỗi …, dùng x.y.z+1"` → sửa → phát hành patch. **Không** `npm unpublish` (phá dự án người khác) |
-| Lộ secret (`NPM_TOKEN`…) | Thu hồi token trên npmjs.com ngay, tạo token mới, cập nhật secret, kiểm tra các bản publish gần đây |
-| Lỗ hổng bảo mật được báo | Xác nhận trong Security Advisory riêng, tạo bản vá trong fork riêng tư, phát hành, công bố advisory + CVE nếu cần |
-| `main` đỏ | Ưu tiên sửa trước mọi PR khác; revert commit gây lỗi nếu không sửa được trong 1 ngày |
-| Docs site hỏng | Chạy lại workflow Docs với commit tốt gần nhất (`workflow_dispatch`) |
+| Broken release (severe build / runtime error) | `npm deprecate yugen-ui@x.y.z "Broken …, use x.y.z+1"` → fix → release a patch. **Don't** `npm unpublish` (it breaks other people's projects) |
+| Leaked secret (`NPM_TOKEN`…) | Revoke the token on npmjs.com right away, create a new token, update the secret, check recent publishes |
+| Security vulnerability reported | Confirm it in a private Security Advisory, build the fix in a private fork, release, publish the advisory + a CVE if needed |
+| `main` is red | Fix it before any other PR; revert the offending commit if it can't be fixed within 1 day |
+| Docs site broken | Rerun the Docs workflow on the last good commit (`workflow_dispatch`) |
 
-## 7. Kiểm duyệt cộng đồng
+## 7. Community moderation
 
-Áp dụng [Quy tắc ứng xử](https://github.com/trandat1114/Yugen-UI/blob/main/CODE_OF_CONDUCT.md) cho issue, PR, Discussions.
+Apply the [Code of Conduct](https://github.com/trandat1114/Yugen-UI/blob/main/CODE_OF_CONDUCT.md) to issues, PRs and Discussions.
 
-| Mức | Khi nào | Hành động |
+| Level | When | Action |
 |---|---|---|
-| Nhắc nhở | Lạc đề, thiếu lịch sự nhẹ | Bình luận nhắc, chỉnh sửa / ẩn bình luận (*Hide → Off-topic*) |
-| Cảnh cáo | Lặp lại hoặc xúc phạm | Cảnh cáo công khai hoặc riêng, khoá thread tạm thời (*Lock conversation*) |
-| Chặn tạm thời | Vi phạm nghiêm trọng | *Block user* 30 ngày từ tổ chức / repo |
-| Chặn vĩnh viễn | Quấy rối, đe doạ, spam có chủ đích | Block vĩnh viễn, xoá nội dung, báo GitHub nếu cần |
+| Reminder | Off topic, mildly impolite | Comment with a reminder, edit / hide the comment (*Hide → Off-topic*) |
+| Warning | Repeated, or insulting | Public or private warning, temporarily lock the thread (*Lock conversation*) |
+| Temporary block | Serious violation | *Block user* for 30 days from the organization / repo |
+| Permanent block | Harassment, threats, deliberate spam | Permanent block, delete the content, report to GitHub if needed |
 
-Spam (quảng cáo, link độc) → xoá ngay, không cần cảnh báo. Mọi quyết định kiểm duyệt ghi lại ngắn gọn cho các maintainer.
+Spam (ads, malicious links) → delete right away, no warning needed. Record every moderation decision briefly for the other maintainers.
 
-## 8. Chỉ số theo dõi
+## 8. Metrics to watch
 
-Số issue mở theo nhãn, thời gian phản hồi đầu tiên, PR chờ review > 7 ngày, tỉ lệ Q&A có câu trả lời, lượt tải npm/tuần,
-ngân sách dung lượng — xem nhanh ở tab **Insights** của repo và trang npm.
+Open issues by label, time to first response, PRs waiting for review > 7 days, share of Q&A threads with an answer, weekly npm
+downloads, the size budget: see them at a glance in the repo's **Insights** tab and on the npm page.

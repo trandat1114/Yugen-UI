@@ -1,60 +1,62 @@
-# Community and Triage · Cộng đồng & phân loại
+# Community and Triage
 
-## Hỏi ở đâu?
+*Tiếng Việt: [Community-and-Triage-vi](Community-and-Triage-vi).*
 
-| Bạn có… | Đi tới |
+## Where to ask?
+
+| You have… | Go to |
 |---|---|
-| Câu hỏi cách dùng | [Discussions › Q&A](https://github.com/trandat1114/Yugen-UI/discussions/categories/q-a) — đánh dấu câu trả lời đúng |
-| Ý tưởng còn sơ khai | [Discussions › Ideas](https://github.com/trandat1114/Yugen-UI/discussions/categories/ideas) — upvote để ưu tiên |
-| Sản phẩm muốn khoe | [Discussions › Show and tell](https://github.com/trandat1114/Yugen-UI/discussions/categories/show-and-tell) |
-| Lỗi tái hiện được | [Issue › Bug report](https://github.com/trandat1114/Yugen-UI/issues/new/choose) |
-| Vấn đề bàn phím / trình đọc màn hình | Issue › Accessibility |
-| Ví dụ sai, props thiếu, bản dịch | Issue › Documentation |
-| Lỗ hổng bảo mật | [Báo riêng tư](https://github.com/trandat1114/Yugen-UI/security/advisories/new) — không mở issue |
+| A usage question | [Discussions › Q&A](https://github.com/trandat1114/Yugen-UI/discussions/categories/q-a) — mark the correct answer |
+| An early idea | [Discussions › Ideas](https://github.com/trandat1114/Yugen-UI/discussions/categories/ideas) — upvote to prioritize |
+| Something you built and want to show | [Discussions › Show and tell](https://github.com/trandat1114/Yugen-UI/discussions/categories/show-and-tell) |
+| A reproducible bug | [Issue › Bug report](https://github.com/trandat1114/Yugen-UI/issues/new/choose) |
+| A keyboard / screen reader problem | Issue › Accessibility |
+| A wrong example, missing props, a translation | Issue › Documentation |
+| A security vulnerability | [Report it privately](https://github.com/trandat1114/Yugen-UI/security/advisories/new) — don't open an issue |
 
-**Announcements** chỉ maintainer đăng (phát hành, thay đổi lớn). **Polls** dùng để hỏi ý kiến cộng đồng khi chọn API.
+Only maintainers post in **Announcements** (releases, major changes). **Polls** are for asking the community when choosing an API.
 
-## Quy tắc Discussions
+## Discussions rules
 
-1. **Tìm trước khi hỏi** — docs, [[FAQ]] và Discussions cũ; câu hỏi trùng sẽ được đánh dấu *Duplicate* và khoá.
-2. **Mỗi thread một chủ đề**, tiêu đề nói rõ vấn đề ("DataGrid không cuộn trong Sheet trên iOS", không phải "Giúp với!!").
-3. **Đưa đủ ngữ cảnh**: phiên bản `yugen-ui`, React, framework, đoạn code tối thiểu (khối code `tsx`) — tốt nhất là link StackBlitz.
-4. **Đánh dấu câu trả lời** (*Mark as answer*) khi đã được giải quyết; quay lại chia sẻ cách bạn làm nếu tự tìm ra.
-5. **Không "up bài"** bằng bình luận "+1" — dùng 👍 (reaction) để ưu tiên; bình luận chỉ khi có thông tin mới.
-6. **Tiếng Việt hoặc tiếng Anh** đều được; trả lời bằng ngôn ngữ người hỏi dùng khi có thể.
-7. **Không đăng thông tin riêng tư** (token, mật khẩu, dữ liệu khách hàng) và **không báo lỗ hổng bảo mật** ở Discussions.
-8. **Ideas / RFC** theo mẫu [RFC trong GOVERNANCE.md](https://github.com/trandat1114/Yugen-UI/blob/main/GOVERNANCE.md#3-quy-trình-rfc);
-   maintainer ghi kết luận *Accepted / Declined / Needs work* trong thread.
-9. **Announcements** chỉ maintainer đăng; bình luận ở đó nên ngắn và đúng chủ đề.
-10. Câu hỏi được hỏi nhiều lần → maintainer bổ sung vào [[FAQ]] hoặc docs rồi khoá thread bằng link.
+1. **Search before asking**: the docs, [[FAQ]] and older Discussions. Duplicate questions are marked *Duplicate* and locked.
+2. **One topic per thread**, with a title that states the problem ("DataGrid doesn't scroll inside a Sheet on iOS", not "Help!!").
+3. **Give enough context**: the `yugen-ui` version, React, framework, a minimal code snippet (a `tsx` code block), ideally a StackBlitz link.
+4. **Mark the answer** (*Mark as answer*) once your question is resolved; if you found the solution yourself, come back and share it.
+5. **Don't bump threads** with "+1" comments. Use 👍 (reaction) to prioritize; comment only when you have new information.
+6. **Vietnamese or English** are both fine; reply in the asker's language when you can.
+7. **Don't post private information** (tokens, passwords, customer data) and **don't report security vulnerabilities** in Discussions.
+8. **Ideas / RFCs** follow the [RFC process in GOVERNANCE.md](https://github.com/trandat1114/Yugen-UI/blob/main/GOVERNANCE.md#3-quy-trình-rfc);
+   maintainers record the outcome *Accepted / Declined / Needs work* in the thread.
+9. Only maintainers post in **Announcements**; comments there should be short and on topic.
+10. A question asked many times → maintainers add it to the [[FAQ]] or the docs, then lock the thread with a link.
 
-Vi phạm xử lý theo mục *Kiểm duyệt* trong [[Operations Handbook]].
+Violations are handled as described under *Community moderation* in the [[Operations Handbook]].
 
-## Nhãn
+## Labels
 
-Nguồn: [`.github/labels.yml`](https://github.com/trandat1114/Yugen-UI/blob/main/.github/labels.yml) — workflow **Labels** tự đồng bộ.
+Source: [`.github/labels.yml`](https://github.com/trandat1114/Yugen-UI/blob/main/.github/labels.yml); the **Labels** workflow syncs them automatically.
 
-- **Loại**: `bug`, `enhancement`, `documentation`, `accessibility`, `performance`, `question`
-- **Khu vực**: `area: components`, `area: labs`, `area: tokens & theming`, `area: docs site`, `area: build & package`, `area: ci & tests`
-- **Trạng thái**: `needs triage` → `needs reproduction` / `confirmed` → `in progress` (· `blocked`) ; `breaking change`
-- **Cộng đồng**: `good first issue`, `help wanted`
+- **Type**: `bug`, `enhancement`, `documentation`, `accessibility`, `performance`, `question`
+- **Area**: `area: components`, `area: labs`, `area: tokens & theming`, `area: docs site`, `area: build & package`, `area: ci & tests`
+- **Status**: `needs triage` → `needs reproduction` / `confirmed` → `in progress` (· `blocked`) ; `breaking change`
+- **Community**: `good first issue`, `help wanted`
 
-## Quy trình phân loại (maintainer, mỗi tuần)
+## Triage process (maintainers, weekly)
 
-1. Lọc `label:"needs triage"`.
-2. Câu hỏi → chuyển sang Discussions (**Convert to discussion**). Trùng → `duplicate` + link, đóng.
-3. Lỗi chưa tái hiện được → `needs reproduction`, xin StackBlitz (nút StackBlitz trên mọi ví dụ docs). Không phản hồi 14 ngày → đóng.
-4. Hợp lệ → bỏ `needs triage`, thêm `confirmed` + nhãn khu vực; việc nhỏ, rõ ràng → `good first issue` kèm gợi ý file cần sửa.
-5. Ý tưởng ở Discussions được nhiều upvote và đủ rõ → tạo issue `enhancement`, link ngược lại.
+1. Filter by `label:"needs triage"`.
+2. Questions → move to Discussions (**Convert to discussion**). Duplicates → `duplicate` + a link, close.
+3. Bugs not yet reproduced → `needs reproduction`, ask for a StackBlitz (the StackBlitz button on every docs example). No response in 14 days → close.
+4. Valid → remove `needs triage`, add `confirmed` + an area label; small, clear tasks → `good first issue` with a hint about which files to change.
+5. Ideas in Discussions with many upvotes and enough detail → create an `enhancement` issue that links back.
 
-## Good first issue tốt trông thế nào
+## What a good first issue looks like
 
-- Phạm vi 1–2 file, có link tới file / dòng cần sửa.
-- Tiêu chí hoàn thành rõ ràng ("`npm run check:props` hết cảnh báo cho Wizard").
-- Ví dụ hay: dịch một trang khái niệm sang tiếng Anh, document prop còn thiếu (danh sách trong `npm run check:props`),
-  thêm test bàn phím cho một component.
+- A scope of 1–2 files, with a link to the file / line to change.
+- Clear completion criteria ("`npm run check:props` shows no more warnings for Wizard").
+- Good examples: translate a concept page into English, document a missing prop (listed by `npm run check:props`),
+  add keyboard tests for a component.
 
 ## Showcase
 
-Bài ở **Show and tell** có tick đồng ý sẽ được đưa lên mục Showcase của
-[trang Cộng đồng](https://trandat1114.github.io/Yugen-UI/#/community).
+**Show and tell** posts with the consent box ticked are featured in the Showcase section of the
+[Community page](https://trandat1114.github.io/Yugen-UI/#/community).
