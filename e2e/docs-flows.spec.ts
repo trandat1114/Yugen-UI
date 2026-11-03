@@ -298,11 +298,13 @@ test("Cộng đồng → Người đóng góp: mỗi người một bông hoa, t
   await expect(page).toHaveURL(/\/contributors$/);
   await expect(page.getByRole("heading", { level: 1, name: "Người đóng góp" })).toBeVisible();
   const flowers = page.locator(".cb-flower");
-  const cards = page.locator("#people ul.grid > li");
-  const people = await flowers.count();
-  expect(people).toBeGreaterThan(0);
-  // Mỗi người một thẻ, cộng ô mời ở cuối.
-  await expect(cards).toHaveCount(people + 1);
+  const logins = await flowers.evaluateAll((els) => els.map((el) => el.getAttribute("data-login")!));
+  expect(logins.length).toBeGreaterThan(0);
+  // Hai mục (code, ý tưởng và thảo luận): mỗi người có thẻ ở ít nhất một mục, mỗi mục kết thúc bằng một ô mời.
+  const cards = page.locator("#code ul.grid > li:has(.cb-mark), #ideas ul.grid > li:has(.cb-mark)");
+  const profiles = await cards.evaluateAll((els) => els.map((el) => el.querySelector("a")!.getAttribute("href")!.split("/").pop()));
+  expect(new Set(profiles)).toEqual(new Set(logins));
+  for (const id of ["code", "ideas"]) await expect(page.locator(`#${id} ul.grid > li:not(:has(.cb-mark))`)).toHaveCount(1);
 
   await cards.first().hover();
   await expect(flowers.first()).toHaveAttribute("data-active", "");
@@ -310,8 +312,20 @@ test("Cộng đồng → Người đóng góp: mỗi người một bông hoa, t
   await page.mouse.move(0, 0);
   await expect(page.locator(".cb-art[data-dim]")).toHaveCount(0);
 
-  await cards.nth(people - 1).getByRole("link").first().focus();
-  await expect(flowers.nth(people - 1)).toHaveAttribute("data-active", "");
+  const last = logins.at(-1)!;
+  await page.locator(`#code, #ideas`).locator(`a[href$="/${last}"]`).first().focus();
+  await expect(flowers.last()).toHaveAttribute("data-active", "");
+
+  // Hàng số đếm mở Popover đóng góp gần đây (maintainer không có danh sách nên không có nút).
+  const counts = cards.locator("button[aria-haspopup]").first();
+  await counts.click();
+  const recent = page.getByRole("dialog");
+  await expect(recent).toContainText("Đóng góp gần đây của");
+  await expect(recent.getByRole("link").first()).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(recent).toBeHidden();
+  await expect(counts).toBeFocused();
+
   // Trang không cuộn ngang trên điện thoại (cành dùng preserveAspectRatio slice).
   await page.setViewportSize({ width: 390, height: 844 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);

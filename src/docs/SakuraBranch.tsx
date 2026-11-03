@@ -215,7 +215,7 @@ export function SakuraBranch({ people, active, elapsed = 0, className }: { peopl
         return (
           <g key={person.login} transform={`translate(${f(spot.x + Math.cos(rad) * lift)} ${f(spot.y + Math.sin(rad) * lift)})`}>
             <g className="cb-bloom" style={{ "--cb-delay": `${0.9 + Math.min(i, 24) * 0.12}s` } as CSSProperties}>
-              <g className="cb-flower" data-active={active === person.login ? "" : undefined}>
+              <g className="cb-flower" data-login={person.login} data-active={active === person.login ? "" : undefined}>
                 <g transform={`rotate(${(i * 47) % 72}) scale(${f(scale)})`}>
                   {PETALS.map(([a, s]) => (
                     <path
