@@ -38,22 +38,22 @@ function Placeholder() {
 
 function AppNav() {
   return (
-    <Nav defaultSelectedValue="home" aria-label="Ứng dụng">
+    <Nav defaultSelectedValue="home" aria-label="App">
       <NavItem value="home" icon={<Home20Regular />}>
-        Trang chủ
+        Home
       </NavItem>
       <NavItem value="inbox" icon={<Mail20Regular />}>
-        Hộp thư
+        Inbox
       </NavItem>
       <NavItem value="calendar" icon={<CalendarLtr20Regular />}>
-        Lịch
+        Calendar
       </NavItem>
-      <NavSectionHeader>Quản lý</NavSectionHeader>
+      <NavSectionHeader>Manage</NavSectionHeader>
       <NavItem value="people" icon={<People20Regular />}>
-        Thành viên
+        Members
       </NavItem>
       <NavItem value="settings" icon={<Settings20Regular />}>
-        Cài đặt
+        Settings
       </NavItem>
     </Nav>
   );
@@ -65,7 +65,7 @@ function NewChatButton() {
   const { setDrawerOpen } = useAppShell();
   return (
     <Button icon={<Compose20Regular />} className="justify-start" onClick={() => setDrawerOpen(false)}>
-      Đoạn chat mới
+      New chat
     </Button>
   );
 }
@@ -73,17 +73,17 @@ function NewChatButton() {
 /** Dòng trạng thái cho demo đổi breakpoint: sidebar đang ở dạng nào. */
 function BreakpointStatus() {
   const { narrow } = useAppShell();
-  return <p>{narrow ? "Khung hẹp hơn 42rem: sidebar mở trong Drawer." : "Khung từ 42rem: sidebar nằm trong bố cục."}</p>;
+  return <p>{narrow ? "Narrower than 42rem: the sidebar opens in a Drawer." : "42rem or wider: the sidebar is part of the layout."}</p>;
 }
 
 const NAV_CODE = `      <SidebarContent>
-        <Nav defaultSelectedValue="home" aria-label="Ứng dụng">
-          <NavItem value="home" icon={<Home20Regular />}>Trang chủ</NavItem>
-          <NavItem value="inbox" icon={<Mail20Regular />}>Hộp thư</NavItem>
-          <NavItem value="calendar" icon={<CalendarLtr20Regular />}>Lịch</NavItem>
-          <NavSectionHeader>Quản lý</NavSectionHeader>
-          <NavItem value="people" icon={<People20Regular />}>Thành viên</NavItem>
-          <NavItem value="settings" icon={<Settings20Regular />}>Cài đặt</NavItem>
+        <Nav defaultSelectedValue="home" aria-label="App">
+          <NavItem value="home" icon={<Home20Regular />}>Home</NavItem>
+          <NavItem value="inbox" icon={<Mail20Regular />}>Inbox</NavItem>
+          <NavItem value="calendar" icon={<CalendarLtr20Regular />}>Calendar</NavItem>
+          <NavSectionHeader>Manage</NavSectionHeader>
+          <NavItem value="people" icon={<People20Regular />}>Members</NavItem>
+          <NavItem value="settings" icon={<Settings20Regular />}>Settings</NavItem>
         </Nav>
       </SidebarContent>`;
 
@@ -114,7 +114,7 @@ ${NAV_CODE}
     </Sidebar>
     <AppShellHeader>
       <SidebarTrigger />
-      <span className="font-semibold">Trang chủ</span>
+      <span className="font-semibold">Home</span>
     </AppShellHeader>
     <AppShellMain asChild>
       <div>
@@ -149,7 +149,7 @@ function Placeholder() {
             </Sidebar>
             <AppShellHeader>
               <SidebarTrigger />
-              <span className="font-semibold">Trang chủ</span>
+              <span className="font-semibold">Home</span>
             </AppShellHeader>
             <AppShellMain asChild>
               <div>
@@ -171,10 +171,10 @@ ${NAV_CODE}
     </Sidebar>
     <AppShellHeader>
       <SidebarTrigger />
-      <span className="font-semibold">Trang chủ</span>
+      <span className="font-semibold">Home</span>
     </AppShellHeader>
     <AppShellMain asChild>
-      <div className="p-4">Nội dung trang</div>
+      <div className="p-4">Page content</div>
     </AppShellMain>
   </AppShell>
 </div>`,
@@ -188,10 +188,10 @@ ${NAV_CODE}
               </Sidebar>
               <AppShellHeader>
                 <SidebarTrigger />
-                <span className="font-semibold">Trang chủ</span>
+                <span className="font-semibold">Home</span>
               </AppShellHeader>
               <AppShellMain asChild>
-                <div className="p-4">Nội dung trang</div>
+                <div className="p-4">Page content</div>
               </AppShellMain>
             </AppShell>
           </div>
@@ -204,7 +204,7 @@ ${NAV_CODE}
           "breakpoint=\"2xl\" (42rem). Mốc đo theo độ rộng của AppShell chứ không theo màn hình: kéo góc dưới của khung để thử. Qua mốc khi Drawer đang mở thì Drawer đóng, focus về SidebarTrigger, nút bị ẩn thì về nội dung; trạng thái thu gọn giữ nguyên. Phần tự làm cần đổi cùng lúc thì dùng `@2xl/app-shell:…`, hoặc `useAppShell().narrow` cho hành vi (luôn là false khi render ở server). `md:` và useMediaQuery theo màn hình nên sẽ lệch mốc.",
         code: `function BreakpointStatus() {
   const { narrow } = useAppShell();
-  return <p>{narrow ? "Khung hẹp hơn 42rem: sidebar mở trong Drawer." : "Khung từ 42rem: sidebar nằm trong bố cục."}</p>;
+  return <p>{narrow ? "Narrower than 42rem: the sidebar opens in a Drawer." : "42rem or wider: the sidebar is part of the layout."}</p>;
 }
 
 function ResizableShell() {
@@ -216,7 +216,7 @@ ${NAV_CODE.replace(/^/gm, "    ")}
         </Sidebar>
         <AppShellHeader>
           <SidebarTrigger />
-          <span className="font-semibold">Trang chủ</span>
+          <span className="font-semibold">Home</span>
         </AppShellHeader>
         <AppShellMain asChild>
           <div className="space-y-3 p-4">
@@ -241,7 +241,7 @@ ${NAV_CODE.replace(/^/gm, "    ")}
               </Sidebar>
               <AppShellHeader>
                 <SidebarTrigger />
-                <span className="font-semibold">Trang chủ</span>
+                <span className="font-semibold">Home</span>
               </AppShellHeader>
               <AppShellMain asChild>
                 <div className="space-y-3 p-4">
@@ -268,14 +268,14 @@ ${NAV_CODE}
     </Sidebar>
     <AppShellHeader>
       <SidebarTrigger />
-      <span className="font-semibold">Hộp thư</span>
+      <span className="font-semibold">Inbox</span>
     </AppShellHeader>
     <AppShellMain asChild>
-      <div className="p-4">Danh sách thư</div>
+      <div className="p-4">Message list</div>
     </AppShellMain>
-    <AppShellAside className="w-56 p-4" aria-label="Chi tiết">
-      <p className="font-semibold">Chi tiết</p>
-      <p className="text-caption1 text-foreground-3">Người gửi, tệp đính kèm, nhãn.</p>
+    <AppShellAside className="w-56 p-4" aria-label="Details">
+      <p className="font-semibold">Details</p>
+      <p className="text-caption1 text-foreground-3">Sender, attachments, labels.</p>
     </AppShellAside>
   </AppShell>
 </div>`,
@@ -289,14 +289,14 @@ ${NAV_CODE}
               </Sidebar>
               <AppShellHeader>
                 <SidebarTrigger />
-                <span className="font-semibold">Hộp thư</span>
+                <span className="font-semibold">Inbox</span>
               </AppShellHeader>
               <AppShellMain asChild>
-                <div className="p-4">Danh sách thư</div>
+                <div className="p-4">Message list</div>
               </AppShellMain>
-              <AppShellAside className="w-56 p-4" aria-label="Chi tiết">
-                <p className="font-semibold">Chi tiết</p>
-                <p className="text-caption1 text-foreground-3">Người gửi, tệp đính kèm, nhãn.</p>
+              <AppShellAside className="w-56 p-4" aria-label="Details">
+                <p className="font-semibold">Details</p>
+                <p className="text-caption1 text-foreground-3">Sender, attachments, labels.</p>
               </AppShellAside>
             </AppShell>
           </div>
@@ -311,8 +311,8 @@ ${NAV_CODE}
   <AppShell scroll="page" className="h-full min-h-0 overflow-y-auto" skipLink={false}>
     <AppShellHeader>
       <span className="me-auto font-semibold">Sakura</span>
-      <Button appearance="subtle">Sản phẩm</Button>
-      <Button appearance="primary">Đăng nhập</Button>
+      <Button appearance="subtle">Products</Button>
+      <Button appearance="primary">Sign in</Button>
     </AppShellHeader>
     <AppShellMain asChild>
       <div className="flex flex-col gap-3 p-4">
@@ -330,8 +330,8 @@ ${NAV_CODE}
             <AppShell scroll="page" className="h-full min-h-0 overflow-y-auto" skipLink={false}>
               <AppShellHeader>
                 <span className="me-auto font-semibold">Sakura</span>
-                <Button appearance="subtle">Sản phẩm</Button>
-                <Button appearance="primary">Đăng nhập</Button>
+                <Button appearance="subtle">Products</Button>
+                <Button appearance="primary">Sign in</Button>
               </AppShellHeader>
               <AppShellMain asChild>
                 <div className="flex flex-col gap-3 p-4">
@@ -361,7 +361,7 @@ ${NAV_CODE}
 ${NAV_CODE}
     </Sidebar>
     <AppShellMain asChild>
-      <div className="p-4">Danh sách khách hàng</div>
+      <div className="p-4">Customer list</div>
     </AppShellMain>
   </AppShell>
 </div>`,
@@ -386,7 +386,7 @@ ${NAV_CODE}
                 </SidebarContent>
               </Sidebar>
               <AppShellMain asChild>
-                <div className="p-4">Danh sách khách hàng</div>
+                <div className="p-4">Customer list</div>
               </AppShellMain>
             </AppShell>
           </div>
@@ -401,7 +401,7 @@ ${NAV_CODE}
   const { setDrawerOpen } = useAppShell();
   return (
     <Button icon={<Compose20Regular />} className="justify-start" onClick={() => setDrawerOpen(false)}>
-      Đoạn chat mới
+      New chat
     </Button>
   );
 }
@@ -413,13 +413,13 @@ function ChatShell() {
         <Sidebar collapsible="offcanvas" defaultWidth={240}>
           <SidebarHeader>
             <Chat20Regular />
-            <span className="font-semibold">Trợ lý</span>
+            <span className="font-semibold">Assistant</span>
           </SidebarHeader>
           <SidebarContent>
-            <Nav defaultSelectedValue="a" aria-label="Hội thoại">
-              <NavItem value="a">Kế hoạch tuần</NavItem>
-              <NavItem value="b">Tóm tắt báo cáo</NavItem>
-              <NavItem value="c">Dịch email</NavItem>
+            <Nav defaultSelectedValue="a" aria-label="Conversations">
+              <NavItem value="a">Weekly plan</NavItem>
+              <NavItem value="b">Report summary</NavItem>
+              <NavItem value="c">Translate email</NavItem>
             </Nav>
           </SidebarContent>
           <SidebarFooter>
@@ -428,10 +428,10 @@ function ChatShell() {
         </Sidebar>
         <AppShellHeader>
           <SidebarTrigger />
-          <span className="font-semibold">Kế hoạch tuần</span>
+          <span className="font-semibold">Weekly plan</span>
         </AppShellHeader>
         <AppShellMain asChild>
-          <div className="p-4">Tin nhắn</div>
+          <div className="p-4">Messages</div>
         </AppShellMain>
       </AppShell>
     </div>
@@ -443,13 +443,13 @@ function ChatShell() {
               <Sidebar collapsible="offcanvas" defaultWidth={240}>
                 <SidebarHeader>
                   <Chat20Regular />
-                  <span className="font-semibold">Trợ lý</span>
+                  <span className="font-semibold">Assistant</span>
                 </SidebarHeader>
                 <SidebarContent>
-                  <Nav defaultSelectedValue="a" aria-label="Hội thoại">
-                    <NavItem value="a">Kế hoạch tuần</NavItem>
-                    <NavItem value="b">Tóm tắt báo cáo</NavItem>
-                    <NavItem value="c">Dịch email</NavItem>
+                  <Nav defaultSelectedValue="a" aria-label="Conversations">
+                    <NavItem value="a">Weekly plan</NavItem>
+                    <NavItem value="b">Report summary</NavItem>
+                    <NavItem value="c">Translate email</NavItem>
                   </Nav>
                 </SidebarContent>
                 <SidebarFooter>
@@ -458,10 +458,10 @@ function ChatShell() {
               </Sidebar>
               <AppShellHeader>
                 <SidebarTrigger />
-                <span className="font-semibold">Kế hoạch tuần</span>
+                <span className="font-semibold">Weekly plan</span>
               </AppShellHeader>
               <AppShellMain asChild>
-                <div className="p-4">Tin nhắn</div>
+                <div className="p-4">Messages</div>
               </AppShellMain>
             </AppShell>
           </div>

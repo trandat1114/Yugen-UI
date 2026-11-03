@@ -8,17 +8,17 @@ import { arrayMove, Sortable, SortableGroup, SortableHandle, SortableItem } from
 import type { ComponentDoc } from "../types";
 
 const TASKS = [
-  { id: "login", title: "Màn hình đăng nhập", description: "Hạn thứ Sáu" },
-  { id: "orders", title: "Danh sách đơn hàng", description: "Chờ API" },
-  { id: "payment", title: "Thanh toán", description: "Ưu tiên cao" },
-  { id: "docs", title: "Tài liệu phát hành", description: "Sau khi phát hành" },
+  { id: "login", title: "Sign-in screen", description: "Due Friday" },
+  { id: "orders", title: "Order list", description: "Waiting on API" },
+  { id: "payment", title: "Payment", description: "High priority" },
+  { id: "docs", title: "Release notes", description: "After launch" },
 ];
 
 const TASKS_CODE = `const TASKS = [
-  { id: "login", title: "Màn hình đăng nhập", description: "Hạn thứ Sáu" },
-  { id: "orders", title: "Danh sách đơn hàng", description: "Chờ API" },
-  { id: "payment", title: "Thanh toán", description: "Ưu tiên cao" },
-  { id: "docs", title: "Tài liệu phát hành", description: "Sau khi phát hành" },
+  { id: "login", title: "Sign-in screen", description: "Due Friday" },
+  { id: "orders", title: "Order list", description: "Waiting on API" },
+  { id: "payment", title: "Payment", description: "High priority" },
+  { id: "docs", title: "Release notes", description: "After launch" },
 ];`;
 
 const taskById = (id: string) => TASKS.find((t) => t.id === id)!;
@@ -27,7 +27,7 @@ function TaskList() {
   const [order, setOrder] = useState(() => TASKS.map((t) => t.id));
   return (
     <Sortable asChild value={order} onValueChange={setOrder}>
-      <List aria-label="Việc cần làm" variant="outline" className="w-full max-w-md">
+      <List aria-label="Tasks" variant="outline" className="w-full max-w-md">
         {order.map((id) => {
           const task = taskById(id);
           return (
@@ -42,9 +42,9 @@ function TaskList() {
 }
 
 function Priorities() {
-  const [order, setOrder] = useState(["Nhanh", "Rẻ", "Bền"]);
+  const [order, setOrder] = useState(["Fast", "Cheap", "Durable"]);
   return (
-    <Sortable orientation="horizontal" value={order} onValueChange={setOrder} role="list" aria-label="Thứ tự ưu tiên" className="flex gap-2">
+    <Sortable orientation="horizontal" value={order} onValueChange={setOrder} role="list" aria-label="Priority order" className="flex gap-2">
       {order.map((name, i) => (
         <SortableItem
           key={name}
@@ -67,7 +67,7 @@ const PHOTOS = ["Sakura", "Fuji", "Kyoto", "Nara", "Nikko", "Osaka"];
 function Gallery() {
   const [order, setOrder] = useState(PHOTOS);
   return (
-    <Sortable orientation="grid" value={order} onValueChange={setOrder} role="list" aria-label="Ảnh trong album" className="grid w-full max-w-sm grid-cols-3 gap-2">
+    <Sortable orientation="grid" value={order} onValueChange={setOrder} role="list" aria-label="Album photos" className="grid w-full max-w-sm grid-cols-3 gap-2">
       {order.map((name) => (
         <SortableItem
           key={name}
@@ -85,30 +85,30 @@ function Gallery() {
 }
 
 const CARDS: Record<string, string> = {
-  login: "Màn hình đăng nhập",
-  orders: "Danh sách đơn hàng",
-  payment: "Thanh toán",
-  docs: "Tài liệu phát hành",
-  search: "Tìm kiếm",
+  login: "Sign-in screen",
+  orders: "Order list",
+  payment: "Payment",
+  docs: "Release notes",
+  search: "Search",
 };
 
 const COLUMNS = [
-  { id: "todo", title: "Cần làm" },
-  { id: "doing", title: "Đang làm" },
-  { id: "done", title: "Xong" },
+  { id: "todo", title: "To do" },
+  { id: "doing", title: "In progress" },
+  { id: "done", title: "Done" },
 ];
 
 const BOARD_CODE = `const CARDS: Record<string, string> = {
-  login: "Màn hình đăng nhập",
-  orders: "Danh sách đơn hàng",
-  payment: "Thanh toán",
-  docs: "Tài liệu phát hành",
-  search: "Tìm kiếm",
+  login: "Sign-in screen",
+  orders: "Order list",
+  payment: "Payment",
+  docs: "Release notes",
+  search: "Search",
 };
 const COLUMNS = [
-  { id: "todo", title: "Cần làm" },
-  { id: "doing", title: "Đang làm" },
-  { id: "done", title: "Xong" },
+  { id: "todo", title: "To do" },
+  { id: "doing", title: "In progress" },
+  { id: "done", title: "Done" },
 ];`;
 
 function Board() {
@@ -125,7 +125,7 @@ function Board() {
           value={board}
           onValueChange={setBoard}
           onSortEnd={({ item, to, canceled }) => {
-            if (!canceled) setSaved(`Đã lưu: ${CARDS[item]} ở cột ${COLUMNS.find((c) => c.id === to.list)?.title}.`);
+            if (!canceled) setSaved(`Saved: ${CARDS[item]} in ${COLUMNS.find((c) => c.id === to.list)?.title}.`);
           }}
         >
           {COLUMNS.map((column) => (
@@ -160,15 +160,15 @@ function Board() {
 }
 
 function Playlist() {
-  const [songs, setSongs] = useState(["Hoa anh đào", "Mưa tháng Sáu", "Biển đêm", "Gió mùa"]);
+  const [songs, setSongs] = useState(["Cherry Blossom", "June Rain", "Night Sea", "Monsoon"]);
   const { announce } = useAnnounce();
   const move = (from: number, to: number) => {
     setSongs(arrayMove(songs, from, to));
-    announce(`${songs[from]}: vị trí ${to + 1} trên ${songs.length}.`);
+    announce(`${songs[from]}: position ${to + 1} of ${songs.length}.`);
   };
   return (
     <Sortable asChild value={songs} onValueChange={setSongs}>
-      <List aria-label="Danh sách phát" className="w-full max-w-md">
+      <List aria-label="Playlist" className="w-full max-w-md">
         {songs.map((song, i) => (
           <SortableItem key={song} value={song} label={song} asChild>
             <ListItem
@@ -177,17 +177,17 @@ function Playlist() {
               actions={
                 <Menu>
                   <MenuTrigger asChild>
-                    <Button appearance="subtle" icon={<MoreHorizontal20Regular />} aria-label={`Tuỳ chọn cho ${song}`} />
+                    <Button appearance="subtle" icon={<MoreHorizontal20Regular />} aria-label={`Options for ${song}`} />
                   </MenuTrigger>
                   <MenuPopover align="end">
                     <MenuItem disabled={i === 0} onSelect={() => move(i, 0)}>
-                      Lên đầu
+                      Move to top
                     </MenuItem>
                     <MenuItem disabled={i === 0} onSelect={() => move(i, i - 1)}>
-                      Lên trên
+                      Move up
                     </MenuItem>
                     <MenuItem disabled={i === songs.length - 1} onSelect={() => move(i, i + 1)}>
-                      Xuống dưới
+                      Move down
                     </MenuItem>
                   </MenuPopover>
                 </Menu>
@@ -201,18 +201,18 @@ function Playlist() {
 }
 
 function PinnedApps() {
-  const [apps, setApps] = useState(["Thư", "Lịch", "Tệp", "Ghi chú"]);
+  const [apps, setApps] = useState(["Mail", "Calendar", "Files", "Notes"]);
   const [opened, setOpened] = useState("");
   return (
     <div className="space-y-2">
-      <Sortable orientation="grid" value={apps} onValueChange={setApps} role="group" aria-label="Ứng dụng đã ghim" className="flex flex-wrap gap-2">
+      <Sortable orientation="grid" value={apps} onValueChange={setApps} role="group" aria-label="Pinned apps" className="flex flex-wrap gap-2">
         {apps.map((app) => (
           <SortableItem key={app} value={app} asChild handle shortcuts>
             <Button onClick={() => setOpened(app)}>{app}</Button>
           </SortableItem>
         ))}
       </Sortable>
-      <p className="text-caption1 text-foreground-3">{opened && `Đã mở ${opened}.`}</p>
+      <p className="text-caption1 text-foreground-3">{opened && `Opened ${opened}.`}</p>
     </div>
   );
 }
@@ -232,7 +232,7 @@ export const docs: ComponentDoc[] = [
   const [order, setOrder] = useState(() => TASKS.map((t) => t.id));
   return (
     <Sortable asChild value={order} onValueChange={setOrder}>
-      <List aria-label="Việc cần làm" variant="outline" className="w-full max-w-md">
+      <List aria-label="Tasks" variant="outline" className="w-full max-w-md">
         {order.map((id) => {
           const task = TASKS.find((t) => t.id === id)!;
           return (
@@ -253,9 +253,9 @@ export const docs: ComponentDoc[] = [
         title: "Ngang",
         description: "orientation=\"horizontal\": ← → di chuyển, đảo chiều trong RTL.",
         code: `function Priorities() {
-  const [order, setOrder] = useState(["Nhanh", "Rẻ", "Bền"]);
+  const [order, setOrder] = useState(["Fast", "Cheap", "Durable"]);
   return (
-    <Sortable orientation="horizontal" value={order} onValueChange={setOrder} role="list" aria-label="Thứ tự ưu tiên" className="flex gap-2">
+    <Sortable orientation="horizontal" value={order} onValueChange={setOrder} role="list" aria-label="Priority order" className="flex gap-2">
       {order.map((name, i) => (
         <SortableItem
           key={name}
@@ -282,7 +282,7 @@ export const docs: ComponentDoc[] = [
 function Gallery() {
   const [order, setOrder] = useState(PHOTOS);
   return (
-    <Sortable orientation="grid" value={order} onValueChange={setOrder} role="list" aria-label="Ảnh trong album" className="grid w-full max-w-sm grid-cols-3 gap-2">
+    <Sortable orientation="grid" value={order} onValueChange={setOrder} role="list" aria-label="Album photos" className="grid w-full max-w-sm grid-cols-3 gap-2">
       {order.map((name) => (
         <SortableItem
           key={name}
@@ -319,7 +319,7 @@ function Gallery() {
           value={board}
           onValueChange={setBoard}
           onSortEnd={({ item, to, canceled }) => {
-            if (!canceled) setSaved(\`Đã lưu: \${CARDS[item]} ở cột \${COLUMNS.find((c) => c.id === to.list)?.title}.\`);
+            if (!canceled) setSaved(\`Saved: \${CARDS[item]} in \${COLUMNS.find((c) => c.id === to.list)?.title}.\`);
           }}
         >
           {COLUMNS.map((column) => (
@@ -360,15 +360,15 @@ function Gallery() {
         description:
           "Thêm lệnh trong menu cho người không nhận ra tay nắm. arrayMove trả về mảng mới; useAnnounce đọc vị trí mới như khi kéo.",
         code: `function Playlist() {
-  const [songs, setSongs] = useState(["Hoa anh đào", "Mưa tháng Sáu", "Biển đêm", "Gió mùa"]);
+  const [songs, setSongs] = useState(["Cherry Blossom", "June Rain", "Night Sea", "Monsoon"]);
   const { announce } = useAnnounce();
   const move = (from: number, to: number) => {
     setSongs(arrayMove(songs, from, to));
-    announce(\`\${songs[from]}: vị trí \${to + 1} trên \${songs.length}.\`);
+    announce(\`\${songs[from]}: position \${to + 1} of \${songs.length}.\`);
   };
   return (
     <Sortable asChild value={songs} onValueChange={setSongs}>
-      <List aria-label="Danh sách phát" className="w-full max-w-md">
+      <List aria-label="Playlist" className="w-full max-w-md">
         {songs.map((song, i) => (
           <SortableItem key={song} value={song} label={song} asChild>
             <ListItem
@@ -377,17 +377,17 @@ function Gallery() {
               actions={
                 <Menu>
                   <MenuTrigger asChild>
-                    <Button appearance="subtle" icon={<MoreHorizontal20Regular />} aria-label={\`Tuỳ chọn cho \${song}\`} />
+                    <Button appearance="subtle" icon={<MoreHorizontal20Regular />} aria-label={\`Options for \${song}\`} />
                   </MenuTrigger>
                   <MenuPopover align="end">
                     <MenuItem disabled={i === 0} onSelect={() => move(i, 0)}>
-                      Lên đầu
+                      Move to top
                     </MenuItem>
                     <MenuItem disabled={i === 0} onSelect={() => move(i, i - 1)}>
-                      Lên trên
+                      Move up
                     </MenuItem>
                     <MenuItem disabled={i === songs.length - 1} onSelect={() => move(i, i + 1)}>
-                      Xuống dưới
+                      Move down
                     </MenuItem>
                   </MenuPopover>
                 </Menu>
@@ -406,18 +406,18 @@ function Gallery() {
         description:
           "Nút đã dùng Space / Enter để mở: `handle` cho kéo cả nút (bấm không kéo vẫn là bấm; trên màn hình cảm ứng thì giữ một lúc rồi kéo), `shortcuts` cho Alt + phím mũi tên di chuyển. Nút xuống dòng khi khung hẹp nên dùng orientation=\"grid\".",
         code: `function PinnedApps() {
-  const [apps, setApps] = useState(["Thư", "Lịch", "Tệp", "Ghi chú"]);
+  const [apps, setApps] = useState(["Mail", "Calendar", "Files", "Notes"]);
   const [opened, setOpened] = useState("");
   return (
     <div className="space-y-2">
-      <Sortable orientation="grid" value={apps} onValueChange={setApps} role="group" aria-label="Ứng dụng đã ghim" className="flex flex-wrap gap-2">
+      <Sortable orientation="grid" value={apps} onValueChange={setApps} role="group" aria-label="Pinned apps" className="flex flex-wrap gap-2">
         {apps.map((app) => (
           <SortableItem key={app} value={app} asChild handle shortcuts>
             <Button onClick={() => setOpened(app)}>{app}</Button>
           </SortableItem>
         ))}
       </Sortable>
-      <p className="text-caption1 text-foreground-3">{opened && \`Đã mở \${opened}.\`}</p>
+      <p className="text-caption1 text-foreground-3">{opened && \`Opened \${opened}.\`}</p>
     </div>
   );
 }`,
