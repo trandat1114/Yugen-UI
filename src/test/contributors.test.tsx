@@ -1,11 +1,12 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 // @ts-expect-error -- script Node thuần, không có khai báo kiểu
-import { buildContributors, parseArgs, pullTypes } from "../../scripts/contributors.mjs";
+import { buildContributors, GROUPS, inGroup, parseArgs, pullTypes, renderAvatarsSvg } from "../../scripts/contributors.mjs";
 // @ts-expect-error -- module Changesets thuần JS
 import changelog, { splitThanks, thanksText } from "../../.changeset/changelog.mjs";
 import {
   sourceLang,
+  CONTRIBUTION_GROUPS,
   CONTRIBUTORS,
   CONTRIBUTORS_LIVE_URL,
   CONTRIBUTORS_UPDATED,
@@ -215,12 +216,47 @@ describe("scripts/contributors.mjs · bình luận trên PR và co-author (#272)
     expect(people[0].items).toEqual([{ types: ["design"], title: "Sakura icon set", date: "2026-10-24", url: "https://www.figma.com/file/x" }]);
   });
 
-  it("--out và --strict", () => {
+  it("--out, --strict và --svg", () => {
     expect(parseArgs([]).strict).toBe(false);
+    expect(parseArgs([]).svg).toBeNull();
+    expect(parseArgs(["--svg", "out"]).svg).toMatch(/out$/);
     expect(parseArgs([]).out).toMatch(/src[\\/]docs[\\/]contributors\.json$/);
     const { out, strict } = parseArgs(["--out", "data/contributors.json", "--strict"]);
     expect(strict).toBe(true);
     expect(out).toMatch(/data[\\/]contributors\.json$/);
+  });
+});
+
+describe("ảnh đại diện cho CONTRIBUTING.md và README (#275)", () => {
+  const person = (login: string, name = login, counts: Record<string, number> = { code: 1 }) =>
+    ({ login, name, avatar: `https://github.com/${login}.png`, first: "2026-10-01", counts }) as Contributor;
+
+  it("hai nhóm giống trang /contributors", () => {
+    expect(GROUPS).toEqual(CONTRIBUTION_GROUPS);
+    const people = [person("a"), person("b", "b", { bug: 1 }), person("c", "c", { docs: 1, discussion: 2 })];
+    expect(inGroup(people, "code").map((p: Contributor) => p.login)).toEqual(["a", "c"]);
+    expect(inGroup(people, "ideas").map((p: Contributor) => p.login)).toEqual(["b", "c"]);
+  });
+
+  it("ảnh nhúng sẵn, người không có ảnh dùng chữ cái đầu, tên được escape", () => {
+    const svg: string = renderAvatarsSvg([person("a", "Ánh <A&B>"), person("b")], new Map([["b", "data:image/png;base64,AAAA"]]));
+    expect(svg.startsWith('<svg xmlns="http://www.w3.org/2000/svg" width="112" height="52"')).toBe(true);
+    expect(svg.match(/<image /g)).toHaveLength(1);
+    expect(svg).toContain('href="data:image/png;base64,AAAA"');
+    expect(svg).toContain("<title>Ánh &lt;A&amp;B&gt; (@a)</title>");
+    expect(svg).toContain(">Á</text>");
+    expect(svg).toContain("<title>@b</title>");
+    // Không tải ảnh ngoài: SVG qua <img> chặn mọi tài nguyên ngoài.
+    expect(svg).not.toMatch(/href="https?:/);
+  });
+
+  it("xuống hàng theo perRow; quá max thì một nụ +N", () => {
+    const many = Array.from({ length: 60 }, (_, i) => person(`p${i}`));
+    const svg: string = renderAvatarsSvg(many, new Map(), { perRow: 14, max: 56 });
+    expect(svg.match(/<g transform="translate\(\d+ \d+\)"><title>@p/g)).toHaveLength(55);
+    expect(svg).toContain("<title>+5</title>");
+    // 56 ô: 14 mỗi hàng, 4 hàng.
+    expect(svg).toMatch(/width="832" height="232"/);
   });
 });
 
