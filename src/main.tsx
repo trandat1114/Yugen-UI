@@ -20,6 +20,13 @@ if (lang !== current.lang || current.legacy || params.has("lang")) {
   window.history.replaceState(null, "", hrefOf(current.route, lang) + search + window.location.hash);
 }
 
+// Service worker (#306, src/docs/sw/sw.js): chunk có hash lấy từ cache, trang đã xem đọc được khi mất mạng. Chỉ bản build,
+// không khi chạy E2E (navigator.webdriver); VITE_DOCS_SW=off thì sw.js là bản tự gỡ và trang không đăng ký nữa.
+if (import.meta.env.PROD && import.meta.env.VITE_DOCS_SW !== "off" && "serviceWorker" in navigator && !navigator.webdriver) {
+  const base = import.meta.env.BASE_URL;
+  window.addEventListener("load", () => void navigator.serviceWorker.register(`${base}sw.js`, { scope: base }).catch(() => {}));
+}
+
 // #root có sẵn HTML prerender (scripts/prerender.mjs). Không hydrate: demo phụ thuộc ngày giờ, theme và cài đặt đã lưu nên
 // HTML dựng lúc build không khớp hoàn toàn. Nạp trước phần của route rồi render một lần — React thay HTML cũ khi commit.
 const root = createRoot(document.getElementById("root")!);

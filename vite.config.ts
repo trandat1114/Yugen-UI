@@ -3,12 +3,12 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "node:path";
 import { yugenBootSplash, yugenDocsMeta, yugenMessages, yugenNews, yugenTypeExports, yugenUiExports } from "./vite.plugins.ts";
-import { fluentIconAtoms } from "./vite.perf.ts";
+import { docsServiceWorker, fluentIconAtoms } from "./vite.perf.ts";
 
 export default defineConfig({
   // GitHub Pages phục vụ site ở /Yugen-UI/ — workflow pages.yml đặt DOCS_BASE; dev & preview giữ "/".
   base: process.env.DOCS_BASE ?? "/",
-  plugins: [react(), tailwindcss(), yugenTypeExports(import.meta.dirname), yugenUiExports(import.meta.dirname), yugenDocsMeta(import.meta.dirname), yugenMessages(import.meta.dirname), yugenNews(import.meta.dirname), yugenBootSplash(import.meta.dirname), fluentIconAtoms(import.meta.dirname)],
+  plugins: [react(), tailwindcss(), yugenTypeExports(import.meta.dirname), yugenUiExports(import.meta.dirname), yugenDocsMeta(import.meta.dirname), yugenMessages(import.meta.dirname), yugenNews(import.meta.dirname), yugenBootSplash(import.meta.dirname), fluentIconAtoms(import.meta.dirname), docsServiceWorker(import.meta.dirname)],
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),

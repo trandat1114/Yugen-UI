@@ -1,8 +1,40 @@
 // Plugin hiệu năng của site docs (#304–#308), chỉ dùng trong vite.config.ts (không áp cho thư viện).
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
 import type { Plugin } from "vite";
+
+/**
+ * Ghi `<base>/sw.js` (#306): src/docs/sw/sw.js kèm VERSION và ASSETS (mọi file trong assets/ của bản build này, để SW
+ * xoá chunk cũ khỏi cache). Mỗi bản build có nội dung khác → trình duyệt cập nhật SW. `VITE_DOCS_SW=off`: ghi bản tự gỡ
+ * (src/docs/sw/kill.js) — main.tsx cũng thôi đăng ký. Chỉ bản build client.
+ */
+export function docsServiceWorker(root: string): Plugin {
+  let ssr = false;
+  return {
+    name: "yugen-docs-service-worker",
+    apply: "build",
+    // Sau các plugin của Vite: file CSS / font đã nằm trong bundle.
+    enforce: "post",
+    configResolved(config) {
+      ssr = !!config.build.ssr;
+    },
+    generateBundle(_, bundle) {
+      if (ssr) return;
+      const dir = path.join(root, "src", "docs", "sw");
+      let source = fs.readFileSync(path.join(dir, "kill.js"), "utf8");
+      if (process.env.VITE_DOCS_SW !== "off") {
+        const assets = Object.keys(bundle)
+          .filter((file) => file.startsWith("assets/"))
+          .sort();
+        const version = createHash("sha256").update(assets.join("\n")).digest("hex").slice(0, 12);
+        source = `const VERSION = ${JSON.stringify(version)};\nconst ASSETS = ${JSON.stringify(assets)};\n${fs.readFileSync(path.join(dir, "sw.js"), "utf8")}`;
+      }
+      this.emitFile({ type: "asset", fileName: "sw.js", source });
+    },
+  };
+}
 
 const PACKAGE = "@fluentui/react-icons";
 const IMPORT = /\b(import|export)\s*\{([^}]*)\}\s*from\s*(["'])@fluentui\/react-icons\3;?/g;
