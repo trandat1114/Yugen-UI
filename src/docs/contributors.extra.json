@@ -26,6 +26,22 @@
       "title": "Xem lại AppShell sau khi làm xong, đề xuất ghi chú về breakpoint trong docs (#161)",
       "date": "2026-11-02",
       "url": "https://github.com/trandat1114/Yugen-UI/issues/161#issuecomment-6569261947"
+    },
+    {
+      "login": "dave-otf",
+      "name": "Dave Kurian",
+      "types": ["review", "idea"],
+      "title": "Đề xuất kiểm thử bảng props ở 375px: tên prop dài và code trong mô tả, không tràn ngang, backtick thành code (#259)",
+      "date": "2026-11-03",
+      "url": "https://github.com/trandat1114/Yugen-UI/issues/259#issuecomment-6593217974"
+    },
+    {
+      "login": "dave-otf",
+      "name": "Dave Kurian",
+      "types": ["review", "idea"],
+      "title": "Đề xuất kiểm thử bảng Messages ở 375px: mỗi khoá đủ giá trị tiếng Việt và tiếng Anh, đo từng ô chứ không chỉ cả trang (#266)",
+      "date": "2026-11-03",
+      "url": "https://github.com/trandat1114/Yugen-UI/issues/266#issuecomment-6595648056"
     }
   ]
 }
