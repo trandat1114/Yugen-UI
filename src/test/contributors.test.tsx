@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { buildContributors, pullTypes } from "../../scripts/contributors.mjs";
 // @ts-expect-error -- module Changesets thuần JS
 import changelog, { splitThanks, thanksText } from "../../.changeset/changelog.mjs";
-import { CONTRIBUTORS, creditsBetween, type Contributor } from "@/docs/contributors";
+import { CONTRIBUTORS, contributionsIn, creditsBetween, type Contributor } from "@/docs/contributors";
 import { SakuraBranch } from "@/docs/SakuraBranch";
 
 const user = (login: string, name?: string) => ({ __typename: "User", login, name, avatarUrl: `https://avatars.githubusercontent.com/u/${login.length}?v=4` });
@@ -18,14 +18,22 @@ const pull = (number: number, author: object, files: string[], mergedAt: string,
   files: { nodes: files.map((path) => ({ path })) },
   reviews: { nodes: reviewers.map((author) => ({ author })) },
 });
-const issue = (number: number, author: object, labels: string[], createdAt: string, title = `Issue ${number}`) => ({
+const issue = (number: number, author: object, labels: string[], createdAt: string, title = `Issue ${number}`, comments: object[] = []) => ({
   number,
   title,
   url: `https://github.com/x/y/issues/${number}`,
   createdAt: `${createdAt}T10:00:00Z`,
   author,
   labels: { nodes: labels.map((name) => ({ name })) },
+  comments: { nodes: comments },
 });
+const comment = (issueNumber: number, id: number, author: object, createdAt: string, bodyText: string) => ({
+  url: `https://github.com/x/y/issues/${issueNumber}#issuecomment-${id}`,
+  createdAt: `${createdAt}T10:00:00Z`,
+  bodyText,
+  author,
+});
+const LONG = "Persist only the desktop collapsed state; treat the Drawer as transient.";
 
 describe("scripts/contributors.mjs", () => {
   it("xếp loại PR theo file, bỏ file sinh ra", () => {
@@ -74,6 +82,47 @@ describe("scripts/contributors.mjs", () => {
   });
 });
 
+describe("scripts/contributors.mjs · góp ý trong issue", () => {
+  it("tính bình luận trong issue của người khác; bỏ maintainer, bot, bình luận ngắn, người mở issue, issue invalid và bình luận đã ghi tay", () => {
+    const people = buildContributors(
+      {
+        pulls: [],
+        issues: [
+          issue(20, user("owner"), [], "2026-10-30", "AppShell proposal", [
+            comment(20, 1, user("owner"), "2026-10-30", LONG),
+            comment(20, 2, user("dave", "Dave"), "2026-10-30", LONG),
+            comment(20, 3, user("dave", "Dave"), "2026-11-02", LONG),
+            comment(20, 4, user("dave"), "2026-11-02", "+1, thanks!"),
+            comment(20, 5, bot("github-actions[bot]"), "2026-11-02", LONG),
+            comment(20, 6, user("gone"), "2026-11-02", LONG),
+          ]),
+          issue(21, user("reporter"), ["bug"], "2026-10-31", "[Bug]: cut off", [
+            comment(21, 7, user("reporter"), "2026-10-31", LONG),
+            comment(21, 8, user("dave"), "2026-11-01", LONG),
+          ]),
+          issue(22, user("spammer"), ["invalid"], "2026-11-01", "spam", [comment(22, 9, user("dave"), "2026-11-01", LONG)]),
+        ],
+      },
+      {
+        maintainers: ["owner"],
+        exclude: ["gone"],
+        people: [{ login: "dave", types: ["a11y", "idea"], title: "Focus after the breakpoint", date: "2026-10-30", url: "https://github.com/x/y/issues/20#issuecomment-2" }],
+      },
+    ) as Contributor[];
+
+    // Maintainer chỉ bình luận thì không có mặt.
+    expect(people.map((p) => p.login)).toEqual(["dave", "reporter"]);
+    const [dave, reporter] = people;
+    expect(reporter.counts).toEqual({ bug: 1 });
+    expect(dave).toMatchObject({ name: "Dave", first: "2026-10-30", counts: { discussion: 2, a11y: 1, idea: 1 } });
+    expect(dave.items?.map((i) => [i.number ?? null, i.types, i.url?.split("-").pop()])).toEqual([
+      [20, ["discussion"], "3"],
+      [21, ["discussion"], "8"],
+      [null, ["a11y", "idea"], "2"],
+    ]);
+  });
+});
+
 describe("creditsBetween", () => {
   const people = [
     { login: "owner", name: "Owner", avatar: "", maintainer: true, first: "2026-10-01", counts: { code: 9 } },
@@ -94,6 +143,37 @@ describe("creditsBetween", () => {
     expect(creditsBetween("2026-10-10", "2026-10-20", people).map(({ person, items }) => [person.login, items.map((i) => i.number)])).toEqual([["a", [2]]]);
     expect(creditsBetween(undefined, "2026-10-10", people)[0].items.map((i) => i.number)).toEqual([1]);
     expect(creditsBetween("2026-10-20", "2026-10-30", people)).toEqual([]);
+  });
+
+  it("tách hai mục: code (PR) và ý tưởng, thảo luận; thẻ chỉ còn loại của mục", () => {
+    const person = {
+      login: "b",
+      name: "B",
+      avatar: "",
+      first: "2026-10-01",
+      counts: { code: 1, docs: 1, review: 2, idea: 1 },
+      items: [
+        { types: ["review", "idea"], title: "góp ý trong issue", date: "2026-11-03", url: "https://github.com/x/y/issues/9#issuecomment-1" },
+        { types: ["code", "docs"], number: 5, title: "PR 5", date: "2026-10-02" },
+        { types: ["review"], number: 4, title: "PR 4", date: "2026-10-01" },
+      ],
+    } as Contributor;
+    const code = contributionsIn(person, "code")!;
+    expect(code.counts).toEqual({ code: 1, docs: 1 });
+    expect(code.items!.map((i) => i.title)).toEqual(["PR 5"]);
+    const ideas = contributionsIn(person, "ideas")!;
+    expect(ideas.counts).toEqual({ review: 2, idea: 1 });
+    expect(ideas.items!.map((i) => [i.title, i.types])).toEqual([
+      ["góp ý trong issue", ["review", "idea"]],
+      ["PR 4", ["review"]],
+    ]);
+    expect(contributionsIn({ ...person, counts: { bug: 1 }, items: [] }, "code")).toBeUndefined();
+  });
+
+  it("dave-otf (chỉ góp ý trong issue) chỉ có ở mục ý tưởng và thảo luận", () => {
+    const dave = CONTRIBUTORS.find((p) => p.login === "dave-otf")!;
+    expect(contributionsIn(dave, "code")).toBeUndefined();
+    expect(contributionsIn(dave, "ideas")?.counts.idea).toBeGreaterThan(0);
   });
 
   it("snapshot có maintainer đứng đầu", () => {

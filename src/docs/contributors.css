@@ -39,6 +39,38 @@
   transform: scale(1.6);
 }
 
+/* Thẻ người đóng góp nở ra khi cuộn tới. Animation theo vị trí cuộn (scroll-driven) nên HTML prerender và lần React
+   render không phát lại; trình duyệt chưa hỗ trợ thì thẻ hiện ngay. */
+@supports (animation-timeline: view()) {
+  .cb-card {
+    animation: cb-card-in linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 80%;
+  }
+}
+@keyframes cb-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+}
+
+/* Trỏ / focus vào thẻ: bông nhỏ cạnh ảnh xoay một cánh và nở to, icon loại đóng góp đổi sang màu brand. */
+.cb-mark {
+  transition: transform 480ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.cb-card:hover .cb-mark,
+.cb-card:focus-within .cb-mark {
+  transform: rotate(72deg) scale(1.3);
+}
+.cb-type {
+  transition: color 240ms ease-out;
+}
+.cb-card:hover .cb-type,
+.cb-card:focus-within .cb-type {
+  color: var(--color-brand-foreground-1);
+}
+
 /* Nền tối: mực trắng tinh quá gắt, dùng xám nhạt như mực pha loãng. */
 [data-theme="dark"] .cb-art {
   color: var(--color-foreground-2);
@@ -46,10 +78,17 @@
 
 @media (prefers-reduced-motion: reduce) {
   .cb-reveal,
-  .cb-bloom {
+  .cb-bloom,
+  .cb-card {
     animation: none;
   }
-  .cb-flower {
+  .cb-flower,
+  .cb-mark,
+  .cb-type {
     transition: none;
+  }
+  .cb-card:hover .cb-mark,
+  .cb-card:focus-within .cb-mark {
+    transform: none;
   }
 }

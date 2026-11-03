@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-30",
+  "updated": "2026-11-03",
   "people": [
     {
       "login": "trandat1114",
@@ -7,15 +7,64 @@
       "avatar": "https://avatars.githubusercontent.com/u/88397960?u=1536b607c6b24251c0f403833bc956776eae27c2&v=4",
       "first": "2026-10-20",
       "counts": {
-        "code": 103,
-        "templates": 28,
-        "docs": 103,
-        "translation": 54,
-        "bug": 16,
+        "code": 113,
+        "templates": 31,
+        "docs": 113,
+        "translation": 62,
+        "bug": 19,
         "a11y": 4,
-        "idea": 60
+        "idea": 61
       },
       "maintainer": true
+    },
+    {
+      "login": "dave-otf",
+      "name": "Dave Kurian",
+      "avatar": "https://github.com/dave-otf.png",
+      "first": "2026-10-30",
+      "counts": {
+        "discussion": 4,
+        "a11y": 1,
+        "idea": 3
+      },
+      "items": [
+        {
+          "types": [
+            "discussion",
+            "idea"
+          ],
+          "title": "Đề xuất kiểm thử bảng props ở 375px: tên prop dài và code trong mô tả, không tràn ngang, backtick thành code (#259)",
+          "date": "2026-11-03",
+          "url": "https://github.com/trandat1114/Yugen-UI/issues/259#issuecomment-6593217974"
+        },
+        {
+          "types": [
+            "discussion",
+            "idea"
+          ],
+          "title": "Đề xuất kiểm thử bảng Messages ở 375px: mỗi khoá đủ giá trị tiếng Việt và tiếng Anh, đo từng ô chứ không chỉ cả trang (#266)",
+          "date": "2026-11-03",
+          "url": "https://github.com/trandat1114/Yugen-UI/issues/266#issuecomment-6595648056"
+        },
+        {
+          "types": [
+            "discussion",
+            "idea"
+          ],
+          "title": "Xem lại AppShell sau khi làm xong, đề xuất ghi chú về breakpoint trong docs (#161)",
+          "date": "2026-11-02",
+          "url": "https://github.com/trandat1114/Yugen-UI/issues/161#issuecomment-6569261947"
+        },
+        {
+          "types": [
+            "discussion",
+            "a11y"
+          ],
+          "title": "Góp ý AppShell: chỉ lưu trạng thái màn rộng, focus khi qua breakpoint, phím tắt khi gõ IME (#161)",
+          "date": "2026-10-30",
+          "url": "https://github.com/trandat1114/Yugen-UI/issues/161#issuecomment-6532308797"
+        }
+      ]
     },
     {
       "login": "giabao12-hali",
@@ -23,9 +72,29 @@
       "avatar": "https://avatars.githubusercontent.com/u/73122721?u=02b625304d485e56f68b21ece646056ce325016b&v=4",
       "first": "2026-10-30",
       "counts": {
+        "code": 1,
+        "docs": 2,
         "bug": 1
       },
       "items": [
+        {
+          "types": [
+            "docs"
+          ],
+          "number": 251,
+          "title": "fix: adjust line height for numeral display in EnsoFrame and BloomFrame",
+          "date": "2026-11-02",
+          "url": "https://github.com/trandat1114/Yugen-UI/pull/251"
+        },
+        {
+          "types": [
+            "code",
+            "docs"
+          ],
+          "title": "Hooks dùng chung (#172)",
+          "date": "2026-11-02",
+          "url": "https://github.com/trandat1114/Yugen-UI/pull/253"
+        },
         {
           "types": [
             "bug"
