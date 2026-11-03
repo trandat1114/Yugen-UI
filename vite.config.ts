@@ -26,10 +26,23 @@ export default defineConfig({
     // Demo + code mẫu nạp lười: mỗi file src/docs/registry/*.tsx thành một chunk riêng (registry/index.ts); entry chỉ giữ metadata.
     rolldownOptions: {
       output: {
-        // Chỉ gom React (đổi ít, cache lâu). Component, Radix, icon để Rolldown chia theo route: gom cả thư viện / mọi icon vào
-        // một chunk thì trang nào cũng tải hết (trước đây ~465 KB gzip ban đầu, giờ ~220 KB).
+        // Component, Radix, icon để Rolldown chia theo route: gom cả thư viện / mọi icon vào một chunk thì trang nào cũng tải
+        // hết (trước đây ~465 KB gzip ban đầu). Nhưng chia hoàn toàn theo route thì mỗi tập entry dùng chung một module thành
+        // một chunk: ~110 file JS mỗi trang, phần lớn dưới 2 KB (#304). Các nhóm dưới đây gom phần nhỏ mà không tải thêm nhiều:
+        //  - react: đổi ít, cache lâu.
+        //  - shell: mọi module chunk chính import tĩnh. Trang nào cũng tải, nên một file thay vì ~25 file.
+        //  - messages: chuỗi có sẵn của component (~7 KB gzip). messagesVi import tất cả nên mỗi file thành một chunk riêng
+        //    (~45 request ở trang tiếng Việt). Trừ Calendar: file đó kéo theo locale vi của date-fns.
+        //  - icons: họ icon (vite.perf.ts) mà ≥ 4 entry dùng.
+        //  - common: thư viện, component, hook mà ≥ 16 entry dùng.
         codeSplitting: {
-          groups: [{ name: "react", test: /[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/ }],
+          groups: [
+            { name: "react", test: /[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/, priority: 10 },
+            { name: "shell", tags: ["$initial"], priority: 5 },
+            { name: "messages", test: /[\\/]src[\\/]components[\\/]ui[\\/](?!Calendar[\\/])[^\\/]+[\\/]messages\.ts$/, priority: 3 },
+            { name: "icons", test: /[\\/]@fluentui[\\/]react-icons[\\/]lib[\\/]atoms[\\/]/, minShareCount: 4, priority: 2 },
+            { name: "common", test: /[\\/]node_modules[\\/]|[\\/]src[\\/](components|lib|hooks)[\\/]/, minShareCount: 16, priority: 1 },
+          ],
         },
       },
     },
