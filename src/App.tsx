@@ -3,18 +3,18 @@ import { PageProgress, PageProgressFallback, YugenProvider } from "@/components/
 import { useAppearance, type Appearance } from "@/hooks/useAppearance";
 import { docsPath, hrefOf, navigate, useDocsLocation } from "@/docs/router";
 import { Sidebar } from "@/docs/layout/Sidebar";
-import { TopBar } from "@/docs/layout/TopBar";
+import { AppearancePicker, TopBar } from "@/docs/layout/TopBar";
 import { dismissLanguageSuggestion, LanguageSuggestion } from "@/docs/layout/LanguageSuggestion";
 import { YugenMark } from "@/docs/YugenMark";
 import { AuthorLink } from "@/docs/AuthorLink";
 import { CONCEPT_BY_SLUG, CONCEPT_EN_PAGES } from "@/docs/concepts";
-import { loadEnglish, LocaleProvider, useLocale, type Locale } from "@/docs/i18n";
+import { loadLocale, LocaleProvider, useLocale, type Locale } from "@/docs/i18n";
 import { FallbackNotice } from "@/docs/i18n/FallbackNotice";
 import { DocumentMeta, fallbackOf } from "@/docs/seo";
 import { lazyPage } from "@/docs/lazyPage";
-import { preloadComponentDoc } from "@/docs/registry";
-import { preloadComponentMessages } from "@/docs/componentMessages";
+import { preloadComponentDoc, retryComponentDoc } from "@/docs/registry";
 import { preloadNews } from "@/docs/news";
+import { installIntentPrefetch } from "@/docs/prefetch";
 import { SITE } from "@/docs/site";
 import type { Route } from "@/docs/router";
 
@@ -34,33 +34,57 @@ const NewsPage = lazyPage(() => import("@/docs/pages/NewsPage").then((m) => m.Ne
 const CommunityPage = lazyPage(() => import("@/docs/pages/CommunityPage").then((m) => m.CommunityPage));
 const ContributorsPage = lazyPage(() => import("@/docs/pages/ContributorsPage").then((m) => m.ContributorsPage));
 
+const PAGES = {
+  home: HomePage,
+  component: ComponentPage,
+  concept: ConceptPage,
+  foundation: FoundationsPage,
+  blocks: BlocksPage,
+  templates: TemplatesPage,
+  "theme-designer": ThemeDesignerPage,
+  news: NewsPage,
+  community: CommunityPage,
+  contributors: ContributorsPage,
+} as const;
+
+const pageOf = (route: Route) => PAGES[route.kind];
+const conceptPageOf = (slug: string, lang: Locale) => (lang === "en" && CONCEPT_EN_PAGES[slug]) || CONCEPT_BY_SLUG[slug]?.Page;
+
 /**
- * Nạp trước mọi phần nạp lười mà route cần (trang, nội dung khái niệm, demo, gói tiếng Anh). main.tsx chờ hàm này rồi
+ * Nạp trước mọi phần nạp lười mà route cần (trang, nội dung khái niệm, demo, gói ngôn ngữ). main.tsx chờ hàm này rồi
  * mới render, nên HTML prerender được thay bằng trang hoàn chỉnh trong một lần. Lỗi mạng bỏ qua: trang tự nạp lại khi render.
  */
 export async function preloadRoute(route: Route, lang: Locale) {
-  const pages = {
-    home: HomePage,
-    component: ComponentPage,
-    concept: ConceptPage,
-    foundation: FoundationsPage,
-    blocks: BlocksPage,
-    templates: TemplatesPage,
-    "theme-designer": ThemeDesignerPage,
-    news: NewsPage,
-    community: CommunityPage,
-    contributors: ContributorsPage,
-  } as const;
-  const tasks: Promise<unknown>[] = [];
-  if (lang === "en") tasks.push(loadEnglish());
-  if (route.kind in pages) tasks.push(pages[route.kind as keyof typeof pages].preload());
+  const tasks: Promise<unknown>[] = [loadLocale(lang), pageOf(route).preload()];
   if (route.kind === "concept") {
-    const page = (lang === "en" && CONCEPT_EN_PAGES[route.slug]) || CONCEPT_BY_SLUG[route.slug]?.Page;
+    const page = conceptPageOf(route.slug, lang);
     if (page) tasks.push(page.preload());
   }
-  if (route.kind === "component") tasks.push(preloadComponentDoc(route.slug, lang), preloadComponentMessages(route.slug));
+  if (route.kind === "component") {
+    const { slug } = route;
+    // Bảng Messages (danh sách namespace, export của thư viện) chỉ trang component cần: không nằm trong chunk chính (#307).
+    tasks.push(preloadComponentDoc(slug, lang), import("@/docs/componentMessages").then((m) => m.preloadComponentMessages(slug)));
+  }
   if (route.kind === "news") tasks.push(preloadNews(lang));
   await Promise.allSettled(tasks);
+}
+
+/**
+ * Nạp trước trang người dùng sắp mở (trỏ / focus / chạm vào link, #305): chunk của trang, nội dung khái niệm, demo, gói
+ * ngôn ngữ. Khác `preloadRoute`: lỗi mạng không được giữ lại, lần mở thật tự nạp lại.
+ */
+export function prefetchRoute({ route, lang }: { route: Route; lang: Locale }) {
+  void loadLocale(lang).catch(() => {});
+  pageOf(route).prefetch();
+  if (route.kind === "concept") conceptPageOf(route.slug, lang)?.prefetch();
+  if (route.kind === "component") {
+    const { slug } = route;
+    void preloadComponentDoc(slug, lang).then(() => retryComponentDoc(slug, lang));
+    import("@/docs/componentMessages").then(
+      (m) => m.messageNamespacesFor(slug).length > 0 && m.MessagesTable.prefetch(),
+      () => {},
+    );
+  }
 }
 
 
@@ -115,10 +139,15 @@ export default function App({ path }: { path?: string }) {
       }
     };
     window.addEventListener("keydown", onKey);
-    const idle = window.requestIdleCallback?.(() => void DocsCommandPalette.preload());
+    const idle = window.requestIdleCallback?.(() => {
+      DocsCommandPalette.prefetch();
+      AppearancePicker.prefetch();
+    });
+    const uninstall = installIntentPrefetch(prefetchRoute);
     return () => {
       window.removeEventListener("keydown", onKey);
       if (idle !== undefined) window.cancelIdleCallback(idle);
+      uninstall();
     };
   }, []);
 

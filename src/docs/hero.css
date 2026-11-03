@@ -78,6 +78,13 @@
   }
 }
 
+/* Phần trang chủ đã ra khỏi màn hình (HomePage › usePauseOffscreen): dừng animation lặp vô hạn bên trong (#308). */
+[data-offscreen] *,
+[data-offscreen] *::before,
+[data-offscreen] *::after {
+  animation-play-state: paused;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .yg-ink {
     animation: none;

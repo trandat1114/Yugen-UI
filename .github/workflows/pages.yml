@@ -75,10 +75,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
+      # Service worker (#306): repository variable DOCS_SW=off ships a sw.js that clears its caches and unregisters
+      # itself (kill switch, wiki › Operations Handbook). Also applies to /next/ (build-versioned-docs.mjs inherits env).
       - name: Build docs
         run: npm run build:docs
         env:
           DOCS_BASE: /${{ github.event.repository.name }}/
+          VITE_DOCS_SW: ${{ vars.DOCS_SW }}
 
       # One Open Graph image per page (dist-docs/og/, read from routes.json), drawn with Playwright's Chromium.
       - name: Open Graph images
@@ -90,6 +93,7 @@ jobs:
         run: node scripts/build-versioned-docs.mjs
         env:
           DOCS_BASE: /${{ github.event.repository.name }}/
+          VITE_DOCS_SW: ${{ vars.DOCS_SW }}
 
       # The router uses the URL hash, so one index.html serves every page; 404.html covers mistyped paths.
       - run: cp dist-docs/index.html dist-docs/404.html
