@@ -265,7 +265,10 @@ TooltipContent, DialogSurface, DrawerSurface, SheetContent), `appearance="glass"
 1. **Consistent API**: `appearance`, `size` (`small | medium | large`), `shape`, `color` (semantic) or `intent` (level).
 2. **Control height**: small 24px (`h-6`), medium 32px (`h-8`, default), large 40px (`h-10`).
 3. **All states**: rest → `hover:` → `active:` → `disabled:` → `focus-visible` (§4.4).
-4. **forwardRef** for components that wrap DOM elements; support `asChild` (Radix `Slot`) for action elements.
+4. **`ref` as a prop** (React 19, no `forwardRef`) for components that wrap DOM elements:
+   `export function Button({ ref, ...props }: ButtonProps & { ref?: React.Ref<HTMLButtonElement> })`, then pass `ref` to the
+   element. To combine it with an internal ref, use `useComposedRefs` from `_internal/composeRefs`. Support `asChild`
+   (Radix `Slot`) for action elements.
 5. The user's `className` always goes **last** in `cn(...)`.
 6. **Accessibility**: labels linked with `useId`; icon-only elements have `aria-label`; `aria-invalid`; `role="alert"` for errors;
    full keyboard navigation (Tree, Toolbar, List, Tabs, Menu, Combobox).

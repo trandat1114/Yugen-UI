@@ -45,87 +45,88 @@ export interface DropdownProps extends Omit<SelectPrimitive.SelectProps, "dir"> 
 }
 
 /** Dropdown: listbox tuỳ biến (Radix Select) — chọn một giá trị trong danh sách, không cho gõ tự do. */
-export const Dropdown = React.forwardRef<HTMLButtonElement, DropdownProps>(
-  (
-    {
-      placeholder,
-      appearance = "outline",
-      size = "medium",
-      className,
-      listboxClassName,
-      id,
-      disabled,
-      children,
-      "aria-label": ariaLabel,
-      "aria-labelledby": ariaLabelledby,
-      "aria-describedby": ariaDescribedby,
-      "aria-invalid": ariaInvalid,
-      ...props
-    },
-    ref,
-  ) => {
-    const s = TRIGGER_SIZE[size];
-    const portalTheme = usePortalThemeProps();
-    return (
-      <SelectPrimitive.Root disabled={disabled} {...props}>
-        <SelectPrimitive.Trigger
-          ref={ref}
-          id={id}
-          aria-label={ariaLabel}
-          aria-labelledby={ariaLabelledby}
-          aria-describedby={ariaDescribedby}
-          aria-invalid={ariaInvalid || undefined}
-          data-invalid={ariaInvalid || undefined}
-          data-disabled={disabled || undefined}
+export function Dropdown({
+  placeholder,
+  appearance = "outline",
+  size = "medium",
+  className,
+  listboxClassName,
+  id,
+  disabled,
+  children,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledby,
+  "aria-describedby": ariaDescribedby,
+  "aria-invalid": ariaInvalid,
+  ref,
+  ...props
+}: DropdownProps & { ref?: React.Ref<HTMLButtonElement> }) {
+  const s = TRIGGER_SIZE[size];
+  const portalTheme = usePortalThemeProps();
+  return (
+    <SelectPrimitive.Root disabled={disabled} {...props}>
+      <SelectPrimitive.Trigger
+        ref={ref}
+        id={id}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledby}
+        aria-describedby={ariaDescribedby}
+        aria-invalid={ariaInvalid || undefined}
+        data-invalid={ariaInvalid || undefined}
+        data-disabled={disabled || undefined}
+        className={cn(
+          fieldAppearanceClass[appearance],
+          "group/dropdown inline-flex min-w-62.5 cursor-pointer items-center justify-between gap-1 text-start outline-none",
+          "data-[state=open]:after:scale-x-100 data-[state=open]:after:duration-normal data-[state=open]:after:ease-decelerate-mid",
+          "disabled:cursor-not-allowed",
+          s.root,
+          className,
+        )}
+      >
+        <span className="min-w-0 flex-1 truncate group-data-placeholder/dropdown:text-foreground-4 group-disabled/dropdown:text-foreground-disabled">
+          <SelectPrimitive.Value placeholder={placeholder} />
+        </span>
+        <SelectPrimitive.Icon className="flex shrink-0 text-foreground-3 group-disabled/dropdown:text-foreground-disabled">
+          <s.Icon className={s.icon} />
+        </SelectPrimitive.Icon>
+      </SelectPrimitive.Trigger>
+      <SelectPrimitive.Portal>
+        <SelectPrimitive.Content
+          {...portalTheme}
+          position="popper"
+          sideOffset={2}
           className={cn(
-            fieldAppearanceClass[appearance],
-            "group/dropdown inline-flex min-w-62.5 cursor-pointer items-center justify-between gap-1 text-start outline-none",
-            "data-[state=open]:after:scale-x-100 data-[state=open]:after:duration-normal data-[state=open]:after:ease-decelerate-mid",
-            "disabled:cursor-not-allowed",
-            s.root,
-            className,
+            popoverSurfaceClass,
+            "relative max-h-[min(var(--radix-select-content-available-height),80vh)] min-w-(--radix-select-trigger-width) overflow-hidden",
+            listboxClassName,
           )}
         >
-          <span className="min-w-0 flex-1 truncate group-data-placeholder/dropdown:text-foreground-4 group-disabled/dropdown:text-foreground-disabled">
-            <SelectPrimitive.Value placeholder={placeholder} />
-          </span>
-          <SelectPrimitive.Icon className="flex shrink-0 text-foreground-3 group-disabled/dropdown:text-foreground-disabled">
-            <s.Icon className={s.icon} />
-          </SelectPrimitive.Icon>
-        </SelectPrimitive.Trigger>
-        <SelectPrimitive.Portal>
-          <SelectPrimitive.Content
-            {...portalTheme}
-            position="popper"
-            sideOffset={2}
-            className={cn(
-              popoverSurfaceClass,
-              "relative max-h-[min(var(--radix-select-content-available-height),80vh)] min-w-(--radix-select-trigger-width) overflow-hidden",
-              listboxClassName,
-            )}
-          >
-            <SelectPrimitive.ScrollUpButton className="flex h-6 cursor-default items-center justify-center text-foreground-3">
-              <ChevronUp16Regular />
-            </SelectPrimitive.ScrollUpButton>
-            <SelectPrimitive.Viewport className="flex flex-col p-1">{children}</SelectPrimitive.Viewport>
-            <SelectPrimitive.ScrollDownButton className="flex h-6 cursor-default items-center justify-center text-foreground-3">
-              <ChevronDown16Regular />
-            </SelectPrimitive.ScrollDownButton>
-          </SelectPrimitive.Content>
-        </SelectPrimitive.Portal>
-      </SelectPrimitive.Root>
-    );
-  },
-);
-Dropdown.displayName = "Dropdown";
+          <SelectPrimitive.ScrollUpButton className="flex h-6 cursor-default items-center justify-center text-foreground-3">
+            <ChevronUp16Regular />
+          </SelectPrimitive.ScrollUpButton>
+          <SelectPrimitive.Viewport className="flex flex-col p-1">{children}</SelectPrimitive.Viewport>
+          <SelectPrimitive.ScrollDownButton className="flex h-6 cursor-default items-center justify-center text-foreground-3">
+            <ChevronDown16Regular />
+          </SelectPrimitive.ScrollDownButton>
+        </SelectPrimitive.Content>
+      </SelectPrimitive.Portal>
+    </SelectPrimitive.Root>
+  );
+}
 
 export interface DropdownOptionProps extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item> {
   /** Icon / Avatar trước nhãn. */
   media?: React.ReactNode;
 }
 
-export const DropdownOption = React.forwardRef<React.ElementRef<typeof SelectPrimitive.Item>, DropdownOptionProps>(
-  ({ className, media, children, ...props }, ref) => (
+export function DropdownOption({
+  className,
+  media,
+  children,
+  ref,
+  ...props
+}: DropdownOptionProps & { ref?: React.Ref<React.ComponentRef<typeof SelectPrimitive.Item>> }) {
+  return (
     <SelectPrimitive.Item
       ref={ref}
       className={cn(
@@ -143,17 +144,22 @@ export const DropdownOption = React.forwardRef<React.ElementRef<typeof SelectPri
       {media && <span className="flex shrink-0 text-foreground-2 [&_svg]:size-5">{media}</span>}
       <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
     </SelectPrimitive.Item>
-  ),
-);
-DropdownOption.displayName = "DropdownOption";
+  );
+}
 
 export interface DropdownGroupProps extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Group> {
   label: React.ReactNode;
 }
 
 /** Nhóm option có tiêu đề; các nhóm liền nhau tự có vạch chia. */
-export const DropdownGroup = React.forwardRef<React.ElementRef<typeof SelectPrimitive.Group>, DropdownGroupProps>(
-  ({ className, label, children, ...props }, ref) => (
+export function DropdownGroup({
+  className,
+  label,
+  children,
+  ref,
+  ...props
+}: DropdownGroupProps & { ref?: React.Ref<React.ComponentRef<typeof SelectPrimitive.Group>> }) {
+  return (
     <SelectPrimitive.Group
       ref={ref}
       className={cn("flex flex-col not-last:mb-1 not-last:border-b not-last:border-stroke-2 not-last:pb-1", className)}
@@ -162,9 +168,8 @@ export const DropdownGroup = React.forwardRef<React.ElementRef<typeof SelectPrim
       <SelectPrimitive.Label className={listboxGroupLabelClass}>{label}</SelectPrimitive.Label>
       {children}
     </SelectPrimitive.Group>
-  ),
-);
-DropdownGroup.displayName = "DropdownGroup";
+  );
+}
 
 export function DropdownDivider({ className }: { className?: string }) {
   return <SelectPrimitive.Separator className={cn("-mx-1 my-1 h-px bg-stroke-2", className)} />;

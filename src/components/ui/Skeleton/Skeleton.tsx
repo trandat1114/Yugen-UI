@@ -24,26 +24,29 @@ export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
 /** true khi đang nằm trong một Skeleton — preset lồng bên trong không tạo thêm role="progressbar". */
 const SkeletonRootContext = React.createContext(false);
 
-export const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
-  ({ animation = "wave", appearance = "opaque", className, ...props }, ref) => {
-    const msg = useYugenMessages("skeleton", skeletonMessagesEn);
-    return (
-      <SkeletonContext.Provider value={{ animation, appearance }}>
-        <SkeletonRootContext.Provider value>
-          <div
-            ref={ref}
-            role="progressbar"
-            aria-busy="true"
-            aria-label={msg.label}
-            className={cn("flex flex-col gap-2", className)}
-            {...props}
-          />
-        </SkeletonRootContext.Provider>
-      </SkeletonContext.Provider>
-    );
-  },
-);
-Skeleton.displayName = "Skeleton";
+export function Skeleton({
+  animation = "wave",
+  appearance = "opaque",
+  className,
+  ref,
+  ...props
+}: SkeletonProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const msg = useYugenMessages("skeleton", skeletonMessagesEn);
+  return (
+    <SkeletonContext.Provider value={{ animation, appearance }}>
+      <SkeletonRootContext.Provider value>
+        <div
+          ref={ref}
+          role="progressbar"
+          aria-busy="true"
+          aria-label={msg.label}
+          className={cn("flex flex-col gap-2", className)}
+          {...props}
+        />
+      </SkeletonRootContext.Provider>
+    </SkeletonContext.Provider>
+  );
+}
 
 /** Chiều cao (rectangle) hoặc cạnh (circle / square) theo px → class Tailwind. */
 const SIZE = {
@@ -99,30 +102,35 @@ export interface SkeletonItemProps extends React.HTMLAttributes<HTMLDivElement> 
   appearance?: SkeletonAppearance;
 }
 
-export const SkeletonItem = React.forwardRef<HTMLDivElement, SkeletonItemProps>(
-  ({ shape = "rectangle", size = 16, animation, appearance, className, ...props }, ref) => {
-    const ctx = React.useContext(SkeletonContext);
-    const anim = ANIMATION[appearance ?? ctx.appearance][animation ?? ctx.animation];
-    const sizeClass = SIZE[size] ?? SIZE[16];
+export function SkeletonItem({
+  shape = "rectangle",
+  size = 16,
+  animation,
+  appearance,
+  className,
+  ref,
+  ...props
+}: SkeletonItemProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const ctx = React.useContext(SkeletonContext);
+  const anim = ANIMATION[appearance ?? ctx.appearance][animation ?? ctx.animation];
+  const sizeClass = SIZE[size] ?? SIZE[16];
 
-    return (
-      <div
-        ref={ref}
-        aria-hidden
-        className={cn(
-          "shrink-0",
-          anim,
-          shape === "rectangle" && cn("w-full rounded-medium", sizeClass.h),
-          shape === "square" && cn("rounded-medium", sizeClass.box),
-          shape === "circle" && cn("rounded-circular", sizeClass.box),
-          className,
-        )}
-        {...props}
-      />
-    );
-  },
-);
-SkeletonItem.displayName = "SkeletonItem";
+  return (
+    <div
+      ref={ref}
+      aria-hidden
+      className={cn(
+        "shrink-0",
+        anim,
+        shape === "rectangle" && cn("w-full rounded-medium", sizeClass.h),
+        shape === "square" && cn("rounded-medium", sizeClass.box),
+        shape === "circle" && cn("rounded-circular", sizeClass.box),
+        className,
+      )}
+      {...props}
+    />
+  );
+}
 
 /* ================================================================ Preset (Yugen Labs) */
 
@@ -137,21 +145,24 @@ export interface SkeletonPresetProps extends React.HTMLAttributes<HTMLDivElement
  * Gốc của mọi preset: đứng một mình → là một Skeleton (role="progressbar", aria-busy);
  * lồng trong Skeleton / preset khác → chỉ là khối bố cục, không lặp thông báo cho trình đọc màn hình.
  */
-const SkeletonPresetRoot = React.forwardRef<HTMLDivElement, SkeletonPresetProps>(
-  ({ animation, appearance, className, ...props }, ref) => {
-    const nested = React.useContext(SkeletonRootContext);
-    const ctx = React.useContext(SkeletonContext);
-    if (!nested) return <Skeleton ref={ref} animation={animation} appearance={appearance} className={className} {...props} />;
-    return (
-      <SkeletonContext.Provider
-        value={{ animation: animation ?? ctx.animation, appearance: appearance ?? ctx.appearance }}
-      >
-        <div ref={ref} className={cn("flex flex-col gap-2", className)} {...props} />
-      </SkeletonContext.Provider>
-    );
-  },
-);
-SkeletonPresetRoot.displayName = "SkeletonPresetRoot";
+function SkeletonPresetRoot({
+  animation,
+  appearance,
+  className,
+  ref,
+  ...props
+}: SkeletonPresetProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const nested = React.useContext(SkeletonRootContext);
+  const ctx = React.useContext(SkeletonContext);
+  if (!nested) return <Skeleton ref={ref} animation={animation} appearance={appearance} className={className} {...props} />;
+  return (
+    <SkeletonContext.Provider
+      value={{ animation: animation ?? ctx.animation, appearance: appearance ?? ctx.appearance }}
+    >
+      <div ref={ref} className={cn("flex flex-col gap-2", className)} {...props} />
+    </SkeletonContext.Provider>
+  );
+}
 
 const count = (n: number, min = 0) => Math.max(min, Math.floor(n));
 
@@ -172,20 +183,23 @@ export interface SkeletonTextProps extends SkeletonPresetProps {
 }
 
 /** Đoạn văn n dòng. */
-export const SkeletonText = React.forwardRef<HTMLDivElement, SkeletonTextProps>(
-  ({ lines = 3, size = "medium", className, ...props }, ref) => {
-    const s = TEXT_SIZE[size];
-    const n = count(lines, 1);
-    return (
-      <SkeletonPresetRoot ref={ref} className={cn("w-full", s.gap, className)} {...props}>
-        {Array.from({ length: n }, (_, i) => (
-          <SkeletonItem key={i} size={s.item} className={n > 1 && i === n - 1 ? "w-3/5" : undefined} />
-        ))}
-      </SkeletonPresetRoot>
-    );
-  },
-);
-SkeletonText.displayName = "SkeletonText";
+export function SkeletonText({
+  lines = 3,
+  size = "medium",
+  className,
+  ref,
+  ...props
+}: SkeletonTextProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const s = TEXT_SIZE[size];
+  const n = count(lines, 1);
+  return (
+    <SkeletonPresetRoot ref={ref} className={cn("w-full", s.gap, className)} {...props}>
+      {Array.from({ length: n }, (_, i) => (
+        <SkeletonItem key={i} size={s.item} className={n > 1 && i === n - 1 ? "w-3/5" : undefined} />
+      ))}
+    </SkeletonPresetRoot>
+  );
+}
 
 export interface SkeletonAvatarProps extends SkeletonPresetProps {
   /** Cạnh, đơn vị px — dùng đúng size của Avatar sẽ thay thế (24, 32, 40, 48…). */
@@ -194,14 +208,19 @@ export interface SkeletonAvatarProps extends SkeletonPresetProps {
 }
 
 /** Chỗ cho Avatar / ảnh đại diện. */
-export const SkeletonAvatar = React.forwardRef<HTMLDivElement, SkeletonAvatarProps>(
-  ({ size = 32, shape = "circular", className, ...props }, ref) => (
+export function SkeletonAvatar({
+  size = 32,
+  shape = "circular",
+  className,
+  ref,
+  ...props
+}: SkeletonAvatarProps & { ref?: React.Ref<HTMLDivElement> }) {
+  return (
     <SkeletonPresetRoot ref={ref} className={cn("inline-flex", className)} {...props}>
       <SkeletonItem shape={shape === "square" ? "square" : "circle"} size={size} />
     </SkeletonPresetRoot>
-  ),
-);
-SkeletonAvatar.displayName = "SkeletonAvatar";
+  );
+}
 
 export interface SkeletonCardProps extends SkeletonPresetProps {
   /** Dòng đầu: avatar + tên + mô tả (như CardHeader). */
@@ -215,8 +234,16 @@ export interface SkeletonCardProps extends SkeletonPresetProps {
 }
 
 /** Thẻ: (header) + ảnh + tiêu đề + mô tả + nút — cùng bề mặt, bo góc và khoảng cách với Card. */
-export const SkeletonCard = React.forwardRef<HTMLDivElement, SkeletonCardProps>(
-  ({ header = false, media = true, lines = 2, actions = 2, className, ...props }, ref) => (
+export function SkeletonCard({
+  header = false,
+  media = true,
+  lines = 2,
+  actions = 2,
+  className,
+  ref,
+  ...props
+}: SkeletonCardProps & { ref?: React.Ref<HTMLDivElement> }) {
+  return (
     <SkeletonPresetRoot
       ref={ref}
       className={cn(
@@ -247,9 +274,8 @@ export const SkeletonCard = React.forwardRef<HTMLDivElement, SkeletonCardProps>(
         </div>
       )}
     </SkeletonPresetRoot>
-  ),
-);
-SkeletonCard.displayName = "SkeletonCard";
+  );
+}
 
 export interface SkeletonListProps extends SkeletonPresetProps {
   /** Số dòng. */
@@ -260,8 +286,15 @@ export interface SkeletonListProps extends SkeletonPresetProps {
 }
 
 /** Danh sách: mỗi dòng gồm avatar + tiêu đề + mô tả. */
-export const SkeletonList = React.forwardRef<HTMLDivElement, SkeletonListProps>(
-  ({ rows = 3, avatarSize = 40, avatarShape = "circular", className, ...props }, ref) => (
+export function SkeletonList({
+  rows = 3,
+  avatarSize = 40,
+  avatarShape = "circular",
+  className,
+  ref,
+  ...props
+}: SkeletonListProps & { ref?: React.Ref<HTMLDivElement> }) {
+  return (
     <SkeletonPresetRoot ref={ref} className={cn("w-full gap-4", className)} {...props}>
       {Array.from({ length: count(rows) }, (_, i) => (
         <div key={i} className="flex items-center gap-3">
@@ -273,9 +306,8 @@ export const SkeletonList = React.forwardRef<HTMLDivElement, SkeletonListProps>(
         </div>
       ))}
     </SkeletonPresetRoot>
-  ),
-);
-SkeletonList.displayName = "SkeletonList";
+  );
+}
 
 export interface SkeletonTableProps extends SkeletonPresetProps {
   /** Số dòng dữ liệu. */
@@ -287,29 +319,33 @@ export interface SkeletonTableProps extends SkeletonPresetProps {
 }
 
 /** Bảng rows × cols — cao 44px mỗi dòng và cùng viền với Table size medium. */
-export const SkeletonTable = React.forwardRef<HTMLDivElement, SkeletonTableProps>(
-  ({ rows = 5, columns = 4, header = true, className, ...props }, ref) => {
-    const cols = count(columns, 1);
-    // Số cột là dữ liệu runtime → không thể là class tĩnh.
-    const grid: React.CSSProperties = { gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` };
-    return (
-      <SkeletonPresetRoot ref={ref} className={cn("w-full gap-0", className)} {...props}>
-        {header && (
-          <div style={grid} className="grid h-11 items-center gap-4 border-b border-stroke-2 px-2">
-            {Array.from({ length: cols }, (_, c) => (
-              <SkeletonItem key={c} size={12} className="w-1/2" />
-            ))}
-          </div>
-        )}
-        {Array.from({ length: count(rows) }, (_, r) => (
-          <div key={r} style={grid} className="grid h-11 items-center gap-4 border-b border-stroke-3 px-2">
-            {Array.from({ length: cols }, (_, c) => (
-              <SkeletonItem key={c} size={12} className={WIDTHS[(r + c) % WIDTHS.length]} />
-            ))}
-          </div>
-        ))}
-      </SkeletonPresetRoot>
-    );
-  },
-);
-SkeletonTable.displayName = "SkeletonTable";
+export function SkeletonTable({
+  rows = 5,
+  columns = 4,
+  header = true,
+  className,
+  ref,
+  ...props
+}: SkeletonTableProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const cols = count(columns, 1);
+  // Số cột là dữ liệu runtime → không thể là class tĩnh.
+  const grid: React.CSSProperties = { gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` };
+  return (
+    <SkeletonPresetRoot ref={ref} className={cn("w-full gap-0", className)} {...props}>
+      {header && (
+        <div style={grid} className="grid h-11 items-center gap-4 border-b border-stroke-2 px-2">
+          {Array.from({ length: cols }, (_, c) => (
+            <SkeletonItem key={c} size={12} className="w-1/2" />
+          ))}
+        </div>
+      )}
+      {Array.from({ length: count(rows) }, (_, r) => (
+        <div key={r} style={grid} className="grid h-11 items-center gap-4 border-b border-stroke-3 px-2">
+          {Array.from({ length: cols }, (_, c) => (
+            <SkeletonItem key={c} size={12} className={WIDTHS[(r + c) % WIDTHS.length]} />
+          ))}
+        </div>
+      ))}
+    </SkeletonPresetRoot>
+  );
+}

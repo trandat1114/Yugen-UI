@@ -8,7 +8,8 @@ lối tắt khi bạn bắt tay vào làm.
 ## Thêm một component — từng bước
 
 1. Mở / nhận một issue (`confirmed`, hoặc ý tưởng đã thống nhất ở Discussions **Ideas**).
-2. `src/components/ui/<Name>/<Name>.tsx` — `forwardRef`, `className` cuối cùng trong `cn()`, JSDoc tiếng Việt, `displayName`.
+2. `src/components/ui/<Name>/<Name>.tsx` — component dạng hàm có tên, nhận `ref` như một prop (không `forwardRef`, không
+   `displayName`), `className` cuối cùng trong `cn()`, JSDoc tiếng Việt.
 3. Thêm `export * from "./<Name>/<Name>";` vào đúng nhóm trong `src/components/ui/index.ts`.
 4. Trang docs: thêm `ComponentDoc` vào một file `src/docs/registry/*.tsx` — `slug`, `name`, `category`, `lead` là chuỗi literal;
    `code` của ví dụ phải chạy được khi chép ra (dùng `setup` cho dữ liệu dùng chung).

@@ -265,7 +265,10 @@ TooltipContent, DialogSurface, DrawerSurface, SheetContent), `appearance="glass"
 1. **API thống nhất**: `appearance`, `size` (`small | medium | large`), `shape`, `color` (ngữ nghĩa) hoặc `intent` (mức độ).
 2. **Chiều cao control**: small 24px (`h-6`), medium 32px (`h-8`, mặc định), large 40px (`h-10`).
 3. **Đủ trạng thái**: rest → `hover:` → `active:` → `disabled:` → `focus-visible` (§4.4).
-4. **forwardRef** cho component bọc DOM; hỗ trợ `asChild` (Radix `Slot`) cho phần tử hành động.
+4. **`ref` là một prop** (React 19, không dùng `forwardRef`) cho component bọc DOM:
+   `export function Button({ ref, ...props }: ButtonProps & { ref?: React.Ref<HTMLButtonElement> })`, rồi chuyển `ref`
+   xuống phần tử. Cần gộp với ref nội bộ thì dùng `useComposedRefs` trong `_internal/composeRefs`. Hỗ trợ `asChild`
+   (Radix `Slot`) cho phần tử hành động.
 5. `className` người dùng luôn ở **cuối** `cn(...)`.
 6. **Accessibility**: label liên kết bằng `useId`; icon-only có `aria-label`; `aria-invalid`; `role="alert"` cho lỗi;
    điều hướng bàn phím đầy đủ (Tree, Toolbar, List, Tabs, Menu, Combobox).

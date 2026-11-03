@@ -5,6 +5,7 @@ import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffec
 import { Button, type ButtonProps } from "../Button/Button";
 import { ToggleButton, type ToggleButtonProps } from "../ToggleButton/ToggleButton";
 import { TOOLBAR_DEFAULTS, ToolbarContext, type ToolbarOrientation, type ToolbarSize } from "./context";
+import { useComposedRefs } from "../_internal/composeRefs";
 
 /** Fluent 2 Toolbar — https://fluent2.microsoft.design/components/web/react/core/toolbar/usage */
 
@@ -27,140 +28,144 @@ export interface ToolbarProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 /** Thanh công cụ có roving focus: Tab vào/ra một lần, phím mũi tên / Home / End di chuyển giữa các mục. */
-export const Toolbar = React.forwardRef<HTMLDivElement, ToolbarProps>(
-  ({ className, size = "medium", orientation = "horizontal", material, onKeyDown, onFocus, ...props }, forwardedRef) => {
-    const rootRef = React.useRef<HTMLDivElement | null>(null);
-    const activeRef = React.useRef<HTMLElement | null>(null);
-    const dir = useDirection();
+export function Toolbar({
+  className,
+  size = "medium",
+  orientation = "horizontal",
+  material,
+  onKeyDown,
+  onFocus,
+  ref: forwardedRef,
+  ...props
+}: ToolbarProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const rootRef = React.useRef<HTMLDivElement | null>(null);
+  const activeRef = React.useRef<HTMLElement | null>(null);
+  const dir = useDirection();
 
-    const setRefs = React.useCallback(
-      (node: HTMLDivElement | null) => {
-        rootRef.current = node;
-        if (typeof forwardedRef === "function") forwardedRef(node);
-        else if (forwardedRef) forwardedRef.current = node;
-      },
-      [forwardedRef],
-    );
+  const setRefs = useComposedRefs(rootRef, forwardedRef);
 
-    const getItems = () => Array.from(rootRef.current?.querySelectorAll<HTMLElement>(ITEM_SELECTOR) ?? []);
+  const getItems = () => Array.from(rootRef.current?.querySelectorAll<HTMLElement>(ITEM_SELECTOR) ?? []);
 
-    const syncTabIndex = () => {
-      const items = getItems();
-      if (items.length === 0) return;
-      const active = activeRef.current && items.includes(activeRef.current) ? activeRef.current : items[0];
-      items.forEach((item) => {
-        item.tabIndex = item === active ? 0 : -1;
-      });
-    };
+  const syncTabIndex = () => {
+    const items = getItems();
+    if (items.length === 0) return;
+    const active = activeRef.current && items.includes(activeRef.current) ? activeRef.current : items[0];
+    items.forEach((item) => {
+      item.tabIndex = item === active ? 0 : -1;
+    });
+  };
 
-    useIsomorphicLayoutEffect(syncTabIndex);
+  useIsomorphicLayoutEffect(syncTabIndex);
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-      onKeyDown?.(e);
-      if (e.defaultPrevented) return;
-      const target = e.target as HTMLElement;
-      if (/^(input|textarea|select)$/i.test(target.tagName) || target.isContentEditable) return;
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    onKeyDown?.(e);
+    if (e.defaultPrevented) return;
+    const target = e.target as HTMLElement;
+    if (/^(input|textarea|select)$/i.test(target.tagName) || target.isContentEditable) return;
 
-      const items = getItems();
-      const index = items.indexOf(target);
-      if (index === -1) return;
+    const items = getItems();
+    const index = items.indexOf(target);
+    if (index === -1) return;
 
-      const rtl = orientation === "horizontal" && dir === "rtl";
-      const prevKey = orientation === "horizontal" ? (rtl ? "ArrowRight" : "ArrowLeft") : "ArrowUp";
-      const nextKey = orientation === "horizontal" ? (rtl ? "ArrowLeft" : "ArrowRight") : "ArrowDown";
+    const rtl = orientation === "horizontal" && dir === "rtl";
+    const prevKey = orientation === "horizontal" ? (rtl ? "ArrowRight" : "ArrowLeft") : "ArrowUp";
+    const nextKey = orientation === "horizontal" ? (rtl ? "ArrowLeft" : "ArrowRight") : "ArrowDown";
 
-      let next = -1;
-      if (e.key === prevKey) next = (index - 1 + items.length) % items.length;
-      else if (e.key === nextKey) next = (index + 1) % items.length;
-      else if (e.key === "Home") next = 0;
-      else if (e.key === "End") next = items.length - 1;
-      if (next === -1) return;
+    let next = -1;
+    if (e.key === prevKey) next = (index - 1 + items.length) % items.length;
+    else if (e.key === nextKey) next = (index + 1) % items.length;
+    else if (e.key === "Home") next = 0;
+    else if (e.key === "End") next = items.length - 1;
+    if (next === -1) return;
 
-      e.preventDefault();
-      activeRef.current = items[next];
+    e.preventDefault();
+    activeRef.current = items[next];
+    syncTabIndex();
+    items[next].focus();
+  };
+
+  const handleFocus = (e: React.FocusEvent<HTMLDivElement>) => {
+    onFocus?.(e);
+    const target = e.target as HTMLElement;
+    if (target.matches(ITEM_SELECTOR)) {
+      activeRef.current = target;
       syncTabIndex();
-      items[next].focus();
-    };
+    }
+  };
 
-    const handleFocus = (e: React.FocusEvent<HTMLDivElement>) => {
-      onFocus?.(e);
-      const target = e.target as HTMLElement;
-      if (target.matches(ITEM_SELECTOR)) {
-        activeRef.current = target;
-        syncTabIndex();
-      }
-    };
-
-    return (
-      <ToolbarContext.Provider value={{ size, orientation }}>
-        <div
-          ref={setRefs}
-          role="toolbar"
-          aria-orientation={orientation}
-          data-orientation={orientation}
-          onKeyDown={handleKeyDown}
-          onFocus={handleFocus}
-          className={cn(
-            "flex gap-0.5",
-            orientation === "vertical" ? "w-fit flex-col items-stretch" : "items-center",
-            ROOT_SIZE[size],
-            material &&
-              cn(
-                material,
-                "rounded-circular border border-transparent p-1 shadow-8",
-                "[--concentric-padding:--spacing(1)] [--concentric-radius:var(--borderRadiusCircular)]",
-                "**:data-toolbar-item:rounded-concentric",
-              ),
-            className,
-          )}
-          {...props}
-        />
-      </ToolbarContext.Provider>
-    );
-  },
-);
-Toolbar.displayName = "Toolbar";
+  return (
+    <ToolbarContext.Provider value={{ size, orientation }}>
+      <div
+        ref={setRefs}
+        role="toolbar"
+        aria-orientation={orientation}
+        data-orientation={orientation}
+        onKeyDown={handleKeyDown}
+        onFocus={handleFocus}
+        className={cn(
+          "flex gap-0.5",
+          orientation === "vertical" ? "w-fit flex-col items-stretch" : "items-center",
+          ROOT_SIZE[size],
+          material &&
+            cn(
+              material,
+              "rounded-circular border border-transparent p-1 shadow-8",
+              "[--concentric-padding:--spacing(1)] [--concentric-radius:var(--borderRadiusCircular)]",
+              "**:data-toolbar-item:rounded-concentric",
+            ),
+          className,
+        )}
+        {...props}
+      />
+    </ToolbarContext.Provider>
+  );
+}
 
 export interface ToolbarButtonProps extends Omit<ButtonProps, "size"> {
   /** Icon nằm trên chữ. */
   vertical?: boolean;
 }
 
-export const ToolbarButton = React.forwardRef<HTMLButtonElement, ToolbarButtonProps>(
-  ({ appearance = "subtle", vertical, className, ...props }, ref) => {
-    const { size } = React.useContext(ToolbarContext) ?? TOOLBAR_DEFAULTS;
-    return (
-      <Button
-        ref={ref}
-        data-toolbar-item=""
-        appearance={appearance}
-        size={size}
-        className={cn("min-w-0", vertical && "h-auto flex-col gap-0.5 py-1", className)}
-        {...props}
-      />
-    );
-  },
-);
-ToolbarButton.displayName = "ToolbarButton";
+export function ToolbarButton({
+  appearance = "subtle",
+  vertical,
+  className,
+  ref,
+  ...props
+}: ToolbarButtonProps & { ref?: React.Ref<HTMLButtonElement> }) {
+  const { size } = React.useContext(ToolbarContext) ?? TOOLBAR_DEFAULTS;
+  return (
+    <Button
+      ref={ref}
+      data-toolbar-item=""
+      appearance={appearance}
+      size={size}
+      className={cn("min-w-0", vertical && "h-auto flex-col gap-0.5 py-1", className)}
+      {...props}
+    />
+  );
+}
 
 export type ToolbarToggleButtonProps = Omit<ToggleButtonProps, "size">;
 
-export const ToolbarToggleButton = React.forwardRef<HTMLButtonElement, ToolbarToggleButtonProps>(
-  ({ appearance = "subtle", className, ...props }, ref) => {
-    const { size } = React.useContext(ToolbarContext) ?? TOOLBAR_DEFAULTS;
-    return (
-      <ToggleButton
-        ref={ref}
-        data-toolbar-item=""
-        appearance={appearance}
-        size={size}
-        className={cn("min-w-0", className)}
-        {...props}
-      />
-    );
-  },
-);
-ToolbarToggleButton.displayName = "ToolbarToggleButton";
+export function ToolbarToggleButton({
+  appearance = "subtle",
+  className,
+  ref,
+  ...props
+}: ToolbarToggleButtonProps & { ref?: React.Ref<HTMLButtonElement> }) {
+  const { size } = React.useContext(ToolbarContext) ?? TOOLBAR_DEFAULTS;
+  return (
+    <ToggleButton
+      ref={ref}
+      data-toolbar-item=""
+      appearance={appearance}
+      size={size}
+      className={cn("min-w-0", className)}
+      {...props}
+    />
+  );
+}
 
 export function ToolbarDivider({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   const { orientation } = React.useContext(ToolbarContext) ?? TOOLBAR_DEFAULTS;

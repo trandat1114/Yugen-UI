@@ -73,12 +73,21 @@ export interface BadgeProps
   icon?: React.ReactNode;
 }
 
-export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
-  ({ className, appearance, color, size, shape, icon, children, ...props }, ref) => (
+export function Badge({
+  className,
+  appearance,
+  color,
+  size,
+  shape,
+  icon,
+  children,
+  ref,
+  ...props
+}: BadgeProps & { ref?: React.Ref<HTMLSpanElement> }) {
+  return (
     <span ref={ref} className={cn(badgeVariants({ appearance, color, size, shape }), className)} {...props}>
       {icon}
       {children != null && <span className="px-0.5">{children}</span>}
     </span>
-  ),
-);
-Badge.displayName = "Badge";
+  );
+}

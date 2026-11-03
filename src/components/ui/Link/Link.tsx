@@ -39,49 +39,60 @@ export interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement>
   asChild?: boolean;
 }
 
-export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
-  ({ className, appearance, inline, disabled, external, asChild, href, target, rel, onClick, children, ...props }, ref) => {
-    const msg = useYugenMessages("link", linkMessagesEn);
-    const shared = {
-      href: disabled ? undefined : href,
-      target: external ? (target ?? "_blank") : target,
-      rel: external ? (rel ?? "noopener noreferrer") : rel,
-      "aria-disabled": disabled || undefined,
-      onClick: (e: React.MouseEvent<HTMLAnchorElement>) => {
-        if (disabled) {
-          e.preventDefault();
-          return;
-        }
-        onClick?.(e);
-      },
-      className: cn(linkVariants({ appearance, inline }), className),
-      ...props,
-    };
+export function Link({
+  className,
+  appearance,
+  inline,
+  disabled,
+  external,
+  asChild,
+  href,
+  target,
+  rel,
+  onClick,
+  children,
+  ref,
+  ...props
+}: LinkProps & { ref?: React.Ref<HTMLAnchorElement> }) {
+  const msg = useYugenMessages("link", linkMessagesEn);
+  const shared = {
+    href: disabled ? undefined : href,
+    target: external ? (target ?? "_blank") : target,
+    rel: external ? (rel ?? "noopener noreferrer") : rel,
+    "aria-disabled": disabled || undefined,
+    onClick: (e: React.MouseEvent<HTMLAnchorElement>) => {
+      if (disabled) {
+        e.preventDefault();
+        return;
+      }
+      onClick?.(e);
+    },
+    className: cn(linkVariants({ appearance, inline }), className),
+    ...props,
+  };
 
-    const externalIcon = external ? (
-      <>
-        <Open16Regular aria-hidden className="ms-0.5 inline size-4 align-text-bottom" />
-        <span className="sr-only"> {msg.newTab}</span>
-      </>
-    ) : null;
+  const externalIcon = external ? (
+    <>
+      <Open16Regular aria-hidden className="ms-0.5 inline size-4 align-text-bottom" />
+      <span className="sr-only"> {msg.newTab}</span>
+    </>
+  ) : null;
 
-    if (asChild) {
-      return (
-        <Slot ref={ref} {...shared}>
-          <Slottable>{children}</Slottable>
-          {externalIcon}
-        </Slot>
-      );
-    }
-
+  if (asChild) {
     return (
-      <a ref={ref} role={disabled ? "link" : undefined} {...shared}>
-        {children}
+      <Slot ref={ref} {...shared}>
+        <Slottable>{children}</Slottable>
         {externalIcon}
-      </a>
+      </Slot>
     );
-  },
-);
-Link.displayName = "Link";
+  }
+
+  return (
+    <a ref={ref} role={disabled ? "link" : undefined} {...shared}>
+      {children}
+      {externalIcon}
+    </a>
+  );
+}
 
 export { linkVariants };

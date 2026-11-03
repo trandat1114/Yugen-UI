@@ -79,14 +79,14 @@ export interface IconProps extends React.SVGProps<SVGSVGElement> {
   primaryFill?: string;
 }
 
-/** Kiểu của một icon có sẵn (thay \`FluentIcon\` của @fluentui/react-icons). */
-export type IconComponent = React.ForwardRefExoticComponent<IconProps & React.RefAttributes<SVGSVGElement>>;
+/** Kiểu của một icon có sẵn (thay \`FluentIcon\` của @fluentui/react-icons). \`ref\` (tới \`<svg>\`) có sẵn trong IconProps. */
+export type IconComponent = React.FunctionComponent<IconProps>;
 
 // Như @fluentui/react-icons: hiển thị inline (thắng \`display: block\` của preflight), giữ màu hệ thống ở forced colors.
 const BASE = "inline leading-0 forced-colors:forced-color-adjust-auto";
 
-function createIcon(name: string, size: string, paths: string[]) {
-  const Icon = React.forwardRef<SVGSVGElement, IconProps>(({ title, primaryFill = "currentColor", className, ...props }, ref) => {
+function createIcon(name: string, size: string, paths: string[]): IconComponent {
+  function Icon({ title, primaryFill = "currentColor", className, ref, ...props }: IconProps) {
     const label = title ?? props["aria-label"];
     const named = Boolean(label || props["aria-labelledby"]);
     return (
@@ -108,7 +108,8 @@ function createIcon(name: string, size: string, paths: string[]) {
         ))}
       </svg>
     );
-  });
+  }
+  // Tạo từ factory nên tên hàm luôn là "Icon": displayName cho DevTools.
   Icon.displayName = name;
   return Icon;
 }

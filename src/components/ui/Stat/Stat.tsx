@@ -47,24 +47,22 @@ export interface StatProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "t
 }
 
 /** Stat — con số chính + mức thay đổi + biểu đồ nhỏ tuỳ chọn. */
-export const Stat = React.forwardRef<HTMLDivElement, StatProps>(function Stat(
-  {
-    label,
-    value,
-    valueFormat,
-    locale: localeProp,
-    delta,
-    deltaFormat,
-    deltaLabel,
-    goodDirection = "up",
-    size = "medium",
-    icon,
-    chart,
-    className,
-    ...props
-  },
+export function Stat({
+  label,
+  value,
+  valueFormat,
+  locale: localeProp,
+  delta,
+  deltaFormat,
+  deltaLabel,
+  goodDirection = "up",
+  size = "medium",
+  icon,
+  chart,
+  className,
   ref,
-) {
+  ...props
+}: StatProps & { ref?: React.Ref<HTMLDivElement> }) {
   const yugen = useYugen();
   const locale = localeProp ?? yugen.locale;
   const msg = useYugenMessages("stat", statMessagesEn);
@@ -116,4 +114,4 @@ export const Stat = React.forwardRef<HTMLDivElement, StatProps>(function Stat(
       </div>
     </div>
   );
-});
+}

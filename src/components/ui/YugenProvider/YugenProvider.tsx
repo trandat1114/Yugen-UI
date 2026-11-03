@@ -49,61 +49,56 @@ function mergeMessages(outer: YugenMessagesInput | undefined, inner: YugenMessag
   return merged as YugenMessagesInput;
 }
 
-export const YugenProvider = React.forwardRef<HTMLDivElement, YugenProviderProps>(
-  (
-    {
-      theme = "light",
-      brand = "sakura",
-      dir = "ltr",
-      applyToDocument = false,
-      withTooltipProvider = true,
-      withToaster = false,
-      messages: messagesProp,
-      locale: localeProp,
-      className,
-      children,
-      ...props
-    },
-    ref,
-  ) => {
-    const parent = React.useContext(YugenContext);
-    const messages = React.useMemo(() => mergeMessages(parent?.messages, messagesProp), [parent?.messages, messagesProp]);
-    const locale = localeProp ?? parent?.locale ?? "en-US";
-    React.useEffect(() => {
-      if (!applyToDocument) return;
-      const root = document.documentElement;
-      root.setAttribute("data-theme", theme);
-      root.setAttribute("data-brand", brand);
-      root.setAttribute("dir", dir);
-    }, [applyToDocument, theme, brand, dir]);
+export function YugenProvider({
+  theme = "light",
+  brand = "sakura",
+  dir = "ltr",
+  applyToDocument = false,
+  withTooltipProvider = true,
+  withToaster = false,
+  messages: messagesProp,
+  locale: localeProp,
+  className,
+  children,
+  ref,
+  ...props
+}: YugenProviderProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const parent = React.useContext(YugenContext);
+  const messages = React.useMemo(() => mergeMessages(parent?.messages, messagesProp), [parent?.messages, messagesProp]);
+  const locale = localeProp ?? parent?.locale ?? "en-US";
+  React.useEffect(() => {
+    if (!applyToDocument) return;
+    const root = document.documentElement;
+    root.setAttribute("data-theme", theme);
+    root.setAttribute("data-brand", brand);
+    root.setAttribute("dir", dir);
+  }, [applyToDocument, theme, brand, dir]);
 
-    const value = React.useMemo(
-      () => ({ theme, brand, dir, locale, messages, scoped: !applyToDocument }),
-      [theme, brand, dir, locale, messages, applyToDocument],
-    );
+  const value = React.useMemo(
+    () => ({ theme, brand, dir, locale, messages, scoped: !applyToDocument }),
+    [theme, brand, dir, locale, messages, applyToDocument],
+  );
 
-    const content = (
-      <>
-        {children}
-        {withToaster && <Toaster position="bottom-end" />}
-      </>
-    );
+  const content = (
+    <>
+      {children}
+      {withToaster && <Toaster position="bottom-end" />}
+    </>
+  );
 
-    return (
-      <DirectionProvider dir={dir}>
-        <YugenContext.Provider value={value}>
-          <div
-            ref={ref}
-            {...(applyToDocument ? {} : { "data-theme": theme, "data-brand": brand })}
-            dir={dir}
-            className={cn(!applyToDocument && "bg-background-1 text-foreground-1", className)}
-            {...props}
-          >
-            {withTooltipProvider ? <TooltipProvider delayDuration={300}>{content}</TooltipProvider> : content}
-          </div>
-        </YugenContext.Provider>
-      </DirectionProvider>
-    );
-  },
-);
-YugenProvider.displayName = "YugenProvider";
+  return (
+    <DirectionProvider dir={dir}>
+      <YugenContext.Provider value={value}>
+        <div
+          ref={ref}
+          {...(applyToDocument ? {} : { "data-theme": theme, "data-brand": brand })}
+          dir={dir}
+          className={cn(!applyToDocument && "bg-background-1 text-foreground-1", className)}
+          {...props}
+        >
+          {withTooltipProvider ? <TooltipProvider delayDuration={300}>{content}</TooltipProvider> : content}
+        </div>
+      </YugenContext.Provider>
+    </DirectionProvider>
+  );
+}

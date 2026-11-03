@@ -91,105 +91,100 @@ export interface RatingProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
 }
 
 /** Rating tương tác — bản chất là nhóm radio: Tab vào, phím mũi tên đổi giá trị, rê chuột để xem trước. */
-export const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
-  (
-    {
-      value,
-      defaultValue = 0,
-      onValueChange,
-      max = 5,
-      step = 1,
-      color = "neutral",
-      size = "extra-large",
-      disabled,
-      name,
-      itemLabel,
-      className,
-      onMouseLeave,
-      onKeyDown,
-      ...props
-    },
-    ref,
-  ) => {
-    const dir = useDirection();
-    const msg = useYugenMessages("rating", ratingMessagesEn);
-    const { locale } = useYugen();
-    const labelOf = itemLabel ?? ((v: number) => msg.item(v, v.toLocaleString(locale)));
-    const autoName = React.useId();
-    const groupName = name ?? autoName;
-    const [current, select] = useControllableState({ value, defaultValue, onChange: onValueChange });
-    const [hover, setHover] = React.useState<number | null>(null);
-    const shown = hover ?? current;
-    const { gap } = ICONS[size];
+export function Rating({
+  value,
+  defaultValue = 0,
+  onValueChange,
+  max = 5,
+  step = 1,
+  color = "neutral",
+  size = "extra-large",
+  disabled,
+  name,
+  itemLabel,
+  className,
+  onMouseLeave,
+  onKeyDown,
+  ref,
+  ...props
+}: RatingProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const dir = useDirection();
+  const msg = useYugenMessages("rating", ratingMessagesEn);
+  const { locale } = useYugen();
+  const labelOf = itemLabel ?? ((v: number) => msg.item(v, v.toLocaleString(locale)));
+  const autoName = React.useId();
+  const groupName = name ?? autoName;
+  const [current, select] = useControllableState({ value, defaultValue, onChange: onValueChange });
+  const [hover, setHover] = React.useState<number | null>(null);
+  const shown = hover ?? current;
+  const { gap } = ICONS[size];
 
-    // Radio gốc xử lý ArrowLeft/Right khác nhau giữa trình duyệt khi RTL → tự xử lý theo chiều hiển thị.
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-      onKeyDown?.(e);
-      if (e.defaultPrevented || (e.key !== "ArrowLeft" && e.key !== "ArrowRight")) return;
-      const radios = Array.from(e.currentTarget.querySelectorAll<HTMLInputElement>("input[type=radio]:not(:disabled)"));
-      const index = radios.indexOf(e.target as HTMLInputElement);
-      if (index === -1) return;
-      e.preventDefault();
-      const forward = (e.key === "ArrowRight") !== (dir === "rtl");
-      const target = radios[(index + (forward ? 1 : -1) + radios.length) % radios.length];
-      target.focus();
-      target.click();
-    };
+  // Radio gốc xử lý ArrowLeft/Right khác nhau giữa trình duyệt khi RTL → tự xử lý theo chiều hiển thị.
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    onKeyDown?.(e);
+    if (e.defaultPrevented || (e.key !== "ArrowLeft" && e.key !== "ArrowRight")) return;
+    const radios = Array.from(e.currentTarget.querySelectorAll<HTMLInputElement>("input[type=radio]:not(:disabled)"));
+    const index = radios.indexOf(e.target as HTMLInputElement);
+    if (index === -1) return;
+    e.preventDefault();
+    const forward = (e.key === "ArrowRight") !== (dir === "rtl");
+    const target = radios[(index + (forward ? 1 : -1) + radios.length) % radios.length];
+    target.focus();
+    target.click();
+  };
 
-    const radio = (v: number, position: string) => (
-      <input
-        type="radio"
-        name={groupName}
-        value={v}
-        checked={current === v}
-        disabled={disabled}
-        aria-label={labelOf(v)}
-        onChange={() => select(v)}
-        onMouseEnter={() => !disabled && setHover(v)}
-        className={cn(
-          "absolute inset-y-0 m-0 cursor-pointer appearance-none opacity-0 disabled:cursor-not-allowed",
-          position,
-        )}
-      />
-    );
+  const radio = (v: number, position: string) => (
+    <input
+      type="radio"
+      name={groupName}
+      value={v}
+      checked={current === v}
+      disabled={disabled}
+      aria-label={labelOf(v)}
+      onChange={() => select(v)}
+      onMouseEnter={() => !disabled && setHover(v)}
+      className={cn(
+        "absolute inset-y-0 m-0 cursor-pointer appearance-none opacity-0 disabled:cursor-not-allowed",
+        position,
+      )}
+    />
+  );
 
-    return (
-      <div
-        ref={ref}
-        role="radiogroup"
-        aria-disabled={disabled || undefined}
-        onMouseLeave={(e) => {
-          setHover(null);
-          onMouseLeave?.(e);
-        }}
-        onKeyDown={handleKeyDown}
-        className={cn("inline-flex items-center", gap, className)}
-        {...props}
-      >
-        {Array.from({ length: max }, (_, k) => {
-          const n = k + 1;
-          return (
-            <span
-              key={n}
-              className="relative inline-flex rounded-small has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-1 has-[input:focus-visible]:outline-stroke-focus"
-            >
-              <Star
-                fill={fillOf(shown, n)}
-                size={size}
-                filledClass={disabled ? "text-foreground-disabled" : FILLED[color]}
-                unfilledClass={disabled ? "text-foreground-disabled" : FILLED[color]}
-                outlineWhenEmpty
-              />
-              {step === 0.5 && radio(n - 0.5, "inset-s-0 w-1/2")}
-              {radio(n, step === 0.5 ? "inset-e-0 w-1/2" : "inset-x-0")}
-            </span>
-          );
-        })}
-      </div>
-    );
-  },
-);
-Rating.displayName = "Rating";
+  return (
+    <div
+      ref={ref}
+      role="radiogroup"
+      aria-disabled={disabled || undefined}
+      onMouseLeave={(e) => {
+        setHover(null);
+        onMouseLeave?.(e);
+      }}
+      onKeyDown={handleKeyDown}
+      className={cn("inline-flex items-center", gap, className)}
+      {...props}
+    >
+      {Array.from({ length: max }, (_, k) => {
+        const n = k + 1;
+        return (
+          <span
+            key={n}
+            className="relative inline-flex rounded-small has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-1 has-[input:focus-visible]:outline-stroke-focus"
+          >
+            <Star
+              fill={fillOf(shown, n)}
+              size={size}
+              filledClass={disabled ? "text-foreground-disabled" : FILLED[color]}
+              unfilledClass={disabled ? "text-foreground-disabled" : FILLED[color]}
+              outlineWhenEmpty
+            />
+            {step === 0.5 && radio(n - 0.5, "inset-s-0 w-1/2")}
+            {radio(n, step === 0.5 ? "inset-e-0 w-1/2" : "inset-x-0")}
+          </span>
+        );
+      })}
+    </div>
+  );
+}
 
 /* -------------------------------------------------------- RatingDisplay */
 
@@ -211,54 +206,63 @@ export interface RatingDisplayProps extends Omit<React.HTMLAttributes<HTMLDivEle
 }
 
 /** RatingDisplay — hiển thị điểm đánh giá chỉ đọc, kèm giá trị và số lượt. */
-export const RatingDisplay = React.forwardRef<HTMLDivElement, RatingDisplayProps>(
-  ({ value, max = 5, count, compact, color = "neutral", size = "medium", showValue: showValueProp, hideValue, className, ...props }, ref) => {
-    if (hideValue !== undefined) warnDeprecated("RatingDisplay.hideValue", "use showValue={false}", "1.0.0");
-    const showValue = showValueProp ?? (hideValue === undefined ? true : !hideValue);
-    const rounded = Math.round(Math.min(Math.max(value, 0), max) * 2) / 2;
-    const { gap, text } = ICONS[size];
-    const msg = useYugenMessages("rating", ratingMessagesEn);
-    const { locale } = useYugen();
-    const valueText = value.toLocaleString(locale, { maximumFractionDigits: 1 });
-    const countText = count?.toLocaleString(locale);
-    const label = msg.summary(valueText, max) + (count !== undefined ? `, ${msg.count(count, countText ?? "")}` : "");
+export function RatingDisplay({
+  value,
+  max = 5,
+  count,
+  compact,
+  color = "neutral",
+  size = "medium",
+  showValue: showValueProp,
+  hideValue,
+  className,
+  ref,
+  ...props
+}: RatingDisplayProps & { ref?: React.Ref<HTMLDivElement> }) {
+  if (hideValue !== undefined) warnDeprecated("RatingDisplay.hideValue", "use showValue={false}", "1.0.0");
+  const showValue = showValueProp ?? (hideValue === undefined ? true : !hideValue);
+  const rounded = Math.round(Math.min(Math.max(value, 0), max) * 2) / 2;
+  const { gap, text } = ICONS[size];
+  const msg = useYugenMessages("rating", ratingMessagesEn);
+  const { locale } = useYugen();
+  const valueText = value.toLocaleString(locale, { maximumFractionDigits: 1 });
+  const countText = count?.toLocaleString(locale);
+  const label = msg.summary(valueText, max) + (count !== undefined ? `, ${msg.count(count, countText ?? "")}` : "");
 
-    return (
-      <div
-        ref={ref}
-        role="img"
-        aria-label={label}
-        className={cn("inline-flex items-center gap-1", text, className)}
-        {...props}
-      >
-        <span className={cn("inline-flex items-center", gap)}>
-          {compact ? (
-            <Star fill="full" size={size} filledClass={FILLED[color]} unfilledClass={UNFILLED_DISPLAY[color]} outlineWhenEmpty={false} />
-          ) : (
-            Array.from({ length: max }, (_, k) => (
-              <Star
-                key={k}
-                fill={fillOf(rounded, k + 1)}
-                size={size}
-                filledClass={FILLED[color]}
-                unfilledClass={UNFILLED_DISPLAY[color]}
-                outlineWhenEmpty={false}
-              />
-            ))
-          )}
+  return (
+    <div
+      ref={ref}
+      role="img"
+      aria-label={label}
+      className={cn("inline-flex items-center gap-1", text, className)}
+      {...props}
+    >
+      <span className={cn("inline-flex items-center", gap)}>
+        {compact ? (
+          <Star fill="full" size={size} filledClass={FILLED[color]} unfilledClass={UNFILLED_DISPLAY[color]} outlineWhenEmpty={false} />
+        ) : (
+          Array.from({ length: max }, (_, k) => (
+            <Star
+              key={k}
+              fill={fillOf(rounded, k + 1)}
+              size={size}
+              filledClass={FILLED[color]}
+              unfilledClass={UNFILLED_DISPLAY[color]}
+              outlineWhenEmpty={false}
+            />
+          ))
+        )}
+      </span>
+      {showValue && (
+        <span aria-hidden className="font-semibold text-foreground-1">
+          {valueText}
         </span>
-        {showValue && (
-          <span aria-hidden className="font-semibold text-foreground-1">
-            {valueText}
-          </span>
-        )}
-        {count !== undefined && (
-          <span aria-hidden className="text-foreground-2 before:pe-1 before:content-['·']">
-            {countText}
-          </span>
-        )}
-      </div>
-    );
-  },
-);
-RatingDisplay.displayName = "RatingDisplay";
+      )}
+      {count !== undefined && (
+        <span aria-hidden className="text-foreground-2 before:pe-1 before:content-['·']">
+          {countText}
+        </span>
+      )}
+    </div>
+  );
+}

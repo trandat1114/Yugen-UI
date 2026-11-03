@@ -57,26 +57,31 @@ export interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectE
 }
 
 /** Select = thẻ `<select>` gốc của trình duyệt được tạo kiểu Fluent — phù hợp form đơn giản và thiết bị di động. */
-export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
-  ({ className, selectClassName, appearance = "outline", size = "medium", disabled, ...props }, ref) => {
-    const icon = ICON[size];
-    const invalid = props["aria-invalid"] === true || props["aria-invalid"] === "true";
-    return (
-      <span
-        data-disabled={disabled || undefined}
-        data-invalid={invalid || undefined}
-        className={cn(fieldAppearanceClass[appearance], "inline-flex w-full items-center", HEIGHT[size], className)}
-      >
-        <select ref={ref} disabled={disabled} className={cn(selectVariants({ size }), selectClassName)} {...props} />
-        <icon.Icon
-          aria-hidden
-          className={cn(
-            "pointer-events-none absolute top-1/2 -translate-y-1/2 text-foreground-3 peer-disabled:text-foreground-disabled",
-            icon.className,
-          )}
-        />
-      </span>
-    );
-  },
-);
-Select.displayName = "Select";
+export function Select({
+  className,
+  selectClassName,
+  appearance = "outline",
+  size = "medium",
+  disabled,
+  ref,
+  ...props
+}: SelectProps & { ref?: React.Ref<HTMLSelectElement> }) {
+  const icon = ICON[size];
+  const invalid = props["aria-invalid"] === true || props["aria-invalid"] === "true";
+  return (
+    <span
+      data-disabled={disabled || undefined}
+      data-invalid={invalid || undefined}
+      className={cn(fieldAppearanceClass[appearance], "inline-flex w-full items-center", HEIGHT[size], className)}
+    >
+      <select ref={ref} disabled={disabled} className={cn(selectVariants({ size }), selectClassName)} {...props} />
+      <icon.Icon
+        aria-hidden
+        className={cn(
+          "pointer-events-none absolute top-1/2 -translate-y-1/2 text-foreground-3 peer-disabled:text-foreground-disabled",
+          icon.className,
+        )}
+      />
+    </span>
+  );
+}
