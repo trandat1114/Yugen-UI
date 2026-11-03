@@ -9,10 +9,10 @@ import {
   Warning20Filled,
 } from "@fluentui/react-icons";
 import { useYugenMessages } from "../YugenProvider/context";
-import { toastMessages } from "./messages";
+import { toastMessagesEn } from "./messages";
 import { cn } from "@/lib/cn";
 
-export { toastMessages, toastMessagesEn, type ToastMessages } from "./messages";
+export { toastMessages, toastMessagesVi, toastMessagesEn, type ToastMessages } from "./messages";
 
 /** Fluent 2 Toast — https://fluent2.microsoft.design/components/web/react/core/toast/usage */
 export type ToastIntent = "info" | "success" | "warning" | "error";
@@ -175,7 +175,7 @@ export interface ToasterProps {
 export function Toaster({ position = "bottom-end", toasterId, limit = 5, className }: ToasterProps) {
   const all = React.useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
   const items = all.filter((t) => t.toasterId === toasterId);
-  const msg = useYugenMessages("toast", toastMessages);
+  const msg = useYugenMessages("toast", toastMessagesEn);
   // Giữ nguyên thứ tự DOM; chỉ `limit` toast mở mới nhất được hiển thị, toast đang đóng vẫn render để chạy animation.
   const visibleIds = new Set(
     items

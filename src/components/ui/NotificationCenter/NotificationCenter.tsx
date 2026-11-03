@@ -26,9 +26,9 @@ import { useMediaQuery } from "../hooks/useMediaQuery";
 import { SkeletonList } from "../Skeleton/Skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../Tabs/Tabs";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
-import { notificationCenterMessages, type NotificationCenterMessages } from "./messages";
+import { notificationCenterMessagesEn, type NotificationCenterMessages } from "./messages";
 
-export { notificationCenterMessages, notificationCenterMessagesEn, type NotificationCenterMessages } from "./messages";
+export { notificationCenterMessages, notificationCenterMessagesVi, notificationCenterMessagesEn, type NotificationCenterMessages } from "./messages";
 
 export type NotificationIntent = "info" | "success" | "warning" | "error";
 
@@ -74,7 +74,7 @@ function dateFormats(locale: string): DateFormats {
   return f;
 }
 
-/** Locale Intl và chuỗi thời gian cho các hàm định dạng — mặc định "vi-VN" và `notificationCenterMessages`. */
+/** Locale Intl và chuỗi thời gian cho các hàm định dạng — mặc định "en-US" và `notificationCenterMessagesEn`. */
 export interface NotificationTimeOptions {
   locale?: string;
   messages?: Pick<NotificationCenterMessages, "justNow" | "minutesAgo" | "hoursAgo" | "today" | "yesterday">;
@@ -87,7 +87,7 @@ const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDat
 export function formatRelativeTime(
   time: NotificationItem["time"],
   now: Date | number,
-  { locale = "vi-VN", messages = notificationCenterMessages }: NotificationTimeOptions = {},
+  { locale = "en-US", messages = notificationCenterMessagesEn }: NotificationTimeOptions = {},
 ): string {
   const date = toDate(time);
   const ref = typeof now === "number" ? now : now.getTime();
@@ -103,7 +103,7 @@ export function formatRelativeTime(
 export function formatNotificationDay(
   time: NotificationItem["time"],
   now: Date | number,
-  { locale = "vi-VN", messages = notificationCenterMessages }: NotificationTimeOptions = {},
+  { locale = "en-US", messages = notificationCenterMessagesEn }: NotificationTimeOptions = {},
 ): string {
   const date = toDate(time);
   const ref = new Date(typeof now === "number" ? now : now.getTime());
@@ -326,7 +326,7 @@ export const NotificationPanel = React.forwardRef<HTMLDivElement, NotificationPa
     const uid = React.useId();
     const now = useNow(nowProp);
     const { locale } = useYugen();
-    const msg = useYugenMessages("notificationCenter", notificationCenterMessages);
+    const msg = useYugenMessages("notificationCenter", notificationCenterMessagesEn);
     const [filter, setFilter] = useControllableState({ value: filterProp, defaultValue: defaultFilter, onChange: onFilterChange });
     const showSkeleton = useSpinDelay(loading);
     const unread = items.filter((n) => !n.read).length;
@@ -474,7 +474,7 @@ export const NotificationCenter = React.forwardRef<HTMLButtonElement, Notificati
     ref,
   ) => {
     const { items } = panelProps;
-    const msg = useYugenMessages("notificationCenter", notificationCenterMessages);
+    const msg = useYugenMessages("notificationCenter", notificationCenterMessagesEn);
     const title = titleProp ?? msg.title;
     const [open, setOpen] = useControllableState({ value: openProp, defaultValue: defaultOpen, onChange: onOpenChange });
     const wide = useMediaQuery(`(min-width: ${breakpoint}px)`, { defaultValue: true });

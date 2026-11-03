@@ -1,10 +1,7 @@
-import { messagesEn } from "@/components/ui";
 import type { Content } from "./types";
 
 const en: Content = {
-  lang: "en",
-  messages: messagesEn,
-  locale: "en-US",
+  lang: "en",  locale: "en-US",
   appName: "Sakura Journeys",
   pageTitle: (page) => `${page} · Sakura Journeys`,
   nav: { label: "Main", home: "Journal", explore: "Explore", settings: "Settings", search: "Search" },

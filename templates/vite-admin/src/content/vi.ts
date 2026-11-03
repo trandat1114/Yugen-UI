@@ -1,7 +1,10 @@
+import { messagesVi } from "yugen-ui";
 import type { Content } from "./types";
 
 const vi: Content = {
   lang: "vi",
+
+  messages: messagesVi,
   locale: "vi-VN",
   currency: "USD",
   appName: "Sakura Admin",

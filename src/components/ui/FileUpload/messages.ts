@@ -94,3 +94,6 @@ export const fileUploadMessagesEn: FileUploadMessages = {
   retry: (name) => `Retry uploading ${name}`,
   remove: (name) => `Remove ${name}`,
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `fileUploadMessagesEn` (mặc định). `fileUploadMessages` giữ cho code cũ. */
+export const fileUploadMessagesVi = fileUploadMessages;

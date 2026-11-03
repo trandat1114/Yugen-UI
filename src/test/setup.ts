@@ -6,6 +6,32 @@ import "@testing-library/jest-dom/vitest";
 import { afterEach, vi } from "vitest";
 import { installMatchMedia, resetMediaQueries } from "./matchMedia";
 
+/**
+ * Từ 0.14 chuỗi có sẵn của component mặc định là tiếng Anh (#277), nhưng phần lớn unit test viết theo chữ tiếng Việt:
+ * `render` / `renderHook` chạy trong ngữ cảnh `messagesVi` + locale "vi-VN" (chỉ context, không thêm phần tử DOM, theme
+ * giữ mặc định). Test cần mặc định tiếng Anh: bọc `<YugenProvider messages={messagesEn} locale="en-US">` (provider trong
+ * ghi đè provider ngoài), hoặc import `render` gốc qua `vi.importActual`. Hàm gọi trực tiếp (formatFileSize…) không qua
+ * đây nên vẫn theo mặc định tiếng Anh.
+ */
+vi.mock("@testing-library/react", async (importOriginal) => {
+  const rtl = await importOriginal<typeof import("@testing-library/react")>();
+  const { createElement } = await import("react");
+  const { YugenContext } = await import("@/components/ui/YugenProvider/context");
+  const { messagesVi } = await import("@/components/ui/messages-vi");
+  type Wrapper = React.JSXElementConstructor<{ children: React.ReactNode }>;
+  const value = { theme: "light", brand: "sakura", dir: "ltr", locale: "vi-VN", scoped: false, messages: messagesVi } as const;
+  const Vietnamese: Wrapper = ({ children }) => createElement(YugenContext.Provider, { value }, children);
+  const wrap = (inner?: Wrapper): Wrapper =>
+    inner ? ({ children }) => createElement(Vietnamese, null, createElement(inner, null, children)) : Vietnamese;
+  return {
+    ...rtl,
+    render: ((ui: React.ReactNode, options?: { wrapper?: Wrapper }) =>
+      rtl.render(ui, { ...options, wrapper: wrap(options?.wrapper) })) as typeof rtl.render,
+    renderHook: ((callback: (props: unknown) => unknown, options?: { wrapper?: Wrapper }) =>
+      rtl.renderHook(callback, { ...options, wrapper: wrap(options?.wrapper) })) as typeof rtl.renderHook,
+  };
+});
+
 if (typeof window !== "undefined") {
   installMatchMedia();
 

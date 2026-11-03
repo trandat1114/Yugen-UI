@@ -28,3 +28,6 @@ export const markdownMessagesEn: MarkdownMessages = {
   taskTodo: "Not done:",
   table: "Table",
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `markdownMessagesEn` (mặc định). `markdownMessages` giữ cho code cũ. */
+export const markdownMessagesVi = markdownMessages;

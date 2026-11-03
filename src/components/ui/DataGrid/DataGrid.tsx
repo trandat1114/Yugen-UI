@@ -8,7 +8,7 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "..
 import { useSpinDelay } from "../Loading/Loading";
 import { SkeletonItem } from "../Skeleton/Skeleton";
 import { useYugenMessages } from "../YugenProvider/context";
-import { dataGridMessages } from "./messages";
+import { dataGridMessagesEn } from "./messages";
 import {
   getOrderedColumns,
   getVisibleColumns,
@@ -25,7 +25,7 @@ import {
 } from "./useDataGrid";
 
 export * from "./useDataGrid";
-export { dataGridMessages, dataGridMessagesEn, type DataGridMessages } from "./messages";
+export { dataGridMessages, dataGridMessagesVi, dataGridMessagesEn, type DataGridMessages } from "./messages";
 
 /**
  * Fluent 2 DataGrid — https://react.fluentui.dev/?path=/docs/components-datagrid--docs
@@ -524,7 +524,7 @@ function DataGridImpl<T>(
 ) {
   const dir = useDirection();
   const rtl = dir === "rtl";
-  const msg = useYugenMessages("dataGrid", dataGridMessages);
+  const msg = useYugenMessages("dataGrid", dataGridMessagesEn);
   const baseId = React.useId();
   const rootRef = React.useRef<HTMLDivElement | null>(null);
   const headerRef = React.useRef<HTMLDivElement | null>(null);

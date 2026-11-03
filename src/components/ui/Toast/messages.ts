@@ -25,3 +25,6 @@ export const toastMessagesEn: ToastMessages = {
   regionHotkey: "Notifications ({hotkey})",
   dismiss: "Dismiss notification",
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `toastMessagesEn` (mặc định). `toastMessages` giữ cho code cũ. */
+export const toastMessagesVi = toastMessages;

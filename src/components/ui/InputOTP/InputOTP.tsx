@@ -5,9 +5,9 @@ import { useDirection } from "@radix-ui/react-direction";
 import { cn } from "@/lib/cn";
 import { fieldControlClass } from "@/components/ui/Field/Field";
 import { useYugenMessages } from "../YugenProvider/context";
-import { inputOTPMessages } from "./messages";
+import { inputOTPMessagesEn } from "./messages";
 
-export { inputOTPMessages, inputOTPMessagesEn, type InputOTPMessages } from "./messages";
+export { inputOTPMessages, inputOTPMessagesVi, inputOTPMessagesEn, type InputOTPMessages } from "./messages";
 
 const PATTERNS = {
   digits: /^\d$/,
@@ -72,7 +72,7 @@ export const InputOTP = React.forwardRef<HTMLDivElement, InputOTPProps>(
     const isValid = (ch: string) => regex.test(ch);
     const sanitize = (text: string) => text.split("").filter(isValid).join("");
 
-    const msg = useYugenMessages("inputOTP", inputOTPMessages);
+    const msg = useYugenMessages("inputOTP", inputOTPMessagesEn);
     const [rawValue, setValue] = useControllableState({
       value,
       defaultValue: () => sanitize(defaultValue).slice(0, length),

@@ -235,9 +235,9 @@ export default function Page() {
               {
                 name: "messages",
                 type: "YugenMessagesInput",
-                description: "Replaces components' built-in strings by namespace, such as messagesEn for English. Nested providers inherit, then override. See Interface language.",
+                description: "Replaces components' built-in strings (English by default) by namespace, such as messagesVi for Vietnamese. Nested providers inherit, then override. See Interface language.",
               },
-              { name: "locale", type: "string", defaultValue: `"vi-VN"`, description: "Intl locale for dates, times and numbers in components. Nested providers inherit it." },
+              { name: "locale", type: "string", defaultValue: `"en-US"`, description: "Intl locale for dates, times and numbers in components. Nested providers inherit it." },
               { name: "className, …div props", type: "HTMLAttributes<HTMLDivElement>", description: "Passed to the wrapping div (the ref is forwarded)." },
             ]}
           />

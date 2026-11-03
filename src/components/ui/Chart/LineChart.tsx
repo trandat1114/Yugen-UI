@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
-import { chartMessages } from "./messages";
+import { chartMessagesEn } from "./messages";
 import { ChartContainer, ChartFocusRing, ChartLegend, ChartTable, ChartTooltip, type ChartTooltipRow } from "./ChartParts";
 import { ChartBrush } from "./ChartBrush";
 import { normalizeDomain, stackValues, type ChartDomain } from "./chartMath";
@@ -120,7 +120,7 @@ function SeriesChart({
 }: AreaChartProps & { variant: "line" | "area"; forwardedRef: React.ForwardedRef<HTMLElement> }) {
   const yugen = useYugen();
   const locale = localeProp ?? yugen.locale;
-  const msg = useYugenMessages("chart", chartMessages);
+  const msg = useYugenMessages("chart", chartMessagesEn);
   const textured = useChartTexture(texture);
   const { ref: plotRef, width } = useElementSize<HTMLDivElement>();
   const [hidden, toggleSeries] = useSeriesToggle(series.map((s) => s.key));

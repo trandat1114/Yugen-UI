@@ -22,9 +22,9 @@ import {
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { useYugenMessages } from "../YugenProvider/context";
-import { resizableMessages } from "./messages";
+import { resizableMessagesEn } from "./messages";
 
-export { resizableMessages, resizableMessagesEn, type ResizableMessages } from "./messages";
+export { resizableMessages, resizableMessagesVi, resizableMessagesEn, type ResizableMessages } from "./messages";
 
 /**
  * shadcn Resizable — https://ui.shadcn.com/docs/components/resizable
@@ -281,7 +281,7 @@ export function ResizableHandle({
   ...props
 }: ResizableHandleProps) {
   const group = React.useContext(ResizableGroupContext);
-  const msg = useYugenMessages("resizable", resizableMessages);
+  const msg = useYugenMessages("resizable", resizableMessagesEn);
   const orientation = group?.orientation ?? "horizontal";
   const mirrored = group?.mirrored ?? false;
   const [element, setElement] = React.useState<HTMLDivElement | null>(null);

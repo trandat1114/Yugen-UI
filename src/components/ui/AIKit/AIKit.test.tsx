@@ -173,7 +173,8 @@ describe("PromptInput", () => {
     expect(accepted).toEqual([pdf]);
     expect(rejected.map((r) => r.reason)).toEqual(["type", "size", "count", "duplicate"]);
     expect(rejected[1].message).toContain("1 KB");
-    expect(formatFileSize(1536)).toBe("1,5 KB");
+    // Mặc định "en-US" (#277).
+    expect(formatFileSize(1536)).toBe("1.5 KB");
     expect(formatFileSize(5 * 1024 * 1024)).toBe("5 MB");
   });
 
@@ -213,7 +214,7 @@ describe("AIKit messages", () => {
   });
 
   it("formatFileSize theo locale", () => {
-    expect(formatFileSize(1536, "en-US")).toBe("1.5 KB");
-    expect(formatFileSize(1536)).toBe("1,5 KB");
+    expect(formatFileSize(1536, "vi-VN")).toBe("1,5 KB");
+    expect(formatFileSize(1536)).toBe("1.5 KB");
   });
 });

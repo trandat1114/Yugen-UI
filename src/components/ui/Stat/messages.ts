@@ -23,3 +23,6 @@ export const statMessagesEn: StatMessages = {
   decrease: "Decrease",
   noChange: "No change",
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `statMessagesEn` (mặc định). `statMessages` giữ cho code cũ. */
+export const statMessagesVi = statMessages;

@@ -36,8 +36,8 @@ function ValueCell({ label, lang, value, folder }: { label: string; lang: string
 }
 
 /**
- * Bảng chuỗi giao diện có sẵn (namespace của `messages` trên YugenProvider): khoá, kiểu, mặc định tiếng Việt, bản tiếng Anh
- * (`messagesEn`). Nạp lười cùng dữ liệu `virtual:yugen-messages` — trang không có mục này không tải dữ liệu.
+ * Bảng chuỗi giao diện có sẵn (namespace của `messages` trên YugenProvider): khoá, kiểu, mặc định tiếng Anh, bản tiếng Việt
+ * (`messagesVi`). Nạp lười cùng dữ liệu `virtual:yugen-messages` — trang không có mục này không tải dữ liệu.
  * Bố cục như bảng props (#266): độ rộng cột cố định; khung hẹp hơn 42rem thì mỗi khoá một khối, không phải cuộn ngang.
  */
 export default function MessagesTable({ names }: { names: string[] }) {
@@ -62,8 +62,8 @@ export default function MessagesTable({ names }: { names: string[] }) {
                   <th className="w-[32%] px-4 py-2 text-start">
                     {t("messages.key")} · {t("blocks.type")}
                   </th>
-                  <th className="px-4 py-2 text-start">{t("messages.vi")}</th>
                   <th className="px-4 py-2 text-start">{t("messages.en")}</th>
+                  <th className="px-4 py-2 text-start">{t("messages.vi")}</th>
                 </tr>
               </thead>
               <tbody className="@max-2xl:block">
@@ -82,8 +82,8 @@ export default function MessagesTable({ names }: { names: string[] }) {
                         </p>
                       )}
                     </td>
-                    <ValueCell label={t("messages.vi")} lang="vi" value={k.vi} folder={ns.folder} />
                     <ValueCell label={t("messages.en")} lang="en" value={k.en} folder={ns.folder} />
+                    <ValueCell label={t("messages.vi")} lang="vi" value={k.vi} folder={ns.folder} />
                   </tr>
                 ))}
               </tbody>

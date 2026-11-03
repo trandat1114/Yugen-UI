@@ -18,9 +18,9 @@ import {
 import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { matchesMedia } from "../hooks/useMediaQuery";
-import { tourMessages } from "./messages";
+import { tourMessagesEn } from "./messages";
 
-export { tourMessages, tourMessagesEn, type TourMessages } from "./messages";
+export { tourMessages, tourMessagesVi, tourMessagesEn, type TourMessages } from "./messages";
 
 /** Vị trí popover so với phần tử — start / end theo hướng chữ (tự đảo ở RTL). */
 export type TourPlacement = "top" | "bottom" | "start" | "end";
@@ -128,7 +128,7 @@ export function Tour({
   finishLabel,
   children,
 }: TourProps) {
-  const msg = useYugenMessages("tour", tourMessages);
+  const msg = useYugenMessages("tour", tourMessagesEn);
   const total = steps.length;
   const [rawOpen, setOpen] = useControllableState({ value: openProp, defaultValue: defaultOpen, onChange: onOpenChange });
   const open = rawOpen && total > 0;

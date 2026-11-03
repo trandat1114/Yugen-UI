@@ -98,3 +98,6 @@ export const notificationCenterMessagesEn: NotificationCenterMessages = {
   today: "Today",
   yesterday: "Yesterday",
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `notificationCenterMessagesEn` (mặc định). `notificationCenterMessages` giữ cho code cũ. */
+export const notificationCenterMessagesVi = notificationCenterMessages;

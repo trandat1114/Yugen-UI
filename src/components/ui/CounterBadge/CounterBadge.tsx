@@ -4,9 +4,9 @@ import { cn } from "@/lib/cn";
 import { Badge, type BadgeProps } from "../Badge/Badge";
 import { VisuallyHidden } from "../VisuallyHidden/VisuallyHidden";
 import { useYugenMessages } from "../YugenProvider/context";
-import { counterBadgeMessages } from "./messages";
+import { counterBadgeMessagesEn } from "./messages";
 
-export { counterBadgeMessages, counterBadgeMessagesEn, type CounterBadgeMessages } from "./messages";
+export { counterBadgeMessages, counterBadgeMessagesVi, counterBadgeMessagesEn, type CounterBadgeMessages } from "./messages";
 
 type CounterBadgeSize = "small" | "medium" | "large" | "extra-large";
 type CounterBadgeColor = "brand" | "danger" | "important" | "informative";
@@ -66,7 +66,7 @@ export const CounterBadge = React.forwardRef<HTMLSpanElement, CounterBadgeProps>
     },
     ref,
   ) => {
-    const msg = useYugenMessages("counterBadge", counterBadgeMessages);
+    const msg = useYugenMessages("counterBadge", counterBadgeMessagesEn);
     if (!dot && count === 0 && !showZero) return null;
 
     const overflow = count > overflowCount;

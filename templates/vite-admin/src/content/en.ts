@@ -1,12 +1,9 @@
-import { messagesEn } from "yugen-ui";
 import type { Content } from "./types";
 
 const plural = (count: number, one: string, many: string) => (count === 1 ? `1 ${one}` : `${count} ${many}`);
 
 const en: Content = {
-  lang: "en",
-  messages: messagesEn,
-  locale: "en-US",
+  lang: "en",  locale: "en-US",
   currency: "USD",
   appName: "Sakura Admin",
   pageTitle: (page) => `${page} · Sakura Admin`,

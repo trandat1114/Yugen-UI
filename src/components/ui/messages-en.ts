@@ -72,8 +72,9 @@ import { tourMessagesEn } from "./Tour/messages";
 import { traceMessagesEn } from "./Trace/messages";
 
 /**
- * Chuỗi giao diện có sẵn của mọi component, bằng tiếng Anh: `<YugenProvider messages={messagesEn} locale="en-US">`.
- * Kiểu `YugenMessages` đầy đủ: component mới thêm namespace mà quên bản tiếng Anh ở đây thì typecheck báo lỗi.
+ * Chuỗi giao diện có sẵn của mọi component, bằng tiếng Anh: đây cũng là giá trị mặc định khi không truyền `messages`.
+ * Tiếng Việt: `messagesVi`. Kiểu `YugenMessages` đầy đủ: component mới thêm namespace mà quên bản tiếng Anh ở đây thì
+ * typecheck báo lỗi.
  */
 export const messagesEn: YugenMessages = {
   appShell: appShellMessagesEn,

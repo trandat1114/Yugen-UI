@@ -5,9 +5,9 @@ import { ChevronDown12Regular, ChevronDown16Regular, ChevronUp12Regular, Chevron
 import { cn } from "@/lib/cn";
 import { fieldAppearanceClass, type FieldAppearance } from "@/components/ui/Select/Select";
 import { useYugenMessages } from "../YugenProvider/context";
-import { spinButtonMessages } from "./messages";
+import { spinButtonMessagesEn } from "./messages";
 
-export { spinButtonMessages, spinButtonMessagesEn, type SpinButtonMessages } from "./messages";
+export { spinButtonMessages, spinButtonMessagesVi, spinButtonMessagesEn, type SpinButtonMessages } from "./messages";
 
 const decimals = (n: number) => {
   const [, frac = ""] = String(n).split(".");
@@ -85,7 +85,7 @@ export const SpinButton = React.forwardRef<HTMLInputElement, SpinButtonProps>(
     },
     ref,
   ) => {
-    const msg = useYugenMessages("spinButton", spinButtonMessages);
+    const msg = useYugenMessages("spinButton", spinButtonMessagesEn);
     const [current, setCurrent] = useControllableState<number | null>({ value, defaultValue, onChange: onValueChange });
     const [text, setTextState] = React.useState<string | null>(null);
     // Ref giữ giá trị mới nhất cho vòng lặp "nhấn giữ" (tránh closure cũ).

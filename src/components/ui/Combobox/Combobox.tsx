@@ -17,9 +17,9 @@ import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffec
 import { popoverSurfaceClass } from "@/components/ui/Popover/Popover";
 import { fieldAppearanceClass, type FieldAppearance } from "@/components/ui/Select/Select";
 import { listboxOptionClass } from "@/components/ui/Dropdown/Dropdown";
-import { comboboxMessages } from "./messages";
+import { comboboxMessagesEn } from "./messages";
 
-export { comboboxMessages, comboboxMessagesEn, type ComboboxMessages } from "./messages";
+export { comboboxMessages, comboboxMessagesVi, comboboxMessagesEn, type ComboboxMessages } from "./messages";
 
 export interface ComboboxOption {
   value: string;
@@ -137,7 +137,7 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
     ...inputProps
   } = props;
 
-  const msg = useYugenMessages("combobox", comboboxMessages);
+  const msg = useYugenMessages("combobox", comboboxMessagesEn);
   const items = React.useMemo<NormalizedOption[]>(
     () => options.map((o) => (typeof o === "string" ? { value: o, label: o } : { ...o, label: o.label ?? o.value })),
     [options],

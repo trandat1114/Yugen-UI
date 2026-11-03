@@ -75,11 +75,11 @@ export const vi = {
 
   // Bảng Messages trên trang component (MessagesTable.tsx)
   "messages.desc": "Chữ có sẵn của component: nhãn, aria-label, thông báo cho trình đọc màn hình.",
-  "messages.intro": "Đổi qua prop messages của YugenProvider, theo namespace bên dưới; messagesEn chứa bản tiếng Anh.",
+  "messages.intro": "Mặc định là tiếng Anh. Đổi qua prop messages của YugenProvider, theo namespace bên dưới; messagesVi chứa bản tiếng Việt.",
   "messages.link": "Xem Ngôn ngữ giao diện.",
   "messages.key": "Khoá",
-  "messages.vi": "Mặc định (tiếng Việt)",
-  "messages.en": "messagesEn",
+  "messages.vi": "messagesVi",
+  "messages.en": "Mặc định (tiếng Anh)",
   "messages.seeSource": "Hàm, xem messages.ts",
 
   // Trang component

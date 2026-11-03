@@ -1,10 +1,7 @@
-import { messagesEn } from "yugen-ui";
 import type { Content } from "./types";
 
 const en: Content = {
-  lang: "en",
-  messages: messagesEn,
-  locale: "en-US",
+  lang: "en",  locale: "en-US",
   site: {
     title: "Sakura Notes Docs",
     product: "Sakura Notes",

@@ -5,9 +5,9 @@ import { Dismiss16Regular, Dismiss20Regular, Dismiss24Regular, Search16Regular, 
 import { cn } from "@/lib/cn";
 import { Input, type InputProps } from "@/components/ui/Input/Input";
 import { useYugenMessages } from "../YugenProvider/context";
-import { searchBoxMessages } from "./messages";
+import { searchBoxMessagesEn } from "./messages";
 
-export { searchBoxMessages, searchBoxMessagesEn, type SearchBoxMessages } from "./messages";
+export { searchBoxMessages, searchBoxMessagesVi, searchBoxMessagesEn, type SearchBoxMessages } from "./messages";
 
 const ICONS = {
   small: { Search: Search16Regular, Dismiss: Dismiss16Regular },
@@ -43,7 +43,7 @@ export const SearchBox = React.forwardRef<HTMLInputElement, SearchBoxProps>(
     },
     ref,
   ) => {
-    const msg = useYugenMessages("searchBox", searchBoxMessages);
+    const msg = useYugenMessages("searchBox", searchBoxMessagesEn);
     const inputRef = React.useRef<HTMLInputElement>(null);
     React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
     const [current, setCurrent] = useControllableState({

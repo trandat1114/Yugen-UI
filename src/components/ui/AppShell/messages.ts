@@ -36,3 +36,6 @@ export const appShellMessagesEn: AppShellMessages = {
   expandSidebar: "Expand sidebar",
   resizeSidebar: "Resize sidebar",
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `appShellMessagesEn` (mặc định). `appShellMessages` giữ cho code cũ. */
+export const appShellMessagesVi = appShellMessages;

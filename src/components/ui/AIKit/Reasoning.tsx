@@ -5,10 +5,10 @@ import { ChevronDown16Regular, Lightbulb16Regular } from "@fluentui/react-icons"
 import { cn } from "@/lib/cn";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../Collapsible/Collapsible";
 import { useYugenMessages } from "../YugenProvider/context";
-import { reasoningMessages } from "./messages";
+import { reasoningMessagesEn } from "./messages";
 import { StreamingMarkdown } from "./StreamingMarkdown";
 
-export { reasoningMessages, reasoningMessagesEn, type ReasoningMessages } from "./messages";
+export { reasoningMessages, reasoningMessagesVi, reasoningMessagesEn, type ReasoningMessages } from "./messages";
 
 /** Thời lượng gọn theo giây: 12s · 1m 05s. */
 export function formatReasoningDuration(ms: number): string {
@@ -40,7 +40,7 @@ export const Reasoning = React.forwardRef<HTMLDivElement, ReasoningProps>(
     { streaming = false, duration, open: openProp, defaultOpen, onOpenChange, autoOpen = true, label, className, children, ...props },
     ref,
   ) => {
-    const msg = useYugenMessages("reasoning", reasoningMessages);
+    const msg = useYugenMessages("reasoning", reasoningMessagesEn);
     const [open, setOpen] = useControllableState({
       value: openProp,
       defaultValue: defaultOpen ?? (autoOpen && streaming),

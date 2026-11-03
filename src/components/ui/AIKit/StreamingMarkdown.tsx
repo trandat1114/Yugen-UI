@@ -15,9 +15,9 @@ import {
   type MdBlock,
   type MdInline,
 } from "./markdown";
-import { streamingMarkdownMessages, type StreamingMarkdownMessages } from "./messages";
+import { streamingMarkdownMessagesEn, type StreamingMarkdownMessages } from "./messages";
 
-export { streamingMarkdownMessages, streamingMarkdownMessagesEn, type StreamingMarkdownMessages } from "./messages";
+export { streamingMarkdownMessages, streamingMarkdownMessagesVi, streamingMarkdownMessagesEn, type StreamingMarkdownMessages } from "./messages";
 export { codeLanguageOf } from "./codeLanguage";
 
 type Size = "small" | "medium";
@@ -315,7 +315,7 @@ export const StreamingMarkdown = React.forwardRef<HTMLDivElement, StreamingMarkd
     },
     ref,
   ) => {
-    const msg = useYugenMessages("streamingMarkdown", streamingMarkdownMessages);
+    const msg = useYugenMessages("streamingMarkdown", streamingMarkdownMessagesEn);
     const stateRef = React.useRef<MarkdownParseState | null>(null);
     const parsed = parseMarkdownIncremental(children, streaming, stateRef.current);
     stateRef.current = parsed;

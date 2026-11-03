@@ -60,3 +60,9 @@ export const dateRangePickerMessagesEn: DateRangePickerMessages = {
   thisMonth: "This month",
   lastMonth: "Last month",
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `datePickerMessagesEn` (mặc định). `datePickerMessages` giữ cho code cũ. */
+export const datePickerMessagesVi = datePickerMessages;
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `dateRangePickerMessagesEn` (mặc định). `dateRangePickerMessages` giữ cho code cũ. */
+export const dateRangePickerMessagesVi = dateRangePickerMessages;

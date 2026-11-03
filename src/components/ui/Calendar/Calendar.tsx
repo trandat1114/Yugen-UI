@@ -10,9 +10,9 @@ import {
 } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
-import { calendarMessages } from "./messages";
+import { calendarMessagesEn } from "./messages";
 
-export { calendarMessages, calendarMessagesEn, type CalendarMessages } from "./messages";
+export { calendarMessages, calendarMessagesVi, calendarMessagesEn, type CalendarMessages } from "./messages";
 
 /** Fluent 2 Calendar — https://fluent2.microsoft.design/components/web/react/core/calendar/usage */
 export type CalendarProps = DayPickerProps;
@@ -105,7 +105,7 @@ export function Calendar({
   dir: dirProp,
   ...props
 }: CalendarProps) {
-  const msg = useYugenMessages("calendar", calendarMessages);
+  const msg = useYugenMessages("calendar", calendarMessagesEn);
   const locale = localeProp ?? msg.locale;
   const isVi = locale?.code === vi.code;
   // DayPicker dùng `dir` để đảo ArrowLeft/ArrowRight; lấy từ DirectionProvider khi không truyền.

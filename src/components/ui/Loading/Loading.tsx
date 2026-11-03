@@ -13,23 +13,23 @@ import { Spinner, type SpinnerSize } from "../Spinner/Spinner";
 import { toast } from "../Toast/Toast";
 import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
 import {
-  asyncContentMessages,
-  errorStateMessages,
-  loadingOverlayMessages,
-  optimisticListMessages,
-  pageProgressMessages,
+  asyncContentMessagesEn,
+  errorStateMessagesEn,
+  loadingOverlayMessagesEn,
+  optimisticListMessagesEn,
+  pageProgressMessagesEn,
 } from "./messages";
 
 export {
-  asyncContentMessages,
+  asyncContentMessages, asyncContentMessagesVi,
   asyncContentMessagesEn,
-  errorStateMessages,
+  errorStateMessages, errorStateMessagesVi,
   errorStateMessagesEn,
-  loadingOverlayMessages,
+  loadingOverlayMessages, loadingOverlayMessagesVi,
   loadingOverlayMessagesEn,
-  optimisticListMessages,
+  optimisticListMessages, optimisticListMessagesVi,
   optimisticListMessagesEn,
-  pageProgressMessages,
+  pageProgressMessages, pageProgressMessagesVi,
   pageProgressMessagesEn,
   type AsyncContentMessages,
   type ErrorStateMessages,
@@ -97,7 +97,7 @@ export const LoadingOverlay = React.forwardRef<HTMLDivElement, LoadingOverlayPro
     { loading, label: labelProp, delay = 0, minDuration, spinnerSize = "medium", overlayClassName, className, children, ...props },
     ref,
   ) => {
-    const msg = useYugenMessages("loadingOverlay", loadingOverlayMessages);
+    const msg = useYugenMessages("loadingOverlay", loadingOverlayMessagesEn);
     const label = labelProp === undefined ? msg.label : labelProp;
     const shown = useSpinDelay(loading, { delay, minDuration: minDuration ?? (delay > 0 ? 500 : 0) });
     const { announce } = useAnnounce();
@@ -247,7 +247,7 @@ export const PageProgress = React.forwardRef<HTMLDivElement, PageProgressProps>(
     { value, active, controller = pageProgress, position = "fixed", thickness = "medium", label, className, ...props },
     ref,
   ) => {
-    const msg = useYugenMessages("pageProgress", pageProgressMessages);
+    const msg = useYugenMessages("pageProgress", pageProgressMessagesEn);
     const [local] = React.useState(createPageProgress);
     const store = value !== undefined || active !== undefined ? local : controller;
     const themeProps = usePortalThemeProps();
@@ -366,7 +366,7 @@ export const ErrorState = React.forwardRef<HTMLDivElement, ErrorStateProps>(
     },
     ref,
   ) => {
-    const msg = useYugenMessages("errorState", errorStateMessages);
+    const msg = useYugenMessages("errorState", errorStateMessagesEn);
     const title = titleProp === undefined ? msg.title : titleProp;
     const description = descriptionProp === undefined ? msg.description : descriptionProp;
     const retryLabel = retryLabelProp === undefined ? msg.retry : retryLabelProp;
@@ -480,7 +480,7 @@ export interface AsyncContentProps extends Omit<React.HTMLAttributes<HTMLDivElem
 }
 
 function DefaultEmpty() {
-  const msg = useYugenMessages("asyncContent", asyncContentMessages);
+  const msg = useYugenMessages("asyncContent", asyncContentMessagesEn);
   return (
     <Empty>
       <EmptyHeader>
@@ -518,7 +518,7 @@ export const AsyncContent = React.forwardRef<HTMLDivElement, AsyncContentProps>(
     },
     ref,
   ) => {
-    const msg = useYugenMessages("asyncContent", asyncContentMessages);
+    const msg = useYugenMessages("asyncContent", asyncContentMessagesEn);
     const loadingLabel = loadingLabelProp ?? msg.loading;
     const loading = status === "loading";
     const showLoader = useSpinDelay(loading, { delay, minDuration });
@@ -620,7 +620,7 @@ export function useOptimisticList<T>(initial: T[] | (() => T[])) {
   const [queue, setQueue] = React.useState<PendingChange<T>[]>([]);
   const nextId = React.useRef(0);
   // Ref thay cho dependency: `mutate` giữ nguyên tham chiếu kể cả khi messages đổi.
-  const msg = useYugenMessages("optimisticList", optimisticListMessages);
+  const msg = useYugenMessages("optimisticList", optimisticListMessagesEn);
   const msgRef = React.useRef(msg);
   msgRef.current = msg;
   const items = React.useMemo(() => queue.reduce((list, change) => change.update(list), base), [base, queue]);

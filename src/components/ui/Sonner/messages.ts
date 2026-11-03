@@ -25,3 +25,6 @@ export const sonnerMessagesEn: SonnerMessages = {
   regionHotkey: "Notifications ({hotkey})",
   dismiss: "Dismiss notification",
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `sonnerMessagesEn` (mặc định). `sonnerMessages` giữ cho code cũ. */
+export const sonnerMessagesVi = sonnerMessages;

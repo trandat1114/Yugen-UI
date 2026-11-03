@@ -4,7 +4,7 @@ import type { CustomerStatus, MockLabels, OrderStatus, Plan, TaskStatus } from "
 /** Every string in the app. One file per language; `content/index.ts` picks the one the app uses. */
 export interface Content {
   lang: "en" | "vi";
-  /** Built-in strings of Yugen components: messagesEn for English, empty = Vietnamese defaults. Kept in the language
+  /** Built-in strings of Yugen components: messagesVi for Vietnamese, empty = English defaults. Kept in the language
    * file so `create --lang vi` (which deletes en.ts) drops the English set from the bundle. */
   messages?: YugenMessagesInput;
   /** Locale for dates, numbers and sorting names. */

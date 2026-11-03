@@ -8,9 +8,9 @@ import { useYugenMessages } from "../YugenProvider/context";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../Tooltip/Tooltip";
 import { useComposedRefs } from "../_internal/composeRefs";
 import { NavHostContext, type NavHostValue } from "./context";
-import { navMessages } from "./messages";
+import { navMessagesEn } from "./messages";
 
-export { navMessages, navMessagesEn, type NavMessages } from "./messages";
+export { navMessages, navMessagesVi, navMessagesEn, type NavMessages } from "./messages";
 
 /** Fluent 2 Nav — https://fluent2.microsoft.design/components/web/react/core/nav/usage */
 type NavDensity = "medium" | "small";
@@ -99,7 +99,7 @@ export const Nav = React.forwardRef<HTMLElement, NavProps>(
     },
     ref,
   ) => {
-    const msg = useYugenMessages("nav", navMessages);
+    const msg = useYugenMessages("nav", navMessagesEn);
     const host = React.useContext(NavHostContext);
     // Callback có thêm tham số (categoryValue, open) nên tự gọi, không truyền làm onChange.
     const [selected, setSelected] = useControllableState({ value: selectedValue, defaultValue: defaultSelectedValue });

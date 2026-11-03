@@ -1,10 +1,7 @@
-import { messagesEn } from "yugen-ui";
 import type { Content } from "./types";
 
 const en: Content = {
-  lang: "en",
-  messages: messagesEn,
-  currency: "USD",
+  lang: "en",  currency: "USD",
   appName: "Sakura Analytics",
   storeName: "Sakura Store",
   user: { name: "Alex Morgan", email: "alex@example.com", role: "Store owner" },

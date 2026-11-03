@@ -21,7 +21,7 @@ import {
   type SidebarCollapsible,
   type SidebarContextValue,
 } from "./context";
-import { appShellMessages } from "./messages";
+import { appShellMessagesEn } from "./messages";
 
 export type { SidebarCollapsible } from "./context";
 
@@ -69,7 +69,7 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
     ref,
   ) => {
     const shell = useShell("Sidebar");
-    const msg = useYugenMessages("appShell", appShellMessages);
+    const msg = useYugenMessages("appShell", appShellMessagesEn);
     const refs = useComposedRefs(ref, shell.sidebarRef);
     const clamp = (width: number) => Math.round(Math.min(maxWidth, Math.max(minWidth, width)));
     const [width, setWidthState] = React.useState(() =>
@@ -241,7 +241,7 @@ function useModifierKey() {
  */
 export const SidebarTrigger = React.forwardRef<HTMLButtonElement, ButtonProps>(({ className, onClick, ...props }, ref) => {
   const shell = useShell("SidebarTrigger");
-  const msg = useYugenMessages("appShell", appShellMessages);
+  const msg = useYugenMessages("appShell", appShellMessagesEn);
   const refs = useComposedRefs(ref, shell.triggerRef);
   const modifier = useModifierKey();
   const WideIcon = shell.collapsed ? PanelLeftExpand20Regular : PanelLeftContract20Regular;
@@ -304,7 +304,7 @@ const RESIZE_STEP = 16;
 export const SidebarRail = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => {
   const shell = useShell("SidebarRail");
   const sidebar = React.useContext(SidebarContext);
-  const msg = useYugenMessages("appShell", appShellMessages);
+  const msg = useYugenMessages("appShell", appShellMessagesEn);
   const dir = useDirection();
   if (!sidebar || sidebar.drawer || sidebar.collapsible === "none") return null;
 

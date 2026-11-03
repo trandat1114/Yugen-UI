@@ -2,7 +2,7 @@ import * as React from "react";
 import { cn } from "@/lib/cn";
 import { Avatar, type AvatarProps } from "../Avatar/Avatar";
 import { useYugenMessages } from "../YugenProvider/context";
-import { presenceBadgeMessages } from "../PresenceBadge/messages";
+import { presenceBadgeMessagesEn } from "../PresenceBadge/messages";
 
 /** Fluent 2 Persona — https://fluent2.microsoft.design/components/web/react/core/persona/usage */
 export type PersonaSize = "extra-small" | "small" | "medium" | "large" | "extra-large" | "huge";
@@ -100,7 +100,7 @@ export const Persona = React.forwardRef<HTMLDivElement, PersonaProps>(
     ref,
   ) => {
     // Tên trạng thái dùng chung với PresenceBadge (`messages.presenceBadge`).
-    const msg = useYugenMessages("presenceBadge", presenceBadgeMessages);
+    const msg = useYugenMessages("presenceBadge", presenceBadgeMessagesEn);
     const below = textPosition === "below";
     const secondaryClass = cn("truncate text-foreground-2", size === "huge" ? "text-body1" : "text-caption1");
 

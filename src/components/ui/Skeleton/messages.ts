@@ -13,3 +13,6 @@ declare module "../YugenProvider/context" {
 export const skeletonMessages: SkeletonMessages = { label: "Đang tải nội dung" };
 
 export const skeletonMessagesEn: SkeletonMessages = { label: "Loading content" };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `skeletonMessagesEn` (mặc định). `skeletonMessages` giữ cho code cũ. */
+export const skeletonMessagesVi = skeletonMessages;
