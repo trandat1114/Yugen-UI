@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Danh sách người đóng góp cho trang /contributors (#248): đọc PR đã merge, issue và review từ GitHub API, cộng phần ghi
- * tay trong src/docs/contributors.extra.json, ghi ra src/docs/contributors.json.
+ * Danh sách người đóng góp cho trang /contributors (#248): đọc PR đã merge, issue, review và bình luận trong issue từ GitHub
+ * API, cộng phần ghi tay trong src/docs/contributors.extra.json, ghi ra src/docs/contributors.json.
  *
  *   npm run contributors        (cần GITHUB_TOKEN; trên máy: GITHUB_TOKEN=$(gh auth token) npm run contributors)
  *
@@ -18,10 +18,16 @@ const EXTRA = path.join(root, "src/docs/contributors.extra.json");
 const REPO = { owner: "trandat1114", name: "Yugen-UI" };
 
 /** Thứ tự hiển thị của các loại đóng góp (trang /contributors đọc cùng danh sách này). */
-export const TYPES = ["code", "templates", "docs", "translation", "design", "review", "bug", "a11y", "idea"];
+export const TYPES = ["code", "templates", "docs", "translation", "design", "review", "discussion", "bug", "a11y", "idea"];
 
 /** Issue mang nhãn này không được tính (trùng, không hợp lệ, chỉ là câu hỏi). */
 const SKIP_LABELS = new Set(["invalid", "duplicate", "question"]);
+
+/**
+ * Bình luận ngắn hơn mức này ("+1", "Cảm ơn!", "LGTM") không tính là góp ý. Đếm trên chữ đã bỏ Markdown, khoảng trắng hai
+ * đầu.
+ */
+export const MIN_COMMENT = 40;
 
 /** File sinh ra hoặc không phải nội dung đóng góp: không dùng để xếp loại PR. */
 const IGNORED = [/^\.changeset\//, /(^|\/)CHANGELOG\.md$/, /^ROADMAP\.md$/, /(^|\/)package-lock\.json$/, /^templates\//, /^e2e\/__screenshots__\//];
@@ -63,6 +69,8 @@ const day = (iso) => iso.slice(0, 10);
 export function buildContributors({ pulls, issues }, extra = {}, { maxItems = 50 } = {}) {
   const maintainers = new Set(extra.maintainers ?? []);
   const exclude = new Set(extra.exclude ?? []);
+  // Bình luận maintainer đã ghi tay (có loại cụ thể hơn "góp ý") thì không đếm lại.
+  const manual = new Set((extra.people ?? []).map((entry) => entry.url).filter(Boolean));
   const people = new Map();
 
   const add = (actor, types, item) => {
@@ -101,6 +109,16 @@ export function buildContributors({ pulls, issues }, extra = {}, { maxItems = 50
     // Bỏ tiền tố của mẫu issue ("[Bug]: …").
     const title = issue.title.replace(/^\[[^\]]*\]:?\s*/, "");
     if (type && isPerson(issue.author)) add(issue.author, [type], { number: issue.number, title, date: day(issue.createdAt), url: issue.url });
+
+    // Góp ý: bình luận trong issue của người khác (người mở issue bổ sung thông tin thì đã được tính ở trên). Bỏ maintainer,
+    // bình luận quá ngắn và issue không hợp lệ.
+    if (issue.labels.nodes.some((l) => l.name === "invalid")) continue;
+    for (const comment of issue.comments?.nodes ?? []) {
+      const author = comment.author;
+      if (!isPerson(author) || maintainers.has(author.login) || author.login === issue.author?.login) continue;
+      if (manual.has(comment.url) || comment.bodyText.trim().length < MIN_COMMENT) continue;
+      add(author, ["discussion"], { number: issue.number, title, date: day(comment.createdAt), url: comment.url });
+    }
   }
 
   for (const entry of extra.people ?? []) {
@@ -129,9 +147,12 @@ const QUERIES = {
   }`,
   issues: `query($owner: String!, $name: String!, $cursor: String) {
     repository(owner: $owner, name: $name) {
-      list: issues(first: 100, after: $cursor, orderBy: { field: CREATED_AT, direction: ASC }) {
+      list: issues(first: 50, after: $cursor, orderBy: { field: CREATED_AT, direction: ASC }) {
         pageInfo { hasNextPage endCursor }
-        nodes { number title url createdAt ${ACTOR} labels(first: 20) { nodes { name } } }
+        nodes {
+          number title url createdAt ${ACTOR} labels(first: 20) { nodes { name } }
+          comments(first: 100) { nodes { url createdAt bodyText ${ACTOR} } }
+        }
       }
     }
   }`,

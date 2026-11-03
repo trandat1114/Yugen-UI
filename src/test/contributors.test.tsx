@@ -18,14 +18,22 @@ const pull = (number: number, author: object, files: string[], mergedAt: string,
   files: { nodes: files.map((path) => ({ path })) },
   reviews: { nodes: reviewers.map((author) => ({ author })) },
 });
-const issue = (number: number, author: object, labels: string[], createdAt: string, title = `Issue ${number}`) => ({
+const issue = (number: number, author: object, labels: string[], createdAt: string, title = `Issue ${number}`, comments: object[] = []) => ({
   number,
   title,
   url: `https://github.com/x/y/issues/${number}`,
   createdAt: `${createdAt}T10:00:00Z`,
   author,
   labels: { nodes: labels.map((name) => ({ name })) },
+  comments: { nodes: comments },
 });
+const comment = (issueNumber: number, id: number, author: object, createdAt: string, bodyText: string) => ({
+  url: `https://github.com/x/y/issues/${issueNumber}#issuecomment-${id}`,
+  createdAt: `${createdAt}T10:00:00Z`,
+  bodyText,
+  author,
+});
+const LONG = "Persist only the desktop collapsed state; treat the Drawer as transient.";
 
 describe("scripts/contributors.mjs", () => {
   it("xếp loại PR theo file, bỏ file sinh ra", () => {
@@ -70,6 +78,47 @@ describe("scripts/contributors.mjs", () => {
     expect(reporter.items?.map((i) => [i.number, i.title])).toEqual([
       [11, "Issue 11"],
       [10, "Text is cut off"],
+    ]);
+  });
+});
+
+describe("scripts/contributors.mjs · góp ý trong issue", () => {
+  it("tính bình luận trong issue của người khác; bỏ maintainer, bot, bình luận ngắn, người mở issue, issue invalid và bình luận đã ghi tay", () => {
+    const people = buildContributors(
+      {
+        pulls: [],
+        issues: [
+          issue(20, user("owner"), [], "2026-10-30", "AppShell proposal", [
+            comment(20, 1, user("owner"), "2026-10-30", LONG),
+            comment(20, 2, user("dave", "Dave"), "2026-10-30", LONG),
+            comment(20, 3, user("dave", "Dave"), "2026-11-02", LONG),
+            comment(20, 4, user("dave"), "2026-11-02", "+1, thanks!"),
+            comment(20, 5, bot("github-actions[bot]"), "2026-11-02", LONG),
+            comment(20, 6, user("gone"), "2026-11-02", LONG),
+          ]),
+          issue(21, user("reporter"), ["bug"], "2026-10-31", "[Bug]: cut off", [
+            comment(21, 7, user("reporter"), "2026-10-31", LONG),
+            comment(21, 8, user("dave"), "2026-11-01", LONG),
+          ]),
+          issue(22, user("spammer"), ["invalid"], "2026-11-01", "spam", [comment(22, 9, user("dave"), "2026-11-01", LONG)]),
+        ],
+      },
+      {
+        maintainers: ["owner"],
+        exclude: ["gone"],
+        people: [{ login: "dave", types: ["a11y", "idea"], title: "Focus after the breakpoint", date: "2026-10-30", url: "https://github.com/x/y/issues/20#issuecomment-2" }],
+      },
+    ) as Contributor[];
+
+    // Maintainer chỉ bình luận thì không có mặt.
+    expect(people.map((p) => p.login)).toEqual(["dave", "reporter"]);
+    const [dave, reporter] = people;
+    expect(reporter.counts).toEqual({ bug: 1 });
+    expect(dave).toMatchObject({ name: "Dave", first: "2026-10-30", counts: { discussion: 2, a11y: 1, idea: 1 } });
+    expect(dave.items?.map((i) => [i.number ?? null, i.types, i.url?.split("-").pop()])).toEqual([
+      [20, ["discussion"], "3"],
+      [21, ["discussion"], "8"],
+      [null, ["a11y", "idea"], "2"],
     ]);
   });
 });

@@ -4,17 +4,17 @@
  */
 import data from "./contributors.json";
 
-export type ContributionType = "code" | "templates" | "docs" | "translation" | "design" | "review" | "bug" | "a11y" | "idea";
+export type ContributionType = "code" | "templates" | "docs" | "translation" | "design" | "review" | "discussion" | "bug" | "a11y" | "idea";
 
 /** Thứ tự hiển thị, giống TYPES trong scripts/contributors.mjs. */
-export const CONTRIBUTION_TYPES: ContributionType[] = ["code", "templates", "docs", "translation", "design", "review", "bug", "a11y", "idea"];
+export const CONTRIBUTION_TYPES: ContributionType[] = ["code", "templates", "docs", "translation", "design", "review", "discussion", "bug", "a11y", "idea"];
 
 export interface Contribution {
   types: ContributionType[];
   /** Số PR / issue; không có với đóng góp ghi tay. */
   number?: number;
   title: string;
-  /** YYYY-MM-DD: ngày merge (PR, review) hoặc ngày mở (issue). */
+  /** YYYY-MM-DD: ngày merge (PR, review), ngày mở (issue) hoặc ngày bình luận (góp ý). */
   date: string;
   url?: string;
 }
@@ -42,7 +42,7 @@ export const CONTRIBUTORS_UPDATED: string = data.updated;
  */
 export const CONTRIBUTION_GROUPS = {
   code: ["code", "templates", "docs", "translation"],
-  ideas: ["design", "review", "bug", "a11y", "idea"],
+  ideas: ["design", "review", "discussion", "bug", "a11y", "idea"],
 } satisfies Record<string, ContributionType[]>;
 export type ContributionGroup = keyof typeof CONTRIBUTION_GROUPS;
 
