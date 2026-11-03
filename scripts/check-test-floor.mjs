@@ -39,8 +39,11 @@ if (fs.existsSync(summaryFile)) {
   const byFolder = {};
   for (const [file, data] of Object.entries(summary)) {
     if (file === "total") continue;
-    const rel = path.relative(uiDir, file).split(path.sep);
-    if (rel.length < 2 || rel[0] === "..") continue;
+    // Đường dẫn tuyệt đối của máy đã chạy coverage (vd. artifact từ CI Linux) → cắt từ src/components/ui/.
+    const at = file.replaceAll("\\", "/").lastIndexOf("/src/components/ui/");
+    if (at < 0) continue;
+    const rel = file.replaceAll("\\", "/").slice(at + "/src/components/ui/".length).split("/");
+    if (rel.length < 2) continue;
     const acc = (byFolder[rel[0]] ??= { covered: 0, total: 0 });
     acc.covered += data.lines.covered;
     acc.total += data.lines.total;
