@@ -324,7 +324,6 @@ export default function Page() {
             rows={[
               [<C key="a">DataGrid</C>, <>Table + the DataTable pattern (filter, sort, row selection, pagination) on the <a className="text-link underline hover:text-link-hover" href={docsPath("/components/table")}>Table page</a>.</>],
               [<C key="a">Overflow, useOverflowMenu</C>, "Hide items by breakpoint and collect them in a “…” Menu; Breadcrumb has maxDisplayedItems."],
-              [<C key="a">ColorPicker, SwatchPicker</C>, <>An <C>{'<input type="color">'}</C> inside a Field, or a ToggleGroup of color swatches.</>],
               [<C key="a">TimePicker (compat)</C>, <>A Combobox with a list of times, or <C>{'<Input type="time">'}</C>.</>],
               [<C key="a">TeachingPopover</C>, <>PopoverSurface <C>appearance=&quot;brand&quot;</C> + navigation buttons.</>],
               [<C key="a">Virtualizer</C>, "An external virtualization library (for example @tanstack/react-virtual)."],

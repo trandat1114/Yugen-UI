@@ -324,7 +324,6 @@ export default function Page() {
             rows={[
               [<C key="a">DataGrid</C>, <>Table + mẫu DataTable (lọc, sắp xếp, chọn hàng, phân trang) ở <a className="text-link underline hover:text-link-hover" href={docsPath("/components/table")}>trang Table</a>.</>],
               [<C key="a">Overflow, useOverflowMenu</C>, "Ẩn mục theo breakpoint và gom vào Menu “…”; Breadcrumb có sẵn maxDisplayedItems."],
-              [<C key="a">ColorPicker, SwatchPicker</C>, <>Thẻ <C>{'<input type="color">'}</C> trong Field, hoặc ToggleGroup các ô màu.</>],
               [<C key="a">TimePicker (compat)</C>, <>Combobox với danh sách giờ, hoặc <C>{'<Input type="time">'}</C>.</>],
               [<C key="a">TeachingPopover</C>, <>PopoverSurface <C>appearance=&quot;brand&quot;</C> + nút điều hướng.</>],
               [<C key="a">Virtualizer</C>, "Thư viện ảo hoá bên ngoài (ví dụ @tanstack/react-virtual)."],

@@ -18,11 +18,18 @@ import {
   copyCodeButtonMessagesEn,
   packageManagerTabsMessagesEn,
 } from "./CodeBlock/messages";
+import { colorPickerMessagesEn } from "./ColorPicker/messages";
 import { comboboxMessagesEn } from "./Combobox/messages";
 import { commandMessagesEn } from "./Command/messages";
 import { counterBadgeMessagesEn } from "./CounterBadge/messages";
 import { dataGridMessagesEn } from "./DataGrid/messages";
-import { datePickerMessagesEn, dateRangePickerMessagesEn } from "./DatePicker/messages";
+import {
+  datePickerMessagesEn,
+  dateRangePickerMessagesEn,
+  dateTimePickerMessagesEn,
+  monthPickerMessagesEn,
+  yearPickerMessagesEn,
+} from "./DatePicker/messages";
 import { descriptionListMessagesEn } from "./DescriptionList/messages";
 import { dialogMessagesEn } from "./Dialog/messages";
 import { fileUploadMessagesEn } from "./FileUpload/messages";
@@ -48,6 +55,7 @@ import { navMessagesEn } from "./Nav/messages";
 import { navigationMenuMessagesEn } from "./NavigationMenu/messages";
 import { notificationCenterMessagesEn } from "./NotificationCenter/messages";
 import { paginationMessagesEn } from "./Pagination/messages";
+import { passwordInputMessagesEn } from "./PasswordInput/messages";
 import { presenceBadgeMessagesEn } from "./PresenceBadge/messages";
 import { questionnaireMessagesEn } from "./Questionnaire/messages";
 import { ratingMessagesEn } from "./Rating/messages";
@@ -91,6 +99,7 @@ export const messagesEn: YugenMessages = {
   citation: citationMessagesEn,
   codeBlock: codeBlockMessagesEn,
   codeTabs: codeTabsMessagesEn,
+  colorPicker: colorPickerMessagesEn,
   combobox: comboboxMessagesEn,
   command: commandMessagesEn,
   copyCodeButton: copyCodeButtonMessagesEn,
@@ -98,6 +107,7 @@ export const messagesEn: YugenMessages = {
   dataGrid: dataGridMessagesEn,
   datePicker: datePickerMessagesEn,
   dateRangePicker: dateRangePickerMessagesEn,
+  dateTimePicker: dateTimePickerMessagesEn,
   descriptionList: descriptionListMessagesEn,
   dialog: dialogMessagesEn,
   errorState: errorStateMessagesEn,
@@ -110,6 +120,7 @@ export const messagesEn: YugenMessages = {
   messageBar: messageBarMessagesEn,
   messageBubble: messageBubbleMessagesEn,
   messageScroller: messageScrollerMessagesEn,
+  monthPicker: monthPickerMessagesEn,
   nav: navMessagesEn,
   navigationMenu: navigationMenuMessagesEn,
   notificationCenter: notificationCenterMessagesEn,
@@ -117,6 +128,7 @@ export const messagesEn: YugenMessages = {
   packageManagerTabs: packageManagerTabsMessagesEn,
   pageProgress: pageProgressMessagesEn,
   pagination: paginationMessagesEn,
+  passwordInput: passwordInputMessagesEn,
   presenceBadge: presenceBadgeMessagesEn,
   promptInput: promptInputMessagesEn,
   questionnaire: questionnaireMessagesEn,
@@ -146,4 +158,5 @@ export const messagesEn: YugenMessages = {
   trace: traceMessagesEn,
   typingIndicator: typingIndicatorMessagesEn,
   wizard: wizardMessagesEn,
+  yearPicker: yearPickerMessagesEn,
 };
