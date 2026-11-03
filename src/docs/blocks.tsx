@@ -47,13 +47,16 @@ export function PageHeader({
   );
 }
 
-/** Chữ trong registry (mô tả, ví dụ, nên / không nên, props): đoạn giữa hai dấu `…` hiện thành code. */
+/**
+ * Chữ trong registry (mô tả, ví dụ, nên / không nên, props): đoạn giữa hai dấu `…` hiện thành code.
+ * Code dài liền một mạch được ngắt dòng thay vì tràn (bảng props cắt phần tràn, #259).
+ */
 export function withCode(text: string): React.ReactNode {
   const parts = text.split(/`([^`]+)`/);
   if (parts.length === 1) return text;
   return parts.map((part, i) =>
     i % 2 ? (
-      <code key={i} dir="ltr" className="rounded-small bg-background-4 px-1 font-mono text-[0.9em] text-foreground-1">
+      <code key={i} dir="ltr" className="rounded-small bg-background-4 px-1 font-mono text-[0.9em] text-foreground-1 wrap-anywhere">
         {part}
       </code>
     ) : (
@@ -174,12 +177,20 @@ export function ExampleFrame({
 }
 
 /* ---------- Example tile (variants grid, takeaway style) ---------- */
+/** Đang mở code: ô chiếm cả hàng của lưới để code không bị ép theo bề ngang một cột. */
 export function ExampleTile({ example, demoLang }: { example: Example; demoLang?: string }) {
   const [showCode, setShowCode] = React.useState(false);
+  const toggleRef = React.useRef<HTMLButtonElement>(null);
   const { t } = useLocale();
 
+  const toggleCode = () => {
+    setShowCode((v) => !v);
+    // Ô đổi chỗ khi giãn / thu (ô cột phải xuống hàng mới): giữ nút vừa bấm trong khung nhìn.
+    requestAnimationFrame(() => toggleRef.current?.scrollIntoView({ block: "nearest" }));
+  };
+
   return (
-    <div className={cn("flex min-w-0 flex-col", example.wide && "md:col-span-2")}>
+    <div className={cn("flex min-w-0 flex-col", (example.wide || showCode) && "md:col-span-2")}>
       <div
         lang={demoLang}
         className="group/tile relative flex min-h-56 flex-wrap content-center items-center justify-center gap-3 rounded-3xlarge border border-stroke-2 bg-background-3 p-5"
@@ -196,8 +207,9 @@ export function ExampleTile({ example, demoLang }: { example: Example; demoLang?
           {example.description && <p className="mt-1 text-body1 text-foreground-2">{withCode(example.description)}</p>}
         </div>
         <button
+          ref={toggleRef}
           type="button"
-          onClick={() => setShowCode((v) => !v)}
+          onClick={toggleCode}
           aria-expanded={showCode}
           aria-label={showCode ? t("blocks.hideCode") : t("blocks.viewCode")}
           className={cn(
