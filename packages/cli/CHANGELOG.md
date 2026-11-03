@@ -1,6 +1,6 @@
 # @yugen-ui/cli
 
-## Unreleased
+## 0.6.0
 
 - **Breaking:** requires Node.js 24 or newer. Yugen UI supports the two newest Node.js LTS lines (24 and 26 today).
 - Templates `starter`, `saas`, `blog`, `dashboard`, `ai-chat`, `admin`, `docs`, `store` and `landing` are built on
