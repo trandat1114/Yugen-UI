@@ -14,25 +14,25 @@ export interface BlockMeta {
 
 type BlockModule = { default: React.ComponentType; meta: BlockMeta };
 
-// Tên và mô tả tiếng Anh theo file. Nội dung block (mã nguồn để copy) giữ tiếng Việt như template.
-export const META_EN: Record<string, Pick<BlockMeta, "title" | "description">> = {
-  "01-login": { title: "Sign in", description: "Sign-in form with email, password and SSO" },
-  "02-stats": { title: "Stats", description: "KPI cards with trends and a mini bar chart" },
-  "03-payout": { title: "Payout threshold", description: "Set a minimum amount with a Slider and a note" },
-  "04-team": { title: "Team members", description: "Invite members and set roles with a Menu" },
-  "05-preferences": { title: "Preferences", description: "Account settings with Select, Switch and Toast" },
-  "06-transactions": { title: "Recent transactions", description: "A List with icons, descriptions and amounts" },
-  "07-savings": { title: "Savings goal", description: "Track progress with a ProgressBar" },
-  "08-booking": { title: "Book an appointment", description: "Calendar with a ToggleGroup for time slots" },
-  "09-feedback": { title: "Send feedback", description: "Form with RadioGroup, Textarea and validation" },
-  "10-empty-inbox": { title: "Empty inbox", description: "Filter tabs with an Empty state that has an action" },
-  "11-analytics": { title: "Analytics", description: "KPIs, trends, rankings and shares, with one time filter for every card" },
-  "12-ai-assistant": { title: "AI assistant", description: "MessageScroller, ChatComposer and Trace showing each step the agent takes" },
-  "13-newsletter": { title: "Newsletter sign-up", description: "Labeled email Field with a hint, a Switch and a confirmation toast" },
-  "14-quantity": { title: "Quantity picker", description: "Labeled ButtonGroup to add / remove, with min / max limits and aria-live" },
-  "15-welcome-dialog": { title: "Welcome dialog", description: "Dialog that keeps focus inside, closes with Esc and returns focus to its trigger" },
-  "16-project-progress": { title: "Project progress", description: "A Slider drives a ProgressBar that turns success when complete" },
-  "17-online-team": { title: "Who's online", description: "Persona with presence and an AvatarGroup that compacts large groups" },
+// Tên và mô tả tiếng Việt theo file (trang /vi/). Block viết bằng tiếng Anh: `meta` trong file là bản tiếng Anh.
+export const META_VI: Record<string, Pick<BlockMeta, "title" | "description">> = {
+  "01-login": { title: "Đăng nhập", description: "Form đăng nhập với email, mật khẩu và SSO" },
+  "02-stats": { title: "Thống kê", description: "Thẻ KPI kèm xu hướng và biểu đồ cột mini" },
+  "03-payout": { title: "Ngưỡng thanh toán", description: "Cấu hình số tiền tối thiểu với Slider và ghi chú" },
+  "04-team": { title: "Thành viên nhóm", description: "Mời thành viên và phân quyền bằng Menu" },
+  "05-preferences": { title: "Tuỳ chọn", description: "Cài đặt tài khoản với Select, Switch và Toast" },
+  "06-transactions": { title: "Giao dịch gần đây", description: "Danh sách List với icon, mô tả và số tiền" },
+  "07-savings": { title: "Mục tiêu tiết kiệm", description: "Theo dõi tiến độ bằng ProgressBar" },
+  "08-booking": { title: "Đặt lịch hẹn", description: "Calendar kết hợp ToggleGroup chọn khung giờ" },
+  "09-feedback": { title: "Gửi phản hồi", description: "Form với RadioGroup, Textarea và validation" },
+  "10-empty-inbox": { title: "Hộp thư trống", description: "Tabs lọc kèm trạng thái Empty có hành động" },
+  "11-analytics": { title: "Bảng phân tích", description: "KPI, xu hướng, xếp hạng và tỉ trọng — một bộ lọc thời gian cho mọi thẻ" },
+  "12-ai-assistant": { title: "Trợ lý AI", description: "MessageScroller, ChatComposer và Trace hiển thị từng bước agent đang làm" },
+  "13-newsletter": { title: "Đăng ký bản tin", description: "Field gắn nhãn và gợi ý cho ô email, Switch và toast xác nhận" },
+  "14-quantity": { title: "Chọn số lượng", description: "ButtonGroup tăng / giảm có nhãn, giới hạn min / max và aria-live" },
+  "15-welcome-dialog": { title: "Hộp thoại chào mừng", description: "Dialog giữ focus bên trong, đóng bằng Esc và trả focus về nút mở" },
+  "16-project-progress": { title: "Tiến độ dự án", description: "Slider điều khiển ProgressBar; màu success khi hoàn thành" },
+  "17-online-team": { title: "Đang trực tuyến", description: "Persona có trạng thái hiện diện và AvatarGroup gọn khi đông người" },
 };
 
 const fileOf = (path: string) => path.replace(/^.*\/(.+)\.tsx$/, "$1");
@@ -49,8 +49,8 @@ const BLOCKS = Object.entries(modules)
 function BlockCard({ path, meta, Component, source }: (typeof BLOCKS)[number]) {
   const [mode, setMode] = React.useState<"preview" | "code">("preview");
   const { locale } = useLocale();
-  const en = locale === "en" ? META_EN[fileOf(path)] : undefined;
-  const { title, description } = en ?? meta;
+  const vi = locale === "vi" ? META_VI[fileOf(path)] : undefined;
+  const { title, description } = vi ?? meta;
 
   return (
     <article className="mb-5 flex break-inside-avoid flex-col overflow-hidden rounded-3xlarge border border-stroke-2 bg-background-1 shadow-2">
@@ -83,7 +83,7 @@ function BlockCard({ path, meta, Component, source }: (typeof BLOCKS)[number]) {
         </div>
       </header>
       {mode === "preview" ? (
-        <div lang={locale === "en" ? "vi" : undefined} className="flex justify-center bg-background-3 p-5">
+        <div lang={locale === "en" ? undefined : "en"} className="flex justify-center bg-background-3 p-5">
           <div className="w-full">
             <Component />
           </div>
@@ -112,7 +112,7 @@ export function BlocksPage() {
         {en ? (
           <>
             Each block is one file in <code className="font-mono text-caption1">src/docs/block-library/</code>. The Code tab shows that
-            file&apos;s source; the sample content is in Vietnamese.
+            file&apos;s source.
           </>
         ) : (
           <>

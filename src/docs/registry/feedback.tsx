@@ -1406,7 +1406,7 @@ function ToastPositionDemo() {
         code: `<Accordion type="multiple" appearance="outline" expandIconPosition="end" defaultValue={["shipping"]} className="w-full max-w-96">
   <AccordionItem value="shipping">
     <AccordionHeader icon={<Mail20Regular />}>Shipping</AccordionHeader>
-    <AccordionPanel>Free on orders over $500.00; arrives in 2–4 days.</AccordionPanel>
+    <AccordionPanel>Free on orders over $50.00; arrives in 2–4 days.</AccordionPanel>
   </AccordionItem>
   <AccordionItem value="returns">
     <AccordionHeader icon={<ShieldLock20Regular />}>Returns</AccordionHeader>
@@ -1421,7 +1421,7 @@ function ToastPositionDemo() {
           <Accordion type="multiple" appearance="outline" expandIconPosition="end" defaultValue={["shipping"]} className="w-full max-w-96">
             <AccordionItem value="shipping">
               <AccordionHeader icon={<Mail20Regular />}>Shipping</AccordionHeader>
-              <AccordionPanel>Free on orders over $500.00; arrives in 2–4 days.</AccordionPanel>
+              <AccordionPanel>Free on orders over $50.00; arrives in 2–4 days.</AccordionPanel>
             </AccordionItem>
             <AccordionItem value="returns">
               <AccordionHeader icon={<ShieldLock20Regular />}>Returns</AccordionHeader>
@@ -1622,9 +1622,9 @@ function ToastPositionDemo() {
     </CollapsibleTrigger>
   </div>
   <CollapsibleContent className="flex flex-col gap-1 px-3 pb-3 text-body1 text-foreground-2">
-    <span>2 × Mechanical keyboard — $3,200.00</span>
-    <span>1 × Wireless mouse — $650.00</span>
-    <span className="font-semibold text-foreground-1">Total: $3,850.00</span>
+    <span>2 × Mechanical keyboard — $258.00</span>
+    <span>1 × Wireless mouse — $49.00</span>
+    <span className="font-semibold text-foreground-1">Total: $307.00</span>
   </CollapsibleContent>
 </Collapsible>`,
         render: () => (
@@ -1644,9 +1644,9 @@ function ToastPositionDemo() {
               </CollapsibleTrigger>
             </div>
             <CollapsibleContent className="flex flex-col gap-1 px-3 pb-3 text-body1 text-foreground-2">
-              <span>2 × Mechanical keyboard — $3,200.00</span>
-              <span>1 × Wireless mouse — $650.00</span>
-              <span className="font-semibold text-foreground-1">Total: $3,850.00</span>
+              <span>2 × Mechanical keyboard — $258.00</span>
+              <span>1 × Wireless mouse — $49.00</span>
+              <span className="font-semibold text-foreground-1">Total: $307.00</span>
             </CollapsibleContent>
           </Collapsible>
         ),

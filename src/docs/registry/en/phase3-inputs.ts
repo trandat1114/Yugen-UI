@@ -123,7 +123,7 @@ export const en: Record<string, ComponentDocEn> = {
       {
         title: "Custom presets & maxDate",
         description:
-          "maxDate is today, so “30 ngày tới” (next 30 days) is disabled.",
+          "maxDate is today, so “Next 30 days” is disabled.",
       },
     ],
     dos: [

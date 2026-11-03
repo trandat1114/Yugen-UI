@@ -112,7 +112,7 @@ export function ExampleFrame({
   example: Example;
   defaultTheme: FrameTheme;
   defaultBrand?: AppBrand;
-  /** Ngôn ngữ nội dung demo khi khác trang (demo viết bằng tiếng Việt, trang đang hiện tiếng Anh). */
+  /** Ngôn ngữ nội dung demo khi khác trang (demo viết bằng tiếng Anh, trang đang hiện tiếng Việt); `example.lang` thắng. */
   demoLang?: string;
 }) {
   const [look, setLook] = React.useState({ theme: defaultTheme, brand: defaultBrand });
@@ -176,7 +176,7 @@ export function ExampleFrame({
         theme={look.theme}
         brand={look.brand}
         dir={pageDir}
-        lang={demoLang}
+        lang={example.lang ?? demoLang}
         withTooltipProvider={false}
         className="flex min-h-48 flex-wrap content-center items-center justify-center gap-3 bg-background-1 p-4 transition-colors duration-normal sm:min-h-60 sm:p-6"
       >
@@ -204,7 +204,7 @@ export function ExampleTile({ example, demoLang }: { example: Example; demoLang?
   return (
     <div className={cn("flex min-w-0 flex-col", (example.wide || showCode) && "md:col-span-2")}>
       <div
-        lang={demoLang}
+        lang={example.lang ?? demoLang}
         className="group/tile relative flex min-h-56 flex-wrap content-center items-center justify-center gap-3 rounded-3xlarge border border-stroke-2 bg-background-3 p-5"
       >
         {example.render()}
@@ -238,7 +238,7 @@ export function ExampleTile({ example, demoLang }: { example: Example; demoLang?
   );
 }
 
-/** `lang`: cả lưới (chữ chưa dịch); `demoLang`: chỉ vùng demo (chữ đã dịch, demo giữ tiếng Việt). */
+/** `lang`: cả lưới (chữ chưa dịch); `demoLang`: chỉ vùng demo (demo viết bằng tiếng Anh, trang tiếng Việt). */
 export function ExampleGrid({ examples, lang, demoLang }: { examples: Example[]; lang?: string; demoLang?: string }) {
   return (
     <div lang={lang} className="grid gap-x-5 gap-y-6 md:grid-cols-2">

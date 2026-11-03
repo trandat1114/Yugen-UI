@@ -2355,6 +2355,7 @@ function TableColumnsDemo() {
       },
       {
         title: "RTL lật thứ tự",
+        lang: "ar",
         description:
           "Panel đầu tiên nằm bên phải; kéo và ArrowLeft / ArrowRight di chuyển đường chia đúng hướng nhìn thấy. mirrorInRtl={false} giữ bố cục LTR như bản cũ.",
         code: `import { DirectionProvider } from "@radix-ui/react-direction";

@@ -86,6 +86,7 @@
     "check:changesets": "node scripts/check-changesets.mjs",
     "check:examples": "vite-node scripts/check-examples.ts",
     "check:props": "vite-node scripts/check-props.ts",
+    "check:demo-language": "node scripts/check-demo-language.mjs",
     "roadmap": "vite-node scripts/sync-roadmap.ts",
     "prepublishOnly": "npm run check:release && npm run typecheck && npm run lint:classes && npm run build:lib",
     "pack:check": "npm pack --dry-run"

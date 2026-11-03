@@ -541,7 +541,7 @@ export const docs: ComponentDoc[] = [
     examples: [
       {
         title: "Tải lên có tiến trình, lỗi và Thử lại",
-        description: "Chế độ điều khiển: files + onFilesChange; mỗi tệp mới được tải lên ngay, cập nhật progress (0 → 1) và status. Bật “Giả lập lỗi mạng” để thấy nút Thử lại.",
+        description: "Chế độ điều khiển: files + onFilesChange; mỗi tệp mới được tải lên ngay, cập nhật progress (0 → 1) và status. Bật “Simulate a network error” để thấy nút Thử lại.",
         code: source("fakeUpload", "UploadProgressDemo"),
         render: () => <UploadProgressDemo />,
       },
@@ -553,7 +553,7 @@ export const docs: ComponentDoc[] = [
       },
       {
         title: "Bắt buộc trong Field",
-        description: "Field gắn nhãn, hint và validationMessage; aria-invalid làm viền vùng thả chuyển sang màu lỗi. Bấm Gửi hồ sơ khi chưa chọn tệp.",
+        description: "Field gắn nhãn, hint và validationMessage; aria-invalid làm viền vùng thả chuyển sang màu lỗi. Bấm Submit khi chưa chọn tệp.",
         code: source("RequiredFileDemo"),
         render: () => <RequiredFileDemo />,
       },
@@ -616,7 +616,7 @@ export const docs: ComponentDoc[] = [
       },
       {
         title: "Thu gọn trong khung hẹp",
-        description: "Khung 288px < 32rem → \"Bước 2/4 · Thu nhập\" + ProgressBar. Tắt bằng responsive={false}.",
+        description: "Khung 288px < 32rem → \"Bước 2/4 · Income\" + ProgressBar. Tắt bằng responsive={false}.",
         code: source("CompactDemo"),
         render: () => <CompactDemo />,
       },
@@ -661,7 +661,7 @@ import { z } from "zod";
 import { Button, Checkbox, DatePicker, Field, Input, Select } from "@/components/ui";`,
     hero: {
       title: "Form đăng ký",
-      description: "Kiểm tra khi rời ô (mode \"onTouched\"), sau đó kiểm tra lại mỗi lần gõ. Bấm Tạo tài khoản khi còn trống để thấy focus nhảy tới ô lỗi đầu tiên.",
+      description: "Kiểm tra khi rời ô (mode \"onTouched\"), sau đó kiểm tra lại mỗi lần gõ. Bấm Create account khi còn trống để thấy focus nhảy tới ô lỗi đầu tiên.",
       code: source("rhf-imports", "rhf-controller", "wait", "signupSchema", "SignUpForm"),
       render: () => <SignUpForm />,
     },

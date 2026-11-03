@@ -1,12 +1,12 @@
 import { ArrowTrendingDown16Regular, ArrowTrending16Regular } from "@fluentui/react-icons";
 import { Badge, Card } from "@/components/ui";
 
-export const meta = { title: "Thống kê", description: "Thẻ KPI kèm xu hướng và biểu đồ cột mini", order: 2 };
+export const meta = { title: "Stats", description: "KPI cards with trends and a mini bar chart", order: 2 };
 
 const STATS = [
-  { label: "Doanh thu", value: "1,28 tỷ ₫", delta: "+12,4%", up: true, bars: [40, 55, 48, 62, 70, 66, 82] },
-  { label: "Khách hàng mới", value: "2.341", delta: "+5,2%", up: true, bars: [30, 42, 38, 45, 52, 58, 61] },
-  { label: "Tỉ lệ rời bỏ", value: "3,1%", delta: "−0,8%", up: false, bars: [60, 52, 55, 48, 44, 40, 36] },
+  { label: "Revenue", value: "$1.28M", delta: "+12.4%", up: true, bars: [40, 55, 48, 62, 70, 66, 82] },
+  { label: "New customers", value: "2,341", delta: "+5.2%", up: true, bars: [30, 42, 38, 45, 52, 58, 61] },
+  { label: "Churn rate", value: "3.1%", delta: "−0.8%", up: false, bars: [60, 52, 55, 48, 44, 40, 36] },
 ];
 
 export default function StatsBlock() {
@@ -23,7 +23,7 @@ export default function StatsBlock() {
               icon={s.up ? <ArrowTrending16Regular className="rtl:-scale-x-100" /> : <ArrowTrendingDown16Regular className="rtl:-scale-x-100" />}
               className="mt-2"
             >
-              {s.delta} so với tháng trước
+              {s.delta} vs. last month
             </Badge>
           </div>
           <div className="flex h-16 shrink-0 items-end gap-0.5" aria-hidden>

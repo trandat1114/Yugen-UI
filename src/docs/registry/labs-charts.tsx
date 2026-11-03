@@ -366,7 +366,7 @@ const LABS_CHARTS: ComponentDoc[] = [
     examples: [
       {
         title: "Trục thời gian & điểm đánh dấu",
-        description: "index là Date → vị trí theo thời gian thực, nhãn trục định dạng bằng Intl (vi-VN). markers vẽ chấm ≥ 8px có viền bề mặt.",
+        description: "index là Date → vị trí theo thời gian thực, nhãn trục định dạng bằng Intl (en-US). markers vẽ chấm ≥ 8px có viền bề mặt.",
         code: `const visits = ${lit(visits)};
 
 <LineChart

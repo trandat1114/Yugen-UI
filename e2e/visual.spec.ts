@@ -40,8 +40,9 @@ for (const { name, route, mask = [], ...appearance } of SHOTS) {
     // Date cố định (giờ tương đối, đồng hồ Trace…) nhưng timer vẫn chạy để trang tải bình thường.
     await page.clock.setFixedTime(FIXED_NOW);
     await openDocs(page, route, appearance);
-    // Chuột ra góc không có phần tử tương tác để không dính trạng thái hover.
-    await page.mouse.move(640, 799);
+    // Chuột lên mép trên thanh top bar (trên ô tìm kiếm, cả LTR lẫn RTL): không có phần tử tương tác, không demo nào bắt
+    // hover / tooltip (đáy khung nhìn từng rơi vào cột của BarChart và hiện tooltip).
+    await page.mouse.move(640, 4);
     await expect(page).toHaveScreenshot(`${name}.png`, {
       mask: mask.map((selector) => page.locator(selector)),
     });

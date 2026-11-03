@@ -26,9 +26,10 @@ function InstallTabs({ importCode }: { importCode: string }) {
 function ComponentBody({ slug, theme, brand, onRetry }: { slug: string; theme: YugenTheme; brand: AppBrand; onRetry: () => void }) {
   const { t, locale } = useLocale();
   const { doc, error } = readComponentDoc(slug, locale);
-  // Giao diện tiếng Anh: phần chữ chưa dịch và nội dung demo (viết bằng tiếng Việt) mang lang="vi" cho trình đọc màn hình.
+  // Giao diện tiếng Anh: phần chữ chưa dịch mang lang="vi" cho trình đọc màn hình. Demo viết bằng tiếng Anh: vùng demo mang
+  // lang="en" khi trang (hoặc phần chữ bao quanh) là tiếng Việt; ví dụ có `lang` riêng (dữ liệu tiếng Việt, RTL) giữ lang đó.
   const contentLang = locale === "en" && !isTranslated(slug) ? "vi" : undefined;
-  const demoLang = locale === "en" ? "vi" : undefined;
+  const demoLang = locale === "en" && !contentLang ? undefined : "en";
   const messages = messageNamespacesFor(slug);
   if (!doc)
     return (

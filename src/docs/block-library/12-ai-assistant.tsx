@@ -11,8 +11,8 @@ import {
 } from "@/components/ui";
 
 export const meta = {
-  title: "Trợ lý AI",
-  description: "MessageScroller, ChatComposer và Trace hiển thị từng bước agent đang làm",
+  title: "AI assistant",
+  description: "MessageScroller, ChatComposer and Trace showing each step the agent takes",
   order: 12,
 };
 
@@ -30,14 +30,14 @@ interface Turn {
   steps?: Step[];
 }
 
-const ASSISTANT = "Trợ lý Sakura";
-const PLAN = ["Đọc lịch 4 thành viên", "Tìm khung giờ trống", "Soạn lời mời họp"];
-const ANSWER = "Thứ Năm 14:00–15:00 cả nhóm đều rảnh. Mình đã soạn sẵn lời mời — bạn chỉ cần xem lại và bấm Gửi.";
-const SUGGESTIONS = ["Xếp lịch họp nhóm tuần này", "Tóm tắt email chưa đọc"];
+const ASSISTANT = "Sakura Assistant";
+const PLAN = ["Read 4 team calendars", "Find a free slot", "Draft the meeting invite"];
+const ANSWER = "Everyone is free on Thursday, 2:00–3:00 PM. I've drafted the invite — just review it and click Send.";
+const SUGGESTIONS = ["Schedule a team meeting this week", "Summarize unread email"];
 
 export default function AiAssistantBlock() {
   const [turns, setTurns] = useState<Turn[]>([
-    { id: 1, role: "assistant", text: "Xin chào! Mình có thể xếp lịch, tóm tắt email hoặc tra tài liệu giúp bạn." },
+    { id: 1, role: "assistant", text: "Hi! I can schedule meetings, summarize email or look things up in your docs." },
   ]);
   const [busy, setBusy] = useState(false);
   const timers = useRef<number[]>([]);
@@ -88,7 +88,7 @@ export default function AiAssistantBlock() {
           ? {
               ...t,
               streaming: false,
-              text: t.text ? `${t.text} (đã dừng)` : "Đã dừng theo yêu cầu.",
+              text: t.text ? `${t.text} (stopped)` : "Stopped at your request.",
               steps: t.steps?.map((s) => (s.status === "success" ? s : { ...s, status: "cancelled" })),
             }
           : t,
@@ -105,16 +105,16 @@ export default function AiAssistantBlock() {
         <Sparkle20Filled className="shrink-0 text-brand-foreground-1" />
         <div className="min-w-0 flex-1">
           <h3 className="text-subtitle2 font-semibold">{ASSISTANT}</h3>
-          <p className="truncate text-caption1 text-foreground-3">AI có thể nhầm — hãy kiểm tra thông tin quan trọng.</p>
+          <p className="truncate text-caption1 text-foreground-3">AI can make mistakes. Check important info.</p>
         </div>
-        <Button appearance="subtle" icon={<Dismiss20Regular />} aria-label="Đóng trợ lý" />
+        <Button appearance="subtle" icon={<Dismiss20Regular />} aria-label="Close assistant" />
       </header>
 
-      <MessageScroller className="flex-1" label="Hội thoại với trợ lý">
+      <MessageScroller className="flex-1" label="Conversation with the assistant">
         {turns.flatMap((t) => {
           if (t.role === "user") {
             return [
-              <MessageBubble key={t.id} side="outgoing" author="Bạn">
+              <MessageBubble key={t.id} side="outgoing" author="You">
                 {t.text}
               </MessageBubble>,
             ];
@@ -123,7 +123,7 @@ export default function AiAssistantBlock() {
           if (t.steps) {
             parts.push(
               <MessageBubble key={`${t.id}-trace`} author={ASSISTANT} appearance="plain">
-                <Trace size="small" title="Các bước đã làm">
+                <Trace size="small" title="Steps taken">
                   {t.steps.map((s) => (
                     <TraceStep key={s.title} title={s.title} status={s.status} duration={s.duration} />
                   ))}
@@ -154,11 +154,11 @@ export default function AiAssistantBlock() {
 
       <ChatComposer
         className="m-3"
-        placeholder="Hỏi trợ lý…"
+        placeholder="Ask the assistant…"
         busy={busy}
         onStop={stop}
         onSend={ask}
-        actions={<Button appearance="subtle" icon={<Attach20Regular />} aria-label="Đính kèm tệp" />}
+        actions={<Button appearance="subtle" icon={<Attach20Regular />} aria-label="Attach a file" />}
       />
     </section>
   );

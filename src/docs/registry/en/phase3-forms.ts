@@ -9,7 +9,7 @@ export const en: Record<string, ComponentDocEn> = {
       {
         title: "Upload with progress, errors and Retry",
         description:
-          "Controlled mode: files + onFilesChange. Each new file is uploaded right away, updating progress (0 → 1) and status. Turn on “Giả lập lỗi mạng” (simulate a network error) to see the Retry button.",
+          "Controlled mode: files + onFilesChange. Each new file is uploaded right away, updating progress (0 → 1) and status. Turn on “Simulate a network error” to see the Retry button.",
       },
       {
         title: "Single image with thumbnail and clipboard paste",
@@ -19,7 +19,7 @@ export const en: Record<string, ComponentDocEn> = {
       {
         title: "Required inside a Field",
         description:
-          "Field provides the label, hint and validationMessage; aria-invalid switches the drop zone border to the error color. Click “Gửi hồ sơ” (submit) without picking a file.",
+          "Field provides the label, hint and validationMessage; aria-invalid switches the drop zone border to the error color. Click “Submit” without picking a file.",
       },
     ],
     dos: [
@@ -79,7 +79,7 @@ export const en: Record<string, ComponentDocEn> = {
       {
         title: "Collapsed in a narrow container",
         description:
-          "The 288px container is narrower than 32rem, so it shows “Bước 2/4 · Thu nhập” (Step 2/4 · Income) plus a ProgressBar. Turn this off with responsive={false}.",
+          "The 288px container is narrower than 32rem, so it shows “Step 2 of 4 · Income” plus a ProgressBar. Turn this off with responsive={false}.",
       },
     ],
     dos: [

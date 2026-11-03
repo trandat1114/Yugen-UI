@@ -102,7 +102,7 @@ export const en: Record<string, ComponentDocEn> = {
       },
       {
         title: "New messages while reading older ones",
-        description: "Scroll up, then click “Nhận tin mới” (Receive new message): the list doesn't jump, and a floating button counts the new messages.",
+        description: "Scroll up, then click “Get a new message”: the list doesn't jump, and a floating button counts the new messages.",
       },
     ],
     dos: [
@@ -142,7 +142,7 @@ export const en: Record<string, ComponentDocEn> = {
       { title: "Responding & Stop button", description: "busy blocks sending; with onStop, the Send button becomes a Stop button." },
       {
         title: "Key hint",
-        description: "showHint shows “Enter để gửi · Shift+Enter xuống dòng” (Enter to send · Shift+Enter for a new line), hidden on narrow screens.",
+        description: "showHint shows “Enter to send · Shift+Enter for a new line”, hidden on narrow screens.",
       },
       { title: "Disabled", description: "Explain why in the placeholder or next to the composer." },
     ],

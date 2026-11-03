@@ -1,20 +1,20 @@
 import { Key20Regular, Mail20Regular, Person20Regular } from "@fluentui/react-icons";
 import { Button, Card, Checkbox, Input } from "@/components/ui";
 
-export const meta = { title: "Đăng nhập", description: "Form đăng nhập với email, mật khẩu và SSO", order: 1 };
+export const meta = { title: "Sign in", description: "Sign-in form with email, password and SSO", order: 1 };
 
 export default function LoginBlock() {
   return (
     <Card size="large" className="mx-auto w-full max-w-sm gap-4 rounded-xlarge p-6">
       <div>
-        <h3 className="font-display text-title3 font-semibold">Chào mừng trở lại</h3>
-        <p className="mt-1 text-body1 text-foreground-3">Đăng nhập để tiếp tục làm việc với nhóm của bạn.</p>
+        <h3 className="font-display text-title3 font-semibold">Welcome back</h3>
+        <p className="mt-1 text-body1 text-foreground-3">Sign in to keep working with your team.</p>
       </div>
 
       <form className="flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}>
-        <Input label="Email" type="email" autoComplete="email" placeholder="ten@congty.vn" contentBefore={<Mail20Regular />} required />
+        <Input label="Email" type="email" autoComplete="email" placeholder="name@company.com" contentBefore={<Mail20Regular />} required />
         <Input
-          label="Mật khẩu"
+          label="Password"
           type="password"
           autoComplete="current-password"
           placeholder="••••••••"
@@ -22,28 +22,28 @@ export default function LoginBlock() {
           required
         />
         <div className="flex items-center justify-between">
-          <Checkbox label="Ghi nhớ tôi" defaultChecked />
+          <Checkbox label="Remember me" defaultChecked />
           <a href="#" className="text-body1 text-link hover:text-link-hover hover:underline">
-            Quên mật khẩu?
+            Forgot password?
           </a>
         </div>
         <Button appearance="primary" type="submit" className="w-full">
-          Đăng nhập
+          Sign in
         </Button>
       </form>
 
       <div className="flex items-center gap-3 text-caption1 text-foreground-3">
         <span className="h-px flex-1 bg-stroke-2" />
-        hoặc
+        or
         <span className="h-px flex-1 bg-stroke-2" />
       </div>
       <Button icon={<Person20Regular />} className="w-full">
-        Đăng nhập bằng tài khoản công ty
+        Sign in with your work account
       </Button>
       <p className="text-center text-body1 text-foreground-3">
-        Chưa có tài khoản?{" "}
+        Don&apos;t have an account?{" "}
         <a href="#" className="font-semibold text-link hover:underline">
-          Đăng ký
+          Sign up
         </a>
       </p>
     </Card>
