@@ -358,6 +358,14 @@ export default function Page() {
               with the same defaults does not re-render the tree.
             </li>
             <li>
+              Yugen Labs: <C>defaults=&#123;glassNavigationDefaults&#125;</C> gives every navigation component with glass{" "}
+              <C>material=&quot;glass&quot;</C>. See{" "}
+              <a className="text-link underline hover:text-link-hover" href={docsPath("/foundations/glass#provider-default")}>
+                Glass
+              </a>
+              .
+            </li>
+            <li>
               Source mode (shadcn registry, <C>yugen add</C>): you can also change <C>defaultVariants</C> in the copied file.
             </li>
           </ul>

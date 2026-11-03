@@ -354,6 +354,14 @@ export default function Page() {
               cùng defaults không làm cả cây render lại.
             </li>
             <li>
+              Yugen Labs: <C>defaults=&#123;glassNavigationDefaults&#125;</C> cho mọi component điều hướng có glass{" "}
+              <C>material=&quot;glass&quot;</C>. Xem{" "}
+              <a className="text-link underline hover:text-link-hover" href={docsPath("/foundations/glass#provider-default")}>
+                Glass
+              </a>
+              .
+            </li>
+            <li>
               Chế độ mã nguồn (registry shadcn, <C>yugen add</C>): có thể sửa luôn <C>defaultVariants</C> trong file đã chép.
             </li>
           </ul>

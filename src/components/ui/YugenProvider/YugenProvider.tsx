@@ -62,6 +62,24 @@ export interface YugenProviderProps extends React.HTMLAttributes<HTMLDivElement>
   density?: YugenDensity;
 }
 
+/**
+ * Yugen Labs (#230): `material="glass"` cho mọi component điều hướng có glass, dưới dạng một bộ `defaults`:
+ * `<YugenProvider defaults={glassNavigationDefaults}>`, hoặc gộp `{ ...glassNavigationDefaults, Button: { … } }`.
+ * Prop `material` của instance vẫn thắng (vd. `"glass-clear"` trên ảnh).
+ */
+export const glassNavigationDefaults = {
+  Toolbar: { material: "glass" },
+  TabsList: { material: "glass" },
+  Nav: { material: "glass" },
+  MenuPopover: { material: "glass" },
+  MenuSubPopover: { material: "glass" },
+  PopoverSurface: { material: "glass" },
+  TooltipContent: { material: "glass" },
+  DialogSurface: { material: "glass" },
+  DrawerSurface: { material: "glass" },
+  SheetContent: { material: "glass" },
+} as const;
+
 /** Gộp hai lớp ghi đè theo namespace / tên component (lớp trong thắng). */
 function mergeLayers<T extends object>(outer: T | undefined, inner: T | undefined): T | undefined {
   if (!outer || !inner) return inner ?? outer;

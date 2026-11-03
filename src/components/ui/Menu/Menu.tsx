@@ -163,11 +163,10 @@ export function MenuSubTrigger({
   );
 }
 
-export function MenuSubPopover({
-  className,
-  material,
-  ...props
-}: React.ComponentPropsWithoutRef<typeof MenuPrimitive.SubContent> & Pick<MenuPopoverProps, "material">) {
+export type MenuSubPopoverProps = React.ComponentPropsWithoutRef<typeof MenuPrimitive.SubContent> & Pick<MenuPopoverProps, "material">;
+
+export function MenuSubPopover(inProps: MenuSubPopoverProps) {
+  const { className, material, ...props } = useComponentDefaults("MenuSubPopover", inProps);
   const portalTheme = usePortalThemeProps();
   return (
     <MenuPrimitive.Portal>
@@ -179,5 +178,6 @@ export function MenuSubPopover({
 declare module "../YugenProvider/context" {
   interface YugenComponentDefaults {
     MenuPopover: MenuPopoverProps;
+    MenuSubPopover: MenuSubPopoverProps;
   }
 }

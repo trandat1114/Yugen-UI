@@ -44,7 +44,7 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
         { status: "doing", issue: 157, vi: "Rà soát API: tên mới cho các prop lệch chuẩn, tên cũ cảnh báo deprecation tới 1.0", en: "API review: new names for the outlier props, old names deprecated until 1.0" },
         { status: "planned", issue: 158, vi: "Yugen Labs: promote component đã chín, phần còn lại đánh dấu thử nghiệm", en: "Yugen Labs: promote what is mature, mark the rest experimental" },
         { status: "done", issue: 171, vi: "Prop mặc định và mật độ (density) từ YugenProvider", en: "Default props and density from YugenProvider" },
-        { status: "planned", issue: 230, vi: "Glass làm mặc định cho component điều hướng, qua prop mặc định", en: "Glass as a default for navigation components, through default props" },
+        { status: "done", issue: 230, vi: "Glass làm mặc định cho component điều hướng, qua prop mặc định", en: "Glass as a default for navigation components, through default props" },
         { status: "planned", issue: 243, vi: "Khóa cuộn: chọn giữ hay ẩn thanh cuộn khi mở Menu, ContextMenu, Dropdown", en: "Scroll lock: keep or hide the page scrollbar while Menu, ContextMenu or Dropdown is open" },
         { status: "planned", issue: 165, vi: "Rà soát bảo mật các component hiển thị nội dung không tin cậy", en: "Security review of components that render untrusted content" },
         { status: "done", issue: 320, vi: "Icon có sẵn trong thư viện: cài yugen-ui nhẹ hơn ~180 MB", en: "Built-in icons: installing yugen-ui is ~180 MB lighter" },
@@ -86,7 +86,6 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       vi: "Chưa xếp lịch.",
       en: "Not scheduled yet.",
       items: [
-        { status: "planned", issue: 230, vi: "Glass: YugenProvider đổi mọi component điều hướng sang glass (sau #171)", en: "Glass: a YugenProvider default that switches navigation components to glass (after #171)" },
         { status: "planned", issue: 68, vi: "Đăng ký @yugen vào danh mục registry của shadcn", en: "Register @yugen in the shadcn registry index" },
         { status: "planned", vi: "Đang cân nhắc: bộ Figma, gói icon Sakura", en: "Under consideration: Figma kit, Sakura icon set" },
       ],

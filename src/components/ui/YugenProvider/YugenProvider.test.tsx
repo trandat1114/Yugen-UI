@@ -1,10 +1,13 @@
 import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { YugenProvider, useYugen } from "./YugenProvider";
+import { YugenProvider, glassNavigationDefaults, useYugen } from "./YugenProvider";
 import { YugenContext } from "./context";
 import { Button } from "../Button/Button";
 import { Input } from "../Input/Input";
+import { Nav } from "../Nav/Nav";
+import { Tabs, TabsList, TabsTrigger } from "../Tabs/Tabs";
+import { Toolbar } from "../Toolbar/Toolbar";
 import { Dialog, DialogSurface, DialogTitle } from "../Dialog/Dialog";
 import { messagesEn } from "../messages-en";
 import { messagesVi } from "../messages-vi";
@@ -194,6 +197,40 @@ describe("YugenProvider defaults & density (#171)", () => {
       </YugenProvider>,
     );
     expect(screen.getByRole("dialog")).toHaveAttribute("data-density", "compact");
+  });
+
+  it("glassNavigationDefaults: component điều hướng thành glass, material của instance thắng (#230)", () => {
+    render(
+      <YugenProvider defaults={{ ...glassNavigationDefaults, Button: { shape: "circular" } }}>
+        <Toolbar aria-label="Mặc định" />
+        <Toolbar aria-label="Trên ảnh" material="glass-clear" />
+        <Tabs defaultValue="a">
+          <TabsList aria-label="Tab">
+            <TabsTrigger value="a">A</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        <Nav aria-label="Điều hướng" />
+        <Button>Tròn</Button>
+      </YugenProvider>,
+    );
+    expect(screen.getByRole("toolbar", { name: "Mặc định" })).toHaveClass("glass");
+    expect(screen.getByRole("toolbar", { name: "Trên ảnh" })).toHaveClass("glass-clear");
+    expect(screen.getByRole("toolbar", { name: "Trên ảnh" })).not.toHaveClass("glass");
+    expect(screen.getByRole("tablist", { name: "Tab" })).toHaveClass("glass");
+    expect(screen.getByRole("navigation", { name: "Điều hướng" })).toHaveClass("glass");
+    expect(button("Tròn")).toHaveClass("rounded-circular");
+    expect(Object.keys(glassNavigationDefaults)).toEqual([
+      "Toolbar",
+      "TabsList",
+      "Nav",
+      "MenuPopover",
+      "MenuSubPopover",
+      "PopoverSurface",
+      "TooltipContent",
+      "DialogSurface",
+      "DrawerSurface",
+      "SheetContent",
+    ]);
   });
 
   it("defaults viết thẳng trong JSX: provider render lại với object bằng nhau không đổi context", () => {
