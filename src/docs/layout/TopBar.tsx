@@ -7,14 +7,19 @@ import {
   WeatherMoon20Regular,
   WeatherSunny20Regular,
 } from "@fluentui/react-icons";
+import { Suspense } from "react";
 import { Button, Popover, PopoverSurface, PopoverTrigger, SimpleTooltip, Kbd, KbdGroup } from "@/components/ui";
 import type { Appearance } from "@/hooks/useAppearance";
 import { YugenMark } from "../YugenMark";
 import { useHasUnseenNews } from "../useNews";
-import { useLocale, type Locale } from "../i18n";
+import { loadLocale, useLocale, type Locale } from "../i18n";
+import { lazyPage } from "../lazyPage";
 import { VersionMenu } from "./VersionMenu";
-import { AppearancePicker } from "./AppearancePicker";
 import { docsPath } from "../router";
+
+// Nội dung khung Giao diện (ToggleGroup, icon) chỉ cần khi mở: App nạp lúc rảnh, nút mở nạp khi được trỏ / focus (#307).
+export const AppearancePicker = lazyPage(() => import("./AppearancePicker").then((m) => m.AppearancePicker));
+const preloadPicker = () => AppearancePicker.prefetch();
 
 const LANGS: Record<Locale, { short: string; label: string }> = {
   vi: { short: "VI", label: "Tiếng Việt" },
@@ -88,6 +93,9 @@ export function TopBar({
             appearance="subtle"
             lang={nextLang}
             onClick={() => onChange({ lang: nextLang })}
+            // Gói chữ của ngôn ngữ kia nạp từ lúc trỏ / focus, trước khi bấm (#305).
+            onPointerEnter={() => void loadLocale(nextLang).catch(() => {})}
+            onFocus={() => void loadLocale(nextLang).catch(() => {})}
             className="gap-1 px-1 text-caption1 font-semibold"
           >
             <LocalLanguage20Regular />
@@ -99,11 +107,20 @@ export function TopBar({
         <Popover>
           <SimpleTooltip content={t("appearance.title")}>
             <PopoverTrigger asChild>
-              <Button appearance="subtle" aria-label={t("appearance.title")} icon={<ModeIcon />} />
+              <Button
+                appearance="subtle"
+                aria-label={t("appearance.title")}
+                icon={<ModeIcon />}
+                onPointerEnter={preloadPicker}
+                onFocus={preloadPicker}
+              />
             </PopoverTrigger>
           </SimpleTooltip>
           <PopoverSurface align="end" aria-label={t("appearance.title")}>
-            <AppearancePicker value={appearance} onChange={onChange} />
+            {/* Chỗ chờ cùng cỡ với nội dung (ba nhóm nút): khung không đổi kích thước khi nội dung tới. */}
+            <Suspense fallback={<div className="h-41 w-80 max-w-full" />}>
+              <AppearancePicker value={appearance} onChange={onChange} />
+            </Suspense>
           </PopoverSurface>
         </Popover>
       </div>

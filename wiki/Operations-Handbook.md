@@ -83,6 +83,23 @@ Protection for `next`, `release/*`, `canary` and `v*` tags: see [[Branching and 
 | Security vulnerability reported | Confirm it in a private Security Advisory, build the fix in a private fork, release, publish the advisory + a CVE if needed |
 | `main` is red | Fix it before any other PR; revert the offending commit if it can't be fixed within 1 day |
 | Docs site broken | Rerun the Docs workflow on the last good commit (`workflow_dispatch`) |
+| Docs show stale or broken pages that a redeploy doesn't fix (service worker) | Turn the service worker off: see below |
+
+### Docs service worker
+
+The docs register a service worker (`src/docs/sw/sw.js`, written to `<base>/sw.js` by `vite.perf.ts`). It serves hashed files
+in `assets/` from its cache, loads pages from the network first and falls back to the cached copy of the same page when
+offline. It leaves everything else alone (`versions.json`, images, `r/*.json`, other origins such as the contributors
+data) and ignores the other docs builds in subfolders (`next/`, `vX.Y/`). Each deploy ships a new `sw.js`, which drops the
+previous build's cached pages and the chunks that are no longer in the build. It isn't registered in local dev or in E2E.
+
+Kill switch:
+
+1. Repository **Settings → Secrets and variables → Actions → Variables**: add `DOCS_SW` = `off`.
+2. Rerun the Docs workflow (`workflow_dispatch`).
+
+That build's `sw.js` deletes the docs caches, unregisters itself and reloads open tabs the next time a visitor opens any
+docs page, and the pages stop registering a worker. Delete the variable and rerun the workflow to turn caching back on.
 
 ## 7. Community moderation
 

@@ -127,6 +127,16 @@ export function legacyHashTarget(location: Pick<Location, "hash" | "search">): s
   return hrefOf(parseHash(location.hash)) + location.search;
 }
 
+/** Trang docs mà một link trỏ tới (cùng origin, dưới BASE, route có thật; cả link `#/…` cũ); null nếu không phải. */
+export function docsLinkTarget(href: string): DocsLocation | null {
+  if (href.startsWith("#/")) return { route: parseHash(href), lang: linkLocale };
+  const url = new URL(href, window.location.href);
+  if (url.origin !== window.location.origin || !url.pathname.startsWith(BASE)) return null;
+  const { lang, rest } = splitLocale(url.pathname.slice(BASE.length));
+  const route = matchSegments(rest);
+  return route && { route, lang };
+}
+
 /**
  * Bấm vào `<a>` trỏ tới một trang docs (cùng origin, dưới BASE, không phải bản docs khác như next/ hay v0.9/) → đổi route
  * tại chỗ thay vì tải lại. Link `#/…` cũ cũng được đổi sang đường dẫn.

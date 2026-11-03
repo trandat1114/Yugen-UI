@@ -1,4 +1,3 @@
-import { messagesVi } from "@/components/ui/messages-vi";
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { YugenMessages } from "@/components/ui/YugenProvider/context";
 import type { ComponentCategory, ConceptGroup, ConceptMeta } from "../types";
@@ -22,19 +21,37 @@ export interface LocaleValue {
   component: (m: { slug: string; name: string; lead: string }) => { name: string; lead: string };
   /** Meta trang khái niệm theo ngôn ngữ (tiêu đề luôn dịch; lead / mục lục chỉ khi trang đã có bản dịch). */
   concept: (m: ConceptMeta) => ConceptMeta;
-  /** `messages` cho YugenProvider của docs: chuỗi có sẵn của component theo ngôn ngữ (không có = mặc định tiếng Việt). */
+  /** `messages` cho YugenProvider của docs: chuỗi có sẵn của component theo ngôn ngữ (không có = mặc định tiếng Anh). */
   ui?: YugenMessages;
 }
 
 const format = (s: string, vars?: Record<string, string | number>) =>
   vars ? s.replace(/\{(\w+)\}/g, (m, k: string) => (k in vars ? String(vars[k]) : m)) : s;
 
+// Chuỗi có sẵn của component bằng tiếng Việt (kèm locale vi của lịch, ~11 KB gzip): chunk riêng, chỉ trang tiếng Việt nạp
+// (#307). Trang tiếng Anh — mặc định — không tải.
+let viUi: YugenMessages | undefined;
+let viUiPromise: Promise<YugenMessages> | null = null;
+
+/** Nạp `messagesVi` (cache; lỗi → bỏ cache để lần sau thử lại). */
+export function loadVietnameseUi(): Promise<YugenMessages> {
+  if (!viUiPromise) {
+    viUiPromise = import("@/components/ui/messages-vi").then((m) => (viUi = m.messagesVi));
+    viUiPromise.catch(() => (viUiPromise = null));
+  }
+  return viUiPromise;
+}
+
+/** Nạp phần chữ của một ngôn ngữ (main.tsx / prerender gọi trước lần render đầu; di chuột lên nút đổi ngôn ngữ gọi trước). */
+export const loadLocale = (locale: Locale): Promise<unknown> => (locale === "en" ? loadEnglish() : loadVietnameseUi());
+
 function createValue(b: EnBundle | null): LocaleValue {
   const messages: Record<MessageKey, string> = b ? b.messages : vi;
   return {
     locale: b ? "en" : "vi",
-    // Chuỗi có sẵn của component: mặc định tiếng Anh, trang tiếng Việt truyền messagesVi.
-    ui: b ? b.ui : messagesVi,
+    // Chuỗi có sẵn của component: mặc định là tiếng Anh (= messagesEn, không cần nạp); trang tiếng Việt truyền messagesVi
+    // (chưa nạp xong: tạm tiếng Anh).
+    ui: b ? undefined : viUi,
     t: (key, vars) => format(messages[key], vars),
     category: (c) => b?.categories[c] ?? c,
     group: (g) => b?.groups[g] ?? g,
@@ -52,8 +69,10 @@ function createValue(b: EnBundle | null): LocaleValue {
   };
 }
 
-const VI_VALUE = createValue(null);
-const LocaleContext = createContext<LocaleValue>(VI_VALUE);
+// Giá trị tiếng Việt, tạo lại một lần sau khi `messagesVi` nạp xong.
+let viValue = createValue(null);
+const vietnamese = () => (viValue.ui === viUi ? viValue : (viValue = createValue(null)));
+const LocaleContext = createContext<LocaleValue>(viValue);
 
 let enBundle: EnBundle | null = null;
 let enPromise: Promise<EnBundle> | null = null;
@@ -69,7 +88,7 @@ export function loadEnglish(): Promise<EnBundle> {
 
 /** Giá trị ngôn ngữ ngoài React (prerender): "en" cần `loadEnglish()` xong trước, nếu chưa thì trả tiếng Việt. */
 export function localeValue(locale: Locale): LocaleValue {
-  return locale === "en" && enBundle ? createValue(enBundle) : VI_VALUE;
+  return locale === "en" && enBundle ? createValue(enBundle) : vietnamese();
 }
 
 /**
@@ -105,8 +124,23 @@ export function LocaleProvider({ locale, children }: { locale: Locale; children:
     };
   }, [wantsEn, bundle]);
 
+  // Trang tiếng Việt: main.tsx đã nạp messagesVi trước; đổi sang tiếng Việt khi đang xem thì nạp rồi render lại.
+  const [ui, setUi] = useState(viUi);
+  useEffect(() => {
+    if (wantsEn || ui) return;
+    let alive = true;
+    loadVietnameseUi().then(
+      (m) => alive && setUi(m),
+      () => {},
+    );
+    return () => {
+      alive = false;
+    };
+  }, [wantsEn, ui]);
+
   const active = wantsEn && bundle ? bundle : null;
-  const value = useMemo(() => (active ? createValue(active) : VI_VALUE), [active]);
+  // `ui` trong deps: messagesVi vừa nạp thì vietnamese() trả giá trị mới.
+  const value = useMemo(() => (active ? createValue(active) : vietnamese()), [active, ui]);
   // Link nội bộ (docsPath) theo ngôn ngữ đang hiển thị — đặt trong render để cây con dùng ngay.
   setLinkLocale(value.locale);
 
