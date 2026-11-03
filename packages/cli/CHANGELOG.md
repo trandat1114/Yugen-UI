@@ -1,5 +1,10 @@
 # @yugen-ui/cli
 
+## Unreleased
+
+- Vite templates use TypeScript 7 (`^7.0.2`, the native compiler): `npm run build` type-checks several times
+  faster. `next-starter` stays on TypeScript 6, because `next build` type-checks through TypeScript's JavaScript API.
+
 ## 0.6.0
 
 - **Breaking:** requires Node.js 24 or newer. Yugen UI supports the two newest Node.js LTS lines (24 and 26 today).

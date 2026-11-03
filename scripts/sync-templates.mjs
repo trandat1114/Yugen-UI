@@ -1111,7 +1111,8 @@ function nextFiles(t, appFiles) {
             "@types/react": pkg.devDependencies["@types/react"],
             "@types/react-dom": pkg.devDependencies["@types/react-dom"],
             tailwindcss: "^4.0.0",
-            typescript: pkg.devDependencies.typescript,
+            // `next build` kiểm tra kiểu qua JS API của TypeScript — TypeScript 7 (bản native) chưa có API đó.
+            typescript: "^6.0.3",
           },
         },
         null,
@@ -1196,10 +1197,11 @@ function files(t) {
             "@tailwindcss/vite": "^4.0.0",
             "@types/react": pkg.devDependencies["@types/react"],
             "@types/react-dom": pkg.devDependencies["@types/react-dom"],
-            // Bundler và TypeScript theo devDependencies ở gốc repo (cùng bản docs build và typecheck).
+            // Bundler và TypeScript theo devDependencies ở gốc repo (cùng bản docs build và typecheck). Gốc repo ghim TypeScript
+            // theo bản vá (~) vì scripts/check-props.ts dùng API "unstable" của nó; app thì nhận cả bản minor (^).
             "@vitejs/plugin-react": pkg.devDependencies["@vitejs/plugin-react"],
             tailwindcss: "^4.0.0",
-            typescript: pkg.devDependencies.typescript,
+            typescript: pkg.devDependencies.typescript.replace(/^~/, "^"),
             vite: pkg.devDependencies.vite,
             ...t.devDependencies,
           },

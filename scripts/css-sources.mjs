@@ -11,7 +11,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import ts from "typescript";
+import { parseSync } from "vite";
 
 const IMPORT_RE = /(?:^|\n)\s*(?:import|export)\s[^;]*?from\s+["']([^"']+)["']|import\(\s*["']([^"']+)["']\s*\)/g;
 const SOURCE_FILE = /\.(?:ts|tsx)$/;
@@ -87,26 +87,109 @@ export function sourceFiles(uiDir) {
   return result;
 }
 
+/**
+ * Đọc tĩnh một module (parser Oxc đi kèm Vite): tên khai báo giá trị ở cấp file, import có tên, export (khai báo / `export { }`
+ * / re-export / `export *`). Bỏ qua mọi thứ chỉ là type.
+ */
+function moduleInfo(cache, file) {
+  if (cache.has(file)) return cache.get(file);
+  const { program } = parseSync(file, fs.readFileSync(file, "utf8"), { lang: file.endsWith(".tsx") ? "tsx" : "ts" });
+  const info = { values: new Set(), imports: new Map(), exports: new Map(), stars: [] };
+  const nameOf = (node) => (node.type === "Identifier" ? node.name : String(node.value));
+  const declared = (decl) => {
+    if (decl?.type === "VariableDeclaration") return decl.declarations.flatMap((d) => (d.id.type === "Identifier" ? [d.id.name] : []));
+    if (["FunctionDeclaration", "ClassDeclaration", "TSEnumDeclaration"].includes(decl?.type) && decl.id) return [decl.id.name];
+    return [];
+  };
+  for (const stmt of program.body) {
+    if (stmt.type === "ImportDeclaration") {
+      if (stmt.importKind === "type") continue;
+      for (const spec of stmt.specifiers ?? []) {
+        if (spec.type !== "ImportSpecifier" || spec.importKind === "type") continue;
+        info.imports.set(spec.local.name, { spec: stmt.source.value, name: nameOf(spec.imported) });
+      }
+    } else if (stmt.type === "ExportAllDeclaration") {
+      if (stmt.exportKind !== "type" && !stmt.exported) info.stars.push(stmt.source.value);
+    } else if (stmt.type === "ExportNamedDeclaration") {
+      if (stmt.exportKind === "type") continue;
+      for (const name of declared(stmt.declaration)) {
+        info.values.add(name);
+        info.exports.set(name, { local: name });
+      }
+      for (const spec of stmt.specifiers) {
+        if (spec.exportKind === "type") continue;
+        const target = stmt.source ? { spec: stmt.source.value, name: nameOf(spec.local) } : { local: nameOf(spec.local) };
+        info.exports.set(nameOf(spec.exported), target);
+      }
+    } else {
+      for (const name of declared(stmt)) info.values.add(name);
+    }
+  }
+  cache.set(file, info);
+  return info;
+}
+
 /** Tên export có giá trị (component, hàm, hằng) của `src/components/ui/index.ts` → thư mục chứa khai báo của nó. */
 export function exportFolders(root) {
   const uiDir = path.join(root, "src", "components", "ui");
+  const cache = new Map();
+  const resolved = new Map();
+  const resolveFile = (from, spec) => {
+    const base = spec.startsWith("@/") ? path.join(root, "src", spec.slice(2)) : spec.startsWith(".") ? path.resolve(path.dirname(from), spec) : null;
+    if (!base) return undefined;
+    if (!resolved.has(base))
+      resolved.set(base, [`${base}.tsx`, `${base}.ts`, path.join(base, "index.tsx"), path.join(base, "index.ts")].find((f) => fs.existsSync(f)));
+    return resolved.get(base);
+  };
+  const declarations = new Map();
+  /** File khai báo giá trị mà `name` (export của `file`) trỏ tới; undefined nếu chỉ là type hoặc nằm ngoài src. */
+  const declarationOf = (file, name, seen = new Set()) => {
+    const key = `${file}#${name}`;
+    if (declarations.has(key)) return declarations.get(key);
+    if (seen.has(key)) return undefined;
+    seen.add(key);
+    const found = lookup(file, name, seen);
+    declarations.set(key, found);
+    return found;
+  };
+  const lookup = (file, name, seen) => {
+    const info = moduleInfo(cache, file);
+    const follow = (spec, imported) => {
+      const target = resolveFile(file, spec);
+      return target && declarationOf(target, imported, seen);
+    };
+    const entry = info.exports.get(name);
+    if (entry?.local !== undefined) {
+      if (info.values.has(entry.local)) return file;
+      const imported = info.imports.get(entry.local);
+      return imported && follow(imported.spec, imported.name);
+    }
+    if (entry) return follow(entry.spec, entry.name);
+    for (const spec of info.stars) {
+      const found = follow(spec, name);
+      if (found) return found;
+    }
+    return undefined;
+  };
+  /** Mọi tên mà `file` export (kể cả qua `export *`). */
+  const exportedNames = (file, seen = new Set()) => {
+    if (seen.has(file)) return [];
+    seen.add(file);
+    const info = moduleInfo(cache, file);
+    const stars = info.stars.flatMap((spec) => {
+      const target = resolveFile(file, spec);
+      return target ? exportedNames(target, seen) : [];
+    });
+    return [...info.exports.keys(), ...stars.filter((n) => n !== "default")];
+  };
+
   const indexPath = path.join(uiDir, "index.ts");
-  const config = ts.readConfigFile(path.join(root, "tsconfig.app.json"), ts.sys.readFile);
-  const { options } = ts.parseJsonConfigFileContent(config.config, ts.sys, root);
-  const program = ts.createProgram([indexPath], { ...options, noEmit: true });
-  const checker = program.getTypeChecker();
-  const source = program.getSourceFile(indexPath);
-  const moduleSymbol = source && checker.getSymbolAtLocation(source);
-  if (!moduleSymbol) throw new Error("css-sources: không đọc được src/components/ui/index.ts");
   const out = {};
-  for (const exported of checker.getExportsOfModule(moduleSymbol)) {
-    const symbol = exported.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(exported) : exported;
-    // Kiểu (interface, type) không có CSS.
-    if (!(symbol.flags & ts.SymbolFlags.Value)) continue;
-    const declaration = symbol.declarations?.[0];
-    if (!declaration) continue;
-    const rel = path.relative(uiDir, declaration.getSourceFile().fileName).split(path.sep);
-    if (rel.length > 1 && rel[0] !== "..") out[exported.name] = rel[0];
+  for (const name of new Set(exportedNames(indexPath))) {
+    const file = declarationOf(indexPath, name);
+    if (!file) continue;
+    const rel = path.relative(uiDir, file).split(path.sep);
+    if (rel.length > 1 && rel[0] !== "..") out[name] = rel[0];
   }
   return Object.fromEntries(Object.entries(out).sort(([a], [b]) => a.localeCompare(b)));
 }
