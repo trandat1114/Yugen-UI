@@ -7,7 +7,7 @@ import {
   ChevronRight20Regular,
   MoreHorizontal16Regular,
   MoreHorizontal20Regular,
-} from "@fluentui/react-icons";
+} from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
 import { paginationMessagesEn } from "./messages";

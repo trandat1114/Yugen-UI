@@ -7,7 +7,7 @@ import {
   ChevronDown20Regular,
   ChevronDown24Regular,
   ChevronUp16Regular,
-} from "@fluentui/react-icons";
+} from "../_internal/icons";
 import { usePortalThemeProps } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { popoverSurfaceClass } from "@/components/ui/Popover/Popover";

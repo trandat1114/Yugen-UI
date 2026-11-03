@@ -1,7 +1,7 @@
 /** Fluent 2 SearchBox — https://fluent2.microsoft.design/components/web/react/core/searchbox/usage */
 import * as React from "react";
 import { useControllableState } from "../hooks/useControllableState";
-import { Dismiss16Regular, Dismiss20Regular, Dismiss24Regular, Search16Regular, Search20Regular, Search24Regular } from "@fluentui/react-icons";
+import { Dismiss16Regular, Dismiss20Regular, Dismiss24Regular, Search16Regular, Search20Regular, Search24Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Input, type InputProps } from "@/components/ui/Input/Input";
 import { useYugenMessages } from "../YugenProvider/context";

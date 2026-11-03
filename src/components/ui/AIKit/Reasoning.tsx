@@ -1,7 +1,7 @@
 /** Yugen Labs · Reasoning — khối "Đang suy luận… / Đã suy luận trong 12s" thu gọn được cho phần suy nghĩ của model. */
 import * as React from "react";
 import { useControllableState } from "../hooks/useControllableState";
-import { ChevronDown16Regular, Lightbulb16Regular } from "@fluentui/react-icons";
+import { ChevronDown16Regular, Lightbulb16Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../Collapsible/Collapsible";
 import { useYugenMessages } from "../YugenProvider/context";

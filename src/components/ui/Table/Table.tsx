@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ArrowSortDown20Regular, ArrowSortUp20Regular } from "@fluentui/react-icons";
+import { ArrowSortDown20Regular, ArrowSortUp20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Checkbox } from "../Checkbox/Checkbox";
 import { useYugenMessages } from "../YugenProvider/context";

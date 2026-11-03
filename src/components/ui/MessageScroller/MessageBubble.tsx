@@ -7,7 +7,7 @@ import {
   Clock12Regular,
   ErrorCircle12Filled,
   Eye12Regular,
-} from "@fluentui/react-icons";
+} from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Avatar } from "../Avatar/Avatar";
 import { useYugenMessages } from "../YugenProvider/context";

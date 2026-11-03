@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ChevronDown20Regular } from "@fluentui/react-icons";
+import { ChevronDown20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Button, type ButtonProps } from "../Button/Button";
 import { Menu, MenuPopover, MenuTrigger } from "../Menu/Menu";

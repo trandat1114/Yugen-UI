@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useDirection } from "@radix-ui/react-direction";
-import { Navigation20Regular, PanelLeftContract20Regular, PanelLeftExpand20Regular } from "@fluentui/react-icons";
+import { Navigation20Regular, PanelLeftContract20Regular, PanelLeftExpand20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
 import { Button, type ButtonProps } from "../Button/Button";

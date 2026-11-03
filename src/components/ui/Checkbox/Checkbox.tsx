@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
-import { Checkmark12Filled, Square12Filled } from "@fluentui/react-icons";
+import { Checkmark12Filled, Square12Filled } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 
 /** Fluent 2 Checkbox — https://fluent2.microsoft.design/components/web/react/core/checkbox/usage */

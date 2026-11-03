@@ -1,5 +1,5 @@
 import * as React from "react";
-import { TextQuoteOpening24Filled } from "@fluentui/react-icons";
+import { TextQuoteOpening24Filled } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 
 export type QuoteAppearance = "default" | "subtle" | "emphasis";

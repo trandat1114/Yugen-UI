@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Info16Filled, Info16Regular, Info20Filled, Info20Regular } from "@fluentui/react-icons";
+import { Info16Filled, Info16Regular, Info20Filled, Info20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Popover, PopoverSurface, PopoverTrigger } from "@/components/ui/Popover/Popover";
 import { useYugenMessages } from "../YugenProvider/context";

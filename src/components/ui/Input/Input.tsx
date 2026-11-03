@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { ErrorCircle12Filled, CheckmarkCircle12Filled, Warning12Filled } from "@fluentui/react-icons";
+import { ErrorCircle12Filled, CheckmarkCircle12Filled, Warning12Filled } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 
 /** Fluent 2 Input + Field — https://fluent2.microsoft.design/components/web/react/core/input/usage */

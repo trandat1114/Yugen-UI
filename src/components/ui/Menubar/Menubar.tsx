@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as MenubarPrimitive from "@radix-ui/react-menubar";
-import { Checkmark16Filled, ChevronRight16Regular } from "@fluentui/react-icons";
+import { Checkmark16Filled, ChevronRight16Regular } from "../_internal/icons";
 import { usePortalThemeProps } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { menuItemClass, menuPopoverClass } from "../Menu/Menu";

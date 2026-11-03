@@ -1099,7 +1099,7 @@ function nextFiles(t, appFiles) {
           private: true,
           scripts: { dev: "next dev", build: "next build", start: "next start" },
           dependencies: {
-            "@fluentui/react-icons": pkg.dependencies["@fluentui/react-icons"],
+            "@fluentui/react-icons": pkg.devDependencies["@fluentui/react-icons"],
             next: NEXT_VERSION,
             react: pkg.devDependencies.react,
             "react-dom": pkg.devDependencies["react-dom"],
@@ -1185,7 +1185,7 @@ function files(t) {
           // `t.dependencies`: thư viện runtime riêng của template (vd. admin: react-hook-form, zod), xếp theo tên như npm.
           dependencies: Object.fromEntries(
             Object.entries({
-              "@fluentui/react-icons": pkg.dependencies["@fluentui/react-icons"],
+              "@fluentui/react-icons": pkg.devDependencies["@fluentui/react-icons"],
               // React và type theo devDependencies ở gốc repo (cùng bản mà docs và test chạy).
               react: pkg.devDependencies.react,
               "react-dom": pkg.devDependencies["react-dom"],

@@ -1,7 +1,7 @@
 /** Yugen Labs · ChatComposer — ô soạn tin tự giãn: Enter gửi, Shift+Enter xuống dòng. */
 import * as React from "react";
 import { useControllableState } from "../hooks/useControllableState";
-import { Send20Filled, Stop20Filled } from "@fluentui/react-icons";
+import { Send20Filled, Stop20Filled } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { Button } from "../Button/Button";

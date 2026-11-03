@@ -4,7 +4,7 @@ import {
   ArrowSortUp20Regular,
   ColumnTriple20Regular,
   ReOrderDotsVertical16Regular,
-} from "@fluentui/react-icons";
+} from "../_internal/icons";
 import { CounterBadge } from "../CounterBadge/CounterBadge";
 import { dataGridMessagesEn } from "../DataGrid/messages";
 import {

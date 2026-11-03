@@ -2,7 +2,7 @@
 import * as React from "react";
 import { cva } from "class-variance-authority";
 import { useDirection } from "@radix-ui/react-direction";
-import { Dismiss12Regular, Dismiss16Regular, Dismiss20Regular } from "@fluentui/react-icons";
+import { Dismiss12Regular, Dismiss16Regular, Dismiss20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
 import { tagMessagesEn } from "./messages";

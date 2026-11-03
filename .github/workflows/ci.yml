@@ -87,6 +87,8 @@ jobs:
       # Code mẫu và block viết bằng tiếng Anh, trừ demo nói về ngôn ngữ (ALLOW trong scripts/check-demo-language.mjs)
       - run: npm run check:demo-language
       - run: node scripts/sync-templates.mjs --check
+      # Icon có sẵn (src/components/ui/_internal/icons.tsx) khớp với các icon component đang import (#320).
+      - run: node scripts/icons.mjs --check
       - run: npm run build:lib
       - run: npm run build:docs
       - run: npm run pack:check

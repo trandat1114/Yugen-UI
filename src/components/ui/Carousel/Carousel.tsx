@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useControllableState } from "../hooks/useControllableState";
 import { useDirection } from "@radix-ui/react-direction";
-import { ChevronLeft20Regular, ChevronRight20Regular, Pause20Regular, Play20Regular } from "@fluentui/react-icons";
+import { ChevronLeft20Regular, ChevronRight20Regular, Pause20Regular, Play20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { warnDeprecated } from "@/lib/deprecate";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";

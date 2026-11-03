@@ -108,7 +108,7 @@ export default function Page() {
             ["Tailwind CSS", "4.x", <>Bắt buộc v4: cấu hình CSS-first (<C>@theme</C>, <C>@utility</C>), cú pháp <C>size-4!</C>, <C>max-h-(--var)</C>.</>],
             ["Bundler", "Vite 6 trở lên · Next.js 14 / 15 · bất kỳ bundler hỗ trợ PostCSS", <>Component không dùng API riêng của bundler; chỉ cần alias <C>@/</C>.</>],
             ["Radix UI", "Theo package.json", "Mỗi primitive là một package riêng — chỉ cài cái bạn dùng."],
-            ["Icon", "@fluentui/react-icons 2.x", "Tree-shake theo từng icon; không cần font icon."],
+            ["Icon", "Có sẵn", <>Icon bên trong component đi kèm yugen-ui dưới dạng SVG nhỏ (Fluent System Icons), không cần cài gói icon. Icon của bạn: thêm <C>@fluentui/react-icons</C>, hoặc bộ icon SVG bất kỳ.</>],
           ]}
         />
       </DocSection>

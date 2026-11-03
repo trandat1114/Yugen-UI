@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ArrowReset20Regular } from "@fluentui/react-icons";
+import { ArrowReset20Regular } from "../_internal/icons";
 import { Button } from "../Button/Button";
 import { useYugenMessages } from "../YugenProvider/context";
 import { chartMessagesEn } from "./messages";

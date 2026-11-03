@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useControllableState } from "../hooks/useControllableState";
 import { useDirection } from "@radix-ui/react-direction";
-import { Checkmark12Filled, Checkmark20Regular } from "@fluentui/react-icons";
+import { Checkmark12Filled, Checkmark20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { warnDeprecated } from "@/lib/deprecate";
 

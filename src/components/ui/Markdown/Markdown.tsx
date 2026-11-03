@@ -1,6 +1,6 @@
 /** Markdown — hiển thị Markdown tĩnh (bài viết, ghi chú phát hành, nội dung CMS) theo kiểu chữ của Prose. */
 import * as React from "react";
-import { CheckboxChecked16Regular, CheckboxUnchecked16Regular } from "@fluentui/react-icons";
+import { CheckboxChecked16Regular, CheckboxUnchecked16Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { codeLanguageOf } from "../AIKit/codeLanguage";
 import { parseInlineMarkdown, parseMarkdown, type MdAlign, type MdBlock, type MdInline } from "../AIKit/markdown";

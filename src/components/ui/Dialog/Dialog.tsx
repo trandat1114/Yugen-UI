@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useDirection } from "@radix-ui/react-direction";
-import { Dismiss24Regular } from "@fluentui/react-icons";
+import { Dismiss24Regular } from "../_internal/icons";
 import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
 import { dialogMessagesEn } from "./messages";
 import { cn } from "@/lib/cn";

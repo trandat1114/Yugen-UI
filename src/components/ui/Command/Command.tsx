@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Command as CommandPrimitive, useCommandState } from "cmdk";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { Search20Regular } from "@fluentui/react-icons";
+import { Search20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Dialog, DialogSurface } from "../Dialog/Dialog";
 import { useYugenMessages } from "../YugenProvider/context";

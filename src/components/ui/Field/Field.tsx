@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ErrorCircle12Filled, CheckmarkCircle12Filled, Warning12Filled } from "@fluentui/react-icons";
+import { ErrorCircle12Filled, CheckmarkCircle12Filled, Warning12Filled } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 
 /** Fluent 2 Field — https://fluent2.microsoft.design/components/web/react/core/field/usage */

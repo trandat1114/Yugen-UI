@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useDirection } from "@radix-ui/react-direction";
-import { Table20Filled, Table20Regular } from "@fluentui/react-icons";
+import { Table20Filled, Table20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { ToggleButton } from "../ToggleButton/ToggleButton";
 import { Table, TableBody, TableHeader, TableHeaderCell, TableRow, TableCell } from "../Table/Table";

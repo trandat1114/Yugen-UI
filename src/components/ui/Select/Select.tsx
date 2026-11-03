@@ -1,7 +1,7 @@
 /** Fluent 2 Select — https://fluent2.microsoft.design/components/web/react/core/select/usage */
 import * as React from "react";
 import { cva } from "class-variance-authority";
-import { ChevronDown16Regular, ChevronDown20Regular, ChevronDown24Regular } from "@fluentui/react-icons";
+import { ChevronDown16Regular, ChevronDown20Regular, ChevronDown24Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { fieldControlClass } from "@/components/ui/Field/Field";
 
