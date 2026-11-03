@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useControllableState } from "../hooks/useControllableState";
 import { useDirection } from "@radix-ui/react-direction";
-import { ChevronRight12Regular } from "@fluentui/react-icons";
+import { ChevronRight12Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { warnDeprecated } from "@/lib/deprecate";
 

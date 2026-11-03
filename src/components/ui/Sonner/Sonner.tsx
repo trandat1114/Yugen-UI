@@ -7,7 +7,7 @@ import {
   Dismiss20Regular,
   Info20Filled,
   Warning20Filled,
-} from "@fluentui/react-icons";
+} from "../_internal/icons";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { Button } from "../Button/Button";
 import { Spinner } from "../Spinner/Spinner";

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { MoreHorizontal20Regular } from "@fluentui/react-icons";
+import { MoreHorizontal20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Avatar, type AvatarProps } from "../Avatar/Avatar";
 import { Popover, PopoverSurface, PopoverTrigger } from "../Popover/Popover";

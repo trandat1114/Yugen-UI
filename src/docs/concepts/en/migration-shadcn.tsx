@@ -147,7 +147,7 @@ export default function Page() {
             ["Variant API", <><C>variant</C>, <C>size: sm | default | lg | icon</C></>, <><C>appearance</C>, <C>size: small | medium | large</C>, <C>shape</C></>],
             ["Color tokens", <><C>--primary</C>, <C>--muted</C>… (oklch)</>, <>Fluent names: <C>--colorBrandBackground</C>, <C>--colorNeutralForeground3</C>… (hex)</>],
             ["Dark mode", <><C>.dark</C> + <C>dark:</C></>, <>Nestable <C>data-theme</C>, no <C>dark:</C></>],
-            ["Icons", "lucide-react", "@fluentui/react-icons"],
+            ["Icons", "lucide-react", <>Fluent icons built in. For your own icons <C>@fluentui/react-icons</C> keeps the Fluent look; <C>lucide-react</C> works too, because icon slots size any SVG with CSS.</>],
           ]}
         />
       </DocSection>

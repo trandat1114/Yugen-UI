@@ -10,7 +10,7 @@
  */
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
-import { ReOrderDotsVertical20Regular } from "@fluentui/react-icons";
+import { ReOrderDotsVertical20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useAnnounce, type AnnounceFn } from "../AriaLive/AriaLive";
 import { useYugenMessages } from "../YugenProvider/context";

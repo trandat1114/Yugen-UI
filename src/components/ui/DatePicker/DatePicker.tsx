@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useControllableState } from "../hooks/useControllableState";
 import type { DateRange } from "react-day-picker";
-import { Calendar20Regular, Dismiss16Regular } from "@fluentui/react-icons";
+import { Calendar20Regular, Dismiss16Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { warnDeprecated } from "@/lib/deprecate";
 import { Calendar } from "@/components/ui/Calendar/Calendar";

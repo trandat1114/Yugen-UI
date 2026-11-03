@@ -108,7 +108,7 @@ export default function Page() {
             ["Tailwind CSS", "4.x", <>v4 is required: CSS-first config (<C>@theme</C>, <C>@utility</C>), syntax such as <C>size-4!</C> and <C>max-h-(--var)</C>.</>],
             ["Bundler", "Vite 6 or later · Next.js 14 / 15 · any bundler with PostCSS support", <>Components use no bundler-specific APIs; only the <C>@/</C> alias is needed.</>],
             ["Radix UI", "As in package.json", "Each primitive is a separate package. Install only the ones you use."],
-            ["Icons", "@fluentui/react-icons 2.x", "Tree-shaken per icon; no icon font needed."],
+            ["Icons", "Built in", <>The icons inside components ship with yugen-ui as small inline SVGs (Fluent System Icons), so no icon package is needed. For your own icons add <C>@fluentui/react-icons</C>, or any SVG icon set.</>],
           ]}
         />
       </DocSection>

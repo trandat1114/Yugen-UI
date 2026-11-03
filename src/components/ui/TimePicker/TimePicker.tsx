@@ -3,7 +3,7 @@ import * as React from "react";
 import { useControllableState } from "../hooks/useControllableState";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { useDirection } from "@radix-ui/react-direction";
-import { Checkmark16Filled, Clock16Regular, Clock20Regular, Clock24Regular } from "@fluentui/react-icons";
+import { Checkmark16Filled, Clock16Regular, Clock20Regular, Clock24Regular } from "../_internal/icons";
 import { usePortalThemeProps, useYugen, useYugenMessages } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { DataTrending20Filled, DataTrending20Regular } from "@fluentui/react-icons";
+import { DataTrending20Filled, DataTrending20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
 import { chartMessagesEn } from "./messages";

@@ -1,6 +1,6 @@
 /** Yugen Labs · MessageScroller — vùng cuộn hội thoại: bám đáy, nút "tin nhắn mới", tải tin cũ giữ vị trí, live region. */
 import * as React from "react";
-import { ArrowDown16Regular } from "@fluentui/react-icons";
+import { ArrowDown16Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { Button } from "../Button/Button";

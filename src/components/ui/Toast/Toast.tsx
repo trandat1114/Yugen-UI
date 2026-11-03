@@ -7,7 +7,7 @@ import {
   Dismiss20Regular,
   Info20Filled,
   Warning20Filled,
-} from "@fluentui/react-icons";
+} from "../_internal/icons";
 import { useYugenMessages } from "../YugenProvider/context";
 import { toastMessagesEn } from "./messages";
 import { cn } from "@/lib/cn";

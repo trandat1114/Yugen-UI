@@ -2,7 +2,7 @@ import * as React from "react";
 import { useControllableState } from "../hooks/useControllableState";
 import { Slot } from "@radix-ui/react-slot";
 import { useDirection } from "@radix-ui/react-direction";
-import { ChevronDown16Regular } from "@fluentui/react-icons";
+import { ChevronDown16Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../Tooltip/Tooltip";

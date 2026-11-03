@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ArrowTrending16Regular, ArrowTrendingDown16Regular, Subtract16Regular } from "@fluentui/react-icons";
+import { ArrowTrending16Regular, ArrowTrendingDown16Regular, Subtract16Regular } from "../_internal/icons";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
 import { statMessagesEn } from "./messages";
 import { cn } from "@/lib/cn";

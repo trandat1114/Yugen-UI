@@ -10,7 +10,7 @@ import {
   CheckmarkCircle48Regular,
   Edit16Regular,
   ErrorCircle12Filled,
-} from "@fluentui/react-icons";
+} from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Button } from "../Button/Button";
 import { Field, type FieldControlProps } from "../Field/Field";

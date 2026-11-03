@@ -10,7 +10,7 @@ import {
   ChevronDown16Regular,
   ChevronDown20Regular,
   ChevronDown24Regular,
-} from "@fluentui/react-icons";
+} from "../_internal/icons";
 import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";

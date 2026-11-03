@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
-import { ChevronRight20Regular } from "@fluentui/react-icons";
+import { ChevronRight20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 
 /** Fluent 2 Accordion — https://fluent2.microsoft.design/components/web/react/core/accordion/usage */

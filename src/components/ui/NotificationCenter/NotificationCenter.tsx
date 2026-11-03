@@ -12,7 +12,7 @@ import {
   Info20Regular,
   MailRead16Regular,
   Warning20Regular,
-} from "@fluentui/react-icons";
+} from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useAnnounce } from "../AriaLive/AriaLive";
 import { Avatar } from "../Avatar/Avatar";

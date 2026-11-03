@@ -13,7 +13,7 @@ import {
   Image24Regular,
   MusicNote224Regular,
   Video24Regular,
-} from "@fluentui/react-icons";
+} from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { formatFileSize } from "../AIKit/PromptInput";
 import { useAnnounce } from "../AriaLive/AriaLive";

@@ -1,7 +1,7 @@
 /** Fluent 2 SpinButton — https://fluent2.microsoft.design/components/web/react/core/spinbutton/usage */
 import * as React from "react";
 import { useControllableState } from "../hooks/useControllableState";
-import { ChevronDown12Regular, ChevronDown16Regular, ChevronUp12Regular, ChevronUp16Regular } from "@fluentui/react-icons";
+import { ChevronDown12Regular, ChevronDown16Regular, ChevronUp12Regular, ChevronUp16Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { fieldAppearanceClass, type FieldAppearance } from "@/components/ui/Select/Select";
 import { useYugenMessages } from "../YugenProvider/context";

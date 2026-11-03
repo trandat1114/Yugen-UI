@@ -8,7 +8,7 @@ import {
   Document16Regular,
   TextWrap16Regular,
   TextWrapOff16Regular,
-} from "@fluentui/react-icons";
+} from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useClipboard } from "../hooks/useClipboard";
 import { useControllableState } from "../hooks/useControllableState";

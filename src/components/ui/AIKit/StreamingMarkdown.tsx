@@ -1,6 +1,6 @@
 /** Yugen Labs · StreamingMarkdown — hiển thị Markdown đang về theo từng token: an toàn, không nháy, ghi nhớ theo khối. */
 import * as React from "react";
-import { CheckboxChecked16Regular, CheckboxUnchecked16Regular } from "@fluentui/react-icons";
+import { CheckboxChecked16Regular, CheckboxUnchecked16Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useAnnounce } from "../AriaLive/AriaLive";
 import { CodeBlock, CopyCodeButton } from "../CodeBlock/CodeBlock";

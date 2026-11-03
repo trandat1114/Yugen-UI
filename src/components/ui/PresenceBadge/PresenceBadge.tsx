@@ -31,8 +31,8 @@ import {
   PresenceUnknown12Regular,
   PresenceUnknown16Regular,
   PresenceUnknown20Regular,
-  type FluentIcon,
-} from "@fluentui/react-icons";
+  type IconComponent,
+} from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
 import { presenceBadgeMessagesEn, type PresenceBadgeMessages } from "./messages";
@@ -51,7 +51,7 @@ export type PresenceBadgeStatus =
 
 export type PresenceBadgeSize = "tiny" | "extra-small" | "small" | "medium" | "large" | "extra-large";
 
-type IconSet = Record<12 | 16 | 20, FluentIcon>;
+type IconSet = Record<12 | 16 | 20, IconComponent>;
 
 const ICONS = {
   available: { 12: PresenceAvailable12Filled, 16: PresenceAvailable16Filled, 20: PresenceAvailable20Filled },

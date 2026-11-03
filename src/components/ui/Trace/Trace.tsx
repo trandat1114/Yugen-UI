@@ -15,7 +15,7 @@ import {
   SubtractCircle16Regular,
   SubtractCircle20Regular,
   Timer16Regular,
-} from "@fluentui/react-icons";
+} from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Badge } from "../Badge/Badge";
 import { Button } from "../Button/Button";

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Slot, Slottable } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import { Open16Regular } from "@fluentui/react-icons";
+import { Open16Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
 import { linkMessagesEn } from "./messages";

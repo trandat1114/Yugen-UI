@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useDirection } from "@radix-ui/react-direction";
-import { ArrowSortDown20Regular, ArrowSortUp20Regular, DocumentSearch24Regular } from "@fluentui/react-icons";
+import { ArrowSortDown20Regular, ArrowSortUp20Regular, DocumentSearch24Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { Checkbox } from "../Checkbox/Checkbox";

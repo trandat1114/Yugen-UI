@@ -1,7 +1,7 @@
 /** Fluent 2 TeachingPopover — https://storybooks.fluentui.dev/react/?path=/docs/components-teachingpopover--docs */
 import * as React from "react";
 import { useControllableState } from "../hooks/useControllableState";
-import { Dismiss16Regular, Lightbulb16Regular } from "@fluentui/react-icons";
+import { Dismiss16Regular, Lightbulb16Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Button } from "../Button/Button";
 import { Popover, PopoverClose, PopoverSurface, PopoverTrigger, type PopoverSurfaceProps } from "../Popover/Popover";

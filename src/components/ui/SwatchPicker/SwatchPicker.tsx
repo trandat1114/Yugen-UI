@@ -2,7 +2,7 @@
 import * as React from "react";
 import { useControllableState } from "../hooks/useControllableState";
 import { cva } from "class-variance-authority";
-import { Prohibited16Regular } from "@fluentui/react-icons";
+import { Prohibited16Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useArrowNavigationGroup } from "../FocusManagement/FocusManagement";
 import { useYugenMessages } from "../YugenProvider/context";

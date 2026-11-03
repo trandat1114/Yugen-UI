@@ -17,7 +17,7 @@ import {
   Send20Filled,
   Stop20Filled,
   Video20Regular,
-} from "@fluentui/react-icons";
+} from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { useAnnounce } from "../AriaLive/AriaLive";

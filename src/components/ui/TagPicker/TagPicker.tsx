@@ -4,7 +4,7 @@ import { useControllableState } from "../hooks/useControllableState";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { useDirection } from "@radix-ui/react-direction";
 import { Command as CommandPrimitive } from "cmdk";
-import { ChevronDown20Regular, ChevronDown24Regular } from "@fluentui/react-icons";
+import { ChevronDown20Regular, ChevronDown24Regular } from "../_internal/icons";
 import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";

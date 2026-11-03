@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createPortal } from "react-dom";
-import { ArrowClockwise20Regular, DocumentSearch24Regular, ErrorCircle20Regular, ErrorCircle24Regular } from "@fluentui/react-icons";
+import { ArrowClockwise20Regular, DocumentSearch24Regular, ErrorCircle20Regular, ErrorCircle24Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { useAnnounce } from "../AriaLive/AriaLive";

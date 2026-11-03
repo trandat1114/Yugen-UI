@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Checkmark16Regular, Copy16Regular } from "@fluentui/react-icons";
+import { Checkmark16Regular, Copy16Regular } from "../_internal/icons";
 import { useClipboard } from "../hooks/useClipboard";
 import { Button } from "../Button/Button";
 import { useYugenMessages } from "../YugenProvider/context";
