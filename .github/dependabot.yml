@@ -18,8 +18,11 @@ updates:
     open-pull-requests-limit: 2
     labels: ["area: build & package"]
     groups:
+      # TypeScript ra PR riêng (không gộp): scripts/check-props.ts dùng API "unstable" của TypeScript 7, nên mỗi bản mới
+      # cần một lần CI của riêng nó.
       npm-minor-patch:
         patterns: ["*"]
+        exclude-patterns: ["typescript"]
         update-types: ["minor", "patch"]
       # @size-limit/* ghim peer size-limit đúng version — luôn lên cùng nhau, kể cả major.
       npm-major:
@@ -33,10 +36,6 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "tailwindcss"
         update-types: ["version-update:semver-major"]
-      # TypeScript ghim theo bản vá (~7.0.x): scripts/check-props.ts dùng API "unstable" của TypeScript 7. Bản minor mới
-      # (7.1…) đi qua PR riêng để CI chạy lại check-props trước khi nhận.
-      - dependency-name: "typescript"
-        update-types: ["version-update:semver-minor"]
 
   - package-ecosystem: npm
     directory: /packages/cli
