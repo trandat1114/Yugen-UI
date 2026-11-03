@@ -44,6 +44,7 @@ describe("docs i18n (en)", () => {
       "positioning",
       "quick-start",
       "rtl",
+      "security",
       "seo",
       "shadcn-registry",
       "slots",
