@@ -66,8 +66,8 @@ function UploadDemo() {
       <ProgressBar
         value={value}
         color={done ? "success" : "brand"}
-        label="Báo cáo Q3.pdf"
-        description={done ? "Hoàn tất" : Math.round(value * 100) + "%"}
+        label="Q3 report.pdf"
+        description={done ? "Done" : Math.round(value * 100) + "%"}
       />
       <Button
         size="small"
@@ -78,7 +78,7 @@ function UploadDemo() {
           setRunning(true);
         }}
       >
-        {done ? "Tải lại" : "Bắt đầu tải lên"}
+        {done ? "Upload again" : "Start upload"}
       </Button>
     </div>
   );
@@ -94,13 +94,13 @@ function ToastDemo() {
         onClick={() =>
           dispatchToast({
             intent: "success",
-            title: "Đã lưu thay đổi",
-            body: "Tài liệu “Kế hoạch Q4” đã được lưu lên đám mây.",
-            action: { label: "Hoàn tác" },
+            title: "Changes saved",
+            body: "“Q4 plan” was saved to the cloud.",
+            action: { label: "Undo" },
           })
         }
       >
-        Lưu tài liệu
+        Save document
       </Button>
     </>
   );
@@ -111,16 +111,16 @@ function ToastIntentDemo() {
   return (
     <>
       <Toaster toasterId="docs-toast-intent" />
-      <Button onClick={() => dispatchToast({ intent: "info", title: "Có bản cập nhật mới", body: "Tải lại trang để dùng phiên bản mới nhất." })}>
+      <Button onClick={() => dispatchToast({ intent: "info", title: "Update available", body: "Reload the page to get the latest version." })}>
         Info
       </Button>
-      <Button onClick={() => dispatchToast({ intent: "success", title: "Đã gửi lời mời", body: "3 thành viên sẽ nhận email trong ít phút." })}>
+      <Button onClick={() => dispatchToast({ intent: "success", title: "Invites sent", body: "3 members will get an email in a few minutes." })}>
         Success
       </Button>
-      <Button onClick={() => dispatchToast({ intent: "warning", title: "Dung lượng sắp đầy", body: "Bạn đã dùng 92% dung lượng lưu trữ." })}>
+      <Button onClick={() => dispatchToast({ intent: "warning", title: "Storage almost full", body: "You've used 92% of your storage." })}>
         Warning
       </Button>
-      <Button onClick={() => dispatchToast({ intent: "error", title: "Không thể tải tệp lên", body: "Tệp vượt quá giới hạn 25 MB." })}>
+      <Button onClick={() => dispatchToast({ intent: "error", title: "Couldn't upload the file", body: "The file is over the 25 MB limit." })}>
         Error
       </Button>
     </>
@@ -141,7 +141,7 @@ function ToastPositionDemo() {
           size="small"
           onClick={() => {
             setPosition(p);
-            dispatchToast({ title: "Vị trí " + p, body: "Vuốt sang ngang (hoặc dọc) để đóng." });
+            dispatchToast({ title: "Position " + p, body: "Swipe sideways (or up and down) to dismiss." });
           }}
         >
           {p}
@@ -162,18 +162,18 @@ function PersistentToastDemo() {
           setId(
             dispatchToast({
               intent: "warning",
-              title: "Mất kết nối mạng",
-              body: "Đang thử kết nối lại…",
+              title: "Connection lost",
+              body: "Trying to reconnect…",
               timeout: -1,
               onDismiss: () => setId(null),
             }),
           )
         }
       >
-        Hiện toast
+        Show toast
       </Button>
       <Button appearance="outline" disabled={!id} onClick={() => id && dismissToast(id)}>
-        Đóng bằng code
+        Dismiss from code
       </Button>
     </>
   );
@@ -185,11 +185,11 @@ function InlineDrawerDemo() {
     <div className="flex h-80 w-full max-w-2xl overflow-hidden rounded-xlarge border border-stroke-2 bg-background-2">
       <InlineDrawer open={open} separator>
         <DrawerHeader>
-          <DrawerHeaderTitle>Điều hướng</DrawerHeaderTitle>
+          <DrawerHeaderTitle>Navigation</DrawerHeaderTitle>
         </DrawerHeader>
         <DrawerBody>
           <nav className="flex flex-col gap-0.5">
-            {["Trang chủ", "Tệp của tôi", "Đã chia sẻ", "Thùng rác"].map((item) => (
+            {["Home", "My files", "Shared", "Trash"].map((item) => (
               <a
                 key={item}
                 href="#/components/drawer"
@@ -203,9 +203,9 @@ function InlineDrawerDemo() {
       </InlineDrawer>
       <div className="flex min-w-0 flex-1 flex-col items-start gap-3 p-4">
         <Button icon={<Navigation20Regular />} onClick={() => setOpen((v) => !v)}>
-          {open ? "Ẩn điều hướng" : "Hiện điều hướng"}
+          {open ? "Hide navigation" : "Show navigation"}
         </Button>
-        <p className="text-body1 text-foreground-2">Nội dung chính co giãn theo drawer, không bị lớp phủ che.</p>
+        <p className="text-body1 text-foreground-2">The main content resizes with the drawer; nothing covers it.</p>
       </div>
     </div>
   );
@@ -216,33 +216,33 @@ function DrawerDemo() {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <Button icon={<Filter20Regular />}>Bộ lọc</Button>
+        <Button icon={<Filter20Regular />}>Filters</Button>
       </DrawerTrigger>
       <DrawerSurface position="end" size="small">
         <DrawerHeader>
           <DrawerHeaderTitle
             action={
               <DrawerClose asChild>
-                <Button appearance="subtle" icon={<Dismiss24Regular />} aria-label="Đóng" />
+                <Button appearance="subtle" icon={<Dismiss24Regular />} aria-label="Close" />
               </DrawerClose>
             }
           >
-            Bộ lọc
+            Filters
           </DrawerHeaderTitle>
         </DrawerHeader>
         <DrawerBody>
           <div className="flex flex-col gap-3">
-            <Checkbox label="Chỉ tệp của tôi" defaultChecked />
-            <Checkbox label="Được chia sẻ với tôi" />
-            <Checkbox label="Đã gắn sao" />
+            <Checkbox label="Only my files" defaultChecked />
+            <Checkbox label="Shared with me" />
+            <Checkbox label="Starred" />
           </div>
         </DrawerBody>
         <DrawerFooter>
           <Button appearance="primary" onClick={() => setOpen(false)}>
-            Áp dụng
+            Apply
           </Button>
           <DrawerClose asChild>
-            <Button>Huỷ</Button>
+            <Button>Cancel</Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerSurface>
@@ -267,7 +267,7 @@ function DrawerPositionDemo() {
           <DrawerHeaderTitle
             action={
               <DrawerClose asChild>
-                <Button appearance="subtle" icon={<Dismiss24Regular />} aria-label="Đóng" />
+                <Button appearance="subtle" icon={<Dismiss24Regular />} aria-label="Close" />
               </DrawerClose>
             }
           >
@@ -276,7 +276,7 @@ function DrawerPositionDemo() {
         </DrawerHeader>
         <DrawerBody>
           <p className="text-foreground-2">
-            Drawer trượt vào từ cạnh {position}. Nhấn Esc hoặc bấm lớp phủ để đóng.
+            The drawer slides in from the {position} edge. Press Esc or click the backdrop to close.
           </p>
         </DrawerBody>
       </OverlayDrawer>
@@ -289,14 +289,14 @@ function CollapsibleDemo() {
   return (
     <Collapsible open={open} onOpenChange={setOpen} className="w-72">
       <ul className="flex flex-col gap-1 text-body1">
-        <li className="rounded-medium bg-background-3 px-3 py-2">Báo cáo Q3.docx</li>
-        <li className="rounded-medium bg-background-3 px-3 py-2">Kế hoạch 2027.xlsx</li>
+        <li className="rounded-medium bg-background-3 px-3 py-2">Q3 report.docx</li>
+        <li className="rounded-medium bg-background-3 px-3 py-2">2027 plan.xlsx</li>
       </ul>
       <CollapsibleContent>
         <ul className="flex flex-col gap-1 pt-1 text-body1">
-          <li className="rounded-medium bg-background-3 px-3 py-2">Biên bản họp.docx</li>
-          <li className="rounded-medium bg-background-3 px-3 py-2">Ngân sách.xlsx</li>
-          <li className="rounded-medium bg-background-3 px-3 py-2">Thiết kế.fig</li>
+          <li className="rounded-medium bg-background-3 px-3 py-2">Meeting notes.docx</li>
+          <li className="rounded-medium bg-background-3 px-3 py-2">Budget.xlsx</li>
+          <li className="rounded-medium bg-background-3 px-3 py-2">Design.fig</li>
         </ul>
       </CollapsibleContent>
       <CollapsibleTrigger asChild>
@@ -306,7 +306,7 @@ function CollapsibleDemo() {
           iconPosition="after"
           icon={<ChevronDown20Regular className={open ? "rotate-180" : undefined} />}
         >
-          {open ? "Thu gọn" : "Hiện thêm 3 mục"}
+          {open ? "Collapse" : "Show 3 more items"}
         </Button>
       </CollapsibleTrigger>
     </Collapsible>
@@ -340,7 +340,7 @@ function CalendarMultipleDemo() {
   return (
     <div className="flex flex-col items-center gap-2">
       <Calendar mode="multiple" selected={days} onSelect={setDays} disabled={{ dayOfWeek: [0, 6] }} />
-      <span className="text-caption1 text-foreground-3">Đã chọn {days?.length ?? 0} ngày làm việc</span>
+      <span className="text-caption1 text-foreground-3">Workdays selected: {days?.length ?? 0}</span>
     </div>
   );
 }
@@ -348,7 +348,7 @@ function CalendarMultipleDemo() {
 function DatePickerDemo() {
   const [date, setDate] = useState<Date | undefined>();
   return (
-    <Field label="Ngày bắt đầu" hint="Định dạng dd/MM/yyyy" className="w-72">
+    <Field label="Start date" hint="Leave it empty if the date isn't set yet." className="w-72">
       <DatePicker value={date ?? null} onSelectDate={setDate} clearable />
     </Field>
   );
@@ -358,10 +358,10 @@ function DeliveryDateDemo() {
   const [date, setDate] = useState<Date | undefined>();
   return (
     <Field
-      label="Ngày giao hàng"
+      label="Delivery date"
       required
       validationState={date ? "success" : "error"}
-      validationMessage={date ? "Có thể giao vào ngày này." : "Vui lòng chọn ngày giao (từ hôm nay trở đi)."}
+      validationMessage={date ? "We can deliver on this day." : "Pick a delivery date (today or later)."}
       className="w-72"
     >
       <DatePicker value={date ?? null} onSelectDate={setDate} minDate={new Date()} />
@@ -382,35 +382,35 @@ const FEEDBACK: Record<string, ComponentDoc> = {
     importCode: `import { ProgressBar } from "@/components/ui";`,
     hero: {
       title: "ProgressBar",
-      code: `<ProgressBar value={0.6} label="Đang tải tệp lên" description="6 / 10 tệp · còn khoảng 1 phút" rootClassName="w-72" />`,
+      code: `<ProgressBar value={0.6} label="Uploading files" description="6 of 10 files · about 1 minute left" rootClassName="w-72" />`,
       render: () => (
-        <ProgressBar value={0.6} label="Đang tải tệp lên" description="6 / 10 tệp · còn khoảng 1 phút" rootClassName="w-72" />
+        <ProgressBar value={0.6} label="Uploading files" description="6 of 10 files · about 1 minute left" rootClassName="w-72" />
       ),
     },
     examples: [
       {
         title: "Không xác định",
         description: "Bỏ `value` khi chưa biết tổng thời gian.",
-        code: `<ProgressBar label="Đang đồng bộ thư mục…" rootClassName="w-72" />`,
-        render: () => <ProgressBar label="Đang đồng bộ thư mục…" rootClassName="w-72" />,
+        code: `<ProgressBar label="Syncing folder…" rootClassName="w-72" />`,
+        render: () => <ProgressBar label="Syncing folder…" rootClassName="w-72" />,
       },
       {
         title: "Màu, độ dày & hình dạng",
         description: "thickness medium (2px) / large (4px); shape rounded / square. Không có label thì đặt aria-label.",
         code: `<div className="flex w-72 flex-col gap-4">
-  <ProgressBar value={0.4} aria-label="Mặc định" />
-  <ProgressBar value={0.4} thickness="large" aria-label="Dày" />
-  <ProgressBar value={1} color="success" thickness="large" aria-label="Hoàn tất" />
-  <ProgressBar value={0.85} color="warning" thickness="large" aria-label="Sắp đầy dung lượng" />
-  <ProgressBar value={0.3} color="error" thickness="large" shape="square" aria-label="Lỗi tải lên" />
+  <ProgressBar value={0.4} aria-label="Default" />
+  <ProgressBar value={0.4} thickness="large" aria-label="Thick" />
+  <ProgressBar value={1} color="success" thickness="large" aria-label="Complete" />
+  <ProgressBar value={0.85} color="warning" thickness="large" aria-label="Storage almost full" />
+  <ProgressBar value={0.3} color="error" thickness="large" shape="square" aria-label="Upload failed" />
 </div>`,
         render: () => (
           <div className="flex w-72 flex-col gap-4">
-            <ProgressBar value={0.4} aria-label="Mặc định" />
-            <ProgressBar value={0.4} thickness="large" aria-label="Dày" />
-            <ProgressBar value={1} color="success" thickness="large" aria-label="Hoàn tất" />
-            <ProgressBar value={0.85} color="warning" thickness="large" aria-label="Sắp đầy dung lượng" />
-            <ProgressBar value={0.3} color="error" thickness="large" shape="square" aria-label="Lỗi tải lên" />
+            <ProgressBar value={0.4} aria-label="Default" />
+            <ProgressBar value={0.4} thickness="large" aria-label="Thick" />
+            <ProgressBar value={1} color="success" thickness="large" aria-label="Complete" />
+            <ProgressBar value={0.85} color="warning" thickness="large" aria-label="Storage almost full" />
+            <ProgressBar value={0.3} color="error" thickness="large" shape="square" aria-label="Upload failed" />
           </div>
         ),
       },
@@ -438,8 +438,8 @@ const FEEDBACK: Record<string, ComponentDoc> = {
       <ProgressBar
         value={value}
         color={done ? "success" : "brand"}
-        label="Báo cáo Q3.pdf"
-        description={done ? "Hoàn tất" : Math.round(value * 100) + "%"}
+        label="Q3 report.pdf"
+        description={done ? "Done" : Math.round(value * 100) + "%"}
       />
       <Button
         size="small"
@@ -450,7 +450,7 @@ const FEEDBACK: Record<string, ComponentDoc> = {
           setRunning(true);
         }}
       >
-        {done ? "Tải lại" : "Bắt đầu tải lên"}
+        {done ? "Upload again" : "Start upload"}
       </Button>
     </div>
   );
@@ -489,8 +489,8 @@ const FEEDBACK: Record<string, ComponentDoc> = {
     importCode: `import { Spinner } from "@/components/ui";`,
     hero: {
       title: "Spinner",
-      code: `<Spinner label="Đang tải dữ liệu…" />`,
-      render: () => <Spinner label="Đang tải dữ liệu…" />,
+      code: `<Spinner label="Loading data…" />`,
+      render: () => <Spinner label="Loading data…" />,
     },
     examples: [
       {
@@ -520,16 +520,16 @@ const FEEDBACK: Record<string, ComponentDoc> = {
       {
         title: "Vị trí nhãn",
         description: "before, after (mặc định), above, below.",
-        code: `<Spinner size="small" label="Trước" labelPosition="before" />
-<Spinner size="small" label="Sau" labelPosition="after" />
-<Spinner size="small" label="Trên" labelPosition="above" />
-<Spinner size="small" label="Dưới" labelPosition="below" />`,
+        code: `<Spinner size="small" label="Before" labelPosition="before" />
+<Spinner size="small" label="After" labelPosition="after" />
+<Spinner size="small" label="Above" labelPosition="above" />
+<Spinner size="small" label="Below" labelPosition="below" />`,
         render: () => (
           <>
-            <Spinner size="small" label="Trước" labelPosition="before" />
-            <Spinner size="small" label="Sau" labelPosition="after" />
-            <Spinner size="small" label="Trên" labelPosition="above" />
-            <Spinner size="small" label="Dưới" labelPosition="below" />
+            <Spinner size="small" label="Before" labelPosition="before" />
+            <Spinner size="small" label="After" labelPosition="after" />
+            <Spinner size="small" label="Above" labelPosition="above" />
+            <Spinner size="small" label="Below" labelPosition="below" />
           </>
         ),
       },
@@ -537,11 +537,11 @@ const FEEDBACK: Record<string, ComponentDoc> = {
         title: "Inverted",
         description: "Dùng trên nền brand hoặc nền tối.",
         code: `<div className="flex items-center rounded-medium bg-brand-background px-4 py-3">
-  <Spinner appearance="inverted" size="tiny" label="Đang gửi…" />
+  <Spinner appearance="inverted" size="tiny" label="Sending…" />
 </div>`,
         render: () => (
           <div className="flex items-center rounded-medium bg-brand-background px-4 py-3">
-            <Spinner appearance="inverted" size="tiny" label="Đang gửi…" />
+            <Spinner appearance="inverted" size="tiny" label="Sending…" />
           </div>
         ),
       },
@@ -579,7 +579,7 @@ const FEEDBACK: Record<string, ComponentDoc> = {
     importCode: `import { Skeleton, SkeletonItem } from "@/components/ui";`,
     hero: {
       title: "Skeleton",
-      code: `<Skeleton className="w-80" aria-label="Đang tải bài viết">
+      code: `<Skeleton className="w-80" aria-label="Loading post">
   <div className="flex items-center gap-3">
     <SkeletonItem shape="circle" size={40} />
     <div className="flex flex-1 flex-col gap-2">
@@ -592,7 +592,7 @@ const FEEDBACK: Record<string, ComponentDoc> = {
   <SkeletonItem size={12} className="w-4/5" />
 </Skeleton>`,
       render: () => (
-        <Skeleton className="w-80" aria-label="Đang tải bài viết">
+        <Skeleton className="w-80" aria-label="Loading post">
           <div className="flex items-center gap-3">
             <SkeletonItem shape="circle" size={40} />
             <div className="flex flex-1 flex-col gap-2">
@@ -700,12 +700,12 @@ const FEEDBACK: Record<string, ComponentDoc> = {
     <EmptyMedia>
       <FolderOpen24Regular />
     </EmptyMedia>
-    <EmptyTitle>Chưa có dự án nào</EmptyTitle>
-    <EmptyDescription>Bạn chưa tạo dự án nào. Hãy bắt đầu bằng dự án đầu tiên hoặc nhập từ tệp có sẵn.</EmptyDescription>
+    <EmptyTitle>No projects yet</EmptyTitle>
+    <EmptyDescription>You haven't created any projects. Start your first one or import one from a file.</EmptyDescription>
   </EmptyHeader>
   <EmptyContent>
-    <Button appearance="primary" icon={<Add20Regular />}>Tạo dự án</Button>
-    <Button>Nhập dự án</Button>
+    <Button appearance="primary" icon={<Add20Regular />}>Create project</Button>
+    <Button>Import project</Button>
   </EmptyContent>
 </Empty>`,
       render: () => (
@@ -714,14 +714,14 @@ const FEEDBACK: Record<string, ComponentDoc> = {
             <EmptyMedia>
               <FolderOpen24Regular />
             </EmptyMedia>
-            <EmptyTitle>Chưa có dự án nào</EmptyTitle>
-            <EmptyDescription>Bạn chưa tạo dự án nào. Hãy bắt đầu bằng dự án đầu tiên hoặc nhập từ tệp có sẵn.</EmptyDescription>
+            <EmptyTitle>No projects yet</EmptyTitle>
+            <EmptyDescription>You haven't created any projects. Start your first one or import one from a file.</EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
             <Button appearance="primary" icon={<Add20Regular />}>
-              Tạo dự án
+              Create project
             </Button>
-            <Button>Nhập dự án</Button>
+            <Button>Import project</Button>
           </EmptyContent>
         </Empty>
       ),
@@ -735,11 +735,11 @@ const FEEDBACK: Record<string, ComponentDoc> = {
     <EmptyMedia>
       <SearchInfo24Regular />
     </EmptyMedia>
-    <EmptyTitle>Không tìm thấy kết quả</EmptyTitle>
-    <EmptyDescription>Thử từ khoá khác hoặc bỏ bớt bộ lọc đang áp dụng.</EmptyDescription>
+    <EmptyTitle>No results found</EmptyTitle>
+    <EmptyDescription>Try a different keyword or remove some filters.</EmptyDescription>
   </EmptyHeader>
   <EmptyContent>
-    <Button appearance="subtle">Xoá bộ lọc</Button>
+    <Button appearance="subtle">Clear filters</Button>
   </EmptyContent>
 </Empty>`,
         render: () => (
@@ -748,11 +748,11 @@ const FEEDBACK: Record<string, ComponentDoc> = {
               <EmptyMedia>
                 <SearchInfo24Regular />
               </EmptyMedia>
-              <EmptyTitle>Không tìm thấy kết quả</EmptyTitle>
-              <EmptyDescription>Thử từ khoá khác hoặc bỏ bớt bộ lọc đang áp dụng.</EmptyDescription>
+              <EmptyTitle>No results found</EmptyTitle>
+              <EmptyDescription>Try a different keyword or remove some filters.</EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
-              <Button appearance="subtle">Xoá bộ lọc</Button>
+              <Button appearance="subtle">Clear filters</Button>
             </EmptyContent>
           </Empty>
         ),
@@ -763,26 +763,26 @@ const FEEDBACK: Record<string, ComponentDoc> = {
         code: `<Empty>
   <EmptyHeader>
     <EmptyMedia variant="default">
-      <Avatar name="Nguyễn Minh Anh" size={64} color="colorful" />
+      <Avatar name="Alex Chen" size={64} color="colorful" />
     </EmptyMedia>
-    <EmptyTitle>Minh Anh đang ngoại tuyến</EmptyTitle>
-    <EmptyDescription>Để lại lời nhắn, bạn ấy sẽ thấy khi quay lại.</EmptyDescription>
+    <EmptyTitle>Alex is offline</EmptyTitle>
+    <EmptyDescription>Leave a message and they'll see it when they're back.</EmptyDescription>
   </EmptyHeader>
   <EmptyContent>
-    <Button icon={<Mail20Regular />}>Để lại lời nhắn</Button>
+    <Button icon={<Mail20Regular />}>Leave a message</Button>
   </EmptyContent>
 </Empty>`,
         render: () => (
           <Empty>
             <EmptyHeader>
               <EmptyMedia variant="default">
-                <Avatar name="Nguyễn Minh Anh" size={64} color="colorful" />
+                <Avatar name="Alex Chen" size={64} color="colorful" />
               </EmptyMedia>
-              <EmptyTitle>Minh Anh đang ngoại tuyến</EmptyTitle>
-              <EmptyDescription>Để lại lời nhắn, bạn ấy sẽ thấy khi quay lại.</EmptyDescription>
+              <EmptyTitle>Alex is offline</EmptyTitle>
+              <EmptyDescription>Leave a message and they'll see it when they're back.</EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
-              <Button icon={<Mail20Regular />}>Để lại lời nhắn</Button>
+              <Button icon={<Mail20Regular />}>Leave a message</Button>
             </EmptyContent>
           </Empty>
         ),
@@ -827,13 +827,13 @@ const FEEDBACK: Record<string, ComponentDoc> = {
         onClick={() =>
           dispatchToast({
             intent: "success",
-            title: "Đã lưu thay đổi",
-            body: "Tài liệu “Kế hoạch Q4” đã được lưu lên đám mây.",
-            action: { label: "Hoàn tác" },
+            title: "Changes saved",
+            body: "“Q4 plan” was saved to the cloud.",
+            action: { label: "Undo" },
           })
         }
       >
-        Lưu tài liệu
+        Save document
       </Button>
     </>
   );
@@ -849,16 +849,16 @@ const FEEDBACK: Record<string, ComponentDoc> = {
   return (
     <>
       <Toaster toasterId="docs-toast-intent" />
-      <Button onClick={() => dispatchToast({ intent: "info", title: "Có bản cập nhật mới", body: "Tải lại trang để dùng phiên bản mới nhất." })}>
+      <Button onClick={() => dispatchToast({ intent: "info", title: "Update available", body: "Reload the page to get the latest version." })}>
         Info
       </Button>
-      <Button onClick={() => dispatchToast({ intent: "success", title: "Đã gửi lời mời", body: "3 thành viên sẽ nhận email trong ít phút." })}>
+      <Button onClick={() => dispatchToast({ intent: "success", title: "Invites sent", body: "3 members will get an email in a few minutes." })}>
         Success
       </Button>
-      <Button onClick={() => dispatchToast({ intent: "warning", title: "Dung lượng sắp đầy", body: "Bạn đã dùng 92% dung lượng lưu trữ." })}>
+      <Button onClick={() => dispatchToast({ intent: "warning", title: "Storage almost full", body: "You've used 92% of your storage." })}>
         Warning
       </Button>
-      <Button onClick={() => dispatchToast({ intent: "error", title: "Không thể tải tệp lên", body: "Tệp vượt quá giới hạn 25 MB." })}>
+      <Button onClick={() => dispatchToast({ intent: "error", title: "Couldn't upload the file", body: "The file is over the 25 MB limit." })}>
         Error
       </Button>
     </>
@@ -883,7 +883,7 @@ function ToastPositionDemo() {
           size="small"
           onClick={() => {
             setPosition(p);
-            dispatchToast({ title: "Vị trí " + p, body: "Vuốt sang ngang (hoặc dọc) để đóng." });
+            dispatchToast({ title: "Position " + p, body: "Swipe sideways (or up and down) to dismiss." });
           }}
         >
           {p}
@@ -908,18 +908,18 @@ function ToastPositionDemo() {
           setId(
             dispatchToast({
               intent: "warning",
-              title: "Mất kết nối mạng",
-              body: "Đang thử kết nối lại…",
+              title: "Connection lost",
+              body: "Trying to reconnect…",
               timeout: -1,
               onDismiss: () => setId(null),
             }),
           )
         }
       >
-        Hiện toast
+        Show toast
       </Button>
       <Button appearance="outline" disabled={!id} onClick={() => id && dismissToast(id)}>
-        Đóng bằng code
+        Dismiss from code
       </Button>
     </>
   );
@@ -961,17 +961,17 @@ function ToastPositionDemo() {
     hero: {
       title: "InfoLabel",
       code: `<div className="flex w-72 flex-col gap-1">
-  <InfoLabel htmlFor="infolabel-email" info="Email này dùng để khôi phục mật khẩu và nhận cảnh báo bảo mật.">
-    Email khôi phục
+  <InfoLabel htmlFor="infolabel-email" info="We use this email to reset your password and send security alerts.">
+    Recovery email
   </InfoLabel>
-  <Input id="infolabel-email" type="email" placeholder="ten@congty.vn" />
+  <Input id="infolabel-email" type="email" placeholder="name@company.dev" />
 </div>`,
       render: () => (
         <div className="flex w-72 flex-col gap-1">
-          <InfoLabel htmlFor="infolabel-email" info="Email này dùng để khôi phục mật khẩu và nhận cảnh báo bảo mật.">
-            Email khôi phục
+          <InfoLabel htmlFor="infolabel-email" info="We use this email to reset your password and send security alerts.">
+            Recovery email
           </InfoLabel>
-          <Input id="infolabel-email" type="email" placeholder="ten@congty.vn" />
+          <Input id="infolabel-email" type="email" placeholder="name@company.dev" />
         </div>
       ),
     },
@@ -979,16 +979,16 @@ function ToastPositionDemo() {
       {
         title: "Kích thước & độ đậm",
         description: "small, medium (mặc định), large; weight regular / semibold.",
-        code: `<InfoLabel size="small" info="Nhãn cỡ small.">Small</InfoLabel>
-<InfoLabel info="Nhãn cỡ medium (mặc định).">Medium</InfoLabel>
-<InfoLabel size="large" weight="semibold" info="Nhãn cỡ large, chữ đậm.">Large semibold</InfoLabel>`,
+        code: `<InfoLabel size="small" info="Small label.">Small</InfoLabel>
+<InfoLabel info="Medium label (default).">Medium</InfoLabel>
+<InfoLabel size="large" weight="semibold" info="Large label, semibold.">Large semibold</InfoLabel>`,
         render: () => (
           <>
-            <InfoLabel size="small" info="Nhãn cỡ small.">
+            <InfoLabel size="small" info="Small label.">
               Small
             </InfoLabel>
-            <InfoLabel info="Nhãn cỡ medium (mặc định).">Medium</InfoLabel>
-            <InfoLabel size="large" weight="semibold" info="Nhãn cỡ large, chữ đậm.">
+            <InfoLabel info="Medium label (default).">Medium</InfoLabel>
+            <InfoLabel size="large" weight="semibold" info="Large label, semibold.">
               Large semibold
             </InfoLabel>
           </>
@@ -1001,28 +1001,28 @@ function ToastPositionDemo() {
   required
   info={
     <>
-      Mã số thuế gồm 10 hoặc 13 chữ số.{" "}
+      A tax ID has 9 digits, without dashes.{" "}
       <a href="#/components/infolabel" className="text-link underline hover:text-link-hover">
-        Tìm hiểu thêm
+        Learn more
       </a>
     </>
   }
 >
-  Mã số thuế
+  Tax ID
 </InfoLabel>`,
         render: () => (
           <InfoLabel
             required
             info={
               <>
-                Mã số thuế gồm 10 hoặc 13 chữ số.{" "}
+                A tax ID has 9 digits, without dashes.{" "}
                 <a href="#/components/infolabel" className="text-link underline hover:text-link-hover">
-                  Tìm hiểu thêm
+                  Learn more
                 </a>
               </>
             }
           >
-            Mã số thuế
+            Tax ID
           </InfoLabel>
         ),
       },
@@ -1056,22 +1056,22 @@ function ToastPositionDemo() {
     hero: {
       title: "HoverCard",
       code: `<div className="text-body1 text-foreground-2">
-  Bản thiết kế đã được duyệt bởi{" "}
+  The design was approved by{" "}
   <HoverCard>
     <HoverCardTrigger asChild>
       <a href="#/components/hovercard" className="font-semibold text-link hover:text-link-hover hover:underline">
-        @minhanh
+        @alex
       </a>
     </HoverCardTrigger>
     <HoverCardContent>
       <div className="flex gap-3">
-        <Avatar name="Nguyễn Minh Anh" size={48} color="colorful" presence="available" />
+        <Avatar name="Alex Chen" size={48} color="colorful" presence="available" />
         <div className="flex min-w-0 flex-col gap-0.5">
-          <span className="text-subtitle2 font-semibold text-foreground-1">Nguyễn Minh Anh</span>
-          <span className="text-caption1 text-foreground-3">Trưởng nhóm thiết kế · Yugen Studio</span>
-          <p className="mt-1 text-body1 text-foreground-2">Phụ trách hệ thống thiết kế và thư viện component cho sản phẩm web.</p>
+          <span className="text-subtitle2 font-semibold text-foreground-1">Alex Chen</span>
+          <span className="text-caption1 text-foreground-3">Design lead · Yugen Studio</span>
+          <p className="mt-1 text-body1 text-foreground-2">Owns the design system and component library for our web products.</p>
           <span className="mt-1 flex items-center gap-1 text-caption1 text-foreground-3">
-            <Location16Regular /> Hà Nội, Việt Nam
+            <Location16Regular /> Kyoto, Japan
           </span>
         </div>
       </div>
@@ -1080,24 +1080,24 @@ function ToastPositionDemo() {
 </div>`,
       render: () => (
         <div className="text-body1 text-foreground-2">
-          Bản thiết kế đã được duyệt bởi{" "}
+          The design was approved by{" "}
           <HoverCard>
             <HoverCardTrigger asChild>
               <a href="#/components/hovercard" className="font-semibold text-link hover:text-link-hover hover:underline">
-                @minhanh
+                @alex
               </a>
             </HoverCardTrigger>
             <HoverCardContent>
               <div className="flex gap-3">
-                <Avatar name="Nguyễn Minh Anh" size={48} color="colorful" presence="available" />
+                <Avatar name="Alex Chen" size={48} color="colorful" presence="available" />
                 <div className="flex min-w-0 flex-col gap-0.5">
-                  <span className="text-subtitle2 font-semibold text-foreground-1">Nguyễn Minh Anh</span>
-                  <span className="text-caption1 text-foreground-3">Trưởng nhóm thiết kế · Yugen Studio</span>
+                  <span className="text-subtitle2 font-semibold text-foreground-1">Alex Chen</span>
+                  <span className="text-caption1 text-foreground-3">Design lead · Yugen Studio</span>
                   <p className="mt-1 text-body1 text-foreground-2">
-                    Phụ trách hệ thống thiết kế và thư viện component cho sản phẩm web.
+                    Owns the design system and component library for our web products.
                   </p>
                   <span className="mt-1 flex items-center gap-1 text-caption1 text-foreground-3">
-                    <Location16Regular /> Hà Nội, Việt Nam
+                    <Location16Regular /> Kyoto, Japan
                   </span>
                 </div>
               </div>
@@ -1119,7 +1119,7 @@ function ToastPositionDemo() {
   <HoverCardContent side="top" withArrow className="w-72">
     <div className="flex flex-col gap-1">
       <span className="text-body1 font-semibold">yugen-ui/components</span>
-      <span className="text-caption1 text-foreground-3">Thư viện component React theo Fluent 2 · cập nhật 2 ngày trước.</span>
+      <span className="text-caption1 text-foreground-3">React component library · updated 2 days ago.</span>
     </div>
   </HoverCardContent>
 </HoverCard>`,
@@ -1137,7 +1137,7 @@ function ToastPositionDemo() {
               <div className="flex flex-col gap-1">
                 <span className="text-body1 font-semibold">yugen-ui/components</span>
                 <span className="text-caption1 text-foreground-3">
-                  Thư viện component React theo Fluent 2 · cập nhật 2 ngày trước.
+                  React component library · updated 2 days ago.
                 </span>
               </div>
             </HoverCardContent>
@@ -1180,11 +1180,11 @@ function ToastPositionDemo() {
     <div className="flex h-80 w-full max-w-2xl overflow-hidden rounded-xlarge border border-stroke-2 bg-background-2">
       <InlineDrawer open={open} separator>
         <DrawerHeader>
-          <DrawerHeaderTitle>Điều hướng</DrawerHeaderTitle>
+          <DrawerHeaderTitle>Navigation</DrawerHeaderTitle>
         </DrawerHeader>
         <DrawerBody>
           <nav className="flex flex-col gap-0.5">
-            {["Trang chủ", "Tệp của tôi", "Đã chia sẻ", "Thùng rác"].map((item) => (
+            {["Home", "My files", "Shared", "Trash"].map((item) => (
               <a
                 key={item}
                 href="#/components/drawer"
@@ -1198,9 +1198,9 @@ function ToastPositionDemo() {
       </InlineDrawer>
       <div className="flex min-w-0 flex-1 flex-col items-start gap-3 p-4">
         <Button icon={<Navigation20Regular />} onClick={() => setOpen((v) => !v)}>
-          {open ? "Ẩn điều hướng" : "Hiện điều hướng"}
+          {open ? "Hide navigation" : "Show navigation"}
         </Button>
-        <p className="text-body1 text-foreground-2">Nội dung chính co giãn theo drawer, không bị lớp phủ che.</p>
+        <p className="text-body1 text-foreground-2">The main content resizes with the drawer; nothing covers it.</p>
       </div>
     </div>
   );
@@ -1216,33 +1216,33 @@ function ToastPositionDemo() {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <Button icon={<Filter20Regular />}>Bộ lọc</Button>
+        <Button icon={<Filter20Regular />}>Filters</Button>
       </DrawerTrigger>
       <DrawerSurface position="end" size="small">
         <DrawerHeader>
           <DrawerHeaderTitle
             action={
               <DrawerClose asChild>
-                <Button appearance="subtle" icon={<Dismiss24Regular />} aria-label="Đóng" />
+                <Button appearance="subtle" icon={<Dismiss24Regular />} aria-label="Close" />
               </DrawerClose>
             }
           >
-            Bộ lọc
+            Filters
           </DrawerHeaderTitle>
         </DrawerHeader>
         <DrawerBody>
           <div className="flex flex-col gap-3">
-            <Checkbox label="Chỉ tệp của tôi" defaultChecked />
-            <Checkbox label="Được chia sẻ với tôi" />
-            <Checkbox label="Đã gắn sao" />
+            <Checkbox label="Only my files" defaultChecked />
+            <Checkbox label="Shared with me" />
+            <Checkbox label="Starred" />
           </div>
         </DrawerBody>
         <DrawerFooter>
           <Button appearance="primary" onClick={() => setOpen(false)}>
-            Áp dụng
+            Apply
           </Button>
           <DrawerClose asChild>
-            <Button>Huỷ</Button>
+            <Button>Cancel</Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerSurface>
@@ -1271,7 +1271,7 @@ function ToastPositionDemo() {
           <DrawerHeaderTitle
             action={
               <DrawerClose asChild>
-                <Button appearance="subtle" icon={<Dismiss24Regular />} aria-label="Đóng" />
+                <Button appearance="subtle" icon={<Dismiss24Regular />} aria-label="Close" />
               </DrawerClose>
             }
           >
@@ -1280,7 +1280,7 @@ function ToastPositionDemo() {
         </DrawerHeader>
         <DrawerBody>
           <p className="text-foreground-2">
-            Drawer trượt vào từ cạnh {position}. Nhấn Esc hoặc bấm lớp phủ để đóng.
+            The drawer slides in from the {position} edge. Press Esc or click the backdrop to close.
           </p>
         </DrawerBody>
       </OverlayDrawer>
@@ -1324,31 +1324,31 @@ function ToastPositionDemo() {
       title: "Accordion",
       code: `<Accordion type="single" collapsible defaultValue="1" className="w-full max-w-96">
   <AccordionItem value="1">
-    <AccordionHeader>Yugen UI là gì?</AccordionHeader>
-    <AccordionPanel>Thư viện component React + Tailwind CSS v4 theo ngôn ngữ thiết kế Microsoft Fluent 2.</AccordionPanel>
+    <AccordionHeader>What is Yugen UI?</AccordionHeader>
+    <AccordionPanel>A React + Tailwind CSS v4 component library that follows the Microsoft Fluent 2 design language.</AccordionPanel>
   </AccordionItem>
   <AccordionItem value="2">
-    <AccordionHeader>Có hỗ trợ dark mode không?</AccordionHeader>
-    <AccordionPanel>Có. Mọi màu đều lấy từ token và tự đổi theo thuộc tính data-theme.</AccordionPanel>
+    <AccordionHeader>Does it support dark mode?</AccordionHeader>
+    <AccordionPanel>Yes. Every color comes from a token and follows the data-theme attribute.</AccordionPanel>
   </AccordionItem>
   <AccordionItem value="3">
-    <AccordionHeader>Đổi màu thương hiệu thế nào?</AccordionHeader>
-    <AccordionPanel>Đặt data-brand="teams" (hoặc brand riêng) trên phần tử gốc.</AccordionPanel>
+    <AccordionHeader>How do I change the brand color?</AccordionHeader>
+    <AccordionPanel>Set data-brand="teams" (or your own brand) on the root element.</AccordionPanel>
   </AccordionItem>
 </Accordion>`,
       render: () => (
         <Accordion type="single" collapsible defaultValue="1" className="w-full max-w-96">
           <AccordionItem value="1">
-            <AccordionHeader>Yugen UI là gì?</AccordionHeader>
-            <AccordionPanel>Thư viện component React + Tailwind CSS v4 theo ngôn ngữ thiết kế Microsoft Fluent 2.</AccordionPanel>
+            <AccordionHeader>What is Yugen UI?</AccordionHeader>
+            <AccordionPanel>A React + Tailwind CSS v4 component library that follows the Microsoft Fluent 2 design language.</AccordionPanel>
           </AccordionItem>
           <AccordionItem value="2">
-            <AccordionHeader>Có hỗ trợ dark mode không?</AccordionHeader>
-            <AccordionPanel>Có. Mọi màu đều lấy từ token và tự đổi theo thuộc tính data-theme.</AccordionPanel>
+            <AccordionHeader>Does it support dark mode?</AccordionHeader>
+            <AccordionPanel>Yes. Every color comes from a token and follows the data-theme attribute.</AccordionPanel>
           </AccordionItem>
           <AccordionItem value="3">
-            <AccordionHeader>Đổi màu thương hiệu thế nào?</AccordionHeader>
-            <AccordionPanel>Đặt data-brand="teams" (hoặc brand riêng) trên phần tử gốc.</AccordionPanel>
+            <AccordionHeader>How do I change the brand color?</AccordionHeader>
+            <AccordionPanel>Set data-brand="teams" (or your own brand) on the root element.</AccordionPanel>
           </AccordionItem>
         </Accordion>
       ),
@@ -1359,43 +1359,43 @@ function ToastPositionDemo() {
         description: "appearance=\"separated\": mỗi mục là một thẻ; description là dòng phụ dưới tiêu đề (đọc ngay sau tiêu đề, nằm trong tên của nút).",
         code: `<Accordion type="single" collapsible appearance="separated" defaultValue="account" className="w-full max-w-96">
   <AccordionItem value="account">
-    <AccordionHeader icon={<Person20Regular />} description="Tên hiển thị, ảnh đại diện, ngôn ngữ">
-      Tài khoản
+    <AccordionHeader icon={<Person20Regular />} description="Display name, photo, language">
+      Account
     </AccordionHeader>
-    <AccordionPanel>Thay đổi được áp dụng cho mọi thiết bị đã đăng nhập.</AccordionPanel>
+    <AccordionPanel>Changes apply to every signed-in device.</AccordionPanel>
   </AccordionItem>
   <AccordionItem value="security">
-    <AccordionHeader icon={<ShieldLock20Regular />} description="Mật khẩu, xác thực hai lớp">
-      Bảo mật
+    <AccordionHeader icon={<ShieldLock20Regular />} description="Password, two-step verification">
+      Security
     </AccordionHeader>
-    <AccordionPanel>Bật xác thực hai lớp để tài khoản vẫn an toàn khi lộ mật khẩu.</AccordionPanel>
+    <AccordionPanel>Turn on two-step verification so your account stays safe even if your password leaks.</AccordionPanel>
   </AccordionItem>
   <AccordionItem value="billing">
-    <AccordionHeader icon={<Payment20Regular />} description="Phương thức thanh toán, hoá đơn">
-      Thanh toán
+    <AccordionHeader icon={<Payment20Regular />} description="Payment methods, invoices">
+      Billing
     </AccordionHeader>
-    <AccordionPanel>Hoá đơn được gửi qua email vào ngày 1 hằng tháng.</AccordionPanel>
+    <AccordionPanel>Invoices are emailed on the 1st of every month.</AccordionPanel>
   </AccordionItem>
 </Accordion>`,
         render: () => (
           <Accordion type="single" collapsible appearance="separated" defaultValue="account" className="w-full max-w-96">
             <AccordionItem value="account">
-              <AccordionHeader icon={<Person20Regular />} description="Tên hiển thị, ảnh đại diện, ngôn ngữ">
-                Tài khoản
+              <AccordionHeader icon={<Person20Regular />} description="Display name, photo, language">
+                Account
               </AccordionHeader>
-              <AccordionPanel>Thay đổi được áp dụng cho mọi thiết bị đã đăng nhập.</AccordionPanel>
+              <AccordionPanel>Changes apply to every signed-in device.</AccordionPanel>
             </AccordionItem>
             <AccordionItem value="security">
-              <AccordionHeader icon={<ShieldLock20Regular />} description="Mật khẩu, xác thực hai lớp">
-                Bảo mật
+              <AccordionHeader icon={<ShieldLock20Regular />} description="Password, two-step verification">
+                Security
               </AccordionHeader>
-              <AccordionPanel>Bật xác thực hai lớp để tài khoản vẫn an toàn khi lộ mật khẩu.</AccordionPanel>
+              <AccordionPanel>Turn on two-step verification so your account stays safe even if your password leaks.</AccordionPanel>
             </AccordionItem>
             <AccordionItem value="billing">
-              <AccordionHeader icon={<Payment20Regular />} description="Phương thức thanh toán, hoá đơn">
-                Thanh toán
+              <AccordionHeader icon={<Payment20Regular />} description="Payment methods, invoices">
+                Billing
               </AccordionHeader>
-              <AccordionPanel>Hoá đơn được gửi qua email vào ngày 1 hằng tháng.</AccordionPanel>
+              <AccordionPanel>Invoices are emailed on the 1st of every month.</AccordionPanel>
             </AccordionItem>
           </Accordion>
         ),
@@ -1405,31 +1405,31 @@ function ToastPositionDemo() {
         description: "appearance=\"outline\" — khung viền chung, vạch chia stroke-2; type=\"multiple\", expandIconPosition=\"end\", mục disabled.",
         code: `<Accordion type="multiple" appearance="outline" expandIconPosition="end" defaultValue={["shipping"]} className="w-full max-w-96">
   <AccordionItem value="shipping">
-    <AccordionHeader icon={<Mail20Regular />}>Giao hàng</AccordionHeader>
-    <AccordionPanel>Miễn phí cho đơn từ 500.000 ₫, nhận hàng trong 2–4 ngày.</AccordionPanel>
+    <AccordionHeader icon={<Mail20Regular />}>Shipping</AccordionHeader>
+    <AccordionPanel>Free on orders over $500.00; arrives in 2–4 days.</AccordionPanel>
   </AccordionItem>
   <AccordionItem value="returns">
-    <AccordionHeader icon={<ShieldLock20Regular />}>Đổi trả</AccordionHeader>
-    <AccordionPanel>Đổi trả trong 30 ngày, giữ nguyên tem và hoá đơn.</AccordionPanel>
+    <AccordionHeader icon={<ShieldLock20Regular />}>Returns</AccordionHeader>
+    <AccordionPanel>Return within 30 days with the tags and receipt.</AccordionPanel>
   </AccordionItem>
   <AccordionItem value="invoice" disabled>
-    <AccordionHeader icon={<Payment20Regular />}>Xuất hoá đơn VAT (sắp có)</AccordionHeader>
-    <AccordionPanel>Tính năng đang phát triển.</AccordionPanel>
+    <AccordionHeader icon={<Payment20Regular />}>VAT invoices (coming soon)</AccordionHeader>
+    <AccordionPanel>This feature is in progress.</AccordionPanel>
   </AccordionItem>
 </Accordion>`,
         render: () => (
           <Accordion type="multiple" appearance="outline" expandIconPosition="end" defaultValue={["shipping"]} className="w-full max-w-96">
             <AccordionItem value="shipping">
-              <AccordionHeader icon={<Mail20Regular />}>Giao hàng</AccordionHeader>
-              <AccordionPanel>Miễn phí cho đơn từ 500.000 ₫, nhận hàng trong 2–4 ngày.</AccordionPanel>
+              <AccordionHeader icon={<Mail20Regular />}>Shipping</AccordionHeader>
+              <AccordionPanel>Free on orders over $500.00; arrives in 2–4 days.</AccordionPanel>
             </AccordionItem>
             <AccordionItem value="returns">
-              <AccordionHeader icon={<ShieldLock20Regular />}>Đổi trả</AccordionHeader>
-              <AccordionPanel>Đổi trả trong 30 ngày, giữ nguyên tem và hoá đơn.</AccordionPanel>
+              <AccordionHeader icon={<ShieldLock20Regular />}>Returns</AccordionHeader>
+              <AccordionPanel>Return within 30 days with the tags and receipt.</AccordionPanel>
             </AccordionItem>
             <AccordionItem value="invoice" disabled>
-              <AccordionHeader icon={<Payment20Regular />}>Xuất hoá đơn VAT (sắp có)</AccordionHeader>
-              <AccordionPanel>Tính năng đang phát triển.</AccordionPanel>
+              <AccordionHeader icon={<Payment20Regular />}>VAT invoices (coming soon)</AccordionHeader>
+              <AccordionPanel>This feature is in progress.</AccordionPanel>
             </AccordionItem>
           </Accordion>
         ),
@@ -1439,45 +1439,45 @@ function ToastPositionDemo() {
         description: "Accordion đặt trong AccordionPanel thừa hưởng size / expandIconPosition của cha và có đường dẫn dọc ở mép đầu dòng.",
         code: `<Accordion type="single" collapsible appearance="outline" defaultValue="docs" className="w-full max-w-96">
   <AccordionItem value="docs">
-    <AccordionHeader>Tài liệu</AccordionHeader>
+    <AccordionHeader>Docs</AccordionHeader>
     <AccordionPanel>
       <Accordion type="single" collapsible defaultValue="start">
         <AccordionItem value="start">
-          <AccordionHeader>Bắt đầu</AccordionHeader>
-          <AccordionPanel>Cài đặt, YugenProvider và component đầu tiên.</AccordionPanel>
+          <AccordionHeader>Get started</AccordionHeader>
+          <AccordionPanel>Installation, YugenProvider and your first component.</AccordionPanel>
         </AccordionItem>
         <AccordionItem value="theming">
           <AccordionHeader>Theming</AccordionHeader>
-          <AccordionPanel>Theme, brand và hướng chữ.</AccordionPanel>
+          <AccordionPanel>Theme, brand and text direction.</AccordionPanel>
         </AccordionItem>
       </Accordion>
     </AccordionPanel>
   </AccordionItem>
   <AccordionItem value="blocks">
-    <AccordionHeader>Block mẫu</AccordionHeader>
-    <AccordionPanel>Bố cục dựng sẵn, copy được nguyên file.</AccordionPanel>
+    <AccordionHeader>Blocks</AccordionHeader>
+    <AccordionPanel>Ready-made layouts you can copy as whole files.</AccordionPanel>
   </AccordionItem>
 </Accordion>`,
         render: () => (
           <Accordion type="single" collapsible appearance="outline" defaultValue="docs" className="w-full max-w-96">
             <AccordionItem value="docs">
-              <AccordionHeader>Tài liệu</AccordionHeader>
+              <AccordionHeader>Docs</AccordionHeader>
               <AccordionPanel>
                 <Accordion type="single" collapsible defaultValue="start">
                   <AccordionItem value="start">
-                    <AccordionHeader>Bắt đầu</AccordionHeader>
-                    <AccordionPanel>Cài đặt, YugenProvider và component đầu tiên.</AccordionPanel>
+                    <AccordionHeader>Get started</AccordionHeader>
+                    <AccordionPanel>Installation, YugenProvider and your first component.</AccordionPanel>
                   </AccordionItem>
                   <AccordionItem value="theming">
                     <AccordionHeader>Theming</AccordionHeader>
-                    <AccordionPanel>Theme, brand và hướng chữ.</AccordionPanel>
+                    <AccordionPanel>Theme, brand and text direction.</AccordionPanel>
                   </AccordionItem>
                 </Accordion>
               </AccordionPanel>
             </AccordionItem>
             <AccordionItem value="blocks">
-              <AccordionHeader>Block mẫu</AccordionHeader>
-              <AccordionPanel>Bố cục dựng sẵn, copy được nguyên file.</AccordionPanel>
+              <AccordionHeader>Blocks</AccordionHeader>
+              <AccordionPanel>Ready-made layouts you can copy as whole files.</AccordionPanel>
             </AccordionItem>
           </Accordion>
         ),
@@ -1489,25 +1489,25 @@ function ToastPositionDemo() {
   <Accordion type="single" collapsible size="small">
     <AccordionItem value="s">
       <AccordionHeader>Small</AccordionHeader>
-      <AccordionPanel>Nội dung cỡ small.</AccordionPanel>
+      <AccordionPanel>Small panel content.</AccordionPanel>
     </AccordionItem>
   </Accordion>
   <Accordion type="single" collapsible>
     <AccordionItem value="m">
       <AccordionHeader>Medium</AccordionHeader>
-      <AccordionPanel>Nội dung cỡ medium.</AccordionPanel>
+      <AccordionPanel>Medium panel content.</AccordionPanel>
     </AccordionItem>
   </Accordion>
   <Accordion type="single" collapsible size="large">
     <AccordionItem value="l">
       <AccordionHeader>Large</AccordionHeader>
-      <AccordionPanel>Nội dung cỡ large.</AccordionPanel>
+      <AccordionPanel>Large panel content.</AccordionPanel>
     </AccordionItem>
   </Accordion>
   <Accordion type="single" collapsible size="extra-large">
     <AccordionItem value="xl">
       <AccordionHeader>Extra large</AccordionHeader>
-      <AccordionPanel>Nội dung cỡ extra-large.</AccordionPanel>
+      <AccordionPanel>Extra-large panel content.</AccordionPanel>
     </AccordionItem>
   </Accordion>
 </div>`,
@@ -1516,25 +1516,25 @@ function ToastPositionDemo() {
             <Accordion type="single" collapsible size="small">
               <AccordionItem value="s">
                 <AccordionHeader>Small</AccordionHeader>
-                <AccordionPanel>Nội dung cỡ small.</AccordionPanel>
+                <AccordionPanel>Small panel content.</AccordionPanel>
               </AccordionItem>
             </Accordion>
             <Accordion type="single" collapsible>
               <AccordionItem value="m">
                 <AccordionHeader>Medium</AccordionHeader>
-                <AccordionPanel>Nội dung cỡ medium.</AccordionPanel>
+                <AccordionPanel>Medium panel content.</AccordionPanel>
               </AccordionItem>
             </Accordion>
             <Accordion type="single" collapsible size="large">
               <AccordionItem value="l">
                 <AccordionHeader>Large</AccordionHeader>
-                <AccordionPanel>Nội dung cỡ large.</AccordionPanel>
+                <AccordionPanel>Large panel content.</AccordionPanel>
               </AccordionItem>
             </Accordion>
             <Accordion type="single" collapsible size="extra-large">
               <AccordionItem value="xl">
                 <AccordionHeader>Extra large</AccordionHeader>
-                <AccordionPanel>Nội dung cỡ extra-large.</AccordionPanel>
+                <AccordionPanel>Extra-large panel content.</AccordionPanel>
               </AccordionItem>
             </Accordion>
           </div>
@@ -1579,14 +1579,14 @@ function ToastPositionDemo() {
   return (
     <Collapsible open={open} onOpenChange={setOpen} className="w-72">
       <ul className="flex flex-col gap-1 text-body1">
-        <li className="rounded-medium bg-background-3 px-3 py-2">Báo cáo Q3.docx</li>
-        <li className="rounded-medium bg-background-3 px-3 py-2">Kế hoạch 2027.xlsx</li>
+        <li className="rounded-medium bg-background-3 px-3 py-2">Q3 report.docx</li>
+        <li className="rounded-medium bg-background-3 px-3 py-2">2027 plan.xlsx</li>
       </ul>
       <CollapsibleContent>
         <ul className="flex flex-col gap-1 pt-1 text-body1">
-          <li className="rounded-medium bg-background-3 px-3 py-2">Biên bản họp.docx</li>
-          <li className="rounded-medium bg-background-3 px-3 py-2">Ngân sách.xlsx</li>
-          <li className="rounded-medium bg-background-3 px-3 py-2">Thiết kế.fig</li>
+          <li className="rounded-medium bg-background-3 px-3 py-2">Meeting notes.docx</li>
+          <li className="rounded-medium bg-background-3 px-3 py-2">Budget.xlsx</li>
+          <li className="rounded-medium bg-background-3 px-3 py-2">Design.fig</li>
         </ul>
       </CollapsibleContent>
       <CollapsibleTrigger asChild>
@@ -1596,7 +1596,7 @@ function ToastPositionDemo() {
           iconPosition="after"
           icon={<ChevronDown20Regular className={open ? "rotate-180" : undefined} />}
         >
-          {open ? "Thu gọn" : "Hiện thêm 3 mục"}
+          {open ? "Collapse" : "Show 3 more items"}
         </Button>
       </CollapsibleTrigger>
     </Collapsible>
@@ -1610,32 +1610,32 @@ function ToastPositionDemo() {
         description: "Không cần state: chevron xoay theo data-state của trigger.",
         code: `<Collapsible defaultOpen className="w-80 rounded-medium bg-background-1 shadow-4">
   <div className="flex items-center justify-between gap-2 py-1 ps-3 pe-1">
-    <span className="text-body1 font-semibold">Chi tiết đơn hàng #1024</span>
+    <span className="text-body1 font-semibold">Order #1024 details</span>
     <CollapsibleTrigger asChild>
       <Button
         appearance="subtle"
         size="small"
-        aria-label="Thu gọn / mở rộng"
+        aria-label="Collapse / expand"
         className="group/trigger"
         icon={<ChevronDown20Regular className="transition-transform duration-normal group-data-[state=open]/trigger:rotate-180" />}
       />
     </CollapsibleTrigger>
   </div>
   <CollapsibleContent className="flex flex-col gap-1 px-3 pb-3 text-body1 text-foreground-2">
-    <span>2 × Bàn phím cơ — 3.200.000 ₫</span>
-    <span>1 × Chuột không dây — 650.000 ₫</span>
-    <span className="font-semibold text-foreground-1">Tổng: 3.850.000 ₫</span>
+    <span>2 × Mechanical keyboard — $3,200.00</span>
+    <span>1 × Wireless mouse — $650.00</span>
+    <span className="font-semibold text-foreground-1">Total: $3,850.00</span>
   </CollapsibleContent>
 </Collapsible>`,
         render: () => (
           <Collapsible defaultOpen className="w-80 rounded-medium bg-background-1 shadow-4">
             <div className="flex items-center justify-between gap-2 py-1 ps-3 pe-1">
-              <span className="text-body1 font-semibold">Chi tiết đơn hàng #1024</span>
+              <span className="text-body1 font-semibold">Order #1024 details</span>
               <CollapsibleTrigger asChild>
                 <Button
                   appearance="subtle"
                   size="small"
-                  aria-label="Thu gọn / mở rộng"
+                  aria-label="Collapse / expand"
                   className="group/trigger"
                   icon={
                     <ChevronDown20Regular className="transition-transform duration-normal group-data-[state=open]/trigger:rotate-180" />
@@ -1644,9 +1644,9 @@ function ToastPositionDemo() {
               </CollapsibleTrigger>
             </div>
             <CollapsibleContent className="flex flex-col gap-1 px-3 pb-3 text-body1 text-foreground-2">
-              <span>2 × Bàn phím cơ — 3.200.000 ₫</span>
-              <span>1 × Chuột không dây — 650.000 ₫</span>
-              <span className="font-semibold text-foreground-1">Tổng: 3.850.000 ₫</span>
+              <span>2 × Mechanical keyboard — $3,200.00</span>
+              <span>1 × Wireless mouse — $650.00</span>
+              <span className="font-semibold text-foreground-1">Total: $3,850.00</span>
             </CollapsibleContent>
           </Collapsible>
         ),
@@ -1714,7 +1714,7 @@ function ToastPositionDemo() {
   return (
     <div className="flex flex-col items-center gap-2">
       <Calendar mode="multiple" selected={days} onSelect={setDays} disabled={{ dayOfWeek: [0, 6] }} />
-      <span className="text-caption1 text-foreground-3">Đã chọn {days?.length ?? 0} ngày làm việc</span>
+      <span className="text-caption1 text-foreground-3">Workdays selected: {days?.length ?? 0}</span>
     </div>
   );
 }`,
@@ -1753,7 +1753,7 @@ function ToastPositionDemo() {
       code: `function DatePickerDemo() {
   const [date, setDate] = useState<Date | undefined>();
   return (
-    <Field label="Ngày bắt đầu" hint="Định dạng dd/MM/yyyy" className="w-72">
+    <Field label="Start date" hint="Leave it empty if the date isn't set yet." className="w-72">
       <DatePicker value={date ?? null} onSelectDate={setDate} clearable />
     </Field>
   );
@@ -1768,10 +1768,10 @@ function ToastPositionDemo() {
   const [date, setDate] = useState<Date | undefined>();
   return (
     <Field
-      label="Ngày giao hàng"
+      label="Delivery date"
       required
       validationState={date ? "success" : "error"}
-      validationMessage={date ? "Có thể giao vào ngày này." : "Vui lòng chọn ngày giao (từ hôm nay trở đi)."}
+      validationMessage={date ? "We can deliver on this day." : "Pick a delivery date (today or later)."}
       className="w-72"
     >
       <DatePicker value={date ?? null} onSelectDate={setDate} minDate={new Date()} />
@@ -1783,11 +1783,11 @@ function ToastPositionDemo() {
       {
         title: "Khoảng ngày",
         description: "DateRangePicker: popover tự đóng khi đã chọn đủ ngày đầu và ngày cuối.",
-        code: `<Field label="Thời gian nghỉ phép" className="w-80">
+        code: `<Field label="Time off" className="w-80">
   <DateRangePicker clearable />
 </Field>`,
         render: () => (
-          <Field label="Thời gian nghỉ phép" className="w-80">
+          <Field label="Time off" className="w-80">
             <DateRangePicker clearable />
           </Field>
         ),
@@ -1796,17 +1796,17 @@ function ToastPositionDemo() {
         title: "Kích thước & disabled",
         description: "small 24px, medium 32px, large 40px.",
         code: `<div className="flex w-64 flex-col gap-3">
-  <DatePicker size="small" aria-label="Ngày (small)" />
-  <DatePicker aria-label="Ngày (medium)" />
-  <DatePicker size="large" aria-label="Ngày (large)" />
-  <DatePicker disabled aria-label="Ngày (disabled)" defaultValue={new Date(2026, 0, 1)} />
+  <DatePicker size="small" aria-label="Date (small)" />
+  <DatePicker aria-label="Date (medium)" />
+  <DatePicker size="large" aria-label="Date (large)" />
+  <DatePicker disabled aria-label="Date (disabled)" defaultValue={new Date(2026, 0, 1)} />
 </div>`,
         render: () => (
           <div className="flex w-64 flex-col gap-3">
-            <DatePicker size="small" aria-label="Ngày (small)" />
-            <DatePicker aria-label="Ngày (medium)" />
-            <DatePicker size="large" aria-label="Ngày (large)" />
-            <DatePicker disabled aria-label="Ngày (disabled)" defaultValue={new Date(2026, 0, 1)} />
+            <DatePicker size="small" aria-label="Date (small)" />
+            <DatePicker aria-label="Date (medium)" />
+            <DatePicker size="large" aria-label="Date (large)" />
+            <DatePicker disabled aria-label="Date (disabled)" defaultValue={new Date(2026, 0, 1)} />
           </div>
         ),
       },

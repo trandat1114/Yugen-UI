@@ -169,7 +169,7 @@ test.describe("Combobox", () => {
 test.describe("DatePicker", () => {
   test("mở bằng bàn phím, mũi tên đổi ngày, Enter chọn, lịch đóng và focus quay về ô", async ({ page }) => {
     await openDocs(page, "/components/datepicker");
-    const field = page.getByRole("combobox", { name: "Ngày bắt đầu" }).first();
+    const field = page.getByRole("combobox", { name: "Start date" }).first();
     await field.focus();
     await page.keyboard.press("Enter");
     const grid = page.getByRole("grid");
@@ -187,12 +187,12 @@ test.describe("DatePicker", () => {
 test.describe("Toast", () => {
   test("hiện trong vùng thông báo mà không lấy focus; F8 tới vùng đó; đóng bằng bàn phím", async ({ page }) => {
     await openDocs(page, "/components/toast");
-    const button = page.getByRole("button", { name: "Lưu tài liệu" });
+    const button = page.getByRole("button", { name: "Save document" });
     // Bấm bằng bàn phím: Safari / WebKit không đặt focus vào nút khi click chuột.
     await button.focus();
     await page.keyboard.press("Enter");
     // Trang có một Toaster cho mỗi ví dụ: lấy đúng vùng đang chứa toast.
-    const toast = page.getByRole("listitem").filter({ hasText: "Đã lưu thay đổi" });
+    const toast = page.getByRole("listitem").filter({ hasText: "Changes saved" });
     await expect(toast).toBeVisible();
     await expect(page.getByRole("region", { name: /Thông báo/ }).filter({ has: toast })).toHaveCount(1);
     await expect(button).toBeFocused();

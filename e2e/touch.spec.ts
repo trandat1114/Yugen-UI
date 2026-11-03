@@ -9,12 +9,12 @@ import { openDocs } from "./utils";
  */
 
 test.describe("Sheet — bottom sheet trên mobile", () => {
-  /** Demo "Bộ lọc" ở hero: snapPoints [0.6, 0.92]. */
+  /** Demo "Filters" ở hero: snapPoints [0.6, 0.92]. */
   async function openFilter(page: Page) {
     await openDocs(page, "/components/sheet");
-    const trigger = page.getByRole("button", { name: "Bộ lọc" }).first();
+    const trigger = page.getByRole("button", { name: "Filters" }).first();
     await trigger.tap();
-    const sheet = page.getByRole("dialog", { name: "Bộ lọc" });
+    const sheet = page.getByRole("dialog", { name: "Filters" });
     await expect(sheet).toBeVisible();
     const handle = sheet.getByRole("button", { name: /^Đổi chiều cao/ });
     return { trigger, sheet, handle };
