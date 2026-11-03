@@ -3,9 +3,9 @@ import { Info16Filled, Info16Regular, Info20Filled, Info20Regular } from "@fluen
 import { cn } from "@/lib/cn";
 import { Popover, PopoverSurface, PopoverTrigger } from "@/components/ui/Popover/Popover";
 import { useYugenMessages } from "../YugenProvider/context";
-import { infoLabelMessages } from "./messages";
+import { infoLabelMessagesEn } from "./messages";
 
-export { infoLabelMessages, infoLabelMessagesEn, type InfoLabelMessages } from "./messages";
+export { infoLabelMessages, infoLabelMessagesVi, infoLabelMessagesEn, type InfoLabelMessages } from "./messages";
 
 /** Fluent 2 InfoLabel — https://fluent2.microsoft.design/components/web/react/core/infolabel/usage */
 const SIZE = {
@@ -44,7 +44,7 @@ export const InfoLabel = React.forwardRef<HTMLLabelElement, InfoLabelProps>(
     },
     ref,
   ) => {
-    const msg = useYugenMessages("infoLabel", infoLabelMessages);
+    const msg = useYugenMessages("infoLabel", infoLabelMessagesEn);
     const autoId = React.useId();
     const labelId = id ?? `${autoId}-label`;
     const buttonId = `${autoId}-info`;

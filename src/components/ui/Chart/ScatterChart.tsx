@@ -2,7 +2,7 @@ import * as React from "react";
 import { DataTrending20Filled, DataTrending20Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
-import { chartMessages } from "./messages";
+import { chartMessagesEn } from "./messages";
 import { ToggleButton } from "../ToggleButton/ToggleButton";
 import { ChartContainer, ChartFocusRing, ChartLegend, ChartTable, ChartTooltip, type ChartTooltipRow } from "./ChartParts";
 import { Baseline, GridLines, PlotArea, ValueAxisBottom, ValueAxisLeft, axisTextClass } from "./cartesian";
@@ -158,7 +158,7 @@ export const ScatterChart = React.forwardRef<HTMLElement, ScatterChartProps>(fun
 ) {
   const yugen = useYugen();
   const locale = localeProp ?? yugen.locale;
-  const msg = useYugenMessages("chart", chartMessages);
+  const msg = useYugenMessages("chart", chartMessagesEn);
   const otherLabel = msg.other;
   const uid = chartUid(React.useId());
   const textured = useChartTexture(texture);

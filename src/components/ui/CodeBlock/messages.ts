@@ -89,3 +89,15 @@ export const codeTabsMessagesEn: CodeTabsMessages = { files: "Files" };
 export const packageManagerTabsMessages: PackageManagerTabsMessages = { label: "Trình quản lý gói" };
 
 export const packageManagerTabsMessagesEn: PackageManagerTabsMessages = { label: "Package manager" };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `copyCodeButtonMessagesEn` (mặc định). `copyCodeButtonMessages` giữ cho code cũ. */
+export const copyCodeButtonMessagesVi = copyCodeButtonMessages;
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `codeBlockMessagesEn` (mặc định). `codeBlockMessages` giữ cho code cũ. */
+export const codeBlockMessagesVi = codeBlockMessages;
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `codeTabsMessagesEn` (mặc định). `codeTabsMessages` giữ cho code cũ. */
+export const codeTabsMessagesVi = codeTabsMessages;
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `packageManagerTabsMessagesEn` (mặc định). `packageManagerTabsMessages` giữ cho code cũ. */
+export const packageManagerTabsMessagesVi = packageManagerTabsMessages;

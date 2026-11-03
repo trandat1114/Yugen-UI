@@ -33,3 +33,6 @@ export const timePickerMessagesEn: TimePickerMessages = {
   closeList: "Close time list",
   openList: "Open time list",
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `timePickerMessagesEn` (mặc định). `timePickerMessages` giữ cho code cũ. */
+export const timePickerMessagesVi = timePickerMessages;

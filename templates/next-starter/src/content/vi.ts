@@ -1,7 +1,10 @@
+import { messagesVi } from "yugen-ui";
 import type { Content } from "./types";
 
 const vi: Content = {
   lang: "vi",
+
+  messages: messagesVi,
   locale: "vi-VN",
   appName: "Ứng dụng của tôi",
   description: "Dự án Next.js App Router với Yugen UI.",

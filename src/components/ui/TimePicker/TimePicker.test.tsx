@@ -40,7 +40,8 @@ describe("parseTimeString", () => {
     ["7 tối", "19:00"],
     ["0:00", "0:00"],
   ])("%s → %s", (text, expected) => {
-    expect(hm(parseTimeString(text, { dateAnchor: anchor }))).toBe(expected);
+    // Nhãn buổi tiếng Việt (CH, sa, tối) được hiểu khi locale là "vi-VN"; mặc định "en-US" (#277).
+    expect(hm(parseTimeString(text, { dateAnchor: anchor, locale: "vi-VN" }))).toBe(expected);
   });
 
   it.each(["", "abc", "24:00", "9:3", "9:75", "13 pm", "0 am", "12345", "9::30"])("không hợp lệ: %j", (text) => {

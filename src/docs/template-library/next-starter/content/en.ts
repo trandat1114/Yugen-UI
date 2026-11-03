@@ -1,10 +1,7 @@
-import { messagesEn } from "@/components/ui";
 import type { Content } from "./types";
 
 const en: Content = {
-  lang: "en",
-  messages: messagesEn,
-  locale: "en-US",
+  lang: "en",  locale: "en-US",
   appName: "My app",
   description: "A Next.js App Router project with Yugen UI.",
   nav: { label: "Main", home: "Home", settings: "Settings", skip: "Skip to content" },

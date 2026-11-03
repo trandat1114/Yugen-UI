@@ -17,9 +17,9 @@ import { useYugenMessages } from "../YugenProvider/context";
 import { matchesMedia } from "../hooks/useMediaQuery";
 import { useComposedRefs } from "../_internal/composeRefs";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
-import { sortableMessages, type SortableMessages } from "./messages";
+import { sortableMessagesEn, type SortableMessages } from "./messages";
 
-export { sortableMessages, sortableMessagesEn, type SortableMessages } from "./messages";
+export { sortableMessages, sortableMessagesVi, sortableMessagesEn, type SortableMessages } from "./messages";
 
 export type SortableOrientation = "vertical" | "horizontal" | "grid";
 
@@ -175,7 +175,7 @@ function createEngine() {
   const items = new Map<string, ItemReg>();
   const listeners = new Set<() => void>();
   const flips = new WeakMap<Element, Animation>();
-  let host: Host = { value: {}, msg: sortableMessages, announce: () => {} };
+  let host: Host = { value: {}, msg: sortableMessagesEn, announce: () => {} };
   let value: SortableGroupValue = {};
   let drag: Drag | null = null;
   let session: PointerSession | null = null;
@@ -788,7 +788,7 @@ export interface SortableGroupProps {
 
 /** Nhiều Sortable (cột Kanban) dùng chung một lần kéo: mục đi được từ danh sách này sang danh sách khác. */
 export function SortableGroup({ value, onValueChange, onSortStart, onSortEnd, children }: SortableGroupProps) {
-  const msg = useYugenMessages("sortable", sortableMessages);
+  const msg = useYugenMessages("sortable", sortableMessagesEn);
   const { announce } = useAnnounce();
   const [engine] = React.useState(createEngine);
   const instructionsId = `${React.useId()}-sortable`;
@@ -972,7 +972,7 @@ export const SortableHandle = React.forwardRef<HTMLButtonElement, SortableHandle
     const engine = useEngine("SortableHandle");
     const item = React.useContext(ItemContext);
     if (!item) throw new Error("SortableHandle phải nằm trong SortableItem.");
-    const msg = useYugenMessages("sortable", sortableMessages);
+    const msg = useYugenMessages("sortable", sortableMessagesEn);
     const dragging = React.useSyncExternalStore(engine.subscribe, () => engine.modeOf(item.value), () => null);
     const elRef = React.useRef<HTMLButtonElement | null>(null);
     const register = React.useCallback(

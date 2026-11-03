@@ -4,9 +4,9 @@ import { cn } from "@/lib/cn";
 import { Button, type ButtonProps } from "../Button/Button";
 import { Menu, MenuPopover, MenuTrigger } from "../Menu/Menu";
 import { useYugenMessages } from "../YugenProvider/context";
-import { splitButtonMessages } from "./messages";
+import { splitButtonMessagesEn } from "./messages";
 
-export { splitButtonMessages, splitButtonMessagesEn, type SplitButtonMessages } from "./messages";
+export { splitButtonMessages, splitButtonMessagesVi, splitButtonMessagesEn, type SplitButtonMessages } from "./messages";
 
 /** Fluent 2 SplitButton — https://fluent2.microsoft.design/components/web/react/core/splitbutton/usage */
 export interface SplitButtonProps extends Omit<ButtonProps, "appearance" | "asChild" | "iconOnly" | "shape"> {
@@ -19,7 +19,7 @@ export interface SplitButtonProps extends Omit<ButtonProps, "appearance" | "asCh
 
 export const SplitButton = React.forwardRef<HTMLButtonElement, SplitButtonProps>(
   ({ appearance = "secondary", size = "medium", menu, menuLabel, className, disabled, ...props }, ref) => {
-    const msg = useYugenMessages("splitButton", splitButtonMessages);
+    const msg = useYugenMessages("splitButton", splitButtonMessagesEn);
     const divider =
       appearance === "primary"
         ? "border-s border-s-stroke-on-brand/40"

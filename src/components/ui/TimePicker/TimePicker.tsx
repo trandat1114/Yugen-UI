@@ -10,9 +10,9 @@ import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffec
 import { popoverSurfaceClass } from "@/components/ui/Popover/Popover";
 import { fieldAppearanceClass, type FieldAppearance } from "@/components/ui/Select/Select";
 import { cmdkOptionClass } from "@/components/ui/Combobox/Combobox";
-import { timePickerMessages } from "./messages";
+import { timePickerMessagesEn } from "./messages";
 
-export { timePickerMessages, timePickerMessagesEn, type TimePickerMessages } from "./messages";
+export { timePickerMessages, timePickerMessagesVi, timePickerMessagesEn, type TimePickerMessages } from "./messages";
 
 export type TimePickerHourCycle = "h23" | "h12";
 export type TimeSelectionErrorType = "invalid-input" | "out-of-start-bound" | "out-of-end-bound";
@@ -54,7 +54,7 @@ function getDayPeriodLabels(locale: string): [string, string] {
 }
 
 /** Chu kỳ giờ mặc định của locale qua Intl: vi-VN → "h23" (24 giờ), en-US → "h12". */
-export function getDefaultHourCycle(locale = "vi-VN"): TimePickerHourCycle {
+export function getDefaultHourCycle(locale = "en-US"): TimePickerHourCycle {
   try {
     const hc = new Intl.DateTimeFormat(locale, { hour: "numeric" }).resolvedOptions().hourCycle;
     return hc === "h11" || hc === "h12" ? "h12" : "h23";
@@ -70,7 +70,7 @@ export interface FormatTimeOptions {
 }
 
 /** Định dạng giờ: h23 → "09:30", h12 → "9:30 SA" (vi-VN) / "9:30 AM" (en-US). Không phụ thuộc chuỗi Intl đầy đủ. */
-export function formatTime(date: Date, { hourCycle = "h23", locale = "vi-VN", showSeconds = false }: FormatTimeOptions = {}) {
+export function formatTime(date: Date, { hourCycle = "h23", locale = "en-US", showSeconds = false }: FormatTimeOptions = {}) {
   const h = date.getHours();
   const tail = `${pad(date.getMinutes())}${showSeconds ? `:${pad(date.getSeconds())}` : ""}`;
   if (hourCycle === "h23") return `${pad(h)}:${tail}`;
@@ -81,7 +81,7 @@ export function formatTime(date: Date, { hourCycle = "h23", locale = "vi-VN", sh
 export interface ParseTimeOptions {
   /** Ngày gắn vào kết quả. Mặc định hôm nay. */
   dateAnchor?: Date;
-  /** Thêm nhãn buổi của locale vào danh sách được hiểu. Mặc định "vi-VN". */
+  /** Thêm nhãn buổi của locale vào danh sách được hiểu. Mặc định "en-US". */
   locale?: string;
 }
 
@@ -92,7 +92,7 @@ const PM_WORDS = ["pm", "p", "ch", "chieu", "toi"];
  * Hiểu giờ gõ tự do: "9", "9:30", "09.30", "930", "0930", "9h30", "9h", "9 giờ 30", "21:15", "9:30 PM", "9pm",
  * "9:30 CH", "9:30:15". Trả `null` nếu không hợp lệ (phút phải đủ 2 chữ số khi có dấu phân cách).
  */
-export function parseTimeString(text: string, { dateAnchor, locale = "vi-VN" }: ParseTimeOptions = {}): Date | null {
+export function parseTimeString(text: string, { dateAnchor, locale = "en-US" }: ParseTimeOptions = {}): Date | null {
   let s = text
     .normalize("NFD")
     .replace(/\p{M}/gu, "")
@@ -233,7 +233,7 @@ export interface TimePickerProps extends InputAttrs, TimeRangeOptions {
   onTimeChange?: (event: React.SyntheticEvent<HTMLElement>, data: TimeSelectionData) => void;
   /** "h23" (24 giờ) | "h12" (SA/CH). Mặc định theo `locale` qua Intl. */
   hourCycle?: TimePickerHourCycle;
-  /** Locale cho chu kỳ giờ và nhãn buổi. Mặc định `locale` của YugenProvider ("vi-VN"). */
+  /** Locale cho chu kỳ giờ và nhãn buổi. Mặc định `locale` của YugenProvider ("en-US"). */
   locale?: string;
   /** Ngày gắn vào giờ trả về. Mặc định ngày của `value`, nếu không thì hôm nay. */
   dateAnchor?: Date;
@@ -278,7 +278,7 @@ export const TimePicker = React.forwardRef<HTMLInputElement, TimePickerProps>((p
     ...inputProps
   } = props;
 
-  const msg = useYugenMessages("timePicker", timePickerMessages);
+  const msg = useYugenMessages("timePicker", timePickerMessagesEn);
   const providerLocale = useYugen().locale;
   const locale = localeProp ?? providerLocale;
   const controlled = value !== undefined;

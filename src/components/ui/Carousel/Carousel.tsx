@@ -7,9 +7,9 @@ import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffec
 import { matchesMedia } from "../hooks/useMediaQuery";
 import { Button } from "../Button/Button";
 import { useYugenMessages } from "../YugenProvider/context";
-import { carouselMessages } from "./messages";
+import { carouselMessagesEn } from "./messages";
 
-export { carouselMessages, carouselMessagesEn, type CarouselMessages } from "./messages";
+export { carouselMessages, carouselMessagesVi, carouselMessagesEn, type CarouselMessages } from "./messages";
 
 /** Fluent 2 Carousel — https://fluent2.microsoft.design/components/web/react/core/carousel/usage (+ Yugen Labs: progress, peek, thumbnails) */
 export type CarouselGap = "none" | "XS" | "S" | "M" | "L" | "XL";
@@ -153,7 +153,7 @@ export const Carousel = React.forwardRef<HTMLElement, CarouselProps>(
     const circular = loop ?? circularProp ?? false;
     const viewportRef = React.useRef<HTMLDivElement | null>(null);
     const dir = useDirection();
-    const msg = useYugenMessages("carousel", carouselMessages);
+    const msg = useYugenMessages("carousel", carouselMessagesEn);
     const [activeIndex, setActiveIndex] = React.useState(0);
     const [count, setCount] = React.useState(0);
     const [autoplay, setAutoplayState] = useControllableState({
@@ -492,7 +492,7 @@ CarouselViewport.displayName = "CarouselViewport";
 export const CarouselCard = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, style, ...props }, ref) => {
     const ctx = useCarousel();
-    const msg = useYugenMessages("carousel", carouselMessages);
+    const msg = useYugenMessages("carousel", carouselMessagesEn);
     const index = React.useContext(SlideIndexContext);
     const perView = ctx.slidesPerView;
     const basis =
@@ -557,7 +557,7 @@ export function CarouselNavContainer({
   ...props
 }: CarouselNavContainerProps) {
   const ctx = useCarousel();
-  const msg = useYugenMessages("carousel", carouselMessages);
+  const msg = useYugenMessages("carousel", carouselMessagesEn);
   const dir = useDirection();
   const dotRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
   const atStart = !ctx.circular && ctx.activeIndex === 0;
@@ -647,7 +647,7 @@ export type CarouselThumbnailsProps = React.HTMLAttributes<HTMLDivElement>;
 export const CarouselThumbnails = React.forwardRef<HTMLDivElement, CarouselThumbnailsProps>(
   ({ className, children, onKeyDown, "aria-label": ariaLabel, ...props }, ref) => {
     const ctx = useCarousel();
-    const msg = useYugenMessages("carousel", carouselMessages);
+    const msg = useYugenMessages("carousel", carouselMessagesEn);
     const dir = useDirection();
     const stripRef = React.useRef<HTMLDivElement | null>(null);
     const thumbRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
@@ -702,7 +702,7 @@ CarouselThumbnails.displayName = "CarouselThumbnails";
 export const CarouselThumbnail = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(
   ({ className, children, onClick, ...props }, ref) => {
     const ctx = useCarousel();
-    const msg = useYugenMessages("carousel", carouselMessages);
+    const msg = useYugenMessages("carousel", carouselMessagesEn);
     const index = React.useContext(ThumbnailIndexContext);
     const refs = React.useContext(ThumbnailRefsContext);
     const active = index === ctx.activeIndex;

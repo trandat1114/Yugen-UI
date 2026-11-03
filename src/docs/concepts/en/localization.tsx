@@ -19,11 +19,11 @@ function A({ href, children }: { href: string; children: ReactNode }) {
   );
 }
 
-const ENGLISH_CODE = `import { YugenProvider, messagesEn } from "yugen-ui";
+const VIETNAMESE_CODE = `import { YugenProvider, messagesVi } from "yugen-ui";
 
 export function App({ children }: { children: React.ReactNode }) {
   return (
-    <YugenProvider applyToDocument withToaster messages={messagesEn} locale="en-US">
+    <YugenProvider applyToDocument withToaster messages={messagesVi} locale="vi-VN">
       {children}
     </YugenProvider>
   );
@@ -33,8 +33,8 @@ const OVERRIDE_CODE = `// Change only the strings you need; the rest keep their 
 <YugenProvider messages={{ dialog: { close: "Close dialog" } }}>…</YugenProvider>
 
 // A nested provider inherits messages and locale from the outer one, then overrides
-<YugenProvider messages={messagesEn} locale="en-US">
-  <YugenProvider messages={{ toast: { dismiss: "Hide" } }}>…</YugenProvider>
+<YugenProvider messages={messagesVi} locale="vi-VN">
+  <YugenProvider messages={{ toast: { dismiss: "Ẩn" } }}>…</YugenProvider>
 </YugenProvider>
 
 // A component's own label prop still wins over messages
@@ -52,31 +52,32 @@ export const messagesJa: YugenMessages = {
 
 <YugenProvider messages={messagesJa} locale="ja-JP">…</YugenProvider>`;
 
-const SOURCE_CODE = `// Source copied with the CLI or shadcn: each component has its own messages.ts
-import { dialogMessagesEn } from "@/components/ui/Dialog/Dialog";
-import { toastMessagesEn } from "@/components/ui/Toast/Toast";
+const SOURCE_CODE = `// Source copied with the CLI or shadcn: each component has its own messages.ts, English by default
+import { dialogMessagesVi } from "@/components/ui/Dialog/Dialog";
+import { toastMessagesVi } from "@/components/ui/Toast/Toast";
 
-const messages = { dialog: dialogMessagesEn, toast: toastMessagesEn };
+const messages = { dialog: dialogMessagesVi, toast: toastMessagesVi };
 
-<YugenProvider messages={messages} locale="en-US">…</YugenProvider>`;
+<YugenProvider messages={messages} locale="vi-VN">…</YugenProvider>`;
 
 export default function Page() {
   return (
     <>
       <DocSection
-        id="english"
-        title="Switch to English"
-        description="messagesEn holds the English version of every built-in string; locale changes how dates, times and numbers are formatted."
+        id="vietnamese"
+        title="Switch to Vietnamese"
+        description="English is the default. messagesVi holds the Vietnamese version of every built-in string; locale changes how dates, times and numbers are formatted."
       >
         <div className="flex flex-col gap-4">
-          <CodeBlock code={ENGLISH_CODE} />
+          <CodeBlock code={VIETNAMESE_CODE} />
           <P>
             Built-in strings are the text a component shows or reads to screen readers without you passing it: the close button label,
             “Loading…”, “No results found”, chart descriptions, aria-live announcements. Content you pass in (titles, children, a Field
             label) is not changed.
           </P>
           <P>
-            <C>messagesEn</C> is a plain object. Bundlers only include it when you import it, so a Vietnamese-only app pays nothing for it.
+            <C>messagesVi</C> is a plain object. Bundlers only include it when you import it, so an English-only app pays nothing for it.
+            <C>messagesEn</C> (the English set, same as the defaults) is still exported, as a base for other languages.
           </P>
         </div>
       </DocSection>
@@ -86,8 +87,8 @@ export default function Page() {
           <CodeBlock code={OVERRIDE_CODE} />
           <P>
             Priority: the component&apos;s own label prop (such as SearchBox <C>dismissLabel</C>), then <C>messages</C> from the nearest
-            provider, then outer providers, then the Vietnamese default. Editors suggest namespace and key names from the types, and
-            the Messages section at the end of each component page lists every key with its Vietnamese and English text.
+            provider, then outer providers, then the English default. Editors suggest namespace and key names from the types, and
+            the Messages section at the end of each component page lists every key with its English and Vietnamese text.
           </P>
         </div>
       </DocSection>
@@ -96,8 +97,8 @@ export default function Page() {
         <div className="flex flex-col gap-4">
           <P>
             Charts, DatePicker, TimePicker, NotificationCenter and Rating format numbers, dates and times with the provider{" "}
-            <C>locale</C> (default <C>"vi-VN"</C>). A component&apos;s own <C>locale</C> prop still wins. Calendar uses a
-            react-day-picker locale, set in <C>messages.calendar.locale</C>; <C>messagesEn</C> already sets English.
+            <C>locale</C> (default <C>"en-US"</C>). A component&apos;s own <C>locale</C> prop still wins. Calendar uses a
+            react-day-picker locale, set in <C>messages.calendar.locale</C>; <C>messagesVi</C> already sets Vietnamese.
           </P>
           <P>
             Text direction is handled separately by the <C>dir</C> prop, see <A href={docsPath("/concepts/rtl")}>RTL</A>.
@@ -119,8 +120,8 @@ export default function Page() {
         <div className="flex flex-col gap-4">
           <CodeBlock code={SOURCE_CODE} />
           <P>
-            <C>messagesEn</C> is only in the npm package. With source copied by <A href={docsPath("/concepts/cli")}>@yugen-ui/cli</A> or
-            shadcn, combine the <C>…MessagesEn</C> objects of the components you have; the <C>YugenMessages</C> type only lists those
+            <C>messagesVi</C> is only in the npm package. With source copied by <A href={docsPath("/concepts/cli")}>@yugen-ui/cli</A> or
+            shadcn, combine the <C>…MessagesVi</C> objects of the components you have; the <C>YugenMessages</C> type only lists those
             components too. To change a default for good, edit <C>messages.ts</C> directly.
           </P>
           <DoDont

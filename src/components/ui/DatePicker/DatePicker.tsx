@@ -7,12 +7,12 @@ import { Calendar } from "@/components/ui/Calendar/Calendar";
 import { fieldControlClass } from "@/components/ui/Field/Field";
 import { Popover, PopoverAnchor, PopoverSurface, PopoverTrigger } from "@/components/ui/Popover/Popover";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
-import { datePickerMessages, dateRangePickerMessages, type DateRangePickerMessages } from "./messages";
+import { datePickerMessagesEn, dateRangePickerMessagesEn, type DateRangePickerMessages } from "./messages";
 
 export {
-  datePickerMessages,
+  datePickerMessages, datePickerMessagesVi,
   datePickerMessagesEn,
-  dateRangePickerMessages,
+  dateRangePickerMessages, dateRangePickerMessagesVi,
   dateRangePickerMessagesEn,
   type DatePickerMessages,
   type DateRangePickerMessages,
@@ -172,7 +172,7 @@ export function DatePicker({
   maxDate,
   ...props
 }: DatePickerProps) {
-  const msg = useYugenMessages("datePicker", datePickerMessages);
+  const msg = useYugenMessages("datePicker", datePickerMessagesEn);
   const { locale } = useYugen();
   const format = formatDate ?? numericDateFormat(locale);
   const [open, setOpen] = React.useState(false);
@@ -229,18 +229,18 @@ const lastDays = (n: number) => {
  * `messages.dateRangePicker` (`label` ở đây là bản tiếng Việt).
  */
 export const DEFAULT_RANGE_PRESETS: DateRangePreset[] = [
-  { label: dateRangePickerMessages.today, range: () => lastDays(1) },
-  { label: dateRangePickerMessages.last7Days, range: () => lastDays(7) },
-  { label: dateRangePickerMessages.last30Days, range: () => lastDays(30) },
+  { label: dateRangePickerMessagesEn.today, range: () => lastDays(1) },
+  { label: dateRangePickerMessagesEn.last7Days, range: () => lastDays(7) },
+  { label: dateRangePickerMessagesEn.last30Days, range: () => lastDays(30) },
   {
-    label: dateRangePickerMessages.thisMonth,
+    label: dateRangePickerMessagesEn.thisMonth,
     range: () => {
       const to = startOfDay(new Date());
       return { from: new Date(to.getFullYear(), to.getMonth(), 1), to };
     },
   },
   {
-    label: dateRangePickerMessages.lastMonth,
+    label: dateRangePickerMessagesEn.lastMonth,
     range: () => {
       const now = new Date();
       return { from: new Date(now.getFullYear(), now.getMonth() - 1, 1), to: new Date(now.getFullYear(), now.getMonth(), 0) };
@@ -270,7 +270,7 @@ function PresetList({
   label: string;
   onPick: (range: { from: Date; to: Date }) => void;
 }) {
-  const msg = useYugenMessages("dateRangePicker", dateRangePickerMessages);
+  const msg = useYugenMessages("dateRangePicker", dateRangePickerMessagesEn);
   return (
     <div
       role="group"
@@ -330,7 +330,7 @@ export function DateRangePicker({
   presetsLabel,
   ...props
 }: DateRangePickerProps) {
-  const msg = useYugenMessages("dateRangePicker", dateRangePickerMessages);
+  const msg = useYugenMessages("dateRangePicker", dateRangePickerMessagesEn);
   const { locale } = useYugen();
   const format = formatDate ?? numericDateFormat(locale);
   const [open, setOpen] = React.useState(false);

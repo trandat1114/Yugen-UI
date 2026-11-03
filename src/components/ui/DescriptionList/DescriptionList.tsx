@@ -3,11 +3,11 @@ import { Checkmark16Regular, Copy16Regular } from "@fluentui/react-icons";
 import { useClipboard } from "../hooks/useClipboard";
 import { Button } from "../Button/Button";
 import { useYugenMessages } from "../YugenProvider/context";
-import { descriptionListMessages } from "./messages";
+import { descriptionListMessagesEn } from "./messages";
 import { cn } from "@/lib/cn";
 
 export {
-  descriptionListMessages,
+  descriptionListMessages, descriptionListMessagesVi,
   descriptionListMessagesEn,
   type DescriptionListMessages,
 } from "./messages";
@@ -106,7 +106,7 @@ export const DescriptionItem = React.forwardRef<HTMLDivElement, DescriptionItemP
 });
 
 function CopyButton({ labelId, getText }: { labelId: string; getText: () => string }) {
-  const msg = useYugenMessages("descriptionList", descriptionListMessages);
+  const msg = useYugenMessages("descriptionList", descriptionListMessagesEn);
   const id = React.useId();
   const { copy, copied } = useClipboard();
 

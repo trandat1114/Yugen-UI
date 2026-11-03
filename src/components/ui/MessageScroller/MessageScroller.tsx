@@ -7,7 +7,7 @@ import { Button } from "../Button/Button";
 import { matchesMedia } from "../hooks/useMediaQuery";
 import { Spinner } from "../Spinner/Spinner";
 import { useYugenMessages } from "../YugenProvider/context";
-import { messageScrollerMessages } from "./messages";
+import { messageScrollerMessagesEn } from "./messages";
 import {
   MessageBubble,
   MessageDaySeparator,
@@ -19,7 +19,7 @@ import {
 
 export * from "./MessageBubble";
 export * from "./ChatComposer";
-export { messageScrollerMessages, messageScrollerMessagesEn, type MessageScrollerMessages } from "./messages";
+export { messageScrollerMessages, messageScrollerMessagesVi, messageScrollerMessagesEn, type MessageScrollerMessages } from "./messages";
 
 /* ================================================================ Tiện ích */
 
@@ -99,7 +99,7 @@ export const MessageScroller = React.forwardRef<HTMLDivElement, MessageScrollerP
     },
     ref,
   ) => {
-    const msg = useYugenMessages("messageScroller", messageScrollerMessages);
+    const msg = useYugenMessages("messageScroller", messageScrollerMessagesEn);
     const label = labelProp ?? msg.label;
     const viewportRef = React.useRef<HTMLDivElement | null>(null);
     const contentRef = React.useRef<HTMLDivElement>(null);

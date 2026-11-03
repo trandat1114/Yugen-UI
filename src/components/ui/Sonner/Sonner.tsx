@@ -12,10 +12,10 @@ import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffec
 import { Button } from "../Button/Button";
 import { Spinner } from "../Spinner/Spinner";
 import { useYugenMessages } from "../YugenProvider/context";
-import { sonnerMessages } from "./messages";
+import { sonnerMessagesEn } from "./messages";
 import { cn } from "@/lib/cn";
 
-export { sonnerMessages, sonnerMessagesEn, type SonnerMessages } from "./messages";
+export { sonnerMessages, sonnerMessagesVi, sonnerMessagesEn, type SonnerMessages } from "./messages";
 
 /**
  * Sonner — thông báo xếp chồng kiểu Sonner (shadcn/ui): toast mới nhất ở trước, toast cũ ló ra phía sau; trỏ chuột hoặc
@@ -252,7 +252,7 @@ export function Sonner({
 }: SonnerProps) {
   const all = React.useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const items = all.filter((t) => t.sonnerId === sonnerId);
-  const msg = useYugenMessages("sonner", sonnerMessages);
+  const msg = useYugenMessages("sonner", sonnerMessagesEn);
   const [hovered, setHovered] = React.useState(false);
   const [focused, setFocused] = React.useState(false);
   const [heights, setHeights] = React.useState<Record<string, number>>({});

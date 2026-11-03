@@ -94,3 +94,18 @@ export const optimisticListMessagesEn: OptimisticListMessages = {
   retry: "Retry",
   retryAltText: "Retry the last action",
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `loadingOverlayMessagesEn` (mặc định). `loadingOverlayMessages` giữ cho code cũ. */
+export const loadingOverlayMessagesVi = loadingOverlayMessages;
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `pageProgressMessagesEn` (mặc định). `pageProgressMessages` giữ cho code cũ. */
+export const pageProgressMessagesVi = pageProgressMessages;
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `errorStateMessagesEn` (mặc định). `errorStateMessages` giữ cho code cũ. */
+export const errorStateMessagesVi = errorStateMessages;
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `asyncContentMessagesEn` (mặc định). `asyncContentMessages` giữ cho code cũ. */
+export const asyncContentMessagesVi = asyncContentMessages;
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `optimisticListMessagesEn` (mặc định). `optimisticListMessages` giữ cho code cũ. */
+export const optimisticListMessagesVi = optimisticListMessages;

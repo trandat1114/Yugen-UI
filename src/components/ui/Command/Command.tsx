@@ -5,9 +5,9 @@ import { Search20Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { Dialog, DialogSurface } from "../Dialog/Dialog";
 import { useYugenMessages } from "../YugenProvider/context";
-import { commandMessages } from "./messages";
+import { commandMessagesEn } from "./messages";
 
-export { commandMessages, commandMessagesEn, type CommandMessages } from "./messages";
+export { commandMessages, commandMessagesVi, commandMessagesEn, type CommandMessages } from "./messages";
 
 /** Command (shadcn/ui + cmdk, giao diện Fluent 2 Menu) — https://ui.shadcn.com/docs/components/command */
 export const Command = React.forwardRef<
@@ -157,7 +157,7 @@ export function CommandDialog({
   children,
   ...props
 }: CommandDialogProps) {
-  const msg = useYugenMessages("command", commandMessages);
+  const msg = useYugenMessages("command", commandMessagesEn);
   return (
     <Dialog open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
       <DialogSurface aria-describedby={undefined} className="max-w-140 gap-0 overflow-hidden p-0">

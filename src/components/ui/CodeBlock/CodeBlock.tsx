@@ -18,16 +18,16 @@ import { Badge } from "../Badge/Badge";
 import { Button } from "../Button/Button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../Tabs/Tabs";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
-import { codeBlockMessages, codeTabsMessages, copyCodeButtonMessages, packageManagerTabsMessages } from "./messages";
+import { codeBlockMessagesEn, codeTabsMessagesEn, copyCodeButtonMessagesEn, packageManagerTabsMessagesEn } from "./messages";
 
 export {
-  copyCodeButtonMessages,
+  copyCodeButtonMessages, copyCodeButtonMessagesVi,
   copyCodeButtonMessagesEn,
-  codeBlockMessages,
+  codeBlockMessages, codeBlockMessagesVi,
   codeBlockMessagesEn,
-  codeTabsMessages,
+  codeTabsMessages, codeTabsMessagesVi,
   codeTabsMessagesEn,
-  packageManagerTabsMessages,
+  packageManagerTabsMessages, packageManagerTabsMessagesVi,
   packageManagerTabsMessagesEn,
   type CopyCodeButtonMessages,
   type CodeBlockMessages,
@@ -408,7 +408,7 @@ export interface CopyCodeButtonProps extends Omit<React.ButtonHTMLAttributes<HTM
 
 export const CopyCodeButton = React.forwardRef<HTMLButtonElement, CopyCodeButtonProps>(
   ({ text, showLabel = true, className, onClick, ...props }, ref) => {
-    const msg = useYugenMessages("copyCodeButton", copyCodeButtonMessages);
+    const msg = useYugenMessages("copyCodeButton", copyCodeButtonMessagesEn);
     const { copy, copied } = useClipboard();
 
     return (
@@ -502,7 +502,7 @@ export const CodeBlock = React.forwardRef<HTMLDivElement, CodeBlockProps>(
     ref,
   ) => {
     const preId = React.useId();
-    const msg = useYugenMessages("codeBlock", codeBlockMessages);
+    const msg = useYugenMessages("codeBlock", codeBlockMessagesEn);
     const themeProps = useCodeThemeProps(appearance);
     const [wrap, setWrap] = useControllableState({ value: wrapProp, defaultValue: defaultWrap, onChange: onWrapChange });
     const [expanded, setExpanded] = React.useState(false);
@@ -720,7 +720,7 @@ export const CodeTabs = React.forwardRef<HTMLDivElement, CodeTabsProps>(
     ref,
   ) => {
     const themeProps = useCodeThemeProps(appearance);
-    const msg = useYugenMessages("codeTabs", codeTabsMessages);
+    const msg = useYugenMessages("codeTabs", codeTabsMessagesEn);
     const [active, setActive] = useControllableState({ value, defaultValue: defaultValue ?? files[0]?.name ?? "", onChange: onValueChange });
     const activeFile = files.find((f) => f.name === active) ?? files[0];
 
@@ -819,7 +819,7 @@ export interface PackageManagerTabsProps extends Omit<React.HTMLAttributes<HTMLD
 export const PackageManagerTabs = React.forwardRef<HTMLDivElement, PackageManagerTabsProps>(
   ({ packages, dev, command = "install", managers = PACKAGE_MANAGERS, appearance = "auto", size, className, ...props }, ref) => {
     const themeProps = useCodeThemeProps(appearance);
-    const msg = useYugenMessages("packageManagerTabs", packageManagerTabsMessages);
+    const msg = useYugenMessages("packageManagerTabs", packageManagerTabsMessagesEn);
     const [stored, setStored] = useLocalStorage<PackageManager>(PM_STORAGE_KEY, "npm", PM_STORAGE);
     const active = managers.includes(stored) ? stored : managers[0];
     const commandText = packageManagerCommand(active, packages, { dev, command });

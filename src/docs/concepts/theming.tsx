@@ -233,9 +233,9 @@ export default function Page() {
               {
                 name: "messages",
                 type: "YugenMessagesInput",
-                description: "Đổi chuỗi có sẵn của component theo namespace, vd. messagesEn cho tiếng Anh. Provider lồng kế thừa rồi ghi đè tiếp. Xem Ngôn ngữ giao diện.",
+                description: "Đổi chuỗi có sẵn của component (mặc định tiếng Anh) theo namespace, vd. messagesVi cho tiếng Việt. Provider lồng kế thừa rồi ghi đè tiếp. Xem Ngôn ngữ giao diện.",
               },
-              { name: "locale", type: "string", defaultValue: `"vi-VN"`, description: "Locale Intl cho ngày, giờ và số trong component. Provider lồng kế thừa provider ngoài." },
+              { name: "locale", type: "string", defaultValue: `"en-US"`, description: "Locale Intl cho ngày, giờ và số trong component. Provider lồng kế thừa provider ngoài." },
               { name: "className, …div props", type: "HTMLAttributes<HTMLDivElement>", description: "Truyền xuống thẻ div bao ngoài (ref được forward)." },
             ]}
           />

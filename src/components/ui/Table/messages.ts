@@ -21,3 +21,6 @@ export const tableMessagesEn: TableMessages = {
   selectAllRows: "Select all rows",
   selectRow: "Select row",
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `tableMessagesEn` (mặc định). `tableMessages` giữ cho code cũ. */
+export const tableMessagesVi = tableMessages;

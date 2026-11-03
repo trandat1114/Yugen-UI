@@ -4,9 +4,9 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { Open16Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
-import { linkMessages } from "./messages";
+import { linkMessagesEn } from "./messages";
 
-export { linkMessages, linkMessagesEn, type LinkMessages } from "./messages";
+export { linkMessages, linkMessagesVi, linkMessagesEn, type LinkMessages } from "./messages";
 
 /** Fluent 2 Link — https://fluent2.microsoft.design/components/web/react/core/link/usage */
 const linkVariants = cva(
@@ -41,7 +41,7 @@ export interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement>
 
 export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
   ({ className, appearance, inline, disabled, external, asChild, href, target, rel, onClick, children, ...props }, ref) => {
-    const msg = useYugenMessages("link", linkMessages);
+    const msg = useYugenMessages("link", linkMessagesEn);
     const shared = {
       href: disabled ? undefined : href,
       target: external ? (target ?? "_blank") : target,

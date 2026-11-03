@@ -11,12 +11,12 @@ import {
 import { cn } from "@/lib/cn";
 import { Avatar } from "../Avatar/Avatar";
 import { useYugenMessages } from "../YugenProvider/context";
-import { messageBubbleMessages, typingIndicatorMessages } from "./messages";
+import { messageBubbleMessagesEn, typingIndicatorMessagesEn } from "./messages";
 
 export {
-  messageBubbleMessages,
+  messageBubbleMessages, messageBubbleMessagesVi,
   messageBubbleMessagesEn,
-  typingIndicatorMessages,
+  typingIndicatorMessages, typingIndicatorMessagesVi,
   typingIndicatorMessagesEn,
   type MessageBubbleMessages,
   type TypingIndicatorMessages,
@@ -98,7 +98,7 @@ export const MessageBubble = React.memo(
       },
       ref,
     ) => {
-      const msg = useYugenMessages("messageBubble", messageBubbleMessages);
+      const msg = useYugenMessages("messageBubble", messageBubbleMessagesEn);
       const contextPosition = React.useContext(MessageGroupContext);
       const position = groupPosition ?? contextPosition ?? "single";
       const outgoing = side === "outgoing";
@@ -282,7 +282,7 @@ const DOT_DELAY = ["", "[animation-delay:var(--durationFast)]", "[animation-dela
 
 export const TypingIndicator = React.forwardRef<HTMLDivElement, TypingIndicatorProps>(
   ({ author, avatar, avatarSrc, label, className, ...props }, ref) => {
-    const msg = useYugenMessages("typingIndicator", typingIndicatorMessages);
+    const msg = useYugenMessages("typingIndicator", typingIndicatorMessagesEn);
     const avatarNode = avatar !== undefined ? avatar : author ? <Avatar name={author} src={avatarSrc} size={32} color="colorful" /> : null;
     return (
       <div ref={ref} role="status" className={cn("mt-3 flex w-full items-end gap-2 first:mt-0", className)} {...props}>

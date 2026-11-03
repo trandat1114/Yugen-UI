@@ -1,7 +1,10 @@
+import { messagesVi } from "yugen-ui";
 import type { Content } from "./types";
 
 const vi: Content = {
   lang: "vi",
+
+  messages: messagesVi,
   appName: "Ứng dụng của tôi",
   nav: { label: "Liên kết", docs: "Tài liệu", appearance: "Giao diện", mode: "Chế độ", brand: "Thương hiệu" },
   themes: { light: "Sáng", dark: "Tối", "high-contrast": "Tương phản cao" },

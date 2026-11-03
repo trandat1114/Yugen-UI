@@ -3,9 +3,9 @@ import { ArrowSortDown20Regular, ArrowSortUp20Regular } from "@fluentui/react-ic
 import { cn } from "@/lib/cn";
 import { Checkbox } from "../Checkbox/Checkbox";
 import { useYugenMessages } from "../YugenProvider/context";
-import { tableMessages } from "./messages";
+import { tableMessagesEn } from "./messages";
 
-export { tableMessages, tableMessagesEn, type TableMessages } from "./messages";
+export { tableMessages, tableMessagesVi, tableMessagesEn, type TableMessages } from "./messages";
 
 /** Fluent 2 Table — https://fluent2.microsoft.design/components/web/react/core/table/usage */
 export type TableSize = "extra-small" | "small" | "medium";
@@ -235,7 +235,7 @@ export interface TableSelectionCellProps extends Omit<React.TdHTMLAttributes<HTM
 export const TableSelectionCell = React.forwardRef<HTMLTableCellElement, TableSelectionCellProps>(
   ({ checked = false, onCheckedChange, subtle = false, disabled, className, "aria-label": ariaLabel, ...props }, ref) => {
     const inHeader = React.useContext(TableHeaderContext);
-    const msg = useYugenMessages("table", tableMessages);
+    const msg = useYugenMessages("table", tableMessagesEn);
     const Cell = (inHeader ? "th" : "td") as "td";
     return (
       <Cell

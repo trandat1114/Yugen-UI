@@ -6,7 +6,7 @@ import {
   ReOrderDotsVertical16Regular,
 } from "@fluentui/react-icons";
 import { CounterBadge } from "../CounterBadge/CounterBadge";
-import { dataGridMessages } from "../DataGrid/messages";
+import { dataGridMessagesEn } from "../DataGrid/messages";
 import {
   getOrderedColumns,
   useDataGridColumnVisibility,
@@ -66,7 +66,7 @@ function DataGridColumnPickerImpl<C extends DataGridColumnVisibilityItem>(
   }: DataGridColumnPickerProps<C>,
   ref: React.ForwardedRef<HTMLButtonElement>,
 ) {
-  const msg = useYugenMessages("dataGrid", dataGridMessages);
+  const msg = useYugenMessages("dataGrid", dataGridMessagesEn);
   const toolbar = React.useContext(ToolbarContext);
   const countId = React.useId();
   const ordered = getOrderedColumns(columns, columnOrder);

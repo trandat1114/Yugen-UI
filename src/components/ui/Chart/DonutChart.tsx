@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
-import { chartMessages } from "./messages";
+import { chartMessagesEn } from "./messages";
 import { ChartContainer, ChartLegend, ChartPatterns, ChartTable, ChartTooltip } from "./ChartParts";
 import {
   chartUid,
@@ -81,7 +81,7 @@ export const DonutChart = React.forwardRef<HTMLElement, DonutChartProps>(functio
 ) {
   const yugen = useYugen();
   const locale = localeProp ?? yugen.locale;
-  const msg = useYugenMessages("chart", chartMessages);
+  const msg = useYugenMessages("chart", chartMessagesEn);
   const otherLabel = otherLabelProp ?? msg.other;
   const centerLabel = centerLabelProp ?? msg.total;
   const indexLabel = indexLabelProp ?? msg.group;

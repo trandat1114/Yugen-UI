@@ -1,9 +1,9 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
-import { skeletonMessages } from "./messages";
+import { skeletonMessagesEn } from "./messages";
 
-export { skeletonMessages, skeletonMessagesEn, type SkeletonMessages } from "./messages";
+export { skeletonMessages, skeletonMessagesVi, skeletonMessagesEn, type SkeletonMessages } from "./messages";
 
 /** Fluent 2 Skeleton — https://fluent2.microsoft.design/components/web/react/core/skeleton/usage */
 type SkeletonAnimation = "wave" | "pulse";
@@ -26,7 +26,7 @@ const SkeletonRootContext = React.createContext(false);
 
 export const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
   ({ animation = "wave", appearance = "opaque", className, ...props }, ref) => {
-    const msg = useYugenMessages("skeleton", skeletonMessages);
+    const msg = useYugenMessages("skeleton", skeletonMessagesEn);
     return (
       <SkeletonContext.Provider value={{ animation, appearance }}>
         <SkeletonRootContext.Provider value>

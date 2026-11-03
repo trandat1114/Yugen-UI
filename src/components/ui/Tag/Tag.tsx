@@ -5,9 +5,9 @@ import { useDirection } from "@radix-ui/react-direction";
 import { Dismiss12Regular, Dismiss16Regular, Dismiss20Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
-import { tagMessages } from "./messages";
+import { tagMessagesEn } from "./messages";
 
-export { tagMessages, tagMessagesEn, type TagMessages } from "./messages";
+export { tagMessages, tagMessagesVi, tagMessagesEn, type TagMessages } from "./messages";
 
 export type TagAppearance = "filled" | "outline" | "brand";
 export type TagSize = "extra-small" | "small" | "medium";
@@ -141,7 +141,7 @@ export const Tag = React.forwardRef<HTMLElement, TagProps>(
     ref,
   ) => {
     const { group, size, appearance, disabled } = useTagContext({ size: sizeProp, appearance: appearanceProp, disabled: disabledProp });
-    const msg = useYugenMessages("tag", tagMessages);
+    const msg = useYugenMessages("tag", tagMessagesEn);
     const classes = cn(
       tagVariants({ appearance, size, shape, disabled }),
       media && MEDIA_PADDING[size],
@@ -236,7 +236,7 @@ export const InteractionTag = React.forwardRef<HTMLButtonElement, InteractionTag
     ref,
   ) => {
     const { group, size, appearance, disabled } = useTagContext({ size: sizeProp, appearance: appearanceProp, disabled: disabledProp });
-    const msg = useYugenMessages("tag", tagMessages);
+    const msg = useYugenMessages("tag", tagMessagesEn);
     const DismissIcon = DISMISS_ICON[size];
     const base = tagVariants({ appearance, size, shape, disabled });
     const label = dismissLabel ?? (typeof children === "string" ? msg.dismissNamed(children) : msg.dismiss);

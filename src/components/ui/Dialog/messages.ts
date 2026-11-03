@@ -13,3 +13,6 @@ declare module "../YugenProvider/context" {
 export const dialogMessages: DialogMessages = { close: "Đóng" };
 
 export const dialogMessagesEn: DialogMessages = { close: "Close" };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `dialogMessagesEn` (mặc định). `dialogMessages` giữ cho code cũ. */
+export const dialogMessagesVi = dialogMessages;

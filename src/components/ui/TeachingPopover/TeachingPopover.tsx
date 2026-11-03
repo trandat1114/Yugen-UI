@@ -6,9 +6,9 @@ import { cn } from "@/lib/cn";
 import { Button } from "../Button/Button";
 import { Popover, PopoverClose, PopoverSurface, PopoverTrigger, type PopoverSurfaceProps } from "../Popover/Popover";
 import { useYugenMessages } from "../YugenProvider/context";
-import { teachingPopoverMessages } from "./messages";
+import { teachingPopoverMessagesEn } from "./messages";
 
-export { teachingPopoverMessages, teachingPopoverMessagesEn, type TeachingPopoverMessages } from "./messages";
+export { teachingPopoverMessages, teachingPopoverMessagesVi, teachingPopoverMessagesEn, type TeachingPopoverMessages } from "./messages";
 
 export type TeachingPopoverAppearance = "normal" | "brand";
 
@@ -86,7 +86,7 @@ export function TeachingPopoverHeader({
   ...props
 }: TeachingPopoverHeaderProps) {
   const brand = useTeachingAppearance() === "brand";
-  const msg = useYugenMessages("teachingPopover", teachingPopoverMessages);
+  const msg = useYugenMessages("teachingPopover", teachingPopoverMessagesEn);
   return (
     <div
       className={cn(
@@ -227,7 +227,7 @@ export function TeachingPopoverCarousel({
   children,
   ...props
 }: TeachingPopoverCarouselProps) {
-  const msg = useYugenMessages("teachingPopover", teachingPopoverMessages);
+  const msg = useYugenMessages("teachingPopover", teachingPopoverMessagesEn);
   const steps = React.Children.toArray(children);
   const count = steps.length;
   const [rawStep, go] = useControllableState({ value: step, defaultValue: defaultStep, onChange: onStepChange });

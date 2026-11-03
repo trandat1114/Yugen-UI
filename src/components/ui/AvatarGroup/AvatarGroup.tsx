@@ -4,9 +4,9 @@ import { cn } from "@/lib/cn";
 import { Avatar, type AvatarProps } from "../Avatar/Avatar";
 import { Popover, PopoverSurface, PopoverTrigger } from "../Popover/Popover";
 import { useYugenMessages } from "../YugenProvider/context";
-import { avatarGroupMessages } from "./messages";
+import { avatarGroupMessagesEn } from "./messages";
 
-export { avatarGroupMessages, avatarGroupMessagesEn, type AvatarGroupMessages } from "./messages";
+export { avatarGroupMessages, avatarGroupMessagesVi, avatarGroupMessagesEn, type AvatarGroupMessages } from "./messages";
 
 /** Fluent 2 AvatarGroup — https://fluent2.microsoft.design/components/web/react/core/avatargroup/usage */
 export type AvatarGroupSize = 20 | 24 | 32 | 40 | 48 | 64 | 96;
@@ -99,7 +99,7 @@ export const AvatarGroup = React.forwardRef<HTMLDivElement, AvatarGroupProps>(
     { layout = "spread", size = 32, maxAvatars = 5, overflowIndicator = "count", overflowLabel, className, children, ...props },
     ref,
   ) => {
-    const msg = useYugenMessages("avatarGroup", avatarGroupMessages);
+    const msg = useYugenMessages("avatarGroup", avatarGroupMessagesEn);
     const items = React.Children.toArray(children).filter(React.isValidElement) as React.ReactElement<AvatarGroupItemProps>[];
     const isPie = layout === "pie";
     const max = Math.max(1, maxAvatars);

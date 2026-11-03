@@ -13,9 +13,9 @@ import { fieldAppearanceClass, type FieldAppearance } from "@/components/ui/Sele
 import { cmdkGroupClass, cmdkOptionClass, normalizeSearchText } from "@/components/ui/Combobox/Combobox";
 import { Tag, TagGroup, type TagAppearance, type TagShape, type TagSize } from "@/components/ui/Tag/Tag";
 import { Sortable, SortableItem } from "@/components/ui/Sortable/Sortable";
-import { tagPickerMessages } from "./messages";
+import { tagPickerMessagesEn } from "./messages";
 
-export { tagPickerMessages, tagPickerMessagesEn, type TagPickerMessages } from "./messages";
+export { tagPickerMessages, tagPickerMessagesVi, tagPickerMessagesEn, type TagPickerMessages } from "./messages";
 
 export interface TagPickerOption {
   value: string;
@@ -86,7 +86,7 @@ export const TagPicker = React.forwardRef<HTMLInputElement, TagPickerProps>(
     },
     ref,
   ) => {
-    const msg = useYugenMessages("tagPicker", tagPickerMessages);
+    const msg = useYugenMessages("tagPicker", tagPickerMessagesEn);
     const items = React.useMemo<NormalizedOption[]>(
       () => options.map((o) => (typeof o === "string" ? { value: o, label: o } : { ...o, label: o.label ?? o.value })),
       [options],

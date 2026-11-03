@@ -1,10 +1,10 @@
 import * as React from "react";
 import { ArrowTrending16Regular, ArrowTrendingDown16Regular, Subtract16Regular } from "@fluentui/react-icons";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
-import { statMessages } from "./messages";
+import { statMessagesEn } from "./messages";
 import { cn } from "@/lib/cn";
 
-export { statMessages, statMessagesEn, type StatMessages } from "./messages";
+export { statMessages, statMessagesVi, statMessagesEn, type StatMessages } from "./messages";
 
 /** Tuỳ chọn Intl.NumberFormat, hoặc hàm tự định dạng. */
 export type StatNumberFormat = Intl.NumberFormatOptions | ((value: number) => string);
@@ -67,7 +67,7 @@ export const Stat = React.forwardRef<HTMLDivElement, StatProps>(function Stat(
 ) {
   const yugen = useYugen();
   const locale = localeProp ?? yugen.locale;
-  const msg = useYugenMessages("stat", statMessages);
+  const msg = useYugenMessages("stat", statMessagesEn);
   const valueText =
     typeof value === "number"
       ? formatNumber(

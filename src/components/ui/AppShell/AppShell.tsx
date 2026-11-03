@@ -17,9 +17,9 @@ import {
   type AppShellScroll,
   type SidebarCollapsible,
 } from "./context";
-import { appShellMessages } from "./messages";
+import { appShellMessagesEn } from "./messages";
 
-export { appShellMessages, appShellMessagesEn, type AppShellMessages } from "./messages";
+export { appShellMessages, appShellMessagesVi, appShellMessagesEn, type AppShellMessages } from "./messages";
 export type { AppShellBreakpoint, AppShellLayout, AppShellScroll } from "./context";
 
 /**
@@ -175,7 +175,7 @@ export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
     },
     ref,
   ) => {
-    const msg = useYugenMessages("appShell", appShellMessages);
+    const msg = useYugenMessages("appShell", appShellMessagesEn);
     const id = React.useId();
     const [saved] = React.useState(() =>
       persistKey && typeof document !== "undefined" ? readAppShellCookie(document.cookie, persistKey) : undefined,

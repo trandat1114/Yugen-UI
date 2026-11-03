@@ -17,3 +17,6 @@ export const inputOTPMessages: InputOTPMessages = {
 export const inputOTPMessagesEn: InputOTPMessages = {
   slot: (position, length) => `Character ${position} of ${length}`,
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `inputOTPMessagesEn` (mặc định). `inputOTPMessages` giữ cho code cũ. */
+export const inputOTPMessagesVi = inputOTPMessages;
