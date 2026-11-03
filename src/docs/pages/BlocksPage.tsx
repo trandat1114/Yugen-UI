@@ -58,7 +58,7 @@ function BlockCard({ path, meta, Component, source }: (typeof BLOCKS)[number]) {
   return (
     <article
       className={cn(
-        "flex min-w-0 flex-col self-start overflow-hidden rounded-3xlarge border border-stroke-2 bg-background-1 shadow-2 [contain-intrinsic-size:auto_none_auto_28rem] [content-visibility:auto]",
+        "flex min-w-0 flex-col self-start overflow-hidden rounded-3xlarge border border-stroke-2 bg-background-1 shadow-2 [contain-intrinsic-size:auto_none_auto_28rem] [content-visibility:auto] has-[.fixed]:[content-visibility:visible]",
         meta.wide && "lg:col-span-2",
       )}
     >

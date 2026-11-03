@@ -193,7 +193,8 @@ export function ExampleFrame({
  * Đang mở code: ô chiếm cả hàng của lưới để code không bị ép theo bề ngang một cột.
  * Demo nằm trong một stacking context riêng (`isolate`): z-index trong demo (header sticky của AppShell…) không phủ lên nút Copy.
  * `content-visibility: auto`: ô ngoài màn hình không tính style / layout / vẽ (#308). Mọi thứ nằm trong padding của ô nên
- * không bị cắt; chỗ giữ chỗ cao 11rem + padding = đúng min-h-56 của ô thường.
+ * không bị cắt; chỗ giữ chỗ cao 11rem + padding = đúng min-h-56 của ô thường. Demo có phần tử `fixed` (vùng thông báo
+ * của Sonner) thì không dùng: content-visibility biến ô thành khối chứa của `fixed`, vùng đó sẽ nằm trong ô.
  */
 export function ExampleTile({ example, demoLang }: { example: Example; demoLang?: string }) {
   const [showCode, setShowCode] = React.useState(false);
@@ -208,7 +209,7 @@ export function ExampleTile({ example, demoLang }: { example: Example; demoLang?
 
   return (
     <div className={cn("flex min-w-0 flex-col", (example.wide || showCode) && "md:col-span-2")}>
-      <div className="group/tile relative flex min-h-56 rounded-3xlarge border border-stroke-2 bg-background-3 p-5 [contain-intrinsic-size:auto_none_auto_11rem] [content-visibility:auto]">
+      <div className="group/tile relative flex min-h-56 rounded-3xlarge border border-stroke-2 bg-background-3 p-5 [contain-intrinsic-size:auto_none_auto_11rem] [content-visibility:auto] has-[.fixed]:[content-visibility:visible]">
         <div lang={example.lang ?? demoLang} className="isolate flex w-full min-w-0 flex-wrap content-center items-center justify-center gap-3">
           {example.render()}
         </div>
