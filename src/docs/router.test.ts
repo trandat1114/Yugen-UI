@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { docsPath, hrefOf, legacyHashTarget, localePathOf, parseHash, parseLocation, parsePath, pathOf, type Route } from "./router";
+import { docsLinkTarget, docsPath, hrefOf, legacyHashTarget, localePathOf, parseHash, parseLocation, parsePath, pathOf, type Route } from "./router";
 
 // Vitest chạy với BASE_URL "/" — bản build trên GitHub Pages chỉ khác tiền tố.
 const ROUTES: Route[] = [
@@ -70,5 +70,19 @@ describe("router (URL theo đường dẫn)", () => {
     expect(parseLocation("/en")).toEqual({ route: { kind: "home" }, lang: "en", legacy: true });
     // "english" không phải tiền tố cũ.
     expect(parseLocation("/english")).toEqual({ route: { kind: "home" }, lang: "en" });
+  });
+});
+
+describe("docsLinkTarget (nạp trước theo ý định, #305)", () => {
+  it("link tới trang docs → route + ngôn ngữ", () => {
+    expect(docsLinkTarget("/components/button")).toEqual({ route: { kind: "component", slug: "button" }, lang: "en" });
+    expect(docsLinkTarget("/vi/concepts/cli")).toEqual({ route: { kind: "concept", slug: "cli" }, lang: "vi" });
+    expect(docsLinkTarget("/")).toEqual({ route: { kind: "home" }, lang: "en" });
+  });
+
+  it("link ngoài, file và bản docs khác (next/, vX.Y/) → null", () => {
+    for (const href of ["https://github.com/trandat1114/Yugen-UI", "/next/components/button", "/v0.13/", "/og.jpg", "/r/button.json"]) {
+      expect(docsLinkTarget(href), href).toBeNull();
+    }
   });
 });
