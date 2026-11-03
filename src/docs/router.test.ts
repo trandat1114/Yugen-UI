@@ -25,10 +25,13 @@ describe("router (URL theo đường dẫn)", () => {
     expect(pathOf({ kind: "component", slug: "button" })).toBe("components/button");
   });
 
-  it("đường dẫn lạ về trang chủ", () => {
+  it("đường dẫn lạ là trang 404, giữ đường dẫn để đổi ngôn ngữ (#238)", () => {
     for (const path of ["/concepts", "/components/button/extra", "/nope", "/blocks/x"]) {
-      expect(parsePath(path)).toEqual({ kind: "home" });
+      expect(parsePath(path)).toEqual({ kind: "not-found", path: path.slice(1) });
     }
+    expect(parseLocation("/vi/nope")).toEqual({ route: { kind: "not-found", path: "nope" }, lang: "vi" });
+    expect(hrefOf({ kind: "not-found", path: "nope" }, "vi")).toBe("/vi/nope");
+    expect(hrefOf({ kind: "not-found", path: "nope" }, "en")).toBe("/nope");
   });
 
   it("link #/… cũ", () => {
@@ -55,7 +58,7 @@ describe("router (URL theo đường dẫn)", () => {
     expect(parseLocation("/vi/")).toEqual({ route: { kind: "home" }, lang: "vi" });
     expect(parseLocation("/vi")).toEqual({ route: { kind: "home" }, lang: "vi" });
     // "video" không phải tiền tố ngôn ngữ.
-    expect(parseLocation("/video")).toEqual({ route: { kind: "home" }, lang: "en" });
+    expect(parseLocation("/video")).toEqual({ route: { kind: "not-found", path: "video" }, lang: "en" });
     for (const lang of ["en", "vi"] as const) {
       for (const route of ROUTES) expect(parseLocation(hrefOf(route, lang))).toEqual({ route, lang });
     }
@@ -69,7 +72,7 @@ describe("router (URL theo đường dẫn)", () => {
     expect(parseLocation("/en/")).toEqual({ route: { kind: "home" }, lang: "en", legacy: true });
     expect(parseLocation("/en")).toEqual({ route: { kind: "home" }, lang: "en", legacy: true });
     // "english" không phải tiền tố cũ.
-    expect(parseLocation("/english")).toEqual({ route: { kind: "home" }, lang: "en" });
+    expect(parseLocation("/english")).toEqual({ route: { kind: "not-found", path: "english" }, lang: "en" });
   });
 });
 

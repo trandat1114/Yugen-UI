@@ -1,7 +1,7 @@
 import { Suspense, useCallback, useEffect, useState, type ReactNode } from "react";
-import { PageProgress, PageProgressFallback, YugenProvider } from "@/components/ui";
+import { ErrorBoundary, PageProgress, PageProgressFallback, YugenProvider } from "@/components/ui";
 import { useAppearance, type Appearance } from "@/hooks/useAppearance";
-import { docsPath, hrefOf, navigate, useDocsLocation } from "@/docs/router";
+import { docsPath, hrefOf, localePathOf, navigate, useDocsLocation } from "@/docs/router";
 import { Sidebar } from "@/docs/layout/Sidebar";
 import { AppearancePicker, TopBar } from "@/docs/layout/TopBar";
 import { dismissLanguageSuggestion, LanguageSuggestion } from "@/docs/layout/LanguageSuggestion";
@@ -10,7 +10,7 @@ import { AuthorLink } from "@/docs/AuthorLink";
 import { CONCEPT_BY_SLUG, CONCEPT_EN_PAGES } from "@/docs/concepts";
 import { loadLocale, LocaleProvider, useLocale, type Locale } from "@/docs/i18n";
 import { FallbackNotice } from "@/docs/i18n/FallbackNotice";
-import { DocumentMeta, fallbackOf } from "@/docs/seo";
+import { DocumentMeta, fallbackOf, resolveRoute } from "@/docs/seo";
 import { lazyPage } from "@/docs/lazyPage";
 import { preloadComponentDoc, retryComponentDoc } from "@/docs/registry";
 import { preloadNews } from "@/docs/news";
@@ -33,6 +33,7 @@ const ThemeDesignerPage = lazyPage(() => import("@/docs/pages/ThemeDesignerPage"
 const NewsPage = lazyPage(() => import("@/docs/pages/NewsPage").then((m) => m.NewsPage));
 const CommunityPage = lazyPage(() => import("@/docs/pages/CommunityPage").then((m) => m.CommunityPage));
 const ContributorsPage = lazyPage(() => import("@/docs/pages/ContributorsPage").then((m) => m.ContributorsPage));
+const NotFoundPage = lazyPage(() => import("@/docs/pages/NotFoundPage").then((m) => m.NotFoundPage));
 
 const PAGES = {
   home: HomePage,
@@ -45,6 +46,7 @@ const PAGES = {
   news: NewsPage,
   community: CommunityPage,
   contributors: ContributorsPage,
+  "not-found": NotFoundPage,
 } as const;
 
 const pageOf = (route: Route) => PAGES[route.kind];
@@ -54,7 +56,8 @@ const conceptPageOf = (slug: string, lang: Locale) => (lang === "en" && CONCEPT_
  * Nạp trước mọi phần nạp lười mà route cần (trang, nội dung khái niệm, demo, gói ngôn ngữ). main.tsx chờ hàm này rồi
  * mới render, nên HTML prerender được thay bằng trang hoàn chỉnh trong một lần. Lỗi mạng bỏ qua: trang tự nạp lại khi render.
  */
-export async function preloadRoute(route: Route, lang: Locale) {
+export async function preloadRoute(parsed: Route, lang: Locale) {
+  const route = resolveRoute(parsed);
   const tasks: Promise<unknown>[] = [loadLocale(lang), pageOf(route).preload()];
   if (route.kind === "concept") {
     const page = conceptPageOf(route.slug, lang);
@@ -75,7 +78,8 @@ export async function preloadRoute(route: Route, lang: Locale) {
  * Nạp trước trang người dùng sắp mở (trỏ / focus / chạm vào link, #305): chunk của trang, nội dung khái niệm, demo, gói
  * ngôn ngữ. Khác `preloadRoute`: lỗi mạng không được giữ lại, lần mở thật tự nạp lại.
  */
-export function prefetchRoute({ route, lang }: { route: Route; lang: Locale }) {
+export function prefetchRoute({ route: parsed, lang }: { route: Route; lang: Locale }) {
+  const route = resolveRoute(parsed);
   void loadLocale(lang).catch(() => {});
   pageOf(route).prefetch();
   if (route.kind === "concept") conceptPageOf(route.slug, lang)?.prefetch();
@@ -124,7 +128,10 @@ function Footer() {
 
 /** `path`: prerender ở Node (scripts/prerender.mjs) truyền đường dẫn thay cho `window.location`. */
 export default function App({ path }: { path?: string }) {
-  const { route, lang } = useDocsLocation(path);
+  const location = useDocsLocation(path);
+  const { lang } = location;
+  // Slug không tồn tại (component, khái niệm, nền tảng) cũng là trang 404 (#238).
+  const route = resolveRoute(location.route);
   const { theme, brand, dir, lang: savedLang, update } = useAppearance();
   const fallback = fallbackOf(route);
   const [navOpen, setNavOpen] = useState(false);
@@ -207,6 +214,8 @@ export default function App({ path }: { path?: string }) {
           <main className="mx-auto max-w-7xl px-4 md:px-12">
             <LanguageSuggestion onChoose={() => change({ lang: "vi" })} />
             {fallback && <FallbackNotice />}
+            {/* Lỗi nạp file sau khi deploy (tab cũ) hoặc lỗi render: trang trạng thái thay vì trang trắng; đổi trang thì thử lại. */}
+            <ErrorBoundary resetKeys={[localePathOf(route, lang)]}>
             <Suspense fallback={<PageProgressFallback />}>
               {route.kind === "home" && <HomePage />}
               {route.kind === "blocks" && <BlocksPage />}
@@ -218,7 +227,9 @@ export default function App({ path }: { path?: string }) {
               {route.kind === "concept" && <ConceptPage slug={route.slug} />}
               {route.kind === "foundation" && <FoundationsPage slug={route.slug} theme={tokenKey} />}
               {route.kind === "component" && <ComponentPage slug={route.slug} theme={theme} brand={brand} />}
+              {route.kind === "not-found" && <NotFoundPage path={route.path} onSearch={() => setPaletteOpen(true)} />}
             </Suspense>
+            </ErrorBoundary>
           </main>
           <Footer />
         </div>
