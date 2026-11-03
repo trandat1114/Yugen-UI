@@ -27,7 +27,7 @@ bị bỏ qua sẽ treo ở "Expected": khi đó chuyển sang lọc trong job t
 
 | Job | Chạy |
 |---|---|
-| Build · Node 22 / 24 / 26 | typecheck, lint:classes, các check:*, sync-templates, build lib + docs, pack, size |
+| Build · Node 24 / 26 | typecheck, lint:classes, các check:*, sync-templates, build lib + docs, pack, size |
 | Unit tests (React 19) | `npm test` |
 | React 18 | cài React 18.3 tạm thời → typecheck, test, build:lib |
 | E2E · shard 1/3 … 3/3 | `test:e2e --shard=n/3` song song (blob report; `test-results-n` khi lỗi) |

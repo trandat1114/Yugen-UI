@@ -104,7 +104,7 @@ export default function Page() {
             ]}
           />
           <P>
-            Nothing to install first: run it with <C>npx @yugen-ui/cli@latest</C> (or <C>pnpm dlx</C>, <C>yarn dlx</C>, <C>bunx</C>). Requires Node.js 22
+            Nothing to install first: run it with <C>npx @yugen-ui/cli@latest</C> (or <C>pnpm dlx</C>, <C>yarn dlx</C>, <C>bunx</C>). Requires Node.js 24
             or later.
           </P>
         </div>

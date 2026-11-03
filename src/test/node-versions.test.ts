@@ -27,13 +27,13 @@ function run(today: string) {
 }
 
 describe("node-versions", () => {
-  it("tháng 10/2026: 22, 24, 26; job một bản trên 24 cho tới khi 26 thành LTS", () => {
-    expect(run("2026-10-23")).toEqual({ matrix: [22, 24, 26], lts: 24 });
-    expect(run("2026-10-28")).toEqual({ matrix: [22, 24, 26], lts: 26 });
+  it("chỉ 2 bản LTS mới nhất: 26 vào ma trận (và job một bản) khi thành LTS, 22 ra", () => {
+    expect(run("2026-10-23")).toEqual({ matrix: [22, 24], lts: 24 });
+    expect(run("2026-10-28")).toEqual({ matrix: [24, 26], lts: 26 });
   });
 
-  it("bỏ bản EOL, thêm bản Current mới; bản lẻ (25) chỉ có khi còn hỗ trợ", () => {
-    expect(run("2026-03-01")).toEqual({ matrix: [20, 22, 24, 25], lts: 24 });
-    expect(run("2027-05-01")).toEqual({ matrix: [24, 26, 27], lts: 26 });
+  it("không chạy bản Current (27) hay bản lẻ (25); bản EOL ra khỏi ma trận", () => {
+    expect(run("2026-03-01")).toEqual({ matrix: [22, 24], lts: 24 });
+    expect(run("2027-05-01")).toEqual({ matrix: [24, 26], lts: 26 });
   });
 });

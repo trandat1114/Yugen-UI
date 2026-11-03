@@ -58,8 +58,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # LTS + Current đang được hỗ trợ (https://github.com/nodejs/Release); node-versions.yml mở PR khi lệch lịch.
-        node: [22, 24, 26]
+        # 2 bản LTS mới nhất (LTS_LINES trong scripts/node-versions.mjs); node-versions.yml mở PR khi lịch Node đổi.
+        node: [24, 26]
     steps:
       - uses: actions/checkout@v7
 
@@ -94,7 +94,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: 26
           cache: npm
 
       - run: npm ci
@@ -109,8 +109,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Cùng các bản Node như Build; engines của CLI: node >=22.
-        node: [22, 24, 26]
+        # Cùng các bản Node như Build.
+        node: [24, 26]
     steps:
       - uses: actions/checkout@v7
 
@@ -159,7 +159,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: 26
           cache: npm
 
       - run: npm ci
@@ -213,7 +213,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: 26
           cache: npm
 
       - run: npm ci
@@ -247,7 +247,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: 26
           cache: npm
 
       - run: npm ci
@@ -283,7 +283,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: 26
           cache: npm
 
       - run: npm ci
@@ -325,7 +325,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: 26
           cache: npm
 
       - run: npm ci

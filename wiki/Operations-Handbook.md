@@ -43,7 +43,7 @@ Protection for `next`, `release/*`, `canary` and `v*` tags: see [[Branching and 
 
 **Settings → Branches → Branch protection for `main`:**
 - Require a pull request before merging · Require approvals: 1 · Dismiss stale approvals
-- Require status checks: `Build · Node 22`, `Build · Node 24`, `Build · Node 26`, `Unit tests (React 19)`, `React 18`, `E2E (Playwright + axe)`
+- Require status checks: `Build · Node 24`, `Build · Node 26`, `Unit tests (React 19)`, `React 18`, `E2E (Playwright + axe)`
 - Require conversation resolution · Block force pushes · Do not allow deletions
 
 **Settings → General:** Allow squash merging (default) · Automatically delete head branches · Discussions: on.

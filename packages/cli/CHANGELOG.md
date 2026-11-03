@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- **Breaking:** requires Node.js 24 or newer. Yugen UI supports the two newest Node.js LTS lines (24 and 26 today).
 - Templates `starter`, `saas`, `blog`, `dashboard`, `ai-chat`, `admin`, `docs`, `store` and `landing` are built on
   `AppShell` from yugen-ui 0.14.0: collapsible sidebar (icon rail, Drawer on narrow screens), Ctrl+B / ⌘B, skip link.
 - Template `admin`: Board page (Kanban) with `Sortable`, saved on drop, rolled back with a toast when the request fails.
