@@ -69,7 +69,7 @@ jobs:
           cache: npm
 
       - run: npm ci
-      # typecheck dùng TypeScript 7 (bản native, `typescript-native`); `typescript` 6 chỉ còn cho JS API của script (#310).
+      # TypeScript 7 (bản native): typecheck, d.ts, và type checker cho check:props qua API đồng bộ của nó (#310).
       - run: npm run typecheck
       # Kết quả lint:classes theo từng class (scripts/canonical-classes.mjs): ~20 s khi tính mới, ~1 s khi có cache.
       # Khoá đổi khi CSS trong src, Tailwind (package-lock.json) hoặc script đổi — script tự kiểm tra lại khoá bên trong file.

@@ -33,10 +33,10 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "tailwindcss"
         update-types: ["version-update:semver-major"]
-      # `typescript` (6) giữ cho JS API mà vite.plugins.ts và scripts/check-props.ts dùng — TypeScript 7 (bản Go) chưa có.
-      # typecheck và build:lib chạy TypeScript 7 qua `typescript-native` (#310).
+      # TypeScript ghim theo bản vá (~7.0.x): scripts/check-props.ts dùng API "unstable" của TypeScript 7. Bản minor mới
+      # (7.1…) đi qua PR riêng để CI chạy lại check-props trước khi nhận.
       - dependency-name: "typescript"
-        versions: [">=7"]
+        update-types: ["version-update:semver-minor"]
 
   - package-ecosystem: npm
     directory: /packages/cli
