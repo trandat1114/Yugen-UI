@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="vi">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -45,11 +45,11 @@
         root.setAttribute("data-theme", t);
         root.setAttribute("data-brand", a.brand === "web" || a.brand === "teams" ? a.brand : "sakura");
         root.setAttribute("dir", a.dir === "rtl" ? "rtl" : "ltr");
-        // Trang prerender mang sẵn ngôn ngữ của nó (<html lang>, /en/… là tiếng Anh). Cùng thứ tự với src/main.tsx: ?lang=,
-        // rồi trang tiếng Anh, rồi lựa chọn đã lưu (trang tiếng Việt sẽ chuyển sang /en/ nếu đã chọn tiếng Anh).
+        // Trang prerender mang sẵn ngôn ngữ của nó (<html lang>, /vi/… là tiếng Việt, #277). Cùng thứ tự với src/main.tsx:
+        // ?lang=, rồi trang tiếng Việt, rồi lựa chọn đã lưu (trang tiếng Anh sẽ chuyển sang /vi/ nếu đã chọn tiếng Việt).
         var pre = root.hasAttribute("data-prerendered");
-        var pageLang = root.getAttribute("lang") === "en" ? "en" : "vi";
-        var lang = !q.get("lang") && pre && pageLang === "en" ? "en" : a.lang === "en" ? "en" : "vi";
+        var pageLang = root.getAttribute("lang") === "vi" ? "vi" : "en";
+        var lang = !q.get("lang") && pre && pageLang === "vi" ? "vi" : a.lang === "vi" ? "vi" : "en";
         root.setAttribute("lang", lang);
         // Độ rộng / dạng rail của sidebar (cùng key và giới hạn với src/docs/layout/sidebarLayout.ts).
         var s = {};

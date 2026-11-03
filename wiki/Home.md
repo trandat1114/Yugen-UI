@@ -4,8 +4,9 @@
 [trandat1114](https://github.com/trandat1114) tạo. Wiki này dành cho **người dùng nâng cao và người đóng góp**: kiến trúc,
 quy trình, cách debug, cách phát hành. Hướng dẫn dùng từng component nằm ở [trang docs](https://trandat1114.github.io/Yugen-UI/).
 
-> **English:** this wiki covers architecture, workflows and maintenance. Pages are written in Vietnamese; component docs
-> have an English mode at <https://trandat1114.github.io/Yugen-UI/?lang=en>. Questions in English are welcome in
+> **English:** this wiki covers architecture, workflows and maintenance. Pages are written in Vietnamese (English
+> versions are planned, #276); the component docs are in English at <https://trandat1114.github.io/Yugen-UI/>, with
+> Vietnamese under `/vi/`. Questions in English are welcome in
 > [Discussions](https://github.com/trandat1114/Yugen-UI/discussions).
 
 ## Bắt đầu từ đâu

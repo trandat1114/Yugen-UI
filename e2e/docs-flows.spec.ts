@@ -18,18 +18,19 @@ test("Ctrl K mở bảng lệnh, gõ để tìm, Enter chuyển trang", async ({
 });
 
 test("ngôn ngữ và chế độ tối còn giữ sau khi tải lại", async ({ page }) => {
-  await openDocs(page, "/");
-  await page.getByRole("button", { name: /English/ }).click();
-  await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  await openDocs(page, "/", { lang: "en" });
+  await page.getByRole("button", { name: /Tiếng Việt/ }).click();
+  await expect(page.locator("html")).toHaveAttribute("lang", "vi");
 
-  await page.getByRole("button", { name: "Appearance" }).click();
-  await page.getByRole("radio", { name: "Dark" }).click();
+  await page.getByRole("button", { name: "Giao diện" }).click();
+  await page.getByRole("radio", { name: "Tối" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
 
-  // Tải lại không kèm ?theme / ?lang: giá trị lấy từ localStorage.
+  // Tải lại không kèm ?theme / ?lang: giá trị lấy từ localStorage, trang tiếng Anh ở gốc chuyển sang /vi/.
   await page.goto("/", { waitUntil: "domcontentloaded" });
   await waitForDocsReady(page);
-  await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  await expect(page).toHaveURL(/\/vi\/$/);
+  await expect(page.locator("html")).toHaveAttribute("lang", "vi");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
 });
 
@@ -150,47 +151,106 @@ test.describe("Sidebar kéo được độ rộng, thu về rail (#46)", () => {
   });
 });
 
+test.describe("trình duyệt tiếng Việt trên bản tiếng Anh: gợi ý một lần (#277)", () => {
+  test.use({ locale: "vi-VN" });
+
+  test("bấm gợi ý sang bản tiếng Việt và nhớ lựa chọn", async ({ page }) => {
+    await openDocs(page, "/components/button", { lang: "en" }, { suggest: true });
+    const suggestion = page.getByText("Trang này có bản tiếng Việt.");
+    await expect(suggestion).toBeVisible();
+    await page.getByRole("button", { name: "Xem bằng tiếng Việt" }).click();
+    await expect(page).toHaveURL(/\/vi\/components\/button\?/);
+    await expect(suggestion).toHaveCount(0);
+    await page.goto("/concepts/cli", { waitUntil: "domcontentloaded" });
+    await expect(page).toHaveURL(/\/vi\/concepts\/cli$/);
+  });
+
+  test("Giữ tiếng Anh: không gợi ý lại", async ({ page }) => {
+    await openDocs(page, "/", { lang: "en" }, { suggest: true });
+    await page.getByRole("button", { name: "Giữ tiếng Anh" }).click();
+    await expect(page.getByText("Trang này có bản tiếng Việt.")).toHaveCount(0);
+    await page.reload();
+    await waitForDocsReady(page);
+    expect(new URL(page.url()).pathname).toBe("/");
+    await expect(page.getByText("Trang này có bản tiếng Việt.")).toHaveCount(0);
+  });
+});
+
+test.describe("trình duyệt tiếng Anh", () => {
+  test.use({ locale: "en-US" });
+
+  test("không có gợi ý tiếng Việt", async ({ page }) => {
+    await openDocs(page, "/", { lang: "en" }, { suggest: true });
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await expect(page.getByText("Trang này có bản tiếng Việt.")).toHaveCount(0);
+  });
+});
+
 test.describe("URL theo đường dẫn (#113)", () => {
-  test("link #/… cũ chuyển sang đường dẫn, ?lang=en sang bản /en/", async ({ page }) => {
+  test("link #/… cũ chuyển sang đường dẫn, ?lang= sang đúng bản (#277)", async ({ page }) => {
     await page.goto("/?theme=dark&lang=en#/components/combobox", { waitUntil: "domcontentloaded" });
-    await expect(page).toHaveURL(/\/en\/components\/combobox\?theme=dark$/);
+    await expect(page).toHaveURL(/\/components\/combobox\?theme=dark$/);
+    expect(new URL(page.url()).pathname).toBe("/components/combobox");
     await expect(page.getByRole("heading", { level: 1, name: "Combobox" })).toBeVisible();
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await page.goto("/?lang=vi#/components/combobox", { waitUntil: "domcontentloaded" });
+    await expect(page).toHaveURL(/\/vi\/components\/combobox$/);
+    await expect(page.locator("html")).toHaveAttribute("lang", "vi");
   });
 
-  test("đổi ngôn ngữ sang URL /en/, link nội bộ giữ ngôn ngữ, lựa chọn được nhớ (#123)", async ({ page }) => {
-    await openDocs(page, "/components/button");
-    await page.getByRole("button", { name: /English/ }).click();
-    await expect(page).toHaveURL(/\/en\/components\/button\?/);
-    await expect(page.locator('main a[href="/en/"]').first()).toBeVisible();
-    // Mở link tiếng Việt khi đã chọn tiếng Anh → sang bản /en/.
+  test("URL /en/… của docs ≤ 0.13 mở đúng trang tiếng Anh ở URL mới (#277)", async ({ page }) => {
+    await page.goto("/en/components/button?theme=dark#props", { waitUntil: "domcontentloaded" });
+    await expect(page).toHaveURL(/\/components\/button\?theme=dark#props$/);
+    expect(new URL(page.url()).pathname).toBe("/components/button");
+    await expect(page.getByRole("heading", { level: 1, name: "Button" })).toBeVisible();
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  });
+
+  test("đổi ngôn ngữ sang URL /vi/, link nội bộ giữ ngôn ngữ, lựa chọn được nhớ (#123, #277)", async ({ page }) => {
+    await openDocs(page, "/components/button", { lang: "en" });
+    await page.getByRole("button", { name: /Tiếng Việt/ }).click();
+    await expect(page).toHaveURL(/\/vi\/components\/button\?/);
+    await expect(page.locator('main a[href="/vi/"]').first()).toBeVisible();
+    // Mở link tiếng Anh (không tiền tố) khi đã chọn tiếng Việt → sang bản /vi/.
     await page.goto("/concepts/cli", { waitUntil: "domcontentloaded" });
-    await expect(page).toHaveURL(/\/en\/concepts\/cli$/);
+    await expect(page).toHaveURL(/\/vi\/concepts\/cli$/);
     await expect(page.getByRole("heading", { level: 1, name: "@yugen-ui/cli" })).toBeVisible();
+    // Chọn lại tiếng Anh: URL không tiền tố.
+    await page.getByRole("button", { name: /English/ }).click();
+    await expect(page).toHaveURL(/\/concepts\/cli$/);
+    expect(new URL(page.url()).pathname).toBe("/concepts/cli");
   });
 
-  test("trang tiếng Anh prerender có canonical riêng và hreflang", async ({ page }) => {
+  test("trang prerender hai ngôn ngữ có canonical riêng và hreflang; /en/… cũ chuyển hướng không cần JS của app (#277)", async ({ page }) => {
     test.skip(process.env.YUGEN_E2E_DEV === "1", "dev server không prerender");
     await page.route(/\/assets\/[^/]+\.js(\?.*)?$/, (route) => route.abort());
-    await page.goto("/en/concepts/cli", { waitUntil: "domcontentloaded" });
-    await expect(page.locator("html")).toHaveAttribute("lang", "en");
-    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://trandat1114.github.io/Yugen-UI/en/concepts/cli");
-    await expect(page.locator('link[hreflang="vi"]')).toHaveAttribute("href", "https://trandat1114.github.io/Yugen-UI/concepts/cli");
+    const site = "https://trandat1114.github.io/Yugen-UI/";
+    await page.goto("/vi/concepts/cli", { waitUntil: "domcontentloaded" });
+    await expect(page.locator("html")).toHaveAttribute("lang", "vi");
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", `${site}vi/concepts/cli`);
+    await expect(page.locator('link[hreflang="en"]')).toHaveAttribute("href", `${site}concepts/cli`);
+    await expect(page.locator('link[hreflang="x-default"]')).toHaveAttribute("href", `${site}concepts/cli`);
     // Foundations song ngữ (#138): canonical riêng, có hreflang.
-    await page.goto("/en/foundations/color", { waitUntil: "domcontentloaded" });
-    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://trandat1114.github.io/Yugen-UI/en/foundations/color");
-    await expect(page.locator('link[hreflang="vi"]')).toHaveAttribute("href", "https://trandat1114.github.io/Yugen-UI/foundations/color");
-    // Button đã dịch: canonical riêng.
-    await page.goto("/en/components/button", { waitUntil: "domcontentloaded" });
-    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://trandat1114.github.io/Yugen-UI/en/components/button");
+    await page.goto("/foundations/color", { waitUntil: "domcontentloaded" });
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", `${site}foundations/color`);
+    await expect(page.locator('link[hreflang="vi"]')).toHaveAttribute("href", `${site}vi/foundations/color`);
+    // URL cũ: trang chuyển hướng tĩnh (noindex, canonical về URL mới), giữ ?query và #mục.
+    const response = await page.request.get("/en/components/button");
+    const stub = await response.text();
+    expect(stub).toContain('<meta name="robots" content="noindex" />');
+    expect(stub).toContain(`<link rel="canonical" href="${site}components/button" />`);
+    await page.goto("/en/components/button?theme=dark#props", { waitUntil: "domcontentloaded" });
+    await expect(page).toHaveURL(/\/components\/button\?theme=dark#props$/);
+    expect(new URL(page.url()).pathname).toBe("/components/button");
   });
 
   test("bấm link nội bộ đổi trang không tải lại, Back quay về", async ({ page }) => {
     await openDocs(page, "/components/button");
     await page.evaluate(() => ((window as unknown as { marker: number }).marker = 1));
-    await page.locator('main a[href="/"]').first().click();
+    await page.locator('main a[href="/vi/"]').first().click();
     await expect(page.getByRole("heading", { level: 1, name: "Yugen UI" })).toBeVisible();
-    expect(new URL(page.url()).pathname).toBe("/");
+    expect(new URL(page.url()).pathname).toBe("/vi/");
     expect(await page.evaluate(() => (window as unknown as { marker?: number }).marker)).toBe(1);
     await page.goBack();
     await expect(page.getByRole("heading", { level: 1, name: "Button" })).toBeVisible();
@@ -250,7 +310,7 @@ for (const viewport of [
 
 /** /templates kèm ?query hoặc #mục: docsUrl() nối ?theme… vào cuối, nên tự ghép URL. */
 async function openTemplates(page: Page, query = "", hash = "") {
-  await page.goto(`/templates?theme=light&brand=sakura&dir=ltr${query}${hash}`, { waitUntil: "domcontentloaded" });
+  await page.goto(`/vi/templates?theme=light&brand=sakura&dir=ltr${query}${hash}`, { waitUntil: "domcontentloaded" });
   await waitForDocsReady(page);
   await page.addStyleTag({ content: FREEZE_MOTION_CSS });
 }

@@ -3,7 +3,7 @@ import { CONCEPT_BY_SLUG, CONCEPT_EN_PAGES } from "./concepts";
 import { FOUNDATIONS } from "./foundations";
 import { useLocale, type LocaleValue } from "./i18n";
 import { COMPONENT_META_BY_SLUG, COMPONENTS_META, isTranslated } from "./registry";
-import { localePathOf, pathOf, type Route } from "./router";
+import { DEFAULT_LOCALE, localePathOf, pathOf, type Route } from "./router";
 import { SITE } from "./site";
 
 /**
@@ -82,7 +82,7 @@ export interface DocumentHead {
   title: string;
   description: string;
   canonical: string;
-  /** hreflang → URL; rỗng khi trang chưa có bản tiếng Anh (bản /en/ trỏ canonical về bản tiếng Việt). */
+  /** hreflang → URL; rỗng khi trang chưa có bản tiếng Anh (bản tiếng Anh trỏ canonical về bản tiếng Việt). */
   alternates: { hreflang: string; href: string }[];
   /** Ảnh chia sẻ, tính từ gốc site: og/<đường dẫn>.jpg (scripts/og-pages.mjs), trang chủ og.jpg. */
   image: string;
@@ -96,17 +96,18 @@ export function documentHead(route: Route, l: LocaleValue): DocumentHead {
   const { title, description } = routeMeta(route, l);
   const path = pathOf(route);
   const translated = fallbackOf(route) !== "page";
-  // Trang chưa dịch: bản /en/ chỉ khác khung giao diện, nội dung là bản tiếng Việt → canonical về bản tiếng Việt.
-  const own = translated ? localePathOf(route, l.locale) : path;
+  // Trang chưa dịch: bản tiếng Anh chỉ khác khung giao diện, nội dung là bản tiếng Việt (ngôn ngữ nguồn) → canonical về
+  // bản tiếng Việt.
+  const own = localePathOf(route, translated ? l.locale : "vi");
   return {
     title: title ? `${title} · ${SITE.name}` : `${SITE.name} — React + Tailwind CSS v4`,
     description,
     canonical: SITE.url + own,
     alternates: translated
       ? [
-          { hreflang: "vi", href: SITE.url + path },
           { hreflang: "en", href: SITE.url + localePathOf(route, "en") },
-          { hreflang: "x-default", href: SITE.url + path },
+          { hreflang: "vi", href: SITE.url + localePathOf(route, "vi") },
+          { hreflang: "x-default", href: SITE.url + localePathOf(route, DEFAULT_LOCALE) },
         ]
       : [],
     image: path ? `og/${own}.jpg` : "og.jpg",
