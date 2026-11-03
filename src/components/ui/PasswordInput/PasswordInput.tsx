@@ -42,7 +42,6 @@ export interface PasswordInputProps extends Omit<InputProps, "type"> {
   capsLockWarning?: boolean;
   /** Thước đo độ mạnh dưới ô nhập: `true` dùng `getPasswordStrength`, hoặc truyền hàm chấm điểm riêng (0–4). */
   strength?: boolean | ((password: string) => PasswordStrength);
-  ref?: React.Ref<HTMLInputElement>;
 }
 
 /**
@@ -70,7 +69,7 @@ export function PasswordInput({
   "aria-describedby": describedBy,
   ref,
   ...props
-}: PasswordInputProps) {
+}: PasswordInputProps & { ref?: React.Ref<HTMLInputElement> }) {
   const msg = useYugenMessages("passwordInput", passwordInputMessagesEn);
   const [visible, setVisible] = useControllableState({ value: visibleProp, defaultValue: defaultVisible, onChange: onVisibleChange });
   const [capsLock, setCapsLock] = React.useState(false);

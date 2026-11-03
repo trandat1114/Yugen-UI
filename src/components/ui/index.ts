@@ -38,8 +38,6 @@ export * from "./SwatchPicker/SwatchPicker";
 export * from "./ColorPicker/ColorPicker";
 export * from "./Calendar/Calendar";
 export * from "./DatePicker/DatePicker";
-export * from "./DatePicker/MonthPicker";
-export * from "./DatePicker/DateTimePicker";
 export * from "./TimePicker/TimePicker";
 export * from "./FileUpload/FileUpload";
 

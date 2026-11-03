@@ -17,6 +17,10 @@ export {
   type DateRangePickerMessages,
 } from "./messages";
 
+// Cùng họ, cùng vỏ (pickerShell): import được từ "@/components/ui/DatePicker/DatePicker" như DatePicker.
+export * from "./MonthPicker";
+export * from "./DateTimePicker";
+
 /** Fluent 2 DatePicker — https://fluent2.microsoft.design/components/web/react/core/datepicker/usage */
 export type { DateRange };
 

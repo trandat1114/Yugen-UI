@@ -161,7 +161,6 @@ export interface FormattedInputProps extends Omit<InputProps, "value" | "default
   currency?: string;
   /** Locale cho currency và mask phone mặc định. Mặc định `locale` của YugenProvider. */
   locale?: string;
-  ref?: React.Ref<HTMLInputElement>;
 }
 
 const FORMAT_ATTRS = {
@@ -189,7 +188,7 @@ export function FormattedInput({
   disabled,
   ref,
   ...props
-}: FormattedInputProps) {
+}: FormattedInputProps & { ref?: React.Ref<HTMLInputElement> }) {
   const providerLocale = useYugen().locale;
   const locale = localeProp ?? providerLocale;
   const engine = React.useMemo(() => {

@@ -366,7 +366,6 @@ export interface ColorPickerProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   /** Nút lấy màu trên màn hình — chỉ hiện khi trình duyệt có EyeDropper API (Chromium). */
   eyeDropper?: boolean;
   disabled?: boolean;
-  ref?: React.Ref<HTMLDivElement>;
 }
 
 interface EyeDropperLike {
@@ -389,7 +388,7 @@ export function ColorPicker({
   className,
   ref,
   ...props
-}: ColorPickerProps) {
+}: ColorPickerProps & { ref?: React.Ref<HTMLDivElement> }) {
   const msg = useYugenMessages("colorPicker", colorPickerMessagesEn);
   const toHsv = (text: string | undefined, hue?: number) => {
     const rgb = (text && parseColor(text)) || { r: 0, g: 0, b: 0, a: 1 };
