@@ -8,7 +8,7 @@ import { CONCEPT_BY_SLUG, CONCEPTS } from "./docs/concepts";
 import { FOUNDATIONS } from "./docs/foundations";
 import { localeValue, type Locale, type LocaleValue } from "./docs/i18n";
 import { COMPONENT_META_BY_SLUG, COMPONENTS_META } from "./docs/registry";
-import { hrefOf, localePathOf, type Route } from "./docs/router";
+import { DEFAULT_LOCALE, hrefOf, LEGACY_PREFIX, localePathOf, PREFIXED_LOCALE, pathOf, type Route } from "./docs/router";
 import { documentHead, routeMeta } from "./docs/seo";
 import { SITE } from "./docs/site";
 
@@ -19,6 +19,7 @@ export const ROUTES: Route[] = [
   { kind: "theme-designer" },
   { kind: "news" },
   { kind: "community" },
+  { kind: "contributors" },
   ...CONCEPTS.map((c): Route => ({ kind: "concept", slug: c.meta.slug })),
   ...FOUNDATIONS.map((f): Route => ({ kind: "foundation", slug: f.slug })),
   ...COMPONENTS_META.map((c): Route => ({ kind: "component", slug: c.slug })),
@@ -39,9 +40,11 @@ export function sourcesOf(route: Route): string[] {
     case "theme-designer":
       return ["src/docs/pages/ThemeDesignerPage.tsx"];
     case "news":
-      return ["src/docs/news.ts"];
+      return ["src/docs/news"];
     case "community":
       return ["src/docs/pages/CommunityPage.tsx", "src/docs/roadmap.ts"];
+    case "contributors":
+      return ["src/docs/pages/ContributorsPage.tsx", "src/docs/contributors.json"];
     case "concept":
       return [`src/docs/concepts/${route.slug}.tsx`, `src/docs/concepts/en/${route.slug}.tsx`];
     case "foundation":
@@ -78,9 +81,9 @@ export interface RenderedPage {
   card: ReturnType<typeof cardOf>;
 }
 
-export { SITE };
+export { SITE, DEFAULT_LOCALE, PREFIXED_LOCALE, LEGACY_PREFIX, pathOf, hrefOf };
 
-export async function render(route: Route, lang: Locale = "vi"): Promise<RenderedPage> {
+export async function render(route: Route, lang: Locale = DEFAULT_LOCALE): Promise<RenderedPage> {
   // Nạp trước như main.tsx: không Suspense nào treo thì React ghi nội dung tại chỗ. Phần nào còn treo (demo nạp lười lồng
   // bên trong) vẫn đúng, nhưng React ghi nó ở cuối trang kèm script $RC đổi chỗ.
   await preloadRoute(route, lang);

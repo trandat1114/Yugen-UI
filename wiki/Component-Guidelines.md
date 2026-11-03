@@ -1,54 +1,56 @@
-# Component Guidelines · Viết component
+# Component Guidelines
 
-Luật đầy đủ và bắt buộc nằm ở [`Design.md`](https://github.com/trandat1114/Yugen-UI/blob/main/Design.md). Trang này là
-lối tắt khi bạn bắt tay vào làm.
+*Tiếng Việt: [Component-Guidelines-vi](Component-Guidelines-vi).*
 
-## Thêm một component — từng bước
+The full, mandatory rules are in [`Design.md`](https://github.com/trandat1114/Yugen-UI/blob/main/Design.md). This page is a
+shortcut for when you start work.
 
-1. Mở / nhận một issue (`confirmed`, hoặc ý tưởng đã thống nhất ở Discussions **Ideas**).
-2. `src/components/ui/<Name>/<Name>.tsx` — `forwardRef`, `className` cuối cùng trong `cn()`, JSDoc tiếng Việt, `displayName`.
-3. Thêm `export * from "./<Name>/<Name>";` vào đúng nhóm trong `src/components/ui/index.ts`.
-4. Trang docs: thêm `ComponentDoc` vào một file `src/docs/registry/*.tsx` — `slug`, `name`, `category`, `lead` là chuỗi literal;
-   `code` của ví dụ phải chạy được khi chép ra (dùng `setup` cho dữ liệu dùng chung).
-5. Mô tả tiếng Anh: `<slug>: { lead: "…" }` trong `src/docs/i18n/en/components.ts` (test bắt buộc).
-6. Test: `<Name>.test.tsx` cạnh component (hành vi, bàn phím, ARIA). Thêm case SSR vào `src/test/ssrCases.tsx` nếu có state phụ thuộc môi trường.
-7. `npx changeset` → chọn `minor` (component mới) và viết một câu cho người dùng (tiếng Anh).
-8. Chạy checklist ở [[Testing and Quality]] + axe cho trang của bạn:
+## Add a component, step by step
+
+1. Open / pick up an issue (`confirmed`, or an idea agreed on in Discussions **Ideas**).
+2. `src/components/ui/<Name>/<Name>.tsx`: `forwardRef`, `className` last in `cn()`, Vietnamese JSDoc, `displayName`.
+3. Add `export * from "./<Name>/<Name>";` to the right group in `src/components/ui/index.ts`.
+4. Docs page: add a `ComponentDoc` to a `src/docs/registry/*.tsx` file. `slug`, `name`, `category`, `lead` are string literals;
+   each example's `code` must run when copied out (use `setup` for shared data).
+5. English description: `<slug>: { lead: "…" }` in `src/docs/i18n/en/components.ts` (required by a test).
+6. Tests: `<Name>.test.tsx` next to the component (behavior, keyboard, ARIA). Add an SSR case to `src/test/ssrCases.tsx` if some state depends on the environment.
+7. `npx changeset` → choose `minor` (new component) and write one sentence for users (in English).
+8. Run the checklist in [[Testing and Quality]] + axe for your page:
    `npx playwright test e2e/a11y.spec.ts --project=a11y --grep "<slug>"`.
 
-## Ví dụ thực tế: thêm `Quote` và `Autocomplete` (0.7, nhánh `next`)
+## Real example: adding `Quote` and `Autocomplete` (0.7, `next` branch)
 
-| Bước | Làm gì | File |
+| Step | What | Files |
 |---|---|---|
-| 1 | Nhánh `feat/quote-autocomplete` từ `next` (tính năng mới → `next`) | — |
-| 2 | Component, tái dùng thứ có sẵn: `SearchBox`, `listboxOptionClass`, `popoverSurfaceClass`, `normalizeSearchText`, `useSpinDelay` | `src/components/ui/Quote/`, `Autocomplete/` |
-| 3 | Export vào đúng nhóm của barrel | `src/components/ui/index.ts` |
-| 4 | Trang docs, code cắt bằng `#region` | `src/docs/registry/content-search.tsx` |
-| 5 | Mô tả tiếng Anh cho 2 slug | `src/docs/i18n/en/components.ts` |
-| 6 | Test: khớp không dấu, ↓/Enter/Esc, ARIA combobox, ngữ nghĩa `<figure>` | `Autocomplete.test.tsx` |
-| 7 | `check:examples`, `check:props`, axe theo slug → sửa vùng cuộn không focus được mà axe báo | — |
-| 8 | 2 changeset `minor` (mỗi component một file); sửa ví dụ SearchBox chỉ là docs → không cần changeset | `.changeset/*.md` |
-| 9 | PR vào `next`; maintainer phát hành `0.7.0-next.N` khi muốn cho người dùng thử | — |
+| 1 | Branch `feat/quote-autocomplete` from `next` (new feature → `next`) | — |
+| 2 | Components, reusing what already exists: `SearchBox`, `listboxOptionClass`, `popoverSurfaceClass`, `normalizeSearchText`, `useSpinDelay` | `src/components/ui/Quote/`, `Autocomplete/` |
+| 3 | Export into the right group of the barrel | `src/components/ui/index.ts` |
+| 4 | Docs page, code trimmed with `#region` | `src/docs/registry/content-search.tsx` |
+| 5 | English descriptions for the 2 slugs | `src/docs/i18n/en/components.ts` |
+| 6 | Tests: diacritic-insensitive matching, ↓/Enter/Esc, combobox ARIA, `<figure>` semantics | `Autocomplete.test.tsx` |
+| 7 | `check:examples`, `check:props`, axe by slug → fix the non-focusable scroll region that axe reported | — |
+| 8 | 2 `minor` changesets (one file per component); fixing the SearchBox example is docs only → no changeset | `.changeset/*.md` |
+| 9 | PR into `next`; the maintainer publishes `0.7.0-next.N` when users should try it | — |
 
-Bài học rút ra: Radix Popover tự bắt Esc ở cấp document trước ô nhập — đóng popover qua `onOpenChange`, đừng chỉ nghe
-`onKeyDown`; file có thể dùng CRLF — script sửa hàng loạt phải chuẩn hoá xuống dòng.
+Lessons learned: Radix Popover catches Esc at the document level before the input does, so close the popover through
+`onOpenChange`, don't only listen to `onKeyDown`. Files may use CRLF, so bulk-editing scripts must normalize line endings.
 
-## 10 điều hay sai nhất
+## The 10 most common mistakes
 
-| Sai | Đúng |
+| Wrong | Right |
 |---|---|
 | `bg-[#c2347a]`, `p-[12px]`, `duration-[200ms]` | `bg-brand-background`, `p-3`, `duration-normal` |
 | `ml-2`, `left-0`, `text-left` | `ms-2`, `inset-s-0`, `text-start` |
 | `start-4`, `data-[disabled]:`, `p-M` | `inset-s-4`, `data-disabled:`, `p-3` (`npm run lint:classes -- --fix`) |
-| `outline-none` không thay thế | giữ focus ring `focus-visible:outline-stroke-focus` |
-| Icon chỉ hướng không lật | `rtl:-scale-x-100` |
-| Đọc `Date.now()` / `window` / `matchMedia` khi render | effect, hoặc `useSyncExternalStore` + server snapshot |
-| `useLayoutEffect` thẳng | `useIsomorphicLayoutEffect` (`_internal/`) |
-| Tự viết popup / menu | Radix primitive + `usePortalThemeProps()` |
-| Nút chỉ có icon không tên | `aria-label` tiếng Việt |
-| Đổi tên prop ngay | thêm prop mới + `warnDeprecated()`, xoá ở major — xem [Phiên bản](https://trandat1114.github.io/Yugen-UI/#/concepts/versioning) |
+| `outline-none` with no replacement | keep the focus ring `focus-visible:outline-stroke-focus` |
+| Directional icons that don't flip | `rtl:-scale-x-100` |
+| Reading `Date.now()` / `window` / `matchMedia` during render | an effect, or `useSyncExternalStore` + a server snapshot |
+| `useLayoutEffect` directly | `useIsomorphicLayoutEffect` (`_internal/`) |
+| Hand-written popup / menu | Radix primitive + `usePortalThemeProps()` |
+| Icon-only button with no name | Vietnamese `aria-label` |
+| Renaming a prop right away | add the new prop + `warnDeprecated()`, remove the old one in a major; see [Versioning](https://trandat1114.github.io/Yugen-UI/#/concepts/versioning) |
 
 ## Yugen Labs
 
-Component vượt ngoài Fluent 2 (AI kit, Chart, Trace, DataGrid…) nằm trong nhóm **Yugen Labs**, có luật riêng ở
-Design.md §7.1 (ví dụ Chart: màu phân loại thứ tự cố định, một trục Y, luôn có bảng dữ liệu tương đương).
+Components beyond Fluent 2 (AI kit, Chart, Trace, DataGrid…) are in the **Yugen Labs** group, with their own rules in
+Design.md §7.1 (for example Chart: categorical colors in a fixed order, one Y axis, always an equivalent data table).

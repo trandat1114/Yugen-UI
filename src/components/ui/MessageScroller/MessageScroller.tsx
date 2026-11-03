@@ -4,9 +4,10 @@ import { ArrowDown16Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { Button } from "../Button/Button";
+import { matchesMedia } from "../hooks/useMediaQuery";
 import { Spinner } from "../Spinner/Spinner";
 import { useYugenMessages } from "../YugenProvider/context";
-import { messageScrollerMessages } from "./messages";
+import { messageScrollerMessagesEn } from "./messages";
 import {
   MessageBubble,
   MessageDaySeparator,
@@ -18,7 +19,7 @@ import {
 
 export * from "./MessageBubble";
 export * from "./ChatComposer";
-export { messageScrollerMessages, messageScrollerMessagesEn, type MessageScrollerMessages } from "./messages";
+export { messageScrollerMessages, messageScrollerMessagesVi, messageScrollerMessagesEn, type MessageScrollerMessages } from "./messages";
 
 /* ================================================================ Tiện ích */
 
@@ -42,10 +43,6 @@ function bubbleProps(el: React.ReactElement): MessageBubbleProps | null {
 function isEditable(target: EventTarget | null) {
   const el = target as HTMLElement | null;
   return !!el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable);
-}
-
-function prefersReducedMotion() {
-  return typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 }
 
 /** Vị trí trong nhóm: các MessageBubble liên tiếp cùng phía + cùng người gửi. */
@@ -102,7 +99,7 @@ export const MessageScroller = React.forwardRef<HTMLDivElement, MessageScrollerP
     },
     ref,
   ) => {
-    const msg = useYugenMessages("messageScroller", messageScrollerMessages);
+    const msg = useYugenMessages("messageScroller", messageScrollerMessagesEn);
     const label = labelProp ?? msg.label;
     const viewportRef = React.useRef<HTMLDivElement | null>(null);
     const contentRef = React.useRef<HTMLDivElement>(null);
@@ -171,7 +168,7 @@ export const MessageScroller = React.forwardRef<HTMLDivElement, MessageScrollerP
     const scrollToBottom = React.useCallback((behavior: ScrollBehavior = "smooth") => {
       const el = viewportRef.current;
       if (!el) return;
-      const smooth = behavior === "smooth" && !prefersReducedMotion();
+      const smooth = behavior === "smooth" && !matchesMedia("(prefers-reduced-motion: reduce)");
       programmaticRef.current = smooth;
       el.scrollTo({ top: el.scrollHeight, behavior: smooth ? "smooth" : "auto" });
       atBottomRef.current = true;

@@ -1,5 +1,4 @@
 // @vitest-environment node
-import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 // @ts-expect-error -- script .mjs không có khai báo kiểu
@@ -71,30 +70,11 @@ describe("release-rules", () => {
     expect(check(entry("0.12.0", "2026-10-27", "fixed"), [entry("0.11.0", "2026-10-25", "new")])).toEqual([]);
   });
 
-  it("đọc version, upcoming, date và kind từ news.ts", () => {
-    const source = `export const NEWS: NewsRelease[] = [
-  {
-    version: "0.13.0",
-    upcoming: true,
-    date: "2026-11-27",
-    items: [{ kind: "new", text: "a" }, { kind: "fixed", text: "b" }],
-  },
-  { version: "0.12.0", date: "2026-10-27", items: [{ kind: "improved", text: "c" }] },
-];
-export const CLI_NEWS: NewsRelease[] = [{ version: "0.5.0", date: "2026-10-27", items: [] }];
-`;
-    expect(newsEntries(source, "NEWS")).toEqual([
-      { version: "0.13.0", upcoming: true, date: "2026-11-27", kinds: ["new", "fixed"] },
-      { version: "0.12.0", upcoming: false, date: "2026-10-27", kinds: ["improved"] },
-    ]);
-    expect(newsEntries(source, "CLI_NEWS")).toEqual([{ version: "0.5.0", upcoming: false, date: "2026-10-27", kinds: [] }]);
-    expect(newsEntries(source, "CREATE_NEWS")).toBeUndefined();
-  });
-
-  it("tin hiện có trong news.ts theo đúng quy tắc", () => {
-    const source = fs.readFileSync(path.resolve(__dirname, "../docs/news.ts"), "utf8");
+  it("tin hiện có trong src/docs/news theo đúng quy tắc", () => {
+    const root = path.resolve(__dirname, "../..");
     for (const name of ["NEWS", "CLI_NEWS"]) {
-      const entries: Entry[] = newsEntries(source, name);
+      const entries: Entry[] = newsEntries(root, name);
+      expect(entries.length).toBeGreaterThan(0);
       entries.forEach((e, i) => expect(releaseRuleErrors(e, entries.slice(i + 1), name)).toEqual([]));
     }
   });

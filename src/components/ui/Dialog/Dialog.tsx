@@ -3,10 +3,10 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useDirection } from "@radix-ui/react-direction";
 import { Dismiss24Regular } from "@fluentui/react-icons";
 import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
-import { dialogMessages } from "./messages";
+import { dialogMessagesEn } from "./messages";
 import { cn } from "@/lib/cn";
 
-export { dialogMessages, dialogMessagesEn, type DialogMessages } from "./messages";
+export { dialogMessages, dialogMessagesVi, dialogMessagesEn, type DialogMessages } from "./messages";
 
 /** Fluent 2 Dialog — https://fluent2.microsoft.design/components/web/react/core/dialog/usage */
 export const Dialog = DialogPrimitive.Root;
@@ -65,7 +65,7 @@ export function DialogTitle({
   /** Mặc định hiện nút X; truyền `null` để ẩn. */
   action?: React.ReactNode | null;
 }) {
-  const msg = useYugenMessages("dialog", dialogMessages);
+  const msg = useYugenMessages("dialog", dialogMessagesEn);
   return (
     <div className="flex items-start gap-2">
       <DialogPrimitive.Title className={cn("flex-1 text-subtitle1 font-semibold", className)} {...props}>

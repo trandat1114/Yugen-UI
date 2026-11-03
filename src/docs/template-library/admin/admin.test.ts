@@ -24,6 +24,7 @@ describe("admin template", () => {
       { name: "customers" },
       { name: "customer", id: "c-007" },
       { name: "orders" },
+      { name: "board" },
       { name: "settings" },
       { name: "signIn" },
       { name: "signIn", next: "/orders" },
@@ -40,6 +41,20 @@ describe("admin template", () => {
     expect(safeNext("//evil.example")).toBeUndefined();
     expect(safeNext("/sign-in")).toBeUndefined();
     expect(safeNext("/orders")).toBe("/orders");
+  });
+
+  it("board: moveTask puts the card in a column at a position; failed writes change nothing", async () => {
+    const api = mock();
+    const before = await api.listTasks();
+    expect(before.todo).toHaveLength(5);
+    expect(before.todo[0].title).not.toContain("{customer}");
+    await api.moveTask("t-1", "done", 0);
+    await api.moveTask("t-2", "todo", 99);
+    const after = await api.listTasks();
+    expect(after.done[0].id).toBe("t-1");
+    expect(after.todo.map((t) => t.id)).toEqual(["t-3", "t-4", "t-5", "t-2"]);
+    await expect(api.moveTask("t-404", "done", 0)).rejects.toMatchObject({ status: 404 });
+    await expect(mock(1).moveTask("t-1", "done", 0)).rejects.toBeInstanceOf(ApiError);
   });
 
   it("lists a page with the total, sorted and filtered on the server", async () => {

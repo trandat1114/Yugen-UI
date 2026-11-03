@@ -22,6 +22,18 @@ import type { Example, PropDoc } from "./types";
 export type { Example, PropDoc };
 
 /* ---------- Page header ---------- */
+/** Tên component dài ("StreamingMarkdown"): ở khung hẹp xuống dòng giữa hai từ ghép thay vì tràn ngang (#266). */
+function breakableTitle(title: string): React.ReactNode {
+  const parts = title.split(/(?<=[a-z])(?=[A-Z])/);
+  if (parts.length === 1) return title;
+  return parts.map((part, i) => (
+    <React.Fragment key={i}>
+      {i > 0 && <wbr />}
+      {part}
+    </React.Fragment>
+  ));
+}
+
 export function PageHeader({
   eyebrow,
   title,
@@ -38,12 +50,30 @@ export function PageHeader({
       {eyebrow && (
         <p className="mb-2 text-caption1 font-semibold tracking-[0.12em] text-foreground-3 uppercase">{eyebrow}</p>
       )}
-      <h1 className="font-display text-[clamp(40px,6vw,64px)] leading-[1.1] font-semibold tracking-[-0.02em] text-foreground-1">
-        {title}
+      <h1 className="font-display text-[clamp(40px,6vw,64px)] leading-[1.1] font-semibold tracking-[-0.02em] wrap-break-word text-foreground-1">
+        {breakableTitle(title)}
       </h1>
       <p className="mt-4 max-w-3xl text-subtitle1 font-normal text-foreground-1">{lead}</p>
       {children && <div className="mt-4 max-w-3xl text-body2 text-foreground-2">{children}</div>}
     </header>
+  );
+}
+
+/**
+ * Chữ trong registry (mô tả, ví dụ, nên / không nên, props): đoạn giữa hai dấu `…` hiện thành code.
+ * Code dài liền một mạch được ngắt dòng thay vì tràn (bảng props cắt phần tràn, #259).
+ */
+export function withCode(text: string): React.ReactNode {
+  const parts = text.split(/`([^`]+)`/);
+  if (parts.length === 1) return text;
+  return parts.map((part, i) =>
+    i % 2 ? (
+      <code key={i} dir="ltr" className="rounded-small bg-background-4 px-1 font-mono text-[0.9em] text-foreground-1 wrap-anywhere">
+        {part}
+      </code>
+    ) : (
+      part
+    ),
   );
 }
 
@@ -82,7 +112,7 @@ export function ExampleFrame({
   example: Example;
   defaultTheme: FrameTheme;
   defaultBrand?: AppBrand;
-  /** Ngôn ngữ nội dung demo khi khác trang (demo viết bằng tiếng Việt, trang đang hiện tiếng Anh). */
+  /** Ngôn ngữ nội dung demo khi khác trang (demo viết bằng tiếng Anh, trang đang hiện tiếng Việt); `example.lang` thắng. */
   demoLang?: string;
 }) {
   const [look, setLook] = React.useState({ theme: defaultTheme, brand: defaultBrand });
@@ -146,7 +176,7 @@ export function ExampleFrame({
         theme={look.theme}
         brand={look.brand}
         dir={pageDir}
-        lang={demoLang}
+        lang={example.lang ?? demoLang}
         withTooltipProvider={false}
         className="flex min-h-48 flex-wrap content-center items-center justify-center gap-3 bg-background-1 p-4 transition-colors duration-normal sm:min-h-60 sm:p-6"
       >
@@ -159,14 +189,22 @@ export function ExampleFrame({
 }
 
 /* ---------- Example tile (variants grid, takeaway style) ---------- */
+/** Đang mở code: ô chiếm cả hàng của lưới để code không bị ép theo bề ngang một cột. */
 export function ExampleTile({ example, demoLang }: { example: Example; demoLang?: string }) {
   const [showCode, setShowCode] = React.useState(false);
+  const toggleRef = React.useRef<HTMLButtonElement>(null);
   const { t } = useLocale();
 
+  const toggleCode = () => {
+    setShowCode((v) => !v);
+    // Ô đổi chỗ khi giãn / thu (ô cột phải xuống hàng mới): giữ nút vừa bấm trong khung nhìn.
+    requestAnimationFrame(() => toggleRef.current?.scrollIntoView({ block: "nearest" }));
+  };
+
   return (
-    <div className="flex min-w-0 flex-col">
+    <div className={cn("flex min-w-0 flex-col", (example.wide || showCode) && "md:col-span-2")}>
       <div
-        lang={demoLang}
+        lang={example.lang ?? demoLang}
         className="group/tile relative flex min-h-56 flex-wrap content-center items-center justify-center gap-3 rounded-3xlarge border border-stroke-2 bg-background-3 p-5"
       >
         {example.render()}
@@ -178,11 +216,12 @@ export function ExampleTile({ example, demoLang }: { example: Example; demoLang?
       <div className="mt-3 flex items-start justify-between gap-3">
         <div>
           <h3 className="text-subtitle2 font-semibold text-foreground-1">{example.title}</h3>
-          {example.description && <p className="mt-1 text-body1 text-foreground-2">{example.description}</p>}
+          {example.description && <p className="mt-1 text-body1 text-foreground-2">{withCode(example.description)}</p>}
         </div>
         <button
+          ref={toggleRef}
           type="button"
-          onClick={() => setShowCode((v) => !v)}
+          onClick={toggleCode}
           aria-expanded={showCode}
           aria-label={showCode ? t("blocks.hideCode") : t("blocks.viewCode")}
           className={cn(
@@ -199,7 +238,7 @@ export function ExampleTile({ example, demoLang }: { example: Example; demoLang?
   );
 }
 
-/** `lang`: cả lưới (chữ chưa dịch); `demoLang`: chỉ vùng demo (chữ đã dịch, demo giữ tiếng Việt). */
+/** `lang`: cả lưới (chữ chưa dịch); `demoLang`: chỉ vùng demo (demo viết bằng tiếng Anh, trang tiếng Việt). */
 export function ExampleGrid({ examples, lang, demoLang }: { examples: Example[]; lang?: string; demoLang?: string }) {
   return (
     <div lang={lang} className="grid gap-x-5 gap-y-6 md:grid-cols-2">
@@ -233,7 +272,7 @@ export function DoDont({ dos, donts, contentLang }: { dos: string[]; donts: stri
         {items.map((item) => (
           <li key={item} className="flex gap-2 text-body1 text-foreground-2">
             <span className="mt-2 size-1.5 shrink-0 rounded-circular bg-foreground-4" />
-            <span>{item}</span>
+            <span>{withCode(item)}</span>
           </li>
         ))}
       </ul>
@@ -248,29 +287,50 @@ export function DoDont({ dos, donts, contentLang }: { dos: string[]; donts: stri
 }
 
 /* ---------- Props table ---------- */
+/** Tên prop dài ("Header / Main.asChild", "fn(a, b)"): thêm chỗ xuống dòng trước dấu chấm và dấu mở ngoặc. */
+function breakableName(name: string): React.ReactNode {
+  return name.split(/(?=[.(])/).map((part, i) => (
+    <React.Fragment key={i}>
+      {i > 0 && <wbr />}
+      {part}
+    </React.Fragment>
+  ));
+}
+
+/*
+ * Prop (tên + kiểu) · Mặc định · Mô tả, độ rộng cột cố định nên mô tả luôn rộng nhất; tên và kiểu dài tự xuống dòng (#259).
+ * Khung hẹp hơn 42rem: mỗi prop một khối (tên, kiểu, mặc định có nhãn, mô tả), không phải cuộn ngang.
+ */
 export function PropsTable({ props, contentLang }: { props: PropDoc[]; contentLang?: string }) {
   const { t } = useLocale();
   return (
-    // Vùng cuộn ngang: focus được để cuộn bằng bàn phím, có tên khi là landmark region.
-    <div role="region" aria-label={t("blocks.propsTable")} tabIndex={0} className="overflow-x-auto rounded-xlarge border border-stroke-2 bg-background-1">
-      <table className="w-full border-collapse text-left text-body1">
-        <thead>
+    <div className="@container overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1">
+      <table aria-label={t("blocks.propsTable")} className="w-full table-fixed border-collapse text-start text-body1 @max-2xl:block">
+        <thead className="@max-2xl:sr-only">
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
-            <th className="px-4 py-2">Prop</th>
-            <th className="px-4 py-2">{t("blocks.type")}</th>
-            <th className="px-4 py-2">{t("blocks.default")}</th>
-            <th className="px-4 py-2">{t("blocks.description")}</th>
+            <th className="w-[32%] px-4 py-2 text-start">Prop · {t("blocks.type")}</th>
+            <th className="w-32 px-4 py-2 text-start">{t("blocks.default")}</th>
+            <th className="px-4 py-2 text-start">{t("blocks.description")}</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="@max-2xl:block">
           {props.map((p) => (
-            <tr key={p.name} className="border-b border-stroke-3 align-top last:border-b-0">
-              <td className="px-4 py-3 font-mono text-[13px] font-semibold whitespace-nowrap text-brand-foreground-1">
-                {p.name}
+            <tr key={p.name} className="border-b border-stroke-3 align-top last:border-b-0 @max-2xl:block @max-2xl:px-4 @max-2xl:py-3">
+              <td className="px-4 py-3 font-mono text-[13px] wrap-anywhere @max-2xl:block @max-2xl:p-0">
+                <span dir="ltr" className="font-semibold text-brand-foreground-1">
+                  {breakableName(p.name)}
+                </span>
+                <span dir="ltr" className="mt-1 block text-foreground-2">
+                  {p.type}
+                </span>
               </td>
-              <td className="px-4 py-3 font-mono text-[13px] text-foreground-2">{p.type}</td>
-              <td className="px-4 py-3 font-mono text-[13px] whitespace-nowrap text-foreground-3">{p.defaultValue ?? "—"}</td>
-              <td lang={contentLang} className="px-4 py-3 text-foreground-2">{p.description}</td>
+              <td className="px-4 py-3 font-mono text-[13px] text-foreground-3 wrap-anywhere @max-2xl:mt-1 @max-2xl:block @max-2xl:p-0">
+                <span className="font-sans @2xl:hidden">{t("blocks.default")}: </span>
+                {p.defaultValue ?? "—"}
+              </td>
+              <td lang={contentLang} className="px-4 py-3 text-foreground-2 @max-2xl:mt-2 @max-2xl:block @max-2xl:p-0">
+                {withCode(p.description)}
+              </td>
             </tr>
           ))}
         </tbody>

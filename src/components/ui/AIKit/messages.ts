@@ -141,3 +141,15 @@ export const reasoningMessagesEn: ReasoningMessages = {
   thought: "Thought",
   thoughtFor: (duration) => `Thought for ${duration}`,
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `promptInputMessagesEn` (mặc định). `promptInputMessages` giữ cho code cũ. */
+export const promptInputMessagesVi = promptInputMessages;
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `streamingMarkdownMessagesEn` (mặc định). `streamingMarkdownMessages` giữ cho code cũ. */
+export const streamingMarkdownMessagesVi = streamingMarkdownMessages;
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `citationMessagesEn` (mặc định). `citationMessages` giữ cho code cũ. */
+export const citationMessagesVi = citationMessages;
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `reasoningMessagesEn` (mặc định). `reasoningMessages` giữ cho code cũ. */
+export const reasoningMessagesVi = reasoningMessages;

@@ -18,10 +18,10 @@ import type { ComponentDoc } from "../types";
 /* ================================================================ Trace */
 
 const AGENT_STEPS = [
-  { title: "Đọc yêu cầu", ms: 700 },
-  { title: "Tra lịch 4 thành viên", ms: 1600 },
-  { title: "Tìm khung giờ trống", ms: 1100 },
-  { title: "Gửi lời mời họp", ms: 900 },
+  { title: "Read the request", ms: 700 },
+  { title: "Check 4 calendars", ms: 1600 },
+  { title: "Find a free slot", ms: 1100 },
+  { title: "Send the invite", ms: 900 },
 ];
 
 function AgentTraceDemo() {
@@ -51,12 +51,12 @@ function AgentTraceDemo() {
   return (
     <Trace
       className="w-full max-w-xl"
-      title="Agent: xếp lịch họp nhóm"
+      title="Agent: schedule a team meeting"
       startedAt={startedAt}
       duration={done ? durations.reduce((a, b) => a + b, 0) : undefined}
       actions={
         <Button size="small" appearance="primary" disabled={current >= 0 && !done} onClick={run}>
-          {current < 0 ? "Chạy" : "Chạy lại"}
+          {current < 0 ? "Run" : "Run again"}
         </Button>
       }
     >
@@ -64,22 +64,22 @@ function AgentTraceDemo() {
         title={AGENT_STEPS[0].title}
         status={statusOf(0)}
         duration={durations[0]}
-        description="Họp 60 phút trong tuần này, đủ 4 người."
+        description="A 60-minute meeting this week with all 4 people."
       />
       <TraceStep
         title={AGENT_STEPS[1].title}
         status={statusOf(1)}
         duration={durations[1]}
-        metadata={["calendar.read", "song song"]}
+        metadata={["calendar.read", "parallel"]}
       >
-        <TraceStep title="Lịch của Lan và Minh" status={statusOf(1)} />
-        <TraceStep title="Lịch của Hà và Tuấn" status={statusOf(1)} />
+        <TraceStep title="Alex and Maria's calendars" status={statusOf(1)} />
+        <TraceStep title="Sam and Priya's calendars" status={statusOf(1)} />
       </TraceStep>
       <TraceStep
         title={AGENT_STEPS[2].title}
         status={statusOf(2)}
         duration={durations[2]}
-        details={<TraceLog>{'{ "slot": "Thứ Năm 14:00–15:00", "conflicts": 0 }'}</TraceLog>}
+        details={<TraceLog>{'{ "slot": "Thu 2:00–3:00 PM", "conflicts": 0 }'}</TraceLog>}
       />
       <TraceStep title={AGENT_STEPS[3].title} status={statusOf(3)} duration={durations[3]} />
     </Trace>
@@ -87,10 +87,10 @@ function AgentTraceDemo() {
 }
 
 const AGENT_TRACE_CODE = `const AGENT_STEPS = [
-  { title: "Đọc yêu cầu", ms: 700 },
-  { title: "Tra lịch 4 thành viên", ms: 1600 },
-  { title: "Tìm khung giờ trống", ms: 1100 },
-  { title: "Gửi lời mời họp", ms: 900 },
+  { title: "Read the request", ms: 700 },
+  { title: "Check 4 calendars", ms: 1600 },
+  { title: "Find a free slot", ms: 1100 },
+  { title: "Send the invite", ms: 900 },
 ];
 
 function AgentTraceDemo() {
@@ -120,12 +120,12 @@ function AgentTraceDemo() {
   return (
     <Trace
       className="w-full max-w-xl"
-      title="Agent: xếp lịch họp nhóm"
+      title="Agent: schedule a team meeting"
       startedAt={startedAt}
       duration={done ? durations.reduce((a, b) => a + b, 0) : undefined}
       actions={
         <Button size="small" appearance="primary" disabled={current >= 0 && !done} onClick={run}>
-          {current < 0 ? "Chạy" : "Chạy lại"}
+          {current < 0 ? "Run" : "Run again"}
         </Button>
       }
     >
@@ -133,22 +133,22 @@ function AgentTraceDemo() {
         title={AGENT_STEPS[0].title}
         status={statusOf(0)}
         duration={durations[0]}
-        description="Họp 60 phút trong tuần này, đủ 4 người."
+        description="A 60-minute meeting this week with all 4 people."
       />
       <TraceStep
         title={AGENT_STEPS[1].title}
         status={statusOf(1)}
         duration={durations[1]}
-        metadata={["calendar.read", "song song"]}
+        metadata={["calendar.read", "parallel"]}
       >
-        <TraceStep title="Lịch của Lan và Minh" status={statusOf(1)} />
-        <TraceStep title="Lịch của Hà và Tuấn" status={statusOf(1)} />
+        <TraceStep title="Alex and Maria's calendars" status={statusOf(1)} />
+        <TraceStep title="Sam and Priya's calendars" status={statusOf(1)} />
       </TraceStep>
       <TraceStep
         title={AGENT_STEPS[2].title}
         status={statusOf(2)}
         duration={durations[2]}
-        details={<TraceLog>{'{ "slot": "Thứ Năm 14:00–15:00", "conflicts": 0 }'}</TraceLog>}
+        details={<TraceLog>{'{ "slot": "Thu 2:00–3:00 PM", "conflicts": 0 }'}</TraceLog>}
       />
       <TraceStep title={AGENT_STEPS[3].title} status={statusOf(3)} duration={durations[3]} />
     </Trace>
@@ -161,42 +161,42 @@ const SURVEY: Question[] = [
   {
     id: "use",
     type: "single",
-    title: "Bạn dùng Yugen UI cho việc gì?",
+    title: "What do you use Yugen UI for?",
     required: true,
     options: [
-      { value: "product", label: "Sản phẩm thương mại" },
-      { value: "internal", label: "Công cụ nội bộ" },
-      { value: "learning", label: "Học & thử nghiệm" },
+      { value: "product", label: "A commercial product" },
+      { value: "internal", label: "Internal tools" },
+      { value: "learning", label: "Learning and side projects" },
     ],
   },
   {
     id: "parts",
     type: "multiple",
-    title: "Bạn dùng nhiều nhất những phần nào?",
-    description: "Chọn tối đa 3.",
+    title: "Which parts do you use most?",
+    description: "Pick up to 3.",
     max: 3,
     options: [
-      { value: "forms", label: "Form & nhập liệu" },
+      { value: "forms", label: "Forms and inputs" },
       { value: "overlay", label: "Dialog, Drawer, Popover" },
-      { value: "data", label: "Bảng & dữ liệu" },
+      { value: "data", label: "Tables and data" },
       { value: "labs", label: "Yugen Labs" },
     ],
   },
-  { id: "docs", type: "rating", title: "Bạn chấm tài liệu mấy sao?", required: true },
+  { id: "docs", type: "rating", title: "How would you rate the docs?", required: true },
   {
     id: "nps",
     type: "scale",
-    title: "Bạn có giới thiệu Yugen UI cho đồng nghiệp không?",
-    minLabel: "Chắc chắn không",
-    maxLabel: "Chắc chắn có",
+    title: "How likely are you to recommend Yugen UI to a colleague?",
+    minLabel: "Not at all likely",
+    maxLabel: "Extremely likely",
     required: true,
   },
-  { id: "rtl", type: "yesNo", title: "Sản phẩm của bạn có cần hỗ trợ RTL không?" },
+  { id: "rtl", type: "yesNo", title: "Does your product need RTL support?" },
   {
     id: "idea",
     type: "longText",
-    title: "Bạn muốn có thêm component nào?",
-    placeholder: "Ví dụ: TimePicker, ColorPicker…",
+    title: "Which component should we build next?",
+    placeholder: "For example: TimePicker, ColorPicker…",
     maxLength: 300,
   },
 ];
@@ -205,8 +205,8 @@ function SurveyDemo() {
   return (
     <Questionnaire
       className="w-full max-w-xl"
-      title="Khảo sát nhanh"
-      description="6 câu · khoảng 1 phút"
+      title="Quick survey"
+      description="6 questions · about 1 minute"
       questions={SURVEY}
       onSubmit={() => new Promise<void>((resolve) => window.setTimeout(resolve, 800))}
     />
@@ -217,42 +217,42 @@ const SURVEY_CODE = `const SURVEY: Question[] = [
   {
     id: "use",
     type: "single",
-    title: "Bạn dùng Yugen UI cho việc gì?",
+    title: "What do you use Yugen UI for?",
     required: true,
     options: [
-      { value: "product", label: "Sản phẩm thương mại" },
-      { value: "internal", label: "Công cụ nội bộ" },
-      { value: "learning", label: "Học & thử nghiệm" },
+      { value: "product", label: "A commercial product" },
+      { value: "internal", label: "Internal tools" },
+      { value: "learning", label: "Learning and side projects" },
     ],
   },
   {
     id: "parts",
     type: "multiple",
-    title: "Bạn dùng nhiều nhất những phần nào?",
-    description: "Chọn tối đa 3.",
+    title: "Which parts do you use most?",
+    description: "Pick up to 3.",
     max: 3,
     options: [
-      { value: "forms", label: "Form & nhập liệu" },
+      { value: "forms", label: "Forms and inputs" },
       { value: "overlay", label: "Dialog, Drawer, Popover" },
-      { value: "data", label: "Bảng & dữ liệu" },
+      { value: "data", label: "Tables and data" },
       { value: "labs", label: "Yugen Labs" },
     ],
   },
-  { id: "docs", type: "rating", title: "Bạn chấm tài liệu mấy sao?", required: true },
+  { id: "docs", type: "rating", title: "How would you rate the docs?", required: true },
   {
     id: "nps",
     type: "scale",
-    title: "Bạn có giới thiệu Yugen UI cho đồng nghiệp không?",
-    minLabel: "Chắc chắn không",
-    maxLabel: "Chắc chắn có",
+    title: "How likely are you to recommend Yugen UI to a colleague?",
+    minLabel: "Not at all likely",
+    maxLabel: "Extremely likely",
     required: true,
   },
-  { id: "rtl", type: "yesNo", title: "Sản phẩm của bạn có cần hỗ trợ RTL không?" },
+  { id: "rtl", type: "yesNo", title: "Does your product need RTL support?" },
   {
     id: "idea",
     type: "longText",
-    title: "Bạn muốn có thêm component nào?",
-    placeholder: "Ví dụ: TimePicker, ColorPicker…",
+    title: "Which component should we build next?",
+    placeholder: "For example: TimePicker, ColorPicker…",
     maxLength: 300,
   },
 ];
@@ -261,8 +261,8 @@ function SurveyDemo() {
   return (
     <Questionnaire
       className="w-full max-w-xl"
-      title="Khảo sát nhanh"
-      description="6 câu · khoảng 1 phút"
+      title="Quick survey"
+      description="6 questions · about 1 minute"
       questions={SURVEY}
       onSubmit={() => new Promise<void>((resolve) => window.setTimeout(resolve, 800))}
     />
@@ -270,57 +270,57 @@ function SurveyDemo() {
 }`;
 
 const SIGNUP: Question[] = [
-  { id: "name", type: "text", title: "Họ và tên", required: true, placeholder: "Nguyễn Văn A" },
+  { id: "name", type: "text", title: "Full name", required: true, placeholder: "Alex Chen" },
   {
     id: "email",
     type: "text",
     inputType: "email",
-    title: "Email công việc",
+    title: "Work email",
     required: true,
-    validate: (value) => (/^\S+@\S+\.\S+$/.test(value) ? null : "Email chưa đúng định dạng."),
+    validate: (value) => (/^\S+@\S+\.\S+$/.test(value) ? null : "Enter a valid email address."),
   },
   {
     id: "team",
     type: "single",
-    title: "Quy mô nhóm",
+    title: "Team size",
     options: [
-      { value: "s", label: "1–5 người" },
-      { value: "m", label: "6–20 người" },
-      { value: "l", label: "Trên 20 người" },
+      { value: "s", label: "1–5 people" },
+      { value: "m", label: "6–20 people" },
+      { value: "l", label: "More than 20" },
     ],
   },
-  { id: "beta", type: "yesNo", title: "Tham gia dùng thử Yugen Labs?" },
+  { id: "beta", type: "yesNo", title: "Join the Yugen Labs beta?" },
 ];
 
 function SignupDemo() {
-  return <Questionnaire mode="list" review={false} className="w-full" questions={SIGNUP} submitLabel="Đăng ký" />;
+  return <Questionnaire mode="list" review={false} className="w-full" questions={SIGNUP} submitLabel="Sign up" />;
 }
 
 const SIGNUP_CODE = `const SIGNUP: Question[] = [
-  { id: "name", type: "text", title: "Họ và tên", required: true, placeholder: "Nguyễn Văn A" },
+  { id: "name", type: "text", title: "Full name", required: true, placeholder: "Alex Chen" },
   {
     id: "email",
     type: "text",
     inputType: "email",
-    title: "Email công việc",
+    title: "Work email",
     required: true,
-    validate: (value) => (/^\\S+@\\S+\\.\\S+$/.test(value) ? null : "Email chưa đúng định dạng."),
+    validate: (value) => (/^\\S+@\\S+\\.\\S+$/.test(value) ? null : "Enter a valid email address."),
   },
   {
     id: "team",
     type: "single",
-    title: "Quy mô nhóm",
+    title: "Team size",
     options: [
-      { value: "s", label: "1–5 người" },
-      { value: "m", label: "6–20 người" },
-      { value: "l", label: "Trên 20 người" },
+      { value: "s", label: "1–5 people" },
+      { value: "m", label: "6–20 people" },
+      { value: "l", label: "More than 20" },
     ],
   },
-  { id: "beta", type: "yesNo", title: "Tham gia dùng thử Yugen Labs?" },
+  { id: "beta", type: "yesNo", title: "Join the Yugen Labs beta?" },
 ];
 
 function SignupDemo() {
-  return <Questionnaire mode="list" review={false} className="w-full" questions={SIGNUP} submitLabel="Đăng ký" />;
+  return <Questionnaire mode="list" review={false} className="w-full" questions={SIGNUP} submitLabel="Sign up" />;
 }`;
 
 function MoodDemo() {
@@ -329,21 +329,21 @@ function MoodDemo() {
 
   return (
     <div className="flex w-full flex-col gap-2">
-      <p className="text-caption1 text-foreground-3">Đã trả lời {answered}/2 câu</p>
+      <p className="text-caption1 text-foreground-3">Answered {answered} of 2</p>
       <Questionnaire
         appearance="subtle"
         review={false}
         questions={[
-          { id: "mood", type: "rating", title: "Hôm nay của bạn thế nào?", required: true },
-          { id: "word", type: "text", title: "Một từ để mô tả ngày hôm nay?" },
+          { id: "mood", type: "rating", title: "How was your day?", required: true },
+          { id: "word", type: "text", title: "Describe today in one word" },
         ]}
         value={answers}
         onChange={setAnswers}
         completion={(result, restart) => (
           <div className="flex flex-col items-start gap-2">
-            <p className="text-body1">Cảm ơn! Bạn chấm {String(result.mood)} sao.</p>
+            <p className="text-body1">Thanks! You gave it {String(result.mood)} stars.</p>
             <Button size="small" onClick={restart}>
-              Trả lời lại
+              Start over
             </Button>
           </div>
         )}
@@ -358,21 +358,21 @@ const MOOD_CODE = `function MoodDemo() {
 
   return (
     <div className="flex w-full flex-col gap-2">
-      <p className="text-caption1 text-foreground-3">Đã trả lời {answered}/2 câu</p>
+      <p className="text-caption1 text-foreground-3">Answered {answered} of 2</p>
       <Questionnaire
         appearance="subtle"
         review={false}
         questions={[
-          { id: "mood", type: "rating", title: "Hôm nay của bạn thế nào?", required: true },
-          { id: "word", type: "text", title: "Một từ để mô tả ngày hôm nay?" },
+          { id: "mood", type: "rating", title: "How was your day?", required: true },
+          { id: "word", type: "text", title: "Describe today in one word" },
         ]}
         value={answers}
         onChange={setAnswers}
         completion={(result, restart) => (
           <div className="flex flex-col items-start gap-2">
-            <p className="text-body1">Cảm ơn! Bạn chấm {String(result.mood)} sao.</p>
+            <p className="text-body1">Thanks! You gave it {String(result.mood)} stars.</p>
             <Button size="small" onClick={restart}>
-              Trả lời lại
+              Start over
             </Button>
           </div>
         )}
@@ -393,16 +393,16 @@ interface ChatMessage {
 }
 
 const BOT = "Sakura Bot";
-const REPLY = "Yugen UI dùng token Fluent 2, nên bạn chỉ cần đổi data-theme để chuyển sáng / tối — component không phải sửa gì.";
+const REPLY = "Yugen UI is built on design tokens, so switching between light and dark only takes a data-theme change. No component edits needed.";
 
 function nowTime() {
-  return new Date().toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
+  return new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
 }
 
 function MiniChatDemo() {
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { id: 1, side: "incoming", text: "Chào bạn 👋 Mình là Sakura Bot.", time: "09:00" },
-    { id: 2, side: "incoming", text: "Hỏi mình bất cứ điều gì về Yugen UI nhé!", time: "09:00" },
+    { id: 1, side: "incoming", text: "Hi 👋 I'm Sakura Bot.", time: "9:00 AM" },
+    { id: 2, side: "incoming", text: "Ask me anything about Yugen UI.", time: "9:00 AM" },
   ]);
   const [typing, setTyping] = useState(false);
   const timers = useRef<number[]>([]);
@@ -440,12 +440,12 @@ function MiniChatDemo() {
   return (
     <div className="flex h-112 w-full max-w-md flex-col overflow-hidden rounded-xlarge border border-stroke-2 bg-background-2">
       <MessageScroller className="flex-1">
-        <MessageDaySeparator>Hôm nay</MessageDaySeparator>
+        <MessageDaySeparator>Today</MessageDaySeparator>
         {messages.map((m) => (
           <MessageBubble
             key={m.id}
             side={m.side}
-            author={m.side === "incoming" ? BOT : "Bạn"}
+            author={m.side === "incoming" ? BOT : "You"}
             time={m.time}
             status={m.status}
             streaming={m.streaming}
@@ -455,7 +455,7 @@ function MiniChatDemo() {
         ))}
         {typing && <TypingIndicator key="typing" author={BOT} />}
       </MessageScroller>
-      <ChatComposer className="m-2" placeholder="Hỏi Sakura Bot…" onSend={send} />
+      <ChatComposer className="m-2" placeholder="Ask Sakura Bot…" onSend={send} />
     </div>
   );
 }
@@ -470,16 +470,16 @@ const MINI_CHAT_CODE = `interface ChatMessage {
 }
 
 const BOT = "Sakura Bot";
-const REPLY = "Yugen UI dùng token Fluent 2, nên bạn chỉ cần đổi data-theme để chuyển sáng / tối — component không phải sửa gì.";
+const REPLY = "Yugen UI is built on design tokens, so switching between light and dark only takes a data-theme change. No component edits needed.";
 
 function nowTime() {
-  return new Date().toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
+  return new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
 }
 
 function MiniChatDemo() {
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { id: 1, side: "incoming", text: "Chào bạn 👋 Mình là Sakura Bot.", time: "09:00" },
-    { id: 2, side: "incoming", text: "Hỏi mình bất cứ điều gì về Yugen UI nhé!", time: "09:00" },
+    { id: 1, side: "incoming", text: "Hi 👋 I'm Sakura Bot.", time: "9:00 AM" },
+    { id: 2, side: "incoming", text: "Ask me anything about Yugen UI.", time: "9:00 AM" },
   ]);
   const [typing, setTyping] = useState(false);
   const timers = useRef<number[]>([]);
@@ -517,12 +517,12 @@ function MiniChatDemo() {
   return (
     <div className="flex h-112 w-full max-w-md flex-col overflow-hidden rounded-xlarge border border-stroke-2 bg-background-2">
       <MessageScroller className="flex-1">
-        <MessageDaySeparator>Hôm nay</MessageDaySeparator>
+        <MessageDaySeparator>Today</MessageDaySeparator>
         {messages.map((m) => (
           <MessageBubble
             key={m.id}
             side={m.side}
-            author={m.side === "incoming" ? BOT : "Bạn"}
+            author={m.side === "incoming" ? BOT : "You"}
             time={m.time}
             status={m.status}
             streaming={m.streaming}
@@ -532,7 +532,7 @@ function MiniChatDemo() {
         ))}
         {typing && <TypingIndicator key="typing" author={BOT} />}
       </MessageScroller>
-      <ChatComposer className="m-2" placeholder="Hỏi Sakura Bot…" onSend={send} />
+      <ChatComposer className="m-2" placeholder="Ask Sakura Bot…" onSend={send} />
     </div>
   );
 }`;
@@ -547,17 +547,17 @@ function DeliveryDemo() {
 
   return (
     <MessageScroller className="h-80 w-full rounded-xlarge border border-stroke-2">
-      <MessageBubble side="outgoing" author="Bạn" time="10:01" status="read">
-        Mình gửi file thiết kế rồi nhé.
+      <MessageBubble side="outgoing" author="You" time="10:01 AM" status="read">
+        I've sent the design file.
       </MessageBubble>
-      <MessageBubble side="outgoing" author="Bạn" time="10:02" status="delivered">
-        Bạn xem giúp phần màu Sakura.
+      <MessageBubble side="outgoing" author="You" time="10:02 AM" status="delivered">
+        Could you check the Sakura colors?
       </MessageBubble>
-      <MessageBubble side="outgoing" author="Bạn" time="10:02" status="sent">
-        Cần trước 5 giờ chiều.
+      <MessageBubble side="outgoing" author="You" time="10:02 AM" status="sent">
+        I need it before 5 PM.
       </MessageBubble>
-      <MessageBubble side="outgoing" author="Bạn" time="10:03" status={status} onRetry={retry}>
-        Cảm ơn bạn!
+      <MessageBubble side="outgoing" author="You" time="10:03 AM" status={status} onRetry={retry}>
+        Thanks!
       </MessageBubble>
     </MessageScroller>
   );
@@ -573,40 +573,40 @@ const DELIVERY_CODE = `function DeliveryDemo() {
 
   return (
     <MessageScroller className="h-80 w-full rounded-xlarge border border-stroke-2">
-      <MessageBubble side="outgoing" author="Bạn" time="10:01" status="read">
-        Mình gửi file thiết kế rồi nhé.
+      <MessageBubble side="outgoing" author="You" time="10:01 AM" status="read">
+        I've sent the design file.
       </MessageBubble>
-      <MessageBubble side="outgoing" author="Bạn" time="10:02" status="delivered">
-        Bạn xem giúp phần màu Sakura.
+      <MessageBubble side="outgoing" author="You" time="10:02 AM" status="delivered">
+        Could you check the Sakura colors?
       </MessageBubble>
-      <MessageBubble side="outgoing" author="Bạn" time="10:02" status="sent">
-        Cần trước 5 giờ chiều.
+      <MessageBubble side="outgoing" author="You" time="10:02 AM" status="sent">
+        I need it before 5 PM.
       </MessageBubble>
-      <MessageBubble side="outgoing" author="Bạn" time="10:03" status={status} onRetry={retry}>
-        Cảm ơn bạn!
+      <MessageBubble side="outgoing" author="You" time="10:03 AM" status={status} onRetry={retry}>
+        Thanks!
       </MessageBubble>
     </MessageScroller>
   );
 }`;
 
 const GROUPING_CODE = `<MessageScroller className="h-80 w-full rounded-xlarge border border-stroke-2">
-  <MessageDaySeparator>Thứ Hai, 19/10</MessageDaySeparator>
-  <MessageBubble author="Trần Lan" time="08:12">Sáng nay bản build mới đã lên staging.</MessageBubble>
-  <MessageBubble author="Trần Lan" time="08:12">Mọi người kiểm tra giúp phần Trace nhé!</MessageBubble>
+  <MessageDaySeparator>Monday, Oct 19</MessageDaySeparator>
+  <MessageBubble author="Alex Chen" time="8:12 AM">The new build went to staging this morning.</MessageBubble>
+  <MessageBubble author="Alex Chen" time="8:12 AM">Could everyone check the Trace part?</MessageBubble>
   <MessageBubble
-    author="Trần Lan"
-    time="08:13"
+    author="Alex Chen"
+    time="8:13 AM"
     reactions={
       <>
-        <MessageReaction emoji="👍" count={3} label="Thích" selected />
-        <MessageReaction emoji="🌸" count={1} label="Hoa anh đào" />
+        <MessageReaction emoji="👍" count={3} label="Like" selected />
+        <MessageReaction emoji="🌸" count={1} label="Cherry blossom" />
       </>
     }
   >
-    Có gì cứ nhắn mình.
+    Message me if anything comes up.
   </MessageBubble>
-  <MessageBubble side="outgoing" author="Bạn" time="08:20">
-    Đã xem, chạy mượt lắm 🎉
+  <MessageBubble side="outgoing" author="You" time="8:20 AM">
+    Checked it, runs smoothly 🎉
   </MessageBubble>
 </MessageScroller>`;
 
@@ -633,8 +633,8 @@ function LoadOlderDemo() {
       hasOlder={ids[0] > 60}
     >
       {ids.map((n) => (
-        <MessageBubble key={n} side={n % 3 === 0 ? "outgoing" : "incoming"} author={n % 3 === 0 ? "Bạn" : "Minh"}>
-          Tin nhắn số {n}
+        <MessageBubble key={n} side={n % 3 === 0 ? "outgoing" : "incoming"} author={n % 3 === 0 ? "You" : "Maria"}>
+          Message {n}
         </MessageBubble>
       ))}
     </MessageScroller>
@@ -664,8 +664,8 @@ const LOAD_OLDER_CODE = `function LoadOlderDemo() {
       hasOlder={ids[0] > 60}
     >
       {ids.map((n) => (
-        <MessageBubble key={n} side={n % 3 === 0 ? "outgoing" : "incoming"} author={n % 3 === 0 ? "Bạn" : "Minh"}>
-          Tin nhắn số {n}
+        <MessageBubble key={n} side={n % 3 === 0 ? "outgoing" : "incoming"} author={n % 3 === 0 ? "You" : "Maria"}>
+          Message {n}
         </MessageBubble>
       ))}
     </MessageScroller>
@@ -679,13 +679,13 @@ function NewMessagesDemo() {
     <div className="flex w-full flex-col gap-2">
       <MessageScroller className="h-72 rounded-xlarge border border-stroke-2">
         {Array.from({ length: count }, (_, i) => (
-          <MessageBubble key={i} author={i % 2 === 0 ? "Hà" : "Tuấn"}>
-            Cập nhật #{i + 1}
+          <MessageBubble key={i} author={i % 2 === 0 ? "Sam" : "Priya"}>
+            Update #{i + 1}
           </MessageBubble>
         ))}
       </MessageScroller>
       <Button className="self-start" onClick={() => setCount((c) => c + 1)}>
-        Nhận tin mới
+        Get a new message
       </Button>
     </div>
   );
@@ -698,13 +698,13 @@ const NEW_MESSAGES_CODE = `function NewMessagesDemo() {
     <div className="flex w-full flex-col gap-2">
       <MessageScroller className="h-72 rounded-xlarge border border-stroke-2">
         {Array.from({ length: count }, (_, i) => (
-          <MessageBubble key={i} author={i % 2 === 0 ? "Hà" : "Tuấn"}>
-            Cập nhật #{i + 1}
+          <MessageBubble key={i} author={i % 2 === 0 ? "Sam" : "Priya"}>
+            Update #{i + 1}
           </MessageBubble>
         ))}
       </MessageScroller>
       <Button className="self-start" onClick={() => setCount((c) => c + 1)}>
-        Nhận tin mới
+        Get a new message
       </Button>
     </div>
   );
@@ -723,14 +723,14 @@ function ComposerDemo() {
         onSend={(text) => setSent((list) => [text, ...list].slice(0, 3))}
         actions={
           <>
-            <Button appearance="subtle" icon={<Attach20Regular />} aria-label="Đính kèm tệp" />
-            <Button appearance="subtle" icon={<Emoji20Regular />} aria-label="Chèn emoji" />
+            <Button appearance="subtle" icon={<Attach20Regular />} aria-label="Attach file" />
+            <Button appearance="subtle" icon={<Emoji20Regular />} aria-label="Insert emoji" />
           </>
         }
       />
       {sent.map((text, i) => (
         <p key={i} className="text-caption1 whitespace-pre-wrap text-foreground-3">
-          Đã gửi: {text}
+          Sent: {text}
         </p>
       ))}
     </div>
@@ -748,14 +748,14 @@ const COMPOSER_CODE = `function ComposerDemo() {
         onSend={(text) => setSent((list) => [text, ...list].slice(0, 3))}
         actions={
           <>
-            <Button appearance="subtle" icon={<Attach20Regular />} aria-label="Đính kèm tệp" />
-            <Button appearance="subtle" icon={<Emoji20Regular />} aria-label="Chèn emoji" />
+            <Button appearance="subtle" icon={<Attach20Regular />} aria-label="Attach file" />
+            <Button appearance="subtle" icon={<Emoji20Regular />} aria-label="Insert emoji" />
           </>
         }
       />
       {sent.map((text, i) => (
         <p key={i} className="text-caption1 whitespace-pre-wrap text-foreground-3">
-          Đã gửi: {text}
+          Sent: {text}
         </p>
       ))}
     </div>
@@ -771,7 +771,7 @@ function StopDemo() {
       busy={busy}
       onStop={() => setBusy(false)}
       onSend={() => setBusy(true)}
-      placeholder={busy ? "Đang trả lời…" : "Hỏi trợ lý…"}
+      placeholder={busy ? "Answering…" : "Ask the assistant…"}
       actions={
         <Button size="small" appearance="subtle" icon={<Sparkle16Regular />}>
           Sakura-1
@@ -790,7 +790,7 @@ const STOP_CODE = `function StopDemo() {
       busy={busy}
       onStop={() => setBusy(false)}
       onSend={() => setBusy(true)}
-      placeholder={busy ? "Đang trả lời…" : "Hỏi trợ lý…"}
+      placeholder={busy ? "Answering…" : "Ask the assistant…"}
       actions={
         <Button size="small" appearance="subtle" icon={<Sparkle16Regular />}>
           Sakura-1
@@ -806,10 +806,10 @@ const SAVE_BAR_SOURCE = [
   'import { Button } from "@/components/ui";',
   "",
   "export function SaveBar({ onSave }: { onSave: () => void }) {",
-  "  // Hành động chính dùng appearance primary",
+  "  // The main action uses the primary appearance",
   "  return (",
   '    <Button appearance="primary" onClick={onSave}>',
-  "      Lưu thay đổi",
+  "      Save changes",
   "    </Button>",
   "  );",
   "}",
@@ -832,10 +832,10 @@ const CODEBLOCK_HERO_CODE = `const SAVE_BAR_SOURCE = [
   'import { Button } from "@/components/ui";',
   "",
   "export function SaveBar({ onSave }: { onSave: () => void }) {",
-  "  // Hành động chính dùng appearance primary",
+  "  // The main action uses the primary appearance",
   "  return (",
   '    <Button appearance="primary" onClick={onSave}>',
-  "      Lưu thay đổi",
+  "      Save changes",
   "    </Button>",
   "  );",
   "}",
@@ -860,12 +860,12 @@ const DIFF_SOURCE = [
   '+  appearance="primary"',
   "+  icon={<Save20Regular />}",
   " >",
-  "   Lưu",
+  "   Save",
   " </Button>",
 ].join("\n");
 
 function DiffDemo() {
-  return <CodeBlock className="w-full" title="Đổi sang nút chính" language="tsx" diff code={DIFF_SOURCE} />;
+  return <CodeBlock className="w-full" title="Switch to a primary button" language="tsx" diff code={DIFF_SOURCE} />;
 }
 
 const DIFF_CODE = `const DIFF_SOURCE = [
@@ -874,12 +874,12 @@ const DIFF_CODE = `const DIFF_SOURCE = [
   '+  appearance="primary"',
   "+  icon={<Save20Regular />}",
   " >",
-  "   Lưu",
+  "   Save",
   " </Button>",
 ].join("\\n");
 
 function DiffDemo() {
-  return <CodeBlock className="w-full" title="Đổi sang nút chính" language="tsx" diff code={DIFF_SOURCE} />;
+  return <CodeBlock className="w-full" title="Switch to a primary button" language="tsx" diff code={DIFF_SOURCE} />;
 }`;
 
 const TOKENS_SOURCE = [
@@ -937,7 +937,7 @@ const PROJECT_FILES = [
       "export default function App() {",
       "  return (",
       '    <YugenProvider applyToDocument theme="dark">',
-      '      <Button appearance="primary">Xin chào</Button>',
+      '      <Button appearance="primary">Hello</Button>',
       "    </YugenProvider>",
       "  );",
       "}",
@@ -966,7 +966,7 @@ const CODE_TABS_CODE = `const PROJECT_FILES = [
       "export default function App() {",
       "  return (",
       '    <YugenProvider applyToDocument theme="dark">',
-      '      <Button appearance="primary">Xin chào</Button>',
+      '      <Button appearance="primary">Hello</Button>',
       "    </YugenProvider>",
       "  );",
       "}",
@@ -1002,94 +1002,94 @@ const LABS_CHAT: Record<string, ComponentDoc> = {
       {
         title: "Sáu trạng thái",
         description: "Icon và màu token đi cùng nhãn chữ — không dùng màu làm tín hiệu duy nhất. Bước running tự chạy đồng hồ.",
-        code: `<Trace hideHeader size="small" appearance="subtle" aria-label="Các trạng thái" className="w-full">
-  <TraceStep status="pending" title="pending — Đang chờ" />
-  <TraceStep status="running" title="running — Đang chạy" />
-  <TraceStep status="success" title="success — Hoàn tất" duration={1240} />
-  <TraceStep status="error" title="error — Lỗi" duration={320} />
-  <TraceStep status="skipped" title="skipped — Bỏ qua" />
-  <TraceStep status="cancelled" title="cancelled — Đã huỷ" />
+        code: `<Trace hideHeader size="small" appearance="subtle" aria-label="Step statuses" className="w-full">
+  <TraceStep status="pending" title="pending — Waiting" />
+  <TraceStep status="running" title="running — In progress" />
+  <TraceStep status="success" title="success — Done" duration={1240} />
+  <TraceStep status="error" title="error — Failed" duration={320} />
+  <TraceStep status="skipped" title="skipped — Skipped" />
+  <TraceStep status="cancelled" title="cancelled — Cancelled" />
 </Trace>`,
         render: () => (
-          <Trace hideHeader size="small" appearance="subtle" aria-label="Các trạng thái" className="w-full">
-            <TraceStep status="pending" title="pending — Đang chờ" />
-            <TraceStep status="running" title="running — Đang chạy" />
-            <TraceStep status="success" title="success — Hoàn tất" duration={1240} />
-            <TraceStep status="error" title="error — Lỗi" duration={320} />
-            <TraceStep status="skipped" title="skipped — Bỏ qua" />
-            <TraceStep status="cancelled" title="cancelled — Đã huỷ" />
+          <Trace hideHeader size="small" appearance="subtle" aria-label="Step statuses" className="w-full">
+            <TraceStep status="pending" title="pending — Waiting" />
+            <TraceStep status="running" title="running — In progress" />
+            <TraceStep status="success" title="success — Done" duration={1240} />
+            <TraceStep status="error" title="error — Failed" duration={320} />
+            <TraceStep status="skipped" title="skipped — Skipped" />
+            <TraceStep status="cancelled" title="cancelled — Cancelled" />
           </Trace>
         ),
       },
       {
         title: "Pipeline có lỗi",
         description: "Bước lỗi tự mở phần chi tiết; ví dụ này đặt các bước sau thành skipped / cancelled.",
-        code: `<Trace title="Triển khai sakura-web" duration={48300} size="small" className="w-full">
-  <TraceStep status="success" title="Cài phụ thuộc" duration={12400} />
-  <TraceStep status="success" title="Kiểm thử" duration={31800} metadata={["212 test"]} />
+        code: `<Trace title="Deploy sakura-web" duration={48300} size="small" className="w-full">
+  <TraceStep status="success" title="Install dependencies" duration={12400} />
+  <TraceStep status="success" title="Run tests" duration={31800} metadata={["212 tests"]} />
   <TraceStep
     status="error"
-    title="Kiểm tra bundle"
+    title="Check bundle size"
     duration={4100}
-    description="Bundle vượt ngân sách 180 KB."
+    description="The bundle is over the 180 KB budget."
     details={<TraceLog intent="error">{"✖ dist/index.js  214.6 KB > 180 KB"}</TraceLog>}
   />
-  <TraceStep status="skipped" title="Triển khai preview" />
-  <TraceStep status="cancelled" title="Triển khai production" />
+  <TraceStep status="skipped" title="Deploy preview" />
+  <TraceStep status="cancelled" title="Deploy to production" />
 </Trace>`,
         render: () => (
-          <Trace title="Triển khai sakura-web" duration={48300} size="small" className="w-full">
-            <TraceStep status="success" title="Cài phụ thuộc" duration={12400} />
-            <TraceStep status="success" title="Kiểm thử" duration={31800} metadata={["212 test"]} />
+          <Trace title="Deploy sakura-web" duration={48300} size="small" className="w-full">
+            <TraceStep status="success" title="Install dependencies" duration={12400} />
+            <TraceStep status="success" title="Run tests" duration={31800} metadata={["212 tests"]} />
             <TraceStep
               status="error"
-              title="Kiểm tra bundle"
+              title="Check bundle size"
               duration={4100}
-              description="Bundle vượt ngân sách 180 KB."
+              description="The bundle is over the 180 KB budget."
               details={<TraceLog intent="error">{"✖ dist/index.js  214.6 KB > 180 KB"}</TraceLog>}
             />
-            <TraceStep status="skipped" title="Triển khai preview" />
-            <TraceStep status="cancelled" title="Triển khai production" />
+            <TraceStep status="skipped" title="Deploy preview" />
+            <TraceStep status="cancelled" title="Deploy to production" />
           </Trace>
         ),
       },
       {
         title: "Gọi công cụ kèm JSON",
         description: "Slot details nhận bất kỳ nội dung nào — ở đây là CodeBlock JSON.",
-        code: `<Trace title="Trả lời câu hỏi đổi trả" duration={3122} size="small" className="w-full">
+        code: `<Trace title="Answer a returns question" duration={3122} size="small" className="w-full">
   <TraceStep
     status="success"
     title="search_docs"
     duration={812}
-    metadata={["tool", "3 kết quả"]}
+    metadata={["tool", "3 results"]}
     defaultExpanded
     details={
       <CodeBlock
         language="json"
         size="small"
-        code={'{\\n  "query": "chính sách đổi trả",\\n  "top_k": 3\\n}'}
+        code={'{\\n  "query": "return policy",\\n  "top_k": 3\\n}'}
       />
     }
   />
-  <TraceStep status="success" title="Tổng hợp câu trả lời" duration={2310} metadata={["1.2k token"]} />
+  <TraceStep status="success" title="Write the answer" duration={2310} metadata={["1.2k tokens"]} />
 </Trace>`,
         render: () => (
-          <Trace title="Trả lời câu hỏi đổi trả" duration={3122} size="small" className="w-full">
+          <Trace title="Answer a returns question" duration={3122} size="small" className="w-full">
             <TraceStep
               status="success"
               title="search_docs"
               duration={812}
-              metadata={["tool", "3 kết quả"]}
+              metadata={["tool", "3 results"]}
               defaultExpanded
               details={
                 <CodeBlock
                   language="json"
                   size="small"
-                  code={'{\n  "query": "chính sách đổi trả",\n  "top_k": 3\n}'}
+                  code={'{\n  "query": "return policy",\n  "top_k": 3\n}'}
                 />
               }
             />
-            <TraceStep status="success" title="Tổng hợp câu trả lời" duration={2310} metadata={["1.2k token"]} />
+            <TraceStep status="success" title="Write the answer" duration={2310} metadata={["1.2k tokens"]} />
           </Trace>
         ),
       },
@@ -1197,23 +1197,23 @@ const LABS_CHAT: Record<string, ComponentDoc> = {
         code: GROUPING_CODE,
         render: () => (
           <MessageScroller className="h-80 w-full rounded-xlarge border border-stroke-2">
-            <MessageDaySeparator>Thứ Hai, 19/10</MessageDaySeparator>
-            <MessageBubble author="Trần Lan" time="08:12">Sáng nay bản build mới đã lên staging.</MessageBubble>
-            <MessageBubble author="Trần Lan" time="08:12">Mọi người kiểm tra giúp phần Trace nhé!</MessageBubble>
+            <MessageDaySeparator>Monday, Oct 19</MessageDaySeparator>
+            <MessageBubble author="Alex Chen" time="8:12 AM">The new build went to staging this morning.</MessageBubble>
+            <MessageBubble author="Alex Chen" time="8:12 AM">Could everyone check the Trace part?</MessageBubble>
             <MessageBubble
-              author="Trần Lan"
-              time="08:13"
+              author="Alex Chen"
+              time="8:13 AM"
               reactions={
                 <>
-                  <MessageReaction emoji="👍" count={3} label="Thích" selected />
-                  <MessageReaction emoji="🌸" count={1} label="Hoa anh đào" />
+                  <MessageReaction emoji="👍" count={3} label="Like" selected />
+                  <MessageReaction emoji="🌸" count={1} label="Cherry blossom" />
                 </>
               }
             >
-              Có gì cứ nhắn mình.
+              Message me if anything comes up.
             </MessageBubble>
-            <MessageBubble side="outgoing" author="Bạn" time="08:20">
-              Đã xem, chạy mượt lắm 🎉
+            <MessageBubble side="outgoing" author="You" time="8:20 AM">
+              Checked it, runs smoothly 🎉
             </MessageBubble>
           </MessageScroller>
         ),
@@ -1226,7 +1226,7 @@ const LABS_CHAT: Record<string, ComponentDoc> = {
       },
       {
         title: "Tin mới khi đang đọc tin cũ",
-        description: "Cuộn lên rồi bấm “Nhận tin mới”: danh sách không tự nhảy, nút nổi đếm số tin mới.",
+        description: "Cuộn lên rồi bấm “Get a new message”: danh sách không tự nhảy, nút nổi đếm số tin mới.",
         code: NEW_MESSAGES_CODE,
         render: () => <NewMessagesDemo />,
       },
@@ -1285,8 +1285,8 @@ const LABS_CHAT: Record<string, ComponentDoc> = {
       {
         title: "Disabled",
         description: "Giải thích lý do ngay trong placeholder hoặc bên cạnh.",
-        code: `<ChatComposer className="w-full" disabled placeholder="Bạn chỉ có quyền xem kênh này" onSend={() => {}} />`,
-        render: () => <ChatComposer className="w-full" disabled placeholder="Bạn chỉ có quyền xem kênh này" onSend={() => {}} />,
+        code: `<ChatComposer className="w-full" disabled placeholder="You can only view this channel" onSend={() => {}} />`,
+        render: () => <ChatComposer className="w-full" disabled placeholder="You can only view this channel" onSend={() => {}} />,
       },
     ],
     dos: [

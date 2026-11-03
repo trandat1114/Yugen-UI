@@ -3,12 +3,14 @@
  * Prerender docs (bước cuối của `npm run build:docs`, sau `vite build` và `vite build --ssr src/entry-server.tsx`):
  *   dist-docs/index.html                  trang chủ
  *   dist-docs/components/button.html      mọi route khác — GitHub Pages phục vụ /components/button từ file này
- *   dist-docs/en/…                        cùng các trang đó bằng tiếng Anh (/en/, /en/components/button)
+ *   dist-docs/vi/…                        cùng các trang đó bằng tiếng Việt (/vi/, /vi/components/button); tiếng Anh ở
+ *                                         gốc (#277)
+ *   dist-docs/en/…                        trang chuyển hướng cho URL /en/… của docs ≤ 0.13 (noindex, canonical về URL mới)
  *   dist-docs/404.html                    khung trống (noindex): đường dẫn lạ, React tự render theo URL
  *   dist-docs/routes.json                 mọi trang: đường dẫn + nội dung ảnh chia sẻ (og-pages.mjs); build-versioned-docs.mjs
  *                                         dựa vào file này để biết bản docs dùng URL đường dẫn
  *   dist-docs/sitemap.xml                 chỉ bản chính (next/ và vX.Y/ trỏ canonical về bản chính); lastmod theo git,
- *                                         kèm hreflang vi / en
+ *                                         kèm hreflang en / vi / x-default
  * Mỗi trang có <title>, description, canonical, hreflang và og:* riêng. Xong thì xoá dist-ssr/.
  */
 import { execFileSync } from "node:child_process";
@@ -38,7 +40,9 @@ function replaceOnce(html, pattern, value) {
   return next;
 }
 
-const { ROUTES, SITE, render, sourcesOf } = await import(pathToFileURL(path.join(ssr, "entry-server.js")).href);
+const { ROUTES, SITE, render, sourcesOf, DEFAULT_LOCALE, PREFIXED_LOCALE, LEGACY_PREFIX, pathOf, hrefOf } = await import(
+  pathToFileURL(path.join(ssr, "entry-server.js")).href
+);
 
 function page(html, lang, { title, description, canonical, alternates, image }, body) {
   const attr = (name) => (_, open) => `${open}${escapeHtml(name)}`;
@@ -51,11 +55,31 @@ function page(html, lang, { title, description, canonical, alternates, image }, 
   html = replaceOnce(html, /(<meta property="og:url" content=")[^"]*/, attr(canonical));
   html = replaceOnce(html, /(<meta property="og:image" content=")[^"]*/, attr(SITE.url + image));
   html = replaceOnce(html, /(<meta property="og:image:alt" content=")[^"]*/, attr(title));
-  html = replaceOnce(html, /<html lang="vi">/, `<html lang="${lang}" data-prerendered>`);
+  html = replaceOnce(html, /<html lang="en">/, `<html lang="${lang}" data-prerendered>`);
   return replaceOnce(html, /<div id="root"><\/div>/, () => `<div id="root">${body}</div>`);
 }
 
 const base = (process.env.DOCS_BASE ?? "/").replace(/\/?$/, "/");
+
+/** Trang chuyển hướng cho một URL cũ: canonical tuyệt đối, đích tương đối với site đang build (next/, vX.Y/). */
+function legacyRedirect(canonical, target) {
+  const href = escapeHtml(target);
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href="${escapeHtml(canonical)}" />
+    <meta http-equiv="refresh" content="0; url=${href}" />
+    <title>Yugen UI</title>
+    <script>location.replace(${JSON.stringify(target)} + location.search + location.hash);</script>
+  </head>
+  <body>
+    <p>This page moved to <a href="${href}">${href}</a>.</p>
+  </body>
+</html>
+`;
+}
 const mainBuild = !/\/(next|v\d+\.\d+)\/$/.test(base);
 
 /** Ngày commit gần nhất (YYYY-MM-DD) đụng tới các file nguồn của trang; không có git / file → undefined. */
@@ -81,9 +105,9 @@ const entries = [];
 const sitemap = [];
 const streamed = [];
 for (const route of ROUTES) {
-  for (const lang of ["vi", "en"]) {
+  for (const lang of [DEFAULT_LOCALE, PREFIXED_LOCALE]) {
     const { path: routePath, html, head, card } = await render(route, lang);
-    // Bản /en/ của trang chưa dịch trỏ canonical về bản tiếng Việt: không đưa vào sitemap.
+    // Bản tiếng Anh của trang chưa dịch trỏ canonical về bản tiếng Việt: không đưa vào sitemap.
     if (mainBuild && head.canonical === SITE.url + routePath) {
       sitemap.push({ loc: head.canonical, alternates: head.alternates, lastmod: lastmod(sourcesOf(route)) });
     }
@@ -94,6 +118,16 @@ for (const route of ROUTES) {
     fs.writeFileSync(file, page(template, lang, head, html));
     entries.push({ path: routePath, lang, image: head.image, ...card });
   }
+}
+
+// URL /en/… của docs ≤ 0.13 (link, bookmark, kết quả tìm kiếm): GitHub Pages không chuyển hướng phía server, nên mỗi
+// trang có một file nhỏ chuyển sang URL mới (giữ ?query và #mục), noindex, canonical về URL mới (#277).
+for (const route of ROUTES) {
+  const target = hrefOf(route, "en");
+  const legacyPath = pathOf(route) ? `${LEGACY_PREFIX}/${pathOf(route)}.html` : `${LEGACY_PREFIX}/index.html`;
+  const file = path.join(out, legacyPath);
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, legacyRedirect(SITE.url + target.slice(base.length), target));
 }
 
 // 404: khung trống như trước khi có prerender, không cho index.

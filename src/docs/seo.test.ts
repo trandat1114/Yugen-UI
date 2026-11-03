@@ -4,11 +4,11 @@ import { documentHead, fallbackOf } from "./seo";
 
 // Hiện mọi trang đều có bản tiếng Anh; quy tắc cho trang chưa dịch (concept mới chưa có en/<slug>.tsx) vẫn cần đúng.
 describe("seo: trang chưa dịch", () => {
-  it("bản /en/ của trang chưa dịch trỏ canonical về bản tiếng Việt, không có hreflang", () => {
+  it("bản tiếng Anh của trang chưa dịch trỏ canonical về bản tiếng Việt (/vi/), không có hreflang", () => {
     const route = { kind: "concept", slug: "__chua-dich__" } as const;
     expect(fallbackOf(route)).toBe("page");
     const head = documentHead(route, localeValue("en"));
-    expect(head.canonical).toBe("https://trandat1114.github.io/Yugen-UI/concepts/__chua-dich__");
+    expect(head.canonical).toBe("https://trandat1114.github.io/Yugen-UI/vi/concepts/__chua-dich__");
     expect(head.alternates).toEqual([]);
   });
 
@@ -19,12 +19,13 @@ describe("seo: trang chưa dịch", () => {
       { kind: "templates" },
       { kind: "theme-designer" },
       { kind: "community" },
+      { kind: "contributors" },
+      { kind: "news" },
       { kind: "foundation", slug: "color" },
       { kind: "foundation", slug: "motion" },
       { kind: "component", slug: "button" },
       { kind: "concept", slug: "cli" },
     ] as const)
       expect(fallbackOf(route), JSON.stringify(route)).toBeNull();
-    expect(fallbackOf({ kind: "news" })).toBe("partial");
   });
 });

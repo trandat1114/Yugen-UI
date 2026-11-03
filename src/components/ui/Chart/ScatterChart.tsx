@@ -2,7 +2,7 @@ import * as React from "react";
 import { DataTrending20Filled, DataTrending20Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
-import { chartMessages } from "./messages";
+import { chartMessagesEn } from "./messages";
 import { ToggleButton } from "../ToggleButton/ToggleButton";
 import { ChartContainer, ChartFocusRing, ChartLegend, ChartTable, ChartTooltip, type ChartTooltipRow } from "./ChartParts";
 import { Baseline, GridLines, PlotArea, ValueAxisBottom, ValueAxisLeft, axisTextClass } from "./cartesian";
@@ -20,7 +20,6 @@ import {
   slotVar,
   toNumber,
   useChartTexture,
-  useElementWidth,
   useRovingPoints,
   useSeriesToggle,
   type ChartDatum,
@@ -29,6 +28,8 @@ import {
   type ChartSeries,
   type ChartSlot,
 } from "./chartUtils";
+import { useElementSize } from "../hooks/useElementSize";
+import { useControllableState } from "../hooks/useControllableState";
 import { MARKER_SHAPES, bubbleRadius, linearRegression, markerPath, nearestPoint, type LinearFit, type MarkerShape } from "./chartMath";
 
 export type ScatterXFormat = Intl.NumberFormatOptions | Intl.DateTimeFormatOptions | ((value: number | Date) => string);
@@ -157,18 +158,13 @@ export const ScatterChart = React.forwardRef<HTMLElement, ScatterChartProps>(fun
 ) {
   const yugen = useYugen();
   const locale = localeProp ?? yugen.locale;
-  const msg = useYugenMessages("chart", chartMessages);
+  const msg = useYugenMessages("chart", chartMessagesEn);
   const otherLabel = msg.other;
   const uid = chartUid(React.useId());
   const textured = useChartTexture(texture);
-  const [plotRef, width] = useElementWidth<HTMLDivElement>();
+  const { ref: plotRef, width } = useElementSize<HTMLDivElement>();
   const [active, setActive] = React.useState<{ i: number; kb: boolean } | null>(null);
-  const [innerTrend, setInnerTrend] = React.useState(defaultTrendLine);
-  const trendOn = trendLine ?? innerTrend;
-  const setTrend = (on: boolean) => {
-    if (trendLine === undefined) setInnerTrend(on);
-    onTrendLineChange?.(on);
-  };
+  const [trendOn, setTrend] = useControllableState({ value: trendLine, defaultValue: defaultTrendLine, onChange: onTrendLineChange });
 
   const isTime = xType ? xType === "time" : data.some((d) => d[x] instanceof Date);
   const xName = xLabel ?? x;

@@ -1,13 +1,14 @@
 /** Yugen Labs · Reasoning — khối "Đang suy luận… / Đã suy luận trong 12s" thu gọn được cho phần suy nghĩ của model. */
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import { ChevronDown16Regular, Lightbulb16Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../Collapsible/Collapsible";
 import { useYugenMessages } from "../YugenProvider/context";
-import { reasoningMessages } from "./messages";
+import { reasoningMessagesEn } from "./messages";
 import { StreamingMarkdown } from "./StreamingMarkdown";
 
-export { reasoningMessages, reasoningMessagesEn, type ReasoningMessages } from "./messages";
+export { reasoningMessages, reasoningMessagesVi, reasoningMessagesEn, type ReasoningMessages } from "./messages";
 
 /** Thời lượng gọn theo giây: 12s · 1m 05s. */
 export function formatReasoningDuration(ms: number): string {
@@ -39,21 +40,16 @@ export const Reasoning = React.forwardRef<HTMLDivElement, ReasoningProps>(
     { streaming = false, duration, open: openProp, defaultOpen, onOpenChange, autoOpen = true, label, className, children, ...props },
     ref,
   ) => {
-    const msg = useYugenMessages("reasoning", reasoningMessages);
-    const [innerOpen, setInnerOpen] = React.useState(defaultOpen ?? (autoOpen && streaming));
-    const open = openProp ?? innerOpen;
+    const msg = useYugenMessages("reasoning", reasoningMessagesEn);
+    const [open, setOpen] = useControllableState({
+      value: openProp,
+      defaultValue: defaultOpen ?? (autoOpen && streaming),
+      onChange: onOpenChange,
+    });
     const userToggled = React.useRef(false);
     const [startedAt, setStartedAt] = React.useState<number | null>(null);
     const [measured, setMeasured] = React.useState<number | null>(null);
     const [now, setNow] = React.useState<number | null>(null);
-
-    const setOpen = React.useCallback(
-      (next: boolean) => {
-        if (openProp === undefined) setInnerOpen(next);
-        onOpenChange?.(next);
-      },
-      [openProp, onOpenChange],
-    );
 
     // Đo thời gian trong effect: Date.now() không bao giờ chạy lúc render (server / client lệch nhau).
     const prevStreaming = React.useRef<boolean | null>(null);

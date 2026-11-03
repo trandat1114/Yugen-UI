@@ -135,9 +135,9 @@ export default function CustomerPage({ id }: { id: string }) {
         }
       />
 
-      <div className="grid items-start gap-4 @5xl/app:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+      <div className="grid items-start gap-4 @5xl/app-shell:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
         <Section title={t.customer.details} action={<CustomerStatusBadge status={customer.status} />}>
-          <dl className="grid gap-x-4 gap-y-3 text-body1 @lg/app:grid-cols-[auto_minmax(0,1fr)]">
+          <dl className="grid gap-x-4 gap-y-3 text-body1 @lg/app-shell:grid-cols-[auto_minmax(0,1fr)]">
             {details.map(([term, value]) => (
               <div key={term} className="contents">
                 <dt className="text-foreground-3">{term}</dt>

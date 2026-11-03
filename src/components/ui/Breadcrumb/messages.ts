@@ -21,3 +21,6 @@ export const breadcrumbMessagesEn: BreadcrumbMessages = {
   label: "Breadcrumb",
   overflow: "More items",
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `breadcrumbMessagesEn` (mặc định). `breadcrumbMessages` giữ cho code cũ. */
+export const breadcrumbMessagesVi = breadcrumbMessages;

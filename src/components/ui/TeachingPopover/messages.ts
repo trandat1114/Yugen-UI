@@ -43,3 +43,6 @@ export const teachingPopoverMessagesEn: TeachingPopoverMessages = {
   step: (current, count) => `Step ${current} of ${count}`,
   goToStep: (index) => `Go to step ${index}`,
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `teachingPopoverMessagesEn` (mặc định). `teachingPopoverMessages` giữ cho code cũ. */
+export const teachingPopoverMessagesVi = teachingPopoverMessages;

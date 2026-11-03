@@ -2,7 +2,8 @@ name: CI
 
 # Push / PR chỉ đổi tài liệu để đọc thì không chạy. Danh sách cố ý không có file mà CI đọc: CHANGELOG.md (check:release),
 # ROADMAP.md (roadmap.test.ts), packages/cli/CHANGELOG.md (check-release của CLI), Markdown trong src/ và templates/ (bài
-# blog của template, README do sync-templates sinh). Cùng danh sách ở engines.yml và pages.yml.
+# blog của template, README do sync-templates sinh). Cùng danh sách ở engines.yml và pages.yml. Ngoại lệ: tin của trang Có gì
+# mới (src/docs/news, #261) — news.yml kiểm tra riêng trong vài giây; pages.yml vẫn build lại docs.
 on:
   push:
     branches: [main, next, "release/**", canary]
@@ -14,10 +15,12 @@ on:
       - "GOVERNANCE.md"
       - "SECURITY.md"
       - "Design.md"
+      - "Design.vi.md"
       - "LICENSE"
       - ".github/PULL_REQUEST_TEMPLATE.md"
       - ".github/ISSUE_TEMPLATE/**"
       - "packages/*/README.md"
+      - "src/docs/news/**" # tin dạng Markdown: news.yml kiểm tra, pages.yml build lại docs
   pull_request:
     branches: [main, next, "release/**", canary]
     # PR draft không chạy CI (bấm "Ready for review" để chạy một lần).
@@ -30,10 +33,12 @@ on:
       - "GOVERNANCE.md"
       - "SECURITY.md"
       - "Design.md"
+      - "Design.vi.md"
       - "LICENSE"
       - ".github/PULL_REQUEST_TEMPLATE.md"
       - ".github/ISSUE_TEMPLATE/**"
       - "packages/*/README.md"
+      - "src/docs/news/**" # tin dạng Markdown: news.yml kiểm tra, pages.yml build lại docs
   # node-versions.yml gọi CI trên nhánh PR nó tạo (PR do GITHUB_TOKEN mở không tự chạy workflow).
   workflow_dispatch:
 
@@ -53,8 +58,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # LTS + Current đang được hỗ trợ (https://github.com/nodejs/Release); node-versions.yml mở PR khi lệch lịch.
-        node: [22, 24, 26]
+        # 2 bản LTS mới nhất (LTS_LINES trong scripts/node-versions.mjs); node-versions.yml mở PR khi lịch Node đổi.
+        node: [24, 26]
     steps:
       - uses: actions/checkout@v7
 
@@ -66,12 +71,14 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm run lint:classes
-      # package.json = news.ts = CHANGELOG.md (scripts/check-release.mjs)
+      # package.json = src/docs/news = CHANGELOG.md (scripts/check-release.mjs)
       - run: npm run check:release
       # Loại bump của changeset; PR vào main / release/* chỉ mang patch (scripts/check-changesets.mjs)
       - run: npm run check:changesets
       - run: npm run check:examples
       - run: npm run check:props
+      # Code mẫu và block viết bằng tiếng Anh, trừ demo nói về ngôn ngữ (ALLOW trong scripts/check-demo-language.mjs)
+      - run: npm run check:demo-language
       - run: node scripts/sync-templates.mjs --check
       - run: npm run build:lib
       - run: npm run build:docs
@@ -89,7 +96,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: 26
           cache: npm
 
       - run: npm ci
@@ -104,8 +111,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Cùng các bản Node như Build; engines của CLI: node >=22.
-        node: [22, 24, 26]
+        # Cùng các bản Node như Build.
+        node: [24, 26]
     steps:
       - uses: actions/checkout@v7
 
@@ -154,7 +161,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: 26
           cache: npm
 
       - run: npm ci
@@ -208,7 +215,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: 26
           cache: npm
 
       - run: npm ci
@@ -242,7 +249,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: 26
           cache: npm
 
       - run: npm ci
@@ -278,7 +285,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: 26
           cache: npm
 
       - run: npm ci
@@ -320,7 +327,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: 26
           cache: npm
 
       - run: npm ci

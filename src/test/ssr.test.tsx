@@ -26,7 +26,7 @@ import { PackageManagerTabs } from "@/components/ui";
 import { captureConsole, summarizeWarning } from "./consoleCapture";
 import { withoutBrowserGlobals } from "./serverRender";
 import { setMediaQueries } from "./matchMedia";
-import { SSR_CASES, SSR_NOW } from "./ssrCases";
+import { HooksProbe, SSR_CASES, SSR_NOW } from "./ssrCases";
 
 const HYDRATION_MESSAGE =
   /hydrat|did not match|server rendered|server-rendered|Expected server HTML|Extra attributes from the server|initial UI does not match/i;
@@ -79,6 +79,7 @@ async function renderServerThenHydrate(render: () => React.ReactElement): Promis
   vi.setSystemTime(SSR_NOW + 5_000);
   window.localStorage.setItem("yugen-ui-package-manager", "pnpm");
   window.localStorage.setItem("react-resizable-panels:ssr-layout", JSON.stringify({ a: 25, b: 75 }));
+  window.localStorage.setItem("ssr-hooks", JSON.stringify("đã lưu"));
 
   // Lượt render đầu của client (như hydration) bằng renderToString — so được từng thuộc tính.
   let clientHtml: string | null = null;
@@ -156,6 +157,16 @@ describe("SSR → hydration không lệch", () => {
     expect(mounted.recoverable).toEqual([]);
     expect(mounted.container.querySelector('[role="tab"][aria-selected="true"]')).toHaveTextContent("pnpm");
     expect(mounted.container.querySelector('[role="tabpanel"][data-state="active"]')).toHaveTextContent("pnpm add yugen-ui");
+  });
+
+  it("sau hydration, hook chuyển sang giá trị thật (useLocalStorage, useMediaQuery)", async () => {
+    mounted = await renderServerThenHydrate(() => <HooksProbe />);
+    const server = document.createElement("div");
+    server.innerHTML = mounted.html;
+    expect(server).toHaveTextContent("ban đầu · hẹp · 0 · ẩn");
+    expect(mounted.clientHtml).toBe(mounted.html);
+    expect(mounted.recoverable).toEqual([]);
+    expect(mounted.container).toHaveTextContent("đã lưu · rộng · 0 · ẩn");
   });
 
   /* ---------- Đối chứng: harness phải bắt được các lỗi kinh điển ---------- */

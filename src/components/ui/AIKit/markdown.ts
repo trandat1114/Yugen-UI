@@ -40,22 +40,46 @@ export interface MdRoot {
 export interface ParseMarkdownOptions {
   /** Chữ còn đang về: khối cuối được phép dở dang (fence, nhấn mạnh, link chưa đóng không hiện ký hiệu thô). */
   streaming?: boolean;
+  /**
+   * Giữ link tương đối trong `[nhãn](url)`: `/path`, `#id`, `?q`, `./x`, `../x`, `guide/x`. Mặc định false (chỉ http,
+   * https, mailto) — hợp với nội dung do model sinh ra; bật cho nội dung của chính app (docs, ghi chú phát hành).
+   */
+  relativeLinks?: boolean;
 }
 
 /* ================================================================ URL an toàn */
 
+// Đường dẫn trong cùng site. Loại "//host" và "/\host" (trình duyệt hiểu là protocol-relative) và mọi thứ có scheme
+// ("javascript:…"): đoạn đầu không được chứa ":" hay "\".
+const RELATIVE_URL = /^(?:\/(?![/\\])|[#?]|\.{1,2}\/|[^:/?#\\]+(?:[/?#]|$))/;
+
 /**
- * Chỉ cho phép link tuyệt đối http / https / mailto. Trả về URL đã làm sạch, hoặc null
- * (javascript:, data:, vbscript:, đường dẫn tương đối, protocol-relative… đều bị loại).
+ * Chỉ cho phép link tuyệt đối http / https / mailto, và đường dẫn tương đối khi `relative: true`. Trả về URL đã làm
+ * sạch, hoặc null (javascript:, data:, vbscript:, protocol-relative… đều bị loại).
  */
-export function sanitizeHref(url: string | undefined | null): string | null {
+export function sanitizeHref(url: string | undefined | null, { relative = false }: { relative?: boolean } = {}): string | null {
   if (!url) return null;
   // Trình duyệt bỏ qua ký tự điều khiển / khoảng trắng trong scheme ("java\tscript:") → loại trước khi kiểm tra.
   // eslint-disable-next-line no-control-regex
   const cleaned = url.trim().replace(/[\u0000-\u001F\u007F\s]+/g, "");
   if (/^https?:\/\/[^/]/i.test(cleaned)) return cleaned;
   if (/^mailto:[^\s]+$/i.test(cleaned)) return cleaned;
+  if (relative && RELATIVE_URL.test(cleaned)) return cleaned;
   return null;
+}
+
+// Tuỳ chọn `relativeLinks` của lần phân tích đang chạy. Phân tích là đồng bộ và không lồng nhau, nên một biến của module
+// đủ dùng thay cho việc truyền tuỳ chọn qua mọi hàm.
+let keepRelative = false;
+
+function withRelativeLinks<T>(on: boolean, run: () => T): T {
+  const prev = keepRelative;
+  keepRelative = on;
+  try {
+    return run();
+  } finally {
+    keepRelative = prev;
+  }
 }
 
 /* ================================================================ Inline */
@@ -388,7 +412,7 @@ function parseBracket(src: string, i: number, open: boolean): { nodes: MdInline[
     const dest = parseDestination(src, k + 2);
     const children = parseInlines(label, false);
     if (dest) {
-      const href = sanitizeHref(dest.href);
+      const href = sanitizeHref(dest.href, { relative: keepRelative });
       return {
         nodes: href ? [{ type: "link", href, ...(dest.title ? { title: dest.title } : {}), children }] : children,
         end: dest.end,
@@ -701,8 +725,13 @@ function toLines(text: string) {
 }
 
 /** Phân tích Markdown thành AST. Hàm thuần — dùng được ở server, worker hoặc test. */
-export function parseMarkdown(text: string, { streaming = false }: ParseMarkdownOptions = {}): MdRoot {
-  return { type: "root", children: parseBlocks(toLines(text), 0, streaming).blocks };
+export function parseMarkdown(text: string, { streaming = false, relativeLinks = false }: ParseMarkdownOptions = {}): MdRoot {
+  return withRelativeLinks(relativeLinks, () => ({ type: "root", children: parseBlocks(toLines(text), 0, streaming).blocks }));
+}
+
+/** Chỉ phần inline (nhấn mạnh, code, link…) của một dòng: không đoạn văn, không khối. Xuống dòng thành `softBreak`. */
+export function parseInlineMarkdown(text: string, { relativeLinks = false }: Pick<ParseMarkdownOptions, "relativeLinks"> = {}): MdInline[] {
+  return withRelativeLinks(relativeLinks, () => parseInlines(text.replace(/\r\n?/g, "\n").trim(), false));
 }
 
 /* ================================================================ Phân tích tăng dần */

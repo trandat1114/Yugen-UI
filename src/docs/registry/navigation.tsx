@@ -126,9 +126,9 @@ function MuteDemo() {
         onCheckedChange={setMuted}
         icon={<Mic20Regular />}
         checkedIcon={<MicOff20Regular />}
-        aria-label="Tắt tiếng"
+        aria-label="Mute"
       />
-      <span className="text-body1 text-foreground-2">{muted ? "Đang tắt tiếng" : "Micro đang bật"}</span>
+      <span className="text-body1 text-foreground-2">{muted ? "Muted" : "Mic on"}</span>
     </div>
   );
 }
@@ -136,10 +136,10 @@ function MuteDemo() {
 function AlignDemo() {
   const [align, setAlign] = useState("left");
   return (
-    <ToggleGroup type="single" value={align} onValueChange={(v) => v && setAlign(v)} aria-label="Căn lề">
-      <ToggleGroupItem value="left" icon={<TextAlignLeft20Regular />} aria-label="Căn trái" />
-      <ToggleGroupItem value="center" icon={<TextAlignCenter20Regular />} aria-label="Căn giữa" />
-      <ToggleGroupItem value="right" icon={<TextAlignRight20Regular />} aria-label="Căn phải" />
+    <ToggleGroup type="single" value={align} onValueChange={(v) => v && setAlign(v)} aria-label="Text alignment">
+      <ToggleGroupItem value="left" icon={<TextAlignLeft20Regular />} aria-label="Align left" />
+      <ToggleGroupItem value="center" icon={<TextAlignCenter20Regular />} aria-label="Align center" />
+      <ToggleGroupItem value="right" icon={<TextAlignRight20Regular />} aria-label="Align right" />
     </ToggleGroup>
   );
 }
@@ -149,7 +149,7 @@ function PaginationDemo() {
   return (
     <div className="flex flex-col items-center gap-2">
       <Pagination page={page} pageCount={20} onPageChange={setPage} />
-      <span className="text-caption1 text-foreground-3">Trang {page} / 20</span>
+      <span className="text-caption1 text-foreground-3">Page {page} of 20</span>
     </div>
   );
 }
@@ -161,28 +161,28 @@ function NavDemo() {
       selectedValue={selected}
       onNavItemSelect={setSelected}
       defaultOpenCategories={["projects"]}
-      aria-label="Quản lý"
+      aria-label="Admin"
       className="w-64"
     >
-      <NavItem value="overview" icon={<Board20Regular />}>Tổng quan</NavItem>
-      <NavItem value="reports" icon={<ChartMultiple20Regular />}>Báo cáo</NavItem>
-      <NavSectionHeader>Công việc</NavSectionHeader>
+      <NavItem value="overview" icon={<Board20Regular />}>Overview</NavItem>
+      <NavItem value="reports" icon={<ChartMultiple20Regular />}>Reports</NavItem>
+      <NavSectionHeader>Work</NavSectionHeader>
       <NavCategory value="projects">
-        <NavCategoryItem icon={<Folder20Regular />}>Dự án</NavCategoryItem>
+        <NavCategoryItem icon={<Folder20Regular />}>Projects</NavCategoryItem>
         <NavSubItemGroup>
-          <NavSubItem value="active">Đang chạy</NavSubItem>
-          <NavSubItem value="archived">Lưu trữ</NavSubItem>
+          <NavSubItem value="active">Active</NavSubItem>
+          <NavSubItem value="archived">Archived</NavSubItem>
         </NavSubItemGroup>
       </NavCategory>
       <NavCategory value="people">
-        <NavCategoryItem icon={<People20Regular />}>Nhân sự</NavCategoryItem>
+        <NavCategoryItem icon={<People20Regular />}>People</NavCategoryItem>
         <NavSubItemGroup>
-          <NavSubItem value="members">Thành viên</NavSubItem>
-          <NavSubItem value="roles">Vai trò</NavSubItem>
+          <NavSubItem value="members">Members</NavSubItem>
+          <NavSubItem value="roles">Roles</NavSubItem>
         </NavSubItemGroup>
       </NavCategory>
       <NavDivider />
-      <NavItem value="settings" icon={<Settings20Regular />}>Cài đặt</NavItem>
+      <NavItem value="settings" icon={<Settings20Regular />}>Settings</NavItem>
     </Nav>
   );
 }
@@ -194,12 +194,12 @@ function MenubarDemo() {
   return (
     <Menubar>
       <MenubarMenu>
-        <MenubarTrigger>Xem</MenubarTrigger>
+        <MenubarTrigger>View</MenubarTrigger>
         <MenubarContent>
-          <MenubarCheckboxItem checked={ruler} onCheckedChange={setRuler}>Thước kẻ</MenubarCheckboxItem>
-          <MenubarCheckboxItem checked={grid} onCheckedChange={setGrid} secondaryContent="Ctrl+'">Lưới</MenubarCheckboxItem>
+          <MenubarCheckboxItem checked={ruler} onCheckedChange={setRuler}>Ruler</MenubarCheckboxItem>
+          <MenubarCheckboxItem checked={grid} onCheckedChange={setGrid} secondaryContent="Ctrl+'">Grid</MenubarCheckboxItem>
           <MenubarSeparator />
-          <MenubarLabel>Thu phóng</MenubarLabel>
+          <MenubarLabel>Zoom</MenubarLabel>
           <MenubarRadioGroup value={zoom} onValueChange={setZoom}>
             <MenubarRadioItem value="75">75%</MenubarRadioItem>
             <MenubarRadioItem value="100">100%</MenubarRadioItem>
@@ -208,16 +208,16 @@ function MenubarDemo() {
         </MenubarContent>
       </MenubarMenu>
       <MenubarMenu>
-        <MenubarTrigger>Chia sẻ</MenubarTrigger>
+        <MenubarTrigger>Share</MenubarTrigger>
         <MenubarContent>
           <MenubarSub>
-            <MenubarSubTrigger icon={<Share20Regular />}>Gửi qua</MenubarSubTrigger>
+            <MenubarSubTrigger icon={<Share20Regular />}>Send via</MenubarSubTrigger>
             <MenubarSubContent>
               <MenubarItem icon={<Mail20Regular />}>Email</MenubarItem>
-              <MenubarItem icon={<Link20Regular />}>Sao chép liên kết</MenubarItem>
+              <MenubarItem icon={<Link20Regular />}>Copy link</MenubarItem>
             </MenubarSubContent>
           </MenubarSub>
-          <MenubarItem disabled>Xuất bản</MenubarItem>
+          <MenubarItem disabled>Publish</MenubarItem>
         </MenubarContent>
       </MenubarMenu>
     </Menubar>
@@ -231,26 +231,26 @@ function ContextMenuDemo() {
     <ContextMenu>
       <ContextMenuTrigger asChild>
         <div className="flex h-36 w-72 items-center justify-center rounded-xlarge border border-dashed border-stroke-1 text-body1 text-foreground-3 select-none">
-          Nhấp chuột phải vào đây
+          Right-click here
         </div>
       </ContextMenuTrigger>
       <ContextMenuContent>
         <ContextMenuSub>
-          <ContextMenuSubTrigger icon={<Add20Regular />}>Tạo mới</ContextMenuSubTrigger>
+          <ContextMenuSubTrigger icon={<Add20Regular />}>New</ContextMenuSubTrigger>
           <ContextMenuSubContent>
-            <ContextMenuItem icon={<Folder20Regular />}>Thư mục</ContextMenuItem>
-            <ContextMenuItem icon={<Document20Regular />}>Tài liệu</ContextMenuItem>
+            <ContextMenuItem icon={<Folder20Regular />}>Folder</ContextMenuItem>
+            <ContextMenuItem icon={<Document20Regular />}>Document</ContextMenuItem>
           </ContextMenuSubContent>
         </ContextMenuSub>
-        <ContextMenuItem icon={<ArrowClockwise20Regular />}>Làm mới</ContextMenuItem>
+        <ContextMenuItem icon={<ArrowClockwise20Regular />}>Refresh</ContextMenuItem>
         <ContextMenuSeparator />
-        <ContextMenuCheckboxItem checked={showGrid} onCheckedChange={setShowGrid}>Hiện lưới</ContextMenuCheckboxItem>
+        <ContextMenuCheckboxItem checked={showGrid} onCheckedChange={setShowGrid}>Show grid</ContextMenuCheckboxItem>
         <ContextMenuSeparator />
-        <ContextMenuLabel>Sắp xếp theo</ContextMenuLabel>
+        <ContextMenuLabel>Sort by</ContextMenuLabel>
         <ContextMenuRadioGroup value={sort} onValueChange={setSort}>
-          <ContextMenuRadioItem value="name">Tên</ContextMenuRadioItem>
-          <ContextMenuRadioItem value="date">Ngày sửa</ContextMenuRadioItem>
-          <ContextMenuRadioItem value="size">Kích thước</ContextMenuRadioItem>
+          <ContextMenuRadioItem value="name">Name</ContextMenuRadioItem>
+          <ContextMenuRadioItem value="date">Date modified</ContextMenuRadioItem>
+          <ContextMenuRadioItem value="size">Size</ContextMenuRadioItem>
         </ContextMenuRadioGroup>
       </ContextMenuContent>
     </ContextMenu>
@@ -274,25 +274,25 @@ function CommandDialogDemo() {
   return (
     <>
       <Button icon={<Search20Regular />} onClick={() => setOpen(true)}>
-        Mở bảng lệnh
+        Open command palette
         <KbdGroup className="ms-1">
           <Kbd>Ctrl</Kbd>
           <Kbd>K</Kbd>
         </KbdGroup>
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Nhập lệnh hoặc tìm kiếm…" />
+        <CommandInput placeholder="Type a command or search…" />
         <CommandList>
-          <CommandEmpty>Không có kết quả.</CommandEmpty>
-          <CommandGroup heading="Điều hướng">
-            <CommandItem icon={<Home20Regular />} onSelect={() => setOpen(false)}>Trang chủ</CommandItem>
-            <CommandItem icon={<Document20Regular />} onSelect={() => setOpen(false)}>Tài liệu</CommandItem>
-            <CommandItem icon={<Settings20Regular />} onSelect={() => setOpen(false)}>Cài đặt</CommandItem>
+          <CommandEmpty>No results.</CommandEmpty>
+          <CommandGroup heading="Navigation">
+            <CommandItem icon={<Home20Regular />} onSelect={() => setOpen(false)}>Home</CommandItem>
+            <CommandItem icon={<Document20Regular />} onSelect={() => setOpen(false)}>Documents</CommandItem>
+            <CommandItem icon={<Settings20Regular />} onSelect={() => setOpen(false)}>Settings</CommandItem>
           </CommandGroup>
           <CommandSeparator />
-          <CommandGroup heading="Giao diện">
-            <CommandItem icon={<WeatherSunny20Regular />} onSelect={() => setOpen(false)}>Chế độ sáng</CommandItem>
-            <CommandItem icon={<WeatherMoon20Regular />} onSelect={() => setOpen(false)}>Chế độ tối</CommandItem>
+          <CommandGroup heading="Appearance">
+            <CommandItem icon={<WeatherSunny20Regular />} onSelect={() => setOpen(false)}>Light mode</CommandItem>
+            <CommandItem icon={<WeatherMoon20Regular />} onSelect={() => setOpen(false)}>Dark mode</CommandItem>
           </CommandGroup>
         </CommandList>
       </CommandDialog>
@@ -315,15 +315,15 @@ export const docs: ComponentDoc[] = [
     hero: {
       title: "ButtonGroup",
       code: `<ButtonGroup>
-  <Button icon={<ArrowUndo20Regular className="rtl:-scale-x-100" />}>Hoàn tác</Button>
-  <Button icon={<ArrowRedo20Regular className="rtl:-scale-x-100" />}>Làm lại</Button>
-  <Button icon={<MoreHorizontal20Regular />} aria-label="Thêm" />
+  <Button icon={<ArrowUndo20Regular className="rtl:-scale-x-100" />}>Undo</Button>
+  <Button icon={<ArrowRedo20Regular className="rtl:-scale-x-100" />}>Redo</Button>
+  <Button icon={<MoreHorizontal20Regular />} aria-label="More" />
 </ButtonGroup>`,
       render: () => (
         <ButtonGroup>
-          <Button icon={<ArrowUndo20Regular className="rtl:-scale-x-100" />}>Hoàn tác</Button>
-          <Button icon={<ArrowRedo20Regular className="rtl:-scale-x-100" />}>Làm lại</Button>
-          <Button icon={<MoreHorizontal20Regular />} aria-label="Thêm" />
+          <Button icon={<ArrowUndo20Regular className="rtl:-scale-x-100" />}>Undo</Button>
+          <Button icon={<ArrowRedo20Regular className="rtl:-scale-x-100" />}>Redo</Button>
+          <Button icon={<MoreHorizontal20Regular />} aria-label="More" />
         </ButtonGroup>
       ),
     },
@@ -332,13 +332,13 @@ export const docs: ComponentDoc[] = [
         title: "Hướng dọc",
         description: "orientation=\"vertical\" — thường dùng cho cặp phóng to / thu nhỏ trên bản đồ, canvas.",
         code: `<ButtonGroup orientation="vertical">
-  <Button icon={<ZoomIn20Regular />} aria-label="Phóng to" />
-  <Button icon={<ZoomOut20Regular />} aria-label="Thu nhỏ" />
+  <Button icon={<ZoomIn20Regular />} aria-label="Zoom in" />
+  <Button icon={<ZoomOut20Regular />} aria-label="Zoom out" />
 </ButtonGroup>`,
         render: () => (
           <ButtonGroup orientation="vertical">
-            <Button icon={<ZoomIn20Regular />} aria-label="Phóng to" />
-            <Button icon={<ZoomOut20Regular />} aria-label="Thu nhỏ" />
+            <Button icon={<ZoomIn20Regular />} aria-label="Zoom in" />
+            <Button icon={<ZoomOut20Regular />} aria-label="Zoom out" />
           </ButtonGroup>
         ),
       },
@@ -346,17 +346,17 @@ export const docs: ComponentDoc[] = [
         title: "Vạch chia",
         description: "Nút primary không có viền — thêm ButtonGroupSeparator appearance=\"on-brand\" để tách.",
         code: `<ButtonGroup>
-  <Button appearance="primary" icon={<Save20Regular />}>Lưu</Button>
+  <Button appearance="primary" icon={<Save20Regular />}>Save</Button>
   <ButtonGroupSeparator appearance="on-brand" />
-  <Button appearance="primary">Lưu bản sao</Button>
+  <Button appearance="primary">Save a copy</Button>
 </ButtonGroup>`,
         render: () => (
           <ButtonGroup>
             <Button appearance="primary" icon={<Save20Regular />}>
-              Lưu
+              Save
             </Button>
             <ButtonGroupSeparator appearance="on-brand" />
-            <Button appearance="primary">Lưu bản sao</Button>
+            <Button appearance="primary">Save a copy</Button>
           </ButtonGroup>
         ),
       },
@@ -364,30 +364,30 @@ export const docs: ComponentDoc[] = [
         title: "Kết hợp SplitButton",
         description: "SplitButton đặt trong nhóm cũng được gộp bo góc.",
         code: `<ButtonGroup>
-  <Button icon={<Add20Regular />}>Mới</Button>
+  <Button icon={<Add20Regular />}>New</Button>
   <SplitButton
     menu={
       <>
-        <MenuItem>Tải lên tệp</MenuItem>
-        <MenuItem>Tải lên thư mục</MenuItem>
+        <MenuItem>Upload files</MenuItem>
+        <MenuItem>Upload folder</MenuItem>
       </>
     }
   >
-    Tải lên
+    Upload
   </SplitButton>
 </ButtonGroup>`,
         render: () => (
           <ButtonGroup>
-            <Button icon={<Add20Regular />}>Mới</Button>
+            <Button icon={<Add20Regular />}>New</Button>
             <SplitButton
               menu={
                 <>
-                  <MenuItem>Tải lên tệp</MenuItem>
-                  <MenuItem>Tải lên thư mục</MenuItem>
+                  <MenuItem>Upload files</MenuItem>
+                  <MenuItem>Upload folder</MenuItem>
                 </>
               }
             >
-              Tải lên
+              Upload
             </SplitButton>
           </ButtonGroup>
         ),
@@ -422,11 +422,11 @@ export const docs: ComponentDoc[] = [
     hero: {
       title: "ToggleButton",
       code: `<ToggleButton defaultChecked icon={<Star20Regular />} checkedIcon={<Star20Filled />}>
-  Yêu thích
+  Favorite
 </ToggleButton>`,
       render: () => (
         <ToggleButton defaultChecked icon={<Star20Regular />} checkedIcon={<Star20Filled />}>
-          Yêu thích
+          Favorite
         </ToggleButton>
       ),
     },
@@ -470,9 +470,9 @@ export const docs: ComponentDoc[] = [
     onCheckedChange={setMuted}
     icon={<Mic20Regular />}
     checkedIcon={<MicOff20Regular />}
-    aria-label="Tắt tiếng"
+    aria-label="Mute"
   />
-  <span className="text-body1 text-foreground-2">{muted ? "Đang tắt tiếng" : "Micro đang bật"}</span>
+  <span className="text-body1 text-foreground-2">{muted ? "Muted" : "Mic on"}</span>
 </div>`,
         render: () => <MuteDemo />,
       },
@@ -533,16 +533,16 @@ export const docs: ComponentDoc[] = [
     importCode: `import { ToggleGroup, ToggleGroupItem } from "@/components/ui";`,
     hero: {
       title: "ToggleGroup",
-      code: `<ToggleGroup type="multiple" defaultValue={["bold"]} aria-label="Định dạng chữ">
-  <ToggleGroupItem value="bold" icon={<TextBold20Regular />} aria-label="In đậm" />
-  <ToggleGroupItem value="italic" icon={<TextItalic20Regular />} aria-label="In nghiêng" />
-  <ToggleGroupItem value="underline" icon={<TextUnderline20Regular />} aria-label="Gạch chân" />
+      code: `<ToggleGroup type="multiple" defaultValue={["bold"]} aria-label="Text formatting">
+  <ToggleGroupItem value="bold" icon={<TextBold20Regular />} aria-label="Bold" />
+  <ToggleGroupItem value="italic" icon={<TextItalic20Regular />} aria-label="Italic" />
+  <ToggleGroupItem value="underline" icon={<TextUnderline20Regular />} aria-label="Underline" />
 </ToggleGroup>`,
       render: () => (
-        <ToggleGroup type="multiple" defaultValue={["bold"]} aria-label="Định dạng chữ">
-          <ToggleGroupItem value="bold" icon={<TextBold20Regular />} aria-label="In đậm" />
-          <ToggleGroupItem value="italic" icon={<TextItalic20Regular />} aria-label="In nghiêng" />
-          <ToggleGroupItem value="underline" icon={<TextUnderline20Regular />} aria-label="Gạch chân" />
+        <ToggleGroup type="multiple" defaultValue={["bold"]} aria-label="Text formatting">
+          <ToggleGroupItem value="bold" icon={<TextBold20Regular />} aria-label="Bold" />
+          <ToggleGroupItem value="italic" icon={<TextItalic20Regular />} aria-label="Italic" />
+          <ToggleGroupItem value="underline" icon={<TextUnderline20Regular />} aria-label="Underline" />
         </ToggleGroup>
       ),
     },
@@ -552,27 +552,27 @@ export const docs: ComponentDoc[] = [
         description: "Controlled; bỏ qua giá trị rỗng để luôn có một mục được chọn.",
         code: `const [align, setAlign] = useState("left");
 
-<ToggleGroup type="single" value={align} onValueChange={(v) => v && setAlign(v)} aria-label="Căn lề">
-  <ToggleGroupItem value="left" icon={<TextAlignLeft20Regular />} aria-label="Căn trái" />
-  <ToggleGroupItem value="center" icon={<TextAlignCenter20Regular />} aria-label="Căn giữa" />
-  <ToggleGroupItem value="right" icon={<TextAlignRight20Regular />} aria-label="Căn phải" />
+<ToggleGroup type="single" value={align} onValueChange={(v) => v && setAlign(v)} aria-label="Text alignment">
+  <ToggleGroupItem value="left" icon={<TextAlignLeft20Regular />} aria-label="Align left" />
+  <ToggleGroupItem value="center" icon={<TextAlignCenter20Regular />} aria-label="Align center" />
+  <ToggleGroupItem value="right" icon={<TextAlignRight20Regular />} aria-label="Align right" />
 </ToggleGroup>`,
         render: () => <AlignDemo />,
       },
       {
         title: "Subtle, có nhãn",
         description: "appearance=\"subtle\" — các mục để rời, mục bật có nền và icon brand.",
-        code: `<ToggleGroup type="single" defaultValue="list" appearance="subtle" aria-label="Kiểu hiển thị">
-  <ToggleGroupItem value="list" icon={<List20Regular />}>Danh sách</ToggleGroupItem>
-  <ToggleGroupItem value="grid" icon={<Grid20Regular />}>Lưới</ToggleGroupItem>
+        code: `<ToggleGroup type="single" defaultValue="list" appearance="subtle" aria-label="View">
+  <ToggleGroupItem value="list" icon={<List20Regular />}>List</ToggleGroupItem>
+  <ToggleGroupItem value="grid" icon={<Grid20Regular />}>Grid</ToggleGroupItem>
 </ToggleGroup>`,
         render: () => (
-          <ToggleGroup type="single" defaultValue="list" appearance="subtle" aria-label="Kiểu hiển thị">
+          <ToggleGroup type="single" defaultValue="list" appearance="subtle" aria-label="View">
             <ToggleGroupItem value="list" icon={<List20Regular />}>
-              Danh sách
+              List
             </ToggleGroupItem>
             <ToggleGroupItem value="grid" icon={<Grid20Regular />}>
-              Lưới
+              Grid
             </ToggleGroupItem>
           </ToggleGroup>
         ),
@@ -580,16 +580,16 @@ export const docs: ComponentDoc[] = [
       {
         title: "Outline, small",
         description: "Bộ chọn khoảng thời gian gọn.",
-        code: `<ToggleGroup type="single" defaultValue="week" appearance="outline" size="small" aria-label="Khoảng thời gian">
-  <ToggleGroupItem value="day">Ngày</ToggleGroupItem>
-  <ToggleGroupItem value="week">Tuần</ToggleGroupItem>
-  <ToggleGroupItem value="month">Tháng</ToggleGroupItem>
+        code: `<ToggleGroup type="single" defaultValue="week" appearance="outline" size="small" aria-label="Time range">
+  <ToggleGroupItem value="day">Day</ToggleGroupItem>
+  <ToggleGroupItem value="week">Week</ToggleGroupItem>
+  <ToggleGroupItem value="month">Month</ToggleGroupItem>
 </ToggleGroup>`,
         render: () => (
-          <ToggleGroup type="single" defaultValue="week" appearance="outline" size="small" aria-label="Khoảng thời gian">
-            <ToggleGroupItem value="day">Ngày</ToggleGroupItem>
-            <ToggleGroupItem value="week">Tuần</ToggleGroupItem>
-            <ToggleGroupItem value="month">Tháng</ToggleGroupItem>
+          <ToggleGroup type="single" defaultValue="week" appearance="outline" size="small" aria-label="Time range">
+            <ToggleGroupItem value="day">Day</ToggleGroupItem>
+            <ToggleGroupItem value="week">Week</ToggleGroupItem>
+            <ToggleGroupItem value="month">Month</ToggleGroupItem>
           </ToggleGroup>
         ),
       },
@@ -624,22 +624,22 @@ export const docs: ComponentDoc[] = [
     importCode: `import { Toolbar, ToolbarButton, ToolbarToggleButton, ToolbarDivider, ToolbarGroup } from "@/components/ui";`,
     hero: {
       title: "Toolbar",
-      code: `<Toolbar aria-label="Định dạng">
-  <ToolbarToggleButton icon={<TextBold20Regular />} aria-label="In đậm" />
-  <ToolbarToggleButton icon={<TextItalic20Regular />} aria-label="In nghiêng" />
-  <ToolbarToggleButton icon={<TextUnderline20Regular />} aria-label="Gạch chân" />
+      code: `<Toolbar aria-label="Formatting">
+  <ToolbarToggleButton icon={<TextBold20Regular />} aria-label="Bold" />
+  <ToolbarToggleButton icon={<TextItalic20Regular />} aria-label="Italic" />
+  <ToolbarToggleButton icon={<TextUnderline20Regular />} aria-label="Underline" />
   <ToolbarDivider />
-  <ToolbarButton icon={<Link20Regular />} aria-label="Chèn liên kết" />
-  <ToolbarButton icon={<Image20Regular />} aria-label="Chèn ảnh" />
+  <ToolbarButton icon={<Link20Regular />} aria-label="Insert link" />
+  <ToolbarButton icon={<Image20Regular />} aria-label="Insert image" />
 </Toolbar>`,
       render: () => (
-        <Toolbar aria-label="Định dạng">
-          <ToolbarToggleButton icon={<TextBold20Regular />} aria-label="In đậm" />
-          <ToolbarToggleButton icon={<TextItalic20Regular />} aria-label="In nghiêng" />
-          <ToolbarToggleButton icon={<TextUnderline20Regular />} aria-label="Gạch chân" />
+        <Toolbar aria-label="Formatting">
+          <ToolbarToggleButton icon={<TextBold20Regular />} aria-label="Bold" />
+          <ToolbarToggleButton icon={<TextItalic20Regular />} aria-label="Italic" />
+          <ToolbarToggleButton icon={<TextUnderline20Regular />} aria-label="Underline" />
           <ToolbarDivider />
-          <ToolbarButton icon={<Link20Regular />} aria-label="Chèn liên kết" />
-          <ToolbarButton icon={<Image20Regular />} aria-label="Chèn ảnh" />
+          <ToolbarButton icon={<Link20Regular />} aria-label="Insert link" />
+          <ToolbarButton icon={<Image20Regular />} aria-label="Insert image" />
         </Toolbar>
       ),
     },
@@ -647,45 +647,45 @@ export const docs: ComponentDoc[] = [
       {
         title: "Nhóm & menu tràn",
         description: "ToolbarGroup chia hai đầu; lệnh ít dùng đưa vào Menu.",
-        code: `<Toolbar aria-label="Soạn thảo" className="w-full max-w-120 justify-between">
+        code: `<Toolbar aria-label="Editor" className="w-full max-w-120 justify-between">
   <ToolbarGroup>
-    <ToolbarButton icon={<ArrowUndo20Regular className="rtl:-scale-x-100" />} aria-label="Hoàn tác" />
-    <ToolbarButton icon={<ArrowRedo20Regular className="rtl:-scale-x-100" />} aria-label="Làm lại" />
+    <ToolbarButton icon={<ArrowUndo20Regular className="rtl:-scale-x-100" />} aria-label="Undo" />
+    <ToolbarButton icon={<ArrowRedo20Regular className="rtl:-scale-x-100" />} aria-label="Redo" />
     <ToolbarDivider />
-    <ToolbarButton icon={<TextBulletListLtr20Regular />} aria-label="Danh sách dấu đầu dòng" />
-    <ToolbarButton icon={<TextNumberListLtr20Regular />} aria-label="Danh sách số" />
+    <ToolbarButton icon={<TextBulletListLtr20Regular />} aria-label="Bulleted list" />
+    <ToolbarButton icon={<TextNumberListLtr20Regular />} aria-label="Numbered list" />
   </ToolbarGroup>
   <ToolbarGroup>
-    <ToolbarButton icon={<Share20Regular />}>Chia sẻ</ToolbarButton>
+    <ToolbarButton icon={<Share20Regular />}>Share</ToolbarButton>
     <Menu>
       <MenuTrigger asChild>
-        <ToolbarButton icon={<MoreHorizontal20Regular />} aria-label="Thêm" />
+        <ToolbarButton icon={<MoreHorizontal20Regular />} aria-label="More" />
       </MenuTrigger>
       <MenuPopover align="end">
-        <MenuItem icon={<Print20Regular />}>In</MenuItem>
-        <MenuItem icon={<Save20Regular />}>Lưu bản sao</MenuItem>
+        <MenuItem icon={<Print20Regular />}>Print</MenuItem>
+        <MenuItem icon={<Save20Regular />}>Save a copy</MenuItem>
       </MenuPopover>
     </Menu>
   </ToolbarGroup>
 </Toolbar>`,
         render: () => (
-          <Toolbar aria-label="Soạn thảo" className="w-full max-w-120 justify-between">
+          <Toolbar aria-label="Editor" className="w-full max-w-120 justify-between">
             <ToolbarGroup>
-              <ToolbarButton icon={<ArrowUndo20Regular className="rtl:-scale-x-100" />} aria-label="Hoàn tác" />
-              <ToolbarButton icon={<ArrowRedo20Regular className="rtl:-scale-x-100" />} aria-label="Làm lại" />
+              <ToolbarButton icon={<ArrowUndo20Regular className="rtl:-scale-x-100" />} aria-label="Undo" />
+              <ToolbarButton icon={<ArrowRedo20Regular className="rtl:-scale-x-100" />} aria-label="Redo" />
               <ToolbarDivider />
-              <ToolbarButton icon={<TextBulletListLtr20Regular />} aria-label="Danh sách dấu đầu dòng" />
-              <ToolbarButton icon={<TextNumberListLtr20Regular />} aria-label="Danh sách số" />
+              <ToolbarButton icon={<TextBulletListLtr20Regular />} aria-label="Bulleted list" />
+              <ToolbarButton icon={<TextNumberListLtr20Regular />} aria-label="Numbered list" />
             </ToolbarGroup>
             <ToolbarGroup>
-              <ToolbarButton icon={<Share20Regular />}>Chia sẻ</ToolbarButton>
+              <ToolbarButton icon={<Share20Regular />}>Share</ToolbarButton>
               <Menu>
                 <MenuTrigger asChild>
-                  <ToolbarButton icon={<MoreHorizontal20Regular />} aria-label="Thêm" />
+                  <ToolbarButton icon={<MoreHorizontal20Regular />} aria-label="More" />
                 </MenuTrigger>
                 <MenuPopover align="end">
-                  <MenuItem icon={<Print20Regular />}>In</MenuItem>
-                  <MenuItem icon={<Save20Regular />}>Lưu bản sao</MenuItem>
+                  <MenuItem icon={<Print20Regular />}>Print</MenuItem>
+                  <MenuItem icon={<Save20Regular />}>Save a copy</MenuItem>
                 </MenuPopover>
               </Menu>
             </ToolbarGroup>
@@ -697,27 +697,27 @@ export const docs: ComponentDoc[] = [
         description: "small và large (medium là mặc định).",
         code: `<div className="flex flex-col items-center gap-3">
   <Toolbar size="small" aria-label="Toolbar small">
-    <ToolbarButton icon={<Cut20Regular />} aria-label="Cắt" />
-    <ToolbarButton icon={<Copy20Regular />} aria-label="Sao chép" />
-    <ToolbarButton icon={<ClipboardPaste20Regular />} aria-label="Dán" />
+    <ToolbarButton icon={<Cut20Regular />} aria-label="Cut" />
+    <ToolbarButton icon={<Copy20Regular />} aria-label="Copy" />
+    <ToolbarButton icon={<ClipboardPaste20Regular />} aria-label="Paste" />
   </Toolbar>
   <Toolbar size="large" aria-label="Toolbar large">
-    <ToolbarButton icon={<Cut20Regular />} aria-label="Cắt" />
-    <ToolbarButton icon={<Copy20Regular />} aria-label="Sao chép" />
-    <ToolbarButton icon={<ClipboardPaste20Regular />} aria-label="Dán" />
+    <ToolbarButton icon={<Cut20Regular />} aria-label="Cut" />
+    <ToolbarButton icon={<Copy20Regular />} aria-label="Copy" />
+    <ToolbarButton icon={<ClipboardPaste20Regular />} aria-label="Paste" />
   </Toolbar>
 </div>`,
         render: () => (
           <div className="flex flex-col items-center gap-3">
             <Toolbar size="small" aria-label="Toolbar small">
-              <ToolbarButton icon={<Cut20Regular />} aria-label="Cắt" />
-              <ToolbarButton icon={<Copy20Regular />} aria-label="Sao chép" />
-              <ToolbarButton icon={<ClipboardPaste20Regular />} aria-label="Dán" />
+              <ToolbarButton icon={<Cut20Regular />} aria-label="Cut" />
+              <ToolbarButton icon={<Copy20Regular />} aria-label="Copy" />
+              <ToolbarButton icon={<ClipboardPaste20Regular />} aria-label="Paste" />
             </Toolbar>
             <Toolbar size="large" aria-label="Toolbar large">
-              <ToolbarButton icon={<Cut20Regular />} aria-label="Cắt" />
-              <ToolbarButton icon={<Copy20Regular />} aria-label="Sao chép" />
-              <ToolbarButton icon={<ClipboardPaste20Regular />} aria-label="Dán" />
+              <ToolbarButton icon={<Cut20Regular />} aria-label="Cut" />
+              <ToolbarButton icon={<Copy20Regular />} aria-label="Copy" />
+              <ToolbarButton icon={<ClipboardPaste20Regular />} aria-label="Paste" />
             </Toolbar>
           </div>
         ),
@@ -725,18 +725,18 @@ export const docs: ComponentDoc[] = [
       {
         title: "Dọc",
         description: "orientation=\"vertical\" — dùng phím mũi tên lên / xuống.",
-        code: `<Toolbar orientation="vertical" aria-label="Công cụ vẽ">
-  <ToolbarButton icon={<Edit20Regular />} aria-label="Bút" />
-  <ToolbarButton icon={<Image20Regular />} aria-label="Ảnh" />
+        code: `<Toolbar orientation="vertical" aria-label="Drawing tools">
+  <ToolbarButton icon={<Edit20Regular />} aria-label="Pen" />
+  <ToolbarButton icon={<Image20Regular />} aria-label="Image" />
   <ToolbarDivider />
-  <ToolbarButton icon={<Delete20Regular />} aria-label="Xoá" />
+  <ToolbarButton icon={<Delete20Regular />} aria-label="Delete" />
 </Toolbar>`,
         render: () => (
-          <Toolbar orientation="vertical" aria-label="Công cụ vẽ">
-            <ToolbarButton icon={<Edit20Regular />} aria-label="Bút" />
-            <ToolbarButton icon={<Image20Regular />} aria-label="Ảnh" />
+          <Toolbar orientation="vertical" aria-label="Drawing tools">
+            <ToolbarButton icon={<Edit20Regular />} aria-label="Pen" />
+            <ToolbarButton icon={<Image20Regular />} aria-label="Image" />
             <ToolbarDivider />
-            <ToolbarButton icon={<Delete20Regular />} aria-label="Xoá" />
+            <ToolbarButton icon={<Delete20Regular />} aria-label="Delete" />
           </Toolbar>
         ),
       },
@@ -772,8 +772,8 @@ export const docs: ComponentDoc[] = [
     importCode: `import { Link } from "@/components/ui";`,
     hero: {
       title: "Link",
-      code: `<Link href="#/components/link">Xem tất cả tài liệu</Link>`,
-      render: () => <Link href="#/components/link">Xem tất cả tài liệu</Link>,
+      code: `<Link href="#/components/link">View all documents</Link>`,
+      render: () => <Link href="#/components/link">View all documents</Link>,
     },
     examples: [
       {
@@ -798,13 +798,13 @@ export const docs: ComponentDoc[] = [
         title: "Inline trong đoạn văn",
         description: "inline luôn gạch chân để không chỉ dựa vào màu sắc.",
         code: `<p className="max-w-100 text-body1 text-foreground-1">
-  Bằng việc tiếp tục, bạn đồng ý với <Link inline href="#/components/link">Điều khoản dịch vụ</Link> và{" "}
-  <Link inline href="#/components/link">Chính sách quyền riêng tư</Link> của chúng tôi.
+  By continuing, you agree to our <Link inline href="#/components/link">Terms of Service</Link> and{" "}
+  <Link inline href="#/components/link">Privacy Policy</Link>.
 </p>`,
         render: () => (
           <p className="max-w-100 text-body1 text-foreground-1">
-            Bằng việc tiếp tục, bạn đồng ý với <Link inline href="#/components/link">Điều khoản dịch vụ</Link> và{" "}
-            <Link inline href="#/components/link">Chính sách quyền riêng tư</Link> của chúng tôi.
+            By continuing, you agree to our <Link inline href="#/components/link">Terms of Service</Link> and{" "}
+            <Link inline href="#/components/link">Privacy Policy</Link>.
           </p>
         ),
       },
@@ -813,7 +813,7 @@ export const docs: ComponentDoc[] = [
         description: "external thêm icon và mở tab mới; asChild giữ style khi bọc phần tử khác.",
         code: `<Link href="https://fluent2.microsoft.design" external>Fluent 2 Design System</Link>
 <Link asChild>
-  <a href="#/components/button">Đi tới Button</a>
+  <a href="#/components/button">Go to Button</a>
 </Link>`,
         render: () => (
           <>
@@ -821,7 +821,7 @@ export const docs: ComponentDoc[] = [
               Fluent 2 Design System
             </Link>
             <Link asChild>
-              <a href="#/components/button">Đi tới Button</a>
+              <a href="#/components/button">Go to Button</a>
             </Link>
           </>
         ),
@@ -870,19 +870,19 @@ export const docs: ComponentDoc[] = [
       {
         title: "Trong câu hướng dẫn",
         code: `<p className="text-body1 text-foreground-2">
-  Nhấn <Kbd>/</Kbd> để tìm kiếm hoặc{" "}
+  Press <Kbd>/</Kbd> to search or{" "}
   <KbdGroup>
     <Kbd>Ctrl</Kbd>+<Kbd>K</Kbd>
   </KbdGroup>{" "}
-  để mở bảng lệnh.
+  to open the command palette.
 </p>`,
         render: () => (
           <p className="text-body1 text-foreground-2">
-            Nhấn <Kbd>/</Kbd> để tìm kiếm hoặc{" "}
+            Press <Kbd>/</Kbd> to search or{" "}
             <KbdGroup>
               <Kbd>Ctrl</Kbd>+<Kbd>K</Kbd>
             </KbdGroup>{" "}
-            để mở bảng lệnh.
+            to open the command palette.
           </p>
         ),
       },
@@ -892,8 +892,8 @@ export const docs: ComponentDoc[] = [
         code: `<Kbd size="small">Esc</Kbd>
 <Kbd>Esc</Kbd>
 <KbdGroup>
-  <Kbd><ArrowUp16Regular /><span className="sr-only">Mũi tên lên</span></Kbd>
-  <Kbd><ArrowDown16Regular /><span className="sr-only">Mũi tên xuống</span></Kbd>
+  <Kbd><ArrowUp16Regular /><span className="sr-only">Up arrow</span></Kbd>
+  <Kbd><ArrowDown16Regular /><span className="sr-only">Down arrow</span></Kbd>
 </KbdGroup>`,
         render: () => (
           <>
@@ -902,11 +902,11 @@ export const docs: ComponentDoc[] = [
             <KbdGroup>
               <Kbd>
                 <ArrowUp16Regular />
-                <span className="sr-only">Mũi tên lên</span>
+                <span className="sr-only">Up arrow</span>
               </Kbd>
               <Kbd>
                 <ArrowDown16Regular />
-                <span className="sr-only">Mũi tên xuống</span>
+                <span className="sr-only">Down arrow</span>
               </Kbd>
             </KbdGroup>
           </>
@@ -941,29 +941,29 @@ export const docs: ComponentDoc[] = [
       title: "Breadcrumb",
       code: `<Breadcrumb>
   <BreadcrumbItem>
-    <BreadcrumbButton>Trang chủ</BreadcrumbButton>
+    <BreadcrumbButton>Home</BreadcrumbButton>
   </BreadcrumbItem>
   <BreadcrumbDivider />
   <BreadcrumbItem>
-    <BreadcrumbButton>Tài liệu</BreadcrumbButton>
+    <BreadcrumbButton>Documents</BreadcrumbButton>
   </BreadcrumbItem>
   <BreadcrumbDivider />
   <BreadcrumbItem>
-    <BreadcrumbButton current>Báo cáo quý</BreadcrumbButton>
+    <BreadcrumbButton current>Quarterly report</BreadcrumbButton>
   </BreadcrumbItem>
 </Breadcrumb>`,
       render: () => (
         <Breadcrumb>
           <BreadcrumbItem>
-            <BreadcrumbButton>Trang chủ</BreadcrumbButton>
+            <BreadcrumbButton>Home</BreadcrumbButton>
           </BreadcrumbItem>
           <BreadcrumbDivider />
           <BreadcrumbItem>
-            <BreadcrumbButton>Tài liệu</BreadcrumbButton>
+            <BreadcrumbButton>Documents</BreadcrumbButton>
           </BreadcrumbItem>
           <BreadcrumbDivider />
           <BreadcrumbItem>
-            <BreadcrumbButton current>Báo cáo quý</BreadcrumbButton>
+            <BreadcrumbButton current>Quarterly report</BreadcrumbButton>
           </BreadcrumbItem>
         </Breadcrumb>
       ),
@@ -975,20 +975,20 @@ export const docs: ComponentDoc[] = [
         code: `<div className="flex flex-col items-center gap-3">
   <Breadcrumb size="small">
     <BreadcrumbItem>
-      <BreadcrumbButton icon={<Home20Regular />}>Trang chủ</BreadcrumbButton>
+      <BreadcrumbButton icon={<Home20Regular />}>Home</BreadcrumbButton>
     </BreadcrumbItem>
     <BreadcrumbDivider />
     <BreadcrumbItem>
-      <BreadcrumbButton current>Cài đặt</BreadcrumbButton>
+      <BreadcrumbButton current>Settings</BreadcrumbButton>
     </BreadcrumbItem>
   </Breadcrumb>
   <Breadcrumb size="large">
     <BreadcrumbItem>
-      <BreadcrumbButton icon={<Home20Regular />}>Trang chủ</BreadcrumbButton>
+      <BreadcrumbButton icon={<Home20Regular />}>Home</BreadcrumbButton>
     </BreadcrumbItem>
     <BreadcrumbDivider />
     <BreadcrumbItem>
-      <BreadcrumbButton current>Cài đặt</BreadcrumbButton>
+      <BreadcrumbButton current>Settings</BreadcrumbButton>
     </BreadcrumbItem>
   </Breadcrumb>
 </div>`,
@@ -996,20 +996,20 @@ export const docs: ComponentDoc[] = [
           <div className="flex flex-col items-center gap-3">
             <Breadcrumb size="small">
               <BreadcrumbItem>
-                <BreadcrumbButton icon={<Home20Regular />}>Trang chủ</BreadcrumbButton>
+                <BreadcrumbButton icon={<Home20Regular />}>Home</BreadcrumbButton>
               </BreadcrumbItem>
               <BreadcrumbDivider />
               <BreadcrumbItem>
-                <BreadcrumbButton current>Cài đặt</BreadcrumbButton>
+                <BreadcrumbButton current>Settings</BreadcrumbButton>
               </BreadcrumbItem>
             </Breadcrumb>
             <Breadcrumb size="large">
               <BreadcrumbItem>
-                <BreadcrumbButton icon={<Home20Regular />}>Trang chủ</BreadcrumbButton>
+                <BreadcrumbButton icon={<Home20Regular />}>Home</BreadcrumbButton>
               </BreadcrumbItem>
               <BreadcrumbDivider />
               <BreadcrumbItem>
-                <BreadcrumbButton current>Cài đặt</BreadcrumbButton>
+                <BreadcrumbButton current>Settings</BreadcrumbButton>
               </BreadcrumbItem>
             </Breadcrumb>
           </div>
@@ -1021,10 +1021,10 @@ export const docs: ComponentDoc[] = [
         code: `<Breadcrumb
   maxDisplayedItems={3}
   items={[
-    { label: "Trang chủ", icon: <Home20Regular /> },
-    { label: "Dự án" },
+    { label: "Home", icon: <Home20Regular /> },
+    { label: "Projects" },
     { label: "2026" },
-    { label: "Thiết kế" },
+    { label: "Design" },
     { label: "Fluent 2" },
     { label: "Breadcrumb" },
   ]}
@@ -1033,10 +1033,10 @@ export const docs: ComponentDoc[] = [
           <Breadcrumb
             maxDisplayedItems={3}
             items={[
-              { label: "Trang chủ", icon: <Home20Regular /> },
-              { label: "Dự án" },
+              { label: "Home", icon: <Home20Regular /> },
+              { label: "Projects" },
               { label: "2026" },
-              { label: "Thiết kế" },
+              { label: "Design" },
               { label: "Fluent 2" },
               { label: "Breadcrumb" },
             ]}
@@ -1085,7 +1085,7 @@ export const docs: ComponentDoc[] = [
 
 <div className="flex flex-col items-center gap-2">
   <Pagination page={page} pageCount={20} onPageChange={setPage} />
-  <span className="text-caption1 text-foreground-3">Trang {page} / 20</span>
+  <span className="text-caption1 text-foreground-3">Page {page} of 20</span>
 </div>`,
         render: () => <PaginationDemo />,
       },
@@ -1142,21 +1142,21 @@ export const docs: ComponentDoc[] = [
 } from "@/components/ui";`,
     hero: {
       title: "Nav",
-      code: `<Nav defaultSelectedValue="home" aria-label="Ứng dụng" className="w-60">
-  <NavItem value="home" icon={<Home20Regular />}>Trang chủ</NavItem>
-  <NavItem value="calendar" icon={<CalendarLtr20Regular />}>Lịch</NavItem>
-  <NavItem value="people" icon={<People20Regular />}>Mọi người</NavItem>
+      code: `<Nav defaultSelectedValue="home" aria-label="App" className="w-60">
+  <NavItem value="home" icon={<Home20Regular />}>Home</NavItem>
+  <NavItem value="calendar" icon={<CalendarLtr20Regular />}>Calendar</NavItem>
+  <NavItem value="people" icon={<People20Regular />}>People</NavItem>
 </Nav>`,
       render: () => (
-        <Nav defaultSelectedValue="home" aria-label="Ứng dụng" className="w-60">
+        <Nav defaultSelectedValue="home" aria-label="App" className="w-60">
           <NavItem value="home" icon={<Home20Regular />}>
-            Trang chủ
+            Home
           </NavItem>
           <NavItem value="calendar" icon={<CalendarLtr20Regular />}>
-            Lịch
+            Calendar
           </NavItem>
           <NavItem value="people" icon={<People20Regular />}>
-            Mọi người
+            People
           </NavItem>
         </Nav>
       ),
@@ -1171,53 +1171,53 @@ export const docs: ComponentDoc[] = [
   selectedValue={selected}
   onNavItemSelect={setSelected}
   defaultOpenCategories={["projects"]}
-  aria-label="Quản lý"
+  aria-label="Admin"
   className="w-64"
 >
-  <NavItem value="overview" icon={<Board20Regular />}>Tổng quan</NavItem>
-  <NavItem value="reports" icon={<ChartMultiple20Regular />}>Báo cáo</NavItem>
-  <NavSectionHeader>Công việc</NavSectionHeader>
+  <NavItem value="overview" icon={<Board20Regular />}>Overview</NavItem>
+  <NavItem value="reports" icon={<ChartMultiple20Regular />}>Reports</NavItem>
+  <NavSectionHeader>Work</NavSectionHeader>
   <NavCategory value="projects">
-    <NavCategoryItem icon={<Folder20Regular />}>Dự án</NavCategoryItem>
+    <NavCategoryItem icon={<Folder20Regular />}>Projects</NavCategoryItem>
     <NavSubItemGroup>
-      <NavSubItem value="active">Đang chạy</NavSubItem>
-      <NavSubItem value="archived">Lưu trữ</NavSubItem>
+      <NavSubItem value="active">Active</NavSubItem>
+      <NavSubItem value="archived">Archived</NavSubItem>
     </NavSubItemGroup>
   </NavCategory>
   <NavCategory value="people">
-    <NavCategoryItem icon={<People20Regular />}>Nhân sự</NavCategoryItem>
+    <NavCategoryItem icon={<People20Regular />}>People</NavCategoryItem>
     <NavSubItemGroup>
-      <NavSubItem value="members">Thành viên</NavSubItem>
-      <NavSubItem value="roles">Vai trò</NavSubItem>
+      <NavSubItem value="members">Members</NavSubItem>
+      <NavSubItem value="roles">Roles</NavSubItem>
     </NavSubItemGroup>
   </NavCategory>
   <NavDivider />
-  <NavItem value="settings" icon={<Settings20Regular />}>Cài đặt</NavItem>
+  <NavItem value="settings" icon={<Settings20Regular />}>Settings</NavItem>
 </Nav>`,
         render: () => <NavDemo />,
       },
       {
         title: "Density small",
         description: "density=\"small\" — mục cao 32px cho không gian hẹp.",
-        code: `<Nav density="small" defaultSelectedValue="inbox" aria-label="Thư" className="w-56">
-  <NavItem value="inbox" icon={<Mail20Regular />}>Hộp thư đến</NavItem>
-  <NavItem value="sent" icon={<Send20Regular className="rtl:-scale-x-100" />}>Đã gửi</NavItem>
-  <NavItem value="drafts" icon={<Document20Regular />}>Bản nháp</NavItem>
-  <NavItem value="deleted" icon={<Delete20Regular />}>Đã xoá</NavItem>
+        code: `<Nav density="small" defaultSelectedValue="inbox" aria-label="Mail" className="w-56">
+  <NavItem value="inbox" icon={<Mail20Regular />}>Inbox</NavItem>
+  <NavItem value="sent" icon={<Send20Regular className="rtl:-scale-x-100" />}>Sent</NavItem>
+  <NavItem value="drafts" icon={<Document20Regular />}>Drafts</NavItem>
+  <NavItem value="deleted" icon={<Delete20Regular />}>Deleted</NavItem>
 </Nav>`,
         render: () => (
-          <Nav density="small" defaultSelectedValue="inbox" aria-label="Thư" className="w-56">
+          <Nav density="small" defaultSelectedValue="inbox" aria-label="Mail" className="w-56">
             <NavItem value="inbox" icon={<Mail20Regular />}>
-              Hộp thư đến
+              Inbox
             </NavItem>
             <NavItem value="sent" icon={<Send20Regular className="rtl:-scale-x-100" />}>
-              Đã gửi
+              Sent
             </NavItem>
             <NavItem value="drafts" icon={<Document20Regular />}>
-              Bản nháp
+              Drafts
             </NavItem>
             <NavItem value="deleted" icon={<Delete20Regular />}>
-              Đã xoá
+              Deleted
             </NavItem>
           </Nav>
         ),
@@ -1241,7 +1241,7 @@ export const docs: ComponentDoc[] = [
       { name: "multiple", type: "boolean", defaultValue: "true", description: "Cho phép mở nhiều category cùng lúc." },
       { name: "density", type: `"medium" | "small"`, defaultValue: `"medium"`, description: "Mục cao 40 / 32px." },
       { name: "material", type: `"glass" | "glass-clear"`, description: "Yugen Labs — sidebar nổi bằng glass (bo góc, đệm, đổ bóng)." },
-      { name: "NavItem.value / icon / href / asChild", type: "string / ReactNode / string / boolean", description: "Có href → thẻ <a>; asChild cho link router." },
+      { name: "NavItem.value / icon / href / asChild / tooltip", type: "string / ReactNode / string / boolean / ReactNode", description: "Có href → thẻ <a>; asChild cho link router; tooltip là nhãn hiện khi sidebar của AppShell thu về icon (mặc định: chữ của mục)." },
       { name: "NavCategory.value", type: "string", description: "Khoá của nhóm (dùng trong openCategories)." },
     ],
   },
@@ -1263,76 +1263,76 @@ export const docs: ComponentDoc[] = [
       title: "Menubar",
       code: `<Menubar>
   <MenubarMenu>
-    <MenubarTrigger>Tệp</MenubarTrigger>
+    <MenubarTrigger>File</MenubarTrigger>
     <MenubarContent>
-      <MenubarItem icon={<DocumentAdd20Regular />} secondaryContent="Ctrl+N">Tạo mới</MenubarItem>
-      <MenubarItem icon={<FolderOpen20Regular />} secondaryContent="Ctrl+O">Mở</MenubarItem>
+      <MenubarItem icon={<DocumentAdd20Regular />} secondaryContent="Ctrl+N">New</MenubarItem>
+      <MenubarItem icon={<FolderOpen20Regular />} secondaryContent="Ctrl+O">Open</MenubarItem>
       <MenubarSeparator />
-      <MenubarItem icon={<Print20Regular />} secondaryContent="Ctrl+P">In</MenubarItem>
+      <MenubarItem icon={<Print20Regular />} secondaryContent="Ctrl+P">Print</MenubarItem>
     </MenubarContent>
   </MenubarMenu>
   <MenubarMenu>
-    <MenubarTrigger>Sửa</MenubarTrigger>
+    <MenubarTrigger>Edit</MenubarTrigger>
     <MenubarContent>
-      <MenubarItem icon={<ArrowUndo20Regular className="rtl:-scale-x-100" />} secondaryContent="Ctrl+Z">Hoàn tác</MenubarItem>
-      <MenubarItem icon={<ArrowRedo20Regular className="rtl:-scale-x-100" />} secondaryContent="Ctrl+Y">Làm lại</MenubarItem>
+      <MenubarItem icon={<ArrowUndo20Regular className="rtl:-scale-x-100" />} secondaryContent="Ctrl+Z">Undo</MenubarItem>
+      <MenubarItem icon={<ArrowRedo20Regular className="rtl:-scale-x-100" />} secondaryContent="Ctrl+Y">Redo</MenubarItem>
       <MenubarSeparator />
-      <MenubarItem icon={<Cut20Regular />} secondaryContent="Ctrl+X">Cắt</MenubarItem>
-      <MenubarItem icon={<Copy20Regular />} secondaryContent="Ctrl+C">Sao chép</MenubarItem>
-      <MenubarItem icon={<ClipboardPaste20Regular />} secondaryContent="Ctrl+V">Dán</MenubarItem>
+      <MenubarItem icon={<Cut20Regular />} secondaryContent="Ctrl+X">Cut</MenubarItem>
+      <MenubarItem icon={<Copy20Regular />} secondaryContent="Ctrl+C">Copy</MenubarItem>
+      <MenubarItem icon={<ClipboardPaste20Regular />} secondaryContent="Ctrl+V">Paste</MenubarItem>
     </MenubarContent>
   </MenubarMenu>
   <MenubarMenu>
-    <MenubarTrigger>Trợ giúp</MenubarTrigger>
+    <MenubarTrigger>Help</MenubarTrigger>
     <MenubarContent>
-      <MenubarItem>Tài liệu</MenubarItem>
-      <MenubarItem>Phím tắt</MenubarItem>
+      <MenubarItem>Documentation</MenubarItem>
+      <MenubarItem>Keyboard shortcuts</MenubarItem>
     </MenubarContent>
   </MenubarMenu>
 </Menubar>`,
       render: () => (
         <Menubar>
           <MenubarMenu>
-            <MenubarTrigger>Tệp</MenubarTrigger>
+            <MenubarTrigger>File</MenubarTrigger>
             <MenubarContent>
               <MenubarItem icon={<DocumentAdd20Regular />} secondaryContent="Ctrl+N">
-                Tạo mới
+                New
               </MenubarItem>
               <MenubarItem icon={<FolderOpen20Regular />} secondaryContent="Ctrl+O">
-                Mở
+                Open
               </MenubarItem>
               <MenubarSeparator />
               <MenubarItem icon={<Print20Regular />} secondaryContent="Ctrl+P">
-                In
+                Print
               </MenubarItem>
             </MenubarContent>
           </MenubarMenu>
           <MenubarMenu>
-            <MenubarTrigger>Sửa</MenubarTrigger>
+            <MenubarTrigger>Edit</MenubarTrigger>
             <MenubarContent>
               <MenubarItem icon={<ArrowUndo20Regular className="rtl:-scale-x-100" />} secondaryContent="Ctrl+Z">
-                Hoàn tác
+                Undo
               </MenubarItem>
               <MenubarItem icon={<ArrowRedo20Regular className="rtl:-scale-x-100" />} secondaryContent="Ctrl+Y">
-                Làm lại
+                Redo
               </MenubarItem>
               <MenubarSeparator />
               <MenubarItem icon={<Cut20Regular />} secondaryContent="Ctrl+X">
-                Cắt
+                Cut
               </MenubarItem>
               <MenubarItem icon={<Copy20Regular />} secondaryContent="Ctrl+C">
-                Sao chép
+                Copy
               </MenubarItem>
               <MenubarItem icon={<ClipboardPaste20Regular />} secondaryContent="Ctrl+V">
-                Dán
+                Paste
               </MenubarItem>
             </MenubarContent>
           </MenubarMenu>
           <MenubarMenu>
-            <MenubarTrigger>Trợ giúp</MenubarTrigger>
+            <MenubarTrigger>Help</MenubarTrigger>
             <MenubarContent>
-              <MenubarItem>Tài liệu</MenubarItem>
-              <MenubarItem>Phím tắt</MenubarItem>
+              <MenubarItem>Documentation</MenubarItem>
+              <MenubarItem>Keyboard shortcuts</MenubarItem>
             </MenubarContent>
           </MenubarMenu>
         </Menubar>
@@ -1348,12 +1348,12 @@ const [zoom, setZoom] = useState("100");
 
 <Menubar>
   <MenubarMenu>
-    <MenubarTrigger>Xem</MenubarTrigger>
+    <MenubarTrigger>View</MenubarTrigger>
     <MenubarContent>
-      <MenubarCheckboxItem checked={ruler} onCheckedChange={setRuler}>Thước kẻ</MenubarCheckboxItem>
-      <MenubarCheckboxItem checked={grid} onCheckedChange={setGrid} secondaryContent="Ctrl+'">Lưới</MenubarCheckboxItem>
+      <MenubarCheckboxItem checked={ruler} onCheckedChange={setRuler}>Ruler</MenubarCheckboxItem>
+      <MenubarCheckboxItem checked={grid} onCheckedChange={setGrid} secondaryContent="Ctrl+'">Grid</MenubarCheckboxItem>
       <MenubarSeparator />
-      <MenubarLabel>Thu phóng</MenubarLabel>
+      <MenubarLabel>Zoom</MenubarLabel>
       <MenubarRadioGroup value={zoom} onValueChange={setZoom}>
         <MenubarRadioItem value="75">75%</MenubarRadioItem>
         <MenubarRadioItem value="100">100%</MenubarRadioItem>
@@ -1362,16 +1362,16 @@ const [zoom, setZoom] = useState("100");
     </MenubarContent>
   </MenubarMenu>
   <MenubarMenu>
-    <MenubarTrigger>Chia sẻ</MenubarTrigger>
+    <MenubarTrigger>Share</MenubarTrigger>
     <MenubarContent>
       <MenubarSub>
-        <MenubarSubTrigger icon={<Share20Regular />}>Gửi qua</MenubarSubTrigger>
+        <MenubarSubTrigger icon={<Share20Regular />}>Send via</MenubarSubTrigger>
         <MenubarSubContent>
           <MenubarItem icon={<Mail20Regular />}>Email</MenubarItem>
-          <MenubarItem icon={<Link20Regular />}>Sao chép liên kết</MenubarItem>
+          <MenubarItem icon={<Link20Regular />}>Copy link</MenubarItem>
         </MenubarSubContent>
       </MenubarSub>
-      <MenubarItem disabled>Xuất bản</MenubarItem>
+      <MenubarItem disabled>Publish</MenubarItem>
     </MenubarContent>
   </MenubarMenu>
 </Menubar>`,
@@ -1416,36 +1416,36 @@ const [zoom, setZoom] = useState("100");
       code: `<ContextMenu>
   <ContextMenuTrigger asChild>
     <div className="flex h-36 w-72 items-center justify-center rounded-xlarge border border-dashed border-stroke-1 text-body1 text-foreground-3 select-none">
-      Nhấp chuột phải vào đây
+      Right-click here
     </div>
   </ContextMenuTrigger>
   <ContextMenuContent>
-    <ContextMenuItem icon={<Cut20Regular />} secondaryContent="Ctrl+X">Cắt</ContextMenuItem>
-    <ContextMenuItem icon={<Copy20Regular />} secondaryContent="Ctrl+C">Sao chép</ContextMenuItem>
-    <ContextMenuItem icon={<ClipboardPaste20Regular />} secondaryContent="Ctrl+V">Dán</ContextMenuItem>
+    <ContextMenuItem icon={<Cut20Regular />} secondaryContent="Ctrl+X">Cut</ContextMenuItem>
+    <ContextMenuItem icon={<Copy20Regular />} secondaryContent="Ctrl+C">Copy</ContextMenuItem>
+    <ContextMenuItem icon={<ClipboardPaste20Regular />} secondaryContent="Ctrl+V">Paste</ContextMenuItem>
     <ContextMenuSeparator />
-    <ContextMenuItem icon={<Delete20Regular />}>Xoá</ContextMenuItem>
+    <ContextMenuItem icon={<Delete20Regular />}>Delete</ContextMenuItem>
   </ContextMenuContent>
 </ContextMenu>`,
       render: () => (
         <ContextMenu>
           <ContextMenuTrigger asChild>
             <div className="flex h-36 w-72 items-center justify-center rounded-xlarge border border-dashed border-stroke-1 text-body1 text-foreground-3 select-none">
-              Nhấp chuột phải vào đây
+              Right-click here
             </div>
           </ContextMenuTrigger>
           <ContextMenuContent>
             <ContextMenuItem icon={<Cut20Regular />} secondaryContent="Ctrl+X">
-              Cắt
+              Cut
             </ContextMenuItem>
             <ContextMenuItem icon={<Copy20Regular />} secondaryContent="Ctrl+C">
-              Sao chép
+              Copy
             </ContextMenuItem>
             <ContextMenuItem icon={<ClipboardPaste20Regular />} secondaryContent="Ctrl+V">
-              Dán
+              Paste
             </ContextMenuItem>
             <ContextMenuSeparator />
-            <ContextMenuItem icon={<Delete20Regular />}>Xoá</ContextMenuItem>
+            <ContextMenuItem icon={<Delete20Regular />}>Delete</ContextMenuItem>
           </ContextMenuContent>
         </ContextMenu>
       ),
@@ -1459,26 +1459,26 @@ const [sort, setSort] = useState("name");
 <ContextMenu>
   <ContextMenuTrigger asChild>
     <div className="flex h-36 w-72 items-center justify-center rounded-xlarge border border-dashed border-stroke-1 text-body1 text-foreground-3 select-none">
-      Nhấp chuột phải vào đây
+      Right-click here
     </div>
   </ContextMenuTrigger>
   <ContextMenuContent>
     <ContextMenuSub>
-      <ContextMenuSubTrigger icon={<Add20Regular />}>Tạo mới</ContextMenuSubTrigger>
+      <ContextMenuSubTrigger icon={<Add20Regular />}>New</ContextMenuSubTrigger>
       <ContextMenuSubContent>
-        <ContextMenuItem icon={<Folder20Regular />}>Thư mục</ContextMenuItem>
-        <ContextMenuItem icon={<Document20Regular />}>Tài liệu</ContextMenuItem>
+        <ContextMenuItem icon={<Folder20Regular />}>Folder</ContextMenuItem>
+        <ContextMenuItem icon={<Document20Regular />}>Document</ContextMenuItem>
       </ContextMenuSubContent>
     </ContextMenuSub>
-    <ContextMenuItem icon={<ArrowClockwise20Regular />}>Làm mới</ContextMenuItem>
+    <ContextMenuItem icon={<ArrowClockwise20Regular />}>Refresh</ContextMenuItem>
     <ContextMenuSeparator />
-    <ContextMenuCheckboxItem checked={showGrid} onCheckedChange={setShowGrid}>Hiện lưới</ContextMenuCheckboxItem>
+    <ContextMenuCheckboxItem checked={showGrid} onCheckedChange={setShowGrid}>Show grid</ContextMenuCheckboxItem>
     <ContextMenuSeparator />
-    <ContextMenuLabel>Sắp xếp theo</ContextMenuLabel>
+    <ContextMenuLabel>Sort by</ContextMenuLabel>
     <ContextMenuRadioGroup value={sort} onValueChange={setSort}>
-      <ContextMenuRadioItem value="name">Tên</ContextMenuRadioItem>
-      <ContextMenuRadioItem value="date">Ngày sửa</ContextMenuRadioItem>
-      <ContextMenuRadioItem value="size">Kích thước</ContextMenuRadioItem>
+      <ContextMenuRadioItem value="name">Name</ContextMenuRadioItem>
+      <ContextMenuRadioItem value="date">Date modified</ContextMenuRadioItem>
+      <ContextMenuRadioItem value="size">Size</ContextMenuRadioItem>
     </ContextMenuRadioGroup>
   </ContextMenuContent>
 </ContextMenu>`,
@@ -1518,25 +1518,25 @@ const [sort, setSort] = useState("name");
     hero: {
       title: "Command",
       code: `<Command className="w-80 shadow-16">
-  <CommandInput placeholder="Nhập lệnh hoặc tìm kiếm…" />
+  <CommandInput placeholder="Type a command or search…" />
   <CommandList>
-    <CommandEmpty>Không có kết quả.</CommandEmpty>
-    <CommandGroup heading="Gợi ý">
-      <CommandItem icon={<CalendarLtr20Regular />}>Lịch</CommandItem>
-      <CommandItem icon={<Emoji20Regular />}>Tìm emoji</CommandItem>
-      <CommandItem icon={<Calculator20Regular />}>Máy tính</CommandItem>
+    <CommandEmpty>No results.</CommandEmpty>
+    <CommandGroup heading="Suggestions">
+      <CommandItem icon={<CalendarLtr20Regular />}>Calendar</CommandItem>
+      <CommandItem icon={<Emoji20Regular />}>Search emoji</CommandItem>
+      <CommandItem icon={<Calculator20Regular />}>Calculator</CommandItem>
     </CommandGroup>
   </CommandList>
 </Command>`,
       render: () => (
         <Command className="w-80 shadow-16">
-          <CommandInput placeholder="Nhập lệnh hoặc tìm kiếm…" />
+          <CommandInput placeholder="Type a command or search…" />
           <CommandList>
-            <CommandEmpty>Không có kết quả.</CommandEmpty>
-            <CommandGroup heading="Gợi ý">
-              <CommandItem icon={<CalendarLtr20Regular />}>Lịch</CommandItem>
-              <CommandItem icon={<Emoji20Regular />}>Tìm emoji</CommandItem>
-              <CommandItem icon={<Calculator20Regular />}>Máy tính</CommandItem>
+            <CommandEmpty>No results.</CommandEmpty>
+            <CommandGroup heading="Suggestions">
+              <CommandItem icon={<CalendarLtr20Regular />}>Calendar</CommandItem>
+              <CommandItem icon={<Emoji20Regular />}>Search emoji</CommandItem>
+              <CommandItem icon={<Calculator20Regular />}>Calculator</CommandItem>
             </CommandGroup>
           </CommandList>
         </Command>
@@ -1547,26 +1547,26 @@ const [sort, setSort] = useState("name");
         title: "Nhóm, phím tắt & separator",
         description: "Gõ để lọc; mục disabled bị bỏ qua khi điều hướng.",
         code: `<Command className="w-96 shadow-16">
-  <CommandInput placeholder="Tìm kiếm…" />
+  <CommandInput placeholder="Search…" />
   <CommandList>
-    <CommandEmpty>Không có kết quả.</CommandEmpty>
-    <CommandGroup heading="Gợi ý">
-      <CommandItem icon={<CalendarLtr20Regular />}>Lịch</CommandItem>
-      <CommandItem icon={<Emoji20Regular />}>Tìm emoji</CommandItem>
-      <CommandItem icon={<Calculator20Regular />} disabled>Máy tính</CommandItem>
+    <CommandEmpty>No results.</CommandEmpty>
+    <CommandGroup heading="Suggestions">
+      <CommandItem icon={<CalendarLtr20Regular />}>Calendar</CommandItem>
+      <CommandItem icon={<Emoji20Regular />}>Search emoji</CommandItem>
+      <CommandItem icon={<Calculator20Regular />} disabled>Calculator</CommandItem>
     </CommandGroup>
     <CommandSeparator />
-    <CommandGroup heading="Cài đặt">
+    <CommandGroup heading="Settings">
       <CommandItem icon={<Person20Regular />}>
-        Hồ sơ
+        Profile
         <CommandShortcut>Ctrl+P</CommandShortcut>
       </CommandItem>
       <CommandItem icon={<Mail20Regular />}>
-        Thư
+        Mail
         <CommandShortcut>Ctrl+B</CommandShortcut>
       </CommandItem>
       <CommandItem icon={<Settings20Regular />}>
-        Cài đặt
+        Settings
         <CommandShortcut>Ctrl+S</CommandShortcut>
       </CommandItem>
     </CommandGroup>
@@ -1574,28 +1574,28 @@ const [sort, setSort] = useState("name");
 </Command>`,
         render: () => (
           <Command className="w-96 shadow-16">
-            <CommandInput placeholder="Tìm kiếm…" />
+            <CommandInput placeholder="Search…" />
             <CommandList>
-              <CommandEmpty>Không có kết quả.</CommandEmpty>
-              <CommandGroup heading="Gợi ý">
-                <CommandItem icon={<CalendarLtr20Regular />}>Lịch</CommandItem>
-                <CommandItem icon={<Emoji20Regular />}>Tìm emoji</CommandItem>
+              <CommandEmpty>No results.</CommandEmpty>
+              <CommandGroup heading="Suggestions">
+                <CommandItem icon={<CalendarLtr20Regular />}>Calendar</CommandItem>
+                <CommandItem icon={<Emoji20Regular />}>Search emoji</CommandItem>
                 <CommandItem icon={<Calculator20Regular />} disabled>
-                  Máy tính
+                  Calculator
                 </CommandItem>
               </CommandGroup>
               <CommandSeparator />
-              <CommandGroup heading="Cài đặt">
+              <CommandGroup heading="Settings">
                 <CommandItem icon={<Person20Regular />}>
-                  Hồ sơ
+                  Profile
                   <CommandShortcut>Ctrl+P</CommandShortcut>
                 </CommandItem>
                 <CommandItem icon={<Mail20Regular />}>
-                  Thư
+                  Mail
                   <CommandShortcut>Ctrl+B</CommandShortcut>
                 </CommandItem>
                 <CommandItem icon={<Settings20Regular />}>
-                  Cài đặt
+                  Settings
                   <CommandShortcut>Ctrl+S</CommandShortcut>
                 </CommandItem>
               </CommandGroup>
@@ -1621,25 +1621,25 @@ useEffect(() => {
 
 <>
   <Button icon={<Search20Regular />} onClick={() => setOpen(true)}>
-    Mở bảng lệnh
+    Open command palette
     <KbdGroup className="ms-1">
       <Kbd>Ctrl</Kbd>
       <Kbd>K</Kbd>
     </KbdGroup>
   </Button>
   <CommandDialog open={open} onOpenChange={setOpen}>
-    <CommandInput placeholder="Nhập lệnh hoặc tìm kiếm…" />
+    <CommandInput placeholder="Type a command or search…" />
     <CommandList>
-      <CommandEmpty>Không có kết quả.</CommandEmpty>
-      <CommandGroup heading="Điều hướng">
-        <CommandItem icon={<Home20Regular />} onSelect={() => setOpen(false)}>Trang chủ</CommandItem>
-        <CommandItem icon={<Document20Regular />} onSelect={() => setOpen(false)}>Tài liệu</CommandItem>
-        <CommandItem icon={<Settings20Regular />} onSelect={() => setOpen(false)}>Cài đặt</CommandItem>
+      <CommandEmpty>No results.</CommandEmpty>
+      <CommandGroup heading="Navigation">
+        <CommandItem icon={<Home20Regular />} onSelect={() => setOpen(false)}>Home</CommandItem>
+        <CommandItem icon={<Document20Regular />} onSelect={() => setOpen(false)}>Documents</CommandItem>
+        <CommandItem icon={<Settings20Regular />} onSelect={() => setOpen(false)}>Settings</CommandItem>
       </CommandGroup>
       <CommandSeparator />
-      <CommandGroup heading="Giao diện">
-        <CommandItem icon={<WeatherSunny20Regular />} onSelect={() => setOpen(false)}>Chế độ sáng</CommandItem>
-        <CommandItem icon={<WeatherMoon20Regular />} onSelect={() => setOpen(false)}>Chế độ tối</CommandItem>
+      <CommandGroup heading="Appearance">
+        <CommandItem icon={<WeatherSunny20Regular />} onSelect={() => setOpen(false)}>Light mode</CommandItem>
+        <CommandItem icon={<WeatherMoon20Regular />} onSelect={() => setOpen(false)}>Dark mode</CommandItem>
       </CommandGroup>
     </CommandList>
   </CommandDialog>

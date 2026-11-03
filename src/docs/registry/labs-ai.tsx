@@ -24,14 +24,14 @@ import RAW from "./labs-ai.tsx?raw";
 /* ================================================================ StreamingMarkdown */
 
 const ANSWER = [
-  "## Đổi brand trong Yugen UI",
+  "## Change the brand in Yugen UI",
   "",
-  "Bạn chỉ cần đặt **`data-brand`** trên `<html>` hoặc trên *YugenProvider*:",
+  "Set **`data-brand`** on `<html>` or on *YugenProvider*:",
   "",
-  "1. Chọn brand có sẵn: `sakura`, `web`, `teams`.",
-  "2. Hoặc tạo brand riêng ở **Theme Designer**:",
-  "   - chọn màu chủ đạo",
-  "   - copy khối CSS vào `tokens.css`",
+  "1. Pick a built-in brand: `sakura`, `web`, `teams`.",
+  "2. Or create your own in **Theme Designer**:",
+  "   - pick a primary color",
+  "   - copy the CSS block into `tokens.css`",
   "",
   "```tsx",
   '<YugenProvider applyToDocument brand="web">',
@@ -39,12 +39,12 @@ const ANSWER = [
   "</YugenProvider>",
   "```",
   "",
-  "| Brand | Màu chủ đạo | Tương phản |",
+  "| Brand | Primary color | Contrast |",
   "| :-- | :-- | --: |",
   "| Sakura | #C2347A | 5.16:1 |",
   "| Web | #0F6CBD | 5.33:1 |",
   "",
-  "> Mẹo: dùng `?brand=web` trên URL docs để chia sẻ đúng giao diện.",
+  "> Tip: add `?brand=web` to a docs URL to share that exact look.",
 ].join("\n");
 
 function useStreamedText(full: string, chunk = 6, every = 40) {
@@ -75,7 +75,7 @@ function StreamingAnswerDemo() {
     <div className="flex w-full max-w-2xl flex-col gap-3">
       <StreamingMarkdown streaming={streaming}>{text}</StreamingMarkdown>
       <Button className="self-start" disabled={streaming} onClick={replay}>
-        Phát lại
+        Replay
       </Button>
     </div>
   );
@@ -103,14 +103,14 @@ const STREAM_HOOK_CODE = `function useStreamedText(full: string, chunk = 6, ever
 }`;
 
 const STREAMING_ANSWER_CODE = `const ANSWER = [
-  "## Đổi brand trong Yugen UI",
+  "## Change the brand in Yugen UI",
   "",
-  "Bạn chỉ cần đặt **\`data-brand\`** trên \`<html>\` hoặc trên *YugenProvider*:",
+  "Set **\`data-brand\`** on \`<html>\` or on *YugenProvider*:",
   "",
-  "1. Chọn brand có sẵn: \`sakura\`, \`web\`, \`teams\`.",
-  "2. Hoặc tạo brand riêng ở **Theme Designer**:",
-  "   - chọn màu chủ đạo",
-  "   - copy khối CSS vào \`tokens.css\`",
+  "1. Pick a built-in brand: \`sakura\`, \`web\`, \`teams\`.",
+  "2. Or create your own in **Theme Designer**:",
+  "   - pick a primary color",
+  "   - copy the CSS block into \`tokens.css\`",
   "",
   "\`\`\`tsx",
   '<YugenProvider applyToDocument brand="web">',
@@ -118,12 +118,12 @@ const STREAMING_ANSWER_CODE = `const ANSWER = [
   "</YugenProvider>",
   "\`\`\`",
   "",
-  "| Brand | Màu chủ đạo | Tương phản |",
+  "| Brand | Primary color | Contrast |",
   "| :-- | :-- | --: |",
   "| Sakura | #C2347A | 5.16:1 |",
   "| Web | #0F6CBD | 5.33:1 |",
   "",
-  "> Mẹo: dùng \`?brand=web\` trên URL docs để chia sẻ đúng giao diện.",
+  "> Tip: add \`?brand=web\` to a docs URL to share that exact look.",
 ].join("\\n");
 
 ${STREAM_HOOK_CODE}
@@ -135,13 +135,13 @@ function StreamingAnswerDemo() {
     <div className="flex w-full max-w-2xl flex-col gap-3">
       <StreamingMarkdown streaming={streaming}>{text}</StreamingMarkdown>
       <Button className="self-start" disabled={streaming} onClick={replay}>
-        Phát lại
+        Replay
       </Button>
     </div>
   );
 }`;
 
-const TASKS_MD = "### Việc cần làm\n\n- [x] Thêm token màu\n- [x] Kiểm tra tương phản\n- [ ] Viết tài liệu\n\n---\n\nLink không an toàn như [bấm vào đây](javascript:alert(1)) chỉ còn là chữ.";
+const TASKS_MD = "### To do\n\n- [x] Add color tokens\n- [x] Check contrast\n- [ ] Write the docs\n\n---\n\nUnsafe links like [click here](javascript:alert(1)) render as plain text.";
 
 /* ================================================================ Citation */
 
@@ -157,19 +157,19 @@ const SOURCES: CitationSource[] = [
     snippet: "Text has a contrast ratio of at least 4.5:1, large text at least 3:1.",
     meta: "W3C · 2023",
   },
-  { title: "Design.md — Quy tắc màu sắc", domain: "yugen-ui", snippet: "Brand chỉ cho CTA, trạng thái chọn, focus và link." },
+  { title: "Design.md — Color rules", domain: "yugen-ui", snippet: "Brand color is only for CTAs, selected states, focus and links." },
 ];
 
-const CITED_MD = "Màu brand chỉ nên dùng cho hành động chính và trạng thái chọn[1][3]. Chữ cần tương phản tối thiểu **4.5:1**[2].";
+const CITED_MD = "Use the brand color only for primary actions and selected states[1][3]. Text needs a contrast ratio of at least **4.5:1**[2].";
 
 /* ================================================================ Reasoning */
 
 const THOUGHT = [
-  "Người dùng hỏi về **tương phản** của Sakura trên nền trắng.",
+  "The user asks about the **contrast** of Sakura on white.",
   "",
-  "- Brand80 là `#C2347A` → tính độ sáng tương đối.",
-  "- So với trắng: khoảng 5.16:1, vượt ngưỡng 4.5:1 của WCAG AA.",
-  "- Kết luận: dùng được cho chữ thường.",
+  "- Brand80 is `#C2347A` → compute its relative luminance.",
+  "- Against white: about 5.16:1, above the WCAG AA minimum of 4.5:1.",
+  "- Conclusion: fine for body text.",
 ].join("\n");
 
 function ReasoningDemo() {
@@ -178,32 +178,32 @@ function ReasoningDemo() {
   return (
     <div className="flex w-full max-w-xl flex-col gap-3">
       <Reasoning streaming={streaming}>{text}</Reasoning>
-      {!streaming && <StreamingMarkdown>{"Có — Sakura đạt **5.16:1** trên nền trắng, đủ cho chữ thường (AA)."}</StreamingMarkdown>}
+      {!streaming && <StreamingMarkdown>{"Yes. Sakura reaches **5.16:1** on white, enough for body text (AA)."}</StreamingMarkdown>}
       <Button className="self-start" disabled={streaming} onClick={replay}>
-        Hỏi lại
+        Ask again
       </Button>
     </div>
   );
 }
 
 const REASONING_CODE = `const THOUGHT = [
-  "Người dùng hỏi về **tương phản** của Sakura trên nền trắng.",
+  "The user asks about the **contrast** of Sakura on white.",
   "",
-  "- Brand80 là \`#C2347A\` → tính độ sáng tương đối.",
-  "- So với trắng: khoảng 5.16:1, vượt ngưỡng 4.5:1 của WCAG AA.",
-  "- Kết luận: dùng được cho chữ thường.",
+  "- Brand80 is \`#C2347A\` → compute its relative luminance.",
+  "- Against white: about 5.16:1, above the WCAG AA minimum of 4.5:1.",
+  "- Conclusion: fine for body text.",
 ].join("\\n");
 
-// useStreamedText: xem ví dụ của StreamingMarkdown.
+// useStreamedText: see the StreamingMarkdown example.
 function ReasoningDemo() {
   const { text, streaming, replay } = useStreamedText(THOUGHT, 4, 50);
 
   return (
     <div className="flex w-full max-w-xl flex-col gap-3">
       <Reasoning streaming={streaming}>{text}</Reasoning>
-      {!streaming && <StreamingMarkdown>{"Có — Sakura đạt **5.16:1** trên nền trắng, đủ cho chữ thường (AA)."}</StreamingMarkdown>}
+      {!streaming && <StreamingMarkdown>{"Yes. Sakura reaches **5.16:1** on white, enough for body text (AA)."}</StreamingMarkdown>}
       <Button className="self-start" disabled={streaming} onClick={replay}>
-        Hỏi lại
+        Ask again
       </Button>
     </div>
   );
@@ -231,12 +231,12 @@ function PromptInputDemo() {
           setStreaming(false);
         }}
         onSubmit={({ text, files }) => {
-          setSent((list) => [`${text || "(chỉ tệp)"} · ${files.length} tệp · ${model}`, ...list].slice(0, 3));
+          setSent((list) => [`${text || "(files only)"} · ${files.length} attached · ${model}`, ...list].slice(0, 3));
           setStreaming(true);
           timer.current = window.setTimeout(() => setStreaming(false), 2500);
         }}
         toolbar={
-          <Dropdown size="small" appearance="filled-lighter" aria-label="Chọn model" value={model} onValueChange={setModel} className="min-w-32">
+          <Dropdown size="small" appearance="filled-lighter" aria-label="Choose a model" value={model} onValueChange={setModel} className="min-w-32">
             <DropdownOption value="sakura-1">Sakura-1</DropdownOption>
             <DropdownOption value="sakura-1-mini">Sakura-1 mini</DropdownOption>
           </Dropdown>
@@ -244,7 +244,7 @@ function PromptInputDemo() {
       />
       {sent.map((line, i) => (
         <p key={i} className="text-caption1 text-foreground-3">
-          Đã gửi: {line}
+          Sent: {line}
         </p>
       ))}
     </div>
@@ -271,12 +271,12 @@ const PROMPT_INPUT_CODE = `function PromptInputDemo() {
           setStreaming(false);
         }}
         onSubmit={({ text, files }) => {
-          setSent((list) => [\`\${text || "(chỉ tệp)"} · \${files.length} tệp · \${model}\`, ...list].slice(0, 3));
+          setSent((list) => [\`\${text || "(files only)"} · \${files.length} attached · \${model}\`, ...list].slice(0, 3));
           setStreaming(true);
           timer.current = window.setTimeout(() => setStreaming(false), 2500);
         }}
         toolbar={
-          <Dropdown size="small" appearance="filled-lighter" aria-label="Chọn model" value={model} onValueChange={setModel} className="min-w-32">
+          <Dropdown size="small" appearance="filled-lighter" aria-label="Choose a model" value={model} onValueChange={setModel} className="min-w-32">
             <DropdownOption value="sakura-1">Sakura-1</DropdownOption>
             <DropdownOption value="sakura-1-mini">Sakura-1 mini</DropdownOption>
           </Dropdown>
@@ -284,7 +284,7 @@ const PROMPT_INPUT_CODE = `function PromptInputDemo() {
       />
       {sent.map((line, i) => (
         <p key={i} className="text-caption1 text-foreground-3">
-          Đã gửi: {line}
+          Sent: {line}
         </p>
       ))}
     </div>
@@ -294,17 +294,17 @@ const PROMPT_INPUT_CODE = `function PromptInputDemo() {
 /* ================================================================ Tour */
 
 const TOUR_STEPS: TourStep[] = [
-  { target: "#tour-search", title: "Tìm mọi thứ", content: "Gõ tên tài liệu, người hoặc lệnh — kết quả hiện ngay khi bạn gõ." },
-  { target: "#tour-board", title: "Bảng công việc", content: "Kéo thả thẻ giữa các cột để cập nhật tiến độ.", placement: "bottom" },
-  { target: "#tour-settings", title: "Cài đặt", content: "Đổi theme, brand và hướng chữ cho cả nhóm.", placement: "start" },
-  { title: "Sẵn sàng!", content: "Bạn có thể mở lại hướng dẫn bất cứ lúc nào từ menu Trợ giúp." },
+  { target: "#tour-search", title: "Search everything", content: "Type a document, person or command. Results show up as you type." },
+  { target: "#tour-board", title: "Task board", content: "Drag cards between columns to update progress.", placement: "bottom" },
+  { target: "#tour-settings", title: "Settings", content: "Change the theme, brand and text direction for the whole team.", placement: "start" },
+  { title: "You're all set", content: "You can restart this tour anytime from the Help menu." },
 ];
 
 function StartTourButton() {
   const tour = useTour();
   return (
     <Button appearance="primary" icon={<Sparkle16Regular />} onClick={() => tour.start()}>
-      Bắt đầu hướng dẫn
+      Start tour
     </Button>
   );
 }
@@ -315,12 +315,12 @@ function TourDemo() {
       <div className="flex w-full max-w-xl flex-col gap-4">
         <div className="flex items-center gap-2 rounded-xlarge border border-stroke-2 bg-background-2 p-2">
           <Button id="tour-search" appearance="subtle" icon={<Search20Regular />}>
-            Tìm kiếm
+            Search
           </Button>
           <Button id="tour-board" appearance="subtle" icon={<Board20Regular />}>
-            Bảng
+            Board
           </Button>
-          <Button id="tour-settings" appearance="subtle" icon={<Settings20Regular />} aria-label="Cài đặt" className="ms-auto" />
+          <Button id="tour-settings" appearance="subtle" icon={<Settings20Regular />} aria-label="Settings" className="ms-auto" />
         </div>
         <StartTourButton />
       </div>
@@ -329,17 +329,17 @@ function TourDemo() {
 }
 
 const TOUR_CODE = `const TOUR_STEPS: TourStep[] = [
-  { target: "#tour-search", title: "Tìm mọi thứ", content: "Gõ tên tài liệu, người hoặc lệnh — kết quả hiện ngay khi bạn gõ." },
-  { target: "#tour-board", title: "Bảng công việc", content: "Kéo thả thẻ giữa các cột để cập nhật tiến độ.", placement: "bottom" },
-  { target: "#tour-settings", title: "Cài đặt", content: "Đổi theme, brand và hướng chữ cho cả nhóm.", placement: "start" },
-  { title: "Sẵn sàng!", content: "Bạn có thể mở lại hướng dẫn bất cứ lúc nào từ menu Trợ giúp." },
+  { target: "#tour-search", title: "Search everything", content: "Type a document, person or command. Results show up as you type." },
+  { target: "#tour-board", title: "Task board", content: "Drag cards between columns to update progress.", placement: "bottom" },
+  { target: "#tour-settings", title: "Settings", content: "Change the theme, brand and text direction for the whole team.", placement: "start" },
+  { title: "You're all set", content: "You can restart this tour anytime from the Help menu." },
 ];
 
 function StartTourButton() {
   const tour = useTour();
   return (
     <Button appearance="primary" icon={<Sparkle16Regular />} onClick={() => tour.start()}>
-      Bắt đầu hướng dẫn
+      Start tour
     </Button>
   );
 }
@@ -350,12 +350,12 @@ function TourDemo() {
       <div className="flex w-full max-w-xl flex-col gap-4">
         <div className="flex items-center gap-2 rounded-xlarge border border-stroke-2 bg-background-2 p-2">
           <Button id="tour-search" appearance="subtle" icon={<Search20Regular />}>
-            Tìm kiếm
+            Search
           </Button>
           <Button id="tour-board" appearance="subtle" icon={<Board20Regular />}>
-            Bảng
+            Board
           </Button>
-          <Button id="tour-settings" appearance="subtle" icon={<Settings20Regular />} aria-label="Cài đặt" className="ms-auto" />
+          <Button id="tour-settings" appearance="subtle" icon={<Settings20Regular />} aria-label="Settings" className="ms-auto" />
         </div>
         <StartTourButton />
       </div>
@@ -370,14 +370,14 @@ function BrandTourDemo() {
   return (
     <div className="flex w-full max-w-md flex-col items-start gap-3">
       <div ref={anchor} className="w-full rounded-xlarge border border-stroke-2 bg-background-2 p-4 text-body1">
-        Bảng điều khiển của bạn
+        Your dashboard
       </div>
-      <Button onClick={() => setOpen(true)}>Xem điểm mới</Button>
+      <Button onClick={() => setOpen(true)}>See what's new</Button>
       <Tour
         open={open}
         onOpenChange={setOpen}
         appearance="brand"
-        steps={[{ target: anchor, title: "Bảng điều khiển mới", content: "Số liệu giờ cập nhật theo thời gian thực.", placement: "top" }]}
+        steps={[{ target: anchor, title: "New dashboard", content: "Metrics now update in real time.", placement: "top" }]}
       />
     </div>
   );
@@ -390,14 +390,14 @@ const BRAND_TOUR_CODE = `function BrandTourDemo() {
   return (
     <div className="flex w-full max-w-md flex-col items-start gap-3">
       <div ref={anchor} className="w-full rounded-xlarge border border-stroke-2 bg-background-2 p-4 text-body1">
-        Bảng điều khiển của bạn
+        Your dashboard
       </div>
-      <Button onClick={() => setOpen(true)}>Xem điểm mới</Button>
+      <Button onClick={() => setOpen(true)}>See what's new</Button>
       <Tour
         open={open}
         onOpenChange={setOpen}
         appearance="brand"
-        steps={[{ target: anchor, title: "Bảng điều khiển mới", content: "Số liệu giờ cập nhật theo thời gian thực.", placement: "top" }]}
+        steps={[{ target: anchor, title: "New dashboard", content: "Metrics now update in real time.", placement: "top" }]}
       />
     </div>
   );
@@ -407,10 +407,10 @@ const BRAND_TOUR_CODE = `function BrandTourDemo() {
 
 function seedNotifications(now: number): NotificationItem[] {
   return [
-    { id: "a", title: "Trần Lan đã nhắc bạn", body: "Xem giúp phần màu Sakura trong bản thiết kế mới nhé.", author: "Trần Lan", time: now - 4 * 60_000 },
-    { id: "b", title: "Bản build #212 thành công", body: "Đã triển khai lên môi trường preview.", intent: "success", time: now - 2 * 3_600_000 },
-    { id: "c", title: "Dung lượng sắp đầy", body: "Đã dùng 92% bộ nhớ của nhóm.", intent: "warning", time: now - 27 * 3_600_000, read: true },
-    { id: "d", title: "Minh đã chia sẻ “Kế hoạch Q4”", author: "Lê Minh", time: now - 3 * 86_400_000, read: true },
+    { id: "a", title: "Alex Chen mentioned you", body: "Could you check the Sakura colors in the new design?", author: "Alex Chen", time: now - 4 * 60_000 },
+    { id: "b", title: "Build #212 succeeded", body: "Deployed to the preview environment.", intent: "success", time: now - 2 * 3_600_000 },
+    { id: "c", title: "Storage almost full", body: "Your team has used 92% of its storage.", intent: "warning", time: now - 27 * 3_600_000, read: true },
+    { id: "d", title: "Maria Garcia shared “Q4 plan”", author: "Maria Garcia", time: now - 3 * 86_400_000, read: true },
   ];
 }
 
@@ -420,23 +420,23 @@ function NotificationDemo() {
 
   function simulate() {
     count.current += 1;
-    store.add({ title: `Bình luận mới #${count.current}`, body: "Hà: Mình đồng ý với phương án 2.", author: "Phạm Hà" });
+    store.add({ title: `New comment #${count.current}`, body: "Sam: I agree with option 2.", author: "Sam Lee" });
   }
 
   return (
     <div className="flex items-center gap-3">
-      <NotificationCenter {...store.bind} footer={<Button appearance="transparent">Xem tất cả</Button>} />
-      <Button onClick={simulate}>Giả lập thông báo mới</Button>
+      <NotificationCenter {...store.bind} footer={<Button appearance="transparent">View all</Button>} />
+      <Button onClick={simulate}>Simulate a notification</Button>
     </div>
   );
 }
 
 const NOTIFICATION_CODE = `function seedNotifications(now: number): NotificationItem[] {
   return [
-    { id: "a", title: "Trần Lan đã nhắc bạn", body: "Xem giúp phần màu Sakura trong bản thiết kế mới nhé.", author: "Trần Lan", time: now - 4 * 60_000 },
-    { id: "b", title: "Bản build #212 thành công", body: "Đã triển khai lên môi trường preview.", intent: "success", time: now - 2 * 3_600_000 },
-    { id: "c", title: "Dung lượng sắp đầy", body: "Đã dùng 92% bộ nhớ của nhóm.", intent: "warning", time: now - 27 * 3_600_000, read: true },
-    { id: "d", title: "Minh đã chia sẻ “Kế hoạch Q4”", author: "Lê Minh", time: now - 3 * 86_400_000, read: true },
+    { id: "a", title: "Alex Chen mentioned you", body: "Could you check the Sakura colors in the new design?", author: "Alex Chen", time: now - 4 * 60_000 },
+    { id: "b", title: "Build #212 succeeded", body: "Deployed to the preview environment.", intent: "success", time: now - 2 * 3_600_000 },
+    { id: "c", title: "Storage almost full", body: "Your team has used 92% of its storage.", intent: "warning", time: now - 27 * 3_600_000, read: true },
+    { id: "d", title: "Maria Garcia shared “Q4 plan”", author: "Maria Garcia", time: now - 3 * 86_400_000, read: true },
   ];
 }
 
@@ -446,13 +446,13 @@ function NotificationDemo() {
 
   function simulate() {
     count.current += 1;
-    store.add({ title: \`Bình luận mới #\${count.current}\`, body: "Hà: Mình đồng ý với phương án 2.", author: "Phạm Hà" });
+    store.add({ title: \`New comment #\${count.current}\`, body: "Sam: I agree with option 2.", author: "Sam Lee" });
   }
 
   return (
     <div className="flex items-center gap-3">
-      <NotificationCenter {...store.bind} footer={<Button appearance="transparent">Xem tất cả</Button>} />
-      <Button onClick={simulate}>Giả lập thông báo mới</Button>
+      <NotificationCenter {...store.bind} footer={<Button appearance="transparent">View all</Button>} />
+      <Button onClick={simulate}>Simulate a notification</Button>
     </div>
   );
 }`;
@@ -466,12 +466,12 @@ function LoadingNotificationsDemo() {
       <NotificationCenter
         items={[]}
         loading={loading}
-        error={failed ? "Mất kết nối tới máy chủ." : undefined}
+        error={failed ? "Lost connection to the server." : undefined}
         onRetry={() => setFailed(false)}
       />
-      <Button onClick={() => setLoading((v) => !v)}>{loading ? "Tải xong" : "Tải lại"}</Button>
+      <Button onClick={() => setLoading((v) => !v)}>{loading ? "Finish loading" : "Reload"}</Button>
       <Button appearance="subtle" onClick={() => setFailed(true)}>
-        Giả lập lỗi
+        Simulate an error
       </Button>
     </div>
   );
@@ -486,12 +486,12 @@ const LOADING_NOTIFICATIONS_CODE = `function LoadingNotificationsDemo() {
       <NotificationCenter
         items={[]}
         loading={loading}
-        error={failed ? "Mất kết nối tới máy chủ." : undefined}
+        error={failed ? "Lost connection to the server." : undefined}
         onRetry={() => setFailed(false)}
       />
-      <Button onClick={() => setLoading((v) => !v)}>{loading ? "Tải xong" : "Tải lại"}</Button>
+      <Button onClick={() => setLoading((v) => !v)}>{loading ? "Finish loading" : "Reload"}</Button>
       <Button appearance="subtle" onClick={() => setFailed(true)}>
-        Giả lập lỗi
+        Simulate an error
       </Button>
     </div>
   );
@@ -521,11 +521,11 @@ export const docs: ComponentDoc[] = [
         title: "Cỡ nhỏ",
         description: "size=\"small\" dùng caption1 — hợp cho chú thích, khối suy luận, thẻ trong panel.",
         code: `<StreamingMarkdown size="small" className="w-full max-w-md">
-  {"**Ghi chú:** token \`colorBrandBackground\` đổi theo \`data-brand\`.\\n\\n- Light: Brand80\\n- Dark: Brand70"}
+  {"**Note:** the \`colorBrandBackground\` token follows \`data-brand\`.\\n\\n- Light: Brand80\\n- Dark: Brand70"}
 </StreamingMarkdown>`,
         render: () => (
           <StreamingMarkdown size="small" className="w-full max-w-md">
-            {"**Ghi chú:** token `colorBrandBackground` đổi theo `data-brand`.\n\n- Light: Brand80\n- Dark: Brand70"}
+            {"**Note:** the `colorBrandBackground` token follows `data-brand`.\n\n- Light: Brand80\n- Dark: Brand70"}
           </StreamingMarkdown>
         ),
       },
@@ -565,9 +565,9 @@ export const docs: ComponentDoc[] = [
       title: "Chip nguồn + danh sách",
       code: `<div className="flex w-full max-w-xl flex-col gap-4">
   <p className="text-body1 text-foreground-1">
-    Màu brand chỉ nên dùng cho hành động chính và trạng thái chọn
+    Use the brand color only for primary actions and selected states
     <Citation index={1} source={SOURCES[0]} />
-    <Citation index={3} source={SOURCES[2]} />. Chữ cần tương phản tối thiểu 4.5:1
+    <Citation index={3} source={SOURCES[2]} />. Text needs a contrast ratio of at least 4.5:1
     <Citation index={2} source={SOURCES[1]} />.
   </p>
   <CitationList sources={SOURCES} />
@@ -575,9 +575,9 @@ export const docs: ComponentDoc[] = [
       render: () => (
         <div className="flex w-full max-w-xl flex-col gap-4">
           <p className="text-body1 text-foreground-1">
-            Màu brand chỉ nên dùng cho hành động chính và trạng thái chọn
+            Use the brand color only for primary actions and selected states
             <Citation index={1} source={SOURCES[0]} />
-            <Citation index={3} source={SOURCES[2]} />. Chữ cần tương phản tối thiểu 4.5:1
+            <Citation index={3} source={SOURCES[2]} />. Text needs a contrast ratio of at least 4.5:1
             <Citation index={2} source={SOURCES[1]} />.
           </p>
           <CitationList sources={SOURCES} />
@@ -632,11 +632,11 @@ export const docs: ComponentDoc[] = [
         title: "Đã xong, có thời lượng",
         description: "Thu gọn mặc định; truyền duration khi server đã đo sẵn.",
         code: `<Reasoning duration={12400} className="w-full max-w-xl">
-  {"So sánh 3 phương án lưu token: CSS biến, JSON, TS. Chọn **CSS biến** vì đổi theme không cần build lại."}
+  {"Compared 3 ways to store tokens: CSS variables, JSON, TS. Picked **CSS variables** because switching themes needs no rebuild."}
 </Reasoning>`,
         render: () => (
           <Reasoning duration={12400} className="w-full max-w-xl">
-            {"So sánh 3 phương án lưu token: CSS biến, JSON, TS. Chọn **CSS biến** vì đổi theme không cần build lại."}
+            {"Compared 3 ways to store tokens: CSS variables, JSON, TS. Picked **CSS variables** because switching themes needs no rebuild."}
           </Reasoning>
         ),
       },
@@ -677,8 +677,8 @@ export const docs: ComponentDoc[] = [
       },
       {
         title: "Vô hiệu hoá",
-        code: `<PromptInput className="w-full max-w-xl" disabled placeholder="Bạn đã dùng hết lượt hôm nay" onSubmit={() => {}} />`,
-        render: () => <PromptInput className="w-full max-w-xl" disabled placeholder="Bạn đã dùng hết lượt hôm nay" onSubmit={() => {}} />,
+        code: `<PromptInput className="w-full max-w-xl" disabled placeholder="You have used all of today's prompts" onSubmit={() => {}} />`,
+        render: () => <PromptInput className="w-full max-w-xl" disabled placeholder="You have used all of today's prompts" onSubmit={() => {}} />,
       },
     ],
     dos: [

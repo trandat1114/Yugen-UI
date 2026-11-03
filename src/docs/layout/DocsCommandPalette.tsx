@@ -7,6 +7,7 @@ import {
   Home20Regular,
   Megaphone20Regular,
   People20Regular,
+  PeopleStar20Regular,
   PuzzlePiece20Regular,
   WeatherMoon20Regular,
   Grid20Regular,
@@ -78,6 +79,9 @@ export function DocsCommandPalette({
           </CommandItem>
           <CommandItem icon={<People20Regular />} onSelect={() => go("/community")} keywords={["community", "đóng góp"]}>
             {t("nav.community")}
+          </CommandItem>
+          <CommandItem icon={<PeopleStar20Regular />} onSelect={() => go("/contributors")} keywords={["contributors", "người đóng góp", "cảm ơn"]}>
+            {t("nav.contributors")}
           </CommandItem>
         </CommandGroup>
 

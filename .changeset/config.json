@@ -1,6 +1,6 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@3.1.4/schema.json",
-  "changelog": "@changesets/cli/changelog",
+  "changelog": ["./changelog.mjs", { "repo": "trandat1114/Yugen-UI", "maintainers": ["trandat1114"] }],
   "commit": false,
   "fixed": [],
   "linked": [],

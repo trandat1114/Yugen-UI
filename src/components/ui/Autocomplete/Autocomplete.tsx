@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { cn } from "@/lib/cn";
 import { normalizeSearchText } from "../Combobox/Combobox";
@@ -8,9 +9,9 @@ import { popoverSurfaceClass } from "../Popover/Popover";
 import { SearchBox, type SearchBoxProps } from "../SearchBox/SearchBox";
 import { Spinner } from "../Spinner/Spinner";
 import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
-import { autocompleteMessages } from "./messages";
+import { autocompleteMessagesEn } from "./messages";
 
-export { autocompleteMessages, autocompleteMessagesEn, type AutocompleteMessages } from "./messages";
+export { autocompleteMessages, autocompleteMessagesVi, autocompleteMessagesEn, type AutocompleteMessages } from "./messages";
 
 /* ================================================================ HighlightMatch */
 
@@ -149,18 +150,17 @@ export const Autocomplete = React.forwardRef<HTMLInputElement, AutocompleteProps
     ref,
   ) => {
     const portalTheme = usePortalThemeProps();
-    const msg = useYugenMessages("autocomplete", autocompleteMessages);
+    const msg = useYugenMessages("autocomplete", autocompleteMessagesEn);
     const baseId = React.useId();
     const listId = `${baseId}-list`;
     const optionId = (i: number) => `${baseId}-opt-${i}`;
     const anchorRef = React.useRef<HTMLDivElement>(null);
 
-    const [inner, setInner] = React.useState(defaultValue === undefined ? "" : String(defaultValue));
-    const query = value !== undefined ? String(value) : inner;
-    const setQuery = (next: string) => {
-      if (value === undefined) setInner(next);
-      onValueChange?.(next);
-    };
+    const [query, setQuery] = useControllableState({
+      value: value === undefined ? undefined : String(value),
+      defaultValue: defaultValue === undefined ? "" : String(defaultValue),
+      onChange: onValueChange,
+    });
 
     const [focused, setFocused] = React.useState(false);
     const [dismissed, setDismissed] = React.useState(false);

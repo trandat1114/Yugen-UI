@@ -3,9 +3,10 @@ import * as React from "react";
 import { CheckboxChecked16Regular, CheckboxUnchecked16Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { useAnnounce } from "../AriaLive/AriaLive";
-import { CodeBlock, CopyCodeButton, type CodeLanguage } from "../CodeBlock/CodeBlock";
+import { CodeBlock, CopyCodeButton } from "../CodeBlock/CodeBlock";
 import { useYugenMessages } from "../YugenProvider/context";
 import { Citation, type CitationSource } from "./Citation";
+import { codeLanguageOf } from "./codeLanguage";
 import {
   markdownToPlainText,
   parseMarkdownIncremental,
@@ -14,44 +15,10 @@ import {
   type MdBlock,
   type MdInline,
 } from "./markdown";
-import { streamingMarkdownMessages, type StreamingMarkdownMessages } from "./messages";
+import { streamingMarkdownMessagesEn, type StreamingMarkdownMessages } from "./messages";
 
-export { streamingMarkdownMessages, streamingMarkdownMessagesEn, type StreamingMarkdownMessages } from "./messages";
-
-const LANGUAGE_ALIAS: Record<string, CodeLanguage> = {
-  tsx: "tsx",
-  ts: "ts",
-  typescript: "ts",
-  jsx: "jsx",
-  js: "js",
-  javascript: "js",
-  mjs: "js",
-  cjs: "js",
-  css: "css",
-  scss: "css",
-  less: "css",
-  html: "html",
-  xml: "html",
-  svg: "html",
-  vue: "html",
-  bash: "bash",
-  sh: "bash",
-  shell: "bash",
-  zsh: "bash",
-  console: "bash",
-  powershell: "bash",
-  ps1: "bash",
-  json: "json",
-  jsonc: "json",
-  json5: "json",
-  md: "md",
-  markdown: "md",
-};
-
-/** Ngôn ngữ của fence → bộ tô màu của CodeBlock ("text" nếu chưa hỗ trợ). */
-export function codeLanguageOf(lang: string): CodeLanguage {
-  return LANGUAGE_ALIAS[lang.toLowerCase()] ?? "text";
-}
+export { streamingMarkdownMessages, streamingMarkdownMessagesVi, streamingMarkdownMessagesEn, type StreamingMarkdownMessages } from "./messages";
+export { codeLanguageOf } from "./codeLanguage";
 
 type Size = "small" | "medium";
 
@@ -348,7 +315,7 @@ export const StreamingMarkdown = React.forwardRef<HTMLDivElement, StreamingMarkd
     },
     ref,
   ) => {
-    const msg = useYugenMessages("streamingMarkdown", streamingMarkdownMessages);
+    const msg = useYugenMessages("streamingMarkdown", streamingMarkdownMessagesEn);
     const stateRef = React.useRef<MarkdownParseState | null>(null);
     const parsed = parseMarkdownIncremental(children, streaming, stateRef.current);
     stateRef.current = parsed;

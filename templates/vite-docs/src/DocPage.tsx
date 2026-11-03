@@ -136,8 +136,8 @@ export default function DocPage({ page, text, target, headingLevel, scrollRoot }
     (id: string, behavior: ScrollBehavior = scrollBehavior()) => {
       const el = articleRef.current?.querySelector(`#${CSS.escape(id)}`);
       const root = scrollRoot?.current;
-      // Embedded: scroll the frame only, not the page around it.
-      if (el && root) root.scrollTo({ top: root.scrollTop + el.getBoundingClientRect().top - root.getBoundingClientRect().top - 16, behavior });
+      // Embedded: scroll the frame only, not the page around it. 80px: below its sticky top bar, like scroll-mt-20.
+      if (el && root) root.scrollTo({ top: root.scrollTop + el.getBoundingClientRect().top - root.getBoundingClientRect().top - 80, behavior });
       else el?.scrollIntoView({ behavior, block: "start" });
       // The address keeps the heading, so the link can be shared. Not in the embedded preview: its URL is the host page's.
       if (!memory) window.history.replaceState(null, "", `#${id}`);
@@ -151,7 +151,7 @@ export default function DocPage({ page, text, target, headingLevel, scrollRoot }
   }, [target, jump]);
 
   return (
-    <div className="grid gap-10 @6xl/docs:grid-cols-[minmax(0,1fr)_13rem]">
+    <div className="grid gap-10 @6xl/app-shell:grid-cols-[minmax(0,1fr)_13rem]">
       <article ref={articleRef} className="@container flex min-w-0 flex-col gap-6">
         <div className="flex flex-col gap-2">
           {section && <p className="text-caption1 font-semibold text-brand-foreground-1">{section.title}</p>}
@@ -162,7 +162,7 @@ export default function DocPage({ page, text, target, headingLevel, scrollRoot }
         <Divider />
         <Pager page={page} />
       </article>
-      <div className="hidden @6xl/docs:block">
+      <div className="hidden @6xl/app-shell:block">
         <div className="sticky top-20">
           <TableOfContents headings={toc} active={active} onJump={jump} />
         </div>

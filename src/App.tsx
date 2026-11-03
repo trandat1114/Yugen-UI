@@ -1,9 +1,10 @@
 import { Suspense, useCallback, useEffect, useState, type ReactNode } from "react";
 import { PageProgress, PageProgressFallback, YugenProvider } from "@/components/ui";
 import { useAppearance, type Appearance } from "@/hooks/useAppearance";
-import { hrefOf, navigate, useDocsLocation } from "@/docs/router";
+import { docsPath, hrefOf, navigate, useDocsLocation } from "@/docs/router";
 import { Sidebar } from "@/docs/layout/Sidebar";
 import { TopBar } from "@/docs/layout/TopBar";
+import { dismissLanguageSuggestion, LanguageSuggestion } from "@/docs/layout/LanguageSuggestion";
 import { YugenMark } from "@/docs/YugenMark";
 import { AuthorLink } from "@/docs/AuthorLink";
 import { CONCEPT_BY_SLUG, CONCEPT_EN_PAGES } from "@/docs/concepts";
@@ -13,6 +14,7 @@ import { DocumentMeta, fallbackOf } from "@/docs/seo";
 import { lazyPage } from "@/docs/lazyPage";
 import { preloadComponentDoc } from "@/docs/registry";
 import { preloadComponentMessages } from "@/docs/componentMessages";
+import { preloadNews } from "@/docs/news";
 import { SITE } from "@/docs/site";
 import type { Route } from "@/docs/router";
 
@@ -30,6 +32,7 @@ const TemplatesPage = lazyPage(() => import("@/docs/pages/TemplatesPage").then((
 const ThemeDesignerPage = lazyPage(() => import("@/docs/pages/ThemeDesignerPage").then((m) => m.ThemeDesignerPage));
 const NewsPage = lazyPage(() => import("@/docs/pages/NewsPage").then((m) => m.NewsPage));
 const CommunityPage = lazyPage(() => import("@/docs/pages/CommunityPage").then((m) => m.CommunityPage));
+const ContributorsPage = lazyPage(() => import("@/docs/pages/ContributorsPage").then((m) => m.ContributorsPage));
 
 /**
  * Nạp trước mọi phần nạp lười mà route cần (trang, nội dung khái niệm, demo, gói tiếng Anh). main.tsx chờ hàm này rồi
@@ -46,6 +49,7 @@ export async function preloadRoute(route: Route, lang: Locale) {
     "theme-designer": ThemeDesignerPage,
     news: NewsPage,
     community: CommunityPage,
+    contributors: ContributorsPage,
   } as const;
   const tasks: Promise<unknown>[] = [];
   if (lang === "en") tasks.push(loadEnglish());
@@ -55,6 +59,7 @@ export async function preloadRoute(route: Route, lang: Locale) {
     if (page) tasks.push(page.preload());
   }
   if (route.kind === "component") tasks.push(preloadComponentDoc(route.slug, lang), preloadComponentMessages(route.slug));
+  if (route.kind === "news") tasks.push(preloadNews(lang));
   await Promise.allSettled(tasks);
 }
 
@@ -78,6 +83,9 @@ function Footer() {
         </span>
       </span>
       <nav aria-label={t("footer.links")} className="flex flex-wrap items-center gap-4">
+        <a href={docsPath("/contributors")} className="hover:text-foreground-1 hover:underline">
+          {t("nav.contributors")}
+        </a>
         {FOOTER_LINKS.map((link) => (
           <a key={link.href} href={link.href} target="_blank" rel="noreferrer" className="hover:text-foreground-1 hover:underline">
             {"label" in link ? link.label : t(link.key)}
@@ -122,7 +130,11 @@ export default function App({ path }: { path?: string }) {
   // Đổi ngôn ngữ = sang URL của trang này ở ngôn ngữ kia; theme / brand / hướng chữ đổi tại chỗ.
   const change = useCallback(
     ({ lang: nextLang, ...rest }: Partial<Appearance>) => {
-      if (nextLang && nextLang !== lang) navigate(hrefOf(route, nextLang) + window.location.search);
+      if (nextLang && nextLang !== lang) {
+        // Đã tự chọn ngôn ngữ: không gợi ý tiếng Việt nữa (#277).
+        dismissLanguageSuggestion();
+        navigate(hrefOf(route, nextLang) + window.location.search);
+      }
       if (Object.keys(rest).length > 0) update(rest);
     },
     [lang, route, update],
@@ -162,7 +174,8 @@ export default function App({ path }: { path?: string }) {
             </Suspense>
           )}
           <main className="mx-auto max-w-7xl px-4 md:px-12">
-            {fallback && <FallbackNotice partial={fallback === "partial"} />}
+            <LanguageSuggestion onChoose={() => change({ lang: "vi" })} />
+            {fallback && <FallbackNotice />}
             <Suspense fallback={<PageProgressFallback />}>
               {route.kind === "home" && <HomePage />}
               {route.kind === "blocks" && <BlocksPage />}
@@ -170,6 +183,7 @@ export default function App({ path }: { path?: string }) {
               {route.kind === "theme-designer" && <ThemeDesignerPage />}
               {route.kind === "news" && <NewsPage />}
               {route.kind === "community" && <CommunityPage />}
+              {route.kind === "contributors" && <ContributorsPage />}
               {route.kind === "concept" && <ConceptPage slug={route.slug} />}
               {route.kind === "foundation" && <FoundationsPage slug={route.slug} theme={tokenKey} />}
               {route.kind === "component" && <ComponentPage slug={route.slug} theme={theme} brand={brand} />}

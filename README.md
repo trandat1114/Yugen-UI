@@ -1,5 +1,7 @@
 # Yugen UI 幽玄
 
+*Tiếng Việt: [xem bên dưới](#tiếng-việt).*
+
 **Yugen UI** is a React component library and design system for **Tailwind CSS v4**. It combines
 [Microsoft Fluent 2](https://fluent2.microsoft.design/)-inspired design tokens and component behaviour with the
 copy-friendly, composable API style of [shadcn/ui](https://ui.shadcn.com/), and ships with its own **Sakura 桜**
@@ -16,7 +18,7 @@ copy-friendly, composable API style of [shadcn/ui](https://ui.shadcn.com/), and 
 - Icons from [Fluent System Icons](https://github.com/microsoft/fluentui-system-icons) (`@fluentui/react-icons`).
 
 **Documentation:** <https://trandat1114.github.io/Yugen-UI/> — every component with live examples, copyable code,
-blocks, concepts and a Theme Designer (Vietnamese; English docs are on the [roadmap](./ROADMAP.md)).
+blocks, concepts and a Theme Designer, in English and Vietnamese. What comes next: [ROADMAP.md](./ROADMAP.md).
 
 | Light | Dark |
 |---|---|
@@ -306,13 +308,20 @@ npm run lint:classes # Tailwind canonical-class check (add --fix to repair)
 npm run build:lib    # library → dist/   (npm run build:docs → dist-docs/)
 ```
 
-### For maintainers
+Releases (maintainers): [CONTRIBUTING.md › Releasing](./CONTRIBUTING.md#releasing-maintainers).
 
-- Before the first public release, add `repository`, `homepage` and `bugs` to `package.json` once the GitHub
-  repository URL is final — `npm publish --provenance` (used by `.github/workflows/release.yml`) requires
-  `repository.url` to match the repository that runs the workflow. Also add the docs URL to this README.
-- Release: bump `version`, update `CHANGELOG.md`, tag `vX.Y.Z` and push the tag (the workflow needs an
-  `NPM_TOKEN` secret). `prepublishOnly` runs typecheck, the class lint and `build:lib`.
+### Contributors
+
+**Code and docs**
+
+<a href="https://trandat1114.github.io/Yugen-UI/contributors#code"><img src="https://raw.githubusercontent.com/trandat1114/Yugen-UI/contributors-data/contributors-code.svg" alt="Avatars of everyone credited for code, templates, docs and translations"></a>
+
+**Ideas and discussion**
+
+<a href="https://trandat1114.github.io/Yugen-UI/contributors#ideas"><img src="https://raw.githubusercontent.com/trandat1114/Yugen-UI/contributors-data/contributors-ideas.svg" alt="Avatars of everyone credited for ideas, design, bug reports, reviews and feedback"></a>
+
+Names and what each person did: [Contributors page](https://trandat1114.github.io/Yugen-UI/contributors). How credit
+works: [CONTRIBUTING.md › Contributor credit](./CONTRIBUTING.md#contributor-credit).
 
 ## Credits
 
@@ -581,9 +590,11 @@ Tailwind CSS v4 (cascade layers, `@property`, `color-mix()`).
 Rất hoan nghênh đóng góp — đọc [CONTRIBUTING.md](./CONTRIBUTING.md) và bộ quy tắc [Design.md](./Design.md), tuân thủ
 [Quy tắc ứng xử](./CODE_OF_CONDUCT.md). Lỗ hổng bảo mật: xem [SECURITY.md](./SECURITY.md). Cam kết khả năng tiếp cận, những gì được kiểm thử và cách báo lỗi: [ACCESSIBILITY.md](./ACCESSIBILITY.md).
 
-**Ghi chú cho maintainer:** trước bản phát hành công khai đầu tiên, thêm `repository`, `homepage`, `bugs` vào
-`package.json` khi đã có URL GitHub chính thức (`npm publish --provenance` yêu cầu `repository.url` khớp với repo chạy
-workflow), và thêm URL trang docs vào README này.
+Phát hành (maintainer): [CONTRIBUTING.md › Phát hành](./CONTRIBUTING.md#phát-hành-maintainer).
+
+Những người đã đóng góp: ảnh ở mục [Contributors](#contributors) phía trên và trang
+[Người đóng góp](https://trandat1114.github.io/Yugen-UI/contributors?lang=vi); cách ghi công:
+[CONTRIBUTING.md › Ghi tên người đóng góp](./CONTRIBUTING.md#ghi-tên-người-đóng-góp).
 
 ### Ghi công
 

@@ -35,3 +35,24 @@ declare module "virtual:yugen-messages" {
   }[];
   export default namespaces;
 }
+
+declare module "virtual:yugen-news-index" {
+  import type { NewsFeeds, NewsIndexRelease } from "@/docs/news";
+  /** Version, ngày, `upcoming` và tiêu đề hai ngôn ngữ của mọi bản phát hành (yugenNews trong vite.plugins.ts). */
+  const index: NewsFeeds<NewsIndexRelease>;
+  export default index;
+}
+
+declare module "virtual:yugen-news-vi" {
+  import type { NewsFeeds, NewsRelease } from "@/docs/news";
+  /** Tin đầy đủ bằng tiếng Việt, từ src/docs/news/<gói>/<version>.vi.md. */
+  const feeds: NewsFeeds<NewsRelease>;
+  export default feeds;
+}
+
+declare module "virtual:yugen-news-en" {
+  import type { NewsFeeds, NewsRelease } from "@/docs/news";
+  /** Tin đầy đủ bằng tiếng Anh, từ src/docs/news/<gói>/<version>.en.md. */
+  const feeds: NewsFeeds<NewsRelease>;
+  export default feeds;
+}

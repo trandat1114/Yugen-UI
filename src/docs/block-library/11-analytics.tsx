@@ -3,16 +3,17 @@ import { Cart20Regular, Money20Regular, People20Regular, Receipt20Regular } from
 import { AreaChart, BarChart, Card, DonutChart, StatTile, ToggleGroup, ToggleGroupItem } from "@/components/ui";
 
 export const meta = {
-  title: "Bảng phân tích",
-  description: "KPI, xu hướng, xếp hạng và tỉ trọng — một bộ lọc thời gian cho mọi thẻ",
+  title: "Analytics",
+  description: "KPIs, trends, rankings and shares, with one time filter for every card",
   order: 11,
 };
 
 type Range = "7" | "30" | "90";
 
 const END = new Date(2026, 9, 20);
+const AVERAGE_ORDER = 58;
 
-/** Dữ liệu mẫu: lượt khách theo ngày, kết thúc ngày 20/10/2026. */
+/** Sample data: daily visitors, ending Oct 20, 2026. */
 function visitorsFor(days: number) {
   return Array.from({ length: days }, (_, i) => {
     const date = new Date(END);
@@ -27,23 +28,23 @@ function visitorsFor(days: number) {
 }
 
 const RANGES: Record<Range, { label: string; scale: number; delta: [number, number, number, number] }> = {
-  "7": { label: "7 ngày", scale: 1, delta: [0.084, 0.052, -0.004, 0.031] },
-  "30": { label: "30 ngày", scale: 4.3, delta: [0.126, 0.091, 0.012, 0.027] },
-  "90": { label: "90 ngày", scale: 12.8, delta: [0.214, 0.162, 0.018, 0.044] },
+  "7": { label: "7 days", scale: 1, delta: [0.084, 0.052, -0.004, 0.031] },
+  "30": { label: "30 days", scale: 4.3, delta: [0.126, 0.091, 0.012, 0.027] },
+  "90": { label: "90 days", scale: 12.8, delta: [0.214, 0.162, 0.018, 0.044] },
 };
 
 const CATEGORIES = [
-  { category: "Âm thanh", revenue: 186 },
-  { category: "Bàn phím & chuột", revenue: 142 },
-  { category: "Màn hình", revenue: 121 },
-  { category: "Phụ kiện bàn làm việc", revenue: 74 },
-  { category: "Cáp & sạc", revenue: 39 },
+  { category: "Audio", revenue: 7400 },
+  { category: "Keyboards & mice", revenue: 5700 },
+  { category: "Monitors", revenue: 4800 },
+  { category: "Desk accessories", revenue: 3000 },
+  { category: "Cables & chargers", revenue: 1600 },
 ];
 
 const DEVICES = [
-  { label: "Di động", value: 5820 },
-  { label: "Máy tính", value: 3410 },
-  { label: "Máy tính bảng", value: 940 },
+  { label: "Mobile", value: 5820 },
+  { label: "Desktop", value: 3410 },
+  { label: "Tablet", value: 940 },
 ];
 
 export default function AnalyticsBlock() {
@@ -57,18 +58,18 @@ export default function AnalyticsBlock() {
 
   return (
     <div className="@container flex flex-col gap-3">
-      {/* Bộ lọc: một hàng phía trên, tác động mọi thẻ bên dưới */}
+      {/* Filter: one row on top that drives every card below */}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h3 className="text-subtitle1 font-semibold">Tổng quan bán hàng</h3>
-          <p className="text-caption1 text-foreground-3">Cập nhật 20/10/2026</p>
+          <h3 className="text-subtitle1 font-semibold">Sales overview</h3>
+          <p className="text-caption1 text-foreground-3">Updated Oct 20, 2026</p>
         </div>
         <ToggleGroup
           type="single"
           size="small"
           value={range}
           onValueChange={(v) => v && setRange(v as Range)}
-          aria-label="Khoảng thời gian"
+          aria-label="Time range"
         >
           {(Object.keys(RANGES) as Range[]).map((key) => (
             <ToggleGroupItem key={key} value={key}>
@@ -82,79 +83,87 @@ export default function AnalyticsBlock() {
         <Card size="large">
           <StatTile
             icon={<Money20Regular />}
-            label="Doanh thu"
-            value={totalOrders * 1450000}
-            valueFormat={{ style: "currency", currency: "VND", notation: "compact", maximumFractionDigits: 1 }}
+            label="Revenue"
+            value={totalOrders * AVERAGE_ORDER}
+            valueFormat={{ style: "currency", currency: "USD", notation: "compact", maximumFractionDigits: 1 }}
             delta={r.delta[0]}
-            deltaLabel={`so với ${r.label} trước`}
+            deltaLabel={`vs. previous ${r.label}`}
             trend={trend}
+            locale="en-US"
           />
         </Card>
         <Card size="large">
           <StatTile
             icon={<Cart20Regular />}
-            label="Đơn hàng"
+            label="Orders"
             value={totalOrders}
             delta={r.delta[1]}
-            deltaLabel={`so với ${r.label} trước`}
+            deltaLabel={`vs. previous ${r.label}`}
             trend={trend}
+            locale="en-US"
           />
         </Card>
         <Card size="large">
           <StatTile
             icon={<People20Regular />}
-            label="Tỉ lệ chuyển đổi"
+            label="Conversion rate"
             value={totalOrders / totalVisitors}
             valueFormat={{ style: "percent", maximumFractionDigits: 2 }}
             delta={r.delta[2]}
-            deltaLabel={`so với ${r.label} trước`}
+            deltaLabel={`vs. previous ${r.label}`}
+            locale="en-US"
           />
         </Card>
         <Card size="large">
           <StatTile
             icon={<Receipt20Regular />}
-            label="Giá trị đơn trung bình"
-            value={1450000 * (1 + r.delta[3])}
-            valueFormat={{ style: "currency", currency: "VND", maximumFractionDigits: 0 }}
+            label="Average order value"
+            value={AVERAGE_ORDER * (1 + r.delta[3])}
+            valueFormat={{ style: "currency", currency: "USD" }}
             delta={r.delta[3]}
-            deltaLabel={`so với ${r.label} trước`}
+            deltaLabel={`vs. previous ${r.label}`}
+            locale="en-US"
           />
         </Card>
       </div>
 
       <Card size="large">
         <AreaChart
-          title="Lượt khách"
-          description={`${r.label} gần nhất`}
+          title="Visitors"
+          description={`Last ${r.label}`}
           data={visitors}
           index="date"
           stacked
           series={[
-            { key: "returning", label: "Khách quay lại" },
-            { key: "newVisitors", label: "Khách mới" },
+            { key: "returning", label: "Returning visitors" },
+            { key: "newVisitors", label: "New visitors" },
           ]}
           height={240}
+          locale="en-US"
         />
       </Card>
 
       <div className="grid gap-3 @2xl:grid-cols-2">
         <Card size="large">
           <BarChart
-            title="Doanh thu theo danh mục"
-            description="Triệu ₫"
+            title="Revenue by category"
+            description="USD"
             data={CATEGORIES.map((c) => ({ ...c, revenue: Math.round(c.revenue * r.scale) }))}
             index="category"
-            series={[{ key: "revenue", label: "Doanh thu" }]}
+            series={[{ key: "revenue", label: "Revenue" }]}
+            valueFormat={{ style: "currency", currency: "USD", notation: "compact", maximumFractionDigits: 1 }}
             orientation="horizontal"
             showValues
+            locale="en-US"
           />
         </Card>
         <Card size="large">
           <DonutChart
-            title="Thiết bị"
-            description="Tỉ trọng phiên truy cập"
+            title="Devices"
+            description="Share of sessions"
             data={DEVICES.map((d) => ({ ...d, value: Math.round(d.value * r.scale) }))}
             size={168}
+            locale="en-US"
           />
         </Card>
       </div>

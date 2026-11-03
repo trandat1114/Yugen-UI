@@ -1,10 +1,10 @@
 import type { YugenMessagesInput, YugenTheme } from "@/components/ui";
-import type { CustomerStatus, MockLabels, OrderStatus, Plan } from "../api";
+import type { CustomerStatus, MockLabels, OrderStatus, Plan, TaskStatus } from "../api";
 
 /** Every string in the app. One file per language; `content/index.ts` picks the one the app uses. */
 export interface Content {
   lang: "en" | "vi";
-  /** Built-in strings of Yugen components: messagesEn for English, empty = Vietnamese defaults. Kept in the language
+  /** Built-in strings of Yugen components: messagesVi for Vietnamese, empty = English defaults. Kept in the language
    * file so `create --lang vi` (which deletes en.ts) drops the English set from the bundle. */
   messages?: YugenMessagesInput;
   /** Locale for dates, numbers and sorting names. */
@@ -18,12 +18,11 @@ export interface Content {
     label: string;
     customers: string;
     orders: string;
+    board: string;
     settings: string;
     account: string;
     signOut: string;
     signedOut: string;
-    skip: string;
-    open: string;
   };
   common: {
     all: string;
@@ -91,6 +90,12 @@ export interface Content {
     ofCustomerDescription: string;
     noMatch: string;
     empty: string;
+  };
+  board: {
+    title: string;
+    description: string;
+    columns: Record<TaskStatus, string>;
+    moveFailed: (task: string) => string;
   };
   form: {
     createTitle: string;

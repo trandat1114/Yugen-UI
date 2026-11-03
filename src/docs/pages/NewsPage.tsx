@@ -1,15 +1,16 @@
 import * as React from "react";
 import { ArrowRight16Regular, Sparkle20Regular } from "@fluentui/react-icons";
-import { Badge, type BadgeProps, Tabs, TabsContent, TabsList, TabsTrigger, ToggleGroup, ToggleGroupItem } from "@/components/ui";
+import { Avatar, Badge, type BadgeProps, Markdown, type MarkdownLink, Tabs, TabsContent, TabsList, TabsTrigger, ToggleGroup, ToggleGroupItem } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { PageHeader } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
-import { CLI_NEWS, CREATE_NEWS, NEWS, NEWS_KIND_LABEL, type NewsKind, type NewsRelease } from "../news";
+import { NEWS_INDEX, NEWS_KINDS, useNewsFeeds, type NewsFeeds, type NewsKind, type NewsRelease } from "../news";
 import { useLocale } from "../i18n";
 import type { MessageKey } from "../i18n/vi";
 import { SITE } from "../site";
 import { markNewsSeen } from "../useNews";
 import { docsPath } from "../router";
+import { avatarOf, creditsBetween, profileUrl } from "../contributors";
 
 const KIND_BADGE: Record<NewsKind, Pick<BadgeProps, "color" | "appearance">> = {
   new: { color: "brand", appearance: "tint" },
@@ -22,7 +23,7 @@ const KIND_BADGE: Record<NewsKind, Pick<BadgeProps, "color" | "appearance">> = {
 const FEEDS: {
   id: string;
   label: string;
-  releases: NewsRelease[];
+  releases: keyof NewsFeeds<NewsRelease>;
   changelog: string;
   releasesPage?: boolean;
   upgradeBody: MessageKey;
@@ -31,7 +32,7 @@ const FEEDS: {
   {
     id: "yugen-ui",
     label: "yugen-ui",
-    releases: NEWS,
+    releases: "NEWS",
     changelog: "CHANGELOG.md",
     releasesPage: true,
     upgradeBody: "news.upgradeBody",
@@ -40,7 +41,7 @@ const FEEDS: {
   {
     id: "cli",
     label: "@yugen-ui/cli",
-    releases: CLI_NEWS,
+    releases: "CLI_NEWS",
     changelog: "packages/cli/CHANGELOG.md",
     upgradeBody: "news.cliUpgradeBody",
     upgrade: "npm install -g @yugen-ui/cli@latest",
@@ -48,21 +49,63 @@ const FEEDS: {
   {
     id: "create",
     label: "create-yugen-ui",
-    releases: CREATE_NEWS,
+    releases: "CREATE_NEWS",
     changelog: "packages/cli/CHANGELOG.md",
     upgradeBody: "news.createUpgradeBody",
     upgrade: "npx create-yugen-ui@latest my-app",
   },
 ];
 
+/**
+ * Người đóng góp của từng bản yugen-ui (#248): đóng góp sau ngày của bản trước, tới ngày của bản này (bản sắp ra: ngày dự
+ * kiến). Maintainer không được liệt kê.
+ */
+const CREDITS = new Map(NEWS_INDEX.NEWS.map((release, i, all) => [release.version, creditsBetween(all[i + 1]?.date, release.date)]));
+
+/** Link trong nội dung tin: đường dẫn docs thêm BASE, link ngoài mở tab mới. */
+function NewsLink({ href, title, children, external }: MarkdownLink) {
+  return external ? (
+    <a href={href} title={title} target="_blank" rel="noreferrer">
+      {children}
+    </a>
+  ) : (
+    <a href={href.startsWith("/") ? docsPath(href) : href} title={title}>
+      {children}
+    </a>
+  );
+}
+
+function ReleaseCredits({ credits }: { credits: ReturnType<typeof creditsBetween> }) {
+  const { t } = useLocale();
+  return (
+    <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-stroke-2 pt-3 text-caption1 text-foreground-2">
+      <span>{t("news.thanks")}</span>
+      {credits.map(({ person, items }) => (
+        <span key={person.login} className="inline-flex items-center gap-1.5">
+          <span aria-hidden>
+            <Avatar name={person.name} src={avatarOf(person, 40)} size={20} color="colorful" />
+          </span>
+          <a href={profileUrl(person.login)} target="_blank" rel="noreferrer" className="font-semibold text-foreground-1 hover:underline">
+            {person.name}
+          </a>
+          {/* Một số mỗi issue / PR, kể cả khi người đó có nhiều bình luận trong cùng một issue. */}
+          {[...new Map(items.filter((item) => item.number && item.url).map((item) => [item.number, item])).values()].map((item) => (
+            <a key={item.number} href={item.url} target="_blank" rel="noreferrer" className="text-link tabular-nums hover:text-link-hover hover:underline">
+              #{item.number}
+            </a>
+          ))}
+        </span>
+      ))}
+    </p>
+  );
+}
+
 function formatDate(date: string, locale: string) {
   return new Intl.DateTimeFormat(locale === "en" ? "en-US" : "vi-VN", { day: "2-digit", month: "long", year: "numeric" }).format(new Date(date));
 }
 
-function Timeline({ releases }: { releases: NewsRelease[] }) {
+function Timeline({ releases, credits }: { releases: NewsRelease[]; credits?: typeof CREDITS }) {
   const { t, locale } = useLocale();
-  // Nội dung bản tin chưa dịch: lang="vi" khi giao diện là tiếng Anh (App hiện thông báo dịch một phần).
-  const itemLang = locale === "en" ? "vi" : undefined;
   const latest = releases.find((r) => !r.upcoming);
   return (
     <ol className="relative flex flex-col gap-8 before:absolute before:inset-y-2 before:inset-s-1.75 before:w-0.5 before:rounded-circular before:bg-stroke-2 md:before:inset-s-41.75">
@@ -83,7 +126,7 @@ function Timeline({ releases }: { releases: NewsRelease[] }) {
           </div>
           <article className="rounded-2xlarge border border-stroke-2 bg-background-1 p-5 shadow-2 md:ms-5">
             <div className="flex flex-wrap items-center gap-2">
-              <h2 lang={itemLang} className="font-display text-title3 font-semibold">
+              <h2 className="font-display text-title3 font-semibold">
                 {release.title}
               </h2>
               {release.upcoming ? (
@@ -98,8 +141,10 @@ function Timeline({ releases }: { releases: NewsRelease[] }) {
                 )
               )}
             </div>
-            <p lang={itemLang} className="mt-2 text-body2 text-foreground-2">
-              {release.summary}
+            <p className="mt-2 text-body2 text-foreground-2">
+              <Markdown inline renderLink={NewsLink}>
+                {release.summary}
+              </Markdown>
             </p>
             <ul className="mt-4 flex flex-col gap-2">
               {release.items.map((item) => (
@@ -108,7 +153,9 @@ function Timeline({ releases }: { releases: NewsRelease[] }) {
                     {t(`news.kind.${item.kind}`)}
                   </Badge>
                   <span className="text-body1 text-foreground-1">
-                    {itemLang ? <span lang={itemLang}>{item.text}</span> : item.text}
+                    <Markdown inline renderLink={NewsLink}>
+                      {item.text}
+                    </Markdown>
                     {item.href && (
                       <a
                         href={docsPath(item.href)}
@@ -122,6 +169,7 @@ function Timeline({ releases }: { releases: NewsRelease[] }) {
                 </li>
               ))}
             </ul>
+            {!!credits?.get(release.version)?.length && <ReleaseCredits credits={credits.get(release.version)!} />}
           </article>
         </li>
       ))}
@@ -131,7 +179,8 @@ function Timeline({ releases }: { releases: NewsRelease[] }) {
 
 export function NewsPage() {
   const [filter, setFilter] = React.useState<"all" | NewsKind>("all");
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
+  const feeds = useNewsFeeds(locale);
 
   React.useEffect(() => markNewsSeen(), []);
 
@@ -151,7 +200,7 @@ export function NewsPage() {
         <div className="flex flex-wrap items-center gap-3">
           <ToggleGroup type="single" value={filter} onValueChange={(v) => v && setFilter(v as typeof filter)} aria-label={t("news.filter")}>
             <ToggleGroupItem value="all">{t("news.all")}</ToggleGroupItem>
-            {(Object.keys(NEWS_KIND_LABEL) as NewsKind[]).map((k) => (
+            {NEWS_KINDS.map((k) => (
               <ToggleGroupItem key={k} value={k}>
                 {t(`news.kind.${k}`)}
               </ToggleGroupItem>
@@ -160,13 +209,14 @@ export function NewsPage() {
         </div>
 
         {FEEDS.map((feed) => {
-          const releases = feed.releases
+          const all = feeds[feed.releases];
+          const releases = all
             .map((r) => ({ ...r, items: filter === "all" ? r.items : r.items.filter((i) => i.kind === filter) }))
             .filter((r) => r.items.length > 0);
           return (
             <TabsContent key={feed.id} value={feed.id} className="flex flex-col gap-6">
               <p className="text-caption1 text-foreground-3">
-                {t("news.current", { version: (feed.releases.find((r) => !r.upcoming) ?? feed.releases[0]).version })} · {t("news.fullIn")}{" "}
+                {t("news.current", { version: (all.find((r) => !r.upcoming) ?? all[0]).version })} · {t("news.fullIn")}{" "}
                 <a className="text-link underline hover:text-link-hover" href={`${SITE.links.repository}/blob/main/${feed.changelog}`}>
                   {feed.changelog}
                 </a>
@@ -182,7 +232,7 @@ export function NewsPage() {
                 .
               </p>
 
-              {releases.length > 0 ? <Timeline releases={releases} /> : <p className="text-body1 text-foreground-3">{t("news.empty")}</p>}
+              {releases.length > 0 ? <Timeline releases={releases} credits={feed.id === "yugen-ui" ? CREDITS : undefined} /> : <p className="text-body1 text-foreground-3">{t("news.empty")}</p>}
 
               <section className="mt-6 rounded-3xlarge border border-stroke-2 bg-background-2 p-6">
                 <h2 className="font-display text-title3 font-semibold">{t("news.upgradeTitle")}</h2>

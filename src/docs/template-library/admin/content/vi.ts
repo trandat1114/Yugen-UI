@@ -1,7 +1,10 @@
+import { messagesVi } from "@/components/ui";
 import type { Content } from "./types";
 
 const vi: Content = {
   lang: "vi",
+
+  messages: messagesVi,
   locale: "vi-VN",
   currency: "USD",
   appName: "Sakura Admin",
@@ -10,12 +13,11 @@ const vi: Content = {
     label: "Chính",
     customers: "Khách hàng",
     orders: "Đơn hàng",
+    board: "Bảng việc",
     settings: "Cài đặt",
     account: "Tài khoản",
     signOut: "Đăng xuất",
     signedOut: "Đã đăng xuất",
-    skip: "Bỏ qua, tới nội dung",
-    open: "Mở menu điều hướng",
   },
   common: {
     all: "Tất cả",
@@ -92,6 +94,12 @@ const vi: Content = {
     ofCustomerDescription: "Mới nhất ở trên. Đơn đã hoàn tiền không tính vào tổng.",
     noMatch: "Không có đơn hàng nào khớp",
     empty: "Chưa có đơn hàng",
+  },
+  board: {
+    title: "Bảng việc",
+    description: "Việc của nhóm. Kéo thẻ, hoặc focus tay nắm rồi nhấn Space, để chuyển; thứ tự được lưu khi thả.",
+    columns: { todo: "Cần làm", doing: "Đang làm", done: "Xong" },
+    moveFailed: (task) => `Không chuyển được “${task}”`,
   },
   form: {
     createTitle: "Thêm khách hàng",
@@ -191,6 +199,18 @@ const vi: Content = {
     familyFirst: true,
     companies: ["Sen Việt", "Mộc An", "Hải Đăng", "Phương Nam", "Bình Minh", "Tre Xanh", "Ánh Dương", "Gốm Bát Tràng", "Lúa Vàng", "Sông Hồng"],
     phonePrefix: "+84 90",
+    tasks: [
+      "Gọi lại cho {customer} về hoá đơn",
+      "Hoàn tiền đơn bị hỏng của {customer}",
+      "Kiểm tra hàng tồn trước đợt giảm giá",
+      "Trả lời đánh giá tuần trước",
+      "Mở gói Business cho {customer}",
+      "Cập nhật phí giao hàng",
+      "Hướng dẫn {customer} dùng hệ thống",
+      "Viết bản tin dịp lễ",
+      "Sửa địa chỉ của {customer}",
+      "Chốt sổ tháng Mười",
+    ],
   },
 };
 

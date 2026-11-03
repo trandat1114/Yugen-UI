@@ -1,0 +1,35 @@
+{
+  "$comment": "Ghi tay cho scripts/contributors.mjs (#248). maintainers: đứng đầu trang. exclude: login xin bỏ tên. people: đóng góp API không thấy (thiết kế, ý tưởng ngoài GitHub…), hoặc loại cụ thể hơn cho một bình luận / PR trên GitHub (cùng login và url: số, tiêu đề, ngày vẫn lấy nguyên bản từ GitHub, title chỉ dùng khi url không phải đóng góp trên GitHub): { login, name?, types: [design|idea|discussion|a11y|…], title?, date: YYYY-MM-DD, url? }.",
+  "maintainers": ["trandat1114"],
+  "exclude": [],
+  "people": [
+    {
+      "login": "dave-otf",
+      "name": "Dave Kurian",
+      "types": ["discussion", "a11y"],
+      "date": "2026-10-30",
+      "url": "https://github.com/trandat1114/Yugen-UI/issues/161#issuecomment-6532308797"
+    },
+    {
+      "login": "dave-otf",
+      "name": "Dave Kurian",
+      "types": ["discussion", "idea"],
+      "date": "2026-11-02",
+      "url": "https://github.com/trandat1114/Yugen-UI/issues/161#issuecomment-6569261947"
+    },
+    {
+      "login": "dave-otf",
+      "name": "Dave Kurian",
+      "types": ["discussion", "idea"],
+      "date": "2026-11-03",
+      "url": "https://github.com/trandat1114/Yugen-UI/issues/259#issuecomment-6593217974"
+    },
+    {
+      "login": "dave-otf",
+      "name": "Dave Kurian",
+      "types": ["discussion", "idea"],
+      "date": "2026-11-03",
+      "url": "https://github.com/trandat1114/Yugen-UI/issues/266#issuecomment-6595648056"
+    }
+  ]
+}

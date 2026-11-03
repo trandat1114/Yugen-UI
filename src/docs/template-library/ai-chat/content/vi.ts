@@ -1,13 +1,15 @@
+import { messagesVi } from "@/components/ui";
 import type { Content } from "./types";
 
 const vi: Content = {
   lang: "vi",
+
+  messages: messagesVi,
   locale: "vi-VN",
   appName: "Sakura Chat",
   assistantName: "Sakura",
   you: "Bạn",
   nav: {
-    open: "Mở danh sách hội thoại",
     label: "Hội thoại",
     newChat: "Trò chuyện mới",
     settings: "Cài đặt",

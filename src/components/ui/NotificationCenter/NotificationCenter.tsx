@@ -1,5 +1,6 @@
 /** Yugen Labs · NotificationCenter — chuông thông báo + bảng thông báo (Popover trên desktop, bottom sheet trên mobile). */
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import {
   Alert20Regular,
   AlertOff20Regular,
@@ -21,13 +22,13 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "..
 import { ErrorState, useSpinDelay } from "../Loading/Loading";
 import { Popover, PopoverSurface, PopoverTrigger } from "../Popover/Popover";
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../Sheet/Sheet";
-import { useMediaQuery } from "../Sheet/useMediaQuery";
+import { useMediaQuery } from "../hooks/useMediaQuery";
 import { SkeletonList } from "../Skeleton/Skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../Tabs/Tabs";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
-import { notificationCenterMessages, type NotificationCenterMessages } from "./messages";
+import { notificationCenterMessagesEn, type NotificationCenterMessages } from "./messages";
 
-export { notificationCenterMessages, notificationCenterMessagesEn, type NotificationCenterMessages } from "./messages";
+export { notificationCenterMessages, notificationCenterMessagesVi, notificationCenterMessagesEn, type NotificationCenterMessages } from "./messages";
 
 export type NotificationIntent = "info" | "success" | "warning" | "error";
 
@@ -73,7 +74,7 @@ function dateFormats(locale: string): DateFormats {
   return f;
 }
 
-/** Locale Intl và chuỗi thời gian cho các hàm định dạng — mặc định "vi-VN" và `notificationCenterMessages`. */
+/** Locale Intl và chuỗi thời gian cho các hàm định dạng — mặc định "en-US" và `notificationCenterMessagesEn`. */
 export interface NotificationTimeOptions {
   locale?: string;
   messages?: Pick<NotificationCenterMessages, "justNow" | "minutesAgo" | "hoursAgo" | "today" | "yesterday">;
@@ -86,7 +87,7 @@ const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDat
 export function formatRelativeTime(
   time: NotificationItem["time"],
   now: Date | number,
-  { locale = "vi-VN", messages = notificationCenterMessages }: NotificationTimeOptions = {},
+  { locale = "en-US", messages = notificationCenterMessagesEn }: NotificationTimeOptions = {},
 ): string {
   const date = toDate(time);
   const ref = typeof now === "number" ? now : now.getTime();
@@ -102,7 +103,7 @@ export function formatRelativeTime(
 export function formatNotificationDay(
   time: NotificationItem["time"],
   now: Date | number,
-  { locale = "vi-VN", messages = notificationCenterMessages }: NotificationTimeOptions = {},
+  { locale = "en-US", messages = notificationCenterMessagesEn }: NotificationTimeOptions = {},
 ): string {
   const date = toDate(time);
   const ref = new Date(typeof now === "number" ? now : now.getTime());
@@ -325,9 +326,8 @@ export const NotificationPanel = React.forwardRef<HTMLDivElement, NotificationPa
     const uid = React.useId();
     const now = useNow(nowProp);
     const { locale } = useYugen();
-    const msg = useYugenMessages("notificationCenter", notificationCenterMessages);
-    const [innerFilter, setInnerFilter] = React.useState<NotificationFilter>(defaultFilter);
-    const filter = filterProp ?? innerFilter;
+    const msg = useYugenMessages("notificationCenter", notificationCenterMessagesEn);
+    const [filter, setFilter] = useControllableState({ value: filterProp, defaultValue: defaultFilter, onChange: onFilterChange });
     const showSkeleton = useSpinDelay(loading);
     const unread = items.filter((n) => !n.read).length;
     const focusAfterRemove = React.useRef<HTMLElement | null>(null);
@@ -405,11 +405,7 @@ export const NotificationPanel = React.forwardRef<HTMLDivElement, NotificationPa
         <Tabs
           ref={listRef}
           value={filter}
-          onValueChange={(v) => {
-            const next = v as NotificationFilter;
-            if (filterProp === undefined) setInnerFilter(next);
-            onFilterChange?.(next);
-          }}
+          onValueChange={(v) => setFilter(v as NotificationFilter)}
           className="flex min-h-0 flex-1 flex-col"
         >
           <TabsList size="small" aria-label={msg.filter} className="shrink-0 border-b border-stroke-2 px-2">
@@ -478,14 +474,9 @@ export const NotificationCenter = React.forwardRef<HTMLButtonElement, Notificati
     ref,
   ) => {
     const { items } = panelProps;
-    const msg = useYugenMessages("notificationCenter", notificationCenterMessages);
+    const msg = useYugenMessages("notificationCenter", notificationCenterMessagesEn);
     const title = titleProp ?? msg.title;
-    const [innerOpen, setInnerOpen] = React.useState(defaultOpen);
-    const open = openProp ?? innerOpen;
-    const setOpen = (next: boolean) => {
-      if (openProp === undefined) setInnerOpen(next);
-      onOpenChange?.(next);
-    };
+    const [open, setOpen] = useControllableState({ value: openProp, defaultValue: defaultOpen, onChange: onOpenChange });
     const wide = useMediaQuery(`(min-width: ${breakpoint}px)`, { defaultValue: true });
     const asSheet = mode === "sheet" || (mode === "auto" && !wide);
     const headingId = React.useId();

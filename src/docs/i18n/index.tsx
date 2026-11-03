@@ -1,3 +1,4 @@
+import { messagesVi } from "@/components/ui/messages-vi";
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { YugenMessages } from "@/components/ui/YugenProvider/context";
 import type { ComponentCategory, ConceptGroup, ConceptMeta } from "../types";
@@ -32,7 +33,8 @@ function createValue(b: EnBundle | null): LocaleValue {
   const messages: Record<MessageKey, string> = b ? b.messages : vi;
   return {
     locale: b ? "en" : "vi",
-    ui: b?.ui,
+    // Chuỗi có sẵn của component: mặc định tiếng Anh, trang tiếng Việt truyền messagesVi.
+    ui: b ? b.ui : messagesVi,
     t: (key, vars) => format(messages[key], vars),
     category: (c) => b?.categories[c] ?? c,
     group: (g) => b?.groups[g] ?? g,

@@ -10,6 +10,13 @@ import {
   questionnaireMessagesEn,
 } from "./Questionnaire";
 import { YugenProvider } from "../YugenProvider/YugenProvider";
+import { questionnaireMessagesVi } from "./messages";
+
+// Hàm gọi trực tiếp mặc định tiếng Anh (#277); các kiểm tra bên dưới viết theo bản tiếng Việt.
+const validateQuestionVi = (...args: Parameters<typeof validateQuestion>) =>
+  validateQuestion(args[0], args[1], args[2] ?? questionnaireMessagesVi);
+const formatQuestionAnswerVi = (...args: Parameters<typeof formatQuestionAnswer>) =>
+  formatQuestionAnswer(args[0], args[1], args[2] ?? questionnaireMessagesVi);
 
 /* ================================================================ validateQuestion */
 
@@ -48,34 +55,34 @@ describe("validateQuestion", () => {
     ["text", text, "Vui lòng nhập câu trả lời."],
     ["longText", longText, "Vui lòng nhập câu trả lời."],
   ])("required + chưa trả lời (%s)", (_type, question, message) => {
-    expect(validateQuestion(question, {})).toBe(message);
+    expect(validateQuestionVi(question, {})).toBe(message);
   });
 
   it("chuỗi chỉ có khoảng trắng và mảng rỗng tính là chưa trả lời", () => {
-    expect(validateQuestion(text, { name: "   " })).toBe("Vui lòng nhập câu trả lời.");
-    expect(validateQuestion(longText, { note: "\n\t" })).toBe("Vui lòng nhập câu trả lời.");
-    expect(validateQuestion(multiple, { features: [] })).toBe("Vui lòng chọn một câu trả lời.");
+    expect(validateQuestionVi(text, { name: "   " })).toBe("Vui lòng nhập câu trả lời.");
+    expect(validateQuestionVi(longText, { note: "\n\t" })).toBe("Vui lòng nhập câu trả lời.");
+    expect(validateQuestionVi(multiple, { features: [] })).toBe("Vui lòng chọn một câu trả lời.");
   });
 
   it("0 và false là câu trả lời hợp lệ (không phải rỗng)", () => {
-    expect(validateQuestion(scale, { nps: 0 })).toBeUndefined();
-    expect(validateQuestion(yesNo, { ok: false })).toBeUndefined();
+    expect(validateQuestionVi(scale, { nps: 0 })).toBeUndefined();
+    expect(validateQuestionVi(yesNo, { ok: false })).toBeUndefined();
   });
 
   it("không required + chưa trả lời → hợp lệ (kể cả có min)", () => {
     const optional = { ...multiple, required: false };
-    expect(validateQuestion(optional, {})).toBeUndefined();
-    expect(validateQuestion(optional, { features: [] })).toBeUndefined();
-    expect(validateQuestion({ ...text, required: false }, { name: "" })).toBeUndefined();
+    expect(validateQuestionVi(optional, {})).toBeUndefined();
+    expect(validateQuestionVi(optional, { features: [] })).toBeUndefined();
+    expect(validateQuestionVi({ ...text, required: false }, { name: "" })).toBeUndefined();
   });
 
   it("multiple: min / max", () => {
-    expect(validateQuestion(multiple, { features: ["a"] })).toBe("Chọn ít nhất 2 mục.");
-    expect(validateQuestion(multiple, { features: ["a", "b"] })).toBeUndefined();
-    expect(validateQuestion(multiple, { features: ["a", "b", "c"] })).toBeUndefined();
-    expect(validateQuestion(multiple, { features: ["a", "b", "c", "d"] })).toBe("Chọn tối đa 3 mục.");
+    expect(validateQuestionVi(multiple, { features: ["a"] })).toBe("Chọn ít nhất 2 mục.");
+    expect(validateQuestionVi(multiple, { features: ["a", "b"] })).toBeUndefined();
+    expect(validateQuestionVi(multiple, { features: ["a", "b", "c"] })).toBeUndefined();
+    expect(validateQuestionVi(multiple, { features: ["a", "b", "c", "d"] })).toBe("Chọn tối đa 3 mục.");
     // Câu không required nhưng đã trả lời vẫn phải đạt min.
-    expect(validateQuestion({ ...multiple, required: false }, { features: ["a"] })).toBe("Chọn ít nhất 2 mục.");
+    expect(validateQuestionVi({ ...multiple, required: false }, { features: ["a"] })).toBe("Chọn ít nhất 2 mục.");
   });
 
   it("validate tuỳ chỉnh chỉ chạy khi đã có câu trả lời, nhận value + toàn bộ answers", () => {
@@ -83,55 +90,55 @@ describe("validateQuestion", () => {
       value.includes("@") ? null : `Email "${value}" không hợp lệ (${String(answers.fw)})`,
     );
     const email: Question = { id: "email", type: "text", title: "Email", validate };
-    expect(validateQuestion(email, {})).toBeUndefined();
+    expect(validateQuestionVi(email, {})).toBeUndefined();
     expect(validate).not.toHaveBeenCalled();
 
-    expect(validateQuestion(email, { email: "abc", fw: "react" })).toBe('Email "abc" không hợp lệ (react)');
+    expect(validateQuestionVi(email, { email: "abc", fw: "react" })).toBe('Email "abc" không hợp lệ (react)');
     expect(validate).toHaveBeenLastCalledWith("abc", { email: "abc", fw: "react" });
     // null → undefined.
-    expect(validateQuestion(email, { email: "a@b.c" })).toBeUndefined();
+    expect(validateQuestionVi(email, { email: "a@b.c" })).toBeUndefined();
   });
 
   it("validate chạy sau min/max (lỗi min được ưu tiên)", () => {
     const validate = vi.fn(() => "lỗi tuỳ chỉnh");
     const q: Question = { ...multiple, validate };
-    expect(validateQuestion(q, { features: ["a"] })).toBe("Chọn ít nhất 2 mục.");
+    expect(validateQuestionVi(q, { features: ["a"] })).toBe("Chọn ít nhất 2 mục.");
     expect(validate).not.toHaveBeenCalled();
-    expect(validateQuestion(q, { features: ["a", "b"] })).toBe("lỗi tuỳ chỉnh");
+    expect(validateQuestionVi(q, { features: ["a", "b"] })).toBe("lỗi tuỳ chỉnh");
   });
 });
 
 describe("formatQuestionAnswer", () => {
   it("chưa trả lời", () => {
-    expect(formatQuestionAnswer(text, undefined)).toBe("Chưa trả lời");
-    expect(formatQuestionAnswer(text, "  ")).toBe("Chưa trả lời");
-    expect(formatQuestionAnswer(multiple, [])).toBe("Chưa trả lời");
+    expect(formatQuestionAnswerVi(text, undefined)).toBe("Chưa trả lời");
+    expect(formatQuestionAnswerVi(text, "  ")).toBe("Chưa trả lời");
+    expect(formatQuestionAnswerVi(multiple, [])).toBe("Chưa trả lời");
   });
 
   it("single / multiple dùng nhãn, giữ value khi không tìm thấy option", () => {
-    expect(formatQuestionAnswer(single, "vue")).toBe("Vue");
-    expect(formatQuestionAnswer(single, "svelte")).toBe("svelte");
-    expect(formatQuestionAnswer(multiple, ["a", "c", "z"])).toBe("A, C, z");
+    expect(formatQuestionAnswerVi(single, "vue")).toBe("Vue");
+    expect(formatQuestionAnswerVi(single, "svelte")).toBe("svelte");
+    expect(formatQuestionAnswerVi(multiple, ["a", "c", "z"])).toBe("A, C, z");
   });
 
   it("rating / scale theo max", () => {
-    expect(formatQuestionAnswer(rating, 4)).toBe("4/5 sao");
-    expect(formatQuestionAnswer({ ...rating, max: 10 }, 7)).toBe("7/10 sao");
-    expect(formatQuestionAnswer(scale, 0)).toBe("0/10");
-    expect(formatQuestionAnswer({ ...scale, max: 5 }, 3)).toBe("3/5");
+    expect(formatQuestionAnswerVi(rating, 4)).toBe("4/5 sao");
+    expect(formatQuestionAnswerVi({ ...rating, max: 10 }, 7)).toBe("7/10 sao");
+    expect(formatQuestionAnswerVi(scale, 0)).toBe("0/10");
+    expect(formatQuestionAnswerVi({ ...scale, max: 5 }, 3)).toBe("3/5");
   });
 
   it("yesNo dùng nhãn tuỳ chỉnh nếu có", () => {
-    expect(formatQuestionAnswer(yesNo, true)).toBe("Có");
-    expect(formatQuestionAnswer(yesNo, false)).toBe("Không");
+    expect(formatQuestionAnswerVi(yesNo, true)).toBe("Có");
+    expect(formatQuestionAnswerVi(yesNo, false)).toBe("Không");
     const custom: Question = { ...yesNo, yesLabel: "Đồng ý", noLabel: "Từ chối" };
-    expect(formatQuestionAnswer(custom, true)).toBe("Đồng ý");
-    expect(formatQuestionAnswer(custom, false)).toBe("Từ chối");
+    expect(formatQuestionAnswerVi(custom, true)).toBe("Đồng ý");
+    expect(formatQuestionAnswerVi(custom, false)).toBe("Từ chối");
   });
 
   it("text / longText giữ nguyên", () => {
-    expect(formatQuestionAnswer(text, "Đạt")).toBe("Đạt");
-    expect(formatQuestionAnswer(longText, "dòng 1\ndòng 2")).toBe("dòng 1\ndòng 2");
+    expect(formatQuestionAnswerVi(text, "Đạt")).toBe("Đạt");
+    expect(formatQuestionAnswerVi(longText, "dòng 1\ndòng 2")).toBe("dòng 1\ndòng 2");
   });
 });
 
@@ -349,8 +356,8 @@ describe("Questionnaire — chế độ list", () => {
 describe("Questionnaire messages", () => {
   it("helper nhận messages; component dùng messages.questionnaire", () => {
     const q = { id: "name", type: "text", title: "Name", required: true } as const;
-    expect(validateQuestion(q, {}, questionnaireMessagesEn)).toBe("Enter an answer.");
-    expect(formatQuestionAnswer({ id: "ok", type: "yesNo", title: "OK" }, true, questionnaireMessagesEn)).toBe("Yes");
+    expect(validateQuestionVi(q, {}, questionnaireMessagesEn)).toBe("Enter an answer.");
+    expect(formatQuestionAnswerVi({ id: "ok", type: "yesNo", title: "OK" }, true, questionnaireMessagesEn)).toBe("Yes");
     render(
       <YugenProvider messages={{ questionnaire: questionnaireMessagesEn }}>
         <Questionnaire questions={[q]} />

@@ -8,7 +8,7 @@ import {
   useNotifications,
   type NotificationItem,
 } from "./NotificationCenter";
-import { notificationCenterMessagesEn } from "./messages";
+import { notificationCenterMessagesEn, notificationCenterMessagesVi } from "./messages";
 import { YugenProvider } from "../YugenProvider/YugenProvider";
 
 const NOW = new Date(2026, 9, 21, 15, 0).getTime();
@@ -25,11 +25,13 @@ function Demo() {
 
 describe("NotificationCenter", () => {
   it("thời gian tương đối và nhãn ngày", () => {
-    expect(formatRelativeTime(NOW - 20_000, NOW)).toBe("Vừa xong");
-    expect(formatRelativeTime(NOW - 5 * 60_000, NOW)).toBe("5 phút trước");
-    expect(formatRelativeTime(NOW - 3 * 3_600_000, NOW)).toBe("3 giờ trước");
-    expect(formatNotificationDay(NOW - 3 * 3_600_000, NOW)).toBe("Hôm nay");
-    expect(formatNotificationDay(NOW - 26 * 3_600_000, NOW)).toBe("Hôm qua");
+    // Hàm định dạng dùng trực tiếp: mặc định tiếng Anh (#277).
+    expect(formatRelativeTime(NOW - 20_000, NOW)).toBe("Just now");
+    expect(formatRelativeTime(NOW - 5 * 60_000, NOW)).toBe("5 minutes ago");
+    expect(formatRelativeTime(NOW - 3 * 3_600_000, NOW)).toBe("3 hours ago");
+    expect(formatNotificationDay(NOW - 3 * 3_600_000, NOW)).toBe("Today");
+    expect(formatNotificationDay(NOW - 26 * 3_600_000, NOW)).toBe("Yesterday");
+    expect(formatRelativeTime(NOW - 5 * 60_000, NOW, { messages: notificationCenterMessagesVi, locale: "vi-VN" })).toBe("5 phút trước");
   });
 
   it("đếm chưa đọc trên nút, nhóm theo ngày, đánh dấu đã đọc / tất cả, lọc", async () => {

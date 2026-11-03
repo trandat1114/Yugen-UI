@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import {
   ChevronLeft16Regular,
   ChevronLeft20Regular,
@@ -9,9 +10,9 @@ import {
 } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
-import { paginationMessages } from "./messages";
+import { paginationMessagesEn } from "./messages";
 
-export { paginationMessages, paginationMessagesEn, type PaginationMessages } from "./messages";
+export { paginationMessages, paginationMessagesVi, paginationMessagesEn, type PaginationMessages } from "./messages";
 
 /** Pagination (shadcn/ui, giao diện Fluent 2) — https://ui.shadcn.com/docs/components/pagination */
 type PaginationSize = "small" | "medium";
@@ -77,16 +78,15 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
     },
     ref,
   ) => {
-    const msg = useYugenMessages("pagination", paginationMessages);
-    const [innerPage, setInnerPage] = React.useState(defaultPage);
-    const current = Math.min(Math.max(page ?? innerPage, 1), Math.max(pageCount, 1));
+    const msg = useYugenMessages("pagination", paginationMessagesEn);
+    const [rawPage, setPage] = useControllableState({ value: page, defaultValue: defaultPage, onChange: onPageChange });
+    const current = Math.min(Math.max(rawPage, 1), Math.max(pageCount, 1));
     const s = SIZE[size];
 
     const go = (next: number) => {
       const clamped = Math.min(Math.max(next, 1), pageCount);
       if (clamped === current) return;
-      if (page === undefined) setInnerPage(clamped);
-      onPageChange?.(clamped);
+      setPage(clamped);
     };
 
     const PrevIcon = size === "small" ? ChevronLeft16Regular : ChevronLeft20Regular;

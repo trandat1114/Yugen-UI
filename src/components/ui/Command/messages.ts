@@ -13,3 +13,6 @@ declare module "../YugenProvider/context" {
 export const commandMessages: CommandMessages = { dialogTitle: "Bảng lệnh" };
 
 export const commandMessagesEn: CommandMessages = { dialogTitle: "Command palette" };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `commandMessagesEn` (mặc định). `commandMessages` giữ cho code cũ. */
+export const commandMessagesVi = commandMessages;

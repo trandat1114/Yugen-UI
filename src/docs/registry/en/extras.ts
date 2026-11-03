@@ -178,7 +178,7 @@ export const en: Record<string, ComponentDocEn> = {
       { title: "Vertical footer", description: "layout=\"vertical\" stacks the two buttons at full width, which suits long labels." },
       {
         title: "Multiple steps (Carousel)",
-        description: "Each child of TeachingPopoverCarousel is one step. The first step has “Để sau” (Later), the last one “Hoàn tất” (Done).",
+        description: "Each child of TeachingPopoverCarousel is one step. The first step has “Not now”, the last one “Finish”.",
       },
     ],
     dos: [
@@ -349,7 +349,7 @@ export const en: Record<string, ComponentDocEn> = {
       { title: "Skip link (focusable)", description: "Press Tab into the example frame: the hidden button appears when it receives focus." },
       {
         title: "Extra context for a link",
-        description: "Sighted users see “Đọc thêm” (Read more); screen readers hear “Đọc thêm về bản phát hành 2.0” (Read more about release 2.0).",
+        description: "Sighted users see “Read more”; screen readers hear “Read more about version 2.0”.",
       },
     ],
     dos: ["Use it for icon-only button labels, table captions and link context.", "Set focusable on skip links."],

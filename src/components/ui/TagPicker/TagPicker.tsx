@@ -1,5 +1,6 @@
 /** Fluent 2 TagPicker — https://fluent2.microsoft.design/components/web/react/core/tagpicker/usage */
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { useDirection } from "@radix-ui/react-direction";
 import { Command as CommandPrimitive } from "cmdk";
@@ -11,9 +12,10 @@ import { popoverSurfaceClass } from "@/components/ui/Popover/Popover";
 import { fieldAppearanceClass, type FieldAppearance } from "@/components/ui/Select/Select";
 import { cmdkGroupClass, cmdkOptionClass, normalizeSearchText } from "@/components/ui/Combobox/Combobox";
 import { Tag, TagGroup, type TagAppearance, type TagShape, type TagSize } from "@/components/ui/Tag/Tag";
-import { tagPickerMessages } from "./messages";
+import { Sortable, SortableItem } from "@/components/ui/Sortable/Sortable";
+import { tagPickerMessagesEn } from "./messages";
 
-export { tagPickerMessages, tagPickerMessagesEn, type TagPickerMessages } from "./messages";
+export { tagPickerMessages, tagPickerMessagesVi, tagPickerMessagesEn, type TagPickerMessages } from "./messages";
 
 export interface TagPickerOption {
   value: string;
@@ -48,6 +50,8 @@ export interface TagPickerProps
   tagShape?: TagShape;
   /** Cho phép tạo tag từ văn bản tự gõ (Enter). */
   freeform?: boolean;
+  /** Kéo tag (hoặc Alt + phím mũi tên khi focus ở tag) để đổi thứ tự; `onValueChange` nhận thứ tự mới. */
+  reorderable?: boolean;
   /** Nội dung khi không có kết quả lọc. Mặc định lấy từ `messages.tagPicker.noResults`. */
   noResultsText?: React.ReactNode;
   /** Class cho bề mặt listbox. */
@@ -71,6 +75,7 @@ export const TagPicker = React.forwardRef<HTMLInputElement, TagPickerProps>(
       tagAppearance,
       tagShape,
       freeform = false,
+      reorderable = false,
       noResultsText,
       listboxClassName,
       className,
@@ -81,7 +86,7 @@ export const TagPicker = React.forwardRef<HTMLInputElement, TagPickerProps>(
     },
     ref,
   ) => {
-    const msg = useYugenMessages("tagPicker", tagPickerMessages);
+    const msg = useYugenMessages("tagPicker", tagPickerMessagesEn);
     const items = React.useMemo<NormalizedOption[]>(
       () => options.map((o) => (typeof o === "string" ? { value: o, label: o } : { ...o, label: o.label ?? o.value })),
       [options],
@@ -89,8 +94,7 @@ export const TagPicker = React.forwardRef<HTMLInputElement, TagPickerProps>(
     // Chuẩn hoá nhãn một lần cho mỗi bộ option (không phải mỗi phím gõ × mỗi option).
     const searchText = React.useMemo(() => items.map((i) => normalizeSearchText(i.label)), [items]);
     const itemByValue = React.useMemo(() => new Map(items.map((i) => [i.value, i])), [items]);
-    const [innerSelected, setInnerSelected] = React.useState<string[]>(defaultValue ?? []);
-    const selected = value ?? innerSelected;
+    const [selected, commit] = useControllableState({ value, defaultValue: defaultValue ?? [], onChange: onValueChange });
 
     const [open, setOpen] = React.useState(false);
     const [query, setQuery] = React.useState("");
@@ -128,11 +132,6 @@ export const TagPicker = React.forwardRef<HTMLInputElement, TagPickerProps>(
       setActiveId(el?.id);
       el?.scrollIntoView({ block: "nearest" });
     }, [open, listEl, active, query, selected.length]);
-
-    const commit = (next: string[]) => {
-      if (value === undefined) setInnerSelected(next);
-      onValueChange?.(next);
-    };
 
     const openList = () => {
       if (disabled || open) return;
@@ -186,6 +185,54 @@ export const TagPicker = React.forwardRef<HTMLInputElement, TagPickerProps>(
       }
     };
 
+    const tagGroup = selected.length > 0 && (
+      <TagGroup
+        ref={tagsRef}
+        aria-label={msg.selectedItems}
+        size={s.tag}
+        appearance={tagAppearance}
+        disabled={disabled}
+        onDismiss={remove}
+        onKeyDown={(e) => {
+          // Không để cmdk (Enter/Home/End) bắt phím khi đang ở trên tag.
+          e.stopPropagation();
+          if (e.defaultPrevented) return;
+          const buttons = tagsRef.current?.querySelectorAll<HTMLElement>("button:not(:disabled)");
+          const isLast = buttons && document.activeElement === buttons[buttons.length - 1];
+          if ((e.key === towardInputKey && isLast) || e.key === "End") {
+            e.preventDefault();
+            inputRef.current?.focus();
+          }
+          if (e.key === "Escape") inputRef.current?.focus();
+        }}
+        className="contents"
+      >
+        {selected.map((v) => {
+          const opt = optionOf(v);
+          const tag = (
+            <Tag
+              key={v}
+              value={v}
+              dismissible
+              tabIndex={-1}
+              shape={tagShape}
+              media={opt?.media}
+            >
+              {opt?.label ?? v}
+            </Tag>
+          );
+          // Tag là nút gỡ: cả tag là tay nắm (kéo thì không gỡ), bàn phím dùng Alt + mũi tên.
+          return reorderable ? (
+            <SortableItem key={v} value={v} label={opt?.label ?? v} disabled={disabled} asChild handle shortcuts>
+              {tag}
+            </SortableItem>
+          ) : (
+            tag
+          );
+        })}
+      </TagGroup>
+    );
+
     return (
       <PopoverPrimitive.Root
         open={open}
@@ -218,43 +265,12 @@ export const TagPicker = React.forwardRef<HTMLInputElement, TagPickerProps>(
               )}
             >
               <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1 py-0.5">
-                {selected.length > 0 && (
-                  <TagGroup
-                    ref={tagsRef}
-                    aria-label={msg.selectedItems}
-                    size={s.tag}
-                    appearance={tagAppearance}
-                    disabled={disabled}
-                    onDismiss={remove}
-                    onKeyDown={(e) => {
-                      // Không để cmdk (Enter/Home/End) bắt phím khi đang ở trên tag.
-                      e.stopPropagation();
-                      const buttons = tagsRef.current?.querySelectorAll<HTMLElement>("button:not(:disabled)");
-                      const isLast = buttons && document.activeElement === buttons[buttons.length - 1];
-                      if ((e.key === towardInputKey && isLast) || e.key === "End") {
-                        e.preventDefault();
-                        inputRef.current?.focus();
-                      }
-                      if (e.key === "Escape") inputRef.current?.focus();
-                    }}
-                    className="contents"
-                  >
-                    {selected.map((v) => {
-                      const opt = optionOf(v);
-                      return (
-                        <Tag
-                          key={v}
-                          value={v}
-                          dismissible
-                          tabIndex={-1}
-                          shape={tagShape}
-                          media={opt?.media}
-                        >
-                          {opt?.label ?? v}
-                        </Tag>
-                      );
-                    })}
-                  </TagGroup>
+                {reorderable && tagGroup ? (
+                  <Sortable asChild orientation="grid" value={selected} onValueChange={commit} disabled={disabled}>
+                    {tagGroup}
+                  </Sortable>
+                ) : (
+                  tagGroup
                 )}
                 <input
                   ref={inputRef}

@@ -1,14 +1,15 @@
 /** Yugen Labs · ChatComposer — ô soạn tin tự giãn: Enter gửi, Shift+Enter xuống dòng. */
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import { Send20Filled, Stop20Filled } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { Button } from "../Button/Button";
 import { fieldControlClass } from "../Field/Field";
 import { useYugenMessages } from "../YugenProvider/context";
-import { chatComposerMessages } from "./messages";
+import { chatComposerMessagesEn } from "./messages";
 
-export { chatComposerMessages, chatComposerMessagesEn, type ChatComposerMessages } from "./messages";
+export { chatComposerMessages, chatComposerMessagesVi, chatComposerMessagesEn, type ChatComposerMessages } from "./messages";
 
 export interface ChatComposerProps
   extends Omit<React.FormHTMLAttributes<HTMLFormElement>, "onSubmit" | "onChange" | "defaultValue"> {
@@ -65,18 +66,12 @@ export const ChatComposer = React.forwardRef<HTMLTextAreaElement, ChatComposerPr
     },
     ref,
   ) => {
-    const msg = useYugenMessages("chatComposer", chatComposerMessages);
+    const msg = useYugenMessages("chatComposer", chatComposerMessagesEn);
     const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
     const counterId = React.useId();
     const hintId = React.useId();
-    const [inner, setInner] = React.useState(defaultValue);
-    const text = value ?? inner;
+    const [text, setText] = useControllableState({ value, defaultValue, onChange: onValueChange });
     const canSend = text.trim().length > 0 && !disabled && !busy;
-
-    const setText = (next: string) => {
-      if (value === undefined) setInner(next);
-      onValueChange?.(next);
-    };
 
     const setRefs = React.useCallback(
       (node: HTMLTextAreaElement | null) => {

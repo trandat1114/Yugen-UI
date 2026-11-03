@@ -202,6 +202,7 @@ export const CONCEPT_METAS: Record<string, ConceptMeta> = {
       { id: "variants", label: "Ghi đè & tạo variant" },
       { id: "state", label: "Data-attribute & important" },
       { id: "shared", label: "Class dùng chung" },
+      { id: "lean-css", label: "Chỉ CSS của component bạn dùng" },
       { id: "media-object", label: "Công thức media object" },
     ],
   },

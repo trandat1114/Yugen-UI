@@ -13,20 +13,20 @@ import {
   TabsTrigger,
 } from "@/components/ui";
 
-export const meta = { title: "Hộp thư trống", description: "Tabs lọc kèm trạng thái Empty có hành động", order: 10 };
+export const meta = { title: "Empty inbox", description: "Filter tabs with an Empty state that has an action", order: 10 };
 
 export default function EmptyInboxBlock() {
   return (
     <Card size="large" className="gap-3 rounded-xlarge p-5">
       <div className="flex items-center justify-between gap-3">
-        <h3 className="text-subtitle1 font-semibold">Thông báo</h3>
-        <Button appearance="subtle" size="small" icon={<ArrowClockwise20Regular />} aria-label="Làm mới" />
+        <h3 className="text-subtitle1 font-semibold">Notifications</h3>
+        <Button appearance="subtle" size="small" icon={<ArrowClockwise20Regular />} aria-label="Refresh" />
       </div>
       <Tabs defaultValue="unread">
         <TabsList size="small">
-          <TabsTrigger value="all">Tất cả</TabsTrigger>
-          <TabsTrigger value="unread">Chưa đọc</TabsTrigger>
-          <TabsTrigger value="mentions">Nhắc đến tôi</TabsTrigger>
+          <TabsTrigger value="all">All</TabsTrigger>
+          <TabsTrigger value="unread">Unread</TabsTrigger>
+          <TabsTrigger value="mentions">Mentions</TabsTrigger>
         </TabsList>
       </Tabs>
       <Empty variant="outline">
@@ -34,11 +34,11 @@ export default function EmptyInboxBlock() {
           <EmptyMedia>
             <MailInbox24Regular />
           </EmptyMedia>
-          <EmptyTitle>Bạn đã đọc hết thông báo</EmptyTitle>
-          <EmptyDescription>Thông báo mới sẽ xuất hiện ở đây. Hãy tận hưởng khoảng lặng nhé.</EmptyDescription>
+          <EmptyTitle>You&apos;re all caught up</EmptyTitle>
+          <EmptyDescription>New notifications will show up here. Enjoy the quiet.</EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
-          <Button appearance="primary">Cài đặt thông báo</Button>
+          <Button appearance="primary">Notification settings</Button>
         </EmptyContent>
       </Empty>
     </Card>

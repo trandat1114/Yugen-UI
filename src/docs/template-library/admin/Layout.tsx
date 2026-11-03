@@ -1,6 +1,7 @@
 import * as React from "react";
 import {
-  Navigation20Regular,
+  Board20Filled,
+  Board20Regular,
   People20Filled,
   People20Regular,
   Receipt20Filled,
@@ -9,13 +10,11 @@ import {
   SignOut20Regular,
 } from "@fluentui/react-icons";
 import {
+  AppShell,
+  AppShellHeader,
+  AppShellMain,
   Avatar,
   Button,
-  Drawer,
-  DrawerBody,
-  DrawerHeader,
-  DrawerHeaderTitle,
-  DrawerSurface,
   Menu,
   MenuDivider,
   MenuItem,
@@ -25,6 +24,9 @@ import {
   NavItem,
   PageProgressFallback,
   Persona,
+  Sidebar,
+  SidebarContent,
+  SidebarTrigger,
   SkeletonText,
   SimpleTooltip,
   toast,
@@ -39,6 +41,7 @@ const loaders = {
   customers: () => import("./pages/CustomersPage"),
   customer: () => import("./pages/CustomerPage"),
   orders: () => import("./pages/OrdersPage"),
+  board: () => import("./pages/BoardPage"),
   settings: () => import("./pages/SettingsPage"),
   signIn: () => import("./pages/SignInPage"),
   forgotPassword: () => import("./pages/ForgotPasswordPage"),
@@ -48,22 +51,24 @@ const loaders = {
 const CustomersPage = React.lazy(loaders.customers);
 const CustomerPage = React.lazy(loaders.customer);
 const OrdersPage = React.lazy(loaders.orders);
+const BoardPage = React.lazy(loaders.board);
 const SettingsPage = React.lazy(loaders.settings);
 const SignInPage = React.lazy(loaders.signIn);
 const ForgotPasswordPage = React.lazy(loaders.forgotPassword);
 const VerifyPage = React.lazy(loaders.verify);
 const NotFoundPage = React.lazy(loaders.notFound);
 
-type Section = "customers" | "orders";
+type Section = "customers" | "orders" | "board";
 
 const SECTIONS: { id: Section; icon: React.ReactNode; activeIcon: React.ReactNode }[] = [
   { id: "customers", icon: <People20Regular />, activeIcon: <People20Filled /> },
   { id: "orders", icon: <Receipt20Regular />, activeIcon: <Receipt20Filled /> },
+  { id: "board", icon: <Board20Regular />, activeIcon: <Board20Filled /> },
 ];
 
 function sectionOf(route: Route): Section | undefined {
   if (route.name === "customers" || route.name === "customer") return "customers";
-  if (route.name === "orders") return "orders";
+  if (route.name === "orders" || route.name === "board") return route.name;
   return undefined;
 }
 
@@ -88,26 +93,26 @@ function PageFallback() {
   return embedded ? skeleton : <PageProgressFallback>{skeleton}</PageProgressFallback>;
 }
 
-function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
+/** Below the top bar; collapses to icons on wide screens and opens as a Drawer on narrow ones. */
+function AppSidebar() {
   const { t } = useAdmin();
   const { route } = useRouter();
   const section = sectionOf(route);
   return (
-    <Nav selectedValue={section} aria-label={t.nav.label} className="px-2 py-3">
-      {SECTIONS.map((item) => (
-        <NavItem key={item.id} value={item.id} asChild>
-          <Link
-            to={{ name: item.id }}
-            onClick={onNavigate}
-            onPointerEnter={() => void loaders[item.id]()}
-            onFocus={() => void loaders[item.id]()}
-          >
-            {section === item.id ? item.activeIcon : item.icon}
-            <span className="min-w-0 flex-1 truncate">{t.nav[item.id]}</span>
-          </Link>
-        </NavItem>
-      ))}
-    </Nav>
+    <Sidebar defaultWidth={224} label={t.appName}>
+      <SidebarContent>
+        <Nav selectedValue={section} aria-label={t.nav.label}>
+          {SECTIONS.map((item) => (
+            <NavItem key={item.id} value={item.id} asChild tooltip={t.nav[item.id]}>
+              <Link to={{ name: item.id }} onPointerEnter={() => void loaders[item.id]()} onFocus={() => void loaders[item.id]()}>
+                {section === item.id ? item.activeIcon : item.icon}
+                <span className="min-w-0 flex-1 truncate">{t.nav[item.id]}</span>
+              </Link>
+            </NavItem>
+          ))}
+        </Nav>
+      </SidebarContent>
+    </Sidebar>
   );
 }
 
@@ -142,12 +147,11 @@ function UserMenu() {
   );
 }
 
-/** Frame of the signed-in pages: top bar, sidebar (a Drawer on narrow screens) and the page. */
+/** Frame of the signed-in pages: top bar across, sidebar below it (a Drawer on narrow screens) and the page. */
 function Shell({ children }: { children: React.ReactNode }) {
   const { t, embedded } = useAdmin();
   const { route } = useRouter();
-  const [navOpen, setNavOpen] = React.useState(false);
-  const scrollRef = React.useRef<HTMLDivElement>(null);
+  const scrollRef = React.useRef<HTMLElement>(null);
   // Embedded: no landmarks that would clash with the host page's own <header> and <main>.
   const Header = embedded ? "div" : "header";
   const Main = embedded ? "div" : "main";
@@ -158,59 +162,41 @@ function Shell({ children }: { children: React.ReactNode }) {
   }, [route]);
 
   return (
-    <div className={cn("@container/app flex flex-col bg-background-2 text-foreground-1", embedded ? "h-full" : "h-dvh")}>
-      {!embedded && (
-        <a
-          href="#content"
-          className="sr-only rounded-medium bg-background-1 px-3 py-2 text-body1 font-semibold shadow-8 focus:not-sr-only focus:fixed focus:inset-s-2 focus:top-2 focus:z-50"
-        >
-          {t.nav.skip}
-        </a>
-      )}
-      <Header className="flex h-14 shrink-0 items-center gap-2 border-b border-stroke-2 bg-background-1 px-3 @3xl/app:px-4">
-        <Button appearance="subtle" icon={<Navigation20Regular />} aria-label={t.nav.open} className="@4xl/app:hidden" onClick={() => setNavOpen(true)} />
-        <Link to={{ name: "customers" }} className="flex min-w-0 items-center gap-2 rounded-medium pe-1">
-          <Logo />
-          <span className="truncate text-body1 font-semibold">{t.appName}</span>
-        </Link>
-        <div className="ms-auto flex shrink-0 items-center gap-1">
-          <SimpleTooltip content={t.nav.settings}>
-            <Button asChild appearance="subtle" iconOnly>
-              <Link to={{ name: "settings" }} aria-label={t.nav.settings} aria-current={route.name === "settings" ? "page" : undefined}>
-                <Settings20Regular />
-              </Link>
-            </Button>
-          </SimpleTooltip>
-          <UserMenu />
-        </div>
-      </Header>
-
-      <div className="flex min-h-0 flex-1">
-        <div className="hidden w-56 shrink-0 overflow-y-auto border-e border-stroke-2 bg-background-1 @4xl/app:block">
-          <Sidebar />
-        </div>
-        <Main
-          ref={scrollRef}
-          id={embedded ? undefined : "content"}
-          tabIndex={embedded ? undefined : -1}
-          className="min-w-0 flex-1 overflow-y-auto outline-none"
-        >
-          <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 p-4 @3xl/app:p-6">{children}</div>
-        </Main>
-      </div>
-
-      <Drawer open={navOpen} onOpenChange={setNavOpen}>
-        <DrawerSurface position="start" size="small" aria-describedby={undefined} className="flex flex-col p-0">
-          <DrawerHeader className="flex-row items-center gap-2 border-b border-stroke-2 px-4 py-3">
+    <AppShell
+      layout="header"
+      // Embedded: fills the preview, no skip link, sidebar state not saved.
+      className={embedded ? "h-full" : undefined}
+      persistKey={embedded ? undefined : "admin-sidebar"}
+      skipLink={!embedded}
+    >
+      <AppShellHeader asChild>
+        <Header>
+          <SidebarTrigger />
+          <Link to={{ name: "customers" }} className="flex min-w-0 items-center gap-2 rounded-medium pe-1">
             <Logo />
-            <DrawerHeaderTitle>{t.appName}</DrawerHeaderTitle>
-          </DrawerHeader>
-          <DrawerBody className="p-0">
-            <Sidebar onNavigate={() => setNavOpen(false)} />
-          </DrawerBody>
-        </DrawerSurface>
-      </Drawer>
-    </div>
+            <span className="truncate text-body1 font-semibold">{t.appName}</span>
+          </Link>
+          <div className="ms-auto flex shrink-0 items-center gap-1">
+            <SimpleTooltip content={t.nav.settings}>
+              <Button asChild appearance="subtle" iconOnly>
+                <Link to={{ name: "settings" }} aria-label={t.nav.settings} aria-current={route.name === "settings" ? "page" : undefined}>
+                  <Settings20Regular />
+                </Link>
+              </Button>
+            </SimpleTooltip>
+            <UserMenu />
+          </div>
+        </Header>
+      </AppShellHeader>
+
+      <AppSidebar />
+
+      <AppShellMain asChild ref={scrollRef}>
+        <Main>
+          <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 p-4 @3xl/app-shell:p-6">{children}</div>
+        </Main>
+      </AppShellMain>
+    </AppShell>
   );
 }
 
@@ -219,8 +205,8 @@ function AuthFrame({ children }: { children: React.ReactNode }) {
   const { t, embedded } = useAdmin();
   const Main = embedded ? "div" : "main";
   return (
-    <Main className={cn("@container/app overflow-y-auto bg-background-2 text-foreground-1", embedded ? "h-full" : "min-h-dvh")}>
-      <div className="mx-auto flex w-full max-w-md flex-col gap-6 px-4 py-10 @3xl/app:py-16">
+    <Main className={cn("@container/app-shell overflow-y-auto bg-background-2 text-foreground-1", embedded ? "h-full" : "min-h-dvh")}>
+      <div className="mx-auto flex w-full max-w-md flex-col gap-6 px-4 py-10 @3xl/app-shell:py-16">
         <div className="flex items-center gap-2">
           <Logo />
           <span className="text-body1 font-semibold">{t.appName}</span>
@@ -239,6 +225,8 @@ function titleOf(route: Route, t: ReturnType<typeof useAdmin>["t"]) {
       return t.customer.title;
     case "orders":
       return t.orders.title;
+    case "board":
+      return t.board.title;
     case "settings":
       return t.settings.title;
     case "signIn":
@@ -280,6 +268,8 @@ export function Layout() {
       <CustomerPage key={route.id} id={route.id} />
     ) : route.name === "orders" ? (
       <OrdersPage />
+    ) : route.name === "board" ? (
+      <BoardPage />
     ) : route.name === "settings" ? (
       <SettingsPage />
     ) : route.name === "signIn" ? (

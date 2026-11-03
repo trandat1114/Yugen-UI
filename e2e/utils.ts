@@ -7,11 +7,19 @@ export interface Appearance {
   theme?: Theme;
   dir?: Dir;
   brand?: "sakura" | "web" | "teams";
+  /**
+   * Ngôn ngữ của trang. Docs mặc định tiếng Anh ở gốc, tiếng Việt dưới /vi/ (#277); test mặc định mở bản tiếng Việt vì
+   * phần lớn assertion và ảnh visual viết theo chữ tiếng Việt.
+   */
+  lang?: "vi" | "en";
 }
 
-/** URL docs: đường dẫn trang ("/components/button") + query theme/brand/dir (script trong index.html áp trước khi render). */
-export function docsUrl(route: string, { theme = "light", dir = "ltr", brand = "sakura" }: Appearance = {}) {
-  return `${route}?theme=${theme}&brand=${brand}&dir=${dir}`;
+/**
+ * URL docs: đường dẫn trang ("/components/button", không gồm ngôn ngữ) + query theme/brand/dir (script trong index.html
+ * áp trước khi render); `lang: "vi"` thêm tiền tố /vi.
+ */
+export function docsUrl(route: string, { theme = "light", dir = "ltr", brand = "sakura", lang = "vi" }: Appearance = {}) {
+  return `${lang === "vi" ? `/vi${route === "/" ? "/" : route}` : route}?theme=${theme}&brand=${brand}&dir=${dir}`;
 }
 
 /** CSS tắt mọi animation/transition — trạng thái cuối hiện ngay (axe đo tương phản không bị opacity giữa chừng). */
@@ -38,7 +46,21 @@ export async function waitForDocsReady(page: Page) {
 }
 
 /** Mở một route docs với theme/hướng chữ cho trước và chờ trang sẵn sàng. */
-export async function openDocs(page: Page, route: string, appearance: Appearance = {}, { freeze = true } = {}) {
+/**
+ * Dữ liệu người đóng góp mới nhất (#272): trang /contributors tải từ nhánh contributors-data trên GitHub. Mặc định bị chặn
+ * để test không phụ thuộc mạng và dữ liệu thật; test cần thì truyền `live: true` và tự route URL này.
+ */
+export const CONTRIBUTORS_LIVE = "https://raw.githubusercontent.com/**/contributors-data/contributors.json";
+
+export async function openDocs(
+  page: Page,
+  route: string,
+  appearance: Appearance = {},
+  { freeze = true, live = false, suggest = false } = {},
+) {
+  if (!live) await page.route(CONTRIBUTORS_LIVE, (request) => request.abort());
+  // Mọi project chạy với locale vi-VN nên bản tiếng Anh sẽ gợi ý tiếng Việt (#277): tắt sẵn, test cần thì `suggest: true`.
+  if (!suggest) await page.addInitScript(() => localStorage.setItem("yugen-docs-language-suggestion", "1"));
   // Không chờ "load" (ảnh, font, mọi module): đã chờ h1 + PageProgress bên dưới.
   await page.goto(docsUrl(route, appearance), { waitUntil: "domcontentloaded" });
   await waitForDocsReady(page);

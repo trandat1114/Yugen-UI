@@ -1,9 +1,9 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
-import { spinnerMessages } from "./messages";
+import { spinnerMessagesEn } from "./messages";
 
-export { spinnerMessages, spinnerMessagesEn, type SpinnerMessages } from "./messages";
+export { spinnerMessages, spinnerMessagesVi, spinnerMessagesEn, type SpinnerMessages } from "./messages";
 
 /** Fluent 2 Spinner — https://fluent2.microsoft.design/components/web/react/core/spinner/usage */
 const SIZE = {
@@ -39,7 +39,7 @@ export interface SpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
 export const Spinner = React.forwardRef<HTMLDivElement, SpinnerProps>(
   ({ size = "medium", appearance = "primary", label, labelPosition = "after", className, ...props }, ref) => {
     const labelId = React.useId();
-    const msg = useYugenMessages("spinner", spinnerMessages);
+    const msg = useYugenMessages("spinner", spinnerMessagesEn);
     const s = SIZE[size];
     const a = APPEARANCE[appearance];
     const r = (s.px - s.stroke) / 2;

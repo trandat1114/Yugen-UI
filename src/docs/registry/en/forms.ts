@@ -216,6 +216,11 @@ export const en: Record<string, ComponentDocEn> = {
       { title: "Avatar & secondary text", description: "media shows on both the option and the tag; size large uses small tags, which fit a 20px Avatar." },
       { title: "Freeform", description: "Type a new keyword and press Enter to create a tag." },
       { title: "Controlled", description: "value / onValueChange; tagAppearance and tagShape change the tag style." },
+      {
+        title: "Ordering tags",
+        description:
+          "reorderable: drag a tag, or focus it (← from the input) and press Alt + ← → to change the order. Clicking a tag without dragging still removes it.",
+      },
       { title: "Size", description: "medium (extra-small tags), large (small tags), extra-large (medium tags)." },
     ],
     dos: [
@@ -235,6 +240,7 @@ export const en: Record<string, ComponentDocEn> = {
       appearance: "Control style.",
       "tagAppearance / tagShape": "Style of the selected tags.",
       freeform: "Enter creates a tag from the typed text.",
+      reorderable: "Drag a tag, or press Alt + arrow keys while a tag has focus, to change the order (Sortable).",
       noResultsText: "Shown when no suggestions match.",
     },
   },

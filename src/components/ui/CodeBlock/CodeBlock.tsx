@@ -10,22 +10,24 @@ import {
   TextWrapOff16Regular,
 } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
-import { copyText } from "../_internal/copyText";
+import { useClipboard } from "../hooks/useClipboard";
+import { useControllableState } from "../hooks/useControllableState";
+import { useLocalStorage, type UseLocalStorageOptions } from "../hooks/useLocalStorage";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { Badge } from "../Badge/Badge";
 import { Button } from "../Button/Button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../Tabs/Tabs";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
-import { codeBlockMessages, codeTabsMessages, copyCodeButtonMessages, packageManagerTabsMessages } from "./messages";
+import { codeBlockMessagesEn, codeTabsMessagesEn, copyCodeButtonMessagesEn, packageManagerTabsMessagesEn } from "./messages";
 
 export {
-  copyCodeButtonMessages,
+  copyCodeButtonMessages, copyCodeButtonMessagesVi,
   copyCodeButtonMessagesEn,
-  codeBlockMessages,
+  codeBlockMessages, codeBlockMessagesVi,
   codeBlockMessagesEn,
-  codeTabsMessages,
+  codeTabsMessages, codeTabsMessagesVi,
   codeTabsMessagesEn,
-  packageManagerTabsMessages,
+  packageManagerTabsMessages, packageManagerTabsMessagesVi,
   packageManagerTabsMessagesEn,
   type CopyCodeButtonMessages,
   type CodeBlockMessages,
@@ -406,10 +408,8 @@ export interface CopyCodeButtonProps extends Omit<React.ButtonHTMLAttributes<HTM
 
 export const CopyCodeButton = React.forwardRef<HTMLButtonElement, CopyCodeButtonProps>(
   ({ text, showLabel = true, className, onClick, ...props }, ref) => {
-    const msg = useYugenMessages("copyCodeButton", copyCodeButtonMessages);
-    const [copied, setCopied] = React.useState(false);
-    const timer = React.useRef<number | undefined>(undefined);
-    React.useEffect(() => () => window.clearTimeout(timer.current), []);
+    const msg = useYugenMessages("copyCodeButton", copyCodeButtonMessagesEn);
+    const { copy, copied } = useClipboard();
 
     return (
       <>
@@ -421,10 +421,7 @@ export const CopyCodeButton = React.forwardRef<HTMLButtonElement, CopyCodeButton
           aria-label={showLabel ? undefined : copied ? msg.copiedLabel : msg.copyLabel}
           onClick={async (e) => {
             onClick?.(e);
-            await copyText(text);
-            setCopied(true);
-            window.clearTimeout(timer.current);
-            timer.current = window.setTimeout(() => setCopied(false), 1600);
+            await copy(text);
           }}
           className={cn(!showLabel && "min-w-0", className)}
           {...props}
@@ -505,14 +502,9 @@ export const CodeBlock = React.forwardRef<HTMLDivElement, CodeBlockProps>(
     ref,
   ) => {
     const preId = React.useId();
-    const msg = useYugenMessages("codeBlock", codeBlockMessages);
+    const msg = useYugenMessages("codeBlock", codeBlockMessagesEn);
     const themeProps = useCodeThemeProps(appearance);
-    const [innerWrap, setInnerWrap] = React.useState(defaultWrap);
-    const wrap = wrapProp ?? innerWrap;
-    const setWrap = (next: boolean) => {
-      if (wrapProp === undefined) setInnerWrap(next);
-      onWrapChange?.(next);
-    };
+    const [wrap, setWrap] = useControllableState({ value: wrapProp, defaultValue: defaultWrap, onChange: onWrapChange });
     const [expanded, setExpanded] = React.useState(false);
     const [overflowing, setOverflowing] = React.useState(false);
     const preRef = React.useRef<HTMLPreElement>(null);
@@ -728,20 +720,13 @@ export const CodeTabs = React.forwardRef<HTMLDivElement, CodeTabsProps>(
     ref,
   ) => {
     const themeProps = useCodeThemeProps(appearance);
-    const msg = useYugenMessages("codeTabs", codeTabsMessages);
-    const [inner, setInner] = React.useState(defaultValue ?? files[0]?.name ?? "");
-    const active = value ?? inner;
+    const msg = useYugenMessages("codeTabs", codeTabsMessagesEn);
+    const [active, setActive] = useControllableState({ value, defaultValue: defaultValue ?? files[0]?.name ?? "", onChange: onValueChange });
     const activeFile = files.find((f) => f.name === active) ?? files[0];
 
     return (
-      <Tabs
-        dir="ltr"
-        value={active}
-        onValueChange={(v) => {
-          if (value === undefined) setInner(v);
-          onValueChange?.(v);
-        }}
-      >
+      // contents: khung bên trong (nhận className) là hộp bố cục, nên w-full / min-w-0 có tác dụng trong flex cha.
+      <Tabs dir="ltr" value={active} onValueChange={setActive} className="contents">
         <div ref={ref} dir="ltr" {...themeProps} className={cn(SURFACE, className)} {...props}>
           <div className="flex min-h-10 items-center gap-2 border-b border-stroke-2 pe-1">
             <TabsList size="small" aria-label={msg.files} className="min-w-0 flex-wrap ps-1">
@@ -796,45 +781,12 @@ function isPackageManager(v: unknown): v is PackageManager {
   return typeof v === "string" && (PACKAGE_MANAGERS as string[]).includes(v);
 }
 
-/* Store dùng chung giữa mọi PackageManagerTabs trên trang (+ đồng bộ giữa các tab trình duyệt qua sự kiện storage). */
-let pmCurrent: PackageManager | null = null;
-const pmListeners = new Set<() => void>();
-
-function pmRead(): PackageManager {
-  if (pmCurrent) return pmCurrent;
-  try {
-    const stored = window.localStorage.getItem(PM_STORAGE_KEY);
-    if (isPackageManager(stored)) pmCurrent = stored;
-  } catch {
-    // localStorage bị chặn (chế độ riêng tư, iframe…) → dùng giá trị trong bộ nhớ.
-  }
-  return pmCurrent ?? "npm";
-}
-
-function pmWrite(pm: PackageManager) {
-  pmCurrent = pm;
-  try {
-    window.localStorage.setItem(PM_STORAGE_KEY, pm);
-  } catch {
-    // Bỏ qua — vẫn đồng bộ trong trang qua listeners.
-  }
-  pmListeners.forEach((l) => l());
-}
-
-function pmSubscribe(listener: () => void) {
-  pmListeners.add(listener);
-  const onStorage = (e: StorageEvent) => {
-    if (e.key === PM_STORAGE_KEY && isPackageManager(e.newValue)) {
-      pmCurrent = e.newValue;
-      listener();
-    }
-  };
-  window.addEventListener("storage", onStorage);
-  return () => {
-    pmListeners.delete(listener);
-    window.removeEventListener("storage", onStorage);
-  };
-}
+/* Lưu tên trình quản lý dạng chuỗi thô (không JSON) như các bản trước, nên lựa chọn đã lưu vẫn đọc được. useLocalStorage
+   đồng bộ mọi PackageManagerTabs trên trang và giữa các tab trình duyệt. */
+const PM_STORAGE: UseLocalStorageOptions<PackageManager> = {
+  serialize: (pm) => pm,
+  deserialize: (raw) => (isPackageManager(raw) ? raw : "npm"),
+};
 
 /** Lệnh cài đặt / chạy gói theo trình quản lý. */
 export function packageManagerCommand(
@@ -867,13 +819,13 @@ export interface PackageManagerTabsProps extends Omit<React.HTMLAttributes<HTMLD
 export const PackageManagerTabs = React.forwardRef<HTMLDivElement, PackageManagerTabsProps>(
   ({ packages, dev, command = "install", managers = PACKAGE_MANAGERS, appearance = "auto", size, className, ...props }, ref) => {
     const themeProps = useCodeThemeProps(appearance);
-    const msg = useYugenMessages("packageManagerTabs", packageManagerTabsMessages);
-    const stored = React.useSyncExternalStore(pmSubscribe, pmRead, () => "npm" as PackageManager);
+    const msg = useYugenMessages("packageManagerTabs", packageManagerTabsMessagesEn);
+    const [stored, setStored] = useLocalStorage<PackageManager>(PM_STORAGE_KEY, "npm", PM_STORAGE);
     const active = managers.includes(stored) ? stored : managers[0];
     const commandText = packageManagerCommand(active, packages, { dev, command });
 
     return (
-      <Tabs dir="ltr" value={active} onValueChange={(v) => isPackageManager(v) && pmWrite(v)}>
+      <Tabs dir="ltr" value={active} onValueChange={(v) => isPackageManager(v) && setStored(v)} className="contents">
         <div ref={ref} dir="ltr" {...themeProps} className={cn(SURFACE, className)} {...props}>
           <div className="flex min-h-10 items-center gap-2 border-b border-stroke-2 pe-1">
             <TabsList size="small" aria-label={msg.label} className="min-w-0 flex-wrap ps-1">

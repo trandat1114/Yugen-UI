@@ -1,5 +1,6 @@
 /** Yugen Labs · PromptInput — ô soạn prompt cho AI: tự giãn, đính kèm (nút, kéo thả, dán ảnh), kiểm tra tệp, Gửi / Dừng. */
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import {
   ArrowUpload20Regular,
   Attach20Regular,
@@ -23,9 +24,9 @@ import { useAnnounce } from "../AriaLive/AriaLive";
 import { Button } from "../Button/Button";
 import { fieldControlClass } from "../Field/Field";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
-import { promptInputMessages, type PromptInputMessages } from "./messages";
+import { promptInputMessagesEn, type PromptInputMessages } from "./messages";
 
-export { promptInputMessages, promptInputMessagesEn, type PromptInputMessages } from "./messages";
+export { promptInputMessages, promptInputMessagesVi, promptInputMessagesEn, type PromptInputMessages } from "./messages";
 
 /* ================================================================ Tệp */
 
@@ -39,8 +40,8 @@ function decimalSeparator(locale: string) {
   return sep;
 }
 
-/** 512 B · 12 KB · 1,2 MB — dấu thập phân theo `locale` (mặc định "vi-VN": dấu phẩy). */
-export function formatFileSize(bytes: number, locale = "vi-VN"): string {
+/** 512 B · 12 KB · 1.2 MB — dấu thập phân theo `locale` (mặc định "en-US": dấu chấm; "vi-VN": dấu phẩy). */
+export function formatFileSize(bytes: number, locale = "en-US"): string {
   if (!Number.isFinite(bytes) || bytes < 0) return "";
   const units = ["B", "KB", "MB", "GB", "TB"];
   let value = bytes;
@@ -71,9 +72,9 @@ export interface ValidateFilesOptions {
   maxFiles?: number;
   /** Tệp đã đính kèm. */
   existing?: File[];
-  /** Câu báo lỗi; mặc định `promptInputMessages` (tiếng Việt). */
+  /** Câu báo lỗi; mặc định `promptInputMessagesEn` (tiếng Việt). */
   messages?: Pick<PromptInputMessages, "duplicate" | "invalidType" | "tooLarge" | "tooMany">;
-  /** Locale cho dung lượng trong câu báo lỗi. Mặc định "vi-VN". */
+  /** Locale cho dung lượng trong câu báo lỗi. Mặc định "en-US". */
   locale?: string;
 }
 
@@ -97,7 +98,7 @@ const sameFile = (a: File, b: File) => a.name === b.name && a.size === b.size &&
 /** Lọc tệp theo accept / maxSize / maxFiles; tệp trùng bị bỏ. Hàm thuần — dùng lại được cho upload khác. */
 export function validateFiles(
   incoming: File[],
-  { accept, maxSize, maxFiles, existing = [], messages = promptInputMessages, locale = "vi-VN" }: ValidateFilesOptions = {},
+  { accept, maxSize, maxFiles, existing = [], messages = promptInputMessagesEn, locale = "en-US" }: ValidateFilesOptions = {},
 ) {
   const accepted: File[] = [];
   const rejected: FileRejection[] = [];
@@ -249,7 +250,7 @@ export const PromptInput = React.forwardRef<HTMLTextAreaElement, PromptInputProp
     },
     ref,
   ) => {
-    const msg = useYugenMessages("promptInput", promptInputMessages);
+    const msg = useYugenMessages("promptInput", promptInputMessagesEn);
     const { locale } = useYugen();
     const sendLabel = sendLabelProp ?? msg.send;
     const stopLabel = stopLabelProp ?? msg.stop;
@@ -262,25 +263,14 @@ export const PromptInput = React.forwardRef<HTMLTextAreaElement, PromptInputProp
     const listId = React.useId();
     const { announce } = useAnnounce();
 
-    const [innerText, setInnerText] = React.useState(defaultValue);
-    const text = value ?? innerText;
-    const [innerFiles, setInnerFiles] = React.useState<File[]>(defaultFiles);
-    const files = filesProp ?? innerFiles;
+    const [text, setText] = useControllableState({ value, defaultValue, onChange: onValueChange });
+    const [files, setFiles] = useControllableState({ value: filesProp, defaultValue: defaultFiles, onChange: onFilesChange });
     const [errors, setErrors] = React.useState<string[]>([]);
     const [dragging, setDragging] = React.useState(false);
     const previews = useFilePreviews(files);
 
     const canSend = (text.trim().length > 0 || files.length > 0) && !disabled && !streaming;
     const canAttach = allowAttachments && !disabled && (maxFiles === undefined || files.length < maxFiles);
-
-    const setText = (next: string) => {
-      if (value === undefined) setInnerText(next);
-      onValueChange?.(next);
-    };
-    const setFiles = (next: File[]) => {
-      if (filesProp === undefined) setInnerFiles(next);
-      onFilesChange?.(next);
-    };
 
     const setRefs = React.useCallback(
       (node: HTMLTextAreaElement | null) => {

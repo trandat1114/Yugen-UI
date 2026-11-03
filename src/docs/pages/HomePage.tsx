@@ -96,7 +96,7 @@ function prerenderedHeroElapsed() {
 }
 
 export function HomePage() {
-  const { t, foundation } = useLocale();
+  const { t, foundation, locale } = useLocale();
   const [heroElapsed] = useState(prerenderedHeroElapsed);
   const count = COMPONENTS_META.length;
 
@@ -115,10 +115,11 @@ export function HomePage() {
         <div className="relative grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 lg:grid-rows-[auto_auto_1fr] lg:gap-x-6">
           <a
             href={docsPath("/news")}
+            data-release-pill
             className="group/news col-span-2 mb-5 inline-flex max-w-full items-center gap-2 justify-self-start rounded-circular border border-stroke-2 bg-background-1/80 py-0.5 ps-0.5 pe-3 text-caption1 shadow-2 backdrop-blur transition-colors duration-faster hover:border-brand-stroke"
           >
             <span className="rounded-circular bg-brand-background px-2 py-0.5 font-semibold text-foreground-on-brand">v{LATEST_RELEASE.version}</span>
-            <span className="truncate text-foreground-1">{t("home.releasePill", { title: LATEST_RELEASE.title, version: LATEST_RELEASE.version })}</span>
+            <span className="truncate text-foreground-1">{t("home.releasePill", { title: LATEST_RELEASE.title[locale], version: LATEST_RELEASE.version })}</span>
             <ArrowRight20Regular className="size-4 shrink-0 text-foreground-3 transition-transform duration-normal group-hover/news:translate-x-0.5 rtl:-scale-x-100 rtl:group-hover/news:-translate-x-0.5" />
           </a>
 

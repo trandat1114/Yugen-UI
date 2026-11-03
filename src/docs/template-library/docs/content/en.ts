@@ -1,10 +1,7 @@
-import { messagesEn } from "@/components/ui";
 import type { Content } from "./types";
 
 const en: Content = {
-  lang: "en",
-  messages: messagesEn,
-  locale: "en-US",
+  lang: "en",  locale: "en-US",
   site: {
     title: "Sakura Notes Docs",
     product: "Sakura Notes",
@@ -12,8 +9,7 @@ const en: Content = {
   },
   themes: { light: "Light", dark: "Dark", "high-contrast": "High contrast" },
   appearance: "Appearance",
-  skipToContent: "Skip to content",
-  nav: { label: "Documentation", open: "Open navigation", home: "Home" },
+  nav: { label: "Documentation", home: "Home" },
   search: {
     button: "Search docs",
     title: "Search the documentation",

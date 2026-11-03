@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { useState } from "react";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { createColumn, DataGrid, type DataGridSortState } from "../DataGrid/DataGrid";
+import { createColumn, DataGrid, getOrderedColumns, type DataGridSortState } from "../DataGrid/DataGrid";
 import { dataGridMessagesEn } from "../DataGrid/messages";
 import { Toolbar } from "../Toolbar/Toolbar";
 import { YugenProvider } from "../YugenProvider/YugenProvider";
@@ -120,6 +120,46 @@ describe("DataGridColumnPicker", () => {
       </Toolbar>,
     );
     expect(screen.getByRole("button", { name: "Cột" })).toHaveAttribute("data-toolbar-item", "");
+  });
+
+  it("onColumnOrderChange: Alt + ↓ đổi thứ tự cột trên lưới, focus ở lại mục, menu vẫn mở", async () => {
+    const user = userEvent.setup();
+    const onOrder = vi.fn();
+    function Ordered() {
+      const [order, setOrder] = useState<string[]>([]);
+      return (
+        <YugenProvider>
+          <DataGridColumnPicker
+            columns={columns}
+            hiddenColumns={new Set()}
+            onHiddenColumnsChange={() => {}}
+            columnOrder={order}
+            onColumnOrderChange={(_, data) => {
+              setOrder(data.columnOrder);
+              onOrder(data.columnOrder);
+            }}
+          />
+          <DataGrid aria-label="Người" items={people} columns={columns} getRowId={(p) => p.id} columnOrder={order} />
+        </YugenProvider>
+      );
+    }
+    render(<Ordered />);
+    await user.click(screen.getByRole("button", { name: "Cột" }));
+    const name = screen.getByRole("menuitemcheckbox", { name: "Tên" });
+    expect(name).toHaveAttribute("aria-keyshortcuts", "Alt+ArrowUp Alt+ArrowDown");
+    name.focus();
+    await user.keyboard("{Alt>}{ArrowDown}{/Alt}");
+    expect(onOrder).toHaveBeenLastCalledWith(["age", "name", "code"]);
+    expect(headers()).toEqual(["Tuổi", "Tên", "Mã"]);
+    expect(screen.getAllByRole("menuitemcheckbox").map((i) => i.textContent)).toEqual(["Tuổi", "Tên", "Mã"]);
+    expect(screen.getByRole("menuitemcheckbox", { name: "Tên" })).toHaveFocus();
+    expect(screen.getByRole("menu")).toBeInTheDocument();
+  });
+
+  it("getOrderedColumns: id lạ bị bỏ, cột thiếu đứng sau, không đổi thì giữ tham chiếu", () => {
+    expect(getOrderedColumns(columns, ["code", "x", "name"]).map((c) => c.columnId)).toEqual(["code", "name", "age"]);
+    expect(getOrderedColumns(columns, ["name", "age"])).toBe(columns);
+    expect(getOrderedColumns(columns, undefined)).toBe(columns);
   });
 
   it("messages tiếng Anh", async () => {

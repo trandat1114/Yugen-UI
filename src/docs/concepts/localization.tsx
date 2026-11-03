@@ -19,22 +19,22 @@ function A({ href, children }: { href: string; children: ReactNode }) {
   );
 }
 
-const ENGLISH_CODE = `import { YugenProvider, messagesEn } from "yugen-ui";
+const VIETNAMESE_CODE = `import { YugenProvider, messagesVi } from "yugen-ui";
 
 export function App({ children }: { children: React.ReactNode }) {
   return (
-    <YugenProvider applyToDocument withToaster messages={messagesEn} locale="en-US">
+    <YugenProvider applyToDocument withToaster messages={messagesVi} locale="vi-VN">
       {children}
     </YugenProvider>
   );
 }`;
 
 const OVERRIDE_CODE = `// Chỉ đổi chuỗi cần đổi, phần còn lại giữ mặc định
-<YugenProvider messages={{ dialog: { close: "Đóng hộp thoại" } }}>…</YugenProvider>
+<YugenProvider messages={{ dialog: { close: "Close dialog" } }}>…</YugenProvider>
 
 // Provider lồng kế thừa messages và locale của provider ngoài, rồi ghi đè tiếp
-<YugenProvider messages={messagesEn} locale="en-US">
-  <YugenProvider messages={{ toast: { dismiss: "Hide" } }}>…</YugenProvider>
+<YugenProvider messages={messagesVi} locale="vi-VN">
+  <YugenProvider messages={{ toast: { dismiss: "Ẩn" } }}>…</YugenProvider>
 </YugenProvider>
 
 // Prop nhãn riêng của component vẫn thắng messages
@@ -52,32 +52,32 @@ export const messagesJa: YugenMessages = {
 
 <YugenProvider messages={messagesJa} locale="ja-JP">…</YugenProvider>`;
 
-const SOURCE_CODE = `// Source copy bằng CLI / shadcn: mỗi component có messages.ts riêng
-import { dialogMessagesEn } from "@/components/ui/Dialog/Dialog";
-import { toastMessagesEn } from "@/components/ui/Toast/Toast";
+const SOURCE_CODE = `// Source copy bằng CLI / shadcn: mỗi component có messages.ts riêng, mặc định tiếng Anh
+import { dialogMessagesVi } from "@/components/ui/Dialog/Dialog";
+import { toastMessagesVi } from "@/components/ui/Toast/Toast";
 
-const messages = { dialog: dialogMessagesEn, toast: toastMessagesEn };
+const messages = { dialog: dialogMessagesVi, toast: toastMessagesVi };
 
-<YugenProvider messages={messages} locale="en-US">…</YugenProvider>`;
+<YugenProvider messages={messages} locale="vi-VN">…</YugenProvider>`;
 
 export default function Page() {
   return (
     <>
       <DocSection
-        id="english"
-        title="Chuyển sang tiếng Anh"
-        description="messagesEn chứa bản tiếng Anh của mọi chuỗi có sẵn; locale đổi định dạng ngày, giờ và số."
+        id="vietnamese"
+        title="Chuyển sang tiếng Việt"
+        description="Mặc định là tiếng Anh. messagesVi chứa bản tiếng Việt của mọi chuỗi có sẵn; locale đổi định dạng ngày, giờ và số."
       >
         <div className="flex flex-col gap-4">
-          <CodeBlock code={ENGLISH_CODE} />
+          <CodeBlock code={VIETNAMESE_CODE} />
           <P>
             Chuỗi có sẵn là chữ component tự hiển thị hoặc đọc cho trình đọc màn hình mà bạn không truyền vào: nhãn nút X, “Đang tải…”,
             “Không tìm thấy kết quả”, mô tả biểu đồ, thông báo aria-live. Nội dung bạn truyền vào (tiêu đề, children, label của Field)
             không bị đổi.
           </P>
           <P>
-            <C>messagesEn</C> là một object thường; bundler chỉ đưa nó vào bản build khi bạn import, ứng dụng chỉ dùng tiếng Việt
-            không tốn thêm byte nào.
+            <C>messagesVi</C> là một object thường; bundler chỉ đưa nó vào bản build khi bạn import, ứng dụng chỉ dùng tiếng Anh
+            không tốn thêm byte nào. <C>messagesEn</C> (bản tiếng Anh, giống mặc định) vẫn có, dùng làm gốc cho ngôn ngữ khác.
           </P>
         </div>
       </DocSection>
@@ -87,8 +87,8 @@ export default function Page() {
           <CodeBlock code={OVERRIDE_CODE} />
           <P>
             Thứ tự ưu tiên: prop nhãn của chính component (vd. <C>dismissLabel</C> của SearchBox), rồi <C>messages</C> của provider gần
-            nhất, rồi provider ngoài, cuối cùng là mặc định tiếng Việt. Tên namespace và từng khoá có gợi ý kiểu trong editor; mục
-            Messages ở cuối mỗi trang component liệt kê đủ khoá, mặc định tiếng Việt và bản tiếng Anh.
+            nhất, rồi provider ngoài, cuối cùng là mặc định tiếng Anh. Tên namespace và từng khoá có gợi ý kiểu trong editor; mục
+            Messages ở cuối mỗi trang component liệt kê đủ khoá, mặc định tiếng Anh và bản tiếng Việt.
           </P>
         </div>
       </DocSection>
@@ -97,8 +97,8 @@ export default function Page() {
         <div className="flex flex-col gap-4">
           <P>
             Biểu đồ, DatePicker, TimePicker, NotificationCenter và Rating định dạng số và ngày giờ theo <C>locale</C> của provider (mặc
-            định <C>"vi-VN"</C>). Prop <C>locale</C> của từng component vẫn ưu tiên hơn. Calendar dùng locale của react-day-picker, nằm
-            trong <C>messages.calendar.locale</C>; <C>messagesEn</C> đã đặt sẵn tiếng Anh.
+            định <C>"en-US"</C>). Prop <C>locale</C> của từng component vẫn ưu tiên hơn. Calendar dùng locale của react-day-picker, nằm
+            trong <C>messages.calendar.locale</C>; <C>messagesVi</C> đã đặt sẵn tiếng Việt.
           </P>
           <P>
             Hướng chữ là việc riêng của prop <C>dir</C>, xem <A href={docsPath("/concepts/rtl")}>Hướng chữ RTL</A>.
@@ -120,8 +120,8 @@ export default function Page() {
         <div className="flex flex-col gap-4">
           <CodeBlock code={SOURCE_CODE} />
           <P>
-            <C>messagesEn</C> chỉ có trong gói npm. Với source copy bằng <A href={docsPath("/concepts/cli")}>@yugen-ui/cli</A> hoặc shadcn,
-            ghép các <C>…MessagesEn</C> của những component bạn có; kiểu <C>YugenMessages</C> cũng chỉ gồm các component đó. Muốn đổi hẳn
+            <C>messagesVi</C> chỉ có trong gói npm. Với source copy bằng <A href={docsPath("/concepts/cli")}>@yugen-ui/cli</A> hoặc shadcn,
+            ghép các <C>…MessagesVi</C> của những component bạn có; kiểu <C>YugenMessages</C> cũng chỉ gồm các component đó. Muốn đổi hẳn
             mặc định thì sửa trực tiếp <C>messages.ts</C>.
           </P>
           <DoDont

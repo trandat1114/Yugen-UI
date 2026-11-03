@@ -1,10 +1,7 @@
-import { messagesEn } from "@/components/ui";
 import type { Content } from "./types";
 
 const en: Content = {
-  lang: "en",
-  messages: messagesEn,
-  locale: "en-US",
+  lang: "en",  locale: "en-US",
   currency: "USD",
   appName: "Sakura Studio",
   plan: "Pro plan",
@@ -29,7 +26,6 @@ const en: Content = {
     storageLabel: "Storage used",
     upgrade: "Upgrade to Business",
     upgradeToast: { title: "Upgrade plan", body: "Connect this button to your billing page." },
-    openNav: "Open navigation",
     breadcrumb: "Breadcrumb",
     search: "Search…",
     searchLabel: "Search (Ctrl K)",

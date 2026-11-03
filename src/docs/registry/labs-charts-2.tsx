@@ -30,33 +30,33 @@ function source(...names: string[]) {
 
 // #region products
 const products = [
-  { name: "Tai nghe Kaze", group: "Âm thanh", price: 0.45, rating: 3.8 },
-  { name: "Tai nghe Kaze Pro", group: "Âm thanh", price: 1.29, rating: 4.4 },
-  { name: "Loa Oto Mini", group: "Âm thanh", price: 0.69, rating: 4.1 },
-  { name: "Loa Oto Max", group: "Âm thanh", price: 2.45, rating: 4.6 },
-  { name: "Tai nghe Hibiki", group: "Âm thanh", price: 1.89, rating: 4.0 },
-  { name: "Màn hình Sora 24", group: "Màn hình", price: 2.89, rating: 4.2 },
-  { name: "Màn hình Sora 27", group: "Màn hình", price: 4.19, rating: 4.5 },
-  { name: "Màn hình Sora 32", group: "Màn hình", price: 6.49, rating: 4.3 },
-  { name: "Màn hình Kumo 24", group: "Màn hình", price: 2.19, rating: 3.6 },
-  { name: "Bàn phím Ame", group: "Bàn phím", price: 0.59, rating: 3.9 },
-  { name: "Bàn phím Ame TKL", group: "Bàn phím", price: 0.99, rating: 4.3 },
-  { name: "Bàn phím Yuki", group: "Bàn phím", price: 1.59, rating: 4.7 },
-  { name: "Bàn phím Yuki Lite", group: "Bàn phím", price: 1.19, rating: 4.4 },
-  { name: "Bàn phím Hana", group: "Bàn phím", price: 0.35, rating: 3.4 },
+  { name: "Kaze headphones", group: "Audio", price: 45, rating: 3.8 },
+  { name: "Kaze Pro headphones", group: "Audio", price: 129, rating: 4.4 },
+  { name: "Oto Mini speaker", group: "Audio", price: 69, rating: 4.1 },
+  { name: "Oto Max speaker", group: "Audio", price: 245, rating: 4.6 },
+  { name: "Hibiki headphones", group: "Audio", price: 189, rating: 4.0 },
+  { name: "Sora 24 monitor", group: "Monitors", price: 289, rating: 4.2 },
+  { name: "Sora 27 monitor", group: "Monitors", price: 419, rating: 4.5 },
+  { name: "Sora 32 monitor", group: "Monitors", price: 649, rating: 4.3 },
+  { name: "Kumo 24 monitor", group: "Monitors", price: 219, rating: 3.6 },
+  { name: "Ame keyboard", group: "Keyboards", price: 59, rating: 3.9 },
+  { name: "Ame TKL keyboard", group: "Keyboards", price: 99, rating: 4.3 },
+  { name: "Yuki keyboard", group: "Keyboards", price: 159, rating: 4.7 },
+  { name: "Yuki Lite keyboard", group: "Keyboards", price: 119, rating: 4.4 },
+  { name: "Hana keyboard", group: "Keyboards", price: 35, rating: 3.4 },
 ];
 // #endregion
 
 // #region stores
 const stores = [
-  { store: "Quận 1", area: 120, revenue: 980, staff: 14 },
-  { store: "Quận 3", area: 85, revenue: 640, staff: 9 },
-  { store: "Thủ Đức", area: 210, revenue: 1120, staff: 18 },
-  { store: "Bình Thạnh", area: 95, revenue: 560, staff: 8 },
-  { store: "Hoàn Kiếm", area: 70, revenue: 720, staff: 10 },
-  { store: "Cầu Giấy", area: 160, revenue: 890, staff: 12 },
-  { store: "Hải Châu", area: 130, revenue: 610, staff: 7 },
-  { store: "Ninh Kiều", area: 180, revenue: 520, staff: 6 },
+  { store: "Downtown", area: 120, revenue: 980, staff: 14 },
+  { store: "Midtown", area: 85, revenue: 640, staff: 9 },
+  { store: "East Side", area: 210, revenue: 1120, staff: 18 },
+  { store: "Riverside", area: 95, revenue: 560, staff: 8 },
+  { store: "Old Town", area: 70, revenue: 720, staff: 10 },
+  { store: "University", area: 160, revenue: 890, staff: 12 },
+  { store: "Harbor", area: 130, revenue: 610, staff: 7 },
+  { store: "Waterfront", area: 180, revenue: 520, staff: 6 },
 ];
 // #endregion
 
@@ -70,43 +70,43 @@ const study = Array.from({ length: 24 }, (_, i) => ({
 // #region latency
 const latency = Array.from({ length: 40 }, (_, i) => ({
   at: new Date(2026, 9, 1 + Math.floor(i / 2)),
-  server: i % 2 ? "Hà Nội" : "TP.HCM",
+  server: i % 2 ? "Tokyo" : "Singapore",
   ms: Math.round(120 + (i % 2 ? 45 : 0) + Math.sin(i * 1.3) * 35 + i),
 }));
 // #endregion
 
 // #region visitsByHour
 const visitsByHour = [
-  { day: "Thứ Hai", h0: 12, h3: 4, h6: 38, h9: 96, h12: 84, h15: 102, h18: 75, h21: 41 },
-  { day: "Thứ Ba", h0: 10, h3: 5, h6: 41, h9: 104, h12: 88, h15: 110, h18: 79, h21: 44 },
-  { day: "Thứ Tư", h0: 11, h3: 3, h6: 36, h9: 99, h12: 91, h15: 107, h18: 72, h21: 39 },
-  { day: "Thứ Năm", h0: 14, h3: 6, h6: 40, h9: 101, h12: 86, h15: 98, h18: 70, h21: 47 },
-  { day: "Thứ Sáu", h0: 16, h3: 7, h6: 33, h9: 88, h12: 79, h15: 84, h18: 66, h21: 58 },
-  { day: "Thứ Bảy", h0: 28, h3: 12, h6: 15, h9: 42, h12: 61, h15: 66, h18: 70, h21: 74 },
-  { day: "Chủ nhật", h0: 31, h3: 14, h6: 12, h9: 35, h12: 57, h15: 62, h18: 68, h21: 63 },
+  { day: "Monday", h0: 12, h3: 4, h6: 38, h9: 96, h12: 84, h15: 102, h18: 75, h21: 41 },
+  { day: "Tuesday", h0: 10, h3: 5, h6: 41, h9: 104, h12: 88, h15: 110, h18: 79, h21: 44 },
+  { day: "Wednesday", h0: 11, h3: 3, h6: 36, h9: 99, h12: 91, h15: 107, h18: 72, h21: 39 },
+  { day: "Thursday", h0: 14, h3: 6, h6: 40, h9: 101, h12: 86, h15: 98, h18: 70, h21: 47 },
+  { day: "Friday", h0: 16, h3: 7, h6: 33, h9: 88, h12: 79, h15: 84, h18: 66, h21: 58 },
+  { day: "Saturday", h0: 28, h3: 12, h6: 15, h9: 42, h12: 61, h15: 66, h18: 70, h21: 74 },
+  { day: "Sunday", h0: 31, h3: 14, h6: 12, h9: 35, h12: 57, h15: 62, h18: 68, h21: 63 },
 ];
-const hours = [0, 3, 6, 9, 12, 15, 18, 21].map((h) => ({ key: `h${h}`, label: `${h}h` }));
+const hours = [0, 3, 6, 9, 12, 15, 18, 21].map((h) => ({ key: `h${h}`, label: `${h % 12 || 12} ${h < 12 ? "AM" : "PM"}` }));
 // #endregion
 
 // #region growth
 const growth = [
-  { region: "Miền Bắc", q1: -12, q2: 4, q3: 18, q4: 25 },
-  { region: "Miền Trung", q1: -24, q2: -8, q3: 2, q4: 9 },
-  { region: "Miền Nam", q1: 6, q2: 14, q3: 21, q4: 30 },
-  { region: "Tây Nguyên", q1: -30, q2: -18, q3: -5, q4: 3 },
+  { region: "North", q1: -12, q2: 4, q3: 18, q4: 25 },
+  { region: "Central", q1: -24, q2: -8, q3: 2, q4: 9 },
+  { region: "South", q1: 6, q2: 14, q3: 21, q4: 30 },
+  { region: "West", q1: -30, q2: -18, q3: -5, q4: 3 },
 ];
 // #endregion
 
 // #region cohorts
 const cohorts = [
-  { cohort: "Tháng 5", m0: 1, m1: 0.46, m2: 0.38, m3: 0.33, m4: 0.3, m5: 0.28 },
-  { cohort: "Tháng 6", m0: 1, m1: 0.51, m2: 0.41, m3: 0.36, m4: 0.32, m5: null },
-  { cohort: "Tháng 7", m0: 1, m1: 0.49, m2: 0.4, m3: 0.35, m4: null, m5: null },
-  { cohort: "Tháng 8", m0: 1, m1: 0.55, m2: 0.44, m3: null, m4: null, m5: null },
-  { cohort: "Tháng 9", m0: 1, m1: 0.58, m2: null, m3: null, m4: null, m5: null },
-  { cohort: "Tháng 10", m0: 1, m1: null, m2: null, m3: null, m4: null, m5: null },
+  { cohort: "May", m0: 1, m1: 0.46, m2: 0.38, m3: 0.33, m4: 0.3, m5: 0.28 },
+  { cohort: "June", m0: 1, m1: 0.51, m2: 0.41, m3: 0.36, m4: 0.32, m5: null },
+  { cohort: "July", m0: 1, m1: 0.49, m2: 0.4, m3: 0.35, m4: null, m5: null },
+  { cohort: "August", m0: 1, m1: 0.55, m2: 0.44, m3: null, m4: null, m5: null },
+  { cohort: "September", m0: 1, m1: 0.58, m2: null, m3: null, m4: null, m5: null },
+  { cohort: "October", m0: 1, m1: null, m2: null, m3: null, m4: null, m5: null },
 ];
-const months = Array.from({ length: 6 }, (_, i) => ({ key: `m${i}`, label: `+${i} tháng` }));
+const months = Array.from({ length: 6 }, (_, i) => ({ key: `m${i}`, label: `Month ${i}` }));
 // #endregion
 
 // #region daily
@@ -131,9 +131,9 @@ function ControlledZoom() {
   const last = daily.length - 1;
   const [domain, setDomain] = useState<[number, number]>([last - 6, last]);
   const presets = [
-    { label: "7 ngày", days: 7 },
-    { label: "30 ngày", days: 30 },
-    { label: "Tất cả", days: daily.length },
+    { label: "7 days", days: 7 },
+    { label: "30 days", days: 30 },
+    { label: "All", days: daily.length },
   ];
   return (
     <div className="flex flex-col gap-3">
@@ -150,13 +150,14 @@ function ControlledZoom() {
         ))}
       </div>
       <LineChart
-        title="Lượt truy cập web"
+        title="Web visits"
         data={daily}
         index="date"
         series={[{ key: "web", label: "Web" }]}
         brush
         domain={domain}
         onDomainChange={setDomain}
+        locale="en-US"
       />
     </div>
   );
@@ -185,16 +186,17 @@ export const docs: ComponentDoc[] = [
       render: () => (
         // #region scatterHero
         <ScatterChart
-          title="Giá và điểm đánh giá"
-          description="14 sản phẩm, 3 nhóm"
+          title="Price and rating"
+          description="14 products, 3 groups"
           data={products}
           x="price"
           y="rating"
           group="group"
           label="name"
-          xLabel="Giá (triệu ₫)"
-          yLabel="Điểm đánh giá"
+          xLabel="Price ($)"
+          yLabel="Rating"
           valueFormat={{ maximumFractionDigits: 1 }}
+          locale="en-US"
         />
         // #endregion
       ),
@@ -207,16 +209,17 @@ export const docs: ComponentDoc[] = [
         render: () => (
           // #region bubble
           <ScatterChart
-            title="Cửa hàng: diện tích, doanh thu và nhân sự"
+            title="Stores: floor area, revenue and staff"
             data={stores}
             x="area"
             y="revenue"
             size="staff"
             label="store"
-            xLabel="Diện tích (m²)"
-            yLabel="Doanh thu (triệu ₫)"
-            sizeLabel="Nhân viên"
+            xLabel="Floor area (m²)"
+            yLabel="Revenue ($K)"
+            sizeLabel="Staff"
             includeZero
+            locale="en-US"
           />
           // #endregion
         ),
@@ -228,14 +231,15 @@ export const docs: ComponentDoc[] = [
         render: () => (
           // #region trend
           <ScatterChart
-            title="Giờ tự học và điểm thi"
+            title="Study hours and exam scores"
             data={study}
             x="hours"
             y="score"
-            xLabel="Giờ tự học / tuần"
-            yLabel="Điểm"
+            xLabel="Study hours per week"
+            yLabel="Score"
             valueFormat={{ maximumFractionDigits: 1 }}
             defaultTrendLine
+            locale="en-US"
           />
           // #endregion
         ),
@@ -247,18 +251,19 @@ export const docs: ComponentDoc[] = [
         render: () => (
           // #region timeScatter
           <ScatterChart
-            title="Thời gian phản hồi"
+            title="Response time"
             data={latency}
             x="at"
             y="ms"
             group="server"
             series={[
-              { key: "Hà Nội", label: "Hà Nội" },
-              { key: "TP.HCM", label: "TP.HCM" },
+              { key: "Tokyo", label: "Tokyo" },
+              { key: "Singapore", label: "Singapore" },
             ]}
-            xLabel="Ngày"
-            yLabel="Phản hồi (ms)"
+            xLabel="Date"
+            yLabel="Response (ms)"
             xFormat={{ day: "numeric", month: "numeric" }}
+            locale="en-US"
           />
           // #endregion
         ),
@@ -308,12 +313,13 @@ export const docs: ComponentDoc[] = [
       render: () => (
         // #region heatmapHero
         <Heatmap
-          title="Lượt truy cập theo giờ"
-          description="Trung bình 4 tuần gần nhất (nghìn lượt)"
+          title="Visits by hour"
+          description="Average of the last 4 weeks (thousands)"
           data={visitsByHour}
           index="day"
           columns={hours}
-          indexLabel="Ngày"
+          indexLabel="Day"
+          locale="en-US"
         />
         // #endregion
       ),
@@ -326,19 +332,20 @@ export const docs: ComponentDoc[] = [
         render: () => (
           // #region diverging
           <Heatmap
-            title="Tăng trưởng so với cùng kỳ"
+            title="Year-over-year growth"
             data={growth}
             index="region"
             columns={[
-              { key: "q1", label: "Quý 1" },
-              { key: "q2", label: "Quý 2" },
-              { key: "q3", label: "Quý 3" },
-              { key: "q4", label: "Quý 4" },
+              { key: "q1", label: "Q1" },
+              { key: "q2", label: "Q2" },
+              { key: "q3", label: "Q3" },
+              { key: "q4", label: "Q4" },
             ]}
             diverging
             domain={[-30, 30]}
             valueFormat={(v) => `${v > 0 ? "+" : ""}${v}%`}
-            indexLabel="Vùng"
+            indexLabel="Region"
+            locale="en-US"
           />
           // #endregion
         ),
@@ -350,14 +357,15 @@ export const docs: ComponentDoc[] = [
         render: () => (
           // #region cohort
           <Heatmap
-            title="Tỉ lệ giữ chân theo nhóm đăng ký"
+            title="Retention by signup cohort"
             data={cohorts}
             index="cohort"
             columns={months}
             domain={[0, 1]}
             valueFormat={{ style: "percent" }}
             rowHeight={28}
-            indexLabel="Nhóm"
+            indexLabel="Cohort"
+            locale="en-US"
           />
           // #endregion
         ),
@@ -399,16 +407,17 @@ export const docs: ComponentDoc[] = [
       render: () => (
         // #region zoomHero
         <LineChart
-          title="Lượt truy cập mỗi ngày"
-          description="Kéo cửa sổ dưới biểu đồ để xem một giai đoạn"
+          title="Daily visits"
+          description="Drag the window below the chart to focus on a period"
           data={daily}
           index="date"
           series={[
             { key: "web", label: "Web" },
-            { key: "app", label: "Ứng dụng" },
+            { key: "app", label: "App" },
           ]}
           brush
           defaultDomain={[60, 89]}
+          locale="en-US"
         />
         // #endregion
       ),
@@ -421,7 +430,7 @@ export const docs: ComponentDoc[] = [
         render: () => (
           // #region stackedBrush
           <AreaChart
-            title="Dung lượng đã dùng (GB)"
+            title="Storage used (GB)"
             data={usage}
             index="month"
             xFormat={{ month: "numeric", year: "2-digit" }}
@@ -429,10 +438,11 @@ export const docs: ComponentDoc[] = [
             stacked
             brush
             series={[
-              { key: "videos", label: "Video" },
-              { key: "photos", label: "Ảnh" },
-              { key: "docs", label: "Tài liệu" },
+              { key: "videos", label: "Videos" },
+              { key: "photos", label: "Photos" },
+              { key: "docs", label: "Documents" },
             ]}
+            locale="en-US"
           />
           // #endregion
         ),
@@ -444,7 +454,7 @@ export const docs: ComponentDoc[] = [
         render: () => (
           // #region expand
           <AreaChart
-            title="Cơ cấu dung lượng"
+            title="Storage mix"
             data={usage}
             index="month"
             xFormat={{ month: "numeric", year: "2-digit" }}
@@ -452,10 +462,11 @@ export const docs: ComponentDoc[] = [
             stacked
             stackOffset="expand"
             series={[
-              { key: "videos", label: "Video" },
-              { key: "photos", label: "Ảnh" },
-              { key: "docs", label: "Tài liệu" },
+              { key: "videos", label: "Videos" },
+              { key: "photos", label: "Photos" },
+              { key: "docs", label: "Documents" },
             ]}
+            locale="en-US"
           />
           // #endregion
         ),

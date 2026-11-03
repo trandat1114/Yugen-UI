@@ -9,6 +9,7 @@ const ROUTES: Route[] = [
   { kind: "theme-designer" },
   { kind: "news" },
   { kind: "community" },
+  { kind: "contributors" },
   { kind: "concept", slug: "cli" },
   { kind: "foundation", slug: "color" },
   { kind: "component", slug: "button" },
@@ -40,21 +41,34 @@ describe("router (URL theo đường dẫn)", () => {
     expect(legacyHashTarget({ hash: "", search: "" })).toBeNull();
   });
 
-  it("docsPath thêm BASE (và en/ khi xem tiếng Anh)", () => {
+  it("docsPath thêm BASE (và vi/ khi xem tiếng Việt)", () => {
     expect(docsPath("/concepts/cli")).toBe("/concepts/cli");
     expect(docsPath("/")).toBe("/");
-    expect(docsPath("/concepts/cli", "en")).toBe("/en/concepts/cli");
-    expect(docsPath("/", "en")).toBe("/en/");
+    expect(docsPath("/concepts/cli", "vi")).toBe("/vi/concepts/cli");
+    expect(docsPath("/", "vi")).toBe("/vi/");
+    expect(docsPath("/concepts/cli", "en")).toBe("/concepts/cli");
   });
 
-  it("tiếng Anh nằm dưới /en/", () => {
-    expect(parseLocation("/en/components/button")).toEqual({ route: { kind: "component", slug: "button" }, lang: "en" });
-    expect(parseLocation("/en/")).toEqual({ route: { kind: "home" }, lang: "en" });
-    expect(parseLocation("/en")).toEqual({ route: { kind: "home" }, lang: "en" });
-    expect(parseLocation("/blocks")).toEqual({ route: { kind: "blocks" }, lang: "vi" });
-    // "english" không phải tiền tố ngôn ngữ.
-    expect(parseLocation("/english")).toEqual({ route: { kind: "home" }, lang: "vi" });
-    for (const route of ROUTES) expect(parseLocation(hrefOf(route, "en"))).toEqual({ route, lang: "en" });
-    expect(localePathOf({ kind: "news" }, "en")).toBe("en/news");
+  it("tiếng Anh ở gốc, tiếng Việt dưới /vi/ (#277)", () => {
+    expect(parseLocation("/components/button")).toEqual({ route: { kind: "component", slug: "button" }, lang: "en" });
+    expect(parseLocation("/vi/components/button")).toEqual({ route: { kind: "component", slug: "button" }, lang: "vi" });
+    expect(parseLocation("/vi/")).toEqual({ route: { kind: "home" }, lang: "vi" });
+    expect(parseLocation("/vi")).toEqual({ route: { kind: "home" }, lang: "vi" });
+    // "video" không phải tiền tố ngôn ngữ.
+    expect(parseLocation("/video")).toEqual({ route: { kind: "home" }, lang: "en" });
+    for (const lang of ["en", "vi"] as const) {
+      for (const route of ROUTES) expect(parseLocation(hrefOf(route, lang))).toEqual({ route, lang });
+    }
+    expect(localePathOf({ kind: "news" }, "vi")).toBe("vi/news");
+    expect(localePathOf({ kind: "news" }, "en")).toBe("news");
+    expect(hrefOf({ kind: "home" })).toBe("/");
+  });
+
+  it("URL /en/… của docs ≤ 0.13: trang tiếng Anh, đánh dấu legacy để đổi sang URL chuẩn", () => {
+    expect(parseLocation("/en/components/button")).toEqual({ route: { kind: "component", slug: "button" }, lang: "en", legacy: true });
+    expect(parseLocation("/en/")).toEqual({ route: { kind: "home" }, lang: "en", legacy: true });
+    expect(parseLocation("/en")).toEqual({ route: { kind: "home" }, lang: "en", legacy: true });
+    // "english" không phải tiền tố cũ.
+    expect(parseLocation("/english")).toEqual({ route: { kind: "home" }, lang: "en" });
   });
 });

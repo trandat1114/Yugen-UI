@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 
 /**
  * Logic thuần của DataGrid (sắp xếp, chọn hàng, ẩn / hiện cột) — tách khỏi giao diện để test dễ và để người dùng tự
@@ -81,20 +82,6 @@ export function sortItems<T>(
     .map((entry) => entry.item);
 }
 
-/* ================================================================ useControllableState (nội bộ) */
-
-function useControllableState<V>(value: V | undefined, defaultValue: V | (() => V)): [V, (next: V) => void] {
-  const [inner, setInner] = React.useState<V>(defaultValue);
-  const controlled = value !== undefined;
-  const set = React.useCallback(
-    (next: V) => {
-      if (!controlled) setInner(() => next);
-    },
-    [controlled],
-  );
-  return [controlled ? value : inner, set];
-}
-
 /* ================================================================ useDataGridSort */
 
 export interface UseDataGridSortOptions<T> {
@@ -124,7 +111,7 @@ export function useDataGridSort<T>({
   defaultSortState,
   onSortChange,
 }: UseDataGridSortOptions<T>): UseDataGridSortResult<T> {
-  const [state, setState] = useControllableState(sortState, defaultSortState ?? NO_SORT);
+  const [state, setState] = useControllableState({ value: sortState, defaultValue: defaultSortState ?? NO_SORT });
 
   const setColumnSort = React.useCallback(
     (event: React.SyntheticEvent | undefined, columnId: string, direction: DataGridSortDirection) => {
@@ -201,10 +188,10 @@ export function useDataGridSelection({
   defaultSelectedItems,
   onSelectionChange,
 }: UseDataGridSelectionOptions): UseDataGridSelectionResult {
-  const [selected, setSelected] = useControllableState<ReadonlySet<string>>(
-    selectedItems,
-    () => new Set(defaultSelectedItems ?? []),
-  );
+  const [selected, setSelected] = useControllableState<ReadonlySet<string>>({
+    value: selectedItems,
+    defaultValue: () => new Set(defaultSelectedItems ?? []),
+  });
   // Mốc và lựa chọn nền của khoảng Shift đang kéo dài.
   const anchor = React.useRef<string | null>(null);
   const base = React.useRef<ReadonlySet<string>>(new Set());
@@ -342,6 +329,32 @@ export function getVisibleColumns<C extends DataGridColumnVisibilityItem>(
   return visible.length > 0 ? visible : columns.slice(0, 1);
 }
 
+/* ================================================================ Thứ tự cột */
+
+export interface DataGridColumnOrderData {
+  columnOrder: string[];
+}
+
+/**
+ * Cột theo `order` (id cột): id không có trong `columns` bị bỏ qua, cột không có trong `order` giữ thứ tự định nghĩa và đứng
+ * sau cùng (cột mới thêm vẫn hiện). Không đổi gì → trả về chính `columns` (giữ tham chiếu).
+ */
+export function getOrderedColumns<C extends Pick<DataGridColumn<unknown>, "columnId">>(
+  columns: readonly C[],
+  order: readonly string[] | undefined,
+): readonly C[] {
+  if (!order || order.length === 0) return columns;
+  const byId = new Map(columns.map((c) => [c.columnId, c]));
+  const ordered: C[] = [];
+  for (const id of new Set(order)) {
+    const column = byId.get(id);
+    if (column) ordered.push(column);
+    byId.delete(id);
+  }
+  ordered.push(...byId.values());
+  return ordered.every((c, i) => c === columns[i]) ? columns : ordered;
+}
+
 export interface UseDataGridColumnVisibilityOptions<C extends DataGridColumnVisibilityItem> {
   columns: readonly C[];
   /** Id các cột đang ẩn (điều khiển từ ngoài). */
@@ -369,10 +382,10 @@ export function useDataGridColumnVisibility<C extends DataGridColumnVisibilityIt
   defaultHiddenColumns,
   onHiddenColumnsChange,
 }: UseDataGridColumnVisibilityOptions<C>): UseDataGridColumnVisibilityResult<C> {
-  const [hidden, setHidden] = useControllableState<ReadonlySet<string>>(
-    hiddenColumns,
-    () => new Set(defaultHiddenColumns ?? []),
-  );
+  const [hidden, setHidden] = useControllableState<ReadonlySet<string>>({
+    value: hiddenColumns,
+    defaultValue: () => new Set(defaultHiddenColumns ?? []),
+  });
   const visibleColumns = React.useMemo(() => getVisibleColumns(columns, hidden), [columns, hidden]);
   const visibleIds = React.useMemo(() => new Set(visibleColumns.map((c) => c.columnId)), [visibleColumns]);
 

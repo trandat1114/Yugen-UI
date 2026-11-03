@@ -1,8 +1,11 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import App from "./App";
 import en from "./content/en";
+
+// Template chạy như ứng dụng thật: render gốc, không qua ngữ cảnh tiếng Việt mà src/test/setup.ts bọc quanh unit test.
+const { render } = await vi.importActual<typeof import("@testing-library/react")>("@testing-library/react");
 
 describe("store checkout", () => {
   it("checks each step, declines the test card, then places the order", async () => {

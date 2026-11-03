@@ -12,7 +12,7 @@ const SAMPLES: [Route, string][] = [
   [{ kind: "home" }, "Yugen UI"],
   [{ kind: "component", slug: "button" }, "Button"],
   [{ kind: "concept", slug: "cli" }, "@yugen-ui/cli"],
-  [{ kind: "foundation", slug: "color" }, "Màu sắc"],
+  [{ kind: "foundation", slug: "color" }, "Color"],
   [{ kind: "templates" }, "Templates"],
 ];
 
@@ -20,7 +20,7 @@ const SAMPLES: [Route, string][] = [
 describe.skipIf(!version.startsWith("19."))("prerender docs", () => {
   it("danh sách route gồm mọi component, khái niệm và nền tảng", () => {
     const kinds = new Set(ROUTES.map((r) => r.kind));
-    expect(kinds).toEqual(new Set(["home", "blocks", "templates", "theme-designer", "news", "community", "concept", "foundation", "component"]));
+    expect(kinds).toEqual(new Set(["home", "blocks", "templates", "theme-designer", "news", "community", "contributors", "concept", "foundation", "component"]));
     expect(ROUTES.filter((r) => r.kind === "component").length).toBeGreaterThan(100);
   });
 
@@ -36,35 +36,44 @@ describe.skipIf(!version.startsWith("19."))("prerender docs", () => {
     // Trang Templates render mọi bản xem trước template: quá 5 s khi cả bộ test chạy song song.
   }, 15_000);
 
-  it("bản tiếng Anh: link nội bộ giữ /en/, hreflang; trang chưa dịch trỏ canonical về bản tiếng Việt (#123)", async () => {
+  it("tiếng Anh ở gốc, tiếng Việt dưới /vi/: link nội bộ giữ ngôn ngữ, hreflang (#123, #277)", async () => {
     const cli = await render({ kind: "concept", slug: "cli" }, "en");
-    expect(cli.path).toBe("en/concepts/cli");
-    expect(cli.html).toContain('href="/en/concepts/shadcn-registry"');
-    expect(cli.html).not.toContain('href="/concepts/shadcn-registry"');
-    expect(cli.head.canonical).toBe("https://trandat1114.github.io/Yugen-UI/en/concepts/cli");
-    expect(cli.head.alternates.map((a) => a.hreflang)).toEqual(["vi", "en", "x-default"]);
-    expect(cli.head.image).toBe("og/en/concepts/cli.jpg");
+    expect(cli.path).toBe("concepts/cli");
+    expect(cli.html).toContain('href="/concepts/shadcn-registry"');
+    expect(cli.html).not.toContain('href="/vi/concepts/shadcn-registry"');
+    expect(cli.head.canonical).toBe("https://trandat1114.github.io/Yugen-UI/concepts/cli");
+    expect(cli.head.alternates).toEqual([
+      { hreflang: "en", href: "https://trandat1114.github.io/Yugen-UI/concepts/cli" },
+      { hreflang: "vi", href: "https://trandat1114.github.io/Yugen-UI/vi/concepts/cli" },
+      { hreflang: "x-default", href: "https://trandat1114.github.io/Yugen-UI/concepts/cli" },
+    ]);
+    expect(cli.head.image).toBe("og/concepts/cli.jpg");
     expect(cli.card.section).toMatch(/^Concepts · /);
+    const cliVi = await render({ kind: "concept", slug: "cli" }, "vi");
+    expect(cliVi.path).toBe("vi/concepts/cli");
+    expect(cliVi.html).toContain('href="/vi/concepts/shadcn-registry"');
+    expect(cliVi.head.canonical).toBe("https://trandat1114.github.io/Yugen-UI/vi/concepts/cli");
+    expect(cliVi.head.image).toBe("og/vi/concepts/cli.jpg");
 
     // Foundations viết song ngữ trong trang (#138): canonical riêng, nội dung tiếng Anh.
     const color = await render({ kind: "foundation", slug: "color" }, "en");
-    expect(color.head.canonical).toBe("https://trandat1114.github.io/Yugen-UI/en/foundations/color");
-    expect(color.head.alternates.map((a) => a.hreflang)).toEqual(["vi", "en", "x-default"]);
+    expect(color.head.canonical).toBe("https://trandat1114.github.io/Yugen-UI/foundations/color");
+    expect(color.head.alternates.map((a) => a.hreflang)).toEqual(["en", "vi", "x-default"]);
     const main = color.html.slice(color.html.indexOf("<main"), color.html.indexOf("</main>"));
     expect(main).not.toMatch(/[ăâđêôơưạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ]/);
 
     // Button đã dịch: canonical riêng, hreflang, mô tả tiếng Anh; demo giữ tiếng Việt và mang lang="vi".
     const button = await render({ kind: "component", slug: "button" }, "en");
-    expect(button.head.canonical).toBe("https://trandat1114.github.io/Yugen-UI/en/components/button");
-    expect(button.head.alternates.map((a) => a.hreflang)).toEqual(["vi", "en", "x-default"]);
+    expect(button.head.canonical).toBe("https://trandat1114.github.io/Yugen-UI/components/button");
+    expect(button.head.alternates.map((a) => a.hreflang)).toEqual(["en", "vi", "x-default"]);
     expect(button.html).toContain('lang="vi"');
-    // Render tiếng Anh xong không làm lệch link của trang tiếng Việt kế tiếp.
+    // Render tiếng Việt xong không làm lệch link của trang tiếng Anh kế tiếp.
     expect((await render({ kind: "concept", slug: "cli" })).html).toContain('href="/concepts/shadcn-registry"');
   });
 
   it("nhóm trang trên ảnh chia sẻ", async () => {
-    expect((await render({ kind: "component", slug: "button" })).card.section).toBe("Component · Hành động");
-    expect((await render({ kind: "concept", slug: "component-labelling" })).card.section).toBe("Khái niệm · Khả năng tiếp cận");
+    expect((await render({ kind: "component", slug: "button" }, "vi")).card.section).toBe("Component · Hành động");
+    expect((await render({ kind: "concept", slug: "component-labelling" }, "vi")).card.section).toBe("Khái niệm · Khả năng tiếp cận");
     expect((await render({ kind: "news" })).card.section).toBe("");
   });
 });

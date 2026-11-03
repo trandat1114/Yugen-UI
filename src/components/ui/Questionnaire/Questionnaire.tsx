@@ -1,5 +1,6 @@
 /** Yugen Labs · Questionnaire — khảo sát / form nhiều bước kiểu Typeform, sinh từ cấu hình `questions`. */
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import {
@@ -22,9 +23,9 @@ import { Rating } from "../Rating/Rating";
 import { Spinner } from "../Spinner/Spinner";
 import { Textarea } from "../Textarea/Textarea";
 import { useYugenMessages } from "../YugenProvider/context";
-import { questionnaireMessages, type QuestionnaireMessages } from "./messages";
+import { questionnaireMessagesEn, type QuestionnaireMessages } from "./messages";
 
-export { questionnaireMessages, questionnaireMessagesEn, type QuestionnaireMessages } from "./messages";
+export { questionnaireMessages, questionnaireMessagesVi, questionnaireMessagesEn, type QuestionnaireMessages } from "./messages";
 
 /* ================================================================ Kiểu cấu hình */
 
@@ -108,11 +109,11 @@ function isEmpty(value: AnswerValue | undefined) {
   );
 }
 
-/** Kiểm tra một câu hỏi; trả về thông báo lỗi (theo `messages`, mặc định tiếng Việt) hoặc undefined. */
+/** Kiểm tra một câu hỏi; trả về thông báo lỗi (theo `messages`, mặc định tiếng Anh) hoặc undefined. */
 export function validateQuestion(
   question: Question,
   answers: QuestionnaireAnswers,
-  messages: QuestionnaireMessages = questionnaireMessages,
+  messages: QuestionnaireMessages = questionnaireMessagesEn,
 ): string | undefined {
   const value = answers[question.id];
   if (isEmpty(value)) {
@@ -129,11 +130,11 @@ export function validateQuestion(
   return validate?.(value as AnswerValue, answers) ?? undefined;
 }
 
-/** Chuỗi hiển thị cho câu trả lời (trang xem lại); chữ có sẵn theo `messages`, mặc định tiếng Việt. */
+/** Chuỗi hiển thị cho câu trả lời (trang xem lại); chữ có sẵn theo `messages`, mặc định tiếng Anh. */
 export function formatQuestionAnswer(
   question: Question,
   value: AnswerValue | undefined,
-  messages: QuestionnaireMessages = questionnaireMessages,
+  messages: QuestionnaireMessages = questionnaireMessagesEn,
 ): string {
   if (isEmpty(value)) return messages.unanswered;
   switch (question.type) {
@@ -219,7 +220,7 @@ interface QuestionControlProps {
 }
 
 function QuestionControl({ question: q, value, onChange, controlProps, showKeys }: QuestionControlProps) {
-  const msg = useYugenMessages("questionnaire", questionnaireMessages);
+  const msg = useYugenMessages("questionnaire", questionnaireMessagesEn);
   const invalid = controlProps["aria-invalid"] === true;
   const aria = {
     id: controlProps.id,
@@ -460,11 +461,11 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
     },
     ref,
   ) => {
-    const msg = useYugenMessages("questionnaire", questionnaireMessages);
+    const msg = useYugenMessages("questionnaire", questionnaireMessagesEn);
     const submitLabel = submitLabelProp ?? msg.submit;
     const uid = React.useId();
-    const [inner, setInner] = React.useState<QuestionnaireAnswers>(defaultValue ?? {});
-    const answers = value ?? inner;
+    // onChange có thêm questionId, còn restart() đặt lại mà không báo ra ngoài → gọi riêng, không qua hook.
+    const [answers, setAnswers] = useControllableState<QuestionnaireAnswers>({ value, defaultValue: defaultValue ?? {} });
     const [errors, setErrors] = React.useState<Record<string, string | undefined>>({});
     const [phase, setPhase] = React.useState<Phase>("form");
     const [index, setIndex] = React.useState(0);
@@ -486,7 +487,7 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
 
     const setAnswer = (id: string, next: AnswerValue | undefined) => {
       const updated = { ...answers, [id]: next };
-      if (value === undefined) setInner(updated);
+      setAnswers(updated);
       onChange?.(updated, id);
       // Đã báo lỗi thì kiểm tra lại ngay khi người dùng sửa.
       if (errors[id]) {
@@ -588,7 +589,7 @@ export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps
     };
 
     const restart = () => {
-      if (value === undefined) setInner(defaultValue ?? {});
+      setAnswers(defaultValue ?? {});
       setErrors({});
       setSubmitError(null);
       go(0, "back");

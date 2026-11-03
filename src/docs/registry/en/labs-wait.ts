@@ -9,7 +9,7 @@ export const en: Record<string, ComponentDocEn> = {
       {
         title: "With and without useSpinDelay",
         description:
-          "Choose “Nhanh” (fast) and click “Tải” (load) a few times: the left panel flashes a spinner for 150ms, the right one doesn't change. Choose “Chậm” (slow): the right panel waits 300ms, then stays steady.",
+          "Choose “Fast” and click “Load” a few times: the left panel flashes a spinner for 150ms, the right one doesn't change. Choose “Slow”: the right panel waits 300ms, then stays steady.",
       },
       {
         title: "Keep old content under the overlay",
@@ -18,7 +18,7 @@ export const en: Record<string, ComponentDocEn> = {
       },
       {
         title: "Small indicators need a delay too",
-        description: "The “Đang lưu…” (Saving…) line of an autosave uses the same useSpinDelay; a fast save only ever shows “Đã lưu” (Saved).",
+        description: "The “Saving…” line of an autosave uses the same useSpinDelay; a fast save only ever shows “Saved”.",
       },
     ],
     dos: [

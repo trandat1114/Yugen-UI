@@ -1,7 +1,10 @@
+import { messagesVi } from "@/components/ui";
 import type { Content } from "./types";
 
 const vi: Content = {
   lang: "vi",
+
+  messages: messagesVi,
   locale: "vi-VN",
   site: {
     title: "Tài liệu Sakura Notes",
@@ -10,8 +13,7 @@ const vi: Content = {
   },
   themes: { light: "Sáng", dark: "Tối", "high-contrast": "Tương phản cao" },
   appearance: "Giao diện",
-  skipToContent: "Bỏ qua, tới nội dung",
-  nav: { label: "Tài liệu", open: "Mở mục lục", home: "Trang chủ" },
+  nav: { label: "Tài liệu", home: "Trang chủ" },
   search: {
     button: "Tìm trong tài liệu",
     title: "Tìm trong tài liệu",

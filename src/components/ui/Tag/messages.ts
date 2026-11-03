@@ -21,3 +21,6 @@ export const tagMessagesEn: TagMessages = {
   dismiss: "Remove",
   dismissNamed: (name) => `Remove ${name}`,
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `tagMessagesEn` (mặc định). `tagMessages` giữ cho code cũ. */
+export const tagMessagesVi = tagMessages;

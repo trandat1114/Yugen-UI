@@ -9,6 +9,7 @@ export const en: Record<MessageKey, string> = {
   "nav.overview": "Overview",
   "nav.news": "What's new",
   "nav.community": "Community",
+  "nav.contributors": "Contributors",
   "nav.foundations": "Design language",
   "nav.concepts": "Concepts",
   "nav.labsConcepts": "Yugen Labs concepts",
@@ -73,11 +74,11 @@ export const en: Record<MessageKey, string> = {
 
   // Messages table on component pages (MessagesTable.tsx)
   "messages.desc": "Text built into the component: labels, aria-labels, screen reader announcements.",
-  "messages.intro": "Change it with the messages prop of YugenProvider, by the namespace below; messagesEn has the English set.",
+  "messages.intro": "English by default. Change it with the messages prop of YugenProvider, by the namespace below; messagesVi has the Vietnamese set.",
   "messages.link": "See Interface language.",
   "messages.key": "Key",
-  "messages.vi": "Default (Vietnamese)",
-  "messages.en": "messagesEn",
+  "messages.vi": "messagesVi",
+  "messages.en": "Default (English)",
   "messages.seeSource": "Function, see messages.ts",
 
   // Component page
@@ -97,7 +98,6 @@ export const en: Record<MessageKey, string> = {
 
   // Untranslated pages
   "fallback.page": "This page hasn't been translated yet — showing the Vietnamese original.",
-  "fallback.partial": "Parts of this page haven't been translated yet — showing the Vietnamese original.",
   "fallback.help": "Help translate",
 
   // What's new
@@ -113,6 +113,7 @@ export const en: Record<MessageKey, string> = {
   "news.kind.breaking": "Breaking",
   "news.current": "Current version: {version}",
   "news.latest": "Latest",
+  "news.thanks": "Thanks to",
   "news.upcoming": "Upcoming",
   "news.planned": "Planned for {date}",
   "news.view": "View",

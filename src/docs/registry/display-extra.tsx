@@ -11,6 +11,7 @@ import { Avatar } from "@/components/ui/Avatar/Avatar";
 import { Button } from "@/components/ui/Button/Button";
 import { Sparkline } from "@/components/ui/Chart/Chart";
 import { DescriptionItem, DescriptionList } from "@/components/ui/DescriptionList/DescriptionList";
+import { Markdown } from "@/components/ui/Markdown/Markdown";
 import { Prose } from "@/components/ui/Prose/Prose";
 import { Sonner, sonner, type SonnerPosition } from "@/components/ui/Sonner/Sonner";
 import { Stat } from "@/components/ui/Stat/Stat";
@@ -20,6 +21,52 @@ import type { ComponentDoc } from "../types";
 
 /* ------------------------------------------------------------------ demos */
 
+function RouterLinkDemo() {
+  const [path, setPath] = useState("/");
+  return (
+    <div className="flex flex-col gap-2">
+      <Markdown
+        renderLink={({ href, title, children, external }) =>
+          external ? (
+            <a href={href} title={title} target="_blank" rel="noopener noreferrer">
+              {children}
+            </a>
+          ) : (
+            // In an app: call your router's navigate(href).
+            <a
+              href={href}
+              title={title}
+              onClick={(e) => {
+                e.preventDefault();
+                setPath(href);
+              }}
+            >
+              {children}
+            </a>
+          )
+        }
+      >
+        {"Read the [installation guide](/concepts/quick-start) or [Prose](/components/prose). Source code is on [GitHub](https://github.com)."}
+      </Markdown>
+      <p className="text-caption1 text-foreground-3">Path: {path}</p>
+    </div>
+  );
+}
+
+const API_NOTES = `## Getting started with the API
+
+Every request needs an **API key** in the \`Authorization\` header. Create one under [Settings](#settings).
+
+1. Create a read-only key.
+2. Store the key in an environment variable.
+3. Try \`GET /v1/orders\`.
+
+| Plan     | Requests / min |
+| -------- | -------------: |
+| Free     |             60 |
+| Pro      |          1,200 |
+`;
+
 function SonnerDemo() {
   return (
     <>
@@ -27,14 +74,14 @@ function SonnerDemo() {
       <Button
         appearance="primary"
         onClick={() =>
-          sonner.success("Đã lưu thay đổi", {
-            description: "Tài liệu “Kế hoạch Q4” đã được lưu lên đám mây.",
-            action: { label: "Hoàn tác" },
+          sonner.success("Changes saved", {
+            description: "“Q4 plan” was saved to the cloud.",
+            action: { label: "Undo" },
             sonnerId: "docs-sonner",
           })
         }
       >
-        Lưu tài liệu
+        Save document
       </Button>
     </>
   );
@@ -45,35 +92,35 @@ function SonnerTypesDemo() {
   return (
     <>
       <Sonner sonnerId="docs-sonner-types" />
-      <Button onClick={() => sonner("Đã chuyển 3 tệp vào thư mục Dự án", options)}>Mặc định</Button>
-      <Button onClick={() => sonner.success("Đã gửi lời mời", options)}>Success</Button>
-      <Button onClick={() => sonner.info("Có bản cập nhật mới", options)}>Info</Button>
-      <Button onClick={() => sonner.warning("Dung lượng sắp đầy", options)}>Warning</Button>
-      <Button onClick={() => sonner.error("Không thể tải tệp lên", options)}>Error</Button>
-      <Button onClick={() => sonner.loading("Đang đồng bộ…", { ...options, duration: 3000 })}>Loading</Button>
+      <Button onClick={() => sonner("Moved 3 files to Projects", options)}>Default</Button>
+      <Button onClick={() => sonner.success("Invitation sent", options)}>Success</Button>
+      <Button onClick={() => sonner.info("An update is available", options)}>Info</Button>
+      <Button onClick={() => sonner.warning("Storage is almost full", options)}>Warning</Button>
+      <Button onClick={() => sonner.error("Couldn't upload the file", options)}>Error</Button>
+      <Button onClick={() => sonner.loading("Syncing…", { ...options, duration: 3000 })}>Loading</Button>
     </>
   );
 }
 
 function wait(ms: number, fail = false) {
-  return new Promise<number>((resolve, reject) => setTimeout(() => (fail ? reject(new Error("Mất kết nối")) : resolve(12)), ms));
+  return new Promise<number>((resolve, reject) => setTimeout(() => (fail ? reject(new Error("Connection lost")) : resolve(12)), ms));
 }
 
 function SonnerPromiseDemo() {
   const run = (fail: boolean) =>
     sonner.promise(wait(1500, fail), {
-      loading: "Đang lưu 12 mục…",
-      success: (count) => `Đã lưu ${count} mục`,
-      error: (error) => `Không lưu được: ${(error as Error).message}`,
+      loading: "Saving 12 items…",
+      success: (count) => `Saved ${count} items`,
+      error: (error) => `Couldn't save: ${(error as Error).message}`,
       sonnerId: "docs-sonner-promise",
     });
   return (
     <>
       <Sonner sonnerId="docs-sonner-promise" />
       <Button appearance="primary" onClick={() => run(false)}>
-        Lưu
+        Save
       </Button>
-      <Button onClick={() => run(true)}>Lưu (lỗi)</Button>
+      <Button onClick={() => run(true)}>Save (fails)</Button>
     </>
   );
 }
@@ -87,12 +134,12 @@ function SonnerStackDemo() {
       <Button
         onClick={() => {
           setCount(count + 1);
-          sonner(`Thông báo ${count + 1}`, { description: "Trỏ chuột vào chồng thông báo để xem tất cả.", sonnerId: "docs-sonner-stack" });
+          sonner(`Notification ${count + 1}`, { description: "Hover over the stack to see them all.", sonnerId: "docs-sonner-stack" });
         }}
       >
-        Thêm thông báo
+        Add notification
       </Button>
-      <Switch label="Luôn xoè" checked={expand} onCheckedChange={setExpand} />
+      <Switch label="Always expanded" checked={expand} onCheckedChange={setExpand} />
     </>
   );
 }
@@ -110,9 +157,9 @@ function SonnerPositionDemo() {
           size="small"
           onClick={() => {
             setPosition(p);
-            sonner.warning("Vị trí " + p, {
-              description: "Vuốt về phía mép để đóng.",
-              cancel: { label: "Bỏ qua" },
+            sonner.warning("Position: " + p, {
+              description: "Swipe toward the edge to dismiss.",
+              cancel: { label: "Dismiss" },
               sonnerId: "docs-sonner-position",
             });
           }}
@@ -125,9 +172,9 @@ function SonnerPositionDemo() {
 }
 
 const POST_HTML = [
-  "<p>Mùa thu ở Kyoto bắt đầu từ cuối tháng 10, khi lá phong ở <em>Tōfuku-ji</em> chuyển đỏ.</p>",
-  "<h2>Đi lúc nào</h2>",
-  "<ul><li>Sáng sớm, trước 8 giờ, để tránh đông.</li><li>Ngày thường thay vì cuối tuần.</li></ul>",
+  "<p>Autumn in Kyoto starts in late October, when the maples at <em>Tōfuku-ji</em> turn red.</p>",
+  "<h2>When to go</h2>",
+  "<ul><li>Early morning, before 8 a.m., to beat the crowds.</li><li>On a weekday rather than a weekend.</li></ul>",
 ].join("");
 
 const REVENUE = [42, 45, 44, 51, 49, 56, 61, 58, 66, 71, 69, 78];
@@ -153,14 +200,14 @@ const DOCS: Record<string, ComponentDoc> = {
       <Button
         appearance="primary"
         onClick={() =>
-          sonner.success("Đã lưu thay đổi", {
-            description: "Tài liệu “Kế hoạch Q4” đã được lưu lên đám mây.",
-            action: { label: "Hoàn tác" },
+          sonner.success("Changes saved", {
+            description: "“Q4 plan” was saved to the cloud.",
+            action: { label: "Undo" },
             sonnerId: "docs-sonner",
           })
         }
       >
-        Lưu tài liệu
+        Save document
       </Button>
     </>
   );
@@ -176,12 +223,12 @@ const DOCS: Record<string, ComponentDoc> = {
   return (
     <>
       <Sonner sonnerId="docs-sonner-types" />
-      <Button onClick={() => sonner("Đã chuyển 3 tệp vào thư mục Dự án", options)}>Mặc định</Button>
-      <Button onClick={() => sonner.success("Đã gửi lời mời", options)}>Success</Button>
-      <Button onClick={() => sonner.info("Có bản cập nhật mới", options)}>Info</Button>
-      <Button onClick={() => sonner.warning("Dung lượng sắp đầy", options)}>Warning</Button>
-      <Button onClick={() => sonner.error("Không thể tải tệp lên", options)}>Error</Button>
-      <Button onClick={() => sonner.loading("Đang đồng bộ…", { ...options, duration: 3000 })}>Loading</Button>
+      <Button onClick={() => sonner("Moved 3 files to Projects", options)}>Default</Button>
+      <Button onClick={() => sonner.success("Invitation sent", options)}>Success</Button>
+      <Button onClick={() => sonner.info("An update is available", options)}>Info</Button>
+      <Button onClick={() => sonner.warning("Storage is almost full", options)}>Warning</Button>
+      <Button onClick={() => sonner.error("Couldn't upload the file", options)}>Error</Button>
+      <Button onClick={() => sonner.loading("Syncing…", { ...options, duration: 3000 })}>Loading</Button>
     </>
   );
 }`,
@@ -191,24 +238,24 @@ const DOCS: Record<string, ComponentDoc> = {
         title: "Theo một promise",
         description: "sonner.promise hiện loading, rồi đổi tại chỗ thành success hoặc error. success / error nhận hàm để dùng kết quả.",
         code: `function wait(ms: number, fail = false) {
-  return new Promise<number>((resolve, reject) => setTimeout(() => (fail ? reject(new Error("Mất kết nối")) : resolve(12)), ms));
+  return new Promise<number>((resolve, reject) => setTimeout(() => (fail ? reject(new Error("Connection lost")) : resolve(12)), ms));
 }
 
 function SonnerPromiseDemo() {
   const run = (fail: boolean) =>
     sonner.promise(wait(1500, fail), {
-      loading: "Đang lưu 12 mục…",
-      success: (count) => \`Đã lưu \${count} mục\`,
-      error: (error) => \`Không lưu được: \${(error as Error).message}\`,
+      loading: "Saving 12 items…",
+      success: (count) => \`Saved \${count} items\`,
+      error: (error) => \`Couldn't save: \${(error as Error).message}\`,
       sonnerId: "docs-sonner-promise",
     });
   return (
     <>
       <Sonner sonnerId="docs-sonner-promise" />
       <Button appearance="primary" onClick={() => run(false)}>
-        Lưu
+        Save
       </Button>
-      <Button onClick={() => run(true)}>Lưu (lỗi)</Button>
+      <Button onClick={() => run(true)}>Save (fails)</Button>
     </>
   );
 }`,
@@ -226,12 +273,12 @@ function SonnerPromiseDemo() {
       <Button
         onClick={() => {
           setCount(count + 1);
-          sonner(\`Thông báo \${count + 1}\`, { description: "Trỏ chuột vào chồng thông báo để xem tất cả.", sonnerId: "docs-sonner-stack" });
+          sonner(\`Notification \${count + 1}\`, { description: "Hover over the stack to see them all.", sonnerId: "docs-sonner-stack" });
         }}
       >
-        Thêm thông báo
+        Add notification
       </Button>
-      <Switch label="Luôn xoè" checked={expand} onCheckedChange={setExpand} />
+      <Switch label="Always expanded" checked={expand} onCheckedChange={setExpand} />
     </>
   );
 }`,
@@ -253,9 +300,9 @@ function SonnerPositionDemo() {
           size="small"
           onClick={() => {
             setPosition(p);
-            sonner.warning("Vị trí " + p, {
-              description: "Vuốt về phía mép để đóng.",
-              cancel: { label: "Bỏ qua" },
+            sonner.warning("Position: " + p, {
+              description: "Swipe toward the edge to dismiss.",
+              cancel: { label: "Dismiss" },
               sonnerId: "docs-sonner-position",
             });
           }}
@@ -313,29 +360,29 @@ function SonnerPositionDemo() {
     importCode: `import { Timeline, TimelineItem } from "@/components/ui";`,
     hero: {
       title: "Timeline",
-      code: `<Timeline aria-label="Lịch sử đơn hàng" className="w-full max-w-md">
-  <TimelineItem icon={<VehicleTruckProfile20Regular />} intent="brand" title="Đang giao hàng" time="Hôm nay, 08:30" dateTime="2026-10-28T08:30">
-    Giao Hàng Nhanh · mã vận đơn GHN-5520417
+      code: `<Timeline aria-label="Order history" className="w-full max-w-md">
+  <TimelineItem icon={<VehicleTruckProfile20Regular />} intent="brand" title="Out for delivery" time="Today, 8:30 AM" dateTime="2026-10-28T08:30">
+    Express Post · tracking no. EP-5520417
   </TimelineItem>
-  <TimelineItem icon={<Box20Regular />} title="Đã đóng gói" time="Hôm qua, 16:05" dateTime="2026-10-27T16:05" />
-  <TimelineItem icon={<Checkmark20Regular />} intent="success" title="Đã thanh toán" time="Hôm qua, 09:12" dateTime="2026-10-27T09:12" />
-  <TimelineItem icon={<Avatar name="Lan Phạm" size={32} />} title={<><strong className="font-semibold">Lan Phạm</strong> đã đặt đơn #2041</>} time="Hôm qua, 09:10" dateTime="2026-10-27T09:10" />
+  <TimelineItem icon={<Box20Regular />} title="Packed" time="Yesterday, 4:05 PM" dateTime="2026-10-27T16:05" />
+  <TimelineItem icon={<Checkmark20Regular />} intent="success" title="Paid" time="Yesterday, 9:12 AM" dateTime="2026-10-27T09:12" />
+  <TimelineItem icon={<Avatar name="Maria Garcia" size={32} />} title={<><strong className="font-semibold">Maria Garcia</strong> placed order #2041</>} time="Yesterday, 9:10 AM" dateTime="2026-10-27T09:10" />
 </Timeline>`,
       render: () => (
-        <Timeline aria-label="Lịch sử đơn hàng" className="w-full max-w-md">
-          <TimelineItem icon={<VehicleTruckProfile20Regular />} intent="brand" title="Đang giao hàng" time="Hôm nay, 08:30" dateTime="2026-10-28T08:30">
-            Giao Hàng Nhanh · mã vận đơn GHN-5520417
+        <Timeline aria-label="Order history" className="w-full max-w-md">
+          <TimelineItem icon={<VehicleTruckProfile20Regular />} intent="brand" title="Out for delivery" time="Today, 8:30 AM" dateTime="2026-10-28T08:30">
+            Express Post · tracking no. EP-5520417
           </TimelineItem>
-          <TimelineItem icon={<Box20Regular />} title="Đã đóng gói" time="Hôm qua, 16:05" dateTime="2026-10-27T16:05" />
-          <TimelineItem icon={<Checkmark20Regular />} intent="success" title="Đã thanh toán" time="Hôm qua, 09:12" dateTime="2026-10-27T09:12" />
+          <TimelineItem icon={<Box20Regular />} title="Packed" time="Yesterday, 4:05 PM" dateTime="2026-10-27T16:05" />
+          <TimelineItem icon={<Checkmark20Regular />} intent="success" title="Paid" time="Yesterday, 9:12 AM" dateTime="2026-10-27T09:12" />
           <TimelineItem
-            icon={<Avatar name="Lan Phạm" size={32} />}
+            icon={<Avatar name="Maria Garcia" size={32} />}
             title={
               <>
-                <strong className="font-semibold">Lan Phạm</strong> đã đặt đơn #2041
+                <strong className="font-semibold">Maria Garcia</strong> placed order #2041
               </>
             }
-            time="Hôm qua, 09:10"
+            time="Yesterday, 9:10 AM"
             dateTime="2026-10-27T09:10"
           />
         </Timeline>
@@ -345,44 +392,44 @@ function SonnerPositionDemo() {
       {
         title: "Compact",
         description: "Chấm nhỏ, tiêu đề và thời gian trên một dòng; nội dung thêm dùng chữ caption.",
-        code: `<Timeline variant="compact" aria-label="Hoạt động gần đây" className="w-full max-w-md">
-  <TimelineItem title="Minh đã đổi trạng thái sang Hoàn thành" time="10 phút trước" intent="success" />
-  <TimelineItem title="Hà đã bình luận" time="1 giờ trước" icon={<Comment20Regular />}>
-    “Mình đã cập nhật số liệu quý 3, nhờ mọi người xem lại.”
+        code: `<Timeline variant="compact" aria-label="Recent activity" className="w-full max-w-md">
+  <TimelineItem title="Sam changed the status to Done" time="10 min ago" intent="success" />
+  <TimelineItem title="Priya commented" time="1 hour ago" icon={<Comment20Regular />}>
+    “I've updated the Q3 numbers. Could everyone take a look?”
   </TimelineItem>
-  <TimelineItem title="Hà đã tải lên bao-cao-q3.pdf" time="1 giờ trước" icon={<DocumentArrowUp20Regular />} />
-  <TimelineItem title="Lan đã thêm 2 thành viên" time="Hôm qua" icon={<People20Regular />} />
+  <TimelineItem title="Priya uploaded q3-report.pdf" time="1 hour ago" icon={<DocumentArrowUp20Regular />} />
+  <TimelineItem title="Maria added 2 members" time="Yesterday" icon={<People20Regular />} />
 </Timeline>`,
         render: () => (
-          <Timeline variant="compact" aria-label="Hoạt động gần đây" className="w-full max-w-md">
-            <TimelineItem title="Minh đã đổi trạng thái sang Hoàn thành" time="10 phút trước" intent="success" />
-            <TimelineItem title="Hà đã bình luận" time="1 giờ trước" icon={<Comment20Regular />}>
-              “Mình đã cập nhật số liệu quý 3, nhờ mọi người xem lại.”
+          <Timeline variant="compact" aria-label="Recent activity" className="w-full max-w-md">
+            <TimelineItem title="Sam changed the status to Done" time="10 min ago" intent="success" />
+            <TimelineItem title="Priya commented" time="1 hour ago" icon={<Comment20Regular />}>
+              “I've updated the Q3 numbers. Could everyone take a look?”
             </TimelineItem>
-            <TimelineItem title="Hà đã tải lên bao-cao-q3.pdf" time="1 giờ trước" icon={<DocumentArrowUp20Regular />} />
-            <TimelineItem title="Lan đã thêm 2 thành viên" time="Hôm qua" icon={<People20Regular />} />
+            <TimelineItem title="Priya uploaded q3-report.pdf" time="1 hour ago" icon={<DocumentArrowUp20Regular />} />
+            <TimelineItem title="Maria added 2 members" time="Yesterday" icon={<People20Regular />} />
           </Timeline>
         ),
       },
       {
         title: "Intent không icon",
         description: "Không có icon thì là chấm tròn theo intent: neutral, brand, success, warning, danger.",
-        code: `<Timeline aria-label="Lịch sử triển khai" className="w-full max-w-md">
-  <TimelineItem intent="danger" title="Triển khai v2.4.1 thất bại" time="14:02">
-    Kiểm tra sức khoẻ không đạt sau 3 lần thử; đã quay về v2.4.0.
+        code: `<Timeline aria-label="Deployment history" className="w-full max-w-md">
+  <TimelineItem intent="danger" title="Deploy of v2.4.1 failed" time="14:02">
+    Health check failed after 3 attempts; rolled back to v2.4.0.
   </TimelineItem>
-  <TimelineItem intent="warning" title="Thời gian phản hồi tăng 30%" time="13:48" />
-  <TimelineItem intent="success" title="Triển khai v2.4.0" time="Hôm qua" />
-  <TimelineItem title="Tạo môi trường staging" time="20/10" />
+  <TimelineItem intent="warning" title="Response time up 30%" time="13:48" />
+  <TimelineItem intent="success" title="Deployed v2.4.0" time="Yesterday" />
+  <TimelineItem title="Created staging environment" time="Oct 20" />
 </Timeline>`,
         render: () => (
-          <Timeline aria-label="Lịch sử triển khai" className="w-full max-w-md">
-            <TimelineItem intent="danger" title="Triển khai v2.4.1 thất bại" time="14:02">
-              Kiểm tra sức khoẻ không đạt sau 3 lần thử; đã quay về v2.4.0.
+          <Timeline aria-label="Deployment history" className="w-full max-w-md">
+            <TimelineItem intent="danger" title="Deploy of v2.4.1 failed" time="14:02">
+              Health check failed after 3 attempts; rolled back to v2.4.0.
             </TimelineItem>
-            <TimelineItem intent="warning" title="Thời gian phản hồi tăng 30%" time="13:48" />
-            <TimelineItem intent="success" title="Triển khai v2.4.0" time="Hôm qua" />
-            <TimelineItem title="Tạo môi trường staging" time="20/10" />
+            <TimelineItem intent="warning" title="Response time up 30%" time="13:48" />
+            <TimelineItem intent="success" title="Deployed v2.4.0" time="Yesterday" />
+            <TimelineItem title="Created staging environment" time="Oct 20" />
           </Timeline>
         ),
       },
@@ -419,32 +466,32 @@ function SonnerPositionDemo() {
     hero: {
       title: "DescriptionList",
       code: `<DescriptionList columns={2} className="w-full max-w-xl">
-  <DescriptionItem label="Mã đơn" copyable>
-    DH-2041
+  <DescriptionItem label="Order ID" copyable>
+    ORD-2041
   </DescriptionItem>
-  <DescriptionItem label="Ngày đặt">27/10/2026, 09:10</DescriptionItem>
-  <DescriptionItem label="Khách hàng">Lan Phạm</DescriptionItem>
-  <DescriptionItem label="Email" copyable="lan.pham@example.com">
-    <a className="text-link hover:underline" href="mailto:lan.pham@example.com">lan.pham@example.com</a>
+  <DescriptionItem label="Order date">Oct 27, 2026, 9:10 AM</DescriptionItem>
+  <DescriptionItem label="Customer">Maria Garcia</DescriptionItem>
+  <DescriptionItem label="Email" copyable="maria.garcia@example.com">
+    <a className="text-link hover:underline" href="mailto:maria.garcia@example.com">maria.garcia@example.com</a>
   </DescriptionItem>
-  <DescriptionItem label="Địa chỉ giao hàng" fullWidth>
-    12 Nguyễn Trãi, phường Bến Thành, TP. Hồ Chí Minh
+  <DescriptionItem label="Shipping address" fullWidth>
+    400 Market Street, Suite 12, San Francisco, CA 94105
   </DescriptionItem>
 </DescriptionList>`,
       render: () => (
         <DescriptionList columns={2} className="w-full max-w-xl">
-          <DescriptionItem label="Mã đơn" copyable>
-            DH-2041
+          <DescriptionItem label="Order ID" copyable>
+            ORD-2041
           </DescriptionItem>
-          <DescriptionItem label="Ngày đặt">27/10/2026, 09:10</DescriptionItem>
-          <DescriptionItem label="Khách hàng">Lan Phạm</DescriptionItem>
-          <DescriptionItem label="Email" copyable="lan.pham@example.com">
-            <a className="text-link hover:underline" href="mailto:lan.pham@example.com">
-              lan.pham@example.com
+          <DescriptionItem label="Order date">Oct 27, 2026, 9:10 AM</DescriptionItem>
+          <DescriptionItem label="Customer">Maria Garcia</DescriptionItem>
+          <DescriptionItem label="Email" copyable="maria.garcia@example.com">
+            <a className="text-link hover:underline" href="mailto:maria.garcia@example.com">
+              maria.garcia@example.com
             </a>
           </DescriptionItem>
-          <DescriptionItem label="Địa chỉ giao hàng" fullWidth>
-            12 Nguyễn Trãi, phường Bến Thành, TP. Hồ Chí Minh
+          <DescriptionItem label="Shipping address" fullWidth>
+            400 Market Street, Suite 12, San Francisco, CA 94105
           </DescriptionItem>
         </DescriptionList>
       ),
@@ -454,19 +501,19 @@ function SonnerPositionDemo() {
         title: "Inline & divided",
         description: "Nhãn và giá trị cùng hàng, có đường kẻ giữa các mục — hợp với trang hồ sơ, cài đặt.",
         code: `<DescriptionList layout="inline" divided className="w-full max-w-lg">
-  <DescriptionItem label="Họ tên">Trần Minh</DescriptionItem>
-  <DescriptionItem label="Vai trò">Quản trị viên</DescriptionItem>
-  <DescriptionItem label="Múi giờ">(UTC+07:00) Bangkok, Hà Nội, Jakarta</DescriptionItem>
-  <DescriptionItem label="Mã API" copyable>
+  <DescriptionItem label="Name">Sam Lee</DescriptionItem>
+  <DescriptionItem label="Role">Admin</DescriptionItem>
+  <DescriptionItem label="Time zone">(UTC+09:00) Osaka, Sapporo, Tokyo</DescriptionItem>
+  <DescriptionItem label="API key" copyable>
     <span className="font-mono">yg_live_51Hc…9QeD</span>
   </DescriptionItem>
 </DescriptionList>`,
         render: () => (
           <DescriptionList layout="inline" divided className="w-full max-w-lg">
-            <DescriptionItem label="Họ tên">Trần Minh</DescriptionItem>
-            <DescriptionItem label="Vai trò">Quản trị viên</DescriptionItem>
-            <DescriptionItem label="Múi giờ">(UTC+07:00) Bangkok, Hà Nội, Jakarta</DescriptionItem>
-            <DescriptionItem label="Mã API" copyable>
+            <DescriptionItem label="Name">Sam Lee</DescriptionItem>
+            <DescriptionItem label="Role">Admin</DescriptionItem>
+            <DescriptionItem label="Time zone">(UTC+09:00) Osaka, Sapporo, Tokyo</DescriptionItem>
+            <DescriptionItem label="API key" copyable>
               <span className="font-mono">yg_live_51Hc…9QeD</span>
             </DescriptionItem>
           </DescriptionList>
@@ -476,20 +523,20 @@ function SonnerPositionDemo() {
         title: "Tổng tiền",
         description: "valueAlign end đẩy giá trị về cuối hàng; mục cuối đậm hơn bằng className.",
         code: `<DescriptionList layout="inline" valueAlign="end" className="w-full max-w-xs tabular-nums">
-  <DescriptionItem label="Tạm tính">1.240.000 ₫</DescriptionItem>
-  <DescriptionItem label="Phí giao hàng">Miễn phí</DescriptionItem>
-  <DescriptionItem label="Giảm giá">−124.000 ₫</DescriptionItem>
-  <DescriptionItem label="Tổng cộng" className="border-t border-stroke-2 pt-2 font-semibold [&_dt]:text-foreground-1">
-    1.116.000 ₫
+  <DescriptionItem label="Subtotal">$1,240.00</DescriptionItem>
+  <DescriptionItem label="Shipping">Free</DescriptionItem>
+  <DescriptionItem label="Discount">−$124.00</DescriptionItem>
+  <DescriptionItem label="Total" className="border-t border-stroke-2 pt-2 font-semibold [&_dt]:text-foreground-1">
+    $1,116.00
   </DescriptionItem>
 </DescriptionList>`,
         render: () => (
           <DescriptionList layout="inline" valueAlign="end" className="w-full max-w-xs tabular-nums">
-            <DescriptionItem label="Tạm tính">1.240.000 ₫</DescriptionItem>
-            <DescriptionItem label="Phí giao hàng">Miễn phí</DescriptionItem>
-            <DescriptionItem label="Giảm giá">−124.000 ₫</DescriptionItem>
-            <DescriptionItem label="Tổng cộng" className="border-t border-stroke-2 pt-2 font-semibold [&_dt]:text-foreground-1">
-              1.116.000 ₫
+            <DescriptionItem label="Subtotal">$1,240.00</DescriptionItem>
+            <DescriptionItem label="Shipping">Free</DescriptionItem>
+            <DescriptionItem label="Discount">−$124.00</DescriptionItem>
+            <DescriptionItem label="Total" className="border-t border-stroke-2 pt-2 font-semibold [&_dt]:text-foreground-1">
+              $1,116.00
             </DescriptionItem>
           </DescriptionList>
         ),
@@ -528,27 +575,27 @@ function SonnerPositionDemo() {
     hero: {
       title: "Stat",
       code: `<div className="grid w-full grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-6">
-  <Stat label="Doanh thu" value={128_400_000} valueFormat={{ notation: "compact", style: "currency", currency: "VND" }} delta={0.124} deltaLabel="so với tháng trước" />
-  <Stat label="Đơn hàng" value={1_284} delta={0.031} deltaLabel="so với tháng trước" />
-  <Stat label="Tỉ lệ hoàn đơn" value="2,1%" delta={-0.004} deltaFormat={{ style: "percent", maximumFractionDigits: 1, signDisplay: "exceptZero" }} goodDirection="down" deltaLabel="so với tháng trước" />
+  <Stat label="Revenue" value={128_400} valueFormat={{ notation: "compact", style: "currency", currency: "USD" }} delta={0.124} deltaLabel="vs. last month" />
+  <Stat label="Orders" value={1_284} delta={0.031} deltaLabel="vs. last month" />
+  <Stat label="Return rate" value="2.1%" delta={-0.004} deltaFormat={{ style: "percent", maximumFractionDigits: 1, signDisplay: "exceptZero" }} goodDirection="down" deltaLabel="vs. last month" />
 </div>`,
       render: () => (
         <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-6">
           <Stat
-            label="Doanh thu"
-            value={128_400_000}
-            valueFormat={{ notation: "compact", style: "currency", currency: "VND" }}
+            label="Revenue"
+            value={128_400}
+            valueFormat={{ notation: "compact", style: "currency", currency: "USD" }}
             delta={0.124}
-            deltaLabel="so với tháng trước"
+            deltaLabel="vs. last month"
           />
-          <Stat label="Đơn hàng" value={1_284} delta={0.031} deltaLabel="so với tháng trước" />
+          <Stat label="Orders" value={1_284} delta={0.031} deltaLabel="vs. last month" />
           <Stat
-            label="Tỉ lệ hoàn đơn"
-            value="2,1%"
+            label="Return rate"
+            value="2.1%"
             delta={-0.004}
             deltaFormat={{ style: "percent", maximumFractionDigits: 1, signDisplay: "exceptZero" }}
             goodDirection="down"
-            deltaLabel="so với tháng trước"
+            deltaLabel="vs. last month"
           />
         </div>
       ),
@@ -562,20 +609,20 @@ function SonnerPositionDemo() {
 <Stat
   className="w-full max-w-sm"
   icon={<People20Regular />}
-  label="Người dùng hoạt động"
+  label="Active users"
   value={78_200}
   delta={0.13}
-  deltaLabel="so với tháng trước"
+  deltaLabel="vs. last month"
   chart={<Sparkline data={REVENUE} width={120} height={40} />}
 />`,
         render: () => (
           <Stat
             className="w-full max-w-sm"
             icon={<People20Regular />}
-            label="Người dùng hoạt động"
+            label="Active users"
             value={78_200}
             delta={0.13}
-            deltaLabel="so với tháng trước"
+            deltaLabel="vs. last month"
             chart={<Sparkline data={REVENUE} width={120} height={40} />}
           />
         ),
@@ -633,62 +680,62 @@ function SonnerPositionDemo() {
     hero: {
       title: "Prose",
       code: `<Prose className="w-full max-w-prose">
-  <h2>Bắt đầu với API</h2>
+  <h2>Getting started with the API</h2>
   <p>
-    Mọi yêu cầu cần <strong>khoá API</strong> trong header <code>Authorization</code>. Tạo khoá ở trang <a href="#">Cài đặt › Nhà phát triển</a>.
+    Every request needs an <strong>API key</strong> in the <code>Authorization</code> header. Create one under <a href="#">Settings › Developer</a>.
   </p>
   <ol>
-    <li>Tạo khoá với quyền chỉ đọc.</li>
-    <li>Lưu khoá vào biến môi trường, không đưa vào mã nguồn.</li>
-    <li>Gọi thử endpoint <code>/v1/orders</code>.</li>
+    <li>Create a read-only key.</li>
+    <li>Store the key in an environment variable, not in source code.</li>
+    <li>Try the <code>/v1/orders</code> endpoint.</li>
   </ol>
   <blockquote>
-    <p>Khoá bị lộ phải được thu hồi ngay; khoá mới có hiệu lực sau vài giây.</p>
+    <p>Revoke a leaked key right away. A new key works within a few seconds.</p>
   </blockquote>
-  <h3>Giới hạn</h3>
+  <h3>Rate limits</h3>
   <table>
     <thead>
-      <tr><th>Gói</th><th>Yêu cầu / phút</th></tr>
+      <tr><th>Plan</th><th>Requests / min</th></tr>
     </thead>
     <tbody>
-      <tr><td>Miễn phí</td><td>60</td></tr>
-      <tr><td>Pro</td><td>1.200</td></tr>
+      <tr><td>Free</td><td>60</td></tr>
+      <tr><td>Pro</td><td>1,200</td></tr>
     </tbody>
   </table>
 </Prose>`,
       render: () => (
         <Prose className="w-full max-w-prose">
-          <h2>Bắt đầu với API</h2>
+          <h2>Getting started with the API</h2>
           <p>
-            Mọi yêu cầu cần <strong>khoá API</strong> trong header <code>Authorization</code>. Tạo khoá ở trang{" "}
-            <a href="#">Cài đặt › Nhà phát triển</a>.
+            Every request needs an <strong>API key</strong> in the <code>Authorization</code> header. Create one under{" "}
+            <a href="#">Settings › Developer</a>.
           </p>
           <ol>
-            <li>Tạo khoá với quyền chỉ đọc.</li>
-            <li>Lưu khoá vào biến môi trường, không đưa vào mã nguồn.</li>
+            <li>Create a read-only key.</li>
+            <li>Store the key in an environment variable, not in source code.</li>
             <li>
-              Gọi thử endpoint <code>/v1/orders</code>.
+              Try the <code>/v1/orders</code> endpoint.
             </li>
           </ol>
           <blockquote>
-            <p>Khoá bị lộ phải được thu hồi ngay; khoá mới có hiệu lực sau vài giây.</p>
+            <p>Revoke a leaked key right away. A new key works within a few seconds.</p>
           </blockquote>
-          <h3>Giới hạn</h3>
+          <h3>Rate limits</h3>
           <table>
             <thead>
               <tr>
-                <th>Gói</th>
-                <th>Yêu cầu / phút</th>
+                <th>Plan</th>
+                <th>Requests / min</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>Miễn phí</td>
+                <td>Free</td>
                 <td>60</td>
               </tr>
               <tr>
                 <td>Pro</td>
-                <td>1.200</td>
+                <td>1,200</td>
               </tr>
             </tbody>
           </table>
@@ -700,9 +747,9 @@ function SonnerPositionDemo() {
         title: "Bài viết & HTML từ CMS",
         description: "asChild render vào <article>; nội dung HTML đã sanitize có thể đưa vào bằng dangerouslySetInnerHTML.",
         code: `const POST_HTML = [
-  "<p>Mùa thu ở Kyoto bắt đầu từ cuối tháng 10, khi lá phong ở <em>Tōfuku-ji</em> chuyển đỏ.</p>",
-  "<h2>Đi lúc nào</h2>",
-  "<ul><li>Sáng sớm, trước 8 giờ, để tránh đông.</li><li>Ngày thường thay vì cuối tuần.</li></ul>",
+  "<p>Autumn in Kyoto starts in late October, when the maples at <em>Tōfuku-ji</em> turn red.</p>",
+  "<h2>When to go</h2>",
+  "<ul><li>Early morning, before 8 a.m., to beat the crowds.</li><li>On a weekday rather than a weekend.</li></ul>",
 ].join("");
 
 function ArticleDemo() {
@@ -726,21 +773,21 @@ function ArticleDemo() {
         title: "Thoát bằng not-prose",
         description: "Phần tử có class not-prose (và mọi thứ bên trong) giữ nguyên kiểu gốc.",
         code: `<Prose className="w-full max-w-prose">
-  <p>Danh sách bên dưới là menu, không phải nội dung bài viết:</p>
+  <p>The list below is a menu, not part of the article:</p>
   <ul className="not-prose flex flex-wrap gap-2">
-    <li><Button size="small">Sao chép liên kết</Button></li>
-    <li><Button size="small">Chia sẻ</Button></li>
+    <li><Button size="small">Copy link</Button></li>
+    <li><Button size="small">Share</Button></li>
   </ul>
 </Prose>`,
         render: () => (
           <Prose className="w-full max-w-prose">
-            <p>Danh sách bên dưới là menu, không phải nội dung bài viết:</p>
+            <p>The list below is a menu, not part of the article:</p>
             <ul className="not-prose flex flex-wrap gap-2">
               <li>
-                <Button size="small">Sao chép liên kết</Button>
+                <Button size="small">Copy link</Button>
               </li>
               <li>
-                <Button size="small">Chia sẻ</Button>
+                <Button size="small">Share</Button>
               </li>
             </ul>
           </Prose>
@@ -759,6 +806,110 @@ function ArticleDemo() {
     props: [
       { name: "size", type: `"medium" | "large"`, defaultValue: `"medium"`, description: "Cỡ chữ nền: body1 (14px) hoặc body2 (16px)." },
       { name: "asChild", type: "boolean", defaultValue: "false", description: "Render vào phần tử con duy nhất (vd. <article>)." },
+    ],
+  },
+
+  /* ---------------------------------------------------------------- Markdown */
+  markdown: {
+    slug: "markdown",
+    name: "Markdown",
+    category: "Hiển thị dữ liệu",
+    lead: "Markdown hiển thị nội dung viết bằng Markdown (bài viết, ghi chú phát hành, mô tả từ CMS) theo kiểu chữ của Prose, an toàn với nội dung không tin cậy.",
+    description:
+      "Truyền chuỗi Markdown làm children. Hỗ trợ CommonMark và phần GFM hay dùng: heading, đoạn văn, danh sách, danh sách việc, trích dẫn, bảng, code fence (tô màu bằng CodeBlock), đậm, nghiêng, gạch, code và link. Không nhận HTML: thẻ HTML hiện như chữ, link `javascript:` hay `data:` chỉ còn nhãn. Link tương đối (`/path`, `#id`) được giữ; link ngoài mở tab mới. `inline` cho đoạn một dòng: chỉ phần inline, trong một `<span>`. `renderLink` giao link cho router của app. Nội dung đang về theo từng token (câu trả lời AI) dùng StreamingMarkdown.",
+    importCode: `import { Markdown } from "@/components/ui";`,
+    hero: {
+      title: "Markdown",
+      code: `const NOTES = \`## Getting started with the API
+
+Every request needs an **API key** in the \\\`Authorization\\\` header. Create one under [Settings](#settings).
+
+1. Create a read-only key.
+2. Store the key in an environment variable.
+3. Try \\\`GET /v1/orders\\\`.
+
+| Plan     | Requests / min |
+| -------- | -------------: |
+| Free     |             60 |
+| Pro      |          1,200 |
+\`;
+
+<Markdown className="w-full max-w-prose">{NOTES}</Markdown>`,
+      render: () => <Markdown className="w-full max-w-prose">{API_NOTES}</Markdown>,
+    },
+    examples: [
+      {
+        title: "Inline",
+        description: "inline render phần inline trong một <span>, không bọc <p>: hợp với mục danh sách, ô bảng, mô tả một dòng.",
+        code: `<ul className="flex flex-col gap-2 text-body1">
+  <li><Markdown inline>{"Call \`sonner.promise\` to turn **loading** into the result."}</Markdown></li>
+  <li><Markdown inline>{"HTML from a CMS? See [Prose](#prose)."}</Markdown></li>
+</ul>`,
+        render: () => (
+          <ul className="flex flex-col gap-2 text-body1">
+            <li>
+              <Markdown inline>{"Call `sonner.promise` to turn **loading** into the result."}</Markdown>
+            </li>
+            <li>
+              <Markdown inline>{"HTML from a CMS? See [Prose](#prose)."}</Markdown>
+            </li>
+          </ul>
+        ),
+      },
+      {
+        title: "Link qua router",
+        description:
+          "renderLink nhận href, title, nhãn và external; link nội bộ đi qua router của app (router.navigate, <Link to> của router) thay vì tải lại trang. Ví dụ thay router bằng state.",
+        code: `function RouterLinkDemo() {
+  const [path, setPath] = useState("/");
+  return (
+    <div className="flex flex-col gap-2">
+      <Markdown
+        renderLink={({ href, title, children, external }) =>
+          external ? (
+            <a href={href} title={title} target="_blank" rel="noopener noreferrer">
+              {children}
+            </a>
+          ) : (
+            // In an app: call your router's navigate(href).
+            <a href={href} title={title} onClick={(e) => { e.preventDefault(); setPath(href); }}>
+              {children}
+            </a>
+          )
+        }
+      >
+        {"Read the [installation guide](/concepts/quick-start) or [Prose](/components/prose). Source code is on [GitHub](https://github.com)."}
+      </Markdown>
+      <p className="text-caption1 text-foreground-3">Path: {path}</p>
+    </div>
+  );
+}`,
+        render: () => <RouterLinkDemo />,
+      },
+      {
+        title: "Nội dung không tin cậy",
+        description: "HTML hiện như chữ, link javascript: chỉ còn nhãn; không cần sanitize trước.",
+        code: `<Markdown>{'<img src=x onerror="alert(1)"> and [click here](javascript:alert(1))'}</Markdown>`,
+        render: () => <Markdown>{'<img src=x onerror="alert(1)"> and [click here](javascript:alert(1))'}</Markdown>,
+      },
+    ],
+    dos: [
+      "Dùng Markdown cho nội dung viết sẵn hoặc từ CMS; dùng StreamingMarkdown cho chữ đang về theo từng token.",
+      "Dùng inline cho đoạn một dòng nằm trong bố cục khác (mục danh sách, ô bảng).",
+      "Bật headingIds khi trang có mục lục hoặc link tới từng heading.",
+    ],
+    donts: [
+      "Không dùng Markdown để hiện HTML từ CMS: HTML hiện như chữ. Dùng Prose với HTML đã sanitize.",
+      "Không đặt Markdown trong Prose: Markdown đã bọc Prose.",
+    ],
+    props: [
+      { name: "children", type: "string", description: "Nội dung Markdown. Không nhận HTML." },
+      { name: "inline", type: "boolean", defaultValue: "false", description: "Chỉ phần inline (đậm, nghiêng, gạch, code, link) trong một <span>, không đoạn văn." },
+      { name: "size", type: `"medium" | "large"`, defaultValue: `"medium"`, description: "Cỡ chữ của Prose: body1 (14px) hoặc body2 (16px)." },
+      { name: "headingOffset", type: "number", defaultValue: "1", description: "Cộng vào cấp heading: mặc định # → h2." },
+      { name: "headingIds", type: "boolean | ((text: string) => string)", defaultValue: "false", description: "Gắn id cho heading từ chữ của nó (bỏ dấu, khử trùng bằng -2, -3); truyền hàm để tự tạo id." },
+      { name: "breaks", type: "boolean", defaultValue: "false", description: "Xuống dòng đơn thành <br>." },
+      { name: "renderLink", type: "(link: MarkdownLink) => ReactNode", description: "Tự render mọi link; MarkdownLink gồm href, title, children, external." },
     ],
   },
 };

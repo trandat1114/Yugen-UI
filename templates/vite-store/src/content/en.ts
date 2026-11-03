@@ -1,19 +1,15 @@
-import { messagesEn } from "yugen-ui";
 import type { Content } from "./types";
 
 const plural = (count: number, one: string, many: string) => (count === 1 ? `1 ${one}` : `${count} ${many}`);
 
 const en: Content = {
-  lang: "en",
-  messages: messagesEn,
-  locale: "en-US",
+  lang: "en",  locale: "en-US",
   currency: "USD",
   defaultCountry: "US",
   countries: ["US", "CA", "GB", "IE", "DE", "FR", "NL", "JP", "SG", "AU", "NZ", "VN"],
   appName: "Sakura Goods",
   pageTitle: (page) => `${page} · Sakura Goods`,
   nav: {
-    skip: "Skip to content",
     categories: "Categories",
     cart: (count) => (count === 0 ? "Cart, empty" : `Cart, ${plural(count, "item", "items")}`),
     appearance: "Appearance",

@@ -9,12 +9,12 @@ import { openDocs } from "./utils";
  */
 
 test.describe("Sheet — bottom sheet trên mobile", () => {
-  /** Demo "Bộ lọc" ở hero: snapPoints [0.6, 0.92]. */
+  /** Demo "Filters" ở hero: snapPoints [0.6, 0.92]. */
   async function openFilter(page: Page) {
     await openDocs(page, "/components/sheet");
-    const trigger = page.getByRole("button", { name: "Bộ lọc" }).first();
+    const trigger = page.getByRole("button", { name: "Filters" }).first();
     await trigger.tap();
-    const sheet = page.getByRole("dialog", { name: "Bộ lọc" });
+    const sheet = page.getByRole("dialog", { name: "Filters" });
     await expect(sheet).toBeVisible();
     const handle = sheet.getByRole("button", { name: /^Đổi chiều cao/ });
     return { trigger, sheet, handle };
@@ -95,7 +95,7 @@ test.describe("Carousel — vuốt trên màn hình cảm ứng", () => {
   for (const dir of ["ltr", "rtl"] as const) {
     test(`vuốt chuyển slide (${dir})`, async ({ page }) => {
       await openDocs(page, "/components/carousel", { dir });
-      const carousel = page.locator('section[aria-label="Điểm nổi bật"]').first();
+      const carousel = page.locator('section[aria-label="Highlights"]').first();
       await carousel.scrollIntoViewIfNeeded();
       const viewport = carousel.locator('[aria-roledescription="slide"]').first().locator("xpath=..");
       const current = carousel.getByRole("tab", { selected: true });
@@ -113,8 +113,8 @@ test.describe("Carousel — vuốt trên màn hình cảm ứng", () => {
 test.describe("Table — thao tác hàng trên màn hình cảm ứng", () => {
   test("nút thao tác và checkbox subtle hiện sẵn, không cần hover", async ({ page }) => {
     await openDocs(page, "/components/table");
-    const actions = page.getByRole("button", { name: "Sửa Nguyễn Văn An" }).locator("xpath=..");
-    const checkboxCell = page.getByRole("checkbox", { name: "Chọn Nguyễn Văn An" }).locator("xpath=ancestor::td[1]");
+    const actions = page.getByRole("button", { name: "Edit Alex Chen" }).locator("xpath=..");
+    const checkboxCell = page.getByRole("checkbox", { name: "Select Alex Chen" }).locator("xpath=ancestor::td[1]");
     await expect(actions).toHaveCSS("opacity", "1");
     await expect(checkboxCell).toHaveCSS("opacity", "1");
   });

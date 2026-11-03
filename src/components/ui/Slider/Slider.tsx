@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { cn } from "@/lib/cn";
 import { usePressed } from "../_internal/usePressed";
@@ -24,8 +25,12 @@ export const Slider = React.forwardRef<React.ElementRef<typeof SliderPrimitive.R
     const labelId = React.useId();
     const pressed = usePressed();
     const lens = material === "glass" && pressed.value;
-    const [inner, setInner] = React.useState<number[]>(value ?? defaultValue ?? [props.min ?? 0]);
-    const current = value ?? inner;
+    // Radix tự giữ giá trị; bản sao này chỉ để hiện `showValue` và đếm số thumb.
+    const [current, setCurrent] = useControllableState({
+      value,
+      defaultValue: () => defaultValue ?? [props.min ?? 0],
+      onChange: onValueChange,
+    });
     const small = size === "small";
 
     return (
@@ -45,10 +50,7 @@ export const Slider = React.forwardRef<React.ElementRef<typeof SliderPrimitive.R
           value={value}
           defaultValue={defaultValue}
           disabled={disabled}
-          onValueChange={(v) => {
-            setInner(v);
-            onValueChange?.(v);
-          }}
+          onValueChange={setCurrent}
           onPointerDown={(event) => {
             if (material) pressed.start();
             onPointerDown?.(event);

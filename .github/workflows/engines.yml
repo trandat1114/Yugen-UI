@@ -20,10 +20,12 @@ on:
       - "GOVERNANCE.md"
       - "SECURITY.md"
       - "Design.md"
+      - "Design.vi.md"
       - "LICENSE"
       - ".github/PULL_REQUEST_TEMPLATE.md"
       - ".github/ISSUE_TEMPLATE/**"
       - "packages/*/README.md"
+      - "src/docs/news/**" # tin dạng Markdown: news.yml kiểm tra, pages.yml build lại docs
   workflow_dispatch:
 
 permissions:
@@ -74,7 +76,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version: 26
           cache: npm
 
       - run: npm ci

@@ -33,3 +33,6 @@ export const tagPickerMessagesEn: TagPickerMessages = {
   closeList: "Close list",
   openList: "Open list",
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `tagPickerMessagesEn` (mặc định). `tagPickerMessages` giữ cho code cũ. */
+export const tagPickerMessagesVi = tagPickerMessages;

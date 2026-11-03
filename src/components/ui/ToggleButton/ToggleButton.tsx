@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import * as TogglePrimitive from "@radix-ui/react-toggle";
 import { cva } from "class-variance-authority";
 import { cn } from "@/lib/cn";
@@ -92,8 +93,7 @@ export const ToggleButton = React.forwardRef<HTMLButtonElement, ToggleButtonProp
     },
     ref,
   ) => {
-    const [innerChecked, setInnerChecked] = React.useState(defaultChecked);
-    const isChecked = checked ?? innerChecked;
+    const [isChecked, setChecked] = useControllableState({ value: checked, defaultValue: defaultChecked, onChange: onCheckedChange });
     const currentIcon = isChecked && checkedIcon ? checkedIcon : icon;
     const isIconOnly = iconOnly ?? (!!currentIcon && !children);
 
@@ -101,10 +101,7 @@ export const ToggleButton = React.forwardRef<HTMLButtonElement, ToggleButtonProp
       <TogglePrimitive.Root
         ref={ref}
         pressed={isChecked}
-        onPressedChange={(next) => {
-          if (checked === undefined) setInnerChecked(next);
-          onCheckedChange?.(next);
-        }}
+        onPressedChange={setChecked}
         className={cn(toggleButtonVariants({ appearance, size, shape, iconOnly: isIconOnly }), className)}
         {...props}
       >

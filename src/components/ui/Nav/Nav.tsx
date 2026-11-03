@@ -1,11 +1,16 @@
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import { Slot } from "@radix-ui/react-slot";
+import { useDirection } from "@radix-ui/react-direction";
 import { ChevronDown16Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
-import { navMessages } from "./messages";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../Tooltip/Tooltip";
+import { useComposedRefs } from "../_internal/composeRefs";
+import { NavHostContext, type NavHostValue } from "./context";
+import { navMessagesEn } from "./messages";
 
-export { navMessages, navMessagesEn, type NavMessages } from "./messages";
+export { navMessages, navMessagesVi, navMessagesEn, type NavMessages } from "./messages";
 
 /** Fluent 2 Nav — https://fluent2.microsoft.design/components/web/react/core/nav/usage */
 type NavDensity = "medium" | "small";
@@ -41,6 +46,8 @@ const ROW: Record<NavDensity, string> = {
   small: "min-h-8 gap-2 px-2",
 };
 const SUB_INDENT: Record<NavDensity, string> = { medium: "ps-10", small: "ps-9" };
+/** Sidebar thu về rail: ô vuông 40px chỉ còn icon; phần còn lại (nhãn, badge) chỉ dành cho trình đọc màn hình. */
+const RAIL_ROW = "size-10 justify-center gap-0 px-0 [&>:not(svg)]:sr-only";
 
 const rowBase = cn(
   "relative flex w-full cursor-pointer items-center rounded-xlarge text-start text-body1 text-foreground-2 select-none",
@@ -92,24 +99,25 @@ export const Nav = React.forwardRef<HTMLElement, NavProps>(
     },
     ref,
   ) => {
-    const msg = useYugenMessages("nav", navMessages);
-    const [innerSelected, setInnerSelected] = React.useState(defaultSelectedValue);
-    const [innerOpen, setInnerOpen] = React.useState<string[]>(defaultOpenCategories);
-    const selected = selectedValue ?? innerSelected;
-    const open = openCategories ?? innerOpen;
+    const msg = useYugenMessages("nav", navMessagesEn);
+    const host = React.useContext(NavHostContext);
+    // Callback có thêm tham số (categoryValue, open) nên tự gọi, không truyền làm onChange.
+    const [selected, setSelected] = useControllableState({ value: selectedValue, defaultValue: defaultSelectedValue });
+    const [open, setOpen] = useControllableState({ value: openCategories, defaultValue: defaultOpenCategories });
 
     const ctx: NavContextValue = {
       selectedValue: selected,
       density,
       select: (value, categoryValue) => {
-        if (selectedValue === undefined) setInnerSelected(value);
+        setSelected(value);
         onNavItemSelect?.(value, { categoryValue });
+        host?.onSelect?.();
       },
       isOpen: (value) => open.includes(value),
       toggle: (value) => {
         const willOpen = !open.includes(value);
         const next = willOpen ? (multiple ? [...open, value] : [value]) : open.filter((v) => v !== value);
-        if (openCategories === undefined) setInnerOpen(next);
+        setOpen(next);
         onNavCategoryItemToggle?.(value, willOpen);
       },
     };
@@ -141,6 +149,8 @@ export interface NavItemProps extends React.HTMLAttributes<HTMLElement> {
   href?: string;
   /** Bọc link của router. */
   asChild?: boolean;
+  /** Nhãn trong Tooltip khi Sidebar của AppShell thu về rail. Mặc định: chữ của mục. */
+  tooltip?: React.ReactNode;
 }
 
 function useNavRow(value: string, onClick: React.MouseEventHandler<HTMLElement> | undefined) {
@@ -154,20 +164,46 @@ function useNavRow(value: string, onClick: React.MouseEventHandler<HTMLElement> 
   return { nav, category, selected, handleClick };
 }
 
-function NavRow({
-  forwardedRef,
-  href,
-  asChild,
-  selected,
-  className,
+/**
+ * Trong Sidebar của AppShell: Tooltip mang nhãn của mục, chỉ mở khi sidebar đang là rail. Luôn bọc (kể cả khi chưa
+ * thu gọn) để thu gọn / mở rộng không mount lại hàng đang giữ focus. Ngoài AppShell: trả nguyên hàng.
+ */
+function HostTooltip({
+  host,
+  label,
+  rowRef,
   children,
-  ...props
-}: React.HTMLAttributes<HTMLElement> & {
-  forwardedRef: React.ForwardedRef<HTMLElement>;
-  href?: string;
-  asChild?: boolean;
-  selected: boolean;
+}: {
+  host: NavHostValue | null;
+  label?: React.ReactNode;
+  rowRef: React.RefObject<HTMLElement | null>;
+  children: React.ReactElement;
 }) {
+  const dir = useDirection();
+  const [open, setOpen] = React.useState(false);
+  const [text, setText] = React.useState("");
+  if (!host) return children;
+  return (
+    <Tooltip
+      open={host.rail && open}
+      onOpenChange={(next) => {
+        // Không có nhãn riêng (asChild bọc link router): đọc chữ của hàng lúc mở.
+        if (next && label === undefined) setText(rowRef.current?.textContent ?? "");
+        setOpen(next);
+      }}
+    >
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipContent side={dir === "rtl" ? "left" : "right"}>{label ?? text}</TooltipContent>
+    </Tooltip>
+  );
+}
+
+type NavRowProps = React.HTMLAttributes<HTMLElement> & { href?: string; asChild?: boolean; selected: boolean };
+
+const NavRow = React.forwardRef<HTMLElement, NavRowProps>(function NavRow(
+  { href, asChild, selected, className, children, ...props },
+  forwardedRef,
+) {
   const shared = {
     "aria-current": selected ? ("page" as const) : undefined,
     "data-selected": selected || undefined,
@@ -193,36 +229,41 @@ function NavRow({
       {children}
     </button>
   );
-}
+});
 
 export const NavItem = React.forwardRef<HTMLElement, NavItemProps>(
-  ({ className, value, icon, href, asChild, onClick, children, ...props }, ref) => {
+  ({ className, value, icon, href, asChild, tooltip, onClick, children, ...props }, ref) => {
     const { nav, selected, handleClick } = useNavRow(value, onClick);
+    const host = React.useContext(NavHostContext);
+    const rowRef = React.useRef<HTMLElement>(null);
+    const refs = useComposedRefs(ref, rowRef);
     return (
-      <NavRow
-        forwardedRef={ref}
-        href={href}
-        asChild={asChild}
-        selected={selected}
-        onClick={handleClick}
-        className={cn(rowBase, ROW[nav.density], selected && rowSelected, className)}
-        {...props}
-      >
-        {asChild ? (
-          children
-        ) : (
-          <>
-            {icon}
-            <span className="min-w-0 flex-1 truncate">{children}</span>
-          </>
-        )}
-      </NavRow>
+      <HostTooltip host={host} label={tooltip ?? (asChild ? undefined : children)} rowRef={rowRef}>
+        <NavRow
+          ref={refs}
+          href={href}
+          asChild={asChild}
+          selected={selected}
+          onClick={handleClick}
+          className={cn(rowBase, host?.rail ? RAIL_ROW : ROW[nav.density], selected && rowSelected, className)}
+          {...props}
+        >
+          {asChild ? (
+            children
+          ) : (
+            <>
+              {icon}
+              <span className={host?.rail ? "sr-only" : "min-w-0 flex-1 truncate"}>{children}</span>
+            </>
+          )}
+        </NavRow>
+      </HostTooltip>
     );
   },
 );
 NavItem.displayName = "NavItem";
 
-export const NavSubItem = React.forwardRef<HTMLElement, Omit<NavItemProps, "icon">>(
+export const NavSubItem = React.forwardRef<HTMLElement, Omit<NavItemProps, "icon" | "tooltip">>(
   ({ className, value, href, asChild, onClick, children, ...props }, ref) => {
     const { nav, category, selected, handleClick } = useNavRow(value, onClick);
     const register = category?.register;
@@ -231,7 +272,7 @@ export const NavSubItem = React.forwardRef<HTMLElement, Omit<NavItemProps, "icon
 
     return (
       <NavRow
-        forwardedRef={ref}
+        ref={ref}
         href={href}
         asChild={asChild}
         selected={selected}
@@ -282,30 +323,44 @@ export const NavCategoryItem = React.forwardRef<HTMLButtonElement, NavCategoryIt
   ({ className, icon, onClick, children, ...props }, ref) => {
     const nav = React.useContext(NavContext);
     const category = React.useContext(CategoryContext);
+    const host = React.useContext(NavHostContext);
+    const rail = !!host?.rail;
     const open = category?.open ?? false;
-    const showSelected = !open && !!category?.containsSelected;
+    // Rail không hiện nhóm con: mục chọn nằm trong nhóm thì category mang chỉ báo.
+    const showSelected = (!open || rail) && !!category?.containsSelected;
+    const rowRef = React.useRef<HTMLButtonElement>(null);
+    const refs = useComposedRefs(ref, rowRef);
 
     return (
-      <button
-        ref={ref}
-        type="button"
-        id={category?.triggerId}
-        aria-expanded={open}
-        aria-controls={category?.groupId}
-        onClick={(e) => {
-          onClick?.(e);
-          if (!e.defaultPrevented && category) nav.toggle(category.value);
-        }}
-        className={cn(rowBase, ROW[nav.density], showSelected && rowSelected, className)}
-        {...props}
-      >
-        {icon}
-        <span className="min-w-0 flex-1 truncate">{children}</span>
-        <ChevronDown16Regular
-          aria-hidden
-          className={cn("size-4! transition-transform duration-normal ease-easy-ease", open && "rotate-180")}
-        />
-      </button>
+      <HostTooltip host={host} label={children} rowRef={rowRef}>
+        <button
+          ref={refs}
+          type="button"
+          id={category?.triggerId}
+          aria-expanded={rail ? false : open}
+          aria-controls={category?.groupId}
+          onClick={(e) => {
+            onClick?.(e);
+            if (e.defaultPrevented || !category) return;
+            // Rail: mở rộng sidebar và mở nhóm để thấy các mục con.
+            if (rail) {
+              host?.expand();
+              if (!open) nav.toggle(category.value);
+            } else nav.toggle(category.value);
+          }}
+          className={cn(rowBase, rail ? RAIL_ROW : ROW[nav.density], showSelected && rowSelected, className)}
+          {...props}
+        >
+          {icon}
+          <span className={rail ? "sr-only" : "min-w-0 flex-1 truncate"}>{children}</span>
+          {!rail && (
+            <ChevronDown16Regular
+              aria-hidden
+              className={cn("size-4! transition-transform duration-normal ease-easy-ease", open && "rotate-180")}
+            />
+          )}
+        </button>
+      </HostTooltip>
     );
   },
 );
@@ -313,20 +368,30 @@ NavCategoryItem.displayName = "NavCategoryItem";
 
 export function NavSubItemGroup({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   const category = React.useContext(CategoryContext);
+  const rail = !!React.useContext(NavHostContext)?.rail;
   return (
     <div
       id={category?.groupId}
       role="group"
       aria-labelledby={category?.triggerId}
-      hidden={!(category?.open ?? true)}
+      hidden={rail || !(category?.open ?? true)}
       className={cn("flex flex-col gap-0.5", className)}
       {...props}
     />
   );
 }
 
-export function NavSectionHeader({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
+export function NavSectionHeader({ className, children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
   const { density } = React.useContext(NavContext);
+  const rail = !!React.useContext(NavHostContext)?.rail;
+  if (rail) {
+    // Rail: vạch ngăn giữa các nhóm icon; tên nhóm vẫn đọc được bằng trình đọc màn hình.
+    return (
+      <h3 className={cn("mx-2 my-1.5 h-px shrink-0 bg-stroke-2 first:bg-transparent", className)} {...props}>
+        <span className="sr-only">{children}</span>
+      </h3>
+    );
+  }
   return (
     <h3
       className={cn(
@@ -335,7 +400,9 @@ export function NavSectionHeader({ className, ...props }: React.HTMLAttributes<H
         className,
       )}
       {...props}
-    />
+    >
+      {children}
+    </h3>
   );
 }
 

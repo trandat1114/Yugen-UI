@@ -31,11 +31,11 @@ export const mountain = photo("#8fbff0", "#e6f1fc", "#fff6dc", "#4a78a8", "#1d4a
 export const sunset = photo("#f2a68c", "#fde3cf", "#fff0c2", "#9a527a", "#552a50");
 export const landscape = photo("#8fbff0", "#e6f1fc", "#fff6dc", "#4a78a8", "#1d4a70", 200, 125);
 export const scenery = [
-  { title: "Núi sáng sớm", src: mountain },
-  { title: "Đồi hoàng hôn", src: sunset },
-  { title: "Rừng thông", src: photo("#a8d8c0", "#eef8f1", "#fffbe6", "#3f7a5a", "#1f4a35") },
-  { title: "Hồ đêm", src: photo("#2b3a67", "#6b7fb8", "#f4f1d0", "#1e2a4d", "#0f1730") },
-  { title: "Sa mạc", src: photo("#f5c98a", "#fdf0d8", "#fff8e1", "#c27c43", "#8a4b22") },
+  { title: "Mountains at dawn", src: mountain },
+  { title: "Hills at sunset", src: sunset },
+  { title: "Pine forest", src: photo("#a8d8c0", "#eef8f1", "#fffbe6", "#3f7a5a", "#1f4a35") },
+  { title: "Lake at night", src: photo("#2b3a67", "#6b7fb8", "#f4f1d0", "#1e2a4d", "#0f1730") },
+  { title: "Desert", src: photo("#f5c98a", "#fdf0d8", "#fff8e1", "#c27c43", "#8a4b22") },
 ];
 
 export const wood = texture("#B9875A", "#9A6A40", 12);
@@ -54,7 +54,7 @@ export const illustration =
   );
 
 /** Tên người mẫu cho Avatar / AvatarGroup / Persona. */
-export const people = ["Nguyễn Văn An", "Trần Thị Bình", "Lê Hoàng Cường", "Phạm Minh Dũng", "Hoàng Thu Hà", "Vũ Quốc Khánh", "Đặng Mai Linh", "Bùi Thanh Nam"];
+export const people = ["Alex Chen", "Maria Garcia", "Sam Lee", "Priya Patel", "Jordan Kim", "Taylor Nguyen", "Chris Novak", "Hana Sato"];
 
 /** Tên có thể dùng trong `code` của ví dụ — converter StackBlitz tự thêm import từ "./sample-assets". */
 export const SAMPLE_ASSET_NAMES = ["photo", "texture", "mountain", "sunset", "landscape", "scenery", "wood", "marble", "fabric", "illustration", "people"];

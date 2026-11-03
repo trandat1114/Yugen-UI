@@ -16,9 +16,10 @@ interface Shot extends Appearance {
 }
 
 const SHOTS: Shot[] = [
-  { name: "home-light", route: "/" },
-  { name: "home-dark", route: "/", theme: "dark" },
-  { name: "home-high-contrast", route: "/", theme: "high-contrast" },
+  // Nút tin hiện version và tiêu đề bản mới nhất: đổi mỗi lần phát hành, và PR chỉ sửa tin không chạy visual (#261).
+  { name: "home-light", route: "/", mask: ["[data-release-pill]"] },
+  { name: "home-dark", route: "/", theme: "dark", mask: ["[data-release-pill]"] },
+  { name: "home-high-contrast", route: "/", theme: "high-contrast", mask: ["[data-release-pill]"] },
   { name: "blocks", route: "/blocks" },
   { name: "foundation-color", route: "/foundations/color" },
   { name: "foundation-glass", route: "/foundations/glass" },
@@ -39,8 +40,9 @@ for (const { name, route, mask = [], ...appearance } of SHOTS) {
     // Date cố định (giờ tương đối, đồng hồ Trace…) nhưng timer vẫn chạy để trang tải bình thường.
     await page.clock.setFixedTime(FIXED_NOW);
     await openDocs(page, route, appearance);
-    // Chuột ra góc không có phần tử tương tác để không dính trạng thái hover.
-    await page.mouse.move(640, 799);
+    // Chuột lên mép trên thanh top bar (trên ô tìm kiếm, cả LTR lẫn RTL): không có phần tử tương tác, không demo nào bắt
+    // hover / tooltip (đáy khung nhìn từng rơi vào cột của BarChart và hiện tooltip).
+    await page.mouse.move(640, 4);
     await expect(page).toHaveScreenshot(`${name}.png`, {
       mask: mask.map((selector) => page.locator(selector)),
     });

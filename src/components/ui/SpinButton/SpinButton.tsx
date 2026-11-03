@@ -1,12 +1,13 @@
 /** Fluent 2 SpinButton — https://fluent2.microsoft.design/components/web/react/core/spinbutton/usage */
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import { ChevronDown12Regular, ChevronDown16Regular, ChevronUp12Regular, ChevronUp16Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { fieldAppearanceClass, type FieldAppearance } from "@/components/ui/Select/Select";
 import { useYugenMessages } from "../YugenProvider/context";
-import { spinButtonMessages } from "./messages";
+import { spinButtonMessagesEn } from "./messages";
 
-export { spinButtonMessages, spinButtonMessagesEn, type SpinButtonMessages } from "./messages";
+export { spinButtonMessages, spinButtonMessagesVi, spinButtonMessagesEn, type SpinButtonMessages } from "./messages";
 
 const decimals = (n: number) => {
   const [, frac = ""] = String(n).split(".");
@@ -84,17 +85,14 @@ export const SpinButton = React.forwardRef<HTMLInputElement, SpinButtonProps>(
     },
     ref,
   ) => {
-    const msg = useYugenMessages("spinButton", spinButtonMessages);
-    const [inner, setInner] = React.useState<number | null>(defaultValue);
-    const current = value !== undefined ? value : inner;
+    const msg = useYugenMessages("spinButton", spinButtonMessagesEn);
+    const [current, setCurrent] = useControllableState<number | null>({ value, defaultValue, onChange: onValueChange });
     const [text, setTextState] = React.useState<string | null>(null);
     // Ref giữ giá trị mới nhất cho vòng lặp "nhấn giữ" (tránh closure cũ).
     const valueRef = React.useRef(current);
     valueRef.current = current;
     const textRef = React.useRef(text);
     textRef.current = text;
-    const onValueChangeRef = React.useRef(onValueChange);
-    onValueChangeRef.current = onValueChange;
     const timer = React.useRef<number | undefined>(undefined);
 
     const page = stepPage ?? step * 10;
@@ -112,8 +110,7 @@ export const SpinButton = React.forwardRef<HTMLInputElement, SpinButtonProps>(
     const setValue = (next: number | null) => {
       if (next === valueRef.current) return false;
       valueRef.current = next;
-      if (value === undefined) setInner(next);
-      onValueChangeRef.current?.(next);
+      setCurrent(next);
       return true;
     };
 

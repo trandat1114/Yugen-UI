@@ -12,7 +12,7 @@ export interface PageLink {
  */
 export interface Content {
   lang: "en" | "vi";
-  /** Built-in strings of Yugen components: messagesEn for English, empty = Vietnamese defaults. Kept in the language
+  /** Built-in strings of Yugen components: messagesVi for Vietnamese, empty = English defaults. Kept in the language
    * file so `create --lang vi` (which deletes en.ts) drops the English set from the bundle. */
   messages?: YugenMessagesInput;
   /** `locale` on YugenProvider and `og:locale`. */
@@ -21,8 +21,7 @@ export interface Content {
   site: { title: string; product: string; description: string };
   themes: Record<YugenTheme, string>;
   appearance: string;
-  skipToContent: string;
-  nav: { label: string; open: string; home: string };
+  nav: { label: string; home: string };
   search: { button: string; title: string; placeholder: string; empty: string };
   home: {
     eyebrow: string;

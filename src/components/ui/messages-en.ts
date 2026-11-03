@@ -5,6 +5,7 @@ import {
   reasoningMessagesEn,
   streamingMarkdownMessagesEn,
 } from "./AIKit/messages";
+import { appShellMessagesEn } from "./AppShell/messages";
 import { autocompleteMessagesEn } from "./Autocomplete/messages";
 import { avatarGroupMessagesEn } from "./AvatarGroup/messages";
 import { breadcrumbMessagesEn } from "./Breadcrumb/messages";
@@ -35,6 +36,7 @@ import {
   optimisticListMessagesEn,
   pageProgressMessagesEn,
 } from "./Loading/messages";
+import { markdownMessagesEn } from "./Markdown/messages";
 import { messageBarMessagesEn } from "./MessageBar/messages";
 import {
   chatComposerMessagesEn,
@@ -53,6 +55,7 @@ import { searchBoxMessagesEn } from "./SearchBox/messages";
 import { sheetMessagesEn } from "./Sheet/messages";
 import { skeletonMessagesEn } from "./Skeleton/messages";
 import { sonnerMessagesEn } from "./Sonner/messages";
+import { sortableMessagesEn } from "./Sortable/messages";
 import { spinButtonMessagesEn } from "./SpinButton/messages";
 import { spinnerMessagesEn } from "./Spinner/messages";
 import { statMessagesEn } from "./Stat/messages";
@@ -69,10 +72,12 @@ import { tourMessagesEn } from "./Tour/messages";
 import { traceMessagesEn } from "./Trace/messages";
 
 /**
- * Chuỗi giao diện có sẵn của mọi component, bằng tiếng Anh: `<YugenProvider messages={messagesEn} locale="en-US">`.
- * Kiểu `YugenMessages` đầy đủ: component mới thêm namespace mà quên bản tiếng Anh ở đây thì typecheck báo lỗi.
+ * Chuỗi giao diện có sẵn của mọi component, bằng tiếng Anh: đây cũng là giá trị mặc định khi không truyền `messages`.
+ * Tiếng Việt: `messagesVi`. Kiểu `YugenMessages` đầy đủ: component mới thêm namespace mà quên bản tiếng Anh ở đây thì
+ * typecheck báo lỗi.
  */
 export const messagesEn: YugenMessages = {
+  appShell: appShellMessagesEn,
   asyncContent: asyncContentMessagesEn,
   autocomplete: autocompleteMessagesEn,
   avatarGroup: avatarGroupMessagesEn,
@@ -99,6 +104,7 @@ export const messagesEn: YugenMessages = {
   inputOTP: inputOTPMessagesEn,
   link: linkMessagesEn,
   loadingOverlay: loadingOverlayMessagesEn,
+  markdown: markdownMessagesEn,
   messageBar: messageBarMessagesEn,
   messageBubble: messageBubbleMessagesEn,
   messageScroller: messageScrollerMessagesEn,
@@ -118,6 +124,7 @@ export const messagesEn: YugenMessages = {
   sheet: sheetMessagesEn,
   skeleton: skeletonMessagesEn,
   sonner: sonnerMessagesEn,
+  sortable: sortableMessagesEn,
   spinButton: spinButtonMessagesEn,
   spinner: spinnerMessagesEn,
   splitButton: splitButtonMessagesEn,

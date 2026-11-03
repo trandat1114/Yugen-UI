@@ -7,6 +7,9 @@
  *                      + keyframes + base. Sinh từ src/index.css: bỏ `@import "tailwindcss"` và các dòng `@source`,
  *                      nội tuyến các file token. Thêm `@source "./components"` để Tailwind của người dùng tự quét
  *                      component đã build (đường dẫn tương đối với chính theme.css).
+ *   dist/theme-core.css — như theme.css nhưng không quét component (#169): app thêm dist/sources/<Thư mục>.css cho
+ *                      từng component mình dùng (mỗi file quét component đó và mọi component nó dùng bên trong).
+ *   dist/sources/index.json — export → thư mục, thư mục → các thư mục được quét (CLI đọc để ghi các dòng @import).
  *   dist/styles.css  — CSS đã biên dịch đầy đủ (preflight + mọi utility component dùng) cho dự án KHÔNG có Tailwind.
  *                      Chỉ quét src/components/ui + src/lib.
  *
@@ -17,6 +20,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { compile, optimize } from "@tailwindcss/node";
 import { Scanner } from "@tailwindcss/oxide";
+import { exportFolders, sourceFiles } from "./css-sources.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const src = path.join(root, "src");
@@ -62,6 +66,32 @@ const theme =
   themeBody +
   "\n";
 write("theme.css", theme);
+
+// ---------- dist/theme-core.css + dist/sources/ (#169) ----------
+write(
+  "theme-core.css",
+  banner("Tailwind CSS v4 theme without component sources — add yugen-ui/sources/<Component>.css") +
+    '\n/* Không quét component: thêm `@import "yugen-ui/sources/<Thư mục>.css";` cho từng component dùng trong app. */\n\n' +
+    themeBody +
+    "\n",
+);
+const graph = sourceFiles(path.join(src, "components", "ui"));
+const exports = exportFolders(root);
+fs.rmSync(path.join(dist, "sources"), { recursive: true, force: true });
+fs.mkdirSync(path.join(dist, "sources"));
+const folders = [...graph.keys()].filter((f) => !f.startsWith("_"));
+for (const folder of folders) {
+  const lines = graph.get(folder).map((f) => `@source "../components/ui/${f}";`);
+  fs.writeFileSync(
+    path.join(dist, "sources", `${folder}.css`),
+    banner(`classes of ${folder} and the components it uses — @import after yugen-ui/theme-core.css`) + lines.join("\n") + "\n",
+  );
+}
+const missing = [...new Set(Object.values(exports))].filter((f) => !folders.includes(f));
+if (missing.length) throw new Error(`[build-css] export nằm trong thư mục không có sources: ${missing.join(", ")}`);
+const manifest = { version: pkg.version, exports, sources: Object.fromEntries(folders.map((f) => [f, graph.get(f)])) };
+fs.writeFileSync(path.join(dist, "sources", "index.json"), JSON.stringify(manifest, null, 2) + "\n");
+console.log(`[build-css] dist/sources/  ${folders.length} files, ${Object.keys(exports).length} exports`);
 
 // ---------- dist/styles.css ----------
 const input = [

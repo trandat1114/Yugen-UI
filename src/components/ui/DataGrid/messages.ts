@@ -50,3 +50,6 @@ export const dataGridMessagesEn: DataGridMessages = {
   showAllColumns: "Show all columns",
   hiddenColumns: (count) => (count === 1 ? "1 column hidden" : `${count} columns hidden`),
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `dataGridMessagesEn` (mặc định). `dataGridMessages` giữ cho code cũ. */
+export const dataGridMessagesVi = dataGridMessages;

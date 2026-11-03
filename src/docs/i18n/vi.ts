@@ -10,6 +10,7 @@ export const vi = {
   "nav.overview": "Tổng quan",
   "nav.news": "Có gì mới",
   "nav.community": "Cộng đồng",
+  "nav.contributors": "Người đóng góp",
   "nav.foundations": "Ngôn ngữ thiết kế",
   "nav.concepts": "Khái niệm",
   "nav.labsConcepts": "Khái niệm Yugen Labs",
@@ -74,11 +75,11 @@ export const vi = {
 
   // Bảng Messages trên trang component (MessagesTable.tsx)
   "messages.desc": "Chữ có sẵn của component: nhãn, aria-label, thông báo cho trình đọc màn hình.",
-  "messages.intro": "Đổi qua prop messages của YugenProvider, theo namespace bên dưới; messagesEn chứa bản tiếng Anh.",
+  "messages.intro": "Mặc định là tiếng Anh. Đổi qua prop messages của YugenProvider, theo namespace bên dưới; messagesVi chứa bản tiếng Việt.",
   "messages.link": "Xem Ngôn ngữ giao diện.",
   "messages.key": "Khoá",
-  "messages.vi": "Mặc định (tiếng Việt)",
-  "messages.en": "messagesEn",
+  "messages.vi": "messagesVi",
+  "messages.en": "Mặc định (tiếng Anh)",
   "messages.seeSource": "Hàm, xem messages.ts",
 
   // Trang component
@@ -98,7 +99,6 @@ export const vi = {
 
   // Trang chưa dịch (chỉ hiện ở chế độ tiếng Anh)
   "fallback.page": "Trang này chưa được dịch — đang hiện bản gốc tiếng Việt.",
-  "fallback.partial": "Một phần trang này chưa được dịch — đang hiện bản gốc tiếng Việt.",
   "fallback.help": "Giúp dịch",
 
   // Có gì mới
@@ -114,6 +114,7 @@ export const vi = {
   "news.kind.breaking": "Thay đổi lớn",
   "news.current": "Phiên bản hiện tại: {version}",
   "news.latest": "Mới nhất",
+  "news.thanks": "Cảm ơn",
   "news.upcoming": "Sắp phát hành",
   "news.planned": "Dự kiến {date}",
   "news.view": "Xem",

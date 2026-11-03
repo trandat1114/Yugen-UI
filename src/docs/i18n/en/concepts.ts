@@ -24,9 +24,9 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
   },
   localization: {
     title: "Interface language",
-    lead: "Text built into components (the close button, screen reader labels, empty states) is Vietnamese by default. One messages prop on YugenProvider switches all of it to English or to another language.",
+    lead: "Text built into components (the close button, screen reader labels, empty states) is English by default. One messages prop on YugenProvider switches all of it to Vietnamese or to another language.",
     toc: {
-      english: "Switch to English",
+      vietnamese: "Switch to Vietnamese",
       override: "Change a few strings",
       locale: "Dates, times and numbers",
       other: "Other languages",
@@ -220,6 +220,7 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
       variants: "Overrides & variants",
       state: "Data attributes & important",
       shared: "Shared classes",
+      "lean-css": "Only the CSS you use",
       "media-object": "The media object pattern",
     },
   },

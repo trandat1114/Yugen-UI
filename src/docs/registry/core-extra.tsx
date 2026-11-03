@@ -36,17 +36,17 @@ function RadioMenuDemo() {
   return (
     <Menu>
       <MenuTrigger asChild>
-        <Button>Sắp xếp</Button>
+        <Button>Sort</Button>
       </MenuTrigger>
       <MenuPopover>
-        <MenuGroupHeader>Sắp xếp theo</MenuGroupHeader>
+        <MenuGroupHeader>Sort by</MenuGroupHeader>
         <MenuRadioGroup value={sort} onValueChange={setSort}>
-          <MenuItemRadio value="date">Ngày sửa</MenuItemRadio>
-          <MenuItemRadio value="name">Tên</MenuItemRadio>
-          <MenuItemRadio value="size">Kích thước</MenuItemRadio>
+          <MenuItemRadio value="date">Date modified</MenuItemRadio>
+          <MenuItemRadio value="name">Name</MenuItemRadio>
+          <MenuItemRadio value="size">Size</MenuItemRadio>
         </MenuRadioGroup>
         <MenuDivider />
-        <MenuItemCheckbox defaultChecked>Hiện thư mục trước</MenuItemCheckbox>
+        <MenuItemCheckbox defaultChecked>Show folders first</MenuItemCheckbox>
       </MenuPopover>
     </Menu>
   );
@@ -57,7 +57,7 @@ function VolumeDemo() {
   return (
     <div className="flex w-72 items-center gap-2">
       {volume[0] === 0 ? <SpeakerMute20Regular className="shrink-0" /> : <Speaker220Regular className="shrink-0" />}
-      <Slider aria-label="Âm lượng" value={volume} onValueChange={setVolume} />
+      <Slider aria-label="Volume" value={volume} onValueChange={setVolume} />
       <span className="w-8 text-end text-body1 tabular-nums">{volume[0]}</span>
     </div>
   );
@@ -78,12 +78,12 @@ const EXTRA: Record<string, ComponentDoc> = {
   icon={<Send20Regular className="rtl:-scale-x-100" />}
   menu={
     <>
-      <MenuItem>Hẹn giờ gửi</MenuItem>
-      <MenuItem>Gửi bản nháp cho tôi</MenuItem>
+      <MenuItem>Schedule send</MenuItem>
+      <MenuItem>Send a draft to me</MenuItem>
     </>
   }
 >
-  Gửi
+  Send
 </SplitButton>`,
       render: () => (
         <SplitButton
@@ -91,12 +91,12 @@ const EXTRA: Record<string, ComponentDoc> = {
           icon={<Send20Regular className="rtl:-scale-x-100" />}
           menu={
             <>
-              <MenuItem>Hẹn giờ gửi</MenuItem>
-              <MenuItem>Gửi bản nháp cho tôi</MenuItem>
+              <MenuItem>Schedule send</MenuItem>
+              <MenuItem>Send a draft to me</MenuItem>
             </>
           }
         >
-          Gửi
+          Send
         </SplitButton>
       ),
     },
@@ -104,20 +104,20 @@ const EXTRA: Record<string, ComponentDoc> = {
       {
         title: "Appearance",
         description: "primary, secondary (mặc định), outline, subtle.",
-        code: `<SplitButton appearance="primary" menu={<MenuItem>Tuỳ chọn</MenuItem>}>Primary</SplitButton>
-<SplitButton menu={<MenuItem>Tuỳ chọn</MenuItem>}>Secondary</SplitButton>
-<SplitButton appearance="outline" menu={<MenuItem>Tuỳ chọn</MenuItem>}>Outline</SplitButton>
-<SplitButton appearance="subtle" menu={<MenuItem>Tuỳ chọn</MenuItem>}>Subtle</SplitButton>`,
+        code: `<SplitButton appearance="primary" menu={<MenuItem>Option</MenuItem>}>Primary</SplitButton>
+<SplitButton menu={<MenuItem>Option</MenuItem>}>Secondary</SplitButton>
+<SplitButton appearance="outline" menu={<MenuItem>Option</MenuItem>}>Outline</SplitButton>
+<SplitButton appearance="subtle" menu={<MenuItem>Option</MenuItem>}>Subtle</SplitButton>`,
         render: () => (
           <>
-            <SplitButton appearance="primary" menu={<MenuItem>Tuỳ chọn</MenuItem>}>
+            <SplitButton appearance="primary" menu={<MenuItem>Option</MenuItem>}>
               Primary
             </SplitButton>
-            <SplitButton menu={<MenuItem>Tuỳ chọn</MenuItem>}>Secondary</SplitButton>
-            <SplitButton appearance="outline" menu={<MenuItem>Tuỳ chọn</MenuItem>}>
+            <SplitButton menu={<MenuItem>Option</MenuItem>}>Secondary</SplitButton>
+            <SplitButton appearance="outline" menu={<MenuItem>Option</MenuItem>}>
               Outline
             </SplitButton>
-            <SplitButton appearance="subtle" menu={<MenuItem>Tuỳ chọn</MenuItem>}>
+            <SplitButton appearance="subtle" menu={<MenuItem>Option</MenuItem>}>
               Subtle
             </SplitButton>
           </>
@@ -126,18 +126,18 @@ const EXTRA: Record<string, ComponentDoc> = {
       {
         title: "Kích thước",
         description: "small, medium, large.",
-        code: `<SplitButton size="small" menu={<MenuItem>Tuỳ chọn</MenuItem>}>Small</SplitButton>
-<SplitButton size="medium" menu={<MenuItem>Tuỳ chọn</MenuItem>}>Medium</SplitButton>
-<SplitButton size="large" appearance="primary" menu={<MenuItem>Tuỳ chọn</MenuItem>}>Large</SplitButton>`,
+        code: `<SplitButton size="small" menu={<MenuItem>Option</MenuItem>}>Small</SplitButton>
+<SplitButton size="medium" menu={<MenuItem>Option</MenuItem>}>Medium</SplitButton>
+<SplitButton size="large" appearance="primary" menu={<MenuItem>Option</MenuItem>}>Large</SplitButton>`,
         render: () => (
           <>
-            <SplitButton size="small" menu={<MenuItem>Tuỳ chọn</MenuItem>}>
+            <SplitButton size="small" menu={<MenuItem>Option</MenuItem>}>
               Small
             </SplitButton>
-            <SplitButton size="medium" menu={<MenuItem>Tuỳ chọn</MenuItem>}>
+            <SplitButton size="medium" menu={<MenuItem>Option</MenuItem>}>
               Medium
             </SplitButton>
-            <SplitButton size="large" appearance="primary" menu={<MenuItem>Tuỳ chọn</MenuItem>}>
+            <SplitButton size="large" appearance="primary" menu={<MenuItem>Option</MenuItem>}>
               Large
             </SplitButton>
           </>
@@ -169,31 +169,31 @@ const EXTRA: Record<string, ComponentDoc> = {
       title: "Menu",
       code: `<Menu>
   <MenuTrigger asChild>
-    <Button icon={<MoreHorizontal20Regular />} aria-label="Thao tác" />
+    <Button icon={<MoreHorizontal20Regular />} aria-label="More actions" />
   </MenuTrigger>
   <MenuPopover>
-    <MenuItem icon={<ArrowReply20Regular className="rtl:-scale-x-100" />} secondaryContent="Ctrl+R">Trả lời</MenuItem>
-    <MenuItem icon={<Share20Regular />}>Chuyển tiếp</MenuItem>
-    <MenuItem icon={<Copy20Regular />} secondaryContent="Ctrl+C">Sao chép</MenuItem>
+    <MenuItem icon={<ArrowReply20Regular className="rtl:-scale-x-100" />} secondaryContent="Ctrl+R">Reply</MenuItem>
+    <MenuItem icon={<Share20Regular />}>Forward</MenuItem>
+    <MenuItem icon={<Copy20Regular />} secondaryContent="Ctrl+C">Copy</MenuItem>
     <MenuDivider />
-    <MenuItem icon={<Delete20Regular />}>Xoá</MenuItem>
+    <MenuItem icon={<Delete20Regular />}>Delete</MenuItem>
   </MenuPopover>
 </Menu>`,
       render: () => (
         <Menu>
           <MenuTrigger asChild>
-            <Button icon={<MoreHorizontal20Regular />} aria-label="Thao tác" />
+            <Button icon={<MoreHorizontal20Regular />} aria-label="More actions" />
           </MenuTrigger>
           <MenuPopover>
             <MenuItem icon={<ArrowReply20Regular className="rtl:-scale-x-100" />} secondaryContent="Ctrl+R">
-              Trả lời
+              Reply
             </MenuItem>
-            <MenuItem icon={<Share20Regular />}>Chuyển tiếp</MenuItem>
+            <MenuItem icon={<Share20Regular />}>Forward</MenuItem>
             <MenuItem icon={<Copy20Regular />} secondaryContent="Ctrl+C">
-              Sao chép
+              Copy
             </MenuItem>
             <MenuDivider />
-            <MenuItem icon={<Delete20Regular />}>Xoá</MenuItem>
+            <MenuItem icon={<Delete20Regular />}>Delete</MenuItem>
           </MenuPopover>
         </Menu>
       ),
@@ -205,16 +205,16 @@ const EXTRA: Record<string, ComponentDoc> = {
         code: `const [sort, setSort] = useState("date");
 
 <Menu>
-  <MenuTrigger asChild><Button>Sắp xếp</Button></MenuTrigger>
+  <MenuTrigger asChild><Button>Sort</Button></MenuTrigger>
   <MenuPopover>
-    <MenuGroupHeader>Sắp xếp theo</MenuGroupHeader>
+    <MenuGroupHeader>Sort by</MenuGroupHeader>
     <MenuRadioGroup value={sort} onValueChange={setSort}>
-      <MenuItemRadio value="date">Ngày sửa</MenuItemRadio>
-      <MenuItemRadio value="name">Tên</MenuItemRadio>
-      <MenuItemRadio value="size">Kích thước</MenuItemRadio>
+      <MenuItemRadio value="date">Date modified</MenuItemRadio>
+      <MenuItemRadio value="name">Name</MenuItemRadio>
+      <MenuItemRadio value="size">Size</MenuItemRadio>
     </MenuRadioGroup>
     <MenuDivider />
-    <MenuItemCheckbox defaultChecked>Hiện thư mục trước</MenuItemCheckbox>
+    <MenuItemCheckbox defaultChecked>Show folders first</MenuItemCheckbox>
   </MenuPopover>
 </Menu>`,
         render: () => <RadioMenuDemo />,
@@ -223,34 +223,34 @@ const EXTRA: Record<string, ComponentDoc> = {
         title: "Submenu",
         description: "Nhóm lệnh phụ; chỉ lồng tối đa 1 cấp.",
         code: `<Menu>
-  <MenuTrigger asChild><Button icon={<Edit20Regular />}>Tệp</Button></MenuTrigger>
+  <MenuTrigger asChild><Button icon={<Edit20Regular />}>File</Button></MenuTrigger>
   <MenuPopover>
-    <MenuItem icon={<Folder20Regular />}>Mở</MenuItem>
+    <MenuItem icon={<Folder20Regular />}>Open</MenuItem>
     <MenuSub>
-      <MenuSubTrigger icon={<Share20Regular />}>Chia sẻ</MenuSubTrigger>
+      <MenuSubTrigger icon={<Share20Regular />}>Share</MenuSubTrigger>
       <MenuSubPopover>
         <MenuItem icon={<Mail20Regular />}>Email</MenuItem>
-        <MenuItem icon={<Copy20Regular />}>Sao chép liên kết</MenuItem>
+        <MenuItem icon={<Copy20Regular />}>Copy link</MenuItem>
       </MenuSubPopover>
     </MenuSub>
-    <MenuItem disabled>Xuất PDF</MenuItem>
+    <MenuItem disabled>Export PDF</MenuItem>
   </MenuPopover>
 </Menu>`,
         render: () => (
           <Menu>
             <MenuTrigger asChild>
-              <Button icon={<Edit20Regular />}>Tệp</Button>
+              <Button icon={<Edit20Regular />}>File</Button>
             </MenuTrigger>
             <MenuPopover>
-              <MenuItem icon={<Folder20Regular />}>Mở</MenuItem>
+              <MenuItem icon={<Folder20Regular />}>Open</MenuItem>
               <MenuSub>
-                <MenuSubTrigger icon={<Share20Regular />}>Chia sẻ</MenuSubTrigger>
+                <MenuSubTrigger icon={<Share20Regular />}>Share</MenuSubTrigger>
                 <MenuSubPopover>
                   <MenuItem icon={<Mail20Regular />}>Email</MenuItem>
-                  <MenuItem icon={<Copy20Regular />}>Sao chép liên kết</MenuItem>
+                  <MenuItem icon={<Copy20Regular />}>Copy link</MenuItem>
                 </MenuSubPopover>
               </MenuSub>
-              <MenuItem disabled>Xuất PDF</MenuItem>
+              <MenuItem disabled>Export PDF</MenuItem>
             </MenuPopover>
           </Menu>
         ),
@@ -277,8 +277,8 @@ const EXTRA: Record<string, ComponentDoc> = {
     importCode: `import { Slider } from "@/components/ui";`,
     hero: {
       title: "Slider",
-      code: `<Slider label="Độ sáng" showValue defaultValue={[70]} rootClassName="w-72" />`,
-      render: () => <Slider label="Độ sáng" showValue defaultValue={[70]} rootClassName="w-72" />,
+      code: `<Slider label="Brightness" showValue defaultValue={[70]} rootClassName="w-72" />`,
+      render: () => <Slider label="Brightness" showValue defaultValue={[70]} rootClassName="w-72" />,
     },
     examples: [
       {
@@ -288,7 +288,7 @@ const EXTRA: Record<string, ComponentDoc> = {
 
 <div className="flex w-72 items-center gap-2">
   <Speaker220Regular />
-  <Slider aria-label="Âm lượng" value={volume} onValueChange={setVolume} />
+  <Slider aria-label="Volume" value={volume} onValueChange={setVolume} />
   <span className="w-8 text-end">{volume[0]}</span>
 </div>`,
         render: () => <VolumeDemo />,
@@ -296,8 +296,8 @@ const EXTRA: Record<string, ComponentDoc> = {
       {
         title: "Khoảng & bước",
         description: "Hai thumb cho khoảng giá trị; step để nhảy theo bước.",
-        code: `<Slider label="Khoảng giá (triệu)" showValue defaultValue={[20, 60]} step={5} rootClassName="w-72" />`,
-        render: () => <Slider label="Khoảng giá (triệu)" showValue defaultValue={[20, 60]} step={5} rootClassName="w-72" />,
+        code: `<Slider label="Price range ($)" showValue defaultValue={[20, 60]} step={5} rootClassName="w-72" />`,
+        render: () => <Slider label="Price range ($)" showValue defaultValue={[20, 60]} step={5} rootClassName="w-72" />,
       },
       {
         title: "Kích thước & disabled",
@@ -316,8 +316,8 @@ const EXTRA: Record<string, ComponentDoc> = {
       {
         title: "Glass (Yugen Labs)",
         description: "Nhấn hoặc kéo: thumb thành glass và to ra, thấy thanh trượt qua nó.",
-        code: `<Slider label="Âm lượng" material="glass" defaultValue={[60]} rootClassName="w-72" />`,
-        render: () => <Slider label="Âm lượng" material="glass" defaultValue={[60]} rootClassName="w-72" />,
+        code: `<Slider label="Volume" material="glass" defaultValue={[60]} rootClassName="w-72" />`,
+        render: () => <Slider label="Volume" material="glass" defaultValue={[60]} rootClassName="w-72" />,
       },
     ],
     dos: ["Luôn có label hoặc aria-label.", "Hiện giá trị (showValue) khi con số có ý nghĩa với người dùng."],

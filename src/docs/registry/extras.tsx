@@ -60,31 +60,31 @@ import { fabric, illustration, marble, wood } from "../sample-assets";
 // wood, marble, fabric, illustration: URL ảnh bất kỳ (ở đây là SVG sinh sẵn — xem ../sample-assets).
 
 const colors = [
-  { value: "#C2347A", label: "Hồng anh đào" },
-  { value: "#A855C9", label: "Tím phong lan" },
-  { value: "#6A5AE0", label: "Chàm" },
-  { value: "#0F6CBD", label: "Xanh dương" },
-  { value: "#23A99B", label: "Ngọc lam" },
-  { value: "#EAA300", label: "Vàng cúc" },
-  { value: "#D4704A", label: "Cam đào" },
+  { value: "#C2347A", label: "Sakura pink" },
+  { value: "#A855C9", label: "Orchid" },
+  { value: "#6A5AE0", label: "Indigo" },
+  { value: "#0F6CBD", label: "Blue" },
+  { value: "#23A99B", label: "Teal" },
+  { value: "#EAA300", label: "Marigold" },
+  { value: "#D4704A", label: "Peach" },
 ];
 
 const palette = [
-  { value: "#FDEDF3", label: "Hồng 160" },
-  { value: "#FFA7C9", label: "Hồng 130" },
-  { value: "#E24A92", label: "Hồng 90" },
-  { value: "#C2347A", label: "Hồng 80" },
-  { value: "#61213F", label: "Hồng 40" },
-  { value: "#EBF3FC", label: "Xanh 160" },
-  { value: "#96C6FA", label: "Xanh 130" },
-  { value: "#2886DE", label: "Xanh 90" },
-  { value: "#0F6CBD", label: "Xanh 80" },
-  { value: "#0E4775", label: "Xanh 40" },
+  { value: "#FDEDF3", label: "Pink 160" },
+  { value: "#FFA7C9", label: "Pink 130" },
+  { value: "#E24A92", label: "Pink 90" },
+  { value: "#C2347A", label: "Pink 80" },
+  { value: "#61213F", label: "Pink 40" },
+  { value: "#EBF3FC", label: "Blue 160" },
+  { value: "#96C6FA", label: "Blue 130" },
+  { value: "#2886DE", label: "Blue 90" },
+  { value: "#0F6CBD", label: "Blue 80" },
+  { value: "#0E4775", label: "Blue 40" },
 ];
 
-const tasks = ["Thiết kế token", "Dựng component", "Viết tài liệu", "Kiểm thử RTL", "Phát hành"];
+const tasks = ["Design tokens", "Build components", "Write docs", "Test RTL", "Release"];
 
-const fruits = ["Táo", "Chuối", "Cam", "Xoài", "Dứa", "Nho", "Ổi", "Mận", "Mít", "Lê"];
+const fruits = ["Apple", "Banana", "Orange", "Mango", "Pineapple", "Grape", "Guava", "Plum", "Kiwi", "Pear"];
 
 /** Props dùng chung của các presence motion component. */
 const PRESENCE_PROPS: PropDoc[] = [
@@ -106,7 +106,7 @@ const PRESENCE_PROPS: PropDoc[] = [
 
 function ControlledMenuButtonDemo() {
   const [open, setOpen] = useState(false);
-  const [view, setView] = useState("Lưới");
+  const [view, setView] = useState("Grid");
   return (
     <div className="flex items-center gap-3">
       <MenuButton
@@ -115,14 +115,14 @@ function ControlledMenuButtonDemo() {
         icon={<Grid20Regular />}
         menu={
           <>
-            <MenuItem onSelect={() => setView("Lưới")}>Lưới</MenuItem>
-            <MenuItem onSelect={() => setView("Danh sách")}>Danh sách</MenuItem>
+            <MenuItem onSelect={() => setView("Grid")}>Grid</MenuItem>
+            <MenuItem onSelect={() => setView("List")}>List</MenuItem>
           </>
         }
       >
-        Chế độ xem: {view}
+        View: {view}
       </MenuButton>
-      <span className="text-caption1 text-foreground-3">Menu {open ? "đang mở" : "đã đóng"}</span>
+      <span className="text-caption1 text-foreground-3">Menu {open ? "open" : "closed"}</span>
     </div>
   );
 }
@@ -132,12 +132,12 @@ function NotificationBadgeDemo() {
   return (
     <div className="flex items-center gap-4">
       <span className="relative inline-flex">
-        <Button appearance="subtle" icon={<Alert20Regular />} aria-label="Thông báo" />
+        <Button appearance="subtle" icon={<Alert20Regular />} aria-label="Notifications" />
         <CounterBadge count={count} size="small" color="danger" className="absolute -inset-e-1 -top-1" />
       </span>
-      <Button onClick={() => setCount((c) => c + 1)}>Thêm</Button>
+      <Button onClick={() => setCount((c) => c + 1)}>Add</Button>
       <Button appearance="subtle" onClick={() => setCount(0)}>
-        Đánh dấu đã đọc
+        Mark as read
       </Button>
     </div>
   );
@@ -148,14 +148,14 @@ function SwatchPickerDemo() {
   const current = colors.find((c) => c.value === color);
   return (
     <div className="flex flex-col items-start gap-3">
-      <SwatchPicker aria-label="Màu nhấn" selectedValue={color} onSelectionChange={setColor}>
+      <SwatchPicker aria-label="Accent color" selectedValue={color} onSelectionChange={setColor}>
         {colors.map((c) => (
           <ColorSwatch key={c.value} value={c.value} color={c.value} aria-label={c.label} />
         ))}
       </SwatchPicker>
       <span className="flex items-center gap-2 text-body1 text-foreground-2">
         <span className="size-4 rounded-circular" style={{ backgroundColor: color }} />
-        Đã chọn: {current?.label}
+        Selected: {current?.label}
       </span>
     </div>
   );
@@ -165,7 +165,7 @@ function FadeDemo() {
   const [visible, setVisible] = useState(true);
   return (
     <div className="flex flex-col items-center gap-3">
-      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
+      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Hide" : "Show"}</Button>
       <Fade visible={visible}>
         <div className="size-24 rounded-xlarge bg-brand-background shadow-8" />
       </Fade>
@@ -177,7 +177,7 @@ function FadeDurationDemo() {
   const [visible, setVisible] = useState(true);
   return (
     <div className="flex flex-col items-center gap-3">
-      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
+      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Hide" : "Show"}</Button>
       <div className="flex gap-3">
         <Fade visible={visible} duration="faster">
           <div className="flex size-20 items-center justify-center rounded-xlarge bg-background-1 text-caption1 shadow-8">faster</div>
@@ -195,16 +195,16 @@ function FadeDurationDemo() {
 
 function FadeUnmountDemo() {
   const [visible, setVisible] = useState(false);
-  const [log, setLog] = useState("Chưa chạy");
+  const [log, setLog] = useState("Not run yet");
   return (
     <div className="flex flex-col items-center gap-3">
-      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
+      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Hide" : "Show"}</Button>
       <Fade
         visible={visible}
         unmountOnExit
-        onMotionFinish={(direction) => setLog(direction === "enter" ? "Đã vào xong" : "Đã ra xong — phần tử đã gỡ khỏi DOM")}
+        onMotionFinish={(direction) => setLog(direction === "enter" ? "Enter finished" : "Exit finished, element removed from the DOM")}
       >
-        <div className="rounded-medium bg-background-1 px-4 py-3 text-body1 shadow-16">Bản nháp đã được lưu</div>
+        <div className="rounded-medium bg-background-1 px-4 py-3 text-body1 shadow-16">Draft saved</div>
       </Fade>
       <span className="text-caption1 text-foreground-3">{log}</span>
     </div>
@@ -215,11 +215,11 @@ function ScaleDemo() {
   const [visible, setVisible] = useState(true);
   return (
     <div className="flex flex-col items-center gap-3">
-      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
+      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Hide" : "Show"}</Button>
       <Scale visible={visible}>
         <div className="flex w-56 flex-col gap-1 rounded-xlarge bg-background-1 p-4 shadow-16">
-          <span className="text-subtitle2 font-semibold">Hộp thoại nhỏ</span>
-          <span className="text-body1 text-foreground-2">Scale phóng từ 90% kèm mờ dần.</span>
+          <span className="text-subtitle2 font-semibold">Small dialog</span>
+          <span className="text-body1 text-foreground-2">Scale grows from 90% while fading in.</span>
         </div>
       </Scale>
     </div>
@@ -230,7 +230,7 @@ function ScaleOptionsDemo() {
   const [visible, setVisible] = useState(true);
   return (
     <div className="flex flex-col items-center gap-3">
-      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
+      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Hide" : "Show"}</Button>
       <div className="flex gap-3">
         <Scale visible={visible} duration="gentle" exitDuration="fast">
           <div className="flex size-24 items-center justify-center rounded-circular bg-brand-background-2 text-caption1 font-semibold text-brand-foreground-2">
@@ -239,7 +239,7 @@ function ScaleOptionsDemo() {
         </Scale>
         <Scale visible={visible} animateOpacity={false}>
           <div className="flex size-24 items-center justify-center rounded-circular bg-brand-background-2 text-caption1 font-semibold text-brand-foreground-2">
-            không opacity
+            no opacity
           </div>
         </Scale>
       </div>
@@ -252,7 +252,7 @@ function ScaleAppearDemo() {
   return (
     <div className="flex flex-col items-center gap-3">
       <Button icon={<ArrowClockwise20Regular />} onClick={() => setRun((r) => r + 1)}>
-        Chạy lại
+        Replay
       </Button>
       <Scale key={run} visible appear duration="gentle">
         <div className="flex size-24 items-center justify-center rounded-xlarge bg-background-1 text-subtitle1 font-semibold shadow-8">
@@ -267,7 +267,7 @@ function SlideDemo() {
   const [visible, setVisible] = useState(true);
   return (
     <div className="flex flex-col items-center gap-3">
-      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
+      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Hide" : "Show"}</Button>
       <div className="grid grid-cols-4 gap-3">
         {(["start", "end", "top", "bottom"] as const).map((from) => (
           <Slide key={from} visible={visible} from={from}>
@@ -285,16 +285,16 @@ function SlideRtlDemo() {
   const [visible, setVisible] = useState(true);
   return (
     <div className="flex flex-col items-center gap-3">
-      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
+      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Hide" : "Show"}</Button>
       <div dir="rtl" className="flex gap-3">
         <Slide visible={visible} from="start">
           <div className="flex h-16 w-32 items-center justify-center rounded-xlarge bg-background-1 text-caption1 shadow-8">
-            start → từ phải
+            start → from the right
           </div>
         </Slide>
         <Slide visible={visible} from="end">
           <div className="flex h-16 w-32 items-center justify-center rounded-xlarge bg-background-1 text-caption1 shadow-8">
-            end → từ trái
+            end → from the left
           </div>
         </Slide>
       </div>
@@ -307,17 +307,17 @@ function SlideNoticeDemo() {
   return (
     <div className="flex h-40 w-80 flex-col items-center justify-between">
       <Button appearance="primary" onClick={() => setVisible(true)}>
-        Lưu thay đổi
+        Save changes
       </Button>
       <Slide visible={visible} from="bottom" unmountOnExit>
         <div className="flex w-full items-center gap-2 rounded-medium bg-background-1 p-3 text-body1 shadow-16">
           <CheckmarkCircle20Regular className="shrink-0 text-success-foreground-1" />
-          <span className="flex-1">Đã lưu thay đổi.</span>
+          <span className="flex-1">Changes saved.</span>
           <Button
             appearance="transparent"
             size="small"
             icon={<Dismiss16Regular />}
-            aria-label="Đóng"
+            aria-label="Close"
             onClick={() => setVisible(false)}
           />
         </div>
@@ -331,12 +331,12 @@ function CollapseDemo() {
   return (
     <div className="flex w-80 flex-col items-start gap-2">
       <Button aria-expanded={open} onClick={() => setOpen((o) => !o)}>
-        {open ? "Thu gọn" : "Xem chi tiết"}
+        {open ? "Show less" : "Show details"}
       </Button>
       <Collapse visible={open}>
         <div className="rounded-medium bg-background-1 p-3 text-body1 text-foreground-2 shadow-4">
-          Collapse dùng kỹ thuật grid-template-rows 0fr → 1fr nên không cần đo chiều cao nội dung — văn bản dài, ảnh
-          hay danh sách đều giãn mượt.
+          Collapse animates grid-template-rows from 0fr to 1fr, so it never measures content height. Long text, images
+          and lists all expand smoothly.
         </div>
       </Collapse>
     </div>
@@ -349,15 +349,15 @@ function CollapseHorizontalDemo() {
     <div className="flex h-40 items-start gap-2">
       <Button
         icon={<Navigation20Regular />}
-        aria-label={open ? "Thu gọn điều hướng" : "Mở điều hướng"}
+        aria-label={open ? "Collapse navigation" : "Expand navigation"}
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
       />
       <Collapse visible={open} orientation="horizontal" className="h-full">
         <nav className="flex h-full w-48 flex-col gap-1 rounded-medium bg-background-1 p-2 text-body1 shadow-4">
-          <span className="px-2 py-1">Trang chủ</span>
-          <span className="px-2 py-1">Tài liệu</span>
-          <span className="px-2 py-1">Cài đặt</span>
+          <span className="px-2 py-1">Home</span>
+          <span className="px-2 py-1">Docs</span>
+          <span className="px-2 py-1">Settings</span>
         </nav>
       </Collapse>
     </div>
@@ -369,13 +369,13 @@ function CollapseSlowDemo() {
   return (
     <div className="flex w-80 flex-col items-start gap-2">
       <Button aria-expanded={open} onClick={() => setOpen((o) => !o)}>
-        {open ? "Thu gọn" : "Mở rộng"}
+        {open ? "Show less" : "Show more"}
       </Button>
       <Collapse visible={open} animateOpacity={false} duration="slow" exitDuration="fast">
         <ul className="flex flex-col gap-1 rounded-medium bg-background-1 p-3 text-body1 shadow-4">
-          <li>Mở: slow (300ms), giảm tốc</li>
-          <li>Đóng: fast (150ms), tăng tốc</li>
-          <li>Không đổi opacity</li>
+          <li>Open: slow (300ms), decelerate</li>
+          <li>Close: fast (150ms), accelerate</li>
+          <li>Opacity unchanged</li>
         </ul>
       </Collapse>
     </div>
@@ -386,7 +386,7 @@ function BlurRotateDemo() {
   const [visible, setVisible] = useState(true);
   return (
     <div className="flex flex-col items-center gap-3">
-      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
+      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Hide" : "Show"}</Button>
       <div className="flex gap-4">
         <Blur visible={visible}>
           <div className="flex size-24 items-center justify-center rounded-xlarge bg-background-1 text-subtitle2 font-semibold shadow-8">
@@ -409,7 +409,7 @@ function RotateIconDemo() {
     <Button
       appearance="primary"
       iconOnly
-      aria-label={playing ? "Tạm dừng" : "Phát"}
+      aria-label={playing ? "Pause" : "Play"}
       onClick={() => setPlaying((p) => !p)}
       icon={
         <span className="grid *:col-start-1 *:row-start-1">
@@ -430,10 +430,10 @@ function BlurAppearDemo() {
   return (
     <div className="flex flex-col items-center gap-3">
       <Button icon={<ArrowClockwise20Regular />} onClick={() => setRun((r) => r + 1)}>
-        Chạy lại
+        Replay
       </Button>
       <Blur key={run} visible appear duration="slow">
-        <p className="max-w-xs text-center text-subtitle1 font-semibold">幽玄 — vẻ đẹp sâu lắng, khó nắm bắt.</p>
+        <p className="max-w-xs text-center text-subtitle1 font-semibold">幽玄 — a deep, quiet beauty that is hard to put into words.</p>
       </Blur>
     </div>
   );
@@ -443,7 +443,7 @@ function StaggerDemo() {
   const [visible, setVisible] = useState(true);
   return (
     <div className="flex w-64 flex-col gap-3">
-      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn danh sách" : "Hiện danh sách"}</Button>
+      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Hide list" : "Show list"}</Button>
       <div className="flex flex-col gap-1">
         <Stagger visible={visible}>
           {tasks.map((task) => (
@@ -461,7 +461,7 @@ function StaggerSlideDemo() {
   const [visible, setVisible] = useState(false);
   return (
     <div className="flex flex-col items-center gap-3">
-      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
+      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Hide" : "Show"}</Button>
       <div className="flex gap-2">
         <Stagger visible={visible} itemDelay="fast">
           {["桜", "幽", "玄", "和", "風"].map((ch) => (
@@ -482,7 +482,7 @@ function StaggerAppearDemo() {
   return (
     <div className="flex flex-col items-center gap-3">
       <Button icon={<ArrowClockwise20Regular />} onClick={() => setRun((r) => r + 1)}>
-        Chạy lại
+        Replay
       </Button>
       <div key={run} className="grid grid-cols-4 gap-2">
         <Stagger visible appear itemDelay="faster">
@@ -509,14 +509,14 @@ function AnnounceDemo() {
           onClick={() => {
             const next = count + 1;
             setCount(next);
-            announce("Đã thêm vào giỏ. Giỏ hàng có " + next + " sản phẩm.", { batchId: "cart" });
+            announce("Added to cart. Items in cart: " + next + ".", { batchId: "cart" });
           }}
         >
-          Thêm vào giỏ ({count})
+          Add to cart ({count})
         </Button>
-        <Button onClick={() => announce("Không thể kết nối máy chủ.", { politeness: "assertive" })}>Báo lỗi</Button>
+        <Button onClick={() => announce("Can't reach the server.", { politeness: "assertive" })}>Show error</Button>
       </div>
-      <span className="text-caption1 text-foreground-3">Bật trình đọc màn hình (Narrator: Ctrl + Win + Enter) để nghe.</span>
+      <span className="text-caption1 text-foreground-3">Turn on a screen reader (Narrator: Ctrl + Win + Enter) to hear it.</span>
     </div>
   );
 }
@@ -529,10 +529,10 @@ function SaveStatus() {
       icon={<Checkmark20Regular />}
       onClick={() => {
         setSaved(true);
-        announce("Đã lưu bản nháp lúc " + new Date().toLocaleTimeString("vi-VN"));
+        announce("Draft saved at " + new Date().toLocaleTimeString("en-US"));
       }}
     >
-      {saved ? "Đã lưu" : "Lưu bản nháp"}
+      {saved ? "Saved" : "Save draft"}
     </Button>
   );
 }
@@ -552,16 +552,16 @@ function SearchAnnounceDemo() {
   return (
     <div className="flex w-72 flex-col gap-2">
       <SearchBox
-        aria-label="Tìm trái cây"
+        aria-label="Search fruit"
         value={query}
         onValueChange={(value) => {
           setQuery(value);
           const count = fruits.filter((f) => f.toLowerCase().includes(value.trim().toLowerCase())).length;
-          announce(count + " kết quả", { batchId: "search" });
+          announce(count + " results", { batchId: "search" });
         }}
       />
       <span className="text-caption1 text-foreground-3">
-        {results.length} kết quả: {results.join(", ")}
+        {results.length} results: {results.join(", ")}
       </span>
     </div>
   );
@@ -570,11 +570,11 @@ function SearchAnnounceDemo() {
 function ArrowNavDemo() {
   const nav = useArrowNavigationGroup({ axis: "horizontal", circular: true });
   return (
-    <div {...nav} role="toolbar" aria-label="Định dạng" className="flex gap-1 rounded-medium bg-background-1 p-1 shadow-4">
-      <Button appearance="subtle" icon={<TextBold20Regular />} aria-label="Đậm" />
-      <Button appearance="subtle" icon={<TextItalic20Regular />} aria-label="Nghiêng" />
-      <Button appearance="subtle" icon={<TextUnderline20Regular />} aria-label="Gạch chân" />
-      <Button appearance="subtle" icon={<TextAlignLeft20Regular />} aria-label="Căn trái" />
+    <div {...nav} role="toolbar" aria-label="Formatting" className="flex gap-1 rounded-medium bg-background-1 p-1 shadow-4">
+      <Button appearance="subtle" icon={<TextBold20Regular />} aria-label="Bold" />
+      <Button appearance="subtle" icon={<TextItalic20Regular />} aria-label="Italic" />
+      <Button appearance="subtle" icon={<TextUnderline20Regular />} aria-label="Underline" />
+      <Button appearance="subtle" icon={<TextAlignLeft20Regular />} aria-label="Align left" />
     </div>
   );
 }
@@ -582,8 +582,8 @@ function ArrowNavDemo() {
 function GridNavDemo() {
   const nav = useArrowNavigationGroup({ axis: "grid", memorizeCurrent: true });
   return (
-    <div {...nav} role="group" aria-label="Ứng dụng" className="grid grid-cols-3 gap-2">
-      {["Thư", "Lịch", "Danh bạ", "Tệp", "Ghi chú", "Việc cần làm", "Ảnh", "Bản đồ", "Cài đặt"].map((app) => (
+    <div {...nav} role="group" aria-label="Apps" className="grid grid-cols-3 gap-2">
+      {["Mail", "Calendar", "Contacts", "Files", "Notes", "To Do", "Photos", "Maps", "Settings"].map((app) => (
         <Button key={app} className="w-28">
           {app}
         </Button>
@@ -595,8 +595,8 @@ function GridNavDemo() {
 function VerticalNavDemo() {
   const nav = useArrowNavigationGroup({ axis: "vertical", circular: true });
   return (
-    <div {...nav} role="group" aria-label="Thư mục" className="flex w-56 flex-col gap-0.5 rounded-medium bg-background-1 p-1 shadow-4">
-      {["Hộp thư đến", "Đã gửi", "Bản nháp", "Lưu trữ"].map((folder) => (
+    <div {...nav} role="group" aria-label="Folders" className="flex w-56 flex-col gap-0.5 rounded-medium bg-background-1 p-1 shadow-4">
+      {["Inbox", "Sent", "Drafts", "Archive"].map((folder) => (
         <Button key={folder} appearance="subtle" className="justify-start">
           {folder}
         </Button>
@@ -612,10 +612,10 @@ function FocusableCard({ title }: { title: string }) {
       <span className="text-subtitle2 font-semibold">{title}</span>
       <div className="flex gap-1">
         <Button size="small" icon={<Heart20Regular />}>
-          Thích
+          Like
         </Button>
         <Button size="small" icon={<Share20Regular />}>
-          Chia sẻ
+          Share
         </Button>
       </div>
     </div>
@@ -625,8 +625,8 @@ function FocusableCard({ title }: { title: string }) {
 function CardGroupDemo() {
   const nav = useArrowNavigationGroup({ axis: "horizontal" });
   return (
-    <div {...nav} role="list" aria-label="Bài viết" className="flex gap-3">
-      {["Ra mắt Yugen UI", "Bảng màu Sakura"].map((title) => (
+    <div {...nav} role="list" aria-label="Posts" className="flex flex-wrap gap-3">
+      {["Introducing Yugen UI", "The Sakura palette"].map((title) => (
         <FocusableCard key={title} title={title} />
       ))}
     </div>
@@ -647,12 +647,12 @@ const EXTRAS: ComponentDoc[] = [
     importCode: `import { CompoundButton } from "@/components/ui";`,
     hero: {
       title: "CompoundButton",
-      code: `<CompoundButton appearance="primary" icon={<CalendarMonth28Regular />} secondaryContent="Gửi lời mời cho cả nhóm">
-  Tạo cuộc họp
+      code: `<CompoundButton appearance="primary" icon={<CalendarMonth28Regular />} secondaryContent="Send invites to the whole team">
+  New meeting
 </CompoundButton>`,
       render: () => (
-        <CompoundButton appearance="primary" icon={<CalendarMonth28Regular />} secondaryContent="Gửi lời mời cho cả nhóm">
-          Tạo cuộc họp
+        <CompoundButton appearance="primary" icon={<CalendarMonth28Regular />} secondaryContent="Send invites to the whole team">
+          New meeting
         </CompoundButton>
       ),
     },
@@ -660,26 +660,26 @@ const EXTRAS: ComponentDoc[] = [
       {
         title: "Appearance",
         description: "secondary (mặc định), primary, outline, subtle, transparent.",
-        code: `<CompoundButton icon={<Video24Regular />} secondaryContent="Mặc định">Secondary</CompoundButton>
-<CompoundButton appearance="primary" icon={<Video24Regular />} secondaryContent="Hành động chính">Primary</CompoundButton>
-<CompoundButton appearance="outline" icon={<Video24Regular />} secondaryContent="Viền, nền trong suốt">Outline</CompoundButton>
-<CompoundButton appearance="subtle" icon={<Video24Regular />} secondaryContent="Nền khi hover">Subtle</CompoundButton>
-<CompoundButton appearance="transparent" icon={<Video24Regular />} secondaryContent="Chỉ đổi màu chữ">Transparent</CompoundButton>`,
+        code: `<CompoundButton icon={<Video24Regular />} secondaryContent="Default">Secondary</CompoundButton>
+<CompoundButton appearance="primary" icon={<Video24Regular />} secondaryContent="Main action">Primary</CompoundButton>
+<CompoundButton appearance="outline" icon={<Video24Regular />} secondaryContent="Border, no fill">Outline</CompoundButton>
+<CompoundButton appearance="subtle" icon={<Video24Regular />} secondaryContent="Fill on hover">Subtle</CompoundButton>
+<CompoundButton appearance="transparent" icon={<Video24Regular />} secondaryContent="Text color only">Transparent</CompoundButton>`,
         render: () => (
           <>
-            <CompoundButton icon={<Video24Regular />} secondaryContent="Mặc định">
+            <CompoundButton icon={<Video24Regular />} secondaryContent="Default">
               Secondary
             </CompoundButton>
-            <CompoundButton appearance="primary" icon={<Video24Regular />} secondaryContent="Hành động chính">
+            <CompoundButton appearance="primary" icon={<Video24Regular />} secondaryContent="Main action">
               Primary
             </CompoundButton>
-            <CompoundButton appearance="outline" icon={<Video24Regular />} secondaryContent="Viền, nền trong suốt">
+            <CompoundButton appearance="outline" icon={<Video24Regular />} secondaryContent="Border, no fill">
               Outline
             </CompoundButton>
-            <CompoundButton appearance="subtle" icon={<Video24Regular />} secondaryContent="Nền khi hover">
+            <CompoundButton appearance="subtle" icon={<Video24Regular />} secondaryContent="Fill on hover">
               Subtle
             </CompoundButton>
-            <CompoundButton appearance="transparent" icon={<Video24Regular />} secondaryContent="Chỉ đổi màu chữ">
+            <CompoundButton appearance="transparent" icon={<Video24Regular />} secondaryContent="Text color only">
               Transparent
             </CompoundButton>
           </>
@@ -690,7 +690,7 @@ const EXTRAS: ComponentDoc[] = [
         description: "small (icon 32px), medium và large (icon 40px).",
         code: `<CompoundButton size="small" icon={<Mic24Regular />} secondaryContent="Icon 32px">Small</CompoundButton>
 <CompoundButton size="medium" icon={<Mic24Regular />} secondaryContent="Icon 40px">Medium</CompoundButton>
-<CompoundButton size="large" icon={<Mic24Regular />} secondaryContent="Icon 40px, chữ lớn">Large</CompoundButton>`,
+<CompoundButton size="large" icon={<Mic24Regular />} secondaryContent="Icon 40px, larger text">Large</CompoundButton>`,
         render: () => (
           <>
             <CompoundButton size="small" icon={<Mic24Regular />} secondaryContent="Icon 32px">
@@ -699,7 +699,7 @@ const EXTRAS: ComponentDoc[] = [
             <CompoundButton size="medium" icon={<Mic24Regular />} secondaryContent="Icon 40px">
               Medium
             </CompoundButton>
-            <CompoundButton size="large" icon={<Mic24Regular />} secondaryContent="Icon 40px, chữ lớn">
+            <CompoundButton size="large" icon={<Mic24Regular />} secondaryContent="Icon 40px, larger text">
               Large
             </CompoundButton>
           </>
@@ -708,21 +708,21 @@ const EXTRAS: ComponentDoc[] = [
       {
         title: "Vị trí icon, chỉ icon & disabled",
         description: "iconPosition=\"after\"; bỏ children để thành nút chỉ icon (bắt buộc aria-label).",
-        code: `<CompoundButton icon={<ArrowDownload24Regular />} iconPosition="after" secondaryContent="PDF · 2,4 MB">
-  Tải báo cáo
+        code: `<CompoundButton icon={<ArrowDownload24Regular />} iconPosition="after" secondaryContent="PDF · 2.4 MB">
+  Download report
 </CompoundButton>
-<CompoundButton icon={<DocumentAdd24Regular />} aria-label="Tài liệu mới" />
-<CompoundButton disabled icon={<People24Regular />} secondaryContent="Cần quyền quản trị">
-  Mời thành viên
+<CompoundButton icon={<DocumentAdd24Regular />} aria-label="New document" />
+<CompoundButton disabled icon={<People24Regular />} secondaryContent="Requires admin access">
+  Invite members
 </CompoundButton>`,
         render: () => (
           <>
-            <CompoundButton icon={<ArrowDownload24Regular />} iconPosition="after" secondaryContent="PDF · 2,4 MB">
-              Tải báo cáo
+            <CompoundButton icon={<ArrowDownload24Regular />} iconPosition="after" secondaryContent="PDF · 2.4 MB">
+              Download report
             </CompoundButton>
-            <CompoundButton icon={<DocumentAdd24Regular />} aria-label="Tài liệu mới" />
-            <CompoundButton disabled icon={<People24Regular />} secondaryContent="Cần quyền quản trị">
-              Mời thành viên
+            <CompoundButton icon={<DocumentAdd24Regular />} aria-label="New document" />
+            <CompoundButton disabled icon={<People24Regular />} secondaryContent="Requires admin access">
+              Invite members
             </CompoundButton>
           </>
         ),
@@ -730,12 +730,12 @@ const EXTRAS: ComponentDoc[] = [
       {
         title: "Liên kết (asChild)",
         description: "Giữ giao diện CompoundButton nhưng render thẻ <a>.",
-        code: `<CompoundButton asChild appearance="outline" icon={<Rocket24Regular />} secondaryContent="Mở trang tài liệu Button">
-  <a href="#/components/button">Xem Button</a>
+        code: `<CompoundButton asChild appearance="outline" icon={<Rocket24Regular />} secondaryContent="Open the Button docs">
+  <a href="#/components/button">View Button</a>
 </CompoundButton>`,
         render: () => (
-          <CompoundButton asChild appearance="outline" icon={<Rocket24Regular />} secondaryContent="Mở trang tài liệu Button">
-            <a href="#/components/button">Xem Button</a>
+          <CompoundButton asChild appearance="outline" icon={<Rocket24Regular />} secondaryContent="Open the Button docs">
+            <a href="#/components/button">View Button</a>
           </CompoundButton>
         ),
       },
@@ -782,26 +782,26 @@ const EXTRAS: ComponentDoc[] = [
   icon={<ArrowSort20Regular />}
   menu={
     <>
-      <MenuItem>Mới nhất</MenuItem>
-      <MenuItem>Cũ nhất</MenuItem>
-      <MenuItem>Theo tên</MenuItem>
+      <MenuItem>Newest</MenuItem>
+      <MenuItem>Oldest</MenuItem>
+      <MenuItem>By name</MenuItem>
     </>
   }
 >
-  Sắp xếp
+  Sort
 </MenuButton>`,
       render: () => (
         <MenuButton
           icon={<ArrowSort20Regular />}
           menu={
             <>
-              <MenuItem>Mới nhất</MenuItem>
-              <MenuItem>Cũ nhất</MenuItem>
-              <MenuItem>Theo tên</MenuItem>
+              <MenuItem>Newest</MenuItem>
+              <MenuItem>Oldest</MenuItem>
+              <MenuItem>By name</MenuItem>
             </>
           }
         >
-          Sắp xếp
+          Sort
         </MenuButton>
       ),
     },
@@ -809,24 +809,24 @@ const EXTRAS: ComponentDoc[] = [
       {
         title: "Appearance",
         description: "primary, secondary (mặc định), outline, subtle, transparent.",
-        code: `<MenuButton appearance="primary" menu={<MenuItem>Tuỳ chọn</MenuItem>}>Primary</MenuButton>
-<MenuButton menu={<MenuItem>Tuỳ chọn</MenuItem>}>Secondary</MenuButton>
-<MenuButton appearance="outline" menu={<MenuItem>Tuỳ chọn</MenuItem>}>Outline</MenuButton>
-<MenuButton appearance="subtle" menu={<MenuItem>Tuỳ chọn</MenuItem>}>Subtle</MenuButton>
-<MenuButton appearance="transparent" menu={<MenuItem>Tuỳ chọn</MenuItem>}>Transparent</MenuButton>`,
+        code: `<MenuButton appearance="primary" menu={<MenuItem>Option</MenuItem>}>Primary</MenuButton>
+<MenuButton menu={<MenuItem>Option</MenuItem>}>Secondary</MenuButton>
+<MenuButton appearance="outline" menu={<MenuItem>Option</MenuItem>}>Outline</MenuButton>
+<MenuButton appearance="subtle" menu={<MenuItem>Option</MenuItem>}>Subtle</MenuButton>
+<MenuButton appearance="transparent" menu={<MenuItem>Option</MenuItem>}>Transparent</MenuButton>`,
         render: () => (
           <>
-            <MenuButton appearance="primary" menu={<MenuItem>Tuỳ chọn</MenuItem>}>
+            <MenuButton appearance="primary" menu={<MenuItem>Option</MenuItem>}>
               Primary
             </MenuButton>
-            <MenuButton menu={<MenuItem>Tuỳ chọn</MenuItem>}>Secondary</MenuButton>
-            <MenuButton appearance="outline" menu={<MenuItem>Tuỳ chọn</MenuItem>}>
+            <MenuButton menu={<MenuItem>Option</MenuItem>}>Secondary</MenuButton>
+            <MenuButton appearance="outline" menu={<MenuItem>Option</MenuItem>}>
               Outline
             </MenuButton>
-            <MenuButton appearance="subtle" menu={<MenuItem>Tuỳ chọn</MenuItem>}>
+            <MenuButton appearance="subtle" menu={<MenuItem>Option</MenuItem>}>
               Subtle
             </MenuButton>
-            <MenuButton appearance="transparent" menu={<MenuItem>Tuỳ chọn</MenuItem>}>
+            <MenuButton appearance="transparent" menu={<MenuItem>Option</MenuItem>}>
               Transparent
             </MenuButton>
           </>
@@ -835,18 +835,18 @@ const EXTRAS: ComponentDoc[] = [
       {
         title: "Kích thước",
         description: "small, medium, large.",
-        code: `<MenuButton size="small" menu={<MenuItem>Tuỳ chọn</MenuItem>}>Small</MenuButton>
-<MenuButton size="medium" menu={<MenuItem>Tuỳ chọn</MenuItem>}>Medium</MenuButton>
-<MenuButton size="large" menu={<MenuItem>Tuỳ chọn</MenuItem>}>Large</MenuButton>`,
+        code: `<MenuButton size="small" menu={<MenuItem>Option</MenuItem>}>Small</MenuButton>
+<MenuButton size="medium" menu={<MenuItem>Option</MenuItem>}>Medium</MenuButton>
+<MenuButton size="large" menu={<MenuItem>Option</MenuItem>}>Large</MenuButton>`,
         render: () => (
           <>
-            <MenuButton size="small" menu={<MenuItem>Tuỳ chọn</MenuItem>}>
+            <MenuButton size="small" menu={<MenuItem>Option</MenuItem>}>
               Small
             </MenuButton>
-            <MenuButton size="medium" menu={<MenuItem>Tuỳ chọn</MenuItem>}>
+            <MenuButton size="medium" menu={<MenuItem>Option</MenuItem>}>
               Medium
             </MenuButton>
-            <MenuButton size="large" menu={<MenuItem>Tuỳ chọn</MenuItem>}>
+            <MenuButton size="large" menu={<MenuItem>Option</MenuItem>}>
               Large
             </MenuButton>
           </>
@@ -856,36 +856,36 @@ const EXTRAS: ComponentDoc[] = [
         title: "Chỉ icon, menuIcon & disabled",
         description: "Không có nhãn → nút gọn gồm icon + chevron (cần aria-label). menuIcon thay chevron mặc định.",
         code: `<MenuButton
-  aria-label="Thêm mới"
+  aria-label="New"
   icon={<Add20Regular />}
   menu={
     <>
-      <MenuItem icon={<Document20Regular />}>Tài liệu</MenuItem>
-      <MenuItem icon={<Folder20Regular />}>Thư mục</MenuItem>
+      <MenuItem icon={<Document20Regular />}>Document</MenuItem>
+      <MenuItem icon={<Folder20Regular />}>Folder</MenuItem>
     </>
   }
 />
-<MenuButton appearance="subtle" menuIcon={<MoreHorizontal20Regular />} menu={<MenuItem>Đổi tên</MenuItem>}>
-  Thao tác
+<MenuButton appearance="subtle" menuIcon={<MoreHorizontal20Regular />} menu={<MenuItem>Rename</MenuItem>}>
+  Actions
 </MenuButton>
-<MenuButton disabled menu={<MenuItem>Tuỳ chọn</MenuItem>}>Không khả dụng</MenuButton>`,
+<MenuButton disabled menu={<MenuItem>Option</MenuItem>}>Unavailable</MenuButton>`,
         render: () => (
           <>
             <MenuButton
-              aria-label="Thêm mới"
+              aria-label="New"
               icon={<Add20Regular />}
               menu={
                 <>
-                  <MenuItem icon={<Document20Regular />}>Tài liệu</MenuItem>
-                  <MenuItem icon={<Folder20Regular />}>Thư mục</MenuItem>
+                  <MenuItem icon={<Document20Regular />}>Document</MenuItem>
+                  <MenuItem icon={<Folder20Regular />}>Folder</MenuItem>
                 </>
               }
             />
-            <MenuButton appearance="subtle" menuIcon={<MoreHorizontal20Regular />} menu={<MenuItem>Đổi tên</MenuItem>}>
-              Thao tác
+            <MenuButton appearance="subtle" menuIcon={<MoreHorizontal20Regular />} menu={<MenuItem>Rename</MenuItem>}>
+              Actions
             </MenuButton>
-            <MenuButton disabled menu={<MenuItem>Tuỳ chọn</MenuItem>}>
-              Không khả dụng
+            <MenuButton disabled menu={<MenuItem>Option</MenuItem>}>
+              Unavailable
             </MenuButton>
           </>
         ),
@@ -895,7 +895,7 @@ const EXTRAS: ComponentDoc[] = [
         description: "open / onOpenChange để đồng bộ với state bên ngoài.",
         code: `function ControlledMenuButtonDemo() {
   const [open, setOpen] = useState(false);
-  const [view, setView] = useState("Lưới");
+  const [view, setView] = useState("Grid");
   return (
     <div className="flex items-center gap-3">
       <MenuButton
@@ -904,14 +904,14 @@ const EXTRAS: ComponentDoc[] = [
         icon={<Grid20Regular />}
         menu={
           <>
-            <MenuItem onSelect={() => setView("Lưới")}>Lưới</MenuItem>
-            <MenuItem onSelect={() => setView("Danh sách")}>Danh sách</MenuItem>
+            <MenuItem onSelect={() => setView("Grid")}>Grid</MenuItem>
+            <MenuItem onSelect={() => setView("List")}>List</MenuItem>
           </>
         }
       >
-        Chế độ xem: {view}
+        View: {view}
       </MenuButton>
-      <span className="text-caption1 text-foreground-3">Menu {open ? "đang mở" : "đã đóng"}</span>
+      <span className="text-caption1 text-foreground-3">Menu {open ? "open" : "closed"}</span>
     </div>
   );
 }`,
@@ -1023,11 +1023,11 @@ const EXTRAS: ComponentDoc[] = [
   return (
     <div className="flex items-center gap-4">
       <span className="relative inline-flex">
-        <Button appearance="subtle" icon={<Alert20Regular />} aria-label="Thông báo" />
+        <Button appearance="subtle" icon={<Alert20Regular />} aria-label="Notifications" />
         <CounterBadge count={count} size="small" color="danger" className="absolute -inset-e-1 -top-1" />
       </span>
-      <Button onClick={() => setCount((c) => c + 1)}>Thêm</Button>
-      <Button appearance="subtle" onClick={() => setCount(0)}>Đánh dấu đã đọc</Button>
+      <Button onClick={() => setCount((c) => c + 1)}>Add</Button>
+      <Button appearance="subtle" onClick={() => setCount(0)}>Mark as read</Button>
     </div>
   );
 }`,
@@ -1089,48 +1089,48 @@ const EXTRAS: ComponentDoc[] = [
         title: "Trạng thái",
         description: "Tám trạng thái; luôn kèm chữ khi không gian cho phép (không chỉ dựa vào màu).",
         code: `<div className="grid grid-cols-2 gap-x-5 gap-y-2 text-body1">
-  <span className="flex items-center gap-2"><PresenceBadge status="available" />Có mặt</span>
-  <span className="flex items-center gap-2"><PresenceBadge status="away" />Vắng mặt</span>
-  <span className="flex items-center gap-2"><PresenceBadge status="busy" />Bận</span>
-  <span className="flex items-center gap-2"><PresenceBadge status="do-not-disturb" />Không làm phiền</span>
-  <span className="flex items-center gap-2"><PresenceBadge status="offline" />Ngoại tuyến</span>
-  <span className="flex items-center gap-2"><PresenceBadge status="out-of-office" />Không ở văn phòng</span>
-  <span className="flex items-center gap-2"><PresenceBadge status="blocked" />Đã chặn</span>
-  <span className="flex items-center gap-2"><PresenceBadge status="unknown" />Không xác định</span>
+  <span className="flex items-center gap-2"><PresenceBadge status="available" />Available</span>
+  <span className="flex items-center gap-2"><PresenceBadge status="away" />Away</span>
+  <span className="flex items-center gap-2"><PresenceBadge status="busy" />Busy</span>
+  <span className="flex items-center gap-2"><PresenceBadge status="do-not-disturb" />Do not disturb</span>
+  <span className="flex items-center gap-2"><PresenceBadge status="offline" />Offline</span>
+  <span className="flex items-center gap-2"><PresenceBadge status="out-of-office" />Out of office</span>
+  <span className="flex items-center gap-2"><PresenceBadge status="blocked" />Blocked</span>
+  <span className="flex items-center gap-2"><PresenceBadge status="unknown" />Unknown</span>
 </div>`,
         render: () => (
           <div className="grid grid-cols-2 gap-x-5 gap-y-2 text-body1">
             <span className="flex items-center gap-2">
               <PresenceBadge status="available" />
-              Có mặt
+              Available
             </span>
             <span className="flex items-center gap-2">
               <PresenceBadge status="away" />
-              Vắng mặt
+              Away
             </span>
             <span className="flex items-center gap-2">
               <PresenceBadge status="busy" />
-              Bận
+              Busy
             </span>
             <span className="flex items-center gap-2">
               <PresenceBadge status="do-not-disturb" />
-              Không làm phiền
+              Do not disturb
             </span>
             <span className="flex items-center gap-2">
               <PresenceBadge status="offline" />
-              Ngoại tuyến
+              Offline
             </span>
             <span className="flex items-center gap-2">
               <PresenceBadge status="out-of-office" />
-              Không ở văn phòng
+              Out of office
             </span>
             <span className="flex items-center gap-2">
               <PresenceBadge status="blocked" />
-              Đã chặn
+              Blocked
             </span>
             <span className="flex items-center gap-2">
               <PresenceBadge status="unknown" />
-              Không xác định
+              Unknown
             </span>
           </div>
         ),
@@ -1177,29 +1177,29 @@ const EXTRAS: ComponentDoc[] = [
         title: "Trên Avatar",
         description: "ring tạo viền 2px màu nền; định vị bằng thuộc tính logical (-inset-e-px) để đúng cả RTL.",
         code: `<span className="relative inline-flex">
-  <Avatar name="Nguyễn Văn An" size={48} color="colorful" />
+  <Avatar name="Alex Chen" size={48} color="colorful" />
   <PresenceBadge status="available" ring className="absolute -inset-e-px -bottom-px" />
 </span>
 <span className="relative inline-flex">
-  <Avatar name="Trần Thị Bình" size={48} color="colorful" />
+  <Avatar name="Maria Garcia" size={48} color="colorful" />
   <PresenceBadge status="busy" ring className="absolute -inset-e-px -bottom-px" />
 </span>
 <span className="relative inline-flex">
-  <Avatar name="Lê Hoàng Cường" size={48} color="colorful" />
+  <Avatar name="Sam Lee" size={48} color="colorful" />
   <PresenceBadge status="away" outOfOffice ring className="absolute -inset-e-px -bottom-px" />
 </span>`,
         render: () => (
           <>
             <span className="relative inline-flex">
-              <Avatar name="Nguyễn Văn An" size={48} color="colorful" />
+              <Avatar name="Alex Chen" size={48} color="colorful" />
               <PresenceBadge status="available" ring className="absolute -inset-e-px -bottom-px" />
             </span>
             <span className="relative inline-flex">
-              <Avatar name="Trần Thị Bình" size={48} color="colorful" />
+              <Avatar name="Maria Garcia" size={48} color="colorful" />
               <PresenceBadge status="busy" ring className="absolute -inset-e-px -bottom-px" />
             </span>
             <span className="relative inline-flex">
-              <Avatar name="Lê Hoàng Cường" size={48} color="colorful" />
+              <Avatar name="Sam Lee" size={48} color="colorful" />
               <PresenceBadge status="away" outOfOffice ring className="absolute -inset-e-px -bottom-px" />
             </span>
           </>
@@ -1246,13 +1246,13 @@ const EXTRAS: ComponentDoc[] = [
     hero: {
       title: "SwatchPicker",
       code: `const colors = [
-  { value: "#C2347A", label: "Hồng anh đào" },
-  { value: "#A855C9", label: "Tím phong lan" },
-  { value: "#6A5AE0", label: "Chàm" },
-  { value: "#0F6CBD", label: "Xanh dương" },
-  { value: "#23A99B", label: "Ngọc lam" },
-  { value: "#EAA300", label: "Vàng cúc" },
-  { value: "#D4704A", label: "Cam đào" },
+  { value: "#C2347A", label: "Sakura pink" },
+  { value: "#A855C9", label: "Orchid" },
+  { value: "#6A5AE0", label: "Indigo" },
+  { value: "#0F6CBD", label: "Blue" },
+  { value: "#23A99B", label: "Teal" },
+  { value: "#EAA300", label: "Marigold" },
+  { value: "#D4704A", label: "Peach" },
 ];
 
 function SwatchPickerDemo() {
@@ -1260,14 +1260,14 @@ function SwatchPickerDemo() {
   const current = colors.find((c) => c.value === color);
   return (
     <div className="flex flex-col items-start gap-3">
-      <SwatchPicker aria-label="Màu nhấn" selectedValue={color} onSelectionChange={setColor}>
+      <SwatchPicker aria-label="Accent color" selectedValue={color} onSelectionChange={setColor}>
         {colors.map((c) => (
           <ColorSwatch key={c.value} value={c.value} color={c.value} aria-label={c.label} />
         ))}
       </SwatchPicker>
       <span className="flex items-center gap-2 text-body1 text-foreground-2">
         <span className="size-4 rounded-circular" style={{ backgroundColor: color }} />
-        Đã chọn: {current?.label}
+        Selected: {current?.label}
       </span>
     </div>
   );
@@ -1279,25 +1279,25 @@ function SwatchPickerDemo() {
         title: "Lưới",
         description: "layout=\"grid\" + columnCount; ↑/↓ đi theo cột, ←/→ theo thứ tự.",
         code: `const palette = [
-  { value: "#FDEDF3", label: "Hồng 160" },
-  { value: "#FFA7C9", label: "Hồng 130" },
-  { value: "#E24A92", label: "Hồng 90" },
-  { value: "#C2347A", label: "Hồng 80" },
-  { value: "#61213F", label: "Hồng 40" },
-  { value: "#EBF3FC", label: "Xanh 160" },
-  { value: "#96C6FA", label: "Xanh 130" },
-  { value: "#2886DE", label: "Xanh 90" },
-  { value: "#0F6CBD", label: "Xanh 80" },
-  { value: "#0E4775", label: "Xanh 40" },
+  { value: "#FDEDF3", label: "Pink 160" },
+  { value: "#FFA7C9", label: "Pink 130" },
+  { value: "#E24A92", label: "Pink 90" },
+  { value: "#C2347A", label: "Pink 80" },
+  { value: "#61213F", label: "Pink 40" },
+  { value: "#EBF3FC", label: "Blue 160" },
+  { value: "#96C6FA", label: "Blue 130" },
+  { value: "#2886DE", label: "Blue 90" },
+  { value: "#0F6CBD", label: "Blue 80" },
+  { value: "#0E4775", label: "Blue 40" },
 ];
 
-<SwatchPicker layout="grid" columnCount={5} shape="rounded" aria-label="Bảng màu" defaultSelectedValue="#0F6CBD">
+<SwatchPicker layout="grid" columnCount={5} shape="rounded" aria-label="Palette" defaultSelectedValue="#0F6CBD">
   {palette.map((c) => (
     <ColorSwatch key={c.value} value={c.value} color={c.value} aria-label={c.label} />
   ))}
 </SwatchPicker>`,
         render: () => (
-          <SwatchPicker layout="grid" columnCount={5} shape="rounded" aria-label="Bảng màu" defaultSelectedValue="#0F6CBD">
+          <SwatchPicker layout="grid" columnCount={5} shape="rounded" aria-label="Palette" defaultSelectedValue="#0F6CBD">
             {palette.map((c) => (
               <ColorSwatch key={c.value} value={c.value} color={c.value} aria-label={c.label} />
             ))}
@@ -1309,47 +1309,47 @@ function SwatchPickerDemo() {
         description: "size extra-small 20 · small 24 · medium 28 · large 32px; shape square, rounded, circular.",
         code: `<div className="flex flex-col gap-3">
   <SwatchPicker size="extra-small" shape="circular" aria-label="Extra small" defaultSelectedValue="#C2347A">
-    <ColorSwatch value="#C2347A" color="#C2347A" aria-label="Hồng anh đào" />
-    <ColorSwatch value="#6A5AE0" color="#6A5AE0" aria-label="Chàm" />
-    <ColorSwatch value="#23A99B" color="#23A99B" aria-label="Ngọc lam" />
+    <ColorSwatch value="#C2347A" color="#C2347A" aria-label="Sakura pink" />
+    <ColorSwatch value="#6A5AE0" color="#6A5AE0" aria-label="Indigo" />
+    <ColorSwatch value="#23A99B" color="#23A99B" aria-label="Teal" />
   </SwatchPicker>
   <SwatchPicker size="small" shape="rounded" aria-label="Small" defaultSelectedValue="#6A5AE0">
-    <ColorSwatch value="#C2347A" color="#C2347A" aria-label="Hồng anh đào" />
-    <ColorSwatch value="#6A5AE0" color="#6A5AE0" aria-label="Chàm" />
-    <ColorSwatch value="#23A99B" color="#23A99B" aria-label="Ngọc lam" />
+    <ColorSwatch value="#C2347A" color="#C2347A" aria-label="Sakura pink" />
+    <ColorSwatch value="#6A5AE0" color="#6A5AE0" aria-label="Indigo" />
+    <ColorSwatch value="#23A99B" color="#23A99B" aria-label="Teal" />
   </SwatchPicker>
   <SwatchPicker size="medium" aria-label="Medium" defaultSelectedValue="#23A99B">
-    <ColorSwatch value="#C2347A" color="#C2347A" aria-label="Hồng anh đào" />
-    <ColorSwatch value="#6A5AE0" color="#6A5AE0" aria-label="Chàm" />
-    <ColorSwatch value="#23A99B" color="#23A99B" aria-label="Ngọc lam" />
+    <ColorSwatch value="#C2347A" color="#C2347A" aria-label="Sakura pink" />
+    <ColorSwatch value="#6A5AE0" color="#6A5AE0" aria-label="Indigo" />
+    <ColorSwatch value="#23A99B" color="#23A99B" aria-label="Teal" />
   </SwatchPicker>
   <SwatchPicker size="large" shape="circular" aria-label="Large" defaultSelectedValue="#C2347A">
-    <ColorSwatch value="#C2347A" color="#C2347A" aria-label="Hồng anh đào" />
-    <ColorSwatch value="#6A5AE0" color="#6A5AE0" aria-label="Chàm" />
-    <ColorSwatch value="#23A99B" color="#23A99B" aria-label="Ngọc lam" />
+    <ColorSwatch value="#C2347A" color="#C2347A" aria-label="Sakura pink" />
+    <ColorSwatch value="#6A5AE0" color="#6A5AE0" aria-label="Indigo" />
+    <ColorSwatch value="#23A99B" color="#23A99B" aria-label="Teal" />
   </SwatchPicker>
 </div>`,
         render: () => (
           <div className="flex flex-col gap-3">
             <SwatchPicker size="extra-small" shape="circular" aria-label="Extra small" defaultSelectedValue="#C2347A">
-              <ColorSwatch value="#C2347A" color="#C2347A" aria-label="Hồng anh đào" />
-              <ColorSwatch value="#6A5AE0" color="#6A5AE0" aria-label="Chàm" />
-              <ColorSwatch value="#23A99B" color="#23A99B" aria-label="Ngọc lam" />
+              <ColorSwatch value="#C2347A" color="#C2347A" aria-label="Sakura pink" />
+              <ColorSwatch value="#6A5AE0" color="#6A5AE0" aria-label="Indigo" />
+              <ColorSwatch value="#23A99B" color="#23A99B" aria-label="Teal" />
             </SwatchPicker>
             <SwatchPicker size="small" shape="rounded" aria-label="Small" defaultSelectedValue="#6A5AE0">
-              <ColorSwatch value="#C2347A" color="#C2347A" aria-label="Hồng anh đào" />
-              <ColorSwatch value="#6A5AE0" color="#6A5AE0" aria-label="Chàm" />
-              <ColorSwatch value="#23A99B" color="#23A99B" aria-label="Ngọc lam" />
+              <ColorSwatch value="#C2347A" color="#C2347A" aria-label="Sakura pink" />
+              <ColorSwatch value="#6A5AE0" color="#6A5AE0" aria-label="Indigo" />
+              <ColorSwatch value="#23A99B" color="#23A99B" aria-label="Teal" />
             </SwatchPicker>
             <SwatchPicker size="medium" aria-label="Medium" defaultSelectedValue="#23A99B">
-              <ColorSwatch value="#C2347A" color="#C2347A" aria-label="Hồng anh đào" />
-              <ColorSwatch value="#6A5AE0" color="#6A5AE0" aria-label="Chàm" />
-              <ColorSwatch value="#23A99B" color="#23A99B" aria-label="Ngọc lam" />
+              <ColorSwatch value="#C2347A" color="#C2347A" aria-label="Sakura pink" />
+              <ColorSwatch value="#6A5AE0" color="#6A5AE0" aria-label="Indigo" />
+              <ColorSwatch value="#23A99B" color="#23A99B" aria-label="Teal" />
             </SwatchPicker>
             <SwatchPicker size="large" shape="circular" aria-label="Large" defaultSelectedValue="#C2347A">
-              <ColorSwatch value="#C2347A" color="#C2347A" aria-label="Hồng anh đào" />
-              <ColorSwatch value="#6A5AE0" color="#6A5AE0" aria-label="Chàm" />
-              <ColorSwatch value="#23A99B" color="#23A99B" aria-label="Ngọc lam" />
+              <ColorSwatch value="#C2347A" color="#C2347A" aria-label="Sakura pink" />
+              <ColorSwatch value="#6A5AE0" color="#6A5AE0" aria-label="Indigo" />
+              <ColorSwatch value="#23A99B" color="#23A99B" aria-label="Teal" />
             </SwatchPicker>
           </div>
         ),
@@ -1357,23 +1357,23 @@ function SwatchPickerDemo() {
       {
         title: "Ảnh, ô trống & disabled",
         description: "ImageSwatch cho chất liệu; ô disabled bị bỏ qua khi điều hướng; EmptySwatch làm nút thêm.",
-        code: `// wood, marble, fabric: URL ảnh bất kỳ (ở đây là SVG sinh sẵn).
-<SwatchPicker size="large" shape="rounded" aria-label="Chất liệu" defaultSelectedValue="go">
-  <ImageSwatch value="go" src={wood} aria-label="Gỗ" />
-  <ImageSwatch value="da" src={marble} aria-label="Đá cẩm thạch" />
-  <ImageSwatch value="vai" src={fabric} aria-label="Vải" />
-  <ColorSwatch value="den" color="#242424" aria-label="Đen (hết hàng)" disabled />
-  <EmptySwatch aria-label="Thêm chất liệu">
+        code: `// wood, marble, fabric: any image URL (generated SVGs here).
+<SwatchPicker size="large" shape="rounded" aria-label="Material" defaultSelectedValue="wood">
+  <ImageSwatch value="wood" src={wood} aria-label="Wood" />
+  <ImageSwatch value="marble" src={marble} aria-label="Marble" />
+  <ImageSwatch value="fabric" src={fabric} aria-label="Fabric" />
+  <ColorSwatch value="black" color="#242424" aria-label="Black (sold out)" disabled />
+  <EmptySwatch aria-label="Add material">
     <Add16Regular />
   </EmptySwatch>
 </SwatchPicker>`,
         render: () => (
-          <SwatchPicker size="large" shape="rounded" aria-label="Chất liệu" defaultSelectedValue="go">
-            <ImageSwatch value="go" src={wood} aria-label="Gỗ" />
-            <ImageSwatch value="da" src={marble} aria-label="Đá cẩm thạch" />
-            <ImageSwatch value="vai" src={fabric} aria-label="Vải" />
-            <ColorSwatch value="den" color="#242424" aria-label="Đen (hết hàng)" disabled />
-            <EmptySwatch aria-label="Thêm chất liệu">
+          <SwatchPicker size="large" shape="rounded" aria-label="Material" defaultSelectedValue="wood">
+            <ImageSwatch value="wood" src={wood} aria-label="Wood" />
+            <ImageSwatch value="marble" src={marble} aria-label="Marble" />
+            <ImageSwatch value="fabric" src={fabric} aria-label="Fabric" />
+            <ColorSwatch value="black" color="#242424" aria-label="Black (sold out)" disabled />
+            <EmptySwatch aria-label="Add material">
               <Add16Regular />
             </EmptySwatch>
           </SwatchPicker>
@@ -1419,29 +1419,29 @@ function SwatchPickerDemo() {
       title: "TeachingPopover",
       code: `<TeachingPopover>
   <TeachingPopoverTrigger asChild>
-    <Button appearance="primary">Xem mẹo</Button>
+    <Button appearance="primary">Show tip</Button>
   </TeachingPopoverTrigger>
   <TeachingPopoverSurface>
-    <TeachingPopoverHeader>Mẹo</TeachingPopoverHeader>
+    <TeachingPopoverHeader>Tip</TeachingPopoverHeader>
     <TeachingPopoverBody>
-      <TeachingPopoverTitle>Ghim trang hay dùng</TeachingPopoverTitle>
-      Bấm biểu tượng ghim để trang luôn nằm ở đầu thanh điều hướng.
+      <TeachingPopoverTitle>Pin pages you use often</TeachingPopoverTitle>
+      Select the pin icon to keep a page at the top of the sidebar.
     </TeachingPopoverBody>
-    <TeachingPopoverFooter primary="Thử ngay" secondary="Để sau" closeOnPrimary />
+    <TeachingPopoverFooter primary="Try it" secondary="Not now" closeOnPrimary />
   </TeachingPopoverSurface>
 </TeachingPopover>`,
       render: () => (
         <TeachingPopover>
           <TeachingPopoverTrigger asChild>
-            <Button appearance="primary">Xem mẹo</Button>
+            <Button appearance="primary">Show tip</Button>
           </TeachingPopoverTrigger>
           <TeachingPopoverSurface>
-            <TeachingPopoverHeader>Mẹo</TeachingPopoverHeader>
+            <TeachingPopoverHeader>Tip</TeachingPopoverHeader>
             <TeachingPopoverBody>
-              <TeachingPopoverTitle>Ghim trang hay dùng</TeachingPopoverTitle>
-              Bấm biểu tượng ghim để trang luôn nằm ở đầu thanh điều hướng.
+              <TeachingPopoverTitle>Pin pages you use often</TeachingPopoverTitle>
+              Select the pin icon to keep a page at the top of the sidebar.
             </TeachingPopoverBody>
-            <TeachingPopoverFooter primary="Thử ngay" secondary="Để sau" closeOnPrimary />
+            <TeachingPopoverFooter primary="Try it" secondary="Not now" closeOnPrimary />
           </TeachingPopoverSurface>
         </TeachingPopover>
       ),
@@ -1450,32 +1450,32 @@ function SwatchPickerDemo() {
       {
         title: "Brand & ảnh minh hoạ",
         description: "appearance=\"brand\" trên TeachingPopover; media hiển thị phía trên nội dung.",
-        code: `// illustration: URL ảnh bất kỳ (ở đây là SVG sinh sẵn).
+        code: `// illustration: any image URL (a generated SVG here).
 <TeachingPopover appearance="brand">
   <TeachingPopoverTrigger asChild>
-    <Button icon={<Sparkle16Regular />}>Tính năng mới</Button>
+    <Button icon={<Sparkle16Regular />}>What's new</Button>
   </TeachingPopoverTrigger>
   <TeachingPopoverSurface>
-    <TeachingPopoverHeader icon={<Sparkle16Regular />}>Mới</TeachingPopoverHeader>
+    <TeachingPopoverHeader icon={<Sparkle16Regular />}>New</TeachingPopoverHeader>
     <TeachingPopoverBody media={<img src={illustration} alt="" />}>
-      <TeachingPopoverTitle>Chủ đề Sakura</TeachingPopoverTitle>
-      Đổi brand và chế độ sáng/tối cho từng vùng giao diện bằng YugenProvider.
+      <TeachingPopoverTitle>Sakura theme</TeachingPopoverTitle>
+      Change the brand and light/dark mode for any part of the UI with YugenProvider.
     </TeachingPopoverBody>
-    <TeachingPopoverFooter primary="Khám phá" secondary="Bỏ qua" closeOnPrimary />
+    <TeachingPopoverFooter primary="Explore" secondary="Skip" closeOnPrimary />
   </TeachingPopoverSurface>
 </TeachingPopover>`,
         render: () => (
           <TeachingPopover appearance="brand">
             <TeachingPopoverTrigger asChild>
-              <Button icon={<Sparkle16Regular />}>Tính năng mới</Button>
+              <Button icon={<Sparkle16Regular />}>What's new</Button>
             </TeachingPopoverTrigger>
             <TeachingPopoverSurface>
-              <TeachingPopoverHeader icon={<Sparkle16Regular />}>Mới</TeachingPopoverHeader>
+              <TeachingPopoverHeader icon={<Sparkle16Regular />}>New</TeachingPopoverHeader>
               <TeachingPopoverBody media={<img src={illustration} alt="" />}>
-                <TeachingPopoverTitle>Chủ đề Sakura</TeachingPopoverTitle>
-                Đổi brand và chế độ sáng/tối cho từng vùng giao diện bằng YugenProvider.
+                <TeachingPopoverTitle>Sakura theme</TeachingPopoverTitle>
+                Change the brand and light/dark mode for any part of the UI with YugenProvider.
               </TeachingPopoverBody>
-              <TeachingPopoverFooter primary="Khám phá" secondary="Bỏ qua" closeOnPrimary />
+              <TeachingPopoverFooter primary="Explore" secondary="Skip" closeOnPrimary />
             </TeachingPopoverSurface>
           </TeachingPopover>
         ),
@@ -1485,29 +1485,29 @@ function SwatchPickerDemo() {
         description: "layout=\"vertical\" xếp hai nút rộng hết bề mặt — hợp với nhãn dài.",
         code: `<TeachingPopover>
   <TeachingPopoverTrigger asChild>
-    <Button icon={<Bookmark20Regular />}>Lưu</Button>
+    <Button icon={<Bookmark20Regular />}>Save</Button>
   </TeachingPopoverTrigger>
   <TeachingPopoverSurface side="bottom" align="start">
-    <TeachingPopoverHeader>Mẹo</TeachingPopoverHeader>
+    <TeachingPopoverHeader>Tip</TeachingPopoverHeader>
     <TeachingPopoverBody>
-      <TeachingPopoverTitle>Bộ sưu tập</TeachingPopoverTitle>
-      Mục đã lưu được gom vào Bộ sưu tập và đồng bộ trên mọi thiết bị.
+      <TeachingPopoverTitle>Collections</TeachingPopoverTitle>
+      Saved items go to Collections and sync across your devices.
     </TeachingPopoverBody>
-    <TeachingPopoverFooter layout="vertical" primary="Mở Bộ sưu tập" secondary="Đã hiểu" closeOnPrimary />
+    <TeachingPopoverFooter layout="vertical" primary="Open Collections" secondary="Got it" closeOnPrimary />
   </TeachingPopoverSurface>
 </TeachingPopover>`,
         render: () => (
           <TeachingPopover>
             <TeachingPopoverTrigger asChild>
-              <Button icon={<Bookmark20Regular />}>Lưu</Button>
+              <Button icon={<Bookmark20Regular />}>Save</Button>
             </TeachingPopoverTrigger>
             <TeachingPopoverSurface side="bottom" align="start">
-              <TeachingPopoverHeader>Mẹo</TeachingPopoverHeader>
+              <TeachingPopoverHeader>Tip</TeachingPopoverHeader>
               <TeachingPopoverBody>
-                <TeachingPopoverTitle>Bộ sưu tập</TeachingPopoverTitle>
-                Mục đã lưu được gom vào Bộ sưu tập và đồng bộ trên mọi thiết bị.
+                <TeachingPopoverTitle>Collections</TeachingPopoverTitle>
+                Saved items go to Collections and sync across your devices.
               </TeachingPopoverBody>
-              <TeachingPopoverFooter layout="vertical" primary="Mở Bộ sưu tập" secondary="Đã hiểu" closeOnPrimary />
+              <TeachingPopoverFooter layout="vertical" primary="Open Collections" secondary="Got it" closeOnPrimary />
             </TeachingPopoverSurface>
           </TeachingPopover>
         ),
@@ -1517,22 +1517,22 @@ function SwatchPickerDemo() {
         description: "Mỗi phần tử con của TeachingPopoverCarousel là một bước; bước đầu có \"Để sau\", bước cuối \"Hoàn tất\".",
         code: `<TeachingPopover>
   <TeachingPopoverTrigger asChild>
-    <Button appearance="primary">Bắt đầu tham quan</Button>
+    <Button appearance="primary">Start tour</Button>
   </TeachingPopoverTrigger>
   <TeachingPopoverSurface>
-    <TeachingPopoverHeader>Làm quen</TeachingPopoverHeader>
+    <TeachingPopoverHeader>Get started</TeachingPopoverHeader>
     <TeachingPopoverCarousel>
       <TeachingPopoverBody>
-        <TeachingPopoverTitle>Tìm nhanh</TeachingPopoverTitle>
-        Gõ tên component vào ô tìm kiếm trên thanh trên cùng để tới thẳng trang tài liệu.
+        <TeachingPopoverTitle>Quick search</TeachingPopoverTitle>
+        Type a component name in the search box at the top to jump straight to its page.
       </TeachingPopoverBody>
       <TeachingPopoverBody>
-        <TeachingPopoverTitle>Đổi giao diện</TeachingPopoverTitle>
-        Chọn Yugen, Web hoặc Teams và chế độ sáng/tối ngay trong khung ví dụ.
+        <TeachingPopoverTitle>Switch themes</TeachingPopoverTitle>
+        Pick Yugen, Web or Teams and light or dark mode right in the example frame.
       </TeachingPopoverBody>
       <TeachingPopoverBody>
-        <TeachingPopoverTitle>Sao chép mã</TeachingPopoverTitle>
-        Mỗi ví dụ đều có nút hiện mã để sao chép nguyên khối JSX.
+        <TeachingPopoverTitle>Copy code</TeachingPopoverTitle>
+        Every example has a button that shows its code, so you can copy the whole JSX block.
       </TeachingPopoverBody>
     </TeachingPopoverCarousel>
   </TeachingPopoverSurface>
@@ -1540,22 +1540,22 @@ function SwatchPickerDemo() {
         render: () => (
           <TeachingPopover>
             <TeachingPopoverTrigger asChild>
-              <Button appearance="primary">Bắt đầu tham quan</Button>
+              <Button appearance="primary">Start tour</Button>
             </TeachingPopoverTrigger>
             <TeachingPopoverSurface>
-              <TeachingPopoverHeader>Làm quen</TeachingPopoverHeader>
+              <TeachingPopoverHeader>Get started</TeachingPopoverHeader>
               <TeachingPopoverCarousel>
                 <TeachingPopoverBody>
-                  <TeachingPopoverTitle>Tìm nhanh</TeachingPopoverTitle>
-                  Gõ tên component vào ô tìm kiếm trên thanh trên cùng để tới thẳng trang tài liệu.
+                  <TeachingPopoverTitle>Quick search</TeachingPopoverTitle>
+                  Type a component name in the search box at the top to jump straight to its page.
                 </TeachingPopoverBody>
                 <TeachingPopoverBody>
-                  <TeachingPopoverTitle>Đổi giao diện</TeachingPopoverTitle>
-                  Chọn Yugen, Web hoặc Teams và chế độ sáng/tối ngay trong khung ví dụ.
+                  <TeachingPopoverTitle>Switch themes</TeachingPopoverTitle>
+                  Pick Yugen, Web or Teams and light or dark mode right in the example frame.
                 </TeachingPopoverBody>
                 <TeachingPopoverBody>
-                  <TeachingPopoverTitle>Sao chép mã</TeachingPopoverTitle>
-                  Mỗi ví dụ đều có nút hiện mã để sao chép nguyên khối JSX.
+                  <TeachingPopoverTitle>Copy code</TeachingPopoverTitle>
+                  Every example has a button that shows its code, so you can copy the whole JSX block.
                 </TeachingPopoverBody>
               </TeachingPopoverCarousel>
             </TeachingPopoverSurface>
@@ -1601,7 +1601,7 @@ function SwatchPickerDemo() {
   const [visible, setVisible] = useState(true);
   return (
     <div className="flex flex-col items-center gap-3">
-      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
+      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Hide" : "Show"}</Button>
       <Fade visible={visible}>
         <div className="size-24 rounded-xlarge bg-brand-background shadow-8" />
       </Fade>
@@ -1618,7 +1618,7 @@ function SwatchPickerDemo() {
   const [visible, setVisible] = useState(true);
   return (
     <div className="flex flex-col items-center gap-3">
-      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
+      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Hide" : "Show"}</Button>
       <div className="flex gap-3">
         <Fade visible={visible} duration="faster">
           <div className="flex size-20 items-center justify-center rounded-xlarge bg-background-1 text-caption1 shadow-8">faster</div>
@@ -1640,16 +1640,16 @@ function SwatchPickerDemo() {
         description: "Gỡ phần tử khỏi DOM sau khi ra xong; callback báo pha nào vừa kết thúc.",
         code: `function FadeUnmountDemo() {
   const [visible, setVisible] = useState(false);
-  const [log, setLog] = useState("Chưa chạy");
+  const [log, setLog] = useState("Not run yet");
   return (
     <div className="flex flex-col items-center gap-3">
-      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
+      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Hide" : "Show"}</Button>
       <Fade
         visible={visible}
         unmountOnExit
-        onMotionFinish={(direction) => setLog(direction === "enter" ? "Đã vào xong" : "Đã ra xong — phần tử đã gỡ khỏi DOM")}
+        onMotionFinish={(direction) => setLog(direction === "enter" ? "Enter finished" : "Exit finished, element removed from the DOM")}
       >
-        <div className="rounded-medium bg-background-1 px-4 py-3 text-body1 shadow-16">Bản nháp đã được lưu</div>
+        <div className="rounded-medium bg-background-1 px-4 py-3 text-body1 shadow-16">Draft saved</div>
       </Fade>
       <span className="text-caption1 text-foreground-3">{log}</span>
     </div>
@@ -1691,11 +1691,11 @@ function SwatchPickerDemo() {
   const [visible, setVisible] = useState(true);
   return (
     <div className="flex flex-col items-center gap-3">
-      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
+      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Hide" : "Show"}</Button>
       <Scale visible={visible}>
         <div className="flex w-56 flex-col gap-1 rounded-xlarge bg-background-1 p-4 shadow-16">
-          <span className="text-subtitle2 font-semibold">Hộp thoại nhỏ</span>
-          <span className="text-body1 text-foreground-2">Scale phóng từ 90% kèm mờ dần.</span>
+          <span className="text-subtitle2 font-semibold">Small dialog</span>
+          <span className="text-body1 text-foreground-2">Scale grows from 90% while fading in.</span>
         </div>
       </Scale>
     </div>
@@ -1711,7 +1711,7 @@ function SwatchPickerDemo() {
   const [visible, setVisible] = useState(true);
   return (
     <div className="flex flex-col items-center gap-3">
-      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
+      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Hide" : "Show"}</Button>
       <div className="flex gap-3">
         <Scale visible={visible} duration="gentle" exitDuration="fast">
           <div className="flex size-24 items-center justify-center rounded-circular bg-brand-background-2 text-caption1 font-semibold text-brand-foreground-2">
@@ -1720,7 +1720,7 @@ function SwatchPickerDemo() {
         </Scale>
         <Scale visible={visible} animateOpacity={false}>
           <div className="flex size-24 items-center justify-center rounded-circular bg-brand-background-2 text-caption1 font-semibold text-brand-foreground-2">
-            không opacity
+            no opacity
           </div>
         </Scale>
       </div>
@@ -1737,7 +1737,7 @@ function SwatchPickerDemo() {
   return (
     <div className="flex flex-col items-center gap-3">
       <Button icon={<ArrowClockwise20Regular />} onClick={() => setRun((r) => r + 1)}>
-        Chạy lại
+        Replay
       </Button>
       <Scale key={run} visible appear duration="gentle">
         <div className="flex size-24 items-center justify-center rounded-xlarge bg-background-1 text-subtitle1 font-semibold shadow-8">
@@ -1773,7 +1773,7 @@ function SwatchPickerDemo() {
   const [visible, setVisible] = useState(true);
   return (
     <div className="flex flex-col items-center gap-3">
-      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
+      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Hide" : "Show"}</Button>
       <div className="grid grid-cols-4 gap-3">
         {(["start", "end", "top", "bottom"] as const).map((from) => (
           <Slide key={from} visible={visible} from={from}>
@@ -1796,16 +1796,16 @@ function SwatchPickerDemo() {
   const [visible, setVisible] = useState(true);
   return (
     <div className="flex flex-col items-center gap-3">
-      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
+      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Hide" : "Show"}</Button>
       <div dir="rtl" className="flex gap-3">
         <Slide visible={visible} from="start">
           <div className="flex h-16 w-32 items-center justify-center rounded-xlarge bg-background-1 text-caption1 shadow-8">
-            start → từ phải
+            start → from the right
           </div>
         </Slide>
         <Slide visible={visible} from="end">
           <div className="flex h-16 w-32 items-center justify-center rounded-xlarge bg-background-1 text-caption1 shadow-8">
-            end → từ trái
+            end → from the left
           </div>
         </Slide>
       </div>
@@ -1822,17 +1822,17 @@ function SwatchPickerDemo() {
   return (
     <div className="flex h-40 w-80 flex-col items-center justify-between">
       <Button appearance="primary" onClick={() => setVisible(true)}>
-        Lưu thay đổi
+        Save changes
       </Button>
       <Slide visible={visible} from="bottom" unmountOnExit>
         <div className="flex w-full items-center gap-2 rounded-medium bg-background-1 p-3 text-body1 shadow-16">
           <CheckmarkCircle20Regular className="shrink-0 text-success-foreground-1" />
-          <span className="flex-1">Đã lưu thay đổi.</span>
+          <span className="flex-1">Changes saved.</span>
           <Button
             appearance="transparent"
             size="small"
             icon={<Dismiss16Regular />}
-            aria-label="Đóng"
+            aria-label="Close"
             onClick={() => setVisible(false)}
           />
         </div>
@@ -1868,12 +1868,12 @@ function SwatchPickerDemo() {
   return (
     <div className="flex w-80 flex-col items-start gap-2">
       <Button aria-expanded={open} onClick={() => setOpen((o) => !o)}>
-        {open ? "Thu gọn" : "Xem chi tiết"}
+        {open ? "Show less" : "Show details"}
       </Button>
       <Collapse visible={open}>
         <div className="rounded-medium bg-background-1 p-3 text-body1 text-foreground-2 shadow-4">
-          Collapse dùng kỹ thuật grid-template-rows 0fr → 1fr nên không cần đo chiều cao nội dung — văn bản dài, ảnh
-          hay danh sách đều giãn mượt.
+          Collapse animates grid-template-rows from 0fr to 1fr, so it never measures content height. Long text, images
+          and lists all expand smoothly.
         </div>
       </Collapse>
     </div>
@@ -1891,15 +1891,15 @@ function SwatchPickerDemo() {
     <div className="flex h-40 items-start gap-2">
       <Button
         icon={<Navigation20Regular />}
-        aria-label={open ? "Thu gọn điều hướng" : "Mở điều hướng"}
+        aria-label={open ? "Collapse navigation" : "Expand navigation"}
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
       />
       <Collapse visible={open} orientation="horizontal" className="h-full">
         <nav className="flex h-full w-48 flex-col gap-1 rounded-medium bg-background-1 p-2 text-body1 shadow-4">
-          <span className="px-2 py-1">Trang chủ</span>
-          <span className="px-2 py-1">Tài liệu</span>
-          <span className="px-2 py-1">Cài đặt</span>
+          <span className="px-2 py-1">Home</span>
+          <span className="px-2 py-1">Docs</span>
+          <span className="px-2 py-1">Settings</span>
         </nav>
       </Collapse>
     </div>
@@ -1915,13 +1915,13 @@ function SwatchPickerDemo() {
   return (
     <div className="flex w-80 flex-col items-start gap-2">
       <Button aria-expanded={open} onClick={() => setOpen((o) => !o)}>
-        {open ? "Thu gọn" : "Mở rộng"}
+        {open ? "Show less" : "Show more"}
       </Button>
       <Collapse visible={open} animateOpacity={false} duration="slow" exitDuration="fast">
         <ul className="flex flex-col gap-1 rounded-medium bg-background-1 p-3 text-body1 shadow-4">
-          <li>Mở: slow (300ms), giảm tốc</li>
-          <li>Đóng: fast (150ms), tăng tốc</li>
-          <li>Không đổi opacity</li>
+          <li>Open: slow (300ms), decelerate</li>
+          <li>Close: fast (150ms), accelerate</li>
+          <li>Opacity unchanged</li>
         </ul>
       </Collapse>
     </div>
@@ -1959,7 +1959,7 @@ function SwatchPickerDemo() {
   const [visible, setVisible] = useState(true);
   return (
     <div className="flex flex-col items-center gap-3">
-      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
+      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Hide" : "Show"}</Button>
       <div className="flex gap-4">
         <Blur visible={visible}>
           <div className="flex size-24 items-center justify-center rounded-xlarge bg-background-1 text-subtitle2 font-semibold shadow-8">
@@ -1987,7 +1987,7 @@ function SwatchPickerDemo() {
     <Button
       appearance="primary"
       iconOnly
-      aria-label={playing ? "Tạm dừng" : "Phát"}
+      aria-label={playing ? "Pause" : "Play"}
       onClick={() => setPlaying((p) => !p)}
       icon={
         <span className="grid *:col-start-1 *:row-start-1">
@@ -2012,10 +2012,10 @@ function SwatchPickerDemo() {
   return (
     <div className="flex flex-col items-center gap-3">
       <Button icon={<ArrowClockwise20Regular />} onClick={() => setRun((r) => r + 1)}>
-        Chạy lại
+        Replay
       </Button>
       <Blur key={run} visible appear duration="slow">
-        <p className="max-w-xs text-center text-subtitle1 font-semibold">幽玄 — vẻ đẹp sâu lắng, khó nắm bắt.</p>
+        <p className="max-w-xs text-center text-subtitle1 font-semibold">幽玄 — a deep, quiet beauty that is hard to put into words.</p>
       </Blur>
     </div>
   );
@@ -2042,13 +2042,13 @@ function SwatchPickerDemo() {
     importCode: `import { Stagger } from "@/components/ui";`,
     hero: {
       title: "Stagger",
-      code: `const tasks = ["Thiết kế token", "Dựng component", "Viết tài liệu", "Kiểm thử RTL", "Phát hành"];
+      code: `const tasks = ["Design tokens", "Build components", "Write docs", "Test RTL", "Release"];
 
 function StaggerDemo() {
   const [visible, setVisible] = useState(true);
   return (
     <div className="flex w-64 flex-col gap-3">
-      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn danh sách" : "Hiện danh sách"}</Button>
+      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Hide list" : "Show list"}</Button>
       <div className="flex flex-col gap-1">
         <Stagger visible={visible}>
           {tasks.map((task) => (
@@ -2071,7 +2071,7 @@ function StaggerDemo() {
   const [visible, setVisible] = useState(false);
   return (
     <div className="flex flex-col items-center gap-3">
-      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Ẩn" : "Hiện"}</Button>
+      <Button onClick={() => setVisible((v) => !v)}>{visible ? "Hide" : "Show"}</Button>
       <div className="flex gap-2">
         <Stagger visible={visible} itemDelay="fast">
           {["桜", "幽", "玄", "和", "風"].map((ch) => (
@@ -2096,7 +2096,7 @@ function StaggerDemo() {
   return (
     <div className="flex flex-col items-center gap-3">
       <Button icon={<ArrowClockwise20Regular />} onClick={() => setRun((r) => r + 1)}>
-        Chạy lại
+        Replay
       </Button>
       <div key={run} className="grid grid-cols-4 gap-2">
         <Stagger visible appear itemDelay="faster">
@@ -2136,11 +2136,11 @@ function StaggerDemo() {
     hero: {
       title: "VisuallyHidden",
       code: `<Button iconOnly icon={<Heart20Regular />}>
-  <VisuallyHidden>Thêm vào yêu thích</VisuallyHidden>
+  <VisuallyHidden>Add to favorites</VisuallyHidden>
 </Button>`,
       render: () => (
         <Button iconOnly icon={<Heart20Regular />}>
-          <VisuallyHidden>Thêm vào yêu thích</VisuallyHidden>
+          <VisuallyHidden>Add to favorites</VisuallyHidden>
         </Button>
       ),
     },
@@ -2150,33 +2150,33 @@ function StaggerDemo() {
         description: "Nhấn Tab vào khung ví dụ: nút ẩn hiện ra khi nhận focus.",
         code: `<div className="flex flex-col items-start gap-2">
   <VisuallyHidden asChild focusable>
-    <Button appearance="primary">Bỏ qua tới nội dung chính</Button>
+    <Button appearance="primary">Skip to main content</Button>
   </VisuallyHidden>
-  <span className="text-body1 text-foreground-2">Nhấn Tab để thấy nút ẩn.</span>
+  <span className="text-body1 text-foreground-2">Press Tab to reveal the hidden button.</span>
 </div>`,
         render: () => (
           <div className="flex flex-col items-start gap-2">
             <VisuallyHidden asChild focusable>
-              <Button appearance="primary">Bỏ qua tới nội dung chính</Button>
+              <Button appearance="primary">Skip to main content</Button>
             </VisuallyHidden>
-            <span className="text-body1 text-foreground-2">Nhấn Tab để thấy nút ẩn.</span>
+            <span className="text-body1 text-foreground-2">Press Tab to reveal the hidden button.</span>
           </div>
         ),
       },
       {
         title: "Bổ sung ngữ cảnh cho liên kết",
-        description: "Người nhìn thấy \"Đọc thêm\"; trình đọc màn hình nghe \"Đọc thêm về bản phát hành 2.0\".",
+        description: "Người nhìn thấy \"Read more\"; trình đọc màn hình nghe \"Read more about version 2.0\".",
         code: `<p className="text-body1 text-foreground-2">
-  Bản phát hành 2.0 đã có.{" "}
+  Version 2.0 is out.{" "}
   <Link href="#/components/visuallyhidden">
-    Đọc thêm<VisuallyHidden> về bản phát hành 2.0</VisuallyHidden>
+    Read more<VisuallyHidden> about version 2.0</VisuallyHidden>
   </Link>
 </p>`,
         render: () => (
           <p className="text-body1 text-foreground-2">
-            Bản phát hành 2.0 đã có.{" "}
+            Version 2.0 is out.{" "}
             <Link href="#/components/visuallyhidden">
-              Đọc thêm<VisuallyHidden> về bản phát hành 2.0</VisuallyHidden>
+              Read more<VisuallyHidden> about version 2.0</VisuallyHidden>
             </Link>
           </p>
         ),
@@ -2214,14 +2214,14 @@ function StaggerDemo() {
           onClick={() => {
             const next = count + 1;
             setCount(next);
-            announce("Đã thêm vào giỏ. Giỏ hàng có " + next + " sản phẩm.", { batchId: "cart" });
+            announce("Added to cart. Items in cart: " + next + ".", { batchId: "cart" });
           }}
         >
-          Thêm vào giỏ ({count})
+          Add to cart ({count})
         </Button>
-        <Button onClick={() => announce("Không thể kết nối máy chủ.", { politeness: "assertive" })}>Báo lỗi</Button>
+        <Button onClick={() => announce("Can't reach the server.", { politeness: "assertive" })}>Show error</Button>
       </div>
-      <span className="text-caption1 text-foreground-3">Bật trình đọc màn hình (Narrator: Ctrl + Win + Enter) để nghe.</span>
+      <span className="text-caption1 text-foreground-3">Turn on a screen reader (Narrator: Ctrl + Win + Enter) to hear it.</span>
     </div>
   );
 }`,
@@ -2239,10 +2239,10 @@ function StaggerDemo() {
       icon={<Checkmark20Regular />}
       onClick={() => {
         setSaved(true);
-        announce("Đã lưu bản nháp lúc " + new Date().toLocaleTimeString("vi-VN"));
+        announce("Draft saved at " + new Date().toLocaleTimeString("en-US"));
       }}
     >
-      {saved ? "Đã lưu" : "Lưu bản nháp"}
+      {saved ? "Saved" : "Save draft"}
     </Button>
   );
 }
@@ -2259,7 +2259,7 @@ function AnnouncerProviderDemo() {
       {
         title: "batchId — gộp thông báo liên tục",
         description: "Gõ nhanh vào ô tìm kiếm: chỉ số kết quả mới nhất được đọc.",
-        code: `const fruits = ["Táo", "Chuối", "Cam", "Xoài", "Dứa", "Nho", "Ổi", "Mận", "Mít", "Lê"];
+        code: `const fruits = ["Apple", "Banana", "Orange", "Mango", "Pineapple", "Grape", "Guava", "Plum", "Kiwi", "Pear"];
 
 function SearchAnnounceDemo() {
   const { announce } = useAnnounce();
@@ -2268,16 +2268,16 @@ function SearchAnnounceDemo() {
   return (
     <div className="flex w-72 flex-col gap-2">
       <SearchBox
-        aria-label="Tìm trái cây"
+        aria-label="Search fruit"
         value={query}
         onValueChange={(value) => {
           setQuery(value);
           const count = fruits.filter((f) => f.toLowerCase().includes(value.trim().toLowerCase())).length;
-          announce(count + " kết quả", { batchId: "search" });
+          announce(count + " results", { batchId: "search" });
         }}
       />
       <span className="text-caption1 text-foreground-3">
-        {results.length} kết quả: {results.join(", ")}
+        {results.length} results: {results.join(", ")}
       </span>
     </div>
   );
@@ -2317,11 +2317,11 @@ function SearchAnnounceDemo() {
       code: `function ArrowNavDemo() {
   const nav = useArrowNavigationGroup({ axis: "horizontal", circular: true });
   return (
-    <div {...nav} role="toolbar" aria-label="Định dạng" className="flex gap-1 rounded-medium bg-background-1 p-1 shadow-4">
-      <Button appearance="subtle" icon={<TextBold20Regular />} aria-label="Đậm" />
-      <Button appearance="subtle" icon={<TextItalic20Regular />} aria-label="Nghiêng" />
-      <Button appearance="subtle" icon={<TextUnderline20Regular />} aria-label="Gạch chân" />
-      <Button appearance="subtle" icon={<TextAlignLeft20Regular />} aria-label="Căn trái" />
+    <div {...nav} role="toolbar" aria-label="Formatting" className="flex gap-1 rounded-medium bg-background-1 p-1 shadow-4">
+      <Button appearance="subtle" icon={<TextBold20Regular />} aria-label="Bold" />
+      <Button appearance="subtle" icon={<TextItalic20Regular />} aria-label="Italic" />
+      <Button appearance="subtle" icon={<TextUnderline20Regular />} aria-label="Underline" />
+      <Button appearance="subtle" icon={<TextAlignLeft20Regular />} aria-label="Align left" />
     </div>
   );
 }`,
@@ -2334,8 +2334,8 @@ function SearchAnnounceDemo() {
         code: `function GridNavDemo() {
   const nav = useArrowNavigationGroup({ axis: "grid", memorizeCurrent: true });
   return (
-    <div {...nav} role="group" aria-label="Ứng dụng" className="grid grid-cols-3 gap-2">
-      {["Thư", "Lịch", "Danh bạ", "Tệp", "Ghi chú", "Việc cần làm", "Ảnh", "Bản đồ", "Cài đặt"].map((app) => (
+    <div {...nav} role="group" aria-label="Apps" className="grid grid-cols-3 gap-2">
+      {["Mail", "Calendar", "Contacts", "Files", "Notes", "To Do", "Photos", "Maps", "Settings"].map((app) => (
         <Button key={app} className="w-28">
           {app}
         </Button>
@@ -2351,8 +2351,8 @@ function SearchAnnounceDemo() {
         code: `function VerticalNavDemo() {
   const nav = useArrowNavigationGroup({ axis: "vertical", circular: true });
   return (
-    <div {...nav} role="group" aria-label="Thư mục" className="flex w-56 flex-col gap-0.5 rounded-medium bg-background-1 p-1 shadow-4">
-      {["Hộp thư đến", "Đã gửi", "Bản nháp", "Lưu trữ"].map((folder) => (
+    <div {...nav} role="group" aria-label="Folders" className="flex w-56 flex-col gap-0.5 rounded-medium bg-background-1 p-1 shadow-4">
+      {["Inbox", "Sent", "Drafts", "Archive"].map((folder) => (
         <Button key={folder} appearance="subtle" className="justify-start">
           {folder}
         </Button>
@@ -2371,8 +2371,8 @@ function SearchAnnounceDemo() {
     <div {...group} role="listitem" aria-label={title} className="flex w-56 flex-col gap-2 rounded-medium bg-background-1 p-3 shadow-4">
       <span className="text-subtitle2 font-semibold">{title}</span>
       <div className="flex gap-1">
-        <Button size="small" icon={<Heart20Regular />}>Thích</Button>
-        <Button size="small" icon={<Share20Regular />}>Chia sẻ</Button>
+        <Button size="small" icon={<Heart20Regular />}>Like</Button>
+        <Button size="small" icon={<Share20Regular />}>Share</Button>
       </div>
     </div>
   );
@@ -2381,8 +2381,8 @@ function SearchAnnounceDemo() {
 function CardGroupDemo() {
   const nav = useArrowNavigationGroup({ axis: "horizontal" });
   return (
-    <div {...nav} role="list" aria-label="Bài viết" className="flex gap-3">
-      {["Ra mắt Yugen UI", "Bảng màu Sakura"].map((title) => (
+    <div {...nav} role="list" aria-label="Posts" className="flex flex-wrap gap-3">
+      {["Introducing Yugen UI", "The Sakura palette"].map((title) => (
         <FocusableCard key={title} title={title} />
       ))}
     </div>

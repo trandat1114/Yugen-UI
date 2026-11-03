@@ -46,21 +46,21 @@ type Order = {
 };
 
 const CUSTOMERS = [
-  "Nguyễn Văn An", "Trần Thị Bình", "Lê Hoàng Cường", "Phạm Minh Dũng", "Hoàng Thu Hà",
-  "Vũ Quốc Khánh", "Đặng Mai Linh", "Bùi Thanh Nam", "Đỗ Ngọc Oanh", "Ngô Đức Phúc",
+  "Alex Chen", "Maria Garcia", "Sam Lee", "Priya Patel", "Jordan Kim",
+  "Taylor Nguyen", "Chris Novak", "Hana Sato", "Ben Carter", "Ines Duarte",
 ];
 const STATUSES = ["paid", "pending", "paid", "failed", "paid"] as const;
 
-/** Sinh dữ liệu tất định (không random) — cùng kết quả ở mọi lần render và trên server. */
+/** Deterministic data (no random): the same result on every render and on the server. */
 function makeOrders(count: number): Order[] {
   return Array.from({ length: count }, (_, i) => {
     const customer = CUSTOMERS[(i * 7) % CUSTOMERS.length];
     return {
-      id: "DH-" + String(10001 + i),
+      id: "ORD-" + String(10001 + i),
       customer,
-      email: "kh" + ((i * 7) % CUSTOMERS.length) + "@contoso.vn",
+      email: customer.toLowerCase().replace(" ", ".") + "@contoso.com",
       status: STATUSES[(i * 3) % STATUSES.length],
-      amount: 150000 + ((i * 7919) % 97) * 65000,
+      amount: 150 + ((i * 7919) % 97) * 65,
       date: "2026-" + String(1 + (i % 12)).padStart(2, "0") + "-" + String(1 + ((i * 11) % 28)).padStart(2, "0"),
     };
   });
@@ -69,36 +69,37 @@ function makeOrders(count: number): Order[] {
 const ORDERS = makeOrders(20);
 
 const STATUS = {
-  paid: { label: "Đã thanh toán", color: "success" },
-  pending: { label: "Đang xử lý", color: "warning" },
-  failed: { label: "Thất bại", color: "danger" },
+  paid: { label: "Paid", color: "success" },
+  pending: { label: "Pending", color: "warning" },
+  failed: { label: "Failed", color: "danger" },
 } as const;
 
-const vnd = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
+const usd = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
+const dateFormat = new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeZone: "UTC" });
 
 const orderColumns = [
   createColumn<Order>({
     columnId: "customer",
-    label: "Khách hàng",
+    label: "Customer",
     hideable: false,
     renderCell: (order) => (
       <TableCellLayout truncate media={<Avatar name={order.customer} size={24} color="colorful" />}>
         {order.customer}
       </TableCellLayout>
     ),
-    compare: (a, b) => a.customer.localeCompare(b.customer, "vi"),
+    compare: (a, b) => a.customer.localeCompare(b.customer, "en"),
     minWidth: 160,
   }),
   createColumn<Order>({
     columnId: "id",
-    label: "Mã đơn",
+    label: "Order ID",
     renderCell: (order) => order.id,
     compare: (a, b) => a.id.localeCompare(b.id),
     width: 104,
   }),
   createColumn<Order>({
     columnId: "status",
-    label: "Trạng thái",
+    label: "Status",
     renderCell: (order) => (
       <Badge appearance="tint" color={STATUS[order.status].color}>
         {STATUS[order.status].label}
@@ -109,15 +110,15 @@ const orderColumns = [
   }),
   createColumn<Order>({
     columnId: "date",
-    label: "Ngày",
-    renderCell: (order) => order.date.split("-").reverse().join("/"),
+    label: "Date",
+    renderCell: (order) => dateFormat.format(new Date(order.date)),
     compare: (a, b) => a.date.localeCompare(b.date),
     width: 112,
   }),
   createColumn<Order>({
     columnId: "amount",
-    label: "Số tiền",
-    renderCell: (order) => vnd.format(order.amount),
+    label: "Amount",
+    renderCell: (order) => usd.format(order.amount),
     compare: (a, b) => a.amount - b.amount,
     width: 130,
     align: "end",
@@ -129,7 +130,7 @@ const orderColumns = [
 function HeroDemo() {
   return (
     <DataGrid
-      aria-label="Đơn hàng"
+      aria-label="Orders"
       items={ORDERS}
       columns={orderColumns}
       getRowId={(order) => order.id}
@@ -151,10 +152,10 @@ function SortDemo() {
   return (
     <div className="flex w-full flex-col gap-2">
       <span className="text-caption1 text-foreground-3">
-        Đang sắp xếp: {sortState.sortColumn} · {sortState.sortDirection === "ascending" ? "tăng dần" : "giảm dần"}
+        Sorted by: {sortState.sortColumn} · {sortState.sortDirection}
       </span>
       <DataGrid
-        aria-label="Đơn hàng sắp xếp"
+        aria-label="Sorted orders"
         items={ORDERS.slice(0, 6)}
         columns={orderColumns}
         getRowId={(order) => order.id}
@@ -172,7 +173,7 @@ function SortDemo() {
 // #region SelectionDemo
 function SelectionDemo() {
   const [orders, setOrders] = useState(() => ORDERS.slice(0, 8));
-  const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set(["DH-10002"]));
+  const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set(["ORD-10002"]));
 
   const remove = () => {
     setOrders((prev) => prev.filter((order) => !selected.has(order.id)));
@@ -181,20 +182,20 @@ function SelectionDemo() {
 
   return (
     <div className="flex w-full flex-col gap-2">
-      <Toolbar aria-label="Thao tác với đơn đã chọn" className="rounded-xlarge border border-stroke-2">
+      <Toolbar aria-label="Actions for selected orders" className="rounded-xlarge border border-stroke-2">
         <span role="status" className="px-2 text-body1 font-semibold">
-          Đã chọn {selected.size} / {orders.length}
+          {selected.size} of {orders.length} selected
         </span>
         <ToolbarDivider />
         <ToolbarButton icon={<Mail20Regular />} disabled={selected.size === 0}>
-          Gửi email
+          Send email
         </ToolbarButton>
         <ToolbarButton icon={<Delete20Regular />} disabled={selected.size === 0} onClick={remove}>
-          Xoá
+          Delete
         </ToolbarButton>
       </Toolbar>
       <DataGrid
-        aria-label="Đơn hàng có thể chọn"
+        aria-label="Selectable orders"
         items={orders}
         columns={orderColumns.slice(0, 3)}
         getRowId={(order) => order.id}
@@ -210,43 +211,53 @@ function SelectionDemo() {
 // #endregion
 
 // #region ColumnsDemo
-const HIDDEN_COLUMNS_KEY = "orders.hiddenColumns";
-
-function loadHiddenColumns(): ReadonlySet<string> {
+function load<T>(key: string, fallback: T): T {
   try {
-    return new Set(JSON.parse(localStorage.getItem(HIDDEN_COLUMNS_KEY) ?? '["id"]'));
+    const saved = localStorage.getItem(key);
+    return saved ? JSON.parse(saved) : fallback;
   } catch {
-    return new Set(["id"]);
+    return fallback;
+  }
+}
+
+function save(key: string, value: unknown) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Storage unavailable (private mode, quota exceeded): the choice still works for this session.
   }
 }
 
 function ColumnsDemo() {
-  const [hiddenColumns, setHiddenColumns] = useState(loadHiddenColumns);
+  const [hiddenColumns, setHiddenColumns] = useState<ReadonlySet<string>>(() => new Set(load("orders.hiddenColumns", ["id"])));
+  const [columnOrder, setColumnOrder] = useState<string[]>(() => load("orders.columnOrder", []));
   const [sortState, setSortState] = useState<DataGridSortState>({ sortColumn: "date", sortDirection: "descending" });
 
   return (
     <div className="flex w-full flex-col gap-2">
-      <Toolbar aria-label="Bảng đơn hàng" className="justify-end px-0">
+      <Toolbar aria-label="Orders table" className="justify-end px-0">
         <DataGridColumnPicker
           columns={orderColumns}
           hiddenColumns={hiddenColumns}
           onHiddenColumnsChange={(_, data) => {
             setHiddenColumns(data.hiddenColumns);
-            try {
-              localStorage.setItem(HIDDEN_COLUMNS_KEY, JSON.stringify([...data.hiddenColumns]));
-            } catch {
-              // Không lưu được (chế độ riêng tư, hết dung lượng): lựa chọn vẫn dùng được trong phiên này.
-            }
+            save("orders.hiddenColumns", [...data.hiddenColumns]);
+          }}
+          columnOrder={columnOrder}
+          onColumnOrderChange={(_, data) => {
+            setColumnOrder(data.columnOrder);
+            save("orders.columnOrder", data.columnOrder);
           }}
           sortState={sortState}
         />
       </Toolbar>
       <DataGrid
-        aria-label="Đơn hàng theo cột đã chọn"
+        aria-label="Orders with chosen columns"
         items={ORDERS.slice(0, 6)}
         columns={orderColumns}
         getRowId={(order) => order.id}
         hiddenColumns={hiddenColumns}
+        columnOrder={columnOrder}
         sortable
         sortState={sortState}
         onSortChange={(_, next) => setSortState(next)}
@@ -260,19 +271,19 @@ function ColumnsDemo() {
 
 // #region ResizeDemo
 function ResizeDemo() {
-  const [last, setLast] = useState("Kéo mép phải tiêu đề, hoặc Tab tới tay nắm rồi dùng phím mũi tên.");
+  const [last, setLast] = useState("Drag the right edge of a header, or Tab to the handle and use the arrow keys.");
 
   return (
     <div className="flex w-full flex-col gap-2">
       <span className="text-caption1 text-foreground-3">{last}</span>
       <DataGrid
-        aria-label="Đơn hàng đổi được độ rộng cột"
+        aria-label="Orders with resizable columns"
         items={ORDERS.slice(0, 5)}
         columns={orderColumns.map((column, i) => (i === 0 ? { ...column, sticky: "start" as const, width: 200 } : column))}
         getRowId={(order) => order.id}
         selectionMode="single"
         resizableColumns
-        onColumnResize={(_, data) => setLast(`Cột ${data.columnId}: ${data.width}px`)}
+        onColumnResize={(_, data) => setLast(`Column ${data.columnId}: ${data.width}px`)}
         className="rounded-xlarge border border-stroke-2"
       />
     </div>
@@ -286,7 +297,7 @@ const MANY_ORDERS = makeOrders(10000);
 function VirtualDemo() {
   return (
     <DataGrid
-      aria-label="10 000 đơn hàng"
+      aria-label="10,000 orders"
       items={MANY_ORDERS}
       columns={orderColumns}
       getRowId={(order) => order.id}
@@ -326,18 +337,18 @@ function StatesDemo() {
     <div className="flex w-full flex-col gap-2">
       <div className="flex flex-wrap gap-2">
         <Button size="small" icon={<ArrowClockwise20Regular />} onClick={() => load("success")}>
-          Tải lại
+          Reload
         </Button>
         <Button size="small" onClick={() => load("empty")}>
-          Trả về rỗng
+          Return empty
         </Button>
         <Button size="small" onClick={() => load("error")}>
-          Giả lập lỗi
+          Simulate error
         </Button>
       </div>
       <AsyncContent status={failed ? "error" : "success"} onRetry={() => load(scenario === "error" ? "success" : scenario)}>
         <DataGrid
-          aria-label="Đơn hàng từ máy chủ"
+          aria-label="Orders from the server"
           items={orders}
           columns={orderColumns.slice(0, 3)}
           getRowId={(order) => order.id}
@@ -400,9 +411,9 @@ export const docs: ComponentDoc[] = [
     category: "Hiển thị dữ liệu",
     lead: "DataGrid là lưới dữ liệu tương tác: sắp xếp, chọn hàng, kéo đổi độ rộng cột và ảo hoá cho hàng chục nghìn hàng.",
     description:
-      "Tương đương DataGrid của Fluent 2. Khai báo cột bằng createColumn<T>() (label, renderCell, compare, width…), truyền items + getRowId. Lưới có role=\"grid\" với aria-rowcount / aria-rowindex đúng cả khi ảo hoá, một tab stop duy nhất (roving tabindex): mũi tên đi từng ô (đảo trái / phải trong RTL), Home / End, Ctrl + Home / End, PageUp / PageDown; Space chọn hàng, Shift + mũi tên hoặc Shift + click chọn theo khoảng. Người dùng tự chọn cột hiển thị bằng DataGridColumnPicker (hiddenColumns). Tiêu đề sticky; loading hiện khung xương theo Wait UX (useSpinDelay), không có hàng thì hiện Empty. Logic dùng lại được qua useDataGridSort, useDataGridSelection, useDataGridColumnVisibility và các hàm thuần sortItems, getVisibleColumns.",
+      "Tương đương DataGrid của Fluent 2. Khai báo cột bằng createColumn<T>() (label, renderCell, compare, width…), truyền items + getRowId. Lưới có role=\"grid\" với aria-rowcount / aria-rowindex đúng cả khi ảo hoá, một tab stop duy nhất (roving tabindex): mũi tên đi từng ô (đảo trái / phải trong RTL), Home / End, Ctrl + Home / End, PageUp / PageDown; Space chọn hàng, Shift + mũi tên hoặc Shift + click chọn theo khoảng. Người dùng tự chọn cột hiển thị và thứ tự cột bằng DataGridColumnPicker (hiddenColumns, columnOrder). Tiêu đề sticky; loading hiện khung xương theo Wait UX (useSpinDelay), không có hàng thì hiện Empty. Logic dùng lại được qua useDataGridSort, useDataGridSelection, useDataGridColumnVisibility và các hàm thuần sortItems, getVisibleColumns, getOrderedColumns.",
     importCode: `import {
-  DataGrid, DataGridColumnPicker, createColumn, sortItems, getVisibleColumns,
+  DataGrid, DataGridColumnPicker, createColumn, sortItems, getVisibleColumns, getOrderedColumns,
   useDataGridSort, useDataGridSelection, useDataGridColumnVisibility,
   type DataGridColumn, type DataGridSortState,
 } from "@/components/ui";`,
@@ -428,8 +439,8 @@ export const docs: ComponentDoc[] = [
         render: () => <SelectionDemo />,
       },
       {
-        title: "Chọn cột hiển thị",
-        description: "DataGridColumnPicker và DataGrid dùng chung hiddenColumns, lựa chọn được lưu vào localStorage. Menu không đóng khi tích từng cột; cột hideable: false (Khách hàng) và cột hiện cuối cùng không bỏ tích được. Ẩn cột đang sắp xếp không đổi thứ tự hàng; menu vẫn hiện mũi tên ở cột đó.",
+        title: "Chọn và sắp xếp cột",
+        description: "DataGridColumnPicker và DataGrid dùng chung hiddenColumns và columnOrder, cả hai được lưu vào localStorage. Menu không đóng khi tích từng cột; cột hideable: false (Khách hàng) và cột hiện cuối cùng không bỏ tích được. Kéo một mục trong menu (hoặc Alt + ↑ ↓) để đổi thứ tự cột, lưới đổi theo ngay. Ẩn cột đang sắp xếp không đổi thứ tự hàng; menu vẫn hiện mũi tên ở cột đó.",
         code: source("ColumnsDemo"),
         setup: source("data"),
         render: () => <ColumnsDemo />,
@@ -457,6 +468,7 @@ export const docs: ComponentDoc[] = [
       },
       {
         title: "RTL",
+        lang: "ar",
         description: "Cột xếp phải → trái, ArrowLeft đi về cuối dòng, kéo tay nắm sang trái để nới rộng cột. Không cần prop riêng — đọc từ DirectionProvider / YugenProvider.",
         code: source("RtlDemo"),
         setup: source("data"),
@@ -476,6 +488,7 @@ export const docs: ComponentDoc[] = [
     props: [
       { name: "items", type: "readonly T[]", description: "Dữ liệu theo thứ tự gốc; T được suy ra cho columns và getRowId." },
       { name: "columns", type: "DataGridColumn<T>[]", description: "Tạo bằng createColumn<T>({ columnId, label?, renderHeaderCell?, renderCell, compare?, width?, minWidth?, maxWidth?, resizable?, align?, sticky?, hideable? }). label là tiêu đề dạng chữ và tên trong DataGridColumnPicker; renderHeaderCell khi tiêu đề cần hơn chữ." },
+      { name: "columnOrder", type: "string[]", description: "Thứ tự hiển thị của cột (id cột). Cột không có trong mảng đứng sau, theo thứ tự columns; id lạ bị bỏ qua." },
       { name: "hiddenColumns", type: "ReadonlySet<string>", description: "Id các cột không hiển thị. Cột hideable: false luôn hiện; ẩn hết thì giữ cột đầu. Cột ẩn giữ độ rộng đã kéo và vẫn sắp xếp nếu đang là cột sắp xếp; focus chuyển sang cột kế bên khi cột đang focus bị ẩn." },
       { name: "getRowId", type: "(item: T) => string", description: "Id ổn định của hàng (key, lựa chọn)." },
       { name: "size", type: `"small" | "medium" | "large"`, defaultValue: `"medium"`, description: "Chiều cao hàng 34 / 44 / 56px." },
@@ -500,9 +513,11 @@ export const docs: ComponentDoc[] = [
       { name: "DataGridColumnPicker.columns", type: "DataGridColumn<T>[] | { columnId, label?, hideable? }[]", description: "Cùng mảng cột truyền cho DataGrid; với Table là mảng { columnId, label }. Tên trong menu là label." },
       { name: "DataGridColumnPicker.hiddenColumns", type: "ReadonlySet<string>", description: "Id các cột đang ẩn — cùng giá trị truyền cho DataGrid." },
       { name: "DataGridColumnPicker.onHiddenColumnsChange", type: "(event, { hiddenColumns: Set<string> }) => void", description: "Gọi khi người dùng tích / bỏ tích hoặc chọn Hiện tất cả cột. Id của cột tạm không có trong columns được giữ nguyên để lưu lại." },
+      { name: "DataGridColumnPicker.columnOrder", type: "string[]", description: "Thứ tự cột — cùng giá trị truyền cho DataGrid." },
+      { name: "DataGridColumnPicker.onColumnOrderChange", type: "(event, { columnOrder: string[] }) => void", description: "Có thì mục trong menu kéo được (hoặc Alt + ↑ ↓) để đổi thứ tự cột. Gọi cả trong lúc kéo để lưới đổi theo." },
       { name: "DataGridColumnPicker.sortState", type: "DataGridSortState", description: "Cột đang sắp xếp có mũi tên trong menu, kể cả khi đang ẩn." },
       { name: "DataGridColumnPicker.align", type: `"start" | "center" | "end"`, defaultValue: `"end"`, description: "Căn menu theo nút. Trong Toolbar nút tự lấy size của Toolbar và appearance subtle." },
-      { name: "useDataGridSort / useDataGridSelection / useDataGridColumnVisibility / sortItems / getVisibleColumns", type: "hook / hook / hook / (items, columns, sortState) => T[] / (columns, hiddenColumns) => columns", description: "Logic dùng riêng được — ví dụ để sắp xếp phía server, điều khiển lựa chọn từ toolbar hoặc tự làm nút chọn cột." },
+      { name: "useDataGridSort / useDataGridSelection / useDataGridColumnVisibility / sortItems / getVisibleColumns / getOrderedColumns", type: "hook / hook / hook / (items, columns, sortState) => T[] / (columns, hiddenColumns) => columns / (columns, columnOrder) => columns", description: "Logic dùng riêng được — ví dụ để sắp xếp phía server, điều khiển lựa chọn từ toolbar hoặc tự làm nút chọn cột." },
     ],
   },
 ];

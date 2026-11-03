@@ -163,3 +163,6 @@ export const chartMessagesEn: ChartMessages = {
   sparklineSummary: ({ points, first, last, min, max }) =>
     `Trend over ${points} ${points === 1 ? "point" : "points"}: from ${first} to ${last}, low ${min}, high ${max}`,
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `chartMessagesEn` (mặc định). `chartMessages` giữ cho code cũ. */
+export const chartMessagesVi = chartMessages;

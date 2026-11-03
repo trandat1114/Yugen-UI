@@ -1,5 +1,6 @@
 /** Fluent 2 Combobox — https://fluent2.microsoft.design/components/web/react/core/combobox/usage */
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { useDirection } from "@radix-ui/react-direction";
 import { Command as CommandPrimitive } from "cmdk";
@@ -16,9 +17,9 @@ import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffec
 import { popoverSurfaceClass } from "@/components/ui/Popover/Popover";
 import { fieldAppearanceClass, type FieldAppearance } from "@/components/ui/Select/Select";
 import { listboxOptionClass } from "@/components/ui/Dropdown/Dropdown";
-import { comboboxMessages } from "./messages";
+import { comboboxMessagesEn } from "./messages";
 
-export { comboboxMessages, comboboxMessagesEn, type ComboboxMessages } from "./messages";
+export { comboboxMessages, comboboxMessagesVi, comboboxMessagesEn, type ComboboxMessages } from "./messages";
 
 export interface ComboboxOption {
   value: string;
@@ -136,7 +137,7 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
     ...inputProps
   } = props;
 
-  const msg = useYugenMessages("combobox", comboboxMessages);
+  const msg = useYugenMessages("combobox", comboboxMessagesEn);
   const items = React.useMemo<NormalizedOption[]>(
     () => options.map((o) => (typeof o === "string" ? { value: o, label: o } : { ...o, label: o.label ?? o.value })),
     [options],
@@ -152,8 +153,11 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
     },
     [items, searchText],
   );
-  const [innerSelected, setInnerSelected] = React.useState<string[]>(() => toArray(defaultValue) ?? []);
-  const selected = toArray(value) ?? innerSelected;
+  // onValueChange nhận string hoặc string[] tuỳ multiselect nên gọi riêng (trong commit), không qua hook.
+  const [selected, setSelected] = useControllableState<string[]>({
+    value: toArray(value),
+    defaultValue: () => toArray(defaultValue) ?? [],
+  });
   const selectedSet = new Set(selected);
   const labelOf = (v: string) => labelByValue.get(v) ?? v;
   const displayText = selected.map(labelOf).join(", ");
@@ -188,7 +192,7 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
   }, [open, listEl, active, query]);
 
   const commit = (next: string[]) => {
-    if (value === undefined) setInnerSelected(next);
+    setSelected(next);
     if (multiselect) (onValueChange as ((v: string[]) => void) | undefined)?.(next);
     else (onValueChange as ((v: string) => void) | undefined)?.(next[0] ?? "");
   };

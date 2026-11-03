@@ -5,6 +5,8 @@
 @source not "../*.md";
 @source not "../wiki";
 @source not "../.github";
+/* Tin của trang Có gì mới (#261): chữ thường, không có class. */
+@source not "./docs/news";
 
 /* Tắt palette/scale mặc định của Tailwind để không ai dùng được bg-blue-500, rounded-lg, shadow-md...
    Chỉ còn lại các utility map từ token Fluent bên dưới. */
@@ -666,6 +668,11 @@
     outline: 2px solid var(--colorStrokeFocus2);
     outline-offset: 1px;
     border-radius: var(--borderRadiusMedium);
+  }
+  /* Sortable: mục đang kéo nổi trên các mục khác và có nền để chữ không chồng lên nhau; class position / bg-* của mục thắng. */
+  [data-sortable-item][data-dragging] {
+    position: relative;
+    background-color: var(--colorNeutralBackground1);
   }
   ::selection {
     background-color: var(--colorBrandBackground);

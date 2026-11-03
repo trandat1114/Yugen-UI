@@ -61,7 +61,7 @@ export const en: Record<string, ComponentDocEn> = {
       {
         title: "Time axis & markers",
         description:
-          "index is a Date → positions follow real time, and axis labels are formatted with Intl (vi-VN). markers draws dots ≥ 8px with a surface-colored ring.",
+          "index is a Date → positions follow real time, and axis labels are formatted with Intl (en-US). markers draws dots ≥ 8px with a surface-colored ring.",
       },
       { title: "AreaChart", description: "Single series: a light fill under the line, and the Y axis always starts at 0. The last value is labeled directly." },
       { title: "Stacked areas", description: "stacked adds the series together for part-to-whole over time; the tooltip gets an extra total row." },
@@ -102,7 +102,7 @@ export const en: Record<string, ComponentDocEn> = {
     examples: [
       {
         title: "Grouping the tail into “Other”",
-        description: "9 groups → the 5 largest + “Khác” (Other) in neutral gray. The data table shows the grouped figure too.",
+        description: "9 groups → the 5 largest + “Other” in neutral gray. The data table shows the grouped figure too.",
       },
       {
         title: "Custom center label",

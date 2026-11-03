@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import {
   ArrowClockwise16Regular,
   CheckmarkCircle12Filled,
@@ -19,9 +20,9 @@ import { useAnnounce } from "../AriaLive/AriaLive";
 import { Button } from "../Button/Button";
 import { ProgressBar } from "../ProgressBar/ProgressBar";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
-import { fileUploadMessages, type FileUploadMessages } from "./messages";
+import { fileUploadMessagesEn, type FileUploadMessages } from "./messages";
 
-export { fileUploadMessages, fileUploadMessagesEn, type FileUploadMessages } from "./messages";
+export { fileUploadMessages, fileUploadMessagesVi, fileUploadMessagesEn, type FileUploadMessages } from "./messages";
 
 /* ------------------------------------------------------------------------------------------------
  * Tiện ích thuần
@@ -145,7 +146,7 @@ export const FileUploadItem = React.forwardRef<HTMLLIElement, FileUploadItemProp
     { name, size, type, file, previewUrl, status = "idle", progress, error, showThumbnail = true, disabled, onRemove, onRetry, className, ...props },
     ref,
   ) => {
-    const msg = useYugenMessages("fileUpload", fileUploadMessages);
+    const msg = useYugenMessages("fileUpload", fileUploadMessagesEn);
     const { locale } = useYugen();
     const [objectUrl, setObjectUrl] = React.useState<string>();
     const isImage = (type ?? file?.type ?? "").startsWith("image/");
@@ -319,17 +320,16 @@ export const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>(
     const inputRef = React.useRef<HTMLInputElement | null>(null);
     const dragDepth = React.useRef(0);
     const { announce } = useAnnounce();
-    const msg = useYugenMessages("fileUpload", fileUploadMessages);
+    const msg = useYugenMessages("fileUpload", fileUploadMessagesEn);
     const { locale } = useYugen();
 
-    const [innerFiles, setInnerFiles] = React.useState<FileUploadEntry[]>(defaultFiles ?? []);
-    const controlled = files !== undefined;
-    const list = controlled ? files : innerFiles;
+    // onFilesChange có thêm `details` nên gọi riêng (trong commit), không qua hook.
+    const [list, setList] = useControllableState({ value: files, defaultValue: defaultFiles ?? [] });
     const [rejections, setRejections] = React.useState<FileUploadRejection[]>([]);
     const [dragging, setDragging] = React.useState(false);
 
     const commit = (next: FileUploadEntry[], details: FileUploadChangeDetails) => {
-      if (!controlled) setInnerFiles(next);
+      setList(next);
       onFilesChange?.(next, details);
     };
 

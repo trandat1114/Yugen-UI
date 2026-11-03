@@ -3,14 +3,14 @@ import { CONCEPT_BY_SLUG, CONCEPT_EN_PAGES } from "./concepts";
 import { FOUNDATIONS } from "./foundations";
 import { useLocale, type LocaleValue } from "./i18n";
 import { COMPONENT_META_BY_SLUG, COMPONENTS_META, isTranslated } from "./registry";
-import { localePathOf, pathOf, type Route } from "./router";
+import { DEFAULT_LOCALE, localePathOf, pathOf, type Route } from "./router";
 import { SITE } from "./site";
 
 /**
  * Tiêu đề tab, <meta name="description">, canonical và og:* theo trang. Bản build ghi sẵn vào HTML prerender của từng
  * trang (scripts/prerender.mjs); khi chuyển trang trong trình duyệt, DocumentMeta cập nhật lại.
  */
-const PAGES: Record<"blocks" | "templates" | "theme-designer" | "community", Record<"vi" | "en", [string, string]>> = {
+const PAGES: Record<"blocks" | "templates" | "theme-designer" | "community" | "contributors", Record<"vi" | "en", [string, string]>> = {
   blocks: {
     vi: ["Blocks", "Cụm giao diện ghép sẵn từ component Yugen UI — đăng nhập, cài đặt, thống kê, danh sách — copy nguyên khối vào dự án."],
     en: ["Blocks", "Ready-made UI sections built from Yugen UI components — sign-in, settings, stats, lists — copy whole blocks into your project."],
@@ -26,6 +26,10 @@ const PAGES: Record<"blocks" | "templates" | "theme-designer" | "community", Rec
   community: {
     vi: ["Cộng đồng", "Đóng góp cho Yugen UI: báo lỗi, gửi block, dịch tài liệu, lộ trình phát triển."],
     en: ["Community", "Contribute to Yugen UI: report bugs, share blocks, translate the docs, follow the roadmap."],
+  },
+  contributors: {
+    vi: ["Người đóng góp", "Những người đã giúp Yugen UI bằng code, tài liệu, bản dịch, báo lỗi và review."],
+    en: ["Contributors", "The people who helped Yugen UI with code, docs, translations, bug reports and reviews."],
   },
 };
 
@@ -53,7 +57,8 @@ export function routeMeta(route: Route, l: LocaleValue): { title?: string; descr
     case "blocks":
     case "templates":
     case "theme-designer":
-    case "community": {
+    case "community":
+    case "contributors": {
       const [title, description] = PAGES[route.kind][l.locale];
       return { title, description };
     }
@@ -62,11 +67,11 @@ export function routeMeta(route: Route, l: LocaleValue): { title?: string; descr
   }
 }
 
-/** Chế độ tiếng Anh: route nào còn hiện nội dung tiếng Việt (toàn trang hoặc một phần). */
-export function fallbackOf(route: Route): "page" | "partial" | null {
-  // Trang chủ, Cộng đồng, Templates, Blocks, Theme Designer và Foundations viết song ngữ ngay trong trang (#45, #138).
-  if (route.kind !== "news" && route.kind !== "concept" && route.kind !== "component") return null;
-  if (route.kind === "news") return "partial";
+/** Chế độ tiếng Anh: route nào còn hiện trang tiếng Việt. */
+export function fallbackOf(route: Route): "page" | null {
+  // Trang chủ, Cộng đồng, Người đóng góp, Templates, Blocks, Theme Designer và Foundations viết song ngữ ngay trong trang
+  // (#45, #138); Có gì mới đọc tin theo ngôn ngữ (#261).
+  if (route.kind !== "concept" && route.kind !== "component") return null;
   if (route.kind === "concept") return CONCEPT_EN_PAGES[route.slug] ? null : "page";
   // Trang component đã dịch: phần chữ tiếng Anh, demo (nội dung mẫu) giữ tiếng Việt và được đánh dấu lang="vi".
   if (route.kind === "component" && isTranslated(route.slug)) return null;
@@ -77,7 +82,7 @@ export interface DocumentHead {
   title: string;
   description: string;
   canonical: string;
-  /** hreflang → URL; rỗng khi trang chưa có bản tiếng Anh (bản /en/ trỏ canonical về bản tiếng Việt). */
+  /** hreflang → URL; rỗng khi trang chưa có bản tiếng Anh (bản tiếng Anh trỏ canonical về bản tiếng Việt). */
   alternates: { hreflang: string; href: string }[];
   /** Ảnh chia sẻ, tính từ gốc site: og/<đường dẫn>.jpg (scripts/og-pages.mjs), trang chủ og.jpg. */
   image: string;
@@ -91,17 +96,18 @@ export function documentHead(route: Route, l: LocaleValue): DocumentHead {
   const { title, description } = routeMeta(route, l);
   const path = pathOf(route);
   const translated = fallbackOf(route) !== "page";
-  // Trang chưa dịch: bản /en/ chỉ khác khung giao diện, nội dung là bản tiếng Việt → canonical về bản tiếng Việt.
-  const own = translated ? localePathOf(route, l.locale) : path;
+  // Trang chưa dịch: bản tiếng Anh chỉ khác khung giao diện, nội dung là bản tiếng Việt (ngôn ngữ nguồn) → canonical về
+  // bản tiếng Việt.
+  const own = localePathOf(route, translated ? l.locale : "vi");
   return {
     title: title ? `${title} · ${SITE.name}` : `${SITE.name} — React + Tailwind CSS v4`,
     description,
     canonical: SITE.url + own,
     alternates: translated
       ? [
-          { hreflang: "vi", href: SITE.url + path },
           { hreflang: "en", href: SITE.url + localePathOf(route, "en") },
-          { hreflang: "x-default", href: SITE.url + path },
+          { hreflang: "vi", href: SITE.url + localePathOf(route, "vi") },
+          { hreflang: "x-default", href: SITE.url + localePathOf(route, DEFAULT_LOCALE) },
         ]
       : [],
     image: path ? `og/${own}.jpg` : "og.jpg",

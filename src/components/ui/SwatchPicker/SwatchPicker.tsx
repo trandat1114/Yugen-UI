@@ -1,13 +1,14 @@
 /** Fluent 2 SwatchPicker — https://storybooks.fluentui.dev/react/?path=/docs/components-swatchpicker--docs */
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import { cva } from "class-variance-authority";
 import { Prohibited16Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { useArrowNavigationGroup } from "../FocusManagement/FocusManagement";
 import { useYugenMessages } from "../YugenProvider/context";
-import { swatchPickerMessages } from "./messages";
+import { swatchPickerMessagesEn } from "./messages";
 
-export { swatchPickerMessages, swatchPickerMessagesEn, type SwatchPickerMessages } from "./messages";
+export { swatchPickerMessages, swatchPickerMessagesVi, swatchPickerMessagesEn, type SwatchPickerMessages } from "./messages";
 
 export type SwatchSize = "extra-small" | "small" | "medium" | "large";
 export type SwatchShape = "square" | "rounded" | "circular";
@@ -60,16 +61,14 @@ export const SwatchPicker = React.forwardRef<HTMLDivElement, SwatchPickerProps>(
     },
     ref,
   ) => {
-    const [uncontrolled, setUncontrolled] = React.useState(defaultSelectedValue);
-    const controlled = selectedValue !== undefined;
-    const current = controlled ? selectedValue : uncontrolled;
-
+    // onSelectionChange gọi cả khi bấm lại ô đang chọn (như Fluent), nên không giao cho hook (hook bỏ qua giá trị không đổi).
+    const [current, setCurrent] = useControllableState({ value: selectedValue, defaultValue: defaultSelectedValue });
     const select = React.useCallback(
       (value: string) => {
-        if (!controlled) setUncontrolled(value);
+        setCurrent(value);
         onSelectionChange?.(value);
       },
-      [controlled, onSelectionChange],
+      [setCurrent, onSelectionChange],
     );
 
     const nav = useArrowNavigationGroup<HTMLDivElement>({ axis: layout === "grid" ? "grid" : "horizontal", circular: true });
@@ -228,7 +227,7 @@ export type EmptySwatchProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 export const EmptySwatch = React.forwardRef<HTMLButtonElement, EmptySwatchProps>(
   ({ className, children, "aria-label": ariaLabel, ...props }, ref) => {
     const { size, shape } = React.useContext(SwatchPickerContext);
-    const msg = useYugenMessages("swatchPicker", swatchPickerMessages);
+    const msg = useYugenMessages("swatchPicker", swatchPickerMessagesEn);
     return (
       <button
         ref={ref}

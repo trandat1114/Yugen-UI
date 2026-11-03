@@ -8,23 +8,35 @@ export type Route =
   | { kind: "theme-designer" }
   | { kind: "news" }
   | { kind: "community" }
+  | { kind: "contributors" }
   | { kind: "concept"; slug: string }
   | { kind: "foundation"; slug: string }
   | { kind: "component"; slug: string };
 
-/** Trang docs đang xem: route + ngôn ngữ (tiếng Anh nằm dưới /en/). */
+/**
+ * Ngôn ngữ ở gốc site, không tiền tố (#277): tiếng Anh ở /components/button, tiếng Việt ở /vi/components/button. Docs
+ * ≤ 0.13 đặt tiếng Việt ở gốc và tiếng Anh dưới /en/: các URL /en/… cũ vẫn mở đúng trang (`legacy`).
+ */
+export const DEFAULT_LOCALE: Locale = "en";
+/** Ngôn ngữ nằm dưới tiền tố /vi/. */
+export const PREFIXED_LOCALE: Locale = "vi";
+/** Tiền tố của docs ≤ 0.13 cho tiếng Anh. */
+export const LEGACY_PREFIX = "en";
+
+/** Trang docs đang xem: route + ngôn ngữ; `legacy` khi URL dùng tiền tố /en/ cũ (cần đổi sang URL chuẩn). */
 export interface DocsLocation {
   route: Route;
   lang: Locale;
+  legacy?: true;
 }
 
 /** Gốc của docs: "/" khi dev, "/Yugen-UI/" trên GitHub Pages, "/Yugen-UI/next/" cho bản xem trước. Luôn có "/" cuối. */
 const BASE = import.meta.env.BASE_URL;
 
-const PAGES = ["blocks", "templates", "theme-designer", "news", "community"] as const;
+const PAGES = ["blocks", "templates", "theme-designer", "news", "community", "contributors"] as const;
 const SECTIONS = { concepts: "concept", foundations: "foundation", components: "component" } as const;
 
-/** "components/button" (đường dẫn sau BASE và sau "en/", không có "/" đầu) → route; null nếu không phải trang docs. */
+/** "components/button" (đường dẫn sau BASE và sau "vi/", không có "/" đầu) → route; null nếu không phải trang docs. */
 function matchSegments(rest: string): Route | null {
   const parts = rest.split("/").filter(Boolean);
   if (parts.length === 0) return { kind: "home" };
@@ -34,17 +46,21 @@ function matchSegments(rest: string): Route | null {
   return null;
 }
 
-/** Tách tiền tố ngôn ngữ: "en/components/button" → { lang: "en", rest: "components/button" }. */
-function splitLocale(rest: string): { lang: Locale; rest: string } {
-  return rest === "en" || rest.startsWith("en/") ? { lang: "en", rest: rest.slice(3) } : { lang: "vi", rest };
+const hasPrefix = (rest: string, prefix: string) => rest === prefix || rest.startsWith(`${prefix}/`);
+
+/** Tách tiền tố ngôn ngữ: "vi/components/button" → { lang: "vi", rest: "components/button" }; "en/…" cũ → tiếng Anh. */
+function splitLocale(rest: string): { lang: Locale; rest: string; legacy?: true } {
+  if (hasPrefix(rest, PREFIXED_LOCALE)) return { lang: PREFIXED_LOCALE, rest: rest.slice(PREFIXED_LOCALE.length + 1) };
+  if (hasPrefix(rest, LEGACY_PREFIX)) return { lang: "en", rest: rest.slice(LEGACY_PREFIX.length + 1), legacy: true };
+  return { lang: DEFAULT_LOCALE, rest };
 }
 
 const afterBase = (pathname: string) => (pathname.startsWith(BASE) ? pathname.slice(BASE.length) : pathname.replace(/^\//, ""));
 
 /** Route + ngôn ngữ của một pathname trong docs (đã gồm BASE). Đường dẫn lạ → trang chủ. */
 export function parseLocation(pathname: string): DocsLocation {
-  const { lang, rest } = splitLocale(afterBase(pathname));
-  return { route: matchSegments(rest) ?? { kind: "home" }, lang };
+  const { lang, rest, legacy } = splitLocale(afterBase(pathname));
+  return { route: matchSegments(rest) ?? { kind: "home" }, lang, ...(legacy && { legacy }) };
 }
 
 export function parsePath(pathname: string): Route {
@@ -72,25 +88,27 @@ export function pathOf(route: Route): string {
   }
 }
 
-/** Đường dẫn gồm ngôn ngữ, không gồm BASE: "en/components/button", "en/" (trang chủ tiếng Anh). */
+const prefixOf = (lang: Locale) => (lang === DEFAULT_LOCALE ? "" : `${lang}/`);
+
+/** Đường dẫn gồm ngôn ngữ, không gồm BASE: "vi/components/button", "vi/" (trang chủ tiếng Việt), "components/button". */
 export function localePathOf(route: Route, lang: Locale) {
-  return (lang === "en" ? "en/" : "") + pathOf(route);
+  return prefixOf(lang) + pathOf(route);
 }
 
-export function hrefOf(route: Route, lang: Locale = "vi") {
+export function hrefOf(route: Route, lang: Locale = DEFAULT_LOCALE) {
   return BASE + localePathOf(route, lang);
 }
 
 // Ngôn ngữ của link nội bộ = ngôn ngữ trang đang render. LocaleProvider đặt giá trị này trong lúc render, trước các
-// component con, nên mọi docsPath() trong cây trỏ đúng bản /en/ hoặc bản tiếng Việt (kể cả khi prerender lần lượt từng trang).
-let linkLocale: Locale = "vi";
+// component con, nên mọi docsPath() trong cây trỏ đúng bản /vi/ hoặc bản tiếng Anh (kể cả khi prerender lần lượt từng trang).
+let linkLocale: Locale = DEFAULT_LOCALE;
 export function setLinkLocale(lang: Locale) {
   linkLocale = lang;
 }
 
-/** Link nội bộ: docsPath("/concepts/cli") → "/Yugen-UI/concepts/cli", hoặc "/Yugen-UI/en/concepts/cli" khi đang xem tiếng Anh. */
+/** Link nội bộ: docsPath("/concepts/cli") → "/Yugen-UI/concepts/cli", hoặc "/Yugen-UI/vi/concepts/cli" khi đang xem tiếng Việt. */
 export function docsPath(path: string, lang: Locale = linkLocale) {
-  return BASE + (lang === "en" ? "en/" : "") + path.replace(/^\//, "");
+  return BASE + prefixOf(lang) + path.replace(/^\//, "");
 }
 
 const NAVIGATE = "yugen-docs:navigate";

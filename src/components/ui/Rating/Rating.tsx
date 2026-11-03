@@ -1,5 +1,6 @@
 /** Fluent 2 Rating — https://fluent2.microsoft.design/components/web/react/core/rating/usage */
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import { useDirection } from "@radix-ui/react-direction";
 import {
   Star12Filled,
@@ -13,9 +14,9 @@ import {
 } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
-import { ratingMessages } from "./messages";
+import { ratingMessagesEn } from "./messages";
 
-export { ratingMessages, ratingMessagesEn, type RatingMessages } from "./messages";
+export { ratingMessages, ratingMessagesVi, ratingMessagesEn, type RatingMessages } from "./messages";
 
 export type RatingColor = "brand" | "marigold" | "neutral";
 export type RatingSize = "small" | "medium" | "large" | "extra-large";
@@ -110,21 +111,15 @@ export const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
     ref,
   ) => {
     const dir = useDirection();
-    const msg = useYugenMessages("rating", ratingMessages);
+    const msg = useYugenMessages("rating", ratingMessagesEn);
     const { locale } = useYugen();
     const labelOf = itemLabel ?? ((v: number) => msg.item(v, v.toLocaleString(locale)));
     const autoName = React.useId();
     const groupName = name ?? autoName;
-    const [inner, setInner] = React.useState(defaultValue);
-    const current = value !== undefined ? value : inner;
+    const [current, select] = useControllableState({ value, defaultValue, onChange: onValueChange });
     const [hover, setHover] = React.useState<number | null>(null);
     const shown = hover ?? current;
     const { gap } = ICONS[size];
-
-    const select = (v: number) => {
-      if (value === undefined) setInner(v);
-      onValueChange?.(v);
-    };
 
     // Radio gốc xử lý ArrowLeft/Right khác nhau giữa trình duyệt khi RTL → tự xử lý theo chiều hiển thị.
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -217,7 +212,7 @@ export const RatingDisplay = React.forwardRef<HTMLDivElement, RatingDisplayProps
   ({ value, max = 5, count, compact, color = "neutral", size = "medium", hideValue, className, ...props }, ref) => {
     const rounded = Math.round(Math.min(Math.max(value, 0), max) * 2) / 2;
     const { gap, text } = ICONS[size];
-    const msg = useYugenMessages("rating", ratingMessages);
+    const msg = useYugenMessages("rating", ratingMessagesEn);
     const { locale } = useYugen();
     const valueText = value.toLocaleString(locale, { maximumFractionDigits: 1 });
     const countText = count?.toLocaleString(locale);

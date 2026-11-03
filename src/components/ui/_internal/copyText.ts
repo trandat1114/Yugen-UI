@@ -13,6 +13,10 @@ export async function copyText(text: string) {
   ta.style.opacity = "0";
   document.body.appendChild(ta);
   ta.select();
-  document.execCommand("copy");
-  ta.remove();
+  try {
+    // execCommand trả false khi trình duyệt từ chối: báo lỗi để useClipboard không hiện "Đã chép".
+    if (!document.execCommand("copy")) throw new Error("copy command was rejected");
+  } finally {
+    ta.remove();
+  }
 }

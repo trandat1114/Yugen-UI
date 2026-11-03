@@ -25,3 +25,6 @@ export const ratingMessagesEn: RatingMessages = {
   summary: (valueText, max) => `Rated ${valueText} out of ${max} stars`,
   count: (count, countText) => (count === 1 ? `${countText} rating` : `${countText} ratings`),
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `ratingMessagesEn` (mặc định). `ratingMessages` giữ cho code cũ. */
+export const ratingMessagesVi = ratingMessages;

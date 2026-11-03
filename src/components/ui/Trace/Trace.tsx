@@ -21,9 +21,9 @@ import { Badge } from "../Badge/Badge";
 import { Button } from "../Button/Button";
 import { Spinner } from "../Spinner/Spinner";
 import { useYugenMessages } from "../YugenProvider/context";
-import { traceMessages } from "./messages";
+import { traceMessagesEn } from "./messages";
 
-export { traceMessages, traceMessagesEn, type TraceMessages } from "./messages";
+export { traceMessages, traceMessagesVi, traceMessagesEn, type TraceMessages } from "./messages";
 
 /* ================================================================ Trạng thái */
 
@@ -37,12 +37,12 @@ export const TRACE_STATUS_META: Record<
   TraceStatus,
   { label: string; color: string; icon16: IconComponent | null; icon20: IconComponent | null }
 > = {
-  pending: { label: traceMessages.pending, color: "text-foreground-3", icon16: Circle16Regular, icon20: Circle20Regular },
-  running: { label: traceMessages.running, color: "text-brand-foreground-1", icon16: null, icon20: null },
-  success: { label: traceMessages.success, color: "text-success-foreground-1", icon16: CheckmarkCircle16Filled, icon20: CheckmarkCircle20Filled },
-  error: { label: traceMessages.error, color: "text-danger-foreground-1", icon16: ErrorCircle16Filled, icon20: ErrorCircle20Filled },
-  skipped: { label: traceMessages.skipped, color: "text-foreground-3", icon16: SubtractCircle16Regular, icon20: SubtractCircle20Regular },
-  cancelled: { label: traceMessages.cancelled, color: "text-warning-foreground-1", icon16: Prohibited16Regular, icon20: Prohibited20Regular },
+  pending: { label: traceMessagesEn.pending, color: "text-foreground-3", icon16: Circle16Regular, icon20: Circle20Regular },
+  running: { label: traceMessagesEn.running, color: "text-brand-foreground-1", icon16: null, icon20: null },
+  success: { label: traceMessagesEn.success, color: "text-success-foreground-1", icon16: CheckmarkCircle16Filled, icon20: CheckmarkCircle20Filled },
+  error: { label: traceMessagesEn.error, color: "text-danger-foreground-1", icon16: ErrorCircle16Filled, icon20: ErrorCircle20Filled },
+  skipped: { label: traceMessagesEn.skipped, color: "text-foreground-3", icon16: SubtractCircle16Regular, icon20: SubtractCircle20Regular },
+  cancelled: { label: traceMessagesEn.cancelled, color: "text-warning-foreground-1", icon16: Prohibited16Regular, icon20: Prohibited20Regular },
 };
 
 /** Thứ tự hiển thị trong phần tổng kết. */
@@ -179,7 +179,7 @@ export const Trace = React.forwardRef<HTMLElement, TraceProps>(
     ref,
   ) => {
     const titleId = React.useId();
-    const msg = useYugenMessages("trace", traceMessages);
+    const msg = useYugenMessages("trace", traceMessagesEn);
     const [records, setRecords] = React.useState<Record<string, StepRecord>>({});
     const [expandSignal, setExpandSignal] = React.useState({ expanded: false, seq: 0 });
     const [message, setMessage] = React.useState("");
@@ -396,7 +396,7 @@ export const TraceStep = React.forwardRef<HTMLLIElement, TraceStepProps>(
     const ctx = React.useContext(TraceContext);
     const depth = React.useContext(DepthContext);
     const last = React.useContext(LastContext);
-    const msg = useYugenMessages("trace", traceMessages);
+    const msg = useYugenMessages("trace", traceMessagesEn);
     const size = ctx?.size ?? "medium";
     const small = size === "small";
     const id = React.useId();
@@ -405,6 +405,7 @@ export const TraceStep = React.forwardRef<HTMLLIElement, TraceStepProps>(
     const hasChildren = React.Children.toArray(children).some(React.isValidElement);
     const expandable = details != null || hasChildren;
 
+    // Không dùng useControllableState: tự mở khi chạy / lỗi (effect bên dưới) chỉ đổi state trong, không gọi onExpandedChange.
     const [innerExpanded, setInnerExpanded] = React.useState(
       defaultExpanded ?? (status === "running" || status === "error"),
     );

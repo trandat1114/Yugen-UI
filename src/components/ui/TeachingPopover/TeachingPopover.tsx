@@ -1,13 +1,14 @@
 /** Fluent 2 TeachingPopover — https://storybooks.fluentui.dev/react/?path=/docs/components-teachingpopover--docs */
 import * as React from "react";
+import { useControllableState } from "../hooks/useControllableState";
 import { Dismiss16Regular, Lightbulb16Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
 import { Button } from "../Button/Button";
 import { Popover, PopoverClose, PopoverSurface, PopoverTrigger, type PopoverSurfaceProps } from "../Popover/Popover";
 import { useYugenMessages } from "../YugenProvider/context";
-import { teachingPopoverMessages } from "./messages";
+import { teachingPopoverMessagesEn } from "./messages";
 
-export { teachingPopoverMessages, teachingPopoverMessagesEn, type TeachingPopoverMessages } from "./messages";
+export { teachingPopoverMessages, teachingPopoverMessagesVi, teachingPopoverMessagesEn, type TeachingPopoverMessages } from "./messages";
 
 export type TeachingPopoverAppearance = "normal" | "brand";
 
@@ -85,7 +86,7 @@ export function TeachingPopoverHeader({
   ...props
 }: TeachingPopoverHeaderProps) {
   const brand = useTeachingAppearance() === "brand";
-  const msg = useYugenMessages("teachingPopover", teachingPopoverMessages);
+  const msg = useYugenMessages("teachingPopover", teachingPopoverMessagesEn);
   return (
     <div
       className={cn(
@@ -226,18 +227,13 @@ export function TeachingPopoverCarousel({
   children,
   ...props
 }: TeachingPopoverCarouselProps) {
-  const msg = useYugenMessages("teachingPopover", teachingPopoverMessages);
+  const msg = useYugenMessages("teachingPopover", teachingPopoverMessagesEn);
   const steps = React.Children.toArray(children);
   const count = steps.length;
-  const [uncontrolled, setUncontrolled] = React.useState(defaultStep);
-  const current = Math.min(Math.max(step ?? uncontrolled, 0), Math.max(count - 1, 0));
+  const [rawStep, go] = useControllableState({ value: step, defaultValue: defaultStep, onChange: onStepChange });
+  const current = Math.min(Math.max(rawStep, 0), Math.max(count - 1, 0));
   const buttons = useTeachingButtons();
   const brand = buttons.brand;
-
-  const go = (next: number) => {
-    if (step === undefined) setUncontrolled(next);
-    onStepChange?.(next);
-  };
 
   const first = current === 0;
   const last = current === count - 1;

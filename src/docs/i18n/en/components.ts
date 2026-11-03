@@ -75,6 +75,7 @@ export const COMPONENTS_EN: Record<string, { lead: string; name?: string }> = {
   descriptionlist: { lead: "DescriptionList shows label / value pairs: order details, a profile, a summary of settings." },
   stat: { lead: "Stat shows one key number with its change and an optional small chart." },
   prose: { lead: "Prose styles long content from Markdown or a CMS: headings, paragraphs, lists, tables, code, quotes and images on the Yugen type ramp." },
+  markdown: { lead: "Markdown renders content written in Markdown (articles, release notes, CMS fields) with Prose typography, safely for untrusted content." },
 
   // Feedback
   empty: { lead: "Empty shows a blank state when there's no data yet, with an explanation and a next step." },
@@ -96,6 +97,7 @@ export const COMPONENTS_EN: Record<string, { lead: string; name?: string }> = {
   tooltip: { lead: "Tooltip shows brief supplementary information when people hover or focus an element." },
 
   // Layout
+  appshell: { lead: "AppShell is the frame of an app: a sidebar that collapses to icons or opens as a Drawer, a header and the main content." },
   accordion: { lead: "Accordion organizes content into expandable / collapsible sections to reduce information overload." },
   aspectratio: { lead: "AspectRatio keeps a frame at a fixed width-to-height ratio at any width, for video, images, banners or stories." },
   collapsible: { lead: "Collapsible shows or hides a region with a toggle control, animating its height." },
@@ -114,6 +116,7 @@ export const COMPONENTS_EN: Record<string, { lead: string; name?: string }> = {
 
   // Utilities
   arialive: { lead: "AriaLiveAnnouncer and useAnnounce read dynamic announcements to screen reader users." },
+  sortable: { lead: "Sortable reorders lists by drag and drop or with the keyboard; every step is announced to screen readers." },
   focusmanagement: { lead: "useArrowNavigationGroup and useFocusableGroup manage keyboard focus for groups of elements, like Fluent's Tabster." },
   usemediaquery: { lead: "useMediaQuery tracks a CSS media query (breakpoint, dark mode, reduced motion, pointer type) and re-renders when it changes." },
   visuallyhidden: { lead: "VisuallyHidden hides content from the screen while keeping it available to screen readers." },
@@ -128,6 +131,7 @@ export const COMPONENTS_EN: Record<string, { lead: string; name?: string }> = {
   donutchart: { lead: "DonutChart gives a quick part-to-whole view with up to 6 slices; the tail is grouped into “Other” and the total sits in the middle." },
   heatmap: { lead: "Heatmap colors a row × column matrix by magnitude, for hour / day patterns, cohort comparisons or retention tables." },
   linechart: { lead: "LineChart and AreaChart show trends over time or across ordered categories, with several series on one axis." },
+  hooks: { lead: "Nine shared hooks that Yugen UI's own components use: state, screen, storage, shortcuts and measuring." },
   loading: { lead: "Show loaders at the right moment and only over the region that is loading: no flash for fast responses, no flicker for slow ones." },
   messagescroller: { lead: "MessageScroller is a conversation scroll area that sticks to the bottom for new messages, shows “N new messages” while you read older ones, and keeps your place when history loads." },
   notificationcenter: { lead: "NotificationCenter is a bell with an unread count. It opens a panel of notifications grouped by day: a Popover on desktop, a bottom sheet on mobile." },

@@ -29,3 +29,6 @@ export const autocompleteMessagesEn: AutocompleteMessages = {
   searching: "Searching…",
   count: (count) => (count === 1 ? "1 suggestion" : `${count} suggestions`),
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `autocompleteMessagesEn` (mặc định). `autocompleteMessages` giữ cho code cũ. */
+export const autocompleteMessagesVi = autocompleteMessages;

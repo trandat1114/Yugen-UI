@@ -78,3 +78,9 @@ export const wizardMessagesEn: WizardMessages = {
   validateFailed: "Couldn't validate this step. Try again.",
   panel: (current, total) => `Step ${current} of ${total}`,
 };
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `stepperMessagesEn` (mặc định). `stepperMessages` giữ cho code cũ. */
+export const stepperMessagesVi = stepperMessages;
+
+/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `wizardMessagesEn` (mặc định). `wizardMessages` giữ cho code cũ. */
+export const wizardMessagesVi = wizardMessages;

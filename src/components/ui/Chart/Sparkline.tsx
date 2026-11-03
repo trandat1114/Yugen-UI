@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
-import { chartMessages } from "./messages";
+import { chartMessagesEn } from "./messages";
 import { Stat, type StatProps } from "../Stat/Stat";
 import { ChartTooltip } from "./ChartParts";
 import {
@@ -9,12 +9,12 @@ import {
   linearScale,
   makeNumberFormatter,
   slotVar,
-  useElementWidth,
   type ChartColor,
   type ChartNumberFormat,
   type ChartSlot,
   type Point,
 } from "./chartUtils";
+import { useElementSize } from "../hooks/useElementSize";
 
 /* ================================================================== Sparkline */
 
@@ -59,8 +59,8 @@ export const Sparkline = React.forwardRef<HTMLSpanElement, SparklineProps>(funct
 ) {
   const yugen = useYugen();
   const locale = localeProp ?? yugen.locale;
-  const msg = useYugenMessages("chart", chartMessages);
-  const [measureRef, measured] = useElementWidth<HTMLSpanElement>();
+  const msg = useYugenMessages("chart", chartMessagesEn);
+  const { ref: measureRef, width: measured } = useElementSize<HTMLSpanElement>();
   const [hover, setHover] = React.useState<number | null>(null);
   const setRefs = (el: HTMLSpanElement | null) => {
     measureRef(el);
