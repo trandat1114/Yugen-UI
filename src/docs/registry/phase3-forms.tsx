@@ -52,7 +52,7 @@ const wait = (ms: number) => new Promise<void>((resolve) => window.setTimeout(re
 // #region FileUploadHero
 function FileUploadHero() {
   return (
-    <Field label="Tài liệu đính kèm" hint="Có thể chọn nhiều tệp cùng lúc." className="w-full max-w-120">
+    <Field label="Attachments" hint="You can pick several files at once." className="w-full max-w-120">
       <FileUpload multiple accept=".pdf,.docx,image/*" maxSize={5 * 1024 * 1024} maxFiles={5} />
     </Field>
   );
@@ -60,7 +60,7 @@ function FileUploadHero() {
 // #endregion
 
 // #region fakeUpload
-/** Giả lập tải lên: +10% mỗi 200ms; `fail` → đứt kết nối ở 60%. */
+/** Fake upload: +10% every 200ms; `fail` drops the connection at 60%. */
 function fakeUpload(onProgress: (progress: number) => void, fail: boolean) {
   return new Promise<void>((resolve, reject) => {
     let progress = 0;
@@ -68,7 +68,7 @@ function fakeUpload(onProgress: (progress: number) => void, fail: boolean) {
       progress = Math.min(progress + 0.1, 1);
       if (fail && progress >= 0.6) {
         window.clearInterval(timer);
-        reject(new Error("Mất kết nối — tải lên bị gián đoạn."));
+        reject(new Error("Connection lost. The upload was interrupted."));
         return;
       }
       onProgress(progress);
@@ -98,8 +98,8 @@ function UploadProgressDemo() {
 
   return (
     <div className="flex w-full max-w-120 flex-col gap-3">
-      <Checkbox label="Giả lập lỗi mạng" checked={failNetwork} onCheckedChange={(checked) => setFailNetwork(checked === true)} />
-      <Field label="Báo cáo quý" hint="Tệp bắt đầu tải lên ngay khi được chọn.">
+      <Checkbox label="Simulate a network error" checked={failNetwork} onCheckedChange={(checked) => setFailNetwork(checked === true)} />
+      <Field label="Quarterly report" hint="Files start uploading as soon as you pick them.">
         <FileUpload
           multiple
           maxFiles={4}
@@ -120,13 +120,13 @@ function UploadProgressDemo() {
 // #region AvatarUploadDemo
 function AvatarUploadDemo() {
   return (
-    <Field label="Ảnh đại diện" className="w-full max-w-100">
+    <Field label="Profile photo" className="w-full max-w-100">
       <FileUpload
         accept="image/png,image/jpeg,image/webp"
         maxSize={2 * 1024 * 1024}
         allowPaste
-        label="Kéo ảnh vào đây hoặc bấm để chọn"
-        description="PNG, JPG, WEBP · tối đa 2 MB · dán được bằng Ctrl + V"
+        label="Drag a photo here or click to browse"
+        description="PNG, JPG, WEBP · up to 2 MB · paste with Ctrl + V"
       />
     </Field>
   );
@@ -149,16 +149,16 @@ function RequiredFileDemo() {
       }}
     >
       <Field
-        label="Bản scan CCCD"
+        label="ID card scan"
         required
-        hint="Mặt trước và mặt sau, PDF hoặc ảnh."
+        hint="Front and back, as a PDF or images."
         validationState={missing ? "error" : "none"}
-        validationMessage={missing ? "Vui lòng tải lên ít nhất một tệp." : undefined}
+        validationMessage={missing ? "Upload at least one file." : undefined}
       >
         <FileUpload multiple maxFiles={2} accept=".pdf,image/*" files={files} onFilesChange={setFiles} />
       </Field>
       <Button type="submit" appearance="primary" className="self-start">
-        Gửi hồ sơ
+        Submit
       </Button>
     </form>
   );
@@ -170,10 +170,10 @@ function RequiredFileDemo() {
 // #region WizardDemo
 const EMAIL = /^\S+@\S+\.\S+$/;
 
-/** Giả lập API kiểm tra email trùng (1,2 giây). */
+/** Fake API that checks whether the email is taken (1.2 seconds). */
 async function checkEmail(email: string) {
   await wait(1200);
-  return email === "da-dung@yugen.vn" ? "Email này đã được đăng ký." : true;
+  return email === "taken@example.com" ? "This email is already registered." : true;
 }
 
 function WizardDemo() {
@@ -184,36 +184,36 @@ function WizardDemo() {
 
   const steps: WizardStep[] = [
     {
-      title: "Tài khoản",
-      description: "Email đăng nhập",
+      title: "Account",
+      description: "Sign-in email",
       content: (
-        <Field label="Email" required hint='Thử "da-dung@yugen.vn" để thấy lỗi từ server.'>
+        <Field label="Email" required hint='Try "taken@example.com" to see a server error.'>
           <Input type="email" value={email} onChange={(event) => setEmail(event.target.value)} />
         </Field>
       ),
-      validate: () => (EMAIL.test(email) ? checkEmail(email) : "Email chưa đúng định dạng."),
+      validate: () => (EMAIL.test(email) ? checkEmail(email) : "Enter a valid email address."),
     },
     {
-      title: "Hồ sơ",
-      description: "Tên hiển thị",
+      title: "Profile",
+      description: "Display name",
       content: (
-        <Field label="Họ và tên" required>
+        <Field label="Full name" required>
           <Input value={name} onChange={(event) => setName(event.target.value)} />
         </Field>
       ),
-      validate: () => name.trim().length >= 2 || "Nhập họ tên (ít nhất 2 ký tự).",
+      validate: () => name.trim().length >= 2 || "Enter your name (at least 2 characters).",
     },
     {
-      title: "Thông báo",
+      title: "Notifications",
       optional: true,
-      content: <Checkbox label="Nhận bản tin hằng tháng" checked={newsletter} onCheckedChange={(checked) => setNewsletter(checked === true)} />,
+      content: <Checkbox label="Get the monthly newsletter" checked={newsletter} onCheckedChange={(checked) => setNewsletter(checked === true)} />,
     },
     {
-      title: "Xác nhận",
+      title: "Confirm",
       content: (
         <p className="text-body1 text-foreground-2">
-          Tạo tài khoản <span className="font-semibold text-foreground-1">{email}</span> cho {name}
-          {newsletter ? ", có nhận bản tin." : ", không nhận bản tin."}
+          Create the account <span className="font-semibold text-foreground-1">{email}</span> for {name}
+          {newsletter ? ", with the newsletter." : ", without the newsletter."}
         </p>
       ),
     },
@@ -222,8 +222,8 @@ function WizardDemo() {
   if (done) {
     return (
       <div className="flex flex-col items-start gap-3">
-        <p className="text-body1 text-foreground-1">Đã tạo tài khoản cho {name}.</p>
-        <Button onClick={() => setDone(false)}>Làm lại</Button>
+        <p className="text-body1 text-foreground-1">Account created for {name}.</p>
+        <Button onClick={() => setDone(false)}>Start over</Button>
       </div>
     );
   }
@@ -238,18 +238,18 @@ function HorizontalDemo() {
 
   return (
     <div className="flex w-full flex-col gap-4">
-      <Stepper activeStep={step} onStepChange={setStep} aria-label="Đặt hàng">
-        <Step title="Giỏ hàng" />
-        <Step title="Giao hàng" description="Địa chỉ, thời gian" />
-        <Step title="Thanh toán" />
-        <Step title="Hoàn tất" />
+      <Stepper activeStep={step} onStepChange={setStep} aria-label="Checkout">
+        <Step title="Cart" />
+        <Step title="Shipping" description="Address and time" />
+        <Step title="Payment" />
+        <Step title="Done" />
       </Stepper>
       <div className="flex gap-2">
         <Button disabled={step === 0} onClick={() => setStep(step - 1)}>
-          Lùi
+          Back
         </Button>
         <Button appearance="primary" disabled={step === 3} onClick={() => setStep(step + 1)}>
-          Tiến
+          Next
         </Button>
       </div>
     </div>
@@ -260,15 +260,15 @@ function HorizontalDemo() {
 // #region VerticalDemo
 function VerticalDemo() {
   return (
-    <Stepper orientation="vertical" activeStep={2} aria-label="Tiến trình đơn hàng" className="w-full max-w-100">
-      <Step title="Tạo đơn" description="08:12 · 21/10" />
-      <Step title="Thanh toán" description="Đã xác nhận chuyển khoản" />
-      <Step title="Đóng gói" status="error" description="Thiếu hàng tại kho Thủ Đức">
+    <Stepper orientation="vertical" activeStep={2} aria-label="Order progress" className="w-full max-w-100">
+      <Step title="Order placed" description="8:12 AM · Oct 21" />
+      <Step title="Payment" description="Bank transfer confirmed" />
+      <Step title="Packing" status="error" description="Out of stock at the main warehouse">
         <Button size="small" icon={<ArrowClockwise16Regular />}>
-          Chuyển kho khác
+          Ship from another warehouse
         </Button>
       </Step>
-      <Step title="Giao hàng" />
+      <Step title="Delivery" />
     </Stepper>
   );
 }
@@ -281,15 +281,15 @@ function CompactDemo() {
   return (
     <div className="flex flex-col items-start gap-3">
       <div className="w-72 rounded-xlarge border border-stroke-2 p-3">
-        <Stepper activeStep={step} aria-label="Hồ sơ vay">
-          <Step title="Thông tin cá nhân" />
-          <Step title="Thu nhập" />
-          <Step title="Tài sản đảm bảo" />
-          <Step title="Ký hợp đồng" />
+        <Stepper activeStep={step} aria-label="Loan application">
+          <Step title="Personal details" />
+          <Step title="Income" />
+          <Step title="Collateral" />
+          <Step title="Contract" />
         </Stepper>
       </div>
       <Button size="small" onClick={() => setStep((current) => (current + 1) % 4)}>
-        Bước tiếp
+        Next step
       </Button>
     </div>
   );
@@ -300,18 +300,18 @@ function CompactDemo() {
 
 // #region signupSchema
 const PLANS = [
-  { value: "free", label: "Miễn phí" },
-  { value: "pro", label: "Pro — 99.000 ₫/tháng" },
-  { value: "team", label: "Nhóm — 249.000 ₫/tháng" },
+  { value: "free", label: "Free" },
+  { value: "pro", label: "Pro · $99/month" },
+  { value: "team", label: "Team · $249/month" },
 ];
 
 const signUpSchema = z.object({
-  fullName: z.string().trim().min(2, "Họ tên cần ít nhất 2 ký tự."),
-  email: z.string().trim().min(1, "Vui lòng nhập email.").pipe(z.email("Email chưa đúng định dạng.")),
-  password: z.string().min(8, "Mật khẩu cần ít nhất 8 ký tự.").regex(/\d/, "Mật khẩu cần ít nhất một chữ số."),
-  plan: z.string().min(1, "Hãy chọn một gói."),
-  birthDate: z.date({ error: "Vui lòng chọn ngày sinh." }),
-  terms: z.boolean().refine((accepted) => accepted, "Bạn cần đồng ý điều khoản để tiếp tục."),
+  fullName: z.string().trim().min(2, "Name must be at least 2 characters."),
+  email: z.string().trim().min(1, "Enter your email.").pipe(z.email("Enter a valid email address.")),
+  password: z.string().min(8, "Password must be at least 8 characters.").regex(/\d/, "Password must include a number."),
+  plan: z.string().min(1, "Choose a plan."),
+  birthDate: z.date({ error: "Pick your date of birth." }),
+  terms: z.boolean().refine((accepted) => accepted, "Accept the terms to continue."),
 });
 
 type SignUpValues = z.infer<typeof signUpSchema>;
@@ -339,24 +339,24 @@ function SignUpForm() {
 
   return (
     <form noValidate onSubmit={onSubmit} className="flex w-full max-w-120 flex-col gap-3">
-      <Field label="Họ và tên" required validationState={errors.fullName ? "error" : "none"} validationMessage={errors.fullName?.message}>
+      <Field label="Full name" required validationState={errors.fullName ? "error" : "none"} validationMessage={errors.fullName?.message}>
         <Input autoComplete="name" {...register("fullName")} />
       </Field>
       <Field label="Email" required validationState={errors.email ? "error" : "none"} validationMessage={errors.email?.message}>
         <Input type="email" autoComplete="email" {...register("email")} />
       </Field>
       <Field
-        label="Mật khẩu"
+        label="Password"
         required
-        hint="Ít nhất 8 ký tự, có chữ số."
+        hint="At least 8 characters, including a number."
         validationState={errors.password ? "error" : "none"}
         validationMessage={errors.password?.message}
       >
         <Input type="password" autoComplete="new-password" {...register("password")} />
       </Field>
-      <Field label="Gói dịch vụ" required validationState={errors.plan ? "error" : "none"} validationMessage={errors.plan?.message}>
+      <Field label="Plan" required validationState={errors.plan ? "error" : "none"} validationMessage={errors.plan?.message}>
         <Select {...register("plan")}>
-          <option value="">Chọn gói…</option>
+          <option value="">Choose a plan…</option>
           {PLANS.map((plan) => (
             <option key={plan.value} value={plan.value}>
               {plan.label}
@@ -368,8 +368,8 @@ function SignUpForm() {
         control={control}
         name="birthDate"
         render={({ field, fieldState }) => (
-          <Field label="Ngày sinh" required validationState={fieldState.error ? "error" : "none"} validationMessage={fieldState.error?.message}>
-            <DatePicker value={field.value ?? null} onSelectDate={field.onChange} placeholder="Chọn ngày" />
+          <Field label="Date of birth" required validationState={fieldState.error ? "error" : "none"} validationMessage={fieldState.error?.message}>
+            <DatePicker value={field.value ?? null} onSelectDate={field.onChange} placeholder="Pick a date" />
           </Field>
         )}
       />
@@ -380,7 +380,7 @@ function SignUpForm() {
           <Field validationState={fieldState.error ? "error" : "none"} validationMessage={fieldState.error?.message}>
             <Checkbox
               ref={field.ref}
-              label="Tôi đồng ý với điều khoản sử dụng"
+              label="I agree to the terms of use"
               checked={field.value}
               onCheckedChange={(checked) => field.onChange(checked === true)}
               onBlur={field.onBlur}
@@ -389,11 +389,11 @@ function SignUpForm() {
         )}
       />
       <Button type="submit" appearance="primary" loading={isSubmitting} className="self-start">
-        Tạo tài khoản
+        Create account
       </Button>
       {created && (
         <p role="status" className="text-body1 text-success-foreground-1">
-          Đã tạo tài khoản {created}.
+          Account created for {created}.
         </p>
       )}
     </form>
@@ -403,7 +403,7 @@ function SignUpForm() {
 
 // #region ServerErrorDemo
 const inviteSchema = z.object({
-  email: z.string().trim().min(1, "Vui lòng nhập email.").pipe(z.email("Email chưa đúng định dạng.")),
+  email: z.string().trim().min(1, "Enter your email.").pipe(z.email("Enter a valid email address.")),
 });
 
 function ServerErrorDemo() {
@@ -415,14 +415,14 @@ function ServerErrorDemo() {
     formState: { errors, isSubmitting },
   } = useForm<z.infer<typeof inviteSchema>>({
     resolver: zodResolver(inviteSchema),
-    defaultValues: { email: "da-dung@yugen.vn" },
+    defaultValues: { email: "taken@example.com" },
   });
 
   const onSubmit = handleSubmit(async ({ email }) => {
     setSent(null);
     await wait(1200);
-    if (email === "da-dung@yugen.vn") {
-      setError("email", { message: "Email này đã là thành viên — hãy dùng email khác." }, { shouldFocus: true });
+    if (email === "taken@example.com") {
+      setError("email", { message: "This email is already a member. Use a different one." }, { shouldFocus: true });
       return;
     }
     setSent(email);
@@ -431,15 +431,15 @@ function ServerErrorDemo() {
   return (
     <form noValidate onSubmit={onSubmit} className="flex w-full max-w-120 flex-col gap-3">
       <Field
-        label="Email người được mời"
+        label="Invitee email"
         required
         validationState={errors.email ? "error" : sent ? "success" : "none"}
-        validationMessage={errors.email?.message ?? (sent ? `Đã gửi lời mời tới ${sent}.` : undefined)}
+        validationMessage={errors.email?.message ?? (sent ? `Invitation sent to ${sent}.` : undefined)}
       >
         <Input type="email" autoComplete="email" {...register("email")} />
       </Field>
       <Button type="submit" appearance="primary" loading={isSubmitting} className="self-start">
-        Gửi lời mời
+        Send invitation
       </Button>
     </form>
   );
@@ -463,33 +463,33 @@ function WizardFormDemo() {
 
   const steps: WizardStep[] = [
     {
-      title: "Đăng nhập",
-      description: "Email, mật khẩu",
-      // trigger() chỉ kiểm tra các trường của bước này và focus vào trường lỗi đầu tiên.
+      title: "Sign in",
+      description: "Email and password",
+      // trigger() checks only this step's fields and focuses the first invalid one.
       validate: () => trigger(["email", "password"], { shouldFocus: true }),
       content: (
         <div className="flex flex-col gap-3">
           <Field label="Email" required validationState={errors.email ? "error" : "none"} validationMessage={errors.email?.message}>
             <Input type="email" {...register("email")} />
           </Field>
-          <Field label="Mật khẩu" required validationState={errors.password ? "error" : "none"} validationMessage={errors.password?.message}>
+          <Field label="Password" required validationState={errors.password ? "error" : "none"} validationMessage={errors.password?.message}>
             <Input type="password" {...register("password")} />
           </Field>
         </div>
       ),
     },
     {
-      title: "Hồ sơ",
-      description: "Tên, gói dịch vụ",
+      title: "Profile",
+      description: "Name and plan",
       validate: () => trigger(["fullName", "plan"], { shouldFocus: true }),
       content: (
         <div className="flex flex-col gap-3">
-          <Field label="Họ và tên" required validationState={errors.fullName ? "error" : "none"} validationMessage={errors.fullName?.message}>
+          <Field label="Full name" required validationState={errors.fullName ? "error" : "none"} validationMessage={errors.fullName?.message}>
             <Input {...register("fullName")} />
           </Field>
-          <Field label="Gói dịch vụ" required validationState={errors.plan ? "error" : "none"} validationMessage={errors.plan?.message}>
+          <Field label="Plan" required validationState={errors.plan ? "error" : "none"} validationMessage={errors.plan?.message}>
             <Select {...register("plan")}>
-              <option value="">Chọn gói…</option>
+              <option value="">Choose a plan…</option>
               {PLANS.map((item) => (
                 <option key={item.value} value={item.value}>
                   {item.label}
@@ -501,10 +501,10 @@ function WizardFormDemo() {
       ),
     },
     {
-      title: "Xác nhận",
+      title: "Confirm",
       content: (
         <p className="text-body1 text-foreground-2">
-          {fullName} · {email} · gói {PLANS.find((item) => item.value === plan)?.label}
+          {fullName} · {email} · Plan: {PLANS.find((item) => item.value === plan)?.label}
         </p>
       ),
     },
@@ -513,8 +513,8 @@ function WizardFormDemo() {
   if (finished) {
     return (
       <div className="flex flex-col items-start gap-3">
-        <p className="text-body1 text-foreground-1">Đã đăng ký cho {fullName}.</p>
-        <Button onClick={() => setFinished(false)}>Xem lại</Button>
+        <p className="text-body1 text-foreground-1">Signed up as {fullName}.</p>
+        <Button onClick={() => setFinished(false)}>Review</Button>
       </div>
     );
   }

@@ -26,9 +26,9 @@ function LabelInputDemo() {
   return (
     <div className="flex w-72 flex-col gap-1">
       <Label htmlFor={id} required>
-        Số điện thoại
+        Phone number
       </Label>
-      <Input id={id} type="tel" placeholder="0912 345 678" />
+      <Input id={id} type="tel" placeholder="(555) 123-4567" />
     </div>
   );
 }
@@ -37,12 +37,12 @@ function DropdownControlledDemo() {
   const [size, setSize] = useState("m");
   return (
     <div className="flex flex-col gap-2">
-      <Dropdown aria-label="Cỡ áo" value={size} onValueChange={setSize}>
+      <Dropdown aria-label="Shirt size" value={size} onValueChange={setSize}>
         <DropdownOption value="s">S</DropdownOption>
         <DropdownOption value="m">M</DropdownOption>
         <DropdownOption value="l">L</DropdownOption>
       </Dropdown>
-      <span className="text-caption1 text-foreground-3">Đã chọn: {size.toUpperCase()}</span>
+      <span className="text-caption1 text-foreground-3">Selected: {size.toUpperCase()}</span>
     </div>
   );
 }
@@ -52,12 +52,12 @@ function RadioControlledDemo() {
   const [plan, setPlan] = useState("monthly");
   return (
     <div className="flex flex-col gap-1">
-      <Label id={labelId}>Chu kỳ thanh toán</Label>
+      <Label id={labelId}>Billing cycle</Label>
       <RadioGroup aria-labelledby={labelId} value={plan} onValueChange={setPlan}>
-        <Radio value="monthly" label="Hằng tháng" />
-        <Radio value="yearly" label="Hằng năm (tiết kiệm 20%)" />
+        <Radio value="monthly" label="Monthly" />
+        <Radio value="yearly" label="Yearly (save 20%)" />
       </RadioGroup>
-      <span className="text-caption1 text-foreground-3">Giá trị: {plan}</span>
+      <span className="text-caption1 text-foreground-3">Value: {plan}</span>
     </div>
   );
 }
@@ -68,13 +68,13 @@ function ComboboxFreeformDemo() {
     <div className="flex flex-col gap-2">
       <Combobox
         freeform
-        aria-label="Món tráng miệng"
-        placeholder="Chọn hoặc nhập món khác"
+        aria-label="Dessert"
+        placeholder="Pick one or type your own"
         value={dessert}
         onValueChange={setDessert}
-        options={["Chè", "Bánh flan", "Kem", "Sữa chua"]}
+        options={["Ice cream", "Flan", "Mochi", "Cheesecake"]}
       />
-      <span className="text-caption1 text-foreground-3">Giá trị: {dessert || "(trống)"}</span>
+      <span className="text-caption1 text-foreground-3">Value: {dessert || "(empty)"}</span>
     </div>
   );
 }
@@ -83,7 +83,7 @@ function TagDismissDemo() {
   const [tags, setTags] = useState(["React", "TypeScript", "Tailwind CSS", "Radix UI"]);
   return (
     <div className="flex flex-col items-center gap-3">
-      <TagGroup aria-label="Bộ lọc" onDismiss={(value) => setTags((t) => t.filter((x) => x !== value))}>
+      <TagGroup aria-label="Filters" onDismiss={(value) => setTags((t) => t.filter((x) => x !== value))}>
         {tags.map((tag) => (
           <Tag key={tag} value={tag} dismissible>
             {tag}
@@ -92,7 +92,7 @@ function TagDismissDemo() {
       </TagGroup>
       {tags.length === 0 && (
         <Button size="small" onClick={() => setTags(["React", "TypeScript", "Tailwind CSS", "Radix UI"])}>
-          Khôi phục
+          Restore
         </Button>
       )}
     </div>
@@ -100,18 +100,18 @@ function TagDismissDemo() {
 }
 
 function TagPickerControlledDemo() {
-  const [members, setMembers] = useState<string[]>(["Lan", "Hùng"]);
+  const [members, setMembers] = useState<string[]>(["Alex", "Maria"]);
   return (
     <div className="flex w-96 flex-col gap-2">
       <TagPicker
-        aria-label="Thành viên"
+        aria-label="Members"
         value={members}
         onValueChange={setMembers}
-        options={["Lan", "Hùng", "Minh", "Thảo", "Quân"]}
+        options={["Alex", "Maria", "Sam", "Priya", "Jordan"]}
         tagAppearance="brand"
         tagShape="circular"
       />
-      <span className="text-caption1 text-foreground-3">{members.length} thành viên được chọn</span>
+      <span className="text-caption1 text-foreground-3">{members.length} members selected</span>
     </div>
   );
 }
@@ -120,8 +120,8 @@ function SpinButtonControlledDemo() {
   const [guests, setGuests] = useState<number | null>(2);
   return (
     <div className="flex flex-col gap-2">
-      <SpinButton aria-label="Số khách" value={guests} onValueChange={setGuests} min={1} max={10} className="w-40" />
-      <span className="text-caption1 text-foreground-3">Phòng cho {guests ?? 0} khách</span>
+      <SpinButton aria-label="Guests" value={guests} onValueChange={setGuests} min={1} max={10} className="w-40" />
+      <span className="text-caption1 text-foreground-3">Room for {guests ?? 0} guests</span>
     </div>
   );
 }
@@ -142,13 +142,13 @@ function FruitFilterDemo() {
   return (
     <div className="w-80 overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1 shadow-4">
       <div className="flex flex-col gap-1 border-b border-stroke-2 p-3">
-        <SearchBox aria-label="Tìm trái cây" aria-controls="fruit-results" value={query} onValueChange={setQuery} />
+        <SearchBox aria-label="Search fruit" aria-controls="fruit-results" value={query} onValueChange={setQuery} />
         <p aria-live="polite" className="text-caption1 text-foreground-3">
-          {results.length} / {FRUITS.length} trái cây
+          {results.length} / {FRUITS.length} fruits
         </p>
       </div>
       {results.length > 0 ? (
-        <List id="fruit-results" aria-label="Kết quả" className="divide-y divide-stroke-3">
+        <List id="fruit-results" aria-label="Results" className="divide-y divide-stroke-3">
           {results.map((f) => (
             <ListItem
               key={f.name}
@@ -161,7 +161,7 @@ function FruitFilterDemo() {
         </List>
       ) : (
         <p id="fruit-results" className="px-3 py-5 text-center text-body1 text-foreground-3">
-          Không có trái cây nào khớp “{query}”.
+          No fruit matches “{query}”.
         </p>
       )}
     </div>
@@ -172,8 +172,8 @@ function InputOTPCompleteDemo() {
   const [code, setCode] = useState("");
   return (
     <div className="flex flex-col items-center gap-2">
-      <InputOTP aria-label="Mã OTP" onComplete={setCode} />
-      <span className="text-caption1 text-foreground-3">{code ? "Đã nhập mã " + code : "Nhập đủ 6 số"}</span>
+      <InputOTP aria-label="One-time code" onComplete={setCode} />
+      <span className="text-caption1 text-foreground-3">{code ? "Entered code " + code : "Enter all 6 digits"}</span>
     </div>
   );
 }
@@ -182,8 +182,8 @@ function RatingHalfDemo() {
   const [score, setScore] = useState(3.5);
   return (
     <div className="flex flex-col items-center gap-2">
-      <Rating step={0.5} value={score} onValueChange={setScore} color="marigold" aria-label="Chất lượng phục vụ" />
-      <span className="text-caption1 text-foreground-3">{score} / 5 sao</span>
+      <Rating step={0.5} value={score} onValueChange={setScore} color="marigold" aria-label="Service quality" />
+      <span className="text-caption1 text-foreground-3">{score} / 5 stars</span>
     </div>
   );
 }
@@ -205,15 +205,15 @@ export const docs: ComponentDoc[] = [
     hero: {
       title: "Label",
       code: `<div className="flex flex-col gap-2">
-  <Label>Tên hiển thị</Label>
-  <Label weight="semibold">Thông tin liên hệ</Label>
-  <Label required>Email công việc</Label>
+  <Label>Display name</Label>
+  <Label weight="semibold">Contact details</Label>
+  <Label required>Work email</Label>
 </div>`,
       render: () => (
         <div className="flex flex-col gap-2">
-          <Label>Tên hiển thị</Label>
-          <Label weight="semibold">Thông tin liên hệ</Label>
-          <Label required>Email công việc</Label>
+          <Label>Display name</Label>
+          <Label weight="semibold">Contact details</Label>
+          <Label required>Work email</Label>
         </div>
       ),
     },
@@ -235,15 +235,15 @@ export const docs: ComponentDoc[] = [
       {
         title: "Bắt buộc & disabled",
         description: "required thêm dấu * màu danger; disabled làm mờ nhãn.",
-        code: `<Label required>Họ và tên</Label>
-<Label disabled>Mã giới thiệu</Label>
-<Label required disabled>Bắt buộc nhưng bị khoá</Label>`,
+        code: `<Label required>Full name</Label>
+<Label disabled>Referral code</Label>
+<Label required disabled>Required but locked</Label>`,
         render: () => (
           <>
-            <Label required>Họ và tên</Label>
-            <Label disabled>Mã giới thiệu</Label>
+            <Label required>Full name</Label>
+            <Label disabled>Referral code</Label>
             <Label required disabled>
-              Bắt buộc nhưng bị khoá
+              Required but locked
             </Label>
           </>
         ),
@@ -254,8 +254,8 @@ export const docs: ComponentDoc[] = [
         code: `const id = useId();
 
 <div className="flex w-72 flex-col gap-1">
-  <Label htmlFor={id} required>Số điện thoại</Label>
-  <Input id={id} type="tel" placeholder="0912 345 678" />
+  <Label htmlFor={id} required>Phone number</Label>
+  <Input id={id} type="tel" placeholder="(555) 123-4567" />
 </div>`,
         render: () => <LabelInputDemo />,
       },
@@ -290,12 +290,12 @@ export const docs: ComponentDoc[] = [
     importCode: `import { Textarea, Field } from "@/components/ui";`,
     hero: {
       title: "Textarea",
-      code: `<Field label="Mô tả sự cố" hint="Nêu các bước để tái hiện lỗi." className="w-80">
-  <Textarea placeholder="Nhập mô tả…" />
+      code: `<Field label="Describe the issue" hint="List the steps to reproduce it." className="w-80">
+  <Textarea placeholder="Add a description…" />
 </Field>`,
       render: () => (
-        <Field label="Mô tả sự cố" hint="Nêu các bước để tái hiện lỗi." className="w-80">
-          <Textarea placeholder="Nhập mô tả…" />
+        <Field label="Describe the issue" hint="List the steps to reproduce it." className="w-80">
+          <Textarea placeholder="Add a description…" />
         </Field>
       ),
     },
@@ -333,31 +333,31 @@ export const docs: ComponentDoc[] = [
       {
         title: "Resize",
         description: "none (mặc định), vertical, horizontal, both.",
-        code: `<Textarea resize="vertical" placeholder="Kéo giãn theo chiều dọc" className="w-64" />
-<Textarea resize="both" placeholder="Kéo giãn tự do" />`,
+        code: `<Textarea resize="vertical" placeholder="Resizes vertically" className="w-64" />
+<Textarea resize="both" placeholder="Resizes in both directions" />`,
         render: () => (
           <>
-            <Textarea resize="vertical" placeholder="Kéo giãn theo chiều dọc" className="w-64" />
-            <Textarea resize="both" placeholder="Kéo giãn tự do" />
+            <Textarea resize="vertical" placeholder="Resizes vertically" className="w-64" />
+            <Textarea resize="both" placeholder="Resizes in both directions" />
           </>
         ),
       },
       {
         title: "Validation & disabled",
         description: "Field tự truyền aria-invalid / disabled xuống Textarea.",
-        code: `<Field label="Ghi chú" required validationState="error" validationMessage="Ghi chú không được để trống." className="w-64">
+        code: `<Field label="Notes" required validationState="error" validationMessage="Notes can't be empty." className="w-64">
   <Textarea />
 </Field>
-<Field label="Ghi chú hệ thống" disabled className="w-64">
-  <Textarea defaultValue="Không thể chỉnh sửa" />
+<Field label="System notes" disabled className="w-64">
+  <Textarea defaultValue="Read only" />
 </Field>`,
         render: () => (
           <>
-            <Field label="Ghi chú" required validationState="error" validationMessage="Ghi chú không được để trống." className="w-64">
+            <Field label="Notes" required validationState="error" validationMessage="Notes can't be empty." className="w-64">
               <Textarea />
             </Field>
-            <Field label="Ghi chú hệ thống" disabled className="w-64">
-              <Textarea defaultValue="Không thể chỉnh sửa" />
+            <Field label="System notes" disabled className="w-64">
+              <Textarea defaultValue="Read only" />
             </Field>
           </>
         ),
@@ -393,20 +393,20 @@ export const docs: ComponentDoc[] = [
     importCode: `import { Select, Field } from "@/components/ui";`,
     hero: {
       title: "Select",
-      code: `<Field label="Quốc gia" className="w-64">
-  <Select defaultValue="vn">
-    <option value="vn">Việt Nam</option>
-    <option value="jp">Nhật Bản</option>
-    <option value="kr">Hàn Quốc</option>
+      code: `<Field label="Country" className="w-64">
+  <Select defaultValue="us">
+    <option value="us">United States</option>
+    <option value="jp">Japan</option>
+    <option value="kr">South Korea</option>
     <option value="sg">Singapore</option>
   </Select>
 </Field>`,
       render: () => (
-        <Field label="Quốc gia" className="w-64">
-          <Select defaultValue="vn">
-            <option value="vn">Việt Nam</option>
-            <option value="jp">Nhật Bản</option>
-            <option value="kr">Hàn Quốc</option>
+        <Field label="Country" className="w-64">
+          <Select defaultValue="us">
+            <option value="us">United States</option>
+            <option value="jp">Japan</option>
+            <option value="kr">South Korea</option>
             <option value="sg">Singapore</option>
           </Select>
         </Field>
@@ -462,12 +462,12 @@ export const docs: ComponentDoc[] = [
       {
         title: "Nhóm option & disabled",
         description: "optgroup gom nhóm; option hoặc cả Select đều có thể disabled.",
-        code: `<Select aria-label="Múi giờ" defaultValue="hn" className="w-64">
-  <optgroup label="Châu Á">
-    <option value="hn">(UTC+07:00) Hà Nội</option>
+        code: `<Select aria-label="Time zone" defaultValue="bangkok" className="w-64">
+  <optgroup label="Asia">
+    <option value="bangkok">(UTC+07:00) Bangkok</option>
     <option value="tokyo">(UTC+09:00) Tokyo</option>
   </optgroup>
-  <optgroup label="Châu Âu">
+  <optgroup label="Europe">
     <option value="london">(UTC+00:00) London</option>
     <option value="paris" disabled>(UTC+01:00) Paris</option>
   </optgroup>
@@ -475,12 +475,12 @@ export const docs: ComponentDoc[] = [
 <Select aria-label="Disabled" disabled className="w-40"><option>Disabled</option></Select>`,
         render: () => (
           <>
-            <Select aria-label="Múi giờ" defaultValue="hn" className="w-64">
-              <optgroup label="Châu Á">
-                <option value="hn">(UTC+07:00) Hà Nội</option>
+            <Select aria-label="Time zone" defaultValue="bangkok" className="w-64">
+              <optgroup label="Asia">
+                <option value="bangkok">(UTC+07:00) Bangkok</option>
                 <option value="tokyo">(UTC+09:00) Tokyo</option>
               </optgroup>
-              <optgroup label="Châu Âu">
+              <optgroup label="Europe">
                 <option value="london">(UTC+00:00) London</option>
                 <option value="paris" disabled>
                   (UTC+01:00) Paris
@@ -523,21 +523,21 @@ export const docs: ComponentDoc[] = [
     importCode: `import { Dropdown, DropdownOption, DropdownGroup, DropdownDivider } from "@/components/ui";`,
     hero: {
       title: "Dropdown",
-      code: `<Field label="Phòng ban" className="w-72">
-  <Dropdown placeholder="Chọn phòng ban">
-    <DropdownOption value="design">Thiết kế</DropdownOption>
-    <DropdownOption value="dev">Phát triển</DropdownOption>
+      code: `<Field label="Department" className="w-72">
+  <Dropdown placeholder="Select a department">
+    <DropdownOption value="design">Design</DropdownOption>
+    <DropdownOption value="dev">Engineering</DropdownOption>
     <DropdownOption value="marketing">Marketing</DropdownOption>
-    <DropdownOption value="sales">Kinh doanh</DropdownOption>
+    <DropdownOption value="sales">Sales</DropdownOption>
   </Dropdown>
 </Field>`,
       render: () => (
-        <Field label="Phòng ban" className="w-72">
-          <Dropdown placeholder="Chọn phòng ban">
-            <DropdownOption value="design">Thiết kế</DropdownOption>
-            <DropdownOption value="dev">Phát triển</DropdownOption>
+        <Field label="Department" className="w-72">
+          <Dropdown placeholder="Select a department">
+            <DropdownOption value="design">Design</DropdownOption>
+            <DropdownOption value="dev">Engineering</DropdownOption>
             <DropdownOption value="marketing">Marketing</DropdownOption>
-            <DropdownOption value="sales">Kinh doanh</DropdownOption>
+            <DropdownOption value="sales">Sales</DropdownOption>
           </Dropdown>
         </Field>
       ),
@@ -546,26 +546,26 @@ export const docs: ComponentDoc[] = [
       {
         title: "Nhóm & option disabled",
         description: "DropdownGroup thêm tiêu đề; các nhóm tự cách nhau bằng vạch chia.",
-        code: `<Dropdown aria-label="Thú cưng" placeholder="Chọn thú cưng">
-  <DropdownGroup label="Trên cạn">
-    <DropdownOption value="dog">Chó</DropdownOption>
-    <DropdownOption value="cat">Mèo</DropdownOption>
+        code: `<Dropdown aria-label="Pet" placeholder="Select a pet">
+  <DropdownGroup label="Land">
+    <DropdownOption value="dog">Dog</DropdownOption>
+    <DropdownOption value="cat">Cat</DropdownOption>
   </DropdownGroup>
-  <DropdownGroup label="Dưới nước">
-    <DropdownOption value="fish">Cá vàng</DropdownOption>
-    <DropdownOption value="turtle" disabled>Rùa (hết hàng)</DropdownOption>
+  <DropdownGroup label="Water">
+    <DropdownOption value="fish">Goldfish</DropdownOption>
+    <DropdownOption value="turtle" disabled>Turtle (sold out)</DropdownOption>
   </DropdownGroup>
 </Dropdown>`,
         render: () => (
-          <Dropdown aria-label="Thú cưng" placeholder="Chọn thú cưng">
-            <DropdownGroup label="Trên cạn">
-              <DropdownOption value="dog">Chó</DropdownOption>
-              <DropdownOption value="cat">Mèo</DropdownOption>
+          <Dropdown aria-label="Pet" placeholder="Select a pet">
+            <DropdownGroup label="Land">
+              <DropdownOption value="dog">Dog</DropdownOption>
+              <DropdownOption value="cat">Cat</DropdownOption>
             </DropdownGroup>
-            <DropdownGroup label="Dưới nước">
-              <DropdownOption value="fish">Cá vàng</DropdownOption>
+            <DropdownGroup label="Water">
+              <DropdownOption value="fish">Goldfish</DropdownOption>
               <DropdownOption value="turtle" disabled>
-                Rùa (hết hàng)
+                Turtle (sold out)
               </DropdownOption>
             </DropdownGroup>
           </Dropdown>
@@ -577,33 +577,33 @@ export const docs: ComponentDoc[] = [
         code: `const [size, setSize] = useState("m");
 
 <div className="flex flex-col gap-2">
-  <Dropdown aria-label="Cỡ áo" value={size} onValueChange={setSize}>
+  <Dropdown aria-label="Shirt size" value={size} onValueChange={setSize}>
     <DropdownOption value="s">S</DropdownOption>
     <DropdownOption value="m">M</DropdownOption>
     <DropdownOption value="l">L</DropdownOption>
   </Dropdown>
-  <span className="text-caption1 text-foreground-3">Đã chọn: {size.toUpperCase()}</span>
+  <span className="text-caption1 text-foreground-3">Selected: {size.toUpperCase()}</span>
 </div>`,
         render: () => <DropdownControlledDemo />,
       },
       {
         title: "Option có icon",
         description: "media đặt icon trước nhãn.",
-        code: `<Dropdown aria-label="Vị trí" defaultValue="office">
-  <DropdownOption value="office" media={<Location20Regular />}>Văn phòng</DropdownOption>
-  <DropdownOption value="remote" media={<Globe20Regular />}>Từ xa</DropdownOption>
-  <DropdownOption value="event" media={<Calendar20Regular />}>Sự kiện</DropdownOption>
+        code: `<Dropdown aria-label="Location" defaultValue="office">
+  <DropdownOption value="office" media={<Location20Regular />}>Office</DropdownOption>
+  <DropdownOption value="remote" media={<Globe20Regular />}>Remote</DropdownOption>
+  <DropdownOption value="event" media={<Calendar20Regular />}>Event</DropdownOption>
 </Dropdown>`,
         render: () => (
-          <Dropdown aria-label="Vị trí" defaultValue="office">
+          <Dropdown aria-label="Location" defaultValue="office">
             <DropdownOption value="office" media={<Location20Regular />}>
-              Văn phòng
+              Office
             </DropdownOption>
             <DropdownOption value="remote" media={<Globe20Regular />}>
-              Từ xa
+              Remote
             </DropdownOption>
             <DropdownOption value="event" media={<Calendar20Regular />}>
-              Sự kiện
+              Event
             </DropdownOption>
           </Dropdown>
         ),
@@ -613,31 +613,31 @@ export const docs: ComponentDoc[] = [
         description: "Cùng bộ appearance / size với Input.",
         code: `<div className="grid gap-3 rounded-xlarge bg-background-1 p-4">
   <Dropdown appearance="underline" size="small" aria-label="Underline" placeholder="Underline · small">
-    <DropdownOption value="a">Tuỳ chọn A</DropdownOption>
+    <DropdownOption value="a">Option A</DropdownOption>
   </Dropdown>
   <Dropdown appearance="filled-darker" aria-label="Filled darker" placeholder="Filled darker">
-    <DropdownOption value="a">Tuỳ chọn A</DropdownOption>
+    <DropdownOption value="a">Option A</DropdownOption>
   </Dropdown>
   <Dropdown size="large" aria-label="Large" placeholder="Large">
-    <DropdownOption value="a">Tuỳ chọn A</DropdownOption>
+    <DropdownOption value="a">Option A</DropdownOption>
   </Dropdown>
   <Dropdown disabled aria-label="Disabled" placeholder="Disabled">
-    <DropdownOption value="a">Tuỳ chọn A</DropdownOption>
+    <DropdownOption value="a">Option A</DropdownOption>
   </Dropdown>
 </div>`,
         render: () => (
           <div className="grid gap-3 rounded-xlarge bg-background-1 p-4">
             <Dropdown appearance="underline" size="small" aria-label="Underline" placeholder="Underline · small">
-              <DropdownOption value="a">Tuỳ chọn A</DropdownOption>
+              <DropdownOption value="a">Option A</DropdownOption>
             </Dropdown>
             <Dropdown appearance="filled-darker" aria-label="Filled darker" placeholder="Filled darker">
-              <DropdownOption value="a">Tuỳ chọn A</DropdownOption>
+              <DropdownOption value="a">Option A</DropdownOption>
             </Dropdown>
             <Dropdown size="large" aria-label="Large" placeholder="Large">
-              <DropdownOption value="a">Tuỳ chọn A</DropdownOption>
+              <DropdownOption value="a">Option A</DropdownOption>
             </Dropdown>
             <Dropdown disabled aria-label="Disabled" placeholder="Disabled">
-              <DropdownOption value="a">Tuỳ chọn A</DropdownOption>
+              <DropdownOption value="a">Option A</DropdownOption>
             </Dropdown>
           </div>
         ),
@@ -677,16 +677,16 @@ export const docs: ComponentDoc[] = [
     importCode: `import { RadioGroup, Radio } from "@/components/ui";`,
     hero: {
       title: "RadioGroup",
-      code: `<RadioGroup defaultValue="email" aria-label="Kênh nhận thông báo">
+      code: `<RadioGroup defaultValue="email" aria-label="Notification channel">
   <Radio value="email" label="Email" />
-  <Radio value="sms" label="Tin nhắn SMS" />
-  <Radio value="push" label="Thông báo đẩy" />
+  <Radio value="sms" label="Text message" />
+  <Radio value="push" label="Push notification" />
 </RadioGroup>`,
       render: () => (
-        <RadioGroup defaultValue="email" aria-label="Kênh nhận thông báo">
+        <RadioGroup defaultValue="email" aria-label="Notification channel">
           <Radio value="email" label="Email" />
-          <Radio value="sms" label="Tin nhắn SMS" />
-          <Radio value="push" label="Thông báo đẩy" />
+          <Radio value="sms" label="Text message" />
+          <Radio value="push" label="Push notification" />
         </RadioGroup>
       ),
     },
@@ -694,14 +694,14 @@ export const docs: ComponentDoc[] = [
       {
         title: "Layout ngang",
         description: "layout=\"horizontal\" khi chỉ có vài lựa chọn ngắn.",
-        code: `<RadioGroup layout="horizontal" defaultValue="m" aria-label="Cỡ áo">
+        code: `<RadioGroup layout="horizontal" defaultValue="m" aria-label="Shirt size">
   <Radio value="s" label="S" />
   <Radio value="m" label="M" />
   <Radio value="l" label="L" />
   <Radio value="xl" label="XL" />
 </RadioGroup>`,
         render: () => (
-          <RadioGroup layout="horizontal" defaultValue="m" aria-label="Cỡ áo">
+          <RadioGroup layout="horizontal" defaultValue="m" aria-label="Shirt size">
             <Radio value="s" label="S" />
             <Radio value="m" label="M" />
             <Radio value="l" label="L" />
@@ -712,43 +712,43 @@ export const docs: ComponentDoc[] = [
       {
         title: "Ngang, nhãn bên dưới",
         description: "layout=\"horizontal-stacked\" — hợp với thang đo.",
-        code: `<RadioGroup layout="horizontal-stacked" defaultValue="3" aria-label="Mức độ hài lòng">
-  <Radio value="1" label="Rất tệ" />
-  <Radio value="2" label="Tệ" />
-  <Radio value="3" label="Bình thường" />
-  <Radio value="4" label="Tốt" />
-  <Radio value="5" label="Rất tốt" />
+        code: `<RadioGroup layout="horizontal-stacked" defaultValue="3" aria-label="Satisfaction">
+  <Radio value="1" label="Very poor" />
+  <Radio value="2" label="Poor" />
+  <Radio value="3" label="Okay" />
+  <Radio value="4" label="Good" />
+  <Radio value="5" label="Very good" />
 </RadioGroup>`,
         render: () => (
-          <RadioGroup layout="horizontal-stacked" defaultValue="3" aria-label="Mức độ hài lòng">
-            <Radio value="1" label="Rất tệ" />
-            <Radio value="2" label="Tệ" />
-            <Radio value="3" label="Bình thường" />
-            <Radio value="4" label="Tốt" />
-            <Radio value="5" label="Rất tốt" />
+          <RadioGroup layout="horizontal-stacked" defaultValue="3" aria-label="Satisfaction">
+            <Radio value="1" label="Very poor" />
+            <Radio value="2" label="Poor" />
+            <Radio value="3" label="Okay" />
+            <Radio value="4" label="Good" />
+            <Radio value="5" label="Very good" />
           </RadioGroup>
         ),
       },
       {
         title: "Disabled",
         description: "Khoá một lựa chọn hoặc cả nhóm.",
-        code: `<RadioGroup defaultValue="standard" aria-label="Giao hàng">
-  <Radio value="standard" label="Tiêu chuẩn" />
-  <Radio value="express" label="Hoả tốc (tạm ngưng)" disabled />
+        code: `<RadioGroup defaultValue="standard" aria-label="Delivery">
+  <Radio value="standard" label="Standard" />
+  <Radio value="express" label="Express (paused)" disabled />
 </RadioGroup>
-<RadioGroup defaultValue="a" disabled aria-label="Nhóm bị khoá">
-  <Radio value="a" label="Đã chọn" />
-  <Radio value="b" label="Chưa chọn" />
+<RadioGroup defaultValue="a" disabled aria-label="Locked group">
+  <Radio value="a" label="Selected" />
+  <Radio value="b" label="Not selected" />
 </RadioGroup>`,
         render: () => (
           <>
-            <RadioGroup defaultValue="standard" aria-label="Giao hàng">
-              <Radio value="standard" label="Tiêu chuẩn" />
-              <Radio value="express" label="Hoả tốc (tạm ngưng)" disabled />
+            <RadioGroup defaultValue="standard" aria-label="Delivery">
+              <Radio value="standard" label="Standard" />
+              <Radio value="express" label="Express (paused)" disabled />
             </RadioGroup>
-            <RadioGroup defaultValue="a" disabled aria-label="Nhóm bị khoá">
-              <Radio value="a" label="Đã chọn" />
-              <Radio value="b" label="Chưa chọn" />
+            <RadioGroup defaultValue="a" disabled aria-label="Locked group">
+              <Radio value="a" label="Selected" />
+              <Radio value="b" label="Not selected" />
             </RadioGroup>
           </>
         ),
@@ -760,12 +760,12 @@ export const docs: ComponentDoc[] = [
 const [plan, setPlan] = useState("monthly");
 
 <div className="flex flex-col gap-1">
-  <Label id={labelId}>Chu kỳ thanh toán</Label>
+  <Label id={labelId}>Billing cycle</Label>
   <RadioGroup aria-labelledby={labelId} value={plan} onValueChange={setPlan}>
-    <Radio value="monthly" label="Hằng tháng" />
-    <Radio value="yearly" label="Hằng năm (tiết kiệm 20%)" />
+    <Radio value="monthly" label="Monthly" />
+    <Radio value="yearly" label="Yearly (save 20%)" />
   </RadioGroup>
-  <span className="text-caption1 text-foreground-3">Giá trị: {plan}</span>
+  <span className="text-caption1 text-foreground-3">Value: {plan}</span>
 </div>`,
         render: () => <RadioControlledDemo />,
       },
@@ -801,16 +801,16 @@ const [plan, setPlan] = useState("monthly");
     importCode: `import { Combobox } from "@/components/ui";`,
     hero: {
       title: "Combobox",
-      code: `<Field label="Thành phố" className="w-72">
+      code: `<Field label="City" className="w-72">
   <Combobox
-    placeholder="Chọn hoặc gõ để tìm"
+    placeholder="Pick or type to search"
     options={["Hà Nội", "TP. Hồ Chí Minh", "Đà Nẵng", "Hải Phòng", "Cần Thơ", "Huế", "Nha Trang"]}
   />
 </Field>`,
       render: () => (
-        <Field label="Thành phố" className="w-72">
+        <Field label="City" className="w-72">
           <Combobox
-            placeholder="Chọn hoặc gõ để tìm"
+            placeholder="Pick or type to search"
             options={["Hà Nội", "TP. Hồ Chí Minh", "Đà Nẵng", "Hải Phòng", "Cần Thơ", "Huế", "Nha Trang"]}
           />
         </Field>
@@ -822,8 +822,8 @@ const [plan, setPlan] = useState("monthly");
         description: "multiselect: listbox giữ mở sau mỗi lần chọn, ô hiện danh sách đã chọn.",
         code: `<Combobox
   multiselect
-  aria-label="Kỹ năng"
-  placeholder="Chọn kỹ năng"
+  aria-label="Skills"
+  placeholder="Select skills"
   defaultValue={["react"]}
   options={[
     { value: "react", label: "React" },
@@ -836,8 +836,8 @@ const [plan, setPlan] = useState("monthly");
         render: () => (
           <Combobox
             multiselect
-            aria-label="Kỹ năng"
-            placeholder="Chọn kỹ năng"
+            aria-label="Skills"
+            placeholder="Select skills"
             defaultValue={["react"]}
             options={[
               { value: "react", label: "React" },
@@ -853,24 +853,24 @@ const [plan, setPlan] = useState("monthly");
         title: "Nhóm & option disabled",
         description: "Option có group được gom dưới tiêu đề.",
         code: `<Combobox
-  aria-label="Múi giờ"
-  placeholder="Chọn múi giờ"
+  aria-label="Time zone"
+  placeholder="Select a time zone"
   options={[
-    { value: "hn", label: "Hà Nội (UTC+7)", group: "Châu Á" },
-    { value: "tokyo", label: "Tokyo (UTC+9)", group: "Châu Á" },
-    { value: "london", label: "London (UTC+0)", group: "Châu Âu" },
-    { value: "paris", label: "Paris (UTC+1)", group: "Châu Âu", disabled: true },
+    { value: "bangkok", label: "Bangkok (UTC+7)", group: "Asia" },
+    { value: "tokyo", label: "Tokyo (UTC+9)", group: "Asia" },
+    { value: "london", label: "London (UTC+0)", group: "Europe" },
+    { value: "paris", label: "Paris (UTC+1)", group: "Europe", disabled: true },
   ]}
 />`,
         render: () => (
           <Combobox
-            aria-label="Múi giờ"
-            placeholder="Chọn múi giờ"
+            aria-label="Time zone"
+            placeholder="Select a time zone"
             options={[
-              { value: "hn", label: "Hà Nội (UTC+7)", group: "Châu Á" },
-              { value: "tokyo", label: "Tokyo (UTC+9)", group: "Châu Á" },
-              { value: "london", label: "London (UTC+0)", group: "Châu Âu" },
-              { value: "paris", label: "Paris (UTC+1)", group: "Châu Âu", disabled: true },
+              { value: "bangkok", label: "Bangkok (UTC+7)", group: "Asia" },
+              { value: "tokyo", label: "Tokyo (UTC+9)", group: "Asia" },
+              { value: "london", label: "London (UTC+0)", group: "Europe" },
+              { value: "paris", label: "Paris (UTC+1)", group: "Europe", disabled: true },
             ]}
           />
         ),
@@ -883,13 +883,13 @@ const [plan, setPlan] = useState("monthly");
 <div className="flex flex-col gap-2">
   <Combobox
     freeform
-    aria-label="Món tráng miệng"
-    placeholder="Chọn hoặc nhập món khác"
+    aria-label="Dessert"
+    placeholder="Pick one or type your own"
     value={dessert}
     onValueChange={setDessert}
-    options={["Chè", "Bánh flan", "Kem", "Sữa chua"]}
+    options={["Ice cream", "Flan", "Mochi", "Cheesecake"]}
   />
-  <span className="text-caption1 text-foreground-3">Giá trị: {dessert || "(trống)"}</span>
+  <span className="text-caption1 text-foreground-3">Value: {dessert || "(empty)"}</span>
 </div>`,
         render: () => <ComboboxFreeformDemo />,
       },
@@ -897,21 +897,21 @@ const [plan, setPlan] = useState("monthly");
         title: "Appearance, kích thước & disabled",
         description: "Cùng bộ appearance / size với Input.",
         code: `<div className="grid gap-3 rounded-xlarge bg-background-1 p-4">
-  <Combobox appearance="underline" size="small" aria-label="Underline" placeholder="Underline · small" options={["Một", "Hai"]} />
-  <Combobox appearance="filled-darker" size="large" aria-label="Filled darker" placeholder="Filled darker · large" options={["Một", "Hai"]} />
-  <Combobox disabled aria-label="Disabled" placeholder="Disabled" options={["Một", "Hai"]} />
+  <Combobox appearance="underline" size="small" aria-label="Underline" placeholder="Underline · small" options={["One", "Two"]} />
+  <Combobox appearance="filled-darker" size="large" aria-label="Filled darker" placeholder="Filled darker · large" options={["One", "Two"]} />
+  <Combobox disabled aria-label="Disabled" placeholder="Disabled" options={["One", "Two"]} />
 </div>`,
         render: () => (
           <div className="grid gap-3 rounded-xlarge bg-background-1 p-4">
-            <Combobox appearance="underline" size="small" aria-label="Underline" placeholder="Underline · small" options={["Một", "Hai"]} />
+            <Combobox appearance="underline" size="small" aria-label="Underline" placeholder="Underline · small" options={["One", "Two"]} />
             <Combobox
               appearance="filled-darker"
               size="large"
               aria-label="Filled darker"
               placeholder="Filled darker · large"
-              options={["Một", "Hai"]}
+              options={["One", "Two"]}
             />
-            <Combobox disabled aria-label="Disabled" placeholder="Disabled" options={["Một", "Hai"]} />
+            <Combobox disabled aria-label="Disabled" placeholder="Disabled" options={["One", "Two"]} />
           </div>
         ),
       },
@@ -949,18 +949,18 @@ const [plan, setPlan] = useState("monthly");
     importCode: `import { Tag, InteractionTag, TagGroup } from "@/components/ui";`,
     hero: {
       title: "Tag",
-      code: `<TagGroup aria-label="Chủ đề">
-  <Tag>Thiết kế</Tag>
-  <Tag icon={<Calendar20Regular />}>Sự kiện</Tag>
-  <Tag media={<Avatar name="Lê Minh" size={24} color="colorful" />}>Lê Minh</Tag>
-  <Tag appearance="brand">Mới</Tag>
+      code: `<TagGroup aria-label="Topics">
+  <Tag>Design</Tag>
+  <Tag icon={<Calendar20Regular />}>Events</Tag>
+  <Tag media={<Avatar name="Alex Chen" size={24} color="colorful" />}>Alex Chen</Tag>
+  <Tag appearance="brand">New</Tag>
 </TagGroup>`,
       render: () => (
-        <TagGroup aria-label="Chủ đề">
-          <Tag>Thiết kế</Tag>
-          <Tag icon={<Calendar20Regular />}>Sự kiện</Tag>
-          <Tag media={<Avatar name="Lê Minh" size={24} color="colorful" />}>Lê Minh</Tag>
-          <Tag appearance="brand">Mới</Tag>
+        <TagGroup aria-label="Topics">
+          <Tag>Design</Tag>
+          <Tag icon={<Calendar20Regular />}>Events</Tag>
+          <Tag media={<Avatar name="Alex Chen" size={24} color="colorful" />}>Alex Chen</Tag>
+          <Tag appearance="brand">New</Tag>
         </TagGroup>
       ),
     },
@@ -1004,15 +1004,15 @@ const [plan, setPlan] = useState("monthly");
       {
         title: "Avatar & secondaryText",
         description: "media đặt Avatar sát mép; secondaryText thêm dòng phụ (size medium).",
-        code: `<Tag shape="circular" media={<Avatar name="Phạm Thu Hà" size={24} color="colorful" />}>Phạm Thu Hà</Tag>
-<Tag media={<Avatar name="Trần Quốc Bảo" size={24} />} secondaryText="Kỹ sư phần mềm">Trần Quốc Bảo</Tag>`,
+        code: `<Tag shape="circular" media={<Avatar name="Maria Garcia" size={24} color="colorful" />}>Maria Garcia</Tag>
+<Tag media={<Avatar name="Sam Lee" size={24} />} secondaryText="Software engineer">Sam Lee</Tag>`,
         render: () => (
           <>
-            <Tag shape="circular" media={<Avatar name="Phạm Thu Hà" size={24} color="colorful" />}>
-              Phạm Thu Hà
+            <Tag shape="circular" media={<Avatar name="Maria Garcia" size={24} color="colorful" />}>
+              Maria Garcia
             </Tag>
-            <Tag media={<Avatar name="Trần Quốc Bảo" size={24} />} secondaryText="Kỹ sư phần mềm">
-              Trần Quốc Bảo
+            <Tag media={<Avatar name="Sam Lee" size={24} />} secondaryText="Software engineer">
+              Sam Lee
             </Tag>
           </>
         ),
@@ -1023,7 +1023,7 @@ const [plan, setPlan] = useState("monthly");
         code: `const [tags, setTags] = useState(["React", "TypeScript", "Tailwind CSS", "Radix UI"]);
 
 <div className="flex flex-col items-center gap-3">
-  <TagGroup aria-label="Bộ lọc" onDismiss={(value) => setTags((t) => t.filter((x) => x !== value))}>
+  <TagGroup aria-label="Filters" onDismiss={(value) => setTags((t) => t.filter((x) => x !== value))}>
     {tags.map((tag) => (
       <Tag key={tag} value={tag} dismissible>
         {tag}
@@ -1032,7 +1032,7 @@ const [plan, setPlan] = useState("monthly");
   </TagGroup>
   {tags.length === 0 && (
     <Button size="small" onClick={() => setTags(["React", "TypeScript", "Tailwind CSS", "Radix UI"])}>
-      Khôi phục
+      Restore
     </Button>
   )}
 </div>`,
@@ -1041,24 +1041,24 @@ const [plan, setPlan] = useState("monthly");
       {
         title: "InteractionTag",
         description: "Hành động chính và nút X là hai điểm focus riêng.",
-        code: `<TagGroup aria-label="Người tham dự">
-  <InteractionTag media={<Avatar name="Ngô Thanh Vân" size={24} color="colorful" />} dismissible>
-    Ngô Thanh Vân
+        code: `<TagGroup aria-label="Attendees">
+  <InteractionTag media={<Avatar name="Priya Patel" size={24} color="colorful" />} dismissible>
+    Priya Patel
   </InteractionTag>
   <InteractionTag appearance="outline" icon={<Location20Regular />} dismissible>
-    Phòng họp A
+    Meeting room A
   </InteractionTag>
-  <InteractionTag appearance="brand">Chỉ bấm</InteractionTag>
+  <InteractionTag appearance="brand">Click only</InteractionTag>
 </TagGroup>`,
         render: () => (
-          <TagGroup aria-label="Người tham dự">
-            <InteractionTag media={<Avatar name="Ngô Thanh Vân" size={24} color="colorful" />} dismissible>
-              Ngô Thanh Vân
+          <TagGroup aria-label="Attendees">
+            <InteractionTag media={<Avatar name="Priya Patel" size={24} color="colorful" />} dismissible>
+              Priya Patel
             </InteractionTag>
             <InteractionTag appearance="outline" icon={<Location20Regular />} dismissible>
-              Phòng họp A
+              Meeting room A
             </InteractionTag>
-            <InteractionTag appearance="brand">Chỉ bấm</InteractionTag>
+            <InteractionTag appearance="brand">Click only</InteractionTag>
           </TagGroup>
         ),
       },
@@ -1097,30 +1097,30 @@ const [plan, setPlan] = useState("monthly");
     importCode: `import { TagPicker } from "@/components/ui";`,
     hero: {
       title: "TagPicker",
-      code: `<Field label="Thẻ bài viết" className="w-96">
+      code: `<Field label="Post tags" className="w-96">
   <TagPicker
-    placeholder="Thêm thẻ"
+    placeholder="Add a tag"
     defaultValue={["design"]}
     options={[
-      { value: "design", label: "Thiết kế" },
+      { value: "design", label: "Design" },
       { value: "frontend", label: "Frontend" },
       { value: "backend", label: "Backend" },
-      { value: "ux", label: "Trải nghiệm người dùng" },
-      { value: "a11y", label: "Khả năng tiếp cận" },
+      { value: "ux", label: "User experience" },
+      { value: "a11y", label: "Accessibility" },
     ]}
   />
 </Field>`,
       render: () => (
-        <Field label="Thẻ bài viết" className="w-96">
+        <Field label="Post tags" className="w-96">
           <TagPicker
-            placeholder="Thêm thẻ"
+            placeholder="Add a tag"
             defaultValue={["design"]}
             options={[
-              { value: "design", label: "Thiết kế" },
+              { value: "design", label: "Design" },
               { value: "frontend", label: "Frontend" },
               { value: "backend", label: "Backend" },
-              { value: "ux", label: "Trải nghiệm người dùng" },
-              { value: "a11y", label: "Khả năng tiếp cận" },
+              { value: "ux", label: "User experience" },
+              { value: "a11y", label: "Accessibility" },
             ]}
           />
         </Field>
@@ -1132,25 +1132,25 @@ const [plan, setPlan] = useState("monthly");
         description: "media hiện trên cả option và tag; size large dùng tag small vừa Avatar 20px.",
         code: `<TagPicker
   size="large"
-  aria-label="Người nhận"
-  placeholder="Chọn người nhận"
+  aria-label="Recipients"
+  placeholder="Select recipients"
   className="w-96"
   options={[
-    { value: "an", label: "Nguyễn Văn An", secondaryText: "Kỹ sư phần mềm", media: <Avatar name="Nguyễn Văn An" size={20} color="colorful" /> },
-    { value: "binh", label: "Trần Thị Bình", secondaryText: "Thiết kế sản phẩm", media: <Avatar name="Trần Thị Bình" size={20} color="colorful" /> },
-    { value: "chi", label: "Lê Hoài Chi", secondaryText: "Quản lý dự án", media: <Avatar name="Lê Hoài Chi" size={20} color="colorful" /> },
+    { value: "alex", label: "Alex Chen", secondaryText: "Software engineer", media: <Avatar name="Alex Chen" size={20} color="colorful" /> },
+    { value: "maria", label: "Maria Garcia", secondaryText: "Product designer", media: <Avatar name="Maria Garcia" size={20} color="colorful" /> },
+    { value: "sam", label: "Sam Lee", secondaryText: "Project manager", media: <Avatar name="Sam Lee" size={20} color="colorful" /> },
   ]}
 />`,
         render: () => (
           <TagPicker
             size="large"
-            aria-label="Người nhận"
-            placeholder="Chọn người nhận"
+            aria-label="Recipients"
+            placeholder="Select recipients"
             className="w-96"
             options={[
-              { value: "an", label: "Nguyễn Văn An", secondaryText: "Kỹ sư phần mềm", media: <Avatar name="Nguyễn Văn An" size={20} color="colorful" /> },
-              { value: "binh", label: "Trần Thị Bình", secondaryText: "Thiết kế sản phẩm", media: <Avatar name="Trần Thị Bình" size={20} color="colorful" /> },
-              { value: "chi", label: "Lê Hoài Chi", secondaryText: "Quản lý dự án", media: <Avatar name="Lê Hoài Chi" size={20} color="colorful" /> },
+              { value: "alex", label: "Alex Chen", secondaryText: "Software engineer", media: <Avatar name="Alex Chen" size={20} color="colorful" /> },
+              { value: "maria", label: "Maria Garcia", secondaryText: "Product designer", media: <Avatar name="Maria Garcia" size={20} color="colorful" /> },
+              { value: "sam", label: "Sam Lee", secondaryText: "Project manager", media: <Avatar name="Sam Lee" size={20} color="colorful" /> },
             ]}
           />
         ),
@@ -1158,26 +1158,26 @@ const [plan, setPlan] = useState("monthly");
       {
         title: "Freeform",
         description: "Gõ từ khoá mới rồi Enter để tạo tag.",
-        code: `<TagPicker freeform aria-label="Từ khoá" placeholder="Gõ rồi nhấn Enter" className="w-80" options={["khuyến mãi", "mùa hè", "giảm giá"]} />`,
+        code: `<TagPicker freeform aria-label="Keywords" placeholder="Type and press Enter" className="w-80" options={["promo", "summer", "sale"]} />`,
         render: () => (
-          <TagPicker freeform aria-label="Từ khoá" placeholder="Gõ rồi nhấn Enter" className="w-80" options={["khuyến mãi", "mùa hè", "giảm giá"]} />
+          <TagPicker freeform aria-label="Keywords" placeholder="Type and press Enter" className="w-80" options={["promo", "summer", "sale"]} />
         ),
       },
       {
         title: "Controlled",
         description: "value / onValueChange; tagAppearance và tagShape đổi kiểu tag.",
-        code: `const [members, setMembers] = useState<string[]>(["Lan", "Hùng"]);
+        code: `const [members, setMembers] = useState<string[]>(["Alex", "Maria"]);
 
 <div className="flex w-96 flex-col gap-2">
   <TagPicker
-    aria-label="Thành viên"
+    aria-label="Members"
     value={members}
     onValueChange={setMembers}
-    options={["Lan", "Hùng", "Minh", "Thảo", "Quân"]}
+    options={["Alex", "Maria", "Sam", "Priya", "Jordan"]}
     tagAppearance="brand"
     tagShape="circular"
   />
-  <span className="text-caption1 text-foreground-3">{members.length} thành viên được chọn</span>
+  <span className="text-caption1 text-foreground-3">{members.length} members selected</span>
 </div>`,
         render: () => <TagPickerControlledDemo />,
       },
@@ -1186,18 +1186,18 @@ const [plan, setPlan] = useState("monthly");
         description: "reorderable: kéo tag, hoặc focus tag (← từ ô nhập) rồi Alt + ← → để đổi thứ tự. Bấm tag mà không kéo thì vẫn gỡ tag.",
         code: `<TagPicker
   reorderable
-  aria-label="Tiêu chí, theo thứ tự ưu tiên"
+  aria-label="Criteria, in order of priority"
   className="w-96"
-  defaultValue={["Giá", "Độ bền", "Thiết kế"]}
-  options={["Giá", "Độ bền", "Thiết kế", "Bảo hành", "Tốc độ giao"]}
+  defaultValue={["Price", "Durability", "Design"]}
+  options={["Price", "Durability", "Design", "Warranty", "Delivery speed"]}
 />`,
         render: () => (
           <TagPicker
             reorderable
-            aria-label="Tiêu chí, theo thứ tự ưu tiên"
+            aria-label="Criteria, in order of priority"
             className="w-96"
-            defaultValue={["Giá", "Độ bền", "Thiết kế"]}
-            options={["Giá", "Độ bền", "Thiết kế", "Bảo hành", "Tốc độ giao"]}
+            defaultValue={["Price", "Durability", "Design"]}
+            options={["Price", "Durability", "Design", "Warranty", "Delivery speed"]}
           />
         ),
       },
@@ -1251,11 +1251,11 @@ const [plan, setPlan] = useState("monthly");
     importCode: `import { SpinButton } from "@/components/ui";`,
     hero: {
       title: "SpinButton",
-      code: `<Field label="Số lượng" className="w-48">
+      code: `<Field label="Quantity" className="w-48">
   <SpinButton defaultValue={1} min={0} max={99} />
 </Field>`,
       render: () => (
-        <Field label="Số lượng" className="w-48">
+        <Field label="Quantity" className="w-48">
           <SpinButton defaultValue={1} min={0} max={99} />
         </Field>
       ),
@@ -1264,15 +1264,15 @@ const [plan, setPlan] = useState("monthly");
       {
         title: "Bước thập phân",
         description: "step={0.1}: số chữ số thập phân suy ra từ step.",
-        code: `<SpinButton aria-label="Hệ số" defaultValue={1.5} step={0.1} min={0} max={5} className="w-40" />`,
-        render: () => <SpinButton aria-label="Hệ số" defaultValue={1.5} step={0.1} min={0} max={5} className="w-40" />,
+        code: `<SpinButton aria-label="Multiplier" defaultValue={1.5} step={0.1} min={0} max={5} className="w-40" />`,
+        render: () => <SpinButton aria-label="Multiplier" defaultValue={1.5} step={0.1} min={0} max={5} className="w-40" />,
       },
       {
         title: "Định dạng hiển thị",
         description: "formatValue thêm đơn vị; khi gõ, ký tự không phải số được bỏ qua.",
-        code: `<SpinButton aria-label="Giảm giá" defaultValue={10} step={5} min={0} max={100} formatValue={(v) => v + "%"} className="w-40" />`,
+        code: `<SpinButton aria-label="Discount" defaultValue={10} step={5} min={0} max={100} formatValue={(v) => v + "%"} className="w-40" />`,
         render: () => (
-          <SpinButton aria-label="Giảm giá" defaultValue={10} step={5} min={0} max={100} formatValue={(v) => v + "%"} className="w-40" />
+          <SpinButton aria-label="Discount" defaultValue={10} step={5} min={0} max={100} formatValue={(v) => v + "%"} className="w-40" />
         ),
       },
       {
@@ -1281,8 +1281,8 @@ const [plan, setPlan] = useState("monthly");
         code: `const [guests, setGuests] = useState<number | null>(2);
 
 <div className="flex flex-col gap-2">
-  <SpinButton aria-label="Số khách" value={guests} onValueChange={setGuests} min={1} max={10} className="w-40" />
-  <span className="text-caption1 text-foreground-3">Phòng cho {guests ?? 0} khách</span>
+  <SpinButton aria-label="Guests" value={guests} onValueChange={setGuests} min={1} max={10} className="w-40" />
+  <span className="text-caption1 text-foreground-3">Room for {guests ?? 0} guests</span>
 </div>`,
         render: () => <SpinButtonControlledDemo />,
       },
@@ -1342,8 +1342,8 @@ const [plan, setPlan] = useState("monthly");
     importCode: `import { SearchBox } from "@/components/ui";`,
     hero: {
       title: "SearchBox",
-      code: `<SearchBox placeholder="Tìm trong tài liệu" rootClassName="w-72" />`,
-      render: () => <SearchBox placeholder="Tìm trong tài liệu" rootClassName="w-72" />,
+      code: `<SearchBox placeholder="Search the docs" rootClassName="w-72" />`,
+      render: () => <SearchBox placeholder="Search the docs" rootClassName="w-72" />,
     },
     examples: [
       {
@@ -1365,13 +1365,13 @@ function FruitFilterDemo() {
   return (
     <div className="w-80 overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1 shadow-4">
       <div className="flex flex-col gap-1 border-b border-stroke-2 p-3">
-        <SearchBox aria-label="Tìm trái cây" aria-controls="fruit-results" value={query} onValueChange={setQuery} />
+        <SearchBox aria-label="Search fruit" aria-controls="fruit-results" value={query} onValueChange={setQuery} />
         <p aria-live="polite" className="text-caption1 text-foreground-3">
-          {results.length} / {FRUITS.length} trái cây
+          {results.length} / {FRUITS.length} fruits
         </p>
       </div>
       {results.length > 0 ? (
-        <List id="fruit-results" aria-label="Kết quả" className="divide-y divide-stroke-3">
+        <List id="fruit-results" aria-label="Results" className="divide-y divide-stroke-3">
           {results.map((f) => (
             <ListItem
               key={f.name}
@@ -1384,7 +1384,7 @@ function FruitFilterDemo() {
         </List>
       ) : (
         <p id="fruit-results" className="px-3 py-5 text-center text-body1 text-foreground-3">
-          Không có trái cây nào khớp “{query}”.
+          No fruit matches “{query}”.
         </p>
       )}
     </div>
@@ -1457,8 +1457,8 @@ function FruitFilterDemo() {
     importCode: `import { InputOTP } from "@/components/ui";`,
     hero: {
       title: "InputOTP",
-      code: `<InputOTP aria-label="Mã xác thực" groups={[3, 3]} />`,
-      render: () => <InputOTP aria-label="Mã xác thực" groups={[3, 3]} />,
+      code: `<InputOTP aria-label="Verification code" groups={[3, 3]} />`,
+      render: () => <InputOTP aria-label="Verification code" groups={[3, 3]} />,
     },
     examples: [
       {
@@ -1467,25 +1467,25 @@ function FruitFilterDemo() {
         code: `const [code, setCode] = useState("");
 
 <div className="flex flex-col items-center gap-2">
-  <InputOTP aria-label="Mã OTP" onComplete={setCode} />
-  <span className="text-caption1 text-foreground-3">{code ? "Đã nhập mã " + code : "Nhập đủ 6 số"}</span>
+  <InputOTP aria-label="One-time code" onComplete={setCode} />
+  <span className="text-caption1 text-foreground-3">{code ? "Entered code " + code : "Enter all 6 digits"}</span>
 </div>`,
         render: () => <InputOTPCompleteDemo />,
       },
       {
         title: "Chữ và số",
         description: "pattern=\"alphanumeric\", length={4}.",
-        code: `<InputOTP aria-label="Mã giới thiệu" length={4} pattern="alphanumeric" size="large" />`,
-        render: () => <InputOTP aria-label="Mã giới thiệu" length={4} pattern="alphanumeric" size="large" />,
+        code: `<InputOTP aria-label="Referral code" length={4} pattern="alphanumeric" size="large" />`,
+        render: () => <InputOTP aria-label="Referral code" length={4} pattern="alphanumeric" size="large" />,
       },
       {
         title: "Trong Field, báo lỗi",
         description: "Field gắn label vào ô đầu và truyền aria-invalid cho mọi ô.",
-        code: `<Field label="Mã xác thực" validationState="error" validationMessage="Mã không đúng, vui lòng thử lại.">
+        code: `<Field label="Verification code" validationState="error" validationMessage="That code is incorrect. Try again.">
   <InputOTP defaultValue="123" />
 </Field>`,
         render: () => (
-          <Field label="Mã xác thực" validationState="error" validationMessage="Mã không đúng, vui lòng thử lại.">
+          <Field label="Verification code" validationState="error" validationMessage="That code is incorrect. Try again.">
             <InputOTP defaultValue="123" />
           </Field>
         ),
@@ -1535,8 +1535,8 @@ function FruitFilterDemo() {
     importCode: `import { Rating, RatingDisplay } from "@/components/ui";`,
     hero: {
       title: "Rating",
-      code: `<Rating defaultValue={3} aria-label="Đánh giá sản phẩm" />`,
-      render: () => <Rating defaultValue={3} aria-label="Đánh giá sản phẩm" />,
+      code: `<Rating defaultValue={3} aria-label="Product rating" />`,
+      render: () => <Rating defaultValue={3} aria-label="Product rating" />,
     },
     examples: [
       {
@@ -1561,8 +1561,8 @@ function FruitFilterDemo() {
         code: `const [score, setScore] = useState(3.5);
 
 <div className="flex flex-col items-center gap-2">
-  <Rating step={0.5} value={score} onValueChange={setScore} color="marigold" aria-label="Chất lượng phục vụ" />
-  <span className="text-caption1 text-foreground-3">{score} / 5 sao</span>
+  <Rating step={0.5} value={score} onValueChange={setScore} color="marigold" aria-label="Service quality" />
+  <span className="text-caption1 text-foreground-3">{score} / 5 stars</span>
 </div>`,
         render: () => <RatingHalfDemo />,
       },

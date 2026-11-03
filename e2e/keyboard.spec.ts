@@ -36,7 +36,7 @@ test.describe("Dialog", () => {
 test.describe("Menu", () => {
   test("Enter mở; mũi tên, Home, End và gõ chữ cái di chuyển; Esc đóng và trả focus", async ({ page }) => {
     await openDocs(page, "/components/menu");
-    const trigger = page.getByRole("button", { name: "Thao tác" }).first();
+    const trigger = page.getByRole("button", { name: "More actions" }).first();
     await trigger.focus();
     await page.keyboard.press("Enter");
     const menu = page.getByRole("menu");
@@ -50,8 +50,8 @@ test.describe("Menu", () => {
     await expect(items.last()).toBeFocused();
     await page.keyboard.press("Home");
     await expect(items.first()).toBeFocused();
-    await page.keyboard.press("s");
-    await expect(menu.getByRole("menuitem", { name: /Sao chép/ })).toBeFocused();
+    await page.keyboard.press("c");
+    await expect(menu.getByRole("menuitem", { name: /Copy/ })).toBeFocused();
 
     await page.keyboard.press("Escape");
     await expect(menu).toBeHidden();
@@ -141,7 +141,7 @@ test.describe("Combobox", () => {
   test("gõ không dấu để lọc, mũi tên duyệt, Enter chọn, Esc đóng; danh sách nằm trong màn 390px", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await openDocs(page, "/components/combobox");
-    const input = page.getByRole("combobox", { name: "Thành phố" }).first();
+    const input = page.getByRole("combobox", { name: "City" }).first();
     await input.click();
     await input.fill("da nang");
     const listbox = page.getByRole("listbox");

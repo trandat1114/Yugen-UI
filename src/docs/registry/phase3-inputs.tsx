@@ -55,14 +55,14 @@ import RAW from "./phase3-inputs.tsx?raw";
 /* ======================================================================== Overflow demos */
 
 const ACTIONS = [
-  { id: "new", label: "Mới", icon: <DocumentAdd20Regular /> },
-  { id: "save", label: "Lưu", icon: <Save20Regular /> },
-  { id: "cut", label: "Cắt", icon: <Cut20Regular /> },
-  { id: "copy", label: "Sao chép", icon: <Copy20Regular /> },
-  { id: "paste", label: "Dán", icon: <ClipboardPaste20Regular /> },
-  { id: "share", label: "Chia sẻ", icon: <Share20Regular /> },
-  { id: "print", label: "In", icon: <Print20Regular /> },
-  { id: "delete", label: "Xoá", icon: <Delete20Regular /> },
+  { id: "new", label: "New", icon: <DocumentAdd20Regular /> },
+  { id: "save", label: "Save", icon: <Save20Regular /> },
+  { id: "cut", label: "Cut", icon: <Cut20Regular /> },
+  { id: "copy", label: "Copy", icon: <Copy20Regular /> },
+  { id: "paste", label: "Paste", icon: <ClipboardPaste20Regular /> },
+  { id: "share", label: "Share", icon: <Share20Regular /> },
+  { id: "print", label: "Print", icon: <Print20Regular /> },
+  { id: "delete", label: "Delete", icon: <Delete20Regular /> },
 ];
 
 function ToolbarOverflowMenu({ actions }: { actions: typeof ACTIONS }) {
@@ -72,7 +72,7 @@ function ToolbarOverflowMenu({ actions }: { actions: typeof ACTIONS }) {
   return (
     <Menu>
       <MenuTrigger asChild>
-        <ToolbarButton ref={ref} icon={<MoreHorizontal20Regular />} aria-label={`Thêm ${overflowCount} mục`} />
+        <ToolbarButton ref={ref} icon={<MoreHorizontal20Regular />} aria-label={`${overflowCount} more items`} />
       </MenuTrigger>
       <MenuPopover align="end">
         {actions
@@ -91,10 +91,10 @@ function OverflowToolbarDemo() {
   const [width, setWidth] = useState([100]);
   return (
     <div className="flex w-full flex-col gap-3">
-      <Slider label="Độ rộng khung (%)" showValue value={width} onValueChange={setWidth} min={25} max={100} />
+      <Slider label="Container width (%)" showValue value={width} onValueChange={setWidth} min={25} max={100} />
       <div style={{ inlineSize: `${width[0]}%` }} className="rounded-xlarge border border-stroke-2">
         <Overflow>
-          <Toolbar aria-label="Tài liệu">
+          <Toolbar aria-label="Document">
             {ACTIONS.map((a) => (
               <OverflowItem key={a.id} id={a.id}>
                 <ToolbarButton icon={a.icon}>{a.label}</ToolbarButton>
@@ -108,7 +108,7 @@ function OverflowToolbarDemo() {
   );
 }
 
-const TABS = ["Tổng quan", "Hoạt động", "Thành viên", "Tệp", "Lịch", "Báo cáo", "Tích hợp", "Cài đặt"];
+const TABS = ["Overview", "Activity", "Members", "Files", "Calendar", "Reports", "Integrations", "Settings"];
 
 function TabsOverflowMenu({ value, onSelect }: { value: string; onSelect: (tab: string) => void }) {
   const { ref, overflowCount, isOverflowing } = useOverflowMenu<HTMLButtonElement>();
@@ -117,7 +117,7 @@ function TabsOverflowMenu({ value, onSelect }: { value: string; onSelect: (tab: 
   return (
     <Menu>
       <MenuTrigger asChild>
-        <ToolbarButton ref={ref} icon={<MoreHorizontal20Regular />} aria-label={`Thêm ${overflowCount} tab`} />
+        <ToolbarButton ref={ref} icon={<MoreHorizontal20Regular />} aria-label={`${overflowCount} more tabs`} />
       </MenuTrigger>
       <MenuPopover align="end">
         <MenuRadioGroup value={value} onValueChange={onSelect}>
@@ -133,12 +133,12 @@ function TabsOverflowMenu({ value, onSelect }: { value: string; onSelect: (tab: 
 }
 
 function OverflowTabsDemo() {
-  const [tab, setTab] = useState("Tổng quan");
+  const [tab, setTab] = useState("Overview");
   return (
     <Tabs value={tab} onValueChange={setTab} className="w-full max-w-120">
       <Overflow>
         <div className="flex items-center">
-          <TabsList aria-label="Dự án">
+          <TabsList aria-label="Project">
             {TABS.map((t) => (
               <OverflowItem key={t} id={t} priority={t === tab ? 1 : 0}>
                 <TabsTrigger value={t}>{t}</TabsTrigger>
@@ -153,11 +153,11 @@ function OverflowTabsDemo() {
 }
 
 const PATH = [
-  { id: "home", label: "Trang chủ" },
-  { id: "docs", label: "Tài liệu" },
-  { id: "components", label: "Component" },
-  { id: "inputs", label: "Nhập liệu" },
-  { id: "pickers", label: "Bộ chọn" },
+  { id: "home", label: "Home" },
+  { id: "docs", label: "Docs" },
+  { id: "components", label: "Components" },
+  { id: "inputs", label: "Inputs" },
+  { id: "pickers", label: "Pickers" },
   { id: "timepicker", label: "TimePicker" },
 ];
 
@@ -169,7 +169,7 @@ function BreadcrumbOverflowMenu() {
     <>
       <BreadcrumbItem ref={ref}>
         <BreadcrumbOverflow
-          label={`Thêm ${overflowCount} mục`}
+          label={`${overflowCount} more items`}
           items={PATH.filter((p) => hiddenIds.includes(p.id)).map((p) => ({ key: p.id, label: p.label }))}
         />
       </BreadcrumbItem>
@@ -216,7 +216,7 @@ function TagOverflowMenu() {
   return (
     <Menu>
       <MenuTrigger asChild>
-        <InteractionTag ref={ref} appearance="brand" aria-label={`Thêm ${overflowCount} kỹ năng`}>
+        <InteractionTag ref={ref} appearance="brand" aria-label={`${overflowCount} more skills`}>
           <span dir="ltr">+{overflowCount}</span>
         </InteractionTag>
       </MenuTrigger>
@@ -233,7 +233,7 @@ function OverflowTagGroupDemo() {
   return (
     <div className="w-full max-w-90">
       <Overflow>
-        <TagGroup size="small" aria-label="Kỹ năng">
+        <TagGroup size="small" aria-label="Skills">
           {SKILLS.map((s) => (
             <OverflowItem key={s} id={s}>
               <Tag>{s}</Tag>
@@ -247,18 +247,18 @@ function OverflowTagGroupDemo() {
 }
 
 const DOC_ACTIONS = [
-  { id: "edit", label: "Sửa", icon: <Edit20Regular />, priority: 3 },
-  { id: "share", label: "Chia sẻ", icon: <Share20Regular />, priority: 2 },
-  { id: "link", label: "Sao chép liên kết", icon: <Link20Regular />, priority: 0 },
-  { id: "print", label: "In", icon: <Print20Regular />, priority: 0 },
-  { id: "delete", label: "Xoá", icon: <Delete20Regular />, priority: 1 },
+  { id: "edit", label: "Edit", icon: <Edit20Regular />, priority: 3 },
+  { id: "share", label: "Share", icon: <Share20Regular />, priority: 2 },
+  { id: "link", label: "Copy link", icon: <Link20Regular />, priority: 0 },
+  { id: "print", label: "Print", icon: <Print20Regular />, priority: 0 },
+  { id: "delete", label: "Delete", icon: <Delete20Regular />, priority: 1 },
 ];
 
 function OverflowPriorityDemo() {
   return (
     <div className="w-full max-w-80 rounded-xlarge border border-stroke-2">
       <Overflow minimumVisible={1}>
-        <Toolbar aria-label="Hành động tài liệu">
+        <Toolbar aria-label="Document actions">
           {DOC_ACTIONS.map((a) => (
             <OverflowItem key={a.id} id={a.id} priority={a.priority}>
               <ToolbarButton icon={a.icon}>{a.label}</ToolbarButton>
@@ -274,9 +274,9 @@ function OverflowPriorityDemo() {
 /* ======================================================================== TimePicker demos */
 
 const TIME_ERRORS: Record<TimeSelectionErrorType, string> = {
-  "invalid-input": "Không hiểu giờ này — thử 9, 930, 9h30 hoặc 21:15.",
-  "out-of-start-bound": "Sớm hơn giờ cho phép.",
-  "out-of-end-bound": "Muộn hơn giờ cho phép.",
+  "invalid-input": "Couldn't read that time. Try 9, 930, 9:30 PM or 21:15.",
+  "out-of-start-bound": "That's earlier than allowed.",
+  "out-of-end-bound": "That's later than allowed.",
 };
 
 function TimePickerDemo() {
@@ -285,8 +285,8 @@ function TimePickerDemo() {
   return (
     <div className="flex w-72 flex-col gap-2">
       <Field
-        label="Giờ họp"
-        hint="Gõ 9, 930, 9h30, 21:15 hoặc chọn trong danh sách"
+        label="Meeting time"
+        hint="Type 9, 930, 9:30 PM or 21:15, or pick from the list"
         validationState={error ? "error" : "none"}
         validationMessage={error ? TIME_ERRORS[error] : undefined}
       >
@@ -298,7 +298,7 @@ function TimePickerDemo() {
           }}
         />
       </Field>
-      <span className="text-caption1 text-foreground-3">{time ? `Đã chọn ${formatTime(time)}` : "Chưa chọn giờ"}</span>
+      <span className="text-caption1 text-foreground-3">{time ? `Selected ${formatTime(time)}` : "No time selected"}</span>
     </div>
   );
 }
@@ -307,7 +307,7 @@ function WorkHoursDemo() {
   const [error, setError] = useState<TimeSelectionErrorType>();
   return (
     <Field
-      label="Giờ hẹn (8:00 – 18:00)"
+      label="Appointment (8 AM – 6 PM)"
       required
       validationState={error ? "error" : "none"}
       validationMessage={error ? TIME_ERRORS[error] : undefined}
@@ -323,8 +323,8 @@ function MinMaxDemo() {
   const day = new Date(2026, 9, 20);
   return (
     <Field
-      label="Nhận hàng chiều 20/10"
-      hint="Từ 13:30 đến 17:00"
+      label="Afternoon pickup, Oct 20"
+      hint="Between 1:30 PM and 5:00 PM"
       validationState={error ? "error" : "none"}
       validationMessage={error ? TIME_ERRORS[error] : undefined}
       className="w-72"
@@ -345,7 +345,7 @@ function RangePresetsDemo() {
   const [range, setRange] = useState<DateRange | undefined>();
   const isDesktop = useMediaQuery("(min-width: 768px)");
   return (
-    <Field label="Khoảng báo cáo" className="w-80">
+    <Field label="Report period" className="w-80">
       <DateRangePicker
         value={range ?? null}
         onSelectRange={setRange}
@@ -359,7 +359,7 @@ function RangePresetsDemo() {
 
 const QUARTER_PRESETS: DateRangePreset[] = [
   {
-    label: "Quý này",
+    label: "This quarter",
     range: () => {
       const now = new Date();
       const q = Math.floor(now.getMonth() / 3) * 3;
@@ -367,21 +367,21 @@ const QUARTER_PRESETS: DateRangePreset[] = [
     },
   },
   {
-    label: "Năm nay",
+    label: "This year",
     range: () => {
       const now = new Date();
       return { from: new Date(now.getFullYear(), 0, 1), to: new Date(now.getFullYear(), now.getMonth(), now.getDate()) };
     },
   },
   {
-    label: "Năm ngoái",
+    label: "Last year",
     range: () => {
       const y = new Date().getFullYear() - 1;
       return { from: new Date(y, 0, 1), to: new Date(y, 11, 31) };
     },
   },
   {
-    label: "30 ngày tới",
+    label: "Next 30 days",
     range: () => {
       const now = new Date();
       return { from: now, to: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 29) };
@@ -405,14 +405,14 @@ export const docs: ComponentDoc[] = [
       title: "Toolbar co giãn",
       description: "Kéo slider để thu hẹp khung — nút cuối lần lượt chui vào menu \"…\".",
       code: `const ACTIONS = [
-  { id: "new", label: "Mới", icon: <DocumentAdd20Regular /> },
-  { id: "save", label: "Lưu", icon: <Save20Regular /> },
-  { id: "cut", label: "Cắt", icon: <Cut20Regular /> },
-  { id: "copy", label: "Sao chép", icon: <Copy20Regular /> },
-  { id: "paste", label: "Dán", icon: <ClipboardPaste20Regular /> },
-  { id: "share", label: "Chia sẻ", icon: <Share20Regular /> },
-  { id: "print", label: "In", icon: <Print20Regular /> },
-  { id: "delete", label: "Xoá", icon: <Delete20Regular /> },
+  { id: "new", label: "New", icon: <DocumentAdd20Regular /> },
+  { id: "save", label: "Save", icon: <Save20Regular /> },
+  { id: "cut", label: "Cut", icon: <Cut20Regular /> },
+  { id: "copy", label: "Copy", icon: <Copy20Regular /> },
+  { id: "paste", label: "Paste", icon: <ClipboardPaste20Regular /> },
+  { id: "share", label: "Share", icon: <Share20Regular /> },
+  { id: "print", label: "Print", icon: <Print20Regular /> },
+  { id: "delete", label: "Delete", icon: <Delete20Regular /> },
 ];
 
 function ToolbarOverflowMenu({ actions }: { actions: typeof ACTIONS }) {
@@ -422,7 +422,7 @@ function ToolbarOverflowMenu({ actions }: { actions: typeof ACTIONS }) {
   return (
     <Menu>
       <MenuTrigger asChild>
-        <ToolbarButton ref={ref} icon={<MoreHorizontal20Regular />} aria-label={\`Thêm \${overflowCount} mục\`} />
+        <ToolbarButton ref={ref} icon={<MoreHorizontal20Regular />} aria-label={\`\${overflowCount} more items\`} />
       </MenuTrigger>
       <MenuPopover align="end">
         {actions
@@ -441,10 +441,10 @@ function OverflowToolbarDemo() {
   const [width, setWidth] = useState([100]);
   return (
     <div className="flex w-full flex-col gap-3">
-      <Slider label="Độ rộng khung (%)" showValue value={width} onValueChange={setWidth} min={25} max={100} />
+      <Slider label="Container width (%)" showValue value={width} onValueChange={setWidth} min={25} max={100} />
       <div style={{ inlineSize: \`\${width[0]}%\` }} className="rounded-xlarge border border-stroke-2">
         <Overflow>
-          <Toolbar aria-label="Tài liệu">
+          <Toolbar aria-label="Document">
             {ACTIONS.map((a) => (
               <OverflowItem key={a.id} id={a.id}>
                 <ToolbarButton icon={a.icon}>{a.label}</ToolbarButton>
@@ -466,18 +466,18 @@ function OverflowToolbarDemo() {
         description:
           "priority lớn hơn ở lại lâu hơn: Sửa (3) → Chia sẻ (2) → Xoá (1) → phần còn lại. minimumVisible={1} giữ ít nhất một nút dù khung rất hẹp.",
         code: `const DOC_ACTIONS = [
-  { id: "edit", label: "Sửa", icon: <Edit20Regular />, priority: 3 },
-  { id: "share", label: "Chia sẻ", icon: <Share20Regular />, priority: 2 },
-  { id: "link", label: "Sao chép liên kết", icon: <Link20Regular />, priority: 0 },
-  { id: "print", label: "In", icon: <Print20Regular />, priority: 0 },
-  { id: "delete", label: "Xoá", icon: <Delete20Regular />, priority: 1 },
+  { id: "edit", label: "Edit", icon: <Edit20Regular />, priority: 3 },
+  { id: "share", label: "Share", icon: <Share20Regular />, priority: 2 },
+  { id: "link", label: "Copy link", icon: <Link20Regular />, priority: 0 },
+  { id: "print", label: "Print", icon: <Print20Regular />, priority: 0 },
+  { id: "delete", label: "Delete", icon: <Delete20Regular />, priority: 1 },
 ];
 
 function OverflowPriorityDemo() {
   return (
     <div className="w-full max-w-80 rounded-xlarge border border-stroke-2">
       <Overflow minimumVisible={1}>
-        <Toolbar aria-label="Hành động tài liệu">
+        <Toolbar aria-label="Document actions">
           {DOC_ACTIONS.map((a) => (
             <OverflowItem key={a.id} id={a.id} priority={a.priority}>
               <ToolbarButton icon={a.icon}>{a.label}</ToolbarButton>
@@ -495,7 +495,7 @@ function OverflowPriorityDemo() {
         title: "Tabs",
         description:
           "Tab đang chọn có priority 1 nên luôn hiển thị; chọn tab trong menu sẽ đưa nó ra ngoài. Nút menu nằm ngoài TabsList (tablist chỉ nên chứa tab).",
-        code: `const TABS = ["Tổng quan", "Hoạt động", "Thành viên", "Tệp", "Lịch", "Báo cáo", "Tích hợp", "Cài đặt"];
+        code: `const TABS = ["Overview", "Activity", "Members", "Files", "Calendar", "Reports", "Integrations", "Settings"];
 
 function TabsOverflowMenu({ value, onSelect }: { value: string; onSelect: (tab: string) => void }) {
   const { ref, overflowCount, isOverflowing } = useOverflowMenu<HTMLButtonElement>();
@@ -504,7 +504,7 @@ function TabsOverflowMenu({ value, onSelect }: { value: string; onSelect: (tab: 
   return (
     <Menu>
       <MenuTrigger asChild>
-        <ToolbarButton ref={ref} icon={<MoreHorizontal20Regular />} aria-label={\`Thêm \${overflowCount} tab\`} />
+        <ToolbarButton ref={ref} icon={<MoreHorizontal20Regular />} aria-label={\`\${overflowCount} more tabs\`} />
       </MenuTrigger>
       <MenuPopover align="end">
         <MenuRadioGroup value={value} onValueChange={onSelect}>
@@ -520,12 +520,12 @@ function TabsOverflowMenu({ value, onSelect }: { value: string; onSelect: (tab: 
 }
 
 function OverflowTabsDemo() {
-  const [tab, setTab] = useState("Tổng quan");
+  const [tab, setTab] = useState("Overview");
   return (
     <Tabs value={tab} onValueChange={setTab} className="w-full max-w-120">
       <Overflow>
         <div className="flex items-center">
-          <TabsList aria-label="Dự án">
+          <TabsList aria-label="Project">
             {TABS.map((t) => (
               <OverflowItem key={t} id={t} priority={t === tab ? 1 : 0}>
                 <TabsTrigger value={t}>{t}</TabsTrigger>
@@ -545,11 +545,11 @@ function OverflowTabsDemo() {
         description:
           "Mỗi mục có groupId riêng; OverflowDivider ẩn cùng nhóm. Mục đầu và trang hiện tại có priority 1, phần giữa gom vào \"…\". Kéo góc khung để đổi độ rộng.",
         code: `const PATH = [
-  { id: "home", label: "Trang chủ" },
-  { id: "docs", label: "Tài liệu" },
-  { id: "components", label: "Component" },
-  { id: "inputs", label: "Nhập liệu" },
-  { id: "pickers", label: "Bộ chọn" },
+  { id: "home", label: "Home" },
+  { id: "docs", label: "Docs" },
+  { id: "components", label: "Components" },
+  { id: "inputs", label: "Inputs" },
+  { id: "pickers", label: "Pickers" },
   { id: "timepicker", label: "TimePicker" },
 ];
 
@@ -561,7 +561,7 @@ function BreadcrumbOverflowMenu() {
     <>
       <BreadcrumbItem ref={ref}>
         <BreadcrumbOverflow
-          label={\`Thêm \${overflowCount} mục\`}
+          label={\`\${overflowCount} more items\`}
           items={PATH.filter((p) => hiddenIds.includes(p.id)).map((p) => ({ key: p.id, label: p.label }))}
         />
       </BreadcrumbItem>
@@ -612,7 +612,7 @@ function TagOverflowMenu() {
   return (
     <Menu>
       <MenuTrigger asChild>
-        <InteractionTag ref={ref} appearance="brand" aria-label={\`Thêm \${overflowCount} kỹ năng\`}>
+        <InteractionTag ref={ref} appearance="brand" aria-label={\`\${overflowCount} more skills\`}>
           <span dir="ltr">+{overflowCount}</span>
         </InteractionTag>
       </MenuTrigger>
@@ -629,7 +629,7 @@ function OverflowTagGroupDemo() {
   return (
     <div className="w-full max-w-90">
       <Overflow>
-        <TagGroup size="small" aria-label="Kỹ năng">
+        <TagGroup size="small" aria-label="Skills">
           {SKILLS.map((s) => (
             <OverflowItem key={s} id={s}>
               <Tag>{s}</Tag>
@@ -682,9 +682,9 @@ function OverflowTagGroupDemo() {
     hero: {
       title: "Giờ họp",
       code: `const TIME_ERRORS: Record<TimeSelectionErrorType, string> = {
-  "invalid-input": "Không hiểu giờ này — thử 9, 930, 9h30 hoặc 21:15.",
-  "out-of-start-bound": "Sớm hơn giờ cho phép.",
-  "out-of-end-bound": "Muộn hơn giờ cho phép.",
+  "invalid-input": "Couldn't read that time. Try 9, 930, 9:30 PM or 21:15.",
+  "out-of-start-bound": "That's earlier than allowed.",
+  "out-of-end-bound": "That's later than allowed.",
 };
 
 function TimePickerDemo() {
@@ -693,8 +693,8 @@ function TimePickerDemo() {
   return (
     <div className="flex w-72 flex-col gap-2">
       <Field
-        label="Giờ họp"
-        hint="Gõ 9, 930, 9h30, 21:15 hoặc chọn trong danh sách"
+        label="Meeting time"
+        hint="Type 9, 930, 9:30 PM or 21:15, or pick from the list"
         validationState={error ? "error" : "none"}
         validationMessage={error ? TIME_ERRORS[error] : undefined}
       >
@@ -706,7 +706,7 @@ function TimePickerDemo() {
           }}
         />
       </Field>
-      <span className="text-caption1 text-foreground-3">{time ? \`Đã chọn \${formatTime(time)}\` : "Chưa chọn giờ"}</span>
+      <span className="text-caption1 text-foreground-3">{time ? \`Selected \${formatTime(time)}\` : "No time selected"}</span>
     </div>
   );
 }`,
@@ -721,7 +721,7 @@ function TimePickerDemo() {
   const [error, setError] = useState<TimeSelectionErrorType>();
   return (
     <Field
-      label="Giờ hẹn (8:00 – 18:00)"
+      label="Appointment (8 AM – 6 PM)"
       required
       validationState={error ? "error" : "none"}
       validationMessage={error ? TIME_ERRORS[error] : undefined}
@@ -742,8 +742,8 @@ function TimePickerDemo() {
   const day = new Date(2026, 9, 20);
   return (
     <Field
-      label="Nhận hàng chiều 20/10"
-      hint="Từ 13:30 đến 17:00"
+      label="Afternoon pickup, Oct 20"
+      hint="Between 1:30 PM and 5:00 PM"
       validationState={error ? "error" : "none"}
       validationMessage={error ? TIME_ERRORS[error] : undefined}
       className="w-72"
@@ -763,12 +763,12 @@ function TimePickerDemo() {
         title: "12 giờ (SA / CH, AM / PM)",
         description: "hourCycle=\"h12\" dùng nhãn buổi của locale; locale=\"en-US\" mặc định 12 giờ.",
         code: `<div className="flex w-72 flex-col gap-3">
-  <TimePicker hourCycle="h12" aria-label="Giờ (12 giờ, vi-VN)" defaultValue={new Date(2026, 0, 1, 14, 30)} />
+  <TimePicker locale="vi-VN" hourCycle="h12" aria-label="Giờ (12 giờ, vi-VN)" defaultValue={new Date(2026, 0, 1, 14, 30)} />
   <TimePicker locale="en-US" aria-label="Time (en-US)" defaultValue={new Date(2026, 0, 1, 9, 0)} />
 </div>`,
         render: () => (
           <div className="flex w-72 flex-col gap-3">
-            <TimePicker hourCycle="h12" aria-label="Giờ (12 giờ, vi-VN)" defaultValue={new Date(2026, 0, 1, 14, 30)} />
+            <TimePicker locale="vi-VN" hourCycle="h12" aria-label="Giờ (12 giờ, vi-VN)" defaultValue={new Date(2026, 0, 1, 14, 30)} />
             <TimePicker locale="en-US" aria-label="Time (en-US)" defaultValue={new Date(2026, 0, 1, 9, 0)} />
           </div>
         ),
@@ -777,17 +777,17 @@ function TimePickerDemo() {
         title: "Kích thước, appearance & disabled",
         description: "small 24px, medium 32px, large 40px; appearance như Input / Combobox.",
         code: `<div className="flex w-64 flex-col gap-3">
-  <TimePicker size="small" aria-label="Giờ (small)" />
-  <TimePicker appearance="underline" aria-label="Giờ (underline)" />
-  <TimePicker appearance="filled-darker" size="large" aria-label="Giờ (filled-darker, large)" />
-  <TimePicker disabled aria-label="Giờ (disabled)" defaultValue={new Date(2026, 0, 1, 8, 0)} />
+  <TimePicker size="small" aria-label="Time (small)" />
+  <TimePicker appearance="underline" aria-label="Time (underline)" />
+  <TimePicker appearance="filled-darker" size="large" aria-label="Time (filled-darker, large)" />
+  <TimePicker disabled aria-label="Time (disabled)" defaultValue={new Date(2026, 0, 1, 8, 0)} />
 </div>`,
         render: () => (
           <div className="flex w-64 flex-col gap-3">
-            <TimePicker size="small" aria-label="Giờ (small)" />
-            <TimePicker appearance="underline" aria-label="Giờ (underline)" />
-            <TimePicker appearance="filled-darker" size="large" aria-label="Giờ (filled-darker, large)" />
-            <TimePicker disabled aria-label="Giờ (disabled)" defaultValue={new Date(2026, 0, 1, 8, 0)} />
+            <TimePicker size="small" aria-label="Time (small)" />
+            <TimePicker appearance="underline" aria-label="Time (underline)" />
+            <TimePicker appearance="filled-darker" size="large" aria-label="Time (filled-darker, large)" />
+            <TimePicker disabled aria-label="Time (disabled)" defaultValue={new Date(2026, 0, 1, 8, 0)} />
           </div>
         ),
       },
@@ -834,7 +834,7 @@ function TimePickerDemo() {
   const [range, setRange] = useState<DateRange | undefined>();
   const isDesktop = useMediaQuery("(min-width: 768px)");
   return (
-    <Field label="Khoảng báo cáo" className="w-80">
+    <Field label="Report period" className="w-80">
       <DateRangePicker
         value={range ?? null}
         onSelectRange={setRange}
@@ -853,7 +853,7 @@ function TimePickerDemo() {
         description: "maxDate = hôm nay nên \"30 ngày tới\" bị vô hiệu.",
         code: `const QUARTER_PRESETS: DateRangePreset[] = [
   {
-    label: "Quý này",
+    label: "This quarter",
     range: () => {
       const now = new Date();
       const q = Math.floor(now.getMonth() / 3) * 3;
@@ -861,21 +861,21 @@ function TimePickerDemo() {
     },
   },
   {
-    label: "Năm nay",
+    label: "This year",
     range: () => {
       const now = new Date();
       return { from: new Date(now.getFullYear(), 0, 1), to: new Date(now.getFullYear(), now.getMonth(), now.getDate()) };
     },
   },
   {
-    label: "Năm ngoái",
+    label: "Last year",
     range: () => {
       const y = new Date().getFullYear() - 1;
       return { from: new Date(y, 0, 1), to: new Date(y, 11, 31) };
     },
   },
   {
-    label: "30 ngày tới",
+    label: "Next 30 days",
     range: () => {
       const now = new Date();
       return { from: now, to: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 29) };
@@ -883,11 +883,11 @@ function TimePickerDemo() {
   },
 ];
 
-<Field label="Kỳ thống kê" className="w-80">
+<Field label="Reporting period" className="w-80">
   <DateRangePicker presets={QUARTER_PRESETS} maxDate={new Date()} numberOfMonths={1} />
 </Field>`,
         render: () => (
-          <Field label="Kỳ thống kê" className="w-80">
+          <Field label="Reporting period" className="w-80">
             <DateRangePicker presets={QUARTER_PRESETS} maxDate={new Date()} numberOfMonths={1} />
           </Field>
         ),

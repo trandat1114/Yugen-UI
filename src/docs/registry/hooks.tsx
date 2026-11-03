@@ -38,9 +38,9 @@ function source(name: string) {
 
 // #region ControllableDemo
 interface ExpandProps {
-  /** Controlled: cha giữ trạng thái. */
+  /** Controlled: the parent holds the state. */
   expanded?: boolean;
-  /** Uncontrolled: component tự giữ, bắt đầu từ giá trị này. */
+  /** Uncontrolled: the component holds it, starting from this value. */
   defaultExpanded?: boolean;
   onExpandedChange?: (expanded: boolean) => void;
 }
@@ -49,7 +49,7 @@ function Expand({ expanded, defaultExpanded = false, onExpandedChange }: ExpandP
   const [isExpanded, setExpanded] = useControllableState({ value: expanded, defaultValue: defaultExpanded, onChange: onExpandedChange });
   return (
     <Button appearance="outline" aria-expanded={isExpanded} onClick={() => setExpanded((prev) => !prev)}>
-      {isExpanded ? "Thu gọn" : "Mở rộng"}
+      {isExpanded ? "Collapse" : "Expand"}
     </Button>
   );
 }
@@ -60,7 +60,7 @@ function ControllableDemo() {
     <div className="flex flex-wrap items-center gap-3">
       <Expand />
       <Expand expanded={open} onExpandedChange={setOpen} />
-      <span className="text-caption1 text-foreground-3">Nút thứ hai do cha điều khiển: {open ? "đang mở" : "đang đóng"}</span>
+      <span className="text-caption1 text-foreground-3">The parent controls the second button: {open ? "open" : "closed"}</span>
     </div>
   );
 }
@@ -72,15 +72,15 @@ function DisclosureDemo() {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-3">
-        <Button onClick={onOpen}>Mở</Button>
+        <Button onClick={onOpen}>Open</Button>
         <Button appearance="outline" onClick={onClose}>
-          Đóng
+          Close
         </Button>
         <Button appearance="subtle" onClick={onToggle}>
-          Đảo
+          Toggle
         </Button>
       </div>
-      <p className="text-body1 text-foreground-2">{open ? "Bảng đang mở." : "Bảng đang đóng."}</p>
+      <p className="text-body1 text-foreground-2">{open ? "The panel is open." : "The panel is closed."}</p>
     </div>
   );
 }
@@ -93,9 +93,9 @@ function MediaQueryDemo() {
   const reduce = useMediaQuery("(prefers-reduced-motion: reduce)");
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <Badge appearance={wide ? "filled" : "outline"}>{wide ? "Màn rộng ≥ 768px" : "Màn hẹp"}</Badge>
-      <Badge appearance={dark ? "filled" : "outline"}>{dark ? "Hệ thống: tối" : "Hệ thống: sáng"}</Badge>
-      <Badge appearance={reduce ? "filled" : "outline"}>{reduce ? "Giảm chuyển động" : "Chuyển động đầy đủ"}</Badge>
+      <Badge appearance={wide ? "filled" : "outline"}>{wide ? "Wide screen ≥ 768px" : "Narrow screen"}</Badge>
+      <Badge appearance={dark ? "filled" : "outline"}>{dark ? "System: dark" : "System: light"}</Badge>
+      <Badge appearance={reduce ? "filled" : "outline"}>{reduce ? "Reduced motion" : "Full motion"}</Badge>
     </div>
   );
 }
@@ -107,13 +107,13 @@ function LocalStorageDemo() {
   const [compact, setCompact] = useLocalStorage("docs-hooks-compact", false);
   return (
     <div className="flex max-w-sm flex-col gap-3">
-      <Input aria-label="Tên của bạn" placeholder="Tên của bạn" value={name} onChange={(e) => setName(e.target.value)} />
-      <Switch label="Gọn" checked={compact} onCheckedChange={setCompact} />
+      <Input aria-label="Your name" placeholder="Your name" value={name} onChange={(e) => setName(e.target.value)} />
+      <Switch label="Compact" checked={compact} onCheckedChange={setCompact} />
       <div className="flex flex-wrap items-center gap-3">
         <Button appearance="outline" size="small" onClick={resetName}>
-          Xoá tên
+          Clear name
         </Button>
-        <span className="text-caption1 text-foreground-3">Tải lại trang, hoặc mở tab thứ hai: giá trị theo bạn.</span>
+        <span className="text-caption1 text-foreground-3">Reload the page or open a second tab: the values stay.</span>
       </div>
     </div>
   );
@@ -128,10 +128,10 @@ function ClipboardDemo() {
     <div className="flex flex-wrap items-center gap-3">
       <code className="rounded-medium bg-background-3 px-2 py-1 text-body1">{token}</code>
       <Button appearance="outline" onClick={() => copy(token)}>
-        {copied ? "Đã chép" : "Chép"}
+        {copied ? "Copied" : "Copy"}
       </Button>
       <span role="status" className="sr-only">
-        {copied ? "Đã chép vào bộ nhớ tạm" : ""}
+        {copied ? "Copied to clipboard" : ""}
       </span>
     </div>
   );
@@ -142,24 +142,24 @@ function ClipboardDemo() {
 function HotkeysDemo() {
   const [log, setLog] = useState<string[]>([]);
   const push = (name: string) => setLog((prev) => [name, ...prev].slice(0, 4));
-  // Chỉ nghe trong khung này: phím tắt trên document sẽ chặn cả mũi tên cuộn trang.
+  // Listen only inside this box: shortcuts on document would also block the arrow keys that scroll the page.
   const [area, setArea] = useState<HTMLDivElement | null>(null);
   useHotkeys(
     {
       "mod+k": () => push("⌘/Ctrl + K"),
       "?": () => push("?"),
-      start: () => push("← theo chiều chữ (start)"),
-      end: () => push("→ theo chiều chữ (end)"),
+      start: () => push("← toward text start (start)"),
+      end: () => push("→ toward text end (end)"),
     },
     { target: area },
   );
   return (
-    <div ref={setArea} tabIndex={0} role="group" aria-label="Khung thử phím tắt" className="flex max-w-sm flex-col gap-3 rounded-large p-1">
+    <div ref={setArea} tabIndex={0} role="group" aria-label="Shortcut test area" className="flex max-w-sm flex-col gap-3 rounded-large p-1">
       <p className="text-body1 text-foreground-2">
-        Bấm vào khung này rồi nhấn <Kbd>Ctrl</Kbd> / <Kbd>⌘</Kbd> + <Kbd>K</Kbd>, <Kbd>?</Kbd> hoặc mũi tên. Gõ trong ô dưới: phím
-        thường bị bỏ qua, phím có Ctrl / ⌘ vẫn chạy.
+        Click this box, then press <Kbd>Ctrl</Kbd> / <Kbd>⌘</Kbd> + <Kbd>K</Kbd>, <Kbd>?</Kbd> or an arrow key. In the input below, plain
+        keys are ignored and Ctrl / ⌘ shortcuts still run.
       </p>
-      <Input aria-label="Ô thử" placeholder="Gõ ? ở đây — không kích hoạt" />
+      <Input aria-label="Test input" placeholder="Type ? here: nothing happens" />
       <ul className="min-h-24 text-body1 text-foreground-1">
         {log.map((entry, i) => (
           <li key={`${i}-${entry}`}>{entry}</li>
@@ -180,10 +180,10 @@ function DebouncedDemo() {
   }, [debounced]);
   return (
     <div className="flex max-w-sm flex-col gap-2">
-      <Input aria-label="Tìm kiếm" placeholder="Gõ nhanh vài ký tự…" value={query} onChange={(e) => setQuery(e.target.value)} />
-      <p className="text-body1 text-foreground-2">Đang gõ: “{query}”</p>
+      <Input aria-label="Search" placeholder="Type a few characters quickly…" value={query} onChange={(e) => setQuery(e.target.value)} />
+      <p className="text-body1 text-foreground-2">Typing: “{query}”</p>
       <p className="text-body1 text-foreground-2">
-        Sau 400ms: “{debounced}” — đã “gọi API” {searches} lần
+        After 400ms: “{debounced}”, “API” called {searches} times
       </p>
     </div>
   );
@@ -195,11 +195,11 @@ function IntersectionDemo() {
   const { ref, isIntersecting } = useIntersection<HTMLDivElement>({ threshold: 0.6 });
   return (
     <div className="flex flex-col gap-2">
-      <Badge appearance={isIntersecting ? "filled" : "outline"}>{isIntersecting ? "Thẻ đang hiện trong khung" : "Thẻ ngoài khung"}</Badge>
-      <div className="h-40 overflow-auto rounded-large border border-stroke-2 p-3" tabIndex={0} aria-label="Vùng cuộn thử">
-        <div className="h-48 text-caption1 text-foreground-3">Cuộn xuống…</div>
+      <Badge appearance={isIntersecting ? "filled" : "outline"}>{isIntersecting ? "Card is in view" : "Card is out of view"}</Badge>
+      <div className="h-40 overflow-auto rounded-large border border-stroke-2 p-3" tabIndex={0} aria-label="Scroll area">
+        <div className="h-48 text-caption1 text-foreground-3">Scroll down…</div>
         <div ref={ref} className="rounded-medium bg-brand-background p-4 text-center text-foreground-on-brand">
-          Thẻ được theo dõi
+          Tracked card
         </div>
         <div className="h-48" />
       </div>
@@ -220,7 +220,7 @@ function ElementSizeDemo() {
       <p className="text-body1 text-foreground-1">
         {Math.round(width)} × {Math.round(height)} px
       </p>
-      <p className="text-caption1 text-foreground-3">{width < 280 ? "Bố cục gọn" : "Bố cục đầy đủ"} — kéo góc dưới phải để đổi cỡ.</p>
+      <p className="text-caption1 text-foreground-3">{width < 280 ? "Compact layout" : "Full layout"}. Drag the bottom-right corner to resize.</p>
     </div>
   );
 }
