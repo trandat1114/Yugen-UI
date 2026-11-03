@@ -12,7 +12,7 @@ import { Button, Popover, PopoverSurface, PopoverTrigger, SimpleTooltip, Kbd, Kb
 import type { Appearance } from "@/hooks/useAppearance";
 import { YugenMark } from "../YugenMark";
 import { useHasUnseenNews } from "../useNews";
-import { useLocale, type Locale } from "../i18n";
+import { loadLocale, useLocale, type Locale } from "../i18n";
 import { lazyPage } from "../lazyPage";
 import { VersionMenu } from "./VersionMenu";
 import { docsPath } from "../router";
@@ -93,6 +93,9 @@ export function TopBar({
             appearance="subtle"
             lang={nextLang}
             onClick={() => onChange({ lang: nextLang })}
+            // Gói chữ của ngôn ngữ kia nạp từ lúc trỏ / focus, trước khi bấm (#305).
+            onPointerEnter={() => void loadLocale(nextLang).catch(() => {})}
+            onFocus={() => void loadLocale(nextLang).catch(() => {})}
             className="gap-1 px-1 text-caption1 font-semibold"
           >
             <LocalLanguage20Regular />
