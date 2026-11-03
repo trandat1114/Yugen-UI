@@ -452,7 +452,7 @@ Labs-specific rules:
    on `0.x`, an API change = minor + `breaking`). The docs site's `SITE.version` reads directly from `package.json`; no edit needed.
 2. Add `<version>.vi.md` and `<version>.en.md` to `src/docs/news/yugen-ui` (sections `## Mới` / `Cải tiến` / `Sửa lỗi` /
    `Thay đổi lớn` in the Vietnamese file, `## New` / `Improved` / `Fixed` / `Breaking` in the English file, each item with a `[→](/path)` link to a docs page;
-   wiki › Release Process › news on the What's new page). The "What's new" dot on the top bar appears automatically for people who have not seen it yet.
+   wiki › Release Process › News on the What's new page). The "What's new" dot on the top bar appears automatically for people who have not seen it yet.
 3. `npm install --package-lock-only` → `npm run check:release` (`package.json` = `src/docs/news` = `CHANGELOG.md`) →
    `npm run typecheck && npm test && npm run build && npm run size` → `npm run pack:check` to preview the package contents.
 4. Commit, then `git tag vX.Y.Z && git push --tags` — the `.github/workflows/release.yml` workflow checks the tag, runs the tests,
