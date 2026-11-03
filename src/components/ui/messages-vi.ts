@@ -45,6 +45,7 @@ import {
   typingIndicatorMessagesVi,
 } from "./MessageScroller/messages";
 import { navMessagesVi } from "./Nav/messages";
+import { navigationMenuMessagesVi } from "./NavigationMenu/messages";
 import { notificationCenterMessagesVi } from "./NotificationCenter/messages";
 import { paginationMessagesVi } from "./Pagination/messages";
 import { presenceBadgeMessagesVi } from "./PresenceBadge/messages";
@@ -59,6 +60,7 @@ import { sortableMessagesVi } from "./Sortable/messages";
 import { spinButtonMessagesVi } from "./SpinButton/messages";
 import { spinnerMessagesVi } from "./Spinner/messages";
 import { statMessagesVi } from "./Stat/messages";
+import { statusPageMessagesVi } from "./StatusPage/messages";
 import { splitButtonMessagesVi } from "./SplitButton/messages";
 import { stepperMessagesVi, wizardMessagesVi } from "./Stepper/messages";
 import { swatchPickerMessagesVi } from "./SwatchPicker/messages";
@@ -109,6 +111,7 @@ export const messagesVi: YugenMessages = {
   messageBubble: messageBubbleMessagesVi,
   messageScroller: messageScrollerMessagesVi,
   nav: navMessagesVi,
+  navigationMenu: navigationMenuMessagesVi,
   notificationCenter: notificationCenterMessagesVi,
   optimisticList: optimisticListMessagesVi,
   packageManagerTabs: packageManagerTabsMessagesVi,
@@ -129,6 +132,7 @@ export const messagesVi: YugenMessages = {
   spinner: spinnerMessagesVi,
   splitButton: splitButtonMessagesVi,
   stat: statMessagesVi,
+  statusPage: statusPageMessagesVi,
   stepper: stepperMessagesVi,
   streamingMarkdown: streamingMarkdownMessagesVi,
   swatchPicker: swatchPickerMessagesVi,

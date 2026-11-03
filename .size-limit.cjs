@@ -31,8 +31,9 @@ const css = (file, limit) => ({
 });
 
 module.exports = [
-  // Sortable (#175): 304.4 → 310.8 kB.
-  js("Toàn bộ thư viện (import *)", "*", "318 kB"),
+  // Sortable (#175): 304.4 → 310.8 kB. NavigationMenu + StatusPage (#168, #238): 309.3 → 317.4 kB; 340 kB chừa chỗ cho
+  // các form control của #173 (~8.6 kB) khi hai PR cùng vào.
+  js("Toàn bộ thư viện (import *)", "*", "340 kB"),
   js("{ cn }", "{ cn }", "10 kB"),
   js("{ Button }", "{ Button }", "14 kB"),
   js("{ YugenProvider }", "{ YugenProvider }", "43 kB"),
@@ -41,6 +42,9 @@ module.exports = [
   js("{ DatePicker }", "{ DatePicker }", "68 kB"),
   js("{ BarChart, LineChart }", "{ BarChart, LineChart }", "38 kB"),
   js("{ Sheet }", "{ Sheet }", "28 kB"),
+  // #168: Radix Navigation Menu (dependency mới) + viewport.
+  js("{ NavigationMenu }", "{ NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuTrigger, NavigationMenuContent, NavigationMenuLink }", "26 kB"),
+  js("{ StatusPage, ErrorBoundary }", "{ StatusPage, ErrorBoundary }", "18 kB"),
   js("{ Trace }", "{ Trace }", "21 kB"),
   js("{ MessageScroller }", "{ MessageScroller }", "23 kB"),
   js("{ CodeBlock }", "{ CodeBlock }", "33 kB"),
@@ -48,10 +52,11 @@ module.exports = [
   // Sortable tự viết (#175): 20.76 kB khi thêm, phần riêng ~6.5 kB (dnd-kit core + sortable: 16.6 kB).
   js("{ Sortable, SortableItem, SortableHandle }", "{ Sortable, SortableItem, SortableHandle }", "23 kB"),
   js("{ StreamingMarkdown, PromptInput }", "{ StreamingMarkdown, PromptInput }", "70 kB"),
-  js("{ messagesEn }", "{ messagesEn }", "5 kB"),
+  // Chuỗi của NavigationMenu + StatusPage (#168, #238): 4.80 → 5.38 kB; 6 kB gồm cả các form control của #173.
+  js("{ messagesEn }", "{ messagesEn }", "6 kB"),
   // Bộ tiếng Việt, chỉ khi import (#277: mặc định là tiếng Anh): 17.7 kB khi thêm, phần lớn là locale vi của
   // react-day-picker cho Calendar / DatePicker.
-  js("{ messagesVi }", "{ messagesVi }", "18.5 kB"),
+  js("{ messagesVi }", "{ messagesVi }", "19.5 kB"),
   // Sonner, Timeline, DescriptionList, Stat, utility yugen-prose (#174, #234): 24.6 kB khi thêm.
   // AppShell / Sidebar + rail của Nav (#161): 24.97 kB khi thêm; 25.08 kB với layout / scroll / footer. 28 kB: chỗ cho vài
   // component nữa (styles.css luôn chứa mọi component, #169 không làm nó nhỏ đi).

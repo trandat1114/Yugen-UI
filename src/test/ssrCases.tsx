@@ -125,6 +125,12 @@ import {
   MenuPopover,
   MenuTrigger,
   Menubar,
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
   MenubarContent,
   MenubarItem,
   MenubarMenu,
@@ -177,6 +183,8 @@ import {
   Slider,
   SpinButton,
   Spinner,
+  StatusPage,
+  ErrorBoundary,
   SplitButton,
   Sparkline,
   Stagger,
@@ -442,6 +450,36 @@ export const SSR_CASES: SsrCase[] = [
   },
 
   /* ---------- Điều hướng ---------- */
+  {
+    name: "NavigationMenu",
+    render: () => (
+      <NavigationMenu>
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger>Sản phẩm</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <NavigationMenuLink href="#a" description="Báo cáo">
+                Phân tích
+              </NavigationMenuLink>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink href="#b" active>
+              Bảng giá
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
+    ),
+  },
+  {
+    name: "StatusPage / ErrorBoundary",
+    render: () => (
+      <ErrorBoundary>
+        <StatusPage status={404} errorId="7f3a-91c2" />
+      </ErrorBoundary>
+    ),
+  },
   {
     name: "Tabs / Breadcrumb / Pagination / Nav",
     render: () => (
