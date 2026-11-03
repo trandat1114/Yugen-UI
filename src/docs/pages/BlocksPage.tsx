@@ -58,7 +58,7 @@ function BlockCard({ path, meta, Component, source }: (typeof BLOCKS)[number]) {
   return (
     <article
       className={cn(
-        "flex min-w-0 flex-col self-start overflow-hidden rounded-3xlarge border border-stroke-2 bg-background-1 shadow-2",
+        "flex min-w-0 flex-col self-start overflow-hidden rounded-3xlarge border border-stroke-2 bg-background-1 shadow-2 [contain-intrinsic-size:auto_none_auto_28rem] [content-visibility:auto]",
         meta.wide && "lg:col-span-2",
       )}
     >
@@ -110,6 +110,8 @@ const GAP = 20;
 /**
  * Masonry bằng CSS grid: đo chiều cao từng block (ResizeObserver) rồi đặt `grid-row-end: span n`, auto-placement xếp
  * block kế tiếp vào chỗ trống cao nhất — thứ tự đọc vẫn theo hàng. Trước khi đo (prerender) là lưới thường.
+ * Block ngoài màn hình có `content-visibility: auto` (#308): đo ra chỗ giữ chỗ 28rem, rồi ResizeObserver đặt lại span khi
+ * trình duyệt vẽ thật (trước khi block vào khung nhìn, nên không thấy nhảy).
  */
 function useMasonry(ref: React.RefObject<HTMLDivElement | null>) {
   useIsomorphicLayoutEffect(() => {

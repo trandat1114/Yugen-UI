@@ -192,6 +192,8 @@ export function ExampleFrame({
 /**
  * Đang mở code: ô chiếm cả hàng của lưới để code không bị ép theo bề ngang một cột.
  * Demo nằm trong một stacking context riêng (`isolate`): z-index trong demo (header sticky của AppShell…) không phủ lên nút Copy.
+ * `content-visibility: auto`: ô ngoài màn hình không tính style / layout / vẽ (#308). Mọi thứ nằm trong padding của ô nên
+ * không bị cắt; chỗ giữ chỗ cao 11rem + padding = đúng min-h-56 của ô thường.
  */
 export function ExampleTile({ example, demoLang }: { example: Example; demoLang?: string }) {
   const [showCode, setShowCode] = React.useState(false);
@@ -206,7 +208,7 @@ export function ExampleTile({ example, demoLang }: { example: Example; demoLang?
 
   return (
     <div className={cn("flex min-w-0 flex-col", (example.wide || showCode) && "md:col-span-2")}>
-      <div className="group/tile relative flex min-h-56 rounded-3xlarge border border-stroke-2 bg-background-3 p-5">
+      <div className="group/tile relative flex min-h-56 rounded-3xlarge border border-stroke-2 bg-background-3 p-5 [contain-intrinsic-size:auto_none_auto_11rem] [content-visibility:auto]">
         <div lang={example.lang ?? demoLang} className="isolate flex w-full min-w-0 flex-wrap content-center items-center justify-center gap-3">
           {example.render()}
         </div>
@@ -306,7 +308,11 @@ function breakableName(name: string): React.ReactNode {
 export function PropsTable({ props, contentLang }: { props: PropDoc[]; contentLang?: string }) {
   const { t } = useLocale();
   return (
-    <div className="@container overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1">
+    // Bảng dài, thường nằm dưới màn hình đầu: bỏ qua khi chưa tới gần (#308); ~4.5rem mỗi prop làm chỗ giữ chỗ.
+    <div
+      className="@container overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1 [content-visibility:auto]"
+      style={{ containIntrinsicSize: `auto none auto ${2.5 + props.length * 4.5}rem` }}
+    >
       <table aria-label={t("blocks.propsTable")} className="w-full table-fixed border-collapse text-start text-body1 @max-2xl:block">
         <thead className="@max-2xl:sr-only">
           <tr className="border-b border-stroke-2 bg-background-3 text-caption1 font-semibold text-foreground-2">
