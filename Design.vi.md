@@ -26,7 +26,7 @@ Tài liệu này là **bộ quy tắc bắt buộc**. Mọi người (và AI) kh
 8. **Không phủ brand lên diện tích lớn** (header, sidebar, nền trang, card lớn).
 9. **Gradient chỉ cho minh hoạ/hero/marketing** — không bao giờ trên control hay để biểu thị trạng thái.
 10. **Không dùng màu làm tín hiệu duy nhất**; chữ ≥ 4.5:1, thành phần UI ≥ 3:1 (kiểm tra ở trang Màu sắc › Khả năng tiếp cận).
-11. Hành vi phức tạp dùng **Radix primitive** / `cmdk` / `react-day-picker`; icon chỉ dùng **`@fluentui/react-icons`**.
+11. Hành vi phức tạp dùng **Radix primitive** / `cmdk` / `react-day-picker`; icon chỉ dùng **Fluent System Icons**: có sẵn trong thư viện (`src/components/ui/_internal/icons.tsx`, sinh bằng `npm run icons`), và `@fluentui/react-icons` trong demo, block.
 12. Component/Block mới chỉ coi là xong khi có trang docs (registry) hoặc file trong `block-library` (xem §8).
 13. **Class phải ở dạng canonical** của Tailwind v4 (`inset-s-L` chứ không `start-L`, `data-disabled:` chứ không
     `data-[disabled]:`, `h-110` chứ không `h-[440px]`). `npm run lint:classes` phải báo sạch; sửa tự động bằng
@@ -45,7 +45,7 @@ Tài liệu này là **bộ quy tắc bắt buộc**. Mọi người (và AI) kh
 | Hành vi / a11y | `@radix-ui/react-*`, `cmdk` (Command, Combobox, TagPicker), `react-day-picker` v10 (Calendar), `react-resizable-panels` v4 |
 | Biến thể | `class-variance-authority` |
 | Gộp class | `cn()` = `clsx` + `tailwind-merge` đã cấu hình scale của Yugen |
-| Icon | `@fluentui/react-icons` (Fluent System Icons) |
+| Icon | Fluent System Icons, có sẵn (`_internal/icons`, sinh từ `@fluentui/react-icons`, một devDependency) |
 
 ```
 src/

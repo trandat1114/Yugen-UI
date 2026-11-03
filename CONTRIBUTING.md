@@ -42,6 +42,7 @@ npm run dev          # docs site at http://localhost:5173
 | `npm run dev` | Runs the docs site (Vite) |
 | `npm run typecheck` | Type check (`tsc -b` with TypeScript 7, the native compiler) |
 | `npm run lint:classes` | Checks that Tailwind classes are canonical (`node scripts/canonical-classes.mjs --fix` repairs them) |
+| `npm run icons` | Regenerates the built-in icons (`src/components/ui/_internal/icons.tsx`) from the ones components import (`--check` in CI) |
 | `npm run build:lib` | Builds the library into `dist/` (JS + `.d.ts` + `theme.css` / `styles.css` / `tokens.css`) |
 | `npm run build:docs` | Builds the docs site into `dist-docs/` |
 | `npm run build` | Both |
@@ -97,13 +98,17 @@ npm run dev          # docs site at http://localhost:5173
    only for states.
 7. Gradients only for illustrations / heroes, never on controls.
 8. Text contrast ≥ 4.5:1, UI parts ≥ 3:1; colour is never the only signal.
-9. Complex behaviour uses Radix / `cmdk` / `react-day-picker`; icons come from `@fluentui/react-icons` only. No other UI
+9. Complex behaviour uses Radix / `cmdk` / `react-day-picker`; icons are Fluent System Icons only: inside components from `../_internal/icons` (see [Adding a component](#adding-a-component)), in demos and blocks from `@fluentui/react-icons`. No other UI
    or animation library.
 
 ### Adding a component
 
 1. Create `src/components/ui/<Name>/<Name>.tsx` following Design.md §5 (named export, `forwardRef`, user `className`
    last in `cn(...)`, hover / pressed / disabled / focus-visible states, keyboard support, `aria-*`).
+   - Icons: import them by their Fluent name from `../_internal/icons` (for example `Dismiss20Regular`), then run
+     `npm run icons`. The script copies the icon from `@fluentui/react-icons` into the library, so `yugen-ui` doesn't
+     depend on the icon package. For an icon passed in by the user, give the slot a size with `[&_svg]:size-…`, so any
+     SVG icon set fits.
 2. Add `export * from "./<Name>/<Name>";` to the right group in `src/components/ui/index.ts`. The npm package exports
    everything in that barrel.
 3. Write the docs page: add a `ComponentDoc` to a file in `src/docs/registry/` (`slug`, `name`, `category`, `lead`,
@@ -306,6 +311,7 @@ npm run dev          # trang docs tại http://localhost:5173
 | `npm run dev` | Chạy trang docs (Vite) |
 | `npm run typecheck` | Kiểm tra kiểu (`tsc -b` bằng TypeScript 7, trình biên dịch native) |
 | `npm run lint:classes` | Kiểm tra class Tailwind ở dạng canonical (`node scripts/canonical-classes.mjs --fix` để tự sửa) |
+| `npm run icons` | Sinh lại icon có sẵn (`src/components/ui/_internal/icons.tsx`) theo các icon component đang import (CI chạy `--check`) |
 | `npm run build:lib` | Build thư viện vào `dist/` (JS + `.d.ts` + `theme.css` / `styles.css` / `tokens.css`) |
 | `npm run build:docs` | Build trang docs vào `dist-docs/` |
 | `npm run build` | Cả hai |
@@ -355,13 +361,16 @@ npm run dev          # trang docs tại http://localhost:5173
 6. Neutral cho bề mặt/chữ/viền · Brand chỉ cho CTA, trạng thái chọn, focus, link · Semantic chỉ cho trạng thái.
 7. Gradient chỉ cho minh hoạ/hero — không bao giờ trên control.
 8. Tương phản chữ ≥ 4.5:1, thành phần UI ≥ 3:1; không dùng màu làm tín hiệu duy nhất.
-9. Hành vi phức tạp dùng Radix / `cmdk` / `react-day-picker`; icon chỉ dùng `@fluentui/react-icons`. Không thêm thư
+9. Hành vi phức tạp dùng Radix / `cmdk` / `react-day-picker`; icon chỉ dùng Fluent System Icons: trong component lấy từ `../_internal/icons` (xem [Thêm component](#thêm-component)), trong demo và block lấy từ `@fluentui/react-icons`. Không thêm thư
    viện UI/animation khác.
 
 ### Thêm component
 
 1. Tạo `src/components/ui/<Name>/<Name>.tsx` theo Design.md §5 (named export, `forwardRef`, `className` cuối `cn(...)`,
    đủ trạng thái hover/pressed/disabled/focus-visible, bàn phím, `aria-*`).
+   - Icon: import theo tên Fluent từ `../_internal/icons` (vd. `Dismiss20Regular`) rồi chạy `npm run icons`. Script chép
+     icon từ `@fluentui/react-icons` vào thư viện, nên `yugen-ui` không phụ thuộc gói icon. Ô nhận icon của người dùng
+     thì đặt cỡ bằng `[&_svg]:size-…` để bộ icon SVG nào cũng vừa.
 2. Thêm `export * from "./<Name>/<Name>";` vào đúng nhóm trong `src/components/ui/index.ts` — gói npm export mọi thứ
    có trong barrel này.
 3. Viết trang docs: thêm một `ComponentDoc` vào file trong `src/docs/registry/` (`slug`, `name`, `category`, `lead`,
