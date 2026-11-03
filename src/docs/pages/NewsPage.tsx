@@ -88,13 +88,12 @@ function ReleaseCredits({ credits }: { credits: ReturnType<typeof creditsBetween
           <a href={profileUrl(person.login)} target="_blank" rel="noreferrer" className="font-semibold text-foreground-1 hover:underline">
             {person.name}
           </a>
-          {items
-            .filter((item) => item.number && item.url)
-            .map((item) => (
-              <a key={item.number} href={item.url} target="_blank" rel="noreferrer" className="text-link tabular-nums hover:text-link-hover hover:underline">
-                #{item.number}
-              </a>
-            ))}
+          {/* Một số mỗi issue / PR, kể cả khi người đó có nhiều bình luận trong cùng một issue. */}
+          {[...new Map(items.filter((item) => item.number && item.url).map((item) => [item.number, item])).values()].map((item) => (
+            <a key={item.number} href={item.url} target="_blank" rel="noreferrer" className="text-link tabular-nums hover:text-link-hover hover:underline">
+              #{item.number}
+            </a>
+          ))}
         </span>
       ))}
     </p>

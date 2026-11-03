@@ -74,12 +74,20 @@ const day = (iso) => iso.slice(0, 10);
 export function buildContributors({ pulls, issues, commits = [] }, extra = {}, { maxItems = 50 } = {}) {
   const maintainers = new Set(extra.maintainers ?? []);
   const exclude = new Set(extra.exclude ?? []);
-  // Đóng góp maintainer đã ghi tay (cùng người, cùng url: có loại cụ thể hơn) thì bản lấy tự động không đếm lại.
-  const manual = new Set((extra.people ?? []).filter((entry) => entry.url).map((entry) => `${entry.login} ${entry.url}`));
+  // Ghi tay trùng một đóng góp trên GitHub (cùng người, cùng url) chỉ đặt loại cho đóng góp đó; số, tiêu đề và ngày vẫn
+  // lấy nguyên bản từ GitHub. Mục không trùng (thiết kế, ý tưởng ngoài GitHub) dùng tiêu đề và ngày ghi tay.
+  const manual = new Map((extra.people ?? []).filter((entry) => entry.url).map((entry) => [`${entry.login} ${entry.url}`, entry]));
+  const matched = new Set();
+  const manualFor = (login, url) => {
+    const entry = url && manual.get(`${login} ${url}`);
+    if (entry) matched.add(entry);
+    return entry;
+  };
   const people = new Map();
 
-  const add = (actor, types, item) => {
+  const add = (actor, autoTypes, item) => {
     if (exclude.has(actor.login)) return;
+    const types = manualFor(actor.login, item.url)?.types ?? autoTypes;
     let person = people.get(actor.login);
     if (!person) {
       person = {
@@ -101,14 +109,16 @@ export function buildContributors({ pulls, issues, commits = [] }, extra = {}, {
 
   /**
    * Góp ý: bình luận (timeline) trong issue / PR của người khác; người mở bổ sung thông tin thì đã được tính cho chính
-   * issue / PR. Bỏ maintainer, bot, bình luận quá ngắn và bình luận đã ghi tay.
+   * issue / PR. Bỏ maintainer, bot và bình luận quá ngắn, trừ khi maintainer đã ghi tay bình luận đó.
    */
   const creditComments = (parent, title) => {
     for (const comment of parent.timelineItems?.nodes ?? []) {
       const author = comment.author;
-      if (!isPerson(author) || maintainers.has(author.login) || author.login === parent.author?.login) continue;
-      if (manual.has(`${author.login} ${comment.url}`) || (comment.bodyText ?? "").trim().length < MIN_COMMENT) continue;
-      add(author, ["discussion"], { number: parent.number, title, date: day(comment.createdAt), url: comment.url });
+      if (!isPerson(author)) continue;
+      const counted =
+        manual.has(`${author.login} ${comment.url}`) ||
+        (!maintainers.has(author.login) && author.login !== parent.author?.login && (comment.bodyText ?? "").trim().length >= MIN_COMMENT);
+      if (counted) add(author, ["discussion"], { number: parent.number, title, date: day(comment.createdAt), url: comment.url });
     }
   };
 
@@ -123,7 +133,7 @@ export function buildContributors({ pulls, issues, commits = [] }, extra = {}, {
     const pr = commit.associatedPullRequests.nodes.map((node) => node.merged && pullsByNumber.get(node.number)).find(Boolean);
     if (!pr) continue;
     for (const { user } of commit.authors.nodes) {
-      if (!isPerson(user) || user.login === pr.author?.login || maintainers.has(user.login) || manual.has(`${user.login} ${pr.url}`)) continue;
+      if (!isPerson(user) || user.login === pr.author?.login || maintainers.has(user.login)) continue;
       if (!coauthors.has(pr.number)) coauthors.set(pr.number, new Map());
       coauthors.get(pr.number).set(user.login, user);
     }
@@ -152,7 +162,8 @@ export function buildContributors({ pulls, issues, commits = [] }, extra = {}, {
   }
 
   for (const entry of extra.people ?? []) {
-    add({ login: entry.login, name: entry.name }, entry.types, { title: entry.title, date: entry.date, ...(entry.url && { url: entry.url }) });
+    if (matched.has(entry)) continue;
+    add({ login: entry.login, name: entry.name }, entry.types, { title: entry.title ?? entry.url, date: entry.date, ...(entry.url && { url: entry.url }) });
   }
 
   return [...people.values()]

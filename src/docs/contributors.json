@@ -7,9 +7,9 @@
       "avatar": "https://avatars.githubusercontent.com/u/88397960?u=1536b607c6b24251c0f403833bc956776eae27c2&v=4",
       "first": "2026-10-20",
       "counts": {
-        "code": 115,
+        "code": 116,
         "templates": 31,
-        "docs": 116,
+        "docs": 117,
         "translation": 62,
         "bug": 19,
         "a11y": 4,
@@ -20,7 +20,7 @@
     {
       "login": "dave-otf",
       "name": "Dave Kurian",
-      "avatar": "https://github.com/dave-otf.png",
+      "avatar": "https://avatars.githubusercontent.com/u/281910818?u=5f8bbaeee4754ec3ed9d9ea8695d2d2e7f2a61ba&v=4",
       "first": "2026-10-30",
       "counts": {
         "discussion": 4,
@@ -33,16 +33,8 @@
             "discussion",
             "idea"
           ],
-          "title": "Đề xuất kiểm thử bảng props ở 375px: tên prop dài và code trong mô tả, không tràn ngang, backtick thành code (#259)",
-          "date": "2026-11-03",
-          "url": "https://github.com/trandat1114/Yugen-UI/issues/259#issuecomment-6593217974"
-        },
-        {
-          "types": [
-            "discussion",
-            "idea"
-          ],
-          "title": "Đề xuất kiểm thử bảng Messages ở 375px: mỗi khoá đủ giá trị tiếng Việt và tiếng Anh, đo từng ô chứ không chỉ cả trang (#266)",
+          "number": 266,
+          "title": "Docs: Messages table scrolls sideways at 375px, raw backticks in key descriptions; three demos overflow",
           "date": "2026-11-03",
           "url": "https://github.com/trandat1114/Yugen-UI/issues/266#issuecomment-6595648056"
         },
@@ -51,7 +43,18 @@
             "discussion",
             "idea"
           ],
-          "title": "Xem lại AppShell sau khi làm xong, đề xuất ghi chú về breakpoint trong docs (#161)",
+          "number": 259,
+          "title": "Docs: props table is hard to read (prop column too wide, description clipped, raw backticks)",
+          "date": "2026-11-03",
+          "url": "https://github.com/trandat1114/Yugen-UI/issues/259#issuecomment-6593217974"
+        },
+        {
+          "types": [
+            "discussion",
+            "idea"
+          ],
+          "number": 161,
+          "title": "1.0 proposal: AppShell / Sidebar layout component",
           "date": "2026-11-02",
           "url": "https://github.com/trandat1114/Yugen-UI/issues/161#issuecomment-6569261947"
         },
@@ -60,7 +63,8 @@
             "discussion",
             "a11y"
           ],
-          "title": "Góp ý AppShell: chỉ lưu trạng thái màn rộng, focus khi qua breakpoint, phím tắt khi gõ IME (#161)",
+          "number": 161,
+          "title": "1.0 proposal: AppShell / Sidebar layout component",
           "date": "2026-10-30",
           "url": "https://github.com/trandat1114/Yugen-UI/issues/161#issuecomment-6532308797"
         }

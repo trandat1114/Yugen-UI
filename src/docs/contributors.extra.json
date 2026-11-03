@@ -1,5 +1,5 @@
 {
-  "$comment": "Ghi tay cho scripts/contributors.mjs (#248). maintainers: đứng đầu trang. exclude: login xin bỏ tên. people: đóng góp API không thấy (thiết kế, ý tưởng ngoài GitHub…) hoặc bình luận / PR cần loại cụ thể hơn bản lấy tự động (cùng login và url thì bản tự động bị bỏ): { login, name?, types: [design|idea|discussion|a11y|…], title, date: YYYY-MM-DD, url? }.",
+  "$comment": "Ghi tay cho scripts/contributors.mjs (#248). maintainers: đứng đầu trang. exclude: login xin bỏ tên. people: đóng góp API không thấy (thiết kế, ý tưởng ngoài GitHub…), hoặc loại cụ thể hơn cho một bình luận / PR trên GitHub (cùng login và url: số, tiêu đề, ngày vẫn lấy nguyên bản từ GitHub, title chỉ dùng khi url không phải đóng góp trên GitHub): { login, name?, types: [design|idea|discussion|a11y|…], title?, date: YYYY-MM-DD, url? }.",
   "maintainers": ["trandat1114"],
   "exclude": [],
   "people": [
@@ -7,7 +7,6 @@
       "login": "dave-otf",
       "name": "Dave Kurian",
       "types": ["discussion", "a11y"],
-      "title": "Góp ý AppShell: chỉ lưu trạng thái màn rộng, focus khi qua breakpoint, phím tắt khi gõ IME (#161)",
       "date": "2026-10-30",
       "url": "https://github.com/trandat1114/Yugen-UI/issues/161#issuecomment-6532308797"
     },
@@ -15,7 +14,6 @@
       "login": "dave-otf",
       "name": "Dave Kurian",
       "types": ["discussion", "idea"],
-      "title": "Xem lại AppShell sau khi làm xong, đề xuất ghi chú về breakpoint trong docs (#161)",
       "date": "2026-11-02",
       "url": "https://github.com/trandat1114/Yugen-UI/issues/161#issuecomment-6569261947"
     },
@@ -23,7 +21,6 @@
       "login": "dave-otf",
       "name": "Dave Kurian",
       "types": ["discussion", "idea"],
-      "title": "Đề xuất kiểm thử bảng props ở 375px: tên prop dài và code trong mô tả, không tràn ngang, backtick thành code (#259)",
       "date": "2026-11-03",
       "url": "https://github.com/trandat1114/Yugen-UI/issues/259#issuecomment-6593217974"
     },
@@ -31,7 +28,6 @@
       "login": "dave-otf",
       "name": "Dave Kurian",
       "types": ["discussion", "idea"],
-      "title": "Đề xuất kiểm thử bảng Messages ở 375px: mỗi khoá đủ giá trị tiếng Việt và tiếng Anh, đo từng ô chứ không chỉ cả trang (#266)",
       "date": "2026-11-03",
       "url": "https://github.com/trandat1114/Yugen-UI/issues/266#issuecomment-6595648056"
     }
