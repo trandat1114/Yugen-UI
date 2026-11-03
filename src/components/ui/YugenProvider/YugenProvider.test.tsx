@@ -190,6 +190,21 @@ describe("YugenProvider defaults & density (#171)", () => {
     expect(document.documentElement).not.toHaveAttribute("data-density");
   });
 
+  it("scrollLock ghi data-yugen-scroll-lock lên <html> khi applyToDocument, gỡ khi unmount (#243)", () => {
+    const html = document.documentElement;
+    const { rerender, unmount } = render(<YugenProvider applyToDocument />);
+    expect(html).not.toHaveAttribute("data-yugen-scroll-lock");
+    rerender(<YugenProvider applyToDocument scrollLock="keep-scrollbar" />);
+    expect(html).toHaveAttribute("data-yugen-scroll-lock", "keep-scrollbar");
+    rerender(<YugenProvider applyToDocument scrollLock="hide-scrollbar" />);
+    expect(html).toHaveAttribute("data-yugen-scroll-lock", "hide-scrollbar");
+    unmount();
+    expect(html).not.toHaveAttribute("data-yugen-scroll-lock");
+    // Provider lồng (không applyToDocument) không đụng tới <html>.
+    render(<YugenProvider scrollLock="keep-scrollbar" />);
+    expect(html).not.toHaveAttribute("data-yugen-scroll-lock");
+  });
+
   it("bề mặt portal của provider lồng mang data-density", () => {
     render(
       <YugenProvider density="compact">

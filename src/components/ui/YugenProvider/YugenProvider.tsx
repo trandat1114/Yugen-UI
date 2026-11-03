@@ -12,6 +12,7 @@ import {
   type YugenDensity,
   type YugenDir,
   type YugenMessagesInput,
+  type YugenScrollLock,
   type YugenTheme,
 } from "./context";
 
@@ -23,6 +24,7 @@ export {
   type YugenBrand,
   type YugenDir,
   type YugenDensity,
+  type YugenScrollLock,
   type YugenMessages,
   type YugenMessagesInput,
   type YugenComponentDefaults,
@@ -60,6 +62,14 @@ export interface YugenProviderProps extends React.HTMLAttributes<HTMLDivElement>
    * `"default"`.
    */
   density?: YugenDensity;
+  /**
+   * Thanh cuộn của trang khi Menu, ContextMenu, Dropdown đang mở (#243). Các bề mặt này khoá cuộn trang (Radix,
+   * react-remove-scroll). `"hide-scrollbar"` (mặc định hiện tại): thanh cuộn ẩn và body được bù lề. `"keep-scrollbar"`:
+   * thanh cuộn vẫn hiện, không có gì xê dịch; lăn chuột / vuốt ngoài bề mặt vẫn bị chặn. Chỉ có tác dụng với
+   * applyToDocument: ghi `data-yugen-scroll-lock` lên <html> (app không dùng provider tự đặt attribute này).
+   * Bản 1.0 sẽ đổi mặc định sang `"keep-scrollbar"`.
+   */
+  scrollLock?: YugenScrollLock;
 }
 
 /**
@@ -124,6 +134,7 @@ export function YugenProvider({
   locale: localeProp,
   defaults: defaultsProp,
   density: densityProp,
+  scrollLock,
   className,
   children,
   ref,
@@ -149,6 +160,12 @@ export function YugenProvider({
     root.setAttribute("data-density", densityProp);
     return () => root.removeAttribute("data-density");
   }, [applyToDocument, densityProp]);
+  React.useEffect(() => {
+    if (!applyToDocument || !scrollLock) return;
+    const root = document.documentElement;
+    root.setAttribute("data-yugen-scroll-lock", scrollLock);
+    return () => root.removeAttribute("data-yugen-scroll-lock");
+  }, [applyToDocument, scrollLock]);
 
   const value = React.useMemo(
     () => ({ theme, brand, dir, locale, density, densityAttr, messages, defaults, scoped: !applyToDocument }),

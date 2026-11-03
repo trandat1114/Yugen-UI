@@ -712,6 +712,23 @@
   --spacingXXXL: 36px;
 }
 
+/* Khoá cuộn (#243): Menu, ContextMenu, Dropdown khoá cuộn trang qua react-remove-scroll (body[data-scroll-locked] được
+   overflow: hidden + margin-right bằng bề rộng thanh cuộn). Với data-yugen-scroll-lock="keep-scrollbar" trên <html>,
+   overflow của body không còn lan lên viewport nên thanh cuộn vẫn hiện; bỏ phần bù lề. Lăn chuột / vuốt vẫn bị chặn. */
+html[data-yugen-scroll-lock="keep-scrollbar"]:has(> body[data-scroll-locked]) {
+  overflow-y: auto;
+}
+html[data-yugen-scroll-lock="keep-scrollbar"] body[data-scroll-locked] {
+  margin-right: 0 !important;
+  --removed-body-scroll-bar-size: 0px;
+}
+html[data-yugen-scroll-lock="keep-scrollbar"] body[data-scroll-locked] .right-scroll-bar-position {
+  right: 0 !important;
+}
+html[data-yugen-scroll-lock="keep-scrollbar"] body[data-scroll-locked] .width-before-scroll-bar {
+  margin-right: 0 !important;
+}
+
 @layer base {
   :root,
   [dir="ltr"] {

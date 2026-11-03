@@ -312,6 +312,12 @@ export default function Page() {
                 defaultValue: `"default"`,
                 description: "compact: control mặc định size small, spacing nhân 0.9375. comfortable: spacing nhân 1.125. Ghi vào data-density (và lên <html> khi applyToDocument). Provider lồng kế thừa.",
               },
+              {
+                name: "scrollLock",
+                type: `"hide-scrollbar" | "keep-scrollbar"`,
+                defaultValue: `"hide-scrollbar"`,
+                description: "Giữ hay ẩn thanh cuộn của trang khi Menu, ContextMenu, Dropdown mở. Chỉ có tác dụng với applyToDocument (ghi data-yugen-scroll-lock lên <html>). Bản 1.0 đổi mặc định sang keep-scrollbar. Xem [Khoá cuộn](/concepts/positioning#scroll-lock).",
+              },
               { name: "className, …div props", type: "HTMLAttributes<HTMLDivElement>", description: "Truyền xuống thẻ div bao ngoài (ref được forward)." },
             ]}
           />

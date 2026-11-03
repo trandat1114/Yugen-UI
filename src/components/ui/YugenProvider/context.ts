@@ -9,6 +9,8 @@ export type YugenDir = "ltr" | "rtl";
  * `default`: như hiện tại. Spacing đổi qua CSS (`data-density`), size mặc định qua `useComponentDefaults`.
  */
 export type YugenDensity = "compact" | "default" | "comfortable";
+/** Thanh cuộn của trang khi Menu, ContextMenu, Dropdown khoá cuộn (#243). */
+export type YugenScrollLock = "hide-scrollbar" | "keep-scrollbar";
 
 /**
  * Chuỗi giao diện có sẵn của mọi component (nhãn nút, aria-label, thông báo cho trình đọc màn hình…), theo namespace của

@@ -85,7 +85,7 @@ export const en: Record<string, ComponentDocEn> = {
 
   dropdown: {
     description:
-      "Unlike Select, the listbox is a custom surface (shadow-16, rounded-medium), so it supports a checkmark, groups with headings, disabled options and custom content. Keyboard: arrow keys, Home/End, type a character to jump, Enter to select, Esc to close.",
+      "Unlike Select, the listbox is a custom surface (shadow-16, rounded-medium), so it supports a checkmark, groups with headings, disabled options and custom content. Keyboard: arrow keys, Home/End, type a character to jump, Enter to select, Esc to close. While the listbox is open, page scrolling is always locked; to keep the page scrollbar, see [Scroll lock](/concepts/positioning#scroll-lock).",
     examples: [
       { title: "Groups & disabled options", description: "DropdownGroup adds a heading; groups are separated by a divider automatically." },
       { title: "Controlled", description: "value / onValueChange." },

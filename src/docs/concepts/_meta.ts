@@ -127,6 +127,7 @@ export const CONCEPT_METAS: Record<string, ConceptMeta> = {
       { id: "playground", label: "Thử side & align" },
       { id: "collision", label: "Va chạm & tự lật" },
       { id: "portals", label: "Portal & theme" },
+      { id: "scroll-lock", label: "Khoá cuộn" },
       { id: "z-index", label: "Thang z-index" },
     ],
   },

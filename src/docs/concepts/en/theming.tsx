@@ -314,6 +314,12 @@ export default function Page() {
                 defaultValue: `"default"`,
                 description: "compact: controls default to size small and spacing scales by 0.9375. comfortable: spacing scales by 1.125. Written to data-density (and to <html> with applyToDocument). Nested providers inherit it.",
               },
+              {
+                name: "scrollLock",
+                type: `"hide-scrollbar" | "keep-scrollbar"`,
+                defaultValue: `"hide-scrollbar"`,
+                description: "Keeps or hides the page scrollbar while Menu, ContextMenu or Dropdown is open. Works with applyToDocument only (writes data-yugen-scroll-lock to <html>). 1.0 switches the default to keep-scrollbar. See [Scroll lock](/concepts/positioning#scroll-lock).",
+              },
               { name: "className, …div props", type: "HTMLAttributes<HTMLDivElement>", description: "Passed to the wrapping div (the ref is forwarded)." },
             ]}
           />

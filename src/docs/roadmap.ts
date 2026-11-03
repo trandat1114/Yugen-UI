@@ -45,7 +45,7 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
         { status: "planned", issue: 158, vi: "Yugen Labs: promote component đã chín, phần còn lại đánh dấu thử nghiệm", en: "Yugen Labs: promote what is mature, mark the rest experimental" },
         { status: "done", issue: 171, vi: "Prop mặc định và mật độ (density) từ YugenProvider", en: "Default props and density from YugenProvider" },
         { status: "done", issue: 230, vi: "Glass làm mặc định cho component điều hướng, qua prop mặc định", en: "Glass as a default for navigation components, through default props" },
-        { status: "planned", issue: 243, vi: "Khóa cuộn: chọn giữ hay ẩn thanh cuộn khi mở Menu, ContextMenu, Dropdown", en: "Scroll lock: keep or hide the page scrollbar while Menu, ContextMenu or Dropdown is open" },
+        { status: "done", issue: 243, vi: "Khóa cuộn: chọn giữ hay ẩn thanh cuộn khi mở Menu, ContextMenu, Dropdown", en: "Scroll lock: keep or hide the page scrollbar while Menu, ContextMenu or Dropdown is open" },
         { status: "planned", issue: 165, vi: "Rà soát bảo mật các component hiển thị nội dung không tin cậy", en: "Security review of components that render untrusted content" },
         { status: "done", issue: 320, vi: "Icon có sẵn trong thư viện: cài yugen-ui nhẹ hơn ~180 MB", en: "Built-in icons: installing yugen-ui is ~180 MB lighter" },
         { status: "done", issue: 62, vi: "Chỉ hỗ trợ React 19: bỏ React 18 khỏi peer dependency và CI", en: "React 19 only: React 18 leaves the peer dependencies and CI" },
