@@ -1,61 +1,61 @@
-name: Accessibility issue · Vấn đề khả năng tiếp cận
-description: Bàn phím, trình đọc màn hình, focus, tương phản, tương phản cao, RTL.
+name: Accessibility issue
+description: Keyboard, screen readers, focus, contrast, high contrast, RTL.
 title: "[A11y]: "
 labels: ["accessibility", "needs triage"]
 body:
   - type: markdown
     attributes:
       value: |
-        Cảm ơn bạn! Yugen UI cam kết WCAG 2.1 AA (xem ACCESSIBILITY.md và https://trandat1114.github.io/Yugen-UI/concepts/accessibility).
-        Thanks! Yugen UI targets WCAG 2.1 AA. You can write in English or Vietnamese.
+        Thanks! Yugen UI targets WCAG 2.1 AA (see ACCESSIBILITY.md and https://trandat1114.github.io/Yugen-UI/concepts/accessibility).
+        You can write in English or Vietnamese. · Bạn có thể viết bằng tiếng Việt.
   - type: input
     id: component
     attributes:
-      label: Component / trang docs
+      label: Component / docs page
       placeholder: "Combobox — https://trandat1114.github.io/Yugen-UI/components/combobox"
     validations:
       required: true
   - type: dropdown
     id: area
     attributes:
-      label: Loại vấn đề · Kind
+      label: Kind
       multiple: true
       options:
-        - Bàn phím / focus · Keyboard / focus
-        - Trình đọc màn hình (tên, vai trò, trạng thái) · Screen reader
-        - Tương phản màu · Colour contrast
-        - Chế độ tương phản cao / forced colors
+        - Keyboard / focus
+        - Screen reader (name, role, state)
+        - Colour contrast
+        - High contrast / forced colors
         - RTL
-        - Chuyển động (prefers-reduced-motion)
-        - Khác · Other
+        - Motion (prefers-reduced-motion)
+        - Other
     validations:
       required: true
   - type: textarea
     id: steps
     attributes:
-      label: Các bước tái hiện · Steps
-      description: Thao tác cụ thể (phím đã bấm), điều bạn nghe / thấy và điều mong đợi.
+      label: Steps to reproduce
+      description: What you did (keys pressed), what you heard or saw, and what you expected.
       placeholder: |
-        1. Tab vào ô Combobox
-        2. Bấm ArrowDown
-        3. NVDA đọc "…" — mong đợi "…"
+        1. Tab into the Combobox
+        2. Press ArrowDown
+        3. NVDA reads "…", expected "…"
     validations:
       required: true
   - type: input
     id: at
     attributes:
-      label: Trình duyệt & công nghệ hỗ trợ · Browser & assistive tech
+      label: Browser & assistive technology
       placeholder: "Edge 140 + NVDA 2025.1, Windows 11"
     validations:
       required: true
   - type: dropdown
     id: theme
     attributes:
-      label: Theme / hướng chữ
+      label: Theme / text direction
       multiple: true
       options: [Light, Dark, High contrast, RTL]
   - type: textarea
     id: axe
     attributes:
-      label: Kết quả axe / Lighthouse (nếu có)
+      label: axe / Lighthouse results (if any)
       render: text
