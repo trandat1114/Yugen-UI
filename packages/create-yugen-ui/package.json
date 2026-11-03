@@ -34,7 +34,7 @@
     "README.md"
   ],
   "engines": {
-    "node": ">=22"
+    "node": ">=24"
   },
   "dependencies": {
     "@yugen-ui/cli": "^0.5.0"

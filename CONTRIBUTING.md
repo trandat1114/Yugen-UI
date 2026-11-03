@@ -28,7 +28,7 @@ The page and these images update a few minutes after each contribution, see [Con
 
 ### Setup
 
-Requires Node.js **24 LTS** (or 22.22+) and npm.
+Requires Node.js **24 LTS** or newer and npm. CI runs the two newest LTS lines (24 and 26 today).
 
 ```bash
 npm install
@@ -288,7 +288,7 @@ bảo mật: **không** mở issue công khai, xem [SECURITY.md](./SECURITY.md).
 
 ### Cài đặt
 
-Yêu cầu Node.js **24 LTS** (hoặc 22.22+) và npm.
+Yêu cầu Node.js **24 LTS** trở lên và npm. CI chạy 2 bản LTS mới nhất (hiện là 24 và 26).
 
 ```bash
 npm install

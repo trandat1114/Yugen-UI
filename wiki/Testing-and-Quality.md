@@ -27,7 +27,7 @@ checks from a skipped workflow will hang at "Expected": then switch to filtering
 
 | Job | Runs |
 |---|---|
-| Build · Node 22 / 24 / 26 | typecheck, lint:classes, the check:* scripts, sync-templates, build lib + docs, pack, size |
+| Build · Node 24 / 26 | typecheck, lint:classes, the check:* scripts, sync-templates, build lib + docs, pack, size |
 | Unit tests (React 19) | `npm test` |
 | React 18 | temporarily installs React 18.3 → typecheck, test, build:lib |
 | E2E · shard 1/3 … 3/3 | `test:e2e --shard=n/3` in parallel (blob report; `test-results-n` on failure) |

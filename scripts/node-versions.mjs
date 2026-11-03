@@ -7,7 +7,7 @@
  *   node scripts/node-versions.mjs --json    # chỉ in { matrix, lts }
  *   --schedule <file.json> --today YYYY-MM-DD   # dùng file / ngày cho trước thay cho mạng / hôm nay (test)
  *
- * Quy tắc: ma trận (`node: [...]` của Build, CLI) = mọi bản đã phát hành và chưa EOL (LTS + Current);
+ * Quy tắc: ma trận (`node: [...]` của Build, CLI) = LTS_LINES bản LTS mới nhất chưa EOL (không chạy bản Current / bản lẻ);
  * job chạy một bản (`node-version: N`) = bản Active LTS mới nhất. `engines` của CLI không tự đổi (đổi là bản minor của
  * CLI) — script chỉ nhắc khi bản cũ nhất trong ma trận đã cao hơn `engines`.
  */
@@ -16,6 +16,9 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const SCHEDULE_URL = "https://raw.githubusercontent.com/nodejs/Release/main/schedule.json";
+/** Chỉ hỗ trợ và chạy CI trên 2 bản LTS mới nhất (quyết định của maintainer, 2026-11-04): bản LTS cũ hơn, bản Current và
+ * bản lẻ không chạy nữa cho đỡ tốn thời gian CI. */
+export const LTS_LINES = 2;
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const WORKFLOWS = path.join(root, ".github/workflows");
 
@@ -30,7 +33,11 @@ export function supportedNode(schedule, day) {
   const lines = Object.entries(schedule)
     .map(([key, v]) => ({ major: Number(/^v(\d+)$/.exec(key)?.[1]), ...v }))
     .filter((v) => Number.isInteger(v.major) && v.start && v.start <= day && day < v.end);
-  const matrix = lines.map((v) => v.major).sort((a, b) => a - b);
+  const matrix = lines
+    .filter((v) => v.lts && v.lts <= day)
+    .map((v) => v.major)
+    .sort((a, b) => a - b)
+    .slice(-LTS_LINES);
   const lts = Math.max(...lines.filter((v) => v.lts && v.lts <= day).map((v) => v.major));
   return { matrix, lts };
 }
