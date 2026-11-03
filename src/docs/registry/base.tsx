@@ -26,12 +26,12 @@ export const docs: ComponentDoc[] = [
     importCode: `import { Field } from "@/components/ui";`,
     hero: {
       title: "Field",
-      code: `<Field label="Mô tả" hint="Tối đa 200 ký tự." required className="w-80">
-  <Textarea placeholder="Viết vài dòng giới thiệu…" />
+      code: `<Field label="Description" hint="Up to 200 characters." required className="w-80">
+  <Textarea placeholder="Write a short bio…" />
 </Field>`,
       render: () => (
-        <Field label="Mô tả" hint="Tối đa 200 ký tự." required className="w-80">
-          <Textarea placeholder="Viết vài dòng giới thiệu…" />
+        <Field label="Description" hint="Up to 200 characters." required className="w-80">
+          <Textarea placeholder="Write a short bio…" />
         </Field>
       ),
     },
@@ -39,24 +39,24 @@ export const docs: ComponentDoc[] = [
       {
         title: "Validation",
         description: "validationState error / warning / success kèm validationMessage có icon.",
-        code: `<Field label="Tên miền" validationState="error" validationMessage="Tên miền đã có người dùng." className="w-64">
+        code: `<Field label="Domain" validationState="error" validationMessage="This domain is already taken." className="w-64">
   <Select defaultValue="yugen">
-    <option value="yugen">yugen.vn</option>
-    <option value="sakura">sakura.vn</option>
+    <option value="yugen">yugen.dev</option>
+    <option value="sakura">sakura.dev</option>
   </Select>
 </Field>
-<Field label="Mật khẩu" validationState="success" validationMessage="Mật khẩu mạnh." className="w-64">
+<Field label="Password" validationState="success" validationMessage="Strong password." className="w-64">
   <Textarea defaultValue="••••••••••••" rows={1} />
 </Field>`,
         render: () => (
           <>
-            <Field label="Tên miền" validationState="error" validationMessage="Tên miền đã có người dùng." className="w-64">
+            <Field label="Domain" validationState="error" validationMessage="This domain is already taken." className="w-64">
               <Select defaultValue="yugen">
-                <option value="yugen">yugen.vn</option>
-                <option value="sakura">sakura.vn</option>
+                <option value="yugen">yugen.dev</option>
+                <option value="sakura">sakura.dev</option>
               </Select>
             </Field>
-            <Field label="Mật khẩu" validationState="success" validationMessage="Mật khẩu mạnh." className="w-64">
+            <Field label="Password" validationState="success" validationMessage="Strong password." className="w-64">
               <Textarea defaultValue="••••••••••••" rows={1} />
             </Field>
           </>
@@ -65,31 +65,31 @@ export const docs: ComponentDoc[] = [
       {
         title: "Ngang (horizontal)",
         description: "Nhãn bên trái, control bên phải — dùng cho form cài đặt rộng.",
-        code: `<Field label="Họ và tên" orientation="horizontal" className="w-96">
-  <Textarea rows={1} placeholder="Nguyễn Văn An" />
+        code: `<Field label="Full name" orientation="horizontal" className="w-96">
+  <Textarea rows={1} placeholder="Alex Chen" />
 </Field>`,
         render: () => (
-          <Field label="Họ và tên" orientation="horizontal" className="w-96">
-            <Textarea rows={1} placeholder="Nguyễn Văn An" />
+          <Field label="Full name" orientation="horizontal" className="w-96">
+            <Textarea rows={1} placeholder="Alex Chen" />
           </Field>
         ),
       },
       {
         title: "Render-prop",
         description: "Cho control cần nhận props theo cách riêng (RadioGroup, component tự viết…).",
-        code: `<Field label="Gói dịch vụ" hint="Có thể đổi bất cứ lúc nào." className="w-72">
+        code: `<Field label="Plan" hint="You can change this at any time." className="w-72">
   {(props) => (
     <RadioGroup {...props} defaultValue="pro">
-      <Radio value="free" label="Miễn phí" />
+      <Radio value="free" label="Free" />
       <Radio value="pro" label="Pro" />
     </RadioGroup>
   )}
 </Field>`,
         render: () => (
-          <Field label="Gói dịch vụ" hint="Có thể đổi bất cứ lúc nào." className="w-72">
+          <Field label="Plan" hint="You can change this at any time." className="w-72">
             {(props) => (
               <RadioGroup {...props} defaultValue="pro">
-                <Radio value="free" label="Miễn phí" />
+                <Radio value="free" label="Free" />
                 <Radio value="pro" label="Pro" />
               </RadioGroup>
             )}
@@ -123,15 +123,15 @@ export const docs: ComponentDoc[] = [
       title: "Popover",
       code: `<Popover>
   <PopoverTrigger asChild>
-    <Button icon={<Settings20Regular />}>Hiển thị</Button>
+    <Button icon={<Settings20Regular />}>Display</Button>
   </PopoverTrigger>
   <PopoverSurface withArrow className="flex w-72 flex-col gap-3">
-    <p className="text-subtitle2 font-semibold">Tuỳ chọn hiển thị</p>
-    <Switch label="Chế độ gọn" defaultChecked />
-    <Switch label="Hiện ảnh xem trước" />
+    <p className="text-subtitle2 font-semibold">Display options</p>
+    <Switch label="Compact mode" defaultChecked />
+    <Switch label="Show previews" />
     <div className="flex justify-end">
       <PopoverClose asChild>
-        <Button appearance="primary" size="small">Xong</Button>
+        <Button appearance="primary" size="small">Done</Button>
       </PopoverClose>
     </div>
   </PopoverSurface>
@@ -139,16 +139,16 @@ export const docs: ComponentDoc[] = [
       render: () => (
         <Popover>
           <PopoverTrigger asChild>
-            <Button icon={<Settings20Regular />}>Hiển thị</Button>
+            <Button icon={<Settings20Regular />}>Display</Button>
           </PopoverTrigger>
           <PopoverSurface withArrow className="flex w-72 flex-col gap-3">
-            <p className="text-subtitle2 font-semibold">Tuỳ chọn hiển thị</p>
-            <Switch label="Chế độ gọn" defaultChecked />
-            <Switch label="Hiện ảnh xem trước" />
+            <p className="text-subtitle2 font-semibold">Display options</p>
+            <Switch label="Compact mode" defaultChecked />
+            <Switch label="Show previews" />
             <div className="flex justify-end">
               <PopoverClose asChild>
                 <Button appearance="primary" size="small">
-                  Xong
+                  Done
                 </Button>
               </PopoverClose>
             </div>
@@ -162,11 +162,11 @@ export const docs: ComponentDoc[] = [
         description: "normal (mặc định), brand cho teaching/onboarding, inverted.",
         code: `<Popover>
   <PopoverTrigger asChild><Button>Brand</Button></PopoverTrigger>
-  <PopoverSurface appearance="brand" withArrow size="small">Mẹo: nhấn / để tìm nhanh.</PopoverSurface>
+  <PopoverSurface appearance="brand" withArrow size="small">Tip: press / to search.</PopoverSurface>
 </Popover>
 <Popover>
   <PopoverTrigger asChild><Button>Inverted</Button></PopoverTrigger>
-  <PopoverSurface appearance="inverted" withArrow size="small">Đã sao chép liên kết.</PopoverSurface>
+  <PopoverSurface appearance="inverted" withArrow size="small">Link copied.</PopoverSurface>
 </Popover>`,
         render: () => (
           <>
@@ -175,7 +175,7 @@ export const docs: ComponentDoc[] = [
                 <Button>Brand</Button>
               </PopoverTrigger>
               <PopoverSurface appearance="brand" withArrow size="small">
-                Mẹo: nhấn / để tìm nhanh.
+                Tip: press / to search.
               </PopoverSurface>
             </Popover>
             <Popover>
@@ -183,7 +183,7 @@ export const docs: ComponentDoc[] = [
                 <Button>Inverted</Button>
               </PopoverTrigger>
               <PopoverSurface appearance="inverted" withArrow size="small">
-                Đã sao chép liên kết.
+                Link copied.
               </PopoverSurface>
             </Popover>
           </>
@@ -194,12 +194,12 @@ export const docs: ComponentDoc[] = [
         description: "Chỉnh nhanh một giá trị mà không mở Dialog.",
         code: `<Popover>
   <PopoverTrigger asChild>
-    <Button appearance="subtle" icon={<Info16Regular />}>Đổi tên</Button>
+    <Button appearance="subtle" icon={<Info16Regular />}>Rename</Button>
   </PopoverTrigger>
   <PopoverSurface side="bottom" align="start" className="flex w-72 flex-col gap-2">
-    <Input label="Tên mới" defaultValue="Báo cáo Q3" />
+    <Input label="New name" defaultValue="Q3 report" />
     <PopoverClose asChild>
-      <Button appearance="primary" size="small" className="self-end">Lưu</Button>
+      <Button appearance="primary" size="small" className="self-end">Save</Button>
     </PopoverClose>
   </PopoverSurface>
 </Popover>`,
@@ -207,14 +207,14 @@ export const docs: ComponentDoc[] = [
           <Popover>
             <PopoverTrigger asChild>
               <Button appearance="subtle" icon={<Info16Regular />}>
-                Đổi tên
+                Rename
               </Button>
             </PopoverTrigger>
             <PopoverSurface side="bottom" align="start" className="flex w-72 flex-col gap-2">
-              <Input label="Tên mới" defaultValue="Báo cáo Q3" />
+              <Input label="New name" defaultValue="Q3 report" />
               <PopoverClose asChild>
                 <Button appearance="primary" size="small" className="self-end">
-                  Lưu
+                  Save
                 </Button>
               </PopoverClose>
             </PopoverSurface>
