@@ -29,7 +29,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const datePickerMessages: DatePickerMessages = {
+export const datePickerMessagesVi: DatePickerMessages = {
   placeholder: "Chọn ngày…",
   clear: "Xoá giá trị",
 };
@@ -39,7 +39,7 @@ export const datePickerMessagesEn: DatePickerMessages = {
   clear: "Clear",
 };
 
-export const dateRangePickerMessages: DateRangePickerMessages = {
+export const dateRangePickerMessagesVi: DateRangePickerMessages = {
   placeholder: "Chọn khoảng ngày…",
   clear: "Xoá giá trị",
   presets: "Chọn nhanh khoảng ngày",
@@ -61,8 +61,8 @@ export const dateRangePickerMessagesEn: DateRangePickerMessages = {
   lastMonth: "Last month",
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `datePickerMessagesEn` (mặc định). `datePickerMessages` giữ cho code cũ. */
-export const datePickerMessagesVi = datePickerMessages;
+/** @deprecated Use `datePickerMessagesVi` (Vietnamese) or `datePickerMessagesEn`. Will be removed in v1.0.0. */
+export const datePickerMessages = datePickerMessagesVi;
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `dateRangePickerMessagesEn` (mặc định). `dateRangePickerMessages` giữ cho code cũ. */
-export const dateRangePickerMessagesVi = dateRangePickerMessages;
+/** @deprecated Use `dateRangePickerMessagesVi` (Vietnamese) or `dateRangePickerMessagesEn`. Will be removed in v1.0.0. */
+export const dateRangePickerMessages = dateRangePickerMessagesVi;

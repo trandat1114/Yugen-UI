@@ -72,7 +72,7 @@ const LINE_KIND_EN = { line: "Line", area: "Area", stacked: "Stacked area", expa
 const seriesVi = (series: string[]) => (series.length === 1 ? series[0] : `${series.length} chuỗi (${series.join(", ")})`);
 const seriesEn = (series: string[]) => (series.length === 1 ? series[0] : `${series.length} series (${series.join(", ")})`);
 
-export const chartMessages: ChartMessages = {
+export const chartMessagesVi: ChartMessages = {
   roleDescription: "biểu đồ",
   heatmapRoleDescription: "bản đồ nhiệt",
   dataTable: "Bảng dữ liệu",
@@ -164,5 +164,5 @@ export const chartMessagesEn: ChartMessages = {
     `Trend over ${points} ${points === 1 ? "point" : "points"}: from ${first} to ${last}, low ${min}, high ${max}`,
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `chartMessagesEn` (mặc định). `chartMessages` giữ cho code cũ. */
-export const chartMessagesVi = chartMessages;
+/** @deprecated Use `chartMessagesVi` (Vietnamese) or `chartMessagesEn`. Will be removed in v1.0.0. */
+export const chartMessages = chartMessagesVi;

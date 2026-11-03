@@ -10,9 +10,9 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const splitButtonMessages: SplitButtonMessages = { menu: "Thêm tuỳ chọn" };
+export const splitButtonMessagesVi: SplitButtonMessages = { menu: "Thêm tuỳ chọn" };
 
 export const splitButtonMessagesEn: SplitButtonMessages = { menu: "More options" };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `splitButtonMessagesEn` (mặc định). `splitButtonMessages` giữ cho code cũ. */
-export const splitButtonMessagesVi = splitButtonMessages;
+/** @deprecated Use `splitButtonMessagesVi` (Vietnamese) or `splitButtonMessagesEn`. Will be removed in v1.0.0. */
+export const splitButtonMessages = splitButtonMessagesVi;

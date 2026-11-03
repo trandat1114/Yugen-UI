@@ -1622,6 +1622,7 @@ function FruitFilterDemo() {
       { name: "itemLabel", type: "(value: number) => string", description: "Nhãn đọc cho từng mức điểm." },
       { name: "RatingDisplay.count / compact", type: "number / boolean", description: "Số lượt; chỉ hiện một sao." },
       { name: "RatingDisplay.size", type: "RatingSize", defaultValue: `"medium"`, description: "Cỡ sao và chữ." },
+      { name: "RatingDisplay.showValue", type: "boolean", defaultValue: "true", description: "Hiện chữ giá trị cạnh các sao. Tên cũ hideValue đã lỗi thời (bỏ ở 1.0)." },
     ],
   },
 ];

@@ -53,7 +53,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const questionnaireMessages: QuestionnaireMessages = {
+export const questionnaireMessagesVi: QuestionnaireMessages = {
   requiredText: "Vui lòng nhập câu trả lời.",
   requiredScore: "Vui lòng chọn một mức điểm.",
   requiredChoice: "Vui lòng chọn một câu trả lời.",
@@ -123,5 +123,5 @@ export const questionnaireMessagesEn: QuestionnaireMessages = {
   orPress: "or press",
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `questionnaireMessagesEn` (mặc định). `questionnaireMessages` giữ cho code cũ. */
-export const questionnaireMessagesVi = questionnaireMessages;
+/** @deprecated Use `questionnaireMessagesVi` (Vietnamese) or `questionnaireMessagesEn`. Will be removed in v1.0.0. */
+export const questionnaireMessages = questionnaireMessagesVi;

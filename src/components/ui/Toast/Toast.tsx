@@ -11,6 +11,7 @@ import {
 import { useYugenMessages } from "../YugenProvider/context";
 import { toastMessagesEn } from "./messages";
 import { cn } from "@/lib/cn";
+import { warnDeprecated } from "@/lib/deprecate";
 
 export { toastMessages, toastMessagesVi, toastMessagesEn, type ToastMessages } from "./messages";
 
@@ -42,7 +43,9 @@ export interface ToastOptions {
   action?: ToastActionOptions;
   /** Thời gian tự đóng (ms). `-1` = không tự đóng. Mặc định 3000. */
   timeout?: number;
-  /** Ẩn nút đóng (X). */
+  /** Hiện nút đóng (X). Mặc định true. */
+  dismissible?: boolean;
+  /** @deprecated Use `dismissible: false`. Will be removed in v1.0.0. */
   hideDismiss?: boolean;
   /** Toaster đích; bỏ trống = Toaster mặc định (không có toasterId). */
   toasterId?: string;
@@ -76,6 +79,7 @@ function getSnapshot() {
 
 /** Hiển thị toast; trả về id để đóng sau. */
 export function dispatchToast(options: ToastOptions): string {
+  if (options.hideDismiss !== undefined) warnDeprecated("ToastOptions.hideDismiss", "use dismissible: false", "1.0.0");
   const id = options.toastId ?? `toast-${++counter}`;
   records = [...records.filter((t) => t.id !== id), { ...options, id, open: true }];
   emit();
@@ -221,7 +225,8 @@ function ToastItem({
   vertical: boolean;
   dismissLabel: string;
 }) {
-  const { id, open, intent = "info", title, body, action, timeout = 3000, hideDismiss } = record;
+  const { id, open, intent = "info", title, body, action, timeout = 3000, dismissible, hideDismiss } = record;
+  const showDismiss = dismissible ?? (hideDismiss === undefined ? true : !hideDismiss);
   const { icon: Icon, className: iconClass } = ICON[intent];
 
   return (
@@ -260,7 +265,7 @@ function ToastItem({
         </div>
         {body && <ToastPrimitive.Description className="text-foreground-1">{body}</ToastPrimitive.Description>}
       </div>
-      {hideDismiss ? (
+      {!showDismiss ? (
         <span />
       ) : (
         <ToastPrimitive.Close

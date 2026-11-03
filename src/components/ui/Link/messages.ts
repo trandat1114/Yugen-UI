@@ -10,9 +10,9 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const linkMessages: LinkMessages = { newTab: "(mở trong thẻ mới)" };
+export const linkMessagesVi: LinkMessages = { newTab: "(mở trong thẻ mới)" };
 
 export const linkMessagesEn: LinkMessages = { newTab: "(opens in new tab)" };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `linkMessagesEn` (mặc định). `linkMessages` giữ cho code cũ. */
-export const linkMessagesVi = linkMessages;
+/** @deprecated Use `linkMessagesVi` (Vietnamese) or `linkMessagesEn`. Will be removed in v1.0.0. */
+export const linkMessages = linkMessagesVi;

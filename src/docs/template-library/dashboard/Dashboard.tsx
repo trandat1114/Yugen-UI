@@ -188,7 +188,7 @@ function UserMenu() {
 function RangePicker() {
   const { content: t, range, setRange } = useDashboard();
   // The calendar shows the first click of a new range before the second one completes it.
-  const [draft, setDraft] = React.useState<PickerRange | undefined>(range);
+  const [draft, setDraft] = React.useState<PickerRange | null>(range);
   const twoMonths = useMediaQuery("(min-width: 768px)");
   const presets = React.useMemo<DateRangePreset[]>(
     () => [
@@ -204,7 +204,7 @@ function RangePicker() {
       aria-label={t.range.label}
       className="w-full @lg:w-64"
       value={draft}
-      onSelectRange={(next) => {
+      onValueChange={(next) => {
         setDraft(next);
         if (next?.from && next.to) setRange({ from: next.from, to: next.to });
       }}

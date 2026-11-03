@@ -107,7 +107,7 @@ describe("YugenProvider messages", () => {
         const [, ns, lang] = match as unknown as [string, string, keyof typeof sets];
         namespaces[lang].push(ns);
         expect((sets[lang] as unknown as Record<string, unknown>)[ns], `${ns} (${lang})`).toBe(value);
-        // Tên không hậu tố giữ cho code cũ là bản tiếng Việt.
+        // Tên không hậu tố (lỗi thời, bỏ ở 1.0) là bản tiếng Việt.
         if (lang === "Vi") expect(mod[`${ns}Messages`], ns).toBe(value);
       }
     }

@@ -164,8 +164,10 @@ export const Step = React.forwardRef<HTMLLIElement, StepProps>(
 Step.displayName = "Step";
 
 export interface StepperProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange"> {
-  /** Chỉ số bước hiện tại (bắt đầu từ 0). */
+  /** Chỉ số bước hiện tại, bắt đầu từ 0 (điều khiển). */
   activeStep?: number;
+  /** Bước ban đầu (không điều khiển). Mặc định 0. */
+  defaultActiveStep?: number;
   /** Có → các bước thành nút bấm (roving focus, mũi tên / Home / End). */
   onStepChange?: (index: number) => void;
   orientation?: StepperOrientation;
@@ -182,9 +184,23 @@ export interface StepperProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
  */
 export const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
   (
-    { activeStep = 0, onStepChange, orientation = "horizontal", linear = false, responsive = true, className, children, "aria-label": ariaLabel, ...props },
+    {
+      activeStep: activeProp,
+      defaultActiveStep = 0,
+      onStepChange,
+      orientation = "horizontal",
+      linear = false,
+      responsive = true,
+      className,
+      children,
+      "aria-label": ariaLabel,
+      ...props
+    },
     ref,
   ) => {
+    const [activeStep, setActiveStep] = useControllableState({ value: activeProp, defaultValue: defaultActiveStep, onChange: onStepChange });
+    // Chỉ có onStepChange mới biến các bước thành nút bấm; bấm bước khác thì tự chuyển khi không điều khiển.
+    const changeStep = onStepChange ? setActiveStep : undefined;
     const dir = useDirection();
     const msg = useYugenMessages("stepper", stepperMessagesEn);
     const steps = React.Children.toArray(children).filter(React.isValidElement) as React.ReactElement<StepProps>[];
@@ -194,8 +210,8 @@ export const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
     const shown = Math.min(Math.max(activeStep, 0), Math.max(total - 1, 0));
 
     const context = React.useMemo<StepperContextValue>(
-      () => ({ activeStep, total, orientation, linear, onStepChange }),
-      [activeStep, total, orientation, linear, onStepChange],
+      () => ({ activeStep, total, orientation, linear, onStepChange: changeStep }),
+      [activeStep, total, orientation, linear, changeStep],
     );
 
     const onKeyDown = (event: React.KeyboardEvent<HTMLOListElement>) => {

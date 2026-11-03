@@ -19,7 +19,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const appShellMessages: AppShellMessages = {
+export const appShellMessagesVi: AppShellMessages = {
   skipToContent: "Chuyển tới nội dung",
   sidebar: "Thanh bên",
   openSidebar: "Mở thanh bên",
@@ -37,5 +37,5 @@ export const appShellMessagesEn: AppShellMessages = {
   resizeSidebar: "Resize sidebar",
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `appShellMessagesEn` (mặc định). `appShellMessages` giữ cho code cũ. */
-export const appShellMessagesVi = appShellMessages;
+/** @deprecated Use `appShellMessagesVi` (Vietnamese) or `appShellMessagesEn`. Will be removed in v1.0.0. */
+export const appShellMessages = appShellMessagesVi;

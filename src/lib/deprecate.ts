@@ -9,6 +9,9 @@
  */
 const warned = new Set<string>();
 
+// Khai báo trong module, không cần @types/node (bản build thư viện và dự án của người dùng có thể không có).
+declare const process: { env: { NODE_ENV?: string } };
+
 function isDev(): boolean {
   try {
     return typeof process !== "undefined" && process.env.NODE_ENV !== "production";

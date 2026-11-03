@@ -24,7 +24,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const sortableMessages: SortableMessages = {
+export const sortableMessagesVi: SortableMessages = {
   handle: "Sắp xếp lại",
   handleItem: "Sắp xếp lại {item}",
   instructions:
@@ -49,5 +49,5 @@ export const sortableMessagesEn: SortableMessages = {
   canceled: "Canceled. {item} is back at position {position} of {total}.",
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `sortableMessagesEn` (mặc định). `sortableMessages` giữ cho code cũ. */
-export const sortableMessagesVi = sortableMessages;
+/** @deprecated Use `sortableMessagesVi` (Vietnamese) or `sortableMessagesEn`. Will be removed in v1.0.0. */
+export const sortableMessages = sortableMessagesVi;

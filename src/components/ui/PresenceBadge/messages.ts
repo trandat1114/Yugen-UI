@@ -20,7 +20,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const presenceBadgeMessages: PresenceBadgeMessages = {
+export const presenceBadgeMessagesVi: PresenceBadgeMessages = {
   available: "Có mặt",
   away: "Vắng mặt",
   busy: "Bận",
@@ -42,5 +42,5 @@ export const presenceBadgeMessagesEn: PresenceBadgeMessages = {
   unknown: "Unknown",
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `presenceBadgeMessagesEn` (mặc định). `presenceBadgeMessages` giữ cho code cũ. */
-export const presenceBadgeMessagesVi = presenceBadgeMessages;
+/** @deprecated Use `presenceBadgeMessagesVi` (Vietnamese) or `presenceBadgeMessagesEn`. Will be removed in v1.0.0. */
+export const presenceBadgeMessages = presenceBadgeMessagesVi;

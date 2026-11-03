@@ -366,6 +366,7 @@ export const en: Record<string, ComponentDocEn> = {
       itemLabel: "Screen reader label for each score.",
       "RatingDisplay.count / compact": "Number of ratings; show a single star.",
       "RatingDisplay.size": "Star and text size.",
+      "RatingDisplay.showValue": "Shows the value next to the stars. The old name hideValue (inverted) is deprecated (removed in 1.0).",
     },
   },
 };

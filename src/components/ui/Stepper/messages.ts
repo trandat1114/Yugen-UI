@@ -37,7 +37,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const stepperMessages: StepperMessages = {
+export const stepperMessagesVi: StepperMessages = {
   label: "Các bước",
   step: (index) => `Bước ${index}`,
   complete: "đã hoàn thành",
@@ -61,7 +61,7 @@ export const stepperMessagesEn: StepperMessages = {
   progressLabel: (current, total) => `Step ${current} of ${total}`,
 };
 
-export const wizardMessages: WizardMessages = {
+export const wizardMessagesVi: WizardMessages = {
   back: "Quay lại",
   next: "Tiếp tục",
   finish: "Hoàn tất",
@@ -79,8 +79,8 @@ export const wizardMessagesEn: WizardMessages = {
   panel: (current, total) => `Step ${current} of ${total}`,
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `stepperMessagesEn` (mặc định). `stepperMessages` giữ cho code cũ. */
-export const stepperMessagesVi = stepperMessages;
+/** @deprecated Use `stepperMessagesVi` (Vietnamese) or `stepperMessagesEn`. Will be removed in v1.0.0. */
+export const stepperMessages = stepperMessagesVi;
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `wizardMessagesEn` (mặc định). `wizardMessages` giữ cho code cũ. */
-export const wizardMessagesVi = wizardMessages;
+/** @deprecated Use `wizardMessagesVi` (Vietnamese) or `wizardMessagesEn`. Will be removed in v1.0.0. */
+export const wizardMessages = wizardMessagesVi;

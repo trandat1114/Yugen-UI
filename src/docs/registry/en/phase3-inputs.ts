@@ -99,6 +99,7 @@ export const en: Record<string, ComponentDocEn> = {
       "value / defaultValue": "Selected time (controlled / uncontrolled).",
       onTimeChange:
         "Called when an option is picked or typed text is confirmed (Enter / leaving the field).",
+      onValueChange: "Called when the selected time changes; null when the field is cleared or the typed text is invalid.",
       increment: "Step between options (minutes).",
       "startHour / endHour": "First hour (included) and last hour (excluded).",
       "minTime / maxTime": "Earliest / latest time (included, time part only).",
@@ -141,7 +142,7 @@ export const en: Record<string, ComponentDocEn> = {
       DEFAULT_RANGE_PRESETS:
         "Today, last 7 days, last 30 days, this month (up to today), last month.",
       numberOfMonths: "Number of months shown; 1 works better on mobile.",
-      "value / onSelectRange / minDate / maxDate / clearable…":
+      "value / onValueChange / minDate / maxDate / clearable…":
         "As in DateRangePicker (see the DatePicker page).",
     },
     defaults: {

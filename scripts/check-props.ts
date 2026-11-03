@@ -1,7 +1,7 @@
 /**
  * Phát hiện lệch giữa bảng props trong docs (`props: PropDoc[]` của src/docs/registry) và props TypeScript thật.
  *  - Lỗi (exit 1): tên được document nhưng không tồn tại trên component (prop đổi tên / bị xoá).
- *  - Cảnh báo (không fail): prop riêng (khai báo trong src/components/ui) chưa có trong bảng props.
+ *  - Cảnh báo (không fail): prop riêng (khai báo trong src/components/ui) chưa có trong bảng props, trừ prop `@deprecated`.
  *
  *   vite-node scripts/check-props.ts
  */
@@ -57,7 +57,9 @@ function collect(t: ts.Type, out: Api, seen = new Set<ts.Type>()) {
   }
   if (!(t.flags & (ts.TypeFlags.Object | ts.TypeFlags.Intersection))) return;
   for (const p of checker.getPropertiesOfType(t)) {
-    const own = (p.declarations ?? []).some((d) => norm(d.getSourceFile().fileName).startsWith(uiDir));
+    // Prop @deprecated vẫn là tên hợp lệ trong bảng nhưng không cần document (bảng chỉ ghi tên mới).
+    const deprecated = p.getJsDocTags(checker).some((tag) => tag.name === "deprecated");
+    const own = !deprecated && (p.declarations ?? []).some((d) => norm(d.getSourceFile().fileName).startsWith(uiDir));
     out.set(p.name, (out.get(p.name) ?? false) || own);
   }
 }

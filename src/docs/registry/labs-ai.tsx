@@ -775,7 +775,7 @@ export const docs: ComponentDoc[] = [
       { name: "loading / error / onRetry", type: "boolean / ReactNode / () => void", description: "Trạng thái tải và lỗi." },
       { name: "now", type: "Date | number", description: "Mốc thời gian cố định (SSR, test)." },
       { name: "open / defaultOpen / onOpenChange", type: "boolean", description: "Trạng thái bảng." },
-      { name: "mode / breakpoint", type: `"auto" | "popover" | "sheet" / number`, defaultValue: `"auto" / 768`, description: "Popover hay bottom sheet." },
+      { name: "mode / breakpoint", type: `"auto" | "popover" | "sheet" / "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | number`, defaultValue: `"auto" / "3xl"`, description: "Popover hay bottom sheet; breakpoint dùng token như Sheet (số px đã lỗi thời, bỏ ở 1.0)." },
       { name: "title / footer / announce", type: "string / ReactNode / boolean", defaultValue: `"Thông báo" / — / true`, description: "Tiêu đề, chân bảng, đọc thông báo mới." },
       { name: "useNotifications(initial)", type: "{ items, unreadCount, add, markRead, markAllRead, dismiss, clear, bind }", description: "Kho nhỏ cho demo; trải bind vào NotificationCenter." },
     ],

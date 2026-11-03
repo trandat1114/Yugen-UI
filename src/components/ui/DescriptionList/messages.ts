@@ -12,7 +12,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const descriptionListMessages: DescriptionListMessages = {
+export const descriptionListMessagesVi: DescriptionListMessages = {
   copy: "Sao chép",
   copied: "Đã sao chép vào bộ nhớ tạm",
 };
@@ -22,5 +22,5 @@ export const descriptionListMessagesEn: DescriptionListMessages = {
   copied: "Copied to clipboard",
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `descriptionListMessagesEn` (mặc định). `descriptionListMessages` giữ cho code cũ. */
-export const descriptionListMessagesVi = descriptionListMessages;
+/** @deprecated Use `descriptionListMessagesVi` (Vietnamese) or `descriptionListMessagesEn`. Will be removed in v1.0.0. */
+export const descriptionListMessages = descriptionListMessagesVi;

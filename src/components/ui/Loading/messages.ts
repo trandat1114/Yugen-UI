@@ -49,15 +49,15 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const loadingOverlayMessages: LoadingOverlayMessages = { label: "Đang tải…", announcement: "Đang tải" };
+export const loadingOverlayMessagesVi: LoadingOverlayMessages = { label: "Đang tải…", announcement: "Đang tải" };
 
 export const loadingOverlayMessagesEn: LoadingOverlayMessages = { label: "Loading…", announcement: "Loading" };
 
-export const pageProgressMessages: PageProgressMessages = { label: "Đang tải trang" };
+export const pageProgressMessagesVi: PageProgressMessages = { label: "Đang tải trang" };
 
 export const pageProgressMessagesEn: PageProgressMessages = { label: "Loading page" };
 
-export const errorStateMessages: ErrorStateMessages = {
+export const errorStateMessagesVi: ErrorStateMessages = {
   title: "Không tải được nội dung",
   description: "Đã có lỗi khi kết nối tới máy chủ. Kiểm tra mạng rồi thử lại.",
   retry: "Thử lại",
@@ -69,7 +69,7 @@ export const errorStateMessagesEn: ErrorStateMessages = {
   retry: "Retry",
 };
 
-export const asyncContentMessages: AsyncContentMessages = {
+export const asyncContentMessagesVi: AsyncContentMessages = {
   loading: "Đang tải…",
   emptyTitle: "Chưa có dữ liệu",
   emptyDescription: "Khi có nội dung mới, chúng sẽ xuất hiện ở đây.",
@@ -81,7 +81,7 @@ export const asyncContentMessagesEn: AsyncContentMessages = {
   emptyDescription: "New content will appear here.",
 };
 
-export const optimisticListMessages: OptimisticListMessages = {
+export const optimisticListMessagesVi: OptimisticListMessages = {
   errorTitle: "Không lưu được thay đổi",
   errorBody: "Thay đổi đã được hoàn tác.",
   retry: "Thử lại",
@@ -95,17 +95,17 @@ export const optimisticListMessagesEn: OptimisticListMessages = {
   retryAltText: "Retry the last action",
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `loadingOverlayMessagesEn` (mặc định). `loadingOverlayMessages` giữ cho code cũ. */
-export const loadingOverlayMessagesVi = loadingOverlayMessages;
+/** @deprecated Use `loadingOverlayMessagesVi` (Vietnamese) or `loadingOverlayMessagesEn`. Will be removed in v1.0.0. */
+export const loadingOverlayMessages = loadingOverlayMessagesVi;
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `pageProgressMessagesEn` (mặc định). `pageProgressMessages` giữ cho code cũ. */
-export const pageProgressMessagesVi = pageProgressMessages;
+/** @deprecated Use `pageProgressMessagesVi` (Vietnamese) or `pageProgressMessagesEn`. Will be removed in v1.0.0. */
+export const pageProgressMessages = pageProgressMessagesVi;
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `errorStateMessagesEn` (mặc định). `errorStateMessages` giữ cho code cũ. */
-export const errorStateMessagesVi = errorStateMessages;
+/** @deprecated Use `errorStateMessagesVi` (Vietnamese) or `errorStateMessagesEn`. Will be removed in v1.0.0. */
+export const errorStateMessages = errorStateMessagesVi;
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `asyncContentMessagesEn` (mặc định). `asyncContentMessages` giữ cho code cũ. */
-export const asyncContentMessagesVi = asyncContentMessages;
+/** @deprecated Use `asyncContentMessagesVi` (Vietnamese) or `asyncContentMessagesEn`. Will be removed in v1.0.0. */
+export const asyncContentMessages = asyncContentMessagesVi;
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `optimisticListMessagesEn` (mặc định). `optimisticListMessages` giữ cho code cũ. */
-export const optimisticListMessagesVi = optimisticListMessages;
+/** @deprecated Use `optimisticListMessagesVi` (Vietnamese) or `optimisticListMessagesEn`. Will be removed in v1.0.0. */
+export const optimisticListMessages = optimisticListMessagesVi;

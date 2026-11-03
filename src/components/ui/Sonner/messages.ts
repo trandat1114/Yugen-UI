@@ -14,7 +14,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const sonnerMessages: SonnerMessages = {
+export const sonnerMessagesVi: SonnerMessages = {
   region: "Thông báo",
   regionHotkey: "Thông báo ({hotkey})",
   dismiss: "Đóng thông báo",
@@ -26,5 +26,5 @@ export const sonnerMessagesEn: SonnerMessages = {
   dismiss: "Dismiss notification",
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `sonnerMessagesEn` (mặc định). `sonnerMessages` giữ cho code cũ. */
-export const sonnerMessagesVi = sonnerMessages;
+/** @deprecated Use `sonnerMessagesVi` (Vietnamese) or `sonnerMessagesEn`. Will be removed in v1.0.0. */
+export const sonnerMessages = sonnerMessagesVi;

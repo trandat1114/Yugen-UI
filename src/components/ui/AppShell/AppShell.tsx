@@ -5,6 +5,7 @@ import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
 import { useComposedRefs } from "../_internal/composeRefs";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
+import { BREAKPOINT_REM } from "../_internal/breakpoint";
 import {
   AppShellContext,
   isShown,
@@ -26,8 +27,6 @@ export type { AppShellBreakpoint, AppShellLayout, AppShellScroll } from "./conte
  * Khung ứng dụng: sidebar (rail chỉ icon khi thu gọn, Drawer khi khung hẹp), thanh trên cùng, nội dung chính và cột phụ.
  * Bố cục là lưới 3 cột × 2 hàng; mỗi phần tự đặt vào ô của nó, phần nào vắng thì cột / hàng đó rộng 0.
  */
-
-const BREAKPOINT_REM: Record<AppShellBreakpoint, number> = { lg: 32, xl: 36, "2xl": 42, "3xl": 48, "4xl": 56, "5xl": 64 };
 
 /*
  * Vị trí trong lưới theo bố cục. Chiều cao thanh trên cùng (`--app-shell-header`, mặc định 3.5rem) và phần trang còn

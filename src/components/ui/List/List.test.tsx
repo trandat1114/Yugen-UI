@@ -2,6 +2,7 @@ import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { watchDeprecations } from "@/test/deprecation";
 import { List, ListItem } from "./List";
 
 const FRUITS = ["Táo", "Cam", "Xoài", "Lê"];
@@ -73,5 +74,33 @@ describe("List", () => {
     renders.clear();
     await user.keyboard("{ArrowDown}");
     expect([...renders].sort()).toEqual(["Cam", "Táo"]);
+  });
+});
+
+describe("List appearance", () => {
+  const list = () => screen.getByRole("list");
+
+  it("appearance=\"outline\": item là thẻ có viền", () => {
+    render(
+      <List appearance="outline" aria-label="Trái cây">
+        <ListItem value="Táo">Táo</ListItem>
+      </List>,
+    );
+    expect(list()).toHaveClass("gap-2");
+  });
+
+  it("variant (tên cũ) vẫn chạy và cảnh báo một lần", () => {
+    const warnings = watchDeprecations();
+    const { rerender } = render(<List variant="outline" aria-label="Trái cây" />);
+    rerender(<List variant="outline" aria-label="Trái cây" />);
+    expect(list()).toHaveClass("gap-2");
+    expect(warnings("List.variant")).toBe(1);
+  });
+
+  it("appearance thắng khi truyền cả hai", () => {
+    watchDeprecations();
+    render(<List appearance="default" variant="outline" aria-label="Trái cây" />);
+    expect(list()).toHaveClass("gap-0.5");
+    expect(list()).not.toHaveClass("gap-2");
   });
 });

@@ -126,7 +126,7 @@ function AutocompleteAsync() {
       loading={loading}
       value={query}
       onValueChange={search}
-      emptyMessage="No cities found"
+      noResultsText="No cities found"
       rootClassName="w-80"
     />
   );
@@ -209,7 +209,7 @@ export const docs: ComponentDoc[] = [
       { name: "onSelect", type: "(s: AutocompleteSuggestion) => void", description: "Chọn một gợi ý." },
       { name: "onSubmit", type: "(query: string) => void", description: "Enter khi không có gợi ý đang chọn." },
       { name: "loading", type: "boolean", defaultValue: "false", description: "Đang tải gợi ý; spinner hiện sau 300ms." },
-      { name: "emptyMessage", type: "ReactNode | null", defaultValue: `"Không có gợi ý phù hợp"`, description: "Khi không có gợi ý khớp; null để đóng danh sách." },
+      { name: "noResultsText", type: "ReactNode | null", defaultValue: `"Không có gợi ý phù hợp"`, description: "Khi không có gợi ý khớp; null để đóng danh sách. Tên cũ emptyMessage đã lỗi thời (bỏ ở 1.0)." },
       { name: "maxSuggestions", type: "number", defaultValue: "8", description: "Số gợi ý tối đa." },
       { name: "minChars", type: "number", defaultValue: "1", description: "Số ký tự trước khi mở; 0 = mở khi focus." },
       { name: "highlight", type: "boolean", defaultValue: "true", description: "Tô sáng phần khớp." },

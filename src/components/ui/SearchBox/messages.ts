@@ -12,7 +12,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const searchBoxMessages: SearchBoxMessages = {
+export const searchBoxMessagesVi: SearchBoxMessages = {
   dismiss: "Xoá nội dung tìm kiếm",
   placeholder: "Tìm kiếm",
 };
@@ -22,5 +22,5 @@ export const searchBoxMessagesEn: SearchBoxMessages = {
   placeholder: "Search",
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `searchBoxMessagesEn` (mặc định). `searchBoxMessages` giữ cho code cũ. */
-export const searchBoxMessagesVi = searchBoxMessages;
+/** @deprecated Use `searchBoxMessagesVi` (Vietnamese) or `searchBoxMessagesEn`. Will be removed in v1.0.0. */
+export const searchBoxMessages = searchBoxMessagesVi;

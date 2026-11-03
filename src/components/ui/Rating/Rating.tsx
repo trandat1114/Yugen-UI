@@ -13,6 +13,7 @@ import {
   Star28Regular,
 } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
+import { warnDeprecated } from "@/lib/deprecate";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
 import { ratingMessagesEn } from "./messages";
 
@@ -203,13 +204,17 @@ export interface RatingDisplayProps extends Omit<React.HTMLAttributes<HTMLDivEle
   color?: RatingColor;
   /** Mặc định medium. */
   size?: RatingSize;
-  /** Ẩn chữ giá trị. */
+  /** Hiện chữ giá trị cạnh các sao. Mặc định true. */
+  showValue?: boolean;
+  /** @deprecated Use `showValue={false}`. Will be removed in v1.0.0. */
   hideValue?: boolean;
 }
 
 /** RatingDisplay — hiển thị điểm đánh giá chỉ đọc, kèm giá trị và số lượt. */
 export const RatingDisplay = React.forwardRef<HTMLDivElement, RatingDisplayProps>(
-  ({ value, max = 5, count, compact, color = "neutral", size = "medium", hideValue, className, ...props }, ref) => {
+  ({ value, max = 5, count, compact, color = "neutral", size = "medium", showValue: showValueProp, hideValue, className, ...props }, ref) => {
+    if (hideValue !== undefined) warnDeprecated("RatingDisplay.hideValue", "use showValue={false}", "1.0.0");
+    const showValue = showValueProp ?? (hideValue === undefined ? true : !hideValue);
     const rounded = Math.round(Math.min(Math.max(value, 0), max) * 2) / 2;
     const { gap, text } = ICONS[size];
     const msg = useYugenMessages("rating", ratingMessagesEn);
@@ -242,7 +247,7 @@ export const RatingDisplay = React.forwardRef<HTMLDivElement, RatingDisplayProps
             ))
           )}
         </span>
-        {!hideValue && (
+        {showValue && (
           <span aria-hidden className="font-semibold text-foreground-1">
             {valueText}
           </span>

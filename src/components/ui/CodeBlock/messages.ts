@@ -46,7 +46,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const copyCodeButtonMessages: CopyCodeButtonMessages = {
+export const copyCodeButtonMessagesVi: CopyCodeButtonMessages = {
   copy: "Sao chép",
   copied: "Đã chép",
   copyLabel: "Sao chép code",
@@ -62,7 +62,7 @@ export const copyCodeButtonMessagesEn: CopyCodeButtonMessages = {
   copiedStatus: "Copied to clipboard",
 };
 
-export const codeBlockMessages: CodeBlockMessages = {
+export const codeBlockMessagesVi: CodeBlockMessages = {
   wrap: "Xuống dòng",
   wrapOn: "Bật xuống dòng",
   wrapOff: "Tắt xuống dòng",
@@ -82,22 +82,22 @@ export const codeBlockMessagesEn: CodeBlockMessages = {
   expand: (lines) => `Show more (${lines} ${lines === 1 ? "line" : "lines"})`,
 };
 
-export const codeTabsMessages: CodeTabsMessages = { files: "Tệp" };
+export const codeTabsMessagesVi: CodeTabsMessages = { files: "Tệp" };
 
 export const codeTabsMessagesEn: CodeTabsMessages = { files: "Files" };
 
-export const packageManagerTabsMessages: PackageManagerTabsMessages = { label: "Trình quản lý gói" };
+export const packageManagerTabsMessagesVi: PackageManagerTabsMessages = { label: "Trình quản lý gói" };
 
 export const packageManagerTabsMessagesEn: PackageManagerTabsMessages = { label: "Package manager" };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `copyCodeButtonMessagesEn` (mặc định). `copyCodeButtonMessages` giữ cho code cũ. */
-export const copyCodeButtonMessagesVi = copyCodeButtonMessages;
+/** @deprecated Use `copyCodeButtonMessagesVi` (Vietnamese) or `copyCodeButtonMessagesEn`. Will be removed in v1.0.0. */
+export const copyCodeButtonMessages = copyCodeButtonMessagesVi;
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `codeBlockMessagesEn` (mặc định). `codeBlockMessages` giữ cho code cũ. */
-export const codeBlockMessagesVi = codeBlockMessages;
+/** @deprecated Use `codeBlockMessagesVi` (Vietnamese) or `codeBlockMessagesEn`. Will be removed in v1.0.0. */
+export const codeBlockMessages = codeBlockMessagesVi;
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `codeTabsMessagesEn` (mặc định). `codeTabsMessages` giữ cho code cũ. */
-export const codeTabsMessagesVi = codeTabsMessages;
+/** @deprecated Use `codeTabsMessagesVi` (Vietnamese) or `codeTabsMessagesEn`. Will be removed in v1.0.0. */
+export const codeTabsMessages = codeTabsMessagesVi;
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `packageManagerTabsMessagesEn` (mặc định). `packageManagerTabsMessages` giữ cho code cũ. */
-export const packageManagerTabsMessagesVi = packageManagerTabsMessages;
+/** @deprecated Use `packageManagerTabsMessagesVi` (Vietnamese) or `packageManagerTabsMessagesEn`. Will be removed in v1.0.0. */
+export const packageManagerTabsMessages = packageManagerTabsMessagesVi;

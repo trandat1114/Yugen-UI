@@ -10,9 +10,9 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const messageBarMessages: MessageBarMessages = { dismiss: "Đóng thông báo" };
+export const messageBarMessagesVi: MessageBarMessages = { dismiss: "Đóng thông báo" };
 
 export const messageBarMessagesEn: MessageBarMessages = { dismiss: "Dismiss" };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `messageBarMessagesEn` (mặc định). `messageBarMessages` giữ cho code cũ. */
-export const messageBarMessagesVi = messageBarMessages;
+/** @deprecated Use `messageBarMessagesVi` (Vietnamese) or `messageBarMessagesEn`. Will be removed in v1.0.0. */
+export const messageBarMessages = messageBarMessagesVi;

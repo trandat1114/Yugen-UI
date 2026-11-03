@@ -45,7 +45,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const notificationCenterMessages: NotificationCenterMessages = {
+export const notificationCenterMessagesVi: NotificationCenterMessages = {
   title: "Thông báo",
   triggerUnread: (title, unread) => `${title}, ${unread} chưa đọc`,
   close: "Đóng",
@@ -99,5 +99,5 @@ export const notificationCenterMessagesEn: NotificationCenterMessages = {
   yesterday: "Yesterday",
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `notificationCenterMessagesEn` (mặc định). `notificationCenterMessages` giữ cho code cũ. */
-export const notificationCenterMessagesVi = notificationCenterMessages;
+/** @deprecated Use `notificationCenterMessagesVi` (Vietnamese) or `notificationCenterMessagesEn`. Will be removed in v1.0.0. */
+export const notificationCenterMessages = notificationCenterMessagesVi;

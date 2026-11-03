@@ -346,16 +346,16 @@ function CalendarMultipleDemo() {
 }
 
 function DatePickerDemo() {
-  const [date, setDate] = useState<Date | undefined>();
+  const [date, setDate] = useState<Date | null>(null);
   return (
     <Field label="Start date" hint="Leave it empty if the date isn't set yet." className="w-72">
-      <DatePicker value={date ?? null} onSelectDate={setDate} clearable />
+      <DatePicker value={date} onValueChange={setDate} clearable />
     </Field>
   );
 }
 
 function DeliveryDateDemo() {
-  const [date, setDate] = useState<Date | undefined>();
+  const [date, setDate] = useState<Date | null>(null);
   return (
     <Field
       label="Delivery date"
@@ -364,7 +364,7 @@ function DeliveryDateDemo() {
       validationMessage={date ? "We can deliver on this day." : "Pick a delivery date (today or later)."}
       className="w-72"
     >
-      <DatePicker value={date ?? null} onSelectDate={setDate} minDate={new Date()} />
+      <DatePicker value={date} onValueChange={setDate} minDate={new Date()} />
     </Field>
   );
 }
@@ -946,7 +946,7 @@ function ToastPositionDemo() {
       { name: "title / body", type: "ReactNode", description: "Tiêu đề (body1 semibold) và nội dung." },
       { name: "action", type: "{ label: string; altText?: string; onClick?: () => void }", description: "Hành động dạng link ở góc phải tiêu đề." },
       { name: "timeout", type: "number", defaultValue: "3000", description: "Thời gian tự đóng (ms); -1 = không tự đóng." },
-      { name: "toastId / onDismiss / hideDismiss", type: "string / () => void / boolean", description: "id cố định, callback khi đóng, ẩn nút X." },
+      { name: "toastId / onDismiss / dismissible", type: "string / () => void / boolean", defaultValue: "— / — / true", description: "id cố định, callback khi đóng, hiện nút X. Tên cũ hideDismiss đã lỗi thời (bỏ ở 1.0)." },
     ],
   },
 
@@ -1751,10 +1751,10 @@ function ToastPositionDemo() {
     hero: {
       title: "DatePicker",
       code: `function DatePickerDemo() {
-  const [date, setDate] = useState<Date | undefined>();
+  const [date, setDate] = useState<Date | null>(null);
   return (
     <Field label="Start date" hint="Leave it empty if the date isn't set yet." className="w-72">
-      <DatePicker value={date ?? null} onSelectDate={setDate} clearable />
+      <DatePicker value={date} onValueChange={setDate} clearable />
     </Field>
   );
 }`,
@@ -1765,7 +1765,7 @@ function ToastPositionDemo() {
         title: "Giới hạn ngày & validation",
         description: "minDate khoá các ngày trước hôm nay; Field hiển thị lỗi / thành công.",
         code: `function DeliveryDateDemo() {
-  const [date, setDate] = useState<Date | undefined>();
+  const [date, setDate] = useState<Date | null>(null);
   return (
     <Field
       label="Delivery date"
@@ -1774,7 +1774,7 @@ function ToastPositionDemo() {
       validationMessage={date ? "We can deliver on this day." : "Pick a delivery date (today or later)."}
       className="w-72"
     >
-      <DatePicker value={date ?? null} onSelectDate={setDate} minDate={new Date()} />
+      <DatePicker value={date} onValueChange={setDate} minDate={new Date()} />
     </Field>
   );
 }`,
@@ -1822,14 +1822,14 @@ function ToastPositionDemo() {
     ],
     props: [
       { name: "value / defaultValue", type: "Date | null", description: "Ngày đã chọn (controlled / uncontrolled)." },
-      { name: "onSelectDate", type: "(date: Date | undefined) => void", description: "Gọi khi chọn hoặc xoá." },
+      { name: "onValueChange", type: "(date: Date | null) => void", description: "Gọi khi chọn hoặc xoá (null). Tên cũ onSelectDate đã lỗi thời (bỏ ở 1.0)." },
       { name: "placeholder", type: "string", defaultValue: `"Chọn ngày…"`, description: "Chữ gợi ý khi trống." },
       { name: "clearable", type: "boolean", defaultValue: "false", description: "Hiện nút xoá khi có giá trị." },
       { name: "minDate / maxDate", type: "Date", description: "Giới hạn ngày chọn được." },
       { name: "formatDate", type: "(date: Date) => string", defaultValue: "dd/MM/yyyy", description: "Định dạng hiển thị." },
       { name: "size", type: `"small" | "medium" | "large"`, defaultValue: `"medium"`, description: "Chiều cao 24 / 32 / 40px." },
       { name: "disabled / required / id / aria-*", type: "—", description: "Field tự truyền khi bọc trong <Field>." },
-      { name: "DateRangePicker.value / onSelectRange", type: "DateRange | null", description: "Khoảng { from, to }; numberOfMonths mặc định 2." },
+      { name: "DateRangePicker.value / onValueChange", type: "DateRange | null / (range: DateRange | null) => void", description: "Khoảng { from, to }; numberOfMonths mặc định 2. Tên cũ onSelectRange đã lỗi thời (bỏ ở 1.0)." },
     ],
   },
 };

@@ -12,7 +12,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const resizableMessages: ResizableMessages = {
+export const resizableMessagesVi: ResizableMessages = {
   collapse: "Thu gọn panel",
   expand: "Mở rộng panel",
 };
@@ -22,5 +22,5 @@ export const resizableMessagesEn: ResizableMessages = {
   expand: "Expand panel",
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `resizableMessagesEn` (mặc định). `resizableMessages` giữ cho code cũ. */
-export const resizableMessagesVi = resizableMessages;
+/** @deprecated Use `resizableMessagesVi` (Vietnamese) or `resizableMessagesEn`. Will be removed in v1.0.0. */
+export const resizableMessages = resizableMessagesVi;

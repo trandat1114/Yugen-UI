@@ -3,6 +3,7 @@ import { useControllableState } from "../hooks/useControllableState";
 import { useDirection } from "@radix-ui/react-direction";
 import { ChevronLeft20Regular, ChevronRight20Regular, Pause20Regular, Play20Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
+import { warnDeprecated } from "@/lib/deprecate";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { matchesMedia } from "../hooks/useMediaQuery";
 import { Button } from "../Button/Button";
@@ -12,7 +13,11 @@ import { carouselMessagesEn } from "./messages";
 export { carouselMessages, carouselMessagesVi, carouselMessagesEn, type CarouselMessages } from "./messages";
 
 /** Fluent 2 Carousel — https://fluent2.microsoft.design/components/web/react/core/carousel/usage (+ Yugen Labs: progress, peek, thumbnails) */
-export type CarouselGap = "none" | "XS" | "S" | "M" | "L" | "XL";
+/** Khoảng cách giữa các slide. Tên ngắn cũ "XS" | "S" | "M" | "L" | "XL" đã lỗi thời (bỏ ở 1.0). */
+export type CarouselGap = CarouselGapName | CarouselGapLegacy;
+type CarouselGapName = "none" | "extra-small" | "small" | "medium" | "large" | "extra-large";
+/** @deprecated Use "extra-small" | "small" | "medium" | "large" | "extra-large". Will be removed in v1.0.0. */
+type CarouselGapLegacy = "XS" | "S" | "M" | "L" | "XL";
 type PauseReason = "hover" | "focus";
 
 interface CarouselContextValue {
@@ -22,7 +27,7 @@ interface CarouselContextValue {
   goTo: (index: number) => void;
   next: () => void;
   prev: () => void;
-  circular: boolean;
+  loop: boolean;
   autoplay: boolean;
   setAutoplay: (autoplay: boolean) => void;
   /** Tương thích ngược: tạm dừng / chạy tiếp (lý do "hover"). */
@@ -33,7 +38,7 @@ interface CarouselContextValue {
   /** Gắn phần tử hiển thị tiến độ autoplay (nhận biến CSS --carousel-progress 0…1). */
   registerProgress: (element: HTMLElement) => () => void;
   slidesPerView?: number;
-  gap: CarouselGap;
+  gap: CarouselGapName;
   viewportRef: React.MutableRefObject<HTMLDivElement | null>;
   onViewportScroll: () => void;
   cancelProgrammaticScroll: () => void;
@@ -68,22 +73,37 @@ function inlineOffset(track: HTMLElement, slide: HTMLElement, rtl: boolean) {
   return rtl ? innerStart + track.clientWidth - slideRect.right : slideRect.left - innerStart;
 }
 
-const GAP_CLASS: Record<CarouselGap, string> = {
+const GAP_CLASS: Record<CarouselGapName, string> = {
   none: "gap-0",
-  XS: "gap-1",
-  S: "gap-2",
-  M: "gap-3",
-  L: "gap-4",
-  XL: "gap-5",
+  "extra-small": "gap-1",
+  small: "gap-2",
+  medium: "gap-3",
+  large: "gap-4",
+  "extra-large": "gap-5",
 };
-const GAP_VALUE: Record<CarouselGap, string> = {
+const GAP_VALUE: Record<CarouselGapName, string> = {
   none: "0px",
-  XS: "var(--spacingXS)",
-  S: "var(--spacingS)",
-  M: "var(--spacingM)",
-  L: "var(--spacingL)",
-  XL: "var(--spacingXL)",
+  "extra-small": "var(--spacingXS)",
+  small: "var(--spacingS)",
+  medium: "var(--spacingM)",
+  large: "var(--spacingL)",
+  "extra-large": "var(--spacingXL)",
 };
+const LEGACY_GAP: Record<CarouselGapLegacy, CarouselGapName> = {
+  XS: "extra-small",
+  S: "small",
+  M: "medium",
+  L: "large",
+  XL: "extra-large",
+};
+
+/** Đổi tên ngắn cũ ("M") sang tên đầy đủ ("medium"), cảnh báo một lần cho mỗi giá trị. */
+function resolveGap(gap: CarouselGap): CarouselGapName {
+  if (!Object.prototype.hasOwnProperty.call(LEGACY_GAP, gap)) return gap as CarouselGapName;
+  const name = LEGACY_GAP[gap as CarouselGapLegacy];
+  warnDeprecated(`Carousel.gap="${gap}"`, `use gap="${name}"`, "1.0.0");
+  return name;
+}
 
 /** Bàn phím cho tablist (chấm / thumbnail): mũi tên theo hướng chữ, Home / End. Trả về chỉ mục đích hoặc null. */
 function tabTarget(event: React.KeyboardEvent, ctx: CarouselContextValue, dir: "ltr" | "rtl") {
@@ -108,14 +128,14 @@ function tabTarget(event: React.KeyboardEvent, ctx: CarouselContextValue, dir: "
   }
   event.preventDefault();
   event.stopPropagation();
-  return ctx.circular ? (index + ctx.count) % ctx.count : Math.max(0, Math.min(last, index));
+  return ctx.loop ? (index + ctx.count) % ctx.count : Math.max(0, Math.min(last, index));
 }
 
 /* ------------------------------------------------------------------ Carousel */
 export interface CarouselProps extends React.HTMLAttributes<HTMLElement> {
   /** Vòng lặp: từ slide cuối bấm "tiếp" (hoặc phím mũi tên) về slide đầu và ngược lại. */
   loop?: boolean;
-  /** Tên cũ của `loop` (giữ để tương thích). */
+  /** @deprecated Use `loop`. Will be removed in v1.0.0. */
   circular?: boolean;
   /** Tự chạy (controlled). Dùng kèm `onAutoplayChange`. */
   autoplay?: boolean;
@@ -126,8 +146,14 @@ export interface CarouselProps extends React.HTMLAttributes<HTMLElement> {
   autoplayInterval?: number;
   /** Số slide thấy cùng lúc; số lẻ để lộ một phần slide kế (vd. 1.15). Bỏ trống = mỗi slide rộng 100%. */
   slidesPerView?: number;
-  /** Khoảng cách giữa các slide (token spacing). */
+  /**
+   * Khoảng cách giữa các slide (token spacing). Mặc định "small". Tên ngắn cũ ("XS" … "XL") vẫn chạy nhưng đã lỗi thời.
+   */
   gap?: CarouselGap;
+  /** Slide hiện tại, đếm từ 0 (controlled). Dùng kèm `onActiveIndexChange`. */
+  activeIndex?: number;
+  /** Slide hiện ra khi mount (uncontrolled). Mặc định 0. */
+  defaultActiveIndex?: number;
   onActiveIndexChange?: (index: number) => void;
 }
 
@@ -141,7 +167,9 @@ export const Carousel = React.forwardRef<HTMLElement, CarouselProps>(
       onAutoplayChange,
       autoplayInterval = 4000,
       slidesPerView,
-      gap = "S",
+      gap: gapProp = "small",
+      activeIndex: activeIndexProp,
+      defaultActiveIndex = 0,
       onActiveIndexChange,
       className,
       onKeyDown,
@@ -150,11 +178,17 @@ export const Carousel = React.forwardRef<HTMLElement, CarouselProps>(
     },
     ref,
   ) => {
-    const circular = loop ?? circularProp ?? false;
+    if (circularProp !== undefined) warnDeprecated("Carousel.circular", "use loop", "1.0.0");
+    const wrap = loop ?? circularProp ?? false;
+    const gap = resolveGap(gapProp);
     const viewportRef = React.useRef<HTMLDivElement | null>(null);
     const dir = useDirection();
     const msg = useYugenMessages("carousel", carouselMessagesEn);
-    const [activeIndex, setActiveIndex] = React.useState(0);
+    const [activeIndex, setActiveIndex] = useControllableState({
+      value: activeIndexProp,
+      defaultValue: defaultActiveIndex,
+      onChange: onActiveIndexChange,
+    });
     const [count, setCount] = React.useState(0);
     const [autoplay, setAutoplayState] = useControllableState({
       value: autoplayProp,
@@ -170,6 +204,8 @@ export const Carousel = React.forwardRef<HTMLElement, CarouselProps>(
     const paused = reasons.hover || reasons.focus || hidden || offscreen;
     const rotating = autoplay && !paused && count > 1;
     const baseId = React.useId();
+    // Slide mà track đang cuộn tới / đang dừng ở đó. Khác `activeIndex` khi giá trị controlled đổi từ bên ngoài hoặc lúc
+    // mount với defaultActiveIndex: effect bên dưới cuộn track tới đúng slide.
     const activeRef = React.useRef(0);
     const targetRef = React.useRef<number | null>(null);
     const frameRef = React.useRef(0);
@@ -177,10 +213,6 @@ export const Carousel = React.forwardRef<HTMLElement, CarouselProps>(
     // Lúc đồng hồ được đặt lại (đổi slide): đồng hồ setTimeout chỉ tính thời gian từ mốc này.
     const resetAtRef = React.useRef(0);
     const progressEls = React.useRef(new Set<HTMLElement>());
-    const callbacks = React.useRef({ onActiveIndexChange });
-    useIsomorphicLayoutEffect(() => {
-      callbacks.current = { onActiveIndexChange };
-    });
 
     const paintProgress = React.useCallback(() => {
       const value = autoplay ? Math.min(1, elapsedRef.current / autoplayInterval) : 1;
@@ -206,25 +238,35 @@ export const Carousel = React.forwardRef<HTMLElement, CarouselProps>(
       elapsedRef.current = 0; // slide mới → đồng hồ autoplay chạy lại từ đầu
       resetAtRef.current = performance.now();
       setActiveIndex(index);
-      callbacks.current.onActiveIndexChange?.(index);
-    }, []);
+    }, [setActiveIndex]);
 
     const goTo = React.useCallback(
-      (index: number) => {
+      (index: number, instant = false) => {
         const track = viewportRef.current;
         if (!track || count === 0) return;
-        const i = circular ? (index + count) % count : Math.max(0, Math.min(count - 1, index));
+        const i = wrap ? (index + count) % count : Math.max(0, Math.min(count - 1, index));
         const slide = track.children[i] as HTMLElement | undefined;
         if (!slide) return;
-        targetRef.current = i;
+        targetRef.current = instant ? null : i;
         // RTL: scrollLeft bằng 0 ở đầu và âm dần khi tiến về sau.
         const rtl = isRtl(track);
         const offset = inlineOffset(track, slide, rtl);
-        track.scrollTo({ left: track.scrollLeft + (rtl ? -offset : offset), behavior: prefersReducedMotion() ? "auto" : "smooth" });
+        const behavior = instant || prefersReducedMotion() ? "auto" : "smooth";
+        track.scrollTo({ left: track.scrollLeft + (rtl ? -offset : offset), behavior });
         updateActive(i);
       },
-      [count, circular, updateActive],
+      [count, wrap, updateActive],
     );
+
+    // activeIndex đổi từ bên ngoài (controlled) hoặc defaultActiveIndex lúc mount → cuộn track tới slide đó.
+    // Lần đầu nhảy thẳng, không chạy hiệu ứng cuộn.
+    const syncedRef = React.useRef(false);
+    useIsomorphicLayoutEffect(() => {
+      if (count === 0) return;
+      const first = !syncedRef.current;
+      syncedRef.current = true;
+      if (activeIndex !== activeRef.current) goTo(activeIndex, first);
+    }, [activeIndex, count, goTo]);
 
     const next = React.useCallback(() => goTo(activeRef.current + 1), [goTo]);
     const prev = React.useCallback(() => goTo(activeRef.current - 1), [goTo]);
@@ -349,7 +391,7 @@ export const Carousel = React.forwardRef<HTMLElement, CarouselProps>(
         goTo,
         next,
         prev,
-        circular,
+        loop: wrap,
         autoplay,
         setAutoplay,
         setPaused,
@@ -369,7 +411,7 @@ export const Carousel = React.forwardRef<HTMLElement, CarouselProps>(
         goTo,
         next,
         prev,
-        circular,
+        wrap,
         autoplay,
         setAutoplay,
         setPaused,
@@ -543,6 +585,8 @@ export interface CarouselNavContainerProps extends React.HTMLAttributes<HTMLDivE
   /** Hiện nút bật / tắt tự chạy. */
   autoplay?: boolean;
   /** aria-label nút trước. Mặc định lấy từ `messages.carousel.previous`. */
+  previousLabel?: string;
+  /** @deprecated Use `previousLabel`. Will be removed in v1.0.0. */
   prevLabel?: string;
   /** aria-label nút sau. Mặc định lấy từ `messages.carousel.next`. */
   nextLabel?: string;
@@ -551,17 +595,19 @@ export interface CarouselNavContainerProps extends React.HTMLAttributes<HTMLDivE
 /** Nút trước / sau + chấm điều hướng (tablist) + nút autoplay tuỳ chọn. Chấm đang chọn hiện tiến độ autoplay. */
 export function CarouselNavContainer({
   autoplay: showAutoplay = false,
+  previousLabel,
   prevLabel,
   nextLabel,
   className,
   ...props
 }: CarouselNavContainerProps) {
+  if (prevLabel !== undefined) warnDeprecated("CarouselNavContainer.prevLabel", "use previousLabel", "1.0.0");
   const ctx = useCarousel();
   const msg = useYugenMessages("carousel", carouselMessagesEn);
   const dir = useDirection();
   const dotRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
-  const atStart = !ctx.circular && ctx.activeIndex === 0;
-  const atEnd = !ctx.circular && ctx.activeIndex >= ctx.count - 1;
+  const atStart = !ctx.loop && ctx.activeIndex === 0;
+  const atEnd = !ctx.loop && ctx.activeIndex >= ctx.count - 1;
 
   const onDotsKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     const target = tabTarget(event, ctx, dir);
@@ -586,7 +632,7 @@ export function CarouselNavContainer({
         appearance="secondary"
         shape="circular"
         icon={<ChevronLeft20Regular className="rtl:-scale-x-100" />}
-        aria-label={prevLabel ?? msg.previous}
+        aria-label={previousLabel ?? prevLabel ?? msg.previous}
         disabled={atStart}
         onClick={ctx.prev}
       />

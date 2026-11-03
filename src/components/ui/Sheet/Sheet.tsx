@@ -6,6 +6,7 @@ import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context"
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { useMediaQuery } from "../hooks/useMediaQuery";
+import { minWidthQuery, warnPxBreakpoint, type BreakpointToken } from "../_internal/breakpoint";
 import { sheetMessagesEn } from "./messages";
 
 export { sheetMessages, sheetMessagesVi, sheetMessagesEn, type SheetMessages } from "./messages";
@@ -21,6 +22,8 @@ export { useMediaQuery, type UseMediaQueryOptions } from "../hooks/useMediaQuery
 export type SheetSide = "start" | "end";
 export type SheetSize = "small" | "medium" | "large";
 export type SheetMode = "auto" | "side" | "bottom";
+/** Mốc độ rộng viewport, cùng bộ token với `AppShellBreakpoint`: lg 32rem · xl 36rem · 2xl 42rem · 3xl 48rem · 4xl 56rem · 5xl 64rem. */
+export type SheetBreakpoint = BreakpointToken;
 
 interface SheetContextValue {
   open: boolean;
@@ -68,8 +71,11 @@ export interface SheetProps {
   size?: SheetSize;
   /** "auto" theo `breakpoint`; "side" / "bottom" ép một dạng. */
   mode?: SheetMode;
-  /** Chiều rộng viewport tối thiểu (px) để hiện dạng panel. */
-  breakpoint?: number;
+  /**
+   * Chiều rộng viewport tối thiểu để hiện dạng panel. Mặc định "3xl" (48rem = 768px).
+   * Số (px) vẫn chạy nhưng đã lỗi thời: dùng token. Bỏ ở 1.0.
+   */
+  breakpoint?: SheetBreakpoint | number;
   /** Các nấc chiều cao của bottom sheet, tính theo phần của chiều cao viewport, ví dụ [0.45, 0.9]. */
   snapPoints?: number[];
   snapPoint?: number;
@@ -90,7 +96,7 @@ export function Sheet({
   side = "end",
   size = "small",
   mode = "auto",
-  breakpoint = 768,
+  breakpoint = "3xl",
   snapPoints: snapPointsProp = [0.5, 0.9],
   snapPoint: snapPointProp,
   defaultSnapPoint,
@@ -106,7 +112,8 @@ export function Sheet({
   }, [snapKey]);
   const initialSnap = nearest(snapPoints, defaultSnapPoint ?? snapPoints[0]);
 
-  const isDesktop = useMediaQuery(`(min-width: ${breakpoint}px)`);
+  if (typeof breakpoint === "number") warnPxBreakpoint("Sheet", breakpoint);
+  const isDesktop = useMediaQuery(minWidthQuery(breakpoint));
   const isBottom = mode === "bottom" || (mode === "auto" && !isDesktop);
 
   const callbacks = React.useRef({ onSnapPointChange });

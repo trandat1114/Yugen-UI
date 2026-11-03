@@ -139,7 +139,7 @@ export const en: Record<string, ComponentDocEn> = {
       { title: "Single selection", description: "selectionMode=\"single\": the selected item gets a brand tint and a checkmark." },
       {
         title: "Outline & actions",
-        description: "variant=\"outline\" turns each item into a card; composite: → moves into the buttons, ← / Esc goes back to the item.",
+        description: "appearance=\"outline\" turns each item into a card; composite: → moves into the buttons, ← / Esc goes back to the item.",
       },
     ],
     dos: [
@@ -157,7 +157,7 @@ export const en: Record<string, ComponentDocEn> = {
       "selectedItems / defaultSelectedItems": "Values of the selected items (controlled / uncontrolled).",
       onSelectionChange: "Called when an item is selected or deselected.",
       navigationMode: "Arrow key navigation (roving tabindex).",
-      variant: "outline: each item is a bordered card with rounded-xlarge corners.",
+      appearance: "outline: each item is a bordered card with rounded-xlarge corners. The old name variant is deprecated (removed in 1.0).",
       "ListItem.media / title / description / actions": "Content areas of the item.",
       "ListItem.onAction": "Main action on click / Enter.",
       "ListItem.value / disabled": "Identifier and disabled state.",
@@ -226,7 +226,7 @@ export const en: Record<string, ComponentDocEn> = {
       "Tree.size": "Row height 24 / 32px.",
       "Tree.appearance": "Background on hover.",
       "Tree.openItems / defaultOpenItems / onOpenChange": "Open branches.",
-      "Tree.selectionMode / selectedValue / onSelectedChange": "Single selection (aria-selected).",
+      "Tree.selectionMode / selectedValue / onSelectionChange": "Single selection (aria-selected).",
       "TreeItem.itemType": "A branch with a subtree, or a leaf item.",
       "TreeItem.value": "Identifier used by openItems / selectedValue.",
       "TreeItemLayout.iconBefore / iconAfter / aside / actions / expandIcon": "Areas of the row; actions appear only on hover / focus.",
@@ -283,7 +283,7 @@ export const en: Record<string, ComponentDocEn> = {
     examples: [
       {
         title: "Peek & loop",
-        description: "slidesPerView={1.15} reveals 15% of the next slide, gap=\"M\" widens the spacing; loop wraps around at both ends.",
+        description: "slidesPerView={1.15} reveals 15% of the next slide, gap=\"medium\" widens the spacing; loop wraps around at both ends.",
       },
       {
         title: "Autoplay with progress",
@@ -305,18 +305,18 @@ export const en: Record<string, ComponentDocEn> = {
       "Don't use both dots and thumbnails in the same Carousel.",
     ],
     props: {
-      loop: "Wraps around at both ends (old name: circular).",
+      loop: "Wraps around at both ends. The old name circular is deprecated (removed in 1.0).",
       slidesPerView: "Number of slides visible at once; a fraction reveals the next slide (1.15, 2.5). Leave it empty for 100%.",
-      gap: "Spacing between slides (spacing token).",
+      gap: "Spacing between slides (spacing token). The short names \"XS\" … \"XL\" are deprecated (removed in 1.0).",
       "autoplay / defaultAutoplay / onAutoplayChange": "Autoplay (controlled / uncontrolled). defaultAutoplay is ignored under prefers-reduced-motion.",
       autoplayInterval: "Time per slide (ms); progress shows in the active dot / thumbnail.",
-      onActiveIndexChange: "Called when the current slide changes.",
+      "activeIndex / defaultActiveIndex / onActiveIndexChange": "Current slide, counted from 0 (controlled / uncontrolled); called when the current slide changes.",
       "CarouselCard.className": "basis-full by default; basis-4/5 or basis-1/2 when slidesPerView isn't used.",
       "CarouselNavContainer.autoplay": "Shows the button that turns autoplay on / off.",
-      "CarouselNavContainer.prevLabel / nextLabel": "aria-label of the navigation buttons.",
+      "CarouselNavContainer.previousLabel / nextLabel": "aria-label of the navigation buttons. The old name prevLabel is deprecated (removed in 1.0).",
       "CarouselThumbnails / CarouselThumbnail": "Thumbnail tablist; each CarouselThumbnail matches the slide at the same position.",
     },
-    defaults: { "CarouselNavContainer.prevLabel / nextLabel": "“Slide trước” (Previous slide) / “Slide tiếp theo” (Next slide)" },
+    defaults: { "CarouselNavContainer.previousLabel / nextLabel": "“Slide trước” (Previous slide) / “Slide tiếp theo” (Next slide)" },
   },
 
   resizable: {

@@ -93,7 +93,7 @@ export const en: Record<string, ComponentDocEn> = {
       "Don't clear entered data when people go back.",
     ],
     props: {
-      activeStep: "Stepper: index of the current step (from 0).",
+      "activeStep / defaultActiveStep": "Stepper: index of the current step, from 0 (controlled / uncontrolled).",
       onStepChange:
         "When set, the steps are buttons (roving focus, arrow keys / Home / End).",
       orientation: "Display direction.",
@@ -150,7 +150,7 @@ export const en: Record<string, ComponentDocEn> = {
       "register(name)":
         'Spread onto Yugen\'s Input / Select / Textarea: {...register("email")}.',
       Controller:
-        "For DatePicker (value + onSelectDate), Checkbox / Switch (checked + onCheckedChange), Combobox…",
+        "For DatePicker (value + onValueChange), Checkbox / Switch (checked + onCheckedChange), Combobox…",
       "Field.validationState":
         '"error" when errors.<name> is set, which puts aria-invalid on the control.',
       "Field.validationMessage":
