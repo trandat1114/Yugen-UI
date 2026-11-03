@@ -6,7 +6,7 @@ import { cn } from "@/lib/cn";
 import { fieldControlClass } from "@/components/ui/Field/Field";
 import { Select } from "@/components/ui/Select/Select";
 import { ColorSwatch, SwatchPicker } from "@/components/ui/SwatchPicker/SwatchPicker";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { colorPickerMessagesEn } from "./messages";
 
 export { colorPickerMessagesVi, colorPickerMessagesEn, type ColorPickerMessages } from "./messages";
@@ -376,19 +376,20 @@ interface EyeDropperLike {
  * ColorPicker: vùng độ bão hoà / độ sáng, thanh sắc độ và độ đục, ô nhập HEX / RGB / HSL, nút lấy màu trên màn hình
  * (nơi trình duyệt hỗ trợ) và màu có sẵn qua SwatchPicker. Đặt trong Popover để làm ô chọn màu.
  */
-export function ColorPicker({
-  value,
-  defaultValue,
-  onValueChange,
-  alpha = false,
-  swatches,
-  defaultFormat = "hex",
-  eyeDropper = true,
-  disabled,
-  className,
-  ref,
-  ...props
-}: ColorPickerProps & { ref?: React.Ref<HTMLDivElement> }) {
+export function ColorPicker(inProps: ColorPickerProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    value,
+    defaultValue,
+    onValueChange,
+    alpha = false,
+    swatches,
+    defaultFormat = "hex",
+    eyeDropper = true,
+    disabled,
+    className,
+    ref,
+    ...props
+  } = useComponentDefaults("ColorPicker", inProps);
   const msg = useYugenMessages("colorPicker", colorPickerMessagesEn);
   const toHsv = (text: string | undefined, hue?: number) => {
     const rgb = (text && parseColor(text)) || { r: 0, g: 0, b: 0, a: 1 };
@@ -551,4 +552,10 @@ export function ColorPicker({
       )}
     </div>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    ColorPicker: ColorPickerProps;
+  }
 }

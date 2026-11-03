@@ -3,7 +3,7 @@ import { useDirection } from "@radix-ui/react-direction";
 import { useControllableState } from "../hooks/useControllableState";
 import { ChevronLeft20Regular, ChevronRight20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
-import { useYugen, useYugenMessages } from "../YugenProvider/context";
+import { useYugen, useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { PickerShell, cachedDateFormat, type PickerBaseProps } from "./pickerShell";
 import { monthPickerMessagesEn, yearPickerMessagesEn } from "./messages";
 
@@ -225,7 +225,8 @@ export type MonthPickerProps = PeriodPickerProps;
  * MonthPicker: chọn tháng + năm trong lưới 12 tháng (thẻ hết hạn, kỳ báo cáo). Giá trị là ngày 1 của tháng.
  * Cùng vỏ, bàn phím và locale với DatePicker; PageUp / PageDown đổi năm.
  */
-export function MonthPicker(props: MonthPickerProps) {
+export function MonthPicker(inProps: MonthPickerProps) {
+  const props = useComponentDefaults("MonthPicker", inProps, COMPACT_SIZE);
   const m = useYugenMessages("monthPicker", monthPickerMessagesEn);
   return (
     <PeriodPicker
@@ -242,7 +243,8 @@ export function MonthPicker(props: MonthPickerProps) {
 export type YearPickerProps = PeriodPickerProps;
 
 /** YearPicker: chọn năm trong lưới 12 năm. Giá trị là ngày 1/1 của năm. PageUp / PageDown sang 12 năm trước / sau. */
-export function YearPicker(props: YearPickerProps) {
+export function YearPicker(inProps: YearPickerProps) {
+  const props = useComponentDefaults("YearPicker", inProps, COMPACT_SIZE);
   const m = useYugenMessages("yearPicker", yearPickerMessagesEn);
   return (
     <PeriodPicker
@@ -252,4 +254,11 @@ export function YearPicker(props: YearPickerProps) {
       defaultFormat={YEAR_FORMAT}
     />
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    MonthPicker: MonthPickerProps;
+    YearPicker: YearPickerProps;
+  }
 }

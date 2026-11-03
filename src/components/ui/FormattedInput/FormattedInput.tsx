@@ -3,7 +3,7 @@ import { useControllableState } from "../hooks/useControllableState";
 import { useComposedRefs } from "../_internal/composeRefs";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { Input, type InputProps } from "@/components/ui/Input/Input";
-import { useYugen } from "../YugenProvider/context";
+import { useYugen, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
 export type FormattedInputFormat = "phone" | "card" | "currency";
 
@@ -173,22 +173,23 @@ const FORMAT_ATTRS = {
  * FormattedInput: Input định dạng khi gõ (số điện thoại, số thẻ, số tiền) mà vẫn giữ vị trí con trỏ. `value` /
  * `onValueChange` dùng giá trị thô; với `name`, form gửi giá trị thô qua một input ẩn.
  */
-export function FormattedInput({
-  format,
-  value,
-  defaultValue,
-  onValueChange,
-  onChange,
-  onBlur,
-  mask,
-  currency = "USD",
-  locale: localeProp,
-  name,
-  form,
-  disabled,
-  ref,
-  ...props
-}: FormattedInputProps & { ref?: React.Ref<HTMLInputElement> }) {
+export function FormattedInput(inProps: FormattedInputProps & { ref?: React.Ref<HTMLInputElement> }) {
+  const {
+    format,
+    value,
+    defaultValue,
+    onValueChange,
+    onChange,
+    onBlur,
+    mask,
+    currency = "USD",
+    locale: localeProp,
+    name,
+    form,
+    disabled,
+    ref,
+    ...props
+  } = useComponentDefaults("FormattedInput", inProps, COMPACT_SIZE);
   const providerLocale = useYugen().locale;
   const locale = localeProp ?? providerLocale;
   const engine = React.useMemo(() => {
@@ -281,4 +282,10 @@ export function FormattedInput({
       {name && <input type="hidden" name={name} form={form} disabled={disabled} value={raw} />}
     </>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    FormattedInput: FormattedInputProps;
+  }
 }

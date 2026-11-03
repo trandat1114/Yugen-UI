@@ -3,7 +3,7 @@ import { useControllableState } from "../hooks/useControllableState";
 import { Eye20Regular, EyeOff20Regular, KeyboardShiftUppercase16Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Input, type InputProps } from "@/components/ui/Input/Input";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { passwordInputMessagesEn } from "./messages";
 
 export { passwordInputMessagesVi, passwordInputMessagesEn, type PasswordInputMessages } from "./messages";
@@ -48,28 +48,29 @@ export interface PasswordInputProps extends Omit<InputProps, "type"> {
  * PasswordInput: Input có nút hiện / ẩn mật khẩu, nhắc Caps Lock và thước đo độ mạnh tuỳ chọn. Nhận mọi prop của Input
  * (label, hint, validationState…) và dùng được trong `<Field>`.
  */
-export function PasswordInput({
-  visible: visibleProp,
-  defaultVisible = false,
-  onVisibleChange,
-  capsLockWarning = true,
-  strength,
-  value,
-  defaultValue,
-  onChange,
-  onKeyDown,
-  onKeyUp,
-  onBlur,
-  size,
-  disabled,
-  readOnly,
-  contentAfter,
-  rootClassName,
-  id,
-  "aria-describedby": describedBy,
-  ref,
-  ...props
-}: PasswordInputProps & { ref?: React.Ref<HTMLInputElement> }) {
+export function PasswordInput(inProps: PasswordInputProps & { ref?: React.Ref<HTMLInputElement> }) {
+  const {
+    visible: visibleProp,
+    defaultVisible = false,
+    onVisibleChange,
+    capsLockWarning = true,
+    strength,
+    value,
+    defaultValue,
+    onChange,
+    onKeyDown,
+    onKeyUp,
+    onBlur,
+    size,
+    disabled,
+    readOnly,
+    contentAfter,
+    rootClassName,
+    id,
+    "aria-describedby": describedBy,
+    ref,
+    ...props
+  } = useComponentDefaults("PasswordInput", inProps, COMPACT_SIZE);
   const msg = useYugenMessages("passwordInput", passwordInputMessagesEn);
   const [visible, setVisible] = useControllableState({ value: visibleProp, defaultValue: defaultVisible, onChange: onVisibleChange });
   const [capsLock, setCapsLock] = React.useState(false);
@@ -189,4 +190,10 @@ export function PasswordInput({
       )}
     </div>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    PasswordInput: PasswordInputProps;
+  }
 }

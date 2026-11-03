@@ -4,7 +4,7 @@ import { CalendarClock20Regular } from "../_internal/icons";
 import { Calendar } from "@/components/ui/Calendar/Calendar";
 import { Button } from "@/components/ui/Button/Button";
 import { TimePicker, formatTime, getDefaultHourCycle, type TimePickerHourCycle } from "@/components/ui/TimePicker/TimePicker";
-import { useYugen, useYugenMessages } from "../YugenProvider/context";
+import { useYugen, useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { PickerShell, boundsOf, numericDateFormat, type PickerBaseProps } from "./pickerShell";
 import { dateTimePickerMessagesEn } from "./messages";
 
@@ -29,19 +29,20 @@ export interface DateTimePickerProps extends PickerBaseProps {
  * DateTimePicker: lịch và ô giờ trong cùng popover. Chọn ngày giữ giờ đã chọn (mặc định 00:00); ô giờ gõ tự do như
  * TimePicker. minDate / maxDate giới hạn phần ngày.
  */
-export function DateTimePicker({
-  value,
-  defaultValue = null,
-  onValueChange,
-  placeholder,
-  clearable = false,
-  formatDate,
-  minDate,
-  maxDate,
-  timeIncrement = 30,
-  hourCycle,
-  ...props
-}: DateTimePickerProps) {
+export function DateTimePicker(inProps: DateTimePickerProps) {
+  const {
+    value,
+    defaultValue = null,
+    onValueChange,
+    placeholder,
+    clearable = false,
+    formatDate,
+    minDate,
+    maxDate,
+    timeIncrement = 30,
+    hourCycle,
+    ...props
+  } = useComponentDefaults("DateTimePicker", inProps, COMPACT_SIZE);
   const msg = useYugenMessages("dateTimePicker", dateTimePickerMessagesEn);
   const { locale } = useYugen();
   const cycle = hourCycle ?? getDefaultHourCycle(locale);
@@ -106,4 +107,10 @@ export function DateTimePicker({
       </div>
     </PickerShell>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    DateTimePicker: DateTimePickerProps;
+  }
 }
