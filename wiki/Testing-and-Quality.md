@@ -30,7 +30,7 @@ checks from a skipped workflow will hang at "Expected": then switch to filtering
 | Build · Node 24 / 26 | typecheck, lint:classes, the check:* scripts, sync-templates, build lib + docs, pack, size |
 | Unit tests (React 19) | `npm test` |
 | React 18 | temporarily installs React 18.3 → typecheck, test, build:lib |
-| E2E · shard 1/3 … 3/3 | `test:e2e --shard=n/3` in parallel (blob report; `test-results-n` on failure) |
+| E2E · shard 1/4 … 4/4 | `test:e2e --shard=n/4` in parallel (blob report; `test-results-n` on failure) |
 | E2E (Playwright + axe) | merges the blob reports into one HTML report (`playwright-report`); red if any shard is red; fixed check name |
 
 Separate workflow **Browser engines** (`engines.yml`): `npm run test:engines` weekly (Monday), on PRs into `main`, on PRs
@@ -61,4 +61,4 @@ doesn't change automatically: raising it is a CLI minor release.
 
 The repo runs React 19. To check React 18.3 (still supported): copy the repo to another folder (without `node_modules`), `npm ci`,
 then `npm i --no-save react@^18.3 react-dom@^18.3 @types/react@^18.3 @types/react-dom@^18.3` and run
-`npx tsc -b && npx vitest run`.
+`npm run typecheck && npx vitest run`.
