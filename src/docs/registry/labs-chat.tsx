@@ -1226,7 +1226,7 @@ const LABS_CHAT: Record<string, ComponentDoc> = {
       },
       {
         title: "Tin mới khi đang đọc tin cũ",
-        description: "Cuộn lên rồi bấm “Get a new message”: danh sách không tự nhảy, nút nổi đếm số tin mới.",
+        description: "Cuộn lên rồi bấm “Nhận tin mới”: danh sách không tự nhảy, nút nổi đếm số tin mới.",
         code: NEW_MESSAGES_CODE,
         render: () => <NewMessagesDemo />,
       },

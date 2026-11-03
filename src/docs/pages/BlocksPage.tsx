@@ -15,7 +15,7 @@ export interface BlockMeta {
   wide?: boolean;
 }
 
-type BlockModule = { default: React.ComponentType; meta: BlockMeta };
+export type BlockModule = { default: React.ComponentType; meta: BlockMeta };
 
 // Tên và mô tả tiếng Việt theo file (trang /vi/). Block viết bằng tiếng Anh: `meta` trong file là bản tiếng Anh.
 export const META_VI: Record<string, Pick<BlockMeta, "title" | "description">> = {
@@ -40,16 +40,47 @@ export const META_VI: Record<string, Pick<BlockMeta, "title" | "description">> =
 
 const fileOf = (path: string) => path.replace(/^.*\/(.+)\.tsx$/, "$1");
 
+export type Block = { path: string; meta: BlockMeta; Component: React.ComponentType; source: string };
+
+export const toBlocks = (modules: Record<string, BlockModule>, sources: Record<string, string>): Block[] =>
+  Object.entries(modules)
+    .map(([path, mod]) => ({ path, meta: mod.meta, Component: mod.default, source: sources[path] ?? "" }))
+    .filter((b) => b.meta)
+    .sort((a, b) => a.meta.order - b.meta.order);
+
 // Component thật + mã nguồn thô của CHÍNH file đó → code copy luôn khớp với preview.
-const modules = import.meta.glob<BlockModule>("../block-library/*.tsx", { eager: true });
-const sources = import.meta.glob<string>("../block-library/*.tsx", { eager: true, query: "?raw", import: "default" });
+const BLOCKS = toBlocks(
+  import.meta.glob<BlockModule>("../block-library/*.tsx", { eager: true }),
+  import.meta.glob<string>("../block-library/*.tsx", { eager: true, query: "?raw", import: "default" }),
+);
 
-const BLOCKS = Object.entries(modules)
-  .map(([path, mod]) => ({ path, meta: mod.meta, Component: mod.default, source: sources[path] ?? "" }))
-  .filter((b) => b.meta)
-  .sort((a, b) => a.meta.order - b.meta.order);
+// Trang /vi/: cùng các file qua `?lang=vi` (chữ tiếng Việt theo từ điển block-library/vi/, plugin yugenDemoLang) — một chunk
+// nạp lười (blocksVi.ts), trang tiếng Anh không tải. Nạp lỗi → hiện bản tiếng Anh.
+let blocksVi: Block[] | "error" | undefined;
+let blocksViPromise: Promise<void> | undefined;
 
-function BlockCard({ path, meta, Component, source }: (typeof BLOCKS)[number]) {
+/** Nạp trước block tiếng Việt (preloadRoute, trước lần render đầu của /vi/blocks). */
+export function preloadBlocksVi(): Promise<void> {
+  blocksViPromise ??= import("./blocksVi").then(
+    (m) => void (blocksVi = m.blocks),
+    () => void (blocksVi = "error"),
+  );
+  return blocksViPromise;
+}
+
+/**
+ * Block theo ngôn ngữ trang; tiếng Việt chưa nạp xong → treo (Suspense của trang). `lang`: ngôn ngữ preview khi khác trang
+ * (bản tiếng Anh thay cho bản tiếng Việt nạp lỗi).
+ */
+function useBlocks(): { blocks: Block[]; lang?: string } {
+  const { locale } = useLocale();
+  if (locale !== "vi") return { blocks: BLOCKS };
+  if (blocksVi === "error") return { blocks: BLOCKS, lang: "en" };
+  if (blocksVi) return { blocks: blocksVi };
+  throw preloadBlocksVi();
+}
+
+function BlockCard({ path, meta, Component, source, lang }: Block & { lang?: string }) {
   const [mode, setMode] = React.useState<"preview" | "code">("preview");
   const { locale } = useLocale();
   const vi = locale === "vi" ? META_VI[fileOf(path)] : undefined;
@@ -91,7 +122,7 @@ function BlockCard({ path, meta, Component, source }: (typeof BLOCKS)[number]) {
         </div>
       </header>
       {mode === "preview" ? (
-        <div lang={locale === "en" ? undefined : "en"} className="flex justify-center bg-background-3 p-5">
+        <div lang={lang} className="flex justify-center bg-background-3 p-5">
           <div className="w-full">
             <Component />
           </div>
@@ -135,6 +166,7 @@ function useMasonry(ref: React.RefObject<HTMLDivElement | null>) {
 
 export function BlocksPage() {
   const { locale } = useLocale();
+  const { blocks, lang } = useBlocks();
   const en = locale === "en";
   const gridRef = React.useRef<HTMLDivElement>(null);
   useMasonry(gridRef);
@@ -165,8 +197,8 @@ export function BlocksPage() {
         ref={gridRef}
         className="grid grid-flow-row-dense gap-5 lg:grid-cols-2 2xl:grid-cols-3 data-masonry:auto-rows-1 data-masonry:gap-y-0"
       >
-        {BLOCKS.map((b) => (
-          <BlockCard key={b.path} {...b} />
+        {blocks.map((b) => (
+          <BlockCard key={b.path} {...b} lang={lang} />
         ))}
       </div>
     </div>

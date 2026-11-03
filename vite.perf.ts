@@ -65,7 +65,11 @@ export function fluentIconAtoms(root: string): Plugin {
     name: "yugen-fluent-icon-atoms",
     apply: "build",
     transform(code, id, options) {
-      if (options?.ssr || id.includes("node_modules") || !/\.[cm]?[jt]sx?$/.test(id) || !code.includes(PACKAGE)) return;
+      // Cả demo tiếng Việt (`x.tsx?lang=vi`, bản sao `?yugen-vi=…` — plugin yugenDemoLang) để chunk tiếng Việt dùng cùng file
+      // atom với bản tiếng Anh.
+      const [file, query = ""] = id.split("?");
+      if (query && (!/(^|&)(lang=vi|yugen-vi=)/.test(query) || /(^|&)raw\b/.test(query))) return;
+      if (options?.ssr || id.includes("node_modules") || !/\.[cm]?[jt]sx?$/.test(file) || !code.includes(PACKAGE)) return;
       const next = code.replace(IMPORT, (statement, keyword: string, list: string) => {
         const byAtom = new Map<string, string[]>();
         const rest: string[] = [];

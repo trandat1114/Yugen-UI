@@ -5,7 +5,7 @@ import { openDocs, type Dir } from "./utils";
 
 async function heroCarousel(page: Page, dir: Dir = "ltr") {
   await openDocs(page, "/components/carousel", { dir });
-  const carousel = page.locator('section[aria-label="Highlights"]').first();
+  const carousel = page.locator('section[aria-label="Điểm nổi bật"]').first();
   await carousel.scrollIntoViewIfNeeded();
   return {
     carousel,

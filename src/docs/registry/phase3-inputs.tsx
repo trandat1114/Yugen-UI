@@ -851,7 +851,7 @@ function TimePickerDemo() {
     examples: [
       {
         title: "Preset tuỳ biến & maxDate",
-        description: "maxDate = hôm nay nên \"Next 30 days\" bị vô hiệu.",
+        description: "maxDate = hôm nay nên \"30 ngày tới\" bị vô hiệu.",
         code: `const QUARTER_PRESETS: DateRangePreset[] = [
   {
     label: "This quarter",

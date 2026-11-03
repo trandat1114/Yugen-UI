@@ -65,6 +65,8 @@ export async function preloadRoute(route: Route, lang: Locale) {
     // Bảng Messages (danh sách namespace, export của thư viện) chỉ trang component cần: không nằm trong chunk chính (#307).
     tasks.push(preloadComponentDoc(slug, lang), import("@/docs/componentMessages").then((m) => m.preloadComponentMessages(slug)));
   }
+  // Block tiếng Việt là chunk riêng (trang tiếng Anh không tải): nạp cùng trang để HTML prerender và lần render đầu đã là tiếng Việt.
+  if (route.kind === "blocks" && lang === "vi") tasks.push(import("@/docs/pages/BlocksPage").then((m) => m.preloadBlocksVi()));
   if (route.kind === "news") tasks.push(preloadNews(lang));
   await Promise.allSettled(tasks);
 }
