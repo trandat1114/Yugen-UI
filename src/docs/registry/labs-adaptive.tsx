@@ -202,7 +202,7 @@ const LABS_ADAPTIVE: Record<string, ComponentDoc> = {
     category: "Yugen Labs",
     lead: "Sheet là một overlay thích ứng: panel trượt từ cạnh trên màn hình rộng, bottom sheet kéo được trên điện thoại — cùng một API, cùng một nội dung.",
     description:
-      "Dựng trên Radix Dialog nên có sẵn bẫy focus, Esc, khoá cuộn và vai trò dialog. Dưới breakpoint (mặc định \"3xl\" = 48rem, 768px) Sheet thành bottom sheet bo góc trên 16px: kéo bằng tay nắm hoặc tiêu đề, dừng ở các snapPoints (phần của chiều cao màn hình), vuốt nhanh để nhảy nấc, vuốt xuống để đóng. Nội dung chỉ cuộn khi ở nấc cao nhất; footer luôn bám đáy màn hình và chừa vùng an toàn. Trên màn hình rộng là panel start / end (tự đảo ở RTL) với ba độ rộng như Drawer. Giảm chuyển động: mọi trượt / đàn hồi thành tức thì.",
+      "Dựng trên Radix Dialog nên có sẵn bẫy focus, Esc, khoá cuộn và vai trò dialog. Dưới breakpoint (mặc định 768px) Sheet thành bottom sheet bo góc trên 16px: kéo bằng tay nắm hoặc tiêu đề, dừng ở các snapPoints (phần của chiều cao màn hình), vuốt nhanh để nhảy nấc, vuốt xuống để đóng. Nội dung chỉ cuộn khi ở nấc cao nhất; footer luôn bám đáy màn hình và chừa vùng an toàn. Trên màn hình rộng là panel start / end (tự đảo ở RTL) với ba độ rộng như Drawer. Giảm chuyển động: mọi trượt / đàn hồi thành tức thì.",
     importCode: `import {
   Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription,
   SheetBody, SheetFooter, SheetClose,
