@@ -17,6 +17,7 @@ export const ROUTES: Route[] = [
   { kind: "blocks" },
   { kind: "templates" },
   { kind: "theme-designer" },
+  { kind: "typeset" },
   { kind: "news" },
   { kind: "community" },
   { kind: "contributors" },
@@ -39,6 +40,8 @@ export function sourcesOf(route: Route): string[] {
       return ["src/docs/pages/TemplatesPage.tsx", "src/docs/template-library"];
     case "theme-designer":
       return ["src/docs/pages/ThemeDesignerPage.tsx"];
+    case "typeset":
+      return ["src/docs/pages/TypesetPage.tsx", "src/docs/typeset.ts"];
     case "news":
       return ["src/docs/news"];
     case "community":

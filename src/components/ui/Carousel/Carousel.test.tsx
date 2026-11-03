@@ -87,6 +87,27 @@ describe("CarouselNavContainer previousLabel", () => {
   });
 });
 
+describe("CarouselNavContainer showAutoplayToggle", () => {
+  const toggle = () => screen.queryByRole("button", { name: "Tự động chạy" });
+
+  it("showAutoplayToggle hiện nút bật / tắt tự chạy", () => {
+    const { rerender } = render(<Demo />);
+    expect(toggle()).toBeNull();
+    rerender(<Demo navProps={{ showAutoplayToggle: true }} />);
+    expect(toggle()).toBeInTheDocument();
+  });
+
+  it("autoplay (tên cũ) vẫn chạy và cảnh báo một lần; tên mới thắng", () => {
+    const warnings = watchDeprecations();
+    const { rerender } = render(<Demo navProps={{ autoplay: true }} />);
+    rerender(<Demo navProps={{ autoplay: true }} />);
+    expect(toggle()).toBeInTheDocument();
+    expect(warnings("CarouselNavContainer.autoplay")).toBe(1);
+    rerender(<Demo navProps={{ autoplay: true, showAutoplayToggle: false }} />);
+    expect(toggle()).toBeNull();
+  });
+});
+
 describe("Carousel activeIndex", () => {
   it("defaultActiveIndex: bắt đầu ở slide đó, tự giữ state khi bấm", async () => {
     const user = userEvent.setup();

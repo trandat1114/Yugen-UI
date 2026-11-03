@@ -3,6 +3,7 @@ import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
 import { cn } from "@/lib/cn";
 import { buttonGroupVariants } from "../ButtonGroup/ButtonGroup";
 import { toggleButtonVariants, type ToggleButtonAppearance, type ToggleButtonSize } from "../ToggleButton/ToggleButton";
+import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
 /** ToggleGroup (shadcn/ui, giao diện Fluent 2 ToggleButton) — https://fluent2.microsoft.design/components/web/react/core/togglebutton/usage */
 type ToggleGroupAppearance = Exclude<ToggleButtonAppearance, "primary">;
@@ -17,14 +18,15 @@ export type ToggleGroupProps = React.ComponentPropsWithoutRef<typeof ToggleGroup
   size?: ToggleButtonSize;
 };
 
-export function ToggleGroup({
-  className,
-  appearance = "secondary",
-  size = "medium",
-  orientation = "horizontal",
-  ref,
-  ...props
-}: ToggleGroupProps & { ref?: React.Ref<React.ComponentRef<typeof ToggleGroupPrimitive.Root>> }) {
+export function ToggleGroup(inProps: ToggleGroupProps & { ref?: React.Ref<React.ComponentRef<typeof ToggleGroupPrimitive.Root>> }) {
+  const {
+    className,
+    appearance = "secondary",
+    size = "medium",
+    orientation = "horizontal",
+    ref,
+    ...props
+  } = useComponentDefaults("ToggleGroup", inProps, COMPACT_SIZE);
   // secondary / outline ghép liền viền; subtle / transparent để rời với khoảng cách nhỏ.
   const joined = appearance === "secondary" || appearance === "outline";
   return (
@@ -67,4 +69,10 @@ export function ToggleGroupItem({
       {children}
     </ToggleGroupPrimitive.Item>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    ToggleGroup: ToggleGroupProps;
+  }
 }

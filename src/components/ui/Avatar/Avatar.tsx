@@ -1,6 +1,7 @@
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/cn";
+import { useComponentDefaults } from "../YugenProvider/context";
 
 /** Fluent 2 Avatar — https://fluent2.microsoft.design/components/web/react/core/avatar/usage */
 const avatarVariants = cva(
@@ -62,7 +63,8 @@ function hashOf(name: string) {
   return Math.abs(h);
 }
 
-export function Avatar({ name, src, size, shape, color = "neutral", presence, className }: AvatarProps) {
+export function Avatar(inProps: AvatarProps) {
+  const { name, src, size, shape, color = "neutral", presence, className } = useComponentDefaults("Avatar", inProps);
   const colorClass =
     color === "brand"
       ? "bg-brand-background text-foreground-on-brand"
@@ -90,4 +92,10 @@ export function Avatar({ name, src, size, shape, color = "neutral", presence, cl
       )}
     </span>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Avatar: AvatarProps;
+  }
 }

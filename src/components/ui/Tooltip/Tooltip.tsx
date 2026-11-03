@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { useDirection } from "@radix-ui/react-direction";
-import { usePortalThemeProps } from "../YugenProvider/context";
+import { usePortalThemeProps, useComponentDefaults } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 
 /** Fluent 2 Tooltip — https://fluent2.microsoft.design/components/web/react/core/tooltip/usage */
@@ -16,16 +16,17 @@ export interface TooltipContentProps extends React.ComponentPropsWithoutRef<type
   material?: "glass" | "glass-clear";
 }
 
-export function TooltipContent({
-  className,
-  appearance = "normal",
-  withArrow = true,
-  material,
-  sideOffset = 4,
-  children,
-  ref,
-  ...props
-}: TooltipContentProps & { ref?: React.Ref<React.ComponentRef<typeof TooltipPrimitive.Content>> }) {
+export function TooltipContent(inProps: TooltipContentProps & { ref?: React.Ref<React.ComponentRef<typeof TooltipPrimitive.Content>> }) {
+  const {
+    className,
+    appearance = "normal",
+    withArrow = true,
+    material,
+    sideOffset = 4,
+    children,
+    ref,
+    ...props
+  } = useComponentDefaults("TooltipContent", inProps);
   // Portal render vào <body>: gắn `dir` để tooltip theo hướng chữ của provider lồng.
   const dir = useDirection();
   const portalTheme = usePortalThemeProps();
@@ -74,4 +75,10 @@ export function SimpleTooltip({
       <TooltipContent {...props}>{content}</TooltipContent>
     </Tooltip>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    TooltipContent: TooltipContentProps;
+  }
 }

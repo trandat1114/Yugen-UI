@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { useDirection } from "@radix-ui/react-direction";
-import { usePortalThemeProps } from "../YugenProvider/context";
+import { usePortalThemeProps, useComponentDefaults } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { morphClass, morphFromTrigger } from "../_internal/morph";
 
@@ -33,18 +33,19 @@ const APPEARANCE = {
 } as const;
 const ARROW = { normal: "fill-background-1", brand: "fill-brand-background", inverted: "fill-background-inverted" } as const;
 
-export function PopoverSurface({
-  className,
-  size = "medium",
-  appearance = "normal",
-  withArrow = false,
-  material,
-  sideOffset = 6,
-  align = "center",
-  children,
-  ref,
-  ...props
-}: PopoverSurfaceProps & { ref?: React.Ref<React.ComponentRef<typeof PopoverPrimitive.Content>> }) {
+export function PopoverSurface(inProps: PopoverSurfaceProps & { ref?: React.Ref<React.ComponentRef<typeof PopoverPrimitive.Content>> }) {
+  const {
+    className,
+    size = "medium",
+    appearance = "normal",
+    withArrow = false,
+    material,
+    sideOffset = 6,
+    align = "center",
+    children,
+    ref,
+    ...props
+  } = useComponentDefaults("PopoverSurface", inProps);
   // Portal render vào <body>: gắn `dir` để bề mặt (và căn align start/end) theo hướng chữ của provider lồng.
   const dir = useDirection();
   const portalTheme = usePortalThemeProps();
@@ -78,4 +79,10 @@ export function PopoverSurface({
       </PopoverPrimitive.Content>
     </PopoverPrimitive.Portal>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    PopoverSurface: PopoverSurfaceProps;
+  }
 }

@@ -3,7 +3,7 @@ import * as React from "react";
 import { cn } from "@/lib/cn";
 import { Badge, type BadgeProps } from "../Badge/Badge";
 import { VisuallyHidden } from "../VisuallyHidden/VisuallyHidden";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { counterBadgeMessagesEn } from "./messages";
 
 export { counterBadgeMessages, counterBadgeMessagesVi, counterBadgeMessagesEn, type CounterBadgeMessages } from "./messages";
@@ -49,20 +49,21 @@ const DOT_SIZE: Record<CounterBadgeSize, string> = {
   "extra-large": "size-3",
 };
 
-export function CounterBadge({
-  count = 0,
-  overflowCount = 99,
-  showZero = false,
-  dot = false,
-  appearance = "filled",
-  color = "brand",
-  shape = "circular",
-  size = "medium",
-  label,
-  className,
-  ref,
-  ...props
-}: CounterBadgeProps & { ref?: React.Ref<HTMLSpanElement> }) {
+export function CounterBadge(inProps: CounterBadgeProps & { ref?: React.Ref<HTMLSpanElement> }) {
+  const {
+    count = 0,
+    overflowCount = 99,
+    showZero = false,
+    dot = false,
+    appearance = "filled",
+    color = "brand",
+    shape = "circular",
+    size = "medium",
+    label,
+    className,
+    ref,
+    ...props
+  } = useComponentDefaults("CounterBadge", inProps);
   const msg = useYugenMessages("counterBadge", counterBadgeMessagesEn);
   if (!dot && count === 0 && !showZero) return null;
 
@@ -90,4 +91,10 @@ export function CounterBadge({
       <VisuallyHidden>{srLabel}</VisuallyHidden>
     </Badge>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    CounterBadge: CounterBadgeProps;
+  }
 }

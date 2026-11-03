@@ -1,6 +1,7 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/cn";
+import { useComponentDefaults } from "../YugenProvider/context";
 
 /** ButtonGroup (shadcn/ui, giao diện Fluent 2 Button) — https://ui.shadcn.com/docs/components/button-group */
 const buttonGroupVariants = cva(
@@ -31,12 +32,13 @@ const buttonGroupVariants = cva(
 
 export interface ButtonGroupProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof buttonGroupVariants> {}
 
-export function ButtonGroup({
-  className,
-  orientation = "horizontal",
-  ref,
-  ...props
-}: ButtonGroupProps & { ref?: React.Ref<HTMLDivElement> }) {
+export function ButtonGroup(inProps: ButtonGroupProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    className,
+    orientation = "horizontal",
+    ref,
+    ...props
+  } = useComponentDefaults("ButtonGroup", inProps);
   return (
     <div
       ref={ref}
@@ -80,3 +82,9 @@ export function ButtonGroupSeparator({
 }
 
 export { buttonGroupVariants };
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    ButtonGroup: ButtonGroupProps;
+  }
+}

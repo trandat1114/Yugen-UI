@@ -9,7 +9,7 @@ describe("Prose", () => {
         <h2>Cài đặt</h2>
       </Prose>,
     );
-    expect(screen.getByTestId("prose")).toHaveClass("yugen-prose", "text-body1");
+    expect(screen.getByTestId("prose")).toHaveClass("yugen-prose", "[--prose-size-default:var(--text-body1)]", "[--prose-flow-default:--spacing(4)]");
   });
 
   it("renders into its child with asChild and switches the base size", () => {
@@ -22,6 +22,6 @@ describe("Prose", () => {
     );
     const article = screen.getByTestId("article");
     expect(article.tagName).toBe("ARTICLE");
-    expect(article).toHaveClass("text-body2");
+    expect(article).toHaveClass("[--prose-size-default:var(--text-body2)]");
   });
 });

@@ -61,7 +61,7 @@ export const en: Record<string, ComponentDocEn> = {
       "Timeline is an `<ol>`; each TimelineItem has a title, a time, an icon (or Avatar) and optional extra content. Pass `dateTime` to turn the time into a machine-readable `<time>`. The compact variant uses a small dot and one line per event, which suits long activity logs. Icons are decorative, so the title must describe the event on its own.",
     examples: [
       { title: "Compact", description: "Small dot, title and time on one line; extra content uses caption text." },
-      { title: "Intent without icons", description: "Without an icon the item shows a dot in the intent color: neutral, brand, success, warning, danger." },
+      { title: "Intent without icons", description: "Without an icon the item shows a dot in the intent color: neutral, brand, success, warning, error." },
     ],
     dos: [
       "Put the newest event first, unless people follow a process from start to end.",
@@ -78,7 +78,7 @@ export const en: Record<string, ComponentDocEn> = {
       "TimelineItem.time": "Time shown to people.",
       "TimelineItem.dateTime": "ISO 8601 timestamp → <time dateTime>.",
       "TimelineItem.icon": "Icon or Avatar; empty = dot.",
-      "TimelineItem.intent": "Color of the icon or dot.",
+      "TimelineItem.intent": "Color of the icon or dot. The old value \"danger\" is deprecated (removed in 1.0).",
       "TimelineItem.children": "Extra content: a comment, files, tags.",
     },
   },
@@ -116,7 +116,7 @@ export const en: Record<string, ComponentDocEn> = {
       "Numbers are formatted with the YugenProvider locale and shortened from 10,000 (12.9K). delta is a signed change shown as a percentage by default; goodDirection decides whether going up is good (green) or bad (red), and the direction is always spelled out for screen readers. chart takes a small chart, usually a Sparkline. StatTile in Yugen Labs is now Stat with a Sparkline drawn from trend.",
     examples: [
       { title: "Small chart & icon", description: "chart puts a chart next to the number; icon sits before the label." },
-      { title: "Size", description: "medium 28px, large 40px, hero 68px. At most one hero per screen." },
+      { title: "Size", description: "medium 28px, large 40px, extra-large 68px. At most one extra-large number per screen." },
     ],
     dos: [
       "Name the comparison period in deltaLabel (“vs last month”).",
@@ -135,7 +135,7 @@ export const en: Record<string, ComponentDocEn> = {
       deltaFormat: "Format of the delta.",
       deltaLabel: "Comparison period.",
       goodDirection: "Which direction is good: sets the success / danger color.",
-      size: "Number size 28 / 40 / 68px.",
+      size: "Number size 28 / 40 / 68px. The old value \"hero\" is deprecated (removed in 1.0).",
       icon: "Icon before the label.",
       chart: "Small chart next to the number, usually a Sparkline.",
       locale: "Locale for Intl.NumberFormat; defaults to YugenProvider.",
@@ -145,7 +145,7 @@ export const en: Record<string, ComponentDocEn> = {
 
   prose: {
     description:
-      "Wrap content in `<Prose>` (or add the theme's `yugen-prose` class); HTML elements inside are styled without classes. The selectors have zero specificity, so a class on an element always wins; add the `not-prose` class to anything that should opt out. CodeBlock, Table, Quote and Timeline already carry `not-prose`. Size large (16px) suits long articles, medium (14px) docs and notes. Prose does not sanitize HTML: content from users must be sanitized first.",
+      "Wrap content in `<Prose>` (or add the theme's `yugen-prose` class). Fonts and rhythm come from the variables `--prose-font-body`, `--prose-font-heading`, `--prose-font-mono`, `--prose-size`, `--prose-leading` and `--prose-flow`; the theme has the presets `yugen-prose-docs`, `yugen-prose-article`, `yugen-prose-chat` and `yugen-prose-compact`, and the Typeset page (/typeset) builds your own. HTML elements inside are styled without classes. The selectors have zero specificity, so a class on an element always wins; add the `not-prose` class to anything that should opt out. CodeBlock, Table, Quote and Timeline already carry `not-prose`. Size large (16px) suits long articles, medium (14px) docs and notes. Prose does not sanitize HTML: content from users must be sanitized first.",
     examples: [
       { title: "Article & HTML from a CMS", description: "asChild renders into <article>; sanitized HTML can go in through dangerouslySetInnerHTML." },
       { title: "Opting out with not-prose", description: "An element with the not-prose class (and everything inside it) keeps its own styles." },

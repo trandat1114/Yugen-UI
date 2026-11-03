@@ -2,6 +2,7 @@ import * as React from "react";
 import * as SwitchPrimitive from "@radix-ui/react-switch";
 import { cn } from "@/lib/cn";
 import { usePressed } from "../_internal/usePressed";
+import { useComponentDefaults } from "../YugenProvider/context";
 
 /** Fluent 2 Switch — https://fluent2.microsoft.design/components/web/react/core/switch/usage */
 export interface SwitchProps extends SwitchPrimitive.SwitchProps {
@@ -11,17 +12,18 @@ export interface SwitchProps extends SwitchPrimitive.SwitchProps {
   material?: "glass";
 }
 
-export function Switch({
-  className,
-  label,
-  labelPosition = "after",
-  id,
-  disabled,
-  material,
-  onPointerDown,
-  ref,
-  ...props
-}: SwitchProps & { ref?: React.Ref<HTMLButtonElement> }) {
+export function Switch(inProps: SwitchProps & { ref?: React.Ref<HTMLButtonElement> }) {
+  const {
+    className,
+    label,
+    labelPosition = "after",
+    id,
+    disabled,
+    material,
+    onPointerDown,
+    ref,
+    ...props
+  } = useComponentDefaults("Switch", inProps);
   const autoId = React.useId();
   const switchId = id ?? autoId;
   const pressed = usePressed();
@@ -79,4 +81,10 @@ export function Switch({
       )}
     </span>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Switch: SwitchProps;
+  }
 }

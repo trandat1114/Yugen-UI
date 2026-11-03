@@ -28,6 +28,7 @@ const REPRESENTATIVE = [
   "/",
   "/blocks",
   "/theme-designer",
+  "/typeset",
   "/news",
   "/community",
   "/contributors",

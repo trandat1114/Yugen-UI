@@ -2,7 +2,17 @@ import * as React from "react";
 import type { ReactNode } from "react";
 import {
   Button,
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+  Dropdown,
+  DropdownOption,
   Label,
+  Menu,
+  MenuItem,
+  MenuPopover,
+  MenuTrigger,
   MessageBar,
   Popover,
   PopoverSurface,
@@ -10,6 +20,7 @@ import {
   Radio,
   RadioGroup,
   SimpleTooltip,
+  Switch,
   YugenProvider,
 } from "@/components/ui";
 import { DocSection, DoDont, PropsTable } from "../../blocks";
@@ -162,6 +173,71 @@ function MyFloatingSurface(props) {
   return <SomePrimitive.Portal><SomePrimitive.Content {...portalTheme} {...props} /></SomePrimitive.Portal>;
 }`;
 
+const SCROLL_LOCK_CODE = `// The whole app: keep the scrollbar while Menu, ContextMenu or Dropdown is open
+<YugenProvider applyToDocument scrollLock="keep-scrollbar">
+  <App />
+</YugenProvider>
+
+// Without the provider: set the attribute on <html>
+<html data-yugen-scroll-lock="keep-scrollbar">
+
+// One menu that doesn't lock scrolling
+<Menu modal={false}>…</Menu>`;
+
+/** "Keep the scrollbar" writes the attribute on the docs page's own <html>; turning it off or leaving the page removes it. */
+function ScrollLockDemo() {
+  const [keep, setKeep] = React.useState(false);
+  React.useEffect(() => {
+    const root = document.documentElement;
+    if (keep) root.setAttribute("data-yugen-scroll-lock", "keep-scrollbar");
+    else root.removeAttribute("data-yugen-scroll-lock");
+    return () => root.removeAttribute("data-yugen-scroll-lock");
+  }, [keep]);
+  return (
+    <div className="flex flex-col gap-4 rounded-2xlarge border border-stroke-2 p-6">
+      <Switch label="Keep the scrollbar" checked={keep} onCheckedChange={setKeep} />
+      <div className="flex flex-wrap items-center gap-3">
+        <Menu>
+          <MenuTrigger asChild>
+            <Button>Menu</Button>
+          </MenuTrigger>
+          <MenuPopover>
+            <MenuItem>Rename</MenuItem>
+            <MenuItem>Duplicate</MenuItem>
+            <MenuItem>Archive</MenuItem>
+          </MenuPopover>
+        </Menu>
+        <Menu modal={false}>
+          <MenuTrigger asChild>
+            <Button>Non-modal menu</Button>
+          </MenuTrigger>
+          <MenuPopover>
+            <MenuItem>Rename</MenuItem>
+            <MenuItem>Duplicate</MenuItem>
+            <MenuItem>Archive</MenuItem>
+          </MenuPopover>
+        </Menu>
+        <Dropdown aria-label="Status" placeholder="Status" className="w-48">
+          <DropdownOption value="open">Open</DropdownOption>
+          <DropdownOption value="review">In review</DropdownOption>
+          <DropdownOption value="done">Done</DropdownOption>
+        </Dropdown>
+      </div>
+      <ContextMenu>
+        <ContextMenuTrigger asChild>
+          <div className="flex h-24 items-center justify-center rounded-xlarge border border-dashed border-stroke-1 text-body1 text-foreground-3 select-none">
+            Right-click here
+          </div>
+        </ContextMenuTrigger>
+        <ContextMenuContent>
+          <ContextMenuItem>Copy</ContextMenuItem>
+          <ContextMenuItem>Paste</ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+    </div>
+  );
+}
+
 export default function Page() {
   return (
     <>
@@ -285,6 +361,45 @@ export default function Page() {
               Text direction needs no extra work: floating surfaces (PopoverSurface, TooltipContent, HoverCardContent, DialogSurface,
               DrawerSurface, menus and listboxes) set the <C>dir</C> of the nearest provider, because React context (including{" "}
               <C>DirectionProvider</C>) passes through portals.
+            </li>
+          </ul>
+        </div>
+      </DocSection>
+
+      <DocSection
+        id="scroll-lock"
+        title="Scroll lock"
+        description="Menu, ContextMenu and Dropdown lock page scrolling while open: wheel and touch scrolling outside are blocked, the page scrollbar is hidden and the body gets a margin so content doesn't shift. The app chooses whether the scrollbar stays."
+      >
+        <div className="flex flex-col gap-4">
+          <ScrollLockDemo />
+          <SimpleTable
+            head={["Surface", "Locks scroll", "Can turn it off"]}
+            rows={[
+              ["Menu (also MenuButton, SplitButton, Breadcrumb overflow, DataGridColumnPicker)", <><C>modal</C> defaults to true</>, <C key="m">modal=&#123;false&#125;</C>],
+              ["ContextMenu", <><C>modal</C> defaults to true</>, <C key="m">modal=&#123;false&#125;</C>],
+              ["Dropdown", "Always", "No; use scrollLock to keep the scrollbar"],
+              ["Menubar", "No (Menubar menus are not modal)", "—"],
+              ["Popover and Popover-based components (Combobox, TagPicker, TimePicker…)", <>No, unless <C>modal</C></>, "—"],
+              ["Dialog, Drawer with an overlay, Sheet, Tour", "Yes", "By design: the content behind can't be used"],
+            ]}
+          />
+          <CodeBlock code={SCROLL_LOCK_CODE} />
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
+            <li>
+              <C>scrollLock=&quot;keep-scrollbar&quot;</C> on the root provider writes <C>data-yugen-scroll-lock</C> to <C>{"<html>"}</C>: the
+              scrollbar stays and nothing shifts, but wheel and touch scrolling outside the surface are still blocked. Apps without the
+              provider set the attribute themselves. The default is <C>&quot;hide-scrollbar&quot;</C> for now; 1.0 switches it to{" "}
+              <C>&quot;keep-scrollbar&quot;</C>.
+            </li>
+            <li>
+              <C>modal=&#123;false&#125;</C> on Menu or ContextMenu: the page keeps scrolling, outside clicks reach the page right away, and
+              the rest of the page is not hidden from screen readers. Good for menus opened from a toolbar inside long content.
+            </li>
+            <li>
+              Elements with <C>position: fixed</C> at the right edge (headers, floating buttons) shift by the scrollbar width when the
+              scrollbar hides, unless they have the <C>right-scroll-bar-position</C> class (or <C>width-before-scroll-bar</C> for
+              full-width elements). With <C>keep-scrollbar</C> they don&apos;t need it.
             </li>
           </ul>
         </div>

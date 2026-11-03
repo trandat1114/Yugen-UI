@@ -1,16 +1,21 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
+import { warnDeprecated } from "@/lib/deprecate";
 
-export type TimelineIntent = "neutral" | "brand" | "success" | "warning" | "danger";
+/** Màu của sự kiện. "danger" cũ đã lỗi thời (bỏ ở 1.0): dùng "error" như MessageBar, Toast, Field. */
+export type TimelineIntent = TimelineIntentName | TimelineIntentLegacy;
+type TimelineIntentName = "neutral" | "brand" | "success" | "warning" | "error";
+/** @deprecated Use "error". Will be removed in v1.0.0. */
+type TimelineIntentLegacy = "danger";
 export type TimelineVariant = "detailed" | "compact";
 
 /** Nền + màu icon của ô tròn (detailed), và màu chấm (compact / không icon). */
-const INTENT: Record<TimelineIntent, { bubble: string; dot: string }> = {
+const INTENT: Record<TimelineIntentName, { bubble: string; dot: string }> = {
   neutral: { bubble: "bg-background-3 text-foreground-2", dot: "text-foreground-3" },
   brand: { bubble: "bg-brand-background-2 text-brand-foreground-1", dot: "text-brand-foreground-1" },
   success: { bubble: "bg-success-background-1 text-success-foreground-1", dot: "text-success-foreground-1" },
   warning: { bubble: "bg-warning-background-1 text-warning-foreground-1", dot: "text-warning-foreground-1" },
-  danger: { bubble: "bg-danger-background-1 text-danger-foreground-1", dot: "text-danger-foreground-1" },
+  error: { bubble: "bg-danger-background-1 text-danger-foreground-1", dot: "text-danger-foreground-1" },
 };
 
 const VariantContext = React.createContext<TimelineVariant>("detailed");
@@ -61,7 +66,8 @@ export function TimelineItem({
 }: TimelineItemProps & { ref?: React.Ref<HTMLLIElement> }) {
   const variant = React.useContext(VariantContext);
   const compact = variant === "compact";
-  const tone = INTENT[intent];
+  if (intent === "danger") warnDeprecated('TimelineItem.intent="danger"', 'use intent="error"', "1.0.0");
+  const tone = INTENT[intent === "danger" ? "error" : intent];
   const timeEl =
     time !== undefined ? (
       dateTime ? (

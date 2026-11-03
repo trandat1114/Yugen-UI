@@ -2,6 +2,7 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { ErrorCircle12Filled, CheckmarkCircle12Filled, Warning12Filled } from "../_internal/icons";
 import { cn } from "@/lib/cn";
+import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
 /** Fluent 2 Input + Field — https://fluent2.microsoft.design/components/web/react/core/input/usage */
 const inputRootVariants = cva(
@@ -65,23 +66,24 @@ export interface InputProps
   rootClassName?: string;
 }
 
-export function Input({
-  className,
-  rootClassName,
-  appearance,
-  size,
-  label,
-  hint,
-  validationState = "none",
-  validationMessage,
-  contentBefore,
-  contentAfter,
-  required,
-  disabled,
-  id,
-  ref,
-  ...props
-}: InputProps & { ref?: React.Ref<HTMLInputElement> }) {
+export function Input(inProps: InputProps & { ref?: React.Ref<HTMLInputElement> }) {
+  const {
+    className,
+    rootClassName,
+    appearance,
+    size,
+    label,
+    hint,
+    validationState = "none",
+    validationMessage,
+    contentBefore,
+    contentAfter,
+    required,
+    disabled,
+    id,
+    ref,
+    ...props
+  } = useComponentDefaults("Input", inProps, COMPACT_SIZE);
   const autoId = React.useId();
   const inputId = id ?? autoId;
   const messageId = `${inputId}-message`;
@@ -135,4 +137,10 @@ export function Input({
       )}
     </div>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Input: InputProps;
+  }
 }

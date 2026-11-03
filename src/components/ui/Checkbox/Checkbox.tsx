@@ -2,6 +2,7 @@ import * as React from "react";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { Checkmark12Filled, Square12Filled } from "../_internal/icons";
 import { cn } from "@/lib/cn";
+import { useComponentDefaults } from "../YugenProvider/context";
 
 /** Fluent 2 Checkbox — https://fluent2.microsoft.design/components/web/react/core/checkbox/usage */
 export interface CheckboxProps extends CheckboxPrimitive.CheckboxProps {
@@ -10,16 +11,17 @@ export interface CheckboxProps extends CheckboxPrimitive.CheckboxProps {
   labelPosition?: "after" | "before";
 }
 
-export function Checkbox({
-  className,
-  label,
-  size = "medium",
-  labelPosition = "after",
-  id,
-  disabled,
-  ref,
-  ...props
-}: CheckboxProps & { ref?: React.Ref<HTMLButtonElement> }) {
+export function Checkbox(inProps: CheckboxProps & { ref?: React.Ref<HTMLButtonElement> }) {
+  const {
+    className,
+    label,
+    size = "medium",
+    labelPosition = "after",
+    id,
+    disabled,
+    ref,
+    ...props
+  } = useComponentDefaults("Checkbox", inProps);
   const autoId = React.useId();
   const checkboxId = id ?? autoId;
 
@@ -73,4 +75,10 @@ export function Checkbox({
       )}
     </span>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Checkbox: CheckboxProps;
+  }
 }

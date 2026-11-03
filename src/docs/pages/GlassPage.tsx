@@ -271,6 +271,17 @@ function TripBars() {
   );
 }`;
 
+const PROVIDER_DEFAULTS = `import { YugenProvider, glassNavigationDefaults } from "yugen-ui";
+
+<YugenProvider applyToDocument defaults={glassNavigationDefaults}>
+  <App />
+</YugenProvider>
+
+// Together with other defaults
+<YugenProvider applyToDocument defaults={{ ...glassNavigationDefaults, Button: { shape: "circular" } }}>
+  <App />
+</YugenProvider>`;
+
 const UTILITIES = `<!-- Thanh tự làm: nền glass, nút bo đồng tâm -->
 <nav class="glass sticky top-3 rounded-circular p-1 [--concentric-radius:var(--borderRadiusCircular)] [--concentric-padding:--spacing(1)]">
   <a class="rounded-concentric px-3 py-1.5" href="/">Home</a>
@@ -383,6 +394,25 @@ export function GlassPage() {
             ["DialogSurface · DrawerSurface · SheetContent", <C key="p">material</C>, t("Bottom sheet glass lồi vào trong mép màn hình và đặc dần khi kéo lên nấc cao nhất.", "A glass bottom sheet is inset from the screen edges and turns opaque at the highest snap point.")],
           ]}
         />
+      </DocSection>
+
+      <DocSection
+        id="provider-default"
+        title={t("Glass cho cả ứng dụng", "Glass for the whole app")}
+        description={t(
+          'glassNavigationDefaults là một bộ prop mặc định cho YugenProvider: mọi component điều hướng có glass nhận material="glass" ở một chỗ. Prop material đặt trên instance vẫn thắng, vd. glass-clear trên ảnh.',
+          'glassNavigationDefaults is a set of default props for YugenProvider: every navigation component with glass gets material="glass" in one place. A material prop on an instance still wins, such as glass-clear over a photo.',
+        )}
+      >
+        <div className="flex flex-col gap-4">
+          <CodeBlock code={PROVIDER_DEFAULTS} />
+          <P>
+            {t(
+              "Gồm Toolbar, TabsList, Nav, MenuPopover, MenuSubPopover, PopoverSurface, TooltipContent, DialogSurface, DrawerSurface và SheetContent. Xem Props mặc định & mật độ ở trang Theming.",
+              "It covers Toolbar, TabsList, Nav, MenuPopover, MenuSubPopover, PopoverSurface, TooltipContent, DialogSurface, DrawerSurface and SheetContent. See Default props & density on the Theming page.",
+            )}
+          </P>
+        </div>
       </DocSection>
 
       <DocSection id="utilities" title={t("Utility", "Utilities")}>
