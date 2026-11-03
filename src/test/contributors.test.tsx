@@ -1,15 +1,24 @@
-import { render } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 // @ts-expect-error -- script Node thuần, không có khai báo kiểu
-import { buildContributors, pullTypes } from "../../scripts/contributors.mjs";
+import { buildContributors, parseArgs, pullTypes } from "../../scripts/contributors.mjs";
 // @ts-expect-error -- module Changesets thuần JS
 import changelog, { splitThanks, thanksText } from "../../.changeset/changelog.mjs";
-import { CONTRIBUTORS, contributionsIn, creditsBetween, type Contributor } from "@/docs/contributors";
+import {
+  CONTRIBUTORS,
+  CONTRIBUTORS_LIVE_URL,
+  CONTRIBUTORS_UPDATED,
+  contributionsIn,
+  creditsBetween,
+  parseContributors,
+  useLiveContributors,
+  type Contributor,
+} from "@/docs/contributors";
 import { SakuraBranch } from "@/docs/SakuraBranch";
 
 const user = (login: string, name?: string) => ({ __typename: "User", login, name, avatarUrl: `https://avatars.githubusercontent.com/u/${login.length}?v=4` });
 const bot = (login: string) => ({ __typename: "Bot", login, avatarUrl: "" });
-const pull = (number: number, author: object, files: string[], mergedAt: string, reviewers: object[] = []) => ({
+const pull = (number: number, author: object, files: string[], mergedAt: string, reviewers: object[] = [], comments: object[] = []) => ({
   number,
   title: `PR ${number}`,
   url: `https://github.com/x/y/pull/${number}`,
@@ -17,6 +26,7 @@ const pull = (number: number, author: object, files: string[], mergedAt: string,
   author,
   files: { nodes: files.map((path) => ({ path })) },
   reviews: { nodes: reviewers.map((author) => ({ author })) },
+  timelineItems: { nodes: comments },
 });
 const issue = (number: number, author: object, labels: string[], createdAt: string, title = `Issue ${number}`, comments: object[] = []) => ({
   number,
@@ -25,7 +35,7 @@ const issue = (number: number, author: object, labels: string[], createdAt: stri
   createdAt: `${createdAt}T10:00:00Z`,
   author,
   labels: { nodes: labels.map((name) => ({ name })) },
-  comments: { nodes: comments },
+  timelineItems: { nodes: comments },
 });
 const comment = (issueNumber: number, id: number, author: object, createdAt: string, bodyText: string) => ({
   url: `https://github.com/x/y/issues/${issueNumber}#issuecomment-${id}`,
@@ -34,6 +44,11 @@ const comment = (issueNumber: number, id: number, author: object, createdAt: str
   author,
 });
 const LONG = "Persist only the desktop collapsed state; treat the Drawer as transient.";
+/** Commit trong lịch sử next: tác giả (kể cả Co-authored-by) và các PR chứa nó, PR tạo trước đứng trước. */
+const commit = (authors: object[], prs: [number, boolean][]) => ({
+  authors: { nodes: authors.map((user) => ({ user })) },
+  associatedPullRequests: { nodes: prs.map(([number, merged]) => ({ number, merged })) },
+});
 
 describe("scripts/contributors.mjs", () => {
   it("xếp loại PR theo file, bỏ file sinh ra", () => {
@@ -120,6 +135,123 @@ describe("scripts/contributors.mjs · góp ý trong issue", () => {
       [21, ["discussion"], "8"],
       [null, ["a11y", "idea"], "2"],
     ]);
+  });
+});
+
+describe("scripts/contributors.mjs · bình luận trên PR và co-author (#272)", () => {
+  it("bình luận trên PR đã merge của người khác là góp ý, cùng luật với issue", () => {
+    const people = buildContributors(
+      {
+        pulls: [
+          pull(30, user("dev", "Dev"), ["src/lib/cn.ts"], "2026-11-01", [], [
+            { ...comment(30, 1, user("dave", "Dave"), "2026-10-31", LONG), url: "https://github.com/x/y/pull/30#issuecomment-1" },
+            { ...comment(30, 2, user("dev"), "2026-10-31", LONG), url: "https://github.com/x/y/pull/30#issuecomment-2" },
+            { ...comment(30, 3, user("owner"), "2026-10-31", LONG), url: "https://github.com/x/y/pull/30#issuecomment-3" },
+            { ...comment(30, 4, user("dave"), "2026-10-31", "LGTM"), url: "https://github.com/x/y/pull/30#issuecomment-4" },
+          ]),
+        ],
+        issues: [],
+      },
+      { maintainers: ["owner"] },
+    ) as Contributor[];
+    expect(people.map((p) => [p.login, p.counts])).toEqual([
+      ["dave", { discussion: 1 }],
+      ["dev", { code: 1 }],
+    ]);
+    expect(people[0].items?.[0]).toMatchObject({ number: 30, title: "PR 30", url: "https://github.com/x/y/pull/30#issuecomment-1" });
+  });
+
+  it("co-author: commit của người khác trong PR merge sớm nhất chứa nó; một lần mỗi PR, bỏ PR release, maintainer, bot và mục ghi tay", () => {
+    const giabao = user("giabao", "Gia Bao");
+    const people = buildContributors(
+      {
+        pulls: [
+          pull(57, user("owner"), ["src/hooks/useClipboard.ts", "src/docs/hooks.tsx"], "2026-11-02"),
+          pull(60, user("owner"), ["CHANGELOG.md"], "2026-11-11"),
+          pull(61, user("owner"), ["src/lib/cn.ts"], "2026-11-12"),
+        ],
+        issues: [],
+        commits: [
+          // #53 (không merge) → #57 (merge) → #60 (release next → main): credit cho #57.
+          commit([giabao], [[53, false], [57, true], [60, true]]),
+          commit([giabao], [[53, false], [57, true], [60, true]]),
+          commit([user("owner"), bot("dependabot[bot]")], [[57, true], [60, true]]),
+          // Co-authored-by trong một commit của maintainer.
+          commit([user("owner"), user("pair", "Pair")], [[61, true]]),
+          // Đã ghi tay cho #61.
+          commit([user("noted")], [[61, true]]),
+          // Commit không thuộc PR nào đã merge.
+          commit([user("stray")], [[70, false]]),
+          commit([user("lone")], []),
+        ],
+      },
+      {
+        maintainers: ["owner"],
+        people: [{ login: "noted", types: ["design"], title: "Icon", date: "2026-11-12", url: "https://github.com/x/y/pull/61" }],
+      },
+    ) as Contributor[];
+    const byLogin = Object.fromEntries(people.map((p) => [p.login, p]));
+    expect(Object.keys(byLogin).sort()).toEqual(["giabao", "noted", "owner", "pair"]);
+    expect(byLogin.giabao).toMatchObject({ name: "Gia Bao", first: "2026-11-02", counts: { code: 1, docs: 1 } });
+    expect(byLogin.giabao.items?.map((i) => i.number)).toEqual([57]);
+    expect(byLogin.pair.counts).toEqual({ code: 1 });
+    expect(byLogin.noted.counts).toEqual({ design: 1 });
+    expect(byLogin.owner.counts).toEqual({ code: 3, docs: 1 });
+  });
+
+  it("--out và --strict", () => {
+    expect(parseArgs([]).strict).toBe(false);
+    expect(parseArgs([]).out).toMatch(/src[\\/]docs[\\/]contributors\.json$/);
+    const { out, strict } = parseArgs(["--out", "data/contributors.json", "--strict"]);
+    expect(strict).toBe(true);
+    expect(out).toMatch(/data[\\/]contributors\.json$/);
+  });
+});
+
+describe("dữ liệu mới từ nhánh contributors-data (#272)", () => {
+  const person = { login: "new", name: "New", avatar: "https://github.com/new.png", first: "2026-11-03", counts: { discussion: 1 }, items: [] };
+  const fresh = { updated: "2099-01-01", people: [...CONTRIBUTORS, person] };
+
+  function Probe() {
+    const { people, updated } = useLiveContributors();
+    return <p data-testid="probe">{`${people.length} ${updated}`}</p>;
+  }
+  const mockFetch = (response: () => Promise<unknown>) => vi.stubGlobal("fetch", vi.fn(response));
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("kiểm dạng: thiếu trường, sai kiểu, danh sách rỗng thì bỏ", () => {
+    expect(parseContributors(fresh)).toEqual(fresh);
+    expect(parseContributors(null)).toBeUndefined();
+    expect(parseContributors({ updated: "hôm nay", people: [person] })).toBeUndefined();
+    expect(parseContributors({ updated: "2099-01-01", people: [] })).toBeUndefined();
+    expect(parseContributors({ updated: "2099-01-01", people: [{ ...person, counts: undefined }] })).toBeUndefined();
+    expect(parseContributors({ updated: "2099-01-01", people: [{ ...person, items: "x" }] })).toBeUndefined();
+  });
+
+  it("render snapshot trước, rồi đổi sang bản mới hơn", async () => {
+    mockFetch(() => Promise.resolve({ ok: true, json: () => Promise.resolve(fresh) }));
+    render(<Probe />);
+    expect(screen.getByTestId("probe").textContent).toBe(`${CONTRIBUTORS.length} ${CONTRIBUTORS_UPDATED}`);
+    await waitFor(() => expect(screen.getByTestId("probe").textContent).toBe(`${CONTRIBUTORS.length + 1} 2099-01-01`));
+    expect(fetch).toHaveBeenCalledWith(CONTRIBUTORS_LIVE_URL, expect.anything());
+    expect(CONTRIBUTORS_LIVE_URL).toBe("https://raw.githubusercontent.com/trandat1114/Yugen-UI/contributors-data/contributors.json");
+  });
+
+  it("giữ snapshot khi bản tải về cũ hơn, sai dạng hoặc lỗi mạng", async () => {
+    for (const response of [
+      () => Promise.resolve({ ok: true, json: () => Promise.resolve({ ...fresh, updated: "2000-01-01" }) }),
+      () => Promise.resolve({ ok: true, json: () => Promise.resolve({ updated: "2099-01-01" }) }),
+      () => Promise.resolve({ ok: false, json: () => Promise.reject(new Error("404")) }),
+      () => Promise.reject(new TypeError("Failed to fetch")),
+    ]) {
+      mockFetch(response);
+      const { unmount } = render(<Probe />);
+      await waitFor(() => expect(fetch).toHaveBeenCalled());
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      expect(screen.getByTestId("probe").textContent).toBe(`${CONTRIBUTORS.length} ${CONTRIBUTORS_UPDATED}`);
+      unmount();
+      vi.unstubAllGlobals();
+    }
   });
 });
 

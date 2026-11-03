@@ -16,8 +16,11 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import { pathToFileURL } from "node:url";
 
-/** Không bao giờ xoá. `issue-assets`: nhánh mồ côi chứa ảnh chụp nhúng trong issue / PR. */
-export const PROTECTED = [/^main$/, /^next$/, /^canary$/, /^gh-pages$/, /^issue-assets$/, /^release\/.+/];
+/**
+ * Không bao giờ xoá. `issue-assets`: nhánh mồ côi chứa ảnh chụp nhúng trong issue / PR. `contributors-data`: dữ liệu trang
+ * Người đóng góp do contributors.yml cập nhật (#272).
+ */
+export const PROTECTED = [/^main$/, /^next$/, /^canary$/, /^gh-pages$/, /^issue-assets$/, /^contributors-data$/, /^release\/.+/];
 /** PR đóng (không merge) bao lâu thì xoá được nhánh — đầu PR vẫn còn ở refs/pull/<số>/head. */
 export const CLOSED_DAYS = 14;
 /** Nhánh không có PR, không có commit bao lâu thì đưa vào "Cần xem". exp/ được lâu hơn. */

@@ -38,7 +38,14 @@ export async function waitForDocsReady(page: Page) {
 }
 
 /** Mở một route docs với theme/hướng chữ cho trước và chờ trang sẵn sàng. */
-export async function openDocs(page: Page, route: string, appearance: Appearance = {}, { freeze = true } = {}) {
+/**
+ * Dữ liệu người đóng góp mới nhất (#272): trang /contributors tải từ nhánh contributors-data trên GitHub. Mặc định bị chặn
+ * để test không phụ thuộc mạng và dữ liệu thật; test cần thì truyền `live: true` và tự route URL này.
+ */
+export const CONTRIBUTORS_LIVE = "https://raw.githubusercontent.com/**/contributors-data/contributors.json";
+
+export async function openDocs(page: Page, route: string, appearance: Appearance = {}, { freeze = true, live = false } = {}) {
+  if (!live) await page.route(CONTRIBUTORS_LIVE, (request) => request.abort());
   // Không chờ "load" (ảnh, font, mọi module): đã chờ h1 + PageProgress bên dưới.
   await page.goto(docsUrl(route, appearance), { waitUntil: "domcontentloaded" });
   await waitForDocsReady(page);

@@ -1,0 +1,78 @@
+# Contributors page (#272): fresh data a few minutes after an issue, a comment or a merged PR, without waiting for a
+# docs deploy. scripts/contributors.mjs (from the default branch) recomputes everything (~20 GraphQL points) and, when the
+# list of people changed, force-pushes contributors.json as a single commit to the orphan branch contributors-data. The
+# page loads that file from raw.githubusercontent.com and falls back to the snapshot built into the docs.
+# Event-triggered workflows run from the default branch, so this starts working once the file is on main.
+name: Contributors data
+
+on:
+  issues:
+    types: [opened, edited, deleted, transferred, labeled, unlabeled]
+  issue_comment:
+    types: [created, edited, deleted]
+  pull_request_target:
+    types: [closed]
+  schedule:
+    - cron: "23 3 * * *" # daily reconcile: reviews after merge, a missed or cancelled run
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A burst of comments collapses into the last run.
+concurrency:
+  group: contributors-data
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    # Skip forks, PRs closed without merging, and comments by bots or the owner (maintainer comments are not credited).
+    if: >-
+      github.repository == 'trandat1114/Yugen-UI' &&
+      (github.event_name != 'pull_request_target' || github.event.pull_request.merged) &&
+      (github.event_name != 'issue_comment' || (github.event.comment.user.type != 'Bot' && github.event.comment.user.login != github.repository_owner))
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write # push contributors-data
+      issues: read
+      pull-requests: read
+    steps:
+      # Only the script and the manual credits, from the default branch. PR code is never checked out.
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          sparse-checkout: |
+            scripts/contributors.mjs
+            src/docs/contributors.extra.json
+          sparse-checkout-cone-mode: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Contributors
+        run: node scripts/contributors.mjs --strict --out "$RUNNER_TEMP/contributors.json"
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Push contributors-data when the people changed
+        env:
+          EVENT: ${{ github.event_name }}
+        run: |
+          next="$RUNNER_TEMP/contributors.json"
+          # `updated` changes every day; only a change in `people` is worth a push. Any error in the comparison (no branch
+          # yet, unreadable JSON) counts as a change, so it never skips a push silently.
+          if git fetch --depth=1 origin contributors-data 2>/dev/null &&
+            git show FETCH_HEAD:contributors.json > "$RUNNER_TEMP/previous.json" &&
+            node -e 'const people = (f) => JSON.stringify(JSON.parse(require("fs").readFileSync(f, "utf8")).people);
+              process.exit(people(process.argv[1]) === people(process.argv[2]) ? 0 : 1)' "$RUNNER_TEMP/previous.json" "$next"; then
+            echo "No change."
+            exit 0
+          fi
+          blob=$(git hash-object -w "$next")
+          tree=$(printf '100644 blob %s\tcontributors.json\n' "$blob" | git mktree)
+          commit=$(git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit-tree "$tree" -m "contributors: $EVENT")
+          git push --force origin "$commit:refs/heads/contributors-data"
+          echo "Pushed $commit."

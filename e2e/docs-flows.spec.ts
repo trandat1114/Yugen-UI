@@ -1,6 +1,8 @@
+import fs from "node:fs";
+import path from "node:path";
 import { test, expect, type Page } from "@playwright/test";
 import { AxeBuilder } from "@axe-core/playwright";
-import { docsUrl, FREEZE_MOTION_CSS, openDocs, waitForDocsReady } from "./utils";
+import { CONTRIBUTORS_LIVE, docsUrl, FREEZE_MOTION_CSS, openDocs, waitForDocsReady } from "./utils";
 
 /** Các luồng chính của site docs (#39): bảng lệnh, ngôn ngữ và giao diện còn giữ sau khi tải lại, nút copy lệnh. */
 
@@ -329,6 +331,36 @@ test("Cộng đồng → Người đóng góp: mỗi người một bông hoa, t
   // Trang không cuộn ngang trên điện thoại (cành dùng preserveAspectRatio slice).
   await page.setViewportSize({ width: 390, height: 844 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+});
+
+test("Người đóng góp: bản mới trên nhánh contributors-data thay snapshot, lỗi thì giữ snapshot (#272)", async ({ page }) => {
+  const snapshot = JSON.parse(fs.readFileSync(path.resolve("src/docs/contributors.json"), "utf8")) as { people: unknown[] };
+  const newcomer = {
+    login: "e2e-newcomer",
+    name: "E2E Newcomer",
+    avatar: "https://avatars.githubusercontent.com/u/1?v=4",
+    first: "2099-01-01",
+    counts: { discussion: 1 },
+    items: [{ types: ["discussion"], number: 1, title: "Góp ý", date: "2099-01-01", url: "https://github.com/trandat1114/Yugen-UI/issues/1" }],
+  };
+  let status = 200;
+  await page.route(CONTRIBUTORS_LIVE, (route) =>
+    status === 200 ? route.fulfill({ json: { updated: "2099-01-01", people: [...snapshot.people, newcomer] } }) : route.fulfill({ status }),
+  );
+
+  await openDocs(page, "/contributors", {}, { live: true });
+  const flowers = page.locator(".cb-flower");
+  await expect(flowers).toHaveCount(snapshot.people.length + 1);
+  await expect(page.locator('#ideas a[href="https://github.com/e2e-newcomer"]')).toBeVisible();
+  await expect(page.locator("#how")).toContainText("2099");
+
+  status = 500;
+  const failed = page.waitForResponse(CONTRIBUTORS_LIVE);
+  await page.reload();
+  await failed;
+  await expect(page.locator("main h1")).toBeVisible();
+  await expect(page.locator('#ideas a[href="https://github.com/e2e-newcomer"]')).toHaveCount(0);
+  await expect(flowers).toHaveCount(snapshot.people.length);
 });
 
 test("ví dụ: mở code thì ô chiếm cả hàng của lưới, đóng lại về một cột (#259)", async ({ page }) => {

@@ -23,12 +23,11 @@ import {
   CONTRIBUTION_GROUPS,
   CONTRIBUTION_TYPES,
   contributionsIn,
-  CONTRIBUTORS,
-  CONTRIBUTORS_UPDATED,
   profileUrl,
   type ContributionGroup,
   type ContributionType,
   type Contributor,
+  useLiveContributors,
 } from "../contributors";
 
 const TYPE_ICON: Record<ContributionType, React.ReactElement> = {
@@ -79,14 +78,14 @@ const VI = {
   inviteOpen: "Xem issue đang mở",
   howTitle: "Cách ghi tên",
   how: [
-    "Code, template, block, tài liệu, bản dịch: PR đã merge, xếp loại theo các file PR sửa.",
+    "Code, template, block, tài liệu, bản dịch: PR đã merge, xếp loại theo các file PR sửa. Có commit trong PR của người khác (kể cả dòng Co-authored-by) cũng được tính cho PR đó.",
     "Review: review trên một PR đã merge.",
     "Báo lỗi, báo lỗi tiếp cận, đề xuất: issue mở bằng mẫu issue, trừ issue trùng, không hợp lệ hoặc chỉ là câu hỏi.",
-    "Góp ý: bình luận trong issue của người khác, bỏ bình luận quá ngắn như \"+1\" hay \"Cảm ơn\". Lấy tự động như PR và issue.",
+    "Góp ý: bình luận trong issue hoặc PR đã merge của người khác, bỏ bình luận quá ngắn như \"+1\" hay \"Cảm ơn\".",
     "Thiết kế và ý tưởng ngoài GitHub, hoặc khi một góp ý cần ghi rõ loại (đề xuất, báo lỗi tiếp cận): maintainer ghi tay vào src/docs/contributors.extra.json.",
   ],
   updated: (date: string) =>
-    `Danh sách cập nhật mỗi lần docs được deploy, lần gần nhất ${date}. Mỗi bản phát hành cũng ghi tên người đóng góp ở trang Có gì mới và trong CHANGELOG.`,
+    `Mọi mục trên được lấy tự động từ GitHub vài phút sau mỗi issue, bình luận hay PR được merge; lần cập nhật gần nhất ${date}. Mỗi bản phát hành cũng ghi tên người đóng góp ở trang Có gì mới và trong CHANGELOG.`,
   privacy:
     "Trang chỉ dùng dữ liệu công khai trên GitHub: tên đăng nhập, tên hiển thị và ảnh đại diện. Muốn bỏ tên khỏi trang, mở issue hoặc nhắn maintainer.",
   types: {
@@ -135,14 +134,14 @@ const EN: typeof VI = {
   inviteOpen: "Browse open issues",
   howTitle: "How credit works",
   how: [
-    "Code, templates, blocks, docs, translations: merged pull requests, sorted by the files they change.",
+    "Code, templates, blocks, docs, translations: merged pull requests, sorted by the files they change. Commits in someone else's pull request (including a Co-authored-by line) count for that pull request.",
     "Reviews: a review on a merged pull request.",
     "Bug reports, accessibility reports, ideas: issues opened from an issue template, except duplicates, invalid issues and questions.",
-    "Feedback: comments on someone else's issue, except very short ones such as \"+1\" or \"Thanks\". Collected automatically, like pull requests and issues.",
+    "Feedback: comments on someone else's issue or merged pull request, except very short ones such as \"+1\" or \"Thanks\".",
     "Design and ideas outside GitHub, or a comment that deserves a more specific type (idea, accessibility report): added by a maintainer in src/docs/contributors.extra.json.",
   ],
   updated: (date) =>
-    `The list refreshes on every docs deploy, last on ${date}. Each release also names its contributors on What's new and in the CHANGELOG.`,
+    `All of the above is collected from GitHub a few minutes after each issue, comment or merged pull request; last updated on ${date}. Each release also names its contributors on What's new and in the CHANGELOG.`,
   privacy:
     "This page uses public GitHub data only: username, display name and avatar. To take your name off the page, open an issue or contact a maintainer.",
   types: {
@@ -324,18 +323,20 @@ function InviteCard({ c, group }: { c: Copy; group: ContributionGroup }) {
  * có chú thích icon; danh sách dài thì chú thích là bộ lọc theo loại.
  */
 function GroupSection({
+  contributors,
   group,
   c,
   locale,
   onActive,
 }: {
+  contributors: Contributor[];
   group: ContributionGroup;
   c: Copy;
   locale: string;
   onActive: (login: string | null) => void;
 }) {
   const [filter, setFilter] = React.useState<"all" | ContributionType>("all");
-  const people = CONTRIBUTORS.flatMap((person) => contributionsIn(person, group) ?? []);
+  const people = contributors.flatMap((person) => contributionsIn(person, group) ?? []);
   const types: ContributionType[] = CONTRIBUTION_GROUPS[group];
   const present = CONTRIBUTION_TYPES.filter((type) => types.includes(type) && people.some((p) => p.counts[type]));
   const shown = filter === "all" ? people : people.filter((p) => p.counts[filter]);
@@ -378,6 +379,7 @@ export function ContributorsPage() {
   const c = locale === "en" ? EN : VI;
   const [elapsed] = React.useState(prerenderedElapsed);
   const [active, setActive] = React.useState<string | null>(null);
+  const { people, updated } = useLiveContributors();
 
   return (
     <div className="pb-8">
@@ -385,12 +387,12 @@ export function ContributorsPage() {
 
       {/* Cắt phần cành ngoài khung (preserveAspectRatio slice trên màn hẹp) để trang không cuộn ngang. */}
       <figure className="-mx-4 mb-6 overflow-hidden md:-mx-12">
-        <SakuraBranch people={CONTRIBUTORS} active={active} elapsed={elapsed} className="block aspect-60/13 min-h-40 w-full" />
+        <SakuraBranch people={people} active={active} elapsed={elapsed} className="block aspect-60/13 min-h-40 w-full" />
         <figcaption className="mt-2 max-w-2xl px-4 text-caption1 text-foreground-3 md:px-12">{c.caption}</figcaption>
       </figure>
 
-      <GroupSection group="code" c={c} locale={locale} onActive={setActive} />
-      <GroupSection group="ideas" c={c} locale={locale} onActive={setActive} />
+      <GroupSection contributors={people} group="code" c={c} locale={locale} onActive={setActive} />
+      <GroupSection contributors={people} group="ideas" c={c} locale={locale} onActive={setActive} />
 
       <DocSection id="how" title={c.howTitle}>
         <ul className="flex max-w-3xl list-disc flex-col gap-2 ps-5 text-body1 text-foreground-2">
@@ -398,7 +400,7 @@ export function ContributorsPage() {
             <li key={line}>{line}</li>
           ))}
         </ul>
-        <p className="mt-4 max-w-3xl text-body1 text-foreground-2">{c.updated(formatDate(CONTRIBUTORS_UPDATED, locale))}</p>
+        <p className="mt-4 max-w-3xl text-body1 text-foreground-2">{c.updated(formatDate(updated, locale))}</p>
         <p className="mt-2 max-w-3xl text-body1 text-foreground-2">{c.privacy}</p>
       </DocSection>
     </div>

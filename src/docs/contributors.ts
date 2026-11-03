@@ -1,8 +1,11 @@
 /**
  * Người đóng góp (#248): src/docs/contributors.json do scripts/contributors.mjs sinh từ GitHub API (pages.yml làm mới mỗi
- * lần deploy docs), cộng phần ghi tay trong contributors.extra.json.
+ * lần deploy docs), cộng phần ghi tay trong contributors.extra.json. Trang /contributors tải thêm bản mới hơn từ nhánh
+ * contributors-data (#272), do contributors.yml cập nhật vài phút sau mỗi issue, bình luận hay PR được merge.
  */
+import * as React from "react";
 import data from "./contributors.json";
+import { SITE } from "./site";
 
 export type ContributionType = "code" | "templates" | "docs" | "translation" | "design" | "review" | "discussion" | "bug" | "a11y" | "idea";
 
@@ -58,6 +61,50 @@ export function contributionsIn(person: Contributor, group: ContributionGroup): 
     ?.map((item) => ({ ...item, types: item.types.filter((type) => types.includes(type)) }))
     .filter((item) => item.types.length);
   return { ...person, counts, ...(items && { items }) };
+}
+
+export interface ContributorsData {
+  /** YYYY-MM-DD. */
+  updated: string;
+  people: Contributor[];
+}
+
+/** contributors.json trên nhánh contributors-data (raw.githubusercontent.com cho phép CORS, CDN cache khoảng 5 phút). */
+export const CONTRIBUTORS_LIVE_URL = `${SITE.links.repository.replace("https://github.com/", "https://raw.githubusercontent.com/")}/contributors-data/contributors.json`;
+
+const isString = (value: unknown): value is string => typeof value === "string";
+
+/** Kiểm dạng dữ liệu tải về; sai dạng thì undefined để trang giữ snapshot. */
+export function parseContributors(value: unknown): ContributorsData | undefined {
+  if (!value || typeof value !== "object") return undefined;
+  const { updated, people } = value as Partial<ContributorsData>;
+  if (!isString(updated) || !/^\d{4}-\d{2}-\d{2}$/.test(updated) || !Array.isArray(people) || people.length === 0) return undefined;
+  const valid = people.every(
+    (p) =>
+      p && isString(p.login) && isString(p.name) && isString(p.avatar) && isString(p.first) &&
+      !!p.counts && typeof p.counts === "object" && (p.items === undefined || Array.isArray(p.items)),
+  );
+  return valid ? { updated, people } : undefined;
+}
+
+/**
+ * Danh sách cho trang /contributors: render bằng snapshot lúc build (khớp HTML prerender), sau đó tải bản trên nhánh
+ * contributors-data. Bản tải về cũ hơn snapshot, sai dạng hoặc lỗi mạng thì giữ snapshot.
+ */
+export function useLiveContributors(): ContributorsData {
+  const [live, setLive] = React.useState<ContributorsData>({ updated: CONTRIBUTORS_UPDATED, people: CONTRIBUTORS });
+  React.useEffect(() => {
+    const controller = new AbortController();
+    fetch(CONTRIBUTORS_LIVE_URL, { signal: controller.signal })
+      .then((res) => (res.ok ? res.json() : undefined))
+      .then((value: unknown) => {
+        const next = parseContributors(value);
+        if (next && next.updated >= CONTRIBUTORS_UPDATED) setLive(next);
+      })
+      .catch(() => {});
+    return () => controller.abort();
+  }, []);
+  return live;
 }
 
 export const profileUrl = (login: string) => `https://github.com/${login}`;
