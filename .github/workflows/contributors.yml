@@ -1,7 +1,9 @@
 # Contributors page (#272): fresh data a few minutes after an issue, a comment or a merged PR, without waiting for a
 # docs deploy. scripts/contributors.mjs (from the default branch) recomputes everything (~20 GraphQL points) and, when the
-# list of people changed, force-pushes contributors.json as a single commit to the orphan branch contributors-data. The
-# page loads that file from raw.githubusercontent.com and falls back to the snapshot built into the docs.
+# list of people changed, force-pushes contributors.json and the avatar images (contributors-code.svg,
+# contributors-ideas.svg, #275) as a single commit to the orphan branch contributors-data. The page loads the JSON from
+# raw.githubusercontent.com and falls back to the snapshot built into the docs; CONTRIBUTING.md and the README embed the
+# images.
 # Event-triggered workflows run from the default branch, so this starts working once the file is on main.
 name: Contributors data
 
@@ -52,7 +54,7 @@ jobs:
           node-version: 24
 
       - name: Contributors
-        run: node scripts/contributors.mjs --strict --out "$RUNNER_TEMP/contributors.json"
+        run: node scripts/contributors.mjs --strict --out "$RUNNER_TEMP/data/contributors.json" --svg "$RUNNER_TEMP/data"
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
@@ -60,18 +62,18 @@ jobs:
         env:
           EVENT: ${{ github.event_name }}
         run: |
-          next="$RUNNER_TEMP/contributors.json"
-          # `updated` changes every day; only a change in `people` is worth a push. Any error in the comparison (no branch
-          # yet, unreadable JSON) counts as a change, so it never skips a push silently.
+          data="$RUNNER_TEMP/data"
+          # `updated` changes every day; only a change in `people` (or a file missing on the branch) is worth a push. Any
+          # error in the comparison (no branch yet, unreadable JSON) counts as a change, so it never skips a push silently.
           if git fetch --depth=1 origin contributors-data 2>/dev/null &&
+            git cat-file -e FETCH_HEAD:contributors-code.svg && git cat-file -e FETCH_HEAD:contributors-ideas.svg &&
             git show FETCH_HEAD:contributors.json > "$RUNNER_TEMP/previous.json" &&
             node -e 'const people = (f) => JSON.stringify(JSON.parse(require("fs").readFileSync(f, "utf8")).people);
-              process.exit(people(process.argv[1]) === people(process.argv[2]) ? 0 : 1)' "$RUNNER_TEMP/previous.json" "$next"; then
+              process.exit(people(process.argv[1]) === people(process.argv[2]) ? 0 : 1)' "$RUNNER_TEMP/previous.json" "$data/contributors.json"; then
             echo "No change."
             exit 0
           fi
-          blob=$(git hash-object -w "$next")
-          tree=$(printf '100644 blob %s\tcontributors.json\n' "$blob" | git mktree)
+          tree=$(for file in "$data"/*; do printf '100644 blob %s\t%s\n' "$(git hash-object -w "$file")" "$(basename "$file")"; done | git mktree)
           commit=$(git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
             commit-tree "$tree" -m "contributors: $EVENT")
           git push --force origin "$commit:refs/heads/contributors-data"

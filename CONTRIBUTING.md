@@ -1,14 +1,290 @@
-# Đóng góp cho Yugen UI · Contributing to Yugen UI
+# Contributing to Yugen UI
 
-Cảm ơn bạn đã quan tâm! · Thanks for your interest! The Vietnamese guide comes first, followed by a short English
-version. Both point to [Design.md](./Design.md) — the project rulebook, which always wins when in doubt.
+*Tiếng Việt: [xem bên dưới](#tiếng-việt).*
 
-Mọi người tham gia đều phải tuân thủ [Quy tắc ứng xử](./CODE_OF_CONDUCT.md). Vai trò, cách ra quyết định và RFC: [GOVERNANCE.md](./GOVERNANCE.md); kiến trúc và vận hành: [Wiki](https://github.com/trandat1114/Yugen-UI/wiki). Lỗ hổng bảo mật: **không** mở issue công
-khai, xem [SECURITY.md](./SECURITY.md).
+Thanks for your interest! This guide comes in English first, then the same content in Vietnamese. Both point to
+[Design.md](./Design.md), the project rulebook, which wins when in doubt.
+
+Everyone taking part follows the [Code of Conduct](./CODE_OF_CONDUCT.md). Roles, decisions and RFCs:
+[GOVERNANCE.md](./GOVERNANCE.md); architecture and operations: the [Wiki](https://github.com/trandat1114/Yugen-UI/wiki).
+Security vulnerabilities: do **not** open a public issue, see [SECURITY.md](./SECURITY.md).
+
+## Contributors
+
+**Code and docs**
+
+<a href="https://trandat1114.github.io/Yugen-UI/contributors#code"><img src="https://raw.githubusercontent.com/trandat1114/Yugen-UI/contributors-data/contributors-code.svg" alt="Avatars of everyone credited for code, templates, docs and translations"></a>
+
+**Ideas and discussion**
+
+<a href="https://trandat1114.github.io/Yugen-UI/contributors#ideas"><img src="https://raw.githubusercontent.com/trandat1114/Yugen-UI/contributors-data/contributors-ideas.svg" alt="Avatars of everyone credited for ideas, design, bug reports, reviews and feedback"></a>
+
+Names and what each person did are on the [Contributors page](https://trandat1114.github.io/Yugen-UI/contributors).
+The page and these images update a few minutes after each contribution, see [Contributor credit](#contributor-credit).
+
+---
+
+## English
+
+### Setup
+
+Requires Node.js **24 LTS** (or 22.22+) and npm.
+
+```bash
+npm install
+npm run dev          # docs site at http://localhost:5173
+```
+
+### Commands
+
+| Command | What it does |
+|---|---|
+| `npm run dev` | Runs the docs site (Vite) |
+| `npm run typecheck` | Type check (`tsc -b`) |
+| `npm run lint:classes` | Checks that Tailwind classes are canonical (`node scripts/canonical-classes.mjs --fix` repairs them) |
+| `npm run build:lib` | Builds the library into `dist/` (JS + `.d.ts` + `theme.css` / `styles.css` / `tokens.css`) |
+| `npm run build:docs` | Builds the docs site into `dist-docs/` |
+| `npm run build` | Both |
+| `npm run pack:check` | Previews the npm package contents (`npm pack --dry-run`) |
+| `npm test` | Unit and interaction tests (Vitest + Testing Library, `src/**/*.test.ts(x)`) |
+| `npm run test:e2e` | Playwright on the docs site: axe (a11y), mouse drag, emulated touch |
+| `npm run test:visual` | Screenshot comparison (the `visual` Playwright project) |
+| `npm run test:engines` | Interaction E2E on Firefox and WebKit (Safari desktop, iPhone) |
+| `npm run size` | Package size budgets (`size-limit`, after `build:lib`) |
+| `npm run changeset` | Adds a changeset to the PR (`npx changeset`) |
+| `npm run check:release` | Checks `package.json` = `src/docs/news` = `CHANGELOG.md` and the rules for each number |
+| `npm run check:changesets` | Checks that each changeset's bump follows the rules for each number |
+| `npm run check:examples` | Every docs example type-checks when copied out and used with `yugen-ui` |
+| `npm run check:props` | Props tables in the docs match the real types |
+| `npm run registry` | Generates the shadcn registry into `public/r/` (runs inside `build:docs`) |
+| `npm run contributors` | Refreshes `src/docs/contributors.json` from GitHub (needs `GITHUB_TOKEN`) |
+| `npm run version-packages` | (maintainers) Versions from changesets and syncs templates and the lockfile |
+| `node scripts/sync-templates.mjs` | Regenerates `templates/` from the blocks and `src/docs/template-library/` (`--check` to verify) |
+| `node scripts/og-image.mjs` | Regenerates the share image `public/og.jpg` (Open Graph) |
+
+### Tests
+
+- `npm test` — unit and interaction tests (Vitest + Testing Library, jsdom), colocated as
+  `src/components/ui/<Name>/<Name>.test.tsx`; `npm run test:watch` while writing them.
+- `npm run test:e2e` — Playwright against the docs site (it starts `npm run dev` on port 5200): axe accessibility,
+  mouse drag and emulated touch. Locally it uses the installed Microsoft Edge; CI uses Playwright's Chromium (without
+  Edge: `npx playwright install chromium` and run with `CI=1`). Open the report with `npx playwright show-report`.
+- `npm run test:visual` — screenshot comparison. Only Linux baselines (`e2e/__screenshots__/**/*-linux.png`) are
+  committed, and CI compares them on every PR that changes components, styles or the docs layout. On Windows / macOS the
+  first run creates baselines for your machine (gitignored). After an intended visual change, run the **Visual
+  regression** workflow on your branch (Actions → Run workflow, tick `update`), download the `visual-screenshots`
+  artifact, copy it into `e2e/__screenshots__/` and commit. The workflow never commits.
+- `npm run test:engines` — interaction E2E on Firefox and WebKit (Safari desktop, iPhone); run
+  `npx playwright install firefox webkit` once. CI runs it weekly, on PRs into `main` and on PRs that change
+  `e2e/` or `playwright.config.ts` (the **Browser engines** workflow), not on every PR. Touch-drag tests go through CDP,
+  so they run on Chromium only.
+- `npm run size` — size budgets (`.size-limit.cjs`), after `npm run build:lib`. If a budget fails, find the cause first
+  (an extra import, a new dependency); raise a `limit` only on purpose, and say why in the PR.
+- The repo runs React 19; CI also runs typecheck, unit tests and the library build against React 18.3 (`react-18` job),
+  which is still supported. To try it locally, use a copy of the repo
+  (`npm i --no-save react@^18.3 react-dom@^18.3 @types/react@^18.3 @types/react-dom@^18.3`), not your main
+  `node_modules`.
+
+### Rules (summary of Design.md §0)
+
+1. No hard-coded HEX / rgb, px, ms or cubic-bezier in `.tsx`; only utilities mapped to tokens.
+2. Tailwind's default palette is disabled (`bg-blue-500`, `rounded-lg`, `shadow-md`, `text-sm` don't exist).
+3. Spacing uses the numeric scale on the Fluent ramp: `p-3`, `gap-2`, `px-5` (Design.md §3.2). Font sizes use the type
+   ramp only, `text-caption2 … text-display`.
+4. Always merge classes with `cn()` (`src/lib/cn.ts`), never with `twMerge` directly.
+5. No `dark:` variant; logical properties only (`ms/me/ps/pe/start/end`) so RTL works.
+6. Neutral colours for surfaces / text / borders · brand only for CTAs, selection, focus and links · semantic colours
+   only for states.
+7. Gradients only for illustrations / heroes, never on controls.
+8. Text contrast ≥ 4.5:1, UI parts ≥ 3:1; colour is never the only signal.
+9. Complex behaviour uses Radix / `cmdk` / `react-day-picker`; icons come from `@fluentui/react-icons` only. No other UI
+   or animation library.
+
+### Adding a component
+
+1. Create `src/components/ui/<Name>/<Name>.tsx` following Design.md §5 (named export, `forwardRef`, user `className`
+   last in `cn(...)`, hover / pressed / disabled / focus-visible states, keyboard support, `aria-*`).
+2. Add `export * from "./<Name>/<Name>";` to the right group in `src/components/ui/index.ts`. The npm package exports
+   everything in that barrel.
+3. Write the docs page: add a `ComponentDoc` to a file in `src/docs/registry/` (`slug`, `name`, `category`, `lead`,
+   `description`, `importCode`, `hero`, `examples` — **`code` must match the JSX in `render` exactly**, `dos` / `donts`,
+   `props`). The sidebar, search and home page are generated from the registry.
+   - `slug`, `name`, `category` and `lead` must be **string literals** (they are extracted at build time to lazy-load
+     the page).
+   - Examples with state or data: write a demo component in the file and slice its code with `// #region Name` …
+     `// #endregion` (see `src/docs/registry/content-search.tsx`), so `code` always matches `render`.
+   - `code` must **run when copied out**: shared data goes in `setup` (`declarationsOf(RAW, ["NAME"])`).
+4. Add the English lead: `<slug>: { lead: "…" }` in `src/docs/i18n/en/components.ts` (a test requires every slug).
+5. Tests next to the component (`<Name>.test.tsx`): behaviour, keyboard, ARIA. A component that reads time, media
+   queries or storage also gets a case in `src/test/ssrCases.tsx`.
+6. Check before opening a PR:
+   ```bash
+   npm run typecheck && npm run lint:classes && npm test
+   npm run check:examples && npm run check:props          # examples run on their own · props tables match the types
+   npx playwright test e2e/a11y.spec.ts --project=a11y --grep "<slug>"   # axe on your page
+   ```
+7. Changeset (`npx changeset`, usually `minor` for a new component); see [Changesets](#changesets).
+8. A new dependency, if really needed, goes in `dependencies` of `package.json`; the maintainer decides.
+
+### Adding a block
+
+1. Create `src/docs/block-library/NN-name.tsx` with `export const meta = { title, description, order }` and
+   `export default function …`.
+2. Import only from `@/components/ui` and `@fluentui/react-icons`, so people can copy the whole file.
+
+### Translating the docs
+
+UI strings live in `src/docs/i18n/vi.ts` (source of the keys) and `src/docs/i18n/en.ts`. English component names and
+leads: `src/docs/i18n/en/components.ts` (a test requires every slug). English concept pages: add
+`src/docs/concepts/en/<slug>.tsx` with the same section ids as the Vietnamese page, and its lead and table of contents
+in `src/docs/i18n/en/concepts.ts`. English component pages: add the entry to `src/docs/registry/en/<registry file>.ts`
+(description, example titles in the same order, dos / don'ts, a description for every prop; demos and code stay as
+they are); the page is marked translated at build time and `registry/en.test.ts` checks the entry is complete.
+Untranslated pages show a notice and the Vietnamese original.
+
+Copy (docs, templates, CLI messages, changesets) follows wiki › *Writing*: short and clear, no repeating what the UI
+next to it already says, package names as users see them.
+
+### Branches
+
+Bug fixes, docs, tests → PR to `main`. New components / props / tokens and breaking changes → PR to `next` (when it
+exists, otherwise `main`). Branch names: `feat/…`, `fix/…`, `docs/…`, `chore/…`, `exp/…`. Release channels (`latest`,
+`next`, `canary`, `release-X.Y`): wiki › *Branching and Release Channels*.
+
+### Commit conventions
+
+Use [Conventional Commits](https://www.conventionalcommits.org/):
+
+```
+feat(button): add the "tint" appearance
+fix(combobox): keep focus when a tag is removed with Backspace
+docs(theming): example of a custom brand
+```
+
+Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`. Breaking API changes add
+`!` (`feat(field)!: …`) and describe the change in the commit body.
+
+### Keep PRs few
+
+Every push to a PR reruns the whole CI (~5 min, plus Visual), so fewer PRs and fewer pushes are faster for everyone.
+
+- **One PR per issue.** Small changes in the same area (copy, docs of one page) go together, not one PR each. Avoid
+  stacked PRs (PR B built on PR A's branch); if one is unavoidable, state the merge order in the description.
+- **Open it as a draft** while you are still working: CI does not run on drafts; click *Ready for review* once.
+- **Check locally before pushing** (typecheck, `lint:classes`, the related tests), then push once.
+- **PRs that only touch Markdown / `wiki/`** skip CI.
+- **Dependabot** (`.github/dependabot.yml`): all updates go to `next`, at most one minor + patch PR and one major PR a
+  week; the CLI and GitHub Actions get one PR a month; 7-day cooldown. Majors that need code changes are ignored in the
+  config and tracked in a migration issue (#91) instead of sitting as red PRs.
+
+### Changesets
+
+From 0.6.0, `CHANGELOG.md` is generated by [Changesets](https://github.com/changesets/changesets) — do not edit it by
+hand. A PR with a user-facing change (component, prop, token, CSS, bug fix) adds a changeset; docs / test / CI-only
+PRs do not need one.
+
+A PR into `next` with a user-facing change (docs included) also adds an item to the **upcoming news entry**: the two
+files `src/docs/news/yugen-ui/<version>.vi.md` and `.en.md` marked `upcoming: true` (create them if missing, with the
+version from `npx changeset status`). CLI changes go to `src/docs/news/cli` / `create-yugen-ui`.
+`node scripts/check-news.mjs` checks the format; preview it on the `/next/` docs. Details: wiki › *Release Process* ›
+Tin trên trang Có gì mới.
+
+```bash
+npx changeset    # pick yugen-ui → patch or minor → write a user-facing summary
+```
+
+- `patch` for fixes and small improvements, `minor` for new components / props / tokens and — while the version is
+  `0.x` — for breaking changes too (start the summary with "**Breaking:**" and explain the migration).
+- Version numbers follow the **rules for each number** (docs › Versioning › Rules for each number): only new API is
+  `minor`, everything else is `patch`; PRs into `main` or `release/*` carry `patch` only; `major` starts at 1.0.
+  `npm run check:changesets` (CI) rejects a summary starting with "Fix" on a `minor`, "New" on a `patch` and
+  "**Breaking:**" on a `patch`. `check:release` checks the news in `src/docs/news`: no `new` / `breaking` item in a
+  patch, at least one `new` item in a minor, no skipped numbers, ≥ 14 days between minors and ≥ 180 days between
+  majors.
+- Write the summary for package users (in English, like the CHANGELOG): "`Combobox`: keep focus when a tag is removed
+  with Backspace.", not "fix bug".
+- Commit the generated `.changeset/*.md` file with your PR; you can edit its text.
+- One changeset per change (two new components → two files), any file name, for example:
+
+  ```md
+  ---
+  "yugen-ui": minor
+  ---
+
+  New `Quote` component: attributed quotations rendered as <figure> › <blockquote cite> + <figcaption>…
+  ```
+
+- **Needs a changeset**: anything people installing `yugen-ui` receive (components, props, exports, tokens, CSS,
+  fixes, a11y). **No changeset**: docs pages / examples, tests, CI, wiki (for example a redesigned docs example).
+- `npx changeset status` previews the bump before a release.
+- **On the `next` branch (prerelease mode)**: `.changeset/pre.json` lives only on `next` — commit it there, never edit
+  it by hand or bring it to `main`. Changeset files are **kept** after each `-next.N` release (that is normal) and
+  removed when the cycle exits pre mode for a stable release. Details: wiki › *Branching and Release Channels*.
+- To thank someone with no commit in the PR (a bug reporter, say), end the summary with a `Thanks: @name` line; the
+  CHANGELOG then reads "Thanks [@name](…)!". The PR author is thanked automatically when `npm run version-packages`
+  runs with `GITHUB_TOKEN` set (for example from `gh auth token`). Maintainers are not listed.
+
+### Contributor credit
+
+The `/contributors` page and the images at the top of this file list everyone with a merged pull request (including
+commits in someone else's pull request and `Co-authored-by` lines), an issue (bug report, accessibility report, idea), a
+review or a feedback comment on an issue or pull request, read from the GitHub API: `npm run contributors` (needs
+`GITHUB_TOKEN`) writes `src/docs/contributors.json`, the snapshot the Docs workflow refreshes on every deploy. The
+Contributors data workflow runs again a few minutes after each issue, comment or merged pull request (and daily) and
+pushes the data and the images to the `contributors-data` branch; the page loads it and falls back to the snapshot.
+Contributions outside GitHub (design, ideas), or a comment that deserves a more specific type, go by hand into
+`src/docs/contributors.extra.json`; titles always come from GitHub as written. To take your name off the page, open an
+issue or contact a maintainer, who adds your login to `exclude` in that file.
+
+### Pull request checklist
+
+- [ ] `npm run typecheck`, `npm run lint:classes`, `npm test`, `npm run build:lib` and `npm run build:docs` pass.
+- [ ] `npm run test:e2e` passes (new UI or interactions); `npm run size` is within budget.
+- [ ] The **Visual (compare)** check is green, or the baselines were updated in the same PR for an intended visual
+  change.
+- [ ] No arbitrary HEX / px / ms; spacing on the numeric scale; font sizes on the type ramp; shared classes used
+  (Design.md §5.7).
+- [ ] Colours match their roles; no large brand areas; no gradients on controls.
+- [ ] Hover / pressed / disabled / focus-visible states; keyboard works; tried in RTL.
+- [ ] Checked Sakura / Web / Teams × Light / Dark and High contrast.
+- [ ] Registry entry (or block file) added; example code matches the render.
+- [ ] Changeset added (`npx changeset`) if the change affects users.
+- [ ] Copy follows wiki › *Writing* (checklist at the end of the page).
+- [ ] PR into `next`: an item added to the upcoming news entry in `src/docs/news`, in both vi and en.
+
+### Releasing (maintainers)
+
+1. `npm run version-packages` (= `changeset version` + syncs `templates/` and the lockfile — skipping it turns CI red)
+   — writes the pending changesets into `CHANGELOG.md` (new section at the top), bumps `version` in `package.json` and
+   deletes the used changeset files. Review the generated entry.
+2. Finalize the news: remove `upcoming` from the two newest files in `src/docs/news/yugen-ui` and set the release date
+   (add `<version>.vi.md` and `.en.md` if there is no upcoming entry). The docs site reads its version from
+   `package.json` automatically.
+3. `npm install --package-lock-only` (syncs the version in `package-lock.json`), then `npm run check:release`
+   (`package.json` = `src/docs/news` = `CHANGELOG.md`).
+4. Commit (`chore(release): vX.Y.Z`) and merge to `main`.
+5. `git tag vX.Y.Z && git push --tags` — `.github/workflows/release.yml` re-checks the version against the tag, runs
+   the tests, builds and runs `npm publish --provenance` (needs the `NPM_TOKEN` secret). Tags containing `-`
+   (e.g. `v0.6.0-beta.1`) are published under the `next` dist-tag.
+
+The `@yugen-ui/cli` CLI and `create-yugen-ui` (`packages/`) are released separately with a `cli@X.Y.Z` tag, outside
+Changesets — rules and steps in the wiki › *Release Process* › CLI. PRs that change `packages/cli` or
+`packages/create-yugen-ui` add a line under `## Unreleased` in `packages/cli/CHANGELOG.md`. Every release needs news in
+`src/docs/news/cli` (and `src/docs/news/create-yugen-ui` when `create-yugen-ui` changes version), in Vietnamese and
+English, shown in its own tab on the What's new page; `check-release` fails without it. Before tagging run
+`npm run check:release --prefix packages/cli -- --npm` and `npm run smoke --prefix packages/cli`.
 
 ---
 
 ## Tiếng Việt
+
+Cảm ơn bạn đã quan tâm! Phần này cùng nội dung với bản tiếng Anh ở trên. Cả hai dẫn về [Design.md](./Design.md), bộ
+luật của dự án, luôn được ưu tiên khi có điều chưa rõ.
+
+Mọi người tham gia đều tuân thủ [Quy tắc ứng xử](./CODE_OF_CONDUCT.md). Vai trò, cách ra quyết định và RFC:
+[GOVERNANCE.md](./GOVERNANCE.md); kiến trúc và vận hành: [Wiki](https://github.com/trandat1114/Yugen-UI/wiki). Lỗ hổng
+bảo mật: **không** mở issue công khai, xem [SECURITY.md](./SECURITY.md). Ảnh những người đã đóng góp nằm ở mục
+[Contributors](#contributors) đầu trang.
 
 ### Cài đặt
 
@@ -41,6 +317,7 @@ npm run dev          # trang docs tại http://localhost:5173
 | `npm run check:examples` | Mọi ví dụ docs typecheck được khi chép ra dùng với `yugen-ui` |
 | `npm run check:props` | Bảng props trên docs khớp type thật |
 | `npm run registry` | Sinh registry shadcn vào `public/r/` (tự chạy trong `build:docs`) |
+| `npm run contributors` | Làm mới `src/docs/contributors.json` từ GitHub (cần `GITHUB_TOKEN`) |
 | `npm run version-packages` | (maintainer) Đánh số phiên bản từ changeset + đồng bộ templates & lockfile |
 | `node scripts/sync-templates.mjs` | Sinh lại `templates/` từ block và `src/docs/template-library/` (`--check` để kiểm tra) |
 | `node scripts/og-image.mjs` | Sinh lại ảnh chia sẻ `public/og.jpg` (Open Graph) |
@@ -110,7 +387,12 @@ npm run dev          # trang docs tại http://localhost:5173
 
 ### Dịch tài liệu
 
-Chuỗi giao diện docs nằm ở `src/docs/i18n/vi.ts` (nguồn khoá) và `src/docs/i18n/en.ts`. Tên / mô tả component tiếng Anh: `src/docs/i18n/en/components.ts` (test bắt buộc đủ mọi slug). Trang khái niệm tiếng Anh: thêm `src/docs/concepts/en/<slug>.tsx` cùng cấu trúc mục với bản tiếng Việt. Trang chưa dịch tự hiện thông báo và nội dung gốc.
+Chuỗi giao diện docs nằm ở `src/docs/i18n/vi.ts` (nguồn khoá) và `src/docs/i18n/en.ts`. Tên / mô tả component tiếng
+Anh: `src/docs/i18n/en/components.ts` (test bắt buộc đủ mọi slug). Trang khái niệm tiếng Anh: thêm
+`src/docs/concepts/en/<slug>.tsx` cùng id mục với bản tiếng Việt, kèm lead và mục lục trong
+`src/docs/i18n/en/concepts.ts`. Trang component tiếng Anh: thêm mục vào `src/docs/registry/en/<file registry>.ts` (mô
+tả, tiêu đề ví dụ đúng thứ tự, nên / không nên, mô tả cho mọi prop; demo và code giữ nguyên); trang được đánh dấu đã
+dịch lúc build và `registry/en.test.ts` kiểm tra mục đủ. Trang chưa dịch tự hiện thông báo và nội dung gốc.
 
 Viết nội dung (docs, template, thông báo CLI, changeset) theo wiki › *Writing*: ngắn, rõ, không lặp lại thứ đã hiện bên cạnh, gọi đúng tên gói.
 
@@ -191,13 +473,14 @@ npx changeset    # chọn yugen-ui → patch hoặc minor → viết tóm tắt 
 
 ### Ghi tên người đóng góp
 
-Trang `/contributors` liệt kê mọi người có PR được merge (kể cả commit trong PR của người khác và dòng
-`Co-authored-by`), issue (báo lỗi, báo lỗi tiếp cận, đề xuất), review hay bình luận góp ý trong issue và PR, lấy từ
-GitHub API: `npm run contributors` (cần `GITHUB_TOKEN`) ghi `src/docs/contributors.json`, snapshot mà workflow Docs làm
-mới mỗi lần deploy. Workflow Contributors data chạy lại vài phút sau mỗi issue, bình luận hay PR được merge (và hằng
-ngày), đẩy kết quả lên nhánh `contributors-data`; trang tải bản đó, lỗi thì dùng snapshot. Đóng góp ngoài GitHub (thiết
-kế, ý tưởng), hoặc một bình luận cần loại cụ thể hơn, ghi tay vào `src/docs/contributors.extra.json`. Muốn bỏ tên khỏi
-trang: mở issue hoặc nhắn maintainer, maintainer thêm login vào `exclude` trong file đó.
+Trang `/contributors` và ảnh ở đầu file này liệt kê mọi người có PR được merge (kể cả commit trong PR của người khác
+và dòng `Co-authored-by`), issue (báo lỗi, báo lỗi tiếp cận, đề xuất), review hay bình luận góp ý trong issue và PR,
+lấy từ GitHub API: `npm run contributors` (cần `GITHUB_TOKEN`) ghi `src/docs/contributors.json`, snapshot mà workflow
+Docs làm mới mỗi lần deploy. Workflow Contributors data chạy lại vài phút sau mỗi issue, bình luận hay PR được merge (và
+hằng ngày), đẩy dữ liệu và ảnh lên nhánh `contributors-data`; trang tải bản đó, lỗi thì dùng snapshot. Đóng góp ngoài
+GitHub (thiết kế, ý tưởng), hoặc một bình luận cần loại cụ thể hơn, ghi tay vào `src/docs/contributors.extra.json`;
+tiêu đề luôn lấy nguyên bản từ GitHub. Muốn bỏ tên khỏi trang: mở issue hoặc nhắn maintainer, maintainer thêm login vào
+`exclude` trong file đó.
 
 ### Checklist PR
 
@@ -230,155 +513,3 @@ các bước ở wiki › *Release Process* › CLI. PR đổi `packages/cli` ho
 `## Unreleased` của `packages/cli/CHANGELOG.md`. Mỗi bản phát hành cần tin trong `src/docs/news/cli` (và `src/docs/news/create-yugen-ui`
 khi `create-yugen-ui` đổi version), cả bản vi và en, hiện ở tab riêng trên trang Có gì mới. `check-release` báo lỗi
 nếu thiếu. Trước khi tag: `npm run check:release --prefix packages/cli -- --npm` và `npm run smoke --prefix packages/cli`.
-
----
-
-## English
-
-### Setup
-
-Requires Node.js **24 LTS** (or 22.22+) and npm. Run `npm install`, then `npm run dev` (docs site at http://localhost:5173).
-Scripts: `typecheck`, `lint:classes` (Tailwind canonical classes; `node scripts/canonical-classes.mjs --fix`
-repairs them), `build:lib` (library → `dist/`), `build:docs` (docs → `dist-docs/`), `build` (both), `pack:check`,
-`test`, `test:e2e`, `test:visual`, `test:engines`, `size`, `changeset`, `check:release`, `check:changesets`.
-
-### Tests
-
-- `npm test` — unit and interaction tests (Vitest + Testing Library, jsdom), colocated as
-  `src/components/ui/<Name>/<Name>.test.tsx`; `npm run test:watch` while writing them.
-- `npm run test:e2e` — Playwright against the docs site (it starts `npm run dev` on port 5200): axe accessibility,
-  mouse drag and emulated touch. Locally it uses the installed Microsoft Edge; CI uses Playwright's Chromium (without
-  Edge: `npx playwright install chromium` and run with `CI=1`). Open the report with `npx playwright show-report`.
-- `npm run test:visual` — screenshot comparison. Only Linux baselines (`e2e/__screenshots__/**/*-linux.png`) are
-  committed, and CI compares them on every PR that changes components, styles or the docs layout. On Windows / macOS the
-  first run creates baselines for your machine (gitignored). After an intended visual change, run the **Visual
-  regression** workflow on your branch (tick `update`), download the `visual-screenshots` artifact, copy it into
-  `e2e/__screenshots__/` and commit. The workflow never commits.
-- `npm run test:engines` — interaction E2E on Firefox and WebKit (Safari desktop, iPhone); run
-  `npx playwright install firefox webkit` once. CI runs it weekly, on PRs into `main` and on PRs that change
-  `e2e/` or `playwright.config.ts` (the **Browser engines** workflow), not on every PR. Touch-drag tests go through CDP, so they run on Chromium only.
-- `npm run size` — size budgets (`.size-limit.cjs`), after `npm run build:lib`. If a budget fails, find the cause
-  first; raise a `limit` only on purpose, and say why in the PR.
-- The repo runs React 19; CI also runs typecheck, unit tests and the library build against React 18.3 (`react-18` job),
-  which is still supported. To try it locally, use a copy of the repo
-  (`npm i --no-save react@^18.3 react-dom@^18.3 @types/react@^18.3 @types/react-dom@^18.3`).
-
-### Rules
-
-[Design.md](./Design.md) is mandatory. In short: only token-mapped utilities (no raw HEX/px/ms), Tailwind's
-default palette is disabled, numeric spacing on the Fluent ramp (`p-3`, `gap-2`), type-ramp font sizes only, always merge
-classes with `cn()`, no `dark:` variant, logical properties only (RTL), brand colour only for CTAs / selection /
-focus / links, gradients never on controls, WCAG contrast (4.5:1 text, 3:1 UI), Radix / `cmdk` /
-`react-day-picker` for behaviour and `@fluentui/react-icons` for icons.
-
-### Adding a component, docs or a block
-
-1. `src/components/ui/<Name>/<Name>.tsx` (named export, `forwardRef`, user `className` last in `cn(...)`, all
-   interaction states, keyboard support, ARIA), then export it from `src/components/ui/index.ts` — the npm package
-   exports everything in that barrel.
-2. Add a `ComponentDoc` to a file in `src/docs/registry/` (example `code` must match the rendered JSX exactly).
-   `slug` / `name` / `category` / `lead` must be string literals (extracted at build time). For stateful examples, slice
-   the code from `// #region Name` … `// #endregion` in the same file; put shared data in `setup` so every example runs
-   when copied (`npm run check:examples`).
-   Add an English lead in `src/docs/i18n/en/components.ts` (a test requires every slug), tests next to the component
-   (behaviour, keyboard, ARIA; SSR case in `src/test/ssrCases.tsx` if it reads time / media queries / storage), then run
-   `npm run check:examples`, `npm run check:props` and
-   `npx playwright test e2e/a11y.spec.ts --project=a11y --grep "<slug>"`, and add a changeset (`minor` for a new component).
-3. Blocks: `src/docs/block-library/NN-name.tsx` with `export const meta` + a default export, importing only from
-   `@/components/ui` and `@fluentui/react-icons`.
-
-### Translating the docs
-
-UI strings live in `src/docs/i18n/vi.ts` (source of the keys) and `src/docs/i18n/en.ts`. English component names and leads: `src/docs/i18n/en/components.ts` (a test requires every slug). English concept pages: add `src/docs/concepts/en/<slug>.tsx` with the same section ids as the Vietnamese page, and its lead and table of contents in `src/docs/i18n/en/concepts.ts`. English component pages: add the entry to `src/docs/registry/en/<registry file>.ts` (description, example titles in the same order, dos / don'ts, a description for every prop; demos and code stay as they are); the page is marked translated at build time and `registry/en.test.ts` checks the entry is complete. Untranslated pages show a notice and the Vietnamese original.
-
-Copy (docs, templates, CLI messages, changesets) follows wiki › *Writing*: short and clear, no repeating what the UI next to it already says, package names as users see them.
-
-### Branches
-
-Bug fixes, docs, tests → PR to `main`. New components / props / tokens and breaking changes → PR to `next` (when it exists, otherwise `main`). Branch names: `feat/…`, `fix/…`, `docs/…`, `chore/…`, `exp/…`. Release channels (`latest`, `next`, `canary`, `release-X.Y`): wiki › *Branching and Release Channels*.
-
-### Commits and pull requests
-
-Use [Conventional Commits](https://www.conventionalcommits.org/) (`feat(scope): …`, `fix`, `docs`, `refactor`,
-`chore`…; `!` for breaking changes). Before opening a PR: typecheck, class lint, `npm test`, `build:lib` and
-`build:docs` pass (plus `npm run test:e2e` for new UI or interactions, and `npm run size` within budget); checked in
-light / dark / high contrast, all brands and RTL; registry docs added; a changeset added for user-facing changes.
-Fill in the pull-request template.
-
-**Keep PRs few.** Every push to a PR reruns the whole CI (~5 min, plus Visual).
-- One PR per issue; small changes in the same area go together. Avoid stacked PRs, or state the merge order when they
-  are unavoidable.
-- Open it as a **draft** while you are still working: CI does not run on drafts; click *Ready for review* once.
-- Check locally before pushing (typecheck, `lint:classes`, the related tests), then push once.
-- PRs that only touch Markdown / `wiki/` skip CI.
-- Dependabot (`.github/dependabot.yml`): all updates go to `next`, at most one minor + patch PR and one major PR a week;
-  the CLI and GitHub Actions get one PR a month; 7-day cooldown. Majors that need code changes are ignored in the config
-  and tracked in a migration issue (#91) instead of sitting as red PRs.
-
-### Changesets
-
-From 0.6.0, `CHANGELOG.md` is generated by [Changesets](https://github.com/changesets/changesets) — do not edit it by
-hand. A PR with a user-facing change (component, prop, token, CSS, bug fix) adds a changeset; docs / test / CI-only
-PRs do not need one.
-
-A PR into `next` with a user-facing change (docs included) also adds an item to the **upcoming news entry**: the two
-files `src/docs/news/yugen-ui/<version>.vi.md` and `.en.md` marked `upcoming: true` (create them if missing, with the
-version from `npx changeset status`). CLI changes go to `src/docs/news/cli` / `create-yugen-ui`. `node
-scripts/check-news.mjs` checks the format; preview it on the `/next/` docs. Details: wiki › *Release Process* › Tin trên
-trang Có gì mới.
-
-```bash
-npx changeset    # pick yugen-ui → patch or minor → write a user-facing summary
-```
-
-Use `patch` for fixes and small improvements, `minor` for new components / props / tokens and — while the version is
-`0.x` — for breaking changes too (start the summary with "**Breaking:**" and explain the migration). Write the summary
-for package users ("`Combobox`: keep focus when a tag is removed with Backspace."), then commit the generated
-`.changeset/*.md` file with your PR.
-
-Version numbers follow the **rules for each number** (docs › Versioning › Rules for each number): only new API is
-`minor`, everything else is `patch`; PRs into `main` or `release/*` carry `patch` only; `major` starts at 1.0.
-`npm run check:changesets` (CI) rejects a summary starting with "Fix" on a `minor`, "New" on a `patch` and
-"**Breaking:**" on a `patch`. `check:release` checks the news in `src/docs/news`: no `new` / `breaking` item in a
-patch, at least one `new` item in a minor, no skipped numbers, ≥ 14 days between minors and ≥ 180 days between majors.
-
-One changeset per change (two new components → two files). Needs a changeset: anything people installing `yugen-ui`
-receive (components, props, exports, tokens, CSS, fixes, a11y). No changeset: docs pages / examples, tests, CI, wiki.
-`npx changeset status` previews the bump. On the `next` branch (prerelease mode) `.changeset/pre.json` lives only on
-`next` — commit it there, never edit it by hand or bring it to `main`; changeset files are kept after each `-next.N`
-release and removed when the cycle exits pre mode.
-
-To thank someone with no commit in the PR (a bug reporter, say), end the summary with a `Thanks: @name` line; the
-CHANGELOG then reads "Thanks [@name](…)!". The PR author is thanked automatically when `npm run version-packages` runs
-with `GITHUB_TOKEN` set (for example from `gh auth token`). Maintainers are not listed.
-
-### Contributor credit
-
-The `/contributors` page lists everyone with a merged pull request (including commits in someone else's pull request
-and `Co-authored-by` lines), an issue (bug report, accessibility report, idea), a review or a feedback comment on an
-issue or pull request, read from the GitHub API: `npm run contributors` (needs `GITHUB_TOKEN`) writes
-`src/docs/contributors.json`, the snapshot the Docs workflow refreshes on every deploy. The Contributors data workflow
-runs again a few minutes after each issue, comment or merged pull request (and daily) and pushes the result to the
-`contributors-data` branch; the page loads it and falls back to the snapshot. Contributions outside GitHub (design,
-ideas), or a comment that deserves a more specific type, go by hand into `src/docs/contributors.extra.json`. To take
-your name off the page, open an issue or contact a maintainer, who adds your login to `exclude` in that file.
-
-### Releasing (maintainers)
-
-1. `npm run version-packages` (= `changeset version` + syncs `templates/` and the lockfile — skipping it turns CI red) — writes the pending changesets into `CHANGELOG.md` (new section at the top), bumps
-   `version` in `package.json` and deletes the used changeset files. Review the generated entry.
-2. Finalize the news: remove `upcoming` from the two newest files in `src/docs/news/yugen-ui` and set the release date
-   (add `<version>.vi.md` and `.en.md` if there is no upcoming entry). The docs site reads its version from `package.json` automatically.
-3. `npm install --package-lock-only` (syncs the version in `package-lock.json`), then `npm run check:release`
-   (`package.json` = `src/docs/news` = `CHANGELOG.md`).
-4. Commit (`chore(release): vX.Y.Z`) and merge to `main`.
-5. `git tag vX.Y.Z && git push --tags` — `.github/workflows/release.yml` re-checks the version against the tag, runs
-   the tests, builds and runs `npm publish --provenance` (needs the `NPM_TOKEN` secret). Tags containing `-`
-   (e.g. `v0.6.0-beta.1`) are published under the `next` dist-tag.
-
-The `@yugen-ui/cli` CLI and `create-yugen-ui` (`packages/`) are released separately with a `cli@X.Y.Z` tag, outside
-Changesets — rules and steps in the wiki › *Release Process* › CLI. PRs that change `packages/cli` or
-`packages/create-yugen-ui` add a line under `## Unreleased` in `packages/cli/CHANGELOG.md`. Every release needs news
-in `src/docs/news/cli` (and `src/docs/news/create-yugen-ui` when `create-yugen-ui` changes version), in Vietnamese and
-English, shown in its own tab on the What's new page; `check-release` fails without it. Before tagging run
-`npm run check:release --prefix packages/cli -- --npm` and `npm run smoke --prefix packages/cli`.
