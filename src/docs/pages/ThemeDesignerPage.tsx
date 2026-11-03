@@ -438,8 +438,8 @@ export function ThemeDesignerPage() {
             <Axis
               label={t("Mật độ", "Density")}
               note={t(
-                "Một hệ số cho spacing và chiều cao control. Bậc Gọn đưa vùng bấm nhỏ nhất xuống dưới 24px.",
-                "One factor for spacing and control heights. Compact puts the smallest targets below 24px.",
+                "Một hệ số cho spacing và chiều cao control. Bậc Gọn đưa vùng bấm nhỏ nhất xuống dưới 24px. Đoạn YugenProvider bên dưới thêm density: ở bậc Gọn control còn mặc định size small.",
+                "One factor for spacing and control heights. Compact puts the smallest targets below 24px. The YugenProvider snippet below adds density: at Compact, controls also default to size small.",
               )}
               value={axes.density}
               onChange={(v) => setAxis("density", v)}
@@ -694,7 +694,7 @@ export function ThemeDesignerPage() {
                 <CopyButton text={css} className="border border-stroke-1" />
               </div>
               <CodeBlock
-                code={`<YugenProvider applyToDocument brand="${brandName}" theme="light">
+                code={`<YugenProvider applyToDocument brand="${brandName}" theme="light"${axes.density === "default" ? "" : ` density="${axes.density}"`}>
   <App />
 </YugenProvider>`}
               />

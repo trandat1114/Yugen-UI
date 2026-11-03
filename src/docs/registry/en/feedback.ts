@@ -134,7 +134,7 @@ export const en: Record<string, ComponentDocEn> = {
       "Toaster.position": "Position of the notification region.",
       "Toaster.toasterId": "Identifier when there are several Toasters; use it with useToast(toasterId).",
       "Toaster.limit": "Number of toasts shown at once.",
-      "useToast(toasterId?)": "Imperative API; dispatchToast returns the id.",
+      "useToast(toasterId?)": "Imperative API; dispatchToast returns the id. The dispatchToast function imported straight from the package is deprecated (removed in 1.0): use toast() or useToast().dispatchToast.",
       intent: "Icon and icon color.",
       "title / body": "Title (body1 semibold) and body.",
       action: "Link-style action to the right of the title.",

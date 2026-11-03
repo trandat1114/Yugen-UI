@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as MenuPrimitive from "@radix-ui/react-dropdown-menu";
 import { Checkmark16Filled, ChevronRight16Regular } from "../_internal/icons";
-import { usePortalThemeProps } from "../YugenProvider/context";
+import { usePortalThemeProps, useComponentDefaults } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { morphClass, morphFromTrigger } from "../_internal/morph";
 
@@ -25,14 +25,15 @@ export interface MenuPopoverProps extends React.ComponentPropsWithoutRef<typeof 
   material?: "glass" | "glass-clear";
 }
 
-export function MenuPopover({
-  className,
-  sideOffset = 4,
-  align = "start",
-  material,
-  ref,
-  ...props
-}: MenuPopoverProps & { ref?: React.Ref<React.ComponentRef<typeof MenuPrimitive.Content>> }) {
+export function MenuPopover(inProps: MenuPopoverProps & { ref?: React.Ref<React.ComponentRef<typeof MenuPrimitive.Content>> }) {
+  const {
+    className,
+    sideOffset = 4,
+    align = "start",
+    material,
+    ref,
+    ...props
+  } = useComponentDefaults("MenuPopover", inProps);
 const portalTheme = usePortalThemeProps();
 return (
   <MenuPrimitive.Portal>
@@ -162,15 +163,21 @@ export function MenuSubTrigger({
   );
 }
 
-export function MenuSubPopover({
-  className,
-  material,
-  ...props
-}: React.ComponentPropsWithoutRef<typeof MenuPrimitive.SubContent> & Pick<MenuPopoverProps, "material">) {
+export type MenuSubPopoverProps = React.ComponentPropsWithoutRef<typeof MenuPrimitive.SubContent> & Pick<MenuPopoverProps, "material">;
+
+export function MenuSubPopover(inProps: MenuSubPopoverProps) {
+  const { className, material, ...props } = useComponentDefaults("MenuSubPopover", inProps);
   const portalTheme = usePortalThemeProps();
   return (
     <MenuPrimitive.Portal>
       <MenuPrimitive.SubContent {...portalTheme} sideOffset={4} className={cn(menuPopoverClass, material, className)} {...props} />
     </MenuPrimitive.Portal>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    MenuPopover: MenuPopoverProps;
+    MenuSubPopover: MenuSubPopoverProps;
+  }
 }

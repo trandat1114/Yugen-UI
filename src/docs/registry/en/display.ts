@@ -238,7 +238,7 @@ export const en: Record<string, ComponentDocEn> = {
       "Horizontal by default, drawn in stroke-2. Set vertical to separate items on the same row. appearance subtle / brand / strong changes the weight of the line.",
     examples: [
       { title: "Appearance", description: "default (stroke-2), subtle (stroke-3), brand, strong (stroke-1)." },
-      { title: "Vertical", description: "vertical separates items on the same row and takes the height of the row." },
+      { title: "Vertical", description: "orientation=\"vertical\" separates items on the same row and takes the height of the row." },
       { title: "Icon & inset", description: "The content can be an icon; inset indents both ends by 12px." },
     ],
     dos: ["Use it to separate different groups of content on the same surface.", "Keep text on a Divider short (“Or”, a group name)."],
@@ -247,7 +247,7 @@ export const en: Record<string, ComponentDocEn> = {
       "Don't use the brand appearance everywhere. Keep it for an important boundary.",
     ],
     props: {
-      vertical: "Vertical line.",
+      orientation: "Direction of the line. The old boolean vertical is deprecated (removed in 1.0).",
       alignContent: "Position of the text / icon on the line.",
       appearance: "Color of the line and the text.",
       inset: "Indents both ends by 12px.",
@@ -297,7 +297,7 @@ export const en: Record<string, ComponentDocEn> = {
     dos: [
       "Give the Carousel an aria-label. Each slide is labeled “Slide x / n” automatically; thumbnails should have their own aria-label.",
       "Keep 3–6 slides of the same kind; use a fractional slidesPerView (1.15, 2.5) to hint that more content follows.",
-      "When autoplay is on, always show the pause button (CarouselNavContainer autoplay).",
+      "When autoplay is on, always show the pause button (CarouselNavContainer showAutoplayToggle).",
     ],
     donts: [
       "Don't put important information only in a hidden slide.",
@@ -312,7 +312,7 @@ export const en: Record<string, ComponentDocEn> = {
       autoplayInterval: "Time per slide (ms); progress shows in the active dot / thumbnail.",
       "activeIndex / defaultActiveIndex / onActiveIndexChange": "Current slide, counted from 0 (controlled / uncontrolled); called when the current slide changes.",
       "CarouselCard.className": "basis-full by default; basis-4/5 or basis-1/2 when slidesPerView isn't used.",
-      "CarouselNavContainer.autoplay": "Shows the button that turns autoplay on / off.",
+      "CarouselNavContainer.showAutoplayToggle": "Shows the button that turns autoplay on / off. The old name autoplay is deprecated (removed in 1.0).",
       "CarouselNavContainer.previousLabel / nextLabel": "aria-label of the navigation buttons. The old name prevLabel is deprecated (removed in 1.0).",
       "CarouselThumbnails / CarouselThumbnail": "Thumbnail tablist; each CarouselThumbnail matches the slide at the same position.",
     },

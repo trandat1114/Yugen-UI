@@ -127,6 +127,7 @@ export const CONCEPT_METAS: Record<string, ConceptMeta> = {
       { id: "playground", label: "Thử side & align" },
       { id: "collision", label: "Va chạm & tự lật" },
       { id: "portals", label: "Portal & theme" },
+      { id: "scroll-lock", label: "Khoá cuộn" },
       { id: "z-index", label: "Thang z-index" },
     ],
   },
@@ -215,6 +216,7 @@ export const CONCEPT_METAS: Record<string, ConceptMeta> = {
     toc: [
       { id: "attributes", label: "data-theme & data-brand" },
       { id: "provider", label: "YugenProvider" },
+      { id: "defaults", label: "Props mặc định & mật độ" },
       { id: "use-yugen", label: "Hook useYugen()" },
       { id: "nested", label: "Theme lồng nhau" },
       { id: "layers", label: "Ba lớp token" },

@@ -10,6 +10,7 @@ import {
   useOverflowMenu,
   type OverflowProps,
 } from "./Overflow";
+import { watchDeprecations } from "@/test/deprecation";
 
 const items = (sizes: number[], priorities: number[] = []) =>
   sizes.map((size, i) => ({ id: `i${i}`, size, priority: priorities[i] ?? 0 }));
@@ -70,10 +71,13 @@ describe("computeOverflow", () => {
     });
     // a + divider g1 + menu = 150; thêm b + divider g2 = 270 > 230.
     expect(r.hiddenIds).toEqual(["b"]);
+    // getOverflowGroups: export lỗi thời (bỏ khỏi gói ở 1.0), vẫn chạy và cảnh báo.
+    const warnings = watchDeprecations();
     expect(getOverflowGroups([{ id: "a", groupId: "g1" }, { id: "b", groupId: "g2" }], r.hiddenIds)).toEqual({
       g1: "visible",
       g2: "hidden",
     });
+    expect(warnings("getOverflowGroups")).toBe(1);
   });
 });
 

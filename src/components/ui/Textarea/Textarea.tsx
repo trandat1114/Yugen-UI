@@ -3,6 +3,7 @@ import * as React from "react";
 import { cva } from "class-variance-authority";
 import { cn } from "@/lib/cn";
 import { fieldAppearanceClass } from "@/components/ui/Select/Select";
+import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
 const textareaVariants = cva(
   [
@@ -36,16 +37,17 @@ export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextArea
 }
 
 /** Textarea nhập văn bản nhiều dòng; đặt trong `<Field>` để có label / hint / validation. */
-export function Textarea({
-  className,
-  textareaClassName,
-  appearance = "outline",
-  size = "medium",
-  resize = "none",
-  disabled,
-  ref,
-  ...props
-}: TextareaProps & { ref?: React.Ref<HTMLTextAreaElement> }) {
+export function Textarea(inProps: TextareaProps & { ref?: React.Ref<HTMLTextAreaElement> }) {
+  const {
+    className,
+    textareaClassName,
+    appearance = "outline",
+    size = "medium",
+    resize = "none",
+    disabled,
+    ref,
+    ...props
+  } = useComponentDefaults("Textarea", inProps, COMPACT_SIZE);
   const invalid = props["aria-invalid"] === true || props["aria-invalid"] === "true";
   return (
     <span
@@ -61,4 +63,10 @@ export function Textarea({
       />
     </span>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Textarea: TextareaProps;
+  }
 }

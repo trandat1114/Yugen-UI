@@ -38,6 +38,7 @@ export const en: Record<string, ComponentDocEn> = {
       "Don't put complex interactive content (forms) in a menu. Use Popover.",
     ],
     props: {
+      "Menu.modal": "true: while the menu is open, page scrolling is locked, an outside click only closes the menu and the rest of the page is hidden from screen readers. false: the page keeps scrolling and outside clicks reach it right away. See [Scroll lock](/concepts/positioning#scroll-lock).",
       "MenuItem.icon": "Icon, size 20.",
       "MenuItem.secondaryContent": "Shortcut or secondary information at the end of the item. MenuItemCheckbox and MenuItemRadio have it too.",
       "MenuPopover.align": "Alignment with the trigger.",

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { TextQuoteOpening24Filled } from "../_internal/icons";
 import { cn } from "@/lib/cn";
+import { useComponentDefaults } from "../YugenProvider/context";
 
 export type QuoteAppearance = "default" | "subtle" | "emphasis";
 export type QuoteSize = "small" | "medium" | "large";
@@ -36,19 +37,20 @@ const TEXT: Record<QuoteSize, string> = {
  * Quote — trích dẫn có ghi nguồn. Ngữ nghĩa: <figure> › <blockquote cite> + <figcaption> (tác giả, <cite> nguồn),
  * nên trình đọc màn hình đọc đúng "trích dẫn" và ai nói. Vạch nhấn dùng border-s → tự đổi bên khi RTL.
  */
-export function Quote({
-  children,
-  author,
-  authorTitle,
-  source,
-  cite,
-  avatar,
-  appearance = "default",
-  size = "medium",
-  className,
-  ref,
-  ...props
-}: QuoteProps & { ref?: React.Ref<HTMLElement> }) {
+export function Quote(inProps: QuoteProps & { ref?: React.Ref<HTMLElement> }) {
+  const {
+    children,
+    author,
+    authorTitle,
+    source,
+    cite,
+    avatar,
+    appearance = "default",
+    size = "medium",
+    className,
+    ref,
+    ...props
+  } = useComponentDefaults("Quote", inProps);
   const emphasis = appearance === "emphasis";
   const body = typeof children === "string" ? <p>{children}</p> : children;
   const sourceNode =
@@ -107,4 +109,10 @@ export function Quote({
       )}
     </figure>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Quote: QuoteProps;
+  }
 }

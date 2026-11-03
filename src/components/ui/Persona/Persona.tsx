@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
 import { Avatar, type AvatarProps } from "../Avatar/Avatar";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { presenceBadgeMessagesEn } from "../PresenceBadge/messages";
 
 /** Fluent 2 Persona — https://fluent2.microsoft.design/components/web/react/core/persona/usage */
@@ -80,22 +80,23 @@ export interface PersonaProps extends React.HTMLAttributes<HTMLDivElement> {
   textAlignment?: "start" | "center";
 }
 
-export function Persona({
-  name = "",
-  avatar,
-  presence,
-  presenceOnly = false,
-  primaryText,
-  secondaryText,
-  tertiaryText,
-  quaternaryText,
-  size = "medium",
-  textPosition = "after",
-  textAlignment = "start",
-  className,
-  ref,
-  ...props
-}: PersonaProps & { ref?: React.Ref<HTMLDivElement> }) {
+export function Persona(inProps: PersonaProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    name = "",
+    avatar,
+    presence,
+    presenceOnly = false,
+    primaryText,
+    secondaryText,
+    tertiaryText,
+    quaternaryText,
+    size = "medium",
+    textPosition = "after",
+    textAlignment = "start",
+    className,
+    ref,
+    ...props
+  } = useComponentDefaults("Persona", inProps);
   // Tên trạng thái dùng chung với PresenceBadge (`messages.presenceBadge`).
   const msg = useYugenMessages("presenceBadge", presenceBadgeMessagesEn);
   const below = textPosition === "below";
@@ -141,4 +142,10 @@ export function Persona({
       </span>
     </div>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Persona: PersonaProps;
+  }
 }

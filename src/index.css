@@ -670,6 +670,65 @@
   --glassLensFilter: none;
 }
 
+/* Mật độ (#171): YugenProvider density ghi data-density. Cùng hệ số với trục Mật độ của Theme Designer (compact ×0.9375,
+   comfortable ×1.125) cho --spacing của Tailwind (p-*, gap-*, h-*…) và token spacing; "default" đặt lại cho provider lồng. */
+[data-density="compact"] {
+  --spacing: 0.2344rem;
+  --spacingXXS: 1.875px;
+  --spacingXS: 3.75px;
+  --spacingSNudge: 5.625px;
+  --spacingS: 7.5px;
+  --spacingMNudge: 9.375px;
+  --spacingM: 11.25px;
+  --spacingL: 15px;
+  --spacingXL: 18.75px;
+  --spacingXXL: 22.5px;
+  --spacingXXXL: 30px;
+}
+[data-density="default"] {
+  --spacing: 0.25rem;
+  --spacingXXS: 2px;
+  --spacingXS: 4px;
+  --spacingSNudge: 6px;
+  --spacingS: 8px;
+  --spacingMNudge: 10px;
+  --spacingM: 12px;
+  --spacingL: 16px;
+  --spacingXL: 20px;
+  --spacingXXL: 24px;
+  --spacingXXXL: 32px;
+}
+[data-density="comfortable"] {
+  --spacing: 0.2813rem;
+  --spacingXXS: 2.25px;
+  --spacingXS: 4.5px;
+  --spacingSNudge: 6.75px;
+  --spacingS: 9px;
+  --spacingMNudge: 11.25px;
+  --spacingM: 13.5px;
+  --spacingL: 18px;
+  --spacingXL: 22.5px;
+  --spacingXXL: 27px;
+  --spacingXXXL: 36px;
+}
+
+/* Khoá cuộn (#243): Menu, ContextMenu, Dropdown khoá cuộn trang qua react-remove-scroll (body[data-scroll-locked] được
+   overflow: hidden + margin-right bằng bề rộng thanh cuộn). Với data-yugen-scroll-lock="keep-scrollbar" trên <html>,
+   overflow của body không còn lan lên viewport nên thanh cuộn vẫn hiện; bỏ phần bù lề. Lăn chuột / vuốt vẫn bị chặn. */
+html[data-yugen-scroll-lock="keep-scrollbar"]:has(> body[data-scroll-locked]) {
+  overflow-y: auto;
+}
+html[data-yugen-scroll-lock="keep-scrollbar"] body[data-scroll-locked] {
+  margin-right: 0 !important;
+  --removed-body-scroll-bar-size: 0px;
+}
+html[data-yugen-scroll-lock="keep-scrollbar"] body[data-scroll-locked] .right-scroll-bar-position {
+  right: 0 !important;
+}
+html[data-yugen-scroll-lock="keep-scrollbar"] body[data-scroll-locked] .width-before-scroll-bar {
+  margin-right: 0 !important;
+}
+
 @layer base {
   :root,
   [dir="ltr"] {

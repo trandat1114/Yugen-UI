@@ -1,3 +1,4 @@
+import * as React from "react";
 import type { ReactNode } from "react";
 import {
   Badge,
@@ -6,8 +7,14 @@ import {
   Input,
   MessageBar,
   Switch,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  ToggleGroup,
+  ToggleGroupItem,
   YugenProvider,
   type YugenBrand,
+  type YugenDensity,
   type YugenTheme,
   useYugen,
 } from "@/components/ui";
@@ -167,6 +174,64 @@ const BRAND_USE_CODE = `// Toàn ứng dụng
 // Hoặc chỉ một vùng (ví dụ trang marketing của sản phẩm con)
 <YugenProvider theme="light" brand="matcha" className="rounded-xlarge p-5">…</YugenProvider>`;
 
+const DEFAULTS_CODE = `<YugenProvider
+  applyToDocument
+  density="compact"
+  defaults={{
+    Button: { shape: "circular" },
+    Input: { appearance: "filled-darker" },
+  }}
+>
+  <App />
+</YugenProvider>
+
+// Prop đặt trên instance vẫn thắng
+<Button size="medium">Xuất file</Button>`;
+
+const DENSITIES: { value: YugenDensity; label: string }[] = [
+  { value: "compact", label: "Gọn" },
+  { value: "default", label: "Mặc định" },
+  { value: "comfortable", label: "Thoáng" },
+];
+
+function DensityDemo() {
+  const [density, setDensity] = React.useState<YugenDensity>("compact");
+  return (
+    <div className="flex flex-col gap-3">
+      <ToggleGroup
+        type="single"
+        size="small"
+        aria-label="Mật độ"
+        value={density}
+        onValueChange={(v) => v && setDensity(v as YugenDensity)}
+        className="self-start"
+      >
+        {DENSITIES.map((d) => (
+          <ToggleGroupItem key={d.value} value={d.value}>
+            {d.label}
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
+      <YugenProvider density={density} defaults={{ Button: { shape: "circular" } }} className="rounded-xlarge border border-stroke-2 p-4">
+        <div className="flex flex-col gap-3">
+          <Tabs defaultValue="files">
+            <TabsList>
+              <TabsTrigger value="files">Tệp</TabsTrigger>
+              <TabsTrigger value="activity">Hoạt động</TabsTrigger>
+            </TabsList>
+          </Tabs>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button appearance="primary">Lưu</Button>
+            <Button>Huỷ</Button>
+            <Button size="medium">Luôn cỡ vừa</Button>
+          </div>
+          <Input placeholder="Tìm trong dự án" aria-label="Tìm trong dự án" />
+        </div>
+      </YugenProvider>
+    </div>
+  );
+}
+
 export default function Page() {
   return (
     <>
@@ -236,6 +301,23 @@ export default function Page() {
                 description: "Đổi chuỗi có sẵn của component (mặc định tiếng Anh) theo namespace, vd. messagesVi cho tiếng Việt. Provider lồng kế thừa rồi ghi đè tiếp. Xem Ngôn ngữ giao diện.",
               },
               { name: "locale", type: "string", defaultValue: `"en-US"`, description: "Locale Intl cho ngày, giờ và số trong component. Provider lồng kế thừa provider ngoài." },
+              {
+                name: "defaults",
+                type: "YugenDefaultsInput",
+                description: "Props mặc định theo component, vd. { Button: { shape: \"circular\" } }. Prop trên instance thắng. Provider lồng gộp theo từng component. Xem Props mặc định & mật độ bên dưới.",
+              },
+              {
+                name: "density",
+                type: `"compact" | "default" | "comfortable"`,
+                defaultValue: `"default"`,
+                description: "compact: control mặc định size small, spacing nhân 0.9375. comfortable: spacing nhân 1.125. Ghi vào data-density (và lên <html> khi applyToDocument). Provider lồng kế thừa.",
+              },
+              {
+                name: "scrollLock",
+                type: `"hide-scrollbar" | "keep-scrollbar"`,
+                defaultValue: `"hide-scrollbar"`,
+                description: "Giữ hay ẩn thanh cuộn của trang khi Menu, ContextMenu, Dropdown mở. Chỉ có tác dụng với applyToDocument (ghi data-yugen-scroll-lock lên <html>). Bản 1.0 đổi mặc định sang keep-scrollbar. Xem [Khoá cuộn](/concepts/positioning#scroll-lock).",
+              },
               { name: "className, …div props", type: "HTMLAttributes<HTMLDivElement>", description: "Truyền xuống thẻ div bao ngoài (ref được forward)." },
             ]}
           />
@@ -245,6 +327,50 @@ export default function Page() {
   <App />
 </YugenProvider>`}
           />
+        </div>
+      </DocSection>
+
+      <DocSection
+        id="defaults"
+        title="Props mặc định & mật độ"
+        description="defaults đặt prop cho mọi instance của một component trong một vùng giao diện. density làm vùng đó gọn hơn hoặc thoáng hơn. Prop đặt trên instance luôn thắng."
+      >
+        <div className="flex flex-col gap-4">
+          <DensityDemo />
+          <CodeBlock code={DEFAULTS_CODE} />
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
+            <li>
+              Thứ tự: prop trên instance, rồi <C>defaults</C> của provider gần nhất (provider lồng gộp theo từng component), rồi density,
+              cuối cùng là mặc định của chính component.
+            </li>
+            <li>
+              <C>density=&quot;compact&quot;</C> cho nút, ô nhập, picker, tab, toolbar, bảng, Tree và Nav mặc định size small, và nhân
+              spacing với 0.9375. <C>&quot;comfortable&quot;</C> nhân spacing với 1.125, giữ nguyên size. Spacing đổi qua{" "}
+              <C>data-density</C> trong CSS (<C>--spacing</C> và token spacing, cùng hệ số với Theme Designer), nên HTML prerender đã đúng
+              trước khi hydrate.
+            </li>
+            <li>Ở mật độ gọn, control size small cao 22.5px. Chừa khoảng cách giữa các control đứng sát nhau (WCAG 2.5.8).</li>
+            <li>
+              Component có prop kiểu dáng (size, appearance, shape, material) đọc mặc định của mình. Phần con như TabsTrigger hay
+              ToolbarButton theo component cha. Mặc định cũng tới component dùng bên trong component khác, như nút đóng của Dialog, nên
+              ưu tiên size, shape và material hơn appearance.
+            </li>
+            <li>
+              <C>defaults</C> có kiểu theo từng component. Object viết thẳng trong JSX được so theo giá trị, nên provider render lại với
+              cùng defaults không làm cả cây render lại.
+            </li>
+            <li>
+              Yugen Labs: <C>defaults=&#123;glassNavigationDefaults&#125;</C> cho mọi component điều hướng có glass{" "}
+              <C>material=&quot;glass&quot;</C>. Xem{" "}
+              <a className="text-link underline hover:text-link-hover" href={docsPath("/foundations/glass#provider-default")}>
+                Glass
+              </a>
+              .
+            </li>
+            <li>
+              Chế độ mã nguồn (registry shadcn, <C>yugen add</C>): có thể sửa luôn <C>defaultVariants</C> trong file đã chép.
+            </li>
+          </ul>
         </div>
       </DocSection>
 

@@ -519,7 +519,7 @@ export const docs: ComponentDoc[] = [
     name: "Dropdown",
     lead: "Dropdown cho phép chọn một lựa chọn từ listbox tuỳ biến mở ra bên dưới ô.",
     description:
-      "Khác với Select, listbox được vẽ bằng bề mặt Fluent (shadow-16, rounded-medium) nên hỗ trợ dấu tick, nhóm có tiêu đề, option disabled và nội dung tuỳ biến. Bàn phím: mũi tên, Home/End, gõ ký tự để nhảy, Enter để chọn, Esc để đóng.",
+      "Khác với Select, listbox được vẽ bằng bề mặt Fluent (shadow-16, rounded-medium) nên hỗ trợ dấu tick, nhóm có tiêu đề, option disabled và nội dung tuỳ biến. Bàn phím: mũi tên, Home/End, gõ ký tự để nhảy, Enter để chọn, Esc để đóng. Khi listbox mở, trang luôn bị khoá cuộn; để giữ thanh cuộn của trang, xem [Khoá cuộn](/concepts/positioning#scroll-lock).",
     importCode: `import { Dropdown, DropdownOption, DropdownGroup, DropdownDivider } from "@/components/ui";`,
     hero: {
       title: "Dropdown",

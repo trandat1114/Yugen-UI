@@ -175,7 +175,7 @@ export const en: Record<string, ComponentDocEn> = {
       "Built on Popover (shadow-16, with an arrow). It has a Header (icon, small title and close button), a Body (optional illustration, title and content), a Footer (primary and secondary buttons) and a Carousel for several steps (\"1/3\", navigation dots, “Back” / “Next” / “Finish”). appearance=\"brand\" fills this small surface with the brand color.",
     examples: [
       { title: "Brand & illustration", description: "appearance=\"brand\" on TeachingPopover; media appears above the content." },
-      { title: "Vertical footer", description: "layout=\"vertical\" stacks the two buttons at full width, which suits long labels." },
+      { title: "Vertical footer", description: "orientation=\"vertical\" stacks the two buttons at full width, which suits long labels." },
       {
         title: "Multiple steps (Carousel)",
         description: "Each child of TeachingPopoverCarousel is one step. The first step has “Not now”, the last one “Finish”.",
@@ -198,7 +198,7 @@ export const en: Record<string, ComponentDocEn> = {
       "TeachingPopoverHeader.icon / dismissible": "Icon before the title; close button.",
       "TeachingPopoverBody.media": "Illustration above the content.",
       "TeachingPopoverFooter.primary / secondary": "Labels of the two buttons; the secondary button closes the popover.",
-      "TeachingPopoverFooter.closeOnPrimary / layout": "Closes the popover when the primary button is clicked; button layout.",
+      "TeachingPopoverFooter.closeOnPrimary / orientation": "Closes the popover when the primary button is clicked; direction of the buttons. The old name layout is deprecated (removed in 1.0).",
       "TeachingPopoverCarousel.step / defaultStep / onStepChange": "Current step (starting at 0).",
       "TeachingPopoverCarousel.onFinish / *Label":
         "onFinish runs when “Finish” is clicked. nextLabel / previousLabel / finishLabel / dismissLabel replace “Next” / “Back” / “Finish” / “Not now”.",

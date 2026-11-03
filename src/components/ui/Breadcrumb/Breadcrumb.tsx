@@ -9,7 +9,7 @@ import {
 } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Menu, MenuItem, MenuPopover, MenuTrigger } from "../Menu/Menu";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { breadcrumbMessagesEn } from "./messages";
 
 export { breadcrumbMessages, breadcrumbMessagesVi, breadcrumbMessagesEn, type BreadcrumbMessages } from "./messages";
@@ -57,18 +57,19 @@ export interface BreadcrumbProps extends React.HTMLAttributes<HTMLElement> {
   overflowLabel?: string;
 }
 
-export function Breadcrumb({
-  className,
-  size = "medium",
-  items,
-  maxDisplayedItems,
-  overflowIndex = 1,
-  overflowLabel,
-  children,
-  "aria-label": ariaLabel,
-  ref,
-  ...props
-}: BreadcrumbProps & { ref?: React.Ref<HTMLElement> }) {
+export function Breadcrumb(inProps: BreadcrumbProps & { ref?: React.Ref<HTMLElement> }) {
+  const {
+    className,
+    size = "medium",
+    items,
+    maxDisplayedItems,
+    overflowIndex = 1,
+    overflowLabel,
+    children,
+    "aria-label": ariaLabel,
+    ref,
+    ...props
+  } = useComponentDefaults("Breadcrumb", inProps, COMPACT_SIZE);
   const msg = useYugenMessages("breadcrumb", breadcrumbMessagesEn);
   let content: React.ReactNode = children;
 
@@ -242,4 +243,10 @@ export function BreadcrumbOverflow({
       </MenuPopover>
     </Menu>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Breadcrumb: BreadcrumbProps;
+  }
 }

@@ -4,6 +4,7 @@ import { cva } from "class-variance-authority";
 import { ChevronDown16Regular, ChevronDown20Regular, ChevronDown24Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { fieldControlClass } from "@/components/ui/Field/Field";
+import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
 export type FieldAppearance = "outline" | "underline" | "filled-darker" | "filled-lighter";
 
@@ -57,15 +58,16 @@ export interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectE
 }
 
 /** Select = thẻ `<select>` gốc của trình duyệt được tạo kiểu Fluent — phù hợp form đơn giản và thiết bị di động. */
-export function Select({
-  className,
-  selectClassName,
-  appearance = "outline",
-  size = "medium",
-  disabled,
-  ref,
-  ...props
-}: SelectProps & { ref?: React.Ref<HTMLSelectElement> }) {
+export function Select(inProps: SelectProps & { ref?: React.Ref<HTMLSelectElement> }) {
+  const {
+    className,
+    selectClassName,
+    appearance = "outline",
+    size = "medium",
+    disabled,
+    ref,
+    ...props
+  } = useComponentDefaults("Select", inProps, COMPACT_SIZE);
   const icon = ICON[size];
   const invalid = props["aria-invalid"] === true || props["aria-invalid"] === "true";
   return (
@@ -84,4 +86,10 @@ export function Select({
       />
     </span>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Select: SelectProps;
+  }
 }
