@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { watchDeprecations } from "@/test/deprecation";
 import { render, screen, within } from "@testing-library/react";
 import { Timeline, TimelineItem } from "./Timeline";
 
@@ -28,5 +29,20 @@ describe("Timeline", () => {
       </Timeline>,
     );
     expect(screen.getByTestId("icon").closest("[aria-hidden]")).not.toBeNull();
+  });
+});
+
+describe("TimelineItem intent", () => {
+  it("error dùng màu danger; danger (giá trị cũ) vẫn chạy và cảnh báo một lần", () => {
+    const warnings = watchDeprecations();
+    const { container } = render(
+      <Timeline>
+        <TimelineItem title="Lỗi" intent="error" icon={<svg />} />
+        <TimelineItem title="Cũ" intent="danger" icon={<svg />} />
+        <TimelineItem title="Cũ 2" intent="danger" icon={<svg />} />
+      </Timeline>,
+    );
+    expect(container.querySelectorAll(".bg-danger-background-1")).toHaveLength(3);
+    expect(warnings('TimelineItem.intent="danger"')).toBe(1);
   });
 });

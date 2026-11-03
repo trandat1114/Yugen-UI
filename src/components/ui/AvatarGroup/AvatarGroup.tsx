@@ -3,7 +3,7 @@ import { MoreHorizontal20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Avatar, type AvatarProps } from "../Avatar/Avatar";
 import { Popover, PopoverSurface, PopoverTrigger } from "../Popover/Popover";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { avatarGroupMessagesEn } from "./messages";
 
 export { avatarGroupMessages, avatarGroupMessagesVi, avatarGroupMessagesEn, type AvatarGroupMessages } from "./messages";
@@ -94,17 +94,18 @@ export interface AvatarGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   overflowLabel?: string;
 }
 
-export function AvatarGroup({
-  layout = "spread",
-  size = 32,
-  maxAvatars = 5,
-  overflowIndicator = "count",
-  overflowLabel,
-  className,
-  children,
-  ref,
-  ...props
-}: AvatarGroupProps & { ref?: React.Ref<HTMLDivElement> }) {
+export function AvatarGroup(inProps: AvatarGroupProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    layout = "spread",
+    size = 32,
+    maxAvatars = 5,
+    overflowIndicator = "count",
+    overflowLabel,
+    className,
+    children,
+    ref,
+    ...props
+  } = useComponentDefaults("AvatarGroup", inProps);
   const msg = useYugenMessages("avatarGroup", avatarGroupMessagesEn);
   const items = React.Children.toArray(children).filter(React.isValidElement) as React.ReactElement<AvatarGroupItemProps>[];
   const isPie = layout === "pie";
@@ -208,4 +209,10 @@ export function AvatarGroup({
       )}
     </div>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    AvatarGroup: AvatarGroupProps;
+  }
 }

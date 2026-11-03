@@ -5,7 +5,7 @@ import { cva } from "class-variance-authority";
 import { Prohibited16Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useArrowNavigationGroup } from "../FocusManagement/FocusManagement";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { swatchPickerMessagesEn } from "./messages";
 import { useComposedRefs } from "../_internal/composeRefs";
 
@@ -41,24 +41,25 @@ export interface SwatchPickerProps extends Omit<React.HTMLAttributes<HTMLDivElem
   onSelectionChange?: (value: string) => void;
 }
 
-export function SwatchPicker({
-  layout = "row",
-  columnCount,
-  size = "medium",
-  shape = "square",
-  spacing = "medium",
-  selectedValue,
-  defaultSelectedValue,
-  onSelectionChange,
-  className,
-  style,
-  onKeyDown,
-  onFocus,
-  onBlur,
-  children,
-  ref,
-  ...props
-}: SwatchPickerProps & { ref?: React.Ref<HTMLDivElement> }) {
+export function SwatchPicker(inProps: SwatchPickerProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    layout = "row",
+    columnCount,
+    size = "medium",
+    shape = "square",
+    spacing = "medium",
+    selectedValue,
+    defaultSelectedValue,
+    onSelectionChange,
+    className,
+    style,
+    onKeyDown,
+    onFocus,
+    onBlur,
+    children,
+    ref,
+    ...props
+  } = useComponentDefaults("SwatchPicker", inProps, COMPACT_SIZE);
   // onSelectionChange gọi cả khi bấm lại ô đang chọn (như Fluent), nên không giao cho hook (hook bỏ qua giá trị không đổi).
   const [current, setCurrent] = useControllableState({ value: selectedValue, defaultValue: defaultSelectedValue });
   const select = React.useCallback(
@@ -244,4 +245,10 @@ export function EmptySwatch({
       {children}
     </button>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    SwatchPicker: SwatchPickerProps;
+  }
 }

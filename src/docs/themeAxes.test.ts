@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import fs from "node:fs";
+import path from "node:path";
 import { generateBrandRamp } from "@/lib/brandRamp";
 import {
   DEFAULT_AXES,
@@ -15,6 +17,7 @@ import {
   type ThemeAxes,
 } from "./themeAxes";
 
+const indexCss = fs.readFileSync(path.resolve(__dirname, "../index.css"), "utf8").replace(/\r\n/g, "\n");
 const SAKURA = "#C2347A";
 const axes = (patch: Partial<ThemeAxes>): ThemeAxes => ({ ...DEFAULT_AXES, ...patch });
 
@@ -39,6 +42,20 @@ describe("Theme Designer — các trục ngoài màu brand", () => {
     expect(comfy["--spacingM"]).toBe("13.5px");
     expect(smallestTarget("compact")).toBe(22.5);
     expect(smallestTarget("default")).toBe(24);
+  });
+
+  it("YugenProvider density dùng đúng giá trị của trục Mật độ (theme.css, #171)", () => {
+    const block = (step: string) => {
+      const body = new RegExp(`\\[data-density="${step}"\\] \\{([^}]*)\\}`).exec(indexCss)?.[1] ?? "";
+      return Object.fromEntries([...body.matchAll(/(--[\w-]+):\s*([^;]+);/g)].map((m) => [m[1], m[2].trim()]));
+    };
+    for (const density of ["compact", "comfortable"] as const) {
+      const expected = Object.fromEntries(Object.entries(sharedVars(axes({ density }))).filter(([k]) => k !== "--spacingNone"));
+      expect(block(density), density).toEqual(expected);
+    }
+    const reset = block("default");
+    expect(reset["--spacing"]).toBe("0.25rem");
+    expect(Object.keys(reset).sort()).toEqual(Object.keys(block("compact")).sort());
   });
 
   it("cỡ chữ gốc 16: cả ramp theo tỉ lệ, line height làm tròn số chẵn", () => {

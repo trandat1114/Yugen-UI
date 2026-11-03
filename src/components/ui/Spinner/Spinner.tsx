@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { spinnerMessagesEn } from "./messages";
 
 export { spinnerMessages, spinnerMessagesVi, spinnerMessagesEn, type SpinnerMessages } from "./messages";
@@ -36,15 +36,16 @@ export interface SpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
   labelPosition?: "before" | "after" | "above" | "below";
 }
 
-export function Spinner({
-  size = "medium",
-  appearance = "primary",
-  label,
-  labelPosition = "after",
-  className,
-  ref,
-  ...props
-}: SpinnerProps & { ref?: React.Ref<HTMLDivElement> }) {
+export function Spinner(inProps: SpinnerProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    size = "medium",
+    appearance = "primary",
+    label,
+    labelPosition = "after",
+    className,
+    ref,
+    ...props
+  } = useComponentDefaults("Spinner", inProps);
   const labelId = React.useId();
   const msg = useYugenMessages("spinner", spinnerMessagesEn);
   const s = SIZE[size];
@@ -90,4 +91,10 @@ export function Spinner({
       {!labelFirst && labelEl}
     </div>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Spinner: SpinnerProps;
+  }
 }

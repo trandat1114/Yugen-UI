@@ -2,7 +2,7 @@ import * as React from "react";
 import { ArrowSortDown20Regular, ArrowSortUp20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Checkbox } from "../Checkbox/Checkbox";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { tableMessagesEn } from "./messages";
 
 export { tableMessages, tableMessagesVi, tableMessagesEn, type TableMessages } from "./messages";
@@ -40,13 +40,14 @@ export interface TableProps extends React.TableHTMLAttributes<HTMLTableElement> 
   sortable?: boolean;
 }
 
-export function Table({
-  size = "medium",
-  sortable = false,
-  className,
-  ref,
-  ...props
-}: TableProps & { ref?: React.Ref<HTMLTableElement> }) {
+export function Table(inProps: TableProps & { ref?: React.Ref<HTMLTableElement> }) {
+  const {
+    size = "medium",
+    sortable = false,
+    className,
+    ref,
+    ...props
+  } = useComponentDefaults("Table", inProps, COMPACT_SIZE);
   const context = React.useMemo(() => ({ size, sortable }), [size, sortable]);
   return (
     <TableContext.Provider value={context}>
@@ -294,4 +295,10 @@ export function TableSelectionCell({
       />
     </Cell>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Table: TableProps;
+  }
 }

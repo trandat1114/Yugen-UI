@@ -1,9 +1,13 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
+import { useComponentDefaults } from "../YugenProvider/context";
+import { warnDeprecated } from "@/lib/deprecate";
 
 /** Fluent 2 Divider — https://fluent2.microsoft.design/components/web/react/core/divider/usage */
 export interface DividerProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Divider dọc (mặc định ngang). */
+  /** Hướng của đường kẻ (mặc định ngang), như ButtonGroup, Toolbar, Stepper. */
+  orientation?: "horizontal" | "vertical";
+  /** @deprecated Use `orientation="vertical"`. Will be removed in v1.0.0. */
   vertical?: boolean;
   /** Vị trí nội dung (chữ / icon) trên đường kẻ. */
   alignContent?: "start" | "center" | "end";
@@ -19,16 +23,20 @@ const APPEARANCE = {
   strong: "text-foreground-1 before:border-stroke-1 after:border-stroke-1",
 } as const;
 
-export function Divider({
-  vertical = false,
-  alignContent = "center",
-  appearance = "default",
-  inset = false,
-  className,
-  children,
-  ref,
-  ...props
-}: DividerProps & { ref?: React.Ref<HTMLDivElement> }) {
+export function Divider(inProps: DividerProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    orientation: orientationProp,
+    vertical: verticalLegacy,
+    alignContent = "center",
+    appearance = "default",
+    inset = false,
+    className,
+    children,
+    ref,
+    ...props
+  } = useComponentDefaults("Divider", inProps);
+  if (verticalLegacy !== undefined) warnDeprecated("Divider.vertical", 'use orientation="vertical"', "1.0.0");
+  const vertical = (orientationProp ?? (verticalLegacy ? "vertical" : "horizontal")) === "vertical";
   const hasContent = children != null && children !== false;
   return (
     <div
@@ -54,4 +62,10 @@ export function Divider({
       {hasContent && <div className="flex items-center gap-1">{children}</div>}
     </div>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Divider: DividerProps;
+  }
 }

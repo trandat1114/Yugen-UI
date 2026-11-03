@@ -644,7 +644,7 @@ export const SSR_CASES: SsrCase[] = [
           <CarouselCard>Slide 2</CarouselCard>
           <CarouselCard>Slide 3</CarouselCard>
         </CarouselViewport>
-        <CarouselNavContainer autoplay />
+        <CarouselNavContainer showAutoplayToggle />
       </Carousel>
     ),
   },

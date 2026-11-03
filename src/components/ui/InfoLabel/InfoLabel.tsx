@@ -2,7 +2,7 @@ import * as React from "react";
 import { Info16Filled, Info16Regular, Info20Filled, Info20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Popover, PopoverSurface, PopoverTrigger } from "@/components/ui/Popover/Popover";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { infoLabelMessagesEn } from "./messages";
 
 export { infoLabelMessages, infoLabelMessagesVi, infoLabelMessagesEn, type InfoLabelMessages } from "./messages";
@@ -27,20 +27,21 @@ export interface InfoLabelProps extends React.LabelHTMLAttributes<HTMLLabelEleme
   rootClassName?: string;
 }
 
-export function InfoLabel({
-  info,
-  size = "medium",
-  weight = "regular",
-  required,
-  disabled,
-  infoButtonLabel,
-  className,
-  rootClassName,
-  id,
-  children,
-  ref,
-  ...props
-}: InfoLabelProps & { ref?: React.Ref<HTMLLabelElement> }) {
+export function InfoLabel(inProps: InfoLabelProps & { ref?: React.Ref<HTMLLabelElement> }) {
+  const {
+    info,
+    size = "medium",
+    weight = "regular",
+    required,
+    disabled,
+    infoButtonLabel,
+    className,
+    rootClassName,
+    id,
+    children,
+    ref,
+    ...props
+  } = useComponentDefaults("InfoLabel", inProps, COMPACT_SIZE);
   const msg = useYugenMessages("infoLabel", infoLabelMessagesEn);
   const autoId = React.useId();
   const labelId = id ?? `${autoId}-label`;
@@ -92,4 +93,10 @@ export function InfoLabel({
       </Popover>
     </span>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    InfoLabel: InfoLabelProps;
+  }
 }

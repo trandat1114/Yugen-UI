@@ -9,7 +9,7 @@ import {
   MoreHorizontal20Regular,
 } from "../_internal/icons";
 import { cn } from "@/lib/cn";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { paginationMessagesEn } from "./messages";
 
 export { paginationMessages, paginationMessagesVi, paginationMessagesEn, type PaginationMessages } from "./messages";
@@ -61,20 +61,21 @@ export interface PaginationProps extends Omit<React.HTMLAttributes<HTMLElement>,
   disabled?: boolean;
 }
 
-export function Pagination({
-  className,
-  page,
-  defaultPage = 1,
-  pageCount,
-  onPageChange,
-  siblingCount = 1,
-  size = "medium",
-  showLabels = true,
-  disabled,
-  "aria-label": ariaLabel,
-  ref,
-  ...props
-}: PaginationProps & { ref?: React.Ref<HTMLElement> }) {
+export function Pagination(inProps: PaginationProps & { ref?: React.Ref<HTMLElement> }) {
+  const {
+    className,
+    page,
+    defaultPage = 1,
+    pageCount,
+    onPageChange,
+    siblingCount = 1,
+    size = "medium",
+    showLabels = true,
+    disabled,
+    "aria-label": ariaLabel,
+    ref,
+    ...props
+  } = useComponentDefaults("Pagination", inProps, COMPACT_SIZE);
   const msg = useYugenMessages("pagination", paginationMessagesEn);
   const [rawPage, setPage] = useControllableState({ value: page, defaultValue: defaultPage, onChange: onPageChange });
   const current = Math.min(Math.max(rawPage, 1), Math.max(pageCount, 1));
@@ -147,4 +148,10 @@ export function Pagination({
       </ul>
     </nav>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Pagination: PaginationProps;
+  }
 }

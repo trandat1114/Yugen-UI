@@ -2,7 +2,17 @@ import * as React from "react";
 import type { ReactNode } from "react";
 import {
   Button,
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+  Dropdown,
+  DropdownOption,
   Label,
+  Menu,
+  MenuItem,
+  MenuPopover,
+  MenuTrigger,
   MessageBar,
   Popover,
   PopoverSurface,
@@ -10,6 +20,7 @@ import {
   Radio,
   RadioGroup,
   SimpleTooltip,
+  Switch,
   YugenProvider,
 } from "@/components/ui";
 import { DocSection, DoDont, PropsTable } from "../blocks";
@@ -162,6 +173,71 @@ function MyFloatingSurface(props) {
   return <SomePrimitive.Portal><SomePrimitive.Content {...portalTheme} {...props} /></SomePrimitive.Portal>;
 }`;
 
+const SCROLL_LOCK_CODE = `// Cả app: giữ thanh cuộn khi Menu, ContextMenu, Dropdown mở
+<YugenProvider applyToDocument scrollLock="keep-scrollbar">
+  <App />
+</YugenProvider>
+
+// Không dùng provider: đặt attribute trên <html>
+<html data-yugen-scroll-lock="keep-scrollbar">
+
+// Một menu không khoá cuộn
+<Menu modal={false}>…</Menu>`;
+
+/** Bật "Giữ thanh cuộn" ghi attribute lên <html> của chính trang docs; tắt hoặc rời trang thì gỡ. */
+function ScrollLockDemo() {
+  const [keep, setKeep] = React.useState(false);
+  React.useEffect(() => {
+    const root = document.documentElement;
+    if (keep) root.setAttribute("data-yugen-scroll-lock", "keep-scrollbar");
+    else root.removeAttribute("data-yugen-scroll-lock");
+    return () => root.removeAttribute("data-yugen-scroll-lock");
+  }, [keep]);
+  return (
+    <div className="flex flex-col gap-4 rounded-2xlarge border border-stroke-2 p-6">
+      <Switch label="Giữ thanh cuộn" checked={keep} onCheckedChange={setKeep} />
+      <div className="flex flex-wrap items-center gap-3">
+        <Menu>
+          <MenuTrigger asChild>
+            <Button>Menu</Button>
+          </MenuTrigger>
+          <MenuPopover>
+            <MenuItem>Đổi tên</MenuItem>
+            <MenuItem>Nhân bản</MenuItem>
+            <MenuItem>Lưu trữ</MenuItem>
+          </MenuPopover>
+        </Menu>
+        <Menu modal={false}>
+          <MenuTrigger asChild>
+            <Button>Menu không modal</Button>
+          </MenuTrigger>
+          <MenuPopover>
+            <MenuItem>Đổi tên</MenuItem>
+            <MenuItem>Nhân bản</MenuItem>
+            <MenuItem>Lưu trữ</MenuItem>
+          </MenuPopover>
+        </Menu>
+        <Dropdown aria-label="Trạng thái" placeholder="Trạng thái" className="w-48">
+          <DropdownOption value="open">Đang mở</DropdownOption>
+          <DropdownOption value="review">Chờ duyệt</DropdownOption>
+          <DropdownOption value="done">Xong</DropdownOption>
+        </Dropdown>
+      </div>
+      <ContextMenu>
+        <ContextMenuTrigger asChild>
+          <div className="flex h-24 items-center justify-center rounded-xlarge border border-dashed border-stroke-1 text-body1 text-foreground-3 select-none">
+            Nhấn chuột phải vào đây
+          </div>
+        </ContextMenuTrigger>
+        <ContextMenuContent>
+          <ContextMenuItem>Sao chép</ContextMenuItem>
+          <ContextMenuItem>Dán</ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+    </div>
+  );
+}
+
 export default function Page() {
   return (
     <>
@@ -282,6 +358,44 @@ export default function Page() {
             <li>
               Hướng chữ không cần xử lý: các bề mặt nổi (PopoverSurface, TooltipContent, HoverCardContent, DialogSurface, DrawerSurface,
               menu và listbox) tự gắn <C>dir</C> của provider gần nhất, vì context React (kể cả <C>DirectionProvider</C>) đi xuyên qua portal.
+            </li>
+          </ul>
+        </div>
+      </DocSection>
+
+      <DocSection
+        id="scroll-lock"
+        title="Khoá cuộn"
+        description="Menu, ContextMenu và Dropdown khoá cuộn trang khi mở: lăn chuột và vuốt bên ngoài bị chặn, thanh cuộn của trang ẩn đi và body được bù lề để nội dung không xê dịch. App chọn giữ hay ẩn thanh cuộn."
+      >
+        <div className="flex flex-col gap-4">
+          <ScrollLockDemo />
+          <SimpleTable
+            head={["Bề mặt", "Khoá cuộn", "Tắt được"]}
+            rows={[
+              ["Menu (cả MenuButton, SplitButton, mục thừa của Breadcrumb, DataGridColumnPicker)", <><C>modal</C> mặc định true</>, <C key="m">modal=&#123;false&#125;</C>],
+              ["ContextMenu", <><C>modal</C> mặc định true</>, <C key="m">modal=&#123;false&#125;</C>],
+              ["Dropdown", "Luôn khoá", "Không; dùng scrollLock để giữ thanh cuộn"],
+              ["Menubar", "Không (menu của Menubar không modal)", "—"],
+              ["Popover và component dựa trên Popover (Combobox, TagPicker, TimePicker…)", <>Không, trừ khi <C>modal</C></>, "—"],
+              ["Dialog, Drawer có lớp phủ, Sheet, Tour", "Có", "Đúng ý đồ: nội dung phía sau không dùng được"],
+            ]}
+          />
+          <CodeBlock code={SCROLL_LOCK_CODE} />
+          <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
+            <li>
+              <C>scrollLock=&quot;keep-scrollbar&quot;</C> trên provider gốc ghi <C>data-yugen-scroll-lock</C> lên <C>{"<html>"}</C>: thanh cuộn
+              vẫn hiện và không có gì xê dịch, nhưng lăn chuột / vuốt bên ngoài bề mặt vẫn bị chặn. App không dùng provider thì tự đặt
+              attribute này. Mặc định hiện tại là <C>&quot;hide-scrollbar&quot;</C>; bản 1.0 sẽ đổi sang <C>&quot;keep-scrollbar&quot;</C>.
+            </li>
+            <li>
+              <C>modal=&#123;false&#125;</C> trên Menu hoặc ContextMenu: trang vẫn cuộn được, bấm ra ngoài tới trang ngay, và phần còn lại
+              của trang không bị ẩn khỏi trình đọc màn hình. Hợp với menu mở từ thanh công cụ trong vùng nội dung dài.
+            </li>
+            <li>
+              Phần tử <C>position: fixed</C> sát mép phải (header, nút nổi) xê dịch theo bề rộng thanh cuộn khi thanh cuộn ẩn, trừ khi có
+              class <C>right-scroll-bar-position</C> (hoặc <C>width-before-scroll-bar</C> cho phần tử rộng hết trang). Với{" "}
+              <C>keep-scrollbar</C> thì không cần.
             </li>
           </ul>
         </div>

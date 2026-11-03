@@ -9,7 +9,7 @@ import { useSpinDelay } from "../Loading/Loading";
 import { popoverSurfaceClass } from "../Popover/Popover";
 import { SearchBox, type SearchBoxProps } from "../SearchBox/SearchBox";
 import { Spinner } from "../Spinner/Spinner";
-import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
+import { usePortalThemeProps, useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { autocompleteMessagesEn } from "./messages";
 
 export { autocompleteMessages, autocompleteMessagesVi, autocompleteMessagesEn, type AutocompleteMessages } from "./messages";
@@ -19,8 +19,15 @@ export { autocompleteMessages, autocompleteMessagesVi, autocompleteMessagesEn, t
 /**
  * Vị trí [đầu, cuối) của mọi đoạn khớp `query` trong `text`, so khớp không dấu & không phân biệt hoa thường
  * ("xoai" khớp "Xoài"). Chỉ số trả về là chỉ số trong chuỗi gốc.
+ * @deprecated Internal helper of `HighlightMatch`; use `<HighlightMatch text query />`. Will be removed from the package
+ * exports in v1.0.0.
  */
 export function highlightRanges(text: string, query: string): [number, number][] {
+  warnDeprecated("highlightRanges", "use <HighlightMatch text query />", "1.0.0");
+  return findHighlightRanges(text, query);
+}
+
+function findHighlightRanges(text: string, query: string): [number, number][] {
   const needle = normalizeSearchText(query.trim());
   if (!needle) return [];
   let haystack = "";
@@ -50,7 +57,7 @@ export interface HighlightMatchProps extends React.HTMLAttributes<HTMLSpanElemen
 
 /** Tô đậm phần khớp với từ khoá (không dấu). Dùng trong gợi ý tìm kiếm và danh sách đã lọc. */
 export function HighlightMatch({ text, query, className, ...props }: HighlightMatchProps) {
-  const ranges = highlightRanges(text, query);
+  const ranges = findHighlightRanges(text, query);
   if (ranges.length === 0)
     return (
       <span className={className} {...props}>
@@ -127,29 +134,30 @@ const includesQuery = (s: AutocompleteSuggestion, query: string) =>
  * gợi ý chỉ giúp điền nhanh; Enter khi không chọn gợi ý → `onSubmit(query)`.
  * Bàn phím: ↓/↑ di chuyển gợi ý · Enter chọn / tìm · Esc đóng danh sách (lần nữa: xoá ô) · Tab rời ô.
  */
-export function Autocomplete({
-  suggestions,
-  filter = true,
-  onSelect,
-  onSubmit,
-  loading = false,
-  noResultsText: noResultsTextProp,
-  emptyMessage,
-  maxSuggestions = 8,
-  minChars = 1,
-  highlight = true,
-  listLabel,
-  listboxClassName,
-  value,
-  defaultValue,
-  onValueChange,
-  onKeyDown,
-  onFocus,
-  onBlur,
-  dir,
-  ref,
-  ...props
-}: AutocompleteProps & { ref?: React.Ref<HTMLInputElement> }) {
+export function Autocomplete(inProps: AutocompleteProps & { ref?: React.Ref<HTMLInputElement> }) {
+  const {
+    suggestions,
+    filter = true,
+    onSelect,
+    onSubmit,
+    loading = false,
+    noResultsText: noResultsTextProp,
+    emptyMessage,
+    maxSuggestions = 8,
+    minChars = 1,
+    highlight = true,
+    listLabel,
+    listboxClassName,
+    value,
+    defaultValue,
+    onValueChange,
+    onKeyDown,
+    onFocus,
+    onBlur,
+    dir,
+    ref,
+    ...props
+  } = useComponentDefaults("Autocomplete", inProps, COMPACT_SIZE);
   if (emptyMessage !== undefined) warnDeprecated("Autocomplete.emptyMessage", "use noResultsText", "1.0.0");
   const noResultsText = noResultsTextProp !== undefined ? noResultsTextProp : emptyMessage;
   const portalTheme = usePortalThemeProps();
@@ -344,4 +352,10 @@ export function Autocomplete({
       </span>
     </PopoverPrimitive.Root>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Autocomplete: AutocompleteProps;
+  }
 }

@@ -4,7 +4,7 @@ import { cva } from "class-variance-authority";
 import { useDirection } from "@radix-ui/react-direction";
 import { Dismiss12Regular, Dismiss16Regular, Dismiss20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { useComposedRefs } from "../_internal/composeRefs";
 import { tagMessagesEn } from "./messages";
 
@@ -99,6 +99,13 @@ function TagContent({
   );
 }
 
+/** Trong TagGroup, size / appearance của nhóm thắng mặc định của YugenProvider (chỉ prop của tag thắng nhóm). */
+function useGroupFirst<P extends TagVisualProps>(props: P): P {
+  const group = React.useContext(TagGroupContext);
+  if (!group) return props;
+  return { ...props, size: props.size ?? group.size, appearance: props.appearance ?? group.appearance };
+}
+
 function useTagContext(props: Pick<TagVisualProps, "size" | "appearance" | "disabled">) {
   const group = React.useContext(TagGroupContext);
   return {
@@ -119,25 +126,26 @@ export interface TagProps extends TagVisualProps, Omit<React.HTMLAttributes<HTML
   dismissLabel?: string;
 }
 
-export function Tag({
-  className,
-  appearance: appearanceProp,
-  size: sizeProp,
-  shape = "rounded",
-  icon,
-  media,
-  secondaryText,
-  disabled: disabledProp,
-  value,
-  dismissible,
-  onDismiss,
-  dismissLabel,
-  children,
-  onClick,
-  onKeyDown,
-  ref,
-  ...props
-}: TagProps & { ref?: React.Ref<HTMLElement> }) {
+export function Tag(inProps: TagProps & { ref?: React.Ref<HTMLElement> }) {
+  const {
+    className,
+    appearance: appearanceProp,
+    size: sizeProp,
+    shape = "rounded",
+    icon,
+    media,
+    secondaryText,
+    disabled: disabledProp,
+    value,
+    dismissible,
+    onDismiss,
+    dismissLabel,
+    children,
+    onClick,
+    onKeyDown,
+    ref,
+    ...props
+  } = useComponentDefaults("Tag", useGroupFirst(inProps), COMPACT_SIZE);
   const { group, size, appearance, disabled } = useTagContext({ size: sizeProp, appearance: appearanceProp, disabled: disabledProp });
   const msg = useYugenMessages("tag", tagMessagesEn);
   const classes = cn(
@@ -211,23 +219,24 @@ export interface InteractionTagProps
 }
 
 /** Tag có hành động chính (bấm vào nhãn) và nút gỡ riêng. */
-export function InteractionTag({
-  className,
-  appearance: appearanceProp,
-  size: sizeProp,
-  shape = "rounded",
-  icon,
-  media,
-  secondaryText,
-  disabled: disabledProp,
-  value,
-  dismissible,
-  onDismiss,
-  dismissLabel,
-  children,
-  ref,
-  ...props
-}: InteractionTagProps & { ref?: React.Ref<HTMLButtonElement> }) {
+export function InteractionTag(inProps: InteractionTagProps & { ref?: React.Ref<HTMLButtonElement> }) {
+  const {
+    className,
+    appearance: appearanceProp,
+    size: sizeProp,
+    shape = "rounded",
+    icon,
+    media,
+    secondaryText,
+    disabled: disabledProp,
+    value,
+    dismissible,
+    onDismiss,
+    dismissLabel,
+    children,
+    ref,
+    ...props
+  } = useComponentDefaults("InteractionTag", useGroupFirst(inProps), COMPACT_SIZE);
   const { group, size, appearance, disabled } = useTagContext({ size: sizeProp, appearance: appearanceProp, disabled: disabledProp });
   const msg = useYugenMessages("tag", tagMessagesEn);
   const DismissIcon = DISMISS_ICON[size];
@@ -291,17 +300,18 @@ export interface TagGroupProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 /** Nhóm tag: xuống dòng tự động, điều hướng bằng phím mũi tên, quản lý focus khi gỡ. */
-export function TagGroup({
-  className,
-  size = "medium",
-  appearance,
-  disabled,
-  onDismiss,
-  onKeyDown,
-  children,
-  ref,
-  ...props
-}: TagGroupProps & { ref?: React.Ref<HTMLDivElement> }) {
+export function TagGroup(inProps: TagGroupProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    className,
+    size = "medium",
+    appearance,
+    disabled,
+    onDismiss,
+    onKeyDown,
+    children,
+    ref,
+    ...props
+  } = useComponentDefaults("TagGroup", inProps, COMPACT_SIZE);
   const rootRef = React.useRef<HTMLDivElement | null>(null);
   const dir = useDirection();
   const setRefs = useComposedRefs(rootRef, ref);
@@ -354,4 +364,12 @@ export function TagGroup({
       </div>
     </TagGroupContext.Provider>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Tag: TagProps;
+    InteractionTag: InteractionTagProps;
+    TagGroup: TagGroupProps;
+  }
 }

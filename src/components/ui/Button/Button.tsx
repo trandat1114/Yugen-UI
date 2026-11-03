@@ -3,6 +3,7 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/cn";
 import { Spinner, type SpinnerSize } from "../Spinner/Spinner";
+import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
 /** Fluent 2 Button — https://fluent2.microsoft.design/components/web/react/core/button/usage */
 const buttonVariants = cva(
@@ -112,23 +113,24 @@ function preventClick(event: React.MouseEvent<HTMLElement>) {
   event.preventDefault();
 }
 
-export function Button({
-  className,
-  appearance,
-  size,
-  shape,
-  iconOnly,
-  icon,
-  iconPosition = "before",
-  asChild,
-  loading,
-  loadingText,
-  children,
-  type,
-  onClick,
-  ref,
-  ...props
-}: ButtonProps & { ref?: React.Ref<HTMLButtonElement> }) {
+export function Button(inProps: ButtonProps & { ref?: React.Ref<HTMLButtonElement> }) {
+  const {
+    className,
+    appearance,
+    size,
+    shape,
+    iconOnly,
+    icon,
+    iconPosition = "before",
+    asChild,
+    loading,
+    loadingText,
+    children,
+    type,
+    onClick,
+    ref,
+    ...props
+  } = useComponentDefaults("Button", inProps, COMPACT_SIZE);
   const isIconOnly = iconOnly ?? (!!icon && !children);
   const busy = !!loading;
   const classes = cn(
@@ -223,3 +225,9 @@ export function Button({
 }
 
 export { buttonVariants };
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Button: ButtonProps;
+  }
+}

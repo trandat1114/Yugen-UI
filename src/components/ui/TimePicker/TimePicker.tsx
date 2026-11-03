@@ -4,7 +4,7 @@ import { useControllableState } from "../hooks/useControllableState";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { useDirection } from "@radix-ui/react-direction";
 import { Checkmark16Filled, Clock16Regular, Clock20Regular, Clock24Regular } from "../_internal/icons";
-import { usePortalThemeProps, useYugen, useYugenMessages } from "../YugenProvider/context";
+import { usePortalThemeProps, useYugen, useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { popoverSurfaceClass } from "@/components/ui/Popover/Popover";
@@ -253,7 +253,8 @@ export interface TimePickerProps extends InputAttrs, TimeRangeOptions {
  * TimePicker: ô nhập kiểu combobox liệt kê giờ theo `increment`; gõ tự do (9, 930, 9h30, 9:30 PM…) rồi Enter / rời ô
  * để xác nhận, gõ dở sẽ nhảy tới giờ gần nhất. ArrowDown mở / di chuyển, Enter chọn, Escape đóng.
  */
-export function TimePicker({ ref, ...props }: TimePickerProps & { ref?: React.Ref<HTMLInputElement> }) {
+export function TimePicker(inProps: TimePickerProps & { ref?: React.Ref<HTMLInputElement> }) {
+  const { ref, ...props } = useComponentDefaults("TimePicker", inProps, COMPACT_SIZE);
   const {
     value,
     defaultValue = null,
@@ -574,4 +575,10 @@ export function TimePicker({ ref, ...props }: TimePickerProps & { ref?: React.Re
       </PopoverPrimitive.Portal>
     </PopoverPrimitive.Root>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    TimePicker: TimePickerProps;
+  }
 }

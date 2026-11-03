@@ -2,6 +2,7 @@ import * as React from "react";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
 import { cn } from "@/lib/cn";
 import { useComposedRefs } from "../_internal/composeRefs";
+import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
 export { useScrollMinimize, type UseScrollMinimizeOptions } from "./useScrollMinimize";
 
@@ -36,15 +37,16 @@ export interface TabsListProps extends React.ComponentPropsWithoutRef<typeof Tab
   minimized?: boolean;
 }
 
-export function TabsList({
-  className,
-  size = "medium",
-  appearance = "transparent",
-  material,
-  minimized = false,
-  ref,
-  ...props
-}: TabsListProps & { ref?: React.Ref<React.ComponentRef<typeof TabsPrimitive.List>> }) {
+export function TabsList(inProps: TabsListProps & { ref?: React.Ref<React.ComponentRef<typeof TabsPrimitive.List>> }) {
+  const {
+    className,
+    size = "medium",
+    appearance = "transparent",
+    material,
+    minimized = false,
+    ref,
+    ...props
+  } = useComponentDefaults("TabsList", inProps, COMPACT_SIZE);
   return (
     <TabsContext.Provider value={{ size, appearance, material, minimized }}>
       <TabsPrimitive.List
@@ -145,4 +147,10 @@ export function TabsContent({ className, ref, ...props }: React.ComponentProps<t
   return (
     <TabsPrimitive.Content ref={ref} className={cn("pt-3 text-body1 text-foreground-2 outline-none", className)} {...props} />
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    TabsList: TabsListProps;
+  }
 }

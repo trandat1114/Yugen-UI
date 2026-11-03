@@ -18,9 +18,9 @@ Reviews before 1.0 (API, Labs, security), default props and density from YugenPr
 
 - [~] API review: new names for the outlier props, old names deprecated until 1.0 (#157)
 - [ ] Yugen Labs: promote what is mature, mark the rest experimental (#158)
-- [ ] Default props and density from YugenProvider (#171)
-- [ ] Glass as a default for navigation components, through default props (#230)
-- [ ] Scroll lock: keep or hide the page scrollbar while Menu, ContextMenu or Dropdown is open (#243)
+- [x] Default props and density from YugenProvider (#171)
+- [x] Glass as a default for navigation components, through default props (#230)
+- [x] Scroll lock: keep or hide the page scrollbar while Menu, ContextMenu or Dropdown is open (#243)
 - [ ] Security review of components that render untrusted content (#165)
 - [x] Built-in icons: installing yugen-ui is ~180 MB lighter (#320)
 - [x] React 19 only: React 18 leaves the peer dependencies and CI (#62)
@@ -51,7 +51,6 @@ Stable API. No fixed date: ships when the readiness checklist is done.
 
 Not scheduled yet.
 
-- [ ] Glass: a YugenProvider default that switches navigation components to glass (after #171) (#230)
 - [ ] Register @yugen in the shadcn registry index (#68)
 - [ ] Under consideration: Figma kit, Sakura icon set
 
@@ -95,9 +94,9 @@ Rà soát trước 1.0 (API, Labs, bảo mật), prop mặc định và mật đ
 
 - [~] Rà soát API: tên mới cho các prop lệch chuẩn, tên cũ cảnh báo deprecation tới 1.0 (#157)
 - [ ] Yugen Labs: promote component đã chín, phần còn lại đánh dấu thử nghiệm (#158)
-- [ ] Prop mặc định và mật độ (density) từ YugenProvider (#171)
-- [ ] Glass làm mặc định cho component điều hướng, qua prop mặc định (#230)
-- [ ] Khóa cuộn: chọn giữ hay ẩn thanh cuộn khi mở Menu, ContextMenu, Dropdown (#243)
+- [x] Prop mặc định và mật độ (density) từ YugenProvider (#171)
+- [x] Glass làm mặc định cho component điều hướng, qua prop mặc định (#230)
+- [x] Khóa cuộn: chọn giữ hay ẩn thanh cuộn khi mở Menu, ContextMenu, Dropdown (#243)
 - [ ] Rà soát bảo mật các component hiển thị nội dung không tin cậy (#165)
 - [x] Icon có sẵn trong thư viện: cài yugen-ui nhẹ hơn ~180 MB (#320)
 - [x] Chỉ hỗ trợ React 19: bỏ React 18 khỏi peer dependency và CI (#62)
@@ -128,7 +127,6 @@ API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện
 
 Chưa xếp lịch.
 
-- [ ] Glass: YugenProvider đổi mọi component điều hướng sang glass (sau #171) (#230)
 - [ ] Đăng ký @yugen vào danh mục registry của shadcn (#68)
 - [ ] Đang cân nhắc: bộ Figma, gói icon Sakura
 

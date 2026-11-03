@@ -1,6 +1,7 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/cn";
+import { useComponentDefaults } from "../YugenProvider/context";
 
 /** Fluent 2 Badge — https://fluent2.microsoft.design/components/web/react/core/badge/usage */
 const badgeVariants = cva(
@@ -73,21 +74,28 @@ export interface BadgeProps
   icon?: React.ReactNode;
 }
 
-export function Badge({
-  className,
-  appearance,
-  color,
-  size,
-  shape,
-  icon,
-  children,
-  ref,
-  ...props
-}: BadgeProps & { ref?: React.Ref<HTMLSpanElement> }) {
+export function Badge(inProps: BadgeProps & { ref?: React.Ref<HTMLSpanElement> }) {
+  const {
+    className,
+    appearance,
+    color,
+    size,
+    shape,
+    icon,
+    children,
+    ref,
+    ...props
+  } = useComponentDefaults("Badge", inProps);
   return (
     <span ref={ref} className={cn(badgeVariants({ appearance, color, size, shape }), className)} {...props}>
       {icon}
       {children != null && <span className="px-0.5">{children}</span>}
     </span>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Badge: BadgeProps;
+  }
 }

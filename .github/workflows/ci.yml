@@ -109,7 +109,18 @@ jobs:
           cache: npm
 
       - run: npm ci
-      - run: npm test
+      # Coverage theo thư mục component (vitest.config.ts › coverage), so với mức sàn trong scripts/test-floor.json (#167):
+      # thư mục mới phải có test, % dòng của mỗi thư mục không được giảm.
+      - run: npx vitest run --coverage
+      - run: node scripts/check-test-floor.mjs
+      - name: Upload coverage summary
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-summary
+          path: coverage/coverage-summary.json
+          retention-days: 7
+          if-no-files-found: ignore
 
   # CLI `yugen` (packages/cli) — package độc lập, lockfile riêng; template đóng gói từ templates/.
   cli:

@@ -8,8 +8,9 @@ import { Quote } from "../Quote/Quote";
 
 const FRUITS = ["Xoài", "Sầu riêng", "Măng cụt", "Chôm chôm"];
 
-describe("highlightRanges", () => {
-  it("khớp không dấu, trả chỉ số trong chuỗi gốc", () => {
+describe("highlightRanges (export lỗi thời)", () => {
+  it("khớp không dấu, trả chỉ số trong chuỗi gốc; cảnh báo một lần", () => {
+    const warnings = watchDeprecations();
     expect(highlightRanges("Xoài cát", "xoai")).toEqual([[0, 4]]);
     expect(highlightRanges("Chôm chôm", "CHOM")).toEqual([
       [0, 4],
@@ -17,6 +18,7 @@ describe("highlightRanges", () => {
     ]);
     expect(highlightRanges("Đà Lạt", "da")).toEqual([[0, 2]]);
     expect(highlightRanges("Măng cụt", "  ")).toEqual([]);
+    expect(warnings("highlightRanges")).toBe(1);
   });
 
   it("HighlightMatch bọc phần khớp trong <mark>", () => {

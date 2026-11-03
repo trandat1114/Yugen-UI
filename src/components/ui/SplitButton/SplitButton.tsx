@@ -3,7 +3,7 @@ import { ChevronDown20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Button, type ButtonProps } from "../Button/Button";
 import { Menu, MenuPopover, MenuTrigger } from "../Menu/Menu";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { splitButtonMessagesEn } from "./messages";
 
 export { splitButtonMessages, splitButtonMessagesVi, splitButtonMessagesEn, type SplitButtonMessages } from "./messages";
@@ -17,16 +17,17 @@ export interface SplitButtonProps extends Omit<ButtonProps, "appearance" | "asCh
   menuLabel?: string;
 }
 
-export function SplitButton({
-  appearance = "secondary",
-  size = "medium",
-  menu,
-  menuLabel,
-  className,
-  disabled,
-  ref,
-  ...props
-}: SplitButtonProps & { ref?: React.Ref<HTMLButtonElement> }) {
+export function SplitButton(inProps: SplitButtonProps & { ref?: React.Ref<HTMLButtonElement> }) {
+  const {
+    appearance = "secondary",
+    size = "medium",
+    menu,
+    menuLabel,
+    className,
+    disabled,
+    ref,
+    ...props
+  } = useComponentDefaults("SplitButton", inProps, COMPACT_SIZE);
   const msg = useYugenMessages("splitButton", splitButtonMessagesEn);
   const divider =
     appearance === "primary"
@@ -53,4 +54,10 @@ export function SplitButton({
       </Menu>
     </span>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    SplitButton: SplitButtonProps;
+  }
 }
