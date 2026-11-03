@@ -160,6 +160,7 @@ const LABS_CHARTS: ComponentDoc[] = [
     { key: "store", label: "In store" },
   ]}
   valueFormat={{ style: "currency", currency: "USD", maximumFractionDigits: 0 }}
+  locale="en-US"
 />`,
       render: () => (
         <BarChart
@@ -172,6 +173,7 @@ const LABS_CHARTS: ComponentDoc[] = [
             { key: "store", label: "In store" },
           ]}
           valueFormat={{ style: "currency", currency: "USD", maximumFractionDigits: 0 }}
+          locale="en-US"
         />
       ),
     },
@@ -188,6 +190,7 @@ const LABS_CHARTS: ComponentDoc[] = [
   series={[{ key: "sold", label: "Units sold" }]}
   orientation="horizontal"
   showValues
+  locale="en-US"
 />`,
         render: () => (
           <BarChart
@@ -197,6 +200,7 @@ const LABS_CHARTS: ComponentDoc[] = [
             series={[{ key: "sold", label: "Units sold" }]}
             orientation="horizontal"
             showValues
+            locale="en-US"
           />
         ),
       },
@@ -216,6 +220,7 @@ const LABS_CHARTS: ComponentDoc[] = [
     { key: "services", label: "Services" },
   ]}
   showValues
+  locale="en-US"
 />`,
         render: () => (
           <BarChart
@@ -229,6 +234,7 @@ const LABS_CHARTS: ComponentDoc[] = [
               { key: "services", label: "Services" },
             ]}
             showValues
+            locale="en-US"
           />
         ),
       },
@@ -243,6 +249,7 @@ const LABS_CHARTS: ComponentDoc[] = [
   index="month"
   series={[{ key: "profit", label: "Profit" }]}
   diverging
+  locale="en-US"
 />`,
         render: () => (
           <BarChart
@@ -251,6 +258,7 @@ const LABS_CHARTS: ComponentDoc[] = [
             index="month"
             series={[{ key: "profit", label: "Profit" }]}
             diverging
+            locale="en-US"
           />
         ),
       },
@@ -269,6 +277,7 @@ const LABS_CHARTS: ComponentDoc[] = [
     { key: "store", label: "In store" },
   ]}
   texture
+  locale="en-US"
 />`,
         render: () => (
           <BarChart
@@ -281,6 +290,7 @@ const LABS_CHARTS: ComponentDoc[] = [
               { key: "store", label: "In store" },
             ]}
             texture
+            locale="en-US"
           />
         ),
       },
@@ -336,6 +346,7 @@ const LABS_CHARTS: ComponentDoc[] = [
     { key: "social", label: "Social" },
     { key: "direct", label: "Direct" },
   ]}
+  locale="en-US"
 />`,
       render: () => (
         <LineChart
@@ -348,6 +359,7 @@ const LABS_CHARTS: ComponentDoc[] = [
             { key: "social", label: "Social" },
             { key: "direct", label: "Direct" },
           ]}
+          locale="en-US"
         />
       ),
     },
@@ -363,9 +375,10 @@ const LABS_CHARTS: ComponentDoc[] = [
   index="date"
   series={[{ key: "visits", label: "Visits" }]}
   markers
+  locale="en-US"
 />`,
         render: () => (
-          <LineChart title="Daily visits" data={visits} index="date" series={[{ key: "visits", label: "Visits" }]} markers />
+          <LineChart title="Daily visits" data={visits} index="date" series={[{ key: "visits", label: "Visits" }]} markers locale="en-US" />
         ),
       },
       {
@@ -378,9 +391,10 @@ const LABS_CHARTS: ComponentDoc[] = [
   data={activeUsers}
   index="week"
   series={[{ key: "users", label: "Users" }]}
+  locale="en-US"
 />`,
         render: () => (
-          <AreaChart title="Active users" data={activeUsers} index="week" series={[{ key: "users", label: "Users" }]} />
+          <AreaChart title="Active users" data={activeUsers} index="week" series={[{ key: "users", label: "Users" }]} locale="en-US" />
         ),
       },
       {
@@ -398,6 +412,7 @@ const LABS_CHARTS: ComponentDoc[] = [
     { key: "photos", label: "Photos" },
     { key: "docs", label: "Documents" },
   ]}
+  locale="en-US"
 />`,
         render: () => (
           <AreaChart
@@ -410,6 +425,7 @@ const LABS_CHARTS: ComponentDoc[] = [
               { key: "photos", label: "Photos" },
               { key: "docs", label: "Documents" },
             ]}
+            locale="en-US"
           />
         ),
       },
@@ -429,6 +445,7 @@ const LABS_CHARTS: ComponentDoc[] = [
     { key: "team", label: "Team" },
     { key: "enterprise", label: "Enterprise" },
   ]}
+  locale="en-US"
 />`,
         render: () => (
           <LineChart
@@ -442,6 +459,7 @@ const LABS_CHARTS: ComponentDoc[] = [
               { key: "team", label: "Team" },
               { key: "enterprise", label: "Enterprise" },
             ]}
+            locale="en-US"
           />
         ),
       },
@@ -483,8 +501,8 @@ const LABS_CHARTS: ComponentDoc[] = [
       title: "Nguồn khách hàng",
       code: `const sources = ${lit(sources)};
 
-<DonutChart title="Customer sources" description="October" data={sources} />`,
-      render: () => <DonutChart title="Customer sources" description="October" data={sources} />,
+<DonutChart title="Customer sources" description="October" data={sources} locale="en-US" />`,
+      render: () => <DonutChart title="Customer sources" description="October" data={sources} locale="en-US" />,
     },
     examples: [
       {
@@ -492,8 +510,8 @@ const LABS_CHARTS: ComponentDoc[] = [
         description: "9 nhóm → 5 nhóm lớn nhất + “Khác” màu xám trung tính. Bảng dữ liệu vẫn giữ con số gộp.",
         code: `const provinces = ${lit(provinces)};
 
-<DonutChart title="Orders by city" data={provinces} valueFormat={{ maximumFractionDigits: 0 }} />`,
-        render: () => <DonutChart title="Orders by city" data={provinces} valueFormat={{ maximumFractionDigits: 0 }} />,
+<DonutChart title="Orders by city" data={provinces} valueFormat={{ maximumFractionDigits: 0 }} locale="en-US" />`,
+        render: () => <DonutChart title="Orders by city" data={provinces} valueFormat={{ maximumFractionDigits: 0 }} locale="en-US" />,
       },
       {
         title: "Nhãn giữa tuỳ biến",
@@ -508,6 +526,7 @@ const LABS_CHARTS: ComponentDoc[] = [
   centerLabel="used of 128 GB"
   size={168}
   thickness={18}
+  locale="en-US"
 />`,
         render: () => (
           <DonutChart
@@ -518,6 +537,7 @@ const LABS_CHARTS: ComponentDoc[] = [
             centerLabel="used of 128 GB"
             size={168}
             thickness={18}
+            locale="en-US"
           />
         ),
       },
@@ -564,6 +584,7 @@ const months = ${JSON.stringify(months)};
   trend={revenueTrend}
   trendLabels={months}
   className="w-80"
+  locale="en-US"
 />`,
       render: () => (
         <StatTile
@@ -575,6 +596,7 @@ const months = ${JSON.stringify(months)};
           trend={revenueTrend}
           trendLabels={months}
           className="w-80"
+          locale="en-US"
         />
       ),
     },
@@ -626,6 +648,7 @@ const churnTrend = ${JSON.stringify(churnTrend)};
   goodDirection="down"
   trend={churnTrend}
   className="w-72"
+  locale="en-US"
 />`,
         render: () => (
           <StatTile
@@ -638,14 +661,15 @@ const churnTrend = ${JSON.stringify(churnTrend)};
             goodDirection="down"
             trend={churnTrend}
             className="w-72"
+            locale="en-US"
           />
         ),
       },
       {
         title: "Con số hero",
         description: "size=\"hero\" (68px, cùng font sans) cho con số duy nhất mà màn hình dẫn dắt.",
-        code: `<StatTile label="Active customers" value={128450} size="hero" delta={0.052} deltaLabel="vs last quarter" />`,
-        render: () => <StatTile label="Active customers" value={128450} size="hero" delta={0.052} deltaLabel="vs last quarter" />,
+        code: `<StatTile label="Active customers" value={128450} size="hero" delta={0.052} deltaLabel="vs last quarter" locale="en-US" />`,
+        render: () => <StatTile label="Active customers" value={128450} size="hero" delta={0.052} deltaLabel="vs last quarter" locale="en-US" />,
       },
     ],
     dos: [

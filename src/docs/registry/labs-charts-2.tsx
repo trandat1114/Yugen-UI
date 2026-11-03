@@ -157,6 +157,7 @@ function ControlledZoom() {
         brush
         domain={domain}
         onDomainChange={setDomain}
+        locale="en-US"
       />
     </div>
   );
@@ -195,6 +196,7 @@ export const docs: ComponentDoc[] = [
           xLabel="Price ($)"
           yLabel="Rating"
           valueFormat={{ maximumFractionDigits: 1 }}
+          locale="en-US"
         />
         // #endregion
       ),
@@ -217,6 +219,7 @@ export const docs: ComponentDoc[] = [
             yLabel="Revenue ($K)"
             sizeLabel="Staff"
             includeZero
+            locale="en-US"
           />
           // #endregion
         ),
@@ -236,6 +239,7 @@ export const docs: ComponentDoc[] = [
             yLabel="Score"
             valueFormat={{ maximumFractionDigits: 1 }}
             defaultTrendLine
+            locale="en-US"
           />
           // #endregion
         ),
@@ -259,6 +263,7 @@ export const docs: ComponentDoc[] = [
             xLabel="Date"
             yLabel="Response (ms)"
             xFormat={{ day: "numeric", month: "numeric" }}
+            locale="en-US"
           />
           // #endregion
         ),
@@ -314,6 +319,7 @@ export const docs: ComponentDoc[] = [
           index="day"
           columns={hours}
           indexLabel="Day"
+          locale="en-US"
         />
         // #endregion
       ),
@@ -339,6 +345,7 @@ export const docs: ComponentDoc[] = [
             domain={[-30, 30]}
             valueFormat={(v) => `${v > 0 ? "+" : ""}${v}%`}
             indexLabel="Region"
+            locale="en-US"
           />
           // #endregion
         ),
@@ -358,6 +365,7 @@ export const docs: ComponentDoc[] = [
             valueFormat={{ style: "percent" }}
             rowHeight={28}
             indexLabel="Cohort"
+            locale="en-US"
           />
           // #endregion
         ),
@@ -409,6 +417,7 @@ export const docs: ComponentDoc[] = [
           ]}
           brush
           defaultDomain={[60, 89]}
+          locale="en-US"
         />
         // #endregion
       ),
@@ -433,6 +442,7 @@ export const docs: ComponentDoc[] = [
               { key: "photos", label: "Photos" },
               { key: "docs", label: "Documents" },
             ]}
+            locale="en-US"
           />
           // #endregion
         ),
@@ -456,6 +466,7 @@ export const docs: ComponentDoc[] = [
               { key: "photos", label: "Photos" },
               { key: "docs", label: "Documents" },
             ]}
+            locale="en-US"
           />
           // #endregion
         ),
