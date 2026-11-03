@@ -625,7 +625,7 @@ function FocusableCard({ title }: { title: string }) {
 function CardGroupDemo() {
   const nav = useArrowNavigationGroup({ axis: "horizontal" });
   return (
-    <div {...nav} role="list" aria-label="Bài viết" className="flex gap-3">
+    <div {...nav} role="list" aria-label="Bài viết" className="flex flex-wrap gap-3">
       {["Ra mắt Yugen UI", "Bảng màu Sakura"].map((title) => (
         <FocusableCard key={title} title={title} />
       ))}
@@ -2381,7 +2381,7 @@ function SearchAnnounceDemo() {
 function CardGroupDemo() {
   const nav = useArrowNavigationGroup({ axis: "horizontal" });
   return (
-    <div {...nav} role="list" aria-label="Bài viết" className="flex gap-3">
+    <div {...nav} role="list" aria-label="Bài viết" className="flex flex-wrap gap-3">
       {["Ra mắt Yugen UI", "Bảng màu Sakura"].map((title) => (
         <FocusableCard key={title} title={title} />
       ))}

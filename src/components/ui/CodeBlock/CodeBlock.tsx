@@ -725,7 +725,8 @@ export const CodeTabs = React.forwardRef<HTMLDivElement, CodeTabsProps>(
     const activeFile = files.find((f) => f.name === active) ?? files[0];
 
     return (
-      <Tabs dir="ltr" value={active} onValueChange={setActive}>
+      // contents: khung bên trong (nhận className) là hộp bố cục, nên w-full / min-w-0 có tác dụng trong flex cha.
+      <Tabs dir="ltr" value={active} onValueChange={setActive} className="contents">
         <div ref={ref} dir="ltr" {...themeProps} className={cn(SURFACE, className)} {...props}>
           <div className="flex min-h-10 items-center gap-2 border-b border-stroke-2 pe-1">
             <TabsList size="small" aria-label={msg.files} className="min-w-0 flex-wrap ps-1">
@@ -824,7 +825,7 @@ export const PackageManagerTabs = React.forwardRef<HTMLDivElement, PackageManage
     const commandText = packageManagerCommand(active, packages, { dev, command });
 
     return (
-      <Tabs dir="ltr" value={active} onValueChange={(v) => isPackageManager(v) && setStored(v)}>
+      <Tabs dir="ltr" value={active} onValueChange={(v) => isPackageManager(v) && setStored(v)} className="contents">
         <div ref={ref} dir="ltr" {...themeProps} className={cn(SURFACE, className)} {...props}>
           <div className="flex min-h-10 items-center gap-2 border-b border-stroke-2 pe-1">
             <TabsList size="small" aria-label={msg.label} className="min-w-0 flex-wrap ps-1">

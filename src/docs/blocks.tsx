@@ -22,6 +22,18 @@ import type { Example, PropDoc } from "./types";
 export type { Example, PropDoc };
 
 /* ---------- Page header ---------- */
+/** Tên component dài ("StreamingMarkdown"): ở khung hẹp xuống dòng giữa hai từ ghép thay vì tràn ngang (#266). */
+function breakableTitle(title: string): React.ReactNode {
+  const parts = title.split(/(?<=[a-z])(?=[A-Z])/);
+  if (parts.length === 1) return title;
+  return parts.map((part, i) => (
+    <React.Fragment key={i}>
+      {i > 0 && <wbr />}
+      {part}
+    </React.Fragment>
+  ));
+}
+
 export function PageHeader({
   eyebrow,
   title,
@@ -38,8 +50,8 @@ export function PageHeader({
       {eyebrow && (
         <p className="mb-2 text-caption1 font-semibold tracking-[0.12em] text-foreground-3 uppercase">{eyebrow}</p>
       )}
-      <h1 className="font-display text-[clamp(40px,6vw,64px)] leading-[1.1] font-semibold tracking-[-0.02em] text-foreground-1">
-        {title}
+      <h1 className="font-display text-[clamp(40px,6vw,64px)] leading-[1.1] font-semibold tracking-[-0.02em] wrap-break-word text-foreground-1">
+        {breakableTitle(title)}
       </h1>
       <p className="mt-4 max-w-3xl text-subtitle1 font-normal text-foreground-1">{lead}</p>
       {children && <div className="mt-4 max-w-3xl text-body2 text-foreground-2">{children}</div>}
