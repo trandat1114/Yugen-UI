@@ -766,7 +766,7 @@ export const docs: ComponentDoc[] = [
 
   {
     slug: "pageprogress",
-    category: "Yugen Labs",
+    category: "Phản hồi",
     name: "PageProgress",
     lead: "Thanh tiến trình mảnh màu brand ở mép trên trang: báo ứng dụng đang làm việc khi chuyển route hay tải nền, mà không che nội dung đang đọc.",
     description:
@@ -823,7 +823,7 @@ export const docs: ComponentDoc[] = [
 
   {
     slug: "asynccontent",
-    category: "Yugen Labs",
+    category: "Phản hồi",
     name: "AsyncContent & ErrorState",
     lead: "Một chỗ cho mọi trạng thái của dữ liệu bất đồng bộ — chưa tải, đang tải, có dữ liệu, rỗng, lỗi — với khung xương không nháy và lỗi luôn có lối thoát.",
     description:
@@ -998,7 +998,7 @@ export const docs: ComponentDoc[] = [
 
   {
     slug: "optimistic",
-    category: "Yugen Labs",
+    category: "Tiện ích",
     name: "useOptimisticList",
     lead: "Cập nhật lạc quan cho danh sách: giao diện đổi ngay khi bấm, gửi lên server phía sau; thất bại thì hoàn tác đúng thay đổi đó và báo bằng toast.",
     description:

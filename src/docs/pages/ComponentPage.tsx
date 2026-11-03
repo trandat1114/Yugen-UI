@@ -1,6 +1,6 @@
 import { Suspense, useState } from "react";
 import { ChevronRight12Regular } from "@fluentui/react-icons";
-import { CodeTabs, ErrorState, PageProgressFallback, SkeletonText, type YugenTheme } from "@/components/ui";
+import { CodeTabs, ErrorState, MessageBar, PageProgressFallback, SkeletonText, type YugenTheme } from "@/components/ui";
 import type { AppBrand } from "@/hooks/useAppearance";
 import { COMPONENT_META_BY_SLUG, isTranslated, readComponentDoc, retryComponentDoc } from "../registry";
 import { DoDont, DocSection, ExampleFrame, ExampleGrid, OnThisPage, PageHeader, PropsTable, withCode } from "../blocks";
@@ -118,6 +118,16 @@ export function ComponentPage({ slug, theme, brand }: { slug: string; theme: Yug
             <ComponentDescription key={attempt} slug={slug} />
           </Suspense>
         </PageHeader>
+
+        {/* Yugen Labs (#158): ngoài SemVer — API có thể đổi ở bản minor, ghi trong What's new. */}
+        {meta.category === "Yugen Labs" && (
+          <MessageBar intent="info" title={t("component.labsTitle")} className="mb-6">
+            {t("component.labsBody")}{" "}
+            <a href={docsPath("/concepts/versioning#labs")} className="text-link underline hover:text-link-hover">
+              {t("component.labsLink")}
+            </a>
+          </MessageBar>
+        )}
 
         <Suspense
           fallback={

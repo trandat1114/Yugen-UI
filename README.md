@@ -42,6 +42,7 @@ blocks, concepts and a Theme Designer, in English and Vietnamese. What comes nex
 - [Copy-paste mode](#copy-paste-mode)
 - [Next.js](#nextjs-app-router)
 - [Package contents](#package-contents)
+- [Yugen Labs](#yugen-labs)
 - [Browser support](#browser-support)
 - [Contributing](#contributing)
 - [Credits](#credits) · [License](#license)
@@ -288,6 +289,12 @@ on the server.
 | `yugen-ui/tokens.css` | Raw design tokens (CSS custom properties only) |
 
 The package is ESM-only (`"type": "module"`), which every modern bundler and Next.js support.
+
+## Yugen Labs
+
+Yugen Labs components are experimental and outside SemVer: their API can change in a minor release, and What's new
+says what changed. Today that is Sheet, Reasoning, PromptInput, ChatComposer, Tour, NotificationCenter, Questionnaire, Trace, the charts (BarChart, LineChart, AreaChart, DonutChart, ScatterChart, Heatmap, Sparkline, StatTile, zoom and brush), LoadingOverlay / useSpinDelay, the Skeleton presets, and the glass material. Their docs pages carry a notice.
+A component leaves Labs when it has tests, a template uses it and its API needs no more changes.
 
 ## Browser support
 
@@ -580,6 +587,12 @@ Bản build trên npm đã có `"use client";` ở đầu mỗi module component
 | `yugen-ui/tokens.css` | Token thô (chỉ biến CSS) |
 
 Gói chỉ có ESM (`"type": "module"`) — mọi bundler hiện đại và Next.js đều hỗ trợ.
+
+### Yugen Labs
+
+Component Yugen Labs là thử nghiệm và nằm ngoài SemVer: API có thể đổi ở một bản minor, và trang Có gì mới ghi lại
+thay đổi. Hiện gồm Sheet, Reasoning, PromptInput, ChatComposer, Tour, NotificationCenter, Questionnaire, Trace, các chart (BarChart, LineChart, AreaChart, DonutChart, ScatterChart, Heatmap, Sparkline, StatTile, zoom và brush), LoadingOverlay / useSpinDelay, các Skeleton preset, và chất liệu glass. Trang docs của chúng có ghi chú.
+Component rời Labs khi đã có test, được một template dùng và API không cần đổi thêm.
 
 ### Trình duyệt hỗ trợ
 
