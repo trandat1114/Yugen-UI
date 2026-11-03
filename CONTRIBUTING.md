@@ -187,7 +187,7 @@ A PR into `next` with a user-facing change (docs included) also adds an item to 
 files `src/docs/news/yugen-ui/<version>.vi.md` and `.en.md` marked `upcoming: true` (create them if missing, with the
 version from `npx changeset status`). CLI changes go to `src/docs/news/cli` / `create-yugen-ui`.
 `node scripts/check-news.mjs` checks the format; preview it on the `/next/` docs. Details: wiki › *Release Process* ›
-Tin trên trang Có gì mới.
+News on the What's new page.
 
 ```bash
 npx changeset    # pick yugen-ui → patch or minor → write a user-facing summary
