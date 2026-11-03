@@ -1175,7 +1175,7 @@ const LABS_CHAT: Record<string, ComponentDoc> = {
 
   messagescroller: {
     slug: "messagescroller",
-    category: "Yugen Labs",
+    category: "Hiển thị dữ liệu",
     name: "MessageScroller",
     lead: "MessageScroller là vùng cuộn hội thoại biết bám đáy khi có tin mới, báo “N tin nhắn mới” khi bạn đang đọc tin cũ và giữ nguyên vị trí khi tải thêm lịch sử.",
     description:
@@ -1312,7 +1312,7 @@ const LABS_CHAT: Record<string, ComponentDoc> = {
 
   codeblock: {
     slug: "codeblock",
-    category: "Yugen Labs",
+    category: "Hiển thị dữ liệu",
     name: "CodeBlock",
     lead: "CodeBlock hiển thị code với tô màu cú pháp gọn nhẹ tự viết (không Prism / Shiki), số dòng, dòng nhấn mạnh, diff, xuống dòng và nút sao chép.",
     description:

@@ -502,7 +502,7 @@ const LOADING_NOTIFICATIONS_CODE = `function LoadingNotificationsDemo() {
 export const docs: ComponentDoc[] = [
   {
     slug: "streamingmarkdown",
-    category: "Yugen Labs",
+    category: "Hiển thị dữ liệu",
     name: "StreamingMarkdown",
     lead: "StreamingMarkdown hiển thị câu trả lời Markdown của AI ngay khi từng token về — không nháy ký hiệu thô, không chèn HTML, và không render lại cả bài mỗi lần có chữ mới.",
     description:
@@ -554,7 +554,7 @@ export const docs: ComponentDoc[] = [
   },
   {
     slug: "citation",
-    category: "Yugen Labs",
+    category: "Hiển thị dữ liệu",
     name: "Citation",
     lead: "Citation gắn số nguồn [1] ngay trong câu trả lời; rê chuột hoặc focus để xem nhanh tiêu đề, tên miền và đoạn trích, bấm để mở thẻ và tới link.",
     description:
