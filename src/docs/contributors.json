@@ -7,13 +7,13 @@
       "avatar": "https://avatars.githubusercontent.com/u/88397960?u=1536b607c6b24251c0f403833bc956776eae27c2&v=4",
       "first": "2026-10-20",
       "counts": {
-        "code": 113,
+        "code": 115,
         "templates": 31,
-        "docs": 113,
+        "docs": 116,
         "translation": 62,
         "bug": 19,
         "a11y": 4,
-        "idea": 61
+        "idea": 62
       },
       "maintainer": true
     },
@@ -74,9 +74,21 @@
       "counts": {
         "code": 1,
         "docs": 2,
+        "translation": 1,
         "bug": 1
       },
       "items": [
+        {
+          "types": [
+            "code",
+            "docs",
+            "translation"
+          ],
+          "number": 257,
+          "title": "feat(hooks): shared hooks for common UI logic (#172)",
+          "date": "2026-11-02",
+          "url": "https://github.com/trandat1114/Yugen-UI/pull/257"
+        },
         {
           "types": [
             "docs"
@@ -85,15 +97,6 @@
           "title": "fix: adjust line height for numeral display in EnsoFrame and BloomFrame",
           "date": "2026-11-02",
           "url": "https://github.com/trandat1114/Yugen-UI/pull/251"
-        },
-        {
-          "types": [
-            "code",
-            "docs"
-          ],
-          "title": "Hooks dùng chung (#172)",
-          "date": "2026-11-02",
-          "url": "https://github.com/trandat1114/Yugen-UI/pull/253"
         },
         {
           "types": [

@@ -191,9 +191,12 @@ npx changeset    # chọn yugen-ui → patch hoặc minor → viết tóm tắt 
 
 ### Ghi tên người đóng góp
 
-Trang `/contributors` liệt kê mọi người có PR được merge, issue (báo lỗi, báo lỗi tiếp cận, đề xuất) hay review, lấy
-từ GitHub API: `npm run contributors` (cần `GITHUB_TOKEN`) ghi `src/docs/contributors.json`, workflow Docs chạy lại mỗi
-lần deploy. Đóng góp ngoài GitHub (thiết kế, ý tưởng) ghi tay vào `src/docs/contributors.extra.json`. Muốn bỏ tên khỏi
+Trang `/contributors` liệt kê mọi người có PR được merge (kể cả commit trong PR của người khác và dòng
+`Co-authored-by`), issue (báo lỗi, báo lỗi tiếp cận, đề xuất), review hay bình luận góp ý trong issue và PR, lấy từ
+GitHub API: `npm run contributors` (cần `GITHUB_TOKEN`) ghi `src/docs/contributors.json`, snapshot mà workflow Docs làm
+mới mỗi lần deploy. Workflow Contributors data chạy lại vài phút sau mỗi issue, bình luận hay PR được merge (và hằng
+ngày), đẩy kết quả lên nhánh `contributors-data`; trang tải bản đó, lỗi thì dùng snapshot. Đóng góp ngoài GitHub (thiết
+kế, ý tưởng), hoặc một bình luận cần loại cụ thể hơn, ghi tay vào `src/docs/contributors.extra.json`. Muốn bỏ tên khỏi
 trang: mở issue hoặc nhắn maintainer, maintainer thêm login vào `exclude` trong file đó.
 
 ### Checklist PR
@@ -351,11 +354,14 @@ with `GITHUB_TOKEN` set (for example from `gh auth token`). Maintainers are not 
 
 ### Contributor credit
 
-The `/contributors` page lists everyone with a merged pull request, an issue (bug report, accessibility report, idea)
-or a review, read from the GitHub API: `npm run contributors` (needs `GITHUB_TOKEN`) writes
-`src/docs/contributors.json`, and the Docs workflow refreshes it on every deploy. Contributions outside GitHub (design,
-ideas) go by hand into `src/docs/contributors.extra.json`. To take your name off the page, open an issue or contact a
-maintainer, who adds your login to `exclude` in that file.
+The `/contributors` page lists everyone with a merged pull request (including commits in someone else's pull request
+and `Co-authored-by` lines), an issue (bug report, accessibility report, idea), a review or a feedback comment on an
+issue or pull request, read from the GitHub API: `npm run contributors` (needs `GITHUB_TOKEN`) writes
+`src/docs/contributors.json`, the snapshot the Docs workflow refreshes on every deploy. The Contributors data workflow
+runs again a few minutes after each issue, comment or merged pull request (and daily) and pushes the result to the
+`contributors-data` branch; the page loads it and falls back to the snapshot. Contributions outside GitHub (design,
+ideas), or a comment that deserves a more specific type, go by hand into `src/docs/contributors.extra.json`. To take
+your name off the page, open an issue or contact a maintainer, who adds your login to `exclude` in that file.
 
 ### Releasing (maintainers)
 

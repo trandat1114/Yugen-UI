@@ -30,7 +30,7 @@ const action = (b: ReturnType<typeof branch>) => classify(b, { today }).action;
 
 describe("prune-branches", () => {
   it("không bao giờ xoá nhánh dài hạn, kể cả khi đã nằm trong main", () => {
-    for (const name of ["main", "next", "canary", "gh-pages", "issue-assets", "release/0.10"])
+    for (const name of ["main", "next", "canary", "gh-pages", "issue-assets", "contributors-data", "release/0.10"])
       expect(action(branch(name, { inBase: true, date: "2020-01-01T00:00:00Z" }))).toBe("keep");
     expect(classify(branch("develop", { inBase: true }), { today, defaultBranch: "develop" }).action).toBe("keep");
   });

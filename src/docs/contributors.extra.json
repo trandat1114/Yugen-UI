@@ -1,16 +1,8 @@
 {
-  "$comment": "Ghi tay cho scripts/contributors.mjs (#248). maintainers: đứng đầu trang. exclude: login xin bỏ tên. people: đóng góp API không thấy (thiết kế, ý tưởng ngoài GitHub…) hoặc bình luận trong issue cần loại cụ thể hơn \"discussion\" (cùng url với bình luận thì bản lấy tự động bị bỏ): { login, name?, types: [design|idea|discussion|a11y|…], title, date: YYYY-MM-DD, url? }.",
+  "$comment": "Ghi tay cho scripts/contributors.mjs (#248). maintainers: đứng đầu trang. exclude: login xin bỏ tên. people: đóng góp API không thấy (thiết kế, ý tưởng ngoài GitHub…) hoặc bình luận / PR cần loại cụ thể hơn bản lấy tự động (cùng login và url thì bản tự động bị bỏ): { login, name?, types: [design|idea|discussion|a11y|…], title, date: YYYY-MM-DD, url? }.",
   "maintainers": ["trandat1114"],
   "exclude": [],
   "people": [
-    {
-      "login": "giabao12-hali",
-      "name": "Nguyễn Gia Bảo",
-      "types": ["code", "docs"],
-      "title": "Hooks dùng chung (#172)",
-      "date": "2026-11-02",
-      "url": "https://github.com/trandat1114/Yugen-UI/pull/253"
-    },
     {
       "login": "dave-otf",
       "name": "Dave Kurian",
