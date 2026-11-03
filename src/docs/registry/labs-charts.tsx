@@ -11,20 +11,20 @@ function lit(rows: Record<string, unknown>[]): string {
 }
 
 const revenue = [
-  { month: "T5", online: 420000000, store: 310000000 },
-  { month: "T6", online: 465000000, store: 298000000 },
-  { month: "T7", online: 510000000, store: 325000000 },
-  { month: "T8", online: 488000000, store: 340000000 },
-  { month: "T9", online: 560000000, store: 352000000 },
-  { month: "T10", online: 615000000, store: 360000000 },
+  { month: "May", online: 420000, store: 310000 },
+  { month: "Jun", online: 465000, store: 298000 },
+  { month: "Jul", online: 510000, store: 325000 },
+  { month: "Aug", online: 488000, store: 340000 },
+  { month: "Sep", online: 560000, store: 352000 },
+  { month: "Oct", online: 615000, store: 360000 },
 ];
 
 const topProducts = [
-  { product: "Tai nghe không dây Sora", sold: 1840 },
-  { product: "Bàn phím cơ Kohaku", sold: 1325 },
-  { product: "Chuột công thái học", sold: 1190 },
-  { product: "Màn hình 27 inch 4K", sold: 860 },
-  { product: "Giá đỡ laptop nhôm", sold: 640 },
+  { product: "Sora wireless headphones", sold: 1840 },
+  { product: "Kohaku mechanical keyboard", sold: 1325 },
+  { product: "Ergonomic mouse", sold: 1190 },
+  { product: "27-inch 4K monitor", sold: 860 },
+  { product: "Aluminum laptop stand", sold: 640 },
 ];
 
 const quarterly = [
@@ -35,29 +35,29 @@ const quarterly = [
 ];
 
 const profit = [
-  { month: "T5", profit: 120 },
-  { month: "T6", profit: -45 },
-  { month: "T7", profit: 80 },
-  { month: "T8", profit: -20 },
-  { month: "T9", profit: 150 },
-  { month: "T10", profit: 95 },
+  { month: "May", profit: 120 },
+  { month: "Jun", profit: -45 },
+  { month: "Jul", profit: 80 },
+  { month: "Aug", profit: -20 },
+  { month: "Sep", profit: 150 },
+  { month: "Oct", profit: 95 },
 ];
 
 const channels = [
-  { region: "Miền Bắc", web: 42, app: 35, store: 23 },
-  { region: "Miền Trung", web: 30, app: 28, store: 42 },
-  { region: "Miền Nam", web: 46, app: 38, store: 16 },
+  { region: "North", web: 42, app: 35, store: 23 },
+  { region: "Central", web: 30, app: 28, store: 42 },
+  { region: "South", web: 46, app: 38, store: 16 },
 ];
 
 const traffic = [
-  { month: "T1", search: 4200, social: 2100, direct: 1500 },
-  { month: "T2", search: 4350, social: 2600, direct: 1550 },
-  { month: "T3", search: 4800, social: 2450, direct: 1620 },
-  { month: "T4", search: 5100, social: 3100, direct: 1700 },
-  { month: "T5", search: 5050, social: 3600, direct: 1680 },
-  { month: "T6", search: 5600, social: 3900, direct: 1810 },
-  { month: "T7", search: 6100, social: 3700, direct: 1900 },
-  { month: "T8", search: 6400, social: 4200, direct: 1950 },
+  { month: "Jan", search: 4200, social: 2100, direct: 1500 },
+  { month: "Feb", search: 4350, social: 2600, direct: 1550 },
+  { month: "Mar", search: 4800, social: 2450, direct: 1620 },
+  { month: "Apr", search: 5100, social: 3100, direct: 1700 },
+  { month: "May", search: 5050, social: 3600, direct: 1680 },
+  { month: "Jun", search: 5600, social: 3900, direct: 1810 },
+  { month: "Jul", search: 6100, social: 3700, direct: 1900 },
+  { month: "Aug", search: 6400, social: 4200, direct: 1950 },
 ];
 
 const visits = [
@@ -78,61 +78,61 @@ const visits = [
 ];
 
 const activeUsers = [
-  { week: "Tuần 1", users: 8200 },
-  { week: "Tuần 2", users: 8650 },
-  { week: "Tuần 3", users: 9100 },
-  { week: "Tuần 4", users: 8900 },
-  { week: "Tuần 5", users: 9800 },
-  { week: "Tuần 6", users: 10400 },
-  { week: "Tuần 7", users: 11200 },
+  { week: "Week 1", users: 8200 },
+  { week: "Week 2", users: 8650 },
+  { week: "Week 3", users: 9100 },
+  { week: "Week 4", users: 8900 },
+  { week: "Week 5", users: 9800 },
+  { week: "Week 6", users: 10400 },
+  { week: "Week 7", users: 11200 },
 ];
 
 const storage = [
-  { month: "T5", photos: 18, videos: 22, docs: 6 },
-  { month: "T6", photos: 21, videos: 26, docs: 6 },
-  { month: "T7", photos: 24, videos: 31, docs: 7 },
-  { month: "T8", photos: 27, videos: 35, docs: 8 },
-  { month: "T9", photos: 30, videos: 38, docs: 8 },
-  { month: "T10", photos: 32, videos: 41, docs: 9 },
+  { month: "May", photos: 18, videos: 22, docs: 6 },
+  { month: "Jun", photos: 21, videos: 26, docs: 6 },
+  { month: "Jul", photos: 24, videos: 31, docs: 7 },
+  { month: "Aug", photos: 27, videos: 35, docs: 8 },
+  { month: "Sep", photos: 30, videos: 38, docs: 8 },
+  { month: "Oct", photos: 32, videos: 41, docs: 9 },
 ];
 
 const productLines = [
-  { month: "T5", basic: 210, pro: 120, team: 90, enterprise: 60 },
-  { month: "T6", basic: 205, pro: 135, team: 95, enterprise: 62 },
-  { month: "T7", basic: 215, pro: 160, team: 92, enterprise: 66 },
-  { month: "T8", basic: 208, pro: 190, team: 98, enterprise: 65 },
-  { month: "T9", basic: 212, pro: 230, team: 101, enterprise: 70 },
-  { month: "T10", basic: 206, pro: 265, team: 104, enterprise: 72 },
+  { month: "May", basic: 210, pro: 120, team: 90, enterprise: 60 },
+  { month: "Jun", basic: 205, pro: 135, team: 95, enterprise: 62 },
+  { month: "Jul", basic: 215, pro: 160, team: 92, enterprise: 66 },
+  { month: "Aug", basic: 208, pro: 190, team: 98, enterprise: 65 },
+  { month: "Sep", basic: 212, pro: 230, team: 101, enterprise: 70 },
+  { month: "Oct", basic: 206, pro: 265, team: 104, enterprise: 72 },
 ];
 
 const sources = [
-  { label: "Tìm kiếm", value: 4200 },
-  { label: "Mạng xã hội", value: 2800 },
-  { label: "Giới thiệu", value: 1800 },
+  { label: "Search", value: 4200 },
+  { label: "Social", value: 2800 },
+  { label: "Referral", value: 1800 },
   { label: "Email", value: 1200 },
 ];
 
 const provinces = [
-  { label: "TP. Hồ Chí Minh", value: 3820 },
-  { label: "Hà Nội", value: 3410 },
-  { label: "Đà Nẵng", value: 1240 },
-  { label: "Hải Phòng", value: 980 },
-  { label: "Cần Thơ", value: 760 },
-  { label: "Huế", value: 420 },
-  { label: "Nha Trang", value: 390 },
-  { label: "Đà Lạt", value: 310 },
-  { label: "Vũng Tàu", value: 260 },
+  { label: "Tokyo", value: 3820 },
+  { label: "Osaka", value: 3410 },
+  { label: "Kyoto", value: 1240 },
+  { label: "Yokohama", value: 980 },
+  { label: "Nagoya", value: 760 },
+  { label: "Sapporo", value: 420 },
+  { label: "Fukuoka", value: 390 },
+  { label: "Kobe", value: 310 },
+  { label: "Nara", value: 260 },
 ];
 
 const usage = [
-  { label: "Video", value: 41 },
-  { label: "Ảnh", value: 32 },
-  { label: "Tài liệu", value: 9 },
-  { label: "Ứng dụng", value: 6 },
+  { label: "Videos", value: 41 },
+  { label: "Photos", value: 32 },
+  { label: "Documents", value: 9 },
+  { label: "Apps", value: 6 },
 ];
 
 const revenueTrend = [62, 68, 64, 71, 75, 73, 80, 84, 82, 90, 96, 104];
-const months = ["T11", "T12", "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10"];
+const months = ["Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"];
 const churnTrend = [0.041, 0.04, 0.039, 0.042, 0.038, 0.037, 0.036, 0.035, 0.036, 0.033, 0.032, 0.031];
 
 /* ------------------------------------------------------------------ Docs */
@@ -151,27 +151,27 @@ const LABS_CHARTS: ComponentDoc[] = [
       code: `const revenue = ${lit(revenue)};
 
 <BarChart
-  title="Doanh thu theo kênh"
-  description="6 tháng gần nhất"
+  title="Revenue by channel"
+  description="Last 6 months"
   data={revenue}
   index="month"
   series={[
-    { key: "online", label: "Trực tuyến" },
-    { key: "store", label: "Cửa hàng" },
+    { key: "online", label: "Online" },
+    { key: "store", label: "In store" },
   ]}
-  valueFormat={{ style: "currency", currency: "VND", maximumFractionDigits: 0 }}
+  valueFormat={{ style: "currency", currency: "USD", maximumFractionDigits: 0 }}
 />`,
       render: () => (
         <BarChart
-          title="Doanh thu theo kênh"
-          description="6 tháng gần nhất"
+          title="Revenue by channel"
+          description="Last 6 months"
           data={revenue}
           index="month"
           series={[
-            { key: "online", label: "Trực tuyến" },
-            { key: "store", label: "Cửa hàng" },
+            { key: "online", label: "Online" },
+            { key: "store", label: "In store" },
           ]}
-          valueFormat={{ style: "currency", currency: "VND", maximumFractionDigits: 0 }}
+          valueFormat={{ style: "currency", currency: "USD", maximumFractionDigits: 0 }}
         />
       ),
     },
@@ -182,19 +182,19 @@ const LABS_CHARTS: ComponentDoc[] = [
         code: `const topProducts = ${lit(topProducts)};
 
 <BarChart
-  title="Sản phẩm bán chạy"
+  title="Best sellers"
   data={topProducts}
   index="product"
-  series={[{ key: "sold", label: "Đã bán" }]}
+  series={[{ key: "sold", label: "Units sold" }]}
   orientation="horizontal"
   showValues
 />`,
         render: () => (
           <BarChart
-            title="Sản phẩm bán chạy"
+            title="Best sellers"
             data={topProducts}
             index="product"
-            series={[{ key: "sold", label: "Đã bán" }]}
+            series={[{ key: "sold", label: "Units sold" }]}
             orientation="horizontal"
             showValues
           />
@@ -206,27 +206,27 @@ const LABS_CHARTS: ComponentDoc[] = [
         code: `const quarterly = ${lit(quarterly)};
 
 <BarChart
-  title="Doanh thu theo mảng (triệu ₫)"
+  title="Revenue by segment ($K)"
   data={quarterly}
   index="quarter"
   layout="stacked"
   series={[
-    { key: "hardware", label: "Phần cứng" },
-    { key: "software", label: "Phần mềm" },
-    { key: "services", label: "Dịch vụ" },
+    { key: "hardware", label: "Hardware" },
+    { key: "software", label: "Software" },
+    { key: "services", label: "Services" },
   ]}
   showValues
 />`,
         render: () => (
           <BarChart
-            title="Doanh thu theo mảng (triệu ₫)"
+            title="Revenue by segment ($K)"
             data={quarterly}
             index="quarter"
             layout="stacked"
             series={[
-              { key: "hardware", label: "Phần cứng" },
-              { key: "software", label: "Phần mềm" },
-              { key: "services", label: "Dịch vụ" },
+              { key: "hardware", label: "Hardware" },
+              { key: "software", label: "Software" },
+              { key: "services", label: "Services" },
             ]}
             showValues
           />
@@ -238,18 +238,18 @@ const LABS_CHARTS: ComponentDoc[] = [
         code: `const profit = ${lit(profit)};
 
 <BarChart
-  title="Lợi nhuận ròng (triệu ₫)"
+  title="Net profit ($K)"
   data={profit}
   index="month"
-  series={[{ key: "profit", label: "Lợi nhuận" }]}
+  series={[{ key: "profit", label: "Profit" }]}
   diverging
 />`,
         render: () => (
           <BarChart
-            title="Lợi nhuận ròng (triệu ₫)"
+            title="Net profit ($K)"
             data={profit}
             index="month"
-            series={[{ key: "profit", label: "Lợi nhuận" }]}
+            series={[{ key: "profit", label: "Profit" }]}
             diverging
           />
         ),
@@ -260,25 +260,25 @@ const LABS_CHARTS: ComponentDoc[] = [
         code: `const channels = ${lit(channels)};
 
 <BarChart
-  title="Tỉ trọng kênh bán (%)"
+  title="Sales channel mix (%)"
   data={channels}
   index="region"
   series={[
     { key: "web", label: "Website" },
-    { key: "app", label: "Ứng dụng" },
-    { key: "store", label: "Cửa hàng" },
+    { key: "app", label: "App" },
+    { key: "store", label: "In store" },
   ]}
   texture
 />`,
         render: () => (
           <BarChart
-            title="Tỉ trọng kênh bán (%)"
+            title="Sales channel mix (%)"
             data={channels}
             index="region"
             series={[
               { key: "web", label: "Website" },
-              { key: "app", label: "Ứng dụng" },
-              { key: "store", label: "Cửa hàng" },
+              { key: "app", label: "App" },
+              { key: "store", label: "In store" },
             ]}
             texture
           />
@@ -327,26 +327,26 @@ const LABS_CHARTS: ComponentDoc[] = [
       code: `const traffic = ${lit(traffic)};
 
 <LineChart
-  title="Lượt truy cập theo nguồn"
-  description="Tháng 1 – tháng 8"
+  title="Visits by source"
+  description="January – August"
   data={traffic}
   index="month"
   series={[
-    { key: "search", label: "Tìm kiếm" },
-    { key: "social", label: "Mạng xã hội" },
-    { key: "direct", label: "Trực tiếp" },
+    { key: "search", label: "Search" },
+    { key: "social", label: "Social" },
+    { key: "direct", label: "Direct" },
   ]}
 />`,
       render: () => (
         <LineChart
-          title="Lượt truy cập theo nguồn"
-          description="Tháng 1 – tháng 8"
+          title="Visits by source"
+          description="January – August"
           data={traffic}
           index="month"
           series={[
-            { key: "search", label: "Tìm kiếm" },
-            { key: "social", label: "Mạng xã hội" },
-            { key: "direct", label: "Trực tiếp" },
+            { key: "search", label: "Search" },
+            { key: "social", label: "Social" },
+            { key: "direct", label: "Direct" },
           ]}
         />
       ),
@@ -358,14 +358,14 @@ const LABS_CHARTS: ComponentDoc[] = [
         code: `const visits = ${lit(visits)};
 
 <LineChart
-  title="Lượt truy cập mỗi ngày"
+  title="Daily visits"
   data={visits}
   index="date"
-  series={[{ key: "visits", label: "Lượt truy cập" }]}
+  series={[{ key: "visits", label: "Visits" }]}
   markers
 />`,
         render: () => (
-          <LineChart title="Lượt truy cập mỗi ngày" data={visits} index="date" series={[{ key: "visits", label: "Lượt truy cập" }]} markers />
+          <LineChart title="Daily visits" data={visits} index="date" series={[{ key: "visits", label: "Visits" }]} markers />
         ),
       },
       {
@@ -374,13 +374,13 @@ const LABS_CHARTS: ComponentDoc[] = [
         code: `const activeUsers = ${lit(activeUsers)};
 
 <AreaChart
-  title="Người dùng hoạt động"
+  title="Active users"
   data={activeUsers}
   index="week"
-  series={[{ key: "users", label: "Người dùng" }]}
+  series={[{ key: "users", label: "Users" }]}
 />`,
         render: () => (
-          <AreaChart title="Người dùng hoạt động" data={activeUsers} index="week" series={[{ key: "users", label: "Người dùng" }]} />
+          <AreaChart title="Active users" data={activeUsers} index="week" series={[{ key: "users", label: "Users" }]} />
         ),
       },
       {
@@ -389,26 +389,26 @@ const LABS_CHARTS: ComponentDoc[] = [
         code: `const storage = ${lit(storage)};
 
 <AreaChart
-  title="Dung lượng đã dùng (GB)"
+  title="Storage used (GB)"
   data={storage}
   index="month"
   stacked
   series={[
-    { key: "videos", label: "Video" },
-    { key: "photos", label: "Ảnh" },
-    { key: "docs", label: "Tài liệu" },
+    { key: "videos", label: "Videos" },
+    { key: "photos", label: "Photos" },
+    { key: "docs", label: "Documents" },
   ]}
 />`,
         render: () => (
           <AreaChart
-            title="Dung lượng đã dùng (GB)"
+            title="Storage used (GB)"
             data={storage}
             index="month"
             stacked
             series={[
-              { key: "videos", label: "Video" },
-              { key: "photos", label: "Ảnh" },
-              { key: "docs", label: "Tài liệu" },
+              { key: "videos", label: "Videos" },
+              { key: "photos", label: "Photos" },
+              { key: "docs", label: "Documents" },
             ]}
           />
         ),
@@ -419,28 +419,28 @@ const LABS_CHARTS: ComponentDoc[] = [
         code: `const productLines = ${lit(productLines)};
 
 <LineChart
-  title="Thuê bao theo gói"
+  title="Subscriptions by plan"
   data={productLines}
   index="month"
   highlight="pro"
   series={[
-    { key: "basic", label: "Cơ bản" },
+    { key: "basic", label: "Basic" },
     { key: "pro", label: "Pro" },
-    { key: "team", label: "Nhóm" },
-    { key: "enterprise", label: "Doanh nghiệp" },
+    { key: "team", label: "Team" },
+    { key: "enterprise", label: "Enterprise" },
   ]}
 />`,
         render: () => (
           <LineChart
-            title="Thuê bao theo gói"
+            title="Subscriptions by plan"
             data={productLines}
             index="month"
             highlight="pro"
             series={[
-              { key: "basic", label: "Cơ bản" },
+              { key: "basic", label: "Basic" },
               { key: "pro", label: "Pro" },
-              { key: "team", label: "Nhóm" },
-              { key: "enterprise", label: "Doanh nghiệp" },
+              { key: "team", label: "Team" },
+              { key: "enterprise", label: "Enterprise" },
             ]}
           />
         ),
@@ -483,8 +483,8 @@ const LABS_CHARTS: ComponentDoc[] = [
       title: "Nguồn khách hàng",
       code: `const sources = ${lit(sources)};
 
-<DonutChart title="Nguồn khách hàng" description="Tháng 10" data={sources} />`,
-      render: () => <DonutChart title="Nguồn khách hàng" description="Tháng 10" data={sources} />,
+<DonutChart title="Customer sources" description="October" data={sources} />`,
+      render: () => <DonutChart title="Customer sources" description="October" data={sources} />,
     },
     examples: [
       {
@@ -492,8 +492,8 @@ const LABS_CHARTS: ComponentDoc[] = [
         description: "9 nhóm → 5 nhóm lớn nhất + “Khác” màu xám trung tính. Bảng dữ liệu vẫn giữ con số gộp.",
         code: `const provinces = ${lit(provinces)};
 
-<DonutChart title="Đơn hàng theo tỉnh" data={provinces} valueFormat={{ maximumFractionDigits: 0 }} />`,
-        render: () => <DonutChart title="Đơn hàng theo tỉnh" data={provinces} valueFormat={{ maximumFractionDigits: 0 }} />,
+<DonutChart title="Orders by city" data={provinces} valueFormat={{ maximumFractionDigits: 0 }} />`,
+        render: () => <DonutChart title="Orders by city" data={provinces} valueFormat={{ maximumFractionDigits: 0 }} />,
       },
       {
         title: "Nhãn giữa tuỳ biến",
@@ -501,21 +501,21 @@ const LABS_CHARTS: ComponentDoc[] = [
         code: `const usage = ${lit(usage)};
 
 <DonutChart
-  title="Bộ nhớ"
+  title="Storage"
   data={usage}
   valueFormat={{ style: "unit", unit: "gigabyte" }}
   centerValue="88 GB"
-  centerLabel="đã dùng / 128 GB"
+  centerLabel="used of 128 GB"
   size={168}
   thickness={18}
 />`,
         render: () => (
           <DonutChart
-            title="Bộ nhớ"
+            title="Storage"
             data={usage}
             valueFormat={{ style: "unit", unit: "gigabyte" }}
             centerValue="88 GB"
-            centerLabel="đã dùng / 128 GB"
+            centerLabel="used of 128 GB"
             size={168}
             thickness={18}
           />
@@ -556,22 +556,22 @@ const LABS_CHARTS: ComponentDoc[] = [
 const months = ${JSON.stringify(months)};
 
 <StatTile
-  label="Doanh thu tháng"
-  value={1284000000}
-  valueFormat={{ style: "currency", currency: "VND", notation: "compact", maximumFractionDigits: 2 }}
+  label="Monthly revenue"
+  value={1284000}
+  valueFormat={{ style: "currency", currency: "USD", notation: "compact", maximumFractionDigits: 2 }}
   delta={0.124}
-  deltaLabel="so với tháng trước"
+  deltaLabel="vs last month"
   trend={revenueTrend}
   trendLabels={months}
   className="w-80"
 />`,
       render: () => (
         <StatTile
-          label="Doanh thu tháng"
-          value={1284000000}
-          valueFormat={{ style: "currency", currency: "VND", notation: "compact", maximumFractionDigits: 2 }}
+          label="Monthly revenue"
+          value={1284000}
+          valueFormat={{ style: "currency", currency: "USD", notation: "compact", maximumFractionDigits: 2 }}
           delta={0.124}
-          deltaLabel="so với tháng trước"
+          deltaLabel="vs last month"
           trend={revenueTrend}
           trendLabels={months}
           className="w-80"
@@ -586,11 +586,11 @@ const months = ${JSON.stringify(months)};
 const months = ${JSON.stringify(months)};
 
 <p className="text-body1 text-foreground-2">
-  Doanh thu 12 tháng <Sparkline data={revenueTrend} labels={months} width={96} height={24} /> tăng đều.
+  Revenue <Sparkline data={revenueTrend} labels={months} width={96} height={24} /> grew steadily over 12 months.
 </p>`,
         render: () => (
           <p className="text-body1 text-foreground-2">
-            Doanh thu 12 tháng <Sparkline data={revenueTrend} labels={months} width={96} height={24} /> tăng đều.
+            Revenue <Sparkline data={revenueTrend} labels={months} width={96} height={24} /> grew steadily over 12 months.
           </p>
         ),
       },
@@ -617,24 +617,24 @@ const churnTrend = ${JSON.stringify(churnTrend)};
         code: `const churnTrend = ${JSON.stringify(churnTrend)};
 
 <StatTile
-  label="Tỉ lệ rời bỏ"
+  label="Churn rate"
   value={0.031}
   valueFormat={{ style: "percent", maximumFractionDigits: 1 }}
   delta={-0.008}
   deltaFormat={{ style: "percent", maximumFractionDigits: 1, signDisplay: "exceptZero" }}
-  deltaLabel="so với tháng trước"
+  deltaLabel="vs last month"
   goodDirection="down"
   trend={churnTrend}
   className="w-72"
 />`,
         render: () => (
           <StatTile
-            label="Tỉ lệ rời bỏ"
+            label="Churn rate"
             value={0.031}
             valueFormat={{ style: "percent", maximumFractionDigits: 1 }}
             delta={-0.008}
             deltaFormat={{ style: "percent", maximumFractionDigits: 1, signDisplay: "exceptZero" }}
-            deltaLabel="so với tháng trước"
+            deltaLabel="vs last month"
             goodDirection="down"
             trend={churnTrend}
             className="w-72"
@@ -644,8 +644,8 @@ const churnTrend = ${JSON.stringify(churnTrend)};
       {
         title: "Con số hero",
         description: "size=\"hero\" (68px, cùng font sans) cho con số duy nhất mà màn hình dẫn dắt.",
-        code: `<StatTile label="Khách hàng đang hoạt động" value={128450} size="hero" delta={0.052} deltaLabel="so với quý trước" />`,
-        render: () => <StatTile label="Khách hàng đang hoạt động" value={128450} size="hero" delta={0.052} deltaLabel="so với quý trước" />,
+        code: `<StatTile label="Active customers" value={128450} size="hero" delta={0.052} deltaLabel="vs last quarter" />`,
+        render: () => <StatTile label="Active customers" value={128450} size="hero" delta={0.052} deltaLabel="vs last quarter" />,
       },
     ],
     dos: [
