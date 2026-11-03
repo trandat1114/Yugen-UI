@@ -40,7 +40,7 @@ This document is a **set of mandatory rules**. Everyone (and every AI) adding or
 
 | Area | Choice |
 |---|---|
-| Build | Vite 6 + React 18 + TypeScript strict |
+| Build | Vite 8 (Rolldown) + React 19 (18.3 still supported) + TypeScript 7 strict |
 | Style | Tailwind CSS v4 (CSS-first, **no** `tailwind.config.js`) |
 | Behavior / a11y | `@radix-ui/react-*`, `cmdk` (Command, Combobox, TagPicker), `react-day-picker` v10 (Calendar), `react-resizable-panels` v4 |
 | Variants | `class-variance-authority` |

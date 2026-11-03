@@ -20,7 +20,7 @@ How the project runs day to day: who does what, when, and under which rules. Rol
 | Frequency | Task | Who |
 |---|---|---|
 | Weekly | Triage `needs triage` ([[Community and Triage]]), answer pending Q&A, review PRs | Triager / maintainer |
-| Weekly | Watch CI on `main` (must always be green). Monday: merge Dependabot minor + patch PRs into `next` if green; close red major PRs, add an `ignore` and note it in the migration issue (#91) | Maintainer |
+| Weekly | Watch CI on `main` (must always be green). Monday: merge Dependabot minor + patch PRs into `next` if green; close red major PRs, add an `ignore` and note it in the migration issue (#91). TypeScript comes as its own PR: `check:props` uses TypeScript 7's unstable API, so the root pins `~7.0.x` and a new minor is merged only when CI is green | Maintainer |
 | Every 2–4 weeks | Release if there are changesets ([[Release Process]]) | Maintainer |
 | When `packages/cli/CHANGELOG.md` has an `Unreleased` section | Release the CLI with a news entry on `#/news` ([[Release Process]] › CLI) | Maintainer |
 | Monthly | Update the ROADMAP, label new `good first issue`s, pick Showcase entries | Maintainer |
@@ -67,6 +67,7 @@ Protection for `next`, `release/*`, `canary` and `v*` tags: see [[Branching and 
 | `engines.yml` | Weekly, on PRs into `main` and on PRs that change `e2e/` → E2E on Firefox and WebKit; when a scheduled run fails, open / update an issue, close it when green again |
 | `pages.yml` | Deploy the docs (+ docs for older minors) to GitHub Pages |
 | `wiki.yml` | Push `wiki/` to the GitHub Wiki |
+| ImgBot (GitHub app, `.imgbotconfig`) | Opens a PR into `main` that compresses images losslessly. Visual baselines and SVGs are ignored (the workflow regenerates the baselines; the SVGs are hand-written). Merge when CI is green |
 | `labels.yml` | Sync labels from `.github/labels.yml` |
 | `pr-labeler.yml` | Add `area: …` labels to PRs by file path (`.github/labeler.yml`) |
 | `stale.yml` | `needs reproduction` issues silent for 14 days → reminder, 7 more days → close |
