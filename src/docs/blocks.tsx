@@ -189,7 +189,10 @@ export function ExampleFrame({
 }
 
 /* ---------- Example tile (variants grid, takeaway style) ---------- */
-/** Đang mở code: ô chiếm cả hàng của lưới để code không bị ép theo bề ngang một cột. */
+/**
+ * Đang mở code: ô chiếm cả hàng của lưới để code không bị ép theo bề ngang một cột.
+ * Demo nằm trong một stacking context riêng (`isolate`): z-index trong demo (header sticky của AppShell…) không phủ lên nút Copy.
+ */
 export function ExampleTile({ example, demoLang }: { example: Example; demoLang?: string }) {
   const [showCode, setShowCode] = React.useState(false);
   const toggleRef = React.useRef<HTMLButtonElement>(null);
@@ -203,11 +206,10 @@ export function ExampleTile({ example, demoLang }: { example: Example; demoLang?
 
   return (
     <div className={cn("flex min-w-0 flex-col", (example.wide || showCode) && "md:col-span-2")}>
-      <div
-        lang={example.lang ?? demoLang}
-        className="group/tile relative flex min-h-56 flex-wrap content-center items-center justify-center gap-3 rounded-3xlarge border border-stroke-2 bg-background-3 p-5"
-      >
-        {example.render()}
+      <div className="group/tile relative flex min-h-56 rounded-3xlarge border border-stroke-2 bg-background-3 p-5">
+        <div lang={example.lang ?? demoLang} className="isolate flex w-full min-w-0 flex-wrap content-center items-center justify-center gap-3">
+          {example.render()}
+        </div>
         <CopyButton
           text={example.code}
           className="absolute top-2 inset-e-2 bg-background-1 opacity-0 shadow-4 group-hover/tile:opacity-100 focus-visible:opacity-100 pointer-coarse:opacity-100"

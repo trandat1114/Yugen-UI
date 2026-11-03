@@ -259,10 +259,7 @@ export const en: Record<string, ComponentDocEn> = {
       "BreadcrumbButton.href / icon / asChild":
         "With href it renders an <a>, without it a <button>; asChild for router links.",
       "aria-label": "Label of the <nav> element.",
-    },
-    defaults: {
-      "aria-label": "“Đường dẫn điều hướng” (breadcrumb navigation)",
-    },
+    },
   },
 
   pagination: {
@@ -295,7 +292,7 @@ export const en: Record<string, ComponentDocEn> = {
       onPageChange: "Called when another page is selected.",
       siblingCount: "Pages shown on each side of the current page.",
       size: "Buttons 24 / 32px.",
-      showLabels: "Shows the “Trước” / “Sau” (Previous / Next) labels.",
+      showLabels: "Shows the “Previous” / “Next” labels.",
       disabled: "Disables the whole control.",
     },
   },
@@ -435,10 +432,6 @@ export const en: Record<string, ComponentDocEn> = {
         "Filter value, extra keywords, selection handler, disabled state, icon.",
       "CommandDialog.open / onOpenChange / title":
         "Dialog state; title is hidden and read by screen readers.",
-    },
-    defaults: {
-      "CommandDialog.open / onOpenChange / title":
-        "— / — / “Bảng lệnh” (command palette)",
     },
   },
 };

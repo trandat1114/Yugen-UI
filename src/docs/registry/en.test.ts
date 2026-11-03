@@ -41,8 +41,8 @@ describe("bản tiếng Anh của trang component", { timeout: 30_000 }, () => {
       ...Object.values(en.props),
       ...Object.values(en.defaults ?? {}),
     ];
-    // Nhãn mặc định component còn tiếng Việt được phép khi trích nguyên văn trong dấu ngoặc kép (“…”).
-    for (const t of text) expect(t.replace(/“[^”]*”/g, ""), t).not.toMatch(VIETNAMESE);
+    // Chuỗi có sẵn của component là tiếng Anh từ #281: chỉ ví dụ bỏ dấu khi lọc (“Đà Nẵng”, “Xoài”) được giữ tiếng Việt.
+    for (const t of text) expect(t.replace(/“(Đà Nẵng|Xoài)”/g, ""), t).not.toMatch(VIETNAMESE);
   });
 
   it("trang tiếng Anh dùng bản dịch, giữ demo và code", async () => {

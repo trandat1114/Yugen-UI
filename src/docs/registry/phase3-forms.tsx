@@ -644,7 +644,7 @@ export const docs: ComponentDoc[] = [
       { name: "WizardStep.validate", type: "() => boolean | string | void | Promise<…>", description: "false / chuỗi → chặn và báo lỗi; Promise → nút Tiếp tục loading (sau 300ms)." },
       { name: "Wizard.activeStep / defaultActiveStep / onStepChange", type: "number / number / (index) => void", description: "Điều khiển hoặc không điều khiển bước hiện tại." },
       { name: "Wizard.onFinish", type: "() => void | Promise<void>", description: "Gọi khi bước cuối qua validate; Promise → nút Hoàn tất loading." },
-      { name: "Wizard.backLabel / nextLabel / finishLabel", type: "ReactNode", defaultValue: `"Quay lại" / "Tiếp tục" / "Hoàn tất"`, description: "Nhãn nút của Wizard." },
+      { name: "Wizard.backLabel / nextLabel / finishLabel", type: "ReactNode", defaultValue: `"Back" / "Next" / "Finish"`, description: "Nhãn nút của Wizard." },
     ],
   },
   {

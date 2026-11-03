@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Code16Regular, Eye16Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
+import { useIsomorphicLayoutEffect } from "@/components/ui/_internal/useIsomorphicLayoutEffect";
 import { PageHeader } from "../blocks";
 import { CodeBlock, CopyButton } from "../CodeBlock";
 import { useLocale } from "../i18n";
@@ -10,6 +11,8 @@ export interface BlockMeta {
   description: string;
   /** Thứ tự hiển thị (nhỏ trước). */
   order: number;
+  /** Block rộng (nhiều thẻ con): chiếm 2 cột khi lưới có từ 2 cột. */
+  wide?: boolean;
 }
 
 type BlockModule = { default: React.ComponentType; meta: BlockMeta };
@@ -53,7 +56,12 @@ function BlockCard({ path, meta, Component, source }: (typeof BLOCKS)[number]) {
   const { title, description } = vi ?? meta;
 
   return (
-    <article className="mb-5 flex break-inside-avoid flex-col overflow-hidden rounded-3xlarge border border-stroke-2 bg-background-1 shadow-2">
+    <article
+      className={cn(
+        "flex min-w-0 flex-col self-start overflow-hidden rounded-3xlarge border border-stroke-2 bg-background-1 shadow-2",
+        meta.wide && "lg:col-span-2",
+      )}
+    >
       <header className="flex items-center justify-between gap-3 border-b border-stroke-2 px-4 py-2">
         <div className="min-w-0">
           <h2 className="truncate text-subtitle2 font-semibold">{title}</h2>
@@ -95,9 +103,39 @@ function BlockCard({ path, meta, Component, source }: (typeof BLOCKS)[number]) {
   );
 }
 
+/** Bước lưới của chế độ masonry (px): mỗi block chiếm số hàng vừa chiều cao của nó. */
+const ROW = 4;
+const GAP = 20;
+
+/**
+ * Masonry bằng CSS grid: đo chiều cao từng block (ResizeObserver) rồi đặt `grid-row-end: span n`, auto-placement xếp
+ * block kế tiếp vào chỗ trống cao nhất — thứ tự đọc vẫn theo hàng. Trước khi đo (prerender) là lưới thường.
+ */
+function useMasonry(ref: React.RefObject<HTMLDivElement | null>) {
+  useIsomorphicLayoutEffect(() => {
+    const grid = ref.current;
+    if (!grid || typeof ResizeObserver === "undefined") return;
+    const items = [...grid.children] as HTMLElement[];
+    const place = (item: HTMLElement) => {
+      item.style.gridRowEnd = `span ${Math.ceil((item.getBoundingClientRect().height + GAP) / ROW)}`;
+    };
+    items.forEach(place);
+    grid.dataset.masonry = "";
+    const observer = new ResizeObserver((entries) => entries.forEach((e) => place(e.target as HTMLElement)));
+    items.forEach((item) => observer.observe(item));
+    return () => {
+      observer.disconnect();
+      delete grid.dataset.masonry;
+      items.forEach((item) => item.style.removeProperty("grid-row-end"));
+    };
+  }, [ref]);
+}
+
 export function BlocksPage() {
   const { locale } = useLocale();
   const en = locale === "en";
+  const gridRef = React.useRef<HTMLDivElement>(null);
+  useMasonry(gridRef);
   return (
     <div className="pb-8">
       <PageHeader
@@ -121,7 +159,10 @@ export function BlocksPage() {
           </>
         )}
       </PageHeader>
-      <div className="columns-1 gap-5 lg:columns-2 2xl:columns-3">
+      <div
+        ref={gridRef}
+        className="grid grid-flow-row-dense gap-5 lg:grid-cols-2 2xl:grid-cols-3 data-masonry:auto-rows-1 data-masonry:gap-y-0"
+      >
         {BLOCKS.map((b) => (
           <BlockCard key={b.path} {...b} />
         ))}

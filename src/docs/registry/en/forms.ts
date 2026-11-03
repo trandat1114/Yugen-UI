@@ -173,7 +173,6 @@ export const en: Record<string, ComponentDocEn> = {
       size: "Height 24 / 32 / 40px.",
       "className / listboxClassName": "Class for the input / the listbox surface.",
     },
-    defaults: { noResultsText: "“Không tìm thấy kết quả” (No results found)" },
   },
 
   tag: {
@@ -305,7 +304,6 @@ export const en: Record<string, ComponentDocEn> = {
       "contentBefore / contentAfter": "Replaces the magnifier icon / adds content after the X button.",
       "appearance, size, label, hint, rootClassName…": "Inherited from Input.",
     },
-    defaults: { dismissLabel: "“Xoá nội dung tìm kiếm” (Clear search text)" },
   },
 
   inputotp: {

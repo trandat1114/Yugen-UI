@@ -29,6 +29,15 @@ describe("docs registry", () => {
     expect(COMPONENTS_BY_CATEGORY.flatMap((g) => g.items)).toEqual(COMPONENTS_META);
   });
 
+  // Chuỗi có sẵn (aria-label, placeholder…) mặc định là tiếng Anh từ #281: cột “Mặc định” ghi đúng chuỗi tiếng Anh.
+  it("giá trị mặc định trong ngoặc kép không phải chuỗi tiếng Việt", async () => {
+    const vietnamese = /[ăâđêôơưạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ]/i;
+    const quoted = (await loadAllComponentDocs()).flatMap((d) =>
+      d.props.flatMap((p) => (p.defaultValue?.match(/"[^"]*"/g) ?? []).map((q) => `${d.slug} › ${p.name}: ${q}`)),
+    );
+    expect(quoted.filter((q) => vietnamese.test(q.slice(q.indexOf(": ")))).join("\n")).toBe("");
+  }, 60_000);
+
   it("slug lạ → lỗi rõ ràng", async () => {
     await expect(loadComponentDoc("khong-ton-tai")).rejects.toThrow(/khong-ton-tai/);
   });

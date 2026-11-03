@@ -614,7 +614,7 @@ export const docs: ComponentDoc[] = [
       { name: "source", type: "{ title, url?, domain?, snippet?, meta? }", description: "Thông tin nguồn; url chỉ nhận http / https / mailto." },
       { name: "openDelay / closeDelay", type: "number (ms)", defaultValue: "250 / 200", description: "Độ trễ mở / đóng khi rê chuột." },
       { name: "CitationList.sources", type: "CitationSource[]", description: "Danh sách nguồn (lưới 2 cột từ sm)." },
-      { name: "CitationList.title", type: "ReactNode", defaultValue: `"Nguồn"`, description: "Tiêu đề kèm số lượng." },
+      { name: "CitationList.title", type: "ReactNode", defaultValue: `"Sources"`, description: "Tiêu đề kèm số lượng." },
     ],
   },
   {
@@ -776,7 +776,7 @@ export const docs: ComponentDoc[] = [
       { name: "now", type: "Date | number", description: "Mốc thời gian cố định (SSR, test)." },
       { name: "open / defaultOpen / onOpenChange", type: "boolean", description: "Trạng thái bảng." },
       { name: "mode / breakpoint", type: `"auto" | "popover" | "sheet" / "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | number`, defaultValue: `"auto" / "3xl"`, description: "Popover hay bottom sheet; breakpoint dùng token như Sheet (số px đã lỗi thời, bỏ ở 1.0)." },
-      { name: "title / footer / announce", type: "string / ReactNode / boolean", defaultValue: `"Thông báo" / — / true`, description: "Tiêu đề, chân bảng, đọc thông báo mới." },
+      { name: "title / footer / announce", type: "string / ReactNode / boolean", defaultValue: `"Notifications" / — / true`, description: "Tiêu đề, chân bảng, đọc thông báo mới." },
       { name: "useNotifications(initial)", type: "{ items, unreadCount, add, markRead, markAllRead, dismiss, clear, bind }", description: "Kho nhỏ cho demo; trải bind vào NotificationCenter." },
     ],
   },

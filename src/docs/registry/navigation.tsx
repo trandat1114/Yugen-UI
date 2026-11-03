@@ -1060,7 +1060,7 @@ export const docs: ComponentDoc[] = [
       { name: "overflowIndex", type: "number", defaultValue: "1", description: "Số mục đầu được giữ trước nút “…”." },
       { name: "BreadcrumbButton.current", type: "boolean", description: "Trang hiện tại: semibold, aria-current=\"page\", không bấm được." },
       { name: "BreadcrumbButton.href / icon / asChild", type: "string / ReactNode / boolean", description: "Có href → thẻ <a>, không có → <button>; asChild cho link router." },
-      { name: "aria-label", type: "string", defaultValue: `"Đường dẫn điều hướng"`, description: "Nhãn của thẻ <nav>." },
+      { name: "aria-label", type: "string", defaultValue: `"Breadcrumb"`, description: "Nhãn của thẻ <nav>." },
     ],
   },
 
@@ -1664,7 +1664,7 @@ useEffect(() => {
       { name: "CommandInput.value / onValueChange", type: "string", description: "Chuỗi tìm kiếm (controlled)." },
       { name: "CommandGroup.heading", type: "ReactNode", description: "Tiêu đề nhóm (caption1 semibold, foreground-3)." },
       { name: "CommandItem.value / keywords / onSelect / disabled / icon", type: "string / string[] / (value) => void / boolean / ReactNode", description: "Giá trị lọc, từ khoá phụ, xử lý chọn, vô hiệu hoá, icon." },
-      { name: "CommandDialog.open / onOpenChange / title", type: "boolean / (open) => void / string", defaultValue: `— / — / "Bảng lệnh"`, description: "Trạng thái dialog; title ẩn cho trình đọc màn hình." },
+      { name: "CommandDialog.open / onOpenChange / title", type: "boolean / (open) => void / string", defaultValue: `— / — / "Command palette"`, description: "Trạng thái dialog; title ẩn cho trình đọc màn hình." },
     ],
   },
 ];

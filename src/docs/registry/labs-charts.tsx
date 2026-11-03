@@ -554,8 +554,8 @@ const LABS_CHARTS: ComponentDoc[] = [
     props: [
       { name: "data", type: "{ label, value, color? }[]", description: "Giá trị ≤ 0 bị bỏ qua." },
       { name: "maxSlices", type: "number", defaultValue: "6", description: "Tối đa số lát (gồm “Khác”), không vượt 6." },
-      { name: "otherLabel", type: "string", defaultValue: `"Khác"`, description: "Nhãn lát gộp." },
-      { name: "centerValue / centerLabel", type: "ReactNode", defaultValue: `tổng / "Tổng"`, description: "Nội dung giữa vòng." },
+      { name: "otherLabel", type: "string", defaultValue: `"Other"`, description: "Nhãn lát gộp." },
+      { name: "centerValue / centerLabel", type: "ReactNode", defaultValue: `tổng / "Total"`, description: "Nội dung giữa vòng." },
       { name: "size / thickness", type: "number", defaultValue: "200 / 12% size", description: "Đường kính và độ dày vòng (px)." },
       { name: "legend", type: "boolean", defaultValue: "true", description: "Legend kèm tỉ lệ bên cạnh." },
       { name: "valueFormat, locale, title, description, texture…", type: "…", description: "Như BarChart." },

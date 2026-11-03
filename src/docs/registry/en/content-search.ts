@@ -58,10 +58,6 @@ export const en: Record<string, ComponentDocEn> = {
       highlight: "Highlights the matching part.",
       listLabel: "aria-label of the list.",
       "value / defaultValue / onValueChange": "Query (controlled / uncontrolled).",
-    },
-    defaults: {
-      noResultsText: "“Không có gợi ý phù hợp” (No matching suggestions)",
-      listLabel: "“Gợi ý tìm kiếm” (Search suggestions)",
-    },
+    },
   },
 };

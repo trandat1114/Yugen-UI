@@ -904,7 +904,7 @@ function TimePickerDemo() {
     ],
     props: [
       { name: "presets", type: "DateRangePreset[]", description: "{ label, range: () => ({ from, to }) } — hiện cạnh lịch, xếp trên lịch khi màn hẹp." },
-      { name: "presetsLabel", type: "string", defaultValue: `"Chọn nhanh khoảng ngày"`, description: "Nhãn nhóm preset cho trình đọc màn hình." },
+      { name: "presetsLabel", type: "string", defaultValue: `"Date range presets"`, description: "Nhãn nhóm preset cho trình đọc màn hình." },
       { name: "DEFAULT_RANGE_PRESETS", type: "DateRangePreset[]", description: "Hôm nay, 7 ngày qua, 30 ngày qua, Tháng này (tới hôm nay), Tháng trước." },
       { name: "numberOfMonths", type: "number", defaultValue: "2", description: "Số tháng hiển thị; nên 1 trên mobile." },
       { name: "value / onValueChange / minDate / maxDate / clearable…", type: "—", description: "Như DateRangePicker (xem trang DatePicker)." },
