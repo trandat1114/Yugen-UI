@@ -19,8 +19,15 @@ export { autocompleteMessages, autocompleteMessagesVi, autocompleteMessagesEn, t
 /**
  * Vị trí [đầu, cuối) của mọi đoạn khớp `query` trong `text`, so khớp không dấu & không phân biệt hoa thường
  * ("xoai" khớp "Xoài"). Chỉ số trả về là chỉ số trong chuỗi gốc.
+ * @deprecated Internal helper of `HighlightMatch`; use `<HighlightMatch text query />`. Will be removed from the package
+ * exports in v1.0.0.
  */
 export function highlightRanges(text: string, query: string): [number, number][] {
+  warnDeprecated("highlightRanges", "use <HighlightMatch text query />", "1.0.0");
+  return findHighlightRanges(text, query);
+}
+
+function findHighlightRanges(text: string, query: string): [number, number][] {
   const needle = normalizeSearchText(query.trim());
   if (!needle) return [];
   let haystack = "";
@@ -50,7 +57,7 @@ export interface HighlightMatchProps extends React.HTMLAttributes<HTMLSpanElemen
 
 /** Tô đậm phần khớp với từ khoá (không dấu). Dùng trong gợi ý tìm kiếm và danh sách đã lọc. */
 export function HighlightMatch({ text, query, className, ...props }: HighlightMatchProps) {
-  const ranges = highlightRanges(text, query);
+  const ranges = findHighlightRanges(text, query);
   if (ranges.length === 0)
     return (
       <span className={className} {...props}>

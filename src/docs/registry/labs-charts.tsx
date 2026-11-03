@@ -667,9 +667,9 @@ const churnTrend = ${JSON.stringify(churnTrend)};
       },
       {
         title: "Con số hero",
-        description: "size=\"hero\" (68px, cùng font sans) cho con số duy nhất mà màn hình dẫn dắt.",
-        code: `<StatTile label="Active customers" value={128450} size="hero" delta={0.052} deltaLabel="vs last quarter" locale="en-US" />`,
-        render: () => <StatTile label="Active customers" value={128450} size="hero" delta={0.052} deltaLabel="vs last quarter" locale="en-US" />,
+        description: "size=\"extra-large\" (68px, cùng font sans) cho con số duy nhất mà màn hình dẫn dắt.",
+        code: `<StatTile label="Active customers" value={128450} size="extra-large" delta={0.052} deltaLabel="vs last quarter" locale="en-US" />`,
+        render: () => <StatTile label="Active customers" value={128450} size="extra-large" delta={0.052} deltaLabel="vs last quarter" locale="en-US" />,
       },
     ],
     dos: [
@@ -692,7 +692,7 @@ const churnTrend = ${JSON.stringify(churnTrend)};
       { name: "StatTile.delta / deltaFormat / deltaLabel", type: "number / format / ReactNode", description: "Thay đổi có dấu (mặc định phần trăm)." },
       { name: "StatTile.goodDirection", type: `"up" | "down" | "neutral"`, defaultValue: `"up"`, description: "Chiều nào là tốt." },
       { name: "StatTile.trend / trendLabels", type: "(number | null)[] / string[]", description: "Sparkline bên cạnh giá trị." },
-      { name: "StatTile.size", type: `"medium" | "large" | "hero"`, defaultValue: `"medium"`, description: "28 / 40 / 68px." },
+      { name: "StatTile.size", type: `"medium" | "large" | "extra-large"`, defaultValue: `"medium"`, description: "28 / 40 / 68px." },
     ],
   },
 ];

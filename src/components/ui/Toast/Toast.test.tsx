@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { act, render, screen, within } from "@testing-library/react";
 import { watchDeprecations } from "@/test/deprecation";
-import { Toaster, dismissAllToasts, toast } from "./Toast";
+import { Toaster, dismissAllToasts, dispatchToast, toast, useToast } from "./Toast";
 
 function show(options: Parameters<typeof toast>[0]) {
   act(() => {
@@ -35,5 +35,32 @@ describe("Toast dismissible", () => {
   it("dismissible thắng khi truyền cả hai", () => {
     watchDeprecations();
     expect(closeButton(show({ toastId: "e", title: "Mới thắng", dismissible: true, hideDismiss: true }))).toBeInTheDocument();
+  });
+});
+
+describe("dispatchToast (export lỗi thời)", () => {
+  beforeEach(() => {
+    render(<Toaster />);
+  });
+  afterEach(() => {
+    act(() => dismissAllToasts());
+  });
+
+  it("vẫn hiện toast và cảnh báo một lần; toast() và useToast().dispatchToast không cảnh báo", () => {
+    const warnings = watchDeprecations();
+    let api: ReturnType<typeof useToast> | undefined;
+    function Probe() {
+      api = useToast();
+      return null;
+    }
+    render(<Probe />);
+    act(() => {
+      dispatchToast({ toastId: "x", title: "Cũ" });
+      dispatchToast({ toastId: "y", title: "Cũ 2" });
+      toast({ toastId: "z", title: "Helper" });
+      api?.dispatchToast({ toastId: "w", title: "Hook" });
+    });
+    for (const title of ["Cũ", "Cũ 2", "Helper", "Hook"]) expect(screen.getByText(title)).toBeInTheDocument();
+    expect(warnings("dispatchToast")).toBe(1);
   });
 });

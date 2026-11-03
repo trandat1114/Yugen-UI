@@ -941,7 +941,7 @@ function ToastPositionDemo() {
       { name: "Toaster.position", type: `"top-start" | "top" | "top-end" | "bottom-start" | "bottom" | "bottom-end"`, defaultValue: `"bottom-end"`, description: "Vị trí vùng thông báo." },
       { name: "Toaster.toasterId", type: "string", description: "Định danh khi có nhiều Toaster; dùng cùng useToast(toasterId)." },
       { name: "Toaster.limit", type: "number", defaultValue: "5", description: "Số toast hiển thị cùng lúc." },
-      { name: "useToast(toasterId?)", type: "{ dispatchToast, dismissToast, dismissAllToasts }", description: "API mệnh lệnh; dispatchToast trả về id." },
+      { name: "useToast(toasterId?)", type: "{ dispatchToast, dismissToast, dismissAllToasts }", description: "API mệnh lệnh; dispatchToast trả về id. Hàm dispatchToast import thẳng từ gói đã lỗi thời (bỏ ở 1.0): dùng toast() hoặc useToast().dispatchToast." },
       { name: "intent", type: `"info" | "success" | "warning" | "error"`, defaultValue: `"info"`, description: "Icon và màu icon." },
       { name: "title / body", type: "ReactNode", description: "Tiêu đề (body1 semibold) và nội dung." },
       { name: "action", type: "{ label: string; altText?: string; onClick?: () => void }", description: "Hành động dạng link ở góc phải tiêu đề." },
