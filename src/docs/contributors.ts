@@ -36,6 +36,30 @@ export const CONTRIBUTORS = data.people as Contributor[];
 /** Ngày danh sách được làm mới lần cuối. */
 export const CONTRIBUTORS_UPDATED: string = data.updated;
 
+/**
+ * Hai mục của trang Người đóng góp: những gì vào repo qua PR (code, template, tài liệu, bản dịch), và ý tưởng, thiết kế,
+ * báo lỗi, review, góp ý trong thảo luận issue.
+ */
+export const CONTRIBUTION_GROUPS = {
+  code: ["code", "templates", "docs", "translation"],
+  ideas: ["design", "review", "bug", "a11y", "idea"],
+} satisfies Record<string, ContributionType[]>;
+export type ContributionGroup = keyof typeof CONTRIBUTION_GROUPS;
+
+/**
+ * Phần đóng góp của một người thuộc một mục: số đếm và từng đóng góp chỉ còn các loại của mục đó. Không có đóng góp nào
+ * trong mục thì trả về undefined.
+ */
+export function contributionsIn(person: Contributor, group: ContributionGroup): Contributor | undefined {
+  const types: ContributionType[] = CONTRIBUTION_GROUPS[group];
+  const counts = Object.fromEntries(types.filter((type) => person.counts[type]).map((type) => [type, person.counts[type]]));
+  if (!Object.keys(counts).length) return undefined;
+  const items = person.items
+    ?.map((item) => ({ ...item, types: item.types.filter((type) => types.includes(type)) }))
+    .filter((item) => item.types.length);
+  return { ...person, counts, ...(items && { items }) };
+}
+
 export const profileUrl = (login: string) => `https://github.com/${login}`;
 
 /** Ảnh đại diện cỡ `size` px (GitHub trả ảnh vuông đúng cỡ, nên đặt gấp đôi cỡ hiển thị cho màn hình mật độ cao). */

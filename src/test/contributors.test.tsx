@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { buildContributors, pullTypes } from "../../scripts/contributors.mjs";
 // @ts-expect-error -- module Changesets thuần JS
 import changelog, { splitThanks, thanksText } from "../../.changeset/changelog.mjs";
-import { CONTRIBUTORS, creditsBetween, type Contributor } from "@/docs/contributors";
+import { CONTRIBUTORS, contributionsIn, creditsBetween, type Contributor } from "@/docs/contributors";
 import { SakuraBranch } from "@/docs/SakuraBranch";
 
 const user = (login: string, name?: string) => ({ __typename: "User", login, name, avatarUrl: `https://avatars.githubusercontent.com/u/${login.length}?v=4` });
@@ -94,6 +94,37 @@ describe("creditsBetween", () => {
     expect(creditsBetween("2026-10-10", "2026-10-20", people).map(({ person, items }) => [person.login, items.map((i) => i.number)])).toEqual([["a", [2]]]);
     expect(creditsBetween(undefined, "2026-10-10", people)[0].items.map((i) => i.number)).toEqual([1]);
     expect(creditsBetween("2026-10-20", "2026-10-30", people)).toEqual([]);
+  });
+
+  it("tách hai mục: code (PR) và ý tưởng, thảo luận; thẻ chỉ còn loại của mục", () => {
+    const person = {
+      login: "b",
+      name: "B",
+      avatar: "",
+      first: "2026-10-01",
+      counts: { code: 1, docs: 1, review: 2, idea: 1 },
+      items: [
+        { types: ["review", "idea"], title: "góp ý trong issue", date: "2026-11-03", url: "https://github.com/x/y/issues/9#issuecomment-1" },
+        { types: ["code", "docs"], number: 5, title: "PR 5", date: "2026-10-02" },
+        { types: ["review"], number: 4, title: "PR 4", date: "2026-10-01" },
+      ],
+    } as Contributor;
+    const code = contributionsIn(person, "code")!;
+    expect(code.counts).toEqual({ code: 1, docs: 1 });
+    expect(code.items!.map((i) => i.title)).toEqual(["PR 5"]);
+    const ideas = contributionsIn(person, "ideas")!;
+    expect(ideas.counts).toEqual({ review: 2, idea: 1 });
+    expect(ideas.items!.map((i) => [i.title, i.types])).toEqual([
+      ["góp ý trong issue", ["review", "idea"]],
+      ["PR 4", ["review"]],
+    ]);
+    expect(contributionsIn({ ...person, counts: { bug: 1 }, items: [] }, "code")).toBeUndefined();
+  });
+
+  it("dave-otf (chỉ góp ý trong issue) chỉ có ở mục ý tưởng và thảo luận", () => {
+    const dave = CONTRIBUTORS.find((p) => p.login === "dave-otf")!;
+    expect(contributionsIn(dave, "code")).toBeUndefined();
+    expect(contributionsIn(dave, "ideas")?.counts.idea).toBeGreaterThan(0);
   });
 
   it("snapshot có maintainer đứng đầu", () => {

@@ -18,10 +18,13 @@ import { SakuraBranch } from "../SakuraBranch";
 import { SakuraBlossom } from "../YugenMark";
 import {
   avatarOf,
+  CONTRIBUTION_GROUPS,
   CONTRIBUTION_TYPES,
+  contributionsIn,
   CONTRIBUTORS,
   CONTRIBUTORS_UPDATED,
   profileUrl,
+  type ContributionGroup,
   type ContributionType,
   type Contributor,
 } from "../contributors";
@@ -44,10 +47,20 @@ const FILTER_FROM = 9;
 const VI = {
   eyebrow: "Cộng đồng",
   title: "Người đóng góp",
-  lead: "Những người đã giúp Yugen UI bằng code, tài liệu, bản dịch, báo lỗi hay review. Đóng góp nào được ghi nhận trên GitHub cũng có tên ở đây.",
+  lead: "Những người đã giúp Yugen UI bằng code, tài liệu, bản dịch, ý tưởng, báo lỗi hay review. Đóng góp nào được ghi nhận trên GitHub cũng có tên ở đây.",
   caption: "Mỗi bông hoa là một người, nở theo thứ tự lần đầu đóng góp tính từ gốc cành. Nụ là chỗ còn trống.",
-  peopleTitle: "Mọi người",
-  peopleDesc: (n: number) => `${n} người, xếp theo lần đóng góp đầu tiên.`,
+  groups: {
+    code: {
+      title: "Code và tài liệu",
+      desc: (n: number) => `PR đã merge: code, template, tài liệu, bản dịch. ${n} người, xếp theo lần đóng góp đầu tiên.`,
+      invite: "Sửa một câu trong tài liệu hay nhận một good first issue. Lần deploy docs sau, tên bạn sẽ có trên cành.",
+    },
+    ideas: {
+      title: "Ý tưởng và thảo luận",
+      desc: (n: number) => `Đề xuất, thiết kế, báo lỗi, review và góp ý trong issue. ${n} người, xếp theo lần đóng góp đầu tiên.`,
+      invite: "Báo một lỗi, đề xuất một thay đổi hay góp ý trong một issue đang mở. Lần deploy docs sau, tên bạn sẽ có trên cành.",
+    },
+  } satisfies Record<ContributionGroup, { title: string; desc: (n: number) => string; invite: string }>,
   maintainer: "Tác giả & maintainer",
   since: (date: string) => `Đóng góp từ ${date}`,
   counts: (name: string) => `Đóng góp của ${name}`,
@@ -56,15 +69,15 @@ const VI = {
   filter: "Lọc theo loại đóng góp",
   all: "Tất cả",
   inviteTitle: "Chỗ này dành cho bạn",
-  inviteText: "Báo một lỗi, sửa một câu trong tài liệu hay nhận một issue good first issue. Lần deploy docs sau, tên bạn sẽ có trên cành.",
   inviteIssues: "Xem good first issue",
-  inviteReport: "Báo lỗi",
+  inviteNew: "Mở issue",
+  inviteOpen: "Xem issue đang mở",
   howTitle: "Cách ghi tên",
   how: [
     "Code, template, block, tài liệu, bản dịch: PR đã merge, xếp loại theo các file PR sửa.",
     "Review: review trên một PR đã merge.",
     "Báo lỗi, báo lỗi tiếp cận, đề xuất: issue mở bằng mẫu issue, trừ issue trùng, không hợp lệ hoặc chỉ là câu hỏi.",
-    "Thiết kế và ý tưởng ngoài GitHub: maintainer ghi tay vào src/docs/contributors.extra.json.",
+    "Thiết kế, ý tưởng ngoài GitHub và góp ý trong thảo luận issue: maintainer ghi tay vào src/docs/contributors.extra.json.",
   ],
   updated: (date: string) =>
     `Danh sách cập nhật mỗi lần docs được deploy, lần gần nhất ${date}. Mỗi bản phát hành cũng ghi tên người đóng góp ở trang Có gì mới và trong CHANGELOG.`,
@@ -86,10 +99,20 @@ const VI = {
 const EN: typeof VI = {
   eyebrow: "Community",
   title: "Contributors",
-  lead: "The people who helped Yugen UI with code, docs, translations, bug reports and reviews. Every contribution recorded on GitHub puts a name here.",
+  lead: "The people who helped Yugen UI with code, docs, translations, ideas, bug reports and reviews. Every contribution recorded on GitHub puts a name here.",
   caption: "Each blossom is one person, opening in order of their first contribution from the base of the branch. Buds are the spots still open.",
-  peopleTitle: "Everyone",
-  peopleDesc: (n) => `${n} ${n === 1 ? "person" : "people"}, in order of their first contribution.`,
+  groups: {
+    code: {
+      title: "Code and docs",
+      desc: (n) => `Merged pull requests: code, templates, docs, translations. ${n} ${n === 1 ? "person" : "people"}, in order of their first contribution.`,
+      invite: "Fix a sentence in the docs or pick up a good first issue. Your name joins the branch on the next docs deploy.",
+    },
+    ideas: {
+      title: "Ideas and discussion",
+      desc: (n) => `Ideas, design, bug reports, reviews and feedback in issues. ${n} ${n === 1 ? "person" : "people"}, in order of their first contribution.`,
+      invite: "Report a bug, suggest a change or give feedback on an open issue. Your name joins the branch on the next docs deploy.",
+    },
+  },
   maintainer: "Author & maintainer",
   since: (date) => `Contributing since ${date}`,
   counts: (name) => `Contributions by ${name}`,
@@ -98,15 +121,15 @@ const EN: typeof VI = {
   filter: "Filter by contribution",
   all: "All",
   inviteTitle: "This spot is for you",
-  inviteText: "Report a bug, fix a sentence in the docs or pick up a good first issue. Your name joins the branch on the next docs deploy.",
   inviteIssues: "Browse good first issues",
-  inviteReport: "Report a bug",
+  inviteNew: "Open an issue",
+  inviteOpen: "Browse open issues",
   howTitle: "How credit works",
   how: [
     "Code, templates, blocks, docs, translations: merged pull requests, sorted by the files they change.",
     "Reviews: a review on a merged pull request.",
     "Bug reports, accessibility reports, ideas: issues opened from an issue template, except duplicates, invalid issues and questions.",
-    "Design and ideas outside GitHub: added by a maintainer in src/docs/contributors.extra.json.",
+    "Design, ideas outside GitHub and feedback in issue discussions: added by a maintainer in src/docs/contributors.extra.json.",
   ],
   updated: (date) =>
     `The list refreshes on every docs deploy, last on ${date}. Each release also names its contributors on What's new and in the CHANGELOG.`,
@@ -141,16 +164,22 @@ function prerenderedElapsed() {
   return Math.max(0, (performance.now() - firstPaint) / 1000);
 }
 
-const searchUrl = (login: string) =>
-  `https://github.com/search?type=issues&q=${encodeURIComponent(`repo:${SITE.links.repository.replace("https://github.com/", "")} author:${login}`)}`;
+/** Code: PR của người đó. Ý tưởng và thảo luận: issue và PR có người đó tham gia (mở, bình luận, review). */
+const searchUrl = (login: string, group: ContributionGroup) =>
+  `https://github.com/search?type=issues&q=${encodeURIComponent(
+    `repo:${SITE.links.repository.replace("https://github.com/", "")} ${group === "code" ? `is:pr author:${login}` : `involves:${login}`}`,
+  )}`;
 
 function PersonCard({
   person,
+  group,
   c,
   locale,
   onActive,
 }: {
+  /** Đã lọc theo mục (contributionsIn): số đếm và đóng góp gần đây chỉ thuộc mục này. */
   person: Contributor;
+  group: ContributionGroup;
   c: Copy;
   locale: string;
   onActive: (login: string | null) => void;
@@ -225,7 +254,7 @@ function PersonCard({
               ))}
             </ul>
             {total > 3 && (
-              <a href={searchUrl(person.login)} target="_blank" rel="noreferrer" className="mt-1 inline-block text-caption1 text-link hover:text-link-hover hover:underline">
+              <a href={searchUrl(person.login, group)} target="_blank" rel="noreferrer" className="mt-1 inline-block text-caption1 text-link hover:text-link-hover hover:underline">
                 {c.more(total)}
               </a>
             )}
@@ -237,7 +266,7 @@ function PersonCard({
 }
 
 /** Ô cuối danh sách: một nụ chưa nở, mời người tiếp theo. */
-function InviteCard({ c }: { c: Copy }) {
+function InviteCard({ c, group }: { c: Copy; group: ContributionGroup }) {
   return (
     <li className="flex min-w-0 flex-col gap-3 rounded-2xlarge border border-dashed border-stroke-1 p-4">
       <svg viewBox="-7 -12 14 14" aria-hidden className="size-9 text-foreground-1">
@@ -246,21 +275,71 @@ function InviteCard({ c }: { c: Copy }) {
       </svg>
       <div className="flex-1">
         <p className="text-subtitle2 font-semibold text-foreground-1">{c.inviteTitle}</p>
-        <p className="mt-1 text-body1 text-foreground-2">{c.inviteText}</p>
+        <p className="mt-1 text-body1 text-foreground-2">{c.groups[group].invite}</p>
       </div>
       <div className="flex flex-wrap gap-2">
-        <Button asChild size="small" appearance="primary">
-          <a href={`${SITE.links.issues}?q=${encodeURIComponent('is:open label:"good first issue"')}`} target="_blank" rel="noreferrer">
-            {c.inviteIssues}
-          </a>
-        </Button>
-        <Button asChild size="small">
-          <a href={`${SITE.links.issues}/new/choose`} target="_blank" rel="noreferrer">
-            {c.inviteReport}
-          </a>
-        </Button>
+        {group === "code" ? (
+          <Button asChild size="small" appearance="primary">
+            <a href={`${SITE.links.issues}?q=${encodeURIComponent('is:open label:"good first issue"')}`} target="_blank" rel="noreferrer">
+              {c.inviteIssues}
+            </a>
+          </Button>
+        ) : (
+          <>
+            <Button asChild size="small" appearance="primary">
+              <a href={`${SITE.links.issues}/new/choose`} target="_blank" rel="noreferrer">
+                {c.inviteNew}
+              </a>
+            </Button>
+            <Button asChild size="small">
+              <a href={`${SITE.links.issues}?q=${encodeURIComponent("is:open")}`} target="_blank" rel="noreferrer">
+                {c.inviteOpen}
+              </a>
+            </Button>
+          </>
+        )}
       </div>
     </li>
+  );
+}
+
+/** Một mục của trang: người có đóng góp thuộc mục, thẻ chỉ hiện phần đóng góp đó; lọc theo loại khi danh sách dài. */
+function GroupSection({
+  group,
+  c,
+  locale,
+  onActive,
+}: {
+  group: ContributionGroup;
+  c: Copy;
+  locale: string;
+  onActive: (login: string | null) => void;
+}) {
+  const [filter, setFilter] = React.useState<"all" | ContributionType>("all");
+  const people = CONTRIBUTORS.flatMap((person) => contributionsIn(person, group) ?? []);
+  const types: ContributionType[] = CONTRIBUTION_GROUPS[group];
+  const present = CONTRIBUTION_TYPES.filter((type) => types.includes(type) && people.some((p) => p.counts[type]));
+  const shown = filter === "all" ? people : people.filter((p) => p.counts[filter]);
+  const copy = c.groups[group];
+  return (
+    <DocSection id={group} title={copy.title} description={copy.desc(people.length)}>
+      {people.length >= FILTER_FROM && present.length > 1 && (
+        <ToggleGroup type="single" value={filter} onValueChange={(v) => v && setFilter(v as typeof filter)} aria-label={c.filter} className="mb-4 flex-wrap">
+          <ToggleGroupItem value="all">{c.all}</ToggleGroupItem>
+          {present.map((type) => (
+            <ToggleGroupItem key={type} value={type}>
+              {c.types[type]}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
+      )}
+      <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {shown.map((person) => (
+          <PersonCard key={person.login} person={person} group={group} c={c} locale={locale} onActive={onActive} />
+        ))}
+        <InviteCard c={c} group={group} />
+      </ul>
+    </DocSection>
   );
 }
 
@@ -269,9 +348,6 @@ export function ContributorsPage() {
   const c = locale === "en" ? EN : VI;
   const [elapsed] = React.useState(prerenderedElapsed);
   const [active, setActive] = React.useState<string | null>(null);
-  const [filter, setFilter] = React.useState<"all" | ContributionType>("all");
-  const present = CONTRIBUTION_TYPES.filter((type) => CONTRIBUTORS.some((p) => p.counts[type]));
-  const shown = filter === "all" ? CONTRIBUTORS : CONTRIBUTORS.filter((p) => p.counts[filter]);
 
   return (
     <div className="pb-8">
@@ -283,24 +359,8 @@ export function ContributorsPage() {
         <figcaption className="mt-2 max-w-2xl px-4 text-caption1 text-foreground-3 md:px-12">{c.caption}</figcaption>
       </figure>
 
-      <DocSection id="people" title={c.peopleTitle} description={c.peopleDesc(CONTRIBUTORS.length)}>
-        {CONTRIBUTORS.length >= FILTER_FROM && (
-          <ToggleGroup type="single" value={filter} onValueChange={(v) => v && setFilter(v as typeof filter)} aria-label={c.filter} className="mb-4 flex-wrap">
-            <ToggleGroupItem value="all">{c.all}</ToggleGroupItem>
-            {present.map((type) => (
-              <ToggleGroupItem key={type} value={type}>
-                {c.types[type]}
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
-        )}
-        <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {shown.map((person) => (
-            <PersonCard key={person.login} person={person} c={c} locale={locale} onActive={setActive} />
-          ))}
-          <InviteCard c={c} />
-        </ul>
-      </DocSection>
+      <GroupSection group="code" c={c} locale={locale} onActive={setActive} />
+      <GroupSection group="ideas" c={c} locale={locale} onActive={setActive} />
 
       <DocSection id="how" title={c.howTitle}>
         <ul className="flex max-w-3xl list-disc flex-col gap-2 ps-5 text-body1 text-foreground-2">
