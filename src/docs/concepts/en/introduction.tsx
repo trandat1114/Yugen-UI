@@ -116,7 +116,7 @@ export default function Page() {
       >
         <div className="flex flex-col gap-5">
           <P>
-            Yugen UI is a set of React components written in TypeScript. It runs on React 18 or 19 with Tailwind CSS v4, or with a
+            Yugen UI is a set of React components written in TypeScript. It runs on React 19 with Tailwind CSS v4, or with a
             precompiled CSS file if you don&apos;t use Tailwind. All components share one set of tokens, so changing the theme, brand color or text
             direction doesn&apos;t require touching components.
           </P>

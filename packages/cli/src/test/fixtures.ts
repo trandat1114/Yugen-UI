@@ -77,7 +77,7 @@ export function viteProject(extra: Record<string, string> = {}) {
   return writeFiles(tmpDir(), {
     "package.json": JSON.stringify({
       name: "app",
-      dependencies: { react: "^18.3.1", "react-dom": "^18.3.1" },
+      dependencies: { react: "^19.3.1", "react-dom": "^19.3.1" },
       devDependencies: { vite: "^6.0.0", tailwindcss: "^4.1.0", "@tailwindcss/vite": "^4.1.0" },
     }),
     "package-lock.json": "{}",

@@ -29,7 +29,6 @@ checks from a skipped workflow will hang at "Expected": then switch to filtering
 |---|---|
 | Build · Node 24 / 26 | typecheck, lint:classes, the check:* scripts, sync-templates, build lib + docs, pack, size |
 | Unit tests (React 19) | `npm test` |
-| React 18 | temporarily installs React 18.3 → typecheck, test, build:lib |
 | E2E · shard 1/4 … 4/4 | `test:e2e --shard=n/4` in parallel (blob report; `test-results-n` on failure) |
 | E2E (Playwright + axe) | merges the blob reports into one HTML report (`playwright-report`); red if any shard is red; fixed check name |
 
@@ -47,7 +46,7 @@ again. Differences between engines are recorded on the docs page Browsers & plat
 | `check:release` fails | missing news in `src/docs/news` / CHANGELOG | add `<version>.vi.md` and `.en.md`, a CHANGELOG entry |
 | `check:examples` fails | the example uses a variable that only exists in the docs file | add `setup: declarationsOf(RAW, [...])` |
 | axe: `aria-allowed-attr` | an ARIA attribute not valid for the role (e.g. `aria-orientation` on `<ol>`) | switch to `data-*` or the correct role |
-| Visual differences | an intentional UI change | **Visual regression** workflow on the branch, tick `update` → download `visual-screenshots` → copy into `e2e/__screenshots__/` → commit. Diff images: the `visual-test-results` artifact |
+| Visual differences | an intentional UI change | **Visual regression** workflow on the branch, tick `update` (rewrites every baseline) → download `visual-screenshots` → copy into `e2e/__screenshots__/` → commit the files git shows as changed. Diff images: the `visual-test-results` artifact |
 | size-limit exceeded | a large dependency / component was added | optimize, or raise `limit` in `.size-limit.cjs` with the reason in the PR |
 
 ## Node.js versions in CI
@@ -56,9 +55,3 @@ Build and CLI run on every released Node.js version that has not reached EOL (LT
 use the latest Active LTS. `node scripts/node-versions.mjs` compares the workflows with the [release schedule](https://github.com/nodejs/Release) (exit 1 if
 they differ, `--write` to fix them); the `node-versions.yml` workflow runs weekly and opens a PR into `next`. The CLI's `engines`
 doesn't change automatically: raising it is a CLI minor release.
-
-## Trying React 18 locally
-
-The repo runs React 19. To check React 18.3 (still supported): copy the repo to another folder (without `node_modules`), `npm ci`,
-then `npm i --no-save react@^18.3 react-dom@^18.3 @types/react@^18.3 @types/react-dom@^18.3` and run
-`npm run typecheck && npx vitest run`.

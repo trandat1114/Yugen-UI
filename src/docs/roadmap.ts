@@ -29,7 +29,7 @@ export interface RoadmapRelease {
   items: RoadmapItem[];
 }
 
-export const ROADMAP_UPDATED = "2026-11-03";
+export const ROADMAP_UPDATED = "2026-11-04";
 export const PROJECT_URL = "https://github.com/users/trandat1114/projects/6";
 
 export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
@@ -47,6 +47,8 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
         { status: "planned", issue: 230, vi: "Glass làm mặc định cho component điều hướng, qua prop mặc định", en: "Glass as a default for navigation components, through default props" },
         { status: "planned", issue: 243, vi: "Khóa cuộn: chọn giữ hay ẩn thanh cuộn khi mở Menu, ContextMenu, Dropdown", en: "Scroll lock: keep or hide the page scrollbar while Menu, ContextMenu or Dropdown is open" },
         { status: "planned", issue: 165, vi: "Rà soát bảo mật các component hiển thị nội dung không tin cậy", en: "Security review of components that render untrusted content" },
+        { status: "done", issue: 320, vi: "Icon có sẵn trong thư viện: cài yugen-ui nhẹ hơn ~180 MB", en: "Built-in icons: installing yugen-ui is ~180 MB lighter" },
+        { status: "done", issue: 62, vi: "Chỉ hỗ trợ React 19: bỏ React 18 khỏi peer dependency và CI", en: "React 19 only: React 18 leaves the peer dependencies and CI" },
       ],
     },
     {
@@ -70,7 +72,7 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       vi: "API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện hoàn tất.",
       en: "Stable API. No fixed date: ships when the readiness checklist is done.",
       items: [
-        { status: "planned", issue: 65, vi: "Rà soát API, gỡ deprecation, quyết định về React 18 và class spacing viết hoa", en: "API review, deprecations removed, decisions on React 18 and upper-case spacing" },
+        { status: "planned", issue: 65, vi: "Rà soát API, gỡ deprecation, quyết định về class spacing viết hoa", en: "API review, deprecations removed, decision on upper-case spacing" },
         { status: "done", issue: 63, vi: "SEO: URL theo đường dẫn, prerender từng trang, sitemap", en: "SEO: path URLs, prerendered pages, sitemap" },
         { status: "planned", issue: 160, vi: "Đề xuất cho 1.0 (đã duyệt): Form, NavigationMenu, block 2.0, codemod, kiểm thử", en: "1.0 proposals (approved): Form, NavigationMenu, blocks 2.0, codemods, testing" },
         { status: "planned", issue: 169, vi: "@yugen-ui/cli ghi các dòng @import của CSS theo component (init, doctor)", en: "@yugen-ui/cli writes the @import lines for per-component CSS (init, doctor)" },

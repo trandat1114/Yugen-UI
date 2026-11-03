@@ -63,7 +63,8 @@ jobs:
           UPDATE: ${{ inputs.update }}
         run: |
           if [ "$UPDATE" = "true" ]; then
-            npm run test:visual -- --update-snapshots
+            # all: ghi lại mọi ảnh, kể cả ảnh lệch dưới ngưỡng 1% — ảnh không đổi pixel cho ra file y hệt, git không báo.
+            npm run test:visual -- --update-snapshots=all
           else
             npm run test:visual
           fi

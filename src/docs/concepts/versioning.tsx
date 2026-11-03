@@ -151,7 +151,7 @@ export default function Page() {
           rows={[
             ["React", "18 và 19", "CI chạy typecheck, unit test và build trên cả hai"],
             ["Tailwind CSS", "v4", "Không cần Tailwind nếu dùng styles.css biên dịch sẵn"],
-            ["TypeScript", "5.x, strict", "Kiểu được kiểm tra với @types/react 18 và 19"],
+            ["TypeScript", "5.x, strict", "Kiểu được kiểm tra với @types/react 19"],
             ["Next.js", "App Router & Pages Router", "Mọi file component có \"use client\""],
             ["Trình duyệt", "Evergreen (Chrome, Edge, Firefox, Safari 2 bản gần nhất)", "Xem trang Trình duyệt & nền tảng"],
           ]}

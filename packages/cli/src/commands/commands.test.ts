@@ -115,7 +115,7 @@ describe("init --mode package", () => {
 
   it("falls back to styles.css without Tailwind v4", async () => {
     const cwd = writeFiles(tmpDir(), {
-      "package.json": JSON.stringify({ dependencies: { react: "^18.3.1", vite: "^6.0.0" } }),
+      "package.json": JSON.stringify({ dependencies: { react: "^19.3.1", vite: "^6.0.0" } }),
       "src/main.tsx": 'import { App } from "./App";\n',
     });
     await init({ cwd, mode: "package", install: false }, ctx);
@@ -202,6 +202,14 @@ describe("doctor", () => {
     expect((await diagnose({ cwd, offline: true })).find((c) => c.message.includes("not imported"))?.level).toBe("error");
     fs.writeFileSync(path.join(cwd, "src/index.css"), '@import "yugen-ui/theme.css";\n@import "tailwindcss";\n');
     expect((await diagnose({ cwd, offline: true })).find((c) => c.message.includes("before"))?.level).toBe("error");
+  });
+
+  it("reports React 18 as an error (yugen-ui 0.15 needs React 19)", async () => {
+    const cwd = viteProject();
+    const pkg = JSON.parse(fs.readFileSync(path.join(cwd, "package.json"), "utf8"));
+    fs.writeFileSync(path.join(cwd, "package.json"), JSON.stringify({ ...pkg, dependencies: { ...pkg.dependencies, react: "^18.3.1" } }));
+    const react = (await diagnose({ cwd, offline: true })).find((c) => c.message.startsWith("React"));
+    expect(react).toMatchObject({ level: "error", message: expect.stringContaining("React 19") });
   });
 
   it("treats an app with yugen-ui installed and no yugen.json as package mode", async () => {
