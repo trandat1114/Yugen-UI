@@ -144,9 +144,9 @@ test.describe("Resizable", () => {
 
 test.describe("Sheet (desktop)", () => {
   async function openFilter(page: Page) {
-    const trigger = page.getByRole("button", { name: "Bộ lọc" }).first();
+    const trigger = page.getByRole("button", { name: "Filters" }).first();
     await trigger.click();
-    const sheet = page.getByRole("dialog", { name: "Bộ lọc" });
+    const sheet = page.getByRole("dialog", { name: "Filters" });
     await expect(sheet).toBeVisible();
     return { trigger, sheet };
   }
@@ -172,7 +172,7 @@ test.describe("Sheet (desktop)", () => {
     await expect(sheet).toHaveAttribute("data-sheet", "end");
     const box = (await sheet.boundingBox())!;
     expect(Math.abs(box.x)).toBeLessThanOrEqual(1);
-    await sheet.getByRole("button", { name: "Huỷ" }).click();
+    await sheet.getByRole("button", { name: "Cancel" }).click();
     await expect(sheet).toBeHidden();
   });
 });

@@ -70,11 +70,11 @@ function source(...names: string[]) {
 // #region network
 type Network = "fast" | "slow" | "error";
 
-/** Giả lập request: nhanh 150ms · chậm 2s · lỗi sau 1,2s. */
+/** Simulated request: fast 150ms · slow 2s · fails after 1.2s. */
 function fakeRequest<T>(network: Network, value: T): Promise<T> {
   const ms = network === "fast" ? 150 : network === "slow" ? 2000 : 1200;
   return new Promise((resolve, reject) =>
-    window.setTimeout(() => (network === "error" ? reject(new Error("Mất kết nối")) : resolve(value)), ms),
+    window.setTimeout(() => (network === "error" ? reject(new Error("Connection lost")) : resolve(value)), ms),
   );
 }
 
@@ -83,13 +83,13 @@ function NetworkToggle({ value, onChange }: { value: Network; onChange: (value: 
     <ToggleGroup
       type="single"
       size="small"
-      aria-label="Tốc độ mạng giả lập"
+      aria-label="Simulated network speed"
       value={value}
       onValueChange={(next) => next && onChange(next as Network)}
     >
-      <ToggleGroupItem value="fast">Nhanh · 150ms</ToggleGroupItem>
-      <ToggleGroupItem value="slow">Chậm · 2s</ToggleGroupItem>
-      <ToggleGroupItem value="error">Lỗi</ToggleGroupItem>
+      <ToggleGroupItem value="fast">Fast · 150ms</ToggleGroupItem>
+      <ToggleGroupItem value="slow">Slow · 2s</ToggleGroupItem>
+      <ToggleGroupItem value="error">Error</ToggleGroupItem>
     </ToggleGroup>
   );
 }
@@ -99,24 +99,24 @@ function NetworkToggle({ value, onChange }: { value: Network; onChange: (value: 
 
 // #region OverlayDemo
 const ORDERS = [
-  { id: "DH-1024", customer: "Nguyễn An", total: "1.250.000 ₫" },
-  { id: "DH-1025", customer: "Trần Bình", total: "860.000 ₫" },
-  { id: "DH-1026", customer: "Lê Chi", total: "2.040.000 ₫" },
+  { id: "ORD-1024", customer: "Alex Chen", total: "$1,250.00" },
+  { id: "ORD-1025", customer: "Maria Garcia", total: "$860.00" },
+  { id: "ORD-1026", customer: "Sam Lee", total: "$2,040.00" },
 ];
 
 function OverlayDemo() {
   const [network, setNetwork] = useState<Network>("slow");
   const [loading, setLoading] = useState(false);
-  const [updatedAt, setUpdatedAt] = useState(() => new Date().toLocaleTimeString("vi-VN"));
+  const [updatedAt, setUpdatedAt] = useState(() => new Date().toLocaleTimeString("en-US"));
 
   async function refresh() {
     if (loading) return;
     setLoading(true);
     try {
       await fakeRequest(network, null);
-      setUpdatedAt(new Date().toLocaleTimeString("vi-VN"));
+      setUpdatedAt(new Date().toLocaleTimeString("en-US"));
     } catch {
-      toast({ intent: "error", title: "Không làm mới được", body: "Đang hiển thị dữ liệu cũ.", timeout: -1 });
+      toast({ intent: "error", title: "Couldn't refresh", body: "Showing the last loaded data.", timeout: -1 });
     } finally {
       setLoading(false);
     }
@@ -127,13 +127,13 @@ function OverlayDemo() {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <NetworkToggle value={network} onChange={setNetwork} />
         <Button icon={<ArrowClockwise20Regular />} onClick={refresh}>
-          Làm mới
+          Refresh
         </Button>
       </div>
       <LoadingOverlay
         loading={loading}
         delay={300}
-        label="Đang làm mới…"
+        label="Refreshing…"
         className="rounded-xlarge border border-stroke-2 bg-background-1"
       >
         <ul className="flex flex-col">
@@ -146,7 +146,7 @@ function OverlayDemo() {
             </li>
           ))}
         </ul>
-        <p className="px-4 py-2 text-caption1 text-foreground-3">Cập nhật lúc {updatedAt}</p>
+        <p className="px-4 py-2 text-caption1 text-foreground-3">Updated at {updatedAt}</p>
       </LoadingOverlay>
     </div>
   );
@@ -169,7 +169,7 @@ function SpinDelayDemo() {
   }
 
   const panels = [
-    { title: "Hiện spinner ngay", busy: loading },
+    { title: "No delay", busy: loading },
     { title: "useSpinDelay", busy: delayed },
   ];
 
@@ -178,7 +178,7 @@ function SpinDelayDemo() {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <NetworkToggle value={network} onChange={setNetwork} />
         <Button appearance="primary" onClick={load}>
-          Tải
+          Load
         </Button>
       </div>
       <div className="grid grid-cols-2 gap-3">
@@ -188,7 +188,7 @@ function SpinDelayDemo() {
             className="flex h-28 flex-col items-center justify-center gap-2 rounded-xlarge border border-stroke-2 bg-background-1 p-3"
           >
             <span className="text-caption1 font-semibold text-foreground-3">{panel.title}</span>
-            {panel.busy ? <Spinner size="small" /> : <span className="text-body1 text-foreground-1">Đã tải {count} lần</span>}
+            {panel.busy ? <Spinner size="small" /> : <span className="text-body1 text-foreground-1">Loads: {count}</span>}
           </div>
         ))}
       </div>
@@ -223,17 +223,17 @@ function AutosaveDemo() {
     <div className="flex w-full max-w-sm flex-col gap-3">
       <NetworkToggle value={network} onChange={setNetwork} />
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-xlarge border border-stroke-2 bg-background-1 px-4 py-2">
-        <Switch label="Gửi thông báo qua email" checked={enabled} onCheckedChange={change} />
+        <Switch label="Email notifications" checked={enabled} onCheckedChange={change} />
         <span role="status" className="flex items-center gap-1 text-caption1 text-foreground-3">
           {showSaving ? (
             <>
               <Spinner size="extra-tiny" aria-hidden />
-              Đang lưu…
+              Saving…
             </>
           ) : failed ? (
-            <span className="text-danger-foreground-1">Chưa lưu được, đã hoàn tác</span>
+            <span className="text-danger-foreground-1">Couldn't save, change undone</span>
           ) : (
-            "Đã lưu"
+            "Saved"
           )}
         </span>
       </div>
@@ -245,7 +245,7 @@ function AutosaveDemo() {
 /* ------------------------------------------------------------- pageprogress */
 
 // #region RouteDemo
-const PAGES = ["Tổng quan", "Đơn hàng", "Báo cáo"];
+const PAGES = ["Overview", "Orders", "Reports"];
 
 function RouteDemo() {
   const [network, setNetwork] = useState<Network>("slow");
@@ -270,8 +270,8 @@ function RouteDemo() {
     <div className="flex w-full max-w-md flex-col gap-3">
       <NetworkToggle value={network} onChange={setNetwork} />
       <div className="relative overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1">
-        <PageProgress position="absolute" active={navigating} label="Đang chuyển trang" />
-        <nav aria-label="Trang mẫu" className="flex gap-1 border-b border-stroke-2 p-2">
+        <PageProgress position="absolute" active={navigating} label="Opening page" />
+        <nav aria-label="Sample pages" className="flex gap-1 border-b border-stroke-2 p-2">
           {PAGES.map((name) => (
             <Button
               key={name}
@@ -288,8 +288,8 @@ function RouteDemo() {
           <h3 className="text-subtitle2 font-semibold text-foreground-1">{page}</h3>
           <p className="text-body1 text-foreground-3">
             {failed
-              ? "Không mở được trang — bạn vẫn ở trang cũ, bấm lại để thử."
-              : "Nội dung trang cũ ở nguyên chỗ trong lúc trang mới tải."}
+              ? "Couldn't open the page. You're still on the old one; click again to retry."
+              : "The old page stays in place while the new one loads."}
           </p>
         </div>
       </div>
@@ -320,12 +320,12 @@ function UploadDemo() {
 
   return (
     <div className="relative flex w-full max-w-sm flex-col items-center gap-2 overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1 p-5">
-      <PageProgress position="absolute" thickness="large" active={uploading} value={value} label="Đang tải tệp lên" />
-      <Button appearance="primary" loading={uploading} loadingText="Đang tải lên…" onClick={start}>
-        Tải tệp lên
+      <PageProgress position="absolute" thickness="large" active={uploading} value={value} label="Uploading file" />
+      <Button appearance="primary" loading={uploading} loadingText="Uploading…" onClick={start}>
+        Upload file
       </Button>
       <span className="text-caption1 text-foreground-3 tabular-nums">
-        {uploading ? `${Math.round(value * 100)}%` : value >= 1 ? "Đã tải xong" : "Chưa có tệp"}
+        {uploading ? `${Math.round(value * 100)}%` : value >= 1 ? "Upload complete" : "No file yet"}
       </span>
     </div>
   );
@@ -342,9 +342,9 @@ function StoreDemo() {
     syncProgress.start();
     try {
       await fakeRequest(network, null);
-      toast({ intent: "success", title: "Đã đồng bộ" });
+      toast({ intent: "success", title: "Synced" });
     } catch {
-      toast({ intent: "error", title: "Đồng bộ thất bại", body: "Kiểm tra kết nối rồi thử lại.", timeout: -1 });
+      toast({ intent: "error", title: "Sync failed", body: "Check your connection and try again.", timeout: -1 });
     } finally {
       syncProgress.done();
     }
@@ -355,10 +355,10 @@ function StoreDemo() {
       <PageProgress controller={syncProgress} />
       <NetworkToggle value={network} onChange={setNetwork} />
       <Button appearance="primary" icon={<ArrowSync20Regular />} onClick={sync}>
-        Đồng bộ
+        Sync
       </Button>
       <p className="text-caption1 text-foreground-3">
-        Thanh chạy ở mép trên cửa sổ. Bấm nhiều lần: thanh chỉ hoàn tất khi mọi lần đồng bộ đã xong.
+        The bar runs along the top edge of the window. Click several times: it only finishes once every sync is done.
       </p>
     </div>
   );
@@ -371,7 +371,7 @@ const routeProgress = createPageProgress();
 function Article() {
   return (
     <p className="max-w-xs text-center text-body1 text-foreground-2">
-      Bài viết đã tải xong. Trong lúc chờ, thanh ở mép trên chạy thay cho spinner giữa trang.
+      The article has loaded. While you waited, the bar at the top ran instead of a spinner in the middle of the page.
     </p>
   );
 }
@@ -393,7 +393,7 @@ function SuspenseDemo() {
   return (
     <div className="flex flex-col items-center gap-3">
       <PageProgress controller={routeProgress} />
-      <Button onClick={open}>Mở bài viết</Button>
+      <Button onClick={open}>Open article</Button>
       <Suspense fallback={<PageProgressFallback controller={routeProgress} />}>{Page && <Page />}</Suspense>
     </div>
   );
@@ -406,9 +406,9 @@ function SuspenseDemo() {
 type Member = { id: number; name: string; role: string };
 
 const MEMBERS: Member[] = [
-  { id: 1, name: "Nguyễn An", role: "Thiết kế" },
-  { id: 2, name: "Trần Bình", role: "Kỹ sư frontend" },
-  { id: 3, name: "Lê Chi", role: "Quản lý sản phẩm" },
+  { id: 1, name: "Alex Chen", role: "Designer" },
+  { id: 2, name: "Maria Garcia", role: "Frontend engineer" },
+  { id: 3, name: "Sam Lee", role: "Product manager" },
 ];
 
 function AsyncContentDemo() {
@@ -432,16 +432,16 @@ function AsyncContentDemo() {
     <div className="flex w-full max-w-md flex-col gap-3">
       <div className="flex flex-wrap items-center gap-3">
         <NetworkToggle value={network} onChange={setNetwork} />
-        <Switch label="Trả về rỗng" checked={empty} onCheckedChange={setEmpty} />
+        <Switch label="Return empty" checked={empty} onCheckedChange={setEmpty} />
       </div>
       <Button appearance="primary" className="self-start" onClick={load}>
-        Tải thành viên
+        Load members
       </Button>
       <AsyncContent
         status={status}
         onRetry={load}
         skeleton={<SkeletonList rows={3} />}
-        idle={<p className="text-body1 text-foreground-3">Bấm “Tải thành viên” để bắt đầu.</p>}
+        idle={<p className="text-body1 text-foreground-3">Click “Load members” to start.</p>}
         className="min-h-48 rounded-xlarge border border-stroke-2 bg-background-1 p-4"
       >
         <ul className="flex flex-col gap-4">
@@ -470,15 +470,15 @@ function RetryDemo() {
       <NetworkToggle value={network} onChange={setNetwork} />
       <ErrorState
         icon={<CloudOff24Regular />}
-        title="Mất kết nối"
-        description="Không tải được bình luận. Kiểm tra mạng rồi thử lại."
+        title="Connection lost"
+        description="Couldn't load comments. Check your network and try again."
         onRetry={() =>
           fakeRequest(network, null).then(
-            () => toast({ intent: "success", title: "Đã tải lại bình luận" }),
-            () => toast({ intent: "error", title: "Vẫn chưa kết nối được", timeout: -1 }),
+            () => toast({ intent: "success", title: "Comments reloaded" }),
+            () => toast({ intent: "error", title: "Still can't connect", timeout: -1 }),
           )
         }
-        secondaryAction={<Button appearance="subtle">Báo lỗi</Button>}
+        secondaryAction={<Button appearance="subtle">Report a problem</Button>}
       />
     </div>
   );
@@ -506,19 +506,19 @@ function FidelityDemo() {
     <div className="flex w-72 flex-col gap-3">
       <NetworkToggle value={network} onChange={setNetwork} />
       <Button icon={<ArrowClockwise20Regular />} className="self-start" onClick={reload}>
-        Tải lại thẻ
+        Reload card
       </Button>
       <AsyncContent status={status} onRetry={reload} skeleton={<SkeletonCard header lines={2} actions={2} />}>
         <Card>
-          <CardHeader image={<Avatar name="Hoa Anh Đào" />} header="Hoa Anh Đào" description="2 giờ trước" />
+          <CardHeader image={<Avatar name="Hana Sato" />} header="Hana Sato" description="2 hours ago" />
           <div className="aspect-video rounded-medium bg-gradient-sakura" />
           <div className="flex flex-col gap-2">
-            <p className="text-subtitle1 font-semibold text-foreground-1">Mùa hoa Đà Lạt</p>
-            <CardContent>Mai anh đào nở rộ quanh hồ Xuân Hương, đẹp nhất vào sáng sớm.</CardContent>
+            <p className="text-subtitle1 font-semibold text-foreground-1">Spring in Kyoto</p>
+            <CardContent>The cherry trees along the Philosopher's Path are in full bloom. Go early in the morning.</CardContent>
           </div>
           <CardFooter>
-            <Button appearance="primary">Xem</Button>
-            <Button>Chia sẻ</Button>
+            <Button appearance="primary">View</Button>
+            <Button>Share</Button>
           </CardFooter>
         </Card>
       </AsyncContent>
@@ -535,9 +535,9 @@ type Todo = { id: string; title: string; done: boolean };
 function TodoDemo() {
   const [network, setNetwork] = useState<Network>("slow");
   const { items, mutate, pending } = useOptimisticList<Todo>([
-    { id: "1", title: "Duyệt thiết kế trang chủ", done: true },
-    { id: "2", title: "Viết tài liệu Wait UX", done: false },
-    { id: "3", title: "Chuẩn bị demo thứ Sáu", done: false },
+    { id: "1", title: "Review the home page design", done: true },
+    { id: "2", title: "Write the Wait UX docs", done: false },
+    { id: "3", title: "Prepare Friday's demo", done: false },
   ]);
   const saving = useSpinDelay(pending);
 
@@ -545,14 +545,14 @@ function TodoDemo() {
     mutate(
       (list) => list.map((todo) => (todo.id === id ? { ...todo, done: !todo.done } : todo)),
       () => fakeRequest(network, null),
-      { errorTitle: "Không cập nhật được công việc" },
+      { errorTitle: "Couldn't update the task" },
     );
 
   const remove = (id: string) =>
     mutate(
       (list) => list.filter((todo) => todo.id !== id),
       () => fakeRequest(network, null),
-      { errorTitle: "Không xoá được công việc" },
+      { errorTitle: "Couldn't delete the task" },
     );
 
   return (
@@ -560,7 +560,7 @@ function TodoDemo() {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <NetworkToggle value={network} onChange={setNetwork} />
         <span role="status" className="text-caption1 text-foreground-3">
-          {saving ? "Đang lưu…" : "Mọi thay đổi đã được lưu"}
+          {saving ? "Saving…" : "All changes saved"}
         </span>
       </div>
       <ul className="flex flex-col rounded-xlarge border border-stroke-2 bg-background-1">
@@ -571,12 +571,12 @@ function TodoDemo() {
               appearance="subtle"
               size="small"
               icon={<Delete20Regular />}
-              aria-label={`Xoá “${todo.title}”`}
+              aria-label={`Delete “${todo.title}”`}
               onClick={() => remove(todo.id)}
             />
           </li>
         ))}
-        {items.length === 0 && <li className="px-3 py-4 text-center text-body1 text-foreground-3">Không còn việc nào.</li>}
+        {items.length === 0 && <li className="px-3 py-4 text-center text-body1 text-foreground-3">Nothing left to do.</li>}
       </ul>
     </div>
   );
@@ -597,7 +597,7 @@ function CompareDemo() {
       await fakeRequest(network, null);
       setLiked((v) => !v);
     } catch {
-      toast({ intent: "error", title: "Chưa thích được bài viết", timeout: -1 });
+      toast({ intent: "error", title: "Couldn't like the post", timeout: -1 });
     } finally {
       setSaving(false);
     }
@@ -607,7 +607,7 @@ function CompareDemo() {
     mutate(
       (ids) => (ids.includes("post-1") ? ids.filter((id) => id !== "post-1") : [...ids, "post-1"]),
       () => fakeRequest(network, null),
-      { errorTitle: "Chưa thích được bài viết" },
+      { errorTitle: "Couldn't like the post" },
     );
 
   return (
@@ -615,24 +615,24 @@ function CompareDemo() {
       <NetworkToggle value={network} onChange={setNetwork} />
       <div className="grid w-full max-w-sm grid-cols-2 gap-3">
         <div className="flex flex-col items-center gap-2 rounded-xlarge border border-stroke-2 bg-background-1 p-4">
-          <span className="text-caption1 font-semibold text-foreground-3">Chờ server</span>
+          <span className="text-caption1 font-semibold text-foreground-3">Wait for server</span>
           <Button
             aria-pressed={liked}
             icon={liked ? <Heart20Filled className="text-brand-foreground-1" /> : <Heart20Regular />}
             loading={saving}
             onClick={likeAndWait}
           >
-            Thích
+            Like
           </Button>
         </div>
         <div className="flex flex-col items-center gap-2 rounded-xlarge border border-stroke-2 bg-background-1 p-4">
-          <span className="text-caption1 font-semibold text-foreground-3">Lạc quan</span>
+          <span className="text-caption1 font-semibold text-foreground-3">Optimistic</span>
           <Button
             aria-pressed={optimisticLiked}
             icon={optimisticLiked ? <Heart20Filled className="text-brand-foreground-1" /> : <Heart20Regular />}
             onClick={likeOptimistic}
           >
-            Thích
+            Like
           </Button>
         </div>
       </div>
@@ -648,8 +648,8 @@ function CommentDemo() {
   const [network, setNetwork] = useState<Network>("fast");
   const [draft, setDraft] = useState("");
   const { items, mutate } = useOptimisticList<Comment>([
-    { id: "c1", text: "Màu hồng này đẹp quá!" },
-    { id: "c2", text: "Năm nay hoa nở sớm hơn mọi năm." },
+    { id: "c1", text: "Love this shade of pink!" },
+    { id: "c2", text: "The blossoms came out earlier than usual this year." },
   ]);
 
   async function send(event: FormEvent) {
@@ -659,8 +659,8 @@ function CommentDemo() {
     setDraft("");
     const comment = { id: String(Date.now()), text };
     const ok = await mutate((list) => [...list, comment], () => fakeRequest(network, null), {
-      errorTitle: "Chưa gửi được bình luận",
-      errorBody: "Nội dung đã được trả lại ô nhập.",
+      errorTitle: "Couldn't post the comment",
+      errorBody: "Your text is back in the input.",
     });
     if (!ok) setDraft((current) => current || text);
   }
@@ -677,13 +677,13 @@ function CommentDemo() {
       </ul>
       <form onSubmit={send} className="flex items-center gap-2">
         <Input
-          aria-label="Bình luận"
-          placeholder="Viết bình luận…"
+          aria-label="Comment"
+          placeholder="Write a comment…"
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
           rootClassName="flex-1"
         />
-        <Button type="submit" appearance="primary" icon={<Send20Regular className="rtl:-scale-x-100" />} aria-label="Gửi" />
+        <Button type="submit" appearance="primary" icon={<Send20Regular className="rtl:-scale-x-100" />} aria-label="Send" />
       </form>
     </div>
   );
@@ -727,10 +727,10 @@ export const docs: ComponentDoc[] = [
         code: source("staticOverlay"),
         render: () => (
           // #region staticOverlay
-          <LoadingOverlay loading label="Đang cập nhật…" className="w-72 rounded-xlarge border border-stroke-2 bg-background-1 p-4">
-            <p className="text-caption1 text-foreground-3">Doanh thu tháng 10</p>
-            <p className="text-title2 font-semibold text-foreground-1">128,4 triệu ₫</p>
-            <p className="text-caption1 text-foreground-3">Tăng 12% so với tháng trước</p>
+          <LoadingOverlay loading label="Updating…" className="w-72 rounded-xlarge border border-stroke-2 bg-background-1 p-4">
+            <p className="text-caption1 text-foreground-3">October revenue</p>
+            <p className="text-title2 font-semibold text-foreground-1">$128,400</p>
+            <p className="text-caption1 text-foreground-3">Up 12% from last month</p>
           </LoadingOverlay>
           // #endregion
         ),
@@ -850,8 +850,8 @@ export const docs: ComponentDoc[] = [
           // #region smallError
           <ErrorState
             size="small"
-            title="Không tải được biểu đồ"
-            description="Dữ liệu tuần này tạm thời chưa có."
+            title="Couldn't load the chart"
+            description="This week's data isn't available yet."
             onRetry={() => undefined}
             className="w-full max-w-md rounded-xlarge border border-stroke-2 bg-background-1"
           />
@@ -873,8 +873,8 @@ export const docs: ComponentDoc[] = [
                   <EmptyMedia>
                     <Search24Regular />
                   </EmptyMedia>
-                  <EmptyTitle>Không có kết quả</EmptyTitle>
-                  <EmptyDescription>Thử từ khoá khác hoặc bỏ bớt bộ lọc.</EmptyDescription>
+                  <EmptyTitle>No results</EmptyTitle>
+                  <EmptyDescription>Try a different keyword or remove some filters.</EmptyDescription>
                 </EmptyHeader>
               </Empty>
             }
