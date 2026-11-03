@@ -182,7 +182,7 @@ function ShareAction() {
 const SHEET_CODE = `<Sheet
   side="end"              // desktop: panel on the inline-end edge (left in RTL)
   size="medium"           // 592px
-  breakpoint={768}        // < 768px → bottom sheet
+  breakpoint="3xl"        // < 48rem (768px) → bottom sheet
   snapPoints={[0.45, 0.9]}
   onSnapPointChange={(snap) => analytics.track("sheet_snap", { snap })}
 >
@@ -283,7 +283,7 @@ export default function Page() {
           <PropsTable
             props={[
               { name: "mode", type: `"auto" | "side" | "bottom"`, defaultValue: `"auto"`, description: "auto follows the breakpoint; side / bottom forces one form." },
-              { name: "breakpoint", type: "number", defaultValue: "768", description: "Minimum viewport width (px) for the panel form." },
+              { name: "breakpoint", type: `"lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | number`, defaultValue: `"3xl"`, description: "Minimum viewport width for the panel form: lg 32rem · xl 36rem · 2xl 42rem · 3xl 48rem · 4xl 56rem · 5xl 64rem. A px number is deprecated." },
               { name: "side / size", type: `"start" | "end" / "small" | "medium" | "large"`, defaultValue: `"end" / "small"`, description: "Panel form: the edge (flips in RTL) and the width, 320 / 592 / 940px." },
               { name: "snapPoints", type: "number[]", defaultValue: "[0.5, 0.9]", description: "Bottom sheet snap heights (as a fraction of the viewport height)." },
               { name: "modal / dismissible", type: "boolean", defaultValue: "true / true", description: "Overlay + focus trap; allow closing with Esc / an outside click / a swipe." },

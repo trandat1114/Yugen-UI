@@ -15,7 +15,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const markdownMessages: MarkdownMessages = {
+export const markdownMessagesVi: MarkdownMessages = {
   newTab: "(mở tab mới)",
   taskDone: "Đã xong:",
   taskTodo: "Chưa xong:",
@@ -29,5 +29,5 @@ export const markdownMessagesEn: MarkdownMessages = {
   table: "Table",
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `markdownMessagesEn` (mặc định). `markdownMessages` giữ cho code cũ. */
-export const markdownMessagesVi = markdownMessages;
+/** @deprecated Use `markdownMessagesVi` (Vietnamese) or `markdownMessagesEn`. Will be removed in v1.0.0. */
+export const markdownMessages = markdownMessagesVi;

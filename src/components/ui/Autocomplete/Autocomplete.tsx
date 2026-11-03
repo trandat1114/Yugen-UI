@@ -2,6 +2,7 @@ import * as React from "react";
 import { useControllableState } from "../hooks/useControllableState";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { cn } from "@/lib/cn";
+import { warnDeprecated } from "@/lib/deprecate";
 import { normalizeSearchText } from "../Combobox/Combobox";
 import { listboxGroupLabelClass, listboxOptionClass } from "../Dropdown/Dropdown";
 import { useSpinDelay } from "../Loading/Loading";
@@ -104,6 +105,8 @@ export interface AutocompleteProps extends Omit<SearchBoxProps, "onSelect" | "on
   /** Đang tải gợi ý (server). Spinner chỉ hiện nếu chờ > 300ms (Wait UX). */
   loading?: boolean;
   /** Nội dung khi không có gợi ý nào khớp. null = đóng danh sách. Mặc định lấy từ `messages.autocomplete.empty`. */
+  noResultsText?: React.ReactNode;
+  /** @deprecated Use `noResultsText`. Will be removed in v1.0.0. */
   emptyMessage?: React.ReactNode;
   maxSuggestions?: number;
   /** Số ký tự tối thiểu trước khi mở gợi ý (0 = mở ngay khi focus, hợp với "Tìm gần đây"). */
@@ -132,6 +135,7 @@ export const Autocomplete = React.forwardRef<HTMLInputElement, AutocompleteProps
       onSelect,
       onSubmit,
       loading = false,
+      noResultsText: noResultsTextProp,
       emptyMessage,
       maxSuggestions = 8,
       minChars = 1,
@@ -149,6 +153,8 @@ export const Autocomplete = React.forwardRef<HTMLInputElement, AutocompleteProps
     },
     ref,
   ) => {
+    if (emptyMessage !== undefined) warnDeprecated("Autocomplete.emptyMessage", "use noResultsText", "1.0.0");
+    const noResultsText = noResultsTextProp !== undefined ? noResultsTextProp : emptyMessage;
     const portalTheme = usePortalThemeProps();
     const msg = useYugenMessages("autocomplete", autocompleteMessagesEn);
     const baseId = React.useId();
@@ -176,7 +182,7 @@ export const Autocomplete = React.forwardRef<HTMLInputElement, AutocompleteProps
     }, [suggestions, query, filter, maxSuggestions]);
 
     const enough = query.trim().length >= minChars;
-    const showEmpty = emptyMessage !== null && query.trim() !== "" && !loading && items.length === 0;
+    const showEmpty = noResultsText !== null && query.trim() !== "" && !loading && items.length === 0;
     const open = focused && !dismissed && enough && (items.length > 0 || showSpinner || showEmpty);
 
     // Gõ tiếp → mở lại danh sách, bỏ chọn gợi ý cũ.
@@ -333,7 +339,7 @@ export const Autocomplete = React.forwardRef<HTMLInputElement, AutocompleteProps
                 {msg.searching}
               </div>
             )}
-            {showEmpty && <div className="px-2 py-1.5 text-body1 text-foreground-3">{emptyMessage === undefined ? msg.empty : emptyMessage}</div>}
+            {showEmpty && <div className="px-2 py-1.5 text-body1 text-foreground-3">{noResultsText === undefined ? msg.empty : noResultsText}</div>}
           </PopoverPrimitive.Content>
         </PopoverPrimitive.Portal>
         <span aria-live="polite" className="sr-only">

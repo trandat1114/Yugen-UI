@@ -12,7 +12,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const spinButtonMessages: SpinButtonMessages = {
+export const spinButtonMessagesVi: SpinButtonMessages = {
   increment: "Tăng giá trị",
   decrement: "Giảm giá trị",
 };
@@ -22,5 +22,5 @@ export const spinButtonMessagesEn: SpinButtonMessages = {
   decrement: "Decrement value",
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `spinButtonMessagesEn` (mặc định). `spinButtonMessages` giữ cho code cũ. */
-export const spinButtonMessagesVi = spinButtonMessages;
+/** @deprecated Use `spinButtonMessagesVi` (Vietnamese) or `spinButtonMessagesEn`. Will be removed in v1.0.0. */
+export const spinButtonMessages = spinButtonMessagesVi;

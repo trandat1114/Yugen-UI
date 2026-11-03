@@ -12,7 +12,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const breadcrumbMessages: BreadcrumbMessages = {
+export const breadcrumbMessagesVi: BreadcrumbMessages = {
   label: "Đường dẫn điều hướng",
   overflow: "Hiện thêm mục",
 };
@@ -22,5 +22,5 @@ export const breadcrumbMessagesEn: BreadcrumbMessages = {
   overflow: "More items",
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `breadcrumbMessagesEn` (mặc định). `breadcrumbMessages` giữ cho code cũ. */
-export const breadcrumbMessagesVi = breadcrumbMessages;
+/** @deprecated Use `breadcrumbMessagesVi` (Vietnamese) or `breadcrumbMessagesEn`. Will be removed in v1.0.0. */
+export const breadcrumbMessages = breadcrumbMessagesVi;

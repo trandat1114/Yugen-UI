@@ -21,8 +21,9 @@ import { CounterBadge } from "../CounterBadge/CounterBadge";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "../Empty/Empty";
 import { ErrorState, useSpinDelay } from "../Loading/Loading";
 import { Popover, PopoverSurface, PopoverTrigger } from "../Popover/Popover";
-import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../Sheet/Sheet";
+import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger, type SheetBreakpoint } from "../Sheet/Sheet";
 import { useMediaQuery } from "../hooks/useMediaQuery";
+import { minWidthQuery, warnPxBreakpoint } from "../_internal/breakpoint";
 import { SkeletonList } from "../Skeleton/Skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../Tabs/Tabs";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
@@ -445,7 +446,11 @@ export interface NotificationCenterProps
   title?: string;
   /** auto: Popover khi rộng ≥ breakpoint, bottom sheet khi hẹp hơn. */
   mode?: "auto" | "popover" | "sheet";
-  breakpoint?: number;
+  /**
+   * Chiều rộng viewport tối thiểu cho Popover, cùng token với Sheet / AppShell. Mặc định "3xl" (48rem = 768px).
+   * Số (px) vẫn chạy nhưng đã lỗi thời: dùng token. Bỏ ở 1.0.
+   */
+  breakpoint?: SheetBreakpoint | number;
   /** Đọc thông báo mới (chưa đọc) qua live region polite. Mặc định true. */
   announce?: boolean;
   /** Căn bảng theo nút (Popover). Mặc định "end". */
@@ -462,7 +467,7 @@ export const NotificationCenter = React.forwardRef<HTMLButtonElement, Notificati
       onOpenChange,
       title: titleProp,
       mode = "auto",
-      breakpoint = 768,
+      breakpoint = "3xl",
       announce: announceNew = true,
       align = "end",
       className,
@@ -477,7 +482,8 @@ export const NotificationCenter = React.forwardRef<HTMLButtonElement, Notificati
     const msg = useYugenMessages("notificationCenter", notificationCenterMessagesEn);
     const title = titleProp ?? msg.title;
     const [open, setOpen] = useControllableState({ value: openProp, defaultValue: defaultOpen, onChange: onOpenChange });
-    const wide = useMediaQuery(`(min-width: ${breakpoint}px)`, { defaultValue: true });
+    if (typeof breakpoint === "number") warnPxBreakpoint("NotificationCenter", breakpoint);
+    const wide = useMediaQuery(minWidthQuery(breakpoint), { defaultValue: true });
     const asSheet = mode === "sheet" || (mode === "auto" && !wide);
     const headingId = React.useId();
     const unread = items.filter((n) => !n.read).length;

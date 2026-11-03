@@ -22,7 +22,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const teachingPopoverMessages: TeachingPopoverMessages = {
+export const teachingPopoverMessagesVi: TeachingPopoverMessages = {
   close: "Đóng",
   next: "Tiếp",
   previous: "Quay lại",
@@ -44,5 +44,5 @@ export const teachingPopoverMessagesEn: TeachingPopoverMessages = {
   goToStep: (index) => `Go to step ${index}`,
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `teachingPopoverMessagesEn` (mặc định). `teachingPopoverMessages` giữ cho code cũ. */
-export const teachingPopoverMessagesVi = teachingPopoverMessages;
+/** @deprecated Use `teachingPopoverMessagesVi` (Vietnamese) or `teachingPopoverMessagesEn`. Will be removed in v1.0.0. */
+export const teachingPopoverMessages = teachingPopoverMessagesVi;

@@ -3,6 +3,7 @@ import { useControllableState } from "../hooks/useControllableState";
 import type { DateRange } from "react-day-picker";
 import { Calendar20Regular, Dismiss16Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
+import { warnDeprecated } from "@/lib/deprecate";
 import { Calendar } from "@/components/ui/Calendar/Calendar";
 import { fieldControlClass } from "@/components/ui/Field/Field";
 import { Popover, PopoverAnchor, PopoverSurface, PopoverTrigger } from "@/components/ui/Popover/Popover";
@@ -21,8 +22,13 @@ export {
 /** Fluent 2 DatePicker — https://fluent2.microsoft.design/components/web/react/core/datepicker/usage */
 export type { DateRange };
 
-/** Định dạng dd/MM/yyyy (như vi-VN). */
+/**
+ * Định dạng dd/MM/yyyy (như vi-VN).
+ * @deprecated DatePicker formats dates by `locale`; use `new Intl.DateTimeFormat("vi-VN").format(date)` or the
+ * `formatDate` prop. Will be removed from the package exports in v1.0.0.
+ */
 export function formatDateVi(date: Date) {
+  warnDeprecated("formatDateVi", 'use new Intl.DateTimeFormat("vi-VN").format(date) or the formatDate prop', "1.0.0");
   const dd = String(date.getDate()).padStart(2, "0");
   const mm = String(date.getMonth() + 1).padStart(2, "0");
   return `${dd}/${mm}/${date.getFullYear()}`;
@@ -157,13 +163,16 @@ export interface DatePickerProps extends PickerBaseProps {
   /** Giá trị (controlled). `null` = trống. */
   value?: Date | null;
   defaultValue?: Date | null;
-  /** Gọi khi chọn hoặc xoá ngày. */
+  /** Gọi khi chọn hoặc xoá ngày; `null` khi xoá (cùng kiểu với `value`). */
+  onValueChange?: (date: Date | null) => void;
+  /** @deprecated Use `onValueChange` (receives `null` instead of `undefined` when cleared). Will be removed in v1.0.0. */
   onSelectDate?: (date: Date | undefined) => void;
 }
 
 export function DatePicker({
   value,
   defaultValue = null,
+  onValueChange,
   onSelectDate,
   placeholder,
   clearable = false,
@@ -176,13 +185,15 @@ export function DatePicker({
   const { locale } = useYugen();
   const format = formatDate ?? numericDateFormat(locale);
   const [open, setOpen] = React.useState(false);
-  // onSelectDate nhận undefined khi xoá (không phải null) nên gọi riêng, không qua hook.
+  if (onSelectDate !== undefined) warnDeprecated("DatePicker.onSelectDate", "use onValueChange", "1.0.0");
+  // Callback gọi riêng, không qua hook: chọn lại đúng ngày đang chọn vẫn báo (như trước), và onSelectDate cũ nhận undefined.
   const [selected, setSelected] = useControllableState<Date | null>({ value, defaultValue });
   const current = selected ?? undefined;
 
   const commit = (date: Date | undefined) => {
     setSelected(date ?? null);
-    onSelectDate?.(date);
+    if (onValueChange) onValueChange(date ?? null);
+    else onSelectDate?.(date);
   };
 
   return (
@@ -307,6 +318,9 @@ function PresetList({
 export interface DateRangePickerProps extends PickerBaseProps {
   value?: DateRange | null;
   defaultValue?: DateRange | null;
+  /** Gọi khi chọn hoặc xoá khoảng ngày; `null` khi xoá (cùng kiểu với `value`). */
+  onValueChange?: (range: DateRange | null) => void;
+  /** @deprecated Use `onValueChange` (receives `null` instead of `undefined` when cleared). Will be removed in v1.0.0. */
   onSelectRange?: (range: DateRange | undefined) => void;
   /** Số tháng hiển thị trong popover. */
   numberOfMonths?: number;
@@ -319,6 +333,7 @@ export interface DateRangePickerProps extends PickerBaseProps {
 export function DateRangePicker({
   value,
   defaultValue = null,
+  onValueChange,
   onSelectRange,
   placeholder,
   clearable = false,
@@ -334,12 +349,14 @@ export function DateRangePicker({
   const { locale } = useYugen();
   const format = formatDate ?? numericDateFormat(locale);
   const [open, setOpen] = React.useState(false);
+  if (onSelectRange !== undefined) warnDeprecated("DateRangePicker.onSelectRange", "use onValueChange", "1.0.0");
   const [selected, setSelected] = useControllableState<DateRange | null>({ value, defaultValue });
   const current = selected ?? undefined;
 
   const commit = (range: DateRange | undefined) => {
     setSelected(range ?? null);
-    onSelectRange?.(range);
+    if (onValueChange) onValueChange(range ?? null);
+    else onSelectRange?.(range);
   };
 
   const display = current?.from ? `${format(current.from)} – ${current.to ? format(current.to) : "…"}` : "";

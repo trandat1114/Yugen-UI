@@ -18,7 +18,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const timePickerMessages: TimePickerMessages = {
+export const timePickerMessagesVi: TimePickerMessages = {
   placeholder: "Chọn giờ…",
   noOptions: "Không có giờ phù hợp",
   listLabel: "Chọn giờ",
@@ -34,5 +34,5 @@ export const timePickerMessagesEn: TimePickerMessages = {
   openList: "Open time list",
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `timePickerMessagesEn` (mặc định). `timePickerMessages` giữ cho code cũ. */
-export const timePickerMessagesVi = timePickerMessages;
+/** @deprecated Use `timePickerMessagesVi` (Vietnamese) or `timePickerMessagesEn`. Will be removed in v1.0.0. */
+export const timePickerMessages = timePickerMessagesVi;

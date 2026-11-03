@@ -4,7 +4,7 @@ import type { ComponentDocEn } from "../../types";
 export const en: Record<string, ComponentDocEn> = {
   sheet: {
     description:
-      "Built on Radix Dialog, so focus trapping, Esc, scroll locking and the dialog role come built in. Below the breakpoint (768px by default) Sheet becomes a bottom sheet with 16px rounded top corners: drag it by the handle or the header, and it stops at the snapPoints (fractions of the screen height). Flick to jump between snap points, swipe down to close. Content only scrolls at the highest snap point; the footer stays at the bottom of the screen and leaves room for the safe area. On wide screens it is a start / end panel (flipped in RTL) with the same three widths as Drawer. With reduced motion, every slide and bounce becomes instant.",
+      "Built on Radix Dialog, so focus trapping, Esc, scroll locking and the dialog role come built in. Below the breakpoint (\"3xl\" = 48rem, 768px by default) Sheet becomes a bottom sheet with 16px rounded top corners: drag it by the handle or the header, and it stops at the snapPoints (fractions of the screen height). Flick to jump between snap points, swipe down to close. Content only scrolls at the highest snap point; the footer stays at the bottom of the screen and leaves room for the safe area. On wide screens it is a start / end panel (flipped in RTL) with the same three widths as Drawer. With reduced motion, every slide and bounce becomes instant.",
     examples: [
       {
         title: "Bottom sheet & snap point",
@@ -34,7 +34,7 @@ export const en: Record<string, ComponentDocEn> = {
     props: {
       "open / defaultOpen / onOpenChange": "Open state (controlled or uncontrolled).",
       mode: "auto: panel when the viewport is ≥ breakpoint, bottom sheet when it is narrower.",
-      breakpoint: "Minimum width (px) for the panel form (through useMediaQuery).",
+      breakpoint: "Minimum viewport width for the panel form, with the same tokens as AppShell: lg 32rem · xl 36rem · 2xl 42rem · 3xl 48rem · 4xl 56rem · 5xl 64rem. A px number is deprecated (removed in 1.0).",
       side: "Edge the panel slides in from; flipped in RTL.",
       size: "Panel width: 320 / 592 / 940px.",
       snapPoints: "Bottom sheet heights (fractions of the viewport height, 0–1).",

@@ -22,7 +22,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const carouselMessages: CarouselMessages = {
+export const carouselMessagesVi: CarouselMessages = {
   slide: (index, count) => `Slide ${index} / ${count}`,
   roleDescription: "carousel",
   slideRoleDescription: "slide",
@@ -42,5 +42,5 @@ export const carouselMessagesEn: CarouselMessages = {
   chooseSlide: "Choose slide",
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `carouselMessagesEn` (mặc định). `carouselMessages` giữ cho code cũ. */
-export const carouselMessagesVi = carouselMessages;
+/** @deprecated Use `carouselMessagesVi` (Vietnamese) or `carouselMessagesEn`. Will be removed in v1.0.0. */
+export const carouselMessages = carouselMessagesVi;

@@ -3,6 +3,7 @@ import { useControllableState } from "../hooks/useControllableState";
 import { useDirection } from "@radix-ui/react-direction";
 import { ChevronRight12Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
+import { warnDeprecated } from "@/lib/deprecate";
 
 /** Fluent 2 Tree — https://fluent2.microsoft.design/components/web/react/core/tree/usage */
 export type TreeSize = "small" | "medium";
@@ -85,6 +86,9 @@ export interface TreeProps extends React.HTMLAttributes<HTMLDivElement> {
   selectionMode?: "none" | "single";
   selectedValue?: string;
   defaultSelectedValue?: string;
+  /** Gọi khi chọn một mục (kể cả chọn lại mục đang chọn). */
+  onSelectionChange?: (value: string) => void;
+  /** @deprecated Use `onSelectionChange`. Will be removed in v1.0.0. */
   onSelectedChange?: (value: string) => void;
 }
 
@@ -108,6 +112,7 @@ const Subtree = React.forwardRef<HTMLDivElement, TreeProps>(
       selectionMode,
       selectedValue,
       defaultSelectedValue,
+      onSelectionChange,
       onSelectedChange,
       className,
       ...props
@@ -136,6 +141,7 @@ const TreeRoot = React.forwardRef<HTMLDivElement, TreeProps>(
       selectionMode = "none",
       selectedValue,
       defaultSelectedValue,
+      onSelectionChange: onSelectionChangeProp,
       onSelectedChange,
       className,
       onKeyDown,
@@ -143,7 +149,9 @@ const TreeRoot = React.forwardRef<HTMLDivElement, TreeProps>(
     },
     ref,
   ) => {
-    // Tự gọi callback: onOpenChange có thêm `data`, onSelectedChange chạy cả khi chọn lại mục đang chọn.
+    if (onSelectedChange !== undefined) warnDeprecated("Tree.onSelectedChange", "use onSelectionChange", "1.0.0");
+    const onSelectionChange = onSelectionChangeProp ?? onSelectedChange;
+    // Tự gọi callback: onOpenChange có thêm `data`, onSelectionChange chạy cả khi chọn lại mục đang chọn.
     const [open, setOpen] = useControllableState({ value: openItems, defaultValue: defaultOpenItems ?? [] });
     const [selected, setSelected] = useControllableState({ value: selectedValue, defaultValue: defaultSelectedValue });
     const [active] = React.useState(createActiveStore);
@@ -176,9 +184,9 @@ const TreeRoot = React.forwardRef<HTMLDivElement, TreeProps>(
       (value: string) => {
         if (selectionMode === "none") return;
         setSelected(value);
-        onSelectedChange?.(value);
+        onSelectionChange?.(value);
       },
-      [selectionMode, setSelected, onSelectedChange],
+      [selectionMode, setSelected, onSelectionChange],
     );
 
     // Roving tabindex: luôn có đúng một treeitem nhận Tab (mục đang chọn hoặc mục đầu tiên).

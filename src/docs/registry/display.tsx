@@ -196,7 +196,7 @@ function TreeSelectionDemo() {
   const [selected, setSelected] = useState("work");
   return (
     <div className="flex w-64 flex-col gap-2">
-      <Tree aria-label="Mail folders" selectionMode="single" selectedValue={selected} onSelectedChange={setSelected} defaultOpenItems={["inbox"]}>
+      <Tree aria-label="Mail folders" selectionMode="single" selectedValue={selected} onSelectionChange={setSelected} defaultOpenItems={["inbox"]}>
         <TreeItem itemType="branch" value="inbox">
           <TreeItemLayout iconBefore={<Mail20Regular />}>Inbox</TreeItemLayout>
           <Tree>
@@ -1042,8 +1042,8 @@ const DISPLAY: Record<string, ComponentDoc> = {
       },
       {
         title: "Outline & actions",
-        description: "variant=\"outline\" biến mỗi item thành thẻ; composite: → vào nút, ← / Esc quay lại item.",
-        code: `<List navigationMode="composite" variant="outline" aria-label="Inbox" className="w-full max-w-sm">
+        description: "appearance=\"outline\" biến mỗi item thành thẻ; composite: → vào nút, ← / Esc quay lại item.",
+        code: `<List navigationMode="composite" appearance="outline" aria-label="Inbox" className="w-full max-w-sm">
   <ListItem
     media={<Avatar name="Maria Garcia" color="colorful" />}
     title="Maria Garcia"
@@ -1068,7 +1068,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
   />
 </List>`,
         render: () => (
-          <List navigationMode="composite" variant="outline" aria-label="Inbox" className="w-full max-w-sm">
+          <List navigationMode="composite" appearance="outline" aria-label="Inbox" className="w-full max-w-sm">
             <ListItem
               media={<Avatar name="Maria Garcia" color="colorful" />}
               title="Maria Garcia"
@@ -1110,7 +1110,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
       { name: "selectedItems / defaultSelectedItems", type: "string[]", description: "Danh sách value đang chọn (controlled / uncontrolled)." },
       { name: "onSelectionChange", type: "(selectedItems: string[]) => void", description: "Gọi khi chọn / bỏ chọn." },
       { name: "navigationMode", type: `"items" | "composite"`, defaultValue: `items khi có selection`, description: "Điều hướng bằng phím mũi tên (roving tabindex)." },
-      { name: "variant", type: `"default" | "outline"`, defaultValue: `"default"`, description: "outline: mỗi item là thẻ có viền, bo rounded-xlarge." },
+      { name: "appearance", type: `"default" | "outline"`, defaultValue: `"default"`, description: "outline: mỗi item là thẻ có viền, bo rounded-xlarge. Tên cũ variant đã lỗi thời (bỏ ở 1.0)." },
       { name: "ListItem.media / title / description / actions", type: "ReactNode", description: "Các vùng nội dung của item." },
       { name: "ListItem.onAction", type: "(event) => void", description: "Hành động chính khi click / Enter." },
       { name: "ListItem.value / disabled", type: "string / boolean", description: "Định danh và trạng thái vô hiệu." },
@@ -1765,7 +1765,7 @@ function TableColumnsDemo() {
   const [selected, setSelected] = useState("work");
   return (
     <div className="flex w-64 flex-col gap-2">
-      <Tree aria-label="Mail folders" selectionMode="single" selectedValue={selected} onSelectedChange={setSelected} defaultOpenItems={["inbox"]}>
+      <Tree aria-label="Mail folders" selectionMode="single" selectedValue={selected} onSelectionChange={setSelected} defaultOpenItems={["inbox"]}>
         <TreeItem itemType="branch" value="inbox">
           <TreeItemLayout iconBefore={<Mail20Regular />}>Inbox</TreeItemLayout>
           <Tree>
@@ -1805,7 +1805,7 @@ function TableColumnsDemo() {
       { name: "Tree.size", type: `"small" | "medium"`, defaultValue: `"medium"`, description: "Hàng cao 24 / 32px." },
       { name: "Tree.appearance", type: `"subtle" | "transparent"`, defaultValue: `"subtle"`, description: "Nền khi hover." },
       { name: "Tree.openItems / defaultOpenItems / onOpenChange", type: "string[] / (openItems, { value, open }) => void", description: "Các nhánh đang mở." },
-      { name: "Tree.selectionMode / selectedValue / onSelectedChange", type: `"none" | "single" / string / (value) => void`, defaultValue: `"none"`, description: "Chọn một mục (aria-selected)." },
+      { name: "Tree.selectionMode / selectedValue / onSelectionChange", type: `"none" | "single" / string / (value) => void`, defaultValue: `"none"`, description: "Chọn một mục (aria-selected)." },
       { name: "TreeItem.itemType", type: `"branch" | "leaf"`, description: "Nhánh có subtree hoặc mục lá." },
       { name: "TreeItem.value", type: "string", description: "Định danh cho openItems / selectedValue." },
       { name: "TreeItemLayout.iconBefore / iconAfter / aside / actions / expandIcon", type: "ReactNode", description: "Các vùng của hàng; actions chỉ hiện khi hover / focus." },
@@ -2114,9 +2114,9 @@ function TableColumnsDemo() {
     examples: [
       {
         title: "Peek & vòng lặp",
-        description: "slidesPerView={1.15} lộ 15% slide kế, gap=\"M\" giãn khoảng cách; loop quay vòng ở hai đầu.",
+        description: "slidesPerView={1.15} lộ 15% slide kế, gap=\"medium\" giãn khoảng cách; loop quay vòng ở hai đầu.",
         code: `// scenery: { title, src }[] with any image URL (generated SVGs here).
-<Carousel loop slidesPerView={1.15} gap="M" aria-label="Scenery" className="w-full">
+<Carousel loop slidesPerView={1.15} gap="medium" aria-label="Scenery" className="w-full">
   <CarouselViewport>
     {scenery.map((item) => (
       <CarouselCard key={item.title}>
@@ -2128,7 +2128,7 @@ function TableColumnsDemo() {
   <CarouselNavContainer />
 </Carousel>`,
         render: () => (
-          <Carousel loop slidesPerView={1.15} gap="M" aria-label="Scenery" className="w-full">
+          <Carousel loop slidesPerView={1.15} gap="medium" aria-label="Scenery" className="w-full">
             <CarouselViewport>
               {scenery.map((item) => (
                 <CarouselCard key={item.title}>
@@ -2231,15 +2231,15 @@ function TableColumnsDemo() {
       "Không dùng cả chấm và thumbnail cho cùng một Carousel.",
     ],
     props: [
-      { name: "loop", type: "boolean", defaultValue: "false", description: "Quay vòng ở hai đầu (tên cũ: circular)." },
+      { name: "loop", type: "boolean", defaultValue: "false", description: "Quay vòng ở hai đầu. Tên cũ circular đã lỗi thời (bỏ ở 1.0)." },
       { name: "slidesPerView", type: "number", description: "Số slide thấy cùng lúc; số lẻ để lộ slide kế (1.15, 2.5). Bỏ trống = 100%." },
-      { name: "gap", type: `"none" | "XS" | "S" | "M" | "L" | "XL"`, defaultValue: `"S"`, description: "Khoảng cách giữa các slide (token spacing)." },
+      { name: "gap", type: `"none" | "extra-small" | "small" | "medium" | "large" | "extra-large"`, defaultValue: `"small"`, description: "Khoảng cách giữa các slide (token spacing). Tên ngắn cũ \"XS\" … \"XL\" đã lỗi thời (bỏ ở 1.0)." },
       { name: "autoplay / defaultAutoplay / onAutoplayChange", type: "boolean / boolean / (value) => void", defaultValue: "— / false", description: "Tự chạy (controlled / uncontrolled). defaultAutoplay bị bỏ qua khi prefers-reduced-motion." },
       { name: "autoplayInterval", type: "number", defaultValue: "4000", description: "Thời gian mỗi slide (ms); tiến độ hiện trong chấm / thumbnail đang chọn." },
-      { name: "onActiveIndexChange", type: "(index: number) => void", description: "Gọi khi slide hiện tại thay đổi." },
+      { name: "activeIndex / defaultActiveIndex / onActiveIndexChange", type: "number / number / (index: number) => void", defaultValue: "— / 0", description: "Slide hiện tại, đếm từ 0 (controlled / uncontrolled); gọi khi slide hiện tại thay đổi." },
       { name: "CarouselCard.className", type: "string", description: "basis-full mặc định; basis-4/5 hoặc basis-1/2 khi không dùng slidesPerView." },
       { name: "CarouselNavContainer.autoplay", type: "boolean", defaultValue: "false", description: "Hiện nút bật / tắt tự chạy." },
-      { name: "CarouselNavContainer.prevLabel / nextLabel", type: "string", defaultValue: `"Slide trước" / "Slide tiếp theo"`, description: "aria-label cho nút điều hướng." },
+      { name: "CarouselNavContainer.previousLabel / nextLabel", type: "string", defaultValue: `"Slide trước" / "Slide tiếp theo"`, description: "aria-label cho nút điều hướng. Tên cũ prevLabel đã lỗi thời (bỏ ở 1.0)." },
       { name: "CarouselThumbnails / CarouselThumbnail", type: "HTMLAttributes / ButtonHTMLAttributes", description: "Tablist ảnh thu nhỏ; mỗi CarouselThumbnail ứng với slide cùng vị trí." },
     ],
   },

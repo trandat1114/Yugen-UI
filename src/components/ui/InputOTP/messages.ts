@@ -10,7 +10,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const inputOTPMessages: InputOTPMessages = {
+export const inputOTPMessagesVi: InputOTPMessages = {
   slot: (position, length) => `Ký tự ${position} trên ${length}`,
 };
 
@@ -18,5 +18,5 @@ export const inputOTPMessagesEn: InputOTPMessages = {
   slot: (position, length) => `Character ${position} of ${length}`,
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `inputOTPMessagesEn` (mặc định). `inputOTPMessages` giữ cho code cũ. */
-export const inputOTPMessagesVi = inputOTPMessages;
+/** @deprecated Use `inputOTPMessagesVi` (Vietnamese) or `inputOTPMessagesEn`. Will be removed in v1.0.0. */
+export const inputOTPMessages = inputOTPMessagesVi;

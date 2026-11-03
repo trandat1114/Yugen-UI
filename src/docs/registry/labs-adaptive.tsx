@@ -202,7 +202,7 @@ const LABS_ADAPTIVE: Record<string, ComponentDoc> = {
     category: "Yugen Labs",
     lead: "Sheet là một overlay thích ứng: panel trượt từ cạnh trên màn hình rộng, bottom sheet kéo được trên điện thoại — cùng một API, cùng một nội dung.",
     description:
-      "Dựng trên Radix Dialog nên có sẵn bẫy focus, Esc, khoá cuộn và vai trò dialog. Dưới breakpoint (mặc định 768px) Sheet thành bottom sheet bo góc trên 16px: kéo bằng tay nắm hoặc tiêu đề, dừng ở các snapPoints (phần của chiều cao màn hình), vuốt nhanh để nhảy nấc, vuốt xuống để đóng. Nội dung chỉ cuộn khi ở nấc cao nhất; footer luôn bám đáy màn hình và chừa vùng an toàn. Trên màn hình rộng là panel start / end (tự đảo ở RTL) với ba độ rộng như Drawer. Giảm chuyển động: mọi trượt / đàn hồi thành tức thì.",
+      "Dựng trên Radix Dialog nên có sẵn bẫy focus, Esc, khoá cuộn và vai trò dialog. Dưới breakpoint (mặc định \"3xl\" = 48rem, 768px) Sheet thành bottom sheet bo góc trên 16px: kéo bằng tay nắm hoặc tiêu đề, dừng ở các snapPoints (phần của chiều cao màn hình), vuốt nhanh để nhảy nấc, vuốt xuống để đóng. Nội dung chỉ cuộn khi ở nấc cao nhất; footer luôn bám đáy màn hình và chừa vùng an toàn. Trên màn hình rộng là panel start / end (tự đảo ở RTL) với ba độ rộng như Drawer. Giảm chuyển động: mọi trượt / đàn hồi thành tức thì.",
     importCode: `import {
   Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription,
   SheetBody, SheetFooter, SheetClose,
@@ -414,7 +414,7 @@ function PlaceSheetDemo() {
     props: [
       { name: "open / defaultOpen / onOpenChange", type: "boolean / boolean / (open) => void", description: "Trạng thái mở (controlled hoặc uncontrolled)." },
       { name: "mode", type: `"auto" | "side" | "bottom"`, defaultValue: `"auto"`, description: "auto: panel khi viewport ≥ breakpoint, bottom sheet khi nhỏ hơn." },
-      { name: "breakpoint", type: "number", defaultValue: "768", description: "Chiều rộng tối thiểu (px) để hiện dạng panel (qua useMediaQuery)." },
+      { name: "breakpoint", type: `"lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | number`, defaultValue: `"3xl"`, description: "Chiều rộng viewport tối thiểu để hiện dạng panel, cùng token với AppShell: lg 32rem · xl 36rem · 2xl 42rem · 3xl 48rem · 4xl 56rem · 5xl 64rem. Số (px) đã lỗi thời (bỏ ở 1.0)." },
       { name: "side", type: `"start" | "end"`, defaultValue: `"end"`, description: "Cạnh trượt vào ở dạng panel; tự đảo ở RTL." },
       { name: "size", type: `"small" | "medium" | "large"`, defaultValue: `"small"`, description: "Độ rộng panel: 320 / 592 / 940px." },
       { name: "snapPoints", type: "number[]", defaultValue: "[0.5, 0.9]", description: "Các nấc chiều cao bottom sheet (phần của chiều cao viewport, 0–1)." },

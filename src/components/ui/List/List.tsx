@@ -3,6 +3,7 @@ import { useControllableState } from "../hooks/useControllableState";
 import { useDirection } from "@radix-ui/react-direction";
 import { Checkmark12Filled, Checkmark20Regular } from "@fluentui/react-icons";
 import { cn } from "@/lib/cn";
+import { warnDeprecated } from "@/lib/deprecate";
 
 /**
  * Fluent 2 List — https://fluent2.microsoft.design/components/web/react/core/list/usage
@@ -10,6 +11,8 @@ import { cn } from "@/lib/cn";
  */
 export type ListSelectionMode = "none" | "single" | "multiselect";
 export type ListNavigationMode = "items" | "composite";
+/** default: item phẳng · outline: mỗi item là thẻ có viền. */
+export type ListAppearance = "default" | "outline";
 
 /**
  * Mục đang giữ tab stop (roving tabindex), để ngoài context: mỗi phím mũi tên chỉ render lại hai mục đổi trạng thái thay vì
@@ -41,7 +44,7 @@ function createActiveStore(): ActiveStore {
 interface ListContextValue {
   selectionMode: ListSelectionMode;
   navigationMode?: ListNavigationMode;
-  variant: "default" | "outline";
+  appearance: ListAppearance;
   isSelected: (value: string) => boolean;
   toggle: (value: string) => void;
   active: ActiveStore;
@@ -49,7 +52,7 @@ interface ListContextValue {
 
 const ListContext = React.createContext<ListContextValue>({
   selectionMode: "none",
-  variant: "default",
+  appearance: "default",
   isSelected: () => false,
   toggle: () => {},
   active: createActiveStore(),
@@ -67,7 +70,9 @@ export interface ListProps extends React.HTMLAttributes<HTMLUListElement> {
   defaultSelectedItems?: string[];
   onSelectionChange?: (selectedItems: string[]) => void;
   /** default: item phẳng · outline: mỗi item là thẻ có viền. */
-  variant?: "default" | "outline";
+  appearance?: ListAppearance;
+  /** @deprecated Use `appearance`. Will be removed in v1.0.0. */
+  variant?: ListAppearance;
 }
 
 export const List = React.forwardRef<HTMLUListElement, ListProps>(
@@ -78,13 +83,16 @@ export const List = React.forwardRef<HTMLUListElement, ListProps>(
       selectedItems,
       defaultSelectedItems,
       onSelectionChange,
-      variant = "default",
+      appearance: appearanceProp,
+      variant,
       className,
       onKeyDown,
       ...props
     },
     ref,
   ) => {
+    if (variant !== undefined) warnDeprecated("List.variant", "use appearance", "1.0.0");
+    const appearance = appearanceProp ?? variant ?? "default";
     const [selected, setSelected] = useControllableState<string[]>({
       value: selectedItems,
       defaultValue: defaultSelectedItems ?? [],
@@ -178,12 +186,12 @@ export const List = React.forwardRef<HTMLUListElement, ListProps>(
       () => ({
         selectionMode,
         navigationMode: nav,
-        variant,
+        appearance,
         isSelected: (value) => selectedSet.has(value),
         toggle,
         active,
       }),
-      [selectionMode, nav, variant, selectedSet, toggle, active],
+      [selectionMode, nav, appearance, selectedSet, toggle, active],
     );
 
     return (
@@ -192,7 +200,7 @@ export const List = React.forwardRef<HTMLUListElement, ListProps>(
           ref={setRefs}
           role={selectionMode === "none" ? "list" : "listbox"}
           aria-multiselectable={selectionMode === "multiselect" || undefined}
-          className={cn("m-0 flex list-none flex-col p-0", variant === "outline" ? "gap-2" : "gap-0.5", className)}
+          className={cn("m-0 flex list-none flex-col p-0", appearance === "outline" ? "gap-2" : "gap-0.5", className)}
           onKeyDown={handleKeyDown}
           {...props}
         />
@@ -265,7 +273,7 @@ export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
         className={cn(
           "group/list-item relative flex items-center gap-3 text-start text-foreground-1",
           "transition-[background-color,border-color] duration-faster ease-easy-ease",
-          ctx.variant === "outline"
+          ctx.appearance === "outline"
             ? "rounded-xlarge border border-stroke-2 bg-background-1 p-3"
             : "rounded-medium border border-transparent px-3 py-2",
           interactive && "cursor-pointer",
@@ -273,7 +281,7 @@ export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
             (selected
               ? "bg-brand-background-2 hover:bg-brand-background-2-hover active:bg-brand-background-2-pressed"
               : "hover:bg-subtle-hover active:bg-subtle-pressed"),
-          selected && ctx.variant === "outline" && "border-brand-stroke",
+          selected && ctx.appearance === "outline" && "border-brand-stroke",
           disabled && "cursor-not-allowed text-foreground-disabled",
           className,
         )}

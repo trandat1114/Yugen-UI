@@ -342,13 +342,13 @@ function MinMaxDemo() {
 /* ======================================================================== DateRangePicker presets demos */
 
 function RangePresetsDemo() {
-  const [range, setRange] = useState<DateRange | undefined>();
+  const [range, setRange] = useState<DateRange | null>(null);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   return (
     <Field label="Report period" className="w-80">
       <DateRangePicker
-        value={range ?? null}
-        onSelectRange={setRange}
+        value={range}
+        onValueChange={setRange}
         presets={DEFAULT_RANGE_PRESETS}
         numberOfMonths={isDesktop ? 2 : 1}
         clearable
@@ -804,6 +804,7 @@ function TimePickerDemo() {
     props: [
       { name: "value / defaultValue", type: "Date | null", description: "Giờ đã chọn (controlled / uncontrolled)." },
       { name: "onTimeChange", type: "(event, { selectedTime, selectedTimeText, errorType? }) => void", description: "Chọn option hoặc xác nhận chữ gõ (Enter / rời ô)." },
+      { name: "onValueChange", type: "(value: Date | null) => void", description: "Gọi khi giờ đã chọn đổi; null khi xoá trống hoặc chữ gõ không hợp lệ." },
       { name: "increment", type: "number", defaultValue: "30", description: "Bước giữa các option (phút)." },
       { name: "startHour / endHour", type: "number", defaultValue: "0 / 24", description: "Giờ đầu (gồm) và giờ cuối (không gồm)." },
       { name: "minTime / maxTime", type: "Date", description: "Giờ sớm / muộn nhất (gồm, chỉ so phần giờ)." },
@@ -831,13 +832,13 @@ function TimePickerDemo() {
       title: "Khoảng báo cáo",
       description: "Hai tháng trên desktop, một tháng trên mobile (useMediaQuery).",
       code: `function RangePresetsDemo() {
-  const [range, setRange] = useState<DateRange | undefined>();
+  const [range, setRange] = useState<DateRange | null>(null);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   return (
     <Field label="Report period" className="w-80">
       <DateRangePicker
-        value={range ?? null}
-        onSelectRange={setRange}
+        value={range}
+        onValueChange={setRange}
         presets={DEFAULT_RANGE_PRESETS}
         numberOfMonths={isDesktop ? 2 : 1}
         clearable
@@ -906,7 +907,7 @@ function TimePickerDemo() {
       { name: "presetsLabel", type: "string", defaultValue: `"Chọn nhanh khoảng ngày"`, description: "Nhãn nhóm preset cho trình đọc màn hình." },
       { name: "DEFAULT_RANGE_PRESETS", type: "DateRangePreset[]", description: "Hôm nay, 7 ngày qua, 30 ngày qua, Tháng này (tới hôm nay), Tháng trước." },
       { name: "numberOfMonths", type: "number", defaultValue: "2", description: "Số tháng hiển thị; nên 1 trên mobile." },
-      { name: "value / onSelectRange / minDate / maxDate / clearable…", type: "—", description: "Như DateRangePicker (xem trang DatePicker)." },
+      { name: "value / onValueChange / minDate / maxDate / clearable…", type: "—", description: "Như DateRangePicker (xem trang DatePicker)." },
     ],
   },
 ];

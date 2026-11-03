@@ -369,7 +369,7 @@ function SignUpForm() {
         name="birthDate"
         render={({ field, fieldState }) => (
           <Field label="Date of birth" required validationState={fieldState.error ? "error" : "none"} validationMessage={fieldState.error?.message}>
-            <DatePicker value={field.value ?? null} onSelectDate={field.onChange} placeholder="Pick a date" />
+            <DatePicker value={field.value ?? null} onValueChange={field.onChange} placeholder="Pick a date" />
           </Field>
         )}
       />
@@ -632,7 +632,7 @@ export const docs: ComponentDoc[] = [
       "Không xoá dữ liệu đã nhập khi người dùng Quay lại.",
     ],
     props: [
-      { name: "activeStep", type: "number", defaultValue: "0", description: "Stepper: chỉ số bước hiện tại (từ 0)." },
+      { name: "activeStep / defaultActiveStep", type: "number / number", defaultValue: "— / 0", description: "Stepper: chỉ số bước hiện tại, từ 0 (controlled / uncontrolled)." },
       { name: "onStepChange", type: "(index: number) => void", description: "Có → các bước là nút bấm (roving focus, mũi tên / Home / End)." },
       { name: "orientation", type: `"horizontal" | "vertical"`, defaultValue: `"horizontal"`, description: "Hướng hiển thị." },
       { name: "linear", type: "boolean", defaultValue: "false (Wizard: true)", description: "Chỉ cho quay lại hoặc tới bước đã complete; bước khác có aria-disabled." },
@@ -691,7 +691,7 @@ import { Button, Checkbox, DatePicker, Field, Input, Select } from "@/components
     ],
     props: [
       { name: "register(name)", type: "react-hook-form", description: "Trải vào Input / Select / Textarea của Yugen: {...register(\"email\")}." },
-      { name: "Controller", type: "react-hook-form", description: "Cho DatePicker (value + onSelectDate), Checkbox / Switch (checked + onCheckedChange), Combobox…" },
+      { name: "Controller", type: "react-hook-form", description: "Cho DatePicker (value + onValueChange), Checkbox / Switch (checked + onCheckedChange), Combobox…" },
       { name: "Field.validationState", type: `"none" | "error" | "warning" | "success"`, description: "\"error\" khi errors.<tên> có giá trị → aria-invalid trên control." },
       { name: "Field.validationMessage", type: "ReactNode", description: "errors.<tên>?.message — hiện với role=\"alert\" và được liên kết qua aria-describedby." },
       { name: "zodResolver(schema)", type: "@hookform/resolvers/zod", description: "Dùng schema zod làm nguồn kiểm tra; z.infer<typeof schema> cho kiểu giá trị form." },

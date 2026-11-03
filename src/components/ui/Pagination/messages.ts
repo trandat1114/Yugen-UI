@@ -20,7 +20,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const paginationMessages: PaginationMessages = {
+export const paginationMessagesVi: PaginationMessages = {
   label: "Phân trang",
   previousPage: "Trang trước",
   nextPage: "Trang sau",
@@ -38,5 +38,5 @@ export const paginationMessagesEn: PaginationMessages = {
   page: (page) => `Page ${page}`,
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `paginationMessagesEn` (mặc định). `paginationMessages` giữ cho code cũ. */
-export const paginationMessagesVi = paginationMessages;
+/** @deprecated Use `paginationMessagesVi` (Vietnamese) or `paginationMessagesEn`. Will be removed in v1.0.0. */
+export const paginationMessages = paginationMessagesVi;

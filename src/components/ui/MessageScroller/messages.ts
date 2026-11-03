@@ -53,7 +53,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const messageScrollerMessages: MessageScrollerMessages = {
+export const messageScrollerMessagesVi: MessageScrollerMessages = {
   label: "Cuộc trò chuyện",
   loadingOlder: "Đang tải tin nhắn cũ…",
   jumpToLatest: "Tới tin nhắn mới nhất",
@@ -67,7 +67,7 @@ export const messageScrollerMessagesEn: MessageScrollerMessages = {
   newMessages: (count) => (count === 1 ? "1 new message" : `${count} new messages`),
 };
 
-export const messageBubbleMessages: MessageBubbleMessages = {
+export const messageBubbleMessagesVi: MessageBubbleMessages = {
   sending: "Đang gửi",
   sent: "Đã gửi",
   delivered: "Đã nhận",
@@ -85,7 +85,7 @@ export const messageBubbleMessagesEn: MessageBubbleMessages = {
   retry: "Retry",
 };
 
-export const typingIndicatorMessages: TypingIndicatorMessages = {
+export const typingIndicatorMessagesVi: TypingIndicatorMessages = {
   label: (author) => `${author ?? "Đối phương"} đang soạn tin…`,
 };
 
@@ -93,7 +93,7 @@ export const typingIndicatorMessagesEn: TypingIndicatorMessages = {
   label: (author) => `${author ?? "Someone"} is typing…`,
 };
 
-export const chatComposerMessages: ChatComposerMessages = {
+export const chatComposerMessagesVi: ChatComposerMessages = {
   placeholder: "Nhập tin nhắn…",
   label: "Tin nhắn",
   send: "Gửi",
@@ -113,14 +113,14 @@ export const chatComposerMessagesEn: ChatComposerMessages = {
   countSuffix: "characters",
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `messageScrollerMessagesEn` (mặc định). `messageScrollerMessages` giữ cho code cũ. */
-export const messageScrollerMessagesVi = messageScrollerMessages;
+/** @deprecated Use `messageScrollerMessagesVi` (Vietnamese) or `messageScrollerMessagesEn`. Will be removed in v1.0.0. */
+export const messageScrollerMessages = messageScrollerMessagesVi;
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `messageBubbleMessagesEn` (mặc định). `messageBubbleMessages` giữ cho code cũ. */
-export const messageBubbleMessagesVi = messageBubbleMessages;
+/** @deprecated Use `messageBubbleMessagesVi` (Vietnamese) or `messageBubbleMessagesEn`. Will be removed in v1.0.0. */
+export const messageBubbleMessages = messageBubbleMessagesVi;
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `typingIndicatorMessagesEn` (mặc định). `typingIndicatorMessages` giữ cho code cũ. */
-export const typingIndicatorMessagesVi = typingIndicatorMessages;
+/** @deprecated Use `typingIndicatorMessagesVi` (Vietnamese) or `typingIndicatorMessagesEn`. Will be removed in v1.0.0. */
+export const typingIndicatorMessages = typingIndicatorMessagesVi;
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `chatComposerMessagesEn` (mặc định). `chatComposerMessages` giữ cho code cũ. */
-export const chatComposerMessagesVi = chatComposerMessages;
+/** @deprecated Use `chatComposerMessagesVi` (Vietnamese) or `chatComposerMessagesEn`. Will be removed in v1.0.0. */
+export const chatComposerMessages = chatComposerMessagesVi;

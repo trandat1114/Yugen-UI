@@ -10,9 +10,9 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const sheetMessages: SheetMessages = { handle: "Đổi chiều cao" };
+export const sheetMessagesVi: SheetMessages = { handle: "Đổi chiều cao" };
 
 export const sheetMessagesEn: SheetMessages = { handle: "Change height" };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `sheetMessagesEn` (mặc định). `sheetMessages` giữ cho code cũ. */
-export const sheetMessagesVi = sheetMessages;
+/** @deprecated Use `sheetMessagesVi` (Vietnamese) or `sheetMessagesEn`. Will be removed in v1.0.0. */
+export const sheetMessages = sheetMessagesVi;

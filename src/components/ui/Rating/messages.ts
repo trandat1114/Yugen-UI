@@ -14,7 +14,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const ratingMessages: RatingMessages = {
+export const ratingMessagesVi: RatingMessages = {
   item: (_value, valueText) => `${valueText} sao`,
   summary: (valueText, max) => `Đánh giá ${valueText} trên ${max} sao`,
   count: (_count, countText) => `${countText} lượt`,
@@ -26,5 +26,5 @@ export const ratingMessagesEn: RatingMessages = {
   count: (count, countText) => (count === 1 ? `${countText} rating` : `${countText} ratings`),
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `ratingMessagesEn` (mặc định). `ratingMessages` giữ cho code cũ. */
-export const ratingMessagesVi = ratingMessages;
+/** @deprecated Use `ratingMessagesVi` (Vietnamese) or `ratingMessagesEn`. Will be removed in v1.0.0. */
+export const ratingMessages = ratingMessagesVi;

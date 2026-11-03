@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Autocomplete, HighlightMatch, autocompleteMessagesEn, highlightRanges } from "./Autocomplete";
+import { watchDeprecations } from "@/test/deprecation";
 import { YugenProvider } from "../YugenProvider/YugenProvider";
 import { Quote } from "../Quote/Quote";
 
@@ -77,7 +78,7 @@ describe("Autocomplete", () => {
 
   it("hiện thông báo khi không có gợi ý", async () => {
     const user = userEvent.setup();
-    render(<Autocomplete aria-label="Tìm" suggestions={FRUITS} emptyMessage="Không có" />);
+    render(<Autocomplete aria-label="Tìm" suggestions={FRUITS} noResultsText="Không có" />);
     await user.type(screen.getByRole("combobox"), "zzz");
     expect(await screen.findByText("Không có")).toBeInTheDocument();
   });
@@ -109,5 +110,30 @@ describe("Autocomplete messages", () => {
     expect(await screen.findByRole("listbox", { name: "Search suggestions" })).toBeInTheDocument();
     await user.type(input, "zzz");
     expect(await screen.findByText("No matching suggestions")).toBeInTheDocument();
+  });
+});
+
+describe("Autocomplete noResultsText", () => {
+  it("emptyMessage (tên cũ) vẫn chạy và cảnh báo một lần", async () => {
+    const warnings = watchDeprecations();
+    const user = userEvent.setup();
+    const { rerender } = render(<Autocomplete aria-label="Tìm" suggestions={FRUITS} emptyMessage="Không có" />);
+    rerender(<Autocomplete aria-label="Tìm" suggestions={FRUITS} emptyMessage="Không có" />);
+    await user.type(screen.getByRole("combobox"), "zzz");
+    expect(await screen.findByText("Không có")).toBeInTheDocument();
+    expect(warnings("Autocomplete.emptyMessage")).toBe(1);
+  });
+
+  it("noResultsText thắng khi truyền cả hai, kể cả null", async () => {
+    watchDeprecations();
+    const user = userEvent.setup();
+    const { rerender } = render(<Autocomplete aria-label="Tìm" suggestions={FRUITS} noResultsText="Mới" emptyMessage="Cũ" />);
+    const input = screen.getByRole("combobox");
+    await user.type(input, "zzz");
+    expect(await screen.findByText("Mới")).toBeInTheDocument();
+    expect(screen.queryByText("Cũ")).not.toBeInTheDocument();
+    rerender(<Autocomplete aria-label="Tìm" suggestions={FRUITS} noResultsText={null} emptyMessage="Cũ" />);
+    expect(input).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByText("Cũ")).not.toBeInTheDocument();
   });
 });

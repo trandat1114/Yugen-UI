@@ -231,6 +231,8 @@ export interface TimePickerProps extends InputAttrs, TimeRangeOptions {
   defaultValue?: Date | null;
   /** Gọi khi chọn option hoặc xác nhận chữ gõ (Enter / rời ô). Có `errorType` nếu không hợp lệ. */
   onTimeChange?: (event: React.SyntheticEvent<HTMLElement>, data: TimeSelectionData) => void;
+  /** Gọi khi giờ đã chọn đổi; `null` khi xoá trống hoặc chữ gõ không hợp lệ. Cùng kiểu với `value`. */
+  onValueChange?: (value: Date | null) => void;
   /** "h23" (24 giờ) | "h12" (SA/CH). Mặc định theo `locale` qua Intl. */
   hourCycle?: TimePickerHourCycle;
   /** Locale cho chu kỳ giờ và nhãn buổi. Mặc định `locale` của YugenProvider ("en-US"). */
@@ -256,6 +258,7 @@ export const TimePicker = React.forwardRef<HTMLInputElement, TimePickerProps>((p
     value,
     defaultValue = null,
     onTimeChange,
+    onValueChange,
     startHour = 0,
     endHour = 24,
     increment = 30,
@@ -328,8 +331,11 @@ export const TimePicker = React.forwardRef<HTMLInputElement, TimePickerProps>((p
   }, [valueKey, controlled]);
 
   const emit = (event: React.SyntheticEvent<HTMLElement>, data: TimeSelectionData) => {
-    lastEmittedRef.current = data.selectedTime?.getTime() ?? null;
+    const time = data.selectedTime?.getTime() ?? null;
+    lastEmittedRef.current = time;
     onTimeChange?.(event, data);
+    // onValueChange chỉ báo khi giờ thật sự đổi (gõ sai hai lần liên tiếp không báo lại null).
+    if (time !== (selected?.getTime() ?? null)) onValueChange?.(data.selectedTime);
   };
 
   const anchorDate = () => dateAnchor ?? selected ?? new Date();

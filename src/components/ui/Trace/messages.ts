@@ -25,7 +25,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const traceMessages: TraceMessages = {
+export const traceMessagesVi: TraceMessages = {
   pending: "Đang chờ",
   running: "Đang chạy",
   success: "Hoàn tất",
@@ -55,5 +55,5 @@ export const traceMessagesEn: TraceMessages = {
   expandAll: "Expand all",
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `traceMessagesEn` (mặc định). `traceMessages` giữ cho code cũ. */
-export const traceMessagesVi = traceMessages;
+/** @deprecated Use `traceMessagesVi` (Vietnamese) or `traceMessagesEn`. Will be removed in v1.0.0. */
+export const traceMessages = traceMessagesVi;

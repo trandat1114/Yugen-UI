@@ -12,7 +12,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const tagMessages: TagMessages = {
+export const tagMessagesVi: TagMessages = {
   dismiss: "Gỡ",
   dismissNamed: (name) => `Gỡ ${name}`,
 };
@@ -22,5 +22,5 @@ export const tagMessagesEn: TagMessages = {
   dismissNamed: (name) => `Remove ${name}`,
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `tagMessagesEn` (mặc định). `tagMessages` giữ cho code cũ. */
-export const tagMessagesVi = tagMessages;
+/** @deprecated Use `tagMessagesVi` (Vietnamese) or `tagMessagesEn`. Will be removed in v1.0.0. */
+export const tagMessages = tagMessagesVi;
