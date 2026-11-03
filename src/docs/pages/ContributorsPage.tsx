@@ -27,6 +27,7 @@ import {
   type ContributionGroup,
   type ContributionType,
   type Contributor,
+  sourceLang,
   useLiveContributors,
 } from "../contributors";
 
@@ -269,7 +270,9 @@ function PersonCard({
                     ) : (
                       <span className="shrink-0 text-foreground-3">{c.types[item.types[0]]}</span>
                     )}
-                    <span className="line-clamp-2 text-foreground-2">{item.title}</span>
+                    <span lang={sourceLang(item.title)} className="line-clamp-2 text-foreground-2">
+                      {item.title}
+                    </span>
                   </li>
                 ))}
               </ul>

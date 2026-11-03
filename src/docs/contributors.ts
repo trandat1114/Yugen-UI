@@ -109,6 +109,13 @@ export function useLiveContributors(): ContributorsData {
 
 export const profileUrl = (login: string) => `https://github.com/${login}`;
 
+/**
+ * Ngôn ngữ của chữ gốc trên GitHub (tiêu đề issue / PR, giữ nguyên không dịch): có dấu tiếng Việt thì "vi", còn lại "en",
+ * để trình đọc màn hình đọc đúng giọng.
+ */
+export const sourceLang = (text: string): "vi" | "en" =>
+  /[ăâđêôơưàáạảãầấậẩẫằắặẳẵèéẹẻẽềếệểễìíịỉĩòóọỏõồốộổỗờớợởỡùúụủũừứựửữỳýỵỷỹ]/i.test(text) ? "vi" : "en";
+
 /** Ảnh đại diện cỡ `size` px (GitHub trả ảnh vuông đúng cỡ, nên đặt gấp đôi cỡ hiển thị cho màn hình mật độ cao). */
 export function avatarOf(person: Pick<Contributor, "avatar">, size: number) {
   const url = new URL(person.avatar);

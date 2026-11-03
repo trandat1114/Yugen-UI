@@ -5,6 +5,7 @@ import { buildContributors, parseArgs, pullTypes } from "../../scripts/contribut
 // @ts-expect-error -- module Changesets thuần JS
 import changelog, { splitThanks, thanksText } from "../../.changeset/changelog.mjs";
 import {
+  sourceLang,
   CONTRIBUTORS,
   CONTRIBUTORS_LIVE_URL,
   CONTRIBUTORS_UPDATED,
@@ -98,7 +99,7 @@ describe("scripts/contributors.mjs", () => {
 });
 
 describe("scripts/contributors.mjs · góp ý trong issue", () => {
-  it("tính bình luận trong issue của người khác; bỏ maintainer, bot, bình luận ngắn, người mở issue, issue invalid và bình luận đã ghi tay", () => {
+  it("tính bình luận trong issue của người khác; bỏ maintainer, bot, bình luận ngắn, người mở issue và issue invalid; ghi tay chỉ đổi loại", () => {
     const people = buildContributors(
       {
         pulls: [],
@@ -121,7 +122,12 @@ describe("scripts/contributors.mjs · góp ý trong issue", () => {
       {
         maintainers: ["owner"],
         exclude: ["gone"],
-        people: [{ login: "dave", types: ["a11y", "idea"], title: "Focus after the breakpoint", date: "2026-10-30", url: "https://github.com/x/y/issues/20#issuecomment-2" }],
+        people: [
+          // Trùng bình luận #2: chỉ đổi loại, số và tiêu đề lấy nguyên bản từ GitHub (không dùng tiêu đề ghi tay).
+          { login: "dave", types: ["a11y", "idea"], title: "Góp ý về breakpoint", date: "2026-10-30", url: "https://github.com/x/y/issues/20#issuecomment-2" },
+          // Bình luận ngắn bị bỏ, nhưng maintainer đã ghi tay thì vẫn tính.
+          { login: "dave", types: ["idea"], date: "2026-11-02", url: "https://github.com/x/y/issues/20#issuecomment-4" },
+        ],
       },
     ) as Contributor[];
 
@@ -129,11 +135,12 @@ describe("scripts/contributors.mjs · góp ý trong issue", () => {
     expect(people.map((p) => p.login)).toEqual(["dave", "reporter"]);
     const [dave, reporter] = people;
     expect(reporter.counts).toEqual({ bug: 1 });
-    expect(dave).toMatchObject({ name: "Dave", first: "2026-10-30", counts: { discussion: 2, a11y: 1, idea: 1 } });
-    expect(dave.items?.map((i) => [i.number ?? null, i.types, i.url?.split("-").pop()])).toEqual([
-      [20, ["discussion"], "3"],
-      [21, ["discussion"], "8"],
-      [null, ["a11y", "idea"], "2"],
+    expect(dave).toMatchObject({ name: "Dave", first: "2026-10-30", counts: { discussion: 2, a11y: 1, idea: 2 } });
+    expect(dave.items?.map((i) => [i.number, i.title, i.types, i.url?.split("-").pop()])).toEqual([
+      [20, "AppShell proposal", ["discussion"], "3"],
+      [20, "AppShell proposal", ["idea"], "4"],
+      [21, "cut off", ["discussion"], "8"],
+      [20, "AppShell proposal", ["a11y", "idea"], "2"],
     ]);
   });
 });
@@ -196,7 +203,16 @@ describe("scripts/contributors.mjs · bình luận trên PR và co-author (#272)
     expect(byLogin.giabao.items?.map((i) => i.number)).toEqual([57]);
     expect(byLogin.pair.counts).toEqual({ code: 1 });
     expect(byLogin.noted.counts).toEqual({ design: 1 });
+    expect(byLogin.noted.items?.map((i) => [i.number, i.title])).toEqual([[61, "PR 61"]]);
     expect(byLogin.owner.counts).toEqual({ code: 3, docs: 1 });
+  });
+
+  it("ghi tay không trùng đóng góp nào trên GitHub thì dùng tiêu đề và ngày ghi tay", () => {
+    const people = buildContributors(
+      { pulls: [], issues: [] },
+      { people: [{ login: "artist", types: ["design"], title: "Sakura icon set", date: "2026-10-24", url: "https://www.figma.com/file/x" }] },
+    ) as Contributor[];
+    expect(people[0].items).toEqual([{ types: ["design"], title: "Sakura icon set", date: "2026-10-24", url: "https://www.figma.com/file/x" }]);
   });
 
   it("--out và --strict", () => {
@@ -218,6 +234,12 @@ describe("dữ liệu mới từ nhánh contributors-data (#272)", () => {
   }
   const mockFetch = (response: () => Promise<unknown>) => vi.stubGlobal("fetch", vi.fn(response));
   afterEach(() => vi.unstubAllGlobals());
+
+  it("tiêu đề gốc giữ nguyên, chỉ đánh dấu ngôn ngữ", () => {
+    expect(sourceLang("1.0 proposal: AppShell / Sidebar layout component")).toBe("en");
+    expect(sourceLang("Hooks dùng chung cho logic giao diện")).toBe("vi");
+    expect(sourceLang("Đề xuất")).toBe("vi");
+  });
 
   it("kiểm dạng: thiếu trường, sai kiểu, danh sách rỗng thì bỏ", () => {
     expect(parseContributors(fresh)).toEqual(fresh);
