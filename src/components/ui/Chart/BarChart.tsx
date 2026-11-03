@@ -96,35 +96,33 @@ interface ValueLabel {
 }
 
 /** BarChart — cột / thanh ngang, nhóm hoặc chồng, hỗ trợ giá trị âm. SVG viết tay, không thư viện. */
-export const BarChart = React.forwardRef<HTMLElement, BarChartProps>(function BarChart(
-  {
-    data,
-    index,
-    series,
-    orientation = "vertical",
-    layout = "grouped",
-    valueFormat,
-    axisFormat,
-    categoryFormat,
-    showValues = false,
-    diverging = false,
-    legend,
-    barSize = 24,
-    title,
-    description,
-    toolbar,
-    height,
-    locale: localeProp,
-    ariaLabel,
-    indexLabel: indexLabelProp,
-    hideTableToggle,
-    defaultShowTable,
-    texture,
-    animate = true,
-    className,
-  },
+export function BarChart({
+  data,
+  index,
+  series,
+  orientation = "vertical",
+  layout = "grouped",
+  valueFormat,
+  axisFormat,
+  categoryFormat,
+  showValues = false,
+  diverging = false,
+  legend,
+  barSize = 24,
+  title,
+  description,
+  toolbar,
+  height,
+  locale: localeProp,
+  ariaLabel,
+  indexLabel: indexLabelProp,
+  hideTableToggle,
+  defaultShowTable,
+  texture,
+  animate = true,
+  className,
   ref,
-) {
+}: BarChartProps & { ref?: React.Ref<HTMLElement> }) {
   const yugen = useYugen();
   const locale = localeProp ?? yugen.locale;
   const msg = useYugenMessages("chart", chartMessagesEn);
@@ -503,7 +501,7 @@ export const BarChart = React.forwardRef<HTMLElement, BarChartProps>(function Ba
       </PlotArea>
     </ChartContainer>
   );
-});
+}
 
 function unionBox(boxes: { x: number; y: number; w: number; h: number }[]) {
   if (!boxes.length) return null;

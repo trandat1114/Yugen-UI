@@ -75,143 +75,136 @@ const CORNERS: Record<MessageSide, Record<MessageGroupPosition, string>> = {
 };
 
 // memo: MessageScroller render lại mọi tin mỗi khi danh sách đổi (mỗi token đang stream); tin không đổi props thì bỏ qua.
-export const MessageBubble = React.memo(
-  React.forwardRef<HTMLDivElement, MessageBubbleProps>(
-    (
-      {
-        side = "incoming",
-        author,
-        avatar,
-        avatarSrc,
-        time,
-        dateTime,
-        status,
-        onRetry,
-        errorMessage,
-        groupPosition,
-        reactions,
-        streaming = false,
-        appearance = "bubble",
+export const MessageBubble = React.memo(function MessageBubble({
+  side = "incoming",
+  author,
+  avatar,
+  avatarSrc,
+  time,
+  dateTime,
+  status,
+  onRetry,
+  errorMessage,
+  groupPosition,
+  reactions,
+  streaming = false,
+  appearance = "bubble",
+  className,
+  children,
+  ref,
+  ...props
+}: MessageBubbleProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const msg = useYugenMessages("messageBubble", messageBubbleMessagesEn);
+  const contextPosition = React.useContext(MessageGroupContext);
+  const position = groupPosition ?? contextPosition ?? "single";
+  const outgoing = side === "outgoing";
+  const startsGroup = position === "single" || position === "first";
+  const plain = appearance === "plain";
+
+  const avatarNode =
+    avatar !== undefined ? avatar : !outgoing && author ? <Avatar name={author} src={avatarSrc} size={32} color="colorful" /> : null;
+  const hasAvatarColumn = avatarNode !== null && avatarNode !== false;
+
+  const timeNode = time ? (
+    <time dateTime={dateTime} className="text-foreground-3">
+      {time}
+    </time>
+  ) : null;
+
+  const StatusIcon = status && status !== "error" ? STATUS_ICON[status] : null;
+  const statusLabel = status && status !== "error" ? msg[status] : undefined;
+
+  return (
+    <div
+      ref={ref}
+      data-side={side}
+      data-group={position}
+      className={cn(
+        "group/message flex w-full gap-2",
+        outgoing && "flex-row-reverse",
+        startsGroup ? "mt-3 first:mt-0" : "mt-0.5",
         className,
-        children,
-        ...props
-      },
-      ref,
-    ) => {
-      const msg = useYugenMessages("messageBubble", messageBubbleMessagesEn);
-      const contextPosition = React.useContext(MessageGroupContext);
-      const position = groupPosition ?? contextPosition ?? "single";
-      const outgoing = side === "outgoing";
-      const startsGroup = position === "single" || position === "first";
-      const plain = appearance === "plain";
+      )}
+      {...props}
+    >
+      {hasAvatarColumn && (
+        <div className="w-8 shrink-0">{startsGroup && avatarNode}</div>
+      )}
 
-      const avatarNode =
-        avatar !== undefined ? avatar : !outgoing && author ? <Avatar name={author} src={avatarSrc} size={32} color="colorful" /> : null;
-      const hasAvatarColumn = avatarNode !== null && avatarNode !== false;
+      <div className={cn("flex min-w-0 flex-col", outgoing ? "items-end" : "items-start", plain ? "flex-1" : "max-w-[85%]")}>
+        {startsGroup && (author || time) && (
+          <div className={cn("mb-0.5 flex items-baseline gap-2 text-caption1", outgoing && "flex-row-reverse")}>
+            {author && !outgoing && <span className="font-semibold text-foreground-1">{author}</span>}
+            {author && outgoing && <span className="sr-only">{author}</span>}
+            {timeNode}
+          </div>
+        )}
 
-      const timeNode = time ? (
-        <time dateTime={dateTime} className="text-foreground-3">
-          {time}
-        </time>
-      ) : null;
-
-      const StatusIcon = status && status !== "error" ? STATUS_ICON[status] : null;
-      const statusLabel = status && status !== "error" ? msg[status] : undefined;
-
-      return (
-        <div
-          ref={ref}
-          data-side={side}
-          data-group={position}
-          className={cn(
-            "group/message flex w-full gap-2",
-            outgoing && "flex-row-reverse",
-            startsGroup ? "mt-3 first:mt-0" : "mt-0.5",
-            className,
-          )}
-          {...props}
-        >
-          {hasAvatarColumn && (
-            <div className="w-8 shrink-0">{startsGroup && avatarNode}</div>
-          )}
-
-          <div className={cn("flex min-w-0 flex-col", outgoing ? "items-end" : "items-start", plain ? "flex-1" : "max-w-[85%]")}>
-            {startsGroup && (author || time) && (
-              <div className={cn("mb-0.5 flex items-baseline gap-2 text-caption1", outgoing && "flex-row-reverse")}>
-                {author && !outgoing && <span className="font-semibold text-foreground-1">{author}</span>}
-                {author && outgoing && <span className="sr-only">{author}</span>}
-                {timeNode}
-              </div>
+        <div className={cn("flex max-w-full items-end gap-1", outgoing && "flex-row-reverse")}>
+          <div
+            aria-busy={streaming || undefined}
+            className={cn(
+              "relative min-w-0 text-body1 wrap-break-word whitespace-pre-wrap text-foreground-1",
+              plain
+                ? "w-full"
+                : cn(
+                    "rounded-xlarge px-3 py-2",
+                    outgoing ? "bg-brand-background-2" : "bg-background-1 shadow-2",
+                    CORNERS[side][position],
+                  ),
+              status === "error" && !plain && "outline outline-danger-border-1",
             )}
-
-            <div className={cn("flex max-w-full items-end gap-1", outgoing && "flex-row-reverse")}>
-              <div
-                aria-busy={streaming || undefined}
-                className={cn(
-                  "relative min-w-0 text-body1 wrap-break-word whitespace-pre-wrap text-foreground-1",
-                  plain
-                    ? "w-full"
-                    : cn(
-                        "rounded-xlarge px-3 py-2",
-                        outgoing ? "bg-brand-background-2" : "bg-background-1 shadow-2",
-                        CORNERS[side][position],
-                      ),
-                  status === "error" && !plain && "outline outline-danger-border-1",
-                )}
-              >
-                {children}
-                {streaming && (
-                  <span
-                    aria-hidden
-                    className="ms-0.5 inline-block h-4 w-0.5 translate-y-0.5 animate-pulse rounded-circular bg-foreground-2 motion-reduce:animate-none"
-                  />
-                )}
-              </div>
-              {/* Tin trong nhóm không lặp lại giờ — hiện khi rê chuột / focus. */}
-              {!startsGroup && time && (
-                <time
-                  dateTime={dateTime}
-                  className="shrink-0 pb-0.5 text-caption2 text-foreground-3 opacity-0 transition-opacity duration-faster group-focus-within/message:opacity-100 group-hover/message:opacity-100"
-                >
-                  {time}
-                </time>
-              )}
-            </div>
-
-            {reactions && (
-              <div className={cn("relative -mt-1 flex flex-wrap gap-0.5", outgoing ? "pe-2" : "ps-2")}>{reactions}</div>
-            )}
-
-            {status === "error" ? (
-              <div role="alert" className="mt-0.5 flex items-center gap-1 text-caption1 text-danger-foreground-1">
-                <ErrorCircle12Filled aria-hidden className="shrink-0" />
-                <span>{errorMessage ?? msg.error}</span>
-                {onRetry && (
-                  <button
-                    type="button"
-                    onClick={onRetry}
-                    className="inline-flex items-center gap-0.5 rounded-small font-semibold text-link hover:text-link-hover hover:underline"
-                  >
-                    <ArrowClockwise12Regular aria-hidden />
-                    {msg.retry}
-                  </button>
-                )}
-              </div>
-            ) : (
-              StatusIcon && (
-                <div title={statusLabel} className="mt-0.5 flex items-center gap-0.5 text-caption2 text-foreground-3">
-                  <StatusIcon aria-hidden className={cn("shrink-0", status === "read" && "text-brand-foreground-1")} />
-                  <span className="sr-only">{statusLabel}</span>
-                </div>
-              )
+          >
+            {children}
+            {streaming && (
+              <span
+                aria-hidden
+                className="ms-0.5 inline-block h-4 w-0.5 translate-y-0.5 animate-pulse rounded-circular bg-foreground-2 motion-reduce:animate-none"
+              />
             )}
           </div>
+          {/* Tin trong nhóm không lặp lại giờ — hiện khi rê chuột / focus. */}
+          {!startsGroup && time && (
+            <time
+              dateTime={dateTime}
+              className="shrink-0 pb-0.5 text-caption2 text-foreground-3 opacity-0 transition-opacity duration-faster group-focus-within/message:opacity-100 group-hover/message:opacity-100"
+            >
+              {time}
+            </time>
+          )}
         </div>
-      );
-    },
-  ),
-);
-MessageBubble.displayName = "MessageBubble";
+
+        {reactions && (
+          <div className={cn("relative -mt-1 flex flex-wrap gap-0.5", outgoing ? "pe-2" : "ps-2")}>{reactions}</div>
+        )}
+
+        {status === "error" ? (
+          <div role="alert" className="mt-0.5 flex items-center gap-1 text-caption1 text-danger-foreground-1">
+            <ErrorCircle12Filled aria-hidden className="shrink-0" />
+            <span>{errorMessage ?? msg.error}</span>
+            {onRetry && (
+              <button
+                type="button"
+                onClick={onRetry}
+                className="inline-flex items-center gap-0.5 rounded-small font-semibold text-link hover:text-link-hover hover:underline"
+              >
+                <ArrowClockwise12Regular aria-hidden />
+                {msg.retry}
+              </button>
+            )}
+          </div>
+        ) : (
+          StatusIcon && (
+            <div title={statusLabel} className="mt-0.5 flex items-center gap-0.5 text-caption2 text-foreground-3">
+              <StatusIcon aria-hidden className={cn("shrink-0", status === "read" && "text-brand-foreground-1")} />
+              <span className="sr-only">{statusLabel}</span>
+            </div>
+          )
+        )}
+      </div>
+    </div>
+  );
+});
 
 /* ================================================================ MessageReaction */
 
@@ -224,8 +217,16 @@ export interface MessageReactionProps extends React.ButtonHTMLAttributes<HTMLBut
   label?: string;
 }
 
-export const MessageReaction = React.forwardRef<HTMLButtonElement, MessageReactionProps>(
-  ({ emoji, count, selected = false, label, className, ...props }, ref) => (
+export function MessageReaction({
+  emoji,
+  count,
+  selected = false,
+  label,
+  className,
+  ref,
+  ...props
+}: MessageReactionProps & { ref?: React.Ref<HTMLButtonElement> }) {
+  return (
     <button
       ref={ref}
       type="button"
@@ -244,9 +245,8 @@ export const MessageReaction = React.forwardRef<HTMLButtonElement, MessageReacti
       <span aria-hidden>{emoji}</span>
       {count !== undefined && <span className="tabular-nums">{count}</span>}
     </button>
-  ),
-);
-MessageReaction.displayName = "MessageReaction";
+  );
+}
 
 /* ================================================================ MessageDaySeparator */
 
@@ -256,16 +256,21 @@ export interface MessageDaySeparatorProps extends React.HTMLAttributes<HTMLDivEl
 }
 
 /** Mốc ngày giữa các tin nhắn ("Hôm nay", "Thứ Hai, 12/10"). Chữ vẫn được trình đọc màn hình đọc. */
-export const MessageDaySeparator = React.forwardRef<HTMLDivElement, MessageDaySeparatorProps>(
-  ({ dateTime, className, children, ...props }, ref) => (
+export function MessageDaySeparator({
+  dateTime,
+  className,
+  children,
+  ref,
+  ...props
+}: MessageDaySeparatorProps & { ref?: React.Ref<HTMLDivElement> }) {
+  return (
     <div ref={ref} className={cn("my-3 flex items-center gap-3 text-caption1 text-foreground-3", className)} {...props}>
       <span aria-hidden className="h-px flex-1 bg-stroke-2" />
       {dateTime ? <time dateTime={dateTime}>{children}</time> : <span>{children}</span>}
       <span aria-hidden className="h-px flex-1 bg-stroke-2" />
     </div>
-  ),
-);
-MessageDaySeparator.displayName = "MessageDaySeparator";
+  );
+}
 
 /* ================================================================ TypingIndicator */
 
@@ -280,23 +285,28 @@ export interface TypingIndicatorProps extends React.HTMLAttributes<HTMLDivElemen
 
 const DOT_DELAY = ["", "[animation-delay:var(--durationFast)]", "[animation-delay:var(--durationSlow)]"];
 
-export const TypingIndicator = React.forwardRef<HTMLDivElement, TypingIndicatorProps>(
-  ({ author, avatar, avatarSrc, label, className, ...props }, ref) => {
-    const msg = useYugenMessages("typingIndicator", typingIndicatorMessagesEn);
-    const avatarNode = avatar !== undefined ? avatar : author ? <Avatar name={author} src={avatarSrc} size={32} color="colorful" /> : null;
-    return (
-      <div ref={ref} role="status" className={cn("mt-3 flex w-full items-end gap-2 first:mt-0", className)} {...props}>
-        {avatarNode !== null && avatarNode !== false && <div className="w-8 shrink-0">{avatarNode}</div>}
-        <div aria-hidden className="flex h-9 items-center gap-1 rounded-xlarge rounded-es-small bg-background-1 px-3 shadow-2">
-          {DOT_DELAY.map((delay, i) => (
-            <span key={i} className={cn("flex h-3 items-end animate-bounce motion-reduce:animate-none", delay)}>
-              <span className={cn("size-1.5 rounded-circular bg-foreground-3", i === 1 && "motion-reduce:opacity-70", i === 2 && "motion-reduce:opacity-40")} />
-            </span>
-          ))}
-        </div>
-        <span className="sr-only">{label ?? msg.label(author)}</span>
+export function TypingIndicator({
+  author,
+  avatar,
+  avatarSrc,
+  label,
+  className,
+  ref,
+  ...props
+}: TypingIndicatorProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const msg = useYugenMessages("typingIndicator", typingIndicatorMessagesEn);
+  const avatarNode = avatar !== undefined ? avatar : author ? <Avatar name={author} src={avatarSrc} size={32} color="colorful" /> : null;
+  return (
+    <div ref={ref} role="status" className={cn("mt-3 flex w-full items-end gap-2 first:mt-0", className)} {...props}>
+      {avatarNode !== null && avatarNode !== false && <div className="w-8 shrink-0">{avatarNode}</div>}
+      <div aria-hidden className="flex h-9 items-center gap-1 rounded-xlarge rounded-es-small bg-background-1 px-3 shadow-2">
+        {DOT_DELAY.map((delay, i) => (
+          <span key={i} className={cn("flex h-3 items-end animate-bounce motion-reduce:animate-none", delay)}>
+            <span className={cn("size-1.5 rounded-circular bg-foreground-3", i === 1 && "motion-reduce:opacity-70", i === 2 && "motion-reduce:opacity-40")} />
+          </span>
+        ))}
       </div>
-    );
-  },
-);
-TypingIndicator.displayName = "TypingIndicator";
+      <span className="sr-only">{label ?? msg.label(author)}</span>
+    </div>
+  );
+}

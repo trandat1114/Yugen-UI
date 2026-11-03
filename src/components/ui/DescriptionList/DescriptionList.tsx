@@ -35,10 +35,16 @@ export interface DescriptionListProps extends React.HTMLAttributes<HTMLDListElem
 }
 
 /** DescriptionList — các cặp nhãn / giá trị: chi tiết đơn hàng, hồ sơ, tóm tắt cài đặt. */
-export const DescriptionList = React.forwardRef<HTMLDListElement, DescriptionListProps>(function DescriptionList(
-  { columns = 1, layout = "stacked", divided = false, valueAlign = "start", className, style, ...props },
+export function DescriptionList({
+  columns = 1,
+  layout = "stacked",
+  divided = false,
+  valueAlign = "start",
+  className,
+  style,
   ref,
-) {
+  ...props
+}: DescriptionListProps & { ref?: React.Ref<HTMLDListElement> }) {
   const context = React.useMemo(() => ({ layout, divided, valueAlign }), [layout, divided, valueAlign]);
   // Lưới tự co: tối đa `columns` cột, mỗi cột không hẹp hơn MIN_COLUMN (gap-x-6 = 1.5rem).
   const template =
@@ -55,7 +61,7 @@ export const DescriptionList = React.forwardRef<HTMLDListElement, DescriptionLis
       />
     </ListContext.Provider>
   );
-});
+}
 
 export interface DescriptionItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
   label: React.ReactNode;
@@ -67,10 +73,15 @@ export interface DescriptionItemProps extends Omit<React.HTMLAttributes<HTMLDivE
   fullWidth?: boolean;
 }
 
-export const DescriptionItem = React.forwardRef<HTMLDivElement, DescriptionItemProps>(function DescriptionItem(
-  { label, children, copyable, fullWidth, className, ...props },
+export function DescriptionItem({
+  label,
+  children,
+  copyable,
+  fullWidth,
+  className,
   ref,
-) {
+  ...props
+}: DescriptionItemProps & { ref?: React.Ref<HTMLDivElement> }) {
   const { layout, divided, valueAlign } = React.useContext(ListContext);
   const labelId = React.useId();
   const valueRef = React.useRef<HTMLSpanElement>(null);
@@ -103,7 +114,7 @@ export const DescriptionItem = React.forwardRef<HTMLDivElement, DescriptionItemP
       </dd>
     </div>
   );
-});
+}
 
 function CopyButton({ labelId, getText }: { labelId: string; getText: () => string }) {
   const msg = useYugenMessages("descriptionList", descriptionListMessagesEn);

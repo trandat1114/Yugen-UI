@@ -117,30 +117,28 @@ function HeatmapLegend({
  * Khe 2px giữa các ô, nhãn cắt bằng fitText (đủ chữ trong tooltip và bảng), ô trống là hoa văn trung tính.
  * Bàn phím: Tab vào ma trận, mũi tên đi giữa các ô, Home/End đầu/cuối hàng, Ctrl+Home/End ô đầu/cuối.
  */
-export const Heatmap = React.forwardRef<HTMLElement, HeatmapProps>(function Heatmap(
-  {
-    data,
-    index,
-    columns,
-    valueFormat,
-    domain: domainProp,
-    diverging = false,
-    midpoint = 0,
-    rowHeight = 32,
-    legend = true,
-    title,
-    description,
-    toolbar,
-    locale: localeProp,
-    ariaLabel,
-    indexLabel,
-    hideTableToggle,
-    defaultShowTable,
-    animate = true,
-    className,
-  },
+export function Heatmap({
+  data,
+  index,
+  columns,
+  valueFormat,
+  domain: domainProp,
+  diverging = false,
+  midpoint = 0,
+  rowHeight = 32,
+  legend = true,
+  title,
+  description,
+  toolbar,
+  locale: localeProp,
+  ariaLabel,
+  indexLabel,
+  hideTableToggle,
+  defaultShowTable,
+  animate = true,
+  className,
   ref,
-) {
+}: HeatmapProps & { ref?: React.Ref<HTMLElement> }) {
   const yugen = useYugen();
   const locale = localeProp ?? yugen.locale;
   const msg = useYugenMessages("chart", chartMessagesEn);
@@ -348,4 +346,4 @@ export const Heatmap = React.forwardRef<HTMLElement, HeatmapProps>(function Heat
       </PlotArea>
     </ChartContainer>
   );
-});
+}

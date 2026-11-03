@@ -27,74 +27,69 @@ export interface InfoLabelProps extends React.LabelHTMLAttributes<HTMLLabelEleme
   rootClassName?: string;
 }
 
-export const InfoLabel = React.forwardRef<HTMLLabelElement, InfoLabelProps>(
-  (
-    {
-      info,
-      size = "medium",
-      weight = "regular",
-      required,
-      disabled,
-      infoButtonLabel,
-      className,
-      rootClassName,
-      id,
-      children,
-      ...props
-    },
-    ref,
-  ) => {
-    const msg = useYugenMessages("infoLabel", infoLabelMessagesEn);
-    const autoId = React.useId();
-    const labelId = id ?? `${autoId}-label`;
-    const buttonId = `${autoId}-info`;
-    const s = SIZE[size];
-    const [Rest, Active] = size === "large" ? [Info20Regular, Info20Filled] : [Info16Regular, Info16Filled];
+export function InfoLabel({
+  info,
+  size = "medium",
+  weight = "regular",
+  required,
+  disabled,
+  infoButtonLabel,
+  className,
+  rootClassName,
+  id,
+  children,
+  ref,
+  ...props
+}: InfoLabelProps & { ref?: React.Ref<HTMLLabelElement> }) {
+  const msg = useYugenMessages("infoLabel", infoLabelMessagesEn);
+  const autoId = React.useId();
+  const labelId = id ?? `${autoId}-label`;
+  const buttonId = `${autoId}-info`;
+  const s = SIZE[size];
+  const [Rest, Active] = size === "large" ? [Info20Regular, Info20Filled] : [Info16Regular, Info16Filled];
 
-    return (
-      <span className={cn("inline-flex items-center gap-0.5 align-middle", rootClassName)}>
-        <label
-          ref={ref}
-          id={labelId}
-          className={cn(
-            s.label,
-            weight === "semibold" && "font-semibold",
-            disabled ? "text-foreground-disabled" : "text-foreground-1",
-            className,
-          )}
-          {...props}
-        >
-          {children}
-          {required && (
-            <span aria-hidden className="ps-1 text-danger-foreground-1">
-              *
-            </span>
-          )}
-        </label>
-        <Popover>
-          <PopoverTrigger asChild>
-            <button
-              type="button"
-              id={buttonId}
-              aria-label={infoButtonLabel ?? msg.infoButton}
-              aria-labelledby={`${buttonId} ${labelId}`}
-              className={cn(
-                "group/info inline-flex shrink-0 items-center justify-center rounded-small text-foreground-2",
-                "transition-colors duration-faster ease-easy-ease hover:text-foreground-1",
-                "data-[state=open]:text-brand-foreground-1",
-                s.button,
-              )}
-            >
-              <Rest aria-hidden className="group-hover/info:hidden group-data-[state=open]/info:hidden" />
-              <Active aria-hidden className="hidden group-hover/info:block group-data-[state=open]/info:block" />
-            </button>
-          </PopoverTrigger>
-          <PopoverSurface size="small" withArrow side="top" align="start" className="max-w-66 text-body1">
-            {info}
-          </PopoverSurface>
-        </Popover>
-      </span>
-    );
-  },
-);
-InfoLabel.displayName = "InfoLabel";
+  return (
+    <span className={cn("inline-flex items-center gap-0.5 align-middle", rootClassName)}>
+      <label
+        ref={ref}
+        id={labelId}
+        className={cn(
+          s.label,
+          weight === "semibold" && "font-semibold",
+          disabled ? "text-foreground-disabled" : "text-foreground-1",
+          className,
+        )}
+        {...props}
+      >
+        {children}
+        {required && (
+          <span aria-hidden className="ps-1 text-danger-foreground-1">
+            *
+          </span>
+        )}
+      </label>
+      <Popover>
+        <PopoverTrigger asChild>
+          <button
+            type="button"
+            id={buttonId}
+            aria-label={infoButtonLabel ?? msg.infoButton}
+            aria-labelledby={`${buttonId} ${labelId}`}
+            className={cn(
+              "group/info inline-flex shrink-0 items-center justify-center rounded-small text-foreground-2",
+              "transition-colors duration-faster ease-easy-ease hover:text-foreground-1",
+              "data-[state=open]:text-brand-foreground-1",
+              s.button,
+            )}
+          >
+            <Rest aria-hidden className="group-hover/info:hidden group-data-[state=open]/info:hidden" />
+            <Active aria-hidden className="hidden group-hover/info:block group-data-[state=open]/info:block" />
+          </button>
+        </PopoverTrigger>
+        <PopoverSurface size="small" withArrow side="top" align="start" className="max-w-66 text-body1">
+          {info}
+        </PopoverSurface>
+      </Popover>
+    </span>
+  );
+}

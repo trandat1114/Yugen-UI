@@ -9,6 +9,7 @@ import { useSpinDelay } from "../Loading/Loading";
 import { SkeletonItem } from "../Skeleton/Skeleton";
 import { useYugenMessages } from "../YugenProvider/context";
 import { dataGridMessagesEn } from "./messages";
+import { useComposedRefs } from "../_internal/composeRefs";
 import {
   getOrderedColumns,
   getVisibleColumns,
@@ -482,46 +483,45 @@ const RowView = React.memo(RowViewImpl) as typeof RowViewImpl;
 
 /* ================================================================ DataGrid */
 
-function DataGridImpl<T>(
-  {
-    items,
-    columns: allColumns,
-    hiddenColumns,
-    columnOrder,
-    getRowId,
-    size = "medium",
-    sortable = false,
-    sortState,
-    defaultSortState,
-    onSortChange,
-    selectionMode,
-    selectedItems,
-    defaultSelectedItems,
-    onSelectionChange,
-    selectionAppearance = "brand",
-    subtleSelection = false,
-    resizableColumns = false,
-    columnSizingOptions,
-    onColumnResize,
-    virtualized = false,
-    rowHeight,
-    height,
-    overscan = DEFAULT_OVERSCAN,
-    focusMode = "cell",
-    loading = false,
-    empty,
-    className,
-    style,
-    onKeyDown,
-    onFocus,
-    onBlur,
-    onClick,
-    onMouseDown,
-    onScroll,
-    ...props
-  }: DataGridProps<T>,
-  ref: React.ForwardedRef<HTMLDivElement>,
-) {
+/** Lưới dữ liệu — generic theo kiểu `item` (suy ra từ `items`). */
+export function DataGrid<T>({
+  items,
+  columns: allColumns,
+  hiddenColumns,
+  columnOrder,
+  getRowId,
+  size = "medium",
+  sortable = false,
+  sortState,
+  defaultSortState,
+  onSortChange,
+  selectionMode,
+  selectedItems,
+  defaultSelectedItems,
+  onSelectionChange,
+  selectionAppearance = "brand",
+  subtleSelection = false,
+  resizableColumns = false,
+  columnSizingOptions,
+  onColumnResize,
+  virtualized = false,
+  rowHeight,
+  height,
+  overscan = DEFAULT_OVERSCAN,
+  focusMode = "cell",
+  loading = false,
+  empty,
+  className,
+  style,
+  onKeyDown,
+  onFocus,
+  onBlur,
+  onClick,
+  onMouseDown,
+  onScroll,
+  ref,
+  ...props
+}: DataGridProps<T> & { ref?: React.Ref<HTMLDivElement> }) {
   const dir = useDirection();
   const rtl = dir === "rtl";
   const msg = useYugenMessages("dataGrid", dataGridMessagesEn);
@@ -529,14 +529,7 @@ function DataGridImpl<T>(
   const rootRef = React.useRef<HTMLDivElement | null>(null);
   const headerRef = React.useRef<HTMLDivElement | null>(null);
 
-  const setRefs = React.useCallback(
-    (node: HTMLDivElement | null) => {
-      rootRef.current = node;
-      if (typeof ref === "function") ref(node);
-      else if (ref) ref.current = node;
-    },
-    [ref],
-  );
+  const setRefs = useComposedRefs(rootRef, ref);
 
   /* ---------------------------------------------------------- sắp xếp & chọn */
   const { getSortDirection, toggleColumnSort, sort } = useDataGridSort({
@@ -1141,11 +1134,3 @@ function DataGridImpl<T>(
     </div>
   );
 }
-
-const DataGridBase = React.forwardRef(DataGridImpl);
-DataGridBase.displayName = "DataGrid";
-
-/** Lưới dữ liệu — generic theo kiểu `item` (suy ra từ `items`). */
-export const DataGrid = DataGridBase as <T>(
-  props: DataGridProps<T> & React.RefAttributes<HTMLDivElement>,
-) => React.ReactElement | null;

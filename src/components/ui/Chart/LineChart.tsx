@@ -116,8 +116,8 @@ function SeriesChart({
   texture,
   animate = true,
   className,
-  forwardedRef,
-}: AreaChartProps & { variant: "line" | "area"; forwardedRef: React.ForwardedRef<HTMLElement> }) {
+  ref,
+}: AreaChartProps & { variant: "line" | "area"; ref?: React.Ref<HTMLElement> }) {
   const yugen = useYugen();
   const locale = localeProp ?? yugen.locale;
   const msg = useYugenMessages("chart", chartMessagesEn);
@@ -346,7 +346,7 @@ function SeriesChart({
 
   return (
     <ChartContainer
-      ref={forwardedRef}
+      ref={ref}
       title={title}
       description={description}
       toolbar={toolbar}
@@ -501,11 +501,11 @@ function SeriesChart({
 }
 
 /** LineChart — xu hướng theo thời gian / danh mục, nhiều chuỗi, crosshair + tooltip, nhãn cuối đường. */
-export const LineChart = React.forwardRef<HTMLElement, LineChartProps>(function LineChart(props, ref) {
-  return <SeriesChart {...props} variant="line" forwardedRef={ref} />;
-});
+export function LineChart(props: LineChartProps & { ref?: React.Ref<HTMLElement> }) {
+  return <SeriesChart {...props} variant="line" />;
+}
 
 /** AreaChart — như LineChart kèm lớp phủ ~10% dưới đường; `stacked` cho phần–tổng theo thời gian. */
-export const AreaChart = React.forwardRef<HTMLElement, AreaChartProps>(function AreaChart(props, ref) {
-  return <SeriesChart {...props} variant="area" forwardedRef={ref} />;
-});
+export function AreaChart(props: AreaChartProps & { ref?: React.Ref<HTMLElement> }) {
+  return <SeriesChart {...props} variant="area" />;
+}

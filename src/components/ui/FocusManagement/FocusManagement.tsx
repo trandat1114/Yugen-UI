@@ -119,7 +119,6 @@ export function useArrowNavigationGroup<T extends HTMLElement = HTMLElement>(
   const dir = useDirection();
   const containerRef = React.useRef<T | null>(null);
   const activeRef = React.useRef<HTMLElement | null>(null);
-  const observerRef = React.useRef<MutationObserver | null>(null);
   const latest = React.useRef({ tabbable, memorizeCurrent });
   latest.current = { tabbable, memorizeCurrent };
 
@@ -137,21 +136,22 @@ export function useArrowNavigationGroup<T extends HTMLElement = HTMLElement>(
 
   const ref = React.useCallback(
     (node: T | null) => {
-      observerRef.current?.disconnect();
-      observerRef.current = null;
       containerRef.current = node;
       if (!node) return;
       syncTabIndex();
-      if (typeof MutationObserver !== "undefined") {
-        const observer = new MutationObserver(() => syncTabIndex());
-        observer.observe(node, {
-          childList: true,
-          subtree: true,
-          attributes: true,
-          attributeFilter: ["disabled", "hidden", "aria-checked", "aria-selected"],
-        });
-        observerRef.current = observer;
-      }
+      if (typeof MutationObserver === "undefined") return;
+      const observer = new MutationObserver(() => syncTabIndex());
+      observer.observe(node, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ["disabled", "hidden", "aria-checked", "aria-selected"],
+      });
+      // Cleanup của ref (React 19): chạy khi gỡ phần tử, thay cho lần gọi với null.
+      return () => {
+        observer.disconnect();
+        containerRef.current = null;
+      };
     },
     [syncTabIndex],
   );
@@ -271,22 +271,19 @@ export function useFocusableGroup<T extends HTMLElement = HTMLElement>(
   const { tabBehavior = "limited" } = options;
   const behaviorRef = React.useRef(tabBehavior);
   behaviorRef.current = tabBehavior;
-  const observerRef = React.useRef<MutationObserver | null>(null);
 
   const ref = React.useCallback((node: T | null) => {
-    observerRef.current?.disconnect();
-    observerRef.current = null;
     if (!node) return;
     if (behaviorRef.current !== "unlimited") limitGroup(node);
-    if (typeof MutationObserver !== "undefined") {
-      const observer = new MutationObserver(() => {
-        const active = document.activeElement;
-        const inside = active !== node && node.contains(active);
-        if (behaviorRef.current !== "unlimited" && !inside) limitGroup(node);
-      });
-      observer.observe(node, { childList: true, subtree: true });
-      observerRef.current = observer;
-    }
+    if (typeof MutationObserver === "undefined") return;
+    const observer = new MutationObserver(() => {
+      const active = document.activeElement;
+      const inside = active !== node && node.contains(active);
+      if (behaviorRef.current !== "unlimited" && !inside) limitGroup(node);
+    });
+    observer.observe(node, { childList: true, subtree: true });
+    // Cleanup của ref (React 19): chạy khi gỡ phần tử, thay cho lần gọi với null.
+    return () => observer.disconnect();
   }, []);
 
   const onKeyDown = React.useCallback((event: React.KeyboardEvent<T>) => {

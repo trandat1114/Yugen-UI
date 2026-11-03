@@ -26,82 +26,77 @@ export interface ProgressBarProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   rootClassName?: string;
 }
 
-export const ProgressBar = React.forwardRef<HTMLDivElement, ProgressBarProps>(
-  (
-    {
-      value,
-      max = 1,
-      thickness = "medium",
-      shape = "rounded",
-      color = "brand",
-      label,
-      description,
-      className,
-      rootClassName,
-      id,
-      ...props
-    },
-    ref,
-  ) => {
-    const autoId = React.useId();
-    const barId = id ?? autoId;
-    const labelId = `${barId}-label`;
-    const descriptionId = `${barId}-description`;
-    const indeterminate = value === undefined || Number.isNaN(value);
-    const safeMax = max > 0 ? max : 1;
-    const clamped = indeterminate ? 0 : Math.min(Math.max(value, 0), safeMax);
-    const radius = shape === "rounded" ? "rounded-circular" : "rounded-none";
+export function ProgressBar({
+  value,
+  max = 1,
+  thickness = "medium",
+  shape = "rounded",
+  color = "brand",
+  label,
+  description,
+  className,
+  rootClassName,
+  id,
+  ref,
+  ...props
+}: ProgressBarProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const autoId = React.useId();
+  const barId = id ?? autoId;
+  const labelId = `${barId}-label`;
+  const descriptionId = `${barId}-description`;
+  const indeterminate = value === undefined || Number.isNaN(value);
+  const safeMax = max > 0 ? max : 1;
+  const clamped = indeterminate ? 0 : Math.min(Math.max(value, 0), safeMax);
+  const radius = shape === "rounded" ? "rounded-circular" : "rounded-none";
 
-    const bar = (
+  const bar = (
+    <div
+      ref={ref}
+      id={barId}
+      role="progressbar"
+      aria-valuemin={indeterminate ? undefined : 0}
+      aria-valuemax={indeterminate ? undefined : safeMax}
+      aria-valuenow={indeterminate ? undefined : clamped}
+      aria-labelledby={label ? labelId : undefined}
+      aria-describedby={description ? descriptionId : undefined}
+      className={cn(
+        "relative block w-full overflow-hidden bg-background-6",
+        thickness === "large" ? "h-1" : "h-0.5",
+        radius,
+        className,
+      )}
+      {...props}
+    >
       <div
-        ref={ref}
-        id={barId}
-        role="progressbar"
-        aria-valuemin={indeterminate ? undefined : 0}
-        aria-valuemax={indeterminate ? undefined : safeMax}
-        aria-valuenow={indeterminate ? undefined : clamped}
-        aria-labelledby={label ? labelId : undefined}
-        aria-describedby={description ? descriptionId : undefined}
         className={cn(
-          "relative block w-full overflow-hidden bg-background-6",
-          thickness === "large" ? "h-1" : "h-0.5",
+          "absolute inset-y-0",
           radius,
-          className,
+          COLOR[color],
+          indeterminate
+            ? // Thanh 1/3 đặt ở left-0 vật lý, chạy bằng transform (compositor) → RTL chạy ngược để đi từ phải sang trái.
+              "left-0 w-1/3 animate-indeterminate-slide rtl:[animation-direction:reverse] motion-reduce:inset-s-0 motion-reduce:w-full motion-reduce:animate-pulse"
+            : "inset-s-0 transition-[width] duration-normal ease-easy-ease motion-reduce:transition-none",
         )}
-        {...props}
-      >
-        <div
-          className={cn(
-            "absolute inset-y-0",
-            radius,
-            COLOR[color],
-            indeterminate
-              ? // Thanh 1/3 đặt ở left-0 vật lý, chạy bằng transform (compositor) → RTL chạy ngược để đi từ phải sang trái.
-                "left-0 w-1/3 animate-indeterminate-slide rtl:[animation-direction:reverse] motion-reduce:inset-s-0 motion-reduce:w-full motion-reduce:animate-pulse"
-              : "inset-s-0 transition-[width] duration-normal ease-easy-ease motion-reduce:transition-none",
-          )}
-          style={indeterminate ? undefined : { width: `${(clamped / safeMax) * 100}%` }}
-        />
-      </div>
-    );
+        style={indeterminate ? undefined : { width: `${(clamped / safeMax) * 100}%` }}
+      />
+    </div>
+  );
 
-    if (!label && !description) return bar;
+  if (!label && !description) return bar;
 
-    return (
-      <div className={cn("flex w-full flex-col gap-1", rootClassName)}>
-        {label && (
-          <span id={labelId} className="text-body1 text-foreground-1">
-            {label}
-          </span>
-        )}
-        {bar}
-        {description && (
-          <span id={descriptionId} className="text-caption1 text-foreground-3">
-            {description}
-          </span>
-        )}
-      </div>
-    );
-  },
-);
-ProgressBar.displayName = "ProgressBar";
+  return (
+    <div className={cn("flex w-full flex-col gap-1", rootClassName)}>
+      {label && (
+        <span id={labelId} className="text-body1 text-foreground-1">
+          {label}
+        </span>
+      )}
+      {bar}
+      {description && (
+        <span id={descriptionId} className="text-caption1 text-foreground-3">
+          {description}
+        </span>
+      )}
+    </div>
+  );
+}

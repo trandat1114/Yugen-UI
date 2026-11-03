@@ -117,7 +117,7 @@ function groupOptions(items: NormalizedOption[]) {
 }
 
 /** Combobox: ô nhập có thể gõ để lọc listbox; hỗ trợ chọn một / nhiều và freeform. */
-export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props, ref) => {
+export function Combobox({ ref, ...props }: ComboboxProps & { ref?: React.Ref<HTMLInputElement> }) {
   const {
     options,
     appearance = "outline",
@@ -395,5 +395,4 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
       </CommandPrimitive>
     </PopoverPrimitive.Root>
   );
-});
-Combobox.displayName = "Combobox";
+}

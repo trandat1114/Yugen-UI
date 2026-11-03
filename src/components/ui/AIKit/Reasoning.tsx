@@ -35,94 +35,100 @@ export interface ReasoningProps extends Omit<React.HTMLAttributes<HTMLDivElement
   children?: React.ReactNode;
 }
 
-export const Reasoning = React.forwardRef<HTMLDivElement, ReasoningProps>(
-  (
-    { streaming = false, duration, open: openProp, defaultOpen, onOpenChange, autoOpen = true, label, className, children, ...props },
-    ref,
-  ) => {
-    const msg = useYugenMessages("reasoning", reasoningMessagesEn);
-    const [open, setOpen] = useControllableState({
-      value: openProp,
-      defaultValue: defaultOpen ?? (autoOpen && streaming),
-      onChange: onOpenChange,
-    });
-    const userToggled = React.useRef(false);
-    const [startedAt, setStartedAt] = React.useState<number | null>(null);
-    const [measured, setMeasured] = React.useState<number | null>(null);
-    const [now, setNow] = React.useState<number | null>(null);
+export function Reasoning({
+  streaming = false,
+  duration,
+  open: openProp,
+  defaultOpen,
+  onOpenChange,
+  autoOpen = true,
+  label,
+  className,
+  children,
+  ref,
+  ...props
+}: ReasoningProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const msg = useYugenMessages("reasoning", reasoningMessagesEn);
+  const [open, setOpen] = useControllableState({
+    value: openProp,
+    defaultValue: defaultOpen ?? (autoOpen && streaming),
+    onChange: onOpenChange,
+  });
+  const userToggled = React.useRef(false);
+  const [startedAt, setStartedAt] = React.useState<number | null>(null);
+  const [measured, setMeasured] = React.useState<number | null>(null);
+  const [now, setNow] = React.useState<number | null>(null);
 
-    // Đo thời gian trong effect: Date.now() không bao giờ chạy lúc render (server / client lệch nhau).
-    const prevStreaming = React.useRef<boolean | null>(null);
-    const startRef = React.useRef<number | null>(null);
-    React.useEffect(() => {
-      const prev = prevStreaming.current;
-      prevStreaming.current = streaming;
-      if (streaming && prev !== true) {
-        const t = Date.now();
-        startRef.current = t;
-        setStartedAt(t);
-        setNow(t);
-        setMeasured(null);
-        if (autoOpen && !userToggled.current && prev === false) setOpen(true);
-      } else if (!streaming && prev === true) {
-        if (startRef.current !== null) setMeasured(Date.now() - startRef.current);
-        startRef.current = null;
-        setStartedAt(null);
-        if (autoOpen && !userToggled.current) setOpen(false);
-      }
-    }, [streaming, autoOpen, setOpen]);
+  // Đo thời gian trong effect: Date.now() không bao giờ chạy lúc render (server / client lệch nhau).
+  const prevStreaming = React.useRef<boolean | null>(null);
+  const startRef = React.useRef<number | null>(null);
+  React.useEffect(() => {
+    const prev = prevStreaming.current;
+    prevStreaming.current = streaming;
+    if (streaming && prev !== true) {
+      const t = Date.now();
+      startRef.current = t;
+      setStartedAt(t);
+      setNow(t);
+      setMeasured(null);
+      if (autoOpen && !userToggled.current && prev === false) setOpen(true);
+    } else if (!streaming && prev === true) {
+      if (startRef.current !== null) setMeasured(Date.now() - startRef.current);
+      startRef.current = null;
+      setStartedAt(null);
+      if (autoOpen && !userToggled.current) setOpen(false);
+    }
+  }, [streaming, autoOpen, setOpen]);
 
-    React.useEffect(() => {
-      if (!streaming) return;
-      const id = window.setInterval(() => setNow(Date.now()), 1000);
-      return () => window.clearInterval(id);
-    }, [streaming]);
+  React.useEffect(() => {
+    if (!streaming) return;
+    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(id);
+  }, [streaming]);
 
-    const elapsed = streaming && startedAt !== null && now !== null ? formatReasoningDuration(now - startedAt) : "";
-    const total = duration ?? measured;
-    const doneLabel = total != null ? msg.thoughtFor(formatReasoningDuration(total)) : msg.thought;
+  const elapsed = streaming && startedAt !== null && now !== null ? formatReasoningDuration(now - startedAt) : "";
+  const total = duration ?? measured;
+  const doneLabel = total != null ? msg.thoughtFor(formatReasoningDuration(total)) : msg.thought;
 
-    return (
-      <Collapsible
-        open={open}
-        onOpenChange={(next) => {
-          userToggled.current = true;
-          setOpen(next);
-        }}
-      >
-        <div ref={ref} data-streaming={streaming || undefined} className={cn("flex min-w-0 flex-col", className)} {...props}>
-          <CollapsibleTrigger
-            className={cn(
-              "group/reasoning -mx-1 inline-flex max-w-full items-center gap-1 self-start rounded-medium px-1 py-0.5 text-caption1 text-foreground-3",
-              "transition-colors duration-faster ease-easy-ease hover:bg-subtle-hover hover:text-foreground-1 active:bg-subtle-pressed",
-            )}
-          >
-            <Lightbulb16Regular aria-hidden className={cn("shrink-0", streaming && "text-brand-foreground-1")} />
-            <span className={cn("truncate", streaming && "animate-pulse motion-reduce:animate-none")}>
-              {label ?? (streaming ? msg.thinking : doneLabel)}
+  return (
+    <Collapsible
+      open={open}
+      onOpenChange={(next) => {
+        userToggled.current = true;
+        setOpen(next);
+      }}
+    >
+      <div ref={ref} data-streaming={streaming || undefined} className={cn("flex min-w-0 flex-col", className)} {...props}>
+        <CollapsibleTrigger
+          className={cn(
+            "group/reasoning -mx-1 inline-flex max-w-full items-center gap-1 self-start rounded-medium px-1 py-0.5 text-caption1 text-foreground-3",
+            "transition-colors duration-faster ease-easy-ease hover:bg-subtle-hover hover:text-foreground-1 active:bg-subtle-pressed",
+          )}
+        >
+          <Lightbulb16Regular aria-hidden className={cn("shrink-0", streaming && "text-brand-foreground-1")} />
+          <span className={cn("truncate", streaming && "animate-pulse motion-reduce:animate-none")}>
+            {label ?? (streaming ? msg.thinking : doneLabel)}
+          </span>
+          {elapsed && (
+            <span aria-hidden className="tabular-nums">
+              {elapsed}
             </span>
-            {elapsed && (
-              <span aria-hidden className="tabular-nums">
-                {elapsed}
-              </span>
-            )}
-            <ChevronDown16Regular
-              aria-hidden
-              className="shrink-0 transition-transform duration-normal ease-easy-ease group-data-[state=open]/reasoning:rotate-180 motion-reduce:transition-none"
-            />
-          </CollapsibleTrigger>
-          <CollapsibleContent aria-busy={streaming || undefined} className="mt-1 border-s-2 border-stroke-2 ps-3 text-foreground-2">
-            {typeof children === "string" ? (
-              <StreamingMarkdown size="small" streaming={streaming} className="text-foreground-2">
-                {children}
-              </StreamingMarkdown>
-            ) : (
-              children
-            )}
-          </CollapsibleContent>
-        </div>
-      </Collapsible>
-    );
-  },
-);
-Reasoning.displayName = "Reasoning";
+          )}
+          <ChevronDown16Regular
+            aria-hidden
+            className="shrink-0 transition-transform duration-normal ease-easy-ease group-data-[state=open]/reasoning:rotate-180 motion-reduce:transition-none"
+          />
+        </CollapsibleTrigger>
+        <CollapsibleContent aria-busy={streaming || undefined} className="mt-1 border-s-2 border-stroke-2 ps-3 text-foreground-2">
+          {typeof children === "string" ? (
+            <StreamingMarkdown size="small" streaming={streaming} className="text-foreground-2">
+              {children}
+            </StreamingMarkdown>
+          ) : (
+            children
+          )}
+        </CollapsibleContent>
+      </div>
+    </Collapsible>
+  );
+}

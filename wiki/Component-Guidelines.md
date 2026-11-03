@@ -8,7 +8,8 @@ shortcut for when you start work.
 ## Add a component, step by step
 
 1. Open / pick up an issue (`confirmed`, or an idea agreed on in Discussions **Ideas**).
-2. `src/components/ui/<Name>/<Name>.tsx`: `forwardRef`, `className` last in `cn()`, Vietnamese JSDoc, `displayName`.
+2. `src/components/ui/<Name>/<Name>.tsx`: a named function component that takes `ref` as a prop (no `forwardRef`, no
+   `displayName`), `className` last in `cn()`, Vietnamese JSDoc.
 3. Add `export * from "./<Name>/<Name>";` to the right group in `src/components/ui/index.ts`.
 4. Docs page: add a `ComponentDoc` to a `src/docs/registry/*.tsx` file. `slug`, `name`, `category`, `lead` are string literals;
    each example's `code` must run when copied out (use `setup` for shared data).

@@ -35,12 +35,16 @@ const cardVariants = cva(
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof cardVariants> {}
 
-export const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, appearance, size, interactive, ...props }, ref) => (
-    <div ref={ref} className={cn(cardVariants({ appearance, size, interactive }), className)} {...props} />
-  ),
-);
-Card.displayName = "Card";
+export function Card({
+  className,
+  appearance,
+  size,
+  interactive,
+  ref,
+  ...props
+}: CardProps & { ref?: React.Ref<HTMLDivElement> }) {
+  return <div ref={ref} className={cn(cardVariants({ appearance, size, interactive }), className)} {...props} />;
+}
 
 export interface CardHeaderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
   image?: React.ReactNode;
