@@ -29,11 +29,28 @@ export interface RoadmapRelease {
   items: RoadmapItem[];
 }
 
-export const ROADMAP_UPDATED = "2026-11-02";
+export const ROADMAP_UPDATED = "2026-11-03";
 export const PROJECT_URL = "https://github.com/users/trandat1114/projects/6";
 
 export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
   now: [
+    {
+      milestone: "0.14.0",
+      kind: "minor",
+      due: "2026-11-11",
+      vi: "AppShell, Sortable, hooks dùng chung, CSS theo component dùng và trang Người đóng góp.",
+      en: "AppShell, Sortable, shared hooks, CSS for the components you use and a Contributors page.",
+      items: [
+        { status: "done", issue: 161, vi: "AppShell và Sidebar: thu về icon trên màn rộng, Drawer trên màn hẹp; các template dựng trên nó", en: "AppShell and Sidebar: an icon rail on wide screens, a Drawer on narrow ones; the templates are built on it" },
+        { status: "done", issue: 175, vi: "Sortable: sắp xếp lại bằng kéo thả hoặc bàn phím; thứ tự cột của DataGrid, thứ tự tag của TagPicker, Kanban trong template Admin", en: "Sortable: reorder by drag and drop or keyboard; DataGrid column order, TagPicker tag order, a Kanban board in the Admin template" },
+        { status: "done", issue: 172, vi: "Hooks dùng chung, chính là những hook các component dùng: useControllableState, useDisclosure, useLocalStorage, useHotkeys…", en: "Shared hooks, the ones the components use themselves: useControllableState, useDisclosure, useLocalStorage, useHotkeys…" },
+        { status: "done", issue: 169, vi: "CSS theo component dùng: theme-core.css và sources/<Component>.css; template từ khoảng 25 kB xuống 14–19 kB gzip", en: "CSS for the components you use: theme-core.css and sources/<Component>.css; templates go from about 25 kB to 14–19 kB gzip" },
+        { status: "done", issue: 263, vi: "Markdown: hiển thị Markdown tĩnh (bài viết, ghi chú phát hành, CMS) theo kiểu chữ của Prose", en: "Markdown: render static Markdown (articles, release notes, CMS fields) with Prose typography" },
+        { status: "done", issue: 248, vi: "Trang Người đóng góp: ghi tên người gửi PR, báo lỗi, đề xuất và review", en: "Contributors page: credits merged PRs, bug reports, suggestions and reviews" },
+        { status: "done", issue: 261, vi: "Có gì mới bằng tiếng Anh; tin viết bằng Markdown, CI nhẹ cho PR chỉ sửa tin", en: "What's new in English; release notes in Markdown, a light CI check for news-only PRs" },
+        { status: "doing", issue: 266, vi: "Docs trên điện thoại: bảng props và bảng Messages không cuộn ngang, mọi trang component vừa 375px", en: "Docs on phones: the props and Messages tables never scroll sideways, every component page fits 375px" },
+      ],
+    },
     {
       milestone: "1.0.0",
       kind: "major",
@@ -43,10 +60,7 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
         { status: "planned", issue: 65, vi: "Rà soát API, gỡ deprecation, quyết định về React 18 và class spacing viết hoa", en: "API review, deprecations removed, decisions on React 18 and upper-case spacing" },
         { status: "done", issue: 63, vi: "SEO: URL theo đường dẫn, prerender từng trang, sitemap", en: "SEO: path URLs, prerendered pages, sitemap" },
         { status: "planned", issue: 160, vi: "Đề xuất cho 1.0 (đã duyệt): Form, NavigationMenu, block 2.0, codemod, kiểm thử", en: "1.0 proposals (approved): Form, NavigationMenu, blocks 2.0, codemods, testing" },
-        { status: "done", issue: 161, vi: "AppShell và Sidebar: thu về icon trên màn rộng, Drawer trên màn hẹp; các template dựng trên nó", en: "AppShell and Sidebar: an icon rail on wide screens, a Drawer on narrow ones; the templates are built on it" },
-        { status: "done", issue: 175, vi: "Sortable: sắp xếp lại bằng kéo thả hoặc bàn phím; thứ tự cột của DataGrid, thứ tự tag của TagPicker, Kanban trong template Admin", en: "Sortable: reorder by drag and drop or keyboard; DataGrid column order, TagPicker tag order, a Kanban board in the Admin template" },
-        { status: "done", issue: 263, vi: "Markdown: hiển thị Markdown tĩnh (bài viết, ghi chú phát hành, CMS) theo kiểu chữ của Prose", en: "Markdown: render static Markdown (articles, release notes, CMS fields) with Prose typography" },
-        { status: "done", issue: 261, vi: "Có gì mới bằng tiếng Anh; tin viết bằng Markdown, CI nhẹ cho PR chỉ sửa tin", en: "What's new in English; release notes in Markdown, a light CI check for news-only PRs" },
+        { status: "planned", issue: 169, vi: "@yugen-ui/cli ghi các dòng @import của CSS theo component (init, doctor)", en: "@yugen-ui/cli writes the @import lines for per-component CSS (init, doctor)" },
         { status: "planned", issue: 243, vi: "Khóa cuộn: chọn giữ hay ẩn thanh cuộn khi mở Menu, ContextMenu, Dropdown", en: "Scroll lock: keep or hide the page scrollbar while Menu, ContextMenu or Dropdown is open" },
         { status: "planned", issue: 244, vi: "Typography: trang Typeset tinh chỉnh Prose (font, cỡ chữ, khoảng cách) và copy CSS", en: "Typography: a Typeset page to tune Prose (fonts, size, spacing) and copy the CSS" },
       ],
