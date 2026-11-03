@@ -13,10 +13,15 @@ export interface HoverCardContentProps extends React.ComponentPropsWithoutRef<ty
   withArrow?: boolean;
 }
 
-export const HoverCardContent = React.forwardRef<
-  React.ElementRef<typeof HoverCardPrimitive.Content>,
-  HoverCardContentProps
->(({ className, sideOffset = 6, align = "center", withArrow = false, children, ...props }, ref) => {
+export function HoverCardContent({
+  className,
+  sideOffset = 6,
+  align = "center",
+  withArrow = false,
+  children,
+  ref,
+  ...props
+}: HoverCardContentProps & { ref?: React.Ref<React.ComponentRef<typeof HoverCardPrimitive.Content>> }) {
   // Portal render vào <body>: gắn `dir` để bề mặt (và căn align start/end) theo hướng chữ của provider lồng.
   const dir = useDirection();
   const portalTheme = usePortalThemeProps();
@@ -36,5 +41,4 @@ export const HoverCardContent = React.forwardRef<
       </HoverCardPrimitive.Content>
     </HoverCardPrimitive.Portal>
   );
-});
-HoverCardContent.displayName = "HoverCardContent";
+}

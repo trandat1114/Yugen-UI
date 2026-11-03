@@ -27,12 +27,18 @@ const imageVariants = cva("box-border border-stroke-1", {
 
 export interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement>, VariantProps<typeof imageVariants> {}
 
-export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
-  ({ className, fit, shape, bordered, shadow, block, ...props }, ref) => (
-    <img ref={ref} className={cn(imageVariants({ fit, shape, bordered, shadow, block }), className)} {...props} />
-  ),
-);
-Image.displayName = "Image";
+export function Image({
+  className,
+  fit,
+  shape,
+  bordered,
+  shadow,
+  block,
+  ref,
+  ...props
+}: ImageProps & { ref?: React.Ref<HTMLImageElement> }) {
+  return <img ref={ref} className={cn(imageVariants({ fit, shape, bordered, shadow, block }), className)} {...props} />;
+}
 
 /* ------------------------------------------------------------------ AspectRatio
    shadcn AspectRatio — https://ui.shadcn.com/docs/components/aspect-ratio (dùng CSS aspect-ratio). */
@@ -41,11 +47,16 @@ export interface AspectRatioProps extends React.HTMLAttributes<HTMLDivElement> {
   ratio?: number;
 }
 
-export const AspectRatio = React.forwardRef<HTMLDivElement, AspectRatioProps>(
-  ({ ratio = 1, className, style, ...props }, ref) => (
+export function AspectRatio({
+  ratio = 1,
+  className,
+  style,
+  ref,
+  ...props
+}: AspectRatioProps & { ref?: React.Ref<HTMLDivElement> }) {
+  return (
     <div ref={ref} style={{ aspectRatio: ratio, ...style }} className={cn("relative w-full overflow-hidden", className)} {...props} />
-  ),
-);
-AspectRatio.displayName = "AspectRatio";
+  );
+}
 
 export { imageVariants };

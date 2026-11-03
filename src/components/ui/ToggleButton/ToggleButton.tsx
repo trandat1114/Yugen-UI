@@ -74,42 +74,37 @@ export interface ToggleButtonProps
   iconOnly?: boolean;
 }
 
-export const ToggleButton = React.forwardRef<HTMLButtonElement, ToggleButtonProps>(
-  (
-    {
-      className,
-      appearance = "secondary",
-      size = "medium",
-      shape = "rounded",
-      checked,
-      defaultChecked = false,
-      onCheckedChange,
-      icon,
-      checkedIcon,
-      iconPosition = "before",
-      iconOnly,
-      children,
-      ...props
-    },
-    ref,
-  ) => {
-    const [isChecked, setChecked] = useControllableState({ value: checked, defaultValue: defaultChecked, onChange: onCheckedChange });
-    const currentIcon = isChecked && checkedIcon ? checkedIcon : icon;
-    const isIconOnly = iconOnly ?? (!!currentIcon && !children);
+export function ToggleButton({
+  className,
+  appearance = "secondary",
+  size = "medium",
+  shape = "rounded",
+  checked,
+  defaultChecked = false,
+  onCheckedChange,
+  icon,
+  checkedIcon,
+  iconPosition = "before",
+  iconOnly,
+  children,
+  ref,
+  ...props
+}: ToggleButtonProps & { ref?: React.Ref<HTMLButtonElement> }) {
+  const [isChecked, setChecked] = useControllableState({ value: checked, defaultValue: defaultChecked, onChange: onCheckedChange });
+  const currentIcon = isChecked && checkedIcon ? checkedIcon : icon;
+  const isIconOnly = iconOnly ?? (!!currentIcon && !children);
 
-    return (
-      <TogglePrimitive.Root
-        ref={ref}
-        pressed={isChecked}
-        onPressedChange={setChecked}
-        className={cn(toggleButtonVariants({ appearance, size, shape, iconOnly: isIconOnly }), className)}
-        {...props}
-      >
-        {currentIcon && iconPosition === "before" && currentIcon}
-        {children}
-        {currentIcon && iconPosition === "after" && currentIcon}
-      </TogglePrimitive.Root>
-    );
-  },
-);
-ToggleButton.displayName = "ToggleButton";
+  return (
+    <TogglePrimitive.Root
+      ref={ref}
+      pressed={isChecked}
+      onPressedChange={setChecked}
+      className={cn(toggleButtonVariants({ appearance, size, shape, iconOnly: isIconOnly }), className)}
+      {...props}
+    >
+      {currentIcon && iconPosition === "before" && currentIcon}
+      {children}
+      {currentIcon && iconPosition === "after" && currentIcon}
+    </TogglePrimitive.Root>
+  );
+}

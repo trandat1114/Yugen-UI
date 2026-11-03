@@ -102,8 +102,9 @@ npm run dev          # docs site at http://localhost:5173
 
 ### Adding a component
 
-1. Create `src/components/ui/<Name>/<Name>.tsx` following Design.md §5 (named export, `forwardRef`, user `className`
-   last in `cn(...)`, hover / pressed / disabled / focus-visible states, keyboard support, `aria-*`).
+1. Create `src/components/ui/<Name>/<Name>.tsx` following Design.md §5 (named function export that takes `ref` as a
+   prop, user `className` last in `cn(...)`, hover / pressed / disabled / focus-visible states, keyboard support,
+   `aria-*`).
    - Icons: import them by their Fluent name from `../_internal/icons` (for example `Dismiss20Regular`), then run
      `npm run icons`. The script copies the icon from `@fluentui/react-icons` into the library, so `yugen-ui` doesn't
      depend on the icon package. For an icon passed in by the user, give the slot a size with `[&_svg]:size-…`, so any
@@ -370,8 +371,8 @@ npm run dev          # trang docs tại http://localhost:5173
 
 ### Thêm component
 
-1. Tạo `src/components/ui/<Name>/<Name>.tsx` theo Design.md §5 (named export, `forwardRef`, `className` cuối `cn(...)`,
-   đủ trạng thái hover/pressed/disabled/focus-visible, bàn phím, `aria-*`).
+1. Tạo `src/components/ui/<Name>/<Name>.tsx` theo Design.md §5 (named export dạng hàm, nhận `ref` như một prop,
+   `className` cuối `cn(...)`, đủ trạng thái hover/pressed/disabled/focus-visible, bàn phím, `aria-*`).
    - Icon: import theo tên Fluent từ `../_internal/icons` (vd. `Dismiss20Regular`) rồi chạy `npm run icons`. Script chép
      icon từ `@fluentui/react-icons` vào thư viện, nên `yugen-ui` không phụ thuộc gói icon. Ô nhận icon của người dùng
      thì đặt cỡ bằng `[&_svg]:size-…` để bộ icon SVG nào cũng vừa.

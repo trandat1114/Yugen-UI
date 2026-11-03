@@ -21,16 +21,18 @@ export interface TimelineProps extends React.OlHTMLAttributes<HTMLOListElement> 
 }
 
 /** Timeline — chuỗi sự kiện theo thời gian (nhật ký hoạt động, lịch sử đơn hàng). Mới nhất thường ở đầu. */
-export const Timeline = React.forwardRef<HTMLOListElement, TimelineProps>(function Timeline(
-  { variant = "detailed", className, ...props },
+export function Timeline({
+  variant = "detailed",
+  className,
   ref,
-) {
+  ...props
+}: TimelineProps & { ref?: React.Ref<HTMLOListElement> }) {
   return (
     <VariantContext.Provider value={variant}>
       <ol ref={ref} className={cn("not-prose m-0 flex min-w-0 list-none flex-col p-0", className)} {...props} />
     </VariantContext.Provider>
   );
-});
+}
 
 export interface TimelineItemProps extends Omit<React.LiHTMLAttributes<HTMLLIElement>, "title"> {
   /** Sự kiện: ai làm gì. */
@@ -46,10 +48,17 @@ export interface TimelineItemProps extends Omit<React.LiHTMLAttributes<HTMLLIEle
   children?: React.ReactNode;
 }
 
-export const TimelineItem = React.forwardRef<HTMLLIElement, TimelineItemProps>(function TimelineItem(
-  { title, icon, intent = "neutral", time, dateTime, children, className, ...props },
+export function TimelineItem({
+  title,
+  icon,
+  intent = "neutral",
+  time,
+  dateTime,
+  children,
+  className,
   ref,
-) {
+  ...props
+}: TimelineItemProps & { ref?: React.Ref<HTMLLIElement> }) {
   const variant = React.useContext(VariantContext);
   const compact = variant === "compact";
   const tone = INTENT[intent];
@@ -91,4 +100,4 @@ export const TimelineItem = React.forwardRef<HTMLLIElement, TimelineItemProps>(f
       </div>
     </li>
   );
-});
+}

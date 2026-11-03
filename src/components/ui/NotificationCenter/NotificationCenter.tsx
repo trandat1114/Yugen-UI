@@ -302,137 +302,132 @@ export interface NotificationPanelProps extends Omit<React.HTMLAttributes<HTMLDi
 }
 
 /** Nội dung bảng thông báo (tiêu đề, lọc, danh sách theo ngày) — dùng riêng được trong trang / Drawer. */
-export const NotificationPanel = React.forwardRef<HTMLDivElement, NotificationPanelProps>(
-  (
-    {
-      items,
-      onMarkRead,
-      onMarkAllRead,
-      onDismiss,
-      onItemClick,
-      loading = false,
-      error,
-      onRetry,
-      now: nowProp,
-      heading,
-      filter: filterProp,
-      defaultFilter = "all",
-      onFilterChange,
-      footer,
-      className,
-      ...props
-    },
-    ref,
-  ) => {
-    const uid = React.useId();
-    const now = useNow(nowProp);
-    const { locale } = useYugen();
-    const msg = useYugenMessages("notificationCenter", notificationCenterMessagesEn);
-    const [filter, setFilter] = useControllableState({ value: filterProp, defaultValue: defaultFilter, onChange: onFilterChange });
-    const showSkeleton = useSpinDelay(loading);
-    const unread = items.filter((n) => !n.read).length;
-    const focusAfterRemove = React.useRef<HTMLElement | null>(null);
-    const listRef = React.useRef<HTMLDivElement>(null);
+export function NotificationPanel({
+  items,
+  onMarkRead,
+  onMarkAllRead,
+  onDismiss,
+  onItemClick,
+  loading = false,
+  error,
+  onRetry,
+  now: nowProp,
+  heading,
+  filter: filterProp,
+  defaultFilter = "all",
+  onFilterChange,
+  footer,
+  className,
+  ref,
+  ...props
+}: NotificationPanelProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const uid = React.useId();
+  const now = useNow(nowProp);
+  const { locale } = useYugen();
+  const msg = useYugenMessages("notificationCenter", notificationCenterMessagesEn);
+  const [filter, setFilter] = useControllableState({ value: filterProp, defaultValue: defaultFilter, onChange: onFilterChange });
+  const showSkeleton = useSpinDelay(loading);
+  const unread = items.filter((n) => !n.read).length;
+  const focusAfterRemove = React.useRef<HTMLElement | null>(null);
+  const listRef = React.useRef<HTMLDivElement>(null);
 
-    // Gỡ một mục → focus sang mục kế tiếp (hoặc trước đó) thay vì rơi về <body>.
-    const onBeforeRemove = (li: HTMLLIElement | null) => {
-      const sibling = (li?.nextElementSibling ?? li?.previousElementSibling) as HTMLElement | null;
-      focusAfterRemove.current = sibling?.querySelector<HTMLElement>("a,button") ?? null;
-    };
-    React.useEffect(() => {
-      const el = focusAfterRemove.current;
-      if (!el) return;
-      focusAfterRemove.current = null;
-      if (el.isConnected) el.focus();
-      else listRef.current?.querySelector<HTMLElement>("[role=tabpanel]")?.focus();
-    }, [items]);
+  // Gỡ một mục → focus sang mục kế tiếp (hoặc trước đó) thay vì rơi về <body>.
+  const onBeforeRemove = (li: HTMLLIElement | null) => {
+    const sibling = (li?.nextElementSibling ?? li?.previousElementSibling) as HTMLElement | null;
+    focusAfterRemove.current = sibling?.querySelector<HTMLElement>("a,button") ?? null;
+  };
+  React.useEffect(() => {
+    const el = focusAfterRemove.current;
+    if (!el) return;
+    focusAfterRemove.current = null;
+    if (el.isConnected) el.focus();
+    else listRef.current?.querySelector<HTMLElement>("[role=tabpanel]")?.focus();
+  }, [items]);
 
-    const renderList = (list: NotificationItem[], which: NotificationFilter) => {
-      if (error) return <ErrorState size="small" title={msg.loadError} description={error} onRetry={onRetry} />;
-      if (loading) return showSkeleton ? <SkeletonList rows={4} avatarSize={32} className="p-4" /> : null;
-      if (list.length === 0) {
-        return (
-          <Empty className="p-5">
-            <EmptyHeader>
-              <EmptyMedia>
-                <AlertOff20Regular />
-              </EmptyMedia>
-              <EmptyTitle className="text-subtitle2">{which === "unread" ? msg.emptyUnreadTitle : msg.emptyTitle}</EmptyTitle>
-              <EmptyDescription>
-                {which === "unread" ? msg.emptyUnreadDescription : msg.emptyDescription}
-              </EmptyDescription>
-            </EmptyHeader>
-          </Empty>
-        );
-      }
-      const rowProps = { now, onMarkRead, onDismiss, onItemClick, onBeforeRemove, msg, locale };
-      // Chưa biết "bây giờ" (SSR, trước mount) → danh sách phẳng, không nhãn ngày để tránh lệch hydration.
-      if (now === null) {
-        return (
-          <ul aria-label={msg.title}>
-            {list.map((item) => (
-              <NotificationRow key={item.id} item={item} {...rowProps} />
-            ))}
-          </ul>
-        );
-      }
-      return groupNotificationsByDay(list, now, { locale, messages: msg }).map((group, g) => (
-        <div key={group.label} role="group" aria-labelledby={`${uid}-${which}-${g}`}>
-          <h3
-            id={`${uid}-${which}-${g}`}
-            className="sticky top-0 z-20 border-b border-stroke-3 bg-background-1 px-4 py-1 text-caption1 font-semibold text-foreground-3"
-          >
-            {group.label}
-          </h3>
-          <ul>
-            {group.items.map((item) => (
-              <NotificationRow key={item.id} item={item} {...rowProps} />
-            ))}
-          </ul>
-        </div>
-      ));
-    };
-
-    return (
-      <div ref={ref} aria-busy={loading || undefined} className={cn("flex min-h-0 flex-1 flex-col", className)} {...props}>
-        <div className="flex shrink-0 items-center gap-2 px-4 pt-3 pb-1">
-          <div className="min-w-0 flex-1">{heading}</div>
-          {onMarkAllRead && (
-            <Button size="small" appearance="subtle" icon={<CheckmarkCircle16Regular />} disabled={unread === 0} onClick={onMarkAllRead}>
-              {msg.markAllRead}
-            </Button>
-          )}
-        </div>
-        <Tabs
-          ref={listRef}
-          value={filter}
-          onValueChange={(v) => setFilter(v as NotificationFilter)}
-          className="flex min-h-0 flex-1 flex-col"
-        >
-          <TabsList size="small" aria-label={msg.filter} className="shrink-0 border-b border-stroke-2 px-2">
-            <TabsTrigger value="all">{msg.all}</TabsTrigger>
-            <TabsTrigger value="unread">
-              {msg.unread}
-              {unread > 0 ? ` (${unread})` : ""}
-            </TabsTrigger>
-          </TabsList>
-          {(["all", "unread"] as const).map((which) => (
-            <TabsContent
-              key={which}
-              value={which}
-              className="min-h-0 flex-1 overflow-y-auto pt-0 focus-visible:-outline-offset-2"
-            >
-              {/* Chỉ dựng danh sách của tab đang mở (tab ẩn không hiển thị nội dung). */}
-              {which === filter && renderList(which === "unread" ? items.filter((n) => !n.read) : items, which)}
-            </TabsContent>
+  const renderList = (list: NotificationItem[], which: NotificationFilter) => {
+    if (error) return <ErrorState size="small" title={msg.loadError} description={error} onRetry={onRetry} />;
+    if (loading) return showSkeleton ? <SkeletonList rows={4} avatarSize={32} className="p-4" /> : null;
+    if (list.length === 0) {
+      return (
+        <Empty className="p-5">
+          <EmptyHeader>
+            <EmptyMedia>
+              <AlertOff20Regular />
+            </EmptyMedia>
+            <EmptyTitle className="text-subtitle2">{which === "unread" ? msg.emptyUnreadTitle : msg.emptyTitle}</EmptyTitle>
+            <EmptyDescription>
+              {which === "unread" ? msg.emptyUnreadDescription : msg.emptyDescription}
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      );
+    }
+    const rowProps = { now, onMarkRead, onDismiss, onItemClick, onBeforeRemove, msg, locale };
+    // Chưa biết "bây giờ" (SSR, trước mount) → danh sách phẳng, không nhãn ngày để tránh lệch hydration.
+    if (now === null) {
+      return (
+        <ul aria-label={msg.title}>
+          {list.map((item) => (
+            <NotificationRow key={item.id} item={item} {...rowProps} />
           ))}
-        </Tabs>
-        {footer && <div className="flex shrink-0 items-center justify-center border-t border-stroke-2 px-4 py-2">{footer}</div>}
+        </ul>
+      );
+    }
+    return groupNotificationsByDay(list, now, { locale, messages: msg }).map((group, g) => (
+      <div key={group.label} role="group" aria-labelledby={`${uid}-${which}-${g}`}>
+        <h3
+          id={`${uid}-${which}-${g}`}
+          className="sticky top-0 z-20 border-b border-stroke-3 bg-background-1 px-4 py-1 text-caption1 font-semibold text-foreground-3"
+        >
+          {group.label}
+        </h3>
+        <ul>
+          {group.items.map((item) => (
+            <NotificationRow key={item.id} item={item} {...rowProps} />
+          ))}
+        </ul>
       </div>
-    );
-  },
-);
-NotificationPanel.displayName = "NotificationPanel";
+    ));
+  };
+
+  return (
+    <div ref={ref} aria-busy={loading || undefined} className={cn("flex min-h-0 flex-1 flex-col", className)} {...props}>
+      <div className="flex shrink-0 items-center gap-2 px-4 pt-3 pb-1">
+        <div className="min-w-0 flex-1">{heading}</div>
+        {onMarkAllRead && (
+          <Button size="small" appearance="subtle" icon={<CheckmarkCircle16Regular />} disabled={unread === 0} onClick={onMarkAllRead}>
+            {msg.markAllRead}
+          </Button>
+        )}
+      </div>
+      <Tabs
+        ref={listRef}
+        value={filter}
+        onValueChange={(v) => setFilter(v as NotificationFilter)}
+        className="flex min-h-0 flex-1 flex-col"
+      >
+        <TabsList size="small" aria-label={msg.filter} className="shrink-0 border-b border-stroke-2 px-2">
+          <TabsTrigger value="all">{msg.all}</TabsTrigger>
+          <TabsTrigger value="unread">
+            {msg.unread}
+            {unread > 0 ? ` (${unread})` : ""}
+          </TabsTrigger>
+        </TabsList>
+        {(["all", "unread"] as const).map((which) => (
+          <TabsContent
+            key={which}
+            value={which}
+            className="min-h-0 flex-1 overflow-y-auto pt-0 focus-visible:-outline-offset-2"
+          >
+            {/* Chỉ dựng danh sách của tab đang mở (tab ẩn không hiển thị nội dung). */}
+            {which === filter && renderList(which === "unread" ? items.filter((n) => !n.read) : items, which)}
+          </TabsContent>
+        ))}
+      </Tabs>
+      {footer && <div className="flex shrink-0 items-center justify-center border-t border-stroke-2 px-4 py-2">{footer}</div>}
+    </div>
+  );
+}
 
 /* ================================================================ NotificationCenter */
 
@@ -459,120 +454,115 @@ export interface NotificationCenterProps
 }
 
 /** ref trỏ vào nút chuông. */
-export const NotificationCenter = React.forwardRef<HTMLButtonElement, NotificationCenterProps>(
-  (
-    {
-      open: openProp,
-      defaultOpen = false,
-      onOpenChange,
-      title: titleProp,
-      mode = "auto",
-      breakpoint = "3xl",
-      announce: announceNew = true,
-      align = "end",
-      className,
-      style,
-      disabled,
-      panelClassName,
-      ...panelProps
-    },
-    ref,
-  ) => {
-    const { items } = panelProps;
-    const msg = useYugenMessages("notificationCenter", notificationCenterMessagesEn);
-    const title = titleProp ?? msg.title;
-    const [open, setOpen] = useControllableState({ value: openProp, defaultValue: defaultOpen, onChange: onOpenChange });
-    if (typeof breakpoint === "number") warnPxBreakpoint("NotificationCenter", breakpoint);
-    const wide = useMediaQuery(minWidthQuery(breakpoint), { defaultValue: true });
-    const asSheet = mode === "sheet" || (mode === "auto" && !wide);
-    const headingId = React.useId();
-    const unread = items.filter((n) => !n.read).length;
+export function NotificationCenter({
+  open: openProp,
+  defaultOpen = false,
+  onOpenChange,
+  title: titleProp,
+  mode = "auto",
+  breakpoint = "3xl",
+  announce: announceNew = true,
+  align = "end",
+  className,
+  style,
+  disabled,
+  panelClassName,
+  ref,
+  ...panelProps
+}: NotificationCenterProps & { ref?: React.Ref<HTMLButtonElement> }) {
+  const { items } = panelProps;
+  const msg = useYugenMessages("notificationCenter", notificationCenterMessagesEn);
+  const title = titleProp ?? msg.title;
+  const [open, setOpen] = useControllableState({ value: openProp, defaultValue: defaultOpen, onChange: onOpenChange });
+  if (typeof breakpoint === "number") warnPxBreakpoint("NotificationCenter", breakpoint);
+  const wide = useMediaQuery(minWidthQuery(breakpoint), { defaultValue: true });
+  const asSheet = mode === "sheet" || (mode === "auto" && !wide);
+  const headingId = React.useId();
+  const unread = items.filter((n) => !n.read).length;
 
-    // Thông báo mới (chưa từng thấy, chưa đọc) → đọc polite; lần render đầu không đọc.
-    const { announce } = useAnnounce();
-    const seen = React.useRef<Set<string> | null>(null);
-    React.useEffect(() => {
-      if (seen.current === null) {
-        seen.current = new Set(items.map((n) => n.id));
-        return;
-      }
-      const known = seen.current;
-      const fresh = items.filter((n) => !known.has(n.id) && !n.read);
-      items.forEach((n) => known.add(n.id));
-      if (announceNew && fresh.length > 0) {
-        announce(fresh.length === 1 ? msg.announceOne(fresh[0].title) : msg.announceMany(fresh.length), {
-          batchId: "yugen-notification-center",
-        });
-      }
-    }, [items, announceNew, announce, msg]);
-
-    const trigger = (
-      <Button
-        ref={ref}
-        appearance="subtle"
-        icon={<Alert20Regular />}
-        aria-label={unread > 0 ? msg.triggerUnread(title, unread) : title}
-        title={title}
-        disabled={disabled}
-        style={style}
-        className={cn("relative overflow-visible", className)}
-      >
-        {unread > 0 && (
-          <CounterBadge
-            aria-hidden
-            count={unread}
-            size="small"
-            color="danger"
-            className="pointer-events-none absolute -inset-e-0.5 -top-0.5"
-          />
-        )}
-      </Button>
-    );
-
-    if (asSheet) {
-      return (
-        <Sheet open={open} onOpenChange={setOpen} mode="bottom" snapPoints={[0.6, 0.95]}>
-          <SheetTrigger asChild>{trigger}</SheetTrigger>
-          <SheetContent aria-describedby={undefined} className={panelClassName}>
-            <SheetHeader
-              className="pb-0"
-              action={
-                <SheetClose asChild>
-                  <Button appearance="subtle" icon={<Dismiss20Regular />} aria-label={msg.close} />
-                </SheetClose>
-              }
-            >
-              <SheetTitle>{title}</SheetTitle>
-            </SheetHeader>
-            <NotificationPanel {...panelProps} className="pb-[env(safe-area-inset-bottom)]" />
-          </SheetContent>
-        </Sheet>
-      );
+  // Thông báo mới (chưa từng thấy, chưa đọc) → đọc polite; lần render đầu không đọc.
+  const { announce } = useAnnounce();
+  const seen = React.useRef<Set<string> | null>(null);
+  React.useEffect(() => {
+    if (seen.current === null) {
+      seen.current = new Set(items.map((n) => n.id));
+      return;
     }
+    const known = seen.current;
+    const fresh = items.filter((n) => !known.has(n.id) && !n.read);
+    items.forEach((n) => known.add(n.id));
+    if (announceNew && fresh.length > 0) {
+      announce(fresh.length === 1 ? msg.announceOne(fresh[0].title) : msg.announceMany(fresh.length), {
+        batchId: "yugen-notification-center",
+      });
+    }
+  }, [items, announceNew, announce, msg]);
 
+  const trigger = (
+    <Button
+      ref={ref}
+      appearance="subtle"
+      icon={<Alert20Regular />}
+      aria-label={unread > 0 ? msg.triggerUnread(title, unread) : title}
+      title={title}
+      disabled={disabled}
+      style={style}
+      className={cn("relative overflow-visible", className)}
+    >
+      {unread > 0 && (
+        <CounterBadge
+          aria-hidden
+          count={unread}
+          size="small"
+          color="danger"
+          className="pointer-events-none absolute -inset-e-0.5 -top-0.5"
+        />
+      )}
+    </Button>
+  );
+
+  if (asSheet) {
     return (
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>{trigger}</PopoverTrigger>
-        <PopoverSurface
-          align={align}
-          aria-labelledby={headingId}
-          className={cn(
-            "flex w-96 max-w-[calc(100vw-var(--spacingXXL))] flex-col overflow-hidden p-0",
-            "max-h-[min(36rem,var(--radix-popover-content-available-height))]",
-            panelClassName,
-          )}
-        >
-          <NotificationPanel
-            {...panelProps}
-            heading={
-              <h2 id={headingId} className="truncate text-subtitle2 font-semibold text-foreground-1">
-                {title}
-              </h2>
+      <Sheet open={open} onOpenChange={setOpen} mode="bottom" snapPoints={[0.6, 0.95]}>
+        <SheetTrigger asChild>{trigger}</SheetTrigger>
+        <SheetContent aria-describedby={undefined} className={panelClassName}>
+          <SheetHeader
+            className="pb-0"
+            action={
+              <SheetClose asChild>
+                <Button appearance="subtle" icon={<Dismiss20Regular />} aria-label={msg.close} />
+              </SheetClose>
             }
-          />
-        </PopoverSurface>
-      </Popover>
+          >
+            <SheetTitle>{title}</SheetTitle>
+          </SheetHeader>
+          <NotificationPanel {...panelProps} className="pb-[env(safe-area-inset-bottom)]" />
+        </SheetContent>
+      </Sheet>
     );
-  },
-);
-NotificationCenter.displayName = "NotificationCenter";
+  }
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>{trigger}</PopoverTrigger>
+      <PopoverSurface
+        align={align}
+        aria-labelledby={headingId}
+        className={cn(
+          "flex w-96 max-w-[calc(100vw-var(--spacingXXL))] flex-col overflow-hidden p-0",
+          "max-h-[min(36rem,var(--radix-popover-content-available-height))]",
+          panelClassName,
+        )}
+      >
+        <NotificationPanel
+          {...panelProps}
+          heading={
+            <h2 id={headingId} className="truncate text-subtitle2 font-semibold text-foreground-1">
+              {title}
+            </h2>
+          }
+        />
+      </PopoverSurface>
+    </Popover>
+  );
+}

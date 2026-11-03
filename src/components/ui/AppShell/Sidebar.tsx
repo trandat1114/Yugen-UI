@@ -50,156 +50,164 @@ export interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
  * Sidebar của AppShell. Màn rộng: cột bên trái, thu về rail (`collapsible="icon"`) với Nav chỉ còn icon + Tooltip.
  * Màn hẹp: cùng nội dung trong Drawer, tự đóng khi theo một link hoặc chọn một mục Nav.
  */
-export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
-  (
-    {
-      collapsible = "icon",
-      resizable = false,
-      defaultWidth = 256,
-      minWidth = 200,
-      maxWidth = 400,
-      label,
-      className,
-      style,
-      onFocus,
-      onBlur,
-      children,
-      ...props
+export function Sidebar({
+  collapsible = "icon",
+  resizable = false,
+  defaultWidth = 256,
+  minWidth = 200,
+  maxWidth = 400,
+  label,
+  className,
+  style,
+  onFocus,
+  onBlur,
+  children,
+  ref,
+  ...props
+}: SidebarProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const shell = useShell("Sidebar");
+  const msg = useYugenMessages("appShell", appShellMessagesEn);
+  const refs = useComposedRefs(ref, shell.sidebarRef);
+  const clamp = (width: number) => Math.round(Math.min(maxWidth, Math.max(minWidth, width)));
+  const [width, setWidthState] = React.useState(() =>
+    clamp(resizable && shell.savedWidth !== undefined ? shell.savedWidth : defaultWidth),
+  );
+  const [resizing, setResizing] = React.useState(false);
+
+  const { setCollapsible, setCollapsed, setDrawerOpen, persistWidth } = shell;
+  useIsomorphicLayoutEffect(() => {
+    setCollapsible(collapsible);
+    return () => setCollapsible(null);
+  }, [collapsible, setCollapsible]);
+
+  const collapsed = collapsible !== "none" && shell.collapsed;
+  const rail = collapsed && collapsible === "icon";
+  const offcanvas = collapsed && collapsible === "offcanvas";
+
+  const setWidth = React.useCallback(
+    (next: number, persist: boolean) => {
+      const value = Math.round(Math.min(maxWidth, Math.max(minWidth, next)));
+      setWidthState(value);
+      if (persist) persistWidth(value);
     },
-    ref,
-  ) => {
-    const shell = useShell("Sidebar");
-    const msg = useYugenMessages("appShell", appShellMessagesEn);
-    const refs = useComposedRefs(ref, shell.sidebarRef);
-    const clamp = (width: number) => Math.round(Math.min(maxWidth, Math.max(minWidth, width)));
-    const [width, setWidthState] = React.useState(() =>
-      clamp(resizable && shell.savedWidth !== undefined ? shell.savedWidth : defaultWidth),
-    );
-    const [resizing, setResizing] = React.useState(false);
+    [minWidth, maxWidth, persistWidth],
+  );
 
-    const { setCollapsible, setCollapsed, setDrawerOpen, persistWidth } = shell;
-    useIsomorphicLayoutEffect(() => {
-      setCollapsible(collapsible);
-      return () => setCollapsible(null);
-    }, [collapsible, setCollapsible]);
+  const desktop = React.useMemo<SidebarContextValue>(
+    () => ({ drawer: false, rail, collapsible, resizable, width, minWidth, maxWidth, defaultWidth, setWidth, setResizing }),
+    [rail, collapsible, resizable, width, minWidth, maxWidth, defaultWidth, setWidth],
+  );
+  const inDrawer = React.useMemo<SidebarContextValue>(() => ({ ...desktop, drawer: true, rail: false }), [desktop]);
+  const desktopHost = React.useMemo<NavHostValue>(() => ({ rail, expand: () => setCollapsed(false) }), [rail, setCollapsed]);
+  const drawerHost = React.useMemo<NavHostValue>(
+    () => ({ rail: false, expand: () => {}, onSelect: () => setDrawerOpen(false) }),
+    [setDrawerOpen],
+  );
 
-    const collapsed = collapsible !== "none" && shell.collapsed;
-    const rail = collapsed && collapsible === "icon";
-    const offcanvas = collapsed && collapsible === "offcanvas";
-
-    const setWidth = React.useCallback(
-      (next: number, persist: boolean) => {
-        const value = Math.round(Math.min(maxWidth, Math.max(minWidth, next)));
-        setWidthState(value);
-        if (persist) persistWidth(value);
-      },
-      [minWidth, maxWidth, persistWidth],
-    );
-
-    const desktop = React.useMemo<SidebarContextValue>(
-      () => ({ drawer: false, rail, collapsible, resizable, width, minWidth, maxWidth, defaultWidth, setWidth, setResizing }),
-      [rail, collapsible, resizable, width, minWidth, maxWidth, defaultWidth, setWidth],
-    );
-    const inDrawer = React.useMemo<SidebarContextValue>(() => ({ ...desktop, drawer: true, rail: false }), [desktop]);
-    const desktopHost = React.useMemo<NavHostValue>(() => ({ rail, expand: () => setCollapsed(false) }), [rail, setCollapsed]);
-    const drawerHost = React.useMemo<NavHostValue>(
-      () => ({ rail: false, expand: () => {}, onSelect: () => setDrawerOpen(false) }),
-      [setDrawerOpen],
-    );
-
-    return (
-      <TooltipProvider delayDuration={300}>
-        <SidebarContext.Provider value={desktop}>
-          <div
-            ref={refs}
-            id={shell.sidebarId}
-            data-state={collapsed ? "collapsed" : "expanded"}
-            data-collapsible={collapsible}
-            data-rail={rail || undefined}
-            style={{ "--app-shell-sidebar-width": `${width}px`, ...style } as React.CSSProperties}
-            onFocus={(e) => {
-              shell.sidebarFocused.current = true;
-              onFocus?.(e);
-            }}
-            onBlur={(e) => {
-              // relatedTarget null: cửa sổ mất focus hoặc phần tử bị ẩn — giữ cờ để chuyển focus khi qua breakpoint.
-              if (e.relatedTarget && !e.currentTarget.contains(e.relatedTarget as Node)) shell.sidebarFocused.current = false;
-              onBlur?.(e);
-            }}
-            className={cn(
-              "col-start-1 hidden min-h-0 flex-col border-e border-stroke-2 bg-background-1 text-foreground-1",
-              SIDEBAR_AREA[shell.layout],
-              shell.scroll === "page" ? SIDEBAR_STICKY[shell.layout] : "relative",
-              !resizing && "transition-[width,visibility] duration-normal ease-easy-ease motion-reduce:transition-none",
-              SHOW_WIDE[shell.breakpoint],
-              rail ? "w-14" : offcanvas ? "invisible w-0 border-e-0" : "w-(--app-shell-sidebar-width)",
-              className,
-            )}
-            {...props}
-          >
-            <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-              {/* offcanvas: nội dung giữ độ rộng trong lúc cột co về 0, không bị dồn chữ. */}
-              <div className={cn("flex min-h-0 flex-1 flex-col", collapsible === "offcanvas" ? "w-(--app-shell-sidebar-width)" : "w-full")}>
-                <NavHostContext.Provider value={desktopHost}>{children}</NavHostContext.Provider>
-              </div>
+  return (
+    <TooltipProvider delayDuration={300}>
+      <SidebarContext.Provider value={desktop}>
+        <div
+          ref={refs}
+          id={shell.sidebarId}
+          data-state={collapsed ? "collapsed" : "expanded"}
+          data-collapsible={collapsible}
+          data-rail={rail || undefined}
+          style={{ "--app-shell-sidebar-width": `${width}px`, ...style } as React.CSSProperties}
+          onFocus={(e) => {
+            shell.sidebarFocused.current = true;
+            onFocus?.(e);
+          }}
+          onBlur={(e) => {
+            // relatedTarget null: cửa sổ mất focus hoặc phần tử bị ẩn — giữ cờ để chuyển focus khi qua breakpoint.
+            if (e.relatedTarget && !e.currentTarget.contains(e.relatedTarget as Node)) shell.sidebarFocused.current = false;
+            onBlur?.(e);
+          }}
+          className={cn(
+            "col-start-1 hidden min-h-0 flex-col border-e border-stroke-2 bg-background-1 text-foreground-1",
+            SIDEBAR_AREA[shell.layout],
+            shell.scroll === "page" ? SIDEBAR_STICKY[shell.layout] : "relative",
+            !resizing && "transition-[width,visibility] duration-normal ease-easy-ease motion-reduce:transition-none",
+            SHOW_WIDE[shell.breakpoint],
+            rail ? "w-14" : offcanvas ? "invisible w-0 border-e-0" : "w-(--app-shell-sidebar-width)",
+            className,
+          )}
+          {...props}
+        >
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+            {/* offcanvas: nội dung giữ độ rộng trong lúc cột co về 0, không bị dồn chữ. */}
+            <div className={cn("flex min-h-0 flex-1 flex-col", collapsible === "offcanvas" ? "w-(--app-shell-sidebar-width)" : "w-full")}>
+              <NavHostContext.Provider value={desktopHost}>{children}</NavHostContext.Provider>
             </div>
           </div>
-        </SidebarContext.Provider>
+        </div>
+      </SidebarContext.Provider>
 
-        <Drawer open={shell.narrow && shell.drawerOpen} onOpenChange={setDrawerOpen}>
-          <DrawerSurface
-            position="start"
-            size="small"
-            data-app-shell={shell.shellId}
-            onClick={(e) => {
-              // Theo một link (kể cả link router chặn tải lại trang) là rời trang hiện tại: đóng Drawer.
-              if (e.target instanceof Element && e.target.closest("a[href]")) setDrawerOpen(false);
-            }}
-            onCloseAutoFocus={(e) => {
-              // Về phần tử đã mở Drawer nếu còn thấy; không thì trigger (khi còn hiện) hoặc nội dung chính.
-              e.preventDefault();
-              const back = shell.returnFocusRef.current;
-              shell.returnFocusRef.current = null;
-              if (isShown(back)) back.focus();
-              else shell.focusTriggerOrMain();
-            }}
-          >
-            <DialogPrimitive.Title className="sr-only">{label ?? msg.sidebar}</DialogPrimitive.Title>
-            <SidebarContext.Provider value={inDrawer}>
-              <NavHostContext.Provider value={drawerHost}>{children}</NavHostContext.Provider>
-            </SidebarContext.Provider>
-          </DrawerSurface>
-        </Drawer>
-      </TooltipProvider>
-    );
-  },
-);
-Sidebar.displayName = "Sidebar";
+      <Drawer open={shell.narrow && shell.drawerOpen} onOpenChange={setDrawerOpen}>
+        <DrawerSurface
+          position="start"
+          size="small"
+          data-app-shell={shell.shellId}
+          onClick={(e) => {
+            // Theo một link (kể cả link router chặn tải lại trang) là rời trang hiện tại: đóng Drawer.
+            if (e.target instanceof Element && e.target.closest("a[href]")) setDrawerOpen(false);
+          }}
+          onCloseAutoFocus={(e) => {
+            // Về phần tử đã mở Drawer nếu còn thấy; không thì trigger (khi còn hiện) hoặc nội dung chính.
+            e.preventDefault();
+            const back = shell.returnFocusRef.current;
+            shell.returnFocusRef.current = null;
+            if (isShown(back)) back.focus();
+            else shell.focusTriggerOrMain();
+          }}
+        >
+          <DialogPrimitive.Title className="sr-only">{label ?? msg.sidebar}</DialogPrimitive.Title>
+          <SidebarContext.Provider value={inDrawer}>
+            <NavHostContext.Provider value={drawerHost}>{children}</NavHostContext.Provider>
+          </SidebarContext.Provider>
+        </DrawerSurface>
+      </Drawer>
+    </TooltipProvider>
+  );
+}
 
 /** Đầu sidebar (logo, tên ứng dụng), cao bằng AppShellHeader. Trong rail: nội dung căn giữa — ẩn chữ bằng `in-data-rail:hidden`. */
-export const SidebarHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "flex h-(--app-shell-header,3.5rem) shrink-0 items-center gap-2 border-b border-stroke-2 px-4 in-data-rail:justify-center in-data-rail:px-0",
-      className,
-    )}
-    {...props}
-  />
-));
-SidebarHeader.displayName = "SidebarHeader";
+export function SidebarHeader({
+  className,
+  ref,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> & { ref?: React.Ref<HTMLDivElement> }) {
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        "flex h-(--app-shell-header,3.5rem) shrink-0 items-center gap-2 border-b border-stroke-2 px-4 in-data-rail:justify-center in-data-rail:px-0",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
 
 /** Phần cuộn của sidebar, thường chứa Nav. */
-export const SidebarContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-2 py-3", className)} {...props} />
-));
-SidebarContent.displayName = "SidebarContent";
+export function SidebarContent({
+  className,
+  ref,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> & { ref?: React.Ref<HTMLDivElement> }) {
+  return (
+    <div ref={ref} className={cn("min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-2 py-3", className)} {...props} />
+  );
+}
 
 /** Cuối sidebar (tài khoản, dung lượng…). */
-export const SidebarFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("flex shrink-0 flex-col gap-2 border-t border-stroke-2 p-2", className)} {...props} />
-));
-SidebarFooter.displayName = "SidebarFooter";
+export function SidebarFooter({
+  className,
+  ref,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> & { ref?: React.Ref<HTMLDivElement> }) {
+  return <div ref={ref} className={cn("flex shrink-0 flex-col gap-2 border-t border-stroke-2 p-2", className)} {...props} />;
+}
 
 export interface SidebarGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Tên nhóm; trong rail chỉ còn cho trình đọc màn hình. */
@@ -207,7 +215,13 @@ export interface SidebarGroupProps extends React.HTMLAttributes<HTMLDivElement> 
 }
 
 /** Nhóm nội dung không phải điều hướng trong sidebar (bộ lọc, dự án gần đây…). Nav dùng NavSectionHeader. */
-export const SidebarGroup = React.forwardRef<HTMLDivElement, SidebarGroupProps>(({ label, className, children, ...props }, ref) => {
+export function SidebarGroup({
+  label,
+  className,
+  children,
+  ref,
+  ...props
+}: SidebarGroupProps & { ref?: React.Ref<HTMLDivElement> }) {
   const labelId = React.useId();
   return (
     <div
@@ -225,8 +239,7 @@ export const SidebarGroup = React.forwardRef<HTMLDivElement, SidebarGroupProps>(
       {children}
     </div>
   );
-});
-SidebarGroup.displayName = "SidebarGroup";
+}
 
 /** ⌘ trên máy Apple, Ctrl ở nơi khác. Đọc sau khi mount để HTML render ở server và lần hydrate đầu giống nhau. */
 function useModifierKey() {
@@ -239,7 +252,12 @@ function useModifierKey() {
  * Nút mở / thu gọn sidebar: màn hẹp mở Drawer, màn rộng thu về rail (hoặc ẩn khi `collapsible="offcanvas"`). Tooltip
  * mang nhãn và phím tắt.
  */
-export const SidebarTrigger = React.forwardRef<HTMLButtonElement, ButtonProps>(({ className, onClick, ...props }, ref) => {
+export function SidebarTrigger({
+  className,
+  onClick,
+  ref,
+  ...props
+}: ButtonProps & { ref?: React.Ref<HTMLButtonElement> }) {
   const shell = useShell("SidebarTrigger");
   const msg = useYugenMessages("appShell", appShellMessagesEn);
   const refs = useComposedRefs(ref, shell.triggerRef);
@@ -292,8 +310,7 @@ export const SidebarTrigger = React.forwardRef<HTMLButtonElement, ButtonProps>((
       </Tooltip>
     </TooltipProvider>
   );
-});
-SidebarTrigger.displayName = "SidebarTrigger";
+}
 
 const RESIZE_STEP = 16;
 
@@ -301,7 +318,11 @@ const RESIZE_STEP = 16;
  * Mép sidebar. Bấm để thu gọn / mở rộng. Với Sidebar `resizable` (khi đang mở): thanh chia kéo đổi độ rộng theo mẫu
  * WAI-ARIA Window Splitter — mũi tên ±16px, Home / End về giới hạn, Enter thu gọn, nhấp đúp về độ rộng mặc định.
  */
-export const SidebarRail = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => {
+export function SidebarRail({
+  className,
+  ref,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> & { ref?: React.Ref<HTMLDivElement> }) {
   const shell = useShell("SidebarRail");
   const sidebar = React.useContext(SidebarContext);
   const msg = useYugenMessages("appShell", appShellMessagesEn);
@@ -399,5 +420,4 @@ export const SidebarRail = React.forwardRef<HTMLDivElement, React.HTMLAttributes
       <span className={line} />
     </div>
   );
-});
-SidebarRail.displayName = "SidebarRail";
+}

@@ -23,94 +23,89 @@ export interface SearchBoxProps extends Omit<InputProps, "type"> {
 }
 
 /** SearchBox: Input có icon tìm kiếm và nút xoá; Esc để xoá nhanh. Hỗ trợ controlled & uncontrolled. */
-export const SearchBox = React.forwardRef<HTMLInputElement, SearchBoxProps>(
-  (
-    {
-      value,
-      defaultValue,
-      onChange,
-      onValueChange,
-      onKeyDown,
-      contentBefore,
-      contentAfter,
-      size,
-      disabled,
-      readOnly,
-      dismissLabel,
-      className,
-      placeholder,
-      ...props
-    },
-    ref,
-  ) => {
-    const msg = useYugenMessages("searchBox", searchBoxMessagesEn);
-    const inputRef = React.useRef<HTMLInputElement>(null);
-    React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
-    const [current, setCurrent] = useControllableState({
-      value: value === undefined ? undefined : String(value),
-      defaultValue: defaultValue === undefined ? "" : String(defaultValue),
-      onChange: onValueChange,
-    });
-    const icons = ICONS[size ?? "medium"];
+export function SearchBox({
+  value,
+  defaultValue,
+  onChange,
+  onValueChange,
+  onKeyDown,
+  contentBefore,
+  contentAfter,
+  size,
+  disabled,
+  readOnly,
+  dismissLabel,
+  className,
+  placeholder,
+  ref,
+  ...props
+}: SearchBoxProps & { ref?: React.Ref<HTMLInputElement> }) {
+  const msg = useYugenMessages("searchBox", searchBoxMessagesEn);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
+  const [current, setCurrent] = useControllableState({
+    value: value === undefined ? undefined : String(value),
+    defaultValue: defaultValue === undefined ? "" : String(defaultValue),
+    onChange: onValueChange,
+  });
+  const icons = ICONS[size ?? "medium"];
 
-    /** Xoá bằng cách phát sự kiện input gốc → onChange của React chạy như khi người dùng gõ. */
-    const clear = () => {
-      const input = inputRef.current;
-      if (!input) return;
-      const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
-      setter?.call(input, "");
-      input.dispatchEvent(new Event("input", { bubbles: true }));
-      input.focus();
-    };
+  /** Xoá bằng cách phát sự kiện input gốc → onChange của React chạy như khi người dùng gõ. */
+  const clear = () => {
+    const input = inputRef.current;
+    if (!input) return;
+    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
+    setter?.call(input, "");
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.focus();
+  };
 
-    const showDismiss = current !== "" && !disabled && !readOnly;
-    const after =
-      showDismiss || contentAfter ? (
-        <>
-          {showDismiss && (
-            <button
-              type="button"
-              aria-label={dismissLabel ?? msg.dismiss}
-              onClick={clear}
-              className="flex cursor-pointer items-center justify-center rounded-small text-foreground-3 transition-colors duration-faster hover:text-foreground-2 active:text-foreground-1"
-            >
-              <icons.Dismiss />
-            </button>
-          )}
-          {contentAfter}
-        </>
-      ) : undefined;
-
-    return (
-      <Input
-        ref={inputRef}
-        type="search"
-        role="searchbox"
-        size={size}
-        disabled={disabled}
-        readOnly={readOnly}
-        placeholder={placeholder ?? msg.placeholder}
-        value={current}
-        onChange={(e) => {
-          onChange?.(e);
-          setCurrent(e.target.value);
-        }}
-        onKeyDown={(e) => {
-          onKeyDown?.(e);
-          if (!e.defaultPrevented && e.key === "Escape" && current !== "" && !readOnly) {
-            e.preventDefault();
-            clear();
-          }
-        }}
-        contentBefore={contentBefore ?? <icons.Search />}
-        contentAfter={after}
-        className={cn(
-          "[&_input::-webkit-search-cancel-button]:appearance-none [&_input::-webkit-search-decoration]:appearance-none",
-          className,
+  const showDismiss = current !== "" && !disabled && !readOnly;
+  const after =
+    showDismiss || contentAfter ? (
+      <>
+        {showDismiss && (
+          <button
+            type="button"
+            aria-label={dismissLabel ?? msg.dismiss}
+            onClick={clear}
+            className="flex cursor-pointer items-center justify-center rounded-small text-foreground-3 transition-colors duration-faster hover:text-foreground-2 active:text-foreground-1"
+          >
+            <icons.Dismiss />
+          </button>
         )}
-        {...props}
-      />
-    );
-  },
-);
-SearchBox.displayName = "SearchBox";
+        {contentAfter}
+      </>
+    ) : undefined;
+
+  return (
+    <Input
+      ref={inputRef}
+      type="search"
+      role="searchbox"
+      size={size}
+      disabled={disabled}
+      readOnly={readOnly}
+      placeholder={placeholder ?? msg.placeholder}
+      value={current}
+      onChange={(e) => {
+        onChange?.(e);
+        setCurrent(e.target.value);
+      }}
+      onKeyDown={(e) => {
+        onKeyDown?.(e);
+        if (!e.defaultPrevented && e.key === "Escape" && current !== "" && !readOnly) {
+          e.preventDefault();
+          clear();
+        }
+      }}
+      contentBefore={contentBefore ?? <icons.Search />}
+      contentAfter={after}
+      className={cn(
+        "[&_input::-webkit-search-cancel-button]:appearance-none [&_input::-webkit-search-decoration]:appearance-none",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
