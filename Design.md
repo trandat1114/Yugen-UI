@@ -456,7 +456,7 @@ Labs-specific rules:
 3. `npm install --package-lock-only` → `npm run check:release` (`package.json` = `src/docs/news` = `CHANGELOG.md`) →
    `npm run typecheck && npm test && npm run build && npm run size` → `npm run pack:check` to preview the package contents.
 4. Commit, then `git tag vX.Y.Z && git push --tags` — the `.github/workflows/release.yml` workflow checks the tag, runs the tests,
-   builds and runs `npm publish --provenance` (requires the `NPM_TOKEN` secret; a tag containing `-` → dist-tag `next`).
+   builds and runs `npm publish --provenance` (npm trusted publishing, no token; a tag containing `-` → dist-tag `next`).
 
 ---
 

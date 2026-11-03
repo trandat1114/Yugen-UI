@@ -57,9 +57,8 @@ Bảo vệ cho `next`, `release/*`, `canary` và tag `v*`: xem [Branching and Re
 | Workflow / file | Làm gì |
 |---|---|
 | `ci.yml` | Build, test (React 19), React 18, e2e, các check, size. Không chạy khi push / PR chỉ đổi tài liệu để đọc (README, wiki, CONTRIBUTING…; danh sách `paths-ignore` trong file); `engines.yml` và `pages.yml` dùng cùng danh sách |
-| `release.yml` | Tag `v*` → kiểm tra nhánh + nhất quán → `npm publish --provenance` (dist-tag theo kênh) → GitHub Release từ mục CHANGELOG |
+| `release.yml` | Tag `v*` → kiểm tra nhánh + nhất quán → `npm publish --provenance` (dist-tag theo kênh) → GitHub Release từ mục CHANGELOG. Push vào `canary` (hoặc chạy tay) → bản `x.y.z-canary-…` với dist-tag `canary` |
 | `release-cli.yml` | Tag `cli@*` → `check-release.mjs --tag` (CHANGELOG, mục tin trên `#/news`, version chưa dùng, `yugen-ui` đã có trên npm) → publish `@yugen-ui/cli` + `create-yugen-ui` → GitHub Release |
-| `canary.yml` | Push vào `canary` → bản `x.y.z-canary-…` với dist-tag `canary` |
 | `sync-next.yml` | Push vào `main` → `next` không có việc riêng thì merge thẳng `main` vào `next` (không PR, không CI lại) và chạy lại Docs; có việc riêng thì mở PR `main → next` |
 | `node-versions.yml` | Hằng tuần → so bản Node.js trong workflow với lịch phát hành (`scripts/node-versions.mjs`), mở PR vào `next` khi lệch rồi chạy CI trên nhánh đó |
 | `prune-branches.yml` | Ngày 1 hằng tháng → báo cáo nhánh hết tác dụng (`scripts/prune-branches.mjs`) vào job summary; chạy tay với `apply` để xoá mục "Xoá" |
@@ -79,7 +78,7 @@ Bảo vệ cho `next`, `release/*`, `canary` và tag `v*`: xem [Branching and Re
 | Sự cố | Làm ngay |
 |---|---|
 | Bản phát hành hỏng (lỗi build / runtime nghiêm trọng) | `npm deprecate yugen-ui@x.y.z "Lỗi …, dùng x.y.z+1"` → sửa → phát hành patch. **Không** `npm unpublish` (phá dự án người khác) |
-| Lộ secret (`NPM_TOKEN`…) | Thu hồi token trên npmjs.com ngay, tạo token mới, cập nhật secret, kiểm tra các bản publish gần đây |
+| Lộ secret | Thu hồi ngay (npm publish qua trusted publishing nên không có npm token để lộ), thay secret, kiểm tra các bản publish và lượt chạy workflow gần đây |
 | Lỗ hổng bảo mật được báo | Xác nhận trong Security Advisory riêng, tạo bản vá trong fork riêng tư, phát hành, công bố advisory + CVE nếu cần |
 | `main` đỏ | Ưu tiên sửa trước mọi PR khác; revert commit gây lỗi nếu không sửa được trong 1 ngày |
 | Docs site hỏng | Chạy lại workflow Docs với commit tốt gần nhất (`workflow_dispatch`) |
