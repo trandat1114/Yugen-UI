@@ -982,8 +982,9 @@ const MODULE_TYPES: Record<string, "js" | "jsx" | "ts" | "tsx" | "json"> = { ".t
  * Build client: module chỉ một file demo dùng (component riêng của Labs, zod…) nằm luôn trong chunk của file đó. Bản `?lang=vi`
  * cũng import chúng thì Rolldown tách chúng ra chunk chung → trang tiếng Anh thêm request. Nên trước khi build, plugin chạy một
  * lượt build thử không có bản tiếng Việt (module rỗng) để biết chunk của mỗi file demo gồm những module nào; bản `?lang=vi`
- * import các module đó qua bản sao riêng (`?yugen-vi=…`). Chunk tiếng Anh giữ nguyên như khi chưa có bản tiếng Việt, chunk
- * tiếng Việt có cùng nội dung và cùng các chunk chung.
+ * import các module đó qua bản sao riêng (`?yugen-vi=…`). Nhóm `codeSplitting` đếm entry (`minShareCount`: common, icons) lấy
+ * đúng danh sách module của lượt build thử, vì bản tiếng Việt làm số entry dùng một module tăng gấp đôi. Chunk tiếng Anh giữ
+ * nguyên như khi chưa có bản tiếng Việt, chunk tiếng Việt có cùng nội dung và cùng các chunk chung.
  */
 export function yugenDemoLang(root: string): Plugin {
   const dirs = [path.join(root, "src", "docs", "registry"), path.join(root, "src", "docs", "block-library")];
@@ -1025,9 +1026,25 @@ export function yugenDemoLang(root: string): Plugin {
     return params.get("lang") === "vi" && isDemoFile(id.split("?")[0]) ? cleanId(id) : undefined;
   };
 
+  /** Nhóm `codeSplitting` đếm số entry dùng chung (`minShareCount`) → module của chunk nhóm đó ở lượt build thử. */
+  const groupModules = new Map<string, Set<string>>();
+
   return {
     name: "yugen-demo-lang",
     enforce: "pre",
+    config(userConfig, env) {
+      // Bản `?lang=vi` cũng là entry: module mà 8 file demo dùng thành ra 16 entry và bị kéo vào nhóm `common` (minShareCount
+      // 16) — chunk dùng chung của trang tiếng Anh nặng thêm. Nhóm như vậy lấy đúng danh sách module của lượt build thử.
+      const output = userConfig.build?.rolldownOptions?.output;
+      if (prepass || env.command !== "build" || env.isSsrBuild || !output || Array.isArray(output)) return;
+      const splitting = output.codeSplitting;
+      if (typeof splitting !== "object" || !splitting.groups) return;
+      splitting.groups = splitting.groups.map((group) => {
+        if (group.minShareCount === undefined || typeof group.name !== "string") return group;
+        const name = group.name;
+        return { name, priority: group.priority, test: (id: string) => groupModules.get(name)?.has(id) ?? false };
+      });
+    },
     configResolved(resolved) {
       config = resolved;
     },
@@ -1037,11 +1054,12 @@ export function yugenDemoLang(root: string): Plugin {
       try {
         const result = await build({ configFile: config.configFile, root: config.root, mode: config.mode, logLevel: "silent", build: { write: false } });
         chunkModules = new Map();
-        for (const output of (Array.isArray(result) ? result : [result]) as { output?: { type: string; moduleIds?: string[] }[] }[])
+        for (const output of (Array.isArray(result) ? result : [result]) as { output?: { type: string; name?: string; moduleIds?: string[] }[] }[])
           for (const chunk of output.output ?? []) {
             if (chunk.type !== "chunk" || !chunk.moduleIds) continue;
             const ids = new Set(chunk.moduleIds);
             for (const id of ids) if (!id.includes("?") && isDemoFile(id)) chunkModules.set(cleanId(id), ids);
+            if (chunk.name) groupModules.set(chunk.name, new Set([...(groupModules.get(chunk.name) ?? []), ...ids]));
           }
       } finally {
         delete process.env[DEMO_LANG_PREPASS];
