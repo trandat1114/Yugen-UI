@@ -484,7 +484,7 @@ Labs-specific rules:
 ```bash
 npm install
 npm run dev            # docs site — http://localhost:5173
-npm run typecheck      # tsc -b
+npm run typecheck      # tsc -b (TypeScript 7)
 npm run lint:classes   # canonical Tailwind classes (add --fix when running the script directly to auto-fix)
 npm run build:lib      # npm package → dist/ (ESM JS + .d.ts + theme.css / styles.css / tokens.css)
 npm run build:docs     # docs site → dist-docs/
