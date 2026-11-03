@@ -329,6 +329,7 @@ export function Sidebar({
     { label: "Templates", href: docsPath("/templates"), active: route.kind === "templates" },
     { label: "Blocks", href: docsPath("/blocks"), active: route.kind === "blocks" },
     { label: "Theme Designer", href: docsPath("/theme-designer"), active: route.kind === "theme-designer" },
+    { label: "Typeset", href: docsPath("/typeset"), active: route.kind === "typeset" },
     { label: t("nav.news"), href: docsPath("/news"), active: route.kind === "news", badge: `v${SITE.version}` },
     { label: t("nav.community"), href: docsPath("/community"), active: route.kind === "community" },
   ].filter((i) => match(i.label));

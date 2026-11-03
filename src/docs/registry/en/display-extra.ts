@@ -145,7 +145,7 @@ export const en: Record<string, ComponentDocEn> = {
 
   prose: {
     description:
-      "Wrap content in `<Prose>` (or add the theme's `yugen-prose` class); HTML elements inside are styled without classes. The selectors have zero specificity, so a class on an element always wins; add the `not-prose` class to anything that should opt out. CodeBlock, Table, Quote and Timeline already carry `not-prose`. Size large (16px) suits long articles, medium (14px) docs and notes. Prose does not sanitize HTML: content from users must be sanitized first.",
+      "Wrap content in `<Prose>` (or add the theme's `yugen-prose` class). Fonts and rhythm come from the variables `--prose-font-body`, `--prose-font-heading`, `--prose-font-mono`, `--prose-size`, `--prose-leading` and `--prose-flow`; the theme has the presets `yugen-prose-docs`, `yugen-prose-article`, `yugen-prose-chat` and `yugen-prose-compact`, and the Typeset page (/typeset) builds your own. HTML elements inside are styled without classes. The selectors have zero specificity, so a class on an element always wins; add the `not-prose` class to anything that should opt out. CodeBlock, Table, Quote and Timeline already carry `not-prose`. Size large (16px) suits long articles, medium (14px) docs and notes. Prose does not sanitize HTML: content from users must be sanitized first.",
     examples: [
       { title: "Article & HTML from a CMS", description: "asChild renders into <article>; sanitized HTML can go in through dangerouslySetInnerHTML." },
       { title: "Opting out with not-prose", description: "An element with the not-prose class (and everything inside it) keeps its own styles." },

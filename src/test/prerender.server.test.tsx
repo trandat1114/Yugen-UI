@@ -18,7 +18,7 @@ const SAMPLES: [Route, string][] = [
 describe("prerender docs", () => {
   it("danh sách route gồm mọi component, khái niệm và nền tảng", () => {
     const kinds = new Set(ROUTES.map((r) => r.kind));
-    expect(kinds).toEqual(new Set(["home", "blocks", "templates", "theme-designer", "news", "community", "contributors", "concept", "foundation", "component"]));
+    expect(kinds).toEqual(new Set(["home", "blocks", "templates", "theme-designer", "typeset", "news", "community", "contributors", "concept", "foundation", "component"]));
     expect(ROUTES.filter((r) => r.kind === "component").length).toBeGreaterThan(100);
   });
 

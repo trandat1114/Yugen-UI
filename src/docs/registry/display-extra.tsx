@@ -675,7 +675,7 @@ function SonnerPositionDemo() {
     category: "Hiển thị dữ liệu",
     lead: "Prose định dạng nội dung dài từ Markdown hoặc CMS: tiêu đề, đoạn văn, danh sách, bảng, code, trích dẫn và ảnh theo thang chữ Yugen.",
     description:
-      "Bọc nội dung trong `<Prose>` (hoặc thêm class `yugen-prose` của theme); các thẻ HTML bên trong được định dạng mà không cần class. Selector có độ ưu tiên 0, nên class đặt trên từng thẻ luôn thắng; thêm class `not-prose` cho phần nào cần thoát hẳn. CodeBlock, Table, Quote và Timeline đã có sẵn `not-prose`. size large (16px) cho bài viết dài, medium (14px) cho docs và ghi chú. Prose không làm sạch HTML: nội dung từ người dùng phải được sanitize trước.",
+      "Bọc nội dung trong `<Prose>` (hoặc thêm class `yugen-prose` của theme). Font và nhịp chữ đọc từ biến `--prose-font-body`, `--prose-font-heading`, `--prose-font-mono`, `--prose-size`, `--prose-leading`, `--prose-flow`; preset có sẵn `yugen-prose-docs`, `yugen-prose-article`, `yugen-prose-chat`, `yugen-prose-compact`, hoặc tạo preset riêng ở trang Typeset (/typeset). các thẻ HTML bên trong được định dạng mà không cần class. Selector có độ ưu tiên 0, nên class đặt trên từng thẻ luôn thắng; thêm class `not-prose` cho phần nào cần thoát hẳn. CodeBlock, Table, Quote và Timeline đã có sẵn `not-prose`. size large (16px) cho bài viết dài, medium (14px) cho docs và ghi chú. Prose không làm sạch HTML: nội dung từ người dùng phải được sanitize trước.",
     importCode: `import { Prose } from "@/components/ui";`,
     hero: {
       title: "Prose",
