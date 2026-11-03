@@ -1,25 +1,27 @@
-# Getting Started · Bắt đầu
+# Getting Started
 
-Yêu cầu: React 19 (khuyên dùng) hoặc 18.3, TypeScript 5 (khuyên dùng). Tailwind CSS v4 là tuỳ chọn.
+*Tiếng Việt: [Getting-Started-vi](Getting-Started-vi).*
 
-## 1. Chọn cách dùng
+Requirements: React 19 (recommended) or 18.3, TypeScript 5 (recommended). Tailwind CSS v4 is optional.
 
-| Cách | Khi nào | Lệnh |
+## 1. Choose how to use it
+
+| Option | When | Command |
 |---|---|---|
-| **CLI `@yugen-ui/cli`** — đơn giản nhất | Dự án có sẵn: cài gói + thêm theme vào CSS trong một lệnh | `npx @yugen-ui/cli@latest init` |
-| **Starter template** | Bắt đầu nhanh một app hoàn chỉnh (starter, SaaS, blog…) | `npm create yugen-ui@latest my-app` |
-| **Chép mã nguồn** | Muốn sở hữu và sửa sâu mã nguồn | `npx @yugen-ui/cli@latest init --mode source` rồi `npx @yugen-ui/cli add button` |
-| **npm + Tailwind v4** (tự làm) | Như dòng đầu, không dùng CLI | `npm install yugen-ui` + `@import "yugen-ui/theme.css"` |
-| **npm, không Tailwind** | Dự án dùng CSS khác | `import "yugen-ui/styles.css"` (hoặc `npx @yugen-ui/cli init` tự thêm) |
-| **shadcn CLI** | Dự án đã dùng shadcn/ui | `npx shadcn@latest init https://trandat1114.github.io/Yugen-UI/r/init.json` rồi `add …/r/button.json` |
+| **CLI `@yugen-ui/cli`** — simplest | Existing project: install the package and add the theme to your CSS in one command | `npx @yugen-ui/cli@latest init` |
+| **Starter template** | Start a complete app quickly (starter, SaaS, blog…) | `npm create yugen-ui@latest my-app` |
+| **Copy the source** | You want to own and deeply modify the source | `npx @yugen-ui/cli@latest init --mode source` then `npx @yugen-ui/cli add button` |
+| **npm + Tailwind v4** (by hand) | Same as the first row, without the CLI | `npm install yugen-ui` + `@import "yugen-ui/theme.css"` |
+| **npm, no Tailwind** | The project uses other CSS | `import "yugen-ui/styles.css"` (or let `npx @yugen-ui/cli init` add it) |
+| **shadcn CLI** | The project already uses shadcn/ui | `npx shadcn@latest init https://trandat1114.github.io/Yugen-UI/r/init.json` then `add …/r/button.json` |
 
-Chi tiết: [@yugen-ui/cli](https://trandat1114.github.io/Yugen-UI/#/concepts/cli), [README](https://github.com/trandat1114/Yugen-UI#readme),
-[Cài bằng shadcn CLI](https://trandat1114.github.io/Yugen-UI/#/concepts/shadcn-registry).
+Details: [@yugen-ui/cli](https://trandat1114.github.io/Yugen-UI/#/concepts/cli), [README](https://github.com/trandat1114/Yugen-UI#readme),
+[Install with the shadcn CLI](https://trandat1114.github.io/Yugen-UI/#/concepts/shadcn-registry).
 
-## 2. Thiết lập tối thiểu (npm + Tailwind v4)
+## 2. Minimal setup (npm + Tailwind v4)
 
-`npx @yugen-ui/cli@latest init` (chọn `package`) làm hộ bước CSS bên dưới và in đoạn bọc `YugenProvider`; kiểm tra lại bằng
-`npx @yugen-ui/cli doctor`. Tự làm:
+`npx @yugen-ui/cli@latest init` (choose `package`) does the CSS step below for you and prints the `YugenProvider` wrapper; check
+the result with `npx @yugen-ui/cli doctor`. By hand:
 
 ```css
 /* src/index.css */
@@ -39,17 +41,17 @@ export function App() {
 }
 ```
 
-> ⚠ `theme.css` **tắt** scale mặc định của Tailwind (màu, bo góc, bóng, cỡ chữ): `bg-blue-500`, `rounded-lg`, `text-sm`
-> không còn. Dùng utility của Yugen: `bg-background-1`, `text-foreground-2`, `p-3`, `rounded-medium`, `text-body1`.
+> ⚠ `theme.css` **turns off** Tailwind's default scales (colors, radius, shadows, font sizes): `bg-blue-500`, `rounded-lg`,
+> `text-sm` no longer exist. Use Yugen utilities: `bg-background-1`, `text-foreground-2`, `p-3`, `rounded-medium`, `text-body1`.
 
 ## 3. Next.js App Router
 
-Mọi file component trong gói đã có `"use client"` — import thẳng trong Server Component. Đặt `YugenProvider` trong
-`app/layout.tsx`, thêm `suppressHydrationWarning` lên `<html>` nếu bạn đổi theme bằng script trước khi hydrate.
-Xem thêm: [SSR & Next.js](https://trandat1114.github.io/Yugen-UI/#/concepts/ssr).
+Every component file in the package already has `"use client"`, so you can import components directly in a Server Component.
+Put `YugenProvider` in `app/layout.tsx`, and add `suppressHydrationWarning` to `<html>` if you change the theme with a script
+before hydration. See also: [SSR & Next.js](https://trandat1114.github.io/Yugen-UI/#/concepts/ssr).
 
-## 4. Bước tiếp theo
+## 4. Next steps
 
-- Đổi màu thương hiệu: [[Theming and Tokens]].
-- Xem mọi component và chép ví dụ: [docs](https://trandat1114.github.io/Yugen-UI/) — mỗi ví dụ có nút Copy và StackBlitz.
-- Vướng mắc? Hỏi ở [Discussions Q&A](https://github.com/trandat1114/Yugen-UI/discussions/categories/q-a).
+- Change the brand color: [[Theming and Tokens]].
+- Browse every component and copy examples: [docs](https://trandat1114.github.io/Yugen-UI/). Each example has Copy and StackBlitz buttons.
+- Stuck? Ask in [Discussions Q&A](https://github.com/trandat1114/Yugen-UI/discussions/categories/q-a).

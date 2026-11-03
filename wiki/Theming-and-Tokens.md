@@ -1,33 +1,35 @@
-# Theming and Tokens · Theme & token
+# Theming and Tokens
 
-## Theme, brand, hướng chữ
+*Tiếng Việt: [Theming-and-Tokens-vi](Theming-and-Tokens-vi).*
+
+## Theme, brand, text direction
 
 ```tsx
 <YugenProvider applyToDocument theme="dark" brand="sakura" dir="rtl">…</YugenProvider>
 ```
 
-| Thuộc tính | Giá trị |
+| Prop | Values |
 |---|---|
 | `theme` | `light` · `dark` · `high-contrast` |
-| `brand` | `sakura` (mặc định) · `web` (Fluent Blue) · `teams` · brand tự tạo |
+| `brand` | `sakura` (default) · `web` (Fluent Blue) · `teams` · a custom brand |
 | `dir` | `ltr` · `rtl` |
 
-Provider lồng nhau được (ví dụ một vùng dark trong trang light). Portal (Dialog, Menu…) tự theo provider gần nhất qua
-`usePortalThemeProps()`.
+Providers can be nested (for example a dark region inside a light page). Portals (Dialog, Menu…) follow the nearest provider
+through `usePortalThemeProps()`.
 
-## Tạo brand riêng
+## Create your own brand
 
-1. Mở [Theme Designer](https://trandat1114.github.io/Yugen-UI/#/theme-designer), chọn màu key (bậc 80).
-2. Kiểm tra các ô tương phản (≥ 4.5:1), chỉnh *vibrancy* / *hue torsion* nếu cần.
-3. **Xuất**:
-   - **CSS** → dán khối `[data-brand="ten-brand"] { --brand-10 … --brand-160 }` vào CSS của bạn.
+1. Open the [Theme Designer](https://trandat1114.github.io/Yugen-UI/#/theme-designer) and pick the key color (step 80).
+2. Check the contrast cells (≥ 4.5:1), adjust *vibrancy* / *hue torsion* if needed.
+3. **Export**:
+   - **CSS** → paste the `[data-brand="my-brand"] { --brand-10 … --brand-160 }` block into your CSS.
    - **W3C Design Tokens (DTCG)** → Style Dictionary 4, Figma Variables, Penpot.
-   - **Tokens Studio** → plugin Tokens Studio for Figma (bộ `global` / `light` / `dark`).
-4. Đặt `brand="ten-brand"` cho `YugenProvider`.
+   - **Tokens Studio** → the Tokens Studio for Figma plugin (`global` / `light` / `dark` sets).
+4. Set `brand="my-brand"` on `YugenProvider`.
 
-Bằng code: `generateBrandRamp("#0F6CBD")`, `rampToCss()`, `rampToDesignTokens()`, `rampToTokensStudio()` — đều export từ `yugen-ui`.
+In code: `generateBrandRamp("#0F6CBD")`, `rampToCss()`, `rampToDesignTokens()`, `rampToTokensStudio()`, all exported from `yugen-ui`.
 
-## Dùng token trong CSS của bạn
+## Use tokens in your own CSS
 
 ```css
 .my-panel {
@@ -39,12 +41,12 @@ Bằng code: `generateBrandRamp("#0F6CBD")`, `rampToCss()`, `rampToDesignTokens(
 }
 ```
 
-Chỉ cần biến CSS? `import "yugen-ui/tokens.css"`.
+Only need the CSS variables? `import "yugen-ui/tokens.css"`.
 
-## Luật màu (tóm tắt)
+## Color rules (summary)
 
-- Neutral cho bề mặt / chữ; **brand chỉ cho** CTA, trạng thái chọn, focus, link; semantic chỉ cho trạng thái.
-- Không phủ brand lên diện tích lớn; gradient chỉ cho hero / minh hoạ, không bao giờ trên control.
-- Chữ ≥ 4.5:1, thành phần UI ≥ 3:1; không dùng màu làm tín hiệu duy nhất.
+- Neutral colors for surfaces / text; **brand only for** CTAs, selected states, focus, links; semantic colors only for status.
+- Don't cover large areas with brand color; gradients only for hero sections / illustrations, never on controls.
+- Text ≥ 4.5:1, UI elements ≥ 3:1; never use color as the only signal.
 
-Đầy đủ: Design.md §4 và trang [Màu sắc](https://trandat1114.github.io/Yugen-UI/#/foundations/color).
+Full rules: Design.md §4 and the [Color](https://trandat1114.github.io/Yugen-UI/#/foundations/color) page.

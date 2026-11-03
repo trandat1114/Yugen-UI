@@ -1,120 +1,123 @@
-# Branching and Release Channels · Nhánh & kênh phát hành
+# Branching and Release Channels
 
-Mỗi nhánh dài hạn ứng với **một kênh phát hành** — người dùng chọn mức ổn định qua dist-tag npm.
+*Tiếng Việt: [Branching-and-Release-Channels-vi](Branching-and-Release-Channels-vi).*
 
-| Nhánh | Mục đích | Phiên bản | npm dist-tag | Docs |
+Each long-lived branch maps to **one release channel**. Users pick a stability level through the npm dist-tag.
+
+| Branch | Purpose | Version | npm dist-tag | Docs |
 |---|---|---|---|---|
-| `main` | Bản ổn định đang dùng; chỉ nhận sửa lỗi, docs, việc vặt | `0.6.1` | `latest` → `npm i yugen-ui` | `/` |
-| `next` | Gom tính năng cho minor tiếp theo, thay đổi phá vỡ | `0.7.0-next.3` | `next` → `npm i yugen-ui@next` | `/next/` |
-| `release/X.Y` | Vá lỗi cho minor cũ sau khi đã ra minor mới | `0.6.4` | `release-0.6` → `npm i yugen-ui@release-0.6` | `/v0.6/` (từ tag) |
-| `canary` | Thử nghiệm nhanh: mỗi push phát hành một bản | `0.7.0-canary-20261021…` | `canary` → `npm i yugen-ui@canary` | — |
+| `main` | The current stable release; only takes bug fixes, docs, chores | `0.6.1` | `latest` → `npm i yugen-ui` | `/` |
+| `next` | Collects features for the next minor, breaking changes | `0.7.0-next.3` | `next` → `npm i yugen-ui@next` | `/next/` |
+| `release/X.Y` | Fixes for an older minor after a newer minor is out | `0.6.4` | `release-0.6` → `npm i yugen-ui@release-0.6` | `/v0.6/` (from the tag) |
+| `canary` | Quick experiments: every push publishes a version | `0.7.0-canary-20261021…` | `canary` → `npm i yugen-ui@canary` | — |
 
-Nhánh ngắn hạn (xoá sau khi merge): `feat/<scope>-<mô-tả>`, `fix/…`, `docs/…`, `chore/…`, `exp/…` (thử ý tưởng, không merge thẳng).
+Short-lived branches (deleted after merge): `feat/<scope>-<description>`, `fix/…`, `docs/…`, `chore/…`, `exp/…` (trying out ideas, never merged directly).
 
 ```
 feat/datagrid-grouping ──PR──▶ next ──(0.7.0-next.N)──▶ … ──PR "release 0.7.0"──▶ main ──tag v0.7.0──▶ latest
 fix/tabs-focus ─────────PR──▶ main ──tag v0.6.1──▶ latest
-                               main ──tự động "sync main → next"──▶ next   (bản sửa không bị thiếu ở 0.7)
+                               main ──automatic "sync main → next"──▶ next   (fixes are not missing from 0.7)
                        tag v0.6.x ──▶ release/0.6 ──fix──▶ tag v0.6.5 ──▶ release-0.6
-bất kỳ nhánh ──push / reset──▶ canary ──▶ yugen-ui@canary
+any branch ──push / reset──▶ canary ──▶ yugen-ui@canary
 ```
 
-Docs của `next` (https://trandat1114.github.io/Yugen-UI/next/) build lại sau mỗi push vào `next`, kèm tin sắp phát hành
-(`upcoming`) trên trang Có gì mới: kiểm tra ở đó trước khi mở PR `next → main` ([[Release Process]] › Tin cho bản sắp
-phát hành).
+The docs for `next` (https://trandat1114.github.io/Yugen-UI/next/) rebuild after every push to `next`, including upcoming news
+(`upcoming`) on the What's new page: check there before opening the `next → main` PR ([[Release Process]] › News for an upcoming
+release).
 
-**Sync main → next** (`sync-next.yml`, sau mỗi push vào `main`): nếu `next` không có thay đổi nào ngoài `main` (thường gặp
-ngay sau khi phát hành), workflow merge thẳng `main` vào `next`. Cây kết quả trùng cây của `main` mà CI đã kiểm tra, nên
-không có PR và không chạy CI lần nữa; workflow chạy lại Docs để cập nhật `/next/`. Nếu `next` có việc riêng, workflow mở
-PR "chore: sync main → next" để CI kiểm tra kết quả merge; merge bằng **Create a merge commit**.
+**Sync main → next** (`sync-next.yml`, after every push to `main`): if `next` has no changes beyond `main` (common right
+after a release), the workflow merges `main` straight into `next`. The resulting tree is the same as the `main` tree that CI
+already checked, so there is no PR and CI doesn't run again; the workflow reruns Docs to update `/next/`. If `next` has work
+of its own, the workflow opens the PR "chore: sync main → next" so CI checks the merge result; merge it with **Create a merge commit**.
 
-## PR vào nhánh nào?
+## Which branch does a PR go to?
 
-| Thay đổi | Nhánh đích |
+| Change | Target branch |
 |---|---|
-| Sửa lỗi (patch), docs, test, CI | `main` |
-| Component / prop / token mới (minor) | `next` |
-| Thay đổi phá vỡ API (đã có RFC) | `next` |
-| Vá cho minor cũ | `release/X.Y` (rồi forward-port lên `main` nếu cần) |
-| Thử nghiệm cần cho người khác cài thử | đẩy lên `canary` (không cần PR) |
+| Bug fix (patch), docs, tests, CI | `main` |
+| New component / prop / token (minor) | `next` |
+| Breaking API change (with an RFC) | `next` |
+| Fix for an older minor | `release/X.Y` (then forward-port to `main` if needed) |
+| Experiment that others need to install | push to `canary` (no PR needed) |
 
-Khi chưa có nhánh `next` (giữa hai chu kỳ), PR tính năng vào `main` như bình thường.
+When there is no `next` branch (between two cycles), feature PRs go to `main` as usual.
 
-## Quy trình theo kênh
+## Workflow per channel
 
-**Ổn định (`main` → `latest`)** — xem [[Release Process]]: `npm run version-packages` → News → tag `vX.Y.Z` trên `main`.
+**Stable (`main` → `latest`)**: see [[Release Process]]: `npm run version-packages` → News → tag `vX.Y.Z` on `main`.
 
-**Thử nghiệm có kế hoạch (`next` → `next`)**
+**Planned prerelease (`next` → `next`)**
 ```bash
-git switch -c next main                 # đầu chu kỳ (một lần)
-npx changeset pre enter next            # bật chế độ prerelease, commit .changeset/pre.json
-# … merge PR tính năng vào next …
-npm run version-packages                # → 0.7.0-next.0 (CHANGELOG có mục prerelease)
-git tag v0.7.0-next.0 && git push origin next v0.7.0-next.0   # release.yml phát hành dist-tag next
+git switch -c next main                 # start of the cycle (once)
+npx changeset pre enter next            # turn on prerelease mode, commit .changeset/pre.json
+# … merge feature PRs into next …
+npm run version-packages                # → 0.7.0-next.0 (CHANGELOG has a prerelease entry)
+git tag v0.7.0-next.0 && git push origin next v0.7.0-next.0   # release.yml publishes the next dist-tag
 ```
-Kết thúc chu kỳ: trên `next` chạy `npx changeset pre exit` → `npm run version-packages` (→ `0.7.0`) → thêm News →
-PR `next → main` → merge → tag `v0.7.0` trên `main`. Trang News chỉ ghi bản ổn định; prerelease không cần mục News.
+End of the cycle: on `next` run `npx changeset pre exit` → `npm run version-packages` (→ `0.7.0`) → add News →
+PR `next → main` → merge → tag `v0.7.0` on `main`. The News page only lists stable releases; prereleases need no News entry.
 
-**Vá minor cũ (`release/X.Y`)**
+**Fixing an older minor (`release/X.Y`)**
 ```bash
-git switch -c release/0.6 v0.6.4        # tạo từ tag cuối của minor cũ (một lần)
-# … cherry-pick / sửa, thêm changeset patch …
+git switch -c release/0.6 v0.6.4        # create it from the last tag of the older minor (once)
+# … cherry-pick / fix, add a patch changeset …
 npm run version-packages && git tag v0.6.5 && git push origin release/0.6 v0.6.5
 ```
-`scripts/release-channel.mjs` thấy `0.6.5 < latest` nên dùng dist-tag `release-0.6`, không chiếm `latest`.
+`scripts/release-channel.mjs` sees `0.6.5 < latest`, so it uses the `release-0.6` dist-tag and leaves `latest` alone.
 
 **Canary**
 ```bash
-git push --force origin HEAD:canary     # từ nhánh bạn muốn cho người khác thử
+git push --force origin HEAD:canary     # from the branch you want others to try
 ```
-Workflow `canary.yml` chạy typecheck + test + build rồi phát hành `x.y.z-canary-<thời gian>`. Không cần tag, không cần News.
+The `canary.yml` workflow runs typecheck + test + build, then publishes `x.y.z-canary-<timestamp>`. No tag, no News needed.
 
-## Luật an toàn (được kiểm tra tự động)
+## Safety rules (checked automatically)
 
-- Tag prerelease (`-next.N`, `-rc.N`) chỉ hợp lệ trên `next` hoặc `release/*`; tag ổn định chỉ trên `main` hoặc `release/*`
-  — `release.yml` dừng nếu sai.
-- Tag phải trùng `package.json`; `check:release` kiểm tra CHANGELOG (+ News với bản ổn định).
-- Không bao giờ force-push `main`, `next`, `release/*`. Chỉ `canary` được ghi đè.
+- Prerelease tags (`-next.N`, `-rc.N`) are only valid on `next` or `release/*`; stable tags only on `main` or `release/*`.
+  `release.yml` stops if a tag is on the wrong branch.
+- The tag must match `package.json`; `check:release` checks the CHANGELOG (+ News for stable releases).
+- Never force-push `main`, `next`, `release/*`. Only `canary` may be overwritten.
 
-## Dọn nhánh
+## Branch cleanup
 
-Nhánh ngắn hạn xoá ngay khi PR merge. GitHub tự làm việc này khi bật Settings → General → **Automatically delete head
-branches**. Phần còn lại dọn bằng `scripts/prune-branches.mjs`, theo bảng sau (PR mới nhất của nhánh quyết định):
+Short-lived branches are deleted as soon as their PR merges. GitHub does this when Settings → General → **Automatically delete head
+branches** is on. The rest is cleaned up with `scripts/prune-branches.mjs`, following this table (the branch's latest PR decides).
+The report uses the section names Xoá (delete), Cần xem (review) and Giữ (keep).
 
-| Nhánh | Kết luận |
+| Branch | Verdict |
 |---|---|
-| `main`, `next`, `canary`, `gh-pages`, `issue-assets` (ảnh chụp nhúng trong issue / PR), `contributors-data` (dữ liệu trang Người đóng góp), `release/*`, nhánh mặc định | Không bao giờ xoá |
-| Có PR đang mở | Giữ |
-| Commit cuối đã nằm trong `main` hoặc `next` | Xoá |
-| PR đã merge đúng commit cuối (squash nên commit không nằm trong `main`) | Xoá |
-| Có commit sau khi PR merge | Cần xem |
-| PR đóng không merge từ 14 ngày trở lên | Xoá (đầu PR vẫn còn ở `refs/pull/<số>/head`) |
-| Không có PR, 30 ngày không có commit (`exp/`: 60 ngày) | Cần xem |
-| Còn lại | Giữ |
+| `main`, `next`, `canary`, `gh-pages`, `issue-assets` (screenshots embedded in issues / PRs), `contributors-data` (data for the Contributors page), `release/*`, the default branch | Never deleted |
+| Has an open PR | Keep |
+| Last commit is already in `main` or `next` | Delete |
+| PR merged at exactly the last commit (squashed, so the commit is not in `main`) | Delete |
+| Has commits after the PR merged | Review |
+| PR closed without merging 14 or more days ago | Delete (the PR head stays at `refs/pull/<number>/head`) |
+| No PR, no commits for 30 days (`exp/`: 60 days) | Review |
+| Everything else | Keep |
 
 ```bash
-node scripts/prune-branches.mjs                                # báo cáo, không xoá gì
-node scripts/prune-branches.mjs --apply                        # xoá mục "Xoá"
-node scripts/prune-branches.mjs --apply --include-abandoned    # xoá thêm mục "Cần xem"
-node scripts/prune-branches.mjs --local --apply                # thêm nhánh local đã merge, git worktree prune
+node scripts/prune-branches.mjs                                # report only, deletes nothing
+node scripts/prune-branches.mjs --apply                        # delete the "Xoá" entries
+node scripts/prune-branches.mjs --apply --include-abandoned    # also delete the "Cần xem" entries
+node scripts/prune-branches.mjs --local --apply                # also merged local branches, git worktree prune
 ```
 
-- Cần `gh` đã đăng nhập. Mỗi nhánh bị xoá được in kèm SHA; khôi phục bằng `git push origin <sha>:refs/heads/<nhánh>`.
-- Mục "Cần xem" không bao giờ tự xoá. Xem `git log origin/next..origin/<nhánh>` trước: còn việc dở thì mở draft PR,
-  hết dùng thì xoá với `--include-abandoned`.
-- Workflow **Prune branches** chạy ngày 1 hằng tháng và chỉ ghi báo cáo vào job summary. Chạy tay (Run workflow, tick
-  `apply`) để xoá mục "Xoá".
-- Worktree: gỡ worktree (`git worktree remove`) trước khi xoá nhánh của nó. Worktree có `node_modules` là junction trỏ về
-  repo chính thì xoá junction trước (PowerShell: `(Get-Item <worktree>
-ode_modules).Delete()`), rồi mới gỡ worktree.
+- Requires a logged-in `gh`. Each deleted branch is printed with its SHA; restore it with `git push origin <sha>:refs/heads/<branch>`.
+- "Cần xem" (review) entries are never deleted automatically. Check `git log origin/next..origin/<branch>` first: if there is
+  unfinished work, open a draft PR; if the branch is no longer needed, delete it with `--include-abandoned`.
+- The **Prune branches** workflow runs on the 1st of every month and only writes a report to the job summary. Run it manually
+  (Run workflow, tick `apply`) to delete the "Xoá" entries.
+- Worktrees: remove the worktree (`git worktree remove`) before deleting its branch. If the worktree's `node_modules` is a
+  junction pointing to the main repo, delete the junction first (PowerShell: `(Get-Item <worktree>\node_modules).Delete()`),
+  then remove the worktree.
 
-## Bảo vệ nhánh (Settings → Branches → Add rule)
+## Branch protection (Settings → Branches → Add rule)
 
-| Pattern | Luật |
+| Pattern | Rules |
 |---|---|
-| `main` | PR bắt buộc, 1 approve, 5 job CI xanh, giải quyết hết thread, cấm force-push / xoá |
-| `next` | PR bắt buộc, CI xanh, cấm force-push / xoá |
-| `release/*` | PR bắt buộc, CI xanh, cấm xoá |
-| `canary` | Không bảo vệ (maintainer được force-push) |
+| `main` | PR required, 1 approval, 5 CI jobs green, all threads resolved, no force-push / deletion |
+| `next` | PR required, CI green, no force-push / deletion |
+| `release/*` | PR required, CI green, no deletion |
+| `canary` | Not protected (maintainers may force-push) |
 
-Tag `v*`: Settings → Rules → Rulesets → Tag ruleset, chỉ maintainer được tạo / xoá tag `v*`.
+`v*` tags: Settings → Rules → Rulesets → Tag ruleset, only maintainers may create / delete `v*` tags.

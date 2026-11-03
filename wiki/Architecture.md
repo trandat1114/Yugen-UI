@@ -1,60 +1,62 @@
-# Architecture · Kiến trúc
+# Architecture
 
-## Cấu trúc repo
+*Tiếng Việt: [Architecture-vi](Architecture-vi).*
+
+## Repo layout
 
 ```
 src/
-  styles/tokens.css, charts.css   token Global + Alias (light / dark / high contrast, brand) — nguồn giá trị duy nhất
-  index.css                        tắt scale mặc định Tailwind, @theme bridge, @utility, keyframes
+  styles/tokens.css, charts.css   Global + Alias tokens (light / dark / high contrast, brand), the single source of values
+  index.css                        turns off Tailwind's default scales, @theme bridge, @utility, keyframes
   lib/                             cn(), brandRamp, tokenExport, deprecate
-  components/ui/<Name>/            1 component = 1 thư mục; barrel index.ts theo nhóm
-  lib.ts                           entry gói npm
-  docs/                            site docs (không thuộc gói)
-    registry/*.tsx                 trang component (ComponentDoc) — nạp lười theo file
-    concepts/, block-library/      trang khái niệm, block
+  components/ui/<Name>/            1 component = 1 folder; barrel index.ts by group
+  lib.ts                           npm package entry
+  docs/                            docs site (not part of the package)
+    registry/*.tsx                 component pages (ComponentDoc), lazy-loaded per file
+    concepts/, block-library/      concept pages, blocks
     i18n/                          VI / EN
-scripts/                           build CSS, registry shadcn, các bước check
-templates/                         starter template sinh từ block + src/docs/template-library (sync-templates)
-wiki/                              nguồn của GitHub Wiki này
+scripts/                           CSS build, shadcn registry, check steps
+templates/                         starter templates generated from blocks + src/docs/template-library (sync-templates)
+wiki/                              source of this GitHub Wiki
 e2e/                               Playwright (a11y, visual, touch)
 ```
 
-## Token 3 lớp
+## Three token layers
 
 ```
-Global   --brand-80, --grey-14, --shared-teal          (giá trị thô, chỉ tokens.css dùng)
+Global   --brand-80, --grey-14, --shared-teal          (raw values, used only by tokens.css)
   ↓
-Alias    --colorBrandBackground, --spacingM, --shadow16  (tên Fluent UI v9)
+Alias    --colorBrandBackground, --spacingM, --shadow16  (Fluent UI v9 names)
   ↓
-Utility  bg-brand-background, p-3, shadow-16            (component chỉ dùng lớp này)
+Utility  bg-brand-background, p-3, shadow-16            (components use only this layer)
 ```
 
-Theme / brand đổi bằng `data-theme` / `data-brand` trên bất kỳ phần tử nào → lồng theme được. Chi tiết: Design.md §2–§4.
+Theme / brand change through `data-theme` / `data-brand` on any element, so themes can be nested. Details: Design.md §2–§4.
 
-## Các bản build
+## Builds
 
-| Lệnh | Ra | Ghi chú |
+| Command | Output | Notes |
 |---|---|---|
-| `npm run build:lib` | `dist/` | ESM `preserveModules`, `.d.ts`, `"use client"` trên mỗi file component; `theme.css`, `styles.css`, `tokens.css` (scripts/build-css.mjs) |
-| `npm run build:docs` | `dist-docs/` + `public/r/` | Chạy `npm run registry` (item shadcn) rồi Vite build site docs |
-| Pages workflow | GitHub Pages | Thêm docs các minor cũ vào `/vX.Y/` từ tag (scripts/build-versioned-docs.mjs) |
+| `npm run build:lib` | `dist/` | ESM `preserveModules`, `.d.ts`, `"use client"` on every component file; `theme.css`, `styles.css`, `tokens.css` (scripts/build-css.mjs) |
+| `npm run build:docs` | `dist-docs/` + `public/r/` | Runs `npm run registry` (shadcn items), then the Vite build of the docs site |
+| Pages workflow | GitHub Pages | Adds docs for older minors under `/vX.Y/` from tags (scripts/build-versioned-docs.mjs) |
 
-## Site docs — những phần "ẩn"
+## Docs site: the "hidden" parts
 
-- **Metadata trích lúc build**: plugin `yugenDocsMeta` (vite.plugins.ts) đọc `slug / name / category / lead` của mọi
-  `ComponentDoc` bằng TypeScript compiler API → sidebar, tìm kiếm, trang chủ hiện ngay; demo nạp lười theo file registry.
-  Vì vậy 4 trường này **phải là chuỗi literal**.
-- **`virtual:yugen-type-exports`**: danh sách type export, để converter StackBlitz tự thêm `import { type X }`.
-- **Ví dụ chạy độc lập**: `Example.code` (+ `setup` dùng chung) → `exampleToApp()` (src/docs/stackblitz.ts). Cùng hàm này
-  dùng cho nút StackBlitz và `npm run check:examples`.
-- **Registry shadcn**: `scripts/build-registry.mjs` suy ra dependency npm và component phụ thuộc từ import của từng file.
+- **Metadata extracted at build time**: the `yugenDocsMeta` plugin (vite.plugins.ts) reads `slug / name / category / lead` from
+  every `ComponentDoc` with the TypeScript compiler API → the sidebar, search and home page show up right away; demos are
+  lazy-loaded per registry file. That is why these 4 fields **must be string literals**.
+- **`virtual:yugen-type-exports`**: the list of type exports, so the StackBlitz converter can add `import { type X }` on its own.
+- **Standalone examples**: `Example.code` (+ shared `setup`) → `exampleToApp()` (src/docs/stackblitz.ts). The same function
+  is used for the StackBlitz button and `npm run check:examples`.
+- **shadcn registry**: `scripts/build-registry.mjs` infers npm dependencies and component dependencies from each file's imports.
 
-## Quyết định thiết kế chính
+## Key design decisions
 
-| Quyết định | Lý do |
+| Decision | Reason |
 |---|---|
-| Tailwind v4 CSS-first, reset scale mặc định | Buộc dùng token, không lẫn `bg-blue-500` |
-| Spacing theo thang số của Tailwind (`p-3`) | Ramp Fluent trùng thang 4px của Tailwind; code từ shadcn/ui dùng thẳng được. Alias viết hoa (`p-M`) deprecated từ 0.10 (#42) |
-| Radix + cmdk + react-day-picker | Hành vi & a11y đã được kiểm chứng |
-| Chart SVG tự viết | Kiểm soát màu theo token, a11y (bảng dữ liệu, bàn phím), không thêm dependency nặng |
-| Logical properties + `rtl:` | RTL không cần code riêng |
+| Tailwind v4 CSS-first, default scales reset | Forces the use of tokens, no stray `bg-blue-500` |
+| Spacing on Tailwind's numeric scale (`p-3`) | The Fluent ramp matches Tailwind's 4px scale; code from shadcn/ui works as is. Uppercase aliases (`p-M`) are deprecated since 0.10 (#42) |
+| Radix + cmdk + react-day-picker | Proven behavior & a11y |
+| Hand-written SVG charts | Token-based color control, a11y (data table, keyboard), no heavy dependency |
+| Logical properties + `rtl:` | RTL needs no separate code |
