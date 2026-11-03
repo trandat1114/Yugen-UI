@@ -483,7 +483,7 @@ Luật riêng của Labs:
 ```bash
 npm install
 npm run dev            # site docs — http://localhost:5173
-npm run typecheck      # tsc -b
+npm run typecheck      # tsc -b (TypeScript 7)
 npm run lint:classes   # class Tailwind canonical (thêm --fix khi chạy trực tiếp script để tự sửa)
 npm run build:lib      # gói npm → dist/ (JS ESM + .d.ts + theme.css / styles.css / tokens.css)
 npm run build:docs     # site docs → dist-docs/

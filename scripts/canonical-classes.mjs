@@ -8,8 +8,10 @@
  *   node scripts/canonical-classes.mjs --fix    # tự sửa tại chỗ
  *   node scripts/canonical-classes.mjs src/components/ui/Button   # giới hạn thư mục/file
  */
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import { createRequire } from "node:module";
 import { __unstable__loadDesignSystem } from "@tailwindcss/node";
 
 const root = process.cwd();
@@ -19,6 +21,37 @@ const scanRoots = targets.length ? targets : ["src"];
 
 const css = fs.readFileSync(path.join(root, "src/index.css"), "utf8");
 const ds = await __unstable__loadDesignSystem(css, { base: path.join(root, "src") });
+
+/**
+ * Cache kết quả theo class ra đĩa: canonicalizeCandidates tốn ~10 ms cho mỗi class lần đầu (~2k class → ~20 s).
+ * Khoá = CSS trong src (theme, token, @utility), phiên bản Tailwind và chính script này — đổi một trong ba là tính lại.
+ * CI giữ file qua actions/cache (ci.yml).
+ */
+const CACHE_FILE = path.join(root, "node_modules/.cache/yugen-canonical-classes.json");
+function cacheKey() {
+  const hash = crypto.createHash("sha256");
+  const cssFiles = [];
+  (function collect(dir) {
+    for (const name of fs.readdirSync(dir).sort()) {
+      const p = path.join(dir, name);
+      if (fs.statSync(p).isDirectory()) collect(p);
+      else if (name.endsWith(".css")) cssFiles.push(p);
+    }
+  })(path.join(root, "src"));
+  for (const p of cssFiles) hash.update(path.relative(root, p)).update(fs.readFileSync(p));
+  hash.update(createRequire(import.meta.url)("tailwindcss/package.json").version);
+  hash.update(fs.readFileSync(new URL(import.meta.url)));
+  return hash.digest("hex");
+}
+const key = cacheKey();
+let stored = {};
+try {
+  const saved = JSON.parse(fs.readFileSync(CACHE_FILE, "utf8"));
+  if (saved.key === key) stored = saved.results;
+} catch {
+  // Chưa có cache hoặc file hỏng: tính lại.
+}
+const fresh = {};
 
 function walk(p, out = []) {
   const stat = fs.statSync(p);
@@ -60,10 +93,23 @@ function canonical(candidate) {
   const numeric = numericSpacing(candidate);
   const base = numeric ?? candidate;
   let result = numeric;
-  const [compiled] = ds.candidatesToCss([base]);
-  if (compiled) {
-    const [next] = ds.canonicalizeCandidates([base], { rem: 16 });
-    if (next && next !== base) result = next;
+  // Phần lớn token là chữ thường trong nội dung docs: parseCandidate (chỉ phân tích, ~0,003 ms) loại chúng trước khi
+  // biên dịch CSS (~0,8 ms mỗi token) — 48k token → ~2k cần biên dịch, 41 s → ~2 s.
+  if (ds.parseCandidate(base).length === 0) {
+    cache.set(candidate, result);
+    return result;
+  }
+  if (base in stored) {
+    result = stored[base] ?? numeric;
+  } else {
+    let next = null;
+    const [compiled] = ds.candidatesToCss([base]);
+    if (compiled) {
+      [next] = ds.canonicalizeCandidates([base], { rem: 16 });
+      if (next === base) next = null;
+    }
+    fresh[base] = next ?? null;
+    if (next) result = next;
   }
   cache.set(candidate, result);
   return result;
@@ -93,6 +139,11 @@ for (const file of files) {
     }
     fs.writeFileSync(file, out);
   }
+}
+
+if (Object.keys(fresh).length) {
+  fs.mkdirSync(path.dirname(CACHE_FILE), { recursive: true });
+  fs.writeFileSync(CACHE_FILE, JSON.stringify({ key, results: { ...stored, ...fresh } }));
 }
 
 console.log(total ? `\n${total} class chưa canonical${fix ? " — đã sửa." : "."}` : "Tất cả class đã canonical.");

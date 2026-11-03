@@ -30,7 +30,7 @@ bị bỏ qua sẽ treo ở "Expected": khi đó chuyển sang lọc trong job t
 | Build · Node 24 / 26 | typecheck, lint:classes, các check:*, sync-templates, build lib + docs, pack, size |
 | Unit tests (React 19) | `npm test` |
 | React 18 | cài React 18.3 tạm thời → typecheck, test, build:lib |
-| E2E · shard 1/3 … 3/3 | `test:e2e --shard=n/3` song song (blob report; `test-results-n` khi lỗi) |
+| E2E · shard 1/4 … 4/4 | `test:e2e --shard=n/4` song song (blob report; `test-results-n` khi lỗi) |
 | E2E (Playwright + axe) | gộp blob report thành một báo cáo HTML (`playwright-report`); đỏ nếu một shard đỏ — tên check cố định |
 
 Workflow riêng **Browser engines** (`engines.yml`): `npm run test:engines` hằng tuần (thứ Hai), trên PR vào `main`, trên PR
@@ -61,4 +61,4 @@ nâng là bản minor của CLI.
 
 Repo chạy React 19. Muốn kiểm tra React 18.3 (vẫn được hỗ trợ): chép repo ra thư mục khác (bỏ `node_modules`), `npm ci`,
 rồi `npm i --no-save react@^18.3 react-dom@^18.3 @types/react@^18.3 @types/react-dom@^18.3` và chạy
-`npx tsc -b && npx vitest run`.
+`npm run typecheck && npx vitest run`.

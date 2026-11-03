@@ -40,7 +40,7 @@ npm run dev          # docs site at http://localhost:5173
 | Command | What it does |
 |---|---|
 | `npm run dev` | Runs the docs site (Vite) |
-| `npm run typecheck` | Type check (`tsc -b`) |
+| `npm run typecheck` | Type check (`tsc -b` with TypeScript 7, the native compiler) |
 | `npm run lint:classes` | Checks that Tailwind classes are canonical (`node scripts/canonical-classes.mjs --fix` repairs them) |
 | `npm run build:lib` | Builds the library into `dist/` (JS + `.d.ts` + `theme.css` / `styles.css` / `tokens.css`) |
 | `npm run build:docs` | Builds the docs site into `dist-docs/` |
@@ -304,7 +304,7 @@ npm run dev          # trang docs tại http://localhost:5173
 | Lệnh | Việc làm |
 |---|---|
 | `npm run dev` | Chạy trang docs (Vite) |
-| `npm run typecheck` | Kiểm tra kiểu (`tsc -b`) |
+| `npm run typecheck` | Kiểm tra kiểu (`tsc -b` bằng TypeScript 7, trình biên dịch native) |
 | `npm run lint:classes` | Kiểm tra class Tailwind ở dạng canonical (`node scripts/canonical-classes.mjs --fix` để tự sửa) |
 | `npm run build:lib` | Build thư viện vào `dist/` (JS + `.d.ts` + `theme.css` / `styles.css` / `tokens.css`) |
 | `npm run build:docs` | Build trang docs vào `dist-docs/` |

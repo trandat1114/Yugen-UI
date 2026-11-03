@@ -1,9 +1,56 @@
 import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import ts from "typescript";
-import { build, parseSync, type Plugin, type ResolvedConfig, type ViteDevServer } from "vite";
+import { build, parseSync, type ESTree, type Plugin, type ResolvedConfig, type ViteDevServer } from "vite";
 import { FEEDS, localizeFeed, NEWS_DIR, readNews } from "./scripts/news.mjs";
+
+/**
+ * Đọc mã TS / TSX bằng parser Oxc (native, đi kèm Vite 8) — không chạy file, không cần TypeScript compiler API.
+ * AST dạng ESTree; `start` / `end` tính theo UTF-16 nên dùng thẳng với `code.slice()`.
+ */
+function parseModule(fileName: string, code: string) {
+  return parseSync(fileName, code, { lang: fileName.endsWith(".tsx") ? "tsx" : "ts" });
+}
+
+type Node = ESTree.Node;
+type Expr = ESTree.Expression;
+
+/** Khai báo biến ở cấp file, kèm cờ `export` (`const x = …` và `export const x = …`). */
+function topLevelVariables(program: ESTree.Program): { decl: ESTree.VariableDeclarator; exported: boolean }[] {
+  return program.body.flatMap((stmt) => {
+    const exported = stmt.type === "ExportNamedDeclaration";
+    const decl = exported ? stmt.declaration : stmt;
+    return decl?.type === "VariableDeclaration" ? decl.declarations.map((d) => ({ decl: d, exported })) : [];
+  });
+}
+
+/** Tên khoá của một thuộc tính object (`a: …`, `"a": …`); undefined nếu là khoá tính toán. */
+function propertyKey(prop: ESTree.ObjectProperty): string | undefined {
+  if (prop.computed) return undefined;
+  if (prop.key.type === "Identifier") return prop.key.name;
+  if (prop.key.type === "Literal" && typeof prop.key.value === "string") return prop.key.value;
+  return undefined;
+}
+
+/** Bỏ lớp bọc không đổi giá trị: `( … )`, `as`, `satisfies`, `!`, `<T>…`. */
+function unwrapExpression(node: Expr): Expr {
+  while (
+    node.type === "ParenthesizedExpression" ||
+    node.type === "TSAsExpression" ||
+    node.type === "TSSatisfiesExpression" ||
+    node.type === "TSNonNullExpression" ||
+    node.type === "TSTypeAssertion"
+  )
+    node = node.expression;
+  return node;
+}
+
+/** Chuỗi literal (`"…"` hoặc template không có `${}`); undefined nếu không phải. */
+function stringValue(node: Node): string | undefined {
+  if (node.type === "Literal" && typeof node.value === "string") return node.value;
+  if (node.type === "TemplateLiteral" && node.expressions.length === 0) return node.quasis[0]?.value.cooked ?? undefined;
+  return undefined;
+}
 
 const VIRTUAL_ID = "virtual:yugen-type-exports";
 const RESOLVED_ID = "\0" + VIRTUAL_ID;
@@ -55,26 +102,27 @@ const UI_EXPORTS_RESOLVED = "\0" + UI_EXPORTS_ID;
 export function runtimeExports(file: string, seen = new Set<string>()): string[] {
   if (seen.has(file)) return [];
   seen.add(file);
-  const source = ts.createSourceFile(file, fs.readFileSync(file, "utf8"), ts.ScriptTarget.Latest, false);
+  const { program } = parseModule(file, fs.readFileSync(file, "utf8"));
   const names: string[] = [];
-  const isExported = (node: ts.Node) =>
-    ts.canHaveModifiers(node) && (ts.getModifiers(node) ?? []).some((m) => m.kind === ts.SyntaxKind.ExportKeyword);
-  for (const statement of source.statements) {
-    if (ts.isExportDeclaration(statement)) {
-      if (statement.isTypeOnly) continue;
-      if (statement.exportClause && ts.isNamedExports(statement.exportClause)) {
-        for (const element of statement.exportClause.elements) if (!element.isTypeOnly) names.push(element.name.text);
-      } else if (!statement.exportClause && statement.moduleSpecifier && ts.isStringLiteral(statement.moduleSpecifier)) {
-        const base = path.resolve(path.dirname(file), statement.moduleSpecifier.text);
-        const target = [".tsx", ".ts", "/index.tsx", "/index.ts"].map((ext) => base + ext).find((f) => fs.existsSync(f));
-        if (target) names.push(...runtimeExports(target, seen));
+  const nameOf = (node: ESTree.ModuleExportName) => (node.type === "Identifier" ? node.name : String(node.value));
+  for (const statement of program.body) {
+    if (statement.type === "ExportAllDeclaration") {
+      if (statement.exportKind === "type" || statement.exported) continue;
+      const base = path.resolve(path.dirname(file), statement.source.value);
+      const target = [".tsx", ".ts", "/index.tsx", "/index.ts"].map((ext) => base + ext).find((f) => fs.existsSync(f));
+      if (target) names.push(...runtimeExports(target, seen));
+    } else if (statement.type === "ExportNamedDeclaration") {
+      if (statement.exportKind === "type") continue;
+      for (const spec of statement.specifiers) if (spec.exportKind !== "type") names.push(nameOf(spec.exported));
+      const decl = statement.declaration;
+      if (decl?.type === "VariableDeclaration") {
+        for (const d of decl.declarations) if (d.id.type === "Identifier") names.push(d.id.name);
+      } else if ((decl?.type === "FunctionDeclaration" || decl?.type === "ClassDeclaration" || decl?.type === "TSEnumDeclaration") && decl.id) {
+        names.push(decl.id.name);
       }
-    } else if (isExported(statement)) {
-      if (ts.isVariableStatement(statement)) {
-        for (const d of statement.declarationList.declarations) if (ts.isIdentifier(d.name)) names.push(d.name.text);
-      } else if ((ts.isFunctionDeclaration(statement) || ts.isClassDeclaration(statement) || ts.isEnumDeclaration(statement)) && statement.name) {
-        names.push(statement.name.text);
-      }
+    } else if (statement.type === "ExportDefaultDeclaration") {
+      const decl = statement.declaration;
+      if ((decl.type === "FunctionDeclaration" || decl.type === "ClassDeclaration") && decl.id) names.push(decl.id.name);
     }
   }
   return names;
@@ -133,114 +181,97 @@ export interface DocMeta {
 
 /** Slug có trong `export const en = { … }` của một file src/docs/registry/en/*.ts (đọc tĩnh, không chạy file). */
 export function extractEnSlugs(fileName: string, code: string): string[] {
-  const source = ts.createSourceFile(fileName, code, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
-  for (const stmt of source.statements) {
-    if (!ts.isVariableStatement(stmt)) continue;
-    for (const decl of stmt.declarationList.declarations) {
-      if (!ts.isIdentifier(decl.name) || decl.name.text !== "en" || !decl.initializer) continue;
-      let init = decl.initializer;
-      while (ts.isAsExpression(init) || ts.isSatisfiesExpression(init) || ts.isParenthesizedExpression(init)) init = init.expression;
-      if (!ts.isObjectLiteralExpression(init)) throw new Error(`[yugen-docs-meta] ${path.basename(fileName)} — export const en phải là object literal.`);
-      return init.properties.flatMap((prop) =>
-        ts.isPropertyAssignment(prop) && (ts.isIdentifier(prop.name) || ts.isStringLiteral(prop.name)) ? [prop.name.text] : [],
-      );
-    }
-  }
-  return [];
+  const { program } = parseModule(fileName, code);
+  const decl = topLevelVariables(program).find(({ decl: d }) => d.id.type === "Identifier" && d.id.name === "en" && d.init)?.decl;
+  if (!decl?.init) return [];
+  const init = unwrapExpression(decl.init);
+  if (init.type !== "ObjectExpression") throw new Error(`[yugen-docs-meta] ${path.basename(fileName)} — export const en phải là object literal.`);
+  return init.properties.flatMap((prop) => {
+    if (prop.type !== "Property" || prop.shorthand || prop.method || prop.kind !== "init") return [];
+    const key = propertyKey(prop);
+    return key === undefined ? [] : [key];
+  });
 }
 
 /**
- * Đọc metadata (slug / name / category / lead) của mọi `ComponentDoc` trong một file registry bằng TypeScript compiler API,
- * không chạy file. Theo `export const docs` qua: mảng literal, định danh const cùng file, `Object.values(<object literal>)`, spread.
+ * Đọc metadata (slug / name / category / lead) của mọi `ComponentDoc` trong một file registry bằng parser Oxc, không chạy
+ * file. Theo `export const docs` qua: mảng literal, định danh const cùng file, `Object.values(<object literal>)`, spread.
  * Thuộc tính meta bắt buộc là chuỗi literal — sai thì ném lỗi rõ ràng (build / dev dừng).
  */
 export function extractDocsMeta(fileName: string, code: string): DocMeta[] {
-  const source = ts.createSourceFile(fileName, code, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const { program } = parseModule(fileName, code);
   const base = path.basename(fileName);
-  const where = (node: ts.Node) => {
-    const { line, character } = source.getLineAndCharacterOfPosition(node.getStart(source));
-    return `${base}:${line + 1}:${character + 1}`;
+  const where = (node: Node) => {
+    const before = code.slice(0, node.start).split("\n");
+    return `${base}:${before.length}:${before[before.length - 1].length + 1}`;
   };
-  const fail = (node: ts.Node, message: string): never => {
+  const fail = (node: Node, message: string): never => {
     throw new Error(`[yugen-docs-meta] ${where(node)} — ${message}`);
   };
 
-  const consts = new Map<string, ts.Expression>();
-  let exported: ts.Expression | undefined;
-  for (const stmt of source.statements) {
-    if (!ts.isVariableStatement(stmt)) continue;
-    const isExport = stmt.modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword);
-    for (const decl of stmt.declarationList.declarations) {
-      if (!ts.isIdentifier(decl.name) || !decl.initializer) continue;
-      consts.set(decl.name.text, decl.initializer);
-      if (isExport && decl.name.text === "docs") exported = decl.initializer;
-    }
+  const consts = new Map<string, Expr>();
+  let exported: Expr | undefined;
+  for (const { decl, exported: isExport } of topLevelVariables(program)) {
+    if (decl.id.type !== "Identifier" || !decl.init) continue;
+    consts.set(decl.id.name, decl.init);
+    if (isExport && decl.id.name === "docs") exported = decl.init;
   }
   if (!exported) return [];
 
-  const unwrap = (node: ts.Expression): ts.Expression => {
-    while (
-      ts.isParenthesizedExpression(node) ||
-      ts.isAsExpression(node) ||
-      ts.isSatisfiesExpression(node) ||
-      ts.isNonNullExpression(node) ||
-      ts.isTypeAssertionExpression(node)
-    )
-      node = node.expression;
-    return node;
-  };
-  const resolve = (node: ts.Expression, seen = new Set<string>()): ts.Expression => {
-    node = unwrap(node);
-    if (ts.isIdentifier(node)) {
-      const init = consts.get(node.text);
-      if (!init || seen.has(node.text)) fail(node, `không tìm thấy const "${node.text}" ở cấp file để đọc metadata docs.`);
-      return resolve(init!, new Set(seen).add(node.text));
+  const resolve = (node: Expr, seen = new Set<string>()): Expr => {
+    node = unwrapExpression(node);
+    if (node.type === "Identifier") {
+      const init = consts.get(node.name);
+      if (!init || seen.has(node.name)) fail(node, `không tìm thấy const "${node.name}" ở cấp file để đọc metadata docs.`);
+      return resolve(init!, new Set(seen).add(node.name));
     }
     return node;
   };
 
   /** Danh sách object literal ComponentDoc từ một biểu thức mảng docs. */
-  const docsOf = (expr: ts.Expression): ts.ObjectLiteralExpression[] => {
+  const docsOf = (expr: Expr): ESTree.ObjectExpression[] => {
     const node = resolve(expr);
-    if (ts.isArrayLiteralExpression(node))
-      return node.elements.flatMap((el) => (ts.isSpreadElement(el) ? docsOf(el.expression) : [docOf(el)]));
+    if (node.type === "ArrayExpression")
+      return node.elements.flatMap((el) => (!el ? [] : el.type === "SpreadElement" ? docsOf(el.argument) : [docOf(el)]));
     if (
-      ts.isCallExpression(node) &&
-      ts.isPropertyAccessExpression(node.expression) &&
-      ts.isIdentifier(node.expression.expression) &&
-      node.expression.expression.text === "Object" &&
-      node.expression.name.text === "values" &&
-      node.arguments.length === 1
+      node.type === "CallExpression" &&
+      node.callee.type === "MemberExpression" &&
+      !node.callee.computed &&
+      node.callee.object.type === "Identifier" &&
+      node.callee.object.name === "Object" &&
+      node.callee.property.type === "Identifier" &&
+      node.callee.property.name === "values" &&
+      node.arguments.length === 1 &&
+      node.arguments[0].type !== "SpreadElement"
     )
       return valuesOf(node.arguments[0]);
     return fail(node, "export const docs phải là mảng literal, const cùng file hoặc Object.values(<object literal>).");
   };
-  const valuesOf = (expr: ts.Expression): ts.ObjectLiteralExpression[] => {
+  const valuesOf = (expr: Expr): ESTree.ObjectExpression[] => {
     const node = resolve(expr);
-    if (!ts.isObjectLiteralExpression(node)) return fail(node, "Object.values(...) phải nhận một object literal (Record<string, ComponentDoc>).");
+    if (node.type !== "ObjectExpression") return fail(node, "Object.values(...) phải nhận một object literal (Record<string, ComponentDoc>).");
     return node.properties.flatMap((p) => {
-      if (ts.isPropertyAssignment(p)) return [docOf(p.initializer)];
-      if (ts.isShorthandPropertyAssignment(p)) return [docOf(p.name)];
-      if (ts.isSpreadAssignment(p)) return valuesOf(p.expression);
+      if (p.type === "SpreadElement") return valuesOf(p.argument);
+      if (p.kind === "init" && !p.method) return [docOf(p.value as Expr)];
       return fail(p, "thuộc tính không hỗ trợ trong record docs.");
     });
   };
-  const docOf = (expr: ts.Expression): ts.ObjectLiteralExpression => {
+  const docOf = (expr: Expr): ESTree.ObjectExpression => {
     const node = resolve(expr);
-    return ts.isObjectLiteralExpression(node) ? node : fail(node, "mỗi ComponentDoc phải là object literal.");
+    return node.type === "ObjectExpression" ? node : fail(node, "mỗi ComponentDoc phải là object literal.");
   };
 
   return docsOf(exported).map((obj) => {
     const meta: Partial<DocMeta> = { file: base };
     for (const key of META_KEYS) {
       const prop = obj.properties.find(
-        (p): p is ts.PropertyAssignment => ts.isPropertyAssignment(p) && (ts.isIdentifier(p.name) || ts.isStringLiteral(p.name)) && p.name.text === key,
+        (p): p is ESTree.ObjectProperty => p.type === "Property" && !p.shorthand && p.kind === "init" && !p.method && propertyKey(p) === key,
       );
       if (!prop) fail(obj, `ComponentDoc thiếu thuộc tính "${key}" dạng \`${key}: "…"\`.`);
-      const value = unwrap(prop!.initializer);
-      if (!ts.isStringLiteral(value) && !ts.isNoSubstitutionTemplateLiteral(value))
-        fail(value, `"${key}" phải là chuỗi literal để trích metadata lúc build (không dùng biến / biểu thức).`);
-      meta[key] = (value as ts.StringLiteral).text;
+      const value = unwrapExpression(prop!.value as Expr);
+      const text = stringValue(value);
+      if (text === undefined) fail(value, `"${key}" phải là chuỗi literal để trích metadata lúc build (không dùng biến / biểu thức).`);
+      meta[key] = text;
     }
     return meta as DocMeta;
   });
@@ -326,54 +357,70 @@ export interface MessagesNamespaceDoc {
  * `xMessages` / `xMessagesEn`. Không chạy file, nên mã nguồn hàm giữ nguyên như khi viết.
  */
 export function extractMessages(file: string, folder: string): MessagesNamespaceDoc[] {
-  const source = ts.createSourceFile(file, fs.readFileSync(file, "utf8"), ts.ScriptTarget.Latest, true);
-  const text = (node: ts.Node) => node.getText(source).replace(/\s+/g, " ").trim();
-  const interfaces = new Map<string, ts.InterfaceDeclaration>();
-  const objects = new Map<string, ts.ObjectLiteralExpression>();
+  const code = fs.readFileSync(file, "utf8");
+  const { program, comments } = parseModule(file, code);
+  const raw = (node: Node) => code.slice(node.start, node.end);
+  const text = (node: Node) => raw(node).replace(/\s+/g, " ").trim();
+  const keyText = (node: Node) => raw(node).replace(/^["']|["']$/g, "");
+  const interfaces = new Map<string, ESTree.TSInterfaceDeclaration>();
+  const objects = new Map<string, ESTree.ObjectExpression>();
   const namespaces: { namespace: string; iface: string }[] = [];
 
-  for (const statement of source.statements) {
-    if (ts.isInterfaceDeclaration(statement)) interfaces.set(statement.name.text, statement);
-    else if (ts.isModuleDeclaration(statement) && statement.body && ts.isModuleBlock(statement.body)) {
-      for (const inner of statement.body.statements) {
-        if (!ts.isInterfaceDeclaration(inner) || inner.name.text !== "YugenMessages") continue;
-        for (const member of inner.members) {
-          if (ts.isPropertySignature(member) && member.type && ts.isTypeReferenceNode(member.type))
-            namespaces.push({ namespace: member.name.getText(source), iface: member.type.typeName.getText(source) });
+  for (const statement of program.body) {
+    const decl = statement.type === "ExportNamedDeclaration" ? statement.declaration : statement;
+    if (decl?.type === "TSInterfaceDeclaration") interfaces.set(decl.id.name, decl);
+    else if (decl?.type === "TSModuleDeclaration" && decl.body?.type === "TSModuleBlock") {
+      for (const inner of decl.body.body) {
+        if (inner.type !== "TSInterfaceDeclaration" || inner.id.name !== "YugenMessages") continue;
+        for (const member of inner.body.body) {
+          const type = member.type === "TSPropertySignature" ? member.typeAnnotation?.typeAnnotation : undefined;
+          if (member.type === "TSPropertySignature" && type?.type === "TSTypeReference")
+            namespaces.push({ namespace: raw(member.key), iface: raw(type.typeName) });
         }
       }
-    } else if (ts.isVariableStatement(statement)) {
-      for (const d of statement.declarationList.declarations) {
-        if (ts.isIdentifier(d.name) && d.initializer && ts.isObjectLiteralExpression(d.initializer)) objects.set(d.name.text, d.initializer);
-      }
+    } else if (decl?.type === "VariableDeclaration") {
+      for (const d of decl.declarations) if (d.id.type === "Identifier" && d.init?.type === "ObjectExpression") objects.set(d.id.name, d.init);
     }
   }
 
   const values = (name: string) => {
     const out = new Map<string, string>();
     for (const p of objects.get(name)?.properties ?? []) {
-      if (ts.isPropertyAssignment(p)) {
-        const v = p.initializer;
-        out.set(p.name.getText(source).replace(/^["']|["']$/g, ""), ts.isStringLiteralLike(v) ? JSON.stringify(v.text) : text(v));
-      } else if (ts.isShorthandPropertyAssignment(p)) out.set(p.name.text, p.name.text);
+      if (p.type !== "Property" || p.method || p.kind !== "init") continue;
+      if (p.shorthand) {
+        out.set(raw(p.key), raw(p.key));
+        continue;
+      }
+      const literal = stringValue(p.value);
+      out.set(keyText(p.key), literal !== undefined ? JSON.stringify(literal) : text(p.value));
     }
     return out;
+  };
+
+  /** Phần chú thích của các khối JSDoc liền ngay trước `node` (bỏ dấu `*` đầu dòng và các thẻ `@…`). */
+  const jsDoc = (node: Node) => {
+    const blocks: string[] = [];
+    let end = node.start;
+    for (let i = comments.length - 1; i >= 0; i--) {
+      const c = comments[i];
+      if (c.end > end) continue;
+      if (c.type !== "Block" || !c.value.startsWith("*") || code.slice(c.end, end).trim() !== "") break;
+      const lines = c.value.slice(1).split("\n").map((line) => line.replace(/^\s*\*?\s?/, ""));
+      const tag = lines.findIndex((line) => line.trimStart().startsWith("@"));
+      blocks.unshift((tag === -1 ? lines : lines.slice(0, tag)).join(" "));
+      end = c.start;
+    }
+    return blocks.join(" ").replace(/\s+/g, " ").trim();
   };
 
   return namespaces.map(({ namespace, iface }) => {
     const vi = values(`${namespace}Messages`);
     const en = values(`${namespace}MessagesEn`);
     const keys: MessageKeyDoc[] = [];
-    for (const member of interfaces.get(iface)?.members ?? []) {
-      if (!ts.isPropertySignature(member) || !member.type) continue;
-      const key = member.name.getText(source).replace(/^["']|["']$/g, "");
-      const doc = ts
-        .getJSDocCommentsAndTags(member)
-        .map((d) => (typeof d.comment === "string" ? d.comment : ""))
-        .join(" ")
-        .replace(/\s+/g, " ")
-        .trim();
-      keys.push({ key, type: text(member.type), doc, vi: vi.get(key) ?? "", en: en.get(key) ?? "" });
+    for (const member of interfaces.get(iface)?.body.body ?? []) {
+      if (member.type !== "TSPropertySignature" || !member.typeAnnotation) continue;
+      const key = keyText(member.key);
+      keys.push({ key, type: text(member.typeAnnotation.typeAnnotation), doc: jsDoc(member), vi: vi.get(key) ?? "", en: en.get(key) ?? "" });
     }
     return { namespace, folder, keys };
   });
@@ -555,11 +602,7 @@ const isAstNode = (v: unknown): v is AstNode => typeof v === "object" && v !== n
 const childrenOf = (node: AstNode): AstNode[] =>
   Object.values(node).flatMap((v) => (Array.isArray(v) ? v.filter(isAstNode) : isAstNode(v) ? [v] : []));
 
-const propNameOf = (p: AstNode): string | undefined => {
-  if (p.type !== "Property" || p.computed) return undefined;
-  const key = p.key as AstNode & { name?: string; value?: unknown };
-  return key.type === "Identifier" ? key.name : key.type === "Literal" && typeof key.value === "string" ? key.value : undefined;
-};
+const propNameOf = (p: AstNode) => (p.type === "Property" ? propertyKey(p as unknown as ESTree.ObjectProperty) : undefined);
 const jsxNameOf = (name: AstNode): string =>
   name.type === "JSXNamespacedName" ? `${jsxNameOf(name.namespace as AstNode)}:${jsxNameOf(name.name as AstNode)}` : String(name.name);
 
@@ -959,7 +1002,7 @@ export function yugenDemoLang(root: string): Plugin {
   const isBarrel = (file: string) => {
     let pure = barrels.get(file);
     if (pure === undefined) {
-      const { program, errors } = parseSync(file, fs.readFileSync(file, "utf8"), { lang: /\.tsx$/.test(file) ? "tsx" : /\.m?ts$/.test(file) ? "ts" : "js" });
+      const { program, errors } = parseModule(file, fs.readFileSync(file, "utf8"));
       const body = program.body as unknown as { type: string; declaration?: { type: string } | null }[];
       pure =
         !errors.length &&
