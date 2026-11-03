@@ -142,6 +142,10 @@ in `src/docs/i18n/en/concepts.ts`. English component pages: add the entry to `sr
 they are); the page is marked translated at build time and `registry/en.test.ts` checks the entry is complete.
 Untranslated pages show a notice and the Vietnamese original.
 
+Demos, code samples and blocks are written in English. Vietnamese pages (`/vi/`) swap their text through
+`src/docs/registry/vi/<registry file>.json` (blocks: `src/docs/block-library/vi/<file>.json`): English string →
+Vietnamese, exact matches only. `registry/vi.test.ts` lists demo strings that have no entry.
+
 Copy (docs, templates, CLI messages, changesets) follows wiki › *Writing*: short and clear, no repeating what the UI
 next to it already says, package names as users see them.
 
@@ -393,6 +397,10 @@ Anh: `src/docs/i18n/en/components.ts` (test bắt buộc đủ mọi slug). Tran
 `src/docs/i18n/en/concepts.ts`. Trang component tiếng Anh: thêm mục vào `src/docs/registry/en/<file registry>.ts` (mô
 tả, tiêu đề ví dụ đúng thứ tự, nên / không nên, mô tả cho mọi prop; demo và code giữ nguyên); trang được đánh dấu đã
 dịch lúc build và `registry/en.test.ts` kiểm tra mục đủ. Trang chưa dịch tự hiện thông báo và nội dung gốc.
+
+Demo, code mẫu và block viết bằng tiếng Anh. Trang tiếng Việt (`/vi/`) đổi chữ qua
+`src/docs/registry/vi/<file registry>.json` (block: `src/docs/block-library/vi/<file>.json`): chuỗi tiếng Anh → tiếng
+Việt, khớp nguyên văn. `registry/vi.test.ts` liệt kê chuỗi demo chưa có mục.
 
 Viết nội dung (docs, template, thông báo CLI, changeset) theo wiki › *Writing*: ngắn, rõ, không lặp lại thứ đã hiện bên cạnh, gọi đúng tên gói.
 

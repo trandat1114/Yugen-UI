@@ -1,13 +1,14 @@
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowRight16Regular } from "@fluentui/react-icons";
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, SearchBox, ToggleGroup, ToggleGroupItem, useMediaQuery } from "@/components/ui";
-import { COMPONENTS_BY_CATEGORY, readComponentDoc } from "../registry";
+import { COMPONENTS_BY_CATEGORY, readComponentDemos } from "../registry";
 import { useLocale } from "../i18n";
 import { docsPath } from "../router";
 
-/** Demo hero của một component — nạp file registry chứa nó (treo tới khi xong; lỗi → để trống). */
+/** Demo hero của một component — nạp file registry chứa nó theo ngôn ngữ trang (treo tới khi xong; lỗi → để trống). */
 function HeroPreview({ slug }: { slug: string }) {
-  const { doc } = readComponentDoc(slug);
+  const { locale } = useLocale();
+  const { doc } = readComponentDemos(slug, locale);
   return <>{doc?.hero.render()}</>;
 }
 

@@ -1,0 +1,19 @@
+{
+  "Sakura Assistant": "Trợ lý Sakura",
+  "Read 4 team calendars": "Đọc lịch 4 thành viên",
+  "Find a free slot": "Tìm khung giờ trống",
+  "Draft the meeting invite": "Soạn lời mời họp",
+  "Everyone is free on Thursday, 2:00–3:00 PM. I've drafted the invite — just review it and click Send.": "Thứ Năm 14:00–15:00 cả nhóm đều rảnh. Mình đã soạn sẵn lời mời — bạn chỉ cần xem lại và bấm Gửi.",
+  "Schedule a team meeting this week": "Xếp lịch họp nhóm tuần này",
+  "Summarize unread email": "Tóm tắt email chưa đọc",
+  "Hi! I can schedule meetings, summarize email or look things up in your docs.": "Xin chào! Mình có thể xếp lịch, tóm tắt email hoặc tra tài liệu giúp bạn.",
+  "${t.text} (stopped)": "${t.text} (đã dừng)",
+  "Stopped at your request.": "Đã dừng theo yêu cầu.",
+  "AI can make mistakes. Check important info.": "AI có thể nhầm — hãy kiểm tra thông tin quan trọng.",
+  "Close assistant": "Đóng trợ lý",
+  "Conversation with the assistant": "Hội thoại với trợ lý",
+  "You": "Bạn",
+  "Steps taken": "Các bước đã làm",
+  "Ask the assistant…": "Hỏi trợ lý…",
+  "Attach a file": "Đính kèm tệp"
+}

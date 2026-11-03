@@ -1,0 +1,7 @@
+{
+  "Book a consultation": "Đặt lịch tư vấn",
+  "Pick a day and a time that works for you (30 minutes).": "Chọn ngày và khung giờ phù hợp (30 phút).",
+  "Time": "Khung giờ",
+  "Confirm ${slot} · ${date.toLocaleDateString(\"en-US\", { dateStyle: \"medium\" })}": "Xác nhận ${slot} · ${date.toLocaleDateString(\"vi-VN\")}",
+  "Pick a day": "Chọn ngày"
+}

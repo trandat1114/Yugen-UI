@@ -21,27 +21,38 @@ export const COMPONENTS_BY_CATEGORY: { category: ComponentCategory; items: Compo
   items: COMPONENTS_META.filter((c) => c.category === category),
 })).filter((g) => g.items.length > 0);
 
-const loaders = import.meta.glob<{ docs?: ComponentDoc[] }>("./*.tsx");
+/**
+ * Ngôn ngữ của demo + code mẫu. "en" = file gốc. "vi" = cùng file qua `?lang=vi`: plugin yugenDemoLang (vite.plugins.ts) thay
+ * chữ demo theo từ điển vi/<file>.json lúc build — chunk riêng, nạp thay cho file gốc, nên trang tiếng Anh không đổi gì.
+ */
+export type DemoLang = "en" | "vi";
+
+type RegistryModule = { docs?: ComponentDoc[] };
+const loaders: Record<DemoLang, Record<string, () => Promise<RegistryModule>>> = {
+  en: import.meta.glob<RegistryModule>("./*.tsx"),
+  vi: import.meta.glob<RegistryModule>("./*.tsx", { query: "?lang=vi" }),
+};
 const files = new Map<string, Promise<ComponentDoc[]>>();
 
-/** Nạp một file registry (cache theo file; lỗi → bỏ cache để lần sau thử lại). */
-function loadFile(key: string): Promise<ComponentDoc[]> {
-  let promise = files.get(key);
+/** Nạp một file registry (cache theo file + ngôn ngữ demo; lỗi → bỏ cache để lần sau thử lại). */
+function loadFile(key: string, lang: DemoLang = "en"): Promise<ComponentDoc[]> {
+  const cacheKey = `${lang}:${key}`;
+  let promise = files.get(cacheKey);
   if (!promise) {
-    const load = loaders[key];
+    const load = loaders[lang][key];
     if (!load) return Promise.reject(new Error(`Không có file registry "${key}".`));
     promise = load().then((m) => m.docs ?? []);
-    promise.catch(() => files.delete(key));
-    files.set(key, promise);
+    promise.catch(() => files.delete(cacheKey));
+    files.set(cacheKey, promise);
   }
   return promise;
 }
 
-/** Doc đầy đủ (demo + code mẫu) của một component — nạp file registry chứa nó khi cần. */
-export async function loadComponentDoc(slug: string): Promise<ComponentDoc> {
+/** Doc đầy đủ (demo + code mẫu) của một component — nạp file registry chứa nó khi cần. `lang`: ngôn ngữ của demo. */
+export async function loadComponentDoc(slug: string, lang: DemoLang = "en"): Promise<ComponentDoc> {
   const entry = COMPONENT_META_BY_SLUG[slug];
   if (!entry) throw new Error(`Không tìm thấy component "${slug}".`);
-  const doc = (await loadFile(`./${entry.file}`)).find((d) => d.slug === slug);
+  const doc = (await loadFile(`./${entry.file}`, lang)).find((d) => d.slug === slug);
   if (!doc) throw new Error(`"${slug}" có trong metadata (${entry.file}) nhưng file không export doc này.`);
   return doc;
 }
@@ -81,33 +92,32 @@ export function translateComponentDoc(doc: ComponentDoc, en: ComponentDocEn): Co
 }
 
 /** Mọi doc của mọi file registry (scripts / test) — cùng thứ tự với COMPONENTS_META. */
-export async function loadAllComponentDocs(): Promise<ComponentDoc[]> {
-  const all = await Promise.all(Object.keys(loaders).map(loadFile));
+export async function loadAllComponentDocs(lang: DemoLang = "en"): Promise<ComponentDoc[]> {
+  const all = await Promise.all(Object.keys(loaders[lang]).map((key) => loadFile(key, lang)));
   return all.flat().sort(byOrder);
 }
 
 type Entry = { status: "pending"; promise: Promise<void> } | { status: "done"; doc: ComponentDoc } | { status: "error"; error: unknown };
 const entries = new Map<string, Entry>();
 
-/** Doc theo ngôn ngữ: tiếng Anh = bản gốc + phần chữ đã dịch (nếu component đã dịch). */
-async function loadLocalizedDoc(slug: string, locale: Locale): Promise<ComponentDoc> {
-  if (locale !== "en") return loadComponentDoc(slug);
+/**
+ * Doc theo ngôn ngữ trang: tiếng Việt = file `?lang=vi` (chữ trang gốc + demo tiếng Việt); tiếng Anh = bản gốc + phần chữ đã
+ * dịch (nếu component đã dịch). "demo-en": chỉ cần demo tiếng Anh (trang chủ) — không nạp phần chữ en/.
+ */
+type Variant = Locale | "demo-en";
+
+async function loadLocalizedDoc(slug: string, variant: Variant): Promise<ComponentDoc> {
+  if (variant === "vi") return loadComponentDoc(slug, "vi");
+  if (variant === "demo-en") return loadComponentDoc(slug);
   const [doc, en] = await Promise.all([loadComponentDoc(slug), loadComponentDocEn(slug)]);
   return en ? translateComponentDoc(doc, en) : doc;
 }
 
-/**
- * Đọc doc trong render, dưới `<Suspense>`: đang tải → treo (throw promise); xong → `{ doc }`; lỗi → `{ error }`
- * (trả về thay vì ném để trang hiện ErrorState có nút thử lại — gọi `retryComponentDoc` trước khi render lại).
- */
-export function readComponentDoc(
-  slug: string,
-  locale: Locale = "vi",
-): { doc: ComponentDoc; error?: undefined } | { doc?: undefined; error: unknown } {
-  const key = `${locale}:${slug}`;
+function read(slug: string, variant: Variant): { doc: ComponentDoc; error?: undefined } | { doc?: undefined; error: unknown } {
+  const key = `${variant}:${slug}`;
   let entry = entries.get(key);
   if (!entry) {
-    const promise = loadLocalizedDoc(slug, locale).then(
+    const promise = loadLocalizedDoc(slug, variant).then(
       (doc) => void entries.set(key, { status: "done", doc }),
       (error: unknown) => void entries.set(key, { status: "error", error }),
     );
@@ -116,6 +126,19 @@ export function readComponentDoc(
   }
   if (entry.status === "pending") throw entry.promise;
   return entry.status === "done" ? { doc: entry.doc } : { error: entry.error };
+}
+
+/**
+ * Đọc doc trong render, dưới `<Suspense>`: đang tải → treo (throw promise); xong → `{ doc }`; lỗi → `{ error }`
+ * (trả về thay vì ném để trang hiện ErrorState có nút thử lại — gọi `retryComponentDoc` trước khi render lại).
+ */
+export function readComponentDoc(slug: string, locale: Locale = "vi") {
+  return read(slug, locale);
+}
+
+/** Như readComponentDoc nhưng chỉ dùng demo (trang chủ): tiếng Việt dùng chung bản của trang component, tiếng Anh là file gốc. */
+export function readComponentDemos(slug: string, locale: Locale) {
+  return read(slug, locale === "vi" ? "vi" : "demo-en");
 }
 
 /** Nạp trước doc của một trang component (main.tsx, trước lần render đầu) — `readComponentDoc` sau đó không treo. */

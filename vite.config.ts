@@ -2,12 +2,12 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "node:path";
-import { yugenBootSplash, yugenDocsMeta, yugenMessages, yugenNews, yugenTypeExports, yugenUiExports } from "./vite.plugins.ts";
+import { yugenBootSplash, yugenDemoLang, yugenDocsMeta, yugenMessages, yugenNews, yugenTypeExports, yugenUiExports } from "./vite.plugins.ts";
 
 export default defineConfig({
   // GitHub Pages phục vụ site ở /Yugen-UI/ — workflow pages.yml đặt DOCS_BASE; dev & preview giữ "/".
   base: process.env.DOCS_BASE ?? "/",
-  plugins: [react(), tailwindcss(), yugenTypeExports(import.meta.dirname), yugenUiExports(import.meta.dirname), yugenDocsMeta(import.meta.dirname), yugenMessages(import.meta.dirname), yugenNews(import.meta.dirname), yugenBootSplash(import.meta.dirname)],
+  plugins: [react(), tailwindcss(), yugenTypeExports(import.meta.dirname), yugenUiExports(import.meta.dirname), yugenDocsMeta(import.meta.dirname), yugenDemoLang(import.meta.dirname), yugenMessages(import.meta.dirname), yugenNews(import.meta.dirname), yugenBootSplash(import.meta.dirname)],
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),
@@ -22,6 +22,9 @@ export default defineConfig({
   },
   build: {
     outDir: "dist-docs",
+    // Block tiếng Việt (/vi/blocks, src/docs/pages/blocksVi.ts) chỉ nạp từ trang Blocks, nơi mọi chunk nó cần đã có sẵn: bỏ danh
+    // sách preload để chunk của trang Blocks (cả bản tiếng Anh) không phình thêm.
+    modulePreload: { resolveDependencies: (filename, deps) => (/(^|\/)blocksVi-[\w-]+\.js$/.test(filename) ? [] : deps) },
     // Demo + code mẫu nạp lười: mỗi file src/docs/registry/*.tsx thành một chunk riêng (registry/index.ts); entry chỉ giữ metadata.
     rolldownOptions: {
       output: {

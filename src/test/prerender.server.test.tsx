@@ -71,6 +71,18 @@ describe.skipIf(!version.startsWith("19."))("prerender docs", () => {
     expect((await render({ kind: "concept", slug: "cli" })).html).toContain('href="/concepts/shadcn-registry"');
   });
 
+  it("demo và block tiếng Việt có sẵn trong HTML prerender của /vi/, bản tiếng Anh giữ nguyên (#300)", async () => {
+    const vi = await render({ kind: "component", slug: "button" }, "vi");
+    expect(vi.html).toContain("Lưu thay đổi");
+    expect(vi.html).not.toContain("Save changes");
+    expect((await render({ kind: "component", slug: "button" }, "en")).html).toContain("Save changes");
+
+    const blocksVi = await render({ kind: "blocks" }, "vi");
+    expect(blocksVi.html).toContain("Chào mừng trở lại");
+    expect(blocksVi.html).not.toContain("Welcome back");
+    expect((await render({ kind: "blocks" }, "en")).html).toContain("Welcome back");
+  }, 30_000);
+
   it("nhóm trang trên ảnh chia sẻ", async () => {
     expect((await render({ kind: "component", slug: "button" }, "vi")).card.section).toBe("Component · Hành động");
     expect((await render({ kind: "concept", slug: "component-labelling" }, "vi")).card.section).toBe("Khái niệm · Khả năng tiếp cận");

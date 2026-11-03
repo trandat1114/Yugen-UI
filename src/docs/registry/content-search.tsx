@@ -183,7 +183,7 @@ export const docs: ComponentDoc[] = [
     examples: [
       {
         title: "Nhóm, icon & tìm gần đây",
-        description: "minChars={0} mở danh sách “Recent searches” ngay khi focus; gợi ý có thể bị disabled.",
+        description: "minChars={0} mở danh sách “Tìm gần đây” ngay khi focus; gợi ý có thể bị disabled.",
         code: source("AutocompleteGroups"),
         render: () => <AutocompleteGroups />,
       },

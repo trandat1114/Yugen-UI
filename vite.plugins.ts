@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import ts from "typescript";
-import type { Plugin, ResolvedConfig, ViteDevServer } from "vite";
+import { build, parseSync, type Plugin, type ResolvedConfig, type ViteDevServer } from "vite";
 import { FEEDS, localizeFeed, NEWS_DIR, readNews } from "./scripts/news.mjs";
 
 const VIRTUAL_ID = "virtual:yugen-type-exports";
@@ -511,6 +511,534 @@ ${read("splash.html")}`),
       if (!fileName) return html;
       const loader = `(function () { var r = document.documentElement; if (r.hasAttribute("data-prerendered") && !r.hasAttribute("data-pending")) return; var s = document.createElement("script"); s.src = ${JSON.stringify(config.base + fileName)}; document.head.appendChild(s); })();`;
       return [{ tag: "script", children: loader, injectTo: "head" }];
+    },
+  };
+}
+
+/* ---------- Demo tiếng Việt cho trang /vi/ (#300) ---------- */
+
+/**
+ * Loại chuỗi trong mã demo mà từ điển thay được: chữ JSX (khoá đã gộp khoảng trắng như React), chuỗi literal, template literal
+ * (khoá là phần thô giữa hai dấu `, giữ nguyên `${…}`) và chú thích một dòng.
+ */
+export type DemoTextKind = "jsx" | "string" | "template" | "comment";
+
+export interface DemoText {
+  kind: DemoTextKind;
+  /** Khoá tra từ điển. */
+  text: string;
+  /** Đoạn mã nguồn được thay: [start, end). */
+  start: number;
+  end: number;
+  /** Nằm trong code mẫu (template literal của `code` / `setup` / hằng `…_CODE`), không phải mã chạy. */
+  inCode: boolean;
+  /** Attribute JSX / thuộc tính object chứa chuỗi; "children" với chữ JSX; "" nếu không có. */
+  context: string;
+  /** Mã thay vào cho bản dịch `value` (đã escape theo vị trí); ném lỗi nếu bản dịch không đặt được vào vị trí đó. */
+  replace: (value: string) => string;
+}
+
+/** Phần chữ của trang (ComponentDoc / Example) — dịch qua en/<file>.ts và bản gốc tiếng Việt, không qua từ điển demo. */
+const DOC_PAGE_KEYS = new Set(["slug", "name", "category", "lead", "description", "importCode", "dos", "donts", "props"]);
+const EXAMPLE_PAGE_KEYS = new Set(["title", "description", "lang", "wide"]);
+/** Template literal là code mẫu: giá trị `code` / `setup`, hằng `…_CODE` / `…_SETUP`. Nội dung được phân tích như TSX. */
+const CODE_KEYS = new Set(["code", "setup"]);
+const CODE_CONST_RE = /_(?:CODE|SETUP)$/;
+/** Tham số là tên vùng `#region` / tên khai báo trong mã nguồn file (registry), không phải chữ. */
+const SOURCE_CALLS = new Set(["source", "declarationsOf"]);
+/** Nút bọc giữa một chuỗi và attribute / thuộc tính chứa nó. */
+const WRAPPERS = new Set(["ParenthesizedExpression", "ConditionalExpression", "LogicalExpression", "BinaryExpression", "ArrayExpression", "TSAsExpression", "TSSatisfiesExpression"]);
+
+/** Nút AST ESTree / TS-ESTree của Oxc (`parseSync` của Vite): `start` / `end` là vị trí UTF-16 trong mã nguồn. */
+type AstNode = { type: string; start: number; end: number; [key: string]: unknown };
+const isAstNode = (v: unknown): v is AstNode => typeof v === "object" && v !== null && typeof (v as AstNode).type === "string";
+const childrenOf = (node: AstNode): AstNode[] =>
+  Object.values(node).flatMap((v) => (Array.isArray(v) ? v.filter(isAstNode) : isAstNode(v) ? [v] : []));
+
+const propNameOf = (p: AstNode): string | undefined => {
+  if (p.type !== "Property" || p.computed) return undefined;
+  const key = p.key as AstNode & { name?: string; value?: unknown };
+  return key.type === "Identifier" ? key.name : key.type === "Literal" && typeof key.value === "string" ? key.value : undefined;
+};
+const jsxNameOf = (name: AstNode): string =>
+  name.type === "JSXNamespacedName" ? `${jsxNameOf(name.namespace as AstNode)}:${jsxNameOf(name.name as AstNode)}` : String(name.name);
+
+/** Giá trị của phần thô trong template literal (escape đã giải, CRLF → LF) + vị trí thô của từng ký tự; `map[text.length]` = cuối. */
+function cookTemplate(raw: string): { text: string; map: number[] } {
+  let text = "";
+  const map: number[] = [];
+  const push = (s: string, at: number) => {
+    for (let k = 0; k < s.length; k++) map.push(at);
+    text += s;
+  };
+  const SIMPLE: Record<string, string> = { n: "\n", t: "\t", r: "\r", b: "\b", f: "\f", v: "\v", 0: "\0" };
+  for (let i = 0; i < raw.length; ) {
+    const c = raw[i];
+    if (c === "\r") {
+      push("\n", i);
+      i += raw[i + 1] === "\n" ? 2 : 1;
+    } else if (c !== "\\") {
+      push(c, i);
+      i++;
+    } else {
+      const n = raw[i + 1];
+      if (n === "\r") i += raw[i + 2] === "\n" ? 3 : 2;
+      else if (n === "\n" || n === " " || n === " ") i += 2;
+      else if (n === "x") {
+        push(String.fromCharCode(parseInt(raw.slice(i + 2, i + 4), 16)), i);
+        i += 4;
+      } else if (n === "u" && raw[i + 2] === "{") {
+        const close = raw.indexOf("}", i);
+        push(String.fromCodePoint(parseInt(raw.slice(i + 3, close), 16)), i);
+        i = close + 1;
+      } else if (n === "u") {
+        push(String.fromCharCode(parseInt(raw.slice(i + 2, i + 6), 16)), i);
+        i += 6;
+      } else {
+        push(SIMPLE[n] ?? n, i);
+        i += 2;
+      }
+    }
+  }
+  map.push(raw.length);
+  return { text, map };
+}
+
+const escapeTemplate = (s: string) => s.replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\$\{/g, "\\${");
+
+/** Biến dùng trong các `${…}` của một template (bỏ chuỗi và tên thuộc tính sau dấu chấm). */
+const templateIdentifiers = (s: string) =>
+  new Set(
+    [...s.matchAll(/\$\{((?:[^{}]|\{[^{}]*\})*)\}/g)]
+      .map((m) => m[1].replace(/"[^"]*"|'[^']*'/g, '""'))
+      .join(" ")
+      .match(/(?<![.\w$])[A-Za-z_$][\w$]*/g) ?? [],
+  );
+
+/**
+ * Bản dịch của template literal có `${…}`: được viết lại biểu thức (định dạng ngày giờ / số kiểu Việt) nhưng chỉ dùng các biến
+ * mà bản tiếng Anh dùng — biến lạ (đổi tên sau khi dịch) sẽ lỗi lúc chạy. Trả về lỗi, hoặc undefined nếu hợp lệ.
+ */
+export function templateTranslationError(en: string, vi: string): string | undefined {
+  if (/(^|[^\\])`/.test(vi)) return `bản dịch template không được chứa dấu \`: ${vi}`;
+  const known = templateIdentifiers(en);
+  const extra = [...templateIdentifiers(vi)].filter((name) => !known.has(name) && !/^(true|false|null|undefined|new|typeof|Math|Number|String|Date|Intl)$/.test(name));
+  return extra.length ? `bản dịch template dùng biến không có trong bản tiếng Anh (${extra.join(", ")}): ${vi}` : undefined;
+}
+
+type Parsed = { program: AstNode; comments: { type: string; start: number; end: number }[]; shift: number };
+
+/** Phân tích TSX bằng Oxc; lỗi cú pháp → undefined. `wrap`: bọc trong `<>…</>` (code mẫu là nhiều phần tử JSX liền nhau). */
+function parseTsx(code: string, offset: number, wrap: boolean): Parsed | undefined {
+  const pre = wrap ? "<>\n" : "";
+  const result = parseSync("demo.tsx", wrap ? `${pre}${code}\n</>` : code, { lang: "tsx" });
+  if (result.errors.length) return undefined;
+  return { program: result.program as unknown as AstNode, comments: result.comments, shift: offset - pre.length };
+}
+
+/**
+ * Code mẫu thường không phải một module hoàn chỉnh: vài phần tử JSX liền nhau, hay khai báo rồi JSX. Thử nguyên khối, bọc
+ * `<>…</>`, rồi tách theo dòng trống và ghép dần các đoạn liền nhau tới khi phân tích được. Đoạn không phải TSX (CSS, lệnh
+ * shell…) vào `unparsed`.
+ */
+function parseCode(code: string, unparsed: string[]): Parsed[] {
+  const whole = parseTsx(code, 0, false) ?? parseTsx(code, 0, true);
+  if (whole) return [whole];
+  const bounds = [0, ...[...code.matchAll(/\n[ \t]*\r?\n/g)].map((m) => m.index + m[0].length), code.length];
+  const out: Parsed[] = [];
+  for (let i = 0; i < bounds.length - 1; ) {
+    let j = i + 1;
+    let parsed: Parsed | undefined;
+    for (; j < bounds.length && !parsed; j++) {
+      const part = code.slice(bounds[i], bounds[j]);
+      parsed = parseTsx(part, bounds[i], false) ?? parseTsx(part, bounds[i], true);
+      if (parsed) break;
+    }
+    if (parsed) {
+      out.push(parsed);
+      i = j;
+    } else {
+      if (code.slice(bounds[i], bounds[i + 1]).trim()) unparsed.push(code.slice(bounds[i], bounds[i + 1]).trim());
+      i++;
+    }
+  }
+  return out;
+}
+
+function scanDemo(
+  code: string,
+  inCode: boolean,
+): { texts: DemoText[]; rawImports: { start: number; end: number; value: string }[]; unparsed: string[] } {
+  const texts: DemoText[] = [];
+  const rawImports: { start: number; end: number; value: string }[] = [];
+  const unparsed: string[] = [];
+  let segments: Parsed[];
+  if (inCode) segments = parseCode(code, unparsed);
+  else {
+    const result = parseSync("demo.tsx", code, { lang: "tsx" });
+    if (result.errors.length) throw new Error(`không phân tích được mã nguồn: ${result.errors[0].message}`);
+    segments = [{ program: result.program as unknown as AstNode, comments: result.comments, shift: 0 }];
+  }
+
+  for (const { program, comments, shift } of segments) {
+    const parents = new Map<AstNode, AstNode>();
+    const skipped: [number, number][] = [];
+    const add = (t: Omit<DemoText, "inCode">) => texts.push({ ...t, inCode });
+    const skip = (node: AstNode) => void skipped.push([node.start + shift, node.end + shift]);
+
+    /** Attribute / thuộc tính bao quanh một chuỗi (qua ngoặc, `? :`, `??`, mảng, `{…}` của attribute JSX). */
+    const contextOf = (node: AstNode): string => {
+      let child = node;
+      let p = parents.get(node);
+      while (p && (WRAPPERS.has(p.type) || (p.type === "JSXExpressionContainer" && parents.get(p)?.type === "JSXAttribute"))) {
+        child = p;
+        p = parents.get(p);
+      }
+      if (!p) return "";
+      if (p.type === "JSXAttribute") return jsxNameOf(p.name as AstNode);
+      if (p.type === "Property" && p.value === child) return propNameOf(p) ?? "";
+      if (p.type === "JSXExpressionContainer") return "children";
+      return "";
+    };
+
+    const addString = (node: AstNode & { value: string }) => {
+      const start = node.start + shift;
+      const quote = code[start];
+      const attr = parents.get(node)?.type === "JSXAttribute";
+      add({
+        kind: "string",
+        text: node.value,
+        start,
+        end: node.end + shift,
+        context: contextOf(node),
+        replace: (v) => {
+          if (attr) {
+            // Chuỗi trong attribute JSX không có escape: đổi dấu nháy nếu bản dịch chứa dấu nháy đang dùng.
+            const other = quote === '"' ? "'" : '"';
+            const q = !v.includes(quote) ? quote : !v.includes(other) ? other : "";
+            if (!q) throw new Error(`attribute JSX không chứa được cả hai loại dấu nháy: ${v}`);
+            return q + v + q;
+          }
+          return quote + v.replace(/\\/g, "\\\\").replaceAll(quote, "\\" + quote).replace(/\n/g, "\\n").replace(/\r/g, "\\r") + quote;
+        },
+      });
+    };
+
+    const addJsx = (node: AstNode) => {
+      const raw = code.slice(node.start + shift, node.end + shift);
+      const text = raw
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .join(" ");
+      if (!text) return;
+      add({
+        kind: "jsx",
+        text,
+        start: node.start + shift + (raw.length - raw.trimStart().length),
+        end: node.end + shift - (raw.length - raw.trimEnd().length),
+        context: "children",
+        replace: (v) => {
+          if (/[{}<>\r\n]/.test(v)) throw new Error(`chữ JSX không được chứa { } < > hay xuống dòng: ${v}`);
+          return v;
+        },
+      });
+    };
+
+    /** Phần thô giữa các `${…}` của một template literal: [đầu, cuối) trong `code`. */
+    const quasiSpans = (node: AstNode) =>
+      (node.quasis as (AstNode & { tail: boolean })[]).map((q) => [q.start + shift + 1, q.end + shift - (q.tail ? 1 : 2)] as const);
+
+    const addTemplate = (node: AstNode) => {
+      const start = node.start + shift;
+      const end = node.end + shift;
+      if ((node.expressions as AstNode[]).length === 0) {
+        const [[from, to]] = quasiSpans(node);
+        add({ kind: "template", text: cookTemplate(code.slice(from, to)).text, start, end, context: contextOf(node), replace: (v) => "`" + escapeTemplate(v) + "`" });
+        return;
+      }
+      const text = code.slice(start + 1, end - 1);
+      add({
+        kind: "template",
+        text,
+        start,
+        end,
+        context: contextOf(node),
+        replace: (v) => {
+          const error = templateTranslationError(text, v);
+          if (error) throw new Error(error);
+          return "`" + v + "`";
+        },
+      });
+    };
+
+    /** Template literal là code mẫu: phân tích nội dung như TSX (`${…}` thay bằng định danh giữ chỗ) rồi đổi vị trí về file. */
+    const addCode = (node: AstNode) => {
+      let text = "";
+      const pieces: { from: number; to: number; at: number; map: number[] }[] = [];
+      quasiSpans(node).forEach(([from, to], i) => {
+        const cooked = cookTemplate(code.slice(from, to));
+        if (i > 0) text += `__${i}__`;
+        pieces.push({ from: text.length, to: text.length + cooked.text.length, at: from, map: cooked.map });
+        text += cooked.text;
+      });
+      const inner = scanDemo(text, true);
+      unparsed.push(...inner.unparsed);
+      for (const t of inner.texts) {
+        const piece = pieces.find((p) => t.start >= p.from && t.end <= p.to);
+        if (!piece) continue;
+        texts.push({
+          ...t,
+          start: piece.at + piece.map[t.start - piece.from],
+          end: piece.at + piece.map[t.end - piece.from],
+          replace: (v) => escapeTemplate(t.replace(v)),
+        });
+      }
+    };
+
+    /** Giá trị của `code` / `setup` / hằng `…_CODE`: template literal là code mẫu, phần khác duyệt như thường. */
+    const visitCode = (node: AstNode, parent: AstNode): void => {
+      parents.set(node, parent);
+      if (node.type === "TemplateLiteral") {
+        addCode(node);
+        for (const expr of node.expressions as AstNode[]) visit(expr, node);
+      } else if (WRAPPERS.has(node.type) && node.type !== "ArrayExpression") {
+        for (const child of childrenOf(node)) visitCode(child, node);
+      } else visit(node, parent);
+    };
+
+    const visit = (node: AstNode, parent?: AstNode): void => {
+      if (parent) parents.set(node, parent);
+      switch (node.type) {
+        case "ImportDeclaration": {
+          const source = node.source as AstNode & { value: string };
+          if (/^\.\/[^/]+\.tsx\?raw$/.test(source.value)) rawImports.push({ start: source.start + shift, end: source.end + shift, value: source.value });
+          return skip(node);
+        }
+        case "ExportAllDeclaration":
+        case "ImportExpression":
+          return skip(node);
+        case "ExportNamedDeclaration": {
+          if (node.source) return skip(node);
+          // Block: `export const meta` là tên / mô tả trên trang (META_VI ở BlocksPage), không phải nội dung block.
+          const decl = node.declaration as AstNode | null;
+          const declarators = decl?.type === "VariableDeclaration" ? (decl.declarations as AstNode[]) : [];
+          if (parent?.type === "Program" && declarators.some((d) => (d.id as AstNode & { name?: string }).name === "meta")) return skip(node);
+          break;
+        }
+        case "CallExpression": {
+          const callee = node.callee as AstNode & { name?: string };
+          if (callee.type === "Identifier" && SOURCE_CALLS.has(callee.name!)) return skip(node);
+          break;
+        }
+        case "ObjectExpression": {
+          const props = node.properties as AstNode[];
+          const names = new Set(props.map(propNameOf));
+          const skipKeys =
+            names.has("slug") && names.has("examples") ? DOC_PAGE_KEYS : names.has("render") && names.has("code") && names.has("title") ? EXAMPLE_PAGE_KEYS : undefined;
+          for (const p of props) {
+            parents.set(p, node);
+            const name = propNameOf(p);
+            if (name && skipKeys?.has(name)) skip(p);
+            else if (name && CODE_KEYS.has(name)) visitCode(p.value as AstNode, p);
+            else visit(p, node);
+          }
+          return;
+        }
+        case "VariableDeclarator": {
+          const id = node.id as AstNode & { name?: string };
+          if (id.type === "Identifier" && CODE_CONST_RE.test(id.name!) && node.init) return visitCode(node.init as AstNode, node);
+          break;
+        }
+        case "JSXText":
+          return addJsx(node);
+        case "Literal":
+          if (typeof node.value === "string") addString(node as AstNode & { value: string });
+          return;
+        case "TemplateLiteral":
+          addTemplate(node);
+          for (const expr of node.expressions as AstNode[]) visit(expr, node);
+          return;
+      }
+      for (const child of childrenOf(node)) visit(child, node);
+    };
+    visit(program);
+
+    // Chú thích một dòng (code mẫu hiện cả chú thích), trừ phần đã bỏ qua (import, chữ trang…).
+    for (const c of comments) {
+      const from = c.start + shift;
+      const raw = code.slice(from, c.end + shift);
+      if (raw.includes("\n") || skipped.some(([a, b]) => from >= a && from < b)) continue;
+      const block = c.type === "Block";
+      const open = block && raw.startsWith("/**") ? 3 : 2;
+      const inner = raw.slice(open, raw.length - (block ? 2 : 0));
+      const text = inner.trim();
+      if (!text) continue;
+      const start = from + open + inner.indexOf(text);
+      add({
+        kind: "comment",
+        text,
+        start,
+        end: start + text.length,
+        context: "",
+        replace: (v) => {
+          if (/[\r\n]|\*\//.test(v)) throw new Error(`chú thích không được xuống dòng / chứa "*/": ${v}`);
+          return v;
+        },
+      });
+    }
+  }
+  return { texts: texts.sort((a, b) => a.start - b.start), rawImports, unparsed };
+}
+
+/** Mọi chuỗi demo của một file registry / block theo thứ tự trong mã nguồn — khoá từ điển `vi/<file>.json` lấy từ đây. */
+export const collectDemoTexts = (code: string): DemoText[] => scanDemo(code, false).texts;
+
+/** Đoạn code mẫu không phân tích được như TSX (CSS, lệnh shell…) — chữ trong đó không được dịch. */
+export const unparsedDemoCode = (code: string): string[] => scanDemo(code, false).unparsed;
+
+/** Từ điển demo của một file: `<thư mục>/vi/<tên>.json` (tiếng Anh → tiếng Việt). */
+export const demoDictionaryOf = (file: string) => path.join(path.dirname(file), "vi", path.basename(file).replace(/\.tsx$/, ".json"));
+
+/**
+ * Bản tiếng Việt của mã nguồn một file demo: thay chuỗi khớp nguyên văn một khoá trong `dict`, đổi `import RAW from "./x.tsx?raw"`
+ * thành `?lang=vi&raw` (code mẫu cắt từ mã nguồn đã dịch). Không đổi gì khác. `used`: các khoá đã dùng.
+ */
+export function localizeDemo(code: string, dict: Record<string, string>): { code: string; used: Set<string> } {
+  const { texts, rawImports } = scanDemo(code, false);
+  const edits = texts
+    .filter((t) => Object.hasOwn(dict, t.text))
+    .map((t) => ({ start: t.start, end: t.end, key: t.text as string | undefined, text: t.replace(dict[t.text]) }));
+  for (const spec of rawImports)
+    edits.push({ start: spec.start, end: spec.end, key: undefined, text: JSON.stringify(spec.value.replace(/\?raw$/, "?lang=vi&raw")) });
+  edits.sort((a, b) => a.start - b.start || b.end - a.end);
+  const used = new Set<string>();
+  let out = "";
+  let last = 0;
+  for (const e of edits) {
+    // Chuỗi nằm trong một template đã dịch nguyên câu (vd. biểu thức trong `${…}`): bản dịch template đã gồm phần đó.
+    if (e.start < last) continue;
+    out += code.slice(last, e.start) + e.text;
+    last = e.end;
+    if (e.key !== undefined) used.add(e.key);
+  }
+  return { code: out + code.slice(last), used };
+}
+
+/** Biến môi trường của lượt build thử (yugenDemoLang): module `?lang=vi` chỉ là module rỗng. */
+const DEMO_LANG_PREPASS = "YUGEN_DEMO_LANG_PREPASS";
+/** Query của bản sao module dành riêng cho chunk tiếng Việt: `?yugen-vi=<file demo>`. */
+const DEMO_COPY = "yugen-vi";
+const MODULE_TYPES: Record<string, "js" | "jsx" | "ts" | "tsx" | "json"> = { ".tsx": "tsx", ".ts": "ts", ".mts": "ts", ".jsx": "jsx", ".json": "json" };
+
+/**
+ * `import("./x.tsx?lang=vi")` (src/docs/registry/*.tsx, src/docs/block-library/*.tsx) → module của chính file đó với chữ demo
+ * tiếng Việt theo từ điển `vi/<file>.json` (localizeDemo); `?lang=vi&raw` → mã nguồn đã dịch dạng chuỗi (tab Code của Blocks,
+ * code mẫu cắt từ mã nguồn của registry). Trang tiếng Anh vẫn nạp file gốc.
+ *
+ * Build client: module chỉ một file demo dùng (component riêng của Labs, zod…) nằm luôn trong chunk của file đó. Bản `?lang=vi`
+ * cũng import chúng thì Rolldown tách chúng ra chunk chung → trang tiếng Anh thêm request. Nên trước khi build, plugin chạy một
+ * lượt build thử không có bản tiếng Việt (module rỗng) để biết chunk của mỗi file demo gồm những module nào; bản `?lang=vi`
+ * import các module đó qua bản sao riêng (`?yugen-vi=…`). Chunk tiếng Anh giữ nguyên như khi chưa có bản tiếng Việt, chunk
+ * tiếng Việt có cùng nội dung và cùng các chunk chung.
+ */
+export function yugenDemoLang(root: string): Plugin {
+  const dirs = [path.join(root, "src", "docs", "registry"), path.join(root, "src", "docs", "block-library")];
+  const prepass = process.env[DEMO_LANG_PREPASS] === "1";
+  const cleanId = (id: string) => id.split("?")[0].replace(/\\/g, "/");
+  const isDemoFile = (file: string) => file.endsWith(".tsx") && dirs.includes(path.dirname(path.resolve(file)));
+  let config: ResolvedConfig;
+  /** File demo → id các module trong chunk chứa nó (lượt build thử). */
+  let chunkModules: Map<string, Set<string>> | undefined;
+
+  /**
+   * Barrel chỉ gồm `export … from` (@/components/ui, Chart/Chart.tsx): sao chép không đổi gì, và phải sao chép để import qua
+   * barrel tới được bản sao của module bên trong (không thì module đó thành dùng chung giữa hai chunk).
+   */
+  const barrels = new Map<string, boolean>();
+  const isBarrel = (file: string) => {
+    let pure = barrels.get(file);
+    if (pure === undefined) {
+      const { program, errors } = parseSync(file, fs.readFileSync(file, "utf8"), { lang: /\.tsx$/.test(file) ? "tsx" : /\.m?ts$/.test(file) ? "ts" : "js" });
+      const body = program.body as unknown as { type: string; declaration?: { type: string } | null }[];
+      pure =
+        !errors.length &&
+        body.length > 0 &&
+        body.every(
+          (s) =>
+            s.type === "ImportDeclaration" ||
+            s.type === "ExportAllDeclaration" ||
+            (s.type === "ExportNamedDeclaration" && (!s.declaration || /^TS(TypeAlias|Interface)Declaration$/.test(s.declaration.type))),
+        );
+      barrels.set(file, pure);
+    }
+    return pure;
+  };
+
+  /** File demo mà một module thuộc về: bản `?lang=vi`, hoặc bản sao `?yugen-vi=<file>`. */
+  const scopeOf = (id: string) => {
+    const params = new URLSearchParams(id.split("?")[1] ?? "");
+    if (params.has(DEMO_COPY)) return params.get(DEMO_COPY)!;
+    return params.get("lang") === "vi" && isDemoFile(id.split("?")[0]) ? cleanId(id) : undefined;
+  };
+
+  return {
+    name: "yugen-demo-lang",
+    enforce: "pre",
+    configResolved(resolved) {
+      config = resolved;
+    },
+    async buildStart() {
+      if (prepass || config.command !== "build" || config.build.ssr) return;
+      process.env[DEMO_LANG_PREPASS] = "1";
+      try {
+        const result = await build({ configFile: config.configFile, root: config.root, mode: config.mode, logLevel: "silent", build: { write: false } });
+        chunkModules = new Map();
+        for (const output of (Array.isArray(result) ? result : [result]) as { output?: { type: string; moduleIds?: string[] }[] }[])
+          for (const chunk of output.output ?? []) {
+            if (chunk.type !== "chunk" || !chunk.moduleIds) continue;
+            const ids = new Set(chunk.moduleIds);
+            for (const id of ids) if (!id.includes("?") && isDemoFile(id)) chunkModules.set(cleanId(id), ids);
+          }
+      } finally {
+        delete process.env[DEMO_LANG_PREPASS];
+      }
+    },
+    async resolveId(source, importer, options) {
+      const scope = chunkModules && importer ? scopeOf(importer) : undefined;
+      const own = scope && chunkModules!.get(scope);
+      if (!own) return undefined;
+      const resolved = await this.resolve(source, importer!.split("?")[0], { ...options, skipSelf: true });
+      if (!resolved || resolved.external || resolved.id.startsWith("\0") || !fs.existsSync(cleanId(resolved.id))) return resolved;
+      if (!own.has(resolved.id) && (resolved.id.includes("?") || !/\.[mc]?[jt]sx?$/.test(resolved.id) || !isBarrel(resolved.id))) return resolved;
+      return { ...resolved, id: `${resolved.id}${resolved.id.includes("?") ? "&" : "?"}${DEMO_COPY}=${encodeURIComponent(scope)}` };
+    },
+    load(id) {
+      const [file, query = ""] = id.split("?");
+      const params = new URLSearchParams(query);
+      if (params.has(DEMO_COPY)) {
+        const code = fs.readFileSync(file, "utf8");
+        if (params.has("raw")) return { code: `export default ${JSON.stringify(code)};`, moduleType: "js" };
+        return { code, moduleType: MODULE_TYPES[path.extname(file)] ?? "js" };
+      }
+      if (params.get("lang") !== "vi" || !isDemoFile(file)) return undefined;
+      if (prepass) {
+        if (params.has("raw")) return { code: `export default "";`, moduleType: "js" };
+        return { code: `export const docs = [], meta = undefined;\nexport default function Empty() { return null; }\n`, moduleType: "js" };
+      }
+      const abs = path.resolve(file);
+      const dictFile = demoDictionaryOf(abs);
+      this.addWatchFile(abs);
+      this.addWatchFile(dictFile);
+      const dict = fs.existsSync(dictFile) ? (JSON.parse(fs.readFileSync(dictFile, "utf8")) as Record<string, string>) : {};
+      let code: string;
+      try {
+        code = localizeDemo(fs.readFileSync(abs, "utf8"), dict).code;
+      } catch (error) {
+        throw new Error(`[yugen-demo-lang] ${path.relative(root, dictFile)}: ${(error as Error).message}`);
+      }
+      if (params.has("raw")) return { code: `export default ${JSON.stringify(code)};`, moduleType: "js" };
+      return { code, moduleType: "tsx" };
     },
   };
 }
