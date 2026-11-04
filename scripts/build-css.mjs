@@ -9,7 +9,8 @@
  *                      component đã build (đường dẫn tương đối với chính theme.css).
  *   dist/theme-core.css — như theme.css nhưng không quét component (#169): app thêm dist/sources/<Thư mục>.css cho
  *                      từng component mình dùng (mỗi file quét component đó và mọi component nó dùng bên trong).
- *   dist/sources/index.json — export → thư mục, thư mục → các thư mục được quét (CLI đọc để ghi các dòng @import).
+ *   dist/sources/index.json — export → thư mục, thư mục → các đường dẫn được quét. `yugen css` (packages/cli) đọc nó để
+ *                      ghi các dòng @import cho đúng các component app import.
  *   dist/styles.css  — CSS đã biên dịch đầy đủ (preflight + mọi utility component dùng) cho dự án KHÔNG có Tailwind.
  *                      Chỉ quét src/components/ui + src/lib.
  *

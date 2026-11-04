@@ -78,6 +78,17 @@ npx @yugen-ui/cli update button --dry-run # xem diff, không ghi
 npx @yugen-ui/cli update                  # áp bản registry (hỏi lại trước khi ghi)
 npx @yugen-ui/cli remove data-grid        # xoá file không còn được import ở đâu`;
 
+const CSS = `npx @yugen-ui/cli css                       # ghi src/yugen-ui.css, import trong src/index.css
+npx @yugen-ui/cli css --check               # CI: thoát với mã 1 khi file đã cũ, không ghi gì
+npx @yugen-ui/cli css --src app --src lib   # chỉ đọc các thư mục này (mặc định: cả dự án)
+npx @yugen-ui/cli css --precompile          # app không dùng Tailwind: CSS đã biên dịch, thay styles.css`;
+
+const CSS_RESULT = `/* src/yugen-ui.css */
+@import "yugen-ui/theme-core.css";
+@import "yugen-ui/sources/Button.css";
+@import "yugen-ui/sources/Dialog.css";
+@import "yugen-ui/sources/YugenProvider.css";`;
+
 const THEME = `npx @yugen-ui/cli theme --brand #0f6cbd --name acme
 # → src/yugen-brand.css: [data-brand="acme"] { --brand-10 … --brand-160 }, import trong src/index.css
 # <YugenProvider applyToDocument withToaster brand="acme">`;
@@ -99,9 +110,10 @@ export default function Page() {
               ["diff [tên…]", "So mã đã chép với registry và in diff; không sửa gì."],
               ["update [tên…]", "Áp bản registry cho mã đã chép: xem diff, hỏi lại rồi ghi."],
               ["remove <tên…>", "Xoá file của component mà không file nào khác còn import."],
+              ["css", "Ghi yugen-ui.css: chỉ CSS của các component mà mã của app import (chế độ package)."],
               ["theme --brand <hex>", "Sinh brand ramp 16 bậc vào yugen-brand.css, cùng thuật toán với Theme Designer."],
               ["list [từ khoá]", "Danh sách component trong registry."],
-              ["doctor", "Kiểm tra React, Tailwind CSS v4, import theme, phiên bản yugen-ui và YugenProvider."],
+              ["doctor", "Kiểm tra React, Tailwind CSS v4, import theme, yugen-ui.css, phiên bản yugen-ui và YugenProvider."],
             ]}
           />
           <P>
@@ -134,8 +146,10 @@ export default function Page() {
               [
                 "package",
                 <>
-                  Cài <C>yugen-ui</C>, thêm <C>@import &quot;yugen-ui/theme.css&quot;;</C> ngay sau <C>@import &quot;tailwindcss&quot;;</C>.
-                  Không có Tailwind CSS v4 thì thêm <C>import &quot;yugen-ui/styles.css&quot;;</C> vào file gốc (main.tsx, app/layout.tsx).
+                  Cài <C>yugen-ui</C>, ghi <C>yugen-ui.css</C> bằng <A href={docsPath("/concepts/cli#css")}>yugen css</A> và thêm{" "}
+                  <C>@import &quot;./yugen-ui.css&quot;;</C> ngay sau <C>@import &quot;tailwindcss&quot;;</C>. File CSS đã import{" "}
+                  <C>yugen-ui/theme.css</C> thì giữ nguyên. Không có Tailwind CSS v4 thì thêm{" "}
+                  <C>import &quot;yugen-ui/styles.css&quot;;</C> vào file gốc (main.tsx, app/layout.tsx).
                 </>,
               ],
               [
@@ -169,7 +183,8 @@ export default function Page() {
             nhận bản mới bằng <C>yugen update</C> (phần bên dưới).
           </P>
           <MessageBar intent="info" title="Ở chế độ package" className="max-w-3xl">
-            Component đã có sẵn trong gói <C>yugen-ui</C>. Lệnh <C>add</C> chỉ in dòng import tương ứng.
+            Component đã có sẵn trong gói <C>yugen-ui</C>. Lệnh <C>add</C> in dòng import tương ứng và thêm component vào{" "}
+            <C>yugen-ui.css</C> nếu app có file này.
           </MessageBar>
         </div>
       </DocSection>
@@ -185,6 +200,40 @@ export default function Page() {
             <C>update</C> in diff của từng file sẽ đổi, báo file mới (ví dụ phụ thuộc vừa thêm vào registry) rồi hỏi lại trước khi ghi;
             phần bạn đã sửa trong các file đó bị thay. Commit trước để giữ được phần tuỳ biến. <C>remove</C> quét import trong dự án
             (đường dẫn tương đối và alias) và giữ lại file còn được dùng, ví dụ Spinner khi Button vẫn import nó. Gói npm không bị gỡ.
+          </P>
+        </div>
+      </DocSection>
+
+      <DocSection
+        id="css"
+        title="Chỉ CSS của component bạn dùng"
+        description="Chế độ package. theme.css cho Tailwind quét mọi component của gói; yugen-ui.css chỉ gồm các component mà mã của app import."
+      >
+        <div className="flex flex-col gap-4">
+          <CodeBlock code={CSS} />
+          <CodeBlock code={CSS_RESULT} />
+          <P>
+            Lệnh đọc import từ <C>yugen-ui</C> trong mã của app, cả đường dẫn con như <C>yugen-ui/Dialog</C>. Import kiểu và ví dụ viết
+            trong chuỗi hay chú thích không được tính. Mỗi tên được tra thư mục trong <C>yugen-ui/sources/index.json</C>, mỗi thư mục là
+            một dòng. Lần chạy đầu thay <C>@import &quot;yugen-ui/theme.css&quot;</C> trong file CSS chính bằng{" "}
+            <C>@import &quot;./yugen-ui.css&quot;</C>. Với các template, CSS gzip giảm từ khoảng 26 kB xuống 12–20 kB (bảng ở{" "}
+            <A href={docsPath("/concepts/styling#lean-css")}>Tuỳ biến style</A>).
+          </P>
+          <P>
+            Import thêm component thì chạy lại lệnh; ở chế độ package <C>yugen add &lt;tên&gt;</C> tự làm. Muốn luôn khớp thì cài CLI làm
+            dev dependency và thêm <C>&quot;predev&quot;: &quot;yugen css&quot;</C>, <C>&quot;prebuild&quot;: &quot;yugen css&quot;</C> vào
+            package.json. Đầu file ghi lệnh đã tạo ra nó (kể cả <C>--src</C>, <C>--out</C>), nên lần sau chỉ cần <C>yugen css</C>.
+          </P>
+          <P>
+            <C>import * as Yugen from &quot;yugen-ui&quot;</C>, <C>export * from &quot;yugen-ui&quot;</C> hay{" "}
+            <C>import(&quot;yugen-ui&quot;)</C> có thể dùng mọi component, nên file quay về theme.css và ghi rõ file nào gây ra. Component được
+            import trong một gói khác của monorepo thì lệnh không thấy: thêm thư mục đó bằng <C>--src</C>.
+          </P>
+          <P>
+            <C>--precompile</C> dành cho app không dùng Tailwind: cùng danh sách đó được biên dịch thành CSS thường bằng{" "}
+            <C>tailwindcss</C>, <C>@tailwindcss/node</C> và <C>@tailwindcss/oxide</C> của chính dự án (cài làm dev dependency, CLI không
+            mang theo Tailwind), rồi thay <C>import &quot;yugen-ui/styles.css&quot;</C> trong file gốc. Với các template: 26.8 kB còn
+            12.8–21.1 kB gzip.
           </P>
         </div>
       </DocSection>
@@ -210,8 +259,9 @@ export default function Page() {
           <CodeBlock code={CLI_DOCTOR_OUTPUT} />
           <P>
             Các mục kiểm tra: React 19 trở lên, Tailwind CSS v4 khi dùng theme, theme được import đúng một lần và đứng sau{" "}
-            <C>@import &quot;tailwindcss&quot;</C>, bản <C>yugen-ui</C> đã cài so với bản mới nhất trên npm, thư mục component và{" "}
-            <C>cn.ts</C> ở chế độ source, có dùng <C>YugenProvider</C>.
+            <C>@import &quot;tailwindcss&quot;</C>, <C>yugen-ui.css</C> đã được import và còn khớp với mã (cảnh báo khi đã cũ), component
+            được import mà thiếu file sources khi bạn tự viết các dòng <C>theme-core.css</C>, bản <C>yugen-ui</C> đã cài so với bản mới
+            nhất trên npm, thư mục component và <C>cn.ts</C> ở chế độ source, có dùng <C>YugenProvider</C>.
           </P>
         </div>
       </DocSection>

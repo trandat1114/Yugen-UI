@@ -65,7 +65,8 @@ export const en: Record<string, ComponentDocEn> = {
         "options: target (document by default), enabled (true), enableOnFormTags (false), preventDefault (true), repeat (false: a held key counts once). Valid keys: mod / ctrl / meta / alt / shift + a key, plus the aliases esc, space, up, down, left, right, start, end.",
       "useDebouncedValue(value, delay)": "Returns the value at once on the first render; afterwards it only changes once `value` has been still for `delay` ms.",
       "useIntersection({ root, rootMargin, threshold, once })": "Attach `ref` to the element. Without IntersectionObserver it is always false.",
-      "useElementSize({ box })": "0 × 0 until measured (server, first render). The first measure runs before the browser paints, so nothing flashes. Also works with vertical writing modes.",
+      "useElementSize({ box, enabled })":
+        "0 × 0 until measured (server, first render). The first measure runs before the browser paints, so nothing flashes. Also works with vertical writing modes. Pass `enabled: false` when the size is already known (a fixed width, for example): no measuring, no ResizeObserver, no extra render, and the result stays 0 × 0.",
     },
   },
 };

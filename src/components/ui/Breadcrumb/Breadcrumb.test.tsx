@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { YugenProvider } from "../YugenProvider/YugenProvider";
 import {
@@ -55,7 +55,8 @@ describe("Breadcrumb", () => {
     expect(screen.getByRole("button", { name: "Hãng" })).toBeInTheDocument();
     const more = screen.getByRole("button", { name: "Hiện thêm mục" });
     await user.click(more);
-    expect(screen.getAllByRole("menuitem").map((el) => el.textContent)).toEqual(["Sản phẩm", "Điện thoại"]);
+    // Menu nạp lúc cần (#350): bấm trước khi nạp xong thì menu mở khi nạp xong.
+    expect((await screen.findAllByRole("menuitem")).map((el) => el.textContent)).toEqual(["Sản phẩm", "Điện thoại"]);
     await user.click(screen.getByRole("menuitem", { name: "Điện thoại" }));
     expect(onClick).toHaveBeenCalledWith("Điện thoại");
   });
@@ -101,5 +102,63 @@ describe("Breadcrumb", () => {
       </YugenProvider>,
     );
     expect(screen.getByRole("navigation", { name: "Đường dẫn điều hướng" })).toBeInTheDocument();
+  });
+});
+
+describe("Breadcrumb: menu … nạp lúc cần (#350)", () => {
+  /** Module mới, menu chưa nạp: render đầu là bản thay thế (như server và lần hydrate đầu). Không qua ngữ cảnh tiếng Việt. */
+  async function freshBreadcrumb() {
+    vi.resetModules();
+    return (await import("./Breadcrumb")).Breadcrumb;
+  }
+  const more = () => screen.getByRole("button", { name: "More items", hidden: true });
+
+  it("trước khi nạp: nút … cùng class và ARIA với MenuTrigger lúc đóng; nạp xong thì MenuTrigger thay vào", async () => {
+    const Fresh = await freshBreadcrumb();
+    renderBare(<Fresh items={items()} maxDisplayedItems={3} />);
+    const fallback = more();
+    expect(fallback).toHaveAttribute("type", "button");
+    expect(fallback).toHaveAttribute("aria-haspopup", "menu");
+    expect(fallback).toHaveAttribute("aria-expanded", "false");
+    expect(fallback).toHaveAttribute("data-state", "closed");
+    // MenuTrigger của Radix có id: dấu hiệu đã nạp.
+    await waitFor(() => expect(more()).toHaveAttribute("id"));
+    const trigger = more();
+    expect(trigger).not.toBe(fallback);
+    expect(trigger.className).toBe(fallback.className);
+    expect(trigger).toHaveAttribute("aria-haspopup", "menu");
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    expect(trigger).toHaveAttribute("data-state", "closed");
+  });
+
+  it("Enter trước khi menu nạp xong: menu mở khi nạp xong, bàn phím như MenuTrigger", async () => {
+    const Fresh = await freshBreadcrumb();
+    const user = userEvent.setup();
+    renderBare(<Fresh items={items()} maxDisplayedItems={3} />);
+    const fallback = more();
+    // Còn là bản thay thế (MenuTrigger của Radix có id).
+    expect(fallback).not.toHaveAttribute("id");
+    fallback.focus();
+    fireEvent.keyDown(fallback, { key: "Enter" });
+    expect((await screen.findAllByRole("menuitem")).map((el) => el.textContent)).toEqual(["Sản phẩm", "Điện thoại"]);
+    expect(more()).toHaveAttribute("aria-expanded", "true");
+    // Focus vào menu; Esc đóng và trả focus về nút.
+    await waitFor(() => expect(screen.getByRole("menu")).toContainElement(document.activeElement as HTMLElement));
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(screen.queryByRole("menu")).not.toBeInTheDocument());
+    expect(more()).toHaveFocus();
+  });
+
+  it("focus đang ở nút … lúc menu nạp xong: chuyển sang MenuTrigger; render sau dùng ngay MenuTrigger", async () => {
+    const Fresh = await freshBreadcrumb();
+    const { unmount } = renderBare(<Fresh items={items()} maxDisplayedItems={3} />);
+    const fallback = more();
+    fallback.focus();
+    await waitFor(() => expect(more()).toHaveAttribute("id"));
+    expect(more()).not.toBe(fallback);
+    expect(more()).toHaveFocus();
+    unmount();
+    renderBare(<Fresh items={items()} maxDisplayedItems={3} />);
+    expect(more()).toHaveAttribute("id");
   });
 });

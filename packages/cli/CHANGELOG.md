@@ -1,5 +1,20 @@
 # @yugen-ui/cli
 
+## Unreleased
+
+- `yugen css`: writes `yugen-ui.css` with `@import "yugen-ui/theme-core.css";` and one
+  `@import "yugen-ui/sources/<Folder>.css";` per component folder your code imports, instead of `theme.css` with every
+  component. On the templates the gzipped CSS goes from about 26 kB to 12–20 kB (−24% to −54%). Imports are read with
+  a small lexer, so examples inside strings, comments or JSX text don't count; `import * as`, `export *` and
+  `import()` of `yugen-ui` fall back to `theme.css`. `--check` exits with 1 when the file is out of date; `--src`
+  limits the folders it reads; `--precompile` compiles plain CSS for apps without Tailwind (26.8 kB → 12.8–21.1 kB)
+  with the project's own `tailwindcss`, `@tailwindcss/node` and `@tailwindcss/oxide` (#169).
+- `init` (package mode, Tailwind CSS v4) writes `yugen-ui.css` and imports it instead of `yugen-ui/theme.css`. A CSS
+  file that already imports `theme.css` is left as it is.
+- `add` in package mode adds the component to `yugen-ui.css` when the app has one.
+- `doctor` accepts `yugen-ui/theme-core.css` (it reported "theme not imported"), warns when `yugen-ui.css` is out of
+  date or not imported, and names the components imported without their `sources/<Folder>.css`.
+
 ## 0.7.0
 
 - `doctor` reports React 18 as an error: yugen-ui 0.15 needs React 19 or later.
