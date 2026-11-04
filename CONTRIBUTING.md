@@ -133,6 +133,10 @@ npm run dev          # docs site at http://localhost:5173
    ```
 7. Changeset (`npx changeset`, usually `minor` for a new component); see [Changesets](#changesets).
 8. A new dependency, if really needed, goes in `dependencies` of `package.json`; the maintainer decides.
+9. Visual baselines: the hero demo of every component page is screenshotted in light, dark and high contrast, so
+   **Visual (compare)** fails until the PR has the new `component-<slug>-*` baselines (run the **Visual regression**
+   workflow with `update`, see [Tests](#tests)). If the layout follows the text direction, add the slug to `RTL` in
+   `e2e/visual.spec.ts`.
 
 ### Adding a block
 
@@ -399,6 +403,9 @@ npm run dev          # trang docs tại http://localhost:5173
    ```
 7. Changeset (`npx changeset`, thường là `minor` cho component mới) — xem mục [Changeset](#changeset).
 8. Dependency mới (nếu thật sự cần) phải nằm trong `dependencies` của `package.json` — maintainer quyết định.
+9. Ảnh visual: demo hero của mọi trang component được chụp ở theme sáng, tối và tương phản cao, nên **Visual (compare)**
+   đỏ cho tới khi PR có baseline `component-<slug>-*` mới (chạy workflow **Visual regression** với `update`, xem mục
+   [Kiểm thử](#kiểm-thử)). Bố cục đổi theo hướng chữ thì thêm slug vào `RTL` trong `e2e/visual.spec.ts`.
 
 ### Thêm block
 
