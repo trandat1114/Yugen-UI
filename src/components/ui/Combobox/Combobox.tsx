@@ -244,7 +244,15 @@ export function Combobox(inProps: ComboboxProps & { ref?: React.Ref<HTMLInputEle
     }
   };
 
-  const listbox = useListbox({ open, groups, active, onActiveChange: setActive, onSelect: selectOption });
+  const listbox = useListbox({
+    open,
+    groups,
+    active,
+    onActiveChange: setActive,
+    onSelect: selectOption,
+    labelledBy: inputProps["aria-labelledby"],
+    label: msg.listLabel,
+  });
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     onKeyDown?.(e);

@@ -8,6 +8,8 @@ export interface ComboboxMessages {
   closeList: string;
   /** aria-label nút mũi tên khi listbox đang đóng. */
   openList: string;
+  /** Tên của listbox khi ô nhập không có nhãn hiển thị (Field nối nhãn qua aria-labelledby). */
+  listLabel: string;
 }
 
 declare module "../YugenProvider/context" {
@@ -21,6 +23,7 @@ export const comboboxMessagesVi: ComboboxMessages = {
   useFreeform: (query) => `Nhấn Enter để dùng “${query}”`,
   closeList: "Đóng danh sách",
   openList: "Mở danh sách",
+  listLabel: "Gợi ý",
 };
 
 export const comboboxMessagesEn: ComboboxMessages = {
@@ -28,6 +31,7 @@ export const comboboxMessagesEn: ComboboxMessages = {
   useFreeform: (query) => `Press Enter to use “${query}”`,
   closeList: "Close list",
   openList: "Open list",
+  listLabel: "Suggestions",
 };
 
 /** @deprecated Use `comboboxMessagesVi` (Vietnamese) or `comboboxMessagesEn`. Will be removed in v1.0.0. */

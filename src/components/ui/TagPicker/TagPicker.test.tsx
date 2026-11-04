@@ -4,6 +4,9 @@ import { hydrateRoot, type Root } from "react-dom/client";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { TagPicker } from "./TagPicker";
+import { Field } from "../Field/Field";
+import { YugenProvider } from "../YugenProvider/YugenProvider";
+import { messagesEn } from "../messages-en";
 import { renderOnServer } from "@/test/serverRender";
 import { captureConsole } from "@/test/consoleCapture";
 
@@ -161,5 +164,43 @@ describe("TagPicker listbox", () => {
     await user.keyboard("Nho{Enter}");
     expect(onValueChange).toHaveBeenLastCalledWith(["Nho"]);
     expect(input).toHaveValue("");
+  });
+});
+
+describe("TagPicker: tên của listbox", () => {
+  // Bộ test mặc định chạy trong messagesVi; bản tiếng Anh bọc provider riêng.
+  const LANGS = [
+    ["vi", undefined, "Gợi ý"],
+    ["en", messagesEn, "Suggestions"],
+  ] as const;
+
+  async function openListbox(ui: React.ReactElement, messages?: typeof messagesEn) {
+    const user = userEvent.setup();
+    render(messages ? <YugenProvider messages={messages} locale="en-US">{ui}</YugenProvider> : ui);
+    await user.click(screen.getByRole("combobox"));
+    return screen.findByRole("listbox");
+  }
+
+  it.each(LANGS)("nhãn của Field (%s): aria-labelledby trỏ tới nhãn", async (_, messages) => {
+    const listbox = await openListbox(
+      <Field label="Trái cây">
+        <TagPicker options={OPTIONS} />
+      </Field>,
+      messages,
+    );
+    expect(listbox).toHaveAccessibleName("Trái cây");
+    expect(listbox).toHaveAttribute("aria-labelledby", screen.getByText("Trái cây").id);
+    expect(listbox).not.toHaveAttribute("aria-label");
+  });
+
+  it.each(LANGS)("chỉ có aria-label trên ô nhập (%s): tên có sẵn trong messages", async (_, messages, name) => {
+    const listbox = await openListbox(<TagPicker aria-label="Trái cây" options={OPTIONS} />, messages);
+    expect(listbox).toHaveAccessibleName(name);
+    expect(listbox).not.toHaveAttribute("aria-labelledby");
+  });
+
+  it.each(LANGS)("không có nhãn (%s): tên có sẵn trong messages", async (_, messages, name) => {
+    const listbox = await openListbox(<TagPicker options={OPTIONS} />, messages);
+    expect(listbox).toHaveAccessibleName(name);
   });
 });

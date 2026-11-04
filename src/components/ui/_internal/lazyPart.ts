@@ -2,8 +2,8 @@ import * as React from "react";
 import { useIsomorphicLayoutEffect } from "./useIsomorphicLayoutEffect";
 
 /**
- * Phần chỉ một tùy chọn cần (menu "…" của Breadcrumb, thẻ nguồn của chú thích) nạp lúc cần bằng `import()` (#350), không
- * nằm trong chunk đầu của component.
+ * Phần chỉ một tùy chọn cần (menu "…" của Breadcrumb, thẻ nguồn của chú thích, Sortable của TagPicker `reorderable`) nạp
+ * lúc cần bằng `import()` (#350, #351), không nằm trong chunk đầu của component.
  *
  * Không dùng React.lazy + Suspense: `renderToString` không chờ Suspense và báo lỗi khi hydrate, còn stream thì đẩy nội
  * dung xuống cuối trang. Ở đây server và lần hydrate đầu luôn render bản thay thế (getServerSnapshot) nên HTML khớp;
@@ -41,9 +41,10 @@ export function lazyPart<T>(load: () => Promise<T>) {
   /**
    * `mod`: module đã nạp, hoặc `undefined` (server, lần hydrate đầu, chưa nạp xong) — khi đó render bản thay thế với
    * `fallbackRef`. Phần thật nhận `ref`: bản thay thế đang giữ focus lúc được thay thì focus chuyển sang phần thật.
+   * `enabled: false` (tùy chọn đang tắt): không nạp, `mod` luôn `undefined`.
    */
-  function usePart<E extends HTMLElement = HTMLButtonElement>() {
-    const mod = React.useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  function usePart<E extends HTMLElement = HTMLButtonElement>(enabled = true) {
+    const mod = React.useSyncExternalStore(subscribe, enabled ? getSnapshot : getServerSnapshot, getServerSnapshot);
     const ref = React.useRef<E>(null);
     const hadFocus = React.useRef(false);
     // Cleanup của ref chạy trước khi React gỡ phần tử khỏi DOM, lúc nó còn giữ focus.
@@ -54,8 +55,8 @@ export function lazyPart<T>(load: () => Promise<T>) {
       };
     }, []);
     React.useEffect(() => {
-      if (!mod) void preload();
-    }, [mod]);
+      if (enabled && !mod) void preload();
+    }, [enabled, mod]);
     useIsomorphicLayoutEffect(() => {
       if (mod && hadFocus.current) {
         hadFocus.current = false;

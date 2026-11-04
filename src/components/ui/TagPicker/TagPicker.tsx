@@ -7,6 +7,8 @@ import { ChevronDown20Regular, ChevronDown24Regular } from "../_internal/icons";
 import { usePortalThemeProps, useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { groupListboxItems, ListboxGroups, listboxOptionProps, useListbox } from "../_internal/useListbox";
+import { lazyPart } from "../_internal/lazyPart";
+import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { popoverSurfaceClass } from "@/components/ui/Popover/Popover";
 import { fieldAppearanceClass, type FieldAppearance } from "@/components/ui/Select/Select";
 import { cmdkOptionClass, normalizeSearchText } from "@/components/ui/Combobox/Combobox";
@@ -85,35 +87,11 @@ const OptionRow = /* @__PURE__ */ React.memo(function OptionRow({
   );
 });
 
-type SortableModule = typeof import("@/components/ui/Sortable/Sortable");
-let sortableModule: SortableModule | undefined;
-let sortableLoading: Promise<void> | undefined;
-const sortableListeners = new Set<() => void>();
-const subscribeSortable = (listener: () => void) => {
-  sortableListeners.add(listener);
-  return () => void sortableListeners.delete(listener);
-};
-
 /**
  * Sortable chỉ cần khi `reorderable`: nạp lúc cần. Server và lượt hydrate vẽ tag thường (cùng kích thước, không lệch
  * hydration); kéo / Alt + mũi tên có ngay khi module về. Nạp lỗi thì tag vẫn dùng được, lần mount sau thử lại.
  */
-function useSortableModule(enabled: boolean) {
-  const loaded = React.useSyncExternalStore(subscribeSortable, () => (enabled ? sortableModule : undefined), () => undefined);
-  React.useEffect(() => {
-    if (!enabled || sortableModule) return;
-    sortableLoading ??= import("@/components/ui/Sortable/Sortable").then(
-      (mod) => {
-        sortableModule = mod;
-        sortableListeners.forEach((listener) => listener());
-      },
-      () => {
-        sortableLoading = undefined;
-      },
-    );
-  }, [enabled]);
-  return loaded;
-}
+const sortablePart = /* @__PURE__ */ lazyPart(() => import("@/components/ui/Sortable/Sortable"));
 
 /** TagPicker: chọn nhiều mục, mỗi mục là một Tag trong ô nhập; gõ để lọc danh sách gợi ý. */
 export function TagPicker(inProps: TagPickerProps & { ref?: React.Ref<HTMLInputElement> }) {
@@ -173,7 +151,7 @@ export function TagPicker(inProps: TagPickerProps & { ref?: React.Ref<HTMLInputE
   );
   const available = React.useMemo(() => filterList(query), [filterList, query]);
   const groups = React.useMemo(() => groupListboxItems(available), [available]);
-  const sortable = useSortableModule(reorderable);
+  const sortable = sortablePart.usePart(reorderable).mod;
   const firstEnabled = (list: NormalizedOption[]) => list.find((i) => !i.disabled)?.value ?? "";
   const optionOf = (v: string) => itemByValue.get(v);
 
@@ -198,7 +176,41 @@ export function TagPicker(inProps: TagPickerProps & { ref?: React.Ref<HTMLInputE
     });
   };
 
-  const listbox = useListbox({ open, groups, active, onActiveChange: setActive, onSelect: add });
+  const listbox = useListbox({
+    open,
+    groups,
+    active,
+    onActiveChange: setActive,
+    onSelect: add,
+    labelledBy: inputProps["aria-labelledby"],
+    label: msg.listLabel,
+  });
+
+  // Sortable về (hoặc `reorderable` tắt) thì nhóm tag nằm trong cây khác nên được tạo lại: tag đang giữ focus lúc đó
+  // nhận lại focus (theo value) thay vì rơi về <body>.
+  const selectedRef = React.useRef(selected);
+  const refocus = React.useRef<string | null>(null);
+  useIsomorphicLayoutEffect(() => {
+    selectedRef.current = selected;
+  });
+  const setTags = React.useCallback((el: HTMLDivElement | null) => {
+    tagsRef.current = el;
+    if (!el) return;
+    // Cleanup của ref chạy trước khi React gỡ phần tử khỏi DOM, lúc tag còn giữ focus.
+    return () => {
+      const index = Array.from(el.querySelectorAll("[data-tag]")).findIndex((t) => t.contains(el.ownerDocument.activeElement));
+      refocus.current = selectedRef.current[index] ?? null;
+      if (tagsRef.current === el) tagsRef.current = null;
+    };
+  }, []);
+  useIsomorphicLayoutEffect(() => {
+    const value = refocus.current;
+    refocus.current = null;
+    const root = tagsRef.current;
+    const doc = root?.ownerDocument;
+    if (value === null || !root || !doc || (doc.activeElement && doc.activeElement !== doc.body)) return;
+    root.querySelectorAll<HTMLElement>("[data-tag]")[selected.indexOf(value)]?.focus({ preventScroll: true });
+  }, [sortable]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     onKeyDown?.(e);
@@ -235,7 +247,7 @@ export function TagPicker(inProps: TagPickerProps & { ref?: React.Ref<HTMLInputE
 
   const tagGroup = selected.length > 0 && (
     <TagGroup
-      ref={tagsRef}
+      ref={setTags}
       aria-label={msg.selectedItems}
       size={s.tag}
       appearance={tagAppearance}

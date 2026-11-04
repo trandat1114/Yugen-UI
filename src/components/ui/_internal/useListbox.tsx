@@ -52,9 +52,21 @@ interface UseListboxOptions<T extends ListboxItem> {
   active: string;
   onActiveChange: (value: string) => void;
   onSelect: (value: string) => void;
+  /** `aria-labelledby` của ô nhập (Field gắn id nhãn): listbox mang cùng tên, như mẫu combobox của APG. */
+  labelledBy?: string;
+  /** Tên dự phòng (`aria-label`) khi ô nhập không có nhãn hiển thị nối qua `aria-labelledby`. */
+  label: string;
 }
 
-export function useListbox<T extends ListboxItem>({ open, groups, active, onActiveChange, onSelect }: UseListboxOptions<T>) {
+export function useListbox<T extends ListboxItem>({
+  open,
+  groups,
+  active,
+  onActiveChange,
+  onSelect,
+  labelledBy,
+  label,
+}: UseListboxOptions<T>) {
   const listId = `${React.useId()}-listbox`;
   const enabled = React.useMemo(() => groups.flatMap((g) => g.items.filter((i) => !i.disabled).map((i) => i.value)), [groups]);
   const current = enabled.includes(active) ? active : (enabled[0] ?? "");
@@ -118,8 +130,13 @@ export function useListbox<T extends ListboxItem>({ open, groups, active, onActi
       "aria-controls": open ? listId : undefined,
       "aria-activedescendant": open && current ? optionId(listId, current) : undefined,
     },
-    /** Gắn lên phần tử listbox. Nhãn giữ như cmdk trước đây. */
-    listProps: { ref: setList, id: listId, role: "listbox", "aria-label": "Suggestions" },
+    /** Gắn lên phần tử listbox: tên theo nhãn của ô nhập, không có thì theo `label`. */
+    listProps: {
+      ref: setList,
+      id: listId,
+      role: "listbox",
+      ...(labelledBy ? { "aria-labelledby": labelledBy } : { "aria-label": label }),
+    },
   };
 }
 
