@@ -23,7 +23,7 @@ import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffec
 import { useAnnounce } from "../AriaLive/AriaLive";
 import { Button } from "../Button/Button";
 import { fieldControlClass } from "../Field/Field";
-import { useYugen, useYugenMessages } from "../YugenProvider/context";
+import { useYugenLocale, useYugenMessages } from "../YugenProvider/context";
 import { promptInputMessagesEn, type PromptInputMessages } from "./messages";
 import { useComposedRefs } from "../_internal/composeRefs";
 
@@ -249,7 +249,7 @@ export function PromptInput({
   ...props
 }: PromptInputProps & { ref?: React.Ref<HTMLTextAreaElement> }) {
   const msg = useYugenMessages("promptInput", promptInputMessagesEn);
-  const { locale } = useYugen();
+  const locale = useYugenLocale();
   const sendLabel = sendLabelProp ?? msg.send;
   const stopLabel = stopLabelProp ?? msg.stop;
   const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);

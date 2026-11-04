@@ -4,7 +4,7 @@ import { CalendarClock20Regular } from "../_internal/icons";
 import { Calendar } from "@/components/ui/Calendar/Calendar";
 import { Button } from "@/components/ui/Button/Button";
 import { TimePicker, formatTime, getDefaultHourCycle, type TimePickerHourCycle } from "@/components/ui/TimePicker/TimePicker";
-import { useYugen, useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
+import { useYugenLocale, useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { PickerShell, boundsOf, numericDateFormat, type PickerBaseProps } from "./pickerShell";
 import { dateTimePickerMessagesEn } from "./messages";
 
@@ -44,7 +44,7 @@ export function DateTimePicker(inProps: DateTimePickerProps) {
     ...props
   } = useComponentDefaults("DateTimePicker", inProps, COMPACT_SIZE);
   const msg = useYugenMessages("dateTimePicker", dateTimePickerMessagesEn);
-  const { locale } = useYugen();
+  const locale = useYugenLocale();
   const cycle = hourCycle ?? getDefaultHourCycle(locale);
   const format = formatDate ?? ((d: Date) => `${numericDateFormat(locale)(d)} ${formatTime(d, { hourCycle: cycle, locale })}`);
   const [open, setOpen] = React.useState(false);

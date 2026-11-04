@@ -14,8 +14,9 @@ const isExternal = (id: string) =>
   !id.startsWith(".") && !id.startsWith("@/") && !id.startsWith("\0") && !path.isAbsolute(id);
 
 // Module tiện ích thuần (không React) và barrel re-export: không gắn "use client" để Server Component (Next.js
-// App Router) vẫn gọi được cn() / generateBrandRamp(). Mỗi file component vẫn là một client boundary riêng.
-const SERVER_SAFE = new Set(["lib.js", "lib/cn.js", "lib/brandRamp.js", "components/ui/index.js"]);
+// App Router) vẫn gọi được cn() / generateBrandRamp() / yugenHtmlAttributes(). Mỗi file component vẫn là một client
+// boundary riêng.
+const SERVER_SAFE = new Set(["lib.js", "lib/cn.js", "lib/brandRamp.js", "components/ui/index.js", "components/ui/YugenProvider/document.js"]);
 
 export default defineConfig({
   plugins: [react()],

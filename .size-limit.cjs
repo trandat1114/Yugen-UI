@@ -11,6 +11,18 @@
  */
 const PEERS = ["react", "react-dom", "react/jsx-runtime", "tailwindcss"];
 
+/**
+ * `import()` trong thư viện (Toaster của YugenProvider, #346) là chunk nạp lười với bundler của app (Vite, webpack,
+ * Next.js): đo lần tải đầu, không tính chunk đó. Không có plugin này, esbuild (không tách chunk) gộp chunk lười vào cùng
+ * file và bọc mọi module nó dùng trong hàm khởi tạo (+0.3–0.7 kB cho mọi mục), điều bundler thật không làm.
+ */
+const lazyChunks = {
+  name: "lazy-chunks",
+  setup(build) {
+    build.onResolve({ filter: /.*/ }, (args) => (args.kind === "dynamic-import" ? { path: args.path, external: true } : undefined));
+  },
+};
+
 /** Import thật từ entry của gói. */
 const js = (name, importStatement, limit) => ({
   name,
@@ -19,6 +31,7 @@ const js = (name, importStatement, limit) => ({
   ignore: PEERS,
   gzip: true,
   limit,
+  modifyEsbuildConfig: (config) => ({ ...config, plugins: [...(config.plugins ?? []), lazyChunks] }),
 });
 
 /** File CSS phát hành, đo nguyên trạng. */
@@ -36,7 +49,8 @@ module.exports = [
   js("Toàn bộ thư viện (import *)", "*", "340 kB"),
   js("{ cn }", "{ cn }", "10 kB"),
   js("{ Button }", "{ Button }", "14 kB"),
-  js("{ YugenProvider }", "{ YugenProvider }", "43 kB"),
+  // Toaster nạp lúc cần (#346): 25.95 → 13.46 kB (lần tải đầu; Toaster là chunk riêng).
+  js("{ YugenProvider }", "{ YugenProvider }", "15 kB"),
   js("{ Dialog, DialogSurface }", "{ Dialog, DialogSurface }", "24 kB"),
   js("{ Combobox }", "{ Combobox }", "59 kB"),
   js("{ DatePicker }", "{ DatePicker }", "68 kB"),

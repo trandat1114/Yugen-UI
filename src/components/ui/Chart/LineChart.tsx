@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
-import { useYugen, useYugenMessages } from "../YugenProvider/context";
+import { useYugenLocale, useYugenMessages } from "../YugenProvider/context";
 import { chartMessagesEn } from "./messages";
 import { ChartContainer, ChartFocusRing, ChartLegend, ChartTable, ChartTooltip, type ChartTooltipRow } from "./ChartParts";
 import { ChartBrush } from "./ChartBrush";
@@ -118,8 +118,8 @@ function SeriesChart({
   className,
   ref,
 }: AreaChartProps & { variant: "line" | "area"; ref?: React.Ref<HTMLElement> }) {
-  const yugen = useYugen();
-  const locale = localeProp ?? yugen.locale;
+  const yugenLocale = useYugenLocale();
+  const locale = localeProp ?? yugenLocale;
   const msg = useYugenMessages("chart", chartMessagesEn);
   const textured = useChartTexture(texture);
   const { ref: plotRef, width } = useElementSize<HTMLDivElement>();

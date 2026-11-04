@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useDirection } from "@radix-ui/react-direction";
 import { cn } from "@/lib/cn";
-import { useYugen, useYugenMessages } from "../YugenProvider/context";
+import { useYugenLocale, useYugenMessages } from "../YugenProvider/context";
 import { chartMessagesEn } from "./messages";
 import { ChartContainer, ChartFocusRing, ChartTable, ChartTooltip } from "./ChartParts";
 import { PlotArea, axisTextClass, formatCategory } from "./cartesian";
@@ -139,8 +139,8 @@ export function Heatmap({
   className,
   ref,
 }: HeatmapProps & { ref?: React.Ref<HTMLElement> }) {
-  const yugen = useYugen();
-  const locale = localeProp ?? yugen.locale;
+  const yugenLocale = useYugenLocale();
+  const locale = localeProp ?? yugenLocale;
   const msg = useYugenMessages("chart", chartMessagesEn);
   const emptyText = msg.noData;
   const uid = chartUid(React.useId());

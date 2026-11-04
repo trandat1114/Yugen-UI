@@ -19,7 +19,8 @@ vi.mock("@testing-library/react", async (importOriginal) => {
   const { YugenContext } = await import("@/components/ui/YugenProvider/context");
   const { messagesVi } = await import("@/components/ui/messages-vi");
   type Wrapper = React.JSXElementConstructor<{ children: React.ReactNode }>;
-  const value = { theme: "light", brand: "sakura", dir: "ltr", locale: "vi-VN", scoped: false, messages: messagesVi } as const;
+  // Chỉ context cấu hình (locale, messages); theme không có provider → mặc định light / sakura / ltr (#347).
+  const value = { locale: "vi-VN", messages: messagesVi } as const;
   const Vietnamese: Wrapper = ({ children }) => createElement(YugenContext.Provider, { value }, children);
   const wrap = (inner?: Wrapper): Wrapper =>
     inner ? ({ children }) => createElement(Vietnamese, null, createElement(inner, null, children)) : Vietnamese;

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useMediaQuery } from "../hooks/useMediaQuery";
-import { useYugen } from "../YugenProvider/context";
+import { useYugenTheme } from "../YugenProvider/context";
 
 /* ================================================================== Kiểu dữ liệu */
 
@@ -336,7 +336,7 @@ export function ringPath(cx: number, cy: number, r0: number, r1: number) {
 
 /** Bật hoa văn khi: prop texture, theme tương phản cao, hoặc forced-colors của hệ điều hành. */
 export function useChartTexture(texture?: boolean): boolean {
-  const { theme } = useYugen();
+  const { theme } = useYugenTheme();
   const forced = useMediaQuery("(forced-colors: active)");
   return texture ?? (theme === "high-contrast" || forced);
 }
