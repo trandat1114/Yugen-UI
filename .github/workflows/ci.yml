@@ -90,6 +90,15 @@ jobs:
       # Icon có sẵn (src/components/ui/_internal/icons.tsx) khớp với các icon component đang import (#320).
       - run: node scripts/icons.mjs --check
       - run: npm run build:lib
+      # The built package (scripts/check-package.mjs): every yugen-ui/<Folder> subpath loads in Node and shares the root's
+      # modules, a nodenext consumer finds a type for every export, the server-safe files have no "use client" (#343–#345).
+      - run: npm run check:package
+      # Are the Types Wrong: types match the JS for node16 (ESM) and bundler. ESM-only package, so node10 / require are
+      # ignored; the CSS files have no types; ./* is a pattern, so a few subpaths stand in for it.
+      - run: >-
+          npx --yes @arethetypeswrong/cli@0.18.5 --pack . --profile esm-only
+          --exclude-entrypoints ./theme.css ./theme-core.css ./styles.css ./tokens.css
+          --include-entrypoints ./Button ./Chart ./AIKit
       - run: npm run build:docs
       - run: npm run pack:check
       # Size budgets (.size-limit.cjs) — measured on the dist/ just built.

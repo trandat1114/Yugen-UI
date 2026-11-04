@@ -19,9 +19,12 @@ import {
   type SidebarCollapsible,
 } from "./context";
 import { appShellMessagesEn } from "./messages";
+import { readAppShellCookie, writeAppShellCookie, type AppShellSavedState } from "./cookie";
 
 export { appShellMessages, appShellMessagesVi, appShellMessagesEn, type AppShellMessages } from "./messages";
 export type { AppShellBreakpoint, AppShellLayout, AppShellScroll } from "./context";
+// Server-safe module (no "use client" in dist): `yugen-ui` re-exports it from there, so Server Components can call it.
+export { readAppShellCookie, type AppShellSavedState } from "./cookie";
 
 /**
  * Khung ứng dụng: sidebar (rail chỉ icon khi thu gọn, Drawer khi khung hẹp), thanh trên cùng, nội dung chính và cột phụ.
@@ -35,37 +38,6 @@ export type { AppShellBreakpoint, AppShellLayout, AppShellScroll } from "./conte
 const HEADER_AREA: Record<AppShellLayout, string> = { sidebar: "col-[2/-1]", header: "col-span-full" };
 const ASIDE_STICKY =
   "sticky top-(--app-shell-header,3.5rem) max-h-[calc(var(--app-shell-viewport,100dvh)-var(--app-shell-header,3.5rem))] self-start";
-
-const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
-
-export interface AppShellSavedState {
-  collapsed: boolean;
-  /** Chỉ có khi Sidebar `resizable` đã được kéo. */
-  width?: number;
-}
-
-/**
- * Đọc trạng thái đã lưu theo `persistKey` từ chuỗi cookie: `document.cookie`, hoặc header Cookie khi render ở server
- * để truyền `defaultCollapsed` / `defaultWidth` và không nháy bố cục.
- */
-export function readAppShellCookie(cookie: string | null | undefined, persistKey: string): AppShellSavedState | undefined {
-  const name = `${encodeURIComponent(persistKey)}=`;
-  const raw = cookie
-    ?.split(";")
-    .map((part) => part.trim())
-    .find((part) => part.startsWith(name))
-    ?.slice(name.length);
-  if (!raw) return undefined;
-  const [state, width] = raw.split(":");
-  if (state !== "collapsed" && state !== "expanded") return undefined;
-  const w = Number(width);
-  return { collapsed: state === "collapsed", width: width && Number.isFinite(w) ? w : undefined };
-}
-
-function writeAppShellCookie(persistKey: string, { collapsed, width }: AppShellSavedState) {
-  const value = `${collapsed ? "collapsed" : "expanded"}${width === undefined ? "" : `:${Math.round(width)}`}`;
-  document.cookie = `${encodeURIComponent(persistKey)}=${value}; path=/; max-age=${COOKIE_MAX_AGE}; samesite=lax`;
-}
 
 /** Ô nhập chữ: phím tắt không cướp Ctrl+B (in đậm) hay phím đang gõ dở bằng bộ gõ (IME). */
 function isTextEntry(target: EventTarget | null) {

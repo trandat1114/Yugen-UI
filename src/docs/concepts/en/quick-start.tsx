@@ -134,6 +134,23 @@ function NewsletterForm() {
   );
 }
 
+const IMPORTS = `// The root: everything from one place. Bundlers keep only what you use.
+import { Button, Dialog, DialogSurface } from "yugen-ui";
+
+// A subpath: only that component and what it uses.
+import { Button } from "yugen-ui/Button";
+import { LineChart, Sparkline } from "yugen-ui/Chart";
+import { useDisclosure } from "yugen-ui/hooks";`;
+
+const NEXT_CONFIG = `// next.config.ts
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  experimental: { optimizePackageImports: ["yugen-ui"] },
+};
+
+export default nextConfig;`;
+
 const PERSIST = `// src/App.tsx — remember the user's theme
 import * as React from "react";
 import { YugenProvider, type YugenTheme } from "yugen-ui";
@@ -283,6 +300,32 @@ export default function Page() {
             <NewsletterForm />
           </div>
           <CodeBlock code={FIRST} />
+        </div>
+      </DocSection>
+
+      <DocSection
+        id="imports"
+        title="Import paths"
+        description="Each component folder is also a subpath of the package: yugen-ui/Button, yugen-ui/Chart, yugen-ui/hooks."
+      >
+        <div className="flex flex-col gap-4">
+          <CodeBlock code={IMPORTS} />
+          <P>
+            A production build is the same size either way. Subpaths help where nothing tree-shakes the package: tests (Vitest, Jest),
+            server rendering in Node and the dev server. A cold <C>{'import { Button } from "yugen-ui/Button"'}</C> in Node loads 14 modules
+            instead of about 500. Both paths load the same files, so you can mix them.
+          </P>
+          <P>
+            The subpath is the folder of the component: <C>CardHeader</C> comes from <C>yugen-ui/Card</C>, <C>DateRangePicker</C> from{" "}
+            <C>yugen-ui/DatePicker</C>. The exceptions are <C>yugen-ui/AppShell/Sidebar</C>, <C>yugen-ui/messages-en</C> and{" "}
+            <C>yugen-ui/messages-vi</C>. <C>cn</C> and the brand color helpers are only on the root, and <C>readAppShellCookie</C> runs in a
+            Server Component only when imported from <C>yugen-ui</C>.
+          </P>
+          <P>
+            Next.js: to keep root imports and still load only what a page uses in development and on the server, add the package to{" "}
+            <C>optimizePackageImports</C>.
+          </P>
+          <CodeBlock code={NEXT_CONFIG} />
         </div>
       </DocSection>
 
