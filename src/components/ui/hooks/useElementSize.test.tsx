@@ -78,6 +78,29 @@ describe("useElementSize", () => {
     expect(instances[0].disconnect).toHaveBeenCalled();
   });
 
+  it("enabled: false — một lần render, không đo, không observer, 0×0; bật lại thì đo, tắt thì ngắt", () => {
+    stubObserver();
+    const rect = vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue({ width: 300, height: 100 } as DOMRect);
+    let renders = 0;
+    function Counted(options: UseElementSizeOptions) {
+      renders++;
+      return <Probe {...options} />;
+    }
+    const { rerender } = render(<Counted enabled={false} />);
+    expect(renders).toBe(1);
+    expect(rect).not.toHaveBeenCalled();
+    expect(instances).toHaveLength(0);
+    expect(screen.getByTestId("box")).toHaveTextContent("0×0");
+
+    rerender(<Counted enabled />);
+    expect(screen.getByTestId("box")).toHaveTextContent("300×100");
+    expect(instances).toHaveLength(1);
+
+    rerender(<Counted enabled={false} />);
+    expect(instances[0].disconnect).toHaveBeenCalled();
+    expect(screen.getByTestId("box")).toHaveTextContent("0×0");
+  });
+
   it("không có ResizeObserver: vẫn có số đo lần đầu, không lỗi", () => {
     vi.stubGlobal("ResizeObserver", undefined);
     render(<Probe />);

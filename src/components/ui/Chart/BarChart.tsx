@@ -67,6 +67,9 @@ interface Mark {
   key: string;
   row: number;
   hit: number;
+  series: string;
+  /** Vị trí chuỗi trong các chuỗi đang hiện. */
+  order: number;
   slot: ChartSlot;
   path: string;
   box: { x: number; y: number; w: number; h: number };
@@ -94,6 +97,21 @@ interface ValueLabel {
   anchor: "start" | "middle" | "end";
   dy: string;
 }
+
+/** Các cột cùng chuỗi và cùng ô màu: tô một lần trên `<g>`, các cột thừa hưởng. */
+interface MarkLayer {
+  key: string;
+  order: number;
+  slot: ChartSlot;
+  marks: Mark[];
+}
+
+const DIM_OPACITY = "var(--chartDimOpacity)";
+
+/** Một cột. Memo: hover chỉ render lại những cột đổi trạng thái mờ (cột cũ và cột mới), không phải mọi cột. */
+const BarMark = React.memo(function BarMark({ d, fill, dim }: { d: string; fill?: string; dim: boolean }) {
+  return <path d={d} className="transition-opacity duration-faster" style={fill || dim ? { fill, opacity: dim ? DIM_OPACITY : undefined } : undefined} />;
+});
 
 /** BarChart — cột / thanh ngang, nhóm hoặc chồng, hỗ trợ giá trị âm. SVG viết tay, không thư viện. */
 export function BarChart({
@@ -136,225 +154,299 @@ export function BarChart({
 
   const horizontal = orientation === "horizontal";
   const stacked = layout === "stacked" && series.length > 1;
-  const single = series.length === 1;
-  const useDiverging = diverging && single;
   const showLegend = legend ?? series.length > 1;
-  const fmt = makeNumberFormatter(locale, valueFormat);
-  const n = data.length;
-  const catLabels = data.map((d) => (categoryFormat ? categoryFormat(d[index]) : formatCategory(d[index], locale)));
-  const slots = series.map((s, i) => slotOf(s.color, i));
-  const vis = series.map((s, i) => ({ s, slot: slots[i] })).filter((v) => !hidden.has(v.s.key));
-  const val = (r: number, key: string) => toNumber(data[r]?.[key]);
 
-  /* ---------- miền giá trị (luôn gồm 0) ---------- */
-  let lo = 0;
-  let hi = 0;
-  const totals: { pos: number; neg: number }[] = [];
-  for (let r = 0; r < n; r++) {
-    let pos = 0;
-    let neg = 0;
-    for (const v of vis) {
-      const x = val(r, v.s.key);
-      if (x == null) continue;
-      if (stacked) {
-        if (x >= 0) pos += x;
-        else neg += x;
-      } else {
-        hi = Math.max(hi, x);
-        lo = Math.min(lo, x);
-      }
-    }
-    totals.push({ pos, neg });
-    if (stacked) {
-      hi = Math.max(hi, pos);
-      lo = Math.min(lo, neg);
-    }
-  }
+  // Hover chỉ đổi `active`: thang đo, cột, vùng bắt chuột và nhãn được nhớ theo props và độ rộng (#352).
+  const geo = React.useMemo(() => {
+    const single = series.length === 1;
+    const useDiverging = diverging && single;
+    const fmt = makeNumberFormatter(locale, valueFormat);
+    const n = data.length;
+    const catLabels = data.map((d) => (categoryFormat ? categoryFormat(d[index]) : formatCategory(d[index], locale)));
+    const slots = series.map((s, i) => slotOf(s.color, i));
+    const vis = series.map((s, i) => ({ s, slot: slots[i] })).filter((v) => !hidden.has(v.s.key));
+    const val = (r: number, key: string) => toNumber(data[r]?.[key]);
 
-  /* ---------- bố cục ---------- */
-  const groupCount = stacked ? 1 : Math.max(1, vis.length);
-  const H = height ?? (horizontal ? Math.max(160, n * Math.max(28, groupCount * Math.min(barSize, 16) + (groupCount - 1) * 2 + 16) + 36) : 280);
-  const top = 8 + (showValues && !horizontal ? 14 : 0);
-  const bottom = 28;
-  const plotH = Math.max(0, H - top - bottom);
-
-  const catLabelW = horizontal ? Math.min(Math.ceil(Math.max(0, ...catLabels.map((l) => measureText(l)))) + 12, Math.max(56, width * 0.35)) : 0;
-  const tickCount = horizontal ? clamp(Math.round((width - catLabelW) / 96), 2, 8) : clamp(Math.round(plotH / 56), 2, 8);
-  const ticks = niceTicks(lo, hi, tickCount);
-  const d0 = ticks[0];
-  const d1 = ticks[ticks.length - 1];
-  const axisFmt = makeAxisFormatter(locale, axisFormat ?? valueFormat, Math.max(Math.abs(d0), Math.abs(d1)), ticks.length > 1 ? ticks[1] - ticks[0] : 0);
-  const tickLabels = ticks.map(axisFmt);
-  const maxTickW = Math.max(0, ...tickLabels.map((t) => measureText(t)));
-
-  let left: number;
-  let right: number;
-  if (horizontal) {
-    const valueLabelW = showValues
-      ? Math.max(0, ...data.map((_, r) => measureText(fmt(stacked ? totals[r].pos + totals[r].neg : Math.max(0, ...vis.map((v) => val(r, v.s.key) ?? 0))))))
-      : 0;
-    left = catLabelW;
-    right = Math.max(8, measureText(tickLabels[tickLabels.length - 1]) / 2 + 2, showValues ? valueLabelW + 8 : 0);
-  } else {
-    left = Math.ceil(maxTickW) + 8;
-    right = 8;
-  }
-  const plotW = Math.max(0, width - left - right);
-
-  const vScale = horizontal ? linearScale([d0, d1], [left, left + plotW]) : linearScale([d0, d1], [top + plotH, top]);
-  const zero = vScale(0);
-  const band = n ? (horizontal ? plotH : plotW) / n : 0;
-  const center = (r: number) => (horizontal ? top : left) + band * (r + 0.5);
-  const thick = stacked || vis.length <= 1 ? Math.max(2, Math.min(barSize, band * 0.6)) : Math.max(2, Math.min(barSize, (band * 0.72 - (vis.length - 1) * 2) / vis.length));
-  const groupW = stacked ? thick : vis.length * thick + Math.max(0, vis.length - 1) * 2;
-
-  /** Đặt một cột từ v0 (phía gốc) tới v1 (phía đầu dữ liệu), lùi `inset` px ở phía gốc (khe 2px giữa các đoạn chồng). */
-  const place = (c: number, off: number, v0: number, v1: number, round: boolean, inset: number) => {
-    const positive = v1 >= v0;
-    const a = vScale(v0);
-    const b = vScale(v1);
-    let x: number;
-    let y: number;
-    let w: number;
-    let h: number;
-    let end: "top" | "bottom" | "left" | "right" | "none";
-    if (horizontal) {
-      y = c + off;
-      h = thick;
-      if (positive) {
-        x = a + inset;
-        w = b - a - inset;
-        end = "right";
-      } else {
-        x = b;
-        w = a - b - inset;
-        end = "left";
-      }
-    } else {
-      x = c + off;
-      w = thick;
-      if (positive) {
-        y = b;
-        h = a - b - inset;
-        end = "top";
-      } else {
-        y = a + inset;
-        h = b - a - inset;
-        end = "bottom";
-      }
-    }
-    w = Math.max(0, w);
-    h = Math.max(0, h);
-    return { path: barPath(x, y, w, h, 4, round ? end : "none"), box: { x, y, w, h } };
-  };
-
-  const marks: Mark[] = [];
-  const hits: Hit[] = [];
-  const valueLabels: ValueLabel[] = [];
-  const plotBox = { x: left, y: top, w: plotW, h: plotH };
-
-  const labelAt = (c: number, off: number, v: number, text: string, room: number): ValueLabel | null => {
-    const tw = measureText(text);
-    if (horizontal) {
-      const end = vScale(v);
-      return { key: "", x: v >= 0 ? end + 6 : end - 6, y: c + off + thick / 2, text, anchor: v >= 0 ? "start" : "end", dy: "0.32em" };
-    }
-    if (tw > room) return null;
-    const end = vScale(v);
-    return { key: "", x: c + off + thick / 2, y: v >= 0 ? end - 6 : end + 6, text, anchor: "middle", dy: v >= 0 ? "0" : "0.71em" };
-  };
-
-  if (width > 0 && n > 0) {
+    /* ---------- miền giá trị (luôn gồm 0) ---------- */
+    let lo = 0;
+    let hi = 0;
+    const totals: { pos: number; neg: number }[] = [];
     for (let r = 0; r < n; r++) {
-      const c = center(r);
-      const cat = catLabels[r];
+      let pos = 0;
+      let neg = 0;
+      for (const v of vis) {
+        const x = val(r, v.s.key);
+        if (x == null) continue;
+        if (stacked) {
+          if (x >= 0) pos += x;
+          else neg += x;
+        } else {
+          hi = Math.max(hi, x);
+          lo = Math.min(lo, x);
+        }
+      }
+      totals.push({ pos, neg });
       if (stacked) {
-        const segs: { v: (typeof vis)[number]; v0: number; v1: number; inset: number }[] = [];
-        let p = 0;
-        let q = 0;
-        for (const v of vis) {
-          const x = val(r, v.s.key);
-          if (!x) continue;
-          if (x > 0) {
-            segs.push({ v, v0: p, v1: p + x, inset: p > 0 ? 2 : 0 });
-            p += x;
-          } else {
-            segs.push({ v, v0: q, v1: q + x, inset: q < 0 ? 2 : 0 });
-            q += x;
-          }
-        }
-        const lastPos = segs.reduce((acc, s, i) => (s.v1 > s.v0 ? i : acc), -1);
-        const lastNeg = segs.reduce((acc, s, i) => (s.v1 < s.v0 ? i : acc), -1);
-        const hitIndex = hits.length;
-        const boxes: Mark["box"][] = [];
-        segs.forEach((s, i) => {
-          const m = place(c, -thick / 2, s.v0, s.v1, i === lastPos || i === lastNeg, s.inset);
-          if (!m.path) return;
-          boxes.push(m.box);
-          marks.push({ key: `${r}-${s.v.s.key}`, row: r, hit: hitIndex, slot: s.v.slot, ...m });
-        });
-        const total = totals[r].pos + totals[r].neg;
-        const rows: ChartTooltipRow[] = vis
-          .filter((v) => val(r, v.s.key) != null)
-          .map((v) => ({ key: v.s.key, label: v.s.label, value: fmt(val(r, v.s.key) as number), slot: v.slot, shape: "rect" as const }));
-        rows.push({ key: "__total", label: totalLabel, value: fmt(total) });
-        const endV = totals[r].pos > 0 ? totals[r].pos : totals[r].neg;
-        const tip = vScale(endV);
-        hits.push({
-          key: `r${r}`,
-          row: r,
-          ...(horizontal ? { x: plotBox.x, y: c - band / 2, w: plotBox.w, h: band } : { x: c - band / 2, y: plotBox.y, w: band, h: plotBox.h }),
-          anchor: horizontal ? [tip, c - thick / 2] : [c, Math.min(tip, zero)],
-          label: `${cat}: ${rows.map((row) => `${row.label} ${row.value}`).join(", ")}`,
-          title: cat,
-          rows,
-          ring: unionBox(boxes),
-        });
-        if (showValues && segs.length) {
-          const l = labelAt(c, -thick / 2, endV, fmt(total), band - 4);
-          if (l) valueLabels.push({ ...l, key: `t${r}` });
-        }
-      } else {
-        vis.forEach((v, j) => {
-          const x = val(r, v.s.key);
-          const off = -groupW / 2 + j * (thick + 2);
-          const slot: ChartSlot = useDiverging ? ((x ?? 0) < 0 ? "neg" : "pos") : v.slot;
-          const m = x == null ? null : place(c, off, 0, x, true, 0);
-          const hitIndex = hits.length;
-          if (m?.path) marks.push({ key: `${r}-${v.s.key}`, row: r, hit: hitIndex, slot, ...m });
-          const whole = vis.length <= 1;
-          const span = whole ? band : thick + 2;
-          const start = whole ? c - band / 2 : c + off - 1;
-          const valueText = x == null ? "—" : fmt(x);
-          hits.push({
-            key: `${r}-${v.s.key}`,
-            row: r,
-            ...(horizontal ? { x: plotBox.x, y: start, w: plotBox.w, h: span } : { x: start, y: plotBox.y, w: span, h: plotBox.h }),
-            anchor: horizontal ? [vScale(x ?? 0), c + off] : [c + off + thick / 2, x == null ? zero : Math.min(vScale(x), zero)],
-            label: single ? `${cat}: ${valueText}` : `${cat}, ${v.s.label}: ${valueText}`,
-            title: cat,
-            rows: [{ key: v.s.key, label: v.s.label, value: valueText, slot, shape: "rect" }],
-            ring: m?.path ? m.box : null,
-          });
-          if (showValues && x != null) {
-            const l = labelAt(c, off, x, fmt(x), whole ? band - 4 : thick + 2);
-            if (l) valueLabels.push({ ...l, key: `v${r}-${v.s.key}` });
-          }
-        });
+        hi = Math.max(hi, pos);
+        lo = Math.min(lo, neg);
       }
     }
-  }
+
+    /* ---------- bố cục ---------- */
+    const groupCount = stacked ? 1 : Math.max(1, vis.length);
+    const H = height ?? (horizontal ? Math.max(160, n * Math.max(28, groupCount * Math.min(barSize, 16) + (groupCount - 1) * 2 + 16) + 36) : 280);
+    const top = 8 + (showValues && !horizontal ? 14 : 0);
+    const bottom = 28;
+    const plotH = Math.max(0, H - top - bottom);
+
+    const catLabelW = horizontal ? Math.min(Math.ceil(Math.max(0, ...catLabels.map((l) => measureText(l)))) + 12, Math.max(56, width * 0.35)) : 0;
+    const tickCount = horizontal ? clamp(Math.round((width - catLabelW) / 96), 2, 8) : clamp(Math.round(plotH / 56), 2, 8);
+    const ticks = niceTicks(lo, hi, tickCount);
+    const d0 = ticks[0];
+    const d1 = ticks[ticks.length - 1];
+    const axisFmt = makeAxisFormatter(locale, axisFormat ?? valueFormat, Math.max(Math.abs(d0), Math.abs(d1)), ticks.length > 1 ? ticks[1] - ticks[0] : 0);
+    const tickLabels = ticks.map(axisFmt);
+    const maxTickW = Math.max(0, ...tickLabels.map((t) => measureText(t)));
+
+    let left: number;
+    let right: number;
+    if (horizontal) {
+      const valueLabelW = showValues
+        ? Math.max(0, ...data.map((_, r) => measureText(fmt(stacked ? totals[r].pos + totals[r].neg : Math.max(0, ...vis.map((v) => val(r, v.s.key) ?? 0))))))
+        : 0;
+      left = catLabelW;
+      right = Math.max(8, measureText(tickLabels[tickLabels.length - 1]) / 2 + 2, showValues ? valueLabelW + 8 : 0);
+    } else {
+      left = Math.ceil(maxTickW) + 8;
+      right = 8;
+    }
+    const plotW = Math.max(0, width - left - right);
+
+    const vScale = horizontal ? linearScale([d0, d1], [left, left + plotW]) : linearScale([d0, d1], [top + plotH, top]);
+    const zero = vScale(0);
+    const band = n ? (horizontal ? plotH : plotW) / n : 0;
+    const center = (r: number) => (horizontal ? top : left) + band * (r + 0.5);
+    const thick = stacked || vis.length <= 1 ? Math.max(2, Math.min(barSize, band * 0.6)) : Math.max(2, Math.min(barSize, (band * 0.72 - (vis.length - 1) * 2) / vis.length));
+    const groupW = stacked ? thick : vis.length * thick + Math.max(0, vis.length - 1) * 2;
+
+    /** Đặt một cột từ v0 (phía gốc) tới v1 (phía đầu dữ liệu), lùi `inset` px ở phía gốc (khe 2px giữa các đoạn chồng). */
+    const place = (c: number, off: number, v0: number, v1: number, round: boolean, inset: number) => {
+      const positive = v1 >= v0;
+      const a = vScale(v0);
+      const b = vScale(v1);
+      let x: number;
+      let y: number;
+      let w: number;
+      let h: number;
+      let end: "top" | "bottom" | "left" | "right" | "none";
+      if (horizontal) {
+        y = c + off;
+        h = thick;
+        if (positive) {
+          x = a + inset;
+          w = b - a - inset;
+          end = "right";
+        } else {
+          x = b;
+          w = a - b - inset;
+          end = "left";
+        }
+      } else {
+        x = c + off;
+        w = thick;
+        if (positive) {
+          y = b;
+          h = a - b - inset;
+          end = "top";
+        } else {
+          y = a + inset;
+          h = b - a - inset;
+          end = "bottom";
+        }
+      }
+      w = Math.max(0, w);
+      h = Math.max(0, h);
+      return { path: barPath(x, y, w, h, 4, round ? end : "none"), box: { x, y, w, h } };
+    };
+
+    const marks: Mark[] = [];
+    const hits: Hit[] = [];
+    const valueLabels: ValueLabel[] = [];
+    const plotBox = { x: left, y: top, w: plotW, h: plotH };
+
+    const labelAt = (c: number, off: number, v: number, text: string, room: number): ValueLabel | null => {
+      const tw = measureText(text);
+      if (horizontal) {
+        const end = vScale(v);
+        return { key: "", x: v >= 0 ? end + 6 : end - 6, y: c + off + thick / 2, text, anchor: v >= 0 ? "start" : "end", dy: "0.32em" };
+      }
+      if (tw > room) return null;
+      const end = vScale(v);
+      return { key: "", x: c + off + thick / 2, y: v >= 0 ? end - 6 : end + 6, text, anchor: "middle", dy: v >= 0 ? "0" : "0.71em" };
+    };
+
+    if (width > 0 && n > 0) {
+      for (let r = 0; r < n; r++) {
+        const c = center(r);
+        const cat = catLabels[r];
+        if (stacked) {
+          const segs: { v: (typeof vis)[number]; j: number; v0: number; v1: number; inset: number }[] = [];
+          let p = 0;
+          let q = 0;
+          vis.forEach((v, j) => {
+            const x = val(r, v.s.key);
+            if (!x) return;
+            if (x > 0) {
+              segs.push({ v, j, v0: p, v1: p + x, inset: p > 0 ? 2 : 0 });
+              p += x;
+            } else {
+              segs.push({ v, j, v0: q, v1: q + x, inset: q < 0 ? 2 : 0 });
+              q += x;
+            }
+          });
+          const lastPos = segs.reduce((acc, s, i) => (s.v1 > s.v0 ? i : acc), -1);
+          const lastNeg = segs.reduce((acc, s, i) => (s.v1 < s.v0 ? i : acc), -1);
+          const hitIndex = hits.length;
+          const boxes: Mark["box"][] = [];
+          segs.forEach((s, i) => {
+            const m = place(c, -thick / 2, s.v0, s.v1, i === lastPos || i === lastNeg, s.inset);
+            if (!m.path) return;
+            boxes.push(m.box);
+            marks.push({ key: `${r}-${s.v.s.key}`, row: r, hit: hitIndex, series: s.v.s.key, order: s.j, slot: s.v.slot, ...m });
+          });
+          const total = totals[r].pos + totals[r].neg;
+          const rows: ChartTooltipRow[] = vis
+            .filter((v) => val(r, v.s.key) != null)
+            .map((v) => ({ key: v.s.key, label: v.s.label, value: fmt(val(r, v.s.key) as number), slot: v.slot, shape: "rect" as const }));
+          rows.push({ key: "__total", label: totalLabel, value: fmt(total) });
+          const endV = totals[r].pos > 0 ? totals[r].pos : totals[r].neg;
+          const tip = vScale(endV);
+          hits.push({
+            key: `r${r}`,
+            row: r,
+            ...(horizontal ? { x: plotBox.x, y: c - band / 2, w: plotBox.w, h: band } : { x: c - band / 2, y: plotBox.y, w: band, h: plotBox.h }),
+            anchor: horizontal ? [tip, c - thick / 2] : [c, Math.min(tip, zero)],
+            label: `${cat}: ${rows.map((row) => `${row.label} ${row.value}`).join(", ")}`,
+            title: cat,
+            rows,
+            ring: unionBox(boxes),
+          });
+          if (showValues && segs.length) {
+            const l = labelAt(c, -thick / 2, endV, fmt(total), band - 4);
+            if (l) valueLabels.push({ ...l, key: `t${r}` });
+          }
+        } else {
+          vis.forEach((v, j) => {
+            const x = val(r, v.s.key);
+            const off = -groupW / 2 + j * (thick + 2);
+            const slot: ChartSlot = useDiverging ? ((x ?? 0) < 0 ? "neg" : "pos") : v.slot;
+            const m = x == null ? null : place(c, off, 0, x, true, 0);
+            const hitIndex = hits.length;
+            if (m?.path) marks.push({ key: `${r}-${v.s.key}`, row: r, hit: hitIndex, series: v.s.key, order: j, slot, ...m });
+            const whole = vis.length <= 1;
+            const span = whole ? band : thick + 2;
+            const start = whole ? c - band / 2 : c + off - 1;
+            const valueText = x == null ? "—" : fmt(x);
+            hits.push({
+              key: `${r}-${v.s.key}`,
+              row: r,
+              ...(horizontal ? { x: plotBox.x, y: start, w: plotBox.w, h: span } : { x: start, y: plotBox.y, w: span, h: plotBox.h }),
+              anchor: horizontal ? [vScale(x ?? 0), c + off] : [c + off + thick / 2, x == null ? zero : Math.min(vScale(x), zero)],
+              label: single ? `${cat}: ${valueText}` : `${cat}, ${v.s.label}: ${valueText}`,
+              title: cat,
+              rows: [{ key: v.s.key, label: v.s.label, value: valueText, slot, shape: "rect" }],
+              ring: m?.path ? m.box : null,
+            });
+            if (showValues && x != null) {
+              const l = labelAt(c, off, x, fmt(x), whole ? band - 4 : thick + 2);
+              if (l) valueLabels.push({ ...l, key: `v${r}-${v.s.key}` });
+            }
+          });
+        }
+      }
+    }
+
+    // Tô màu trên nhóm của chuỗi thay vì từng cột, chỉ khi đổi thứ tự vẽ không đổi điểm ảnh nào. Với band > thick + 1, hai
+    // cột khác hàng chỉ chạm nhau (chung một điểm ảnh) khi cột ở hàng sau thuộc chuỗi đứng trước; vẽ chuỗi cuối trước
+    // (grouped) giữ đúng thứ tự cũ ở những chỗ đó. Stacked giữ thứ tự chuỗi: các đoạn âm / dương của một cột chung cạnh ở mốc 0.
+    // Cột dày đặc hơn (band ≤ thick + 1) thì vẽ như cũ, mỗi cột một màu tô, theo thứ tự hàng.
+    let layers: MarkLayer[] | null = null;
+    if (band > thick + 1) {
+      const byKey = new Map<string, MarkLayer>();
+      for (const m of marks) {
+        const key = `${m.series}-${m.slot}`;
+        let layer = byKey.get(key);
+        if (!layer) byKey.set(key, (layer = { key, order: m.order, slot: m.slot, marks: [] }));
+        layer.marks.push(m);
+      }
+      layers = [...byKey.values()].sort((a, b) => (stacked ? a.order - b.order : b.order - a.order));
+    }
+
+    /* ---------- nhãn trục danh mục ---------- */
+    const catPositions = data.map((_, r) => center(r));
+    const xLabelIdx = !horizontal && width > 0 ? pickLabelIndices(catPositions, catLabels, left, left + plotW) : [];
+
+    const usedSlots: ChartSlot[] = useDiverging ? ["pos", "neg"] : vis.map((v) => v.slot);
+    const summary = ariaLabel ?? msg.barSummary({ horizontal, stacked, categories: n, series: series.map((s) => s.label) });
+
+    const legendNode = showLegend ? (
+      <ChartLegend
+        textured={textured}
+        onToggle={series.length > 1 ? toggleSeries : undefined}
+        items={series.map((s, i) => ({ key: s.key, label: s.label, slot: slots[i], hidden: hidden.has(s.key) }))}
+      />
+    ) : undefined;
+
+    // Cùng một element giữa các lần hover nên React bỏ qua cả cây con (lưới, trục, nhãn danh mục; đường gốc, nhãn giá trị).
+    const axes = width > 0 && (
+      <>
+        {textured && <ChartPatterns prefix={uid} slots={usedSlots} />}
+
+        {horizontal ? (
+          <>
+            <GridLines ticks={ticks} scale={vScale} from={top} to={top + plotH} orientation="vertical" skip={0} />
+            <ValueAxisBottom ticks={ticks} scale={vScale} y={top + plotH + 8} format={axisFmt} />
+            <g aria-hidden>
+              {catLabels.map((l, r) => (
+                <text key={r} x={left - 8} y={center(r)} dy="0.32em" textAnchor="end" className={axisTextClass}>
+                  {fitText(l, left - 12)}
+                </text>
+              ))}
+            </g>
+          </>
+        ) : (
+          <>
+            <GridLines ticks={ticks} scale={vScale} from={left} to={left + plotW} orientation="horizontal" skip={0} />
+            <ValueAxisLeft ticks={ticks} scale={vScale} x={left - 8} format={axisFmt} />
+            <CategoryAxisBottom positions={catPositions} labels={catLabels} indices={xLabelIdx} y={top + plotH + 8} minX={0} maxX={width} />
+          </>
+        )}
+      </>
+    );
+
+    const overlay = (
+      <>
+        {horizontal ? <Baseline x1={zero} x2={zero} y1={top} y2={top + plotH} /> : <Baseline x1={left} x2={left + plotW} y1={zero} y2={zero} />}
+
+        {valueLabels.length > 0 && (
+          <g aria-hidden>
+            {valueLabels.map((l) => (
+              <text key={l.key} x={l.x} y={l.y} dy={l.dy} textAnchor={l.anchor} className="fill-foreground-2 text-caption1 tabular-nums">
+                {l.text}
+              </text>
+            ))}
+          </g>
+        )}
+      </>
+    );
+
+    return { fmt, catLabels, H, zero, marks, layers, hits, summary, legendNode, axes, overlay };
+  }, [data, index, series, hidden, toggleSeries, showLegend, horizontal, stacked, valueFormat, axisFormat, categoryFormat, showValues, diverging, barSize, height, locale, width, totalLabel, ariaLabel, msg, textured, uid]);
+
+  const { fmt, catLabels, H, zero, marks, layers, hits, summary } = geo;
 
   const roving = useRovingPoints(hits.length, (i, kb) => setActive(i === null ? null : { i, kb }));
   const activeHit = active ? hits[active.i] : undefined;
-
-  /* ---------- nhãn trục danh mục ---------- */
-  const catPositions = data.map((_, r) => center(r));
-  const xLabelIdx = !horizontal && width > 0 ? pickLabelIndices(catPositions, catLabels, left, left + plotW) : [];
-
-  const usedSlots: ChartSlot[] = useDiverging ? ["pos", "neg"] : vis.map((v) => v.slot);
-  const summary =
-    ariaLabel ?? msg.barSummary({ horizontal, stacked, categories: n, series: series.map((s) => s.label) });
 
   // Chỉ dựng khi bảng đang bật: hàng của mọi điểm dữ liệu được định dạng lại mỗi lần biểu đồ render.
   const table = () => (
@@ -379,6 +471,31 @@ export function BarChart({
     />
   );
 
+  // Một lớp vùng bắt chuột + điểm dừng bàn phím với handler dùng chung: hover không render lại lớp này.
+  const hitLayer = React.useMemo(
+    () => (
+      <g {...roving.layerProps} style={{ fill: "transparent" }}>
+        {hits.map((h, i) => (
+          <rect
+            key={h.key}
+            data-i={i}
+            x={h.x}
+            y={h.y}
+            width={Math.max(0, h.w)}
+            height={Math.max(0, h.h)}
+            role="img"
+            aria-label={h.label}
+            tabIndex={i === roving.stop ? 0 : -1}
+            className="cursor-default outline-none"
+          />
+        ))}
+      </g>
+    ),
+    [roving.layerProps, roving.stop, hits],
+  );
+
+  const dim = (m: Mark) => !!active && active.i !== m.hit;
+
   return (
     <ChartContainer
       ref={ref}
@@ -389,15 +506,7 @@ export function BarChart({
       defaultShowTable={defaultShowTable}
       className={className}
       table={table}
-      legend={
-        showLegend ? (
-          <ChartLegend
-            textured={textured}
-            onToggle={series.length > 1 ? toggleSeries : undefined}
-            items={series.map((s, i) => ({ key: s.key, label: s.label, slot: slots[i], hidden: hidden.has(s.key) }))}
-          />
-        ) : undefined
-      }
+      legend={geo.legendNode}
     >
       <PlotArea ref={plotRef} height={H}>
         {width > 0 && (
@@ -410,89 +519,31 @@ export function BarChart({
             className="block overflow-visible"
             onPointerLeave={() => setActive((a) => (a?.kb ? a : null))}
           >
-            {textured && <ChartPatterns prefix={uid} slots={usedSlots} />}
-
-            {horizontal ? (
-              <>
-                <GridLines ticks={ticks} scale={vScale} from={top} to={top + plotH} orientation="vertical" skip={0} />
-                <ValueAxisBottom ticks={ticks} scale={vScale} y={top + plotH + 8} format={axisFmt} />
-                <g aria-hidden>
-                  {catLabels.map((l, r) => (
-                    <text key={r} x={left - 8} y={center(r)} dy="0.32em" textAnchor="end" className={axisTextClass}>
-                      {fitText(l, left - 12)}
-                    </text>
-                  ))}
-                </g>
-              </>
-            ) : (
-              <>
-                <GridLines ticks={ticks} scale={vScale} from={left} to={left + plotW} orientation="horizontal" skip={0} />
-                <ValueAxisLeft ticks={ticks} scale={vScale} x={left - 8} format={axisFmt} />
-                <CategoryAxisBottom
-                  positions={catPositions}
-                  labels={catLabels}
-                  indices={xLabelIdx}
-                  y={top + plotH + 8}
-                  minX={0}
-                  maxX={width}
-                />
-              </>
-            )}
+            {geo.axes}
 
             <g
               aria-hidden
               className={cn(animate && (horizontal ? "animate-chart-grow-x" : "animate-chart-grow"), "motion-reduce:animate-none")}
               style={{ transformOrigin: horizontal ? `${zero}px 0px` : `0px ${zero}px` }}
             >
-              {marks.map((m) => (
-                <path
-                  key={m.key}
-                  d={m.path}
-                  className="transition-opacity duration-faster"
-                  style={{
-                    fill: slotFill(m.slot, textured, uid),
-                    opacity: active && active.i !== m.hit ? "var(--chartDimOpacity)" : undefined,
-                  }}
-                />
-              ))}
+              {layers
+                ? layers.map((l) => (
+                    <g key={l.key} style={{ fill: slotFill(l.slot, textured, uid) }}>
+                      {l.marks.map((m) => (
+                        <BarMark key={m.key} d={m.path} dim={dim(m)} />
+                      ))}
+                    </g>
+                  ))
+                : marks.map((m) => <BarMark key={m.key} d={m.path} fill={slotFill(m.slot, textured, uid)} dim={dim(m)} />)}
             </g>
 
-            {horizontal ? (
-              <Baseline x1={zero} x2={zero} y1={top} y2={top + plotH} />
-            ) : (
-              <Baseline x1={left} x2={left + plotW} y1={zero} y2={zero} />
-            )}
-
-            {valueLabels.length > 0 && (
-              <g aria-hidden>
-                {valueLabels.map((l) => (
-                  <text key={l.key} x={l.x} y={l.y} dy={l.dy} textAnchor={l.anchor} className="fill-foreground-2 text-caption1 tabular-nums">
-                    {l.text}
-                  </text>
-                ))}
-              </g>
-            )}
+            {geo.overlay}
 
             {activeHit?.ring && active?.kb && (
               <ChartFocusRing x={activeHit.ring.x} y={activeHit.ring.y} width={activeHit.ring.w} height={activeHit.ring.h} />
             )}
 
-            <g>
-              {hits.map((h, i) => (
-                <rect
-                  key={h.key}
-                  x={h.x}
-                  y={h.y}
-                  width={Math.max(0, h.w)}
-                  height={Math.max(0, h.h)}
-                  role="img"
-                  aria-label={h.label}
-                  className="cursor-default outline-none"
-                  style={{ fill: "transparent" }}
-                  {...roving.pointProps(i)}
-                />
-              ))}
-            </g>
+            {hitLayer}
           </svg>
         )}
         {activeHit && (

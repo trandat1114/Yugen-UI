@@ -58,7 +58,8 @@ module.exports = [
   js("{ MonthPicker, YearPicker, DateTimePicker }", "{ MonthPicker, YearPicker, DateTimePicker }", "76 kB"),
   js("{ PasswordInput, FormattedInput }", "{ PasswordInput, FormattedInput }", "16.5 kB"),
   js("{ ColorPicker }", "{ ColorPicker }", "30 kB"),
-  js("{ BarChart, LineChart }", "{ BarChart, LineChart }", "38 kB"),
+  // Hình học / nhãn nhớ theo props, lớp điểm dùng chung, màu tô trên nhóm (#352): 30.18 → 31.10 kB.
+  js("{ BarChart, LineChart }", "{ BarChart, LineChart }", "34 kB"),
   js("{ Sheet }", "{ Sheet }", "28 kB"),
   // #168: Radix Navigation Menu (dependency mới) + viewport.
   js("{ NavigationMenu }", "{ NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuTrigger, NavigationMenuContent, NavigationMenuLink }", "26 kB"),

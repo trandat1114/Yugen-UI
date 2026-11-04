@@ -363,10 +363,11 @@ export const docs: ComponentDoc[] = [
         description: "Gắn `ref` vào phần tử. Không có IntersectionObserver thì luôn false.",
       },
       {
-        name: "useElementSize({ box })",
+        name: "useElementSize({ box, enabled })",
         type: "{ ref, width, height }",
-        defaultValue: `"content-box"`,
-        description: "Chưa đo được (server, lần render đầu) thì là 0 × 0. Đo lần đầu trước khi trình duyệt vẽ nên không nháy. Dùng được cả với chữ viết dọc.",
+        defaultValue: `box: "content-box", enabled: true`,
+        description:
+          "Chưa đo được (server, lần render đầu) thì là 0 × 0. Đo lần đầu trước khi trình duyệt vẽ nên không nháy. Dùng được cả với chữ viết dọc. `enabled: false` khi kích thước đã biết trước (vd. độ rộng cố định): không đo, không ResizeObserver, không render thêm, luôn 0 × 0.",
       },
     ],
   },
