@@ -119,7 +119,8 @@ if (smoke) {
     const { chromium } = await import("@playwright/test");
     const { AxeBuilder } = await import("@axe-core/playwright");
     const browser = await chromium.launch();
-    const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+    // Giảm chuyển động: axe chạy giữa hiệu ứng xuất hiện (chữ còn mờ) báo sai color-contrast, lúc có lúc không.
+    const context = await browser.newContext({ viewport: { width: 1280, height: 800 }, reducedMotion: "reduce" });
     const page = await context.newPage();
     let errors = [];
     page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
@@ -135,6 +136,15 @@ if (smoke) {
       await page.goto("about:blank");
       await page.goto(origin + url, { waitUntil: "networkidle" });
       const rendered = await page.locator(isNext ? "body > *" : "#root > *").count();
+      // Chờ các animation hữu hạn còn chạy (spinner lặp vô hạn thì bỏ qua).
+      await page.evaluate(() =>
+        Promise.all(
+          document
+            .getAnimations()
+            .filter((a) => a.effect?.getComputedTiming().iterations !== Infinity)
+            .map((a) => a.finished.catch(() => {})),
+        ),
+      );
       const { violations } = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
       const problems = [
         ...(rendered ? [] : [isNext ? "<body> trống" : "#root trống"]),
