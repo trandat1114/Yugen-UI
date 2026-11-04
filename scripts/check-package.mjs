@@ -122,7 +122,9 @@ try {
         jsx: "react-jsx",
         strict: true,
         noEmit: true,
-        skipLibCheck: true,
+        // Off, so an import in this package's .d.ts that nodenext cannot resolve fails here instead of turning a type
+        // into `any`. Errors inside other packages' declarations are filtered out below.
+        skipLibCheck: false,
         types: [],
       },
       files: ["index.ts"],
@@ -146,8 +148,17 @@ try {
   try {
     execFileSync(process.execPath, [tsc, "-p", consumer], { cwd: consumer, encoding: "utf8", stdio: "pipe" });
   } catch (error) {
-    const output = `${error.stdout ?? ""}${error.stderr ?? ""}`.trim().split("\n");
-    fail(`tsc --module nodenext on a consumer of every export: ${output.length} line(s) of errors\n    ${output.slice(0, 30).join("\n    ")}`);
+    // One diagnostic per `file(line,col): error …` line plus its indented continuation lines.
+    const diagnostics = `${error.stdout ?? ""}${error.stderr ?? ""}`.trim().split(/\r?\n(?=\S)/);
+    // Another package's file: under a node_modules folder other than this package's link.
+    const dependency = new RegExp(`[\\\\/]node_modules[\\\\/](?!${pkg.name}[\\\\/])`);
+    const ours = diagnostics.filter((d) => {
+      const file = /^(.+?)\(\d+,\d+\): /.exec(d)?.[1];
+      return !file || !dependency.test(file);
+    });
+    if (ours.length)
+      fail(`tsc --module nodenext on a consumer of every export: ${ours.length} error(s)\n    ${ours.slice(0, 30).join("\n    ")}`);
+    else console.log(`[check-package] types: ${diagnostics.length} error(s) in dependencies' declarations, not checked`);
   }
   console.log(`[check-package] types: ${n} imports type-checked with module nodenext`);
 } finally {
