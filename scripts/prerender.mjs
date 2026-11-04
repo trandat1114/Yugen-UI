@@ -6,7 +6,8 @@
  *   dist-docs/vi/…                        cùng các trang đó bằng tiếng Việt (/vi/, /vi/components/button); tiếng Anh ở
  *                                         gốc (#277)
  *   dist-docs/en/…                        trang chuyển hướng cho URL /en/… của docs ≤ 0.13 (noindex, canonical về URL mới)
- *   dist-docs/404.html                    khung trống (noindex): đường dẫn lạ, React tự render theo URL
+ *   dist-docs/404.html                    trang 404 tiếng Anh (noindex, #238): GitHub Pages trả cho mọi đường dẫn lạ; React
+ *                                         render lại theo URL (/vi/… thành tiếng Việt)
  *   dist-docs/routes.json                 mọi trang: đường dẫn + nội dung ảnh chia sẻ (og-pages.mjs); build-versioned-docs.mjs
  *                                         dựa vào file này để biết bản docs dùng URL đường dẫn
  *   dist-docs/sitemap.xml                 chỉ bản chính (next/ và vX.Y/ trỏ canonical về bản chính); lastmod theo git,
@@ -40,7 +41,7 @@ function replaceOnce(html, pattern, value) {
   return next;
 }
 
-const { ROUTES, SITE, render, sourcesOf, DEFAULT_LOCALE, PREFIXED_LOCALE, LEGACY_PREFIX, pathOf, hrefOf } = await import(
+const { ROUTES, NOT_FOUND_ROUTE, SITE, render, sourcesOf, DEFAULT_LOCALE, PREFIXED_LOCALE, LEGACY_PREFIX, pathOf, hrefOf } = await import(
   pathToFileURL(path.join(ssr, "entry-server.js")).href
 );
 
@@ -130,9 +131,15 @@ for (const route of ROUTES) {
   fs.writeFileSync(file, legacyRedirect(SITE.url + target.slice(base.length), target));
 }
 
-// 404: khung trống như trước khi có prerender, không cho index.
-const notFound = replaceOnce(template, /<meta name="viewport"[^>]*>/, (m) => `${m}\n    <meta name="robots" content="noindex" />`);
-fs.writeFileSync(path.join(out, "404.html"), notFound);
+// 404 (#238): trang "Không tìm thấy" thật (không phải khung trống / trang chủ), không cho index. data-not-found: script trong
+// index.html lấy ngôn ngữ từ URL (/vi/…) thay vì từ HTML dựng sẵn bằng tiếng Anh.
+{
+  const { html, head } = await render(NOT_FOUND_ROUTE, DEFAULT_LOCALE);
+  let notFound = page(template, DEFAULT_LOCALE, head, html);
+  notFound = replaceOnce(notFound, /<meta name="viewport"[^>]*>/, (m) => `${m}\n    <meta name="robots" content="noindex" />`);
+  notFound = replaceOnce(notFound, /<html lang="[^"]*" data-prerendered>/, (m) => m.replace(">", " data-not-found>"));
+  fs.writeFileSync(path.join(out, "404.html"), notFound);
+}
 fs.writeFileSync(path.join(out, "routes.json"), JSON.stringify(entries, null, 2) + "\n");
 if (mainBuild) {
   const urls = sitemap.map(({ loc, alternates, lastmod }) =>

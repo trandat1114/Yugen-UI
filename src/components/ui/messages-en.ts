@@ -52,6 +52,7 @@ import {
   typingIndicatorMessagesEn,
 } from "./MessageScroller/messages";
 import { navMessagesEn } from "./Nav/messages";
+import { navigationMenuMessagesEn } from "./NavigationMenu/messages";
 import { notificationCenterMessagesEn } from "./NotificationCenter/messages";
 import { paginationMessagesEn } from "./Pagination/messages";
 import { passwordInputMessagesEn } from "./PasswordInput/messages";
@@ -67,6 +68,7 @@ import { sortableMessagesEn } from "./Sortable/messages";
 import { spinButtonMessagesEn } from "./SpinButton/messages";
 import { spinnerMessagesEn } from "./Spinner/messages";
 import { statMessagesEn } from "./Stat/messages";
+import { statusPageMessagesEn } from "./StatusPage/messages";
 import { splitButtonMessagesEn } from "./SplitButton/messages";
 import { stepperMessagesEn, wizardMessagesEn } from "./Stepper/messages";
 import { swatchPickerMessagesEn } from "./SwatchPicker/messages";
@@ -120,6 +122,7 @@ export const messagesEn: YugenMessages = {
   messageScroller: messageScrollerMessagesEn,
   monthPicker: monthPickerMessagesEn,
   nav: navMessagesEn,
+  navigationMenu: navigationMenuMessagesEn,
   notificationCenter: notificationCenterMessagesEn,
   optimisticList: optimisticListMessagesEn,
   packageManagerTabs: packageManagerTabsMessagesEn,
@@ -141,6 +144,7 @@ export const messagesEn: YugenMessages = {
   spinner: spinnerMessagesEn,
   splitButton: splitButtonMessagesEn,
   stat: statMessagesEn,
+  statusPage: statusPageMessagesEn,
   stepper: stepperMessagesEn,
   streamingMarkdown: streamingMarkdownMessagesEn,
   swatchPicker: swatchPickerMessagesEn,

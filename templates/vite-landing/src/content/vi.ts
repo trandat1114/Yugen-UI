@@ -161,6 +161,7 @@ const vi: Content = {
     madeWith: "Làm bằng Yugen UI",
     sample: "Sản phẩm mẫu. Tên người và lời nhận xét đều là hư cấu.",
   },
+  notFound: { home: "Về trang chủ" },
 };
 
 export default vi;

@@ -56,8 +56,13 @@ export function sourcesOf(route: Route): string[] {
       const meta = COMPONENT_META_BY_SLUG[route.slug];
       return meta ? [`src/docs/registry/${meta.file}`, `src/components/ui/${meta.name}`] : [];
     }
+    case "not-found":
+      return ["src/docs/pages/NotFoundPage.tsx"];
   }
 }
+
+/** Trang 404.html (#238): GitHub Pages trả file này cho mọi đường dẫn lạ; React render lại theo URL và ngôn ngữ thật. */
+export const NOT_FOUND_ROUTE: Route = { kind: "not-found", path: "404" };
 
 /** Nội dung ảnh chia sẻ (scripts/og-pages.mjs): nhóm trang, tiêu đề, mô tả. */
 function cardOf(route: Route, l: LocaleValue) {

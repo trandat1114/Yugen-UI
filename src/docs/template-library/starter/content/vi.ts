@@ -49,6 +49,7 @@ const vi: Content = {
     ],
   },
   footer: { yugen: "yūgen: vẻ đẹp sâu lắng trong những điều tinh tế.", builtWith: "Dựng bằng" },
+  notFound: { home: "Về trang chủ" },
 };
 
 export default vi;

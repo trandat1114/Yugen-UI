@@ -16,6 +16,7 @@ import {
   Toolbar,
   ToolbarButton,
   useScrollMinimize,
+  ErrorBoundary,
 } from "yugen-ui";
 import { cn } from "yugen-ui";
 import { SOLID_MATERIAL, type Appearance } from "./appearance";
@@ -115,7 +116,9 @@ export function Layout({ t, appearance, onAppearanceChange, embedded }: LayoutPr
       className={cn("@container/app relative isolate overflow-hidden bg-shell text-foreground-1", embedded ? "h-full" : "h-dvh")}
     >
       <Main ref={scrollRef} className="h-full overflow-y-auto">
-        <React.Suspense fallback={<PageFallback embedded={embedded} />}>{page}</React.Suspense>
+        <ErrorBoundary resetKeys={[JSON.stringify(route)]}>
+          <React.Suspense fallback={<PageFallback embedded={embedded} />}>{page}</React.Suspense>
+        </ErrorBoundary>
       </Main>
 
       {/* Sidebar: from 768px, an icon rail until 1024px. Floats over the photos (background extension). */}
