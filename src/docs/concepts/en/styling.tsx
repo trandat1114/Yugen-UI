@@ -331,7 +331,7 @@ export default function Page() {
               [<C key="a">menuPopoverClass</C>, <span key="b">Menu</span>, "Menu surface (Menu, ContextMenu, Menubar)."],
               [<C key="a">menuItemClass</C>, "Menu", "32px menu item, highlighted through data-highlighted."],
               [<C key="a">listboxOptionClass</C>, "Dropdown", "Listbox option (Dropdown, Combobox, TagPicker)."],
-              [<C key="a">cmdkOptionClass</C>, "Combobox", "cmdk option: highlighted through data-selected=true."],
+              [<C key="a">cmdkOptionClass</C>, "Combobox", "Option highlighted through data-selected=true (Combobox, TagPicker, TimePicker)."],
             ]}
           />
           <P>Example: a custom read-only field that still has the stroke-accessible bottom edge and the brand bar on focus (click it or Tab to it):</P>

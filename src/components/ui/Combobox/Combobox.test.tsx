@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { Profiler } from "react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Combobox, comboboxMessagesEn, normalizeSearchText, type ComboboxProps } from "./Combobox";
 import { YugenProvider } from "../YugenProvider/YugenProvider";
@@ -149,6 +150,130 @@ describe("Combobox", () => {
     expect(input).toBeDisabled();
     await user.click(input);
     expect(input).toHaveAttribute("aria-expanded", "false");
+  });
+});
+
+describe("Combobox listbox", () => {
+  // Thứ tự vẽ: Miền Bắc (Hà Nội, Hải Phòng) · Miền Trung (Đà Nẵng, Huế disabled) · Khác (không nhóm) · Miền Nam.
+  const GROUPED = [
+    { value: "hn", label: "Hà Nội", group: "Miền Bắc" },
+    { value: "dn", label: "Đà Nẵng", group: "Miền Trung" },
+    { value: "hp", label: "Hải Phòng", group: "Miền Bắc" },
+    { value: "hue", label: "Huế", group: "Miền Trung", disabled: true },
+    { value: "khac", label: "Khác" },
+    { value: "hcm", label: "Hồ Chí Minh", group: "Miền Nam" },
+  ];
+
+  function open(props: Partial<ComboboxProps> = {}) {
+    const onRender = vi.fn();
+    const utils = render(
+      <Profiler id="combobox" onRender={onRender}>
+        <Combobox aria-label="Thành phố" options={GROUPED} {...(props as object)} />
+      </Profiler>,
+    );
+    const input = screen.getByRole("combobox", { name: "Thành phố" });
+    input.focus();
+    fireEvent.keyDown(input, { key: "ArrowDown" });
+    const active = () => {
+      const id = input.getAttribute("aria-activedescendant");
+      return id ? document.getElementById(id)?.textContent : null;
+    };
+    const press = (key: string, init: object = {}) => fireEvent.keyDown(input, { key, ...init });
+    return { ...utils, input, active, press, onRender };
+  }
+
+  it("nhóm có tiêu đề (role=group), option không nhóm nằm thẳng trong listbox", () => {
+    open();
+    const groups = screen.getAllByRole("group");
+    expect(groups.map((g) => document.getElementById(g.getAttribute("aria-labelledby")!)?.textContent)).toEqual([
+      "Miền Bắc",
+      "Miền Trung",
+      "Miền Nam",
+    ]);
+    expect(screen.getAllByRole("option").map((o) => o.textContent)).toEqual(["Hà Nội", "Hải Phòng", "Đà Nẵng", "Huế", "Khác", "Hồ Chí Minh"]);
+    expect(screen.getByRole("option", { name: "Khác" }).parentElement).toBe(screen.getByRole("listbox"));
+    expect(screen.getByRole("option", { name: "Huế" })).toHaveAttribute("aria-disabled", "true");
+  });
+
+  it("Alt + mũi tên nhảy nhóm có tên; ⌘ + mũi tên về đầu / cuối", () => {
+    const { active, press } = open();
+    expect(active()).toBe("Hà Nội");
+    press("ArrowDown", { altKey: true });
+    expect(active()).toBe("Đà Nẵng");
+    // Bỏ qua option không nhóm, sang Miền Nam.
+    press("ArrowDown", { altKey: true });
+    expect(active()).toBe("Hồ Chí Minh");
+    // Hết nhóm: như mũi tên thường (vòng về đầu).
+    press("ArrowDown", { altKey: true });
+    expect(active()).toBe("Hà Nội");
+    press("ArrowUp", { altKey: true });
+    expect(active()).toBe("Hồ Chí Minh");
+    press("ArrowUp", { altKey: true });
+    expect(active()).toBe("Đà Nẵng");
+    press("ArrowDown");
+    expect(active()).toBe("Khác");
+    press("ArrowDown", { altKey: true });
+    expect(active()).toBe("Hồ Chí Minh");
+    press("ArrowUp", { metaKey: true });
+    expect(active()).toBe("Hà Nội");
+    press("ArrowDown", { metaKey: true });
+    expect(active()).toBe("Hồ Chí Minh");
+  });
+
+  it("đang gõ IME: mũi tên / Enter không đổi highlight, không chọn", () => {
+    const onValueChange = vi.fn();
+    const { active, press } = open({ onValueChange });
+    press("ArrowDown", { isComposing: true });
+    press("Enter", { keyCode: 229 });
+    expect(active()).toBe("Hà Nội");
+    expect(onValueChange).not.toHaveBeenCalled();
+  });
+
+  it("Enter khi danh sách đóng: chặn mặc định (không submit form), không chọn gì", () => {
+    const onValueChange = vi.fn();
+    render(<Combobox aria-label="Thành phố" options={GROUPED} onValueChange={onValueChange} />);
+    const input = screen.getByRole("combobox", { name: "Thành phố" });
+    expect(fireEvent.keyDown(input, { key: "Enter" })).toBe(false);
+    expect(onValueChange).not.toHaveBeenCalled();
+    expect(input).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("mỗi phím mũi tên chỉ một lượt commit; option đầu nhóm kéo theo tiêu đề vào tầm nhìn", () => {
+    const scroll = vi.spyOn(Element.prototype, "scrollIntoView");
+    const { press, onRender } = open();
+    // Lúc mở: tiêu đề Miền Bắc rồi Hà Nội.
+    expect(scroll.mock.contexts.map((el) => (el as Element).textContent)).toEqual(["Miền Bắc", "Hà Nội"]);
+    scroll.mockClear();
+    onRender.mockClear();
+    press("ArrowDown");
+    expect(onRender).toHaveBeenCalledTimes(1);
+    expect(scroll.mock.contexts.map((el) => (el as Element).textContent)).toEqual(["Hải Phòng"]);
+    scroll.mockClear();
+    press("ArrowDown");
+    expect(scroll.mock.contexts.map((el) => (el as Element).textContent)).toEqual(["Miền Trung", "Đà Nẵng"]);
+  });
+
+  it("option đang highlight biến mất (options đổi khi đang mở) → highlight option bật đầu tiên", () => {
+    const { active, press, rerender } = open();
+    press("ArrowUp");
+    expect(active()).toBe("Hồ Chí Minh");
+    rerender(
+      <Profiler id="combobox" onRender={() => {}}>
+        <Combobox aria-label="Thành phố" options={GROUPED.slice(1, 5)} />
+      </Profiler>,
+    );
+    expect(active()).toBe("Đà Nẵng");
+  });
+
+  it("rê chuột đổi highlight, không cần commit khi rê trên option đang highlight", () => {
+    const { active, onRender } = open();
+    fireEvent.pointerMove(screen.getByRole("option", { name: "Khác" }));
+    expect(active()).toBe("Khác");
+    onRender.mockClear();
+    fireEvent.pointerMove(screen.getByRole("option", { name: "Khác" }));
+    fireEvent.pointerMove(screen.getByRole("option", { name: "Huế" }));
+    expect(onRender).not.toHaveBeenCalled();
+    expect(active()).toBe("Khác");
   });
 });
 

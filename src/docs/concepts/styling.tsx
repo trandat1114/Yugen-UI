@@ -330,7 +330,7 @@ export default function Page() {
               [<C key="a">menuPopoverClass</C>, <span key="b">Menu</span>, "Bề mặt menu (Menu, ContextMenu, Menubar)."],
               [<C key="a">menuItemClass</C>, "Menu", "Item menu cao 32px, highlight bằng data-highlighted."],
               [<C key="a">listboxOptionClass</C>, "Dropdown", "Option trong listbox (Dropdown, Combobox, TagPicker)."],
-              [<C key="a">cmdkOptionClass</C>, "Combobox", "Option cmdk: highlight bằng data-selected=true."],
+              [<C key="a">cmdkOptionClass</C>, "Combobox", "Option highlight bằng data-selected=true (Combobox, TagPicker, TimePicker)."],
             ]}
           />
           <P>Ví dụ: một ô chỉ đọc tự viết nhưng vẫn có đáy stroke-accessible và thanh brand khi focus (bấm vào hoặc Tab tới ô):</P>

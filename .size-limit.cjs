@@ -52,7 +52,10 @@ module.exports = [
   // Toaster nạp lúc cần (#346): 25.95 → 13.52 kB (lần tải đầu; Toaster là chunk riêng).
   js("{ YugenProvider }", "{ YugenProvider }", "15 kB"),
   js("{ Dialog, DialogSurface }", "{ Dialog, DialogSurface }", "24 kB"),
-  js("{ Combobox }", "{ Combobox }", "59 kB"),
+  // Listbox riêng thay cmdk (#351): 42.57 → 38.59 kB.
+  js("{ Combobox }", "{ Combobox }", "42 kB"),
+  // #351: không cmdk, Sortable nạp lúc cần khi `reorderable`: 50.30 → 40.38 kB.
+  js("{ TagPicker }", "{ TagPicker }", "44 kB"),
   js("{ DatePicker }", "{ DatePicker }", "68 kB"),
   // #173: họ DatePicker dùng chung vỏ; MonthPicker / DateTimePicker kéo theo Calendar (react-day-picker) như DatePicker.
   js("{ MonthPicker, YearPicker, DateTimePicker }", "{ MonthPicker, YearPicker, DateTimePicker }", "76 kB"),

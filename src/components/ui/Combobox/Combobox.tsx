@@ -3,7 +3,6 @@ import * as React from "react";
 import { useControllableState } from "../hooks/useControllableState";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { useDirection } from "@radix-ui/react-direction";
-import { Command as CommandPrimitive } from "cmdk";
 import {
   Checkmark12Filled,
   Checkmark16Filled,
@@ -13,7 +12,7 @@ import {
 } from "../_internal/icons";
 import { usePortalThemeProps, useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
-import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
+import { groupListboxItems, ListboxGroups, listboxOptionProps, useListbox } from "../_internal/useListbox";
 import { popoverSurfaceClass } from "@/components/ui/Popover/Popover";
 import { fieldAppearanceClass, type FieldAppearance } from "@/components/ui/Select/Select";
 import { listboxOptionClass } from "@/components/ui/Dropdown/Dropdown";
@@ -41,13 +40,13 @@ export function normalizeSearchText(text: string) {
     .trim();
 }
 
-/** Class cho option cmdk (highlight = data-selected, disabled = data-disabled=true). */
+/** Class cho option highlight qua `data-selected=true`, disabled qua `data-disabled=true` (Combobox, TagPicker, TimePicker). */
 export const cmdkOptionClass = cn(
   listboxOptionClass,
   "data-[selected=true]:bg-background-1-hover data-[disabled=true]:pointer-events-none data-[disabled=true]:text-foreground-disabled",
 );
 
-/** Class cho cmdk Group: tiêu đề + vạch chia giữa các nhóm. */
+/** Class cho nhóm của cmdk (Command.Group): tiêu đề + vạch chia giữa các nhóm. */
 export const cmdkGroupClass = cn(
   "not-last:mb-1 not-last:border-b not-last:border-stroke-2 not-last:pb-1",
   "**:[[cmdk-group-heading]]:flex **:[[cmdk-group-heading]]:h-8 **:[[cmdk-group-heading]]:items-center **:[[cmdk-group-heading]]:px-2",
@@ -106,15 +105,46 @@ function toArray(v: string | string[] | undefined): string[] | undefined {
   return v === "" ? [] : [v];
 }
 
-function groupOptions(items: NormalizedOption[]) {
-  const groups: { name?: string; items: NormalizedOption[] }[] = [];
-  for (const item of items) {
-    const g = groups.find((x) => x.name === item.group);
-    if (g) g.items.push(item);
-    else groups.push({ name: item.group, items: [item] });
-  }
-  return groups;
+interface OptionRowProps {
+  item: NormalizedOption;
+  id: string;
+  active: boolean;
+  checked: boolean;
+  multiselect: boolean;
+  onHover: (value: string) => void;
+  onSelect: (value: string) => void;
 }
+
+/** Option đã memo: mũi tên chỉ vẽ lại option vừa mất và vừa nhận highlight. */
+const OptionRow = /* @__PURE__ */ React.memo(function OptionRow({ item, id, active, checked, multiselect, onHover, onSelect }: OptionRowProps) {
+  return (
+    <div
+      {...listboxOptionProps(id, item.value, item.disabled, active, onHover, onSelect)}
+      aria-checked={multiselect ? checked : undefined}
+      className={cmdkOptionClass}
+    >
+      {multiselect ? (
+        <span
+          className={cn(
+            "flex size-4 shrink-0 items-center justify-center rounded-small border",
+            item.disabled
+              ? "border-stroke-disabled text-foreground-disabled"
+              : checked
+                ? "border-brand-background bg-brand-background text-foreground-on-brand"
+                : "border-stroke-accessible",
+          )}
+        >
+          {checked && <Checkmark12Filled className="size-3" />}
+        </span>
+      ) : (
+        <span className="flex size-4 shrink-0 items-center justify-center">
+          {checked && <Checkmark16Filled className="size-4" />}
+        </span>
+      )}
+      <span className="min-w-0 flex-1 truncate">{item.label}</span>
+    </div>
+  );
+});
 
 /** Combobox: ô nhập có thể gõ để lọc listbox; hỗ trợ chọn một / nhiều và freeform. */
 export function Combobox(inProps: ComboboxProps & { ref?: React.Ref<HTMLInputElement> }) {
@@ -167,8 +197,6 @@ export function Combobox(inProps: ComboboxProps & { ref?: React.Ref<HTMLInputEle
   /** null = chưa gõ gì kể từ lúc mở → hiện toàn bộ option. */
   const [query, setQuery] = React.useState<string | null>(null);
   const [active, setActive] = React.useState("");
-  const [activeId, setActiveId] = React.useState<string>();
-  const [listEl, setListEl] = React.useState<HTMLDivElement | null>(null);
   const anchorRef = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
   // Listbox portal vào <body>: gắn `dir` để align="start" và nội dung theo hướng chữ của provider.
@@ -177,20 +205,10 @@ export function Combobox(inProps: ComboboxProps & { ref?: React.Ref<HTMLInputEle
   React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
 
   const filtered = React.useMemo(() => filterItems(query ?? ""), [filterItems, query]);
+  const groups = React.useMemo(() => groupListboxItems(filtered), [filtered]);
   const firstEnabled = (list: NormalizedOption[]) => list.find((i) => !i.disabled)?.value ?? "";
   const s = SIZE[size];
   const invalid = inputProps["aria-invalid"] === true || inputProps["aria-invalid"] === "true";
-
-  // aria-activedescendant + cuộn option đang highlight vào tầm nhìn.
-  useIsomorphicLayoutEffect(() => {
-    if (!open || !listEl || !active) {
-      setActiveId(undefined);
-      return;
-    }
-    const el = listEl.querySelector<HTMLElement>(`[cmdk-item][data-value="${CSS.escape(active)}"]`);
-    setActiveId(el?.id);
-    el?.scrollIntoView({ block: "nearest" });
-  }, [open, listEl, active, query]);
 
   const commit = (next: string[]) => {
     setSelected(next);
@@ -226,10 +244,12 @@ export function Combobox(inProps: ComboboxProps & { ref?: React.Ref<HTMLInputEle
     }
   };
 
+  const listbox = useListbox({ open, groups, active, onActiveChange: setActive, onSelect: selectOption });
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     onKeyDown?.(e);
     if (e.defaultPrevented) return;
-    // Home/End giữ hành vi di chuyển con trỏ trong ô nhập (không để cmdk bắt).
+    // Home/End giữ hành vi di chuyển con trỏ trong ô nhập.
     if (e.key === "Home" || e.key === "End") {
       e.stopPropagation();
       return;
@@ -250,7 +270,9 @@ export function Combobox(inProps: ComboboxProps & { ref?: React.Ref<HTMLInputEle
         setQuery(null);
         setOpen(false);
       }
+      return;
     }
+    listbox.onKeyDown(e);
   };
 
   const multiPlaceholder = multiselect && open && displayText ? displayText : placeholder;
@@ -258,142 +280,115 @@ export function Combobox(inProps: ComboboxProps & { ref?: React.Ref<HTMLInputEle
 
   return (
     <PopoverPrimitive.Root open={open} onOpenChange={(o) => (o ? openList() : closeList())}>
-      <CommandPrimitive shouldFilter={false} value={active} onValueChange={setActive} loop vimBindings={false} className="contents">
-        <PopoverPrimitive.Anchor asChild>
-          <div
-            ref={anchorRef}
-            data-disabled={disabled || undefined}
-            data-invalid={invalid || undefined}
-            onClick={() => inputRef.current?.focus()}
-            className={cn(
-              fieldAppearanceClass[appearance],
-              "inline-flex min-w-62.5 cursor-text items-center gap-0.5",
-              open && "after:scale-x-100",
-              disabled && "cursor-not-allowed",
-              s.root,
-              className,
-            )}
-          >
-            <input
-              ref={inputRef}
-              type="text"
-              role="combobox"
-              aria-autocomplete="list"
-              aria-expanded={open}
-              aria-controls={open && listEl ? listEl.id : undefined}
-              aria-activedescendant={activeId}
-              autoComplete="off"
-              disabled={disabled}
-              placeholder={multiPlaceholder}
-              value={inputValue}
-              onChange={(e) => {
-                const text = e.target.value;
-                const next = filterItems(text);
-                setQuery(text);
-                setActive(firstEnabled(next));
-                if (!open) setOpen(true);
-              }}
-              onClick={(e) => {
-                onClick?.(e);
-                openList();
-              }}
-              onKeyDown={handleKeyDown}
-              className="h-full min-w-0 flex-1 bg-transparent text-foreground-1 outline-none placeholder:text-foreground-4 disabled:cursor-not-allowed disabled:text-foreground-disabled"
-              {...inputProps}
-            />
-            <button
-              type="button"
-              tabIndex={-1}
-              aria-label={open ? msg.closeList : msg.openList}
-              disabled={disabled}
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={(e) => {
-                e.stopPropagation();
-                if (open) closeList();
-                else {
-                  inputRef.current?.focus();
-                  openList();
-                }
-              }}
-              className={cn(
-                "flex h-full shrink-0 cursor-pointer items-center justify-center text-foreground-3 outline-none",
-                "disabled:cursor-not-allowed disabled:text-foreground-disabled",
-                s.button,
-              )}
-            >
-              <s.Icon className={s.icon} />
-            </button>
-          </div>
-        </PopoverPrimitive.Anchor>
-        <PopoverPrimitive.Portal>
-          <PopoverPrimitive.Content
-            {...portalTheme}
-            dir={dir}
-            role="presentation"
-            align="start"
-            sideOffset={2}
-            onOpenAutoFocus={(e) => e.preventDefault()}
-            onCloseAutoFocus={(e) => e.preventDefault()}
-            onInteractOutside={(e) => {
-              if (anchorRef.current?.contains(e.target as Node)) e.preventDefault();
+      <PopoverPrimitive.Anchor asChild>
+        <div
+          ref={anchorRef}
+          data-disabled={disabled || undefined}
+          data-invalid={invalid || undefined}
+          onClick={() => inputRef.current?.focus()}
+          className={cn(
+            fieldAppearanceClass[appearance],
+            "inline-flex min-w-62.5 cursor-text items-center gap-0.5",
+            open && "after:scale-x-100",
+            disabled && "cursor-not-allowed",
+            s.root,
+            className,
+          )}
+        >
+          <input
+            ref={inputRef}
+            type="text"
+            role="combobox"
+            aria-autocomplete="list"
+            aria-expanded={open}
+            {...listbox.inputProps}
+            autoComplete="off"
+            disabled={disabled}
+            placeholder={multiPlaceholder}
+            value={inputValue}
+            onChange={(e) => {
+              const text = e.target.value;
+              const next = filterItems(text);
+              setQuery(text);
+              setActive(firstEnabled(next));
+              if (!open) setOpen(true);
             }}
+            onClick={(e) => {
+              onClick?.(e);
+              openList();
+            }}
+            onKeyDown={handleKeyDown}
+            className="h-full min-w-0 flex-1 bg-transparent text-foreground-1 outline-none placeholder:text-foreground-4 disabled:cursor-not-allowed disabled:text-foreground-disabled"
+            {...inputProps}
+          />
+          <button
+            type="button"
+            tabIndex={-1}
+            aria-label={open ? msg.closeList : msg.openList}
+            disabled={disabled}
             onMouseDown={(e) => e.preventDefault()}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (open) closeList();
+              else {
+                inputRef.current?.focus();
+                openList();
+              }
+            }}
             className={cn(
-              popoverSurfaceClass,
-              "max-h-[min(var(--radix-popover-content-available-height),--spacing(80))] w-(--radix-popover-trigger-width) overflow-y-auto p-1",
-              listboxClassName,
+              "flex h-full shrink-0 cursor-pointer items-center justify-center text-foreground-3 outline-none",
+              "disabled:cursor-not-allowed disabled:text-foreground-disabled",
+              s.button,
             )}
           >
-            <CommandPrimitive.List ref={setListEl} aria-multiselectable={multiselect || undefined}>
-              <CommandPrimitive.Empty className="px-2 py-1.5 text-body1 text-foreground-3">
+            <s.Icon className={s.icon} />
+          </button>
+        </div>
+      </PopoverPrimitive.Anchor>
+      <PopoverPrimitive.Portal>
+        <PopoverPrimitive.Content
+          {...portalTheme}
+          dir={dir}
+          role="presentation"
+          align="start"
+          sideOffset={2}
+          onOpenAutoFocus={(e) => e.preventDefault()}
+          onCloseAutoFocus={(e) => e.preventDefault()}
+          onInteractOutside={(e) => {
+            if (anchorRef.current?.contains(e.target as Node)) e.preventDefault();
+          }}
+          onMouseDown={(e) => e.preventDefault()}
+          className={cn(
+            popoverSurfaceClass,
+            "max-h-[min(var(--radix-popover-content-available-height),--spacing(80))] w-(--radix-popover-trigger-width) overflow-y-auto p-1",
+            listboxClassName,
+          )}
+        >
+          <div {...listbox.listProps} aria-multiselectable={multiselect || undefined}>
+            {filtered.length === 0 && (
+              <div role="presentation" className="px-2 py-1.5 text-body1 text-foreground-3">
                 {freeform && query?.trim() ? msg.useFreeform(query.trim()) : noResultsText === undefined ? msg.noResults : noResultsText}
-              </CommandPrimitive.Empty>
-              {groupOptions(filtered).map((group) => {
-                const rendered = group.items.map((item) => {
-                  const checked = selectedSet.has(item.value);
-                  return (
-                    <CommandPrimitive.Item
-                      key={item.value}
-                      value={item.value}
-                      disabled={item.disabled}
-                      onSelect={() => selectOption(item.value)}
-                      aria-checked={multiselect ? checked : undefined}
-                      className={cmdkOptionClass}
-                    >
-                      {multiselect ? (
-                        <span
-                          className={cn(
-                            "flex size-4 shrink-0 items-center justify-center rounded-small border",
-                            item.disabled
-                              ? "border-stroke-disabled text-foreground-disabled"
-                              : checked
-                                ? "border-brand-background bg-brand-background text-foreground-on-brand"
-                                : "border-stroke-accessible",
-                          )}
-                        >
-                          {checked && <Checkmark12Filled className="size-3" />}
-                        </span>
-                      ) : (
-                        <span className="flex size-4 shrink-0 items-center justify-center">
-                          {checked && <Checkmark16Filled className="size-4" />}
-                        </span>
-                      )}
-                      <span className="min-w-0 flex-1 truncate">{item.label}</span>
-                    </CommandPrimitive.Item>
-                  );
-                });
-                return group.name ? (
-                  <CommandPrimitive.Group key={group.name} heading={group.name} className={cmdkGroupClass}>
-                    {rendered}
-                  </CommandPrimitive.Group>
-                ) : (
-                  <React.Fragment key="__ungrouped">{rendered}</React.Fragment>
-                );
-              })}
-            </CommandPrimitive.List>
-          </PopoverPrimitive.Content>
-        </PopoverPrimitive.Portal>
-      </CommandPrimitive>
+              </div>
+            )}
+            <ListboxGroups
+              groups={groups}
+              listId={listbox.listProps.id}
+              renderItem={(item) => (
+                <OptionRow
+                  key={item.value}
+                  item={item}
+                  id={listbox.idOf(item.value)}
+                  active={item.value === listbox.active}
+                  checked={selectedSet.has(item.value)}
+                  multiselect={!!multiselect}
+                  onHover={listbox.hover}
+                  onSelect={listbox.select}
+                />
+              )}
+            />
+          </div>
+        </PopoverPrimitive.Content>
+      </PopoverPrimitive.Portal>
     </PopoverPrimitive.Root>
   );
 }

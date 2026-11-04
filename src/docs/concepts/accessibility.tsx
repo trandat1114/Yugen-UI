@@ -171,7 +171,7 @@ export default function Page() {
             ["Tabs", <><C>tablist</C>, <C>tab</C> (<C>aria-selected</C>, <C>aria-controls</C>), <C>tabpanel</C>.</>],
             ["Checkbox, Switch, Radio", <><C>checkbox</C> (<C>aria-checked=&quot;mixed&quot;</C> khi indeterminate), <C>switch</C>, <C>radiogroup</C> / <C>radio</C>.</>],
             ["Slider", <><C>slider</C> với <C>aria-valuenow / min / max</C>; tên từ <C>label</C> hoặc <C>aria-label</C>.</>],
-            ["Dropdown, Combobox", <><C>combobox</C> + <C>listbox</C> / <C>option</C>, <C>aria-expanded</C>, <C>aria-activedescendant</C> (cmdk).</>],
+            ["Dropdown, Combobox", <><C>combobox</C> + <C>listbox</C> / <C>option</C>, <C>aria-expanded</C>, <C>aria-activedescendant</C>.</>],
             ["Breadcrumb, Pagination", <><C>nav</C> có <C>aria-label</C>, trang hiện tại <C>aria-current=&quot;page&quot;</C>.</>],
             ["Table", <><C>th scope=&quot;col&quot;</C>, cột sắp xếp có <C>aria-sort</C>; TableSelectionCell có nhãn “Chọn hàng”.</>],
             ["MessageBar", <><C>role=&quot;alert&quot;</C> cho error / warning, <C>role=&quot;status&quot;</C> cho info / success.</>],
