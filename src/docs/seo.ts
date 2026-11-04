@@ -37,6 +37,18 @@ const PAGES: Record<"blocks" | "templates" | "theme-designer" | "typeset" | "com
   },
 };
 
+/**
+ * Route sẽ hiện: trang component / khái niệm / nền tảng với slug không tồn tại thành trang 404 (#238), cùng đường dẫn.
+ * Router không đọc registry (giữ nhẹ) nên kiểm ở đây.
+ */
+export function resolveRoute(route: Route): Route {
+  const missing =
+    (route.kind === "component" && !COMPONENT_META_BY_SLUG[route.slug]) ||
+    (route.kind === "concept" && !CONCEPT_BY_SLUG[route.slug]) ||
+    (route.kind === "foundation" && !FOUNDATIONS.some((f) => f.slug === route.slug));
+  return missing ? { kind: "not-found", path: pathOf(route) } : route;
+}
+
 export function routeMeta(route: Route, l: LocaleValue): { title?: string; description: string } {
   const home = l.t("home.intro", { count: COMPONENTS_META.length });
   switch (route.kind) {
@@ -58,6 +70,8 @@ export function routeMeta(route: Route, l: LocaleValue): { title?: string; descr
     }
     case "news":
       return { title: l.t("nav.news"), description: l.t("news.lead") };
+    case "not-found":
+      return { title: l.t("notFound.title"), description: l.t("notFound.description") };
     case "blocks":
     case "templates":
     case "theme-designer":
@@ -91,6 +105,8 @@ export interface DocumentHead {
   alternates: { hreflang: string; href: string }[];
   /** Ảnh chia sẻ, tính từ gốc site: og/<đường dẫn>.jpg (scripts/og-pages.mjs), trang chủ og.jpg. */
   image: string;
+  /** Trang 404: `<meta name="robots" content="noindex">`, không canonical riêng / hreflang. */
+  noindex?: true;
 }
 
 /**
@@ -99,6 +115,9 @@ export interface DocumentHead {
  */
 export function documentHead(route: Route, l: LocaleValue): DocumentHead {
   const { title, description } = routeMeta(route, l);
+  if (route.kind === "not-found") {
+    return { title: `${title} · ${SITE.name}`, description, canonical: SITE.url + localePathOf({ kind: "home" }, l.locale), alternates: [], image: "og.jpg", noindex: true };
+  }
   const path = pathOf(route);
   const translated = fallbackOf(route) !== "page";
   // Trang chưa dịch: bản tiếng Anh chỉ khác khung giao diện, nội dung là bản tiếng Việt (ngôn ngữ nguồn) → canonical về
@@ -123,6 +142,15 @@ function setAttr(selector: string, name: string, value: string) {
   document.head.querySelector(selector)?.setAttribute(name, value);
 }
 
+/** Trang 404 không cho index; trang khác bỏ thẻ (HTML 404.html có sẵn thẻ này). */
+function setRobots(noindex?: true) {
+  let meta = document.head.querySelector<HTMLMetaElement>('meta[name="robots"]');
+  if (noindex) {
+    meta ??= document.head.appendChild(Object.assign(document.createElement("meta"), { name: "robots" }));
+    meta.content = "noindex";
+  } else meta?.remove();
+}
+
 function setAlternates(alternates: DocumentHead["alternates"]) {
   document.head.querySelectorAll("link[rel=alternate][hreflang]").forEach((link) => link.remove());
   // Đặt ngay sau canonical, đúng thứ tự như HTML prerender.
@@ -138,8 +166,9 @@ function setAlternates(alternates: DocumentHead["alternates"]) {
 function useDocumentMeta(route: Route) {
   const l = useLocale();
   useEffect(() => {
-    const { title, description, canonical, alternates, image } = documentHead(route, l);
+    const { title, description, canonical, alternates, image, noindex } = documentHead(route, l);
     document.title = title;
+    setRobots(noindex);
     setAttr('meta[name="description"]', "content", description);
     setAttr('link[rel="canonical"]', "href", canonical);
     setAlternates(alternates);

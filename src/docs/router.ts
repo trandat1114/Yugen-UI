@@ -12,7 +12,9 @@ export type Route =
   | { kind: "contributors" }
   | { kind: "concept"; slug: string }
   | { kind: "foundation"; slug: string }
-  | { kind: "component"; slug: string };
+  | { kind: "component"; slug: string }
+  /** Đường dẫn không có trang (#238): `path` là đường dẫn gốc (sau BASE và tiền tố ngôn ngữ), giữ khi đổi ngôn ngữ. */
+  | { kind: "not-found"; path: string };
 
 /**
  * Ngôn ngữ ở gốc site, không tiền tố (#277): tiếng Anh ở /components/button, tiếng Việt ở /vi/components/button. Docs
@@ -58,10 +60,10 @@ function splitLocale(rest: string): { lang: Locale; rest: string; legacy?: true 
 
 const afterBase = (pathname: string) => (pathname.startsWith(BASE) ? pathname.slice(BASE.length) : pathname.replace(/^\//, ""));
 
-/** Route + ngôn ngữ của một pathname trong docs (đã gồm BASE). Đường dẫn lạ → trang chủ. */
+/** Route + ngôn ngữ của một pathname trong docs (đã gồm BASE). Đường dẫn lạ → trang 404 (`not-found`). */
 export function parseLocation(pathname: string): DocsLocation {
   const { lang, rest, legacy } = splitLocale(afterBase(pathname));
-  return { route: matchSegments(rest) ?? { kind: "home" }, lang, ...(legacy && { legacy }) };
+  return { route: matchSegments(rest) ?? { kind: "not-found", path: rest.replace(/^\/+/, "") }, lang, ...(legacy && { legacy }) };
 }
 
 export function parsePath(pathname: string): Route {
@@ -84,6 +86,8 @@ export function pathOf(route: Route): string {
       return `foundations/${route.slug}`;
     case "component":
       return `components/${route.slug}`;
+    case "not-found":
+      return route.path;
     default:
       return route.kind;
   }

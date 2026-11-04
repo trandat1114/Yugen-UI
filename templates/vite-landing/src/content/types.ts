@@ -91,4 +91,6 @@ export interface Content {
     success: { title: string; body: (email: string) => string };
   };
   footer: { tagline: string; madeWith: string; sample: string };
+  /** 404 page (StatusPage): the way back. Its title and description are Yugen built-in strings (`messages.statusPage`). */
+  notFound: { home: string };
 }

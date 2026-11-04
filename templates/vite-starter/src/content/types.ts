@@ -15,4 +15,6 @@ export interface Content {
   steps: { title: string; items: { title: string; body: Rich }[] };
   links: { title: string; items: { title: string; body: string; path: string }[] };
   footer: { yugen: string; builtWith: string };
+  /** Trang 404 (StatusPage): nút quay về. Tiêu đề và mô tả là chuỗi có sẵn của Yugen (`messages.statusPage`). */
+  notFound: { home: string };
 }

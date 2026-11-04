@@ -160,6 +160,13 @@ export const vi = {
   "home.open": "Mở trang {name}",
   "home.viewComponent": "Xem component",
 
+  // Trang 404 (#238)
+  "notFound.title": "Không tìm thấy trang",
+  "notFound.description": "Đường dẫn có thể bị gõ sai, hoặc trang đã đổi chỗ.",
+  "notFound.search": "Tìm kiếm",
+  "notFound.home": "Về trang chủ",
+  "notFound.suggestions": "Có thể bạn cần",
+
   // Trang chủ — showcase
   "show.actions": "Hành động",
   "show.inputs": "Nhập liệu",
