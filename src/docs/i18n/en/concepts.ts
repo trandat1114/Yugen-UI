@@ -46,6 +46,18 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
       checklist: "Before you ship",
     },
   },
+  performance: {
+    title: "Performance",
+    lead: "The settings that keep an app built with Yugen UI small and fast, with numbers measured on the library's builds. Sizes are minified and gzipped.",
+    toc: {
+      imports: "Import paths and bundlers",
+      "on-demand": "What loads on demand",
+      css: "CSS size",
+      theme: "Theme before the first paint",
+      "re-renders": "Re-renders",
+      charts: "Charts with many points",
+    },
+  },
   cli: {
     title: "@yugen-ui/cli",
     lead: "A command-line tool to create an app from a template, set up Yugen UI in an existing project, copy component source and check the setup.",
