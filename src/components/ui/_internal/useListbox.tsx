@@ -32,11 +32,14 @@ export function groupListboxItems<T extends ListboxItem>(items: readonly T[]): L
 
 const optionId = (listId: string, value: string) => `${listId}-${encodeURIComponent(value)}`;
 
-/** Cuộn option vào tầm nhìn; option đầu nhóm kéo theo tiêu đề nhóm. */
+/**
+ * Cuộn option vào tầm nhìn; option đầu của nhóm có tên kéo theo tiêu đề nhóm. Option không nhóm đứng sau một nhóm thì
+ * không kéo cả nhóm đó theo.
+ */
 function reveal(list: HTMLElement | null, value: string) {
   const el = list && value ? list.ownerDocument.getElementById(optionId(list.id, value)) : null;
   if (!el) return;
-  const heading = el.previousElementSibling;
+  const heading = el.parentElement?.getAttribute("role") === "group" ? el.previousElementSibling : null;
   if (heading && heading.getAttribute("role") !== "option") heading.scrollIntoView({ block: "nearest" });
   el.scrollIntoView({ block: "nearest" });
 }

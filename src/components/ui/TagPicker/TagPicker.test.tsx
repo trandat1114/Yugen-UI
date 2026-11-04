@@ -1,9 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
 import { useState } from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { hydrateRoot, type Root } from "react-dom/client";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { TagPicker } from "./TagPicker";
 import { renderOnServer } from "@/test/serverRender";
+import { captureConsole } from "@/test/consoleCapture";
 
 const OPTIONS = [
   { value: "tao", label: "Táo" },
@@ -64,14 +66,34 @@ describe("TagPicker reorderable", () => {
     expect(document.querySelector("[data-sortable-item]")).toBeNull();
   });
 
-  it("server và lượt render đầu vẽ tag thường (cùng chữ), Sortable gắn vào sau", async () => {
+  it("server và lượt hydrate vẽ tag thường (kể cả khi Sortable đã nạp sẵn), Sortable gắn vào sau", async () => {
+    // Một TagPicker reorderable khác đã nạp Sortable vào cache của module.
+    const first = render(<Picker />);
+    await sortableReady();
+    first.unmount();
+
     const html = renderOnServer(<Picker />);
     expect(html).not.toContain("data-sortable");
     expect(html).toContain("Táo");
-    render(<Picker />);
-    await sortableReady();
-    expect(tags()).toEqual(["Táo", "Cam", "Lê"]);
-    expect(document.querySelectorAll("[data-sortable-item]")).toHaveLength(3);
+    const container = document.createElement("div");
+    container.innerHTML = html;
+    document.body.appendChild(container);
+    const recoverable: unknown[] = [];
+    const logged = captureConsole();
+    let root!: Root;
+    try {
+      await act(async () => {
+        root = hydrateRoot(container, <Picker />, { onRecoverableError: (error) => recoverable.push(error) });
+      });
+    } finally {
+      logged.restore();
+    }
+    expect(recoverable).toEqual([]);
+    expect(logged.errors).toEqual([]);
+    expect(Array.from(container.querySelectorAll("[data-tag]")).map((t) => t.textContent?.split(",")[0])).toEqual(["Táo", "Cam", "Lê"]);
+    expect(container.querySelectorAll("[data-sortable-item]")).toHaveLength(3);
+    act(() => root.unmount());
+    container.remove();
   });
 });
 

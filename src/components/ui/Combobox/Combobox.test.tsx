@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { Profiler } from "react";
+import { createRef, Profiler } from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Combobox, comboboxMessagesEn, normalizeSearchText, type ComboboxProps } from "./Combobox";
@@ -151,6 +151,84 @@ describe("Combobox", () => {
     await user.click(input);
     expect(input).toHaveAttribute("aria-expanded", "false");
   });
+
+  it("Home / End để con trỏ đi trong ô nhập: không chặn mặc định, không lên phần tử cha, không đổi highlight", async () => {
+    const user = userEvent.setup();
+    const onParentKeyDown = vi.fn();
+    render(
+      <div onKeyDown={onParentKeyDown}>
+        <Combobox aria-label="Thành phố" options={CITIES} />
+      </div>,
+    );
+    const input = screen.getByRole("combobox", { name: "Thành phố" });
+    input.focus();
+    await user.keyboard("{ArrowDown}");
+    await screen.findByRole("listbox");
+    await user.keyboard("{ArrowDown}");
+    const active = () => document.getElementById(input.getAttribute("aria-activedescendant")!)?.textContent;
+    expect(active()).toBe("Hồ Chí Minh");
+    onParentKeyDown.mockClear();
+    expect(fireEvent.keyDown(input, { key: "Home" })).toBe(true);
+    expect(fireEvent.keyDown(input, { key: "End" })).toBe(true);
+    expect(onParentKeyDown).not.toHaveBeenCalled();
+    expect(active()).toBe("Hồ Chí Minh");
+  });
+
+  it("freeform: đóng danh sách giữ chữ đã gõ (khớp nhãn thì lấy option), xoá hết thì bỏ chọn", async () => {
+    const { user, input, onValueChange } = setup({ freeform: true, defaultValue: "Huế" });
+    await user.click(input);
+    await user.keyboard("{Control>}a{/Control}da nang{Escape}");
+    expect(onValueChange).toHaveBeenLastCalledWith("Đà Nẵng");
+    expect(input).toHaveValue("Đà Nẵng");
+    await user.click(input);
+    await user.keyboard("{Control>}a{/Control}{Backspace}{Escape}");
+    expect(onValueChange).toHaveBeenLastCalledWith("");
+    expect(input).toHaveValue("");
+  });
+
+  it("freeform + multiselect: Enter thêm chữ tự gõ (không trùng), ô nhập trống lại, danh sách vẫn mở", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(<Combobox aria-label="Thành phố" multiselect freeform options={CITIES} defaultValue={["Huế"]} onValueChange={onValueChange} />);
+    const input = screen.getByRole("combobox", { name: "Thành phố" });
+    await user.click(input);
+    await user.keyboard("Vũng Tàu{Enter}");
+    expect(onValueChange).toHaveBeenLastCalledWith(["Huế", "Vũng Tàu"]);
+    expect(input).toHaveValue("");
+    expect(input).toHaveAttribute("aria-expanded", "true");
+    await user.keyboard("Vũng Tàu{Enter}");
+    expect(onValueChange).toHaveBeenCalledTimes(1);
+    expect(input).toHaveValue("");
+  });
+
+  it("gõ khi danh sách đã đóng thì mở lại", async () => {
+    const { user, input } = setup();
+    await user.click(input);
+    await screen.findByRole("listbox");
+    await user.keyboard("{Enter}");
+    expect(input).toHaveValue("Hà Nội");
+    expect(input).toHaveAttribute("aria-expanded", "false");
+    await user.keyboard("{Backspace}");
+    expect(input).toHaveAttribute("aria-expanded", "true");
+  });
+
+  it("bấm lại vào ô nhập không đóng danh sách; nút mũi tên đóng", async () => {
+    const { user, input } = setup();
+    const toggle = screen.getByRole("button", { name: "Mở danh sách" });
+    await user.click(input);
+    await screen.findByRole("listbox");
+    await user.click(input);
+    expect(input).toHaveAttribute("aria-expanded", "true");
+    expect(toggle).toHaveAttribute("aria-label", "Đóng danh sách");
+    await user.click(toggle);
+    expect(input).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("ref trỏ tới ô nhập", () => {
+    const ref = createRef<HTMLInputElement>();
+    render(<Combobox ref={ref} aria-label="Thành phố" options={CITIES} />);
+    expect(ref.current).toBe(screen.getByRole("combobox", { name: "Thành phố" }));
+  });
 });
 
 describe("Combobox listbox", () => {
@@ -251,6 +329,13 @@ describe("Combobox listbox", () => {
     scroll.mockClear();
     press("ArrowDown");
     expect(scroll.mock.contexts.map((el) => (el as Element).textContent)).toEqual(["Miền Trung", "Đà Nẵng"]);
+    // Option không nhóm đứng sau nhóm Miền Trung: chỉ cuộn chính nó, không kéo cả nhóm trước.
+    scroll.mockClear();
+    press("ArrowDown");
+    expect(scroll.mock.contexts.map((el) => (el as Element).textContent)).toEqual(["Khác"]);
+    scroll.mockClear();
+    press("ArrowDown");
+    expect(scroll.mock.contexts.map((el) => (el as Element).textContent)).toEqual(["Miền Nam", "Hồ Chí Minh"]);
   });
 
   it("option đang highlight biến mất (options đổi khi đang mở) → highlight option bật đầu tiên", () => {
