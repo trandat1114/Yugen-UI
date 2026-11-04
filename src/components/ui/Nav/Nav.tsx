@@ -1,11 +1,9 @@
 import * as React from "react";
 import { useControllableState } from "../hooks/useControllableState";
 import { Slot } from "@radix-ui/react-slot";
-import { useDirection } from "@radix-ui/react-direction";
 import { ChevronDown16Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../Tooltip/Tooltip";
 import { useComposedRefs } from "../_internal/composeRefs";
 import { NavHostContext, type NavHostValue } from "./context";
 import { navMessagesEn } from "./messages";
@@ -164,8 +162,8 @@ function useNavRow(value: string, onClick: React.MouseEventHandler<HTMLElement> 
 }
 
 /**
- * Trong Sidebar của AppShell: Tooltip mang nhãn của mục, chỉ mở khi sidebar đang là rail. Luôn bọc (kể cả khi chưa
- * thu gọn) để thu gọn / mở rộng không mount lại hàng đang giữ focus. Ngoài AppShell: trả nguyên hàng.
+ * Trong Sidebar của AppShell: Tooltip (host truyền vào, #350) mang nhãn của mục, chỉ mở khi sidebar đang là rail. Luôn
+ * bọc (kể cả khi chưa thu gọn) để thu gọn / mở rộng không mount lại hàng đang giữ focus. Ngoài AppShell: trả nguyên hàng.
  */
 function HostTooltip({
   host,
@@ -178,22 +176,12 @@ function HostTooltip({
   rowRef: React.RefObject<HTMLElement | null>;
   children: React.ReactElement;
 }) {
-  const dir = useDirection();
-  const [open, setOpen] = React.useState(false);
-  const [text, setText] = React.useState("");
-  if (!host) return children;
+  const RowTooltip = host?.RowTooltip;
+  if (!host || !RowTooltip) return children;
   return (
-    <Tooltip
-      open={host.rail && open}
-      onOpenChange={(next) => {
-        // Không có nhãn riêng (asChild bọc link router): đọc chữ của hàng lúc mở.
-        if (next && label === undefined) setText(rowRef.current?.textContent ?? "");
-        setOpen(next);
-      }}
-    >
-      <TooltipTrigger asChild>{children}</TooltipTrigger>
-      <TooltipContent side={dir === "rtl" ? "left" : "right"}>{label ?? text}</TooltipContent>
-    </Tooltip>
+    <RowTooltip rail={host.rail} label={label} rowRef={rowRef}>
+      {children}
+    </RowTooltip>
   );
 }
 
