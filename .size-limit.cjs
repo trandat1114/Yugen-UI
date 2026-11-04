@@ -49,7 +49,7 @@ module.exports = [
   js("Toàn bộ thư viện (import *)", "*", "340 kB"),
   js("{ cn }", "{ cn }", "10 kB"),
   js("{ Button }", "{ Button }", "14 kB"),
-  // Toaster nạp lúc cần (#346): 25.95 → 13.46 kB (lần tải đầu; Toaster là chunk riêng).
+  // Toaster nạp lúc cần (#346): 25.95 → 13.52 kB (lần tải đầu; Toaster là chunk riêng).
   js("{ YugenProvider }", "{ YugenProvider }", "15 kB"),
   js("{ Dialog, DialogSurface }", "{ Dialog, DialogSurface }", "24 kB"),
   js("{ Combobox }", "{ Combobox }", "59 kB"),

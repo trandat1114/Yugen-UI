@@ -39,9 +39,21 @@ export {
 
 /**
  * Toaster của `withToaster` nạp lúc cần (#346): app không bật thì không tải `@radix-ui/react-toast`. Store của toast ở cấp
- * module, nên toast gọi trước khi chunk nạp xong vẫn hiện khi Toaster mount.
+ * module, nên toast gọi trước khi chunk nạp xong vẫn hiện khi Toaster mount. Chunk không tải được (mất mạng, tab mở từ
+ * trước một lần deploy): chỉ thiếu Toaster, lỗi không lan lên làm sập cả cây dưới provider gốc.
  */
-const LazyToaster = /* @__PURE__ */ React.lazy(() => import("../Toast/Toast").then((m) => ({ default: m.Toaster })));
+const LazyToaster = /* @__PURE__ */ React.lazy(() =>
+  import("../Toast/Toast").then(
+    (m): { default: React.ComponentType<{ position: "bottom-end" }> } => ({ default: m.Toaster }),
+    (error: unknown) => {
+      console.error("[yugen-ui] YugenProvider withToaster: the Toaster could not be loaded.", error);
+      return { default: NoToaster };
+    },
+  ),
+);
+function NoToaster() {
+  return null;
+}
 const subscribeNothing = () => () => {};
 
 /**

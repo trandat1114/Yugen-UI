@@ -20,12 +20,23 @@ interface Chunk {
   moduleIds: string[];
 }
 
+/** `import { YugenProvider } from "yugen-ui"`: entry gốc của gói (src/lib.ts), chỉ dùng YugenProvider. */
+const ROOT_IMPORT = path.join(root, "src", "provider-from-root.virtual.ts").split(path.sep).join("/");
+const rootImport = {
+  name: "provider-from-root",
+  enforce: "pre" as const,
+  resolveId: (id: string) => (id.split(path.sep).join("/") === ROOT_IMPORT ? ROOT_IMPORT : null),
+  load: (id: string) =>
+    id === ROOT_IMPORT ? `export { YugenProvider } from ${JSON.stringify(path.join(root, "src", "lib.ts").split(path.sep).join("/"))};` : null,
+};
+
 async function bundle(entries: Record<string, string>) {
   const result = await build({
     configFile: false,
     root,
     logLevel: "silent",
     publicDir: false,
+    plugins: [rootImport],
     resolve: { alias: { "@": path.join(root, "src") } },
     build: {
       write: false,
@@ -86,5 +97,15 @@ describe("YugenProvider nạp Toaster lúc cần (#346)", () => {
     expect(loading.modules).toContain("Toast/toastStore.ts");
     expect(loading.modules).not.toContain("Toast/Toast.tsx");
     expect(loading.packages).not.toContain("@radix-ui/react-toast");
+  });
+
+  it("import { YugenProvider } từ entry gốc của gói cũng không kéo Toaster vào chunk đầu", { timeout: 120_000 }, async () => {
+    const { chunks, closure, entry } = await bundle({ root: ROOT_IMPORT });
+    const initial = closure(entry("root"));
+    expect(initial.modules).toContain("YugenProvider/YugenProvider.tsx");
+    expect(initial.modules).not.toContain("Toast/Toast.tsx");
+    expect(initial.packages).not.toContain("@radix-ui/react-toast");
+    const lazy = entry("root").dynamicImports.map((file) => closure(chunks.get(file)!));
+    expect(lazy.some((c) => c.modules.has("Toast/Toast.tsx") && c.packages.has("@radix-ui/react-toast"))).toBe(true);
   });
 });

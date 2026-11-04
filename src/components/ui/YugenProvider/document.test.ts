@@ -11,7 +11,8 @@ function runScript(stored: string | null, options?: YugenThemeScriptOptions) {
   html.setAttribute("data-brand", "sakura");
   html.setAttribute("dir", "ltr");
   const key = options?.storageKey ?? "yugen-ui-theme";
-  if (stored !== null) window.localStorage.setItem(key, stored);
+  if (stored === null) window.localStorage.removeItem(key);
+  else window.localStorage.setItem(key, stored);
   new Function(yugenThemeScript(options))();
   return Object.fromEntries(ATTRS.map((name) => [name, html.getAttribute(name)]));
 }
