@@ -4,7 +4,20 @@ import { loadConfig, type YugenConfig } from "../lib/config.js";
 import { CONFIG_FILE, PACKAGE } from "../lib/constants.js";
 import { cssImports, stripCssComments } from "../lib/css.js";
 import { CliError } from "../lib/errors.js";
-import { exists, readText, toPosix, walk } from "../lib/fs.js";
+import { exists, readText, sameText, toPosix, walk } from "../lib/fs.js";
+import {
+  THEME_CORE,
+  codeImportsFile,
+  commandOf,
+  findGenerated,
+  folderChange,
+  importsCss,
+  listedFolders,
+  precompiledMeta,
+  readManifest,
+  scanUsage,
+  specResolvesTo,
+} from "../lib/leanCss.js";
 import { addArgs, commandLine } from "../lib/pm.js";
 import {
   TAILWIND_IMPORT,
@@ -36,6 +49,7 @@ export interface DoctorOptions {
 const THEME_PACKAGE = `${PACKAGE}/theme.css`;
 const STYLES_PACKAGE = `${PACKAGE}/styles.css`;
 const isSourceTheme = (spec: string) => /(^|\/)yugen\.css$/.test(spec);
+const isThemeSpec = (spec: string) => spec === THEME_PACKAGE || spec === THEME_CORE || isSourceTheme(spec);
 
 /** "0.7.2" < "0.8.0" → âm; bỏ qua hậu tố prerelease. */
 export function compareVersions(a: string, b: string) {
@@ -87,15 +101,28 @@ export async function diagnose(opts: DoctorOptions): Promise<Check[]> {
 
   const cssFiles = ["src", "app", "styles"].flatMap((d) => walk(path.join(cwd, d), /\.css$/, 5));
   const codeFiles = appCodeFiles(cwd);
-  const themeImports = cssFiles.flatMap((file) =>
-    cssImports(readText(file))
-      .filter((spec) => spec === THEME_PACKAGE || isSourceTheme(spec))
-      .map((spec) => ({ file, spec })),
-  );
+  // File do `yugen css` ghi (#169): bản @import là theme của file CSS import nó; bản --precompile thay cho styles.css.
+  const generated = findGenerated(cwd);
+  const leanFile = (from: string, spec: string) => generated.find((g) => !g.recorded.precompile && specResolvesTo(from, spec, g.abs));
+  const themeImports = cssFiles
+    .filter((file) => !generated.some((g) => g.abs === file))
+    .flatMap((file) =>
+      cssImports(readText(file))
+        .filter((spec) => isThemeSpec(spec) || leanFile(file, spec))
+        .map((spec) => ({ file, spec })),
+    );
   const stylesImports = [
     ...codeFiles.filter((f) => readText(f).includes(`"${STYLES_PACKAGE}"`) || readText(f).includes(`'${STYLES_PACKAGE}'`)),
     ...cssFiles.filter((f) => cssImports(readText(f)).includes(STYLES_PACKAGE)),
   ];
+  const precompiledImports = codeFiles.flatMap((file) => {
+    const code = readText(file);
+    const g = generated.find((g) => g.recorded.precompile && codeImportsFile(file, code, g.abs));
+    return g ? [{ file, g }] : [];
+  });
+  const unimported = generated.filter((g) =>
+    g.recorded.precompile ? !precompiledImports.some((i) => i.g === g) : !themeImports.some((t) => leanFile(t.file, t.spec) === g),
+  );
 
   const tailwind = packageMajor(cwd, pkg, "tailwindcss");
   const tailwindVersion = installedVersion(cwd, "tailwindcss") ?? deps.tailwindcss;
@@ -106,12 +133,27 @@ export async function diagnose(opts: DoctorOptions): Promise<Check[]> {
       tailwind ? `Tailwind CSS ${tailwindVersion} — the Yugen theme needs v4` : "Tailwind CSS v4 is not installed",
       `Upgrade (https://tailwindcss.com/docs/upgrade-guide) or import ${STYLES_PACKAGE} instead.`,
     );
-  else if (stylesImports.length) add("ok", `No Tailwind CSS v4 — using the precompiled ${STYLES_PACKAGE}`);
+  else if (stylesImports.length || precompiledImports.length)
+    add("ok", `No Tailwind CSS v4 — using the precompiled ${precompiledImports[0]?.g.file ?? STYLES_PACKAGE}`);
 
-  const imports = [...themeImports.map((t) => `${rel(t.file)} → ${t.spec}`), ...stylesImports.map((f) => `${rel(f)} → ${STYLES_PACKAGE}`)];
-  if (!imports.length)
-    add("error", "The Yugen theme is not imported", `Add @import "${THEME_PACKAGE}"; below @import "tailwindcss"; — or run \`yugen init\`.`);
-  else if (imports.length > 1)
+  const imports = [
+    ...themeImports.map((t) => `${rel(t.file)} → ${t.spec}`),
+    ...stylesImports.map((f) => `${rel(f)} → ${STYLES_PACKAGE}`),
+    ...precompiledImports.map((i) => `${rel(i.file)} → ${i.g.file}`),
+  ];
+  for (const g of unimported)
+    add(
+      "error",
+      `${g.file} (written by yugen css) is not imported`,
+      g.recorded.precompile
+        ? `Import it once in your entry file: import "./${path.basename(g.file)}";`
+        : `Add @import "./${path.basename(g.file)}"; below @import "tailwindcss"; in your main CSS file.`,
+    );
+  if (!imports.length) {
+    // File của yugen css chưa được import: đã báo ở trên, cụ thể hơn.
+    if (!unimported.length)
+      add("error", "The Yugen theme is not imported", `Add @import "${THEME_PACKAGE}"; below @import "tailwindcss"; — or run \`yugen init\`.`);
+  } else if (imports.length > 1)
     add("warn", `The theme is imported ${imports.length} times: ${imports.join(", ")}`, "Keep a single import — duplicates bloat the CSS.");
   else add("ok", `Theme imported: ${imports[0]}`);
 
@@ -123,6 +165,41 @@ export async function diagnose(opts: DoctorOptions): Promise<Check[]> {
     else if (theme < tw) add("error", `${rel(file)} imports the theme before "tailwindcss"`, 'Move it below @import "tailwindcss";.');
     if (isSourceTheme(spec) && spec.startsWith(".") && !exists(path.resolve(path.dirname(file), spec)))
       add("error", `${rel(file)} imports ${spec}, which does not exist`, "Run `yugen init --mode source --overwrite`.");
+  }
+
+  // CSS theo component (#169): file sinh ra còn khớp mã không; theme-core.css viết tay có đủ sources không.
+  const manifest = config?.mode === "source" ? null : readManifest(cwd);
+  if (manifest) {
+    for (const g of generated) {
+      const usage = scanUsage(cwd, g.recorded.src ?? ["."], manifest);
+      const folders = usage.everything ? "all" : usage.folders;
+      const fresh = g.recorded.precompile
+        ? g.text.split(/\r?\n/).includes(` * ${precompiledMeta(manifest.version, installedVersion(cwd, "tailwindcss") ?? "?", usage)}`)
+        : sameText(g.text, importsCss(g.recorded, usage));
+      const count = folders === "all" ? "every component" : `${folders.length} component folder${folders.length === 1 ? "" : "s"}`;
+      if (fresh) add("ok", `${g.file} is up to date (${count})`);
+      else {
+        const change = folderChange(listedFolders(g.text), folders);
+        add("warn", `${g.file} is out of date${change ? `: ${change}` : ""}`, `Run \`${commandOf(g.recorded)}\`.`);
+      }
+    }
+    if (themeImports.some((t) => t.spec === THEME_CORE)) {
+      const imported = new Set(cssFiles.flatMap((f) => cssImports(readText(f)).flatMap((s) => s.match(/^yugen-ui\/sources\/(.+)\.css$/)?.[1] ?? [])));
+      const usage = scanUsage(cwd, ["."], manifest);
+      const missing = usage.folders.filter((f) => !imported.has(f));
+      if (usage.everything)
+        add(
+          "warn",
+          `${usage.everything.file} uses \`${usage.everything.syntax}\` from "${PACKAGE}", which can reach any component`,
+          `theme-core.css + sources cannot cover that: import ${THEME_PACKAGE}, or import the components by name.`,
+        );
+      else if (missing.length)
+        add(
+          "warn",
+          `No CSS for ${missing.join(", ")}: your code imports ${missing.length === 1 ? "it" : "them"}, but not yugen-ui/sources/${missing.length === 1 ? `${missing[0]}.css` : "<Folder>.css"}`,
+          `Add @import "yugen-ui/sources/${missing[0]}.css";${missing.length > 1 ? " (one line per folder)" : ""}, or let \`yugen css\` write the list.`,
+        );
+    }
   }
 
   if (deps[PACKAGE] || config?.mode === "package") {

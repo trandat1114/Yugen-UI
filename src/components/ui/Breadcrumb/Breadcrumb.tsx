@@ -8,7 +8,7 @@ import {
   MoreHorizontal20Regular,
 } from "../_internal/icons";
 import { cn } from "@/lib/cn";
-import { Menu, MenuItem, MenuPopover, MenuTrigger } from "../Menu/Menu";
+import { lazyPart } from "../_internal/lazyPart";
 import { useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { breadcrumbMessagesEn } from "./messages";
 
@@ -207,6 +207,9 @@ export function BreadcrumbDivider({ className, ...props }: React.LiHTMLAttribute
   );
 }
 
+/** Menu của nút "…" nạp lúc cần (#350): Breadcrumb không gom mục thì không mang Menu. */
+const overflowMenu = lazyPart(() => import("./BreadcrumbOverflowMenu"));
+
 /** Nút "…" mở menu chứa các mục bị thu gọn. */
 export function BreadcrumbOverflow({
   items,
@@ -220,28 +223,49 @@ export function BreadcrumbOverflow({
 }) {
   const { size } = React.useContext(BreadcrumbContext);
   const msg = useYugenMessages("breadcrumb", breadcrumbMessagesEn);
-  return (
-    <Menu>
-      <MenuTrigger asChild>
-        <button type="button" aria-label={label ?? msg.overflow} className={cn(buttonBase, BUTTON_SIZE[size], ICON_ONLY[size], buttonInteractive, className)}>
-          {size === "small" ? <MoreHorizontal16Regular /> : <MoreHorizontal20Regular />}
+  const { mod, ref, fallbackRef } = overflowMenu.usePart();
+  const [openOnLoad, setOpenOnLoad] = React.useState(false);
+  const button = {
+    type: "button" as const,
+    "aria-label": label ?? msg.overflow,
+    className: cn(buttonBase, BUTTON_SIZE[size], ICON_ONLY[size], buttonInteractive, className),
+  };
+  const icon = size === "small" ? <MoreHorizontal16Regular /> : <MoreHorizontal20Regular />;
+
+  if (mod) {
+    return (
+      <mod.BreadcrumbOverflowMenu items={items} defaultOpen={openOnLoad}>
+        <button ref={ref} {...button}>
+          {icon}
         </button>
-      </MenuTrigger>
-      <MenuPopover>
-        {items.map((item, i) => (
-          <MenuItem
-            key={item.key ?? i}
-            icon={item.icon}
-            onSelect={() => {
-              item.onClick?.();
-              if (item.href) window.location.assign(item.href);
-            }}
-          >
-            {item.label}
-          </MenuItem>
-        ))}
-      </MenuPopover>
-    </Menu>
+      </mod.BreadcrumbOverflowMenu>
+    );
+  }
+
+  // Chưa nạp (server, lần hydrate đầu): cùng hộp và ARIA với MenuTrigger lúc đóng. Bấm / phím mở menu như MenuTrigger
+  // thì menu mở ngay khi nạp xong.
+  const openLater = () => {
+    setOpenOnLoad(true);
+    void overflowMenu.preload();
+  };
+  return (
+    <button
+      ref={fallbackRef}
+      {...button}
+      aria-haspopup="menu"
+      aria-expanded={false}
+      data-state="closed"
+      onPointerDown={(e) => {
+        if (e.button === 0 && !e.ctrlKey) openLater();
+      }}
+      onKeyDown={(e) => {
+        if (e.key !== "Enter" && e.key !== " " && e.key !== "ArrowDown") return;
+        e.preventDefault();
+        openLater();
+      }}
+    >
+      {icon}
+    </button>
   );
 }
 

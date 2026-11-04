@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 /**
  * Đo CSS của một app khi dùng `theme.css` (quét mọi component) so với `theme-core.css` + `sources/*.css` cho đúng các
- * component app import (#169). Đọc import `from "yugen-ui"` / `"@/components/ui"` trong thư mục nguồn của app, tra thư
- * mục qua dist/sources/index.json, biên dịch cả hai bằng Tailwind như bundler của app (gồm class của chính app).
+ * component app import (#169). Đọc import từ `yugen-ui` / `@/components/ui` trong thư mục nguồn của app bằng lexer của
+ * `yugen css` (packages/cli/src/lib/imports.ts: import ví dụ viết trong chuỗi không được tính), tra thư mục qua
+ * dist/sources/index.json, biên dịch cả hai bằng Tailwind như bundler của app (gồm class của chính app).
  * Chạy sau `npm run build:lib`.
  *
  *   node scripts/measure-css.mjs src/docs/template-library/starter src/docs/template-library/saas …
@@ -13,12 +14,13 @@ import zlib from "node:zlib";
 import { fileURLToPath } from "node:url";
 import { compile, optimize } from "@tailwindcss/node";
 import { Scanner } from "@tailwindcss/oxide";
+import { findImports } from "../packages/cli/src/lib/imports.ts";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const dist = path.join(root, "dist");
 const manifest = JSON.parse(fs.readFileSync(path.join(dist, "sources", "index.json"), "utf8"));
 const posix = (p) => p.split(path.sep).join("/");
-const IMPORT_RE = /import\s*(?:type\s*)?\{([^}]*)\}\s*from\s*["'](?:yugen-ui|@\/components\/ui)["']/g;
+const UI_IMPORT = /^(?:yugen-ui|@\/components\/ui)(?:\/([^/]+))?/;
 
 /** Các thư mục component mà mã trong `dir` import. */
 function usedFolders(dir) {
@@ -28,11 +30,11 @@ function usedFolders(dir) {
       const p = path.join(d, entry.name);
       if (entry.isDirectory()) walk(p);
       else if (/\.(?:ts|tsx)$/.test(entry.name) && !/\.test\./.test(entry.name)) {
-        for (const m of fs.readFileSync(p, "utf8").matchAll(IMPORT_RE)) {
-          for (const raw of m[1].split(",")) {
-            const name = raw.trim().replace(/^type\s+/, "").split(/\s+as\s+/)[0];
-            if (manifest.exports[name]) folders.add(manifest.exports[name]);
-          }
+        for (const imp of findImports(fs.readFileSync(p, "utf8"), p)) {
+          const m = imp.from.match(UI_IMPORT);
+          if (m?.[1]) {
+            if (Object.hasOwn(manifest.sources, m[1])) folders.add(m[1]);
+          } else if (m) for (const name of imp.names) if (Object.hasOwn(manifest.exports, name)) folders.add(manifest.exports[name]);
         }
       }
     }

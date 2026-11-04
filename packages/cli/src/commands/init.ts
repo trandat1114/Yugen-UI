@@ -23,6 +23,8 @@ import {
   type PackageManager,
 } from "../lib/project.js";
 import { installItems, registryFor } from "./add.js";
+import { css as leanCss } from "./css.js";
+import { THEME_CORE, findGenerated } from "../lib/leanCss.js";
 import { wrapWithProvider } from "../lib/provider.js";
 import { confirm, p, pc, select, text, type Ctx } from "../lib/ui.js";
 
@@ -44,6 +46,8 @@ interface Project {
   framework: Framework;
   pm: PackageManager;
   tailwind: number | null;
+  /** Mode package + Tailwind v4, CSS chưa import theme: ghi yugen-ui.css (`yugen css`) sau khi bọc YugenProvider. */
+  lean?: boolean;
 }
 
 const THEME_PACKAGE = `${PACKAGE}/theme.css`;
@@ -104,6 +108,16 @@ export async function init(opts: InitOptions, ctx: Ctx): Promise<YugenConfig> {
   writeConfig(cwd, config);
   p.log.success(`Wrote ${CONFIG_FILE}`);
   await provider(project, config, opts, ctx);
+  if (project.lean) {
+    try {
+      await leanCss({ cwd, mainCss: css });
+    } catch (e) {
+      // vd. đã có một src/yugen-ui.css không do yugen css ghi: vẫn import theme.css như trước để init chạy xong.
+      if (!(e instanceof CliError) || project.tailwind !== 4 || !css) throw e;
+      p.log.warn(`yugen css: ${e.message}${e.hint ? `\n${pc.dim(e.hint)}` : ""}`);
+      importInto(cwd, css, THEME_PACKAGE);
+    }
+  }
   return config;
 }
 
@@ -128,9 +142,20 @@ async function initPackage(project: Project, css: string | null, opts: InitOptio
   }
 
   if (tailwind === 4 && css) {
-    importInto(cwd, css, THEME_PACKAGE);
+    // Theme đã import thẳng (thiết lập trước đây, hoặc tự viết): giữ nguyên. Chưa có: yugen-ui.css chỉ gồm CSS của các
+    // component mà mã import (`yugen css`, #169), import ngay sau "tailwindcss". File được ghi sau bước bọc YugenProvider
+    // (cuối init()), để có cả YugenProvider mà codemod vừa import.
+    const direct = [THEME_PACKAGE, THEME_CORE].find((spec) => hasCssImport(readText(path.join(cwd, css)), spec));
+    if (direct) {
+      p.log.info(`${css} already imports "${direct}"`);
+      if (direct === THEME_PACKAGE)
+        p.log.info(`It brings the CSS of every component. ${pc.cyan("yugen css")} replaces it with only the components your code imports.`);
+    } else project.lean = true;
     if (readText(path.join(cwd, css)).includes(THEME_SOURCE))
       p.log.warn(`${css} also imports the source theme (${THEME_SOURCE}) — keep only one of them.`);
+  } else if (findGenerated(cwd).some((g) => g.recorded.precompile)) {
+    // Đã chạy `yugen css --precompile` (thay cho styles.css): chỉ cập nhật file đó.
+    project.lean = true;
   } else {
     if (tailwind) p.log.warn(`Tailwind CSS v${tailwind} found — ${THEME_PACKAGE} needs v4, using the precompiled ${STYLES_PACKAGE}.`);
     const entry = findEntryFile(cwd, framework);

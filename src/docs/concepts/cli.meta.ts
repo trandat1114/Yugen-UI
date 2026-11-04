@@ -12,6 +12,7 @@ export const meta: ConceptMeta = {
     { id: "init", label: "Thiết lập dự án có sẵn" },
     { id: "add", label: "Thêm component" },
     { id: "update", label: "Cập nhật và gỡ" },
+    { id: "css", label: "Chỉ CSS bạn dùng" },
     { id: "theme", label: "Màu thương hiệu" },
     { id: "doctor", label: "Kiểm tra cấu hình" },
     { id: "config", label: "yugen.json và registry" },

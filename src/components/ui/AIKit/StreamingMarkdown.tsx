@@ -5,7 +5,9 @@ import { cn } from "@/lib/cn";
 import { useAnnounce } from "../AriaLive/AriaLive";
 import { CodeBlock, CopyCodeButton } from "../CodeBlock/CodeBlock";
 import { useYugenMessages } from "../YugenProvider/context";
-import { Citation, type CitationSource } from "./Citation";
+import { lazyPart } from "../_internal/lazyPart";
+import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
+import { citationChipClass, CitationChipText, type CitationSource } from "./citationChip";
 import { codeLanguageOf } from "./codeLanguage";
 import {
   markdownToPlainText,
@@ -15,7 +17,7 @@ import {
   type MdBlock,
   type MdInline,
 } from "./markdown";
-import { streamingMarkdownMessagesEn, type StreamingMarkdownMessages } from "./messages";
+import { citationMessagesEn, streamingMarkdownMessagesEn, type StreamingMarkdownMessages } from "./messages";
 
 export { streamingMarkdownMessages, streamingMarkdownMessagesVi, streamingMarkdownMessagesEn, type StreamingMarkdownMessages } from "./messages";
 export { codeLanguageOf } from "./codeLanguage";
@@ -57,6 +59,40 @@ function Caret() {
       data-streaming-caret=""
       className="ms-0.5 inline-block h-4 w-0.5 translate-y-0.5 animate-pulse rounded-circular bg-foreground-2 motion-reduce:animate-none"
     />
+  );
+}
+
+/** Citation (Popover) nạp lúc cần (#350): câu trả lời không có chú thích thì không mang Popover. */
+const citationPart = lazyPart(() => import("./Citation"));
+
+/** Chip `[n]`; trước khi Citation nạp xong: cùng chip, cùng ARIA với trigger lúc đóng. Bấm thì thẻ mở ngay khi nạp xong. */
+function LazyCitation({ index, source }: { index: number; source: CitationSource }) {
+  const msg = useYugenMessages("citation", citationMessagesEn);
+  const { mod, ref, fallbackRef } = citationPart.usePart();
+  const descId = `${React.useId()}-desc`;
+  const [clickOnLoad, setClickOnLoad] = React.useState(false);
+  // Chỉ một lần, lúc phần thật thay bản thay thế: bấm lại để Citation mở thẻ (và ghim) như cú bấm của người dùng.
+  useIsomorphicLayoutEffect(() => {
+    if (mod && clickOnLoad) ref.current?.click();
+  }, [mod]);
+  if (mod) return <mod.Citation ref={ref} index={index} source={source} />;
+  return (
+    <button
+      ref={fallbackRef}
+      type="button"
+      aria-describedby={descId}
+      aria-haspopup="dialog"
+      aria-expanded={false}
+      data-state="closed"
+      data-citation={index}
+      className={citationChipClass}
+      onClick={() => {
+        setClickOnLoad(true);
+        void citationPart.preload();
+      }}
+    >
+      <CitationChipText index={index} source={source} descId={descId} label={msg.source} />
+    </button>
   );
 }
 
@@ -108,7 +144,7 @@ function renderInlines(nodes: MdInline[], ctx: RenderContext): React.ReactNode[]
       }
       case "citation": {
         const source = ctx.citations?.[node.index - 1];
-        return source ? <Citation key={i} index={node.index} source={source} /> : <React.Fragment key={i}>{node.label}</React.Fragment>;
+        return source ? <LazyCitation key={i} index={node.index} source={source} /> : <React.Fragment key={i}>{node.label}</React.Fragment>;
       }
       case "softBreak":
         return ctx.breaks ? <br key={i} /> : <React.Fragment key={i}> </React.Fragment>;

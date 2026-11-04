@@ -264,6 +264,7 @@ npm create yugen-ui@latest my-app            # pick a template (= npx @yugen-ui/
 npx @yugen-ui/cli@latest init                        # existing project: npm package or source mode, theme import, yugen.json
 npx @yugen-ui/cli@latest add button dialog           # copy component source + install its dependencies
 npx @yugen-ui/cli@latest list                        # components in the registry
+npx @yugen-ui/cli@latest css                         # yugen-ui.css: only the CSS of the components you import
 npx @yugen-ui/cli@latest doctor                      # check React, Tailwind v4, the theme import, versions, YugenProvider
 ```
 
@@ -566,6 +567,7 @@ npm create yugen-ui@latest my-app            # chọn template (= npx @yugen-ui/
 npx @yugen-ui/cli@latest init                        # dự án có sẵn: gói npm hoặc mã nguồn, import theme, ghi yugen.json
 npx @yugen-ui/cli@latest add button dialog           # chép mã nguồn component + cài phụ thuộc
 npx @yugen-ui/cli@latest list                        # danh sách component trong registry
+npx @yugen-ui/cli@latest css                         # yugen-ui.css: chỉ CSS của các component bạn import
 npx @yugen-ui/cli@latest doctor                      # kiểm tra React, Tailwind v4, import theme, phiên bản, YugenProvider
 ```
 

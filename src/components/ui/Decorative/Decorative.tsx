@@ -69,7 +69,7 @@ export function WavyUnderline({ gradient = "sakura", animated = true, thickness 
           <stop offset="1" style={{ stopColor: a }} />
         </linearGradient>
       </defs>
-      <g className={animated ? "animate-[wave-flow_5s_linear_infinite] motion-reduce:animate-none" : undefined}>
+      <g className={animated ? "animate-wave-flow motion-reduce:animate-none" : undefined}>
         <path
           d={WAVE}
           fill="none"

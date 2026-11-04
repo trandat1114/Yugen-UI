@@ -55,6 +55,7 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
       init: "Set up an existing project",
       add: "Add components",
       update: "Update and remove",
+      css: "Only the CSS you use",
       theme: "Brand color",
       doctor: "Check the setup",
       config: "yugen.json and the registry",

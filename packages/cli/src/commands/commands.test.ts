@@ -104,13 +104,15 @@ describe("create", () => {
 });
 
 describe("init --mode package", () => {
-  it("imports theme.css after tailwindcss and records the mode", async () => {
+  it("imports yugen-ui.css (yugen css) after tailwindcss and records the mode", async () => {
     const cwd = viteProject();
     await init({ cwd, mode: "package", install: false }, ctx);
-    expect(read(cwd, "src/index.css")).toBe('@import "tailwindcss";\n@import "yugen-ui/theme.css";\n\nbody { margin: 0; }\n');
+    expect(read(cwd, "src/index.css")).toBe('@import "tailwindcss";\n@import "./yugen-ui.css";\n\nbody { margin: 0; }\n');
+    // yugen-ui is not installed yet (--no-install): theme.css until `yugen css` runs again.
+    expect(read(cwd, "src/yugen-ui.css")).toContain('\n@import "yugen-ui/theme.css";\n');
     expect(json(cwd, "yugen.json")).toEqual({ mode: "package", framework: "vite", rsc: false, css: "src/index.css" });
     await init({ cwd, mode: "package", install: false }, ctx);
-    expect(read(cwd, "src/index.css").match(/theme\.css/g)).toHaveLength(1);
+    expect(read(cwd, "src/index.css").match(/yugen-ui\.css/g)).toHaveLength(1);
   });
 
   it("falls back to styles.css without Tailwind v4", async () => {
