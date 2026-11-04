@@ -92,10 +92,10 @@ module.exports = [
     "62.5 kB",
   ),
   js("{ Dialog, DialogSurface }", "{ Dialog, DialogSurface }", "26 kB"),
-  // Listbox riêng thay cmdk (#351): 42.57 → 38.59 kB.
-  js("{ Combobox }", "{ Combobox }", "42 kB"),
-  // #351: không cmdk, Sortable nạp lúc cần khi `reorderable`: 50.30 → 40.38 kB.
-  js("{ TagPicker }", "{ TagPicker }", "44 kB"),
+  // Listbox riêng thay cmdk (#351): 42.83 → 38.92 kB.
+  js("{ Combobox }", "{ Combobox }", "42.5 kB"),
+  // #351: không cmdk, Sortable nạp lúc cần khi `reorderable`: 50.56 → 41.01 kB.
+  js("{ TagPicker }", "{ TagPicker }", "44.5 kB"),
   // Calendar không kéo locale vi của react-day-picker (#349): 61.93 → 59.72 kB.
   js("{ DatePicker }", "{ DatePicker }", "65 kB"),
   // #173: họ DatePicker dùng chung vỏ; MonthPicker / DateTimePicker kéo theo Calendar (react-day-picker) như DatePicker.
