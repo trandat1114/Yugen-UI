@@ -10,8 +10,9 @@ export interface UseElementSizeOptions {
   /** Đo hộp nào: `content-box` (mặc định, không tính padding / border) hay `border-box`. */
   box?: "content-box" | "border-box";
   /**
-   * `false`: không gắn ref, không đo, không ResizeObserver, kích thước là 0 × 0. Dùng khi kích thước đã biết trước
-   * (vd. Sparkline có `width` cố định) để khỏi tốn hai lần render và một observer cho mỗi phần tử. Mặc định `true`.
+   * `false`: the ref does nothing, nothing is measured, no ResizeObserver is created and the size stays 0 × 0. Use it
+   * when the size is already known (a Sparkline with a numeric `width`, for example) to skip the extra render and the
+   * observer. Default `true`.
    */
   enabled?: boolean;
 }
