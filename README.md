@@ -269,9 +269,9 @@ npx @yugen-ui/cli@latest doctor                      # check React, Tailwind v4,
 
 ## Next.js (App Router)
 
-The published build already starts every component module with `"use client";`. The entry barrel, `cn()` and
-the brand-ramp helpers carry **no** directive, so you can import components from Server Components and call `cn()`
-on the server.
+The published build already starts every component module with `"use client";`. The entry barrel, `cn()`, the
+brand-ramp helpers and `readAppShellCookie()` carry **no** directive, so you can import components from Server
+Components and call `cn()` or `readAppShellCookie()` on the server (import them from `yugen-ui`).
 
 - Setup A with Next.js uses `@tailwindcss/postcss`; put the two `@import` lines in `app/globals.css`.
 - To avoid a theme flash on first paint, render the attributes on `<html>` in `app/layout.tsx`:
@@ -284,6 +284,7 @@ on the server.
 | Import | Contents |
 |---|---|
 | `yugen-ui` | Components, hooks, `cn`, brand-ramp helpers — ESM (`preserveModules`, tree-shakeable) + `.d.ts` |
+| `yugen-ui/<Folder>` | One component folder (`yugen-ui/Button`, `yugen-ui/Chart`), plus `yugen-ui/hooks`, `yugen-ui/AppShell/Sidebar`, `yugen-ui/messages-en`, `yugen-ui/messages-vi`. Same files as the root |
 | `yugen-ui/theme.css` | Tailwind v4 theme source (Setup A) |
 | `yugen-ui/styles.css` | Precompiled stylesheet (Setup B) |
 | `yugen-ui/tokens.css` | Raw design tokens (CSS custom properties only) |
@@ -570,8 +571,9 @@ npx @yugen-ui/cli@latest doctor                      # kiểm tra React, Tailwin
 
 ### Next.js (App Router)
 
-Bản build trên npm đã có `"use client";` ở đầu mỗi module component. Barrel gốc, `cn()` và các hàm brand ramp
-**không** có chỉ thị này, nên bạn import component được từ Server Component và gọi `cn()` ở server.
+Bản build trên npm đã có `"use client";` ở đầu mỗi module component. Barrel gốc, `cn()`, các hàm brand ramp và
+`readAppShellCookie()` **không** có chỉ thị này, nên bạn import component được từ Server Component và gọi `cn()` hay
+`readAppShellCookie()` ở server (import từ `yugen-ui`).
 
 - Cách A với Next.js dùng `@tailwindcss/postcss`; đặt hai dòng `@import` trong `app/globals.css`.
 - Để tránh nháy theme ở lần vẽ đầu, ghi sẵn attribute lên `<html>` trong `app/layout.tsx`:
@@ -582,6 +584,7 @@ Bản build trên npm đã có `"use client";` ở đầu mỗi module component
 | Import | Nội dung |
 |---|---|
 | `yugen-ui` | Component, hook, `cn`, hàm brand ramp — ESM (`preserveModules`, tree-shake được) + `.d.ts` |
+| `yugen-ui/<Folder>` | Một thư mục component (`yugen-ui/Button`, `yugen-ui/Chart`), thêm `yugen-ui/hooks`, `yugen-ui/AppShell/Sidebar`, `yugen-ui/messages-en`, `yugen-ui/messages-vi`; cùng file với gốc gói |
 | `yugen-ui/theme.css` | Nguồn theme Tailwind v4 (Cách A) |
 | `yugen-ui/styles.css` | Stylesheet đã biên dịch (Cách B) |
 | `yugen-ui/tokens.css` | Token thô (chỉ biến CSS) |

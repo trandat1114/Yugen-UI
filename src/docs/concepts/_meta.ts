@@ -142,6 +142,7 @@ export const CONCEPT_METAS: Record<string, ConceptMeta> = {
       { id: "existing", label: "Thêm vào dự án có sẵn" },
       { id: "shadcn", label: "Tuỳ biến mã nguồn" },
       { id: "first-component", label: "Component đầu tiên" },
+      { id: "imports", label: "Đường dẫn import" },
       { id: "persist-theme", label: "Nhớ theme & chống nháy" },
       { id: "requirements", label: "Yêu cầu" },
     ],

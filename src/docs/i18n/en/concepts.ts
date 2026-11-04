@@ -18,6 +18,7 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
       existing: "Add to an existing project",
       shadcn: "Customize the source",
       "first-component": "Your first component",
+      imports: "Import paths",
       "persist-theme": "Remember the theme, no flash",
       requirements: "Requirements",
     },

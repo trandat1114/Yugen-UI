@@ -134,6 +134,23 @@ function NewsletterForm() {
   );
 }
 
+const IMPORTS = `// Gốc gói: mọi thứ từ một chỗ. Bundler chỉ giữ phần bạn dùng.
+import { Dialog, DialogSurface, DialogTrigger } from "yugen-ui";
+
+// Subpath: chỉ component đó và những gì nó dùng.
+import { Button } from "yugen-ui/Button";
+import { LineChart, Sparkline } from "yugen-ui/Chart";
+import { useDisclosure } from "yugen-ui/hooks";`;
+
+const NEXT_CONFIG = `// next.config.ts
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  experimental: { optimizePackageImports: ["yugen-ui"] },
+};
+
+export default nextConfig;`;
+
 const PERSIST = `// src/App.tsx — nhớ theme người dùng chọn
 import * as React from "react";
 import { YugenProvider, type YugenTheme } from "yugen-ui";
@@ -282,6 +299,32 @@ export default function Page() {
             <NewsletterForm />
           </div>
           <CodeBlock code={FIRST} />
+        </div>
+      </DocSection>
+
+      <DocSection
+        id="imports"
+        title="Đường dẫn import"
+        description="Mỗi thư mục component cũng là một subpath của gói: yugen-ui/Button, yugen-ui/Chart, yugen-ui/hooks."
+      >
+        <div className="flex flex-col gap-4">
+          <CodeBlock code={IMPORTS} />
+          <P>
+            Bản build production có cùng dung lượng với cả hai cách. Subpath có ích ở nơi không có tree-shaking: test (Vitest, Jest), render
+            phía server bằng Node và dev server. Trong Node, <C>{'import { Button } from "yugen-ui/Button"'}</C> lần đầu nạp 14 module thay
+            vì khoảng 500. Hai cách nạp cùng các file nên có thể dùng lẫn.
+          </P>
+          <P>
+            Subpath là thư mục của component: <C>CardHeader</C> lấy từ <C>yugen-ui/Card</C>, <C>DateRangePicker</C> từ{" "}
+            <C>yugen-ui/DatePicker</C>. Ngoại lệ là <C>yugen-ui/AppShell/Sidebar</C>, <C>yugen-ui/messages-en</C> và{" "}
+            <C>yugen-ui/messages-vi</C>. <C>cn</C> và các hàm màu thương hiệu chỉ có ở gốc gói; <C>readAppShellCookie</C> chạy được trong
+            Server Component chỉ khi import từ <C>yugen-ui</C>.
+          </P>
+          <P>
+            Next.js: để giữ import từ gốc gói mà vẫn chỉ nạp phần trang dùng khi phát triển và ở server, thêm gói vào{" "}
+            <C>optimizePackageImports</C>.
+          </P>
+          <CodeBlock code={NEXT_CONFIG} />
         </div>
       </DocSection>
 
