@@ -77,6 +77,17 @@ npx @yugen-ui/cli update button --dry-run # show the diff, write nothing
 npx @yugen-ui/cli update                  # apply the registry version (asks before writing)
 npx @yugen-ui/cli remove data-grid        # delete the files nothing else imports`;
 
+const CSS = `npx @yugen-ui/cli css                       # write src/yugen-ui.css, import it in src/index.css
+npx @yugen-ui/cli css --check               # CI: exit with 1 when the file is out of date, write nothing
+npx @yugen-ui/cli css --src app --src lib   # read only these folders (default: the whole project)
+npx @yugen-ui/cli css --precompile          # apps without Tailwind: compiled CSS that replaces styles.css`;
+
+const CSS_RESULT = `/* src/yugen-ui.css */
+@import "yugen-ui/theme-core.css";
+@import "yugen-ui/sources/Button.css";
+@import "yugen-ui/sources/Dialog.css";
+@import "yugen-ui/sources/YugenProvider.css";`;
+
 const THEME = `npx @yugen-ui/cli theme --brand #0f6cbd --name acme
 # → src/yugen-brand.css: [data-brand="acme"] { --brand-10 … --brand-160 }, imported from src/index.css
 # <YugenProvider applyToDocument withToaster brand="acme">`;
@@ -98,9 +109,10 @@ export default function Page() {
               ["diff [names…]", "Compare copied source with the registry and print the diff. Changes nothing."],
               ["update [names…]", "Apply the registry version to copied source: shows the diff, asks, then writes."],
               ["remove <names…>", "Delete a component's files that nothing else imports."],
+              ["css", "Write yugen-ui.css: only the CSS of the components your code imports (package mode)."],
               ["theme --brand <hex>", "Generate a 16-step brand ramp into yugen-brand.css, with the Theme Designer's algorithm."],
               ["list [query]", "Components in the registry."],
-              ["doctor", "Check React, Tailwind CSS v4, the theme import, the yugen-ui version and YugenProvider."],
+              ["doctor", "Check React, Tailwind CSS v4, the theme import, yugen-ui.css, the yugen-ui version and YugenProvider."],
             ]}
           />
           <P>
@@ -134,8 +146,10 @@ export default function Page() {
               [
                 "package",
                 <>
-                  Installs <C>yugen-ui</C> and adds <C>@import &quot;yugen-ui/theme.css&quot;;</C> right after <C>@import &quot;tailwindcss&quot;;</C>.
-                  Without Tailwind CSS v4 it adds <C>import &quot;yugen-ui/styles.css&quot;;</C> to your entry file (main.tsx, app/layout.tsx).
+                  Installs <C>yugen-ui</C>, writes <C>yugen-ui.css</C> with <A href={docsPath("/concepts/cli#css")}>yugen css</A> and adds{" "}
+                  <C>@import &quot;./yugen-ui.css&quot;;</C> right after <C>@import &quot;tailwindcss&quot;;</C>. A CSS file that already imports{" "}
+                  <C>yugen-ui/theme.css</C> is left as it is. Without Tailwind CSS v4 it adds{" "}
+                  <C>import &quot;yugen-ui/styles.css&quot;;</C> to your entry file (main.tsx, app/layout.tsx).
                 </>,
               ],
               [
@@ -167,7 +181,8 @@ export default function Page() {
             re-run with <C>--overwrite</C> when you want the update. Commit first and use git&apos;s diff to keep your changes.
           </P>
           <MessageBar intent="info" title="In package mode" className="max-w-3xl">
-            The components are already in the <C>yugen-ui</C> package. <C>add</C> only prints the matching import.
+            The components are already in the <C>yugen-ui</C> package. <C>add</C> prints the matching import and adds the component to{" "}
+            <C>yugen-ui.css</C> when the app has one.
           </MessageBar>
         </div>
       </DocSection>
@@ -184,6 +199,42 @@ export default function Page() {
             then asks before writing. Your edits in those files are replaced, so commit first. <C>remove</C> scans the project&apos;s imports
             (relative paths and aliases) and keeps files that are still used, for example Spinner while Button imports it. npm packages are
             not uninstalled.
+          </P>
+        </div>
+      </DocSection>
+
+      <DocSection
+        id="css"
+        title="Only the CSS you use"
+        description="Package mode. theme.css makes Tailwind scan every component in the package; yugen-ui.css lists only the components your code imports."
+      >
+        <div className="flex flex-col gap-4">
+          <CodeBlock code={CSS} />
+          <CodeBlock code={CSS_RESULT} />
+          <P>
+            The command reads the imports from <C>yugen-ui</C> in your code, subpaths such as <C>yugen-ui/Dialog</C> included. Type imports
+            and examples written inside strings or comments don&apos;t count. Each name is looked up in{" "}
+            <C>yugen-ui/sources/index.json</C> and each component folder becomes one line. The first run replaces{" "}
+            <C>@import &quot;yugen-ui/theme.css&quot;</C> in your main CSS file with <C>@import &quot;./yugen-ui.css&quot;</C>. On the
+            templates, the gzipped CSS goes from about 26 kB to 12–20 kB (table on{" "}
+            <A href={docsPath("/concepts/styling#lean-css")}>Styling</A>).
+          </P>
+          <P>
+            Run it again after you import another component; in package mode <C>yugen add &lt;name&gt;</C> does it for you. To keep it in
+            sync, install the CLI as a dev dependency and add <C>&quot;predev&quot;: &quot;yugen css&quot;</C> and{" "}
+            <C>&quot;prebuild&quot;: &quot;yugen css&quot;</C> to package.json. The file starts with the command that wrote it (
+            <C>--src</C> included), so the next run is just <C>yugen css</C>.
+          </P>
+          <P>
+            <C>import * as Yugen from &quot;yugen-ui&quot;</C>, <C>export * from &quot;yugen-ui&quot;</C> and{" "}
+            <C>import(&quot;yugen-ui&quot;)</C> can reach any component, so the file falls back to theme.css and names the file that caused
+            it. Components imported in another package of a monorepo are not seen: add that folder with <C>--src</C>.
+          </P>
+          <P>
+            <C>--precompile</C> is for apps without Tailwind: the same list is compiled into plain CSS with your project&apos;s own{" "}
+            <C>tailwindcss</C>, <C>@tailwindcss/node</C> and <C>@tailwindcss/oxide</C> (install them as dev dependencies; the CLI does not
+            bundle Tailwind), and replaces <C>import &quot;yugen-ui/styles.css&quot;</C> in your entry file. On the templates: 26.8 kB down
+            to 12.8–21.1 kB gzipped.
           </P>
         </div>
       </DocSection>
@@ -205,8 +256,9 @@ export default function Page() {
           <CodeBlock code={CLI_DOCTOR_OUTPUT} />
           <P>
             It checks for React 19 or later, Tailwind CSS v4 when the theme is used, a single theme import placed after{" "}
-            <C>@import &quot;tailwindcss&quot;</C>, the installed <C>yugen-ui</C> against the latest on npm, the component folder and{" "}
-            <C>cn.ts</C> in source mode, and a <C>YugenProvider</C>.
+            <C>@import &quot;tailwindcss&quot;</C>, a <C>yugen-ui.css</C> that is imported and matches your code (a warning when it is out of
+            date), components imported without their sources file when you write the <C>theme-core.css</C> lines by hand, the installed{" "}
+            <C>yugen-ui</C> against the latest on npm, the component folder and <C>cn.ts</C> in source mode, and a <C>YugenProvider</C>.
           </P>
         </div>
       </DocSection>
