@@ -3,16 +3,16 @@ import * as React from "react";
 import { useControllableState } from "../hooks/useControllableState";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { useDirection } from "@radix-ui/react-direction";
-import { Command as CommandPrimitive } from "cmdk";
 import { ChevronDown20Regular, ChevronDown24Regular } from "../_internal/icons";
 import { usePortalThemeProps, useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
+import { groupListboxItems, ListboxGroups, listboxOptionProps, useListbox } from "../_internal/useListbox";
+import { lazyPart } from "../_internal/lazyPart";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { popoverSurfaceClass } from "@/components/ui/Popover/Popover";
 import { fieldAppearanceClass, type FieldAppearance } from "@/components/ui/Select/Select";
-import { cmdkGroupClass, cmdkOptionClass, normalizeSearchText } from "@/components/ui/Combobox/Combobox";
+import { cmdkOptionClass, normalizeSearchText } from "@/components/ui/Combobox/Combobox";
 import { Tag, TagGroup, type TagAppearance, type TagShape, type TagSize } from "@/components/ui/Tag/Tag";
-import { Sortable, SortableItem } from "@/components/ui/Sortable/Sortable";
 import { tagPickerMessagesEn } from "./messages";
 
 export { tagPickerMessages, tagPickerMessagesVi, tagPickerMessagesEn, type TagPickerMessages } from "./messages";
@@ -62,6 +62,37 @@ interface NormalizedOption extends TagPickerOption {
   label: string;
 }
 
+/** Option đã memo: mũi tên chỉ vẽ lại option vừa mất và vừa nhận highlight. */
+const OptionRow = /* @__PURE__ */ React.memo(function OptionRow({
+  item,
+  id,
+  active,
+  onHover,
+  onSelect,
+}: {
+  item: NormalizedOption;
+  id: string;
+  active: boolean;
+  onHover: (value: string) => void;
+  onSelect: (value: string) => void;
+}) {
+  return (
+    <div {...listboxOptionProps(id, item.value, item.disabled, active, onHover, onSelect)} className={cn(cmdkOptionClass, "gap-2")}>
+      {item.media && <span className="flex shrink-0 items-center text-foreground-2 [&_svg]:size-5">{item.media}</span>}
+      <span className="flex min-w-0 flex-1 flex-col">
+        <span className="truncate">{item.label}</span>
+        {item.secondaryText && <span className="truncate text-caption1 text-foreground-3">{item.secondaryText}</span>}
+      </span>
+    </div>
+  );
+});
+
+/**
+ * Sortable chỉ cần khi `reorderable`: nạp lúc cần. Server và lượt hydrate vẽ tag thường (cùng kích thước, không lệch
+ * hydration); kéo / Alt + mũi tên có ngay khi module về. Nạp lỗi thì tag vẫn dùng được, lần mount sau thử lại.
+ */
+const sortablePart = /* @__PURE__ */ lazyPart(() => import("@/components/ui/Sortable/Sortable"));
+
 /** TagPicker: chọn nhiều mục, mỗi mục là một Tag trong ô nhập; gõ để lọc danh sách gợi ý. */
 export function TagPicker(inProps: TagPickerProps & { ref?: React.Ref<HTMLInputElement> }) {
   const {
@@ -97,8 +128,6 @@ export function TagPicker(inProps: TagPickerProps & { ref?: React.Ref<HTMLInputE
   const [open, setOpen] = React.useState(false);
   const [query, setQuery] = React.useState("");
   const [active, setActive] = React.useState("");
-  const [activeId, setActiveId] = React.useState<string>();
-  const [listEl, setListEl] = React.useState<HTMLDivElement | null>(null);
   const anchorRef = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const tagsRef = React.useRef<HTMLDivElement>(null);
@@ -112,24 +141,19 @@ export function TagPicker(inProps: TagPickerProps & { ref?: React.Ref<HTMLInputE
 
   const s = SIZE[size];
   const invalid = inputProps["aria-invalid"] === true || inputProps["aria-invalid"] === "true";
-  const selectedSet = new Set(selected);
-  const filterList = (text: string) => {
-    const q = normalizeSearchText(text);
-    return items.filter((i, k) => !selectedSet.has(i.value) && (!q || searchText[k].includes(q)));
-  };
-  const available = filterList(query);
+  const filterList = React.useCallback(
+    (text: string) => {
+      const q = normalizeSearchText(text);
+      const taken = new Set(selected);
+      return items.filter((i, k) => !taken.has(i.value) && (!q || searchText[k].includes(q)));
+    },
+    [items, searchText, selected],
+  );
+  const available = React.useMemo(() => filterList(query), [filterList, query]);
+  const groups = React.useMemo(() => groupListboxItems(available), [available]);
+  const sortable = sortablePart.usePart(reorderable).mod;
   const firstEnabled = (list: NormalizedOption[]) => list.find((i) => !i.disabled)?.value ?? "";
   const optionOf = (v: string) => itemByValue.get(v);
-
-  useIsomorphicLayoutEffect(() => {
-    if (!open || !listEl || !active) {
-      setActiveId(undefined);
-      return;
-    }
-    const el = listEl.querySelector<HTMLElement>(`[cmdk-item][data-value="${CSS.escape(active)}"]`);
-    setActiveId(el?.id);
-    el?.scrollIntoView({ block: "nearest" });
-  }, [open, listEl, active, query, selected.length]);
 
   const openList = () => {
     if (disabled || open) return;
@@ -151,6 +175,42 @@ export function TagPicker(inProps: TagPickerProps & { ref?: React.Ref<HTMLInputE
       if (!anchorRef.current?.contains(document.activeElement)) inputRef.current?.focus();
     });
   };
+
+  const listbox = useListbox({
+    open,
+    groups,
+    active,
+    onActiveChange: setActive,
+    onSelect: add,
+    labelledBy: inputProps["aria-labelledby"],
+    label: inputProps["aria-label"] || msg.listLabel,
+  });
+
+  // Sortable về (hoặc `reorderable` tắt) thì nhóm tag nằm trong cây khác nên được tạo lại: tag đang giữ focus lúc đó
+  // nhận lại focus (theo value) thay vì rơi về <body>.
+  const selectedRef = React.useRef(selected);
+  const refocus = React.useRef<string | null>(null);
+  useIsomorphicLayoutEffect(() => {
+    selectedRef.current = selected;
+  });
+  const setTags = React.useCallback((el: HTMLDivElement | null) => {
+    tagsRef.current = el;
+    if (!el) return;
+    // Cleanup của ref chạy trước khi React gỡ phần tử khỏi DOM, lúc tag còn giữ focus.
+    return () => {
+      const index = Array.from(el.querySelectorAll("[data-tag]")).findIndex((t) => t.contains(el.ownerDocument.activeElement));
+      refocus.current = selectedRef.current[index] ?? null;
+      if (tagsRef.current === el) tagsRef.current = null;
+    };
+  }, []);
+  useIsomorphicLayoutEffect(() => {
+    const value = refocus.current;
+    refocus.current = null;
+    const root = tagsRef.current;
+    const doc = root?.ownerDocument;
+    if (value === null || !root || !doc || (doc.activeElement && doc.activeElement !== doc.body)) return;
+    root.querySelectorAll<HTMLElement>("[data-tag]")[selected.indexOf(value)]?.focus({ preventScroll: true });
+  }, [sortable]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     onKeyDown?.(e);
@@ -180,19 +240,21 @@ export function TagPicker(inProps: TagPickerProps & { ref?: React.Ref<HTMLInputE
     if (e.key === "Enter" && freeform && query.trim() && available.length === 0) {
       e.preventDefault();
       add(query.trim());
+      return;
     }
+    listbox.onKeyDown(e);
   };
 
   const tagGroup = selected.length > 0 && (
     <TagGroup
-      ref={tagsRef}
+      ref={setTags}
       aria-label={msg.selectedItems}
       size={s.tag}
       appearance={tagAppearance}
       disabled={disabled}
       onDismiss={remove}
       onKeyDown={(e) => {
-        // Không để cmdk (Enter/Home/End) bắt phím khi đang ở trên tag.
+        // Phím trên tag (Enter / Home / End…) thuộc về tag, không đi lên các phần tử cha.
         e.stopPropagation();
         if (e.defaultPrevented) return;
         const buttons = tagsRef.current?.querySelectorAll<HTMLElement>("button:not(:disabled)");
@@ -220,10 +282,10 @@ export function TagPicker(inProps: TagPickerProps & { ref?: React.Ref<HTMLInputE
           </Tag>
         );
         // Tag là nút gỡ: cả tag là tay nắm (kéo thì không gỡ), bàn phím dùng Alt + mũi tên.
-        return reorderable ? (
-          <SortableItem key={v} value={v} label={opt?.label ?? v} disabled={disabled} asChild handle shortcuts>
+        return sortable ? (
+          <sortable.SortableItem key={v} value={v} label={opt?.label ?? v} disabled={disabled} asChild handle shortcuts>
             {tag}
-          </SortableItem>
+          </sortable.SortableItem>
         ) : (
           tag
         );
@@ -242,148 +304,125 @@ export function TagPicker(inProps: TagPickerProps & { ref?: React.Ref<HTMLInputE
         }
       }}
     >
-      <CommandPrimitive shouldFilter={false} value={active} onValueChange={setActive} loop vimBindings={false} className="contents">
-        <PopoverPrimitive.Anchor asChild>
-          <div
-            ref={anchorRef}
-            data-disabled={disabled || undefined}
-            data-invalid={invalid || undefined}
-            onClick={(e) => {
-              if ((e.target as HTMLElement).closest("[data-tag]")) return;
-              inputRef.current?.focus();
-              openList();
-            }}
-            className={cn(
-              fieldAppearanceClass[appearance],
-              "flex w-full min-w-62.5 cursor-text items-center",
-              open && "after:scale-x-100",
-              disabled && "cursor-not-allowed",
-              s.root,
-              className,
+      <PopoverPrimitive.Anchor asChild>
+        <div
+          ref={anchorRef}
+          data-disabled={disabled || undefined}
+          data-invalid={invalid || undefined}
+          onClick={(e) => {
+            if ((e.target as HTMLElement).closest("[data-tag]")) return;
+            inputRef.current?.focus();
+            openList();
+          }}
+          className={cn(
+            fieldAppearanceClass[appearance],
+            "flex w-full min-w-62.5 cursor-text items-center",
+            open && "after:scale-x-100",
+            disabled && "cursor-not-allowed",
+            s.root,
+            className,
+          )}
+        >
+          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1 py-0.5">
+            {sortable && tagGroup ? (
+              <sortable.Sortable asChild orientation="grid" value={selected} onValueChange={commit} disabled={disabled}>
+                {tagGroup}
+              </sortable.Sortable>
+            ) : (
+              tagGroup
             )}
-          >
-            <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1 py-0.5">
-              {reorderable && tagGroup ? (
-                <Sortable asChild orientation="grid" value={selected} onValueChange={commit} disabled={disabled}>
-                  {tagGroup}
-                </Sortable>
-              ) : (
-                tagGroup
-              )}
-              <input
-                ref={inputRef}
-                type="text"
-                role="combobox"
-                aria-autocomplete="list"
-                aria-expanded={open}
-                aria-controls={open && listEl ? listEl.id : undefined}
-                aria-activedescendant={activeId}
-                autoComplete="off"
-                disabled={disabled}
-                placeholder={selected.length === 0 ? placeholder : undefined}
-                value={query}
-                onChange={(e) => {
-                  const text = e.target.value;
-                  setQuery(text);
-                  setActive(firstEnabled(filterList(text)));
-                  if (!open) setOpen(true);
-                }}
-                onKeyDown={handleKeyDown}
-                className={cn(
-                  "min-w-16 flex-1 bg-transparent px-1 text-foreground-1 outline-none placeholder:text-foreground-4",
-                  "disabled:cursor-not-allowed disabled:text-foreground-disabled",
-                  s.input,
-                )}
-                {...inputProps}
-              />
-            </div>
-            <button
-              type="button"
-              tabIndex={-1}
-              aria-label={open ? msg.closeList : msg.openList}
+            <input
+              ref={inputRef}
+              type="text"
+              role="combobox"
+              aria-autocomplete="list"
+              aria-expanded={open}
+              {...listbox.inputProps}
+              autoComplete="off"
               disabled={disabled}
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={(e) => {
-                e.stopPropagation();
-                if (open) {
-                  setOpen(false);
-                  setQuery("");
-                } else {
-                  inputRef.current?.focus();
-                  openList();
-                }
+              placeholder={selected.length === 0 ? placeholder : undefined}
+              value={query}
+              onChange={(e) => {
+                const text = e.target.value;
+                setQuery(text);
+                setActive(firstEnabled(filterList(text)));
+                if (!open) setOpen(true);
               }}
-              className="flex w-8 shrink-0 cursor-pointer items-center justify-center self-stretch text-foreground-3 outline-none disabled:cursor-not-allowed disabled:text-foreground-disabled"
-            >
-              <s.Icon className={s.icon} />
-            </button>
+              onKeyDown={handleKeyDown}
+              className={cn(
+                "min-w-16 flex-1 bg-transparent px-1 text-foreground-1 outline-none placeholder:text-foreground-4",
+                "disabled:cursor-not-allowed disabled:text-foreground-disabled",
+                s.input,
+              )}
+              {...inputProps}
+            />
           </div>
-        </PopoverPrimitive.Anchor>
-        <PopoverPrimitive.Portal>
-          <PopoverPrimitive.Content
-            {...portalTheme}
-            dir={dir}
-            role="presentation"
-            align="start"
-            sideOffset={2}
-            onOpenAutoFocus={(e) => e.preventDefault()}
-            onCloseAutoFocus={(e) => e.preventDefault()}
-            onInteractOutside={(e) => {
-              if (anchorRef.current?.contains(e.target as Node)) e.preventDefault();
-            }}
+          <button
+            type="button"
+            tabIndex={-1}
+            aria-label={open ? msg.closeList : msg.openList}
+            disabled={disabled}
             onMouseDown={(e) => e.preventDefault()}
-            className={cn(
-              popoverSurfaceClass,
-              "max-h-[min(var(--radix-popover-content-available-height),--spacing(80))] w-(--radix-popover-trigger-width) overflow-y-auto p-1",
-              listboxClassName,
-            )}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (open) {
+                setOpen(false);
+                setQuery("");
+              } else {
+                inputRef.current?.focus();
+                openList();
+              }
+            }}
+            className="flex w-8 shrink-0 cursor-pointer items-center justify-center self-stretch text-foreground-3 outline-none disabled:cursor-not-allowed disabled:text-foreground-disabled"
           >
-            <CommandPrimitive.List ref={setListEl} aria-multiselectable>
-              <CommandPrimitive.Empty className="px-2 py-1.5 text-body1 text-foreground-3">
+            <s.Icon className={s.icon} />
+          </button>
+        </div>
+      </PopoverPrimitive.Anchor>
+      <PopoverPrimitive.Portal>
+        <PopoverPrimitive.Content
+          {...portalTheme}
+          dir={dir}
+          role="presentation"
+          align="start"
+          sideOffset={2}
+          onOpenAutoFocus={(e) => e.preventDefault()}
+          onCloseAutoFocus={(e) => e.preventDefault()}
+          onInteractOutside={(e) => {
+            if (anchorRef.current?.contains(e.target as Node)) e.preventDefault();
+          }}
+          onMouseDown={(e) => e.preventDefault()}
+          className={cn(
+            popoverSurfaceClass,
+            "max-h-[min(var(--radix-popover-content-available-height),--spacing(80))] w-(--radix-popover-trigger-width) overflow-y-auto p-1",
+            listboxClassName,
+          )}
+        >
+          <div {...listbox.listProps} aria-multiselectable>
+            {available.length === 0 && (
+              <div role="presentation" className="px-2 py-1.5 text-body1 text-foreground-3">
                 {freeform && query.trim() ? msg.addFreeform(query.trim()) : noResultsText === undefined ? msg.noResults : noResultsText}
-              </CommandPrimitive.Empty>
-              {groupOptions(available).map((group) => {
-                const rendered = group.items.map((item) => (
-                  <CommandPrimitive.Item
-                    key={item.value}
-                    value={item.value}
-                    disabled={item.disabled}
-                    onSelect={() => add(item.value)}
-                    className={cn(cmdkOptionClass, "gap-2")}
-                  >
-                    {item.media && <span className="flex shrink-0 items-center text-foreground-2 [&_svg]:size-5">{item.media}</span>}
-                    <span className="flex min-w-0 flex-1 flex-col">
-                      <span className="truncate">{item.label}</span>
-                      {item.secondaryText && (
-                        <span className="truncate text-caption1 text-foreground-3">{item.secondaryText}</span>
-                      )}
-                    </span>
-                  </CommandPrimitive.Item>
-                ));
-                return group.name ? (
-                  <CommandPrimitive.Group key={group.name} heading={group.name} className={cmdkGroupClass}>
-                    {rendered}
-                  </CommandPrimitive.Group>
-                ) : (
-                  <React.Fragment key="__ungrouped">{rendered}</React.Fragment>
-                );
-              })}
-            </CommandPrimitive.List>
-          </PopoverPrimitive.Content>
-        </PopoverPrimitive.Portal>
-      </CommandPrimitive>
+              </div>
+            )}
+            <ListboxGroups
+              groups={groups}
+              listId={listbox.listProps.id}
+              renderItem={(item) => (
+                <OptionRow
+                  key={item.value}
+                  item={item}
+                  id={listbox.idOf(item.value)}
+                  active={item.value === listbox.active}
+                  onHover={listbox.hover}
+                  onSelect={listbox.select}
+                />
+              )}
+            />
+          </div>
+        </PopoverPrimitive.Content>
+      </PopoverPrimitive.Portal>
     </PopoverPrimitive.Root>
   );
-}
-
-function groupOptions(items: NormalizedOption[]) {
-  const groups: { name?: string; items: NormalizedOption[] }[] = [];
-  for (const item of items) {
-    const g = groups.find((x) => x.name === item.group);
-    if (g) g.items.push(item);
-    else groups.push({ name: item.group, items: [item] });
-  }
-  return groups;
 }
 
 declare module "../YugenProvider/context" {

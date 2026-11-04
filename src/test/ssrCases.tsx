@@ -400,6 +400,7 @@ export const SSR_CASES: SsrCase[] = [
         <Combobox aria-label="Thành phố" options={["Hà Nội", "Huế"]} defaultValue="Huế" />
         <TagPicker
           aria-label="Thẻ"
+          reorderable
           defaultValue={["design"]}
           options={[
             { value: "design", label: "Thiết kế" },

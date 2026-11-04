@@ -42,7 +42,7 @@ Tài liệu này là **bộ quy tắc bắt buộc**. Mọi người (và AI) kh
 |---|---|
 | Build | Vite 8 (Rolldown) + React 19 (vẫn hỗ trợ 18.3) + TypeScript 7 strict |
 | Style | Tailwind CSS v4 (CSS-first, **không** có `tailwind.config.js`) |
-| Hành vi / a11y | `@radix-ui/react-*`, `cmdk` (Command, Combobox, TagPicker), `react-day-picker` v10 (Calendar), `react-resizable-panels` v4 |
+| Hành vi / a11y | `@radix-ui/react-*`, `cmdk` (Command), `react-day-picker` v10 (Calendar), `react-resizable-panels` v4 |
 | Biến thể | `class-variance-authority` |
 | Gộp class | `cn()` = `clsx` + `tailwind-merge` đã cấu hình scale của Yugen |
 | Icon | Fluent System Icons, có sẵn (`_internal/icons`, sinh từ `@fluentui/react-icons`, một devDependency) |

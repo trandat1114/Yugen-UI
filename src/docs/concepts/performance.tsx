@@ -122,7 +122,7 @@ export default function Page() {
       <DocSection
         id="on-demand"
         title="Phần nạp lúc cần"
-        description="Ba phần chỉ một số ứng dụng render có chunk riêng. Mỗi phần bắt đầu nạp ngay khi nó được render ở client."
+        description="Bốn phần chỉ một số ứng dụng render có chunk riêng. Mỗi phần bắt đầu nạp ngay khi nó được render ở client."
       >
         <div className="flex flex-col gap-4">
           <SimpleTable
@@ -156,6 +156,16 @@ export default function Page() {
                 </>,
                 "24.25 kB",
               ],
+              [
+                <>
+                  Sortable của TagPicker (<C>reorderable</C>)
+                </>,
+                "Khi TagPicker có reorderable mount",
+                <>
+                  <C>{"{ TagPicker }"}</C> 47.35 → 38.86 kB
+                </>,
+                "7.10 kB",
+              ],
             ]}
           />
           <List>
@@ -163,7 +173,8 @@ export default function Page() {
             <li>
               Trong lúc chờ code, Breadcrumb render đúng nút “…” và StreamingMarkdown render đúng chip, cùng kích thước và ARIA, nên bố cục
               không xê dịch. Bấm chuột hay nhấn phím trong lúc đó thì menu hoặc thẻ mở ngay khi code tới, và focus chuyển sang nút thật.
-              Nạp lỗi thì lần tương tác sau thử lại.
+              Nạp lỗi thì lần tương tác sau thử lại. TagPicker hiện đúng các tag; kéo thả và Alt + phím mũi tên dùng được khi
+              Sortable đã nạp, tag đang có focus vẫn giữ focus.
             </li>
             <li>
               HTML từ server có các bản thay thế này và không có Toaster, nên hydrate khớp (

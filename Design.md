@@ -42,7 +42,7 @@ This document is a **set of mandatory rules**. Everyone (and every AI) adding or
 |---|---|
 | Build | Vite 8 (Rolldown) + React 19 (18.3 still supported) + TypeScript 7 strict |
 | Style | Tailwind CSS v4 (CSS-first, **no** `tailwind.config.js`) |
-| Behavior / a11y | `@radix-ui/react-*`, `cmdk` (Command, Combobox, TagPicker), `react-day-picker` v10 (Calendar), `react-resizable-panels` v4 |
+| Behavior / a11y | `@radix-ui/react-*`, `cmdk` (Command), `react-day-picker` v10 (Calendar), `react-resizable-panels` v4 |
 | Variants | `class-variance-authority` |
 | Class merging | `cn()` = `clsx` + `tailwind-merge` configured with Yugen's scales |
 | Icons | Fluent System Icons, built in (`_internal/icons`, generated from `@fluentui/react-icons`, a devDependency) |
