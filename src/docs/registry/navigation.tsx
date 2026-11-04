@@ -1056,7 +1056,7 @@ export const docs: ComponentDoc[] = [
     props: [
       { name: "size", type: `"small" | "medium" | "large"`, defaultValue: `"medium"`, description: "Chiều cao 24 / 32 / 40px." },
       { name: "items", type: "{ key?, label, href?, onClick?, icon? }[]", description: "Chế độ dữ liệu: tự chèn divider, mục cuối là trang hiện tại." },
-      { name: "maxDisplayedItems", type: "number", description: "Số mục tối đa hiển thị (với items); phần giữa vào menu “…”." },
+      { name: "maxDisplayedItems", type: "number", description: "Số mục tối đa hiển thị (với items); phần giữa vào menu “…”. Code của menu nạp lúc cần, ngay sau khi nút “…” hiện." },
       { name: "overflowIndex", type: "number", defaultValue: "1", description: "Số mục đầu được giữ trước nút “…”." },
       { name: "BreadcrumbButton.current", type: "boolean", description: "Trang hiện tại: semibold, aria-current=\"page\", không bấm được." },
       { name: "BreadcrumbButton.href / icon / asChild", type: "string / ReactNode / boolean", description: "Có href → thẻ <a>, không có → <button>; asChild cho link router." },

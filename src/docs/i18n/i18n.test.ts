@@ -41,6 +41,7 @@ describe("docs i18n (en)", () => {
       "migration-fluent",
       "migration-shadcn",
       "notifications",
+      "performance",
       "positioning",
       "quick-start",
       "rtl",

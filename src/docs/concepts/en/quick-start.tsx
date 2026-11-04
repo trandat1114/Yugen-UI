@@ -311,9 +311,12 @@ export default function Page() {
         <div className="flex flex-col gap-4">
           <CodeBlock code={IMPORTS} />
           <P>
-            A production build is the same size either way. Subpaths help where nothing tree-shakes the package: tests (Vitest, Jest),
-            server rendering in Node and the dev server. A cold <C>{'import { Button } from "yugen-ui/Button"'}</C> in Node loads 14 modules
-            instead of about 500. Both paths load the same files, so you can mix them.
+            With Vite, Rollup, webpack and Next.js a production build is the same size either way. With esbuild code splitting (
+            <C>splitting: true</C>), import from subpaths: from the root, esbuild puts the parts that load on demand into the first chunk
+            (see <A href={docsPath("/concepts/performance#imports")}>Performance</A>). Subpaths also help where nothing tree-shakes the
+            package: tests (Vitest, Jest), server rendering in Node and the dev server. A cold{" "}
+            <C>{'import { Button } from "yugen-ui/Button"'}</C> in Node loads 14 modules instead of about 500. Both paths load the same
+            files, so you can mix them.
           </P>
           <P>
             The subpath is the folder of the component: <C>CardHeader</C> comes from <C>yugen-ui/Card</C>, <C>DateRangePicker</C> from{" "}
@@ -321,6 +324,10 @@ export default function Page() {
             <C>yugen-ui/messages-en</C> and <C>yugen-ui/messages-vi</C>. <C>cn</C> and the brand color helpers are only on the root.{" "}
             <C>readAppShellCookie</C> runs in a Server Component only when imported from <C>yugen-ui</C>; <C>yugenHtmlAttributes</C> and{" "}
             <C>yugenThemeScript</C> when imported from <C>yugen-ui</C> or <C>yugen-ui/YugenProvider/document</C>.
+          </P>
+          <P>
+            TypeScript with <C>moduleResolution: node</C> (node10) does not read <C>exports</C>, so it finds no types for subpaths there:
+            import from <C>yugen-ui</C>, or switch to <C>bundler</C> or <C>nodenext</C>.
           </P>
           <P>
             Next.js: to keep root imports and still load only what a page uses in development and on the server, add the package to{" "}
@@ -338,8 +345,8 @@ export default function Page() {
         <div className="flex flex-col gap-4">
           <CodeBlock code={PERSIST} />
           <P>
-            <C>YugenProvider</C> writes attributes in <C>useEffect</C> (after the first paint), so add a script to <C>{"<head>"}</C> to avoid
-            a white flash for users who picked the dark theme. For Next.js, see <A href={docsPath("/concepts/ssr")}>SSR & Next.js</A>.
+            <C>YugenProvider</C> writes the attributes when React runs, after the browser has painted <C>index.html</C>, so add a script to{" "}
+            <C>{"<head>"}</C> to avoid a white flash for users who picked the dark theme. For Next.js, see <A href={docsPath("/concepts/ssr")}>SSR & Next.js</A>.
           </P>
           <CodeBlock code={HTML} />
           <MessageBar intent="warning" title="Use the same localStorage key." className="max-w-3xl">

@@ -154,7 +154,7 @@ export const en: Record<string, ComponentDocEn> = {
     ],
     props: {
       "Sparkline.data": "null creates a gap.",
-      "Sparkline.width / height": "\"auto\" = follows the parent element.",
+      "Sparkline.width / height": "\"auto\" = follows the parent element (measured with a ResizeObserver); a number measures nothing.",
       "Sparkline.variant": "Line, or line + light fill.",
       "Sparkline.color": "Background gray or a categorical color slot.",
       "Sparkline.highlightLast / labels": "Dot on the last point; labels for the tooltip.",
