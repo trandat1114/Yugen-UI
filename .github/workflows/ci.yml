@@ -93,6 +93,9 @@ jobs:
       # The built package (scripts/check-package.mjs): every yugen-ui/<Folder> subpath loads in Node and shares the root's
       # modules, a nodenext consumer finds a type for every export, the server-safe files have no "use client" (#343–#345).
       - run: npm run check:package
+      # esbuild with `splitting: true`: subpath imports keep the parts that load on demand (Toaster, Breadcrumb's menu,
+      # citation card) out of the first chunk, as Quick start and Performance say (#370).
+      - run: node scripts/check-esbuild-splitting.mjs
       # Are the Types Wrong: types match the JS for node16 (ESM) and bundler. ESM-only package, so node10 / require are
       # ignored; the CSS files have no types; ./* is a pattern, so a few subpaths stand in for it.
       - run: >-
