@@ -9,6 +9,12 @@ export interface ElementSize {
 export interface UseElementSizeOptions {
   /** Đo hộp nào: `content-box` (mặc định, không tính padding / border) hay `border-box`. */
   box?: "content-box" | "border-box";
+  /**
+   * `false`: the ref does nothing, nothing is measured, no ResizeObserver is created and the size stays 0 × 0. Use it
+   * when the size is already known (a Sparkline with a numeric `width`, for example) to skip the extra render and the
+   * observer. Default `true`.
+   */
+  enabled?: boolean;
 }
 
 export interface UseElementSizeResult<T extends Element> extends ElementSize {
@@ -17,6 +23,7 @@ export interface UseElementSizeResult<T extends Element> extends ElementSize {
 }
 
 const EMPTY: ElementSize = { width: 0, height: 0 };
+const NO_REF = () => {};
 
 /** Lần đo đầu, đồng bộ trước khi vẽ (ResizeObserver chỉ báo sau một frame). */
 function measure(el: Element, box: UseElementSizeOptions["box"]): ElementSize {
@@ -42,12 +49,12 @@ const same = (a: ElementSize, b: ElementSize) => Math.abs(a.width - b.width) < 0
  * <div ref={ref}>{width < 480 ? <Compact /> : <Full />}</div>
  * ```
  */
-export function useElementSize<T extends Element = Element>({ box = "content-box" }: UseElementSizeOptions = {}): UseElementSizeResult<T> {
+export function useElementSize<T extends Element = Element>({ box = "content-box", enabled = true }: UseElementSizeOptions = {}): UseElementSizeResult<T> {
   const [node, setNode] = React.useState<T | null>(null);
   const [size, setSize] = React.useState<ElementSize>(EMPTY);
 
   useIsomorphicLayoutEffect(() => {
-    if (!node) return;
+    if (!node || !enabled) return;
     const first = measure(node, box);
     setSize((prev) => (same(prev, first) ? prev : first));
     if (typeof ResizeObserver === "undefined") return;
@@ -63,7 +70,8 @@ export function useElementSize<T extends Element = Element>({ box = "content-box
     });
     observer.observe(node, { box });
     return () => observer.disconnect();
-  }, [node, box]);
+  }, [node, box, enabled]);
 
-  return { ref: setNode, ...size };
+  // Tắt thì ref là hàm rỗng cố định: React không gọi setNode, nên không có lần render thứ hai.
+  return enabled ? { ref: setNode, ...size } : { ref: NO_REF, ...EMPTY };
 }

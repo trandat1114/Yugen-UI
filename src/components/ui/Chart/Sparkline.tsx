@@ -59,7 +59,8 @@ export function Sparkline({
   const yugenLocale = useYugenLocale();
   const locale = localeProp ?? yugenLocale;
   const msg = useYugenMessages("chart", chartMessagesEn);
-  const { ref: measureRef, width: measured } = useElementSize<HTMLSpanElement>();
+  // Độ rộng cố định thì không cần đo: không observer, mount một lần render thay vì ba.
+  const { ref: measureRef, width: measured } = useElementSize<HTMLSpanElement>({ enabled: width === "auto" });
   const [hover, setHover] = React.useState<number | null>(null);
   const setRefs = useComposedRefs(measureRef, ref);
   const W = width === "auto" ? measured : width;

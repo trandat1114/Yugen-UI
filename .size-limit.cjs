@@ -60,7 +60,8 @@ module.exports = [
   js("{ MonthPicker, YearPicker, DateTimePicker }", "{ MonthPicker, YearPicker, DateTimePicker }", "72.5 kB"),
   js("{ PasswordInput, FormattedInput }", "{ PasswordInput, FormattedInput }", "16.5 kB"),
   js("{ ColorPicker }", "{ ColorPicker }", "30 kB"),
-  js("{ BarChart, LineChart }", "{ BarChart, LineChart }", "38 kB"),
+  // Hình học / nhãn nhớ theo props, lớp điểm dùng chung, màu tô trên nhóm (#352): 30.18 → 31.10 kB.
+  js("{ BarChart, LineChart }", "{ BarChart, LineChart }", "34 kB"),
   js("{ Sheet }", "{ Sheet }", "28 kB"),
   // Nav không import Tooltip, Sidebar của AppShell truyền Tooltip của rail (#350): 31.40 → 12.33 kB.
   js("{ Nav, NavItem }", "{ Nav, NavItem }", "13.5 kB"),
