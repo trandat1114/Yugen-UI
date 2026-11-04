@@ -190,7 +190,9 @@ export function ExampleFrame({
         </div>
       </div>
 
+      {/* data-hero-demo: e2e/visual.spec.ts chụp riêng vùng demo này cho mọi component (#166). */}
       <YugenProvider
+        data-hero-demo=""
         theme={look.theme}
         brand={look.brand}
         dir={pageDir}
