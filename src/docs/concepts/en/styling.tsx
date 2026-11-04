@@ -15,9 +15,18 @@ import {
 import { cn } from "@/lib/cn";
 import { DocSection, DoDont } from "../../blocks";
 import { CodeBlock } from "../../CodeBlock";
+import { docsPath } from "../../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
+}
+
+function A({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <a className="text-link underline hover:text-link-hover" href={href}>
+      {children}
+    </a>
+  );
 }
 
 function C({ children }: { children: ReactNode }) {
@@ -366,36 +375,54 @@ import { cn } from "@/lib/cn";
       <DocSection
         id="lean-css"
         title="Only the CSS of the components you use"
-        description="theme.css makes Tailwind scan every component in the package, so every app carries the CSS of every component. For a lighter app, use theme-core.css and add one file per component the app uses."
+        description="theme.css makes Tailwind scan every component in the package, so every app carries the CSS of every component. The CLI's css command reads the imports in your code and writes a file with only those components."
       >
         <div className="flex flex-col gap-4">
-          <CodeBlock code={`@import "tailwindcss";
+          <CodeBlock code="npx @yugen-ui/cli@latest css" />
+          <P>
+            It writes <C>yugen-ui.css</C> next to your main CSS file and replaces <C>@import &quot;yugen-ui/theme.css&quot;</C> with{" "}
+            <C>@import &quot;./yugen-ui.css&quot;</C>. <C>yugen init</C> sets this up for new projects.
+          </P>
+          <CodeBlock code={`/* src/yugen-ui.css, written by yugen css */
 @import "yugen-ui/theme-core.css";
-/* One line per component the app uses: the folder it lives in. */
-@import "yugen-ui/sources/YugenProvider.css";
+/* One line per component folder your code imports. */
 @import "yugen-ui/sources/Button.css";
+@import "yugen-ui/sources/DataGrid.css";
 @import "yugen-ui/sources/Dialog.css";
-@import "yugen-ui/sources/DataGrid.css";`} />
+@import "yugen-ui/sources/YugenProvider.css";`} />
           <SimpleTable
-            head={["Template", "Component folders", "theme.css", "theme-core.css + sources"]}
+            head={["Template", "Component folders", "theme.css", "yugen css"]}
             rows={[
-              ["Starter", "4", "25.4 kB", "13.9 kB"],
-              ["Landing", "14", "25.5 kB", "14.9 kB"],
-              ["Admin", "30", "25.1 kB", "17.1 kB"],
-              ["SaaS", "34", "25.0 kB", "19.4 kB"],
+              ["Starter", "5", "26.7 kB", "13.4 kB"],
+              ["Next.js Starter", "7", "26.2 kB", "12.0 kB"],
+              ["Landing", "16", "26.9 kB", "16.3 kB"],
+              ["Admin", "34", "26.5 kB", "18.2 kB"],
+              ["SaaS", "35", "26.3 kB", "20.0 kB"],
             ]}
           />
           <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>CSS gzip, including the app's own classes, measured with <C>scripts/measure-css.mjs</C>.</li>
+            <li>
+              Run the command again after you import another component (in package mode <C>yugen add</C> does it), or put it in your{" "}
+              <C>predev</C> / <C>prebuild</C> scripts. <C>yugen css --check</C> exits with 1 when the file is out of date, and{" "}
+              <C>yugen doctor</C> warns about it. See the <A href={docsPath("/concepts/cli#css")}>CLI page</A>.
+            </li>
             <li>
               Each file already includes the components that component uses inside (<C>SplitButton.css</C> has Menu and Button), so list only
               the components you import.
             </li>
             <li>
               The file is named after the component's folder: <C>NavItem</C> is in <C>sources/Nav.css</C>, <C>toast</C> in{" "}
-              <C>sources/Toast.css</C>. The export → file table is in <C>yugen-ui/sources/index.json</C>.
+              <C>sources/Toast.css</C>. The export → file table is in <C>yugen-ui/sources/index.json</C>. You can also write these lines by
+              hand.
             </li>
-            <li>A missing file leaves that component unstyled. When in doubt, use theme.css.</li>
+            <li>
+              A missing file leaves that component unstyled. <C>import * as</C>, <C>export *</C> and <C>import(&quot;yugen-ui&quot;)</C> can
+              reach any component, so the generated file falls back to theme.css when it finds one.
+            </li>
+            <li>
+              Without Tailwind: <C>yugen css --precompile</C> compiles the same list into plain CSS that replaces <C>styles.css</C>.
+            </li>
             <li>
               Not needed when you copy component source (shadcn registry, <C>@yugen-ui/cli add</C>): Tailwind already scans the app&apos;s
               folders. <C>styles.css</C> (no Tailwind) always contains every component.

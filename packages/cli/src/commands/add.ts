@@ -15,8 +15,10 @@ import {
   resolveTree,
   suggest,
 } from "../lib/registry.js";
+import { findGenerated } from "../lib/leanCss.js";
 import { targetPath, transformFile } from "../lib/transform.js";
 import { fileList, multiselect, p, pc, type Ctx } from "../lib/ui.js";
+import { css } from "./css.js";
 
 export interface AddOptions {
   cwd: string;
@@ -41,6 +43,15 @@ export async function add(opts: AddOptions, ctx: Ctx) {
   if (config.mode === "package") {
     const names = opts.names.length ? opts.names.map(pascal) : ["Button"];
     p.note(`import { ${names.join(", ")} } from "${PACKAGE}";`, `Components ship with the ${PACKAGE} package`);
+    // App dùng yugen-ui.css (`yugen css`): thêm CSS của các component vừa yêu cầu, cùng mọi import mới trong mã.
+    if (opts.names.length && !opts.dryRun && findGenerated(opts.cwd).length) {
+      try {
+        await css({ cwd: opts.cwd, extra: opts.names });
+      } catch (e) {
+        if (!(e instanceof CliError)) throw e;
+        p.log.warn(`Could not update the CSS: ${e.message}${e.hint ? `\n${pc.dim(e.hint)}` : ""}`);
+      }
+    }
     p.log.info(`Want to own and edit the source instead? Run ${pc.cyan("yugen init --mode source")}.`);
     return;
   }
