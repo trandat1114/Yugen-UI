@@ -10,6 +10,10 @@
  *   3. Server-safe files (#345, scripts/server-safe.mjs): no "use client", no hooks or context, imports limited to
  *      other server-safe files and packages that do not use React; the root takes their names from them. Every other
  *      file starts with "use client", the messages modules included.
+ *   4. CSS (#353): a consumer's Tailwind compiles `yugen-ui/theme.css` (its `@import "./theme-core.css"` and
+ *      `@source "./components"` resolve next to it), `theme-core.css` alone (no component classes, no keyframes) and
+ *      `theme-core.css` + `sources/Decorative.css` (that component's classes and only the keyframes they use).
+ *      dist/tokens.css has no Tailwind-only at-rule.
  *
  *   node scripts/check-package.mjs
  */
@@ -19,6 +23,9 @@ import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { parseSync } from "vite";
+import { compile } from "@tailwindcss/node";
+import { Scanner } from "@tailwindcss/oxide";
+import { tailwindAtRules } from "./css-tokens.mjs";
 import { SERVER_SAFE, SERVER_SAFE_BARRELS } from "./server-safe.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -245,6 +252,39 @@ for (const file of files.filter((f) => f.endsWith(".js"))) {
   if (!hasDirective(parse(file))) fail(`dist/${rel} has no "use client" and is not in scripts/server-safe.mjs`);
 }
 console.log(`[check-package] server-safe: ${SERVER_SAFE.length} files, ${clientFiles} files with "use client"`);
+
+// ---------- 4. CSS ----------
+const leftover = tailwindAtRules(fs.readFileSync(path.join(dist, "tokens.css"), "utf8"));
+if (leftover.length) fail(`dist/tokens.css has Tailwind-only at-rules: ${[...new Set(leftover)].join(", ")}`);
+// The consumer resolves yugen-ui and tailwindcss from its own node_modules, as after `npm install`.
+const cssConsumer = fs.mkdtempSync(path.join(os.tmpdir(), "yugen-css-"));
+try {
+  fs.mkdirSync(path.join(cssConsumer, "node_modules"));
+  fs.symlinkSync(root, path.join(cssConsumer, "node_modules", pkg.name), "junction");
+  fs.symlinkSync(path.join(root, "node_modules", "tailwindcss"), path.join(cssConsumer, "node_modules", "tailwindcss"), "junction");
+  const tailwind = async (...files) => {
+    const input = ['@import "tailwindcss" source(none);', ...files.map((file) => `@import "${pkg.name}/${file}";`)].join("\n");
+    const compiler = await compile(input, { base: cssConsumer, onDependency: () => {} });
+    const css = compiler.build(new Scanner({ sources: compiler.sources }).scan());
+    return { css, keyframes: [...css.matchAll(/@keyframes ([\w-]+)/g)].map((m) => m[1]) };
+  };
+  // Decorative's WavyUnderline: class animate-wave-flow, keyframe wave-flow.
+  const COMPONENT_CLASS = ".animate-wave-flow";
+  const full = await tailwind("theme.css");
+  if (!full.css.includes("--colorBrandBackground:")) fail("theme.css: the tokens of theme-core.css are missing (@import not resolved?)");
+  if (!full.css.includes(COMPONENT_CLASS) || !full.keyframes.includes("wave-flow"))
+    fail(`theme.css: no ${COMPONENT_CLASS} or wave-flow keyframes, @source "./components" scanned nothing`);
+  const core = await tailwind("theme-core.css");
+  if (!core.css.includes("--colorBrandBackground:")) fail("theme-core.css: tokens missing");
+  if (core.css.includes(COMPONENT_CLASS) || core.keyframes.length)
+    fail(`theme-core.css alone: component classes or keyframes (${core.keyframes.join(", ")}) in the output`);
+  const lean = await tailwind("theme-core.css", "sources/Decorative.css");
+  if (!lean.css.includes(COMPONENT_CLASS) || !lean.keyframes.includes("wave-flow") || lean.keyframes.includes("chart-grow"))
+    fail(`theme-core.css + sources/Decorative.css: expected ${COMPONENT_CLASS} and wave-flow only, got keyframes ${lean.keyframes.join(", ")}`);
+  console.log(`[check-package] css: theme.css ${full.keyframes.length} keyframes, theme-core.css ${core.keyframes.length}, + Decorative ${lean.keyframes.length}`);
+} finally {
+  fs.rmSync(cssConsumer, { recursive: true, force: true });
+}
 
 if (errors.length) {
   console.error(`[check-package] ${errors.length} problem(s):\n  - ${errors.join("\n  - ")}`);

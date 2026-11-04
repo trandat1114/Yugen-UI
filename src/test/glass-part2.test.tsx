@@ -15,8 +15,9 @@ const indexCss = fs.readFileSync(path.resolve(__dirname, "../index.css"), "utf8"
 
 describe("morph", () => {
   it("keyframes đọc --morph-from, có dự phòng; chỉ chạy khi không giảm chuyển động", () => {
-    expect(indexCss).toMatch(/@keyframes morph-in \{\n {2}from \{\n {4}opacity: 0;\n {4}transform: var\(--morph-from, scale\(0\.9\)\);/);
-    expect(indexCss).toMatch(/@keyframes morph-out \{\n {2}to \{\n {4}opacity: 0;\n {4}transform: var\(--morph-from, scale\(0\.9\)\);/);
+    // Keyframes nằm trong @theme (#353), thụt lề thêm một bậc.
+    expect(indexCss).toMatch(/@keyframes morph-in \{\n {4}from \{\n {6}opacity: 0;\n {6}transform: var\(--morph-from, scale\(0\.9\)\);/);
+    expect(indexCss).toMatch(/@keyframes morph-out \{\n {4}to \{\n {6}opacity: 0;\n {6}transform: var\(--morph-from, scale\(0\.9\)\);/);
     expect(morphClass.split(" ").every((c) => c.startsWith("motion-safe:"))).toBe(true);
   });
 
