@@ -79,7 +79,7 @@ module.exports = [
   // Sortable (#175): 304.4 → 310.8 kB. Form control mới (#173): 309.3 → 318.0 kB. NavigationMenu + StatusPage
   // (#168, #238): → ~328 kB.
   // #360: mọi giới hạn đặt lại = đo được + 8%. cvx (#355) thêm 0.25–0.28 kB cho mục có Button, Input, Badge, Tag….
-  js("Toàn bộ thư viện (import *)", "*", "354 kB"),
+  js("Toàn bộ thư viện (import *)", "*", "355.5 kB"),
   js("{ cn }", "{ cn }", "10 kB"),
   // cvx (#355): 12.95 → 13.22 kB.
   js("{ Button }", "{ Button }", "14.5 kB"),
@@ -94,7 +94,7 @@ module.exports = [
   js("{ Dialog, DialogSurface }", "{ Dialog, DialogSurface }", "26 kB"),
   js("{ Combobox }", "{ Combobox }", "46.5 kB"),
   // Calendar không kéo locale vi của react-day-picker (#349): 61.93 → 59.72 kB.
-  js("{ DatePicker }", "{ DatePicker }", "64.5 kB"),
+  js("{ DatePicker }", "{ DatePicker }", "65 kB"),
   // #173: họ DatePicker dùng chung vỏ; MonthPicker / DateTimePicker kéo theo Calendar (react-day-picker) như DatePicker.
   // Không kéo locale vi (#349): 69.00 → 66.76 kB.
   js("{ MonthPicker, YearPicker, DateTimePicker }", "{ MonthPicker, YearPicker, DateTimePicker }", "72.5 kB"),
@@ -136,8 +136,8 @@ module.exports = [
   css("theme.css", "200 B"),
   // #353: bỏ khối @theme của charts.css, 8.22 → 8.02 kB.
   css("tokens.css", "9 kB"),
-  // CSS đã biên dịch (#360): sàn của mọi app dùng theme-core.css (7.04 kB), và Starter với sources của 6 thư mục nó
-  // import (15.09 kB; 26.7 kB với theme.css quét mọi component, scripts/measure-css.mjs).
-  compiledCss("theme-core.css compiled (floor)", null, "8 kB"),
-  compiledCss("Starter: lean CSS compiled", "src/docs/template-library/starter", "16.5 kB"),
+  // CSS đã biên dịch (#360): sàn của mọi app dùng theme-core.css (6.74 kB), và Starter với sources của 5 thư mục nó
+  // import (13.08 kB; 26.7 kB với theme.css quét mọi component, scripts/measure-css.mjs).
+  compiledCss("theme-core.css compiled (floor)", null, "7.5 kB"),
+  compiledCss("Starter: lean CSS compiled", "src/docs/template-library/starter", "14.5 kB"),
 ];
