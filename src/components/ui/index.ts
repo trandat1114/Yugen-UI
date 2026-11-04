@@ -1,5 +1,7 @@
 // Provider
 export * from "./YugenProvider/YugenProvider";
+// Không qua YugenProvider.tsx ("use client"): Server Component gọi được (#348).
+export * from "./YugenProvider/document";
 export * from "./messages-en";
 export * from "./messages-vi";
 

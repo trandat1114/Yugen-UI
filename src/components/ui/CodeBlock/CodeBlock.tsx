@@ -17,7 +17,7 @@ import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffec
 import { Badge } from "../Badge/Badge";
 import { Button } from "../Button/Button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../Tabs/Tabs";
-import { useYugen, useYugenMessages } from "../YugenProvider/context";
+import { useYugenTheme, useYugenMessages } from "../YugenProvider/context";
 import { codeBlockMessagesEn, codeTabsMessagesEn, copyCodeButtonMessagesEn, packageManagerTabsMessagesEn } from "./messages";
 
 export {
@@ -456,7 +456,7 @@ export function CopyCodeButton({
 
 /** appearance="dark" ép theme tối (trừ khi đang ở tương phản cao); "auto" theo theme hiện tại. */
 function useCodeThemeProps(appearance: "auto" | "dark") {
-  const { theme } = useYugen();
+  const { theme } = useYugenTheme();
   return appearance === "dark" && theme !== "high-contrast" ? { "data-theme": "dark" as const } : {};
 }
 

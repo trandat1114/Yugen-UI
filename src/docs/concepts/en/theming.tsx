@@ -133,6 +133,11 @@ function ThemeToggle({ onToggle }: { onToggle: () => void }) {
   );
 }`;
 
+const NARROW_HOOKS_CODE = `import { useYugenLocale, useYugenTheme } from "@/components/ui";
+
+const { theme, brand, dir } = useYugenTheme(); // re-renders when the theme, brand or dir change
+const locale = useYugenLocale(); // re-renders when the locale changes`;
+
 const LAYERS_CODE = `/* 1. GLOBAL (tokens.css): raw values, no role */
 :root { --grey-14: #242424; --white: #ffffff; }
 [data-brand="web"] { --brand-70: #115ea3; --brand-80: #0f6cbd; /* … 10 → 160 */ }
@@ -295,7 +300,8 @@ export default function Page() {
                 name: "withToaster",
                 type: "boolean",
                 defaultValue: "false",
-                description: "Adds <Toaster /> so toast() works, placed bottom-end (bottom-start in RTL). Turn it on for the root provider only.",
+                description:
+                  "Adds <Toaster /> so toast() works, placed bottom-end (bottom-start in RTL). It loads after the first client render; toast() calls made before that still show. Turn it on for the root provider only, or render <Toaster /> as a child to pick position and limit.",
               },
               {
                 name: "messages",
@@ -381,13 +387,19 @@ export default function Page() {
       <DocSection
         id="use-yugen"
         title="The useYugen() hook"
-        description="Returns { theme, brand, dir } from the nearest YugenProvider. Use it when a component needs to change content (not colors) with the theme or text direction."
+        description="Returns { theme, brand, dir, locale, density } from the nearest YugenProvider. Use it when a component needs to change content (not colors) with the theme or text direction."
       >
         <div className="flex flex-col gap-4">
           <CodeBlock code={HOOK_CODE} />
           <P>
             Don&apos;t use <C>useYugen()</C> to pick colors; they already change through the tokens. Use it for content: a sun or moon icon,
             light and dark illustrations, arrow direction. Surfaces in portals already follow the nested provider (see Positioning).
+          </P>
+          <CodeBlock code={NARROW_HOOKS_CODE} />
+          <P>
+            <C>useYugen()</C> re-renders when either the theme or the locale settings change. When a component needs only one of them, use{" "}
+            <C>useYugenTheme()</C> (<C>{"{ theme, brand, dir }"}</C>) or <C>useYugenLocale()</C> (the locale string). Yugen&apos;s
+            components do the same, so a theme switch re-renders only the parts that read the theme, such as charts and CodeBlock.
           </P>
         </div>
       </DocSection>

@@ -11,12 +11,22 @@ import {
 import { useYugenMessages } from "../YugenProvider/context";
 import { toastMessagesEn } from "./messages";
 import { cn } from "@/lib/cn";
-import { warnDeprecated } from "@/lib/deprecate";
+import { dismissToast, getToastSnapshot, subscribeToasts, type ToastRecord } from "./toastStore";
 
 export { toastMessages, toastMessagesVi, toastMessagesEn, type ToastMessages } from "./messages";
+// Store tách riêng (#346): import từ đây vẫn chạy như cũ.
+export {
+  dispatchToast,
+  dismissToast,
+  dismissAllToasts,
+  toast,
+  useToast,
+  type ToastIntent,
+  type ToastActionOptions,
+  type ToastOptions,
+} from "./toastStore";
 
 /** Fluent 2 Toast — https://fluent2.microsoft.design/components/web/react/core/toast/usage */
-export type ToastIntent = "info" | "success" | "warning" | "error";
 export type ToastPosition = "top-start" | "top" | "top-end" | "bottom-start" | "bottom" | "bottom-end";
 
 /** Cùng icon / màu với MessageBar. */
@@ -26,111 +36,6 @@ const ICON = {
   warning: { icon: Warning20Filled, className: "text-warning-foreground-1" },
   error: { icon: DiamondDismiss20Filled, className: "text-danger-foreground-1" },
 } as const;
-
-export interface ToastActionOptions {
-  label: string;
-  /** Mô tả thay thế cho trình đọc màn hình (cách thực hiện hành động bằng bàn phím). Mặc định = label. */
-  altText?: string;
-  onClick?: () => void;
-}
-
-export interface ToastOptions {
-  /** id tuỳ chọn; trùng id sẽ thay thế toast cũ. */
-  toastId?: string;
-  intent?: ToastIntent;
-  title?: React.ReactNode;
-  body?: React.ReactNode;
-  action?: ToastActionOptions;
-  /** Thời gian tự đóng (ms). `-1` = không tự đóng. Mặc định 3000. */
-  timeout?: number;
-  /** Hiện nút đóng (X). Mặc định true. */
-  dismissible?: boolean;
-  /** @deprecated Use `dismissible: false`. Will be removed in v1.0.0. */
-  hideDismiss?: boolean;
-  /** Toaster đích; bỏ trống = Toaster mặc định (không có toasterId). */
-  toasterId?: string;
-  onDismiss?: () => void;
-}
-
-interface ToastRecord extends ToastOptions {
-  id: string;
-  open: boolean;
-}
-
-/* ------------------------------------------------------------------ store */
-
-let records: ToastRecord[] = [];
-let counter = 0;
-const listeners = new Set<() => void>();
-const REMOVE_DELAY = 1000; // giữ record đủ lâu cho animation đóng chạy xong
-
-function emit() {
-  for (const listener of listeners) listener();
-}
-
-function subscribe(listener: () => void) {
-  listeners.add(listener);
-  return () => listeners.delete(listener);
-}
-
-function getSnapshot() {
-  return records;
-}
-
-/**
- * Hiển thị toast; trả về id để đóng sau.
- * @deprecated Use `toast(options)` or `useToast(toasterId).dispatchToast(options)`. Will be removed from the package
- * exports in v1.0.0.
- */
-export function dispatchToast(options: ToastOptions): string {
-  warnDeprecated("dispatchToast", "use toast() or useToast().dispatchToast", "1.0.0");
-  return showToast(options);
-}
-
-function showToast(options: ToastOptions): string {
-  if (options.hideDismiss !== undefined) warnDeprecated("ToastOptions.hideDismiss", "use dismissible: false", "1.0.0");
-  const id = options.toastId ?? `toast-${++counter}`;
-  records = [...records.filter((t) => t.id !== id), { ...options, id, open: true }];
-  emit();
-  return id;
-}
-
-/** Đóng một toast theo id. */
-export function dismissToast(id: string) {
-  const target = records.find((t) => t.id === id);
-  if (!target || !target.open) return;
-  records = records.map((t) => (t.id === id ? { ...t, open: false } : t));
-  emit();
-  target.onDismiss?.();
-  window.setTimeout(() => {
-    records = records.filter((t) => t.id !== id || t.open);
-    emit();
-  }, REMOVE_DELAY);
-}
-
-/** Đóng mọi toast (của một Toaster nếu truyền toasterId). */
-export function dismissAllToasts(toasterId?: string) {
-  for (const t of records) {
-    if (toasterId === undefined || t.toasterId === toasterId) dismissToast(t.id);
-  }
-}
-
-/** Helper tĩnh: `toast({ intent: "success", title: "Đã lưu" })` → Toaster mặc định. */
-export function toast(options: ToastOptions) {
-  return showToast(options);
-}
-
-/** API mệnh lệnh kiểu Fluent `useToastController(toasterId)`. */
-export function useToast(toasterId?: string) {
-  return React.useMemo(
-    () => ({
-      dispatchToast: (options: ToastOptions) => showToast({ toasterId, ...options }),
-      dismissToast,
-      dismissAllToasts: () => dismissAllToasts(toasterId),
-    }),
-    [toasterId],
-  );
-}
 
 /* ------------------------------------------------------------------ Toaster */
 
@@ -186,7 +91,7 @@ export interface ToasterProps {
 
 /** Đặt một lần ở gốc ứng dụng (hoặc trong vùng cần toast riêng với `toasterId`). */
 export function Toaster({ position = "bottom-end", toasterId, limit = 5, className }: ToasterProps) {
-  const all = React.useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  const all = React.useSyncExternalStore(subscribeToasts, getToastSnapshot, getToastSnapshot);
   const items = all.filter((t) => t.toasterId === toasterId);
   const msg = useYugenMessages("toast", toastMessagesEn);
   // Giữ nguyên thứ tự DOM; chỉ `limit` toast mở mới nhất được hiển thị, toast đang đóng vẫn render để chạy animation.

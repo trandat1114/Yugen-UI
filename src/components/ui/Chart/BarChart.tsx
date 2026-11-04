@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
-import { useYugen, useYugenMessages } from "../YugenProvider/context";
+import { useYugenLocale, useYugenMessages } from "../YugenProvider/context";
 import { chartMessagesEn } from "./messages";
 import { ChartContainer, ChartFocusRing, ChartLegend, ChartPatterns, ChartTable, ChartTooltip, type ChartTooltipRow } from "./ChartParts";
 import {
@@ -123,8 +123,8 @@ export function BarChart({
   className,
   ref,
 }: BarChartProps & { ref?: React.Ref<HTMLElement> }) {
-  const yugen = useYugen();
-  const locale = localeProp ?? yugen.locale;
+  const yugenLocale = useYugenLocale();
+  const locale = localeProp ?? yugenLocale;
   const msg = useYugenMessages("chart", chartMessagesEn);
   const indexLabel = indexLabelProp ?? msg.category;
   const totalLabel = msg.total;

@@ -164,6 +164,9 @@ const folders = fs
   .map((d) => d.name)
   .sort();
 
+/** File trong components/ui không gắn "use client": hàm thường cho Server Component (#348). */
+const SERVER_SAFE_FILES = new Set(["YugenProvider/document.ts"]);
+
 const componentNames = [];
 for (const folder of folders) {
   const dir = path.join(uiDir, folder);
@@ -194,8 +197,10 @@ for (const folder of folders) {
     registryDependencies: sorted(regDeps),
     files: files.map((file) => {
       const code = read(path.join(dir, file));
-      // Như gói npm: mọi file component là client boundary (Next.js App Router); CLI tự bỏ khi rsc = false.
-      const content = /\.tsx?$/.test(file) && !/^["']use client["']/.test(code) ? `"use client";\n\n${code}` : code;
+      // Như gói npm: mọi file component là client boundary (Next.js App Router); CLI tự bỏ khi rsc = false. Trừ file không
+      // React mà Server Component gọi (SERVER_SAFE trong vite.lib.config.ts).
+      const clientFile = /\.tsx?$/.test(file) && !SERVER_SAFE_FILES.has(`${folder}/${file}`);
+      const content = clientFile && !/^["']use client["']/.test(code) ? `"use client";\n\n${code}` : code;
       return { path: `registry/yugen/ui/${folder}/${file}`, type: "registry:ui", content };
     }),
   });

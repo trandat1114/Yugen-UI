@@ -133,6 +133,11 @@ function ThemeToggle({ onToggle }: { onToggle: () => void }) {
   );
 }`;
 
+const NARROW_HOOKS_CODE = `import { useYugenLocale, useYugenTheme } from "@/components/ui";
+
+const { theme, brand, dir } = useYugenTheme(); // render lại khi theme, brand hoặc dir đổi
+const locale = useYugenLocale(); // render lại khi locale đổi`;
+
 const LAYERS_CODE = `/* 1. GLOBAL (tokens.css) — giá trị thô, không gắn vai trò */
 :root { --grey-14: #242424; --white: #ffffff; }
 [data-brand="web"] { --brand-70: #115ea3; --brand-80: #0f6cbd; /* … 10 → 160 */ }
@@ -293,7 +298,8 @@ export default function Page() {
                 name: "withToaster",
                 type: "boolean",
                 defaultValue: "false",
-                description: "Gắn <Toaster /> để toast() hoạt động; vị trí bottom-end (bottom-start khi RTL). Chỉ bật ở provider gốc.",
+                description:
+                  "Gắn <Toaster /> để toast() hoạt động; vị trí bottom-end (bottom-start khi RTL). Toaster nạp sau lần render đầu trên client; toast() gọi trước đó vẫn hiện. Chỉ bật ở provider gốc, hoặc đặt <Toaster /> làm con để chọn vị trí và limit.",
               },
               {
                 name: "messages",
@@ -377,13 +383,19 @@ export default function Page() {
       <DocSection
         id="use-yugen"
         title="Hook useYugen()"
-        description="Trả về { theme, brand, dir } của YugenProvider gần nhất — dùng khi component cần đổi nội dung (không phải màu) theo theme hoặc hướng chữ."
+        description="Trả về { theme, brand, dir, locale, density } của YugenProvider gần nhất — dùng khi component cần đổi nội dung (không phải màu) theo theme hoặc hướng chữ."
       >
         <div className="flex flex-col gap-4">
           <CodeBlock code={HOOK_CODE} />
           <P>
             Đừng dùng <C>useYugen()</C> để chọn màu — màu đã tự đổi qua token. Hãy dùng nó cho nội dung: icon mặt trời / mặt trăng, ảnh
             minh hoạ sáng / tối, hướng mũi tên. Bề mặt trong portal đã tự theo provider lồng (xem trang Định vị).
+          </P>
+          <CodeBlock code={NARROW_HOOKS_CODE} />
+          <P>
+            <C>useYugen()</C> render lại khi theme hoặc phần cấu hình locale đổi. Component chỉ cần một phần thì dùng{" "}
+            <C>useYugenTheme()</C> (<C>{"{ theme, brand, dir }"}</C>) hoặc <C>useYugenLocale()</C> (chuỗi locale). Component của Yugen
+            cũng làm vậy, nên đổi theme chỉ render lại phần đọc theme, như chart và CodeBlock.
           </P>
         </div>
       </DocSection>

@@ -316,9 +316,10 @@ export default function Page() {
           </P>
           <P>
             Subpath là thư mục của component: <C>CardHeader</C> lấy từ <C>yugen-ui/Card</C>, <C>DateRangePicker</C> từ{" "}
-            <C>yugen-ui/DatePicker</C>. Ngoại lệ là <C>yugen-ui/AppShell/Sidebar</C>, <C>yugen-ui/messages-en</C> và{" "}
-            <C>yugen-ui/messages-vi</C>. <C>cn</C> và các hàm màu thương hiệu chỉ có ở gốc gói; <C>readAppShellCookie</C> chạy được trong
-            Server Component chỉ khi import từ <C>yugen-ui</C>.
+            <C>yugen-ui/DatePicker</C>. Ngoại lệ là <C>yugen-ui/AppShell/Sidebar</C>, <C>yugen-ui/YugenProvider/document</C>,{" "}
+            <C>yugen-ui/messages-en</C> và <C>yugen-ui/messages-vi</C>. <C>cn</C> và các hàm màu thương hiệu chỉ có ở gốc gói;{" "}
+            <C>readAppShellCookie</C> chạy được trong Server Component chỉ khi import từ <C>yugen-ui</C>, còn <C>yugenHtmlAttributes</C> và{" "}
+            <C>yugenThemeScript</C> khi import từ <C>yugen-ui</C> hoặc <C>yugen-ui/YugenProvider/document</C>.
           </P>
           <P>
             Next.js: để giữ import từ gốc gói mà vẫn chỉ nạp phần trang dùng khi phát triển và ở server, thêm gói vào{" "}

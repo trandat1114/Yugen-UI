@@ -18,6 +18,7 @@ export const SERVER_SAFE = [
   "lib/tokenExport.js",
   "lib/deprecate.js",
   "components/ui/AppShell/cookie.js",
+  "components/ui/YugenProvider/document.js",
 ];
 
 /** Files of SERVER_SAFE that only re-export (no code of their own). */

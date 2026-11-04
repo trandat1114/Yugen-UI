@@ -49,23 +49,19 @@ const TSCONFIG_CODE = `// tsconfig.json — Next.js đọc paths trực tiếp, 
 
 const LAYOUT_CODE = `// src/app/layout.tsx — Server Component
 import type { Metadata } from "next";
+import { yugenHtmlAttributes, yugenThemeScript } from "@/components/ui";
 import "./globals.css";
 import { Providers } from "./providers";
-
-// Chạy trước khi trình duyệt vẽ trang: đặt data-theme theo lựa chọn đã lưu / hệ điều hành.
-const themeScript =
-  '(function(){var t;try{t=localStorage.getItem("yugen-ui-theme")}catch(e){}' +
-  'if(t!=="light"&&t!=="dark")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";' +
-  'document.documentElement.setAttribute("data-theme",t)})();';
 
 export const metadata: Metadata = { title: "Ứng dụng Yugen" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     // Script sửa attribute của <html> trước khi hydrate → tắt cảnh báo lệch attribute cho riêng thẻ này.
-    <html lang="vi" data-brand="sakura" suppressHydrationWarning>
+    <html lang="vi" {...yugenHtmlAttributes({ brand: "sakura" })} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        {/* Chạy trước khi trình duyệt vẽ trang: data-theme theo lựa chọn đã lưu, không có thì theo hệ điều hành. */}
+        <script dangerouslySetInnerHTML={{ __html: yugenThemeScript({ storageKey: "yugen-ui-theme" }) }} />
       </head>
       <body>
         <Providers>{children}</Providers>
@@ -85,7 +81,8 @@ const STORAGE_KEY = "yugen-ui-theme";
 function readTheme(): YugenTheme {
   // Server không có document → "light"; client đọc lại giá trị script đã đặt.
   if (typeof document === "undefined") return "light";
-  return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+  const theme = document.documentElement.getAttribute("data-theme");
+  return theme === "dark" || theme === "high-contrast" ? theme : "light";
 }
 
 export const SetThemeContext = React.createContext<(theme: YugenTheme) => void>(() => {});
@@ -202,11 +199,20 @@ export default function Page() {
               <C>suppressHydrationWarning</C> chỉ tác động lên chính thẻ <C>{"<html>"}</C> (một cấp), không che lỗi hydrate của phần còn lại.
             </li>
             <li>
-              Với <C>applyToDocument</C>, YugenProvider không render attribute theme vào markup nên server và client cho cùng HTML. Nếu UI
-              của bạn render khác nhau theo theme (icon mặt trời / mặt trăng), hãy render phần đó sau khi mount.
+              <C>yugenThemeScript()</C> đọc giá trị đã lưu ở <C>storageKey</C>: tên theme, hoặc JSON có <C>theme</C> và tuỳ chọn{" "}
+              <C>brand</C>, <C>dir</C>. Chưa lưu gì thì theo hệ điều hành: <C>high-contrast</C> khi <C>prefers-contrast: more</C> (tắt
+              bằng <C>highContrast: false</C>), sau đó tới <C>prefers-color-scheme</C>. Đặt <C>defaultTheme</C> để dùng một theme cố
+              định.
             </li>
             <li>
-              Đặt sẵn <C>data-brand</C> và <C>dir</C> trên <C>{"<html>"}</C> trong layout khi chúng cố định — không cần chờ JavaScript.
+              <C>yugenHtmlAttributes()</C> trả về đúng những gì <C>applyToDocument</C> ghi lên <C>{"<html>"}</C> (cùng mặc định), nên giá
+              trị cố định như brand và <C>dir</C> có ngay trong HTML đầu tiên. Khi server biết theme (cookie), truyền theme vào đây và bỏ
+              script. Cả hai helper là hàm thường, gọi được trong Server Component.
+            </li>
+            <li>
+              Với <C>applyToDocument</C>, YugenProvider không render attribute theme vào markup nên server và client cho cùng HTML. Provider
+              cập nhật <C>{"<html>"}</C> trong layout effect, trước khi trình duyệt vẽ. Nếu UI của bạn render khác nhau theo theme (icon
+              mặt trời / mặt trăng), hãy render phần đó sau khi mount.
             </li>
           </ul>
         </div>

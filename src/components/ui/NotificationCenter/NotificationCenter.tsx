@@ -26,7 +26,7 @@ import { useMediaQuery } from "../hooks/useMediaQuery";
 import { minWidthQuery, warnPxBreakpoint } from "../_internal/breakpoint";
 import { SkeletonList } from "../Skeleton/Skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../Tabs/Tabs";
-import { useYugen, useYugenMessages } from "../YugenProvider/context";
+import { useYugenLocale, useYugenMessages } from "../YugenProvider/context";
 import { notificationCenterMessagesEn, type NotificationCenterMessages } from "./messages";
 
 export { notificationCenterMessages, notificationCenterMessagesVi, notificationCenterMessagesEn, type NotificationCenterMessages } from "./messages";
@@ -323,7 +323,7 @@ export function NotificationPanel({
 }: NotificationPanelProps & { ref?: React.Ref<HTMLDivElement> }) {
   const uid = React.useId();
   const now = useNow(nowProp);
-  const { locale } = useYugen();
+  const locale = useYugenLocale();
   const msg = useYugenMessages("notificationCenter", notificationCenterMessagesEn);
   const [filter, setFilter] = useControllableState({ value: filterProp, defaultValue: defaultFilter, onChange: onFilterChange });
   const showSkeleton = useSpinDelay(loading);

@@ -49,23 +49,19 @@ const TSCONFIG_CODE = `// tsconfig.json — Next.js reads paths directly, no bun
 
 const LAYOUT_CODE = `// src/app/layout.tsx — Server Component
 import type { Metadata } from "next";
+import { yugenHtmlAttributes, yugenThemeScript } from "@/components/ui";
 import "./globals.css";
 import { Providers } from "./providers";
-
-// Runs before the browser paints the page: sets data-theme from the saved choice / the OS setting.
-const themeScript =
-  '(function(){var t;try{t=localStorage.getItem("yugen-ui-theme")}catch(e){}' +
-  'if(t!=="light"&&t!=="dark")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";' +
-  'document.documentElement.setAttribute("data-theme",t)})();';
 
 export const metadata: Metadata = { title: "Yugen app" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     // The script changes attributes on <html> before hydration → silence the attribute mismatch warning for this element only.
-    <html lang="en" data-brand="sakura" suppressHydrationWarning>
+    <html lang="en" {...yugenHtmlAttributes({ brand: "sakura" })} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        {/* Runs before the browser paints the page: data-theme from the saved choice, otherwise from the OS setting. */}
+        <script dangerouslySetInnerHTML={{ __html: yugenThemeScript({ storageKey: "yugen-ui-theme" }) }} />
       </head>
       <body>
         <Providers>{children}</Providers>
@@ -85,7 +81,8 @@ const STORAGE_KEY = "yugen-ui-theme";
 function readTheme(): YugenTheme {
   // No document on the server → "light"; on the client, read back the value the script set.
   if (typeof document === "undefined") return "light";
-  return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+  const theme = document.documentElement.getAttribute("data-theme");
+  return theme === "dark" || theme === "high-contrast" ? theme : "light";
 }
 
 export const SetThemeContext = React.createContext<(theme: YugenTheme) => void>(() => {});
@@ -204,12 +201,20 @@ export default function Page() {
               errors in the rest of the tree.
             </li>
             <li>
-              With <C>applyToDocument</C>, YugenProvider does not render the theme attribute into the markup, so the server and the client
-              produce the same HTML. If your UI renders differently per theme (a sun / moon icon), render that part after mount.
+              <C>yugenThemeScript()</C> reads the saved value under <C>storageKey</C>: a theme name, or JSON with <C>theme</C> and
+              optionally <C>brand</C> and <C>dir</C>. Without one it follows the OS: <C>high-contrast</C> for{" "}
+              <C>prefers-contrast: more</C> (turn off with <C>highContrast: false</C>), then <C>prefers-color-scheme</C>. Set{" "}
+              <C>defaultTheme</C> to use a fixed theme instead.
             </li>
             <li>
-              When <C>data-brand</C> and <C>dir</C> are fixed, set them on <C>{"<html>"}</C> in the layout so they don&apos;t wait for
-              JavaScript.
+              <C>yugenHtmlAttributes()</C> returns what <C>applyToDocument</C> writes to <C>{"<html>"}</C> (same defaults), so fixed
+              values such as the brand and <C>dir</C> are in the first HTML. When the server knows the theme (a cookie), pass it here and
+              skip the script. Both helpers are plain functions and work in a Server Component.
+            </li>
+            <li>
+              With <C>applyToDocument</C>, YugenProvider does not render the theme attribute into the markup, so the server and the client
+              produce the same HTML. It updates <C>{"<html>"}</C> in a layout effect, before the browser paints. If your UI renders
+              differently per theme (a sun / moon icon), render that part after mount.
             </li>
           </ul>
         </div>

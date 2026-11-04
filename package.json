@@ -73,6 +73,10 @@
       "types": "./dist/components/ui/messages-vi.d.ts",
       "default": "./dist/components/ui/messages-vi.js"
     },
+    "./YugenProvider/document": {
+      "types": "./dist/components/ui/YugenProvider/document.d.ts",
+      "default": "./dist/components/ui/YugenProvider/document.js"
+    },
     "./AppShell/Sidebar": {
       "types": "./dist/components/ui/AppShell/Sidebar.d.ts",
       "default": "./dist/components/ui/AppShell/Sidebar.js"

@@ -3,7 +3,7 @@ import { useDirection } from "@radix-ui/react-direction";
 import { useControllableState } from "../hooks/useControllableState";
 import { ChevronLeft20Regular, ChevronRight20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
-import { useYugen, useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
+import { useYugenLocale, useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { PickerShell, cachedDateFormat, type PickerBaseProps } from "./pickerShell";
 import { monthPickerMessagesEn, yearPickerMessagesEn } from "./messages";
 
@@ -182,7 +182,7 @@ function PeriodPicker({
   placeholder,
   ...props
 }: PeriodPickerShellProps) {
-  const { locale } = useYugen();
+  const locale = useYugenLocale();
   const format = formatDate ?? cachedDateFormat(locale, defaultFormat);
   const [open, setOpen] = React.useState(false);
   const [selected, setSelected] = useControllableState<Date | null>({ value, defaultValue, onChange: onValueChange });

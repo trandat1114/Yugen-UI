@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ArrowTrending16Regular, ArrowTrendingDown16Regular, Subtract16Regular } from "../_internal/icons";
-import { useYugen, useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
+import { useYugenLocale, useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { statMessagesEn } from "./messages";
 import { cn } from "@/lib/cn";
 import { warnDeprecated } from "@/lib/deprecate";
@@ -69,8 +69,8 @@ export function Stat(inProps: StatProps & { ref?: React.Ref<HTMLDivElement> }) {
   } = useComponentDefaults("Stat", inProps);
   if (size === "hero") warnDeprecated('Stat.size="hero"', 'use size="extra-large"', "1.0.0");
   const valueSize = size === "hero" ? "extra-large" : size;
-  const yugen = useYugen();
-  const locale = localeProp ?? yugen.locale;
+  const yugenLocale = useYugenLocale();
+  const locale = localeProp ?? yugenLocale;
   const msg = useYugenMessages("stat", statMessagesEn);
   const valueText =
     typeof value === "number"

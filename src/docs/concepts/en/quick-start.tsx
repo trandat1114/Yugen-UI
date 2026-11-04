@@ -317,9 +317,10 @@ export default function Page() {
           </P>
           <P>
             The subpath is the folder of the component: <C>CardHeader</C> comes from <C>yugen-ui/Card</C>, <C>DateRangePicker</C> from{" "}
-            <C>yugen-ui/DatePicker</C>. The exceptions are <C>yugen-ui/AppShell/Sidebar</C>, <C>yugen-ui/messages-en</C> and{" "}
-            <C>yugen-ui/messages-vi</C>. <C>cn</C> and the brand color helpers are only on the root, and <C>readAppShellCookie</C> runs in a
-            Server Component only when imported from <C>yugen-ui</C>.
+            <C>yugen-ui/DatePicker</C>. The exceptions are <C>yugen-ui/AppShell/Sidebar</C>, <C>yugen-ui/YugenProvider/document</C>,{" "}
+            <C>yugen-ui/messages-en</C> and <C>yugen-ui/messages-vi</C>. <C>cn</C> and the brand color helpers are only on the root.{" "}
+            <C>readAppShellCookie</C> runs in a Server Component only when imported from <C>yugen-ui</C>; <C>yugenHtmlAttributes</C> and{" "}
+            <C>yugenThemeScript</C> when imported from <C>yugen-ui</C> or <C>yugen-ui/YugenProvider/document</C>.
           </P>
           <P>
             Next.js: to keep root imports and still load only what a page uses in development and on the server, add the package to{" "}
