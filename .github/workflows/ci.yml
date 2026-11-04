@@ -103,6 +103,9 @@ jobs:
       - run: npm run pack:check
       # Size budgets (.size-limit.cjs) — measured on the dist/ just built.
       - run: npm run size
+      # Budgets stay tight: fails when a limit is more than 20% above the measured size, so the PR that makes an entry
+      # smaller lowers its limit too (#360).
+      - run: node scripts/check-size-slack.mjs
 
   unit:
     name: Unit tests (React 19)

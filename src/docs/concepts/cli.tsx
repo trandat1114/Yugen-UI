@@ -64,6 +64,7 @@ src/
   index.css                           # thêm @import "./yugen.css"; sau @import "tailwindcss";
   yugen.css                           # theme
   lib/cn.ts
+  lib/cvx.ts                          # cùng yugen add button (class theo biến thể)
   components/ui/YugenProvider/…       # cùng Toast, Tooltip mà provider dùng
   components/ui/Button/Button.tsx     # từ yugen add`;
 

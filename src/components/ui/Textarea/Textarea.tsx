@@ -1,11 +1,11 @@
 /** Fluent 2 Textarea — https://fluent2.microsoft.design/components/web/react/core/textarea/usage */
 import * as React from "react";
-import { cva } from "class-variance-authority";
 import { cn } from "@/lib/cn";
+import { cvx } from "@/lib/cvx";
 import { fieldAppearanceClass } from "@/components/ui/Select/Select";
 import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
-const textareaVariants = cva(
+const textareaVariants = cvx(
   [
     "m-0 block w-full grow bg-transparent text-foreground-1 outline-none placeholder:text-foreground-4",
     "disabled:cursor-not-allowed disabled:text-foreground-disabled disabled:placeholder:text-foreground-disabled",
@@ -58,7 +58,7 @@ export function Textarea(inProps: TextareaProps & { ref?: React.Ref<HTMLTextArea
       <textarea
         ref={ref}
         disabled={disabled}
-        className={cn(textareaVariants({ size, resize }), textareaClassName)}
+        className={textareaVariants({ size, resize, className: textareaClassName })}
         {...props}
       />
     </span>

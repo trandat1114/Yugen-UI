@@ -1,10 +1,11 @@
 import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/cn";
+import { cvx } from "@/lib/cvx";
 import { useComponentDefaults } from "../YugenProvider/context";
 
 /** ButtonGroup (shadcn/ui, giao diện Fluent 2 Button) — https://ui.shadcn.com/docs/components/button-group */
-const buttonGroupVariants = cva(
+const buttonGroupVariants = cvx(
   [
     "inline-flex w-fit items-stretch align-middle",
     // Phần tử con nổi lên khi hover/focus để viền và vòng focus không bị nút kế bên che.
@@ -44,7 +45,7 @@ export function ButtonGroup(inProps: ButtonGroupProps & { ref?: React.Ref<HTMLDi
       ref={ref}
       role="group"
       data-orientation={orientation ?? "horizontal"}
-      className={cn(buttonGroupVariants({ orientation }), className)}
+      className={buttonGroupVariants({ orientation, className })}
       {...props}
     />
   );

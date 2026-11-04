@@ -1,12 +1,13 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
-import { cva, type VariantProps } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/cn";
+import { cvx } from "@/lib/cvx";
 import { Spinner, type SpinnerSize } from "../Spinner/Spinner";
 import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
 /** Fluent 2 Button — https://fluent2.microsoft.design/components/web/react/core/button/usage */
-const buttonVariants = cva(
+const buttonVariants = cvx(
   [
     "inline-flex items-center justify-center whitespace-nowrap border align-middle select-none",
     "transition-[background-color,border-color,color] duration-faster ease-easy-ease",
@@ -133,11 +134,7 @@ export function Button(inProps: ButtonProps & { ref?: React.Ref<HTMLButtonElemen
   } = useComponentDefaults("Button", inProps, COMPACT_SIZE);
   const isIconOnly = iconOnly ?? (!!icon && !children);
   const busy = !!loading;
-  const classes = cn(
-    buttonVariants({ appearance, size, shape, iconOnly: isIconOnly }),
-    busy && "cursor-progress",
-    className,
-  );
+  const classes = buttonVariants({ appearance, size, shape, iconOnly: isIconOnly, className: [busy && "cursor-progress", className] });
   // Không dùng `disabled`: nút đang xử lý vẫn phải focus được và được đọc là "bận".
   const busyProps = busy ? { "aria-busy": true, "aria-disabled": true } : {};
 

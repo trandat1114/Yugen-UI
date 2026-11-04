@@ -43,31 +43,41 @@ function usedFolders(dir) {
   return [...folders].sort();
 }
 
-async function build(css, base) {
-  const compiler = await compile(css, { base, onDependency: () => {} });
+/** CSS app nhận được: biên dịch bằng Tailwind rồi minify (Lightning CSS), như bundler của app. */
+export async function compileCss(css) {
+  const compiler = await compile(css, { base: root, onDependency: () => {} });
   const scanner = new Scanner({ sources: compiler.sources });
-  const code = optimize(compiler.build(scanner.scan()), { minify: true }).code;
-  return zlib.gzipSync(code).length / 1000;
+  return optimize(compiler.build(scanner.scan()), { minify: true }).code;
 }
 
-const rows = [];
-for (const arg of process.argv.slice(2)) {
-  const app = path.resolve(arg);
-  const folders = usedFolders(app);
-  const appSource = `@source "${posix(app)}";`;
-  const full = await build(['@import "tailwindcss" source(none);', `@import "${posix(path.join(dist, "theme.css"))}";`, appSource].join("\n"), root);
-  const lean = await build(
-    [
-      '@import "tailwindcss" source(none);',
-      `@import "${posix(path.join(dist, "theme-core.css"))}";`,
-      ...folders.map((f) => `@import "${posix(path.join(dist, "sources", `${f}.css`))}";`),
-      appSource,
-    ].join("\n"),
-    root,
-  );
-  rows.push({ app: path.basename(app), components: folders.length, full, lean });
+/** CSS nguồn kiểu lean: `theme-core.css` + `sources/<Folder>.css` cho từng thư mục + class trong `app` (nếu có). */
+export function leanCss(folders, app) {
+  return [
+    '@import "tailwindcss" source(none);',
+    `@import "${posix(path.join(dist, "theme-core.css"))}";`,
+    ...folders.map((f) => `@import "${posix(path.join(dist, "sources", `${f}.css`))}";`),
+    ...(app ? [`@source "${posix(app)}";`] : []),
+  ].join("\n");
 }
-for (const r of rows) {
-  const saved = (1 - r.lean / r.full) * 100;
-  console.log(`${r.app.padEnd(12)} ${String(r.components).padStart(3)} folders   theme.css ${r.full.toFixed(1)} kB   core + sources ${r.lean.toFixed(1)} kB   −${saved.toFixed(0)}%`);
+
+export { usedFolders };
+
+const gzipKb = (code) => zlib.gzipSync(code).length / 1000;
+
+// Chỉ khi chạy trực tiếp: .size-limit.cjs import file này để đo CSS đã biên dịch (#360).
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const rows = [];
+  for (const arg of process.argv.slice(2)) {
+    const app = path.resolve(arg);
+    const folders = usedFolders(app);
+    const full = gzipKb(
+      await compileCss(['@import "tailwindcss" source(none);', `@import "${posix(path.join(dist, "theme.css"))}";`, `@source "${posix(app)}";`].join("\n")),
+    );
+    const lean = gzipKb(await compileCss(leanCss(folders, app)));
+    rows.push({ app: path.basename(app), components: folders.length, full, lean });
+  }
+  for (const r of rows) {
+    const saved = (1 - r.lean / r.full) * 100;
+    console.log(`${r.app.padEnd(12)} ${String(r.components).padStart(3)} folders   theme.css ${r.full.toFixed(1)} kB   core + sources ${r.lean.toFixed(1)} kB   −${saved.toFixed(0)}%`);
+  }
 }
