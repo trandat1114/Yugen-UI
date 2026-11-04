@@ -5,6 +5,8 @@ name: Visual regression
 # Visual regression → Run workflow with `update` on your branch; the new Linux baselines
 # (e2e/__screenshots__/**/*-linux.png, the only committed ones) come back as the `visual-screenshots` artifact — copy
 # them into e2e/__screenshots__/ and commit. This workflow never commits.
+# The shots (a few full pages + a hero of every component in light, dark, high contrast and RTL, #166) run in parallel
+# shards; the last job, "Visual (compare)" / "Visual (update)", waits for them and is the one check to look at.
 
 on:
   pull_request:
@@ -20,7 +22,12 @@ on:
       - "package-lock.json"
       - "e2e/visual.spec.ts"
       - "e2e/utils.ts"
+      # Danh sách trang component (ảnh hero) gom từ sidebar ở global-setup.
+      - "e2e/routes.ts"
+      - "e2e/global-setup.ts"
       - "e2e/__screenshots__/**"
+      - "playwright.config.ts"
+      - ".github/workflows/visual.yml"
   workflow_dispatch:
     inputs:
       update:
@@ -36,11 +43,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  visual:
-    name: Visual (${{ inputs.update && 'update' || 'compare' }})
+  shard:
+    name: Visual shard ${{ matrix.shard }}/${{ strategy.job-total }}
     if: github.event.pull_request.draft != true
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
+    strategy:
+      # Chạy hết mọi shard dù một shard đỏ: đủ ảnh diff (compare) và đủ ảnh mới (update).
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     # Trình duyệt và thư viện hệ thống có sẵn trong image: không `playwright install --with-deps` (apt) mỗi lần chạy.
     # Tag phải khớp @playwright/test trong package-lock.json (src/test/playwright-image.test.ts).
     container:
@@ -61,25 +73,93 @@ jobs:
       - name: Run visual tests
         env:
           UPDATE: ${{ inputs.update }}
+          SHARD: ${{ matrix.shard }}/${{ strategy.job-total }}
         run: |
           if [ "$UPDATE" = "true" ]; then
+            # Mốc thời gian: sau khi chạy, chỉ ảnh shard này vừa ghi (mới hoặc đổi) được gửi lên để gộp ở job cuối.
+            touch /tmp/visual-start
             # all: ghi lại mọi ảnh, kể cả ảnh lệch dưới ngưỡng 1% — ảnh không đổi pixel cho ra file y hệt, git không báo.
-            npm run test:visual -- --update-snapshots=all
+            npm run test:visual -- --shard="$SHARD" --update-snapshots=all
           else
-            npm run test:visual
+            npm run test:visual -- --shard="$SHARD"
           fi
+
+      - name: Collect updated screenshots
+        if: ${{ !cancelled() && inputs.update }}
+        run: |
+          mkdir -p visual-updated
+          cd e2e/__screenshots__
+          find . -type f -newer /tmp/visual-start -exec cp --parents {} ../../visual-updated/ \;
+
+      - name: Upload updated screenshots
+        if: ${{ !cancelled() && inputs.update }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: visual-screenshots-${{ matrix.shard }}
+          path: visual-updated/
+          retention-days: 1
+          if-no-files-found: ignore
 
       - name: Upload Playwright report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v7
         with:
-          name: visual-report
+          name: visual-report-${{ matrix.shard }}
           path: playwright-report/
           retention-days: 14
           if-no-files-found: ignore
 
+      - name: Upload test results (diffs)
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: visual-test-results-${{ matrix.shard }}
+          path: test-results/
+          retention-days: 1
+          if-no-files-found: ignore
+
+  visual:
+    name: Visual (${{ inputs.update && 'update' || 'compare' }})
+    needs: shard
+    # Chạy cả khi một shard đỏ (gộp diff, báo lỗi); bỏ qua cùng các shard với PR nháp.
+    if: ${{ !cancelled() && github.event.pull_request.draft != true }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # Update: bộ ảnh đầy đủ = ảnh đã commit + ảnh các shard vừa ghi, trong một artifact `visual-screenshots`.
+      - uses: actions/checkout@v7
+        if: inputs.update
+        with:
+          sparse-checkout: e2e/__screenshots__
+
+      - name: Download updated screenshots
+        if: inputs.update
+        # Không shard nào ghi ảnh (không có gì đổi) thì không có artifact để tải.
+        continue-on-error: true
+        uses: actions/download-artifact@v7
+        with:
+          pattern: visual-screenshots-*
+          merge-multiple: true
+          path: visual-updated/
+
+      - name: Merge screenshots
+        if: inputs.update
+        run: |
+          mkdir -p visual-updated e2e/__screenshots__
+          cp -r visual-updated/. e2e/__screenshots__/
+          {
+            echo "### Updated screenshots"
+            echo ""
+            echo "Download **visual-screenshots**, copy it into \`e2e/__screenshots__/\` and commit the files git shows as changed."
+            echo ""
+            count=$(find visual-updated -type f | wc -l)
+            echo "$count new or changed file(s):"
+            echo ""
+            find visual-updated -type f | sed 's|^visual-updated/|- |' | sort
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Upload screenshots (baselines)
-        if: ${{ !cancelled() }}
+        if: inputs.update
         uses: actions/upload-artifact@v7
         with:
           name: visual-screenshots
@@ -87,8 +167,18 @@ jobs:
           retention-days: 14
           if-no-files-found: ignore
 
+      # Compare đỏ: gộp ảnh diff của các shard vào một artifact `visual-test-results`.
+      - name: Download test results (diffs)
+        if: needs.shard.result == 'failure'
+        continue-on-error: true
+        uses: actions/download-artifact@v7
+        with:
+          pattern: visual-test-results-*
+          merge-multiple: true
+          path: test-results/
+
       - name: Upload test results (diffs)
-        if: failure()
+        if: needs.shard.result == 'failure'
         uses: actions/upload-artifact@v7
         with:
           name: visual-test-results
@@ -97,12 +187,20 @@ jobs:
           if-no-files-found: ignore
 
       - name: Explain a failed compare
-        if: failure() && !inputs.update
+        if: needs.shard.result == 'failure' && !inputs.update
         run: |
           {
             echo "### Visual differences"
             echo ""
             echo "Download **visual-test-results** (diff, actual and expected PNGs) from this run's artifacts."
+            echo "The HTML report of each shard is in **visual-report-<n>**."
             echo "If the change is intended: Actions → Visual regression → Run workflow on this branch with **update**,"
             echo "then copy the files from **visual-screenshots** into \`e2e/__screenshots__/\` and commit them."
           } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: All shards passed
+        env:
+          RESULT: ${{ needs.shard.result }}
+        run: |
+          echo "Shards: $RESULT"
+          test "$RESULT" = "success"
