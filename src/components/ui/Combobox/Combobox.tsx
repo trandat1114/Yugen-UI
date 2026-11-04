@@ -251,7 +251,7 @@ export function Combobox(inProps: ComboboxProps & { ref?: React.Ref<HTMLInputEle
     onActiveChange: setActive,
     onSelect: selectOption,
     labelledBy: inputProps["aria-labelledby"],
-    label: msg.listLabel,
+    label: inputProps["aria-label"] || msg.listLabel,
   });
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

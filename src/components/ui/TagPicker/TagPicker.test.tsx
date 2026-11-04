@@ -193,9 +193,9 @@ describe("TagPicker: tên của listbox", () => {
     expect(listbox).not.toHaveAttribute("aria-label");
   });
 
-  it.each(LANGS)("chỉ có aria-label trên ô nhập (%s): tên có sẵn trong messages", async (_, messages, name) => {
+  it.each(LANGS)("chỉ có aria-label trên ô nhập (%s): listbox dùng lại tên đó", async (_, messages) => {
     const listbox = await openListbox(<TagPicker aria-label="Trái cây" options={OPTIONS} />, messages);
-    expect(listbox).toHaveAccessibleName(name);
+    expect(listbox).toHaveAccessibleName("Trái cây");
     expect(listbox).not.toHaveAttribute("aria-labelledby");
   });
 

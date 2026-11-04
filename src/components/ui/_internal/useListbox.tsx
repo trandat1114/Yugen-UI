@@ -54,7 +54,10 @@ interface UseListboxOptions<T extends ListboxItem> {
   onSelect: (value: string) => void;
   /** `aria-labelledby` của ô nhập (Field gắn id nhãn): listbox mang cùng tên, như mẫu combobox của APG. */
   labelledBy?: string;
-  /** Tên dự phòng (`aria-label`) khi ô nhập không có nhãn hiển thị nối qua `aria-labelledby`. */
+  /**
+   * Tên (`aria-label`) khi ô nhập không có nhãn nối qua `aria-labelledby`: `aria-label` của chính ô nhập (như TimePicker),
+   * không có thì chuỗi `listLabel` trong messages.
+   */
   label: string;
 }
 

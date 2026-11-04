@@ -183,7 +183,7 @@ export function TagPicker(inProps: TagPickerProps & { ref?: React.Ref<HTMLInputE
     onActiveChange: setActive,
     onSelect: add,
     labelledBy: inputProps["aria-labelledby"],
-    label: msg.listLabel,
+    label: inputProps["aria-label"] || msg.listLabel,
   });
 
   // Sortable về (hoặc `reorderable` tắt) thì nhóm tag nằm trong cây khác nên được tạo lại: tag đang giữ focus lúc đó
