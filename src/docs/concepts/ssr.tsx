@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { MessageBar } from "@/components/ui";
 import { DocSection, DoDont } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
+import { docsPath } from "../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -259,6 +260,15 @@ export default function Page() {
           </li>
           <li>
             <C>useSyncExternalStore</C> của Toaster đã có snapshot cho server, không gây lỗi khi render SSR.
+          </li>
+          <li>
+            Toaster của <C>withToaster</C> không có trong HTML từ server: nó nạp sau khi hydrate. Nút “…” của Breadcrumb và chip chú thích
+            của StreamingMarkdown render ở server thành cùng một nút, rồi đổi sang component đầy đủ khi code của nó nạp xong, nên HTML hai
+            phía khớp nhau. Xem{" "}
+            <a className="text-link underline hover:text-link-hover" href={docsPath("/concepts/performance#on-demand")}>
+              Hiệu năng
+            </a>
+            .
           </li>
         </ul>
       </DocSection>

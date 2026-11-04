@@ -26,7 +26,7 @@ export const en: Record<string, ComponentDocEn> = {
       children: "Markdown content.",
       streaming: "Tolerates unfinished syntax, shows the caret, sets aria-busy.",
       headingOffset: "Added to the heading level; never produces an h1.",
-      citations: "Sources for [1] / [^1], rendered as Citation chips.",
+      citations: "Sources for [1] / [^1], rendered as Citation chips. The chip's preview card loads on demand, right after the first chip appears.",
       breaks: "Turns single line breaks into <br>.",
       caret: "Caret while streaming.",
       size: "caption1 or body1.",

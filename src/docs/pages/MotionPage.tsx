@@ -600,8 +600,8 @@ export function MotionPage() {
         id="utilities"
         title={t("Utility & keyframe", "Utilities & keyframes")}
         description={t(
-          "duration-* đặt transition-duration, ease-* đặt transition-timing-function. Các animate-* dưới đây có sẵn trong theme.css.",
-          "duration-* sets transition-duration and ease-* sets transition-timing-function. The animate-* utilities below ship in theme.css.",
+          "duration-* đặt transition-duration, ease-* đặt transition-timing-function. Các animate-* dưới đây có sẵn trong theme (theme.css, theme-core.css); keyframe nằm trong @theme nên Tailwind chỉ xuất keyframe mà một class hay khai báo animation dùng tới. Muốn thay một keyframe bằng @keyframes cùng tên của app, khai báo nó trong @theme.",
+          "duration-* sets transition-duration and ease-* sets transition-timing-function. The animate-* utilities below come with the theme (theme.css, theme-core.css). The keyframes live in @theme, so Tailwind writes only the ones a class or an animation declaration uses. To replace one with your own @keyframes of the same name, declare it inside @theme.",
         )}
       >
         <Table
