@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { MessageBar } from "@/components/ui";
 import { DocSection, DoDont } from "../../blocks";
 import { CodeBlock } from "../../CodeBlock";
+import { docsPath } from "../../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -261,6 +262,15 @@ export default function Page() {
           </li>
           <li>
             The Toaster&apos;s <C>useSyncExternalStore</C> has a server snapshot, so it renders without errors during SSR.
+          </li>
+          <li>
+            The Toaster from <C>withToaster</C> is not in the server HTML: it loads after hydration. Breadcrumb&apos;s “…” button and
+            StreamingMarkdown&apos;s citation chips render on the server as the same button and switch to the full component once its code
+            has loaded, so both sides produce the same HTML. See{" "}
+            <a className="text-link underline hover:text-link-hover" href={docsPath("/concepts/performance#on-demand")}>
+              Performance
+            </a>
+            .
           </li>
         </ul>
       </DocSection>

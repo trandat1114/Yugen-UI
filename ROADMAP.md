@@ -4,13 +4,36 @@
 
 *Tiếng Việt: [xem bên dưới](#tiếng-việt).*
 
-Plans for each release, updated 2026-11-04. Each release is a GitHub milestone; priority, size and
+Plans for each release, updated 2026-11-05. Each release is a GitHub milestone; priority, size and
 dependencies are in the [GitHub Project](https://github.com/users/trandat1114/projects/6). `[x]` done, `[~]` in progress, `[ ]` planned.
 
 Want to pick something up? Comment on the issue before you start. The same roadmap is on the
 [community page](https://trandat1114.github.io/Yugen-UI/community).
 
 ## Now
+
+### 0.16.0 · minor · due 2026-11-18
+
+Performance: lighter imports, CSS that follows your imports, fewer re-renders.
+
+- [x] Types for every export under moduleResolution nodenext; tsc-alias replaced (#343)
+- [x] Subpath imports: yugen-ui/Button loads one component (#344)
+- [x] Server-safe helpers: readAppShellCookie works in Server Components (#345)
+- [x] YugenProvider loads the Toaster only with withToaster (#346)
+- [x] Fewer re-renders: the theme in its own context, inline messages compared by value (#347)
+- [x] Theme before the first paint with SSR: yugenHtmlAttributes, yugenThemeScript (#348)
+- [x] Date components no longer bundle the Vietnamese locale (#349)
+- [x] Breadcrumb's overflow menu and citation cards load on demand; Nav without Tooltip (#350)
+- [x] Charts: a hover step takes about 1 ms at any point count, smaller markup, Sparkline without an observer (#352)
+- [x] CSS floor: keyframes only when used, plain tokens.css, theme.css imports theme-core.css (#353)
+- [x] yugen css: only the CSS of the components an app imports (init, add, doctor) (#169)
+- [x] Variant classes merged once per combination of props (#355)
+- [x] Size budgets: measured + 8%, compiled CSS, a slack check in CI (#360)
+- [x] Docs and CI for esbuild code splitting (subpath imports) (#370)
+- [~] Combobox and TagPicker on their own listbox, without cmdk (#351)
+- [ ] yugen css --watch and a Vite plugin, so a new import is styled during dev (#368)
+- [ ] Deprecate withToaster: an explicit Toaster in templates and docs (#369)
+- [ ] Audit follow-ups: registry directive for cookie.ts, optimizePackageImports in next-starter, test floors (#372)
 
 ### 1.0.0 · major
 
@@ -21,7 +44,10 @@ Stable API. No fixed date: ships when the readiness checklist is done.
 - [ ] Form: validation and an error summary (#162)
 - [ ] Block library 2.0 (marketing, app, commerce), installable with the CLI (#163)
 - [ ] Codemods 0.x → 1.0 (yugen migrate) for the renamed props (#164)
-- [ ] @yugen-ui/cli writes the @import lines for per-component CSS (init, doctor) (#169)
+- [ ] Yugen-owned prop types for Calendar and Resizable (no third-party types in public props) (#371)
+- [ ] CSS layering: tokens in @layer theme, opt-in token groups, no global reset from styles.css (#354)
+- [ ] The date stack as an optional peer (yugen-ui/dates) (#356)
+- [ ] Native inputs for Checkbox, Switch and RadioGroup (#357)
 
 ## Next
 
@@ -60,12 +86,35 @@ Details on What's new (`/news`) and in `CHANGELOG.md`.
 
 ## Tiếng Việt
 
-Kế hoạch theo từng bản phát hành, cập nhật 2026-11-04. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và
+Kế hoạch theo từng bản phát hành, cập nhật 2026-11-05. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và
 phụ thuộc nằm ở [GitHub Project](https://github.com/users/trandat1114/projects/6). `[x]` đã xong, `[~]` đang làm, `[ ]` dự kiến.
 
 Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. Trang [Cộng đồng](https://trandat1114.github.io/Yugen-UI/vi/community) có cùng lộ trình.
 
 ### Đang làm
+
+#### 0.16.0 · minor · hạn 2026-11-18
+
+Hiệu năng: import nhẹ hơn, CSS theo đúng phần bạn import, ít render lại hơn.
+
+- [x] Kiểu cho mọi export với moduleResolution nodenext; bỏ tsc-alias (#343)
+- [x] Import theo subpath: yugen-ui/Button chỉ nạp một component (#344)
+- [x] Helper an toàn cho server: readAppShellCookie chạy trong Server Component (#345)
+- [x] YugenProvider chỉ nạp Toaster khi bật withToaster (#346)
+- [x] Ít render lại hơn: theme có context riêng, messages inline so theo giá trị (#347)
+- [x] Theme trước lần vẽ đầu khi SSR: yugenHtmlAttributes, yugenThemeScript (#348)
+- [x] Component ngày tháng không còn kèm locale tiếng Việt (#349)
+- [x] Menu thu gọn của Breadcrumb và thẻ chú thích nạp lúc cần; Nav không kèm Tooltip (#350)
+- [x] Biểu đồ: một bước hover khoảng 1 ms dù nhiều điểm, markup nhỏ hơn, Sparkline không cần observer (#352)
+- [x] CSS nền: keyframe chỉ xuất khi dùng, tokens.css là CSS thuần, theme.css import theme-core.css (#353)
+- [x] yugen css: chỉ CSS của các component mà app import (init, add, doctor) (#169)
+- [x] Class của variant được gộp một lần cho mỗi tổ hợp props (#355)
+- [x] Ngân sách dung lượng: số đo + 8%, CSS đã biên dịch, kiểm tra độ dư trong CI (#360)
+- [x] Docs và CI cho esbuild có code splitting (import theo subpath) (#370)
+- [~] Combobox và TagPicker dùng listbox riêng, không cần cmdk (#351)
+- [ ] yugen css --watch và plugin Vite: import mới có style ngay khi dev (#368)
+- [ ] Deprecate withToaster: template và docs đặt Toaster rõ ràng (#369)
+- [ ] Việc còn lại của đợt rà soát: directive của cookie.ts trong registry, optimizePackageImports cho next-starter, mức sàn test (#372)
 
 #### 1.0.0 · major
 
@@ -76,7 +125,10 @@ API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện
 - [ ] Form: kiểm tra dữ liệu và tóm tắt lỗi (#162)
 - [ ] Thư viện block 2.0 (marketing, ứng dụng, thương mại), cài bằng CLI (#163)
 - [ ] Codemod 0.x → 1.0 (yugen migrate) cho các tên đã đổi (#164)
-- [ ] @yugen-ui/cli ghi các dòng @import của CSS theo component (init, doctor) (#169)
+- [ ] Kiểu prop riêng của Yugen cho Calendar và Resizable (không lộ kiểu của thư viện khác) (#371)
+- [ ] Phân lớp CSS: token trong @layer theme, nhóm token tuỳ chọn, styles.css không reset toàn cục (#354)
+- [ ] Phần ngày tháng thành peer tuỳ chọn (yugen-ui/dates) (#356)
+- [ ] Input gốc cho Checkbox, Switch và RadioGroup (#357)
 
 ### Tiếp theo
 

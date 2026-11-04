@@ -544,7 +544,7 @@ export const docs: ComponentDoc[] = [
       { name: "children", type: "string", description: "Nội dung Markdown." },
       { name: "streaming", type: "boolean", defaultValue: "false", description: "Chịu cú pháp dở dang, hiện con trỏ, aria-busy." },
       { name: "headingOffset", type: "number", defaultValue: "2", description: "Cộng vào cấp heading; luôn ≥ h2." },
-      { name: "citations", type: "CitationSource[]", description: "Nguồn cho [1] / [^1] → chip Citation." },
+      { name: "citations", type: "CitationSource[]", description: "Nguồn cho [1] / [^1] → chip Citation. Thẻ xem nhanh của chip nạp lúc cần, ngay sau khi chip đầu tiên hiện." },
       { name: "breaks", type: "boolean", defaultValue: "true", description: "Xuống dòng đơn thành <br>." },
       { name: "caret", type: "boolean", defaultValue: "true", description: "Con trỏ khi streaming." },
       { name: "size", type: `"small" | "medium"`, defaultValue: `"medium"`, description: "caption1 hoặc body1." },

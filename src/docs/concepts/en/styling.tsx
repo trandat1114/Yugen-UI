@@ -393,10 +393,10 @@ import { cn } from "@/lib/cn";
           <SimpleTable
             head={["Template", "Component folders", "theme.css", "yugen css"]}
             rows={[
-              ["Starter", "5", "26.7 kB", "13.4 kB"],
-              ["Next.js Starter", "7", "26.2 kB", "12.0 kB"],
-              ["Landing", "16", "26.9 kB", "16.3 kB"],
-              ["Admin", "34", "26.5 kB", "18.2 kB"],
+              ["Starter", "5", "26.7 kB", "13.2 kB"],
+              ["Next.js Starter", "7", "26.2 kB", "11.8 kB"],
+              ["Landing", "16", "26.9 kB", "16.1 kB"],
+              ["Admin", "34", "26.4 kB", "18.1 kB"],
               ["SaaS", "35", "26.3 kB", "20.0 kB"],
             ]}
           />
