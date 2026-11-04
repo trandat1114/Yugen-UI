@@ -123,7 +123,7 @@ export default function Page() {
       <DocSection
         id="on-demand"
         title="What loads on demand"
-        description="Three parts that only some apps render have their own chunk. Each one starts loading as soon as it is rendered on the client."
+        description="Four parts that only some apps render have their own chunk. Each one starts loading as soon as it is rendered on the client."
       >
         <div className="flex flex-col gap-4">
           <SimpleTable
@@ -157,6 +157,16 @@ export default function Page() {
                 </>,
                 "24.25 kB",
               ],
+              [
+                <>
+                  TagPicker's Sortable (<C>reorderable</C>)
+                </>,
+                "When a TagPicker with reorderable mounts",
+                <>
+                  <C>{"{ TagPicker }"}</C> 47.35 → 38.86 kB
+                </>,
+                "7.10 kB",
+              ],
             ]}
           />
           <List>
@@ -164,7 +174,8 @@ export default function Page() {
             <li>
               Until the code arrives, Breadcrumb renders the same “…” button and StreamingMarkdown the same chip, with the same size and
               ARIA, so nothing moves. A click or key press in that time opens the menu or the card once the code arrives, and focus moves
-              to the real button. If loading fails, the next interaction tries again.
+              to the real button. If loading fails, the next interaction tries again. TagPicker shows the same tags; dragging and
+              Alt + arrow keys work once Sortable has loaded, and a tag that has focus keeps it.
             </li>
             <li>
               The server HTML has these placeholders and no Toaster, so hydration matches (
