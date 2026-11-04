@@ -131,12 +131,22 @@ describe("Breadcrumb: menu … nạp lúc cần (#350)", () => {
     expect(trigger).toHaveAttribute("data-state", "closed");
   });
 
-  it("Enter trước khi menu nạp xong: menu mở khi nạp xong", async () => {
+  it("Enter trước khi menu nạp xong: menu mở khi nạp xong, bàn phím như MenuTrigger", async () => {
     const Fresh = await freshBreadcrumb();
+    const user = userEvent.setup();
     renderBare(<Fresh items={items()} maxDisplayedItems={3} />);
-    fireEvent.keyDown(more(), { key: "Enter" });
+    const fallback = more();
+    // Còn là bản thay thế (MenuTrigger của Radix có id).
+    expect(fallback).not.toHaveAttribute("id");
+    fallback.focus();
+    fireEvent.keyDown(fallback, { key: "Enter" });
     expect((await screen.findAllByRole("menuitem")).map((el) => el.textContent)).toEqual(["Sản phẩm", "Điện thoại"]);
     expect(more()).toHaveAttribute("aria-expanded", "true");
+    // Focus vào menu; Esc đóng và trả focus về nút.
+    await waitFor(() => expect(screen.getByRole("menu")).toContainElement(document.activeElement as HTMLElement));
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(screen.queryByRole("menu")).not.toBeInTheDocument());
+    expect(more()).toHaveFocus();
   });
 
   it("focus đang ở nút … lúc menu nạp xong: chuyển sang MenuTrigger; render sau dùng ngay MenuTrigger", async () => {

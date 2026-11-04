@@ -162,10 +162,21 @@ describe("StreamingMarkdown: chú thích nạp lúc cần (#350)", () => {
 
   it("bấm chip trước khi Citation nạp xong: thẻ nguồn mở khi nạp xong", async () => {
     const Fresh = await freshMarkdown();
+    const user = userEvent.setup();
     const { container } = renderBare(<Fresh citations={sources}>{"Hooks run in order [1]."}</Fresh>);
-    fireEvent.click(chip(container));
-    expect(await screen.findByRole("dialog")).toHaveTextContent("React docs");
+    const fallback = chip(container);
+    // Còn là chip thay thế (PopoverTrigger của Radix có aria-controls).
+    expect(fallback).not.toHaveAttribute("aria-controls");
+    fallback.focus();
+    fireEvent.click(fallback);
+    const card = await screen.findByRole("dialog");
+    expect(card).toHaveTextContent("React docs");
     expect(chip(container)).toHaveAttribute("aria-expanded", "true");
+    // Như bấm chip thật: thẻ được ghim, focus vào trong; Esc đóng và trả focus về chip.
+    await waitFor(() => expect(card).toContainElement(document.activeElement as HTMLElement));
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    expect(chip(container)).toHaveFocus();
   });
 
   it("focus đang ở chip lúc Citation nạp xong: chuyển sang chip thật", async () => {
