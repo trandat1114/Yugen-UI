@@ -45,6 +45,7 @@ const en: Content = {
     ],
   },
   footer: { yugen: "yūgen: quiet beauty in subtle things.", builtWith: "Built with" },
+  notFound: { home: "Go to the home page" },
 };
 
 export default en;

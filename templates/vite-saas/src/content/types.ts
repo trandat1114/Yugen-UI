@@ -170,4 +170,6 @@ export interface Content {
     submit: string;
     toast: { title: string; body: string };
   };
+  /** Trang 404 (StatusPage): nút quay về. Tiêu đề và mô tả là chuỗi có sẵn của Yugen (`messages.statusPage`). */
+  notFound: { home: string };
 }

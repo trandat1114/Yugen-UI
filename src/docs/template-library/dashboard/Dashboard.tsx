@@ -42,6 +42,7 @@ import {
   type DateRange as PickerRange,
   type DateRangePreset,
   type YugenTheme,
+  ErrorBoundary,
 } from "@/components/ui";
 import { createMockApi, DEFAULT_MOCK_OPTIONS, type MockOptions } from "./api";
 import type { Content } from "./content/types";
@@ -319,6 +320,7 @@ export function Dashboard({ content: t, appearance, onAppearanceChange, embedded
                 {page && page !== "settings" && <RangePicker />}
               </div>
               {Page ? (
+                <ErrorBoundary resetKeys={[page]} statusPageProps={{ headingAs: "h2" }}>
                 <React.Suspense
                   fallback={
                     embedded ? (
@@ -332,6 +334,7 @@ export function Dashboard({ content: t, appearance, onAppearanceChange, embedded
                 >
                   <Page />
                 </React.Suspense>
+                </ErrorBoundary>
               ) : (
                 <NotFound />
               )}

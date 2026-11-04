@@ -157,6 +157,7 @@ const en: Content = {
     madeWith: "Made with Yugen UI",
     sample: "A sample product. Names and quotes are made up.",
   },
+  notFound: { home: "Go to the home page" },
 };
 
 export default en;

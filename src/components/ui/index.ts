@@ -48,6 +48,7 @@ export * from "./Pagination/Pagination";
 export * from "./Nav/Nav";
 export * from "./Menu/Menu";
 export * from "./Menubar/Menubar";
+export * from "./NavigationMenu/NavigationMenu";
 export * from "./ContextMenu/ContextMenu";
 export * from "./Command/Command";
 export * from "./Stepper/Stepper";
@@ -85,6 +86,7 @@ export * from "./ProgressBar/ProgressBar";
 export * from "./Spinner/Spinner";
 export * from "./Skeleton/Skeleton";
 export * from "./Empty/Empty";
+export * from "./StatusPage/StatusPage";
 export * from "./InfoLabel/InfoLabel";
 
 // Bề mặt & overlay

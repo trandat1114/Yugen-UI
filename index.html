@@ -48,7 +48,9 @@
         // Trang prerender mang sẵn ngôn ngữ của nó (<html lang>, /vi/… là tiếng Việt, #277). Cùng thứ tự với src/main.tsx:
         // ?lang=, rồi trang tiếng Việt, rồi lựa chọn đã lưu (trang tiếng Anh sẽ chuyển sang /vi/ nếu đã chọn tiếng Việt).
         var pre = root.hasAttribute("data-prerendered");
-        var pageLang = root.getAttribute("lang") === "vi" ? "vi" : "en";
+        var htmlLang = root.getAttribute("lang") === "vi" ? "vi" : "en";
+        // 404.html (data-not-found) phục vụ mọi đường dẫn lạ: ngôn ngữ theo URL (/vi/…), không theo HTML dựng sẵn.
+        var pageLang = root.hasAttribute("data-not-found") ? (/\/vi(\/|$)/.test(location.pathname) ? "vi" : "en") : htmlLang;
         var lang = !q.get("lang") && pre && pageLang === "vi" ? "vi" : a.lang === "vi" ? "vi" : "en";
         root.setAttribute("lang", lang);
         // Độ rộng / dạng rail của sidebar (cùng key và giới hạn với src/docs/layout/sidebarLayout.ts).
@@ -59,7 +61,7 @@
         if (s.collapsed === true) root.setAttribute("data-docs-sidebar", "rail");
         // HTML prerender dựng theo LTR, ở trang đường dẫn chỉ tới: ẩn tới khi React render nếu sẽ hiện thứ khác (ngôn ngữ kia,
         // RTL, link #/… cũ). App bỏ data-pending sau lần render đầu; hẹn giờ phòng khi JS lỗi.
-        if (pre && (lang !== pageLang || a.dir === "rtl" || location.hash.indexOf("#/") === 0)) {
+        if (pre && (lang !== htmlLang || a.dir === "rtl" || location.hash.indexOf("#/") === 0)) {
           root.setAttribute("data-pending", "");
           setTimeout(function () { root.removeAttribute("data-pending"); }, 5000);
         }
