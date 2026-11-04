@@ -72,6 +72,36 @@ export function writeRegistry(dir = tmpDir()) {
   return dir;
 }
 
+/** Bảng sources/index.json nhỏ, cùng định dạng scripts/build-css.mjs (yugen-ui ≥ 0.14.0). */
+export const FIXTURE_MANIFEST = {
+  version: "0.15.0",
+  exports: {
+    AppShell: "AppShell",
+    Button: "Button",
+    Dialog: "Dialog",
+    DialogTrigger: "Dialog",
+    NavItem: "Nav",
+    Toast: "Toast",
+    toast: "Toast",
+    useMediaQuery: "hooks",
+    YugenProvider: "YugenProvider",
+  },
+  sources: Object.fromEntries(["AppShell", "Button", "Dialog", "Nav", "Toast", "YugenProvider", "hooks"].map((f) => [f, [f]])),
+};
+
+/** node_modules/yugen-ui giả, cùng bố cục với gói thật: `exports["./sources/*"]` → dist/sources/index.json. */
+export function installYugen(cwd: string, manifest: object | null = FIXTURE_MANIFEST) {
+  writeFiles(cwd, {
+    "node_modules/yugen-ui/package.json": JSON.stringify({
+      name: "yugen-ui",
+      version: "0.15.0",
+      exports: { ".": "./dist/lib.js", ...(manifest ? { "./sources/*": "./dist/sources/*" } : {}) },
+    }),
+    ...(manifest ? { "node_modules/yugen-ui/dist/sources/index.json": JSON.stringify(manifest) } : {}),
+  });
+  return cwd;
+}
+
 /** Dự án Vite + Tailwind v4 tối thiểu, alias @/* khai báo trong tsconfig.app.json (như template create-vite). */
 export function viteProject(extra: Record<string, string> = {}) {
   return writeFiles(tmpDir(), {
