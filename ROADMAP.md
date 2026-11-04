@@ -36,6 +36,7 @@ Not scheduled yet.
 
 Details on What's new (`/news`) and in `CHANGELOG.md`.
 
+- **0.15.0** (2026-11-04): New form controls, NavigationMenu, status pages and app-wide defaults
 - **0.14.0** (2026-11-03): AppShell, Sortable and a Contributors page
 - **0.13.0** (2026-10-28): Refraction for glass, cherry blossom season in the Glass template
 - **0.12.0** (2026-10-27): Glass, six new templates and a column picker for DataGrid
@@ -90,6 +91,7 @@ Chưa xếp lịch.
 
 Chi tiết ở trang Có gì mới (`/news`) và `CHANGELOG.md`.
 
+- **0.15.0** (2026-11-04): Form control mới, NavigationMenu, trang trạng thái và prop mặc định cho cả ứng dụng
 - **0.14.0** (2026-11-03): AppShell, Sortable, trang Người đóng góp
 - **0.13.0** (2026-10-28): Khúc xạ cho glass, mùa hoa anh đào trong template Glass
 - **0.12.0** (2026-10-27): Glass, sáu template mới và chọn cột trong DataGrid

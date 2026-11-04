@@ -1,6 +1,6 @@
 # @yugen-ui/cli
 
-## Unreleased
+## 0.7.0
 
 - `doctor` reports React 18 as an error: yugen-ui 0.15 needs React 19 or later.
 - Template `docs` reads its pages with `React.use`.
