@@ -88,6 +88,7 @@ const RTL = [
   "drawer",
   "messagebar",
   "nav",
+  "navigationmenu",
   "pagination",
   "progressbar",
   "rating",
