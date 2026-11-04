@@ -11,6 +11,7 @@ import {
   SkeletonText,
   toast,
   useAppShell,
+  ErrorBoundary,
 } from "@/components/ui";
 import type { SendMessage } from "./api";
 import type { Appearance } from "./appearance";
@@ -193,7 +194,9 @@ export function ChatLayout({
 
       <AppShellMain asChild className="flex flex-col">
         <Main>
-          <React.Suspense fallback={<PageFallback embedded={embedded} />}>{page}</React.Suspense>
+          <ErrorBoundary resetKeys={[JSON.stringify(route)]}>
+            <React.Suspense fallback={<PageFallback embedded={embedded} />}>{page}</React.Suspense>
+          </ErrorBoundary>
         </Main>
       </AppShellMain>
 

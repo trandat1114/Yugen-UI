@@ -380,10 +380,10 @@ Choose the signal by **expected** duration, not by habit (details: `#/concepts/w
 |---|---|
 | **Provider** | YugenProvider (+ `useYugen`, `usePortalThemeProps`) |
 | **Actions** (9) | Button (+ `loading`, `loadingText`), CompoundButton, MenuButton, SplitButton, ButtonGroup, ToggleButton, ToggleGroup, Toolbar, Link |
-| **Inputs** (25) | Field, Label, Input, Textarea, SearchBox, Select (native), Dropdown, Combobox, Tag (+TagGroup), TagPicker, Checkbox, RadioGroup, Switch, Slider, SpinButton, InputOTP, Rating, SwatchPicker, Calendar, DatePicker, TimePicker, DateRangePicker `presets`, FileUpload, Form (react-hook-form + zod, example only) |
-| **Navigation** (9) | Tabs, Breadcrumb, Pagination, Nav, Menu, Menubar, ContextMenu, Command, Stepper / Wizard |
+| **Inputs** (31) | Field, Label, Input, PasswordInput, FormattedInput, Textarea, SearchBox, Select (native), Dropdown, Combobox, Tag (+TagGroup), TagPicker, Checkbox, RadioGroup, Switch, Slider, SpinButton, InputOTP, Rating, SwatchPicker, ColorPicker, Calendar, DatePicker, MonthPicker, YearPicker, DateTimePicker, TimePicker, DateRangePicker `presets`, FileUpload, Form (react-hook-form + zod, example only) |
+| **Navigation** (10) | Tabs, Breadcrumb, Pagination, Nav, NavigationMenu, Menu, Menubar, ContextMenu, Command, Stepper / Wizard |
 | **Data display** (14) | Avatar, AvatarGroup, Persona, PresenceBadge, Badge, CounterBadge, Kbd, Text, Image, List, Table (+DataTable example), Tree, Carousel (loop, autoplay with progress, `slidesPerView`, `CarouselThumbnails`), DataGrid (sorting, row selection, column resizing, virtualization) |
-| **Feedback** (7) | MessageBar, Toast, ProgressBar, Spinner, Skeleton (+ `SkeletonText/Avatar/Card/List/Table`), Empty, InfoLabel |
+| **Feedback** (8) | MessageBar, Toast, ProgressBar, Spinner, Skeleton (+ `SkeletonText/Avatar/Card/List/Table`), Empty, StatusPage (+ `ErrorBoundary`), InfoLabel |
 | **Surfaces & overlays** (7) | Card, Dialog, Drawer (overlay + inline), Popover, TeachingPopover, HoverCard, Tooltip |
 | **Layout** (7) | Accordion (`appearance` flush / separated / outline), AspectRatio, Collapsible, Divider, ScrollArea, Resizable (`collapsible`, `persistKey`), Overflow |
 | **Motion** (6) | Fade, Scale, Slide, Collapse, Blur & Rotate, Stagger (+ `usePresence` hook) |
@@ -425,7 +425,7 @@ Labs-specific rules:
   visual order, so dragging and arrow keys move in the pointer's direction (covered by an e2e test). `mirrorInRtl={false}` keeps the LTR layout.
 - **Sheet** in bottom form: drag/swipe gestures have only been tested with a mouse and a touch emulator; they still need testing on real iOS/Android devices.
 - **Chart** is hand-written SVG: no log axis or maps yet; the brush always runs left→right like the plot area (even in RTL); very large datasets should be sampled first.
-- Not available yet: a full ColorPicker, a TimePicker that crosses midnight. Overflow needs items with a natural width (no `flex-1`).
+- Not available yet: a TimePicker that crosses midnight. Overflow needs items with a natural width (no `flex-1`).
 
 ---
 

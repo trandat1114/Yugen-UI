@@ -1,5 +1,5 @@
 import * as React from "react";
-import { YugenProvider, type YugenBrand, type YugenTheme } from "yugen-ui";
+import { ErrorBoundary, YugenProvider, type YugenBrand, type YugenTheme } from "yugen-ui";
 import defaultContent from "./content";
 import type { Content } from "./content/types";
 import { LandingPage } from "./LandingPage";
@@ -54,12 +54,15 @@ export default function App({ embedded = false, content = defaultContent, defaul
       locale={content.locale}
       className={embedded ? "h-full" : undefined}
     >
-      <LandingPage
-        t={content}
-        theme={appearance.theme}
-        onThemeChange={(theme) => setAppearance((a) => ({ ...a, theme }))}
-        embedded={embedded}
-      />
+      {/* A render error shows a "Something went wrong" page with Try again instead of a blank screen. */}
+      <ErrorBoundary statusPageProps={{ fullscreen: !embedded }}>
+        <LandingPage
+          t={content}
+          theme={appearance.theme}
+          onThemeChange={(theme) => setAppearance((a) => ({ ...a, theme }))}
+          embedded={embedded}
+        />
+      </ErrorBoundary>
     </YugenProvider>
   );
 }

@@ -159,6 +159,13 @@ export const en: Record<MessageKey, string> = {
   "home.open": "Open {name}",
   "home.viewComponent": "View component",
 
+  // 404 page (#238)
+  "notFound.title": "Page not found",
+  "notFound.description": "The link may be mistyped, or the page has moved.",
+  "notFound.search": "Search",
+  "notFound.home": "Home",
+  "notFound.suggestions": "You might be looking for",
+
   // Home — showcase
   "show.actions": "Actions",
   "show.inputs": "Inputs",

@@ -212,6 +212,7 @@ const en: Content = {
     submit: "Send feedback",
     toast: { title: "Thank you!", body: "Your feedback was sent to the team." },
   },
+  notFound: { home: "Go to Overview" },
 };
 
 export default en;

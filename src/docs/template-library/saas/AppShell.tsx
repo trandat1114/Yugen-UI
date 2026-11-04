@@ -44,6 +44,7 @@ import {
   type NotificationItem,
   type YugenBrand,
   type YugenTheme,
+  ErrorBoundary,
 } from "@/components/ui";
 import { BRANDS, CommandPalette, THEMES } from "./CommandPalette";
 import defaultContent from "./content";
@@ -279,6 +280,7 @@ export function AppShell({ page, onNavigate, appearance, onAppearanceChange, con
               </div>
               {current.actions?.(t)}
             </div>
+            <ErrorBoundary resetKeys={[page]} statusPageProps={{ headingAs: "h2" }}>
             <React.Suspense
               fallback={
                 <div className="grid items-start gap-4 @3xl:grid-cols-2">
@@ -289,6 +291,7 @@ export function AppShell({ page, onNavigate, appearance, onAppearanceChange, con
             >
               <current.Page t={t} />
             </React.Suspense>
+            </ErrorBoundary>
           </div>
         </Main>
       </AppShellMain>

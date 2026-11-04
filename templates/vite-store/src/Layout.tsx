@@ -17,6 +17,7 @@ import {
   PageProgressFallback,
   SkeletonText,
   type YugenTheme,
+  ErrorBoundary,
 } from "yugen-ui";
 import { cn } from "yugen-ui";
 import { BRANDS, THEMES } from "./appearance";
@@ -228,7 +229,9 @@ export function Layout() {
       <AppShellMain asChild>
         <Main>
           <div className="mx-auto w-full max-w-6xl px-4 py-6 @3xl/app-shell:px-6 @3xl/app-shell:py-8">
-            <React.Suspense fallback={<PageFallback />}>{page}</React.Suspense>
+            <ErrorBoundary resetKeys={[pageKey(route)]}>
+              <React.Suspense fallback={<PageFallback />}>{page}</React.Suspense>
+            </ErrorBoundary>
           </div>
         </Main>
       </AppShellMain>

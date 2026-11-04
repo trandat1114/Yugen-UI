@@ -1,5 +1,5 @@
 import * as React from "react";
-import { YugenProvider, type YugenBrand, type YugenTheme } from "@/components/ui";
+import { Button, ErrorBoundary, StatusPage, YugenProvider, statusPageCopy, statusPageMessagesEn, type YugenBrand, type YugenTheme } from "@/components/ui";
 import { AppShell, type Appearance } from "./AppShell";
 import content from "./content";
 import { preloadPages, type PageId } from "./pages";
@@ -8,11 +8,14 @@ import { pageFromLegacyHash, pageFromPath, pathOf } from "./routes";
 /** Cùng khoá với script chống nháy trong index.html. */
 const STORAGE_KEY = "yugen-saas-appearance";
 
-/** Trang lúc mở app. Link kiểu cũ `#/billing` và đường dẫn lạ được thay bằng đường dẫn đúng (không thêm mục lịch sử). */
-function initialPage(): PageId {
-  const page = pageFromLegacyHash(window.location.hash) ?? pageFromPath(window.location.pathname) ?? "overview";
-  if (window.location.pathname !== pathOf(page) || window.location.hash) window.history.replaceState(null, "", pathOf(page));
-  return page;
+/** Trang lúc mở app; `undefined` = đường dẫn lạ (trang 404). Link kiểu cũ `#/billing` được thay bằng đường dẫn đúng. */
+function initialPage(): PageId | undefined {
+  const legacy = pageFromLegacyHash(window.location.hash);
+  if (legacy) {
+    window.history.replaceState(null, "", pathOf(legacy));
+    return legacy;
+  }
+  return pageFromPath(window.location.pathname);
 }
 
 function initialAppearance(): Appearance {
@@ -36,7 +39,7 @@ export default function App() {
 
   // Back / Forward của trình duyệt.
   React.useEffect(() => {
-    const onPopState = () => setPage(pageFromPath(window.location.pathname) ?? "overview");
+    const onPopState = () => setPage(pageFromPath(window.location.pathname));
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
@@ -51,7 +54,9 @@ export default function App() {
 
   // Tiêu đề tab và mô tả theo trang — lịch sử trình duyệt, bookmark và bản xem trước khi chia sẻ đều đúng trang.
   React.useEffect(() => {
-    const { title, description } = content.pages[page];
+    const { title, description } = page
+      ? content.pages[page]
+      : statusPageCopy(404, { ...statusPageMessagesEn, ...content.messages?.statusPage });
     document.title = `${title} · ${content.appName}`;
     document.querySelector('meta[name="description"]')?.setAttribute("content", description);
   }, [page]);
@@ -70,12 +75,27 @@ export default function App() {
       messages={content.messages}
       locale={content.locale}
     >
-      <AppShell
-        page={page}
-        onNavigate={navigate}
-        appearance={appearance}
-        onAppearanceChange={(patch) => setAppearance((a) => ({ ...a, ...patch }))}
-      />
+      {/* Lỗi render → trang 500 có nút Thử lại; lỗi nạp file sau khi deploy → "Đã có phiên bản mới" + Tải lại. */}
+      <ErrorBoundary resetKeys={[page]} statusPageProps={{ fullscreen: true }}>
+        {page ? (
+          <AppShell
+            page={page}
+            onNavigate={navigate}
+            appearance={appearance}
+            onAppearanceChange={(patch) => setAppearance((a) => ({ ...a, ...patch }))}
+          />
+        ) : (
+          <StatusPage
+            status={404}
+            fullscreen
+            primaryAction={
+              <Button appearance="primary" onClick={() => navigate("overview")}>
+                {content.notFound.home}
+              </Button>
+            }
+          />
+        )}
+      </ErrorBoundary>
     </YugenProvider>
   );
 }

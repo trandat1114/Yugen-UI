@@ -256,6 +256,31 @@ test.describe("URL theo đường dẫn (#113)", () => {
     await expect(page.getByRole("heading", { level: 1, name: "Button" })).toBeVisible();
   });
 
+  test("đường dẫn lạ hiện trang 404 theo ngôn ngữ của URL, noindex, gợi ý trang gần giống (#238)", async ({ page }) => {
+    await openDocs(page, "/components/buton", { lang: "en" });
+    const heading = page.getByRole("heading", { level: 1, name: "Page not found" });
+    await expect(heading).toBeVisible();
+    await expect(heading).toBeFocused();
+    await expect(page).toHaveTitle("Page not found · Yugen UI");
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "noindex");
+    await page.getByRole("navigation", { name: "You might be looking for" }).getByRole("link", { name: "Button" }).click();
+    await expect(page.getByRole("heading", { level: 1, name: "Button" })).toBeVisible();
+    await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
+
+    await openDocs(page, "/vi/khong-co-trang-nay");
+    await expect(page.getByRole("heading", { level: 1, name: "Không tìm thấy trang" })).toBeVisible();
+    await expect(page.getByText("Lỗi 404")).toBeVisible();
+  });
+
+  test("404.html dựng sẵn trang 404 (noindex) cho GitHub Pages (#238)", async ({ request }) => {
+    test.skip(process.env.YUGEN_E2E_DEV === "1", "dev server không prerender");
+    const html = await (await request.get("/404.html")).text();
+    expect(html).toContain('<meta name="robots" content="noindex" />');
+    expect(html).toContain("data-not-found");
+    expect(html).toContain("<title>Page not found · Yugen UI</title>");
+    expect(html).toContain("Page not found</h1>");
+  });
+
   test("trang prerender có nội dung và head riêng khi chưa chạy JS", async ({ page }) => {
     test.skip(process.env.YUGEN_E2E_DEV === "1", "dev server không prerender");
     await page.route(/\/assets\/[^/]+\.js(\?.*)?$/, (route) => route.abort());
