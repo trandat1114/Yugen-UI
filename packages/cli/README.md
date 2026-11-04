@@ -79,7 +79,7 @@ in your main CSS file with `@import "./yugen-ui.css"`. On the templates the gzip
 12–20 kB.
 
 Run it again after you import another component, or from `predev` / `prebuild` with the CLI in `devDependencies`. The
-file records the command that wrote it, `--src` included. `import * as`, `export *` and `import()` of `yugen-ui` can
+file records the command that wrote it, `--src` and `--out` included. `import * as`, `export *` and `import()` of `yugen-ui` can
 reach any component, so the file falls back to `theme.css`. Options: `--src <dir>` (repeatable; default: the whole
 project), `--out <file>`, `--check`, `--precompile` (uses the project's own `tailwindcss`, `@tailwindcss/node` and
 `@tailwindcss/oxide`; the CLI does not bundle Tailwind).

@@ -156,6 +156,8 @@ export function folderOfName(name: string, manifest: Manifest): string | null {
 /** Tuỳ chọn được ghi lại trong đầu file sinh ra, để `yugen css` / `add` / `doctor` chạy lại đúng như lần trước. */
 export interface Recorded {
   src?: string[];
+  /** Chỉ khi người dùng truyền `--out`: lệnh in ra (predev, --check) phải trỏ đúng file. */
+  out?: string;
   precompile?: boolean;
 }
 
@@ -163,7 +165,12 @@ const quoteArg = (a: string) => (/[\s"`]/.test(a) ? `"${a.replace(/"/g, "")}"` :
 
 /** `yugen css --src app --precompile`: lệnh tạo ra file, ghi ở dòng đầu. */
 export function commandOf(r: Recorded) {
-  return ["yugen css", ...(r.src ?? []).flatMap((d) => ["--src", quoteArg(d)]), ...(r.precompile ? ["--precompile"] : [])].join(" ");
+  return [
+    "yugen css",
+    ...(r.src ?? []).flatMap((d) => ["--src", quoteArg(d)]),
+    ...(r.out ? ["--out", quoteArg(r.out)] : []),
+    ...(r.precompile ? ["--precompile"] : []),
+  ].join(" ");
 }
 
 /** Đọc lại tuỳ chọn từ đầu file; null nếu file không do `yugen css` ghi. */
@@ -174,6 +181,7 @@ export function parseRecorded(text: string): Recorded | null {
   const r: Recorded = {};
   for (let i = 0; i < args.length; i++) {
     if (args[i] === "--src" && args[i + 1] !== undefined) (r.src ??= []).push(args[++i]);
+    else if (args[i] === "--out" && args[i + 1] !== undefined) r.out = args[++i];
     else if (args[i] === "--precompile") r.precompile = true;
   }
   return r;
@@ -231,14 +239,24 @@ export interface Generated {
   recorded: Recorded;
 }
 
-/** File CSS của dự án (src, app, styles và gốc) mà `yugen css` đã ghi. */
+/** File do `yugen css` ghi (đọc đầu file), hoặc null. */
+export function readGenerated(cwd: string, abs: string): Generated | null {
+  if (!exists(abs)) return null;
+  const text = readText(abs);
+  const recorded = text.slice(0, 600).includes(MARK) ? parseRecorded(text) : null;
+  return recorded ? { file: toPosix(path.relative(cwd, abs)), abs, text, recorded } : null;
+}
+
+/**
+ * File CSS của dự án mà `yugen css` đã ghi: trong src, app, styles và gốc, cùng file mà các CSS đó `@import` (file ghi
+ * bằng `--out` ở thư mục khác, vd. `@import "../lib/yugen-ui.css"`).
+ */
 export function findGenerated(cwd: string): Generated[] {
-  const files = [...walk(cwd, /\.css$/, 0), ...["src", "app", "styles"].flatMap((d) => walk(path.join(cwd, d), /\.css$/, 5))];
-  return files.flatMap((abs) => {
-    const text = readText(abs);
-    const recorded = text.slice(0, 600).includes(MARK) ? parseRecorded(text) : null;
-    return recorded ? [{ file: toPosix(path.relative(cwd, abs)), abs, text, recorded }] : [];
-  });
+  const scanned = [...walk(cwd, /\.css$/, 0), ...["src", "app", "styles"].flatMap((d) => walk(path.join(cwd, d), /\.css$/, 5))];
+  const linked = scanned.flatMap((f) =>
+    cssImports(readText(f)).flatMap((spec) => (spec.startsWith(".") && spec.endsWith(".css") ? [path.resolve(path.dirname(f), spec)] : [])),
+  );
+  return [...new Set([...scanned, ...linked])].sort().flatMap((abs) => readGenerated(cwd, abs) ?? []);
 }
 
 /** Đường dẫn tương đối `spec` viết trong file `from` trỏ tới file `target` (tuyệt đối)? */

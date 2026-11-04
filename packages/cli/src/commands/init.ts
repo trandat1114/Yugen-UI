@@ -108,7 +108,16 @@ export async function init(opts: InitOptions, ctx: Ctx): Promise<YugenConfig> {
   writeConfig(cwd, config);
   p.log.success(`Wrote ${CONFIG_FILE}`);
   await provider(project, config, opts, ctx);
-  if (project.lean) await leanCss({ cwd, mainCss: css });
+  if (project.lean) {
+    try {
+      await leanCss({ cwd, mainCss: css });
+    } catch (e) {
+      // vd. đã có một src/yugen-ui.css không do yugen css ghi: vẫn import theme.css như trước để init chạy xong.
+      if (!(e instanceof CliError) || project.tailwind !== 4 || !css) throw e;
+      p.log.warn(`yugen css: ${e.message}${e.hint ? `\n${pc.dim(e.hint)}` : ""}`);
+      importInto(cwd, css, THEME_PACKAGE);
+    }
+  }
   return config;
 }
 

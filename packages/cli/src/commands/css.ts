@@ -21,6 +21,7 @@ import {
   listedFolders,
   precompiledCss,
   precompiledMeta,
+  readGenerated,
   readManifest,
   replaceThemeImports,
   scanUsage,
@@ -100,14 +101,17 @@ export async function css(opts: CssOptions): Promise<CssResult> {
   const pm = detectPackageManager(cwd);
 
   // File đích và tuỳ chọn của lần trước (ghi trong đầu file).
-  const generated = findGenerated(cwd);
   const relative = (p: string) => toPosix(path.relative(cwd, path.resolve(cwd, p))) || ".";
   let target = opts.out ? relative(opts.out) : undefined;
+  // `--out` ở thư mục không quét (vd. lib/) và chưa CSS nào import: vẫn là file của lần trước nếu đầu file do yugen css ghi.
+  const own = target ? readGenerated(cwd, path.join(cwd, target)) : null;
+  const generated = [...findGenerated(cwd).filter((g) => g.abs !== own?.abs), ...(own ? [own] : [])];
   if (!target && generated.length > 1)
     throw new CliError(`Several files were written by yugen css: ${generated.map((g) => g.file).join(", ")}.`, "Pass --out <file> to pick one, and delete the others.");
   const previous = target ? generated.find((g) => g.file === target) : generated[0];
   const recorded: Recorded = {
     src: opts.src?.length ? opts.src.map(relative) : previous?.recorded.src,
+    out: opts.out ? target : previous?.recorded.out,
     precompile: opts.precompile ?? previous?.recorded.precompile,
   };
   const precompile = !!recorded.precompile;

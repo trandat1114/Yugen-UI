@@ -221,7 +221,7 @@ export default function Page() {
           <P>
             Import thêm component thì chạy lại lệnh; ở chế độ package <C>yugen add &lt;tên&gt;</C> tự làm. Muốn luôn khớp thì cài CLI làm
             dev dependency và thêm <C>&quot;predev&quot;: &quot;yugen css&quot;</C>, <C>&quot;prebuild&quot;: &quot;yugen css&quot;</C> vào
-            package.json. Đầu file ghi lệnh đã tạo ra nó (kể cả <C>--src</C>), nên lần sau chỉ cần <C>yugen css</C>.
+            package.json. Đầu file ghi lệnh đã tạo ra nó (kể cả <C>--src</C>, <C>--out</C>), nên lần sau chỉ cần <C>yugen css</C>.
           </P>
           <P>
             <C>import * as Yugen from &quot;yugen-ui&quot;</C>, <C>export * from &quot;yugen-ui&quot;</C> hay{" "}

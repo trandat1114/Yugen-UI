@@ -223,7 +223,7 @@ export default function Page() {
             Run it again after you import another component; in package mode <C>yugen add &lt;name&gt;</C> does it for you. To keep it in
             sync, install the CLI as a dev dependency and add <C>&quot;predev&quot;: &quot;yugen css&quot;</C> and{" "}
             <C>&quot;prebuild&quot;: &quot;yugen css&quot;</C> to package.json. The file starts with the command that wrote it (
-            <C>--src</C> included), so the next run is just <C>yugen css</C>.
+            <C>--src</C> and <C>--out</C> included), so the next run is just <C>yugen css</C>.
           </P>
           <P>
             <C>import * as Yugen from &quot;yugen-ui&quot;</C>, <C>export * from &quot;yugen-ui&quot;</C> and{" "}
