@@ -35,38 +35,6 @@ export const PROJECT_URL = "https://github.com/users/trandat1114/projects/6";
 export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
   now: [
     {
-      milestone: "0.15.0",
-      kind: "minor",
-      due: "2026-11-25",
-      vi: "Rà soát trước 1.0 (API, Labs, bảo mật), prop mặc định và mật độ từ YugenProvider, tuỳ chọn thanh cuộn.",
-      en: "Reviews before 1.0 (API, Labs, security), default props and density from YugenProvider, a scroll lock setting.",
-      items: [
-        { status: "doing", issue: 157, vi: "Rà soát API: tên mới cho các prop lệch chuẩn, tên cũ cảnh báo deprecation tới 1.0", en: "API review: new names for the outlier props, old names deprecated until 1.0" },
-        { status: "planned", issue: 158, vi: "Yugen Labs: promote component đã chín, phần còn lại đánh dấu thử nghiệm", en: "Yugen Labs: promote what is mature, mark the rest experimental" },
-        { status: "done", issue: 171, vi: "Prop mặc định và mật độ (density) từ YugenProvider", en: "Default props and density from YugenProvider" },
-        { status: "done", issue: 230, vi: "Glass làm mặc định cho component điều hướng, qua prop mặc định", en: "Glass as a default for navigation components, through default props" },
-        { status: "done", issue: 243, vi: "Khóa cuộn: chọn giữ hay ẩn thanh cuộn khi mở Menu, ContextMenu, Dropdown", en: "Scroll lock: keep or hide the page scrollbar while Menu, ContextMenu or Dropdown is open" },
-        { status: "planned", issue: 165, vi: "Rà soát bảo mật các component hiển thị nội dung không tin cậy", en: "Security review of components that render untrusted content" },
-        { status: "done", issue: 320, vi: "Icon có sẵn trong thư viện: cài yugen-ui nhẹ hơn ~180 MB", en: "Built-in icons: installing yugen-ui is ~180 MB lighter" },
-        { status: "done", issue: 62, vi: "Chỉ hỗ trợ React 19: bỏ React 18 khỏi peer dependency và CI", en: "React 19 only: React 18 leaves the peer dependencies and CI" },
-      ],
-    },
-    {
-      milestone: "0.16.0",
-      kind: "minor",
-      due: "2026-12-09",
-      vi: "Những phần còn thiếu của một bộ component đầy đủ.",
-      en: "The missing pieces of a complete kit.",
-      items: [
-        { status: "planned", issue: 168, vi: "NavigationMenu cho header website", en: "NavigationMenu for website headers" },
-        { status: "planned", issue: 173, vi: "Form control còn thiếu: PasswordInput, input có định dạng, chọn tháng / năm / ngày giờ, ColorPicker", en: "Missing form controls: PasswordInput, formatted inputs, month / year / date-time pickers, ColorPicker" },
-        { status: "planned", issue: 244, vi: "Typography: trang Typeset tinh chỉnh Prose (font, cỡ chữ, khoảng cách) và copy CSS", en: "Typography: a Typeset page to tune Prose (fonts, size, spacing) and copy the CSS" },
-        { status: "planned", issue: 238, vi: "Trang lỗi HTTP: component StatusPage, trang 404 cho docs, not-found trong template", en: "HTTP status pages: a StatusPage component, a docs 404 route, not-found routes in the templates" },
-        { status: "planned", issue: 167, vi: "Unit test tối thiểu cho mọi component, coverage trong CI", en: "A unit test floor for every component, with coverage in CI" },
-        { status: "planned", issue: 166, vi: "Visual regression cho mọi component (3 theme + RTL)", en: "Visual regression for every component (3 themes + RTL)" },
-      ],
-    },
-    {
       milestone: "1.0.0",
       kind: "major",
       vi: "API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện hoàn tất.",
@@ -74,7 +42,9 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       items: [
         { status: "planned", issue: 65, vi: "Rà soát API, gỡ deprecation, quyết định về class spacing viết hoa", en: "API review, deprecations removed, decision on upper-case spacing" },
         { status: "done", issue: 63, vi: "SEO: URL theo đường dẫn, prerender từng trang, sitemap", en: "SEO: path URLs, prerendered pages, sitemap" },
-        { status: "planned", issue: 160, vi: "Đề xuất cho 1.0 (đã duyệt): Form, NavigationMenu, block 2.0, codemod, kiểm thử", en: "1.0 proposals (approved): Form, NavigationMenu, blocks 2.0, codemods, testing" },
+        { status: "planned", issue: 162, vi: "Form: kiểm tra dữ liệu và tóm tắt lỗi", en: "Form: validation and an error summary" },
+        { status: "planned", issue: 163, vi: "Thư viện block 2.0 (marketing, ứng dụng, thương mại), cài bằng CLI", en: "Block library 2.0 (marketing, app, commerce), installable with the CLI" },
+        { status: "planned", issue: 164, vi: "Codemod 0.x → 1.0 (yugen migrate) cho các tên đã đổi", en: "Codemods 0.x → 1.0 (yugen migrate) for the renamed props" },
         { status: "planned", issue: 169, vi: "@yugen-ui/cli ghi các dòng @import của CSS theo component (init, doctor)", en: "@yugen-ui/cli writes the @import lines for per-component CSS (init, doctor)" },
       ],
     },

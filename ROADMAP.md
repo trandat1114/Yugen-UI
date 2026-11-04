@@ -12,37 +12,15 @@ Want to pick something up? Comment on the issue before you start. The same roadm
 
 ## Now
 
-### 0.15.0 · minor · due 2026-11-25
-
-Reviews before 1.0 (API, Labs, security), default props and density from YugenProvider, a scroll lock setting.
-
-- [~] API review: new names for the outlier props, old names deprecated until 1.0 (#157)
-- [ ] Yugen Labs: promote what is mature, mark the rest experimental (#158)
-- [x] Default props and density from YugenProvider (#171)
-- [x] Glass as a default for navigation components, through default props (#230)
-- [x] Scroll lock: keep or hide the page scrollbar while Menu, ContextMenu or Dropdown is open (#243)
-- [ ] Security review of components that render untrusted content (#165)
-- [x] Built-in icons: installing yugen-ui is ~180 MB lighter (#320)
-- [x] React 19 only: React 18 leaves the peer dependencies and CI (#62)
-
-### 0.16.0 · minor · due 2026-12-09
-
-The missing pieces of a complete kit.
-
-- [ ] NavigationMenu for website headers (#168)
-- [ ] Missing form controls: PasswordInput, formatted inputs, month / year / date-time pickers, ColorPicker (#173)
-- [ ] Typography: a Typeset page to tune Prose (fonts, size, spacing) and copy the CSS (#244)
-- [ ] HTTP status pages: a StatusPage component, a docs 404 route, not-found routes in the templates (#238)
-- [ ] A unit test floor for every component, with coverage in CI (#167)
-- [ ] Visual regression for every component (3 themes + RTL) (#166)
-
 ### 1.0.0 · major
 
 Stable API. No fixed date: ships when the readiness checklist is done.
 
 - [ ] API review, deprecations removed, decision on upper-case spacing (#65)
 - [x] SEO: path URLs, prerendered pages, sitemap (#63)
-- [ ] 1.0 proposals (approved): Form, NavigationMenu, blocks 2.0, codemods, testing (#160)
+- [ ] Form: validation and an error summary (#162)
+- [ ] Block library 2.0 (marketing, app, commerce), installable with the CLI (#163)
+- [ ] Codemods 0.x → 1.0 (yugen migrate) for the renamed props (#164)
 - [ ] @yugen-ui/cli writes the @import lines for per-component CSS (init, doctor) (#169)
 
 ## Next
@@ -88,37 +66,15 @@ Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. 
 
 ### Đang làm
 
-#### 0.15.0 · minor · hạn 2026-11-25
-
-Rà soát trước 1.0 (API, Labs, bảo mật), prop mặc định và mật độ từ YugenProvider, tuỳ chọn thanh cuộn.
-
-- [~] Rà soát API: tên mới cho các prop lệch chuẩn, tên cũ cảnh báo deprecation tới 1.0 (#157)
-- [ ] Yugen Labs: promote component đã chín, phần còn lại đánh dấu thử nghiệm (#158)
-- [x] Prop mặc định và mật độ (density) từ YugenProvider (#171)
-- [x] Glass làm mặc định cho component điều hướng, qua prop mặc định (#230)
-- [x] Khóa cuộn: chọn giữ hay ẩn thanh cuộn khi mở Menu, ContextMenu, Dropdown (#243)
-- [ ] Rà soát bảo mật các component hiển thị nội dung không tin cậy (#165)
-- [x] Icon có sẵn trong thư viện: cài yugen-ui nhẹ hơn ~180 MB (#320)
-- [x] Chỉ hỗ trợ React 19: bỏ React 18 khỏi peer dependency và CI (#62)
-
-#### 0.16.0 · minor · hạn 2026-12-09
-
-Những phần còn thiếu của một bộ component đầy đủ.
-
-- [ ] NavigationMenu cho header website (#168)
-- [ ] Form control còn thiếu: PasswordInput, input có định dạng, chọn tháng / năm / ngày giờ, ColorPicker (#173)
-- [ ] Typography: trang Typeset tinh chỉnh Prose (font, cỡ chữ, khoảng cách) và copy CSS (#244)
-- [ ] Trang lỗi HTTP: component StatusPage, trang 404 cho docs, not-found trong template (#238)
-- [ ] Unit test tối thiểu cho mọi component, coverage trong CI (#167)
-- [ ] Visual regression cho mọi component (3 theme + RTL) (#166)
-
 #### 1.0.0 · major
 
 API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện hoàn tất.
 
 - [ ] Rà soát API, gỡ deprecation, quyết định về class spacing viết hoa (#65)
 - [x] SEO: URL theo đường dẫn, prerender từng trang, sitemap (#63)
-- [ ] Đề xuất cho 1.0 (đã duyệt): Form, NavigationMenu, block 2.0, codemod, kiểm thử (#160)
+- [ ] Form: kiểm tra dữ liệu và tóm tắt lỗi (#162)
+- [ ] Thư viện block 2.0 (marketing, ứng dụng, thương mại), cài bằng CLI (#163)
+- [ ] Codemod 0.x → 1.0 (yugen migrate) cho các tên đã đổi (#164)
 - [ ] @yugen-ui/cli ghi các dòng @import của CSS theo component (init, doctor) (#169)
 
 ### Tiếp theo
