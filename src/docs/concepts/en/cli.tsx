@@ -64,6 +64,7 @@ src/
   index.css                           # gains @import "./yugen.css"; after @import "tailwindcss";
   yugen.css                           # theme
   lib/cn.ts
+  lib/cvx.ts                          # with yugen add button (variant classes)
   components/ui/YugenProvider/…       # plus the Toast and Tooltip it uses
   components/ui/Button/Button.tsx     # from yugen add`;
 

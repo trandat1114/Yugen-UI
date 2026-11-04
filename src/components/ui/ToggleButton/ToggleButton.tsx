@@ -1,8 +1,8 @@
 import * as React from "react";
 import { useControllableState } from "../hooks/useControllableState";
 import * as TogglePrimitive from "@radix-ui/react-toggle";
-import { cva } from "class-variance-authority";
 import { cn } from "@/lib/cn";
+import { cvx } from "@/lib/cvx";
 import { buttonVariants } from "../Button/Button";
 import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
@@ -12,7 +12,7 @@ export type ToggleButtonSize = "small" | "medium" | "large";
 export type ToggleButtonShape = "rounded" | "circular" | "square";
 
 /** Lớp phủ trạng thái "đang bật" (`data-state=on`) cho từng appearance. */
-const toggleCheckedVariants = cva("", {
+const toggleCheckedVariants = cvx("", {
   variants: {
     appearance: {
       secondary: [

@@ -1,10 +1,10 @@
 /** Fluent 2 Label — https://fluent2.microsoft.design/components/web/react/core/label/usage */
 import * as React from "react";
-import { cva } from "class-variance-authority";
 import { cn } from "@/lib/cn";
+import { cvx } from "@/lib/cvx";
 import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
-const labelVariants = cva("text-foreground-1", {
+const labelVariants = cvx("text-foreground-1", {
   variants: {
     size: {
       small: "text-caption1",
@@ -47,7 +47,7 @@ export function Label(inProps: LabelProps & { ref?: React.Ref<HTMLLabelElement> 
     <label
       ref={ref}
       aria-disabled={disabled || undefined}
-      className={cn(labelVariants({ size, weight, disabled: !!disabled }), disabled && "cursor-not-allowed", className)}
+      className={labelVariants({ size, weight, disabled: !!disabled, className: [disabled && "cursor-not-allowed", className] })}
       {...props}
     >
       {children}

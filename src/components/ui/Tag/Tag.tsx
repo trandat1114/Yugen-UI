@@ -1,9 +1,9 @@
 /** Fluent 2 Tag — https://fluent2.microsoft.design/components/web/react/core/tag/usage */
 import * as React from "react";
-import { cva } from "class-variance-authority";
 import { useDirection } from "@radix-ui/react-direction";
 import { Dismiss12Regular, Dismiss16Regular, Dismiss20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
+import { cvx } from "@/lib/cvx";
 import { useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { useComposedRefs } from "../_internal/composeRefs";
 import { tagMessagesEn } from "./messages";
@@ -23,7 +23,7 @@ interface TagGroupContextValue {
 
 const TagGroupContext = React.createContext<TagGroupContextValue | null>(null);
 
-const tagVariants = cva(
+const tagVariants = cvx(
   "inline-flex max-w-full min-w-0 shrink-0 items-center border align-middle whitespace-nowrap select-none [&_svg]:shrink-0",
   {
     variants: {
@@ -148,12 +148,13 @@ export function Tag(inProps: TagProps & { ref?: React.Ref<HTMLElement> }) {
   } = useComponentDefaults("Tag", useGroupFirst(inProps), COMPACT_SIZE);
   const { group, size, appearance, disabled } = useTagContext({ size: sizeProp, appearance: appearanceProp, disabled: disabledProp });
   const msg = useYugenMessages("tag", tagMessagesEn);
-  const classes = cn(
-    tagVariants({ appearance, size, shape, disabled }),
-    media && MEDIA_PADDING[size],
-    dismissible && DISMISS_PADDING[size],
-    className,
-  );
+  const classes = tagVariants({
+    appearance,
+    size,
+    shape,
+    disabled,
+    className: [media && MEDIA_PADDING[size], dismissible && DISMISS_PADDING[size], className],
+  });
 
   if (!dismissible) {
     return (
