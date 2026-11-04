@@ -135,7 +135,7 @@ function NewsletterForm() {
 }
 
 const IMPORTS = `// Gốc gói: mọi thứ từ một chỗ. Bundler chỉ giữ phần bạn dùng.
-import { Button, Dialog, DialogSurface } from "yugen-ui";
+import { Dialog, DialogSurface, DialogTrigger } from "yugen-ui";
 
 // Subpath: chỉ component đó và những gì nó dùng.
 import { Button } from "yugen-ui/Button";

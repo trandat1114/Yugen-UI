@@ -135,7 +135,7 @@ function NewsletterForm() {
 }
 
 const IMPORTS = `// The root: everything from one place. Bundlers keep only what you use.
-import { Button, Dialog, DialogSurface } from "yugen-ui";
+import { Dialog, DialogSurface, DialogTrigger } from "yugen-ui";
 
 // A subpath: only that component and what it uses.
 import { Button } from "yugen-ui/Button";
