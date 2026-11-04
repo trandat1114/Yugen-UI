@@ -83,7 +83,9 @@ npm run dev          # docs site at http://localhost:5173
   `e2e/` or `playwright.config.ts` (the **Browser engines** workflow), not on every PR. Touch-drag tests go through CDP,
   so they run on Chromium only.
 - `npm run size` — size budgets (`.size-limit.cjs`), after `npm run build:lib`. If a budget fails, find the cause first
-  (an extra import, a new dependency); raise a `limit` only on purpose, and say why in the PR.
+  (an extra import, a new dependency); raise a `limit` only on purpose, and say why in the PR. A limit is the measured
+  size + 8%, rounded up to 0.5 kB. When a change makes an entry smaller, lower its limit in the same PR:
+  `node scripts/check-size-slack.mjs` (CI) fails when a limit is more than 20% above the measured size.
 
 ### Rules (summary of Design.md §0)
 
@@ -358,7 +360,9 @@ npm run dev          # trang docs tại http://localhost:5173
 - `npm run test:engines` — cần `npx playwright install firefox webkit` một lần. CI chạy hằng tuần, trên PR vào `main` và
   trên PR có đổi `e2e/` hoặc `playwright.config.ts` (workflow **Browser engines**), không chạy trên mọi PR. Test chạm-kéo dùng CDP nên chỉ chạy trên Chromium.
 - `npm run size` — sau `npm run build:lib`. Vượt ngân sách thì tìm nguyên nhân trước (import thừa, dependency mới);
-  tăng có chủ đích thì sửa `limit` trong `.size-limit.cjs` và ghi lý do trong PR.
+  tăng có chủ đích thì sửa `limit` trong `.size-limit.cjs` và ghi lý do trong PR. Giới hạn = kích thước đo được + 8%,
+  làm tròn lên 0.5 kB. Thay đổi làm một mục nhỏ đi thì hạ `limit` của mục đó trong cùng PR:
+  `node scripts/check-size-slack.mjs` (CI) báo lỗi khi giới hạn cao hơn kích thước đo được quá 20%.
 
 ### Luật bắt buộc (tóm tắt Design.md §0)
 
