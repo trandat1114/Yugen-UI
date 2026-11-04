@@ -73,21 +73,32 @@ describe("keyframes trong @theme (#353)", () => {
     expect(tokens.get("indeterminate")).toEqual(["indeterminate"]);
   });
 
-  it("component dùng token, không gọi keyframe bằng tên trong giá trị tuỳ ý", () => {
+  it("component, demo và template dùng token, không gọi keyframe bằng tên", () => {
+    // Tên keyframe trong giá trị tuỳ ý (animate-[…], [animation:…]), trong style={{ animation }} hay trong file CSS
+    // không qua Tailwind: Tailwind không thấy (style, CSS thường) hoặc chỉ bản mới thấy (giá trị tuỳ ý), nên keyframe
+    // có thể không được xuất. Tách từng từ của giá trị: "_" ngăn các phần trong giá trị tuỳ ý.
+    const PATTERNS: Record<string, RegExp[]> = {
+      ts: [/animate-\[([^\]\s]+)\]/g, /\[animation(?:-name)?:([^\]\s]+)\]/g, /animation(?:Name)?\s*:\s*["'`]([^"'`]+)["'`]/g],
+      css: [/(?<![\w-])animation(?:-name)?\s*:\s*([^;}]+)/g],
+    };
     const offenders: string[] = [];
     const walk = (dir: string) => {
       for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
         const p = path.join(dir, entry.name);
-        if (entry.isDirectory()) walk(p);
-        else if (/\.tsx?$/.test(entry.name) && !/\.test\./.test(entry.name)) {
+        const kind = /\.tsx?$/.test(entry.name) && !/\.test\./.test(entry.name) ? "ts" : entry.name.endsWith(".css") ? "css" : null;
+        if (entry.isDirectory()) {
+          if (entry.name !== "node_modules") walk(p);
+        } else if (kind) {
           const text = fs.readFileSync(p, "utf8");
-          for (const [all, name] of text.matchAll(/(?:animate-\[|\[animation(?:-name)?:)([\w-]+)/g)) {
-            if (keyframeNames.includes(name)) offenders.push(`${path.relative(root, p)}: ${all}`);
+          for (const re of PATTERNS[kind]) {
+            for (const [all, value] of text.matchAll(re)) {
+              if (value.split(/[\s_,]+/).some((word) => keyframeNames.includes(word))) offenders.push(`${path.relative(root, p)}: ${all}`);
+            }
           }
         }
       }
     };
-    walk(path.join(src, "components", "ui"));
+    for (const dir of ["components/ui", "docs"]) walk(path.join(src, dir));
     expect(offenders).toEqual([]);
   });
 
