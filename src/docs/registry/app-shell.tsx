@@ -494,7 +494,7 @@ function ChatShell() {
       { name: "SidebarGroup.label", type: "ReactNode", description: "Tên nhóm; trong rail chỉ còn cho trình đọc màn hình." },
       { name: "AppShellHeader / AppShellMain / AppShellAside / AppShellFooter.asChild", type: "boolean", description: "Đổi thẻ header / main / aside / footer sang phần tử con." },
       { name: "useAppShell()", type: "AppShellState", description: "narrow, collapsed, setCollapsed, drawerOpen, setDrawerOpen, toggleSidebar, rail." },
-      { name: "readAppShellCookie(cookie, persistKey)", type: "{ collapsed, width? } | undefined", description: "Đọc trạng thái đã lưu từ document.cookie hoặc header Cookie khi render ở server." },
+      { name: "readAppShellCookie(cookie, persistKey)", type: "{ collapsed, width? } | undefined", description: "Đọc trạng thái đã lưu từ document.cookie hoặc header Cookie khi render ở server. Gọi được trong Server Component khi import từ yugen-ui (gốc gói)." },
     ],
   },
 ];

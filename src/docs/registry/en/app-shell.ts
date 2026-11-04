@@ -63,7 +63,7 @@ export const en: Record<string, ComponentDocEn> = {
       "SidebarGroup.label": "Group name; in the rail it is kept for screen readers only.",
       "AppShellHeader / AppShellMain / AppShellAside / AppShellFooter.asChild": "Render the header / main / aside / footer as the child element.",
       "useAppShell()": "narrow, collapsed, setCollapsed, drawerOpen, setDrawerOpen, toggleSidebar, rail.",
-      "readAppShellCookie(cookie, persistKey)": "Reads the saved state from document.cookie, or from the Cookie header when rendering on the server.",
+      "readAppShellCookie(cookie, persistKey)": "Reads the saved state from document.cookie, or from the Cookie header when rendering on the server. Callable in a Server Component when imported from yugen-ui (the package root).",
     },
   },
 };

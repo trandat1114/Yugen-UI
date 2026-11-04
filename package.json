@@ -60,7 +60,32 @@
     "./sources/*": "./dist/sources/*",
     "./styles.css": "./dist/styles.css",
     "./tokens.css": "./dist/tokens.css",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./hooks": {
+      "types": "./dist/components/ui/hooks/Hooks.d.ts",
+      "default": "./dist/components/ui/hooks/Hooks.js"
+    },
+    "./messages-en": {
+      "types": "./dist/components/ui/messages-en.d.ts",
+      "default": "./dist/components/ui/messages-en.js"
+    },
+    "./messages-vi": {
+      "types": "./dist/components/ui/messages-vi.d.ts",
+      "default": "./dist/components/ui/messages-vi.js"
+    },
+    "./YugenProvider/document": {
+      "types": "./dist/components/ui/YugenProvider/document.d.ts",
+      "default": "./dist/components/ui/YugenProvider/document.js"
+    },
+    "./AppShell/Sidebar": {
+      "types": "./dist/components/ui/AppShell/Sidebar.d.ts",
+      "default": "./dist/components/ui/AppShell/Sidebar.js"
+    },
+    "./_internal/*": null,
+    "./*": {
+      "types": "./dist/components/ui/*/*.d.ts",
+      "default": "./dist/components/ui/*/*.js"
+    }
   },
   "scripts": {
     "dev": "vite",
@@ -68,7 +93,7 @@
     "contributors": "node scripts/contributors.mjs",
     "cli": "npm run build --prefix packages/cli && node packages/cli/dist/index.js",
     "build:docs": "npm run registry && vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.mjs",
-    "build:lib": "vite build -c vite.lib.config.ts && tsc -p tsconfig.lib.json && tsc-alias -p tsconfig.lib.json && node scripts/build-css.mjs",
+    "build:lib": "vite build -c vite.lib.config.ts && tsc -p tsconfig.lib.json && node scripts/alias-dts.mjs && node scripts/build-css.mjs",
     "build": "npm run build:lib && npm run build:docs",
     "preview": "vite preview",
     "typecheck": "tsc -b",
@@ -90,7 +115,8 @@
     "check:demo-language": "node scripts/check-demo-language.mjs",
     "roadmap": "vite-node scripts/sync-roadmap.ts",
     "prepublishOnly": "npm run check:release && npm run typecheck && npm run lint:classes && npm run build:lib",
-    "pack:check": "npm pack --dry-run"
+    "pack:check": "npm pack --dry-run",
+    "check:package": "node scripts/check-package.mjs"
   },
   "peerDependencies": {
     "react": ">=19",
@@ -158,7 +184,6 @@
     "react-hook-form": "^7.90.0",
     "size-limit": "^14.2.0",
     "tailwindcss": "^4.0.0",
-    "tsc-alias": "^1.9.8",
     "typescript": "~7.0.2",
     "vite": "^8.3.5",
     "vite-node": "^6.0.0",

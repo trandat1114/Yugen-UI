@@ -10,12 +10,5 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false
   },
-  "include": ["src/lib.ts"],
-  "tsc-alias": {
-    "resolveFullPaths": true,
-    "verbose": false,
-    "fileExtensions": {
-      "inputGlob": "d.ts"
-    }
-  }
+  "include": ["src/lib.ts"]
 }
