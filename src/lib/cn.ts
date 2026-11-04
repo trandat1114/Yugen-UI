@@ -4,6 +4,9 @@ import { extendTailwindMerge } from "tailwind-merge";
 // Dạy tailwind-merge các scale tuỳ biến; thiếu bước này, `text-body1` bị coi là màu chữ
 // và bị xoá khi đi cùng `text-foreground-1`. Khoá theme (spacing, radius) theo namespace biến của Tailwind v4 (tailwind-merge 3).
 const twMerge = extendTailwindMerge<"glass">({
+  // Default 500: one page with many components already merges ~500 distinct strings, so the cache started over on
+  // every render of a large app (#355).
+  cacheSize: 2000,
   extend: {
     theme: {
       // Alias spacing viết hoa (deprecated từ 0.10, bỏ ở 1.0 — #42); thang số đã có sẵn trong tailwind-merge.

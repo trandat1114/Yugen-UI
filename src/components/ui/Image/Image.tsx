@@ -1,9 +1,10 @@
 import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/cn";
+import { cvx } from "@/lib/cvx";
 
 /** Fluent 2 Image — https://fluent2.microsoft.design/components/web/react/core/image/usage */
-const imageVariants = cva("box-border border-stroke-1", {
+const imageVariants = cvx("box-border border-stroke-1", {
   variants: {
     fit: {
       // object-position không có giá trị logic → neo về góc đầu dòng theo hướng chữ.
@@ -37,7 +38,7 @@ export function Image({
   ref,
   ...props
 }: ImageProps & { ref?: React.Ref<HTMLImageElement> }) {
-  return <img ref={ref} className={cn(imageVariants({ fit, shape, bordered, shadow, block }), className)} {...props} />;
+  return <img ref={ref} className={imageVariants({ fit, shape, bordered, shadow, block, className })} {...props} />;
 }
 
 /* ------------------------------------------------------------------ AspectRatio

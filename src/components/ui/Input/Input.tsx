@@ -1,11 +1,12 @@
 import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
 import { ErrorCircle12Filled, CheckmarkCircle12Filled, Warning12Filled } from "../_internal/icons";
 import { cn } from "@/lib/cn";
+import { cvx } from "@/lib/cvx";
 import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
 /** Fluent 2 Input + Field — https://fluent2.microsoft.design/components/web/react/core/input/usage */
-const inputRootVariants = cva(
+const inputRootVariants = cvx(
   [
     "relative inline-flex w-full items-center text-foreground-1",
     // Fluent focus indicator: thanh brand 2px ở đáy, scale từ giữa ra.
@@ -102,11 +103,12 @@ export function Input(inProps: InputProps & { ref?: React.Ref<HTMLInputElement> 
         </label>
       )}
       <span
-        className={cn(
-          inputRootVariants({ appearance, size, invalid: validationState === "error" }),
-          disabled && "border-stroke-disabled bg-transparent text-foreground-disabled hover:border-stroke-disabled",
-          className,
-        )}
+        className={inputRootVariants({
+          appearance,
+          size,
+          invalid: validationState === "error",
+          className: [disabled && "border-stroke-disabled bg-transparent text-foreground-disabled hover:border-stroke-disabled", className],
+        })}
       >
         {contentBefore && <span className="flex text-foreground-3">{contentBefore}</span>}
         <input

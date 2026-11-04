@@ -145,14 +145,15 @@ function libItem(file) {
   const abs = path.join(src, "lib", file.endsWith(".ts") ? file : `${file}.ts`);
   const name = kebab(path.basename(abs, ".ts"));
   libFiles.set(file, name);
-  const { npm } = analyse(abs, null);
+  const { npm, lib } = analyse(abs, null);
   items.push({
     name,
     type: "registry:lib",
     title: path.basename(abs),
     description: `Yugen UI helper ${path.basename(abs)}.`,
     dependencies: sorted(npm).map(withVersion),
-    registryDependencies: [],
+    // cvx.ts dùng cn.ts (#355).
+    registryDependencies: sorted(lib).map((file) => itemUrl(libItem(file))),
     files: [{ path: `registry/yugen/lib/${path.basename(abs)}`, type: "registry:lib", content: read(abs) }],
   });
   return name;

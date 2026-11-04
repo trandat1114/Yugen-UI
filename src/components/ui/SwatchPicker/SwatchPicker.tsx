@@ -1,9 +1,9 @@
 /** Fluent 2 SwatchPicker — https://storybooks.fluentui.dev/react/?path=/docs/components-swatchpicker--docs */
 import * as React from "react";
 import { useControllableState } from "../hooks/useControllableState";
-import { cva } from "class-variance-authority";
 import { Prohibited16Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
+import { cvx } from "@/lib/cvx";
 import { useArrowNavigationGroup } from "../FocusManagement/FocusManagement";
 import { useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { swatchPickerMessagesEn } from "./messages";
@@ -105,7 +105,7 @@ export function SwatchPicker(inProps: SwatchPickerProps & { ref?: React.Ref<HTML
   );
 }
 
-const swatchVariants = cva(
+const swatchVariants = cvx(
   [
     "group/swatch relative inline-flex shrink-0 cursor-pointer items-center justify-center p-0 align-middle",
     "disabled:pointer-events-none",
@@ -158,7 +158,7 @@ function SwatchBase({
       aria-label={ariaLabel ?? value}
       disabled={disabled}
       data-selected={selected || undefined}
-      className={cn(swatchVariants({ size, shape }), className)}
+      className={swatchVariants({ size, shape, className })}
       onClick={(event) => {
         onClick?.(event);
         if (!event.defaultPrevented) select(value);

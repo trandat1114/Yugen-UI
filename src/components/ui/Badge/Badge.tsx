@@ -1,10 +1,10 @@
 import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/lib/cn";
+import type { VariantProps } from "class-variance-authority";
+import { cvx } from "@/lib/cvx";
 import { useComponentDefaults } from "../YugenProvider/context";
 
 /** Fluent 2 Badge — https://fluent2.microsoft.design/components/web/react/core/badge/usage */
-const badgeVariants = cva(
+const badgeVariants = cvx(
   "inline-flex shrink-0 items-center justify-center border font-semibold whitespace-nowrap [&_svg]:shrink-0",
   {
     variants: {
@@ -87,7 +87,7 @@ export function Badge(inProps: BadgeProps & { ref?: React.Ref<HTMLSpanElement> }
     ...props
   } = useComponentDefaults("Badge", inProps);
   return (
-    <span ref={ref} className={cn(badgeVariants({ appearance, color, size, shape }), className)} {...props}>
+    <span ref={ref} className={badgeVariants({ appearance, color, size, shape, className })} {...props}>
       {icon}
       {children != null && <span className="px-0.5">{children}</span>}
     </span>

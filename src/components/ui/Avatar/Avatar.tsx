@@ -1,10 +1,11 @@
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
-import { cva, type VariantProps } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/cn";
+import { cvx } from "@/lib/cvx";
 import { useComponentDefaults } from "../YugenProvider/context";
 
 /** Fluent 2 Avatar — https://fluent2.microsoft.design/components/web/react/core/avatar/usage */
-const avatarVariants = cva(
+const avatarVariants = cvx(
   "relative inline-flex shrink-0 items-center justify-center overflow-hidden font-semibold select-none",
   {
     variants: {
@@ -75,7 +76,7 @@ export function Avatar(inProps: AvatarProps) {
 
   return (
     <span className="relative inline-flex shrink-0" role="img" aria-label={name}>
-      <AvatarPrimitive.Root className={cn(avatarVariants({ size, shape }), colorClass, className)}>
+      <AvatarPrimitive.Root className={avatarVariants({ size, shape, className: [colorClass, className] })}>
         {src && <AvatarPrimitive.Image src={src} alt="" className="size-full object-cover" />}
         <AvatarPrimitive.Fallback delayMs={src ? 400 : 0} aria-hidden>
           {initialsOf(name)}
