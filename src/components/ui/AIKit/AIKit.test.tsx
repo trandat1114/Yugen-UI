@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { markdownToPlainText, parseMarkdown, sanitizeHref, type MdBlock, type MdInline } from "./markdown";
 import { StreamingMarkdown } from "./StreamingMarkdown";
@@ -7,6 +7,9 @@ import { PromptInput, formatFileSize, validateFiles } from "./PromptInput";
 import { formatReasoningDuration } from "./Reasoning";
 import { promptInputMessagesEn } from "./messages";
 import { YugenProvider } from "../YugenProvider/YugenProvider";
+
+// render gốc (tiếng Anh), không qua ngữ cảnh tiếng Việt của src/test/setup.ts: module nạp lại không dùng chung context đó.
+const { render: renderBare } = await vi.importActual<typeof import("@testing-library/react")>("@testing-library/react");
 
 const blocks = (text: string, streaming = false) => parseMarkdown(text, { streaming }).children;
 const first = <T extends MdBlock["type"]>(text: string, type: T, streaming = false) => {
@@ -125,6 +128,64 @@ describe("StreamingMarkdown", () => {
     rerender(<StreamingMarkdown>{"Đoạn một.\n\nĐoạn hai.\n\nĐoạn ba dài thêm."}</StreamingMarkdown>);
     expect(root).not.toHaveAttribute("aria-busy");
     expect(container.querySelector("[data-streaming-caret]")).toBeNull();
+  });
+});
+
+describe("StreamingMarkdown: chú thích nạp lúc cần (#350)", () => {
+  /** Module mới, Citation chưa nạp: render đầu là chip thay thế (như server và lần hydrate đầu). */
+  async function freshMarkdown() {
+    vi.resetModules();
+    return (await import("./StreamingMarkdown")).StreamingMarkdown;
+  }
+  const sources = [{ title: "React docs", url: "https://www.react.dev/reference" }];
+  const chip = (container: HTMLElement) => container.querySelector<HTMLButtonElement>('[data-citation="1"]')!;
+
+  it("chip trước khi Citation nạp: cùng class, tên, mô tả và ARIA với trigger lúc đóng; nạp xong thì Citation thay vào", async () => {
+    const Fresh = await freshMarkdown();
+    const { container } = renderBare(<Fresh citations={sources}>{"Hooks run in order [1]."}</Fresh>);
+    const fallback = chip(container);
+    expect(fallback).toHaveAccessibleName(/^Source ?1: React docs — react\.dev$/);
+    expect(fallback).toHaveAccessibleDescription(": React docs — react.dev");
+    expect(fallback).toHaveAttribute("aria-haspopup", "dialog");
+    expect(fallback).toHaveAttribute("aria-expanded", "false");
+    expect(fallback).toHaveAttribute("data-state", "closed");
+    await waitFor(() => expect(chip(container)).not.toBe(fallback));
+    const trigger = chip(container);
+    expect(trigger.className).toBe(fallback.className);
+    expect(trigger.innerHTML.replace(/id="[^"]+"/, "")).toBe(fallback.innerHTML.replace(/id="[^"]+"/, ""));
+    expect(trigger).toHaveAccessibleName(/^Source ?1: React docs — react\.dev$/);
+    expect(trigger).toHaveAccessibleDescription(": React docs — react.dev");
+    expect(trigger).toHaveAttribute("aria-haspopup", "dialog");
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    expect(trigger).toHaveAttribute("data-state", "closed");
+  });
+
+  it("bấm chip trước khi Citation nạp xong: thẻ nguồn mở khi nạp xong", async () => {
+    const Fresh = await freshMarkdown();
+    const user = userEvent.setup();
+    const { container } = renderBare(<Fresh citations={sources}>{"Hooks run in order [1]."}</Fresh>);
+    const fallback = chip(container);
+    // Còn là chip thay thế (PopoverTrigger của Radix có aria-controls).
+    expect(fallback).not.toHaveAttribute("aria-controls");
+    fallback.focus();
+    fireEvent.click(fallback);
+    const card = await screen.findByRole("dialog");
+    expect(card).toHaveTextContent("React docs");
+    expect(chip(container)).toHaveAttribute("aria-expanded", "true");
+    // Như bấm chip thật: thẻ được ghim, focus vào trong; Esc đóng và trả focus về chip.
+    await waitFor(() => expect(card).toContainElement(document.activeElement as HTMLElement));
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    expect(chip(container)).toHaveFocus();
+  });
+
+  it("focus đang ở chip lúc Citation nạp xong: chuyển sang chip thật", async () => {
+    const Fresh = await freshMarkdown();
+    const { container } = renderBare(<Fresh citations={sources}>{"Hooks run in order [1]."}</Fresh>);
+    const fallback = chip(container);
+    fallback.focus();
+    await waitFor(() => expect(chip(container)).not.toBe(fallback));
+    expect(chip(container)).toHaveFocus();
   });
 });
 

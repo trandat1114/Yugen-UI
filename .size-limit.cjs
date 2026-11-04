@@ -53,13 +53,19 @@ module.exports = [
   js("{ YugenProvider }", "{ YugenProvider }", "15 kB"),
   js("{ Dialog, DialogSurface }", "{ Dialog, DialogSurface }", "24 kB"),
   js("{ Combobox }", "{ Combobox }", "59 kB"),
-  js("{ DatePicker }", "{ DatePicker }", "68 kB"),
+  // Calendar không kéo locale vi của react-day-picker (#349): 61.93 → 59.72 kB.
+  js("{ DatePicker }", "{ DatePicker }", "64.5 kB"),
   // #173: họ DatePicker dùng chung vỏ; MonthPicker / DateTimePicker kéo theo Calendar (react-day-picker) như DatePicker.
-  js("{ MonthPicker, YearPicker, DateTimePicker }", "{ MonthPicker, YearPicker, DateTimePicker }", "76 kB"),
+  // Không kéo locale vi (#349): 69.00 → 66.76 kB.
+  js("{ MonthPicker, YearPicker, DateTimePicker }", "{ MonthPicker, YearPicker, DateTimePicker }", "72.5 kB"),
   js("{ PasswordInput, FormattedInput }", "{ PasswordInput, FormattedInput }", "16.5 kB"),
   js("{ ColorPicker }", "{ ColorPicker }", "30 kB"),
   js("{ BarChart, LineChart }", "{ BarChart, LineChart }", "38 kB"),
   js("{ Sheet }", "{ Sheet }", "28 kB"),
+  // Nav không import Tooltip, Sidebar của AppShell truyền Tooltip của rail (#350): 31.40 → 12.33 kB.
+  js("{ Nav, NavItem }", "{ Nav, NavItem }", "13.5 kB"),
+  // Menu của nút "…" nạp lúc cần (#350): 42.49 → 13.04 kB (lần tải đầu; menu là chunk riêng).
+  js("{ Breadcrumb }", "{ Breadcrumb }", "14.5 kB"),
   // #168: Radix Navigation Menu (dependency mới) + viewport.
   js("{ NavigationMenu }", "{ NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuTrigger, NavigationMenuContent, NavigationMenuLink }", "26 kB"),
   js("{ StatusPage, ErrorBoundary }", "{ StatusPage, ErrorBoundary }", "18 kB"),
@@ -69,7 +75,8 @@ module.exports = [
   js("{ DataGrid }", "{ DataGrid }", "36 kB"),
   // Sortable tự viết (#175): 20.76 kB khi thêm, phần riêng ~6.5 kB (dnd-kit core + sortable: 16.6 kB).
   js("{ Sortable, SortableItem, SortableHandle }", "{ Sortable, SortableItem, SortableHandle }", "23 kB"),
-  js("{ StreamingMarkdown, PromptInput }", "{ StreamingMarkdown, PromptInput }", "70 kB"),
+  // Citation (Popover) nạp lúc cần (#350): 57.00 → 32.42 kB (lần tải đầu; Citation là chunk riêng).
+  js("{ StreamingMarkdown, PromptInput }", "{ StreamingMarkdown, PromptInput }", "35.5 kB"),
   // Chuỗi của 6 component mới (#173): 4.80 → 5.11 kB; NavigationMenu + StatusPage (#168, #238): → ~5.7 kB.
   js("{ messagesEn }", "{ messagesEn }", "6 kB"),
   // Bộ tiếng Việt, chỉ khi import (#277: mặc định là tiếng Anh): 17.7 kB khi thêm, phần lớn là locale vi của

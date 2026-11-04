@@ -195,6 +195,7 @@ import {
   Sparkline,
   Stagger,
   StatTile,
+  StreamingMarkdown,
   SwatchPicker,
   Switch,
   Table,
@@ -1060,6 +1061,21 @@ export const SSR_CASES: SsrCase[] = [
         />
         <PackageManagerTabs packages="yugen-ui" />
         <CopyCodeButton text="npm i yugen-ui" />
+      </div>
+    ),
+  },
+  {
+    // Server và lần hydrate đầu render bản thay thế; phần thật nạp sau hydration (#350).
+    name: "Phần nạp lúc cần: menu … của Breadcrumb / chú thích của StreamingMarkdown",
+    render: () => (
+      <div>
+        <Breadcrumb
+          items={["Trang chủ", "Sản phẩm", "Điện thoại", "Mẫu"].map((label) => ({ key: label, label, href: "#" }))}
+          maxDisplayedItems={2}
+        />
+        <StreamingMarkdown citations={[{ title: "Tài liệu React", url: "https://react.dev/reference" }]}>
+          {"Hook chạy theo thứ tự [1]."}
+        </StreamingMarkdown>
       </div>
     ),
   },

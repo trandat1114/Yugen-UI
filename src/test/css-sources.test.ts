@@ -28,6 +28,12 @@ describe("CSS theo component (#169)", () => {
     expect(loading).not.toContain("Toast/Toast.js");
   });
 
+  it("phần nạp lúc cần (#350): Breadcrumb giữ class của Menu, Nav không cần Tooltip (AppShell mang Tooltip của rail)", () => {
+    expect(files.get("Breadcrumb")).toContain("Menu/Menu.js");
+    expect(files.get("Nav")!.some((p) => p.startsWith("Tooltip/"))).toBe(false);
+    expect(files.get("AppShell")).toContain("Tooltip/Tooltip.js");
+  });
+
   it("phụ thuộc bắc cầu: SplitButton có đủ Menu và Button", () => {
     const split = files.get("SplitButton")!;
     expect(split).toEqual(expect.arrayContaining(["Menu/Menu.js", "Button/Button.js"]));

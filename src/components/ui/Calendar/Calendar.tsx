@@ -1,7 +1,6 @@
 import * as React from "react";
 import { useDirection } from "@radix-ui/react-direction";
 import { DayPicker, labelDayButton, type ChevronProps, type DayButtonProps, type DayPickerProps } from "react-day-picker";
-import { vi } from "react-day-picker/locale/vi";
 import {
   ChevronDown20Regular,
   ChevronLeft20Regular,
@@ -107,7 +106,8 @@ export function Calendar({
 }: CalendarProps) {
   const msg = useYugenMessages("calendar", calendarMessagesEn);
   const locale = localeProp ?? msg.locale;
-  const isVi = locale?.code === vi.code;
+  // So mã, không import locale `vi`: app tiếng Anh không mang theo nó (#349). App tiếng Việt có locale qua calendarMessagesVi.
+  const isVi = locale?.code === "vi";
   // DayPicker dùng `dir` để đảo ArrowLeft/ArrowRight; lấy từ DirectionProvider khi không truyền.
   const contextDir = useDirection();
   const dir = dirProp ?? contextDir;

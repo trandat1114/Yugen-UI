@@ -3,32 +3,12 @@ import * as React from "react";
 import { cn } from "@/lib/cn";
 import { Popover, PopoverSurface, PopoverTrigger } from "../Popover/Popover";
 import { useYugenMessages } from "../YugenProvider/context";
+import { citationChipClass, CitationChipText, getSourceDomain, type CitationSource } from "./citationChip";
 import { sanitizeHref } from "./markdown";
 import { citationMessagesEn } from "./messages";
 
 export { citationMessages, citationMessagesVi, citationMessagesEn, type CitationMessages } from "./messages";
-
-export interface CitationSource {
-  title: string;
-  url?: string;
-  /** Tên miền hiển thị; mặc định tách từ url. */
-  domain?: string;
-  /** Đoạn trích liên quan. */
-  snippet?: string;
-  /** Thông tin phụ: ngày đăng, tác giả… */
-  meta?: string;
-}
-
-/** Tên miền gọn ("www." bị bỏ). */
-export function getSourceDomain(source: CitationSource): string {
-  if (source.domain) return source.domain;
-  if (!source.url) return "";
-  try {
-    return new URL(source.url).hostname.replace(/^www\./, "");
-  } catch {
-    return "";
-  }
-}
+export { getSourceDomain, type CitationSource } from "./citationChip";
 
 const PALETTE = [
   "bg-cranberry-bg text-cranberry-fg",
@@ -137,13 +117,7 @@ export function Citation({
           type="button"
           aria-describedby={descId}
           data-citation={index}
-          className={cn(
-            "relative -top-0.5 mx-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-small border border-stroke-2 bg-background-4 px-0.5 align-text-top",
-            "font-sans text-caption2 font-semibold text-foreground-2 tabular-nums no-underline",
-            "transition-colors duration-faster ease-easy-ease hover:bg-brand-background-2 hover:text-brand-foreground-2",
-            "data-[state=open]:border-brand-stroke data-[state=open]:bg-brand-background-2 data-[state=open]:text-brand-foreground-2",
-            className,
-          )}
+          className={cn(citationChipClass, className)}
           onPointerEnter={(e) => {
             onPointerEnter?.(e);
             if (e.pointerType === "mouse") peek();
@@ -172,11 +146,7 @@ export function Citation({
           }}
           {...props}
         >
-          <span className="sr-only">{msg.source} </span>
-          {index}
-          <span id={descId} className="sr-only">
-            {`: ${source.title}${domain ? ` — ${domain}` : ""}`}
-          </span>
+          <CitationChipText index={index} source={source} descId={descId} label={msg.source} />
         </button>
       </PopoverTrigger>
       <PopoverSurface

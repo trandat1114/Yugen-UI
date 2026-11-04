@@ -9,6 +9,7 @@ import { Drawer, DrawerSurface } from "../Drawer/Drawer";
 import { Kbd, KbdGroup } from "../Kbd/Kbd";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../Tooltip/Tooltip";
 import { NavHostContext, type NavHostValue } from "../Nav/context";
+import { NavRailTooltip } from "./NavRailTooltip";
 import { useComposedRefs } from "../_internal/composeRefs";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import {
@@ -98,9 +99,13 @@ export function Sidebar({
     [rail, collapsible, resizable, width, minWidth, maxWidth, defaultWidth, setWidth],
   );
   const inDrawer = React.useMemo<SidebarContextValue>(() => ({ ...desktop, drawer: true, rail: false }), [desktop]);
-  const desktopHost = React.useMemo<NavHostValue>(() => ({ rail, expand: () => setCollapsed(false) }), [rail, setCollapsed]);
+  // Nav không import Tooltip (#350): Sidebar truyền Tooltip của rail cho từng hàng.
+  const desktopHost = React.useMemo<NavHostValue>(
+    () => ({ rail, expand: () => setCollapsed(false), RowTooltip: NavRailTooltip }),
+    [rail, setCollapsed],
+  );
   const drawerHost = React.useMemo<NavHostValue>(
-    () => ({ rail: false, expand: () => {}, onSelect: () => setDrawerOpen(false) }),
+    () => ({ rail: false, expand: () => {}, onSelect: () => setDrawerOpen(false), RowTooltip: NavRailTooltip }),
     [setDrawerOpen],
   );
 
