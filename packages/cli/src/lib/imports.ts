@@ -307,12 +307,36 @@ class Lexer {
 /** Đuôi file đọc được: mã JS / TS (JSX tuỳ đuôi) và MDX (chỉ các khối import / export). */
 export const CODE_FILE = /\.(?:[cm]?[jt]sx?|mdx)$/;
 
-/** MDX: khối ESM là đoạn (ngăn bởi dòng trống) bắt đầu bằng `import` / `export` ở đầu dòng; phần còn lại là Markdown. */
-const mdxEsm = (text: string) =>
-  text
-    .split(/\r?\n[ \t]*\r?\n/)
-    .filter((block) => /^(?:import|export)\b/.test(block))
-    .join("\n\n");
+/**
+ * MDX: khối ESM là đoạn (ngăn bởi dòng trống) bắt đầu bằng `import` / `export` ở đầu dòng; phần còn lại là Markdown.
+ * Khối mã ``` / ~~~ là Markdown kể cả khi có dòng trống bên trong (`"use client";`, dòng trống, rồi `import …`).
+ */
+function mdxEsm(text: string) {
+  const out: string[] = [];
+  let fence = ""; // dấu mở của khối mã đang mở
+  let esm = false;
+  let markdown = false; // đang trong một đoạn Markdown (chưa gặp dòng trống)
+  for (const line of text.split(/\r?\n/)) {
+    if (fence) {
+      const close = line.match(/^ {0,3}(`{3,}|~{3,})[ \t]*$/)?.[1];
+      if (close && close[0] === fence[0] && close.length >= fence.length) fence = "";
+      out.push("");
+    } else if (!line.trim()) {
+      esm = markdown = false;
+      out.push("");
+    } else if (esm || (!markdown && /^(?:import|export)\b/.test(line))) {
+      esm = true;
+      out.push(line);
+    } else {
+      const open = line.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
+      // ```` ```js ```` mở khối mã; `` ``` a ` `` (có backtick sau dấu mở) là code inline.
+      if (open && !(open[1][0] === "`" && open[2].includes("`"))) fence = open[1];
+      else markdown = true;
+      out.push("");
+    }
+  }
+  return out.join("\n");
+}
 
 /** Specifier trong `{ … }` của import / export: `[type] name [as alias]`, phân tách bằng dấu phẩy. */
 function specifiers(tokens: Token[], i: number): { names: string[]; end: number } | null {

@@ -99,4 +99,32 @@ export { Card } from "yugen-ui";
 `;
     expect(fromYugen(mdx, "page.mdx")).toEqual(["yugen-ui: Button", "yugen-ui: Card"]);
   });
+
+  it("MDX: a blank line inside a code fence does not end it", () => {
+    const mdx = `import { Button } from "yugen-ui";
+
+\`\`\`tsx
+"use client";
+
+import { Dialog } from "yugen-ui";
+import * as Yugen from "yugen-ui";
+\`\`\`
+
+~~~~js
+const a = 1;
+
+export * from "yugen-ui";
+~~~
+still inside: the fence needs four tildes to close
+
+import { Tabs } from "yugen-ui";
+~~~~
+
+Some text \`\`\` with inline code \`\`\`
+import { Menu } from "yugen-ui";
+
+export { Card } from "yugen-ui";
+`;
+    expect(fromYugen(mdx, "page.mdx")).toEqual(["yugen-ui: Button", "yugen-ui: Card"]);
+  });
 });
