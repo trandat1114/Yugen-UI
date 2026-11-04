@@ -87,7 +87,11 @@ module.exports = [
   // AppShell / Sidebar + rail của Nav (#161): 24.97 kB khi thêm; 25.08 kB với layout / scroll / footer. 28 kB: chỗ cho vài
   // component nữa (styles.css luôn chứa mọi component, #169 không làm nó nhỏ đi).
   css("styles.css", "28 kB"),
-  // Glass (#178): token + utility + fallback trợ năng (12.49 / 8.15 kB khi thêm).
-  css("theme.css", "15 kB"), // Prose: biến --prose-* và 4 preset (#244)
+  // Glass (#178): token + utility + fallback trợ năng (12.49 / 8.15 kB khi thêm). Prose: biến --prose-* và 4 preset (#244).
+  // #353: theme.css chỉ còn `@import "./theme-core.css"` + `@source` (14.68 → 0.18 kB), nên theme được đo ở theme-core.css:
+  // 14.69 → 14.79 kB (token animate-wave-flow, keyframes vào @theme).
+  css("theme-core.css", "16 kB"),
+  css("theme.css", "0.5 kB"),
+  // #353: bỏ khối @theme của charts.css, 8.22 → 8.02 kB.
   css("tokens.css", "9 kB"),
 ];

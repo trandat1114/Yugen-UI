@@ -2,11 +2,12 @@
 /**
  * Build CSS cho gói npm (chạy sau `vite build -c vite.lib.config.ts`, ghi vào dist/):
  *
- *   dist/tokens.css  — token thô (tokens.css + charts.css). Không cần Tailwind.
- *   dist/theme.css   — nguồn Tailwind v4 cho dự án CÓ Tailwind: token + @theme (reset + bridge) + @utility
- *                      + keyframes + base. Sinh từ src/index.css: bỏ `@import "tailwindcss"` và các dòng `@source`,
- *                      nội tuyến các file token. Thêm `@source "./components"` để Tailwind của người dùng tự quét
- *                      component đã build (đường dẫn tương đối với chính theme.css).
+ *   dist/tokens.css  — token thô (tokens.css + charts.css) bỏ các khối @theme (#353, scripts/css-tokens.mjs): chỉ còn
+ *                      CSS thường, không cần Tailwind.
+ *   dist/theme.css   — nguồn Tailwind v4 cho dự án CÓ Tailwind: token + @theme (reset + bridge) + @utility + keyframes
+ *                      + base, sinh từ src/index.css (bỏ `@import "tailwindcss"` và các dòng `@source`, nội tuyến các
+ *                      file token). Phần đó nằm trong theme-core.css: theme.css chỉ `@import "./theme-core.css"` rồi thêm
+ *                      `@source "./components"` để Tailwind của người dùng tự quét component đã build (#353).
  *   dist/theme-core.css — như theme.css nhưng không quét component (#169): app thêm dist/sources/<Thư mục>.css cho
  *                      từng component mình dùng (mỗi file quét component đó và mọi component nó dùng bên trong).
  *   dist/sources/index.json — export → thư mục, thư mục → các đường dẫn được quét. `yugen css` (packages/cli) đọc nó để
@@ -22,6 +23,7 @@ import { fileURLToPath } from "node:url";
 import { compile, optimize } from "@tailwindcss/node";
 import { Scanner } from "@tailwindcss/oxide";
 import { exportFolders, sourceFiles } from "./css-sources.mjs";
+import { tokensCss } from "./css-tokens.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const src = path.join(root, "src");
@@ -56,19 +58,10 @@ const themeBody = read(indexPath)
   .trim();
 
 // ---------- dist/tokens.css ----------
-const tokens = inlined.map(read).join("\n\n");
+const tokens = tokensCss(inlined.map(read));
 write("tokens.css", banner("design tokens (CSS custom properties)") + tokens + "\n");
 
-// ---------- dist/theme.css ----------
-const theme =
-  banner('Tailwind CSS v4 theme — use after @import "tailwindcss"') +
-  "\n/* Quét class trong các component đã build (tương đối với file này). */\n" +
-  '@source "./components";\n\n' +
-  themeBody +
-  "\n";
-write("theme.css", theme);
-
-// ---------- dist/theme-core.css + dist/sources/ (#169) ----------
+// ---------- dist/theme-core.css + dist/theme.css ----------
 write(
   "theme-core.css",
   banner("Tailwind CSS v4 theme without component sources — add yugen-ui/sources/<Component>.css") +
@@ -76,6 +69,16 @@ write(
     themeBody +
     "\n",
 );
+// Tailwind giải @import và @source tương đối với chính theme.css: theme-core.css và components/ nằm cạnh nó (#353).
+write(
+  "theme.css",
+  banner('Tailwind CSS v4 theme — use after @import "tailwindcss"') +
+    '@import "./theme-core.css";\n\n' +
+    "/* Quét class trong các component đã build (tương đối với file này). */\n" +
+    '@source "./components";\n',
+);
+
+// ---------- dist/sources/ (#169) ----------
 const graph = sourceFiles(path.join(src, "components", "ui"));
 const exports = exportFolders(root);
 fs.rmSync(path.join(dist, "sources"), { recursive: true, force: true });
