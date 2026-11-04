@@ -380,7 +380,7 @@ Chọn tín hiệu theo thời gian **dự kiến**, không theo thói quen (chi
 |---|---|
 | **Provider** | YugenProvider (+ `useYugen`, `usePortalThemeProps`) |
 | **Hành động** (9) | Button (+ `loading`, `loadingText`), CompoundButton, MenuButton, SplitButton, ButtonGroup, ToggleButton, ToggleGroup, Toolbar, Link |
-| **Nhập liệu** (25) | Field, Label, Input, Textarea, SearchBox, Select (native), Dropdown, Combobox, Tag (+TagGroup), TagPicker, Checkbox, RadioGroup, Switch, Slider, SpinButton, InputOTP, Rating, SwatchPicker, Calendar, DatePicker, TimePicker, DateRangePicker `presets`, FileUpload, Form (react-hook-form + zod, chỉ ví dụ) |
+| **Nhập liệu** (31) | Field, Label, Input, PasswordInput, FormattedInput, Textarea, SearchBox, Select (native), Dropdown, Combobox, Tag (+TagGroup), TagPicker, Checkbox, RadioGroup, Switch, Slider, SpinButton, InputOTP, Rating, SwatchPicker, ColorPicker, Calendar, DatePicker, MonthPicker, YearPicker, DateTimePicker, TimePicker, DateRangePicker `presets`, FileUpload, Form (react-hook-form + zod, chỉ ví dụ) |
 | **Điều hướng** (9) | Tabs, Breadcrumb, Pagination, Nav, Menu, Menubar, ContextMenu, Command, Stepper / Wizard |
 | **Hiển thị dữ liệu** (14) | Avatar, AvatarGroup, Persona, PresenceBadge, Badge, CounterBadge, Kbd, Text, Image, List, Table (+DataTable mẫu), Tree, Carousel (loop, autoplay có tiến độ, `slidesPerView`, `CarouselThumbnails`), DataGrid (sort, chọn dòng, đổi cỡ cột, ảo hoá) |
 | **Phản hồi** (7) | MessageBar, Toast, ProgressBar, Spinner, Skeleton (+ `SkeletonText/Avatar/Card/List/Table`), Empty, InfoLabel |
@@ -425,7 +425,7 @@ Luật riêng của Labs:
   hiển thị nên kéo và phím mũi tên đi đúng chiều con trỏ (có test e2e). `mirrorInRtl={false}` giữ bố cục LTR.
 - **Sheet** dạng bottom: cử chỉ kéo/vuốt mới kiểm tra bằng chuột và trình giả lập cảm ứng; cần thử thêm trên thiết bị iOS/Android thật.
 - **Chart** viết tay bằng SVG: chưa có trục log hay bản đồ; brush luôn trái→phải như vùng vẽ (cả khi RTL); dữ liệu rất lớn nên lấy mẫu trước.
-- Chưa có: ColorPicker đầy đủ, TimePicker qua nửa đêm. Overflow cần item có độ rộng tự nhiên (không `flex-1`).
+- Chưa có: TimePicker qua nửa đêm. Overflow cần item có độ rộng tự nhiên (không `flex-1`).
 
 ---
 
