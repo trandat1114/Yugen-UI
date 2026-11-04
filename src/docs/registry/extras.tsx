@@ -1482,7 +1482,7 @@ function SwatchPickerDemo() {
       },
       {
         title: "Footer dọc",
-        description: "layout=\"vertical\" xếp hai nút rộng hết bề mặt — hợp với nhãn dài.",
+        description: "orientation=\"vertical\" xếp hai nút rộng hết bề mặt — hợp với nhãn dài.",
         code: `<TeachingPopover>
   <TeachingPopoverTrigger asChild>
     <Button icon={<Bookmark20Regular />}>Save</Button>
@@ -1493,7 +1493,7 @@ function SwatchPickerDemo() {
       <TeachingPopoverTitle>Collections</TeachingPopoverTitle>
       Saved items go to Collections and sync across your devices.
     </TeachingPopoverBody>
-    <TeachingPopoverFooter layout="vertical" primary="Open Collections" secondary="Got it" closeOnPrimary />
+    <TeachingPopoverFooter orientation="vertical" primary="Open Collections" secondary="Got it" closeOnPrimary />
   </TeachingPopoverSurface>
 </TeachingPopover>`,
         render: () => (
@@ -1507,7 +1507,7 @@ function SwatchPickerDemo() {
                 <TeachingPopoverTitle>Collections</TeachingPopoverTitle>
                 Saved items go to Collections and sync across your devices.
               </TeachingPopoverBody>
-              <TeachingPopoverFooter layout="vertical" primary="Open Collections" secondary="Got it" closeOnPrimary />
+              <TeachingPopoverFooter orientation="vertical" primary="Open Collections" secondary="Got it" closeOnPrimary />
             </TeachingPopoverSurface>
           </TeachingPopover>
         ),
@@ -1580,7 +1580,7 @@ function SwatchPickerDemo() {
       { name: "TeachingPopoverHeader.icon / dismissible", type: "ReactNode / boolean", defaultValue: "bóng đèn / true", description: "Icon trước tiêu đề; nút đóng." },
       { name: "TeachingPopoverBody.media", type: "ReactNode", description: "Ảnh minh hoạ phía trên." },
       { name: "TeachingPopoverFooter.primary / secondary", type: "ReactNode", description: "Nhãn hai nút; nút phụ đóng popover." },
-      { name: "TeachingPopoverFooter.closeOnPrimary / layout", type: `boolean / "horizontal" | "vertical"`, description: "Đóng khi bấm nút chính; bố cục nút." },
+      { name: "TeachingPopoverFooter.closeOnPrimary / orientation", type: `boolean / "horizontal" | "vertical"`, description: "Đóng khi bấm nút chính; hướng xếp nút. Tên cũ layout đã lỗi thời (bỏ ở 1.0)." },
       { name: "TeachingPopoverCarousel.step / defaultStep / onStepChange", type: "number", description: "Bước hiện tại (bắt đầu từ 0)." },
       { name: "TeachingPopoverCarousel.onFinish / *Label", type: "() => void / string", description: "Bấm Hoàn tất; đổi nhãn Tiếp / Quay lại / Hoàn tất / Để sau." },
     ],

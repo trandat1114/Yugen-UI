@@ -502,7 +502,7 @@ const LOADING_NOTIFICATIONS_CODE = `function LoadingNotificationsDemo() {
 export const docs: ComponentDoc[] = [
   {
     slug: "streamingmarkdown",
-    category: "Yugen Labs",
+    category: "Hiển thị dữ liệu",
     name: "StreamingMarkdown",
     lead: "StreamingMarkdown hiển thị câu trả lời Markdown của AI ngay khi từng token về — không nháy ký hiệu thô, không chèn HTML, và không render lại cả bài mỗi lần có chữ mới.",
     description:
@@ -554,7 +554,7 @@ export const docs: ComponentDoc[] = [
   },
   {
     slug: "citation",
-    category: "Yugen Labs",
+    category: "Hiển thị dữ liệu",
     name: "Citation",
     lead: "Citation gắn số nguồn [1] ngay trong câu trả lời; rê chuột hoặc focus để xem nhanh tiêu đề, tên miền và đoạn trích, bấm để mở thẻ và tới link.",
     description:
@@ -775,7 +775,7 @@ export const docs: ComponentDoc[] = [
       { name: "loading / error / onRetry", type: "boolean / ReactNode / () => void", description: "Trạng thái tải và lỗi." },
       { name: "now", type: "Date | number", description: "Mốc thời gian cố định (SSR, test)." },
       { name: "open / defaultOpen / onOpenChange", type: "boolean", description: "Trạng thái bảng." },
-      { name: "mode / breakpoint", type: `"auto" | "popover" | "sheet" / number`, defaultValue: `"auto" / 768`, description: "Popover hay bottom sheet." },
+      { name: "mode / breakpoint", type: `"auto" | "popover" | "sheet" / "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | number`, defaultValue: `"auto" / "3xl"`, description: "Popover hay bottom sheet; breakpoint dùng token như Sheet (số px đã lỗi thời, bỏ ở 1.0)." },
       { name: "title / footer / announce", type: "string / ReactNode / boolean", defaultValue: `"Notifications" / — / true`, description: "Tiêu đề, chân bảng, đọc thông báo mới." },
       { name: "useNotifications(initial)", type: "{ items, unreadCount, add, markRead, markAllRead, dismiss, clear, bind }", description: "Kho nhỏ cho demo; trải bind vào NotificationCenter." },
     ],

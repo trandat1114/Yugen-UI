@@ -14,7 +14,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const toastMessages: ToastMessages = {
+export const toastMessagesVi: ToastMessages = {
   region: "Thông báo",
   regionHotkey: "Thông báo ({hotkey})",
   dismiss: "Đóng thông báo",
@@ -26,5 +26,5 @@ export const toastMessagesEn: ToastMessages = {
   dismiss: "Dismiss notification",
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `toastMessagesEn` (mặc định). `toastMessages` giữ cho code cũ. */
-export const toastMessagesVi = toastMessages;
+/** @deprecated Use `toastMessagesVi` (Vietnamese) or `toastMessagesEn`. Will be removed in v1.0.0. */
+export const toastMessages = toastMessagesVi;

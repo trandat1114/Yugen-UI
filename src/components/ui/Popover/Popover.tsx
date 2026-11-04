@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { useDirection } from "@radix-ui/react-direction";
-import { usePortalThemeProps } from "../YugenProvider/context";
+import { usePortalThemeProps, useComponentDefaults } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { morphClass, morphFromTrigger } from "../_internal/morph";
 
@@ -33,44 +33,56 @@ const APPEARANCE = {
 } as const;
 const ARROW = { normal: "fill-background-1", brand: "fill-brand-background", inverted: "fill-background-inverted" } as const;
 
-export const PopoverSurface = React.forwardRef<React.ElementRef<typeof PopoverPrimitive.Content>, PopoverSurfaceProps>(
-  (
-    { className, size = "medium", appearance = "normal", withArrow = false, material, sideOffset = 6, align = "center", children, ...props },
+export function PopoverSurface(inProps: PopoverSurfaceProps & { ref?: React.Ref<React.ComponentRef<typeof PopoverPrimitive.Content>> }) {
+  const {
+    className,
+    size = "medium",
+    appearance = "normal",
+    withArrow = false,
+    material,
+    sideOffset = 6,
+    align = "center",
+    children,
     ref,
-  ) => {
-    // Portal render vào <body>: gắn `dir` để bề mặt (và căn align start/end) theo hướng chữ của provider lồng.
-    const dir = useDirection();
-    const portalTheme = usePortalThemeProps();
-    return (
-      <PopoverPrimitive.Portal>
-        <PopoverPrimitive.Content
-          ref={ref}
-          {...portalTheme}
-          dir={dir}
-          sideOffset={sideOffset}
-          align={align}
-          className={cn(
-            popoverSurfaceClass,
-            PADDING[size],
-            APPEARANCE[appearance],
-            material,
-            material && morphClass,
-            "max-w-[min(360px,calc(100vw-24px))]",
-            className,
-          )}
-          {...props}
-          onAnimationStart={(event) => {
-            if (material) morphFromTrigger(event);
-            props.onAnimationStart?.(event);
-          }}
-        >
-          {children}
-          {withArrow && (
-            <PopoverPrimitive.Arrow width={14} height={7} className={material ? "fill-(--glass-tint)" : ARROW[appearance]} />
-          )}
-        </PopoverPrimitive.Content>
-      </PopoverPrimitive.Portal>
-    );
-  },
-);
-PopoverSurface.displayName = "PopoverSurface";
+    ...props
+  } = useComponentDefaults("PopoverSurface", inProps);
+  // Portal render vào <body>: gắn `dir` để bề mặt (và căn align start/end) theo hướng chữ của provider lồng.
+  const dir = useDirection();
+  const portalTheme = usePortalThemeProps();
+  return (
+    <PopoverPrimitive.Portal>
+      <PopoverPrimitive.Content
+        ref={ref}
+        {...portalTheme}
+        dir={dir}
+        sideOffset={sideOffset}
+        align={align}
+        className={cn(
+          popoverSurfaceClass,
+          PADDING[size],
+          APPEARANCE[appearance],
+          material,
+          material && morphClass,
+          "max-w-[min(360px,calc(100vw-24px))]",
+          className,
+        )}
+        {...props}
+        onAnimationStart={(event) => {
+          if (material) morphFromTrigger(event);
+          props.onAnimationStart?.(event);
+        }}
+      >
+        {children}
+        {withArrow && (
+          <PopoverPrimitive.Arrow width={14} height={7} className={material ? "fill-(--glass-tint)" : ARROW[appearance]} />
+        )}
+      </PopoverPrimitive.Content>
+    </PopoverPrimitive.Portal>
+  );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    PopoverSurface: PopoverSurfaceProps;
+  }
+}

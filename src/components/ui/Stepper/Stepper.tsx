@@ -8,7 +8,7 @@ import {
   Checkmark20Regular,
   ErrorCircle16Filled,
   Important16Filled,
-} from "@fluentui/react-icons";
+} from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Button } from "../Button/Button";
 import { useSpinDelay } from "../Loading/Loading";
@@ -64,108 +64,117 @@ export interface StepProps extends Omit<React.LiHTMLAttributes<HTMLLIElement>, "
 }
 
 /** Một bước trong `Stepper`. Chỉ số, trạng thái tự động và `aria-current="step"` lấy từ Stepper cha. */
-export const Step = React.forwardRef<HTMLLIElement, StepProps>(
-  ({ title, description, status: statusProp, optional, disabled, children, className, ...props }, ref) => {
-    const { activeStep, total, orientation, linear, onStepChange } = React.useContext(StepperContext);
-    const index = React.useContext(StepIndexContext);
-    const msg = useYugenMessages("stepper", stepperMessagesEn);
-    const isCurrent = index === activeStep;
-    const status: StepStatus = statusProp ?? (index < activeStep ? "complete" : isCurrent ? "current" : "upcoming");
-    const reachable = !disabled && (!linear || index <= activeStep || status === "complete");
-    const interactive = !!onStepChange;
-    const horizontal = orientation === "horizontal";
-    const last = index === total - 1;
-    const tabStop = Math.min(Math.max(activeStep, 0), total - 1);
+export function Step({
+  title,
+  description,
+  status: statusProp,
+  optional,
+  disabled,
+  children,
+  className,
+  ref,
+  ...props
+}: StepProps & { ref?: React.Ref<HTMLLIElement> }) {
+  const { activeStep, total, orientation, linear, onStepChange } = React.useContext(StepperContext);
+  const index = React.useContext(StepIndexContext);
+  const msg = useYugenMessages("stepper", stepperMessagesEn);
+  const isCurrent = index === activeStep;
+  const status: StepStatus = statusProp ?? (index < activeStep ? "complete" : isCurrent ? "current" : "upcoming");
+  const reachable = !disabled && (!linear || index <= activeStep || status === "complete");
+  const interactive = !!onStepChange;
+  const horizontal = orientation === "horizontal";
+  const last = index === total - 1;
+  const tabStop = Math.min(Math.max(activeStep, 0), total - 1);
 
-    const content = (
-      <>
-        <span
-          aria-hidden
-          className={cn(
-            "flex size-7 shrink-0 items-center justify-center rounded-circular border text-caption1 font-semibold",
-            "transition-colors duration-normal ease-easy-ease",
-            INDICATOR[status],
-          )}
-        >
-          {status === "complete" ? <Checkmark16Regular /> : status === "error" ? <Important16Filled /> : index + 1}
-        </span>
-        <span className={cn("flex min-w-0 flex-col text-start", !horizontal && "pt-0.5")}>
-          <span className={cn("text-body1", horizontal && "truncate", TITLE[status], disabled && "text-foreground-disabled")}>
-            <span className="sr-only">{`${msg.step(index + 1)}:`}</span> {title}
-            <span className="sr-only">{`, ${msg[status]}`}</span>
-          </span>
-          {(description || optional) && (
-            <span className={cn("text-caption1 text-foreground-3", horizontal && "truncate")}>
-              {description}
-              {optional && (description ? ` · ${msg.optional}` : msg.optional)}
-            </span>
-          )}
-        </span>
-      </>
-    );
-
-    const triggerClass = cn(
-      "flex min-w-0 gap-2 rounded-medium p-1",
-      horizontal ? "items-center" : "w-full items-start",
-      interactive && "focus-visible:outline-2 focus-visible:outline-stroke-focus",
-      interactive && reachable && !isCurrent && "cursor-pointer hover:bg-subtle-hover active:bg-subtle-pressed",
-      interactive && !reachable && "cursor-not-allowed",
-    );
-
-    return (
-      <li
-        ref={ref}
-        data-status={status}
+  const content = (
+    <>
+      <span
+        aria-hidden
         className={cn(
-          horizontal ? cn("flex min-w-0 items-center gap-2", last ? "flex-none" : "flex-1") : "relative pb-4 last:pb-0",
-          className,
+          "flex size-7 shrink-0 items-center justify-center rounded-circular border text-caption1 font-semibold",
+          "transition-colors duration-normal ease-easy-ease",
+          INDICATOR[status],
         )}
-        {...props}
       >
-        {interactive ? (
-          <button
-            type="button"
-            data-stepper-trigger=""
-            aria-current={isCurrent ? "step" : undefined}
-            aria-disabled={!reachable || undefined}
-            tabIndex={index === tabStop ? 0 : -1}
-            className={triggerClass}
-            onClick={() => {
-              if (reachable && !isCurrent) onStepChange(index);
-            }}
-          >
-            {content}
-          </button>
-        ) : (
-          <div aria-current={isCurrent ? "step" : undefined} className={triggerClass}>
-            {content}
-          </div>
+        {status === "complete" ? <Checkmark16Regular /> : status === "error" ? <Important16Filled /> : index + 1}
+      </span>
+      <span className={cn("flex min-w-0 flex-col text-start", !horizontal && "pt-0.5")}>
+        <span className={cn("text-body1", horizontal && "truncate", TITLE[status], disabled && "text-foreground-disabled")}>
+          <span className="sr-only">{`${msg.step(index + 1)}:`}</span> {title}
+          <span className="sr-only">{`, ${msg[status]}`}</span>
+        </span>
+        {(description || optional) && (
+          <span className={cn("text-caption1 text-foreground-3", horizontal && "truncate")}>
+            {description}
+            {optional && (description ? ` · ${msg.optional}` : msg.optional)}
+          </span>
         )}
-        {!last &&
-          (horizontal ? (
-            <span
-              aria-hidden
-              className={cn("h-0.5 min-w-4 flex-1 rounded-circular", status === "complete" ? "bg-brand-background" : "bg-stroke-2")}
-            />
-          ) : (
-            <span
-              aria-hidden
-              className={cn(
-                "absolute inset-s-4.25 top-9 bottom-0 w-0.5 rounded-circular",
-                status === "complete" ? "bg-brand-background" : "bg-stroke-2",
-              )}
-            />
-          ))}
-        {!horizontal && children && <div className="ps-10 pt-1">{children}</div>}
-      </li>
-    );
-  },
-);
-Step.displayName = "Step";
+      </span>
+    </>
+  );
+
+  const triggerClass = cn(
+    "flex min-w-0 gap-2 rounded-medium p-1",
+    horizontal ? "items-center" : "w-full items-start",
+    interactive && "focus-visible:outline-2 focus-visible:outline-stroke-focus",
+    interactive && reachable && !isCurrent && "cursor-pointer hover:bg-subtle-hover active:bg-subtle-pressed",
+    interactive && !reachable && "cursor-not-allowed",
+  );
+
+  return (
+    <li
+      ref={ref}
+      data-status={status}
+      className={cn(
+        horizontal ? cn("flex min-w-0 items-center gap-2", last ? "flex-none" : "flex-1") : "relative pb-4 last:pb-0",
+        className,
+      )}
+      {...props}
+    >
+      {interactive ? (
+        <button
+          type="button"
+          data-stepper-trigger=""
+          aria-current={isCurrent ? "step" : undefined}
+          aria-disabled={!reachable || undefined}
+          tabIndex={index === tabStop ? 0 : -1}
+          className={triggerClass}
+          onClick={() => {
+            if (reachable && !isCurrent) onStepChange(index);
+          }}
+        >
+          {content}
+        </button>
+      ) : (
+        <div aria-current={isCurrent ? "step" : undefined} className={triggerClass}>
+          {content}
+        </div>
+      )}
+      {!last &&
+        (horizontal ? (
+          <span
+            aria-hidden
+            className={cn("h-0.5 min-w-4 flex-1 rounded-circular", status === "complete" ? "bg-brand-background" : "bg-stroke-2")}
+          />
+        ) : (
+          <span
+            aria-hidden
+            className={cn(
+              "absolute inset-s-4.25 top-9 bottom-0 w-0.5 rounded-circular",
+              status === "complete" ? "bg-brand-background" : "bg-stroke-2",
+            )}
+          />
+        ))}
+      {!horizontal && children && <div className="ps-10 pt-1">{children}</div>}
+    </li>
+  );
+}
 
 export interface StepperProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange"> {
-  /** Chỉ số bước hiện tại (bắt đầu từ 0). */
+  /** Chỉ số bước hiện tại, bắt đầu từ 0 (điều khiển). */
   activeStep?: number;
+  /** Bước ban đầu (không điều khiển). Mặc định 0. */
+  defaultActiveStep?: number;
   /** Có → các bước thành nút bấm (roving focus, mũi tên / Home / End). */
   onStepChange?: (index: number) => void;
   orientation?: StepperOrientation;
@@ -180,76 +189,85 @@ export interface StepperProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
  * Chỉ báo tiến trình nhiều bước (danh sách có thứ tự). Bước hiện tại có `aria-current="step"`, chỉ báo số / dấu tích /
  * dấu chấm than luôn kèm chữ ẩn ("đã hoàn thành", "có lỗi"…). Đường nối dùng flex + thuộc tính logic nên tự đảo trong RTL.
  */
-export const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
-  (
-    { activeStep = 0, onStepChange, orientation = "horizontal", linear = false, responsive = true, className, children, "aria-label": ariaLabel, ...props },
-    ref,
-  ) => {
-    const dir = useDirection();
-    const msg = useYugenMessages("stepper", stepperMessagesEn);
-    const steps = React.Children.toArray(children).filter(React.isValidElement) as React.ReactElement<StepProps>[];
-    const total = steps.length;
-    const horizontal = orientation === "horizontal";
-    const collapse = horizontal && responsive;
-    const shown = Math.min(Math.max(activeStep, 0), Math.max(total - 1, 0));
+export function Stepper({
+  activeStep: activeProp,
+  defaultActiveStep = 0,
+  onStepChange,
+  orientation = "horizontal",
+  linear = false,
+  responsive = true,
+  className,
+  children,
+  "aria-label": ariaLabel,
+  ref,
+  ...props
+}: StepperProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const [activeStep, setActiveStep] = useControllableState({ value: activeProp, defaultValue: defaultActiveStep, onChange: onStepChange });
+  // Chỉ có onStepChange mới biến các bước thành nút bấm; bấm bước khác thì tự chuyển khi không điều khiển.
+  const changeStep = onStepChange ? setActiveStep : undefined;
+  const dir = useDirection();
+  const msg = useYugenMessages("stepper", stepperMessagesEn);
+  const steps = React.Children.toArray(children).filter(React.isValidElement) as React.ReactElement<StepProps>[];
+  const total = steps.length;
+  const horizontal = orientation === "horizontal";
+  const collapse = horizontal && responsive;
+  const shown = Math.min(Math.max(activeStep, 0), Math.max(total - 1, 0));
 
-    const context = React.useMemo<StepperContextValue>(
-      () => ({ activeStep, total, orientation, linear, onStepChange }),
-      [activeStep, total, orientation, linear, onStepChange],
-    );
+  const context = React.useMemo<StepperContextValue>(
+    () => ({ activeStep, total, orientation, linear, onStepChange: changeStep }),
+    [activeStep, total, orientation, linear, changeStep],
+  );
 
-    const onKeyDown = (event: React.KeyboardEvent<HTMLOListElement>) => {
-      const triggers = Array.from(event.currentTarget.querySelectorAll<HTMLElement>("[data-stepper-trigger]"));
-      const from = triggers.indexOf(event.target as HTMLElement);
-      if (from < 0) return;
-      const forward = horizontal ? (dir === "rtl" ? "ArrowLeft" : "ArrowRight") : "ArrowDown";
-      const backward = horizontal ? (dir === "rtl" ? "ArrowRight" : "ArrowLeft") : "ArrowUp";
-      const to =
-        event.key === forward
-          ? Math.min(from + 1, triggers.length - 1)
-          : event.key === backward
-            ? Math.max(from - 1, 0)
-            : event.key === "Home"
-              ? 0
-              : event.key === "End"
-                ? triggers.length - 1
-                : -1;
-      if (to < 0) return;
-      event.preventDefault();
-      triggers[to].focus();
-    };
+  const onKeyDown = (event: React.KeyboardEvent<HTMLOListElement>) => {
+    const triggers = Array.from(event.currentTarget.querySelectorAll<HTMLElement>("[data-stepper-trigger]"));
+    const from = triggers.indexOf(event.target as HTMLElement);
+    if (from < 0) return;
+    const forward = horizontal ? (dir === "rtl" ? "ArrowLeft" : "ArrowRight") : "ArrowDown";
+    const backward = horizontal ? (dir === "rtl" ? "ArrowRight" : "ArrowLeft") : "ArrowUp";
+    const to =
+      event.key === forward
+        ? Math.min(from + 1, triggers.length - 1)
+        : event.key === backward
+          ? Math.max(from - 1, 0)
+          : event.key === "Home"
+            ? 0
+            : event.key === "End"
+              ? triggers.length - 1
+              : -1;
+    if (to < 0) return;
+    event.preventDefault();
+    triggers[to].focus();
+  };
 
-    return (
-      <StepperContext.Provider value={context}>
-        <div ref={ref} className={cn(collapse && "@container", className)} {...props}>
-          {collapse && total > 0 && (
-            <div className="flex flex-col gap-2 @lg:hidden">
-              <p className="truncate text-body1 text-foreground-1">
-                <span className="font-semibold">{msg.progress(shown + 1, total)}</span>
-                {" · "}
-                {steps[shown]?.props.title}
-              </p>
-              <ProgressBar value={shown + 1} max={total} aria-label={msg.progressLabel(shown + 1, total)} />
-            </div>
-          )}
-          <ol
-            aria-label={ariaLabel ?? msg.label}
-            data-orientation={horizontal ? "horizontal" : "vertical"}
-            className={cn(horizontal ? "items-center gap-2" : "flex-col", collapse ? "hidden @lg:flex" : "flex")}
-            onKeyDown={onStepChange ? onKeyDown : undefined}
-          >
-            {steps.map((step, index) => (
-              <StepIndexContext.Provider key={step.key ?? index} value={index}>
-                {step}
-              </StepIndexContext.Provider>
-            ))}
-          </ol>
-        </div>
-      </StepperContext.Provider>
-    );
-  },
-);
-Stepper.displayName = "Stepper";
+  return (
+    <StepperContext.Provider value={context}>
+      <div ref={ref} className={cn(collapse && "@container", className)} {...props}>
+        {collapse && total > 0 && (
+          <div className="flex flex-col gap-2 @lg:hidden">
+            <p className="truncate text-body1 text-foreground-1">
+              <span className="font-semibold">{msg.progress(shown + 1, total)}</span>
+              {" · "}
+              {steps[shown]?.props.title}
+            </p>
+            <ProgressBar value={shown + 1} max={total} aria-label={msg.progressLabel(shown + 1, total)} />
+          </div>
+        )}
+        <ol
+          aria-label={ariaLabel ?? msg.label}
+          data-orientation={horizontal ? "horizontal" : "vertical"}
+          className={cn(horizontal ? "items-center gap-2" : "flex-col", collapse ? "hidden @lg:flex" : "flex")}
+          onKeyDown={onStepChange ? onKeyDown : undefined}
+        >
+          {steps.map((step, index) => (
+            <StepIndexContext.Provider key={step.key ?? index} value={index}>
+              {step}
+            </StepIndexContext.Provider>
+          ))}
+        </ol>
+      </div>
+    </StepperContext.Provider>
+  );
+}
 
 /* ------------------------------------------------------------------------------------------------
  * Wizard
@@ -295,159 +313,154 @@ function isThenable<T>(value: unknown): value is PromiseLike<T> {
  * bất đồng bộ (sau 300ms nút hiện Spinner, giữ nguyên độ rộng); lỗi hiện `role="alert"` và bước đó chuyển trạng thái `error`.
  * Đổi bước bằng nút → focus vào vùng nội dung để trình đọc màn hình đọc bước mới.
  */
-export const Wizard = React.forwardRef<HTMLDivElement, WizardProps>(
-  (
-    {
-      steps,
-      activeStep: activeProp,
-      defaultActiveStep = 0,
-      onStepChange,
-      onFinish,
-      orientation = "horizontal",
-      linear = true,
-      backLabel,
-      nextLabel,
-      finishLabel,
-      className,
-      ...props
-    },
-    ref,
-  ) => {
-    const msg = useYugenMessages("wizard", wizardMessagesEn);
-    const autoId = React.useId();
-    const [active, setActive] = useControllableState({ value: activeProp, defaultValue: defaultActiveStep, onChange: onStepChange });
-    const [completed, setCompleted] = React.useState<ReadonlySet<number>>(() => new Set());
-    const [error, setError] = React.useState<{ index: number; message: string } | null>(null);
-    const [pending, setPending] = React.useState(false);
-    const pendingRef = React.useRef(false);
-    // Wait UX: Spinner trên nút chỉ hiện khi chờ > 300ms và giữ ≥ 500ms; `pending` vẫn chặn thao tác ngay lập tức.
-    const showSpinner = useSpinDelay(pending);
-    const panelRef = React.useRef<HTMLDivElement>(null);
-    const focusPanel = React.useRef(false);
+export function Wizard({
+  steps,
+  activeStep: activeProp,
+  defaultActiveStep = 0,
+  onStepChange,
+  onFinish,
+  orientation = "horizontal",
+  linear = true,
+  backLabel,
+  nextLabel,
+  finishLabel,
+  className,
+  ref,
+  ...props
+}: WizardProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const msg = useYugenMessages("wizard", wizardMessagesEn);
+  const autoId = React.useId();
+  const [active, setActive] = useControllableState({ value: activeProp, defaultValue: defaultActiveStep, onChange: onStepChange });
+  const [completed, setCompleted] = React.useState<ReadonlySet<number>>(() => new Set());
+  const [error, setError] = React.useState<{ index: number; message: string } | null>(null);
+  const [pending, setPending] = React.useState(false);
+  const pendingRef = React.useRef(false);
+  // Wait UX: Spinner trên nút chỉ hiện khi chờ > 300ms và giữ ≥ 500ms; `pending` vẫn chặn thao tác ngay lập tức.
+  const showSpinner = useSpinDelay(pending);
+  const panelRef = React.useRef<HTMLDivElement>(null);
+  const focusPanel = React.useRef(false);
 
-    const total = steps.length;
-    const step = steps[active];
-    const isFirst = active <= 0;
-    const isLast = active >= total - 1;
+  const total = steps.length;
+  const step = steps[active];
+  const isFirst = active <= 0;
+  const isLast = active >= total - 1;
 
-    React.useEffect(() => {
-      if (!focusPanel.current) return;
-      focusPanel.current = false;
-      panelRef.current?.focus();
-    }, [active]);
+  React.useEffect(() => {
+    if (!focusPanel.current) return;
+    focusPanel.current = false;
+    panelRef.current?.focus();
+  }, [active]);
 
-    const goTo = (index: number) => {
-      if (pendingRef.current || index === active || index < 0 || index >= total) return;
-      setError(null);
-      focusPanel.current = true;
-      setActive(index);
-    };
+  const goTo = (index: number) => {
+    if (pendingRef.current || index === active || index < 0 || index >= total) return;
+    setError(null);
+    focusPanel.current = true;
+    setActive(index);
+  };
 
-    /** Chạy hàm có thể trả Promise; chỉ bật `pending` khi thật sự bất đồng bộ (không chớp loader cho validate đồng bộ). */
-    const settle = async <T,>(run: () => T | PromiseLike<T>): Promise<T> => {
-      const value = run();
-      if (!isThenable<T>(value)) return value;
-      pendingRef.current = true;
-      setPending(true);
-      try {
-        return await value;
-      } finally {
-        pendingRef.current = false;
-        setPending(false);
-      }
-    };
+  /** Chạy hàm có thể trả Promise; chỉ bật `pending` khi thật sự bất đồng bộ (không chớp loader cho validate đồng bộ). */
+  const settle = async <T,>(run: () => T | PromiseLike<T>): Promise<T> => {
+    const value = run();
+    if (!isThenable<T>(value)) return value;
+    pendingRef.current = true;
+    setPending(true);
+    try {
+      return await value;
+    } finally {
+      pendingRef.current = false;
+      setPending(false);
+    }
+  };
 
-    const next = async () => {
-      if (pendingRef.current || !step) return;
-      setError(null);
-      let result: WizardValidateResult;
-      try {
-        result = step.validate ? await settle(step.validate) : true;
-      } catch {
-        result = msg.validateFailed;
-      }
-      if (result === false || typeof result === "string") {
-        setError({ index: active, message: typeof result === "string" ? result : msg.invalid });
-        return;
-      }
-      setCompleted((prev) => new Set(prev).add(active));
-      if (isLast) {
-        if (onFinish) await settle(onFinish);
-      } else {
-        goTo(active + 1);
-      }
-    };
+  const next = async () => {
+    if (pendingRef.current || !step) return;
+    setError(null);
+    let result: WizardValidateResult;
+    try {
+      result = step.validate ? await settle(step.validate) : true;
+    } catch {
+      result = msg.validateFailed;
+    }
+    if (result === false || typeof result === "string") {
+      setError({ index: active, message: typeof result === "string" ? result : msg.invalid });
+      return;
+    }
+    setCompleted((prev) => new Set(prev).add(active));
+    if (isLast) {
+      if (onFinish) await settle(onFinish);
+    } else {
+      goTo(active + 1);
+    }
+  };
 
-    const labelId = `${autoId}-panel-label`;
+  const labelId = `${autoId}-panel-label`;
 
-    return (
-      <div
-        ref={ref}
-        className={cn("flex flex-col gap-4", orientation === "vertical" && "@container", className)}
-        {...props}
-      >
-        <div className={cn("flex flex-col gap-4", orientation === "vertical" && "@2xl:flex-row @2xl:gap-6")}>
-          <Stepper
-            activeStep={active}
-            onStepChange={goTo}
-            orientation={orientation}
-            linear={linear}
-            className={cn(orientation === "vertical" && "@2xl:w-56 @2xl:shrink-0")}
-          >
-            {steps.map((item, index) => (
-              <Step
-                key={item.id ?? index}
-                title={item.title}
-                description={item.description}
-                optional={item.optional}
-                status={error?.index === index ? "error" : completed.has(index) && index !== active ? "complete" : undefined}
-              />
-            ))}
-          </Stepper>
-          <div
-            ref={panelRef}
-            role="group"
-            tabIndex={-1}
-            aria-labelledby={labelId}
-            aria-busy={pending || undefined}
-            className="flex min-w-0 flex-1 flex-col gap-3 rounded-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke-focus"
-          >
-            <span id={labelId} className="sr-only">
-              {`${msg.panel(Math.min(active + 1, total), total)}: `}
-              {step?.title}
-            </span>
-            {step?.content}
-          </div>
-        </div>
-
-        {error && (
-          <p role="alert" className="flex items-center gap-1 text-body1 text-danger-foreground-1">
-            <ErrorCircle16Filled aria-hidden className="shrink-0" />
-            {error.message}
-          </p>
-        )}
-
-        <div className="flex items-center justify-between gap-2 border-t border-stroke-2 pt-3">
-          <Button
-            appearance="secondary"
-            icon={<ArrowLeft20Regular className="rtl:-scale-x-100" />}
-            disabled={isFirst || pending}
-            onClick={() => goTo(active - 1)}
-          >
-            {backLabel === undefined ? msg.back : backLabel}
-          </Button>
-          <Button
-            appearance="primary"
-            loading={showSpinner}
-            icon={isLast ? <Checkmark20Regular /> : <ArrowRight20Regular className="rtl:-scale-x-100" />}
-            iconPosition={isLast ? "before" : "after"}
-            onClick={() => void next()}
-          >
-            {isLast ? (finishLabel === undefined ? msg.finish : finishLabel) : nextLabel === undefined ? msg.next : nextLabel}
-          </Button>
+  return (
+    <div
+      ref={ref}
+      className={cn("flex flex-col gap-4", orientation === "vertical" && "@container", className)}
+      {...props}
+    >
+      <div className={cn("flex flex-col gap-4", orientation === "vertical" && "@2xl:flex-row @2xl:gap-6")}>
+        <Stepper
+          activeStep={active}
+          onStepChange={goTo}
+          orientation={orientation}
+          linear={linear}
+          className={cn(orientation === "vertical" && "@2xl:w-56 @2xl:shrink-0")}
+        >
+          {steps.map((item, index) => (
+            <Step
+              key={item.id ?? index}
+              title={item.title}
+              description={item.description}
+              optional={item.optional}
+              status={error?.index === index ? "error" : completed.has(index) && index !== active ? "complete" : undefined}
+            />
+          ))}
+        </Stepper>
+        <div
+          ref={panelRef}
+          role="group"
+          tabIndex={-1}
+          aria-labelledby={labelId}
+          aria-busy={pending || undefined}
+          className="flex min-w-0 flex-1 flex-col gap-3 rounded-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stroke-focus"
+        >
+          <span id={labelId} className="sr-only">
+            {`${msg.panel(Math.min(active + 1, total), total)}: `}
+            {step?.title}
+          </span>
+          {step?.content}
         </div>
       </div>
-    );
-  },
-);
-Wizard.displayName = "Wizard";
+
+      {error && (
+        <p role="alert" className="flex items-center gap-1 text-body1 text-danger-foreground-1">
+          <ErrorCircle16Filled aria-hidden className="shrink-0" />
+          {error.message}
+        </p>
+      )}
+
+      <div className="flex items-center justify-between gap-2 border-t border-stroke-2 pt-3">
+        <Button
+          appearance="secondary"
+          icon={<ArrowLeft20Regular className="rtl:-scale-x-100" />}
+          disabled={isFirst || pending}
+          onClick={() => goTo(active - 1)}
+        >
+          {backLabel === undefined ? msg.back : backLabel}
+        </Button>
+        <Button
+          appearance="primary"
+          loading={showSpinner}
+          icon={isLast ? <Checkmark20Regular /> : <ArrowRight20Regular className="rtl:-scale-x-100" />}
+          iconPosition={isLast ? "before" : "after"}
+          onClick={() => void next()}
+        >
+          {isLast ? (finishLabel === undefined ? msg.finish : finishLabel) : nextLabel === undefined ? msg.next : nextLabel}
+        </Button>
+      </div>
+    </div>
+  );
+}

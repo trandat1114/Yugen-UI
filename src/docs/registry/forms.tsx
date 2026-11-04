@@ -519,7 +519,7 @@ export const docs: ComponentDoc[] = [
     name: "Dropdown",
     lead: "Dropdown cho phép chọn một lựa chọn từ listbox tuỳ biến mở ra bên dưới ô.",
     description:
-      "Khác với Select, listbox được vẽ bằng bề mặt Fluent (shadow-16, rounded-medium) nên hỗ trợ dấu tick, nhóm có tiêu đề, option disabled và nội dung tuỳ biến. Bàn phím: mũi tên, Home/End, gõ ký tự để nhảy, Enter để chọn, Esc để đóng.",
+      "Khác với Select, listbox được vẽ bằng bề mặt Fluent (shadow-16, rounded-medium) nên hỗ trợ dấu tick, nhóm có tiêu đề, option disabled và nội dung tuỳ biến. Bàn phím: mũi tên, Home/End, gõ ký tự để nhảy, Enter để chọn, Esc để đóng. Khi listbox mở, trang luôn bị khoá cuộn; để giữ thanh cuộn của trang, xem [Khoá cuộn](/concepts/positioning#scroll-lock).",
     importCode: `import { Dropdown, DropdownOption, DropdownGroup, DropdownDivider } from "@/components/ui";`,
     hero: {
       title: "Dropdown",
@@ -1622,6 +1622,7 @@ function FruitFilterDemo() {
       { name: "itemLabel", type: "(value: number) => string", description: "Nhãn đọc cho từng mức điểm." },
       { name: "RatingDisplay.count / compact", type: "number / boolean", description: "Số lượt; chỉ hiện một sao." },
       { name: "RatingDisplay.size", type: "RatingSize", defaultValue: `"medium"`, description: "Cỡ sao và chữ." },
+      { name: "RatingDisplay.showValue", type: "boolean", defaultValue: "true", description: "Hiện chữ giá trị cạnh các sao. Tên cũ hideValue đã lỗi thời (bỏ ở 1.0)." },
     ],
   },
 ];

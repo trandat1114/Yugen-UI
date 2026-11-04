@@ -17,12 +17,15 @@ export const COMPONENTS_EN: Record<string, { lead: string; name?: string }> = {
   // Inputs
   calendar: { lead: "Calendar shows a monthly grid of days to pick a single date, several dates or a date range." },
   checkbox: { lead: "Checkbox lets people select one or more independent options from a set." },
+  colorpicker: { lead: "ColorPicker picks any color: a saturation / brightness area, hue and opacity bars, and HEX / RGB / HSL inputs." },
   combobox: { lead: "Combobox combines a text input with a listbox: type to filter, then pick one or more options." },
   datepicker: { lead: "DatePicker is a Fluent-style input that opens a Calendar in a popover to pick a date, shown as dd/MM/yyyy." },
   daterangepresets: { lead: "DateRangePicker with a list of quick range presets next to the calendar." },
+  datetimepicker: { lead: "DateTimePicker picks a date and a time in one popover: the calendar on top, the time field below." },
   dropdown: { lead: "Dropdown lets people pick one option from a custom listbox that opens below the field." },
   field: { lead: "Field wraps an input control with its label, required marker, hint and validation message." },
   fileupload: { lead: "FileUpload is a drop zone with a file list: pick with mouse or keyboard, drag and drop or paste; type, size and count are validated." },
+  formattedinput: { lead: "FormattedInput formats phone numbers, card numbers and amounts as you type, keeping the caret in place." },
   formvalidation: {
     name: "Forms with react-hook-form + zod",
     lead: "Combine Yugen's Field, Input, Select, Checkbox, DatePicker and Button with react-hook-form + zod for fully validated, accessible forms.",
@@ -30,6 +33,8 @@ export const COMPONENTS_EN: Record<string, { lead: string; name?: string }> = {
   input: { lead: "Input lets people enter and edit a single line of text." },
   inputotp: { lead: "InputOTP collects a one-time passcode, one character per box." },
   label: { lead: "Label names a control so people know what to enter or choose." },
+  monthpicker: { lead: "MonthPicker and YearPicker pick a month or a year, with the same field and keyboard as DatePicker." },
+  passwordinput: { lead: "PasswordInput is a password field with a show / hide button, a Caps Lock note and an optional strength meter." },
   radiogroup: { lead: "RadioGroup lets people choose exactly one option from a mutually exclusive set." },
   rating: { lead: "Rating lets people score with stars; RatingDisplay shows a read-only score." },
   autocomplete: { lead: "Autocomplete is a search box with suggestions: type to filter, pick a suggestion to fill it, or press Enter to search the raw query." },
@@ -52,6 +57,7 @@ export const COMPONENTS_EN: Record<string, { lead: string; name?: string }> = {
   menu: { lead: "Menu shows a list of commands or options when people interact with a button." },
   menubar: { lead: "Menubar is a persistent horizontal, desktop-style menu bar holding command groups like File, Edit, View…" },
   nav: { lead: "Nav is an app's vertical navigation, moving people between its main areas." },
+  navigationmenu: { lead: "NavigationMenu is a website header menu: links and triggers that open dropdown panels (mega menus)." },
   pagination: { lead: "Pagination splits long content into pages and lets people move between them quickly." },
   stepper: { lead: "Stepper shows which step of a multi-step process people are on; Wizard pairs it with each step's content and Back / Next buttons." },
   tabs: { lead: "TabList switches between sibling content panels without leaving the page." },
@@ -84,6 +90,9 @@ export const COMPONENTS_EN: Record<string, { lead: string; name?: string }> = {
   progressbar: { lead: "ProgressBar shows the progress of a running task, with a known percentage or as indeterminate." },
   skeleton: { lead: "Skeleton is a placeholder sketch of upcoming content that makes loading feel shorter." },
   spinner: { lead: "Spinner shows that the system is working on a task of unknown duration." },
+  statuspage: {
+    lead: "StatusPage is a page for HTTP errors (404, 500, 503…), being offline and new versions; ErrorBoundary shows it when its children fail.",
+  },
   toast: { lead: "Toast is a short, non-blocking notification that appears in a corner of the screen and dismisses itself." },
   sonner: { lead: "Sonner stacks short notifications in a corner: the newest in front, older ones behind, fanning out on hover." },
 

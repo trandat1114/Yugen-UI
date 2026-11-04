@@ -414,7 +414,7 @@ function PlaceSheetDemo() {
     props: [
       { name: "open / defaultOpen / onOpenChange", type: "boolean / boolean / (open) => void", description: "Trạng thái mở (controlled hoặc uncontrolled)." },
       { name: "mode", type: `"auto" | "side" | "bottom"`, defaultValue: `"auto"`, description: "auto: panel khi viewport ≥ breakpoint, bottom sheet khi nhỏ hơn." },
-      { name: "breakpoint", type: "number", defaultValue: "768", description: "Chiều rộng tối thiểu (px) để hiện dạng panel (qua useMediaQuery)." },
+      { name: "breakpoint", type: `"lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | number`, defaultValue: `"3xl"`, description: "Chiều rộng viewport tối thiểu để hiện dạng panel, cùng token với AppShell: lg 32rem · xl 36rem · 2xl 42rem · 3xl 48rem · 4xl 56rem · 5xl 64rem. Số (px) đã lỗi thời (bỏ ở 1.0)." },
       { name: "side", type: `"start" | "end"`, defaultValue: `"end"`, description: "Cạnh trượt vào ở dạng panel; tự đảo ở RTL." },
       { name: "size", type: `"small" | "medium" | "large"`, defaultValue: `"small"`, description: "Độ rộng panel: 320 / 592 / 940px." },
       { name: "snapPoints", type: "number[]", defaultValue: "[0.5, 0.9]", description: "Các nấc chiều cao bottom sheet (phần của chiều cao viewport, 0–1)." },

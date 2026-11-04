@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
-import { Checkmark16Filled, ChevronRight16Regular } from "@fluentui/react-icons";
+import { Checkmark16Filled, ChevronRight16Regular } from "../_internal/icons";
 import { usePortalThemeProps } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { menuItemClass, menuPopoverClass } from "../Menu/Menu";
@@ -12,18 +12,18 @@ export const ContextMenuGroup = ContextMenuPrimitive.Group;
 export const ContextMenuRadioGroup = ContextMenuPrimitive.RadioGroup;
 export const ContextMenuSub = ContextMenuPrimitive.Sub;
 
-export const ContextMenuContent = React.forwardRef<
-  React.ElementRef<typeof ContextMenuPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Content>
->(({ className, ...props }, ref) => {
+export function ContextMenuContent({
+  className,
+  ref,
+  ...props
+}: React.ComponentProps<typeof ContextMenuPrimitive.Content>) {
   const portalTheme = usePortalThemeProps();
   return (
     <ContextMenuPrimitive.Portal>
       <ContextMenuPrimitive.Content ref={ref} {...portalTheme} className={cn(menuPopoverClass, className)} {...props} />
     </ContextMenuPrimitive.Portal>
   );
-});
-ContextMenuContent.displayName = "ContextMenuContent";
+}
 
 export interface ContextMenuItemProps extends React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Item> {
   icon?: React.ReactNode;
@@ -31,47 +31,60 @@ export interface ContextMenuItemProps extends React.ComponentPropsWithoutRef<typ
   secondaryContent?: React.ReactNode;
 }
 
-export const ContextMenuItem = React.forwardRef<React.ElementRef<typeof ContextMenuPrimitive.Item>, ContextMenuItemProps>(
-  ({ className, icon, secondaryContent, children, ...props }, ref) => (
+export function ContextMenuItem({
+  className,
+  icon,
+  secondaryContent,
+  children,
+  ref,
+  ...props
+}: ContextMenuItemProps & { ref?: React.Ref<React.ComponentRef<typeof ContextMenuPrimitive.Item>> }) {
+  return (
     <ContextMenuPrimitive.Item ref={ref} className={cn(menuItemClass, className)} {...props}>
       {icon}
       <span className="min-w-0 flex-1 truncate">{children}</span>
       {secondaryContent && <span className="ps-4 text-caption1 text-foreground-3">{secondaryContent}</span>}
     </ContextMenuPrimitive.Item>
-  ),
-);
-ContextMenuItem.displayName = "ContextMenuItem";
+  );
+}
 
-export const ContextMenuCheckboxItem = React.forwardRef<
-  React.ElementRef<typeof ContextMenuPrimitive.CheckboxItem>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.CheckboxItem> & { secondaryContent?: React.ReactNode }
->(({ className, secondaryContent, children, ...props }, ref) => (
-  <ContextMenuPrimitive.CheckboxItem ref={ref} className={cn(menuItemClass, "ps-8", className)} {...props}>
-    <span className="absolute inset-s-2 flex size-4 items-center justify-center">
-      <ContextMenuPrimitive.ItemIndicator>
-        <Checkmark16Filled className="size-4! text-foreground-1" />
-      </ContextMenuPrimitive.ItemIndicator>
-    </span>
-    <span className="min-w-0 flex-1 truncate">{children}</span>
-    {secondaryContent && <span className="ps-4 text-caption1 text-foreground-3">{secondaryContent}</span>}
-  </ContextMenuPrimitive.CheckboxItem>
-));
-ContextMenuCheckboxItem.displayName = "ContextMenuCheckboxItem";
+export function ContextMenuCheckboxItem({
+  className,
+  secondaryContent,
+  children,
+  ref,
+  ...props
+}: React.ComponentProps<typeof ContextMenuPrimitive.CheckboxItem> & { secondaryContent?: React.ReactNode }) {
+  return (
+    <ContextMenuPrimitive.CheckboxItem ref={ref} className={cn(menuItemClass, "ps-8", className)} {...props}>
+      <span className="absolute inset-s-2 flex size-4 items-center justify-center">
+        <ContextMenuPrimitive.ItemIndicator>
+          <Checkmark16Filled className="size-4! text-foreground-1" />
+        </ContextMenuPrimitive.ItemIndicator>
+      </span>
+      <span className="min-w-0 flex-1 truncate">{children}</span>
+      {secondaryContent && <span className="ps-4 text-caption1 text-foreground-3">{secondaryContent}</span>}
+    </ContextMenuPrimitive.CheckboxItem>
+  );
+}
 
-export const ContextMenuRadioItem = React.forwardRef<
-  React.ElementRef<typeof ContextMenuPrimitive.RadioItem>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.RadioItem>
->(({ className, children, ...props }, ref) => (
-  <ContextMenuPrimitive.RadioItem ref={ref} className={cn(menuItemClass, "ps-8", className)} {...props}>
-    <span className="absolute inset-s-2 flex size-4 items-center justify-center">
-      <ContextMenuPrimitive.ItemIndicator>
-        <Checkmark16Filled className="size-4! text-foreground-1" />
-      </ContextMenuPrimitive.ItemIndicator>
-    </span>
-    <span className="min-w-0 flex-1 truncate">{children}</span>
-  </ContextMenuPrimitive.RadioItem>
-));
-ContextMenuRadioItem.displayName = "ContextMenuRadioItem";
+export function ContextMenuRadioItem({
+  className,
+  children,
+  ref,
+  ...props
+}: React.ComponentProps<typeof ContextMenuPrimitive.RadioItem>) {
+  return (
+    <ContextMenuPrimitive.RadioItem ref={ref} className={cn(menuItemClass, "ps-8", className)} {...props}>
+      <span className="absolute inset-s-2 flex size-4 items-center justify-center">
+        <ContextMenuPrimitive.ItemIndicator>
+          <Checkmark16Filled className="size-4! text-foreground-1" />
+        </ContextMenuPrimitive.ItemIndicator>
+      </span>
+      <span className="min-w-0 flex-1 truncate">{children}</span>
+    </ContextMenuPrimitive.RadioItem>
+  );
+}
 
 export function ContextMenuSeparator({ className, ...props }: React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Separator>) {
   return <ContextMenuPrimitive.Separator className={cn("-mx-1 my-1 h-px bg-stroke-2", className)} {...props} />;

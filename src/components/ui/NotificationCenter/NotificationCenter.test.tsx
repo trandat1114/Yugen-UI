@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {
@@ -10,6 +10,7 @@ import {
 } from "./NotificationCenter";
 import { notificationCenterMessagesEn, notificationCenterMessagesVi } from "./messages";
 import { YugenProvider } from "../YugenProvider/YugenProvider";
+import { watchDeprecations } from "@/test/deprecation";
 
 const NOW = new Date(2026, 9, 21, 15, 0).getTime();
 const ITEMS: NotificationItem[] = [
@@ -81,5 +82,25 @@ describe("NotificationCenter messages", () => {
     expect(within(panel).getByRole("heading", { name: "Today" })).toBeInTheDocument();
     expect(within(panel).getByText("5 minutes ago")).toBeInTheDocument();
     expect(formatRelativeTime(NOW - 60_000, NOW, { messages: notificationCenterMessagesEn })).toBe("1 minute ago");
+  });
+});
+
+describe("NotificationCenter breakpoint", () => {
+  const queries = (breakpoint?: "lg" | number) => {
+    const matchMedia = vi.spyOn(window, "matchMedia");
+    const { rerender } = render(<NotificationCenter items={ITEMS} now={NOW} breakpoint={breakpoint} />);
+    rerender(<NotificationCenter items={ITEMS} now={NOW} breakpoint={breakpoint} />);
+    return matchMedia.mock.calls.map(([query]) => query);
+  };
+
+  it("token như Sheet / AppShell; mặc định 3xl = 48rem", () => {
+    expect(queries()).toContain("(min-width: 48rem)");
+    expect(queries("lg")).toContain("(min-width: 32rem)");
+  });
+
+  it("số px vẫn chạy và cảnh báo một lần", () => {
+    const warnings = watchDeprecations();
+    expect(queries(1000)).toContain("(min-width: 1000px)");
+    expect(warnings("NotificationCenter.breakpoint={number}")).toBe(1);
   });
 });

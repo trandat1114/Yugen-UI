@@ -12,7 +12,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const statMessages: StatMessages = {
+export const statMessagesVi: StatMessages = {
   increase: "Tăng",
   decrease: "Giảm",
   noChange: "Không đổi",
@@ -24,5 +24,5 @@ export const statMessagesEn: StatMessages = {
   noChange: "No change",
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `statMessagesEn` (mặc định). `statMessages` giữ cho code cũ. */
-export const statMessagesVi = statMessages;
+/** @deprecated Use `statMessagesVi` (Vietnamese) or `statMessagesEn`. Will be removed in v1.0.0. */
+export const statMessages = statMessagesVi;

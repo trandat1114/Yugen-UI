@@ -3,7 +3,7 @@ import * as React from "react";
 import { useControllableState } from "../hooks/useControllableState";
 import { createPortal } from "react-dom";
 import { useDirection } from "@radix-ui/react-direction";
-import { Lightbulb16Regular } from "@fluentui/react-icons";
+import { Lightbulb16Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Button } from "../Button/Button";
 import { PopoverAnchor } from "../Popover/Popover";

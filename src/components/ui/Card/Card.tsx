@@ -1,6 +1,7 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/cn";
+import { useComponentDefaults } from "../YugenProvider/context";
 
 /** Fluent 2 Card — https://fluent2.microsoft.design/components/web/react/core/card/usage */
 const cardVariants = cva(
@@ -35,12 +36,17 @@ const cardVariants = cva(
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof cardVariants> {}
 
-export const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, appearance, size, interactive, ...props }, ref) => (
-    <div ref={ref} className={cn(cardVariants({ appearance, size, interactive }), className)} {...props} />
-  ),
-);
-Card.displayName = "Card";
+export function Card(inProps: CardProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    className,
+    appearance,
+    size,
+    interactive,
+    ref,
+    ...props
+  } = useComponentDefaults("Card", inProps);
+  return <div ref={ref} className={cn(cardVariants({ appearance, size, interactive }), className)} {...props} />;
+}
 
 export interface CardHeaderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
   image?: React.ReactNode;
@@ -72,4 +78,10 @@ export function CardContent({ className, ...props }: React.HTMLAttributes<HTMLDi
 
 export function CardFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return <div className={cn("flex items-center gap-2", className)} {...props} />;
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Card: CardProps;
+  }
 }

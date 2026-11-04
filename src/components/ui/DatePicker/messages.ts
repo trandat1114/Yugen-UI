@@ -22,14 +22,51 @@ export interface DateRangePickerMessages {
   lastMonth: string;
 }
 
+/** Chuỗi giao diện có sẵn của MonthPicker. Đổi qua `messages.monthPicker` của YugenProvider. */
+export interface MonthPickerMessages {
+  /** Placeholder khi chưa chọn tháng. */
+  placeholder: string;
+  /** aria-label nút xoá giá trị (`clearable`). */
+  clear: string;
+  /** aria-label nút sang năm trước / năm sau. */
+  previousYear: string;
+  nextYear: string;
+}
+
+/** Chuỗi giao diện có sẵn của YearPicker. Đổi qua `messages.yearPicker` của YugenProvider. */
+export interface YearPickerMessages {
+  /** Placeholder khi chưa chọn năm. */
+  placeholder: string;
+  /** aria-label nút xoá giá trị (`clearable`). */
+  clear: string;
+  /** aria-label nút sang 12 năm trước / sau. */
+  previousYears: string;
+  nextYears: string;
+}
+
+/** Chuỗi giao diện có sẵn của DateTimePicker. Đổi qua `messages.dateTimePicker` của YugenProvider. */
+export interface DateTimePickerMessages {
+  /** Placeholder khi chưa chọn. */
+  placeholder: string;
+  /** aria-label nút xoá giá trị (`clearable`). */
+  clear: string;
+  /** Nhãn ô giờ trong popover. */
+  time: string;
+  /** Nút đóng popover. */
+  done: string;
+}
+
 declare module "../YugenProvider/context" {
   interface YugenMessages {
     datePicker: DatePickerMessages;
     dateRangePicker: DateRangePickerMessages;
+    monthPicker: MonthPickerMessages;
+    yearPicker: YearPickerMessages;
+    dateTimePicker: DateTimePickerMessages;
   }
 }
 
-export const datePickerMessages: DatePickerMessages = {
+export const datePickerMessagesVi: DatePickerMessages = {
   placeholder: "Chọn ngày…",
   clear: "Xoá giá trị",
 };
@@ -39,7 +76,7 @@ export const datePickerMessagesEn: DatePickerMessages = {
   clear: "Clear",
 };
 
-export const dateRangePickerMessages: DateRangePickerMessages = {
+export const dateRangePickerMessagesVi: DateRangePickerMessages = {
   placeholder: "Chọn khoảng ngày…",
   clear: "Xoá giá trị",
   presets: "Chọn nhanh khoảng ngày",
@@ -61,8 +98,50 @@ export const dateRangePickerMessagesEn: DateRangePickerMessages = {
   lastMonth: "Last month",
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `datePickerMessagesEn` (mặc định). `datePickerMessages` giữ cho code cũ. */
-export const datePickerMessagesVi = datePickerMessages;
+export const monthPickerMessagesVi: MonthPickerMessages = {
+  placeholder: "Chọn tháng…",
+  clear: "Xoá giá trị",
+  previousYear: "Năm trước",
+  nextYear: "Năm sau",
+};
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `dateRangePickerMessagesEn` (mặc định). `dateRangePickerMessages` giữ cho code cũ. */
-export const dateRangePickerMessagesVi = dateRangePickerMessages;
+export const monthPickerMessagesEn: MonthPickerMessages = {
+  placeholder: "Select a month…",
+  clear: "Clear",
+  previousYear: "Previous year",
+  nextYear: "Next year",
+};
+
+export const yearPickerMessagesVi: YearPickerMessages = {
+  placeholder: "Chọn năm…",
+  clear: "Xoá giá trị",
+  previousYears: "Các năm trước",
+  nextYears: "Các năm sau",
+};
+
+export const yearPickerMessagesEn: YearPickerMessages = {
+  placeholder: "Select a year…",
+  clear: "Clear",
+  previousYears: "Earlier years",
+  nextYears: "Later years",
+};
+
+export const dateTimePickerMessagesVi: DateTimePickerMessages = {
+  placeholder: "Chọn ngày giờ…",
+  clear: "Xoá giá trị",
+  time: "Giờ",
+  done: "Xong",
+};
+
+export const dateTimePickerMessagesEn: DateTimePickerMessages = {
+  placeholder: "Select date and time…",
+  clear: "Clear",
+  time: "Time",
+  done: "Done",
+};
+
+/** @deprecated Use `datePickerMessagesVi` (Vietnamese) or `datePickerMessagesEn`. Will be removed in v1.0.0. */
+export const datePickerMessages = datePickerMessagesVi;
+
+/** @deprecated Use `dateRangePickerMessagesVi` (Vietnamese) or `dateRangePickerMessagesEn`. Will be removed in v1.0.0. */
+export const dateRangePickerMessages = dateRangePickerMessagesVi;

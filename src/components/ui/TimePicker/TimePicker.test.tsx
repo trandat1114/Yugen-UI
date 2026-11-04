@@ -221,3 +221,27 @@ describe("TimePicker messages", () => {
     expect(screen.getByRole("combobox", { name: "Giờ" })).toHaveValue("21:30");
   });
 });
+
+describe("TimePicker onValueChange", () => {
+  it("báo giờ mới khi đổi, null khi xoá hoặc gõ sai; không báo lại khi giờ không đổi", async () => {
+    const onValueChange = vi.fn();
+    const { user, input, onTimeChange } = setup({ onValueChange });
+    await user.click(input);
+    await user.keyboard("930{Enter}");
+    expect(hm(onValueChange.mock.calls.at(-1)?.[0])).toBe("9:30");
+    // Xác nhận lại đúng giờ đó: không đổi → không gọi.
+    await user.clear(input);
+    await user.keyboard("9:30{Enter}");
+    expect(onValueChange).toHaveBeenCalledTimes(1);
+    // Chữ không hợp lệ: onTimeChange báo lỗi, onValueChange báo null một lần.
+    await user.clear(input);
+    await user.keyboard("abc");
+    await user.tab();
+    expect(onValueChange).toHaveBeenLastCalledWith(null);
+    await user.click(input);
+    await user.keyboard("x");
+    await user.tab();
+    expect(onTimeChange.mock.calls.at(-1)?.[1].errorType).toBe("invalid-input");
+    expect(onValueChange).toHaveBeenCalledTimes(2);
+  });
+});

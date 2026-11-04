@@ -85,7 +85,7 @@ export const en: Record<string, ComponentDocEn> = {
 
   dropdown: {
     description:
-      "Unlike Select, the listbox is a custom surface (shadow-16, rounded-medium), so it supports a checkmark, groups with headings, disabled options and custom content. Keyboard: arrow keys, Home/End, type a character to jump, Enter to select, Esc to close.",
+      "Unlike Select, the listbox is a custom surface (shadow-16, rounded-medium), so it supports a checkmark, groups with headings, disabled options and custom content. Keyboard: arrow keys, Home/End, type a character to jump, Enter to select, Esc to close. While the listbox is open, page scrolling is always locked; to keep the page scrollbar, see [Scroll lock](/concepts/positioning#scroll-lock).",
     examples: [
       { title: "Groups & disabled options", description: "DropdownGroup adds a heading; groups are separated by a divider automatically." },
       { title: "Controlled", description: "value / onValueChange." },
@@ -364,6 +364,7 @@ export const en: Record<string, ComponentDocEn> = {
       itemLabel: "Screen reader label for each score.",
       "RatingDisplay.count / compact": "Number of ratings; show a single star.",
       "RatingDisplay.size": "Star and text size.",
+      "RatingDisplay.showValue": "Shows the value next to the stars. The old name hideValue (inverted) is deprecated (removed in 1.0).",
     },
   },
 };

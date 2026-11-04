@@ -1,9 +1,13 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
+import { useComponentDefaults } from "../YugenProvider/context";
+import { warnDeprecated } from "@/lib/deprecate";
 
 /** Fluent 2 Divider — https://fluent2.microsoft.design/components/web/react/core/divider/usage */
 export interface DividerProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Divider dọc (mặc định ngang). */
+  /** Hướng của đường kẻ (mặc định ngang), như ButtonGroup, Toolbar, Stepper. */
+  orientation?: "horizontal" | "vertical";
+  /** @deprecated Use `orientation="vertical"`. Will be removed in v1.0.0. */
   vertical?: boolean;
   /** Vị trí nội dung (chữ / icon) trên đường kẻ. */
   alignContent?: "start" | "center" | "end";
@@ -19,33 +23,49 @@ const APPEARANCE = {
   strong: "text-foreground-1 before:border-stroke-1 after:border-stroke-1",
 } as const;
 
-export const Divider = React.forwardRef<HTMLDivElement, DividerProps>(
-  ({ vertical = false, alignContent = "center", appearance = "default", inset = false, className, children, ...props }, ref) => {
-    const hasContent = children != null && children !== false;
-    return (
-      <div
-        ref={ref}
-        role="separator"
-        aria-orientation={vertical ? "vertical" : "horizontal"}
-        className={cn(
-          "box-border flex items-center text-caption1",
-          "before:box-border before:flex before:grow after:box-border after:flex after:grow",
-          vertical
-            ? "min-h-5 shrink-0 grow-0 flex-col self-stretch before:min-h-2 before:border-s after:min-h-2 after:border-s"
-            : "w-full grow flex-row before:min-w-2 before:border-t after:min-w-2 after:border-t",
-          hasContent && (vertical ? "before:mb-3 after:mt-3" : "before:me-3 after:ms-3"),
-          alignContent === "start" && (vertical ? "before:max-h-2" : "before:max-w-2"),
-          alignContent === "end" && (vertical ? "after:max-h-2" : "after:max-w-2"),
-          inset && (vertical ? "my-3" : "px-3"),
-          APPEARANCE[appearance],
-          "[&_svg]:size-4 [&_svg]:shrink-0",
-          className,
-        )}
-        {...props}
-      >
-        {hasContent && <div className="flex items-center gap-1">{children}</div>}
-      </div>
-    );
-  },
-);
-Divider.displayName = "Divider";
+export function Divider(inProps: DividerProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    orientation: orientationProp,
+    vertical: verticalLegacy,
+    alignContent = "center",
+    appearance = "default",
+    inset = false,
+    className,
+    children,
+    ref,
+    ...props
+  } = useComponentDefaults("Divider", inProps);
+  if (verticalLegacy !== undefined) warnDeprecated("Divider.vertical", 'use orientation="vertical"', "1.0.0");
+  const vertical = (orientationProp ?? (verticalLegacy ? "vertical" : "horizontal")) === "vertical";
+  const hasContent = children != null && children !== false;
+  return (
+    <div
+      ref={ref}
+      role="separator"
+      aria-orientation={vertical ? "vertical" : "horizontal"}
+      className={cn(
+        "box-border flex items-center text-caption1",
+        "before:box-border before:flex before:grow after:box-border after:flex after:grow",
+        vertical
+          ? "min-h-5 shrink-0 grow-0 flex-col self-stretch before:min-h-2 before:border-s after:min-h-2 after:border-s"
+          : "w-full grow flex-row before:min-w-2 before:border-t after:min-w-2 after:border-t",
+        hasContent && (vertical ? "before:mb-3 after:mt-3" : "before:me-3 after:ms-3"),
+        alignContent === "start" && (vertical ? "before:max-h-2" : "before:max-w-2"),
+        alignContent === "end" && (vertical ? "after:max-h-2" : "after:max-w-2"),
+        inset && (vertical ? "my-3" : "px-3"),
+        APPEARANCE[appearance],
+        "[&_svg]:size-4 [&_svg]:shrink-0",
+        className,
+      )}
+      {...props}
+    >
+      {hasContent && <div className="flex items-center gap-1">{children}</div>}
+    </div>
+  );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Divider: DividerProps;
+  }
+}

@@ -10,8 +10,8 @@ import {
   ChevronDown16Regular,
   ChevronDown20Regular,
   ChevronDown24Regular,
-} from "@fluentui/react-icons";
-import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
+} from "../_internal/icons";
+import { usePortalThemeProps, useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { popoverSurfaceClass } from "@/components/ui/Popover/Popover";
@@ -117,7 +117,8 @@ function groupOptions(items: NormalizedOption[]) {
 }
 
 /** Combobox: ô nhập có thể gõ để lọc listbox; hỗ trợ chọn một / nhiều và freeform. */
-export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props, ref) => {
+export function Combobox(inProps: ComboboxProps & { ref?: React.Ref<HTMLInputElement> }) {
+  const { ref, ...props } = useComponentDefaults("Combobox", inProps, COMPACT_SIZE);
   const {
     options,
     appearance = "outline",
@@ -395,5 +396,10 @@ export const Combobox = React.forwardRef<HTMLInputElement, ComboboxProps>((props
       </CommandPrimitive>
     </PopoverPrimitive.Root>
   );
-});
-Combobox.displayName = "Combobox";
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Combobox: ComboboxProps;
+  }
+}

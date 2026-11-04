@@ -14,6 +14,9 @@ export const vi = {
   "nav.foundations": "Ngôn ngữ thiết kế",
   "nav.concepts": "Khái niệm",
   "nav.labsConcepts": "Khái niệm Yugen Labs",
+  "component.labsTitle": "Yugen Labs · thử nghiệm",
+  "component.labsBody": "Component này nằm ngoài SemVer: API có thể đổi ở một bản minor, và thay đổi sẽ được ghi trong Có gì mới.",
+  "component.labsLink": "Chính sách phiên bản",
   "nav.components": "Component",
   "credit.by": "tạo bởi",
   "credit.rules": "Quy tắc đầy đủ:",
@@ -156,6 +159,13 @@ export const vi = {
   "home.noMatch": "Không có component nào khớp “{query}”.",
   "home.open": "Mở trang {name}",
   "home.viewComponent": "Xem component",
+
+  // Trang 404 (#238)
+  "notFound.title": "Không tìm thấy trang",
+  "notFound.description": "Đường dẫn có thể bị gõ sai, hoặc trang đã đổi chỗ.",
+  "notFound.search": "Tìm kiếm",
+  "notFound.home": "Về trang chủ",
+  "notFound.suggestions": "Có thể bạn cần",
 
   // Trang chủ — showcase
   "show.actions": "Hành động",

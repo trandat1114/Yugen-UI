@@ -4,8 +4,8 @@ import { useControllableState } from "../hooks/useControllableState";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { useDirection } from "@radix-ui/react-direction";
 import { Command as CommandPrimitive } from "cmdk";
-import { ChevronDown20Regular, ChevronDown24Regular } from "@fluentui/react-icons";
-import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
+import { ChevronDown20Regular, ChevronDown24Regular } from "../_internal/icons";
+import { usePortalThemeProps, useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { popoverSurfaceClass } from "@/components/ui/Popover/Popover";
@@ -63,322 +63,318 @@ interface NormalizedOption extends TagPickerOption {
 }
 
 /** TagPicker: chọn nhiều mục, mỗi mục là một Tag trong ô nhập; gõ để lọc danh sách gợi ý. */
-export const TagPicker = React.forwardRef<HTMLInputElement, TagPickerProps>(
-  (
-    {
-      options,
-      value,
-      defaultValue,
-      onValueChange,
-      appearance = "outline",
-      size = "medium",
-      tagAppearance,
-      tagShape,
-      freeform = false,
-      reorderable = false,
-      noResultsText,
-      listboxClassName,
-      className,
-      disabled,
-      placeholder,
-      onKeyDown,
-      ...inputProps
-    },
+export function TagPicker(inProps: TagPickerProps & { ref?: React.Ref<HTMLInputElement> }) {
+  const {
+    options,
+    value,
+    defaultValue,
+    onValueChange,
+    appearance = "outline",
+    size = "medium",
+    tagAppearance,
+    tagShape,
+    freeform = false,
+    reorderable = false,
+    noResultsText,
+    listboxClassName,
+    className,
+    disabled,
+    placeholder,
+    onKeyDown,
     ref,
-  ) => {
-    const msg = useYugenMessages("tagPicker", tagPickerMessagesEn);
-    const items = React.useMemo<NormalizedOption[]>(
-      () => options.map((o) => (typeof o === "string" ? { value: o, label: o } : { ...o, label: o.label ?? o.value })),
-      [options],
-    );
-    // Chuẩn hoá nhãn một lần cho mỗi bộ option (không phải mỗi phím gõ × mỗi option).
-    const searchText = React.useMemo(() => items.map((i) => normalizeSearchText(i.label)), [items]);
-    const itemByValue = React.useMemo(() => new Map(items.map((i) => [i.value, i])), [items]);
-    const [selected, commit] = useControllableState({ value, defaultValue: defaultValue ?? [], onChange: onValueChange });
+    ...inputProps
+  } = useComponentDefaults("TagPicker", inProps);
+  const msg = useYugenMessages("tagPicker", tagPickerMessagesEn);
+  const items = React.useMemo<NormalizedOption[]>(
+    () => options.map((o) => (typeof o === "string" ? { value: o, label: o } : { ...o, label: o.label ?? o.value })),
+    [options],
+  );
+  // Chuẩn hoá nhãn một lần cho mỗi bộ option (không phải mỗi phím gõ × mỗi option).
+  const searchText = React.useMemo(() => items.map((i) => normalizeSearchText(i.label)), [items]);
+  const itemByValue = React.useMemo(() => new Map(items.map((i) => [i.value, i])), [items]);
+  const [selected, commit] = useControllableState({ value, defaultValue: defaultValue ?? [], onChange: onValueChange });
 
-    const [open, setOpen] = React.useState(false);
-    const [query, setQuery] = React.useState("");
-    const [active, setActive] = React.useState("");
-    const [activeId, setActiveId] = React.useState<string>();
-    const [listEl, setListEl] = React.useState<HTMLDivElement | null>(null);
-    const anchorRef = React.useRef<HTMLDivElement>(null);
-    const inputRef = React.useRef<HTMLInputElement>(null);
-    const tagsRef = React.useRef<HTMLDivElement>(null);
-    // Tag nằm ở phía đầu dòng của ô nhập: LTR là bên trái, RTL là bên phải.
-    // Listbox portal vào <body> cũng nhận `dir` để align="start" theo hướng chữ.
-    const dir = useDirection();
-    const portalTheme = usePortalThemeProps();
-    const towardTagsKey = dir === "rtl" ? "ArrowRight" : "ArrowLeft";
-    const towardInputKey = dir === "rtl" ? "ArrowLeft" : "ArrowRight";
-    React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
+  const [open, setOpen] = React.useState(false);
+  const [query, setQuery] = React.useState("");
+  const [active, setActive] = React.useState("");
+  const [activeId, setActiveId] = React.useState<string>();
+  const [listEl, setListEl] = React.useState<HTMLDivElement | null>(null);
+  const anchorRef = React.useRef<HTMLDivElement>(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  const tagsRef = React.useRef<HTMLDivElement>(null);
+  // Tag nằm ở phía đầu dòng của ô nhập: LTR là bên trái, RTL là bên phải.
+  // Listbox portal vào <body> cũng nhận `dir` để align="start" theo hướng chữ.
+  const dir = useDirection();
+  const portalTheme = usePortalThemeProps();
+  const towardTagsKey = dir === "rtl" ? "ArrowRight" : "ArrowLeft";
+  const towardInputKey = dir === "rtl" ? "ArrowLeft" : "ArrowRight";
+  React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
 
-    const s = SIZE[size];
-    const invalid = inputProps["aria-invalid"] === true || inputProps["aria-invalid"] === "true";
-    const selectedSet = new Set(selected);
-    const filterList = (text: string) => {
-      const q = normalizeSearchText(text);
-      return items.filter((i, k) => !selectedSet.has(i.value) && (!q || searchText[k].includes(q)));
-    };
-    const available = filterList(query);
-    const firstEnabled = (list: NormalizedOption[]) => list.find((i) => !i.disabled)?.value ?? "";
-    const optionOf = (v: string) => itemByValue.get(v);
+  const s = SIZE[size];
+  const invalid = inputProps["aria-invalid"] === true || inputProps["aria-invalid"] === "true";
+  const selectedSet = new Set(selected);
+  const filterList = (text: string) => {
+    const q = normalizeSearchText(text);
+    return items.filter((i, k) => !selectedSet.has(i.value) && (!q || searchText[k].includes(q)));
+  };
+  const available = filterList(query);
+  const firstEnabled = (list: NormalizedOption[]) => list.find((i) => !i.disabled)?.value ?? "";
+  const optionOf = (v: string) => itemByValue.get(v);
 
-    useIsomorphicLayoutEffect(() => {
-      if (!open || !listEl || !active) {
-        setActiveId(undefined);
-        return;
-      }
-      const el = listEl.querySelector<HTMLElement>(`[cmdk-item][data-value="${CSS.escape(active)}"]`);
-      setActiveId(el?.id);
-      el?.scrollIntoView({ block: "nearest" });
-    }, [open, listEl, active, query, selected.length]);
+  useIsomorphicLayoutEffect(() => {
+    if (!open || !listEl || !active) {
+      setActiveId(undefined);
+      return;
+    }
+    const el = listEl.querySelector<HTMLElement>(`[cmdk-item][data-value="${CSS.escape(active)}"]`);
+    setActiveId(el?.id);
+    el?.scrollIntoView({ block: "nearest" });
+  }, [open, listEl, active, query, selected.length]);
 
-    const openList = () => {
-      if (disabled || open) return;
-      setActive(firstEnabled(available));
-      setOpen(true);
-    };
+  const openList = () => {
+    if (disabled || open) return;
+    setActive(firstEnabled(available));
+    setOpen(true);
+  };
 
-    const add = (val: string) => {
-      if (selected.includes(val)) return;
-      const next = [...selected, val];
-      commit(next);
-      setQuery("");
-      setActive(firstEnabled(items.filter((i) => !next.includes(i.value))));
-    };
+  const add = (val: string) => {
+    if (selected.includes(val)) return;
+    const next = [...selected, val];
+    commit(next);
+    setQuery("");
+    setActive(firstEnabled(items.filter((i) => !next.includes(i.value))));
+  };
 
-    const remove = (val: string) => {
-      commit(selected.filter((v) => v !== val));
-      requestAnimationFrame(() => {
-        if (!anchorRef.current?.contains(document.activeElement)) inputRef.current?.focus();
-      });
-    };
+  const remove = (val: string) => {
+    commit(selected.filter((v) => v !== val));
+    requestAnimationFrame(() => {
+      if (!anchorRef.current?.contains(document.activeElement)) inputRef.current?.focus();
+    });
+  };
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-      onKeyDown?.(e);
-      if (e.defaultPrevented) return;
-      const input = e.currentTarget;
-      const atStart = input.selectionStart === 0 && input.selectionEnd === 0;
-      if (e.key === "Home" || e.key === "End") {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    onKeyDown?.(e);
+    if (e.defaultPrevented) return;
+    const input = e.currentTarget;
+    const atStart = input.selectionStart === 0 && input.selectionEnd === 0;
+    if (e.key === "Home" || e.key === "End") {
+      e.stopPropagation();
+      return;
+    }
+    if (e.key === "Backspace" && query === "" && selected.length > 0) {
+      e.preventDefault();
+      remove(selected[selected.length - 1]);
+      return;
+    }
+    if (e.key === towardTagsKey && atStart && selected.length > 0) {
+      e.preventDefault();
+      const tags = tagsRef.current?.querySelectorAll<HTMLElement>("button:not(:disabled)");
+      tags?.[tags.length - 1]?.focus();
+      return;
+    }
+    if (!open && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+      e.preventDefault();
+      openList();
+      return;
+    }
+    if (e.key === "Enter" && freeform && query.trim() && available.length === 0) {
+      e.preventDefault();
+      add(query.trim());
+    }
+  };
+
+  const tagGroup = selected.length > 0 && (
+    <TagGroup
+      ref={tagsRef}
+      aria-label={msg.selectedItems}
+      size={s.tag}
+      appearance={tagAppearance}
+      disabled={disabled}
+      onDismiss={remove}
+      onKeyDown={(e) => {
+        // Không để cmdk (Enter/Home/End) bắt phím khi đang ở trên tag.
         e.stopPropagation();
-        return;
-      }
-      if (e.key === "Backspace" && query === "" && selected.length > 0) {
-        e.preventDefault();
-        remove(selected[selected.length - 1]);
-        return;
-      }
-      if (e.key === towardTagsKey && atStart && selected.length > 0) {
-        e.preventDefault();
-        const tags = tagsRef.current?.querySelectorAll<HTMLElement>("button:not(:disabled)");
-        tags?.[tags.length - 1]?.focus();
-        return;
-      }
-      if (!open && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
-        e.preventDefault();
-        openList();
-        return;
-      }
-      if (e.key === "Enter" && freeform && query.trim() && available.length === 0) {
-        e.preventDefault();
-        add(query.trim());
-      }
-    };
+        if (e.defaultPrevented) return;
+        const buttons = tagsRef.current?.querySelectorAll<HTMLElement>("button:not(:disabled)");
+        const isLast = buttons && document.activeElement === buttons[buttons.length - 1];
+        if ((e.key === towardInputKey && isLast) || e.key === "End") {
+          e.preventDefault();
+          inputRef.current?.focus();
+        }
+        if (e.key === "Escape") inputRef.current?.focus();
+      }}
+      className="contents"
+    >
+      {selected.map((v) => {
+        const opt = optionOf(v);
+        const tag = (
+          <Tag
+            key={v}
+            value={v}
+            dismissible
+            tabIndex={-1}
+            shape={tagShape}
+            media={opt?.media}
+          >
+            {opt?.label ?? v}
+          </Tag>
+        );
+        // Tag là nút gỡ: cả tag là tay nắm (kéo thì không gỡ), bàn phím dùng Alt + mũi tên.
+        return reorderable ? (
+          <SortableItem key={v} value={v} label={opt?.label ?? v} disabled={disabled} asChild handle shortcuts>
+            {tag}
+          </SortableItem>
+        ) : (
+          tag
+        );
+      })}
+    </TagGroup>
+  );
 
-    const tagGroup = selected.length > 0 && (
-      <TagGroup
-        ref={tagsRef}
-        aria-label={msg.selectedItems}
-        size={s.tag}
-        appearance={tagAppearance}
-        disabled={disabled}
-        onDismiss={remove}
-        onKeyDown={(e) => {
-          // Không để cmdk (Enter/Home/End) bắt phím khi đang ở trên tag.
-          e.stopPropagation();
-          if (e.defaultPrevented) return;
-          const buttons = tagsRef.current?.querySelectorAll<HTMLElement>("button:not(:disabled)");
-          const isLast = buttons && document.activeElement === buttons[buttons.length - 1];
-          if ((e.key === towardInputKey && isLast) || e.key === "End") {
-            e.preventDefault();
-            inputRef.current?.focus();
-          }
-          if (e.key === "Escape") inputRef.current?.focus();
-        }}
-        className="contents"
-      >
-        {selected.map((v) => {
-          const opt = optionOf(v);
-          const tag = (
-            <Tag
-              key={v}
-              value={v}
-              dismissible
-              tabIndex={-1}
-              shape={tagShape}
-              media={opt?.media}
-            >
-              {opt?.label ?? v}
-            </Tag>
-          );
-          // Tag là nút gỡ: cả tag là tay nắm (kéo thì không gỡ), bàn phím dùng Alt + mũi tên.
-          return reorderable ? (
-            <SortableItem key={v} value={v} label={opt?.label ?? v} disabled={disabled} asChild handle shortcuts>
-              {tag}
-            </SortableItem>
-          ) : (
-            tag
-          );
-        })}
-      </TagGroup>
-    );
-
-    return (
-      <PopoverPrimitive.Root
-        open={open}
-        onOpenChange={(o) => {
-          if (o) openList();
-          else {
-            setOpen(false);
-            setQuery("");
-          }
-        }}
-      >
-        <CommandPrimitive shouldFilter={false} value={active} onValueChange={setActive} loop vimBindings={false} className="contents">
-          <PopoverPrimitive.Anchor asChild>
-            <div
-              ref={anchorRef}
-              data-disabled={disabled || undefined}
-              data-invalid={invalid || undefined}
-              onClick={(e) => {
-                if ((e.target as HTMLElement).closest("[data-tag]")) return;
-                inputRef.current?.focus();
-                openList();
-              }}
-              className={cn(
-                fieldAppearanceClass[appearance],
-                "flex w-full min-w-62.5 cursor-text items-center",
-                open && "after:scale-x-100",
-                disabled && "cursor-not-allowed",
-                s.root,
-                className,
+  return (
+    <PopoverPrimitive.Root
+      open={open}
+      onOpenChange={(o) => {
+        if (o) openList();
+        else {
+          setOpen(false);
+          setQuery("");
+        }
+      }}
+    >
+      <CommandPrimitive shouldFilter={false} value={active} onValueChange={setActive} loop vimBindings={false} className="contents">
+        <PopoverPrimitive.Anchor asChild>
+          <div
+            ref={anchorRef}
+            data-disabled={disabled || undefined}
+            data-invalid={invalid || undefined}
+            onClick={(e) => {
+              if ((e.target as HTMLElement).closest("[data-tag]")) return;
+              inputRef.current?.focus();
+              openList();
+            }}
+            className={cn(
+              fieldAppearanceClass[appearance],
+              "flex w-full min-w-62.5 cursor-text items-center",
+              open && "after:scale-x-100",
+              disabled && "cursor-not-allowed",
+              s.root,
+              className,
+            )}
+          >
+            <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1 py-0.5">
+              {reorderable && tagGroup ? (
+                <Sortable asChild orientation="grid" value={selected} onValueChange={commit} disabled={disabled}>
+                  {tagGroup}
+                </Sortable>
+              ) : (
+                tagGroup
               )}
-            >
-              <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1 py-0.5">
-                {reorderable && tagGroup ? (
-                  <Sortable asChild orientation="grid" value={selected} onValueChange={commit} disabled={disabled}>
-                    {tagGroup}
-                  </Sortable>
-                ) : (
-                  tagGroup
-                )}
-                <input
-                  ref={inputRef}
-                  type="text"
-                  role="combobox"
-                  aria-autocomplete="list"
-                  aria-expanded={open}
-                  aria-controls={open && listEl ? listEl.id : undefined}
-                  aria-activedescendant={activeId}
-                  autoComplete="off"
-                  disabled={disabled}
-                  placeholder={selected.length === 0 ? placeholder : undefined}
-                  value={query}
-                  onChange={(e) => {
-                    const text = e.target.value;
-                    setQuery(text);
-                    setActive(firstEnabled(filterList(text)));
-                    if (!open) setOpen(true);
-                  }}
-                  onKeyDown={handleKeyDown}
-                  className={cn(
-                    "min-w-16 flex-1 bg-transparent px-1 text-foreground-1 outline-none placeholder:text-foreground-4",
-                    "disabled:cursor-not-allowed disabled:text-foreground-disabled",
-                    s.input,
-                  )}
-                  {...inputProps}
-                />
-              </div>
-              <button
-                type="button"
-                tabIndex={-1}
-                aria-label={open ? msg.closeList : msg.openList}
+              <input
+                ref={inputRef}
+                type="text"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-expanded={open}
+                aria-controls={open && listEl ? listEl.id : undefined}
+                aria-activedescendant={activeId}
+                autoComplete="off"
                 disabled={disabled}
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (open) {
-                    setOpen(false);
-                    setQuery("");
-                  } else {
-                    inputRef.current?.focus();
-                    openList();
-                  }
+                placeholder={selected.length === 0 ? placeholder : undefined}
+                value={query}
+                onChange={(e) => {
+                  const text = e.target.value;
+                  setQuery(text);
+                  setActive(firstEnabled(filterList(text)));
+                  if (!open) setOpen(true);
                 }}
-                className="flex w-8 shrink-0 cursor-pointer items-center justify-center self-stretch text-foreground-3 outline-none disabled:cursor-not-allowed disabled:text-foreground-disabled"
-              >
-                <s.Icon className={s.icon} />
-              </button>
+                onKeyDown={handleKeyDown}
+                className={cn(
+                  "min-w-16 flex-1 bg-transparent px-1 text-foreground-1 outline-none placeholder:text-foreground-4",
+                  "disabled:cursor-not-allowed disabled:text-foreground-disabled",
+                  s.input,
+                )}
+                {...inputProps}
+              />
             </div>
-          </PopoverPrimitive.Anchor>
-          <PopoverPrimitive.Portal>
-            <PopoverPrimitive.Content
-              {...portalTheme}
-              dir={dir}
-              role="presentation"
-              align="start"
-              sideOffset={2}
-              onOpenAutoFocus={(e) => e.preventDefault()}
-              onCloseAutoFocus={(e) => e.preventDefault()}
-              onInteractOutside={(e) => {
-                if (anchorRef.current?.contains(e.target as Node)) e.preventDefault();
-              }}
+            <button
+              type="button"
+              tabIndex={-1}
+              aria-label={open ? msg.closeList : msg.openList}
+              disabled={disabled}
               onMouseDown={(e) => e.preventDefault()}
-              className={cn(
-                popoverSurfaceClass,
-                "max-h-[min(var(--radix-popover-content-available-height),--spacing(80))] w-(--radix-popover-trigger-width) overflow-y-auto p-1",
-                listboxClassName,
-              )}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (open) {
+                  setOpen(false);
+                  setQuery("");
+                } else {
+                  inputRef.current?.focus();
+                  openList();
+                }
+              }}
+              className="flex w-8 shrink-0 cursor-pointer items-center justify-center self-stretch text-foreground-3 outline-none disabled:cursor-not-allowed disabled:text-foreground-disabled"
             >
-              <CommandPrimitive.List ref={setListEl} aria-multiselectable>
-                <CommandPrimitive.Empty className="px-2 py-1.5 text-body1 text-foreground-3">
-                  {freeform && query.trim() ? msg.addFreeform(query.trim()) : noResultsText === undefined ? msg.noResults : noResultsText}
-                </CommandPrimitive.Empty>
-                {groupOptions(available).map((group) => {
-                  const rendered = group.items.map((item) => (
-                    <CommandPrimitive.Item
-                      key={item.value}
-                      value={item.value}
-                      disabled={item.disabled}
-                      onSelect={() => add(item.value)}
-                      className={cn(cmdkOptionClass, "gap-2")}
-                    >
-                      {item.media && <span className="flex shrink-0 items-center text-foreground-2 [&_svg]:size-5">{item.media}</span>}
-                      <span className="flex min-w-0 flex-1 flex-col">
-                        <span className="truncate">{item.label}</span>
-                        {item.secondaryText && (
-                          <span className="truncate text-caption1 text-foreground-3">{item.secondaryText}</span>
-                        )}
-                      </span>
-                    </CommandPrimitive.Item>
-                  ));
-                  return group.name ? (
-                    <CommandPrimitive.Group key={group.name} heading={group.name} className={cmdkGroupClass}>
-                      {rendered}
-                    </CommandPrimitive.Group>
-                  ) : (
-                    <React.Fragment key="__ungrouped">{rendered}</React.Fragment>
-                  );
-                })}
-              </CommandPrimitive.List>
-            </PopoverPrimitive.Content>
-          </PopoverPrimitive.Portal>
-        </CommandPrimitive>
-      </PopoverPrimitive.Root>
-    );
-  },
-);
-TagPicker.displayName = "TagPicker";
+              <s.Icon className={s.icon} />
+            </button>
+          </div>
+        </PopoverPrimitive.Anchor>
+        <PopoverPrimitive.Portal>
+          <PopoverPrimitive.Content
+            {...portalTheme}
+            dir={dir}
+            role="presentation"
+            align="start"
+            sideOffset={2}
+            onOpenAutoFocus={(e) => e.preventDefault()}
+            onCloseAutoFocus={(e) => e.preventDefault()}
+            onInteractOutside={(e) => {
+              if (anchorRef.current?.contains(e.target as Node)) e.preventDefault();
+            }}
+            onMouseDown={(e) => e.preventDefault()}
+            className={cn(
+              popoverSurfaceClass,
+              "max-h-[min(var(--radix-popover-content-available-height),--spacing(80))] w-(--radix-popover-trigger-width) overflow-y-auto p-1",
+              listboxClassName,
+            )}
+          >
+            <CommandPrimitive.List ref={setListEl} aria-multiselectable>
+              <CommandPrimitive.Empty className="px-2 py-1.5 text-body1 text-foreground-3">
+                {freeform && query.trim() ? msg.addFreeform(query.trim()) : noResultsText === undefined ? msg.noResults : noResultsText}
+              </CommandPrimitive.Empty>
+              {groupOptions(available).map((group) => {
+                const rendered = group.items.map((item) => (
+                  <CommandPrimitive.Item
+                    key={item.value}
+                    value={item.value}
+                    disabled={item.disabled}
+                    onSelect={() => add(item.value)}
+                    className={cn(cmdkOptionClass, "gap-2")}
+                  >
+                    {item.media && <span className="flex shrink-0 items-center text-foreground-2 [&_svg]:size-5">{item.media}</span>}
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <span className="truncate">{item.label}</span>
+                      {item.secondaryText && (
+                        <span className="truncate text-caption1 text-foreground-3">{item.secondaryText}</span>
+                      )}
+                    </span>
+                  </CommandPrimitive.Item>
+                ));
+                return group.name ? (
+                  <CommandPrimitive.Group key={group.name} heading={group.name} className={cmdkGroupClass}>
+                    {rendered}
+                  </CommandPrimitive.Group>
+                ) : (
+                  <React.Fragment key="__ungrouped">{rendered}</React.Fragment>
+                );
+              })}
+            </CommandPrimitive.List>
+          </PopoverPrimitive.Content>
+        </PopoverPrimitive.Portal>
+      </CommandPrimitive>
+    </PopoverPrimitive.Root>
+  );
+}
 
 function groupOptions(items: NormalizedOption[]) {
   const groups: { name?: string; items: NormalizedOption[] }[] = [];
@@ -388,4 +384,10 @@ function groupOptions(items: NormalizedOption[]) {
     else groups.push({ name: item.group, items: [item] });
   }
   return groups;
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    TagPicker: TagPickerProps;
+  }
 }

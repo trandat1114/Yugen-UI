@@ -190,26 +190,29 @@ function usePresenceMotion(props: MotionTimingProps, recipe: MotionRecipe) {
   return { ...presence, className };
 }
 
-const PresenceSlot = React.forwardRef<HTMLElement, PresenceMotionProps & { recipe: MotionRecipe }>(
-  ({ recipe, className, style, children, ...timing }, ref) => {
-    const motion = usePresenceMotion(timing, recipe);
-    if (!motion.mounted) return null;
-    return (
-      <Slot ref={ref} data-motion={motion.status} className={cn(motion.className, className)} style={style}>
-        {children}
-      </Slot>
-    );
-  },
-);
-PresenceSlot.displayName = "PresenceSlot";
+function PresenceSlot({
+  recipe,
+  className,
+  style,
+  children,
+  ref,
+  ...timing
+}: PresenceMotionProps & { recipe: MotionRecipe } & { ref?: React.Ref<HTMLElement> }) {
+  const motion = usePresenceMotion(timing, recipe);
+  if (!motion.mounted) return null;
+  return (
+    <Slot ref={ref} data-motion={motion.status} className={cn(motion.className, className)} style={style}>
+      {children}
+    </Slot>
+  );
+}
 
 const FADE: MotionRecipe = { property: "transition-opacity", from: "opacity-0", to: "opacity-100" };
 
 /** Fade — mờ dần vào / ra. */
-export const Fade = React.forwardRef<HTMLElement, PresenceMotionProps>((props, ref) => (
-  <PresenceSlot ref={ref} recipe={FADE} {...props} />
-));
-Fade.displayName = "Fade";
+export function Fade({ ref, ...props }: PresenceMotionProps & { ref?: React.Ref<HTMLElement> }) {
+  return <PresenceSlot ref={ref} recipe={FADE} {...props} />;
+}
 
 export interface ScaleProps extends PresenceMotionProps {
   /** Kết hợp mờ dần. Mặc định true. */
@@ -217,18 +220,19 @@ export interface ScaleProps extends PresenceMotionProps {
 }
 
 /** Scale — phóng từ 90% lên 100%. */
-export const Scale = React.forwardRef<HTMLElement, ScaleProps>(({ animateOpacity = true, ...props }, ref) => (
-  <PresenceSlot
-    ref={ref}
-    recipe={{
-      property: "transition-[opacity,scale]",
-      from: cn("scale-90", animateOpacity && "opacity-0"),
-      to: "scale-100 opacity-100",
-    }}
-    {...props}
-  />
-));
-Scale.displayName = "Scale";
+export function Scale({ animateOpacity = true, ref, ...props }: ScaleProps & { ref?: React.Ref<HTMLElement> }) {
+  return (
+    <PresenceSlot
+      ref={ref}
+      recipe={{
+        property: "transition-[opacity,scale]",
+        from: cn("scale-90", animateOpacity && "opacity-0"),
+        to: "scale-100 opacity-100",
+      }}
+      {...props}
+    />
+  );
+}
 
 export type SlideFrom = "start" | "end" | "top" | "bottom";
 
@@ -247,50 +251,58 @@ export interface SlideProps extends PresenceMotionProps {
 }
 
 /** Slide — trượt vào từ một cạnh (start/end theo hướng chữ). */
-export const Slide = React.forwardRef<HTMLElement, SlideProps>(({ from = "bottom", animateOpacity = true, ...props }, ref) => (
-  <PresenceSlot
-    ref={ref}
-    recipe={{
-      property: "transition-[opacity,translate]",
-      from: cn(SLIDE_FROM[from], animateOpacity && "opacity-0"),
-      to: "translate-x-0 translate-y-0 opacity-100",
-    }}
-    {...props}
-  />
-));
-Slide.displayName = "Slide";
+export function Slide({
+  from = "bottom",
+  animateOpacity = true,
+  ref,
+  ...props
+}: SlideProps & { ref?: React.Ref<HTMLElement> }) {
+  return (
+    <PresenceSlot
+      ref={ref}
+      recipe={{
+        property: "transition-[opacity,translate]",
+        from: cn(SLIDE_FROM[from], animateOpacity && "opacity-0"),
+        to: "translate-x-0 translate-y-0 opacity-100",
+      }}
+      {...props}
+    />
+  );
+}
 
 export interface BlurProps extends PresenceMotionProps {
   animateOpacity?: boolean;
 }
 
 /** Blur — từ nhoè sang rõ. */
-export const Blur = React.forwardRef<HTMLElement, BlurProps>(({ animateOpacity = true, ...props }, ref) => (
-  <PresenceSlot
-    ref={ref}
-    recipe={{ property: "transition-[opacity,filter]", from: cn("blur-md", animateOpacity && "opacity-0"), to: "opacity-100" }}
-    {...props}
-  />
-));
-Blur.displayName = "Blur";
+export function Blur({ animateOpacity = true, ref, ...props }: BlurProps & { ref?: React.Ref<HTMLElement> }) {
+  return (
+    <PresenceSlot
+      ref={ref}
+      recipe={{ property: "transition-[opacity,filter]", from: cn("blur-md", animateOpacity && "opacity-0"), to: "opacity-100" }}
+      {...props}
+    />
+  );
+}
 
 export interface RotateProps extends PresenceMotionProps {
   animateOpacity?: boolean;
 }
 
 /** Rotate — xoay từ -90° về 0° (đảo chiều trong RTL). */
-export const Rotate = React.forwardRef<HTMLElement, RotateProps>(({ animateOpacity = true, ...props }, ref) => (
-  <PresenceSlot
-    ref={ref}
-    recipe={{
-      property: "transition-[opacity,rotate]",
-      from: cn("-rotate-90 rtl:rotate-90", animateOpacity && "opacity-0"),
-      to: "rotate-0 opacity-100",
-    }}
-    {...props}
-  />
-));
-Rotate.displayName = "Rotate";
+export function Rotate({ animateOpacity = true, ref, ...props }: RotateProps & { ref?: React.Ref<HTMLElement> }) {
+  return (
+    <PresenceSlot
+      ref={ref}
+      recipe={{
+        property: "transition-[opacity,rotate]",
+        from: cn("-rotate-90 rtl:rotate-90", animateOpacity && "opacity-0"),
+        to: "rotate-0 opacity-100",
+      }}
+      {...props}
+    />
+  );
+}
 
 export interface CollapseProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "children">,
@@ -302,41 +314,36 @@ export interface CollapseProps
 }
 
 /** Collapse — giãn chiều cao bằng kỹ thuật grid-template-rows 0fr → 1fr (không cần đo chiều cao). */
-export const Collapse = React.forwardRef<HTMLDivElement, CollapseProps>(
-  (
+export function Collapse({
+  visible,
+  appear,
+  unmountOnExit,
+  duration,
+  exitDuration,
+  onMotionFinish,
+  orientation = "vertical",
+  animateOpacity = true,
+  className,
+  children,
+  ref,
+  ...props
+}: CollapseProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const vertical = orientation === "vertical";
+  const motion = usePresenceMotion(
+    { visible, appear, unmountOnExit, duration, exitDuration, onMotionFinish },
     {
-      visible,
-      appear,
-      unmountOnExit,
-      duration,
-      exitDuration,
-      onMotionFinish,
-      orientation = "vertical",
-      animateOpacity = true,
-      className,
-      children,
-      ...props
+      property: vertical ? "transition-[grid-template-rows,opacity]" : "transition-[grid-template-columns,opacity]",
+      from: cn(vertical ? "grid-rows-[0fr]" : "grid-cols-[0fr]", animateOpacity && "opacity-0"),
+      to: cn(vertical ? "grid-rows-[1fr]" : "grid-cols-[1fr]", "opacity-100"),
     },
-    ref,
-  ) => {
-    const vertical = orientation === "vertical";
-    const motion = usePresenceMotion(
-      { visible, appear, unmountOnExit, duration, exitDuration, onMotionFinish },
-      {
-        property: vertical ? "transition-[grid-template-rows,opacity]" : "transition-[grid-template-columns,opacity]",
-        from: cn(vertical ? "grid-rows-[0fr]" : "grid-cols-[0fr]", animateOpacity && "opacity-0"),
-        to: cn(vertical ? "grid-rows-[1fr]" : "grid-cols-[1fr]", "opacity-100"),
-      },
-    );
-    if (!motion.mounted) return null;
-    return (
-      <div ref={ref} data-motion={motion.status} className={cn(vertical ? "grid" : "inline-grid", motion.className, className)} {...props}>
-        <div className={cn(vertical ? "min-h-0" : "min-w-0", motion.status !== "entered" && "overflow-hidden")}>{children}</div>
-      </div>
-    );
-  },
-);
-Collapse.displayName = "Collapse";
+  );
+  if (!motion.mounted) return null;
+  return (
+    <div ref={ref} data-motion={motion.status} className={cn(vertical ? "grid" : "inline-grid", motion.className, className)} {...props}>
+      <div className={cn(vertical ? "min-h-0" : "min-w-0", motion.status !== "entered" && "overflow-hidden")}>{children}</div>
+    </div>
+  );
+}
 
 const PRESENCE_COMPONENTS = new Set<unknown>([Fade, Scale, Slide, Blur, Rotate, Collapse]);
 

@@ -1,9 +1,14 @@
 # @yugen-ui/cli
 
-## Unreleased
+## 0.7.0
 
+- `doctor` reports React 18 as an error: yugen-ui 0.15 needs React 19 or later.
+- Template `docs` reads its pages with `React.use`.
 - Vite templates use TypeScript 7 (`^7.0.2`, the native compiler): `npm run build` type-checks several times
   faster. `next-starter` stays on TypeScript 6, because `next build` type-checks through TypeScript's JavaScript API.
+- Vite templates catch render errors with `ErrorBoundary` from yugen-ui 0.15: a page that fails shows a status page with
+  Try again (or Reload when a file failed to load after a deploy) instead of a blank screen. `saas` and `starter` show
+  a 404 page for unknown paths instead of the home page, and `landing` writes a static `404.html` at build time.
 
 ## 0.6.0
 

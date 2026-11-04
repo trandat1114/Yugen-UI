@@ -6,10 +6,10 @@ import {
   ChevronRight20Regular,
   MoreHorizontal16Regular,
   MoreHorizontal20Regular,
-} from "@fluentui/react-icons";
+} from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Menu, MenuItem, MenuPopover, MenuTrigger } from "../Menu/Menu";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { breadcrumbMessagesEn } from "./messages";
 
 export { breadcrumbMessages, breadcrumbMessagesVi, breadcrumbMessagesEn, type BreadcrumbMessages } from "./messages";
@@ -57,74 +57,73 @@ export interface BreadcrumbProps extends React.HTMLAttributes<HTMLElement> {
   overflowLabel?: string;
 }
 
-export const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(
-  (
-    {
-      className,
-      size = "medium",
-      items,
-      maxDisplayedItems,
-      overflowIndex = 1,
-      overflowLabel,
-      children,
-      "aria-label": ariaLabel,
-      ...props
-    },
+export function Breadcrumb(inProps: BreadcrumbProps & { ref?: React.Ref<HTMLElement> }) {
+  const {
+    className,
+    size = "medium",
+    items,
+    maxDisplayedItems,
+    overflowIndex = 1,
+    overflowLabel,
+    children,
+    "aria-label": ariaLabel,
     ref,
-  ) => {
-    const msg = useYugenMessages("breadcrumb", breadcrumbMessagesEn);
-    let content: React.ReactNode = children;
+    ...props
+  } = useComponentDefaults("Breadcrumb", inProps, COMPACT_SIZE);
+  const msg = useYugenMessages("breadcrumb", breadcrumbMessagesEn);
+  let content: React.ReactNode = children;
 
-    if (items) {
-      const max = maxDisplayedItems ?? items.length;
-      const overflowing = items.length > max && max > overflowIndex;
-      const start = overflowing ? items.slice(0, overflowIndex) : items;
-      const overflow = overflowing ? items.slice(overflowIndex, items.length - (max - overflowIndex)) : [];
-      const end = overflowing ? items.slice(items.length - (max - overflowIndex)) : [];
-      const last = items[items.length - 1];
+  if (items) {
+    const max = maxDisplayedItems ?? items.length;
+    const overflowing = items.length > max && max > overflowIndex;
+    const start = overflowing ? items.slice(0, overflowIndex) : items;
+    const overflow = overflowing ? items.slice(overflowIndex, items.length - (max - overflowIndex)) : [];
+    const end = overflowing ? items.slice(items.length - (max - overflowIndex)) : [];
+    const last = items[items.length - 1];
 
-      const renderItem = (item: BreadcrumbItemData, i: number) => (
-        <React.Fragment key={item.key ?? i}>
-          <BreadcrumbItem>
-            <BreadcrumbButton href={item.href} onClick={item.onClick} icon={item.icon} current={item === last}>
-              {item.label}
-            </BreadcrumbButton>
-          </BreadcrumbItem>
-          {item !== last && <BreadcrumbDivider />}
-        </React.Fragment>
-      );
-
-      content = (
-        <>
-          {start.map(renderItem)}
-          {overflowing && (
-            <>
-              <BreadcrumbItem>
-                <BreadcrumbOverflow label={overflowLabel} items={overflow} />
-              </BreadcrumbItem>
-              <BreadcrumbDivider />
-            </>
-          )}
-          {end.map((item, i) => renderItem(item, overflowIndex + overflow.length + i))}
-        </>
-      );
-    }
-
-    return (
-      <BreadcrumbContext.Provider value={{ size }}>
-        <nav ref={ref} aria-label={ariaLabel ?? msg.label} className={className} {...props}>
-          <ol className="flex flex-wrap items-center">{content}</ol>
-        </nav>
-      </BreadcrumbContext.Provider>
+    const renderItem = (item: BreadcrumbItemData, i: number) => (
+      <React.Fragment key={item.key ?? i}>
+        <BreadcrumbItem>
+          <BreadcrumbButton href={item.href} onClick={item.onClick} icon={item.icon} current={item === last}>
+            {item.label}
+          </BreadcrumbButton>
+        </BreadcrumbItem>
+        {item !== last && <BreadcrumbDivider />}
+      </React.Fragment>
     );
-  },
-);
-Breadcrumb.displayName = "Breadcrumb";
 
-export const BreadcrumbItem = React.forwardRef<HTMLLIElement, React.LiHTMLAttributes<HTMLLIElement>>(
-  ({ className, ...props }, ref) => <li ref={ref} className={cn("flex items-center", className)} {...props} />,
-);
-BreadcrumbItem.displayName = "BreadcrumbItem";
+    content = (
+      <>
+        {start.map(renderItem)}
+        {overflowing && (
+          <>
+            <BreadcrumbItem>
+              <BreadcrumbOverflow label={overflowLabel} items={overflow} />
+            </BreadcrumbItem>
+            <BreadcrumbDivider />
+          </>
+        )}
+        {end.map((item, i) => renderItem(item, overflowIndex + overflow.length + i))}
+      </>
+    );
+  }
+
+  return (
+    <BreadcrumbContext.Provider value={{ size }}>
+      <nav ref={ref} aria-label={ariaLabel ?? msg.label} className={className} {...props}>
+        <ol className="flex flex-wrap items-center">{content}</ol>
+      </nav>
+    </BreadcrumbContext.Provider>
+  );
+}
+
+export function BreadcrumbItem({
+  className,
+  ref,
+  ...props
+}: React.LiHTMLAttributes<HTMLLIElement> & { ref?: React.Ref<HTMLLIElement> }) {
+  return <li ref={ref} className={cn("flex items-center", className)} {...props} />;
+}
 
 export interface BreadcrumbButtonProps extends React.HTMLAttributes<HTMLElement> {
   href?: string;
@@ -138,51 +137,60 @@ export interface BreadcrumbButtonProps extends React.HTMLAttributes<HTMLElement>
   asChild?: boolean;
 }
 
-export const BreadcrumbButton = React.forwardRef<HTMLElement, BreadcrumbButtonProps>(
-  ({ className, href, target, rel, current, icon, disabled, asChild, children, ...props }, ref) => {
-    const { size } = React.useContext(BreadcrumbContext);
-    const classes = cn(
-      buttonBase,
-      BUTTON_SIZE[size],
-      current ? "cursor-default font-semibold" : buttonInteractive,
-      className,
-    );
+export function BreadcrumbButton({
+  className,
+  href,
+  target,
+  rel,
+  current,
+  icon,
+  disabled,
+  asChild,
+  children,
+  ref,
+  ...props
+}: BreadcrumbButtonProps & { ref?: React.Ref<HTMLElement> }) {
+  const { size } = React.useContext(BreadcrumbContext);
+  const classes = cn(
+    buttonBase,
+    BUTTON_SIZE[size],
+    current ? "cursor-default font-semibold" : buttonInteractive,
+    className,
+  );
 
-    if (current) {
-      return (
-        <span ref={ref} aria-current="page" className={classes} {...props}>
-          {icon}
-          {children}
-        </span>
-      );
-    }
-
-    if (asChild) {
-      return (
-        <Slot ref={ref} className={classes} {...props}>
-          {children}
-        </Slot>
-      );
-    }
-
-    if (href && !disabled) {
-      return (
-        <a ref={ref as React.Ref<HTMLAnchorElement>} href={href} target={target} rel={rel} className={classes} {...props}>
-          {icon}
-          {children}
-        </a>
-      );
-    }
-
+  if (current) {
     return (
-      <button ref={ref as React.Ref<HTMLButtonElement>} type="button" disabled={disabled} className={classes} {...props}>
+      <span ref={ref} aria-current="page" className={classes} {...props}>
         {icon}
         {children}
-      </button>
+      </span>
     );
-  },
-);
-BreadcrumbButton.displayName = "BreadcrumbButton";
+  }
+
+  if (asChild) {
+    return (
+      <Slot ref={ref} className={classes} {...props}>
+        {children}
+      </Slot>
+    );
+  }
+
+  if (href && !disabled) {
+    return (
+      <a ref={ref as React.Ref<HTMLAnchorElement>} href={href} target={target} rel={rel} className={classes} {...props}>
+        {icon}
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <button ref={ref as React.Ref<HTMLButtonElement>} type="button" disabled={disabled} className={classes} {...props}>
+      {icon}
+      {children}
+    </button>
+  );
+}
 
 export function BreadcrumbDivider({ className, ...props }: React.LiHTMLAttributes<HTMLLIElement>) {
   const { size } = React.useContext(BreadcrumbContext);
@@ -235,4 +243,10 @@ export function BreadcrumbOverflow({
       </MenuPopover>
     </Menu>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Breadcrumb: BreadcrumbProps;
+  }
 }

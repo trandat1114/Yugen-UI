@@ -156,3 +156,43 @@ describe("Stepper / Wizard messages", () => {
     expect(screen.getByRole("alert")).toHaveTextContent("Check the information in this step.");
   });
 });
+
+describe("Stepper defaultActiveStep", () => {
+  function Uncontrolled({ onStepChange }: { onStepChange?: (i: number) => void }) {
+    return (
+      <Stepper defaultActiveStep={2} responsive={false} onStepChange={onStepChange}>
+        <Step title="Tài khoản" />
+        <Step title="Hồ sơ" />
+        <Step title="Thanh toán" />
+        <Step title="Xác nhận" />
+      </Stepper>
+    );
+  }
+  const statuses = () => screen.getAllByRole("listitem").map((li) => li.dataset.status);
+
+  it("bắt đầu ở bước defaultActiveStep", () => {
+    render(<Uncontrolled />);
+    expect(statuses()).toEqual(["complete", "complete", "current", "upcoming"]);
+  });
+
+  it("không điều khiển: bấm bước khác thì tự chuyển và gọi onStepChange", async () => {
+    const user = userEvent.setup();
+    const onStepChange = vi.fn();
+    render(<Uncontrolled onStepChange={onStepChange} />);
+    await user.click(screen.getByRole("button", { name: /Bước 1/ }));
+    expect(onStepChange).toHaveBeenCalledWith(0);
+    expect(statuses()).toEqual(["current", "upcoming", "upcoming", "upcoming"]);
+  });
+
+  it("activeStep (điều khiển) thắng defaultActiveStep", () => {
+    render(
+      <Stepper activeStep={1} defaultActiveStep={3} responsive={false}>
+        <Step title="Một" />
+        <Step title="Hai" />
+        <Step title="Ba" />
+        <Step title="Bốn" />
+      </Stepper>,
+    );
+    expect(statuses()).toEqual(["complete", "current", "upcoming", "upcoming"]);
+  });
+});

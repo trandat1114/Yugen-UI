@@ -1,6 +1,7 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/cn";
+import { useComponentDefaults } from "../YugenProvider/context";
 
 /** ButtonGroup (shadcn/ui, giao diện Fluent 2 Button) — https://ui.shadcn.com/docs/components/button-group */
 const buttonGroupVariants = cva(
@@ -31,8 +32,14 @@ const buttonGroupVariants = cva(
 
 export interface ButtonGroupProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof buttonGroupVariants> {}
 
-export const ButtonGroup = React.forwardRef<HTMLDivElement, ButtonGroupProps>(
-  ({ className, orientation = "horizontal", ...props }, ref) => (
+export function ButtonGroup(inProps: ButtonGroupProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    className,
+    orientation = "horizontal",
+    ref,
+    ...props
+  } = useComponentDefaults("ButtonGroup", inProps);
+  return (
     <div
       ref={ref}
       role="group"
@@ -40,9 +47,8 @@ export const ButtonGroup = React.forwardRef<HTMLDivElement, ButtonGroupProps>(
       className={cn(buttonGroupVariants({ orientation }), className)}
       {...props}
     />
-  ),
-);
-ButtonGroup.displayName = "ButtonGroup";
+  );
+}
 
 export interface ButtonGroupSeparatorProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Hướng của vạch chia — ngược với hướng nhóm. */
@@ -52,8 +58,14 @@ export interface ButtonGroupSeparatorProps extends React.HTMLAttributes<HTMLDivE
 }
 
 /** Vạch chia giữa các nút trong nhóm (cần thiết cho nút primary/subtle vốn không có viền). */
-export const ButtonGroupSeparator = React.forwardRef<HTMLDivElement, ButtonGroupSeparatorProps>(
-  ({ className, orientation = "vertical", appearance = "default", ...props }, ref) => (
+export function ButtonGroupSeparator({
+  className,
+  orientation = "vertical",
+  appearance = "default",
+  ref,
+  ...props
+}: ButtonGroupSeparatorProps & { ref?: React.Ref<HTMLDivElement> }) {
+  return (
     <div
       ref={ref}
       role="separator"
@@ -66,8 +78,13 @@ export const ButtonGroupSeparator = React.forwardRef<HTMLDivElement, ButtonGroup
       )}
       {...props}
     />
-  ),
-);
-ButtonGroupSeparator.displayName = "ButtonGroupSeparator";
+  );
+}
 
 export { buttonGroupVariants };
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    ButtonGroup: ButtonGroupProps;
+  }
+}

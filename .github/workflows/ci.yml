@@ -87,6 +87,8 @@ jobs:
       # Code mẫu và block viết bằng tiếng Anh, trừ demo nói về ngôn ngữ (ALLOW trong scripts/check-demo-language.mjs)
       - run: npm run check:demo-language
       - run: node scripts/sync-templates.mjs --check
+      # Icon có sẵn (src/components/ui/_internal/icons.tsx) khớp với các icon component đang import (#320).
+      - run: node scripts/icons.mjs --check
       - run: npm run build:lib
       - run: npm run build:docs
       - run: npm run pack:check
@@ -107,7 +109,18 @@ jobs:
           cache: npm
 
       - run: npm ci
-      - run: npm test
+      # Coverage theo thư mục component (vitest.config.ts › coverage), so với mức sàn trong scripts/test-floor.json (#167):
+      # thư mục mới phải có test, % dòng của mỗi thư mục không được giảm.
+      - run: npx vitest run --coverage
+      - run: node scripts/check-test-floor.mjs
+      - name: Upload coverage summary
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-summary
+          path: coverage/coverage-summary.json
+          retention-days: 7
+          if-no-files-found: ignore
 
   # CLI `yugen` (packages/cli) — package độc lập, lockfile riêng; template đóng gói từ templates/.
   cli:
@@ -210,29 +223,6 @@ jobs:
             console.log(text);
             if (process.env.GITHUB_STEP_SUMMARY) fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, text + "\n");
           '
-
-  # React 18.3 vẫn được hỗ trợ (peer react >=18) cho tới khi #62 quyết định ngừng.
-  react-18:
-    name: React 18
-    if: github.event.pull_request.draft != true
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 26
-          cache: npm
-
-      - run: npm ci
-      # Swap the dev copies of React for 18.3 in this workspace only (package.json / lockfile stay on 19).
-      - name: Install React 18 (not saved)
-        run: npm i --no-save --no-audit --no-fund react@^18.3 react-dom@^18.3 @types/react@^18.3 @types/react-dom@^18.3
-      - run: node -p "'react ' + require('react/package.json').version + ', @types/react ' + require('@types/react/package.json').version"
-      - run: npm run typecheck
-      - run: npm test
-      - run: npm run build:lib
 
   # E2E chia 4 shard chạy song song (#38, #310); job "E2E (Playwright + axe)" bên dưới gộp báo cáo và là tên check cố định.
   # E2E là đường dài nhất của CI: 3 shard mất 207–249 s, 4 shard rút còn ~3/4.

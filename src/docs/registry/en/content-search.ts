@@ -52,7 +52,7 @@ export const en: Record<string, ComponentDocEn> = {
       onSelect: "Called when a suggestion is picked.",
       onSubmit: "Called on Enter when no suggestion is active.",
       loading: "Suggestions are loading; the spinner appears after 300ms.",
-      emptyMessage: "Shown when no suggestions match; null closes the list instead.",
+      noResultsText: "Shown when no suggestions match; null closes the list instead. The old name emptyMessage is deprecated (removed in 1.0).",
       maxSuggestions: "Maximum number of suggestions.",
       minChars: "Characters needed before the list opens; 0 = open on focus.",
       highlight: "Highlights the matching part.",

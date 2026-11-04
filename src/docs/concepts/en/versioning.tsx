@@ -150,13 +150,21 @@ export default function Page() {
         </div>
       </DocSection>
 
+      <DocSection id="labs" title="Yugen Labs" description="Experimental components, outside SemVer.">
+        <P>
+          Components in the Yugen Labs group are still settling, and their pages say so. Their API can change in a minor release;
+          the CHANGELOG and What&apos;s new list what changed. A component leaves Labs when it has tests, a template uses it and
+          its API needs no more changes. From then on it follows the rules above.
+        </P>
+      </DocSection>
+
       <DocSection id="support" title="Support matrix">
         <Table
           head={["Area", "Supported", "Notes"]}
           rows={[
             ["React", "18 and 19", "CI runs typecheck, unit tests and the build on both"],
             ["Tailwind CSS", "v4", "Not needed if you use the precompiled styles.css"],
-            ["TypeScript", "5.x, strict", "Types are checked against @types/react 18 and 19"],
+            ["TypeScript", "5.x, strict", "Types are checked against @types/react 19"],
             ["Next.js", "App Router & Pages Router", "Every component file has \"use client\""],
             ["Browsers", "Evergreen (last 2 versions of Chrome, Edge, Firefox, Safari)", "See Browsers & platforms"],
           ]}

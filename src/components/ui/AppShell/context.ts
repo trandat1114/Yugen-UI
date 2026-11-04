@@ -1,12 +1,13 @@
 import * as React from "react";
+import type { BreakpointToken } from "../_internal/breakpoint";
 
 /*
  * Phần dùng chung của AppShell.tsx và Sidebar.tsx. Hai file tách nhau để trang chỉ có thanh trên cùng (site nội dung)
  * không kéo theo Sidebar cùng Drawer, Tooltip, Kbd. Chỉ dùng nội bộ: barrel export từ hai file kia.
  */
 
-/** Độ rộng khung (container query, rem) từ đó sidebar nằm trong bố cục; hẹp hơn thì thành Drawer. */
-export type AppShellBreakpoint = "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl";
+/** Độ rộng khung (container query, rem) từ đó sidebar nằm trong bố cục; hẹp hơn thì thành Drawer. Cùng mốc với Sheet. */
+export type AppShellBreakpoint = BreakpointToken;
 /** icon: thu về rail chỉ icon · offcanvas: ẩn hẳn · none: luôn mở trên màn rộng. */
 export type SidebarCollapsible = "icon" | "offcanvas" | "none";
 /** sidebar: sidebar cao hết khung, thanh trên cùng bên cạnh · header: thanh trên cùng trải ngang, sidebar bên dưới. */

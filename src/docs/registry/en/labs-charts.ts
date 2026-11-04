@@ -140,7 +140,7 @@ export const en: Record<string, ComponentDocEn> = {
       },
       { title: "Variants", description: "variant area; color picks a categorical color slot instead of the background gray." },
       { title: "Down is good", description: "goodDirection=\"down\": a falling churn rate → success color, always with an icon and text." },
-      { title: "Hero number", description: "size=\"hero\" (68px, same sans font) for the one number the screen leads with." },
+      { title: "Hero number", description: "size=\"extra-large\" (68px, same sans font) for the one number the screen leads with." },
     ],
     dos: [
       "Use StatTile when the data is a single current number (+ a trend), instead of a single-bar chart.",

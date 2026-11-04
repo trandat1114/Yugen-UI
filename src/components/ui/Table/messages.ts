@@ -12,7 +12,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const tableMessages: TableMessages = {
+export const tableMessagesVi: TableMessages = {
   selectAllRows: "Chọn tất cả hàng",
   selectRow: "Chọn hàng",
 };
@@ -22,5 +22,5 @@ export const tableMessagesEn: TableMessages = {
   selectRow: "Select row",
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `tableMessagesEn` (mặc định). `tableMessages` giữ cho code cũ. */
-export const tableMessagesVi = tableMessages;
+/** @deprecated Use `tableMessagesVi` (Vietnamese) or `tableMessagesEn`. Will be removed in v1.0.0. */
+export const tableMessages = tableMessagesVi;

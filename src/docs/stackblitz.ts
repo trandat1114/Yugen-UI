@@ -164,15 +164,15 @@ export function stackBlitzFiles(code: string, o: StackBlitzOptions): Record<stri
     private: true,
     type: "module",
     scripts: { dev: "vite", build: "vite build" },
-    dependencies: { react: "^18.3.1", "react-dom": "^18.3.1", "yugen-ui": `^${o.version}`, "@fluentui/react-icons": "^2.0.264", ...extra },
+    dependencies: { react: "^19.3.1", "react-dom": "^19.3.1", "yugen-ui": `^${o.version}`, "@fluentui/react-icons": "^2.0.264", ...extra },
     devDependencies: {
       vite: "^6.0.0",
       "@vitejs/plugin-react": "^4.3.4",
       tailwindcss: "^4.0.0",
       "@tailwindcss/vite": "^4.0.0",
       typescript: "^5.7.3",
-      "@types/react": "^18.3.18",
-      "@types/react-dom": "^18.3.5",
+      "@types/react": "^19.3.0",
+      "@types/react-dom": "^19.3.0",
     },
   };
   return {

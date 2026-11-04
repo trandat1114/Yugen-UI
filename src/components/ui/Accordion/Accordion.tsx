@@ -1,7 +1,8 @@
 import * as React from "react";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
-import { ChevronRight20Regular } from "@fluentui/react-icons";
+import { ChevronRight20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
+import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
 /** Fluent 2 Accordion — https://fluent2.microsoft.design/components/web/react/core/accordion/usage */
 type AccordionSize = "small" | "medium" | "large" | "extra-large";
@@ -57,49 +58,51 @@ export type AccordionProps = React.ComponentPropsWithoutRef<typeof AccordionPrim
   appearance?: AccordionAppearance;
 };
 
-export const Accordion = React.forwardRef<React.ElementRef<typeof AccordionPrimitive.Root>, AccordionProps>(
-  ({ size, expandIconPosition, appearance = "flush", className, ...props }, ref) => {
-    const parent = React.useContext(AccordionContext);
-    const level = parent.level + 1;
-    const nested = level > 1;
-    const value = React.useMemo<AccordionContextValue>(
-      () => ({
-        size: size ?? (nested ? parent.size : "medium"),
-        expandIconPosition: expandIconPosition ?? (nested ? parent.expandIconPosition : "start"),
-        appearance,
-        level,
-      }),
-      [size, expandIconPosition, appearance, level, nested, parent.size, parent.expandIconPosition],
-    );
-    return (
-      <AccordionContext.Provider value={value}>
-        <AccordionPrimitive.Root
-          ref={ref}
-          data-appearance={appearance}
-          data-level={level}
-          className={cn(
-            "flex flex-col",
-            ROOT_APPEARANCE[appearance],
-            // Accordion lồng (flush): đường dẫn dọc stroke-2 ở mép đầu dòng thể hiện cấp bậc.
-            nested && appearance === "flush" && "border-s border-stroke-2 ps-1",
-            className,
-          )}
-          {...props}
-        />
-      </AccordionContext.Provider>
-    );
-  },
-);
-Accordion.displayName = "Accordion";
+export function Accordion(inProps: AccordionProps & { ref?: React.Ref<React.ComponentRef<typeof AccordionPrimitive.Root>> }) {
+  const parent = React.useContext(AccordionContext);
+  const level = parent.level + 1;
+  const nested = level > 1;
+  // Accordion lồng theo cỡ của Accordion cha trước, rồi mới tới mặc định của YugenProvider.
+  const {
+    size,
+    expandIconPosition,
+    appearance = "flush",
+    className,
+    ref,
+    ...props
+  } = useComponentDefaults("Accordion", nested && inProps.size === undefined ? { ...inProps, size: parent.size } : inProps, COMPACT_SIZE);
+  const value = React.useMemo<AccordionContextValue>(
+    () => ({
+      size: size ?? (nested ? parent.size : "medium"),
+      expandIconPosition: expandIconPosition ?? (nested ? parent.expandIconPosition : "start"),
+      appearance,
+      level,
+    }),
+    [size, expandIconPosition, appearance, level, nested, parent.size, parent.expandIconPosition],
+  );
+  return (
+    <AccordionContext.Provider value={value}>
+      <AccordionPrimitive.Root
+        ref={ref}
+        data-appearance={appearance}
+        data-level={level}
+        className={cn(
+          "flex flex-col",
+          ROOT_APPEARANCE[appearance],
+          // Accordion lồng (flush): đường dẫn dọc stroke-2 ở mép đầu dòng thể hiện cấp bậc.
+          nested && appearance === "flush" && "border-s border-stroke-2 ps-1",
+          className,
+        )}
+        {...props}
+      />
+    </AccordionContext.Provider>
+  );
+}
 
-export const AccordionItem = React.forwardRef<
-  React.ElementRef<typeof AccordionPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
->(({ className, ...props }, ref) => {
+export function AccordionItem({ className, ref, ...props }: React.ComponentProps<typeof AccordionPrimitive.Item>) {
   const { appearance } = React.useContext(AccordionContext);
   return <AccordionPrimitive.Item ref={ref} className={cn(ITEM_APPEARANCE[appearance], className)} {...props} />;
-});
-AccordionItem.displayName = "AccordionItem";
+}
 
 const HEADER_SIZE: Record<AccordionSize, string> = {
   small: "min-h-8 text-caption1",
@@ -118,70 +121,76 @@ export interface AccordionHeaderProps extends React.ComponentPropsWithoutRef<typ
   description?: React.ReactNode;
 }
 
-export const AccordionHeader = React.forwardRef<React.ElementRef<typeof AccordionPrimitive.Trigger>, AccordionHeaderProps>(
-  ({ className, icon, description, children, ...props }, ref) => {
-    const { size, expandIconPosition, appearance } = React.useContext(AccordionContext);
-    const id = React.useId();
-    const chevron = (
-      <ChevronRight20Regular
-        aria-hidden
-        className={cn(
-          "size-5 shrink-0 text-foreground-2 transition-transform duration-normal ease-easy-ease motion-reduce:transition-none",
-          "group-data-disabled/acc:text-foreground-disabled",
-          // Chevron ở đầu chỉ sang ngang khi đóng → lật theo chiều đọc; scale áp trước rotate nên RTL xoay ngược chiều.
-          expandIconPosition === "start"
-            ? "rtl:-scale-x-100 group-data-[state=open]/acc:rotate-90 rtl:group-data-[state=open]/acc:-rotate-90"
-            : "rotate-90 group-data-[state=open]/acc:-rotate-90",
-        )}
-      />
-    );
+export function AccordionHeader({
+  className,
+  icon,
+  description,
+  children,
+  ref,
+  ...props
+}: AccordionHeaderProps & { ref?: React.Ref<React.ComponentRef<typeof AccordionPrimitive.Trigger>> }) {
+  const { size, expandIconPosition, appearance } = React.useContext(AccordionContext);
+  const id = React.useId();
+  const chevron = (
+    <ChevronRight20Regular
+      aria-hidden
+      className={cn(
+        "size-5 shrink-0 text-foreground-2 transition-transform duration-normal ease-easy-ease motion-reduce:transition-none",
+        "group-data-disabled/acc:text-foreground-disabled",
+        // Chevron ở đầu chỉ sang ngang khi đóng → lật theo chiều đọc; scale áp trước rotate nên RTL xoay ngược chiều.
+        expandIconPosition === "start"
+          ? "rtl:-scale-x-100 group-data-[state=open]/acc:rotate-90 rtl:group-data-[state=open]/acc:-rotate-90"
+          : "rotate-90 group-data-[state=open]/acc:-rotate-90",
+      )}
+    />
+  );
 
-    return (
-      <AccordionPrimitive.Header className="m-0 flex">
-        <AccordionPrimitive.Trigger
-          ref={ref}
-          className={cn(
-            "group/acc flex w-full flex-1 items-center gap-2 py-2 text-start text-foreground-1",
-            "transition-colors duration-faster ease-easy-ease hover:bg-subtle-hover active:bg-subtle-pressed",
-            "disabled:pointer-events-none disabled:text-foreground-disabled",
-            HEADER_SIZE[size],
-            TRIGGER_APPEARANCE[appearance],
-            className,
-          )}
-          {...props}
-        >
-          {expandIconPosition === "start" && chevron}
-          {icon && (
-            <span className="flex shrink-0 text-foreground-2 group-data-disabled/acc:text-foreground-disabled [&_svg]:size-5">
-              {icon}
+  return (
+    <AccordionPrimitive.Header className="m-0 flex">
+      <AccordionPrimitive.Trigger
+        ref={ref}
+        className={cn(
+          "group/acc flex w-full flex-1 items-center gap-2 py-2 text-start text-foreground-1",
+          "transition-colors duration-faster ease-easy-ease hover:bg-subtle-hover active:bg-subtle-pressed",
+          "disabled:pointer-events-none disabled:text-foreground-disabled",
+          HEADER_SIZE[size],
+          TRIGGER_APPEARANCE[appearance],
+          className,
+        )}
+        {...props}
+      >
+        {expandIconPosition === "start" && chevron}
+        {icon && (
+          <span className="flex shrink-0 text-foreground-2 group-data-disabled/acc:text-foreground-disabled [&_svg]:size-5">
+            {icon}
+          </span>
+        )}
+        {description ? (
+          <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+            <span id={`${id}-title`}>{children}</span>
+            <span
+              id={`${id}-description`}
+              className="text-caption1 font-normal text-foreground-3 group-data-disabled/acc:text-foreground-disabled"
+            >
+              {description}
             </span>
-          )}
-          {description ? (
-            <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-              <span id={`${id}-title`}>{children}</span>
-              <span
-                id={`${id}-description`}
-                className="text-caption1 font-normal text-foreground-3 group-data-disabled/acc:text-foreground-disabled"
-              >
-                {description}
-              </span>
-            </span>
-          ) : (
-            <span className="min-w-0 flex-1">{children}</span>
-          )}
-          {expandIconPosition === "end" && chevron}
-        </AccordionPrimitive.Trigger>
-      </AccordionPrimitive.Header>
-    );
-  },
-);
-AccordionHeader.displayName = "AccordionHeader";
+          </span>
+        ) : (
+          <span className="min-w-0 flex-1">{children}</span>
+        )}
+        {expandIconPosition === "end" && chevron}
+      </AccordionPrimitive.Trigger>
+    </AccordionPrimitive.Header>
+  );
+}
 
 /** Panel luôn được mount để chuyển động chiều cao bằng grid-template-rows (0fr ↔ 1fr). */
-export const AccordionPanel = React.forwardRef<
-  React.ElementRef<typeof AccordionPrimitive.Content>,
-  Omit<React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>, "forceMount">
->(({ className, children, ...props }, ref) => {
+export function AccordionPanel({
+  className,
+  children,
+  ref,
+  ...props
+}: Omit<React.ComponentProps<typeof AccordionPrimitive.Content>, "forceMount">) {
   const { appearance } = React.useContext(AccordionContext);
   return (
     <AccordionPrimitive.Content
@@ -198,5 +207,10 @@ export const AccordionPanel = React.forwardRef<
       </div>
     </AccordionPrimitive.Content>
   );
-});
-AccordionPanel.displayName = "AccordionPanel";
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Accordion: AccordionProps;
+  }
+}

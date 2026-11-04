@@ -16,7 +16,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const comboboxMessages: ComboboxMessages = {
+export const comboboxMessagesVi: ComboboxMessages = {
   noResults: "Không tìm thấy kết quả",
   useFreeform: (query) => `Nhấn Enter để dùng “${query}”`,
   closeList: "Đóng danh sách",
@@ -30,5 +30,5 @@ export const comboboxMessagesEn: ComboboxMessages = {
   openList: "Open list",
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `comboboxMessagesEn` (mặc định). `comboboxMessages` giữ cho code cũ. */
-export const comboboxMessagesVi = comboboxMessages;
+/** @deprecated Use `comboboxMessagesVi` (Vietnamese) or `comboboxMessagesEn`. Will be removed in v1.0.0. */
+export const comboboxMessages = comboboxMessagesVi;

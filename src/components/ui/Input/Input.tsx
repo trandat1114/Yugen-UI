@@ -1,7 +1,8 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { ErrorCircle12Filled, CheckmarkCircle12Filled, Warning12Filled } from "@fluentui/react-icons";
+import { ErrorCircle12Filled, CheckmarkCircle12Filled, Warning12Filled } from "../_internal/icons";
 import { cn } from "@/lib/cn";
+import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
 /** Fluent 2 Input + Field — https://fluent2.microsoft.design/components/web/react/core/input/usage */
 const inputRootVariants = cva(
@@ -65,79 +66,81 @@ export interface InputProps
   rootClassName?: string;
 }
 
-export const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  (
-    {
-      className,
-      rootClassName,
-      appearance,
-      size,
-      label,
-      hint,
-      validationState = "none",
-      validationMessage,
-      contentBefore,
-      contentAfter,
-      required,
-      disabled,
-      id,
-      ...props
-    },
+export function Input(inProps: InputProps & { ref?: React.Ref<HTMLInputElement> }) {
+  const {
+    className,
+    rootClassName,
+    appearance,
+    size,
+    label,
+    hint,
+    validationState = "none",
+    validationMessage,
+    contentBefore,
+    contentAfter,
+    required,
+    disabled,
+    id,
     ref,
-  ) => {
-    const autoId = React.useId();
-    const inputId = id ?? autoId;
-    const messageId = `${inputId}-message`;
-    const hintId = `${inputId}-hint`;
-    const validation = validationState !== "none" ? VALIDATION[validationState] : null;
+    ...props
+  } = useComponentDefaults("Input", inProps, COMPACT_SIZE);
+  const autoId = React.useId();
+  const inputId = id ?? autoId;
+  const messageId = `${inputId}-message`;
+  const hintId = `${inputId}-hint`;
+  const validation = validationState !== "none" ? VALIDATION[validationState] : null;
 
-    return (
-      <div className={cn("flex flex-col gap-0.5", rootClassName)}>
-        {label && (
-          <label
-            htmlFor={inputId}
-            className={cn("pb-0.5 text-body1 text-foreground-1", disabled && "text-foreground-disabled")}
-          >
-            {label}
-            {required && <span className="ps-1 text-danger-foreground-1">*</span>}
-          </label>
-        )}
-        <span
-          className={cn(
-            inputRootVariants({ appearance, size, invalid: validationState === "error" }),
-            disabled && "border-stroke-disabled bg-transparent text-foreground-disabled hover:border-stroke-disabled",
-            className,
-          )}
+  return (
+    <div className={cn("flex flex-col gap-0.5", rootClassName)}>
+      {label && (
+        <label
+          htmlFor={inputId}
+          className={cn("pb-0.5 text-body1 text-foreground-1", disabled && "text-foreground-disabled")}
         >
-          {contentBefore && <span className="flex text-foreground-3">{contentBefore}</span>}
-          <input
-            ref={ref}
-            id={inputId}
-            required={required}
-            disabled={disabled}
-            aria-invalid={validationState === "error" || undefined}
-            aria-describedby={cn(validationMessage && messageId, hint && hintId) || undefined}
-            className="h-full w-full min-w-0 grow bg-transparent px-0.5 outline-none placeholder:text-foreground-4 disabled:cursor-not-allowed"
-            {...props}
-          />
-          {contentAfter && <span className="flex text-foreground-3">{contentAfter}</span>}
+          {label}
+          {required && <span className="ps-1 text-danger-foreground-1">*</span>}
+        </label>
+      )}
+      <span
+        className={cn(
+          inputRootVariants({ appearance, size, invalid: validationState === "error" }),
+          disabled && "border-stroke-disabled bg-transparent text-foreground-disabled hover:border-stroke-disabled",
+          className,
+        )}
+      >
+        {contentBefore && <span className="flex text-foreground-3">{contentBefore}</span>}
+        <input
+          ref={ref}
+          id={inputId}
+          required={required}
+          disabled={disabled}
+          aria-invalid={validationState === "error" || undefined}
+          aria-describedby={cn(validationMessage && messageId, hint && hintId) || undefined}
+          className="h-full w-full min-w-0 grow bg-transparent px-0.5 outline-none placeholder:text-foreground-4 disabled:cursor-not-allowed"
+          {...props}
+        />
+        {contentAfter && <span className="flex text-foreground-3">{contentAfter}</span>}
+      </span>
+      {validationMessage && (
+        <span
+          id={messageId}
+          className={cn("flex items-center gap-1 text-caption1", validation?.className ?? "text-foreground-3")}
+        >
+          {validation && <validation.icon className="shrink-0" />}
+          <span className={validationState === "error" ? undefined : "text-foreground-3"}>{validationMessage}</span>
         </span>
-        {validationMessage && (
-          <span
-            id={messageId}
-            className={cn("flex items-center gap-1 text-caption1", validation?.className ?? "text-foreground-3")}
-          >
-            {validation && <validation.icon className="shrink-0" />}
-            <span className={validationState === "error" ? undefined : "text-foreground-3"}>{validationMessage}</span>
-          </span>
-        )}
-        {hint && (
-          <span id={hintId} className="text-caption1 text-foreground-3">
-            {hint}
-          </span>
-        )}
-      </div>
-    );
-  },
-);
-Input.displayName = "Input";
+      )}
+      {hint && (
+        <span id={hintId} className="text-caption1 text-foreground-3">
+          {hint}
+        </span>
+      )}
+    </div>
+  );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Input: InputProps;
+  }
+}

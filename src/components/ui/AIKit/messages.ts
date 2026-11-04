@@ -66,7 +66,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const promptInputMessages: PromptInputMessages = {
+export const promptInputMessagesVi: PromptInputMessages = {
   placeholder: "Hỏi bất cứ điều gì…",
   label: "Nhập yêu cầu",
   send: "Gửi",
@@ -104,7 +104,7 @@ export const promptInputMessagesEn: PromptInputMessages = {
   tooMany: (maxFiles) => (maxFiles === 1 ? "You can attach only 1 file." : `You can attach up to ${maxFiles} files.`),
 };
 
-export const streamingMarkdownMessages: StreamingMarkdownMessages = {
+export const streamingMarkdownMessagesVi: StreamingMarkdownMessages = {
   newTab: "(mở tab mới)",
   taskDone: "Đã xong:",
   taskTodo: "Chưa xong:",
@@ -118,7 +118,7 @@ export const streamingMarkdownMessagesEn: StreamingMarkdownMessages = {
   table: "Table",
 };
 
-export const citationMessages: CitationMessages = {
+export const citationMessagesVi: CitationMessages = {
   source: "Nguồn",
   sources: "Nguồn",
   newTab: "(mở tab mới)",
@@ -130,7 +130,7 @@ export const citationMessagesEn: CitationMessages = {
   newTab: "(opens in new tab)",
 };
 
-export const reasoningMessages: ReasoningMessages = {
+export const reasoningMessagesVi: ReasoningMessages = {
   thinking: "Đang suy luận…",
   thought: "Đã suy luận",
   thoughtFor: (duration) => `Đã suy luận trong ${duration}`,
@@ -142,14 +142,14 @@ export const reasoningMessagesEn: ReasoningMessages = {
   thoughtFor: (duration) => `Thought for ${duration}`,
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `promptInputMessagesEn` (mặc định). `promptInputMessages` giữ cho code cũ. */
-export const promptInputMessagesVi = promptInputMessages;
+/** @deprecated Use `promptInputMessagesVi` (Vietnamese) or `promptInputMessagesEn`. Will be removed in v1.0.0. */
+export const promptInputMessages = promptInputMessagesVi;
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `streamingMarkdownMessagesEn` (mặc định). `streamingMarkdownMessages` giữ cho code cũ. */
-export const streamingMarkdownMessagesVi = streamingMarkdownMessages;
+/** @deprecated Use `streamingMarkdownMessagesVi` (Vietnamese) or `streamingMarkdownMessagesEn`. Will be removed in v1.0.0. */
+export const streamingMarkdownMessages = streamingMarkdownMessagesVi;
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `citationMessagesEn` (mặc định). `citationMessages` giữ cho code cũ. */
-export const citationMessagesVi = citationMessages;
+/** @deprecated Use `citationMessagesVi` (Vietnamese) or `citationMessagesEn`. Will be removed in v1.0.0. */
+export const citationMessages = citationMessagesVi;
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `reasoningMessagesEn` (mặc định). `reasoningMessages` giữ cho code cũ. */
-export const reasoningMessagesVi = reasoningMessages;
+/** @deprecated Use `reasoningMessagesVi` (Vietnamese) or `reasoningMessagesEn`. Will be removed in v1.0.0. */
+export const reasoningMessages = reasoningMessagesVi;

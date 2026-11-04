@@ -3,6 +3,7 @@ import { useControllableState } from "../hooks/useControllableState";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { cn } from "@/lib/cn";
 import { usePressed } from "../_internal/usePressed";
+import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
 /** Fluent 2 Slider — https://fluent2.microsoft.design/components/web/react/core/slider/usage */
 export interface SliderProps extends Omit<React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root>, "aria-label"> {
@@ -17,83 +18,98 @@ export interface SliderProps extends Omit<React.ComponentPropsWithoutRef<typeof 
   material?: "glass";
 }
 
-export const Slider = React.forwardRef<React.ElementRef<typeof SliderPrimitive.Root>, SliderProps>(
-  (
-    { className, rootClassName, size = "medium", label, showValue, value, defaultValue, onValueChange, disabled, material, onPointerDown, ...props },
+export function Slider(inProps: SliderProps & { ref?: React.Ref<React.ComponentRef<typeof SliderPrimitive.Root>> }) {
+  const {
+    className,
+    rootClassName,
+    size = "medium",
+    label,
+    showValue,
+    value,
+    defaultValue,
+    onValueChange,
+    disabled,
+    material,
+    onPointerDown,
     ref,
-  ) => {
-    const labelId = React.useId();
-    const pressed = usePressed();
-    const lens = material === "glass" && pressed.value;
-    // Radix tự giữ giá trị; bản sao này chỉ để hiện `showValue` và đếm số thumb.
-    const [current, setCurrent] = useControllableState({
-      value,
-      defaultValue: () => defaultValue ?? [props.min ?? 0],
-      onChange: onValueChange,
-    });
-    const small = size === "small";
+    ...props
+  } = useComponentDefaults("Slider", inProps, COMPACT_SIZE);
+  const labelId = React.useId();
+  const pressed = usePressed();
+  const lens = material === "glass" && pressed.value;
+  // Radix tự giữ giá trị; bản sao này chỉ để hiện `showValue` và đếm số thumb.
+  const [current, setCurrent] = useControllableState({
+    value,
+    defaultValue: () => defaultValue ?? [props.min ?? 0],
+    onChange: onValueChange,
+  });
+  const small = size === "small";
 
-    return (
-      <div className={cn("flex w-full flex-col gap-0.5", rootClassName)}>
-        {(label || showValue) && (
-          <div className="flex items-center justify-between text-body1">
-            {label && (
-              <span id={labelId} className={disabled ? "text-foreground-disabled" : "text-foreground-1"}>
-                {label}
-              </span>
-            )}
-            {showValue && <span className="text-foreground-3 tabular-nums">{current.join(" – ")}</span>}
-          </div>
-        )}
-        <SliderPrimitive.Root
-          ref={ref}
-          value={value}
-          defaultValue={defaultValue}
-          disabled={disabled}
-          onValueChange={setCurrent}
-          onPointerDown={(event) => {
-            if (material) pressed.start();
-            onPointerDown?.(event);
-          }}
-          className={cn(
-            "group/slider relative flex w-full touch-none items-center select-none data-disabled:pointer-events-none",
-            small ? "h-6" : "h-8",
-            className,
+  return (
+    <div className={cn("flex w-full flex-col gap-0.5", rootClassName)}>
+      {(label || showValue) && (
+        <div className="flex items-center justify-between text-body1">
+          {label && (
+            <span id={labelId} className={disabled ? "text-foreground-disabled" : "text-foreground-1"}>
+              {label}
+            </span>
           )}
-          {...props}
+          {showValue && <span className="text-foreground-3 tabular-nums">{current.join(" – ")}</span>}
+        </div>
+      )}
+      <SliderPrimitive.Root
+        ref={ref}
+        value={value}
+        defaultValue={defaultValue}
+        disabled={disabled}
+        onValueChange={setCurrent}
+        onPointerDown={(event) => {
+          if (material) pressed.start();
+          onPointerDown?.(event);
+        }}
+        className={cn(
+          "group/slider relative flex w-full touch-none items-center select-none data-disabled:pointer-events-none",
+          small ? "h-6" : "h-8",
+          className,
+        )}
+        {...props}
+      >
+        <SliderPrimitive.Track
+          className={cn(
+            "relative grow overflow-hidden rounded-circular bg-stroke-accessible group-data-disabled/slider:bg-stroke-disabled",
+            small ? "h-0.5" : "h-1",
+          )}
         >
-          <SliderPrimitive.Track
+          <SliderPrimitive.Range className="absolute h-full bg-brand-background group-data-disabled/slider:bg-foreground-disabled" />
+        </SliderPrimitive.Track>
+        {current.map((_, i) => (
+          <SliderPrimitive.Thumb
+            key={i}
+            aria-label={props["aria-label"]}
+            aria-labelledby={label ? labelId : undefined}
             className={cn(
-              "relative grow overflow-hidden rounded-circular bg-stroke-accessible group-data-disabled/slider:bg-stroke-disabled",
-              small ? "h-0.5" : "h-1",
+              "block cursor-grab rounded-circular border active:cursor-grabbing",
+              "transition-[background-color,box-shadow,scale] duration-faster ease-easy-ease",
+              small ? "size-4" : "size-5",
+              lens
+                ? "glass scale-160 border-transparent shadow-8"
+                : cn(
+                    "border-stroke-1 bg-brand-background hover:bg-brand-background-hover active:bg-brand-background-pressed",
+                    "group-data-disabled/slider:bg-foreground-disabled group-data-disabled/slider:border-stroke-disabled",
+                    small
+                      ? "shadow-[inset_0_0_0_3px_var(--colorNeutralBackground1)]"
+                      : "shadow-[inset_0_0_0_4px_var(--colorNeutralBackground1)]",
+                  ),
             )}
-          >
-            <SliderPrimitive.Range className="absolute h-full bg-brand-background group-data-disabled/slider:bg-foreground-disabled" />
-          </SliderPrimitive.Track>
-          {current.map((_, i) => (
-            <SliderPrimitive.Thumb
-              key={i}
-              aria-label={props["aria-label"]}
-              aria-labelledby={label ? labelId : undefined}
-              className={cn(
-                "block cursor-grab rounded-circular border active:cursor-grabbing",
-                "transition-[background-color,box-shadow,scale] duration-faster ease-easy-ease",
-                small ? "size-4" : "size-5",
-                lens
-                  ? "glass scale-160 border-transparent shadow-8"
-                  : cn(
-                      "border-stroke-1 bg-brand-background hover:bg-brand-background-hover active:bg-brand-background-pressed",
-                      "group-data-disabled/slider:bg-foreground-disabled group-data-disabled/slider:border-stroke-disabled",
-                      small
-                        ? "shadow-[inset_0_0_0_3px_var(--colorNeutralBackground1)]"
-                        : "shadow-[inset_0_0_0_4px_var(--colorNeutralBackground1)]",
-                    ),
-              )}
-            />
-          ))}
-        </SliderPrimitive.Root>
-      </div>
-    );
-  },
-);
-Slider.displayName = "Slider";
+          />
+        ))}
+      </SliderPrimitive.Root>
+    </div>
+  );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Slider: SliderProps;
+  }
+}

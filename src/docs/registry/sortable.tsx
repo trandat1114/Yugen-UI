@@ -27,7 +27,7 @@ function TaskList() {
   const [order, setOrder] = useState(() => TASKS.map((t) => t.id));
   return (
     <Sortable asChild value={order} onValueChange={setOrder}>
-      <List aria-label="Tasks" variant="outline" className="w-full max-w-md">
+      <List aria-label="Tasks" appearance="outline" className="w-full max-w-md">
         {order.map((id) => {
           const task = taskById(id);
           return (
@@ -232,7 +232,7 @@ export const docs: ComponentDoc[] = [
   const [order, setOrder] = useState(() => TASKS.map((t) => t.id));
   return (
     <Sortable asChild value={order} onValueChange={setOrder}>
-      <List aria-label="Tasks" variant="outline" className="w-full max-w-md">
+      <List aria-label="Tasks" appearance="outline" className="w-full max-w-md">
         {order.map((id) => {
           const task = TASKS.find((t) => t.id === id)!;
           return (

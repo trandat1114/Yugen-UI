@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useDirection } from "@radix-ui/react-direction";
-import { usePortalThemeProps } from "../YugenProvider/context";
+import { usePortalThemeProps, useComponentDefaults } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 
 /** Fluent 2 Drawer — https://fluent2.microsoft.design/components/web/react/core/drawer/usage */
@@ -35,49 +35,54 @@ export interface DrawerSurfaceProps extends React.ComponentPropsWithoutRef<typeo
 }
 
 /** Bề mặt Drawer dạng overlay (portal + lớp phủ). Đặt trong `<Drawer>`. */
-export const DrawerSurface = React.forwardRef<React.ElementRef<typeof DialogPrimitive.Content>, DrawerSurfaceProps>(
-  (
-    { className, position = "end", size = "small", modalType = "modal", material, onPointerDownOutside, onEscapeKeyDown, ...props },
+export function DrawerSurface(inProps: DrawerSurfaceProps & { ref?: React.Ref<React.ComponentRef<typeof DialogPrimitive.Content>> }) {
+  const {
+    className,
+    position = "end",
+    size = "small",
+    modalType = "modal",
+    material,
+    onPointerDownOutside,
+    onEscapeKeyDown,
     ref,
-  ) => {
-    // Portal render vào <body>: gắn `dir` để start/end và animation slide theo hướng chữ của provider lồng.
-    const dir = useDirection();
-    const portalTheme = usePortalThemeProps();
-    return (
-      <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay {...portalTheme} className="fixed inset-0 z-50 bg-overlay animate-fade-in data-[state=closed]:animate-fade-out" />
-        <DrawerContext.Provider value={{ type: "overlay" }}>
-          <DialogPrimitive.Content
-            {...portalTheme}
-            ref={ref}
-            dir={dir}
-            role={modalType === "alert" ? "alertdialog" : "dialog"}
-            // Drawer thường không có DialogDescription; truyền aria-describedby để gắn mô tả riêng khi cần.
-            aria-describedby={undefined}
-            onPointerDownOutside={(e) => {
-              if (modalType === "alert") e.preventDefault();
-              onPointerDownOutside?.(e);
-            }}
-            onEscapeKeyDown={(e) => {
-              if (modalType === "alert") e.preventDefault();
-              onEscapeKeyDown?.(e);
-            }}
-            className={cn(
-              "fixed z-50 flex flex-col bg-background-1 text-foreground-1 shadow-64 outline-none",
-              "motion-reduce:animate-none",
-              OVERLAY_POSITION[position],
-              position === "bottom" ? OVERLAY_HEIGHT[size] : OVERLAY_WIDTH[size],
-              material,
-              className,
-            )}
-            {...props}
-          />
-        </DrawerContext.Provider>
-      </DialogPrimitive.Portal>
-    );
-  },
-);
-DrawerSurface.displayName = "DrawerSurface";
+    ...props
+  } = useComponentDefaults("DrawerSurface", inProps);
+  // Portal render vào <body>: gắn `dir` để start/end và animation slide theo hướng chữ của provider lồng.
+  const dir = useDirection();
+  const portalTheme = usePortalThemeProps();
+  return (
+    <DialogPrimitive.Portal>
+      <DialogPrimitive.Overlay {...portalTheme} className="fixed inset-0 z-50 bg-overlay animate-fade-in data-[state=closed]:animate-fade-out" />
+      <DrawerContext.Provider value={{ type: "overlay" }}>
+        <DialogPrimitive.Content
+          {...portalTheme}
+          ref={ref}
+          dir={dir}
+          role={modalType === "alert" ? "alertdialog" : "dialog"}
+          // Drawer thường không có DialogDescription; truyền aria-describedby để gắn mô tả riêng khi cần.
+          aria-describedby={undefined}
+          onPointerDownOutside={(e) => {
+            if (modalType === "alert") e.preventDefault();
+            onPointerDownOutside?.(e);
+          }}
+          onEscapeKeyDown={(e) => {
+            if (modalType === "alert") e.preventDefault();
+            onEscapeKeyDown?.(e);
+          }}
+          className={cn(
+            "fixed z-50 flex flex-col bg-background-1 text-foreground-1 shadow-64 outline-none",
+            "motion-reduce:animate-none",
+            OVERLAY_POSITION[position],
+            position === "bottom" ? OVERLAY_HEIGHT[size] : OVERLAY_WIDTH[size],
+            material,
+            className,
+          )}
+          {...props}
+        />
+      </DrawerContext.Provider>
+    </DialogPrimitive.Portal>
+  );
+}
 
 export interface OverlayDrawerProps extends DrawerSurfaceProps {
   open?: boolean;
@@ -86,14 +91,20 @@ export interface OverlayDrawerProps extends DrawerSurfaceProps {
 }
 
 /** Tiện ích kiểu Fluent: `<OverlayDrawer open onOpenChange position size>` = Drawer + DrawerSurface. */
-export const OverlayDrawer = React.forwardRef<React.ElementRef<typeof DialogPrimitive.Content>, OverlayDrawerProps>(
-  ({ open, defaultOpen, onOpenChange, ...props }, ref) => (
+export function OverlayDrawer(inProps: OverlayDrawerProps & { ref?: React.Ref<React.ComponentRef<typeof DialogPrimitive.Content>> }) {
+  const {
+    open,
+    defaultOpen,
+    onOpenChange,
+    ref,
+    ...props
+  } = useComponentDefaults("OverlayDrawer", inProps);
+  return (
     <Drawer open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
       <DrawerSurface ref={ref} {...props} />
     </Drawer>
-  ),
-);
-OverlayDrawer.displayName = "OverlayDrawer";
+  );
+}
 
 /* ------------------------------------------------------------------ inline */
 
@@ -114,39 +125,46 @@ export interface InlineDrawerProps extends React.HTMLAttributes<HTMLDivElement> 
 }
 
 /** Drawer nằm trong bố cục (không modal, không lớp phủ) — đẩy nội dung bên cạnh khi mở. */
-export const InlineDrawer = React.forwardRef<HTMLDivElement, InlineDrawerProps>(
-  ({ open = false, position = "start", size = "small", separator = false, className, children, ...props }, ref) => {
-    const vertical = position === "bottom";
-    return (
-      <DrawerContext.Provider value={{ type: "inline" }}>
+export function InlineDrawer(inProps: InlineDrawerProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    open = false,
+    position = "start",
+    size = "small",
+    separator = false,
+    className,
+    children,
+    ref,
+    ...props
+  } = useComponentDefaults("InlineDrawer", inProps);
+  const vertical = position === "bottom";
+  return (
+    <DrawerContext.Provider value={{ type: "inline" }}>
+      <div
+        ref={ref}
+        data-state={open ? "open" : "closed"}
+        className={cn(
+          "relative flex shrink-0 overflow-hidden bg-background-1 text-foreground-1",
+          "transition-[width,height,visibility] duration-normal ease-easy-ease motion-reduce:transition-none",
+          vertical ? (open ? INLINE_HEIGHT[size] : "h-0") : open ? INLINE_WIDTH[size] : "w-0",
+          !open && "invisible",
+          separator && SEPARATOR[position],
+          position === "end" && "justify-end",
+          className,
+        )}
+        {...props}
+      >
         <div
-          ref={ref}
-          data-state={open ? "open" : "closed"}
           className={cn(
-            "relative flex shrink-0 overflow-hidden bg-background-1 text-foreground-1",
-            "transition-[width,height,visibility] duration-normal ease-easy-ease motion-reduce:transition-none",
-            vertical ? (open ? INLINE_HEIGHT[size] : "h-0") : open ? INLINE_WIDTH[size] : "w-0",
-            !open && "invisible",
-            separator && SEPARATOR[position],
-            position === "end" && "justify-end",
-            className,
+            "flex shrink-0 flex-col",
+            vertical ? cn("w-full", INLINE_HEIGHT[size]) : cn("h-full", INLINE_WIDTH[size]),
           )}
-          {...props}
         >
-          <div
-            className={cn(
-              "flex shrink-0 flex-col",
-              vertical ? cn("w-full", INLINE_HEIGHT[size]) : cn("h-full", INLINE_WIDTH[size]),
-            )}
-          >
-            {children}
-          </div>
+          {children}
         </div>
-      </DrawerContext.Provider>
-    );
-  },
-);
-InlineDrawer.displayName = "InlineDrawer";
+      </div>
+    </DrawerContext.Provider>
+  );
+}
 
 /* ------------------------------------------------------------------ parts */
 
@@ -187,4 +205,12 @@ export function DrawerBody({ className, ...props }: React.HTMLAttributes<HTMLDiv
 
 export function DrawerFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return <div className={cn("flex flex-wrap items-center gap-2 px-6 pt-4 pb-6", className)} {...props} />;
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    DrawerSurface: DrawerSurfaceProps;
+    OverlayDrawer: OverlayDrawerProps;
+    InlineDrawer: InlineDrawerProps;
+  }
 }

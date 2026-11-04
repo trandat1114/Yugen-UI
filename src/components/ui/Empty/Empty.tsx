@@ -7,18 +7,24 @@ export interface EmptyProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: "default" | "outline";
 }
 
-export const Empty = React.forwardRef<HTMLDivElement, EmptyProps>(({ variant = "default", className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "flex min-w-0 flex-1 flex-col items-center justify-center gap-4 p-6 text-center text-balance",
-      variant === "outline" && "rounded-2xlarge border border-dashed border-stroke-1",
-      className,
-    )}
-    {...props}
-  />
-));
-Empty.displayName = "Empty";
+export function Empty({
+  variant = "default",
+  className,
+  ref,
+  ...props
+}: EmptyProps & { ref?: React.Ref<HTMLDivElement> }) {
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        "flex min-w-0 flex-1 flex-col items-center justify-center gap-4 p-6 text-center text-balance",
+        variant === "outline" && "rounded-2xlarge border border-dashed border-stroke-1",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
 
 export function EmptyHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return <div className={cn("flex max-w-sm flex-col items-center gap-2", className)} {...props} />;

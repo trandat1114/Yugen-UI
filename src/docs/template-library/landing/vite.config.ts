@@ -16,6 +16,7 @@ import { SITE } from "./site.ts";
  *   Graph and JSON-LD (the product and its plans). Also in dev.
  * - <body>: after the build, renders App to HTML into <div id="root"> (the first screen and the footer; the sections
  *   below load in the browser). main.tsx hydrates it, so the page shows before any JavaScript runs.
+ * - 404.html: a static "Page not found" page (no JavaScript, noindex) that hosts serve for unknown paths.
  */
 function landingSeo(): Plugin {
   let base = "/";
@@ -49,7 +50,20 @@ function landingSeo(): Plugin {
         const { default: App } = await server.ssrLoadModule("/src/App.tsx");
         const body = renderToString(createElement(StrictMode, null, createElement(App)));
         const file = path.join(outDir, "index.html");
-        fs.writeFileSync(file, fs.readFileSync(file, "utf8").replace('<div id="root"></div>', () => `<div id="root">${body}</div>`));
+        const html = fs.readFileSync(file, "utf8");
+        fs.writeFileSync(file, html.replace('<div id="root"></div>', () => `<div id="root">${body}</div>`));
+
+        const { default: NotFoundPage, notFoundTitle } = await server.ssrLoadModule("/src/NotFoundPage.tsx");
+        const notFound = renderToString(createElement(NotFoundPage, { t: content, home: base }));
+        const title = String(notFoundTitle(content)).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+        fs.writeFileSync(
+          path.join(outDir, "404.html"),
+          html
+            .replace(/<!-- seo -->[\s\S]*?<!-- \/seo -->/, `<title>${title}</title>\n    <meta name="robots" content="noindex" />`)
+            .replace(/\s*<script type="module"[^>]*><\/script>/g, "")
+            .replace(/\s*<link rel="modulepreload"[^>]*>/g, "")
+            .replace('<div id="root"></div>', () => `<div id="root">${notFound}</div>`),
+        );
       } finally {
         await server.close();
       }

@@ -15,6 +15,7 @@ import {
   type Point,
 } from "./chartUtils";
 import { useElementSize } from "../hooks/useElementSize";
+import { useComposedRefs } from "../_internal/composeRefs";
 
 /* ================================================================== Sparkline */
 
@@ -39,34 +40,28 @@ export interface SparklineProps extends Omit<React.HTMLAttributes<HTMLSpanElemen
 }
 
 /** Sparkline — đường xu hướng nhỏ inline, không trục. */
-export const Sparkline = React.forwardRef<HTMLSpanElement, SparklineProps>(function Sparkline(
-  {
-    data,
-    width = 120,
-    height = 32,
-    variant = "line",
-    color = "neutral",
-    highlightLast = true,
-    labels,
-    valueFormat,
-    locale: localeProp,
-    curve = "monotone",
-    ariaLabel,
-    className,
-    ...props
-  },
+export function Sparkline({
+  data,
+  width = 120,
+  height = 32,
+  variant = "line",
+  color = "neutral",
+  highlightLast = true,
+  labels,
+  valueFormat,
+  locale: localeProp,
+  curve = "monotone",
+  ariaLabel,
+  className,
   ref,
-) {
+  ...props
+}: SparklineProps & { ref?: React.Ref<HTMLSpanElement> }) {
   const yugen = useYugen();
   const locale = localeProp ?? yugen.locale;
   const msg = useYugenMessages("chart", chartMessagesEn);
   const { ref: measureRef, width: measured } = useElementSize<HTMLSpanElement>();
   const [hover, setHover] = React.useState<number | null>(null);
-  const setRefs = (el: HTMLSpanElement | null) => {
-    measureRef(el);
-    if (typeof ref === "function") ref(el);
-    else if (ref) ref.current = el;
-  };
+  const setRefs = useComposedRefs(measureRef, ref);
   const W = width === "auto" ? measured : width;
   const fmt = makeNumberFormatter(locale, valueFormat);
 
@@ -164,7 +159,7 @@ export const Sparkline = React.forwardRef<HTMLSpanElement, SparklineProps>(funct
       )}
     </span>
   );
-});
+}
 
 /* ================================================================== StatTile */
 
@@ -175,10 +170,15 @@ export interface StatTileProps extends Omit<StatProps, "chart"> {
 }
 
 /** StatTile — Stat kèm Sparkline vẽ từ `trend`. Ngoài biểu đồ, dùng thẳng `Stat` (ổn định, không thuộc Labs). */
-export const StatTile = React.forwardRef<HTMLDivElement, StatTileProps>(function StatTile(
-  { trend, trendLabels, size = "medium", locale, valueFormat, ...props },
+export function StatTile({
+  trend,
+  trendLabels,
+  size = "medium",
+  locale,
+  valueFormat,
   ref,
-) {
+  ...props
+}: StatTileProps & { ref?: React.Ref<HTMLDivElement> }) {
   return (
     <Stat
       ref={ref}
@@ -200,4 +200,4 @@ export const StatTile = React.forwardRef<HTMLDivElement, StatTileProps>(function
       {...props}
     />
   );
-});
+}

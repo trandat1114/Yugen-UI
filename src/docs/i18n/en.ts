@@ -13,6 +13,9 @@ export const en: Record<MessageKey, string> = {
   "nav.foundations": "Design language",
   "nav.concepts": "Concepts",
   "nav.labsConcepts": "Yugen Labs concepts",
+  "component.labsTitle": "Yugen Labs · experimental",
+  "component.labsBody": "This component is outside SemVer: its API can change in a minor release, and What's new says so.",
+  "component.labsLink": "Versioning policy",
   "nav.components": "Components",
   "credit.by": "made by",
   "credit.rules": "Full rules:",
@@ -155,6 +158,13 @@ export const en: Record<MessageKey, string> = {
   "home.noMatch": "No components match “{query}”.",
   "home.open": "Open {name}",
   "home.viewComponent": "View component",
+
+  // 404 page (#238)
+  "notFound.title": "Page not found",
+  "notFound.description": "The link may be mistyped, or the page has moved.",
+  "notFound.search": "Search",
+  "notFound.home": "Home",
+  "notFound.suggestions": "You might be looking for",
 
   // Home — showcase
   "show.actions": "Actions",

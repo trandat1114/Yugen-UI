@@ -1,7 +1,7 @@
 /**
  * Phát hiện lệch giữa bảng props trong docs (`props: PropDoc[]` của src/docs/registry) và props TypeScript thật.
  *  - Lỗi (exit 1): tên được document nhưng không tồn tại trên component (prop đổi tên / bị xoá).
- *  - Cảnh báo (không fail): prop riêng (khai báo trong src/components/ui) chưa có trong bảng props.
+ *  - Cảnh báo (không fail): prop riêng (khai báo trong src/components/ui) chưa có trong bảng props, trừ prop `@deprecated`.
  *
  *   vite-node scripts/check-props.ts
  */
@@ -54,7 +54,9 @@ function collect(t: Type | undefined, out: Api, seen = new Set<number>()) {
   if (t.flags & TypeFlags.TypeParameter) return collect(checker!.getBaseConstraintOfType(t), out, seen);
   if (!(t.flags & (TypeFlags.Object | TypeFlags.Intersection))) return;
   for (const p of checker!.getPropertiesOfType(t)) {
-    const own = p.declarations.some((d) => norm(d.path).startsWith(uiDir));
+    // Prop @deprecated vẫn là tên hợp lệ trong bảng nhưng không cần document (bảng chỉ ghi tên mới).
+    const deprecated = p.getJsDocTags(checker!).some((tag) => tag.name === "deprecated");
+    const own = !deprecated && p.declarations.some((d) => norm(d.path).startsWith(uiDir));
     out.set(p.name, (out.get(p.name) ?? false) || own);
   }
 }
@@ -70,8 +72,10 @@ function apiOf(name: string) {
     const params = new Map<string, Type>();
     if (sym.flags & SymbolFlags.Value) {
       const type = checker!.getTypeOfSymbol(sym);
-      const sigs = type ? checker!.getSignaturesOfType(type, SignatureKind.Call) : [];
       const isComponent = /^[A-Z]/.test(name);
+      // Component dạng class (ErrorBoundary): props là tham số đầu của constructor.
+      const calls = type ? checker!.getSignaturesOfType(type, SignatureKind.Call) : [];
+      const sigs = calls.length === 0 && isComponent && type ? checker!.getSignaturesOfType(type, SignatureKind.Construct) : calls;
       for (const sig of sigs) {
         const ps = sig.getParameters();
         (isComponent ? ps.slice(0, 1) : ps).forEach((p) => {

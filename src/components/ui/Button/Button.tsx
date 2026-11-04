@@ -3,6 +3,7 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/cn";
 import { Spinner, type SpinnerSize } from "../Spinner/Spinner";
+import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
 /** Fluent 2 Button — https://fluent2.microsoft.design/components/web/react/core/button/usage */
 const buttonVariants = cva(
@@ -112,119 +113,121 @@ function preventClick(event: React.MouseEvent<HTMLElement>) {
   event.preventDefault();
 }
 
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
-      className,
-      appearance,
-      size,
-      shape,
-      iconOnly,
-      icon,
-      iconPosition = "before",
-      asChild,
-      loading,
-      loadingText,
-      children,
-      type,
-      onClick,
-      ...props
-    },
+export function Button(inProps: ButtonProps & { ref?: React.Ref<HTMLButtonElement> }) {
+  const {
+    className,
+    appearance,
+    size,
+    shape,
+    iconOnly,
+    icon,
+    iconPosition = "before",
+    asChild,
+    loading,
+    loadingText,
+    children,
+    type,
+    onClick,
     ref,
-  ) => {
-    const isIconOnly = iconOnly ?? (!!icon && !children);
-    const busy = !!loading;
-    const classes = cn(
-      buttonVariants({ appearance, size, shape, iconOnly: isIconOnly }),
-      busy && "cursor-progress",
-      className,
+    ...props
+  } = useComponentDefaults("Button", inProps, COMPACT_SIZE);
+  const isIconOnly = iconOnly ?? (!!icon && !children);
+  const busy = !!loading;
+  const classes = cn(
+    buttonVariants({ appearance, size, shape, iconOnly: isIconOnly }),
+    busy && "cursor-progress",
+    className,
+  );
+  // Không dùng `disabled`: nút đang xử lý vẫn phải focus được và được đọc là "bận".
+  const busyProps = busy ? { "aria-busy": true, "aria-disabled": true } : {};
+
+  if (asChild) {
+    return (
+      <Slot ref={ref} className={classes} onClick={busy ? preventClick : onClick} {...props} {...busyProps}>
+        {children}
+      </Slot>
     );
-    // Không dùng `disabled`: nút đang xử lý vẫn phải focus được và được đọc là "bận".
-    const busyProps = busy ? { "aria-busy": true, "aria-disabled": true } : {};
+  }
 
-    if (asChild) {
-      return (
-        <Slot ref={ref} className={classes} onClick={busy ? preventClick : onClick} {...props} {...busyProps}>
-          {children}
-        </Slot>
+  let content: React.ReactNode;
+  if (loading === undefined) {
+    content = (
+      <>
+        {icon && iconPosition === "before" && icon}
+        {children}
+        {icon && iconPosition === "after" && icon}
+      </>
+    );
+  } else {
+    const s = LOADING[size ?? "medium"];
+    const spinner = (
+      <Spinner
+        aria-hidden
+        size={s.spinner}
+        appearance={
+          (appearance === "primary" || appearance === "danger" || appearance === "glass-prominent") && !props.disabled
+            ? "inverted"
+            : "primary"
+        }
+      />
+    );
+    const rest = (
+      <>
+        {icon && iconPosition === "before" && icon}
+        {children}
+        {icon && iconPosition === "after" && icon}
+      </>
+    );
+
+    if (loadingText !== undefined) {
+      // Hai lớp chồng nhau; lớp ẩn dùng `invisible` nên cũng rời khỏi cây trợ năng → tên nút = lớp đang hiện.
+      content = (
+        <span className={STACK}>
+          <span className={cn("inline-flex items-center", s.gap, busy && "invisible")}>{rest}</span>
+          <span className={cn("inline-flex items-center", s.gap, !busy && "invisible")}>
+            {busy ? spinner : <span className={s.box} />}
+            {loadingText}
+          </span>
+        </span>
       );
-    }
-
-    let content: React.ReactNode;
-    if (loading === undefined) {
+    } else if (icon) {
+      const slot = busy ? spinner : icon;
       content = (
         <>
-          {icon && iconPosition === "before" && icon}
+          {iconPosition === "before" && slot}
           {children}
-          {icon && iconPosition === "after" && icon}
+          {iconPosition === "after" && slot}
         </>
       );
     } else {
-      const s = LOADING[size ?? "medium"];
-      const spinner = (
-        <Spinner
-          aria-hidden
-          size={s.spinner}
-          appearance={
-            (appearance === "primary" || appearance === "danger" || appearance === "glass-prominent") && !props.disabled
-              ? "inverted"
-              : "primary"
-          }
-        />
+      // Chỉ có nhãn: nhãn trong suốt (vẫn giữ chỗ và tên truy cập), Spinner nằm giữa.
+      content = (
+        <span className={STACK}>
+          <span className={cn("inline-flex items-center", s.gap, busy && "opacity-0")}>{children}</span>
+          {busy && spinner}
+        </span>
       );
-      const rest = (
-        <>
-          {icon && iconPosition === "before" && icon}
-          {children}
-          {icon && iconPosition === "after" && icon}
-        </>
-      );
-
-      if (loadingText !== undefined) {
-        // Hai lớp chồng nhau; lớp ẩn dùng `invisible` nên cũng rời khỏi cây trợ năng → tên nút = lớp đang hiện.
-        content = (
-          <span className={STACK}>
-            <span className={cn("inline-flex items-center", s.gap, busy && "invisible")}>{rest}</span>
-            <span className={cn("inline-flex items-center", s.gap, !busy && "invisible")}>
-              {busy ? spinner : <span className={s.box} />}
-              {loadingText}
-            </span>
-          </span>
-        );
-      } else if (icon) {
-        const slot = busy ? spinner : icon;
-        content = (
-          <>
-            {iconPosition === "before" && slot}
-            {children}
-            {iconPosition === "after" && slot}
-          </>
-        );
-      } else {
-        // Chỉ có nhãn: nhãn trong suốt (vẫn giữ chỗ và tên truy cập), Spinner nằm giữa.
-        content = (
-          <span className={STACK}>
-            <span className={cn("inline-flex items-center", s.gap, busy && "opacity-0")}>{children}</span>
-            {busy && spinner}
-          </span>
-        );
-      }
     }
+  }
 
-    return (
-      <button
-        ref={ref}
-        type={type ?? "button"}
-        className={classes}
-        onClick={busy ? preventClick : onClick}
-        {...props}
-        {...busyProps}
-      >
-        {content}
-      </button>
-    );
-  },
-);
-Button.displayName = "Button";
+  return (
+    <button
+      ref={ref}
+      type={type ?? "button"}
+      className={classes}
+      onClick={busy ? preventClick : onClick}
+      {...props}
+      {...busyProps}
+    >
+      {content}
+    </button>
+  );
+}
 
 export { buttonVariants };
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Button: ButtonProps;
+  }
+}

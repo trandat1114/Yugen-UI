@@ -69,7 +69,7 @@ npm run version-packages && git tag v0.6.5 && git push origin release/0.6 v0.6.5
 ```bash
 git push --force origin HEAD:canary     # from the branch you want others to try
 ```
-The `canary.yml` workflow runs typecheck + test + build, then publishes `x.y.z-canary-<timestamp>`. No tag, no News needed.
+The `canary` job of `release.yml` runs typecheck + test + build, then publishes `x.y.z-canary-<timestamp>`. No tag, no News needed.
 
 ## Safety rules (checked automatically)
 

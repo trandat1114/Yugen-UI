@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { spinnerMessagesEn } from "./messages";
 
 export { spinnerMessages, spinnerMessagesVi, spinnerMessagesEn, type SpinnerMessages } from "./messages";
@@ -36,53 +36,65 @@ export interface SpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
   labelPosition?: "before" | "after" | "above" | "below";
 }
 
-export const Spinner = React.forwardRef<HTMLDivElement, SpinnerProps>(
-  ({ size = "medium", appearance = "primary", label, labelPosition = "after", className, ...props }, ref) => {
-    const labelId = React.useId();
-    const msg = useYugenMessages("spinner", spinnerMessagesEn);
-    const s = SIZE[size];
-    const a = APPEARANCE[appearance];
-    const r = (s.px - s.stroke) / 2;
-    const circumference = 2 * Math.PI * r;
-    const vertical = labelPosition === "above" || labelPosition === "below";
-    const labelFirst = labelPosition === "before" || labelPosition === "above";
+export function Spinner(inProps: SpinnerProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    size = "medium",
+    appearance = "primary",
+    label,
+    labelPosition = "after",
+    className,
+    ref,
+    ...props
+  } = useComponentDefaults("Spinner", inProps);
+  const labelId = React.useId();
+  const msg = useYugenMessages("spinner", spinnerMessagesEn);
+  const s = SIZE[size];
+  const a = APPEARANCE[appearance];
+  const r = (s.px - s.stroke) / 2;
+  const circumference = 2 * Math.PI * r;
+  const vertical = labelPosition === "above" || labelPosition === "below";
+  const labelFirst = labelPosition === "before" || labelPosition === "above";
 
-    const labelEl = label ? (
-      <span id={labelId} className={cn(s.label, a.label)}>
-        {label}
-      </span>
-    ) : null;
+  const labelEl = label ? (
+    <span id={labelId} className={cn(s.label, a.label)}>
+      {label}
+    </span>
+  ) : null;
 
-    return (
-      <div
-        ref={ref}
-        role="progressbar"
-        aria-labelledby={label ? labelId : undefined}
-        aria-label={label ? undefined : msg.label}
-        className={cn("inline-flex items-center justify-center gap-2", vertical && "flex-col", className)}
-        {...props}
+  return (
+    <div
+      ref={ref}
+      role="progressbar"
+      aria-labelledby={label ? labelId : undefined}
+      aria-label={label ? undefined : msg.label}
+      className={cn("inline-flex items-center justify-center gap-2", vertical && "flex-col", className)}
+      {...props}
+    >
+      {labelFirst && labelEl}
+      <svg
+        aria-hidden
+        viewBox={`0 0 ${s.px} ${s.px}`}
+        fill="none"
+        className={cn("shrink-0 animate-spin", s.className)}
       >
-        {labelFirst && labelEl}
-        <svg
-          aria-hidden
-          viewBox={`0 0 ${s.px} ${s.px}`}
-          fill="none"
-          className={cn("shrink-0 animate-spin", s.className)}
-        >
-          <circle cx={s.px / 2} cy={s.px / 2} r={r} strokeWidth={s.stroke} className={a.track} />
-          <circle
-            cx={s.px / 2}
-            cy={s.px / 2}
-            r={r}
-            strokeWidth={s.stroke}
-            strokeLinecap="round"
-            strokeDasharray={`${circumference * 0.3} ${circumference}`}
-            className={a.arc}
-          />
-        </svg>
-        {!labelFirst && labelEl}
-      </div>
-    );
-  },
-);
-Spinner.displayName = "Spinner";
+        <circle cx={s.px / 2} cy={s.px / 2} r={r} strokeWidth={s.stroke} className={a.track} />
+        <circle
+          cx={s.px / 2}
+          cy={s.px / 2}
+          r={r}
+          strokeWidth={s.stroke}
+          strokeLinecap="round"
+          strokeDasharray={`${circumference * 0.3} ${circumference}`}
+          className={a.arc}
+        />
+      </svg>
+      {!labelFirst && labelEl}
+    </div>
+  );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Spinner: SpinnerProps;
+  }
+}

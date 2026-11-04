@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as MenuPrimitive from "@radix-ui/react-dropdown-menu";
-import { Checkmark16Filled, ChevronRight16Regular } from "@fluentui/react-icons";
-import { usePortalThemeProps } from "../YugenProvider/context";
+import { Checkmark16Filled, ChevronRight16Regular } from "../_internal/icons";
+import { usePortalThemeProps, useComponentDefaults } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { morphClass, morphFromTrigger } from "../_internal/morph";
 
@@ -25,28 +25,33 @@ export interface MenuPopoverProps extends React.ComponentPropsWithoutRef<typeof 
   material?: "glass" | "glass-clear";
 }
 
-export const MenuPopover = React.forwardRef<React.ElementRef<typeof MenuPrimitive.Content>, MenuPopoverProps>(
-  ({ className, sideOffset = 4, align = "start", material, ...props }, ref) => {
-  const portalTheme = usePortalThemeProps();
-  return (
-    <MenuPrimitive.Portal>
-      <MenuPrimitive.Content
-        ref={ref}
-        {...portalTheme}
-        sideOffset={sideOffset}
-        align={align}
-        className={cn(menuPopoverClass, material, material && morphClass, className)}
-        {...props}
-        onAnimationStart={(event) => {
-          if (material) morphFromTrigger(event);
-          props.onAnimationStart?.(event);
-        }}
-      />
-    </MenuPrimitive.Portal>
-  );
-  },
+export function MenuPopover(inProps: MenuPopoverProps & { ref?: React.Ref<React.ComponentRef<typeof MenuPrimitive.Content>> }) {
+  const {
+    className,
+    sideOffset = 4,
+    align = "start",
+    material,
+    ref,
+    ...props
+  } = useComponentDefaults("MenuPopover", inProps);
+const portalTheme = usePortalThemeProps();
+return (
+  <MenuPrimitive.Portal>
+    <MenuPrimitive.Content
+      ref={ref}
+      {...portalTheme}
+      sideOffset={sideOffset}
+      align={align}
+      className={cn(menuPopoverClass, material, material && morphClass, className)}
+      {...props}
+      onAnimationStart={(event) => {
+        if (material) morphFromTrigger(event);
+        props.onAnimationStart?.(event);
+      }}
+    />
+  </MenuPrimitive.Portal>
 );
-MenuPopover.displayName = "MenuPopover";
+}
 
 /** Class dùng chung cho mọi item menu. */
 export const menuItemClass = cn(
@@ -66,50 +71,66 @@ function SecondaryContent({ children }: { children: React.ReactNode }) {
   return <span className="flex shrink-0 items-center gap-1 ps-4 text-caption1 text-foreground-3">{children}</span>;
 }
 
-export const MenuItem = React.forwardRef<React.ElementRef<typeof MenuPrimitive.Item>, MenuItemProps>(
-  ({ className, icon, secondaryContent, children, ...props }, ref) => (
+export function MenuItem({
+  className,
+  icon,
+  secondaryContent,
+  children,
+  ref,
+  ...props
+}: MenuItemProps & { ref?: React.Ref<React.ComponentRef<typeof MenuPrimitive.Item>> }) {
+  return (
     <MenuPrimitive.Item ref={ref} className={cn(menuItemClass, className)} {...props}>
       {icon}
       <span className="min-w-0 flex-1 truncate">{children}</span>
       {secondaryContent && <SecondaryContent>{secondaryContent}</SecondaryContent>}
     </MenuPrimitive.Item>
-  ),
-);
-MenuItem.displayName = "MenuItem";
+  );
+}
 
-export const MenuItemRadio = React.forwardRef<
-  React.ElementRef<typeof MenuPrimitive.RadioItem>,
-  React.ComponentPropsWithoutRef<typeof MenuPrimitive.RadioItem> & Pick<MenuItemProps, "icon" | "secondaryContent">
->(({ className, icon, secondaryContent, children, ...props }, ref) => (
-  <MenuPrimitive.RadioItem ref={ref} className={cn(menuItemClass, "ps-8", className)} {...props}>
-    <span className="absolute inset-s-2 flex size-4 items-center justify-center">
-      <MenuPrimitive.ItemIndicator>
-        <Checkmark16Filled className="size-4! text-foreground-1" />
-      </MenuPrimitive.ItemIndicator>
-    </span>
-    {icon}
-    <span className="min-w-0 flex-1 truncate">{children}</span>
-    {secondaryContent && <SecondaryContent>{secondaryContent}</SecondaryContent>}
-  </MenuPrimitive.RadioItem>
-));
-MenuItemRadio.displayName = "MenuItemRadio";
+export function MenuItemRadio({
+  className,
+  icon,
+  secondaryContent,
+  children,
+  ref,
+  ...props
+}: React.ComponentProps<typeof MenuPrimitive.RadioItem> & Pick<MenuItemProps, "icon" | "secondaryContent">) {
+  return (
+    <MenuPrimitive.RadioItem ref={ref} className={cn(menuItemClass, "ps-8", className)} {...props}>
+      <span className="absolute inset-s-2 flex size-4 items-center justify-center">
+        <MenuPrimitive.ItemIndicator>
+          <Checkmark16Filled className="size-4! text-foreground-1" />
+        </MenuPrimitive.ItemIndicator>
+      </span>
+      {icon}
+      <span className="min-w-0 flex-1 truncate">{children}</span>
+      {secondaryContent && <SecondaryContent>{secondaryContent}</SecondaryContent>}
+    </MenuPrimitive.RadioItem>
+  );
+}
 
-export const MenuItemCheckbox = React.forwardRef<
-  React.ElementRef<typeof MenuPrimitive.CheckboxItem>,
-  React.ComponentPropsWithoutRef<typeof MenuPrimitive.CheckboxItem> & Pick<MenuItemProps, "icon" | "secondaryContent">
->(({ className, icon, secondaryContent, children, ...props }, ref) => (
-  <MenuPrimitive.CheckboxItem ref={ref} className={cn(menuItemClass, "ps-8", className)} {...props}>
-    <span className="absolute inset-s-2 flex size-4 items-center justify-center">
-      <MenuPrimitive.ItemIndicator>
-        <Checkmark16Filled className="size-4! text-foreground-1" />
-      </MenuPrimitive.ItemIndicator>
-    </span>
-    {icon}
-    <span className="min-w-0 flex-1 truncate">{children}</span>
-    {secondaryContent && <SecondaryContent>{secondaryContent}</SecondaryContent>}
-  </MenuPrimitive.CheckboxItem>
-));
-MenuItemCheckbox.displayName = "MenuItemCheckbox";
+export function MenuItemCheckbox({
+  className,
+  icon,
+  secondaryContent,
+  children,
+  ref,
+  ...props
+}: React.ComponentProps<typeof MenuPrimitive.CheckboxItem> & Pick<MenuItemProps, "icon" | "secondaryContent">) {
+  return (
+    <MenuPrimitive.CheckboxItem ref={ref} className={cn(menuItemClass, "ps-8", className)} {...props}>
+      <span className="absolute inset-s-2 flex size-4 items-center justify-center">
+        <MenuPrimitive.ItemIndicator>
+          <Checkmark16Filled className="size-4! text-foreground-1" />
+        </MenuPrimitive.ItemIndicator>
+      </span>
+      {icon}
+      <span className="min-w-0 flex-1 truncate">{children}</span>
+      {secondaryContent && <SecondaryContent>{secondaryContent}</SecondaryContent>}
+    </MenuPrimitive.CheckboxItem>
+  );
+}
 
 export function MenuDivider({ className }: { className?: string }) {
   return <MenuPrimitive.Separator className={cn("-mx-1 my-1 h-px bg-stroke-2", className)} />;
@@ -142,15 +163,21 @@ export function MenuSubTrigger({
   );
 }
 
-export function MenuSubPopover({
-  className,
-  material,
-  ...props
-}: React.ComponentPropsWithoutRef<typeof MenuPrimitive.SubContent> & Pick<MenuPopoverProps, "material">) {
+export type MenuSubPopoverProps = React.ComponentPropsWithoutRef<typeof MenuPrimitive.SubContent> & Pick<MenuPopoverProps, "material">;
+
+export function MenuSubPopover(inProps: MenuSubPopoverProps) {
+  const { className, material, ...props } = useComponentDefaults("MenuSubPopover", inProps);
   const portalTheme = usePortalThemeProps();
   return (
     <MenuPrimitive.Portal>
       <MenuPrimitive.SubContent {...portalTheme} sideOffset={4} className={cn(menuPopoverClass, material, className)} {...props} />
     </MenuPrimitive.Portal>
   );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    MenuPopover: MenuPopoverProps;
+    MenuSubPopover: MenuSubPopoverProps;
+  }
 }

@@ -383,6 +383,7 @@ export const en: Record<string, ComponentDocEn> = {
     ],
     props: {
       "ContextMenu.onOpenChange": "Called when it opens or closes.",
+      "ContextMenu.modal": "true: while the menu is open, page scrolling is locked, an outside click only closes the menu and the rest of the page is hidden from screen readers. false: the page keeps scrolling and outside clicks reach it right away. See [Scroll lock](/concepts/positioning#scroll-lock).",
       "ContextMenuTrigger.asChild":
         "Uses the child element as the right-click area.",
       "ContextMenuItem.icon / secondaryContent":

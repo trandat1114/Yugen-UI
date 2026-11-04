@@ -150,11 +150,15 @@ export function CategoryAxisBottom({
 }
 
 /** Vùng vẽ: luôn LTR (trục số không đảo trong trang RTL), cao cố định gồm cả dải nhãn trục. */
-export const PlotArea = React.forwardRef<HTMLDivElement, { height: number; children?: React.ReactNode; className?: string }>(
-  ({ height, children, className }, ref) => (
+export function PlotArea({
+  height,
+  children,
+  className,
+  ref,
+}: { height: number; children?: React.ReactNode; className?: string } & { ref?: React.Ref<HTMLDivElement> }) {
+  return (
     <div ref={ref} dir="ltr" className={className ?? "relative w-full min-w-0"} style={{ height }}>
       {children}
     </div>
-  ),
-);
-PlotArea.displayName = "PlotArea";
+  );
+}

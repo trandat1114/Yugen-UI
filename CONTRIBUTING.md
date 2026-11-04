@@ -42,6 +42,7 @@ npm run dev          # docs site at http://localhost:5173
 | `npm run dev` | Runs the docs site (Vite) |
 | `npm run typecheck` | Type check (`tsc -b` with TypeScript 7, the native compiler) |
 | `npm run lint:classes` | Checks that Tailwind classes are canonical (`node scripts/canonical-classes.mjs --fix` repairs them) |
+| `npm run icons` | Regenerates the built-in icons (`src/components/ui/_internal/icons.tsx`) from the ones components import (`--check` in CI) |
 | `npm run build:lib` | Builds the library into `dist/` (JS + `.d.ts` + `theme.css` / `styles.css` / `tokens.css`) |
 | `npm run build:docs` | Builds the docs site into `dist-docs/` |
 | `npm run build` | Both |
@@ -74,17 +75,15 @@ npm run dev          # docs site at http://localhost:5173
   committed, and CI compares them on every PR that changes components, styles or the docs layout. On Windows / macOS the
   first run creates baselines for your machine (gitignored). After an intended visual change, run the **Visual
   regression** workflow on your branch (Actions → Run workflow, tick `update`), download the `visual-screenshots`
-  artifact, copy it into `e2e/__screenshots__/` and commit. The workflow never commits.
+  artifact, copy it into `e2e/__screenshots__/`, look at the files git shows as changed, and commit those. The update
+  rewrites every baseline, so screenshots that drifted below the 1% tolerance are refreshed too. The workflow never
+  commits.
 - `npm run test:engines` — interaction E2E on Firefox and WebKit (Safari desktop, iPhone); run
   `npx playwright install firefox webkit` once. CI runs it weekly, on PRs into `main` and on PRs that change
   `e2e/` or `playwright.config.ts` (the **Browser engines** workflow), not on every PR. Touch-drag tests go through CDP,
   so they run on Chromium only.
 - `npm run size` — size budgets (`.size-limit.cjs`), after `npm run build:lib`. If a budget fails, find the cause first
   (an extra import, a new dependency); raise a `limit` only on purpose, and say why in the PR.
-- The repo runs React 19; CI also runs typecheck, unit tests and the library build against React 18.3 (`react-18` job),
-  which is still supported. To try it locally, use a copy of the repo
-  (`npm i --no-save react@^18.3 react-dom@^18.3 @types/react@^18.3 @types/react-dom@^18.3`), not your main
-  `node_modules`.
 
 ### Rules (summary of Design.md §0)
 
@@ -98,13 +97,18 @@ npm run dev          # docs site at http://localhost:5173
    only for states.
 7. Gradients only for illustrations / heroes, never on controls.
 8. Text contrast ≥ 4.5:1, UI parts ≥ 3:1; colour is never the only signal.
-9. Complex behaviour uses Radix / `cmdk` / `react-day-picker`; icons come from `@fluentui/react-icons` only. No other UI
+9. Complex behaviour uses Radix / `cmdk` / `react-day-picker`; icons are Fluent System Icons only: inside components from `../_internal/icons` (see [Adding a component](#adding-a-component)), in demos and blocks from `@fluentui/react-icons`. No other UI
    or animation library.
 
 ### Adding a component
 
-1. Create `src/components/ui/<Name>/<Name>.tsx` following Design.md §5 (named export, `forwardRef`, user `className`
-   last in `cn(...)`, hover / pressed / disabled / focus-visible states, keyboard support, `aria-*`).
+1. Create `src/components/ui/<Name>/<Name>.tsx` following Design.md §5 (named function export that takes `ref` as a
+   prop, user `className` last in `cn(...)`, hover / pressed / disabled / focus-visible states, keyboard support,
+   `aria-*`).
+   - Icons: import them by their Fluent name from `../_internal/icons` (for example `Dismiss20Regular`), then run
+     `npm run icons`. The script copies the icon from `@fluentui/react-icons` into the library, so `yugen-ui` doesn't
+     depend on the icon package. For an icon passed in by the user, give the slot a size with `[&_svg]:size-…`, so any
+     SVG icon set fits.
 2. Add `export * from "./<Name>/<Name>";` to the right group in `src/components/ui/index.ts`. The npm package exports
    everything in that barrel.
 3. Write the docs page: add a `ComponentDoc` to a file in `src/docs/registry/` (`slug`, `name`, `category`, `lead`,
@@ -129,6 +133,10 @@ npm run dev          # docs site at http://localhost:5173
    ```
 7. Changeset (`npx changeset`, usually `minor` for a new component); see [Changesets](#changesets).
 8. A new dependency, if really needed, goes in `dependencies` of `package.json`; the maintainer decides.
+9. Visual baselines: the hero demo of every component page is screenshotted in light, dark and high contrast, so
+   **Visual (compare)** fails until the PR has the new `component-<slug>-*` baselines (run the **Visual regression**
+   workflow with `update`, see [Tests](#tests)). If the layout follows the text direction, add the slug to `RTL` in
+   `e2e/visual.spec.ts`.
 
 ### Adding a block
 
@@ -275,7 +283,7 @@ issue or contact a maintainer, who adds your login to `exclude` in that file.
    (`package.json` = `src/docs/news` = `CHANGELOG.md`).
 4. Commit (`chore(release): vX.Y.Z`) and merge to `main`.
 5. `git tag vX.Y.Z && git push --tags` — `.github/workflows/release.yml` re-checks the version against the tag, runs
-   the tests, builds and runs `npm publish --provenance` (needs the `NPM_TOKEN` secret). Tags containing `-`
+   the tests, builds and runs `npm publish --provenance` (npm trusted publishing, no token). Tags containing `-`
    (e.g. `v0.6.0-beta.1`) are published under the `next` dist-tag.
 
 The `@yugen-ui/cli` CLI and `create-yugen-ui` (`packages/`) are released separately with a `cli@X.Y.Z` tag, outside
@@ -313,6 +321,7 @@ npm run dev          # trang docs tại http://localhost:5173
 | `npm run dev` | Chạy trang docs (Vite) |
 | `npm run typecheck` | Kiểm tra kiểu (`tsc -b` bằng TypeScript 7, trình biên dịch native) |
 | `npm run lint:classes` | Kiểm tra class Tailwind ở dạng canonical (`node scripts/canonical-classes.mjs --fix` để tự sửa) |
+| `npm run icons` | Sinh lại icon có sẵn (`src/components/ui/_internal/icons.tsx`) theo các icon component đang import (CI chạy `--check`) |
 | `npm run build:lib` | Build thư viện vào `dist/` (JS + `.d.ts` + `theme.css` / `styles.css` / `tokens.css`) |
 | `npm run build:docs` | Build trang docs vào `dist-docs/` |
 | `npm run build` | Cả hai |
@@ -344,14 +353,12 @@ npm run dev          # trang docs tại http://localhost:5173
 - `npm run test:visual` — chỉ ảnh Linux (`e2e/__screenshots__/**/*-linux.png`) được commit; CI so sánh trên mọi PR đổi
   component, style hoặc khung docs. Trên Windows / macOS, lần chạy đầu tạo ảnh riêng cho máy bạn (gitignore). Cố ý đổi
   giao diện: chạy workflow **Visual regression** trên nhánh của bạn (Actions → Run workflow, tick `update`), tải artifact
-  `visual-screenshots`, chép vào `e2e/__screenshots__/` rồi commit. Workflow không tự commit.
+  `visual-screenshots`, chép vào `e2e/__screenshots__/`, xem các file git báo đổi rồi commit chúng. Lần update ghi lại
+  mọi ảnh, nên ảnh lệch dưới ngưỡng 1% cũng được làm mới. Workflow không tự commit.
 - `npm run test:engines` — cần `npx playwright install firefox webkit` một lần. CI chạy hằng tuần, trên PR vào `main` và
   trên PR có đổi `e2e/` hoặc `playwright.config.ts` (workflow **Browser engines**), không chạy trên mọi PR. Test chạm-kéo dùng CDP nên chỉ chạy trên Chromium.
 - `npm run size` — sau `npm run build:lib`. Vượt ngân sách thì tìm nguyên nhân trước (import thừa, dependency mới);
   tăng có chủ đích thì sửa `limit` trong `.size-limit.cjs` và ghi lý do trong PR.
-- Repo chạy React 19; CI chạy thêm typecheck, test và build:lib bằng React 18.3 (job `react-18`) vì bản này vẫn được
-  hỗ trợ. Muốn thử trên máy: làm trong một bản sao của repo
-  (`npm i --no-save react@^18.3 react-dom@^18.3 @types/react@^18.3 @types/react-dom@^18.3`), đừng làm bẩn `node_modules` chính.
 
 ### Luật bắt buộc (tóm tắt Design.md §0)
 
@@ -363,13 +370,16 @@ npm run dev          # trang docs tại http://localhost:5173
 6. Neutral cho bề mặt/chữ/viền · Brand chỉ cho CTA, trạng thái chọn, focus, link · Semantic chỉ cho trạng thái.
 7. Gradient chỉ cho minh hoạ/hero — không bao giờ trên control.
 8. Tương phản chữ ≥ 4.5:1, thành phần UI ≥ 3:1; không dùng màu làm tín hiệu duy nhất.
-9. Hành vi phức tạp dùng Radix / `cmdk` / `react-day-picker`; icon chỉ dùng `@fluentui/react-icons`. Không thêm thư
+9. Hành vi phức tạp dùng Radix / `cmdk` / `react-day-picker`; icon chỉ dùng Fluent System Icons: trong component lấy từ `../_internal/icons` (xem [Thêm component](#thêm-component)), trong demo và block lấy từ `@fluentui/react-icons`. Không thêm thư
    viện UI/animation khác.
 
 ### Thêm component
 
-1. Tạo `src/components/ui/<Name>/<Name>.tsx` theo Design.md §5 (named export, `forwardRef`, `className` cuối `cn(...)`,
-   đủ trạng thái hover/pressed/disabled/focus-visible, bàn phím, `aria-*`).
+1. Tạo `src/components/ui/<Name>/<Name>.tsx` theo Design.md §5 (named export dạng hàm, nhận `ref` như một prop,
+   `className` cuối `cn(...)`, đủ trạng thái hover/pressed/disabled/focus-visible, bàn phím, `aria-*`).
+   - Icon: import theo tên Fluent từ `../_internal/icons` (vd. `Dismiss20Regular`) rồi chạy `npm run icons`. Script chép
+     icon từ `@fluentui/react-icons` vào thư viện, nên `yugen-ui` không phụ thuộc gói icon. Ô nhận icon của người dùng
+     thì đặt cỡ bằng `[&_svg]:size-…` để bộ icon SVG nào cũng vừa.
 2. Thêm `export * from "./<Name>/<Name>";` vào đúng nhóm trong `src/components/ui/index.ts` — gói npm export mọi thứ
    có trong barrel này.
 3. Viết trang docs: thêm một `ComponentDoc` vào file trong `src/docs/registry/` (`slug`, `name`, `category`, `lead`,
@@ -393,6 +403,9 @@ npm run dev          # trang docs tại http://localhost:5173
    ```
 7. Changeset (`npx changeset`, thường là `minor` cho component mới) — xem mục [Changeset](#changeset).
 8. Dependency mới (nếu thật sự cần) phải nằm trong `dependencies` của `package.json` — maintainer quyết định.
+9. Ảnh visual: demo hero của mọi trang component được chụp ở theme sáng, tối và tương phản cao, nên **Visual (compare)**
+   đỏ cho tới khi PR có baseline `component-<slug>-*` mới (chạy workflow **Visual regression** với `update`, xem mục
+   [Kiểm thử](#kiểm-thử)). Bố cục đổi theo hướng chữ thì thêm slug vào `RTL` trong `e2e/visual.spec.ts`.
 
 ### Thêm block
 
@@ -528,7 +541,7 @@ tiêu đề luôn lấy nguyên bản từ GitHub. Muốn bỏ tên khỏi trang
    (`package.json` = `src/docs/news` = `CHANGELOG.md`).
 4. Commit (`chore(release): vX.Y.Z`), mở PR hoặc đẩy lên `main`.
 5. `git tag vX.Y.Z && git push --tags` — workflow `.github/workflows/release.yml` kiểm tra lại, chạy test, build và
-   `npm publish --provenance` (cần secret `NPM_TOKEN`). Tag có `-` (vd. `v0.6.0-beta.1`) phát hành với dist-tag `next`.
+   `npm publish --provenance` (npm trusted publishing, không cần token). Tag có `-` (vd. `v0.6.0-beta.1`) phát hành với dist-tag `next`.
 
 CLI `@yugen-ui/cli` và `create-yugen-ui` (`packages/`) phát hành riêng bằng tag `cli@X.Y.Z`, không qua Changesets — quy tắc và
 các bước ở wiki › *Release Process* › CLI. PR đổi `packages/cli` hoặc `packages/create-yugen-ui`: ghi một dòng vào mục

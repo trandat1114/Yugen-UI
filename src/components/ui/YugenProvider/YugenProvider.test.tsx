@@ -1,6 +1,13 @@
+import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { YugenProvider, useYugen } from "./YugenProvider";
+import { YugenProvider, glassNavigationDefaults, useYugen } from "./YugenProvider";
+import { YugenContext } from "./context";
+import { Button } from "../Button/Button";
+import { Input } from "../Input/Input";
+import { Nav } from "../Nav/Nav";
+import { Tabs, TabsList, TabsTrigger } from "../Tabs/Tabs";
+import { Toolbar } from "../Toolbar/Toolbar";
 import { Dialog, DialogSurface, DialogTitle } from "../Dialog/Dialog";
 import { messagesEn } from "../messages-en";
 import { messagesVi } from "../messages-vi";
@@ -107,11 +114,163 @@ describe("YugenProvider messages", () => {
         const [, ns, lang] = match as unknown as [string, string, keyof typeof sets];
         namespaces[lang].push(ns);
         expect((sets[lang] as unknown as Record<string, unknown>)[ns], `${ns} (${lang})`).toBe(value);
-        // Tên không hậu tố giữ cho code cũ là bản tiếng Việt.
-        if (lang === "Vi") expect(mod[`${ns}Messages`], ns).toBe(value);
+        // Tên không hậu tố (lỗi thời, bỏ ở 1.0; component mới không có) là bản tiếng Việt.
+        if (lang === "Vi" && `${ns}Messages` in mod) expect(mod[`${ns}Messages`], ns).toBe(value);
       }
     }
     expect(Object.keys(messagesEn).sort()).toEqual(namespaces.En.sort());
     expect(Object.keys(messagesVi).sort()).toEqual(namespaces.Vi.sort());
+  });
+});
+
+describe("YugenProvider defaults & density (#171)", () => {
+  const button = (name: string) => screen.getByRole("button", { name });
+
+  it("defaults áp cho mọi instance; prop của instance thắng", () => {
+    render(
+      <YugenProvider defaults={{ Button: { shape: "circular", size: "large" } }}>
+        <Button>Mặc định</Button>
+        <Button size="small">Riêng</Button>
+      </YugenProvider>,
+    );
+    expect(button("Mặc định")).toHaveClass("rounded-circular", "h-10");
+    expect(button("Riêng")).toHaveClass("rounded-circular", "h-6");
+  });
+
+  it("provider lồng gộp defaults theo từng component", () => {
+    render(
+      <YugenProvider defaults={{ Button: { shape: "circular" }, Input: { appearance: "filled-darker" } }}>
+        <YugenProvider defaults={{ Button: { size: "small" } }}>
+          <Button>Lồng</Button>
+          <Input aria-label="Tìm" />
+        </YugenProvider>
+      </YugenProvider>,
+    );
+    expect(button("Lồng")).toHaveClass("rounded-circular", "h-6");
+    expect(screen.getByRole("textbox", { name: "Tìm" }).parentElement).toHaveClass("bg-background-3");
+  });
+
+  it("density compact: control mặc định size small, size của instance và defaults vẫn thắng", () => {
+    render(
+      <YugenProvider density="compact">
+        <Button>Gọn</Button>
+        <Button size="large">To</Button>
+        <YugenProvider defaults={{ Button: { size: "medium" } }}>
+          <Button>Vừa</Button>
+        </YugenProvider>
+      </YugenProvider>,
+    );
+    expect(button("Gọn")).toHaveClass("h-6");
+    expect(button("To")).toHaveClass("h-10");
+    expect(button("Vừa")).toHaveClass("h-8");
+  });
+
+  it("density ghi data-density lên thẻ bao; provider lồng kế thừa, useYugen() trả về density", () => {
+    function Density() {
+      return <span data-testid="density">{useYugen().density}</span>;
+    }
+    const { container, rerender } = renderBare(<Density />);
+    expect(screen.getByTestId("density")).toHaveTextContent("default");
+    rerender(
+      <YugenProvider density="comfortable">
+        <YugenProvider>
+          <Density />
+        </YugenProvider>
+      </YugenProvider>,
+    );
+    expect(screen.getByTestId("density")).toHaveTextContent("comfortable");
+    expect(container.querySelectorAll("[data-density]")).toHaveLength(1);
+    expect(container.querySelector("[data-density]")).toHaveAttribute("data-density", "comfortable");
+  });
+
+  it("applyToDocument ghi data-density lên <html> và gỡ khi unmount", () => {
+    const { unmount } = render(<YugenProvider applyToDocument density="compact" />);
+    expect(document.documentElement).toHaveAttribute("data-density", "compact");
+    unmount();
+    expect(document.documentElement).not.toHaveAttribute("data-density");
+  });
+
+  it("scrollLock ghi data-yugen-scroll-lock lên <html> khi applyToDocument, gỡ khi unmount (#243)", () => {
+    const html = document.documentElement;
+    const { rerender, unmount } = render(<YugenProvider applyToDocument />);
+    expect(html).not.toHaveAttribute("data-yugen-scroll-lock");
+    rerender(<YugenProvider applyToDocument scrollLock="keep-scrollbar" />);
+    expect(html).toHaveAttribute("data-yugen-scroll-lock", "keep-scrollbar");
+    rerender(<YugenProvider applyToDocument scrollLock="hide-scrollbar" />);
+    expect(html).toHaveAttribute("data-yugen-scroll-lock", "hide-scrollbar");
+    unmount();
+    expect(html).not.toHaveAttribute("data-yugen-scroll-lock");
+    // Provider lồng (không applyToDocument) không đụng tới <html>.
+    render(<YugenProvider scrollLock="keep-scrollbar" />);
+    expect(html).not.toHaveAttribute("data-yugen-scroll-lock");
+  });
+
+  it("bề mặt portal của provider lồng mang data-density", () => {
+    render(
+      <YugenProvider density="compact">
+        <OpenDialog />
+      </YugenProvider>,
+    );
+    expect(screen.getByRole("dialog")).toHaveAttribute("data-density", "compact");
+  });
+
+  it("glassNavigationDefaults: component điều hướng thành glass, material của instance thắng (#230)", () => {
+    render(
+      <YugenProvider defaults={{ ...glassNavigationDefaults, Button: { shape: "circular" } }}>
+        <Toolbar aria-label="Mặc định" />
+        <Toolbar aria-label="Trên ảnh" material="glass-clear" />
+        <Tabs defaultValue="a">
+          <TabsList aria-label="Tab">
+            <TabsTrigger value="a">A</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        <Nav aria-label="Điều hướng" />
+        <Button>Tròn</Button>
+      </YugenProvider>,
+    );
+    expect(screen.getByRole("toolbar", { name: "Mặc định" })).toHaveClass("glass");
+    expect(screen.getByRole("toolbar", { name: "Trên ảnh" })).toHaveClass("glass-clear");
+    expect(screen.getByRole("toolbar", { name: "Trên ảnh" })).not.toHaveClass("glass");
+    expect(screen.getByRole("tablist", { name: "Tab" })).toHaveClass("glass");
+    expect(screen.getByRole("navigation", { name: "Điều hướng" })).toHaveClass("glass");
+    expect(button("Tròn")).toHaveClass("rounded-circular");
+    expect(Object.keys(glassNavigationDefaults)).toEqual([
+      "Toolbar",
+      "TabsList",
+      "Nav",
+      "MenuPopover",
+      "MenuSubPopover",
+      "PopoverSurface",
+      "TooltipContent",
+      "DialogSurface",
+      "DrawerSurface",
+      "SheetContent",
+    ]);
+  });
+
+  it("defaults viết thẳng trong JSX: provider render lại với object bằng nhau không đổi context", () => {
+    const seen: unknown[] = [];
+    function Probe() {
+      seen.push(React.useContext(YugenContext));
+      return null;
+    }
+    const MemoProbe = React.memo(Probe);
+    const { rerender } = render(
+      <YugenProvider defaults={{ Button: { size: "small" } }}>
+        <MemoProbe />
+      </YugenProvider>,
+    );
+    rerender(
+      <YugenProvider defaults={{ Button: { size: "small" } }}>
+        <MemoProbe />
+      </YugenProvider>,
+    );
+    expect(seen).toHaveLength(1);
+    rerender(
+      <YugenProvider defaults={{ Button: { size: "large" } }}>
+        <MemoProbe />
+      </YugenProvider>,
+    );
+    expect(seen).toHaveLength(2);
   });
 });

@@ -1,8 +1,8 @@
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useDirection } from "@radix-ui/react-direction";
-import { Dismiss24Regular } from "@fluentui/react-icons";
-import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
+import { Dismiss24Regular } from "../_internal/icons";
+import { usePortalThemeProps, useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { dialogMessagesEn } from "./messages";
 import { cn } from "@/lib/cn";
 
@@ -20,41 +20,47 @@ export interface DialogSurfaceProps extends React.ComponentPropsWithoutRef<typeo
   material?: "glass" | "glass-clear";
 }
 
-export const DialogSurface = React.forwardRef<React.ElementRef<typeof DialogPrimitive.Content>, DialogSurfaceProps>(
-  ({ className, modalType = "modal", material, onPointerDownOutside, onEscapeKeyDown, ...props }, ref) => {
-    // Portal render vào <body>: gắn `dir` để nội dung theo hướng chữ của provider lồng.
-    const dir = useDirection();
-    const portalTheme = usePortalThemeProps();
-    return (
-      <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay {...portalTheme} className="fixed inset-0 z-50 bg-overlay animate-fade-in data-[state=closed]:animate-fade-out" />
-        <DialogPrimitive.Content
-          {...portalTheme}
-          ref={ref}
-          dir={dir}
-          role={modalType === "alert" ? "alertdialog" : "dialog"}
-          onPointerDownOutside={(e) => {
-            if (modalType === "alert") e.preventDefault();
-            onPointerDownOutside?.(e);
-          }}
-          onEscapeKeyDown={(e) => {
-            if (modalType === "alert") e.preventDefault();
-            onEscapeKeyDown?.(e);
-          }}
-          className={cn(
-            "fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100dvh-48px)] w-[calc(100vw-32px)] max-w-150 -translate-x-1/2 -translate-y-1/2 flex-col gap-2",
-            "rounded-xlarge border border-transparent bg-background-1 p-6 text-foreground-1 shadow-64",
-            "animate-surface-in data-[state=closed]:animate-surface-out",
-            material,
-            className,
-          )}
-          {...props}
-        />
-      </DialogPrimitive.Portal>
-    );
-  },
-);
-DialogSurface.displayName = "DialogSurface";
+export function DialogSurface(inProps: DialogSurfaceProps & { ref?: React.Ref<React.ComponentRef<typeof DialogPrimitive.Content>> }) {
+  const {
+    className,
+    modalType = "modal",
+    material,
+    onPointerDownOutside,
+    onEscapeKeyDown,
+    ref,
+    ...props
+  } = useComponentDefaults("DialogSurface", inProps);
+  // Portal render vào <body>: gắn `dir` để nội dung theo hướng chữ của provider lồng.
+  const dir = useDirection();
+  const portalTheme = usePortalThemeProps();
+  return (
+    <DialogPrimitive.Portal>
+      <DialogPrimitive.Overlay {...portalTheme} className="fixed inset-0 z-50 bg-overlay animate-fade-in data-[state=closed]:animate-fade-out" />
+      <DialogPrimitive.Content
+        {...portalTheme}
+        ref={ref}
+        dir={dir}
+        role={modalType === "alert" ? "alertdialog" : "dialog"}
+        onPointerDownOutside={(e) => {
+          if (modalType === "alert") e.preventDefault();
+          onPointerDownOutside?.(e);
+        }}
+        onEscapeKeyDown={(e) => {
+          if (modalType === "alert") e.preventDefault();
+          onEscapeKeyDown?.(e);
+        }}
+        className={cn(
+          "fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100dvh-48px)] w-[calc(100vw-32px)] max-w-150 -translate-x-1/2 -translate-y-1/2 flex-col gap-2",
+          "rounded-xlarge border border-transparent bg-background-1 p-6 text-foreground-1 shadow-64",
+          "animate-surface-in data-[state=closed]:animate-surface-out",
+          material,
+          className,
+        )}
+        {...props}
+      />
+    </DialogPrimitive.Portal>
+  );
+}
 
 export function DialogTitle({
   className,
@@ -89,14 +95,20 @@ export function DialogContent({ className, ...props }: React.HTMLAttributes<HTML
   return <div className={cn("min-h-8 overflow-y-auto text-body1 text-foreground-1", className)} {...props} />;
 }
 
-export const DialogDescription = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Description>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
->(({ className, ...props }, ref) => (
-  <DialogPrimitive.Description ref={ref} className={cn("text-body1 text-foreground-1", className)} {...props} />
-));
-DialogDescription.displayName = "DialogDescription";
+export function DialogDescription({
+  className,
+  ref,
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Description>) {
+  return <DialogPrimitive.Description ref={ref} className={cn("text-body1 text-foreground-1", className)} {...props} />;
+}
 
 export function DialogActions({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return <div className={cn("mt-2 flex flex-wrap justify-end gap-2", className)} {...props} />;
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    DialogSurface: DialogSurfaceProps;
+  }
 }

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createPortal } from "react-dom";
-import { ArrowClockwise20Regular, DocumentSearch24Regular, ErrorCircle20Regular, ErrorCircle24Regular } from "@fluentui/react-icons";
+import { ArrowClockwise20Regular, DocumentSearch24Regular, ErrorCircle20Regular, ErrorCircle24Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { useAnnounce } from "../AriaLive/AriaLive";
@@ -92,41 +92,46 @@ export interface LoadingOverlayProps extends React.HTMLAttributes<HTMLDivElement
 }
 
 /** Phủ một vùng (nội dung cũ vẫn giữ chỗ bên dưới) bằng bề mặt mờ + Spinner + nhãn. */
-export const LoadingOverlay = React.forwardRef<HTMLDivElement, LoadingOverlayProps>(
-  (
-    { loading, label: labelProp, delay = 0, minDuration, spinnerSize = "medium", overlayClassName, className, children, ...props },
-    ref,
-  ) => {
-    const msg = useYugenMessages("loadingOverlay", loadingOverlayMessagesEn);
-    const label = labelProp === undefined ? msg.label : labelProp;
-    const shown = useSpinDelay(loading, { delay, minDuration: minDuration ?? (delay > 0 ? 500 : 0) });
-    const { announce } = useAnnounce();
-    const spoken = typeof label === "string" ? label : msg.announcement;
+export function LoadingOverlay({
+  loading,
+  label: labelProp,
+  delay = 0,
+  minDuration,
+  spinnerSize = "medium",
+  overlayClassName,
+  className,
+  children,
+  ref,
+  ...props
+}: LoadingOverlayProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const msg = useYugenMessages("loadingOverlay", loadingOverlayMessagesEn);
+  const label = labelProp === undefined ? msg.label : labelProp;
+  const shown = useSpinDelay(loading, { delay, minDuration: minDuration ?? (delay > 0 ? 500 : 0) });
+  const { announce } = useAnnounce();
+  const spoken = typeof label === "string" ? label : msg.announcement;
 
-    React.useEffect(() => {
-      if (shown) announce(spoken);
-    }, [shown, spoken, announce]);
+  React.useEffect(() => {
+    if (shown) announce(spoken);
+  }, [shown, spoken, announce]);
 
-    return (
-      <div ref={ref} aria-busy={loading} className={cn("relative isolate", className)} {...props}>
-        {children}
-        <Fade visible={shown} unmountOnExit exitDuration="fast">
-          {/* Chỉ để nhìn: trạng thái đã có aria-busy + thông báo live, không đọc lặp. */}
-          <div
-            aria-hidden
-            className={cn(
-              "absolute inset-0 flex items-center justify-center rounded-[inherit] bg-background-1/80 p-4",
-              overlayClassName,
-            )}
-          >
-            <Spinner size={spinnerSize} label={label} labelPosition="below" />
-          </div>
-        </Fade>
-      </div>
-    );
-  },
-);
-LoadingOverlay.displayName = "LoadingOverlay";
+  return (
+    <div ref={ref} aria-busy={loading} className={cn("relative isolate", className)} {...props}>
+      {children}
+      <Fade visible={shown} unmountOnExit exitDuration="fast">
+        {/* Chỉ để nhìn: trạng thái đã có aria-busy + thông báo live, không đọc lặp. */}
+        <div
+          aria-hidden
+          className={cn(
+            "absolute inset-0 flex items-center justify-center rounded-[inherit] bg-background-1/80 p-4",
+            overlayClassName,
+          )}
+        >
+          <Spinner size={spinnerSize} label={label} labelPosition="below" />
+        </div>
+      </Fade>
+    </div>
+  );
+}
 
 /* ================================================================ PageProgress */
 
@@ -242,64 +247,68 @@ export interface PageProgressProps extends Omit<React.HTMLAttributes<HTMLDivElem
 }
 
 /** Thanh tiến trình mảnh màu brand ở mép trên trang (chuyển route, tải nền). */
-export const PageProgress = React.forwardRef<HTMLDivElement, PageProgressProps>(
-  (
-    { value, active, controller = pageProgress, position = "fixed", thickness = "medium", label, className, ...props },
-    ref,
-  ) => {
-    const msg = useYugenMessages("pageProgress", pageProgressMessagesEn);
-    const [local] = React.useState(createPageProgress);
-    const store = value !== undefined || active !== undefined ? local : controller;
-    const themeProps = usePortalThemeProps();
+export function PageProgress({
+  value,
+  active,
+  controller = pageProgress,
+  position = "fixed",
+  thickness = "medium",
+  label,
+  className,
+  ref,
+  ...props
+}: PageProgressProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const msg = useYugenMessages("pageProgress", pageProgressMessagesEn);
+  const [local] = React.useState(createPageProgress);
+  const store = value !== undefined || active !== undefined ? local : controller;
+  const themeProps = usePortalThemeProps();
 
-    React.useEffect(() => {
-      if (!active) return;
-      local.start();
-      return () => local.done();
-    }, [active, local]);
+  React.useEffect(() => {
+    if (!active) return;
+    local.start();
+    return () => local.done();
+  }, [active, local]);
 
-    // Kèm active: chỉ nhận giá trị khi đang active (active=false → để thanh chạy nốt và mờ đi).
-    React.useEffect(() => {
-      if (value !== undefined && active !== false) local.set(value);
-    }, [value, active, local]);
+  // Kèm active: chỉ nhận giá trị khi đang active (active=false → để thanh chạy nốt và mờ đi).
+  React.useEffect(() => {
+    if (value !== undefined && active !== false) local.set(value);
+  }, [value, active, local]);
 
-    React.useEffect(() => () => local.reset(), [local]);
+  React.useEffect(() => () => local.reset(), [local]);
 
-    const snap = React.useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
-    const fixed = position === "fixed";
+  const snap = React.useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
+  const fixed = position === "fixed";
 
-    const bar = (
-      <Fade visible={snap.status !== "idle"} unmountOnExit exitDuration="normal">
+  const bar = (
+    <Fade visible={snap.status !== "idle"} unmountOnExit exitDuration="normal">
+      <div
+        ref={ref}
+        role="progressbar"
+        aria-label={label ?? msg.label}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={snap.trickling ? undefined : Math.round(snap.value * 100)}
+        {...(fixed ? themeProps : {})}
+        className={cn(
+          "pointer-events-none inset-x-0 top-0 overflow-hidden",
+          fixed ? "fixed z-50" : "absolute",
+          thickness === "large" ? "h-1" : "h-0.5",
+          className,
+        )}
+        {...props}
+      >
+        {/* scaleX thay cho width: chạy trên compositor, không layout lại cả trang mỗi bước tiến độ. */}
         <div
-          ref={ref}
-          role="progressbar"
-          aria-label={label ?? msg.label}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={snap.trickling ? undefined : Math.round(snap.value * 100)}
-          {...(fixed ? themeProps : {})}
-          className={cn(
-            "pointer-events-none inset-x-0 top-0 overflow-hidden",
-            fixed ? "fixed z-50" : "absolute",
-            thickness === "large" ? "h-1" : "h-0.5",
-            className,
-          )}
-          {...props}
-        >
-          {/* scaleX thay cho width: chạy trên compositor, không layout lại cả trang mỗi bước tiến độ. */}
-          <div
-            className="absolute inset-0 origin-left bg-brand-background transition-transform duration-slow ease-easy-ease motion-reduce:transition-none rtl:origin-right"
-            style={{ transform: `scaleX(${snap.value})` }}
-          />
-        </div>
-      </Fade>
-    );
+          className="absolute inset-0 origin-left bg-brand-background transition-transform duration-slow ease-easy-ease motion-reduce:transition-none rtl:origin-right"
+          style={{ transform: `scaleX(${snap.value})` }}
+        />
+      </div>
+    </Fade>
+  );
 
-    if (!fixed) return bar;
-    return typeof document === "undefined" ? null : createPortal(bar, document.body);
-  },
-);
-PageProgress.displayName = "PageProgress";
+  if (!fixed) return bar;
+  return typeof document === "undefined" ? null : createPortal(bar, document.body);
+}
 
 /** Chạy thanh tiến trình trong lúc `active` (mặc định true: suốt thời gian component được mount). */
 export function usePageProgress(active = true, controller: PageProgressController = pageProgress) {
@@ -349,110 +358,105 @@ export interface ErrorStateProps extends Omit<React.HTMLAttributes<HTMLDivElemen
 }
 
 /** Trạng thái lỗi có lối thoát: nói chuyện gì xảy ra, cho thử lại và một hành động phụ. */
-export const ErrorState = React.forwardRef<HTMLDivElement, ErrorStateProps>(
-  (
-    {
-      icon,
-      title: titleProp,
-      description: descriptionProp,
-      onRetry,
-      retryLabel: retryLabelProp,
-      retrying,
-      secondaryAction,
-      variant = "default",
-      size = "medium",
-      className,
-      ...props
-    },
-    ref,
-  ) => {
-    const msg = useYugenMessages("errorState", errorStateMessagesEn);
-    const title = titleProp === undefined ? msg.title : titleProp;
-    const description = descriptionProp === undefined ? msg.description : descriptionProp;
-    const retryLabel = retryLabelProp === undefined ? msg.retry : retryLabelProp;
-    const [pending, setPending] = React.useState(false);
-    const mounted = React.useRef(true);
-    React.useEffect(() => {
-      mounted.current = true;
-      return () => {
-        mounted.current = false;
-      };
-    }, []);
-    const busy = !!retrying || pending;
-    const small = size === "small";
-
-    const retry = () => {
-      if (!onRetry || busy) return;
-      const result: unknown = onRetry();
-      if (isThenable(result)) {
-        setPending(true);
-        const settle = () => {
-          if (mounted.current) setPending(false);
-        };
-        result.then(settle, settle);
-      }
+export function ErrorState({
+  icon,
+  title: titleProp,
+  description: descriptionProp,
+  onRetry,
+  retryLabel: retryLabelProp,
+  retrying,
+  secondaryAction,
+  variant = "default",
+  size = "medium",
+  className,
+  ref,
+  ...props
+}: ErrorStateProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const msg = useYugenMessages("errorState", errorStateMessagesEn);
+  const title = titleProp === undefined ? msg.title : titleProp;
+  const description = descriptionProp === undefined ? msg.description : descriptionProp;
+  const retryLabel = retryLabelProp === undefined ? msg.retry : retryLabelProp;
+  const [pending, setPending] = React.useState(false);
+  const mounted = React.useRef(true);
+  React.useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
     };
+  }, []);
+  const busy = !!retrying || pending;
+  const small = size === "small";
 
-    const actions = (onRetry || secondaryAction) && (
-      <div className={cn("flex flex-wrap items-center gap-2", small ? "shrink-0" : "justify-center")}>
-        {onRetry && (
-          <Button
-            appearance={small ? "secondary" : "primary"}
-            size={small ? "small" : "medium"}
-            icon={<ArrowClockwise20Regular />}
-            loading={busy}
-            onClick={retry}
-          >
-            {retryLabel}
-          </Button>
-        )}
-        {secondaryAction}
-      </div>
-    );
-
-    if (small) {
-      return (
-        <div
-          ref={ref}
-          role={variant === "alert" ? "alert" : undefined}
-          className={cn("flex min-w-0 flex-wrap items-center gap-3 p-3 text-start", className)}
-          {...props}
-        >
-          <span aria-hidden className="flex shrink-0 text-danger-foreground-1 [&_svg]:size-5">
-            {icon ?? <ErrorCircle20Regular />}
-          </span>
-          <div className="flex min-w-0 flex-1 flex-col">
-            <p className="text-body1 font-semibold text-foreground-1">{title}</p>
-            {description && <p className="text-caption1 text-foreground-3">{description}</p>}
-          </div>
-          {actions}
-        </div>
-      );
+  const retry = () => {
+    if (!onRetry || busy) return;
+    const result: unknown = onRetry();
+    if (isThenable(result)) {
+      setPending(true);
+      const settle = () => {
+        if (mounted.current) setPending(false);
+      };
+      result.then(settle, settle);
     }
+  };
 
+  const actions = (onRetry || secondaryAction) && (
+    <div className={cn("flex flex-wrap items-center gap-2", small ? "shrink-0" : "justify-center")}>
+      {onRetry && (
+        <Button
+          appearance={small ? "secondary" : "primary"}
+          size={small ? "small" : "medium"}
+          icon={<ArrowClockwise20Regular />}
+          loading={busy}
+          onClick={retry}
+        >
+          {retryLabel}
+        </Button>
+      )}
+      {secondaryAction}
+    </div>
+  );
+
+  if (small) {
     return (
       <div
         ref={ref}
         role={variant === "alert" ? "alert" : undefined}
-        className={cn("flex min-w-0 flex-col items-center justify-center gap-4 p-6 text-center text-balance", className)}
+        className={cn("flex min-w-0 flex-wrap items-center gap-3 p-3 text-start", className)}
         {...props}
       >
-        <div className="flex max-w-sm flex-col items-center gap-2">
-          <div
-            aria-hidden
-            className="mb-1 flex size-12 items-center justify-center rounded-xlarge bg-danger-background-1 text-danger-foreground-1 [&_svg]:size-6"
-          >
-            {icon ?? <ErrorCircle24Regular />}
-          </div>
-          <h3 className="font-display text-subtitle1 font-semibold text-foreground-1">{title}</h3>
-          {description && <p className="text-body1 text-foreground-3">{description}</p>}
+        <span aria-hidden className="flex shrink-0 text-danger-foreground-1 [&_svg]:size-5">
+          {icon ?? <ErrorCircle20Regular />}
+        </span>
+        <div className="flex min-w-0 flex-1 flex-col">
+          <p className="text-body1 font-semibold text-foreground-1">{title}</p>
+          {description && <p className="text-caption1 text-foreground-3">{description}</p>}
         </div>
         {actions}
       </div>
     );
-  },
-);
-ErrorState.displayName = "ErrorState";
+  }
+
+  return (
+    <div
+      ref={ref}
+      role={variant === "alert" ? "alert" : undefined}
+      className={cn("flex min-w-0 flex-col items-center justify-center gap-4 p-6 text-center text-balance", className)}
+      {...props}
+    >
+      <div className="flex max-w-sm flex-col items-center gap-2">
+        <div
+          aria-hidden
+          className="mb-1 flex size-12 items-center justify-center rounded-xlarge bg-danger-background-1 text-danger-foreground-1 [&_svg]:size-6"
+        >
+          {icon ?? <ErrorCircle24Regular />}
+        </div>
+        <h3 className="font-display text-subtitle1 font-semibold text-foreground-1">{title}</h3>
+        {description && <p className="text-body1 text-foreground-3">{description}</p>}
+      </div>
+      {actions}
+    </div>
+  );
+}
 
 /* ================================================================ AsyncContent */
 
@@ -498,100 +502,95 @@ function DefaultEmpty() {
  * Hiển thị đúng một trạng thái: idle | loading | success | error | empty.
  * Tải nhanh hơn `delay` → không có khung xương nháy lên (giữ trạng thái trước đó); đã hiện → giữ ít nhất `minDuration`.
  */
-export const AsyncContent = React.forwardRef<HTMLDivElement, AsyncContentProps>(
-  (
-    {
-      status,
-      children,
-      skeleton,
-      error,
-      empty,
-      idle = null,
-      onRetry,
-      loadingLabel: loadingLabelProp,
-      delay = 300,
-      minDuration = 500,
-      className,
-      onFocus,
-      onBlur,
-      ...props
-    },
-    ref,
-  ) => {
-    const msg = useYugenMessages("asyncContent", asyncContentMessagesEn);
-    const loadingLabel = loadingLabelProp ?? msg.loading;
-    const loading = status === "loading";
-    const showLoader = useSpinDelay(loading, { delay, minDuration });
-    // Trạng thái đã ổn định gần nhất — hiển thị tiếp trong khoảng delay thay vì nháy trống.
-    const [settled, setSettled] = React.useState<Exclude<AsyncStatus, "loading">>(
-      status === "loading" ? "idle" : status,
-    );
-    if (status !== "loading" && status !== settled) setSettled(status);
-    const view: AsyncStatus = showLoader ? "loading" : loading ? settled : status;
+export function AsyncContent({
+  status,
+  children,
+  skeleton,
+  error,
+  empty,
+  idle = null,
+  onRetry,
+  loadingLabel: loadingLabelProp,
+  delay = 300,
+  minDuration = 500,
+  className,
+  onFocus,
+  onBlur,
+  ref,
+  ...props
+}: AsyncContentProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const msg = useYugenMessages("asyncContent", asyncContentMessagesEn);
+  const loadingLabel = loadingLabelProp ?? msg.loading;
+  const loading = status === "loading";
+  const showLoader = useSpinDelay(loading, { delay, minDuration });
+  // Trạng thái đã ổn định gần nhất — hiển thị tiếp trong khoảng delay thay vì nháy trống.
+  const [settled, setSettled] = React.useState<Exclude<AsyncStatus, "loading">>(
+    status === "loading" ? "idle" : status,
+  );
+  if (status !== "loading" && status !== settled) setSettled(status);
+  const view: AsyncStatus = showLoader ? "loading" : loading ? settled : status;
 
-    const { announce } = useAnnounce();
-    React.useEffect(() => {
-      if (showLoader) announce(loadingLabel);
-    }, [showLoader, loadingLabel, announce]);
+  const { announce } = useAnnounce();
+  React.useEffect(() => {
+    if (showLoader) announce(loadingLabel);
+  }, [showLoader, loadingLabel, announce]);
 
-    // Nội dung đang chứa focus (vd. nút "Thử lại") bị thay → giữ focus trong vùng thay vì rơi về <body>.
-    const rootRef = React.useRef<HTMLDivElement>(null);
-    const focusInside = React.useRef(false);
-    React.useImperativeHandle(ref, () => rootRef.current as HTMLDivElement);
-    useIsomorphicLayoutEffect(() => {
-      const root = rootRef.current;
-      if (!root || !focusInside.current) return;
-      const activeEl = document.activeElement;
-      if (!activeEl || activeEl === document.body || !root.contains(activeEl)) root.focus({ preventScroll: true });
-    }, [view]);
+  // Nội dung đang chứa focus (vd. nút "Thử lại") bị thay → giữ focus trong vùng thay vì rơi về <body>.
+  const rootRef = React.useRef<HTMLDivElement>(null);
+  const focusInside = React.useRef(false);
+  React.useImperativeHandle(ref, () => rootRef.current as HTMLDivElement);
+  useIsomorphicLayoutEffect(() => {
+    const root = rootRef.current;
+    if (!root || !focusInside.current) return;
+    const activeEl = document.activeElement;
+    if (!activeEl || activeEl === document.body || !root.contains(activeEl)) root.focus({ preventScroll: true });
+  }, [view]);
 
-    let content: React.ReactNode;
-    switch (view) {
-      case "loading":
-        content = skeleton ?? <SkeletonText lines={3} />;
-        break;
-      case "error":
-        content =
-          typeof error === "function"
-            ? error({ retry: onRetry, retrying: loading })
-            : (error ?? <ErrorState variant="alert" onRetry={onRetry} retrying={loading} />);
-        break;
-      case "empty":
-        content = empty ?? <DefaultEmpty />;
-        break;
-      case "success":
-        content = typeof children === "function" ? children() : children;
-        break;
-      default:
-        content = idle;
-    }
+  let content: React.ReactNode;
+  switch (view) {
+    case "loading":
+      content = skeleton ?? <SkeletonText lines={3} />;
+      break;
+    case "error":
+      content =
+        typeof error === "function"
+          ? error({ retry: onRetry, retrying: loading })
+          : (error ?? <ErrorState variant="alert" onRetry={onRetry} retrying={loading} />);
+      break;
+    case "empty":
+      content = empty ?? <DefaultEmpty />;
+      break;
+    case "success":
+      content = typeof children === "function" ? children() : children;
+      break;
+    default:
+      content = idle;
+  }
 
-    return (
-      <div
-        ref={rootRef}
-        tabIndex={-1}
-        aria-busy={loading}
-        className={cn("min-w-0", className)}
-        onFocus={(event) => {
-          focusInside.current = true;
-          onFocus?.(event);
-        }}
-        onBlur={(event) => {
-          // relatedTarget null = phần tử bị gỡ khỏi DOM hoặc bấm ra nền → vẫn coi như focus đang ở vùng này.
-          const next = event.relatedTarget;
-          if (next && !event.currentTarget.contains(next)) focusInside.current = false;
-          onBlur?.(event);
-        }}
-        {...props}
-      >
-        <div key={view} className="animate-fade-in motion-reduce:animate-none">
-          {content}
-        </div>
+  return (
+    <div
+      ref={rootRef}
+      tabIndex={-1}
+      aria-busy={loading}
+      className={cn("min-w-0", className)}
+      onFocus={(event) => {
+        focusInside.current = true;
+        onFocus?.(event);
+      }}
+      onBlur={(event) => {
+        // relatedTarget null = phần tử bị gỡ khỏi DOM hoặc bấm ra nền → vẫn coi như focus đang ở vùng này.
+        const next = event.relatedTarget;
+        if (next && !event.currentTarget.contains(next)) focusInside.current = false;
+        onBlur?.(event);
+      }}
+      {...props}
+    >
+      <div key={view} className="animate-fade-in motion-reduce:animate-none">
+        {content}
       </div>
-    );
-  },
-);
-AsyncContent.displayName = "AsyncContent";
+    </div>
+  );
+}
 
 /* ================================================================ useOptimisticList */
 

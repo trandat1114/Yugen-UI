@@ -163,7 +163,7 @@ export const en: Record<string, ComponentDocEn> = {
       "loading / error / onRetry": "Loading and error states.",
       now: "Fixed reference time (SSR, tests).",
       "open / defaultOpen / onOpenChange": "Panel open state.",
-      "mode / breakpoint": "Popover or bottom sheet.",
+      "mode / breakpoint": "Popover or bottom sheet; breakpoint takes the same tokens as Sheet (a px number is deprecated, removed in 1.0).",
       "title / footer / announce": "Title, panel footer, announcing new notifications.",
       "useNotifications(initial)": "Small store for demos; spread bind into NotificationCenter.",
     },

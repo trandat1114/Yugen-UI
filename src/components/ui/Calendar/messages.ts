@@ -16,10 +16,10 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const calendarMessages: CalendarMessages = { locale: vi };
+export const calendarMessagesVi: CalendarMessages = { locale: vi };
 
 /** en-US là locale mặc định của react-day-picker, nên `messagesEn` không phải nạp thêm locale nào. */
 export const calendarMessagesEn: CalendarMessages = { locale: undefined };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `calendarMessagesEn` (mặc định). `calendarMessages` giữ cho code cũ. */
-export const calendarMessagesVi = calendarMessages;
+/** @deprecated Use `calendarMessagesVi` (Vietnamese) or `calendarMessagesEn`. Will be removed in v1.0.0. */
+export const calendarMessages = calendarMessagesVi;

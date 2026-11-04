@@ -71,7 +71,7 @@ export const CLI_CONFIG = `{
 }`;
 
 export const CLI_DOCTOR_OUTPUT = `◆  yugen.json: source mode
-◆  React 18.3.1
+◆  React 19.3.1
 ◆  Tailwind CSS 4.3.3
 ◆  Theme imported: src/index.css → ./yugen.css
 ◆  15 component folders in src/components/ui

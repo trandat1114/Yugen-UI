@@ -14,16 +14,27 @@ export interface ProseProps extends React.HTMLAttributes<HTMLDivElement> {
  * Yugen, qua utility `yugen-prose` (theme): selector độ ưu tiên 0, thoát bằng class `not-prose`. Không tự làm sạch HTML:
  * nội dung chưa tin cậy phải được sanitize trước khi đưa vào.
  */
-export const Prose = React.forwardRef<HTMLDivElement, ProseProps>(function Prose(
-  { size = "medium", asChild = false, className, ...props },
+export function Prose({
+  size = "medium",
+  asChild = false,
+  className,
   ref,
-) {
+  ...props
+}: ProseProps & { ref?: React.Ref<HTMLDivElement> }) {
   const Comp = asChild ? Slot : "div";
   return (
     <Comp
       ref={ref}
-      className={cn("yugen-prose flex min-w-0 flex-col gap-4 text-foreground-2", size === "large" ? "text-body2" : "text-body1", className)}
+      className={cn(
+        "yugen-prose flex min-w-0 flex-col text-foreground-2",
+        // Cỡ chữ, line-height, khoảng cách khối đến từ biến --prose-* của yugen-prose; size chỉ đặt giá trị mặc định.
+        "[--prose-flow-default:--spacing(4)]",
+        size === "large"
+          ? "[--prose-leading-default:var(--text-body2--line-height)] [--prose-size-default:var(--text-body2)]"
+          : "[--prose-leading-default:var(--text-body1--line-height)] [--prose-size-default:var(--text-body1)]",
+        className,
+      )}
       {...props}
     />
   );
-});
+}

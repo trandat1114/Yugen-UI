@@ -14,6 +14,7 @@ import { cn } from "@/lib/cn";
 import type { AppBrand } from "@/hooks/useAppearance";
 import { AppearancePicker, BRAND_LABEL, BrandDot } from "./layout/AppearancePicker";
 import { CodeBlock, CopyButton } from "./CodeBlock";
+import { docsPath } from "./router";
 import { SITE } from "./site";
 import { openInStackBlitz } from "./stackblitz";
 import { useLocale } from "./i18n";
@@ -59,20 +60,37 @@ export function PageHeader({
   );
 }
 
+/** `[chữ](/đường-dẫn#mục)` trong chữ thường → link tới trang docs cùng ngôn ngữ. */
+function withLinks(text: string, key: number): React.ReactNode {
+  const parts = text.split(/\[([^\]]+)\]\((\/[^)\s]*)\)/);
+  if (parts.length === 1) return text;
+  const out: React.ReactNode[] = [];
+  for (let i = 0; i < parts.length; i += 3) {
+    if (parts[i]) out.push(parts[i]);
+    if (i + 2 < parts.length)
+      out.push(
+        <a key={`${key}-${i}`} href={docsPath(parts[i + 2])} className="text-link underline hover:text-link-hover">
+          {parts[i + 1]}
+        </a>,
+      );
+  }
+  return out;
+}
+
 /**
- * Chữ trong registry (mô tả, ví dụ, nên / không nên, props): đoạn giữa hai dấu `…` hiện thành code.
- * Code dài liền một mạch được ngắt dòng thay vì tràn (bảng props cắt phần tràn, #259).
+ * Chữ trong registry (mô tả, ví dụ, nên / không nên, props): đoạn giữa hai dấu `…` hiện thành code, `[chữ](/trang)` thành
+ * link tới trang docs. Code dài liền một mạch được ngắt dòng thay vì tràn (bảng props cắt phần tràn, #259).
  */
 export function withCode(text: string): React.ReactNode {
   const parts = text.split(/`([^`]+)`/);
-  if (parts.length === 1) return text;
+  if (parts.length === 1) return withLinks(text, 0);
   return parts.map((part, i) =>
     i % 2 ? (
       <code key={i} dir="ltr" className="rounded-small bg-background-4 px-1 font-mono text-[0.9em] text-foreground-1 wrap-anywhere">
         {part}
       </code>
     ) : (
-      part
+      <React.Fragment key={i}>{withLinks(part, i)}</React.Fragment>
     ),
   );
 }
@@ -172,7 +190,9 @@ export function ExampleFrame({
         </div>
       </div>
 
+      {/* data-hero-demo: e2e/visual.spec.ts chụp riêng vùng demo này cho mọi component (#166). */}
       <YugenProvider
+        data-hero-demo=""
         theme={look.theme}
         brand={look.brand}
         dir={pageDir}

@@ -2,12 +2,16 @@ name: Release
 
 # Release flow (see CONTRIBUTING.md): `npx changeset version` → update src/docs/news (vi + en) → `npm run check:release`
 # → commit → `git tag vX.Y.Z && git push --tags`. Pushing the tag runs this workflow.
-# Requires the repository secret NPM_TOKEN (npm automation / granular token with publish rights) and a
-# `repository` field in package.json that points at this GitHub repository (needed for --provenance).
+# Publishes through npm trusted publishing (OIDC, no npm token): the package lists this repository and release.yml as
+# its trusted publisher on npmjs.com. Needs a `repository` field in package.json that points at this GitHub repository.
+# npm accepts one trusted publisher workflow per package, so canary builds (push to `canary`, or a manual run) are a
+# job of this workflow too.
 
 on:
   push:
     tags: ["v*"]
+    branches: [canary]
+  workflow_dispatch:
 
 permissions:
   contents: write # GitHub Release
@@ -15,6 +19,7 @@ permissions:
 
 jobs:
   publish:
+    if: github.event_name == 'push' && github.ref_type == 'tag'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -28,8 +33,7 @@ jobs:
           cache: npm
           registry-url: https://registry.npmjs.org
 
-      # npm trusted publishing (OIDC, #202) cần npm ≥ 11.5.1. npm dùng OIDC khi gói đã khai báo trusted publisher trên
-      # npmjs.com và chỉ quay về NODE_AUTH_TOKEN khi chưa có — giữ token tới bản phát hành đầu tiên chạy bằng OIDC.
+      # npm trusted publishing (OIDC, #202) cần npm ≥ 11.5.1. Không dùng npm token từ 0.14.0.
       - name: npm with trusted publishing
         run: npm install -g npm@11 && npm --version
 
@@ -61,8 +65,6 @@ jobs:
       # prepublishOnly also runs typecheck + lint:classes + build:lib.
       - name: Publish to npm
         run: npm publish --provenance --access public --tag "${{ steps.channel.outputs.dist_tag }}"
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       # GitHub Release từ mục CHANGELOG của bản này. Đã có release cho tag (chạy lại workflow) thì bỏ qua.
       - name: Create GitHub Release
@@ -83,3 +85,47 @@ jobs:
           [ "$DIST_TAG" = "latest" ] && FLAGS="--latest"
           case "$VERSION" in *-*) FLAGS="$FLAGS --prerelease" ;; esac
           gh release create "$GITHUB_REF_NAME" --verify-tag --title "yugen-ui $VERSION" --notes-file "$RUNNER_TEMP/notes.md" $FLAGS
+
+  # Bản thử nghiệm: mỗi push vào nhánh `canary` (hoặc chạy tay) phát hành `x.y.z-canary-<thời gian>` với dist-tag `canary`.
+  # Người dùng thử: npm install yugen-ui@canary — không bao giờ ảnh hưởng `latest` hay `next`.
+  canary:
+    if: github.ref_type == 'branch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      id-token: write # npm trusted publishing + provenance
+    concurrency:
+      group: canary
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: npm
+          registry-url: https://registry.npmjs.org
+
+      - name: npm with trusted publishing
+        run: npm install -g npm@11 && npm --version
+
+      - run: npm ci
+
+      - name: Snapshot version
+        run: |
+          # Changesets không cho snapshot ở chế độ pre (nhánh next có .changeset/pre.json) → dùng npm version.
+          if [ ! -f .changeset/pre.json ] && ls .changeset/*.md 2>/dev/null | grep -qv README.md; then
+            npx changeset version --snapshot canary
+          else
+            npm version --no-git-tag-version "$(node -p "require('./package.json').version")-canary-$(date -u +%Y%m%d%H%M%S)"
+          fi
+          echo "Version: $(node -p "require('./package.json').version")"
+
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build:lib
+
+      # --ignore-scripts: bỏ prepublishOnly (check:release đòi News/CHANGELOG cho bản ổn định); đã build & test ở trên.
+      - name: Publish canary
+        run: npm publish --provenance --access public --tag canary --ignore-scripts

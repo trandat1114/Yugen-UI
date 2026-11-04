@@ -8,7 +8,7 @@ import {
   Document16Regular,
   TextWrap16Regular,
   TextWrapOff16Regular,
-} from "@fluentui/react-icons";
+} from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useClipboard } from "../hooks/useClipboard";
 import { useControllableState } from "../hooks/useControllableState";
@@ -264,11 +264,20 @@ const HTML_GRAMMAR: Grammar = {
 
 /* ---------- Bash ---------- */
 
-/** Từ đầu tiên của lệnh: đầu dòng, sau prompt `$`, sau `|`, `&&`, `||`, `;`, `(`, `sudo`. */
+/**
+ * Từ đầu tiên của lệnh: đầu dòng, sau prompt `$`, sau `|`, `&&`, `||`, `;`, `(`, `sudo`. Chỉ nhìn lùi vài ký tự (không cắt
+ * cả dòng) để một dòng rất dài vẫn tô màu trong thời gian tuyến tính (#165).
+ */
 function bashCommandPosition(code: string, index: number) {
-  const lineStart = code.lastIndexOf("\n", index - 1) + 1;
-  const before = code.slice(lineStart, index).trimEnd();
-  return before === "" || before === "$" || /(?:\|\||&&|[|;(]|\bsudo)$/.test(before);
+  const blank = (c: string | undefined) => c === " " || c === "\t";
+  let k = index - 1;
+  while (k >= 0 && blank(code[k])) k--;
+  if (k < 0 || code[k] === "\n") return true;
+  const c = code[k];
+  if (c === "|" || c === ";" || c === "(") return true;
+  if (c === "&") return code[k - 1] === "&";
+  if (c === "$") return k === 0 || code[k - 1] === "\n";
+  return code.slice(Math.max(0, k - 3), k + 1) === "sudo" && (k < 4 || !/\w/.test(code[k - 4]));
 }
 
 const BASH_GRAMMAR: Grammar = {
@@ -277,7 +286,8 @@ const BASH_GRAMMAR: Grammar = {
     { re: /^\$(?= )/my, type: "punct" },
     { re: /"(?:[^"\\]|\\[\s\S])*"?/y, type: "string" },
     { re: /'[^']*'?/y, type: "string" },
-    { re: /\$\{[^}\n]*\}|\$[\w@#?*!$-]+/y, type: "variable" },
+    // `${…}` giới hạn 200 ký tự: không có `}` thì không quét tới cuối input cho mỗi `${` (#165).
+    { re: /\$\{[^}\n]{0,200}\}|\$[\w@#?*!$-]+/y, type: "variable" },
     { re: /[A-Za-z_./~@][\w./~@:+-]*/y, type: "function", when: bashCommandPosition },
     { re: /--?[\w-]+(?:=[^\s]*)?/y, type: "attr", when: (c, i) => /\s/.test(c[i - 1] ?? " ") },
     { re: /\b\d+\b/y, type: "number" },
@@ -308,12 +318,13 @@ const MD_GRAMMAR: Grammar = {
     { re: /^>[^\n]*/my, type: "comment" },
     { re: /^(?:-{3,}|\*{3,}|_{3,})[ \t]*$/my, type: "punct" },
     { re: /^[ \t]*(?:[-*+]|\d+[.)])(?=[ \t])/my, type: "keyword" },
-    { re: /`[^`\n]+`/y, type: "string" },
-    { re: /\*\*[^*\n]+\*\*|__[^_\n]+__/y, type: "strong" },
-    { re: /\*[^*\n]+\*/y, type: "emphasis" },
-    { re: /_[^_\n]+_/y, type: "emphasis", when: (c, i) => !/\w/.test(c[i - 1] ?? "") },
-    { re: /!?\[[^\]\n]*\]\([^)\n]*\)/y, type: "link" },
-    { re: /<\/?[A-Za-z][^>\n]*>/y, type: "tag" },
+    // Phần inline giới hạn độ dài: dòng dài toàn dấu mở chưa đóng không bị quét lại tới cuối dòng ở mỗi ký tự (#165).
+    { re: /`[^`\n]{1,1000}`/y, type: "string" },
+    { re: /\*\*[^*\n]{1,1000}\*\*|__[^_\n]{1,1000}__/y, type: "strong" },
+    { re: /\*[^*\n]{1,1000}\*/y, type: "emphasis" },
+    { re: /_[^_\n]{1,1000}_/y, type: "emphasis", when: (c, i) => !/\w/.test(c[i - 1] ?? "") },
+    { re: /!?\[[^\]\n]{0,1000}\]\([^)\n]{0,2000}\)/y, type: "link" },
+    { re: /<\/?[A-Za-z][^>\n]{0,1000}>/y, type: "tag" },
     { re: /[^`*_[!<\n]+/y, type: null },
   ],
 };
@@ -406,36 +417,40 @@ export interface CopyCodeButtonProps extends Omit<React.ButtonHTMLAttributes<HTM
   showLabel?: boolean;
 }
 
-export const CopyCodeButton = React.forwardRef<HTMLButtonElement, CopyCodeButtonProps>(
-  ({ text, showLabel = true, className, onClick, ...props }, ref) => {
-    const msg = useYugenMessages("copyCodeButton", copyCodeButtonMessagesEn);
-    const { copy, copied } = useClipboard();
+export function CopyCodeButton({
+  text,
+  showLabel = true,
+  className,
+  onClick,
+  ref,
+  ...props
+}: CopyCodeButtonProps & { ref?: React.Ref<HTMLButtonElement> }) {
+  const msg = useYugenMessages("copyCodeButton", copyCodeButtonMessagesEn);
+  const { copy, copied } = useClipboard();
 
-    return (
-      <>
-        <Button
-          ref={ref}
-          size="small"
-          appearance="subtle"
-          icon={copied ? <Checkmark16Regular className="text-success-foreground-1" /> : <Copy16Regular />}
-          aria-label={showLabel ? undefined : copied ? msg.copiedLabel : msg.copyLabel}
-          onClick={async (e) => {
-            onClick?.(e);
-            await copy(text);
-          }}
-          className={cn(!showLabel && "min-w-0", className)}
-          {...props}
-        >
-          {showLabel ? (copied ? msg.copied : msg.copy) : undefined}
-        </Button>
-        <span role="status" className="sr-only">
-          {copied ? msg.copiedStatus : ""}
-        </span>
-      </>
-    );
-  },
-);
-CopyCodeButton.displayName = "CopyCodeButton";
+  return (
+    <>
+      <Button
+        ref={ref}
+        size="small"
+        appearance="subtle"
+        icon={copied ? <Checkmark16Regular className="text-success-foreground-1" /> : <Copy16Regular />}
+        aria-label={showLabel ? undefined : copied ? msg.copiedLabel : msg.copyLabel}
+        onClick={async (e) => {
+          onClick?.(e);
+          await copy(text);
+        }}
+        className={cn(!showLabel && "min-w-0", className)}
+        {...props}
+      >
+        {showLabel ? (copied ? msg.copied : msg.copy) : undefined}
+      </Button>
+      <span role="status" className="sr-only">
+        {copied ? msg.copiedStatus : ""}
+      </span>
+    </>
+  );
+}
 
 /* ================================================================ Theme */
 
@@ -477,201 +492,196 @@ export interface CodeBlockProps extends Omit<React.HTMLAttributes<HTMLDivElement
   bare?: boolean;
 }
 
-export const CodeBlock = React.forwardRef<HTMLDivElement, CodeBlockProps>(
-  (
-    {
-      code,
-      language = "tsx",
-      title,
-      filename,
-      showLineNumbers = false,
-      highlightLines,
-      diff = false,
-      wrap: wrapProp,
-      defaultWrap = false,
-      onWrapChange,
-      showWrapToggle,
-      copyable = true,
-      maxHeight,
-      appearance = "auto",
-      size = "medium",
-      bare = false,
-      className,
-      ...props
-    },
-    ref,
-  ) => {
-    const preId = React.useId();
-    const msg = useYugenMessages("codeBlock", codeBlockMessagesEn);
-    const themeProps = useCodeThemeProps(appearance);
-    const [wrap, setWrap] = useControllableState({ value: wrapProp, defaultValue: defaultWrap, onChange: onWrapChange });
-    const [expanded, setExpanded] = React.useState(false);
-    const [overflowing, setOverflowing] = React.useState(false);
-    const preRef = React.useRef<HTMLPreElement>(null);
+export function CodeBlock({
+  code,
+  language = "tsx",
+  title,
+  filename,
+  showLineNumbers = false,
+  highlightLines,
+  diff = false,
+  wrap: wrapProp,
+  defaultWrap = false,
+  onWrapChange,
+  showWrapToggle,
+  copyable = true,
+  maxHeight,
+  appearance = "auto",
+  size = "medium",
+  bare = false,
+  className,
+  ref,
+  ...props
+}: CodeBlockProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const preId = React.useId();
+  const msg = useYugenMessages("codeBlock", codeBlockMessagesEn);
+  const themeProps = useCodeThemeProps(appearance);
+  const [wrap, setWrap] = useControllableState({ value: wrapProp, defaultValue: defaultWrap, onChange: onWrapChange });
+  const [expanded, setExpanded] = React.useState(false);
+  const [overflowing, setOverflowing] = React.useState(false);
+  const preRef = React.useRef<HTMLPreElement>(null);
 
-    const { lines, marks, copySource } = React.useMemo(() => {
-      const normalized = code.replace(/\r\n?/g, "\n").replace(/\n$/, "");
-      const raw = normalized.split("\n");
-      const diffMarks = diff ? raw.map((l) => (l.startsWith("+") ? "+" : l.startsWith("-") ? "-" : " ")) : null;
-      const source = diff ? raw.map((l) => (/^[+\- ]/.test(l) ? l.slice(1) : l)).join("\n") : normalized;
-      const copy = diff
-        ? raw
-            .filter((_, i) => diffMarks?.[i] !== "-")
-            .map((l) => (/^[+ ]/.test(l) ? l.slice(1) : l))
-            .join("\n")
-        : normalized;
-      return { lines: splitLines(tokenizeCode(source, language)), marks: diffMarks, copySource: copy };
-    }, [code, diff, language]);
+  const { lines, marks, copySource } = React.useMemo(() => {
+    const normalized = code.replace(/\r\n?/g, "\n").replace(/\n$/, "");
+    const raw = normalized.split("\n");
+    const diffMarks = diff ? raw.map((l) => (l.startsWith("+") ? "+" : l.startsWith("-") ? "-" : " ")) : null;
+    const source = diff ? raw.map((l) => (/^[+\- ]/.test(l) ? l.slice(1) : l)).join("\n") : normalized;
+    const copy = diff
+      ? raw
+          .filter((_, i) => diffMarks?.[i] !== "-")
+          .map((l) => (/^[+ ]/.test(l) ? l.slice(1) : l))
+          .join("\n")
+      : normalized;
+    return { lines: splitLines(tokenizeCode(source, language)), marks: diffMarks, copySource: copy };
+  }, [code, diff, language]);
 
-    const highlighted = React.useMemo(() => parseLineRanges(highlightLines), [highlightLines]);
-    const collapsible = maxHeight !== undefined;
-    const collapsed = collapsible && !expanded;
+  const highlighted = React.useMemo(() => parseLineRanges(highlightLines), [highlightLines]);
+  const collapsible = maxHeight !== undefined;
+  const collapsed = collapsible && !expanded;
 
-    // Đo xem nội dung có vượt maxHeight không (chỉ khi đang thu gọn).
-    useIsomorphicLayoutEffect(() => {
-      const pre = preRef.current;
-      if (!pre || !collapsed) return;
-      const measure = () => setOverflowing(pre.scrollHeight > pre.clientHeight + 1);
-      measure();
-      if (typeof ResizeObserver === "undefined") return;
-      const observer = new ResizeObserver(measure);
-      observer.observe(pre);
-      return () => observer.disconnect();
-    }, [collapsed, lines, wrap]);
+  // Đo xem nội dung có vượt maxHeight không (chỉ khi đang thu gọn).
+  useIsomorphicLayoutEffect(() => {
+    const pre = preRef.current;
+    if (!pre || !collapsed) return;
+    const measure = () => setOverflowing(pre.scrollHeight > pre.clientHeight + 1);
+    measure();
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(pre);
+    return () => observer.disconnect();
+  }, [collapsed, lines, wrap]);
 
-    const hasHeader = !bare && (title != null || filename != null);
-    const wrapToggle = showWrapToggle ?? hasHeader;
+  const hasHeader = !bare && (title != null || filename != null);
+  const wrapToggle = showWrapToggle ?? hasHeader;
 
-    const wrapButton = (
-      <Button
-        size="small"
-        appearance="subtle"
-        icon={wrap ? <TextWrapOff16Regular /> : <TextWrap16Regular />}
-        aria-pressed={wrap}
-        aria-label={msg.wrap}
-        title={wrap ? msg.wrapOff : msg.wrapOn}
-        onClick={() => setWrap(!wrap)}
-      />
-    );
+  const wrapButton = (
+    <Button
+      size="small"
+      appearance="subtle"
+      icon={wrap ? <TextWrapOff16Regular /> : <TextWrap16Regular />}
+      aria-pressed={wrap}
+      aria-label={msg.wrap}
+      title={wrap ? msg.wrapOff : msg.wrapOn}
+      onClick={() => setWrap(!wrap)}
+    />
+  );
 
-    const body = (
-      <div className="relative">
-        <pre
-          ref={preRef}
-          id={preId}
-          dir="ltr"
-          tabIndex={0}
-          className={cn(
-            "m-0 py-3 text-start font-mono text-foreground-1 focus-visible:-outline-offset-2",
-            size === "small" ? "text-caption1" : "text-body1",
-            wrap ? "whitespace-pre-wrap wrap-anywhere" : "overflow-x-auto whitespace-pre",
-            collapsed && "overflow-y-hidden",
-            collapsed && overflowing && "mask-b-from-60%",
-          )}
-          style={collapsed ? { maxHeight } : undefined}
-        >
-          <code className={cn("block", !wrap && "w-max min-w-full")}>
-            {lines.map((line, i) => {
-              const n = i + 1;
-              const mark = marks?.[i] ?? " ";
-              return (
-                <span
-                  key={i}
-                  className={cn(
-                    "flex min-h-lh border-s-2 border-transparent",
-                    highlighted.has(n) && "border-brand-stroke bg-brand-background-2",
-                    mark === "+" && "border-success-border-1 bg-success-background-1",
-                    mark === "-" && "border-danger-border-1 bg-danger-background-1",
-                  )}
-                >
-                  {showLineNumbers && (
-                    <span aria-hidden className="w-12 shrink-0 pe-3 text-end text-foreground-3 tabular-nums select-none">
-                      {n}
-                    </span>
-                  )}
-                  {marks && (
-                    <span
-                      aria-hidden
-                      className={cn(
-                        "w-6 shrink-0 text-center select-none",
-                        mark === "+" ? "text-success-foreground-1" : mark === "-" ? "text-danger-foreground-1" : "text-foreground-3",
-                      )}
-                    >
-                      {mark}
-                    </span>
-                  )}
-                  <span className={cn("min-w-0 flex-1 pe-4", !showLineNumbers && !marks && "ps-4")}>
-                    {mark !== " " && <span className="sr-only select-none">{mark === "+" ? msg.added : msg.removed} </span>}
-                    {line.map((token, k) =>
-                      token.type === "plain" ? (
-                        <React.Fragment key={k}>{token.text}</React.Fragment>
-                      ) : (
-                        <span key={k} className={TOKEN_CLASS[token.type]}>
-                          {token.text}
-                        </span>
-                      ),
-                    )}
-                  </span>
-                </span>
-              );
-            })}
-          </code>
-        </pre>
-
-        {copyable && !hasHeader && !bare && (
-          <CopyCodeButton
-            text={copySource}
-            showLabel={false}
-            className="absolute inset-e-2 top-2 bg-background-1 opacity-0 shadow-2 group-hover/code:opacity-100 focus-visible:opacity-100 pointer-coarse:opacity-100"
-          />
+  const body = (
+    <div className="relative">
+      <pre
+        ref={preRef}
+        id={preId}
+        dir="ltr"
+        tabIndex={0}
+        className={cn(
+          "m-0 py-3 text-start font-mono text-foreground-1 focus-visible:-outline-offset-2",
+          size === "small" ? "text-caption1" : "text-body1",
+          wrap ? "whitespace-pre-wrap wrap-anywhere" : "overflow-x-auto whitespace-pre",
+          collapsed && "overflow-y-hidden",
+          collapsed && overflowing && "mask-b-from-60%",
         )}
-      </div>
-    );
-
-    const footer = collapsible && (overflowing || expanded) && (
-      <button
-        type="button"
-        aria-expanded={expanded}
-        aria-controls={preId}
-        onClick={() => setExpanded((v) => !v)}
-        className="flex w-full items-center justify-center gap-1 border-t border-stroke-2 py-1 text-caption1 font-semibold text-link transition-colors duration-faster hover:bg-subtle-hover hover:text-link-hover"
+        style={collapsed ? { maxHeight } : undefined}
       >
-        {expanded ? <ChevronUp16Regular aria-hidden /> : <ChevronDown16Regular aria-hidden />}
-        {expanded ? msg.collapse : msg.expand(lines.length)}
-      </button>
-    );
+        <code className={cn("block", !wrap && "w-max min-w-full")}>
+          {lines.map((line, i) => {
+            const n = i + 1;
+            const mark = marks?.[i] ?? " ";
+            return (
+              <span
+                key={i}
+                className={cn(
+                  "flex min-h-lh border-s-2 border-transparent",
+                  highlighted.has(n) && "border-brand-stroke bg-brand-background-2",
+                  mark === "+" && "border-success-border-1 bg-success-background-1",
+                  mark === "-" && "border-danger-border-1 bg-danger-background-1",
+                )}
+              >
+                {showLineNumbers && (
+                  <span aria-hidden className="w-12 shrink-0 pe-3 text-end text-foreground-3 tabular-nums select-none">
+                    {n}
+                  </span>
+                )}
+                {marks && (
+                  <span
+                    aria-hidden
+                    className={cn(
+                      "w-6 shrink-0 text-center select-none",
+                      mark === "+" ? "text-success-foreground-1" : mark === "-" ? "text-danger-foreground-1" : "text-foreground-3",
+                    )}
+                  >
+                    {mark}
+                  </span>
+                )}
+                <span className={cn("min-w-0 flex-1 pe-4", !showLineNumbers && !marks && "ps-4")}>
+                  {mark !== " " && <span className="sr-only select-none">{mark === "+" ? msg.added : msg.removed} </span>}
+                  {line.map((token, k) =>
+                    token.type === "plain" ? (
+                      <React.Fragment key={k}>{token.text}</React.Fragment>
+                    ) : (
+                      <span key={k} className={TOKEN_CLASS[token.type]}>
+                        {token.text}
+                      </span>
+                    ),
+                  )}
+                </span>
+              </span>
+            );
+          })}
+        </code>
+      </pre>
 
-    if (bare) {
-      return (
-        <div ref={ref} dir="ltr" {...themeProps} className={cn("group/code min-w-0 bg-background-2 text-start", className)} {...props}>
-          {body}
-          {footer}
-        </div>
-      );
-    }
+      {copyable && !hasHeader && !bare && (
+        <CopyCodeButton
+          text={copySource}
+          showLabel={false}
+          className="absolute inset-e-2 top-2 bg-background-1 opacity-0 shadow-2 group-hover/code:opacity-100 focus-visible:opacity-100 pointer-coarse:opacity-100"
+        />
+      )}
+    </div>
+  );
 
+  const footer = collapsible && (overflowing || expanded) && (
+    <button
+      type="button"
+      aria-expanded={expanded}
+      aria-controls={preId}
+      onClick={() => setExpanded((v) => !v)}
+      className="flex w-full items-center justify-center gap-1 border-t border-stroke-2 py-1 text-caption1 font-semibold text-link transition-colors duration-faster hover:bg-subtle-hover hover:text-link-hover"
+    >
+      {expanded ? <ChevronUp16Regular aria-hidden /> : <ChevronDown16Regular aria-hidden />}
+      {expanded ? msg.collapse : msg.expand(lines.length)}
+    </button>
+  );
+
+  if (bare) {
     return (
-      <div ref={ref} dir="ltr" {...themeProps} className={cn("group/code", SURFACE, className)} {...props}>
-        {hasHeader && (
-          <div className="flex min-h-10 items-center gap-2 border-b border-stroke-2 ps-3 pe-1">
-            <Document16Regular aria-hidden className="shrink-0 text-foreground-3" />
-            <span className="min-w-0 truncate text-caption1 font-semibold text-foreground-1">{title ?? filename}</span>
-            <Badge appearance="tint" color="informative" size="small" shape="rounded">
-              {CODE_LANGUAGE_LABEL[language]}
-            </Badge>
-            <div className="ms-auto flex shrink-0 items-center gap-0.5">
-              {wrapToggle && wrapButton}
-              {copyable && <CopyCodeButton text={copySource} />}
-            </div>
-          </div>
-        )}
+      <div ref={ref} dir="ltr" {...themeProps} className={cn("group/code min-w-0 bg-background-2 text-start", className)} {...props}>
         {body}
         {footer}
       </div>
     );
-  },
-);
-CodeBlock.displayName = "CodeBlock";
+  }
+
+  return (
+    <div ref={ref} dir="ltr" {...themeProps} className={cn("group/code", SURFACE, className)} {...props}>
+      {hasHeader && (
+        <div className="flex min-h-10 items-center gap-2 border-b border-stroke-2 ps-3 pe-1">
+          <Document16Regular aria-hidden className="shrink-0 text-foreground-3" />
+          <span className="min-w-0 truncate text-caption1 font-semibold text-foreground-1">{title ?? filename}</span>
+          <Badge appearance="tint" color="informative" size="small" shape="rounded">
+            {CODE_LANGUAGE_LABEL[language]}
+          </Badge>
+          <div className="ms-auto flex shrink-0 items-center gap-0.5">
+            {wrapToggle && wrapButton}
+            {copyable && <CopyCodeButton text={copySource} />}
+          </div>
+        </div>
+      )}
+      {body}
+      {footer}
+    </div>
+  );
+}
 
 /* ================================================================ CodeTabs */
 
@@ -714,61 +724,68 @@ function languageOf(name: string): CodeLanguage {
 }
 
 /** Nhiều tệp trong một khối: mỗi tab là một tệp. */
-export const CodeTabs = React.forwardRef<HTMLDivElement, CodeTabsProps>(
-  (
-    { files, value, defaultValue, onValueChange, showLineNumbers, wrap, maxHeight, appearance = "auto", size, className, ...props },
-    ref,
-  ) => {
-    const themeProps = useCodeThemeProps(appearance);
-    const msg = useYugenMessages("codeTabs", codeTabsMessagesEn);
-    const [active, setActive] = useControllableState({ value, defaultValue: defaultValue ?? files[0]?.name ?? "", onChange: onValueChange });
-    const activeFile = files.find((f) => f.name === active) ?? files[0];
+export function CodeTabs({
+  files,
+  value,
+  defaultValue,
+  onValueChange,
+  showLineNumbers,
+  wrap,
+  maxHeight,
+  appearance = "auto",
+  size,
+  className,
+  ref,
+  ...props
+}: CodeTabsProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const themeProps = useCodeThemeProps(appearance);
+  const msg = useYugenMessages("codeTabs", codeTabsMessagesEn);
+  const [active, setActive] = useControllableState({ value, defaultValue: defaultValue ?? files[0]?.name ?? "", onChange: onValueChange });
+  const activeFile = files.find((f) => f.name === active) ?? files[0];
 
-    return (
-      // contents: khung bên trong (nhận className) là hộp bố cục, nên w-full / min-w-0 có tác dụng trong flex cha.
-      <Tabs dir="ltr" value={active} onValueChange={setActive} className="contents">
-        <div ref={ref} dir="ltr" {...themeProps} className={cn(SURFACE, className)} {...props}>
-          <div className="flex min-h-10 items-center gap-2 border-b border-stroke-2 pe-1">
-            <TabsList size="small" aria-label={msg.files} className="min-w-0 flex-wrap ps-1">
-              {files.map((f) => (
-                <TabsTrigger key={f.name} value={f.name}>
-                  {f.name}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            {activeFile && (
-              <div className="ms-auto flex shrink-0 items-center gap-1">
-                <Badge appearance="tint" color="informative" size="small" shape="rounded">
-                  {CODE_LANGUAGE_LABEL[activeFile.language ?? languageOf(activeFile.name)]}
-                </Badge>
-                <CopyCodeButton text={activeFile.code} />
-              </div>
-            )}
-          </div>
-          {files.map((f) => (
-            <TabsContent
-              key={f.name}
-              value={f.name}
-              className="pt-0 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-stroke-focus"
-            >
-              <CodeBlock
-                bare
-                code={f.code}
-                language={f.language ?? languageOf(f.name)}
-                highlightLines={f.highlightLines}
-                showLineNumbers={showLineNumbers}
-                wrap={wrap}
-                maxHeight={maxHeight}
-                size={size}
-              />
-            </TabsContent>
-          ))}
+  return (
+    // contents: khung bên trong (nhận className) là hộp bố cục, nên w-full / min-w-0 có tác dụng trong flex cha.
+    <Tabs dir="ltr" value={active} onValueChange={setActive} className="contents">
+      <div ref={ref} dir="ltr" {...themeProps} className={cn(SURFACE, className)} {...props}>
+        <div className="flex min-h-10 items-center gap-2 border-b border-stroke-2 pe-1">
+          <TabsList size="small" aria-label={msg.files} className="min-w-0 flex-wrap ps-1">
+            {files.map((f) => (
+              <TabsTrigger key={f.name} value={f.name}>
+                {f.name}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          {activeFile && (
+            <div className="ms-auto flex shrink-0 items-center gap-1">
+              <Badge appearance="tint" color="informative" size="small" shape="rounded">
+                {CODE_LANGUAGE_LABEL[activeFile.language ?? languageOf(activeFile.name)]}
+              </Badge>
+              <CopyCodeButton text={activeFile.code} />
+            </div>
+          )}
         </div>
-      </Tabs>
-    );
-  },
-);
-CodeTabs.displayName = "CodeTabs";
+        {files.map((f) => (
+          <TabsContent
+            key={f.name}
+            value={f.name}
+            className="pt-0 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-stroke-focus"
+          >
+            <CodeBlock
+              bare
+              code={f.code}
+              language={f.language ?? languageOf(f.name)}
+              highlightLines={f.highlightLines}
+              showLineNumbers={showLineNumbers}
+              wrap={wrap}
+              maxHeight={maxHeight}
+              size={size}
+            />
+          </TabsContent>
+        ))}
+      </div>
+    </Tabs>
+  );
+}
 
 /* ================================================================ PackageManagerTabs */
 
@@ -816,39 +833,46 @@ export interface PackageManagerTabsProps extends Omit<React.HTMLAttributes<HTMLD
 }
 
 /** Lệnh cài cho npm / pnpm / yarn / bun; nhớ lựa chọn (localStorage) và đồng bộ giữa mọi khối trên trang. */
-export const PackageManagerTabs = React.forwardRef<HTMLDivElement, PackageManagerTabsProps>(
-  ({ packages, dev, command = "install", managers = PACKAGE_MANAGERS, appearance = "auto", size, className, ...props }, ref) => {
-    const themeProps = useCodeThemeProps(appearance);
-    const msg = useYugenMessages("packageManagerTabs", packageManagerTabsMessagesEn);
-    const [stored, setStored] = useLocalStorage<PackageManager>(PM_STORAGE_KEY, "npm", PM_STORAGE);
-    const active = managers.includes(stored) ? stored : managers[0];
-    const commandText = packageManagerCommand(active, packages, { dev, command });
+export function PackageManagerTabs({
+  packages,
+  dev,
+  command = "install",
+  managers = PACKAGE_MANAGERS,
+  appearance = "auto",
+  size,
+  className,
+  ref,
+  ...props
+}: PackageManagerTabsProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const themeProps = useCodeThemeProps(appearance);
+  const msg = useYugenMessages("packageManagerTabs", packageManagerTabsMessagesEn);
+  const [stored, setStored] = useLocalStorage<PackageManager>(PM_STORAGE_KEY, "npm", PM_STORAGE);
+  const active = managers.includes(stored) ? stored : managers[0];
+  const commandText = packageManagerCommand(active, packages, { dev, command });
 
-    return (
-      <Tabs dir="ltr" value={active} onValueChange={(v) => isPackageManager(v) && setStored(v)} className="contents">
-        <div ref={ref} dir="ltr" {...themeProps} className={cn(SURFACE, className)} {...props}>
-          <div className="flex min-h-10 items-center gap-2 border-b border-stroke-2 pe-1">
-            <TabsList size="small" aria-label={msg.label} className="min-w-0 flex-wrap ps-1">
-              {managers.map((pm) => (
-                <TabsTrigger key={pm} value={pm}>
-                  {pm}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            <CopyCodeButton text={commandText} className="ms-auto shrink-0" />
-          </div>
-          {managers.map((pm) => (
-            <TabsContent
-              key={pm}
-              value={pm}
-              className="pt-0 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-stroke-focus"
-            >
-              <CodeBlock bare language="bash" size={size} code={packageManagerCommand(pm, packages, { dev, command })} />
-            </TabsContent>
-          ))}
+  return (
+    <Tabs dir="ltr" value={active} onValueChange={(v) => isPackageManager(v) && setStored(v)} className="contents">
+      <div ref={ref} dir="ltr" {...themeProps} className={cn(SURFACE, className)} {...props}>
+        <div className="flex min-h-10 items-center gap-2 border-b border-stroke-2 pe-1">
+          <TabsList size="small" aria-label={msg.label} className="min-w-0 flex-wrap ps-1">
+            {managers.map((pm) => (
+              <TabsTrigger key={pm} value={pm}>
+                {pm}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          <CopyCodeButton text={commandText} className="ms-auto shrink-0" />
         </div>
-      </Tabs>
-    );
-  },
-);
-PackageManagerTabs.displayName = "PackageManagerTabs";
+        {managers.map((pm) => (
+          <TabsContent
+            key={pm}
+            value={pm}
+            className="pt-0 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-stroke-focus"
+          >
+            <CodeBlock bare language="bash" size={size} code={packageManagerCommand(pm, packages, { dev, command })} />
+          </TabsContent>
+        ))}
+      </div>
+    </Tabs>
+  );
+}

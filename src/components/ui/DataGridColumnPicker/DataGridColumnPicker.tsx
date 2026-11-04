@@ -4,7 +4,7 @@ import {
   ArrowSortUp20Regular,
   ColumnTriple20Regular,
   ReOrderDotsVertical16Regular,
-} from "@fluentui/react-icons";
+} from "../_internal/icons";
 import { CounterBadge } from "../CounterBadge/CounterBadge";
 import { dataGridMessagesEn } from "../DataGrid/messages";
 import {
@@ -48,24 +48,23 @@ export interface DataGridColumnPickerProps<C extends DataGridColumnVisibilityIte
 /** Radix đóng menu sau mỗi lần chọn — giữ mở để tích nhiều cột liền. */
 const keepOpen = (event: Event) => event.preventDefault();
 
-function DataGridColumnPickerImpl<C extends DataGridColumnVisibilityItem>(
-  {
-    columns,
-    hiddenColumns,
-    onHiddenColumnsChange,
-    columnOrder,
-    onColumnOrderChange,
-    sortState,
-    children,
-    icon,
-    appearance,
-    size,
-    align = "end",
-    "aria-describedby": describedBy,
-    ...props
-  }: DataGridColumnPickerProps<C>,
-  ref: React.ForwardedRef<HTMLButtonElement>,
-) {
+/** Nút chọn cột hiển thị — generic theo kiểu cột (suy ra từ `columns`). */
+export function DataGridColumnPicker<C extends DataGridColumnVisibilityItem>({
+  columns,
+  hiddenColumns,
+  onHiddenColumnsChange,
+  columnOrder,
+  onColumnOrderChange,
+  sortState,
+  children,
+  icon,
+  appearance,
+  size,
+  align = "end",
+  "aria-describedby": describedBy,
+  ref,
+  ...props
+}: DataGridColumnPickerProps<C> & { ref?: React.Ref<HTMLButtonElement> }) {
   const msg = useYugenMessages("dataGrid", dataGridMessagesEn);
   const toolbar = React.useContext(ToolbarContext);
   const countId = React.useId();
@@ -154,11 +153,3 @@ function DataGridColumnPickerImpl<C extends DataGridColumnVisibilityItem>(
     </MenuButton>
   );
 }
-
-const DataGridColumnPickerBase = React.forwardRef(DataGridColumnPickerImpl);
-DataGridColumnPickerBase.displayName = "DataGridColumnPicker";
-
-/** Nút chọn cột hiển thị — generic theo kiểu cột (suy ra từ `columns`). */
-export const DataGridColumnPicker = DataGridColumnPickerBase as <C extends DataGridColumnVisibilityItem>(
-  props: DataGridColumnPickerProps<C> & React.RefAttributes<HTMLButtonElement>,
-) => React.ReactElement | null;

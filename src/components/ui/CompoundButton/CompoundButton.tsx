@@ -3,6 +3,7 @@ import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cn } from "@/lib/cn";
 import { buttonVariants, type ButtonProps } from "../Button/Button";
+import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
 type CompoundSize = "small" | "medium" | "large";
 
@@ -24,75 +25,77 @@ export interface CompoundButtonProps extends ButtonProps {
   secondaryContent?: React.ReactNode;
 }
 
-export const CompoundButton = React.forwardRef<HTMLButtonElement, CompoundButtonProps>(
-  (
-    {
-      className,
-      appearance = "secondary",
-      size = "medium",
-      shape,
-      iconOnly,
-      icon,
-      iconPosition = "before",
-      secondaryContent,
-      asChild,
-      children,
-      type,
-      ...props
-    },
+export function CompoundButton(inProps: CompoundButtonProps & { ref?: React.Ref<HTMLButtonElement> }) {
+  const {
+    className,
+    appearance = "secondary",
+    size = "medium",
+    shape,
+    iconOnly,
+    icon,
+    iconPosition = "before",
+    secondaryContent,
+    asChild,
+    children,
+    type,
     ref,
-  ) => {
-    const resolvedSize = size ?? "medium";
-    const onBrand = appearance === "primary" || appearance === "danger";
-    const child = asChild && React.isValidElement<{ children?: React.ReactNode }>(children) ? children : null;
-    const label = child ? child.props.children : children;
-    const isIconOnly = iconOnly ?? (!!icon && label == null && secondaryContent == null);
+    ...props
+  } = useComponentDefaults("CompoundButton", inProps, COMPACT_SIZE);
+  const resolvedSize = size ?? "medium";
+  const onBrand = appearance === "primary" || appearance === "danger";
+  const child = asChild && React.isValidElement<{ children?: React.ReactNode }>(children) ? children : null;
+  const label = child ? child.props.children : children;
+  const isIconOnly = iconOnly ?? (!!icon && label == null && secondaryContent == null);
 
-    const classes = cn(
-      buttonVariants({ appearance, size: resolvedSize, shape, iconOnly: false }),
-      "group/compound font-normal whitespace-normal",
-      SIZE[resolvedSize],
-      isIconOnly && "min-w-0",
-      className,
-    );
+  const classes = cn(
+    buttonVariants({ appearance, size: resolvedSize, shape, iconOnly: false }),
+    "group/compound font-normal whitespace-normal",
+    SIZE[resolvedSize],
+    isIconOnly && "min-w-0",
+    className,
+  );
 
-    const content = (
-      <>
-        {icon && iconPosition === "before" && icon}
-        {!isIconOnly && (
-          <span className="flex min-w-0 flex-col items-start text-start">
-            <span className="font-semibold">{label}</span>
-            {secondaryContent != null && (
-              <span
-                className={cn(
-                  "font-normal",
-                  SECONDARY_SIZE[resolvedSize],
-                  onBrand ? "text-foreground-on-brand" : "text-foreground-2",
-                  "group-disabled/compound:text-foreground-disabled",
-                )}
-              >
-                {secondaryContent}
-              </span>
-            )}
-          </span>
-        )}
-        {icon && iconPosition === "after" && icon}
-      </>
-    );
+  const content = (
+    <>
+      {icon && iconPosition === "before" && icon}
+      {!isIconOnly && (
+        <span className="flex min-w-0 flex-col items-start text-start">
+          <span className="font-semibold">{label}</span>
+          {secondaryContent != null && (
+            <span
+              className={cn(
+                "font-normal",
+                SECONDARY_SIZE[resolvedSize],
+                onBrand ? "text-foreground-on-brand" : "text-foreground-2",
+                "group-disabled/compound:text-foreground-disabled",
+              )}
+            >
+              {secondaryContent}
+            </span>
+          )}
+        </span>
+      )}
+      {icon && iconPosition === "after" && icon}
+    </>
+  );
 
-    if (child) {
-      return (
-        <Slot ref={ref} className={classes} {...props}>
-          {React.cloneElement(child, undefined, content)}
-        </Slot>
-      );
-    }
-
+  if (child) {
     return (
-      <button ref={ref} type={type ?? "button"} className={classes} {...props}>
-        {content}
-      </button>
+      <Slot ref={ref} className={classes} {...props}>
+        {React.cloneElement(child, undefined, content)}
+      </Slot>
     );
-  },
-);
-CompoundButton.displayName = "CompoundButton";
+  }
+
+  return (
+    <button ref={ref} type={type ?? "button"} className={classes} {...props}>
+      {content}
+    </button>
+  );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    CompoundButton: CompoundButtonProps;
+  }
+}

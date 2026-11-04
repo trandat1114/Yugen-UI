@@ -1,9 +1,9 @@
 import * as React from "react";
-import { ChevronDown20Regular } from "@fluentui/react-icons";
+import { ChevronDown20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Button, type ButtonProps } from "../Button/Button";
 import { Menu, MenuPopover, MenuTrigger } from "../Menu/Menu";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { splitButtonMessagesEn } from "./messages";
 
 export { splitButtonMessages, splitButtonMessagesVi, splitButtonMessagesEn, type SplitButtonMessages } from "./messages";
@@ -17,34 +17,47 @@ export interface SplitButtonProps extends Omit<ButtonProps, "appearance" | "asCh
   menuLabel?: string;
 }
 
-export const SplitButton = React.forwardRef<HTMLButtonElement, SplitButtonProps>(
-  ({ appearance = "secondary", size = "medium", menu, menuLabel, className, disabled, ...props }, ref) => {
-    const msg = useYugenMessages("splitButton", splitButtonMessagesEn);
-    const divider =
-      appearance === "primary"
-        ? "border-s border-s-stroke-on-brand/40"
-        : appearance === "subtle"
-          ? "border-s border-s-stroke-2"
-          : "-ms-px";
+export function SplitButton(inProps: SplitButtonProps & { ref?: React.Ref<HTMLButtonElement> }) {
+  const {
+    appearance = "secondary",
+    size = "medium",
+    menu,
+    menuLabel,
+    className,
+    disabled,
+    ref,
+    ...props
+  } = useComponentDefaults("SplitButton", inProps, COMPACT_SIZE);
+  const msg = useYugenMessages("splitButton", splitButtonMessagesEn);
+  const divider =
+    appearance === "primary"
+      ? "border-s border-s-stroke-on-brand/40"
+      : appearance === "subtle"
+        ? "border-s border-s-stroke-2"
+        : "-ms-px";
 
-    return (
-      <span className={cn("inline-flex align-middle", className)}>
-        <Button ref={ref} appearance={appearance} size={size} disabled={disabled} className="rounded-e-none" {...props} />
-        <Menu>
-          <MenuTrigger asChild disabled={disabled}>
-            <Button
-              appearance={appearance}
-              size={size}
-              disabled={disabled}
-              aria-label={menuLabel ?? msg.menu}
-              icon={<ChevronDown20Regular />}
-              className={cn("rounded-s-none", size === "small" ? "w-6" : size === "large" ? "w-11" : "w-8", divider)}
-            />
-          </MenuTrigger>
-          <MenuPopover align="end">{menu}</MenuPopover>
-        </Menu>
-      </span>
-    );
-  },
-);
-SplitButton.displayName = "SplitButton";
+  return (
+    <span className={cn("inline-flex align-middle", className)}>
+      <Button ref={ref} appearance={appearance} size={size} disabled={disabled} className="rounded-e-none" {...props} />
+      <Menu>
+        <MenuTrigger asChild disabled={disabled}>
+          <Button
+            appearance={appearance}
+            size={size}
+            disabled={disabled}
+            aria-label={menuLabel ?? msg.menu}
+            icon={<ChevronDown20Regular />}
+            className={cn("rounded-s-none", size === "small" ? "w-6" : size === "large" ? "w-11" : "w-8", divider)}
+          />
+        </MenuTrigger>
+        <MenuPopover align="end">{menu}</MenuPopover>
+      </Menu>
+    </span>
+  );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    SplitButton: SplitButtonProps;
+  }
+}

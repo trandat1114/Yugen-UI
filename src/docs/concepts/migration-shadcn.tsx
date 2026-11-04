@@ -147,7 +147,7 @@ export default function Page() {
             ["API variant", <><C>variant</C>, <C>size: sm | default | lg | icon</C></>, <><C>appearance</C>, <C>size: small | medium | large</C>, <C>shape</C></>],
             ["Token màu", <><C>--primary</C>, <C>--muted</C>… (oklch)</>, <>Tên Fluent: <C>--colorBrandBackground</C>, <C>--colorNeutralForeground3</C>… (hex)</>],
             ["Dark mode", <><C>.dark</C> + <C>dark:</C></>, <><C>data-theme</C> lồng được, không dùng <C>dark:</C></>],
-            ["Icon", "lucide-react", "@fluentui/react-icons"],
+            ["Icon", "lucide-react", <>Icon Fluent có sẵn. Icon của bạn: <C>@fluentui/react-icons</C> giữ đúng phong cách Fluent; <C>lucide-react</C> vẫn dùng được, vì ô icon chỉnh kích thước mọi SVG bằng CSS.</>],
           ]}
         />
       </DocSection>

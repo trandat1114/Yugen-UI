@@ -7,9 +7,9 @@ import {
   ChevronRight20Regular,
   MoreHorizontal16Regular,
   MoreHorizontal20Regular,
-} from "@fluentui/react-icons";
+} from "../_internal/icons";
 import { cn } from "@/lib/cn";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { paginationMessagesEn } from "./messages";
 
 export { paginationMessages, paginationMessagesVi, paginationMessagesEn, type PaginationMessages } from "./messages";
@@ -61,95 +61,97 @@ export interface PaginationProps extends Omit<React.HTMLAttributes<HTMLElement>,
   disabled?: boolean;
 }
 
-export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
-  (
-    {
-      className,
-      page,
-      defaultPage = 1,
-      pageCount,
-      onPageChange,
-      siblingCount = 1,
-      size = "medium",
-      showLabels = true,
-      disabled,
-      "aria-label": ariaLabel,
-      ...props
-    },
+export function Pagination(inProps: PaginationProps & { ref?: React.Ref<HTMLElement> }) {
+  const {
+    className,
+    page,
+    defaultPage = 1,
+    pageCount,
+    onPageChange,
+    siblingCount = 1,
+    size = "medium",
+    showLabels = true,
+    disabled,
+    "aria-label": ariaLabel,
     ref,
-  ) => {
-    const msg = useYugenMessages("pagination", paginationMessagesEn);
-    const [rawPage, setPage] = useControllableState({ value: page, defaultValue: defaultPage, onChange: onPageChange });
-    const current = Math.min(Math.max(rawPage, 1), Math.max(pageCount, 1));
-    const s = SIZE[size];
+    ...props
+  } = useComponentDefaults("Pagination", inProps, COMPACT_SIZE);
+  const msg = useYugenMessages("pagination", paginationMessagesEn);
+  const [rawPage, setPage] = useControllableState({ value: page, defaultValue: defaultPage, onChange: onPageChange });
+  const current = Math.min(Math.max(rawPage, 1), Math.max(pageCount, 1));
+  const s = SIZE[size];
 
-    const go = (next: number) => {
-      const clamped = Math.min(Math.max(next, 1), pageCount);
-      if (clamped === current) return;
-      setPage(clamped);
-    };
+  const go = (next: number) => {
+    const clamped = Math.min(Math.max(next, 1), pageCount);
+    if (clamped === current) return;
+    setPage(clamped);
+  };
 
-    const PrevIcon = size === "small" ? ChevronLeft16Regular : ChevronLeft20Regular;
-    const NextIcon = size === "small" ? ChevronRight16Regular : ChevronRight20Regular;
-    const MoreIcon = size === "small" ? MoreHorizontal16Regular : MoreHorizontal20Regular;
+  const PrevIcon = size === "small" ? ChevronLeft16Regular : ChevronLeft20Regular;
+  const NextIcon = size === "small" ? ChevronRight16Regular : ChevronRight20Regular;
+  const MoreIcon = size === "small" ? MoreHorizontal16Regular : MoreHorizontal20Regular;
 
-    return (
-      <nav ref={ref} aria-label={ariaLabel ?? msg.label} className={cn("flex", className)} {...props}>
-        <ul className="flex flex-wrap items-center gap-1">
-          <li>
-            <button
-              type="button"
-              aria-label={msg.previousPage}
-              disabled={disabled || current <= 1}
-              onClick={() => go(current - 1)}
-              className={cn(interactive, s.nav, !showLabels && cn(s.item, "px-0"))}
-            >
-              <PrevIcon className="rtl:-scale-x-100" />
-              {showLabels && <span>{msg.previous}</span>}
-            </button>
-          </li>
+  return (
+    <nav ref={ref} aria-label={ariaLabel ?? msg.label} className={cn("flex", className)} {...props}>
+      <ul className="flex flex-wrap items-center gap-1">
+        <li>
+          <button
+            type="button"
+            aria-label={msg.previousPage}
+            disabled={disabled || current <= 1}
+            onClick={() => go(current - 1)}
+            className={cn(interactive, s.nav, !showLabels && cn(s.item, "px-0"))}
+          >
+            <PrevIcon className="rtl:-scale-x-100" />
+            {showLabels && <span>{msg.previous}</span>}
+          </button>
+        </li>
 
-          {getPageRange(current, pageCount, siblingCount).map((entry) =>
-            typeof entry === "number" ? (
-              <li key={entry}>
-                <button
-                  type="button"
-                  aria-label={msg.page(entry)}
-                  aria-current={entry === current ? "page" : undefined}
-                  disabled={disabled}
-                  onClick={() => go(entry)}
-                  className={cn(
-                    interactive,
-                    s.item,
-                    entry === current &&
-                      "bg-brand-background-2 font-semibold text-brand-foreground-2 hover:bg-brand-background-2-hover hover:text-brand-foreground-2 active:bg-brand-background-2-pressed",
-                  )}
-                >
-                  {entry}
-                </button>
-              </li>
-            ) : (
-              <li key={entry} aria-hidden className={cn("inline-flex items-center justify-center text-foreground-3", s.item, "[&_svg]:size-4")}>
-                <MoreIcon />
-              </li>
-            ),
-          )}
+        {getPageRange(current, pageCount, siblingCount).map((entry) =>
+          typeof entry === "number" ? (
+            <li key={entry}>
+              <button
+                type="button"
+                aria-label={msg.page(entry)}
+                aria-current={entry === current ? "page" : undefined}
+                disabled={disabled}
+                onClick={() => go(entry)}
+                className={cn(
+                  interactive,
+                  s.item,
+                  entry === current &&
+                    "bg-brand-background-2 font-semibold text-brand-foreground-2 hover:bg-brand-background-2-hover hover:text-brand-foreground-2 active:bg-brand-background-2-pressed",
+                )}
+              >
+                {entry}
+              </button>
+            </li>
+          ) : (
+            <li key={entry} aria-hidden className={cn("inline-flex items-center justify-center text-foreground-3", s.item, "[&_svg]:size-4")}>
+              <MoreIcon />
+            </li>
+          ),
+        )}
 
-          <li>
-            <button
-              type="button"
-              aria-label={msg.nextPage}
-              disabled={disabled || current >= pageCount}
-              onClick={() => go(current + 1)}
-              className={cn(interactive, s.nav, !showLabels && cn(s.item, "px-0"))}
-            >
-              {showLabels && <span>{msg.next}</span>}
-              <NextIcon className="rtl:-scale-x-100" />
-            </button>
-          </li>
-        </ul>
-      </nav>
-    );
-  },
-);
-Pagination.displayName = "Pagination";
+        <li>
+          <button
+            type="button"
+            aria-label={msg.nextPage}
+            disabled={disabled || current >= pageCount}
+            onClick={() => go(current + 1)}
+            className={cn(interactive, s.nav, !showLabels && cn(s.item, "px-0"))}
+          >
+            {showLabels && <span>{msg.next}</span>}
+            <NextIcon className="rtl:-scale-x-100" />
+          </button>
+        </li>
+      </ul>
+    </nav>
+  );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Pagination: PaginationProps;
+  }
+}

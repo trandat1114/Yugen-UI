@@ -20,6 +20,15 @@ describe("withCode", () => {
     expect(container.querySelector("code")).toHaveAttribute("dir", "ltr");
   });
 
+  it("[chữ](/trang) thành link tới trang docs, cả cạnh code", () => {
+    const { container } = render(<p>{withCode("Dùng `modal={false}` hoặc [khoá cuộn](/concepts/positioning#scroll-lock).")}</p>);
+    const link = container.querySelector("a");
+    expect(link).toHaveTextContent("khoá cuộn");
+    expect(link?.getAttribute("href")).toMatch(/concepts\/positioning#scroll-lock$/);
+    expect(codes(container)).toEqual(["modal={false}"]);
+    expect(container.textContent).toBe("Dùng modal={false} hoặc khoá cuộn.");
+  });
+
   it("chữ không có cặp backtick trả về nguyên văn", () => {
     expect(withCode("Không có code")).toBe("Không có code");
     const { container } = render(<p>{withCode("Một dấu ` lẻ")}</p>);

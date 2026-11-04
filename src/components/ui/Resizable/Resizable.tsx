@@ -18,7 +18,7 @@ import {
   ChevronRight16Regular,
   ChevronUp16Regular,
   ReOrderDotsVertical16Regular,
-} from "@fluentui/react-icons";
+} from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { useYugenMessages } from "../YugenProvider/context";

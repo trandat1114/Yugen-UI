@@ -82,7 +82,7 @@ export async function diagnose(opts: DoctorOptions): Promise<Check[]> {
   const react = installedVersion(cwd, "react") ?? deps.react;
   const reactMajor = majorOf(react);
   if (!react) add("error", "React is not installed");
-  else if (reactMajor !== null && reactMajor < 18) add("error", `React ${react} — Yugen UI needs React 18 or 19`);
+  else if (reactMajor !== null && reactMajor < 19) add("error", `React ${react} — Yugen UI needs React 19 or later`);
   else add("ok", `React ${react}`);
 
   const cssFiles = ["src", "app", "styles"].flatMap((d) => walk(path.join(cwd, d), /\.css$/, 5));

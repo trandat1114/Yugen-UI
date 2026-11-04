@@ -31,10 +31,10 @@ import {
   PresenceUnknown12Regular,
   PresenceUnknown16Regular,
   PresenceUnknown20Regular,
-  type FluentIcon,
-} from "@fluentui/react-icons";
+  type IconComponent,
+} from "../_internal/icons";
 import { cn } from "@/lib/cn";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { presenceBadgeMessagesEn, type PresenceBadgeMessages } from "./messages";
 
 export { presenceBadgeMessages, presenceBadgeMessagesVi, presenceBadgeMessagesEn, type PresenceBadgeMessages } from "./messages";
@@ -51,7 +51,7 @@ export type PresenceBadgeStatus =
 
 export type PresenceBadgeSize = "tiny" | "extra-small" | "small" | "medium" | "large" | "extra-large";
 
-type IconSet = Record<12 | 16 | 20, FluentIcon>;
+type IconSet = Record<12 | 16 | 20, IconComponent>;
 
 const ICONS = {
   available: { 12: PresenceAvailable12Filled, 16: PresenceAvailable16Filled, 20: PresenceAvailable20Filled },
@@ -142,30 +142,43 @@ export interface PresenceBadgeProps extends Omit<React.HTMLAttributes<HTMLSpanEl
   label?: string;
 }
 
-export const PresenceBadge = React.forwardRef<HTMLSpanElement, PresenceBadgeProps>(
-  ({ status = "available", outOfOffice = false, size = "medium", ring = false, label, className, ...props }, ref) => {
-    const msg = useYugenMessages("presenceBadge", presenceBadgeMessagesEn);
-    const Icon = iconFor(status, outOfOffice)[ICON_SIZE[size]];
-    const ariaLabel =
-      label ?? msg[LABEL_KEY[status]] + (outOfOffice && status !== "out-of-office" ? `, ${msg.outOfOffice.toLowerCase()}` : "");
+export function PresenceBadge(inProps: PresenceBadgeProps & { ref?: React.Ref<HTMLSpanElement> }) {
+  const {
+    status = "available",
+    outOfOffice = false,
+    size = "medium",
+    ring = false,
+    label,
+    className,
+    ref,
+    ...props
+  } = useComponentDefaults("PresenceBadge", inProps);
+  const msg = useYugenMessages("presenceBadge", presenceBadgeMessagesEn);
+  const Icon = iconFor(status, outOfOffice)[ICON_SIZE[size]];
+  const ariaLabel =
+    label ?? msg[LABEL_KEY[status]] + (outOfOffice && status !== "out-of-office" ? `, ${msg.outOfOffice.toLowerCase()}` : "");
 
-    return (
-      <span
-        ref={ref}
-        role="img"
-        aria-label={ariaLabel}
-        className={cn(
-          "inline-flex shrink-0 items-center justify-center rounded-circular bg-background-1 [&>svg]:size-full",
-          SIZE[size],
-          colorFor(status, outOfOffice),
-          ring && "ring-2 ring-background-1",
-          className,
-        )}
-        {...props}
-      >
-        <Icon aria-hidden="true" />
-      </span>
-    );
-  },
-);
-PresenceBadge.displayName = "PresenceBadge";
+  return (
+    <span
+      ref={ref}
+      role="img"
+      aria-label={ariaLabel}
+      className={cn(
+        "inline-flex shrink-0 items-center justify-center rounded-circular bg-background-1 [&>svg]:size-full",
+        SIZE[size],
+        colorFor(status, outOfOffice),
+        ring && "ring-2 ring-background-1",
+        className,
+      )}
+      {...props}
+    >
+      <Icon aria-hidden="true" />
+    </span>
+  );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    PresenceBadge: PresenceBadgeProps;
+  }
+}

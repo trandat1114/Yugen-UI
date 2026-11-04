@@ -81,6 +81,7 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
       numbers: "Rules for each number",
       breaking: "What counts as breaking",
       deprecation: "Deprecation process",
+      labs: "Yugen Labs",
       support: "Support matrix",
       upgrade: "Upgrading safely",
     },
@@ -96,9 +97,18 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
       tools: "Tools & related pages",
     },
   },
+  security: {
+    title: "Security",
+    lead: "Which components show untrusted content (Markdown from users or a model, code, links, files), what Yugen UI cleans up, and what your app still has to do.",
+    toc: {
+      handled: "What Yugen UI handles",
+      app: "What your app must do",
+      report: "Reporting a vulnerability",
+    },
+  },
   "browser-support": {
     title: "Browsers & platforms",
-    lead: "Yugen UI targets evergreen browsers and React 18 or later. The modern CSS features Tailwind CSS v4 relies on need no polyfills.",
+    lead: "Yugen UI targets evergreen browsers and React 19 or later. The modern CSS features Tailwind CSS v4 relies on need no polyfills.",
     toc: {
       browsers: "Browsers",
       css: "CSS features",
@@ -172,6 +182,7 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
       playground: "Try side & align",
       collision: "Collisions & flipping",
       portals: "Portals & theme",
+      "scroll-lock": "Scroll lock",
       "z-index": "z-index scale",
     },
   },
@@ -230,6 +241,7 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
     toc: {
       attributes: "data-theme & data-brand",
       provider: "YugenProvider",
+      defaults: "Default props & density",
       "use-yugen": "The useYugen() hook",
       nested: "Nested themes",
       layers: "Three token layers",

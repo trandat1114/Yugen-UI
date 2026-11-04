@@ -5,6 +5,7 @@ import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
 import { useComposedRefs } from "../_internal/composeRefs";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
+import { BREAKPOINT_REM } from "../_internal/breakpoint";
 import {
   AppShellContext,
   isShown,
@@ -26,8 +27,6 @@ export type { AppShellBreakpoint, AppShellLayout, AppShellScroll } from "./conte
  * Khung ứng dụng: sidebar (rail chỉ icon khi thu gọn, Drawer khi khung hẹp), thanh trên cùng, nội dung chính và cột phụ.
  * Bố cục là lưới 3 cột × 2 hàng; mỗi phần tự đặt vào ô của nó, phần nào vắng thì cột / hàng đó rộng 0.
  */
-
-const BREAKPOINT_REM: Record<AppShellBreakpoint, number> = { lg: 32, xl: 36, "2xl": 42, "3xl": 48, "4xl": 56, "5xl": 64 };
 
 /*
  * Vị trí trong lưới theo bố cục. Chiều cao thanh trên cùng (`--app-shell-header`, mặc định 3.5rem) và phần trang còn
@@ -157,237 +156,232 @@ export interface AppShellProps extends React.HTMLAttributes<HTMLDivElement> {
   scroll?: AppShellScroll;
 }
 
-export const AppShell = React.forwardRef<HTMLDivElement, AppShellProps>(
-  (
-    {
-      breakpoint = "4xl",
-      layout = "sidebar",
-      scroll = "main",
-      collapsed: collapsedProp,
-      defaultCollapsed,
-      onCollapsedChange,
-      persistKey,
-      shortcut = "b",
-      skipLink = true,
-      className,
-      children,
-      ...props
+export function AppShell({
+  breakpoint = "4xl",
+  layout = "sidebar",
+  scroll = "main",
+  collapsed: collapsedProp,
+  defaultCollapsed,
+  onCollapsedChange,
+  persistKey,
+  shortcut = "b",
+  skipLink = true,
+  className,
+  children,
+  ref,
+  ...props
+}: AppShellProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const msg = useYugenMessages("appShell", appShellMessagesEn);
+  const id = React.useId();
+  const [saved] = React.useState(() =>
+    persistKey && typeof document !== "undefined" ? readAppShellCookie(document.cookie, persistKey) : undefined,
+  );
+  const [collapsed, setCollapsedState] = useControllableState({
+    value: collapsedProp,
+    defaultValue: saved?.collapsed ?? defaultCollapsed ?? false,
+    onChange: onCollapsedChange,
+  });
+  const [drawerOpen, setDrawerOpenState] = React.useState(false);
+  const [narrow, setNarrow] = React.useState(false);
+  const [collapsible, setCollapsible] = React.useState<SidebarCollapsible | null>(null);
+
+  const rootRef = React.useRef<HTMLDivElement>(null);
+  const refs = useComposedRefs(ref, rootRef);
+  const mainRef = React.useRef<HTMLElement | null>(null);
+  const triggerRef = React.useRef<HTMLButtonElement | null>(null);
+  const sidebarRef = React.useRef<HTMLDivElement | null>(null);
+  const sidebarFocused = React.useRef(false);
+  const returnFocusRef = React.useRef<HTMLElement | null>(null);
+  const persisted = React.useRef<AppShellSavedState>({ collapsed, width: saved?.width });
+
+  const setCollapsed = React.useCallback(
+    (next: boolean) => {
+      persisted.current = { ...persisted.current, collapsed: next };
+      if (persistKey) writeAppShellCookie(persistKey, persisted.current);
+      setCollapsedState(next);
     },
-    ref,
-  ) => {
-    const msg = useYugenMessages("appShell", appShellMessagesEn);
-    const id = React.useId();
-    const [saved] = React.useState(() =>
-      persistKey && typeof document !== "undefined" ? readAppShellCookie(document.cookie, persistKey) : undefined,
-    );
-    const [collapsed, setCollapsedState] = useControllableState({
-      value: collapsedProp,
-      defaultValue: saved?.collapsed ?? defaultCollapsed ?? false,
-      onChange: onCollapsedChange,
-    });
-    const [drawerOpen, setDrawerOpenState] = React.useState(false);
-    const [narrow, setNarrow] = React.useState(false);
-    const [collapsible, setCollapsible] = React.useState<SidebarCollapsible | null>(null);
+    [persistKey, setCollapsedState],
+  );
 
-    const rootRef = React.useRef<HTMLDivElement>(null);
-    const refs = useComposedRefs(ref, rootRef);
-    const mainRef = React.useRef<HTMLElement | null>(null);
-    const triggerRef = React.useRef<HTMLButtonElement | null>(null);
-    const sidebarRef = React.useRef<HTMLDivElement | null>(null);
-    const sidebarFocused = React.useRef(false);
-    const returnFocusRef = React.useRef<HTMLElement | null>(null);
-    const persisted = React.useRef<AppShellSavedState>({ collapsed, width: saved?.width });
+  const persistWidth = React.useCallback(
+    (width: number) => {
+      persisted.current = { ...persisted.current, width };
+      if (persistKey) writeAppShellCookie(persistKey, persisted.current);
+    },
+    [persistKey],
+  );
 
-    const setCollapsed = React.useCallback(
-      (next: boolean) => {
-        persisted.current = { ...persisted.current, collapsed: next };
-        if (persistKey) writeAppShellCookie(persistKey, persisted.current);
-        setCollapsedState(next);
-      },
-      [persistKey, setCollapsedState],
-    );
-
-    const persistWidth = React.useCallback(
-      (width: number) => {
-        persisted.current = { ...persisted.current, width };
-        if (persistKey) writeAppShellCookie(persistKey, persisted.current);
-      },
-      [persistKey],
-    );
-
-    const setDrawerOpen = React.useCallback((open: boolean) => {
-      if (open) {
-        const active = document.activeElement;
-        returnFocusRef.current = active instanceof HTMLElement && active !== document.body ? active : null;
-      }
-      setDrawerOpenState(open);
-    }, []);
-
-    const focusTriggerOrMain = React.useCallback(() => {
-      const trigger = triggerRef.current;
-      if (isShown(trigger)) trigger.focus();
-      else mainRef.current?.focus();
-    }, []);
-
-    // Có gì để mở / đóng không: cần một Sidebar, và trên màn rộng nó phải thu gọn được.
-    const canToggle = collapsible !== null && (narrow || collapsible !== "none");
-    const toggleSidebar = React.useCallback(() => {
-      if (!canToggle) return;
-      if (narrow) setDrawerOpen(!drawerOpen);
-      else setCollapsed(!collapsed);
-    }, [canToggle, narrow, drawerOpen, collapsed, setDrawerOpen, setCollapsed]);
-
-    // Đo khung (cùng mốc rem với container query) để biết sidebar đang là Drawer hay nằm trong bố cục.
-    useIsomorphicLayoutEffect(() => {
-      const el = rootRef.current;
-      if (!el) return;
-      const update = (width: number) => {
-        // Cuộn cả trang trong một vùng tự cuộn (preview nhúng): phần còn thấy là chiều cao vùng đó, không phải màn hình.
-        if (scroll === "page" && /auto|scroll/.test(getComputedStyle(el).overflowY)) {
-          el.style.setProperty("--app-shell-viewport", `${el.clientHeight}px`);
-        } else el.style.removeProperty("--app-shell-viewport");
-        // 0: chưa có layout (khối cha display: none, jsdom) — giữ giá trị cũ.
-        if (width <= 0) return;
-        const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
-        setNarrow(width < BREAKPOINT_REM[breakpoint] * rem);
-      };
-      update(el.getBoundingClientRect().width);
-      if (typeof ResizeObserver === "undefined") return;
-      const observer = new ResizeObserver((entries) => {
-        const entry = entries[entries.length - 1];
-        if (entry) update(entry.contentRect.width);
-      });
-      observer.observe(el);
-      return () => observer.disconnect();
-    }, [breakpoint, scroll]);
-
-    // Qua breakpoint: Drawer chỉ có trên màn hẹp nên đóng lại (focus về trigger hoặc nội dung qua onCloseAutoFocus);
-    // sidebar trên màn rộng bị ẩn khi thu hẹp, nên focus đang ở trong nó chuyển ra trigger hoặc nội dung.
-    const wasNarrow = React.useRef(narrow);
-    React.useEffect(() => {
-      if (wasNarrow.current === narrow) return;
-      wasNarrow.current = narrow;
-      if (!narrow) {
-        setDrawerOpenState(false);
-        return;
-      }
+  const setDrawerOpen = React.useCallback((open: boolean) => {
+    if (open) {
       const active = document.activeElement;
-      const lost = !active || active === document.body;
-      if (sidebarFocused.current && (lost || sidebarRef.current?.contains(active))) {
-        sidebarFocused.current = false;
-        focusTriggerOrMain();
-      }
-    }, [narrow, focusTriggerOrMain]);
+      returnFocusRef.current = active instanceof HTMLElement && active !== document.body ? active : null;
+    }
+    setDrawerOpenState(open);
+  }, []);
 
-    const toggleRef = React.useRef(toggleSidebar);
-    const canToggleRef = React.useRef(canToggle);
-    React.useEffect(() => {
-      toggleRef.current = toggleSidebar;
-      canToggleRef.current = canToggle;
+  const focusTriggerOrMain = React.useCallback(() => {
+    const trigger = triggerRef.current;
+    if (isShown(trigger)) trigger.focus();
+    else mainRef.current?.focus();
+  }, []);
+
+  // Có gì để mở / đóng không: cần một Sidebar, và trên màn rộng nó phải thu gọn được.
+  const canToggle = collapsible !== null && (narrow || collapsible !== "none");
+  const toggleSidebar = React.useCallback(() => {
+    if (!canToggle) return;
+    if (narrow) setDrawerOpen(!drawerOpen);
+    else setCollapsed(!collapsed);
+  }, [canToggle, narrow, drawerOpen, collapsed, setDrawerOpen, setCollapsed]);
+
+  // Đo khung (cùng mốc rem với container query) để biết sidebar đang là Drawer hay nằm trong bố cục.
+  useIsomorphicLayoutEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    const update = (width: number) => {
+      // Cuộn cả trang trong một vùng tự cuộn (preview nhúng): phần còn thấy là chiều cao vùng đó, không phải màn hình.
+      if (scroll === "page" && /auto|scroll/.test(getComputedStyle(el).overflowY)) {
+        el.style.setProperty("--app-shell-viewport", `${el.clientHeight}px`);
+      } else el.style.removeProperty("--app-shell-viewport");
+      // 0: chưa có layout (khối cha display: none, jsdom) — giữ giá trị cũ.
+      if (width <= 0) return;
+      const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+      setNarrow(width < BREAKPOINT_REM[breakpoint] * rem);
+    };
+    update(el.getBoundingClientRect().width);
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      if (entry) update(entry.contentRect.width);
     });
-    React.useEffect(() => {
-      if (!shortcut) return;
-      const key = shortcut.toLowerCase();
-      const code = /^[a-z]$/.test(key) ? `Key${key.toUpperCase()}` : undefined;
-      shortcutShells.add(id);
-      trackPointer();
-      const onKeyDown = (e: KeyboardEvent) => {
-        if (e.defaultPrevented || e.repeat || e.isComposing || e.keyCode === 229) return;
-        if (!(e.ctrlKey || e.metaKey) || e.altKey || e.shiftKey) return;
-        if (e.key.toLowerCase() !== key && e.code !== code) return;
-        // Không có gì để đổi (chưa có Sidebar): để phím cho trình duyệt.
-        if (!canToggleRef.current || isTextEntry(e.target) || shortcutOwner(e.target) !== id) return;
-        e.preventDefault();
-        toggleRef.current();
-      };
-      window.addEventListener("keydown", onKeyDown);
-      return () => {
-        shortcutShells.delete(id);
-        if (lastPointerShell === id) lastPointerShell = null;
-        window.removeEventListener("keydown", onKeyDown);
-      };
-    }, [shortcut, id]);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [breakpoint, scroll]);
 
-    const ctx = React.useMemo<AppShellContextValue>(
-      () => ({
-        narrow,
-        collapsed,
-        setCollapsed,
-        drawerOpen,
-        setDrawerOpen,
-        toggleSidebar,
-        breakpoint,
-        layout,
-        scroll,
-        collapsible,
-        setCollapsible,
-        shortcut,
-        shellId: id,
-        mainId: `${id}-main`,
-        sidebarId: `${id}-sidebar`,
-        mainRef,
-        triggerRef,
-        sidebarRef,
-        sidebarFocused,
-        returnFocusRef,
-        savedWidth: saved?.width,
-        persistWidth,
-        focusTriggerOrMain,
-      }),
-      [
-        narrow,
-        collapsed,
-        setCollapsed,
-        drawerOpen,
-        setDrawerOpen,
-        toggleSidebar,
-        breakpoint,
-        layout,
-        scroll,
-        collapsible,
-        shortcut,
-        id,
-        saved,
-        persistWidth,
-        focusTriggerOrMain,
-      ],
-    );
+  // Qua breakpoint: Drawer chỉ có trên màn hẹp nên đóng lại (focus về trigger hoặc nội dung qua onCloseAutoFocus);
+  // sidebar trên màn rộng bị ẩn khi thu hẹp, nên focus đang ở trong nó chuyển ra trigger hoặc nội dung.
+  const wasNarrow = React.useRef(narrow);
+  React.useEffect(() => {
+    if (wasNarrow.current === narrow) return;
+    wasNarrow.current = narrow;
+    if (!narrow) {
+      setDrawerOpenState(false);
+      return;
+    }
+    const active = document.activeElement;
+    const lost = !active || active === document.body;
+    if (sidebarFocused.current && (lost || sidebarRef.current?.contains(active))) {
+      sidebarFocused.current = false;
+      focusTriggerOrMain();
+    }
+  }, [narrow, focusTriggerOrMain]);
 
-    return (
-      <AppShellContext.Provider value={ctx}>
-        <div
-          ref={refs}
-          data-app-shell={id}
-          data-scroll={scroll}
-          className={cn(
-            "@container/app-shell grid grid-cols-[auto_minmax(0,1fr)_auto] bg-background-2 text-foreground-1",
-            // Hàng giữa của "page" lớn theo nội dung (trang dài ra); của "main" bị giới hạn để AppShellMain tự cuộn.
-            scroll === "page" ? "min-h-dvh grid-rows-[auto_1fr_auto]" : "h-dvh grid-rows-[auto_minmax(0,1fr)_auto]",
-            className,
-          )}
-          {...props}
-        >
-          {skipLink && (
-            <a
-              href={`#${ctx.mainId}`}
-              onClick={(e) => {
-                // Không đổi hash của URL (router dùng hash, khôi phục cuộn): focus thẳng vào nội dung.
-                if (!mainRef.current) return;
-                e.preventDefault();
-                mainRef.current.focus();
-              }}
-              className="sr-only rounded-medium bg-background-1 px-3 py-2 text-body1 font-semibold text-foreground-1 shadow-8 focus:not-sr-only focus:fixed focus:inset-s-2 focus:top-2 focus:z-50"
-            >
-              {msg.skipToContent}
-            </a>
-          )}
-          {children}
-        </div>
-      </AppShellContext.Provider>
-    );
-  },
-);
-AppShell.displayName = "AppShell";
+  const toggleRef = React.useRef(toggleSidebar);
+  const canToggleRef = React.useRef(canToggle);
+  React.useEffect(() => {
+    toggleRef.current = toggleSidebar;
+    canToggleRef.current = canToggle;
+  });
+  React.useEffect(() => {
+    if (!shortcut) return;
+    const key = shortcut.toLowerCase();
+    const code = /^[a-z]$/.test(key) ? `Key${key.toUpperCase()}` : undefined;
+    shortcutShells.add(id);
+    trackPointer();
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.defaultPrevented || e.repeat || e.isComposing || e.keyCode === 229) return;
+      if (!(e.ctrlKey || e.metaKey) || e.altKey || e.shiftKey) return;
+      if (e.key.toLowerCase() !== key && e.code !== code) return;
+      // Không có gì để đổi (chưa có Sidebar): để phím cho trình duyệt.
+      if (!canToggleRef.current || isTextEntry(e.target) || shortcutOwner(e.target) !== id) return;
+      e.preventDefault();
+      toggleRef.current();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      shortcutShells.delete(id);
+      if (lastPointerShell === id) lastPointerShell = null;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [shortcut, id]);
+
+  const ctx = React.useMemo<AppShellContextValue>(
+    () => ({
+      narrow,
+      collapsed,
+      setCollapsed,
+      drawerOpen,
+      setDrawerOpen,
+      toggleSidebar,
+      breakpoint,
+      layout,
+      scroll,
+      collapsible,
+      setCollapsible,
+      shortcut,
+      shellId: id,
+      mainId: `${id}-main`,
+      sidebarId: `${id}-sidebar`,
+      mainRef,
+      triggerRef,
+      sidebarRef,
+      sidebarFocused,
+      returnFocusRef,
+      savedWidth: saved?.width,
+      persistWidth,
+      focusTriggerOrMain,
+    }),
+    [
+      narrow,
+      collapsed,
+      setCollapsed,
+      drawerOpen,
+      setDrawerOpen,
+      toggleSidebar,
+      breakpoint,
+      layout,
+      scroll,
+      collapsible,
+      shortcut,
+      id,
+      saved,
+      persistWidth,
+      focusTriggerOrMain,
+    ],
+  );
+
+  return (
+    <AppShellContext.Provider value={ctx}>
+      <div
+        ref={refs}
+        data-app-shell={id}
+        data-scroll={scroll}
+        className={cn(
+          "@container/app-shell grid grid-cols-[auto_minmax(0,1fr)_auto] bg-background-2 text-foreground-1",
+          // Hàng giữa của "page" lớn theo nội dung (trang dài ra); của "main" bị giới hạn để AppShellMain tự cuộn.
+          scroll === "page" ? "min-h-dvh grid-rows-[auto_1fr_auto]" : "h-dvh grid-rows-[auto_minmax(0,1fr)_auto]",
+          className,
+        )}
+        {...props}
+      >
+        {skipLink && (
+          <a
+            href={`#${ctx.mainId}`}
+            onClick={(e) => {
+              // Không đổi hash của URL (router dùng hash, khôi phục cuộn): focus thẳng vào nội dung.
+              if (!mainRef.current) return;
+              e.preventDefault();
+              mainRef.current.focus();
+            }}
+            className="sr-only rounded-medium bg-background-1 px-3 py-2 text-body1 font-semibold text-foreground-1 shadow-8 focus:not-sr-only focus:fixed focus:inset-s-2 focus:top-2 focus:z-50"
+          >
+            {msg.skipToContent}
+          </a>
+        )}
+        {children}
+      </div>
+    </AppShellContext.Provider>
+  );
+}
 
 type PartProps = React.HTMLAttributes<HTMLElement> & {
   /** Đổi thẻ (vd. `div` khi khung nằm trong một trang đã có landmark). */
@@ -395,7 +389,7 @@ type PartProps = React.HTMLAttributes<HTMLElement> & {
 };
 
 /** Thanh trên cùng: bên cạnh sidebar, hoặc trải ngang với `layout="header"`. Cao `--app-shell-header` (3.5rem). */
-export const AppShellHeader = React.forwardRef<HTMLElement, PartProps>(({ asChild, className, ...props }, ref) => {
+export function AppShellHeader({ asChild, className, ref, ...props }: PartProps & { ref?: React.Ref<HTMLElement> }) {
   const shell = useShell("AppShellHeader");
   const Comp = asChild ? Slot : "header";
   return (
@@ -410,11 +404,10 @@ export const AppShellHeader = React.forwardRef<HTMLElement, PartProps>(({ asChil
       {...props}
     />
   );
-});
-AppShellHeader.displayName = "AppShellHeader";
+}
 
 /** Nội dung chính: vùng cuộn, đích của skip link và nơi nhận focus khi trigger không còn hiển thị. */
-export const AppShellMain = React.forwardRef<HTMLElement, PartProps>(({ asChild, className, ...props }, ref) => {
+export function AppShellMain({ asChild, className, ref, ...props }: PartProps & { ref?: React.Ref<HTMLElement> }) {
   const shell = useShell("AppShellMain");
   const refs = useComposedRefs(ref, shell.mainRef);
   const Comp = asChild ? Slot : "main";
@@ -427,11 +420,10 @@ export const AppShellMain = React.forwardRef<HTMLElement, PartProps>(({ asChild,
       {...props}
     />
   );
-});
-AppShellMain.displayName = "AppShellMain";
+}
 
 /** Cột phụ bên cạnh nội dung (chi tiết, bộ lọc…). Ẩn khi khung hẹp hơn `breakpoint`. */
-export const AppShellAside = React.forwardRef<HTMLElement, PartProps>(({ asChild, className, ...props }, ref) => {
+export function AppShellAside({ asChild, className, ref, ...props }: PartProps & { ref?: React.Ref<HTMLElement> }) {
   const shell = useShell("AppShellAside");
   const Comp = asChild ? Slot : "aside";
   return (
@@ -446,11 +438,10 @@ export const AppShellAside = React.forwardRef<HTMLElement, PartProps>(({ asChild
       {...props}
     />
   );
-});
-AppShellAside.displayName = "AppShellAside";
+}
 
 /** Cuối trang, dưới nội dung và cột phụ. `scroll="page"`: ở cuối trang; `"main"`: luôn thấy ở đáy khung. */
-export const AppShellFooter = React.forwardRef<HTMLElement, PartProps>(({ asChild, className, ...props }, ref) => {
+export function AppShellFooter({ asChild, className, ref, ...props }: PartProps & { ref?: React.Ref<HTMLElement> }) {
   const Comp = asChild ? Slot : "footer";
   return (
     <Comp
@@ -459,5 +450,4 @@ export const AppShellFooter = React.forwardRef<HTMLElement, PartProps>(({ asChil
       {...props}
     />
   );
-});
-AppShellFooter.displayName = "AppShellFooter";
+}

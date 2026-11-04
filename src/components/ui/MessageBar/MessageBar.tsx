@@ -6,7 +6,7 @@ import {
   Info20Filled,
   Warning20Filled,
   Dismiss20Regular,
-} from "@fluentui/react-icons";
+} from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useYugenMessages } from "../YugenProvider/context";
 import { messageBarMessagesEn } from "./messages";

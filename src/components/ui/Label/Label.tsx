@@ -2,6 +2,7 @@
 import * as React from "react";
 import { cva } from "class-variance-authority";
 import { cn } from "@/lib/cn";
+import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
 const labelVariants = cva("text-foreground-1", {
   variants: {
@@ -31,8 +32,18 @@ export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> 
   disabled?: boolean;
 }
 
-export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
-  ({ className, size, weight, required, disabled, children, ...props }, ref) => (
+export function Label(inProps: LabelProps & { ref?: React.Ref<HTMLLabelElement> }) {
+  const {
+    className,
+    size,
+    weight,
+    required,
+    disabled,
+    children,
+    ref,
+    ...props
+  } = useComponentDefaults("Label", inProps, COMPACT_SIZE);
+  return (
     <label
       ref={ref}
       aria-disabled={disabled || undefined}
@@ -46,6 +57,11 @@ export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
         </span>
       )}
     </label>
-  ),
-);
-Label.displayName = "Label";
+  );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Label: LabelProps;
+  }
+}

@@ -1,6 +1,6 @@
 /** Markdown — hiển thị Markdown tĩnh (bài viết, ghi chú phát hành, nội dung CMS) theo kiểu chữ của Prose. */
 import * as React from "react";
-import { CheckboxChecked16Regular, CheckboxUnchecked16Regular } from "@fluentui/react-icons";
+import { CheckboxChecked16Regular, CheckboxUnchecked16Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { codeLanguageOf } from "../AIKit/codeLanguage";
 import { parseInlineMarkdown, parseMarkdown, type MdAlign, type MdBlock, type MdInline } from "../AIKit/markdown";
@@ -194,10 +194,18 @@ function Block({ block, ctx }: { block: MdBlock; ctx: RenderContext }): React.Re
  * `javascript:`, `data:` hiện như chữ). Giữ link tương đối (`/path`, `#id`), link ngoài mở tab mới. Kiểu chữ theo Prose.
  * Cho nội dung đang về theo từng token (câu trả lời AI) dùng StreamingMarkdown.
  */
-export const Markdown = React.forwardRef<HTMLElement, MarkdownProps>(function Markdown(
-  { children = "", inline = false, size = "medium", headingOffset = 1, headingIds = false, breaks = false, renderLink, className, ...props },
+export function Markdown({
+  children = "",
+  inline = false,
+  size = "medium",
+  headingOffset = 1,
+  headingIds = false,
+  breaks = false,
+  renderLink,
+  className,
   ref,
-) {
+  ...props
+}: MarkdownProps & { ref?: React.Ref<HTMLElement> }) {
   const msg = useYugenMessages("markdown", markdownMessagesEn);
   const parsed = React.useMemo(
     () => (inline ? parseInlineMarkdown(children, { relativeLinks: true }) : parseMarkdown(children, { relativeLinks: true }).children),
@@ -231,4 +239,4 @@ export const Markdown = React.forwardRef<HTMLElement, MarkdownProps>(function Ma
       ))}
     </Prose>
   );
-});
+}

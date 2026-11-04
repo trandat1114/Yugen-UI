@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
 import { Avatar, type AvatarProps } from "../Avatar/Avatar";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { presenceBadgeMessagesEn } from "../PresenceBadge/messages";
 
 /** Fluent 2 Persona — https://fluent2.microsoft.design/components/web/react/core/persona/usage */
@@ -80,70 +80,72 @@ export interface PersonaProps extends React.HTMLAttributes<HTMLDivElement> {
   textAlignment?: "start" | "center";
 }
 
-export const Persona = React.forwardRef<HTMLDivElement, PersonaProps>(
-  (
-    {
-      name = "",
-      avatar,
-      presence,
-      presenceOnly = false,
-      primaryText,
-      secondaryText,
-      tertiaryText,
-      quaternaryText,
-      size = "medium",
-      textPosition = "after",
-      textAlignment = "start",
-      className,
-      ...props
-    },
+export function Persona(inProps: PersonaProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    name = "",
+    avatar,
+    presence,
+    presenceOnly = false,
+    primaryText,
+    secondaryText,
+    tertiaryText,
+    quaternaryText,
+    size = "medium",
+    textPosition = "after",
+    textAlignment = "start",
+    className,
     ref,
-  ) => {
-    // Tên trạng thái dùng chung với PresenceBadge (`messages.presenceBadge`).
-    const msg = useYugenMessages("presenceBadge", presenceBadgeMessagesEn);
-    const below = textPosition === "below";
-    const secondaryClass = cn("truncate text-foreground-2", size === "huge" ? "text-body1" : "text-caption1");
+    ...props
+  } = useComponentDefaults("Persona", inProps);
+  // Tên trạng thái dùng chung với PresenceBadge (`messages.presenceBadge`).
+  const msg = useYugenMessages("presenceBadge", presenceBadgeMessagesEn);
+  const below = textPosition === "below";
+  const secondaryClass = cn("truncate text-foreground-2", size === "huge" ? "text-body1" : "text-caption1");
 
-    const media = presenceOnly ? (
-      // Khung cao bằng dòng primaryText để chấm luôn thẳng hàng với tên.
-      <span className={cn("flex shrink-0 items-center", LINE[size])}>
-        <span
-          role="img"
-          aria-label={msg[presence ?? "offline"]}
-          className={cn("rounded-circular", PRESENCE_SIZE[size], PRESENCE_COLOR[presence ?? "offline"])}
-        />
-      </span>
-    ) : (
-      <Avatar name={name} size={AVATAR_SIZE[size]} presence={presence} {...avatar} />
-    );
+  const media = presenceOnly ? (
+    // Khung cao bằng dòng primaryText để chấm luôn thẳng hàng với tên.
+    <span className={cn("flex shrink-0 items-center", LINE[size])}>
+      <span
+        role="img"
+        aria-label={msg[presence ?? "offline"]}
+        className={cn("rounded-circular", PRESENCE_SIZE[size], PRESENCE_COLOR[presence ?? "offline"])}
+      />
+    </span>
+  ) : (
+    <Avatar name={name} size={AVATAR_SIZE[size]} presence={presence} {...avatar} />
+  );
 
-    return (
-      <div
-        ref={ref}
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        "inline-flex min-w-0 max-w-full",
+        GAP[size],
+        below ? "flex-col" : textPosition === "before" ? "flex-row-reverse" : "flex-row",
+        textAlignment === "center" ? "items-center" : "items-start",
+        below && textAlignment === "center" && "text-center",
+        className,
+      )}
+      {...props}
+    >
+      {media}
+      <span
         className={cn(
-          "inline-flex min-w-0 max-w-full",
-          GAP[size],
-          below ? "flex-col" : textPosition === "before" ? "flex-row-reverse" : "flex-row",
-          textAlignment === "center" ? "items-center" : "items-start",
-          below && textAlignment === "center" && "text-center",
-          className,
+          "flex min-w-0 flex-col",
+          below && textAlignment === "center" ? "items-center" : textPosition === "before" ? "items-end text-end" : "items-start",
         )}
-        {...props}
       >
-        {media}
-        <span
-          className={cn(
-            "flex min-w-0 flex-col",
-            below && textAlignment === "center" ? "items-center" : textPosition === "before" ? "items-end text-end" : "items-start",
-          )}
-        >
-          <span className={cn("max-w-full truncate font-semibold text-foreground-1", PRIMARY[size])}>{primaryText ?? name}</span>
-          {secondaryText && <span className={cn("max-w-full", secondaryClass)}>{secondaryText}</span>}
-          {tertiaryText && <span className="max-w-full truncate text-caption1 text-foreground-2">{tertiaryText}</span>}
-          {quaternaryText && <span className="max-w-full truncate text-caption1 text-foreground-2">{quaternaryText}</span>}
-        </span>
-      </div>
-    );
-  },
-);
-Persona.displayName = "Persona";
+        <span className={cn("max-w-full truncate font-semibold text-foreground-1", PRIMARY[size])}>{primaryText ?? name}</span>
+        {secondaryText && <span className={cn("max-w-full", secondaryClass)}>{secondaryText}</span>}
+        {tertiaryText && <span className="max-w-full truncate text-caption1 text-foreground-2">{tertiaryText}</span>}
+        {quaternaryText && <span className="max-w-full truncate text-caption1 text-foreground-2">{quaternaryText}</span>}
+      </span>
+    </div>
+  );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Persona: PersonaProps;
+  }
+}

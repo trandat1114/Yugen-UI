@@ -1,8 +1,8 @@
 import * as React from "react";
-import { ArrowSortDown20Regular, ArrowSortUp20Regular } from "@fluentui/react-icons";
+import { ArrowSortDown20Regular, ArrowSortUp20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Checkbox } from "../Checkbox/Checkbox";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { tableMessagesEn } from "./messages";
 
 export { tableMessages, tableMessagesVi, tableMessagesEn, type TableMessages } from "./messages";
@@ -40,40 +40,50 @@ export interface TableProps extends React.TableHTMLAttributes<HTMLTableElement> 
   sortable?: boolean;
 }
 
-export const Table = React.forwardRef<HTMLTableElement, TableProps>(
-  ({ size = "medium", sortable = false, className, ...props }, ref) => {
-    const context = React.useMemo(() => ({ size, sortable }), [size, sortable]);
-    return (
-      <TableContext.Provider value={context}>
-        <table
-          ref={ref}
-          className={cn(
-            "not-prose w-full table-fixed border-collapse text-start align-middle text-foreground-1 tabular-nums",
-            TEXT[size],
-            className,
-          )}
-          {...props}
-        />
-      </TableContext.Provider>
-    );
-  },
-);
-Table.displayName = "Table";
+export function Table(inProps: TableProps & { ref?: React.Ref<HTMLTableElement> }) {
+  const {
+    size = "medium",
+    sortable = false,
+    className,
+    ref,
+    ...props
+  } = useComponentDefaults("Table", inProps, COMPACT_SIZE);
+  const context = React.useMemo(() => ({ size, sortable }), [size, sortable]);
+  return (
+    <TableContext.Provider value={context}>
+      <table
+        ref={ref}
+        className={cn(
+          "not-prose w-full table-fixed border-collapse text-start align-middle text-foreground-1 tabular-nums",
+          TEXT[size],
+          className,
+        )}
+        {...props}
+      />
+    </TableContext.Provider>
+  );
+}
 
 /* ------------------------------------------------------------------ Sections */
-export const TableHeader = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
-  ({ className, ...props }, ref) => (
+export function TableHeader({
+  className,
+  ref,
+  ...props
+}: React.HTMLAttributes<HTMLTableSectionElement> & { ref?: React.Ref<HTMLTableSectionElement> }) {
+  return (
     <TableHeaderContext.Provider value>
       <thead ref={ref} className={className} {...props} />
     </TableHeaderContext.Provider>
-  ),
-);
-TableHeader.displayName = "TableHeader";
+  );
+}
 
-export const TableBody = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
-  ({ className, ...props }, ref) => <tbody ref={ref} className={className} {...props} />,
-);
-TableBody.displayName = "TableBody";
+export function TableBody({
+  className,
+  ref,
+  ...props
+}: React.HTMLAttributes<HTMLTableSectionElement> & { ref?: React.Ref<HTMLTableSectionElement> }) {
+  return <tbody ref={ref} className={className} {...props} />;
+}
 
 /* ------------------------------------------------------------------ TableRow */
 export interface TableRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
@@ -83,34 +93,37 @@ export interface TableRowProps extends React.HTMLAttributes<HTMLTableRowElement>
   selected?: boolean;
 }
 
-export const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
-  ({ appearance, selected = false, className, ...props }, ref) => {
-    const { size } = React.useContext(TableContext);
-    const inHeader = React.useContext(TableHeaderContext);
-    const look = appearance ?? (selected ? "brand" : "none");
-    return (
-      <tr
-        ref={ref}
-        data-selected={selected || undefined}
-        className={cn(
-          "group/row",
-          ROW_HEIGHT[size],
-          inHeader
-            ? "border-b border-stroke-2"
-            : [
-                "border-b border-stroke-3 transition-colors duration-faster ease-easy-ease",
-                look === "none" && "hover:bg-subtle-hover active:bg-subtle-pressed",
-                look === "neutral" && "bg-subtle-pressed",
-                look === "brand" && "bg-brand-background-2 hover:bg-brand-background-2-hover",
-              ],
-          className,
-        )}
-        {...props}
-      />
-    );
-  },
-);
-TableRow.displayName = "TableRow";
+export function TableRow({
+  appearance,
+  selected = false,
+  className,
+  ref,
+  ...props
+}: TableRowProps & { ref?: React.Ref<HTMLTableRowElement> }) {
+  const { size } = React.useContext(TableContext);
+  const inHeader = React.useContext(TableHeaderContext);
+  const look = appearance ?? (selected ? "brand" : "none");
+  return (
+    <tr
+      ref={ref}
+      data-selected={selected || undefined}
+      className={cn(
+        "group/row",
+        ROW_HEIGHT[size],
+        inHeader
+          ? "border-b border-stroke-2"
+          : [
+              "border-b border-stroke-3 transition-colors duration-faster ease-easy-ease",
+              look === "none" && "hover:bg-subtle-hover active:bg-subtle-pressed",
+              look === "neutral" && "bg-subtle-pressed",
+              look === "brand" && "bg-brand-background-2 hover:bg-brand-background-2-hover",
+            ],
+        className,
+      )}
+      {...props}
+    />
+  );
+}
 
 /* ------------------------------------------------------------------ TableHeaderCell */
 export interface TableHeaderCellProps extends Omit<React.ThHTMLAttributes<HTMLTableCellElement>, "onClick"> {
@@ -122,61 +135,67 @@ export interface TableHeaderCellProps extends Omit<React.ThHTMLAttributes<HTMLTa
   onClick?: React.MouseEventHandler<HTMLElement>;
 }
 
-export const TableHeaderCell = React.forwardRef<HTMLTableCellElement, TableHeaderCellProps>(
-  ({ sortable, sortDirection, onClick, className, children, ...props }, ref) => {
-    const ctx = React.useContext(TableContext);
-    const isSortable = sortable ?? ctx.sortable;
-    const SortIcon = sortDirection === "ascending" ? ArrowSortUp20Regular : ArrowSortDown20Regular;
+export function TableHeaderCell({
+  sortable,
+  sortDirection,
+  onClick,
+  className,
+  children,
+  ref,
+  ...props
+}: TableHeaderCellProps & { ref?: React.Ref<HTMLTableCellElement> }) {
+  const ctx = React.useContext(TableContext);
+  const isSortable = sortable ?? ctx.sortable;
+  const SortIcon = sortDirection === "ascending" ? ArrowSortUp20Regular : ArrowSortDown20Regular;
 
-    if (!isSortable) {
-      return (
-        <th
-          ref={ref}
-          scope="col"
-          onClick={onClick}
-          className={cn("relative px-2 text-start align-middle font-semibold text-foreground-1", className)}
-          {...props}
-        >
-          {children}
-        </th>
-      );
-    }
-
+  if (!isSortable) {
     return (
       <th
         ref={ref}
         scope="col"
-        aria-sort={sortDirection ?? "none"}
-        className={cn(
-          "relative p-0 text-start align-middle font-semibold text-foreground-1",
-          "transition-colors duration-faster ease-easy-ease hover:bg-subtle-hover active:bg-subtle-pressed",
-          className,
-        )}
+        onClick={onClick}
+        className={cn("relative px-2 text-start align-middle font-semibold text-foreground-1", className)}
         {...props}
       >
-        <button
-          type="button"
-          onClick={onClick}
-          className="flex w-full cursor-pointer items-center gap-1 px-2 py-0.5 text-start font-semibold"
-        >
-          <span className="min-w-0 truncate">{children}</span>
-          {sortDirection && (
-            <SortIcon aria-hidden className={cn("shrink-0 text-foreground-2", ctx.size === "extra-small" ? "size-4" : "size-5")} />
-          )}
-        </button>
+        {children}
       </th>
     );
-  },
-);
-TableHeaderCell.displayName = "TableHeaderCell";
+  }
+
+  return (
+    <th
+      ref={ref}
+      scope="col"
+      aria-sort={sortDirection ?? "none"}
+      className={cn(
+        "relative p-0 text-start align-middle font-semibold text-foreground-1",
+        "transition-colors duration-faster ease-easy-ease hover:bg-subtle-hover active:bg-subtle-pressed",
+        className,
+      )}
+      {...props}
+    >
+      <button
+        type="button"
+        onClick={onClick}
+        className="flex w-full cursor-pointer items-center gap-1 px-2 py-0.5 text-start font-semibold"
+      >
+        <span className="min-w-0 truncate">{children}</span>
+        {sortDirection && (
+          <SortIcon aria-hidden className={cn("shrink-0 text-foreground-2", ctx.size === "extra-small" ? "size-4" : "size-5")} />
+        )}
+      </button>
+    </th>
+  );
+}
 
 /* ------------------------------------------------------------------ TableCell */
-export const TableCell = React.forwardRef<HTMLTableCellElement, React.TdHTMLAttributes<HTMLTableCellElement>>(
-  ({ className, ...props }, ref) => (
-    <td ref={ref} className={cn("relative px-2 align-middle", className)} {...props} />
-  ),
-);
-TableCell.displayName = "TableCell";
+export function TableCell({
+  className,
+  ref,
+  ...props
+}: React.TdHTMLAttributes<HTMLTableCellElement> & { ref?: React.Ref<HTMLTableCellElement> }) {
+  return <td ref={ref} className={cn("relative px-2 align-middle", className)} {...props} />;
+}
 
 /* ------------------------------------------------------------------ TableCellLayout */
 export interface TableCellLayoutProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -190,8 +209,17 @@ export interface TableCellLayoutProps extends React.HTMLAttributes<HTMLDivElemen
   truncate?: boolean;
 }
 
-export const TableCellLayout = React.forwardRef<HTMLDivElement, TableCellLayoutProps>(
-  ({ media, description, appearance, truncate = false, className, children, ...props }, ref) => (
+export function TableCellLayout({
+  media,
+  description,
+  appearance,
+  truncate = false,
+  className,
+  children,
+  ref,
+  ...props
+}: TableCellLayoutProps & { ref?: React.Ref<HTMLDivElement> }) {
+  return (
     <div ref={ref} className={cn("flex min-w-0 items-center gap-2", className)} {...props}>
       {media && <span className="flex shrink-0 items-center text-foreground-2">{media}</span>}
       <div className="flex min-w-0 flex-col">
@@ -201,14 +229,17 @@ export const TableCellLayout = React.forwardRef<HTMLDivElement, TableCellLayoutP
         )}
       </div>
     </div>
-  ),
-);
-TableCellLayout.displayName = "TableCellLayout";
+  );
+}
 
 /* ------------------------------------------------------------------ TableCellActions */
 /** Nhóm nút chỉ hiện khi hover / focus vào hàng (đặt trong TableCell). */
-export const TableCellActions = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
+export function TableCellActions({
+  className,
+  ref,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> & { ref?: React.Ref<HTMLDivElement> }) {
+  return (
     <div
       ref={ref}
       className={cn(
@@ -219,9 +250,8 @@ export const TableCellActions = React.forwardRef<HTMLDivElement, React.HTMLAttri
       )}
       {...props}
     />
-  ),
-);
-TableCellActions.displayName = "TableCellActions";
+  );
+}
 
 /* ------------------------------------------------------------------ TableSelectionCell */
 export interface TableSelectionCellProps extends Omit<React.TdHTMLAttributes<HTMLTableCellElement>, "onChange"> {
@@ -232,31 +262,43 @@ export interface TableSelectionCellProps extends Omit<React.TdHTMLAttributes<HTM
   disabled?: boolean;
 }
 
-export const TableSelectionCell = React.forwardRef<HTMLTableCellElement, TableSelectionCellProps>(
-  ({ checked = false, onCheckedChange, subtle = false, disabled, className, "aria-label": ariaLabel, ...props }, ref) => {
-    const inHeader = React.useContext(TableHeaderContext);
-    const msg = useYugenMessages("table", tableMessagesEn);
-    const Cell = (inHeader ? "th" : "td") as "td";
-    return (
-      <Cell
-        ref={ref}
-        className={cn(
-          "w-11 px-0 text-center align-middle [&>span]:py-0",
-          subtle &&
-            !checked &&
-            "opacity-0 transition-opacity duration-faster group-hover/row:opacity-100 focus-within:opacity-100 pointer-coarse:opacity-100",
-          className,
-        )}
-        {...props}
-      >
-        <Checkbox
-          checked={checked === "mixed" ? "indeterminate" : checked}
-          onCheckedChange={(value) => onCheckedChange?.(value === true)}
-          disabled={disabled}
-          aria-label={ariaLabel ?? (inHeader ? msg.selectAllRows : msg.selectRow)}
-        />
-      </Cell>
-    );
-  },
-);
-TableSelectionCell.displayName = "TableSelectionCell";
+export function TableSelectionCell({
+  checked = false,
+  onCheckedChange,
+  subtle = false,
+  disabled,
+  className,
+  "aria-label": ariaLabel,
+  ref,
+  ...props
+}: TableSelectionCellProps & { ref?: React.Ref<HTMLTableCellElement> }) {
+  const inHeader = React.useContext(TableHeaderContext);
+  const msg = useYugenMessages("table", tableMessagesEn);
+  const Cell = (inHeader ? "th" : "td") as "td";
+  return (
+    <Cell
+      ref={ref}
+      className={cn(
+        "w-11 px-0 text-center align-middle [&>span]:py-0",
+        subtle &&
+          !checked &&
+          "opacity-0 transition-opacity duration-faster group-hover/row:opacity-100 focus-within:opacity-100 pointer-coarse:opacity-100",
+        className,
+      )}
+      {...props}
+    >
+      <Checkbox
+        checked={checked === "mixed" ? "indeterminate" : checked}
+        onCheckedChange={(value) => onCheckedChange?.(value === true)}
+        disabled={disabled}
+        aria-label={ariaLabel ?? (inHeader ? msg.selectAllRows : msg.selectRow)}
+      />
+    </Cell>
+  );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    Table: TableProps;
+  }
+}

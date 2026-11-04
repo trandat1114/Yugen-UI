@@ -26,7 +26,7 @@ Tài liệu này là **bộ quy tắc bắt buộc**. Mọi người (và AI) kh
 8. **Không phủ brand lên diện tích lớn** (header, sidebar, nền trang, card lớn).
 9. **Gradient chỉ cho minh hoạ/hero/marketing** — không bao giờ trên control hay để biểu thị trạng thái.
 10. **Không dùng màu làm tín hiệu duy nhất**; chữ ≥ 4.5:1, thành phần UI ≥ 3:1 (kiểm tra ở trang Màu sắc › Khả năng tiếp cận).
-11. Hành vi phức tạp dùng **Radix primitive** / `cmdk` / `react-day-picker`; icon chỉ dùng **`@fluentui/react-icons`**.
+11. Hành vi phức tạp dùng **Radix primitive** / `cmdk` / `react-day-picker`; icon chỉ dùng **Fluent System Icons**: có sẵn trong thư viện (`src/components/ui/_internal/icons.tsx`, sinh bằng `npm run icons`), và `@fluentui/react-icons` trong demo, block.
 12. Component/Block mới chỉ coi là xong khi có trang docs (registry) hoặc file trong `block-library` (xem §8).
 13. **Class phải ở dạng canonical** của Tailwind v4 (`inset-s-L` chứ không `start-L`, `data-disabled:` chứ không
     `data-[disabled]:`, `h-110` chứ không `h-[440px]`). `npm run lint:classes` phải báo sạch; sửa tự động bằng
@@ -45,7 +45,7 @@ Tài liệu này là **bộ quy tắc bắt buộc**. Mọi người (và AI) kh
 | Hành vi / a11y | `@radix-ui/react-*`, `cmdk` (Command, Combobox, TagPicker), `react-day-picker` v10 (Calendar), `react-resizable-panels` v4 |
 | Biến thể | `class-variance-authority` |
 | Gộp class | `cn()` = `clsx` + `tailwind-merge` đã cấu hình scale của Yugen |
-| Icon | `@fluentui/react-icons` (Fluent System Icons) |
+| Icon | Fluent System Icons, có sẵn (`_internal/icons`, sinh từ `@fluentui/react-icons`, một devDependency) |
 
 ```
 src/
@@ -265,7 +265,10 @@ TooltipContent, DialogSurface, DrawerSurface, SheetContent), `appearance="glass"
 1. **API thống nhất**: `appearance`, `size` (`small | medium | large`), `shape`, `color` (ngữ nghĩa) hoặc `intent` (mức độ).
 2. **Chiều cao control**: small 24px (`h-6`), medium 32px (`h-8`, mặc định), large 40px (`h-10`).
 3. **Đủ trạng thái**: rest → `hover:` → `active:` → `disabled:` → `focus-visible` (§4.4).
-4. **forwardRef** cho component bọc DOM; hỗ trợ `asChild` (Radix `Slot`) cho phần tử hành động.
+4. **`ref` là một prop** (React 19, không dùng `forwardRef`) cho component bọc DOM:
+   `export function Button({ ref, ...props }: ButtonProps & { ref?: React.Ref<HTMLButtonElement> })`, rồi chuyển `ref`
+   xuống phần tử. Cần gộp với ref nội bộ thì dùng `useComposedRefs` trong `_internal/composeRefs`. Hỗ trợ `asChild`
+   (Radix `Slot`) cho phần tử hành động.
 5. `className` người dùng luôn ở **cuối** `cn(...)`.
 6. **Accessibility**: label liên kết bằng `useId`; icon-only có `aria-label`; `aria-invalid`; `role="alert"` cho lỗi;
    điều hướng bàn phím đầy đủ (Tree, Toolbar, List, Tabs, Menu, Combobox).
@@ -377,10 +380,10 @@ Chọn tín hiệu theo thời gian **dự kiến**, không theo thói quen (chi
 |---|---|
 | **Provider** | YugenProvider (+ `useYugen`, `usePortalThemeProps`) |
 | **Hành động** (9) | Button (+ `loading`, `loadingText`), CompoundButton, MenuButton, SplitButton, ButtonGroup, ToggleButton, ToggleGroup, Toolbar, Link |
-| **Nhập liệu** (25) | Field, Label, Input, Textarea, SearchBox, Select (native), Dropdown, Combobox, Tag (+TagGroup), TagPicker, Checkbox, RadioGroup, Switch, Slider, SpinButton, InputOTP, Rating, SwatchPicker, Calendar, DatePicker, TimePicker, DateRangePicker `presets`, FileUpload, Form (react-hook-form + zod, chỉ ví dụ) |
-| **Điều hướng** (9) | Tabs, Breadcrumb, Pagination, Nav, Menu, Menubar, ContextMenu, Command, Stepper / Wizard |
+| **Nhập liệu** (31) | Field, Label, Input, PasswordInput, FormattedInput, Textarea, SearchBox, Select (native), Dropdown, Combobox, Tag (+TagGroup), TagPicker, Checkbox, RadioGroup, Switch, Slider, SpinButton, InputOTP, Rating, SwatchPicker, ColorPicker, Calendar, DatePicker, MonthPicker, YearPicker, DateTimePicker, TimePicker, DateRangePicker `presets`, FileUpload, Form (react-hook-form + zod, chỉ ví dụ) |
+| **Điều hướng** (10) | Tabs, Breadcrumb, Pagination, Nav, NavigationMenu, Menu, Menubar, ContextMenu, Command, Stepper / Wizard |
 | **Hiển thị dữ liệu** (14) | Avatar, AvatarGroup, Persona, PresenceBadge, Badge, CounterBadge, Kbd, Text, Image, List, Table (+DataTable mẫu), Tree, Carousel (loop, autoplay có tiến độ, `slidesPerView`, `CarouselThumbnails`), DataGrid (sort, chọn dòng, đổi cỡ cột, ảo hoá) |
-| **Phản hồi** (7) | MessageBar, Toast, ProgressBar, Spinner, Skeleton (+ `SkeletonText/Avatar/Card/List/Table`), Empty, InfoLabel |
+| **Phản hồi** (8) | MessageBar, Toast, ProgressBar, Spinner, Skeleton (+ `SkeletonText/Avatar/Card/List/Table`), Empty, StatusPage (+ `ErrorBoundary`), InfoLabel |
 | **Bề mặt & overlay** (7) | Card, Dialog, Drawer (overlay + inline), Popover, TeachingPopover, HoverCard, Tooltip |
 | **Bố cục** (7) | Accordion (`appearance` flush / separated / outline), AspectRatio, Collapsible, Divider, ScrollArea, Resizable (`collapsible`, `persistKey`), Overflow |
 | **Chuyển động** (6) | Fade, Scale, Slide, Collapse, Blur & Rotate, Stagger (+ hook `usePresence`) |
@@ -422,7 +425,7 @@ Luật riêng của Labs:
   hiển thị nên kéo và phím mũi tên đi đúng chiều con trỏ (có test e2e). `mirrorInRtl={false}` giữ bố cục LTR.
 - **Sheet** dạng bottom: cử chỉ kéo/vuốt mới kiểm tra bằng chuột và trình giả lập cảm ứng; cần thử thêm trên thiết bị iOS/Android thật.
 - **Chart** viết tay bằng SVG: chưa có trục log hay bản đồ; brush luôn trái→phải như vùng vẽ (cả khi RTL); dữ liệu rất lớn nên lấy mẫu trước.
-- Chưa có: ColorPicker đầy đủ, TimePicker qua nửa đêm. Overflow cần item có độ rộng tự nhiên (không `flex-1`).
+- Chưa có: TimePicker qua nửa đêm. Overflow cần item có độ rộng tự nhiên (không `flex-1`).
 
 ---
 
@@ -455,7 +458,7 @@ Luật riêng của Labs:
 3. `npm install --package-lock-only` → `npm run check:release` (`package.json` = `src/docs/news` = `CHANGELOG.md`) →
    `npm run typecheck && npm test && npm run build && npm run size` → `npm run pack:check` để xem trước nội dung gói.
 4. Commit rồi `git tag vX.Y.Z && git push --tags` — workflow `.github/workflows/release.yml` kiểm tra tag, chạy test,
-   build và `npm publish --provenance` (cần secret `NPM_TOKEN`; tag có `-` → dist-tag `next`).
+   build và `npm publish --provenance` (npm trusted publishing, không cần token; tag có `-` → dist-tag `next`).
 
 ---
 

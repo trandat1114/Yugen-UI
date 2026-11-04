@@ -79,61 +79,57 @@ export interface TextProps extends React.HTMLAttributes<HTMLElement> {
   block?: boolean;
 }
 
-export const Text = React.forwardRef<HTMLElement, TextProps>(
-  (
-    {
-      as = "span",
-      size = 300,
-      weight = "regular",
-      font = "base",
-      align = "start",
-      italic = false,
-      underline = false,
-      strikethrough = false,
-      truncate = false,
-      wrap = true,
-      block = false,
-      className,
-      ...props
-    },
-    ref,
-  ) => {
-    const Element = as as React.ElementType;
-    return (
-      <Element
-        ref={ref}
-        className={cn(
-          "m-0",
-          SIZE[size],
-          WEIGHT[weight],
-          FONT[font],
-          font === "base" && size >= 500 && "font-display",
-          ALIGN[align],
-          block ? "block" : "inline",
-          wrap ? "whitespace-normal" : "overflow-hidden whitespace-nowrap",
-          truncate && "overflow-hidden text-ellipsis",
-          italic && "italic",
-          underline && strikethrough
-            ? "[text-decoration-line:underline_line-through]"
-            : underline
-              ? "underline"
-              : strikethrough && "line-through",
-          className,
-        )}
-        {...props}
-      />
-    );
-  },
-);
-Text.displayName = "Text";
+export function Text({
+  as = "span",
+  size = 300,
+  weight = "regular",
+  font = "base",
+  align = "start",
+  italic = false,
+  underline = false,
+  strikethrough = false,
+  truncate = false,
+  wrap = true,
+  block = false,
+  className,
+  ref,
+  ...props
+}: TextProps & { ref?: React.Ref<HTMLElement> }) {
+  const Element = as as React.ElementType;
+  return (
+    <Element
+      ref={ref}
+      className={cn(
+        "m-0",
+        SIZE[size],
+        WEIGHT[weight],
+        FONT[font],
+        font === "base" && size >= 500 && "font-display",
+        ALIGN[align],
+        block ? "block" : "inline",
+        wrap ? "whitespace-normal" : "overflow-hidden whitespace-nowrap",
+        truncate && "overflow-hidden text-ellipsis",
+        italic && "italic",
+        underline && strikethrough
+          ? "[text-decoration-line:underline_line-through]"
+          : underline
+            ? "underline"
+            : strikethrough && "line-through",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
 
 /* ------------------------------------------------------------------ Presets */
 export type TextPresetProps = Omit<TextProps, "size" | "weight" | "font">;
 
 function createPreset(displayName: string, size: TextSize, weight: TextWeight) {
-  const Preset = React.forwardRef<HTMLElement, TextPresetProps>((props, ref) => (
-    <Text ref={ref} size={size} weight={weight} {...props} />
-  ));
+  // `ref` đi cùng props xuống Text. Tạo từ factory nên cần displayName cho DevTools.
+  function Preset(props: TextPresetProps & { ref?: React.Ref<HTMLElement> }) {
+    return <Text size={size} weight={weight} {...props} />;
+  }
   Preset.displayName = displayName;
   return Preset;
 }

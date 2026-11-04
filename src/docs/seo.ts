@@ -10,7 +10,7 @@ import { SITE } from "./site";
  * Tiêu đề tab, <meta name="description">, canonical và og:* theo trang. Bản build ghi sẵn vào HTML prerender của từng
  * trang (scripts/prerender.mjs); khi chuyển trang trong trình duyệt, DocumentMeta cập nhật lại.
  */
-const PAGES: Record<"blocks" | "templates" | "theme-designer" | "community" | "contributors", Record<"vi" | "en", [string, string]>> = {
+const PAGES: Record<"blocks" | "templates" | "theme-designer" | "typeset" | "community" | "contributors", Record<"vi" | "en", [string, string]>> = {
   blocks: {
     vi: ["Blocks", "Cụm giao diện ghép sẵn từ component Yugen UI — đăng nhập, cài đặt, thống kê, danh sách — copy nguyên khối vào dự án."],
     en: ["Blocks", "Ready-made UI sections built from Yugen UI components — sign-in, settings, stats, lists — copy whole blocks into your project."],
@@ -23,6 +23,10 @@ const PAGES: Record<"blocks" | "templates" | "theme-designer" | "community" | "c
     vi: ["Theme Designer", "Tạo theme từ một màu: brand ramp 16 bậc, bo góc, mật độ, font, màu trung tính, độ nổi, chuyển động. Xem trước ở sáng, tối, tương phản cao và RTL, xuất CSS, JSON, Tokens Studio."],
     en: ["Theme Designer", "Build a theme from one color: a 16-step brand ramp, radius, density, font, neutrals, elevation and motion. Preview in light, dark, high contrast and RTL, then export CSS, JSON or Tokens Studio."],
   },
+  typeset: {
+    vi: ["Typeset", "Chỉnh font, cỡ chữ, line-height, khoảng cách khối và độ rộng dòng cho Prose trên nội dung thật, rồi copy CSS preset."],
+    en: ["Typeset", "Tune fonts, size, line height, block spacing and line length for Prose on real content, then copy the preset CSS."],
+  },
   community: {
     vi: ["Cộng đồng", "Đóng góp cho Yugen UI: báo lỗi, gửi block, dịch tài liệu, lộ trình phát triển."],
     en: ["Community", "Contribute to Yugen UI: report bugs, share blocks, translate the docs, follow the roadmap."],
@@ -32,6 +36,18 @@ const PAGES: Record<"blocks" | "templates" | "theme-designer" | "community" | "c
     en: ["Contributors", "The people who helped Yugen UI with code, docs, translations, bug reports and reviews."],
   },
 };
+
+/**
+ * Route sẽ hiện: trang component / khái niệm / nền tảng với slug không tồn tại thành trang 404 (#238), cùng đường dẫn.
+ * Router không đọc registry (giữ nhẹ) nên kiểm ở đây.
+ */
+export function resolveRoute(route: Route): Route {
+  const missing =
+    (route.kind === "component" && !COMPONENT_META_BY_SLUG[route.slug]) ||
+    (route.kind === "concept" && !CONCEPT_BY_SLUG[route.slug]) ||
+    (route.kind === "foundation" && !FOUNDATIONS.some((f) => f.slug === route.slug));
+  return missing ? { kind: "not-found", path: pathOf(route) } : route;
+}
 
 export function routeMeta(route: Route, l: LocaleValue): { title?: string; description: string } {
   const home = l.t("home.intro", { count: COMPONENTS_META.length });
@@ -54,9 +70,12 @@ export function routeMeta(route: Route, l: LocaleValue): { title?: string; descr
     }
     case "news":
       return { title: l.t("nav.news"), description: l.t("news.lead") };
+    case "not-found":
+      return { title: l.t("notFound.title"), description: l.t("notFound.description") };
     case "blocks":
     case "templates":
     case "theme-designer":
+    case "typeset":
     case "community":
     case "contributors": {
       const [title, description] = PAGES[route.kind][l.locale];
@@ -86,6 +105,8 @@ export interface DocumentHead {
   alternates: { hreflang: string; href: string }[];
   /** Ảnh chia sẻ, tính từ gốc site: og/<đường dẫn>.jpg (scripts/og-pages.mjs), trang chủ og.jpg. */
   image: string;
+  /** Trang 404: `<meta name="robots" content="noindex">`, không canonical riêng / hreflang. */
+  noindex?: true;
 }
 
 /**
@@ -94,6 +115,9 @@ export interface DocumentHead {
  */
 export function documentHead(route: Route, l: LocaleValue): DocumentHead {
   const { title, description } = routeMeta(route, l);
+  if (route.kind === "not-found") {
+    return { title: `${title} · ${SITE.name}`, description, canonical: SITE.url + localePathOf({ kind: "home" }, l.locale), alternates: [], image: "og.jpg", noindex: true };
+  }
   const path = pathOf(route);
   const translated = fallbackOf(route) !== "page";
   // Trang chưa dịch: bản tiếng Anh chỉ khác khung giao diện, nội dung là bản tiếng Việt (ngôn ngữ nguồn) → canonical về
@@ -118,6 +142,15 @@ function setAttr(selector: string, name: string, value: string) {
   document.head.querySelector(selector)?.setAttribute(name, value);
 }
 
+/** Trang 404 không cho index; trang khác bỏ thẻ (HTML 404.html có sẵn thẻ này). */
+function setRobots(noindex?: true) {
+  let meta = document.head.querySelector<HTMLMetaElement>('meta[name="robots"]');
+  if (noindex) {
+    meta ??= document.head.appendChild(Object.assign(document.createElement("meta"), { name: "robots" }));
+    meta.content = "noindex";
+  } else meta?.remove();
+}
+
 function setAlternates(alternates: DocumentHead["alternates"]) {
   document.head.querySelectorAll("link[rel=alternate][hreflang]").forEach((link) => link.remove());
   // Đặt ngay sau canonical, đúng thứ tự như HTML prerender.
@@ -133,8 +166,9 @@ function setAlternates(alternates: DocumentHead["alternates"]) {
 function useDocumentMeta(route: Route) {
   const l = useLocale();
   useEffect(() => {
-    const { title, description, canonical, alternates, image } = documentHead(route, l);
+    const { title, description, canonical, alternates, image, noindex } = documentHead(route, l);
     document.title = title;
+    setRobots(noindex);
     setAttr('meta[name="description"]', "content", description);
     setAttr('link[rel="canonical"]', "href", canonical);
     setAlternates(alternates);

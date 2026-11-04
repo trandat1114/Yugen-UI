@@ -41,7 +41,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const fileUploadMessages: FileUploadMessages = {
+export const fileUploadMessagesVi: FileUploadMessages = {
   dropzone: "Kéo thả tệp vào đây hoặc",
   browse: "chọn tệp",
   dropping: "Thả tệp để tải lên",
@@ -95,5 +95,5 @@ export const fileUploadMessagesEn: FileUploadMessages = {
   remove: (name) => `Remove ${name}`,
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `fileUploadMessagesEn` (mặc định). `fileUploadMessages` giữ cho code cũ. */
-export const fileUploadMessagesVi = fileUploadMessages;
+/** @deprecated Use `fileUploadMessagesVi` (Vietnamese) or `fileUploadMessagesEn`. Will be removed in v1.0.0. */
+export const fileUploadMessages = fileUploadMessagesVi;

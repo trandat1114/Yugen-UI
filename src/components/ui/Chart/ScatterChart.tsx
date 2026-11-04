@@ -1,5 +1,5 @@
 import * as React from "react";
-import { DataTrending20Filled, DataTrending20Regular } from "@fluentui/react-icons";
+import { DataTrending20Filled, DataTrending20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
 import { chartMessagesEn } from "./messages";
@@ -116,46 +116,44 @@ function timeTicks(min: number, max: number, count: number): number[] {
  * Marker ≥ 8px có viền bề mặt 2px để tách điểm chồng; tooltip theo điểm gần con trỏ nhất; bàn phím: Tab vào biểu đồ,
  * mũi tên duyệt các điểm theo thứ tự X. Có đường xu hướng (bình phương tối thiểu) bật/tắt được.
  */
-export const ScatterChart = React.forwardRef<HTMLElement, ScatterChartProps>(function ScatterChart(
-  {
-    data,
-    x,
-    y,
-    size,
-    group,
-    series,
-    label,
-    xLabel,
-    yLabel,
-    sizeLabel,
-    xType,
-    xFormat,
-    valueFormat,
-    axisFormat,
-    sizeFormat,
-    includeZero,
-    maxRadius = 24,
-    shapes,
-    trendLine,
-    defaultTrendLine = false,
-    onTrendLineChange,
-    hideTrendToggle,
-    legend,
-    title,
-    description,
-    toolbar,
-    height = 320,
-    locale: localeProp,
-    ariaLabel,
-    indexLabel,
-    hideTableToggle,
-    defaultShowTable,
-    texture,
-    animate = true,
-    className,
-  },
+export function ScatterChart({
+  data,
+  x,
+  y,
+  size,
+  group,
+  series,
+  label,
+  xLabel,
+  yLabel,
+  sizeLabel,
+  xType,
+  xFormat,
+  valueFormat,
+  axisFormat,
+  sizeFormat,
+  includeZero,
+  maxRadius = 24,
+  shapes,
+  trendLine,
+  defaultTrendLine = false,
+  onTrendLineChange,
+  hideTrendToggle,
+  legend,
+  title,
+  description,
+  toolbar,
+  height = 320,
+  locale: localeProp,
+  ariaLabel,
+  indexLabel,
+  hideTableToggle,
+  defaultShowTable,
+  texture,
+  animate = true,
+  className,
   ref,
-) {
+}: ScatterChartProps & { ref?: React.Ref<HTMLElement> }) {
   const yugen = useYugen();
   const locale = localeProp ?? yugen.locale;
   const msg = useYugenMessages("chart", chartMessagesEn);
@@ -503,4 +501,4 @@ export const ScatterChart = React.forwardRef<HTMLElement, ScatterChartProps>(fun
       </PlotArea>
     </ChartContainer>
   );
-});
+}

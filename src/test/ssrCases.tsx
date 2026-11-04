@@ -64,6 +64,7 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  ColorPicker,
   ColorSwatch,
   Combobox,
   Command,
@@ -80,6 +81,7 @@ import {
   CopyCodeButton,
   CounterBadge,
   DatePicker,
+  DateTimePicker,
   Dialog,
   DialogSurface,
   DialogTitle,
@@ -109,6 +111,10 @@ import {
   InfoLabel,
   InlineDrawer,
   Input,
+  FormattedInput,
+  MonthPicker,
+  PasswordInput,
+  YearPicker,
   InputOTP,
   InteractionTag,
   Kbd,
@@ -125,6 +131,12 @@ import {
   MenuPopover,
   MenuTrigger,
   Menubar,
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
   MenubarContent,
   MenubarItem,
   MenubarMenu,
@@ -177,6 +189,8 @@ import {
   Slider,
   SpinButton,
   Spinner,
+  StatusPage,
+  ErrorBoundary,
   SplitButton,
   Sparkline,
   Stagger,
@@ -425,6 +439,20 @@ export const SSR_CASES: SsrCase[] = [
     ),
   },
   {
+    name: "PasswordInput / FormattedInput",
+    render: () => (
+      <div>
+        <PasswordInput aria-label="Mật khẩu" strength defaultValue="abc12345" />
+        <FormattedInput format="phone" aria-label="Điện thoại" defaultValue="0912345678" name="phone" />
+        <FormattedInput format="currency" currency="VND" aria-label="Số tiền" defaultValue="1500000" />
+      </div>
+    ),
+  },
+  {
+    name: "ColorPicker",
+    render: () => <ColorPicker alpha defaultValue="#0F6CBD" swatches={["#0F6CBD", "#C2347A"]} />,
+  },
+  {
     name: "Calendar",
     render: () => <Calendar mode="single" selected={new Date(2026, 9, 12)} defaultMonth={new Date(2026, 9, 1)} />,
     knownServerWarnings: [
@@ -437,11 +465,44 @@ export const SSR_CASES: SsrCase[] = [
       <div>
         <DatePicker aria-label="Ngày bắt đầu" value={new Date(2026, 9, 12)} />
         <DatePicker aria-label="Ngày kết thúc" value={null} clearable />
+        <MonthPicker aria-label="Tháng" defaultValue={new Date(2026, 9, 1)} />
+        <YearPicker aria-label="Năm" defaultValue={new Date(2026, 0, 1)} />
+        <DateTimePicker aria-label="Bắt đầu" defaultValue={new Date(2026, 9, 12, 9, 30)} />
       </div>
     ),
   },
 
   /* ---------- Điều hướng ---------- */
+  {
+    name: "NavigationMenu",
+    render: () => (
+      <NavigationMenu>
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger>Sản phẩm</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <NavigationMenuLink href="#a" description="Báo cáo">
+                Phân tích
+              </NavigationMenuLink>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink href="#b" active>
+              Bảng giá
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
+    ),
+  },
+  {
+    name: "StatusPage / ErrorBoundary",
+    render: () => (
+      <ErrorBoundary>
+        <StatusPage status={404} errorId="7f3a-91c2" />
+      </ErrorBoundary>
+    ),
+  },
   {
     name: "Tabs / Breadcrumb / Pagination / Nav",
     render: () => (
@@ -644,7 +705,7 @@ export const SSR_CASES: SsrCase[] = [
           <CarouselCard>Slide 2</CarouselCard>
           <CarouselCard>Slide 3</CarouselCard>
         </CarouselViewport>
-        <CarouselNavContainer autoplay />
+        <CarouselNavContainer showAutoplayToggle />
       </Carousel>
     ),
   },

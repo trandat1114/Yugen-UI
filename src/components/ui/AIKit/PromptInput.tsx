@@ -17,7 +17,7 @@ import {
   Send20Filled,
   Stop20Filled,
   Video20Regular,
-} from "@fluentui/react-icons";
+} from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { useAnnounce } from "../AriaLive/AriaLive";
@@ -25,6 +25,7 @@ import { Button } from "../Button/Button";
 import { fieldControlClass } from "../Field/Field";
 import { useYugen, useYugenMessages } from "../YugenProvider/context";
 import { promptInputMessagesEn, type PromptInputMessages } from "./messages";
+import { useComposedRefs } from "../_internal/composeRefs";
 
 export { promptInputMessages, promptInputMessagesVi, promptInputMessagesEn, type PromptInputMessages } from "./messages";
 
@@ -219,296 +220,284 @@ export interface PromptInputProps
 }
 
 /** ref trỏ vào <textarea>. */
-export const PromptInput = React.forwardRef<HTMLTextAreaElement, PromptInputProps>(
-  (
-    {
-      value,
-      defaultValue = "",
-      onValueChange,
-      files: filesProp,
-      defaultFiles = [],
-      onFilesChange,
-      onSubmit,
-      onFilesRejected,
-      streaming = false,
-      onStop,
-      disabled = false,
-      placeholder,
-      label,
-      accept,
-      maxFiles,
-      maxSize,
-      allowAttachments = true,
-      toolbar,
-      maxRows = 8,
-      showHint = false,
-      sendLabel: sendLabelProp,
-      stopLabel: stopLabelProp,
-      textareaProps,
-      className,
-      ...props
-    },
-    ref,
-  ) => {
-    const msg = useYugenMessages("promptInput", promptInputMessagesEn);
-    const { locale } = useYugen();
-    const sendLabel = sendLabelProp ?? msg.send;
-    const stopLabel = stopLabelProp ?? msg.stop;
-    const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
-    const inputRef = React.useRef<HTMLInputElement>(null);
-    const composing = React.useRef(false);
-    const dragDepth = React.useRef(0);
-    const errorId = React.useId();
-    const hintId = React.useId();
-    const listId = React.useId();
-    const { announce } = useAnnounce();
+export function PromptInput({
+  value,
+  defaultValue = "",
+  onValueChange,
+  files: filesProp,
+  defaultFiles = [],
+  onFilesChange,
+  onSubmit,
+  onFilesRejected,
+  streaming = false,
+  onStop,
+  disabled = false,
+  placeholder,
+  label,
+  accept,
+  maxFiles,
+  maxSize,
+  allowAttachments = true,
+  toolbar,
+  maxRows = 8,
+  showHint = false,
+  sendLabel: sendLabelProp,
+  stopLabel: stopLabelProp,
+  textareaProps,
+  className,
+  ref,
+  ...props
+}: PromptInputProps & { ref?: React.Ref<HTMLTextAreaElement> }) {
+  const msg = useYugenMessages("promptInput", promptInputMessagesEn);
+  const { locale } = useYugen();
+  const sendLabel = sendLabelProp ?? msg.send;
+  const stopLabel = stopLabelProp ?? msg.stop;
+  const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  const composing = React.useRef(false);
+  const dragDepth = React.useRef(0);
+  const errorId = React.useId();
+  const hintId = React.useId();
+  const listId = React.useId();
+  const { announce } = useAnnounce();
 
-    const [text, setText] = useControllableState({ value, defaultValue, onChange: onValueChange });
-    const [files, setFiles] = useControllableState({ value: filesProp, defaultValue: defaultFiles, onChange: onFilesChange });
-    const [errors, setErrors] = React.useState<string[]>([]);
-    const [dragging, setDragging] = React.useState(false);
-    const previews = useFilePreviews(files);
+  const [text, setText] = useControllableState({ value, defaultValue, onChange: onValueChange });
+  const [files, setFiles] = useControllableState({ value: filesProp, defaultValue: defaultFiles, onChange: onFilesChange });
+  const [errors, setErrors] = React.useState<string[]>([]);
+  const [dragging, setDragging] = React.useState(false);
+  const previews = useFilePreviews(files);
 
-    const canSend = (text.trim().length > 0 || files.length > 0) && !disabled && !streaming;
-    const canAttach = allowAttachments && !disabled && (maxFiles === undefined || files.length < maxFiles);
+  const canSend = (text.trim().length > 0 || files.length > 0) && !disabled && !streaming;
+  const canAttach = allowAttachments && !disabled && (maxFiles === undefined || files.length < maxFiles);
 
-    const setRefs = React.useCallback(
-      (node: HTMLTextAreaElement | null) => {
-        textareaRef.current = node;
-        if (typeof ref === "function") ref(node);
-        else if (ref) ref.current = node;
-      },
-      [ref],
-    );
+  const setRefs = useComposedRefs(textareaRef, ref);
 
-    // Tự giãn theo nội dung, tối đa maxRows dòng.
-    useIsomorphicLayoutEffect(() => {
-      const el = textareaRef.current;
-      if (!el) return;
-      el.style.height = "auto";
-      const style = window.getComputedStyle(el);
-      const line = parseFloat(style.lineHeight) || parseFloat(style.fontSize) * 1.4 || 20;
-      const padding = (parseFloat(style.paddingTop) || 0) + (parseFloat(style.paddingBottom) || 0);
-      const max = line * maxRows + padding;
-      el.style.height = `${Math.min(el.scrollHeight, max)}px`;
-      el.style.overflowY = el.scrollHeight > max ? "auto" : "hidden";
-    }, [text, maxRows]);
+  // Tự giãn theo nội dung, tối đa maxRows dòng.
+  useIsomorphicLayoutEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    const style = window.getComputedStyle(el);
+    const line = parseFloat(style.lineHeight) || parseFloat(style.fontSize) * 1.4 || 20;
+    const padding = (parseFloat(style.paddingTop) || 0) + (parseFloat(style.paddingBottom) || 0);
+    const max = line * maxRows + padding;
+    el.style.height = `${Math.min(el.scrollHeight, max)}px`;
+    el.style.overflowY = el.scrollHeight > max ? "auto" : "hidden";
+  }, [text, maxRows]);
 
-    const addFiles = (incoming: File[]) => {
-      if (!allowAttachments || disabled || incoming.length === 0) return;
-      const { accepted, rejected } = validateFiles(incoming, { accept, maxSize, maxFiles, existing: files, messages: msg, locale });
-      // Gộp các lỗi "quá số lượng" thành một câu.
-      const messages = Array.from(new Set(rejected.map((r) => r.message)));
-      setErrors(messages);
-      if (rejected.length) onFilesRejected?.(rejected);
-      if (accepted.length) {
-        setFiles([...files, ...accepted]);
-        announce(accepted.length === 1 ? msg.attachedOne(accepted[0].name) : msg.attachedMany(accepted.length));
-      }
-    };
+  const addFiles = (incoming: File[]) => {
+    if (!allowAttachments || disabled || incoming.length === 0) return;
+    const { accepted, rejected } = validateFiles(incoming, { accept, maxSize, maxFiles, existing: files, messages: msg, locale });
+    // Gộp các lỗi "quá số lượng" thành một câu.
+    const messages = Array.from(new Set(rejected.map((r) => r.message)));
+    setErrors(messages);
+    if (rejected.length) onFilesRejected?.(rejected);
+    if (accepted.length) {
+      setFiles([...files, ...accepted]);
+      announce(accepted.length === 1 ? msg.attachedOne(accepted[0].name) : msg.attachedMany(accepted.length));
+    }
+  };
 
-    const removeFile = (file: File) => {
-      setFiles(files.filter((f) => f !== file));
-      setErrors([]);
-      announce(msg.removed(file.name));
-      textareaRef.current?.focus();
-    };
+  const removeFile = (file: File) => {
+    setFiles(files.filter((f) => f !== file));
+    setErrors([]);
+    announce(msg.removed(file.name));
+    textareaRef.current?.focus();
+  };
 
-    const submit = () => {
-      if (!canSend) return;
-      const result = onSubmit({ text: text.trim(), files });
-      if (result === false) return;
-      setText("");
-      setFiles([]);
-      setErrors([]);
-      textareaRef.current?.focus();
-    };
+  const submit = () => {
+    if (!canSend) return;
+    const result = onSubmit({ text: text.trim(), files });
+    if (result === false) return;
+    setText("");
+    setFiles([]);
+    setErrors([]);
+    textareaRef.current?.focus();
+  };
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      textareaProps?.onKeyDown?.(e);
-      if (e.defaultPrevented || e.key !== "Enter" || e.shiftKey || e.altKey) return;
-      // Bộ gõ (Telex/VNI, IME CJK) đang ghép chữ: Enter chỉ xác nhận chữ. keyCode 229 = Safari sau compositionend.
-      if (composing.current || e.nativeEvent.isComposing || e.keyCode === 229) return;
-      e.preventDefault();
-      submit();
-    };
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    textareaProps?.onKeyDown?.(e);
+    if (e.defaultPrevented || e.key !== "Enter" || e.shiftKey || e.altKey) return;
+    // Bộ gõ (Telex/VNI, IME CJK) đang ghép chữ: Enter chỉ xác nhận chữ. keyCode 229 = Safari sau compositionend.
+    if (composing.current || e.nativeEvent.isComposing || e.keyCode === 229) return;
+    e.preventDefault();
+    submit();
+  };
 
-    const hasFiles = (e: React.DragEvent) => Array.from(e.dataTransfer?.types ?? []).includes("Files");
+  const hasFiles = (e: React.DragEvent) => Array.from(e.dataTransfer?.types ?? []).includes("Files");
 
-    const describedBy =
-      cn(errors.length > 0 && errorId, showHint && hintId, files.length > 0 && listId, textareaProps?.["aria-describedby"]) || undefined;
+  const describedBy =
+    cn(errors.length > 0 && errorId, showHint && hintId, files.length > 0 && listId, textareaProps?.["aria-describedby"]) || undefined;
 
-    return (
-      <form
-        data-disabled={disabled || undefined}
-        aria-busy={streaming || undefined}
-        className={cn(fieldControlClass, "flex flex-col", className)}
-        onSubmit={(e) => {
-          e.preventDefault();
-          submit();
-        }}
-        onDragEnter={(e) => {
-          if (!canAttach || !hasFiles(e)) return;
-          e.preventDefault();
-          dragDepth.current += 1;
-          setDragging(true);
-        }}
-        onDragOver={(e) => {
-          if (!canAttach || !hasFiles(e)) return;
-          e.preventDefault();
-          e.dataTransfer.dropEffect = "copy";
-        }}
-        onDragLeave={() => {
-          dragDepth.current = Math.max(0, dragDepth.current - 1);
-          if (dragDepth.current === 0) setDragging(false);
-        }}
-        onDrop={(e) => {
-          if (!hasFiles(e)) return;
-          e.preventDefault();
-          dragDepth.current = 0;
-          setDragging(false);
-          addFiles(Array.from(e.dataTransfer.files));
-        }}
-        {...props}
-      >
-        {files.length > 0 && (
-          <ul id={listId} aria-label={msg.attachments} className="flex flex-wrap gap-1 px-2 pt-2">
-            {files.map((file, i) => {
-              const Icon = fileIcon(file);
-              const preview = previews.get(file);
-              return (
-                <li
-                  key={`${file.name}-${file.size}-${file.lastModified}-${i}`}
-                  className="flex max-w-60 min-w-0 items-center gap-2 rounded-medium border border-stroke-2 bg-background-2 py-1 ps-1 pe-0.5"
-                >
-                  {preview ? (
-                    <img src={preview} alt="" className="size-8 shrink-0 rounded-small object-cover" />
-                  ) : (
-                    <span aria-hidden className="flex size-8 shrink-0 items-center justify-center rounded-small bg-background-4 text-foreground-2">
-                      <Icon className="size-5" />
-                    </span>
-                  )}
-                  <span className="flex min-w-0 flex-col">
-                    <span className="truncate text-caption1 font-semibold text-foreground-1" title={file.name}>
-                      {file.name}
-                    </span>
-                    <span className="text-caption2 text-foreground-3 tabular-nums">{formatFileSize(file.size, locale)}</span>
+  return (
+    <form
+      data-disabled={disabled || undefined}
+      aria-busy={streaming || undefined}
+      className={cn(fieldControlClass, "flex flex-col", className)}
+      onSubmit={(e) => {
+        e.preventDefault();
+        submit();
+      }}
+      onDragEnter={(e) => {
+        if (!canAttach || !hasFiles(e)) return;
+        e.preventDefault();
+        dragDepth.current += 1;
+        setDragging(true);
+      }}
+      onDragOver={(e) => {
+        if (!canAttach || !hasFiles(e)) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "copy";
+      }}
+      onDragLeave={() => {
+        dragDepth.current = Math.max(0, dragDepth.current - 1);
+        if (dragDepth.current === 0) setDragging(false);
+      }}
+      onDrop={(e) => {
+        if (!hasFiles(e)) return;
+        e.preventDefault();
+        dragDepth.current = 0;
+        setDragging(false);
+        addFiles(Array.from(e.dataTransfer.files));
+      }}
+      {...props}
+    >
+      {files.length > 0 && (
+        <ul id={listId} aria-label={msg.attachments} className="flex flex-wrap gap-1 px-2 pt-2">
+          {files.map((file, i) => {
+            const Icon = fileIcon(file);
+            const preview = previews.get(file);
+            return (
+              <li
+                key={`${file.name}-${file.size}-${file.lastModified}-${i}`}
+                className="flex max-w-60 min-w-0 items-center gap-2 rounded-medium border border-stroke-2 bg-background-2 py-1 ps-1 pe-0.5"
+              >
+                {preview ? (
+                  <img src={preview} alt="" className="size-8 shrink-0 rounded-small object-cover" />
+                ) : (
+                  <span aria-hidden className="flex size-8 shrink-0 items-center justify-center rounded-small bg-background-4 text-foreground-2">
+                    <Icon className="size-5" />
                   </span>
-                  <Button
-                    size="small"
-                    appearance="subtle"
-                    icon={<Dismiss12Regular />}
-                    aria-label={msg.remove(file.name)}
-                    disabled={disabled}
-                    onClick={() => removeFile(file)}
-                    className="shrink-0"
-                  />
-                </li>
-              );
-            })}
-          </ul>
+                )}
+                <span className="flex min-w-0 flex-col">
+                  <span className="truncate text-caption1 font-semibold text-foreground-1" title={file.name}>
+                    {file.name}
+                  </span>
+                  <span className="text-caption2 text-foreground-3 tabular-nums">{formatFileSize(file.size, locale)}</span>
+                </span>
+                <Button
+                  size="small"
+                  appearance="subtle"
+                  icon={<Dismiss12Regular />}
+                  aria-label={msg.remove(file.name)}
+                  disabled={disabled}
+                  onClick={() => removeFile(file)}
+                  className="shrink-0"
+                />
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      <textarea
+        rows={1}
+        {...textareaProps}
+        ref={setRefs}
+        value={text}
+        disabled={disabled}
+        placeholder={placeholder ?? msg.placeholder}
+        aria-label={textareaProps?.["aria-label"] ?? label ?? msg.label}
+        aria-describedby={describedBy}
+        onChange={(e) => setText(e.target.value)}
+        onKeyDown={handleKeyDown}
+        onCompositionStart={(e) => {
+          composing.current = true;
+          textareaProps?.onCompositionStart?.(e);
+        }}
+        onCompositionEnd={(e) => {
+          composing.current = false;
+          textareaProps?.onCompositionEnd?.(e);
+        }}
+        onPaste={(e) => {
+          textareaProps?.onPaste?.(e);
+          const pasted = Array.from(e.clipboardData?.files ?? []);
+          // Chỉ chặn dán khi clipboard chỉ có tệp (ảnh chụp màn hình…); có chữ thì dán chữ như thường.
+          if (pasted.length && allowAttachments && !e.clipboardData.getData("text/plain")) {
+            e.preventDefault();
+            addFiles(pasted);
+          }
+        }}
+        className={cn(
+          "block w-full resize-none bg-transparent px-3 pt-2 pb-1 text-body1 text-foreground-1 outline-none",
+          "placeholder:text-foreground-4 disabled:cursor-not-allowed disabled:text-foreground-disabled",
+          textareaProps?.className,
         )}
+      />
 
-        <textarea
-          rows={1}
-          {...textareaProps}
-          ref={setRefs}
-          value={text}
-          disabled={disabled}
-          placeholder={placeholder ?? msg.placeholder}
-          aria-label={textareaProps?.["aria-label"] ?? label ?? msg.label}
-          aria-describedby={describedBy}
-          onChange={(e) => setText(e.target.value)}
-          onKeyDown={handleKeyDown}
-          onCompositionStart={(e) => {
-            composing.current = true;
-            textareaProps?.onCompositionStart?.(e);
-          }}
-          onCompositionEnd={(e) => {
-            composing.current = false;
-            textareaProps?.onCompositionEnd?.(e);
-          }}
-          onPaste={(e) => {
-            textareaProps?.onPaste?.(e);
-            const pasted = Array.from(e.clipboardData?.files ?? []);
-            // Chỉ chặn dán khi clipboard chỉ có tệp (ảnh chụp màn hình…); có chữ thì dán chữ như thường.
-            if (pasted.length && allowAttachments && !e.clipboardData.getData("text/plain")) {
-              e.preventDefault();
-              addFiles(pasted);
-            }
-          }}
-          className={cn(
-            "block w-full resize-none bg-transparent px-3 pt-2 pb-1 text-body1 text-foreground-1 outline-none",
-            "placeholder:text-foreground-4 disabled:cursor-not-allowed disabled:text-foreground-disabled",
-            textareaProps?.className,
-          )}
-        />
-
-        {errors.length > 0 && (
-          <div id={errorId} role="alert" className="flex items-start gap-1 px-3 pb-1 text-caption1 text-danger-foreground-1">
-            <ErrorCircle12Filled aria-hidden className="mt-0.5 shrink-0" />
-            <span className="min-w-0">{errors.join(" ")}</span>
-          </div>
-        )}
-
-        <div className="flex items-center gap-1 px-1 pb-1">
-          {allowAttachments && (
-            <>
-              <input
-                ref={inputRef}
-                type="file"
-                hidden
-                multiple={maxFiles !== 1}
-                accept={accept}
-                tabIndex={-1}
-                onChange={(e) => {
-                  addFiles(Array.from(e.target.files ?? []));
-                  e.target.value = "";
-                }}
-              />
-              <Button
-                appearance="subtle"
-                icon={<Attach20Regular />}
-                aria-label={msg.attach}
-                title={msg.attach}
-                disabled={!canAttach}
-                onClick={() => inputRef.current?.click()}
-              />
-            </>
-          )}
-          {toolbar && <div className="flex min-w-0 items-center gap-0.5">{toolbar}</div>}
-          {showHint && (
-            <span id={hintId} className="hidden min-w-0 truncate ps-1 text-caption1 text-foreground-3 sm:inline">
-              {msg.hint}
-            </span>
-          )}
-          <div className="ms-auto flex shrink-0 items-center gap-2">
-            {streaming && onStop ? (
-              <Button appearance="secondary" icon={<Stop20Filled />} aria-label={stopLabel} title={stopLabel} onClick={onStop} />
-            ) : (
-              <Button
-                type="submit"
-                appearance="primary"
-                disabled={!canSend}
-                icon={<Send20Filled className="rtl:-scale-x-100" />}
-                aria-label={sendLabel}
-                title={sendLabel}
-              />
-            )}
-          </div>
+      {errors.length > 0 && (
+        <div id={errorId} role="alert" className="flex items-start gap-1 px-3 pb-1 text-caption1 text-danger-foreground-1">
+          <ErrorCircle12Filled aria-hidden className="mt-0.5 shrink-0" />
+          <span className="min-w-0">{errors.join(" ")}</span>
         </div>
+      )}
 
-        {dragging && (
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center gap-2 rounded-medium border-2 border-dashed border-brand-stroke bg-brand-background-2 text-body1 font-semibold text-brand-foreground-2"
-          >
-            <ArrowUpload20Regular />
-            {msg.dropzone}
-          </div>
+      <div className="flex items-center gap-1 px-1 pb-1">
+        {allowAttachments && (
+          <>
+            <input
+              ref={inputRef}
+              type="file"
+              hidden
+              multiple={maxFiles !== 1}
+              accept={accept}
+              tabIndex={-1}
+              onChange={(e) => {
+                addFiles(Array.from(e.target.files ?? []));
+                e.target.value = "";
+              }}
+            />
+            <Button
+              appearance="subtle"
+              icon={<Attach20Regular />}
+              aria-label={msg.attach}
+              title={msg.attach}
+              disabled={!canAttach}
+              onClick={() => inputRef.current?.click()}
+            />
+          </>
         )}
-      </form>
-    );
-  },
-);
-PromptInput.displayName = "PromptInput";
+        {toolbar && <div className="flex min-w-0 items-center gap-0.5">{toolbar}</div>}
+        {showHint && (
+          <span id={hintId} className="hidden min-w-0 truncate ps-1 text-caption1 text-foreground-3 sm:inline">
+            {msg.hint}
+          </span>
+        )}
+        <div className="ms-auto flex shrink-0 items-center gap-2">
+          {streaming && onStop ? (
+            <Button appearance="secondary" icon={<Stop20Filled />} aria-label={stopLabel} title={stopLabel} onClick={onStop} />
+          ) : (
+            <Button
+              type="submit"
+              appearance="primary"
+              disabled={!canSend}
+              icon={<Send20Filled className="rtl:-scale-x-100" />}
+              aria-label={sendLabel}
+              title={sendLabel}
+            />
+          )}
+        </div>
+      </div>
+
+      {dragging && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center gap-2 rounded-medium border-2 border-dashed border-brand-stroke bg-brand-background-2 text-body1 font-semibold text-brand-foreground-2"
+        >
+          <ArrowUpload20Regular />
+          {msg.dropzone}
+        </div>
+      )}
+    </form>
+  );
+}

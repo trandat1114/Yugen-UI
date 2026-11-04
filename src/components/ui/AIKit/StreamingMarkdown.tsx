@@ -1,6 +1,6 @@
 /** Yugen Labs · StreamingMarkdown — hiển thị Markdown đang về theo từng token: an toàn, không nháy, ghi nhớ theo khối. */
 import * as React from "react";
-import { CheckboxChecked16Regular, CheckboxUnchecked16Regular } from "@fluentui/react-icons";
+import { CheckboxChecked16Regular, CheckboxUnchecked16Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useAnnounce } from "../AriaLive/AriaLive";
 import { CodeBlock, CopyCodeButton } from "../CodeBlock/CodeBlock";
@@ -299,75 +299,70 @@ function citationKey(list?: CitationSource[]) {
   return list ? list.map((s) => `${s.title}|${s.url ?? ""}|${s.snippet ?? ""}`).join("\n") : "";
 }
 
-export const StreamingMarkdown = React.forwardRef<HTMLDivElement, StreamingMarkdownProps>(
-  (
-    {
-      children = "",
-      streaming = false,
-      headingOffset = 2,
-      citations,
-      breaks = true,
-      caret = true,
-      size = "medium",
-      announceWhenDone = false,
-      className,
-      ...props
-    },
-    ref,
-  ) => {
-    const msg = useYugenMessages("streamingMarkdown", streamingMarkdownMessagesEn);
-    const stateRef = React.useRef<MarkdownParseState | null>(null);
-    const parsed = parseMarkdownIncremental(children, streaming, stateRef.current);
-    stateRef.current = parsed;
-    const blocks = parsed.blocks;
+export function StreamingMarkdown({
+  children = "",
+  streaming = false,
+  headingOffset = 2,
+  citations,
+  breaks = true,
+  caret = true,
+  size = "medium",
+  announceWhenDone = false,
+  className,
+  ref,
+  ...props
+}: StreamingMarkdownProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const msg = useYugenMessages("streamingMarkdown", streamingMarkdownMessagesEn);
+  const stateRef = React.useRef<MarkdownParseState | null>(null);
+  const parsed = parseMarkdownIncremental(children, streaming, stateRef.current);
+  stateRef.current = parsed;
+  const blocks = parsed.blocks;
 
-    // Mảng citations truyền inline mỗi lần render vẫn giữ ctx ổn định nếu nội dung không đổi.
-    const key = citationKey(citations);
-    const citationsRef = React.useRef(citations);
-    if (citationKey(citationsRef.current) !== key) citationsRef.current = citations;
-    const stableCitations = citationsRef.current;
+  // Mảng citations truyền inline mỗi lần render vẫn giữ ctx ổn định nếu nội dung không đổi.
+  const key = citationKey(citations);
+  const citationsRef = React.useRef(citations);
+  if (citationKey(citationsRef.current) !== key) citationsRef.current = citations;
+  const stableCitations = citationsRef.current;
 
-    const ctx = React.useMemo<RenderContext>(
-      () => ({ size, headingOffset, breaks, streaming, citations: stableCitations, msg }),
-      [size, headingOffset, breaks, streaming, stableCitations, msg],
-    );
+  const ctx = React.useMemo<RenderContext>(
+    () => ({ size, headingOffset, breaks, streaming, citations: stableCitations, msg }),
+    [size, headingOffset, breaks, streaming, stableCitations, msg],
+  );
 
-    const { announce } = useAnnounce();
-    const wasStreaming = React.useRef(streaming);
-    React.useEffect(() => {
-      if (wasStreaming.current && !streaming && announceWhenDone) {
-        const text = markdownToPlainText(blocks);
-        if (text) announce(text);
-      }
-      wasStreaming.current = streaming;
-    }, [streaming, announceWhenDone, announce, blocks]);
+  const { announce } = useAnnounce();
+  const wasStreaming = React.useRef(streaming);
+  React.useEffect(() => {
+    if (wasStreaming.current && !streaming && announceWhenDone) {
+      const text = markdownToPlainText(blocks);
+      if (text) announce(text);
+    }
+    wasStreaming.current = streaming;
+  }, [streaming, announceWhenDone, announce, blocks]);
 
-    const showCaret = streaming && caret;
-    const last = blocks[blocks.length - 1];
-    const caretInside = showCaret && !!last && last.type !== "code" && last.type !== "thematicBreak";
+  const showCaret = streaming && caret;
+  const last = blocks[blocks.length - 1];
+  const caretInside = showCaret && !!last && last.type !== "code" && last.type !== "thematicBreak";
 
-    return (
-      <div
-        ref={ref}
-        aria-busy={streaming || undefined}
-        data-streaming={streaming || undefined}
-        className={cn(
-          "flex min-w-0 flex-col text-foreground-1 wrap-break-word whitespace-normal",
-          size === "small" ? "gap-2 text-caption1" : "gap-3 text-body1",
-          className,
-        )}
-        {...props}
-      >
-        {blocks.map((block, i) => (
-          <MemoBlock key={i} block={block} ctx={ctx} caret={caretInside && i === blocks.length - 1} />
-        ))}
-        {showCaret && !caretInside && last?.type !== "code" && (
-          <span>
-            <Caret />
-          </span>
-        )}
-      </div>
-    );
-  },
-);
-StreamingMarkdown.displayName = "StreamingMarkdown";
+  return (
+    <div
+      ref={ref}
+      aria-busy={streaming || undefined}
+      data-streaming={streaming || undefined}
+      className={cn(
+        "flex min-w-0 flex-col text-foreground-1 wrap-break-word whitespace-normal",
+        size === "small" ? "gap-2 text-caption1" : "gap-3 text-body1",
+        className,
+      )}
+      {...props}
+    >
+      {blocks.map((block, i) => (
+        <MemoBlock key={i} block={block} ctx={ctx} caret={caretInside && i === blocks.length - 1} />
+      ))}
+      {showCaret && !caretInside && last?.type !== "code" && (
+        <span>
+          <Caret />
+        </span>
+      )}
+    </div>
+  );
+}

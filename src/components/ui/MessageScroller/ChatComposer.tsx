@@ -1,13 +1,14 @@
 /** Yugen Labs · ChatComposer — ô soạn tin tự giãn: Enter gửi, Shift+Enter xuống dòng. */
 import * as React from "react";
 import { useControllableState } from "../hooks/useControllableState";
-import { Send20Filled, Stop20Filled } from "@fluentui/react-icons";
+import { Send20Filled, Stop20Filled } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { Button } from "../Button/Button";
 import { fieldControlClass } from "../Field/Field";
 import { useYugenMessages } from "../YugenProvider/context";
 import { chatComposerMessagesEn } from "./messages";
+import { useComposedRefs } from "../_internal/composeRefs";
 
 export { chatComposerMessages, chatComposerMessagesVi, chatComposerMessagesEn, type ChatComposerMessages } from "./messages";
 
@@ -42,140 +43,128 @@ export interface ChatComposerProps
 }
 
 /** ref trỏ vào <textarea> (để focus lại sau khi gửi, chèn nội dung…). */
-export const ChatComposer = React.forwardRef<HTMLTextAreaElement, ChatComposerProps>(
-  (
-    {
-      value,
-      defaultValue = "",
-      onValueChange,
-      onSend,
-      placeholder,
-      label,
-      disabled = false,
-      maxLength,
-      showCount = false,
-      maxRows = 6,
-      actions,
-      busy = false,
-      onStop,
-      sendLabel,
-      showHint = false,
-      textareaProps,
-      className,
-      ...props
-    },
-    ref,
-  ) => {
-    const msg = useYugenMessages("chatComposer", chatComposerMessagesEn);
-    const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
-    const counterId = React.useId();
-    const hintId = React.useId();
-    const [text, setText] = useControllableState({ value, defaultValue, onChange: onValueChange });
-    const canSend = text.trim().length > 0 && !disabled && !busy;
+export function ChatComposer({
+  value,
+  defaultValue = "",
+  onValueChange,
+  onSend,
+  placeholder,
+  label,
+  disabled = false,
+  maxLength,
+  showCount = false,
+  maxRows = 6,
+  actions,
+  busy = false,
+  onStop,
+  sendLabel,
+  showHint = false,
+  textareaProps,
+  className,
+  ref,
+  ...props
+}: ChatComposerProps & { ref?: React.Ref<HTMLTextAreaElement> }) {
+  const msg = useYugenMessages("chatComposer", chatComposerMessagesEn);
+  const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
+  const counterId = React.useId();
+  const hintId = React.useId();
+  const [text, setText] = useControllableState({ value, defaultValue, onChange: onValueChange });
+  const canSend = text.trim().length > 0 && !disabled && !busy;
 
-    const setRefs = React.useCallback(
-      (node: HTMLTextAreaElement | null) => {
-        textareaRef.current = node;
-        if (typeof ref === "function") ref(node);
-        else if (ref) ref.current = node;
-      },
-      [ref],
-    );
+  const setRefs = useComposedRefs(textareaRef, ref);
 
-    // Tự giãn chiều cao theo nội dung, tối đa maxRows dòng.
-    useIsomorphicLayoutEffect(() => {
-      const el = textareaRef.current;
-      if (!el) return;
-      el.style.height = "auto";
-      const style = window.getComputedStyle(el);
-      const line = parseFloat(style.lineHeight) || parseFloat(style.fontSize) * 1.4;
-      const padding = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
-      const max = line * maxRows + padding;
-      el.style.height = `${Math.min(el.scrollHeight, max)}px`;
-      el.style.overflowY = el.scrollHeight > max ? "auto" : "hidden";
-    }, [text, maxRows]);
+  // Tự giãn chiều cao theo nội dung, tối đa maxRows dòng.
+  useIsomorphicLayoutEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    const style = window.getComputedStyle(el);
+    const line = parseFloat(style.lineHeight) || parseFloat(style.fontSize) * 1.4;
+    const padding = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+    const max = line * maxRows + padding;
+    el.style.height = `${Math.min(el.scrollHeight, max)}px`;
+    el.style.overflowY = el.scrollHeight > max ? "auto" : "hidden";
+  }, [text, maxRows]);
 
-    const send = () => {
-      if (!canSend) return;
-      onSend(text.trim());
-      setText("");
-      textareaRef.current?.focus();
-    };
+  const send = () => {
+    if (!canSend) return;
+    onSend(text.trim());
+    setText("");
+    textareaRef.current?.focus();
+  };
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      textareaProps?.onKeyDown?.(e);
-      if (e.defaultPrevented) return;
-      // Không gửi khi bộ gõ (Telex/VNI, IME) còn đang ghép chữ.
-      if (e.key === "Enter" && !e.shiftKey && !e.altKey && !e.nativeEvent.isComposing) {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    textareaProps?.onKeyDown?.(e);
+    if (e.defaultPrevented) return;
+    // Không gửi khi bộ gõ (Telex/VNI, IME) còn đang ghép chữ.
+    if (e.key === "Enter" && !e.shiftKey && !e.altKey && !e.nativeEvent.isComposing) {
+      e.preventDefault();
+      send();
+    }
+  };
+
+  const nearLimit = maxLength !== undefined && text.length >= maxLength * 0.9;
+  const describedBy = cn(showCount && maxLength !== undefined && counterId, showHint && hintId, textareaProps?.["aria-describedby"]) || undefined;
+
+  return (
+    <form
+      data-disabled={disabled || undefined}
+      className={cn(fieldControlClass, "flex flex-col", className)}
+      onSubmit={(e) => {
         e.preventDefault();
         send();
-      }
-    };
-
-    const nearLimit = maxLength !== undefined && text.length >= maxLength * 0.9;
-    const describedBy = cn(showCount && maxLength !== undefined && counterId, showHint && hintId, textareaProps?.["aria-describedby"]) || undefined;
-
-    return (
-      <form
-        data-disabled={disabled || undefined}
-        className={cn(fieldControlClass, "flex flex-col", className)}
-        onSubmit={(e) => {
-          e.preventDefault();
-          send();
-        }}
-        {...props}
-      >
-        <textarea
-          rows={1}
-          {...textareaProps}
-          ref={setRefs}
-          value={text}
-          disabled={disabled}
-          maxLength={maxLength}
-          placeholder={placeholder ?? msg.placeholder}
-          aria-label={textareaProps?.["aria-label"] ?? label ?? msg.label}
-          aria-describedby={describedBy}
-          onChange={(e) => setText(e.target.value)}
-          onKeyDown={handleKeyDown}
-          className={cn(
-            "block w-full resize-none bg-transparent px-3 pt-2 pb-1 text-body1 text-foreground-1 outline-none",
-            "placeholder:text-foreground-4 disabled:cursor-not-allowed disabled:text-foreground-disabled",
-            textareaProps?.className,
-          )}
-        />
-        <div className="flex items-center gap-1 px-1 pb-1">
-          {actions && <div className="flex min-w-0 items-center gap-0.5">{actions}</div>}
-          {showHint && (
-            <span id={hintId} className="hidden min-w-0 truncate ps-1 text-caption1 text-foreground-3 sm:inline">
-              {msg.hint}
+      }}
+      {...props}
+    >
+      <textarea
+        rows={1}
+        {...textareaProps}
+        ref={setRefs}
+        value={text}
+        disabled={disabled}
+        maxLength={maxLength}
+        placeholder={placeholder ?? msg.placeholder}
+        aria-label={textareaProps?.["aria-label"] ?? label ?? msg.label}
+        aria-describedby={describedBy}
+        onChange={(e) => setText(e.target.value)}
+        onKeyDown={handleKeyDown}
+        className={cn(
+          "block w-full resize-none bg-transparent px-3 pt-2 pb-1 text-body1 text-foreground-1 outline-none",
+          "placeholder:text-foreground-4 disabled:cursor-not-allowed disabled:text-foreground-disabled",
+          textareaProps?.className,
+        )}
+      />
+      <div className="flex items-center gap-1 px-1 pb-1">
+        {actions && <div className="flex min-w-0 items-center gap-0.5">{actions}</div>}
+        {showHint && (
+          <span id={hintId} className="hidden min-w-0 truncate ps-1 text-caption1 text-foreground-3 sm:inline">
+            {msg.hint}
+          </span>
+        )}
+        <div className="ms-auto flex shrink-0 items-center gap-2">
+          {showCount && maxLength !== undefined && (
+            <span
+              id={counterId}
+              className={cn("text-caption1 tabular-nums", nearLimit ? "text-warning-foreground-1" : "text-foreground-3")}
+            >
+              <span className="sr-only">{msg.countPrefix} </span>
+              {text.length}/{maxLength}
+              <span className="sr-only"> {msg.countSuffix}</span>
             </span>
           )}
-          <div className="ms-auto flex shrink-0 items-center gap-2">
-            {showCount && maxLength !== undefined && (
-              <span
-                id={counterId}
-                className={cn("text-caption1 tabular-nums", nearLimit ? "text-warning-foreground-1" : "text-foreground-3")}
-              >
-                <span className="sr-only">{msg.countPrefix} </span>
-                {text.length}/{maxLength}
-                <span className="sr-only"> {msg.countSuffix}</span>
-              </span>
-            )}
-            {busy && onStop ? (
-              <Button appearance="secondary" icon={<Stop20Filled />} aria-label={msg.stop} onClick={onStop} />
-            ) : (
-              <Button
-                type="submit"
-                appearance="primary"
-                disabled={!canSend}
-                icon={<Send20Filled className="rtl:-scale-x-100" />}
-                aria-label={sendLabel ?? msg.send}
-              />
-            )}
-          </div>
+          {busy && onStop ? (
+            <Button appearance="secondary" icon={<Stop20Filled />} aria-label={msg.stop} onClick={onStop} />
+          ) : (
+            <Button
+              type="submit"
+              appearance="primary"
+              disabled={!canSend}
+              icon={<Send20Filled className="rtl:-scale-x-100" />}
+              aria-label={sendLabel ?? msg.send}
+            />
+          )}
         </div>
-      </form>
-    );
-  },
-);
-ChatComposer.displayName = "ChatComposer";
+      </div>
+    </form>
+  );
+}

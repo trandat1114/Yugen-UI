@@ -21,7 +21,7 @@ export const CONCEPT_METAS: Record<string, ConceptMeta> = {
     title: "Trình duyệt & nền tảng",
     group: "Nhà phát triển",
     order: 7,
-    lead: "Yugen UI nhắm tới trình duyệt evergreen và React 18 trở lên; không cần polyfill cho các tính năng CSS hiện đại mà Tailwind CSS v4 dựa vào.",
+    lead: "Yugen UI nhắm tới trình duyệt evergreen và React 19 trở lên; không cần polyfill cho các tính năng CSS hiện đại mà Tailwind CSS v4 dựa vào.",
     toc: [
       { id: "browsers", label: "Trình duyệt" },
       { id: "css", label: "Tính năng CSS" },
@@ -127,6 +127,7 @@ export const CONCEPT_METAS: Record<string, ConceptMeta> = {
       { id: "playground", label: "Thử side & align" },
       { id: "collision", label: "Va chạm & tự lật" },
       { id: "portals", label: "Portal & theme" },
+      { id: "scroll-lock", label: "Khoá cuộn" },
       { id: "z-index", label: "Thang z-index" },
     ],
   },
@@ -215,6 +216,7 @@ export const CONCEPT_METAS: Record<string, ConceptMeta> = {
     toc: [
       { id: "attributes", label: "data-theme & data-brand" },
       { id: "provider", label: "YugenProvider" },
+      { id: "defaults", label: "Props mặc định & mật độ" },
       { id: "use-yugen", label: "Hook useYugen()" },
       { id: "nested", label: "Theme lồng nhau" },
       { id: "layers", label: "Ba lớp token" },

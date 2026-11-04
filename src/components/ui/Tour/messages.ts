@@ -16,7 +16,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const tourMessages: TourMessages = {
+export const tourMessagesVi: TourMessages = {
   next: "Tiếp",
   back: "Quay lại",
   skip: "Bỏ qua",
@@ -34,5 +34,5 @@ export const tourMessagesEn: TourMessages = {
   step: "Step",
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `tourMessagesEn` (mặc định). `tourMessages` giữ cho code cũ. */
-export const tourMessagesVi = tourMessages;
+/** @deprecated Use `tourMessagesVi` (Vietnamese) or `tourMessagesEn`. Will be removed in v1.0.0. */
+export const tourMessages = tourMessagesVi;

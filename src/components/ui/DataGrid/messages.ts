@@ -25,7 +25,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const dataGridMessages: DataGridMessages = {
+export const dataGridMessagesVi: DataGridMessages = {
   selectRow: "Chọn hàng",
   selectAll: "Chọn tất cả hàng",
   sortAscending: "(tăng dần)",
@@ -51,5 +51,5 @@ export const dataGridMessagesEn: DataGridMessages = {
   hiddenColumns: (count) => (count === 1 ? "1 column hidden" : `${count} columns hidden`),
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `dataGridMessagesEn` (mặc định). `dataGridMessages` giữ cho code cũ. */
-export const dataGridMessagesVi = dataGridMessages;
+/** @deprecated Use `dataGridMessagesVi` (Vietnamese) or `dataGridMessagesEn`. Will be removed in v1.0.0. */
+export const dataGridMessages = dataGridMessagesVi;

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useDirection } from "@radix-ui/react-direction";
-import { Table20Filled, Table20Regular } from "@fluentui/react-icons";
+import { Table20Filled, Table20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { ToggleButton } from "../ToggleButton/ToggleButton";
 import { Table, TableBody, TableHeader, TableHeaderCell, TableRow, TableCell } from "../Table/Table";
@@ -103,8 +103,17 @@ export interface ChartLegendProps extends Omit<React.HTMLAttributes<HTMLUListEle
 }
 
 /** Legend — luôn có khi ≥ 2 chuỗi. Chữ dùng token chữ, màu chỉ nằm ở swatch. */
-export const ChartLegend = React.forwardRef<HTMLUListElement, ChartLegendProps>(
-  ({ items, shape = "rect", textured = false, onToggle, orientation = "horizontal", className, ...props }, ref) => (
+export function ChartLegend({
+  items,
+  shape = "rect",
+  textured = false,
+  onToggle,
+  orientation = "horizontal",
+  className,
+  ref,
+  ...props
+}: ChartLegendProps & { ref?: React.Ref<HTMLUListElement> }) {
+  return (
     <ul
       ref={ref}
       className={cn(
@@ -148,9 +157,8 @@ export const ChartLegend = React.forwardRef<HTMLUListElement, ChartLegendProps>(
         );
       })}
     </ul>
-  ),
-);
-ChartLegend.displayName = "ChartLegend";
+  );
+}
 
 /* ================================================================== Tooltip */
 
@@ -181,91 +189,100 @@ export interface ChartTooltipProps extends Omit<React.HTMLAttributes<HTMLDivElem
 }
 
 /** Tooltip của biểu đồ: div định vị tuyệt đối trong vùng vẽ, tự lật xuống dưới / kẹp trong khung. Giá trị đậm, nhãn phụ. */
-export const ChartTooltip = React.forwardRef<HTMLDivElement, ChartTooltipProps>(
-  ({ x, y, title, rows, textured = false, placement = "auto", origin, className, children, ...props }, forwardedRef) => {
-    const innerRef = React.useRef<HTMLDivElement>(null);
-    const dir = useDirection();
-    React.useImperativeHandle(forwardedRef, () => innerRef.current as HTMLDivElement);
+export function ChartTooltip({
+  x,
+  y,
+  title,
+  rows,
+  textured = false,
+  placement = "auto",
+  origin,
+  className,
+  children,
+  ref: forwardedRef,
+  ...props
+}: ChartTooltipProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const innerRef = React.useRef<HTMLDivElement>(null);
+  const dir = useDirection();
+  React.useImperativeHandle(forwardedRef, () => innerRef.current as HTMLDivElement);
 
-    React.useLayoutEffect(() => {
-      const el = innerRef.current;
-      const parent = el?.offsetParent as HTMLElement | null;
-      if (!el || !parent) return;
-      const w = el.offsetWidth;
-      const h = el.offsetHeight;
-      const pw = parent.clientWidth;
-      const ph = parent.clientHeight;
-      const clampX = (v: number) => Math.min(Math.max(0, v), Math.max(0, pw - w));
-      const clampY = (v: number) => Math.min(Math.max(-4, v), Math.max(-4, ph - h));
-      // Ưu tiên phía trên điểm neo; không đủ chỗ thì đặt sang bên (không che mark), cuối cùng là phía dưới.
-      let left: number;
-      let top: number;
-      if (placement === "above") {
-        left = x - w / 2;
-        top = y - h - 12;
-      } else if (placement === "outward" && origin) {
-        const ux = x - origin[0];
-        const uy = y - origin[1];
-        left = clampX(Math.abs(ux) < w / 4 ? x - w / 2 : ux >= 0 ? x + 12 : x - 12 - w);
-        // Không kẹp dọc: được phép tràn lên tiêu đề / xuống dưới thay vì đè lên tâm vòng.
-        top = Math.abs(uy) < h / 4 ? clampY(y - h / 2) : uy >= 0 ? y + 12 : y - 12 - h;
-      } else if (y - h - 12 >= -4) {
-        left = clampX(x - w / 2);
-        top = y - h - 12;
-      } else if (x + 16 + w <= pw) {
-        left = x + 16;
-        top = clampY(y - h / 2);
-      } else if (x - 16 - w >= 0) {
-        left = x - 16 - w;
-        top = clampY(y - h / 2);
-      } else {
-        left = clampX(x - w / 2);
-        top = y + 12;
-      }
-      el.style.left = `${left}px`;
-      el.style.top = `${top}px`;
-      el.style.visibility = "visible";
-    });
+  React.useLayoutEffect(() => {
+    const el = innerRef.current;
+    const parent = el?.offsetParent as HTMLElement | null;
+    if (!el || !parent) return;
+    const w = el.offsetWidth;
+    const h = el.offsetHeight;
+    const pw = parent.clientWidth;
+    const ph = parent.clientHeight;
+    const clampX = (v: number) => Math.min(Math.max(0, v), Math.max(0, pw - w));
+    const clampY = (v: number) => Math.min(Math.max(-4, v), Math.max(-4, ph - h));
+    // Ưu tiên phía trên điểm neo; không đủ chỗ thì đặt sang bên (không che mark), cuối cùng là phía dưới.
+    let left: number;
+    let top: number;
+    if (placement === "above") {
+      left = x - w / 2;
+      top = y - h - 12;
+    } else if (placement === "outward" && origin) {
+      const ux = x - origin[0];
+      const uy = y - origin[1];
+      left = clampX(Math.abs(ux) < w / 4 ? x - w / 2 : ux >= 0 ? x + 12 : x - 12 - w);
+      // Không kẹp dọc: được phép tràn lên tiêu đề / xuống dưới thay vì đè lên tâm vòng.
+      top = Math.abs(uy) < h / 4 ? clampY(y - h / 2) : uy >= 0 ? y + 12 : y - 12 - h;
+    } else if (y - h - 12 >= -4) {
+      left = clampX(x - w / 2);
+      top = y - h - 12;
+    } else if (x + 16 + w <= pw) {
+      left = x + 16;
+      top = clampY(y - h / 2);
+    } else if (x - 16 - w >= 0) {
+      left = x - 16 - w;
+      top = clampY(y - h / 2);
+    } else {
+      left = clampX(x - w / 2);
+      top = y + 12;
+    }
+    el.style.left = `${left}px`;
+    el.style.top = `${top}px`;
+    el.style.visibility = "visible";
+  });
 
-    return (
-      <div
-        ref={innerRef}
-        aria-hidden
-        dir={dir}
-        className={cn(
-          "pointer-events-none invisible absolute w-max max-w-64 min-w-32 rounded-medium border border-stroke-2 bg-background-1 px-3 py-2 shadow-8",
-          "text-caption1 text-foreground-2",
-          className,
-        )}
-        {...props}
-      >
-        {title !== undefined && <div className="mb-1 font-semibold text-foreground-1">{title}</div>}
-        {rows && rows.length > 0 && (
-          <div className="grid grid-cols-[auto_1fr_auto] items-center gap-x-2 gap-y-0.5">
-            {rows.map((row) => (
-              <React.Fragment key={row.key}>
-                {row.swatch ? (
-                  row.swatch
-                ) : row.slot !== undefined ? (
-                  // Khoá bằng nét ngắn (không phải ô đặc); chỉ khi có hoa văn mới cần ô để thấy hoa văn.
-                  <ChartLegendSwatch slot={row.slot} shape={textured ? (row.shape ?? "line") : "line"} textured={textured} />
-                ) : (
-                  <span />
-                )}
-                <span className="min-w-0 truncate">{row.label}</span>
-                <span className="text-end font-semibold text-foreground-1 tabular-nums">
-                  <bdi>{row.value}</bdi>
-                </span>
-              </React.Fragment>
-            ))}
-          </div>
-        )}
-        {children}
-      </div>
-    );
-  },
-);
-ChartTooltip.displayName = "ChartTooltip";
+  return (
+    <div
+      ref={innerRef}
+      aria-hidden
+      dir={dir}
+      className={cn(
+        "pointer-events-none invisible absolute w-max max-w-64 min-w-32 rounded-medium border border-stroke-2 bg-background-1 px-3 py-2 shadow-8",
+        "text-caption1 text-foreground-2",
+        className,
+      )}
+      {...props}
+    >
+      {title !== undefined && <div className="mb-1 font-semibold text-foreground-1">{title}</div>}
+      {rows && rows.length > 0 && (
+        <div className="grid grid-cols-[auto_1fr_auto] items-center gap-x-2 gap-y-0.5">
+          {rows.map((row) => (
+            <React.Fragment key={row.key}>
+              {row.swatch ? (
+                row.swatch
+              ) : row.slot !== undefined ? (
+                // Khoá bằng nét ngắn (không phải ô đặc); chỉ khi có hoa văn mới cần ô để thấy hoa văn.
+                <ChartLegendSwatch slot={row.slot} shape={textured ? (row.shape ?? "line") : "line"} textured={textured} />
+              ) : (
+                <span />
+              )}
+              <span className="min-w-0 truncate">{row.label}</span>
+              <span className="text-end font-semibold text-foreground-1 tabular-nums">
+                <bdi>{row.value}</bdi>
+              </span>
+            </React.Fragment>
+          ))}
+        </div>
+      )}
+      {children}
+    </div>
+  );
+}
 
 /* ================================================================== Bảng dữ liệu */
 
@@ -276,37 +293,45 @@ export interface ChartTableProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 /** Bảng tương đương của biểu đồ (WCAG) — cột đầu là tiêu đề hàng. */
-export const ChartTable = React.forwardRef<HTMLDivElement, ChartTableProps>(({ caption, columns, rows, className, ...props }, ref) => (
-  <div ref={ref} className={cn("w-full overflow-x-auto", className)} {...props}>
-    <Table size="small" className="table-auto">
-      {caption && <caption className="sr-only">{caption}</caption>}
-      <TableHeader>
-        <TableRow>
-          {columns.map((c) => (
-            <TableHeaderCell key={c.key} className={cn("text-caption1 whitespace-nowrap text-foreground-2", c.numeric && "text-end")}>
-              {c.label}
-            </TableHeaderCell>
-          ))}
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {rows.map((r) => (
-          <TableRow key={r.key}>
-            <th scope="row" className="px-2 text-start align-middle font-normal whitespace-nowrap text-foreground-1">
-              {r.header}
-            </th>
-            {r.cells.map((cell, i) => (
-              <TableCell key={i} className="text-end whitespace-nowrap tabular-nums">
-                <bdi>{cell}</bdi>
-              </TableCell>
+export function ChartTable({
+  caption,
+  columns,
+  rows,
+  className,
+  ref,
+  ...props
+}: ChartTableProps & { ref?: React.Ref<HTMLDivElement> }) {
+  return (
+    <div ref={ref} className={cn("w-full overflow-x-auto", className)} {...props}>
+      <Table size="small" className="table-auto">
+        {caption && <caption className="sr-only">{caption}</caption>}
+        <TableHeader>
+          <TableRow>
+            {columns.map((c) => (
+              <TableHeaderCell key={c.key} className={cn("text-caption1 whitespace-nowrap text-foreground-2", c.numeric && "text-end")}>
+                {c.label}
+              </TableHeaderCell>
             ))}
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  </div>
-));
-ChartTable.displayName = "ChartTable";
+        </TableHeader>
+        <TableBody>
+          {rows.map((r) => (
+            <TableRow key={r.key}>
+              <th scope="row" className="px-2 text-start align-middle font-normal whitespace-nowrap text-foreground-1">
+                {r.header}
+              </th>
+              {r.cells.map((cell, i) => (
+                <TableCell key={i} className="text-end whitespace-nowrap tabular-nums">
+                  <bdi>{cell}</bdi>
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+}
 
 /* ================================================================== Khung biểu đồ */
 
@@ -328,85 +353,80 @@ export interface ChartContainerProps extends Omit<React.HTMLAttributes<HTMLEleme
 }
 
 /** Khung chung: tiêu đề, mô tả, thanh công cụ có nút "Bảng dữ liệu", legend và vùng vẽ. */
-export const ChartContainer = React.forwardRef<HTMLElement, ChartContainerProps>(
-  (
-    {
-      title,
-      description,
-      toolbar,
-      legend,
-      table,
-      showTable,
-      defaultShowTable = false,
-      onShowTableChange,
-      hideTableToggle = false,
-      className,
-      children,
-      ...props
-    },
-    ref,
-  ) => {
-    const msg = useYugenMessages("chart", chartMessagesEn);
-    const id = chartUid(React.useId());
-    const [tableState, setTable] = useControllableState({ value: showTable, defaultValue: defaultShowTable, onChange: onShowTableChange });
-    const tableOn = !!table && tableState;
-    const hasToggle = !!table && !hideTableToggle;
-    const hasHeader = title !== undefined || description !== undefined || toolbar !== undefined || hasToggle;
+export function ChartContainer({
+  title,
+  description,
+  toolbar,
+  legend,
+  table,
+  showTable,
+  defaultShowTable = false,
+  onShowTableChange,
+  hideTableToggle = false,
+  className,
+  children,
+  ref,
+  ...props
+}: ChartContainerProps & { ref?: React.Ref<HTMLElement> }) {
+  const msg = useYugenMessages("chart", chartMessagesEn);
+  const id = chartUid(React.useId());
+  const [tableState, setTable] = useControllableState({ value: showTable, defaultValue: defaultShowTable, onChange: onShowTableChange });
+  const tableOn = !!table && tableState;
+  const hasToggle = !!table && !hideTableToggle;
+  const hasHeader = title !== undefined || description !== undefined || toolbar !== undefined || hasToggle;
 
-    return (
-      <figure
-        ref={ref}
-        aria-labelledby={title !== undefined ? `${id}-title` : undefined}
-        aria-describedby={description !== undefined ? `${id}-desc` : undefined}
-        className={cn("flex w-full min-w-0 flex-col gap-3", className)}
-        {...props}
-      >
-        {hasHeader && (
-          <div className="flex flex-wrap items-start justify-between gap-2">
-            <div className="min-w-0 flex-1">
-              {title !== undefined && (
-                <div id={`${id}-title`} className="text-subtitle2 font-semibold text-foreground-1">
-                  {title}
-                </div>
-              )}
-              {description !== undefined && (
-                <div id={`${id}-desc`} className="mt-0.5 text-caption1 text-foreground-3">
-                  {description}
-                </div>
-              )}
-            </div>
-            {(toolbar !== undefined || hasToggle) && (
-              <div className="flex shrink-0 items-center gap-1">
-                {toolbar}
-                {hasToggle && (
-                  <ToggleButton
-                    size="small"
-                    appearance="subtle"
-                    icon={<Table20Regular />}
-                    checkedIcon={<Table20Filled />}
-                    checked={tableOn}
-                    onCheckedChange={setTable}
-                  >
-                    {msg.dataTable}
-                  </ToggleButton>
-                )}
+  return (
+    <figure
+      ref={ref}
+      aria-labelledby={title !== undefined ? `${id}-title` : undefined}
+      aria-describedby={description !== undefined ? `${id}-desc` : undefined}
+      className={cn("flex w-full min-w-0 flex-col gap-3", className)}
+      {...props}
+    >
+      {hasHeader && (
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <div className="min-w-0 flex-1">
+            {title !== undefined && (
+              <div id={`${id}-title`} className="text-subtitle2 font-semibold text-foreground-1">
+                {title}
+              </div>
+            )}
+            {description !== undefined && (
+              <div id={`${id}-desc`} className="mt-0.5 text-caption1 text-foreground-3">
+                {description}
               </div>
             )}
           </div>
-        )}
-        {tableOn ? (
-          typeof table === "function" ? table() : table
-        ) : (
-          <>
-            {legend}
-            {children}
-          </>
-        )}
-      </figure>
-    );
-  },
-);
-ChartContainer.displayName = "ChartContainer";
+          {(toolbar !== undefined || hasToggle) && (
+            <div className="flex shrink-0 items-center gap-1">
+              {toolbar}
+              {hasToggle && (
+                <ToggleButton
+                  size="small"
+                  appearance="subtle"
+                  icon={<Table20Regular />}
+                  checkedIcon={<Table20Filled />}
+                  checked={tableOn}
+                  onCheckedChange={setTable}
+                >
+                  {msg.dataTable}
+                </ToggleButton>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+      {tableOn ? (
+        typeof table === "function" ? table() : table
+      ) : (
+        <>
+          {legend}
+          {children}
+        </>
+      )}
+    </figure>
+  );
+}
 
 /* ================================================================== Vòng focus cho mark */
 

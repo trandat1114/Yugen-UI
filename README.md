@@ -15,7 +15,7 @@ copy-friendly, composable API style of [shadcn/ui](https://ui.shadcn.com/), and 
   **Teams** — or your own, generated with the Theme Designer.
 - **RTL** out of the box (logical properties, Radix `DirectionProvider`).
 - **Tree-shakeable ESM**, TypeScript types, `"use client"` directives for the Next.js App Router.
-- Icons from [Fluent System Icons](https://github.com/microsoft/fluentui-system-icons) (`@fluentui/react-icons`).
+- [Fluent System Icons](https://github.com/microsoft/fluentui-system-icons) built in, with no icon package to install. For your own icons use `@fluentui/react-icons`, or any SVG icon set.
 
 **Documentation:** <https://trandat1114.github.io/Yugen-UI/> — every component with live examples, copyable code,
 blocks, concepts and a Theme Designer, in English and Vietnamese. What comes next: [ROADMAP.md](./ROADMAP.md).
@@ -42,6 +42,7 @@ blocks, concepts and a Theme Designer, in English and Vietnamese. What comes nex
 - [Copy-paste mode](#copy-paste-mode)
 - [Next.js](#nextjs-app-router)
 - [Package contents](#package-contents)
+- [Yugen Labs](#yugen-labs)
 - [Browser support](#browser-support)
 - [Contributing](#contributing)
 - [Credits](#credits) · [License](#license)
@@ -220,7 +221,8 @@ Or copy by hand from this repository:
 3. The styles: `src/styles/tokens.css` and the theme part of `src/index.css` (`@theme`, `@utility`, keyframes, base),
    or simply `@import "yugen-ui/theme.css"`.
 4. Configure the `@/` path alias (`"paths": { "@/*": ["./src/*"] }` + your bundler alias) and install the
-   component's dependencies (Radix packages, `class-variance-authority`, `@fluentui/react-icons`…).
+   component's dependencies (Radix packages, `class-variance-authority`…). Components that show icons also need
+   `src/components/ui/_internal/icons.tsx`.
 5. Next.js App Router: add `"use client";` at the top of every copied component file.
 
 ## Starter templates
@@ -288,6 +290,12 @@ on the server.
 
 The package is ESM-only (`"type": "module"`), which every modern bundler and Next.js support.
 
+## Yugen Labs
+
+Yugen Labs components are experimental and outside SemVer: their API can change in a minor release, and What's new
+says what changed. Today that is Sheet, Reasoning, PromptInput, ChatComposer, Tour, NotificationCenter, Questionnaire, Trace, the charts (BarChart, LineChart, AreaChart, DonutChart, ScatterChart, Heatmap, Sparkline, StatTile, zoom and brush), LoadingOverlay / useSpinDelay, the Skeleton presets, and the glass material. Their docs pages carry a notice.
+A component leaves Labs when it has tests, a template uses it and its API needs no more changes.
+
 ## Browser support
 
 The last two versions of Chrome / Edge (**111+**), Firefox (**128+**) and Safari on macOS / iOS (**16.4+**) — the
@@ -350,7 +358,7 @@ dễ ghép của [shadcn/ui](https://ui.shadcn.com/), cùng brand riêng **Sakur
   bằng Theme Designer.
 - **RTL** sẵn có (thuộc tính logic, `DirectionProvider` của Radix).
 - **ESM tree-shake được**, có kiểu TypeScript, chỉ thị `"use client"` cho Next.js App Router.
-- Icon: [Fluent System Icons](https://github.com/microsoft/fluentui-system-icons) (`@fluentui/react-icons`).
+- Icon [Fluent System Icons](https://github.com/microsoft/fluentui-system-icons) có sẵn, không cần cài gói icon. Icon của bạn: dùng `@fluentui/react-icons`, hoặc bộ icon SVG bất kỳ.
 
 **Tài liệu:** <https://trandat1114.github.io/Yugen-UI/> — mọi component kèm ví dụ chạy được, code copy được, block,
 khái niệm và Theme Designer. Ảnh chụp màn hình ở [phần tiếng Anh](#yugen-ui-幽玄); lộ trình ở [ROADMAP.md](./ROADMAP.md).
@@ -515,7 +523,7 @@ Hoặc sao chép thủ công từ repo này:
 3. Style: `src/styles/tokens.css` và phần theme trong `src/index.css` (`@theme`, `@utility`, keyframes, base) — hoặc
    đơn giản `@import "yugen-ui/theme.css"`.
 4. Cấu hình alias `@/` (`"paths": { "@/*": ["./src/*"] }` + alias của bundler) và cài dependency của component
-   (các gói Radix, `class-variance-authority`, `@fluentui/react-icons`…).
+   (các gói Radix, `class-variance-authority`…). Component có icon cần thêm `src/components/ui/_internal/icons.tsx`.
 5. Next.js App Router: thêm `"use client";` ở đầu mỗi file component đã chép.
 
 ### Starter template
@@ -579,6 +587,12 @@ Bản build trên npm đã có `"use client";` ở đầu mỗi module component
 | `yugen-ui/tokens.css` | Token thô (chỉ biến CSS) |
 
 Gói chỉ có ESM (`"type": "module"`) — mọi bundler hiện đại và Next.js đều hỗ trợ.
+
+### Yugen Labs
+
+Component Yugen Labs là thử nghiệm và nằm ngoài SemVer: API có thể đổi ở một bản minor, và trang Có gì mới ghi lại
+thay đổi. Hiện gồm Sheet, Reasoning, PromptInput, ChatComposer, Tour, NotificationCenter, Questionnaire, Trace, các chart (BarChart, LineChart, AreaChart, DonutChart, ScatterChart, Heatmap, Sparkline, StatTile, zoom và brush), LoadingOverlay / useSpinDelay, các Skeleton preset, và chất liệu glass. Trang docs của chúng có ghi chú.
+Component rời Labs khi đã có test, được một template dùng và API không cần đổi thêm.
 
 ### Trình duyệt hỗ trợ
 

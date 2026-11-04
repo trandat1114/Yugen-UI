@@ -29,7 +29,7 @@ Cách dự án được vận hành hằng ngày: ai làm gì, khi nào, theo lu
 
 ## 3. Luật review & merge
 
-1. Mọi thay đổi vào `main` qua PR; CI **phải xanh** (build, unit, React 18, e2e).
+1. Mọi thay đổi vào `main` qua PR; CI **phải xanh** (build, unit, e2e).
 2. Ít nhất **1 approve** của maintainer (người viết PR không tự approve, trừ khi chỉ có một maintainer — khi đó tự merge
    sau khi CI xanh và đã tự review lại diff ngày hôm sau).
 3. Thay đổi người dùng thấy → có changeset. Thay đổi phá vỡ → RFC đã chấp nhận + mục "Thay đổi lớn" + hướng dẫn chuyển đổi.
@@ -43,7 +43,7 @@ Bảo vệ cho `next`, `release/*`, `canary` và tag `v*`: xem [Branching and Re
 
 **Settings → Branches → Branch protection cho `main`:**
 - Require a pull request before merging · Require approvals: 1 · Dismiss stale approvals
-- Require status checks: `Build · Node 24`, `Build · Node 26`, `Unit tests (React 19)`, `React 18`, `E2E (Playwright + axe)`
+- Require status checks: `Build · Node 24`, `Build · Node 26`, `Unit tests (React 19)`, `E2E (Playwright + axe)`
 - Require conversation resolution · Block force pushes · Do not allow deletions
 
 **Settings → General:** Allow squash merging (mặc định) · Automatically delete head branches · Discussions: bật.
@@ -56,14 +56,12 @@ Bảo vệ cho `next`, `release/*`, `canary` và tag `v*`: xem [Branching and Re
 
 | Workflow / file | Làm gì |
 |---|---|
-| `ci.yml` | Build, test (React 19), React 18, e2e, các check, size. Không chạy khi push / PR chỉ đổi tài liệu để đọc (README, wiki, CONTRIBUTING…; danh sách `paths-ignore` trong file); `engines.yml` và `pages.yml` dùng cùng danh sách |
-| `release.yml` | Tag `v*` → kiểm tra nhánh + nhất quán → `npm publish --provenance` (dist-tag theo kênh) → GitHub Release từ mục CHANGELOG |
+| `ci.yml` | Build, test (React 19), e2e, các check, size. Không chạy khi push / PR chỉ đổi tài liệu để đọc (README, wiki, CONTRIBUTING…; danh sách `paths-ignore` trong file); `engines.yml` và `pages.yml` dùng cùng danh sách |
+| `release.yml` | Tag `v*` → kiểm tra nhánh + nhất quán → `npm publish --provenance` (dist-tag theo kênh) → GitHub Release từ mục CHANGELOG. Push vào `canary` (hoặc chạy tay) → bản `x.y.z-canary-…` với dist-tag `canary` |
 | `release-cli.yml` | Tag `cli@*` → `check-release.mjs --tag` (CHANGELOG, mục tin trên `#/news`, version chưa dùng, `yugen-ui` đã có trên npm) → publish `@yugen-ui/cli` + `create-yugen-ui` → GitHub Release |
-| `canary.yml` | Push vào `canary` → bản `x.y.z-canary-…` với dist-tag `canary` |
 | `sync-next.yml` | Push vào `main` → `next` không có việc riêng thì merge thẳng `main` vào `next` (không PR, không CI lại) và chạy lại Docs; có việc riêng thì mở PR `main → next` |
 | `node-versions.yml` | Hằng tuần → so bản Node.js trong workflow với lịch phát hành (`scripts/node-versions.mjs`), mở PR vào `next` khi lệch rồi chạy CI trên nhánh đó |
 | `prune-branches.yml` | Ngày 1 hằng tháng → báo cáo nhánh hết tác dụng (`scripts/prune-branches.mjs`) vào job summary; chạy tay với `apply` để xoá mục "Xoá" |
-| `react-share.yml` | Ngày 1 hằng tháng → tỉ lệ tải React theo major (`scripts/react-share.mjs`) bình luận vào #62; React 18 dưới 10% là một trong hai điều kiện để ngừng hỗ trợ |
 | `engines.yml` | Hằng tuần, PR vào `main` và PR đổi `e2e/` → E2E trên Firefox và WebKit; bản chạy theo lịch hỏng thì mở / cập nhật issue, xanh lại thì đóng |
 | `pages.yml` | Deploy docs (+ docs các minor cũ) lên GitHub Pages |
 | `wiki.yml` | Đẩy `wiki/` lên GitHub Wiki |
@@ -80,7 +78,7 @@ Bảo vệ cho `next`, `release/*`, `canary` và tag `v*`: xem [Branching and Re
 | Sự cố | Làm ngay |
 |---|---|
 | Bản phát hành hỏng (lỗi build / runtime nghiêm trọng) | `npm deprecate yugen-ui@x.y.z "Lỗi …, dùng x.y.z+1"` → sửa → phát hành patch. **Không** `npm unpublish` (phá dự án người khác) |
-| Lộ secret (`NPM_TOKEN`…) | Thu hồi token trên npmjs.com ngay, tạo token mới, cập nhật secret, kiểm tra các bản publish gần đây |
+| Lộ secret | Thu hồi ngay (npm publish qua trusted publishing nên không có npm token để lộ), thay secret, kiểm tra các bản publish và lượt chạy workflow gần đây |
 | Lỗ hổng bảo mật được báo | Xác nhận trong Security Advisory riêng, tạo bản vá trong fork riêng tư, phát hành, công bố advisory + CVE nếu cần |
 | `main` đỏ | Ưu tiên sửa trước mọi PR khác; revert commit gây lỗi nếu không sửa được trong 1 ngày |
 | Docs site hỏng | Chạy lại workflow Docs với commit tốt gần nhất (`workflow_dispatch`) |

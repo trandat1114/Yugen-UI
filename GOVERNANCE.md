@@ -48,7 +48,7 @@ tính năng mới**. Không merge thứ làm giảm a11y, dù tiện đến đâ
 ## 5. Bảo mật & quyền truy cập
 
 - Lỗ hổng: theo [SECURITY.md](./SECURITY.md), xử lý riêng tư qua GitHub Security Advisories.
-- Quyền publish npm và secrets (`NPM_TOKEN`) chỉ lead maintainer giữ; bật 2FA bắt buộc cho mọi maintainer.
+- Quyền publish npm và secrets chỉ lead maintainer giữ; bật 2FA bắt buộc cho mọi maintainer. Workflow phát hành publish bằng npm trusted publishing (OIDC), không có npm token trong secrets.
 - Mọi thay đổi vào `main` qua PR (xem cấu hình bảo vệ nhánh trong wiki *Operations Handbook*).
 
 ## 6. Sửa đổi tài liệu này

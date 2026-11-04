@@ -14,7 +14,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const counterBadgeMessages: CounterBadgeMessages = {
+export const counterBadgeMessagesVi: CounterBadgeMessages = {
   dot: "Có thông báo mới",
   count: (count) => `${count} thông báo`,
   overflow: (overflowCount) => `Hơn ${overflowCount} thông báo`,
@@ -26,5 +26,5 @@ export const counterBadgeMessagesEn: CounterBadgeMessages = {
   overflow: (overflowCount) => `More than ${overflowCount} notifications`,
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `counterBadgeMessagesEn` (mặc định). `counterBadgeMessages` giữ cho code cũ. */
-export const counterBadgeMessagesVi = counterBadgeMessages;
+/** @deprecated Use `counterBadgeMessagesVi` (Vietnamese) or `counterBadgeMessagesEn`. Will be removed in v1.0.0. */
+export const counterBadgeMessages = counterBadgeMessagesVi;

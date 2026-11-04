@@ -3,6 +3,7 @@ import type { ReactElement } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { watchDeprecations } from "@/test/deprecation";
 import { YugenProvider } from "../YugenProvider/YugenProvider";
 import { Tree, TreeItem, TreeItemLayout, type TreeProps } from "./Tree";
 
@@ -145,12 +146,12 @@ describe("Tree — bàn phím", () => {
   });
 
   it("Enter / Space: chọn mục (selectionMode single) và bật/tắt nhánh", async () => {
-    const onSelectedChange = vi.fn();
-    const { user, item } = setup(<FileTree selectionMode="single" onSelectedChange={onSelectedChange} />);
+    const onSelectionChange = vi.fn();
+    const { user, item } = setup(<FileTree selectionMode="single" onSelectionChange={onSelectionChange} />);
     expect(item("main")).toHaveAttribute("aria-selected", "false");
     item("main").focus();
     await user.keyboard("{Enter}");
-    expect(onSelectedChange).toHaveBeenLastCalledWith("main");
+    expect(onSelectionChange).toHaveBeenLastCalledWith("main");
     expect(item("main")).toHaveAttribute("aria-selected", "true");
 
     await user.keyboard("{ArrowUp}");
@@ -236,5 +237,31 @@ describe("Tree — hiệu năng", () => {
     renders.clear();
     await user.keyboard("{ArrowDown}");
     expect([...renders].sort()).toEqual(["a", "b"]);
+  });
+});
+
+describe("Tree — onSelectedChange (tên cũ)", () => {
+  it("vẫn chạy và cảnh báo một lần", async () => {
+    const warnings = watchDeprecations();
+    const onSelectedChange = vi.fn();
+    const { user, item, rerender } = setup(<FileTree selectionMode="single" onSelectedChange={onSelectedChange} />);
+    rerender(<FileTree selectionMode="single" onSelectedChange={onSelectedChange} />);
+    item("main").focus();
+    await user.keyboard("{Enter}");
+    expect(onSelectedChange).toHaveBeenLastCalledWith("main");
+    expect(warnings("Tree.onSelectedChange")).toBe(1);
+  });
+
+  it("onSelectionChange thắng khi truyền cả hai", async () => {
+    watchDeprecations();
+    const onSelectionChange = vi.fn();
+    const onSelectedChange = vi.fn();
+    const { user, item } = setup(
+      <FileTree selectionMode="single" onSelectionChange={onSelectionChange} onSelectedChange={onSelectedChange} />,
+    );
+    item("main").focus();
+    await user.keyboard("{Enter}");
+    expect(onSelectionChange).toHaveBeenLastCalledWith("main");
+    expect(onSelectedChange).not.toHaveBeenCalled();
   });
 });

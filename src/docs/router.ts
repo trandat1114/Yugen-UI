@@ -6,12 +6,15 @@ export type Route =
   | { kind: "blocks" }
   | { kind: "templates" }
   | { kind: "theme-designer" }
+  | { kind: "typeset" }
   | { kind: "news" }
   | { kind: "community" }
   | { kind: "contributors" }
   | { kind: "concept"; slug: string }
   | { kind: "foundation"; slug: string }
-  | { kind: "component"; slug: string };
+  | { kind: "component"; slug: string }
+  /** Đường dẫn không có trang (#238): `path` là đường dẫn gốc (sau BASE và tiền tố ngôn ngữ), giữ khi đổi ngôn ngữ. */
+  | { kind: "not-found"; path: string };
 
 /**
  * Ngôn ngữ ở gốc site, không tiền tố (#277): tiếng Anh ở /components/button, tiếng Việt ở /vi/components/button. Docs
@@ -33,7 +36,7 @@ export interface DocsLocation {
 /** Gốc của docs: "/" khi dev, "/Yugen-UI/" trên GitHub Pages, "/Yugen-UI/next/" cho bản xem trước. Luôn có "/" cuối. */
 const BASE = import.meta.env.BASE_URL;
 
-const PAGES = ["blocks", "templates", "theme-designer", "news", "community", "contributors"] as const;
+const PAGES = ["blocks", "templates", "theme-designer", "typeset", "news", "community", "contributors"] as const;
 const SECTIONS = { concepts: "concept", foundations: "foundation", components: "component" } as const;
 
 /** "components/button" (đường dẫn sau BASE và sau "vi/", không có "/" đầu) → route; null nếu không phải trang docs. */
@@ -57,10 +60,10 @@ function splitLocale(rest: string): { lang: Locale; rest: string; legacy?: true 
 
 const afterBase = (pathname: string) => (pathname.startsWith(BASE) ? pathname.slice(BASE.length) : pathname.replace(/^\//, ""));
 
-/** Route + ngôn ngữ của một pathname trong docs (đã gồm BASE). Đường dẫn lạ → trang chủ. */
+/** Route + ngôn ngữ của một pathname trong docs (đã gồm BASE). Đường dẫn lạ → trang 404 (`not-found`). */
 export function parseLocation(pathname: string): DocsLocation {
   const { lang, rest, legacy } = splitLocale(afterBase(pathname));
-  return { route: matchSegments(rest) ?? { kind: "home" }, lang, ...(legacy && { legacy }) };
+  return { route: matchSegments(rest) ?? { kind: "not-found", path: rest.replace(/^\/+/, "") }, lang, ...(legacy && { legacy }) };
 }
 
 export function parsePath(pathname: string): Route {
@@ -83,6 +86,8 @@ export function pathOf(route: Route): string {
       return `foundations/${route.slug}`;
     case "component":
       return `components/${route.slug}`;
+    case "not-found":
+      return route.path;
     default:
       return route.kind;
   }

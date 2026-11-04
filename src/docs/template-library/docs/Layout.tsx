@@ -22,6 +22,7 @@ import {
   SkeletonText,
   useAppShell,
   type YugenTheme,
+  ErrorBoundary,
 } from "@/components/ui";
 import type { Content } from "./content/types";
 import { pageMeta, type DocPage as Page, type PageKind } from "./docs";
@@ -232,6 +233,7 @@ export function Layout({ t, theme, onThemeChange, embedded }: LayoutProps) {
           <Main>
             {/* 64rem: the content column keeps the width it had beside the sidebar in the 80rem frame. */}
             <div className="mx-auto w-full max-w-5xl px-4 py-8 @3xl/app-shell:px-10">
+              <ErrorBoundary resetKeys={[JSON.stringify(route)]} statusPageProps={{ headingAs: headingLevel }}>
               {route.name === "home" && <HomePage headingLevel={headingLevel} />}
               {route.name === "page" &&
                 (page && text ? (
@@ -242,6 +244,7 @@ export function Layout({ t, theme, onThemeChange, embedded }: LayoutProps) {
                   <NotFound headingLevel={headingLevel} />
                 ))}
               {route.name === "notFound" && <NotFound headingLevel={headingLevel} />}
+              </ErrorBoundary>
             </div>
           </Main>
         </AppShellMain>

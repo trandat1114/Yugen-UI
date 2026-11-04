@@ -16,7 +16,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const autocompleteMessages: AutocompleteMessages = {
+export const autocompleteMessagesVi: AutocompleteMessages = {
   empty: "Không có gợi ý phù hợp",
   listLabel: "Gợi ý tìm kiếm",
   searching: "Đang tìm…",
@@ -30,5 +30,5 @@ export const autocompleteMessagesEn: AutocompleteMessages = {
   count: (count) => (count === 1 ? "1 suggestion" : `${count} suggestions`),
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `autocompleteMessagesEn` (mặc định). `autocompleteMessages` giữ cho code cũ. */
-export const autocompleteMessagesVi = autocompleteMessages;
+/** @deprecated Use `autocompleteMessagesVi` (Vietnamese) or `autocompleteMessagesEn`. Will be removed in v1.0.0. */
+export const autocompleteMessages = autocompleteMessagesVi;

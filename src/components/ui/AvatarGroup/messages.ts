@@ -14,7 +14,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const avatarGroupMessages: AvatarGroupMessages = {
+export const avatarGroupMessagesVi: AvatarGroupMessages = {
   list: "Danh sách thành viên",
   viewAll: (count) => `Xem ${count} thành viên`,
   viewMore: (count) => `Xem thêm ${count} thành viên`,
@@ -26,5 +26,5 @@ export const avatarGroupMessagesEn: AvatarGroupMessages = {
   viewMore: (count) => (count === 1 ? "View 1 more member" : `View ${count} more members`),
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `avatarGroupMessagesEn` (mặc định). `avatarGroupMessages` giữ cho code cũ. */
-export const avatarGroupMessagesVi = avatarGroupMessages;
+/** @deprecated Use `avatarGroupMessagesVi` (Vietnamese) or `avatarGroupMessagesEn`. Will be removed in v1.0.0. */
+export const avatarGroupMessages = avatarGroupMessagesVi;

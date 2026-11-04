@@ -10,9 +10,9 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const swatchPickerMessages: SwatchPickerMessages = { emptySwatch: "Ô trống" };
+export const swatchPickerMessagesVi: SwatchPickerMessages = { emptySwatch: "Ô trống" };
 
 export const swatchPickerMessagesEn: SwatchPickerMessages = { emptySwatch: "Empty swatch" };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `swatchPickerMessagesEn` (mặc định). `swatchPickerMessages` giữ cho code cũ. */
-export const swatchPickerMessagesVi = swatchPickerMessages;
+/** @deprecated Use `swatchPickerMessagesVi` (Vietnamese) or `swatchPickerMessagesEn`. Will be removed in v1.0.0. */
+export const swatchPickerMessages = swatchPickerMessagesVi;

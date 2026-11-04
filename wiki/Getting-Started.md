@@ -2,7 +2,7 @@
 
 *Tiếng Việt: [Getting-Started-vi](Getting-Started-vi).*
 
-Requirements: React 19 (recommended) or 18.3, TypeScript 5 (recommended). Tailwind CSS v4 is optional.
+Requirements: React 19, TypeScript 5 (recommended). Tailwind CSS v4 is optional.
 
 ## 1. Choose how to use it
 

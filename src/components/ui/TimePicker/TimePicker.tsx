@@ -3,8 +3,8 @@ import * as React from "react";
 import { useControllableState } from "../hooks/useControllableState";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { useDirection } from "@radix-ui/react-direction";
-import { Checkmark16Filled, Clock16Regular, Clock20Regular, Clock24Regular } from "@fluentui/react-icons";
-import { usePortalThemeProps, useYugen, useYugenMessages } from "../YugenProvider/context";
+import { Checkmark16Filled, Clock16Regular, Clock20Regular, Clock24Regular } from "../_internal/icons";
+import { usePortalThemeProps, useYugen, useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { popoverSurfaceClass } from "@/components/ui/Popover/Popover";
@@ -231,6 +231,8 @@ export interface TimePickerProps extends InputAttrs, TimeRangeOptions {
   defaultValue?: Date | null;
   /** Gọi khi chọn option hoặc xác nhận chữ gõ (Enter / rời ô). Có `errorType` nếu không hợp lệ. */
   onTimeChange?: (event: React.SyntheticEvent<HTMLElement>, data: TimeSelectionData) => void;
+  /** Gọi khi giờ đã chọn đổi; `null` khi xoá trống hoặc chữ gõ không hợp lệ. Cùng kiểu với `value`. */
+  onValueChange?: (value: Date | null) => void;
   /** "h23" (24 giờ) | "h12" (SA/CH). Mặc định theo `locale` qua Intl. */
   hourCycle?: TimePickerHourCycle;
   /** Locale cho chu kỳ giờ và nhãn buổi. Mặc định `locale` của YugenProvider ("en-US"). */
@@ -251,11 +253,13 @@ export interface TimePickerProps extends InputAttrs, TimeRangeOptions {
  * TimePicker: ô nhập kiểu combobox liệt kê giờ theo `increment`; gõ tự do (9, 930, 9h30, 9:30 PM…) rồi Enter / rời ô
  * để xác nhận, gõ dở sẽ nhảy tới giờ gần nhất. ArrowDown mở / di chuyển, Enter chọn, Escape đóng.
  */
-export const TimePicker = React.forwardRef<HTMLInputElement, TimePickerProps>((props, ref) => {
+export function TimePicker(inProps: TimePickerProps & { ref?: React.Ref<HTMLInputElement> }) {
+  const { ref, ...props } = useComponentDefaults("TimePicker", inProps, COMPACT_SIZE);
   const {
     value,
     defaultValue = null,
     onTimeChange,
+    onValueChange,
     startHour = 0,
     endHour = 24,
     increment = 30,
@@ -328,8 +332,11 @@ export const TimePicker = React.forwardRef<HTMLInputElement, TimePickerProps>((p
   }, [valueKey, controlled]);
 
   const emit = (event: React.SyntheticEvent<HTMLElement>, data: TimeSelectionData) => {
-    lastEmittedRef.current = data.selectedTime?.getTime() ?? null;
+    const time = data.selectedTime?.getTime() ?? null;
+    lastEmittedRef.current = time;
     onTimeChange?.(event, data);
+    // onValueChange chỉ báo khi giờ thật sự đổi (gõ sai hai lần liên tiếp không báo lại null).
+    if (time !== (selected?.getTime() ?? null)) onValueChange?.(data.selectedTime);
   };
 
   const anchorDate = () => dateAnchor ?? selected ?? new Date();
@@ -568,5 +575,10 @@ export const TimePicker = React.forwardRef<HTMLInputElement, TimePickerProps>((p
       </PopoverPrimitive.Portal>
     </PopoverPrimitive.Root>
   );
-});
-TimePicker.displayName = "TimePicker";
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    TimePicker: TimePickerProps;
+  }
+}

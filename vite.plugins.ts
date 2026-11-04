@@ -354,7 +354,7 @@ export interface MessagesNamespaceDoc {
 
 /**
  * Đọc tĩnh một `<Folder>/messages.ts`: namespace (khối `declare module`), interface của nó (khoá, kiểu, JSDoc) và hai object
- * `xMessages` / `xMessagesEn`. Không chạy file, nên mã nguồn hàm giữ nguyên như khi viết.
+ * `xMessagesVi` / `xMessagesEn`. Không chạy file, nên mã nguồn hàm giữ nguyên như khi viết.
  */
 export function extractMessages(file: string, folder: string): MessagesNamespaceDoc[] {
   const code = fs.readFileSync(file, "utf8");
@@ -414,7 +414,7 @@ export function extractMessages(file: string, folder: string): MessagesNamespace
   };
 
   return namespaces.map(({ namespace, iface }) => {
-    const vi = values(`${namespace}Messages`);
+    const vi = values(`${namespace}MessagesVi`);
     const en = values(`${namespace}MessagesEn`);
     const keys: MessageKeyDoc[] = [];
     for (const member of interfaces.get(iface)?.body.body ?? []) {

@@ -18,7 +18,7 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const tagPickerMessages: TagPickerMessages = {
+export const tagPickerMessagesVi: TagPickerMessages = {
   noResults: "Không tìm thấy kết quả",
   addFreeform: (query) => `Nhấn Enter để thêm “${query}”`,
   selectedItems: "Mục đã chọn",
@@ -34,5 +34,5 @@ export const tagPickerMessagesEn: TagPickerMessages = {
   openList: "Open list",
 };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `tagPickerMessagesEn` (mặc định). `tagPickerMessages` giữ cho code cũ. */
-export const tagPickerMessagesVi = tagPickerMessages;
+/** @deprecated Use `tagPickerMessagesVi` (Vietnamese) or `tagPickerMessagesEn`. Will be removed in v1.0.0. */
+export const tagPickerMessages = tagPickerMessagesVi;

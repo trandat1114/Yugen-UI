@@ -182,7 +182,7 @@ function ShareAction() {
 const SHEET_CODE = `<Sheet
   side="end"              // desktop: panel ở cạnh cuối dòng (trái khi RTL)
   size="medium"           // 592px
-  breakpoint={768}        // < 768px → bottom sheet
+  breakpoint="3xl"        // < 48rem (768px) → bottom sheet
   snapPoints={[0.45, 0.9]}
   onSnapPointChange={(snap) => analytics.track("sheet_snap", { snap })}
 >
@@ -283,7 +283,7 @@ export default function Page() {
           <PropsTable
             props={[
               { name: "mode", type: `"auto" | "side" | "bottom"`, defaultValue: `"auto"`, description: "auto theo breakpoint; side / bottom ép một dạng." },
-              { name: "breakpoint", type: "number", defaultValue: "768", description: "Chiều rộng viewport (px) tối thiểu cho dạng panel." },
+              { name: "breakpoint", type: `"lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | number`, defaultValue: `"3xl"`, description: "Chiều rộng viewport tối thiểu cho dạng panel: lg 32rem · xl 36rem · 2xl 42rem · 3xl 48rem · 4xl 56rem · 5xl 64rem. Số (px) đã lỗi thời." },
               { name: "side / size", type: `"start" | "end" / "small" | "medium" | "large"`, defaultValue: `"end" / "small"`, description: "Dạng panel: cạnh (tự đảo ở RTL) và độ rộng 320 / 592 / 940px." },
               { name: "snapPoints", type: "number[]", defaultValue: "[0.5, 0.9]", description: "Nấc chiều cao bottom sheet (phần của chiều cao viewport)." },
               { name: "modal / dismissible", type: "boolean", defaultValue: "true / true", description: "Lớp phủ + bẫy focus; cho phép Esc / bấm ngoài / vuốt để đóng." },

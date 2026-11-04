@@ -248,7 +248,7 @@ export default function Page() {
             <C>Toaster</C> dùng một store phía client; <C>toast()</C> chỉ gọi trong event handler hoặc effect.
           </li>
           <li>
-            Field, Input, Checkbox… sinh id bằng <C>useId</C> của React 18 nên id ở server và client khớp nhau, <C>htmlFor</C> /{" "}
+            Field, Input, Checkbox… sinh id bằng <C>useId</C> của React nên id ở server và client khớp nhau, <C>htmlFor</C> /{" "}
             <C>aria-describedby</C> không bị lệch.
           </li>
           <li>

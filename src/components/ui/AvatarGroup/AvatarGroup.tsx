@@ -1,9 +1,9 @@
 import * as React from "react";
-import { MoreHorizontal20Regular } from "@fluentui/react-icons";
+import { MoreHorizontal20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Avatar, type AvatarProps } from "../Avatar/Avatar";
 import { Popover, PopoverSurface, PopoverTrigger } from "../Popover/Popover";
-import { useYugenMessages } from "../YugenProvider/context";
+import { useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { avatarGroupMessagesEn } from "./messages";
 
 export { avatarGroupMessages, avatarGroupMessagesVi, avatarGroupMessagesEn, type AvatarGroupMessages } from "./messages";
@@ -94,114 +94,125 @@ export interface AvatarGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   overflowLabel?: string;
 }
 
-export const AvatarGroup = React.forwardRef<HTMLDivElement, AvatarGroupProps>(
-  (
-    { layout = "spread", size = 32, maxAvatars = 5, overflowIndicator = "count", overflowLabel, className, children, ...props },
+export function AvatarGroup(inProps: AvatarGroupProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const {
+    layout = "spread",
+    size = 32,
+    maxAvatars = 5,
+    overflowIndicator = "count",
+    overflowLabel,
+    className,
+    children,
     ref,
-  ) => {
-    const msg = useYugenMessages("avatarGroup", avatarGroupMessagesEn);
-    const items = React.Children.toArray(children).filter(React.isValidElement) as React.ReactElement<AvatarGroupItemProps>[];
-    const isPie = layout === "pie";
-    const max = Math.max(1, maxAvatars);
-    const overflowing = !isPie && items.length > max;
-    const inline = isPie ? items.slice(0, 3) : overflowing ? items.slice(0, Math.max(1, max - 1)) : items;
-    const overflow = isPie ? items : items.slice(inline.length);
+    ...props
+  } = useComponentDefaults("AvatarGroup", inProps);
+  const msg = useYugenMessages("avatarGroup", avatarGroupMessagesEn);
+  const items = React.Children.toArray(children).filter(React.isValidElement) as React.ReactElement<AvatarGroupItemProps>[];
+  const isPie = layout === "pie";
+  const max = Math.max(1, maxAvatars);
+  const overflowing = !isPie && items.length > max;
+  const inline = isPie ? items.slice(0, 3) : overflowing ? items.slice(0, Math.max(1, max - 1)) : items;
+  const overflow = isPie ? items : items.slice(inline.length);
 
-    const popoverList = (
-      <PopoverSurface size="small" align="start" className="w-56">
-        <AvatarGroupContext.Provider value={{ layout, size, inPopover: true }}>
-          <ul aria-label={msg.list} className="flex max-h-56 flex-col overflow-y-auto">
-            {overflow}
-          </ul>
-        </AvatarGroupContext.Provider>
-      </PopoverSurface>
-    );
+  const popoverList = (
+    <PopoverSurface size="small" align="start" className="w-56">
+      <AvatarGroupContext.Provider value={{ layout, size, inPopover: true }}>
+        <ul aria-label={msg.list} className="flex max-h-56 flex-col overflow-y-auto">
+          {overflow}
+        </ul>
+      </AvatarGroupContext.Provider>
+    </PopoverSurface>
+  );
 
-    if (isPie) {
-      return (
-        <div ref={ref} role="group" className={cn("inline-flex", className)} {...props}>
-          <Popover>
-            <PopoverTrigger asChild>
-              <button
-                type="button"
-                className={cn(
-                  "relative grid shrink-0 gap-px overflow-hidden rounded-circular bg-background-1",
-                  BOX[size],
-                  inline.length >= 2 && "grid-cols-2",
-                  inline.length === 3 && "grid-rows-2",
-                )}
-              >
-                {/* Tên lấy từ nội dung ẩn thay cho aria-label: chữ viết tắt trong ô ghép (aria-hidden) là hình, không phải
-                    nhãn — tránh lệch "nhãn nhìn thấy ⊄ tên truy cập" (WCAG 2.5.3). sr-only nằm absolute, không chiếm ô grid. */}
-                <span className="sr-only">{overflowLabel ?? msg.viewAll(items.length)}</span>
-                {inline.map((item, index) => (
-                  // Ô ghép chỉ để nhìn — tên nút đã có aria-label, chữ viết tắt không được lọt vào tên truy cập.
-                  <span
-                    key={item.key ?? index}
-                    aria-hidden
-                    className={cn("relative overflow-hidden", inline.length === 3 && index === 0 && "row-span-2")}
-                  >
-                    <span className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2">
-                      <Avatar
-                        name={item.props.name}
-                        src={item.props.src}
-                        color={item.props.color ?? "colorful"}
-                        size={size}
-                        className="rounded-none"
-                      />
-                    </span>
-                  </span>
-                ))}
-              </button>
-            </PopoverTrigger>
-            {popoverList}
-          </Popover>
-        </div>
-      );
-    }
-
+  if (isPie) {
     return (
-      <div
-        ref={ref}
-        role="group"
-        className={cn(
-          "inline-flex items-center",
-          layout === "spread" ? SPREAD_GAP[size] : STACK_OVERLAP[size],
-          className,
-        )}
-        {...props}
-      >
-        <AvatarGroupContext.Provider value={{ layout, size, inPopover: false }}>{inline}</AvatarGroupContext.Provider>
-        {overflow.length > 0 && (
-          <Popover>
-            <PopoverTrigger asChild>
-              <button
-                type="button"
-                // Số đếm hiển thị phải nằm trong tên accessibility (WCAG 2.5.3): "+2 Xem thêm 2 thành viên".
-                aria-label={overflowIndicator === "icon" ? (overflowLabel ?? msg.viewMore(overflow.length)) : undefined}
-                className={cn(
-                  "relative inline-flex shrink-0 items-center justify-center rounded-circular border border-stroke-1 bg-background-1 font-normal text-foreground-1",
-                  "transition-colors duration-faster ease-easy-ease hover:bg-background-1-hover active:bg-background-1-pressed",
-                  "data-[state=open]:bg-background-1-pressed",
-                  BOX[size],
-                  layout === "stack" && "ring-2 ring-background-1",
-                )}
-              >
-                {overflowIndicator === "icon" ? (
-                  <MoreHorizontal20Regular className="size-1/2" />
-                ) : (
-                  <>
-                    +{overflow.length}
-                    <span className="sr-only"> {overflowLabel ?? msg.viewMore(overflow.length)}</span>
-                  </>
-                )}
-              </button>
-            </PopoverTrigger>
-            {popoverList}
-          </Popover>
-        )}
+      <div ref={ref} role="group" className={cn("inline-flex", className)} {...props}>
+        <Popover>
+          <PopoverTrigger asChild>
+            <button
+              type="button"
+              className={cn(
+                "relative grid shrink-0 gap-px overflow-hidden rounded-circular bg-background-1",
+                BOX[size],
+                inline.length >= 2 && "grid-cols-2",
+                inline.length === 3 && "grid-rows-2",
+              )}
+            >
+              {/* Tên lấy từ nội dung ẩn thay cho aria-label: chữ viết tắt trong ô ghép (aria-hidden) là hình, không phải
+                  nhãn — tránh lệch "nhãn nhìn thấy ⊄ tên truy cập" (WCAG 2.5.3). sr-only nằm absolute, không chiếm ô grid. */}
+              <span className="sr-only">{overflowLabel ?? msg.viewAll(items.length)}</span>
+              {inline.map((item, index) => (
+                // Ô ghép chỉ để nhìn — tên nút đã có aria-label, chữ viết tắt không được lọt vào tên truy cập.
+                <span
+                  key={item.key ?? index}
+                  aria-hidden
+                  className={cn("relative overflow-hidden", inline.length === 3 && index === 0 && "row-span-2")}
+                >
+                  <span className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2">
+                    <Avatar
+                      name={item.props.name}
+                      src={item.props.src}
+                      color={item.props.color ?? "colorful"}
+                      size={size}
+                      className="rounded-none"
+                    />
+                  </span>
+                </span>
+              ))}
+            </button>
+          </PopoverTrigger>
+          {popoverList}
+        </Popover>
       </div>
     );
-  },
-);
-AvatarGroup.displayName = "AvatarGroup";
+  }
+
+  return (
+    <div
+      ref={ref}
+      role="group"
+      className={cn(
+        "inline-flex items-center",
+        layout === "spread" ? SPREAD_GAP[size] : STACK_OVERLAP[size],
+        className,
+      )}
+      {...props}
+    >
+      <AvatarGroupContext.Provider value={{ layout, size, inPopover: false }}>{inline}</AvatarGroupContext.Provider>
+      {overflow.length > 0 && (
+        <Popover>
+          <PopoverTrigger asChild>
+            <button
+              type="button"
+              // Số đếm hiển thị phải nằm trong tên accessibility (WCAG 2.5.3): "+2 Xem thêm 2 thành viên".
+              aria-label={overflowIndicator === "icon" ? (overflowLabel ?? msg.viewMore(overflow.length)) : undefined}
+              className={cn(
+                "relative inline-flex shrink-0 items-center justify-center rounded-circular border border-stroke-1 bg-background-1 font-normal text-foreground-1",
+                "transition-colors duration-faster ease-easy-ease hover:bg-background-1-hover active:bg-background-1-pressed",
+                "data-[state=open]:bg-background-1-pressed",
+                BOX[size],
+                layout === "stack" && "ring-2 ring-background-1",
+              )}
+            >
+              {overflowIndicator === "icon" ? (
+                <MoreHorizontal20Regular className="size-1/2" />
+              ) : (
+                <>
+                  +{overflow.length}
+                  <span className="sr-only"> {overflowLabel ?? msg.viewMore(overflow.length)}</span>
+                </>
+              )}
+            </button>
+          </PopoverTrigger>
+          {popoverList}
+        </Popover>
+      )}
+    </div>
+  );
+}
+
+declare module "../YugenProvider/context" {
+  interface YugenComponentDefaults {
+    AvatarGroup: AvatarGroupProps;
+  }
+}

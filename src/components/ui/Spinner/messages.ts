@@ -10,9 +10,9 @@ declare module "../YugenProvider/context" {
   }
 }
 
-export const spinnerMessages: SpinnerMessages = { label: "Đang tải" };
+export const spinnerMessagesVi: SpinnerMessages = { label: "Đang tải" };
 
 export const spinnerMessagesEn: SpinnerMessages = { label: "Loading" };
 
-/** Bản tiếng Việt, tên có hậu tố ngôn ngữ như `spinnerMessagesEn` (mặc định). `spinnerMessages` giữ cho code cũ. */
-export const spinnerMessagesVi = spinnerMessages;
+/** @deprecated Use `spinnerMessagesVi` (Vietnamese) or `spinnerMessagesEn`. Will be removed in v1.0.0. */
+export const spinnerMessages = spinnerMessagesVi;

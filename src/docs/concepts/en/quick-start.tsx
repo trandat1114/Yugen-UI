@@ -202,7 +202,7 @@ export default function Page() {
         </div>
       </DocSection>
 
-      <DocSection id="existing" title="Add to an existing project" description="React 19 (or 18.3) and Tailwind CSS v4. No aliases or bundler config.">
+      <DocSection id="existing" title="Add to an existing project" description="React 19 and Tailwind CSS v4. No aliases or bundler config.">
         <div className="flex flex-col gap-4">
           <PackageManagerTabs packages={CLI_INIT} command="dlx" />
           <P>
@@ -310,7 +310,7 @@ export default function Page() {
           <SimpleTable
             head={["Technology", "Version", "Notes"]}
             rows={[
-              ["React", "19 (recommended), 18.3", "React 18.3 is supported until the end of 0.x; from 1.0, React 19 only."],
+              ["React", "19 or later", "React 18 was supported until 0.14. On React 18, stay on yugen-ui 0.14 until you upgrade."],
               ["Tailwind CSS", "4.x", <>Optional when using <C>yugen-ui/styles.css</C>. Tailwind 3 is not supported.</>],
               ["Bundler", "Vite 6, Next.js 14+", <>Vite uses <C>@tailwindcss/vite</C>; Next.js uses <C>@tailwindcss/postcss</C>.</>],
               ["TypeScript", "5.x", "Optional — types ship with the package."],

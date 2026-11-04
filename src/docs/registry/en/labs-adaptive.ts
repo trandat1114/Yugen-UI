@@ -34,7 +34,7 @@ export const en: Record<string, ComponentDocEn> = {
     props: {
       "open / defaultOpen / onOpenChange": "Open state (controlled or uncontrolled).",
       mode: "auto: panel when the viewport is ≥ breakpoint, bottom sheet when it is narrower.",
-      breakpoint: "Minimum width (px) for the panel form (through useMediaQuery).",
+      breakpoint: "Minimum viewport width for the panel form, with the same tokens as AppShell: lg 32rem · xl 36rem · 2xl 42rem · 3xl 48rem · 4xl 56rem · 5xl 64rem. A px number is deprecated (removed in 1.0).",
       side: "Edge the panel slides in from; flipped in RTL.",
       size: "Panel width: 320 / 592 / 940px.",
       snapPoints: "Bottom sheet heights (fractions of the viewport height, 0–1).",

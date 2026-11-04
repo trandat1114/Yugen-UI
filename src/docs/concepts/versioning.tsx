@@ -145,13 +145,21 @@ export default function Page() {
         </div>
       </DocSection>
 
+      <DocSection id="labs" title="Yugen Labs" description="Component thử nghiệm, nằm ngoài SemVer.">
+        <P>
+          Component trong nhóm Yugen Labs còn đang hoàn thiện, và trang của chúng có ghi rõ. API có thể đổi ở một bản minor;
+          CHANGELOG và trang Có gì mới ghi lại thay đổi. Component rời Labs khi đã có test, được một template dùng và API không
+          cần đổi thêm. Từ đó nó theo các quy tắc ở trên.
+        </P>
+      </DocSection>
+
       <DocSection id="support" title="Phạm vi hỗ trợ">
         <Table
           head={["Hạng mục", "Hỗ trợ", "Ghi chú"]}
           rows={[
             ["React", "18 và 19", "CI chạy typecheck, unit test và build trên cả hai"],
             ["Tailwind CSS", "v4", "Không cần Tailwind nếu dùng styles.css biên dịch sẵn"],
-            ["TypeScript", "5.x, strict", "Kiểu được kiểm tra với @types/react 18 và 19"],
+            ["TypeScript", "5.x, strict", "Kiểu được kiểm tra với @types/react 19"],
             ["Next.js", "App Router & Pages Router", "Mọi file component có \"use client\""],
             ["Trình duyệt", "Evergreen (Chrome, Edge, Firefox, Safari 2 bản gần nhất)", "Xem trang Trình duyệt & nền tảng"],
           ]}

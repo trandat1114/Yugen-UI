@@ -10,7 +10,7 @@
  */
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
-import { ReOrderDotsVertical20Regular } from "@fluentui/react-icons";
+import { ReOrderDotsVertical20Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useAnnounce, type AnnounceFn } from "../AriaLive/AriaLive";
 import { useYugenMessages } from "../YugenProvider/context";
@@ -833,54 +833,63 @@ export interface SortableProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 /** Danh sách sắp xếp được. Đứng riêng thì truyền `value` / `onValueChange`; trong SortableGroup thì truyền `listId`. */
-export const Sortable = React.forwardRef<HTMLDivElement, SortableProps>(
-  ({ value, onValueChange, onSortStart, onSortEnd, ...props }, ref) => {
-    const listId = props.listId ?? "";
-    const groupValue = React.useMemo(() => ({ [listId]: value ?? [] }), [listId, value]);
-    if (value === undefined) return <SortableList ref={ref} {...props} />;
-    return (
-      <SortableGroup
-        value={groupValue}
-        onValueChange={(next) => onValueChange?.(next[listId])}
-        onSortStart={onSortStart}
-        onSortEnd={onSortEnd}
-      >
-        <SortableList ref={ref} {...props} />
-      </SortableGroup>
-    );
-  },
-);
-Sortable.displayName = "Sortable";
+export function Sortable({
+  value,
+  onValueChange,
+  onSortStart,
+  onSortEnd,
+  ref,
+  ...props
+}: SortableProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const listId = props.listId ?? "";
+  const groupValue = React.useMemo(() => ({ [listId]: value ?? [] }), [listId, value]);
+  if (value === undefined) return <SortableList ref={ref} {...props} />;
+  return (
+    <SortableGroup
+      value={groupValue}
+      onValueChange={(next) => onValueChange?.(next[listId])}
+      onSortStart={onSortStart}
+      onSortEnd={onSortEnd}
+    >
+      <SortableList ref={ref} {...props} />
+    </SortableGroup>
+  );
+}
 
-const SortableList = React.forwardRef<HTMLDivElement, Omit<SortableProps, "value" | "onValueChange" | "onSortStart" | "onSortEnd">>(
-  ({ asChild, listId = "", orientation = "vertical", label, disabled = false, ...props }, ref) => {
-    const engine = useEngine("Sortable");
-    const elRef = React.useRef<HTMLDivElement | null>(null);
-    const composed = useComposedRefs(ref, elRef);
-    const over = React.useSyncExternalStore(engine.subscribe, () => engine.isOver(listId), () => false);
+function SortableList({
+  asChild,
+  listId = "",
+  orientation = "vertical",
+  label,
+  disabled = false,
+  ref,
+  ...props
+}: Omit<SortableProps, "value" | "onValueChange" | "onSortStart" | "onSortEnd"> & { ref?: React.Ref<HTMLDivElement> }) {
+  const engine = useEngine("Sortable");
+  const elRef = React.useRef<HTMLDivElement | null>(null);
+  const composed = useComposedRefs(ref, elRef);
+  const over = React.useSyncExternalStore(engine.subscribe, () => engine.isOver(listId), () => false);
 
-    useIsomorphicLayoutEffect(() => {
-      engine.setList(listId, { el: elRef.current, orientation, label, disabled });
-      return () => engine.setList(listId, null);
-    }, [engine, listId, orientation, label, disabled]);
+  useIsomorphicLayoutEffect(() => {
+    engine.setList(listId, { el: elRef.current, orientation, label, disabled });
+    return () => engine.setList(listId, null);
+  }, [engine, listId, orientation, label, disabled]);
 
-    const context = React.useMemo(() => ({ listId, orientation }), [listId, orientation]);
-    const Comp = asChild ? Slot : "div";
-    return (
-      <ListContext.Provider value={context}>
-        <Comp
-          ref={composed}
-          data-sortable-list=""
-          data-orientation={orientation}
-          data-over={over || undefined}
-          data-disabled={disabled || undefined}
-          {...props}
-        />
-      </ListContext.Provider>
-    );
-  },
-);
-SortableList.displayName = "SortableList";
+  const context = React.useMemo(() => ({ listId, orientation }), [listId, orientation]);
+  const Comp = asChild ? Slot : "div";
+  return (
+    <ListContext.Provider value={context}>
+      <Comp
+        ref={composed}
+        data-sortable-list=""
+        data-orientation={orientation}
+        data-over={over || undefined}
+        data-disabled={disabled || undefined}
+        {...props}
+      />
+    </ListContext.Provider>
+  );
+}
 
 /* ------------------------------------------------------------------ SortableItem */
 export interface SortableItemProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -907,55 +916,61 @@ const SHORTCUTS: Record<SortableOrientation, string> = {
   grid: "Alt+ArrowLeft Alt+ArrowRight Alt+ArrowUp Alt+ArrowDown",
 };
 
-export const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
-  (
-    { value, asChild, label, disabled = false, handle = false, shortcuts = false, className, onPointerDown, onKeyDown, ...props },
-    ref,
-  ) => {
-    const engine = useEngine("SortableItem");
-    const { orientation } = React.useContext(ListContext);
-    const dragging = React.useSyncExternalStore(engine.subscribe, () => engine.modeOf(value), () => null);
-    const elRef = React.useRef<HTMLElement | null>(null);
-    const register = React.useCallback(
-      (el: HTMLDivElement | null) => {
-        engine.setItem(value, { el }, elRef.current);
-        elRef.current = el;
-      },
-      [engine, value],
-    );
-    const composed = useComposedRefs(ref, register);
-    useIsomorphicLayoutEffect(() => engine.setItem(value, { label }), [engine, value, label]);
+export function SortableItem({
+  value,
+  asChild,
+  label,
+  disabled = false,
+  handle = false,
+  shortcuts = false,
+  className,
+  onPointerDown,
+  onKeyDown,
+  ref,
+  ...props
+}: SortableItemProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const engine = useEngine("SortableItem");
+  const { orientation } = React.useContext(ListContext);
+  const dragging = React.useSyncExternalStore(engine.subscribe, () => engine.modeOf(value), () => null);
+  const elRef = React.useRef<HTMLElement | null>(null);
+  const register = React.useCallback(
+    (el: HTMLDivElement | null) => {
+      engine.setItem(value, { el }, elRef.current);
+      elRef.current = el;
+    },
+    [engine, value],
+  );
+  const composed = useComposedRefs(ref, register);
+  useIsomorphicLayoutEffect(() => engine.setItem(value, { label }), [engine, value, label]);
 
-    const context = React.useMemo(() => ({ value, label, disabled }), [value, label, disabled]);
-    const Comp = asChild ? Slot : "div";
-    return (
-      <ItemContext.Provider value={context}>
-        <Comp
-          ref={composed}
-          data-sortable-item=""
-          data-dragging={dragging ?? undefined}
-          aria-keyshortcuts={shortcuts && !disabled ? SHORTCUTS[orientation] : undefined}
-          className={cn(
-            className,
-            handle && !disabled && "select-none [-webkit-touch-callout:none]",
-            dragging && "z-10 shadow-16",
-            dragging === "pointer" && "cursor-grabbing",
-          )}
-          onPointerDown={(event: React.PointerEvent<HTMLDivElement>) => {
-            onPointerDown?.(event);
-            if (handle && !disabled && !event.defaultPrevented) engine.pointerDown(event.nativeEvent, value, true);
-          }}
-          onKeyDown={(event: React.KeyboardEvent<HTMLDivElement>) => {
-            onKeyDown?.(event);
-            if (shortcuts && !disabled && !event.defaultPrevented) engine.shortcut(event, value);
-          }}
-          {...props}
-        />
-      </ItemContext.Provider>
-    );
-  },
-);
-SortableItem.displayName = "SortableItem";
+  const context = React.useMemo(() => ({ value, label, disabled }), [value, label, disabled]);
+  const Comp = asChild ? Slot : "div";
+  return (
+    <ItemContext.Provider value={context}>
+      <Comp
+        ref={composed}
+        data-sortable-item=""
+        data-dragging={dragging ?? undefined}
+        aria-keyshortcuts={shortcuts && !disabled ? SHORTCUTS[orientation] : undefined}
+        className={cn(
+          className,
+          handle && !disabled && "select-none [-webkit-touch-callout:none]",
+          dragging && "z-10 shadow-16",
+          dragging === "pointer" && "cursor-grabbing",
+        )}
+        onPointerDown={(event: React.PointerEvent<HTMLDivElement>) => {
+          onPointerDown?.(event);
+          if (handle && !disabled && !event.defaultPrevented) engine.pointerDown(event.nativeEvent, value, true);
+        }}
+        onKeyDown={(event: React.KeyboardEvent<HTMLDivElement>) => {
+          onKeyDown?.(event);
+          if (shortcuts && !disabled && !event.defaultPrevented) engine.shortcut(event, value);
+        }}
+        {...props}
+      />
+    </ItemContext.Provider>
+  );
+}
 
 /* ------------------------------------------------------------------ SortableHandle */
 export interface SortableHandleProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -967,64 +982,71 @@ export interface SortableHandleProps extends React.ButtonHTMLAttributes<HTMLButt
  * Tay nắm của SortableItem: kéo bằng chuột / cảm ứng, hoặc focus rồi Space / Enter để nhấc lên. Nhãn mặc định
  * "Sắp xếp lại {label}"; hướng dẫn bàn phím là mô tả của nút.
  */
-export const SortableHandle = React.forwardRef<HTMLButtonElement, SortableHandleProps>(
-  ({ asChild, className, children, disabled, onPointerDown, onKeyDown, onClick, ...props }, ref) => {
-    const engine = useEngine("SortableHandle");
-    const item = React.useContext(ItemContext);
-    if (!item) throw new Error("SortableHandle phải nằm trong SortableItem.");
-    const msg = useYugenMessages("sortable", sortableMessagesEn);
-    const dragging = React.useSyncExternalStore(engine.subscribe, () => engine.modeOf(item.value), () => null);
-    const elRef = React.useRef<HTMLButtonElement | null>(null);
-    const register = React.useCallback(
-      (el: HTMLButtonElement | null) => {
-        engine.setItem(item.value, { handle: el }, elRef.current);
-        elRef.current = el;
-      },
-      [engine, item.value],
-    );
-    const composed = useComposedRefs(ref, register);
-    const off = disabled || item.disabled;
-    const Comp = asChild ? Slot : "button";
+export function SortableHandle({
+  asChild,
+  className,
+  children,
+  disabled,
+  onPointerDown,
+  onKeyDown,
+  onClick,
+  ref,
+  ...props
+}: SortableHandleProps & { ref?: React.Ref<HTMLButtonElement> }) {
+  const engine = useEngine("SortableHandle");
+  const item = React.useContext(ItemContext);
+  if (!item) throw new Error("SortableHandle phải nằm trong SortableItem.");
+  const msg = useYugenMessages("sortable", sortableMessagesEn);
+  const dragging = React.useSyncExternalStore(engine.subscribe, () => engine.modeOf(item.value), () => null);
+  const elRef = React.useRef<HTMLButtonElement | null>(null);
+  const register = React.useCallback(
+    (el: HTMLButtonElement | null) => {
+      engine.setItem(item.value, { handle: el }, elRef.current);
+      elRef.current = el;
+    },
+    [engine, item.value],
+  );
+  const composed = useComposedRefs(ref, register);
+  const off = disabled || item.disabled;
+  const Comp = asChild ? Slot : "button";
 
-    return (
-      <Comp
-        ref={composed}
-        type={asChild ? undefined : "button"}
-        data-sortable-handle=""
-        disabled={off}
-        aria-label={item.label ? fill(msg.handleItem, { item: item.label }) : msg.handle}
-        aria-describedby={engine.instructionsId}
-        aria-pressed={dragging === "keyboard"}
-        className={cn(
-          "inline-flex size-6 shrink-0 touch-none select-none items-center justify-center rounded-medium text-foreground-3",
-          "transition-colors duration-faster ease-easy-ease [&>svg]:size-5",
-          off
-            ? "cursor-not-allowed text-foreground-disabled"
-            : "cursor-grab hover:bg-subtle-hover hover:text-foreground-2 active:cursor-grabbing",
-          className,
-        )}
-        onPointerDown={(event: React.PointerEvent<HTMLButtonElement>) => {
-          onPointerDown?.(event);
-          if (!off && !event.defaultPrevented) engine.pointerDown(event.nativeEvent, item.value, false);
-        }}
-        onKeyDown={(event: React.KeyboardEvent<HTMLButtonElement>) => {
-          onKeyDown?.(event);
-          if (off || event.defaultPrevented || event.repeat || engine.isLifted()) return;
-          if (event.key === " " || event.key === "Enter") {
-            event.preventDefault();
-            engine.lift(item.value, event.currentTarget);
-          }
-        }}
-        onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-          onClick?.(event);
-          // detail 0: click sinh ra từ bàn phím — onKeyDown đã xử lý.
-          if (!off && !event.defaultPrevented && event.detail > 0) engine.click(item.value, event.currentTarget);
-        }}
-        {...props}
-      >
-        {children ?? <ReOrderDotsVertical20Regular aria-hidden />}
-      </Comp>
-    );
-  },
-);
-SortableHandle.displayName = "SortableHandle";
+  return (
+    <Comp
+      ref={composed}
+      type={asChild ? undefined : "button"}
+      data-sortable-handle=""
+      disabled={off}
+      aria-label={item.label ? fill(msg.handleItem, { item: item.label }) : msg.handle}
+      aria-describedby={engine.instructionsId}
+      aria-pressed={dragging === "keyboard"}
+      className={cn(
+        "inline-flex size-6 shrink-0 touch-none select-none items-center justify-center rounded-medium text-foreground-3",
+        "transition-colors duration-faster ease-easy-ease [&>svg]:size-5",
+        off
+          ? "cursor-not-allowed text-foreground-disabled"
+          : "cursor-grab hover:bg-subtle-hover hover:text-foreground-2 active:cursor-grabbing",
+        className,
+      )}
+      onPointerDown={(event: React.PointerEvent<HTMLButtonElement>) => {
+        onPointerDown?.(event);
+        if (!off && !event.defaultPrevented) engine.pointerDown(event.nativeEvent, item.value, false);
+      }}
+      onKeyDown={(event: React.KeyboardEvent<HTMLButtonElement>) => {
+        onKeyDown?.(event);
+        if (off || event.defaultPrevented || event.repeat || engine.isLifted()) return;
+        if (event.key === " " || event.key === "Enter") {
+          event.preventDefault();
+          engine.lift(item.value, event.currentTarget);
+        }
+      }}
+      onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+        onClick?.(event);
+        // detail 0: click sinh ra từ bàn phím — onKeyDown đã xử lý.
+        if (!off && !event.defaultPrevented && event.detail > 0) engine.click(item.value, event.currentTarget);
+      }}
+      {...props}
+    >
+      {children ?? <ReOrderDotsVertical20Regular aria-hidden />}
+    </Comp>
+  );
+}

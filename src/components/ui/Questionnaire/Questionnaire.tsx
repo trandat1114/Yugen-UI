@@ -10,7 +10,7 @@ import {
   CheckmarkCircle48Regular,
   Edit16Regular,
   ErrorCircle12Filled,
-} from "@fluentui/react-icons";
+} from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { Button } from "../Button/Button";
 import { Field, type FieldControlProps } from "../Field/Field";
@@ -440,496 +440,491 @@ export interface QuestionnaireProps
 
 type Phase = "form" | "review" | "done";
 
-export const Questionnaire = React.forwardRef<HTMLDivElement, QuestionnaireProps>(
-  (
-    {
-      questions,
-      mode = "stepper",
-      value,
-      defaultValue,
-      onChange,
-      onSubmit,
-      review = true,
-      completion,
-      title,
-      description,
-      submitLabel: submitLabelProp,
-      appearance = "outline",
-      className,
-      onKeyDown,
-      ...props
+export function Questionnaire({
+  questions,
+  mode = "stepper",
+  value,
+  defaultValue,
+  onChange,
+  onSubmit,
+  review = true,
+  completion,
+  title,
+  description,
+  submitLabel: submitLabelProp,
+  appearance = "outline",
+  className,
+  onKeyDown,
+  ref,
+  ...props
+}: QuestionnaireProps & { ref?: React.Ref<HTMLDivElement> }) {
+  const msg = useYugenMessages("questionnaire", questionnaireMessagesEn);
+  const submitLabel = submitLabelProp ?? msg.submit;
+  const uid = React.useId();
+  // onChange có thêm questionId, còn restart() đặt lại mà không báo ra ngoài → gọi riêng, không qua hook.
+  const [answers, setAnswers] = useControllableState<QuestionnaireAnswers>({ value, defaultValue: defaultValue ?? {} });
+  const [errors, setErrors] = React.useState<Record<string, string | undefined>>({});
+  const [phase, setPhase] = React.useState<Phase>("form");
+  const [index, setIndex] = React.useState(0);
+  const [direction, setDirection] = React.useState<"forward" | "back">("forward");
+  const [submitting, setSubmitting] = React.useState(false);
+  const [submitError, setSubmitError] = React.useState<string | null>(null);
+  const contentRef = React.useRef<HTMLDivElement>(null);
+  /** Sau khi đổi màn do người dùng: đưa focus vào câu hỏi mới (id câu hoặc "review" / "done"). */
+  const pendingFocus = React.useRef<string | null>(null);
+  const [focusTick, setFocusTick] = React.useState(0);
+  const requestFocus = (target: string | null) => {
+    pendingFocus.current = target;
+    setFocusTick((t) => t + 1);
+  };
+
+  const stepper = mode === "stepper";
+  const total = questions.length;
+  const current = questions[Math.min(index, total - 1)];
+
+  const setAnswer = (id: string, next: AnswerValue | undefined) => {
+    const updated = { ...answers, [id]: next };
+    setAnswers(updated);
+    onChange?.(updated, id);
+    // Đã báo lỗi thì kiểm tra lại ngay khi người dùng sửa.
+    if (errors[id]) {
+      const q = questions.find((x) => x.id === id);
+      if (q) setErrors((prev) => ({ ...prev, [id]: validateQuestion(q, updated, msg) }));
+    }
+  };
+
+  /** Focus control của một câu hỏi (ưu tiên đáp án đang chọn). */
+  const focusQuestion = React.useCallback(
+    (id: string) => {
+      const root = contentRef.current;
+      if (!root) return;
+      const scope = root.querySelector<HTMLElement>(`[data-question-id="${id}"]`) ?? root;
+      for (const selector of FOCUS_ORDER) {
+        const el = scope.querySelector<HTMLElement>(selector);
+        if (el) {
+          el.focus({ preventScroll: stepper });
+          break;
+        }
+      }
+      if (!stepper) scope.scrollIntoView({ behavior: "smooth", block: "center" });
     },
-    ref,
-  ) => {
-    const msg = useYugenMessages("questionnaire", questionnaireMessagesEn);
-    const submitLabel = submitLabelProp ?? msg.submit;
-    const uid = React.useId();
-    // onChange có thêm questionId, còn restart() đặt lại mà không báo ra ngoài → gọi riêng, không qua hook.
-    const [answers, setAnswers] = useControllableState<QuestionnaireAnswers>({ value, defaultValue: defaultValue ?? {} });
-    const [errors, setErrors] = React.useState<Record<string, string | undefined>>({});
-    const [phase, setPhase] = React.useState<Phase>("form");
-    const [index, setIndex] = React.useState(0);
-    const [direction, setDirection] = React.useState<"forward" | "back">("forward");
-    const [submitting, setSubmitting] = React.useState(false);
-    const [submitError, setSubmitError] = React.useState<string | null>(null);
-    const contentRef = React.useRef<HTMLDivElement>(null);
-    /** Sau khi đổi màn do người dùng: đưa focus vào câu hỏi mới (id câu hoặc "review" / "done"). */
-    const pendingFocus = React.useRef<string | null>(null);
-    const [focusTick, setFocusTick] = React.useState(0);
-    const requestFocus = (target: string | null) => {
-      pendingFocus.current = target;
-      setFocusTick((t) => t + 1);
-    };
+    [stepper],
+  );
 
-    const stepper = mode === "stepper";
-    const total = questions.length;
-    const current = questions[Math.min(index, total - 1)];
+  React.useEffect(() => {
+    const target = pendingFocus.current;
+    if (!target) return;
+    pendingFocus.current = null;
+    if (target === "review" || target === "done") {
+      contentRef.current?.querySelector<HTMLElement>("[data-autofocus]")?.focus({ preventScroll: !stepper });
+      return;
+    }
+    focusQuestion(target);
+  }, [focusTick, stepper, focusQuestion]);
 
-    const setAnswer = (id: string, next: AnswerValue | undefined) => {
-      const updated = { ...answers, [id]: next };
-      setAnswers(updated);
-      onChange?.(updated, id);
-      // Đã báo lỗi thì kiểm tra lại ngay khi người dùng sửa.
-      if (errors[id]) {
-        const q = questions.find((x) => x.id === id);
-        if (q) setErrors((prev) => ({ ...prev, [id]: validateQuestion(q, updated, msg) }));
-      }
-    };
+  const go = (nextIndex: number, dir: "forward" | "back") => {
+    setDirection(dir);
+    setIndex(nextIndex);
+    setPhase("form");
+    requestFocus(questions[nextIndex]?.id ?? null);
+  };
 
-    /** Focus control của một câu hỏi (ưu tiên đáp án đang chọn). */
-    const focusQuestion = React.useCallback(
-      (id: string) => {
-        const root = contentRef.current;
-        if (!root) return;
-        const scope = root.querySelector<HTMLElement>(`[data-question-id="${id}"]`) ?? root;
-        for (const selector of FOCUS_ORDER) {
-          const el = scope.querySelector<HTMLElement>(selector);
-          if (el) {
-            el.focus({ preventScroll: stepper });
-            break;
-          }
-        }
-        if (!stepper) scope.scrollIntoView({ behavior: "smooth", block: "center" });
-      },
-      [stepper],
-    );
+  const validateAll = () => {
+    const all: Record<string, string | undefined> = {};
+    questions.forEach((q) => (all[q.id] = validateQuestion(q, answers, msg)));
+    setErrors(all);
+    return questions.findIndex((q) => all[q.id]);
+  };
 
-    React.useEffect(() => {
-      const target = pendingFocus.current;
-      if (!target) return;
-      pendingFocus.current = null;
-      if (target === "review" || target === "done") {
-        contentRef.current?.querySelector<HTMLElement>("[data-autofocus]")?.focus({ preventScroll: !stepper });
-        return;
-      }
-      focusQuestion(target);
-    }, [focusTick, stepper, focusQuestion]);
+  const submit = async () => {
+    if (submitting) return;
+    const firstInvalid = validateAll();
+    if (firstInvalid !== -1) {
+      go(firstInvalid, "back");
+      return;
+    }
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      await onSubmit?.(answers);
+      setPhase("done");
+      requestFocus("done");
+    } catch {
+      setSubmitError(msg.submitError);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
-    const go = (nextIndex: number, dir: "forward" | "back") => {
-      setDirection(dir);
-      setIndex(nextIndex);
-      setPhase("form");
-      requestFocus(questions[nextIndex]?.id ?? null);
-    };
+  const toReview = () => {
+    const firstInvalid = validateAll();
+    if (firstInvalid !== -1) {
+      go(firstInvalid, "back");
+      return;
+    }
+    setDirection("forward");
+    setPhase("review");
+    requestFocus("review");
+  };
 
-    const validateAll = () => {
-      const all: Record<string, string | undefined> = {};
-      questions.forEach((q) => (all[q.id] = validateQuestion(q, answers, msg)));
-      setErrors(all);
-      return questions.findIndex((q) => all[q.id]);
-    };
+  const next = () => {
+    if (!current) return;
+    const error = validateQuestion(current, answers, msg);
+    setErrors((prev) => ({ ...prev, [current.id]: error }));
+    if (error) {
+      focusQuestion(current.id);
+      return;
+    }
+    if (index < total - 1) go(index + 1, "forward");
+    else if (review) toReview();
+    else void submit();
+  };
 
-    const submit = async () => {
-      if (submitting) return;
-      const firstInvalid = validateAll();
-      if (firstInvalid !== -1) {
-        go(firstInvalid, "back");
-        return;
-      }
-      setSubmitting(true);
-      setSubmitError(null);
-      try {
-        await onSubmit?.(answers);
-        setPhase("done");
-        requestFocus("done");
-      } catch {
-        setSubmitError(msg.submitError);
-      } finally {
-        setSubmitting(false);
-      }
-    };
+  const back = () => {
+    if (phase === "review") go(stepper ? total - 1 : 0, "back");
+    else if (index > 0) go(index - 1, "back");
+  };
 
-    const toReview = () => {
-      const firstInvalid = validateAll();
-      if (firstInvalid !== -1) {
-        go(firstInvalid, "back");
-        return;
-      }
-      setDirection("forward");
-      setPhase("review");
-      requestFocus("review");
-    };
+  const restart = () => {
+    setAnswers(defaultValue ?? {});
+    setErrors({});
+    setSubmitError(null);
+    go(0, "back");
+  };
 
-    const next = () => {
-      if (!current) return;
-      const error = validateQuestion(current, answers, msg);
-      setErrors((prev) => ({ ...prev, [current.id]: error }));
-      if (error) {
-        focusQuestion(current.id);
-        return;
-      }
-      if (index < total - 1) go(index + 1, "forward");
-      else if (review) toReview();
-      else void submit();
-    };
+  /* ---------- Bàn phím (stepper): Enter tiếp tục, phím số chọn đáp án ---------- */
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    onKeyDown?.(e);
+    if (!stepper || phase !== "form" || !current || e.altKey || e.nativeEvent.isComposing) return;
+    const t = e.target as HTMLElement;
+    const isTextEntry =
+      t.tagName === "TEXTAREA" ||
+      t.isContentEditable ||
+      (t.tagName === "INPUT" && !["radio", "checkbox"].includes((t as HTMLInputElement).type));
 
-    const back = () => {
-      if (phase === "review") go(stepper ? total - 1 : 0, "back");
-      else if (index > 0) go(index - 1, "back");
-    };
+    if (e.key === "Enter" && !e.shiftKey) {
+      if (t.tagName === "TEXTAREA" && !(e.ctrlKey || e.metaKey)) return;
+      if ((t.tagName === "BUTTON" && !t.getAttribute("role")) || t.tagName === "A") return;
+      e.preventDefault();
+      next();
+      return;
+    }
+    if (isTextEntry || e.ctrlKey || e.metaKey) return;
 
-    const restart = () => {
-      setAnswers(defaultValue ?? {});
-      setErrors({});
-      setSubmitError(null);
-      go(0, "back");
-    };
-
-    /* ---------- Bàn phím (stepper): Enter tiếp tục, phím số chọn đáp án ---------- */
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-      onKeyDown?.(e);
-      if (!stepper || phase !== "form" || !current || e.altKey || e.nativeEvent.isComposing) return;
-      const t = e.target as HTMLElement;
-      const isTextEntry =
-        t.tagName === "TEXTAREA" ||
-        t.isContentEditable ||
-        (t.tagName === "INPUT" && !["radio", "checkbox"].includes((t as HTMLInputElement).type));
-
-      if (e.key === "Enter" && !e.shiftKey) {
-        if (t.tagName === "TEXTAREA" && !(e.ctrlKey || e.metaKey)) return;
-        if ((t.tagName === "BUTTON" && !t.getAttribute("role")) || t.tagName === "A") return;
-        e.preventDefault();
-        next();
-        return;
-      }
-      if (isTextEntry || e.ctrlKey || e.metaKey) return;
-
-      const key = e.key.toLowerCase();
-      const digit = /^[0-9]$/.test(key) ? Number(key) : null;
-      let handled = false;
-      if ((current.type === "single" || current.type === "multiple") && digit !== null && digit >= 1) {
-        const option = current.options[digit - 1];
-        if (option) {
-          handled = true;
-          if (current.type === "single") setAnswer(current.id, option.value);
-          else {
-            const selected = Array.isArray(answers[current.id]) ? (answers[current.id] as string[]) : [];
-            const has = selected.includes(option.value);
-            if (has) setAnswer(current.id, selected.filter((v) => v !== option.value));
-            else if (current.max === undefined || selected.length < current.max) setAnswer(current.id, [...selected, option.value]);
-          }
-        }
-      } else if (current.type === "yesNo") {
-        // Y / C (Có) / 1 → có · N / K (Không) / 2 → không.
-        const yes = key === "y" || key === "c" || digit === 1;
-        const no = key === "n" || key === "k" || digit === 2;
-        if (yes || no) {
-          handled = true;
-          setAnswer(current.id, yes);
-        }
-      } else if (current.type === "rating" && digit !== null && digit >= 1 && digit <= (current.max ?? 5)) {
+    const key = e.key.toLowerCase();
+    const digit = /^[0-9]$/.test(key) ? Number(key) : null;
+    let handled = false;
+    if ((current.type === "single" || current.type === "multiple") && digit !== null && digit >= 1) {
+      const option = current.options[digit - 1];
+      if (option) {
         handled = true;
-        setAnswer(current.id, digit);
-      } else if (current.type === "scale" && digit !== null && digit >= (current.min ?? 0) && digit <= (current.max ?? 10)) {
-        handled = true;
-        setAnswer(current.id, digit);
+        if (current.type === "single") setAnswer(current.id, option.value);
+        else {
+          const selected = Array.isArray(answers[current.id]) ? (answers[current.id] as string[]) : [];
+          const has = selected.includes(option.value);
+          if (has) setAnswer(current.id, selected.filter((v) => v !== option.value));
+          else if (current.max === undefined || selected.length < current.max) setAnswer(current.id, [...selected, option.value]);
+        }
       }
-      if (handled) e.preventDefault();
-    };
+    } else if (current.type === "yesNo") {
+      // Y / C (Có) / 1 → có · N / K (Không) / 2 → không.
+      const yes = key === "y" || key === "c" || digit === 1;
+      const no = key === "n" || key === "k" || digit === 2;
+      if (yes || no) {
+        handled = true;
+        setAnswer(current.id, yes);
+      }
+    } else if (current.type === "rating" && digit !== null && digit >= 1 && digit <= (current.max ?? 5)) {
+      handled = true;
+      setAnswer(current.id, digit);
+    } else if (current.type === "scale" && digit !== null && digit >= (current.min ?? 0) && digit <= (current.max ?? 10)) {
+      handled = true;
+      setAnswer(current.id, digit);
+    }
+    if (handled) e.preventDefault();
+  };
 
-    /* ---------- Các phần hiển thị ---------- */
+  /* ---------- Các phần hiển thị ---------- */
 
-    const header = (title || description) && (
-      <div>
-        {title && <h2 className="font-display text-subtitle1 font-semibold text-foreground-1">{title}</h2>}
-        {description && <p className="mt-0.5 text-body1 text-foreground-2">{description}</p>}
-      </div>
-    );
+  const header = (title || description) && (
+    <div>
+      {title && <h2 className="font-display text-subtitle1 font-semibold text-foreground-1">{title}</h2>}
+      {description && <p className="mt-0.5 text-body1 text-foreground-2">{description}</p>}
+    </div>
+  );
 
-    const renderStepperQuestion = (q: Question, i: number) => {
-      const labelId = `${uid}-${q.id}-label`;
-      const descId = `${uid}-${q.id}-desc`;
-      const errId = `${uid}-${q.id}-error`;
-      const error = errors[q.id];
-      const keyHint =
-        q.type === "single" || q.type === "multiple"
-          ? msg.keyHintChoice(Math.min(q.options.length, 9))
-          : q.type === "yesNo"
-            ? msg.keyHintYesNo
-            : q.type === "rating"
-              ? msg.keyHintRating(q.max ?? 5)
-              : q.type === "scale"
-                ? msg.keyHintScale
-                : null;
-      return (
-        <div data-question-id={q.id} className="flex flex-col gap-3">
-          <div className="flex items-start gap-2">
-            <span aria-hidden className="mt-0.5 inline-flex shrink-0 items-center gap-0.5 text-body1 font-semibold text-brand-foreground-1 tabular-nums">
-              {i + 1}
-              <ArrowRight20Regular className="size-4 rtl:-scale-x-100" />
-            </span>
-            <h3 id={labelId} className="font-display text-subtitle1 font-semibold text-foreground-1">
-              {q.title}
-              {q.required && (
-                <span aria-hidden className="ps-1 text-danger-foreground-1">
-                  *
-                </span>
-              )}
-              {q.required && <span className="sr-only"> {msg.required}</span>}
-            </h3>
-          </div>
-          {q.description && (
-            <p id={descId} className="-mt-2 text-body1 text-foreground-2">
-              {q.description}
-            </p>
-          )}
-          <QuestionControl
-            question={q}
-            value={answers[q.id]}
-            onChange={(v) => setAnswer(q.id, v)}
-            showKeys
-            controlProps={{
-              id: `${uid}-${q.id}`,
-              "aria-labelledby": labelId,
-              "aria-describedby": cn(error && errId, q.description && descId) || undefined,
-              "aria-invalid": error ? true : undefined,
-            }}
-          />
-          {error && (
-            <p id={errId} role="alert" className="flex items-center gap-1 text-caption1 text-danger-foreground-1">
-              <ErrorCircle12Filled className="shrink-0" />
-              {error}
-            </p>
-          )}
-          {keyHint && <p className="hidden text-caption1 text-foreground-3 sm:block">{keyHint}</p>}
-        </div>
-      );
-    };
-
-    const reviewView = (
-      <div className="flex flex-col gap-3">
-        <div>
-          <h3 data-autofocus tabIndex={-1} className="font-display text-subtitle1 font-semibold text-foreground-1">
-            {msg.reviewTitle}
+  const renderStepperQuestion = (q: Question, i: number) => {
+    const labelId = `${uid}-${q.id}-label`;
+    const descId = `${uid}-${q.id}-desc`;
+    const errId = `${uid}-${q.id}-error`;
+    const error = errors[q.id];
+    const keyHint =
+      q.type === "single" || q.type === "multiple"
+        ? msg.keyHintChoice(Math.min(q.options.length, 9))
+        : q.type === "yesNo"
+          ? msg.keyHintYesNo
+          : q.type === "rating"
+            ? msg.keyHintRating(q.max ?? 5)
+            : q.type === "scale"
+              ? msg.keyHintScale
+              : null;
+    return (
+      <div data-question-id={q.id} className="flex flex-col gap-3">
+        <div className="flex items-start gap-2">
+          <span aria-hidden className="mt-0.5 inline-flex shrink-0 items-center gap-0.5 text-body1 font-semibold text-brand-foreground-1 tabular-nums">
+            {i + 1}
+            <ArrowRight20Regular className="size-4 rtl:-scale-x-100" />
+          </span>
+          <h3 id={labelId} className="font-display text-subtitle1 font-semibold text-foreground-1">
+            {q.title}
+            {q.required && (
+              <span aria-hidden className="ps-1 text-danger-foreground-1">
+                *
+              </span>
+            )}
+            {q.required && <span className="sr-only"> {msg.required}</span>}
           </h3>
-          <p className="mt-0.5 text-body1 text-foreground-2">{msg.reviewDescription}</p>
         </div>
-        <dl className="flex flex-col divide-y divide-stroke-2 rounded-large border border-stroke-2">
-          {questions.map((q, i) => (
-            <div key={q.id} className="flex flex-wrap items-center gap-x-3 gap-y-0.5 px-3 py-2">
-              <dt className="min-w-0 flex-1 basis-60 text-body1 text-foreground-2">
-                {i + 1}. {q.title}
-              </dt>
-              <dd className="flex min-w-0 items-center gap-2">
-                <span className={cn("text-body1 font-semibold wrap-break-word", isEmpty(answers[q.id]) ? "text-foreground-3" : "text-foreground-1")}>
-                  {formatQuestionAnswer(q, answers[q.id], msg)}
-                </span>
-                <Button
-                  size="small"
-                  appearance="subtle"
-                  icon={<Edit16Regular />}
-                  aria-label={msg.editQuestion(i + 1, q.title)}
-                  onClick={() => go(i, "back")}
-                />
-              </dd>
-            </div>
-          ))}
-        </dl>
-        {submitError && (
-          <p role="alert" className="flex items-center gap-1 text-caption1 text-danger-foreground-1">
-            <ErrorCircle12Filled className="shrink-0" />
-            {submitError}
+        {q.description && (
+          <p id={descId} className="-mt-2 text-body1 text-foreground-2">
+            {q.description}
           </p>
         )}
+        <QuestionControl
+          question={q}
+          value={answers[q.id]}
+          onChange={(v) => setAnswer(q.id, v)}
+          showKeys
+          controlProps={{
+            id: `${uid}-${q.id}`,
+            "aria-labelledby": labelId,
+            "aria-describedby": cn(error && errId, q.description && descId) || undefined,
+            "aria-invalid": error ? true : undefined,
+          }}
+        />
+        {error && (
+          <p id={errId} role="alert" className="flex items-center gap-1 text-caption1 text-danger-foreground-1">
+            <ErrorCircle12Filled className="shrink-0" />
+            {error}
+          </p>
+        )}
+        {keyHint && <p className="hidden text-caption1 text-foreground-3 sm:block">{keyHint}</p>}
+      </div>
+    );
+  };
+
+  const reviewView = (
+    <div className="flex flex-col gap-3">
+      <div>
+        <h3 data-autofocus tabIndex={-1} className="font-display text-subtitle1 font-semibold text-foreground-1">
+          {msg.reviewTitle}
+        </h3>
+        <p className="mt-0.5 text-body1 text-foreground-2">{msg.reviewDescription}</p>
+      </div>
+      <dl className="flex flex-col divide-y divide-stroke-2 rounded-large border border-stroke-2">
+        {questions.map((q, i) => (
+          <div key={q.id} className="flex flex-wrap items-center gap-x-3 gap-y-0.5 px-3 py-2">
+            <dt className="min-w-0 flex-1 basis-60 text-body1 text-foreground-2">
+              {i + 1}. {q.title}
+            </dt>
+            <dd className="flex min-w-0 items-center gap-2">
+              <span className={cn("text-body1 font-semibold wrap-break-word", isEmpty(answers[q.id]) ? "text-foreground-3" : "text-foreground-1")}>
+                {formatQuestionAnswer(q, answers[q.id], msg)}
+              </span>
+              <Button
+                size="small"
+                appearance="subtle"
+                icon={<Edit16Regular />}
+                aria-label={msg.editQuestion(i + 1, q.title)}
+                onClick={() => go(i, "back")}
+              />
+            </dd>
+          </div>
+        ))}
+      </dl>
+      {submitError && (
+        <p role="alert" className="flex items-center gap-1 text-caption1 text-danger-foreground-1">
+          <ErrorCircle12Filled className="shrink-0" />
+          {submitError}
+        </p>
+      )}
+    </div>
+  );
+
+  const doneView =
+    typeof completion === "function" ? (
+      <div data-autofocus tabIndex={-1}>
+        {completion(answers, restart)}
+      </div>
+    ) : completion !== undefined ? (
+      <div data-autofocus tabIndex={-1}>
+        {completion}
+      </div>
+    ) : (
+      <div data-autofocus tabIndex={-1} className="flex flex-col items-center gap-2 py-5 text-center">
+        <CheckmarkCircle48Regular aria-hidden className="text-success-foreground-1" />
+        <h3 className="font-display text-title3 font-semibold text-foreground-1">{msg.doneTitle}</h3>
+        <p className="max-w-sm text-body1 text-foreground-2">{msg.doneDescription}</p>
+        <Button className="mt-2" onClick={restart}>
+          {msg.restart}
+        </Button>
       </div>
     );
 
-    const doneView =
-      typeof completion === "function" ? (
-        <div data-autofocus tabIndex={-1}>
-          {completion(answers, restart)}
-        </div>
-      ) : completion !== undefined ? (
-        <div data-autofocus tabIndex={-1}>
-          {completion}
-        </div>
-      ) : (
-        <div data-autofocus tabIndex={-1} className="flex flex-col items-center gap-2 py-5 text-center">
-          <CheckmarkCircle48Regular aria-hidden className="text-success-foreground-1" />
-          <h3 className="font-display text-title3 font-semibold text-foreground-1">{msg.doneTitle}</h3>
-          <p className="max-w-sm text-body1 text-foreground-2">{msg.doneDescription}</p>
-          <Button className="mt-2" onClick={restart}>
-            {msg.restart}
-          </Button>
-        </div>
-      );
+  const submitButton = (
+    <Button appearance="primary" onClick={() => void submit()} disabled={submitting} aria-busy={submitting || undefined}>
+      {submitting && <Spinner size="extra-tiny" appearance="inverted" aria-hidden />}
+      {submitting ? msg.submitting : submitLabel}
+    </Button>
+  );
 
-    const submitButton = (
-      <Button appearance="primary" onClick={() => void submit()} disabled={submitting} aria-busy={submitting || undefined}>
-        {submitting && <Spinner size="extra-tiny" appearance="inverted" aria-hidden />}
-        {submitting ? msg.submitting : submitLabel}
-      </Button>
-    );
+  const rootClass = cn(
+    "flex w-full min-w-0 flex-col gap-4 text-foreground-1",
+    appearance === "outline" && "rounded-xlarge border border-stroke-2 bg-background-1 p-5 shadow-2",
+    className,
+  );
 
-    const rootClass = cn(
-      "flex w-full min-w-0 flex-col gap-4 text-foreground-1",
-      appearance === "outline" && "rounded-xlarge border border-stroke-2 bg-background-1 p-5 shadow-2",
-      className,
-    );
-
-    /* ---------- Chế độ list ---------- */
-    if (!stepper) {
-      return (
-        <div ref={ref} className={rootClass} onKeyDown={onKeyDown} {...props}>
-          {header}
-          <div ref={contentRef}>
-            {phase === "form" && (
-              <form
-                noValidate
-                className="flex flex-col gap-5"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (review) toReview();
-                  else void submit();
-                }}
-              >
-                {questions.map((q, i) => (
-                  <div key={q.id} data-question-id={q.id}>
-                    <Field
-                      size="large"
-                      label={`${i + 1}. ${q.title}`}
-                      required={q.required}
-                      hint={q.description}
-                      validationState={errors[q.id] ? "error" : "none"}
-                      validationMessage={errors[q.id]}
-                    >
-                      {(fieldProps) => (
-                        <QuestionControl
-                          question={q}
-                          value={answers[q.id]}
-                          onChange={(v) => setAnswer(q.id, v)}
-                          controlProps={fieldProps}
-                          showKeys={false}
-                        />
-                      )}
-                    </Field>
-                  </div>
-                ))}
-                {submitError && (
-                  <p role="alert" className="flex items-center gap-1 text-caption1 text-danger-foreground-1">
-                    <ErrorCircle12Filled className="shrink-0" />
-                    {submitError}
-                  </p>
-                )}
-                <div className="flex justify-end gap-2">
-                  <Button type="submit" appearance="primary" disabled={submitting}>
-                    {submitting && <Spinner size="extra-tiny" appearance="inverted" aria-hidden />}
-                    {review ? msg.review : submitting ? msg.submitting : submitLabel}
-                  </Button>
-                </div>
-              </form>
-            )}
-            {phase === "review" && (
-              <div className="flex flex-col gap-4">
-                {reviewView}
-                <div className="flex justify-between gap-2">
-                  <Button appearance="subtle" icon={<ArrowLeft20Regular className="rtl:-scale-x-100" />} onClick={() => go(0, "back")}>
-                    {msg.backToEdit}
-                  </Button>
-                  {submitButton}
-                </div>
-              </div>
-            )}
-            {phase === "done" && doneView}
-          </div>
-        </div>
-      );
-    }
-
-    /* ---------- Chế độ stepper ---------- */
-    const progress = phase === "form" ? (index + 1) / Math.max(total, 1) : 1;
-    const isLast = index === total - 1;
-
+  /* ---------- Chế độ list ---------- */
+  if (!stepper) {
     return (
-      <div ref={ref} className={rootClass} onKeyDown={handleKeyDown} {...props}>
+      <div ref={ref} className={rootClass} onKeyDown={onKeyDown} {...props}>
         {header}
-
-        {phase !== "done" && (
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center justify-between text-caption1 text-foreground-3 tabular-nums">
-              <span>{phase === "review" ? msg.review : msg.questionOf(index + 1, total)}</span>
-              <span>{Math.round(progress * 100)}%</span>
-            </div>
-            <ProgressBar
-              value={progress}
-              thickness="large"
-              aria-label={msg.progressLabel}
-              aria-valuetext={phase === "review" ? msg.review : msg.progressValue(index + 1, total)}
-            />
-          </div>
-        )}
-
-        {/* Cắt phần trượt ngang; px-1 chừa chỗ cho viền focus. */}
-        <div ref={contentRef} className="-mx-1 min-h-48 overflow-x-clip px-1">
-          {phase === "form" && current && (
-            <Slide key={`q-${index}`} visible appear from={direction === "forward" ? "end" : "start"} duration="gentle">
-              {renderStepperQuestion(current, index)}
-            </Slide>
-          )}
-          {phase === "review" && (
-            <Slide key="review" visible appear from="end" duration="gentle">
-              {reviewView}
-            </Slide>
-          )}
-          {phase === "done" && (
-            <Slide key="done" visible appear from="bottom" duration="gentle">
-              {doneView}
-            </Slide>
-          )}
-        </div>
-
-        {phase !== "done" && (
-          <div className="flex items-center justify-between gap-2">
-            <Button
-              appearance="subtle"
-              icon={<ArrowLeft20Regular className="rtl:-scale-x-100" />}
-              onClick={back}
-              disabled={phase === "form" && index === 0}
+        <div ref={contentRef}>
+          {phase === "form" && (
+            <form
+              noValidate
+              className="flex flex-col gap-5"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (review) toReview();
+                else void submit();
+              }}
             >
-              {msg.back}
-            </Button>
-            {phase === "form" ? (
-              <div className="flex items-center gap-2">
-                <span className="hidden items-center gap-1 text-caption1 text-foreground-3 sm:inline-flex">
-                  {msg.orPress} <Kbd size="small">Enter ↵</Kbd>
-                </span>
-                <Button
-                  appearance="primary"
-                  icon={<ArrowRight20Regular className="rtl:-scale-x-100" />}
-                  iconPosition="after"
-                  onClick={next}
-                  disabled={submitting}
-                >
-                  {isLast ? (review ? msg.review : submitLabel) : msg.next}
+              {questions.map((q, i) => (
+                <div key={q.id} data-question-id={q.id}>
+                  <Field
+                    size="large"
+                    label={`${i + 1}. ${q.title}`}
+                    required={q.required}
+                    hint={q.description}
+                    validationState={errors[q.id] ? "error" : "none"}
+                    validationMessage={errors[q.id]}
+                  >
+                    {(fieldProps) => (
+                      <QuestionControl
+                        question={q}
+                        value={answers[q.id]}
+                        onChange={(v) => setAnswer(q.id, v)}
+                        controlProps={fieldProps}
+                        showKeys={false}
+                      />
+                    )}
+                  </Field>
+                </div>
+              ))}
+              {submitError && (
+                <p role="alert" className="flex items-center gap-1 text-caption1 text-danger-foreground-1">
+                  <ErrorCircle12Filled className="shrink-0" />
+                  {submitError}
+                </p>
+              )}
+              <div className="flex justify-end gap-2">
+                <Button type="submit" appearance="primary" disabled={submitting}>
+                  {submitting && <Spinner size="extra-tiny" appearance="inverted" aria-hidden />}
+                  {review ? msg.review : submitting ? msg.submitting : submitLabel}
                 </Button>
               </div>
-            ) : (
-              submitButton
-            )}
-          </div>
-        )}
+            </form>
+          )}
+          {phase === "review" && (
+            <div className="flex flex-col gap-4">
+              {reviewView}
+              <div className="flex justify-between gap-2">
+                <Button appearance="subtle" icon={<ArrowLeft20Regular className="rtl:-scale-x-100" />} onClick={() => go(0, "back")}>
+                  {msg.backToEdit}
+                </Button>
+                {submitButton}
+              </div>
+            </div>
+          )}
+          {phase === "done" && doneView}
+        </div>
       </div>
     );
-  },
-);
-Questionnaire.displayName = "Questionnaire";
+  }
+
+  /* ---------- Chế độ stepper ---------- */
+  const progress = phase === "form" ? (index + 1) / Math.max(total, 1) : 1;
+  const isLast = index === total - 1;
+
+  return (
+    <div ref={ref} className={rootClass} onKeyDown={handleKeyDown} {...props}>
+      {header}
+
+      {phase !== "done" && (
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center justify-between text-caption1 text-foreground-3 tabular-nums">
+            <span>{phase === "review" ? msg.review : msg.questionOf(index + 1, total)}</span>
+            <span>{Math.round(progress * 100)}%</span>
+          </div>
+          <ProgressBar
+            value={progress}
+            thickness="large"
+            aria-label={msg.progressLabel}
+            aria-valuetext={phase === "review" ? msg.review : msg.progressValue(index + 1, total)}
+          />
+        </div>
+      )}
+
+      {/* Cắt phần trượt ngang; px-1 chừa chỗ cho viền focus. */}
+      <div ref={contentRef} className="-mx-1 min-h-48 overflow-x-clip px-1">
+        {phase === "form" && current && (
+          <Slide key={`q-${index}`} visible appear from={direction === "forward" ? "end" : "start"} duration="gentle">
+            {renderStepperQuestion(current, index)}
+          </Slide>
+        )}
+        {phase === "review" && (
+          <Slide key="review" visible appear from="end" duration="gentle">
+            {reviewView}
+          </Slide>
+        )}
+        {phase === "done" && (
+          <Slide key="done" visible appear from="bottom" duration="gentle">
+            {doneView}
+          </Slide>
+        )}
+      </div>
+
+      {phase !== "done" && (
+        <div className="flex items-center justify-between gap-2">
+          <Button
+            appearance="subtle"
+            icon={<ArrowLeft20Regular className="rtl:-scale-x-100" />}
+            onClick={back}
+            disabled={phase === "form" && index === 0}
+          >
+            {msg.back}
+          </Button>
+          {phase === "form" ? (
+            <div className="flex items-center gap-2">
+              <span className="hidden items-center gap-1 text-caption1 text-foreground-3 sm:inline-flex">
+                {msg.orPress} <Kbd size="small">Enter ↵</Kbd>
+              </span>
+              <Button
+                appearance="primary"
+                icon={<ArrowRight20Regular className="rtl:-scale-x-100" />}
+                iconPosition="after"
+                onClick={next}
+                disabled={submitting}
+              >
+                {isLast ? (review ? msg.review : submitLabel) : msg.next}
+              </Button>
+            </div>
+          ) : (
+            submitButton
+          )}
+        </div>
+      )}
+    </div>
+  );
+}

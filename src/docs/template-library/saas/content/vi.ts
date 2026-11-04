@@ -216,6 +216,7 @@ const vi: Content = {
     submit: "Gửi phản hồi",
     toast: { title: "Cảm ơn bạn!", body: "Phản hồi đã được gửi tới nhóm phát triển." },
   },
+  notFound: { home: "Về Tổng quan" },
 };
 
 export default vi;
