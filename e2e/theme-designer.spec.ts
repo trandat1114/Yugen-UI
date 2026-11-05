@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import { openDocs } from "./utils";
 
-/** Theme Designer (#44): các trục đổi bản xem trước, kiểm tra, CSS xuất và link chia sẻ. */
+/** Theme Designer (#44, #377): các trục đổi bản xem trước, kiểm tra theo section, CSS xuất và link chia sẻ. */
 
 const preview = (page: Page, theme: "light" | "dark" | "high-contrast") => page.locator(`#preview [data-brand="custom"][data-theme="${theme}"]`);
 const computed = (page: Page, selector: string, prop: string) =>
@@ -53,4 +53,51 @@ test("link chia sẻ khôi phục mọi lựa chọn", async ({ page }) => {
   await expect(css).toContainText('[data-brand="acme"] {');
   await expect(css).toContainText("--fontSizeBase300: 16px;");
   await expect(css).toContainText("--shadow4: none;");
+});
+
+test("mỗi nhóm kiểm tra nằm trong section của control gây ra nó; ba theme cùng một hàng", async ({ page }) => {
+  await openDocs(page, "/theme-designer");
+  await expect(page.locator("#color").getByText("Chữ trắng trên nút primary (light)")).toBeVisible();
+  await expect(page.locator("#color").getByText("Khác hue so với danger")).toBeVisible();
+  await expect(page.locator("#type").getByText("Vùng bấm nhỏ nhất (size small)")).toBeVisible();
+  await expect(page.locator("#surfaces").getByText("Chữ trên nền trung tính (light, dark)")).toBeVisible();
+  await expect(page.locator("#glass").getByText("Chữ trên glass, nền sau đen hoặc trắng (light, dark)")).toBeVisible();
+  await expect(page.locator("#preview").getByText("Đạt cả 8 kiểm tra")).toBeVisible();
+
+  // Light, Dark, High contrast: ba cột theo thứ tự, cùng mép trên, cùng chiều cao (subgrid).
+  const columns = page.locator("[data-preview-row] > [data-theme]");
+  await expect(columns).toHaveCount(3);
+  const boxes = await columns.evaluateAll((els) =>
+    els.map((el) => ({ theme: el.getAttribute("data-theme"), ...el.getBoundingClientRect().toJSON() }) as { theme: string; top: number; left: number; height: number }),
+  );
+  expect(boxes.map((b) => b.theme)).toEqual(["light", "dark", "high-contrast"]);
+  expect(new Set(boxes.map((b) => Math.round(b.top))).size).toBe(1);
+  expect(new Set(boxes.map((b) => Math.round(b.height))).size).toBe(1);
+  expect(boxes[0].left).toBeLessThan(boxes[1].left);
+  expect(boxes[1].left).toBeLessThan(boxes[2].left);
+});
+
+test("font: một Combobox, gõ tên font tự do; link chia sẻ khôi phục font tự nhập", async ({ page }) => {
+  await openDocs(page, "/theme-designer");
+  const font = page.getByRole("combobox", { name: "Font chữ" });
+  await expect(font).toHaveValue("Segoe UI");
+  await font.fill("Atkinson Hyperlegible");
+  await font.press("Enter");
+  await expect(font).toHaveValue("Atkinson Hyperlegible");
+  await expect(page.locator("#export pre").first()).toContainText('--fontFamilyBase: "Atkinson Hyperlegible"');
+
+  await page.goto("/vi/theme-designer?td-font=custom&td-font-name=Atkinson+Hyperlegible", { waitUntil: "domcontentloaded" });
+  await expect(page.getByRole("combobox", { name: "Font chữ" })).toHaveValue("Atkinson Hyperlegible");
+});
+
+test("về mặc định đặt lại màu key và mọi trục", async ({ page }) => {
+  await openDocs(page, "/theme-designer");
+  const reset = page.getByRole("button", { name: "Về mặc định" });
+  await expect(reset).toBeDisabled();
+  await page.getByRole("radio", { name: "Teal" }).click();
+  await page.getByRole("radiogroup", { name: "Độ nổi" }).getByRole("radio", { name: "Phẳng" }).click();
+  await reset.click();
+  await expect(page.getByLabel("Mã HEX")).toHaveValue("#C2347A");
+  await expect(page.getByRole("radiogroup", { name: "Độ nổi" }).getByRole("radio", { name: "Mặc định" })).toBeChecked();
+  await expect(reset).toBeDisabled();
 });
