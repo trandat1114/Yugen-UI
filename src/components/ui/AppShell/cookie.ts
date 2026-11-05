@@ -4,22 +4,12 @@
  *
  * The cookie holds the sidebar state only: `collapsed` or `expanded`, plus the width in px once a `resizable` Sidebar
  * has been dragged (`expanded:280`). It is written with `path=/; max-age=<1 year>; samesite=lax`, and `secure` on https.
+ * The cookie name is `encodeURIComponent(persistKey)`, so any key is safe: spaces, `;`, `=` and non-ASCII are escaped.
  */
-import { warnDev } from "@/lib/deprecate";
 
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
-/** `persistKey` is the cookie name: letters, digits, `_` and `-` only. */
-const PERSIST_KEY = /^[A-Za-z0-9_-]+$/;
-
-function validKey(persistKey: string): boolean {
-  if (PERSIST_KEY.test(persistKey)) return true;
-  warnDev(
-    `AppShell.persistKey:${persistKey}`,
-    `AppShell: persistKey "${persistKey}" may only use letters, digits, "_" and "-". The sidebar state is not saved.`,
-  );
-  return false;
-}
+const cookieName = (persistKey: string) => encodeURIComponent(persistKey);
 
 export interface AppShellSavedState {
   collapsed: boolean;
@@ -33,8 +23,8 @@ export interface AppShellSavedState {
  * from `yugen-ui` (the package root): through `yugen-ui/AppShell` (a "use client" file) it is only a client reference.
  */
 export function readAppShellCookie(cookie: string | null | undefined, persistKey: string): AppShellSavedState | undefined {
-  if (!validKey(persistKey)) return undefined;
-  const name = `${persistKey}=`;
+  if (!persistKey) return undefined;
+  const name = `${cookieName(persistKey)}=`;
   const raw = cookie
     ?.split(";")
     .map((part) => part.trim())
@@ -49,8 +39,8 @@ export function readAppShellCookie(cookie: string | null | undefined, persistKey
 
 /** Browser only (writes `document.cookie`); AppShell calls it from event handlers. */
 export function writeAppShellCookie(persistKey: string, { collapsed, width }: AppShellSavedState) {
-  if (!validKey(persistKey)) return;
+  if (!persistKey) return;
   const value = `${collapsed ? "collapsed" : "expanded"}${width === undefined ? "" : `:${Math.round(width)}`}`;
   const secure = globalThis.location?.protocol === "https:" ? "; secure" : "";
-  document.cookie = `${persistKey}=${value}; path=/; max-age=${COOKIE_MAX_AGE}; samesite=lax${secure}`;
+  document.cookie = `${cookieName(persistKey)}=${value}; path=/; max-age=${COOKIE_MAX_AGE}; samesite=lax${secure}`;
 }

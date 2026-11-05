@@ -34,22 +34,17 @@ describe("AppShell cookie", () => {
     expect(readAppShellCookie(document.cookie, "shell")).toEqual({ collapsed: true, width: undefined });
   });
 
-  it.each(["my shell", "shell;path=/admin", "shell=1", "ứng-dụng", ""])(
-    "does not persist with the key %j and warns once in development",
+  it.each(["my shell", "shell;path=/admin", "shell=1", "ứng-dụng", "app:sidebar"])(
+    "escapes the key %j, so it cannot add cookie attributes, and reads it back",
     (key) => {
-      const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
-      expect(written(key, { collapsed: true })).toEqual([]);
-      expect(readAppShellCookie(`${key}=collapsed`, key)).toBeUndefined();
-      expect(warn).toHaveBeenCalledTimes(1);
-      expect(warn.mock.calls[0][0]).toBe(
-        `[yugen-ui] AppShell: persistKey "${key}" may only use letters, digits, "_" and "-". The sidebar state is not saved.`,
-      );
+      const [cookie] = written(key, { collapsed: true });
+      expect(cookie).toBe(`${encodeURIComponent(key)}=collapsed; path=/; max-age=31536000; samesite=lax`);
+      expect(readAppShellCookie(`a=1; ${encodeURIComponent(key)}=collapsed`, key)).toEqual({ collapsed: true, width: undefined });
     },
   );
 
-  it("accepts letters, digits, _ and -", () => {
-    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
-    expect(readAppShellCookie("a=1; Docs_sidebar-2=collapsed", "Docs_sidebar-2")).toEqual({ collapsed: true, width: undefined });
-    expect(warn).not.toHaveBeenCalled();
+  it("an empty key saves nothing", () => {
+    expect(written("", { collapsed: true })).toEqual([]);
+    expect(readAppShellCookie("=collapsed", "")).toBeUndefined();
   });
 });
