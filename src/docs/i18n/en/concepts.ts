@@ -231,6 +231,7 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
       "client-components": "Client components",
       setup: "Setting up Next.js",
       "theme-flash": "Root layout & no flash",
+      csp: "Content Security Policy",
       rsc: "Use in Server Components",
       hydration: "Portals, Toast & hydration",
       "docs-only": "Only for the docs site",

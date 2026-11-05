@@ -484,7 +484,7 @@ function ChatShell() {
       { name: "scroll", type: `"main" | "page"`, defaultValue: `"main"`, description: "main: khung cao bằng màn hình, AppShellMain tự cuộn (ứng dụng). page: cả trang cuộn, thanh trên cùng và sidebar dính lại (site nội dung)." },
       { name: "collapsed / defaultCollapsed", type: "boolean", defaultValue: "false", description: "Sidebar thu gọn trên màn rộng." },
       { name: "onCollapsedChange", type: "(collapsed: boolean) => void", description: "Gọi khi thu gọn / mở rộng." },
-      { name: "persistKey", type: "string", description: "Tên cookie lưu trạng thái thu gọn và độ rộng; giá trị đã lưu thắng defaultCollapsed, cookie thiếu hoặc hỏng thì dùng defaultCollapsed. Cookie đặt ở path=/, nên mỗi ứng dụng cùng domain cần một tên riêng." },
+      { name: "persistKey", type: "string", description: "Tên cookie lưu trạng thái thu gọn và độ rộng; giá trị đã lưu thắng defaultCollapsed, cookie thiếu hoặc hỏng thì dùng defaultCollapsed. Chỉ gồm chữ, số, _ và -: tên khác thì không lưu gì (có cảnh báo khi phát triển). Cookie chỉ chứa collapsed hoặc expanded, kèm độ rộng (px) khi Sidebar resizable đã được kéo. Cookie đặt ở path=/ với samesite=lax, thêm secure trên https, nên mỗi ứng dụng cùng domain cần một tên riêng." },
       { name: "shortcut", type: "string | false", defaultValue: `"b"`, description: "Phím đi cùng Ctrl / ⌘; false để tắt. Nhiều AppShell trên một trang: chỉ khung đang được focus hoặc vừa được bấm vào nhận phím." },
       { name: "skipLink", type: "boolean", defaultValue: "true", description: "Link “Chuyển tới nội dung” hiện khi được focus." },
       { name: "Sidebar.collapsible", type: `"icon" | "offcanvas" | "none"`, defaultValue: `"icon"`, description: "Thu về rail chỉ icon, ẩn hẳn, hoặc luôn mở." },

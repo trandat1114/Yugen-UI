@@ -1,3 +1,6 @@
+import { createHash } from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { setMediaQueries } from "@/test/matchMedia";
 import { yugenHtmlAttributes, yugenThemeScript, type YugenThemeScriptOptions } from "./document";
@@ -81,6 +84,16 @@ describe("yugenThemeScript (#348)", () => {
       expect(html.getAttribute("data-theme")).toBe("dark");
     } finally {
       Object.defineProperty(window, "localStorage", descriptor);
+    }
+  });
+});
+
+describe("yugenThemeScript and a Content Security Policy (#382)", () => {
+  it("the sha256 hash on /concepts/ssr is the hash of the default script", () => {
+    const hash = `sha256-${createHash("sha256").update(yugenThemeScript()).digest("base64")}`;
+    for (const page of ["src/docs/concepts/ssr.tsx", "src/docs/concepts/en/ssr.tsx"]) {
+      const source = fs.readFileSync(path.resolve(__dirname, "../../../..", page), "utf8");
+      expect(source, `${page}: update THEME_SCRIPT_HASH`).toContain(`const THEME_SCRIPT_HASH = "${hash}";`);
     }
   });
 });

@@ -71,6 +71,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   );
 }`;
 
+/** sha256 của yugenThemeScript() không tuỳ chọn; document.test.ts báo lỗi khi script đổi mà giá trị này chưa đổi. */
+const THEME_SCRIPT_HASH = "sha256-aQ5/7/M1H2ZEsd4PyJ7/nRi/VlDCe/SWLVR6JGIWbgM=";
+
+const CSP_NONCE_CODE = `// Mỗi response một nonce ngẫu nhiên mới, đặt ở header và trên thẻ <script>:
+// Content-Security-Policy: script-src 'self' 'nonce-<nonce>'
+<script nonce={nonce} dangerouslySetInnerHTML={{ __html: yugenThemeScript() }} />`;
+
+const CSP_HASH_CODE = `# yugenThemeScript() không tuỳ chọn, ở phiên bản này
+Content-Security-Policy: script-src 'self' '${THEME_SCRIPT_HASH}'`;
+
+const CSP_HASH_COMPUTE_CODE = `// Tuỳ chọn khác: tính hash ở server hoặc lúc build
+import { createHash } from "node:crypto";
+import { yugenThemeScript } from "@/components/ui";
+
+const script = yugenThemeScript({ storageKey: "my-app-theme" }); // đúng chuỗi bạn render trong <head>
+const hash = createHash("sha256").update(script).digest("base64");
+// Content-Security-Policy: script-src 'self' 'sha256-\${hash}'`;
+
 const PROVIDERS_CODE = `// src/app/providers.tsx
 "use client";
 
@@ -216,6 +234,27 @@ export default function Page() {
               mặt trời / mặt trăng), hãy render phần đó sau khi mount.
             </li>
           </ul>
+        </div>
+      </DocSection>
+
+      <DocSection
+        id="csp"
+        title="Content Security Policy"
+        description="Script chống nháy là script inline. Policy chặt có thể cho phép nó bằng nonce hoặc bằng hash, không cần 'unsafe-inline'."
+      >
+        <div className="flex flex-col gap-4">
+          <P>
+            Dùng nonce: tạo một giá trị ngẫu nhiên mới cho mỗi response, đặt vào header <C>Content-Security-Policy</C> và lên thẻ{" "}
+            <C>{"<script>"}</C>. Với Next.js, tạo nonce trong middleware rồi đọc lại trong layout bằng <C>headers()</C>.
+          </P>
+          <CodeBlock code={CSP_NONCE_CODE} />
+          <P>
+            Dùng hash: cùng tuỳ chọn thì script giống hệt nhau, nên trang tĩnh hoặc prerender có thể ghi hash sha256 của nó. Giá trị dưới
+            đây là của <C>yugenThemeScript()</C> không tuỳ chọn. Hash đổi khi bạn truyền tuỳ chọn hoặc khi bản cập nhật đổi script, nên
+            tính từ hàm khi có thể.
+          </P>
+          <CodeBlock code={CSP_HASH_CODE} />
+          <CodeBlock code={CSP_HASH_COMPUTE_CODE} />
         </div>
       </DocSection>
 

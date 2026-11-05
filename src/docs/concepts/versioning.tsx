@@ -41,14 +41,14 @@ function Table({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
   );
 }
 
-const WARN = `[yugen-ui] "Button.appearance.transparent" đã lỗi thời và sẽ bị xoá ở v2.0.0:
-dùng appearance="subtle". Xem https://trandat1114.github.io/Yugen-UI/concepts/versioning`;
+const WARN = `[yugen-ui] "Button.appearance.transparent" is deprecated and will be removed in v2.0.0:
+use appearance="subtle". See https://trandat1114.github.io/Yugen-UI/concepts/versioning`;
 
 const DEPRECATE = `import { warnDeprecated } from "@/lib/deprecate";
 
 /** @deprecated Dùng \`appearance="subtle"\`. Sẽ xoá ở v2.0.0. */
 if (appearance === "transparent") {
-  warnDeprecated("Button.appearance.transparent", 'dùng appearance="subtle"', "2.0.0");
+  warnDeprecated("Button.appearance.transparent", 'use appearance="subtle"', "2.0.0");
 }`;
 
 const PIN = `# Giữ trong một dòng minor khi cần ổn định tuyệt đối (giai đoạn 0.x)

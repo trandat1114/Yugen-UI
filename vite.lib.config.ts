@@ -58,11 +58,16 @@ export default defineConfig({
     },
     rolldownOptions: {
       external: isExternal,
+      // No `// src/<module>` line at the start of each module (#382).
+      experimental: { attachDebugInfo: "none" },
       output: {
         preserveModules: true,
         preserveModulesRoot: src,
         entryFileNames: "[name].js",
         banner: (chunk) => (serverSafe.has(chunk.fileName) ? "" : '"use client";'),
+        // No comments in the published JS (#382): the JSDoc ships in the .d.ts files (tsconfig.lib.json). Keep the
+        // `@__PURE__` / `@__NO_SIDE_EFFECTS__` annotations, which let the app's bundler tree-shake.
+        comments: { legal: false, jsdoc: false, annotation: true },
       },
     },
   },

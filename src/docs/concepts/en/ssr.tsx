@@ -71,6 +71,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   );
 }`;
 
+/** sha256 of yugenThemeScript() with no options; document.test.ts fails when the script changes and this does not. */
+const THEME_SCRIPT_HASH = "sha256-aQ5/7/M1H2ZEsd4PyJ7/nRi/VlDCe/SWLVR6JGIWbgM=";
+
+const CSP_NONCE_CODE = `// A new random nonce for every response, in the header and on the <script>:
+// Content-Security-Policy: script-src 'self' 'nonce-<nonce>'
+<script nonce={nonce} dangerouslySetInnerHTML={{ __html: yugenThemeScript() }} />`;
+
+const CSP_HASH_CODE = `# yugenThemeScript() with no options, in this version
+Content-Security-Policy: script-src 'self' '${THEME_SCRIPT_HASH}'`;
+
+const CSP_HASH_COMPUTE_CODE = `// Other options: compute the hash on the server or at build time
+import { createHash } from "node:crypto";
+import { yugenThemeScript } from "@/components/ui";
+
+const script = yugenThemeScript({ storageKey: "my-app-theme" }); // the same string you render in <head>
+const hash = createHash("sha256").update(script).digest("base64");
+// Content-Security-Policy: script-src 'self' 'sha256-\${hash}'`;
+
 const PROVIDERS_CODE = `// src/app/providers.tsx
 "use client";
 
@@ -218,6 +236,27 @@ export default function Page() {
               differently per theme (a sun / moon icon), render that part after mount.
             </li>
           </ul>
+        </div>
+      </DocSection>
+
+      <DocSection
+        id="csp"
+        title="Content Security Policy"
+        description="The no-flash script is inline. A strict policy can allow it with a nonce or with its hash instead of 'unsafe-inline'."
+      >
+        <div className="flex flex-col gap-4">
+          <P>
+            With a nonce: create a new random value for every response, put it in the <C>Content-Security-Policy</C> header and on the{" "}
+            <C>{"<script>"}</C>. In Next.js, create it in middleware and read it in the layout with <C>headers()</C>.
+          </P>
+          <CodeBlock code={CSP_NONCE_CODE} />
+          <P>
+            With a hash: the script is the same for the same options, so a static or prerendered page can list its sha256 hash. The value
+            below is for <C>yugenThemeScript()</C> with no options. It changes when you pass options or when an update changes the script,
+            so compute it from the function when you can.
+          </P>
+          <CodeBlock code={CSP_HASH_CODE} />
+          <CodeBlock code={CSP_HASH_COMPUTE_CODE} />
         </div>
       </DocSection>
 
