@@ -187,6 +187,7 @@ export const CONCEPT_METAS: Record<string, ConceptMeta> = {
       { id: "client-components", label: "Client component" },
       { id: "setup", label: "Cài đặt cho Next.js" },
       { id: "theme-flash", label: "Root layout & chống nháy" },
+      { id: "csp", label: "Content Security Policy" },
       { id: "rsc", label: "Dùng trong Server Component" },
       { id: "hydration", label: "Portal, Toast & hydration" },
       { id: "docs-only", label: "Phần chỉ dành cho site docs" },

@@ -110,6 +110,7 @@ export interface AppShellProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
    * Lưu trạng thái thu gọn (và độ rộng khi `resizable`) vào cookie tên này; giá trị đã lưu thắng `defaultCollapsed`.
    * Render ở server: đọc bằng `readAppShellCookie()` rồi truyền `defaultCollapsed` để không nháy.
+   * Chỉ gồm chữ, số, `_` và `-`; tên khác thì không lưu.
    */
   persistKey?: string;
   /**

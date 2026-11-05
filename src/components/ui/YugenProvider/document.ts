@@ -63,6 +63,8 @@ export interface YugenThemeScriptOptions {
  * before the first paint, so server-rendered or prerendered pages don't flash the light theme:
  * `<script dangerouslySetInnerHTML={{ __html: yugenThemeScript({ storageKey: "my-app-theme" }) }} />`.
  * Read the attribute back on the client to initialise the `theme` you pass to YugenProvider.
+ * With a Content Security Policy, put a `nonce` on that `<script>` or allow the sha256 hash of the returned string
+ * (the same for the same options); the SSR concept page shows both.
  */
 export function yugenThemeScript({ storageKey = "yugen-ui-theme", defaultTheme = "system", highContrast = true }: YugenThemeScriptOptions = {}): string {
   // JSON.stringify cho chuỗi JS hợp lệ; "<" thoát để giá trị không đóng được thẻ <script>.

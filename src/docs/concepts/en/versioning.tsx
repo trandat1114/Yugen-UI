@@ -42,14 +42,14 @@ function Table({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
 }
 
 // Console output stays as the library prints it (Vietnamese message from warnDeprecated).
-const WARN = `[yugen-ui] "Button.appearance.transparent" đã lỗi thời và sẽ bị xoá ở v2.0.0:
-dùng appearance="subtle". Xem https://trandat1114.github.io/Yugen-UI/concepts/versioning`;
+const WARN = `[yugen-ui] "Button.appearance.transparent" is deprecated and will be removed in v2.0.0:
+use appearance="subtle". See https://trandat1114.github.io/Yugen-UI/concepts/versioning`;
 
 const DEPRECATE = `import { warnDeprecated } from "@/lib/deprecate";
 
 /** @deprecated Use \`appearance="subtle"\`. Will be removed in v2.0.0. */
 if (appearance === "transparent") {
-  warnDeprecated("Button.appearance.transparent", 'dùng appearance="subtle"', "2.0.0");
+  warnDeprecated("Button.appearance.transparent", 'use appearance="subtle"', "2.0.0");
 }`;
 
 const PIN = `# Stay on one minor line when you need absolute stability (0.x phase)

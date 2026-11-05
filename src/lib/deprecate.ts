@@ -1,15 +1,18 @@
 /**
- * Cảnh báo API sắp bỏ — chỉ ở môi trường phát triển, mỗi `id` một lần.
- * Bundler của người dùng (Vite, webpack, Next.js) thay `process.env.NODE_ENV` khi build production nên lời gọi
- * bị loại bỏ hoàn toàn; khi không có `process` (ESM thuần trong trình duyệt) thì im lặng.
+ * Warns about an API that is going away: development only, once per `id`.
+ * The app's bundler (Vite, webpack, Next.js) replaces `process.env.NODE_ENV` in production builds, so the call is
+ * removed; without `process` (plain ESM in the browser) it stays silent.
  *
  * ```ts
- * if (appearance === "transparent") warnDeprecated("Button.appearance.transparent", 'dùng appearance="subtle"', "1.0.0");
+ * if (appearance === "transparent") warnDeprecated("Button.appearance.transparent", 'use appearance="subtle"', "1.0.0");
  * ```
  */
 const warned = new Set<string>();
 
-// Khai báo trong module, không cần @types/node (bản build thư viện và dự án của người dùng có thể không có).
+/** The versioning and deprecation policy, linked from every warning. */
+const VERSIONING_URL = "https://trandat1114.github.io/Yugen-UI/concepts/versioning";
+
+// Declared here so neither the library build nor the app needs @types/node.
 declare const process: { env: { NODE_ENV?: string } };
 
 function isDev(): boolean {
@@ -20,14 +23,19 @@ function isDev(): boolean {
   }
 }
 
-export function warnDeprecated(id: string, replacement: string, removedIn?: string): void {
+/** A development-only console warning, once per `id`. */
+export function warnDev(id: string, message: string): void {
   if (!isDev() || warned.has(id)) return;
   warned.add(id);
-  const when = removedIn ? ` và sẽ bị xoá ở v${removedIn}` : " và sẽ bị xoá ở bản major tiếp theo";
-  console.warn(`[yugen-ui] "${id}" đã lỗi thời${when}: ${replacement}. Xem https://trandat1114.github.io/Yugen-UI/#/concepts/versioning`);
+  console.warn(`[yugen-ui] ${message}`);
 }
 
-/** Chỉ dùng trong test: cho phép cảnh báo lại. */
+export function warnDeprecated(id: string, replacement: string, removedIn?: string): void {
+  const when = removedIn ? `will be removed in v${removedIn}` : "will be removed in the next major version";
+  warnDev(id, `"${id}" is deprecated and ${when}: ${replacement}. See ${VERSIONING_URL}`);
+}
+
+/** Tests only: lets every warning fire again. */
 export function resetDeprecationWarnings(): void {
   warned.clear();
 }
