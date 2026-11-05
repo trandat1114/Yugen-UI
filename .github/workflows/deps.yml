@@ -1,0 +1,46 @@
+name: Dependencies
+
+# Dependency policy of yugen-ui (#383): scripts/check-deps.mjs installs the packed package like an app does and checks
+# the tree against deps-policy.json (package count, install scripts, last publish, provenance, publisher). Runs when
+# the dependencies or the policy change; CONTRIBUTING.md > Dependencies. Needs no npm ci: the script uses Node built-ins.
+on:
+  push:
+    branches: [main, next]
+    paths:
+      - "package.json"
+      - "package-lock.json"
+      - "deps-policy.json"
+      - "scripts/check-deps.mjs"
+      - ".github/workflows/deps.yml"
+  pull_request:
+    branches: [main, next]
+    paths:
+      - "package.json"
+      - "package-lock.json"
+      - "deps-policy.json"
+      - "scripts/check-deps.mjs"
+      - ".github/workflows/deps.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deps-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Dependency policy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 26
+
+      - run: node scripts/check-deps.mjs
