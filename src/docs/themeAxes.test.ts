@@ -9,8 +9,10 @@ import {
   GLASS,
   glassChecks,
   neutralChecks,
+  neutralSwatches,
   paramsToAxes,
   sanitizeFontName,
+  sharedToken,
   sharedVars,
   smallestTarget,
   themeVars,
@@ -124,5 +126,15 @@ describe("Theme Designer — các trục ngoài màu brand", () => {
     expect(themeVars(axes({ glassTint: "brand" }), "light", SAKURA)["--colorGlassBackground"]).toBe("rgb(from var(--brand-160) r g b / 0.8)");
     expect(themeVars(DEFAULT_AXES, "light", SAKURA)["--colorGlassBackground"]).toBeUndefined();
     expect(paramsToAxes(axesToParams(axes({ glass: "airy", glassTint: "brand" })))).toEqual(axes({ glass: "airy", glassTint: "brand" }));
+  });
+  it("giá trị token đang dùng và mẫu xám cho ô lựa chọn", () => {
+    expect(sharedToken(DEFAULT_AXES, "borderRadiusMedium")).toBe("4px");
+    expect(sharedToken(axes({ radius: "large" }), "borderRadiusMedium")).toBe("6px");
+    expect(sharedToken(axes({ motion: "expressive" }), "durationNormal")).toBe("250ms");
+    expect(sharedToken(DEFAULT_AXES, "noSuchToken")).toBe("");
+    expect(neutralSwatches("pure", SAKURA)).toEqual(["#fafafa", "#e0e0e0", "#424242", "#292929"]);
+    const warm = neutralSwatches("warm", SAKURA);
+    expect(warm).toHaveLength(4);
+    expect(warm).not.toEqual(neutralSwatches("cool", SAKURA));
   });
 });

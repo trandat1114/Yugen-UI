@@ -213,6 +213,20 @@ export function themeVars(axes: ThemeAxes, theme: "light" | "dark", brandHex: st
   return vars;
 }
 
+/** Giá trị đang dùng của một token dùng chung (bo góc, spacing, chữ, thời lượng): giá trị theo các trục, hoặc giá trị gốc. */
+export function sharedToken(axes: ThemeAxes, name: string): string {
+  return sharedVars(axes)[`--${name}`] ?? ROOT.get(name) ?? "";
+}
+
+/** Vài bậc xám sau khi pha sắc (sáng → tối), để vẽ mẫu cho từng lựa chọn Màu trung tính. */
+export function neutralSwatches(tone: NeutralTone, brandHex: string, steps = [98, 88, 26, 16]): string[] {
+  const hue = neutralHue(tone, brandHex);
+  return steps.map((step) => {
+    const hex = ROOT.get(`grey-${step}`) ?? "#808080";
+    return hue === null ? hex : tintGrey(hex, hue);
+  });
+}
+
 /** Màu thật của một token neutral sau khi pha sắc (giải var(--grey-N) / var(--white)). */
 function resolve(theme: Block, name: string, greys: Record<string, string>): string | null {
   const value = theme.get(name);
