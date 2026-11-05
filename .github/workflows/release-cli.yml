@@ -4,35 +4,46 @@ name: Release CLI
 # Quy tắc và các bước: wiki › Release Process › CLI. Kiểm tra: packages/cli/scripts/check-release.mjs.
 # Bản ổn định tag cli@X.Y.Z trên main (dist-tag latest), prerelease cli@X.Y.Z-beta.N trên next (dist-tag next).
 # Mỗi gói chỉ publish khi version của nó chưa có trên npm → chạy lại được nếu một bước publish lỗi.
+# Keep the file name: the trusted publisher of both packages on npmjs.com is bound to it.
+#
+# Jobs (#379): only `publish` gets `id-token: write`, and it runs no code from the repository or its dependencies.
+#   build          → npm ci, check-release, typecheck, test, smoke, `npm pack` both packages → artifact (.tgz + SHA256SUMS).
+#   publish        → environment `npm-release` (maintainer approval) → verify checksums → `npm publish <file>.tgz`,
+#                    @yugen-ui/cli first, then create-yugen-ui.
+#   github-release → GitHub Release from packages/cli/CHANGELOG.md. `contents: write`, no id-token.
 
 on:
   push:
     tags: ["cli@*"]
 
 permissions:
-  contents: write # GitHub Release
-  id-token: write # npm provenance
+  contents: read
 
 jobs:
-  publish:
+  build:
+    name: Build and pack
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      contents: read
+    outputs:
+      dist_tag: ${{ steps.channel.outputs.dist_tag }}
+      cli_package: ${{ steps.pack.outputs.cli_package }}
+      cli_tarball: ${{ steps.pack.outputs.cli_tarball }}
+      create_package: ${{ steps.pack.outputs.create_package }}
+      create_tarball: ${{ steps.pack.outputs.create_tarball }}
+      sums: ${{ steps.pack.outputs.sums }}
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0 # cần lịch sử nhánh để kiểm tra tag nằm đúng nhánh
+          persist-credentials: false
 
       - uses: actions/setup-node@v7
         with:
           node-version: 26
           cache: npm
           cache-dependency-path: packages/cli/package-lock.json
-          registry-url: https://registry.npmjs.org
-
-      # npm trusted publishing (OIDC, #202) cần npm ≥ 11.5.1. Không dùng npm token từ CLI 0.6.0: cả hai gói khai báo
-      # repository này và release-cli.yml là trusted publisher trên npmjs.com.
-      - name: npm with trusted publishing
-        run: npm install -g npm@11 && npm --version
 
       - run: npm ci --prefix packages/cli
 
@@ -44,32 +55,113 @@ jobs:
       - run: npm test --prefix packages/cli
       - run: npm run smoke --prefix packages/cli
 
-      - name: Publish @yugen-ui/cli (if its version is new)
-        working-directory: packages/cli
+      # npm pack runs the CLI's prepack (npm run build), as `npm publish` did before the split.
+      - name: Pack @yugen-ui/cli and create-yugen-ui
+        id: pack
         run: |
-          NAME_VERSION="$(node -p "require('./package.json').name + '@' + require('./package.json').version")"
-          if [ "$(npm view "$NAME_VERSION" version 2>/dev/null)" != "" ]; then
-            echo "$NAME_VERSION is already published — skipping."
+          OUT="$RUNNER_TEMP/npm-packages"
+          mkdir -p "$OUT"
+          spec() { node -p "const p = require('./$1/package.json'); p.name + '@' + p.version"; }
+          CLI_TARBALL="$(cd packages/cli && npm pack --pack-destination "$OUT" | tail -n 1)"
+          CREATE_TARBALL="$(cd packages/create-yugen-ui && npm pack --pack-destination "$OUT" | tail -n 1)"
+          {
+            echo "cli_package=$(spec packages/cli)"
+            echo "cli_tarball=$CLI_TARBALL"
+            echo "create_package=$(spec packages/create-yugen-ui)"
+            echo "create_tarball=$CREATE_TARBALL"
+          } >> "$GITHUB_OUTPUT"
+          cd "$OUT"
+          sha256sum "$CLI_TARBALL" "$CREATE_TARBALL" > SHA256SUMS
+          cat SHA256SUMS
+          echo "sums=$(sha256sum SHA256SUMS | cut -d ' ' -f 1)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: npm-packages
+          path: ${{ runner.temp }}/npm-packages/
+          if-no-files-found: error
+
+  # No checkout, no npm ci, no repo scripts: only npm itself runs while the OIDC token can be requested.
+  publish:
+    name: Publish to npm
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: npm-release # required reviewer; deployments only from tags v* and cli@*
+    permissions:
+      id-token: write # npm trusted publishing + provenance
+    steps:
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          registry-url: https://registry.npmjs.org
+
+      # npm trusted publishing (OIDC, #202) cần npm ≥ 11.5.1. Không dùng npm token từ CLI 0.6.0: cả hai gói khai báo
+      # repository này và release-cli.yml là trusted publisher trên npmjs.com.
+      - name: npm with trusted publishing
+        run: npm install -g npm@11 && npm --version
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: npm-packages
+          path: npm-packages
+
+      # SHA256SUMS must match the hash the build job reported, and the tarballs must match SHA256SUMS.
+      - name: Verify checksums
+        working-directory: npm-packages
+        env:
+          SUMS: ${{ needs.build.outputs.sums }}
+        run: |
+          echo "$SUMS  SHA256SUMS" | sha256sum -c -
+          sha256sum -c SHA256SUMS
+
+      - name: Publish @yugen-ui/cli (if its version is new)
+        working-directory: npm-packages
+        env:
+          PACKAGE: ${{ needs.build.outputs.cli_package }}
+          TARBALL: ${{ needs.build.outputs.cli_tarball }}
+          DIST_TAG: ${{ needs.build.outputs.dist_tag }}
+        run: |
+          if [ "$(npm view "$PACKAGE" version 2>/dev/null)" != "" ]; then
+            echo "$PACKAGE is already published — skipping."
           else
-            npm publish --provenance --access public --tag "${{ steps.channel.outputs.dist_tag }}"
+            npm publish "./$TARBALL" --provenance --access public --tag "$DIST_TAG" --ignore-scripts
           fi
 
       - name: Publish create-yugen-ui (if its version is new; stable releases only)
-        if: steps.channel.outputs.dist_tag == 'latest'
-        working-directory: packages/create-yugen-ui
+        if: needs.build.outputs.dist_tag == 'latest'
+        working-directory: npm-packages
+        env:
+          PACKAGE: ${{ needs.build.outputs.create_package }}
+          TARBALL: ${{ needs.build.outputs.create_tarball }}
         run: |
-          NAME_VERSION="create-yugen-ui@$(node -p "require('./package.json').version")"
-          if [ "$(npm view "$NAME_VERSION" version 2>/dev/null)" != "" ]; then
-            echo "$NAME_VERSION is already published — skipping."
+          if [ "$(npm view "$PACKAGE" version 2>/dev/null)" != "" ]; then
+            echo "$PACKAGE is already published — skipping."
           else
-            npm publish --provenance --access public
+            npm publish "./$TARBALL" --provenance --access public --ignore-scripts
           fi
+
+  github-release:
+    name: GitHub Release
+    needs: [build, publish]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write # GitHub Release
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
 
       # GitHub Release từ packages/cli/CHANGELOG.md. Không đánh dấu "Latest" để trang repo vẫn chỉ bản yugen-ui.
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DIST_TAG: ${{ steps.channel.outputs.dist_tag }}
+          DIST_TAG: ${{ needs.build.outputs.dist_tag }}
         run: |
           if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
             echo "Release $GITHUB_REF_NAME đã có — bỏ qua."; exit 0

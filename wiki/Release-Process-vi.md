@@ -112,8 +112,10 @@ git tag vx.y.z
 git push origin vx.y.z
 ```
 
-Workflow **Release** kiểm tra tag khớp `package.json` và nằm đúng nhánh, chạy test, build và `npm publish --provenance`
-qua npm trusted publishing (không cần token). Dist-tag do `scripts/release-channel.mjs` chọn: `latest`, `next` (prerelease) hoặc `release-X.Y`.
+Workflow **Release** kiểm tra tag khớp `package.json` và nằm đúng nhánh, chạy test, build và đóng gói. Sau đó job publish
+**chờ bạn duyệt** (environment `npm-release`, xem [Các job phát hành và bước duyệt](#các-job-phát-hành-và-bước-duyệt)):
+mở lần chạy › **Review deployments** › duyệt. Job này chạy `npm publish --provenance` với file `.tgz` đã đóng gói, qua npm
+trusted publishing (không cần token). Dist-tag do `scripts/release-channel.mjs` chọn: `latest`, `next` (prerelease) hoặc `release-X.Y`.
 
 Sau khi publish, workflow tự tạo GitHub Release cho tag từ mục CHANGELOG của bản đó (`scripts/release-notes.mjs`; bản
 `latest` được đánh dấu Latest, prerelease đánh dấu Pre-release). Workflow **Docs** build lại site (kèm docs các minor cũ ở
@@ -203,8 +205,9 @@ git push origin cli@X.Y.Z
 ```
 
 **Release CLI** chạy `check-release.mjs --tag` (tag khớp version, đúng nhánh, version chưa bị unpublish, `yugen-ui` mà template ghim đã có trên npm → chọn dist-tag),
-typecheck, test, smoke, rồi `npm publish --provenance` cho `@yugen-ui/cli` và `create-yugen-ui`. Mỗi gói bỏ qua nếu
-version đó đã có trên npm, nên một bước publish lỗi (token, tên gói) thì sửa xong chỉ cần **Re-run** workflow.
+typecheck, test, smoke và đóng gói cả hai gói. Sau khi bạn duyệt (environment `npm-release`, như **Release**) nó chạy
+`npm publish --provenance` cho `@yugen-ui/cli`, rồi `create-yugen-ui`. Mỗi gói bỏ qua nếu version đó đã có trên npm, nên
+một bước publish lỗi (token, tên gói) thì sửa xong chỉ cần **Re-run** các job lỗi.
 
 ### Sau khi publish
 
@@ -222,16 +225,39 @@ thanh trên cho người đã xem bản trước. **Release CLI** tự tạo Git
 ### Trusted publishing (OIDC, #202)
 
 Từ 0.14.0 và CLI 0.6.0 mọi lần publish đều qua OIDC; repository không giữ npm token. Hai workflow phát hành dùng
-npm ≥ 11.5.1 và `permissions: id-token: write`. Trên npmjs.com, mỗi gói › **Settings** › **Trusted Publisher** › GitHub
-Actions:
+npm ≥ 11.5.1 và chỉ cấp `permissions: id-token: write` cho job publish. Trên npmjs.com, mỗi gói › **Settings** ›
+**Trusted Publisher** › GitHub Actions:
 
 - repository `trandat1114/Yugen-UI`, workflow `release.yml` cho `yugen-ui` (bản ổn định, prerelease và canary);
   `release-cli.yml` cho `@yugen-ui/cli` và `create-yugen-ui`. Không cần environment.
 - Chọn **Allow npm publish**. Thiếu nó, bước publish lỗi `E403 … OIDC permission denied for this action`.
 - Bỏ chọn **Allow npm dist-tag**: dist-tag do `npm publish --tag` đặt.
 
-npm chỉ nhận một workflow trusted publisher cho mỗi gói, nên job canary nằm trong `release.yml`. Gói mới cần một lần
-`npm publish` bằng tay trước khi khai báo được trusted publisher.
+npm chỉ nhận một workflow trusted publisher cho mỗi gói, nên các job canary nằm trong `release.yml`. Gói mới cần một lần
+`npm publish` bằng tay trước khi khai báo được trusted publisher. Trusted publisher gắn với tên file workflow: không đổi tên
+`release.yml` hay `release-cli.yml`.
+
+### Các job phát hành và bước duyệt
+
+Job nào xin được token OIDC của npm thì publish được một bản có provenance hợp lệ. Vì vậy job giữ token không chạy mã nào
+của repository hay dependency (#379):
+
+| Job | Quyền | Chạy |
+| --- | --- | --- |
+| `build` (`canary-build`) | `contents: read` | `npm ci`, kiểm tra phát hành, test, build, `npm pack`. Tải các file `.tgz` và `SHA256SUMS` lên làm artifact. |
+| `publish` (`canary-publish`) | `id-token: write` | Chỉ `setup-node` và npm 11. Tải artifact, so `SHA256SUMS` với mã băm job `build` báo, rồi `npm publish <file>.tgz --provenance --ignore-scripts`. Không checkout, không `npm ci`, không script của repo. |
+| `github-release` | `contents: write` | Checkout và `scripts/release-notes.mjs` → GitHub Release. Không có `id-token`. |
+
+`release-cli.yml` có đúng ba job đó; job publish của nó publish `@yugen-ui/cli` trước, rồi `create-yugen-ui`.
+
+Job `publish` của `release.yml` và `release-cli.yml` dùng GitHub environment **`npm-release`** (repository **Settings** ›
+**Environments**): người duyệt bắt buộc `trandat1114`, chỉ deploy từ tag `v*` và `cli@*`. Sau khi đẩy tag, lần chạy dừng
+trước `publish` cho tới khi bạn mở nó và chọn **Review deployments** › **Approve and deploy**. Từ chối thì dừng phát hành:
+không publish gì, không tạo GitHub Release. Muốn thử lại sau thì chạy lại workflow. Các job canary không dùng environment,
+nên mỗi push lên `canary` vẫn phát hành mà không cần duyệt.
+
+Ô **Environment** của trusted publisher trên npm để trống: `yugen-ui` có một trusted publisher chung cho canary và bản ổn
+định, ghi `npm-release` ở đó sẽ chặn mọi bản canary.
 
 ### Lần đầu (`cli@0.1.0`)
 

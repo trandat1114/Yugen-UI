@@ -302,7 +302,8 @@ issue or contact a maintainer, who adds your login to `exclude` in that file.
    (`package.json` = `src/docs/news` = `CHANGELOG.md`).
 4. Commit (`chore(release): vX.Y.Z`) and merge to `main`.
 5. `git tag vX.Y.Z && git push --tags` — `.github/workflows/release.yml` re-checks the version against the tag, runs
-   the tests, builds and runs `npm publish --provenance` (npm trusted publishing, no token). Tags containing `-`
+   the tests, builds, waits for the maintainer's approval (environment `npm-release`) and runs `npm publish --provenance`
+   (npm trusted publishing, no token). Tags containing `-`
    (e.g. `v0.6.0-beta.1`) are published under the `next` dist-tag.
 
 The `@yugen-ui/cli` CLI and `create-yugen-ui` (`packages/`) are released separately with a `cli@X.Y.Z` tag, outside
@@ -577,8 +578,8 @@ tiêu đề luôn lấy nguyên bản từ GitHub. Muốn bỏ tên khỏi trang
 3. `npm install --package-lock-only` (đồng bộ `version` trong `package-lock.json`) rồi `npm run check:release`
    (`package.json` = `src/docs/news` = `CHANGELOG.md`).
 4. Commit (`chore(release): vX.Y.Z`), mở PR hoặc đẩy lên `main`.
-5. `git tag vX.Y.Z && git push --tags` — workflow `.github/workflows/release.yml` kiểm tra lại, chạy test, build và
-   `npm publish --provenance` (npm trusted publishing, không cần token). Tag có `-` (vd. `v0.6.0-beta.1`) phát hành với dist-tag `next`.
+5. `git tag vX.Y.Z && git push --tags` — workflow `.github/workflows/release.yml` kiểm tra lại, chạy test, build, chờ
+   maintainer duyệt (environment `npm-release`) rồi `npm publish --provenance` (npm trusted publishing, không cần token). Tag có `-` (vd. `v0.6.0-beta.1`) phát hành với dist-tag `next`.
 
 CLI `@yugen-ui/cli` và `create-yugen-ui` (`packages/`) phát hành riêng bằng tag `cli@X.Y.Z`, không qua Changesets — quy tắc và
 các bước ở wiki › *Release Process* › CLI. PR đổi `packages/cli` hoặc `packages/create-yugen-ui`: ghi một dòng vào mục

@@ -69,7 +69,7 @@ npm run version-packages && git tag v0.6.5 && git push origin release/0.6 v0.6.5
 ```bash
 git push --force origin HEAD:canary     # từ nhánh bạn muốn cho người khác thử
 ```
-Job `canary` của `release.yml` chạy typecheck + test + build rồi phát hành `x.y.z-canary-<thời gian>`. Không cần tag, không cần News.
+Job `canary-build` của `release.yml` chạy typecheck + test + build, rồi `canary-publish` phát hành `x.y.z-canary-<thời gian>`. Không cần tag, không cần News, không cần duyệt.
 
 ## Luật an toàn (được kiểm tra tự động)
 
