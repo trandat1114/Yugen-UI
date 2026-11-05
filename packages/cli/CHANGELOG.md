@@ -14,6 +14,14 @@
 - `add` in package mode adds the component to `yugen-ui.css` when the app has one.
 - `doctor` accepts `yugen-ui/theme-core.css` (it reported "theme not imported"), warns when `yugen-ui.css` is out of
   date or not imported, and names the components imported without their `sources/<Folder>.css`.
+- No runtime dependencies: own prompts on `node:readline` and colors with `node:util` `styleText` replace
+  `@clack/prompts` and `picocolors` (#381).
+- Bundled templates ship `package.json` as `_package.json`; `create` renames it back. Scanners no longer read the
+  templates' manifests as dependencies of the CLI (#381).
+- `create --ref` no longer reads `GITHUB_TOKEN` / `GH_TOKEN` (#381).
+- `add` / `update` refuse registry file paths that leave the target folder and dependency specs that are not npm
+  package specs; on Windows the package manager that launched the CLI runs without a shell (#381).
+- `LICENSE` file in `@yugen-ui/cli` and `create-yugen-ui`; `homepage` points to the path URL of the CLI page.
 
 ## 0.7.0
 

@@ -56,7 +56,7 @@ try {
     const target = path.join(app, dir);
     const pkg = readJson(path.join(target, "package.json"));
     check(
-      pkg.name === dir && !!pkg.dependencies?.["yugen-ui"] && fs.existsSync(path.join(target, ".gitignore")) && !fs.existsSync(path.join(target, "_gitignore")),
+      pkg.name === dir && !!pkg.dependencies?.["yugen-ui"] && fs.existsSync(path.join(target, ".gitignore")) && !fs.existsSync(path.join(target, "_gitignore")) && !fs.existsSync(path.join(target, "_package.json")),
       `create-yugen-ui -t ${t.name} (yugen-ui ${pkg.dependencies?.["yugen-ui"]})`,
     );
   }

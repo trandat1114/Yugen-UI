@@ -26,6 +26,20 @@ describe("create", () => {
     expect(read(target, "src/index.css")).toContain('@import "yugen-ui/theme.css"');
   });
 
+  it("restores _package.json and _gitignore from the bundled copy (#381: no nested manifests in the npm package)", async () => {
+    const bundled = tmpDir();
+    const dir = (JSON.parse(read(repoTemplates, "templates.json")) as { name: string; dir: string }[]).find((t) => t.name === "starter")!.dir;
+    fs.copyFileSync(path.join(repoTemplates, "templates.json"), path.join(bundled, "templates.json"));
+    fs.cpSync(path.join(repoTemplates, dir), path.join(bundled, dir), { recursive: true, filter: (src) => !/[\\/](node_modules|dist)$/.test(src) });
+    fs.renameSync(path.join(bundled, dir, "package.json"), path.join(bundled, dir, "_package.json"));
+    fs.renameSync(path.join(bundled, dir, ".gitignore"), path.join(bundled, dir, "_gitignore"));
+    const { target } = await create({ cwd: tmpDir(), dir: "app", template: "starter", install: false, git: false, templatesDir: bundled }, ctx);
+    expect(json(target, "package.json").name).toBe("app");
+    expect(fs.existsSync(path.join(target, ".gitignore"))).toBe(true);
+    expect(fs.existsSync(path.join(target, "_package.json"))).toBe(false);
+    expect(fs.existsSync(path.join(target, "_gitignore"))).toBe(false);
+  });
+
   it("next-starter: a Next.js app; --lang works without index.html; doctor finds the theme and the provider", async () => {
     const cwd = tmpDir();
     const base = { cwd, template: "next-starter", install: false, git: false, templatesDir: repoTemplates };

@@ -9,11 +9,11 @@ type Fetch = typeof fetch;
 /**
  * `create --ref <branch|tag>`: tải thư mục templates/ của repo ở ref đó vào một thư mục tạm (cùng cấu trúc với bản
  * đóng gói). Hai lời gọi GitHub API (commit, cây file) rồi tải từng file qua raw.githubusercontent.com theo SHA của
- * commit — tên nhánh có "/" không làm URL mơ hồ. GITHUB_TOKEN (nếu có) nâng giới hạn API.
+ * commit — tên nhánh có "/" không làm URL mơ hồ. Không đọc token nào từ môi trường (#381): hai lời gọi API mỗi lần chạy
+ * nằm xa dưới giới hạn 60 lần/giờ khi chưa đăng nhập.
  */
 export async function downloadTemplates(ref: string, fetchImpl: Fetch = fetch): Promise<string> {
-  const token = process.env.GITHUB_TOKEN ?? process.env.GH_TOKEN;
-  const headers: Record<string, string> = { Accept: "application/vnd.github+json", ...(token ? { Authorization: `Bearer ${token}` } : {}) };
+  const headers: Record<string, string> = { Accept: "application/vnd.github+json" };
   const api = async <T>(url: string): Promise<T> => {
     let res: Response;
     try {
@@ -23,7 +23,7 @@ export async function downloadTemplates(ref: string, fetchImpl: Fetch = fetch): 
     }
     if (res.status === 404 || res.status === 422) throw new CliError(`Branch or tag "${ref}" not found in ${REPO}.`);
     if (res.status === 403 || res.status === 429)
-      throw new CliError("GitHub API rate limit reached.", "Set GITHUB_TOKEN and retry, or drop --ref to use the bundled templates.");
+      throw new CliError("GitHub API rate limit reached.", "Try again later, or drop --ref to use the bundled templates.");
     if (!res.ok) throw new CliError(`GitHub request failed: ${res.status} ${res.statusText} (${url}).`);
     return (await res.json()) as T;
   };

@@ -1,8 +1,7 @@
-import * as p from "@clack/prompts";
-import pc from "picocolors";
-import { CancelledError, CliError } from "./errors.js";
+import { CliError } from "./errors.js";
+import { confirmPrompt, multiselectPrompt, p, pc, selectPrompt, textPrompt, type Choice } from "./term.js";
 
-export { p, pc };
+export { p, pc, type Choice };
 
 export interface Ctx {
   /** Được hỏi người dùng: có TTY, không -y, không chạy trong CI. Ngược lại mọi prompt lấy giá trị mặc định. */
@@ -13,35 +12,19 @@ export const makeCtx = (yes = false): Ctx => ({
   interactive: !yes && !!process.stdin.isTTY && !!process.stdout.isTTY && !process.env.CI,
 });
 
-function guard<T>(value: T): Exclude<T, symbol> {
-  if (p.isCancel(value)) {
-    p.cancel("Cancelled.");
-    throw new CancelledError();
-  }
-  return value as Exclude<T, symbol>;
-}
-
-export interface Choice<T extends string> {
-  value: T;
-  label?: string;
-  hint?: string;
-}
-
 export async function select<T extends string>(ctx: Ctx, message: string, options: Choice<T>[], initial: T): Promise<T> {
   if (!ctx.interactive) return initial;
-  return guard(await p.select<T>({ message, options: options as Parameters<typeof p.select<T>>[0]["options"], initialValue: initial }));
+  return selectPrompt(message, options, initial);
 }
 
 export async function multiselect<T extends string>(ctx: Ctx, message: string, options: Choice<T>[]): Promise<T[]> {
   if (!ctx.interactive) return [];
-  return guard(
-    await p.multiselect<T>({ message, options: options as Parameters<typeof p.multiselect<T>>[0]["options"], required: true }),
-  );
+  return multiselectPrompt(message, options);
 }
 
 export async function confirm(ctx: Ctx, message: string, initial: boolean): Promise<boolean> {
   if (!ctx.interactive) return initial;
-  return guard(await p.confirm({ message, initialValue: initial }));
+  return confirmPrompt(message, initial);
 }
 
 export async function text(ctx: Ctx, message: string, initial: string, validate?: (v: string) => string | undefined) {
@@ -50,10 +33,7 @@ export async function text(ctx: Ctx, message: string, initial: string, validate?
     if (error) throw new CliError(error);
     return initial;
   }
-  const value = guard(
-    await p.text({ message, placeholder: initial, defaultValue: initial, validate: (v) => validate?.(v || initial) }),
-  );
-  return value || initial;
+  return textPrompt(message, initial, validate);
 }
 
 /** Danh sách đường dẫn mờ, cắt bớt khi dài (`yugen add all` ghi hơn trăm file). */
