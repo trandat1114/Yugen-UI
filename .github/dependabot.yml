@@ -50,6 +50,7 @@ updates:
       cli:
         patterns: ["*"]
 
+  # Workflows pin every action by commit SHA with the version in a comment (#380); Dependabot updates both.
   - package-ecosystem: github-actions
     directory: /
     target-branch: next

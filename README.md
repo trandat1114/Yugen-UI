@@ -2,6 +2,8 @@
 
 *Tiếng Việt: [xem bên dưới](#tiếng-việt).*
 
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/trandat1114/Yugen-UI/badge)](https://scorecard.dev/viewer/?uri=github.com/trandat1114/Yugen-UI)
+
 **Yugen UI** is a React component library and design system for **Tailwind CSS v4**. It combines
 [Microsoft Fluent 2](https://fluent2.microsoft.design/)-inspired design tokens and component behaviour with the
 copy-friendly, composable API style of [shadcn/ui](https://ui.shadcn.com/), and ships with its own **Sakura 桜**
