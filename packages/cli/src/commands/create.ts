@@ -11,6 +11,8 @@ import { confirm, p, pc, select, text, type Ctx } from "../lib/ui.js";
 
 /** Template đóng gói cùng CLI (scripts/copy-templates.mjs): dist/commands → ../../templates. */
 export const BUNDLED_TEMPLATES = fileURLToPath(new URL("../../templates", import.meta.url));
+/** Tên file đổi khi đóng gói (scripts/copy-templates.mjs) → tên thật khi chép ra. */
+const BUNDLED_NAMES: Record<string, string> = { _gitignore: ".gitignore", "_package.json": "package.json" };
 
 export interface TemplateInfo {
   dir: string;
@@ -164,7 +166,7 @@ async function createFrom(templatesDir: string, opts: CreateOptions, ctx: Ctx) {
   const pm = (opts.pm ?? pmFromUserAgent() ?? "npm") as PackageManager;
   if (!PMS.includes(pm)) throw new CliError(`Unknown package manager "${opts.pm}".`, `Use one of: ${PMS.join(", ")}.`);
 
-  copyDir(path.join(templatesDir, template.dir), target, (name) => (name === "_gitignore" ? ".gitignore" : name));
+  copyDir(path.join(templatesDir, template.dir), target, (name) => BUNDLED_NAMES[name] ?? name);
   const pkgFile = path.join(target, "package.json");
   const pkg = JSON.parse(readText(pkgFile)) as PackageJson;
   writeJson(pkgFile, { ...pkg, name: toPackageName(path.basename(target)) });

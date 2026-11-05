@@ -2,6 +2,8 @@
 /**
  * Chép templates/ ở gốc repo vào packages/cli/templates/ để đóng gói cùng CLI (`yugen create` chạy offline).
  * npm bỏ mọi file .gitignore khi publish → đổi tên thành _gitignore, `yugen create` đổi lại khi chép ra.
+ * package.json của template → _package.json: máy quét (Socket…) đọc package.json lồng trong gói như manifest và tính
+ * cây phụ thuộc của mọi template vào CLI (#381).
  *
  *   node scripts/copy-templates.mjs     # chạy trong `npm run build` / prepack
  */
@@ -24,7 +26,8 @@ for (const { dir } of manifest) {
   });
 }
 for (const file of fs.readdirSync(to, { recursive: true }).map(String)) {
-  if (path.basename(file) === ".gitignore") fs.renameSync(path.join(to, file), path.join(to, path.dirname(file), "_gitignore"));
+  const renamed = { ".gitignore": "_gitignore", "package.json": "_package.json" }[path.basename(file)];
+  if (renamed) fs.renameSync(path.join(to, file), path.join(to, path.dirname(file), renamed));
 }
 fs.copyFileSync(path.join(from, "templates.json"), path.join(to, "templates.json"));
 console.log(`copy-templates: ${manifest.map((t) => t.dir).join(", ")} → packages/cli/templates/`);
