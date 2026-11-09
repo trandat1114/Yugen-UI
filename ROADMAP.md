@@ -39,7 +39,7 @@ Not scheduled yet.
 
 Details on What's new (`/news`) and in `CHANGELOG.md`.
 
-- **0.16.0** (2026-11-18): Performance: lighter imports, smaller CSS and fewer re-renders
+- **0.16.0** (2026-11-09): Performance: lighter imports, smaller CSS and fewer re-renders
 - **0.15.0** (2026-11-04): New form controls, NavigationMenu, status pages and app-wide defaults
 - **0.14.0** (2026-11-03): AppShell, Sortable and a Contributors page
 - **0.13.0** (2026-10-28): Refraction for glass, cherry blossom season in the Glass template
@@ -98,7 +98,7 @@ Chưa xếp lịch.
 
 Chi tiết ở trang Có gì mới (`/news`) và `CHANGELOG.md`.
 
-- **0.16.0** (2026-11-18): Hiệu năng: import nhẹ hơn, CSS gọn hơn và ít render lại hơn
+- **0.16.0** (2026-11-09): Hiệu năng: import nhẹ hơn, CSS gọn hơn và ít render lại hơn
 - **0.15.0** (2026-11-04): Form control mới, NavigationMenu, trang trạng thái và prop mặc định cho cả ứng dụng
 - **0.14.0** (2026-11-03): AppShell, Sortable, trang Người đóng góp
 - **0.13.0** (2026-10-28): Khúc xạ cho glass, mùa hoa anh đào trong template Glass

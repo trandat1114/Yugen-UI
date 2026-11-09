@@ -16,9 +16,10 @@ import { FEEDS, NEWS_DIR } from "./news.mjs";
  * 0.12.0 và cùng ngày quy tắc ra đời (maintainer quyết định không chờ), nên quy tắc áp dụng từ bản sau đó. 0.14.0 và CLI
  * 0.6.0 phát hành ngày 3/11, sớm hơn mốc 14 ngày (maintainer quyết định ngoại lệ một lần), nên quy tắc áp dụng lại từ 4/11.
  * 0.15.0 và CLI 0.7.0 phát hành ngày 4/11 và gộp luôn milestone 0.16.0 (maintainer quyết định phát hành một lần trong ngày
- * thay vì hai bản minor), nên quy tắc áp dụng lại từ 5/11: bản minor kế tiếp sớm nhất ngày 18/11.
+ * thay vì hai bản minor), nên quy tắc áp dụng lại từ 5/11. 0.16.0 và CLI 0.8.0 phát hành ngày 9/11, sớm hơn mốc 18/11
+ * (maintainer quyết định ngoại lệ), nên quy tắc áp dụng lại từ 10/11: bản minor kế tiếp sớm nhất ngày 23/11.
  */
-export const RULES_SINCE = "2026-11-05";
+export const RULES_SINCE = "2026-11-10";
 /** Số ngày tối thiểu giữa hai bản cùng cấp. Patch không giới hạn. */
 export const MIN_DAYS = { minor: 14, major: 180 };
 
