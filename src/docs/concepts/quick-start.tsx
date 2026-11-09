@@ -134,9 +134,26 @@ function NewsletterForm() {
   );
 }
 
+const IMPORTS = `// Gốc gói: mọi thứ từ một chỗ. Bundler chỉ giữ phần bạn dùng.
+import { Dialog, DialogSurface, DialogTrigger } from "yugen-ui";
+
+// Subpath: chỉ component đó và những gì nó dùng.
+import { Button } from "yugen-ui/Button";
+import { LineChart, Sparkline } from "yugen-ui/Chart";
+import { useDisclosure } from "yugen-ui/hooks";`;
+
+const NEXT_CONFIG = `// next.config.ts
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  experimental: { optimizePackageImports: ["yugen-ui"] },
+};
+
+export default nextConfig;`;
+
 const PERSIST = `// src/App.tsx — nhớ theme người dùng chọn
 import * as React from "react";
-import { YugenProvider, type YugenTheme } from "yugen-ui";
+import { Toaster, YugenProvider, type YugenTheme } from "yugen-ui";
 
 const STORAGE_KEY = "yugen-ui-theme";
 
@@ -156,7 +173,8 @@ export default function App() {
   }, [theme]);
 
   return (
-    <YugenProvider applyToDocument withToaster theme={theme}>
+    <YugenProvider applyToDocument theme={theme}>
+      <Toaster />
       <AppShell onThemeChange={setTheme} />
     </YugenProvider>
   );
@@ -250,7 +268,7 @@ export default function Page() {
                   </Tabs>
                   <P>
                     <C>applyToDocument</C> ghi theme lên <C>{"<html>"}</C> để Dialog, Menu, Tooltip (render qua portal) cũng đúng màu;{" "}
-                    <C>withToaster</C> để gọi <C>toast()</C> ở bất kỳ đâu. Xong — thử ngay với component đầu tiên bên dưới.
+                    Đặt <C>Toaster</C> một lần trong provider gốc để gọi <C>toast()</C> ở bất kỳ đâu. Xong — thử ngay với component đầu tiên bên dưới.
                   </P>
                 </>
               ),
@@ -286,6 +304,40 @@ export default function Page() {
       </DocSection>
 
       <DocSection
+        id="imports"
+        title="Đường dẫn import"
+        description="Mỗi thư mục component cũng là một subpath của gói: yugen-ui/Button, yugen-ui/Chart, yugen-ui/hooks."
+      >
+        <div className="flex flex-col gap-4">
+          <CodeBlock code={IMPORTS} />
+          <P>
+            Với Vite, Rollup, webpack và Next.js, bản build production có cùng dung lượng với cả hai cách. Với esbuild có code splitting (
+            <C>splitting: true</C>), hãy import từ subpath: import từ gốc gói thì esbuild đưa các phần nạp lúc cần vào chunk đầu (xem{" "}
+            <A href={docsPath("/concepts/performance#imports")}>Hiệu năng</A>). Subpath còn có ích ở nơi không có tree-shaking: test
+            (Vitest, Jest), render phía server bằng Node và dev server. Trong Node,{" "}
+            <C>{'import { Button } from "yugen-ui/Button"'}</C> lần đầu nạp 14 module thay vì khoảng 500. Hai cách nạp cùng các file nên
+            có thể dùng lẫn.
+          </P>
+          <P>
+            Subpath là thư mục của component: <C>CardHeader</C> lấy từ <C>yugen-ui/Card</C>, <C>DateRangePicker</C> từ{" "}
+            <C>yugen-ui/DatePicker</C>. Ngoại lệ là <C>yugen-ui/AppShell/Sidebar</C>, <C>yugen-ui/YugenProvider/document</C>,{" "}
+            <C>yugen-ui/messages-en</C> và <C>yugen-ui/messages-vi</C>. <C>cn</C> và các hàm màu thương hiệu chỉ có ở gốc gói;{" "}
+            <C>readAppShellCookie</C> chạy được trong Server Component chỉ khi import từ <C>yugen-ui</C>, còn <C>yugenHtmlAttributes</C> và{" "}
+            <C>yugenThemeScript</C> khi import từ <C>yugen-ui</C> hoặc <C>yugen-ui/YugenProvider/document</C>.
+          </P>
+          <P>
+            TypeScript với <C>moduleResolution: node</C> (node10) không đọc <C>exports</C> nên không thấy kiểu của subpath: import từ{" "}
+            <C>yugen-ui</C>, hoặc chuyển sang <C>bundler</C> hay <C>nodenext</C>.
+          </P>
+          <P>
+            Next.js: để giữ import từ gốc gói mà vẫn chỉ nạp phần trang dùng khi phát triển và ở server, thêm gói vào{" "}
+            <C>optimizePackageImports</C>.
+          </P>
+          <CodeBlock code={NEXT_CONFIG} />
+        </div>
+      </DocSection>
+
+      <DocSection
         id="persist-theme"
         title="Nhớ theme & chống nháy (tuỳ chọn)"
         description="Template đã làm sẵn phần này. Tự dựng thì cần hai mảnh: state lưu lựa chọn và script nhỏ đặt theme trước khi trang hiện."
@@ -293,8 +345,8 @@ export default function Page() {
         <div className="flex flex-col gap-4">
           <CodeBlock code={PERSIST} />
           <P>
-            <C>YugenProvider</C> ghi attribute trong <C>useEffect</C> (sau lần vẽ đầu), nên thêm script vào <C>{"<head>"}</C> để không chớp
-            nền trắng khi người dùng đã chọn theme tối. Với Next.js, xem <A href={docsPath("/concepts/ssr")}>SSR & Next.js</A>.
+            <C>YugenProvider</C> ghi attribute khi React chạy, lúc trình duyệt đã vẽ <C>index.html</C>, nên thêm script vào{" "}
+            <C>{"<head>"}</C> để không chớp nền trắng khi người dùng đã chọn theme tối. Với Next.js, xem <A href={docsPath("/concepts/ssr")}>SSR & Next.js</A>.
           </P>
           <CodeBlock code={HTML} />
           <MessageBar intent="warning" title="Giữ cùng một khoá localStorage." className="max-w-3xl">

@@ -4,7 +4,7 @@ import type { DateRange } from "react-day-picker";
 import { cn } from "@/lib/cn";
 import { warnDeprecated } from "@/lib/deprecate";
 import { Calendar } from "@/components/ui/Calendar/Calendar";
-import { useYugen, useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
+import { useYugenLocale, useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { PickerShell, boundsOf, numericDateFormat, type PickerBaseProps } from "./pickerShell";
 import { datePickerMessagesEn, dateRangePickerMessagesEn, type DateRangePickerMessages } from "./messages";
 
@@ -62,7 +62,7 @@ export function DatePicker(inProps: DatePickerProps) {
     ...props
   } = useComponentDefaults("DatePicker", inProps, COMPACT_SIZE);
   const msg = useYugenMessages("datePicker", datePickerMessagesEn);
-  const { locale } = useYugen();
+  const locale = useYugenLocale();
   const format = formatDate ?? numericDateFormat(locale);
   const [open, setOpen] = React.useState(false);
   if (onSelectDate !== undefined) warnDeprecated("DatePicker.onSelectDate", "use onValueChange", "1.0.0");
@@ -227,7 +227,7 @@ export function DateRangePicker(inProps: DateRangePickerProps) {
     ...props
   } = useComponentDefaults("DateRangePicker", inProps, COMPACT_SIZE);
   const msg = useYugenMessages("dateRangePicker", dateRangePickerMessagesEn);
-  const { locale } = useYugen();
+  const locale = useYugenLocale();
   const format = formatDate ?? numericDateFormat(locale);
   const [open, setOpen] = React.useState(false);
   if (onSelectRange !== undefined) warnDeprecated("DateRangePicker.onSelectRange", "use onValueChange", "1.0.0");

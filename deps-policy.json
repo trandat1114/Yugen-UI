@@ -1,0 +1,48 @@
+{
+  "$comment": "Dependency policy of yugen-ui, checked by scripts/check-deps.mjs (#383). maxPackages: packages installed with yugen-ui, lowered when one goes away. allow: accepted findings, each with a reason and a review date. CONTRIBUTING.md > Dependencies.",
+  "maxPackages": 70,
+  "allow": [
+    {
+      "name": "detect-node-es",
+      "reason": "Last release 2021-03. Comes from react-remove-scroll (use-sidecar), which Radix Dialog, Popover, Select and Menu use. Under 1 kB, no I/O. Goes away when Radix drops react-remove-scroll.",
+      "review": "2027-05-01",
+      "rules": ["unmaintained"]
+    },
+    {
+      "name": "get-nonce",
+      "reason": "Last release 2020-04. Comes from react-remove-scroll (react-style-singleton), which Radix Dialog, Popover, Select and Menu use. Under 1 kB, no I/O. Goes away when Radix drops react-remove-scroll.",
+      "review": "2027-05-01",
+      "rules": ["unmaintained"]
+    },
+    {
+      "name": "tslib",
+      "reason": "2.9.1 is the first version published by the npm account microsoft1es (earlier versions: typescript-bot), a Microsoft build account. Comes from the react-remove-scroll family.",
+      "review": "2027-05-01",
+      "rules": ["publisher"]
+    },
+    {
+      "name": "class-variance-authority",
+      "reason": "Published without provenance. src/lib/cvx.ts builds the component variants on it; one small file, no dependencies.",
+      "review": "2027-05-01",
+      "rules": ["provenance"]
+    },
+    {
+      "name": "clsx",
+      "reason": "Published without provenance. cn() uses it to join class names; under 1 kB, no dependencies.",
+      "review": "2027-05-01",
+      "rules": ["provenance"]
+    },
+    {
+      "name": "cmdk",
+      "reason": "Published without provenance. Only Command still uses it: Combobox, TagPicker and TimePicker moved to the own listbox (#351).",
+      "review": "2027-02-01",
+      "rules": ["provenance"]
+    },
+    {
+      "name": "react-resizable-panels",
+      "reason": "Published without provenance. Only Resizable uses it; an own splitter is planned (#356).",
+      "review": "2027-02-01",
+      "rules": ["provenance"]
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
 import {
   CheckmarkCircle20Filled,
   DiamondDismiss20Filled,
@@ -8,13 +8,14 @@ import {
   Dismiss20Regular,
 } from "../_internal/icons";
 import { cn } from "@/lib/cn";
+import { cvx } from "@/lib/cvx";
 import { useYugenMessages } from "../YugenProvider/context";
 import { messageBarMessagesEn } from "./messages";
 
 export { messageBarMessages, messageBarMessagesVi, messageBarMessagesEn, type MessageBarMessages } from "./messages";
 
 /** Fluent 2 MessageBar — https://fluent2.microsoft.design/components/web/react/core/messagebar/usage */
-const messageBarVariants = cva(
+const messageBarVariants = cvx(
   "flex min-h-9 w-full items-start gap-2 rounded-medium border px-3 py-1.5 text-body1 text-foreground-1",
   {
     variants: {
@@ -62,7 +63,7 @@ export function MessageBar({
   return (
     <div
       role={intent === "error" || intent === "warning" ? "alert" : "status"}
-      className={cn(messageBarVariants({ intent }), className)}
+      className={messageBarVariants({ intent, className })}
       {...props}
     >
       <Icon className={cn("mt-0.5 size-5 shrink-0", iconClass)} />

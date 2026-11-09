@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useMediaQuery } from "../hooks/useMediaQuery";
-import { useYugen } from "../YugenProvider/context";
+import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
+import { useYugenTheme } from "../YugenProvider/context";
 
 /* ================================================================== Kiểu dữ liệu */
 
@@ -336,63 +337,91 @@ export function ringPath(cx: number, cy: number, r0: number, r1: number) {
 
 /** Bật hoa văn khi: prop texture, theme tương phản cao, hoặc forced-colors của hệ điều hành. */
 export function useChartTexture(texture?: boolean): boolean {
-  const { theme } = useYugen();
+  const { theme } = useYugenTheme();
   const forced = useMediaQuery("(forced-colors: active)");
   return texture ?? (theme === "high-contrast" || forced);
 }
 
-/** Điều hướng bàn phím kiểu roving tabindex giữa các điểm dữ liệu (←/→/↑/↓, Home, End, Esc). */
+/** Phím của roving tabindex → chỉ số kế tiếp (chưa kẹp), "escape", hoặc null nếu không phải phím điều hướng. */
+function rovingTarget(key: string, i: number, count: number): number | "escape" | null {
+  if (key === "ArrowRight" || key === "ArrowDown") return i + 1;
+  if (key === "ArrowLeft" || key === "ArrowUp") return i - 1;
+  if (key === "Home") return 0;
+  if (key === "End") return count - 1;
+  if (key === "Escape") return "escape";
+  return null;
+}
+
+/** Chỉ số `data-i` của phần tử phát sự kiện; -1 nếu không phải một điểm. */
+function pointIndex(event: React.SyntheticEvent) {
+  const value = (event.target as Element).getAttribute?.("data-i");
+  return value == null ? -1 : Number(value);
+}
+
+export interface RovingLayerProps {
+  onPointerOver: (event: React.PointerEvent<SVGElement>) => void;
+  onFocus: (event: React.FocusEvent<SVGElement>) => void;
+  onBlur: (event: React.FocusEvent<SVGElement>) => void;
+  onKeyDown: (event: React.KeyboardEvent<SVGElement>) => void;
+}
+
+/**
+ * Điều hướng bàn phím kiểu roving tabindex giữa các điểm dữ liệu (←/→/↑/↓, Home, End, Esc).
+ * Handler dùng chung, identity cố định, đọc chỉ số từ `data-i` của điểm phát sự kiện. Hai cách gắn: `pointProps(i)` trên
+ * từng điểm, hoặc `layerProps` trên `<g>` cha cùng `data-i` và `tabIndex={i === stop ? 0 : -1}` trên từng điểm: lớp điểm
+ * khi đó memo được, hover không render lại nó.
+ */
 export function useRovingPoints(count: number, onActivate: (index: number | null, viaKeyboard: boolean) => void) {
-  const refs = React.useRef<(SVGElement | null)[]>([]);
   const [tabStop, setTabStop] = React.useState(0);
   const stop = Math.min(tabStop, Math.max(0, count - 1));
 
-  const focusAt = (i: number) => {
-    const next = clamp(i, 0, count - 1);
-    setTabStop(next);
-    refs.current[next]?.focus();
-  };
-
-  const onKeyDown = (event: React.KeyboardEvent, i: number) => {
-    let next: number | null = null;
-    if (event.key === "ArrowRight" || event.key === "ArrowDown") next = i + 1;
-    else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = i - 1;
-    else if (event.key === "Home") next = 0;
-    else if (event.key === "End") next = count - 1;
-    else if (event.key === "Escape") {
-      onActivate(null, true);
-      return;
-    }
-    if (next === null) return;
-    event.preventDefault();
-    focusAt(next);
-  };
-
-  // Ref callback cố định cho mỗi điểm: callback mới mỗi render khiến React gỡ rồi gắn lại ref của mọi điểm.
-  const refCallbacks = React.useRef<((el: SVGElement | null) => void)[]>([]);
-  const refAt = (i: number) =>
-    (refCallbacks.current[i] ??= (el) => {
-      refs.current[i] = el;
-    });
-
-  const pointProps = (i: number) => ({
-    ref: refAt(i),
-    tabIndex: i === stop ? 0 : -1,
-    onKeyDown: (e: React.KeyboardEvent) => onKeyDown(e, i),
-    onFocus: () => {
-      setTabStop(i);
-      onActivate(i, true);
-    },
-    onBlur: () => onActivate(null, true),
-    onPointerEnter: () => onActivate(i, false),
+  const latest = React.useRef({ count, onActivate });
+  useIsomorphicLayoutEffect(() => {
+    latest.current = { count, onActivate };
   });
+  const [layerProps] = React.useState<RovingLayerProps>(() => ({
+    onPointerOver: (event) => {
+      const i = pointIndex(event);
+      if (i >= 0) latest.current.onActivate(i, false);
+    },
+    onFocus: (event) => {
+      const i = pointIndex(event);
+      if (i < 0) return;
+      setTabStop(i);
+      latest.current.onActivate(i, true);
+    },
+    onBlur: (event) => {
+      if (pointIndex(event) >= 0) latest.current.onActivate(null, true);
+    },
+    onKeyDown: (event) => {
+      const i = pointIndex(event);
+      if (i < 0) return;
+      const { count: n, onActivate: activate } = latest.current;
+      const next = rovingTarget(event.key, i, n);
+      if (next === "escape") {
+        activate(null, true);
+        return;
+      }
+      if (next === null) return;
+      event.preventDefault();
+      const target = clamp(next, 0, n - 1);
+      setTabStop(target);
+      // Các điểm là anh em trong cùng một `<g>`: handler gắn trên `<g>` (layerProps) hoặc trên chính điểm (pointProps).
+      const layer = event.currentTarget.hasAttribute("data-i") ? event.currentTarget.parentElement : event.currentTarget;
+      layer?.querySelector<SVGElement>(`[data-i="${target}"]`)?.focus();
+    },
+  }));
 
-  return { pointProps };
+  const pointProps = (i: number) => ({ "data-i": i, tabIndex: i === stop ? 0 : -1, ...layerProps });
+
+  return { pointProps, layerProps, stop };
 }
 
 /** Ẩn/hiện chuỗi từ legend — luôn giữ ít nhất một chuỗi. Màu không đổi khi lọc (màu theo thực thể). */
 export function useSeriesToggle(keys: string[]) {
   const [hidden, setHidden] = React.useState<ReadonlySet<string>>(() => new Set());
+  // Theo nội dung, không theo mảng: biểu đồ truyền `series.map(...)` mới mỗi lần render, toggle vẫn giữ identity (legend memo được).
+  const signature = keys.join("\u0000");
   const toggle = React.useCallback(
     (key: string) =>
       setHidden((prev) => {
@@ -401,7 +430,8 @@ export function useSeriesToggle(keys: string[]) {
         else next.add(key);
         return keys.every((k) => next.has(k)) ? prev : next;
       }),
-    [keys],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [signature],
   );
   return [hidden, toggle] as const;
 }

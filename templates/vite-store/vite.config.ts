@@ -3,6 +3,7 @@ import path from "node:path";
 import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import { yugenCss } from "@yugen-ui/cli/vite";
 
 /**
  * `npm run build:gh-pages` (mode gh-pages): GitHub Pages answers unknown paths with 404.html, so the app is copied
@@ -25,7 +26,7 @@ function githubPagesFallback(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [react(), tailwindcss(), githubPagesFallback()],
+  plugins: [react(), tailwindcss(), yugenCss(), githubPagesFallback()],
   build: {
     rolldownOptions: {
       output: {

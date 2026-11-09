@@ -3,6 +3,7 @@ import path from "node:path";
 import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import { yugenCss } from "@yugen-ui/cli/vite";
 import { frontmatterOf, loadDocs, outlineOf, pageMeta, type PageKind } from "./src/docs.ts";
 // The language in use is the one content/index.ts points to (`create --lang` keeps one): text and content/<lang>/docs.
 import content from "./src/content/index.ts";
@@ -77,7 +78,7 @@ function docsSeo(): Plugin {
       outDir = path.resolve(config.root, config.build.outDir);
       base = config.base;
     },
-    closeBundle() {
+    writeBundle() {
       const files: Record<string, string> = {};
       for (const section of fs.readdirSync(DOCS_DIR, { withFileTypes: true }).filter((d) => d.isDirectory())) {
         for (const file of fs.readdirSync(path.join(DOCS_DIR, section.name)).filter((f) => f.endsWith(".md"))) {
@@ -119,7 +120,7 @@ ${pages.map((p) => `  <url><loc>${SITE.url}${p.path}</loc></url>`).join("\n")}
 export default defineConfig({
   // Deploying to a subfolder (GitHub Pages /<repo>/): BASE=/<repo>/ npm run build
   base: process.env.BASE ?? "/",
-  plugins: [docsContent(), react(), tailwindcss(), docsSeo()],
+  plugins: [docsContent(), react(), tailwindcss(), yugenCss(), docsSeo()],
   build: {
     rolldownOptions: {
       output: {

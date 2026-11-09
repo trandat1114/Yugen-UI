@@ -15,7 +15,7 @@ import { fieldAppearanceClass, type FieldAppearance } from "@/components/ui/Sele
 
 /**
  * Class nền dùng chung cho option trong listbox (Dropdown, Combobox, TagPicker).
- * Trạng thái highlight/disabled do từng component thêm (Radix: `data-highlighted`, cmdk: `data-selected=true`).
+ * Trạng thái highlight/disabled do từng component thêm (Radix: `data-highlighted`, Combobox / TagPicker: `data-selected=true`).
  */
 export const listboxOptionClass =
   "relative flex min-h-8 cursor-pointer items-center gap-1 rounded-medium px-2 py-1.5 text-body1 text-foreground-1 outline-none select-none active:bg-background-1-pressed";

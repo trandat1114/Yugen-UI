@@ -1,5 +1,5 @@
 import * as React from "react";
-import { GlassRefraction, YugenProvider } from "@/components/ui";
+import { GlassRefraction, Toaster, YugenProvider } from "@/components/ui";
 import { DEFAULT_APPEARANCE, type Appearance } from "./appearance";
 import defaultContent from "./content";
 import type { Content } from "./content/types";
@@ -61,13 +61,13 @@ export default function App({ embedded = false, content = defaultContent, defaul
   return (
     <YugenProvider
       applyToDocument={!embedded}
-      withToaster={!embedded}
       theme={appearance.theme}
       brand={appearance.brand}
       messages={content.messages}
       locale={content.locale}
       className={embedded ? "h-full" : undefined}
     >
+      {!embedded && <Toaster />}
       {/* Edges of every glass surface bend the photo behind them (Chromium); elsewhere glass stays as it is. */}
       <GlassRefraction />
       {embedded ? <MemoryRouter initial={initialRoute}>{layout}</MemoryRouter> : <BrowserRouter>{layout}</BrowserRouter>}

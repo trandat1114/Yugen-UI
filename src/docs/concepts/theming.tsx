@@ -109,12 +109,13 @@ const NESTED_CODE = `import { YugenProvider } from "@/components/ui";
 
 const HOOK_CODE = `import * as React from "react";
 import { WeatherMoon20Regular, WeatherSunny20Regular } from "@fluentui/react-icons";
-import { Button, YugenProvider, useYugen, type YugenTheme } from "@/components/ui";
+import { Button, Toaster, YugenProvider, useYugen, type YugenTheme } from "@/components/ui";
 
 export default function App() {
   const [theme, setTheme] = React.useState<YugenTheme>("light");
   return (
-    <YugenProvider applyToDocument withToaster theme={theme}>
+    <YugenProvider applyToDocument theme={theme}>
+      <Toaster />
       <ThemeToggle onToggle={() => setTheme((t) => (t === "light" ? "dark" : "light"))} />
     </YugenProvider>
   );
@@ -132,6 +133,11 @@ function ThemeToggle({ onToggle }: { onToggle: () => void }) {
     />
   );
 }`;
+
+const NARROW_HOOKS_CODE = `import { useYugenLocale, useYugenTheme } from "@/components/ui";
+
+const { theme, brand, dir } = useYugenTheme(); // render lại khi theme, brand hoặc dir đổi
+const locale = useYugenLocale(); // render lại khi locale đổi`;
 
 const LAYERS_CODE = `/* 1. GLOBAL (tokens.css) — giá trị thô, không gắn vai trò */
 :root { --grey-14: #242424; --white: #ffffff; }
@@ -293,7 +299,8 @@ export default function Page() {
                 name: "withToaster",
                 type: "boolean",
                 defaultValue: "false",
-                description: "Gắn <Toaster /> để toast() hoạt động; vị trí bottom-end (bottom-start khi RTL). Chỉ bật ở provider gốc.",
+                description:
+                  "Deprecated in 1.0.0. Gắn <Toaster /> làm con của provider gốc để toast() hoạt động, chọn vị trí và limit rõ ràng; mặc định bottom-end (bottom-start khi RTL).",
               },
               {
                 name: "messages",
@@ -323,7 +330,8 @@ export default function Page() {
           />
           <CodeBlock
             code={`// Provider gốc — một lần duy nhất
-<YugenProvider applyToDocument withToaster theme="light" brand="sakura" dir="ltr">
+<YugenProvider applyToDocument theme="light" brand="sakura" dir="ltr">
+  <Toaster />
   <App />
 </YugenProvider>`}
           />
@@ -377,13 +385,19 @@ export default function Page() {
       <DocSection
         id="use-yugen"
         title="Hook useYugen()"
-        description="Trả về { theme, brand, dir } của YugenProvider gần nhất — dùng khi component cần đổi nội dung (không phải màu) theo theme hoặc hướng chữ."
+        description="Trả về { theme, brand, dir, locale, density } của YugenProvider gần nhất — dùng khi component cần đổi nội dung (không phải màu) theo theme hoặc hướng chữ."
       >
         <div className="flex flex-col gap-4">
           <CodeBlock code={HOOK_CODE} />
           <P>
             Đừng dùng <C>useYugen()</C> để chọn màu — màu đã tự đổi qua token. Hãy dùng nó cho nội dung: icon mặt trời / mặt trăng, ảnh
             minh hoạ sáng / tối, hướng mũi tên. Bề mặt trong portal đã tự theo provider lồng (xem trang Định vị).
+          </P>
+          <CodeBlock code={NARROW_HOOKS_CODE} />
+          <P>
+            <C>useYugen()</C> render lại khi theme hoặc phần cấu hình locale đổi. Component chỉ cần một phần thì dùng{" "}
+            <C>useYugenTheme()</C> (<C>{"{ theme, brand, dir }"}</C>) hoặc <C>useYugenLocale()</C> (chuỗi locale). Component của Yugen
+            cũng làm vậy, nên đổi theme chỉ render lại phần đọc theme, như chart và CodeBlock.
           </P>
         </div>
       </DocSection>

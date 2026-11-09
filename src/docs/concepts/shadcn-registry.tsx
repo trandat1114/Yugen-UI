@@ -26,6 +26,7 @@ const RESULT = `components.json                       # tạo mới nếu chưa 
 src/
   styles/yugen.css                    # theme — đã tự @import vào src/index.css
   lib/cn.ts                           # cn() đã dạy scale Yugen
+  lib/cvx.ts                          # class theo biến thể, đi cùng Button
   components/ui/YugenProvider/…       # provider + Tooltip, Toast mà nó dùng
   components/ui/Button/Button.tsx     # component từ lệnh add (giữ thư mục để import tương đối chạy)
   components/ui/Dialog/Dialog.tsx`;
@@ -35,7 +36,8 @@ import { Button } from "@/components/ui/Button/Button";
 
 export default function App() {
   return (
-    <YugenProvider applyToDocument withToaster>
+<YugenProvider applyToDocument>
+  <Toaster />
       <Button appearance="primary">Xin chào</Button>
     </YugenProvider>
   );

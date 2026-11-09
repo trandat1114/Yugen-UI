@@ -23,6 +23,8 @@ import {
   type PackageManager,
 } from "../lib/project.js";
 import { installItems, registryFor } from "./add.js";
+import { css as leanCss } from "./css.js";
+import { THEME_CORE, findGenerated } from "../lib/leanCss.js";
 import { wrapWithProvider } from "../lib/provider.js";
 import { confirm, p, pc, select, text, type Ctx } from "../lib/ui.js";
 
@@ -44,10 +46,13 @@ interface Project {
   framework: Framework;
   pm: PackageManager;
   tailwind: number | null;
+  /** Mode package + Tailwind v4, CSS chưa import theme: ghi yugen-ui.css (`yugen css`) sau khi bọc YugenProvider. */
+  lean?: boolean;
 }
 
 const THEME_PACKAGE = `${PACKAGE}/theme.css`;
 const STYLES_PACKAGE = `${PACKAGE}/styles.css`;
+const CLI_PACKAGE = "@yugen-ui/cli";
 const THEME_SOURCE = "yugen.css";
 
 export async function init(opts: InitOptions, ctx: Ctx): Promise<YugenConfig> {
@@ -104,6 +109,17 @@ export async function init(opts: InitOptions, ctx: Ctx): Promise<YugenConfig> {
   writeConfig(cwd, config);
   p.log.success(`Wrote ${CONFIG_FILE}`);
   await provider(project, config, opts, ctx);
+  if (project.lean) {
+    try {
+      await leanCss({ cwd, mainCss: css });
+    } catch (e) {
+      // vd. đã có một src/yugen-ui.css không do yugen css ghi: vẫn import theme.css như trước để init chạy xong.
+      if (!(e instanceof CliError) || project.tailwind !== 4 || !css) throw e;
+      p.log.warn(`yugen css: ${e.message}${e.hint ? `\n${pc.dim(e.hint)}` : ""}`);
+      importInto(cwd, css, THEME_PACKAGE);
+    }
+    wireDevCss(project);
+  }
   return config;
 }
 
@@ -128,9 +144,20 @@ async function initPackage(project: Project, css: string | null, opts: InitOptio
   }
 
   if (tailwind === 4 && css) {
-    importInto(cwd, css, THEME_PACKAGE);
+    // Theme đã import thẳng (thiết lập trước đây, hoặc tự viết): giữ nguyên. Chưa có: yugen-ui.css chỉ gồm CSS của các
+    // component mà mã import (`yugen css`, #169), import ngay sau "tailwindcss". File được ghi sau bước bọc YugenProvider
+    // (cuối init()), để có cả YugenProvider mà codemod vừa import.
+    const direct = [THEME_PACKAGE, THEME_CORE].find((spec) => hasCssImport(readText(path.join(cwd, css)), spec));
+    if (direct) {
+      p.log.info(`${css} already imports "${direct}"`);
+      if (direct === THEME_PACKAGE)
+        p.log.info(`It brings the CSS of every component. ${pc.cyan("yugen css")} replaces it with only the components your code imports.`);
+    } else project.lean = true;
     if (readText(path.join(cwd, css)).includes(THEME_SOURCE))
       p.log.warn(`${css} also imports the source theme (${THEME_SOURCE}) — keep only one of them.`);
+  } else if (findGenerated(cwd).some((g) => g.recorded.precompile)) {
+    // Đã chạy `yugen css --precompile` (thay cho styles.css): chỉ cập nhật file đó.
+    project.lean = true;
   } else {
     if (tailwind) p.log.warn(`Tailwind CSS v${tailwind} found — ${THEME_PACKAGE} needs v4, using the precompiled ${STYLES_PACKAGE}.`);
     const entry = findEntryFile(cwd, framework);
@@ -142,7 +169,43 @@ async function initPackage(project: Project, css: string | null, opts: InitOptio
       p.log.success(changed ? `Added ${statement} to ${entry}` : `${entry} already imports ${STYLES_PACKAGE}`);
     }
   }
+  if (tailwind === 4 && !allDeps(project.pkg)[CLI_PACKAGE]) {
+    const install = addArgs(pm, [`${CLI_PACKAGE}@latest`], true);
+    if (opts.install === false) p.log.info(`Install the dev tool for the Vite plugin and watch mode: ${pc.cyan(commandLine(pm, install))}`);
+    else {
+      p.log.step(`Installing ${CLI_PACKAGE}`);
+      await exec(pm, install, cwd);
+    }
+  }
   return { mode: "package", framework, rsc: framework === "next", css: tailwind === 4 ? css : null };
+}
+
+/** Gắn dev safety net cho lean CSS: Vite tự sinh lại trước build và khi import thay đổi. */
+function wireDevCss(project: Project) {
+  if (project.framework !== "vite") return;
+  const configFile = ["vite.config.ts", "vite.config.mts", "vite.config.js", "vite.config.mjs"].find((file) => exists(path.join(project.cwd, file)));
+  if (!configFile) {
+    writeText(
+      path.join(project.cwd, "vite.config.ts"),
+      'import { defineConfig } from "vite";\nimport { yugenCss } from "@yugen-ui/cli/vite";\n\nexport default defineConfig({ plugins: [yugenCss()] });\n',
+    );
+    p.log.success("Created vite.config.ts with the yugen CSS plugin");
+    return;
+  }
+  const file = path.join(project.cwd, configFile);
+  const before = readText(file);
+  if (before.includes("@yugen-ui/cli/vite") || /\byugenCss\s*\(/.test(before)) return;
+  let code = `import { yugenCss } from "@yugen-ui/cli/vite";\n${before}`;
+  const plugins = code.match(/plugins\s*:\s*\[([\s\S]*?)\]/m);
+  if (plugins) {
+    const body = plugins[1].trim();
+    const replacement = `plugins: [${body}${body.endsWith(",") ? "" : ","} yugenCss()]`;
+    code = code.replace(plugins[0], replacement);
+  } else {
+    code = code.replace(/defineConfig\s*\(\s*\{/, (match) => `${match}\n  plugins: [yugenCss()],`);
+  }
+  writeText(file, code);
+  p.log.success(`Added the yugen CSS Vite plugin to ${configFile}`);
 }
 
 async function initSource(project: Project, css: string, previous: YugenConfig | null, opts: InitOptions): Promise<SourceConfig> {
@@ -193,7 +256,7 @@ async function provider(project: Project, config: YugenConfig, opts: InitOptions
   // App đã render YugenProvider ở chỗ khác (vd. App.tsx của template): không bọc thêm lớp nữa.
   if (code.includes("YugenProvider") || findProviderUsage(project.cwd, config.paths?.ui)) return;
   if (opts.provider !== false && (await confirm(ctx, `Wrap your app in YugenProvider (${entry})?`, true))) {
-    const result = wrapWithProvider(code, project.framework, providerImport(config, entry));
+    const result = wrapWithProvider(code, project.framework, providerImport(config, entry), toasterImport(config, entry));
     if (result.changed) {
       writeText(file, result.code);
       p.log.success(`Wrapped the app in YugenProvider — ${entry}`);
@@ -206,11 +269,19 @@ async function provider(project: Project, config: YugenConfig, opts: InitOptions
 
 /** Đường import YugenProvider từ `entry`: gói npm, alias của dự án hoặc đường dẫn tương đối. */
 function providerImport(config: YugenConfig, entry: string | null) {
-  const target = config.paths ? path.posix.join(config.paths.ui, "YugenProvider/YugenProvider") : "";
+  return componentImport(config, entry, "YugenProvider/YugenProvider");
+}
+
+function toasterImport(config: YugenConfig, entry: string | null) {
+  return componentImport(config, entry, "Toast/Toast");
+}
+
+function componentImport(config: YugenConfig, entry: string | null, component: string) {
+  const target = config.paths ? path.posix.join(config.paths.ui, component) : "";
   return config.mode === "package"
     ? PACKAGE
     : config.aliases
-      ? `${config.aliases.ui}/YugenProvider/YugenProvider`
+      ? `${config.aliases.ui}/${component}`
       : entry
         ? path.posix.relative(path.posix.dirname(entry), target).replace(/^(?!\.)/, "./")
         : `./${target}`;
@@ -219,12 +290,18 @@ function providerImport(config: YugenConfig, entry: string | null) {
 function providerNote({ cwd, framework }: Project, config: YugenConfig) {
   const entry = findEntryFile(cwd, framework);
   if (findProviderUsage(cwd, config.paths?.ui)) return;
-  const from = providerImport(config, entry);
+  const providerFrom = providerImport(config, entry);
+  const toasterFrom = toasterImport(config, entry);
   p.note(
     [
-      pc.cyan(`import { YugenProvider } from "${from}";`),
+      pc.cyan(
+        toasterFrom === providerFrom
+          ? `import { Toaster, YugenProvider } from "${providerFrom}";`
+          : `import { YugenProvider } from "${providerFrom}";\nimport { Toaster } from "${toasterFrom}";`,
+      ),
       "",
-      pc.cyan("<YugenProvider applyToDocument withToaster>"),
+      pc.cyan("<YugenProvider applyToDocument>"),
+      pc.cyan("  <Toaster />"),
       pc.cyan("  {/* your app */}"),
       pc.cyan("</YugenProvider>"),
     ].join("\n"),

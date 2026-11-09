@@ -53,7 +53,7 @@ export const en: Record<string, ComponentDocEn> = {
       "collapsed / defaultCollapsed": "Sidebar collapsed on wide frames.",
       onCollapsedChange: "Called when the sidebar collapses or expands.",
       persistKey:
-        "Cookie name for the collapsed state and width; a saved value wins over defaultCollapsed, and a missing or malformed cookie falls back to it. The cookie is set on path=/, so each app on the same domain needs its own name.",
+        "Cookie name for the collapsed state and width; a saved value wins over defaultCollapsed, and a missing or malformed cookie falls back to it. Letters, digits, _ and - only: with any other name nothing is saved (a warning in development). The cookie holds only collapsed or expanded, plus the width in px once a resizable Sidebar has been dragged. It is set on path=/ with samesite=lax, and secure on https, so each app on the same domain needs its own name.",
       shortcut: "Key used with Ctrl / ⌘; false turns it off. With several AppShells on a page, only the one that has focus or was clicked last responds.",
       skipLink: "A “Skip to content” link shown on focus.",
       "Sidebar.collapsible": "Collapse to an icon rail, hide completely, or always stay open.",
@@ -63,7 +63,7 @@ export const en: Record<string, ComponentDocEn> = {
       "SidebarGroup.label": "Group name; in the rail it is kept for screen readers only.",
       "AppShellHeader / AppShellMain / AppShellAside / AppShellFooter.asChild": "Render the header / main / aside / footer as the child element.",
       "useAppShell()": "narrow, collapsed, setCollapsed, drawerOpen, setDrawerOpen, toggleSidebar, rail.",
-      "readAppShellCookie(cookie, persistKey)": "Reads the saved state from document.cookie, or from the Cookie header when rendering on the server.",
+      "readAppShellCookie(cookie, persistKey)": "Reads the saved state from document.cookie, or from the Cookie header when rendering on the server. Callable in a Server Component when imported from yugen-ui (the package root).",
     },
   },
 };

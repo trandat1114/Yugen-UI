@@ -1,15 +1,15 @@
 import * as React from "react";
 import { Slot, Slottable } from "@radix-ui/react-slot";
-import { cva, type VariantProps } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
 import { Open16Regular } from "../_internal/icons";
-import { cn } from "@/lib/cn";
+import { cvx } from "@/lib/cvx";
 import { useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { linkMessagesEn } from "./messages";
 
 export { linkMessages, linkMessagesVi, linkMessagesEn, type LinkMessages } from "./messages";
 
 /** Fluent 2 Link — https://fluent2.microsoft.design/components/web/react/core/link/usage */
-const linkVariants = cva(
+const linkVariants = cvx(
   [
     "cursor-pointer rounded-small transition-colors duration-faster ease-easy-ease",
     "aria-disabled:cursor-not-allowed aria-disabled:text-foreground-disabled aria-disabled:no-underline",
@@ -68,7 +68,7 @@ export function Link(inProps: LinkProps & { ref?: React.Ref<HTMLAnchorElement> }
       }
       onClick?.(e);
     },
-    className: cn(linkVariants({ appearance, inline }), className),
+    className: linkVariants({ appearance, inline, className }),
     ...props,
   };
 

@@ -21,6 +21,19 @@ describe("CSS theo component (#169)", () => {
     expect(button.some((p) => p.startsWith("Tooltip/"))).toBe(false);
   });
 
+  it("import() cũng được quét: YugenProvider giữ class của Toaster nạp lười (withToaster), Loading chỉ cần store (#346)", () => {
+    expect(files.get("YugenProvider")).toEqual(expect.arrayContaining(["Toast/Toast.js", "Toast/toastStore.js"]));
+    const loading = files.get("Loading")!;
+    expect(loading).toContain("Toast/toastStore.js");
+    expect(loading).not.toContain("Toast/Toast.js");
+  });
+
+  it("phần nạp lúc cần (#350): Breadcrumb giữ class của Menu, Nav không cần Tooltip (AppShell mang Tooltip của rail)", () => {
+    expect(files.get("Breadcrumb")).toContain("Menu/Menu.js");
+    expect(files.get("Nav")!.some((p) => p.startsWith("Tooltip/"))).toBe(false);
+    expect(files.get("AppShell")).toContain("Tooltip/Tooltip.js");
+  });
+
   it("phụ thuộc bắc cầu: SplitButton có đủ Menu và Button", () => {
     const split = files.get("SplitButton")!;
     expect(split).toEqual(expect.arrayContaining(["Menu/Menu.js", "Button/Button.js"]));

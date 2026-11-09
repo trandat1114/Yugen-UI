@@ -1,5 +1,5 @@
 import * as React from "react";
-import { YugenProvider } from "@/components/ui";
+import { Toaster, YugenProvider } from "@/components/ui";
 import { createMockBackend, sendMessage, type SendMessage } from "./api";
 import type { Appearance } from "./appearance";
 import { ChatLayout } from "./ChatLayout";
@@ -53,13 +53,13 @@ export default function App({ embedded = false, content = defaultContent, defaul
   return (
     <YugenProvider
       applyToDocument={!embedded}
-      withToaster={!embedded}
       theme={appearance.theme}
       brand={appearance.brand}
       messages={content.messages}
       locale={content.locale}
       className={embedded ? "h-full" : undefined}
     >
+      {!embedded && <Toaster />}
       <Router>
         <ChatLayout
           embedded={embedded}

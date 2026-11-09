@@ -1,6 +1,6 @@
 {
   "name": "@yugen-ui/cli",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "CLI for Yugen UI: create an app from a template, set up Yugen UI in an existing project, add component source from the registry and diagnose the setup.",
   "keywords": [
     "yugen-ui",
@@ -17,7 +17,7 @@
     "name": "trandat1114",
     "url": "https://github.com/trandat1114"
   },
-  "homepage": "https://trandat1114.github.io/Yugen-UI/#/concepts/cli",
+  "homepage": "https://trandat1114.github.io/Yugen-UI/concepts/cli",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/trandat1114/Yugen-UI.git",
@@ -34,6 +34,10 @@
     ".": {
       "types": "./dist/api.d.ts",
       "import": "./dist/api.js"
+    },
+    "./vite": {
+      "types": "./dist/vite.d.ts",
+      "import": "./dist/vite.js"
     },
     "./package.json": "./package.json"
   },
@@ -53,10 +57,6 @@
     "check:release": "node scripts/check-release.mjs",
     "smoke": "node scripts/smoke.mjs",
     "prepack": "npm run build"
-  },
-  "dependencies": {
-    "@clack/prompts": "^1.8.1",
-    "picocolors": "^1.1.1"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",

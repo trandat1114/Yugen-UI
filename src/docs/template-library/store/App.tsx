@@ -1,5 +1,5 @@
 import * as React from "react";
-import { YugenProvider } from "@/components/ui";
+import { Toaster, YugenProvider } from "@/components/ui";
 import { DEFAULT_APPEARANCE, type Appearance } from "./appearance";
 import { useCart } from "./cart";
 import defaultContent from "./content";
@@ -67,7 +67,6 @@ export default function App({ embedded = false, content = defaultContent, defaul
   return (
     <YugenProvider
       applyToDocument={!embedded}
-      withToaster={!embedded}
       theme={appearance.theme}
       brand={appearance.brand}
       // Built-in component strings (wizard, carousel, spin button…) in the app's language.
@@ -75,6 +74,7 @@ export default function App({ embedded = false, content = defaultContent, defaul
       locale={content.locale}
       className={embedded ? "h-full" : undefined}
     >
+      {!embedded && <Toaster />}
       <StoreContext.Provider value={value}>
         {embedded ? (
           <MemoryRouter initial={initialRoute}>

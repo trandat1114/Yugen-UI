@@ -1,4 +1,5 @@
 import path from "node:path";
+import { CliError } from "./errors.js";
 import type { RegistryFile } from "./registry.js";
 
 /** Thư mục đặt mã nguồn, tương đối với dự án ("src/components/ui", "src/lib"). */
@@ -18,7 +19,12 @@ export interface TransformOptions {
 /** registry/yugen/ui/Button/Button.tsx → src/components/ui/Button/Button.tsx; file khác (theme) → null. */
 export function targetPath(file: RegistryFile, paths: Placement): string | null {
   const m = file.path.match(/^registry\/yugen\/(ui|lib)\/(.+)$/);
-  return m ? path.posix.join(paths[m[1] as keyof Placement], m[2]) : null;
+  if (!m) return null;
+  // Registry đọc qua mạng: một đường dẫn có "..", gốc tuyệt đối hay "\\" có thể ghi ra ngoài thư mục đích (#381).
+  const rest = m[2];
+  if (rest.includes("\\") || rest.startsWith("/") || /^[a-z]:/i.test(rest) || rest.split("/").some((part) => part === ".." || part === "."))
+    throw new CliError(`Registry file "${file.path}" points outside the ${m[1]} directory.`, "The registry may be corrupted; nothing was written.");
+  return path.posix.join(paths[m[1] as keyof Placement], rest);
 }
 
 export const stripUseClient = (code: string) => code.replace(/^(["'])use client\1;?[ \t]*\r?\n(?:[ \t]*\r?\n)?/, "");

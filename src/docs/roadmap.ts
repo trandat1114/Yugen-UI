@@ -29,7 +29,7 @@ export interface RoadmapRelease {
   items: RoadmapItem[];
 }
 
-export const ROADMAP_UPDATED = "2026-11-04";
+export const ROADMAP_UPDATED = "2026-11-09";
 export const PROJECT_URL = "https://github.com/users/trandat1114/projects/6";
 
 export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
@@ -45,7 +45,10 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
         { status: "planned", issue: 162, vi: "Form: kiểm tra dữ liệu và tóm tắt lỗi", en: "Form: validation and an error summary" },
         { status: "planned", issue: 163, vi: "Thư viện block 2.0 (marketing, ứng dụng, thương mại), cài bằng CLI", en: "Block library 2.0 (marketing, app, commerce), installable with the CLI" },
         { status: "planned", issue: 164, vi: "Codemod 0.x → 1.0 (yugen migrate) cho các tên đã đổi", en: "Codemods 0.x → 1.0 (yugen migrate) for the renamed props" },
-        { status: "planned", issue: 169, vi: "@yugen-ui/cli ghi các dòng @import của CSS theo component (init, doctor)", en: "@yugen-ui/cli writes the @import lines for per-component CSS (init, doctor)" },
+        { status: "planned", issue: 371, vi: "Kiểu prop riêng của Yugen cho Calendar và Resizable (không lộ kiểu của thư viện khác)", en: "Yugen-owned prop types for Calendar and Resizable (no third-party types in public props)" },
+        { status: "planned", issue: 354, vi: "Phân lớp CSS: token trong @layer theme, nhóm token tuỳ chọn, styles.css không reset toàn cục", en: "CSS layering: tokens in @layer theme, opt-in token groups, no global reset from styles.css" },
+        { status: "planned", issue: 356, vi: "Phần ngày tháng thành peer tuỳ chọn (yugen-ui/dates)", en: "The date stack as an optional peer (yugen-ui/dates)" },
+        { status: "planned", issue: 357, vi: "Input gốc cho Checkbox, Switch và RadioGroup", en: "Native inputs for Checkbox, Switch and RadioGroup" },
       ],
     },
   ],

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { YugenProvider, type YugenTheme } from "yugen-ui";
+import { Toaster, YugenProvider, type YugenTheme } from "yugen-ui";
 import { BlogLayout } from "./BlogLayout";
 import content from "./content";
 import { BrowserRouter } from "./router";
@@ -27,12 +27,12 @@ export default function App() {
   return (
     <YugenProvider
       applyToDocument
-      withToaster
       theme={theme}
       brand="sakura"
       messages={content.messages}
       locale={content.locale}
     >
+      <Toaster />
       <BrowserRouter>
         <BlogLayout theme={theme} onThemeChange={setTheme} />
       </BrowserRouter>

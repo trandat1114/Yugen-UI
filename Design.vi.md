@@ -42,7 +42,7 @@ Tài liệu này là **bộ quy tắc bắt buộc**. Mọi người (và AI) kh
 |---|---|
 | Build | Vite 8 (Rolldown) + React 19 (vẫn hỗ trợ 18.3) + TypeScript 7 strict |
 | Style | Tailwind CSS v4 (CSS-first, **không** có `tailwind.config.js`) |
-| Hành vi / a11y | `@radix-ui/react-*`, `cmdk` (Command, Combobox, TagPicker), `react-day-picker` v10 (Calendar), `react-resizable-panels` v4 |
+| Hành vi / a11y | `@radix-ui/react-*`, `cmdk` (Command), `react-day-picker` v10 (Calendar), `react-resizable-panels` v4 |
 | Biến thể | `class-variance-authority` |
 | Gộp class | `cn()` = `clsx` + `tailwind-merge` đã cấu hình scale của Yugen |
 | Icon | Fluent System Icons, có sẵn (`_internal/icons`, sinh từ `@fluentui/react-icons`, một devDependency) |
@@ -293,7 +293,7 @@ TooltipContent, DialogSurface, DrawerSurface, SheetContent), `appearance="glass"
 14. **Next.js App Router**: thêm `"use client"` đầu mỗi file component khi copy sang; hằng class dùng chung (`fieldControlClass`…) vẫn import được trong client component.
 15. **Không phá API trong bản minor/patch** (từ 1.0; trước 1.0 phải ghi "Thay đổi lớn"). Muốn bỏ một prop/giá trị/export: thêm thay thế,
     đánh dấu JSDoc `@deprecated` và gọi `warnDeprecated(id, "dùng …", "x.0.0")` từ `@/lib/deprecate` — chỉ xoá ở bản major sau đó.
-    Chi tiết: `#/concepts/versioning`.
+    Chi tiết: `/concepts/versioning`.
 16. **SSR an toàn**: không đọc `Date.now()`, `Math.random()`, `window`, `matchMedia`, `localStorage` hay kích thước layout trong lúc render —
     làm trong effect, hoặc `useSyncExternalStore` có `getServerSnapshot` (`useMediaQuery`). Id dùng `React.useId()`.
 

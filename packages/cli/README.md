@@ -18,9 +18,10 @@ rejects the name `yugen` as too similar to an existing package.
 | `yugen diff [names…]` | Compare copied source with the registry (all installed components without names). |
 | `yugen update [names…]` | Apply the registry version: shows the diff, asks, then writes. `--dry-run` only shows it. |
 | `yugen remove <names…>` | Delete a component's files that nothing else in the project imports. |
+| `yugen css` | Write `yugen-ui.css`: only the CSS of the yugen-ui components your code imports (package mode); `--watch` keeps it current during dev. |
 | `yugen theme --brand <hex>` | Generate a brand ramp into `yugen-brand.css` next to your main CSS and import it. |
 | `yugen list [query]` | List the components in the registry; `✓` marks the ones you already have. |
-| `yugen doctor` | Check React, Tailwind CSS v4, the theme import, the `yugen-ui` version and `YugenProvider`. |
+| `yugen doctor` | Check React, Tailwind CSS v4, the theme import, `yugen-ui.css`, the `yugen-ui` version and `YugenProvider`. |
 
 ## create
 
@@ -37,8 +38,9 @@ Templates ship inside the CLI, so this works offline apart from installing depen
 Detects the framework (Vite, Next.js, React Router, TanStack Start), the package manager and your main CSS file, then
 asks how you want to use Yugen UI:
 
-- **package** — installs `yugen-ui` and adds `@import "yugen-ui/theme.css";` right after `@import "tailwindcss";`.
-  Without Tailwind CSS v4 it imports the precompiled `yugen-ui/styles.css` in your entry file instead.
+- **package** — installs `yugen-ui`, writes `yugen-ui.css` (see [css](#css)) and imports it right after
+  `@import "tailwindcss";`. A CSS file that already imports `yugen-ui/theme.css` is left as it is. Without Tailwind CSS v4
+  it imports the precompiled `yugen-ui/styles.css` in your entry file instead.
 - **source** (needs Tailwind CSS v4) — writes the theme next to your CSS file as `yugen.css`, imports it, and copies
   `cn()` and `YugenProvider` into `components/ui` / `lib` (under `src/` or your `@/*` alias). Imports use your tsconfig
   alias when there is one, relative paths otherwise. `"use client"` is kept only for Next.js.
@@ -58,7 +60,39 @@ npx @yugen-ui/cli add select --dry-run
 ```
 
 Names are matched loosely (`data-grid`, `DataGrid`). Files you have edited are left alone unless you pass
-`--overwrite`. In package mode `add` prints the import instead — the components are already in `yugen-ui`.
+`--overwrite`. In package mode `add` prints the import instead — the components are already in `yugen-ui` — and adds
+the component to `yugen-ui.css` when the app has one.
+
+## css
+
+```bash
+npx @yugen-ui/cli css                 # write src/yugen-ui.css and import it in src/index.css
+npx @yugen-ui/cli css --check         # CI: exit with 1 when the file is out of date, write nothing
+npx @yugen-ui/cli css --watch         # keep it current when component imports change
+npx @yugen-ui/cli css --precompile    # apps without Tailwind: compiled CSS that replaces yugen-ui/styles.css
+```
+
+For Vite, install the CLI in `devDependencies` and add the plugin so CSS is regenerated before builds and while the dev
+server sees source changes:
+
+```ts
+import { yugenCss } from "@yugen-ui/cli/vite";
+
+export default defineConfig({ plugins: [yugenCss()] });
+```
+
+`yugen-ui/theme.css` makes Tailwind scan every component in the package. `yugen css` reads the imports from `yugen-ui`
+in your code (subpaths like `yugen-ui/Dialog` too; type imports and examples inside strings or comments don't count),
+looks the names up in `yugen-ui/sources/index.json` and writes `@import "yugen-ui/theme-core.css";` plus one
+`@import "yugen-ui/sources/<Folder>.css";` per component folder. The first run replaces `@import "yugen-ui/theme.css"`
+in your main CSS file with `@import "./yugen-ui.css"`. On the templates the gzipped CSS goes from about 26 kB to
+12–20 kB.
+
+Run it again after you import another component, or from `predev` / `prebuild` with the CLI in `devDependencies`. The
+file records the command that wrote it, `--src` and `--out` included. `import * as`, `export *` and `import()` of `yugen-ui` can
+reach any component, so the file falls back to `theme.css`. Options: `--src <dir>` (repeatable; default: the whole
+project), `--out <file>`, `--check`, `--watch`, `--precompile` (uses the project's own `tailwindcss`, `@tailwindcss/node` and
+`@tailwindcss/oxide`; the CLI does not bundle Tailwind).
 
 ## yugen.json
 

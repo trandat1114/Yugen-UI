@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import { tmpDir, viteProject, writeFiles, writeRegistry } from "../test/fixtures.js";
 import { addCssImport, addJsImport, cssImports } from "./css.js";
 import { parseJsonc } from "./fs.js";
-import { addArgs, commandLine } from "./pm.js";
+import { CliError } from "./errors.js";
+import { addArgs, assertPackageSpec, commandLine, directCommand, exec } from "./pm.js";
 import {
   detectFramework,
   detectPackageManager,
@@ -98,6 +99,11 @@ describe("transform", () => {
     expect(targetPath({ path: "registry/yugen/styles/yugen.css", type: "registry:file" }, paths)).toBeNull();
   });
 
+  it("refuses registry paths that leave the target directory", () => {
+    for (const bad of ["registry/yugen/ui/../../../etc/passwd", "registry/yugen/lib/./cn.ts", "registry/yugen/ui//abs.ts", "registry/yugen/lib/C:/x.ts", "registry/yugen/ui/a\\..\\..\\x.ts"])
+      expect(() => targetPath({ path: bad, type: "registry:ui" }, paths), bad).toThrow(CliError);
+  });
+
   it("rewrites imports to aliases or relative paths", () => {
     const code = 'import { cn } from "@/lib/cn";\nimport { Popover } from \'@/components/ui/Popover/Popover\';\n';
     const target = "src/components/ui/Select/Select.tsx";
@@ -142,5 +148,30 @@ describe("pm", () => {
     expect(addArgs("pnpm", ["a"], true)).toEqual(["add", "-D", "a"]);
     expect(addArgs("bun", ["a"], true)).toEqual(["add", "-d", "a"]);
     expect(commandLine("npm", addArgs("npm", ["clsx@^2.1.1"]))).toBe('npm install "clsx@^2.1.1"');
+  });
+
+  it("accepts npm package specs only", () => {
+    for (const ok of ["clsx", "clsx@^2.1.1", "@radix-ui/react-slot@^1.1.1", "react@>=19 <20", "yugen-ui@latest", "a.b_c-d@~1.2.3"])
+      expect(() => assertPackageSpec(ok), ok).not.toThrow();
+    for (const bad of ["clsx@^2 & calc", "x%PATH%", "x;rm", "@scope", "../x", 'x"', "x@1|$(id)", "Upper", ""])
+      expect(() => assertPackageSpec(bad), bad).toThrow(CliError);
+    expect(() => addArgs("npm", ["ok", "bad;rm"])).toThrow(CliError);
+  });
+
+  it("runs the package manager that launched the CLI without a shell", () => {
+    const npm = "C:\\nodejs\\node_modules\\npm\\bin\\npm-cli.js";
+    expect(directCommand("npm", ["install"], { npm_execpath: npm })).toEqual({ file: process.execPath, args: [npm, "install"] });
+    expect(directCommand("pnpm", ["install"], { npm_execpath: npm })).toBeNull();
+    expect(directCommand("pnpm", ["add", "x"], { npm_execpath: "/home/u/.cache/pnpm/pnpm.cjs" })).toEqual({
+      file: process.execPath,
+      args: ["/home/u/.cache/pnpm/pnpm.cjs", "add", "x"],
+    });
+    expect(directCommand("bun", ["install"], { npm_execpath: "/usr/local/bin/bun" })).toEqual({ file: "/usr/local/bin/bun", args: ["install"] });
+    expect(directCommand("npm", ["install"], {})).toBeNull();
+    expect(directCommand("git", ["init"], { npm_execpath: npm })).toBeNull();
+  });
+
+  it("refuses commands other than package managers and git", async () => {
+    await expect(exec("rm", ["-rf", "x"], tmpDir())).rejects.toThrow(CliError);
   });
 });

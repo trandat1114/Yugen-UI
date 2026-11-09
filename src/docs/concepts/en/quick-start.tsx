@@ -134,9 +134,26 @@ function NewsletterForm() {
   );
 }
 
+const IMPORTS = `// The root: everything from one place. Bundlers keep only what you use.
+import { Dialog, DialogSurface, DialogTrigger } from "yugen-ui";
+
+// A subpath: only that component and what it uses.
+import { Button } from "yugen-ui/Button";
+import { LineChart, Sparkline } from "yugen-ui/Chart";
+import { useDisclosure } from "yugen-ui/hooks";`;
+
+const NEXT_CONFIG = `// next.config.ts
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  experimental: { optimizePackageImports: ["yugen-ui"] },
+};
+
+export default nextConfig;`;
+
 const PERSIST = `// src/App.tsx — remember the user's theme
 import * as React from "react";
-import { YugenProvider, type YugenTheme } from "yugen-ui";
+import { Toaster, YugenProvider, type YugenTheme } from "yugen-ui";
 
 const STORAGE_KEY = "yugen-ui-theme";
 
@@ -156,7 +173,8 @@ export default function App() {
   }, [theme]);
 
   return (
-    <YugenProvider applyToDocument withToaster theme={theme}>
+    <YugenProvider applyToDocument theme={theme}>
+      <Toaster />
       <AppShell onThemeChange={setTheme} />
     </YugenProvider>
   );
@@ -251,7 +269,7 @@ export default function Page() {
                   </Tabs>
                   <P>
                     <C>applyToDocument</C> writes the theme to <C>{"<html>"}</C> so portalled Dialog, Menu and Tooltip match;{" "}
-                    <C>withToaster</C> lets you call <C>toast()</C> anywhere. Done — try your first component below.
+                    Put <C>Toaster</C> once inside the root provider to call <C>toast()</C> anywhere. Done — try your first component below.
                   </P>
                 </>
               ),
@@ -287,6 +305,40 @@ export default function Page() {
       </DocSection>
 
       <DocSection
+        id="imports"
+        title="Import paths"
+        description="Each component folder is also a subpath of the package: yugen-ui/Button, yugen-ui/Chart, yugen-ui/hooks."
+      >
+        <div className="flex flex-col gap-4">
+          <CodeBlock code={IMPORTS} />
+          <P>
+            With Vite, Rollup, webpack and Next.js a production build is the same size either way. With esbuild code splitting (
+            <C>splitting: true</C>), import from subpaths: from the root, esbuild puts the parts that load on demand into the first chunk
+            (see <A href={docsPath("/concepts/performance#imports")}>Performance</A>). Subpaths also help where nothing tree-shakes the
+            package: tests (Vitest, Jest), server rendering in Node and the dev server. A cold{" "}
+            <C>{'import { Button } from "yugen-ui/Button"'}</C> in Node loads 14 modules instead of about 500. Both paths load the same
+            files, so you can mix them.
+          </P>
+          <P>
+            The subpath is the folder of the component: <C>CardHeader</C> comes from <C>yugen-ui/Card</C>, <C>DateRangePicker</C> from{" "}
+            <C>yugen-ui/DatePicker</C>. The exceptions are <C>yugen-ui/AppShell/Sidebar</C>, <C>yugen-ui/YugenProvider/document</C>,{" "}
+            <C>yugen-ui/messages-en</C> and <C>yugen-ui/messages-vi</C>. <C>cn</C> and the brand color helpers are only on the root.{" "}
+            <C>readAppShellCookie</C> runs in a Server Component only when imported from <C>yugen-ui</C>; <C>yugenHtmlAttributes</C> and{" "}
+            <C>yugenThemeScript</C> when imported from <C>yugen-ui</C> or <C>yugen-ui/YugenProvider/document</C>.
+          </P>
+          <P>
+            TypeScript with <C>moduleResolution: node</C> (node10) does not read <C>exports</C>, so it finds no types for subpaths there:
+            import from <C>yugen-ui</C>, or switch to <C>bundler</C> or <C>nodenext</C>.
+          </P>
+          <P>
+            Next.js: to keep root imports and still load only what a page uses in development and on the server, add the package to{" "}
+            <C>optimizePackageImports</C>.
+          </P>
+          <CodeBlock code={NEXT_CONFIG} />
+        </div>
+      </DocSection>
+
+      <DocSection
         id="persist-theme"
         title="Remember the theme, no flash (optional)"
         description="Templates already do this. Doing it yourself takes two pieces: state that stores the choice and a tiny script that sets the theme before the page paints."
@@ -294,8 +346,8 @@ export default function Page() {
         <div className="flex flex-col gap-4">
           <CodeBlock code={PERSIST} />
           <P>
-            <C>YugenProvider</C> writes attributes in <C>useEffect</C> (after the first paint), so add a script to <C>{"<head>"}</C> to avoid
-            a white flash for users who picked the dark theme. For Next.js, see <A href={docsPath("/concepts/ssr")}>SSR & Next.js</A>.
+            <C>YugenProvider</C> writes the attributes when React runs, after the browser has painted <C>index.html</C>, so add a script to{" "}
+            <C>{"<head>"}</C> to avoid a white flash for users who picked the dark theme. For Next.js, see <A href={docsPath("/concepts/ssr")}>SSR & Next.js</A>.
           </P>
           <CodeBlock code={HTML} />
           <MessageBar intent="warning" title="Use the same localStorage key." className="max-w-3xl">

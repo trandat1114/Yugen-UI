@@ -1,5 +1,5 @@
 import * as React from "react";
-import { YugenProvider, type YugenBrand, type YugenTheme } from "@/components/ui";
+import { Toaster, YugenProvider, type YugenBrand, type YugenTheme } from "@/components/ui";
 import content from "./content";
 import type { Appearance } from "./context";
 import { Dashboard } from "./Dashboard";
@@ -32,13 +32,13 @@ export default function App() {
   return (
     <YugenProvider
       applyToDocument
-      withToaster
       theme={appearance.theme}
       brand={appearance.brand}
       // Built-in component strings (close buttons, chart summaries, pagination…) in the app's language.
       messages={content.messages}
       locale={content.lang === "en" ? "en-US" : "vi-VN"}
     >
+      <Toaster />
       <BrowserRouter>
         <Dashboard content={content} appearance={appearance} onAppearanceChange={onAppearanceChange} />
       </BrowserRouter>

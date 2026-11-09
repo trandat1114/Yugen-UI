@@ -26,6 +26,7 @@ const RESULT = `components.json                       # created if missing
 src/
   styles/yugen.css                    # theme — already @imported into src/index.css
   lib/cn.ts                           # cn() taught the Yugen scales
+  lib/cvx.ts                          # variant classes, comes with Button
   components/ui/YugenProvider/…       # provider + the Tooltip and Toast it uses
   components/ui/Button/Button.tsx     # from the add command (folders kept so relative imports work)
   components/ui/Dialog/Dialog.tsx`;
@@ -35,7 +36,8 @@ import { Button } from "@/components/ui/Button/Button";
 
 export default function App() {
   return (
-    <YugenProvider applyToDocument withToaster>
+<YugenProvider applyToDocument>
+  <Toaster />
       <Button appearance="primary">Hello</Button>
     </YugenProvider>
   );

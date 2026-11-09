@@ -49,7 +49,7 @@ Bài học rút ra: Radix Popover tự bắt Esc ở cấp document trước ô 
 | `useLayoutEffect` thẳng | `useIsomorphicLayoutEffect` (`_internal/`) |
 | Tự viết popup / menu | Radix primitive + `usePortalThemeProps()` |
 | Nút chỉ có icon không tên | `aria-label` tiếng Việt |
-| Đổi tên prop ngay | thêm prop mới + `warnDeprecated()`, xoá ở major — xem [Phiên bản](https://trandat1114.github.io/Yugen-UI/#/concepts/versioning) |
+| Đổi tên prop ngay | thêm prop mới + `warnDeprecated()`, xoá ở major — xem [Phiên bản](https://trandat1114.github.io/Yugen-UI/concepts/versioning) |
 
 ## Yugen Labs
 

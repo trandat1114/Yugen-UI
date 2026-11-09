@@ -14,29 +14,29 @@
  * Phân kỳ: Sakura (âm) ↔ Ai (dương), điểm giữa xám trung tính.
  */
 
-/* Animation vào cảnh của biểu đồ — luôn đi kèm motion-reduce:animate-none trong component. */
 @theme {
+  /* Animation vào cảnh của biểu đồ — luôn đi kèm motion-reduce:animate-none trong component. */
   --animate-chart-grow: chart-grow var(--durationSlower) var(--curveDecelerateMid) both;
   --animate-chart-grow-x: chart-grow-x var(--durationSlower) var(--curveDecelerateMid) both;
   --animate-chart-draw: chart-draw var(--durationUltraSlow) var(--curveDecelerateMid) both;
-}
 
-@keyframes chart-grow {
-  from {
-    transform: scaleY(0);
+  @keyframes chart-grow {
+    from {
+      transform: scaleY(0);
+    }
   }
-}
-@keyframes chart-grow-x {
-  from {
-    transform: scaleX(0);
+  @keyframes chart-grow-x {
+    from {
+      transform: scaleX(0);
+    }
   }
-}
-@keyframes chart-draw {
-  from {
-    stroke-dashoffset: 1;
-  }
-  to {
-    stroke-dashoffset: 0;
+  @keyframes chart-draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
   }
 }
 

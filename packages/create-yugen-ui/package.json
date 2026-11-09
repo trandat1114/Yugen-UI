@@ -1,6 +1,6 @@
 {
   "name": "create-yugen-ui",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Create a Yugen UI app from a template: npm create yugen-ui@latest",
   "keywords": [
     "yugen-ui",
@@ -16,7 +16,7 @@
     "name": "trandat1114",
     "url": "https://github.com/trandat1114"
   },
-  "homepage": "https://trandat1114.github.io/Yugen-UI/#/concepts/cli",
+  "homepage": "https://trandat1114.github.io/Yugen-UI/concepts/cli",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/trandat1114/Yugen-UI.git",
@@ -37,6 +37,6 @@
     "node": ">=24"
   },
   "dependencies": {
-    "@yugen-ui/cli": "^0.7.0"
+    "@yugen-ui/cli": "^0.8.0"
   }
 }

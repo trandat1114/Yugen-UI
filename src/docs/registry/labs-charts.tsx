@@ -684,7 +684,7 @@ const churnTrend = ${JSON.stringify(churnTrend)};
     ],
     props: [
       { name: "Sparkline.data", type: "(number | null)[]", description: "null tạo khoảng trống." },
-      { name: "Sparkline.width / height", type: `number | "auto" / number`, defaultValue: "120 / 32", description: `"auto" = theo phần tử cha.` },
+      { name: "Sparkline.width / height", type: `number | "auto" / number`, defaultValue: "120 / 32", description: `"auto" = theo phần tử cha (đo bằng ResizeObserver); một số thì không đo gì.` },
       { name: "Sparkline.variant", type: `"line" | "area"`, defaultValue: `"line"`, description: "Đường hoặc đường + vùng nhạt." },
       { name: "Sparkline.color", type: `"neutral" | 1–8`, defaultValue: `"neutral"`, description: "Xám làm nền hoặc ô màu phân loại." },
       { name: "Sparkline.highlightLast / labels", type: "boolean / string[]", defaultValue: "true", description: "Chấm điểm cuối; nhãn cho tooltip." },

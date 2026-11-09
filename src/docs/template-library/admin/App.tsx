@@ -1,5 +1,5 @@
 import * as React from "react";
-import { YugenProvider } from "@/components/ui";
+import { Toaster, YugenProvider } from "@/components/ui";
 import { createMockApi, DEFAULT_MOCK_OPTIONS, DEMO_ACCOUNT, type MockOptions } from "./api";
 import { DEFAULT_APPEARANCE, type Appearance } from "./appearance";
 import { AuthProvider } from "./auth";
@@ -81,7 +81,6 @@ export default function App({ embedded = false, content = defaultContent, defaul
   return (
     <YugenProvider
       applyToDocument={!embedded}
-      withToaster={!embedded}
       theme={appearance.theme}
       brand={appearance.brand}
       // Built-in component strings (pagination, dialogs, DataGrid…) in the app's language.
@@ -89,6 +88,7 @@ export default function App({ embedded = false, content = defaultContent, defaul
       locale={content.locale}
       className={embedded ? "h-full" : undefined}
     >
+      {!embedded && <Toaster />}
       {embedded ? <MemoryRouter initial={initialRoute}>{app}</MemoryRouter> : <BrowserRouter>{app}</BrowserRouter>}
     </YugenProvider>
   );

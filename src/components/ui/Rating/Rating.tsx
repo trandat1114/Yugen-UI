@@ -14,7 +14,7 @@ import {
 } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { warnDeprecated } from "@/lib/deprecate";
-import { useYugen, useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
+import { useYugenLocale, useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { ratingMessagesEn } from "./messages";
 
 export { ratingMessages, ratingMessagesVi, ratingMessagesEn, type RatingMessages } from "./messages";
@@ -111,7 +111,7 @@ export function Rating(inProps: RatingProps & { ref?: React.Ref<HTMLDivElement> 
   } = useComponentDefaults("Rating", inProps);
   const dir = useDirection();
   const msg = useYugenMessages("rating", ratingMessagesEn);
-  const { locale } = useYugen();
+  const locale = useYugenLocale();
   const labelOf = itemLabel ?? ((v: number) => msg.item(v, v.toLocaleString(locale)));
   const autoName = React.useId();
   const groupName = name ?? autoName;
@@ -225,7 +225,7 @@ export function RatingDisplay({
   const rounded = Math.round(Math.min(Math.max(value, 0), max) * 2) / 2;
   const { gap, text } = ICONS[size];
   const msg = useYugenMessages("rating", ratingMessagesEn);
-  const { locale } = useYugen();
+  const locale = useYugenLocale();
   const valueText = value.toLocaleString(locale, { maximumFractionDigits: 1 });
   const countText = count?.toLocaleString(locale);
   const label = msg.summary(valueText, max) + (count !== undefined ? `, ${msg.count(count, countText ?? "")}` : "");

@@ -1,5 +1,33 @@
 # @yugen-ui/cli
 
+## 0.8.0
+
+- `yugen css --watch` keeps the lean CSS file current while source imports change. The bundled Next.js template runs it beside
+  `next dev`; Vite templates include `@yugen-ui/cli/vite` and `yugenCss()`. `init` wires the Vite plugin into an existing
+  Tailwind CSS v4 project. `--watch` cannot be combined with `--check`.
+- `init`, `doctor` and `theme` now print an explicit `<Toaster />` inside the root `<YugenProvider>` instead of the deprecated
+  `withToaster` prop.
+- `yugen css`: writes `yugen-ui.css` with `@import "yugen-ui/theme-core.css";` and one
+  `@import "yugen-ui/sources/<Folder>.css";` per component folder your code imports, instead of `theme.css` with every
+  component. On the templates the gzipped CSS goes from about 26 kB to 12–20 kB (−24% to −54%). Imports are read with
+  a small lexer, so examples inside strings, comments or JSX text don't count; `import * as`, `export *` and
+  `import()` of `yugen-ui` fall back to `theme.css`. `--check` exits with 1 when the file is out of date; `--src`
+  limits the folders it reads; `--precompile` compiles plain CSS for apps without Tailwind (26.8 kB → 12.8–21.1 kB)
+  with the project's own `tailwindcss`, `@tailwindcss/node` and `@tailwindcss/oxide` (#169).
+- `init` (package mode, Tailwind CSS v4) writes `yugen-ui.css` and imports it instead of `yugen-ui/theme.css`. A CSS
+  file that already imports `theme.css` is left as it is.
+- `add` in package mode adds the component to `yugen-ui.css` when the app has one.
+- `doctor` accepts `yugen-ui/theme-core.css` (it reported "theme not imported"), warns when `yugen-ui.css` is out of
+  date or not imported, and names the components imported without their `sources/<Folder>.css`.
+- No runtime dependencies: own prompts on `node:readline` and colors with `node:util` `styleText` replace
+  `@clack/prompts` and `picocolors` (#381).
+- Bundled templates ship `package.json` as `_package.json`; `create` renames it back. Scanners no longer read the
+  templates' manifests as dependencies of the CLI (#381).
+- `create --ref` no longer reads `GITHUB_TOKEN` / `GH_TOKEN` (#381).
+- `add` / `update` refuse registry file paths that leave the target folder and dependency specs that are not npm
+  package specs; on Windows the package manager that launched the CLI runs without a shell (#381).
+- `LICENSE` file in `@yugen-ui/cli` and `create-yugen-ui`; `homepage` points to the path URL of the CLI page.
+
 ## 0.7.0
 
 - `doctor` reports React 18 as an error: yugen-ui 0.15 needs React 19 or later.

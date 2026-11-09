@@ -158,8 +158,8 @@ createRoot(document.getElementById("root")!).render(
   it("Vite: bọc <App /> trong render, giữ thụt lề, thêm import", () => {
     const { code, changed } = wrapWithProvider(VITE_MAIN, "vite", "yugen-ui");
     expect(changed).toBe(true);
-    expect(code).toContain('import { YugenProvider } from "yugen-ui";');
-    expect(code).toContain("  <StrictMode>\n    <YugenProvider applyToDocument withToaster>\n      <App />\n    </YugenProvider>\n  </StrictMode>");
+    expect(code).toContain('import { Toaster, YugenProvider } from "yugen-ui";');
+    expect(code).toContain("  <StrictMode>\n    <YugenProvider applyToDocument>\n      <Toaster />\n      <App />\n    </YugenProvider>\n  </StrictMode>");
     expect(wrapWithProvider(code, "vite", "yugen-ui").changed).toBe(false);
     expect(wrapWithProvider("export {};\n", "vite", "yugen-ui").changed).toBe(false);
   });
@@ -175,8 +175,8 @@ createRoot(document.getElementById("root")!).render(
 `;
     const { code, changed } = wrapWithProvider(layout, "next", "@/components/ui/YugenProvider/YugenProvider");
     expect(changed).toBe(true);
-    expect(code).toContain('<body className="antialiased"><YugenProvider applyToDocument withToaster>{children}</YugenProvider></body>');
-    expect(code.startsWith('import { YugenProvider } from "@/components/ui/YugenProvider/YugenProvider";')).toBe(true);
+    expect(code).toContain('<body className="antialiased"><YugenProvider applyToDocument><Toaster />{children}</YugenProvider></body>');
+    expect(code.startsWith('import { Toaster, YugenProvider } from "@/components/ui/YugenProvider/YugenProvider";')).toBe(true);
   });
 
   it("init không bọc thêm khi app đã render YugenProvider ở file khác (starter: App.tsx)", async () => {
@@ -191,7 +191,8 @@ createRoot(document.getElementById("root")!).render(
   it("init bọc app (mode package); --no-provider thì không", async () => {
     const cwd = viteProject({ "src/main.tsx": VITE_MAIN });
     await init({ cwd, mode: "package", install: false }, ctx);
-    expect(read(cwd, "src/main.tsx")).toContain("<YugenProvider applyToDocument withToaster>");
+    expect(read(cwd, "src/main.tsx")).toContain("<YugenProvider applyToDocument>");
+    expect(read(cwd, "src/main.tsx")).toContain("<Toaster />");
 
     const other = viteProject({ "src/main.tsx": VITE_MAIN });
     await init({ cwd: other, mode: "package", install: false, provider: false }, ctx);

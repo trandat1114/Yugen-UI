@@ -19,11 +19,12 @@ function A({ href, children }: { href: string; children: ReactNode }) {
   );
 }
 
-const VIETNAMESE_CODE = `import { YugenProvider, messagesVi } from "yugen-ui";
+const VIETNAMESE_CODE = `import { Toaster, YugenProvider, messagesVi } from "yugen-ui";
 
 export function App({ children }: { children: React.ReactNode }) {
   return (
-    <YugenProvider applyToDocument withToaster messages={messagesVi} locale="vi-VN">
+    <YugenProvider applyToDocument messages={messagesVi} locale="vi-VN">
+      <Toaster />
       {children}
     </YugenProvider>
   );

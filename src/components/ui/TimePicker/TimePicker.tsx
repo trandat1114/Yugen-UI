@@ -4,7 +4,7 @@ import { useControllableState } from "../hooks/useControllableState";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { useDirection } from "@radix-ui/react-direction";
 import { Checkmark16Filled, Clock16Regular, Clock20Regular, Clock24Regular } from "../_internal/icons";
-import { usePortalThemeProps, useYugen, useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
+import { usePortalThemeProps, useYugenLocale, useYugenMessages, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 import { cn } from "@/lib/cn";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { popoverSurfaceClass } from "@/components/ui/Popover/Popover";
@@ -283,7 +283,7 @@ export function TimePicker(inProps: TimePickerProps & { ref?: React.Ref<HTMLInpu
   } = props;
 
   const msg = useYugenMessages("timePicker", timePickerMessagesEn);
-  const providerLocale = useYugen().locale;
+  const providerLocale = useYugenLocale();
   const locale = localeProp ?? providerLocale;
   const controlled = value !== undefined;
   // onTimeChange có event + data và chỉ phát khi thật sự đổi (xem selectTime) nên gọi riêng, không qua hook.

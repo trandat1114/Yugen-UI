@@ -15,9 +15,18 @@ import {
 import { cn } from "@/lib/cn";
 import { DocSection, DoDont } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
+import { docsPath } from "../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
+}
+
+function A({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <a className="text-link underline hover:text-link-hover" href={href}>
+      {children}
+    </a>
+  );
 }
 
 function C({ children }: { children: ReactNode }) {
@@ -330,7 +339,7 @@ export default function Page() {
               [<C key="a">menuPopoverClass</C>, <span key="b">Menu</span>, "Bề mặt menu (Menu, ContextMenu, Menubar)."],
               [<C key="a">menuItemClass</C>, "Menu", "Item menu cao 32px, highlight bằng data-highlighted."],
               [<C key="a">listboxOptionClass</C>, "Dropdown", "Option trong listbox (Dropdown, Combobox, TagPicker)."],
-              [<C key="a">cmdkOptionClass</C>, "Combobox", "Option cmdk: highlight bằng data-selected=true."],
+              [<C key="a">cmdkOptionClass</C>, "Combobox", "Option highlight bằng data-selected=true (Combobox, TagPicker, TimePicker)."],
             ]}
           />
           <P>Ví dụ: một ô chỉ đọc tự viết nhưng vẫn có đáy stroke-accessible và thanh brand khi focus (bấm vào hoặc Tab tới ô):</P>
@@ -365,36 +374,53 @@ import { cn } from "@/lib/cn";
       <DocSection
         id="lean-css"
         title="Chỉ CSS của component bạn dùng"
-        description="theme.css cho Tailwind quét mọi component của gói, nên app nào cũng mang CSS của mọi component. App muốn nhẹ hơn dùng theme-core.css và thêm một file cho mỗi component nó dùng."
+        description="theme.css cho Tailwind quét mọi component của gói, nên app nào cũng mang CSS của mọi component. Lệnh css của CLI đọc import trong mã của app và ghi một file chỉ gồm các component đó."
       >
         <div className="flex flex-col gap-4">
-          <CodeBlock code={`@import "tailwindcss";
+          <CodeBlock code="npx @yugen-ui/cli@latest css" />
+          <P>
+            Lệnh ghi <C>yugen-ui.css</C> cạnh file CSS chính và thay <C>@import &quot;yugen-ui/theme.css&quot;</C> bằng{" "}
+            <C>@import &quot;./yugen-ui.css&quot;</C>. <C>yugen init</C> làm sẵn bước này cho dự án mới.
+          </P>
+          <CodeBlock code={`/* src/yugen-ui.css, do yugen css ghi */
 @import "yugen-ui/theme-core.css";
-/* Một dòng cho mỗi component app dùng: thư mục chứa nó. */
-@import "yugen-ui/sources/YugenProvider.css";
+/* Một dòng cho mỗi thư mục component mà mã import. */
 @import "yugen-ui/sources/Button.css";
+@import "yugen-ui/sources/DataGrid.css";
 @import "yugen-ui/sources/Dialog.css";
-@import "yugen-ui/sources/DataGrid.css";`} />
+@import "yugen-ui/sources/YugenProvider.css";`} />
           <SimpleTable
-            head={["Template", "Thư mục component", "theme.css", "theme-core.css + sources"]}
+            head={["Template", "Thư mục component", "theme.css", "yugen css"]}
             rows={[
-              ["Starter", "4", "25.4 kB", "13.9 kB"],
-              ["Landing", "14", "25.5 kB", "14.9 kB"],
-              ["Admin", "30", "25.1 kB", "17.1 kB"],
-              ["SaaS", "34", "25.0 kB", "19.4 kB"],
+              ["Starter", "5", "26.7 kB", "13.2 kB"],
+              ["Next.js Starter", "7", "26.2 kB", "11.8 kB"],
+              ["Landing", "16", "26.9 kB", "16.1 kB"],
+              ["Admin", "34", "26.4 kB", "18.1 kB"],
+              ["SaaS", "35", "26.3 kB", "20.0 kB"],
             ]}
           />
           <ul className="flex max-w-3xl list-disc flex-col gap-1 ps-5 text-body2 text-foreground-2">
             <li>CSS gzip, gồm cả class của chính app, đo bằng <C>scripts/measure-css.mjs</C>.</li>
+            <li>
+              Import thêm component thì chạy lại lệnh (ở chế độ package, <C>yugen add</C> tự làm), hoặc đặt nó trong script{" "}
+              <C>predev</C> / <C>prebuild</C>. <C>yugen css --check</C> thoát với mã 1 khi file đã cũ, <C>yugen doctor</C> cũng cảnh báo.
+              Xem <A href={docsPath("/concepts/cli#css")}>trang CLI</A>.
+            </li>
             <li>
               Mỗi file đã gồm các component mà component đó dùng bên trong (<C>SplitButton.css</C> có Menu và Button), nên chỉ cần liệt kê
               component bạn import.
             </li>
             <li>
               Tên file là thư mục chứa component: <C>NavItem</C> ở <C>sources/Nav.css</C>, <C>toast</C> ở <C>sources/Toast.css</C>. Bảng
-              export → file nằm trong <C>yugen-ui/sources/index.json</C>.
+              export → file nằm trong <C>yugen-ui/sources/index.json</C>. Có thể tự viết các dòng này thay cho CLI.
             </li>
-            <li>Thiếu một file thì component đó không có style. Chưa chắc thì dùng theme.css.</li>
+            <li>
+              Thiếu một file thì component đó không có style. <C>import * as</C>, <C>export *</C> hay <C>import(&quot;yugen-ui&quot;)</C> có
+              thể dùng mọi component, nên khi gặp chúng file sinh ra quay về theme.css.
+            </li>
+            <li>
+              Không dùng Tailwind: <C>yugen css --precompile</C> biên dịch cùng danh sách thành CSS thường để thay <C>styles.css</C>.
+            </li>
             <li>
               Copy mã nguồn component (shadcn registry, <C>@yugen-ui/cli add</C>) thì không cần: Tailwind đã quét thư mục của app.{" "}
               <C>styles.css</C> (không dùng Tailwind) luôn chứa mọi component.

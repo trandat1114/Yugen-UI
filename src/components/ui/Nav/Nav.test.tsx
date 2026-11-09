@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { NavRailTooltip } from "../AppShell/NavRailTooltip";
 import { TooltipProvider } from "../Tooltip/Tooltip";
 import { YugenProvider } from "../YugenProvider/YugenProvider";
 import { NavHostContext, type NavHostValue } from "./context";
@@ -182,10 +183,10 @@ describe("Nav", () => {
 });
 
 describe("Nav trong Sidebar của AppShell (rail)", () => {
-  function Host({ rail, expand = () => {}, onSelect }: Partial<NavHostValue>) {
+  function Host({ rail, expand = () => {}, onSelect, RowTooltip = NavRailTooltip }: Partial<NavHostValue>) {
     return (
       <TooltipProvider delayDuration={0}>
-        <NavHostContext.Provider value={{ rail: !!rail, expand, onSelect }}>
+        <NavHostContext.Provider value={{ rail: !!rail, expand, onSelect, RowTooltip }}>
           <Demo />
         </NavHostContext.Provider>
       </TooltipProvider>
@@ -219,5 +220,20 @@ describe("Nav trong Sidebar của AppShell (rail)", () => {
     await user.tab();
     expect(row("Trang chủ")).toHaveFocus();
     expect(await screen.findByRole("tooltip")).toHaveTextContent("Trang chủ");
+  });
+
+  it("Tooltip do host truyền vào (#350): host không có RowTooltip thì hàng không được bọc", async () => {
+    const user = userEvent.setup();
+    render(
+      <TooltipProvider delayDuration={0}>
+        <NavHostContext.Provider value={{ rail: true, expand: () => {} }}>
+          <Demo />
+        </NavHostContext.Provider>
+      </TooltipProvider>,
+    );
+    expect(row("Trang chủ")).not.toHaveAttribute("data-state");
+    await user.tab();
+    expect(row("Trang chủ")).toHaveFocus();
+    expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
   });
 });

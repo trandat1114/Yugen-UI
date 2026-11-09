@@ -4,7 +4,7 @@
 
 *Tiếng Việt: [xem bên dưới](#tiếng-việt).*
 
-Plans for each release, updated 2026-11-04. Each release is a GitHub milestone; priority, size and
+Plans for each release, updated 2026-11-09. Each release is a GitHub milestone; priority, size and
 dependencies are in the [GitHub Project](https://github.com/users/trandat1114/projects/6). `[x]` done, `[~]` in progress, `[ ]` planned.
 
 Want to pick something up? Comment on the issue before you start. The same roadmap is on the
@@ -21,7 +21,10 @@ Stable API. No fixed date: ships when the readiness checklist is done.
 - [ ] Form: validation and an error summary (#162)
 - [ ] Block library 2.0 (marketing, app, commerce), installable with the CLI (#163)
 - [ ] Codemods 0.x → 1.0 (yugen migrate) for the renamed props (#164)
-- [ ] @yugen-ui/cli writes the @import lines for per-component CSS (init, doctor) (#169)
+- [ ] Yugen-owned prop types for Calendar and Resizable (no third-party types in public props) (#371)
+- [ ] CSS layering: tokens in @layer theme, opt-in token groups, no global reset from styles.css (#354)
+- [ ] The date stack as an optional peer (yugen-ui/dates) (#356)
+- [ ] Native inputs for Checkbox, Switch and RadioGroup (#357)
 
 ## Next
 
@@ -36,6 +39,7 @@ Not scheduled yet.
 
 Details on What's new (`/news`) and in `CHANGELOG.md`.
 
+- **0.16.0** (2026-11-09): Performance: lighter imports, smaller CSS and fewer re-renders
 - **0.15.0** (2026-11-04): New form controls, NavigationMenu, status pages and app-wide defaults
 - **0.14.0** (2026-11-03): AppShell, Sortable and a Contributors page
 - **0.13.0** (2026-10-28): Refraction for glass, cherry blossom season in the Glass template
@@ -60,7 +64,7 @@ Details on What's new (`/news`) and in `CHANGELOG.md`.
 
 ## Tiếng Việt
 
-Kế hoạch theo từng bản phát hành, cập nhật 2026-11-04. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và
+Kế hoạch theo từng bản phát hành, cập nhật 2026-11-09. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và
 phụ thuộc nằm ở [GitHub Project](https://github.com/users/trandat1114/projects/6). `[x]` đã xong, `[~]` đang làm, `[ ]` dự kiến.
 
 Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. Trang [Cộng đồng](https://trandat1114.github.io/Yugen-UI/vi/community) có cùng lộ trình.
@@ -76,7 +80,10 @@ API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện
 - [ ] Form: kiểm tra dữ liệu và tóm tắt lỗi (#162)
 - [ ] Thư viện block 2.0 (marketing, ứng dụng, thương mại), cài bằng CLI (#163)
 - [ ] Codemod 0.x → 1.0 (yugen migrate) cho các tên đã đổi (#164)
-- [ ] @yugen-ui/cli ghi các dòng @import của CSS theo component (init, doctor) (#169)
+- [ ] Kiểu prop riêng của Yugen cho Calendar và Resizable (không lộ kiểu của thư viện khác) (#371)
+- [ ] Phân lớp CSS: token trong @layer theme, nhóm token tuỳ chọn, styles.css không reset toàn cục (#354)
+- [ ] Phần ngày tháng thành peer tuỳ chọn (yugen-ui/dates) (#356)
+- [ ] Input gốc cho Checkbox, Switch và RadioGroup (#357)
 
 ### Tiếp theo
 
@@ -91,6 +98,7 @@ Chưa xếp lịch.
 
 Chi tiết ở trang Có gì mới (`/news`) và `CHANGELOG.md`.
 
+- **0.16.0** (2026-11-09): Hiệu năng: import nhẹ hơn, CSS gọn hơn và ít render lại hơn
 - **0.15.0** (2026-11-04): Form control mới, NavigationMenu, trang trạng thái và prop mặc định cho cả ứng dụng
 - **0.14.0** (2026-11-03): AppShell, Sortable, trang Người đóng góp
 - **0.13.0** (2026-10-28): Khúc xạ cho glass, mùa hoa anh đào trong template Glass

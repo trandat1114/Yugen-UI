@@ -38,15 +38,15 @@ export function GridLines({
   skip?: number;
 }) {
   return (
-    <g aria-hidden>
+    <g aria-hidden style={{ stroke: "var(--colorChartGrid)" }}>
       {ticks
         .filter((t) => t !== skip)
         .map((t) => {
           const p = Math.round(scale(t)) + 0.5;
           return orientation === "horizontal" ? (
-            <line key={t} x1={from} x2={to} y1={p} y2={p} strokeWidth={1} style={{ stroke: "var(--colorChartGrid)" }} />
+            <line key={t} x1={from} x2={to} y1={p} y2={p} strokeWidth={1} />
           ) : (
-            <line key={t} y1={from} y2={to} x1={p} x2={p} strokeWidth={1} style={{ stroke: "var(--colorChartGrid)" }} />
+            <line key={t} y1={from} y2={to} x1={p} x2={p} strokeWidth={1} />
           );
         })}
     </g>

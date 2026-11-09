@@ -10,6 +10,8 @@ export interface TagPickerMessages {
   closeList: string;
   /** aria-label nút mũi tên khi listbox đang đóng. */
   openList: string;
+  /** Tên của listbox khi ô nhập không có nhãn hiển thị (Field nối nhãn qua aria-labelledby). */
+  listLabel: string;
 }
 
 declare module "../YugenProvider/context" {
@@ -24,6 +26,7 @@ export const tagPickerMessagesVi: TagPickerMessages = {
   selectedItems: "Mục đã chọn",
   closeList: "Đóng danh sách",
   openList: "Mở danh sách",
+  listLabel: "Gợi ý",
 };
 
 export const tagPickerMessagesEn: TagPickerMessages = {
@@ -32,6 +35,7 @@ export const tagPickerMessagesEn: TagPickerMessages = {
   selectedItems: "Selected items",
   closeList: "Close list",
   openList: "Open list",
+  listLabel: "Suggestions",
 };
 
 /** @deprecated Use `tagPickerMessagesVi` (Vietnamese) or `tagPickerMessagesEn`. Will be removed in v1.0.0. */

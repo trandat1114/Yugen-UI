@@ -11,9 +11,10 @@
     "@fluentui/react-icons": "^2.0.264",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "yugen-ui": "^0.15.0"
+    "yugen-ui": "^0.16.0"
   },
   "devDependencies": {
+    "@yugen-ui/cli": "^0.8.0",
     "@tailwindcss/vite": "^4.0.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",

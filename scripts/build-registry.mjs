@@ -145,14 +145,15 @@ function libItem(file) {
   const abs = path.join(src, "lib", file.endsWith(".ts") ? file : `${file}.ts`);
   const name = kebab(path.basename(abs, ".ts"));
   libFiles.set(file, name);
-  const { npm } = analyse(abs, null);
+  const { npm, lib } = analyse(abs, null);
   items.push({
     name,
     type: "registry:lib",
     title: path.basename(abs),
     description: `Yugen UI helper ${path.basename(abs)}.`,
     dependencies: sorted(npm).map(withVersion),
-    registryDependencies: [],
+    // cvx.ts dùng cn.ts (#355).
+    registryDependencies: sorted(lib).map((file) => itemUrl(libItem(file))),
     files: [{ path: `registry/yugen/lib/${path.basename(abs)}`, type: "registry:lib", content: read(abs) }],
   });
   return name;
@@ -163,6 +164,9 @@ const folders = fs
   .filter((d) => d.isDirectory())
   .map((d) => d.name)
   .sort();
+
+/** File trong components/ui không gắn "use client": hàm thường cho Server Component (#348). */
+const SERVER_SAFE_FILES = new Set(["YugenProvider/document.ts", "AppShell/cookie.ts"]);
 
 const componentNames = [];
 for (const folder of folders) {
@@ -194,8 +198,10 @@ for (const folder of folders) {
     registryDependencies: sorted(regDeps),
     files: files.map((file) => {
       const code = read(path.join(dir, file));
-      // Như gói npm: mọi file component là client boundary (Next.js App Router); CLI tự bỏ khi rsc = false.
-      const content = /\.tsx?$/.test(file) && !/^["']use client["']/.test(code) ? `"use client";\n\n${code}` : code;
+      // Như gói npm: mọi file component là client boundary (Next.js App Router); CLI tự bỏ khi rsc = false. Trừ file không
+      // React mà Server Component gọi (SERVER_SAFE trong vite.lib.config.ts).
+      const clientFile = /\.tsx?$/.test(file) && !SERVER_SAFE_FILES.has(`${folder}/${file}`);
+      const content = clientFile && !/^["']use client["']/.test(code) ? `"use client";\n\n${code}` : code;
       return { path: `registry/yugen/ui/${folder}/${file}`, type: "registry:ui", content };
     }),
   });
@@ -225,7 +231,7 @@ for (const [name, themeName, framework] of [
     dependencies: [],
     registryDependencies: [itemUrl(themeName), itemUrl(libItem("cn")), itemUrl("yugen-provider")],
     files: [],
-    docs: `Yugen UI is ready. Wrap your app once — <YugenProvider applyToDocument withToaster> from "@/components/ui/YugenProvider/YugenProvider" — then add components: npx shadcn@latest add ${itemUrl("button")}`,
+    docs: `Yugen UI is ready. Wrap your app once — <YugenProvider applyToDocument><Toaster />…</YugenProvider> from "@/components/ui/YugenProvider/YugenProvider" — then add components: npx shadcn@latest add ${itemUrl("button")}`,
   });
 }
 

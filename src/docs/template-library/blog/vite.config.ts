@@ -3,6 +3,7 @@ import path from "node:path";
 import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import { yugenCss } from "@yugen-ui/cli/vite";
 import { loadPosts, pageMeta, slugify, type PageKind } from "./blog.ts";
 // Ngôn ngữ đang dùng là file content/index.ts trỏ tới (`create --lang` chỉ giữ lại một ngôn ngữ): chữ và content/<lang>/posts.
 import content from "./content/index.ts";
@@ -132,7 +133,7 @@ ${p.tags.map((t) => `      <category>${esc(t)}</category>`).join("\n")}
 export default defineConfig({
   // Triển khai ở thư mục con (GitHub Pages /<repo>/): BASE=/<repo>/ npm run build
   base: process.env.BASE ?? "/",
-  plugins: [react(), tailwindcss(), blogSeo()],
+  plugins: [react(), tailwindcss(), yugenCss(), blogSeo()],
   build: {
     rolldownOptions: {
       output: {

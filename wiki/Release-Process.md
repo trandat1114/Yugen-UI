@@ -4,7 +4,7 @@
 
 This page covers the stable channel (`main` → `latest`). Prereleases on `next`, `canary` and fixes for older minors on `release/X.Y`: [[Branching and Release Channels]].
 
-Versions follow [SemVer](https://trandat1114.github.io/Yugen-UI/#/concepts/versioning). Before 1.0, a minor release may
+Versions follow [SemVer](https://trandat1114.github.io/Yugen-UI/concepts/versioning). Before 1.0, a minor release may
 contain breaking changes; always call them out.
 
 ## Rules for each number
@@ -112,8 +112,11 @@ git tag vx.y.z
 git push origin vx.y.z
 ```
 
-The **Release** workflow checks that the tag matches `package.json` and is on the right branch, runs the tests, builds and runs
-`npm publish --provenance` through npm trusted publishing (no token). The dist-tag is chosen by `scripts/release-channel.mjs`: `latest`, `next` (prerelease) or `release-X.Y`.
+The **Release** workflow checks that the tag matches `package.json` and is on the right branch, runs the tests, builds and packs
+the package. The publish job then **waits for your approval** (environment `npm-release`, see
+[Release jobs and approval](#release-jobs-and-approval)): open the run › **Review deployments** › approve. It runs
+`npm publish --provenance` on the packed `.tgz` through npm trusted publishing (no token). The dist-tag is chosen by
+`scripts/release-channel.mjs`: `latest`, `next` (prerelease) or `release-X.Y`.
 
 After publishing, the workflow creates a GitHub Release for the tag from that version's CHANGELOG entry (`scripts/release-notes.mjs`;
 the `latest` release is marked Latest, prereleases are marked Pre-release). The **Docs** workflow rebuilds the site (including docs for
@@ -203,8 +206,9 @@ git push origin cli@X.Y.Z
 ```
 
 **Release CLI** runs `check-release.mjs --tag` (the tag matches the version, the branch is right, the version was never unpublished, the `yugen-ui` version pinned by the templates is on npm → pick the dist-tag),
-typecheck, test, smoke, then `npm publish --provenance` for `@yugen-ui/cli` and `create-yugen-ui`. Each package is skipped if
-that version is already on npm, so when a publish step fails (token, package name), fix the cause and just **Re-run** the workflow.
+typecheck, test, smoke and packs both packages. After your approval (environment `npm-release`, as for **Release**) it runs
+`npm publish --provenance` for `@yugen-ui/cli`, then `create-yugen-ui`. Each package is skipped if that version is already
+on npm, so when a publish step fails (token, package name), fix the cause and just **Re-run** the failed jobs.
 
 ### After publishing
 
@@ -222,16 +226,39 @@ in the top bar for people who saw the previous version. **Release CLI** creates 
 ### Trusted publishing (OIDC, #202)
 
 Since 0.14.0 and CLI 0.6.0 every publish goes through OIDC; the repository has no npm token. Both release workflows use
-npm ≥ 11.5.1 and `permissions: id-token: write`. On npmjs.com, each package › **Settings** › **Trusted Publisher** › GitHub
-Actions:
+npm ≥ 11.5.1 and give `permissions: id-token: write` to their publish jobs only. On npmjs.com, each package › **Settings** ›
+**Trusted Publisher** › GitHub Actions:
 
 - repository `trandat1114/Yugen-UI`, workflow `release.yml` for `yugen-ui` (stable, prerelease and canary builds);
   `release-cli.yml` for `@yugen-ui/cli` and `create-yugen-ui`. No environment.
 - **Allow npm publish** checked. Without it the publish step fails with `E403 … OIDC permission denied for this action`.
 - **Allow npm dist-tag** unchecked: dist-tags are set by `npm publish --tag`.
 
-npm accepts one trusted publisher workflow per package, which is why the canary job lives in `release.yml`. A new package
-needs a first manual `npm publish` before its trusted publisher can be set.
+npm accepts one trusted publisher workflow per package, which is why the canary jobs live in `release.yml`. A new package
+needs a first manual `npm publish` before its trusted publisher can be set. The trusted publisher is bound to the workflow
+file name: don't rename `release.yml` or `release-cli.yml`.
+
+### Release jobs and approval
+
+Any job that can request the npm OIDC token can publish a version with valid provenance. So the jobs that hold it run no code
+from the repository or its dependencies (#379):
+
+| Job | Permissions | Runs |
+| --- | --- | --- |
+| `build` (`canary-build`) | `contents: read` | `npm ci`, release checks, tests, build, `npm pack`. Uploads the `.tgz` files and `SHA256SUMS` as an artifact. |
+| `publish` (`canary-publish`) | `id-token: write` | `setup-node` and npm 11 only. Downloads the artifact, checks `SHA256SUMS` against the hash reported by `build`, then `npm publish <file>.tgz --provenance --ignore-scripts`. No checkout, no `npm ci`, no repo scripts. |
+| `github-release` | `contents: write` | Checkout and `scripts/release-notes.mjs` → GitHub Release. No `id-token`. |
+
+`release-cli.yml` has the same three jobs; its publish job publishes `@yugen-ui/cli` first, then `create-yugen-ui`.
+
+The `publish` jobs of `release.yml` and `release-cli.yml` use the GitHub environment **`npm-release`** (repository
+**Settings** › **Environments**): required reviewer `trandat1114`, deployments only from tags `v*` and `cli@*`. After you
+push a tag, the run stops before `publish` until you open it and choose **Review deployments** › **Approve and deploy**.
+Rejecting it stops the release; nothing is published and no GitHub Release is created. To try again later, re-run the
+workflow. The canary jobs don't use the environment, so every push to `canary` publishes without approval.
+
+The **Environment** field of the npm trusted publisher stays empty: `yugen-ui` has one trusted publisher for both canary and
+stable builds, and naming `npm-release` there would block every canary.
 
 ### First time (`cli@0.1.0`)
 

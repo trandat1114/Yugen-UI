@@ -1,8 +1,9 @@
 import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
-import { YugenProvider, glassNavigationDefaults, useYugen } from "./YugenProvider";
-import { YugenContext } from "./context";
+import { act, render, screen } from "@testing-library/react";
+import { YugenProvider, glassNavigationDefaults, useYugen, useYugenLocale, useYugenTheme, type YugenTheme } from "./YugenProvider";
+import { YugenContext, useComponentDefaults, usePortalThemeProps, useYugenMessages } from "./context";
+import { dialogMessagesEn } from "../Dialog/messages";
 import { Button } from "../Button/Button";
 import { Input } from "../Input/Input";
 import { Nav } from "../Nav/Nav";
@@ -272,5 +273,140 @@ describe("YugenProvider defaults & density (#171)", () => {
       </YugenProvider>,
     );
     expect(seen).toHaveLength(2);
+  });
+});
+
+describe("YugenProvider: theme tách khỏi cấu hình (#347)", () => {
+  it("messages viết thẳng trong JSX: provider render lại với nội dung bằng nhau không render lại consumer", () => {
+    let renders = 0;
+    const MemoProbe = React.memo(function Probe() {
+      renders++;
+      useYugenMessages("dialog", dialogMessagesEn);
+      return null;
+    });
+    const { rerender } = render(
+      <YugenProvider messages={{ dialog: { close: "Shut" } }}>
+        <MemoProbe />
+      </YugenProvider>,
+    );
+    rerender(
+      <YugenProvider messages={{ dialog: { close: "Shut" } }}>
+        <MemoProbe />
+      </YugenProvider>,
+    );
+    rerender(
+      <YugenProvider messages={{ ...messagesEn, dialog: { close: "Shut" } }}>
+        <MemoProbe />
+      </YugenProvider>,
+    );
+    rerender(
+      <YugenProvider messages={{ ...messagesEn, dialog: { close: "Shut" } }}>
+        <MemoProbe />
+      </YugenProvider>,
+    );
+    // Lần 2: thêm namespace của messagesEn (nội dung khác). Lần 4 bằng lần 3.
+    expect(renders).toBe(2);
+  });
+
+  it("đổi theme với children ổn định: control đọc defaults / messages / locale không render lại", () => {
+    const counts = { defaults: 0, messages: 0, locale: 0, theme: 0, portal: 0 };
+    const themes: string[] = [];
+    const portals: unknown[] = [];
+    function DefaultsReader() {
+      counts.defaults++;
+      useComponentDefaults("Button", {});
+      return null;
+    }
+    function MessagesReader() {
+      counts.messages++;
+      useYugenMessages("dialog", dialogMessagesEn);
+      return null;
+    }
+    function LocaleReader() {
+      counts.locale++;
+      useYugenLocale();
+      return null;
+    }
+    function ThemeReader() {
+      counts.theme++;
+      themes.push(useYugenTheme().theme);
+      return null;
+    }
+    function PortalReader() {
+      counts.portal++;
+      portals.push(usePortalThemeProps()["data-theme"]);
+      return null;
+    }
+    let setTheme!: (theme: YugenTheme) => void;
+    // Như layout Next.js App Router hay wrapper nhận `children`: phần tử con giữ nguyên khi state của Shell đổi.
+    function Shell({ children }: { children: React.ReactNode }) {
+      const [theme, set] = React.useState<YugenTheme>("light");
+      setTheme = set;
+      return (
+        <YugenProvider theme={theme} density="compact" defaults={{ Button: { shape: "circular" } }} messages={{ dialog: { close: "Shut" } }}>
+          {children}
+        </YugenProvider>
+      );
+    }
+    render(
+      <Shell>
+        <DefaultsReader />
+        <MessagesReader />
+        <LocaleReader />
+        <ThemeReader />
+        <PortalReader />
+      </Shell>,
+    );
+    act(() => setTheme("dark"));
+    act(() => setTheme("high-contrast"));
+    expect(counts).toEqual({ defaults: 1, messages: 1, locale: 1, theme: 3, portal: 3 });
+    expect(themes).toEqual(["light", "dark", "high-contrast"]);
+    expect(portals).toEqual(["light", "dark", "high-contrast"]);
+  });
+
+  it("useYugen() giữ nguyên dạng; useYugenTheme() và useYugenLocale() đọc từng phần", () => {
+    let all: ReturnType<typeof useYugen> | undefined;
+    let theme: ReturnType<typeof useYugenTheme> | undefined;
+    let locale: string | undefined;
+    function Probe() {
+      all = useYugen();
+      theme = useYugenTheme();
+      locale = useYugenLocale();
+      return null;
+    }
+    const { rerender } = renderBare(<Probe />);
+    expect(all).toEqual({ theme: "light", brand: "sakura", dir: "ltr", locale: "en-US", density: "default" });
+    expect(theme).toEqual({ theme: "light", brand: "sakura", dir: "ltr" });
+    expect(locale).toBe("en-US");
+    rerender(
+      <YugenProvider theme="dark" brand="web" dir="rtl" locale="vi-VN" density="compact">
+        <Probe />
+      </YugenProvider>,
+    );
+    expect(all).toEqual({ theme: "dark", brand: "web", dir: "rtl", locale: "vi-VN", density: "compact" });
+    expect(theme).toEqual({ theme: "dark", brand: "web", dir: "rtl" });
+    expect(locale).toBe("vi-VN");
+  });
+});
+
+describe("YugenProvider applyToDocument (#348)", () => {
+  it("ghi attribute lên <html> trong layout effect: effect của component con đã thấy theme", () => {
+    const html = document.documentElement;
+    for (const name of ["data-theme", "data-brand", "dir"]) html.removeAttribute(name);
+    let seen: (string | null)[] = [];
+    function Child() {
+      React.useEffect(() => {
+        seen = ["data-theme", "data-brand", "dir"].map((name) => html.getAttribute(name));
+      }, []);
+      return null;
+    }
+    const { unmount } = render(
+      <YugenProvider applyToDocument theme="dark" brand="web" dir="rtl">
+        <Child />
+      </YugenProvider>,
+    );
+    expect(seen).toEqual(["dark", "web", "rtl"]);
+    unmount();
+    for (const name of ["data-theme", "data-brand", "dir"]) html.removeAttribute(name);
   });
 });

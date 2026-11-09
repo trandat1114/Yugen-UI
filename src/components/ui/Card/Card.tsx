@@ -1,10 +1,11 @@
 import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/cn";
+import { cvx } from "@/lib/cvx";
 import { useComponentDefaults } from "../YugenProvider/context";
 
 /** Fluent 2 Card — https://fluent2.microsoft.design/components/web/react/core/card/usage */
-const cardVariants = cva(
+const cardVariants = cvx(
   "relative flex flex-col overflow-hidden rounded-medium border text-foreground-1 transition-[box-shadow,background-color] duration-faster ease-easy-ease",
   {
     variants: {
@@ -45,7 +46,7 @@ export function Card(inProps: CardProps & { ref?: React.Ref<HTMLDivElement> }) {
     ref,
     ...props
   } = useComponentDefaults("Card", inProps);
-  return <div ref={ref} className={cn(cardVariants({ appearance, size, interactive }), className)} {...props} />;
+  return <div ref={ref} className={cardVariants({ appearance, size, interactive, className })} {...props} />;
 }
 
 export interface CardHeaderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {

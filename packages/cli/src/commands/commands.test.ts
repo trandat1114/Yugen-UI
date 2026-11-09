@@ -23,15 +23,29 @@ describe("create", () => {
     const { target } = await create({ cwd, dir: "My App", template: "starter", install: false, git: false, templatesDir: repoTemplates }, ctx);
     expect(json(target, "package.json").name).toBe("my-app");
     expect(fs.existsSync(path.join(target, ".gitignore"))).toBe(true);
-    expect(read(target, "src/index.css")).toContain('@import "yugen-ui/theme.css"');
+    expect(read(target, "src/index.css")).toContain('@import "./yugen-ui.css"');
+  });
+
+  it("restores _package.json and _gitignore from the bundled copy (#381: no nested manifests in the npm package)", async () => {
+    const bundled = tmpDir();
+    const dir = (JSON.parse(read(repoTemplates, "templates.json")) as { name: string; dir: string }[]).find((t) => t.name === "starter")!.dir;
+    fs.copyFileSync(path.join(repoTemplates, "templates.json"), path.join(bundled, "templates.json"));
+    fs.cpSync(path.join(repoTemplates, dir), path.join(bundled, dir), { recursive: true, filter: (src) => !/[\\/](node_modules|dist)$/.test(src) });
+    fs.renameSync(path.join(bundled, dir, "package.json"), path.join(bundled, dir, "_package.json"));
+    fs.renameSync(path.join(bundled, dir, ".gitignore"), path.join(bundled, dir, "_gitignore"));
+    const { target } = await create({ cwd: tmpDir(), dir: "app", template: "starter", install: false, git: false, templatesDir: bundled }, ctx);
+    expect(json(target, "package.json").name).toBe("app");
+    expect(fs.existsSync(path.join(target, ".gitignore"))).toBe(true);
+    expect(fs.existsSync(path.join(target, "_package.json"))).toBe(false);
+    expect(fs.existsSync(path.join(target, "_gitignore"))).toBe(false);
   });
 
   it("next-starter: a Next.js app; --lang works without index.html; doctor finds the theme and the provider", async () => {
     const cwd = tmpDir();
     const base = { cwd, template: "next-starter", install: false, git: false, templatesDir: repoTemplates };
     const { target } = await create({ ...base, dir: "next-app" }, ctx);
-    expect(json(target, "package.json")).toMatchObject({ name: "next-app", scripts: { build: "next build" } });
-    expect(read(target, "src/app/globals.css")).toContain('@import "yugen-ui/theme.css"');
+    expect(json(target, "package.json")).toMatchObject({ name: "next-app", scripts: { build: "yugen css && next build" } });
+    expect(read(target, "src/app/globals.css")).toContain('@import "./yugen-ui.css"');
     const checks = await diagnose({ cwd: target, offline: true });
     expect(checks.find((c) => c.message.startsWith("Theme imported"))?.message).toContain("src/app/globals.css");
     expect(checks.find((c) => c.message.startsWith("YugenProvider found"))?.level).toBe("ok");
@@ -104,13 +118,15 @@ describe("create", () => {
 });
 
 describe("init --mode package", () => {
-  it("imports theme.css after tailwindcss and records the mode", async () => {
+  it("imports yugen-ui.css (yugen css) after tailwindcss and records the mode", async () => {
     const cwd = viteProject();
     await init({ cwd, mode: "package", install: false }, ctx);
-    expect(read(cwd, "src/index.css")).toBe('@import "tailwindcss";\n@import "yugen-ui/theme.css";\n\nbody { margin: 0; }\n');
+    expect(read(cwd, "src/index.css")).toBe('@import "tailwindcss";\n@import "./yugen-ui.css";\n\nbody { margin: 0; }\n');
+    // yugen-ui is not installed yet (--no-install): theme.css until `yugen css` runs again.
+    expect(read(cwd, "src/yugen-ui.css")).toContain('\n@import "yugen-ui/theme.css";\n');
     expect(json(cwd, "yugen.json")).toEqual({ mode: "package", framework: "vite", rsc: false, css: "src/index.css" });
     await init({ cwd, mode: "package", install: false }, ctx);
-    expect(read(cwd, "src/index.css").match(/theme\.css/g)).toHaveLength(1);
+    expect(read(cwd, "src/index.css").match(/yugen-ui\.css/g)).toHaveLength(1);
   });
 
   it("falls back to styles.css without Tailwind v4", async () => {

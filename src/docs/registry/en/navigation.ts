@@ -252,7 +252,7 @@ export const en: Record<string, ComponentDocEn> = {
       items:
         "Data mode: dividers are inserted automatically and the last item is the current page.",
       maxDisplayedItems:
-        "Maximum number of visible items (with items); the middle ones go into the “…” menu.",
+        "Maximum number of visible items (with items); the middle ones go into the “…” menu. The menu's code loads on demand, right after the “…” button appears.",
       overflowIndex: "Number of leading items kept before the “…” button.",
       "BreadcrumbButton.current":
         'Current page: semibold, aria-current="page", not clickable.',

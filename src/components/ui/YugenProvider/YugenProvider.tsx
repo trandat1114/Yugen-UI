@@ -1,12 +1,15 @@
 import * as React from "react";
 import { DirectionProvider } from "@radix-ui/react-direction";
 import { cn } from "@/lib/cn";
+import { warnDeprecated } from "@/lib/deprecate";
+import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { TooltipProvider } from "../Tooltip/Tooltip";
-import { Toaster } from "../Toast/Toast";
+import { yugenHtmlAttributes } from "./document";
 
 /** YugenProvider — tương đương FluentProvider: áp theme, brand, hướng chữ cho một cây component. */
 import {
   YugenContext,
+  YugenThemeContext,
   type YugenBrand,
   type YugenDefaultsInput,
   type YugenDensity,
@@ -18,6 +21,8 @@ import {
 
 export {
   useYugen,
+  useYugenTheme,
+  useYugenLocale,
   useYugenMessages,
   usePortalThemeProps,
   type YugenTheme,
@@ -25,11 +30,46 @@ export {
   type YugenDir,
   type YugenDensity,
   type YugenScrollLock,
+  type YugenThemeValue,
+  type YugenContextValue,
   type YugenMessages,
   type YugenMessagesInput,
   type YugenComponentDefaults,
   type YugenDefaultsInput,
 } from "./context";
+
+/**
+ * Toaster của `withToaster` nạp lúc cần (#346): app không bật thì không tải `@radix-ui/react-toast`. Store của toast ở cấp
+ * module, nên toast gọi trước khi chunk nạp xong vẫn hiện khi Toaster mount. Chunk không tải được (mất mạng, tab mở từ
+ * trước một lần deploy): chỉ thiếu Toaster, lỗi không lan lên làm sập cả cây dưới provider gốc.
+ */
+const LazyToaster = /* @__PURE__ */ React.lazy(() =>
+  import("../Toast/Toast").then(
+    (m): { default: React.ComponentType<{ position: "bottom-end" }> } => ({ default: m.Toaster }),
+    (error: unknown) => {
+      console.error("[yugen-ui] YugenProvider withToaster: the Toaster could not be loaded.", error);
+      return { default: NoToaster };
+    },
+  ),
+);
+function NoToaster() {
+  return null;
+}
+const subscribeNothing = () => () => {};
+
+/**
+ * Server và lượt hydrate không render Toaster (HTML hai phía giống nhau, không có Suspense treo trong renderToString);
+ * render client đầu tiên sau đó mới nạp. Toaster không có gì để hiện trước khi JavaScript chạy.
+ */
+function DeferredToaster() {
+  const client = React.useSyncExternalStore(subscribeNothing, () => true, () => false);
+  if (!client) return null;
+  return (
+    <React.Suspense fallback={null}>
+      <LazyToaster position="bottom-end" />
+    </React.Suspense>
+  );
+}
 
 export interface YugenProviderProps extends React.HTMLAttributes<HTMLDivElement> {
   theme?: YugenTheme;
@@ -42,7 +82,14 @@ export interface YugenProviderProps extends React.HTMLAttributes<HTMLDivElement>
   applyToDocument?: boolean;
   /** Gắn sẵn TooltipProvider (mặc định true). */
   withTooltipProvider?: boolean;
-  /** Gắn sẵn <Toaster /> để dùng toast() (mặc định false — chỉ bật ở provider gốc). */
+  /**
+   * Gắn sẵn <Toaster /> để dùng toast() (mặc định false — chỉ bật ở provider gốc). Toaster được nạp riêng sau lần render
+   * đầu trên client; toast gọi trước đó vẫn hiện khi nó mount.
+   *
+   * Recommended: render `<Toaster />` as a child of the root provider instead (the way Radix, shadcn/ui, Chakra and Mantine
+   * compose it). The Toaster then ships with your bundle from the first render and you choose its `position` and `limit`.
+   * @deprecated Render `<Toaster />` inside the root `YugenProvider`; this prop will be removed in 1.0.0.
+   */
   withToaster?: boolean;
   /**
    * Ghi đè chuỗi giao diện có sẵn của component (mặc định tiếng Anh), theo namespace: `messages={messagesVi}` cho tiếng
@@ -140,59 +187,65 @@ export function YugenProvider({
   ref,
   ...props
 }: YugenProviderProps & { ref?: React.Ref<HTMLDivElement> }) {
+  if (withToaster) warnDeprecated("YugenProvider.withToaster", "render <Toaster /> inside the root YugenProvider", "1.0.0");
   const parent = React.useContext(YugenContext);
-  const messages = React.useMemo(() => mergeLayers(parent?.messages, messagesProp), [parent?.messages, messagesProp]);
+  const parentTheme = React.useContext(YugenThemeContext);
+  // messages={{ … }} / {...messagesVi, …} viết thẳng trong JSX: so theo giá trị như defaults (#347).
+  const ownMessages = useStableLayers(messagesProp);
+  const messages = React.useMemo(() => mergeLayers(parent?.messages, ownMessages), [parent?.messages, ownMessages]);
   const ownDefaults = useStableLayers(defaultsProp);
   const defaults = React.useMemo(() => mergeLayers(parent?.defaults, ownDefaults), [parent?.defaults, ownDefaults]);
   const locale = localeProp ?? parent?.locale ?? "en-US";
   const density = densityProp ?? parent?.density ?? "default";
-  const densityAttr = densityProp ?? parent?.densityAttr;
-  React.useEffect(() => {
+  const densityAttr = densityProp ?? parentTheme?.densityAttr;
+  // Layout effect: attribute lên <html> trước lần vẽ đầu của client, không nháy theme mặc định (#348).
+  useIsomorphicLayoutEffect(() => {
     if (!applyToDocument) return;
     const root = document.documentElement;
-    root.setAttribute("data-theme", theme);
-    root.setAttribute("data-brand", brand);
-    root.setAttribute("dir", dir);
+    for (const [name, value] of Object.entries(yugenHtmlAttributes({ theme, brand, dir }))) root.setAttribute(name, value);
   }, [applyToDocument, theme, brand, dir]);
-  React.useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!applyToDocument || !densityProp) return;
     const root = document.documentElement;
     root.setAttribute("data-density", densityProp);
     return () => root.removeAttribute("data-density");
   }, [applyToDocument, densityProp]);
-  React.useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!applyToDocument || !scrollLock) return;
     const root = document.documentElement;
     root.setAttribute("data-yugen-scroll-lock", scrollLock);
     return () => root.removeAttribute("data-yugen-scroll-lock");
   }, [applyToDocument, scrollLock]);
 
-  const value = React.useMemo(
-    () => ({ theme, brand, dir, locale, density, densityAttr, messages, defaults, scoped: !applyToDocument }),
-    [theme, brand, dir, locale, density, densityAttr, messages, defaults, applyToDocument],
+  const value = React.useMemo(() => ({ locale, density, messages, defaults }), [locale, density, messages, defaults]);
+  const themeValue = React.useMemo(
+    () => ({ theme, brand, dir, densityAttr, scoped: !applyToDocument }),
+    [theme, brand, dir, densityAttr, applyToDocument],
   );
 
   const content = (
     <>
       {children}
-      {withToaster && <Toaster position="bottom-end" />}
+      {withToaster && <DeferredToaster />}
     </>
   );
 
   return (
     <DirectionProvider dir={dir}>
-      <YugenContext.Provider value={value}>
-        <div
-          ref={ref}
-          {...(applyToDocument ? {} : { "data-theme": theme, "data-brand": brand })}
-          data-density={densityProp}
-          dir={dir}
-          className={cn(!applyToDocument && "bg-background-1 text-foreground-1", className)}
-          {...props}
-        >
-          {withTooltipProvider ? <TooltipProvider delayDuration={300}>{content}</TooltipProvider> : content}
-        </div>
-      </YugenContext.Provider>
+      <YugenThemeContext.Provider value={themeValue}>
+        <YugenContext.Provider value={value}>
+          <div
+            ref={ref}
+            {...(applyToDocument ? {} : { "data-theme": theme, "data-brand": brand })}
+            data-density={densityProp}
+            dir={dir}
+            className={cn(!applyToDocument && "bg-background-1 text-foreground-1", className)}
+            {...props}
+          >
+            {withTooltipProvider ? <TooltipProvider delayDuration={300}>{content}</TooltipProvider> : content}
+          </div>
+        </YugenContext.Provider>
+      </YugenThemeContext.Provider>
     </DirectionProvider>
   );
 }

@@ -26,7 +26,7 @@ describe("Decorative", () => {
     const gradientId = (svg: SVGSVGElement) => svg.querySelector("linearGradient")!.id;
     expect(gradientId(first)).not.toBe(gradientId(second));
     expect(first.querySelector("path")).toHaveAttribute("stroke", `url(#${gradientId(first)})`);
-    expect(first.querySelector("g")?.getAttribute("class")).toContain("animate-[wave-flow_5s_linear_infinite]");
+    expect(first.querySelector("g")?.getAttribute("class")).toContain("animate-wave-flow");
     expect(second.querySelector("g")).not.toHaveAttribute("class");
     expect(second.querySelector("path")).toHaveAttribute("stroke-width", "3");
     expect(second).toHaveClass("h-3");

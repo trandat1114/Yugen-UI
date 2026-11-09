@@ -2,6 +2,8 @@
 
 *Tiếng Việt: [xem bên dưới](#tiếng-việt).*
 
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/trandat1114/Yugen-UI/badge)](https://scorecard.dev/viewer/?uri=github.com/trandat1114/Yugen-UI)
+
 **Yugen UI** is a React component library and design system for **Tailwind CSS v4**. It combines
 [Microsoft Fluent 2](https://fluent2.microsoft.design/)-inspired design tokens and component behaviour with the
 copy-friendly, composable API style of [shadcn/ui](https://ui.shadcn.com/), and ships with its own **Sakura 桜**
@@ -107,11 +109,12 @@ Wrap your app once. The root provider writes `data-theme`, `data-brand` and `dir
 (Dialog, Menu, Popover, Tooltip, Toast) get the same theme.
 
 ```tsx
-import { YugenProvider } from "yugen-ui";
+import { Toaster, YugenProvider } from "yugen-ui";
 
 export function Root() {
   return (
-    <YugenProvider applyToDocument withToaster theme="light" brand="sakura" dir="ltr">
+    <YugenProvider applyToDocument theme="light" brand="sakura" dir="ltr">
+      <Toaster />
       <App />
     </YugenProvider>
   );
@@ -124,7 +127,7 @@ export function Root() {
 | `brand` | `"sakura" \| "web" \| "teams" \| string` | `"sakura"` | Brand ramp (`data-brand`). |
 | `dir` | `"ltr" \| "rtl"` | `"ltr"` | Text direction (includes Radix `DirectionProvider`). |
 | `applyToDocument` | `boolean` | `false` | Apply theme/brand/dir to `<html>` — use on the root provider. |
-| `withToaster` | `boolean` | `false` | Mount a `<Toaster />` so `toast()` works. |
+| `withToaster` | `boolean` | `false` | Deprecated; render `<Toaster />` explicitly inside the root provider. Removed in 1.0.0. |
 | `withTooltipProvider` | `boolean` | `true` | Mount Radix `TooltipProvider`. |
 
 Nested providers (without `applyToDocument`) scope a theme to a subtree. Read the current values with `useYugen()`.
@@ -264,14 +267,15 @@ npm create yugen-ui@latest my-app            # pick a template (= npx @yugen-ui/
 npx @yugen-ui/cli@latest init                        # existing project: npm package or source mode, theme import, yugen.json
 npx @yugen-ui/cli@latest add button dialog           # copy component source + install its dependencies
 npx @yugen-ui/cli@latest list                        # components in the registry
+npx @yugen-ui/cli@latest css                         # yugen-ui.css: only the CSS of the components you import
 npx @yugen-ui/cli@latest doctor                      # check React, Tailwind v4, the theme import, versions, YugenProvider
 ```
 
 ## Next.js (App Router)
 
-The published build already starts every component module with `"use client";`. The entry barrel, `cn()` and
-the brand-ramp helpers carry **no** directive, so you can import components from Server Components and call `cn()`
-on the server.
+The published build already starts every component module with `"use client";`. The entry barrel, `cn()`, the
+brand-ramp helpers, `readAppShellCookie()`, `yugenHtmlAttributes()` and `yugenThemeScript()` carry **no** directive,
+so you can import components from Server Components and call these helpers on the server (import them from `yugen-ui`).
 
 - Setup A with Next.js uses `@tailwindcss/postcss`; put the two `@import` lines in `app/globals.css`.
 - To avoid a theme flash on first paint, render the attributes on `<html>` in `app/layout.tsx`:
@@ -284,6 +288,7 @@ on the server.
 | Import | Contents |
 |---|---|
 | `yugen-ui` | Components, hooks, `cn`, brand-ramp helpers — ESM (`preserveModules`, tree-shakeable) + `.d.ts` |
+| `yugen-ui/<Folder>` | One component folder (`yugen-ui/Button`, `yugen-ui/Chart`), plus `yugen-ui/hooks`, `yugen-ui/AppShell/Sidebar`, `yugen-ui/messages-en`, `yugen-ui/messages-vi`. Same files as the root |
 | `yugen-ui/theme.css` | Tailwind v4 theme source (Setup A) |
 | `yugen-ui/styles.css` | Precompiled stylesheet (Setup B) |
 | `yugen-ui/tokens.css` | Raw design tokens (CSS custom properties only) |
@@ -421,11 +426,12 @@ Bọc ứng dụng một lần. Provider gốc ghi `data-theme`, `data-brand`, `
 (Dialog, Menu, Popover, Tooltip, Toast) cũng đúng theme.
 
 ```tsx
-import { YugenProvider } from "yugen-ui";
+import { Toaster, YugenProvider } from "yugen-ui";
 
 export function Root() {
   return (
-    <YugenProvider applyToDocument withToaster theme="light" brand="sakura" dir="ltr">
+    <YugenProvider applyToDocument theme="light" brand="sakura" dir="ltr">
+      <Toaster />
       <App />
     </YugenProvider>
   );
@@ -434,7 +440,7 @@ export function Root() {
 
 - `theme`: `"light" | "dark" | "high-contrast"` · `brand`: `"sakura" | "web" | "teams" | <tên brand tự tạo>` ·
   `dir`: `"ltr" | "rtl"`.
-- `applyToDocument`: áp lên `<html>` (dùng cho provider gốc). `withToaster`: gắn `<Toaster />` để gọi `toast()`.
+- `applyToDocument`: áp lên `<html>` (dùng cho provider gốc). `withToaster` đã deprecated; đặt rõ `<Toaster />` làm con để gọi `toast()`, sẽ bỏ ở 1.0.0.
   `withTooltipProvider` (mặc định `true`): gắn `TooltipProvider` của Radix.
 - Provider lồng (không có `applyToDocument`) chỉ đổi theme cho nhánh con. Đọc giá trị hiện tại bằng `useYugen()`.
 
@@ -565,13 +571,15 @@ npm create yugen-ui@latest my-app            # chọn template (= npx @yugen-ui/
 npx @yugen-ui/cli@latest init                        # dự án có sẵn: gói npm hoặc mã nguồn, import theme, ghi yugen.json
 npx @yugen-ui/cli@latest add button dialog           # chép mã nguồn component + cài phụ thuộc
 npx @yugen-ui/cli@latest list                        # danh sách component trong registry
+npx @yugen-ui/cli@latest css                         # yugen-ui.css: chỉ CSS của các component bạn import
 npx @yugen-ui/cli@latest doctor                      # kiểm tra React, Tailwind v4, import theme, phiên bản, YugenProvider
 ```
 
 ### Next.js (App Router)
 
-Bản build trên npm đã có `"use client";` ở đầu mỗi module component. Barrel gốc, `cn()` và các hàm brand ramp
-**không** có chỉ thị này, nên bạn import component được từ Server Component và gọi `cn()` ở server.
+Bản build trên npm đã có `"use client";` ở đầu mỗi module component. Barrel gốc, `cn()`, các hàm brand ramp,
+`readAppShellCookie()`, `yugenHtmlAttributes()` và `yugenThemeScript()` **không** có chỉ thị này, nên bạn import
+component được từ Server Component và gọi các hàm này ở server (import từ `yugen-ui`).
 
 - Cách A với Next.js dùng `@tailwindcss/postcss`; đặt hai dòng `@import` trong `app/globals.css`.
 - Để tránh nháy theme ở lần vẽ đầu, ghi sẵn attribute lên `<html>` trong `app/layout.tsx`:
@@ -582,6 +590,7 @@ Bản build trên npm đã có `"use client";` ở đầu mỗi module component
 | Import | Nội dung |
 |---|---|
 | `yugen-ui` | Component, hook, `cn`, hàm brand ramp — ESM (`preserveModules`, tree-shake được) + `.d.ts` |
+| `yugen-ui/<Folder>` | Một thư mục component (`yugen-ui/Button`, `yugen-ui/Chart`), thêm `yugen-ui/hooks`, `yugen-ui/AppShell/Sidebar`, `yugen-ui/messages-en`, `yugen-ui/messages-vi`; cùng file với gốc gói |
 | `yugen-ui/theme.css` | Nguồn theme Tailwind v4 (Cách A) |
 | `yugen-ui/styles.css` | Stylesheet đã biên dịch (Cách B) |
 | `yugen-ui/tokens.css` | Token thô (chỉ biến CSS) |

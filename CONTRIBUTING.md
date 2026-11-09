@@ -55,6 +55,7 @@ npm run dev          # docs site at http://localhost:5173
 | `npm run changeset` | Adds a changeset to the PR (`npx changeset`) |
 | `npm run check:release` | Checks `package.json` = `src/docs/news` = `CHANGELOG.md` and the rules for each number |
 | `npm run check:changesets` | Checks that each changeset's bump follows the rules for each number |
+| `npm run check:deps` | Installs the packed package and checks its dependency tree against `deps-policy.json` (see [Dependencies](#dependencies)) |
 | `npm run check:examples` | Every docs example type-checks when copied out and used with `yugen-ui` |
 | `npm run check:props` | Props tables in the docs match the real types |
 | `npm run registry` | Generates the shadcn registry into `public/r/` (runs inside `build:docs`) |
@@ -83,7 +84,9 @@ npm run dev          # docs site at http://localhost:5173
   `e2e/` or `playwright.config.ts` (the **Browser engines** workflow), not on every PR. Touch-drag tests go through CDP,
   so they run on Chromium only.
 - `npm run size` — size budgets (`.size-limit.cjs`), after `npm run build:lib`. If a budget fails, find the cause first
-  (an extra import, a new dependency); raise a `limit` only on purpose, and say why in the PR.
+  (an extra import, a new dependency); raise a `limit` only on purpose, and say why in the PR. A limit is the measured
+  size + 8%, rounded up to 0.5 kB. When a change makes an entry smaller, lower its limit in the same PR:
+  `node scripts/check-size-slack.mjs` (CI) fails when a limit is more than 20% above the measured size.
 
 ### Rules (summary of Design.md §0)
 
@@ -99,6 +102,22 @@ npm run dev          # docs site at http://localhost:5173
 8. Text contrast ≥ 4.5:1, UI parts ≥ 3:1; colour is never the only signal.
 9. Complex behaviour uses Radix / `cmdk` / `react-day-picker`; icons are Fluent System Icons only: inside components from `../_internal/icons` (see [Adding a component](#adding-a-component)), in demos and blocks from `@fluentui/react-icons`. No other UI
    or animation library.
+
+### Dependencies
+
+Every runtime dependency ships to every app that installs `yugen-ui`. Before adding one:
+
+- Give the reason in the PR, and say why a small implementation of our own is not enough (as with Sortable, and the
+  listbox of Combobox and TagPicker).
+- It must be maintained, have no install scripts (`preinstall` / `install` / `postinstall`), and carry npm provenance
+  when possible.
+
+`npm run check:deps` (workflow **Dependencies**, on PRs that change `package.json`, `package-lock.json` or
+`deps-policy.json`) installs the packed package like an app does and fails when the tree grows past `maxPackages`,
+when a package has an install script, when a package's last publish is more than 5 years old, when a direct dependency
+has no provenance, or when a version comes from a different npm account than the one before. Accepted cases go in
+`allow` in `deps-policy.json` with a reason and a review date. When a dependency goes away, lower `maxPackages`
+(`node scripts/check-deps.mjs --write`).
 
 ### Adding a component
 
@@ -283,7 +302,8 @@ issue or contact a maintainer, who adds your login to `exclude` in that file.
    (`package.json` = `src/docs/news` = `CHANGELOG.md`).
 4. Commit (`chore(release): vX.Y.Z`) and merge to `main`.
 5. `git tag vX.Y.Z && git push --tags` — `.github/workflows/release.yml` re-checks the version against the tag, runs
-   the tests, builds and runs `npm publish --provenance` (npm trusted publishing, no token). Tags containing `-`
+   the tests, builds, waits for the maintainer's approval (environment `npm-release`) and runs `npm publish --provenance`
+   (npm trusted publishing, no token). Tags containing `-`
    (e.g. `v0.6.0-beta.1`) are published under the `next` dist-tag.
 
 The `@yugen-ui/cli` CLI and `create-yugen-ui` (`packages/`) are released separately with a `cli@X.Y.Z` tag, outside
@@ -334,6 +354,7 @@ npm run dev          # trang docs tại http://localhost:5173
 | `npm run changeset` | Thêm changeset cho PR (`npx changeset`) |
 | `npm run check:release` | Kiểm tra `package.json` = `src/docs/news` = `CHANGELOG.md` và quy tắc cho từng số |
 | `npm run check:changesets` | Loại bump của changeset đúng quy tắc cho từng số |
+| `npm run check:deps` | Cài gói đã đóng gói và kiểm tra cây dependency theo `deps-policy.json` (xem [Dependency](#dependency)) |
 | `npm run check:examples` | Mọi ví dụ docs typecheck được khi chép ra dùng với `yugen-ui` |
 | `npm run check:props` | Bảng props trên docs khớp type thật |
 | `npm run registry` | Sinh registry shadcn vào `public/r/` (tự chạy trong `build:docs`) |
@@ -358,7 +379,9 @@ npm run dev          # trang docs tại http://localhost:5173
 - `npm run test:engines` — cần `npx playwright install firefox webkit` một lần. CI chạy hằng tuần, trên PR vào `main` và
   trên PR có đổi `e2e/` hoặc `playwright.config.ts` (workflow **Browser engines**), không chạy trên mọi PR. Test chạm-kéo dùng CDP nên chỉ chạy trên Chromium.
 - `npm run size` — sau `npm run build:lib`. Vượt ngân sách thì tìm nguyên nhân trước (import thừa, dependency mới);
-  tăng có chủ đích thì sửa `limit` trong `.size-limit.cjs` và ghi lý do trong PR.
+  tăng có chủ đích thì sửa `limit` trong `.size-limit.cjs` và ghi lý do trong PR. Giới hạn = kích thước đo được + 8%,
+  làm tròn lên 0.5 kB. Thay đổi làm một mục nhỏ đi thì hạ `limit` của mục đó trong cùng PR:
+  `node scripts/check-size-slack.mjs` (CI) báo lỗi khi giới hạn cao hơn kích thước đo được quá 20%.
 
 ### Luật bắt buộc (tóm tắt Design.md §0)
 
@@ -372,6 +395,21 @@ npm run dev          # trang docs tại http://localhost:5173
 8. Tương phản chữ ≥ 4.5:1, thành phần UI ≥ 3:1; không dùng màu làm tín hiệu duy nhất.
 9. Hành vi phức tạp dùng Radix / `cmdk` / `react-day-picker`; icon chỉ dùng Fluent System Icons: trong component lấy từ `../_internal/icons` (xem [Thêm component](#thêm-component)), trong demo và block lấy từ `@fluentui/react-icons`. Không thêm thư
    viện UI/animation khác.
+
+### Dependency
+
+Mỗi dependency runtime đi vào mọi ứng dụng cài `yugen-ui`. Trước khi thêm:
+
+- Ghi lý do trong PR, và vì sao một bản tự viết nhỏ không đủ (như Sortable, và listbox của Combobox và TagPicker).
+- Thư viện phải còn được bảo trì, không có install script (`preinstall` / `install` / `postinstall`), và có npm
+  provenance khi được.
+
+`npm run check:deps` (workflow **Dependencies**, trên PR đổi `package.json`, `package-lock.json` hoặc
+`deps-policy.json`) cài gói đã đóng gói như một ứng dụng và báo lỗi khi cây dependency vượt `maxPackages`, khi một gói
+có install script, khi lần phát hành cuối của một gói đã quá 5 năm, khi dependency trực tiếp không có provenance, hoặc
+khi một phiên bản do tài khoản npm khác với bản trước phát hành. Trường hợp chấp nhận được ghi vào `allow` trong
+`deps-policy.json`, kèm lý do và ngày xem lại. Khi bỏ một dependency, hạ `maxPackages`
+(`node scripts/check-deps.mjs --write`).
 
 ### Thêm component
 
@@ -540,8 +578,8 @@ tiêu đề luôn lấy nguyên bản từ GitHub. Muốn bỏ tên khỏi trang
 3. `npm install --package-lock-only` (đồng bộ `version` trong `package-lock.json`) rồi `npm run check:release`
    (`package.json` = `src/docs/news` = `CHANGELOG.md`).
 4. Commit (`chore(release): vX.Y.Z`), mở PR hoặc đẩy lên `main`.
-5. `git tag vX.Y.Z && git push --tags` — workflow `.github/workflows/release.yml` kiểm tra lại, chạy test, build và
-   `npm publish --provenance` (npm trusted publishing, không cần token). Tag có `-` (vd. `v0.6.0-beta.1`) phát hành với dist-tag `next`.
+5. `git tag vX.Y.Z && git push --tags` — workflow `.github/workflows/release.yml` kiểm tra lại, chạy test, build, chờ
+   maintainer duyệt (environment `npm-release`) rồi `npm publish --provenance` (npm trusted publishing, không cần token). Tag có `-` (vd. `v0.6.0-beta.1`) phát hành với dist-tag `next`.
 
 CLI `@yugen-ui/cli` và `create-yugen-ui` (`packages/`) phát hành riêng bằng tag `cli@X.Y.Z`, không qua Changesets — quy tắc và
 các bước ở wiki › *Release Process* › CLI. PR đổi `packages/cli` hoặc `packages/create-yugen-ui`: ghi một dòng vào mục

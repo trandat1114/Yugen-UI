@@ -42,7 +42,7 @@ This document is a **set of mandatory rules**. Everyone (and every AI) adding or
 |---|---|
 | Build | Vite 8 (Rolldown) + React 19 (18.3 still supported) + TypeScript 7 strict |
 | Style | Tailwind CSS v4 (CSS-first, **no** `tailwind.config.js`) |
-| Behavior / a11y | `@radix-ui/react-*`, `cmdk` (Command, Combobox, TagPicker), `react-day-picker` v10 (Calendar), `react-resizable-panels` v4 |
+| Behavior / a11y | `@radix-ui/react-*`, `cmdk` (Command), `react-day-picker` v10 (Calendar), `react-resizable-panels` v4 |
 | Variants | `class-variance-authority` |
 | Class merging | `cn()` = `clsx` + `tailwind-merge` configured with Yugen's scales |
 | Icons | Fluent System Icons, built in (`_internal/icons`, generated from `@fluentui/react-icons`, a devDependency) |
@@ -293,7 +293,7 @@ TooltipContent, DialogSurface, DrawerSurface, SheetContent), `appearance="glass"
 14. **Next.js App Router**: add `"use client"` at the top of each component file when copying it over; shared class constants (`fieldControlClass`…) can still be imported in client components.
 15. **No API breaks in minor/patch releases** (from 1.0; before 1.0 they must be listed under "Breaking"). To remove a prop/value/export: add a replacement,
     mark it with JSDoc `@deprecated` and call `warnDeprecated(id, "use …", "x.0.0")` from `@/lib/deprecate` — remove it only in a later major release.
-    Details: `#/concepts/versioning`.
+    Details: `/concepts/versioning`.
 16. **SSR safety**: do not read `Date.now()`, `Math.random()`, `window`, `matchMedia`, `localStorage` or layout sizes during render —
     do it in an effect, or with `useSyncExternalStore` and a `getServerSnapshot` (`useMediaQuery`). Ids use `React.useId()`.
 

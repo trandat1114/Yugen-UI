@@ -3,7 +3,7 @@ import { useControllableState } from "../hooks/useControllableState";
 import { useComposedRefs } from "../_internal/composeRefs";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { Input, type InputProps } from "@/components/ui/Input/Input";
-import { useYugen, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
+import { useYugenLocale, useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
 export type FormattedInputFormat = "phone" | "card" | "currency";
 
@@ -190,7 +190,7 @@ export function FormattedInput(inProps: FormattedInputProps & { ref?: React.Ref<
     ref,
     ...props
   } = useComponentDefaults("FormattedInput", inProps, COMPACT_SIZE);
-  const providerLocale = useYugen().locale;
+  const providerLocale = useYugenLocale();
   const locale = localeProp ?? providerLocale;
   const engine = React.useMemo(() => {
     if (format === "currency") return currencyEngine(locale, currency);

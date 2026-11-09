@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, ErrorBoundary, StatusPage, YugenProvider, statusPageCopy, statusPageMessagesEn, type YugenBrand, type YugenTheme } from "@/components/ui";
+import { Button, ErrorBoundary, StatusPage, Toaster, YugenProvider, statusPageCopy, statusPageMessagesEn, type YugenBrand, type YugenTheme } from "@/components/ui";
 import { AppShell, type Appearance } from "./AppShell";
 import content from "./content";
 import { preloadPages, type PageId } from "./pages";
@@ -69,12 +69,12 @@ export default function App() {
   return (
     <YugenProvider
       applyToDocument
-      withToaster
       theme={appearance.theme}
       brand={appearance.brand}
       messages={content.messages}
       locale={content.locale}
     >
+      <Toaster />
       {/* Lỗi render → trang 500 có nút Thử lại; lỗi nạp file sau khi deploy → "Đã có phiên bản mới" + Tải lại. */}
       <ErrorBoundary resetKeys={[page]} statusPageProps={{ fullscreen: true }}>
         {page ? (

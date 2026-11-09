@@ -19,7 +19,7 @@ import { formatFileSize } from "../AIKit/PromptInput";
 import { useAnnounce } from "../AriaLive/AriaLive";
 import { Button } from "../Button/Button";
 import { ProgressBar } from "../ProgressBar/ProgressBar";
-import { useYugen, useYugenMessages } from "../YugenProvider/context";
+import { useYugenLocale, useYugenMessages } from "../YugenProvider/context";
 import { useComposedRefs } from "../_internal/composeRefs";
 import { fileUploadMessagesEn, type FileUploadMessages } from "./messages";
 
@@ -160,7 +160,7 @@ export function FileUploadItem({
   ...props
 }: FileUploadItemProps & { ref?: React.Ref<HTMLLIElement> }) {
   const msg = useYugenMessages("fileUpload", fileUploadMessagesEn);
-  const { locale } = useYugen();
+  const locale = useYugenLocale();
   const [objectUrl, setObjectUrl] = React.useState<string>();
   const isImage = (type ?? file?.type ?? "").startsWith("image/");
 
@@ -325,7 +325,7 @@ export function FileUpload({
   const dragDepth = React.useRef(0);
   const { announce } = useAnnounce();
   const msg = useYugenMessages("fileUpload", fileUploadMessagesEn);
-  const { locale } = useYugen();
+  const locale = useYugenLocale();
 
   // onFilesChange có thêm `details` nên gọi riêng (trong commit), không qua hook.
   const [list, setList] = useControllableState({ value: files, defaultValue: defaultFiles ?? [] });

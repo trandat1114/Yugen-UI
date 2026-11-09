@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { MessageBar } from "@/components/ui";
 import { DocSection, DoDont } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
+import { docsPath } from "../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -49,23 +50,19 @@ const TSCONFIG_CODE = `// tsconfig.json — Next.js đọc paths trực tiếp, 
 
 const LAYOUT_CODE = `// src/app/layout.tsx — Server Component
 import type { Metadata } from "next";
+import { yugenHtmlAttributes, yugenThemeScript } from "@/components/ui";
 import "./globals.css";
 import { Providers } from "./providers";
-
-// Chạy trước khi trình duyệt vẽ trang: đặt data-theme theo lựa chọn đã lưu / hệ điều hành.
-const themeScript =
-  '(function(){var t;try{t=localStorage.getItem("yugen-ui-theme")}catch(e){}' +
-  'if(t!=="light"&&t!=="dark")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";' +
-  'document.documentElement.setAttribute("data-theme",t)})();';
 
 export const metadata: Metadata = { title: "Ứng dụng Yugen" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     // Script sửa attribute của <html> trước khi hydrate → tắt cảnh báo lệch attribute cho riêng thẻ này.
-    <html lang="vi" data-brand="sakura" suppressHydrationWarning>
+    <html lang="vi" {...yugenHtmlAttributes({ brand: "sakura" })} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        {/* Chạy trước khi trình duyệt vẽ trang: data-theme theo lựa chọn đã lưu, không có thì theo hệ điều hành. */}
+        <script dangerouslySetInnerHTML={{ __html: yugenThemeScript({ storageKey: "yugen-ui-theme" }) }} />
       </head>
       <body>
         <Providers>{children}</Providers>
@@ -73,6 +70,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }`;
+
+/** sha256 của yugenThemeScript() không tuỳ chọn; document.test.ts báo lỗi khi script đổi mà giá trị này chưa đổi. */
+const THEME_SCRIPT_HASH = "sha256-aQ5/7/M1H2ZEsd4PyJ7/nRi/VlDCe/SWLVR6JGIWbgM=";
+
+const CSP_NONCE_CODE = `// Mỗi response một nonce ngẫu nhiên mới, đặt ở header và trên thẻ <script>:
+// Content-Security-Policy: script-src 'self' 'nonce-<nonce>'
+<script nonce={nonce} dangerouslySetInnerHTML={{ __html: yugenThemeScript() }} />`;
+
+const CSP_HASH_CODE = `# yugenThemeScript() không tuỳ chọn, ở phiên bản này
+Content-Security-Policy: script-src 'self' '${THEME_SCRIPT_HASH}'`;
+
+const CSP_HASH_COMPUTE_CODE = `// Tuỳ chọn khác: tính hash ở server hoặc lúc build
+import { createHash } from "node:crypto";
+import { yugenThemeScript } from "@/components/ui";
+
+const script = yugenThemeScript({ storageKey: "my-app-theme" }); // đúng chuỗi bạn render trong <head>
+const hash = createHash("sha256").update(script).digest("base64");
+// Content-Security-Policy: script-src 'self' 'sha256-\${hash}'`;
 
 const PROVIDERS_CODE = `// src/app/providers.tsx
 "use client";
@@ -85,7 +100,8 @@ const STORAGE_KEY = "yugen-ui-theme";
 function readTheme(): YugenTheme {
   // Server không có document → "light"; client đọc lại giá trị script đã đặt.
   if (typeof document === "undefined") return "light";
-  return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+  const theme = document.documentElement.getAttribute("data-theme");
+  return theme === "dark" || theme === "high-contrast" ? theme : "light";
 }
 
 export const SetThemeContext = React.createContext<(theme: YugenTheme) => void>(() => {});
@@ -103,7 +119,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <SetThemeContext.Provider value={setTheme}>
-      <YugenProvider applyToDocument withToaster theme={theme}>
+      <YugenProvider applyToDocument theme={theme}>
+        <Toaster />
         {children}
       </YugenProvider>
     </SetThemeContext.Provider>
@@ -202,13 +219,43 @@ export default function Page() {
               <C>suppressHydrationWarning</C> chỉ tác động lên chính thẻ <C>{"<html>"}</C> (một cấp), không che lỗi hydrate của phần còn lại.
             </li>
             <li>
-              Với <C>applyToDocument</C>, YugenProvider không render attribute theme vào markup nên server và client cho cùng HTML. Nếu UI
-              của bạn render khác nhau theo theme (icon mặt trời / mặt trăng), hãy render phần đó sau khi mount.
+              <C>yugenThemeScript()</C> đọc giá trị đã lưu ở <C>storageKey</C>: tên theme, hoặc JSON có <C>theme</C> và tuỳ chọn{" "}
+              <C>brand</C>, <C>dir</C>. Chưa lưu gì thì theo hệ điều hành: <C>high-contrast</C> khi <C>prefers-contrast: more</C> (tắt
+              bằng <C>highContrast: false</C>), sau đó tới <C>prefers-color-scheme</C>. Đặt <C>defaultTheme</C> để dùng một theme cố
+              định.
             </li>
             <li>
-              Đặt sẵn <C>data-brand</C> và <C>dir</C> trên <C>{"<html>"}</C> trong layout khi chúng cố định — không cần chờ JavaScript.
+              <C>yugenHtmlAttributes()</C> trả về đúng những gì <C>applyToDocument</C> ghi lên <C>{"<html>"}</C> (cùng mặc định), nên giá
+              trị cố định như brand và <C>dir</C> có ngay trong HTML đầu tiên. Khi server biết theme (cookie), truyền theme vào đây và bỏ
+              script. Cả hai helper là hàm thường, gọi được trong Server Component.
+            </li>
+            <li>
+              Với <C>applyToDocument</C>, YugenProvider không render attribute theme vào markup nên server và client cho cùng HTML. Provider
+              cập nhật <C>{"<html>"}</C> trong layout effect, trước khi trình duyệt vẽ. Nếu UI của bạn render khác nhau theo theme (icon
+              mặt trời / mặt trăng), hãy render phần đó sau khi mount.
             </li>
           </ul>
+        </div>
+      </DocSection>
+
+      <DocSection
+        id="csp"
+        title="Content Security Policy"
+        description="Script chống nháy là script inline. Policy chặt có thể cho phép nó bằng nonce hoặc bằng hash, không cần 'unsafe-inline'."
+      >
+        <div className="flex flex-col gap-4">
+          <P>
+            Dùng nonce: tạo một giá trị ngẫu nhiên mới cho mỗi response, đặt vào header <C>Content-Security-Policy</C> và lên thẻ{" "}
+            <C>{"<script>"}</C>. Với Next.js, tạo nonce trong middleware rồi đọc lại trong layout bằng <C>headers()</C>.
+          </P>
+          <CodeBlock code={CSP_NONCE_CODE} />
+          <P>
+            Dùng hash: cùng tuỳ chọn thì script giống hệt nhau, nên trang tĩnh hoặc prerender có thể ghi hash sha256 của nó. Giá trị dưới
+            đây là của <C>yugenThemeScript()</C> không tuỳ chọn. Hash đổi khi bạn truyền tuỳ chọn hoặc khi bản cập nhật đổi script, nên
+            tính từ hàm khi có thể.
+          </P>
+          <CodeBlock code={CSP_HASH_CODE} />
+          <CodeBlock code={CSP_HASH_COMPUTE_CODE} />
         </div>
       </DocSection>
 
@@ -253,6 +300,15 @@ export default function Page() {
           </li>
           <li>
             <C>useSyncExternalStore</C> của Toaster đã có snapshot cho server, không gây lỗi khi render SSR.
+          </li>
+          <li>
+            Toaster của <C>withToaster</C> không có trong HTML từ server: nó nạp sau khi hydrate. Nút “…” của Breadcrumb và chip chú thích
+            của StreamingMarkdown render ở server thành cùng một nút, rồi đổi sang component đầy đủ khi code của nó nạp xong, nên HTML hai
+            phía khớp nhau. Xem{" "}
+            <a className="text-link underline hover:text-link-hover" href={docsPath("/concepts/performance#on-demand")}>
+              Hiệu năng
+            </a>
+            .
           </li>
         </ul>
       </DocSection>

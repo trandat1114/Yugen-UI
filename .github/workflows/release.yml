@@ -5,7 +5,13 @@ name: Release
 # Publishes through npm trusted publishing (OIDC, no npm token): the package lists this repository and release.yml as
 # its trusted publisher on npmjs.com. Needs a `repository` field in package.json that points at this GitHub repository.
 # npm accepts one trusted publisher workflow per package, so canary builds (push to `canary`, or a manual run) are a
-# job of this workflow too.
+# job of this workflow too. Keep the file name: the trusted publisher on npmjs.com is bound to it.
+#
+# Jobs (#379): only the publish jobs get `id-token: write`, and they run no code from the repository or its dependencies.
+#   build          → npm ci, checks, tests, build, `npm pack` → artifact (.tgz + SHA256SUMS). No id-token.
+#   publish        → environment `npm-release` (maintainer approval) → verify checksums → `npm publish <file>.tgz`.
+#   github-release → GitHub Release from the CHANGELOG entry. `contents: write`, no id-token.
+#   canary-build → canary-publish: same split for the canary channel, without the environment (no approval).
 
 on:
   push:
@@ -14,28 +20,31 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write # GitHub Release
-  id-token: write # npm provenance
+  contents: read
 
 jobs:
-  publish:
+  build:
+    name: Build and pack
     if: github.event_name == 'push' && github.ref_type == 'tag'
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      contents: read
+    outputs:
+      dist_tag: ${{ steps.channel.outputs.dist_tag }}
+      package: ${{ steps.pack.outputs.package }}
+      tarball: ${{ steps.pack.outputs.tarball }}
+      sums: ${{ steps.pack.outputs.sums }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0 # cần lịch sử nhánh để kiểm tra tag nằm đúng nhánh
+          persist-credentials: false
 
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 26
           cache: npm
-          registry-url: https://registry.npmjs.org
-
-      # npm trusted publishing (OIDC, #202) cần npm ≥ 11.5.1. Không dùng npm token từ 0.14.0.
-      - name: npm with trusted publishing
-        run: npm install -g npm@11 && npm --version
 
       - name: Check tag matches package.json version
         run: |
@@ -62,15 +71,100 @@ jobs:
         id: channel
         run: echo "dist_tag=$(node scripts/release-channel.mjs "$GITHUB_REF_NAME")" >> "$GITHUB_OUTPUT"
 
-      # prepublishOnly also runs typecheck + lint:classes + build:lib.
-      - name: Publish to npm
-        run: npm publish --provenance --access public --tag "${{ steps.channel.outputs.dist_tag }}"
+      # What `npm publish` ran before the split: check:release + typecheck + lint:classes + build:lib.
+      - name: prepublishOnly
+        run: npm run prepublishOnly
+
+      - name: Pack
+        id: pack
+        run: |
+          OUT="$RUNNER_TEMP/npm-package"
+          mkdir -p "$OUT"
+          TARBALL="$(npm pack --pack-destination "$OUT" | tail -n 1)"
+          PACKAGE="$(node -p "const p = require('./package.json'); p.name + '@' + p.version")"
+          cd "$OUT"
+          sha256sum "$TARBALL" > SHA256SUMS
+          cat SHA256SUMS
+          {
+            echo "tarball=$TARBALL"
+            echo "package=$PACKAGE"
+            echo "sums=$(sha256sum SHA256SUMS | cut -d ' ' -f 1)"
+          } >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: npm-package
+          path: ${{ runner.temp }}/npm-package/
+          if-no-files-found: error
+
+  # No checkout, no npm ci, no repo scripts: only npm itself runs while the OIDC token can be requested.
+  publish:
+    name: Publish to npm
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: npm-release # required reviewer; deployments only from tags v* and cli@*
+    permissions:
+      id-token: write # npm trusted publishing + provenance
+    steps:
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 26
+          registry-url: https://registry.npmjs.org
+
+      # npm trusted publishing (OIDC, #202) cần npm ≥ 11.5.1. Không dùng npm token từ 0.14.0.
+      - name: npm with trusted publishing
+        run: npm install -g npm@11 && npm --version
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: npm-package
+          path: npm-package
+
+      # SHA256SUMS must match the hash the build job reported, and the tarball must match SHA256SUMS.
+      - name: Verify checksums
+        working-directory: npm-package
+        env:
+          SUMS: ${{ needs.build.outputs.sums }}
+        run: |
+          echo "$SUMS  SHA256SUMS" | sha256sum -c -
+          sha256sum -c SHA256SUMS
+
+      # Already on npm (re-run after a later step failed) → skip.
+      - name: Publish to npm (if the version is new)
+        working-directory: npm-package
+        env:
+          PACKAGE: ${{ needs.build.outputs.package }}
+          TARBALL: ${{ needs.build.outputs.tarball }}
+          DIST_TAG: ${{ needs.build.outputs.dist_tag }}
+        run: |
+          if [ "$(npm view "$PACKAGE" version 2>/dev/null)" != "" ]; then
+            echo "$PACKAGE is already published — skipping."
+          else
+            npm publish "./$TARBALL" --provenance --access public --tag "$DIST_TAG" --ignore-scripts
+          fi
+
+  github-release:
+    name: GitHub Release
+    needs: [build, publish]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write # GitHub Release
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 26
 
       # GitHub Release từ mục CHANGELOG của bản này. Đã có release cho tag (chạy lại workflow) thì bỏ qua.
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DIST_TAG: ${{ steps.channel.outputs.dist_tag }}
+          DIST_TAG: ${{ needs.build.outputs.dist_tag }}
         run: |
           if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
             echo "Release $GITHUB_REF_NAME đã có — bỏ qua."; exit 0
@@ -88,27 +182,29 @@ jobs:
 
   # Bản thử nghiệm: mỗi push vào nhánh `canary` (hoặc chạy tay) phát hành `x.y.z-canary-<thời gian>` với dist-tag `canary`.
   # Người dùng thử: npm install yugen-ui@canary — không bao giờ ảnh hưởng `latest` hay `next`.
-  canary:
+  canary-build:
+    name: Canary · build and pack
     if: github.ref_type == 'branch'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
       contents: read
-      id-token: write # npm trusted publishing + provenance
+    # A newer push cancels the build of an older one; a publish already running is left to finish (canary-publish).
     concurrency:
       group: canary
       cancel-in-progress: true
+    outputs:
+      tarball: ${{ steps.pack.outputs.tarball }}
+      sums: ${{ steps.pack.outputs.sums }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 26
           cache: npm
-          registry-url: https://registry.npmjs.org
-
-      - name: npm with trusted publishing
-        run: npm install -g npm@11 && npm --version
 
       - run: npm ci
 
@@ -126,6 +222,62 @@ jobs:
       - run: npm test
       - run: npm run build:lib
 
-      # --ignore-scripts: bỏ prepublishOnly (check:release đòi News/CHANGELOG cho bản ổn định); đã build & test ở trên.
+      # --ignore-scripts: bỏ lifecycle scripts (prepublishOnly đòi News/CHANGELOG cho bản ổn định); đã build & test ở trên.
+      - name: Pack
+        id: pack
+        run: |
+          OUT="$RUNNER_TEMP/npm-package"
+          mkdir -p "$OUT"
+          TARBALL="$(npm pack --ignore-scripts --pack-destination "$OUT" | tail -n 1)"
+          cd "$OUT"
+          sha256sum "$TARBALL" > SHA256SUMS
+          cat SHA256SUMS
+          {
+            echo "tarball=$TARBALL"
+            echo "sums=$(sha256sum SHA256SUMS | cut -d ' ' -f 1)"
+          } >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: canary-package
+          path: ${{ runner.temp }}/npm-package/
+          if-no-files-found: error
+
+  # No environment: canary publishes stay automatic. Same rules as `publish`: no checkout, no repo or dependency code.
+  canary-publish:
+    name: Canary · publish
+    needs: canary-build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      id-token: write # npm trusted publishing + provenance
+    concurrency:
+      group: canary-publish
+      cancel-in-progress: false
+    steps:
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 26
+          registry-url: https://registry.npmjs.org
+
+      - name: npm with trusted publishing
+        run: npm install -g npm@11 && npm --version
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: canary-package
+          path: npm-package
+
+      - name: Verify checksums
+        working-directory: npm-package
+        env:
+          SUMS: ${{ needs.canary-build.outputs.sums }}
+        run: |
+          echo "$SUMS  SHA256SUMS" | sha256sum -c -
+          sha256sum -c SHA256SUMS
+
       - name: Publish canary
-        run: npm publish --provenance --access public --tag canary --ignore-scripts
+        working-directory: npm-package
+        env:
+          TARBALL: ${{ needs.canary-build.outputs.tarball }}
+        run: npm publish "./$TARBALL" --provenance --access public --tag canary --ignore-scripts

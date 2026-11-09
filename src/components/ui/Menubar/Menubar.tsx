@@ -6,7 +6,9 @@ import { cn } from "@/lib/cn";
 import { menuItemClass, menuPopoverClass } from "../Menu/Menu";
 
 /** Menubar (shadcn/ui, giao diện Fluent 2 Menu) — https://ui.shadcn.com/docs/components/menubar */
-export const MenubarMenu = MenubarPrimitive.Menu;
+// Typed by hand: the inferred type names `@radix-ui/react-context` (its `__scopeMenubar` prop), which is not a dependency
+// of this package, so the emitted .d.ts would import a module consumers may not have (#343).
+export const MenubarMenu: (props: MenubarPrimitive.MenubarMenuProps) => React.JSX.Element = MenubarPrimitive.Menu;
 export const MenubarGroup = MenubarPrimitive.Group;
 export const MenubarRadioGroup = MenubarPrimitive.RadioGroup;
 export const MenubarSub = MenubarPrimitive.Sub;

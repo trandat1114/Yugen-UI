@@ -1,8 +1,8 @@
 /** Fluent 2 Select — https://fluent2.microsoft.design/components/web/react/core/select/usage */
 import * as React from "react";
-import { cva } from "class-variance-authority";
 import { ChevronDown16Regular, ChevronDown20Regular, ChevronDown24Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
+import { cvx } from "@/lib/cvx";
 import { fieldControlClass } from "@/components/ui/Field/Field";
 import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
 
@@ -24,7 +24,7 @@ export const fieldAppearanceClass: Record<FieldAppearance, string> = {
   "filled-lighter": cn(fieldControlClass, "border-transparent bg-background-1 hover:border-transparent"),
 };
 
-const selectVariants = cva(
+const selectVariants = cvx(
   [
     "peer h-full w-full min-w-0 cursor-pointer appearance-none truncate bg-transparent text-foreground-1 outline-none",
     "disabled:cursor-not-allowed disabled:text-foreground-disabled",
@@ -76,7 +76,7 @@ export function Select(inProps: SelectProps & { ref?: React.Ref<HTMLSelectElemen
       data-invalid={invalid || undefined}
       className={cn(fieldAppearanceClass[appearance], "inline-flex w-full items-center", HEIGHT[size], className)}
     >
-      <select ref={ref} disabled={disabled} className={cn(selectVariants({ size }), selectClassName)} {...props} />
+      <select ref={ref} disabled={disabled} className={selectVariants({ size, className: selectClassName })} {...props} />
       <icon.Icon
         aria-hidden
         className={cn(

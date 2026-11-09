@@ -31,33 +31,73 @@ export interface YugenComponentDefaults {}
 /** Props mặc định theo tên component, vd. `{ Button: { size: "small" }, Input: { appearance: "filled-darker" } }`. */
 export type YugenDefaultsInput = { [K in keyof YugenComponentDefaults]?: Partial<YugenComponentDefaults[K]> };
 
-export interface YugenContextValue {
+/** Theme, brand and text direction of the nearest YugenProvider (`useYugenTheme()`). */
+export interface YugenThemeValue {
   theme: YugenTheme;
   brand: YugenBrand;
   dir: YugenDir;
+}
+
+export interface YugenContextValue extends YugenThemeValue {
   /** Locale cho Intl (ngày, giờ, số) của component — mặc định "en-US". */
   locale: string;
   /** Mật độ của YugenProvider gần nhất — mặc định "default". */
   density: YugenDensity;
 }
 
-type YugenContextInternal = Omit<YugenContextValue, "density"> & {
-  density?: YugenDensity;
+/**
+ * Hai context (#347): theme đổi thì chỉ phần đọc theme render lại (bề mặt portal, Chart, CodeBlock), không phải mọi
+ * control đọc `defaults` / `messages`. Đổi theme chỉ cần CSS (`data-theme`), nên control thường không đăng ký theme.
+ */
+type YugenThemeInternal = YugenThemeValue & {
   scoped: boolean;
-  messages?: YugenMessagesInput;
-  defaults?: YugenDefaultsInput;
   /** Mật độ do một provider trong chuỗi đặt rõ ràng: bề mặt portal của provider lồng ghi lại thành data-density. */
   densityAttr?: YugenDensity;
 };
 
-const DEFAULT_VALUE: YugenContextValue = { theme: "light", brand: "sakura", dir: "ltr", locale: "en-US", density: "default" };
-export const YugenContext = React.createContext<YugenContextInternal | null>(null);
+type YugenContextInternal = {
+  locale: string;
+  density?: YugenDensity;
+  messages?: YugenMessagesInput;
+  defaults?: YugenDefaultsInput;
+};
 
-/** Đọc theme / brand / hướng chữ / locale / mật độ của YugenProvider gần nhất. */
+const DEFAULT_THEME: YugenThemeValue = { theme: "light", brand: "sakura", dir: "ltr" };
+const DEFAULT_VALUE: YugenContextValue = { ...DEFAULT_THEME, locale: "en-US", density: "default" };
+/** Locale, density, messages, defaults. */
+export const YugenContext = React.createContext<YugenContextInternal | null>(null);
+/** Theme, brand, dir, scoped, density attribute. */
+export const YugenThemeContext = React.createContext<YugenThemeInternal | null>(null);
+
+/**
+ * Đọc theme / brand / hướng chữ / locale / mật độ của YugenProvider gần nhất. Đăng ký cả hai context: component chỉ cần
+ * theme hoặc locale thì dùng `useYugenTheme()` / `useYugenLocale()` để không render lại khi phần kia đổi.
+ */
 export function useYugen(): YugenContextValue {
-  const ctx = React.useContext(YugenContext);
-  if (!ctx) return DEFAULT_VALUE;
-  return ctx.density ? (ctx as YugenContextValue) : { ...ctx, density: "default" };
+  const theme = React.useContext(YugenThemeContext);
+  const config = React.useContext(YugenContext);
+  return React.useMemo(() => {
+    if (!theme && !config) return DEFAULT_VALUE;
+    const { theme: t, brand, dir } = theme ?? DEFAULT_THEME;
+    return { theme: t, brand, dir, locale: config?.locale ?? "en-US", density: config?.density ?? "default" };
+  }, [theme, config]);
+}
+
+/**
+ * Theme, brand and text direction of the nearest YugenProvider. Unlike `useYugen()`, it does not re-render when the
+ * locale, messages or defaults change. Without a provider: `{ theme: "light", brand: "sakura", dir: "ltr" }`.
+ */
+export function useYugenTheme(): YugenThemeValue {
+  const ctx = React.useContext(YugenThemeContext);
+  return React.useMemo(() => (ctx ? { theme: ctx.theme, brand: ctx.brand, dir: ctx.dir } : DEFAULT_THEME), [ctx]);
+}
+
+/**
+ * Intl locale of the nearest YugenProvider (`"en-US"` without one). Unlike `useYugen()`, it does not re-render when the
+ * theme, brand or text direction change.
+ */
+export function useYugenLocale(): string {
+  return React.useContext(YugenContext)?.locale ?? "en-US";
 }
 
 /**
@@ -106,7 +146,7 @@ export function useComponentDefaults<K extends keyof YugenComponentDefaults, P e
  * lên chính bề mặt. Với provider gốc (applyToDocument) hoặc khi không có provider: trả về {} (đã kế thừa từ <html>).
  */
 export function usePortalThemeProps(): { "data-theme"?: YugenTheme; "data-brand"?: string; dir?: YugenDir; "data-density"?: YugenDensity } {
-  const ctx = React.useContext(YugenContext);
+  const ctx = React.useContext(YugenThemeContext);
   if (!ctx || !ctx.scoped) return {};
   const props: ReturnType<typeof usePortalThemeProps> = { "data-theme": ctx.theme, "data-brand": ctx.brand, dir: ctx.dir };
   if (ctx.densityAttr) props["data-density"] = ctx.densityAttr;

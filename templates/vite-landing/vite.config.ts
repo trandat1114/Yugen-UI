@@ -5,6 +5,7 @@ import { renderToString } from "react-dom/server";
 import { createServer, defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import { yugenCss } from "@yugen-ui/cli/vite";
 // The language in use is the file content/index.ts points to (`create --lang` keeps only one language).
 import content from "./src/content/index.ts";
 import { headTags } from "./src/seo.ts";
@@ -34,7 +35,7 @@ function landingSeo(): Plugin {
     transformIndexHtml(html) {
       return html.replace(/<!-- seo -->[\s\S]*?<!-- \/seo -->/, `<!-- seo -->\n    ${headTags(content, `${SITE.url}${base}`)}\n    <!-- /seo -->`);
     },
-    async closeBundle() {
+    async writeBundle() {
       if (!build) return;
       // A short-lived dev server only to load App.tsx in Node (dependencies come from node_modules as they are).
       const server = await createServer({
@@ -73,7 +74,7 @@ function landingSeo(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [react(), tailwindcss(), landingSeo()],
+  plugins: [react(), tailwindcss(), yugenCss(), landingSeo()],
   build: {
     rolldownOptions: {
       output: {

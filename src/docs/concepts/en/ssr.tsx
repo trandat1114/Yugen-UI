@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { MessageBar } from "@/components/ui";
 import { DocSection, DoDont } from "../../blocks";
 import { CodeBlock } from "../../CodeBlock";
+import { docsPath } from "../../router";
 
 function P({ children }: { children: ReactNode }) {
   return <p className="max-w-3xl text-body2 text-foreground-2">{children}</p>;
@@ -49,23 +50,19 @@ const TSCONFIG_CODE = `// tsconfig.json — Next.js reads paths directly, no bun
 
 const LAYOUT_CODE = `// src/app/layout.tsx — Server Component
 import type { Metadata } from "next";
+import { yugenHtmlAttributes, yugenThemeScript } from "@/components/ui";
 import "./globals.css";
 import { Providers } from "./providers";
-
-// Runs before the browser paints the page: sets data-theme from the saved choice / the OS setting.
-const themeScript =
-  '(function(){var t;try{t=localStorage.getItem("yugen-ui-theme")}catch(e){}' +
-  'if(t!=="light"&&t!=="dark")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";' +
-  'document.documentElement.setAttribute("data-theme",t)})();';
 
 export const metadata: Metadata = { title: "Yugen app" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     // The script changes attributes on <html> before hydration → silence the attribute mismatch warning for this element only.
-    <html lang="en" data-brand="sakura" suppressHydrationWarning>
+    <html lang="en" {...yugenHtmlAttributes({ brand: "sakura" })} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        {/* Runs before the browser paints the page: data-theme from the saved choice, otherwise from the OS setting. */}
+        <script dangerouslySetInnerHTML={{ __html: yugenThemeScript({ storageKey: "yugen-ui-theme" }) }} />
       </head>
       <body>
         <Providers>{children}</Providers>
@@ -73,6 +70,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }`;
+
+/** sha256 of yugenThemeScript() with no options; document.test.ts fails when the script changes and this does not. */
+const THEME_SCRIPT_HASH = "sha256-aQ5/7/M1H2ZEsd4PyJ7/nRi/VlDCe/SWLVR6JGIWbgM=";
+
+const CSP_NONCE_CODE = `// A new random nonce for every response, in the header and on the <script>:
+// Content-Security-Policy: script-src 'self' 'nonce-<nonce>'
+<script nonce={nonce} dangerouslySetInnerHTML={{ __html: yugenThemeScript() }} />`;
+
+const CSP_HASH_CODE = `# yugenThemeScript() with no options, in this version
+Content-Security-Policy: script-src 'self' '${THEME_SCRIPT_HASH}'`;
+
+const CSP_HASH_COMPUTE_CODE = `// Other options: compute the hash on the server or at build time
+import { createHash } from "node:crypto";
+import { yugenThemeScript } from "@/components/ui";
+
+const script = yugenThemeScript({ storageKey: "my-app-theme" }); // the same string you render in <head>
+const hash = createHash("sha256").update(script).digest("base64");
+// Content-Security-Policy: script-src 'self' 'sha256-\${hash}'`;
 
 const PROVIDERS_CODE = `// src/app/providers.tsx
 "use client";
@@ -85,7 +100,8 @@ const STORAGE_KEY = "yugen-ui-theme";
 function readTheme(): YugenTheme {
   // No document on the server → "light"; on the client, read back the value the script set.
   if (typeof document === "undefined") return "light";
-  return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+  const theme = document.documentElement.getAttribute("data-theme");
+  return theme === "dark" || theme === "high-contrast" ? theme : "light";
 }
 
 export const SetThemeContext = React.createContext<(theme: YugenTheme) => void>(() => {});
@@ -103,7 +119,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <SetThemeContext.Provider value={setTheme}>
-      <YugenProvider applyToDocument withToaster theme={theme}>
+      <YugenProvider applyToDocument theme={theme}>
+        <Toaster />
         {children}
       </YugenProvider>
     </SetThemeContext.Provider>
@@ -204,14 +221,43 @@ export default function Page() {
               errors in the rest of the tree.
             </li>
             <li>
-              With <C>applyToDocument</C>, YugenProvider does not render the theme attribute into the markup, so the server and the client
-              produce the same HTML. If your UI renders differently per theme (a sun / moon icon), render that part after mount.
+              <C>yugenThemeScript()</C> reads the saved value under <C>storageKey</C>: a theme name, or JSON with <C>theme</C> and
+              optionally <C>brand</C> and <C>dir</C>. Without one it follows the OS: <C>high-contrast</C> for{" "}
+              <C>prefers-contrast: more</C> (turn off with <C>highContrast: false</C>), then <C>prefers-color-scheme</C>. Set{" "}
+              <C>defaultTheme</C> to use a fixed theme instead.
             </li>
             <li>
-              When <C>data-brand</C> and <C>dir</C> are fixed, set them on <C>{"<html>"}</C> in the layout so they don&apos;t wait for
-              JavaScript.
+              <C>yugenHtmlAttributes()</C> returns what <C>applyToDocument</C> writes to <C>{"<html>"}</C> (same defaults), so fixed
+              values such as the brand and <C>dir</C> are in the first HTML. When the server knows the theme (a cookie), pass it here and
+              skip the script. Both helpers are plain functions and work in a Server Component.
+            </li>
+            <li>
+              With <C>applyToDocument</C>, YugenProvider does not render the theme attribute into the markup, so the server and the client
+              produce the same HTML. It updates <C>{"<html>"}</C> in a layout effect, before the browser paints. If your UI renders
+              differently per theme (a sun / moon icon), render that part after mount.
             </li>
           </ul>
+        </div>
+      </DocSection>
+
+      <DocSection
+        id="csp"
+        title="Content Security Policy"
+        description="The no-flash script is inline. A strict policy can allow it with a nonce or with its hash instead of 'unsafe-inline'."
+      >
+        <div className="flex flex-col gap-4">
+          <P>
+            With a nonce: create a new random value for every response, put it in the <C>Content-Security-Policy</C> header and on the{" "}
+            <C>{"<script>"}</C>. In Next.js, create it in middleware and read it in the layout with <C>headers()</C>.
+          </P>
+          <CodeBlock code={CSP_NONCE_CODE} />
+          <P>
+            With a hash: the script is the same for the same options, so a static or prerendered page can list its sha256 hash. The value
+            below is for <C>yugenThemeScript()</C> with no options. It changes when you pass options or when an update changes the script,
+            so compute it from the function when you can.
+          </P>
+          <CodeBlock code={CSP_HASH_CODE} />
+          <CodeBlock code={CSP_HASH_COMPUTE_CODE} />
         </div>
       </DocSection>
 
@@ -256,6 +302,15 @@ export default function Page() {
           </li>
           <li>
             The Toaster&apos;s <C>useSyncExternalStore</C> has a server snapshot, so it renders without errors during SSR.
+          </li>
+          <li>
+            The Toaster from <C>withToaster</C> is not in the server HTML: it loads after hydration. Breadcrumb&apos;s “…” button and
+            StreamingMarkdown&apos;s citation chips render on the server as the same button and switch to the full component once its code
+            has loaded, so both sides produce the same HTML. See{" "}
+            <a className="text-link underline hover:text-link-hover" href={docsPath("/concepts/performance#on-demand")}>
+              Performance
+            </a>
+            .
           </li>
         </ul>
       </DocSection>

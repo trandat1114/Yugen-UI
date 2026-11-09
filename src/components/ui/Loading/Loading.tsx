@@ -10,7 +10,7 @@ import { matchesMedia } from "../hooks/useMediaQuery";
 import { Fade } from "../Motion/Motion";
 import { SkeletonText } from "../Skeleton/Skeleton";
 import { Spinner, type SpinnerSize } from "../Spinner/Spinner";
-import { toast } from "../Toast/Toast";
+import { toast } from "../Toast/toastStore";
 import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
 import {
   asyncContentMessagesEn,
