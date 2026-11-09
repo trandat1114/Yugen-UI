@@ -77,7 +77,7 @@ function docsSeo(): Plugin {
       outDir = path.resolve(config.root, config.build.outDir);
       base = config.base;
     },
-    closeBundle() {
+    writeBundle() {
       const files: Record<string, string> = {};
       for (const section of fs.readdirSync(DOCS_DIR, { withFileTypes: true }).filter((d) => d.isDirectory())) {
         for (const file of fs.readdirSync(path.join(DOCS_DIR, section.name)).filter((f) => f.endsWith(".md"))) {

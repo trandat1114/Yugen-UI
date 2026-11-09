@@ -34,7 +34,7 @@ function landingSeo(): Plugin {
     transformIndexHtml(html) {
       return html.replace(/<!-- seo -->[\s\S]*?<!-- \/seo -->/, `<!-- seo -->\n    ${headTags(content, `${SITE.url}${base}`)}\n    <!-- /seo -->`);
     },
-    async closeBundle() {
+    async writeBundle() {
       if (!build) return;
       // A short-lived dev server only to load App.tsx in Node (dependencies come from node_modules as they are).
       const server = await createServer({
