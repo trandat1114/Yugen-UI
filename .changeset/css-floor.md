@@ -1,5 +1,0 @@
----
-"yugen-ui": patch
----
-
-Leaner CSS floor (#353). The library's 19 keyframes now live inside `@theme`, so Tailwind only outputs the ones an `animate-*` utility (or an `animation` declaration) in your app uses: with `theme-core.css`, a Button-only app goes from 20 keyframes to 1 (9.17 → 8.86 kB gzip in a Vite build) and the floor with no components from 7.15 to 6.85 kB. Utility and keyframe names are unchanged, including `animate-shimmer` and `animate-indeterminate`; WavyUnderline uses the new `animate-wave-flow`. As with Tailwind's own keyframes, they are written at the end of the output: an app that defines its own `@keyframes` with one of these names (`fade-in`, `sweep`…) should declare it inside `@theme` for it to win. `tokens.css` no longer carries the `@theme` block and chart keyframes of `charts.css`, so it is plain CSS with custom properties only (8.22 → 8.02 kB gzip). `styles.css` keeps the keyframes its components use and drops the unused `shimmer` and `indeterminate`. `theme.css` is now `@import "./theme-core.css"` plus its `@source` line instead of a second copy of the theme (64 kB less in the package).

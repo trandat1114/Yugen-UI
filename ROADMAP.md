@@ -12,29 +12,6 @@ Want to pick something up? Comment on the issue before you start. The same roadm
 
 ## Now
 
-### 0.16.0 · minor · due 2026-11-18
-
-Performance: lighter imports, CSS that follows your imports, fewer re-renders.
-
-- [x] Types for every export under moduleResolution nodenext; tsc-alias replaced (#343)
-- [x] Subpath imports: yugen-ui/Button loads one component (#344)
-- [x] Server-safe helpers: readAppShellCookie works in Server Components (#345)
-- [x] YugenProvider loads the Toaster only with withToaster (#346)
-- [x] Fewer re-renders: the theme in its own context, inline messages compared by value (#347)
-- [x] Theme before the first paint with SSR: yugenHtmlAttributes, yugenThemeScript (#348)
-- [x] Date components no longer bundle the Vietnamese locale (#349)
-- [x] Breadcrumb's overflow menu and citation cards load on demand; Nav without Tooltip (#350)
-- [x] Charts: a hover step takes about 1 ms at any point count, smaller markup, Sparkline without an observer (#352)
-- [x] CSS floor: keyframes only when used, plain tokens.css, theme.css imports theme-core.css (#353)
-- [x] yugen css: only the CSS of the components an app imports (init, add, doctor) (#169)
-- [x] Variant classes merged once per combination of props (#355)
-- [x] Size budgets: measured + 8%, compiled CSS, a slack check in CI (#360)
-- [x] Docs and CI for esbuild code splitting (subpath imports) (#370)
-- [x] Combobox and TagPicker on their own listbox, without cmdk (#351)
-- [x] yugen css --watch and a Vite plugin, so a new import is styled during dev (#368)
-- [x] Deprecate withToaster: an explicit Toaster in templates and docs (#369)
-- [x] Audit follow-ups: registry directive for cookie.ts, optimizePackageImports in next-starter, test floors (#372)
-
 ### 1.0.0 · major
 
 Stable API. No fixed date: ships when the readiness checklist is done.
@@ -62,6 +39,7 @@ Not scheduled yet.
 
 Details on What's new (`/news`) and in `CHANGELOG.md`.
 
+- **0.16.0** (2026-11-18): Performance: lighter imports, smaller CSS and fewer re-renders
 - **0.15.0** (2026-11-04): New form controls, NavigationMenu, status pages and app-wide defaults
 - **0.14.0** (2026-11-03): AppShell, Sortable and a Contributors page
 - **0.13.0** (2026-10-28): Refraction for glass, cherry blossom season in the Glass template
@@ -93,29 +71,6 @@ Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. 
 
 ### Đang làm
 
-#### 0.16.0 · minor · hạn 2026-11-18
-
-Hiệu năng: import nhẹ hơn, CSS theo đúng phần bạn import, ít render lại hơn.
-
-- [x] Kiểu cho mọi export với moduleResolution nodenext; bỏ tsc-alias (#343)
-- [x] Import theo subpath: yugen-ui/Button chỉ nạp một component (#344)
-- [x] Helper an toàn cho server: readAppShellCookie chạy trong Server Component (#345)
-- [x] YugenProvider chỉ nạp Toaster khi bật withToaster (#346)
-- [x] Ít render lại hơn: theme có context riêng, messages inline so theo giá trị (#347)
-- [x] Theme trước lần vẽ đầu khi SSR: yugenHtmlAttributes, yugenThemeScript (#348)
-- [x] Component ngày tháng không còn kèm locale tiếng Việt (#349)
-- [x] Menu thu gọn của Breadcrumb và thẻ chú thích nạp lúc cần; Nav không kèm Tooltip (#350)
-- [x] Biểu đồ: một bước hover khoảng 1 ms dù nhiều điểm, markup nhỏ hơn, Sparkline không cần observer (#352)
-- [x] CSS nền: keyframe chỉ xuất khi dùng, tokens.css là CSS thuần, theme.css import theme-core.css (#353)
-- [x] yugen css: chỉ CSS của các component mà app import (init, add, doctor) (#169)
-- [x] Class của variant được gộp một lần cho mỗi tổ hợp props (#355)
-- [x] Ngân sách dung lượng: số đo + 8%, CSS đã biên dịch, kiểm tra độ dư trong CI (#360)
-- [x] Docs và CI cho esbuild có code splitting (import theo subpath) (#370)
-- [x] Combobox và TagPicker dùng listbox riêng, không cần cmdk (#351)
-- [x] yugen css --watch và plugin Vite: import mới có style ngay khi dev (#368)
-- [x] Deprecate withToaster: template và docs đặt Toaster rõ ràng (#369)
-- [x] Việc còn lại của đợt rà soát: directive của cookie.ts trong registry, optimizePackageImports cho next-starter, mức sàn test (#372)
-
 #### 1.0.0 · major
 
 API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện hoàn tất.
@@ -143,6 +98,7 @@ Chưa xếp lịch.
 
 Chi tiết ở trang Có gì mới (`/news`) và `CHANGELOG.md`.
 
+- **0.16.0** (2026-11-18): Hiệu năng: import nhẹ hơn, CSS gọn hơn và ít render lại hơn
 - **0.15.0** (2026-11-04): Form control mới, NavigationMenu, trang trạng thái và prop mặc định cho cả ứng dụng
 - **0.14.0** (2026-11-03): AppShell, Sortable, trang Người đóng góp
 - **0.13.0** (2026-10-28): Khúc xạ cho glass, mùa hoa anh đào trong template Glass

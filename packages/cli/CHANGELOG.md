@@ -1,6 +1,6 @@
 # @yugen-ui/cli
 
-## Unreleased
+## 0.8.0
 
 - `yugen css --watch` keeps the lean CSS file current while source imports change. The bundled Next.js template runs it beside
   `next dev`; Vite templates include `@yugen-ui/cli/vite` and `yugenCss()`. `init` wires the Vite plugin into an existing

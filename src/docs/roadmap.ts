@@ -35,33 +35,6 @@ export const PROJECT_URL = "https://github.com/users/trandat1114/projects/6";
 export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
   now: [
     {
-      milestone: "0.16.0",
-      kind: "minor",
-      due: "2026-11-18",
-      vi: "Hiệu năng: import nhẹ hơn, CSS theo đúng phần bạn import, ít render lại hơn.",
-      en: "Performance: lighter imports, CSS that follows your imports, fewer re-renders.",
-      items: [
-        { status: "done", issue: 343, vi: "Kiểu cho mọi export với moduleResolution nodenext; bỏ tsc-alias", en: "Types for every export under moduleResolution nodenext; tsc-alias replaced" },
-        { status: "done", issue: 344, vi: "Import theo subpath: yugen-ui/Button chỉ nạp một component", en: "Subpath imports: yugen-ui/Button loads one component" },
-        { status: "done", issue: 345, vi: "Helper an toàn cho server: readAppShellCookie chạy trong Server Component", en: "Server-safe helpers: readAppShellCookie works in Server Components" },
-        { status: "done", issue: 346, vi: "YugenProvider chỉ nạp Toaster khi bật withToaster", en: "YugenProvider loads the Toaster only with withToaster" },
-        { status: "done", issue: 347, vi: "Ít render lại hơn: theme có context riêng, messages inline so theo giá trị", en: "Fewer re-renders: the theme in its own context, inline messages compared by value" },
-        { status: "done", issue: 348, vi: "Theme trước lần vẽ đầu khi SSR: yugenHtmlAttributes, yugenThemeScript", en: "Theme before the first paint with SSR: yugenHtmlAttributes, yugenThemeScript" },
-        { status: "done", issue: 349, vi: "Component ngày tháng không còn kèm locale tiếng Việt", en: "Date components no longer bundle the Vietnamese locale" },
-        { status: "done", issue: 350, vi: "Menu thu gọn của Breadcrumb và thẻ chú thích nạp lúc cần; Nav không kèm Tooltip", en: "Breadcrumb's overflow menu and citation cards load on demand; Nav without Tooltip" },
-        { status: "done", issue: 352, vi: "Biểu đồ: một bước hover khoảng 1 ms dù nhiều điểm, markup nhỏ hơn, Sparkline không cần observer", en: "Charts: a hover step takes about 1 ms at any point count, smaller markup, Sparkline without an observer" },
-        { status: "done", issue: 353, vi: "CSS nền: keyframe chỉ xuất khi dùng, tokens.css là CSS thuần, theme.css import theme-core.css", en: "CSS floor: keyframes only when used, plain tokens.css, theme.css imports theme-core.css" },
-        { status: "done", issue: 169, vi: "yugen css: chỉ CSS của các component mà app import (init, add, doctor)", en: "yugen css: only the CSS of the components an app imports (init, add, doctor)" },
-        { status: "done", issue: 355, vi: "Class của variant được gộp một lần cho mỗi tổ hợp props", en: "Variant classes merged once per combination of props" },
-        { status: "done", issue: 360, vi: "Ngân sách dung lượng: số đo + 8%, CSS đã biên dịch, kiểm tra độ dư trong CI", en: "Size budgets: measured + 8%, compiled CSS, a slack check in CI" },
-        { status: "done", issue: 370, vi: "Docs và CI cho esbuild có code splitting (import theo subpath)", en: "Docs and CI for esbuild code splitting (subpath imports)" },
-        { status: "done", issue: 351, vi: "Combobox và TagPicker dùng listbox riêng, không cần cmdk", en: "Combobox and TagPicker on their own listbox, without cmdk" },
-        { status: "done", issue: 368, vi: "yugen css --watch và plugin Vite: import mới có style ngay khi dev", en: "yugen css --watch and a Vite plugin, so a new import is styled during dev" },
-        { status: "done", issue: 369, vi: "Deprecate withToaster: template và docs đặt Toaster rõ ràng", en: "Deprecate withToaster: an explicit Toaster in templates and docs" },
-        { status: "done", issue: 372, vi: "Việc còn lại của đợt rà soát: directive của cookie.ts trong registry, optimizePackageImports cho next-starter, mức sàn test", en: "Audit follow-ups: registry directive for cookie.ts, optimizePackageImports in next-starter, test floors" },
-      ],
-    },
-    {
       milestone: "1.0.0",
       kind: "major",
       vi: "API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện hoàn tất.",
