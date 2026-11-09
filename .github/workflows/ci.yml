@@ -224,7 +224,7 @@ jobs:
         run: |
           cp -r "templates/${{ matrix.template }}" "$RUNNER_TEMP/app"
           cd "$RUNNER_TEMP/app"
-          npm pkg set "dependencies.yugen-ui=file:$(ls "$RUNNER_TEMP"/yugen-ui-*.tgz)"
+          npm pkg set "dependencies.yugen-ui=file:$(ls "$RUNNER_TEMP"/yugen-ui-[0-9]*.tgz)"
           npm pkg set "devDependencies.@yugen-ui/cli=file:$(ls "$RUNNER_TEMP"/yugen-ui-cli-*.tgz)"
           npm install --no-audit --no-fund
           npm run build
