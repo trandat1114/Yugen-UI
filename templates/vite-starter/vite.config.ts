@@ -2,9 +2,10 @@ import path from "node:path";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import { yugenCss } from "@yugen-ui/cli/vite";
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), yugenCss()],
   // import { Foo } from "@/components/Foo" thay cho đường dẫn tương đối dài (khai báo cả trong tsconfig.json).
   resolve: { alias: { "@": path.resolve(import.meta.dirname, "./src") } },
   build: {

@@ -4,7 +4,7 @@
 
 This page covers the stable channel (`main` → `latest`). Prereleases on `next`, `canary` and fixes for older minors on `release/X.Y`: [[Branching and Release Channels]].
 
-Versions follow [SemVer](https://trandat1114.github.io/Yugen-UI/#/concepts/versioning). Before 1.0, a minor release may
+Versions follow [SemVer](https://trandat1114.github.io/Yugen-UI/concepts/versioning). Before 1.0, a minor release may
 contain breaking changes; always call them out.
 
 ## Rules for each number

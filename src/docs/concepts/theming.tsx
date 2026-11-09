@@ -109,12 +109,13 @@ const NESTED_CODE = `import { YugenProvider } from "@/components/ui";
 
 const HOOK_CODE = `import * as React from "react";
 import { WeatherMoon20Regular, WeatherSunny20Regular } from "@fluentui/react-icons";
-import { Button, YugenProvider, useYugen, type YugenTheme } from "@/components/ui";
+import { Button, Toaster, YugenProvider, useYugen, type YugenTheme } from "@/components/ui";
 
 export default function App() {
   const [theme, setTheme] = React.useState<YugenTheme>("light");
   return (
-    <YugenProvider applyToDocument withToaster theme={theme}>
+    <YugenProvider applyToDocument theme={theme}>
+      <Toaster />
       <ThemeToggle onToggle={() => setTheme((t) => (t === "light" ? "dark" : "light"))} />
     </YugenProvider>
   );
@@ -299,7 +300,7 @@ export default function Page() {
                 type: "boolean",
                 defaultValue: "false",
                 description:
-                  "Gắn <Toaster /> để toast() hoạt động; vị trí bottom-end (bottom-start khi RTL). Toaster nạp sau lần render đầu trên client; toast() gọi trước đó vẫn hiện. Chỉ bật ở provider gốc, hoặc đặt <Toaster /> làm con để chọn vị trí và limit.",
+                  "Deprecated in 1.0.0. Gắn <Toaster /> làm con của provider gốc để toast() hoạt động, chọn vị trí và limit rõ ràng; mặc định bottom-end (bottom-start khi RTL).",
               },
               {
                 name: "messages",
@@ -329,7 +330,8 @@ export default function Page() {
           />
           <CodeBlock
             code={`// Provider gốc — một lần duy nhất
-<YugenProvider applyToDocument withToaster theme="light" brand="sakura" dir="ltr">
+<YugenProvider applyToDocument theme="light" brand="sakura" dir="ltr">
+  <Toaster />
   <App />
 </YugenProvider>`}
           />

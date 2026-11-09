@@ -119,7 +119,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <SetThemeContext.Provider value={setTheme}>
-      <YugenProvider applyToDocument withToaster theme={theme}>
+      <YugenProvider applyToDocument theme={theme}>
+        <Toaster />
         {children}
       </YugenProvider>
     </SetThemeContext.Provider>

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { DirectionProvider } from "@radix-ui/react-direction";
 import { cn } from "@/lib/cn";
+import { warnDeprecated } from "@/lib/deprecate";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import { TooltipProvider } from "../Tooltip/Tooltip";
 import { yugenHtmlAttributes } from "./document";
@@ -87,6 +88,7 @@ export interface YugenProviderProps extends React.HTMLAttributes<HTMLDivElement>
    *
    * Recommended: render `<Toaster />` as a child of the root provider instead (the way Radix, shadcn/ui, Chakra and Mantine
    * compose it). The Toaster then ships with your bundle from the first render and you choose its `position` and `limit`.
+   * @deprecated Render `<Toaster />` inside the root `YugenProvider`; this prop will be removed in 1.0.0.
    */
   withToaster?: boolean;
   /**
@@ -185,6 +187,7 @@ export function YugenProvider({
   ref,
   ...props
 }: YugenProviderProps & { ref?: React.Ref<HTMLDivElement> }) {
+  if (withToaster) warnDeprecated("YugenProvider.withToaster", "render <Toaster /> inside the root YugenProvider", "1.0.0");
   const parent = React.useContext(YugenContext);
   const parentTheme = React.useContext(YugenThemeContext);
   // messages={{ … }} / {...messagesVi, …} viết thẳng trong JSX: so theo giá trị như defaults (#347).

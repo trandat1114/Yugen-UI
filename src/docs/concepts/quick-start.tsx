@@ -153,7 +153,7 @@ export default nextConfig;`;
 
 const PERSIST = `// src/App.tsx — nhớ theme người dùng chọn
 import * as React from "react";
-import { YugenProvider, type YugenTheme } from "yugen-ui";
+import { Toaster, YugenProvider, type YugenTheme } from "yugen-ui";
 
 const STORAGE_KEY = "yugen-ui-theme";
 
@@ -173,7 +173,8 @@ export default function App() {
   }, [theme]);
 
   return (
-    <YugenProvider applyToDocument withToaster theme={theme}>
+    <YugenProvider applyToDocument theme={theme}>
+      <Toaster />
       <AppShell onThemeChange={setTheme} />
     </YugenProvider>
   );
@@ -267,7 +268,7 @@ export default function Page() {
                   </Tabs>
                   <P>
                     <C>applyToDocument</C> ghi theme lên <C>{"<html>"}</C> để Dialog, Menu, Tooltip (render qua portal) cũng đúng màu;{" "}
-                    <C>withToaster</C> để gọi <C>toast()</C> ở bất kỳ đâu. Xong — thử ngay với component đầu tiên bên dưới.
+                    Đặt <C>Toaster</C> một lần trong provider gốc để gọi <C>toast()</C> ở bất kỳ đâu. Xong — thử ngay với component đầu tiên bên dưới.
                   </P>
                 </>
               ),

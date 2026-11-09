@@ -109,11 +109,12 @@ Wrap your app once. The root provider writes `data-theme`, `data-brand` and `dir
 (Dialog, Menu, Popover, Tooltip, Toast) get the same theme.
 
 ```tsx
-import { YugenProvider } from "yugen-ui";
+import { Toaster, YugenProvider } from "yugen-ui";
 
 export function Root() {
   return (
-    <YugenProvider applyToDocument withToaster theme="light" brand="sakura" dir="ltr">
+    <YugenProvider applyToDocument theme="light" brand="sakura" dir="ltr">
+      <Toaster />
       <App />
     </YugenProvider>
   );
@@ -126,7 +127,7 @@ export function Root() {
 | `brand` | `"sakura" \| "web" \| "teams" \| string` | `"sakura"` | Brand ramp (`data-brand`). |
 | `dir` | `"ltr" \| "rtl"` | `"ltr"` | Text direction (includes Radix `DirectionProvider`). |
 | `applyToDocument` | `boolean` | `false` | Apply theme/brand/dir to `<html>` — use on the root provider. |
-| `withToaster` | `boolean` | `false` | Mount a `<Toaster />` so `toast()` works. |
+| `withToaster` | `boolean` | `false` | Deprecated; render `<Toaster />` explicitly inside the root provider. Removed in 1.0.0. |
 | `withTooltipProvider` | `boolean` | `true` | Mount Radix `TooltipProvider`. |
 
 Nested providers (without `applyToDocument`) scope a theme to a subtree. Read the current values with `useYugen()`.
@@ -425,11 +426,12 @@ Bọc ứng dụng một lần. Provider gốc ghi `data-theme`, `data-brand`, `
 (Dialog, Menu, Popover, Tooltip, Toast) cũng đúng theme.
 
 ```tsx
-import { YugenProvider } from "yugen-ui";
+import { Toaster, YugenProvider } from "yugen-ui";
 
 export function Root() {
   return (
-    <YugenProvider applyToDocument withToaster theme="light" brand="sakura" dir="ltr">
+    <YugenProvider applyToDocument theme="light" brand="sakura" dir="ltr">
+      <Toaster />
       <App />
     </YugenProvider>
   );
@@ -438,7 +440,7 @@ export function Root() {
 
 - `theme`: `"light" | "dark" | "high-contrast"` · `brand`: `"sakura" | "web" | "teams" | <tên brand tự tạo>` ·
   `dir`: `"ltr" | "rtl"`.
-- `applyToDocument`: áp lên `<html>` (dùng cho provider gốc). `withToaster`: gắn `<Toaster />` để gọi `toast()`.
+- `applyToDocument`: áp lên `<html>` (dùng cho provider gốc). `withToaster` đã deprecated; đặt rõ `<Toaster />` làm con để gọi `toast()`, sẽ bỏ ở 1.0.0.
   `withTooltipProvider` (mặc định `true`): gắn `TooltipProvider` của Radix.
 - Provider lồng (không có `applyToDocument`) chỉ đổi theme cho nhánh con. Đọc giá trị hiện tại bằng `useYugen()`.
 

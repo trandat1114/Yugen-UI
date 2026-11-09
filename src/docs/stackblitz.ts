@@ -217,13 +217,14 @@ export default defineConfig({ plugins: [react(), tailwindcss()] });
     "src/index.css": `@import "tailwindcss";\n@import "yugen-ui/theme.css";\n`,
     "src/main.tsx": `import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { YugenProvider } from "yugen-ui";
+import { Toaster, YugenProvider } from "yugen-ui";
 import App from "./App";
 import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <YugenProvider applyToDocument withToaster theme="${o.theme}" brand="${o.brand}" dir="${o.dir}">
+    <YugenProvider applyToDocument theme="${o.theme}" brand="${o.brand}" dir="${o.dir}">
+      <Toaster />
       <main className="flex min-h-dvh flex-wrap content-center items-center justify-center gap-3 bg-background-1 p-6">
         <App />
       </main>

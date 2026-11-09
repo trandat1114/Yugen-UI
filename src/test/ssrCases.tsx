@@ -297,7 +297,8 @@ export const SSR_CASES: SsrCase[] = [
   {
     name: "YugenProvider (dark, rtl, Toaster)",
     render: () => (
-      <YugenProvider theme="dark" brand="web" dir="rtl" withToaster>
+      <YugenProvider theme="dark" brand="web" dir="rtl">
+        <Toaster />
         <Button appearance="primary">Lưu</Button>
         <Tabs defaultValue="a">
           <TabsList>

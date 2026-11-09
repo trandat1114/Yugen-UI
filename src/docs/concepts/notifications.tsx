@@ -172,7 +172,8 @@ toast({
 const ANNOUNCE_CODE = `import { AriaLiveAnnouncer, useAnnounce, YugenProvider } from "@/components/ui";
 
 // 1. Gắn một lần ở gốc: render hai vùng live ẩn (polite / assertive)
-<YugenProvider applyToDocument withToaster>
+<YugenProvider applyToDocument>
+  <Toaster />
   <AriaLiveAnnouncer>
     <App />
   </AriaLiveAnnouncer>

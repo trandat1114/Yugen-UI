@@ -227,7 +227,7 @@ export async function diagnose(opts: DoctorOptions): Promise<Check[]> {
 
   const provider = findProviderUsage(cwd, ui);
   if (provider) add("ok", `YugenProvider found in ${rel(provider)}`);
-  else add("warn", "YugenProvider not found", "Wrap your app once: <YugenProvider applyToDocument withToaster>…</YugenProvider>");
+  else add("warn", "YugenProvider not found", "Wrap your app once and add <Toaster />: <YugenProvider applyToDocument>…</YugenProvider>");
 
   return checks;
 }

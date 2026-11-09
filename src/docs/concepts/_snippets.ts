@@ -15,27 +15,31 @@ import "yugen-ui/styles.css";`;
 export const PROVIDER_VITE = `// src/main.tsx
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { YugenProvider } from "yugen-ui";
+import { Toaster, YugenProvider } from "yugen-ui";
 import App from "./App";
 import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <YugenProvider applyToDocument withToaster>
+    <YugenProvider applyToDocument>
+      <Toaster />
       <App />
     </YugenProvider>
   </StrictMode>,
 );`;
 
 export const PROVIDER_NEXT = `// app/layout.tsx
-import { YugenProvider } from "yugen-ui";
+import { Toaster, YugenProvider } from "yugen-ui";
 import "./globals.css";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="vi" data-theme="light" data-brand="sakura">
       <body>
-        <YugenProvider applyToDocument withToaster>{children}</YugenProvider>
+        <YugenProvider applyToDocument>
+          <Toaster />
+          {children}
+        </YugenProvider>
       </body>
     </html>
   );
@@ -76,5 +80,5 @@ export const CLI_DOCTOR_OUTPUT = `◆  yugen.json: source mode
 ◆  Theme imported: src/index.css → ./yugen.css
 ◆  15 component folders in src/components/ui
 ▲  YugenProvider not found
-│  Wrap your app once: <YugenProvider applyToDocument withToaster>…</YugenProvider>
+│  Wrap your app once: <YugenProvider applyToDocument><Toaster />…</YugenProvider>
 └  Looks good, 1 warning`;

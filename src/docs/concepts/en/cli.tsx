@@ -81,7 +81,12 @@ npx @yugen-ui/cli remove data-grid        # delete the files nothing else import
 const CSS = `npx @yugen-ui/cli css                       # write src/yugen-ui.css, import it in src/index.css
 npx @yugen-ui/cli css --check               # CI: exit with 1 when the file is out of date, write nothing
 npx @yugen-ui/cli css --src app --src lib   # read only these folders (default: the whole project)
-npx @yugen-ui/cli css --precompile          # apps without Tailwind: compiled CSS that replaces styles.css`;
+npx @yugen-ui/cli css --precompile          # apps without Tailwind: compiled CSS that replaces styles.css
+npx @yugen-ui/cli css --watch               # regenerate when component imports change
+
+// vite.config.ts
+import { yugenCss } from "@yugen-ui/cli/vite";
+plugins: [yugenCss()]`;
 
 const CSS_RESULT = `/* src/yugen-ui.css */
 @import "yugen-ui/theme-core.css";
@@ -91,7 +96,7 @@ const CSS_RESULT = `/* src/yugen-ui.css */
 
 const THEME = `npx @yugen-ui/cli theme --brand #0f6cbd --name acme
 # → src/yugen-brand.css: [data-brand="acme"] { --brand-10 … --brand-160 }, imported from src/index.css
-# <YugenProvider applyToDocument withToaster brand="acme">`;
+# <YugenProvider applyToDocument brand="acme"><Toaster />…</YugenProvider>`;
 
 const CI = `npx @yugen-ui/cli@latest create app -t starter -y --no-git
 npx @yugen-ui/cli@latest add button dialog -y --no-install`;
@@ -168,7 +173,7 @@ export default function Page() {
           <P>
             Imports in the copied code use your tsconfig alias (<C>@/*</C>, <C>~/*</C>) when there is one and relative paths otherwise, so
             vite.config needs no changes. <C>&quot;use client&quot;</C> is kept for Next.js only. At the end the CLI prints the{" "}
-            <C>{"<YugenProvider applyToDocument withToaster>"}</C> wrapper and the file to put it in.
+            <C>{"<YugenProvider applyToDocument>"}</C> with <C>{"<Toaster />"}</C> and the wrapper file to put it in.
           </P>
         </div>
       </DocSection>

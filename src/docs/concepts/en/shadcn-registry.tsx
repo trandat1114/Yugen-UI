@@ -36,7 +36,8 @@ import { Button } from "@/components/ui/Button/Button";
 
 export default function App() {
   return (
-    <YugenProvider applyToDocument withToaster>
+<YugenProvider applyToDocument>
+  <Toaster />
       <Button appearance="primary">Hello</Button>
     </YugenProvider>
   );

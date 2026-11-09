@@ -73,6 +73,6 @@ export function theme(opts: ThemeOptions): ThemeResult {
       `White text on the primary button is ${contrast.toFixed(2)}:1, under 4.5:1.\n` +
         pc.dim(`A darker key that passes: yugen theme --brand ${adjustKeyForContrast(hex)}${opts.name ? ` --name ${name}` : ""}`),
     );
-  p.note(pc.cyan(`<YugenProvider applyToDocument withToaster brand="${name}">`), "Use the brand");
+  p.note(pc.cyan(`<YugenProvider applyToDocument brand="${name}"><Toaster />…</YugenProvider>`), "Use the brand");
   return { file, css, contrast };
 }

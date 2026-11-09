@@ -4,6 +4,7 @@ import { parseArgs, type ParseArgsConfig } from "node:util";
 import { add } from "./commands/add.js";
 import { create } from "./commands/create.js";
 import { css } from "./commands/css.js";
+import { watchCss } from "./commands/css-watch.js";
 import { diff } from "./commands/diff.js";
 import { doctor } from "./commands/doctor.js";
 import { init } from "./commands/init.js";
@@ -132,11 +133,13 @@ const COMMANDS: Record<string, Command> = {
       out: { type: "string" },
       check: { type: "boolean" },
       precompile: { type: "boolean" },
+      watch: { type: "boolean" },
     },
     help: [
       "    --src <dir>         Folder to read imports from, can be repeated (default: the whole project)",
       "    --out <file>        File to write (default: yugen-ui.css next to your main CSS file)",
       "    --check             Write nothing, exit with 1 when the file is out of date (CI, prebuild)",
+      "    --watch             Keep running and update the file when app imports change",
       "    --precompile        Plain compiled CSS for apps without Tailwind, using the project's own",
       "                        tailwindcss, @tailwindcss/node and @tailwindcss/oxide (dev dependencies)",
     ],
@@ -309,13 +312,27 @@ export async function run(argv: string[]): Promise<number> {
         return 0;
       case "css": {
         banner();
-        const result = await css({
+        const options = {
           cwd,
           src: values.src as string[] | undefined,
           out: str("out"),
           check: bool("check"),
           precompile: bool("precompile") || undefined,
-        });
+        };
+        if (bool("watch")) {
+          const controller = new AbortController();
+          const stop = () => controller.abort();
+          process.once("SIGINT", stop);
+          process.once("SIGTERM", stop);
+          try {
+            await watchCss({ ...options, signal: controller.signal });
+          } finally {
+            process.removeListener("SIGINT", stop);
+            process.removeListener("SIGTERM", stop);
+          }
+          return 0;
+        }
+        const result = await css(options);
         p.outro(result.ok ? "Done" : pc.red("Out of date"));
         return result.ok ? 0 : 1;
       }

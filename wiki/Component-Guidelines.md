@@ -49,7 +49,7 @@ Lessons learned: Radix Popover catches Esc at the document level before the inpu
 | `useLayoutEffect` directly | `useIsomorphicLayoutEffect` (`_internal/`) |
 | Hand-written popup / menu | Radix primitive + `usePortalThemeProps()` |
 | Icon-only button with no name | Vietnamese `aria-label` |
-| Renaming a prop right away | add the new prop + `warnDeprecated()`, remove the old one in a major; see [Versioning](https://trandat1114.github.io/Yugen-UI/#/concepts/versioning) |
+| Renaming a prop right away | add the new prop + `warnDeprecated()`, remove the old one in a major; see [Versioning](https://trandat1114.github.io/Yugen-UI/concepts/versioning) |
 
 ## Yugen Labs
 

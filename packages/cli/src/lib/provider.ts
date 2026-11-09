@@ -3,20 +3,25 @@ import type { Framework } from "./project.js";
 
 /**
  * Bọc app trong YugenProvider ngay tại file gốc (codemod của `yugen init`):
- * - Vite / React: `<App />` trong `createRoot(…).render(…)` → `<YugenProvider applyToDocument withToaster><App /></YugenProvider>`.
+ * - Vite / React: `<App />` trong `createRoot(…).render(…)` → `<YugenProvider applyToDocument><Toaster /><App /></YugenProvider>`.
  * - Next.js App Router (`app/layout.tsx`): `{children}` trong `<body>`; YugenProvider là client component nên dùng được
  *   trong layout server. `applyToDocument` không render attribute vào HTML nên server và client khớp nhau.
  * Không khớp mẫu nào (đã có YugenProvider, cấu trúc lạ) → trả `changed: false` để init in hướng dẫn thủ công.
  */
-export function wrapWithProvider(code: string, framework: Framework, importFrom: string): { code: string; changed: boolean } {
+export function wrapWithProvider(
+  code: string,
+  framework: Framework,
+  providerImportFrom: string,
+  toasterImportFrom = providerImportFrom,
+): { code: string; changed: boolean } {
   if (code.includes("YugenProvider")) return { code, changed: false };
-  const open = "<YugenProvider applyToDocument withToaster>";
+  const open = "<YugenProvider applyToDocument>";
   let next: string | null = null;
 
   if (framework === "next") {
     const body = /(<body\b[^>]*>)([\s\S]*?)(<\/body>)/.exec(code);
     if (body && body[2].includes("{children}")) {
-      const inner = body[2].replace("{children}", `${open}{children}</YugenProvider>`);
+      const inner = body[2].replace("{children}", `${open}<Toaster />{children}</YugenProvider>`);
       next = code.slice(0, body.index) + body[1] + inner + body[3] + code.slice(body.index + body[0].length);
     }
   } else {
@@ -30,11 +35,20 @@ export function wrapWithProvider(code: string, framework: Framework, importFrom:
         const indent = /\n([ \t]*)$/.exec(code.slice(0, at))?.[1];
         const eol = code.includes("\r\n") ? "\r\n" : "\n";
         const wrapped =
-          indent === undefined ? `${open}<App /></YugenProvider>` : `${open}${eol}${indent}  <App />${eol}${indent}</YugenProvider>`;
+          indent === undefined
+            ? `${open}<Toaster /><App /></YugenProvider>`
+            : `${open}${eol}${indent}  <Toaster />${eol}${indent}  <App />${eol}${indent}</YugenProvider>`;
         next = code.slice(0, at) + wrapped + code.slice(at + app[0].length);
       }
     }
   }
   if (next === null) return { code, changed: false };
-  return { code: addJsImport(next, `import { YugenProvider } from "${importFrom}";`).code, changed: true };
+  let imported = addJsImport(
+    next,
+    toasterImportFrom === providerImportFrom
+      ? `import { Toaster, YugenProvider } from "${providerImportFrom}";`
+      : `import { YugenProvider } from "${providerImportFrom}";`,
+  ).code;
+  if (toasterImportFrom !== providerImportFrom) imported = addJsImport(imported, `import { Toaster } from "${toasterImportFrom}";`).code;
+  return { code: imported, changed: true };
 }

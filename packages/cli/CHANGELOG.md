@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- `yugen css --watch` keeps the lean CSS file current while source imports change. The bundled Next.js template runs it beside
+  `next dev`; Vite templates include `@yugen-ui/cli/vite` and `yugenCss()`. `init` wires the Vite plugin into an existing
+  Tailwind CSS v4 project. `--watch` cannot be combined with `--check`.
+- `init`, `doctor` and `theme` now print an explicit `<Toaster />` inside the root `<YugenProvider>` instead of the deprecated
+  `withToaster` prop.
 - `yugen css`: writes `yugen-ui.css` with `@import "yugen-ui/theme-core.css";` and one
   `@import "yugen-ui/sources/<Folder>.css";` per component folder your code imports, instead of `theme.css` with every
   component. On the templates the gzipped CSS goes from about 26 kB to 12–20 kB (−24% to −54%). Imports are read with

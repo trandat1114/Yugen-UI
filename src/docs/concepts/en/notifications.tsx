@@ -172,7 +172,8 @@ toast({
 const ANNOUNCE_CODE = `import { AriaLiveAnnouncer, useAnnounce, YugenProvider } from "@/components/ui";
 
 // 1. Add once at the root: renders two hidden live regions (polite / assertive)
-<YugenProvider applyToDocument withToaster>
+<YugenProvider applyToDocument>
+  <Toaster />
   <AriaLiveAnnouncer>
     <App />
   </AriaLiveAnnouncer>

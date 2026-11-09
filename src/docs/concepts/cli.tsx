@@ -81,7 +81,12 @@ npx @yugen-ui/cli remove data-grid        # xoá file không còn được impor
 const CSS = `npx @yugen-ui/cli css                       # ghi src/yugen-ui.css, import trong src/index.css
 npx @yugen-ui/cli css --check               # CI: thoát với mã 1 khi file đã cũ, không ghi gì
 npx @yugen-ui/cli css --src app --src lib   # chỉ đọc các thư mục này (mặc định: cả dự án)
-npx @yugen-ui/cli css --precompile          # app không dùng Tailwind: CSS đã biên dịch, thay styles.css`;
+npx @yugen-ui/cli css --precompile          # app không dùng Tailwind: CSS đã biên dịch, thay styles.css
+npx @yugen-ui/cli css --watch               # tự ghi lại khi import component thay đổi
+
+// vite.config.ts
+import { yugenCss } from "@yugen-ui/cli/vite";
+plugins: [yugenCss()]`;
 
 const CSS_RESULT = `/* src/yugen-ui.css */
 @import "yugen-ui/theme-core.css";
@@ -91,7 +96,7 @@ const CSS_RESULT = `/* src/yugen-ui.css */
 
 const THEME = `npx @yugen-ui/cli theme --brand #0f6cbd --name acme
 # → src/yugen-brand.css: [data-brand="acme"] { --brand-10 … --brand-160 }, import trong src/index.css
-# <YugenProvider applyToDocument withToaster brand="acme">`;
+# <YugenProvider applyToDocument brand="acme"><Toaster />…</YugenProvider>`;
 
 const CI = `npx @yugen-ui/cli@latest create app -t starter -y --no-git
 npx @yugen-ui/cli@latest add button dialog -y --no-install`;
@@ -167,7 +172,7 @@ export default function Page() {
           <P>
             Import trong mã chép vào dùng alias của tsconfig (<C>@/*</C>, <C>~/*</C>) nếu có, không thì dùng đường dẫn tương đối, nên không phải
             sửa vite.config. Dòng <C>&quot;use client&quot;</C> chỉ được giữ với Next.js. Cuối cùng CLI hỏi để bọc app trong{" "}
-            <C>{"<YugenProvider applyToDocument withToaster>"}</C>: <C>{"<App />"}</C> trong main.tsx (Vite) hoặc <C>{"{children}"}</C>{" "}
+            <C>{"<YugenProvider applyToDocument>"}</C> với <C>{"<Toaster />"}</C> và <C>{"<App />"}</C> trong main.tsx (Vite) hoặc <C>{"{children}"}</C>{" "}
             trong <C>{"<body>"}</C> của app/layout.tsx (Next.js). Cấu trúc khác, hoặc chạy với <C>--no-provider</C>, thì CLI in đoạn cần thêm
             kèm tên file.
           </P>

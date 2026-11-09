@@ -109,12 +109,13 @@ const NESTED_CODE = `import { YugenProvider } from "@/components/ui";
 
 const HOOK_CODE = `import * as React from "react";
 import { WeatherMoon20Regular, WeatherSunny20Regular } from "@fluentui/react-icons";
-import { Button, YugenProvider, useYugen, type YugenTheme } from "@/components/ui";
+import { Button, Toaster, YugenProvider, useYugen, type YugenTheme } from "@/components/ui";
 
 export default function App() {
   const [theme, setTheme] = React.useState<YugenTheme>("light");
   return (
-    <YugenProvider applyToDocument withToaster theme={theme}>
+    <YugenProvider applyToDocument theme={theme}>
+      <Toaster />
       <ThemeToggle onToggle={() => setTheme((t) => (t === "light" ? "dark" : "light"))} />
     </YugenProvider>
   );
@@ -301,7 +302,7 @@ export default function Page() {
                 type: "boolean",
                 defaultValue: "false",
                 description:
-                  "Adds <Toaster /> so toast() works, placed bottom-end (bottom-start in RTL). It loads after the first client render; toast() calls made before that still show. Turn it on for the root provider only, or render <Toaster /> as a child to pick position and limit.",
+                  "Deprecated in 1.0.0. Render <Toaster /> as a child of the root provider so toast() works and its position and limit are explicit; the default is bottom-end (bottom-start in RTL).",
               },
               {
                 name: "messages",
@@ -331,7 +332,8 @@ export default function Page() {
           />
           <CodeBlock
             code={`// Root provider, used once
-<YugenProvider applyToDocument withToaster theme="light" brand="sakura" dir="ltr">
+<YugenProvider applyToDocument theme="light" brand="sakura" dir="ltr">
+  <Toaster />
   <App />
 </YugenProvider>`}
           />

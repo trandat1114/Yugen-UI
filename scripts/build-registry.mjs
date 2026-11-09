@@ -166,7 +166,7 @@ const folders = fs
   .sort();
 
 /** File trong components/ui không gắn "use client": hàm thường cho Server Component (#348). */
-const SERVER_SAFE_FILES = new Set(["YugenProvider/document.ts"]);
+const SERVER_SAFE_FILES = new Set(["YugenProvider/document.ts", "AppShell/cookie.ts"]);
 
 const componentNames = [];
 for (const folder of folders) {
@@ -231,7 +231,7 @@ for (const [name, themeName, framework] of [
     dependencies: [],
     registryDependencies: [itemUrl(themeName), itemUrl(libItem("cn")), itemUrl("yugen-provider")],
     files: [],
-    docs: `Yugen UI is ready. Wrap your app once — <YugenProvider applyToDocument withToaster> from "@/components/ui/YugenProvider/YugenProvider" — then add components: npx shadcn@latest add ${itemUrl("button")}`,
+    docs: `Yugen UI is ready. Wrap your app once — <YugenProvider applyToDocument><Toaster />…</YugenProvider> from "@/components/ui/YugenProvider/YugenProvider" — then add components: npx shadcn@latest add ${itemUrl("button")}`,
   });
 }
 

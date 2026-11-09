@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { YugenProvider, type YugenBrand, type YugenTheme } from "yugen-ui";
+import { Toaster, YugenProvider, type YugenBrand, type YugenTheme } from "yugen-ui";
 import { BRAND_COOKIE, saveCookie, THEME_COOKIE } from "../appearance";
 import content from "../content";
 
@@ -43,12 +43,12 @@ export function Providers({ theme, brand, children }: { theme?: YugenTheme; bran
     <AppearanceContext.Provider value={value}>
       <YugenProvider
         applyToDocument
-        withToaster
         theme={appearance.theme}
         brand={appearance.brand}
         messages={content.messages}
         locale={content.locale}
       >
+        <Toaster />
         {children}
       </YugenProvider>
     </AppearanceContext.Provider>

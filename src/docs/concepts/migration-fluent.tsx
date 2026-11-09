@@ -63,7 +63,8 @@ import { FluentProvider, webLightTheme } from "@fluentui/react-components";
 // Yugen UI
 import { YugenProvider } from "@/components/ui";
 
-<YugenProvider applyToDocument withToaster theme="light" brand="web" dir="ltr">
+<YugenProvider applyToDocument theme="light" brand="web" dir="ltr">
+  <Toaster />
   <App />
 </YugenProvider>`;
 
@@ -134,7 +135,7 @@ const { dispatchToast } = useToast("settings");
 dispatchToast({ intent: "success", title: "Đã lưu", body: "Thay đổi có hiệu lực ngay." });
 <Toaster toasterId="settings" />
 
-// Hoặc helper tĩnh tới Toaster mặc định (YugenProvider withToaster)
+// Hoặc helper tĩnh tới Toaster mặc định (đặt <Toaster /> trong YugenProvider)
 toast({ intent: "success", title: "Đã lưu" });`;
 
 const OPTIONS_CODE = `// Fluent UI React v9

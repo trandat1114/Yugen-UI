@@ -23,7 +23,7 @@ describe("create", () => {
     const { target } = await create({ cwd, dir: "My App", template: "starter", install: false, git: false, templatesDir: repoTemplates }, ctx);
     expect(json(target, "package.json").name).toBe("my-app");
     expect(fs.existsSync(path.join(target, ".gitignore"))).toBe(true);
-    expect(read(target, "src/index.css")).toContain('@import "yugen-ui/theme.css"');
+    expect(read(target, "src/index.css")).toContain('@import "./yugen-ui.css"');
   });
 
   it("restores _package.json and _gitignore from the bundled copy (#381: no nested manifests in the npm package)", async () => {
@@ -44,8 +44,8 @@ describe("create", () => {
     const cwd = tmpDir();
     const base = { cwd, template: "next-starter", install: false, git: false, templatesDir: repoTemplates };
     const { target } = await create({ ...base, dir: "next-app" }, ctx);
-    expect(json(target, "package.json")).toMatchObject({ name: "next-app", scripts: { build: "next build" } });
-    expect(read(target, "src/app/globals.css")).toContain('@import "yugen-ui/theme.css"');
+    expect(json(target, "package.json")).toMatchObject({ name: "next-app", scripts: { build: "yugen css && next build" } });
+    expect(read(target, "src/app/globals.css")).toContain('@import "./yugen-ui.css"');
     const checks = await diagnose({ cwd: target, offline: true });
     expect(checks.find((c) => c.message.startsWith("Theme imported"))?.message).toContain("src/app/globals.css");
     expect(checks.find((c) => c.message.startsWith("YugenProvider found"))?.level).toBe("ok");

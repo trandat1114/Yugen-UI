@@ -29,7 +29,7 @@ export interface RoadmapRelease {
   items: RoadmapItem[];
 }
 
-export const ROADMAP_UPDATED = "2026-11-05";
+export const ROADMAP_UPDATED = "2026-11-09";
 export const PROJECT_URL = "https://github.com/users/trandat1114/projects/6";
 
 export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
@@ -56,9 +56,9 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
         { status: "done", issue: 360, vi: "Ngân sách dung lượng: số đo + 8%, CSS đã biên dịch, kiểm tra độ dư trong CI", en: "Size budgets: measured + 8%, compiled CSS, a slack check in CI" },
         { status: "done", issue: 370, vi: "Docs và CI cho esbuild có code splitting (import theo subpath)", en: "Docs and CI for esbuild code splitting (subpath imports)" },
         { status: "done", issue: 351, vi: "Combobox và TagPicker dùng listbox riêng, không cần cmdk", en: "Combobox and TagPicker on their own listbox, without cmdk" },
-        { status: "planned", issue: 368, vi: "yugen css --watch và plugin Vite: import mới có style ngay khi dev", en: "yugen css --watch and a Vite plugin, so a new import is styled during dev" },
-        { status: "planned", issue: 369, vi: "Deprecate withToaster: template và docs đặt Toaster rõ ràng", en: "Deprecate withToaster: an explicit Toaster in templates and docs" },
-        { status: "planned", issue: 372, vi: "Việc còn lại của đợt rà soát: directive của cookie.ts trong registry, optimizePackageImports cho next-starter, mức sàn test", en: "Audit follow-ups: registry directive for cookie.ts, optimizePackageImports in next-starter, test floors" },
+        { status: "done", issue: 368, vi: "yugen css --watch và plugin Vite: import mới có style ngay khi dev", en: "yugen css --watch and a Vite plugin, so a new import is styled during dev" },
+        { status: "done", issue: 369, vi: "Deprecate withToaster: template và docs đặt Toaster rõ ràng", en: "Deprecate withToaster: an explicit Toaster in templates and docs" },
+        { status: "done", issue: 372, vi: "Việc còn lại của đợt rà soát: directive của cookie.ts trong registry, optimizePackageImports cho next-starter, mức sàn test", en: "Audit follow-ups: registry directive for cookie.ts, optimizePackageImports in next-starter, test floors" },
       ],
     },
     {

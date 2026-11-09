@@ -4,7 +4,7 @@
 
 Trang này mô tả kênh ổn định (`main` → `latest`). Bản thử nghiệm `next`, `canary` và vá minor cũ `release/X.Y`: [Branching and Release Channels](Branching-and-Release-Channels-vi).
 
-Phiên bản theo [SemVer](https://trandat1114.github.io/Yugen-UI/#/concepts/versioning). Trước 1.0, bản minor có thể
+Phiên bản theo [SemVer](https://trandat1114.github.io/Yugen-UI/concepts/versioning). Trước 1.0, bản minor có thể
 có thay đổi phá vỡ — luôn ghi rõ.
 
 ## Quy tắc cho từng số

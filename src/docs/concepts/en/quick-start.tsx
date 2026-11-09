@@ -153,7 +153,7 @@ export default nextConfig;`;
 
 const PERSIST = `// src/App.tsx — remember the user's theme
 import * as React from "react";
-import { YugenProvider, type YugenTheme } from "yugen-ui";
+import { Toaster, YugenProvider, type YugenTheme } from "yugen-ui";
 
 const STORAGE_KEY = "yugen-ui-theme";
 
@@ -173,7 +173,8 @@ export default function App() {
   }, [theme]);
 
   return (
-    <YugenProvider applyToDocument withToaster theme={theme}>
+    <YugenProvider applyToDocument theme={theme}>
+      <Toaster />
       <AppShell onThemeChange={setTheme} />
     </YugenProvider>
   );
@@ -268,7 +269,7 @@ export default function Page() {
                   </Tabs>
                   <P>
                     <C>applyToDocument</C> writes the theme to <C>{"<html>"}</C> so portalled Dialog, Menu and Tooltip match;{" "}
-                    <C>withToaster</C> lets you call <C>toast()</C> anywhere. Done — try your first component below.
+                    Put <C>Toaster</C> once inside the root provider to call <C>toast()</C> anywhere. Done — try your first component below.
                   </P>
                 </>
               ),

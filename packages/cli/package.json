@@ -35,6 +35,10 @@
       "types": "./dist/api.d.ts",
       "import": "./dist/api.js"
     },
+    "./vite": {
+      "types": "./dist/vite.d.ts",
+      "import": "./dist/vite.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [

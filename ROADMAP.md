@@ -4,7 +4,7 @@
 
 *Tiếng Việt: [xem bên dưới](#tiếng-việt).*
 
-Plans for each release, updated 2026-11-05. Each release is a GitHub milestone; priority, size and
+Plans for each release, updated 2026-11-09. Each release is a GitHub milestone; priority, size and
 dependencies are in the [GitHub Project](https://github.com/users/trandat1114/projects/6). `[x]` done, `[~]` in progress, `[ ]` planned.
 
 Want to pick something up? Comment on the issue before you start. The same roadmap is on the
@@ -31,9 +31,9 @@ Performance: lighter imports, CSS that follows your imports, fewer re-renders.
 - [x] Size budgets: measured + 8%, compiled CSS, a slack check in CI (#360)
 - [x] Docs and CI for esbuild code splitting (subpath imports) (#370)
 - [x] Combobox and TagPicker on their own listbox, without cmdk (#351)
-- [ ] yugen css --watch and a Vite plugin, so a new import is styled during dev (#368)
-- [ ] Deprecate withToaster: an explicit Toaster in templates and docs (#369)
-- [ ] Audit follow-ups: registry directive for cookie.ts, optimizePackageImports in next-starter, test floors (#372)
+- [x] yugen css --watch and a Vite plugin, so a new import is styled during dev (#368)
+- [x] Deprecate withToaster: an explicit Toaster in templates and docs (#369)
+- [x] Audit follow-ups: registry directive for cookie.ts, optimizePackageImports in next-starter, test floors (#372)
 
 ### 1.0.0 · major
 
@@ -86,7 +86,7 @@ Details on What's new (`/news`) and in `CHANGELOG.md`.
 
 ## Tiếng Việt
 
-Kế hoạch theo từng bản phát hành, cập nhật 2026-11-05. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và
+Kế hoạch theo từng bản phát hành, cập nhật 2026-11-09. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và
 phụ thuộc nằm ở [GitHub Project](https://github.com/users/trandat1114/projects/6). `[x]` đã xong, `[~]` đang làm, `[ ]` dự kiến.
 
 Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. Trang [Cộng đồng](https://trandat1114.github.io/Yugen-UI/vi/community) có cùng lộ trình.
@@ -112,9 +112,9 @@ Hiệu năng: import nhẹ hơn, CSS theo đúng phần bạn import, ít render
 - [x] Ngân sách dung lượng: số đo + 8%, CSS đã biên dịch, kiểm tra độ dư trong CI (#360)
 - [x] Docs và CI cho esbuild có code splitting (import theo subpath) (#370)
 - [x] Combobox và TagPicker dùng listbox riêng, không cần cmdk (#351)
-- [ ] yugen css --watch và plugin Vite: import mới có style ngay khi dev (#368)
-- [ ] Deprecate withToaster: template và docs đặt Toaster rõ ràng (#369)
-- [ ] Việc còn lại của đợt rà soát: directive của cookie.ts trong registry, optimizePackageImports cho next-starter, mức sàn test (#372)
+- [x] yugen css --watch và plugin Vite: import mới có style ngay khi dev (#368)
+- [x] Deprecate withToaster: template và docs đặt Toaster rõ ràng (#369)
+- [x] Việc còn lại của đợt rà soát: directive của cookie.ts trong registry, optimizePackageImports cho next-starter, mức sàn test (#372)
 
 #### 1.0.0 · major
 
