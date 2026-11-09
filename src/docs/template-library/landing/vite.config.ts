@@ -5,6 +5,7 @@ import { renderToString } from "react-dom/server";
 import { createServer, defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import { yugenCss } from "@yugen-ui/cli/vite";
 // The language in use is the file content/index.ts points to (`create --lang` keeps only one language).
 import content from "./content/index.ts";
 import { headTags } from "./seo.ts";
@@ -73,7 +74,7 @@ function landingSeo(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [react(), tailwindcss(), landingSeo()],
+  plugins: [react(), tailwindcss(), yugenCss(), landingSeo()],
   build: {
     rolldownOptions: {
       output: {
