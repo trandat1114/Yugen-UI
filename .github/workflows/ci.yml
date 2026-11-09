@@ -214,6 +214,7 @@ jobs:
       - run: npm ci
       - run: npm run build:lib
       - run: npm pack --pack-destination "$RUNNER_TEMP"
+      - run: npm pack --prefix packages/cli --pack-destination "$RUNNER_TEMP"
 
       # Trỏ yugen-ui vào gói vừa pack trước lần cài đầu tiên: ở PR release (và khi vừa merge vào main) template đã ghim
       # ^<version mới> mà npm chưa có. Việc ^<version> cài được từ npm do check-release --tag của CLI kiểm, trước khi
@@ -223,6 +224,7 @@ jobs:
           cp -r "templates/${{ matrix.template }}" "$RUNNER_TEMP/app"
           cd "$RUNNER_TEMP/app"
           npm pkg set "dependencies.yugen-ui=file:$(ls "$RUNNER_TEMP"/yugen-ui-*.tgz)"
+          npm pkg set "devDependencies.@yugen-ui/cli=file:$(ls "$RUNNER_TEMP"/yugen-ui-cli-*.tgz)"
           npm install --no-audit --no-fund
           npm run build
 
