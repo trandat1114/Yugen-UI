@@ -22,13 +22,23 @@ import { pathToFileURL } from "node:url";
 const REGISTRY = "https://registry.npmjs.org";
 export const SLSA_PROVENANCE = "https://slsa.dev/provenance/v1";
 
+// npm package names (optionally scoped) and semver versions; anything else is refused before it reaches a URL or a path.
+const NAME = /^(?:@[a-z0-9][a-z0-9._~-]*\/)?[a-z0-9][a-z0-9._~-]*$/;
+const VERSION = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
+const FILE = /^[A-Za-z0-9._-]+\.tgz$/;
+
 export function parseSpec(arg) {
   const eq = arg.indexOf("=");
   const spec = eq === -1 ? "" : arg.slice(0, eq);
   const at = spec.lastIndexOf("@");
-  if (at <= 0 || eq === arg.length - 1) throw new Error(`Expected <name@version>=<file.tgz>, got "${arg}"`);
-  return { name: spec.slice(0, at), version: spec.slice(at + 1), file: arg.slice(eq + 1) };
+  const parsed = { name: spec.slice(0, Math.max(at, 0)), version: spec.slice(at + 1), file: arg.slice(eq + 1) };
+  if (at <= 0 || !NAME.test(parsed.name) || !VERSION.test(parsed.version) || !FILE.test(parsed.file))
+    throw new Error(`Expected <name@version>=<file.tgz>, got "${arg}"`);
+  return parsed;
 }
+
+/** Registry URL of one version: the scope's "/" is encoded (@scope%2fname). */
+export const registryUrl = (name, version) => `${REGISTRY}/${encodeURIComponent(name).replace(/^%40/, "@")}/${encodeURIComponent(version)}`;
 
 export const sha512Hex = (buf) => crypto.createHash("sha512").update(buf).digest("hex");
 
@@ -84,7 +94,7 @@ export async function releaseAssets(dir, args) {
     const tarball = path.join(dir, file);
     const local = sha512Hex(fs.readFileSync(tarball));
 
-    const meta = await waitForJson(`${REGISTRY}/${name.replace("/", "%2f")}/${version}`);
+    const meta = await waitForJson(registryUrl(name, version));
     if (integrityToHex(meta.dist?.integrity) !== local) {
       console.error(`::notice::${spec} on npm was not published from ${file} — not attached.`);
       continue;
