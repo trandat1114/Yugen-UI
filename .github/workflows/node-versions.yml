@@ -10,13 +10,15 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
-  actions: write
+  contents: read
 
 jobs:
   update:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # push chore/node-versions
+      pull-requests: write
+      actions: write # workflow_dispatch ci.yml on the PR branch
     env:
       BRANCH: chore/node-versions
     steps:

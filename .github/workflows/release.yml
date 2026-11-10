@@ -113,8 +113,13 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       # npm trusted publishing (OIDC, #202) cần npm ≥ 11.5.1. Không dùng npm token từ 0.14.0.
+      # Node 26 đã kèm npm đủ mới (11.20.0 trong 26.13.0) nên chỉ kiểm tra phiên bản: `npm install -g npm` sẽ tải một npm
+      # không ghim hash ngay trong job có OIDC token (OpenSSF Scorecard › Pinned-Dependencies).
       - name: npm with trusted publishing
-        run: npm install -g npm@11 && npm --version
+        run: |
+          V="$(npm --version)"; echo "npm $V"
+          node -e 'const [a, b, c] = process.argv[1].split(".").map(Number); process.exit(a > 11 || (a === 11 && (b > 5 || (b === 5 && c >= 1))) ? 0 : 1)' "$V" \
+            || { echo "::error::npm $V is older than 11.5.1, which trusted publishing needs"; exit 1; }
 
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
@@ -179,6 +184,22 @@ jobs:
           [ "$DIST_TAG" = "latest" ] && FLAGS="--latest"
           case "$VERSION" in *-*) FLAGS="$FLAGS --prerelease" ;; esac
           gh release create "$GITHUB_REF_NAME" --verify-tag --title "yugen-ui $VERSION" --notes-file "$RUNNER_TEMP/notes.md" $FLAGS
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: npm-package
+          path: ${{ runner.temp }}/npm-package
+
+      # Tarball trên npm + SLSA provenance npm ghi lúc job publish chạy, đối chiếu sha512 với tarball của job build
+      # (scripts/release-provenance.mjs; OpenSSF Scorecard › Signed-Releases). Chạy lại workflow thì ghi đè (--clobber).
+      - name: Attach package and provenance
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SPEC: ${{ needs.build.outputs.package }}=${{ needs.build.outputs.tarball }}
+        run: |
+          node scripts/release-provenance.mjs "$RUNNER_TEMP/npm-package" "$SPEC" > "$RUNNER_TEMP/assets.txt"
+          mapfile -t FILES < "$RUNNER_TEMP/assets.txt"
+          if [ "${#FILES[@]}" -gt 0 ]; then gh release upload "$GITHUB_REF_NAME" "${FILES[@]}" --clobber; fi
 
   # Bản thử nghiệm: mỗi push vào nhánh `canary` (hoặc chạy tay) phát hành `x.y.z-canary-<thời gian>` với dist-tag `canary`.
   # Người dùng thử: npm install yugen-ui@canary — không bao giờ ảnh hưởng `latest` hay `next`.
@@ -261,7 +282,10 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       - name: npm with trusted publishing
-        run: npm install -g npm@11 && npm --version
+        run: |
+          V="$(npm --version)"; echo "npm $V"
+          node -e 'const [a, b, c] = process.argv[1].split(".").map(Number); process.exit(a > 11 || (a === 11 && (b > 5 || (b === 5 && c >= 1))) ? 0 : 1)' "$V" \
+            || { echo "::error::npm $V is older than 11.5.1, which trusted publishing needs"; exit 1; }
 
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:

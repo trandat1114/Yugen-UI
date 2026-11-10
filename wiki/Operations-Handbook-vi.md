@@ -57,8 +57,8 @@ Bảo vệ cho `next`, `release/*`, `canary` và tag `v*`: xem [Branching and Re
 | Workflow / file | Làm gì |
 |---|---|
 | `ci.yml` | Build, test (React 19), e2e, các check, size. Không chạy khi push / PR chỉ đổi tài liệu để đọc (README, wiki, CONTRIBUTING…; danh sách `paths-ignore` trong file); `engines.yml` và `pages.yml` dùng cùng danh sách |
-| `release.yml` | Tag `v*` → kiểm tra nhánh + nhất quán → `npm publish --provenance` (dist-tag theo kênh) → GitHub Release từ mục CHANGELOG. Push vào `canary` (hoặc chạy tay) → bản `x.y.z-canary-…` với dist-tag `canary` |
-| `release-cli.yml` | Tag `cli@*` → `check-release.mjs --tag` (CHANGELOG, mục tin trên `#/news`, version chưa dùng, `yugen-ui` đã có trên npm) → publish `@yugen-ui/cli` + `create-yugen-ui` → GitHub Release |
+| `release.yml` | Tag `v*` → kiểm tra nhánh + nhất quán → `npm publish --provenance` (dist-tag theo kênh) → GitHub Release từ mục CHANGELOG, kèm tarball và SLSA provenance. Push vào `canary` (hoặc chạy tay) → bản `x.y.z-canary-…` với dist-tag `canary` |
+| `release-cli.yml` | Tag `cli@*` → `check-release.mjs --tag` (CHANGELOG, mục tin trên `#/news`, version chưa dùng, `yugen-ui` đã có trên npm) → publish `@yugen-ui/cli` + `create-yugen-ui` → GitHub Release (tarball + SLSA provenance) |
 | `sync-next.yml` | Push vào `main` → `next` không có việc riêng thì merge thẳng `main` vào `next` (không PR, không CI lại) và chạy lại Docs; có việc riêng thì mở PR `main → next` |
 | `node-versions.yml` | Hằng tuần → so bản Node.js trong workflow với lịch phát hành (`scripts/node-versions.mjs`), mở PR vào `next` khi lệch rồi chạy CI trên nhánh đó |
 | `prune-branches.yml` | Ngày 1 hằng tháng → báo cáo nhánh hết tác dụng (`scripts/prune-branches.mjs`) vào job summary; chạy tay với `apply` để xoá mục "Xoá" |
@@ -71,6 +71,8 @@ Bảo vệ cho `next`, `release/*`, `canary` và tag `v*`: xem [Branching and Re
 | `stale.yml` | Issue `needs reproduction` im lặng 14 ngày → nhắc, thêm 7 ngày → đóng |
 | `welcome.yml` | Chào người mở issue / PR lần đầu, chỉ đường tới CONTRIBUTING; PR của bot (Dependabot…) nhận ghi chú review cho maintainer thay vì lời chào |
 | `visual.yml` | Chạy tay: so ảnh / tạo ảnh chuẩn Linux |
+| `codeql.yml` | CodeQL (TypeScript / JavaScript và workflow) trên mọi PR vào `main` / `next`, mọi push vào hai nhánh đó và hằng tuần → Security › Code scanning. Default setup của code scanning để tắt |
+| `scorecard.yml` | Hằng tuần và khi push vào `main` → OpenSSF Scorecard, công bố cho badge trong README |
 | `CODEOWNERS` | Tự yêu cầu review của maintainer |
 
 ## 6. Xử lý sự cố

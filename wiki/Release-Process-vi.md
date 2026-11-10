@@ -245,8 +245,8 @@ của repository hay dependency (#379):
 | Job | Quyền | Chạy |
 | --- | --- | --- |
 | `build` (`canary-build`) | `contents: read` | `npm ci`, kiểm tra phát hành, test, build, `npm pack`. Tải các file `.tgz` và `SHA256SUMS` lên làm artifact. |
-| `publish` (`canary-publish`) | `id-token: write` | Chỉ `setup-node` và npm 11. Tải artifact, so `SHA256SUMS` với mã băm job `build` báo, rồi `npm publish <file>.tgz --provenance --ignore-scripts`. Không checkout, không `npm ci`, không script của repo. |
-| `github-release` | `contents: write` | Checkout và `scripts/release-notes.mjs` → GitHub Release. Không có `id-token`. |
+| `publish` (`canary-publish`) | `id-token: write` | Chỉ `setup-node`, kèm bước kiểm tra npm đi kèm ≥ 11.5.1 (không `npm install -g npm`: tải không ghim hash). Tải artifact, so `SHA256SUMS` với mã băm job `build` báo, rồi `npm publish <file>.tgz --provenance --ignore-scripts`. Không checkout, không `npm ci`, không script của repo. |
+| `github-release` | `contents: write` | Checkout và `scripts/release-notes.mjs` → GitHub Release. Sau đó `scripts/release-provenance.mjs` đính kèm tarball và SLSA provenance của nó (`<file>.tgz.intoto.jsonl`, Sigstore bundle npm ghi lúc publish), sau khi đối chiếu cả hai với sha512 của tarball từ `build`. Không có `id-token`. |
 
 `release-cli.yml` có đúng ba job đó; job publish của nó publish `@yugen-ui/cli` trước, rồi `create-yugen-ui`.
 
