@@ -69,7 +69,7 @@ Protection for `next`, `release/*`, `canary` and `v*` tags: see [[Branching and 
 | `labels.yml` | Sync labels from `.github/labels.yml` |
 | `pr-labeler.yml` | Add `area: …` labels to PRs by file path (`.github/labeler.yml`) |
 | `stale.yml` | `needs reproduction` issues silent for 14 days → reminder, 7 more days → close |
-| `welcome.yml` | Greet first-time issue / PR authors, point them to CONTRIBUTING |
+| `welcome.yml` | Greet first-time issue / PR authors, point them to CONTRIBUTING; bot PRs (Dependabot…) get a review note for the maintainer instead |
 | `visual.yml` | Manual: compare screenshots / create Linux baselines |
 | `CODEOWNERS` | Request maintainer review automatically |
 

@@ -12,6 +12,8 @@ permissions:
 
 jobs:
   welcome:
+    # Chỉ cho người: first-interaction coi mọi PR của bot (Dependabot, ImgBot…) là PR đầu tiên.
+    if: github.event.pull_request.user.type != 'Bot' && github.event.issue.user.type != 'Bot'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/first-interaction@1c4688942c71f71d4f5502a26ea67c331730fa4d # v3.1.0
@@ -25,3 +27,37 @@ jobs:
             Cảm ơn PR đầu tiên của bạn! 🌸 Vui lòng kiểm tra checklist trong mô tả PR, thêm changeset (`npx changeset`)
             nếu thay đổi ảnh hưởng người dùng, và đợi CI xanh. Hướng dẫn: CONTRIBUTING.md · wiki › Component Guidelines.
             Thanks for your first PR! Please complete the checklist and add a changeset if needed.
+
+  bot-note:
+    # PR của bot: ghi chú cho người review thay vì lời chào người mới. Không checkout, không chạy code của PR, nên an toàn
+    # với pull_request_target. Không viết "@dependabot" trong nội dung: Dependabot đọc đó là lệnh.
+    if: github.event_name == 'pull_request_target' && github.event.pull_request.user.type == 'Bot'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+        run: |
+          if [ "$AUTHOR" = "dependabot[bot]" ]; then
+            body=$(cat <<'EOF'
+          Automated dependency update from Dependabot. Before merging into `next`:
+
+          - Wait for every check, including the `Template · …` jobs and `Visual (compare)`.
+          - `@fluentui/react-icons`: if `icons.mjs --check` fails, the upstream paths changed. Run `npm run icons` on this branch and commit `src/components/ui/_internal/icons.tsx`.
+          - A change that reaches the published packages (a `dependencies` entry of `yugen-ui` or `@yugen-ui/cli`, regenerated icons) needs a patch changeset or a line in `packages/cli/CHANGELOG.md`. Lockfile-only, devDependency and GitHub Actions updates don't.
+          - A major update with red CI: close it and add an `ignore` with the reason in `.github/dependabot.yml`.
+
+          Cập nhật dependency tự động từ Dependabot. Trước khi merge: chờ mọi check xanh; icon Fluent đổi path thì chạy `npm run icons`; thay đổi tới gói phát hành cần changeset patch (hoặc dòng CHANGELOG của CLI); bản major đỏ thì đóng và thêm `ignore` kèm lý do.
+          EOF
+            )
+          else
+            body=$(cat <<EOF
+          Automated pull request from \`$AUTHOR\`. Review the diff and wait for CI to be green. No changeset is needed unless it changes a published package.
+
+          PR tự động từ \`$AUTHOR\`: xem diff và chờ CI xanh. Chỉ cần changeset khi thay đổi tới gói phát hành.
+          EOF
+            )
+          fi
+          gh pr comment "$PR_URL" --body "$body"

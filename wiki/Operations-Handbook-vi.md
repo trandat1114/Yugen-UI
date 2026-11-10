@@ -69,7 +69,7 @@ Bảo vệ cho `next`, `release/*`, `canary` và tag `v*`: xem [Branching and Re
 | `labels.yml` | Đồng bộ nhãn từ `.github/labels.yml` |
 | `pr-labeler.yml` | Tự gắn nhãn `area: …` cho PR theo đường dẫn file (`.github/labeler.yml`) |
 | `stale.yml` | Issue `needs reproduction` im lặng 14 ngày → nhắc, thêm 7 ngày → đóng |
-| `welcome.yml` | Chào người mở issue / PR lần đầu, chỉ đường tới CONTRIBUTING |
+| `welcome.yml` | Chào người mở issue / PR lần đầu, chỉ đường tới CONTRIBUTING; PR của bot (Dependabot…) nhận ghi chú review cho maintainer thay vì lời chào |
 | `visual.yml` | Chạy tay: so ảnh / tạo ảnh chuẩn Linux |
 | `CODEOWNERS` | Tự yêu cầu review của maintainer |
 
