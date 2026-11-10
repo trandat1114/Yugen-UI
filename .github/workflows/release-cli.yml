@@ -97,9 +97,13 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       # npm trusted publishing (OIDC, #202) cần npm ≥ 11.5.1. Không dùng npm token từ CLI 0.6.0: cả hai gói khai báo
-      # repository này và release-cli.yml là trusted publisher trên npmjs.com.
+      # repository này và release-cli.yml là trusted publisher trên npmjs.com. Node 26 đã kèm npm đủ mới nên chỉ kiểm tra
+      # phiên bản, không `npm install -g npm` (tải không ghim hash; OpenSSF Scorecard › Pinned-Dependencies).
       - name: npm with trusted publishing
-        run: npm install -g npm@11 && npm --version
+        run: |
+          V="$(npm --version)"; echo "npm $V"
+          node -e 'const [a, b, c] = process.argv[1].split(".").map(Number); process.exit(a > 11 || (a === 11 && (b > 5 || (b === 5 && c >= 1))) ? 0 : 1)' "$V" \
+            || { echo "::error::npm $V is older than 11.5.1, which trusted publishing needs"; exit 1; }
 
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
@@ -178,3 +182,24 @@ jobs:
           FLAGS="--latest=false"
           [ "$DIST_TAG" = "latest" ] || FLAGS="$FLAGS --prerelease"
           gh release create "$GITHUB_REF_NAME" --verify-tag --title "@yugen-ui/cli $VERSION" --notes-file "$RUNNER_TEMP/notes.md" $FLAGS
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: npm-packages
+          path: ${{ runner.temp }}/npm-packages
+
+      # Tarball trên npm + SLSA provenance npm ghi lúc job publish chạy, đối chiếu sha512 với tarball của job build
+      # (scripts/release-provenance.mjs; OpenSSF Scorecard › Signed-Releases). create-yugen-ui chỉ có ở bản stable, và bị
+      # bỏ qua khi phiên bản trên npm là bản cũ (không tăng cùng bản vá CLI). Chạy lại workflow thì ghi đè (--clobber).
+      - name: Attach packages and provenance
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DIST_TAG: ${{ needs.build.outputs.dist_tag }}
+          CLI: ${{ needs.build.outputs.cli_package }}=${{ needs.build.outputs.cli_tarball }}
+          CREATE: ${{ needs.build.outputs.create_package }}=${{ needs.build.outputs.create_tarball }}
+        run: |
+          SPECS=("$CLI")
+          [ "$DIST_TAG" = "latest" ] && SPECS+=("$CREATE")
+          node scripts/release-provenance.mjs "$RUNNER_TEMP/npm-packages" "${SPECS[@]}" > "$RUNNER_TEMP/assets.txt"
+          mapfile -t FILES < "$RUNNER_TEMP/assets.txt"
+          if [ "${#FILES[@]}" -gt 0 ]; then gh release upload "$GITHUB_REF_NAME" "${FILES[@]}" --clobber; fi

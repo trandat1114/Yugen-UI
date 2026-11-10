@@ -7,14 +7,16 @@ on:
     types: [opened]
 
 permissions:
-  issues: write
-  pull-requests: write
+  contents: read
 
 jobs:
   welcome:
     # Chỉ cho người: first-interaction coi mọi PR của bot (Dependabot, ImgBot…) là PR đầu tiên.
     if: github.event.pull_request.user.type != 'Bot' && github.event.issue.user.type != 'Bot'
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
     steps:
       - uses: actions/first-interaction@1c4688942c71f71d4f5502a26ea67c331730fa4d # v3.1.0
         with:
@@ -33,6 +35,9 @@ jobs:
     # với pull_request_target. Không viết "@dependabot" trong nội dung: Dependabot đọc đó là lệnh.
     if: github.event_name == 'pull_request_target' && github.event.pull_request.user.type == 'Bot'
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
     steps:
       - name: Comment
         env:

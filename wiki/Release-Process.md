@@ -246,8 +246,8 @@ from the repository or its dependencies (#379):
 | Job | Permissions | Runs |
 | --- | --- | --- |
 | `build` (`canary-build`) | `contents: read` | `npm ci`, release checks, tests, build, `npm pack`. Uploads the `.tgz` files and `SHA256SUMS` as an artifact. |
-| `publish` (`canary-publish`) | `id-token: write` | `setup-node` and npm 11 only. Downloads the artifact, checks `SHA256SUMS` against the hash reported by `build`, then `npm publish <file>.tgz --provenance --ignore-scripts`. No checkout, no `npm ci`, no repo scripts. |
-| `github-release` | `contents: write` | Checkout and `scripts/release-notes.mjs` → GitHub Release. No `id-token`. |
+| `publish` (`canary-publish`) | `id-token: write` | `setup-node` only, with a check that its npm is ≥ 11.5.1 (no `npm install -g npm`: an unpinned download). Downloads the artifact, checks `SHA256SUMS` against the hash reported by `build`, then `npm publish <file>.tgz --provenance --ignore-scripts`. No checkout, no `npm ci`, no repo scripts. |
+| `github-release` | `contents: write` | Checkout and `scripts/release-notes.mjs` → GitHub Release. Then `scripts/release-provenance.mjs` attaches the tarball and its SLSA provenance (`<file>.tgz.intoto.jsonl`, the Sigstore bundle npm recorded at publish), after checking both against the `build` tarball's sha512. No `id-token`. |
 
 `release-cli.yml` has the same three jobs; its publish job publishes `@yugen-ui/cli` first, then `create-yugen-ui`.
 

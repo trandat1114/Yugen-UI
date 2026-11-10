@@ -799,10 +799,12 @@ export function parseMarkdownIncremental(text: string, streaming: boolean, prev:
     };
   }
   const full = parseBlocks(lines, 0, streaming);
-  // Khối không đổi so với lần trước (cùng raw) giữ tham chiếu cũ.
+  // Khối không đổi so với lần trước (cùng raw) giữ tham chiếu cũ. Trừ khối cuối của lần trước khi đang stream: nó được
+  // phép dở dang (`` ` ``, `**`, `[` chưa đóng bị ẩn), nên khi đã có khối sau thì phải phân tích lại dù raw không đổi.
+  const prevLast = prev?.streaming ? prev.blocks.length - 1 : Infinity;
   const blocks = full.blocks.map((b, k) => {
     const old = prev?.blocks[k];
-    return old && old.raw === b.raw && old.type === b.type && k < full.blocks.length - 1 ? old : b;
+    return old && old.raw === b.raw && old.type === b.type && k < full.blocks.length - 1 && k < prevLast ? old : b;
   });
   return { text, streaming, blocks, starts: full.starts };
 }

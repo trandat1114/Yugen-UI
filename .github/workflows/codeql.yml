@@ -1,0 +1,54 @@
+name: CodeQL
+
+# Static analysis (SAST) of the TypeScript / JavaScript code and of the workflows themselves. Results go to
+# Security › Code scanning, and each PR gets a "CodeQL" check from code scanning. Runs on every PR without path filters:
+# OpenSSF Scorecard (SAST) counts a merged PR as checked only when that check ran on it. Repository settings keep
+# code scanning's default setup off, which would conflict with this workflow.
+
+on:
+  push:
+    branches: [main, next, "release/**"]
+  pull_request:
+    branches: [main, next, "release/**", canary]
+  schedule:
+    - cron: "17 4 * * 3" # weekly, Wednesday 04:17 UTC: new queries on unchanged code
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: codeql-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  analyze:
+    name: CodeQL · ${{ matrix.language }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      security-events: write # upload results to code scanning
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [javascript-typescript, actions]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # No build and no npm ci: CodeQL reads the sources directly (build-mode none), so no dependency code runs here.
+      - uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+          config: |
+            paths-ignore:
+              - dist
+              - dist-docs
+              - e2e/**/*-snapshots
+
+      - uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+        with:
+          category: /language:${{ matrix.language }}

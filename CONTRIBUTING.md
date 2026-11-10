@@ -67,7 +67,9 @@ npm run dev          # docs site at http://localhost:5173
 ### Tests
 
 - `npm test` — unit and interaction tests (Vitest + Testing Library, jsdom), colocated as
-  `src/components/ui/<Name>/<Name>.test.tsx`; `npm run test:watch` while writing them.
+  `src/components/ui/<Name>/<Name>.test.tsx`; `npm run test:watch` while writing them. Code that reads untrusted text
+  (Markdown, URLs) also has property-based tests with `fast-check` (`*.property.test.ts`): random and adversarial
+  inputs, shrunk to the shortest failing case.
 - `npm run test:e2e` — Playwright against the docs site (it builds the docs and serves them with `vite preview` on port
   5200; `YUGEN_E2E_DEV=1` uses the dev server instead, faster for a single spec): axe accessibility,
   mouse drag and emulated touch. Locally it uses the installed Microsoft Edge; CI uses Playwright's Chromium (without
@@ -366,7 +368,8 @@ npm run dev          # trang docs tại http://localhost:5173
 ### Kiểm thử
 
 - `npm test` — Vitest (jsdom). Test đặt cạnh component: `src/components/ui/<Name>/<Name>.test.tsx`. Chạy
-  `npm run test:watch` khi đang viết test.
+  `npm run test:watch` khi đang viết test. Code đọc nội dung không tin cậy (Markdown, URL) có thêm property-based test
+  bằng `fast-check` (`*.property.test.ts`): đầu vào ngẫu nhiên và hiểm hóc, ca hỏng được thu nhỏ về ví dụ ngắn nhất.
 - `npm run test:e2e` — Playwright tự build docs và chạy `vite preview` ở cổng 5200 (`YUGEN_E2E_DEV=1` dùng dev server,
   nhanh hơn khi chỉ chạy một spec). Trên máy dùng Microsoft Edge đã cài sẵn; CI dùng
   Chromium của Playwright (`npx playwright install chromium`, rồi chạy với `CI=1` nếu máy không có Edge). Báo cáo:
