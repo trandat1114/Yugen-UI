@@ -41,10 +41,15 @@ Cách dự án được vận hành hằng ngày: ai làm gì, khi nào, theo lu
 
 Bảo vệ cho `next`, `release/*`, `canary` và tag `v*`: xem [Branching and Release Channels](Branching-and-Release-Channels-vi).
 
-**Settings → Branches → Branch protection cho `main`:**
-- Require a pull request before merging · Require approvals: 1 · Dismiss stale approvals
-- Require status checks: `Build · Node 24`, `Build · Node 26`, `Unit tests (React 19)`, `E2E (Playwright + axe)`
-- Require conversation resolution · Block force pushes · Do not allow deletions
+**Settings → Rules → Rulesets → `protect-main`** (`main` và `release/*`):
+- Bắt buộc pull request · 2 approval · review của code owner · approval sau lần push cuối · bỏ approval cũ khi có push
+  mới · giải quyết hết thread
+- Check bắt buộc `Build · Node 24`, `Build · Node 26`, `Unit tests (React 19)`, `E2E (Playwright + axe)`, và nhánh phải
+  cập nhật theo `main` trước khi merge
+- Cấm force push, cấm xoá
+- Bypass: admin của repository. Chỉ có một maintainer nên mọi lần merge vào `main` dùng quyền này ("Merge without
+  waiting for requirements to be met (bypass rules)", hoặc `gh pr merge --admin`); người khác vẫn phải theo luật.
+  OpenSSF Scorecard chấm mức này 9/10 (Branch-Protection); 10 cần bỏ bypass, tức là cần maintainer thứ hai
 
 **Settings → General:** Allow squash merging (mặc định) · Automatically delete head branches · Discussions: bật.
 

@@ -111,13 +111,12 @@ node scripts/prune-branches.mjs --local --apply                # also merged loc
   junction pointing to the main repo, delete the junction first (PowerShell: `(Get-Item <worktree>\node_modules).Delete()`),
   then remove the worktree.
 
-## Branch protection (Settings → Branches → Add rule)
+## Branch protection (Settings → Rules → Rulesets)
 
 | Pattern | Rules |
 |---|---|
-| `main` | PR required, 1 approval, 5 CI jobs green, all threads resolved, no force-push / deletion |
-| `next` | PR required, CI green, no force-push / deletion |
-| `release/*` | PR required, CI green, no deletion |
+| `main`, `release/*` | `protect-main`: PR required, 2 approvals incl. code owner review, approval of the most recent push, branch up to date, required checks (`Build · Node 24`, `Build · Node 26`, `Unit tests (React 19)`, `E2E (Playwright + axe)`), threads resolved, no force-push / deletion. Admins bypass: with one maintainer, merges into `main` go through the bypass |
+| `next` | `protect-next`: no force-push / deletion, so `sync-next.yml` can push `main` into it. CI runs on every PR |
 | `canary` | Not protected (maintainers may force-push) |
 
-`v*` tags: Settings → Rules → Rulesets → Tag ruleset, only maintainers may create / delete `v*` tags.
+`v*` and `cli@*` tags: ruleset `rule-tags`, only admins create them, nobody updates or deletes them.

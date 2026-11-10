@@ -41,10 +41,15 @@ How the project runs day to day: who does what, when, and under which rules. Rol
 
 Protection for `next`, `release/*`, `canary` and `v*` tags: see [[Branching and Release Channels]].
 
-**Settings → Branches → Branch protection for `main`:**
-- Require a pull request before merging · Require approvals: 1 · Dismiss stale approvals
-- Require status checks: `Build · Node 24`, `Build · Node 26`, `Unit tests (React 19)`, `E2E (Playwright + axe)`
-- Require conversation resolution · Block force pushes · Do not allow deletions
+**Settings → Rules → Rulesets → `protect-main`** (`main` and `release/*`):
+- Pull request required · 2 approvals · code owner review · approval of the most recent push · dismiss stale approvals ·
+  conversations resolved
+- Required checks `Build · Node 24`, `Build · Node 26`, `Unit tests (React 19)`, `E2E (Playwright + axe)`, and the branch
+  must be up to date before merging
+- No force push, no deletion
+- Bypass: repository admin. With one maintainer, merges into `main` use it ("Merge without waiting for requirements to be
+  met (bypass rules)", or `gh pr merge --admin`); the rules apply to everyone else. OpenSSF Scorecard scores this 9/10
+  (Branch-Protection); 10 needs no bypass, which needs a second maintainer
 
 **Settings → General:** Allow squash merging (default) · Automatically delete head branches · Discussions: on.
 

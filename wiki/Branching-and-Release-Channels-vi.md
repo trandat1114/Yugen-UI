@@ -107,16 +107,14 @@ node scripts/prune-branches.mjs --local --apply                # thêm nhánh lo
 - Workflow **Prune branches** chạy ngày 1 hằng tháng và chỉ ghi báo cáo vào job summary. Chạy tay (Run workflow, tick
   `apply`) để xoá mục "Xoá".
 - Worktree: gỡ worktree (`git worktree remove`) trước khi xoá nhánh của nó. Worktree có `node_modules` là junction trỏ về
-  repo chính thì xoá junction trước (PowerShell: `(Get-Item <worktree>
-ode_modules).Delete()`), rồi mới gỡ worktree.
+  repo chính thì xoá junction trước (PowerShell: `(Get-Item <worktree>\node_modules).Delete()`), rồi mới gỡ worktree.
 
-## Bảo vệ nhánh (Settings → Branches → Add rule)
+## Bảo vệ nhánh (Settings → Rules → Rulesets)
 
 | Pattern | Luật |
 |---|---|
-| `main` | PR bắt buộc, 1 approve, 5 job CI xanh, giải quyết hết thread, cấm force-push / xoá |
-| `next` | PR bắt buộc, CI xanh, cấm force-push / xoá |
-| `release/*` | PR bắt buộc, CI xanh, cấm xoá |
+| `main`, `release/*` | `protect-main`: PR bắt buộc, 2 approval gồm review của code owner, approval sau lần push cuối, nhánh cập nhật theo `main`, check bắt buộc (`Build · Node 24`, `Build · Node 26`, `Unit tests (React 19)`, `E2E (Playwright + axe)`), giải quyết hết thread, cấm force-push / xoá. Admin bypass: chỉ có một maintainer nên mọi lần merge vào `main` đi qua bypass |
+| `next` | `protect-next`: cấm force-push / xoá, để `sync-next.yml` đẩy `main` vào được. CI chạy trên mọi PR |
 | `canary` | Không bảo vệ (maintainer được force-push) |
 
-Tag `v*`: Settings → Rules → Rulesets → Tag ruleset, chỉ maintainer được tạo / xoá tag `v*`.
+Tag `v*` và `cli@*`: ruleset `rule-tags`, chỉ admin được tạo, không ai được sửa hay xoá.
