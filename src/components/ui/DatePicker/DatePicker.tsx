@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useControllableState } from "../hooks/useControllableState";
-import type { DateRange } from "react-day-picker";
+import type { DateRange } from "@/components/ui/Calendar/Calendar";
 import { cn } from "@/lib/cn";
 import { warnDeprecated } from "@/lib/deprecate";
 import { Calendar } from "@/components/ui/Calendar/Calendar";

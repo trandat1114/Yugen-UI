@@ -293,11 +293,26 @@ export const en: Record<string, ComponentDocEn> = {
     props: {
       mode: "Selection mode.",
       "selected / onSelect": "Value, depending on mode.",
-      disabled: "Disabled days (Date, { before }, { after }, { dayOfWeek }…).",
+      required: "Clicking the selected day again keeps it selected.",
+      "min / max": "Fewest / most days (multiple), nights (range).",
+      "disabled / hidden": "Disabled / hidden days: Date, Date[], DateRange, { before }, { after }, { dayOfWeek }, a (date) => boolean function.",
+      "modifiers / modifiersClassNames": "Named day groups and a class per group, e.g. { booked: [...] } and { booked: \"line-through\" }.",
+      "month / defaultMonth / onMonthChange": "The month shown.",
+      "startMonth / endMonth": "Limits of month navigation.",
       numberOfMonths: "Number of months shown.",
+      captionLayout: "Month title or month / year dropdowns.",
       showOutsideDays: "Shows days of the previous / next month (foreground-4).",
-      locale: "Language; import it from react-day-picker/locale.",
-      "…": "Any other react-day-picker v10 prop.",
+      weekStartsOn: "First day of the week (0 = Sunday); defaults to the locale's.",
+      locale: "A date-fns locale, imported from react-day-picker/locale; defaults to messages.calendar.locale.",
+      timeZone: "IANA time zone, e.g. \"Asia/Ho_Chi_Minh\".",
+      "excludeDisabled / resetOnSelect": "range: never span a disabled day / a click after a complete range starts a new one.",
+      "navLayout / hideNavigation / disableNavigation / pagedNavigation / reverseMonths / reverseYears":
+        "Where the month navigation buttons go and how they behave.",
+      "fixedWeeks / showWeekNumber / ISOWeek / firstWeekContainsDate / hideWeekdays / today":
+        "Day grid: always six weeks, week numbers, ISO weeks, first week of the year, hidden weekday names, the day marked as today.",
+      "autoFocus / footer / dir / role / id / title / lang": "Focus on mount, calendar footer, reading direction and HTML attributes.",
+      "classNames / components / formatters / labels":
+        "Deprecated: react-day-picker props, still forwarded with a development warning, removed in 1.0 (#371).",
     },
   },
 
