@@ -1,6 +1,6 @@
 {
   "$comment": "Dependency policy of yugen-ui, checked by scripts/check-deps.mjs (#383). maxPackages: packages installed with yugen-ui, lowered when one goes away. allow: accepted findings, each with a reason and a review date. CONTRIBUTING.md > Dependencies.",
-  "maxPackages": 69,
+  "maxPackages": 68,
   "allow": [
     {
       "name": "detect-node-es",
