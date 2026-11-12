@@ -7,7 +7,7 @@ import { Switch } from "@/components/ui/Switch/Switch";
 import { Radio, RadioGroup } from "@/components/ui/RadioGroup/RadioGroup";
 
 /*
- * Trong <form>, Radix thêm một input / select ẩn (position: absolute) cạnh control để gửi giá trị theo form. Nó phải có
+ * Trong <form>, Radix Select thêm một input / select ẩn (position: absolute) cạnh control để gửi giá trị theo form. Nó phải có
  * phần tử định vị bao quanh nằm trong component; nếu không, nó thoát khỏi vùng cuộn chứa control và kéo dài trang (#223).
  * jsdom không tính layout: kiểm phần tử định vị gần nhất. Trang /templates được E2E đo thật (e2e/docs-flows.spec.ts).
  */
@@ -18,16 +18,6 @@ function positionedParent(el: Element, stop: Element) {
 
 describe("phần tử ẩn cho <form> nằm trong control", () => {
   it.each([
-    ["Checkbox", <Checkbox key="c" name="consent" label="Đồng ý" />, 'input[type="checkbox"][aria-hidden="true"]', "button"],
-    ["Switch", <Switch key="s" name="alerts" label="Thông báo" />, 'input[type="checkbox"][aria-hidden="true"]', "button"],
-    [
-      "Radio",
-      <RadioGroup key="r" name="plan" aria-label="Gói">
-        <Radio value="free" label="Free" />
-      </RadioGroup>,
-      'input[type="radio"][aria-hidden="true"]',
-      "button",
-    ],
     [
       "Dropdown trong Field",
       <Field key="d" label="Quốc gia">
@@ -46,5 +36,24 @@ describe("phần tử ẩn cho <form> nằm trong control", () => {
     const parent = positionedParent(input, form);
     expect(parent).not.toBeNull();
     expect(parent!.contains(form.querySelector(visible))).toBe(true);
+  });
+});
+
+describe("Checkbox / Switch / Radio là input gốc (#357)", () => {
+  it("không có bản ẩn; giá trị đi thẳng vào FormData", () => {
+    const { container } = render(
+      <form>
+        <Checkbox name="consent" defaultChecked label="Đồng ý" />
+        <Switch name="alerts" defaultChecked label="Thông báo" />
+        <RadioGroup name="plan" defaultValue="free" aria-label="Gói">
+          <Radio value="free" label="Free" />
+          <Radio value="pro" label="Pro" />
+        </RadioGroup>
+      </form>,
+    );
+    const form = container.querySelector("form")!;
+    expect(form.querySelectorAll('input[aria-hidden="true"]')).toHaveLength(0);
+    const data = new FormData(form);
+    expect([data.get("consent"), data.get("alerts"), data.get("plan")]).toEqual(["on", "on", "free"]);
   });
 });

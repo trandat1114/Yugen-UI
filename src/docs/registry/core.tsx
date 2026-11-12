@@ -841,7 +841,8 @@ export const docs: ComponentDoc[] = [
     props: [
       { name: "label", type: "ReactNode", description: "Nhãn bấm được." },
       { name: "checked / defaultChecked", type: `boolean | "indeterminate"`, description: "Controlled / uncontrolled." },
-      { name: "onCheckedChange", type: `(checked: boolean | "indeterminate") => void`, description: "Callback khi đổi." },
+      { name: "onCheckedChange", type: "(checked: boolean) => void", description: "Callback khi đổi (bấm hay Space luôn cho boolean)." },
+      { name: "name / value / required / form", type: "string / string / boolean / string", description: "Thuộc tính của <input> gốc: giá trị đi theo form, FormData và autofill. ref trỏ tới HTMLInputElement (type=\"checkbox\")." },
       { name: "size", type: `"medium" | "large"`, defaultValue: `"medium"`, description: "Ô 16 / 20px." },
       { name: "labelPosition", type: `"after" | "before"`, defaultValue: `"after"`, description: "Vị trí label." },
     ],
@@ -895,6 +896,7 @@ export const docs: ComponentDoc[] = [
       { name: "label", type: "ReactNode", description: "Nhãn." },
       { name: "checked / defaultChecked", type: "boolean", description: "Controlled / uncontrolled." },
       { name: "onCheckedChange", type: "(checked: boolean) => void", description: "Callback khi đổi." },
+      { name: "name / value / required / form", type: "string / string / boolean / string", description: "Thuộc tính của <input> gốc: giá trị đi theo form, FormData và autofill. ref trỏ tới HTMLInputElement (type=\"checkbox\" role=\"switch\")." },
       { name: "labelPosition", type: `"after" | "before"`, defaultValue: `"after"`, description: "Vị trí label." },
       { name: "material", type: `"glass"`, description: "Yugen Labs — thumb thành glass và dài ra khi đang nhấn." },
     ],

@@ -783,7 +783,7 @@ const [plan, setPlan] = useState("monthly");
       { name: "layout", type: `"vertical" | "horizontal" | "horizontal-stacked"`, defaultValue: `"vertical"`, description: "Bố cục nhóm." },
       { name: "value / defaultValue", type: "string", description: "Giá trị đang chọn." },
       { name: "onValueChange", type: "(value: string) => void", description: "Callback khi đổi." },
-      { name: "disabled / required / name", type: "boolean / string", description: "Áp dụng cho cả nhóm." },
+      { name: "disabled / required / name / form", type: "boolean / string", description: "Áp dụng cho cả nhóm. Các Radio là <input type=\"radio\"> gốc chung name (tự sinh nếu không đặt): mũi tên chọn mục kế, giá trị đi theo form. ref của Radio trỏ tới HTMLInputElement." },
       { name: "Radio.value", type: "string", description: "Giá trị của lựa chọn." },
       { name: "Radio.label", type: "ReactNode", description: "Nhãn bấm được." },
       { name: "Radio.disabled", type: "boolean", description: "Khoá riêng một lựa chọn." },

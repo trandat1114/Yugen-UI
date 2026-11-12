@@ -76,11 +76,11 @@ describe("thumb glass", () => {
   it("Switch: thumb glass dài ra khi nhấn, vẫn trong track khi đang bật", () => {
     render(<Switch label="Wi-Fi" material="glass" defaultChecked />);
     const control = screen.getByRole("switch");
-    const thumb = control.querySelector("span")!;
+    const thumb = control.nextElementSibling!;
     fireEvent.pointerDown(control, { button: 0 });
     expect(thumb.className).toMatch(/\bglass\b/);
-    expect(thumb.className).toContain("data-[state=checked]:translate-x-3");
+    expect(thumb.className).toContain("peer-data-[state=checked]:translate-x-2.5");
     fireEvent.pointerCancel(window);
-    expect(thumb.className).toContain("data-[state=checked]:translate-x-5.5");
+    expect(thumb.className).toContain("peer-data-[state=checked]:translate-x-5");
   });
 });

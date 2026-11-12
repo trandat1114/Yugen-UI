@@ -137,7 +137,8 @@ export const en: Record<string, ComponentDocEn> = {
       layout: "Group layout.",
       "value / defaultValue": "Selected value.",
       onValueChange: "Called when the selection changes.",
-      "disabled / required / name": "Apply to the whole group.",
+      "disabled / required / name / form":
+        "Apply to the whole group. Each Radio is a native <input type=\"radio\"> sharing the name (generated when not set): arrow keys select the next one, the value goes with the form. A Radio's ref points to HTMLInputElement.",
       "Radio.value": "Value of the option.",
       "Radio.label": "Clickable label.",
       "Radio.disabled": "Disables this option only.",
