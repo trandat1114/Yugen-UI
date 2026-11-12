@@ -6,11 +6,8 @@ import {
   Separator,
   useDefaultLayout,
   type GroupImperativeHandle,
-  type GroupProps,
   type LayoutStorage,
   type PanelImperativeHandle,
-  type PanelProps,
-  type SeparatorProps,
 } from "react-resizable-panels";
 import {
   ChevronDown16Regular,
@@ -38,11 +35,48 @@ export { resizableMessages, resizableMessagesVi, resizableMessagesEn, type Resiz
 
 type Orientation = "horizontal" | "vertical";
 
+/* ------------------------------------------------------------------ public types (#371) */
+/** Panel sizes by panel id, in percent (0–100). */
+export type ResizableLayout = Record<string, number>;
+
+/** Second argument of `onLayoutChanged`. */
+export interface ResizableLayoutChange {
+  /** The user dragged a divider or used the keyboard (false for `setLayout` and window resizes). */
+  isUserInteraction: boolean;
+  /** The layout that was asked for, before min / max sizes were applied. */
+  requestedLayout?: ResizableLayout;
+}
+
+/** A panel's size. */
+export interface ResizablePanelSize {
+  asPercentage: number;
+  inPixels: number;
+}
+
+/** What `groupRef` receives. */
+export interface ResizableGroupHandle {
+  getLayout: () => ResizableLayout;
+  /** Applies a layout (clamped to the panels' limits) and returns the one applied. */
+  setLayout: (layout: ResizableLayout) => ResizableLayout;
+}
+
+/** What `panelRef` receives. */
+export interface ResizablePanelHandle {
+  /** Collapses to `collapsedSize`; does nothing unless the panel is `collapsible`. */
+  collapse: () => void;
+  /** Expands a collapsed panel to its last size. */
+  expand: () => void;
+  getSize: () => ResizablePanelSize;
+  isCollapsed: () => boolean;
+  /** A number is pixels, a string such as "30%" is a percentage. */
+  resize: (size: number | string) => void;
+}
+
 interface ResizableGroupContextValue {
   orientation: Orientation;
   /** Nhóm ngang đang lật theo RTL (để lật icon chevron của nút thu gọn). */
   mirrored: boolean;
-  panels: React.MutableRefObject<Map<string, PanelImperativeHandle>>;
+  panels: React.RefObject<Map<string, PanelImperativeHandle>>;
   collapsed: Record<string, boolean>;
   setCollapsed: (id: string, value: boolean) => void;
 }
@@ -109,7 +143,24 @@ const safeLocalStorage: LayoutStorage = {
 const noopStorage: LayoutStorage = { getItem: () => null, setItem: () => {} };
 
 /* ------------------------------------------------------------------ ResizablePanelGroup */
-export interface ResizablePanelGroupProps extends GroupProps {
+export interface ResizablePanelGroupProps extends React.HTMLAttributes<HTMLDivElement> {
+  orientation?: Orientation;
+  /** Initial sizes by panel id (uncontrolled). */
+  defaultLayout?: ResizableLayout;
+  /** Called on every change while dragging. */
+  onLayoutChange?: (layout: ResizableLayout) => void;
+  /** Called once a change is done (end of a drag, a key press, `setLayout`). */
+  onLayoutChanged?: (layout: ResizableLayout, change: ResizableLayoutChange) => void;
+  /** Locks every divider. */
+  disabled?: boolean;
+  /** Keeps the default cursor while dragging. */
+  disableCursor?: boolean;
+  /** "separator" moves only the divider while dragging and resizes the panels on release. */
+  resizePreviewMode?: "panel" | "separator";
+  /** Smallest hit area of a divider, in pixels, for touch (coarse) and mouse (fine) pointers. */
+  resizeTargetMinimumSize?: { coarse: number; fine: number };
+  groupRef?: React.Ref<ResizableGroupHandle | null>;
+  elementRef?: React.Ref<HTMLDivElement | null>;
   /**
    * Lưu bố cục vào localStorage (khoá `react-resizable-panels:<persistKey>`) sau mỗi lần kéo và khôi phục khi tải lại.
    * Đặt `id` cố định cho từng ResizablePanel để bố cục khớp đúng panel.
@@ -140,7 +191,7 @@ function PersistedPanelGroup({
 }: ResizablePanelGroupProps & { persistKey: string }) {
   const hydrating = React.useSyncExternalStore(subscribeNothing, () => false, () => true);
   const persisted = useDefaultLayout({ id: persistKey, storage: hydrating ? noopStorage : safeLocalStorage });
-  const api = React.useRef<GroupImperativeHandle | null>(null);
+  const api = React.useRef<ResizableGroupHandle | null>(null);
   const restoreAfterHydration = React.useRef(hydrating);
 
   React.useEffect(() => {
@@ -176,6 +227,7 @@ function PanelGroup({
   orientation = "horizontal",
   mirrorInRtl = true,
   resizeTargetMinimumSize,
+  groupRef,
   ...props
 }: Omit<ResizablePanelGroupProps, "persistKey">) {
   const contextDir = useDirection();
@@ -202,6 +254,7 @@ function PanelGroup({
         orientation={orientation}
         resizeTargetMinimumSize={resizeTargetMinimumSize}
         className={cn("size-full", className)}
+        groupRef={groupRef as React.Ref<GroupImperativeHandle | null> | undefined}
         {...props}
       />
     </ResizableGroupContext.Provider>
@@ -209,7 +262,23 @@ function PanelGroup({
 }
 
 /* ------------------------------------------------------------------ ResizablePanel */
-export type ResizablePanelProps = PanelProps;
+export interface ResizablePanelProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onResize"> {
+  /** A number is pixels, a string such as "30%" is a percentage. */
+  defaultSize?: number | string;
+  minSize?: number | string;
+  maxSize?: number | string;
+  collapsible?: boolean;
+  /** Size when collapsed. */
+  collapsedSize?: number | string;
+  /** How far past `minSize` the user drags before the panel collapses. */
+  collapsedThreshold?: number | string;
+  /** When the group resizes (window), keep this panel's share or its pixel size. */
+  groupResizeBehavior?: "preserve-relative-size" | "preserve-pixel-size";
+  disabled?: boolean;
+  onResize?: (size: ResizablePanelSize, id: string | number | undefined, prevSize: ResizablePanelSize | undefined) => void;
+  panelRef?: React.Ref<ResizablePanelHandle | null>;
+  elementRef?: React.Ref<HTMLDivElement | null>;
+}
 
 export function ResizablePanel({ dir, id, panelRef, onResize, ...props }: ResizablePanelProps) {
   const contextDir = useDirection();
@@ -249,7 +318,14 @@ export function ResizablePanel({ dir, id, panelRef, onResize, ...props }: Resiza
 }
 
 /* ------------------------------------------------------------------ ResizableHandle */
-export interface ResizableHandleProps extends SeparatorProps {
+export interface ResizableHandleProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "role" | "tabIndex"> {
+  /** Locks this divider. */
+  disabled?: boolean;
+  /** Turns off the double-click that resets the neighbouring panels. */
+  disableDoubleClick?: boolean;
+  /** Shown while dragging with `resizePreviewMode="separator"`. */
+  preview?: React.ReactNode;
+  elementRef?: React.Ref<HTMLDivElement>;
   /** Hiện tay nắm (grip) ở giữa đường chia. */
   withHandle?: boolean;
   /**

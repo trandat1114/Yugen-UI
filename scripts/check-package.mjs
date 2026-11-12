@@ -103,12 +103,15 @@ const allowed = new Set([...Object.keys(pkg.dependencies ?? {}), ...Object.keys(
 const packageOf = (spec) => spec.split("/").slice(0, spec.startsWith("@") ? 2 : 1).join("/");
 // Same specifier forms as scripts/alias-dts.mjs; comment lines (JSDoc examples) do not count.
 const SPECIFIER = /(?:\bfrom\s*|\bimport\s*\(\s*|^[ \t]*import\s+|\bdeclare\s+module\s+)["']([^"'\n]+)["']/gm;
+// Libraries whose types must not reach the public API (#371): replacing them (#356) would otherwise be a breaking change.
+const PRIVATE_TYPES = new Set(["react-resizable-panels"]);
 const files = fs.readdirSync(dist, { recursive: true }).map((f) => path.join(dist, f));
 for (const file of files.filter((f) => f.endsWith(".d.ts"))) {
   const text = fs.readFileSync(file, "utf8");
   for (const { 1: spec, index } of text.matchAll(SPECIFIER)) {
     if (spec.startsWith(".") || /^\s*(?:\*|\/\*|\/\/)/.test(text.slice(text.lastIndexOf("\n", index) + 1, index + 1))) continue;
     if (!allowed.has(packageOf(spec))) fail(`${posix(path.relative(root, file))}: imports "${spec}", which is not a dependency or peer`);
+    if (PRIVATE_TYPES.has(packageOf(spec))) fail(`${posix(path.relative(root, file))}: public types import "${spec}" (#371: use Yugen types)`);
   }
 }
 
