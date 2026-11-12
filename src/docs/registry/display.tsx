@@ -76,7 +76,7 @@ import {
 import { DirectionProvider } from "@radix-ui/react-direction";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/Resizable/Resizable";
 import type { ComponentDoc } from "../types";
-import { landscape, mountain, people, scenery, sunset } from "../sample-assets";
+import { brokenPhoto, landscape, logo, mountain, people, portraits, scenery, sunset } from "../sample-assets";
 
 /* ================================================================== Dữ liệu mẫu */
 
@@ -556,6 +556,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
       { name: "overflowIndicator", type: `"count" | "icon"`, defaultValue: `"count"`, description: "Nút tràn hiện “+N” hoặc icon “…”." },
       { name: "overflowLabel", type: "string", description: "Nhãn đọc sau số đếm của nút mở danh sách (\"+2 …\"); với overflowIndicator=\"icon\" là toàn bộ tên của nút." },
       { name: "AvatarGroupItem.name / src / color", type: "string / string / AvatarColor", defaultValue: `color "colorful"`, description: "Thông tin từng thành viên." },
+      { name: "AvatarGroupItem.image / renderImage / fallbackDelay / onLoadingStatusChange", type: "Pick<AvatarProps, …>", description: "Tuỳ chọn ảnh như của Avatar." },
     ],
   },
 
@@ -672,6 +673,87 @@ const DISPLAY: Record<string, ComponentDoc> = {
           </div>
         ),
       },
+      {
+        title: "Ảnh",
+        description: "avatar.src cho ảnh chân dung; ảnh không tải được thì quay về chữ viết tắt; shape square cho ứng dụng, bot.",
+        code: `<div className="flex flex-col items-start gap-3">
+  <Persona size="extra-large" name="Alex Chen" secondaryText="Design lead" presence="available" avatar={{ src: portraits[0] }} />
+  <Persona size="extra-large" name="Maria Garcia" secondaryText="Photo failed to load" avatar={{ src: brokenPhoto, color: "colorful" }} />
+  <Persona size="extra-large" name="Release bot" secondaryText="Runs every night" avatar={{ src: logo, shape: "square" }} />
+</div>`,
+        render: () => (
+          <div className="flex flex-col items-start gap-3">
+            <Persona size="extra-large" name="Alex Chen" secondaryText="Design lead" presence="available" avatar={{ src: portraits[0] }} />
+            <Persona size="extra-large" name="Maria Garcia" secondaryText="Photo failed to load" avatar={{ src: brokenPhoto, color: "colorful" }} />
+            <Persona size="extra-large" name="Release bot" secondaryText="Runs every night" avatar={{ src: logo, shape: "square" }} />
+          </div>
+        ),
+      },
+      {
+        title: "Nhiều người",
+        description:
+          "avatars hiện một AvatarGroup theo size của Persona: stack (mặc định) hoặc pie. Quá maxAvatars (mặc định 3) thì gom vào nút “+N”; primaryText là tên của nhóm.",
+        code: `<div className="flex flex-wrap items-start gap-6">
+  <Persona
+    size="large"
+    avatars={[
+      { name: "Alex Chen", src: portraits[0] },
+      { name: "Maria Garcia", src: portraits[1] },
+      { name: "Sam Lee", src: portraits[2] },
+      { name: "Priya Patel", src: portraits[3] },
+      { name: "Jordan Kim", src: portraits[4] },
+    ]}
+    primaryText="Alex Chen, Maria Garcia and 3 others"
+    secondaryText="Design review · 4 files"
+  />
+  <Persona
+    size="large"
+    avatarLayout="pie"
+    avatars={[{ name: "Sam Lee" }, { name: "Priya Patel" }, { name: "Jordan Kim" }]}
+    primaryText="Release crew"
+    secondaryText="3 members"
+  />
+  <Persona
+    size="large"
+    textPosition="below"
+    textAlignment="center"
+    avatars={[{ name: "Taylor Nguyen" }, { name: "Chris Novak" }, { name: "Hana Sato" }, { name: "Alex Chen" }]}
+    primaryText="Platform team"
+    secondaryText="4 members"
+  />
+</div>`,
+        render: () => (
+          <div className="flex flex-wrap items-start gap-6">
+            <Persona
+              size="large"
+              avatars={[
+                { name: "Alex Chen", src: portraits[0] },
+                { name: "Maria Garcia", src: portraits[1] },
+                { name: "Sam Lee", src: portraits[2] },
+                { name: "Priya Patel", src: portraits[3] },
+                { name: "Jordan Kim", src: portraits[4] },
+              ]}
+              primaryText="Alex Chen, Maria Garcia and 3 others"
+              secondaryText="Design review · 4 files"
+            />
+            <Persona
+              size="large"
+              avatarLayout="pie"
+              avatars={[{ name: "Sam Lee" }, { name: "Priya Patel" }, { name: "Jordan Kim" }]}
+              primaryText="Release crew"
+              secondaryText="3 members"
+            />
+            <Persona
+              size="large"
+              textPosition="below"
+              textAlignment="center"
+              avatars={[{ name: "Taylor Nguyen" }, { name: "Chris Novak" }, { name: "Hana Sato" }, { name: "Alex Chen" }]}
+              primaryText="Platform team"
+              secondaryText="4 members"
+            />
+          </div>
+        ),
+      },
     ],
     dos: [
       "Dòng phụ ngắn gọn: chức danh, trạng thái, giờ địa phương.",
@@ -689,7 +771,14 @@ const DISPLAY: Record<string, ComponentDoc> = {
       { name: "size", type: `"extra-small" | "small" | "medium" | "large" | "extra-large" | "huge"`, defaultValue: `"medium"`, description: "Avatar 20 / 24 / 32 / 40 / 48 / 64px." },
       { name: "presence", type: `"available" | "busy" | "away" | "offline"`, description: "Trạng thái hiện trên Avatar." },
       { name: "presenceOnly", type: "boolean", defaultValue: "false", description: "Chỉ hiện chấm trạng thái." },
-      { name: "avatar", type: "{ src, color, shape }", description: "Tuỳ chọn truyền cho Avatar." },
+      { name: "avatar", type: "{ src, image, renderImage, color, shape… }", description: "Tuỳ chọn truyền cho Avatar." },
+      {
+        name: "avatars",
+        type: "{ name, src?, color?, image?, renderImage? }[]",
+        description: "Nhiều người, hiện bằng AvatarGroup theo size của Persona. Không dùng cùng avatar, presence, presenceOnly.",
+      },
+      { name: "avatarLayout", type: `"stack" | "pie"`, defaultValue: `"stack"`, description: "Bố cục AvatarGroup của avatars." },
+      { name: "maxAvatars", type: "number", defaultValue: "3", description: "Số ô tối đa của avatars, tính cả nút “+N”; không áp dụng cho pie." },
       { name: "textPosition", type: `"after" | "before" | "below"`, defaultValue: `"after"`, description: "Vị trí khối chữ so với Avatar." },
       { name: "textAlignment", type: `"start" | "center"`, defaultValue: `"start"`, description: "Căn khối chữ." },
     ],

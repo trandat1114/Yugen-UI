@@ -1,6 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
 import { Avatar, type AvatarProps } from "../Avatar/Avatar";
+import { AvatarGroup, AvatarGroupItem, type AvatarGroupItemProps } from "../AvatarGroup/AvatarGroup";
 import { useYugenMessages, useComponentDefaults } from "../YugenProvider/context";
 import { presenceBadgeMessagesEn } from "../PresenceBadge/messages";
 
@@ -63,14 +64,36 @@ const PRIMARY: Record<PersonaSize, string> = {
   huge: "font-display text-subtitle1",
 };
 
-export interface PersonaProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Tên người — dùng làm primaryText mặc định và tên Avatar. */
-  name?: string;
-  /** Tuỳ chọn cho Avatar (src, color, shape…). */
-  avatar?: Omit<AvatarProps, "name" | "size" | "presence">;
+export type PersonaAvatarOptions = Omit<AvatarProps, "name" | "size" | "presence">;
+/** One person in `avatars`: `{ name, src?, color?, image?, renderImage? }`. */
+export type PersonaAvatarItem = Omit<AvatarGroupItemProps, "className">;
+
+interface PersonaOneAvatar {
+  /** Avatar options (src, image, color, shape…). */
+  avatar?: PersonaAvatarOptions;
   presence?: PersonaPresence;
-  /** Chỉ hiện chấm trạng thái thay cho Avatar. */
+  /** Shows only the presence dot instead of the Avatar. */
   presenceOnly?: boolean;
+  avatars?: never;
+  avatarLayout?: never;
+  maxAvatars?: never;
+}
+
+interface PersonaAvatarStack {
+  /** Several people, shown as an AvatarGroup at the Persona's size. */
+  avatars: PersonaAvatarItem[];
+  /** AvatarGroup layout for `avatars`. */
+  avatarLayout?: "stack" | "pie";
+  /** Most avatars shown, the "+N" button included (stack only). */
+  maxAvatars?: number;
+  avatar?: never;
+  presence?: never;
+  presenceOnly?: never;
+}
+
+interface PersonaBaseProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Name: the default primaryText and the Avatar's name. */
+  name?: string;
   primaryText?: React.ReactNode;
   secondaryText?: React.ReactNode;
   tertiaryText?: React.ReactNode;
@@ -80,10 +103,15 @@ export interface PersonaProps extends React.HTMLAttributes<HTMLDivElement> {
   textAlignment?: "start" | "center";
 }
 
+export type PersonaProps = PersonaBaseProps & (PersonaOneAvatar | PersonaAvatarStack);
+
 export function Persona(inProps: PersonaProps & { ref?: React.Ref<HTMLDivElement> }) {
   const {
     name = "",
     avatar,
+    avatars,
+    avatarLayout = "stack",
+    maxAvatars = 3,
     presence,
     presenceOnly = false,
     primaryText,
@@ -102,7 +130,20 @@ export function Persona(inProps: PersonaProps & { ref?: React.Ref<HTMLDivElement
   const below = textPosition === "below";
   const secondaryClass = cn("truncate text-foreground-2", size === "huge" ? "text-body1" : "text-caption1");
 
-  const media = presenceOnly ? (
+  const label = primaryText ?? name;
+  const media = avatars ? (
+    <AvatarGroup
+      layout={avatarLayout}
+      size={AVATAR_SIZE[size]}
+      maxAvatars={maxAvatars}
+      aria-label={typeof label === "string" && label ? label : avatars.map((a) => a.name).join(", ")}
+      className="shrink-0"
+    >
+      {avatars.map((item, index) => (
+        <AvatarGroupItem key={index} {...item} />
+      ))}
+    </AvatarGroup>
+  ) : presenceOnly ? (
     // Khung cao bằng dòng primaryText để chấm luôn thẳng hàng với tên.
     <span className={cn("flex shrink-0 items-center", LINE[size])}>
       <span
@@ -135,7 +176,7 @@ export function Persona(inProps: PersonaProps & { ref?: React.Ref<HTMLDivElement
           below && textAlignment === "center" ? "items-center" : textPosition === "before" ? "items-end text-end" : "items-start",
         )}
       >
-        <span className={cn("max-w-full truncate font-semibold text-foreground-1", PRIMARY[size])}>{primaryText ?? name}</span>
+        <span className={cn("max-w-full truncate font-semibold text-foreground-1", PRIMARY[size])}>{label}</span>
         {secondaryText && <span className={cn("max-w-full", secondaryClass)}>{secondaryText}</span>}
         {tertiaryText && <span className="max-w-full truncate text-caption1 text-foreground-2">{tertiaryText}</span>}
         {quaternaryText && <span className="max-w-full truncate text-caption1 text-foreground-2">{quaternaryText}</span>}

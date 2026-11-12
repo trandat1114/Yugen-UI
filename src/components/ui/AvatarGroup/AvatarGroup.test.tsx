@@ -78,4 +78,16 @@ describe("AvatarGroup", () => {
     );
     expect(screen.getByRole("button", { name: "Xem 2 thành viên" })).toBeInTheDocument();
   });
+
+  it("AvatarGroupItem passes src and image options to its Avatar", () => {
+    const { container } = render(
+      <AvatarGroup aria-label="Team">
+        <AvatarGroupItem name="Alex Chen" src="/alex.png" image={{ loading: "lazy", sizes: "32px" }} />
+      </AvatarGroup>,
+    );
+    const img = container.querySelector("img");
+    expect(img).toHaveAttribute("src", "/alex.png");
+    expect(img).toHaveAttribute("loading", "lazy");
+    expect(img).toHaveAttribute("sizes", "32px");
+  });
 });
