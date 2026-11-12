@@ -18,6 +18,7 @@ import {
   folderChange,
   folderOfName,
   importsCss,
+  leanImports,
   listedFolders,
   precompiledCss,
   precompiledMeta,
@@ -261,7 +262,7 @@ async function compile(cwd: string, usage: Usage, pm: PackageManager): Promise<{
   if (majorOf(version) !== 4) throw new CliError(`Tailwind CSS ${version} is installed; \`--precompile\` needs v4.`);
   const input = [
     '@import "tailwindcss" source(none);',
-    ...(usage.everything ? [`@import "${THEME}";`] : [`@import "${THEME_CORE}";`, ...usage.folders.map((f) => `@import "yugen-ui/sources/${f}.css";`)]),
+    ...(usage.everything ? [`@import "${THEME}";`] : leanImports(usage)),
     `@source inline("${STYLES_INLINE}");`,
   ].join("\n");
   try {

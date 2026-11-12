@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { findGenerated, parseRecorded, replaceThemeImports } from "../lib/leanCss.js";
-import { installYugen, tmpDir, viteProject, writeFiles } from "../test/fixtures.js";
+import { FIXTURE_MANIFEST, installYugen, tmpDir, viteProject, writeFiles } from "../test/fixtures.js";
 import { add } from "./add.js";
 import { css } from "./css.js";
 import { diagnose } from "./doctor.js";
@@ -60,6 +60,28 @@ describe("yugen css", () => {
     // Second run: nothing to write, still one import.
     expect((await css({ cwd })).written).toBe(false);
     expect(read(cwd, "src/index.css").match(/yugen-ui\.css/g)).toHaveLength(1);
+  });
+
+  it("brand web / teams adds tokens/brands.css when the package has token groups (#354); older packages don't", async () => {
+    const app = (brand: string) => `import { YugenProvider } from "yugen-ui";
+export const app = <YugenProvider brand="${brand}" />;
+`;
+    const files = { "src/main.tsx": app("teams") };
+    const withTokens = installYugen(viteProject(files), { ...FIXTURE_MANIFEST, tokens: { brands: "tokens/brands.css", charts: "tokens/charts.css" } });
+    await css({ cwd: withTokens });
+    expect(imports(withTokens)).toEqual([
+      '@import "yugen-ui/theme-core.css";',
+      '@import "yugen-ui/tokens/brands.css";',
+      '@import "yugen-ui/sources/YugenProvider.css";',
+    ]);
+
+    const sakura = installYugen(viteProject({ "src/main.tsx": app("sakura") }), { ...FIXTURE_MANIFEST, tokens: { brands: "tokens/brands.css" } });
+    await css({ cwd: sakura });
+    expect(imports(sakura)).not.toContain('@import "yugen-ui/tokens/brands.css";');
+
+    const older = installYugen(viteProject(files));
+    await css({ cwd: older });
+    expect(imports(older)).toEqual(['@import "yugen-ui/theme-core.css";', '@import "yugen-ui/sources/YugenProvider.css";']);
   });
 
   it("--check exits with 1 when the file is out of date; yugen add (package mode) adds the component", async () => {

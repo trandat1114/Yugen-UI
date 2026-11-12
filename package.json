@@ -60,6 +60,7 @@
     "./sources/*": "./dist/sources/*",
     "./styles.css": "./dist/styles.css",
     "./tokens.css": "./dist/tokens.css",
+    "./tokens/*": "./dist/tokens/*",
     "./package.json": "./package.json",
     "./hooks": {
       "types": "./dist/components/ui/hooks/Hooks.d.ts",

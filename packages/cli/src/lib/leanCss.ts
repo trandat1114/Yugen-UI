@@ -32,6 +32,8 @@ export interface Manifest {
   exports: Record<string, string>;
   /** Thư mục → các đường dẫn file sources/<Thư mục>.css quét. */
   sources: Record<string, string[]>;
+  /** Token groups outside theme-core.css → file in the package (#354), e.g. brands → tokens/brands.css. */
+  tokens?: Record<string, string>;
 }
 
 /**
@@ -66,9 +68,14 @@ export interface Usage {
   /** Thư mục component được import, đã sắp xếp. */
   folders: string[];
   everything: Everything | null;
+  /** Token files to import after theme-core.css (#354), e.g. tokens/brands.css when the app sets brand web / teams. */
+  tokens?: string[];
   /** Số file mã đã đọc. */
   files: number;
 }
+
+/** brand="web" | "teams" on YugenProvider, `brand: "teams"` in an object, or data-brand="web" in markup (#354). */
+const OTHER_BRAND = /\b(?:data-)?brand\s*[=:]\s*\{?\s*["'`](?:web|teams)["'`]/;
 
 const SKIP_DIRS = new Set(["node_modules", "dist", "build", "out", "coverage", "public", "storybook-static"]);
 const MAX_BYTES = 2 * 1024 * 1024;
@@ -122,6 +129,7 @@ export function importFolders(imp: ModuleImport, manifest: Manifest): string[] |
 /** Đọc import yugen-ui trong `dirs` (tương đối với `cwd`). */
 export function scanUsage(cwd: string, dirs: string[], manifest: Manifest): Usage {
   const folders = new Set<string>();
+  const tokens = new Set<string>();
   let everything: Everything | null = null;
   let files = 0;
   for (const dir of dirs) {
@@ -134,6 +142,7 @@ export function scanUsage(cwd: string, dirs: string[], manifest: Manifest): Usag
         continue;
       }
       files++;
+      if (manifest.tokens?.brands && OTHER_BRAND.test(code)) tokens.add(manifest.tokens.brands);
       if (!code.includes(PACKAGE)) continue;
       for (const imp of findImports(code, file)) {
         const found = importFolders(imp, manifest);
@@ -142,7 +151,7 @@ export function scanUsage(cwd: string, dirs: string[], manifest: Manifest): Usag
       }
     }
   }
-  return { folders: [...folders].sort(), everything, files };
+  return { folders: [...folders].sort(), everything, tokens: [...tokens].sort(), files };
 }
 
 /** Tên do người dùng gõ (`data-grid`, `DataGrid`, `NavItem`) → thư mục component, hoặc null. */
@@ -203,7 +212,16 @@ const everythingNote = (e: Everything) => `${e.file} uses \`${e.syntax}\` from "
 export function importsCss(r: Recorded, usage: Usage | null): string {
   if (!usage) return `${header(r, ["yugen-ui 0.14.0 or later is not installed yet, so this file imports theme.css (every component)."])}\n@import "${THEME}";\n`;
   if (usage.everything) return `${header(r, [everythingNote(usage.everything), "So this file imports theme.css (every component)."])}\n@import "${THEME}";\n`;
-  return [header(r, []), `@import "${THEME_CORE}";`, ...usage.folders.map((f) => `@import "${PACKAGE}/sources/${f}.css";`), ""].join("\n");
+  return [header(r, []), ...leanImports(usage), ""].join("\n");
+}
+
+/** `@import` lines of the lean path: theme-core.css, the token groups the app needs, one sources file per folder. */
+export function leanImports(usage: Usage): string[] {
+  return [
+    `@import "${THEME_CORE}";`,
+    ...(usage.tokens ?? []).map((t) => `@import "${PACKAGE}/${t}";`),
+    ...usage.folders.map((f) => `@import "${PACKAGE}/sources/${f}.css";`),
+  ];
 }
 
 /** Dòng mô tả bản biên dịch (`--precompile`): phiên bản và thư mục, để doctor biết file đã cũ mà không cần biên dịch lại. */
