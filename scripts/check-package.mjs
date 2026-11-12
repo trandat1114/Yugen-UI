@@ -87,7 +87,7 @@ try {
 } catch (error) {
   if (error.code !== "ERR_PACKAGE_PATH_NOT_EXPORTED") fail(`${pkg.name}/_internal/icons: ${error.code ?? error.message}`);
 }
-const CSS_FILES = ["theme.css", "theme-core.css", "styles.css", "tokens.css", "tokens/brands.css", "tokens/charts.css"];
+const CSS_FILES = ["theme.css", "theme-core.css", "styles.css", "components.css", "tokens.css", "tokens/brands.css", "tokens/charts.css"];
 for (const file of [...CSS_FILES, "sources/index.json", "sources/Button.css"]) {
   const specifier = `${pkg.name}/${file}`;
   try {
@@ -101,6 +101,16 @@ for (const file of [...CSS_FILES, "sources/index.json", "sources/Button.css"]) {
 const distText = (file) => (fs.existsSync(path.join(dist, file)) ? fs.readFileSync(path.join(dist, file), "utf8") : "");
 if (/\[data-brand="(web|teams)"\]|--colorChartCategorical1:/.test(distText("theme-core.css"))) fail("dist/theme-core.css still has brand or chart tokens (#354)");
 if (!distText("sources/Chart.css").includes('@import "../tokens/charts.css";')) fail("dist/sources/Chart.css does not import ../tokens/charts.css");
+// components.css (#354) embeds Yugen in a page it does not own: no global reset, no page styles.
+const embed = distText("components.css");
+for (const [what, pattern] of [
+  ["a global * reset", /(^|[{};])\*,::after,::before/],
+  ["a body rule", /(^|[{};])body\{/],
+  ["a ::selection rule", /::selection/],
+]) {
+  if (pattern.test(embed)) fail(`dist/components.css has ${what}`);
+}
+if (!embed.includes(":where([data-theme]) *")) fail("dist/components.css has no preflight scoped to :where([data-theme])");
 for (const group of ["brands", "charts"]) {
   if (!distText("theme.css").includes(`@import "./tokens/${group}.css";`)) fail(`dist/theme.css does not import ./tokens/${group}.css`);
 }

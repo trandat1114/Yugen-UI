@@ -133,24 +133,43 @@ const manifest = {
 fs.writeFileSync(path.join(dist, "sources", "index.json"), JSON.stringify(manifest, null, 2) + "\n");
 console.log(`[build-css] dist/sources/  ${folders.length} files, ${Object.keys(exports).length} exports`);
 
-// ---------- dist/styles.css ----------
-const input = [
-  '@import "tailwindcss" source(none);',
-  themeBody,
+// ---------- dist/styles.css + dist/components.css ----------
+const SOURCES = [
   '@source "./components/ui";',
   '@source "./lib";',
   // Utility glass (Yugen Labs) và yugen-prose dùng thẳng trong app, không chỉ qua component: phải có sẵn trong bản biên dịch.
   '@source inline("glass glass-clear glass-tinted glass-scrim scroll-edge scroll-edge-above rounded-concentric yugen-prose");',
-].join("\n\n");
+];
 
-const compiler = await compile(input, { base: src, onDependency: () => {} });
-const scanner = new Scanner({ sources: compiler.sources });
-const candidates = scanner.scan();
-const compiled = compiler.build(candidates);
-const { code } = optimize(compiled, { minify: true });
-write("styles.css", banner("precompiled stylesheet (no Tailwind required)") + code.trim() + "\n");
+async function compileCss(parts) {
+  const compiler = await compile(parts.join("\n\n"), { base: src, onDependency: () => {} });
+  const scanner = new Scanner({ sources: compiler.sources });
+  const candidates = scanner.scan();
+  const { code } = optimize(compiler.build(candidates), { minify: true });
+  return { code: code.trim(), candidates: candidates.length, files: scanner.files.length };
+}
 
-console.log(`[build-css] ${candidates.length} candidates scanned from ${scanner.files.length} files`);
+const styles = await compileCss(['@import "tailwindcss" source(none);', themeBody, ...SOURCES]);
+write("styles.css", banner("precompiled stylesheet (no Tailwind required)") + styles.code + "\n");
+console.log(`[build-css] ${styles.candidates} candidates scanned from ${styles.files} files`);
+
+/*
+ * components.css (#354): styles.css for a page Yugen does not own. No global preflight and no page styles: Tailwind's
+ * preflight is nested under :where([data-theme]) (zero specificity, inside YugenProvider only) and the base layer of
+ * index.css is replaced by src/styles/embed-base.css.
+ */
+const BASE_BLOCK = /^@layer base \{\n[\s\S]*?\n\}$/m;
+if (!BASE_BLOCK.test(themeBody)) throw new Error("[build-css] src/index.css không còn khối @layer base ở cấp trên cùng");
+const preflight = read(path.join(root, "node_modules", "tailwindcss", "preflight.css"));
+const components = await compileCss([
+  "@layer theme, base, components, utilities;",
+  '@import "tailwindcss/theme.css" layer(theme);',
+  `@layer base {\n:where([data-theme]) {\n${preflight}\n}\n}`,
+  '@import "tailwindcss/utilities.css" layer(utilities) source(none);',
+  themeBody.replace(BASE_BLOCK, read(path.join(src, "styles", "embed-base.css"))),
+  ...SOURCES,
+]);
+write("components.css", banner("precompiled stylesheet to embed in a page you don't own (no global reset)") + components.code + "\n");
 
 function write(name, content) {
   fs.writeFileSync(path.join(dist, name), content);

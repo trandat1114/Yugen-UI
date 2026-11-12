@@ -1,0 +1,39 @@
+/**
+ * Base layer of dist/components.css (#354): Yugen inside a page it does not own. No page styles (html, body, ::selection)
+ * and no global reset: scripts/build-css.mjs nests Tailwind's preflight under :where([data-theme]), so it only reaches
+ * what YugenProvider renders. Keep in step with the @layer base block of src/index.css (src/test/css-floor.test.ts).
+ */
+@layer base {
+  :root,
+  [dir="ltr"] {
+    --yugen-dir: 1;
+  }
+  [dir="rtl"] {
+    --yugen-dir: -1;
+  }
+  /* The page's typography stops at the provider: zero specificity, so any class wins. */
+  :where([data-theme]) {
+    font-family: var(--fontFamilyBase);
+    font-size: var(--fontSizeBase300);
+    line-height: var(--lineHeightBase300);
+    -webkit-font-smoothing: antialiased;
+  }
+  :where([data-theme]),
+  :where([data-theme]) *,
+  :where([data-theme]) ::before,
+  :where([data-theme]) ::after {
+    border-color: var(--colorNeutralStroke2);
+  }
+  [data-theme] {
+    color: var(--colorNeutralForeground1);
+  }
+  :where([data-theme]):focus-visible,
+  :where([data-theme]) :focus-visible {
+    outline: 2px solid var(--colorStrokeFocus2);
+    outline-offset: 1px;
+  }
+  [data-sortable-item][data-dragging] {
+    position: relative;
+    background-color: var(--colorNeutralBackground1);
+  }
+}
