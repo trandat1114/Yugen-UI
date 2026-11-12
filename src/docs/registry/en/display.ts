@@ -32,6 +32,7 @@ export const en: Record<string, ComponentDocEn> = {
       overflowLabel:
         "Label read after the count on the button that opens the list (\"+2 …\"); with overflowIndicator=\"icon\" it is the button's whole name.",
       "AvatarGroupItem.name / src / color": "Details of each member.",
+      "AvatarGroupItem.image / renderImage / fallbackDelay / onLoadingStatusChange": "Image options, as on Avatar.",
     },
   },
 
@@ -46,6 +47,12 @@ export const en: Record<string, ComponentDocEn> = {
         description: "textAlignment start (default) aligns the text with the top edge of the Avatar; center centers it vertically.",
       },
       { title: "Presence only", description: "presenceOnly replaces the Avatar with a presence dot, which suits dense lists." },
+      { title: "Image", description: "avatar.src for a photo; an image that fails to load falls back to the initials; shape square for apps and bots." },
+      {
+        title: "Several people",
+        description:
+          "avatars shows an AvatarGroup at the Persona's size: stack (default) or pie. Past maxAvatars (default 3) the rest go into a “+N” button; primaryText names the group.",
+      },
     ],
     dos: [
       "Keep secondary lines short: job title, status, local time.",
@@ -64,6 +71,9 @@ export const en: Record<string, ComponentDocEn> = {
       presence: "Presence shown on the Avatar.",
       presenceOnly: "Shows only the presence dot.",
       avatar: "Options passed to the Avatar.",
+      avatars: "Several people, shown as an AvatarGroup at the Persona's size. Not combined with avatar, presence or presenceOnly.",
+      avatarLayout: "AvatarGroup layout for avatars.",
+      maxAvatars: "Most cells for avatars, the “+N” button included; not used by pie.",
       textPosition: "Position of the text block relative to the Avatar.",
       textAlignment: "Alignment of the text block.",
     },

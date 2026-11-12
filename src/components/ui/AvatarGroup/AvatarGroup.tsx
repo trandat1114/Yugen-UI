@@ -51,34 +51,25 @@ interface AvatarGroupContextValue {
 const AvatarGroupContext = React.createContext<AvatarGroupContextValue>({ layout: "spread", size: 32, inPopover: false });
 
 /* ------------------------------------------------------------------ AvatarGroupItem */
-export interface AvatarGroupItemProps {
-  name: string;
-  src?: string;
+export interface AvatarGroupItemProps
+  extends Pick<AvatarProps, "name" | "src" | "image" | "renderImage" | "fallbackDelay" | "onLoadingStatusChange"> {
   color?: AvatarProps["color"];
   className?: string;
 }
 
-export function AvatarGroupItem({ name, src, color = "colorful", className }: AvatarGroupItemProps) {
+export function AvatarGroupItem({ color = "colorful", className, ...avatar }: AvatarGroupItemProps) {
   const { layout, size, inPopover } = React.useContext(AvatarGroupContext);
 
   if (inPopover) {
     return (
       <li className={cn("flex items-center gap-2 rounded-medium px-2 py-1 text-body1 text-foreground-1", className)}>
-        <Avatar name={name} src={src} color={color} size={24} />
-        <span className="min-w-0 truncate">{name}</span>
+        <Avatar {...avatar} color={color} size={24} />
+        <span className="min-w-0 truncate">{avatar.name}</span>
       </li>
     );
   }
 
-  return (
-    <Avatar
-      name={name}
-      src={src}
-      color={color}
-      size={size}
-      className={cn(layout === "stack" && "ring-2 ring-background-1", className)}
-    />
-  );
+  return <Avatar {...avatar} color={color} size={size} className={cn(layout === "stack" && "ring-2 ring-background-1", className)} />;
 }
 
 /* ------------------------------------------------------------------ AvatarGroup */
@@ -150,8 +141,7 @@ export function AvatarGroup(inProps: AvatarGroupProps & { ref?: React.Ref<HTMLDi
                 >
                   <span className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2">
                     <Avatar
-                      name={item.props.name}
-                      src={item.props.src}
+                      {...item.props}
                       color={item.props.color ?? "colorful"}
                       size={size}
                       className="rounded-none"
