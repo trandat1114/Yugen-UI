@@ -8,13 +8,219 @@ import {
   ChevronUp20Regular,
 } from "../_internal/icons";
 import { cn } from "@/lib/cn";
+import { warnDeprecated } from "@/lib/deprecate";
 import { useYugenMessages } from "../YugenProvider/context";
-import { calendarMessagesEn } from "./messages";
+import { calendarMessagesEn, type CalendarLocale } from "./messages";
 
-export { calendarMessages, calendarMessagesVi, calendarMessagesEn, type CalendarMessages } from "./messages";
+export {
+  calendarMessages,
+  calendarMessagesVi,
+  calendarMessagesEn,
+  type CalendarLocale,
+  type CalendarMessages,
+} from "./messages";
+
+/** A range of days; `to` stays unset until the second day is picked. */
+export interface DateRange {
+  from: Date | undefined;
+  to?: Date | undefined;
+}
+
+/**
+ * Days a rule matches: `true` (every day), a day, a list of days, a range, `{ before }`, `{ after }`, both (the days
+ * between), `{ dayOfWeek }` (0 = Sunday), or a function.
+ */
+export type CalendarMatcher =
+  | boolean
+  | Date
+  | Date[]
+  | DateRange
+  | { before: Date }
+  | { after: Date }
+  | { before: Date; after: Date }
+  | { dayOfWeek: number | number[] }
+  | ((date: Date) => boolean);
+
+/** Props of every Calendar, whatever its `mode`. */
+export interface CalendarBaseProps {
+  className?: string;
+  style?: React.CSSProperties;
+  id?: string;
+  title?: string;
+  lang?: string;
+  "aria-label"?: string;
+  "aria-labelledby"?: string;
+  role?: "application" | "dialog";
+  /** Reading direction; defaults to the nearest DirectionProvider. */
+  dir?: "ltr" | "rtl";
+
+  /** Month shown (controlled). */
+  month?: Date;
+  /** Month shown first (uncontrolled). */
+  defaultMonth?: Date;
+  onMonthChange?: (month: Date) => void;
+  /** First month that can be shown. */
+  startMonth?: Date;
+  /** Last month that can be shown. */
+  endMonth?: Date;
+  numberOfMonths?: number;
+  /** With several months, the arrows move by `numberOfMonths`. */
+  pagedNavigation?: boolean;
+  reverseMonths?: boolean;
+  captionLayout?: "label" | "dropdown" | "dropdown-months" | "dropdown-years";
+  reverseYears?: boolean;
+  navLayout?: "around" | "after";
+  hideNavigation?: boolean;
+  disableNavigation?: boolean;
+
+  /** Days that cannot be selected. */
+  disabled?: CalendarMatcher | CalendarMatcher[];
+  /** Days that are not shown. */
+  hidden?: CalendarMatcher | CalendarMatcher[];
+  /** The day marked as today. */
+  today?: Date;
+  /** Named day groups, e.g. `{ booked: [date1, date2] }`; style them with `modifiersClassNames`. */
+  modifiers?: Record<string, CalendarMatcher | CalendarMatcher[] | undefined>;
+  /** Class names per modifier, e.g. `{ booked: "line-through" }`. */
+  modifiersClassNames?: Record<string, string>;
+  showOutsideDays?: boolean;
+  /** Always six weeks per month. */
+  fixedWeeks?: boolean;
+  hideWeekdays?: boolean;
+  showWeekNumber?: boolean;
+  weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
+  firstWeekContainsDate?: 1 | 4;
+  ISOWeek?: boolean;
+  /** Overrides `messages.calendar.locale` of the YugenProvider. */
+  locale?: CalendarLocale;
+  /** IANA time zone, e.g. "Asia/Ho_Chi_Minh". */
+  timeZone?: string;
+  autoFocus?: boolean;
+  footer?: React.ReactNode;
+}
+
+export interface CalendarNoSelectionProps extends CalendarBaseProps {
+  mode?: undefined;
+  selected?: undefined;
+  onSelect?: undefined;
+  required?: undefined;
+}
+
+export interface CalendarSingleProps extends CalendarBaseProps {
+  mode: "single";
+  selected?: Date;
+  onSelect?: (date: Date | undefined, triggerDate: Date) => void;
+  /** Clicking the selected day again keeps it selected. */
+  required?: boolean;
+}
+
+export interface CalendarMultipleProps extends CalendarBaseProps {
+  mode: "multiple";
+  selected?: Date[];
+  onSelect?: (dates: Date[] | undefined, triggerDate: Date) => void;
+  required?: boolean;
+  /** Fewest days to keep selected. */
+  min?: number;
+  /** Most days that can be selected. */
+  max?: number;
+}
+
+export interface CalendarRangeProps extends CalendarBaseProps {
+  mode: "range";
+  selected?: DateRange;
+  onSelect?: (range: DateRange | undefined, triggerDate: Date) => void;
+  required?: boolean;
+  /** Shortest range, in nights. */
+  min?: number;
+  /** Longest range, in nights. */
+  max?: number;
+  /** A range cannot span a disabled day. */
+  excludeDisabled?: boolean;
+  /** A click after a complete range starts a new one. */
+  resetOnSelect?: boolean;
+}
 
 /** Fluent 2 Calendar — https://fluent2.microsoft.design/components/web/react/core/calendar/usage */
-export type CalendarProps = DayPickerProps;
+export type CalendarProps = CalendarNoSelectionProps | CalendarSingleProps | CalendarMultipleProps | CalendarRangeProps;
+
+/**
+ * react-day-picker props that Calendar still forwards. They are not part of CalendarProps and go away in 1.0 (#371):
+ * keeping them would tie Yugen's API to react-day-picker, which #356 replaces.
+ */
+export interface CalendarDeprecatedProps {
+  /** @deprecated react-day-picker prop, removed in 1.0. Style days with `modifiers` + `modifiersClassNames`. */
+  classNames?: DayPickerProps["classNames"];
+  /** @deprecated react-day-picker prop, removed in 1.0. Use `className` or `modifiersClassNames`. */
+  styles?: DayPickerProps["styles"];
+  /** @deprecated react-day-picker prop, removed in 1.0. Use `modifiersClassNames`. */
+  modifiersStyles?: DayPickerProps["modifiersStyles"];
+  /** @deprecated react-day-picker prop, removed in 1.0. */
+  components?: DayPickerProps["components"];
+  /** @deprecated react-day-picker prop, removed in 1.0. Set `locale`. */
+  formatters?: DayPickerProps["formatters"];
+  /** @deprecated react-day-picker prop, removed in 1.0. Set `locale`. */
+  labels?: DayPickerProps["labels"];
+  /** @deprecated react-day-picker prop, removed in 1.0. Set `locale`. */
+  numerals?: DayPickerProps["numerals"];
+  /** @deprecated react-day-picker prop, removed in 1.0. Use `onSelect`. */
+  onDayClick?: DayPickerProps["onDayClick"];
+  /** @deprecated react-day-picker prop, removed in 1.0. */
+  onDayFocus?: DayPickerProps["onDayFocus"];
+  /** @deprecated react-day-picker prop, removed in 1.0. */
+  onDayBlur?: DayPickerProps["onDayBlur"];
+  /** @deprecated react-day-picker prop, removed in 1.0. */
+  onDayKeyDown?: DayPickerProps["onDayKeyDown"];
+  /** @deprecated react-day-picker prop, removed in 1.0. */
+  onDayMouseEnter?: DayPickerProps["onDayMouseEnter"];
+  /** @deprecated react-day-picker prop, removed in 1.0. */
+  onDayMouseLeave?: DayPickerProps["onDayMouseLeave"];
+  /** @deprecated react-day-picker prop, removed in 1.0. Use `onMonthChange`. */
+  onNextClick?: DayPickerProps["onNextClick"];
+  /** @deprecated react-day-picker prop, removed in 1.0. Use `onMonthChange`. */
+  onPrevClick?: DayPickerProps["onPrevClick"];
+  /** @deprecated react-day-picker prop, removed in 1.0. */
+  animate?: DayPickerProps["animate"];
+  /** @deprecated react-day-picker prop, removed in 1.0. */
+  broadcastCalendar?: DayPickerProps["broadcastCalendar"];
+  /** @deprecated react-day-picker prop, removed in 1.0. */
+  noonSafe?: DayPickerProps["noonSafe"];
+  /** @deprecated react-day-picker prop, removed in 1.0. */
+  nonce?: DayPickerProps["nonce"];
+  /** @deprecated react-day-picker prop, removed in 1.0. */
+  dateLib?: DayPickerProps["dateLib"];
+  /** @deprecated react-day-picker prop, removed in 1.0. */
+  useAdditionalWeekYearTokens?: DayPickerProps["useAdditionalWeekYearTokens"];
+  /** @deprecated react-day-picker prop, removed in 1.0. */
+  useAdditionalDayOfYearTokens?: DayPickerProps["useAdditionalDayOfYearTokens"];
+}
+
+const NO_REPLACEMENT = "it is a react-day-picker option without a Calendar prop (#371)";
+const SET_LOCALE = "set the locale (prop or messages.calendar.locale)";
+/** What to use instead of each deprecated prop, for the development warning. */
+const DEPRECATED: Record<keyof CalendarDeprecatedProps, string> = {
+  classNames: "style days with modifiers and modifiersClassNames, the calendar with className",
+  styles: "use className or modifiersClassNames",
+  modifiersStyles: "use modifiersClassNames",
+  components: NO_REPLACEMENT,
+  formatters: SET_LOCALE,
+  labels: SET_LOCALE,
+  numerals: SET_LOCALE,
+  onDayClick: "use onSelect",
+  onDayFocus: NO_REPLACEMENT,
+  onDayBlur: NO_REPLACEMENT,
+  onDayKeyDown: NO_REPLACEMENT,
+  onDayMouseEnter: NO_REPLACEMENT,
+  onDayMouseLeave: NO_REPLACEMENT,
+  onNextClick: "use onMonthChange",
+  onPrevClick: "use onMonthChange",
+  animate: NO_REPLACEMENT,
+  broadcastCalendar: NO_REPLACEMENT,
+  noonSafe: NO_REPLACEMENT,
+  nonce: NO_REPLACEMENT,
+  dateLib: NO_REPLACEMENT,
+  useAdditionalWeekYearTokens: NO_REPLACEMENT,
+  useAdditionalDayOfYearTokens: NO_REPLACEMENT,
+};
 
 const WEEKDAY_VI = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"] as const;
 
@@ -93,19 +299,14 @@ function CalendarDayButton({ day, modifiers, className, ...props }: DayButtonPro
  * (`mode="single" | "range" | "multiple"`, `selected`, `onSelect`, `disabled`, `numberOfMonths`…).
  * Mặc định dùng locale tiếng Việt và tuần bắt đầu từ Thứ Hai; locale mặc định lấy từ `messages.calendar.locale`.
  */
-export function Calendar({
-  className,
-  classNames,
-  components,
-  formatters,
-  labels,
-  locale: localeProp,
-  showOutsideDays = true,
-  dir: dirProp,
-  ...props
-}: CalendarProps) {
+export function Calendar(allProps: CalendarProps & CalendarDeprecatedProps) {
+  const { className, classNames, components, formatters, labels, locale: localeProp, showOutsideDays = true, dir: dirProp, ...props } =
+    allProps;
+  for (const key of Object.keys(DEPRECATED) as (keyof CalendarDeprecatedProps)[]) {
+    if (allProps[key] !== undefined) warnDeprecated(`Calendar.${key}`, DEPRECATED[key], "1.0.0");
+  }
   const msg = useYugenMessages("calendar", calendarMessagesEn);
-  const locale = localeProp ?? msg.locale;
+  const locale = (localeProp ?? msg.locale) as DayPickerProps["locale"];
   // So mã, không import locale `vi`: app tiếng Anh không mang theo nó (#349). App tiếng Việt có locale qua calendarMessagesVi.
   const isVi = locale?.code === "vi";
   // DayPicker dùng `dir` để đảo ArrowLeft/ArrowRight; lấy từ DirectionProvider khi không truyền.
@@ -160,7 +361,7 @@ export function Calendar({
         }}
         components={{ Chevron: CalendarChevron, DayButton: CalendarDayButton, ...components }}
         formatters={isVi ? { formatWeekdayName: (date: Date) => WEEKDAY_VI[date.getDay()], ...formatters } : formatters}
-        {...props}
+        {...(props as DayPickerProps)}
       />
     </CalendarMirrorContext.Provider>
   );
