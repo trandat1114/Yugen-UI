@@ -114,6 +114,7 @@
     "check:examples": "vite-node scripts/check-examples.ts",
     "check:props": "vite-node scripts/check-props.ts",
     "check:demo-language": "node scripts/check-demo-language.mjs",
+    "check:line-terminators": "node scripts/check-line-terminators.mjs",
     "roadmap": "vite-node scripts/sync-roadmap.ts",
     "prepublishOnly": "npm run check:release && npm run check:deps && npm run typecheck && npm run lint:classes && npm run build:lib",
     "pack:check": "npm pack --dry-run",

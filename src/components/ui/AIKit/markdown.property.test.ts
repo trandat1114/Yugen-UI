@@ -23,7 +23,7 @@ const BASE = new URL("https://app.example/docs/page");
 const URL_PIECES = [
   "javascript:", "JaVaScRiPt:", "java\tscript:", "java\nscript:", "\u0000javascript:", " javascript:", "vbscript:",
   "data:text/html,", "http://", "https://", "HTTPS://", "http:/", "mailto:", "//", "/\\", "\\/", "/", "\\", "./", "../",
-  "#", "?", ":", "@", "%2F", "%0A", "&#106;", "&colon;", " ", " ", "﻿", "\t", " ", "\n", "a", "x.y",
+  "#", "?", ":", "@", "%2F", "%0A", "&#106;", "&colon;", "\u00a0", "\u2028", "\ufeff", "\t", " ", "\n", "a", "x.y",
   "evil.com", "www.",
 ];
 const urlLike = fc.oneof(fc.string(), fc.string({ unit: fc.constantFrom(...URL_PIECES), maxLength: 8 }));
