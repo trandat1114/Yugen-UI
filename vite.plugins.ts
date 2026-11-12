@@ -626,7 +626,7 @@ function cookTemplate(raw: string): { text: string; map: number[] } {
     } else {
       const n = raw[i + 1];
       if (n === "\r") i += raw[i + 2] === "\n" ? 3 : 2;
-      else if (n === "\n" || n === " " || n === " ") i += 2;
+      else if (n === "\n" || n === "\u2028" || n === "\u2029") i += 2;
       else if (n === "x") {
         push(String.fromCharCode(parseInt(raw.slice(i + 2, i + 4), 16)), i);
         i += 4;

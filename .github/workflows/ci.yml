@@ -90,6 +90,8 @@ jobs:
       - run: npm run check:props
       # Code mẫu và block viết bằng tiếng Anh, trừ demo nói về ngôn ngữ (ALLOW trong scripts/check-demo-language.mjs)
       - run: npm run check:demo-language
+      # No raw U+2028 / U+2029 in tracked files: editors treat them as line breaks; write the escape instead.
+      - run: npm run check:line-terminators
       - run: node scripts/sync-templates.mjs --check
       # Icon có sẵn (src/components/ui/_internal/icons.tsx) khớp với các icon component đang import (#320).
       - run: node scripts/icons.mjs --check
