@@ -430,6 +430,11 @@ import { cn } from "@/lib/cn";
               Copy mã nguồn component (shadcn registry, <C>@yugen-ui/cli add</C>) thì không cần: Tailwind đã quét thư mục của app.{" "}
               <C>styles.css</C> (không dùng Tailwind) luôn chứa mọi component.
             </li>
+            <li>
+              Nhúng Yugen vào trang có CSS không do bạn quản lý (CMS, widget, micro-frontend): import <C>yugen-ui/components.css</C>{" "}
+              thay cho <C>styles.css</C>. File này không reset toàn trang, không có style cho <C>html</C>, <C>body</C> hay{" "}
+              <C>::selection</C>; reset của Tailwind chỉ áp dụng bên trong <C>YugenProvider</C>.
+            </li>
           </ul>
         </div>
       </DocSection>

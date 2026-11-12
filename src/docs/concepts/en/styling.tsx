@@ -432,6 +432,11 @@ import { cn } from "@/lib/cn";
               Not needed when you copy component source (shadcn registry, <C>@yugen-ui/cli add</C>): Tailwind already scans the app&apos;s
               folders. <C>styles.css</C> (no Tailwind) always contains every component.
             </li>
+            <li>
+              Embedding Yugen in a page whose CSS you don&apos;t own (a CMS, a widget, a micro-frontend): import{" "}
+              <C>yugen-ui/components.css</C> instead of <C>styles.css</C>. It has no global reset and no styles for <C>html</C>,{" "}
+              <C>body</C> or <C>::selection</C>; Tailwind&apos;s reset only applies inside <C>YugenProvider</C>.
+            </li>
           </ul>
         </div>
       </DocSection>

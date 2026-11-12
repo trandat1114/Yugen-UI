@@ -59,6 +59,7 @@
     "./theme-core.css": "./dist/theme-core.css",
     "./sources/*": "./dist/sources/*",
     "./styles.css": "./dist/styles.css",
+    "./components.css": "./dist/components.css",
     "./tokens.css": "./dist/tokens.css",
     "./tokens/*": "./dist/tokens/*",
     "./package.json": "./package.json",

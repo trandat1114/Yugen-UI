@@ -79,6 +79,31 @@ describe("token groups and the theme layer (#354)", () => {
   });
 });
 
+describe("embed-base.css (#354)", () => {
+  /** `prop: value` of every rule in a top-level `@layer base` block whose selector passes `keep`. */
+  const declarations = (css: string, keep: (selector: string) => boolean) => {
+    const base = css.slice(css.indexOf("@layer base {"));
+    const out = new Set<string>();
+    for (const [, selector, body] of base.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+      if (!keep(selector.replace(/\/\*[\s\S]*?\*\//g, "").trim())) continue;
+      for (const [, prop, value] of body.matchAll(/([\w-]+):\s*([^;]+);/g)) out.add(`${prop}: ${value.trim()}`);
+    }
+    return out;
+  };
+
+  it("has every component-level base declaration of index.css (page styles excepted)", () => {
+    const page = /^(html|body|::selection)$/;
+    const index = declarations(indexCss, (s) => !page.test(s));
+    const embed = declarations(read("styles/embed-base.css"), () => true);
+    expect([...index].filter((d) => !embed.has(d))).toEqual([]);
+  });
+
+  it("the focus ring is an outline only: it never changes the shape of the focused element", () => {
+    const focus = declarations(indexCss, (s) => s === ":focus-visible");
+    expect([...focus].sort()).toEqual(["outline-offset: 1px", "outline: 2px solid var(--colorStrokeFocus2)"]);
+  });
+});
+
 describe("keyframes trong @theme (#353)", () => {
   it("index.css và charts.css không còn keyframe nào ngoài @theme", () => {
     expect(stripTheme(indexCss)).not.toMatch(/@keyframes/);

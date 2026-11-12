@@ -132,6 +132,8 @@ module.exports = [
   // AppShell / Sidebar + rail của Nav (#161): 24.97 kB khi thêm; 25.08 kB với layout / scroll / footer. styles.css luôn
   // chứa mọi component (#169 không làm nó nhỏ đi).
   css("styles.css", "29 kB"),
+  // #354: styles.css để nhúng vào trang không thuộc app (preflight chỉ trong :where([data-theme]), không style html / body).
+  css("components.css", "28.5 kB"),
   // Glass (#178): token + utility + fallback trợ năng (12.49 / 8.15 kB khi thêm). Prose: biến --prose-* và 4 preset (#244).
   // #353: theme.css chỉ còn `@import "./theme-core.css"` + `@source` (14.68 → 0.18 kB), nên theme được đo ở theme-core.css:
   // 14.69 → 14.79 kB (token animate-wave-flow, keyframes vào @theme). #354: brand web / teams và token chart ra file riêng,

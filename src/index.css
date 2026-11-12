@@ -760,10 +760,10 @@ html[data-yugen-scroll-lock="keep-scrollbar"] body[data-scroll-locked] .width-be
   [data-theme] {
     color: var(--colorNeutralForeground1);
   }
+  /* Outline only (#354): the ring follows the element's own corners and never changes the shape of a focused element. */
   :focus-visible {
     outline: 2px solid var(--colorStrokeFocus2);
     outline-offset: 1px;
-    border-radius: var(--borderRadiusMedium);
   }
   /* Sortable: mục đang kéo nổi trên các mục khác và có nền để chữ không chồng lên nhau; class position / bg-* của mục thắng. */
   [data-sortable-item][data-dragging] {
