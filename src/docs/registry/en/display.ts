@@ -350,12 +350,20 @@ export const en: Record<string, ComponentDocEn> = {
       "ResizablePanelGroup.mirrorInRtl":
         "RTL: horizontal groups run right → left (dragging / arrow keys follow the visible direction); false keeps the LTR layout.",
       "ResizablePanelGroup.onLayoutChanged": "Called after a drag ends. Use it to save the layout your own way.",
+      "ResizablePanelGroup.defaultLayout / onLayoutChange": "Initial sizes by panel id (percent); called continuously while dragging.",
+      "ResizablePanelGroup.groupRef / elementRef": "getLayout(), setLayout(layout); the group's DOM element.",
+      "ResizablePanelGroup.disabled / disableCursor / resizePreviewMode / resizeTargetMinimumSize":
+        "Locks every divider, keeps the default cursor, preview while dragging, smallest hit area (px).",
       "ResizablePanel.defaultSize / minSize / maxSize": "A string such as “30%” is a percentage, a number is px. Double-clicking the divider resets to defaultSize.",
       "ResizablePanel.collapsible / collapsedSize": "Lets the panel collapse (drag past minSize, Enter, or the button).",
+      "ResizablePanel.collapsedThreshold / groupResizeBehavior / disabled":
+        "How far past minSize a drag goes before the panel collapses; on group resize, keep the panel's share or its pixels; locks the panel.",
+      "ResizablePanel.onResize / panelRef / elementRef": "The new size; collapse(), expand(), getSize(), isCollapsed(), resize(size); the DOM element.",
       "ResizableHandle.withHandle": "Shows a grip in the middle of the divider.",
       "ResizableHandle.collapseButton":
         "Button that collapses / expands the panel before (above / at the start of the line) or after the divider; that panel must be collapsible.",
       "ResizableHandle.collapseLabel / expandLabel": "Tooltip text (title) of the button.",
+      "ResizableHandle.preview / elementRef": "Shown while dragging with resizePreviewMode=\"separator\"; the divider's DOM element.",
       "ResizableHandle.disabled / disableDoubleClick": "Locks the divider / turns off the double-click reset.",
     },
   },
