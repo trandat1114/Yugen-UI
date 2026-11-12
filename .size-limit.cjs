@@ -134,14 +134,17 @@ module.exports = [
   css("styles.css", "29 kB"),
   // Glass (#178): token + utility + fallback trợ năng (12.49 / 8.15 kB khi thêm). Prose: biến --prose-* và 4 preset (#244).
   // #353: theme.css chỉ còn `@import "./theme-core.css"` + `@source` (14.68 → 0.18 kB), nên theme được đo ở theme-core.css:
-  // 14.69 → 14.79 kB (token animate-wave-flow, keyframes vào @theme).
-  css("theme-core.css", "16 kB"),
-  // Hai dòng: giới hạn tính theo byte (0.5 kB sẽ gần gấp 3 kích thước).
-  css("theme.css", "200 B"),
+  // 14.69 → 14.79 kB (token animate-wave-flow, keyframes vào @theme). #354: brand web / teams và token chart ra file riêng,
+  // palette --shared-* về docs: 14.79 → 12.80 kB.
+  css("theme-core.css", "14 kB"),
+  // Bốn dòng (#354: + tokens/brands.css, tokens/charts.css): giới hạn tính theo byte.
+  css("theme.css", "300 B"),
+  css("tokens/brands.css", "1 kB"),
+  css("tokens/charts.css", "2.5 kB"),
   // #353: bỏ khối @theme của charts.css, 8.22 → 8.02 kB.
   css("tokens.css", "9 kB"),
-  // CSS đã biên dịch (#360): sàn của mọi app dùng theme-core.css (6.74 kB), và Starter với sources của 5 thư mục nó
-  // import (13.08 kB; 26.7 kB với theme.css quét mọi component, scripts/measure-css.mjs).
-  compiledCss("theme-core.css compiled (floor)", null, "7.5 kB"),
-  compiledCss("Starter: lean CSS compiled", "src/docs/template-library/starter", "14.5 kB"),
+  // CSS đã biên dịch (#360): sàn của mọi app dùng theme-core.css, và Starter với sources của các thư mục nó import
+  // (scripts/measure-css.mjs). #354: sàn 6.74 → 5.80 kB, Starter 13.08 → 12.14 kB.
+  compiledCss("theme-core.css compiled (floor)", null, "6.5 kB"),
+  compiledCss("Starter: lean CSS compiled", "src/docs/template-library/starter", "13 kB"),
 ];

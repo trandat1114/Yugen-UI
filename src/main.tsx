@@ -4,6 +4,8 @@ import App, { preloadRoute } from "./App";
 import { readAppearance } from "./hooks/useAppearance";
 import { hrefOf, legacyHashTarget, parseLocation, PREFIXED_LOCALE } from "./docs/router";
 import "./index.css";
+// Docs only (#354): the shared M365 palette of the Color page, no longer part of the library tokens.
+import "./docs/shared-palette.css";
 
 // Link chia sẻ kiểu cũ (#/components/button) → đường dẫn mới trước khi render.
 const legacy = legacyHashTarget(window.location);

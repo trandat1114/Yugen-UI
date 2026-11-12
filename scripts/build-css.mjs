@@ -37,44 +37,69 @@ const kb = (text) => `${(Buffer.byteLength(text) / 1024).toFixed(1)} kB`;
 if (!fs.existsSync(dist)) fs.mkdirSync(dist, { recursive: true });
 
 // ---------- Nguồn: src/index.css với các @import cục bộ đã nội tuyến ----------
+/**
+ * Token groups kept out of theme-core.css (#354): each is written to dist/tokens/<group>.css. theme.css and styles.css
+ * include them all; with theme-core.css an app imports brands.css itself and sources/<Folder>.css imports charts.css
+ * when the folder uses Chart.
+ */
+const TOKEN_GROUPS = { "brands.css": "brands", "charts.css": "charts" };
 const indexPath = path.join(src, "index.css");
 const inlined = [];
-const themeBody = read(indexPath)
-  .split("\n")
-  .flatMap((line) => {
-    const t = line.trim();
-    if (/^@import\s+["']tailwindcss["'].*;$/.test(t)) return [];
-    if (/^@source\b.*;$/.test(t)) return [];
-    const local = t.match(/^@import\s+["'](\.{1,2}\/[^"']+\.css)["']\s*;$/);
-    if (local) {
-      const file = path.resolve(path.dirname(indexPath), local[1]);
-      inlined.push(file);
-      return [read(file), ""];
-    }
-    return [line];
-  })
-  .join("\n")
-  .replace(/\n{3,}/g, "\n\n")
-  .trim();
+const groups = {};
+const inline = (withGroups) =>
+  read(indexPath)
+    .split("\n")
+    .flatMap((line) => {
+      const t = line.trim();
+      if (/^@import\s+["']tailwindcss["'].*;$/.test(t)) return [];
+      if (/^@source\b.*;$/.test(t)) return [];
+      const local = t.match(/^@import\s+["'](\.{1,2}\/[^"']+\.css)["']\s*;$/);
+      if (local) {
+        const file = path.resolve(path.dirname(indexPath), local[1]);
+        const group = TOKEN_GROUPS[path.basename(file)];
+        if (withGroups) {
+          inlined.push(file);
+          if (group) groups[group] = file;
+        }
+        return group && !withGroups ? [] : [read(file), ""];
+      }
+      return [line];
+    })
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+const themeBody = inline(true);
+const coreBody = inline(false);
+const missingGroups = Object.values(TOKEN_GROUPS).filter((g) => !groups[g]);
+if (missingGroups.length) throw new Error(`[build-css] src/index.css không import nhóm token: ${missingGroups.join(", ")}`);
 
-// ---------- dist/tokens.css ----------
+// ---------- dist/tokens.css + dist/tokens/<group>.css ----------
 const tokens = tokensCss(inlined.map(read));
 write("tokens.css", banner("design tokens (CSS custom properties)") + tokens + "\n");
+fs.rmSync(path.join(dist, "tokens"), { recursive: true, force: true });
+fs.mkdirSync(path.join(dist, "tokens"));
+for (const [group, file] of Object.entries(groups)) {
+  write(`tokens/${group}.css`, banner(`${group} tokens — included by theme.css; @import after yugen-ui/theme-core.css`) + read(file) + "\n");
+}
 
 // ---------- dist/theme-core.css + dist/theme.css ----------
 write(
   "theme-core.css",
   banner("Tailwind CSS v4 theme without component sources — add yugen-ui/sources/<Component>.css") +
-    '\n/* Không quét component: thêm `@import "yugen-ui/sources/<Thư mục>.css";` cho từng component dùng trong app. */\n\n' +
-    themeBody +
+    '\n/* Không quét component: thêm `@import "yugen-ui/sources/<Thư mục>.css";` cho từng component dùng trong app.\n' +
+    '   Brand web / teams: `@import "yugen-ui/tokens/brands.css";` (#354). */\n\n' +
+    coreBody +
     "\n",
 );
 // Tailwind giải @import và @source tương đối với chính theme.css: theme-core.css và components/ nằm cạnh nó (#353).
 write(
   "theme.css",
   banner('Tailwind CSS v4 theme — use after @import "tailwindcss"') +
-    '@import "./theme-core.css";\n\n' +
-    "/* Quét class trong các component đã build (tương đối với file này). */\n" +
+    '@import "./theme-core.css";\n' +
+    Object.keys(groups)
+      .map((group) => `@import "./tokens/${group}.css";\n`)
+      .join("") +
+    "\n/* Quét class trong các component đã build (tương đối với file này). */\n" +
     '@source "./components";\n',
 );
 
@@ -85,7 +110,12 @@ fs.rmSync(path.join(dist, "sources"), { recursive: true, force: true });
 fs.mkdirSync(path.join(dist, "sources"));
 const folders = [...graph.keys()].filter((f) => !f.startsWith("_"));
 for (const folder of folders) {
-  const lines = graph.get(folder).map((f) => `@source "../components/ui/${f}";`);
+  // Chart's tokens come with the folders that render a chart (#354), so the lean path needs no extra import for them.
+  const usesChart = graph.get(folder).some((f) => f === "Chart" || f.startsWith("Chart/"));
+  const lines = [
+    ...(usesChart ? ['@import "../tokens/charts.css";'] : []),
+    ...graph.get(folder).map((f) => `@source "../components/ui/${f}";`),
+  ];
   fs.writeFileSync(
     path.join(dist, "sources", `${folder}.css`),
     banner(`classes of ${folder} and the components it uses — @import after yugen-ui/theme-core.css`) + lines.join("\n") + "\n",
@@ -93,7 +123,13 @@ for (const folder of folders) {
 }
 const missing = [...new Set(Object.values(exports))].filter((f) => !folders.includes(f));
 if (missing.length) throw new Error(`[build-css] export nằm trong thư mục không có sources: ${missing.join(", ")}`);
-const manifest = { version: pkg.version, exports, sources: Object.fromEntries(folders.map((f) => [f, graph.get(f)])) };
+const manifest = {
+  version: pkg.version,
+  exports,
+  sources: Object.fromEntries(folders.map((f) => [f, graph.get(f)])),
+  // Token groups outside theme-core.css (#354): `yugen css` adds tokens/brands.css when the app sets brand web / teams.
+  tokens: Object.fromEntries(Object.keys(groups).map((group) => [group, `tokens/${group}.css`])),
+};
 fs.writeFileSync(path.join(dist, "sources", "index.json"), JSON.stringify(manifest, null, 2) + "\n");
 console.log(`[build-css] dist/sources/  ${folders.length} files, ${Object.keys(exports).length} exports`);
 

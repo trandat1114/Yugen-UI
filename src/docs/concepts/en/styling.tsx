@@ -421,6 +421,11 @@ import { cn } from "@/lib/cn";
               reach any component, so the generated file falls back to theme.css when it finds one.
             </li>
             <li>
+              <C>theme-core.css</C> has the Sakura brand and the tokens every component needs. The web and teams brands are in{" "}
+              <C>yugen-ui/tokens/brands.css</C>: <C>yugen css</C> adds it when your code sets <C>brand=&quot;web&quot;</C> or{" "}
+              <C>brand=&quot;teams&quot;</C>. Chart tokens come with <C>sources/Chart.css</C>.
+            </li>
+            <li>
               Without Tailwind: <C>yugen css --precompile</C> compiles the same list into plain CSS that replaces <C>styles.css</C>.
             </li>
             <li>

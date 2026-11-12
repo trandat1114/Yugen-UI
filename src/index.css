@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./styles/tokens.css";
+@import "./styles/brands.css";
 @import "./styles/charts.css";
 /* Tài liệu Markdown không sinh class: sửa README / CHANGELOG không đổi CSS của docs (CI và Docs bỏ qua các file đó). */
 @source not "../*.md";

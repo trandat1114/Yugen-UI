@@ -28,16 +28,16 @@ function animateTokens() {
 const keyframeNames = [...`${indexCss}\n${chartsCss}`.matchAll(/@keyframes ([\w-]+)/g)].map((m) => m[1]);
 
 describe("dist/tokens.css (#353)", () => {
-  const tokens: string = tokensCss([read("styles/tokens.css"), chartsCss]);
+  const tokens: string = tokensCss([read("styles/tokens.css"), read("styles/brands.css"), chartsCss]);
 
   it("không còn at-rule chỉ Tailwind hiểu, không còn keyframes", () => {
     expect(tailwindAtRules(tokens)).toEqual([]);
     expect(tokens).not.toMatch(/@keyframes|--animate-/);
   });
 
-  it("giữ nguyên token của cả hai file", () => {
-    for (const name of ["--colorBrandBackground:", "--colorChartCategorical1:", "--chartDimOpacity:"]) expect(tokens).toContain(name);
-    expect(tokens).toContain('[data-theme="high-contrast"] {\n  --colorChartCategorical1: #ffffff;');
+  it("giữ nguyên token của các file token", () => {
+    for (const name of ["--colorBrandBackground:", "--colorChartCategorical1:", "--chartDimOpacity:", "--brand-10: #061724"]) expect(tokens).toContain(name);
+    expect(tokens).toContain('  [data-theme="high-contrast"] {\n    --colorChartCategorical1: #ffffff;');
     // Chỉ khối @theme bị bỏ: phần còn lại của charts.css giữ nguyên từng ký tự.
     expect(tokens).toContain(chartsCss.slice(chartsCss.indexOf("/* ===================== LIGHT")));
   });
@@ -55,6 +55,27 @@ describe("dist/tokens.css (#353)", () => {
     ].join("\n");
     expect(stripTheme(css)).toBe('/* @theme { không phải khối } */\n\n:root { --b: "}"; }');
     expect(() => tokensCss([".a { @apply flex; }"])).toThrow(/@apply/);
+  });
+});
+
+describe("token groups and the theme layer (#354)", () => {
+  const groups = ["styles/tokens.css", "styles/brands.css", "styles/charts.css"].map((file) => [file, stripTheme(read(file))] as const);
+
+  it("every token rule sits in @layer theme, so an app's own declarations win", () => {
+    for (const [file, css] of groups) {
+      const code = css.replace(/\/\*[\s\S]*?\*\//g, "").trim();
+      expect(code.startsWith("@layer theme {"), file).toBe(true);
+      expect(code.endsWith("}"), file).toBe(true);
+      expect(code.match(/@layer/g), file).toHaveLength(1);
+    }
+  });
+
+  it("brands web / teams live in brands.css; the docs-only --shared-* palette is not a library token", () => {
+    expect(read("styles/tokens.css")).not.toMatch(/\[data-brand="(web|teams)"\]/);
+    expect(read("styles/brands.css")).toMatch(/data-brand="web"[\s\S]*data-brand="teams"/);
+    for (const [file, css] of groups) expect(css, file).not.toContain("--shared-");
+    const imports = [...indexCss.matchAll(/^@import "\.\/styles\/([\w-]+)\.css";$/gm)].map((m) => m[1]);
+    expect(imports).toEqual(["tokens", "brands", "charts"]);
   });
 });
 

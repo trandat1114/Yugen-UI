@@ -1,0 +1,47 @@
+/**
+ * Brand ramps besides Sakura (#354): `data-brand="web"` (Fluent 2 Communication Blue) and `data-brand="teams"`.
+ * The brand aliases in tokens.css read whichever --brand-* ramp the nearest data-brand defines.
+ * Included by theme.css, styles.css and tokens.css; with theme-core.css add `@import "yugen-ui/tokens/brands.css";`
+ * (`yugen css` does it when the app sets brand="web" or brand="teams").
+ */
+
+@layer theme {
+  /* Fluent 2 Communication Blue — brand gốc của Fluent */
+  [data-brand="web"] {
+    --brand-10: #061724;
+    --brand-20: #082338;
+    --brand-30: #0a2e4a;
+    --brand-40: #0c3b5e;
+    --brand-50: #0e4775;
+    --brand-60: #0f548c;
+    --brand-70: #115ea3;
+    --brand-80: #0f6cbd;
+    --brand-90: #2886de;
+    --brand-100: #479ef5;
+    --brand-110: #62abf5;
+    --brand-120: #77b7f7;
+    --brand-130: #96c6fa;
+    --brand-140: #b4d6fa;
+    --brand-150: #cfe4fa;
+    --brand-160: #ebf3fc;
+  }
+
+  [data-brand="teams"] {
+    --brand-10: #121326;
+    --brand-20: #1c1e3b;
+    --brand-30: #25284e;
+    --brand-40: #303464;
+    --brand-50: #3a3e7c;
+    --brand-60: #464a94;
+    --brand-70: #4f53ac;
+    --brand-80: #5b5fc7;
+    --brand-90: #7177e9;
+    --brand-100: #878ffe;
+    --brand-110: #949efe;
+    --brand-120: #a2abfe;
+    --brand-130: #b4bdff;
+    --brand-140: #c8d0ff;
+    --brand-150: #dbe0fd;
+    --brand-160: #eff1fd;
+  }
+}

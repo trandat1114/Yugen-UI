@@ -87,7 +87,8 @@ try {
 } catch (error) {
   if (error.code !== "ERR_PACKAGE_PATH_NOT_EXPORTED") fail(`${pkg.name}/_internal/icons: ${error.code ?? error.message}`);
 }
-for (const file of ["theme.css", "theme-core.css", "styles.css", "tokens.css", "sources/index.json", "sources/Button.css"]) {
+const CSS_FILES = ["theme.css", "theme-core.css", "styles.css", "tokens.css", "tokens/brands.css", "tokens/charts.css"];
+for (const file of [...CSS_FILES, "sources/index.json", "sources/Button.css"]) {
   const specifier = `${pkg.name}/${file}`;
   try {
     if (import.meta.resolve(specifier) !== pathToFileURL(path.join(dist, file)).href) fail(`${specifier}: resolves outside dist/${file}`);
@@ -95,6 +96,13 @@ for (const file of ["theme.css", "theme-core.css", "styles.css", "tokens.css", "
     fail(`${specifier}: does not resolve (${error.code ?? error.message})`);
   }
   if (!fs.existsSync(path.join(dist, file))) fail(`dist/${file} is missing`);
+}
+// Token groups (#354): theme-core.css has neither the web / teams ramps nor the chart tokens; the Chart sources bring theirs.
+const distText = (file) => (fs.existsSync(path.join(dist, file)) ? fs.readFileSync(path.join(dist, file), "utf8") : "");
+if (/\[data-brand="(web|teams)"\]|--colorChartCategorical1:/.test(distText("theme-core.css"))) fail("dist/theme-core.css still has brand or chart tokens (#354)");
+if (!distText("sources/Chart.css").includes('@import "../tokens/charts.css";')) fail("dist/sources/Chart.css does not import ../tokens/charts.css");
+for (const group of ["brands", "charts"]) {
+  if (!distText("theme.css").includes(`@import "./tokens/${group}.css";`)) fail(`dist/theme.css does not import ./tokens/${group}.css`);
 }
 console.log(`[check-package] exports: ${modules.length} subpaths, ${Object.keys(rootModule).length} root exports`);
 
