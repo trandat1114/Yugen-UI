@@ -143,7 +143,8 @@ export const en: Record<string, ComponentDocEn> = {
     props: {
       label: "Clickable label.",
       "checked / defaultChecked": "Controlled / uncontrolled.",
-      onCheckedChange: "Called when the value changes.",
+      onCheckedChange: "Called when the value changes (a click or Space always gives a boolean).",
+      "name / value / required / form": "Attributes of the native <input>: the value goes with the form, FormData and autofill. ref points to HTMLInputElement (type=\"checkbox\").",
       size: "Box size 16 / 20px.",
       labelPosition: "Label position.",
     },
@@ -162,6 +163,7 @@ export const en: Record<string, ComponentDocEn> = {
       label: "Label.",
       "checked / defaultChecked": "Controlled / uncontrolled.",
       onCheckedChange: "Called when the value changes.",
+      "name / value / required / form": "Attributes of the native <input>: the value goes with the form, FormData and autofill. ref points to HTMLInputElement (type=\"checkbox\" role=\"switch\").",
       labelPosition: "Label position.",
       material: "Yugen Labs — the thumb turns to glass and stretches while pressed.",
     },

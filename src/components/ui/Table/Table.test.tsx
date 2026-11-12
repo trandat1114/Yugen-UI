@@ -115,7 +115,7 @@ describe("Table", () => {
     const onSelect = vi.fn();
     render(<Files onSelect={onSelect} />);
     const all = screen.getByRole("checkbox", { name: "Chọn tất cả hàng" });
-    expect(all).toHaveAttribute("aria-checked", "mixed");
+    expect(all).toBePartiallyChecked();
     expect(all.closest("th")).not.toBeNull();
     const rows = screen.getAllByRole("checkbox", { name: "Chọn hàng" });
     expect(rows[0]).toBeChecked();

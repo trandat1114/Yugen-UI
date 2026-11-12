@@ -117,7 +117,8 @@ module.exports = [
   js("{ Trace }", "{ Trace }", "18 kB"),
   js("{ MessageScroller }", "{ MessageScroller }", "22 kB"),
   js("{ CodeBlock }", "{ CodeBlock }", "21.5 kB"),
-  js("{ DataGrid }", "{ DataGrid }", "28 kB"),
+  // Checkbox là input gốc (#357): 28 → 20.27 kB.
+  js("{ DataGrid }", "{ DataGrid }", "22 kB"),
   // Sortable tự viết (#175): 20.76 kB khi thêm, phần riêng ~6.5 kB (dnd-kit core + sortable: 16.6 kB).
   js("{ Sortable, SortableItem, SortableHandle }", "{ Sortable, SortableItem, SortableHandle }", "19.5 kB"),
   // Citation (Popover) nạp lúc cần (#350): 57.00 → 32.42 kB (lần tải đầu; Citation là chunk riêng).
