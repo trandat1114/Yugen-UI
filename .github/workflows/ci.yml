@@ -106,7 +106,7 @@ jobs:
       # ignored; the CSS files have no types; ./* is a pattern, so a few subpaths stand in for it.
       - run: >-
           npx --yes @arethetypeswrong/cli@0.18.5 --pack . --profile esm-only
-          --exclude-entrypoints ./theme.css ./theme-core.css ./styles.css ./tokens.css
+          --exclude-entrypoints ./theme.css ./theme-core.css ./styles.css ./components.css ./tokens.css
           --include-entrypoints ./Button ./Chart ./AIKit
       - run: npm run build:docs
       - run: npm run pack:check
