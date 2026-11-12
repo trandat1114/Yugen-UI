@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from "vitest";
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { Avatar, type AvatarImageRenderProps } from "./Avatar";
 
 describe("Avatar", () => {
@@ -114,6 +114,50 @@ describe("Avatar", () => {
       fireEvent.error(img(container)!);
       expect(img(container)).toBeNull();
       expect(screen.getByText("AC")).toBeInTheDocument();
+    });
+
+    describe("loaded before hydration (complete is already true)", () => {
+      const proto = HTMLImageElement.prototype;
+      const decodeBefore = Object.getOwnPropertyDescriptor(proto, "decode");
+      function mockImage(naturalWidth: number, decode?: () => Promise<void>) {
+        vi.spyOn(proto, "complete", "get").mockReturnValue(true);
+        vi.spyOn(proto, "naturalWidth", "get").mockReturnValue(naturalWidth);
+        Object.defineProperty(proto, "decode", { configurable: true, writable: true, value: decode });
+      }
+      afterEach(() => {
+        vi.restoreAllMocks();
+        if (decodeBefore) Object.defineProperty(proto, "decode", decodeBefore);
+        else delete (proto as { decode?: unknown }).decode;
+      });
+
+      it("a decoded image counts as loaded", () => {
+        mockImage(96);
+        const onStatus = vi.fn();
+        render(<Avatar name="Alex Chen" src="/alex.png" fallbackDelay={0} onLoadingStatusChange={onStatus} />);
+        expect(onStatus).toHaveBeenLastCalledWith("loaded");
+        expect(screen.queryByText("AC")).toBeNull();
+      });
+
+      it("naturalWidth 0: decode() decides (an SVG without a size loads, a broken image fails)", async () => {
+        mockImage(0, () => Promise.resolve());
+        const onStatus = vi.fn();
+        const { unmount } = render(<Avatar name="Alex Chen" src="/logo.svg" onLoadingStatusChange={onStatus} />);
+        await waitFor(() => expect(onStatus).toHaveBeenLastCalledWith("loaded"));
+        unmount();
+
+        mockImage(0, () => Promise.reject(new Error("EncodingError")));
+        const { container } = render(<Avatar name="Alex Chen" src="/broken.png" onLoadingStatusChange={onStatus} />);
+        await waitFor(() => expect(onStatus).toHaveBeenLastCalledWith("error"));
+        expect(container.querySelector("img")).toBeNull();
+        expect(screen.getByText("AC")).toBeInTheDocument();
+      });
+
+      it("naturalWidth 0 without decode(): error", () => {
+        mockImage(0, undefined);
+        delete (proto as { decode?: unknown }).decode;
+        render(<Avatar name="Alex Chen" src="/broken.png" />);
+        expect(screen.getByText("AC")).toBeInTheDocument();
+      });
     });
 
     it("no src: initials at once and no status callback", () => {
