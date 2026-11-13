@@ -1,0 +1,137 @@
+{
+  "updated": "2026-11-13",
+  "people": [
+    {
+      "login": "trandat1114",
+      "name": "Trần Phú Đạt",
+      "avatar": "https://avatars.githubusercontent.com/u/88397960?u=1536b607c6b24251c0f403833bc956776eae27c2&v=4",
+      "first": "2026-10-20",
+      "counts": {
+        "code": 179,
+        "templates": 39,
+        "docs": 176,
+        "translation": 92,
+        "bug": 29,
+        "a11y": 6,
+        "idea": 86
+      },
+      "maintainer": true
+    },
+    {
+      "login": "dave-otf",
+      "name": "Dave Kurian",
+      "avatar": "https://avatars.githubusercontent.com/u/281910818?u=5f8bbaeee4754ec3ed9d9ea8695d2d2e7f2a61ba&v=4",
+      "first": "2026-10-30",
+      "counts": {
+        "discussion": 4,
+        "a11y": 1,
+        "idea": 3
+      },
+      "items": [
+        {
+          "types": [
+            "discussion",
+            "idea"
+          ],
+          "number": 266,
+          "title": "Docs: Messages table scrolls sideways at 375px, raw backticks in key descriptions; three demos overflow",
+          "date": "2026-11-03",
+          "url": "https://github.com/trandat1114/Yugen-UI/issues/266#issuecomment-6595648056"
+        },
+        {
+          "types": [
+            "discussion",
+            "idea"
+          ],
+          "number": 259,
+          "title": "Docs: props table is hard to read (prop column too wide, description clipped, raw backticks)",
+          "date": "2026-11-03",
+          "url": "https://github.com/trandat1114/Yugen-UI/issues/259#issuecomment-6593217974"
+        },
+        {
+          "types": [
+            "discussion",
+            "idea"
+          ],
+          "number": 161,
+          "title": "1.0 proposal: AppShell / Sidebar layout component",
+          "date": "2026-11-02",
+          "url": "https://github.com/trandat1114/Yugen-UI/issues/161#issuecomment-6569261947"
+        },
+        {
+          "types": [
+            "discussion",
+            "a11y"
+          ],
+          "number": 161,
+          "title": "1.0 proposal: AppShell / Sidebar layout component",
+          "date": "2026-10-30",
+          "url": "https://github.com/trandat1114/Yugen-UI/issues/161#issuecomment-6532308797"
+        }
+      ]
+    },
+    {
+      "login": "giabao12-hali",
+      "name": "Nguyễn Gia Bảo",
+      "avatar": "https://avatars.githubusercontent.com/u/73122721?u=02b625304d485e56f68b21ece646056ce325016b&v=4",
+      "first": "2026-10-30",
+      "counts": {
+        "code": 1,
+        "docs": 2,
+        "translation": 1,
+        "bug": 1
+      },
+      "items": [
+        {
+          "types": [
+            "code",
+            "docs",
+            "translation"
+          ],
+          "number": 257,
+          "title": "feat(hooks): shared hooks for common UI logic (#172)",
+          "date": "2026-11-02",
+          "url": "https://github.com/trandat1114/Yugen-UI/pull/257"
+        },
+        {
+          "types": [
+            "docs"
+          ],
+          "number": 251,
+          "title": "fix: adjust line height for numeral display in EnsoFrame and BloomFrame",
+          "date": "2026-11-02",
+          "url": "https://github.com/trandat1114/Yugen-UI/pull/251"
+        },
+        {
+          "types": [
+            "bug"
+          ],
+          "number": 246,
+          "title": "Japanese (and some other languages) have their endings cut off when opened in full-screen mode.",
+          "date": "2026-10-30",
+          "url": "https://github.com/trandat1114/Yugen-UI/issues/246"
+        }
+      ]
+    },
+    {
+      "login": "ImgBotApp",
+      "name": "Imgbot",
+      "avatar": "https://avatars.githubusercontent.com/u/31427850?u=464006d20c236f7bbec4ae1b2ae80bf4c1ebd57a&v=4",
+      "first": "2026-11-03",
+      "counts": {
+        "code": 1
+      },
+      "items": [
+        {
+          "types": [
+            "code"
+          ],
+          "number": 311,
+          "title": "[ImgBot] Optimize images",
+          "date": "2026-11-03",
+          "url": "https://github.com/trandat1114/Yugen-UI/pull/311"
+        }
+      ]
+    }
+  ]
+}
