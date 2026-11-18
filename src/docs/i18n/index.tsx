@@ -29,15 +29,18 @@ const format = (s: string, vars?: Record<string, string | number>) =>
   vars ? s.replace(/\{(\w+)\}/g, (m, k: string) => (k in vars ? String(vars[k]) : m)) : s;
 
 // Chuỗi có sẵn của component bằng tiếng Việt (kèm locale vi của lịch, ~11 KB gzip): chunk riêng, chỉ trang tiếng Việt nạp
-// (#307). Trang tiếng Anh — mặc định — không tải.
+// (#307). Trang tiếng Anh — mặc định — không tải. Locale của lịch ở yugen-ui/dates, ngoài messagesVi (#356).
 let viUi: YugenMessages | undefined;
 let viUiPromise: Promise<YugenMessages> | null = null;
 
-/** Nạp `messagesVi` (cache; lỗi → bỏ cache để lần sau thử lại). */
+/** Nạp `messagesVi` + `calendarMessagesVi` (cache; lỗi → bỏ cache để lần sau thử lại). */
 export function loadVietnameseUi(): Promise<YugenMessages> {
   if (!viUiPromise) {
-    viUiPromise = import("@/components/ui/messages-vi").then((m) => (viUi = m.messagesVi));
-    viUiPromise.catch(() => (viUiPromise = null));
+    const promise = Promise.all([import("@/components/ui/messages-vi"), import("@/components/ui/Calendar/messages")]).then(
+      ([m, c]) => (viUi = { ...m.messagesVi, calendar: c.calendarMessagesVi }),
+    );
+    promise.catch(() => (viUiPromise = null));
+    viUiPromise = promise;
   }
   return viUiPromise;
 }

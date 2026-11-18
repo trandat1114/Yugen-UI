@@ -107,8 +107,8 @@ export default function Page() {
           />
           <P>
             esbuild assigns whole files to chunks before it drops unused exports. From the root,{" "}
-            <C>{"import { Calendar }"}</C> then brings the Toaster, Breadcrumb&apos;s menu and the citation card into the first chunk:
-            76.46 kB, against 31.60 kB from <C>yugen-ui/Calendar</C>. Two subpaths hold such a part themselves: <C>yugen-ui/AIKit</C>{" "}
+            <C>{"import { Combobox }"}</C> then brings the Toaster, Breadcrumb&apos;s menu and the citation card into the first chunk:
+            66.28 kB, against 38.07 kB from <C>yugen-ui/Combobox</C>. Two subpaths hold such a part themselves: <C>yugen-ui/AIKit</C>{" "}
             also exports Citation, so StreamingMarkdown from it has the citation card in the first chunk, and <C>toast</C> from{" "}
             <C>yugen-ui/Toast</C> brings the Toaster along, because both live in one file.
           </P>

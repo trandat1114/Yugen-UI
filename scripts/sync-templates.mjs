@@ -219,9 +219,17 @@ const ASSET = /\.(avif|webp|png|jpe?g|svg)$/;
 const isText = (content) => typeof content === "string";
 const toYugen = (code) =>
   code
+    // Calendar and the DatePicker family: yugen-ui/dates, which needs react-day-picker (#356).
+    .replace(/(["'])@\/components\/ui\/dates\1/g, '"yugen-ui/dates"')
     .replace(/(["'])@\/components\/ui(?:\/[^"']*)?\1/g, '"yugen-ui"')
     .replace(/(["'])@\/lib\/cn\1/g, '"yugen-ui"')
     .replace(BLOCK_IMPORT, '"./blocks/$2"');
+
+/** react-day-picker, the optional peer of yugen-ui/dates (#356), when the template imports it. */
+const datesPeer = (appFiles) =>
+  Object.values(appFiles).some((code) => isText(code) && /from\s+["']yugen-ui\/dates["']/.test(code))
+    ? { "react-day-picker": pkg.peerDependencies["react-day-picker"] }
+    : {};
 
 /** Export name → component folder, used to seed the generated lean CSS before the CLI runs for the first time. */
 const componentFolderByExport = new Map();
@@ -242,9 +250,10 @@ function leanCss(appFiles, fallbackCode = "") {
   let everything = false;
   for (const match of code.matchAll(/["']yugen-ui\/([^"']+)["']/g)) {
     const folder = match[1].split("/")[0];
-    if (!folder.endsWith(".css")) folders.add(folder);
+    if (!folder.endsWith(".css") && folder !== "dates") folders.add(folder);
   }
-  for (const match of code.matchAll(/(?:import|export)\s+(?:type\s+)?\{([\s\S]*?)\}\s+from\s+["']yugen-ui["']/g)) {
+  // yugen-ui/dates (#356) is looked up by name, like the root (same rule as `yugen css`).
+  for (const match of code.matchAll(/(?:import|export)\s+(?:type\s+)?\{([\s\S]*?)\}\s+from\s+["']yugen-ui(?:\/dates)?["']/g)) {
     for (const name of match[1].split(",").map((part) => part.trim().replace(/^type\s+/, "").split(/\s+as\s+/)[0]).filter(Boolean)) {
       const folder = componentFolderByExport.get(name);
       if (folder) folders.add(folder);
@@ -1262,6 +1271,7 @@ function files(t) {
               react: pkg.devDependencies.react,
               "react-dom": pkg.devDependencies["react-dom"],
               "yugen-ui": `^${pkg.version}`,
+              ...datesPeer({ ...appFiles, ...blockFiles }),
               ...t.dependencies,
             }).sort(([a], [b]) => (a < b ? -1 : 1)),
           ),

@@ -45,7 +45,9 @@ const kebab = (s) => s.replace(/([a-z0-9])([A-Z])/g, "$1-$2").replace(/([A-Z])([
 
 /** Không phải dependency cần cài: peer của mọi dự án React. */
 const PEERS = new Set(["react", "react-dom"]);
-const deps = { ...pkg.dependencies };
+// Optional peers of the package (react-day-picker, #356) are dependencies of the source files that import them.
+const optionalPeers = Object.entries(pkg.peerDependencies ?? {}).filter(([name]) => pkg.peerDependenciesMeta?.[name]?.optional);
+const deps = { ...pkg.dependencies, ...Object.fromEntries(optionalPeers) };
 
 function npmName(specifier) {
   const parts = specifier.split("/");

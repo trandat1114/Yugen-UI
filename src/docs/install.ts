@@ -6,6 +6,15 @@ import { homepage } from "../../package.json";
 /** Mọi tên runtime mà `import { … } from "yugen-ui"` cung cấp (barrel + cn + brand ramp + token export). */
 export const exportNames = () => [...uiExports.barrel, ...Object.keys(Ramp), ...Object.keys(Tokens), "cn"];
 
+/** Tên runtime chỉ có ở `yugen-ui/dates` (#356): Calendar, DatePicker… cần react-day-picker (peer tuỳ chọn). */
+export const dateExportNames = () => {
+  const root = new Set(exportNames());
+  return uiExports.dates.filter((name) => !root.has(name));
+};
+
+/** Peer tuỳ chọn mà `yugen-ui/dates` cần; app cài cùng yugen-ui. */
+export const DATES_PEER = "react-day-picker";
+
 /**
  * Suy ra lệnh cài cho từng trang component từ `importCode` của docs:
  *   - npm:        import { … } from "yugen-ui"
@@ -21,7 +30,8 @@ export const REGISTRY_URL = `${homepage.replace(/\/$/, "")}/r`;
 export const registryItemName = (folder: string) =>
   folder.replace(/([a-z0-9])([A-Z])/g, "$1-$2").replace(/([A-Z])([A-Z][a-z])/g, "$1-$2").toLowerCase();
 
-const IMPORT_RE = /import\s*\{([^}]*)\}\s*from\s*["']@\/components\/ui["'];?/g;
+const IMPORT_RE = /import\s*\{([^}]*)\}\s*from\s*["']@\/components\/ui(?:\/dates)?["'];?/g;
+const DATES_IMPORT = /(["'])@\/components\/ui\/dates\1/;
 
 function parseNames(list: string) {
   return list
@@ -45,7 +55,10 @@ export interface InstallSnippets {
 }
 
 export function installSnippets(importCode: string): InstallSnippets {
-  const npm = `// npm install yugen-ui\n${importCode.replace(/(["'])@\/components\/ui\1/g, '"yugen-ui"').trim()}`;
+  // yugen-ui/dates (#356): react-day-picker is an optional peer, installed next to yugen-ui.
+  const install = DATES_IMPORT.test(importCode) ? `yugen-ui ${DATES_PEER}` : "yugen-ui";
+  const code = importCode.replace(/(["'])@\/components\/ui\1/g, '"yugen-ui"').replace(/(["'])@\/components\/ui\/dates\1/g, '"yugen-ui/dates"');
+  const npm = `// npm install ${install}\n${code.trim()}`;
 
   const byFolder = new Map<string, string[]>();
   const rest = importCode.replace(IMPORT_RE, (_m, list: string) => {

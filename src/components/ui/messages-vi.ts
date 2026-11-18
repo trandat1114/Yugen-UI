@@ -9,7 +9,6 @@ import { appShellMessagesVi } from "./AppShell/messages";
 import { autocompleteMessagesVi } from "./Autocomplete/messages";
 import { avatarGroupMessagesVi } from "./AvatarGroup/messages";
 import { breadcrumbMessagesVi } from "./Breadcrumb/messages";
-import { calendarMessagesVi } from "./Calendar/messages";
 import { carouselMessagesVi } from "./Carousel/messages";
 import { chartMessagesVi } from "./Chart/messages";
 import {
@@ -85,14 +84,16 @@ import { traceMessagesVi } from "./Trace/messages";
  * Chuỗi giao diện có sẵn của mọi component, bằng tiếng Việt: `<YugenProvider messages={messagesVi} locale="vi-VN">`.
  * Mặc định là tiếng Anh (`messagesEn`). Kiểu `YugenMessages` đầy đủ: component mới thêm namespace mà quên bản tiếng Việt ở
  * đây thì typecheck báo lỗi.
+ *
+ * Trừ `calendar` (#356): locale date-fns của Calendar đến từ react-day-picker, peer dependency tuỳ chọn, nên nằm ở
+ * `yugen-ui/dates`: `messages={{ ...messagesVi, calendar: calendarMessagesVi }}`.
  */
-export const messagesVi: YugenMessages = {
+export const messagesVi: Omit<YugenMessages, "calendar"> = {
   appShell: appShellMessagesVi,
   asyncContent: asyncContentMessagesVi,
   autocomplete: autocompleteMessagesVi,
   avatarGroup: avatarGroupMessagesVi,
   breadcrumb: breadcrumbMessagesVi,
-  calendar: calendarMessagesVi,
   carousel: carouselMessagesVi,
   chart: chartMessagesVi,
   chatComposer: chatComposerMessagesVi,

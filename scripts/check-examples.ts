@@ -49,6 +49,7 @@ fs.writeFileSync(
         types: [],
         paths: {
           "yugen-ui": [posix(path.join(root, "src", "lib.ts"))],
+          "yugen-ui/dates": [posix(path.join(root, "src", "components", "ui", "dates.ts"))],
           "@/*": [posix(path.join(root, "src")) + "/*"],
         },
       },

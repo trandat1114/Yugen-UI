@@ -83,17 +83,36 @@ const has = (modules: Set<string>, pattern: RegExp) => [...modules].some((m) => 
 const locales = (modules: Set<string>) =>
   [...new Set([...modules].flatMap((m) => /\/locale\/([^/]+?)(?:\.js|\/)/.exec(m)?.[1] ?? []))].filter((l) => l !== "_lib").sort();
 
+/** `import { … } from "yugen-ui/dates"` (#356). */
+const fromDates = (names: string) => ({ contents: `import { ${names} } from "./src/components/ui/dates";\nconsole.log(${names});\n` });
+/** react-day-picker, date-fns, @date-fns/tz: what yugen-ui/dates needs, an optional peer (#356). */
+const DATE_STACK = /\/node_modules\/(?:react-day-picker|date-fns|@date-fns\/tz)\//;
+
+describe("Gốc gói không import thư viện ngày (#356)", () => {
+  it("import * từ src/lib, messagesEn / messagesVi, MonthPicker: không có module của react-day-picker / date-fns", { timeout: 60_000 }, async () => {
+    const entries = [
+      { contents: 'import * as Y from "./src/lib";\nconsole.log(Y);\n' },
+      fromRoot("messagesEn, messagesVi"),
+      fromRoot("MonthPicker, YearPicker, TimePicker"),
+    ];
+    for (const entry of entries) {
+      const { initial, lazy } = await bundle(entry);
+      expect([...initial, ...lazy].filter((m) => DATE_STACK.test(m)), entry.contents).toEqual([]);
+    }
+  });
+});
+
 describe("Calendar không kéo locale tiếng Việt (#349)", () => {
   it("{ DatePicker }, { Calendar }: chỉ locale en-US có sẵn của react-day-picker", { timeout: 60_000 }, async () => {
     for (const names of ["DatePicker", "Calendar", "DateRangePicker, DateTimePicker"]) {
-      const { initial } = await bundle(fromRoot(names));
+      const { initial } = await bundle(fromDates(names));
       expect(initial, names).toContain("src/components/ui/Calendar/Calendar.tsx");
       expect(locales(initial), names).toEqual(["en-US"]);
     }
   });
 
   it("app tiếng Việt vẫn có locale vi qua calendarMessagesVi", { timeout: 60_000 }, async () => {
-    const { initial } = await bundle(fromRoot("DatePicker, calendarMessagesVi"));
+    const { initial } = await bundle(fromDates("DatePicker, calendarMessagesVi"));
     expect(locales(initial)).toEqual(["en-US", "vi"]);
   });
 });

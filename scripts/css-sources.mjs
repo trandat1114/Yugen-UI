@@ -129,7 +129,7 @@ function moduleInfo(cache, file) {
   return info;
 }
 
-/** Tên export có giá trị (component, hàm, hằng) của `src/components/ui/index.ts` → thư mục chứa khai báo của nó. */
+/** Tên export có giá trị (component, hàm, hằng) của `src/components/ui/index.ts` và `dates.ts` → thư mục chứa khai báo của nó. */
 export function exportFolders(root) {
   const uiDir = path.join(root, "src", "components", "ui");
   const cache = new Map();
@@ -183,13 +183,16 @@ export function exportFolders(root) {
     return [...info.exports.keys(), ...stars.filter((n) => n !== "default")];
   };
 
-  const indexPath = path.join(uiDir, "index.ts");
   const out = {};
-  for (const name of new Set(exportedNames(indexPath))) {
-    const file = declarationOf(indexPath, name);
-    if (!file) continue;
-    const rel = path.relative(uiDir, file).split(path.sep);
-    if (rel.length > 1 && rel[0] !== "..") out[name] = rel[0];
+  // The root entry and yugen-ui/dates (#356): `import { DatePicker } from "yugen-ui/dates"` needs sources/DatePicker.css.
+  for (const barrel of ["index.ts", "dates.ts"]) {
+    const indexPath = path.join(uiDir, barrel);
+    for (const name of new Set(exportedNames(indexPath))) {
+      const file = declarationOf(indexPath, name);
+      if (!file) continue;
+      const rel = path.relative(uiDir, file).split(path.sep);
+      if (rel.length > 1 && rel[0] !== "..") out[name] ??= rel[0];
+    }
   }
   return Object.fromEntries(Object.entries(out).sort(([a], [b]) => a.localeCompare(b)));
 }

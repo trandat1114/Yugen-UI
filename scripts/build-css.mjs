@@ -123,10 +123,22 @@ for (const folder of folders) {
 }
 const missing = [...new Set(Object.values(exports))].filter((f) => !folders.includes(f));
 if (missing.length) throw new Error(`[build-css] export nằm trong thư mục không có sources: ${missing.join(", ")}`);
+// yugen-ui/dates (#356) is not a folder. `yugen css` up to @yugen-ui/cli 0.8 reads `yugen-ui/<x>` as folder x, so
+// sources/dates.css brings the folders of that entry; newer versions look its names up in `exports`.
+const DATES_FOLDERS = ["Calendar", "DatePicker"];
+fs.writeFileSync(
+  path.join(dist, "sources", "dates.css"),
+  banner("classes of yugen-ui/dates (Calendar, DatePicker…) — @import after yugen-ui/theme-core.css") +
+    DATES_FOLDERS.map((f) => `@import "./${f}.css";`).join("\n") +
+    "\n",
+);
 const manifest = {
   version: pkg.version,
   exports,
-  sources: Object.fromEntries(folders.map((f) => [f, graph.get(f)])),
+  sources: {
+    ...Object.fromEntries(folders.map((f) => [f, graph.get(f)])),
+    dates: [...new Set(DATES_FOLDERS.flatMap((f) => graph.get(f)))],
+  },
   // Token groups outside theme-core.css (#354): `yugen css` adds tokens/brands.css when the app sets brand web / teams.
   tokens: Object.fromEntries(Object.keys(groups).map((group) => [group, `tokens/${group}.css`])),
 };

@@ -9,7 +9,6 @@ import { appShellMessagesEn } from "./AppShell/messages";
 import { autocompleteMessagesEn } from "./Autocomplete/messages";
 import { avatarGroupMessagesEn } from "./AvatarGroup/messages";
 import { breadcrumbMessagesEn } from "./Breadcrumb/messages";
-import { calendarMessagesEn } from "./Calendar/messages";
 import { carouselMessagesEn } from "./Carousel/messages";
 import { chartMessagesEn } from "./Chart/messages";
 import {
@@ -84,15 +83,14 @@ import { traceMessagesEn } from "./Trace/messages";
 /**
  * Chuỗi giao diện có sẵn của mọi component, bằng tiếng Anh: đây cũng là giá trị mặc định khi không truyền `messages`.
  * Tiếng Việt: `messagesVi`. Kiểu `YugenMessages` đầy đủ: component mới thêm namespace mà quên bản tiếng Anh ở đây thì
- * typecheck báo lỗi.
+ * typecheck báo lỗi. Trừ `calendar` (#356): nó ở `yugen-ui/dates`, và en-US là mặc định của Calendar.
  */
-export const messagesEn: YugenMessages = {
+export const messagesEn: Omit<YugenMessages, "calendar"> = {
   appShell: appShellMessagesEn,
   asyncContent: asyncContentMessagesEn,
   autocomplete: autocompleteMessagesEn,
   avatarGroup: avatarGroupMessagesEn,
   breadcrumb: breadcrumbMessagesEn,
-  calendar: calendarMessagesEn,
   carousel: carouselMessagesEn,
   chart: chartMessagesEn,
   chatComposer: chatComposerMessagesEn,

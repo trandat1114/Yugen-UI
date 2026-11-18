@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import * as UI from "@/components/ui";
+import * as Dates from "@/components/ui/dates";
 import uiExports from "virtual:yugen-ui-exports";
 
 // virtual:yugen-ui-exports đọc export tĩnh lúc build (vite.plugins.ts) để trang docs không phải nạp cả thư viện.
@@ -9,6 +10,10 @@ const modules = import.meta.glob<Record<string, unknown>>(["../components/ui/*/*
 describe("virtual:yugen-ui-exports", () => {
   it("barrel: đúng các tên runtime của yugen-ui", () => {
     expect(uiExports.barrel).toEqual(Object.keys(UI).sort());
+  });
+
+  it("dates: đúng các tên runtime của yugen-ui/dates (#356)", () => {
+    expect(uiExports.dates).toEqual(Object.keys(Dates).sort());
   });
 
   it("thư mục của từng tên export khớp module thật", () => {

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Button, Calendar, Card, ToggleGroup, ToggleGroupItem } from "@/components/ui";
+import { Button, Card, ToggleGroup, ToggleGroupItem } from "@/components/ui";
+import { Calendar } from "@/components/ui/dates";
 
 export const meta = { title: "Book an appointment", description: "Calendar with a ToggleGroup for time slots", order: 8 };
 

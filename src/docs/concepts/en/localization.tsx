@@ -99,7 +99,9 @@ export default function Page() {
           <P>
             Charts, DatePicker, TimePicker, NotificationCenter and Rating format numbers, dates and times with the provider{" "}
             <C>locale</C> (default <C>"en-US"</C>). A component&apos;s own <C>locale</C> prop still wins. Calendar uses a
-            react-day-picker locale, set in <C>messages.calendar.locale</C>; <C>messagesVi</C> already sets Vietnamese.
+            react-day-picker locale, set in <C>messages.calendar.locale</C>. <C>messagesVi</C> does not include it, because
+            react-day-picker is an optional peer dependency: add <C>calendarMessagesVi</C> from <C>yugen-ui/dates</C>, as in{" "}
+            <C>{"messages={{ ...messagesVi, calendar: calendarMessagesVi }}"}</C>.
           </P>
           <P>
             Text direction is handled separately by the <C>dir</C> prop, see <A href={docsPath("/concepts/rtl")}>RTL</A>.

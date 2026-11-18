@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   Button,
   ColorPicker,
-  DateTimePicker,
   Field,
   FormattedInput,
   MonthPicker,
@@ -13,6 +12,7 @@ import {
   YearPicker,
   type PasswordStrength,
 } from "@/components/ui";
+import { DateTimePicker } from "@/components/ui/dates";
 import type { ComponentDoc } from "../types";
 import { declarationsOf } from "../setup";
 import RAW from "./form-controls.tsx?raw";
@@ -411,7 +411,7 @@ export const docs: ComponentDoc[] = [
     category: "Nhập liệu",
     lead: "MonthPicker và YearPicker chọn một tháng hoặc một năm, cùng vỏ và bàn phím với DatePicker.",
     description:
-      "Popover hiện lưới 12 tháng của một năm (MonthPicker) hoặc 12 năm (YearPicker). Bàn phím như lịch ngày: mũi tên di chuyển, Home / End về đầu / cuối hàng, PageUp / PageDown sang năm (hoặc 12 năm) trước / sau, Enter chọn; mở popover thì focus ô đang chọn. Giá trị là `Date`: ngày 1 của tháng, hoặc 1/1 của năm. minDate / maxDate làm mờ ô ngoài khoảng. Hiển thị theo `locale` của YugenProvider (\"November 2026\", \"tháng 11 năm 2026\"); đổi bằng `formatDate`.",
+      "Popover hiện lưới 12 tháng của một năm (MonthPicker) hoặc 12 năm (YearPicker). Bàn phím như lịch ngày: mũi tên di chuyển, Home / End về đầu / cuối hàng, PageUp / PageDown sang năm (hoặc 12 năm) trước / sau, Enter chọn; mở popover thì focus ô đang chọn. Giá trị là `Date`: ngày 1 của tháng, hoặc 1/1 của năm. minDate / maxDate làm mờ ô ngoài khoảng. Hiển thị theo `locale` của YugenProvider (\"November 2026\", \"tháng 11 năm 2026\"); đổi bằng `formatDate`. Không cần react-day-picker: import từ `yugen-ui`.",
     importCode: `import { MonthPicker, YearPicker } from "@/components/ui";`,
     hero: { title: "Hạn thẻ", code: source("MonthHero"), render: () => <MonthHero /> },
     examples: [
@@ -455,8 +455,8 @@ export const docs: ComponentDoc[] = [
     category: "Nhập liệu",
     lead: "DateTimePicker chọn ngày và giờ trong cùng một popover: lịch ở trên, ô giờ ở dưới.",
     description:
-      "Lịch là Calendar của DatePicker, ô giờ là TimePicker (gõ tự do \"9\", \"930\", \"9:30 PM\" hoặc chọn trong danh sách cách nhau `timeIncrement` phút). Chọn ngày giữ giờ đã chọn (mặc định 00:00); giờ chọn trước khi có ngày được dùng khi chọn ngày. Nút Xong đóng popover; giá trị đã cập nhật ngay khi chọn. Hiển thị ngày dạng số và giờ theo `locale` (chu kỳ 12 / 24 giờ theo locale hoặc `hourCycle`). minDate / maxDate giới hạn phần ngày.",
-    importCode: `import { DateTimePicker } from "@/components/ui";`,
+      "Lịch là Calendar của DatePicker, ô giờ là TimePicker (gõ tự do \"9\", \"930\", \"9:30 PM\" hoặc chọn trong danh sách cách nhau `timeIncrement` phút). Chọn ngày giữ giờ đã chọn (mặc định 00:00); giờ chọn trước khi có ngày được dùng khi chọn ngày. Nút Xong đóng popover; giá trị đã cập nhật ngay khi chọn. Hiển thị ngày dạng số và giờ theo `locale` (chu kỳ 12 / 24 giờ theo locale hoặc `hourCycle`). minDate / maxDate giới hạn phần ngày. Import từ `yugen-ui/dates` và cài react-day-picker (peer dependency tuỳ chọn): `npm i react-day-picker`.",
+    importCode: `import { DateTimePicker } from "@/components/ui/dates";`,
     hero: { title: "Lịch họp", code: source("DateTimeHero"), render: () => <DateTimeHero /> },
     examples: [
       {

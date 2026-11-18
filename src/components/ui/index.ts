@@ -38,8 +38,8 @@ export * from "./InputOTP/InputOTP";
 export * from "./Rating/Rating";
 export * from "./SwatchPicker/SwatchPicker";
 export * from "./ColorPicker/ColorPicker";
-export * from "./Calendar/Calendar";
-export * from "./DatePicker/DatePicker";
+// Calendar, DatePicker, DateRangePicker, DateTimePicker: yugen-ui/dates (./dates.ts, react-day-picker), #356.
+export * from "./DatePicker/MonthPicker";
 export * from "./TimePicker/TimePicker";
 export * from "./FileUpload/FileUpload";
 

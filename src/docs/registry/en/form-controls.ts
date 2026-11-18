@@ -71,7 +71,7 @@ export const en: Record<string, ComponentDocEn> = {
 
   monthpicker: {
     description:
-      'The popover shows a grid of the 12 months of a year (MonthPicker) or 12 years (YearPicker). The keyboard works like the day calendar: arrows move, Home / End go to the start / end of the row, PageUp / PageDown go to the previous / next year (or 12 years), Enter picks; opening the popover focuses the selected cell. The value is a `Date`: the 1st of the month, or January 1 of the year. minDate / maxDate dim cells out of range. Shown in the YugenProvider `locale` ("November 2026" in en-US); change it with `formatDate`.',
+      'The popover shows a grid of the 12 months of a year (MonthPicker) or 12 years (YearPicker). The keyboard works like the day calendar: arrows move, Home / End go to the start / end of the row, PageUp / PageDown go to the previous / next year (or 12 years), Enter picks; opening the popover focuses the selected cell. The value is a `Date`: the 1st of the month, or January 1 of the year. minDate / maxDate dim cells out of range. Shown in the YugenProvider `locale` ("November 2026" in en-US); change it with `formatDate`. Needs no react-day-picker: import from `yugen-ui`.',
     examples: [
       { title: "YearPicker", description: "maxDate is this year; clearable adds a clear button." },
       { title: "Report month, size & disabled", description: "Same sizes and states as DatePicker." },
@@ -98,7 +98,7 @@ export const en: Record<string, ComponentDocEn> = {
 
   datetimepicker: {
     description:
-      'The calendar is the DatePicker Calendar and the time field is a TimePicker (type "9", "930", "9:30 PM" freely or pick from a list `timeIncrement` minutes apart). Picking a date keeps the selected time (00:00 by default); a time picked before any date is used when a date is picked. The Done button closes the popover; the value updates as soon as you pick. Shows a numeric date and a time in the `locale` (12- or 24-hour from the locale or `hourCycle`). minDate / maxDate limit the date part.',
+      'The calendar is the DatePicker Calendar and the time field is a TimePicker (type "9", "930", "9:30 PM" freely or pick from a list `timeIncrement` minutes apart). Picking a date keeps the selected time (00:00 by default); a time picked before any date is used when a date is picked. The Done button closes the popover; the value updates as soon as you pick. Shows a numeric date and a time in the `locale` (12- or 24-hour from the locale or `hourCycle`). minDate / maxDate limit the date part. Import it from `yugen-ui/dates` and install react-day-picker, an optional peer dependency: `npm i react-day-picker`.',
     examples: [{ title: "24- / 12-hour", description: "hourCycle overrides the cycle from the locale." }],
     dos: [
       "Use it when the exact moment matters (appointments, deadlines with a time).",
