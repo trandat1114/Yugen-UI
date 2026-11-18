@@ -16,6 +16,7 @@ export const meta: ConceptMeta = {
     { id: "theme", label: "Màu thương hiệu" },
     { id: "doctor", label: "Kiểm tra cấu hình" },
     { id: "config", label: "yugen.json và registry" },
+    { id: "network", label: "Mạng, file và checksum" },
     { id: "options", label: "Tuỳ chọn chung" },
   ],
 };

@@ -71,6 +71,7 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
       theme: "Brand color",
       doctor: "Check the setup",
       config: "yugen.json and the registry",
+      network: "Network, files and checksums",
       options: "Common options",
     },
   },

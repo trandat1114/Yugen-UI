@@ -112,8 +112,9 @@ with `yugen-ui` in its dependencies and no `yugen.json` (an app made by `create`
 
 ## Registry
 
-Components come from `https://trandat1114.github.io/Yugen-UI/r` (the same shadcn-compatible registry as
-`npx shadcn add`). Point `--registry` (or `"registry"` in `yugen.json`) at another URL or at a local folder, e.g. a
-clone's `public/r` after `npm run registry`.
+Components come from `https://trandat1114.github.io/Yugen-UI/r/<version>/`, the shadcn-compatible registry of the
+`yugen-ui` version the CLI's templates use. Each CLI release ships the sha256 of every item and stops before writing
+files when one doesn't match. Point `--registry` (or `"registry"` in `yugen.json`) at another URL or at a local folder,
+e.g. a clone's `public/r` after `npm run registry`; those items are used without the check.
 
 MIT License

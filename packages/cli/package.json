@@ -51,7 +51,7 @@
     "node": ">=24"
   },
   "scripts": {
-    "build": "node scripts/copy-templates.mjs && tsc -p tsconfig.build.json",
+    "build": "node scripts/copy-templates.mjs && tsc -p tsconfig.build.json && node scripts/registry-integrity.mjs",
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
     "check:release": "node scripts/check-release.mjs",

@@ -49,6 +49,15 @@ try {
   // `npx @yugen-ui/cli` chạy bin duy nhất của gói — bin phải được link với tên "yugen".
   check(fs.readdirSync(path.join(app, "node_modules/.bin")).some((f) => /^yugen(\.cmd)?$/.test(f)), "bin yugen linked");
 
+  // Checksums of the registry (#381): present, for the yugen-ui version the templates pin.
+  const rootVersion = readJson(path.resolve(cli, "../../package.json")).version;
+  const integrityFile = path.join(installed, "dist/registry-integrity.json");
+  const integrity = fs.existsSync(integrityFile) ? readJson(integrityFile) : null;
+  check(
+    integrity?.version === rootVersion && Object.keys(integrity.items ?? {}).length > 50 && !!integrity.items.button,
+    `dist/registry-integrity.json (yugen-ui ${integrity?.version}, ${Object.keys(integrity?.items ?? {}).length} items)`,
+  );
+
   const templates = readJson(path.join(installed, "templates/templates.json"));
   for (const t of templates) {
     const dir = `app-${t.name}`;
