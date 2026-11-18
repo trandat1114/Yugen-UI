@@ -153,7 +153,7 @@ const TEMPLATES = [
     app: "admin",
     spa: true,
     storageKey: "yugen-admin-appearance",
-    /** Form validation (src/validation.ts). Not @hookform/resolvers: its optional peers break `npm install` on npm 11. */
+    /** Forms: HookForm from yugen-ui/form with the zod schemas in src/validation.ts (#162). */
     dependencies: { "react-hook-form": pkg.devDependencies["react-hook-form"], zod: pkg.devDependencies.zod },
   },
   {
@@ -219,14 +219,19 @@ const ASSET = /\.(avif|webp|png|jpe?g|svg)$/;
 const isText = (content) => typeof content === "string";
 const toYugen = (code) =>
   code
+    // HookForm is the `yugen-ui/form` subpath (#162), outside the root.
+    .replace(/(["'])@\/components\/ui\/HookForm\/HookForm\1/g, '"yugen-ui/form"')
     .replace(/(["'])@\/components\/ui(?:\/[^"']*)?\1/g, '"yugen-ui"')
     .replace(/(["'])@\/lib\/cn\1/g, '"yugen-ui"')
     .replace(BLOCK_IMPORT, '"./blocks/$2"');
 
 /** Export name → component folder, used to seed the generated lean CSS before the CLI runs for the first time. */
 const componentFolderByExport = new Map();
+/** Folders that have a `sources/<Folder>.css`, exact case (`yugen-ui/form` has none, as in `yugen css`). */
+const sourceFolders = new Set();
 for (const dir of fs.readdirSync(path.join(root, "src/components/ui"), { withFileTypes: true }).filter((entry) => entry.isDirectory())) {
   const folder = dir.name;
+  sourceFolders.add(folder);
   const dirPath = path.join(root, "src/components/ui", folder);
   for (const file of fs.readdirSync(dirPath)) {
     if (!/\.(tsx?|jsx?)$/.test(file)) continue;
@@ -242,9 +247,12 @@ function leanCss(appFiles, fallbackCode = "") {
   let everything = false;
   for (const match of code.matchAll(/["']yugen-ui\/([^"']+)["']/g)) {
     const folder = match[1].split("/")[0];
-    if (!folder.endsWith(".css")) folders.add(folder);
+    if (sourceFolders.has(folder)) folders.add(folder);
   }
-  for (const match of code.matchAll(/(?:import|export)\s+(?:type\s+)?\{([\s\S]*?)\}\s+from\s+["']yugen-ui["']/g)) {
+  // Named imports from a subpath (`yugen-ui/form`) are counted above; dropped here so the list below does not run on
+  // from them to the next `from "yugen-ui"`.
+  const rootImports = code.replace(/import\s*\{[^}]*\}\s*from\s*["']yugen-ui\/[^"']+["']/g, "");
+  for (const match of rootImports.matchAll(/(?:import|export)\s+(?:type\s+)?\{([\s\S]*?)\}\s+from\s+["']yugen-ui["']/g)) {
     for (const name of match[1].split(",").map((part) => part.trim().replace(/^type\s+/, "").split(/\s+as\s+/)[0]).filter(Boolean)) {
       const folder = componentFolderByExport.get(name);
       if (folder) folders.add(folder);
@@ -846,8 +854,8 @@ ${install(t.dir, "en")}
 - Customers (\`/customers\`): a \`DataGrid\` paged, sorted and filtered by the server (one page plus the total per
   request), search, status and plan filters, a column picker (\`DataGridColumnPicker\`), and row selection with bulk
   export to CSV and bulk delete.
-- Create and edit in a \`Drawer\`, validated with react-hook-form and zod (\`src/validation.ts\`); delete after a
-  confirm \`Dialog\`.
+- Create and edit in a \`Drawer\`, validated with react-hook-form and zod (\`src/validation.ts\`) through
+  \`yugen-ui/form\`; delete after a confirm \`Dialog\`.
 - Optimistic updates (\`useOptimisticList\`): changes show at once, a toast confirms them, and a failed request puts
   the list back as it was, with a Retry button.
 - Customer page (\`/customers/<id>\`) with the details and the customer's orders; Orders (\`/orders\`), read-only.
@@ -883,8 +891,9 @@ Create it in \`src/App.tsx\` instead of \`createMockApi\`, then delete the mock 
 a sort and the filters, and return \`{ rows, total }\`. Reject with an error when a request fails: the optimistic
 update rolls back on its own.
 
-Validation uses a small zod resolver in \`src/validation.ts\` instead of \`@hookform/resolvers\`, whose optional
-peer dependencies make \`npm install\` fail on npm 11. You can switch to it once that is fixed.
+Forms use \`HookForm\` and \`standardSchemaResolver\` from \`yugen-ui/form\` with the zod schemas in
+\`src/validation.ts\`: each \`Field\` shows the error of its control by name, \`FormErrorSummary\` lists them, and the
+submit button is loading while the form submits.
 
 ${deploy()}
 ## Structure
@@ -899,7 +908,7 @@ src/
   OrderList.tsx        # paged orders, for /orders and the customer page
   api.ts               # mock back end (replace with yours)
   auth.tsx             # session in sessionStorage, demo sign-in
-  validation.ts        # zod schemas and the resolver
+  validation.ts        # zod schemas
   router.tsx           # History API router, Link, next= after sign-in
   content/             # every string, one file per language
   ui.tsx · useQuery.ts · csv.ts · context.ts · appearance.ts

@@ -32,6 +32,8 @@ const entry = Object.fromEntries([
     if (!file) throw new Error(`[vite.lib] src/components/ui/index.ts re-exports "./${module}", which has no .ts / .tsx file`);
     return [`components/ui/${module}`, file];
   }),
+  // `yugen-ui/form` (#162): the react-hook-form adapter. Not in the barrel, so the root never imports react-hook-form.
+  ["components/ui/HookForm/HookForm", path.join(ui, "HookForm", "HookForm.tsx")],
 ]);
 
 // Module tiện ích thuần (không React): không gắn "use client" để Server Component (Next.js App Router) vẫn gọi được

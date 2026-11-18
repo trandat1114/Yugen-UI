@@ -33,6 +33,7 @@ import {
 import { descriptionListMessagesVi } from "./DescriptionList/messages";
 import { dialogMessagesVi } from "./Dialog/messages";
 import { fileUploadMessagesVi } from "./FileUpload/messages";
+import { formMessagesVi } from "./Form/messages";
 import { infoLabelMessagesVi } from "./InfoLabel/messages";
 import { inputOTPMessagesVi } from "./InputOTP/messages";
 import { linkMessagesVi } from "./Link/messages";
@@ -112,6 +113,7 @@ export const messagesVi: YugenMessages = {
   dialog: dialogMessagesVi,
   errorState: errorStateMessagesVi,
   fileUpload: fileUploadMessagesVi,
+  form: formMessagesVi,
   infoLabel: infoLabelMessagesVi,
   inputOTP: inputOTPMessagesVi,
   link: linkMessagesVi,

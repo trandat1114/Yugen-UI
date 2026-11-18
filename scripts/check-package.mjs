@@ -14,6 +14,8 @@
  *      `@source "./components"` resolve next to it), `theme-core.css` alone (no component classes, no keyframes) and
  *      `theme-core.css` + `sources/Decorative.css` (that component's classes and only the keyframes they use).
  *      dist/tokens.css has no Tailwind-only at-rule.
+ *   5. Optional peers (#162): dist/lib.js bundles with every optional peer (react-hook-form, tailwindcss) unresolvable,
+ *      so an app without them can import the root; `yugen-ui/form` is the subpath that needs react-hook-form.
  *
  *   node scripts/check-package.mjs
  */
@@ -71,6 +73,31 @@ for (const module of modules) {
     if (rootModule[name] !== sub[name]) fail(`${specifier}: "${name}" is not the root's ${name} (a second module instance?)`);
   }
   subpaths.set(specifier, names);
+}
+// Subpaths outside the barrel: `yugen-ui/form`, the react-hook-form adapter (#162). Its names are not on the root.
+const EXTRA_SUBPATHS = { [`${pkg.name}/form`]: "components/ui/HookForm/HookForm.js" };
+for (const [specifier, file] of Object.entries(EXTRA_SUBPATHS)) {
+  const expected = pathToFileURL(path.join(dist, file)).href;
+  try {
+    const resolved = import.meta.resolve(specifier);
+    if (resolved !== expected) {
+      fail(`${specifier}: resolves to ${resolved}, expected ${expected}`);
+      continue;
+    }
+    const names = Object.keys(await import(specifier));
+    if (!names.length) fail(`${specifier}: exports nothing`);
+    const onRoot = names.filter((name) => name in rootModule);
+    if (onRoot.length) fail(`${specifier}: ${onRoot.join(", ")} also on the root (the root must not import react-hook-form)`);
+    subpaths.set(specifier, names);
+  } catch (error) {
+    fail(`${specifier}: does not load (${error.code ?? error.message})`);
+  }
+}
+try {
+  const leaked = import.meta.resolve(`${pkg.name}/HookForm`);
+  fail(`${pkg.name}/HookForm resolves to ${leaked}: the adapter's only path is ${pkg.name}/form`);
+} catch (error) {
+  if (error.code !== "ERR_PACKAGE_PATH_NOT_EXPORTED") fail(`${pkg.name}/HookForm: ${error.code ?? error.message}`);
 }
 const fromSubpaths = new Set([...subpaths.values()].flat());
 // What the root has besides the component modules: src/lib (cn, brand ramp, token export).
@@ -306,6 +333,47 @@ try {
 } finally {
   fs.rmSync(cssConsumer, { recursive: true, force: true });
 }
+
+// ---------- 5. Optional peers ----------
+const optionalPeers = Object.entries(pkg.peerDependenciesMeta ?? {})
+  .filter(([, meta]) => meta.optional)
+  .map(([name]) => name);
+const { rolldown } = await import("rolldown");
+/** Bundles `file` with each optional peer unresolvable (other packages external); rejects when one is imported. */
+async function bundleWithoutOptionalPeers(file) {
+  const bundle = await rolldown({
+    input: file,
+    logLevel: "silent",
+    plugins: [
+      {
+        name: "no-optional-peers",
+        resolveId(id) {
+          if (id.startsWith(".") || path.isAbsolute(id) || id.startsWith(" ")) return null;
+          if (optionalPeers.includes(packageOf(id))) throw new Error(`imports "${id}"`);
+          return { id, external: true };
+        },
+      },
+    ],
+  });
+  try {
+    await bundle.generate({ format: "es" });
+  } finally {
+    await bundle.close();
+  }
+}
+try {
+  await bundleWithoutOptionalPeers(path.join(dist, "lib.js"));
+} catch (error) {
+  fail(`dist/lib.js does not bundle without the optional peers ${optionalPeers.join(", ")}: ${error.message}`);
+}
+// The check sees an optional peer when there is one: `yugen-ui/form` imports react-hook-form.
+const adapter = path.join(dist, EXTRA_SUBPATHS[`${pkg.name}/form`]);
+const adapterNeedsPeer = await bundleWithoutOptionalPeers(adapter).then(
+  () => false,
+  (error) => /react-hook-form/.test(error.message),
+);
+if (!adapterNeedsPeer) fail(`${posix(path.relative(root, adapter))} bundled without react-hook-form: the optional-peer check cannot see imports`);
+console.log(`[check-package] optional peers: dist/lib.js bundles without ${optionalPeers.join(", ")}`);
 
 if (errors.length) {
   console.error(`[check-package] ${errors.length} problem(s):\n  - ${errors.join("\n  - ")}`);

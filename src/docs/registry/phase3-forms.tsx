@@ -653,7 +653,7 @@ export const docs: ComponentDoc[] = [
     category: "Nhập liệu",
     lead: "Ghép Field, Input, Select, Checkbox, DatePicker và Button của Yugen với react-hook-form + zod để có form kiểm tra dữ liệu đầy đủ, tiếng Việt, truy cập được.",
     description:
-      "react-hook-form, zod và @hookform/resolvers là peer tuỳ chọn — Yugen không phụ thuộc vào chúng; bạn tự cài: npm i react-hook-form zod @hookform/resolvers. Input / Select nhận thẳng register(name) (ref trỏ tới phần tử gốc). Control không phải phần tử form gốc (DatePicker, Checkbox) dùng Controller. Map lỗi vào Field bằng validationState=\"error\" + validationMessage: Field tự gắn aria-invalid, aria-describedby và role=\"alert\". Đặt noValidate trên <form> để bong bóng lỗi của trình duyệt không chen vào; nút gửi dùng loading={isSubmitting}.",
+      "Cách nối tay từng Field với react-hook-form. HookForm của yugen-ui/form (trang Form) làm phần này: Field tự đọc lỗi theo name, có FormErrorSummary và standardSchemaResolver. react-hook-form, zod và @hookform/resolvers là peer tuỳ chọn — Yugen không phụ thuộc vào chúng; bạn tự cài: npm i react-hook-form zod @hookform/resolvers. Input / Select nhận thẳng register(name) (ref trỏ tới phần tử gốc). Control không phải phần tử form gốc (DatePicker, Checkbox) dùng Controller. Map lỗi vào Field bằng validationState=\"error\" + validationMessage: Field tự gắn aria-invalid, aria-describedby và role=\"alert\". Đặt noValidate trên <form> để bong bóng lỗi của trình duyệt không chen vào; nút gửi dùng loading={isSubmitting}.",
     importCode: `// Tuỳ chọn — tự cài: npm i react-hook-form zod @hookform/resolvers
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

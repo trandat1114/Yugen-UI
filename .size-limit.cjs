@@ -36,6 +36,13 @@ const js = (name, importStatement, limit) => ({
   modifyEsbuildConfig: (config) => ({ ...config, plugins: [...(config.plugins ?? []), lazyChunks] }),
 });
 
+/** Import từ một subpath ngoài barrel (`yugen-ui/form`, #162); `peers`: peer tuỳ chọn mà app tự cài, không tính vào. */
+const subpath = (name, file, importStatement, limit, peers = []) => ({
+  ...js(name, importStatement, limit),
+  path: `dist/${file}`,
+  ignore: [...PEERS, ...peers],
+});
+
 /** File CSS phát hành, đo nguyên trạng. */
 const css = (file, limit) => ({
   name: file,
@@ -92,6 +99,10 @@ module.exports = [
     "62.5 kB",
   ),
   js("{ Dialog, DialogSurface }", "{ Dialog, DialogSurface }", "26 kB"),
+  // Form cho action của React 19, FormErrorSummary (#162): 13.50 kB khi thêm.
+  js("{ Form, FormErrorSummary }", "{ Form, FormErrorSummary }", "15 kB"),
+  // Adapter react-hook-form (#162), không tính react-hook-form (peer tuỳ chọn, app tự cài): 2.24 kB khi thêm.
+  subpath("yugen-ui/form: { HookForm, standardSchemaResolver }", "components/ui/HookForm/HookForm.js", "{ HookForm, standardSchemaResolver }", "2.5 kB", ["react-hook-form"]),
   // Listbox riêng thay cmdk (#351): 42.83 → 38.92 kB.
   js("{ Combobox }", "{ Combobox }", "42.5 kB"),
   // #351: không cmdk, Sortable nạp lúc cần khi `reorderable`: 50.56 → 41.01 kB.

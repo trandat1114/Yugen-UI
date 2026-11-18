@@ -10,5 +10,6 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false
   },
-  "include": ["src/lib.ts"]
+  // HookForm: `yugen-ui/form`, outside the root barrel (#162).
+  "include": ["src/lib.ts", "src/components/ui/HookForm/HookForm.tsx"]
 }

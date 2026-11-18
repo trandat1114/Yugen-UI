@@ -43,6 +43,11 @@ const exportsMap = new Map<string, TsSymbol>();
 for (const s of checker.getExportsOfModule(moduleSym)) {
   exportsMap.set(s.name, s.flags & SymbolFlags.Alias ? checker.getAliasedSymbol(s) : s);
 }
+// `yugen-ui/form` (#162) is outside the barrel: HookForm, standardSchemaResolver.
+const hookFormSf = project!.program.getSourceFile(path.join(root, "src", "components", "ui", "HookForm", "HookForm.tsx"));
+const hookFormSym = hookFormSf && checker.getSymbolAtLocation(hookFormSf);
+if (!hookFormSym) throw new Error("Không đọc được src/components/ui/HookForm/HookForm.tsx");
+for (const s of checker.getExportsOfModule(hookFormSym)) exportsMap.set(s.name, s);
 
 /** name → own? (khai báo trong src/components/ui) */
 type Api = Map<string, boolean>;

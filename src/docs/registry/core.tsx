@@ -298,7 +298,7 @@ export const docs: ComponentDoc[] = [
       { name: "iconPosition", type: `"before" | "after"`, defaultValue: `"before"`, description: "Vị trí icon so với nhãn." },
       { name: "iconOnly", type: "boolean", defaultValue: "tự suy ra", description: "Tự bật khi có icon mà không có children." },
       { name: "asChild", type: "boolean", defaultValue: "false", description: "Render vào phần tử con (vd <a>) thay vì <button>." },
-      { name: "loading", type: "boolean", defaultValue: "false", description: "Đang xử lý: Spinner thay icon (hoặc ở giữa nút), giữ độ rộng, aria-busy + aria-disabled, bỏ qua click nhưng vẫn focus được." },
+      { name: "loading", type: "boolean", defaultValue: "false", description: "Đang xử lý: Spinner thay icon (hoặc ở giữa nút), giữ độ rộng, aria-busy + aria-disabled, bỏ qua click nhưng vẫn focus được. Trong Form / HookForm, nút type=\"submit\" tự loading khi đang gửi." },
       { name: "loadingText", type: "ReactNode", description: "Nhãn khi đang xử lý (vd. “Đang lưu…”); nút luôn rộng bằng nhãn dài hơn nên không xê dịch." },
     ],
   },

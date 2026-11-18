@@ -26,6 +26,8 @@ const REACT_VALUES = new Set([
   "useContext",
   "useSyncExternalStore",
   "useImperativeHandle",
+  "useActionState",
+  "useOptimistic",
   "Fragment",
   "Suspense",
   "lazy",
@@ -78,12 +80,18 @@ const EXTERNAL: Record<string, string> = { DirectionProvider: "@radix-ui/react-d
 /** Phiên bản thêm vào package.json của StackBlitz khi App.tsx import các gói này. */
 const EXTRA_DEPS: Record<string, string> = {
   "@radix-ui/react-direction": "^1.1.0",
-  "react-hook-form": "^7.54.0",
-  zod: "^3.24.0",
+  // yugen-ui/form needs react-hook-form 7.55 or later; the examples use zod 4 (z.email).
+  "react-hook-form": "^7.55.0",
+  zod: "^4.0.0",
   "@hookform/resolvers": "^3.10.0",
 };
 
-const toYugen = (s: string) => s.replace(/(["'])@\/components\/ui(?:\/[^"']*)?\1/g, '"yugen-ui"').trim();
+/** `@/components/ui/HookForm/HookForm` → `yugen-ui/form` (#162), every other `@/components/ui…` → `yugen-ui`. */
+const toYugen = (s: string) =>
+  s
+    .replace(/(["'])@\/components\/ui\/HookForm\/HookForm\1/g, '"yugen-ui/form"')
+    .replace(/(["'])@\/components\/ui(?:\/[^"']*)?\1/g, '"yugen-ui"')
+    .trim();
 
 export function exampleToApp(code: string, setup = ""): string {
   const source = toYugen(code);

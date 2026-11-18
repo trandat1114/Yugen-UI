@@ -1,10 +1,12 @@
 import * as React from "react";
+import { useFormStatus } from "react-dom";
 import { Slot } from "@radix-ui/react-slot";
 import type { VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/cn";
 import { cvx } from "@/lib/cvx";
 import { Spinner, type SpinnerSize } from "../Spinner/Spinner";
 import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
+import { FormPendingContext } from "../_internal/formContext";
 
 /** Fluent 2 Button — https://fluent2.microsoft.design/components/web/react/core/button/usage */
 const buttonVariants = cvx(
@@ -91,7 +93,8 @@ export interface ButtonProps
   iconPosition?: "before" | "after";
   /**
    * Đang xử lý: Spinner thay chỗ icon (nút không có icon: Spinner ở giữa, nhãn vẫn giữ chỗ), độ rộng không đổi,
-   * `aria-busy` + `aria-disabled`, bỏ qua click nhưng vẫn focus được.
+   * `aria-busy` + `aria-disabled`, bỏ qua click nhưng vẫn focus được. Inside Form or HookForm, a `type="submit"` Button
+   * is loading while the form submits, unless you pass `loading`.
    */
   loading?: boolean;
   /** Nhãn thay thế khi đang xử lý (vd. "Đang lưu…"). Nút luôn rộng bằng nội dung dài hơn trong hai nhãn. */
@@ -124,7 +127,7 @@ export function Button(inProps: ButtonProps & { ref?: React.Ref<HTMLButtonElemen
     icon,
     iconPosition = "before",
     asChild,
-    loading,
+    loading: loadingProp,
     loadingText,
     children,
     type,
@@ -132,6 +135,10 @@ export function Button(inProps: ButtonProps & { ref?: React.Ref<HTMLButtonElemen
     ref,
     ...props
   } = useComponentDefaults("Button", inProps, COMPACT_SIZE);
+  // Nút gửi trong Form / HookForm (#162): đang gửi = isSubmitting của HookForm, hoặc useFormStatus() của action React 19.
+  const formPending = React.useContext(FormPendingContext);
+  const status = useFormStatus();
+  const loading = loadingProp ?? (type === "submit" && !asChild && formPending !== undefined ? formPending || status.pending : undefined);
   const isIconOnly = iconOnly ?? (!!icon && !children);
   const busy = !!loading;
   const classes = buttonVariants({ appearance, size, shape, iconOnly: isIconOnly, className: [busy && "cursor-progress", className] });

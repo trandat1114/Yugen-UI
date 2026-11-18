@@ -45,7 +45,10 @@ export interface InstallSnippets {
 }
 
 export function installSnippets(importCode: string): InstallSnippets {
-  const npm = `// npm install yugen-ui\n${importCode.replace(/(["'])@\/components\/ui\1/g, '"yugen-ui"').trim()}`;
+  const npm = `// npm install yugen-ui\n${importCode
+    .replace(/(["'])@\/components\/ui\/HookForm\/HookForm\1/g, '"yugen-ui/form"')
+    .replace(/(["'])@\/components\/ui\1/g, '"yugen-ui"')
+    .trim()}`;
 
   const byFolder = new Map<string, string[]>();
   const rest = importCode.replace(IMPORT_RE, (_m, list: string) => {
@@ -57,7 +60,9 @@ export function installSnippets(importCode: string): InstallSnippets {
     return "";
   });
 
-  const items = [...byFolder.keys()];
+  // A folder imported by its own path (`@/components/ui/HookForm/HookForm`, `yugen-ui/form` from npm) is an item too.
+  const own = [...rest.matchAll(/["']@\/components\/ui\/([^/"']+)\//g)].map((m) => m[1]);
+  const items = [...new Set([...byFolder.keys(), ...own])];
   if (items.length === 0) return { npm, cli: "", shadcn: "", items };
 
   // Dòng init chỉ chạy một lần mỗi dự án (theme + cn + YugenProvider) — component không tự kéo theme.

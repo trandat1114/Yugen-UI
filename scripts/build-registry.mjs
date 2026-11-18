@@ -45,7 +45,11 @@ const kebab = (s) => s.replace(/([a-z0-9])([A-Z])/g, "$1-$2").replace(/([A-Z])([
 
 /** Không phải dependency cần cài: peer của mọi dự án React. */
 const PEERS = new Set(["react", "react-dom"]);
-const deps = { ...pkg.dependencies };
+/** Peer tuỳ chọn mà một item cần (react-hook-form cho HookForm, #162): cài kèm item đó như một dependency. */
+const optionalPeers = Object.entries(pkg.peerDependenciesMeta ?? {})
+  .filter(([, meta]) => meta.optional)
+  .map(([name]) => [name, pkg.peerDependencies[name]]);
+const deps = { ...pkg.dependencies, ...Object.fromEntries(optionalPeers) };
 
 function npmName(specifier) {
   const parts = specifier.split("/");
@@ -169,6 +173,8 @@ const folders = fs
 const SERVER_SAFE_FILES = new Set(["YugenProvider/document.ts", "AppShell/cookie.ts"]);
 
 const componentNames = [];
+/** Item cần một peer tuỳ chọn (hook-form): không nằm trong `all`, người dùng tự thêm khi cần. */
+const withOptionalPeer = new Set();
 for (const folder of folders) {
   const dir = path.join(uiDir, folder);
   const files = fs
@@ -189,6 +195,7 @@ for (const folder of folders) {
 
   const name = kebab(folder);
   componentNames.push(name);
+  if ([...npm].some((dep) => optionalPeers.some(([peer]) => peer === dep))) withOptionalPeer.add(name);
   items.push({
     name,
     type: "registry:ui",
@@ -213,7 +220,7 @@ items.push({
   title: "All Yugen UI components",
   description: "Every Yugen UI component and the cn() helper. Run init first for the theme.",
   dependencies: [],
-  registryDependencies: componentNames.map(itemUrl),
+  registryDependencies: componentNames.filter((name) => !withOptionalPeer.has(name)).map(itemUrl),
   files: [],
 });
 

@@ -17,6 +17,7 @@ export * from "./Toolbar/Toolbar";
 export * from "./Link/Link";
 
 // Nhập liệu
+export * from "./Form/Form";
 export * from "./Field/Field";
 export * from "./Label/Label";
 export * from "./Input/Input";
