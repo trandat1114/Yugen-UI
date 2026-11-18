@@ -12,6 +12,7 @@ export const vi = {
   "nav.community": "Cộng đồng",
   "nav.contributors": "Người đóng góp",
   "footer.privacy": "Quyền riêng tư",
+  "nav.support": "Ủng hộ",
   "nav.foundations": "Ngôn ngữ thiết kế",
   "nav.concepts": "Khái niệm",
   "nav.labsConcepts": "Khái niệm Yugen Labs",
