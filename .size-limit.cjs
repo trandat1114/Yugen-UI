@@ -91,7 +91,7 @@ module.exports = [
   // Sortable (#175): 304.4 → 310.8 kB. Form control mới (#173): 309.3 → 318.0 kB. NavigationMenu + StatusPage
   // (#168, #238): → ~328 kB.
   // #360: mọi giới hạn đặt lại = đo được + 8%. cvx (#355) thêm 0.25–0.28 kB cho mục có Button, Input, Badge, Tag….
-  // #356: Calendar / họ DatePicker và react-day-picker sang yugen-ui/dates: → 298.50 kB.
+  // #356: Calendar / họ DatePicker và react-day-picker sang yugen-ui/dates: 325.25 → 298.50 kB.
   js("Toàn bộ thư viện (import *)", "*", "322.5 kB"),
   js("{ cn }", "{ cn }", "10 kB"),
   // cvx (#355): 12.95 → 13.22 kB.
@@ -142,7 +142,7 @@ module.exports = [
   // Chuỗi của 6 component mới (#173): 4.80 → 5.11 kB; NavigationMenu + StatusPage (#168, #238): → ~5.7 kB.
   js("{ messagesEn }", "{ messagesEn }", "6.5 kB"),
   // Bộ tiếng Việt, chỉ khi import (#277: mặc định là tiếng Anh): 17.7 kB khi thêm, phần lớn là locale vi của
-  // react-day-picker cho Calendar / DatePicker. #356: locale đó sang yugen-ui/dates (calendarMessagesVi): → 6.49 kB.
+  // react-day-picker cho Calendar / DatePicker. #356: locale đó sang yugen-ui/dates (calendarMessagesVi): 18.38 → 6.49 kB.
   js("{ messagesVi }", "{ messagesVi }", "7.5 kB"),
   // Sonner, Timeline, DescriptionList, Stat, utility yugen-prose (#174, #234): 24.6 kB khi thêm.
   // AppShell / Sidebar + rail của Nav (#161): 24.97 kB khi thêm; 25.08 kB với layout / scroll / footer. styles.css luôn
