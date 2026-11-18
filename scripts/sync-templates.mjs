@@ -47,12 +47,12 @@ const TEMPLATES = [
   {
     dir: "vite-saas",
     /** Tiêu đề và mô tả của index.html khi tạo bằng `--lang vi` (CLI ghi đè lúc tạo app). */
-    vi: { appTitle: "Sakura Studio", description: "Ứng dụng SaaS dựng bằng Yugen UI: sidebar, bảng lệnh Ctrl K, thông báo, theme sáng / tối / tương phản cao và 8 trang mẫu." },
-    hint: "SaaS workspace: sidebar, Ctrl K command palette, notifications, 8 pages",
+    vi: { appTitle: "Sakura Studio", description: "Ứng dụng SaaS dựng bằng Yugen UI: sidebar, bảng lệnh Ctrl K, thông báo, theme sáng / tối / tương phản cao và 9 trang mẫu." },
+    hint: "SaaS workspace: sidebar, Ctrl K command palette, notifications, 9 pages",
     title: "SaaS",
     appTitle: "Sakura Studio",
     description:
-      "A SaaS app built with Yugen UI: sidebar, Ctrl K command palette, notifications, light / dark / high-contrast themes and 8 sample pages.",
+      "A SaaS app built with Yugen UI: sidebar, Ctrl K command palette, notifications, light / dark / high-contrast themes and 9 sample pages.",
     lang: "en",
     app: "saas",
     /** Route là đường dẫn thật, app một trang: kèm _redirects, vercel.json, build:gh-pages và mục Deploy (#150). */
@@ -568,8 +568,11 @@ ${install(t.dir, "en")}
 - \`NotificationCenter\`, an account menu, a breadcrumb and an export button with a \`toast\`.
 - Light, dark and high-contrast themes and the Sakura, Web and Teams brands, saved in \`localStorage\` with **no flash** on
   reload (a small script in \`index.html\`).
-- 8 sample pages: Overview, Analytics, AI assistant, Inbox, Calendar, Team, Billing and Settings. Each page loads on
-  demand; the others are fetched while the browser is idle.
+- 9 sample pages: Overview, Analytics, AI assistant, Inbox, Calendar, Team, Customers, Billing and Settings. Each page
+  loads on demand; the others are fetched while the browser is idle.
+- A data page (Customers): a \`DataGrid\` that uses the full width and the remaining height, with compact density, the
+  name column pinned, long names and addresses wrapped, and a compact \`DataGridColumnPicker\` (a bottom sheet on
+  phones).
 - Real paths with the History API (\`/analytics\`, \`/settings\`), no extra library; old \`#/analytics\` links still open
   the right page. The tab title and \`<meta name="description">\` follow the page.
 - SEO basics: \`description\`, Open Graph, \`theme-color\`, \`robots.txt\`.
@@ -583,6 +586,7 @@ src/
   App.tsx             # root: YugenProvider, routing, saved theme, page title
   routes.ts           # / · /<page>: path ⇄ page
   AppShell.tsx        # layout: sidebar, top bar, Drawer, content
+  layout.ts           # content width and density of a page: default or fluid, default / compact / comfortable
   CommandPalette.tsx  # Ctrl K command palette
   pages.tsx           # page list: one entry per page in the sidebar and the command palette
   pages/              # one file per page, loaded on demand
@@ -594,6 +598,11 @@ src/
 
 - **Add a page**: create \`src/pages/<id>.tsx\`, add the id to \`PageId\` in \`src/content/types.ts\` and its text to
   \`pages\` in \`src/content/<lang>.ts\`, then add an entry to \`PAGES\` in \`src/pages.tsx\`.
+- **Make a data page**: set \`layout: { width: "fluid", density: "compact" }\` on its entry in \`PAGES\`. \`fluid\` drops
+  the 72rem (\`max-w-6xl\`) column, so a table uses the whole content area at 1440px and 2560px; \`compact\` wraps the
+  page in \`YugenProvider density="compact"\` (controls size small, spacing × 0.9375). Page padding and section gaps
+  per density are in \`SPACING\` in \`src/layout.ts\`; set \`DEFAULT_LAYOUT\` there to change every page. Other pages
+  keep the SaaS default. Recipe for the table itself: https://trandat1114.github.io/Yugen-UI/#/concepts/data-tables
 - **Change the default brand**: replace \`"sakura"\` in \`index.html\` and \`App.tsx\`; make your own palette in
   [Theme Designer](https://trandat1114.github.io/Yugen-UI/#/theme-designer).
 - **Use a router library** (React Router, TanStack Router): replace \`initialPage\` / \`navigate\` in \`App.tsx\` and

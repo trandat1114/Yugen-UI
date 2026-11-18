@@ -1,10 +1,28 @@
 import type { AvatarProps, NotificationIntent, YugenTheme, YugenMessagesInput } from "@/components/ui";
 
-export type PageId = "overview" | "analytics" | "assistant" | "inbox" | "calendar" | "team" | "billing" | "settings";
+export type PageId = "overview" | "analytics" | "assistant" | "inbox" | "calendar" | "team" | "customers" | "billing" | "settings";
 
 export type TransactionKind = "food" | "shopping" | "income" | "transport" | "entertainment";
 
 export type Role = "owner" | "editor" | "viewer";
+
+export type CustomerTier = "gold" | "silver" | "bronze";
+
+/** A row of the customer directory (pages/customers.tsx). Optional fields show "—" when empty. */
+export interface Customer {
+  id: string;
+  name: string;
+  email?: string;
+  phone?: string;
+  address: string;
+  city: string;
+  tier: CustomerTier;
+  orders: number;
+  /** Amount owed, in `currency`. */
+  balance: number;
+  /** ISO date (YYYY-MM-DD). */
+  updated: string;
+}
 
 /** Every string in the app, and the sample data. One file per language; `content/index.ts` picks the one the app uses. */
 export interface Content {
@@ -132,6 +150,25 @@ export interface Content {
     invite: string;
     roles: Record<Role, string>;
     members: { name: string; email: string; role: Role; presence: NonNullable<AvatarProps["presence"]> }[];
+  };
+  customers: {
+    /** Name of the grid. */
+    title: string;
+    search: string;
+    count: (n: number) => string;
+    selected: (n: number) => string;
+    /** Name of the column picker button: one per table, so two tables never both have a "Columns" button. */
+    columnsLabel: string;
+    add: string;
+    addToast: { title: string; body: string };
+    /** Read by screen readers in an empty cell (shown as "—"). */
+    none: string;
+    columns: Record<"name" | "code" | "email" | "phone" | "address" | "city" | "tier" | "orders" | "balance" | "updated", string>;
+    tiers: Record<CustomerTier, string>;
+    emptyTitle: string;
+    emptyBody: string;
+    clear: string;
+    items: Customer[];
   };
   payout: {
     title: string;

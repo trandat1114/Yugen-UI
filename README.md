@@ -243,7 +243,7 @@ npm run dev
 | Template | What you get |
 | --- | --- |
 | `vite-starter` | Blank start: persisted theme, toast, `@/` alias, SEO basics, a cherry-blossom welcome page to delete |
-| `vite-saas` | 8-page SaaS app: sidebar → drawer, Ctrl K palette, notifications, themes & brands |
+| `vite-saas` | 9-page SaaS app: sidebar → drawer, Ctrl K palette, notifications, themes & brands, full-width data page |
 | `vite-blog` | Markdown blog: tags, search, TOC; build-time HTML per post, sitemap.xml, rss.xml |
 | `vite-dashboard` | KPI tiles, charts, recent transactions |
 | `vite-ai-chat` | AI assistant chat with agent trace |
@@ -549,7 +549,7 @@ npm run dev
 | Template | Có gì |
 | --- | --- |
 | `vite-starter` | Khởi đầu trắng: theme ghi nhớ, toast, alias `@/`, SEO cơ bản, trang chào hoa anh đào (xoá được) |
-| `vite-saas` | Ứng dụng SaaS 8 trang: sidebar → drawer, bảng lệnh Ctrl K, thông báo, theme & thương hiệu |
+| `vite-saas` | Ứng dụng SaaS 9 trang: sidebar → drawer, bảng lệnh Ctrl K, thông báo, theme & thương hiệu, trang dữ liệu rộng hết màn hình |
 | `vite-blog` | Blog Markdown: thẻ, tìm kiếm, mục lục; HTML tĩnh từng bài, sitemap.xml, rss.xml lúc build |
 | `vite-dashboard` | Thẻ KPI, biểu đồ, giao dịch gần đây |
 | `vite-ai-chat` | Trợ lý AI dạng chat, Trace các bước agent |

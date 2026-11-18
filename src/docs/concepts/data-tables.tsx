@@ -163,6 +163,22 @@ const TABLE_CODE = `<Table sortable size="small" className="text-body2">
   </TableBody>
 </Table>`;
 
+const SHELL_CODE = `// src/pages.tsx (vite-saas): one entry opts in, the other pages keep the 72rem column.
+{
+  id: "customers",
+  icon: <ContactCard20Regular />,
+  section: "manage",
+  layout: { width: "fluid", density: "compact" },
+  Page: lazy(LOADERS.customers),
+}
+
+// src/layout.ts: page padding and section gaps per density.
+const SPACING = {
+  default: "gap-4 p-4 @3xl:p-6",
+  compact: "gap-3 px-3 py-3 @3xl:px-5 @3xl:py-4",
+  comfortable: "gap-6 p-5 @3xl:p-8",
+};`;
+
 export default function Page() {
   return (
     <>
@@ -328,6 +344,28 @@ export default function Page() {
             ]}
           />
           <CodeBlock code={PICKER_CODE} />
+        </div>
+      </DocSection>
+
+      <DocSection
+        id="shell"
+        title="Độ rộng & mật độ trang trong ứng dụng"
+        description="Trang dữ liệu dùng hết vùng nội dung. Cột max-w-6xl ở giữa để trống hơn 1.000px trên màn hình 2560px."
+      >
+        <div className="flex flex-col gap-4">
+          <Bullets
+            items={[
+              <>
+                Template <C>vite-saas</C> đặt bố cục theo từng trang: <C>width: &quot;fluid&quot;</C> bỏ cột 72rem,{" "}
+                <C>density: &quot;compact&quot;</C> bọc trang trong <C>YugenProvider density=&quot;compact&quot;</C> cùng theme và brand
+                của ứng dụng. Trang không có <C>layout</C> giữ nguyên như cũ.
+              </>,
+              "Trang gọn có khoảng đệm 12px (20px khi vùng nội dung từ 48rem) và 12px giữa các phần; mặc định là 16 / 24px và 16px. Cả hai là class trong một bảng, không phải CSS toàn cục.",
+              "Menu và sheet mở từ trang gọn cũng gọn: provider lồng truyền mật độ cho portal.",
+              "Khung không đổi: sidebar thành rail hoặc drawer dưới breakpoint của AppShell, thanh trên cùng giữ chiều cao.",
+            ]}
+          />
+          <CodeBlock code={SHELL_CODE} />
         </div>
       </DocSection>
 

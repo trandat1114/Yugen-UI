@@ -45,10 +45,12 @@ import {
   type YugenBrand,
   type YugenTheme,
   ErrorBoundary,
+  YugenProvider,
 } from "@/components/ui";
 import { BRANDS, CommandPalette, THEMES } from "./CommandPalette";
 import defaultContent from "./content";
 import type { Content } from "./content/types";
+import { pageClassName, resolveLayout, type PageLayout } from "./layout";
 import { PAGE_BY_ID, PAGES, type PageId } from "./pages";
 import { isPlainClick, pathOf } from "./routes";
 
@@ -201,12 +203,26 @@ function UserMenu({ t, onNavigate, onOpenPalette }: { t: Content; onNavigate: (p
   );
 }
 
+/**
+ * Mật độ riêng của một trang (layout.density): YugenProvider lồng cho control bên trong size small (compact) và đổi
+ * khoảng cách, kể cả menu / sheet mở từ trang. Cùng theme và brand với provider gốc; `contents` để không thêm hộp nào.
+ */
+function PageDensity({ density, appearance, children }: { density: Required<PageLayout>["density"]; appearance: Appearance; children: React.ReactNode }) {
+  if (density === "default") return children;
+  return (
+    <YugenProvider density={density} theme={appearance.theme} brand={appearance.brand} className="contents">
+      {children}
+    </YugenProvider>
+  );
+}
+
 /** Khung ứng dụng: sidebar (Drawer trên màn hẹp), thanh trên cùng, bảng lệnh và nội dung trang. */
 export function AppShell({ page, onNavigate, appearance, onAppearanceChange, content: t = defaultContent, embedded = false }: AppShellProps) {
   const [paletteOpen, setPaletteOpen] = React.useState(false);
   const notifications = useNotifications(() => seedNotifications(t, Date.now()));
   const current = PAGE_BY_ID[page];
   const text = t.pages[page];
+  const layout = resolveLayout(current.layout);
   const contentRef = React.useRef<HTMLElement>(null);
 
   React.useEffect(() => {
@@ -272,7 +288,8 @@ export function AppShell({ page, onNavigate, appearance, onAppearanceChange, con
 
       <AppShellMain asChild ref={contentRef} className="@container">
         <Main aria-label={embedded ? text.title : undefined}>
-          <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 p-4 @3xl:p-6">
+          <PageDensity density={layout.density} appearance={appearance}>
+          <div className={pageClassName(layout)}>
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div className="min-w-0">
                 <Heading className="font-display text-title2 font-semibold">{text.title}</Heading>
@@ -293,6 +310,7 @@ export function AppShell({ page, onNavigate, appearance, onAppearanceChange, con
             </React.Suspense>
             </ErrorBoundary>
           </div>
+          </PageDensity>
         </Main>
       </AppShellMain>
 

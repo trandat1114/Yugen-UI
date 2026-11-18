@@ -14,6 +14,7 @@ export const meta: ConceptMeta = {
     { id: "scrolling", label: "Cuộn ngang & ghim cột" },
     { id: "states", label: "Tải, rỗng, lỗi" },
     { id: "viewports", label: "Theo độ rộng màn hình" },
+    { id: "shell", label: "Độ rộng & mật độ trang" },
     { id: "a11y", label: "Bàn phím, sắp xếp, chọn hàng" },
     { id: "rules", label: "Nên & không nên" },
   ],

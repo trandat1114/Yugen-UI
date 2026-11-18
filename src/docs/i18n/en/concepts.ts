@@ -285,6 +285,7 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
       scrolling: "Horizontal scrolling & pinned columns",
       states: "Loading, empty, error",
       viewports: "Viewports",
+      shell: "Page width & density",
       a11y: "Keyboard, sort & selection",
       rules: "Do and don't",
     },

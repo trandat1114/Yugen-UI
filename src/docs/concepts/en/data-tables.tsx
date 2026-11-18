@@ -163,6 +163,22 @@ const TABLE_CODE = `<Table sortable size="small" className="text-body2">
   </TableBody>
 </Table>`;
 
+const SHELL_CODE = `// src/pages.tsx (vite-saas): one entry opts in, the other pages keep the 72rem column.
+{
+  id: "customers",
+  icon: <ContactCard20Regular />,
+  section: "manage",
+  layout: { width: "fluid", density: "compact" },
+  Page: lazy(LOADERS.customers),
+}
+
+// src/layout.ts: page padding and section gaps per density.
+const SPACING = {
+  default: "gap-4 p-4 @3xl:p-6",
+  compact: "gap-3 px-3 py-3 @3xl:px-5 @3xl:py-4",
+  comfortable: "gap-6 p-5 @3xl:p-8",
+};`;
+
 export default function Page() {
   return (
     <>
@@ -337,6 +353,28 @@ export default function Page() {
             ]}
           />
           <CodeBlock code={PICKER_CODE} />
+        </div>
+      </DocSection>
+
+      <DocSection
+        id="shell"
+        title="Page width & density in an app"
+        description="A data page uses the whole content area. A centered max-w-6xl column leaves more than 1,000px empty on a 2560px screen."
+      >
+        <div className="flex flex-col gap-4">
+          <Bullets
+            items={[
+              <>
+                The <C>vite-saas</C> template sets the layout per page: <C>width: &quot;fluid&quot;</C> drops the 72rem column,{" "}
+                <C>density: &quot;compact&quot;</C> wraps the page in <C>YugenProvider density=&quot;compact&quot;</C> with the app&apos;s
+                theme and brand. Pages without <C>layout</C> stay as they were.
+              </>,
+              "Compact pages use 12px padding (20px from a 48rem content area) and 12px between sections; the default is 16 / 24px and 16px. Both are classes in one map, not global CSS.",
+              "Menus and sheets opened from a compact page are compact too: the nested provider passes the density to portals.",
+              "The shell itself doesn't change: the sidebar becomes a rail or a drawer below the AppShell breakpoint, and the header keeps its height.",
+            ]}
+          />
+          <CodeBlock code={SHELL_CODE} />
         </div>
       </DocSection>
 
