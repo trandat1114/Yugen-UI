@@ -10,6 +10,7 @@ export const en: Record<MessageKey, string> = {
   "nav.news": "What's new",
   "nav.community": "Community",
   "nav.contributors": "Contributors",
+  "nav.support": "Support",
   "nav.foundations": "Design language",
   "nav.concepts": "Concepts",
   "nav.labsConcepts": "Yugen Labs concepts",
