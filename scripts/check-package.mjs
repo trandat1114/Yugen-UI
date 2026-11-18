@@ -16,8 +16,9 @@
  *      `@source "./components"` resolve next to it), `theme-core.css` alone (no component classes, no keyframes) and
  *      `theme-core.css` + `sources/Decorative.css` (that component's classes and only the keyframes they use).
  *      dist/tokens.css has no Tailwind-only at-rule.
- *   5. Optional peers (#356): esbuild bundles dist/lib.js and the messages entries with react-day-picker, date-fns and
- *      @date-fns/tz unresolvable; `yugen-ui/dates` fails the same way.
+ *   5. Optional peers (#162, #356): esbuild bundles dist/lib.js and the messages entries with every optional peer and
+ *      the packages it brings (react-day-picker, date-fns, @date-fns/tz, react-hook-form) unresolvable;
+ *      `yugen-ui/dates` and `yugen-ui/form` fail the same way.
  *
  *   node scripts/check-package.mjs
  */
@@ -76,6 +77,31 @@ for (const module of modules) {
     if (rootModule[name] !== sub[name]) fail(`${specifier}: "${name}" is not the root's ${name} (a second module instance?)`);
   }
   subpaths.set(specifier, names);
+}
+// Subpaths outside the barrel: `yugen-ui/form`, the react-hook-form adapter (#162). Its names are not on the root.
+const EXTRA_SUBPATHS = { [`${pkg.name}/form`]: "components/ui/HookForm/HookForm.js" };
+for (const [specifier, file] of Object.entries(EXTRA_SUBPATHS)) {
+  const expected = pathToFileURL(path.join(dist, file)).href;
+  try {
+    const resolved = import.meta.resolve(specifier);
+    if (resolved !== expected) {
+      fail(`${specifier}: resolves to ${resolved}, expected ${expected}`);
+      continue;
+    }
+    const names = Object.keys(await import(specifier));
+    if (!names.length) fail(`${specifier}: exports nothing`);
+    const onRoot = names.filter((name) => name in rootModule);
+    if (onRoot.length) fail(`${specifier}: ${onRoot.join(", ")} also on the root (the root must not import react-hook-form)`);
+    subpaths.set(specifier, names);
+  } catch (error) {
+    fail(`${specifier}: does not load (${error.code ?? error.message})`);
+  }
+}
+try {
+  const leaked = import.meta.resolve(`${pkg.name}/HookForm`);
+  fail(`${pkg.name}/HookForm resolves to ${leaked}: the adapter's only path is ${pkg.name}/form`);
+} catch (error) {
+  if (error.code !== "ERR_PACKAGE_PATH_NOT_EXPORTED") fail(`${pkg.name}/HookForm: ${error.code ?? error.message}`);
 }
 
 // yugen-ui/dates (#356): its own entry, outside the root. Every module that src/components/ui/dates.ts re-exports has a
@@ -432,6 +458,13 @@ try {
   fail(`${DATES} bundles without react-day-picker: the optional-peer check above blocks nothing`);
 } catch (error) {
   if (!(error.errors ?? []).some((e) => e.text.includes("react-day-picker"))) fail(`${DATES}: unexpected esbuild error (${error.message})`);
+}
+// The same plugin stops `yugen-ui/form` (#162), which imports react-hook-form: the check sees that peer too.
+try {
+  await bundleWithoutPeers([path.join(dist, EXTRA_SUBPATHS[`${pkg.name}/form`])]);
+  fail(`${pkg.name}/form bundles without react-hook-form: the optional-peer check above blocks nothing`);
+} catch (error) {
+  if (!(error.errors ?? []).some((e) => e.text.includes("react-hook-form"))) fail(`${pkg.name}/form: unexpected esbuild error (${error.message})`);
 }
 
 if (errors.length) {

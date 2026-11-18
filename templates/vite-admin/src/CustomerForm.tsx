@@ -1,10 +1,11 @@
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
-import { Button, DrawerBody, DrawerFooter, DrawerHeader, DrawerHeaderTitle, Field, Input, Select } from "yugen-ui";
+import { Button, DrawerBody, DrawerFooter, DrawerHeader, DrawerHeaderTitle, Field, FormErrorSummary, Input, Select } from "yugen-ui";
+import { HookForm, standardSchemaResolver } from "yugen-ui/form";
 import { CUSTOMER_STATUSES, PLANS, type Customer, type CustomerInput } from "./api";
 import { useAdmin } from "./context";
-import { customerSchema, zodResolver } from "./validation";
+import { customerSchema } from "./validation";
 
 type Values = z.input<ReturnType<typeof customerSchema>>;
 
@@ -19,45 +20,44 @@ export interface CustomerFormProps {
   onSubmit: (values: CustomerInput) => void;
 }
 
-/** Fields of a customer, checked by the zod schema in validation.ts as you leave each one and on save. */
+/**
+ * Fields of a customer, checked by the zod schema in validation.ts as you leave each one and on save. HookForm shows each
+ * error in the Field of the same name, lists them in FormErrorSummary and moves focus to the first one.
+ */
 export default function CustomerForm({ customer, title, close, onCancel, onSubmit }: CustomerFormProps) {
   const { t } = useAdmin();
   const schema = React.useMemo(() => customerSchema(t.form.errors), [t]);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<Values, unknown, CustomerInput>({
-    resolver: zodResolver(schema),
+  const form = useForm<Values, unknown, CustomerInput>({
+    resolver: standardSchemaResolver(schema),
     mode: "onTouched",
     defaultValues: customer
       ? { name: customer.name, email: customer.email, company: customer.company, phone: customer.phone, status: customer.status, plan: customer.plan }
       : EMPTY,
   });
-  const check = (name: keyof Values) =>
-    ({ validationState: errors[name] ? "error" : "none", validationMessage: errors[name]?.message }) as const;
+  const { register } = form;
 
   return (
-    <form noValidate onSubmit={handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
+    <HookForm form={form} onSubmit={onSubmit} className="flex min-h-0 flex-1 flex-col">
       <DrawerHeader>
         <DrawerHeaderTitle action={close}>{title}</DrawerHeaderTitle>
         <p className="text-body1 text-foreground-3">{t.form.lead}</p>
       </DrawerHeader>
       <DrawerBody className="flex flex-col gap-4 py-4">
-        <Field label={t.form.name} required {...check("name")}>
+        <FormErrorSummary />
+        <Field label={t.form.name} required>
           <Input autoComplete="off" {...register("name")} />
         </Field>
-        <Field label={t.form.email} required {...check("email")}>
+        <Field label={t.form.email} required>
           <Input type="email" autoComplete="off" {...register("email")} />
         </Field>
-        <Field label={t.form.company} {...check("company")}>
+        <Field label={t.form.company}>
           <Input autoComplete="off" {...register("company")} />
         </Field>
-        <Field label={t.form.phone} hint={t.form.phoneHint} {...check("phone")}>
+        <Field label={t.form.phone} hint={t.form.phoneHint}>
           <Input type="tel" autoComplete="off" {...register("phone")} />
         </Field>
         <div className="grid grid-cols-2 gap-4">
-          <Field label={t.form.status} {...check("status")}>
+          <Field label={t.form.status}>
             <Select {...register("status")}>
               {CUSTOMER_STATUSES.map((status) => (
                 <option key={status} value={status}>
@@ -66,7 +66,7 @@ export default function CustomerForm({ customer, title, close, onCancel, onSubmi
               ))}
             </Select>
           </Field>
-          <Field label={t.form.plan} {...check("plan")}>
+          <Field label={t.form.plan}>
             <Select {...register("plan")}>
               {PLANS.map((plan) => (
                 <option key={plan} value={plan}>
@@ -83,6 +83,6 @@ export default function CustomerForm({ customer, title, close, onCancel, onSubmi
           {customer ? t.form.save : t.form.create}
         </Button>
       </DrawerFooter>
-    </form>
+    </HookForm>
   );
 }

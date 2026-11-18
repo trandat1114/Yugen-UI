@@ -91,6 +91,11 @@
       "types": "./dist/components/ui/AppShell/Sidebar.d.ts",
       "default": "./dist/components/ui/AppShell/Sidebar.js"
     },
+    "./form": {
+      "types": "./dist/components/ui/HookForm/HookForm.d.ts",
+      "default": "./dist/components/ui/HookForm/HookForm.js"
+    },
+    "./HookForm": null,
     "./_internal/*": null,
     "./*": {
       "types": "./dist/components/ui/*/*.d.ts",
@@ -134,10 +139,14 @@
     "react": ">=19",
     "react-day-picker": "^10.0.2",
     "react-dom": ">=19",
+    "react-hook-form": "^7.55.0",
     "tailwindcss": "^4.0.0"
   },
   "peerDependenciesMeta": {
     "react-day-picker": {
+      "optional": true
+    },
+    "react-hook-form": {
       "optional": true
     },
     "tailwindcss": {

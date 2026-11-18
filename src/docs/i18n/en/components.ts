@@ -25,6 +25,9 @@ export const COMPONENTS_EN: Record<string, { lead: string; name?: string }> = {
   dropdown: { lead: "Dropdown lets people pick one option from a custom listbox that opens below the field." },
   field: { lead: "Field wraps an input control with its label, required marker, hint and validation message." },
   fileupload: { lead: "FileUpload is a drop zone with a file list: pick with mouse or keyboard, drag and drop or paste; type, size and count are validated." },
+  form: {
+    lead: "Form checks input before it is sent and shows errors in each Field by name and in a summary at the top, with React 19 actions or react-hook-form.",
+  },
   formattedinput: { lead: "FormattedInput formats phone numbers, card numbers and amounts as you type, keeping the caret in place." },
   formvalidation: {
     name: "Forms with react-hook-form + zod",

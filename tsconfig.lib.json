@@ -10,5 +10,6 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false
   },
-  "include": ["src/lib.ts", "src/components/ui/dates.ts"]
+  // `yugen-ui/dates` (#356) and `yugen-ui/form` (#162) live outside the root barrel.
+  "include": ["src/lib.ts", "src/components/ui/dates.ts", "src/components/ui/HookForm/HookForm.tsx"]
 }

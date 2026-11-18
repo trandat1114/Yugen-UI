@@ -43,7 +43,7 @@ export const en: Record<string, ComponentDocEn> = {
       iconOnly: "Turns on when there is an icon and no children.",
       asChild: "Renders into the child element (e.g. <a>) instead of a <button>.",
       loading:
-        "Busy state: a Spinner replaces the icon (or sits in the middle of the button), the width is kept, aria-busy and aria-disabled are set, and clicks are ignored while the button stays focusable.",
+        "Busy state: a Spinner replaces the icon (or sits in the middle of the button), the width is kept, aria-busy and aria-disabled are set, and clicks are ignored while the button stays focusable. Inside Form or HookForm, a type=\"submit\" Button is loading while the form submits.",
       loadingText: "Label while loading (e.g. “Saving…”). The button is always as wide as the longer label, so nothing shifts.",
     },
     defaults: { iconOnly: "auto" },

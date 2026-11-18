@@ -55,9 +55,12 @@ export interface InstallSnippets {
 }
 
 export function installSnippets(importCode: string): InstallSnippets {
-  // yugen-ui/dates (#356): react-day-picker is an optional peer, installed next to yugen-ui.
+  // yugen-ui/dates (#356): react-day-picker is an optional peer, installed next to yugen-ui. HookForm → yugen-ui/form (#162).
   const install = DATES_IMPORT.test(importCode) ? `yugen-ui ${DATES_PEER}` : "yugen-ui";
-  const code = importCode.replace(/(["'])@\/components\/ui\1/g, '"yugen-ui"').replace(/(["'])@\/components\/ui\/dates\1/g, '"yugen-ui/dates"');
+  const code = importCode
+    .replace(/(["'])@\/components\/ui\/HookForm\/HookForm\1/g, '"yugen-ui/form"')
+    .replace(/(["'])@\/components\/ui\1/g, '"yugen-ui"')
+    .replace(/(["'])@\/components\/ui\/dates\1/g, '"yugen-ui/dates"');
   const npm = `// npm install ${install}\n${code.trim()}`;
 
   const byFolder = new Map<string, string[]>();
@@ -70,7 +73,9 @@ export function installSnippets(importCode: string): InstallSnippets {
     return "";
   });
 
-  const items = [...byFolder.keys()];
+  // A folder imported by its own path (`@/components/ui/HookForm/HookForm`, `yugen-ui/form` from npm) is an item too.
+  const own = [...rest.matchAll(/["']@\/components\/ui\/([^/"']+)\//g)].map((m) => m[1]);
+  const items = [...new Set([...byFolder.keys(), ...own])];
   if (items.length === 0) return { npm, cli: "", shadcn: "", items };
 
   // Dòng init chỉ chạy một lần mỗi dự án (theme + cn + YugenProvider) — component không tự kéo theme.

@@ -179,7 +179,7 @@ export default function Page() {
             row(["Drawer (vaul)"], ["Drawer", "DrawerSurface position=\"bottom\""], "Không có kéo để đóng."),
             row(["DropdownMenu", "DropdownMenuContent", "DropdownMenuItem", "DropdownMenuLabel", "DropdownMenuSeparator", "DropdownMenuShortcut"], ["Menu", "MenuPopover", "MenuItem", "MenuGroupHeader", "MenuDivider", "MenuItem secondaryContent"], <><C>DropdownMenuCheckboxItem / RadioItem / Sub</C> → <C>MenuItemCheckbox / MenuItemRadio / MenuSub</C>.</>),
             row(["Field", "FieldLabel", "FieldDescription", "FieldError"], ["Field"], <>Một component: <C>label</C>, <C>hint</C>, <C>validationState</C>, <C>validationMessage</C>.</>),
-            row(["Form (react-hook-form)"], ["Field"], "Dùng thư viện form bạn chọn; nối lỗi vào validationMessage."),
+            row(["Form (react-hook-form)"], ["HookForm", "Field", "FormErrorSummary"], <><C>HookForm</C> từ <C>yugen-ui/form</C>: Field tự đọc lỗi theo <C>name</C>; <C>standardSchemaResolver</C> cho zod.</>),
             row(["Input Group"], ["Input contentBefore / contentAfter"], ""),
             row(["Input OTP", "InputOTPGroup", "InputOTPSlot"], ["InputOTP"], <><C>maxLength</C> → <C>length</C>; nhóm bằng <C>groups={"{[3, 3]}"}</C>.</>),
             row(["Item"], ["List", "ListItem"], <><C>media</C>, <C>title</C>, <C>description</C>, <C>actions</C>.</>),

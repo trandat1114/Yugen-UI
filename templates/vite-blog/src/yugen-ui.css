@@ -5,7 +5,9 @@
 @import "yugen-ui/theme-core.css";
 @import "yugen-ui/sources/AIKit.css";
 @import "yugen-ui/sources/AppShell.css";
+@import "yugen-ui/sources/Badge.css";
 @import "yugen-ui/sources/Button.css";
+@import "yugen-ui/sources/CodeBlock.css";
 @import "yugen-ui/sources/Divider.css";
 @import "yugen-ui/sources/Empty.css";
 @import "yugen-ui/sources/Menu.css";

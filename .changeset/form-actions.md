@@ -1,0 +1,5 @@
+---
+"yugen-ui": minor
+---
+
+New `Form` and `FormErrorSummary` (#162). `Form` runs a React 19 action (`action`, `useActionState`, `useFormStatus`): before the action it checks the controls' constraints (`required`, `type`, `pattern`, `minLength`, `min` / `max`…) with messages from the new `messages.form` namespace (English default, `formMessagesVi`), shows the errors the action returns (`{ errors: { email: "…" } }`) or the `errors` prop in the `Field` of the same `name`, keeps what people typed when there are errors, and moves focus to the first invalid control after a failed submit. `validate` adds checks of your own. `FormErrorSummary` lists the errors as links that move focus to each control (WCAG 3.3.1) and is announced after each submit. `Field` takes a `name` (default: its control's `name`) and shows that control's error inside `Form` without `validationState` / `validationMessage`; outside a form nothing changes. A `type="submit"` `Button` inside `Form` is `loading` while the form submits, unless `loading` is set.

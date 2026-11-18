@@ -32,6 +32,7 @@ import {
 import { descriptionListMessagesEn } from "./DescriptionList/messages";
 import { dialogMessagesEn } from "./Dialog/messages";
 import { fileUploadMessagesEn } from "./FileUpload/messages";
+import { formMessagesEn } from "./Form/messages";
 import { infoLabelMessagesEn } from "./InfoLabel/messages";
 import { inputOTPMessagesEn } from "./InputOTP/messages";
 import { linkMessagesEn } from "./Link/messages";
@@ -110,6 +111,7 @@ export const messagesEn: Omit<YugenMessages, "calendar"> = {
   dialog: dialogMessagesEn,
   errorState: errorStateMessagesEn,
   fileUpload: fileUploadMessagesEn,
+  form: formMessagesEn,
   infoLabel: infoLabelMessagesEn,
   inputOTP: inputOTPMessagesEn,
   link: linkMessagesEn,

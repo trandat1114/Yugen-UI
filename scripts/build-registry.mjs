@@ -171,6 +171,9 @@ const folders = fs
 const SERVER_SAFE_FILES = new Set(["YugenProvider/document.ts", "AppShell/cookie.ts"]);
 
 const componentNames = [];
+/** Adapter cho thư viện form (hook-form cần react-hook-form, #162): không nằm trong `all`, người dùng tự thêm khi cần. */
+const NOT_IN_ALL = new Set(["react-hook-form"]);
+const withOptionalPeer = new Set();
 for (const folder of folders) {
   const dir = path.join(uiDir, folder);
   const files = fs
@@ -191,6 +194,7 @@ for (const folder of folders) {
 
   const name = kebab(folder);
   componentNames.push(name);
+  if ([...npm].some((dep) => NOT_IN_ALL.has(dep))) withOptionalPeer.add(name);
   items.push({
     name,
     type: "registry:ui",
@@ -215,7 +219,7 @@ items.push({
   title: "All Yugen UI components",
   description: "Every Yugen UI component and the cn() helper. Run init first for the theme.",
   dependencies: [],
-  registryDependencies: componentNames.map(itemUrl),
+  registryDependencies: componentNames.filter((name) => !withOptionalPeer.has(name)).map(itemUrl),
   files: [],
 });
 

@@ -15,6 +15,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { parseSync } from "vite";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
@@ -153,7 +154,7 @@ const TEMPLATES = [
     app: "admin",
     spa: true,
     storageKey: "yugen-admin-appearance",
-    /** Form validation (src/validation.ts). Not @hookform/resolvers: its optional peers break `npm install` on npm 11. */
+    /** Forms: HookForm from yugen-ui/form with the zod schemas in src/validation.ts (#162). */
     dependencies: { "react-hook-form": pkg.devDependencies["react-hook-form"], zod: pkg.devDependencies.zod },
   },
   {
@@ -219,6 +220,8 @@ const ASSET = /\.(avif|webp|png|jpe?g|svg)$/;
 const isText = (content) => typeof content === "string";
 const toYugen = (code) =>
   code
+    // HookForm is the `yugen-ui/form` subpath (#162), outside the root.
+    .replace(/(["'])@\/components\/ui\/HookForm\/HookForm\1/g, '"yugen-ui/form"')
     // Calendar and the DatePicker family: yugen-ui/dates, which needs react-day-picker (#356).
     .replace(/(["'])@\/components\/ui\/dates\1/g, '"yugen-ui/dates"')
     .replace(/(["'])@\/components\/ui(?:\/[^"']*)?\1/g, '"yugen-ui"')
@@ -233,8 +236,11 @@ const datesPeer = (appFiles) =>
 
 /** Export name → component folder, used to seed the generated lean CSS before the CLI runs for the first time. */
 const componentFolderByExport = new Map();
+/** Folders that have a `sources/<Folder>.css`, exact case (`yugen-ui/form` has none, as in `yugen css`). */
+const sourceFolders = new Set();
 for (const dir of fs.readdirSync(path.join(root, "src/components/ui"), { withFileTypes: true }).filter((entry) => entry.isDirectory())) {
   const folder = dir.name;
+  sourceFolders.add(folder);
   const dirPath = path.join(root, "src/components/ui", folder);
   for (const file of fs.readdirSync(dirPath)) {
     if (!/\.(tsx?|jsx?)$/.test(file)) continue;
@@ -244,22 +250,54 @@ for (const dir of fs.readdirSync(path.join(root, "src/components/ui"), { withFil
   componentFolderByExport.set(folder, folder);
 }
 
+/**
+ * The yugen-ui imports of the app's code, read with a parser like `yugen css` reads them (packages/cli): an import
+ * written inside a string or a comment ('import { DataGrid } from "yugen-ui"' in the starter's text) does not count, and
+ * one import list never runs on into the next import.
+ */
+function yugenImports(sources) {
+  const found = [];
+  const walk = (node) => {
+    if (!node || typeof node !== "object") return;
+    if (Array.isArray(node)) return node.forEach(walk);
+    const from = node.source?.value;
+    if (typeof from === "string" && (from === "yugen-ui" || from.startsWith("yugen-ui/"))) {
+      const specifiers = node.specifiers ?? [];
+      found.push({
+        from,
+        names: specifiers.map((s) => s.imported?.name ?? s.local?.name).filter(Boolean),
+        all:
+          node.type === "ImportExpression" ||
+          node.type === "ExportAllDeclaration" ||
+          specifiers.some((s) => s.type === "ImportNamespaceSpecifier" || s.type === "ImportDefaultSpecifier"),
+      });
+    }
+    for (const key of Object.keys(node)) if (key !== "type" && key !== "start" && key !== "end") walk(node[key]);
+  };
+  for (const [file, code] of sources) {
+    const { program, errors } = parseSync(file, code);
+    if (errors.length) throw new Error(`${file}: ${errors[0].message}`);
+    walk(program);
+  }
+  return found;
+}
+
 function leanCss(appFiles, fallbackCode = "") {
   const code = [...Object.values(appFiles), fallbackCode].filter(isText).join("\n");
+  const sources = Object.entries(appFiles).filter(([file, text]) => isText(text) && /\.[cm]?[jt]sx?$/.test(file));
+  if (fallbackCode) sources.push(["src/main.tsx", fallbackCode]);
   const folders = new Set();
   let everything = false;
-  for (const match of code.matchAll(/["']yugen-ui\/([^"']+)["']/g)) {
-    const folder = match[1].split("/")[0];
-    if (!folder.endsWith(".css") && folder !== "dates") folders.add(folder);
-  }
-  // yugen-ui/dates (#356) is looked up by name, like the root (same rule as `yugen css`).
-  for (const match of code.matchAll(/(?:import|export)\s+(?:type\s+)?\{([\s\S]*?)\}\s+from\s+["']yugen-ui(?:\/dates)?["']/g)) {
-    for (const name of match[1].split(",").map((part) => part.trim().replace(/^type\s+/, "").split(/\s+as\s+/)[0]).filter(Boolean)) {
-      const folder = componentFolderByExport.get(name);
-      if (folder) folders.add(folder);
+  for (const { from, names, all } of yugenImports(sources)) {
+    // The root and yugen-ui/dates (#356) by name; another subpath by its folder. `yugen-ui/form` (#162) has no sources.
+    if (from === "yugen-ui" || from === "yugen-ui/dates") {
+      if (all && from === "yugen-ui") everything = true;
+      for (const name of names) if (componentFolderByExport.has(name)) folders.add(componentFolderByExport.get(name));
+    } else {
+      const folder = from.slice("yugen-ui/".length).split("/")[0];
+      if (sourceFolders.has(folder)) folders.add(folder);
     }
   }
-  if (/(?:import|export)\s+\*\s+(?:as\s+\w+\s+)?from\s+["']yugen-ui["']|import\s*\(\s*["']yugen-ui["']/.test(code)) everything = true;
   // Brand web / teams: their ramps are outside theme-core.css (#354), same rule as `yugen css` (packages/cli/src/lib/leanCss.ts).
   const brands = /\b(?:data-)?brand\s*[=:]\s*\{?\s*["'`](?:web|teams)["'`]/.test(code) ? ['@import "yugen-ui/tokens/brands.css";'] : [];
   const imports = everything
@@ -855,8 +893,8 @@ ${install(t.dir, "en")}
 - Customers (\`/customers\`): a \`DataGrid\` paged, sorted and filtered by the server (one page plus the total per
   request), search, status and plan filters, a column picker (\`DataGridColumnPicker\`), and row selection with bulk
   export to CSV and bulk delete.
-- Create and edit in a \`Drawer\`, validated with react-hook-form and zod (\`src/validation.ts\`); delete after a
-  confirm \`Dialog\`.
+- Create and edit in a \`Drawer\`, validated with react-hook-form and zod (\`src/validation.ts\`) through
+  \`yugen-ui/form\`; delete after a confirm \`Dialog\`.
 - Optimistic updates (\`useOptimisticList\`): changes show at once, a toast confirms them, and a failed request puts
   the list back as it was, with a Retry button.
 - Customer page (\`/customers/<id>\`) with the details and the customer's orders; Orders (\`/orders\`), read-only.
@@ -892,8 +930,9 @@ Create it in \`src/App.tsx\` instead of \`createMockApi\`, then delete the mock 
 a sort and the filters, and return \`{ rows, total }\`. Reject with an error when a request fails: the optimistic
 update rolls back on its own.
 
-Validation uses a small zod resolver in \`src/validation.ts\` instead of \`@hookform/resolvers\`, whose optional
-peer dependencies make \`npm install\` fail on npm 11. You can switch to it once that is fixed.
+Forms use \`HookForm\` and \`standardSchemaResolver\` from \`yugen-ui/form\` with the zod schemas in
+\`src/validation.ts\`: each \`Field\` shows the error of its control by name, \`FormErrorSummary\` lists them, and the
+submit button is loading while the form submits.
 
 ${deploy()}
 ## Structure
@@ -908,7 +947,7 @@ src/
   OrderList.tsx        # paged orders, for /orders and the customer page
   api.ts               # mock back end (replace with yours)
   auth.tsx             # session in sessionStorage, demo sign-in
-  validation.ts        # zod schemas and the resolver
+  validation.ts        # zod schemas
   router.tsx           # History API router, Link, next= after sign-in
   content/             # every string, one file per language
   ui.tsx · useQuery.ts · csv.ts · context.ts · appearance.ts
