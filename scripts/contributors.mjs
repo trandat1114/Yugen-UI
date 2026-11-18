@@ -137,7 +137,12 @@ async function fetchAvatars(people) {
   return new Map(entries.filter(Boolean));
 }
 
-const isPerson = (actor) => actor?.__typename === "User" && !actor.login.endsWith("[bot]");
+/**
+ * Bot đăng ký như tài khoản thường (kiểu User, không có hậu tố [bot]): Imgbot commit bằng ImgBotApp. Bot kiểu Bot
+ * (dependabot, github-actions) và tác giả commit của GitHub App (`dependabot[bot]`) đã được nhận ra qua kiểu và hậu tố.
+ */
+const BOT_ACCOUNTS = new Set(["ImgBotApp"]);
+const isPerson = (actor) => actor?.__typename === "User" && !actor.login.endsWith("[bot]") && !BOT_ACCOUNTS.has(actor.login);
 const day = (iso) => iso.slice(0, 10);
 
 /**
@@ -199,13 +204,14 @@ export function buildContributors({ pulls, issues, commits = [] }, extra = {}, {
   /**
    * Co-author: commit của người khác (tác giả commit hoặc dòng Co-authored-by) nằm trong một PR đã merge, như khi
    * maintainer làm tiếp PR của contributor (#253 → #257). Commit thuộc PR merge sớm nhất chứa nó, không phải PR release
-   * next → main tạo sau. Mỗi người một lần cho mỗi PR, cùng loại với PR.
+   * next → main tạo sau. Mỗi người một lần cho mỗi PR, cùng loại với PR. PR do bot mở (Dependabot, Imgbot) không tính:
+   * commit trong đó là việc của bot.
    */
   const pullsByNumber = new Map(pulls.map((pr) => [pr.number, pr]));
   const coauthors = new Map();
   for (const commit of commits) {
     const pr = commit.associatedPullRequests.nodes.map((node) => node.merged && pullsByNumber.get(node.number)).find(Boolean);
-    if (!pr) continue;
+    if (!pr || !isPerson(pr.author)) continue;
     for (const { user } of commit.authors.nodes) {
       if (!isPerson(user) || user.login === pr.author?.login || maintainers.has(user.login)) continue;
       if (!coauthors.has(pr.number)) coauthors.set(pr.number, new Map());
