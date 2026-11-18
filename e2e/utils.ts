@@ -47,10 +47,12 @@ export async function waitForDocsReady(page: Page) {
 
 /** Mở một route docs với theme/hướng chữ cho trước và chờ trang sẵn sàng. */
 /**
- * Dữ liệu người đóng góp mới nhất (#272): trang /contributors tải từ nhánh contributors-data trên GitHub. Mặc định bị chặn
- * để test không phụ thuộc mạng và dữ liệu thật; test cần thì truyền `live: true` và tự route URL này.
+ * Dữ liệu người đóng góp mới nhất (#272): trang /contributors tải từ nhánh contributors-data trên GitHub, qua API rồi dự
+ * phòng qua raw.githubusercontent.com. Mặc định bị chặn để test không phụ thuộc mạng và dữ liệu thật; test cần thì truyền
+ * `live: true` và tự route hai URL này.
  */
-export const CONTRIBUTORS_LIVE = "https://raw.githubusercontent.com/**/contributors-data/contributors.json";
+export const CONTRIBUTORS_LIVE =
+  /^https:\/\/(api\.github\.com\/repos\/[^/]+\/[^/]+\/contents\/contributors\.json\?ref=contributors-data|raw\.githubusercontent\.com\/[^/]+\/[^/]+\/contributors-data\/contributors\.json)$/;
 
 export async function openDocs(
   page: Page,
