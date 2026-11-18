@@ -16,6 +16,7 @@ import { preloadComponentDoc, retryComponentDoc } from "@/docs/registry";
 import { preloadNews } from "@/docs/news";
 import { installIntentPrefetch } from "@/docs/prefetch";
 import { SITE } from "@/docs/site";
+import { supportEnabled } from "@/docs/support";
 import type { Route } from "@/docs/router";
 
 // Mọi trang nạp lười theo route: phần dùng chung (khung, sidebar) không kéo theo component riêng của từng trang. Trang chủ
@@ -34,6 +35,7 @@ const TypesetPage = lazyPage(() => import("@/docs/pages/TypesetPage").then((m) =
 const NewsPage = lazyPage(() => import("@/docs/pages/NewsPage").then((m) => m.NewsPage));
 const CommunityPage = lazyPage(() => import("@/docs/pages/CommunityPage").then((m) => m.CommunityPage));
 const ContributorsPage = lazyPage(() => import("@/docs/pages/ContributorsPage").then((m) => m.ContributorsPage));
+const SupportPage = lazyPage(() => import("@/docs/pages/SupportPage").then((m) => m.SupportPage));
 const NotFoundPage = lazyPage(() => import("@/docs/pages/NotFoundPage").then((m) => m.NotFoundPage));
 
 const PAGES = {
@@ -48,6 +50,7 @@ const PAGES = {
   news: NewsPage,
   community: CommunityPage,
   contributors: ContributorsPage,
+  support: SupportPage,
   "not-found": NotFoundPage,
 } as const;
 
@@ -118,6 +121,11 @@ function Footer() {
         <a href={docsPath("/contributors")} className="hover:text-foreground-1 hover:underline">
           {t("nav.contributors")}
         </a>
+        {supportEnabled() && (
+          <a href={docsPath("/support")} className="hover:text-foreground-1 hover:underline">
+            {t("nav.support")}
+          </a>
+        )}
         {FOOTER_LINKS.map((link) => (
           <a key={link.href} href={link.href} target="_blank" rel="noreferrer" className="hover:text-foreground-1 hover:underline">
             {"label" in link ? link.label : t(link.key)}
@@ -227,6 +235,7 @@ export default function App({ path }: { path?: string }) {
               {route.kind === "news" && <NewsPage />}
               {route.kind === "community" && <CommunityPage />}
               {route.kind === "contributors" && <ContributorsPage />}
+              {route.kind === "support" && <SupportPage />}
               {route.kind === "concept" && <ConceptPage slug={route.slug} />}
               {route.kind === "foundation" && <FoundationsPage slug={route.slug} theme={tokenKey} />}
               {route.kind === "component" && <ComponentPage slug={route.slug} theme={theme} brand={brand} />}
