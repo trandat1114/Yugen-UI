@@ -82,8 +82,8 @@ const unreachable = Object.keys(rootModule).filter((name) => !fromSubpaths.has(n
 if (unreachable.length) fail(`root exports with no subpath: ${unreachable.join(", ")}`);
 
 try {
-  import.meta.resolve(`${pkg.name}/_internal/icons`);
-  fail(`${pkg.name}/_internal/icons resolves: _internal must stay out of the exports`);
+  const leaked = import.meta.resolve(`${pkg.name}/_internal/icons`);
+  fail(`${pkg.name}/_internal/icons resolves to ${leaked}: _internal must stay out of the exports`);
 } catch (error) {
   if (error.code !== "ERR_PACKAGE_PATH_NOT_EXPORTED") fail(`${pkg.name}/_internal/icons: ${error.code ?? error.message}`);
 }
