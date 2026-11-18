@@ -286,6 +286,31 @@ export default function Page() {
         </div>
       </DocSection>
 
+      <DocSection id="network" title="Network, files and checksums">
+        <div className="flex flex-col gap-4">
+          <P>
+            Each release of <C>@yugen-ui/cli</C> ships the sha256 of every registry item of the <C>yugen-ui</C> version its templates use, and
+            reads those items from <C>{`${REGISTRY_URL}/<version>/`}</C>, a copy that later deploys of the docs don&apos;t change. <C>add</C>,{" "}
+            <C>init</C>, <C>update</C> and <C>diff</C> stop before writing anything when an item doesn&apos;t match. With <C>--registry</C>, or a
+            registry from yugen.json or components.json, items are used as they are and the CLI says so in one line.
+          </P>
+          <Table
+            head={["Host", "When"]}
+            rows={[
+              [<C key="h">trandat1114.github.io</C>, "init, add, update, diff, list, remove (registry items)"],
+              [<C key="h">registry.npmjs.org</C>, "doctor (latest yugen-ui version, 3 s timeout); installs run by your package manager"],
+              [<C key="h">api.github.com, raw.githubusercontent.com</C>, "create --ref only (2 unauthenticated API calls, then the template files)"],
+            ]}
+          />
+          <P>
+            The CLI writes only inside the project: component and theme files, <C>yugen.json</C>, <C>yugen-ui.css</C>, the CSS and entry files
+            it adds an import to, and <C>package.json</C> through your package manager. It reads no tokens or credentials; the environment
+            variables it uses are <C>CI</C>, <C>npm_config_user_agent</C> and <C>npm_execpath</C> (to pick the package manager and run it
+            without a shell), and <C>NO_COLOR</C> / <C>FORCE_COLOR</C>.
+          </P>
+        </div>
+      </DocSection>
+
       <DocSection id="options" title="Common options">
         <div className="flex flex-col gap-4">
           <Table

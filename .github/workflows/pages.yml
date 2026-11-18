@@ -96,6 +96,12 @@ jobs:
           DOCS_BASE: /${{ github.event.repository.name }}/
           VITE_DOCS_SW: ${{ vars.DOCS_SW }}
 
+      # Registry snapshots (#381): <docs>/r/<version>/ for every release tag since 0.16.0 (canaries too), plus the current version before its
+      # tag exists. @yugen-ui/cli fetches from these paths and checks each item against the sha256 it ships with, so this
+      # deploy (or a later one) never changes what a released CLI installs.
+      - name: Versioned registry
+        run: node scripts/registry-snapshot.mjs --all --out dist-docs/r
+
       # The router uses the URL hash, so one index.html serves every page; 404.html covers mistyped paths.
       - run: cp dist-docs/index.html dist-docs/404.html
 

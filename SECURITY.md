@@ -29,3 +29,16 @@ is resolved. Once a fix is published we will credit you in the release notes, un
 Yugen UI is a client-side React component library. Relevant reports include, for example, cross-site scripting
 through component props, unsafe HTML rendering, or a vulnerable runtime dependency that the library actually
 exercises. Vulnerabilities in third-party packages that do not affect Yugen UI should be reported upstream.
+
+## The CLI (`@yugen-ui/cli`)
+
+- Registry items are checked: each CLI release ships the sha256 of every item of the `yugen-ui` version its templates
+  use and reads them from `https://trandat1114.github.io/Yugen-UI/r/<version>/`, built from the release tag. A
+  mismatch stops `add`, `init`, `update` and `diff` before any file is written. A registry passed with `--registry`, or
+  set in `yugen.json` / `components.json`, is not checked (the CLI prints a notice).
+- Hosts: `trandat1114.github.io` (registry), `registry.npmjs.org` (`doctor`, and installs run by your package
+  manager), `api.github.com` and `raw.githubusercontent.com` (`create --ref` only, unauthenticated).
+- No credentials are read. Environment variables used: `CI`, `npm_config_user_agent`, `npm_execpath`, `NO_COLOR`,
+  `FORCE_COLOR`. Package managers run without a shell when `npm_execpath` is set; otherwise every argument is
+  validated first.
+- No runtime dependencies. Both packages are published from GitHub Actions with npm provenance.

@@ -1,5 +1,13 @@
 # @yugen-ui/cli
 
+## Unreleased
+
+- `add`, `init`, `update`, `diff`, `list` and `remove` read the registry of the `yugen-ui` version the templates use, from
+  `<docs>/r/<version>/`, and check each item against the sha256 shipped in `dist/registry-integrity.json`. A mismatch
+  stops before any file is written. `--registry` and registries from `yugen.json` / `components.json` are not checked
+  and the CLI says so (#381).
+- `yugen css` and `init` add `yugen-ui/tokens/brands.css` when the app uses the web or Teams brand (#354).
+
 ## 0.8.0
 
 - `yugen css --watch` keeps the lean CSS file current while source imports change. The bundled Next.js template runs it beside
