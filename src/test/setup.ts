@@ -18,9 +18,11 @@ vi.mock("@testing-library/react", async (importOriginal) => {
   const { createElement } = await import("react");
   const { YugenContext } = await import("@/components/ui/YugenProvider/context");
   const { messagesVi } = await import("@/components/ui/messages-vi");
+  // Locale date-fns của Calendar nằm ở yugen-ui/dates, ngoài messagesVi (#356): app tiếng Việt thêm nó như dưới đây.
+  const { calendarMessagesVi } = await import("@/components/ui/Calendar/messages");
   type Wrapper = React.JSXElementConstructor<{ children: React.ReactNode }>;
   // Chỉ context cấu hình (locale, messages); theme không có provider → mặc định light / sakura / ltr (#347).
-  const value = { locale: "vi-VN", messages: messagesVi } as const;
+  const value = { locale: "vi-VN", messages: { ...messagesVi, calendar: calendarMessagesVi } } as const;
   const Vietnamese: Wrapper = ({ children }) => createElement(YugenContext.Provider, { value }, children);
   const wrap = (inner?: Wrapper): Wrapper =>
     inner ? ({ children }) => createElement(Vietnamese, null, createElement(inner, null, children)) : Vietnamese;

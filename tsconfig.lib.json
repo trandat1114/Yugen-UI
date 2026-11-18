@@ -10,5 +10,5 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false
   },
-  "include": ["src/lib.ts"]
+  "include": ["src/lib.ts", "src/components/ui/dates.ts"]
 }

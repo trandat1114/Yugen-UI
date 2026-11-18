@@ -47,7 +47,6 @@ import {
   BreadcrumbItem,
   Button,
   ButtonGroup,
-  Calendar,
   Card,
   CardContent,
   CardFooter,
@@ -80,8 +79,6 @@ import {
   ContextMenuTrigger,
   CopyCodeButton,
   CounterBadge,
-  DatePicker,
-  DateTimePicker,
   Dialog,
   DialogSurface,
   DialogTitle,
@@ -244,6 +241,7 @@ import {
   WavyUnderline,
   YugenProvider,
 } from "@/components/ui";
+import { Calendar, DatePicker, DateTimePicker } from "@/components/ui/dates";
 
 /**
  * Giá trị của các hook (#172) nằm thẳng trong markup: server và lượt hydrate phải ra "ban đầu · hẹp · 0 · ẩn", sau hydrate client

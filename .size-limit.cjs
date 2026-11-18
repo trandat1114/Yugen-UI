@@ -1,9 +1,10 @@
 /**
  * Ngân sách dung lượng của gói npm (`npm run size`, chạy sau `npm run build:lib`).
  *
- * - JS: @size-limit/esbuild bundle + minify + tree-shake đúng phần import từ `dist/lib.js`, như bundler của người
- *   dùng. Peer dependency (`react`, `react-dom` — kể cả `react/jsx-runtime` — và `tailwindcss`) được size-limit tự
- *   loại ra; dependency thường (Radix, cmdk, react-day-picker, tailwind-merge…) được tính vào.
+ * - JS: @size-limit/esbuild bundle + minify + tree-shake đúng phần import từ `dist/lib.js` (hoặc `yugen-ui/dates`), như
+ *   bundler của người dùng. Peer dependency (`react`, `react-dom` — kể cả `react/jsx-runtime` — và `tailwindcss`) được
+ *   size-limit tự loại ra; dependency thường (Radix, cmdk, tailwind-merge…) và react-day-picker (peer tuỳ chọn của
+ *   yugen-ui/dates, `COUNTED_PEERS`) được tính vào.
  * - CSS: đo nguyên file đã phát hành (loader `copy` — esbuild không biến đổi gì, nhất là `theme.css` vốn là nguồn
  *   Tailwind v4 với `@theme` / `@utility` / `@source`), và CSS app thật sự nhận được sau khi Tailwind biên dịch
  *   (`compiledCss`, #360).
@@ -25,16 +26,27 @@ const lazyChunks = {
   },
 };
 
-/** Import thật từ entry của gói. */
-const js = (name, importStatement, limit) => ({
+/**
+ * Peer tuỳ chọn mà app dùng `yugen-ui/dates` phải cài (#356): size-limit loại mọi peer trong package.json ra, nhưng
+ * react-day-picker (và date-fns đi kèm) là phần app đó thật sự tải, nên vẫn được tính.
+ */
+const COUNTED_PEERS = ["react-day-picker"];
+
+/** Import thật từ entry của gói (`dist/lib.js`, hoặc `entry`, vd. `yugen-ui/dates`). */
+const js = (name, importStatement, limit, entry = "dist/lib.js") => ({
   name,
-  path: "dist/lib.js",
+  path: entry,
   import: importStatement,
   ignore: PEERS,
   gzip: true,
   limit,
-  modifyEsbuildConfig: (config) => ({ ...config, plugins: [...(config.plugins ?? []), lazyChunks] }),
+  modifyEsbuildConfig: (config) => ({
+    ...config,
+    external: (config.external ?? []).filter((id) => !COUNTED_PEERS.includes(id)),
+    plugins: [...(config.plugins ?? []), lazyChunks],
+  }),
 });
+const DATES = "dist/components/ui/dates.js";
 
 /** File CSS phát hành, đo nguyên trạng. */
 const css = (file, limit) => ({
@@ -79,7 +91,8 @@ module.exports = [
   // Sortable (#175): 304.4 → 310.8 kB. Form control mới (#173): 309.3 → 318.0 kB. NavigationMenu + StatusPage
   // (#168, #238): → ~328 kB.
   // #360: mọi giới hạn đặt lại = đo được + 8%. cvx (#355) thêm 0.25–0.28 kB cho mục có Button, Input, Badge, Tag….
-  js("Toàn bộ thư viện (import *)", "*", "355.5 kB"),
+  // #356: Calendar / họ DatePicker và react-day-picker sang yugen-ui/dates: → 298.50 kB.
+  js("Toàn bộ thư viện (import *)", "*", "322.5 kB"),
   js("{ cn }", "{ cn }", "10 kB"),
   // cvx (#355): 12.95 → 13.22 kB.
   js("{ Button }", "{ Button }", "14.5 kB"),
@@ -96,11 +109,14 @@ module.exports = [
   js("{ Combobox }", "{ Combobox }", "42.5 kB"),
   // #351: không cmdk, Sortable nạp lúc cần khi `reorderable`: 50.56 → 41.01 kB.
   js("{ TagPicker }", "{ TagPicker }", "44.5 kB"),
-  // Calendar không kéo locale vi của react-day-picker (#349): 61.93 → 59.72 kB.
-  js("{ DatePicker }", "{ DatePicker }", "65 kB"),
-  // #173: họ DatePicker dùng chung vỏ; MonthPicker / DateTimePicker kéo theo Calendar (react-day-picker) như DatePicker.
+  // Calendar không kéo locale vi của react-day-picker (#349): 61.93 → 59.72 kB. Từ yugen-ui/dates (#356), react-day-picker
+  // vẫn được tính.
+  js("{ DatePicker } (yugen-ui/dates)", "{ DatePicker }", "65 kB", DATES),
+  // #173: họ DatePicker dùng chung vỏ; DateTimePicker kéo theo Calendar (react-day-picker) như DatePicker.
   // Không kéo locale vi (#349): 69.00 → 66.76 kB.
-  js("{ MonthPicker, YearPicker, DateTimePicker }", "{ MonthPicker, YearPicker, DateTimePicker }", "72.5 kB"),
+  js("{ MonthPicker, YearPicker, DateTimePicker } (yugen-ui/dates)", "{ MonthPicker, YearPicker, DateTimePicker }", "72.5 kB", DATES),
+  // #356: MonthPicker / YearPicker ở gốc gói, không cần react-day-picker: 38.19 kB.
+  js("{ MonthPicker, YearPicker }", "{ MonthPicker, YearPicker }", "41.5 kB"),
   js("{ PasswordInput, FormattedInput }", "{ PasswordInput, FormattedInput }", "17 kB"),
   js("{ ColorPicker }", "{ ColorPicker }", "30 kB"),
   // Hình học / nhãn nhớ theo props, lớp điểm dùng chung, màu tô trên nhóm (#352): 30.18 → 31.10 kB.
@@ -126,8 +142,8 @@ module.exports = [
   // Chuỗi của 6 component mới (#173): 4.80 → 5.11 kB; NavigationMenu + StatusPage (#168, #238): → ~5.7 kB.
   js("{ messagesEn }", "{ messagesEn }", "6.5 kB"),
   // Bộ tiếng Việt, chỉ khi import (#277: mặc định là tiếng Anh): 17.7 kB khi thêm, phần lớn là locale vi của
-  // react-day-picker cho Calendar / DatePicker.
-  js("{ messagesVi }", "{ messagesVi }", "20 kB"),
+  // react-day-picker cho Calendar / DatePicker. #356: locale đó sang yugen-ui/dates (calendarMessagesVi): → 6.49 kB.
+  js("{ messagesVi }", "{ messagesVi }", "7.5 kB"),
   // Sonner, Timeline, DescriptionList, Stat, utility yugen-prose (#174, #234): 24.6 kB khi thêm.
   // AppShell / Sidebar + rail của Nav (#161): 24.97 kB khi thêm; 25.08 kB với layout / scroll / footer. styles.css luôn
   // chứa mọi component (#169 không làm nó nhỏ đi).

@@ -99,7 +99,9 @@ export default function Page() {
           <P>
             Biểu đồ, DatePicker, TimePicker, NotificationCenter và Rating định dạng số và ngày giờ theo <C>locale</C> của provider (mặc
             định <C>"en-US"</C>). Prop <C>locale</C> của từng component vẫn ưu tiên hơn. Calendar dùng locale của react-day-picker, nằm
-            trong <C>messages.calendar.locale</C>; <C>messagesVi</C> đã đặt sẵn tiếng Việt.
+            trong <C>messages.calendar.locale</C>. <C>messagesVi</C> không chứa nó, vì react-day-picker là peer dependency tuỳ
+            chọn: thêm <C>calendarMessagesVi</C> từ <C>yugen-ui/dates</C>, như{" "}
+            <C>{"messages={{ ...messagesVi, calendar: calendarMessagesVi }}"}</C>.
           </P>
           <P>
             Hướng chữ là việc riêng của prop <C>dir</C>, xem <A href={docsPath("/concepts/rtl")}>Hướng chữ RTL</A>.

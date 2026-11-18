@@ -8,6 +8,7 @@ import { SERVER_SAFE } from "./scripts/server-safe.mjs";
  * Build thư viện cho gói npm (`npm run build:lib`). Trang docs dùng `vite.config.ts` (outDir `dist-docs`).
  * - ESM, giữ nguyên cấu trúc module (`preserveModules`) để bundler của người dùng tree-shake từng component.
  * - Mọi import "trần" (react, react/jsx-runtime, @radix-ui/*, react-day-picker/locale/vi…) là external.
+ * - `yugen-ui/dates` (src/components/ui/dates.ts) là entry riêng: chỉ nó import react-day-picker, peer tuỳ chọn (#356).
  * - Khai báo kiểu: `tsconfig.lib.json` + scripts/alias-dts.mjs; CSS: `scripts/build-css.mjs`.
  */
 const src = path.resolve(import.meta.dirname, "src");
@@ -22,14 +23,16 @@ const isExternal = (id: string) =>
  * hooks) are emitted too instead of being inlined into lib.js. With `preserveModules` the root and a subpath load
  * the same files, so a context is never duplicated.
  */
-const subpathModules = [...fs.readFileSync(path.join(ui, "index.ts"), "utf8").matchAll(/^export \* from "\.\/(.+?)(?:\.js)?";/gm)].map(
-  ([, module]) => module,
-);
+const reExports = (barrel: string) =>
+  [...fs.readFileSync(path.join(ui, barrel), "utf8").matchAll(/^export \* from "\.\/(.+?)(?:\.js)?";/gm)].map(([, module]) => ({ barrel, module }));
+/** `yugen-ui/dates` (#356): Calendar and the DatePicker family, the modules that import react-day-picker (optional peer). */
+const subpathModules = [...reExports("index.ts"), ...reExports("dates.ts")];
 const entry = Object.fromEntries([
   ["lib", path.join(src, "lib.ts")],
-  ...subpathModules.map((module) => {
+  ["components/ui/dates", path.join(ui, "dates.ts")],
+  ...subpathModules.map(({ barrel, module }) => {
     const file = [".tsx", ".ts"].map((ext) => path.join(ui, module + ext)).find((f) => fs.existsSync(f));
-    if (!file) throw new Error(`[vite.lib] src/components/ui/index.ts re-exports "./${module}", which has no .ts / .tsx file`);
+    if (!file) throw new Error(`[vite.lib] src/components/ui/${barrel} re-exports "./${module}", which has no .ts / .tsx file`);
     return [`components/ui/${module}`, file];
   }),
 ]);

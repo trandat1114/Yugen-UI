@@ -5,8 +5,10 @@
  *   1. Exports (#344): every module that src/components/ui/index.ts re-exports has a `yugen-ui/<path>` subpath; Node
  *      resolves and imports each one, and each name it exports is the same object as the root's (one module instance,
  *      so no duplicated React context). `yugen-ui/_internal/*` stays closed; the CSS / JSON keys still resolve.
+ *      `yugen-ui/dates` (#356) and the subpaths of the modules src/components/ui/dates.ts re-exports load the same way.
  *   2. Types (#343): a consumer with `module: nodenext` imports every runtime export from the root and from every
- *      subpath, and tsc finds a type for each; declaration files import no package outside dependencies / peers.
+ *      subpath, and tsc finds a type for each; declaration files import no package outside dependencies / peers, and
+ *      the ones the root entry reaches import no optional peer (#356).
  *   3. Server-safe files (#345, scripts/server-safe.mjs): no "use client", no hooks or context, imports limited to
  *      other server-safe files and packages that do not use React; the root takes their names from them. Every other
  *      file starts with "use client", the messages modules included.
@@ -14,6 +16,8 @@
  *      `@source "./components"` resolve next to it), `theme-core.css` alone (no component classes, no keyframes) and
  *      `theme-core.css` + `sources/Decorative.css` (that component's classes and only the keyframes they use).
  *      dist/tokens.css has no Tailwind-only at-rule.
+ *   5. Optional peers (#356): esbuild bundles dist/lib.js and the messages entries with react-day-picker, date-fns and
+ *      @date-fns/tz unresolvable; `yugen-ui/dates` fails the same way.
  *
  *   node scripts/check-package.mjs
  */
@@ -21,6 +25,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
+import { createRequire } from "node:module";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { parseSync } from "vite";
 import { compile } from "@tailwindcss/node";
@@ -72,6 +77,52 @@ for (const module of modules) {
   }
   subpaths.set(specifier, names);
 }
+
+// yugen-ui/dates (#356): its own entry, outside the root. Every module that src/components/ui/dates.ts re-exports has a
+// subpath too (`yugen-ui/Calendar`, `yugen-ui/DatePicker`), whose names are the same objects as the entry's and the root's.
+const datesIndex = fs.readFileSync(path.join(root, "src", "components", "ui", "dates.ts"), "utf8");
+const dateModules = [...datesIndex.matchAll(/^export \* from "\.\/(.+?)(?:\.js)?";/gm)].map(([, module]) => module);
+const DATES = `${pkg.name}/dates`;
+/** Subpath specifier → its runtime export names: yugen-ui/dates and the subpaths of its modules. */
+const dateSubpaths = new Map();
+let datesModule = {};
+try {
+  const expected = pathToFileURL(path.join(dist, "components", "ui", "dates.js")).href;
+  const resolved = import.meta.resolve(DATES);
+  if (resolved !== expected) fail(`${DATES}: resolves to ${resolved}, expected ${expected}`);
+  datesModule = await import(DATES);
+  dateSubpaths.set(DATES, Object.keys(datesModule));
+} catch (error) {
+  fail(`${DATES}: does not load (${error.code ?? error.message})`);
+}
+for (const module of dateModules) {
+  if (modules.includes(module)) fail(`src/components/ui/index.ts and dates.ts both re-export ./${module}`);
+  const specifier = `${pkg.name}/${subpathOf(module)}`;
+  const expected = pathToFileURL(path.join(dist, "components", "ui", `${module}.js`)).href;
+  try {
+    const resolved = import.meta.resolve(specifier);
+    if (resolved !== expected) {
+      fail(`${specifier}: resolves to ${resolved}, expected ${expected}`);
+      continue;
+    }
+    const sub = await import(specifier);
+    for (const name of Object.keys(sub)) {
+      if (datesModule[name] !== sub[name]) fail(`${specifier}: "${name}" is not ${DATES}'s ${name}`);
+      if (name in rootModule && rootModule[name] !== sub[name]) fail(`${specifier}: "${name}" is not the root's ${name}`);
+    }
+    dateSubpaths.set(specifier, Object.keys(sub));
+  } catch (error) {
+    fail(`${specifier}: does not load (${error.code ?? error.message})`);
+  }
+}
+const fromDateSubpaths = new Set([...dateSubpaths].filter(([specifier]) => specifier !== DATES).flatMap(([, names]) => names));
+const noDateSubpath = Object.keys(datesModule).filter((name) => !fromDateSubpaths.has(name));
+if (noDateSubpath.length) fail(`${DATES} exports with no subpath: ${noDateSubpath.join(", ")}`);
+for (const name of ["Calendar", "DatePicker", "DateRangePicker", "DateTimePicker", "calendarMessagesVi"]) {
+  if (name in rootModule) fail(`the root exports ${name}: it belongs to ${DATES} (#356)`);
+  if (!(name in datesModule)) fail(`${DATES} does not export ${name}`);
+}
+
 const fromSubpaths = new Set([...subpaths.values()].flat());
 // What the root has besides the component modules: src/lib (cn, brand ramp, token export).
 const libNames = new Set();
@@ -114,7 +165,9 @@ if (!embed.includes(":where([data-theme]) *")) fail("dist/components.css has no 
 for (const group of ["brands", "charts"]) {
   if (!distText("theme.css").includes(`@import "./tokens/${group}.css";`)) fail(`dist/theme.css does not import ./tokens/${group}.css`);
 }
-console.log(`[check-package] exports: ${modules.length} subpaths, ${Object.keys(rootModule).length} root exports`);
+console.log(
+  `[check-package] exports: ${modules.length} subpaths, ${Object.keys(rootModule).length} root exports; ${DATES}: ${Object.keys(datesModule).length} exports, ${dateModules.length} subpaths`,
+);
 
 // ---------- 2. Types ----------
 const allowed = new Set([...Object.keys(pkg.dependencies ?? {}), ...Object.keys(pkg.peerDependencies ?? {})]);
@@ -132,6 +185,38 @@ for (const file of files.filter((f) => f.endsWith(".d.ts"))) {
     if (PRIVATE_TYPES.has(packageOf(spec))) fail(`${posix(path.relative(root, file))}: public types import "${spec}" (#371: use Yugen types)`);
   }
 }
+
+/**
+ * Optional peers (#356) and the packages that come with them, for section 5 too: react-day-picker brings date-fns and
+ * @date-fns/tz. A package that is also a dependency of yugen-ui is not one of them.
+ */
+const OPTIONAL_PEERS = Object.keys(pkg.peerDependencies ?? {}).filter((name) => pkg.peerDependenciesMeta?.[name]?.optional);
+const optionalStack = new Set(
+  OPTIONAL_PEERS.flatMap((name) => {
+    const manifest = path.join(root, "node_modules", name, "package.json");
+    const deps = fs.existsSync(manifest) ? Object.keys(JSON.parse(fs.readFileSync(manifest, "utf8")).dependencies ?? {}) : [];
+    return [name, ...deps.filter((dep) => !(dep in (pkg.dependencies ?? {})))];
+  }),
+);
+// The declarations the root entry and the messages entries reach must not import them either, or a TypeScript app
+// without react-day-picker fails to type-check `import … from "yugen-ui"`.
+const ROOT_DTS = ["lib.d.ts", "components/ui/messages-en.d.ts", "components/ui/messages-vi.d.ts"].map((f) => path.join(dist, f));
+const reachedDts = new Set();
+const dtsStack = [...ROOT_DTS];
+while (dtsStack.length) {
+  const file = dtsStack.pop();
+  if (reachedDts.has(file) || !fs.existsSync(file)) continue;
+  reachedDts.add(file);
+  const text = fs.readFileSync(file, "utf8");
+  for (const { 1: spec, index } of text.matchAll(SPECIFIER)) {
+    if (/^\s*(?:\*|\/\*|\/\/)/.test(text.slice(text.lastIndexOf("\n", index) + 1, index + 1))) continue;
+    if (spec.startsWith(".")) dtsStack.push(path.resolve(path.dirname(file), spec).replace(/\.js$/, ".d.ts"));
+    else if (optionalStack.has(packageOf(spec)))
+      fail(`${posix(path.relative(root, file))}: imports "${spec}", an optional peer, and the root entry reaches it (#356)`);
+  }
+}
+if (reachedDts.size < 100) fail(`only ${reachedDts.size} declaration files reached from dist/lib.d.ts: is the walk broken?`);
+console.log(`[check-package] types: ${reachedDts.size} declaration files the root reaches import no optional peer`);
 
 // A consumer project in a temp folder, with node_modules/yugen-ui linked to this package (as after `npm install`).
 const consumer = fs.mkdtempSync(path.join(os.tmpdir(), "yugen-nodenext-"));
@@ -162,14 +247,15 @@ try {
   const importAll = (specifier, names) =>
     `import { ${names.map((name) => `${name} as $${n++}`).join(", ")} } from "${specifier}";`;
   const lines = [importAll(pkg.name, Object.keys(rootModule))];
-  for (const [specifier, names] of subpaths) lines.push(importAll(specifier, names));
+  for (const [specifier, names] of [...subpaths, ...dateSubpaths]) lines.push(importAll(specifier, names));
   // Types only, and the per-component augmentation of the provider's interfaces (`declare module "…/context.js"`).
   lines.push(
     `import type { ButtonProps, YugenComponentDefaults, YugenMessages } from "${pkg.name}";`,
     `import type { LineChartProps } from "${pkg.name}/Chart";`,
     `import type { PromptInputProps } from "${pkg.name}/AIKit";`,
     `import type { UseDisclosureResult } from "${pkg.name}/hooks";`,
-    `export type Checked = [ButtonProps, LineChartProps, PromptInputProps, UseDisclosureResult, YugenComponentDefaults["Button"], YugenMessages["chart"]];`,
+    `import type { CalendarProps, DatePickerProps } from "${DATES}";`,
+    `export type Checked = [ButtonProps, LineChartProps, PromptInputProps, UseDisclosureResult, CalendarProps, DatePickerProps, YugenComponentDefaults["Button"], YugenMessages["chart"], YugenMessages["calendar"]];`,
   );
   fs.writeFileSync(path.join(consumer, "index.ts"), lines.join("\n") + "\n");
   const tsc = path.join(root, "node_modules", "typescript", "bin", "tsc");
@@ -305,6 +391,47 @@ try {
   console.log(`[check-package] css: theme.css ${full.keyframes.length} keyframes, theme-core.css ${core.keyframes.length}, + Decorative ${lean.keyframes.length}`);
 } finally {
   fs.rmSync(cssConsumer, { recursive: true, force: true });
+}
+
+// ---------- 5. Optional peers ----------
+// esbuild (the copy size-limit runs, as scripts/check-esbuild-splitting.mjs does) bundles the root entry and the messages
+// entries with every package of the optional peers unresolvable, as in an app that did not install react-day-picker.
+// yugen-ui/dates with the same plugin must fail, so the check still bites.
+const requireHere = createRequire(import.meta.url);
+const esbuild = await import(pathToFileURL(createRequire(requireHere.resolve("@size-limit/esbuild")).resolve("esbuild")).href);
+const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
+const missingPeers = {
+  name: "missing-optional-peers",
+  setup(build) {
+    const filter = new RegExp(`^(?:${[...optionalStack].map(escapeRe).join("|")})(?:/|$)`);
+    build.onResolve({ filter }, (args) => ({ errors: [{ text: `"${args.path}" is not installed (optional peer)` }] }));
+  },
+};
+const bundleWithoutPeers = (entryPoints) =>
+  esbuild.build({
+    entryPoints,
+    absWorkingDir: root,
+    bundle: true,
+    format: "esm",
+    write: false,
+    outdir: path.join(os.tmpdir(), "yugen-optional-peers"),
+    external: ["react", "react-dom", "react/*", "react-dom/*"],
+    plugins: [missingPeers],
+    logLevel: "silent",
+  });
+const withoutPeers = ["lib.js", "components/ui/messages-en.js", "components/ui/messages-vi.js"];
+try {
+  await bundleWithoutPeers(withoutPeers.map((f) => path.join(dist, f)));
+  console.log(`[check-package] optional peers: ${withoutPeers.join(", ")} bundle without ${[...optionalStack].join(", ")}`);
+} catch (error) {
+  const where = (error.errors ?? []).map((e) => `${e.location?.file ?? "?"}: ${e.text}`);
+  fail(`bundling ${withoutPeers.join(", ")} needs an optional peer (#356):\n    ${(where.length ? where : [error.message]).slice(0, 20).join("\n    ")}`);
+}
+try {
+  await bundleWithoutPeers([path.join(dist, "components", "ui", "dates.js")]);
+  fail(`${DATES} bundles without react-day-picker: the optional-peer check above blocks nothing`);
+} catch (error) {
+  if (!(error.errors ?? []).some((e) => e.text.includes("react-day-picker"))) fail(`${DATES}: unexpected esbuild error (${error.message})`);
 }
 
 if (errors.length) {

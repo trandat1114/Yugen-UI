@@ -3,11 +3,13 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { YugenProvider } from "../YugenProvider/YugenProvider";
 import { messagesEn } from "../messages-en";
+import { calendarMessagesEn } from "../Calendar/messages";
 import { MonthPicker, YearPicker } from "./MonthPicker";
 import { DateTimePicker } from "./DateTimePicker";
 
+// Locale của Calendar ở yugen-ui/dates, ngoài messagesEn (#356): ghi đè cả nó, không thì kế thừa tiếng Việt của setup.ts.
 const english = ({ children }: { children: React.ReactNode }) => (
-  <YugenProvider messages={messagesEn} locale="en-US">
+  <YugenProvider messages={{ ...messagesEn, calendar: calendarMessagesEn }} locale="en-US">
     {children}
   </YugenProvider>
 );

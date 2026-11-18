@@ -326,6 +326,11 @@ export default function Page() {
             <C>yugenThemeScript</C> khi import từ <C>yugen-ui</C> hoặc <C>yugen-ui/YugenProvider/document</C>.
           </P>
           <P>
+            Calendar, DatePicker, DateRangePicker và DateTimePicker không có ở gốc gói: chúng cần react-day-picker, một peer dependency
+            tuỳ chọn. Cài nó (<C>npm i react-day-picker</C>) rồi import từ <C>yugen-ui/dates</C> (hoặc <C>yugen-ui/Calendar</C>,{" "}
+            <C>yugen-ui/DatePicker</C>). App không dùng lịch thì không cài thư viện ngày nào.
+          </P>
+          <P>
             TypeScript với <C>moduleResolution: node</C> (node10) không đọc <C>exports</C> nên không thấy kiểu của subpath: import từ{" "}
             <C>yugen-ui</C>, hoặc chuyển sang <C>bundler</C> hay <C>nodenext</C>.
           </P>

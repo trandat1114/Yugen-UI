@@ -1,5 +1,6 @@
-import typeNames from "virtual:yugen-type-exports";
-import { exportNames } from "./install";
+import typeNames, { dates as dateTypeNames } from "virtual:yugen-type-exports";
+import { DATES_PEER, dateExportNames, exportNames } from "./install";
+import { peerDependencies } from "../../package.json";
 import { SAMPLE_ASSET_NAMES } from "./sample-assets";
 import sampleAssetsSource from "./sample-assets.ts?raw";
 
@@ -83,7 +84,13 @@ const EXTRA_DEPS: Record<string, string> = {
   "@hookform/resolvers": "^3.10.0",
 };
 
-const toYugen = (s: string) => s.replace(/(["'])@\/components\/ui(?:\/[^"']*)?\1/g, '"yugen-ui"').trim();
+const DATE_TYPES = new Set(dateTypeNames);
+
+const toYugen = (s: string) =>
+  s
+    .replace(/(["'])@\/components\/ui\/dates\1/g, '"yugen-ui/dates"')
+    .replace(/(["'])@\/components\/ui(?:\/[^"']*)?\1/g, '"yugen-ui"')
+    .trim();
 
 export function exampleToApp(code: string, setup = ""): string {
   const source = toYugen(code);
@@ -131,8 +138,16 @@ export function exampleToApp(code: string, setup = ""): string {
   const reactNames = [...pick((n) => REACT_VALUES.has(n)), ...pick((n) => REACT_TYPES.has(n)).map((n) => `type ${n}`)];
   if (/\bReact\./.test(module) && !declared.has("React")) imports.unshift('import * as React from "react";');
   if (reactNames.length) imports.unshift(`import { ${reactNames.join(", ")} } from "react";`);
-  const yugenNames = [...pick((n) => yugen.has(n)), ...pick((n) => !yugen.has(n) && YUGEN_TYPES.has(n)).map((n) => `type ${n}`)];
+  // yugen-ui/dates (#356): Calendar, DatePicker… and their types; a name the root also exports comes from the root.
+  const dates = new Set(dateExportNames());
+  const isDateType = (n: string) => !yugen.has(n) && !dates.has(n) && DATE_TYPES.has(n);
+  const yugenNames = [
+    ...pick((n) => yugen.has(n)),
+    ...pick((n) => !yugen.has(n) && !dates.has(n) && YUGEN_TYPES.has(n) && !DATE_TYPES.has(n)).map((n) => `type ${n}`),
+  ];
   if (yugenNames.length) imports.push(`import { ${yugenNames.join(", ")} } from "yugen-ui";`);
+  const dateNames = [...pick((n) => dates.has(n)), ...pick(isDateType).map((n) => `type ${n}`)];
+  if (dateNames.length) imports.push(`import { ${dateNames.join(", ")} } from "yugen-ui/dates";`);
   const icons = pick((n) => ICON_RE.test(n));
   if (icons.length) imports.push(`import { ${icons.join(", ")} } from "@fluentui/react-icons";`);
   const assets = pick((n) => ASSETS.has(n));
@@ -159,6 +174,7 @@ export interface StackBlitzOptions {
 export function stackBlitzFiles(code: string, o: StackBlitzOptions): Record<string, string> {
   const app = exampleToApp(code, o.setup);
   const extra = Object.fromEntries(Object.entries(EXTRA_DEPS).filter(([pkgName]) => app.includes(`from "${pkgName}`)));
+  if (app.includes('from "yugen-ui/dates"')) extra[DATES_PEER] = peerDependencies[DATES_PEER];
   const pkg = {
     name: "yugen-ui-example",
     private: true,

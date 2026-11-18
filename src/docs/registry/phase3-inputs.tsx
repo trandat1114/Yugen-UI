@@ -18,8 +18,6 @@ import {
   BreadcrumbDivider,
   BreadcrumbItem,
   BreadcrumbOverflow,
-  DEFAULT_RANGE_PRESETS,
-  DateRangePicker,
   Field,
   InteractionTag,
   Menu,
@@ -44,10 +42,14 @@ import {
   useMediaQuery,
   useOverflowItems,
   useOverflowMenu,
-  type DateRange,
-  type DateRangePreset,
   type TimeSelectionErrorType,
 } from "@/components/ui";
+import {
+  DEFAULT_RANGE_PRESETS,
+  DateRangePicker,
+  type DateRange,
+  type DateRangePreset,
+} from "@/components/ui/dates";
 import type { ComponentDoc } from "../types";
 import { declarationsOf } from "../setup";
 import RAW from "./phase3-inputs.tsx?raw";
@@ -827,7 +829,7 @@ function TimePickerDemo() {
     lead: "DateRangePicker có danh sách chọn nhanh khoảng ngày cạnh lịch.",
     description:
       "Truyền `presets` (mảng `{ label, range: () => ({ from, to }) }`) để hiện các lựa chọn nhanh bên cạnh lịch; ở màn hẹp danh sách xếp phía trên. `DEFAULT_RANGE_PRESETS` gồm Hôm nay, 7 ngày qua, 30 ngày qua, Tháng này, Tháng trước, luôn tính theo thời điểm hiện tại; nhãn lấy từ `messages.dateRangePicker` của YugenProvider. Preset khớp khoảng đang chọn được đánh dấu (aria-pressed); preset vượt minDate / maxDate bị vô hiệu. Mọi prop cũ của DateRangePicker giữ nguyên.",
-    importCode: `import { DateRangePicker, DEFAULT_RANGE_PRESETS, type DateRangePreset } from "@/components/ui";`,
+    importCode: `import { DateRangePicker, DEFAULT_RANGE_PRESETS, type DateRangePreset } from "@/components/ui/dates";`,
     hero: {
       title: "Khoảng báo cáo",
       description: "Hai tháng trên desktop, một tháng trên mobile (useMediaQuery).",

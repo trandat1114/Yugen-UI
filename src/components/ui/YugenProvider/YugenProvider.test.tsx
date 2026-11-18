@@ -13,6 +13,7 @@ import { Dialog, DialogSurface, DialogTitle } from "../Dialog/Dialog";
 import { messagesEn } from "../messages-en";
 import { messagesVi } from "../messages-vi";
 import * as ui from "../index";
+import * as dates from "../dates";
 
 const MESSAGE_MODULES = import.meta.glob<Record<string, unknown>>("../*/messages.ts", { eager: true });
 
@@ -98,7 +99,7 @@ describe("YugenProvider messages", () => {
   it("messagesEn không còn chữ tiếng Việt", () => {
     const VI = /[ăâđêôơưạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ]/i;
     for (const [namespace, messages] of Object.entries(messagesEn)) {
-      for (const [key, value] of Object.entries(messages as Record<string, unknown>)) {
+      for (const [key, value] of Object.entries(messages as unknown as Record<string, unknown>)) {
         expect(VI.test(String(value)), `${namespace}.${key}`).toBe(false);
       }
     }
@@ -107,12 +108,19 @@ describe("YugenProvider messages", () => {
   it("gói xuất mọi messages.ts; messagesEn và messagesVi gom đủ hai bản", () => {
     const sets = { En: messagesEn, Vi: messagesVi } as const;
     const namespaces: Record<keyof typeof sets, string[]> = { En: [], Vi: [] };
+    // Gốc gói hoặc yugen-ui/dates (#356). `calendar` (locale date-fns của react-day-picker) chỉ ở yugen-ui/dates.
+    const both = { ...dates, ...ui };
     for (const [file, mod] of Object.entries(MESSAGE_MODULES)) {
       for (const [name, value] of Object.entries(mod)) {
-        expect(ui, `${file}: ${name}`).toHaveProperty(name, value);
+        expect(both, `${file}: ${name}`).toHaveProperty(name, value);
         const match = name.match(/^(\w+)Messages(En|Vi)$/);
         if (!match) continue;
         const [, ns, lang] = match as unknown as [string, string, keyof typeof sets];
+        if (ns === "calendar") {
+          expect(ui, name).not.toHaveProperty(name);
+          expect(sets[lang], `${ns} (${lang})`).not.toHaveProperty(ns);
+          continue;
+        }
         namespaces[lang].push(ns);
         expect((sets[lang] as unknown as Record<string, unknown>)[ns], `${ns} (${lang})`).toBe(value);
         // Tên không hậu tố (lỗi thời, bỏ ở 1.0; component mới không có) là bản tiếng Việt.

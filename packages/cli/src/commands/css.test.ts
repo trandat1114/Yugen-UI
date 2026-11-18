@@ -114,6 +114,9 @@ export const app = <YugenProvider brand="${brand}" />;
     // Subpaths name their folder, even as a namespace or a dynamic import.
     const cwd = installYugen(viteProject({ "src/App.tsx": 'import * as D from "yugen-ui/Dialog";\nconst S = () => import("yugen-ui/AppShell/Sidebar");\n' }));
     expect((await css({ cwd })).folders).toEqual(["AppShell", "Dialog"]);
+    // yugen-ui/dates (#356) is looked up by name, like the root.
+    const dates = installYugen(viteProject({ "src/App.tsx": 'import { Button } from "yugen-ui";\nimport { DatePicker } from "yugen-ui/dates";\n' }));
+    expect((await css({ cwd: dates })).folders).toEqual(["Button", "DatePicker"]);
   });
 
   it("--src limits the scan and is kept in the header for the next run", async () => {

@@ -14,7 +14,6 @@ import {
   SearchInfo24Regular,
   ShieldLock20Regular,
 } from "@fluentui/react-icons";
-import type { DateRange } from "react-day-picker";
 import { Avatar, Button, Checkbox, Input } from "@/components/ui";
 import { Field } from "@/components/ui/Field/Field";
 import { ProgressBar } from "@/components/ui/ProgressBar/ProgressBar";
@@ -39,8 +38,7 @@ import {
 } from "@/components/ui/Drawer/Drawer";
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel } from "@/components/ui/Accordion/Accordion";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/Collapsible/Collapsible";
-import { Calendar } from "@/components/ui/Calendar/Calendar";
-import { DatePicker, DateRangePicker } from "@/components/ui/DatePicker/DatePicker";
+import { Calendar, DatePicker, DateRangePicker, type DateRange } from "@/components/ui/dates";
 import type { ComponentDoc } from "../types";
 
 /* ------------------------------------------------------------------ demos */
@@ -1674,8 +1672,8 @@ function ToastPositionDemo() {
     category: "Nhập liệu",
     lead: "Calendar hiển thị lưới ngày theo tháng để chọn một ngày, nhiều ngày hoặc một khoảng ngày.",
     description:
-      "Dựng trên react-day-picker v10 với giao diện Fluent: ô ngày 32px bo 4px, hôm nay chữ brand đậm kèm vạch dưới, ngày chọn nền brand, khoảng giữa tint brand-background-2. Mặc định tiếng Việt, tuần bắt đầu Thứ Hai; nhận mọi prop của DayPicker (mode, selected, onSelect, disabled, numberOfMonths…).",
-    importCode: `import { Calendar } from "@/components/ui";`,
+      "Dựng trên react-day-picker v10 với giao diện Fluent: ô ngày 32px bo 4px, hôm nay chữ brand đậm kèm vạch dưới, ngày chọn nền brand, khoảng giữa tint brand-background-2. Tên tháng, tên thứ và ngày đầu tuần theo `messages.calendar.locale` (mặc định en-US); tiếng Việt: `messages={{ ...messagesVi, calendar: calendarMessagesVi }}`. Import từ `yugen-ui/dates` và cài react-day-picker, một peer dependency tuỳ chọn: `npm i react-day-picker`.",
+    importCode: `import { Calendar } from "@/components/ui/dates";`,
     hero: {
       title: "Calendar",
       code: `function CalendarDemo() {
@@ -1778,8 +1776,9 @@ function ToastPositionDemo() {
     category: "Nhập liệu",
     lead: "DatePicker là ô nhập dạng Fluent mở Calendar trong popover để chọn ngày, hiển thị dd/MM/yyyy.",
     description:
-      "Trigger dùng chung kiểu viền với Input (viền đáy accessible, thanh brand khi focus), icon lịch bên phải, có nút xoá (clearable). Đặt trong `<Field>` để có nhãn, hint và thông báo lỗi. DateRangePicker chọn khoảng ngày với hai tháng cạnh nhau.",
-    importCode: `import { DatePicker, DateRangePicker, Field } from "@/components/ui";`,
+      "Trigger dùng chung kiểu viền với Input (viền đáy accessible, thanh brand khi focus), icon lịch bên phải, có nút xoá (clearable). Đặt trong `<Field>` để có nhãn, hint và thông báo lỗi. DateRangePicker chọn khoảng ngày với hai tháng cạnh nhau. Import từ `yugen-ui/dates` và cài react-day-picker (peer dependency tuỳ chọn): `npm i react-day-picker`.",
+    importCode: `import { DatePicker, DateRangePicker } from "@/components/ui/dates";
+import { Field } from "@/components/ui";`,
     hero: {
       title: "DatePicker",
       code: `function DatePickerDemo() {

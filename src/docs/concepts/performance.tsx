@@ -107,8 +107,8 @@ export default function Page() {
           />
           <P>
             esbuild chia cả file vào chunk trước khi bỏ các export không dùng. Vì vậy import từ gốc gói,{" "}
-            <C>{"import { Calendar }"}</C> kéo theo Toaster, menu của Breadcrumb và thẻ chú thích vào chunk đầu: 76.46 kB, so với 31.60 kB
-            khi import từ <C>yugen-ui/Calendar</C>. Hai subpath tự chứa một phần như vậy: <C>yugen-ui/AIKit</C> cũng export Citation nên
+            <C>{"import { Combobox }"}</C> kéo theo Toaster, menu của Breadcrumb và thẻ chú thích vào chunk đầu: 66.28 kB, so với 38.07 kB
+            khi import từ <C>yugen-ui/Combobox</C>. Hai subpath tự chứa một phần như vậy: <C>yugen-ui/AIKit</C> cũng export Citation nên
             StreamingMarkdown lấy từ đó có thẻ chú thích trong chunk đầu, còn <C>toast</C> từ <C>yugen-ui/Toast</C> kéo theo Toaster vì
             cả hai nằm chung một file.
           </P>
