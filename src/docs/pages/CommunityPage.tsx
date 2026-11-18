@@ -189,8 +189,12 @@ npm run build:lib      # build gói npm vào dist/`,
     "Radix UI: primitive cho hành vi và khả năng tiếp cận.",
     "Fluent System Icons (MIT): bộ icon.",
     "Tailwind CSS v4: engine utility.",
-    "cmdk, react-day-picker, react-resizable-panels: thư viện nền.",
+    "react-day-picker, react-resizable-panels: thư viện nền.",
   ],
+  privacyTitle: "Quyền riêng tư",
+  privacyOff: "Trang docs không thu thập số liệu truy cập: không cookie, không script theo dõi. Lựa chọn theme và ngôn ngữ chỉ lưu trong trình duyệt của bạn.",
+  privacyOn:
+    "Trang docs đếm lượt xem bằng một beacon nhỏ: đường dẫn trang, ngôn ngữ, phiên bản docs, tên miền trang dẫn tới và nhóm kích thước màn hình. Trình duyệt không lưu cookie hay mã định danh nào. Máy thu chỉ giữ giá trị băm của địa chỉ IP và user agent với muối đổi mỗi ngày, không giữ IP. Trình duyệt gửi Do Not Track hoặc Global Privacy Control không được đếm.",
 };
 
 type Copy = typeof VI;
@@ -329,8 +333,12 @@ npm run build:lib      # build the npm package into dist/`,
     "Radix UI: primitives for behavior and accessibility.",
     "Fluent System Icons (MIT): the icon set.",
     "Tailwind CSS v4: the utility engine.",
-    "cmdk, react-day-picker, react-resizable-panels: foundation libraries.",
+    "react-day-picker, react-resizable-panels: foundation libraries.",
   ],
+  privacyTitle: "Privacy",
+  privacyOff: "These docs collect no analytics: no cookies, no tracking scripts. Theme and language choices are saved in your browser only.",
+  privacyOn:
+    "These docs count page views with a small beacon: page path, language, docs version, referrer host and a screen size class. Nothing is stored in your browser for it, no cookies and no identifiers. The collector keeps a hash of IP address and user agent with a salt that changes every day, never the IP itself. Browsers that send Do Not Track or Global Privacy Control are not counted.",
 };
 
 const WAY_ICONS = [Code20Regular, Bug20Regular, Lightbulb20Regular, Chat20Regular, Translate20Regular, Grid20Regular];
@@ -608,6 +616,10 @@ export function CommunityPage() {
             <li key={line}>{line}</li>
           ))}
         </ul>
+      </DocSection>
+
+      <DocSection id="privacy" title={c.privacyTitle}>
+        <p className="max-w-3xl text-body1 text-foreground-2">{import.meta.env.VITE_ANALYTICS_URL ? c.privacyOn : c.privacyOff}</p>
       </DocSection>
     </div>
   );

@@ -59,6 +59,7 @@ export function CopyButton({ text, label, className, collapse }: { text: string;
     <button
       type="button"
       onClick={copy}
+      data-analytics="copy"
       className={cn(
         "inline-flex h-7 shrink-0 items-center gap-1 whitespace-nowrap rounded-medium px-2 text-caption1 font-semibold text-foreground-2",
         "transition-colors duration-faster hover:bg-subtle-hover hover:text-foreground-1",

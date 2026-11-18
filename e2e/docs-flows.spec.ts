@@ -488,3 +488,26 @@ test("ví dụ: z-index trong demo (header sticky của AppShell) không phủ l
     expect(covered, `ô ${i + 1}`).toBe(false);
   }
 });
+
+test("no analytics beacon in test builds (#190)", async ({ page }) => {
+  // The build under test has no VITE_ANALYTICS_URL: neither page views nor [data-analytics] clicks may call sendBeacon.
+  await page.addInitScript(() => {
+    const w = window as unknown as { __beacons: number };
+    w.__beacons = 0;
+    navigator.sendBeacon = () => {
+      w.__beacons++;
+      return true;
+    };
+  });
+  const pings: string[] = [];
+  page.on("request", (r) => {
+    if (r.resourceType() === "ping" || (r.method() === "POST" && !r.url().startsWith(new URL(page.url() || "http://x").origin))) pings.push(r.url());
+  });
+  await openDocs(page, "/");
+  await openDocs(page, "/components/button");
+  // The copy button (not StackBlitz, which posts a form to stackblitz.com). Clipboard stubbed as in the copy test above.
+  await page.evaluate(() => Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText: async () => {} } }));
+  await page.locator('[data-analytics="copy"]').first().dispatchEvent("click");
+  expect(await page.evaluate(() => (window as unknown as { __beacons: number }).__beacons)).toBe(0);
+  expect(pings).toEqual([]);
+});
