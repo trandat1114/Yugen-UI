@@ -1654,6 +1654,8 @@ function TableColumnsDemo() {
       { name: "Table.sortable", type: "boolean", defaultValue: "false", description: "Mọi TableHeaderCell thành nút sắp xếp." },
       { name: "TableHeaderCell.sortDirection", type: `"ascending" | "descending"`, description: "Hiện icon ArrowSortUp/Down và aria-sort." },
       { name: "TableHeaderCell.sortable / onClick", type: "boolean / MouseEventHandler", description: "Bật / tắt sắp xếp riêng cột; onClick gắn vào nút trong header." },
+      { name: "TableHeaderCell.align", type: `"start" | "center" | "end"`, defaultValue: `"start"`, description: "Căn tiêu đề cùng hướng với ô của cột; với cột sortable, cả nút sắp xếp căn theo. end cho số, tiền tệ, ngày." },
+      { name: "TableCell.align", type: `"start" | "center" | "end"`, description: "Căn nội dung ô (đảo trong RTL). Thay thuộc tính HTML align cũ." },
       { name: "TableRow.selected / appearance", type: `boolean / "none" | "neutral" | "brand"`, description: "Trạng thái nền của hàng." },
       { name: "TableCellLayout.media / description / appearance / truncate", type: `ReactNode / ReactNode / "primary" / boolean`, description: "Bố cục ô: media + nội dung chính + mô tả." },
       { name: "TableSelectionCell.checked / onCheckedChange / subtle", type: `boolean | "mixed" / (checked) => void / boolean`, description: "Checkbox chọn hàng; trong TableHeader thành ô chọn tất cả." },

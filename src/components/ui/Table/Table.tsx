@@ -10,6 +10,8 @@ export { tableMessages, tableMessagesVi, tableMessagesEn, type TableMessages } f
 /** Fluent 2 Table — https://fluent2.microsoft.design/components/web/react/core/table/usage */
 export type TableSize = "extra-small" | "small" | "medium";
 export type TableSortDirection = "ascending" | "descending";
+/** Căn nội dung ô theo chiều đọc: end cho số, tiền tệ, ngày (đảo trong RTL). */
+export type TableCellAlign = "start" | "center" | "end";
 
 interface TableContextValue {
   size: TableSize;
@@ -26,6 +28,10 @@ const ROW_HEIGHT: Record<TableSize, string> = {
   small: "h-8.5",
   medium: "h-11",
 };
+
+const ALIGN_TEXT: Record<TableCellAlign, string> = { start: "text-start", center: "text-center", end: "text-end" };
+/** Nút sắp xếp trong tiêu đề: icon đi sau chữ, cả cụm theo cùng hướng căn với ô dữ liệu. */
+const ALIGN_FLEX: Record<TableCellAlign, string> = { start: "justify-start", center: "justify-center", end: "justify-end" };
 
 const TEXT: Record<TableSize, string> = {
   "extra-small": "text-caption1",
@@ -126,19 +132,22 @@ export function TableRow({
 }
 
 /* ------------------------------------------------------------------ TableHeaderCell */
-export interface TableHeaderCellProps extends Omit<React.ThHTMLAttributes<HTMLTableCellElement>, "onClick"> {
+export interface TableHeaderCellProps extends Omit<React.ThHTMLAttributes<HTMLTableCellElement>, "onClick" | "align"> {
   /** Ghi đè `sortable` của Table cho riêng cột này. */
   sortable?: boolean;
   /** Hướng đang sắp xếp; để trống = chưa sắp xếp theo cột này. */
   sortDirection?: TableSortDirection;
   /** Với cột sortable, gắn vào nút bên trong (bấm hoặc Enter/Space). */
   onClick?: React.MouseEventHandler<HTMLElement>;
+  /** Căn tiêu đề (kể cả nút sắp xếp) cùng hướng với ô của cột. Mặc định "start". */
+  align?: TableCellAlign;
 }
 
 export function TableHeaderCell({
   sortable,
   sortDirection,
   onClick,
+  align = "start",
   className,
   children,
   ref,
@@ -154,7 +163,7 @@ export function TableHeaderCell({
         ref={ref}
         scope="col"
         onClick={onClick}
-        className={cn("relative px-2 text-start align-middle font-semibold text-foreground-1", className)}
+        className={cn("relative px-2 align-middle font-semibold text-foreground-1", ALIGN_TEXT[align], className)}
         {...props}
       >
         {children}
@@ -168,7 +177,8 @@ export function TableHeaderCell({
       scope="col"
       aria-sort={sortDirection ?? "none"}
       className={cn(
-        "relative p-0 text-start align-middle font-semibold text-foreground-1",
+        "relative p-0 align-middle font-semibold text-foreground-1",
+        ALIGN_TEXT[align],
         "transition-colors duration-faster ease-easy-ease hover:bg-subtle-hover active:bg-subtle-pressed",
         className,
       )}
@@ -177,7 +187,7 @@ export function TableHeaderCell({
       <button
         type="button"
         onClick={onClick}
-        className="flex w-full cursor-pointer items-center gap-1 px-2 py-0.5 text-start font-semibold"
+        className={cn("flex w-full cursor-pointer items-center gap-1 px-2 py-0.5 font-semibold", ALIGN_TEXT[align], ALIGN_FLEX[align])}
       >
         <span className="min-w-0 truncate">{children}</span>
         {sortDirection && (
@@ -189,12 +199,13 @@ export function TableHeaderCell({
 }
 
 /* ------------------------------------------------------------------ TableCell */
-export function TableCell({
-  className,
-  ref,
-  ...props
-}: React.TdHTMLAttributes<HTMLTableCellElement> & { ref?: React.Ref<HTMLTableCellElement> }) {
-  return <td ref={ref} className={cn("relative px-2 align-middle", className)} {...props} />;
+export interface TableCellProps extends Omit<React.TdHTMLAttributes<HTMLTableCellElement>, "align"> {
+  /** Căn nội dung: "end" cho số, tiền tệ, ngày. Mặc định theo bảng (đầu dòng). */
+  align?: TableCellAlign;
+}
+
+export function TableCell({ align, className, ref, ...props }: TableCellProps & { ref?: React.Ref<HTMLTableCellElement> }) {
+  return <td ref={ref} className={cn("relative px-2 align-middle", align && ALIGN_TEXT[align], className)} {...props} />;
 }
 
 /* ------------------------------------------------------------------ TableCellLayout */
