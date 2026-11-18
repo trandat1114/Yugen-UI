@@ -182,18 +182,33 @@ jobs:
     timeout-minutes: 5
     outputs:
       dirs: ${{ steps.list.outputs.dirs }}
+      run: ${{ steps.changes.outputs.run }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          fetch-depth: 2 # PR: HEAD is the merge commit, HEAD^1 the base
           persist-credentials: false
       - id: list
         run: echo "dirs=$(node -p 'JSON.stringify(require("./templates/templates.json").map((t) => t.dir))')" >> "$GITHUB_OUTPUT"
+      # PRs that change nothing the templates build from (docs pages, e2e, wiki…) skip the template jobs (#310). Pushes
+      # always run them. The list errs on the side of running: library, styles, build scripts, packages, lockfile.
+      - id: changes
+        run: |
+          if [ "$GITHUB_EVENT_NAME" != "pull_request" ]; then echo "run=true" >> "$GITHUB_OUTPUT"; exit 0; fi
+          files="$(git diff --name-only HEAD^1 HEAD)"
+          if echo "$files" | grep -qE '^(src/(components|lib|hooks|styles)/|src/lib\.ts$|src/docs/(template-library|block-library)/|templates/|packages/|scripts/|package(-lock)?\.json$|vite\.(lib\.config|plugins)\.ts$|tsconfig|\.github/workflows/ci\.yml$)'; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::No template inputs changed: template jobs skipped."
+          fi
 
   # Mỗi template build với yugen-ui của chính PR này (npm pack), rồi scripts/check-template.mjs: ngân sách dung lượng
   # lần tải đầu + smoke test (mọi link nội bộ render, không lỗi console, không vi phạm axe) (#145).
   templates:
     name: Template · ${{ matrix.template }}
     needs: templates-list
+    if: needs.templates-list.outputs.run == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     strategy:
