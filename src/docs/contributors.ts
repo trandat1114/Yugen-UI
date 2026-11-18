@@ -69,8 +69,19 @@ export interface ContributorsData {
   people: Contributor[];
 }
 
-/** contributors.json trên nhánh contributors-data (raw.githubusercontent.com cho phép CORS, CDN cache khoảng 5 phút). */
+/**
+ * contributors.json trên nhánh contributors-data qua GitHub API: CDN cache 60 giây, trình duyệt hỏi lại bằng ETag mỗi lần
+ * tải, nên trang thấy bản mới khoảng một phút sau khi contributors.yml đẩy lên. Không cần token, nhưng giới hạn 60 lượt
+ * mỗi giờ cho mỗi IP.
+ */
+export const CONTRIBUTORS_API_URL = `${SITE.links.repository.replace("https://github.com/", "https://api.github.com/repos/")}/contents/contributors.json?ref=contributors-data`;
+/**
+ * Dự phòng khi API lỗi hoặc hết lượt: cùng file qua raw.githubusercontent.com (không giới hạn lượt, nhưng CDN cache 5 phút
+ * và query string không bỏ qua được cache đó).
+ */
 export const CONTRIBUTORS_LIVE_URL = `${SITE.links.repository.replace("https://github.com/", "https://raw.githubusercontent.com/")}/contributors-data/contributors.json`;
+/** Quay lại tab thì tải lại, nhưng không quá một lần mỗi khoảng này (giữ dưới giới hạn lượt của API). */
+export const CONTRIBUTORS_REFRESH_MS = 60_000;
 
 const isString = (value: unknown): value is string => typeof value === "string";
 
@@ -87,22 +98,49 @@ export function parseContributors(value: unknown): ContributorsData | undefined 
   return valid ? { updated, people } : undefined;
 }
 
+async function fetchContributors(url: string, init: RequestInit): Promise<ContributorsData | undefined> {
+  const res = await fetch(url, { ...init, cache: "no-cache" });
+  return res.ok ? parseContributors(await res.json()) : undefined;
+}
+
+/** Bản trên nhánh contributors-data: qua API trước, API lỗi hoặc sai dạng thì qua raw.githubusercontent.com. */
+export async function loadLiveContributors(signal?: AbortSignal): Promise<ContributorsData | undefined> {
+  try {
+    const data = await fetchContributors(CONTRIBUTORS_API_URL, { signal, headers: { accept: "application/vnd.github.raw+json" } });
+    if (data) return data;
+  } catch (error) {
+    if (signal?.aborted) throw error;
+  }
+  return fetchContributors(CONTRIBUTORS_LIVE_URL, { signal });
+}
+
 /**
  * Danh sách cho trang /contributors: render bằng snapshot lúc build (khớp HTML prerender), sau đó tải bản trên nhánh
- * contributors-data. Bản tải về cũ hơn snapshot, sai dạng hoặc lỗi mạng thì giữ snapshot.
+ * contributors-data, và tải lại khi người xem quay lại tab. Bản tải về cũ hơn snapshot, sai dạng hoặc lỗi mạng thì giữ
+ * bản đang có.
  */
 export function useLiveContributors(): ContributorsData {
   const [live, setLive] = React.useState<ContributorsData>({ updated: CONTRIBUTORS_UPDATED, people: CONTRIBUTORS });
   React.useEffect(() => {
-    const controller = new AbortController();
-    fetch(CONTRIBUTORS_LIVE_URL, { signal: controller.signal })
-      .then((res) => (res.ok ? res.json() : undefined))
-      .then((value: unknown) => {
-        const next = parseContributors(value);
-        if (next && next.updated >= CONTRIBUTORS_UPDATED) setLive(next);
-      })
-      .catch(() => {});
-    return () => controller.abort();
+    let controller: AbortController | undefined;
+    let last = -Infinity;
+    const load = () => {
+      if (document.visibilityState === "hidden" || Date.now() - last < CONTRIBUTORS_REFRESH_MS) return;
+      last = Date.now();
+      controller?.abort();
+      controller = new AbortController();
+      loadLiveContributors(controller.signal)
+        .then((next) => {
+          if (next && next.updated >= CONTRIBUTORS_UPDATED) setLive((prev) => (JSON.stringify(prev) === JSON.stringify(next) ? prev : next));
+        })
+        .catch(() => {});
+    };
+    load();
+    document.addEventListener("visibilitychange", load);
+    return () => {
+      document.removeEventListener("visibilitychange", load);
+      controller?.abort();
+    };
   }, []);
   return live;
 }

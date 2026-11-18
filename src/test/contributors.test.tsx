@@ -8,7 +8,9 @@ import {
   sourceLang,
   CONTRIBUTION_GROUPS,
   CONTRIBUTORS,
+  CONTRIBUTORS_API_URL,
   CONTRIBUTORS_LIVE_URL,
+  CONTRIBUTORS_REFRESH_MS,
   CONTRIBUTORS_UPDATED,
   contributionsIn,
   creditsBetween,
@@ -208,6 +210,31 @@ describe("scripts/contributors.mjs · bình luận trên PR và co-author (#272)
     expect(byLogin.owner.counts).toEqual({ code: 3, docs: 1 });
   });
 
+  it("bỏ bot đăng ký như tài khoản thường (ImgBotApp) và commit trong PR do bot mở", () => {
+    const people = buildContributors(
+      {
+        pulls: [
+          // Imgbot: PR do bot "imgbot" mở, commit của tài khoản kiểu User "ImgBotApp" (#311).
+          pull(311, bot("imgbot"), ["public/logo.png"], "2026-11-03"),
+          pull(415, bot("dependabot"), ["package.json"], "2026-11-18"),
+          pull(80, user("dev"), ["src/lib/cn.ts"], "2026-11-04", [user("ImgBotApp")]),
+        ],
+        issues: [issue(81, user("ImgBotApp"), ["bug"], "2026-11-05", "x", [comment(81, 1, user("dave"), "2026-11-05", LONG)])],
+        commits: [
+          commit([user("ImgBotApp")], [[311, true]]),
+          // Người khác đẩy commit vào PR của Dependabot: vẫn là PR của bot.
+          commit([user("helper")], [[415, true]]),
+          commit([user("ImgBotApp")], [[80, true]]),
+        ],
+      },
+      {},
+    ) as Contributor[];
+    expect(people.map((p) => [p.login, p.counts])).toEqual([
+      ["dev", { code: 1 }],
+      ["dave", { discussion: 1 }],
+    ]);
+  });
+
   it("ghi tay không trùng đóng góp nào trên GitHub thì dùng tiêu đề và ngày ghi tay", () => {
     const people = buildContributors(
       { pulls: [], issues: [] },
@@ -268,7 +295,7 @@ describe("dữ liệu mới từ nhánh contributors-data (#272)", () => {
     const { people, updated } = useLiveContributors();
     return <p data-testid="probe">{`${people.length} ${updated}`}</p>;
   }
-  const mockFetch = (response: () => Promise<unknown>) => vi.stubGlobal("fetch", vi.fn(response));
+  const mockFetch = (response: (url?: string) => Promise<unknown>) => vi.stubGlobal("fetch", vi.fn(response));
   afterEach(() => vi.unstubAllGlobals());
 
   it("tiêu đề gốc giữ nguyên, chỉ đánh dấu ngôn ngữ", () => {
@@ -286,13 +313,56 @@ describe("dữ liệu mới từ nhánh contributors-data (#272)", () => {
     expect(parseContributors({ updated: "2099-01-01", people: [{ ...person, items: "x" }] })).toBeUndefined();
   });
 
-  it("render snapshot trước, rồi đổi sang bản mới hơn", async () => {
+  it("render snapshot trước, rồi đổi sang bản mới hơn qua GitHub API (không qua cache trình duyệt)", async () => {
     mockFetch(() => Promise.resolve({ ok: true, json: () => Promise.resolve(fresh) }));
     render(<Probe />);
     expect(screen.getByTestId("probe").textContent).toBe(`${CONTRIBUTORS.length} ${CONTRIBUTORS_UPDATED}`);
     await waitFor(() => expect(screen.getByTestId("probe").textContent).toBe(`${CONTRIBUTORS.length + 1} 2099-01-01`));
-    expect(fetch).toHaveBeenCalledWith(CONTRIBUTORS_LIVE_URL, expect.anything());
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledWith(
+      CONTRIBUTORS_API_URL,
+      expect.objectContaining({ cache: "no-cache", headers: { accept: "application/vnd.github.raw+json" } }),
+    );
+    expect(CONTRIBUTORS_API_URL).toBe("https://api.github.com/repos/trandat1114/Yugen-UI/contents/contributors.json?ref=contributors-data");
     expect(CONTRIBUTORS_LIVE_URL).toBe("https://raw.githubusercontent.com/trandat1114/Yugen-UI/contributors-data/contributors.json");
+  });
+
+  it("API lỗi hoặc hết lượt thì tải qua raw.githubusercontent.com", async () => {
+    mockFetch((url) =>
+      Promise.resolve(
+        url === CONTRIBUTORS_LIVE_URL
+          ? { ok: true, json: () => Promise.resolve(fresh) }
+          : { ok: false, status: 403, json: () => Promise.resolve({ message: "API rate limit exceeded" }) },
+      ),
+    );
+    render(<Probe />);
+    await waitFor(() => expect(screen.getByTestId("probe").textContent).toBe(`${CONTRIBUTORS.length + 1} 2099-01-01`));
+    expect(vi.mocked(fetch).mock.calls.map(([url]) => url)).toEqual([CONTRIBUTORS_API_URL, CONTRIBUTORS_LIVE_URL]);
+  });
+
+  it("quay lại tab thì tải lại, không quá một lần mỗi CONTRIBUTORS_REFRESH_MS", async () => {
+    let now = 1_000_000;
+    vi.spyOn(Date, "now").mockImplementation(() => now);
+    const newer = { ...fresh, people: [...fresh.people, { ...person, login: "newer" }] };
+    let body: unknown = fresh;
+    mockFetch(() => Promise.resolve({ ok: true, json: () => Promise.resolve(body) }));
+    const { unmount } = render(<Probe />);
+    await waitFor(() => expect(screen.getByTestId("probe").textContent).toBe(`${CONTRIBUTORS.length + 1} 2099-01-01`));
+
+    body = newer;
+    document.dispatchEvent(new Event("visibilitychange"));
+    expect(fetch).toHaveBeenCalledTimes(1);
+
+    now += CONTRIBUTORS_REFRESH_MS;
+    document.dispatchEvent(new Event("visibilitychange"));
+    await waitFor(() => expect(screen.getByTestId("probe").textContent).toBe(`${CONTRIBUTORS.length + 2} 2099-01-01`));
+    expect(fetch).toHaveBeenCalledTimes(2);
+
+    unmount();
+    now += CONTRIBUTORS_REFRESH_MS;
+    document.dispatchEvent(new Event("visibilitychange"));
+    expect(fetch).toHaveBeenCalledTimes(2);
+    vi.restoreAllMocks();
   });
 
   it("giữ snapshot khi bản tải về cũ hơn, sai dạng hoặc lỗi mạng", async () => {
