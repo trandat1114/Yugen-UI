@@ -83,6 +83,8 @@ jobs:
         env:
           DOCS_BASE: /${{ github.event.repository.name }}/
           VITE_DOCS_SW: ${{ vars.DOCS_SW }}
+          # Analytics beacon (#190): repository variable ANALYTICS_URL (https collector); unset = no beacon.
+          VITE_ANALYTICS_URL: ${{ vars.ANALYTICS_URL }}
 
       # One Open Graph image per page (dist-docs/og/, read from routes.json), drawn with Playwright's Chromium.
       - name: Open Graph images

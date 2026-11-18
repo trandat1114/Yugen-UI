@@ -177,6 +177,7 @@ export function ExampleFrame({
             <button
               type="button"
               aria-label="StackBlitz"
+              data-analytics="stackblitz-example"
               onClick={() =>
                 openInStackBlitz(example.code, { title: example.title, theme: look.theme, brand: look.brand, dir: pageDir, version: SITE.version, setup: example.setup })
               }

@@ -1,7 +1,7 @@
 import { Suspense, useCallback, useEffect, useState, type ReactNode } from "react";
 import { ErrorBoundary, PageProgress, PageProgressFallback, YugenProvider } from "@/components/ui";
 import { useAppearance, type Appearance } from "@/hooks/useAppearance";
-import { docsPath, hrefOf, localePathOf, navigate, useDocsLocation } from "@/docs/router";
+import { docsPath, hrefOf, localePathOf, navigate, parseLocation, useDocsLocation } from "@/docs/router";
 import { Sidebar } from "@/docs/layout/Sidebar";
 import { AppearancePicker, TopBar } from "@/docs/layout/TopBar";
 import { dismissLanguageSuggestion, LanguageSuggestion } from "@/docs/layout/LanguageSuggestion";
@@ -16,6 +16,7 @@ import { preloadComponentDoc, retryComponentDoc } from "@/docs/registry";
 import { preloadNews } from "@/docs/news";
 import { installIntentPrefetch } from "@/docs/prefetch";
 import { SITE } from "@/docs/site";
+import { send, trackClicks } from "@/docs/analytics";
 import { supportEnabled } from "@/docs/support";
 import type { Route } from "@/docs/router";
 
@@ -121,6 +122,9 @@ function Footer() {
         <a href={docsPath("/contributors")} className="hover:text-foreground-1 hover:underline">
           {t("nav.contributors")}
         </a>
+        <a href={`${docsPath("/community")}#privacy`} className="hover:text-foreground-1 hover:underline">
+          {t("footer.privacy")}
+        </a>
         {supportEnabled() && (
           <a href={docsPath("/support")} className="hover:text-foreground-1 hover:underline">
             {t("nav.support")}
@@ -171,6 +175,15 @@ export default function App({ path }: { path?: string }) {
   }, []);
 
   useEffect(() => setNavOpen(false), [route]);
+  // Analytics (#190): no-op unless the build sets VITE_ANALYTICS_URL. One view per page, clicks on [data-analytics].
+  const viewPath = localePathOf(route, lang);
+  useEffect(() => {
+    send({ type: "view", path: viewPath, lang, version: SITE.version });
+  }, [viewPath, lang]);
+  useEffect(
+    () => trackClicks(() => ({ path: localePathOf(parseLocation(window.location.pathname).route, lang), lang, version: SITE.version })),
+    [lang],
+  );
   // Ngôn ngữ theo URL (/en/…). Lưu làm lựa chọn: lần sau mở link tiếng Việt, main.tsx chuyển sang bản tiếng Anh.
   useEffect(() => {
     if (savedLang !== lang) update({ lang });

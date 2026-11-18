@@ -42,7 +42,7 @@ export function HomeCreate() {
           <a href={docsPath("/templates")}>{t("home.createPreview")}</a>
         </Button>
         <Button asChild icon={<Open16Regular />}>
-          <a href={templateStackBlitzUrl(dir)} target="_blank" rel="noreferrer">
+          <a href={templateStackBlitzUrl(dir)} target="_blank" rel="noreferrer" data-analytics="stackblitz-template">
             {t("home.createStackblitz")}
           </a>
         </Button>
