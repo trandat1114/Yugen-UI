@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Button, Calendar, Card, ToggleGroup, ToggleGroupItem } from "@/components/ui";
+import { Button, Card, ToggleGroup, ToggleGroupItem } from "@/components/ui";
+import { Calendar } from "@/components/ui/dates";
 import type { PageProps } from "../pages";
 
 export default function CalendarPage({ t }: PageProps) {

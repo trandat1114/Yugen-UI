@@ -79,6 +79,14 @@
       "types": "./dist/components/ui/YugenProvider/document.d.ts",
       "default": "./dist/components/ui/YugenProvider/document.js"
     },
+    "./dates": {
+      "types": "./dist/components/ui/dates.d.ts",
+      "default": "./dist/components/ui/dates.js"
+    },
+    "./DatePicker/MonthPicker": {
+      "types": "./dist/components/ui/DatePicker/MonthPicker.d.ts",
+      "default": "./dist/components/ui/DatePicker/MonthPicker.js"
+    },
     "./AppShell/Sidebar": {
       "types": "./dist/components/ui/AppShell/Sidebar.d.ts",
       "default": "./dist/components/ui/AppShell/Sidebar.js"
@@ -129,11 +137,15 @@
   },
   "peerDependencies": {
     "react": ">=19",
+    "react-day-picker": "^10.0.2",
     "react-dom": ">=19",
     "react-hook-form": "^7.55.0",
     "tailwindcss": "^4.0.0"
   },
   "peerDependenciesMeta": {
+    "react-day-picker": {
+      "optional": true
+    },
     "react-hook-form": {
       "optional": true
     },
@@ -166,7 +178,6 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
-    "react-day-picker": "^10.0.2",
     "react-resizable-panels": "^4.14.7",
     "tailwind-merge": "^3.7.0"
   },
@@ -192,6 +203,7 @@
     "fast-check": "^4.10.2",
     "jsdom": "^31.0.0",
     "react": "^19.3.1",
+    "react-day-picker": "^10.0.2",
     "react-dom": "^19.3.1",
     "react-hook-form": "^7.90.0",
     "size-limit": "^14.2.0",

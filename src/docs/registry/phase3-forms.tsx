@@ -11,7 +11,6 @@ import { Controller } from "react-hook-form";
 import {
   Button,
   Checkbox,
-  DatePicker,
   Field,
   FileUpload,
   Input,
@@ -22,6 +21,7 @@ import {
   type FileUploadEntry,
   type WizardStep,
 } from "@/components/ui";
+import { DatePicker } from "@/components/ui/dates";
 import type { ComponentDoc } from "../types";
 import RAW from "./phase3-forms.tsx?raw";
 
@@ -658,7 +658,8 @@ export const docs: ComponentDoc[] = [
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Button, Checkbox, DatePicker, Field, Input, Select } from "@/components/ui";`,
+import { Button, Checkbox, Field, Input, Select } from "@/components/ui";
+import { DatePicker } from "@/components/ui/dates";`,
     hero: {
       title: "Form đăng ký",
       description: "Kiểm tra khi rời ô (mode \"onTouched\"), sau đó kiểm tra lại mỗi lần gõ. Bấm Tạo tài khoản khi còn trống để thấy focus nhảy tới ô lỗi đầu tiên.",

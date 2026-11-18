@@ -10,7 +10,7 @@ import { SITE } from "./site";
  * Tiêu đề tab, <meta name="description">, canonical và og:* theo trang. Bản build ghi sẵn vào HTML prerender của từng
  * trang (scripts/prerender.mjs); khi chuyển trang trong trình duyệt, DocumentMeta cập nhật lại.
  */
-const PAGES: Record<"blocks" | "templates" | "theme-designer" | "typeset" | "community" | "contributors", Record<"vi" | "en", [string, string]>> = {
+const PAGES: Record<"blocks" | "templates" | "theme-designer" | "typeset" | "community" | "contributors" | "support", Record<"vi" | "en", [string, string]>> = {
   blocks: {
     vi: ["Blocks", "Cụm giao diện ghép sẵn từ component Yugen UI — đăng nhập, cài đặt, thống kê, danh sách — copy nguyên khối vào dự án."],
     en: ["Blocks", "Ready-made UI sections built from Yugen UI components — sign-in, settings, stats, lists — copy whole blocks into your project."],
@@ -34,6 +34,10 @@ const PAGES: Record<"blocks" | "templates" | "theme-designer" | "typeset" | "com
   contributors: {
     vi: ["Người đóng góp", "Những người đã giúp Yugen UI bằng code, tài liệu, bản dịch, báo lỗi và review."],
     en: ["Contributors", "The people who helped Yugen UI with code, docs, translations, bug reports and reviews."],
+  },
+  support: {
+    vi: ["Ủng hộ", "Ủng hộ Yugen UI, thư viện component React mã nguồn mở."],
+    en: ["Support", "Support Yugen UI, an open source React component library."],
   },
 };
 
@@ -77,7 +81,8 @@ export function routeMeta(route: Route, l: LocaleValue): { title?: string; descr
     case "theme-designer":
     case "typeset":
     case "community":
-    case "contributors": {
+    case "contributors":
+    case "support": {
       const [title, description] = PAGES[route.kind][l.locale];
       return { title, description };
     }

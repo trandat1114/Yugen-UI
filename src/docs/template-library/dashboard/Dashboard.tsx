@@ -15,8 +15,6 @@ import {
   AppShellMain,
   Avatar,
   Button,
-  DateRangePicker,
-  DEFAULT_RANGE_PRESETS,
   Menu,
   MenuDivider,
   MenuGroupHeader,
@@ -39,11 +37,15 @@ import {
   SkeletonItem,
   toast,
   useMediaQuery,
-  type DateRange as PickerRange,
-  type DateRangePreset,
   type YugenTheme,
   ErrorBoundary,
 } from "@/components/ui";
+import {
+  DateRangePicker,
+  DEFAULT_RANGE_PRESETS,
+  type DateRange as PickerRange,
+  type DateRangePreset,
+} from "@/components/ui/dates";
 import { createMockApi, DEFAULT_MOCK_OPTIONS, type MockOptions } from "./api";
 import type { Content } from "./content/types";
 import { BRANDS, DashboardContext, THEMES, useDashboard, type Appearance, type DashboardValue } from "./context";

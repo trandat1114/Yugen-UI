@@ -45,10 +45,8 @@ const kebab = (s) => s.replace(/([a-z0-9])([A-Z])/g, "$1-$2").replace(/([A-Z])([
 
 /** Không phải dependency cần cài: peer của mọi dự án React. */
 const PEERS = new Set(["react", "react-dom"]);
-/** Peer tuỳ chọn mà một item cần (react-hook-form cho HookForm, #162): cài kèm item đó như một dependency. */
-const optionalPeers = Object.entries(pkg.peerDependenciesMeta ?? {})
-  .filter(([, meta]) => meta.optional)
-  .map(([name]) => [name, pkg.peerDependencies[name]]);
+// Optional peers of the package (react-day-picker, #356) are dependencies of the source files that import them.
+const optionalPeers = Object.entries(pkg.peerDependencies ?? {}).filter(([name]) => pkg.peerDependenciesMeta?.[name]?.optional);
 const deps = { ...pkg.dependencies, ...Object.fromEntries(optionalPeers) };
 
 function npmName(specifier) {
@@ -173,7 +171,8 @@ const folders = fs
 const SERVER_SAFE_FILES = new Set(["YugenProvider/document.ts", "AppShell/cookie.ts"]);
 
 const componentNames = [];
-/** Item cần một peer tuỳ chọn (hook-form): không nằm trong `all`, người dùng tự thêm khi cần. */
+/** Adapter cho thư viện form (hook-form cần react-hook-form, #162): không nằm trong `all`, người dùng tự thêm khi cần. */
+const NOT_IN_ALL = new Set(["react-hook-form"]);
 const withOptionalPeer = new Set();
 for (const folder of folders) {
   const dir = path.join(uiDir, folder);
@@ -195,7 +194,7 @@ for (const folder of folders) {
 
   const name = kebab(folder);
   componentNames.push(name);
-  if ([...npm].some((dep) => optionalPeers.some(([peer]) => peer === dep))) withOptionalPeer.add(name);
+  if ([...npm].some((dep) => NOT_IN_ALL.has(dep))) withOptionalPeer.add(name);
   items.push({
     name,
     type: "registry:ui",

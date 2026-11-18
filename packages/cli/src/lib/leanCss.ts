@@ -115,7 +115,8 @@ const SYNTAX: Record<ModuleImport["kind"], string> = {
 
 /** Thư mục component của một import từ yugen-ui; "all" nếu nó có thể dùng mọi component; null nếu không phải yugen-ui. */
 export function importFolders(imp: ModuleImport, manifest: Manifest): string[] | "all" | null {
-  if (imp.from === PACKAGE) {
+  // yugen-ui/dates (yugen-ui 0.17, #356): Calendar and the DatePicker family, looked up by name like the root.
+  if (imp.from === PACKAGE || imp.from === `${PACKAGE}/dates`) {
     // Gói không có export mặc định; `import Y from "yugen-ui"` coi như import cả gói.
     if (imp.all || imp.names.includes("default")) return "all";
     return [...new Set(imp.names.flatMap((n) => (Object.hasOwn(manifest.exports, n) ? [manifest.exports[n]] : [])))];

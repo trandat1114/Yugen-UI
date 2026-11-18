@@ -40,8 +40,14 @@ const moduleSym = indexSf && checker!.getSymbolAtLocation(indexSf);
 if (!checker || !indexSf || !moduleSym) throw new Error("Không đọc được src/components/ui/index.ts");
 
 const exportsMap = new Map<string, TsSymbol>();
-for (const s of checker.getExportsOfModule(moduleSym)) {
-  exportsMap.set(s.name, s.flags & SymbolFlags.Alias ? checker.getAliasedSymbol(s) : s);
+// The root entry and yugen-ui/dates (#356, Calendar and the DatePicker family).
+const datesSf = project!.program.getSourceFile(path.join(root, "src", "components", "ui", "dates.ts"));
+const datesSym = datesSf && checker.getSymbolAtLocation(datesSf);
+if (!datesSym) throw new Error("Không đọc được src/components/ui/dates.ts");
+for (const sym of [moduleSym, datesSym]) {
+  for (const s of checker.getExportsOfModule(sym)) {
+    if (!exportsMap.has(s.name)) exportsMap.set(s.name, s.flags & SymbolFlags.Alias ? checker.getAliasedSymbol(s) : s);
+  }
 }
 // `yugen-ui/form` (#162) is outside the barrel: HookForm, standardSchemaResolver.
 const hookFormSf = project!.program.getSourceFile(path.join(root, "src", "components", "ui", "HookForm", "HookForm.tsx"));
@@ -139,7 +145,7 @@ for (const doc of COMPONENTS) {
   const main =
     rule?.main ??
     doc.importCode
-      .match(/import\s*\{([^}]*)\}\s*from\s*["']@\/components\/ui["']/)?.[1]
+      .match(/import\s*\{([^}]*)\}\s*from\s*["']@\/components\/ui(?:\/dates)?["']/)?.[1]
       .split(",")
       .map((s) => s.trim())
       .find((s) => s && !s.startsWith("type "))

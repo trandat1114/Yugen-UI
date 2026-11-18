@@ -15,6 +15,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { parseSync } from "vite";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
@@ -221,9 +222,17 @@ const toYugen = (code) =>
   code
     // HookForm is the `yugen-ui/form` subpath (#162), outside the root.
     .replace(/(["'])@\/components\/ui\/HookForm\/HookForm\1/g, '"yugen-ui/form"')
+    // Calendar and the DatePicker family: yugen-ui/dates, which needs react-day-picker (#356).
+    .replace(/(["'])@\/components\/ui\/dates\1/g, '"yugen-ui/dates"')
     .replace(/(["'])@\/components\/ui(?:\/[^"']*)?\1/g, '"yugen-ui"')
     .replace(/(["'])@\/lib\/cn\1/g, '"yugen-ui"')
     .replace(BLOCK_IMPORT, '"./blocks/$2"');
+
+/** react-day-picker, the optional peer of yugen-ui/dates (#356), when the template imports it. */
+const datesPeer = (appFiles) =>
+  Object.values(appFiles).some((code) => isText(code) && /from\s+["']yugen-ui\/dates["']/.test(code))
+    ? { "react-day-picker": pkg.peerDependencies["react-day-picker"] }
+    : {};
 
 /** Export name → component folder, used to seed the generated lean CSS before the CLI runs for the first time. */
 const componentFolderByExport = new Map();
@@ -241,24 +250,54 @@ for (const dir of fs.readdirSync(path.join(root, "src/components/ui"), { withFil
   componentFolderByExport.set(folder, folder);
 }
 
+/**
+ * The yugen-ui imports of the app's code, read with a parser like `yugen css` reads them (packages/cli): an import
+ * written inside a string or a comment ('import { DataGrid } from "yugen-ui"' in the starter's text) does not count, and
+ * one import list never runs on into the next import.
+ */
+function yugenImports(sources) {
+  const found = [];
+  const walk = (node) => {
+    if (!node || typeof node !== "object") return;
+    if (Array.isArray(node)) return node.forEach(walk);
+    const from = node.source?.value;
+    if (typeof from === "string" && (from === "yugen-ui" || from.startsWith("yugen-ui/"))) {
+      const specifiers = node.specifiers ?? [];
+      found.push({
+        from,
+        names: specifiers.map((s) => s.imported?.name ?? s.local?.name).filter(Boolean),
+        all:
+          node.type === "ImportExpression" ||
+          node.type === "ExportAllDeclaration" ||
+          specifiers.some((s) => s.type === "ImportNamespaceSpecifier" || s.type === "ImportDefaultSpecifier"),
+      });
+    }
+    for (const key of Object.keys(node)) if (key !== "type" && key !== "start" && key !== "end") walk(node[key]);
+  };
+  for (const [file, code] of sources) {
+    const { program, errors } = parseSync(file, code);
+    if (errors.length) throw new Error(`${file}: ${errors[0].message}`);
+    walk(program);
+  }
+  return found;
+}
+
 function leanCss(appFiles, fallbackCode = "") {
   const code = [...Object.values(appFiles), fallbackCode].filter(isText).join("\n");
+  const sources = Object.entries(appFiles).filter(([file, text]) => isText(text) && /\.[cm]?[jt]sx?$/.test(file));
+  if (fallbackCode) sources.push(["src/main.tsx", fallbackCode]);
   const folders = new Set();
   let everything = false;
-  for (const match of code.matchAll(/["']yugen-ui\/([^"']+)["']/g)) {
-    const folder = match[1].split("/")[0];
-    if (sourceFolders.has(folder)) folders.add(folder);
-  }
-  // Named imports from a subpath (`yugen-ui/form`) are counted above; dropped here so the list below does not run on
-  // from them to the next `from "yugen-ui"`.
-  const rootImports = code.replace(/import\s*\{[^}]*\}\s*from\s*["']yugen-ui\/[^"']+["']/g, "");
-  for (const match of rootImports.matchAll(/(?:import|export)\s+(?:type\s+)?\{([\s\S]*?)\}\s+from\s+["']yugen-ui["']/g)) {
-    for (const name of match[1].split(",").map((part) => part.trim().replace(/^type\s+/, "").split(/\s+as\s+/)[0]).filter(Boolean)) {
-      const folder = componentFolderByExport.get(name);
-      if (folder) folders.add(folder);
+  for (const { from, names, all } of yugenImports(sources)) {
+    // The root and yugen-ui/dates (#356) by name; another subpath by its folder. `yugen-ui/form` (#162) has no sources.
+    if (from === "yugen-ui" || from === "yugen-ui/dates") {
+      if (all && from === "yugen-ui") everything = true;
+      for (const name of names) if (componentFolderByExport.has(name)) folders.add(componentFolderByExport.get(name));
+    } else {
+      const folder = from.slice("yugen-ui/".length).split("/")[0];
+      if (sourceFolders.has(folder)) folders.add(folder);
     }
   }
-  if (/(?:import|export)\s+\*\s+(?:as\s+\w+\s+)?from\s+["']yugen-ui["']|import\s*\(\s*["']yugen-ui["']/.test(code)) everything = true;
   // Brand web / teams: their ramps are outside theme-core.css (#354), same rule as `yugen css` (packages/cli/src/lib/leanCss.ts).
   const brands = /\b(?:data-)?brand\s*[=:]\s*\{?\s*["'`](?:web|teams)["'`]/.test(code) ? ['@import "yugen-ui/tokens/brands.css";'] : [];
   const imports = everything
@@ -1271,6 +1310,7 @@ function files(t) {
               react: pkg.devDependencies.react,
               "react-dom": pkg.devDependencies["react-dom"],
               "yugen-ui": `^${pkg.version}`,
+              ...datesPeer({ ...appFiles, ...blockFiles }),
               ...t.dependencies,
             }).sort(([a], [b]) => (a < b ? -1 : 1)),
           ),

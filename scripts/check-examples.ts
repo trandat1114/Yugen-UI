@@ -50,6 +50,7 @@ fs.writeFileSync(
         paths: {
           "yugen-ui": [posix(path.join(root, "src", "lib.ts"))],
           "yugen-ui/form": [posix(path.join(root, "src", "components", "ui", "HookForm", "HookForm.tsx"))],
+          "yugen-ui/dates": [posix(path.join(root, "src", "components", "ui", "dates.ts"))],
           "@/*": [posix(path.join(root, "src")) + "/*"],
         },
       },

@@ -327,6 +327,11 @@ export default function Page() {
             <C>yugenThemeScript</C> when imported from <C>yugen-ui</C> or <C>yugen-ui/YugenProvider/document</C>.
           </P>
           <P>
+            Calendar, DatePicker, DateRangePicker and DateTimePicker are not on the root: they need react-day-picker, an optional peer
+            dependency. Install it (<C>npm i react-day-picker</C>) and import them from <C>yugen-ui/dates</C> (or{" "}
+            <C>yugen-ui/Calendar</C>, <C>yugen-ui/DatePicker</C>). An app without dates installs no date library.
+          </P>
+          <P>
             TypeScript with <C>moduleResolution: node</C> (node10) does not read <C>exports</C>, so it finds no types for subpaths there:
             import from <C>yugen-ui</C>, or switch to <C>bundler</C> or <C>nodenext</C>.
           </P>

@@ -5,8 +5,10 @@
 @import "yugen-ui/theme-core.css";
 @import "yugen-ui/sources/AppShell.css";
 @import "yugen-ui/sources/Avatar.css";
+@import "yugen-ui/sources/Badge.css";
 @import "yugen-ui/sources/Button.css";
 @import "yugen-ui/sources/Card.css";
+@import "yugen-ui/sources/CounterBadge.css";
 @import "yugen-ui/sources/DataGrid.css";
 @import "yugen-ui/sources/DataGridColumnPicker.css";
 @import "yugen-ui/sources/Dialog.css";
@@ -36,4 +38,3 @@
 @import "yugen-ui/sources/Toolbar.css";
 @import "yugen-ui/sources/Tooltip.css";
 @import "yugen-ui/sources/YugenProvider.css";
-@import "yugen-ui/sources/_internal.css";

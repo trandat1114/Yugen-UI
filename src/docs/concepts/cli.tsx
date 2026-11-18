@@ -288,6 +288,31 @@ export default function Page() {
         </div>
       </DocSection>
 
+      <DocSection id="network" title="Mạng, file và checksum">
+        <div className="flex flex-col gap-4">
+          <P>
+            Mỗi bản <C>@yugen-ui/cli</C> mang theo sha256 của mọi item registry thuộc phiên bản <C>yugen-ui</C> mà template của nó dùng, và đọc
+            các item đó từ <C>{`${REGISTRY_URL}/<version>/`}</C>, bản sao không đổi khi site docs deploy lại. <C>add</C>, <C>init</C>,{" "}
+            <C>update</C> và <C>diff</C> dừng trước khi ghi file nếu một item không khớp. Với <C>--registry</C>, hoặc registry trong yugen.json
+            hay components.json, item được dùng nguyên trạng và CLI báo một dòng.
+          </P>
+          <Table
+            head={["Host", "Khi nào"]}
+            rows={[
+              [<C key="h">trandat1114.github.io</C>, "init, add, update, diff, list, remove (item registry)"],
+              [<C key="h">registry.npmjs.org</C>, "doctor (phiên bản yugen-ui mới nhất, timeout 3 giây); lệnh cài do package manager chạy"],
+              [<C key="h">api.github.com, raw.githubusercontent.com</C>, "chỉ create --ref (2 lệnh gọi API không xác thực, rồi tải file template)"],
+            ]}
+          />
+          <P>
+            CLI chỉ ghi trong dự án: file component và theme, <C>yugen.json</C>, <C>yugen-ui.css</C>, file CSS và file entry được thêm import,
+            và <C>package.json</C> qua package manager. CLI không đọc token hay thông tin đăng nhập; biến môi trường nó dùng là <C>CI</C>,{" "}
+            <C>npm_config_user_agent</C> và <C>npm_execpath</C> (chọn package manager và chạy không qua shell), cùng <C>NO_COLOR</C> /{" "}
+            <C>FORCE_COLOR</C>.
+          </P>
+        </div>
+      </DocSection>
+
       <DocSection id="options" title="Tuỳ chọn chung">
         <div className="flex flex-col gap-4">
           <Table
