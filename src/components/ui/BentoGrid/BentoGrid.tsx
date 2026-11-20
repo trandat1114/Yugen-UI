@@ -206,7 +206,7 @@ export function BentoGridItem(inProps: BentoGridItemProps & { ref?: React.Ref<HT
   } = inProps;
   const itemClassName = cn(
     "group relative flex min-w-0 flex-col overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1 p-5 text-foreground-1",
-    "[&_*]:min-w-0 [&_img]:max-w-full",
+    "**:min-w-0 [&_img]:max-w-full",
     href && "cursor-pointer transition-[background-color,border-color,box-shadow] duration-faster hover:border-stroke-1-hover hover:bg-background-1-hover hover:shadow-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-stroke",
     responsiveClasses(colSpan, COL_SPANS),
     responsiveClasses(rowSpan, ROW_SPANS),
@@ -220,13 +220,13 @@ export function BentoGridItem(inProps: BentoGridItemProps & { ref?: React.Ref<HT
           {icon && <span aria-hidden className="flex size-9 shrink-0 items-center justify-center rounded-large bg-brand-background-2 text-brand-foreground-2 [&_svg]:size-5">{icon}</span>}
           {(title || description) && (
             <div className="min-w-0">
-              {title && <Title className="break-words font-display text-title3 font-semibold">{title}</Title>}
-              {description && <p className="mt-1 break-words text-body2 text-foreground-2">{description}</p>}
+              {title && <Title className="wrap-break-word font-display text-title3 font-semibold">{title}</Title>}
+              {description && <p className="mt-1 wrap-break-word text-body2 text-foreground-2">{description}</p>}
             </div>
           )}
         </div>
       )}
-      {children && <div className="mt-4 break-words text-body2 text-foreground-2">{children}</div>}
+      {children && <div className="mt-4 wrap-break-word text-body2 text-foreground-2">{children}</div>}
       {action && <div className="mt-5 flex flex-wrap items-center gap-2">{action}</div>}
       {media && <div className="mt-auto -mx-5 -mb-5 overflow-hidden pt-5 [&_img]:block [&_img]:h-auto [&_img]:w-full">{media}</div>}
     </>

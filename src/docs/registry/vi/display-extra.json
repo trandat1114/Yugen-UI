@@ -106,5 +106,12 @@
   "Share": "Chia sẻ",
   "Call `sonner.promise` to turn **loading** into the result.": "Gọi `sonner.promise` để đổi **loading** thành kết quả.",
   "HTML from a CMS? See [Prose](#prose).": "HTML từ CMS: xem [Prose](#prose).",
-  "<img src=x onerror=\"alert(1)\"> and [click here](javascript:alert(1))": "<img src=x onerror=\"alert(1)\"> và [bấm vào đây](javascript:alert(1))"
+  "<img src=x onerror=\"alert(1)\"> and [click here](javascript:alert(1))": "<img src=x onerror=\"alert(1)\"> và [bấm vào đây](javascript:alert(1))",
+  "Release roadmap": "Lộ trình phát hành",
+  "Research": "Nghiên cứu",
+  "Jan 2026": "Tháng 1/2026",
+  "Beta": "Bản beta",
+  "Mar 2026": "Tháng 3/2026",
+  "General availability": "Phát hành rộng rãi",
+  "Jun 2026": "Tháng 6/2026"
 }

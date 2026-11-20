@@ -172,10 +172,10 @@ export function Timeline({
   });
   const progressStyle = { "--timeline-progress": progress } as React.CSSProperties;
   const progressClasses = progressEnabled
-    ? "relative before:pointer-events-none before:absolute before:inset-y-4 before:start-4 before:z-0 before:w-px before:bg-stroke-2 before:content-[''] after:pointer-events-none after:absolute after:inset-y-4 after:start-4 after:z-0 after:w-px after:origin-top after:scale-y-[var(--timeline-progress)] after:bg-brand-background after:content-[''] motion-reduce:after:scale-y-100"
+    ? "relative before:pointer-events-none before:absolute before:inset-y-4 before:inset-s-4 before:z-0 before:w-px before:bg-stroke-2 before:content-[''] after:pointer-events-none after:absolute after:inset-y-4 after:inset-s-4 after:z-0 after:w-px after:origin-top after:scale-y-(--timeline-progress) after:bg-brand-background after:content-[''] motion-reduce:after:scale-y-100"
     : "";
   const compactProgressClasses = variant === "compact" && progressEnabled
-    ? "before:inset-y-2.5 before:start-2.5 after:inset-y-2.5 after:start-2.5"
+    ? "before:inset-y-2.5 before:inset-s-2.5 after:inset-y-2.5 after:inset-s-2.5"
     : "";
 
   return (

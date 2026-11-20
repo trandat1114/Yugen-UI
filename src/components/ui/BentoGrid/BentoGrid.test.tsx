@@ -43,8 +43,8 @@ describe("BentoGrid", () => {
         />
       </BentoGrid>,
     );
-    expect(screen.getByRole("heading")).toHaveClass("break-words");
-    expect(screen.getByText(/A long description/)).toHaveClass("break-words");
+    expect(screen.getByRole("heading")).toHaveClass("wrap-break-word");
+    expect(screen.getByText(/A long description/)).toHaveClass("wrap-break-word");
     expect(container.querySelector("img")).toHaveAttribute("alt", "");
   });
 });
