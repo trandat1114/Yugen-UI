@@ -102,6 +102,7 @@ export * from "./TeachingPopover/TeachingPopover";
 export * from "./Tooltip/Tooltip";
 
 // Bố cục
+export * from "./BentoGrid/BentoGrid";
 export * from "./AppShell/AppShell";
 export * from "./AppShell/Sidebar";
 export * from "./Accordion/Accordion";

@@ -76,6 +76,8 @@ export const en: Record<MessageKey, string> = {
   "blocks.default": "Default",
   "blocks.description": "Description",
   "blocks.onThisPage": "On this page",
+  "blocks.expandItem": "Expand {label}",
+  "blocks.collapseItem": "Collapse {label}",
 
   // Messages table on component pages (MessagesTable.tsx)
   "messages.desc": "Text built into the component: labels, aria-labels, screen reader announcements.",
@@ -123,6 +125,10 @@ export const en: Record<MessageKey, string> = {
   "news.planned": "Planned for {date}",
   "news.view": "View",
   "news.packages": "Packages",
+  "news.toc.packages": "Release packages",
+  "news.toc.filter": "Filter changes",
+  "news.toc.releases": "Release history",
+  "news.toc.upgrade": "Upgrade",
   "news.empty": "No changes of this type yet.",
   "news.cliUpgradeBody": "npx @yugen-ui/cli@latest always runs the latest version. If you installed it globally, update with the command below.",
   "news.createUpgradeBody": "Add @latest to always create apps with the newest version.",

@@ -6,14 +6,19 @@ import { cn } from "@/lib/cn";
 import { warnDeprecated } from "@/lib/deprecate";
 import { Button } from "../Button/Button";
 import { Popover, PopoverClose, PopoverSurface, PopoverTrigger, type PopoverSurfaceProps } from "../Popover/Popover";
-import { useYugenMessages } from "../YugenProvider/context";
+import * as PopoverPrimitive from "@radix-ui/react-popover";
+import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
 import { teachingPopoverMessagesEn } from "./messages";
 
 export { teachingPopoverMessages, teachingPopoverMessagesVi, teachingPopoverMessagesEn, type TeachingPopoverMessages } from "./messages";
 
 export type TeachingPopoverAppearance = "normal" | "brand";
+export type TeachingPopoverFocus = "none" | "spotlight";
 
-const TeachingPopoverContext = React.createContext<{ appearance: TeachingPopoverAppearance }>({ appearance: "normal" });
+const TeachingPopoverContext = React.createContext<{ appearance: TeachingPopoverAppearance; focus: TeachingPopoverFocus }>({
+  appearance: "normal",
+  focus: "none",
+});
 
 function useTeachingAppearance() {
   return React.useContext(TeachingPopoverContext).appearance;
@@ -45,14 +50,43 @@ function useTeachingButtons() {
 export interface TeachingPopoverProps extends React.ComponentPropsWithoutRef<typeof Popover> {
   /** normal: bề mặt neutral · brand: nền brand chữ on-brand. */
   appearance?: TeachingPopoverAppearance;
+  /** spotlight làm tối phần còn lại của viewport; mặc định none để giữ nguyên hành vi Popover. */
+  focus?: TeachingPopoverFocus;
+}
+
+function TeachingPopoverScrim() {
+  const portalTheme = usePortalThemeProps();
+  return (
+    <PopoverPrimitive.Portal>
+      <div
+        {...portalTheme}
+        data-teaching-popover-scrim
+        aria-hidden="true"
+        className="fixed inset-0 z-40 bg-overlay animate-fade-in motion-reduce:animate-none"
+      />
+    </PopoverPrimitive.Portal>
+  );
 }
 
 /** Popover hướng dẫn (coachmark / onboarding) — giới thiệu tính năng mới, gắn với phần tử trigger. */
-export function TeachingPopover({ appearance = "normal", ...props }: TeachingPopoverProps) {
-  const value = React.useMemo(() => ({ appearance }), [appearance]);
+export function TeachingPopover({
+  appearance = "normal",
+  focus = "none",
+  open: openProp,
+  defaultOpen,
+  onOpenChange,
+  modal,
+  children,
+  ...props
+}: TeachingPopoverProps) {
+  const [open, setOpen] = useControllableState({ value: openProp, defaultValue: defaultOpen ?? false, onChange: onOpenChange });
+  const value = React.useMemo(() => ({ appearance, focus }), [appearance, focus]);
   return (
     <TeachingPopoverContext.Provider value={value}>
-      <Popover {...props} />
+      <Popover {...props} open={open} onOpenChange={setOpen} modal={focus === "spotlight" ? true : modal}>
+        {focus === "spotlight" && open && <TeachingPopoverScrim />}
+        {children}
+      </Popover>
     </TeachingPopoverContext.Provider>
   );
 }

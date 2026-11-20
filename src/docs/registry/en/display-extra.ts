@@ -58,27 +58,36 @@ export const en: Record<string, ComponentDocEn> = {
 
   timeline: {
     description:
-      "Timeline is an `<ol>`; each TimelineItem has a title, a time, an icon (or Avatar) and optional extra content. Pass `dateTime` to turn the time into a machine-readable `<time>`. The compact variant uses a small dot and one line per event, which suits long activity logs. Icons are decorative, so the title must describe the event on its own.",
+      "Timeline is an `<ol>`; each TimelineItem has a title, a time, an icon (or Avatar) and optional extra content. Pass `dateTime` to turn the time into a machine-readable `<time>`. `progress` adds a scroll-driven rail with one requestAnimationFrame-scheduled listener, derives upcoming/current/complete item states and exposes a progressbar to screen readers. `dateLayout=\"sticky\"` places dates in a separate column on wide screens and above the content on narrow screens. The compact variant uses a small dot and one line per event, which suits long activity logs. Icons are decorative, so the title must describe the event on its own.",
     examples: [
       { title: "Compact", description: "Small dot, title and time on one line; extra content uses caption text." },
       { title: "Intent without icons", description: "Without an icon the item shows a dot in the intent color: neutral, brand, success, warning, error." },
+      { title: "Scroll progress & current state", description: "The rail follows scroll; items move from upcoming to current to complete, with sticky dates that stack on narrow screens." },
     ],
     dos: [
       "Put the newest event first, unless people follow a process from start to end.",
       "Write titles that say who did what, because icons are not read by screen readers.",
       "Pass dateTime when the shown time is relative (“2 hours ago”).",
+      "Use progress for roadmaps, changelogs or long histories; keep scrollOffset stable so the current state is predictable.",
     ],
     donts: [
       "Don't use Timeline for steps people still have to go through. Use Stepper.",
       "Don't use intent for decoration; keep color for states that really differ.",
+      "Don't enable progress for a very short list or attach a scroll listener to every item.",
     ],
     props: {
       variant: "detailed: 32px icon, content below · compact: small dot, one line.",
+      progress: "Boolean; enables the scroll progress rail and derives upcoming/current/complete states.",
+      scrollOffset: "Number, default 0.65; viewport position of the marker line, clamped to 0.1–0.9.",
+      activeIndex: "Number; controlled current item index when progress comes from another source.",
+      progressLabel: "String, default 'Timeline progress'; accessible label for the hidden progressbar.",
+      dateLayout: "inline or sticky; sticky uses a date column on wide screens and stacks the date above content on narrow screens.",
       "TimelineItem.title": "The event: who did what.",
       "TimelineItem.time": "Time shown to people.",
       "TimelineItem.dateTime": "ISO 8601 timestamp → <time dateTime>.",
       "TimelineItem.icon": "Icon or Avatar; empty = dot.",
       "TimelineItem.intent": "Color of the icon or dot. The old value \"danger\" is deprecated (removed in 1.0).",
+      "TimelineItem.status": "upcoming, current or complete; overrides the automatically derived state.",
       "TimelineItem.children": "Extra content: a comment, files, tags.",
     },
   },

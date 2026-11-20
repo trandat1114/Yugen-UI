@@ -31,3 +31,24 @@ describe("TeachingPopoverFooter orientation", () => {
     expect(screen.getByTestId("footer")).not.toHaveClass("flex-col");
   });
 });
+
+describe("TeachingPopover focus", () => {
+  it("spotlight dims the viewport while the default stays unchanged", () => {
+    const { rerender } = render(
+      <TeachingPopover open>
+        <TeachingPopoverSurface aria-label="Tip">Content</TeachingPopoverSurface>
+      </TeachingPopover>,
+    );
+    expect(document.querySelector("[data-teaching-popover-scrim]")).not.toBeInTheDocument();
+
+    rerender(
+      <TeachingPopover open focus="spotlight">
+        <TeachingPopoverSurface aria-label="Tip">Content</TeachingPopoverSurface>
+      </TeachingPopover>,
+    );
+    const scrim = document.querySelector("[data-teaching-popover-scrim]");
+    expect(scrim).toBeInTheDocument();
+    expect(scrim).toHaveAttribute("aria-hidden", "true");
+    expect(scrim).toHaveClass("bg-overlay", "z-40");
+  });
+});

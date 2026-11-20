@@ -170,11 +170,43 @@ export const en: Record<string, ComponentDocEn> = {
     },
   },
 
+  bentogrid: {
+    description:
+      "A CSS-first responsive grid for composing content cells with different sizes while preserving a predictable reading order. BentoGridItem supports a header, title, description, media, icon, action and link-card slots; colSpan and rowSpan accept a number or breakpoint object. The demos use generated SVG placeholders with no network dependency, keep copy short for scanning and allow long text to wrap. When a card is a link, do not put another interactive control inside it.",
+    examples: [
+      { title: "Asymmetric header & content", description: "Let a large cell carry the primary story while supporting cells fill the same grid without changing reading order." },
+      { title: "Two-column grid", description: "Use columns={{ base: 1, md: 2 }} when the content should scan evenly instead of using an asymmetric composition." },
+      { title: "Link cards & action cells", description: "Use a link card for one primary action; use an action cell with its own button when several actions are needed." },
+      { title: "Images & responsive spans", description: "Pass an image directly, provide an appropriate alt, and keep the mobile span small." },
+    ],
+    dos: [
+      "Put important content first in the DOM; spans only change the visual layout.",
+      "Use a link card for one primary action, or an action cell for multiple controls.",
+      "Keep the number of cells reasonable; use a regular Grid or List when content must be scanned quickly.",
+      "Use a placeholder with an appropriate alt; decorative images should use alt=\"\".",
+      "Keep titles and descriptions short so cells grow with their content instead of clipping text.",
+    ],
+    donts: [
+      "Do not nest a button or link inside a BentoGridItem with href.",
+      "Do not use spans to change reading order on mobile.",
+      "Do not attach a listener or ResizeObserver to every cell to measure layout.",
+    ],
+    props: {
+      "BentoGrid.columns": "Number of columns at each breakpoint (1–6).",
+      "BentoGrid.gap": "Spacing between cells: small, medium or large.",
+      "BentoGridItem.colSpan / rowSpan": "Number of tracks occupied at each breakpoint (1–6).",
+      "BentoGridItem.title / titleAs": "Title content and heading element; titleAs defaults to h3.",
+      "BentoGridItem.header / description / media / icon / action": "A visual header at the top of the cell plus optional content slots.",
+      "BentoGridItem.href / target / rel": "Enables semantic link-card mode; do not combine it with an action containing another interactive control.",
+    },
+  },
+
   teachingpopover: {
     description:
-      "Built on Popover (shadow-16, with an arrow). It has a Header (icon, small title and close button), a Body (optional illustration, title and content), a Footer (primary and secondary buttons) and a Carousel for several steps (\"1/3\", navigation dots, “Back” / “Next” / “Finish”). appearance=\"brand\" fills this small surface with the brand color.",
+      "Built on Popover (shadow-16, with an arrow). It has a Header (icon, small title and close button), a Body (optional illustration, title and content), a Footer (primary and secondary buttons) and a Carousel for several steps (\"1/3\", navigation dots, “Back” / “Next” / “Finish”). appearance=\"brand\" fills this small surface with the brand color; focus=\"spotlight\" dims the rest of the viewport so people can focus on the guide.",
     examples: [
       { title: "Brand & illustration", description: "appearance=\"brand\" on TeachingPopover; media appears above the content." },
+      { title: "Spotlight guidance", description: "focus=\"spotlight\" dims the rest of the page and keeps interaction focused on the TeachingPopover; Escape or dismiss restores focus." },
       { title: "Vertical footer", description: "orientation=\"vertical\" stacks the two buttons at full width, which suits long labels." },
       {
         title: "Multiple steps (Carousel)",
@@ -185,6 +217,7 @@ export const en: Record<string, ComponentDocEn> = {
       "Show only one TeachingPopover at a time, attached to the element it introduces.",
       "Keep the title short and the content to 1–2 sentences. Always offer a way to close it (the X button or the secondary button).",
       "Limit multi-step tours to 3–5 steps.",
+      "Use focus=\"spotlight\" for a step that needs attention; use the default Popover for non-blocking tips.",
     ],
     donts: [
       "Don't use it for error messages or confirmations. Use MessageBar / Dialog.",
@@ -193,6 +226,7 @@ export const en: Record<string, ComponentDocEn> = {
     ],
     props: {
       "TeachingPopover.appearance": "Applies to the surface, header and buttons.",
+      "TeachingPopover.focus": "\"spotlight\" adds a viewport scrim and modal interaction; \"none\" keeps the page non-blocking.",
       "TeachingPopover.open / onOpenChange": "Controls visibility (Radix Popover).",
       "TeachingPopoverSurface.side / align / withArrow": "Surface position (320px wide).",
       "TeachingPopoverHeader.icon / dismissible": "Icon before the title; close button.",

@@ -77,6 +77,8 @@ export const vi = {
   "blocks.default": "Mặc định",
   "blocks.description": "Mô tả",
   "blocks.onThisPage": "Trên trang này",
+  "blocks.expandItem": "Mở rộng {label}",
+  "blocks.collapseItem": "Thu gọn {label}",
 
   // Bảng Messages trên trang component (MessagesTable.tsx)
   "messages.desc": "Chữ có sẵn của component: nhãn, aria-label, thông báo cho trình đọc màn hình.",
@@ -124,6 +126,10 @@ export const vi = {
   "news.planned": "Dự kiến {date}",
   "news.view": "Xem",
   "news.packages": "Gói",
+  "news.toc.packages": "Gói phát hành",
+  "news.toc.filter": "Lọc thay đổi",
+  "news.toc.releases": "Lịch sử phát hành",
+  "news.toc.upgrade": "Nâng cấp",
   "news.empty": "Chưa có thay đổi loại này.",
   "news.cliUpgradeBody": "npx @yugen-ui/cli@latest luôn chạy bản mới nhất. Đã cài toàn cục thì cập nhật bằng lệnh dưới đây.",
   "news.createUpgradeBody": "Gọi kèm @latest để luôn tạo app bằng bản mới nhất.",

@@ -24,8 +24,10 @@ export interface ChartSeries {
   color?: ChartColor;
 }
 
-export type ChartNumberFormat = Intl.NumberFormatOptions | ((value: number) => string);
-export type ChartDateFormat = Intl.DateTimeFormatOptions | ((value: Date) => string);
+export type ChartNumberFormat =
+  Intl.NumberFormatOptions | ((value: number) => string);
+export type ChartDateFormat =
+  Intl.DateTimeFormatOptions | ((value: Date) => string);
 
 /** Prop dùng chung cho mọi biểu đồ có khung (ChartContainer). */
 export interface ChartFrameProps {
@@ -55,7 +57,10 @@ export interface ChartFrameProps {
 
 /* ================================================================== Màu */
 
-export function slotOf(color: ChartColor | undefined, index: number): ChartSlot {
+export function slotOf(
+  color: ChartColor | undefined,
+  index: number,
+): ChartSlot {
   if (color) return color;
   return index < CHART_PALETTE_SIZE ? ((index + 1) as ChartColor) : "other";
 }
@@ -82,7 +87,10 @@ const DASHES: Record<string, string | undefined> = {
   pos: undefined,
 };
 
-export function slotDash(slot: ChartSlot, textured: boolean): string | undefined {
+export function slotDash(
+  slot: ChartSlot,
+  textured: boolean,
+): string | undefined {
   return textured ? DASHES[String(slot)] : undefined;
 }
 
@@ -93,7 +101,11 @@ export function patternId(prefix: string, slot: ChartSlot): string | undefined {
 }
 
 /** Giá trị `fill` cho mark diện tích (cột, lát donut). */
-export function slotFill(slot: ChartSlot, textured: boolean, prefix: string): string {
+export function slotFill(
+  slot: ChartSlot,
+  textured: boolean,
+  prefix: string,
+): string {
   const id = textured ? patternId(prefix, slot) : undefined;
   return id ? `url(#${id})` : slotVar(slot);
 }
@@ -123,7 +135,10 @@ export function df(locale: string, options: Intl.DateTimeFormatOptions) {
   return f;
 }
 
-export function makeNumberFormatter(locale: string, format?: ChartNumberFormat): (value: number) => string {
+export function makeNumberFormatter(
+  locale: string,
+  format?: ChartNumberFormat,
+): (value: number) => string {
   if (typeof format === "function") return format;
   const f = nf(locale, format ?? { maximumFractionDigits: 2 });
   return (v) => f.format(v);
@@ -151,8 +166,17 @@ export function makeAxisFormatter(
   if (typeof format === "function") return format;
   const base = format ?? {};
   const compact = maxAbs >= 1000 && base.style !== "percent";
-  const unit = compact ? 10 ** (3 * Math.floor(Math.log10(maxAbs) / 3)) : base.style === "percent" ? 0.01 : 1;
-  const digits = step > 0 ? decimalsOf(step / unit) : compact ? 1 : (base.maximumFractionDigits ?? 2);
+  const unit = compact
+    ? 10 ** (3 * Math.floor(Math.log10(maxAbs) / 3))
+    : base.style === "percent"
+      ? 0.01
+      : 1;
+  const digits =
+    step > 0
+      ? decimalsOf(step / unit)
+      : compact
+        ? 1
+        : (base.maximumFractionDigits ?? 2);
   const f = nf(locale, {
     ...base,
     notation: compact ? "compact" : base.notation,
@@ -162,7 +186,11 @@ export function makeAxisFormatter(
   return (v) => f.format(v);
 }
 
-export function makeDateFormatter(locale: string, format: ChartDateFormat | undefined, fallback: Intl.DateTimeFormatOptions) {
+export function makeDateFormatter(
+  locale: string,
+  format: ChartDateFormat | undefined,
+  fallback: Intl.DateTimeFormatOptions,
+) {
   if (typeof format === "function") return format;
   const f = df(locale, format ?? fallback);
   return (d: Date) => f.format(d);
@@ -195,11 +223,15 @@ export function niceTicks(min: number, max: number, count = 5): number[] {
   const start = Math.floor(min / step) * step;
   const end = Math.ceil(max / step) * step;
   const ticks: number[] = [];
-  for (let v = start; v <= end + step / 2; v += step) ticks.push(+v.toFixed(10));
+  for (let v = start; v <= end + step / 2; v += step)
+    ticks.push(+v.toFixed(10));
   return ticks;
 }
 
-export function linearScale([d0, d1]: [number, number], [r0, r1]: [number, number]) {
+export function linearScale(
+  [d0, d1]: [number, number],
+  [r0, r1]: [number, number],
+) {
   const k = d1 === d0 ? 0 : (r1 - r0) / (d1 - d0);
   return (v: number) => r0 + (v - d0) * k;
 }
@@ -250,9 +282,19 @@ export function fitText(text: string, max: number, size = 12): string {
 /* ================================================================== Đường & hình */
 
 /** Hình chữ nhật bo 4px ở đầu dữ liệu, vuông ở đường gốc. */
-export function barPath(x: number, y: number, w: number, h: number, r: number, end: "top" | "bottom" | "left" | "right" | "none") {
+export function barPath(
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
+  end: "top" | "bottom" | "left" | "right" | "none",
+) {
   if (w <= 0 || h <= 0) return "";
-  const rr = end === "top" || end === "bottom" ? Math.min(r, w / 2, h) : Math.min(r, h / 2, w);
+  const rr =
+    end === "top" || end === "bottom"
+      ? Math.min(r, w / 2, h)
+      : Math.min(r, h / 2, w);
   if (end === "none" || rr <= 0) return `M${x},${y}h${w}v${h}h${-w}Z`;
   const x1 = x + w;
   const y1 = y + h;
@@ -271,10 +313,24 @@ export function barPath(x: number, y: number, w: number, h: number, r: number, e
 export type Point = [number, number];
 
 /** Đường nối thẳng hoặc monotone (Fritsch–Carlson, không vượt đỉnh dữ liệu). */
-export function linePath(points: Point[], curve: "linear" | "monotone" = "monotone"): string {
+export function linePath(
+  points: Point[],
+  curve: "linear" | "monotone" | "step" = "monotone",
+): string {
   if (points.length === 0) return "";
   if (points.length === 1) return `M${points[0][0]},${points[0][1]}`;
-  if (curve === "linear" || points.length === 2) return "M" + points.map((p) => `${p[0]},${p[1]}`).join("L");
+  if (curve === "linear" || points.length === 2)
+    return "M" + points.map((p) => `${p[0]},${p[1]}`).join("L");
+  if (curve === "step") {
+    let d = `M${points[0][0]},${points[0][1]}`;
+    for (let i = 1; i < points.length; i++) {
+      const [x, y] = points[i - 1];
+      const [nx, ny] = points[i];
+      const mid = (x + nx) / 2;
+      d += `L${mid},${y}L${mid},${ny}L${nx},${ny}`;
+    }
+    return d;
+  }
   const n = points.length;
   const dx: number[] = [];
   const slope: number[] = [];
@@ -313,7 +369,15 @@ export function linePath(points: Point[], curve: "linear" | "monotone" = "monoto
 }
 
 /** Lát donut có khe 2px song song (khe đều từ trong ra ngoài). Góc tính bằng radian, 0 = 12 giờ, chiều kim đồng hồ. */
-export function donutSlicePath(cx: number, cy: number, r0: number, r1: number, a0: number, a1: number, gap: number): string {
+export function donutSlicePath(
+  cx: number,
+  cy: number,
+  r0: number,
+  r1: number,
+  a0: number,
+  a1: number,
+  gap: number,
+): string {
   const half = gap / 2;
   const off1 = gap > 0 ? Math.asin(Math.min(1, half / r1)) : 0;
   const off0 = gap > 0 ? Math.asin(Math.min(1, half / r0)) : 0;
@@ -322,10 +386,30 @@ export function donutSlicePath(cx: number, cy: number, r0: number, r1: number, a
   const i0 = a0 + off0;
   const i1 = a1 - off0;
   if (o1 <= o0 || i1 <= i0) return "";
-  const pt = (r: number, a: number) => `${cx + r * Math.sin(a)},${cy - r * Math.cos(a)}`;
+  const pt = (r: number, a: number) =>
+    `${cx + r * Math.sin(a)},${cy - r * Math.cos(a)}`;
   const largeOuter = o1 - o0 > Math.PI ? 1 : 0;
   const largeInner = i1 - i0 > Math.PI ? 1 : 0;
   return `M${pt(r1, o0)}A${r1},${r1} 0 ${largeOuter} 1 ${pt(r1, o1)}L${pt(r0, i1)}A${r0},${r0} 0 ${largeInner} 0 ${pt(r0, i0)}Z`;
+}
+
+/** Lát pie không có lỗ giữa; góc tính bằng radian, 0 = 12 giờ, chiều kim đồng hồ. */
+export function pieSlicePath(
+  cx: number,
+  cy: number,
+  r: number,
+  a0: number,
+  a1: number,
+  gap = 0,
+): string {
+  const half = gap / 2;
+  const offset = gap > 0 ? Math.asin(Math.min(1, half / r)) : 0;
+  const o0 = a0 + offset;
+  const o1 = a1 - offset;
+  if (o1 <= o0) return "";
+  const pt = (a: number) => `${cx + r * Math.sin(a)},${cy - r * Math.cos(a)}`;
+  const large = o1 - o0 > Math.PI ? 1 : 0;
+  return `M${cx},${cy}L${pt(o0)}A${r},${r} 0 ${large} 1 ${pt(o1)}Z`;
 }
 
 /** Vòng tròn đầy đủ (một lát duy nhất). */
@@ -343,7 +427,11 @@ export function useChartTexture(texture?: boolean): boolean {
 }
 
 /** Phím của roving tabindex → chỉ số kế tiếp (chưa kẹp), "escape", hoặc null nếu không phải phím điều hướng. */
-function rovingTarget(key: string, i: number, count: number): number | "escape" | null {
+function rovingTarget(
+  key: string,
+  i: number,
+  count: number,
+): number | "escape" | null {
   if (key === "ArrowRight" || key === "ArrowDown") return i + 1;
   if (key === "ArrowLeft" || key === "ArrowUp") return i - 1;
   if (key === "Home") return 0;
@@ -371,7 +459,10 @@ export interface RovingLayerProps {
  * từng điểm, hoặc `layerProps` trên `<g>` cha cùng `data-i` và `tabIndex={i === stop ? 0 : -1}` trên từng điểm: lớp điểm
  * khi đó memo được, hover không render lại nó.
  */
-export function useRovingPoints(count: number, onActivate: (index: number | null, viaKeyboard: boolean) => void) {
+export function useRovingPoints(
+  count: number,
+  onActivate: (index: number | null, viaKeyboard: boolean) => void,
+) {
   const [tabStop, setTabStop] = React.useState(0);
   const stop = Math.min(tabStop, Math.max(0, count - 1));
 
@@ -407,19 +498,27 @@ export function useRovingPoints(count: number, onActivate: (index: number | null
       const target = clamp(next, 0, n - 1);
       setTabStop(target);
       // Các điểm là anh em trong cùng một `<g>`: handler gắn trên `<g>` (layerProps) hoặc trên chính điểm (pointProps).
-      const layer = event.currentTarget.hasAttribute("data-i") ? event.currentTarget.parentElement : event.currentTarget;
+      const layer = event.currentTarget.hasAttribute("data-i")
+        ? event.currentTarget.parentElement
+        : event.currentTarget;
       layer?.querySelector<SVGElement>(`[data-i="${target}"]`)?.focus();
     },
   }));
 
-  const pointProps = (i: number) => ({ "data-i": i, tabIndex: i === stop ? 0 : -1, ...layerProps });
+  const pointProps = (i: number) => ({
+    "data-i": i,
+    tabIndex: i === stop ? 0 : -1,
+    ...layerProps,
+  });
 
   return { pointProps, layerProps, stop };
 }
 
 /** Ẩn/hiện chuỗi từ legend — luôn giữ ít nhất một chuỗi. Màu không đổi khi lọc (màu theo thực thể). */
 export function useSeriesToggle(keys: string[]) {
-  const [hidden, setHidden] = React.useState<ReadonlySet<string>>(() => new Set());
+  const [hidden, setHidden] = React.useState<ReadonlySet<string>>(
+    () => new Set(),
+  );
   // Theo nội dung, không theo mảng: biểu đồ truyền `series.map(...)` mới mỗi lần render, toggle vẫn giữ identity (legend memo được).
   const signature = keys.join("\u0000");
   const toggle = React.useCallback(

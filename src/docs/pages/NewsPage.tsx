@@ -2,7 +2,7 @@ import * as React from "react";
 import { ArrowRight16Regular, Sparkle20Regular } from "@fluentui/react-icons";
 import { Avatar, Badge, type BadgeProps, Markdown, type MarkdownLink, Tabs, TabsContent, TabsList, TabsTrigger, ToggleGroup, ToggleGroupItem } from "@/components/ui";
 import { cn } from "@/lib/cn";
-import { PageHeader } from "../blocks";
+import { OnThisPage, PageHeader } from "../blocks";
 import { CodeBlock } from "../CodeBlock";
 import { NEWS_INDEX, NEWS_KINDS, useNewsFeeds, type NewsFeeds, type NewsKind, type NewsRelease } from "../news";
 import { useLocale } from "../i18n";
@@ -56,6 +56,11 @@ const FEEDS: {
   },
 ];
 
+function newsReleaseId(packageId: string, version: string) {
+  const safeVersion = version.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "");
+  return `news-release-${packageId}-${safeVersion}`;
+}
+
 /**
  * Người đóng góp của từng bản yugen-ui (#248): đóng góp sau ngày của bản trước, tới ngày của bản này (bản sắp ra: ngày dự
  * kiến). Maintainer không được liệt kê.
@@ -104,13 +109,13 @@ function formatDate(date: string, locale: string) {
   return new Intl.DateTimeFormat(locale === "en" ? "en-US" : "vi-VN", { day: "2-digit", month: "long", year: "numeric" }).format(new Date(date));
 }
 
-function Timeline({ releases, credits }: { releases: NewsRelease[]; credits?: typeof CREDITS }) {
+function Timeline({ packageId, releases, credits }: { packageId: string; releases: NewsRelease[]; credits?: typeof CREDITS }) {
   const { t, locale } = useLocale();
   const latest = releases.find((r) => !r.upcoming);
   return (
     <ol className="relative flex flex-col gap-8 before:absolute before:inset-y-2 before:inset-s-1.75 before:w-0.5 before:rounded-circular before:bg-stroke-2 md:before:inset-s-41.75">
       {releases.map((release) => (
-        <li key={release.version} className="relative grid gap-3 ps-6 md:grid-cols-[160px_minmax(0,1fr)] md:gap-6 md:ps-0">
+        <li id={newsReleaseId(packageId, release.version)} key={release.version} className="relative scroll-mt-24 grid gap-3 ps-6 md:grid-cols-[160px_minmax(0,1fr)] md:gap-6 md:ps-0">
           <span
             aria-hidden
             className={cn(
@@ -179,42 +184,102 @@ function Timeline({ releases, credits }: { releases: NewsRelease[]; credits?: ty
 
 export function NewsPage() {
   const [filter, setFilter] = React.useState<"all" | NewsKind>("all");
+  const [activePackage, setActivePackage] = React.useState(FEEDS[0].id);
   const { t, locale } = useLocale();
   const feeds = useNewsFeeds(locale);
+  const selectedFeed = FEEDS.find((feed) => feed.id === activePackage) ?? FEEDS[0];
+  const changePackage = React.useCallback((packageId: string) => {
+    setActivePackage(packageId);
+  }, []);
+  const scrollToNewsItem = React.useCallback((id: string) => {
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+  }, []);
+  const selectPackage = React.useCallback((packageId: string) => {
+    changePackage(packageId);
+    scrollToNewsItem(`news-release-${packageId}`);
+  }, [changePackage, scrollToNewsItem]);
+  const selectRelease = React.useCallback((packageId: string, version: string) => {
+    changePackage(packageId);
+    scrollToNewsItem(newsReleaseId(packageId, version));
+  }, [changePackage, scrollToNewsItem]);
+  const toc = React.useMemo(
+    () => [
+      {
+        id: "news-packages",
+        label: t("news.toc.packages"),
+      },
+      { id: "news-filter", label: t("news.toc.filter") },
+      {
+        id: "news-releases",
+        label: t("news.toc.releases"),
+        children: FEEDS.map((feed) => ({
+          id: `news-release-${feed.id}`,
+          label: feed.label,
+          onClick: () => selectPackage(feed.id),
+          children: feeds[feed.releases].map((release) => ({
+            id: newsReleaseId(feed.id, release.version),
+            label: `v${release.version}`,
+            onClick: () => selectRelease(feed.id, release.version),
+          })),
+        })),
+      },
+      { id: "news-upgrade", label: t("news.toc.upgrade") },
+    ],
+    [feeds, selectPackage, selectRelease, t],
+  );
 
   React.useEffect(() => markNewsSeen(), []);
 
   return (
-    <div className="pb-8">
+    <div className="flex gap-8">
+      <article className="min-w-0 flex-1 pb-8">
       <PageHeader eyebrow={t("news.eyebrow")} title={t("nav.news")} lead={t("news.lead")} />
 
-      <Tabs defaultValue={FEEDS[0].id} className="flex flex-col gap-5">
-        <TabsList aria-label={t("news.packages")}>
-          {FEEDS.map((feed) => (
-            <TabsTrigger key={feed.id} value={feed.id} className="font-mono">
-              {feed.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <ToggleGroup type="single" value={filter} onValueChange={(v) => v && setFilter(v as typeof filter)} aria-label={t("news.filter")}>
-            <ToggleGroupItem value="all">{t("news.all")}</ToggleGroupItem>
-            {NEWS_KINDS.map((k) => (
-              <ToggleGroupItem key={k} value={k}>
-                {t(`news.kind.${k}`)}
-              </ToggleGroupItem>
+      <Tabs value={activePackage} onValueChange={changePackage} className="flex flex-col gap-5">
+        <section id="news-packages" aria-labelledby="news-packages-heading" className="scroll-mt-24">
+          <h2 id="news-packages-heading" className="sr-only">
+            {t("news.toc.packages")}
+          </h2>
+          <TabsList aria-label={t("news.packages")}>
+            {FEEDS.map((feed) => (
+              <TabsTrigger key={feed.id} value={feed.id} className="font-mono">
+                {feed.label}
+              </TabsTrigger>
             ))}
-          </ToggleGroup>
-        </div>
+          </TabsList>
+        </section>
 
-        {FEEDS.map((feed) => {
+        <section id="news-filter" aria-labelledby="news-filter-heading" className="scroll-mt-24">
+          <h2 id="news-filter-heading" className="sr-only">
+            {t("news.toc.filter")}
+          </h2>
+          <div className="flex flex-wrap items-center gap-3">
+            <ToggleGroup type="single" value={filter} onValueChange={(v) => v && setFilter(v as typeof filter)} aria-label={t("news.filter")}>
+              <ToggleGroupItem value="all">{t("news.all")}</ToggleGroupItem>
+              {NEWS_KINDS.map((k) => (
+                <ToggleGroupItem key={k} value={k}>
+                  {t(`news.kind.${k}`)}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          </div>
+        </section>
+
+        <section id="news-releases" aria-labelledby="news-releases-heading" className="scroll-mt-24">
+          <h2 id="news-releases-heading" className="sr-only">
+            {t("news.toc.releases")}
+          </h2>
+          {FEEDS.map((feed) => {
           const all = feeds[feed.releases];
-          const releases = all
-            .map((r) => ({ ...r, items: filter === "all" ? r.items : r.items.filter((i) => i.kind === filter) }))
+              const releases = all
+                .map((r) => ({ ...r, items: filter === "all" ? r.items : r.items.filter((i) => i.kind === filter) }))
             .filter((r) => r.items.length > 0);
           return (
-            <TabsContent key={feed.id} value={feed.id} className="flex flex-col gap-6">
+                <TabsContent id={`news-release-${feed.id}`} key={feed.id} value={feed.id} className="flex flex-col gap-6">
               <p className="text-caption1 text-foreground-3">
                 {t("news.current", { version: (all.find((r) => !r.upcoming) ?? all[0]).version })} · {t("news.fullIn")}{" "}
                 <a className="text-link underline hover:text-link-hover" href={`${SITE.links.repository}/blob/main/${feed.changelog}`}>
@@ -232,25 +297,31 @@ export function NewsPage() {
                 .
               </p>
 
-              {releases.length > 0 ? <Timeline releases={releases} credits={feed.id === "yugen-ui" ? CREDITS : undefined} /> : <p className="text-body1 text-foreground-3">{t("news.empty")}</p>}
+              {releases.length > 0 ? <Timeline packageId={feed.id} releases={releases} credits={feed.id === "yugen-ui" ? CREDITS : undefined} /> : <p className="text-body1 text-foreground-3">{t("news.empty")}</p>}
 
-              <section className="mt-6 rounded-3xlarge border border-stroke-2 bg-background-2 p-6">
-                <h2 className="font-display text-title3 font-semibold">{t("news.upgradeTitle")}</h2>
-                <p className="mt-2 max-w-2xl text-body2 text-foreground-2">
-                  {t(feed.upgradeBody)}
-                  {feed.id === "yugen-ui" && (
-                    <>
-                      {" "}
-                      <code className="font-mono text-caption1">tokens.css</code>.
-                    </>
-                  )}
-                </p>
-                <CodeBlock className="mt-4" code={feed.upgrade} />
-              </section>
             </TabsContent>
           );
-        })}
+          })}
+        </section>
       </Tabs>
+
+      <section id="news-upgrade" aria-labelledby="news-upgrade-heading" className="mt-6 scroll-mt-24 rounded-3xlarge border border-stroke-2 bg-background-2 p-6">
+        <h2 id="news-upgrade-heading" className="font-display text-title3 font-semibold">
+          {t("news.upgradeTitle")}
+        </h2>
+        <p className="mt-2 max-w-2xl text-body2 text-foreground-2">
+          {t(selectedFeed.upgradeBody)}
+          {selectedFeed.id === "yugen-ui" && (
+            <>
+              {" "}
+              <code className="font-mono text-caption1">tokens.css</code>.
+            </>
+          )}
+        </p>
+        <CodeBlock className="mt-4" code={selectedFeed.upgrade} />
+      </section>
+      </article>
+      <OnThisPage key={`toc-news-${locale}`} items={toc} />
     </div>
   );
 }

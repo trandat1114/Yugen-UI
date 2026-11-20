@@ -354,9 +354,9 @@ function SonnerPositionDemo() {
     slug: "timeline",
     name: "Timeline",
     category: "Hiển thị dữ liệu",
-    lead: "Timeline liệt kê các sự kiện theo thời gian: lịch sử đơn hàng, nhật ký hoạt động, các bước đã qua của một yêu cầu.",
+    lead: "Timeline liệt kê các sự kiện theo thời gian và có thể theo dõi tiến độ cuộn để làm nổi bật trạng thái hiện tại của roadmap, lịch sử phát hành hoặc yêu cầu.",
     description:
-      "Timeline là một `<ol>`; mỗi TimelineItem có tiêu đề, thời gian, icon (hoặc Avatar) và nội dung thêm tuỳ chọn. Truyền `dateTime` để thời gian thành thẻ `<time>` máy đọc được. variant compact dùng chấm nhỏ và một dòng cho mỗi sự kiện, hợp với nhật ký dài. Icon chỉ để trang trí, nên tiêu đề phải tự nói đủ sự kiện.",
+      "Timeline là một `<ol>`; mỗi TimelineItem có tiêu đề, thời gian, icon (hoặc Avatar) và nội dung thêm tuỳ chọn. Truyền `dateTime` để thời gian thành thẻ `<time>` máy đọc được. `progress` bật một rail theo scroll với một listener cuộn dùng requestAnimationFrame, tự suy ra item upcoming/current/complete và cung cấp progressbar cho trình đọc màn hình. `dateLayout=\"sticky\"` đặt ngày ở cột riêng trên màn hình rộng và đưa ngày lên trên nội dung ở màn hình hẹp. variant compact dùng chấm nhỏ và một dòng cho mỗi sự kiện, hợp với nhật ký dài. Icon chỉ để trang trí, nên tiêu đề phải tự nói đủ sự kiện.",
     importCode: `import { Timeline, TimelineItem } from "@/components/ui";`,
     hero: {
       title: "Timeline",
@@ -433,23 +433,47 @@ function SonnerPositionDemo() {
           </Timeline>
         ),
       },
+      {
+        title: "Scroll progress & trạng thái hiện tại",
+        description: "Rail tiến độ chạy theo scroll; item tự chuyển upcoming → current → complete. Ngày sticky đổi thành bố cục trên/dưới ở màn hình hẹp.",
+        code: `<Timeline progress scrollOffset={0.65} dateLayout="sticky" aria-label="Release roadmap" className="w-full max-w-2xl">
+  <TimelineItem title="Research" time="Jan 2026" dateTime="2026-01-15" />
+  <TimelineItem title="Beta" time="Mar 2026" dateTime="2026-03-20" />
+  <TimelineItem title="General availability" time="Jun 2026" dateTime="2026-06-01" />
+</Timeline>`,
+        render: () => (
+          <Timeline progress scrollOffset={0.65} dateLayout="sticky" aria-label="Release roadmap" className="w-full max-w-2xl">
+            <TimelineItem title="Research" time="Jan 2026" dateTime="2026-01-15" />
+            <TimelineItem title="Beta" time="Mar 2026" dateTime="2026-03-20" />
+            <TimelineItem title="General availability" time="Jun 2026" dateTime="2026-06-01" />
+          </Timeline>
+        ),
+      },
     ],
     dos: [
       "Xếp sự kiện mới nhất lên đầu, trừ khi người dùng đang theo dõi một quy trình từ đầu đến cuối.",
       "Viết tiêu đề đủ ý (ai, làm gì) vì icon không được đọc cho trình đọc màn hình.",
       "Truyền dateTime khi thời gian hiển thị là tương đối (“2 giờ trước”).",
+      "Dùng progress cho roadmap, changelog hoặc lịch sử dài; giữ scrollOffset ổn định để trạng thái hiện tại dễ đoán.",
     ],
     donts: [
       "Không dùng Timeline cho các bước chưa xảy ra mà người dùng phải đi qua — dùng Stepper.",
       "Không dùng intent chỉ để trang trí; giữ màu cho trạng thái thật sự khác.",
+      "Không bật progress cho danh sách rất ngắn hoặc gắn thêm scroll listener riêng cho từng item.",
     ],
     props: [
       { name: "variant", type: `"detailed" | "compact"`, defaultValue: `"detailed"`, description: "detailed: ô icon 32px, nội dung bên dưới · compact: chấm nhỏ, một dòng." },
+      { name: "progress", type: "boolean", defaultValue: "false", description: "Bật rail tiến độ theo scroll và tự suy ra trạng thái upcoming/current/complete." },
+      { name: "scrollOffset", type: "number", defaultValue: "0.65", description: "Vị trí đường đánh dấu trong viewport; được giới hạn trong 0.1–0.9." },
+      { name: "activeIndex", type: "number", description: "Chỉ số item hiện tại do ứng dụng điều khiển; hữu ích khi tiến độ đến từ nguồn khác." },
+      { name: "progressLabel", type: "string", defaultValue: `"Timeline progress"`, description: "Nhãn progressbar ẩn dành cho trình đọc màn hình." },
+      { name: "dateLayout", type: `"inline" | "sticky"`, defaultValue: `"inline"`, description: "sticky dùng cột ngày riêng trên màn hình rộng và xếp ngày lên trên ở màn hình hẹp." },
       { name: "TimelineItem.title", type: "ReactNode", description: "Sự kiện: ai làm gì." },
       { name: "TimelineItem.time", type: "ReactNode", description: "Thời gian hiển thị." },
       { name: "TimelineItem.dateTime", type: "string", description: "Thời điểm ISO 8601 → thẻ <time dateTime>." },
       { name: "TimelineItem.icon", type: "ReactNode", description: "Icon hoặc Avatar; bỏ trống = chấm tròn." },
       { name: "TimelineItem.intent", type: `"neutral" | "brand" | "success" | "warning" | "error"`, defaultValue: `"neutral"`, description: "Màu ô icon / chấm. Giá trị cũ \"danger\" đã lỗi thời (bỏ ở 1.0)." },
+      { name: "TimelineItem.status", type: `"upcoming" | "current" | "complete"`, description: "Ghi đè trạng thái tự suy ra khi cần điều khiển thủ công." },
       { name: "TimelineItem.children", type: "ReactNode", description: "Nội dung thêm: bình luận, tệp, thẻ." },
     ],
   },

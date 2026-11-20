@@ -1,4 +1,14 @@
-import { AreaChart, BarChart, DonutChart, LineChart, Sparkline, StatTile } from "@/components/ui/Chart/Chart";
+import {
+  AreaChart,
+  BarChart,
+  DonutChart,
+  LineChart,
+  PieChart,
+  RadarChart,
+  RadialChart,
+  Sparkline,
+  StatTile,
+} from "@/components/ui/Chart/Chart";
 import type { ComponentDoc } from "../types";
 
 /* ------------------------------------------------------------------ Dữ liệu mẫu
@@ -134,6 +144,26 @@ const usage = [
 const revenueTrend = [62, 68, 64, 71, 75, 73, 80, 84, 82, 90, 96, 104];
 const months = ["Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"];
 const churnTrend = [0.041, 0.04, 0.039, 0.042, 0.038, 0.037, 0.036, 0.035, 0.036, 0.033, 0.032, 0.031];
+
+const pieMix = [
+  { label: "Web", value: 42 },
+  { label: "App", value: 31 },
+  { label: "Store", value: 19 },
+  { label: "Partner", value: 8 },
+];
+
+const radarProfile = [
+  { axis: "Speed", alpha: 86, beta: 72 },
+  { axis: "Quality", alpha: 78, beta: 88 },
+  { axis: "Support", alpha: 92, beta: 68 },
+  { axis: "Reach", alpha: 64, beta: 82 },
+  { axis: "Value", alpha: 80, beta: 74 },
+];
+
+const radialProgress = [
+  { label: "Completed", value: 72 },
+  { label: "Remaining", value: 28 },
+];
 
 /* ------------------------------------------------------------------ Docs */
 
@@ -693,6 +723,101 @@ const churnTrend = ${JSON.stringify(churnTrend)};
       { name: "StatTile.goodDirection", type: `"up" | "down" | "neutral"`, defaultValue: `"up"`, description: "Chiều nào là tốt." },
       { name: "StatTile.trend / trendLabels", type: "(number | null)[] / string[]", description: "Sparkline bên cạnh giá trị." },
       { name: "StatTile.size", type: `"medium" | "large" | "extra-large"`, defaultValue: `"medium"`, description: "28 / 40 / 68px." },
+    ],
+  },
+
+  {
+    slug: "piechart",
+    name: "PieChart",
+    category: "Yugen Labs",
+    lead: "PieChart cho phần–tổng với lát đặc, separator tuỳ chọn, legend và bảng dữ liệu truy cập.",
+    description: "PieChart dùng chung data, locale, legend, texture, tooltip và bảng dữ liệu với DonutChart; dùng khi cần lát đặc thay vì một vòng có lỗ.",
+    importCode: `import { PieChart } from "@/components/ui";`,
+    hero: {
+      title: "Traffic mix",
+      code: `const pieMix = ${lit(pieMix)};\n\n<PieChart title="Traffic mix" data={pieMix} locale="en-US" />`,
+      render: () => <PieChart title="Traffic mix" data={pieMix} locale="en-US" />,
+    },
+    examples: [
+      {
+        title: "Không có khe giữa lát",
+        description: "separator=false cho biểu đồ liền khối; bảng dữ liệu vẫn giữ nhãn và giá trị từng lát.",
+        setup: `const pieMix = ${lit(pieMix)};`,
+        code: `<PieChart data={pieMix} separator={false} legend />`,
+        render: () => <PieChart data={pieMix} separator={false} legend />,
+      },
+    ],
+    dos: ["Dùng cho phần–tổng nhìn nhanh với ít lát.", "Khi cần so sánh giá trị gần nhau, dùng BarChart."],
+    donts: ["Không dùng quá nhiều lát hoặc chỉ dựa vào màu để phân biệt.", "Không dùng pie cho chuỗi theo thời gian."],
+    props: [
+      { name: "data", type: "{ label, value, color? }[]", description: "Các lát pie; giá trị không hữu hạn hoặc ≤ 0 bị bỏ qua." },
+      { name: "separator", type: "boolean", defaultValue: "true", description: "Khe bề mặt 2px giữa các lát." },
+      { name: "maxSlices / otherLabel", type: "number / string", defaultValue: "6 / Other", description: "Giới hạn lát và nhãn phần gộp." },
+      { name: "legend / valueFormat / locale", type: "boolean / format / string", defaultValue: "true / mặc định / vi-VN", description: "Legend, định dạng số và locale." },
+      { name: "title, description, texture, defaultShowTable…", type: "ChartFrameProps", description: "Props khung và accessibility dùng chung." },
+    ],
+  },
+
+  {
+    slug: "radarchart",
+    name: "RadarChart",
+    category: "Yugen Labs",
+    lead: "RadarChart so sánh nhiều chuỗi trên cùng tập trục, với grid polygon/circle, dots, fill và legend toggle.",
+    description: "SVG viết tay, memo hình học và điều hướng keyboard theo từng trục; dùng cho hồ sơ nhiều tiêu chí có cùng thang đo.",
+    importCode: `import { RadarChart } from "@/components/ui";`,
+    hero: {
+      title: "Product profile",
+      code: `const radarProfile = ${lit(radarProfile)};\n\n<RadarChart title="Product profile" data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} />`,
+      render: () => <RadarChart title="Product profile" data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} />,
+    },
+    examples: [
+      {
+        title: "Circle grid & dots",
+        description: "Circle grid phù hợp khi muốn nhấn mạnh khoảng cách từ tâm; dots giúp đọc từng tiêu chí.",
+        setup: `const radarProfile = ${lit(radarProfile)};`,
+        code: `<RadarChart data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} grid="circle" dots />`,
+        render: () => <RadarChart data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} grid="circle" dots />,
+      },
+    ],
+    dos: ["Giữ các trục cùng thang đo và giới hạn số trục để hình không bị rối.", "Dùng bảng dữ liệu khi cần đọc chính xác."],
+    donts: ["Không dùng radar để so sánh quá nhiều trục hoặc các đại lượng khác thang đo.", "Không dùng diện tích polygon như một phép đo chính xác."],
+    props: [
+      { name: "data / index / series", type: "ChartDatum[] / string / ChartSeries[]", description: "Dữ liệu trục và các chuỗi so sánh." },
+      { name: "grid", type: `"polygon" | "circle" | "none"`, defaultValue: `"polygon"`, description: "Kiểu lưới đồng tâm." },
+      { name: "levels / domain", type: "number / [number, number]", defaultValue: "5 / tự tính", description: "Số vòng và miền chuẩn hoá." },
+      { name: "dots / linesOnly / fill / legend", type: "boolean", defaultValue: "false / false / true / true", description: "Các lớp hiển thị và legend bật/tắt chuỗi." },
+      { name: "title, locale, texture, defaultShowTable…", type: "ChartFrameProps", description: "Props khung, locale và accessibility dùng chung." },
+    ],
+  },
+
+  {
+    slug: "radialchart",
+    name: "RadialChart",
+    category: "Yugen Labs",
+    lead: "RadialChart hiển thị gauge, track, cung một phần, nhãn giữa và các đoạn stacked bằng SVG nhẹ.",
+    description: "Dùng cho một chỉ số tiến độ hoặc một nhóm giá trị stacked; chunk riêng, không kéo thêm thư viện chart.",
+    importCode: `import { RadialChart } from "@/components/ui";`,
+    hero: {
+      title: "Sprint progress",
+      code: `const radialProgress = ${lit(radialProgress)};\n\n<RadialChart title="Sprint progress" data={radialProgress} stacked maxValue={100} centerValue="72%" centerLabel="complete" />`,
+      render: () => <RadialChart title="Sprint progress" data={radialProgress} stacked maxValue={100} centerValue="72%" centerLabel="complete" />,
+    },
+    examples: [
+      {
+        title: "Gauge một phần",
+        description: "startAngle/endAngle tạo gauge không kín; track giữ bối cảnh phần còn lại.",
+        code: `<RadialChart data={[{ label: "SLA", value: 86 }]} maxValue={100} endAngle={270} centerLabel="SLA" />`,
+        render: () => <RadialChart data={[{ label: "SLA", value: 86 }]} maxValue={100} endAngle={270} centerLabel="SLA" />,
+      },
+    ],
+    dos: ["Dùng cho tiến độ, tỷ lệ hoàn thành hoặc một tổng số có mốc tối đa rõ ràng.", "Hiển thị số ở tâm để không bắt người đọc ước lượng theo cung."],
+    donts: ["Không dùng radial để so sánh nhiều giá trị gần nhau nếu không có nhãn số.", "Không biến track và animation thành tín hiệu duy nhất."],
+    props: [
+      { name: "data / maxValue", type: "{ label, value, color? }[] / number", description: "Giá trị và mốc tối đa; stacked dùng nhiều đoạn." },
+      { name: "startAngle / endAngle", type: "number / number", defaultValue: "0 / 360", description: "Góc theo độ, 0 là 12 giờ và chiều kim đồng hồ." },
+      { name: "stacked / track", type: "boolean", defaultValue: "false / true", description: "Nối tiếp các đoạn và hiển thị track nền." },
+      { name: "size / thickness / centerValue / centerLabel", type: "number / number / ReactNode / ReactNode", description: "Kích thước, độ dày và nội dung ở tâm." },
+      { name: "legend / valueFormat / locale", type: "boolean / format / string", defaultValue: "true / mặc định / vi-VN", description: "Legend và định dạng số." },
     ],
   },
 ];

@@ -5,13 +5,49 @@
  * chữ dùng token chữ · tooltip khi hover/focus · luôn có bảng dữ liệu tương đương.
  */
 export { BarChart, type BarChartProps } from "./BarChart";
-export { LineChart, AreaChart, type LineChartProps, type AreaChartProps, type ChartXFormat } from "./LineChart";
-export { DonutChart, type DonutChartProps, type DonutDatum } from "./DonutChart";
-export { Sparkline, StatTile, type SparklineProps, type StatTileProps } from "./Sparkline";
-export { ScatterChart, type ScatterChartProps, type ScatterXFormat } from "./ScatterChart";
+export {
+  LineChart,
+  AreaChart,
+  type LineChartProps,
+  type AreaChartProps,
+  type ChartXFormat,
+} from "./LineChart";
+export {
+  DonutChart,
+  PieChart,
+  type DonutChartProps,
+  type DonutDatum,
+  type PieChartProps,
+} from "./DonutChart";
+export {
+  Sparkline,
+  StatTile,
+  type SparklineProps,
+  type StatTileProps,
+} from "./Sparkline";
+export {
+  ScatterChart,
+  type ScatterChartProps,
+  type ScatterXFormat,
+} from "./ScatterChart";
 export { Heatmap, type HeatmapProps, type HeatmapColumn } from "./Heatmap";
-export { ChartBrush, type ChartBrushProps, type ChartBrushLine } from "./ChartBrush";
-export { chartMessages, chartMessagesVi, chartMessagesEn, type ChartMessages } from "./messages";
+export { RadarChart, type RadarChartProps, type RadarGrid } from "./RadarChart";
+export {
+  RadialChart,
+  type RadialChartProps,
+  type RadialDatum,
+} from "./RadialChart";
+export {
+  ChartBrush,
+  type ChartBrushProps,
+  type ChartBrushLine,
+} from "./ChartBrush";
+export {
+  chartMessages,
+  chartMessagesVi,
+  chartMessagesEn,
+  type ChartMessages,
+} from "./messages";
 export {
   nearestPoint,
   nearestIndex,
@@ -35,6 +71,13 @@ export {
   type StackedSeries,
   type ChartDomain,
 } from "./chartMath";
+export {
+  radarPath,
+  radarPoint,
+  radarValue,
+  type RadarPoint,
+} from "./radarMath";
+export { pieSlicePath } from "./chartUtils";
 export {
   ChartContainer,
   ChartLegend,
