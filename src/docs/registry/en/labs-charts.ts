@@ -169,4 +169,37 @@ export const en: Record<string, ComponentDocEn> = {
       "StatTile.size": "28 / 40 / 68px.",
     },
   },
+  radarchart: {
+    description:
+      "Hand-written SVG with memoized geometry and keyboard navigation axis by axis; for multi-criteria profiles that share one scale.",
+    examples: [
+      { title: "Circle grid & dots", description: "A circle grid stresses the distance from the center; dots make each criterion easier to read." },
+      { title: "Lines only", description: "linesOnly drops the fill and dots mark each value: useful when the series overlap a lot." },
+      { title: "Axis labels with values", description: "axisLabel changes the axis label text (here with Alpha's score); the name read on focus still has every value." },
+      { title: "Filled grid", description: "gridFill shades every other ring, which makes levels easier to read on an empty background." },
+      { title: "No grid", description: "grid=\"none\" when only the overall shape matters; the data table still has exact numbers." },
+      { title: "Long labels, missing values, narrow card", description: "Long axis labels stay readable in a narrow card; a missing value (null) reads as “No data” and that series is not closed." },
+    ],
+    dos: [
+      "Keep the axes on one scale (set a shared domain), around 5–12 axes and at most 4 series.",
+      "Use the data table or the tooltip when exact values matter.",
+      "Use linesOnly when the series overlap a lot.",
+    ],
+    donts: [
+      "Don't use radar for measures on different scales, or for more than about 12 axes: use a horizontal BarChart.",
+      "Don't treat the polygon's area as an exact measure.",
+      "Don't rely on color to tell series apart in high contrast: patterns and dashes turn on automatically.",
+    ],
+    props: {
+      "data / index / series": "Axis data and the series to compare.",
+      grid: "Grid style.",
+      "levels / domain": "Number of rings and the normalization range.",
+      gridFill: "Shades every other grid ring.",
+      axisLabel: "Changes the axis label text; the accessible name stays complete.",
+      tooltip: "Tooltip key, title, values, icons or custom content (shared by every chart).",
+      "dots / linesOnly / fill / legend": "Layers to draw, and a legend that hides series.",
+      "title, locale, texture, defaultShowTable…": "Shared frame, locale and accessibility props.",
+    },
+    defaults: { "levels / domain": "5 / computed" },
+  },
 };

@@ -154,4 +154,18 @@ describe("RadarChart", () => {
     expect(table).toHaveTextContent("Alpha");
     expect(screen.getByRole("rowheader", { name: "Support" }).parentElement).toHaveTextContent("—");
   });
+
+  it("shortens labels that don't fit and keeps the full name for assistive tech", () => {
+    const long = [
+      { axis: "Communication with every stakeholder in the company", a: 80 },
+      { axis: "Design", a: 60 },
+      { axis: "Testing", a: 70 },
+    ];
+    render(<RadarChart data={long} index="axis" series={[{ key: "a", label: "A" }]} size={200} legend={false} />);
+    const texts = [...document.querySelectorAll("svg text")].map((t) => t.textContent ?? "");
+    expect(texts.some((t) => t.endsWith("…") && t.startsWith("Commun"))).toBe(true);
+    expect(texts).toContain("Design");
+    expect(screen.getByRole("img", { name: /^Communication with every stakeholder in the company:/ })).toBeInTheDocument();
+  });
 });
+

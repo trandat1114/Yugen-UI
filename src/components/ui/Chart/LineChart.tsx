@@ -153,6 +153,7 @@ function SeriesChart({
   hideTableToggle,
   defaultShowTable,
   texture,
+  tooltip,
   animate = true,
   className,
   ref,
@@ -365,12 +366,13 @@ function SeriesChart({
           key: v.s.key,
           label: v.s.label,
           value: text,
+          raw: x,
           slot: v.slot,
           shape: isArea ? "rect" : "line",
         };
       });
       if (isStacked)
-        rows.push({ key: "__total", label: totalLabel, value: fmt(total) });
+        rows.push({ key: "__total", label: totalLabel, value: fmt(total), raw: total });
       return rows;
     };
     // Nhãn của từng điểm cho trình đọc màn hình (Intl cho mỗi chuỗi): chỉ khi đã có vùng vẽ.
@@ -808,6 +810,8 @@ function SeriesChart({
             title={xLong[activeCol.i]}
             rows={rowsAt(activeCol.i)}
             textured={textured}
+            config={tooltip}
+            index={activeCol.i}
           />
         )}
       </PlotArea>

@@ -160,6 +160,15 @@ const radarProfile = [
   { axis: "Value", alpha: 80, beta: 74 },
 ];
 
+const radarSkills = [
+  { axis: "Communication with stakeholders", lead: 90, junior: 55 },
+  { axis: "System design", lead: 82, junior: 40 },
+  { axis: "Code review", lead: 88, junior: null },
+  { axis: "Mentoring", lead: 76, junior: 30 },
+  { axis: "Incident response", lead: 70, junior: 62 },
+  { axis: "Testing", lead: 84, junior: 71 },
+];
+
 const radialProgress = [
   { label: "Completed", value: 72 },
   { label: "Remaining", value: 28 },
@@ -834,13 +843,73 @@ const churnTrend = ${JSON.stringify(churnTrend)};
         code: `<RadarChart data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} grid="circle" dots />`,
         render: () => <RadarChart data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} grid="circle" dots />,
       },
+      {
+        title: "Chỉ đường viền",
+        description: "linesOnly bỏ phần tô, dots đánh dấu từng giá trị: hợp khi các chuỗi chồng lên nhau nhiều.",
+        setup: `const radarProfile = ${lit(radarProfile)};`,
+        code: `<RadarChart data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} linesOnly dots />`,
+        render: () => (
+          <RadarChart data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} linesOnly dots />
+        ),
+      },
+      {
+        title: "Nhãn trục kèm giá trị",
+        description: "axisLabel đổi chữ của nhãn trục (ở đây kèm điểm của Alpha); tên đọc khi focus vẫn có mọi giá trị.",
+        setup: `const radarProfile = ${lit(radarProfile)};`,
+        code: `<RadarChart data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} axisLabel={(label, i) => \`\${label} \${radarProfile[i].alpha}\`} />`,
+        render: () => (
+          <RadarChart data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} axisLabel={(label, i) => `${label} ${radarProfile[i].alpha}`} />
+        ),
+      },
+      {
+        title: "Lưới tô xen kẽ",
+        description: "gridFill tô xen kẽ các vòng, giúp đọc mức trên nền trống.",
+        setup: `const radarProfile = ${lit(radarProfile)};`,
+        code: `<RadarChart data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} grid="circle" gridFill levels={4} />`,
+        render: () => (
+          <RadarChart data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} grid="circle" gridFill levels={4} />
+        ),
+      },
+      {
+        title: "Không lưới",
+        description: "grid=\"none\" khi chỉ cần hình dạng tổng thể; bảng dữ liệu vẫn có số chính xác.",
+        setup: `const radarProfile = ${lit(radarProfile)};`,
+        code: `<RadarChart data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} grid="none" dots />`,
+        render: () => (
+          <RadarChart data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} grid="none" dots />
+        ),
+      },
+      {
+        title: "Nhãn dài, thiếu giá trị, khung hẹp",
+        description: "Nhãn trục dài vẫn đọc được trong card hẹp; giá trị thiếu (null) đọc là “Không có dữ liệu” và chuỗi đó không khép kín.",
+        setup: `const radarSkills = ${lit(radarSkills)};`,
+        code: `<div className="w-full max-w-xs">
+  <RadarChart data={radarSkills} index="axis" series={[{ key: "lead", label: "Lead" }, { key: "junior", label: "Junior" }]} size={280} domain={[0, 100]} />
+</div>`,
+        render: () => (
+          <div className="w-full max-w-xs">
+  <RadarChart data={radarSkills} index="axis" series={[{ key: "lead", label: "Lead" }, { key: "junior", label: "Junior" }]} size={280} domain={[0, 100]} />
+</div>
+        ),
+      },
     ],
-    dos: ["Giữ các trục cùng thang đo và giới hạn số trục để hình không bị rối.", "Dùng bảng dữ liệu khi cần đọc chính xác."],
-    donts: ["Không dùng radar để so sánh quá nhiều trục hoặc các đại lượng khác thang đo.", "Không dùng diện tích polygon như một phép đo chính xác."],
+    dos: [
+      "Giữ các trục cùng thang đo (đặt domain chung) và khoảng 5–12 trục, tối đa 4 chuỗi.",
+      "Dùng bảng dữ liệu hoặc tooltip khi cần đọc chính xác.",
+      "Dùng linesOnly khi các chuỗi chồng lên nhau nhiều.",
+    ],
+    donts: [
+      "Không dùng radar cho các đại lượng khác thang đo, hoặc cho hơn khoảng 12 trục: dùng BarChart ngang.",
+      "Không dùng diện tích polygon như một phép đo chính xác.",
+      "Không dựa vào màu để phân biệt chuỗi trong tương phản cao: hoa văn và nét đứt tự bật.",
+    ],
     props: [
       { name: "data / index / series", type: "ChartDatum[] / string / ChartSeries[]", description: "Dữ liệu trục và các chuỗi so sánh." },
       { name: "grid", type: `"polygon" | "circle" | "none"`, defaultValue: `"polygon"`, description: "Kiểu lưới đồng tâm." },
       { name: "levels / domain", type: "number / [number, number]", defaultValue: "5 / tự tính", description: "Số vòng và miền chuẩn hoá." },
+      { name: "gridFill", type: "boolean", defaultValue: "false", description: "Tô xen kẽ các vòng lưới." },
+      { name: "axisLabel", type: "(label: string, index: number) => string", description: "Đổi chữ của nhãn trục; tên đọc vẫn đầy đủ." },
+      { name: "tooltip", type: "ChartTooltipConfig", description: "Khoá màu, tiêu đề, giá trị, icon hoặc nội dung riêng của tooltip (dùng chung mọi biểu đồ)." },
       { name: "dots / linesOnly / fill / legend", type: "boolean", defaultValue: "false / false / true / true", description: "Các lớp hiển thị và legend bật/tắt chuỗi." },
       { name: "title, locale, texture, defaultShowTable…", type: "ChartFrameProps", description: "Props khung, locale và accessibility dùng chung." },
     ],

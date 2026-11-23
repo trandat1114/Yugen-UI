@@ -137,6 +137,7 @@ export function BarChart({
   hideTableToggle,
   defaultShowTable,
   texture,
+  tooltip,
   animate = true,
   className,
   ref,
@@ -317,8 +318,8 @@ export function BarChart({
           const total = totals[r].pos + totals[r].neg;
           const rows: ChartTooltipRow[] = vis
             .filter((v) => val(r, v.s.key) != null)
-            .map((v) => ({ key: v.s.key, label: v.s.label, value: fmt(val(r, v.s.key) as number), slot: v.slot, shape: "rect" as const }));
-          rows.push({ key: "__total", label: totalLabel, value: fmt(total) });
+            .map((v) => ({ key: v.s.key, label: v.s.label, value: fmt(val(r, v.s.key) as number), raw: val(r, v.s.key), slot: v.slot, shape: "rect" as const }));
+          rows.push({ key: "__total", label: totalLabel, value: fmt(total), raw: total });
           const endV = totals[r].pos > 0 ? totals[r].pos : totals[r].neg;
           const tip = vScale(endV);
           hits.push({
@@ -354,7 +355,7 @@ export function BarChart({
               anchor: horizontal ? [vScale(x ?? 0), c + off] : [c + off + thick / 2, x == null ? zero : Math.min(vScale(x), zero)],
               label: single ? `${cat}: ${valueText}` : `${cat}, ${v.s.label}: ${valueText}`,
               title: cat,
-              rows: [{ key: v.s.key, label: v.s.label, value: valueText, slot, shape: "rect" }],
+              rows: [{ key: v.s.key, label: v.s.label, value: valueText, raw: x, slot, shape: "rect" }],
               ring: m?.path ? m.box : null,
             });
             if (showValues && x != null) {
@@ -547,7 +548,15 @@ export function BarChart({
           </svg>
         )}
         {activeHit && (
-          <ChartTooltip x={activeHit.anchor[0]} y={activeHit.anchor[1]} title={activeHit.title} rows={activeHit.rows} textured={textured} />
+          <ChartTooltip
+            x={activeHit.anchor[0]}
+            y={activeHit.anchor[1]}
+            title={activeHit.title}
+            rows={activeHit.rows}
+            textured={textured}
+            config={tooltip}
+            index={activeHit.row}
+          />
         )}
       </PlotArea>
     </ChartContainer>

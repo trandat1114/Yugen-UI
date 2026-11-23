@@ -86,6 +86,7 @@ export function DonutChart({
   hideTableToggle,
   defaultShowTable,
   texture,
+  tooltip,
   animate = true,
   className,
   ref,
@@ -354,13 +355,15 @@ export function DonutChart({
             y={anchor[1]}
             title={activeSlice.label}
             rows={[
-              { key: "v", label: msg.value, value: fmt(activeSlice.value) },
+              { key: activeSlice.key, label: msg.value, value: fmt(activeSlice.value), raw: activeSlice.value, slot: activeSlice.slot },
               {
-                key: "p",
+                key: "__share",
                 label: msg.share,
                 value: pct.format(total > 0 ? activeSlice.value / total : 0),
               },
             ]}
+            config={tooltip}
+            index={active?.i ?? 0}
           />
         )}
       </div>

@@ -15,6 +15,8 @@ interface Shot extends Appearance {
   route: string;
   /** Selector bị che (đồng hồ chạy, giờ tương đối…). */
   mask?: string[];
+  /** Bề ngang khung nhìn (mặc định 1280): chụp bố cục di động. */
+  width?: number;
 }
 
 const SHOTS: Shot[] = [
@@ -35,6 +37,8 @@ const SHOTS: Shot[] = [
   { name: "sheet-closed", route: "/components/sheet" },
   // Giờ gửi tin nhắn.
   { name: "messagescroller-rtl", route: "/components/messagescroller", dir: "rtl", mask: ["main time"] },
+  // RadarChart co theo khung chứa ở màn hình hẹp (#426): nhãn trục dài, card hẹp.
+  { name: "radarchart-mobile", route: "/components/radarchart", width: 375 },
 ];
 
 /** Mở trang với đồng hồ cố định và chuột đặt ở chỗ không có gì để hover. */
@@ -47,8 +51,9 @@ async function openStill(page: Page, route: string, appearance: Appearance) {
   await page.mouse.move(640, 4);
 }
 
-for (const { name, route, mask = [], ...appearance } of SHOTS) {
+for (const { name, route, mask = [], width, ...appearance } of SHOTS) {
   test(name, async ({ page }) => {
+    if (width) await page.setViewportSize({ width, height: 800 });
     await openStill(page, route, appearance);
     await expect(page).toHaveScreenshot(`${name}.png`, {
       mask: mask.map((selector) => page.locator(selector)),

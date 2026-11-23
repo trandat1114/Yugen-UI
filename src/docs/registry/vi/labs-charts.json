@@ -99,5 +99,13 @@
   "SLA": "Mức SLA",
   "complete": "hoàn thành",
   "Online revenue": "Doanh thu online",
-  "Store revenue": "Doanh thu cửa hàng"
+  "Store revenue": "Doanh thu cửa hàng",
+  "Communication with stakeholders": "Giao tiếp với các bên liên quan",
+  "System design": "Thiết kế hệ thống",
+  "Code review": "Review code",
+  "Mentoring": "Kèm cặp",
+  "Incident response": "Xử lý sự cố",
+  "Testing": "Kiểm thử",
+  "Lead": "Trưởng nhóm",
+  "Junior": "Mới vào nghề"
 }
