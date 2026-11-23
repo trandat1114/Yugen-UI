@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- `vite-saas`: pages opt in to a data layout with `layout: { width: "fluid", density: "compact" }` in `PAGES`, and a
+  Customers page shows a DataGrid with the compact column picker (#411).
 - `add`, `init`, `update`, `diff`, `list` and `remove` read the registry of the `yugen-ui` version the templates use, from
   `<docs>/r/<version>/`, and check each item against the sha256 shipped in `dist/registry-integrity.json`. A mismatch
   stops before any file is written. `--registry` and registries from `yugen.json` / `components.json` are not checked
