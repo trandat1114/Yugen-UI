@@ -178,6 +178,9 @@ export const en: Record<string, ComponentDocEn> = {
       { title: "Two-column grid", description: "Use columns={{ base: 1, md: 2 }} when the content should scan evenly instead of using an asymmetric composition." },
       { title: "Link cards & action cells", description: "Use a link card for one primary action; use an action cell with its own button when several actions are needed." },
       { title: "Images & responsive spans", description: "Pass an image directly, provide an appropriate alt, and keep the mobile span small." },
+      { title: "Metric cells", description: "The big number goes in children and the title says what it is; gap=\"small\" suits dense dashboards." },
+      { title: "In a narrow container", description: "breakpoints=\"container\": the column count follows the width of the grid's own container (a panel, a card) instead of the screen." },
+      { title: "From a hand-made grid", description: "Replace a grid div with Cards by BentoGrid: spans per breakpoint, headings and link cards come built in." },
     ],
     dos: [
       "Put important content first in the DOM; spans only change the visual layout.",
@@ -187,13 +190,15 @@ export const en: Record<string, ComponentDocEn> = {
       "Keep titles and descriptions short so cells grow with their content instead of clipping text.",
     ],
     donts: [
-      "Do not nest a button or link inside a BentoGridItem with href.",
+      "Do not put another link in the title or children of a link card; put extra buttons in action.",
       "Do not use spans to change reading order on mobile.",
-      "Do not attach a listener or ResizeObserver to every cell to measure layout.",
+      "Do not attach a listener or ResizeObserver to every cell to measure layout; use breakpoints=\"container\" when the grid sits in a narrow box.",
+      "Do not use Bento for long lists people scan quickly (tables, search results): use List or Table.",
     ],
     props: {
       "BentoGrid.columns": "Number of columns at each breakpoint (1–6).",
       "BentoGrid.gap": "Spacing between cells: small, medium or large.",
+      "BentoGrid.breakpoints": "Breakpoints from the screen, or from the width of the grid's container (container query).",
       "BentoGridItem.colSpan / rowSpan": "Number of tracks occupied at each breakpoint (1–6).",
       "BentoGridItem.title / titleAs": "Title content and heading element; titleAs defaults to h3.",
       "BentoGridItem.header / description / media / icon / action": "A visual header at the top of the cell plus optional content slots.",

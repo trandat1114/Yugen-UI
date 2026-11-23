@@ -212,5 +212,19 @@
   "Start guided tip": "Bắt đầu hướng dẫn",
   "Focus mode": "Chế độ tập trung",
   "Read this first": "Đọc phần này trước",
-  "The rest of the page is dimmed until you finish or dismiss this tip.": "Phần còn lại của trang sẽ được làm tối cho đến khi bạn hoàn tất hoặc đóng mẹo này."
+  "The rest of the page is dimmed until you finish or dismiss this tip.": "Phần còn lại của trang sẽ được làm tối cho đến khi bạn hoàn tất hoặc đóng mẹo này.",
+  "Monthly revenue": "Doanh thu tháng",
+  "Up 12% from October": "Tăng 12% so với tháng 10",
+  "Active users": "Người dùng hoạt động",
+  "Churn": "Tỉ lệ rời bỏ",
+  "3 new": "3 thư mới",
+  "Tasks": "Việc cần làm",
+  "5 due today": "5 việc đến hạn hôm nay",
+  "Next: design review at 2 pm": "Tiếp theo: duyệt thiết kế lúc 2 giờ chiều",
+  "After: spans per breakpoint, heading levels and link cards come with the item.": "Sau: span theo breakpoint, cấp heading và link card có sẵn trong item.",
+  "Getting started": "Bắt đầu",
+  "Install and import your first component.": "Cài đặt và import component đầu tiên.",
+  "Themes": "Theme",
+  "Light, dark and high contrast.": "Sáng, tối và tương phản cao.",
+  "Before: a hand-made grid with Card and column classes (md:col-span-2 on the wide card).": "Trước: lưới tự viết bằng Card và class cột (md:col-span-2 cho card rộng)."
 }

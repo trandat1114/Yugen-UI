@@ -1524,6 +1524,71 @@ function SwatchPickerDemo() {
           </BentoGrid>
         ),
       },
+      {
+        title: "Ô số liệu",
+        description: "Số lớn trong children, tiêu đề nói số đó là gì; gap=\"small\" cho bảng điều khiển dày.",
+        code: `<BentoGrid columns={{ base: 1, sm: 2, lg: 4 }} gap="small">
+  <BentoGridItem colSpan={{ base: 1, sm: 2 }} title="Monthly revenue" description="Up 12% from October">
+    <p className="text-title1 font-semibold text-foreground-1 tabular-nums">$48,210</p>
+  </BentoGridItem>
+  <BentoGridItem title="Active users">
+    <p className="text-title2 font-semibold text-foreground-1 tabular-nums">12,431</p>
+  </BentoGridItem>
+  <BentoGridItem title="Churn">
+    <p className="text-title2 font-semibold text-foreground-1 tabular-nums">1.8%</p>
+  </BentoGridItem>
+</BentoGrid>`,
+        render: () => (
+          <BentoGrid columns={{ base: 1, sm: 2, lg: 4 }} gap="small">
+            <BentoGridItem colSpan={{ base: 1, sm: 2 }} title="Monthly revenue" description="Up 12% from October">
+              <p className="text-title1 font-semibold text-foreground-1 tabular-nums">$48,210</p>
+            </BentoGridItem>
+            <BentoGridItem title="Active users">
+              <p className="text-title2 font-semibold text-foreground-1 tabular-nums">12,431</p>
+            </BentoGridItem>
+            <BentoGridItem title="Churn">
+              <p className="text-title2 font-semibold text-foreground-1 tabular-nums">1.8%</p>
+            </BentoGridItem>
+          </BentoGrid>
+        ),
+      },
+      {
+        title: "Trong khung hẹp",
+        description: "breakpoints=\"container\": số cột theo bề rộng của chính khung chứa (panel, card) thay vì màn hình.",
+        code: `<div className="w-full max-w-sm rounded-xlarge border border-stroke-2 p-3">
+  <BentoGrid breakpoints="container" columns={{ base: 1, sm: 2 }} gap="small">
+    <BentoGridItem title="Inbox" description="3 new" />
+    <BentoGridItem title="Tasks" description="5 due today" />
+    <BentoGridItem colSpan={{ base: 1, sm: 2 }} title="Calendar" description="Next: design review at 2 pm" />
+  </BentoGrid>
+</div>`,
+        render: () => (
+          <div className="w-full max-w-sm rounded-xlarge border border-stroke-2 p-3">
+            <BentoGrid breakpoints="container" columns={{ base: 1, sm: 2 }} gap="small">
+              <BentoGridItem title="Inbox" description="3 new" />
+              <BentoGridItem title="Tasks" description="5 due today" />
+              <BentoGridItem colSpan={{ base: 1, sm: 2 }} title="Calendar" description="Next: design review at 2 pm" />
+            </BentoGrid>
+          </div>
+        ),
+      },
+      {
+        title: "Chuyển từ lưới tự viết",
+        description: "Thay div grid + Card bằng BentoGrid: span theo breakpoint, heading và link card có sẵn.",
+        code: `// Before: a hand-made grid with Card and column classes (md:col-span-2 on the wide card).
+
+// After: spans per breakpoint, heading levels and link cards come with the item.
+<BentoGrid columns={{ base: 1, md: 3 }}>
+  <BentoGridItem colSpan={{ base: 1, md: 2 }} title="Getting started" description="Install and import your first component." href="#start" />
+  <BentoGridItem title="Themes" description="Light, dark and high contrast." href="#themes" />
+</BentoGrid>`,
+        render: () => (
+          <BentoGrid columns={{ base: 1, md: 3 }}>
+            <BentoGridItem colSpan={{ base: 1, md: 2 }} title="Getting started" description="Install and import your first component." href="#start" />
+            <BentoGridItem title="Themes" description="Light, dark and high contrast." href="#themes" />
+          </BentoGrid>
+        ),
+      },
     ],
     dos: [
       "Đặt nội dung quan trọng trước trong DOM; span chỉ thay đổi bố cục thị giác.",
@@ -1533,13 +1598,15 @@ function SwatchPickerDemo() {
       "Giữ title và description ngắn để ô tự giãn theo nội dung, không cắt chữ.",
     ],
     donts: [
-      "Không đặt button hoặc link lồng trong BentoGridItem có href.",
+      "Không đặt link khác trong title hoặc children của link card; nút riêng thì đưa vào action.",
       "Không dùng span để đảo thứ tự đọc trên mobile.",
-      "Không gắn listener hoặc ResizeObserver cho từng ô để đo layout.",
+      "Không gắn listener hoặc ResizeObserver cho từng ô để đo layout; dùng breakpoints=\"container\" khi lưới nằm trong khung hẹp.",
+      "Không dùng Bento cho danh sách dài cần quét nhanh (bảng, kết quả tìm kiếm): dùng List hoặc Table.",
     ],
     props: [
       { name: "BentoGrid.columns", type: "BentoResponsive", defaultValue: "{ base: 1, sm: 2, lg: 4 }", description: "Số cột theo breakpoint (1–6)." },
       { name: "BentoGrid.gap", type: `"small" | "medium" | "large"`, defaultValue: `"medium"`, description: "Khoảng cách giữa các ô." },
+      { name: "BentoGrid.breakpoints", type: `"viewport" | "container"`, defaultValue: `"viewport"`, description: "Breakpoint theo màn hình hoặc theo bề rộng của khung chứa (container query)." },
       { name: "BentoGridItem.colSpan / rowSpan", type: "BentoResponsive", defaultValue: "1", description: "Số track mà ô chiếm theo breakpoint." },
       { name: "BentoGridItem.title / titleAs", type: "ReactNode / heading", defaultValue: `titleAs="h3"`, description: "Tiêu đề và phần tử heading; dùng div khi trang đã có hierarchy riêng." },
       { name: "BentoGridItem.header / description / media / icon / action", type: "ReactNode", description: "Header trực quan ở đầu ô và các slot nội dung tuỳ chọn." },

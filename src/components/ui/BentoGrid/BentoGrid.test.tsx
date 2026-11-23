@@ -88,4 +88,64 @@ describe("BentoGrid", () => {
     expect(screen.getByText(/A long description/)).toHaveClass("wrap-break-word");
     expect(container.querySelector("img")).toHaveAttribute("alt", "");
   });
+
+  it("can follow its container's width instead of the viewport", () => {
+    render(
+      <BentoGrid breakpoints="container" columns={{ base: 1, sm: 2, lg: 4 }} data-testid="grid">
+        <BentoGridItem colSpan={{ base: 1, lg: 2 }} title="Wide" data-testid="item" />
+      </BentoGrid>,
+    );
+    const grid = screen.getByTestId("grid");
+    expect(grid.parentElement).toHaveClass("@container");
+    expect(grid).toHaveAttribute("data-bento-breakpoints", "container");
+    expect(grid).toHaveClass("grid-cols-1", "@2xl:grid-cols-2", "@5xl:grid-cols-4");
+    expect(screen.getByTestId("item")).toHaveClass("col-span-1", "@5xl:col-span-2");
+    expect(grid).not.toHaveClass("sm:grid-cols-2");
+  });
 });
+
+describe("BentoGrid accessibility contract (#435)", () => {
+  it("keeps DOM order whatever the spans, with logical properties for RTL", () => {
+    render(
+      <div dir="rtl">
+        <BentoGrid columns={{ base: 1, lg: 3 }}>
+          <BentoGridItem title="First" colSpan={{ base: 1, lg: 2 }} rowSpan={{ lg: 2 }} />
+          <BentoGridItem title="Second" />
+          <BentoGridItem title="Third" />
+        </BentoGrid>
+      </div>,
+    );
+    expect(screen.getAllByRole("heading").map((h) => h.textContent)).toEqual(["First", "Second", "Third"]);
+    // Không đảo thứ tự bằng order-*; chỉ span thay đổi bố cục.
+    for (const article of screen.getAllByRole("article")) expect(article.className).not.toMatch(/order-/);
+  });
+
+  it("keeps buttons and nested content reachable, and every card focusable once", () => {
+    render(
+      <BentoGrid>
+        <BentoGridItem href="/a" title="Link card" description="Goes to A" action={<button type="button">Pin</button>}>
+          <p>Nested text</p>
+        </BentoGridItem>
+        <BentoGridItem title="Plain" action={<button type="button">Open</button>} />
+      </BentoGrid>,
+    );
+    const focusables = screen.getAllByRole("link").concat(screen.getAllByRole("button"));
+    expect(focusables.map((el) => el.textContent)).toEqual(["Link card", "Pin", "Open"]);
+    for (const el of focusables) expect(el).not.toHaveAttribute("tabindex", "-1");
+    expect(screen.getByText("Nested text")).toBeInTheDocument();
+  });
+
+  it("hides decorative icons and keeps media alt text as given", () => {
+    render(<BentoGridItem title="Stats" icon={<svg data-testid="icon" />} media={<img src="/m.png" alt="Weekly chart" />} />);
+    expect(screen.getByTestId("icon").parentElement).toHaveAttribute("aria-hidden", "true");
+    expect(screen.getByRole("img", { name: "Weekly chart" })).toBeInTheDocument();
+  });
+
+  it("respects reduced motion and forced colors on link cards", () => {
+    render(<BentoGridItem href="/x" title="Motion" data-testid="card" />);
+    const card = screen.getByTestId("card");
+    expect(card.className).toContain("motion-reduce:transition-none");
+    expect(card.className).toContain("forced-colors:has-[[data-bento-link]:focus-visible]:outline-[Highlight]");
+  });
+});
+

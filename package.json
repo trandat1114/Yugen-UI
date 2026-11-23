@@ -119,6 +119,7 @@
     "test:e2e": "playwright test",
     "test:visual": "playwright test --project=visual",
     "test:engines": "playwright test --project=firefox --project=webkit --project=touch-webkit",
+    "bench": "node scripts/bench.mjs",
     "size": "size-limit",
     "changeset": "changeset",
     "version-packages": "changeset version && node scripts/sync-templates.mjs && npm install --package-lock-only",

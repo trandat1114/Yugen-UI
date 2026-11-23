@@ -21,6 +21,38 @@ for (const width of WIDTHS) {
 }
 
 /**
+ * BentoGrid (#437): không cuộn ngang và không xô lệch bố cục (CLS < 0.1) ở 320px, 768px và màn hình rộng. Ảnh trong ô có
+ * khung giữ chỗ; layout-shift chỉ đo được trên Chromium, engine khác chỉ kiểm tra tràn ngang.
+ */
+for (const width of [320, 768, 1280]) {
+  test(`BentoGrid không tràn, không xô lệch · ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.addInitScript(() => {
+      (window as unknown as { __cls: number }).__cls = 0;
+      if (!PerformanceObserver.supportedEntryTypes?.includes("layout-shift")) return;
+      type Shift = PerformanceEntry & { value: number; hadRecentInput: boolean; sources?: { node?: Node | null }[] };
+      new PerformanceObserver((list) => {
+        for (const entry of list.getEntries() as Shift[]) {
+          // Chỉ dịch chuyển của chính các ô BentoGrid, không tính phần trang docs nạp lười.
+          const inGrid = entry.sources?.some((s) => s.node instanceof Element && s.node.closest("[data-bento-grid]"));
+          if (!entry.hadRecentInput && inGrid) (window as unknown as { __cls: number }).__cls += entry.value;
+        }
+      }).observe({ type: "layout-shift", buffered: true });
+    });
+    await openDocs(page, "/components/bentogrid");
+    // Đếm từ lúc trang docs đã dựng xong: chỉ còn dịch chuyển do chính các ô (ảnh, chữ) gây ra.
+    await page.evaluate(() => ((window as unknown as { __cls: number }).__cls = 0));
+    await page.waitForTimeout(800);
+    const { overflow, cls } = await page.evaluate(() => ({
+      overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      cls: (window as unknown as { __cls: number }).__cls,
+    }));
+    expect(overflow).toBeLessThanOrEqual(0);
+    expect(cls).toBeLessThan(0.1);
+  });
+}
+
+/**
  * Mọi trang component ở 375px (#259, #266): bảng props và bảng Messages không tràn, trang không cuộn ngang, và chữ registry
  * (mô tả trang, mô tả ví dụ, nên / không nên, props, mô tả khoá messages) không còn backtick thô. Hai bảng cắt phần tràn
  * (overflow-hidden) nên phải đo chính khung bảng và từng ô: đo cả trang không thấy được chữ bị cắt. Ở bố cục một khối mỗi

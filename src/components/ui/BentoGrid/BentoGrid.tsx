@@ -136,6 +136,139 @@ const ROW_SPANS: Record<BentoBreakpoint, Record<BentoSpan, string>> = {
   },
 };
 
+/**
+ * Cùng các lớp nhưng theo bề rộng của khung chứa (container query, `breakpoints="container"`): sm ≈ 42rem, md 48rem,
+ * lg 64rem, xl 80rem — gần với breakpoint của viewport, nên một bố cục dùng được ở cả hai chế độ.
+ */
+const CONTAINER_GRID_COLUMNS: Record<BentoBreakpoint, Record<BentoSpan, string>> = {
+  base: {
+    1: "grid-cols-1",
+    2: "grid-cols-2",
+    3: "grid-cols-3",
+    4: "grid-cols-4",
+    5: "grid-cols-5",
+    6: "grid-cols-6",
+  },
+  sm: {
+    1: "@2xl:grid-cols-1",
+    2: "@2xl:grid-cols-2",
+    3: "@2xl:grid-cols-3",
+    4: "@2xl:grid-cols-4",
+    5: "@2xl:grid-cols-5",
+    6: "@2xl:grid-cols-6",
+  },
+  md: {
+    1: "@3xl:grid-cols-1",
+    2: "@3xl:grid-cols-2",
+    3: "@3xl:grid-cols-3",
+    4: "@3xl:grid-cols-4",
+    5: "@3xl:grid-cols-5",
+    6: "@3xl:grid-cols-6",
+  },
+  lg: {
+    1: "@5xl:grid-cols-1",
+    2: "@5xl:grid-cols-2",
+    3: "@5xl:grid-cols-3",
+    4: "@5xl:grid-cols-4",
+    5: "@5xl:grid-cols-5",
+    6: "@5xl:grid-cols-6",
+  },
+  xl: {
+    1: "@7xl:grid-cols-1",
+    2: "@7xl:grid-cols-2",
+    3: "@7xl:grid-cols-3",
+    4: "@7xl:grid-cols-4",
+    5: "@7xl:grid-cols-5",
+    6: "@7xl:grid-cols-6",
+  },
+};
+
+const CONTAINER_COL_SPANS: Record<BentoBreakpoint, Record<BentoSpan, string>> = {
+  base: {
+    1: "col-span-1",
+    2: "col-span-2",
+    3: "col-span-3",
+    4: "col-span-4",
+    5: "col-span-5",
+    6: "col-span-6",
+  },
+  sm: {
+    1: "@2xl:col-span-1",
+    2: "@2xl:col-span-2",
+    3: "@2xl:col-span-3",
+    4: "@2xl:col-span-4",
+    5: "@2xl:col-span-5",
+    6: "@2xl:col-span-6",
+  },
+  md: {
+    1: "@3xl:col-span-1",
+    2: "@3xl:col-span-2",
+    3: "@3xl:col-span-3",
+    4: "@3xl:col-span-4",
+    5: "@3xl:col-span-5",
+    6: "@3xl:col-span-6",
+  },
+  lg: {
+    1: "@5xl:col-span-1",
+    2: "@5xl:col-span-2",
+    3: "@5xl:col-span-3",
+    4: "@5xl:col-span-4",
+    5: "@5xl:col-span-5",
+    6: "@5xl:col-span-6",
+  },
+  xl: {
+    1: "@7xl:col-span-1",
+    2: "@7xl:col-span-2",
+    3: "@7xl:col-span-3",
+    4: "@7xl:col-span-4",
+    5: "@7xl:col-span-5",
+    6: "@7xl:col-span-6",
+  },
+};
+
+const CONTAINER_ROW_SPANS: Record<BentoBreakpoint, Record<BentoSpan, string>> = {
+  base: {
+    1: "row-span-1",
+    2: "row-span-2",
+    3: "row-span-3",
+    4: "row-span-4",
+    5: "row-span-5",
+    6: "row-span-6",
+  },
+  sm: {
+    1: "@2xl:row-span-1",
+    2: "@2xl:row-span-2",
+    3: "@2xl:row-span-3",
+    4: "@2xl:row-span-4",
+    5: "@2xl:row-span-5",
+    6: "@2xl:row-span-6",
+  },
+  md: {
+    1: "@3xl:row-span-1",
+    2: "@3xl:row-span-2",
+    3: "@3xl:row-span-3",
+    4: "@3xl:row-span-4",
+    5: "@3xl:row-span-5",
+    6: "@3xl:row-span-6",
+  },
+  lg: {
+    1: "@5xl:row-span-1",
+    2: "@5xl:row-span-2",
+    3: "@5xl:row-span-3",
+    4: "@5xl:row-span-4",
+    5: "@5xl:row-span-5",
+    6: "@5xl:row-span-6",
+  },
+  xl: {
+    1: "@7xl:row-span-1",
+    2: "@7xl:row-span-2",
+    3: "@7xl:row-span-3",
+    4: "@7xl:row-span-4",
+    5: "@7xl:row-span-5",
+    6: "@7xl:row-span-6",
+  },
+};
+
 const GAP_CLASSES = {
   small: "gap-2",
   medium: "gap-4",
@@ -149,22 +282,45 @@ function responsiveClasses(value: BentoResponsive, classes: Record<BentoBreakpoi
 
 const DEFAULT_COLUMNS = { base: 1, sm: 2, lg: 4 } as const;
 
+export type BentoBreakpoints = "viewport" | "container";
+
+/** Chế độ breakpoint của BentoGrid gần nhất, để BentoGridItem chọn đúng bảng lớp span. */
+const BentoModeContext = React.createContext<BentoBreakpoints>("viewport");
+
 export interface BentoGridProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Số cột theo breakpoint; không đo layout bằng JavaScript. */
   columns?: BentoResponsive;
   gap?: keyof typeof GAP_CLASSES;
+  /**
+   * viewport: breakpoint theo bề rộng màn hình (mặc định) · container: theo bề rộng của chính khung chứa BentoGrid
+   * (container query) — cho lưới đặt trong cột hẹp, panel hay card. Vẫn là CSS, không đo bằng JavaScript.
+   */
+  breakpoints?: BentoBreakpoints;
 }
 
 export function BentoGrid(inProps: BentoGridProps & { ref?: React.Ref<HTMLDivElement> }) {
-  const { className, columns = DEFAULT_COLUMNS, gap = "medium", ref, ...props } = useComponentDefaults("BentoGrid", inProps);
-  return (
+  const { className, columns = DEFAULT_COLUMNS, gap = "medium", breakpoints = "viewport", ref, ...props } = useComponentDefaults("BentoGrid", inProps);
+  const container = breakpoints === "container";
+  const grid = (
     <div
       ref={ref}
       data-bento-grid
       data-bento-columns={typeof columns === "number" ? columns : undefined}
-      className={cn("grid min-w-0 auto-rows-[minmax(8rem,auto)] items-stretch", GAP_CLASSES[gap], responsiveClasses(columns, GRID_COLUMNS), className)}
+      data-bento-breakpoints={container ? "container" : undefined}
+      className={cn(
+        "grid min-w-0 auto-rows-[minmax(8rem,auto)] items-stretch",
+        GAP_CLASSES[gap],
+        responsiveClasses(columns, container ? CONTAINER_GRID_COLUMNS : GRID_COLUMNS),
+        className,
+      )}
       {...props}
     />
+  );
+  return (
+    <BentoModeContext.Provider value={breakpoints}>
+      {/* Container query đo phần tử bọc ngoài: lưới không thể tự đo chính nó. */}
+      {container ? <div className="@container w-full min-w-0">{grid}</div> : grid}
+    </BentoModeContext.Provider>
   );
 }
 
@@ -210,6 +366,7 @@ export function BentoGridItem(inProps: BentoGridItemProps & { ref?: React.Ref<HT
     ...props
   } = inProps;
   const descriptionId = React.useId();
+  const container = React.useContext(BentoModeContext) === "container";
   const linked = href !== undefined && title !== undefined && title !== null;
   if (href !== undefined && !linked) {
     warnDev("BentoGridItem.href", '"BentoGridItem.href" needs a `title`, which names the link; the item renders without a link.');
@@ -224,8 +381,8 @@ export function BentoGridItem(inProps: BentoGridItemProps & { ref?: React.Ref<HT
       "has-[[data-bento-link]:focus-visible]:outline-2 has-[[data-bento-link]:focus-visible]:outline-offset-2 has-[[data-bento-link]:focus-visible]:outline-brand-stroke",
       "forced-colors:has-[[data-bento-link]:focus-visible]:outline-[Highlight]",
     ],
-    responsiveClasses(colSpan, COL_SPANS),
-    responsiveClasses(rowSpan, ROW_SPANS),
+    responsiveClasses(colSpan, container ? CONTAINER_COL_SPANS : COL_SPANS),
+    responsiveClasses(rowSpan, container ? CONTAINER_ROW_SPANS : ROW_SPANS),
     className,
   );
   const titleContent = linked ? (
