@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
+import { warnDev } from "@/lib/deprecate";
 import { useComponentDefaults } from "../YugenProvider/context";
 
 export type BentoSpan = 1 | 2 | 3 | 4 | 5 | 6;
@@ -176,8 +177,12 @@ export interface BentoGridItemProps extends Omit<React.HTMLAttributes<HTMLElemen
   header?: React.ReactNode;
   media?: React.ReactNode;
   icon?: React.ReactNode;
+  /** Nút / link riêng của ô; vẫn bấm được khi ô là link card. */
   action?: React.ReactNode;
-  /** Link card mode. Do not combine with action containing another interactive control. */
+  /**
+   * Link card: tiêu đề thành link và vùng bấm phủ cả ô; tên link là tiêu đề, `description` là mô tả của link. `action`
+   * nằm trên vùng bấm nên không có control lồng trong link. Cần `title`.
+   */
   href?: string;
   target?: React.HTMLAttributeAnchorTarget;
   rel?: string;
@@ -204,43 +209,61 @@ export function BentoGridItem(inProps: BentoGridItemProps & { ref?: React.Ref<HT
     children,
     ...props
   } = inProps;
+  const descriptionId = React.useId();
+  const linked = href !== undefined && title !== undefined && title !== null;
+  if (href !== undefined && !linked) {
+    warnDev("BentoGridItem.href", '"BentoGridItem.href" needs a `title`, which names the link; the item renders without a link.');
+  }
   const itemClassName = cn(
     "group relative flex min-w-0 flex-col overflow-hidden rounded-xlarge border border-stroke-2 bg-background-1 p-5 text-foreground-1",
     "**:min-w-0 [&_img]:max-w-full",
-    href && "cursor-pointer transition-[background-color,border-color,box-shadow] duration-faster hover:border-stroke-1-hover hover:bg-background-1-hover hover:shadow-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-stroke",
+    linked && [
+      "transition-[background-color,border-color,box-shadow] duration-faster motion-reduce:transition-none",
+      "hover:border-stroke-1-hover hover:bg-background-1-hover hover:shadow-4",
+      // Focus của link (tiêu đề) hiện thành vòng quanh cả ô.
+      "has-[[data-bento-link]:focus-visible]:outline-2 has-[[data-bento-link]:focus-visible]:outline-offset-2 has-[[data-bento-link]:focus-visible]:outline-brand-stroke",
+      "forced-colors:has-[[data-bento-link]:focus-visible]:outline-[Highlight]",
+    ],
     responsiveClasses(colSpan, COL_SPANS),
     responsiveClasses(rowSpan, ROW_SPANS),
     className,
   );
-  const content = (
-    <>
+  const titleContent = linked ? (
+    <a
+      data-bento-link=""
+      href={href}
+      target={target}
+      rel={rel}
+      aria-describedby={description ? descriptionId : undefined}
+      className="outline-none after:absolute after:inset-0 after:content-['']"
+    >
+      {title}
+    </a>
+  ) : (
+    title
+  );
+  return (
+    <article data-bento-item ref={ref} className={itemClassName} {...props}>
       {header && <div className="-mx-5 -mt-5 mb-5 overflow-hidden [&_img]:block [&_img]:h-auto [&_img]:w-full">{header}</div>}
       {(icon || title || description) && (
         <div className="flex items-start gap-3">
           {icon && <span aria-hidden className="flex size-9 shrink-0 items-center justify-center rounded-large bg-brand-background-2 text-brand-foreground-2 [&_svg]:size-5">{icon}</span>}
           {(title || description) && (
             <div className="min-w-0">
-              {title && <Title className="wrap-break-word font-display text-title3 font-semibold">{title}</Title>}
-              {description && <p className="mt-1 wrap-break-word text-body2 text-foreground-2">{description}</p>}
+              {title && <Title className="wrap-break-word font-display text-title3 font-semibold">{titleContent}</Title>}
+              {description && (
+                <p id={descriptionId} className="mt-1 wrap-break-word text-body2 text-foreground-2">
+                  {description}
+                </p>
+              )}
             </div>
           )}
         </div>
       )}
       {children && <div className="mt-4 wrap-break-word text-body2 text-foreground-2">{children}</div>}
-      {action && <div className="mt-5 flex flex-wrap items-center gap-2">{action}</div>}
+      {/* z-10: nằm trên vùng bấm của link card. */}
+      {action && <div className="relative z-10 mt-5 flex flex-wrap items-center gap-2">{action}</div>}
       {media && <div className="mt-auto -mx-5 -mb-5 overflow-hidden pt-5 [&_img]:block [&_img]:h-auto [&_img]:w-full">{media}</div>}
-    </>
-  );
-  if (href) {
-    return (
-      <a data-bento-item ref={ref as React.Ref<HTMLAnchorElement>} href={href} target={target} rel={rel} className={itemClassName} {...props}>
-        {content}
-      </a>
-    );
-  }
-  return (
-    <article data-bento-item ref={ref as React.Ref<HTMLElement>} className={itemClassName} {...props}>
-      {content}
     </article>
   );
 }

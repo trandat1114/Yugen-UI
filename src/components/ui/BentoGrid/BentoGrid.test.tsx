@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
+import { watchDeprecations } from "@/test/deprecation";
 import { BentoGrid, BentoGridItem } from "./BentoGrid";
 
 describe("BentoGrid", () => {
@@ -28,9 +29,49 @@ describe("BentoGrid", () => {
         <BentoGridItem title="Actions" action={<button type="button">Save</button>} />
       </BentoGrid>,
     );
-    expect(screen.getByRole("link", { name: /Details Open the report/i })).toHaveAttribute("href", "/details");
+    // Tên link là tiêu đề; mô tả đọc qua aria-describedby.
+    const link = screen.getByRole("link", { name: "Details" });
+    expect(link).toHaveAttribute("href", "/details");
+    expect(link).toHaveAccessibleDescription("Open the report");
+    expect(screen.getByRole("heading", { name: "Details" })).toContainElement(link);
     expect(screen.getByTestId("header")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Save" })).toBeInTheDocument();
+  });
+
+  it("keeps actions of a link card outside the link, above its click area", () => {
+    render(
+      <BentoGridItem href="/plans" target="_blank" rel="noreferrer" title="Plans" action={<button type="button">Compare</button>} data-testid="card" />,
+    );
+    const card = screen.getByTestId("card");
+    const link = screen.getByRole("link", { name: "Plans" });
+    const button = screen.getByRole("button", { name: "Compare" });
+    expect(card.tagName).toBe("ARTICLE");
+    expect(link).not.toContainElement(button);
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noreferrer");
+    expect(link).toHaveClass("after:absolute", "after:inset-0");
+    expect(button.parentElement).toHaveClass("relative", "z-10");
+    expect(card.className).toContain("has-[[data-bento-link]:focus-visible]:outline-2");
+  });
+
+  it("warns and renders no link when a link card has no title", () => {
+    const warnings = watchDeprecations();
+    render(<BentoGridItem href="/x" description="No title" data-testid="card" />);
+    expect(within(screen.getByTestId("card")).queryByRole("link")).toBeNull();
+    expect(warnings("BentoGridItem.href")).toBe(1);
+  });
+
+  it("forwards the item ref and supports a fixed column count", () => {
+    const ref = { current: null as HTMLElement | null };
+    render(
+      <BentoGrid columns={3} gap="large" data-testid="grid">
+        <BentoGridItem ref={ref} titleAs="div" title="Plain" />
+      </BentoGrid>,
+    );
+    expect(screen.getByTestId("grid")).toHaveAttribute("data-bento-columns", "3");
+    expect(screen.getByTestId("grid")).toHaveClass("grid-cols-3", "gap-6");
+    expect(ref.current?.tagName).toBe("ARTICLE");
+    expect(screen.queryByRole("heading")).toBeNull();
   });
 
   it("keeps image slots contained and wraps long copy instead of clipping it", () => {
