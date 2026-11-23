@@ -84,6 +84,7 @@ import { toastMessagesEn } from "./Toast/messages";
 import { tourMessagesEn } from "./Tour/messages";
 import { traceMessagesEn } from "./Trace/messages";
 import { voiceWaveMessagesEn } from "./VoiceWave/messages";
+import { voiceAssistantMessagesEn } from "./VoiceAssistant/messages";
 import { transcriptMessagesEn } from "./Transcript/messages";
 
 /**
@@ -166,6 +167,7 @@ export const messagesEn: Omit<YugenMessages, "calendar"> = {
   trace: traceMessagesEn,
   transcript: transcriptMessagesEn,
   typingIndicator: typingIndicatorMessagesEn,
+  voiceAssistant: voiceAssistantMessagesEn,
   voiceWave: voiceWaveMessagesEn,
   wizard: wizardMessagesEn,
   yearPicker: yearPickerMessagesEn,

@@ -80,5 +80,15 @@
   "Product design": "Thiết kế sản phẩm",
   "Call again": "Gọi lại",
   "+1 415 555 0134": "0901 234 567",
-  "No answer": "Không ai bắt máy"
+  "No answer": "Không ai bắt máy",
+  "Do I have anything after lunch tomorrow?": "Chiều mai tôi có lịch gì không?",
+  "Yes, a design review at 2 pm and a call with Aiko at 4.": "Có, buổi duyệt thiết kế lúc 2 giờ và cuộc gọi với Lan Anh lúc 4 giờ.",
+  "A scripted session: no microphone, no network. Your app would set these from its voice provider.": "Một phiên theo kịch bản: không micro, không mạng. App của bạn sẽ đặt các giá trị này từ dịch vụ giọng nói của nó.",
+  "You": "Bạn",
+  "Calendar and email": "Lịch và email",
+  "Read my last email.": "Đọc email mới nhất của tôi.",
+  "From Aiko: the review moved to Friday": "Từ Lan Anh: buổi duyệt dời sang thứ Sáu",
+  "Talk to the assistant": "Nói với trợ lý",
+  "Voice assistant": "Trợ lý giọng nói",
+  "The microphone is blocked. Allow it in the browser settings, then try again.": "Micro đang bị chặn. Cho phép trong cài đặt trình duyệt rồi thử lại."
 }

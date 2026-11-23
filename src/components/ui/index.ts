@@ -134,6 +134,7 @@ export * from "./AIKit/AIKit";
 export * from "./VoiceWave/VoiceWave";
 export * from "./Transcript/Transcript";
 export * from "./Call/Call";
+export * from "./VoiceAssistant/VoiceAssistant";
 export * from "./Tour/Tour";
 export * from "./NotificationCenter/NotificationCenter";
 export * from "./GlassRefraction/GlassRefraction";
