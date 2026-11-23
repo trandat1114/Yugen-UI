@@ -14,7 +14,6 @@ import { Sparkline } from "@/components/ui/Chart/Chart";
 import { DescriptionItem, DescriptionList } from "@/components/ui/DescriptionList/DescriptionList";
 import { Article, ArticleBody, ArticleHeader, ArticleMeta, ArticleToc, readingTime } from "@/components/ui/Article/Article";
 import { Markdown, markdownHeadings } from "@/components/ui/Markdown/Markdown";
-import { sunset } from "../sample-assets";
 import { Prose } from "@/components/ui/Prose/Prose";
 import { SearchBox } from "@/components/ui/SearchBox/SearchBox";
 import { Sonner, sonner, type SonnerPosition } from "@/components/ui/Sonner/Sonner";
