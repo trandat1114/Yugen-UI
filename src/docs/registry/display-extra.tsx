@@ -1274,6 +1274,7 @@ Every request needs an **API key** in the \\\`Authorization\\\` header. Create o
     slug: "blog",
     name: "Blog",
     category: "Hiển thị dữ liệu",
+    tags: ["blog", "article", "markdown"],
     lead: "BlogCard, BlogList và BlogTagFilter dựng trang danh sách bài viết: card dạng link với ảnh bìa, tác giả và ngày, lưới có bài nổi bật, lọc theo thẻ và tìm kiếm.",
     description:
       "Không gắn với router hay bộ xử lý Markdown nào: mỗi bài là một object (id, title, href, excerpt, cover, author, published, readingTime, tags), lấy từ front matter của file Markdown hay từ CMS đều được. BlogCard là thẻ <article>; tiêu đề là link và vùng bấm phủ cả card, tóm tắt là mô tả của link, nên trình đọc màn hình chỉ đọc tên bài thay vì cả card. Ảnh bìa nằm trong khung 16:9 giữ chỗ sẵn và nạp lười; ngày ở thẻ <time>. BlogList xếp lưới (hoặc danh sách card ngang), đưa bài nổi bật lên đầu và rộng hai cột, hiện card giữ chỗ khi đang tải, trạng thái trống khi lọc không ra gì, và nút Xem thêm. BlogTagFilter là nhóm nút bật-tắt (aria-pressed) với nút Tất cả; filterPosts() tìm theo tiêu đề, tóm tắt và thẻ, không phân biệt dấu. Trạng thái lọc và URL là của app. Trang của từng bài: ghép Article với Markdown (xem trang Article).",

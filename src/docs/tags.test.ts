@@ -30,7 +30,9 @@ describe("component tags (#445)", () => {
 
   it("finds the content family through markdown and article", () => {
     expect(search("markdown")).toEqual(expect.arrayContaining(["markdown", "streamingmarkdown", "article"]));
-    expect(search("article")).toEqual(expect.arrayContaining(["article", "markdown", "prose"]));
+    expect(search("article")).toEqual(expect.arrayContaining(["article", "markdown", "prose", "blog"]));
+    expect(search("blog")).toEqual(expect.arrayContaining(["blog"]));
+    expect(search("posts")).toContain("blog");
   });
 
   it("matches aliases and Vietnamese labels without accents", () => {
