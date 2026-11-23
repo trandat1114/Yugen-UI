@@ -27,7 +27,8 @@ function fixture(axes: number, seriesCount: number, seed = 0) {
   return { data, series };
 }
 
-describe("RadarChart performance (#427)", () => {
+// Đo nhiều lần trong một test: cho thời gian rộng hơn mặc định 5 s khi CI chạy song song.
+describe("RadarChart performance (#427)", { timeout: 60_000 }, () => {
   for (const [axes, seriesCount] of [
     [8, 1],
     [24, 4],
