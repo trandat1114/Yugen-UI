@@ -51,6 +51,17 @@ import { useControllableState } from "../hooks/useControllableState";
 export type ChartXFormat =
   Intl.DateTimeFormatOptions | ((value: ChartValue) => string);
 
+export interface LineChartMarker {
+  /** Toạ độ trong SVG. */
+  x: number;
+  y: number;
+  /** Chỉ số điểm trong dữ liệu đang hiện. */
+  index: number;
+  /** `key` của chuỗi. */
+  series: string;
+  value: number;
+}
+
 export interface LineChartProps extends ChartFrameProps {
   data: ChartDatum[];
   /** Trường trục X — chuỗi (danh mục) hoặc Date (thời gian). Dữ liệu cần sắp xếp tăng dần theo X. */
@@ -66,6 +77,16 @@ export interface LineChartProps extends ChartFrameProps {
   xTooltipFormat?: ChartXFormat;
   /** Chấm tại mọi điểm (≥ 8px, viền bề mặt 2px). */
   markers?: boolean;
+  /**
+   * Vẽ chấm của riêng bạn tại mọi điểm (bật markers). Phần tử nằm trong nhóm của chuỗi nên thừa hưởng màu (fill) và viền
+   * bề mặt (stroke). Trang trí: trình đọc màn hình vẫn đọc giá trị qua các điểm có thể focus.
+   */
+  renderMarker?: (point: LineChartMarker) => React.ReactNode;
+  /**
+   * Giá trị ghi ngay trên mỗi điểm. true: định dạng theo `valueFormat`; hàm: tự định dạng. Khi các điểm quá sát, chỉ ghi
+   * cách quãng (luôn có điểm cuối).
+   */
+  valueLabels?: boolean | ((value: number, index: number, series: string) => string);
   curve?: "linear" | "monotone" | "step";
   /** Nhãn trực tiếp ở cuối đường (tên chuỗi; một chuỗi thì là giá trị). Mặc định khi ≤ 4 chuỗi; tự tắt nếu các nhãn chồng nhau. */
   endLabels?: boolean;
@@ -110,7 +131,9 @@ function SeriesChart({
   axisFormat,
   xFormat,
   xTooltipFormat,
-  markers = false,
+  markers: markersProp = false,
+  renderMarker,
+  valueLabels = false,
   curve = "monotone",
   endLabels,
   highlight,
@@ -165,6 +188,7 @@ function SeriesChart({
 
   // Hover chỉ đổi `active`. Hình học, nhãn của mọi điểm và các lớp không phụ thuộc hover được nhớ theo props, độ rộng và
   // chuỗi đang ẩn: mỗi bước hover không tính lại, không định dạng lại, không so lại các lớp đó (#352).
+  const markers = markersProp || renderMarker !== undefined;
   const view = React.useMemo(() => {
     const data = zoomed ? allData.slice(ds, de + 1) : allData;
     const rawAll = allData.map((d) => d[index]);
@@ -506,13 +530,39 @@ function SeriesChart({
                   stroke: "var(--colorChartSurface)",
                 }}
               >
-                {upper[s.k].map((u, r) =>
-                  u == null ? null : (
-                    <circle key={r} cx={xs[r]} cy={y(u)} r={4} />
-                  ),
-                )}
+                {upper[s.k].map((u, r) => {
+                  if (u == null) return null;
+                  const value = val(r, s.v.s.key);
+                  if (renderMarker && value != null)
+                    return <React.Fragment key={r}>{renderMarker({ x: xs[r], y: y(u), index: r, series: s.v.s.key, value })}</React.Fragment>;
+                  return <circle key={r} cx={xs[r]} cy={y(u)} r={4} />;
+                })}
               </g>
             ))}
+          </g>
+        )}
+
+        {valueLabels && (
+          <g aria-hidden className="text-caption1 tabular-nums">
+            {shapes.map((s) => {
+              // Điểm quá sát (< 32px): chỉ ghi cách quãng, luôn giữ điểm cuối.
+              const gap = n > 1 ? Math.abs(xs[1] - xs[0]) : Infinity;
+              const step = Math.max(1, Math.ceil(32 / Math.max(gap, 1)));
+              return (
+                <g key={s.v.s.key} style={{ fill: slotVar(s.v.slot) }}>
+                  {upper[s.k].map((u, r) => {
+                    const value = val(r, s.v.s.key);
+                    if (u == null || value == null || (r % step !== 0 && r !== n - 1)) return null;
+                    const text = typeof valueLabels === "function" ? valueLabels(value, r, s.v.s.key) : fmt(value);
+                    return (
+                      <text key={r} x={xs[r]} y={y(u) - (markers ? 10 : 6)} textAnchor="middle">
+                        {text}
+                      </text>
+                    );
+                  })}
+                </g>
+              );
+            })}
           </g>
         )}
 
@@ -597,6 +647,8 @@ function SeriesChart({
     ariaLabel,
     curve,
     markers,
+    renderMarker,
+    valueLabels,
     animate,
     textured,
     brush,
