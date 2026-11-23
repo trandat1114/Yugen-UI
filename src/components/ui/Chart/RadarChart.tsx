@@ -70,8 +70,10 @@ interface RadarSeries {
   points: (RadarPoint | null)[];
 }
 
-/** Khoảng chừa quanh lưới cho nhãn trục. */
+/** Khoảng chừa tối thiểu quanh lưới cho nhãn trục. */
 const LABEL_MARGIN = 38;
+/** Bề ngang ước lượng của một ký tự caption1 (px), để chừa chỗ cho nhãn mà không đo DOM. */
+const CHAR_WIDTH = 6.5;
 
 /**
  * RadarChart — so sánh nhiều chuỗi trên cùng một tập trục, SVG viết tay và không phụ thuộc thư viện. Lưới, đường của
@@ -143,7 +145,12 @@ export function RadarChart({
   const S = boxWidth > 0 ? Math.max(120, Math.min(maxSide, Math.floor(boxWidth))) : maxSide;
   const cx = S / 2;
   const cy = S / 2;
-  const radius = Math.max(20, S / 2 - LABEL_MARGIN);
+  // Chừa lề theo nhãn dài nhất (tối đa 30% cạnh); nhãn vẫn dài hơn thì rút gọn bằng "…" (tên đầy đủ ở tooltip và tên đọc).
+  const shownLabels = React.useMemo(() => axisLabels.map((label, i) => (axisLabel ? axisLabel(label, i) : label)), [axisLabels, axisLabel]);
+  const longest = shownLabels.reduce((m, label) => Math.max(m, label.length), 0);
+  const margin = Math.min(S * 0.3, Math.max(LABEL_MARGIN, longest * CHAR_WIDTH + 10));
+  const maxChars = Math.max(4, Math.floor((margin - 10) / CHAR_WIDTH));
+  const radius = Math.max(20, S / 2 - margin);
 
   const axisPoints = React.useMemo(
     () => Array.from({ length: count }, (_, i) => radarPoint(i, count, radius, cx, cy)),
@@ -246,7 +253,7 @@ export function RadarChart({
                 textAnchor={Math.abs(point.x - cx) < 4 ? "middle" : point.x < cx ? "end" : "start"}
                 className="fill-foreground-2 text-caption1"
               >
-                {axisLabel ? axisLabel(axisLabels[i], i) : axisLabels[i]}
+                {shownLabels[i].length > maxChars ? `${shownLabels[i].slice(0, maxChars - 1)}…` : shownLabels[i]}
               </text>
               <circle
                 data-i={i}
@@ -264,7 +271,7 @@ export function RadarChart({
         })}
       </g>
     ),
-    [roving.layerProps, roving.stop, axisPoints, seriesData, axisLabels, axisLabel, msg.noData, cx, cy],
+    [roving.layerProps, roving.stop, axisPoints, seriesData, axisLabels, shownLabels, maxChars, msg.noData, cx, cy],
   );
 
   const table = () => (
