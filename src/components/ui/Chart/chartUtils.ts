@@ -22,6 +22,8 @@ export interface ChartSeries {
   label: string;
   /** Ô màu cố định — mặc định theo vị trí trong mảng `series` (1…8). Màu đi theo thực thể, không theo thứ hạng. */
   color?: ChartColor;
+  /** Icon của chuỗi (16px), thay ô màu trong legend và tooltip; tô theo màu của chuỗi. */
+  icon?: React.ReactNode;
 }
 
 export type ChartNumberFormat =

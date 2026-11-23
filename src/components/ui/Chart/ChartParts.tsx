@@ -171,6 +171,15 @@ export function ChartLegend({
   );
 }
 
+/** Icon của chuỗi (ChartSeries.icon) ở chỗ ô màu: 16px, theo màu của chuỗi. */
+export function ChartSeriesIcon({ icon, slot }: { icon: React.ReactNode; slot: ChartSlot }) {
+  return (
+    <span aria-hidden className="flex size-4 shrink-0 items-center justify-center [&_svg]:size-4" style={{ color: slotVar(slot) }}>
+      {icon}
+    </span>
+  );
+}
+
 /* ================================================================== Tooltip */
 
 export interface ChartTooltipRow {

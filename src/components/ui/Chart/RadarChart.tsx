@@ -6,6 +6,7 @@ import { chartMessagesEn } from "./messages";
 import {
   ChartContainer,
   ChartLegend,
+  ChartSeriesIcon,
   ChartPatterns,
   ChartTable,
   ChartTooltip,
@@ -184,7 +185,11 @@ export function RadarChart({
   const summary = ariaLabel ?? msg.radarSummary({ axes: count, series: seriesData.map((item) => item.label) });
 
   const legendItems: ChartLegendItem[] = React.useMemo(
-    () => series.map((item) => ({ key: item.key, label: item.label, slot: slots.get(item.key) as ChartSlot, hidden: hidden.has(item.key) })),
+    () =>
+      series.map((item) => {
+        const slot = slots.get(item.key) as ChartSlot;
+        return { key: item.key, label: item.label, slot, hidden: hidden.has(item.key), swatch: item.icon ? <ChartSeriesIcon icon={item.icon} slot={slot} /> : undefined };
+      }),
     [hidden, series, slots],
   );
 
@@ -342,6 +347,9 @@ export function RadarChart({
                 value: item.labels[active.i] ?? msg.noData,
                 raw: item.values[active.i],
                 slot: item.slot,
+                swatch: series.find((s) => s.key === item.key)?.icon ? (
+                  <ChartSeriesIcon icon={series.find((s) => s.key === item.key)?.icon} slot={item.slot} />
+                ) : undefined,
                 shape: "line",
               }))}
               textured={textured}

@@ -107,5 +107,14 @@
   "Incident response": "Xử lý sự cố",
   "Testing": "Kiểm thử",
   "Lead": "Trưởng nhóm",
-  "Junior": "Mới vào nghề"
+  "Junior": "Mới vào nghề",
+  "Visits by device": "Lượt truy cập theo thiết bị",
+  "Device": "Thiết bị",
+  "Desktop": "Máy tính",
+  "Mobile": "Điện thoại",
+  "Visitors by browser": "Khách theo trình duyệt",
+  "Visitors": "Khách",
+  "Other": "Khác",
+  "Desktop visits": "Lượt truy cập từ máy tính",
+  "% of visits came from phones.": "% lượt truy cập đến từ điện thoại."
 }
