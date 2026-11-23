@@ -493,6 +493,60 @@ const LABS_CHARTS: ComponentDoc[] = [
           />
         ),
       },
+      {
+        title: "Nhãn giá trị",
+        description: "valueLabels ghi giá trị ngay trên mỗi điểm, theo valueFormat; điểm quá sát thì ghi cách quãng. Hợp với ít điểm, khi người đọc cần con số chính xác.",
+        code: `const revenue = ${lit(revenue)};
+
+<LineChart
+  title="Online revenue"
+  data={revenue}
+  index="month"
+  series={[{ key: "online", label: "Online" }]}
+  markers
+  valueLabels
+  valueFormat={{ notation: "compact", style: "currency", currency: "USD" }}
+  locale="en-US"
+/>`,
+        render: () => (
+          <LineChart
+            title="Online revenue"
+            data={revenue}
+            index="month"
+            series={[{ key: "online", label: "Online" }]}
+            markers
+            valueLabels
+            valueFormat={{ notation: "compact", style: "currency", currency: "USD" }}
+            locale="en-US"
+          />
+        ),
+      },
+      {
+        title: "Chấm tuỳ biến",
+        description: "renderMarker vẽ chấm của riêng bạn; phần tử thừa hưởng màu của chuỗi. Ở đây tháng cao nhất là chấm lớn hơn.",
+        code: `const revenue = ${lit(revenue)};
+
+<LineChart
+  title="Store revenue"
+  data={revenue}
+  index="month"
+  series={[{ key: "store", label: "Store" }]}
+  renderMarker={({ x, y, value }) => <circle cx={x} cy={y} r={value === 360000 ? 7 : 3} strokeWidth={2} />}
+  valueFormat={{ notation: "compact", style: "currency", currency: "USD" }}
+  locale="en-US"
+/>`,
+        render: () => (
+          <LineChart
+            title="Store revenue"
+            data={revenue}
+            index="month"
+            series={[{ key: "store", label: "Store" }]}
+            renderMarker={({ x, y, value }) => <circle cx={x} cy={y} r={value === 360000 ? 7 : 3} strokeWidth={2} />}
+            valueFormat={{ notation: "compact", style: "currency", currency: "USD" }}
+            locale="en-US"
+          />
+        ),
+      },
     ],
     dos: [
       "Dùng đường cho xu hướng; AreaChart khi chỉ một chuỗi hoặc khi cần phần–tổng theo thời gian (stacked).",
@@ -510,7 +564,9 @@ const LABS_CHARTS: ComponentDoc[] = [
       { name: "xFormat / xTooltipFormat", type: "Intl.DateTimeFormatOptions | (v) => string", description: "Nhãn trục / tooltip & bảng." },
       { name: "valueFormat / axisFormat", type: "Intl.NumberFormatOptions | (v) => string", description: "Định dạng giá trị và trục." },
       { name: "markers", type: "boolean", defaultValue: "false", description: "Chấm tại mọi điểm." },
-      { name: "curve", type: `"monotone" | "linear"`, defaultValue: `"monotone"`, description: "Nội suy không vượt đỉnh dữ liệu." },
+      { name: "renderMarker", type: "(point: LineChartMarker) => ReactNode", description: "Chấm của riêng bạn (x, y, index, series, value); bật markers." },
+      { name: "valueLabels", type: "boolean | (value, index, series) => string", defaultValue: "false", description: "Giá trị trên mỗi điểm; điểm quá sát thì ghi cách quãng." },
+      { name: "curve", type: `"monotone" | "linear" | "step"`, defaultValue: `"monotone"`, description: "monotone không vượt đỉnh dữ liệu; step cho giá trị đổi theo bậc." },
       { name: "endLabels", type: "boolean", defaultValue: "≤ 4 chuỗi", description: "Nhãn cuối đường; tự tắt nếu va nhau." },
       { name: "highlight", type: "string", description: "Key chuỗi được nhấn mạnh (các chuỗi khác xám)." },
       { name: "includeZero", type: "boolean", defaultValue: "false (Line) · true (Area)", description: "Trục Y bắt đầu từ 0." },
