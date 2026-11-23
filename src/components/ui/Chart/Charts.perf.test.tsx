@@ -60,7 +60,7 @@ describe("axis charts performance", () => {
   });
 
   it("AreaChart, 500 points × 4 stacked series with a gradient: one hover step and a data update", () => {
-    const data = rows(500, 4).map((r) => ({ ...r, s3: Math.abs(Number(r.s3)) }));
+    const data: Record<string, string | number>[] = rows(500, 4).map((r) => ({ ...r, s3: Math.abs(Number(r.s3)) }));
     const { rerender } = render(<AreaChart data={data} index="x" series={series(4)} stacked gradient animate={false} />);
     const hover = hoverSteps("AreaChart 500×4 stacked hover step", screen.getAllByRole("img"));
     let shift = 0;
