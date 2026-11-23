@@ -132,6 +132,8 @@ module.exports = [
   js("{ ColorPicker }", "{ ColorPicker }", "30 kB"),
   // Hình học / nhãn nhớ theo props, lớp điểm dùng chung, màu tô trên nhóm (#352): 30.18 → 31.10 kB.
   js("{ BarChart, LineChart }", "{ BarChart, LineChart }", "34 kB"),
+  // Button (Xem thêm) + Intl, không router (#444): 15.50 kB.
+  js("{ BlogCard, BlogList, BlogTagFilter, filterPosts }", "{ BlogCard, BlogList, BlogTagFilter, filterPosts }", "17 kB"),
   // Một IntersectionObserver cho mục lục, không phụ thuộc mới (#446): 11.45 kB.
   js("{ Article, ArticleHeader, ArticleMeta, ArticleBody, ArticleToc }", "{ Article, ArticleHeader, ArticleMeta, ArticleBody, ArticleToc }", "12.5 kB"),
   // CallSurface + Transcript + VoiceWave, không runtime giọng nói (#443): 21.23 kB.

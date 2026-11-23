@@ -8,6 +8,7 @@ import {
   VehicleTruckProfile20Regular,
 } from "@fluentui/react-icons";
 import { Avatar } from "@/components/ui/Avatar/Avatar";
+import { BlogList, BlogTagFilter, filterPosts, type BlogPost } from "@/components/ui/Blog/Blog";
 import { Button } from "@/components/ui/Button/Button";
 import { Sparkline } from "@/components/ui/Chart/Chart";
 import { DescriptionItem, DescriptionList } from "@/components/ui/DescriptionList/DescriptionList";
@@ -15,13 +16,150 @@ import { Article, ArticleBody, ArticleHeader, ArticleMeta, ArticleToc, readingTi
 import { Markdown, markdownHeadings } from "@/components/ui/Markdown/Markdown";
 import { sunset } from "../sample-assets";
 import { Prose } from "@/components/ui/Prose/Prose";
+import { SearchBox } from "@/components/ui/SearchBox/SearchBox";
 import { Sonner, sonner, type SonnerPosition } from "@/components/ui/Sonner/Sonner";
 import { Stat } from "@/components/ui/Stat/Stat";
 import { Switch } from "@/components/ui/Switch/Switch";
 import { Timeline, TimelineItem } from "@/components/ui/Timeline/Timeline";
 import type { ComponentDoc } from "../types";
+import { landscape, mountain, sunset } from "../sample-assets";
 
 /* ------------------------------------------------------------------ demos */
+
+/* ---------------------------------------------------------------- Blog */
+
+const BLOG_CODE = `// mountain, sunset, landscape: any image URL (generated SVGs here).
+const POSTS: BlogPost[] = [
+  {
+    id: "release-2-4",
+    title: "Release 2.4: faster search and exports",
+    href: "/blog/release-2-4",
+    excerpt: "Search answers in under 50 ms, and every table can be exported to CSV.",
+    cover: { src: sunset, alt: "Sunset over hills" },
+    author: { name: "Linh Tran" },
+    published: "2026-11-18",
+    readingTime: 3,
+    tags: ["release"],
+  },
+  {
+    id: "spacing",
+    title: "Calm interfaces with spacing, not borders",
+    href: "/blog/spacing",
+    excerpt: "How a spacing scale and clear headings replace most dividers.",
+    cover: { src: mountain, alt: "Mountains under a pale sky" },
+    author: { name: "Linh Tran" },
+    published: "2026-11-02",
+    readingTime: 6,
+    tags: ["design"],
+  },
+  {
+    id: "focus",
+    title: "A focus ring that never disappears",
+    href: "/blog/focus",
+    excerpt: "Outline-only focus, forced colors and why border-radius stays put.",
+    cover: { src: landscape, alt: "A lake below mountains" },
+    author: { name: "Minh Pham" },
+    published: "2026-10-21",
+    readingTime: 4,
+    tags: ["accessibility", "design"],
+  },
+  {
+    id: "tokens",
+    title: "Design tokens in a cascade layer",
+    href: "/blog/tokens",
+    excerpt: "Your own token values now win whatever the file order.",
+    author: { name: "Minh Pham" },
+    published: "2026-10-09",
+    readingTime: 5,
+    tags: ["engineering"],
+  },
+];
+
+const TAGS = ["release", "design", "accessibility", "engineering"].map((tag) => ({
+  tag,
+  count: POSTS.filter((p) => p.tags?.includes(tag)).length,
+}));
+
+function BlogDemo() {
+  const [query, setQuery] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const filtering = query.trim() !== "" || tags.length > 0;
+  const posts = filterPosts(POSTS, { query, tags });
+  return (
+    <div className="flex w-full flex-col gap-4">
+      <SearchBox value={query} onValueChange={setQuery} placeholder="Search posts" aria-label="Search posts" className="max-w-sm" />
+      <BlogTagFilter tags={TAGS} selected={tags} onSelectedChange={setTags} />
+      <BlogList posts={posts} featuredId={filtering ? undefined : "release-2-4"} headingLevel="h2" locale="en-US" />
+    </div>
+  );
+}`;
+
+// mountain, sunset, landscape: any image URL (generated SVGs here).
+const POSTS: BlogPost[] = [
+  {
+    id: "release-2-4",
+    title: "Release 2.4: faster search and exports",
+    href: "/blog/release-2-4",
+    excerpt: "Search answers in under 50 ms, and every table can be exported to CSV.",
+    cover: { src: sunset, alt: "Sunset over hills" },
+    author: { name: "Linh Tran" },
+    published: "2026-11-18",
+    readingTime: 3,
+    tags: ["release"],
+  },
+  {
+    id: "spacing",
+    title: "Calm interfaces with spacing, not borders",
+    href: "/blog/spacing",
+    excerpt: "How a spacing scale and clear headings replace most dividers.",
+    cover: { src: mountain, alt: "Mountains under a pale sky" },
+    author: { name: "Linh Tran" },
+    published: "2026-11-02",
+    readingTime: 6,
+    tags: ["design"],
+  },
+  {
+    id: "focus",
+    title: "A focus ring that never disappears",
+    href: "/blog/focus",
+    excerpt: "Outline-only focus, forced colors and why border-radius stays put.",
+    cover: { src: landscape, alt: "A lake below mountains" },
+    author: { name: "Minh Pham" },
+    published: "2026-10-21",
+    readingTime: 4,
+    tags: ["accessibility", "design"],
+  },
+  {
+    id: "tokens",
+    title: "Design tokens in a cascade layer",
+    href: "/blog/tokens",
+    excerpt: "Your own token values now win whatever the file order.",
+    author: { name: "Minh Pham" },
+    published: "2026-10-09",
+    readingTime: 5,
+    tags: ["engineering"],
+  },
+];
+
+const TAGS = ["release", "design", "accessibility", "engineering"].map((tag) => ({
+  tag,
+  count: POSTS.filter((p) => p.tags?.includes(tag)).length,
+}));
+
+function BlogDemo() {
+  const [query, setQuery] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const filtering = query.trim() !== "" || tags.length > 0;
+  const posts = filterPosts(POSTS, { query, tags });
+  return (
+    <div className="flex w-full flex-col gap-4">
+      <SearchBox value={query} onValueChange={setQuery} placeholder="Search posts" aria-label="Search posts" className="max-w-sm" />
+      <BlogTagFilter tags={TAGS} selected={tags} onSelectedChange={setTags} />
+      <BlogList posts={posts} featuredId={filtering ? undefined : "release-2-4"} headingLevel="h2" locale="en-US" />
+    </div>
+  );
+}
+
 
 /* ---------------------------------------------------------------- Article */
 
@@ -1127,6 +1265,52 @@ Every request needs an **API key** in the \\\`Authorization\\\` header. Create o
       { name: "ArticleToc.maxLevel / title / trackActive / offset", type: "number / ReactNode / boolean / number", defaultValue: "3 / — / true / 0", description: "Cấp sâu nhất, tiêu đề, theo dõi mục đang đọc, chiều cao header dính (px)." },
       { name: "markdownHeadings(markdown, options)", type: "MarkdownHeading[]", description: "Heading cùng id mà Markdown gắn; options: headingOffset, slug." },
       { name: "readingTime(text, wpm) / articleJsonLd(input)", type: "number / object", description: "Phút đọc (mặc định 220 từ / phút, bỏ code) và dữ liệu schema.org Article." },
+    ],
+  },
+  /* ---------------------------------------------------------------- Blog */
+  blog: {
+    slug: "blog",
+    name: "Blog",
+    category: "Hiển thị dữ liệu",
+    lead: "BlogCard, BlogList và BlogTagFilter dựng trang danh sách bài viết: card dạng link với ảnh bìa, tác giả và ngày, lưới có bài nổi bật, lọc theo thẻ và tìm kiếm.",
+    description:
+      "Không gắn với router hay bộ xử lý Markdown nào: mỗi bài là một object (id, title, href, excerpt, cover, author, published, readingTime, tags), lấy từ front matter của file Markdown hay từ CMS đều được. BlogCard là thẻ <article>; tiêu đề là link và vùng bấm phủ cả card, tóm tắt là mô tả của link, nên trình đọc màn hình chỉ đọc tên bài thay vì cả card. Ảnh bìa nằm trong khung 16:9 giữ chỗ sẵn và nạp lười; ngày ở thẻ <time>. BlogList xếp lưới (hoặc danh sách card ngang), đưa bài nổi bật lên đầu và rộng hai cột, hiện card giữ chỗ khi đang tải, trạng thái trống khi lọc không ra gì, và nút Xem thêm. BlogTagFilter là nhóm nút bật-tắt (aria-pressed) với nút Tất cả; filterPosts() tìm theo tiêu đề, tóm tắt và thẻ, không phân biệt dấu. Trạng thái lọc và URL là của app. Trang của từng bài: ghép Article với Markdown (xem trang Article).",
+    importCode: `import { BlogCard, BlogList, BlogTagFilter, filterPosts, type BlogPost } from "@/components/ui";`,
+    hero: { title: "Trang blog có lọc và tìm kiếm", code: BLOG_CODE, render: () => <BlogDemo /> },
+    examples: [
+      {
+        title: "Đang tải",
+        description: "Card giữ chỗ cùng kích thước card thật, nên trang không xô lệch khi bài tải xong.",
+        code: `<BlogList posts={[]} loading loadingCount={3} />`,
+        render: () => <BlogList posts={[]} loading loadingCount={3} />,
+      },
+      {
+        title: "Không có bài phù hợp",
+        description: "empty thay câu mặc định khi lọc không ra bài nào.",
+        code: `<BlogList posts={[]} empty="No posts with this tag yet." />`,
+        render: () => <BlogList posts={[]} empty="No posts with this tag yet." />,
+      },
+    ],
+    dos: [
+      "Đặt headingLevel theo cấu trúc trang (h2 khi tiêu đề trang là h1).",
+      "Giữ thẻ và từ khoá tìm kiếm trong URL để người dùng chia sẻ được kết quả lọc.",
+      "Viết alt cho ảnh bìa, hoặc alt rỗng khi ảnh chỉ để trang trí.",
+    ],
+    donts: [
+      "Không đặt nút hay link khác vào trong card: card đã là một link.",
+      "Không cắt tiêu đề bằng dấu …; chỉ tóm tắt được rút gọn (3 dòng).",
+      "Không dùng màu làm cách duy nhất để báo thẻ đang lọc: nút có aria-pressed và đổi nền.",
+    ],
+    props: [
+      { name: "BlogCard.post", type: "BlogPost", description: "id, title, href, excerpt, cover, author, published, readingTime, tags." },
+      { name: "BlogCard.headingLevel / layout / featured", type: `"h2" | "h3" | "h4" / "vertical" | "horizontal" / boolean`, defaultValue: `"h3" / "vertical" / false`, description: "Cấp heading, bố cục, bài nổi bật." },
+      { name: "BlogCard.renderLink", type: "({ href, children, className }) => ReactNode", description: "Link của router; giữ className để vùng bấm phủ cả card." },
+      { name: "BlogList.posts / layout", type: `BlogPost[] / "grid" | "list"`, defaultValue: `— / "grid"`, description: "Các bài và cách xếp." },
+      { name: "BlogList.loading / loadingCount / empty", type: "boolean / number / ReactNode", defaultValue: "false / 3 / —", description: "Đang tải (card giữ chỗ), trạng thái trống." },
+      { name: "BlogList.hasMore / onLoadMore / loadingMore", type: "boolean / () => void / boolean", description: "Nút Xem thêm." },
+      { name: "BlogList.featuredId / renderCard", type: "string / (post) => ReactNode", description: "Bài nổi bật đưa lên đầu, thay card." },
+      { name: "BlogTagFilter.tags / selected / onSelectedChange / single", type: "(string | { tag, count })[] / string[] / (tags) => void / boolean", description: "Thẻ, thẻ đang chọn (controlled), chỉ chọn một." },
+      { name: "filterPosts(posts, { query, tags, match })", type: "BlogPost[]", description: "Lọc không dấu theo tiêu đề, tóm tắt, thẻ; match any / all." },
     ],
   },
 };
