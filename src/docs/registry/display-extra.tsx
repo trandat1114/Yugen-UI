@@ -13,6 +13,7 @@ import { Sparkline } from "@/components/ui/Chart/Chart";
 import { DescriptionItem, DescriptionList } from "@/components/ui/DescriptionList/DescriptionList";
 import { Article, ArticleBody, ArticleHeader, ArticleMeta, ArticleToc, readingTime } from "@/components/ui/Article/Article";
 import { Markdown, markdownHeadings } from "@/components/ui/Markdown/Markdown";
+import { sunset } from "../sample-assets";
 import { Prose } from "@/components/ui/Prose/Prose";
 import { Sonner, sonner, type SonnerPosition } from "@/components/ui/Sonner/Sonner";
 import { Stat } from "@/components/ui/Stat/Stat";
@@ -958,7 +959,7 @@ function ArticleDemo() {
     category: "Hiển thị dữ liệu",
     lead: "Markdown hiển thị nội dung viết bằng Markdown (bài viết, ghi chú phát hành, mô tả từ CMS) theo kiểu chữ của Prose, an toàn với nội dung không tin cậy.",
     description:
-      "Truyền chuỗi Markdown làm children. Hỗ trợ CommonMark và phần GFM hay dùng: heading, đoạn văn, danh sách, danh sách việc, trích dẫn, bảng, code fence (tô màu bằng CodeBlock), đậm, nghiêng, gạch, code và link. Không nhận HTML: thẻ HTML hiện như chữ, link `javascript:` hay `data:` chỉ còn nhãn. Link tương đối (`/path`, `#id`) được giữ; link ngoài mở tab mới. `inline` cho đoạn một dòng: chỉ phần inline, trong một `<span>`. `renderLink` giao link cho router của app. Nội dung đang về theo từng token (câu trả lời AI) dùng StreamingMarkdown.",
+      "Truyền chuỗi Markdown làm children. Hỗ trợ CommonMark và phần GFM hay dùng: heading, đoạn văn, danh sách, danh sách việc, trích dẫn, bảng, code fence (tô màu bằng CodeBlock), đậm, nghiêng, gạch, code, link và ảnh. Không hỗ trợ: HTML (hiện như chữ), link tham chiếu `[x][id]`, chú thích cuối trang và code thụt lề. Link `javascript:`, `data:` chỉ còn nhãn; ảnh chỉ nhận http, https hoặc đường dẫn tương đối, nạp lười (loading=\"lazy\") và cần alt (thiếu thì cảnh báo khi phát triển). Link tương đối (`/path`, `#id`) được giữ; link ngoài mở tab mới. `inline` cho đoạn một dòng: chỉ phần inline, trong một `<span>`. `renderLink` giao link cho router của app, `renderImage` giao ảnh cho component ảnh của framework. Các khối được memo: render lại với cùng nội dung không tô màu code lại. Nội dung đang về theo từng token (câu trả lời AI) dùng StreamingMarkdown.",
     importCode: `import { Markdown } from "@/components/ui";`,
     hero: {
       title: "Markdown",
@@ -1029,6 +1030,24 @@ Every request needs an **API key** in the \\\`Authorization\\\` header. Create o
         render: () => <RouterLinkDemo />,
       },
       {
+        title: "Ảnh qua renderImage",
+        description: "renderImage nhận src, alt, title đã làm sạch; truyền width / height để ảnh giữ chỗ trước khi tải xong.",
+        code: `<Markdown
+  className="w-full max-w-md"
+  renderImage={({ src, alt }) => <img src={src === "/lake.png" ? sunset : src} alt={alt} width={640} height={400} className="h-auto w-full rounded-large" />}
+>
+  {"A quiet morning by the lake.\\n\\n![A lake at sunrise with hills behind it](/lake.png)"}
+</Markdown>`,
+        render: () => (
+          <Markdown
+            className="w-full max-w-md"
+            renderImage={({ src, alt }) => <img src={src === "/lake.png" ? sunset : src} alt={alt} width={640} height={400} className="h-auto w-full rounded-large" />}
+          >
+            {"A quiet morning by the lake.\n\n![A lake at sunrise with hills behind it](/lake.png)"}
+          </Markdown>
+        ),
+      },
+      {
         title: "Nội dung không tin cậy",
         description: "HTML hiện như chữ, link javascript: chỉ còn nhãn; không cần sanitize trước.",
         code: `<Markdown>{'<img src=x onerror="alert(1)"> and [click here](javascript:alert(1))'}</Markdown>`,
@@ -1052,6 +1071,8 @@ Every request needs an **API key** in the \\\`Authorization\\\` header. Create o
       { name: "headingIds", type: "boolean | ((text: string) => string)", defaultValue: "false", description: "Gắn id cho heading từ chữ của nó (bỏ dấu, khử trùng bằng -2, -3); truyền hàm để tự tạo id." },
       { name: "breaks", type: "boolean", defaultValue: "false", description: "Xuống dòng đơn thành <br>." },
       { name: "renderLink", type: "(link: MarkdownLink) => ReactNode", description: "Tự render mọi link; MarkdownLink gồm href, title, children, external." },
+      { name: "images", type: "boolean", defaultValue: "true", description: "![alt](src) thành ảnh nạp lười; false: hiện như link tới ảnh." },
+      { name: "renderImage", type: "(image: MarkdownImage) => ReactNode", description: "Tự render ảnh; MarkdownImage gồm src, alt, title." },
     ],
   },
   /* ---------------------------------------------------------------- Article */

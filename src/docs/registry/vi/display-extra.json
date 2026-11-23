@@ -130,5 +130,6 @@
   "## A very long heading that has to wrap on small screens without overflowing the page": "## Một heading rất dài phải xuống dòng trên màn hình nhỏ mà không làm trang tràn ngang",
   "Long headings wrap instead of pushing the layout sideways.": "Heading dài xuống dòng thay vì đẩy bố cục sang ngang.",
   "## Applying it in code": "## Áp dụng trong code",
-  "A second section with the same title gets its own id in the table of contents.": "Phần thứ hai trùng tiêu đề vẫn có id riêng trong mục lục."
+  "A second section with the same title gets its own id in the table of contents.": "Phần thứ hai trùng tiêu đề vẫn có id riêng trong mục lục.",
+  "A quiet morning by the lake.\n\n![A lake at sunrise with hills behind it](/lake.png)": "Một buổi sáng yên tĩnh bên hồ.\n\n![Mặt hồ lúc bình minh, đồi phía sau](/lake.png)"
 }
