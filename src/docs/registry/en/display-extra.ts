@@ -235,4 +235,33 @@ export const en: Record<string, ComponentDocEn> = {
       "readingTime(text, wpm) / articleJsonLd(input)": "Minutes to read (220 words per minute by default, code ignored) and schema.org Article data.",
     },
   },
+  blog: {
+    description:
+      "Not tied to a router or a Markdown engine: each post is an object (id, title, href, excerpt, cover, author, published, readingTime, tags), from a Markdown file's front matter or from a CMS. BlogCard is an <article>; the title is the link and its click area covers the card, and the excerpt is the link's description, so a screen reader reads the post's name instead of the whole card. The cover sits in a 16:9 frame that holds its space and loads lazily; dates use <time>. BlogList lays posts out in a grid (or a list of horizontal cards), puts the featured post first and two columns wide, shows placeholder cards while loading, an empty state when a filter finds nothing, and a Load more button. BlogTagFilter is a group of toggle buttons (aria-pressed) with an All button; filterPosts() searches titles, excerpts and tags, ignoring accents. The filter state and the URL belong to your app. For each post's page, combine Article with Markdown (see Article).",
+    examples: [
+      { title: "Loading", description: "Placeholder cards match the real cards' size, so nothing shifts when the posts arrive." },
+      { title: "No matching posts", description: "empty replaces the default text when a filter finds nothing." },
+    ],
+    dos: [
+      "Set headingLevel from the page structure (h2 when the page title is the h1).",
+      "Keep the tags and the search in the URL so people can share a filtered list.",
+      "Write alt text for covers, or an empty alt when the image is decorative.",
+    ],
+    donts: [
+      "Don't put other buttons or links inside a card: the card is already a link.",
+      "Don't cut titles with an ellipsis; only the excerpt is clamped (3 lines).",
+      "Don't use color as the only sign of an active tag: the buttons have aria-pressed and change their fill.",
+    ],
+    props: {
+      "BlogCard.post": "id, title, href, excerpt, cover, author, published, readingTime, tags.",
+      "BlogCard.headingLevel / layout / featured": "Heading level, layout, featured post.",
+      "BlogCard.renderLink": "Your router's link; keep className so the click area covers the card.",
+      "BlogList.posts / layout": "The posts and how they are arranged.",
+      "BlogList.loading / loadingCount / empty": "Loading (placeholder cards) and the empty state.",
+      "BlogList.hasMore / onLoadMore / loadingMore": "The Load more button.",
+      "BlogList.featuredId / renderCard": "Featured post moved first, replacement card.",
+      "BlogTagFilter.tags / selected / onSelectedChange / single": "Tags, selected tags (controlled), single choice.",
+      "filterPosts(posts, { query, tags, match })": "Accent-insensitive filter on title, excerpt and tags; match any / all.",
+    },
+  },
 };

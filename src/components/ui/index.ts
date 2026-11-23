@@ -69,6 +69,7 @@ export * from "./Text/Text";
 export * from "./Quote/Quote";
 export * from "./Prose/Prose";
 export * from "./Markdown/Markdown";
+export * from "./Blog/Blog";
 export * from "./Article/Article";
 export * from "./Image/Image";
 export * from "./List/List";

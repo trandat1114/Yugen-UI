@@ -131,5 +131,19 @@
   "Long headings wrap instead of pushing the layout sideways.": "Heading dài xuống dòng thay vì đẩy bố cục sang ngang.",
   "## Applying it in code": "## Áp dụng trong code",
   "A second section with the same title gets its own id in the table of contents.": "Phần thứ hai trùng tiêu đề vẫn có id riêng trong mục lục.",
-  "A quiet morning by the lake.\n\n![A lake at sunrise with hills behind it](/lake.png)": "Một buổi sáng yên tĩnh bên hồ.\n\n![Mặt hồ lúc bình minh, đồi phía sau](/lake.png)"
+  "A quiet morning by the lake.\n\n![A lake at sunrise with hills behind it](/lake.png)": "Một buổi sáng yên tĩnh bên hồ.\n\n![Mặt hồ lúc bình minh, đồi phía sau](/lake.png)",
+  "mountain, sunset, landscape: any image URL (generated SVGs here).": "mountain, sunset, landscape: URL ảnh bất kỳ (ở đây là SVG sinh tại chỗ).",
+  "Release 2.4: faster search and exports": "Bản 2.4: tìm kiếm nhanh hơn và xuất dữ liệu",
+  "Search answers in under 50 ms, and every table can be exported to CSV.": "Tìm kiếm trả lời dưới 50 ms, và mọi bảng đều xuất được ra CSV.",
+  "Sunset over hills": "Hoàng hôn trên đồi",
+  "Mountains under a pale sky": "Núi dưới bầu trời nhạt",
+  "A focus ring that never disappears": "Vòng focus không bao giờ biến mất",
+  "Outline-only focus, forced colors and why border-radius stays put.": "Focus chỉ bằng outline, forced colors và vì sao bo góc giữ nguyên.",
+  "A lake below mountains": "Hồ nước dưới chân núi",
+  "Minh Pham": "Phạm Minh",
+  "Design tokens in a cascade layer": "Design token trong cascade layer",
+  "Your own token values now win whatever the file order.": "Giá trị token của bạn giờ luôn thắng, bất kể thứ tự file.",
+  "Search posts": "Tìm bài viết",
+  "No posts with this tag yet.": "Chưa có bài nào với thẻ này.",
+  "en-US": "vi-VN"
 }
