@@ -1,6 +1,10 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
 import { warnDeprecated } from "@/lib/deprecate";
+import { useYugenMessages } from "../YugenProvider/context";
+import { timelineMessagesEn } from "./messages";
+
+export { timelineMessagesVi, timelineMessagesEn, type TimelineMessages } from "./messages";
 
 /** Màu của sự kiện. "danger" cũ đã lỗi thời (bỏ ở 1.0): dùng "error" như MessageBar, Toast, Field. */
 export type TimelineIntent = TimelineIntentName | TimelineIntentLegacy;
@@ -65,15 +69,21 @@ function useTimelineScrollState(
 
     const media = typeof window.matchMedia === "function" ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
     let frame: number | null = null;
+    // Mỗi frame chỉ re-render khi tiến độ hoặc mục hiện tại thực sự đổi.
+    const update = (next: { progress: number; activeIndex: number; reducedMotion: boolean }) =>
+      setState((prev) =>
+        prev.progress === next.progress && prev.activeIndex === next.activeIndex && prev.reducedMotion === next.reducedMotion
+          ? prev
+          : next,
+      );
 
     const measure = () => {
       frame = null;
       const list = listRef.current;
-      const reducedMotion = media?.matches ?? false;
       if (!list) return;
 
-      if (reducedMotion) {
-        setState({ progress: 1, activeIndex: Math.max(itemCount - 1, -1), reducedMotion: true });
+      if (media?.matches) {
+        update({ progress: 1, activeIndex: itemCount - 1, reducedMotion: true });
         return;
       }
 
@@ -88,30 +98,24 @@ function useTimelineScrollState(
       itemNodes.forEach((item, index) => {
         if (item.getBoundingClientRect().top - rect.top <= relativeMarkerLine) activeIndex = index;
       });
-      setState({ progress, activeIndex, reducedMotion: false });
+      update({ progress, activeIndex, reducedMotion: false });
     };
 
+    // Scroll, resize và đổi prefers-reduced-motion dồn về một lần đo mỗi frame.
     const scheduleMeasure = () => {
-      if (frame !== null) return;
-      frame = typeof window.requestAnimationFrame === "function" ? window.requestAnimationFrame(measure) : window.setTimeout(measure, 0);
+      if (frame === null) frame = window.requestAnimationFrame(measure);
     };
-    const onMotionPreferenceChange = () => scheduleMeasure();
 
     window.addEventListener("scroll", scheduleMeasure, { passive: true });
     window.addEventListener("resize", scheduleMeasure);
-    media?.addEventListener?.("change", onMotionPreferenceChange);
-    media?.addListener?.(onMotionPreferenceChange);
+    media?.addEventListener?.("change", scheduleMeasure);
     scheduleMeasure();
 
     return () => {
       window.removeEventListener("scroll", scheduleMeasure);
       window.removeEventListener("resize", scheduleMeasure);
-      media?.removeEventListener?.("change", onMotionPreferenceChange);
-      media?.removeListener?.(onMotionPreferenceChange);
-      if (frame !== null) {
-        if (typeof window.cancelAnimationFrame === "function") window.cancelAnimationFrame(frame);
-        else window.clearTimeout(frame);
-      }
+      media?.removeEventListener?.("change", scheduleMeasure);
+      if (frame !== null) window.cancelAnimationFrame(frame);
     };
   }, [enabled, itemCount, listRef, scrollOffset]);
 
@@ -127,7 +131,7 @@ export interface TimelineProps extends React.OlHTMLAttributes<HTMLOListElement> 
   scrollOffset?: number;
   /** Chỉ số item hiện tại do ứng dụng điều khiển; bỏ qua khi muốn tự tính theo scroll. */
   activeIndex?: number;
-  /** Nhãn cho progressbar ẩn dành cho trình đọc màn hình. */
+  /** Nhãn cho progressbar ẩn dành cho trình đọc màn hình. Mặc định: `messages.timeline.progressLabel`. */
   progressLabel?: string;
   /** inline giữ thời gian cạnh tiêu đề; sticky đặt thời gian ở cột riêng trên màn hình rộng. */
   dateLayout?: TimelineDateLayout;
@@ -139,7 +143,7 @@ export function Timeline({
   progress: progressEnabled = false,
   scrollOffset: scrollOffsetProp = 0.65,
   activeIndex: activeIndexProp,
-  progressLabel = "Timeline progress",
+  progressLabel: progressLabelProp,
   dateLayout = "inline",
   className,
   style,
@@ -147,6 +151,8 @@ export function Timeline({
   ref,
   ...props
 }: TimelineProps & { ref?: React.Ref<HTMLOListElement> }) {
+  const msg = useYugenMessages("timeline", timelineMessagesEn);
+  const progressLabel = progressLabelProp ?? msg.progressLabel;
   const listRef = React.useRef<HTMLOListElement>(null);
   const scrollOffset = clamp(scrollOffsetProp, MIN_SCROLL_OFFSET, MAX_SCROLL_OFFSET);
   const directItems = React.Children.toArray(children).filter(

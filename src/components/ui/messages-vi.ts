@@ -76,6 +76,7 @@ import { tableMessagesVi } from "./Table/messages";
 import { tagMessagesVi } from "./Tag/messages";
 import { tagPickerMessagesVi } from "./TagPicker/messages";
 import { teachingPopoverMessagesVi } from "./TeachingPopover/messages";
+import { timelineMessagesVi } from "./Timeline/messages";
 import { timePickerMessagesVi } from "./TimePicker/messages";
 import { toastMessagesVi } from "./Toast/messages";
 import { tourMessagesVi } from "./Tour/messages";
@@ -155,6 +156,7 @@ export const messagesVi: Omit<YugenMessages, "calendar"> = {
   tag: tagMessagesVi,
   tagPicker: tagPickerMessagesVi,
   teachingPopover: teachingPopoverMessagesVi,
+  timeline: timelineMessagesVi,
   timePicker: timePickerMessagesVi,
   toast: toastMessagesVi,
   tour: tourMessagesVi,

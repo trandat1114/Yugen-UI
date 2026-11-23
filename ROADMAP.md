@@ -4,7 +4,7 @@
 
 *Tiếng Việt: [xem bên dưới](#tiếng-việt).*
 
-Plans for each release, updated 2026-11-09. Each release is a GitHub milestone; priority, size and
+Plans for each release, updated 2026-11-23. Each release is a GitHub milestone; priority, size and
 dependencies are in the [GitHub Project](https://github.com/users/trandat1114/projects/6). `[x]` done, `[~]` in progress, `[ ]` planned.
 
 Want to pick something up? Comment on the issue before you start. The same roadmap is on the
@@ -12,21 +12,42 @@ Want to pick something up? Comment on the issue before you start. The same roadm
 
 ## Now
 
+### 0.17.0 · minor
+
+The 1.0 breaking changes ahead of time, plus Form, new charts, BentoGrid and components for voice and articles.
+
+- [x] Native inputs for Checkbox, Switch and RadioGroup (#357)
+- [x] The date stack as an optional peer (yugen-ui/dates) (#356)
+- [x] CSS layering: tokens in @layer theme, opt-in token groups, components.css without a global reset (#354)
+- [x] Yugen-owned prop types for Calendar and Resizable (#371)
+- [x] Form: validation, an error summary, react-hook-form (yugen-ui/form) (#162)
+- [x] Persona with several avatars, image options for Avatar (#401)
+- [~] RadarChart: polygon, circle or no grid, keyboard, data table, size budget (#424)
+- [~] PieChart and RadialChart, with the gallery variants (#431)
+- [ ] Area, Bar and Line charts: full variant set, one tooltip contract, benchmarks (#433)
+- [~] BentoGrid: a responsive, accessible card grid with a benchmark (#434)
+- [~] Timeline that follows the scroll, with a status per item (#439)
+- [~] TeachingPopover spotlight that dims the rest of the page (#438)
+- [ ] AI voice: VoiceWave, Transcript, calling UI and a VoiceAssistant block (#443)
+- [ ] Article and Blog from Markdown, a faster Markdown renderer (#446)
+- [ ] Docs search by domain: AI, voice, Article, Blog (#445)
+- [ ] Enterprise data tables: density, a compact column picker, a vite-saas app shell (#412)
+
+## Next
+
 ### 1.0.0 · major
 
 Stable API. No fixed date: ships when the readiness checklist is done.
 
 - [ ] API review, deprecations removed, decision on upper-case spacing (#65)
 - [x] SEO: path URLs, prerendered pages, sitemap (#63)
-- [ ] Form: validation and an error summary (#162)
+- [ ] Codemods 0.x → 1.0 (yugen migrate) for the renamed props and moved imports (#164)
 - [ ] Block library 2.0 (marketing, app, commerce), installable with the CLI (#163)
-- [ ] Codemods 0.x → 1.0 (yugen migrate) for the renamed props (#164)
-- [ ] Yugen-owned prop types for Calendar and Resizable (no third-party types in public props) (#371)
-- [ ] CSS layering: tokens in @layer theme, opt-in token groups, no global reset from styles.css (#354)
-- [ ] The date stack as an optional peer (yugen-ui/dates) (#356)
-- [ ] Native inputs for Checkbox, Switch and RadioGroup (#357)
+- [ ] Yugen's own calendar grid and splitter (#356)
+- [ ] Performance audit: bundle, CSS, runtime and build (#342)
+- [ ] Supply chain security for the three npm packages (#384)
 
-## Next
+## Later
 
 ### Backlog
 
@@ -64,12 +85,35 @@ Details on What's new (`/news`) and in `CHANGELOG.md`.
 
 ## Tiếng Việt
 
-Kế hoạch theo từng bản phát hành, cập nhật 2026-11-09. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và
+Kế hoạch theo từng bản phát hành, cập nhật 2026-11-23. Mỗi bản là một milestone trên GitHub; ưu tiên, độ lớn và
 phụ thuộc nằm ở [GitHub Project](https://github.com/users/trandat1114/projects/6). `[x]` đã xong, `[~]` đang làm, `[ ]` dự kiến.
 
 Muốn nhận một mục? Bình luận vào issue trước khi bắt tay làm. Trang [Cộng đồng](https://trandat1114.github.io/Yugen-UI/vi/community) có cùng lộ trình.
 
 ### Đang làm
+
+#### 0.17.0 · minor
+
+Đưa sớm các thay đổi phá vỡ API của 1.0, thêm Form, biểu đồ mới, BentoGrid và component cho voice, bài viết.
+
+- [x] Input gốc cho Checkbox, Switch và RadioGroup (#357)
+- [x] Phần ngày tháng thành peer tuỳ chọn (yugen-ui/dates) (#356)
+- [x] Phân lớp CSS: token trong @layer theme, nhóm token tuỳ chọn, components.css không reset toàn cục (#354)
+- [x] Kiểu prop riêng của Yugen cho Calendar và Resizable (#371)
+- [x] Form: kiểm tra dữ liệu, tóm tắt lỗi, react-hook-form (yugen-ui/form) (#162)
+- [x] Persona nhiều avatar, tuỳ chọn ảnh cho Avatar (#401)
+- [~] RadarChart: lưới đa giác / tròn / không lưới, bàn phím, bảng dữ liệu, ngân sách kích thước (#424)
+- [~] PieChart và RadialChart, các biến thể theo gallery (#431)
+- [ ] Biểu đồ Area, Bar, Line: đủ biến thể, tooltip thống nhất, benchmark (#433)
+- [~] BentoGrid: lưới card responsive, truy cập được, có benchmark (#434)
+- [~] Timeline chạy theo vị trí cuộn, trạng thái từng mục (#439)
+- [~] TeachingPopover làm tối phần còn lại của trang (spotlight) (#438)
+- [ ] AI voice: VoiceWave, Transcript, giao diện cuộc gọi, block VoiceAssistant (#443)
+- [ ] Article và Blog từ Markdown, trình render Markdown nhanh hơn (#446)
+- [ ] Tìm kiếm trong docs theo nhóm: AI, voice, Article, Blog (#445)
+- [ ] Bảng dữ liệu cho doanh nghiệp: mật độ, chọn cột gọn, khung app vite-saas (#412)
+
+### Tiếp theo
 
 #### 1.0.0 · major
 
@@ -77,15 +121,13 @@ API ổn định. Chưa định ngày: phát hành khi danh sách điều kiện
 
 - [ ] Rà soát API, gỡ deprecation, quyết định về class spacing viết hoa (#65)
 - [x] SEO: URL theo đường dẫn, prerender từng trang, sitemap (#63)
-- [ ] Form: kiểm tra dữ liệu và tóm tắt lỗi (#162)
+- [ ] Codemod 0.x → 1.0 (yugen migrate) cho các tên và đường import đã đổi (#164)
 - [ ] Thư viện block 2.0 (marketing, ứng dụng, thương mại), cài bằng CLI (#163)
-- [ ] Codemod 0.x → 1.0 (yugen migrate) cho các tên đã đổi (#164)
-- [ ] Kiểu prop riêng của Yugen cho Calendar và Resizable (không lộ kiểu của thư viện khác) (#371)
-- [ ] Phân lớp CSS: token trong @layer theme, nhóm token tuỳ chọn, styles.css không reset toàn cục (#354)
-- [ ] Phần ngày tháng thành peer tuỳ chọn (yugen-ui/dates) (#356)
-- [ ] Input gốc cho Checkbox, Switch và RadioGroup (#357)
+- [ ] Lưới lịch và splitter của riêng Yugen (#356)
+- [ ] Rà soát hiệu năng: bundle, CSS, runtime và build (#342)
+- [ ] Bảo mật chuỗi cung ứng cho cả ba gói npm (#384)
 
-### Tiếp theo
+### Sau đó
 
 #### Backlog
 
