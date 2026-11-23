@@ -1,7 +1,13 @@
-import type { VoiceWaveState } from "./VoiceWave";
-
 /** Chuỗi giao diện có sẵn của VoiceWave: tên đọc cho từng trạng thái. Đổi qua `messages.voiceWave` của YugenProvider. */
-export type VoiceWaveMessages = Record<VoiceWaveState, string>;
+export interface VoiceWaveMessages {
+  /** Chưa có âm thanh. */
+  idle: string;
+  listening: string;
+  speaking: string;
+  muted: string;
+  /** Không nhận được âm thanh (micro lỗi, bị chặn). */
+  error: string;
+}
 
 declare module "../YugenProvider/context" {
   interface YugenMessages {
