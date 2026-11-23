@@ -80,7 +80,7 @@ export const en: Record<string, ComponentDocEn> = {
       progress: "Boolean; enables the scroll progress rail and derives upcoming/current/complete states.",
       scrollOffset: "Number, default 0.65; viewport position of the marker line, clamped to 0.1–0.9.",
       activeIndex: "Number; controlled current item index when progress comes from another source.",
-      progressLabel: "Name of the hidden progressbar for screen readers. Defaults to messages.timeline.progressLabel, in the app's language (\"Timeline progress\", \"Tiến độ dòng thời gian\").",
+      progressLabel: "Name of the hidden progressbar for screen readers. Defaults to messages.timeline.progressLabel, in the app's language (\"Timeline progress\" in English).",
       dateLayout: "inline or sticky; sticky uses a date column on wide screens and stacks the date above content on narrow screens.",
       "TimelineItem.title": "The event: who did what.",
       "TimelineItem.time": "Time shown to people.",
