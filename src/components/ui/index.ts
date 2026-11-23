@@ -131,6 +131,7 @@ export * from "./MessageScroller/MessageScroller";
 export * from "./CodeBlock/CodeBlock";
 export * from "./AIKit/AIKit";
 export * from "./VoiceWave/VoiceWave";
+export * from "./Transcript/Transcript";
 export * from "./Tour/Tour";
 export * from "./NotificationCenter/NotificationCenter";
 export * from "./GlassRefraction/GlassRefraction";

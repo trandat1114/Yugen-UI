@@ -82,6 +82,7 @@ import { toastMessagesVi } from "./Toast/messages";
 import { tourMessagesVi } from "./Tour/messages";
 import { traceMessagesVi } from "./Trace/messages";
 import { voiceWaveMessagesVi } from "./VoiceWave/messages";
+import { transcriptMessagesVi } from "./Transcript/messages";
 
 /**
  * Chuỗi giao diện có sẵn của mọi component, bằng tiếng Việt: `<YugenProvider messages={messagesVi} locale="vi-VN">`.
@@ -162,6 +163,7 @@ export const messagesVi: Omit<YugenMessages, "calendar"> = {
   toast: toastMessagesVi,
   tour: tourMessagesVi,
   trace: traceMessagesVi,
+  transcript: transcriptMessagesVi,
   typingIndicator: typingIndicatorMessagesVi,
   voiceWave: voiceWaveMessagesVi,
   wizard: wizardMessagesVi,

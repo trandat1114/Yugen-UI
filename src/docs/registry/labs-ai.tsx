@@ -11,12 +11,14 @@ import {
   Reasoning,
   StreamingMarkdown,
   Tour,
+  Transcript,
   useNotifications,
   useTour,
   VoiceWave,
   type CitationSource,
   type NotificationItem,
   type TourStep,
+  type TranscriptTurn,
   type VoiceWaveState,
 } from "@/components/ui";
 import type { ComponentDoc } from "../types";
@@ -598,6 +600,77 @@ function VoiceInput() {
   );
 }`;
 
+
+/* ================================================================ Transcript */
+
+const TRANSCRIPT_CODE = `const SCRIPT: TranscriptTurn[] = [
+  { id: "1", speaker: "Maya", role: "user", text: "Can you move my 3 pm meeting to tomorrow?", timestamp: Date.UTC(2026, 10, 23, 2, 4) },
+  { id: "2", speaker: "Assistant", role: "assistant", text: "Sure. Tomorrow at 3 pm is free for everyone. Should I send the update?", timestamp: Date.UTC(2026, 10, 23, 2, 4) },
+  { id: "3", speaker: "Maya", role: "user", text: "Yes, and add a note that the agenda is the same.", timestamp: Date.UTC(2026, 10, 23, 2, 5) },
+];
+const REPLY = "Done. The meeting is now tomorrow at 3 pm, and the invite says the agenda is unchanged.";
+
+function TranscriptDemo() {
+  const [turns, setTurns] = useState<TranscriptTurn[]>(SCRIPT);
+  const [run, setRun] = useState(0);
+  useEffect(() => {
+    let length = 0;
+    setTurns(SCRIPT);
+    const timer = setInterval(() => {
+      length = Math.min(REPLY.length, length + 4);
+      const done = length === REPLY.length;
+      setTurns([
+        ...SCRIPT,
+        { id: "4", speaker: "Assistant", role: "assistant", text: REPLY.slice(0, length), status: done ? "complete" : "streaming", timestamp: Date.UTC(2026, 10, 23, 2, 5) },
+      ]);
+      if (done) clearInterval(timer);
+    }, 60);
+    return () => clearInterval(timer);
+  }, [run]);
+  return (
+    <div className="flex w-full max-w-xl flex-col gap-3">
+      <Transcript turns={turns} announce locale="en-US" className="max-h-72 overflow-y-auto rounded-large border border-stroke-2 p-2" />
+      <Button size="small" className="self-start" onClick={() => setRun((r) => r + 1)}>
+        Replay
+      </Button>
+    </div>
+  );
+}`;
+
+const SCRIPT: TranscriptTurn[] = [
+  { id: "1", speaker: "Maya", role: "user", text: "Can you move my 3 pm meeting to tomorrow?", timestamp: Date.UTC(2026, 10, 23, 2, 4) },
+  { id: "2", speaker: "Assistant", role: "assistant", text: "Sure. Tomorrow at 3 pm is free for everyone. Should I send the update?", timestamp: Date.UTC(2026, 10, 23, 2, 4) },
+  { id: "3", speaker: "Maya", role: "user", text: "Yes, and add a note that the agenda is the same.", timestamp: Date.UTC(2026, 10, 23, 2, 5) },
+];
+const REPLY = "Done. The meeting is now tomorrow at 3 pm, and the invite says the agenda is unchanged.";
+
+function TranscriptDemo() {
+  const [turns, setTurns] = useState<TranscriptTurn[]>(SCRIPT);
+  const [run, setRun] = useState(0);
+  useEffect(() => {
+    let length = 0;
+    setTurns(SCRIPT);
+    const timer = setInterval(() => {
+      length = Math.min(REPLY.length, length + 4);
+      const done = length === REPLY.length;
+      setTurns([
+        ...SCRIPT,
+        { id: "4", speaker: "Assistant", role: "assistant", text: REPLY.slice(0, length), status: done ? "complete" : "streaming", timestamp: Date.UTC(2026, 10, 23, 2, 5) },
+      ]);
+      if (done) clearInterval(timer);
+    }, 60);
+    return () => clearInterval(timer);
+  }, [run]);
+  return (
+    <div className="flex w-full max-w-xl flex-col gap-3">
+      <Transcript turns={turns} announce locale="en-US" className="max-h-72 overflow-y-auto rounded-large border border-stroke-2 p-2" />
+      <Button size="small" className="self-start" onClick={() => setRun((r) => r + 1)}>
+        Replay
+      </Button>
+    </div>
+  );
+}
+
 export const docs: ComponentDoc[] = [
   {
     slug: "streamingmarkdown",
@@ -785,6 +858,58 @@ export const docs: ComponentDoc[] = [
       { name: "align", type: `"center" | "bottom"`, defaultValue: `"center"`, description: "Vạch đối xứng quanh đường giữa hoặc mọc từ đáy." },
       { name: "label", type: "string", description: "Tên đọc; mặc định theo state (messages.voiceWave)." },
       { name: "resampleLevels(levels, count)", type: "number[]", description: "Hàm lấy mẫu lại dùng bên trong, cũng được export." },
+    ],
+  },
+  {
+    slug: "transcript",
+    category: "Yugen Labs",
+    name: "Transcript",
+    lead: "Transcript hiện các lượt của một cuộc hội thoại giọng nói: ai nói, lúc nào, và câu trả lời đang đến dần.",
+    description:
+      "Mỗi lượt có id, speaker, text, role (user / assistant), timestamp và status (complete, streaming, error). Lượt đang diễn ra (mặc định: lượt đang streaming, hoặc activeId) có viền nhấn, nhãn chữ “Đang nói” và aria-current, không chỉ đổi màu. Danh sách không phải vùng live: với announce, mỗi lượt được đọc một lần khi xong, lịch sử không bao giờ bị đọc lại. Mỗi lượt được memo, nên khi một token mới đến chỉ lượt đó render lại (renderText cũng chỉ được gọi cho lượt đó). Đặt chiều cao và overflow-y-auto để có khung cuộn: autoScroll giữ cuộn ở cuối khi người dùng đang ở cuối, và thôi kéo xuống khi họ cuộn lên đọc lại.",
+    importCode: `import { Transcript, type TranscriptTurn } from "@/components/ui";`,
+    hero: { title: "Trợ lý đang trả lời", code: TRANSCRIPT_CODE, render: () => <TranscriptDemo /> },
+    examples: [
+      {
+        title: "Lỗi nhận dạng và trạng thái trống",
+        description: "status=\"error\" hiện lý do bằng chữ kèm icon; không có lượt nào thì hiện empty.",
+        code: `<div className="flex w-full max-w-xl flex-col gap-4">
+  <Transcript
+    turns={[
+      { id: "1", speaker: "Maya", role: "user", text: "Call the…", status: "error", error: "The microphone stopped. Try again." },
+    ]}
+  />
+  <Transcript turns={[]} empty="Press the microphone and start talking." />
+</div>`,
+        render: () => (
+          <div className="flex w-full max-w-xl flex-col gap-4">
+            <Transcript
+              turns={[{ id: "1", speaker: "Maya", role: "user", text: "Call the…", status: "error", error: "The microphone stopped. Try again." }]}
+            />
+            <Transcript turns={[]} empty="Press the microphone and start talking." />
+          </div>
+        ),
+      },
+    ],
+    dos: [
+      "Bật announce khi người dùng không nhìn màn hình (cuộc gọi, trợ lý giọng nói).",
+      "Giữ id ổn định cho mỗi lượt và chỉ tạo object mới cho lượt vừa đổi.",
+      "Đặt khung cuộn có chiều cao cố định để autoScroll hoạt động.",
+    ],
+    donts: [
+      "Không bọc Transcript trong một vùng aria-live: cả lịch sử sẽ bị đọc lại.",
+      "Không dùng màu làm cách duy nhất để báo ai đang nói.",
+      "Không tạo lại mọi lượt mỗi token — các lượt cũ sẽ render lại.",
+    ],
+    props: [
+      { name: "turns", type: "TranscriptTurn[]", description: "Các lượt: id, speaker, text, role, timestamp / time, status, error, avatar." },
+      { name: "activeId", type: "string | null", description: "Lượt đang diễn ra; mặc định lượt streaming cuối cùng, null để tắt." },
+      { name: "autoScroll", type: "boolean", defaultValue: "true", description: "Giữ cuộn ở cuối khi có chữ mới, nếu người dùng đang ở cuối." },
+      { name: "announce", type: "boolean", defaultValue: "false", description: "Đọc mỗi lượt một lần khi xong (useAnnounce)." },
+      { name: "loading", type: "boolean", defaultValue: "false", description: "Đang tải: aria-busy, chữ “Đang tải bản ghi…” khi chưa có lượt nào." },
+      { name: "empty", type: "ReactNode", description: "Nội dung khi chưa có lượt nào (mặc định messages.transcript.empty)." },
+      { name: "renderText", type: "(turn) => ReactNode", description: "Thay cách hiện chữ; chỉ được gọi cho lượt đổi." },
+      { name: "locale", type: "string", description: "Định dạng giờ của timestamp; mặc định locale của YugenProvider." },
     ],
   },
   {

@@ -156,6 +156,7 @@ export const COMPONENTS_EN: Record<string, { lead: string; name?: string }> = {
   radarchart: { lead: "RadarChart compares several series across the same axes with polygon or circular grids, dots, fills and a toggleable legend." },
   radialchart: { lead: "RadialChart displays gauges, tracks, partial arcs, center labels and stacked segments with lightweight SVG." },
   voicewave: { lead: "VoiceWave shows the audio level of a voice assistant or a call as vertical bars: flat while idle or muted, moving while listening or speaking." },
+  transcript: { lead: "Transcript shows the turns of a voice conversation: who spoke, when, and the reply that is still arriving." },
   reasoning: { lead: "Reasoning tucks the model's thinking into a collapsible block: “Reasoning…” with a timer while it runs, “Reasoned for 12s” when done." },
   scatterchart: { lead: "ScatterChart shows the relationship between two numeric measures (correlation, clusters, outliers), with bubbles and a trend line when needed." },
   sheet: { lead: "Sheet is an adaptive overlay with one API and one content: a side panel on wide screens, a draggable bottom sheet on phones." },
