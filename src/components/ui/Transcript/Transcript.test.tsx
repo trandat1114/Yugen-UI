@@ -3,7 +3,7 @@ import { render, screen, within } from "@testing-library/react";
 import { YugenProvider } from "../YugenProvider/YugenProvider";
 import { AriaLiveAnnouncer } from "../AriaLive/AriaLive";
 import { messagesEn } from "../messages-en";
-import { Transcript, type TranscriptTurn } from "./Transcript";
+import { Transcript, transcriptMessagesEn, transcriptMessagesVi, type TranscriptTurn } from "./Transcript";
 
 const AT = Date.UTC(2026, 10, 23, 9, 5);
 
@@ -130,5 +130,10 @@ describe("Transcript", () => {
     expect(screen.getByText("just now")).toBeInTheDocument();
     expect(screen.getByTestId("avatar")).toBeInTheDocument();
     expect(screen.getByText("x".repeat(300))).toHaveClass("wrap-break-word");
+  });
+
+  it("formats announcements in both languages", () => {
+    expect(transcriptMessagesEn.announce("Maya", "Hi")).toBe("Maya: Hi");
+    expect(transcriptMessagesVi.announce("Mai", "Chào")).toBe("Mai: Chào");
   });
 });
