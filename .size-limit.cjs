@@ -132,6 +132,8 @@ module.exports = [
   js("{ ColorPicker }", "{ ColorPicker }", "30 kB"),
   // Hình học / nhãn nhớ theo props, lớp điểm dùng chung, màu tô trên nhóm (#352): 30.18 → 31.10 kB.
   js("{ BarChart, LineChart }", "{ BarChart, LineChart }", "34 kB"),
+  // Một IntersectionObserver cho mục lục, không phụ thuộc mới (#446): 11.45 kB.
+  js("{ Article, ArticleHeader, ArticleMeta, ArticleBody, ArticleToc }", "{ Article, ArticleHeader, ArticleMeta, ArticleBody, ArticleToc }", "12.5 kB"),
   // Toolbar (roving focus) + 10 icon, không logic kết nối (#441): 14.29 kB.
   js("{ CallSurface, CallControls, CallControlButton }", "{ CallSurface, CallControls, CallControlButton }", "15.5 kB"),
   // SVG viết tay, không runtime vẽ biểu đồ (#424, #431, #432): RadarChart 22.21 kB, PieChart + RadialChart 22.61 kB.

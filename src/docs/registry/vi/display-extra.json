@@ -113,5 +113,22 @@
   "Beta": "Bản beta",
   "Mar 2026": "Tháng 3/2026",
   "General availability": "Phát hành rộng rãi",
-  "Jun 2026": "Tháng 6/2026"
+  "Jun 2026": "Tháng 6/2026",
+  "Design notes": "Ghi chú thiết kế",
+  "Calm interfaces with spacing, not borders": "Giao diện tĩnh lặng nhờ khoảng cách, không nhờ đường viền",
+  "How a spacing scale and clear headings replace most dividers.": "Thang khoảng cách và heading rõ ràng thay được hầu hết đường phân cách.",
+  "Linh Tran": "Trần Linh",
+  "Release 2.4": "Bản phát hành 2.4",
+  "Faster search and a new export button.": "Tìm kiếm nhanh hơn và có nút xuất dữ liệu mới.",
+  "## Why rhythm beats borders": "## Vì sao nhịp điệu hơn đường viền",
+  "Most screens use borders to separate things that spacing could separate on its own. Start with a **4 px grid** and let headings carry the structure.": "Phần lớn màn hình dùng đường viền để tách những thứ mà khoảng cách tự tách được. Hãy bắt đầu với **lưới 4 px** và để heading gánh cấu trúc.",
+  "## Spacing scale": "## Thang khoảng cách",
+  "| Token | Value | Use |": "| Token | Giá trị | Dùng cho |",
+  "| spacing-2 | 8 px | inside controls |": "| spacing-2 | 8 px | bên trong control |",
+  "| spacing-4 | 16 px | between fields |": "| spacing-4 | 16 px | giữa các trường |",
+  "| spacing-8 | 32 px | between sections |": "| spacing-8 | 32 px | giữa các phần |",
+  "## A very long heading that has to wrap on small screens without overflowing the page": "## Một heading rất dài phải xuống dòng trên màn hình nhỏ mà không làm trang tràn ngang",
+  "Long headings wrap instead of pushing the layout sideways.": "Heading dài xuống dòng thay vì đẩy bố cục sang ngang.",
+  "## Applying it in code": "## Áp dụng trong code",
+  "A second section with the same title gets its own id in the table of contents.": "Phần thứ hai trùng tiêu đề vẫn có id riêng trong mục lục."
 }
