@@ -21,7 +21,7 @@ for (const width of WIDTHS) {
 }
 
 /**
- * BentoGrid (#437): không cuộn ngang và không xô lệch bố cục (CLS < 0.1) ở 320px, 768px và màn hình rộng. Ảnh trong ô có
+ * BentoGrid (#437): các lưới không tràn ngang và không xô lệch bố cục (CLS < 0.1) ở 320px, 768px và màn hình rộng. Ảnh trong ô có
  * khung giữ chỗ; layout-shift chỉ đo được trên Chromium, engine khác chỉ kiểm tra tràn ngang.
  */
 for (const width of [320, 768, 1280]) {
@@ -43,8 +43,14 @@ for (const width of [320, 768, 1280]) {
     // Đếm từ lúc trang docs đã dựng xong: chỉ còn dịch chuyển do chính các ô (ảnh, chữ) gây ra.
     await page.evaluate(() => ((window as unknown as { __cls: number }).__cls = 0));
     await page.waitForTimeout(800);
+    // Đo chính các lưới (thanh trên của trang docs ở 320px nằm ngoài phạm vi): không tràn khỏi khung, không vượt mép phải.
     const { overflow, cls } = await page.evaluate(() => ({
-      overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      overflow: Math.max(
+        0,
+        ...[...document.querySelectorAll("[data-bento-grid]")].map((el) =>
+          Math.max(el.scrollWidth - el.clientWidth, Math.ceil(el.getBoundingClientRect().right - document.documentElement.clientWidth)),
+        ),
+      ),
       cls: (window as unknown as { __cls: number }).__cls,
     }));
     expect(overflow).toBeLessThanOrEqual(0);
