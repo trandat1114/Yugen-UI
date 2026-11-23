@@ -466,7 +466,7 @@ function SonnerPositionDemo() {
       { name: "progress", type: "boolean", defaultValue: "false", description: "Bật rail tiến độ theo scroll và tự suy ra trạng thái upcoming/current/complete." },
       { name: "scrollOffset", type: "number", defaultValue: "0.65", description: "Vị trí đường đánh dấu trong viewport; được giới hạn trong 0.1–0.9." },
       { name: "activeIndex", type: "number", description: "Chỉ số item hiện tại do ứng dụng điều khiển; hữu ích khi tiến độ đến từ nguồn khác." },
-      { name: "progressLabel", type: "string", defaultValue: `"Timeline progress"`, description: "Nhãn progressbar ẩn dành cho trình đọc màn hình." },
+      { name: "progressLabel", type: "string", defaultValue: "messages.timeline.progressLabel", description: "Tên của progressbar ẩn cho trình đọc màn hình. Mặc định theo ngôn ngữ của app (\"Timeline progress\", \"Tiến độ dòng thời gian\")." },
       { name: "dateLayout", type: `"inline" | "sticky"`, defaultValue: `"inline"`, description: "sticky dùng cột ngày riêng trên màn hình rộng và xếp ngày lên trên ở màn hình hẹp." },
       { name: "TimelineItem.title", type: "ReactNode", description: "Sự kiện: ai làm gì." },
       { name: "TimelineItem.time", type: "ReactNode", description: "Thời gian hiển thị." },
