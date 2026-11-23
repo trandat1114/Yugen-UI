@@ -8,7 +8,7 @@ describe("RadialChart", () => {
       <RadialChart data={[{ label: "Progress", value: 72 }]} maxValue={100} />,
     );
     expect(
-      screen.getByRole("img", { name: /Radial chart: 72 of 100/ }),
+      screen.getByRole("img", { name: /Biểu đồ vòng cung: 72 trên 100/ }),
     ).toBeInTheDocument();
     expect(screen.getByText("72")).toBeInTheDocument();
   });

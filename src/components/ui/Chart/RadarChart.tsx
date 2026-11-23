@@ -1,18 +1,21 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
+import { useElementSize } from "../hooks/useElementSize";
 import { useYugenLocale, useYugenMessages } from "../YugenProvider/context";
 import { chartMessagesEn } from "./messages";
 import {
   ChartContainer,
   ChartLegend,
+  ChartPatterns,
   ChartTable,
   ChartTooltip,
   type ChartLegendItem,
 } from "./ChartParts";
-import { radarPath, radarPoint, radarValue } from "./radarMath";
+import { radarPath, radarPoint, radarValue, type RadarPoint } from "./radarMath";
 import {
   chartUid,
   makeNumberFormatter,
+  patternId,
   slotFill,
   slotOf,
   slotVar,
@@ -34,16 +37,20 @@ export interface RadarChartProps extends ChartFrameProps {
   /** Trường nhãn của mỗi trục. */
   index: string;
   series: ChartSeries[];
+  /** Lưới nền: đa giác theo các trục, vòng tròn, hoặc không vẽ (bỏ cả các nan từ tâm). */
   grid?: RadarGrid;
-  /** Số vòng chia từ tâm tới biên. */
+  /** Số vòng chia từ tâm tới biên (1–8). */
   levels?: number;
-  /** Giá trị nhỏ nhất/lớn nhất dùng để chuẩn hóa các trục. */
+  /** Giá trị nhỏ nhất/lớn nhất dùng để chuẩn hóa các trục. Mặc định [0, giá trị lớn nhất của mọi chuỗi]. */
   domain?: [number, number];
   valueFormat?: ChartNumberFormat;
+  /** Chấm tại giá trị của mỗi trục. */
   dots?: boolean;
+  /** Chỉ vẽ đường viền, không tô (thắng `fill`). */
   linesOnly?: boolean;
   fill?: boolean;
   legend?: boolean;
+  /** Cạnh lớn nhất (px); biểu đồ thu nhỏ theo khung chứa hẹp hơn. */
   size?: number;
 }
 
@@ -51,10 +58,21 @@ interface RadarSeries {
   key: string;
   label: string;
   slot: ChartSlot;
+  /** Giá trị gốc theo từng trục (null = thiếu). */
   values: (number | null)[];
+  /** Giá trị đã định dạng theo `locale` (null = thiếu). */
+  labels: (string | null)[];
+  points: (RadarPoint | null)[];
 }
 
-/** RadarChart — so sánh nhiều chuỗi trên cùng một tập trục, SVG viết tay và không phụ thuộc thư viện. */
+/** Khoảng chừa quanh lưới cho nhãn trục. */
+const LABEL_MARGIN = 38;
+
+/**
+ * RadarChart — so sánh nhiều chuỗi trên cùng một tập trục, SVG viết tay và không phụ thuộc thư viện. Lưới, đường của
+ * các chuỗi và nhãn trục chỉ dựng lại khi dữ liệu, kích thước hoặc prop đổi; hover và focus chỉ vẽ lại vòng focus và
+ * tooltip.
+ */
 export function RadarChart({
   data,
   index,
@@ -86,93 +104,161 @@ export function RadarChart({
   const msg = useYugenMessages("chart", chartMessagesEn);
   const textured = useChartTexture(texture);
   const uid = chartUid(React.useId());
-  const fmt = React.useMemo(
-    () => makeNumberFormatter(locale, valueFormat),
-    [locale, valueFormat],
-  );
+  const fmt = React.useMemo(() => makeNumberFormatter(locale, valueFormat), [locale, valueFormat]);
   const axisLabels = React.useMemo(
     () => data.map((row, i) => String(row[index] ?? `${msg.category} ${i + 1}`)),
     [data, index, msg.category],
   );
-  const keys = series.map((item) => item.key);
-  const [hidden, toggle] = useSeriesToggle(keys);
-  const visible = React.useMemo(
-    () => series.filter((item) => !hidden.has(item.key)),
-    [hidden, series],
-  );
-  const allValues = React.useMemo(
-    () =>
-      data
-        .flatMap((row) => series.map((item) => toNumber(row[item.key])))
-        .filter((v): v is number => v !== null),
-    [data, series],
-  );
+  const count = axisLabels.length;
+  const [hidden, toggle] = useSeriesToggle(series.map((item) => item.key));
+  // Màu theo thực thể: chỉ số trong `series`, không đổi khi ẩn một chuỗi (giống legend).
+  const slots = React.useMemo(() => new Map(series.map((item, i) => [item.key, slotOf(item.color, i)])), [series]);
+
+  // Thang đo tính trên mọi chuỗi, kể cả chuỗi đang ẩn: ẩn một chuỗi không làm các chuỗi khác đổi hình.
+  const autoMax = React.useMemo(() => {
+    let m = 1;
+    for (const row of data) {
+      for (const item of series) {
+        const v = toNumber(row[item.key]);
+        if (v !== null && v > m) m = v;
+      }
+    }
+    return m;
+  }, [data, series]);
   const min = domain?.[0] ?? 0;
-  const max = domain?.[1] ?? Math.max(1, ...allValues, min);
-  const levelCount = Math.max(1, Math.min(8, levels));
-  const S = Math.max(180, size);
+  const max = domain?.[1] ?? Math.max(autoMax, min);
+  const levelCount = Math.max(1, Math.min(8, Math.round(levels)));
+
+  // Cạnh = `size`, nhỏ lại khi khung chứa hẹp hơn. Server và lần render đầu dùng `size`; CSS `max-w-full` giữ không tràn.
+  const { ref: boxRef, width: boxWidth } = useElementSize<HTMLDivElement>();
+  const maxSide = Math.max(160, size);
+  const S = boxWidth > 0 ? Math.max(120, Math.min(maxSide, Math.floor(boxWidth))) : maxSide;
   const cx = S / 2;
   const cy = S / 2;
-  const radius = Math.max(20, S / 2 - 38);
+  const radius = Math.max(20, S / 2 - LABEL_MARGIN);
+
   const axisPoints = React.useMemo(
-    () =>
-      axisLabels.map((_, i) =>
-        radarPoint(i, axisLabels.length, radius, cx, cy),
-      ),
-    [axisLabels, radius, cx, cy],
+    () => Array.from({ length: count }, (_, i) => radarPoint(i, count, radius, cx, cy)),
+    [count, radius, cx, cy],
   );
   const seriesData: RadarSeries[] = React.useMemo(
     () =>
-      visible.map((item, seriesIndex) => ({
-        key: item.key,
-        label: item.label,
-        slot: slotOf(item.color, seriesIndex),
-        values: data.map((row) =>
-          radarValue(toNumber(row[item.key]), min, max),
-        ),
-      })),
-    [data, max, min, visible],
+      series
+        .filter((item) => !hidden.has(item.key))
+        .map((item) => {
+          const values = data.map((row) => toNumber(row[item.key]));
+          return {
+            key: item.key,
+            label: item.label,
+            slot: slots.get(item.key) as ChartSlot,
+            values,
+            labels: values.map((v) => (v === null ? null : fmt(v))),
+            points: values.map((v, i) => {
+              const t = radarValue(v, min, max);
+              const axis = axisPoints[i];
+              return t === null || !axis ? null : { x: cx + (axis.x - cx) * t, y: cy + (axis.y - cy) * t };
+            }),
+          };
+        }),
+    [series, hidden, data, slots, fmt, min, max, axisPoints, cx, cy],
   );
-  const [active, setActive] = React.useState<{ i: number; kb: boolean } | null>(
-    null,
-  );
-  const roving = useRovingPoints(axisLabels.length, (i, kb) =>
-    setActive(i === null ? null : { i, kb }),
-  );
+
+  const [active, setActive] = React.useState<{ i: number; kb: boolean } | null>(null);
+  const roving = useRovingPoints(count, (i, kb) => setActive(i === null ? null : { i, kb }));
   const indexLabel = indexLabelProp ?? msg.category;
-  const summary =
-    ariaLabel ??
-    `Radar chart: ${axisLabels.length} ${axisLabels.length === 1 ? "axis" : "axes"}, ${seriesData.length} ${seriesData.length === 1 ? "series" : "series"}.`;
-  const layers = React.useMemo(
-    () =>
-      Array.from(
-        { length: levelCount },
-        (_, level) => (level + 1) / levelCount,
-      ),
-    [levelCount],
-  );
+  const summary = ariaLabel ?? msg.radarSummary({ axes: count, series: seriesData.map((item) => item.label) });
+
   const legendItems: ChartLegendItem[] = React.useMemo(
-    () =>
-      series.map((item, i) => ({
-        key: item.key,
-        label: item.label,
-        slot: slotOf(item.color, i),
-        hidden: hidden.has(item.key),
-      })),
-    [hidden, series],
+    () => series.map((item) => ({ key: item.key, label: item.label, slot: slots.get(item.key) as ChartSlot, hidden: hidden.has(item.key) })),
+    [hidden, series, slots],
+  );
+
+  const gridLayer = React.useMemo(() => {
+    if (grid === "none" || count === 0) return null;
+    const rings = Array.from({ length: levelCount }, (_, level) => (level + 1) / levelCount);
+    return (
+      <g aria-hidden fill="none" style={{ stroke: "var(--colorChartGrid)" }}>
+        {rings.map((scale) =>
+          grid === "circle" ? (
+            <circle key={scale} cx={cx} cy={cy} r={radius * scale} />
+          ) : (
+            <path
+              key={scale}
+              d={radarPath(axisPoints.map((point) => ({ x: cx + (point.x - cx) * scale, y: cy + (point.y - cy) * scale })))}
+            />
+          ),
+        )}
+        {axisPoints.map((point, i) => (
+          <line key={i} x1={cx} y1={cy} x2={point.x} y2={point.y} strokeWidth={1} />
+        ))}
+      </g>
+    );
+  }, [grid, count, levelCount, axisPoints, cx, cy, radius]);
+
+  const seriesLayer = React.useMemo(
+    () => (
+      <g aria-hidden>
+        {seriesData.map((item) => (
+          <g key={item.key} style={{ stroke: slotVar(item.slot) }}>
+            <path
+              d={radarPath(item.points)}
+              fill={fill && !linesOnly ? slotFill(item.slot, textured, uid) : "none"}
+              // Hoa văn (tương phản cao) giữ nét đậm; màu đặc tô mờ để các chuỗi chồng lên nhau vẫn đọc được.
+              fillOpacity={fill && !linesOnly && !(textured && patternId(uid, item.slot)) ? 0.18 : undefined}
+              strokeWidth={2}
+              strokeLinejoin="round"
+            />
+            {dots && (
+              <g style={{ fill: slotVar(item.slot), stroke: "var(--colorChartSurface)" }}>
+                {item.points.map((point, i) => point && <circle key={i} cx={point.x} cy={point.y} r={3} />)}
+              </g>
+            )}
+          </g>
+        ))}
+      </g>
+    ),
+    [seriesData, fill, linesOnly, dots, textured, uid],
+  );
+
+  const axisLayer = React.useMemo(
+    () => (
+      <g {...roving.layerProps}>
+        {axisPoints.map((point, i) => {
+          const values = seriesData.map((item) => `${item.label} ${item.labels[i] ?? msg.noData}`).join(", ");
+          return (
+            <g key={i}>
+              <text
+                aria-hidden
+                x={point.x}
+                y={point.y + (point.y < cy ? -8 : 14)}
+                textAnchor={Math.abs(point.x - cx) < 4 ? "middle" : point.x < cx ? "end" : "start"}
+                className="fill-foreground-2 text-caption1"
+              >
+                {axisLabels[i]}
+              </text>
+              <circle
+                data-i={i}
+                tabIndex={i === roving.stop ? 0 : -1}
+                cx={point.x}
+                cy={point.y}
+                r={12}
+                fill="transparent"
+                role="img"
+                aria-label={values ? `${axisLabels[i]}: ${values}` : axisLabels[i]}
+                className="cursor-pointer outline-none"
+              />
+            </g>
+          );
+        })}
+      </g>
+    ),
+    [roving.layerProps, roving.stop, axisPoints, seriesData, axisLabels, msg.noData, cx, cy],
   );
 
   const table = () => (
     <ChartTable
       caption={summary}
-      columns={[
-        { key: "axis", label: indexLabel },
-        ...series.map((item) => ({
-          key: item.key,
-          label: item.label,
-          numeric: true,
-        })),
-      ]}
+      columns={[{ key: "axis", label: indexLabel }, ...series.map((item) => ({ key: item.key, label: item.label, numeric: true }))]}
       rows={data.map((row, i) => ({
         key: String(i),
         header: axisLabels[i],
@@ -183,6 +269,8 @@ export function RadarChart({
       }))}
     />
   );
+
+  const activePoint = active ? axisPoints[active.i] : undefined;
 
   return (
     <ChartContainer
@@ -195,16 +283,9 @@ export function RadarChart({
       className={className}
       table={table}
     >
-      {legend && (
-        <ChartLegend
-          items={legendItems}
-          shape="line"
-          textured={textured}
-          onToggle={toggle}
-        />
-      )}
-      <div className="relative flex w-full justify-center overflow-visible">
-        <div className="relative shrink-0" style={{ width: S, height: S }}>
+      {legend && <ChartLegend items={legendItems} shape="line" textured={textured} onToggle={toggle} />}
+      <div ref={boxRef} className="relative flex w-full min-w-0 justify-center overflow-visible">
+        <div className="relative max-w-full shrink-0" style={{ width: S, aspectRatio: "1" }}>
           <svg
             width={S}
             height={S}
@@ -212,152 +293,34 @@ export function RadarChart({
             role="group"
             aria-label={summary}
             aria-roledescription={msg.roleDescription}
-            className={cn(
-              "block h-auto max-w-full overflow-visible",
-              animate && "animate-surface-in",
-              "motion-reduce:animate-none",
-            )}
-            onPointerLeave={() =>
-              setActive((current) => (current?.kb ? current : null))
-            }
+            className={cn("block size-full overflow-visible", animate && "animate-surface-in", "motion-reduce:animate-none")}
+            onPointerLeave={() => setActive((current) => (current?.kb ? current : null))}
           >
-          {layers.map((scale) => {
-            const points = axisPoints.map((point) => ({
-              x: cx + (point.x - cx) * scale,
-              y: cy + (point.y - cy) * scale,
-            }));
-            return grid === "circle" ? (
+            {textured && fill && !linesOnly && <ChartPatterns prefix={uid} slots={seriesData.map((item) => item.slot)} />}
+            {gridLayer}
+            {seriesLayer}
+            {axisLayer}
+            {active?.kb && activePoint && (
               <circle
-                key={scale}
-                cx={cx}
-                cy={cy}
-                r={radius * scale}
+                cx={activePoint.x}
+                cy={activePoint.y}
+                r={14}
                 fill="none"
-                style={{ stroke: "var(--colorChartGrid)" }}
+                strokeWidth={2}
+                pointerEvents="none"
+                style={{ stroke: "var(--colorStrokeFocus2)" }}
               />
-            ) : grid === "polygon" ? (
-              <path
-                key={scale}
-                d={radarPath(points)}
-                fill="none"
-                style={{ stroke: "var(--colorChartGrid)" }}
-              />
-            ) : null;
-          })}
-          {grid !== "none" &&
-            axisPoints.map((point, i) => (
-              <line
-                key={i}
-                x1={cx}
-                y1={cy}
-                x2={point.x}
-                y2={point.y}
-                strokeWidth={1}
-                style={{ stroke: "var(--colorChartGrid)" }}
-              />
-            ))}
-          <g aria-hidden>
-            {seriesData.map((item) => {
-              const points = item.values.map((value, i) =>
-                value === null
-                  ? null
-                  : {
-                      x: cx + (axisPoints[i].x - cx) * value,
-                      y: cy + (axisPoints[i].y - cy) * value,
-                    },
-              );
-              const path = radarPath(points);
-              return (
-                <g key={item.key}>
-                  <path
-                    d={path}
-                    fill={
-                      fill && !linesOnly
-                        ? slotFill(item.slot, textured, uid)
-                        : "none"
-                    }
-                    fillOpacity={fill && !linesOnly ? 0.18 : undefined}
-                    strokeWidth={2}
-                    strokeLinejoin="round"
-                    strokeDasharray={textured ? undefined : undefined}
-                    style={{
-                      stroke: slotVar(item.slot),
-                      transition: "opacity 120ms ease",
-                    }}
-                  />
-                  {dots &&
-                    points.map(
-                      (point, i) =>
-                        point && (
-                          <circle
-                            key={i}
-                            cx={point.x}
-                            cy={point.y}
-                            r={3}
-                            style={{
-                              fill: slotVar(item.slot),
-                              stroke: "var(--colorChartSurface)",
-                            }}
-                          />
-                        ),
-                    )}
-                </g>
-              );
-            })}
-          </g>
-          <g>
-            {axisPoints.map((point, i) => (
-              <g key={i}>
-                <text
-                  x={point.x}
-                  y={point.y + (point.y < cy ? -8 : 14)}
-                  textAnchor={
-                    Math.abs(point.x - cx) < 4
-                      ? "middle"
-                      : point.x < cx
-                        ? "end"
-                        : "start"
-                  }
-                  className="fill-foreground-2 text-caption1"
-                >
-                  {axisLabels[i]}
-                </text>
-                <circle
-                  cx={point.x}
-                  cy={point.y}
-                  r={12}
-                  fill="transparent"
-                  role="img"
-                  aria-label={`${axisLabels[i]}: ${seriesData.map((item) => `${item.label} ${item.values[i] === null ? msg.noData : fmt(data[i]?.[item.key] as number)}`).join(", ")}`}
-                  className="cursor-pointer outline-none"
-                  {...roving.pointProps(i)}
-                />
-              </g>
-            ))}
-          </g>
-          {active?.kb && (
-            <circle
-              cx={axisPoints[active.i].x}
-              cy={axisPoints[active.i].y}
-              r={14}
-              fill="none"
-              strokeWidth={2}
-              style={{ stroke: "var(--colorStrokeFocus2)" }}
-            />
-          )}
+            )}
           </svg>
-          {active && (
+          {active && activePoint && (
             <ChartTooltip
-              x={axisPoints[active.i].x}
-              y={axisPoints[active.i].y}
+              x={activePoint.x}
+              y={activePoint.y}
               title={axisLabels[active.i]}
               rows={seriesData.map((item) => ({
                 key: item.key,
                 label: item.label,
-                value:
-                  toNumber(data[active.i]?.[item.key]) === null
-                    ? msg.noData
-                    : fmt(toNumber(data[active.i]?.[item.key]) as number),
+                value: item.labels[active.i] ?? msg.noData,
                 slot: item.slot,
                 shape: "line",
               }))}

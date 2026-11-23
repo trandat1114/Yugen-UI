@@ -183,6 +183,7 @@ export function DonutChart({
         biggest && total > 0
           ? { label: biggest.label, share: pct.format(biggest.value / total) }
           : undefined,
+      pie: variant === "pie",
     });
 
   // Chỉ dựng khi bảng đang bật: hàng của mọi điểm dữ liệu được định dạng lại mỗi lần biểu đồ render.

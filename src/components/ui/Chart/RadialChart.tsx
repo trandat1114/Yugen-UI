@@ -5,6 +5,7 @@ import { chartMessagesEn } from "./messages";
 import {
   ChartContainer,
   ChartLegend,
+  ChartPatterns,
   ChartTable,
   type ChartLegendItem,
 } from "./ChartParts";
@@ -151,7 +152,7 @@ export function RadialChart({
   const value = centerValue ?? fmt(total);
   const summary =
     ariaLabel ??
-    `Radial chart: ${fmt(total)} of ${fmt(max)}${segments[0] ? `, ${segments[0].label}` : ""}.`;
+    msg.radialSummary({ value: fmt(total), max: fmt(max), label: segments[0]?.label });
   const legendItems: ChartLegendItem[] = segments.map((item) => ({
     key: item.key,
     label: item.label,
@@ -195,6 +196,7 @@ export function RadialChart({
             aria-label={summary}
             className="block max-w-full overflow-visible"
           >
+            {textured && <ChartPatterns prefix={uid} slots={segments.map((item) => item.slot)} />}
             {track && (
               isFullCircle ? (
                 <circle
