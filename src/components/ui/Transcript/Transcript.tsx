@@ -133,7 +133,9 @@ export function Transcript({
   const yugenLocale = useYugenLocale();
   const locale = localeProp ?? yugenLocale;
   const timeFormat = React.useMemo(() => new Intl.DateTimeFormat(locale, { hour: "numeric", minute: "2-digit" }), [locale]);
-  const current = activeId === undefined ? lastStreamingId(turns) : activeId;
+  const streamingId = lastStreamingId(turns);
+  const streaming = streamingId !== undefined;
+  const current = activeId === undefined ? streamingId : activeId;
 
   // Khung cuộn: giữ ở cuối khi có chữ mới nếu người dùng đang ở cuối.
   const boxRef = React.useRef<HTMLElement | null>(null);
@@ -169,7 +171,7 @@ export function Transcript({
     <section
       ref={setRefs}
       aria-label={props["aria-labelledby"] ? undefined : msg.label}
-      aria-busy={loading || undefined}
+      aria-busy={loading || streaming || undefined}
       onScroll={handleScroll}
       className={cn("min-w-0 overscroll-contain", className)}
       {...props}

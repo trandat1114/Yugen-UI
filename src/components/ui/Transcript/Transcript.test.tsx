@@ -31,6 +31,8 @@ describe("Transcript", () => {
       </YugenProvider>,
     );
     const items = screen.getAllByRole("listitem");
+    // Đang nhận chữ: cả vùng aria-busy.
+    expect(screen.getByRole("region")).toHaveAttribute("aria-busy", "true");
     expect(items[2]).toHaveAttribute("aria-current", "true");
     expect(within(items[2]).getByText("Speaking")).toBeInTheDocument();
     expect(items[2]).toHaveTextContent("(continuing)");

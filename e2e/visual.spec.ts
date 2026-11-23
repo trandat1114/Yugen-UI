@@ -117,7 +117,7 @@ const MASKS: Record<string, string[]> = {
 };
 
 /** Hero tự stream chữ ngay khi mở trang: chờ hết aria-busy (stream xong) rồi mới chụp. */
-const BUSY = ["streamingmarkdown", "reasoning"];
+const BUSY = ["streamingmarkdown", "reasoning", "transcript"];
 
 test("hero: gom được trang component và các danh sách trỏ đúng slug", () => {
   expect(COMPONENTS.length, "global-setup chưa ghi danh sách route (chạy qua `playwright test`)").toBeGreaterThan(100);
