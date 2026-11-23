@@ -953,6 +953,7 @@ function SonnerPositionDemo() {
     slug: "prose",
     name: "Prose",
     category: "Hiển thị dữ liệu",
+    tags: ["article"],
     lead: "Prose định dạng nội dung dài từ Markdown hoặc CMS: tiêu đề, đoạn văn, danh sách, bảng, code, trích dẫn và ảnh theo thang chữ Yugen.",
     description:
       "Bọc nội dung trong `<Prose>` (hoặc thêm class `yugen-prose` của theme). Font và nhịp chữ đọc từ biến `--prose-font-body`, `--prose-font-heading`, `--prose-font-mono`, `--prose-size`, `--prose-leading`, `--prose-flow`; preset có sẵn `yugen-prose-docs`, `yugen-prose-article`, `yugen-prose-chat`, `yugen-prose-compact`, hoặc tạo preset riêng ở trang Typeset (/typeset). các thẻ HTML bên trong được định dạng mà không cần class. Selector có độ ưu tiên 0, nên class đặt trên từng thẻ luôn thắng; thêm class `not-prose` cho phần nào cần thoát hẳn. CodeBlock, Table, Quote và Timeline đã có sẵn `not-prose`. size large (16px) cho bài viết dài, medium (14px) cho docs và ghi chú. Prose không làm sạch HTML: nội dung từ người dùng phải được sanitize trước.",
@@ -1094,6 +1095,7 @@ function ArticleDemo() {
     slug: "markdown",
     name: "Markdown",
     category: "Hiển thị dữ liệu",
+    tags: ["markdown", "article"],
     lead: "Markdown hiển thị nội dung viết bằng Markdown (bài viết, ghi chú phát hành, mô tả từ CMS) theo kiểu chữ của Prose, an toàn với nội dung không tin cậy.",
     description:
       "Truyền chuỗi Markdown làm children. Hỗ trợ CommonMark và phần GFM hay dùng: heading, đoạn văn, danh sách, danh sách việc, trích dẫn, bảng, code fence (tô màu bằng CodeBlock), đậm, nghiêng, gạch, code, link và ảnh. Không hỗ trợ: HTML (hiện như chữ), link tham chiếu `[x][id]`, chú thích cuối trang và code thụt lề. Link `javascript:`, `data:` chỉ còn nhãn; ảnh chỉ nhận http, https hoặc đường dẫn tương đối, nạp lười (loading=\"lazy\") và cần alt (thiếu thì cảnh báo khi phát triển). Link tương đối (`/path`, `#id`) được giữ; link ngoài mở tab mới. `inline` cho đoạn một dòng: chỉ phần inline, trong một `<span>`. `renderLink` giao link cho router của app, `renderImage` giao ảnh cho component ảnh của framework. Các khối được memo: render lại với cùng nội dung không tô màu code lại. Nội dung đang về theo từng token (câu trả lời AI) dùng StreamingMarkdown.",
@@ -1217,6 +1219,7 @@ Every request needs an **API key** in the \\\`Authorization\\\` header. Create o
     slug: "article",
     name: "Article",
     category: "Hiển thị dữ liệu",
+    tags: ["article", "markdown"],
     lead: "Article, ArticleHeader, ArticleMeta, ArticleBody và ArticleToc dựng một bài viết dài từ Markdown: tiêu đề, tác giả và ngày, độ rộng đọc và mục lục.",
     description:
       "Mỗi phần là một component riêng để ghép theo trang của bạn. Article là thẻ <article>; truyền toc để mục lục nằm bên phải và dính khi cuộn từ màn hình lg (màn hình hẹp: trước nội dung). ArticleHeader là <header> với tiêu đề h1 (titleAs đổi cấp), tóm tắt, dòng chuyên mục và ảnh bìa trong khung 16:9 giữ chỗ sẵn. ArticleMeta hiện tác giả, ngày đăng và ngày cập nhật bằng <time>, thời gian đọc và thẻ. ArticleBody giới hạn độ rộng đọc; bảng và code rộng cuộn trong khung của chúng. ArticleToc nhận danh sách heading từ markdownHeadings(), cùng id mà <Markdown headingIds> gắn (heading trùng tên thành -2, -3), nên link chạy được cả trước khi JavaScript tải; một IntersectionObserver đánh dấu mục đang đọc bằng aria-current. readingTime() ước lượng số phút đọc, articleJsonLd() dựng dữ liệu schema.org cho thẻ script của app.",

@@ -196,6 +196,8 @@ export interface DocMeta {
   file: string;
   /** Có bản tiếng Anh trong src/docs/registry/en/<file>.ts. */
   translated?: true;
+  /** Thẻ chủ đề (src/docs/tags.ts), mảng chuỗi literal. */
+  tags?: string[];
 }
 
 /** Slug có trong `export const en = { … }` của một file src/docs/registry/en/*.ts (đọc tĩnh, không chạy file). */
@@ -291,6 +293,18 @@ export function extractDocsMeta(fileName: string, code: string): DocMeta[] {
       const text = stringValue(value);
       if (text === undefined) fail(value, `"${key}" phải là chuỗi literal để trích metadata lúc build (không dùng biến / biểu thức).`);
       meta[key] = text;
+    }
+    const tagsProp = obj.properties.find(
+      (p): p is ESTree.ObjectProperty => p.type === "Property" && !p.shorthand && p.kind === "init" && !p.method && propertyKey(p) === "tags",
+    );
+    if (tagsProp) {
+      const value = unwrapExpression(tagsProp.value as Expr);
+      if (value.type !== "ArrayExpression") fail(value, `"tags" phải là mảng chuỗi literal.`);
+      meta.tags = (value as ESTree.ArrayExpression).elements.map((el) => {
+        const text = el && el.type !== "SpreadElement" ? stringValue(el as Expr) : undefined;
+        if (text === undefined) return fail(el ?? value, `"tags" chỉ nhận chuỗi literal.`);
+        return text;
+      });
     }
     return meta as DocMeta;
   });

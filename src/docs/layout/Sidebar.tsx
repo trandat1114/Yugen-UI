@@ -30,6 +30,7 @@ import { useLocale } from "../i18n";
 import { VersionMenu } from "./VersionMenu";
 import { SIDEBAR_DEFAULT, SIDEBAR_MAX, SIDEBAR_MIN, SIDEBAR_STEP, setSidebarLayout, useSidebarLayout } from "./sidebarLayout";
 import { docsPath, type Route } from "../router";
+import { matchesComponent } from "../tags";
 
 const SIDEBAR_ID = "docs-sidebar";
 
@@ -346,8 +347,9 @@ export function Sidebar({
     category: g.category,
     total: g.items.length,
     items: g.items
-      .map((c) => ({ slug: c.slug, name: component(c).name }))
-      .filter((c) => match(c.name))
+      .map((c) => ({ slug: c.slug, name: component(c).name, tags: c.tags }))
+      // Tên, slug và thẻ chủ đề (#445), không phân biệt dấu: "voice" ra Transcript. Lead chỉ tìm ở trang Components.
+      .filter((c) => matchesComponent(c, query))
       .map((c) => ({
         label: c.name,
         href: docsPath(`/components/${c.slug}`),

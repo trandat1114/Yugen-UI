@@ -916,6 +916,7 @@ export const docs: ComponentDoc[] = [
   {
     slug: "streamingmarkdown",
     category: "Hiển thị dữ liệu",
+    tags: ["ai", "markdown"],
     name: "StreamingMarkdown",
     lead: "StreamingMarkdown hiển thị câu trả lời Markdown của AI ngay khi từng token về — không nháy ký hiệu thô, không chèn HTML, và không render lại cả bài mỗi lần có chữ mới.",
     description:
@@ -968,6 +969,7 @@ export const docs: ComponentDoc[] = [
   {
     slug: "citation",
     category: "Hiển thị dữ liệu",
+    tags: ["ai"],
     name: "Citation",
     lead: "Citation gắn số nguồn [1] ngay trong câu trả lời; rê chuột hoặc focus để xem nhanh tiêu đề, tên miền và đoạn trích, bấm để mở thẻ và tới link.",
     description:
@@ -1033,6 +1035,7 @@ export const docs: ComponentDoc[] = [
   {
     slug: "voicewave",
     category: "Yugen Labs",
+    tags: ["ai", "voice"],
     name: "VoiceWave",
     lead: "VoiceWave hiện mức âm thanh của trợ lý giọng nói hoặc cuộc gọi bằng các vạch dọc: phẳng khi chờ hay tắt micro, nhấp nhô khi đang nghe hoặc đang nói.",
     description:
@@ -1104,6 +1107,7 @@ export const docs: ComponentDoc[] = [
   {
     slug: "transcript",
     category: "Yugen Labs",
+    tags: ["ai", "voice", "transcript"],
     name: "Transcript",
     lead: "Transcript hiện các lượt của một cuộc hội thoại giọng nói: ai nói, lúc nào, và câu trả lời đang đến dần.",
     description:
@@ -1156,6 +1160,7 @@ export const docs: ComponentDoc[] = [
   {
     slug: "callsurface",
     category: "Yugen Labs",
+    tags: ["ai", "voice", "calling"],
     name: "CallSurface",
     lead: "CallSurface, CallStatus và CallControls dựng giao diện một cuộc gọi thoại hoặc video: ai ở đầu bên kia, trạng thái bằng chữ và các nút điều khiển.",
     description:
@@ -1241,6 +1246,7 @@ export const docs: ComponentDoc[] = [
   {
     slug: "voiceassistant",
     category: "Yugen Labs",
+    tags: ["ai", "voice", "calling", "transcript"],
     name: "VoiceAssistant",
     lead: "VoiceAssistant đặt một cuộc trò chuyện bằng giọng nói lên một màn hình: ai đang nói, trợ lý đang làm gì, sóng âm, transcript và các nút điều khiển.",
     description:
@@ -1321,6 +1327,7 @@ export const docs: ComponentDoc[] = [
   {
     slug: "reasoning",
     category: "Yugen Labs",
+    tags: ["ai"],
     name: "Reasoning",
     lead: "Reasoning gói phần suy nghĩ của model vào một khối thu gọn: “Đang suy luận…” kèm đồng hồ khi đang chạy, “Đã suy luận trong 12s” khi xong.",
     description:
@@ -1364,6 +1371,7 @@ export const docs: ComponentDoc[] = [
   {
     slug: "promptinput",
     category: "Yugen Labs",
+    tags: ["ai"],
     name: "PromptInput",
     lead: "PromptInput là ô soạn prompt đầy đủ cho trợ lý AI: tự giãn, đính kèm bằng nút / kéo thả / dán ảnh, kiểm tra tệp ngay tại chỗ và nút Gửi đổi thành Dừng khi model đang trả lời.",
     description:
