@@ -6,6 +6,7 @@ import {
   ChartContainer,
   ChartFocusRing,
   ChartLegend,
+  ChartSeriesIcon,
   ChartTable,
   ChartTooltip,
   type ChartTooltipRow,
@@ -22,6 +23,7 @@ import {
   pickLabelIndices,
 } from "./cartesian";
 import {
+  chartUid,
   clamp,
   df,
   linePath,
@@ -108,6 +110,8 @@ export interface LineChartProps extends ChartFrameProps {
 export interface AreaChartProps extends LineChartProps {
   /** Chồng các vùng (phần–tổng theo thời gian). */
   stacked?: boolean;
+  /** Tô vùng bằng dải màu nhạt dần xuống trục thay vì một lớp mờ đều. */
+  gradient?: boolean;
   /** Khi chồng: "expand" chuẩn hoá mỗi mốc về 100% (trục Y là tỉ lệ). */
   stackOffset?: "none" | "expand";
 }
@@ -123,6 +127,7 @@ function SeriesChart({
   variant,
   stacked = false,
   stackOffset = "none",
+  gradient = false,
   data: allData,
   index,
   series,
@@ -172,6 +177,7 @@ function SeriesChart({
   );
 
   const isArea = variant === "area";
+  const uid = chartUid(React.useId());
   const isStacked = isArea && stacked && series.length > 1;
   const expand = isStacked && stackOffset === "expand";
 
@@ -367,6 +373,7 @@ function SeriesChart({
           label: v.s.label,
           value: text,
           raw: x,
+          swatch: v.s.icon ? <ChartSeriesIcon icon={v.s.icon} slot={v.slot} /> : undefined,
           slot: v.slot,
           shape: isArea ? "rect" : "line",
         };
@@ -443,6 +450,7 @@ function SeriesChart({
         textured={textured}
         onToggle={series.length > 1 ? toggleSeries : undefined}
         items={series.map((s, i) => ({
+          swatch: s.icon ? <ChartSeriesIcon icon={s.icon} slot={slots[i]} /> : undefined,
           key: s.key,
           label: s.label,
           slot: slotFor(s.key, slots[i]),
@@ -480,14 +488,28 @@ function SeriesChart({
               "motion-reduce:animate-none",
             )}
           >
+            {gradient && (
+              <defs>
+                {shapes.map((s) => (
+                  <linearGradient key={s.v.s.key} id={`${uid}-grad-${s.k}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" style={{ stopColor: slotVar(s.v.slot), stopOpacity: 0.45 }} />
+                    <stop offset="100%" style={{ stopColor: slotVar(s.v.slot), stopOpacity: 0.02 }} />
+                  </linearGradient>
+                ))}
+              </defs>
+            )}
             {shapes.map((s) => (
               <path
                 key={s.v.s.key}
                 d={s.area}
-                style={{
-                  fill: slotVar(s.v.slot),
-                  fillOpacity: "var(--chartAreaOpacity)",
-                }}
+                style={
+                  gradient
+                    ? { fill: `url(#${uid}-grad-${s.k})` }
+                    : {
+                        fill: slotVar(s.v.slot),
+                        fillOpacity: "var(--chartAreaOpacity)",
+                      }
+                }
               />
             ))}
           </g>
@@ -651,6 +673,8 @@ function SeriesChart({
     markers,
     renderMarker,
     valueLabels,
+    gradient,
+    uid,
     animate,
     textured,
     brush,

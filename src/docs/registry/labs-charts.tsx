@@ -9,6 +9,9 @@ import {
   Sparkline,
   StatTile,
 } from "@/components/ui/Chart/Chart";
+import { useState } from "react";
+import { Globe20Regular, Phone20Regular } from "@fluentui/react-icons";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/ToggleGroup/ToggleGroup";
 import type { ComponentDoc } from "../types";
 
 /* ------------------------------------------------------------------ Dữ liệu mẫu
@@ -151,6 +154,168 @@ const pieMix = [
   { label: "Store", value: 19 },
   { label: "Partner", value: 8 },
 ];
+
+const browserShare = [
+  { browser: "Chrome", visitors: 275 },
+  { browser: "Safari", visitors: 200 },
+  { browser: "Firefox", visitors: 187 },
+  { browser: "Edge", visitors: 173 },
+  { browser: "Other", visitors: 90 },
+];
+
+const deviceVisits = [
+  { month: "Jan", desktop: 186, mobile: 80 },
+  { month: "Feb", desktop: 305, mobile: 200 },
+  { month: "Mar", desktop: 237, mobile: 120 },
+  { month: "Apr", desktop: 73, mobile: 190 },
+  { month: "May", desktop: 209, mobile: 130 },
+  { month: "Jun", desktop: 214, mobile: 140 },
+];
+
+
+/* ---------- gallery demos (#428–#433) ---------- */
+
+const DEVICE_BARS_CODE = `function DeviceBars() {
+  const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
+  const totals = {
+    desktop: deviceVisits.reduce((sum, d) => sum + d.desktop, 0),
+    mobile: deviceVisits.reduce((sum, d) => sum + d.mobile, 0),
+  };
+  return (
+    <BarChart
+      title="Visits by device"
+      toolbar={
+        <ToggleGroup type="single" size="small" value={device} onValueChange={(v) => v && setDevice(v as "desktop" | "mobile")} aria-label="Device">
+          <ToggleGroupItem value="desktop">Desktop {totals.desktop}</ToggleGroupItem>
+          <ToggleGroupItem value="mobile">Mobile {totals.mobile}</ToggleGroupItem>
+        </ToggleGroup>
+      }
+      data={deviceVisits}
+      index="month"
+      series={[{ key: device, label: device === "desktop" ? "Desktop" : "Mobile", color: device === "desktop" ? 1 : 2 }]}
+      locale="en-US"
+    />
+  );
+}`;
+
+function DeviceBars() {
+  const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
+  const totals = {
+    desktop: deviceVisits.reduce((sum, d) => sum + d.desktop, 0),
+    mobile: deviceVisits.reduce((sum, d) => sum + d.mobile, 0),
+  };
+  return (
+    <BarChart
+      title="Visits by device"
+      toolbar={
+        <ToggleGroup type="single" size="small" value={device} onValueChange={(v) => v && setDevice(v as "desktop" | "mobile")} aria-label="Device">
+          <ToggleGroupItem value="desktop">Desktop {totals.desktop}</ToggleGroupItem>
+          <ToggleGroupItem value="mobile">Mobile {totals.mobile}</ToggleGroupItem>
+        </ToggleGroup>
+      }
+      data={deviceVisits}
+      index="month"
+      series={[{ key: device, label: device === "desktop" ? "Desktop" : "Mobile", color: device === "desktop" ? 1 : 2 }]}
+      locale="en-US"
+    />
+  );
+}
+
+const TOOLTIP_VARIANTS_CODE = `function TooltipVariants() {
+  return (
+    <LineChart
+      title="Visits by device"
+      data={deviceVisits}
+      index="month"
+      series={[
+        { key: "desktop", label: "Desktop", icon: <Globe20Regular /> },
+        { key: "mobile", label: "Mobile", icon: <Phone20Regular /> },
+      ]}
+      tooltip={{
+        indicator: "dot",
+        label: (label) => \`\${label} 2026\`,
+        value: (v) => \`\${v.toLocaleString("en-US")} visits\`,
+      }}
+      locale="en-US"
+    />
+  );
+}`;
+
+function TooltipVariants() {
+  return (
+    <LineChart
+      title="Visits by device"
+      data={deviceVisits}
+      index="month"
+      series={[
+        { key: "desktop", label: "Desktop", icon: <Globe20Regular /> },
+        { key: "mobile", label: "Mobile", icon: <Phone20Regular /> },
+      ]}
+      tooltip={{
+        indicator: "dot",
+        label: (label) => `${label} 2026`,
+        value: (v) => `${v.toLocaleString("en-US")} visits`,
+      }}
+      locale="en-US"
+    />
+  );
+}
+
+const TOOLTIP_CONTENT_CODE = `function TooltipContent() {
+  return (
+    <BarChart
+      title="Visits by device"
+      data={deviceVisits}
+      index="month"
+      layout="stacked"
+      series={[
+        { key: "desktop", label: "Desktop" },
+        { key: "mobile", label: "Mobile" },
+      ]}
+      tooltip={{
+        render: ({ title, rows }) => {
+          const desktop = rows.find((r) => r.key === "desktop")?.value ?? 0;
+          const mobile = rows.find((r) => r.key === "mobile")?.value ?? 0;
+          return (
+            <div className="flex flex-col gap-1">
+              <span className="font-semibold text-foreground-1">{title}</span>
+              <span>{Math.round((mobile / (desktop + mobile)) * 100)}% of visits came from phones.</span>
+            </div>
+          );
+        },
+      }}
+      locale="en-US"
+    />
+  );
+}`;
+
+function TooltipContent() {
+  return (
+    <BarChart
+      title="Visits by device"
+      data={deviceVisits}
+      index="month"
+      layout="stacked"
+      series={[
+        { key: "desktop", label: "Desktop" },
+        { key: "mobile", label: "Mobile" },
+      ]}
+      tooltip={{
+        render: ({ title, rows }) => {
+          const desktop = rows.find((r) => r.key === "desktop")?.value ?? 0;
+          const mobile = rows.find((r) => r.key === "mobile")?.value ?? 0;
+          return (
+            <div className="flex flex-col gap-1">
+              <span className="font-semibold text-foreground-1">{title}</span>
+              <span>{Math.round((mobile / (desktop + mobile)) * 100)}% of visits came from phones.</span>
+            </div>
+          );
+        },
+      }}
+      locale="en-US"
+    />
+  );
+}
 
 const radarProfile = [
   { axis: "Speed", alpha: 86, beta: 72 },
@@ -333,6 +498,52 @@ const LABS_CHARTS: ComponentDoc[] = [
           />
         ),
       },
+      {
+        title: "Đổi chuỗi bằng nút",
+        description: "Nút trong toolbar chọn chuỗi đang xem và hiện tổng của từng chuỗi; màu đi theo chuỗi, không theo nút.",
+        setup: `const deviceVisits = ${lit(deviceVisits)};`,
+        code: DEVICE_BARS_CODE,
+        render: () => <DeviceBars />,
+      },
+      {
+        title: "Mỗi danh mục một màu",
+        description: "colorBy=\"category\" khi danh mục là thực thể có màu riêng (trình duyệt, kênh); legend liệt kê danh mục.",
+        setup: `const browserShare = ${lit(browserShare)};`,
+        code: `<BarChart title="Visitors by browser" data={browserShare} index="browser" series={[{ key: "visitors", label: "Visitors" }]} colorBy="category" orientation="horizontal" locale="en-US" />`,
+        render: () => <BarChart title="Visitors by browser" data={browserShare} index="browser" series={[{ key: "visitors", label: "Visitors" }]} colorBy="category" orientation="horizontal" locale="en-US" />,
+      },
+      {
+        title: "Cột đang nhấn và nhãn tuỳ biến",
+        description: "activeIndex nhấn một danh mục (các cột khác nhạt đi); showValues nhận hàm để tự viết nhãn.",
+        setup: `const deviceVisits = ${lit(deviceVisits)};`,
+        code: `<BarChart
+  title="Desktop visits"
+  data={deviceVisits}
+  index="month"
+  series={[{ key: "desktop", label: "Desktop" }]}
+  activeIndex={1}
+  showValues={(value, index) => (index === 1 ? \`\${value} ▲\` : String(value))}
+  locale="en-US"
+/>`,
+        render: () => (
+          <BarChart
+            title="Desktop visits"
+            data={deviceVisits}
+            index="month"
+            series={[{ key: "desktop", label: "Desktop" }]}
+            activeIndex={1}
+            showValues={(value, index) => (index === 1 ? `${value} ▲` : String(value))}
+            locale="en-US"
+          />
+        ),
+      },
+      {
+        title: "Tooltip tuỳ biến",
+        description: "tooltip.render thay nội dung tooltip bằng câu của bạn, từ giá trị gốc của từng hàng; vị trí và khung giữ nguyên.",
+        setup: `const deviceVisits = ${lit(deviceVisits)};`,
+        code: TOOLTIP_CONTENT_CODE,
+        render: () => <TooltipContent />,
+      },
     ],
     dos: [
       "Dùng cột để so sánh độ lớn; chuyển sang thanh ngang khi nhiều danh mục hoặc tên dài.",
@@ -345,6 +556,9 @@ const LABS_CHARTS: ComponentDoc[] = [
       "Không vẽ biểu đồ chỉ một cột — dùng StatTile.",
     ],
     props: [
+      { name: "colorBy", type: `"series" | "category"`, defaultValue: `"series"`, description: "Một chuỗi: mỗi danh mục một màu, legend liệt kê danh mục." },
+      { name: "activeIndex", type: "number", description: "Danh mục được nhấn; các cột khác nhạt đi khi không trỏ cột nào." },
+      { name: "tooltip", type: "ChartTooltipConfig", description: "indicator, label, value, icons, render, hidden — dùng chung mọi biểu đồ." },
       { name: "data", type: "ChartDatum[]", description: "Mảng dòng dữ liệu (object)." },
       { name: "index", type: "string", description: "Trường danh mục." },
       { name: "series", type: "{ key, label, color? }[]", description: "Chuỗi giá trị; color (1–8) ghim ô màu, mặc định theo thứ tự." },
@@ -556,6 +770,49 @@ const LABS_CHARTS: ComponentDoc[] = [
           />
         ),
       },
+      {
+        title: "AreaChart gradient và legend có icon",
+        description: "gradient tô vùng nhạt dần xuống trục; icon của từng chuỗi thay ô màu trong legend và tooltip.",
+        setup: `const deviceVisits = ${lit(deviceVisits)};`,
+        code: `<AreaChart
+  title="Visits by device"
+  data={deviceVisits}
+  index="month"
+  gradient
+  series={[
+    { key: "desktop", label: "Desktop", icon: <Globe20Regular /> },
+    { key: "mobile", label: "Mobile", icon: <Phone20Regular /> },
+  ]}
+  locale="en-US"
+/>`,
+        render: () => (
+          <AreaChart
+            title="Visits by device"
+            data={deviceVisits}
+            index="month"
+            gradient
+            series={[
+              { key: "desktop", label: "Desktop", icon: <Globe20Regular /> },
+              { key: "mobile", label: "Mobile", icon: <Phone20Regular /> },
+            ]}
+            locale="en-US"
+          />
+        ),
+      },
+      {
+        title: "Bậc thang và kéo chọn khoảng",
+        description: "curve=\"step\" cho giá trị đổi theo bậc; brush thêm thanh kéo để xem một khoảng (bàn phím: mũi tên, Home, End).",
+        setup: `const visits = ${lit(visits)};`,
+        code: `<AreaChart title="Daily visits" data={visits} index="date" series={[{ key: "visits", label: "Visits" }]} curve="step" brush locale="en-US" />`,
+        render: () => <AreaChart title="Daily visits" data={visits} index="date" series={[{ key: "visits", label: "Visits" }]} curve="step" brush locale="en-US" />,
+      },
+      {
+        title: "Biến thể tooltip",
+        description: "tooltip: indicator chấm, label đổi tiêu đề, value định dạng lại giá trị; icon của chuỗi hiện thay khoá màu.",
+        setup: `const deviceVisits = ${lit(deviceVisits)};`,
+        code: TOOLTIP_VARIANTS_CODE,
+        render: () => <TooltipVariants />,
+      },
     ],
     dos: [
       "Dùng đường cho xu hướng; AreaChart khi chỉ một chuỗi hoặc khi cần phần–tổng theo thời gian (stacked).",
@@ -568,6 +825,9 @@ const LABS_CHARTS: ComponentDoc[] = [
       "Không ghi số ở mọi điểm — chỉ điểm cuối hoặc điểm cực trị.",
     ],
     props: [
+      { name: "gradient (AreaChart)", type: "boolean", defaultValue: "false", description: "Tô vùng nhạt dần xuống trục." },
+      { name: "series[].icon", type: "ReactNode", description: "Icon của chuỗi, thay ô màu trong legend và tooltip." },
+      { name: "tooltip", type: "ChartTooltipConfig", description: "indicator, label, value, icons, render, hidden — dùng chung mọi biểu đồ." },
       { name: "data / index / series", type: "ChartDatum[] / string / ChartSeries[]", description: "Dữ liệu sắp xếp tăng dần theo X." },
       { name: "xType", type: `"category" | "time"`, defaultValue: "tự nhận", description: "Có Date → time (vị trí theo thời gian)." },
       { name: "xFormat / xTooltipFormat", type: "Intl.DateTimeFormatOptions | (v) => string", description: "Nhãn trục / tooltip & bảng." },

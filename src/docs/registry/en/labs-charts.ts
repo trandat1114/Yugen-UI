@@ -23,6 +23,10 @@ export const en: Record<string, ComponentDocEn> = {
         description:
           "A fallback channel for full color blindness, print and forced-colors: 45° / 135° patterns. Turns on automatically in the high-contrast theme.",
       },
+      { title: "Switching series with buttons", description: "Toolbar buttons choose the series on screen and show each series' total; the color follows the series, not the button." },
+      { title: "One color per category", description: "colorBy=\"category\" when the categories are entities with their own color (browsers, channels); the legend lists the categories." },
+      { title: "Active bar and custom labels", description: "activeIndex emphasizes one category (the other bars fade); showValues takes a function to write the labels." },
+      { title: "Custom tooltip", description: "tooltip.render replaces the tooltip content with your own sentence, from each row's raw value; position and frame stay." },
     ],
     dos: [
       "Use columns to compare magnitudes; switch to horizontal bars when there are many categories or long names.",
@@ -35,6 +39,9 @@ export const en: Record<string, ComponentDocEn> = {
       "Don't chart a single bar. Use StatTile.",
     ],
     props: {
+      colorBy: "One series: one color per category, and the legend lists the categories.",
+      activeIndex: "The emphasized category; the other bars fade while no bar is pointed at.",
+      tooltip: "indicator, label, value, icons, render, hidden — shared by every chart.",
       data: "Array of data rows (objects).",
       index: "Category field.",
       series: "Value series; color (1–8) pins a color slot, otherwise slots follow the order.",
@@ -71,6 +78,9 @@ export const en: Record<string, ComponentDocEn> = {
       },
       { title: "Value labels", description: "valueLabels writes each value right above its point, with valueFormat; close points are labeled at intervals. Best with few points, when readers need the exact numbers." },
       { title: "Custom dots", description: "renderMarker draws your own dots; they take the series color. Here the highest month gets a bigger dot." },
+      { title: "AreaChart gradient and icon legend", description: "gradient fades the area toward the axis; each series' icon replaces the color key in the legend and the tooltip." },
+      { title: "Steps and range selection", description: "curve=\"step\" for values that change in steps; brush adds a handle to view one range (keyboard: arrows, Home, End)." },
+      { title: "Tooltip variants", description: "tooltip: a dot indicator, label rewrites the title, value reformats the values; series icons replace the color key." },
     ],
     dos: [
       "Use lines for trends; AreaChart for a single series or for part-to-whole over time (stacked).",
@@ -83,6 +93,9 @@ export const en: Record<string, ComponentDocEn> = {
       "Don't label every point. Label only the last point or the extremes.",
     ],
     props: {
+      "gradient (AreaChart)": "Fades the area toward the axis.",
+      "series[].icon": "The series' icon, instead of the color key in the legend and the tooltip.",
+      tooltip: "indicator, label, value, icons, render, hidden — shared by every chart.",
       renderMarker: "Your own dots (x, y, index, series, value); turns markers on.",
       valueLabels: "Each value above its point; close points are labeled at intervals.",
       "data / index / series": "Data sorted by X in ascending order.",
