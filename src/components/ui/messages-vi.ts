@@ -81,6 +81,7 @@ import { timePickerMessagesVi } from "./TimePicker/messages";
 import { toastMessagesVi } from "./Toast/messages";
 import { tourMessagesVi } from "./Tour/messages";
 import { traceMessagesVi } from "./Trace/messages";
+import { voiceWaveMessagesVi } from "./VoiceWave/messages";
 
 /**
  * Chuỗi giao diện có sẵn của mọi component, bằng tiếng Việt: `<YugenProvider messages={messagesVi} locale="vi-VN">`.
@@ -162,6 +163,7 @@ export const messagesVi: Omit<YugenMessages, "calendar"> = {
   tour: tourMessagesVi,
   trace: traceMessagesVi,
   typingIndicator: typingIndicatorMessagesVi,
+  voiceWave: voiceWaveMessagesVi,
   wizard: wizardMessagesVi,
   yearPicker: yearPickerMessagesVi,
 };

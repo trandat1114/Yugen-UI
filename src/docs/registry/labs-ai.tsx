@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Board20Regular, Search20Regular, Settings20Regular, Sparkle16Regular } from "@fluentui/react-icons";
 import {
   Button,
@@ -13,9 +13,11 @@ import {
   Tour,
   useNotifications,
   useTour,
+  VoiceWave,
   type CitationSource,
   type NotificationItem,
   type TourStep,
+  type VoiceWaveState,
 } from "@/components/ui";
 import type { ComponentDoc } from "../types";
 import { declarationsOf } from "../setup";
@@ -499,6 +501,103 @@ const LOADING_NOTIFICATIONS_CODE = `function LoadingNotificationsDemo() {
 
 /* ================================================================ Docs */
 
+
+/* ================================================================ VoiceWave */
+
+const VOICE_WAVE_CODE = `function useFakeLevels(running: boolean) {
+  // Stands in for an AnalyserNode: smooth noise around a slow pulse.
+  const levels = useRef(new Float32Array(32));
+  const source = useCallback(() => {
+    const t = performance.now() / 1000;
+    const data = levels.current;
+    for (let i = 0; i < data.length; i++) {
+      const target = 0.35 + 0.3 * Math.sin(t * 3 + i * 0.5) * Math.sin(t * 1.3 + i * 0.17);
+      data[i] += (Math.max(0, target + (Math.random() - 0.5) * 0.3) - data[i]) * 0.3;
+    }
+    return running ? data : null;
+  }, [running]);
+  return source;
+}
+
+function VoiceDemo() {
+  const [state, setState] = useState<VoiceWaveState>("listening");
+  const source = useFakeLevels(state === "listening" || state === "speaking");
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <VoiceWave state={state} source={source} bars={32} size="large" />
+      <div className="flex flex-wrap justify-center gap-2">
+        {(["idle", "listening", "speaking", "muted", "error"] as const).map((s) => (
+          <Button key={s} size="small" appearance={s === state ? "primary" : "secondary"} onClick={() => setState(s)}>
+            {s}
+          </Button>
+        ))}
+      </div>
+    </div>
+  );
+}`;
+
+function useFakeLevels(running: boolean) {
+  // Stands in for an AnalyserNode: smooth noise around a slow pulse.
+  const levels = useRef(new Float32Array(32));
+  const source = useCallback(() => {
+    const t = performance.now() / 1000;
+    const data = levels.current;
+    for (let i = 0; i < data.length; i++) {
+      const target = 0.35 + 0.3 * Math.sin(t * 3 + i * 0.5) * Math.sin(t * 1.3 + i * 0.17);
+      data[i] += (Math.max(0, target + (Math.random() - 0.5) * 0.3) - data[i]) * 0.3;
+    }
+    return running ? data : null;
+  }, [running]);
+  return source;
+}
+
+function VoiceDemo() {
+  const [state, setState] = useState<VoiceWaveState>("listening");
+  const source = useFakeLevels(state === "listening" || state === "speaking");
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <VoiceWave state={state} source={source} bars={32} size="large" />
+      <div className="flex flex-wrap justify-center gap-2">
+        {(["idle", "listening", "speaking", "muted", "error"] as const).map((s) => (
+          <Button key={s} size="small" appearance={s === state ? "primary" : "secondary"} onClick={() => setState(s)}>
+            {s}
+          </Button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const WEB_AUDIO_CODE = `// Your app owns the microphone and the AnalyserNode; VoiceWave only reads numbers.
+async function microphoneLevels(): Promise<VoiceWaveSource> {
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  const context = new AudioContext();
+  const analyser = context.createAnalyser();
+  analyser.fftSize = 64;
+  context.createMediaStreamSource(stream).connect(analyser);
+  const bytes = new Uint8Array(analyser.frequencyBinCount);
+  const levels = new Float32Array(bytes.length);
+  return () => {
+    analyser.getByteFrequencyData(bytes);
+    for (let i = 0; i < bytes.length; i++) levels[i] = bytes[i] / 255;
+    return levels;
+  };
+}
+
+function VoiceInput() {
+  const [source, setSource] = useState<VoiceWaveSource>();
+  const start = async () => {
+    const read = await microphoneLevels();
+    setSource(() => read);
+  };
+  return (
+    <div className="flex items-center gap-3">
+      <Button onClick={start}>Use microphone</Button>
+      <VoiceWave state={source ? "listening" : "idle"} source={source} />
+    </div>
+  );
+}`;
+
 export const docs: ComponentDoc[] = [
   {
     slug: "streamingmarkdown",
@@ -615,6 +714,77 @@ export const docs: ComponentDoc[] = [
       { name: "openDelay / closeDelay", type: "number (ms)", defaultValue: "250 / 200", description: "Độ trễ mở / đóng khi rê chuột." },
       { name: "CitationList.sources", type: "CitationSource[]", description: "Danh sách nguồn (lưới 2 cột từ sm)." },
       { name: "CitationList.title", type: "ReactNode", defaultValue: `"Sources"`, description: "Tiêu đề kèm số lượng." },
+    ],
+  },
+  {
+    slug: "voicewave",
+    category: "Yugen Labs",
+    name: "VoiceWave",
+    lead: "VoiceWave hiện mức âm thanh của trợ lý giọng nói hoặc cuộc gọi bằng các vạch dọc: phẳng khi chờ hay tắt micro, nhấp nhô khi đang nghe hoặc đang nói.",
+    description:
+      "VoiceWave không tự mở micro hay tạo AudioContext: app truyền levels (mảng 0–1, re-render khi đổi) hoặc source, một hàm được gọi một lần mỗi animation frame khi đang nghe / nói. Với source, các vạch được cập nhật thẳng qua transform, không re-render và không có timer hay listener cho từng vạch. Số vạch cố định nên chiều rộng không đổi khi dữ liệu đổi. Không có dữ liệu thì mỗi trạng thái có một dáng tĩnh; khi người dùng giảm chuyển động, vòng frame không chạy. Cả khối có role=\"img\" với tên theo trạng thái (messages.voiceWave), các vạch bị ẩn khỏi trình đọc màn hình.",
+    importCode: `import { VoiceWave } from "@/components/ui";`,
+    hero: { title: "Luồng âm thanh giả lập", code: VOICE_WAVE_CODE, render: () => <VoiceDemo /> },
+    examples: [
+      {
+        title: "Mức âm thanh tĩnh",
+        description: "levels được lấy mẫu lại cho đủ số vạch; align=\"bottom\" cho vạch mọc từ đáy.",
+        code: `<div className="flex items-center gap-6">
+  <VoiceWave state="speaking" levels={[0.2, 0.5, 0.9, 0.6, 0.3, 0.7, 0.4, 0.8]} bars={16} />
+  <VoiceWave state="speaking" levels={[0.2, 0.5, 0.9, 0.6, 0.3, 0.7, 0.4, 0.8]} bars={16} align="bottom" tone="neutral" />
+</div>`,
+        render: () => (
+          <div className="flex items-center gap-6">
+            <VoiceWave state="speaking" levels={[0.2, 0.5, 0.9, 0.6, 0.3, 0.7, 0.4, 0.8]} bars={16} />
+            <VoiceWave state="speaking" levels={[0.2, 0.5, 0.9, 0.6, 0.3, 0.7, 0.4, 0.8]} bars={16} align="bottom" tone="neutral" />
+          </div>
+        ),
+      },
+      {
+        title: "Trạng thái và kích thước",
+        description: "idle, muted và error nằm phẳng; muted và error có màu riêng.",
+        code: `<div className="flex flex-wrap items-center gap-6">
+  <VoiceWave state="idle" size="small" />
+  <VoiceWave state="listening" />
+  <VoiceWave state="muted" />
+  <VoiceWave state="error" size="large" />
+</div>`,
+        render: () => (
+          <div className="flex flex-wrap items-center gap-6">
+            <VoiceWave state="idle" size="small" />
+            <VoiceWave state="listening" />
+            <VoiceWave state="muted" />
+            <VoiceWave state="error" size="large" />
+          </div>
+        ),
+      },
+      {
+        title: "Web Audio",
+        description: "Đọc AnalyserNode trong source; quyền micro và AudioContext là của app.",
+        code: WEB_AUDIO_CODE,
+        render: () => <VoiceWave state="listening" bars={24} />,
+      },
+    ],
+    dos: [
+      "Dùng source cho luồng micro để không re-render mỗi frame.",
+      "Hiện trạng thái bằng chữ ở gần (Đang nghe, Đã tắt micro) khi đây là tín hiệu chính của màn hình.",
+      "Giữ số vạch cố định trong một giao diện.",
+    ],
+    donts: [
+      "Không tạo AudioContext hay xin quyền micro chỉ để hiển thị sóng.",
+      "Không dùng màu sóng làm cách duy nhất để báo lỗi micro.",
+      "Không đưa levels mới vào state mỗi frame — dùng source.",
+    ],
+    props: [
+      { name: "state", type: `"idle" | "listening" | "speaking" | "muted" | "error"`, defaultValue: `"idle"`, description: "Trạng thái; quyết định dáng tĩnh, màu và tên đọc." },
+      { name: "levels", type: "ArrayLike<number>", description: "Mức âm thanh 0–1, lấy mẫu lại cho đủ bars." },
+      { name: "source", type: "() => ArrayLike<number> | null", description: "Gọi mỗi animation frame khi listening / speaking; cập nhật vạch không re-render." },
+      { name: "bars", type: "number", defaultValue: "24", description: "Số vạch (3–64)." },
+      { name: "size", type: `"small" | "medium" | "large"`, defaultValue: `"medium"`, description: "Chiều cao 20 / 32 / 56 px." },
+      { name: "tone", type: `"brand" | "neutral"`, defaultValue: `"brand"`, description: "Màu khi nghe / nói." },
+      { name: "align", type: `"center" | "bottom"`, defaultValue: `"center"`, description: "Vạch đối xứng quanh đường giữa hoặc mọc từ đáy." },
+      { name: "label", type: "string", description: "Tên đọc; mặc định theo state (messages.voiceWave)." },
+      { name: "resampleLevels(levels, count)", type: "number[]", description: "Hàm lấy mẫu lại dùng bên trong, cũng được export." },
     ],
   },
   {

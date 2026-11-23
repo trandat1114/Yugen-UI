@@ -137,6 +137,8 @@ module.exports = [
   js("{ PieChart, RadialChart }", "{ PieChart, RadialChart }", "24.5 kB"),
   // CSS Grid, không đo layout bằng JavaScript (#434, #437): 11.01 kB, phần lớn là cn / tailwind-merge dùng chung.
   js("{ BentoGrid, BentoGridItem }", "{ BentoGrid, BentoGridItem }", "12 kB"),
+  // Một vòng requestAnimationFrame, không Web Audio trong gói (#440): 10.92 kB, phần lớn là cn / tailwind-merge dùng chung.
+  js("{ VoiceWave }", "{ VoiceWave }", "12 kB"),
   // Trước đây `{ Sheet }`: chỉ context gốc (5.87 kB); SheetContent mới là phần nặng (#360): 27.52 kB.
   js("{ Sheet, SheetTrigger, SheetContent }", "{ Sheet, SheetTrigger, SheetContent }", "30 kB"),
   // Nav không import Tooltip, Sidebar của AppShell truyền Tooltip của rail (#350): 31.40 → 12.33 kB.
