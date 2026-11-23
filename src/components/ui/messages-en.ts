@@ -9,6 +9,7 @@ import { appShellMessagesEn } from "./AppShell/messages";
 import { autocompleteMessagesEn } from "./Autocomplete/messages";
 import { avatarGroupMessagesEn } from "./AvatarGroup/messages";
 import { breadcrumbMessagesEn } from "./Breadcrumb/messages";
+import { callMessagesEn } from "./Call/messages";
 import { carouselMessagesEn } from "./Carousel/messages";
 import { chartMessagesEn } from "./Chart/messages";
 import {
@@ -95,6 +96,7 @@ export const messagesEn: Omit<YugenMessages, "calendar"> = {
   autocomplete: autocompleteMessagesEn,
   avatarGroup: avatarGroupMessagesEn,
   breadcrumb: breadcrumbMessagesEn,
+  call: callMessagesEn,
   carousel: carouselMessagesEn,
   chart: chartMessagesEn,
   chatComposer: chatComposerMessagesEn,

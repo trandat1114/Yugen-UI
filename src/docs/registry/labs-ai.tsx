@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Board20Regular, Search20Regular, Settings20Regular, Sparkle16Regular } from "@fluentui/react-icons";
 import {
+  Avatar,
   Button,
+  CallControlButton,
+  CallControls,
+  CallStatus,
+  CallSurface,
   Citation,
   CitationList,
   Dropdown,
@@ -15,6 +20,7 @@ import {
   useNotifications,
   useTour,
   VoiceWave,
+  type CallState,
   type CitationSource,
   type NotificationItem,
   type TourStep,
@@ -671,6 +677,97 @@ function TranscriptDemo() {
   );
 }
 
+
+/* ================================================================ Call */
+
+const CALL_CODE = `function CallDemo() {
+  const [state, setState] = useState<CallState>("connected");
+  const [muted, setMuted] = useState(false);
+  const [speaker, setSpeaker] = useState(true);
+  const [held, setHeld] = useState(false);
+  const live = state === "connected" || state === "muted" || state === "on-hold";
+  return (
+    <CallSurface
+      name="Aiko Tanaka"
+      description="Product design"
+      avatar={<Avatar name="Aiko Tanaka" size={64} color="colorful" />}
+      state={state}
+      duration={live ? 151 : undefined}
+      className="w-full max-w-sm"
+      controls={
+        state === "ended" ? (
+          <Button onClick={() => setState("connected")}>Call again</Button>
+        ) : (
+          <CallControls>
+            <CallControlButton
+              kind="mute"
+              pressed={muted}
+              onPressedChange={(next) => {
+                setMuted(next);
+                setState(next ? "muted" : "connected");
+              }}
+            />
+            <CallControlButton kind="speaker" pressed={speaker} onPressedChange={setSpeaker} />
+            <CallControlButton
+              kind="hold"
+              pressed={held}
+              onPressedChange={(next) => {
+                setHeld(next);
+                setState(next ? "on-hold" : muted ? "muted" : "connected");
+              }}
+            />
+            <CallControlButton kind="end" confirm onClick={() => setState("ended")} />
+          </CallControls>
+        )
+      }
+    />
+  );
+}`;
+
+function CallDemo() {
+  const [state, setState] = useState<CallState>("connected");
+  const [muted, setMuted] = useState(false);
+  const [speaker, setSpeaker] = useState(true);
+  const [held, setHeld] = useState(false);
+  const live = state === "connected" || state === "muted" || state === "on-hold";
+  return (
+    <CallSurface
+      name="Aiko Tanaka"
+      description="Product design"
+      avatar={<Avatar name="Aiko Tanaka" size={64} color="colorful" />}
+      state={state}
+      duration={live ? 151 : undefined}
+      className="w-full max-w-sm"
+      controls={
+        state === "ended" ? (
+          <Button onClick={() => setState("connected")}>Call again</Button>
+        ) : (
+          <CallControls>
+            <CallControlButton
+              kind="mute"
+              pressed={muted}
+              onPressedChange={(next) => {
+                setMuted(next);
+                setState(next ? "muted" : "connected");
+              }}
+            />
+            <CallControlButton kind="speaker" pressed={speaker} onPressedChange={setSpeaker} />
+            <CallControlButton
+              kind="hold"
+              pressed={held}
+              onPressedChange={(next) => {
+                setHeld(next);
+                setState(next ? "on-hold" : muted ? "muted" : "connected");
+              }}
+            />
+            <CallControlButton kind="end" confirm onClick={() => setState("ended")} />
+          </CallControls>
+        )
+      }
+    />
+  );
+}
+
 export const docs: ComponentDoc[] = [
   {
     slug: "streamingmarkdown",
@@ -910,6 +1007,91 @@ export const docs: ComponentDoc[] = [
       { name: "empty", type: "ReactNode", description: "Nội dung khi chưa có lượt nào (mặc định messages.transcript.empty)." },
       { name: "renderText", type: "(turn) => ReactNode", description: "Thay cách hiện chữ; chỉ được gọi cho lượt đổi." },
       { name: "locale", type: "string", description: "Định dạng giờ của timestamp; mặc định locale của YugenProvider." },
+    ],
+  },
+  {
+    slug: "callsurface",
+    category: "Yugen Labs",
+    name: "CallSurface",
+    lead: "CallSurface, CallStatus và CallControls dựng giao diện một cuộc gọi thoại hoặc video: ai ở đầu bên kia, trạng thái bằng chữ và các nút điều khiển.",
+    description:
+      "Các component chỉ nhận trạng thái và callback: kết nối, quyền micro và camera là việc của app. CallStatus nói trạng thái bằng chữ trong role=\"status\" (đổi trạng thái được đọc lên), thời lượng nằm ngoài vùng đó nên không bị đọc mỗi giây; chấm màu chỉ là phần phụ. CallControls là một toolbar: Tab vào một lần, phím mũi tên / Home / End giữa các nút, nút bị vô hiệu được bỏ qua. CallControlButton có sẵn mute, speaker, camera, hold (nút bật-tắt với aria-pressed, tên giữ nguyên, icon đổi theo trạng thái), add và end; confirm buộc bấm Kết thúc hai lần trong 4 giây. layout=\"inline\" xếp mọi thứ trên một hàng cho panel hoặc thanh dưới màn hình.",
+    importCode: `import { CallSurface, CallStatus, CallControls, CallControlButton } from "@/components/ui";`,
+    hero: { title: "Cuộc gọi đang diễn ra", code: CALL_CODE, render: () => <CallDemo /> },
+    examples: [
+      {
+        title: "Đang kết nối và lỗi",
+        description: "Trạng thái luôn có chữ; label thay chữ mặc định khi cần nói rõ lý do.",
+        code: `<div className="flex flex-col gap-3">
+  <CallStatus state="connecting" />
+  <CallStatus state="ringing" />
+  <CallStatus state="failed" label="No answer" />
+</div>`,
+        render: () => (
+          <div className="flex flex-col gap-3">
+            <CallStatus state="connecting" />
+            <CallStatus state="ringing" />
+            <CallStatus state="failed" label="No answer" />
+          </div>
+        ),
+      },
+      {
+        title: "Một hàng gọn",
+        description: "layout=\"inline\" cho panel hẹp; nội dung giữa (Transcript, VoiceWave) xuống hàng riêng.",
+        code: `<CallSurface
+  layout="inline"
+  name="Aiko Tanaka"
+  description="+1 415 555 0134"
+  state="muted"
+  duration={42}
+  className="w-full max-w-lg"
+  controls={
+    <CallControls>
+      <CallControlButton kind="mute" pressed />
+      <CallControlButton kind="end" />
+    </CallControls>
+  }
+/>`,
+        render: () => (
+          <CallSurface
+            layout="inline"
+            name="Aiko Tanaka"
+            description="+1 415 555 0134"
+            state="muted"
+            duration={42}
+            className="w-full max-w-lg"
+            controls={
+              <CallControls>
+                <CallControlButton kind="mute" pressed />
+                <CallControlButton kind="end" />
+              </CallControls>
+            }
+          />
+        ),
+      },
+    ],
+    dos: [
+      "Đổi state theo sự kiện thật của kết nối (đã nhận, đang giữ, mất mạng).",
+      "Dùng confirm cho nút Kết thúc khi lỡ tay kết thúc sẽ mất dữ liệu (ghi âm, phòng họp).",
+      "Đặt Transcript hoặc VoiceWave làm children để mọi thứ nằm trong cùng một vùng có tên.",
+    ],
+    donts: [
+      "Không báo trạng thái chỉ bằng màu của chấm.",
+      "Không đổi nhãn của nút bật-tắt theo trạng thái — aria-pressed đã nói điều đó.",
+      "Không đặt đồng hồ thời lượng vào vùng live.",
+    ],
+    props: [
+      { name: "CallSurface.name / avatar / description", type: "string / ReactNode / ReactNode", description: "Đầu bên kia; name cũng đặt tên cho vùng (messages.call.surface)." },
+      { name: "CallSurface.state / duration", type: "CallState / number (giây)", description: "Trạng thái và thời lượng, hiện bằng CallStatus." },
+      { name: "CallSurface.controls / children", type: "ReactNode", description: "Thanh điều khiển và nội dung giữa." },
+      { name: "CallSurface.layout", type: `"stacked" | "inline"`, defaultValue: `"stacked"`, description: "Màn hình cuộc gọi hoặc một hàng gọn." },
+      { name: "CallStatus.state", type: `"connecting" | "ringing" | "connected" | "muted" | "on-hold" | "ended" | "failed"`, description: "Trạng thái, đọc bằng chữ (messages.call.states)." },
+      { name: "CallStatus.duration / label", type: "number / ReactNode", description: "Thời lượng (khi đã kết nối) và chữ thay thế." },
+      { name: "CallControlButton.kind", type: `"mute" | "speaker" | "camera" | "hold" | "add" | "end"`, description: "Nút có sẵn: icon và nhãn (messages.call.controls)." },
+      { name: "CallControlButton.pressed / onPressedChange", type: "boolean", description: "Trạng thái của nút bật-tắt (aria-pressed)." },
+      { name: "CallControlButton.confirm", type: "boolean", defaultValue: "false", description: "kind=\"end\": cần bấm hai lần trong 4 giây." },
+      { name: "CallControlButton.label / icon", type: "ReactNode", description: "Thay nhãn và icon (nút tuỳ chỉnh)." },
+      { name: "formatCallDuration(seconds)", type: "string", description: "Giây → m:ss hoặc h:mm:ss." },
     ],
   },
   {
