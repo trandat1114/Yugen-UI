@@ -17,6 +17,12 @@ export interface DataGridMessages {
   showAllColumns: string;
   /** Mô tả nút DataGridColumnPicker khi có cột bị ẩn. */
   hiddenColumns: (count: number) => string;
+  /** DataGridColumnPicker: mục `resettable` đưa cột về mặc định. */
+  resetColumns: string;
+  /** DataGridColumnPicker: lý do cột `hideable: false` không bỏ tích được. */
+  requiredColumn: string;
+  /** DataGridColumnPicker: nút đóng Sheet (`mode="auto"` / `"sheet"`). */
+  close: string;
 }
 
 declare module "../YugenProvider/context" {
@@ -36,6 +42,9 @@ export const dataGridMessagesVi: DataGridMessages = {
   columns: "Cột",
   showAllColumns: "Hiện tất cả cột",
   hiddenColumns: (count) => `${count} cột đang ẩn`,
+  resetColumns: "Đặt lại cột",
+  requiredColumn: "Luôn hiện",
+  close: "Đóng",
 };
 
 export const dataGridMessagesEn: DataGridMessages = {
@@ -49,6 +58,9 @@ export const dataGridMessagesEn: DataGridMessages = {
   columns: "Columns",
   showAllColumns: "Show all columns",
   hiddenColumns: (count) => (count === 1 ? "1 column hidden" : `${count} columns hidden`),
+  resetColumns: "Reset columns",
+  requiredColumn: "Always shown",
+  close: "Close",
 };
 
 /** @deprecated Use `dataGridMessagesVi` (Vietnamese) or `dataGridMessagesEn`. Will be removed in v1.0.0. */

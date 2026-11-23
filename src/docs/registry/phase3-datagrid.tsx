@@ -269,6 +269,52 @@ function ColumnsDemo() {
 }
 // #endregion
 
+// #region DenseColumnsDemo
+const denseColumns = [
+  ...orderColumns,
+  createColumn<Order>({ columnId: "email", label: "Email", renderCell: (order) => order.email, minWidth: 220 }),
+];
+
+/** The table's default view: what "Reset columns" brings back. */
+const DEFAULT_VIEW = { hiddenColumns: ["email"] };
+
+function DenseColumnsDemo() {
+  const [hiddenColumns, setHiddenColumns] = useState<ReadonlySet<string>>(() => new Set(DEFAULT_VIEW.hiddenColumns));
+  const [columnOrder, setColumnOrder] = useState<string[]>([]);
+
+  return (
+    <div className="flex w-full min-w-0 flex-col gap-2">
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-body1 font-semibold">{ORDERS.length} orders</span>
+        <DataGridColumnPicker
+          compact
+          mode="auto"
+          resettable={DEFAULT_VIEW}
+          size="small"
+          columns={denseColumns}
+          hiddenColumns={hiddenColumns}
+          onHiddenColumnsChange={(_, data) => setHiddenColumns(data.hiddenColumns)}
+          columnOrder={columnOrder}
+          onColumnOrderChange={(_, data) => setColumnOrder(data.columnOrder)}
+        >
+          Order columns
+        </DataGridColumnPicker>
+      </div>
+      <DataGrid
+        aria-label="Orders, dense view"
+        items={ORDERS.slice(0, 6)}
+        columns={denseColumns}
+        getRowId={(order) => order.id}
+        hiddenColumns={hiddenColumns}
+        columnOrder={columnOrder}
+        size="small"
+        className="rounded-xlarge border border-stroke-2"
+      />
+    </div>
+  );
+}
+// #endregion
+
 // #region ResizeDemo
 function ResizeDemo() {
   const [last, setLast] = useState("Drag the right edge of a header, or Tab to the handle and use the arrow keys.");
@@ -446,6 +492,13 @@ export const docs: ComponentDoc[] = [
         render: () => <ColumnsDemo />,
       },
       {
+        title: "Chọn cột cho bảng dày đặc",
+        description: "compact: nút chỉ còn icon và số cột đang ẩn, tên nút vẫn là nhãn (đặt tên riêng cho từng bảng khi trang có nhiều bảng). mode=\"auto\": menu khi màn hình rộng từ 768px (breakpoint \"3xl\"), bottom sheet khi hẹp hơn — mỗi cột một hàng cao 44px, đổi thứ tự bằng tay nắm (kéo, hoặc Space rồi ↑ ↓). resettable đưa cột về mặc định của bảng (ở đây Email ẩn, thứ tự gốc). Cột hideable: false (Khách hàng) có khoá, vẫn nhận focus và có mô tả \"Luôn hiện\". Thu hẹp cửa sổ dưới 768px để thấy sheet.",
+        code: source("DenseColumnsDemo"),
+        setup: source("data"),
+        render: () => <DenseColumnsDemo />,
+      },
+      {
         title: "Đổi độ rộng cột, ghim cột đầu",
         description: "Tay nắm nhận focus khi Tab từ ô tiêu đề: ← / → ±10px, Shift ±50px, nhấp đúp để vừa nội dung. Cột sticky giữ nguyên khi cuộn ngang.",
         code: source("ResizeDemo"),
@@ -517,6 +570,10 @@ export const docs: ComponentDoc[] = [
       { name: "DataGridColumnPicker.onColumnOrderChange", type: "(event, { columnOrder: string[] }) => void", description: "Có thì mục trong menu kéo được (hoặc Alt + ↑ ↓) để đổi thứ tự cột. Gọi cả trong lúc kéo để lưới đổi theo." },
       { name: "DataGridColumnPicker.sortState", type: "DataGridSortState", description: "Cột đang sắp xếp có mũi tên trong menu, kể cả khi đang ẩn." },
       { name: "DataGridColumnPicker.align", type: `"start" | "center" | "end"`, defaultValue: `"end"`, description: "Căn menu theo nút. Trong Toolbar nút tự lấy size của Toolbar và appearance subtle." },
+      { name: "DataGridColumnPicker.compact", type: "boolean", defaultValue: "false", description: "Nút chỉ có icon và số cột đang ẩn. Nhãn (children hoặc \"Cột\") vẫn là tên của nút cho trình đọc màn hình và điều khiển bằng giọng nói." },
+      { name: "DataGridColumnPicker.mode", type: `"menu" | "auto" | "sheet"`, defaultValue: `"menu"`, description: "auto: menu khi viewport rộng ≥ breakpoint, bottom sheet khi hẹp hơn. sheet: luôn là Sheet (panel bên cạnh trên màn hình rộng). Trong sheet, cột đổi thứ tự bằng tay nắm." },
+      { name: "DataGridColumnPicker.breakpoint", type: `"lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl"`, defaultValue: `"3xl"`, description: "Độ rộng viewport tối thiểu cho menu, cùng token với Sheet: 3xl = 48rem (768px)." },
+      { name: "DataGridColumnPicker.resettable", type: "boolean | { hiddenColumns?: Iterable<string>; columnOrder?: string[] }", description: "Thêm mục \"Đặt lại cột\" (tắt khi đã ở mặc định). true: mọi cột hiện, thứ tự columns; object: trạng thái mặc định của bảng." },
       { name: "useDataGridSort / useDataGridSelection / useDataGridColumnVisibility / sortItems / getVisibleColumns / getOrderedColumns", type: "hook / hook / hook / (items, columns, sortState) => T[] / (columns, hiddenColumns) => columns / (columns, columnOrder) => columns", description: "Logic dùng riêng được — ví dụ để sắp xếp phía server, điều khiển lựa chọn từ toolbar hoặc tự làm nút chọn cột." },
     ],
   },

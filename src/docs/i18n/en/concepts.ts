@@ -274,6 +274,22 @@ export const CONCEPTS_EN: Record<string, { title: string; lead?: string; toc?: R
       buttons: "Don't truncate button labels",
     },
   },
+  "data-tables": {
+    title: "Dense data tables",
+    lead: "A recipe for operational tables with 8–15 columns: pick the density, give every column a width rule, keep the identifier in view, and show loading, empty and error in the same box.",
+    toc: {
+      example: "Example: customer directory",
+      density: "Comfortable or compact",
+      columns: "Column widths & long text",
+      alignment: "Numbers & identifiers",
+      scrolling: "Horizontal scrolling & pinned columns",
+      states: "Loading, empty, error",
+      viewports: "Viewports",
+      shell: "Page width & density",
+      a11y: "Keyboard, sort & selection",
+      rules: "Do and don't",
+    },
+  },
   "adaptive-overlays": {
     title: "Adaptive overlays for desktop & mobile",
     lead: "Same task, different devices: choose between Dialog, Drawer, Sheet and Popover, and let Sheet become a side panel on wide screens and a bottom sheet within thumb reach on phones.",

@@ -48,29 +48,31 @@ export const TEMPLATES: TemplateInfo[] = [
   {
     dir: "vite-saas",
     name: "SaaS",
-    tags: ["Vite", "React 19", "Tailwind v4", { vi: "8 trang", en: "8 pages" }],
+    tags: ["Vite", "React 19", "Tailwind v4", { vi: "9 trang", en: "9 pages" }],
     featured: true,
     previewPath: "/",
     vi: {
       description:
-        "Ứng dụng SaaS 8 trang: sidebar, bảng lệnh Ctrl K, thông báo và menu tài khoản.",
+        "Ứng dụng SaaS 9 trang: sidebar, bảng lệnh Ctrl K, thông báo và trang khách hàng rộng hết màn hình.",
       features: [
         "Sidebar Nav → Drawer trên màn hẹp (container query)",
         "Bảng lệnh Ctrl / ⌘ K: chuyển trang, đổi theme, hành động nhanh",
         "Sáng / tối / tương phản cao + 3 thương hiệu, lưu lại, không nháy khi tải",
         "Đường dẫn thật (/analytics), tiêu đề & meta description theo trang; mỗi trang nạp lười",
+        "Trang dữ liệu: DataGrid rộng hết vùng nội dung, mật độ gọn, chọn cột (src/layout.ts)",
         "SEO cơ bản: description, Open Graph, theme-color, robots.txt",
         "Chữ và dữ liệu mẫu bằng tiếng Anh (tiếng Việt với --lang vi), nằm trong src/content/",
       ],
     },
     en: {
       description:
-        "An 8-page SaaS app: sidebar, Ctrl K command palette, notifications and account menu.",
+        "A 9-page SaaS app: sidebar, Ctrl K command palette, notifications and a full-width customer page.",
       features: [
         "Sidebar Nav → Drawer on narrow screens (container queries)",
         "Ctrl / ⌘ K command palette: navigate, switch theme, quick actions",
         "Light / dark / high contrast + 3 brands, persisted with no flash on load",
         "Real paths (/analytics), per-page title & meta description; every page loads on demand",
+        "Data page: a DataGrid across the whole content area, compact density, column picker (src/layout.ts)",
         "SEO basics: description, Open Graph, theme-color, robots.txt",
         "English text and sample data (Vietnamese with --lang vi), kept in src/content/",
       ],

@@ -205,6 +205,9 @@ export const en: Record<string, ComponentDocEn> = {
       "Table.sortable": "Turns every TableHeaderCell into a sort button.",
       "TableHeaderCell.sortDirection": "Shows the ArrowSortUp/Down icon and sets aria-sort.",
       "TableHeaderCell.sortable / onClick": "Turns sorting on / off for one column; onClick goes on the button in the header.",
+      "TableHeaderCell.align":
+        "Aligns the header with the column's cells; on a sortable column the sort button follows. end for numbers, amounts and dates.",
+      "TableCell.align": "Aligns the cell content (flips in RTL). Replaces the old HTML align attribute.",
       "TableRow.selected / appearance": "Background state of the row.",
       "TableCellLayout.media / description / appearance / truncate": "Cell layout: media + main content + description.",
       "TableSelectionCell.checked / onCheckedChange / subtle": "Row selection checkbox; inside TableHeader it becomes the select-all cell.",
