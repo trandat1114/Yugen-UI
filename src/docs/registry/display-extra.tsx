@@ -24,34 +24,36 @@ import type { ComponentDoc } from "../types";
 
 /* ---------------------------------------------------------------- Article */
 
-const ARTICLE_CODE = `const POST = \`## Why rhythm beats borders
-
-Most screens use borders to separate things that spacing could separate on its own. Start with a **4 px grid** and let headings carry the structure.
-
-## Spacing scale
-
-| Token | Value | Use |
-| --- | ---: | --- |
-| spacing-2 | 8 px | inside controls |
-| spacing-4 | 16 px | between fields |
-| spacing-8 | 32 px | between sections |
-
-## A very long heading that has to wrap on small screens without overflowing the page
-
-Long headings wrap instead of pushing the layout sideways.
-
-## Applying it in code
-
-\\\`\\\`\\\`tsx
-<Stack gap="4">
-  <Field label="Name" />
-  <Field label="Email" />
-</Stack>
-\\\`\\\`\\\`
-
-## Spacing scale
-
-A second section with the same title gets its own id in the table of contents.\`;
+const ARTICLE_CODE = `const POST = [
+  "## Why rhythm beats borders",
+  "",
+  "Most screens use borders to separate things that spacing could separate on its own. Start with a **4 px grid** and let headings carry the structure.",
+  "",
+  "## Spacing scale",
+  "",
+  "| Token | Value | Use |",
+  "| --- | ---: | --- |",
+  "| spacing-2 | 8 px | inside controls |",
+  "| spacing-4 | 16 px | between fields |",
+  "| spacing-8 | 32 px | between sections |",
+  "",
+  "## A very long heading that has to wrap on small screens without overflowing the page",
+  "",
+  "Long headings wrap instead of pushing the layout sideways.",
+  "",
+  "## Applying it in code",
+  "",
+  "\`\`\`tsx",
+  "<Stack gap=\\"4\\">",
+  "  <Field label=\\"Name\\" />",
+  "  <Field label=\\"Email\\" />",
+  "</Stack>",
+  "\`\`\`",
+  "",
+  "## Spacing scale",
+  "",
+  "A second section with the same title gets its own id in the table of contents.",
+].join("\\n");
 
 const HEADINGS = markdownHeadings(POST);
 
@@ -79,34 +81,36 @@ function ArticleDemo() {
   );
 }`;
 
-const POST = `## Why rhythm beats borders
-
-Most screens use borders to separate things that spacing could separate on its own. Start with a **4 px grid** and let headings carry the structure.
-
-## Spacing scale
-
-| Token | Value | Use |
-| --- | ---: | --- |
-| spacing-2 | 8 px | inside controls |
-| spacing-4 | 16 px | between fields |
-| spacing-8 | 32 px | between sections |
-
-## A very long heading that has to wrap on small screens without overflowing the page
-
-Long headings wrap instead of pushing the layout sideways.
-
-## Applying it in code
-
-\`\`\`tsx
-<Stack gap="4">
-  <Field label="Name" />
-  <Field label="Email" />
-</Stack>
-\`\`\`
-
-## Spacing scale
-
-A second section with the same title gets its own id in the table of contents.`;
+const POST = [
+  "## Why rhythm beats borders",
+  "",
+  "Most screens use borders to separate things that spacing could separate on its own. Start with a **4 px grid** and let headings carry the structure.",
+  "",
+  "## Spacing scale",
+  "",
+  "| Token | Value | Use |",
+  "| --- | ---: | --- |",
+  "| spacing-2 | 8 px | inside controls |",
+  "| spacing-4 | 16 px | between fields |",
+  "| spacing-8 | 32 px | between sections |",
+  "",
+  "## A very long heading that has to wrap on small screens without overflowing the page",
+  "",
+  "Long headings wrap instead of pushing the layout sideways.",
+  "",
+  "## Applying it in code",
+  "",
+  "```tsx",
+  "<Stack gap=\"4\">",
+  "  <Field label=\"Name\" />",
+  "  <Field label=\"Email\" />",
+  "</Stack>",
+  "```",
+  "",
+  "## Spacing scale",
+  "",
+  "A second section with the same title gets its own id in the table of contents.",
+].join("\n");
 
 const HEADINGS = markdownHeadings(POST);
 
