@@ -7,6 +7,10 @@
   stops before any file is written. `--registry` and registries from `yugen.json` / `components.json` are not checked
   and the CLI says so (#381).
 - `yugen css` and `init` add `yugen-ui/tokens/brands.css` when the app uses the web or Teams brand (#354).
+- Templates follow yugen-ui 0.17.0: `vite-admin` validates its forms with `HookForm` and `standardSchemaResolver` from
+  `yugen-ui/form` instead of its own zod resolver (#162); `vite-dashboard` and `vite-saas` import the date components
+  from `yugen-ui/dates` and list `react-day-picker` (#356); `vite-store` styles the selected radio card with
+  `has-checked:` now that Radio is a native input (#357).
 
 ## 0.8.0
 

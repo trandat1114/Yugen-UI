@@ -2,6 +2,8 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { watchDeprecations } from "@/test/deprecation";
 import { setMediaQueries } from "@/test/matchMedia";
 import { act, render, screen, within } from "@testing-library/react";
+import { YugenProvider } from "../YugenProvider/YugenProvider";
+import { messagesVi } from "../messages-vi";
 import { Timeline, TimelineItem } from "./Timeline";
 
 afterEach(() => vi.unstubAllGlobals());
@@ -106,6 +108,46 @@ describe("Timeline", () => {
     expect(items[1]).toHaveAttribute("data-timeline-status", "upcoming");
     expect(within(items[0]).getByText("Today").parentElement).toHaveClass("sm:sticky");
     expect(within(items[0]).getByText("Today").compareDocumentPosition(within(items[0]).getByText("Now")) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("cancels a pending frame on unmount and coalesces events into one frame", () => {
+    const flushFrame = queueAnimationFrames();
+    const cancel = vi.fn();
+    vi.stubGlobal("cancelAnimationFrame", cancel);
+    const { unmount } = render(
+      <Timeline progress aria-label="Pending">
+        <TimelineItem title="One" />
+      </Timeline>,
+    );
+    act(() => {
+      window.dispatchEvent(new Event("scroll"));
+      window.dispatchEvent(new Event("resize"));
+    });
+    unmount();
+    expect(cancel).toHaveBeenCalledTimes(1);
+    flushFrame();
+  });
+
+  it("names the progressbar from messages.timeline and keeps the static timeline free of listeners", () => {
+    const addListener = vi.spyOn(window, "addEventListener");
+    const { rerender } = render(
+      <YugenProvider messages={messagesVi}>
+        <Timeline progress>
+          <TimelineItem title="Một" />
+        </Timeline>
+      </YugenProvider>,
+    );
+    expect(screen.getByRole("progressbar", { name: "Tiến độ dòng thời gian" })).toBeInTheDocument();
+    rerender(
+      <YugenProvider messages={messagesVi}>
+        <Timeline>
+          <TimelineItem title="Một" />
+        </Timeline>
+      </YugenProvider>,
+    );
+    expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
+    expect(screen.getByRole("listitem")).not.toHaveAttribute("data-timeline-status");
+    expect(addListener.mock.calls.filter(([type]) => type === "scroll")).toHaveLength(1);
   });
 });
 
