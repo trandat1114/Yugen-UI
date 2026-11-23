@@ -132,6 +132,9 @@ module.exports = [
   js("{ ColorPicker }", "{ ColorPicker }", "30 kB"),
   // Hình học / nhãn nhớ theo props, lớp điểm dùng chung, màu tô trên nhóm (#352): 30.18 → 31.10 kB.
   js("{ BarChart, LineChart }", "{ BarChart, LineChart }", "34 kB"),
+  // SVG viết tay, không runtime vẽ biểu đồ (#424, #431, #432): RadarChart 22.21 kB, PieChart + RadialChart 22.61 kB.
+  js("{ RadarChart }", "{ RadarChart }", "24 kB"),
+  js("{ PieChart, RadialChart }", "{ PieChart, RadialChart }", "24.5 kB"),
   // CSS Grid, không đo layout bằng JavaScript (#434, #437): 11.01 kB, phần lớn là cn / tailwind-merge dùng chung.
   js("{ BentoGrid, BentoGridItem }", "{ BentoGrid, BentoGridItem }", "12 kB"),
   // Trước đây `{ Sheet }`: chỉ context gốc (5.87 kB); SheetContent mới là phần nặng (#360): 27.52 kB.

@@ -45,7 +45,12 @@ export interface ChartMessages {
     series: string[];
   }) => string;
   barSummary: (info: { horizontal: boolean; stacked: boolean; categories: number; series: string[] }) => string;
-  donutSummary: (info: { groups: number; total: string; largest?: { label: string; share: string } }) => string;
+  /** `pie`: PieChart (lát đặc) thay vì DonutChart. */
+  donutSummary: (info: { groups: number; total: string; largest?: { label: string; share: string }; pie?: boolean }) => string;
+  /** RadarChart: số trục và tên các chuỗi đang hiện. */
+  radarSummary: (info: { axes: number; series: string[] }) => string;
+  /** RadialChart: tổng và giá trị tối đa đã định dạng, nhãn của đoạn đầu (nếu có). */
+  radialSummary: (info: { value: string; max: string; label?: string }) => string;
   scatterSummary: (info: {
     points: number;
     x: string;
@@ -98,8 +103,8 @@ export const chartMessagesVi: ChartMessages = {
     `Biểu đồ ${LINE_KIND_VI[kind]}: ${points} điểm${points ? ` từ ${from} đến ${to}` : ""}, ${seriesVi(series)}. Dùng phím mũi tên để duyệt từng mốc.`,
   barSummary: ({ horizontal, stacked, categories, series }) =>
     `Biểu đồ ${horizontal ? "thanh" : "cột"}${stacked ? " chồng" : ""}: ${categories} danh mục, ${seriesVi(series)}. Dùng phím mũi tên để duyệt từng giá trị.`,
-  donutSummary: ({ groups, total, largest }) =>
-    `Biểu đồ donut: ${groups} nhóm, tổng ${total}${largest ? `. Lớn nhất: ${largest.label} (${largest.share})` : ""}. Dùng phím mũi tên để duyệt từng lát.`,
+  donutSummary: ({ groups, total, largest, pie }) =>
+    `Biểu đồ ${pie ? "tròn" : "donut"}: ${groups} nhóm, tổng ${total}${largest ? `. Lớn nhất: ${largest.label} (${largest.share})` : ""}. Dùng phím mũi tên để duyệt từng lát.`,
   scatterSummary: ({ points, x, y, size, groups, trends }) =>
     `Biểu đồ phân tán: ${points} điểm, ${x} theo ${y}${size !== undefined ? `, kích thước theo ${size}` : ""}${
       groups ? `, ${groups.length} nhóm (${groups.join(", ")})` : ""
@@ -114,6 +119,9 @@ export const chartMessagesVi: ChartMessages = {
     }. Dùng phím mũi tên để duyệt từng ô.`,
   sparklineSummary: ({ points, first, last, min, max }) =>
     `Xu hướng ${points} điểm: từ ${first} đến ${last}, thấp nhất ${min}, cao nhất ${max}`,
+  radarSummary: ({ axes, series }) =>
+    `Biểu đồ radar: ${axes} trục${series.length ? `, ${seriesVi(series)}` : ""}. Dùng phím mũi tên để duyệt từng trục.`,
+  radialSummary: ({ value, max, label }) => `Biểu đồ vòng cung: ${value} trên ${max}${label ? `, ${label}` : ""}.`,
 };
 
 export const chartMessagesEn: ChartMessages = {
@@ -144,8 +152,8 @@ export const chartMessagesEn: ChartMessages = {
     `${horizontal ? (stacked ? "Stacked bar" : "Bar") : stacked ? "Stacked column" : "Column"} chart: ${categories} ${
       categories === 1 ? "category" : "categories"
     }, ${seriesEn(series)}. Use the arrow keys to move between values.`,
-  donutSummary: ({ groups, total, largest }) =>
-    `Donut chart: ${groups} ${groups === 1 ? "group" : "groups"}, total ${total}${
+  donutSummary: ({ groups, total, largest, pie }) =>
+    `${pie ? "Pie" : "Donut"} chart: ${groups} ${groups === 1 ? "group" : "groups"}, total ${total}${
       largest ? `. Largest: ${largest.label} (${largest.share})` : ""
     }. Use the arrow keys to move between slices.`,
   scatterSummary: ({ points, x, y, size, groups, trends }) =>
@@ -162,6 +170,9 @@ export const chartMessagesEn: ChartMessages = {
     }${hasEmpty ? ", some cells have no data" : ""}. Use the arrow keys to move between cells.`,
   sparklineSummary: ({ points, first, last, min, max }) =>
     `Trend over ${points} ${points === 1 ? "point" : "points"}: from ${first} to ${last}, low ${min}, high ${max}`,
+  radarSummary: ({ axes, series }) =>
+    `Radar chart: ${axes} ${axes === 1 ? "axis" : "axes"}${series.length ? `, ${seriesEn(series)}` : ""}. Use the arrow keys to move between axes.`,
+  radialSummary: ({ value, max, label }) => `Radial chart: ${value} of ${max}${label ? `, ${label}` : ""}.`,
 };
 
 /** @deprecated Use `chartMessagesVi` (Vietnamese) or `chartMessagesEn`. Will be removed in v1.0.0. */
