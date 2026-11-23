@@ -7,7 +7,7 @@ import { Table, TableBody, TableHeader, TableHeaderCell, TableRow, TableCell } f
 import { useYugenMessages } from "../YugenProvider/context";
 import { useControllableState } from "../hooks/useControllableState";
 import { chartMessagesEn } from "./messages";
-import { chartUid, patternId, slotDash, slotFill, slotVar, type ChartSlot } from "./chartUtils";
+import { chartUid, patternId, slotDash, slotFill, slotVar, type ChartSlot, type ChartTooltipConfig } from "./chartUtils";
 
 /* ================================================================== Hoa văn (texture) */
 
@@ -54,7 +54,18 @@ export function ChartPatterns({ prefix, slots }: { prefix: string; slots: ChartS
 
 export type ChartLegendShape = "rect" | "line";
 
-export function ChartLegendSwatch({ slot, shape = "rect", textured = false }: { slot: ChartSlot; shape?: ChartLegendShape; textured?: boolean }) {
+export function ChartLegendSwatch({
+  slot,
+  shape = "rect",
+  textured = false,
+  dashed = false,
+}: {
+  slot: ChartSlot;
+  shape?: ChartLegendShape;
+  textured?: boolean;
+  /** Nét đứt bất kể chuỗi (khoá `indicator: "dashed"` của tooltip). */
+  dashed?: boolean;
+}) {
   const uid = chartUid(React.useId());
   if (shape === "line") {
     return (
@@ -66,7 +77,7 @@ export function ChartLegendSwatch({ slot, shape = "rect", textured = false }: { 
           y2={4}
           strokeWidth={2}
           strokeLinecap="round"
-          strokeDasharray={slotDash(slot, textured)}
+          strokeDasharray={dashed ? "4 3" : slotDash(slot, textured)}
           style={{ stroke: slotVar(slot) }}
         />
       </svg>
@@ -171,6 +182,8 @@ export interface ChartTooltipRow {
   shape?: ChartLegendShape;
   /** Thay khoá màu mặc định (vd. hình marker của ScatterChart). */
   swatch?: React.ReactNode;
+  /** Giá trị gốc (cho `tooltip.value` / `tooltip.render`); bỏ trống khi hàng không phải một số. */
+  raw?: number | null;
 }
 
 export interface ChartTooltipProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
@@ -186,6 +199,10 @@ export interface ChartTooltipProps extends Omit<React.HTMLAttributes<HTMLDivElem
    */
   placement?: "auto" | "above" | "outward";
   origin?: [number, number];
+  /** `tooltip` của biểu đồ (ChartFrameProps). */
+  config?: ChartTooltipConfig;
+  /** Chỉ số điểm / danh mục, truyền cho `config.label` và `config.render`. */
+  index?: number;
 }
 
 /** Tooltip của biểu đồ: div định vị tuyệt đối trong vùng vẽ, tự lật xuống dưới / kẹp trong khung. Giá trị đậm, nhãn phụ. */
@@ -197,12 +214,24 @@ export function ChartTooltip({
   textured = false,
   placement = "auto",
   origin,
+  config,
+  index = 0,
   className,
   children,
   ref: forwardedRef,
   ...props
 }: ChartTooltipProps & { ref?: React.Ref<HTMLDivElement> }) {
   const innerRef = React.useRef<HTMLDivElement>(null);
+  const indicator = config?.indicator ?? "line";
+  const shownTitle = config?.label === false ? undefined : config?.label ? config.label(title, index) : title;
+  const shownRows = rows?.map((row) =>
+    config?.value && typeof row.raw === "number" ? { ...row, value: config.value(row.raw, row.key) } : row,
+  );
+  const custom = config?.render?.({
+    title,
+    index,
+    rows: (rows ?? []).map((row) => ({ key: row.key, label: row.label, value: row.raw ?? null, formatted: row.value, slot: row.slot })),
+  });
   const dir = useDirection();
   React.useImperativeHandle(forwardedRef, () => innerRef.current as HTMLDivElement);
 
@@ -246,6 +275,7 @@ export function ChartTooltip({
     el.style.visibility = "visible";
   });
 
+  if (config?.hidden) return null;
   return (
     <div
       ref={innerRef}
@@ -258,26 +288,40 @@ export function ChartTooltip({
       )}
       {...props}
     >
-      {title !== undefined && <div className="mb-1 font-semibold text-foreground-1">{title}</div>}
-      {rows && rows.length > 0 && (
-        <div className="grid grid-cols-[auto_1fr_auto] items-center gap-x-2 gap-y-0.5">
-          {rows.map((row) => (
-            <React.Fragment key={row.key}>
-              {row.swatch ? (
-                row.swatch
-              ) : row.slot !== undefined ? (
-                // Khoá bằng nét ngắn (không phải ô đặc); chỉ khi có hoa văn mới cần ô để thấy hoa văn.
-                <ChartLegendSwatch slot={row.slot} shape={textured ? (row.shape ?? "line") : "line"} textured={textured} />
-              ) : (
-                <span />
-              )}
-              <span className="min-w-0 truncate">{row.label}</span>
-              <span className="text-end font-semibold text-foreground-1 tabular-nums">
-                <bdi>{row.value}</bdi>
-              </span>
-            </React.Fragment>
-          ))}
-        </div>
+      {custom !== undefined ? (
+        custom
+      ) : (
+        <>
+          {shownTitle !== undefined && <div className="mb-1 font-semibold text-foreground-1">{shownTitle}</div>}
+          {shownRows && shownRows.length > 0 && (
+            <div className={cn("grid items-center gap-x-2 gap-y-0.5", indicator === "none" && !config?.icons ? "grid-cols-[1fr_auto]" : "grid-cols-[auto_1fr_auto]")}>
+              {shownRows.map((row) => (
+                <React.Fragment key={row.key}>
+                  {config?.icons?.[row.key] !== undefined ? (
+                    <span className="flex size-4 items-center justify-center [&_svg]:size-4">{config.icons[row.key]}</span>
+                  ) : indicator === "none" ? (
+                    config?.icons ? <span /> : null
+                  ) : row.swatch ? (
+                    row.swatch
+                  ) : row.slot !== undefined ? (
+                    indicator === "dot" ? (
+                      <span className="size-2 rounded-circular" style={{ background: slotVar(row.slot) }} />
+                    ) : (
+                      // Khoá bằng nét ngắn (không phải ô đặc); chỉ khi có hoa văn mới cần ô để thấy hoa văn.
+                      <ChartLegendSwatch slot={row.slot} shape={textured ? (row.shape ?? "line") : "line"} textured={textured} dashed={indicator === "dashed"} />
+                    )
+                  ) : (
+                    <span />
+                  )}
+                  <span className="min-w-0 truncate">{row.label}</span>
+                  <span className="text-end font-semibold text-foreground-1 tabular-nums">
+                    <bdi>{row.value}</bdi>
+                  </span>
+                </React.Fragment>
+              ))}
+            </div>
+          )}
+        </>
       )}
       {children}
     </div>

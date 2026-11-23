@@ -52,7 +52,44 @@ export interface ChartFrameProps {
   texture?: boolean;
   /** Animation vào cảnh (luôn tắt khi prefers-reduced-motion). */
   animate?: boolean;
+  /** Tuỳ biến tooltip (khoá màu, tiêu đề, giá trị, icon, nội dung riêng) — cùng một cách cho mọi biểu đồ. */
+  tooltip?: ChartTooltipConfig;
   className?: string;
+}
+
+/** Một hàng của tooltip, như biểu đồ dựng sẵn (cho `tooltip.render`). */
+export interface ChartTooltipPayloadRow {
+  /** `key` của chuỗi (hoặc lát, ô). */
+  key: string;
+  label: React.ReactNode;
+  /** Giá trị gốc; null khi thiếu dữ liệu. */
+  value: number | null;
+  /** Giá trị đã định dạng mà tooltip mặc định hiện. */
+  formatted: React.ReactNode;
+  slot?: ChartSlot;
+}
+
+export interface ChartTooltipPayload {
+  /** Tiêu đề đã định dạng (danh mục, mốc thời gian, tên lát…). */
+  title: React.ReactNode;
+  /** Chỉ số điểm / danh mục đang trỏ tới. */
+  index: number;
+  rows: ChartTooltipPayloadRow[];
+}
+
+export interface ChartTooltipConfig {
+  /** Khoá màu trước mỗi hàng: line (nét ngắn, mặc định), dot (chấm tròn), dashed (nét đứt) hoặc none. */
+  indicator?: "line" | "dot" | "dashed" | "none";
+  /** false: không có tiêu đề · hàm: đổi tiêu đề (nhận tiêu đề đã định dạng và chỉ số). */
+  label?: false | ((label: React.ReactNode, index: number) => React.ReactNode);
+  /** Định dạng lại giá trị của từng hàng (nhận số gốc và `key` của chuỗi); thiếu dữ liệu vẫn hiện như mặc định. */
+  value?: (value: number, key: string) => React.ReactNode;
+  /** Icon thay khoá màu, theo `key` của chuỗi. */
+  icons?: Record<string, React.ReactNode>;
+  /** Thay cả nội dung tooltip (vị trí, viền và nền giữ nguyên). */
+  render?: (payload: ChartTooltipPayload) => React.ReactNode;
+  /** Ẩn tooltip; focus bàn phím, vòng focus và bảng dữ liệu vẫn còn. */
+  hidden?: boolean;
 }
 
 /* ================================================================== Màu */

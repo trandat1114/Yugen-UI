@@ -132,6 +132,7 @@ export function Heatmap({
   toolbar,
   locale: localeProp,
   ariaLabel,
+  tooltip,
   indexLabel,
   hideTableToggle,
   defaultShowTable,
@@ -340,7 +341,9 @@ export function Heatmap({
             x={cellX(active.c) + cellW / 2}
             y={cellY(active.r)}
             title={`${rowLabels[active.r]} · ${columns[active.c].label}`}
-            rows={[{ key: "v", label: msg.value, value: valueText(activeValue ?? null) }]}
+            rows={[{ key: "v", label: msg.value, value: valueText(activeValue ?? null), raw: activeValue ?? null }]}
+            config={tooltip}
+            index={active.r * cols + active.c}
           />
         )}
       </PlotArea>

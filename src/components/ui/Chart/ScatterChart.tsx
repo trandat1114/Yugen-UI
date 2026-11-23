@@ -150,6 +150,7 @@ export function ScatterChart({
   hideTableToggle,
   defaultShowTable,
   texture,
+  tooltip,
   animate = true,
   className,
   ref,
@@ -496,6 +497,7 @@ export function ScatterChart({
             title={pointTitle(activePoint) || undefined}
             rows={rowsOf(activePoint)}
             textured={textured}
+            config={tooltip}
           />
         )}
       </PlotArea>
