@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Board20Regular, Search20Regular, Settings20Regular, Sparkle16Regular } from "@fluentui/react-icons";
 import {
+  Avatar,
   Button,
+  CallControlButton,
+  CallControls,
+  CallStatus,
+  CallSurface,
   Citation,
   CitationList,
   Dropdown,
@@ -11,12 +16,15 @@ import {
   Reasoning,
   StreamingMarkdown,
   Tour,
+  Transcript,
   useNotifications,
   useTour,
   VoiceWave,
+  type CallState,
   type CitationSource,
   type NotificationItem,
   type TourStep,
+  type TranscriptTurn,
   type VoiceWaveState,
 } from "@/components/ui";
 import type { ComponentDoc } from "../types";
@@ -598,6 +606,168 @@ function VoiceInput() {
   );
 }`;
 
+
+/* ================================================================ Transcript */
+
+const TRANSCRIPT_CODE = `const SCRIPT: TranscriptTurn[] = [
+  { id: "1", speaker: "Maya", role: "user", text: "Can you move my 3 pm meeting to tomorrow?", timestamp: Date.UTC(2026, 10, 23, 2, 4) },
+  { id: "2", speaker: "Assistant", role: "assistant", text: "Sure. Tomorrow at 3 pm is free for everyone. Should I send the update?", timestamp: Date.UTC(2026, 10, 23, 2, 4) },
+  { id: "3", speaker: "Maya", role: "user", text: "Yes, and add a note that the agenda is the same.", timestamp: Date.UTC(2026, 10, 23, 2, 5) },
+];
+const REPLY = "Done. The meeting is now tomorrow at 3 pm, and the invite says the agenda is unchanged.";
+
+function TranscriptDemo() {
+  const [turns, setTurns] = useState<TranscriptTurn[]>(SCRIPT);
+  const [run, setRun] = useState(0);
+  useEffect(() => {
+    let length = 0;
+    setTurns(SCRIPT);
+    const timer = setInterval(() => {
+      length = Math.min(REPLY.length, length + 4);
+      const done = length === REPLY.length;
+      setTurns([
+        ...SCRIPT,
+        { id: "4", speaker: "Assistant", role: "assistant", text: REPLY.slice(0, length), status: done ? "complete" : "streaming", timestamp: Date.UTC(2026, 10, 23, 2, 5) },
+      ]);
+      if (done) clearInterval(timer);
+    }, 60);
+    return () => clearInterval(timer);
+  }, [run]);
+  return (
+    <div className="flex w-full max-w-xl flex-col gap-3">
+      <Transcript turns={turns} announce locale="en-US" className="max-h-72 overflow-y-auto rounded-large border border-stroke-2 p-2" />
+      <Button size="small" className="self-start" onClick={() => setRun((r) => r + 1)}>
+        Replay
+      </Button>
+    </div>
+  );
+}`;
+
+const SCRIPT: TranscriptTurn[] = [
+  { id: "1", speaker: "Maya", role: "user", text: "Can you move my 3 pm meeting to tomorrow?", timestamp: Date.UTC(2026, 10, 23, 2, 4) },
+  { id: "2", speaker: "Assistant", role: "assistant", text: "Sure. Tomorrow at 3 pm is free for everyone. Should I send the update?", timestamp: Date.UTC(2026, 10, 23, 2, 4) },
+  { id: "3", speaker: "Maya", role: "user", text: "Yes, and add a note that the agenda is the same.", timestamp: Date.UTC(2026, 10, 23, 2, 5) },
+];
+const REPLY = "Done. The meeting is now tomorrow at 3 pm, and the invite says the agenda is unchanged.";
+
+function TranscriptDemo() {
+  const [turns, setTurns] = useState<TranscriptTurn[]>(SCRIPT);
+  const [run, setRun] = useState(0);
+  useEffect(() => {
+    let length = 0;
+    setTurns(SCRIPT);
+    const timer = setInterval(() => {
+      length = Math.min(REPLY.length, length + 4);
+      const done = length === REPLY.length;
+      setTurns([
+        ...SCRIPT,
+        { id: "4", speaker: "Assistant", role: "assistant", text: REPLY.slice(0, length), status: done ? "complete" : "streaming", timestamp: Date.UTC(2026, 10, 23, 2, 5) },
+      ]);
+      if (done) clearInterval(timer);
+    }, 60);
+    return () => clearInterval(timer);
+  }, [run]);
+  return (
+    <div className="flex w-full max-w-xl flex-col gap-3">
+      <Transcript turns={turns} announce locale="en-US" className="max-h-72 overflow-y-auto rounded-large border border-stroke-2 p-2" />
+      <Button size="small" className="self-start" onClick={() => setRun((r) => r + 1)}>
+        Replay
+      </Button>
+    </div>
+  );
+}
+
+
+/* ================================================================ Call */
+
+const CALL_CODE = `function CallDemo() {
+  const [state, setState] = useState<CallState>("connected");
+  const [muted, setMuted] = useState(false);
+  const [speaker, setSpeaker] = useState(true);
+  const [held, setHeld] = useState(false);
+  const live = state === "connected" || state === "muted" || state === "on-hold";
+  return (
+    <CallSurface
+      name="Aiko Tanaka"
+      description="Product design"
+      avatar={<Avatar name="Aiko Tanaka" size={64} color="colorful" />}
+      state={state}
+      duration={live ? 151 : undefined}
+      className="w-full max-w-sm"
+      controls={
+        state === "ended" ? (
+          <Button onClick={() => setState("connected")}>Call again</Button>
+        ) : (
+          <CallControls>
+            <CallControlButton
+              kind="mute"
+              pressed={muted}
+              onPressedChange={(next) => {
+                setMuted(next);
+                setState(next ? "muted" : "connected");
+              }}
+            />
+            <CallControlButton kind="speaker" pressed={speaker} onPressedChange={setSpeaker} />
+            <CallControlButton
+              kind="hold"
+              pressed={held}
+              onPressedChange={(next) => {
+                setHeld(next);
+                setState(next ? "on-hold" : muted ? "muted" : "connected");
+              }}
+            />
+            <CallControlButton kind="end" confirm onClick={() => setState("ended")} />
+          </CallControls>
+        )
+      }
+    />
+  );
+}`;
+
+function CallDemo() {
+  const [state, setState] = useState<CallState>("connected");
+  const [muted, setMuted] = useState(false);
+  const [speaker, setSpeaker] = useState(true);
+  const [held, setHeld] = useState(false);
+  const live = state === "connected" || state === "muted" || state === "on-hold";
+  return (
+    <CallSurface
+      name="Aiko Tanaka"
+      description="Product design"
+      avatar={<Avatar name="Aiko Tanaka" size={64} color="colorful" />}
+      state={state}
+      duration={live ? 151 : undefined}
+      className="w-full max-w-sm"
+      controls={
+        state === "ended" ? (
+          <Button onClick={() => setState("connected")}>Call again</Button>
+        ) : (
+          <CallControls>
+            <CallControlButton
+              kind="mute"
+              pressed={muted}
+              onPressedChange={(next) => {
+                setMuted(next);
+                setState(next ? "muted" : "connected");
+              }}
+            />
+            <CallControlButton kind="speaker" pressed={speaker} onPressedChange={setSpeaker} />
+            <CallControlButton
+              kind="hold"
+              pressed={held}
+              onPressedChange={(next) => {
+                setHeld(next);
+                setState(next ? "on-hold" : muted ? "muted" : "connected");
+              }}
+            />
+            <CallControlButton kind="end" confirm onClick={() => setState("ended")} />
+          </CallControls>
+        )
+      }
+    />
+  );
+}
+
 export const docs: ComponentDoc[] = [
   {
     slug: "streamingmarkdown",
@@ -785,6 +955,143 @@ export const docs: ComponentDoc[] = [
       { name: "align", type: `"center" | "bottom"`, defaultValue: `"center"`, description: "Vạch đối xứng quanh đường giữa hoặc mọc từ đáy." },
       { name: "label", type: "string", description: "Tên đọc; mặc định theo state (messages.voiceWave)." },
       { name: "resampleLevels(levels, count)", type: "number[]", description: "Hàm lấy mẫu lại dùng bên trong, cũng được export." },
+    ],
+  },
+  {
+    slug: "transcript",
+    category: "Yugen Labs",
+    name: "Transcript",
+    lead: "Transcript hiện các lượt của một cuộc hội thoại giọng nói: ai nói, lúc nào, và câu trả lời đang đến dần.",
+    description:
+      "Mỗi lượt có id, speaker, text, role (user / assistant), timestamp và status (complete, streaming, error). Lượt đang diễn ra (mặc định: lượt đang streaming, hoặc activeId) có viền nhấn, nhãn chữ “Đang nói” và aria-current, không chỉ đổi màu. Danh sách không phải vùng live: với announce, mỗi lượt được đọc một lần khi xong, lịch sử không bao giờ bị đọc lại. Mỗi lượt được memo, nên khi một token mới đến chỉ lượt đó render lại (renderText cũng chỉ được gọi cho lượt đó). Đặt chiều cao và overflow-y-auto để có khung cuộn: autoScroll giữ cuộn ở cuối khi người dùng đang ở cuối, và thôi kéo xuống khi họ cuộn lên đọc lại.",
+    importCode: `import { Transcript, type TranscriptTurn } from "@/components/ui";`,
+    hero: { title: "Trợ lý đang trả lời", code: TRANSCRIPT_CODE, render: () => <TranscriptDemo /> },
+    examples: [
+      {
+        title: "Lỗi nhận dạng và trạng thái trống",
+        description: "status=\"error\" hiện lý do bằng chữ kèm icon; không có lượt nào thì hiện empty.",
+        code: `<div className="flex w-full max-w-xl flex-col gap-4">
+  <Transcript
+    turns={[
+      { id: "1", speaker: "Maya", role: "user", text: "Call the…", status: "error", error: "The microphone stopped. Try again." },
+    ]}
+  />
+  <Transcript turns={[]} empty="Press the microphone and start talking." />
+</div>`,
+        render: () => (
+          <div className="flex w-full max-w-xl flex-col gap-4">
+            <Transcript
+              turns={[{ id: "1", speaker: "Maya", role: "user", text: "Call the…", status: "error", error: "The microphone stopped. Try again." }]}
+            />
+            <Transcript turns={[]} empty="Press the microphone and start talking." />
+          </div>
+        ),
+      },
+    ],
+    dos: [
+      "Bật announce khi người dùng không nhìn màn hình (cuộc gọi, trợ lý giọng nói).",
+      "Giữ id ổn định cho mỗi lượt và chỉ tạo object mới cho lượt vừa đổi.",
+      "Đặt khung cuộn có chiều cao cố định để autoScroll hoạt động.",
+    ],
+    donts: [
+      "Không bọc Transcript trong một vùng aria-live: cả lịch sử sẽ bị đọc lại.",
+      "Không dùng màu làm cách duy nhất để báo ai đang nói.",
+      "Không tạo lại mọi lượt mỗi token — các lượt cũ sẽ render lại.",
+    ],
+    props: [
+      { name: "turns", type: "TranscriptTurn[]", description: "Các lượt: id, speaker, text, role, timestamp / time, status, error, avatar." },
+      { name: "activeId", type: "string | null", description: "Lượt đang diễn ra; mặc định lượt streaming cuối cùng, null để tắt." },
+      { name: "autoScroll", type: "boolean", defaultValue: "true", description: "Giữ cuộn ở cuối khi có chữ mới, nếu người dùng đang ở cuối." },
+      { name: "announce", type: "boolean", defaultValue: "false", description: "Đọc mỗi lượt một lần khi xong (useAnnounce)." },
+      { name: "loading", type: "boolean", defaultValue: "false", description: "Đang tải: aria-busy, chữ “Đang tải bản ghi…” khi chưa có lượt nào." },
+      { name: "empty", type: "ReactNode", description: "Nội dung khi chưa có lượt nào (mặc định messages.transcript.empty)." },
+      { name: "renderText", type: "(turn) => ReactNode", description: "Thay cách hiện chữ; chỉ được gọi cho lượt đổi." },
+      { name: "locale", type: "string", description: "Định dạng giờ của timestamp; mặc định locale của YugenProvider." },
+    ],
+  },
+  {
+    slug: "callsurface",
+    category: "Yugen Labs",
+    name: "CallSurface",
+    lead: "CallSurface, CallStatus và CallControls dựng giao diện một cuộc gọi thoại hoặc video: ai ở đầu bên kia, trạng thái bằng chữ và các nút điều khiển.",
+    description:
+      "Các component chỉ nhận trạng thái và callback: kết nối, quyền micro và camera là việc của app. CallStatus nói trạng thái bằng chữ trong role=\"status\" (đổi trạng thái được đọc lên), thời lượng nằm ngoài vùng đó nên không bị đọc mỗi giây; chấm màu chỉ là phần phụ. CallControls là một toolbar: Tab vào một lần, phím mũi tên / Home / End giữa các nút, nút bị vô hiệu được bỏ qua. CallControlButton có sẵn mute, speaker, camera, hold (nút bật-tắt với aria-pressed, tên giữ nguyên, icon đổi theo trạng thái), add và end; confirm buộc bấm Kết thúc hai lần trong 4 giây. layout=\"inline\" xếp mọi thứ trên một hàng cho panel hoặc thanh dưới màn hình.",
+    importCode: `import { CallSurface, CallStatus, CallControls, CallControlButton } from "@/components/ui";`,
+    hero: { title: "Cuộc gọi đang diễn ra", code: CALL_CODE, render: () => <CallDemo /> },
+    examples: [
+      {
+        title: "Đang kết nối và lỗi",
+        description: "Trạng thái luôn có chữ; label thay chữ mặc định khi cần nói rõ lý do.",
+        code: `<div className="flex flex-col gap-3">
+  <CallStatus state="connecting" />
+  <CallStatus state="ringing" />
+  <CallStatus state="failed" label="No answer" />
+</div>`,
+        render: () => (
+          <div className="flex flex-col gap-3">
+            <CallStatus state="connecting" />
+            <CallStatus state="ringing" />
+            <CallStatus state="failed" label="No answer" />
+          </div>
+        ),
+      },
+      {
+        title: "Một hàng gọn",
+        description: "layout=\"inline\" cho panel hẹp; nội dung giữa (Transcript, VoiceWave) xuống hàng riêng.",
+        code: `<CallSurface
+  layout="inline"
+  name="Aiko Tanaka"
+  description="+1 415 555 0134"
+  state="muted"
+  duration={42}
+  className="w-full max-w-lg"
+  controls={
+    <CallControls>
+      <CallControlButton kind="mute" pressed />
+      <CallControlButton kind="end" />
+    </CallControls>
+  }
+/>`,
+        render: () => (
+          <CallSurface
+            layout="inline"
+            name="Aiko Tanaka"
+            description="+1 415 555 0134"
+            state="muted"
+            duration={42}
+            className="w-full max-w-lg"
+            controls={
+              <CallControls>
+                <CallControlButton kind="mute" pressed />
+                <CallControlButton kind="end" />
+              </CallControls>
+            }
+          />
+        ),
+      },
+    ],
+    dos: [
+      "Đổi state theo sự kiện thật của kết nối (đã nhận, đang giữ, mất mạng).",
+      "Dùng confirm cho nút Kết thúc khi lỡ tay kết thúc sẽ mất dữ liệu (ghi âm, phòng họp).",
+      "Đặt Transcript hoặc VoiceWave làm children để mọi thứ nằm trong cùng một vùng có tên.",
+    ],
+    donts: [
+      "Không báo trạng thái chỉ bằng màu của chấm.",
+      "Không đổi nhãn của nút bật-tắt theo trạng thái — aria-pressed đã nói điều đó.",
+      "Không đặt đồng hồ thời lượng vào vùng live.",
+    ],
+    props: [
+      { name: "CallSurface.name / avatar / description", type: "string / ReactNode / ReactNode", description: "Đầu bên kia; name cũng đặt tên cho vùng (messages.call.surface)." },
+      { name: "CallSurface.state / duration", type: "CallState / number (giây)", description: "Trạng thái và thời lượng, hiện bằng CallStatus." },
+      { name: "CallSurface.controls / children", type: "ReactNode", description: "Thanh điều khiển và nội dung giữa." },
+      { name: "CallSurface.layout", type: `"stacked" | "inline"`, defaultValue: `"stacked"`, description: "Màn hình cuộc gọi hoặc một hàng gọn." },
+      { name: "CallStatus.state", type: `"connecting" | "ringing" | "connected" | "muted" | "on-hold" | "ended" | "failed"`, description: "Trạng thái, đọc bằng chữ (messages.call.states)." },
+      { name: "CallStatus.duration / label", type: "number / ReactNode", description: "Thời lượng (khi đã kết nối) và chữ thay thế." },
+      { name: "CallControlButton.kind", type: `"mute" | "speaker" | "camera" | "hold" | "add" | "end"`, description: "Nút có sẵn: icon và nhãn (messages.call.controls)." },
+      { name: "CallControlButton.pressed / onPressedChange", type: "boolean", description: "Trạng thái của nút bật-tắt (aria-pressed)." },
+      { name: "CallControlButton.confirm", type: "boolean", defaultValue: "false", description: "kind=\"end\": cần bấm hai lần trong 4 giây." },
+      { name: "CallControlButton.label / icon", type: "ReactNode", description: "Thay nhãn và icon (nút tuỳ chỉnh)." },
+      { name: "formatCallDuration(seconds)", type: "string", description: "Giây → m:ss hoặc h:mm:ss." },
     ],
   },
   {

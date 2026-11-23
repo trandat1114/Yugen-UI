@@ -10,6 +10,7 @@ import { appShellMessagesVi } from "./AppShell/messages";
 import { autocompleteMessagesVi } from "./Autocomplete/messages";
 import { avatarGroupMessagesVi } from "./AvatarGroup/messages";
 import { breadcrumbMessagesVi } from "./Breadcrumb/messages";
+import { callMessagesVi } from "./Call/messages";
 import { carouselMessagesVi } from "./Carousel/messages";
 import { chartMessagesVi } from "./Chart/messages";
 import {
@@ -83,6 +84,7 @@ import { toastMessagesVi } from "./Toast/messages";
 import { tourMessagesVi } from "./Tour/messages";
 import { traceMessagesVi } from "./Trace/messages";
 import { voiceWaveMessagesVi } from "./VoiceWave/messages";
+import { transcriptMessagesVi } from "./Transcript/messages";
 
 /**
  * Chuỗi giao diện có sẵn của mọi component, bằng tiếng Việt: `<YugenProvider messages={messagesVi} locale="vi-VN">`.
@@ -99,6 +101,7 @@ export const messagesVi: Omit<YugenMessages, "calendar"> = {
   autocomplete: autocompleteMessagesVi,
   avatarGroup: avatarGroupMessagesVi,
   breadcrumb: breadcrumbMessagesVi,
+  call: callMessagesVi,
   carousel: carouselMessagesVi,
   chart: chartMessagesVi,
   chatComposer: chatComposerMessagesVi,
@@ -164,6 +167,7 @@ export const messagesVi: Omit<YugenMessages, "calendar"> = {
   toast: toastMessagesVi,
   tour: tourMessagesVi,
   trace: traceMessagesVi,
+  transcript: transcriptMessagesVi,
   typingIndicator: typingIndicatorMessagesVi,
   voiceWave: voiceWaveMessagesVi,
   wizard: wizardMessagesVi,

@@ -65,5 +65,20 @@
   "You have used all of today's prompts": "Bạn đã dùng hết lượt hôm nay",
   "Stands in for an AnalyserNode: smooth noise around a slow pulse.": "Thay cho AnalyserNode: nhiễu mượt quanh một nhịp chậm.",
   "Your app owns the microphone and the AnalyserNode; VoiceWave only reads numbers.": "Micro và AnalyserNode là của app; VoiceWave chỉ đọc các con số.",
-  "Use microphone": "Dùng micro"
+  "Use microphone": "Dùng micro",
+  "Can you move my 3 pm meeting to tomorrow?": "Dời cuộc họp 3 giờ chiều của tôi sang mai được không?",
+  "Sure. Tomorrow at 3 pm is free for everyone. Should I send the update?": "Được. 3 giờ chiều mai mọi người đều rảnh. Tôi gửi lời mời cập nhật nhé?",
+  "Yes, and add a note that the agenda is the same.": "Ừ, và ghi chú là nội dung họp giữ nguyên.",
+  "Done. The meeting is now tomorrow at 3 pm, and the invite says the agenda is unchanged.": "Xong. Cuộc họp đã dời sang 3 giờ chiều mai, lời mời có ghi nội dung họp không đổi.",
+  "Assistant": "Trợ lý",
+  "en-US": "vi-VN",
+  "Call the…": "Gọi cho…",
+  "The microphone stopped. Try again.": "Micro đã ngừng. Thử lại nhé.",
+  "Press the microphone and start talking.": "Bấm micro rồi bắt đầu nói.",
+  "Maya": "Mai",
+  "Aiko Tanaka": "Lan Anh",
+  "Product design": "Thiết kế sản phẩm",
+  "Call again": "Gọi lại",
+  "+1 415 555 0134": "0901 234 567",
+  "No answer": "Không ai bắt máy"
 }

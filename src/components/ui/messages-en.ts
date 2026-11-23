@@ -10,6 +10,7 @@ import { appShellMessagesEn } from "./AppShell/messages";
 import { autocompleteMessagesEn } from "./Autocomplete/messages";
 import { avatarGroupMessagesEn } from "./AvatarGroup/messages";
 import { breadcrumbMessagesEn } from "./Breadcrumb/messages";
+import { callMessagesEn } from "./Call/messages";
 import { carouselMessagesEn } from "./Carousel/messages";
 import { chartMessagesEn } from "./Chart/messages";
 import {
@@ -83,6 +84,7 @@ import { toastMessagesEn } from "./Toast/messages";
 import { tourMessagesEn } from "./Tour/messages";
 import { traceMessagesEn } from "./Trace/messages";
 import { voiceWaveMessagesEn } from "./VoiceWave/messages";
+import { transcriptMessagesEn } from "./Transcript/messages";
 
 /**
  * Chuỗi giao diện có sẵn của mọi component, bằng tiếng Anh: đây cũng là giá trị mặc định khi không truyền `messages`.
@@ -96,6 +98,7 @@ export const messagesEn: Omit<YugenMessages, "calendar"> = {
   autocomplete: autocompleteMessagesEn,
   avatarGroup: avatarGroupMessagesEn,
   breadcrumb: breadcrumbMessagesEn,
+  call: callMessagesEn,
   carousel: carouselMessagesEn,
   chart: chartMessagesEn,
   chatComposer: chatComposerMessagesEn,
@@ -161,6 +164,7 @@ export const messagesEn: Omit<YugenMessages, "calendar"> = {
   toast: toastMessagesEn,
   tour: tourMessagesEn,
   trace: traceMessagesEn,
+  transcript: transcriptMessagesEn,
   typingIndicator: typingIndicatorMessagesEn,
   voiceWave: voiceWaveMessagesEn,
   wizard: wizardMessagesEn,

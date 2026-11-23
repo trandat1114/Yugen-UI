@@ -90,6 +90,64 @@ export const en: Record<string, ComponentDocEn> = {
       "resampleLevels(levels, count)": "The resampling used inside, also exported.",
     },
   },
+  transcript: {
+    description:
+      "Each turn has an id, speaker, text, role (user / assistant), timestamp and status (complete, streaming, error). The current turn (by default the streaming one, or activeId) gets an accent border, a “Speaking” label and aria-current, not only a color. The list is not a live region: with announce, each turn is read once when it completes and the history is never read again. Turns are memoized, so when a token arrives only that turn re-renders (renderText is called for that turn only). Give it a height and overflow-y-auto for a scroll box: autoScroll keeps it at the end while the reader is at the end, and stops when they scroll up to read.",
+    examples: [
+      { title: "Recognition errors and the empty state", description: "status=\"error\" shows the reason as text with an icon; with no turns, empty is shown." },
+    ],
+    dos: [
+      "Turn on announce when people aren't looking at the screen (calls, voice assistants).",
+      "Keep each turn's id stable and create a new object only for the turn that changed.",
+      "Give the scroll box a fixed height so autoScroll works.",
+    ],
+    donts: [
+      "Don't wrap Transcript in an aria-live region: the whole history would be read again.",
+      "Don't use color as the only sign of who is speaking.",
+      "Don't recreate every turn on each token; the old turns would re-render.",
+    ],
+    props: {
+      turns: "The turns: id, speaker, text, role, timestamp / time, status, error, avatar.",
+      activeId: "The current turn; defaults to the last streaming turn, null for none.",
+      autoScroll: "Keeps the view at the end as text arrives, while the reader is at the end.",
+      announce: "Reads each turn once when it completes (useAnnounce).",
+      loading: "Loading: aria-busy, and “Loading transcript…” while there are no turns.",
+      empty: "Content when there are no turns (defaults to messages.transcript.empty).",
+      renderText: "Replaces how text is shown; called only for the turn that changed.",
+      locale: "Time format of timestamp; defaults to the YugenProvider locale.",
+    },
+  },
+  callsurface: {
+    description:
+      "The components only receive state and callbacks: the connection and the microphone and camera permissions belong to the app. CallStatus says the state in words inside role=\"status\" (a change is read out); the duration sits outside it, so it isn't read every second, and the colored dot is only a secondary cue. CallControls is a toolbar: one Tab stop, arrow keys / Home / End between the buttons, disabled buttons skipped. CallControlButton has built-in mute, speaker, camera, hold (toggles with aria-pressed, a constant name and an icon that follows the state), add and end; confirm makes End need a second press within 4 seconds. layout=\"inline\" puts everything on one row for a panel or a bottom bar.",
+    examples: [
+      { title: "Connecting and failure", description: "The state always has words; label replaces the default text when the reason matters." },
+      { title: "One compact row", description: "layout=\"inline\" for a narrow panel; the middle content (Transcript, VoiceWave) moves to its own row." },
+    ],
+    dos: [
+      "Change state on real connection events (answered, on hold, network lost).",
+      "Use confirm on End when ending by mistake loses something (a recording, a meeting room).",
+      "Put Transcript or VoiceWave in children so everything sits in one named region.",
+    ],
+    donts: [
+      "Don't show the state with the dot's color only.",
+      "Don't change a toggle's label with its state; aria-pressed already says it.",
+      "Don't put the duration clock in a live region.",
+    ],
+    props: {
+      "CallSurface.name / avatar / description": "The other party; name also names the region (messages.call.surface).",
+      "CallSurface.state / duration": "State and duration, shown with CallStatus.",
+      "CallSurface.controls / children": "The control bar and the middle content.",
+      "CallSurface.layout": "A call screen or one compact row.",
+      "CallStatus.state": "The state, read in words (messages.call.states).",
+      "CallStatus.duration / label": "Duration (once connected) and replacement text.",
+      "CallControlButton.kind": "Built-in button: icon and label (messages.call.controls).",
+      "CallControlButton.pressed / onPressedChange": "State of a toggle (aria-pressed).",
+      "CallControlButton.confirm": "kind=\"end\": needs two presses within 4 seconds.",
+      "CallControlButton.label / icon": "Replace the label and the icon (custom button).",
+      "formatCallDuration(seconds)": "Seconds → m:ss or h:mm:ss.",
+    },
+  },
   reasoning: {
     description:
       "Built on Collapsible (aria-expanded; the height animation turns off with reduced motion). autoOpen opens the block when reasoning starts and collapses it when done, unless the user has toggled it. The time is measured in an effect (Date.now() is never read during render), so it is safe for SSR; you can also pass duration. String content is rendered with a small StreamingMarkdown and has aria-busy while running.",

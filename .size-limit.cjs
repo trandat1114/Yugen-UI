@@ -134,9 +134,13 @@ module.exports = [
   js("{ BarChart, LineChart }", "{ BarChart, LineChart }", "34 kB"),
   // Một IntersectionObserver cho mục lục, không phụ thuộc mới (#446): 11.45 kB.
   js("{ Article, ArticleHeader, ArticleMeta, ArticleBody, ArticleToc }", "{ Article, ArticleHeader, ArticleMeta, ArticleBody, ArticleToc }", "12.5 kB"),
+  // Toolbar (roving focus) + 10 icon, không logic kết nối (#441): 14.29 kB.
+  js("{ CallSurface, CallControls, CallControlButton }", "{ CallSurface, CallControls, CallControlButton }", "15.5 kB"),
   // SVG viết tay, không runtime vẽ biểu đồ (#424, #431, #432): RadarChart 22.21 kB, PieChart + RadialChart 22.61 kB.
   js("{ RadarChart }", "{ RadarChart }", "24 kB"),
   js("{ PieChart, RadialChart }", "{ PieChart, RadialChart }", "24.5 kB"),
+  // Mỗi lượt memo, đọc lượt vừa xong qua useAnnounce (#442): 12.04 kB.
+  js("{ Transcript }", "{ Transcript }", "13 kB"),
   // CSS Grid, không đo layout bằng JavaScript (#434, #437): 11.01 kB, phần lớn là cn / tailwind-merge dùng chung.
   js("{ BentoGrid, BentoGridItem }", "{ BentoGrid, BentoGridItem }", "12 kB"),
   // Một vòng requestAnimationFrame, không Web Audio trong gói (#440): 10.92 kB, phần lớn là cn / tailwind-merge dùng chung.
