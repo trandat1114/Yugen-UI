@@ -197,7 +197,7 @@ export const en: Record<string, ComponentDocEn> = {
       "BentoGridItem.colSpan / rowSpan": "Number of tracks occupied at each breakpoint (1–6).",
       "BentoGridItem.title / titleAs": "Title content and heading element; titleAs defaults to h3.",
       "BentoGridItem.header / description / media / icon / action": "A visual header at the top of the cell plus optional content slots.",
-      "BentoGridItem.href / target / rel": "Enables semantic link-card mode; do not combine it with an action containing another interactive control.",
+      "BentoGridItem.href / target / rel": "Link card: the title becomes the link, its click area covers the whole item and the description is read with it. An action stays clickable and outside the link. Needs a title.",
     },
   },
 

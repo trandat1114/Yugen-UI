@@ -132,6 +132,8 @@ module.exports = [
   js("{ ColorPicker }", "{ ColorPicker }", "30 kB"),
   // Hình học / nhãn nhớ theo props, lớp điểm dùng chung, màu tô trên nhóm (#352): 30.18 → 31.10 kB.
   js("{ BarChart, LineChart }", "{ BarChart, LineChart }", "34 kB"),
+  // CSS Grid, không đo layout bằng JavaScript (#434, #437): 11.01 kB, phần lớn là cn / tailwind-merge dùng chung.
+  js("{ BentoGrid, BentoGridItem }", "{ BentoGrid, BentoGridItem }", "12 kB"),
   // Trước đây `{ Sheet }`: chỉ context gốc (5.87 kB); SheetContent mới là phần nặng (#360): 27.52 kB.
   js("{ Sheet, SheetTrigger, SheetContent }", "{ Sheet, SheetTrigger, SheetContent }", "30 kB"),
   // Nav không import Tooltip, Sidebar của AppShell truyền Tooltip của rail (#350): 31.40 → 12.33 kB.

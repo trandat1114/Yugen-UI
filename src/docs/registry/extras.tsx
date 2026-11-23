@@ -1543,7 +1543,7 @@ function SwatchPickerDemo() {
       { name: "BentoGridItem.colSpan / rowSpan", type: "BentoResponsive", defaultValue: "1", description: "Số track mà ô chiếm theo breakpoint." },
       { name: "BentoGridItem.title / titleAs", type: "ReactNode / heading", defaultValue: `titleAs="h3"`, description: "Tiêu đề và phần tử heading; dùng div khi trang đã có hierarchy riêng." },
       { name: "BentoGridItem.header / description / media / icon / action", type: "ReactNode", description: "Header trực quan ở đầu ô và các slot nội dung tuỳ chọn." },
-      { name: "BentoGridItem.href / target / rel", type: "string", description: "Bật semantic link card; không dùng action chứa control tương tác cùng lúc." },
+      { name: "BentoGridItem.href / target / rel", type: "string", description: "Link card: tiêu đề thành link, vùng bấm phủ cả ô, mô tả đọc kèm link. action vẫn bấm được và không nằm trong link. Cần title." },
     ],
   },
 
