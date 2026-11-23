@@ -60,6 +60,36 @@ export const en: Record<string, ComponentDocEn> = {
     },
   },
 
+  voicewave: {
+    description:
+      "VoiceWave never opens the microphone or creates an AudioContext: the app passes levels (an array of 0–1, re-renders when it changes) or source, a function called once per animation frame while listening or speaking. With source the bars are updated through their transform, with no re-render and no timer or listener per bar. The bar count is fixed, so the width doesn't change with the data. Without data each state has a static shape; with reduced motion the frame loop doesn't run. The whole wave is role=\"img\" named after its state (messages.voiceWave), and the bars are hidden from screen readers.",
+    examples: [
+      { title: "Static levels", description: "levels is resampled to the bar count; align=\"bottom\" grows the bars from the bottom." },
+      { title: "States and sizes", description: "idle, muted and error lie flat; muted and error have their own color." },
+      { title: "Web Audio", description: "Read your AnalyserNode in source; the microphone permission and the AudioContext belong to the app." },
+    ],
+    dos: [
+      "Use source for a microphone stream, so nothing re-renders each frame.",
+      "Show the state as text nearby (Listening, Microphone muted) when it is the main signal on the screen.",
+      "Keep the bar count fixed within one interface.",
+    ],
+    donts: [
+      "Don't create an AudioContext or ask for the microphone only to draw the wave.",
+      "Don't use the wave's color as the only sign of a microphone error.",
+      "Don't put new levels into state every frame; use source.",
+    ],
+    props: {
+      state: "The state; sets the static shape, the color and the accessible name.",
+      levels: "Audio levels from 0 to 1, resampled to the bar count.",
+      source: "Called every animation frame while listening or speaking; updates the bars without a re-render.",
+      bars: "Number of bars (3–64).",
+      size: "Height of 20, 32 or 56 px.",
+      tone: "Color while listening or speaking.",
+      align: "Bars centered on the middle line, or growing from the bottom.",
+      label: "Accessible name; defaults to the state's name (messages.voiceWave).",
+      "resampleLevels(levels, count)": "The resampling used inside, also exported.",
+    },
+  },
   reasoning: {
     description:
       "Built on Collapsible (aria-expanded; the height animation turns off with reduced motion). autoOpen opens the block when reasoning starts and collapses it when done, unless the user has toggled it. The time is measured in an effect (Date.now() is never read during render), so it is safe for SSR; you can also pass duration. String content is rendered with a small StreamingMarkdown and has aria-busy while running.",

@@ -62,5 +62,8 @@
   "Use the brand color only for primary actions and selected states": "Màu brand chỉ nên dùng cho hành động chính và trạng thái chọn",
   ". Text needs a contrast ratio of at least 4.5:1": ". Chữ cần tương phản tối thiểu 4.5:1",
   "Compared 3 ways to store tokens: CSS variables, JSON, TS. Picked **CSS variables** because switching themes needs no rebuild.": "So sánh 3 phương án lưu token: CSS biến, JSON, TS. Chọn **CSS biến** vì đổi theme không cần build lại.",
-  "You have used all of today's prompts": "Bạn đã dùng hết lượt hôm nay"
+  "You have used all of today's prompts": "Bạn đã dùng hết lượt hôm nay",
+  "Stands in for an AnalyserNode: smooth noise around a slow pulse.": "Thay cho AnalyserNode: nhiễu mượt quanh một nhịp chậm.",
+  "Your app owns the microphone and the AnalyserNode; VoiceWave only reads numbers.": "Micro và AnalyserNode là của app; VoiceWave chỉ đọc các con số.",
+  "Use microphone": "Dùng micro"
 }
