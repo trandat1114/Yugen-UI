@@ -2,6 +2,7 @@
 import * as React from "react";
 import { CheckboxChecked16Regular, CheckboxUnchecked16Regular } from "../_internal/icons";
 import { cn } from "@/lib/cn";
+import { warnDev } from "@/lib/deprecate";
 import { codeLanguageOf } from "../AIKit/codeLanguage";
 import { parseInlineMarkdown, parseMarkdown, type MdAlign, type MdBlock, type MdInline } from "../AIKit/markdown";
 import { CodeBlock } from "../CodeBlock/CodeBlock";
@@ -18,6 +19,14 @@ export interface MarkdownLink {
   children: React.ReactNode;
   /** Link http / https tới site khác. Mặc định mở tab mới. */
   external: boolean;
+}
+
+export interface MarkdownImage {
+  /** URL đã làm sạch (http / https hoặc đường dẫn tương đối). */
+  src: string;
+  /** Chữ thay thế; chuỗi rỗng = ảnh trang trí. */
+  alt: string;
+  title?: string;
 }
 
 export interface MarkdownProps extends Omit<React.HTMLAttributes<HTMLElement>, "children"> {
@@ -38,6 +47,13 @@ export interface MarkdownProps extends Omit<React.HTMLAttributes<HTMLElement>, "
   breaks?: boolean;
   /** Tự render mọi link, vd. giao link nội bộ cho router của app. */
   renderLink?: (link: MarkdownLink) => React.ReactNode;
+  /**
+   * `![alt](src)` thành `<img>` (tải lười, src http / https hoặc tương đối; `data:` và `javascript:` chỉ còn chữ alt).
+   * false: ảnh hiện như link tới ảnh. Mặc định true.
+   */
+  images?: boolean;
+  /** Tự render ảnh, vd. component ảnh của framework với kích thước biết trước (không xô lệch bố cục). */
+  renderImage?: (image: MarkdownImage) => React.ReactNode;
 }
 
 /** id cho heading: bỏ dấu, chữ thường, khoảng trắng và dấu câu thành `-`. Giữ chữ không phải Latin. */
@@ -104,6 +120,7 @@ interface RenderContext {
   breaks: boolean;
   headingOffset: number;
   renderLink?: (link: MarkdownLink) => React.ReactNode;
+  renderImage?: (image: MarkdownImage) => React.ReactNode;
   /** id của từng heading (đã khử trùng), hoặc undefined khi tắt headingIds. */
   headings?: Map<MdBlock, MarkdownHeading>;
 }
@@ -112,7 +129,17 @@ const ALIGN_CLASS: Record<Exclude<MdAlign, null>, string> = { start: "text-start
 
 function inlineText(nodes: MdInline[]): string {
   return nodes
-    .map((n) => ("children" in n ? inlineText(n.children) : n.type === "text" || n.type === "inlineCode" ? n.text : n.type === "citation" ? n.label : " "))
+    .map((n) =>
+      "children" in n
+        ? inlineText(n.children)
+        : n.type === "text" || n.type === "inlineCode"
+          ? n.text
+          : n.type === "citation"
+            ? n.label
+            : n.type === "image"
+              ? n.alt
+              : " ",
+    )
     .join("");
 }
 
@@ -149,6 +176,12 @@ function renderInlines(nodes: MdInline[], ctx: RenderContext): React.ReactNode[]
           </a>
         );
       }
+      case "image": {
+        const { src, alt, title } = node;
+        if (!alt) warnDev("Markdown.image-alt", `Markdown: the image "${src}" has no alt text. Write ![description](url), or keep it empty only for decorative images.`);
+        if (ctx.renderImage) return <React.Fragment key={i}>{ctx.renderImage({ src, alt, title })}</React.Fragment>;
+        return <img key={i} src={src} alt={alt} title={title} loading="lazy" decoding="async" className="h-auto max-w-full" />;
+      }
       // Không có nguồn để gắn: giữ nguyên chữ "[1]".
       case "citation":
         return <React.Fragment key={i}>{node.label}</React.Fragment>;
@@ -160,7 +193,8 @@ function renderInlines(nodes: MdInline[], ctx: RenderContext): React.ReactNode[]
   });
 }
 
-function Block({ block, ctx }: { block: MdBlock; ctx: RenderContext }): React.ReactNode {
+/** Memo: khi nội dung không đổi (cùng object khối, cùng ctx), khối không render lại — CodeBlock không tô màu lại. */
+const Block = React.memo(function Block({ block, ctx }: { block: MdBlock; ctx: RenderContext }): React.ReactNode {
   switch (block.type) {
     case "paragraph":
       return <p>{renderInlines(block.children, ctx)}</p>;
@@ -234,7 +268,7 @@ function Block({ block, ctx }: { block: MdBlock; ctx: RenderContext }): React.Re
     case "thematicBreak":
       return <hr />;
   }
-}
+});
 
 /**
  * Markdown tĩnh → React bằng bộ phân tích an toàn của Yugen UI (không HTML, không `dangerouslySetInnerHTML`; link
@@ -249,14 +283,19 @@ export function Markdown({
   headingIds = false,
   breaks = false,
   renderLink,
+  images = true,
+  renderImage,
   className,
   ref,
   ...props
 }: MarkdownProps & { ref?: React.Ref<HTMLElement> }) {
   const msg = useYugenMessages("markdown", markdownMessagesEn);
   const parsed = React.useMemo(
-    () => (inline ? parseInlineMarkdown(children, { relativeLinks: true }) : parseMarkdown(children, { relativeLinks: true }).children),
-    [children, inline],
+    () =>
+      inline
+        ? parseInlineMarkdown(children, { relativeLinks: true, images })
+        : parseMarkdown(children, { relativeLinks: true, images }).children,
+    [children, inline, images],
   );
 
   // Heading trùng chữ nhận -2, -3… theo thứ tự trong nội dung.
@@ -265,7 +304,11 @@ export function Markdown({
     () => (inline || !slug ? undefined : collectHeadings(parsed as MdBlock[], slug, headingOffset)),
     [parsed, slug, inline, headingOffset],
   );
-  const ctx: RenderContext = { msg, breaks, headingOffset, renderLink, headings };
+  // ctx ổn định khi props không đổi, để Block (memo) bỏ qua các khối không đổi.
+  const ctx = React.useMemo<RenderContext>(
+    () => ({ msg, breaks, headingOffset, renderLink, renderImage, headings }),
+    [msg, breaks, headingOffset, renderLink, renderImage, headings],
+  );
 
   if (inline) {
     return (

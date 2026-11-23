@@ -13,6 +13,8 @@ export type MdInline =
   | { type: "delete"; children: MdInline[] }
   | { type: "inlineCode"; text: string }
   | { type: "link"; href: string; title?: string; children: MdInline[] }
+  /** `![alt](src)`, chỉ khi bật `images`. */
+  | { type: "image"; src: string; alt: string; title?: string }
   | { type: "citation"; index: number; label: string }
   | { type: "softBreak" }
   | { type: "hardBreak" };
@@ -45,6 +47,11 @@ export interface ParseMarkdownOptions {
    * https, mailto) — hợp với nội dung do model sinh ra; bật cho nội dung của chính app (docs, ghi chú phát hành).
    */
   relativeLinks?: boolean;
+  /**
+   * `![alt](src)` thành ảnh (src http / https, hoặc tương đối khi bật `relativeLinks`; `data:`, `javascript:`… chỉ còn
+   * chữ alt). Mặc định false: ảnh hiện như link tới ảnh — hợp với nội dung do model sinh ra (không tải ảnh lạ).
+   */
+  images?: boolean;
 }
 
 /* ================================================================ URL an toàn */
@@ -68,17 +75,25 @@ export function sanitizeHref(url: string | undefined | null, { relative = false 
   return null;
 }
 
+/** Như `sanitizeHref` cho `src` của ảnh: http / https, hoặc tương đối khi `relative`; không mailto, không data:. */
+export function sanitizeImageSrc(url: string | undefined | null, { relative = false }: { relative?: boolean } = {}): string | null {
+  const href = sanitizeHref(url, { relative });
+  return href && !/^mailto:/i.test(href) ? href : null;
+}
+
 // Tuỳ chọn `relativeLinks` của lần phân tích đang chạy. Phân tích là đồng bộ và không lồng nhau, nên một biến của module
 // đủ dùng thay cho việc truyền tuỳ chọn qua mọi hàm.
 let keepRelative = false;
+let keepImages = false;
 
-function withRelativeLinks<T>(on: boolean, run: () => T): T {
-  const prev = keepRelative;
+function withRelativeLinks<T>(on: boolean, run: () => T, images = false): T {
+  const prev = [keepRelative, keepImages] as const;
   keepRelative = on;
+  keepImages = images;
   try {
     return run();
   } finally {
-    keepRelative = prev;
+    [keepRelative, keepImages] = prev;
   }
 }
 
@@ -404,7 +419,7 @@ export function parseInlines(src: string, open = false, depth = 0): MdInline[] {
 
     if ((ch === "[" || (ch === "!" && src[i + 1] === "[")) && depth < MAX_INLINE_DEPTH) {
       const start = ch === "!" ? i + 1 : i;
-      const result = parseBracket(src, start, open, depth);
+      const result = parseBracket(src, start, open, depth, ch === "!" && keepImages);
       if (result) {
         push(result.nodes);
         i = result.end;
@@ -422,7 +437,7 @@ export function parseInlines(src: string, open = false, depth = 0): MdInline[] {
   return out;
 }
 
-function parseBracket(src: string, i: number, open: boolean, inlineDepth: number): { nodes: MdInline[]; end: number } | null {
+function parseBracket(src: string, i: number, open: boolean, inlineDepth: number, image = false): { nodes: MdInline[]; end: number } | null {
   let depth = 0;
   let k = i;
   for (; k < src.length; k++) {
@@ -449,6 +464,14 @@ function parseBracket(src: string, i: number, open: boolean, inlineDepth: number
   if (src[k + 1] === "(") {
     const dest = parseDestination(src, k + 2);
     const children = parseInlines(label, false, inlineDepth + 1);
+    if (dest && image) {
+      const imageSrc = sanitizeImageSrc(dest.href, { relative: keepRelative });
+      const alt = inlineText(children);
+      return {
+        nodes: imageSrc ? [{ type: "image", src: imageSrc, alt, ...(dest.title ? { title: dest.title } : {}) }] : alt ? [{ type: "text", text: alt }] : [],
+        end: dest.end,
+      };
+    }
     if (dest) {
       const href = sanitizeHref(dest.href, { relative: keepRelative });
       return {
@@ -763,13 +786,16 @@ function toLines(text: string) {
 }
 
 /** Phân tích Markdown thành AST. Hàm thuần — dùng được ở server, worker hoặc test. */
-export function parseMarkdown(text: string, { streaming = false, relativeLinks = false }: ParseMarkdownOptions = {}): MdRoot {
-  return withRelativeLinks(relativeLinks, () => ({ type: "root", children: parseBlocks(toLines(text), 0, streaming).blocks }));
+export function parseMarkdown(text: string, { streaming = false, relativeLinks = false, images = false }: ParseMarkdownOptions = {}): MdRoot {
+  return withRelativeLinks(relativeLinks, () => ({ type: "root", children: parseBlocks(toLines(text), 0, streaming).blocks }), images);
 }
 
 /** Chỉ phần inline (nhấn mạnh, code, link…) của một dòng: không đoạn văn, không khối. Xuống dòng thành `softBreak`. */
-export function parseInlineMarkdown(text: string, { relativeLinks = false }: Pick<ParseMarkdownOptions, "relativeLinks"> = {}): MdInline[] {
-  return withRelativeLinks(relativeLinks, () => parseInlines(text.replace(/\r\n?/g, "\n").trim(), false));
+export function parseInlineMarkdown(
+  text: string,
+  { relativeLinks = false, images = false }: Pick<ParseMarkdownOptions, "relativeLinks" | "images"> = {},
+): MdInline[] {
+  return withRelativeLinks(relativeLinks, () => parseInlines(text.replace(/\r\n?/g, "\n").trim(), false), images);
 }
 
 /* ================================================================ Phân tích tăng dần */
@@ -820,6 +846,8 @@ function inlineText(nodes: MdInline[]): string {
           return n.text;
         case "citation":
           return n.label;
+        case "image":
+          return n.alt;
         case "softBreak":
         case "hardBreak":
           return " ";
