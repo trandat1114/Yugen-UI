@@ -52,13 +52,60 @@ export function slugifyHeading(text: string): string {
   return slug || "section";
 }
 
+export interface MarkdownHeading {
+  /** id gắn trên heading (đã khử trùng: `intro`, `intro-2`…). */
+  id: string;
+  /** Chữ của heading, không định dạng. */
+  text: string;
+  /** Cấp đã render (2 = `h2`), tức cấp Markdown cộng `headingOffset`. */
+  level: number;
+}
+
+export interface MarkdownHeadingsOptions {
+  /** Như `Markdown`: mặc định 1 (`#` → `h2`). */
+  headingOffset?: number;
+  /** Hàm tạo id, như `headingIds` của `Markdown`. Mặc định `slugifyHeading`. */
+  slug?: (text: string) => string;
+}
+
+/**
+ * id của mọi heading theo thứ tự trong nội dung (kể cả trong blockquote, danh sách). Tính trước khi render nên id không
+ * phụ thuộc thứ tự React gọi component (StrictMode gọi hai lần) và trùng khớp với `markdownHeadings`.
+ */
+function collectHeadings(blocks: MdBlock[], slug: (text: string) => string, offset: number) {
+  const out = new Map<MdBlock, MarkdownHeading>();
+  const used = new Map<string, number>();
+  const walk = (list: MdBlock[]) => {
+    for (const block of list) {
+      if (block.type === "heading") {
+        const text = inlineText(block.children).trim();
+        const base = slug(text);
+        const n = (used.get(base) ?? 0) + 1;
+        used.set(base, n);
+        out.set(block, { id: n === 1 ? base : `${base}-${n}`, text, level: Math.min(6, Math.max(1, block.level + offset)) });
+      } else if (block.type === "blockquote") walk(block.children);
+      else if (block.type === "list") for (const item of block.items) walk(item.children);
+    }
+  };
+  walk(blocks);
+  return out;
+}
+
+/**
+ * Các heading của một chuỗi Markdown, cùng id mà `<Markdown headingIds>` gắn: dựng mục lục (ArticleToc) ở server, trước
+ * khi JavaScript chạy, mà không phải đọc DOM.
+ */
+export function markdownHeadings(markdown: string, { headingOffset = 1, slug = slugifyHeading }: MarkdownHeadingsOptions = {}): MarkdownHeading[] {
+  return [...collectHeadings(parseMarkdown(markdown, { relativeLinks: true }).children, slug, headingOffset).values()];
+}
+
 interface RenderContext {
   msg: MarkdownMessages;
   breaks: boolean;
   headingOffset: number;
   renderLink?: (link: MarkdownLink) => React.ReactNode;
-  /** id của heading tiếp theo (đã khử trùng), hoặc undefined khi tắt headingIds. */
-  headingId?: (text: string) => string;
+  /** id của từng heading (đã khử trùng), hoặc undefined khi tắt headingIds. */
+  headings?: Map<MdBlock, MarkdownHeading>;
 }
 
 const ALIGN_CLASS: Record<Exclude<MdAlign, null>, string> = { start: "text-start", center: "text-center", end: "text-end" };
@@ -119,7 +166,7 @@ function Block({ block, ctx }: { block: MdBlock; ctx: RenderContext }): React.Re
       return <p>{renderInlines(block.children, ctx)}</p>;
     case "heading": {
       const Tag = `h${Math.min(6, Math.max(1, block.level + ctx.headingOffset))}` as "h2";
-      return <Tag id={ctx.headingId?.(inlineText(block.children))}>{renderInlines(block.children, ctx)}</Tag>;
+      return <Tag id={ctx.headings?.get(block)?.id}>{renderInlines(block.children, ctx)}</Tag>;
     }
     case "code":
       return <CodeBlock code={block.text} language={codeLanguageOf(block.lang)} />;
@@ -213,17 +260,12 @@ export function Markdown({
   );
 
   // Heading trùng chữ nhận -2, -3… theo thứ tự trong nội dung.
-  const used = new Map<string, number>();
-  const slug = typeof headingIds === "function" ? headingIds : slugifyHeading;
-  const headingId = headingIds
-    ? (text: string) => {
-        const base = slug(text);
-        const n = (used.get(base) ?? 0) + 1;
-        used.set(base, n);
-        return n === 1 ? base : `${base}-${n}`;
-      }
-    : undefined;
-  const ctx: RenderContext = { msg, breaks, headingOffset, renderLink, headingId };
+  const slug = typeof headingIds === "function" ? headingIds : headingIds ? slugifyHeading : undefined;
+  const headings = React.useMemo(
+    () => (inline || !slug ? undefined : collectHeadings(parsed as MdBlock[], slug, headingOffset)),
+    [parsed, slug, inline, headingOffset],
+  );
+  const ctx: RenderContext = { msg, breaks, headingOffset, renderLink, headings };
 
   if (inline) {
     return (

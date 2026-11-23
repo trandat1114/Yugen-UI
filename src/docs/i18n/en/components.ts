@@ -84,6 +84,7 @@ export const COMPONENTS_EN: Record<string, { lead: string; name?: string }> = {
   descriptionlist: { lead: "DescriptionList shows label / value pairs: order details, a profile, a summary of settings." },
   stat: { lead: "Stat shows one key number with its change and an optional small chart." },
   prose: { lead: "Prose styles long content from Markdown or a CMS: headings, paragraphs, lists, tables, code, quotes and images on the Yugen type ramp." },
+  article: { lead: "Article, ArticleHeader, ArticleMeta, ArticleBody and ArticleToc lay out a long Markdown post: title, author and dates, reading width and a table of contents." },
   markdown: { lead: "Markdown renders content written in Markdown (articles, release notes, CMS fields) with Prose typography, safely for untrusted content." },
 
   // Feedback

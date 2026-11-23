@@ -113,5 +113,11 @@
   "Beta": "Bản beta",
   "Mar 2026": "Tháng 3/2026",
   "General availability": "Phát hành rộng rãi",
-  "Jun 2026": "Tháng 6/2026"
+  "Jun 2026": "Tháng 6/2026",
+  "Design notes": "Ghi chú thiết kế",
+  "Calm interfaces with spacing, not borders": "Giao diện tĩnh lặng nhờ khoảng cách, không nhờ đường viền",
+  "How a spacing scale and clear headings replace most dividers.": "Thang khoảng cách và heading rõ ràng thay được hầu hết đường phân cách.",
+  "Linh Tran": "Trần Linh",
+  "Release 2.4": "Bản phát hành 2.4",
+  "Faster search and a new export button.": "Tìm kiếm nhanh hơn và có nút xuất dữ liệu mới."
 }

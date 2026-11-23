@@ -204,4 +204,32 @@ export const en: Record<string, ComponentDocEn> = {
       renderLink: "Renders every link yourself; MarkdownLink has href, title, children and external.",
     },
   },
+  article: {
+    description:
+      "Each part is its own component, to compose into your page. Article is an <article>; pass toc to put the table of contents on the right, sticky from the lg breakpoint (before the content on narrow screens). ArticleHeader is a <header> with an h1 title (titleAs changes the level), an excerpt, an eyebrow line and a cover in a 16:9 frame that holds its space. ArticleMeta shows the author, the published and updated dates in <time> elements, the reading time and the tags. ArticleBody limits the reading width; wide tables and code scroll inside their own box. ArticleToc takes the headings from markdownHeadings(), with the same ids <Markdown headingIds> renders (duplicates become -2, -3), so its links work before JavaScript loads; one IntersectionObserver marks the section being read with aria-current. readingTime() estimates minutes, and articleJsonLd() builds schema.org data for your app's script tag.",
+    examples: [{ title: "Without a table of contents", description: "Leave toc out for short posts; ArticleToc renders nothing when there are no headings." }],
+    dos: [
+      "Use the same Markdown string for markdownHeadings() and <Markdown headingIds> so the ids match.",
+      "Set ArticleToc's offset to the height of the page's sticky header.",
+      "Let the app render the JSON-LD (articleJsonLd) and meta tags in <head>.",
+    ],
+    donts: [
+      "Don't skip heading levels (h2 then h4) just for the text size.",
+      "Don't put wide tables or code outside ArticleBody: the page would scroll sideways on phones.",
+      "Don't use the cover image instead of the title; the title is always text.",
+    ],
+    props: {
+      "Article.toc": "Table of contents beside the content (sticky from lg).",
+      "ArticleHeader.title / titleAs": "Title and its heading level.",
+      "ArticleHeader.excerpt / eyebrow / meta / cover": "Excerpt, eyebrow line, ArticleMeta, 16:9 cover.",
+      "ArticleMeta.author": "Author; href becomes a rel=\"author\" link.",
+      "ArticleMeta.published / updated": "Published / updated date (the update is hidden on the same day).",
+      "ArticleMeta.readingTime / tags / renderTag / locale": "Minutes to read, tags, how a tag renders, locale for dates.",
+      "ArticleBody.width": "About 70 characters, 90 characters, or the container.",
+      "ArticleToc.items": "Headings, usually from markdownHeadings().",
+      "ArticleToc.maxLevel / title / trackActive / offset": "Deepest level, title, tracking the section being read, sticky header height (px).",
+      "markdownHeadings(markdown, options)": "Headings with the ids Markdown renders; options: headingOffset, slug.",
+      "readingTime(text, wpm) / articleJsonLd(input)": "Minutes to read (220 words per minute by default, code ignored) and schema.org Article data.",
+    },
+  },
 };

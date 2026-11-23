@@ -5,6 +5,7 @@ import {
   reasoningMessagesEn,
   streamingMarkdownMessagesEn,
 } from "./AIKit/messages";
+import { articleMessagesEn } from "./Article/messages";
 import { appShellMessagesEn } from "./AppShell/messages";
 import { autocompleteMessagesEn } from "./Autocomplete/messages";
 import { avatarGroupMessagesEn } from "./AvatarGroup/messages";
@@ -90,6 +91,7 @@ import { voiceWaveMessagesEn } from "./VoiceWave/messages";
  */
 export const messagesEn: Omit<YugenMessages, "calendar"> = {
   appShell: appShellMessagesEn,
+  article: articleMessagesEn,
   asyncContent: asyncContentMessagesEn,
   autocomplete: autocompleteMessagesEn,
   avatarGroup: avatarGroupMessagesEn,

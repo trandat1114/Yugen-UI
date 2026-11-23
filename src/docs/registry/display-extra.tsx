@@ -11,7 +11,8 @@ import { Avatar } from "@/components/ui/Avatar/Avatar";
 import { Button } from "@/components/ui/Button/Button";
 import { Sparkline } from "@/components/ui/Chart/Chart";
 import { DescriptionItem, DescriptionList } from "@/components/ui/DescriptionList/DescriptionList";
-import { Markdown } from "@/components/ui/Markdown/Markdown";
+import { Article, ArticleBody, ArticleHeader, ArticleMeta, ArticleToc, readingTime } from "@/components/ui/Article/Article";
+import { Markdown, markdownHeadings } from "@/components/ui/Markdown/Markdown";
 import { Prose } from "@/components/ui/Prose/Prose";
 import { Sonner, sonner, type SonnerPosition } from "@/components/ui/Sonner/Sonner";
 import { Stat } from "@/components/ui/Stat/Stat";
@@ -20,6 +21,119 @@ import { Timeline, TimelineItem } from "@/components/ui/Timeline/Timeline";
 import type { ComponentDoc } from "../types";
 
 /* ------------------------------------------------------------------ demos */
+
+/* ---------------------------------------------------------------- Article */
+
+const ARTICLE_CODE = `const POST = \`## Why rhythm beats borders
+
+Most screens use borders to separate things that spacing could separate on its own. Start with a **4 px grid** and let headings carry the structure.
+
+## Spacing scale
+
+| Token | Value | Use |
+| --- | ---: | --- |
+| spacing-2 | 8 px | inside controls |
+| spacing-4 | 16 px | between fields |
+| spacing-8 | 32 px | between sections |
+
+## A very long heading that has to wrap on small screens without overflowing the page
+
+Long headings wrap instead of pushing the layout sideways.
+
+## Applying it in code
+
+\\\`\\\`\\\`tsx
+<Stack gap="4">
+  <Field label="Name" />
+  <Field label="Email" />
+</Stack>
+\\\`\\\`\\\`
+
+## Spacing scale
+
+A second section with the same title gets its own id in the table of contents.\`;
+
+const HEADINGS = markdownHeadings(POST);
+
+function ArticleDemo() {
+  return (
+    <Article toc={<ArticleToc items={HEADINGS} offset={64} />} className="w-full">
+      <ArticleHeader
+        eyebrow="Design notes"
+        title="Calm interfaces with spacing, not borders"
+        excerpt="How a spacing scale and clear headings replace most dividers."
+        meta={
+          <ArticleMeta
+            author={{ name: "Linh Tran", avatar: <Avatar name="Linh Tran" size={24} /> }}
+            published="2026-11-02"
+            updated="2026-11-20"
+            readingTime={readingTime(POST)}
+            tags={["design", "spacing"]}
+          />
+        }
+      />
+      <ArticleBody className="mt-6">
+        <Markdown headingIds size="large">{POST}</Markdown>
+      </ArticleBody>
+    </Article>
+  );
+}`;
+
+const POST = `## Why rhythm beats borders
+
+Most screens use borders to separate things that spacing could separate on its own. Start with a **4 px grid** and let headings carry the structure.
+
+## Spacing scale
+
+| Token | Value | Use |
+| --- | ---: | --- |
+| spacing-2 | 8 px | inside controls |
+| spacing-4 | 16 px | between fields |
+| spacing-8 | 32 px | between sections |
+
+## A very long heading that has to wrap on small screens without overflowing the page
+
+Long headings wrap instead of pushing the layout sideways.
+
+## Applying it in code
+
+\`\`\`tsx
+<Stack gap="4">
+  <Field label="Name" />
+  <Field label="Email" />
+</Stack>
+\`\`\`
+
+## Spacing scale
+
+A second section with the same title gets its own id in the table of contents.`;
+
+const HEADINGS = markdownHeadings(POST);
+
+function ArticleDemo() {
+  return (
+    <Article toc={<ArticleToc items={HEADINGS} offset={64} />} className="w-full">
+      <ArticleHeader
+        eyebrow="Design notes"
+        title="Calm interfaces with spacing, not borders"
+        excerpt="How a spacing scale and clear headings replace most dividers."
+        meta={
+          <ArticleMeta
+            author={{ name: "Linh Tran", avatar: <Avatar name="Linh Tran" size={24} /> }}
+            published="2026-11-02"
+            updated="2026-11-20"
+            readingTime={readingTime(POST)}
+            tags={["design", "spacing"]}
+          />
+        }
+      />
+      <ArticleBody className="mt-6">
+        <Markdown headingIds size="large">{POST}</Markdown>
+      </ArticleBody>
+    </Article>
+  );
+}
+
 
 function RouterLinkDemo() {
   const [path, setPath] = useState("/");
@@ -934,6 +1048,60 @@ Every request needs an **API key** in the \\\`Authorization\\\` header. Create o
       { name: "headingIds", type: "boolean | ((text: string) => string)", defaultValue: "false", description: "Gắn id cho heading từ chữ của nó (bỏ dấu, khử trùng bằng -2, -3); truyền hàm để tự tạo id." },
       { name: "breaks", type: "boolean", defaultValue: "false", description: "Xuống dòng đơn thành <br>." },
       { name: "renderLink", type: "(link: MarkdownLink) => ReactNode", description: "Tự render mọi link; MarkdownLink gồm href, title, children, external." },
+    ],
+  },
+  /* ---------------------------------------------------------------- Article */
+  article: {
+    slug: "article",
+    name: "Article",
+    category: "Hiển thị dữ liệu",
+    lead: "Article, ArticleHeader, ArticleMeta, ArticleBody và ArticleToc dựng một bài viết dài từ Markdown: tiêu đề, tác giả và ngày, độ rộng đọc và mục lục.",
+    description:
+      "Mỗi phần là một component riêng để ghép theo trang của bạn. Article là thẻ <article>; truyền toc để mục lục nằm bên phải và dính khi cuộn từ màn hình lg (màn hình hẹp: trước nội dung). ArticleHeader là <header> với tiêu đề h1 (titleAs đổi cấp), tóm tắt, dòng chuyên mục và ảnh bìa trong khung 16:9 giữ chỗ sẵn. ArticleMeta hiện tác giả, ngày đăng và ngày cập nhật bằng <time>, thời gian đọc và thẻ. ArticleBody giới hạn độ rộng đọc; bảng và code rộng cuộn trong khung của chúng. ArticleToc nhận danh sách heading từ markdownHeadings(), cùng id mà <Markdown headingIds> gắn (heading trùng tên thành -2, -3), nên link chạy được cả trước khi JavaScript tải; một IntersectionObserver đánh dấu mục đang đọc bằng aria-current. readingTime() ước lượng số phút đọc, articleJsonLd() dựng dữ liệu schema.org cho thẻ script của app.",
+    importCode: `import { Article, ArticleHeader, ArticleMeta, ArticleBody, ArticleToc, Markdown, markdownHeadings } from "@/components/ui";`,
+    hero: { title: "Bài viết Markdown có mục lục", code: ARTICLE_CODE, render: () => <ArticleDemo /> },
+    examples: [
+      {
+        title: "Không có mục lục",
+        description: "Bỏ toc khi bài ngắn; ArticleToc không render gì nếu không có heading.",
+        code: `<Article className="w-full max-w-xl">
+  <ArticleHeader title="Release 2.4" titleAs="h2" meta={<ArticleMeta published="2026-11-18" readingTime={2} />} />
+  <ArticleBody className="mt-4">
+    <Markdown>{"Faster search and a new export button."}</Markdown>
+  </ArticleBody>
+</Article>`,
+        render: () => (
+          <Article className="w-full max-w-xl">
+            <ArticleHeader title="Release 2.4" titleAs="h2" meta={<ArticleMeta published="2026-11-18" readingTime={2} />} />
+            <ArticleBody className="mt-4">
+              <Markdown>{"Faster search and a new export button."}</Markdown>
+            </ArticleBody>
+          </Article>
+        ),
+      },
+    ],
+    dos: [
+      "Dùng cùng một chuỗi Markdown cho markdownHeadings() và <Markdown headingIds> để id khớp nhau.",
+      "Đặt offset của ArticleToc bằng chiều cao header dính của trang.",
+      "Để app tự render JSON-LD (articleJsonLd) và thẻ meta trong <head>.",
+    ],
+    donts: [
+      "Không bỏ qua cấp heading (h2 rồi h4) chỉ để lấy cỡ chữ.",
+      "Không đưa bảng hoặc code rộng ra ngoài ArticleBody: trang sẽ tràn ngang trên điện thoại.",
+      "Không dùng ảnh bìa để thay tiêu đề — tiêu đề luôn là chữ.",
+    ],
+    props: [
+      { name: "Article.toc", type: "ReactNode", description: "Mục lục bên cạnh (dính từ lg)." },
+      { name: "ArticleHeader.title / titleAs", type: `ReactNode / "h1" | "h2" | "h3"`, defaultValue: `— / "h1"`, description: "Tiêu đề và cấp heading." },
+      { name: "ArticleHeader.excerpt / eyebrow / meta / cover", type: "ReactNode", description: "Tóm tắt, dòng chuyên mục, ArticleMeta, ảnh bìa 16:9." },
+      { name: "ArticleMeta.author", type: "{ name, avatar?, href? }", description: "Tác giả; href thành link rel=\"author\"." },
+      { name: "ArticleMeta.published / updated", type: "Date | number | string", description: "Ngày đăng / cập nhật (ngày cập nhật ẩn nếu trùng ngày đăng)." },
+      { name: "ArticleMeta.readingTime / tags / renderTag / locale", type: "number / string[] / (tag) => ReactNode / string", description: "Phút đọc, thẻ, cách hiện thẻ, locale định dạng ngày." },
+      { name: "ArticleBody.width", type: `"reading" | "wide" | "full"`, defaultValue: `"reading"`, description: "Khoảng 70 ký tự, 90 ký tự hoặc theo khung." },
+      { name: "ArticleToc.items", type: "{ id, text, level }[]", description: "Heading, thường từ markdownHeadings()." },
+      { name: "ArticleToc.maxLevel / title / trackActive / offset", type: "number / ReactNode / boolean / number", defaultValue: "3 / — / true / 0", description: "Cấp sâu nhất, tiêu đề, theo dõi mục đang đọc, chiều cao header dính (px)." },
+      { name: "markdownHeadings(markdown, options)", type: "MarkdownHeading[]", description: "Heading cùng id mà Markdown gắn; options: headingOffset, slug." },
+      { name: "readingTime(text, wpm) / articleJsonLd(input)", type: "number / object", description: "Phút đọc (mặc định 220 từ / phút, bỏ code) và dữ liệu schema.org Article." },
     ],
   },
 };
