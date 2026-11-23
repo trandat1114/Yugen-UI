@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import { YugenProvider } from "../YugenProvider/YugenProvider";
 import { messagesEn } from "../messages-en";
-import { CallControlButton, CallControls, CallStatus, CallSurface, formatCallDuration } from "./Call";
+import { callMessagesEn, callMessagesVi, CallControlButton, CallControls, CallStatus, CallSurface, formatCallDuration } from "./Call";
 
 afterEach(() => vi.useRealTimers());
 
@@ -127,5 +127,12 @@ describe("CallControlButton", () => {
     render(<CallControlButton kind="end" onClick={onClick} />);
     fireEvent.click(screen.getByRole("button", { name: "Kết thúc" }));
     expect(onClick).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("callMessages", () => {
+  it("names the call in both languages", () => {
+    expect(callMessagesEn.surface("Aiko")).toBe("Call with Aiko");
+    expect(callMessagesVi.surface("Lan")).toBe("Cuộc gọi với Lan");
   });
 });
