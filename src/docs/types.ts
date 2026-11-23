@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { ComponentTag } from "./tags";
 
 export interface Example {
   title: string;
@@ -51,6 +52,8 @@ export interface ComponentDoc {
   dos: string[];
   donts: string[];
   props: PropDoc[];
+  /** Thẻ chủ đề (src/docs/tags.ts) để tìm kiếm ra trang này: `["ai", "voice"]`. Chuỗi literal, đọc lúc build. */
+  tags?: ComponentTag[];
 }
 
 /**
@@ -73,7 +76,7 @@ export interface ComponentDocEn {
  * Phần nạp sẵn của một trang component (sidebar, trang chủ, command palette, header trang) — trích lúc build,
  * không kéo theo demo / code mẫu. `file`: file trong src/docs/registry chứa doc (nạp lười theo file).
  */
-export type ComponentMeta = Pick<ComponentDoc, "slug" | "name" | "category" | "lead"> & {
+export type ComponentMeta = Pick<ComponentDoc, "slug" | "name" | "category" | "lead" | "tags"> & {
   file: string;
   /** Có bản tiếng Anh (src/docs/registry/en/<file>.ts) — plugin yugenDocsMeta đánh dấu lúc build. */
   translated?: true;

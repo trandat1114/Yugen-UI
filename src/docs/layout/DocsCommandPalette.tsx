@@ -33,6 +33,7 @@ import { COMPONENTS_BY_CATEGORY } from "../registry";
 import { useLocale } from "../i18n";
 import { docsPath, navigate } from "../router";
 import { prefetchHref } from "../prefetch";
+import { tagTerms } from "../tags";
 
 /** Mục đang chọn đổi (phím mũi tên, gõ tìm): nạp trước trang của mục đó. cmdk đặt data-selected sau lần render này. */
 const prefetchSelected = () =>
@@ -158,7 +159,7 @@ export function DocsCommandPalette({
                 key={c.slug}
                 icon={g.category === "Yugen Labs" ? <PuzzlePiece20Regular /> : <Document20Regular />}
                 {...nav(`/components/${c.slug}`)}
-                keywords={[c.slug, g.category, category(g.category)]}
+                keywords={[c.slug, g.category, category(g.category), ...tagTerms(c.tags)]}
               >
                 {component(c).name}
               </CommandItem>

@@ -4,6 +4,7 @@ import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, SearchBox, T
 import { COMPONENTS_BY_CATEGORY, readComponentDemos } from "../registry";
 import { useLocale } from "../i18n";
 import { docsPath } from "../router";
+import { matchesComponent } from "../tags";
 
 /** Demo hero của một component — nạp file registry chứa nó theo ngôn ngữ trang (treo tới khi xong; lỗi → để trống). */
 function HeroPreview({ slug }: { slug: string }) {
@@ -90,7 +91,7 @@ export function HomeComponents() {
       COMPONENTS_BY_CATEGORY.filter((g) => group === ALL || g.category === group)
         .map((g) => ({
           ...g,
-          items: g.items.map((m) => ({ ...m, ...component(m) })).filter((c) => !q || c.name.toLowerCase().includes(q) || c.slug.includes(q)),
+          items: g.items.map((m) => ({ ...m, ...component(m) })).filter((c) => matchesComponent(c, q)),
         }))
         .filter((g) => g.items.length > 0),
     [group, q, component],

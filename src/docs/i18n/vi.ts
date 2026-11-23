@@ -17,6 +17,7 @@ export const vi = {
   "nav.concepts": "Khái niệm",
   "nav.labsConcepts": "Khái niệm Yugen Labs",
   "component.labsTitle": "Yugen Labs · thử nghiệm",
+  "component.tags": "Chủ đề",
   "component.labsBody": "Component này nằm ngoài SemVer: API có thể đổi ở một bản minor, và thay đổi sẽ được ghi trong Có gì mới.",
   "component.labsLink": "Chính sách phiên bản",
   "nav.components": "Component",

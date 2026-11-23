@@ -16,6 +16,7 @@ export const en: Record<MessageKey, string> = {
   "nav.concepts": "Concepts",
   "nav.labsConcepts": "Yugen Labs concepts",
   "component.labsTitle": "Yugen Labs · experimental",
+  "component.tags": "Topics",
   "component.labsBody": "This component is outside SemVer: its API can change in a minor release, and What's new says so.",
   "component.labsLink": "Versioning policy",
   "nav.components": "Components",

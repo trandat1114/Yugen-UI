@@ -992,6 +992,7 @@ const LABS_CHAT: Record<string, ComponentDoc> = {
   trace: {
     slug: "trace",
     category: "Yugen Labs",
+    tags: ["ai"],
     name: "Trace",
     lead: "Trace hiển thị tiến trình thực thi theo từng bước — agent AI gọi công cụ, CI pipeline, triển khai — để người dùng thấy hệ thống đang làm gì và vì sao.",
     description:
@@ -1176,6 +1177,7 @@ const LABS_CHAT: Record<string, ComponentDoc> = {
   messagescroller: {
     slug: "messagescroller",
     category: "Hiển thị dữ liệu",
+    tags: ["ai"],
     name: "MessageScroller",
     lead: "MessageScroller là vùng cuộn hội thoại biết bám đáy khi có tin mới, báo “N tin nhắn mới” khi bạn đang đọc tin cũ và giữ nguyên vị trí khi tải thêm lịch sử.",
     description:
@@ -1263,6 +1265,7 @@ const LABS_CHAT: Record<string, ComponentDoc> = {
   chatcomposer: {
     slug: "chatcomposer",
     category: "Yugen Labs",
+    tags: ["ai"],
     name: "ChatComposer",
     lead: "ChatComposer là ô soạn tin tự giãn theo nội dung: Enter để gửi, Shift+Enter để xuống dòng, nút gửi chỉ bật khi có nội dung.",
     description:
