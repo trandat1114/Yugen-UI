@@ -119,6 +119,10 @@ describe("RadarChart", () => {
     // Chuỗi đầu (slot 1) luôn tô đặc; các chuỗi sau dùng hoa văn.
     expect(fills[0]).toMatch(/^var\(/);
     expect(fills[1]).toMatch(/^url\(#/);
+    // Nét đứt như legend (slot 2 trở đi), để phân biệt chuỗi không cần màu.
+    const dashes = [...container.querySelectorAll("path[stroke-linejoin]")].map((p) => p.getAttribute("stroke-dasharray"));
+    expect(dashes[0]).toBeNull();
+    expect(dashes[1]).not.toBeNull();
     rerender(<RadarChart {...props} texture linesOnly dots />);
     expect(container.querySelector("pattern")).toBeNull();
     expect(container.querySelectorAll("svg g[style] > g circle")).toHaveLength(5);

@@ -16,6 +16,7 @@ import {
   chartUid,
   makeNumberFormatter,
   patternId,
+  slotDash,
   slotFill,
   slotOf,
   slotVar,
@@ -207,6 +208,7 @@ export function RadarChart({
               fillOpacity={fill && !linesOnly && !(textured && patternId(uid, item.slot)) ? 0.18 : undefined}
               strokeWidth={2}
               strokeLinejoin="round"
+              strokeDasharray={slotDash(item.slot, textured)}
             />
             {dots && (
               <g style={{ fill: slotVar(item.slot), stroke: "var(--colorChartSurface)" }}>
