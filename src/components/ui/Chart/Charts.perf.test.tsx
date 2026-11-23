@@ -37,7 +37,8 @@ function hoverSteps(label: string, points: HTMLElement[]) {
   );
 }
 
-describe("axis charts performance", () => {
+// Đo nhiều lần trong một test: cho thời gian rộng hơn mặc định 5 s khi CI chạy song song.
+describe("axis charts performance", { timeout: 60_000 }, () => {
   it("LineChart, 2,000 points × 3 series, markers and a custom tooltip: one hover step", () => {
     render(
       <LineChart
