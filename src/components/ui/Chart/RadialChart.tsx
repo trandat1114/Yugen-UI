@@ -44,6 +44,13 @@ export interface RadialChartProps extends Omit<ChartFrameProps, "height"> {
   centerValue?: React.ReactNode;
   valueFormat?: ChartNumberFormat;
   legend?: boolean;
+  /** Đầu cung bo tròn thay vì cắt thẳng. */
+  rounded?: boolean;
+  /**
+   * segments: một vòng, datum đầu (hoặc mọi datum khi `stacked`) nối tiếp trên vòng · rings: mỗi datum một vòng đồng tâm
+   * (từ ngoài vào trong), có track và nhãn ở đầu vòng — để so vài giá trị cùng thang.
+   */
+  layout?: "segments" | "rings";
 }
 
 interface RadialSegment extends RadialDatum {
@@ -90,6 +97,8 @@ export function RadialChart({
   stacked = false,
   startAngle = 0,
   endAngle = 360,
+  rounded = false,
+  layout = "segments",
   size = 220,
   thickness,
   track = true,
@@ -114,13 +123,16 @@ export function RadialChart({
   const textured = useChartTexture(texture);
   const uid = chartUid(React.useId());
   const fmt = makeNumberFormatter(locale, valueFormat);
-  const source = stacked ? data : data.slice(0, 1);
+  const rings = layout === "rings";
+  const source = stacked || rings ? data : data.slice(0, 1);
   const total = source.reduce(
     (sum, item) =>
       sum + (Number.isFinite(item.value) ? Math.max(0, item.value) : 0),
     0,
   );
-  const max = Math.max(1, maxValue ?? total, total);
+  // Vòng riêng: thang chung là giá trị lớn nhất (hoặc maxValue); một vòng: tổng.
+  const largest = source.reduce((m, item) => Math.max(m, Number.isFinite(item.value) ? item.value : 0), 0);
+  const max = rings ? Math.max(1, maxValue ?? largest) : Math.max(1, maxValue ?? total, total);
   const span = Math.max(0, Math.min(360, endAngle - startAngle));
   const start = degrees(startAngle);
   const end = start + degrees(span);
@@ -148,12 +160,32 @@ export function RadialChart({
       end: cursor,
     };
   });
-  const label = centerLabel ?? (stacked ? msg.total : segments[0]?.label);
-  const value = centerValue ?? fmt(total);
+  // Vòng đồng tâm: từ ngoài vào, mỗi vòng một datum, giữ một khoảng ở tâm.
+  const ringBand = rings ? Math.max(6, (outer - Math.max(S * 0.16, 12)) / Math.max(1, source.length)) : 0;
+  const ringGeometry = rings
+    ? source.map((item, index) => {
+        const value = Math.max(0, Number.isFinite(item.value) ? item.value : 0);
+        const ro = outer - index * ringBand;
+        const ri = ro - ringBand + 3;
+        return {
+          ...item,
+          value,
+          key: `${item.label}-${index}`,
+          slot: slotOf(item.color, index),
+          inner: ri,
+          outer: ro,
+          mid: (ri + ro) / 2,
+          start,
+          end: start + (Math.min(value, max) / max) * degrees(span),
+        };
+      })
+    : [];
+  const label = centerLabel ?? (rings ? undefined : stacked ? msg.total : segments[0]?.label);
+  const value = centerValue ?? (rings ? undefined : fmt(total));
   const summary =
     ariaLabel ??
     msg.radialSummary({ value: fmt(total), max: fmt(max), label: segments[0]?.label });
-  const legendItems: ChartLegendItem[] = segments.map((item) => ({
+  const legendItems: ChartLegendItem[] = (rings ? ringGeometry : segments).map((item) => ({
     key: item.key,
     label: item.label,
     slot: item.slot,
@@ -166,7 +198,7 @@ export function RadialChart({
         { key: "label", label: msg.name },
         { key: "value", label: msg.value, numeric: true },
       ]}
-      rows={segments.map((item) => ({
+      rows={(rings ? ringGeometry : segments).map((item) => ({
         key: item.key,
         header: item.label,
         cells: [fmt(item.value)],
@@ -196,8 +228,8 @@ export function RadialChart({
             aria-label={summary}
             className="block max-w-full overflow-visible"
           >
-            {textured && <ChartPatterns prefix={uid} slots={segments.map((item) => item.slot)} />}
-            {track && (
+            {textured && <ChartPatterns prefix={uid} slots={(rings ? ringGeometry : segments).map((item) => item.slot)} />}
+            {track && !rings && (
               isFullCircle ? (
                 <circle
                   cx={cx}
@@ -224,9 +256,18 @@ export function RadialChart({
                 "motion-reduce:animate-none",
               )}
             >
-              {segments.map(
-                (item) =>
-                  item.end > item.start && (
+              {!rings &&
+                segments.map((item) =>
+                  item.end <= item.start ? null : rounded ? (
+                    <path
+                      key={item.key}
+                      d={strokeArcPath(cx, cy, trackRadius, item.start, Math.min(item.end, item.start + Math.PI * 2 - 0.001))}
+                      fill="none"
+                      strokeWidth={outer - inner}
+                      strokeLinecap="round"
+                      stroke={slotFill(item.slot, textured ?? false, uid)}
+                    />
+                  ) : (
                     <path
                       key={item.key}
                       d={arcPath(cx, cy, inner, outer, item.start, item.end)}
@@ -235,25 +276,69 @@ export function RadialChart({
                       style={{ opacity: 0.92 }}
                     />
                   ),
-              )}
+                )}
+              {rings &&
+                ringGeometry.map((item) => (
+                  <g key={item.key}>
+                    {track &&
+                      (isFullCircle ? (
+                        <circle cx={cx} cy={cy} r={item.mid} fill="none" strokeWidth={item.outer - item.inner} style={{ stroke: "var(--colorChartGrid)" }} />
+                      ) : (
+                        <path
+                          d={strokeArcPath(cx, cy, item.mid, start, end)}
+                          fill="none"
+                          strokeWidth={item.outer - item.inner}
+                          strokeLinecap={rounded ? "round" : "butt"}
+                          style={{ stroke: "var(--colorChartGrid)" }}
+                        />
+                      ))}
+                    {item.end > item.start && (
+                      <path
+                        d={strokeArcPath(cx, cy, item.mid, item.start, Math.min(item.end, item.start + Math.PI * 2 - 0.001))}
+                        fill="none"
+                        strokeWidth={item.outer - item.inner}
+                        strokeLinecap={rounded ? "round" : "butt"}
+                        stroke={slotFill(item.slot, textured ?? false, uid)}
+                      />
+                    )}
+                  </g>
+                ))}
             </g>
-            <circle
-              cx={cx}
-              cy={cy}
-              r={(inner + outer) / 2}
-              fill="none"
-              stroke="var(--colorChartSurface)"
-              strokeWidth={2}
-              aria-hidden
-            />
-            <text
-              x={cx}
-              y={cy - 2}
-              textAnchor="middle"
-              className="fill-foreground-1 text-subtitle1 font-semibold"
-            >
-              {value}
-            </text>
+            {rings && (
+              <g aria-hidden className="fill-foreground-2 text-caption1">
+                {ringGeometry.map((item) => {
+                  // Nhãn ngay trước điểm bắt đầu của vòng, theo hướng tiếp tuyến ngược chiều kim đồng hồ.
+                  const px = cx + item.mid * Math.sin(start) - 8 * Math.cos(start);
+                  const py = cy - item.mid * Math.cos(start) - 8 * Math.sin(start);
+                  return (
+                    <text key={item.key} x={px} y={py} dy="0.32em" textAnchor={Math.cos(start) >= 0 ? "end" : "start"}>
+                      {item.label}
+                    </text>
+                  );
+                })}
+              </g>
+            )}
+            {!rings && !rounded && (
+              <circle
+                cx={cx}
+                cy={cy}
+                r={(inner + outer) / 2}
+                fill="none"
+                stroke="var(--colorChartSurface)"
+                strokeWidth={2}
+                aria-hidden
+              />
+            )}
+            {value !== undefined && (
+              <text
+                x={cx}
+                y={cy - 2}
+                textAnchor="middle"
+                className="fill-foreground-1 text-subtitle1 font-semibold"
+              >
+                {value}
+              </text>
+            )}
             {label !== undefined && (
               <text
                 x={cx}
@@ -266,7 +351,7 @@ export function RadialChart({
             )}
           </svg>
         </div>
-        {legend && segments.length > 1 && (
+        {legend && legendItems.length > 1 && (
           <ChartLegend items={legendItems} shape="rect" textured={textured} />
         )}
       </div>

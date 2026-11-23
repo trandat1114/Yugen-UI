@@ -334,10 +334,67 @@ const radarSkills = [
   { axis: "Testing", lead: 84, junior: 71 },
 ];
 
+const browserSlices = [
+  { label: "Chrome", value: 275 },
+  { label: "Safari", value: 200 },
+  { label: "Firefox", value: 187 },
+  { label: "Edge", value: 173 },
+  { label: "Other", value: 90 },
+];
+
+const goals = [
+  { label: "Move", value: 420 },
+  { label: "Exercise", value: 28 },
+  { label: "Stand", value: 10 },
+];
+
 const radialProgress = [
   { label: "Completed", value: 72 },
   { label: "Remaining", value: 28 },
 ];
+
+
+const BROWSER_PICKER_CODE = `function BrowserPicker() {
+  const [index, setIndex] = useState(0);
+  return (
+    <DonutChart
+      title="Visitors by browser"
+      toolbar={
+        <ToggleGroup type="single" size="small" value={String(index)} onValueChange={(v) => v && setIndex(Number(v))} aria-label="Browser">
+          {browserSlices.slice(0, 4).map((b, i) => (
+            <ToggleGroupItem key={b.label} value={String(i)}>
+              {b.label}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
+      }
+      data={browserSlices}
+      activeIndex={index}
+      locale="en-US"
+    />
+  );
+}`;
+
+function BrowserPicker() {
+  const [index, setIndex] = useState(0);
+  return (
+    <DonutChart
+      title="Visitors by browser"
+      toolbar={
+        <ToggleGroup type="single" size="small" value={String(index)} onValueChange={(v) => v && setIndex(Number(v))} aria-label="Browser">
+          {browserSlices.slice(0, 4).map((b, i) => (
+            <ToggleGroupItem key={b.label} value={String(i)}>
+              {b.label}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
+      }
+      data={browserSlices}
+      activeIndex={index}
+      locale="en-US"
+    />
+  );
+}
 
 /* ------------------------------------------------------------------ Docs */
 
@@ -1071,10 +1128,38 @@ const churnTrend = ${JSON.stringify(churnTrend)};
         code: `<PieChart data={pieMix} separator={false} legend />`,
         render: () => <PieChart data={pieMix} separator={false} legend />,
       },
+      {
+        title: "Nhãn phần trăm",
+        description: "labels=\"percent\" ghi tỉ lệ ngoài mỗi lát (lát dưới 4% bỏ nhãn); \"value\", \"label\" hoặc một hàm cũng được.",
+        setup: `const browserSlices = ${lit(browserSlices)};`,
+        code: `<PieChart title="Visitors by browser" data={browserSlices} labels="percent" legend={false} locale="en-US" />`,
+        render: () => <PieChart title="Visitors by browser" data={browserSlices} labels="percent" legend={false} locale="en-US" />,
+      },
+      {
+        title: "Nhãn tuỳ biến",
+        description: "labels nhận hàm ({ label, value, share, index }) để viết nhãn của riêng bạn.",
+        setup: `const browserSlices = ${lit(browserSlices)};`,
+        code: `<PieChart data={browserSlices} labels={({ label, share }) => \`\${label} \${Math.round(share * 100)}%\`} legend={false} />`,
+        render: () => <PieChart data={browserSlices} labels={({ label, share }) => `${label} ${Math.round(share * 100)}%`} legend={false} />,
+      },
+      {
+        title: "Chọn một lát",
+        description: "activeIndex nhấn một lát (nổi ra, các lát khác nhạt đi) và đưa giá trị của lát đó vào tâm donut; ở đây nút trong toolbar chọn lát.",
+        setup: `const browserSlices = ${lit(browserSlices)};`,
+        code: BROWSER_PICKER_CODE,
+        render: () => <BrowserPicker />,
+      },
     ],
-    dos: ["Dùng cho phần–tổng nhìn nhanh với ít lát.", "Khi cần so sánh giá trị gần nhau, dùng BarChart."],
+    dos: [
+      "Dùng cho phần–tổng nhìn nhanh với ít lát (tối đa 6; phần còn lại tự gộp vào “Khác”).",
+      "Khi cần so sánh giá trị gần nhau, dùng BarChart.",
+      "Ghi tỉ lệ bằng labels khi người đọc cần con số mà không mở tooltip.",
+    ],
     donts: ["Không dùng quá nhiều lát hoặc chỉ dựa vào màu để phân biệt.", "Không dùng pie cho chuỗi theo thời gian."],
     props: [
+      { name: "labels", type: `"value" | "percent" | "label" | (slice) => string`, description: "Nhãn ngoài mỗi lát; lát dưới 4% bỏ nhãn." },
+      { name: "activeIndex", type: "number", description: "Lát được nhấn khi không trỏ lát nào; tâm donut hiện giá trị của lát đó." },
+      { name: "tooltip", type: "ChartTooltipConfig", description: "indicator, label, value, icons, render, hidden — dùng chung mọi biểu đồ." },
       { name: "data", type: "{ label, value, color? }[]", description: "Các lát pie; giá trị không hữu hạn hoặc ≤ 0 bị bỏ qua." },
       { name: "separator", type: "boolean", defaultValue: "true", description: "Khe bề mặt 2px giữa các lát." },
       { name: "maxSlices / otherLabel", type: "number / string", defaultValue: "6 / Other", description: "Giới hạn lát và nhãn phần gộp." },
@@ -1194,10 +1279,26 @@ const churnTrend = ${JSON.stringify(churnTrend)};
         code: `<RadialChart data={[{ label: "SLA", value: 86 }]} maxValue={100} endAngle={270} centerLabel="SLA" />`,
         render: () => <RadialChart data={[{ label: "SLA", value: 86 }]} maxValue={100} endAngle={270} centerLabel="SLA" />,
       },
+      {
+        title: "Đầu cung bo tròn",
+        description: "rounded bo tròn hai đầu cung; hợp với gauge và tiến độ.",
+        setup: `const radialProgress = ${lit(radialProgress)};`,
+        code: `<RadialChart data={radialProgress} maxValue={100} rounded startAngle={-120} endAngle={120} />`,
+        render: () => <RadialChart data={radialProgress} maxValue={100} rounded startAngle={-120} endAngle={120} />,
+      },
+      {
+        title: "Mỗi giá trị một vòng",
+        description: "layout=\"rings\" vẽ mỗi datum một vòng đồng tâm cùng thang (maxValue hoặc giá trị lớn nhất), nhãn ở đầu mỗi vòng.",
+        setup: `const goals = ${lit(goals)};`,
+        code: `<RadialChart title="Daily goals" data={goals} layout="rings" rounded maxValue={500} locale="en-US" />`,
+        render: () => <RadialChart title="Daily goals" data={goals} layout="rings" rounded maxValue={500} locale="en-US" />,
+      },
     ],
     dos: ["Dùng cho tiến độ, tỷ lệ hoàn thành hoặc một tổng số có mốc tối đa rõ ràng.", "Hiển thị số ở tâm để không bắt người đọc ước lượng theo cung."],
     donts: ["Không dùng radial để so sánh nhiều giá trị gần nhau nếu không có nhãn số.", "Không biến track và animation thành tín hiệu duy nhất."],
     props: [
+      { name: "rounded", type: "boolean", defaultValue: "false", description: "Bo tròn hai đầu cung." },
+      { name: "layout", type: `"segments" | "rings"`, defaultValue: `"segments"`, description: "Một vòng nối tiếp các đoạn, hoặc mỗi datum một vòng đồng tâm có nhãn." },
       { name: "data / maxValue", type: "{ label, value, color? }[] / number", description: "Giá trị và mốc tối đa; stacked dùng nhiều đoạn." },
       { name: "startAngle / endAngle", type: "number / number", defaultValue: "0 / 360", description: "Góc theo độ, 0 là 12 giờ và chiều kim đồng hồ." },
       { name: "stacked / track", type: "boolean", defaultValue: "false / true", description: "Nối tiếp các đoạn và hiển thị track nền." },

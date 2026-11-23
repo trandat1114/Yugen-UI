@@ -215,4 +215,54 @@ export const en: Record<string, ComponentDocEn> = {
     },
     defaults: { "levels / domain": "5 / computed" },
   },
+  piechart: {
+    description:
+      "PieChart shares data, locale, legend, textures, tooltip and the data table with DonutChart; use it when solid slices read better than a ring.",
+    examples: [
+      { title: "No gap between slices", description: "separator={false} draws one solid shape; the data table keeps each slice's label and value." },
+      { title: "Percent labels", description: "labels=\"percent\" writes each slice's share outside it (slices under 4% get none); \"value\", \"label\" or a function work too." },
+      { title: "Custom labels", description: "labels takes a function ({ label, value, share, index }) for your own text." },
+      { title: "Picking a slice", description: "activeIndex emphasizes one slice (it pops out, the others fade) and puts its value in the donut center; here toolbar buttons pick the slice." },
+    ],
+    dos: [
+      "Use it for a quick part-to-whole with few slices (at most 6; the rest are grouped into “Other”).",
+      "When values are close, use a BarChart.",
+      "Write the shares with labels when readers need the numbers without opening a tooltip.",
+    ],
+    donts: ["Don't use many slices or rely on color alone to tell them apart.", "Don't use a pie for a series over time."],
+    props: {
+      labels: "Labels outside each slice; slices under 4% get none.",
+      activeIndex: "The emphasized slice while nothing is pointed at; the donut center shows its value.",
+      tooltip: "indicator, label, value, icons, render, hidden — shared by every chart.",
+      data: "The slices; values that aren't finite or are ≤ 0 are skipped.",
+      separator: "A 2px surface gap between slices.",
+      "maxSlices / otherLabel": "Slice limit and the name of the grouped slice.",
+      "legend / valueFormat / locale": "Legend, number format and locale.",
+      "title, description, texture, defaultShowTable…": "Shared frame and accessibility props.",
+    },
+    defaults: { "legend / valueFormat / locale": "true / default / vi-VN" },
+  },
+  radialchart: {
+    description: "For one progress value or a few stacked values; its own chunk, with no chart library.",
+    examples: [
+      { title: "Partial gauge", description: "startAngle / endAngle draw an open gauge; the track keeps the rest in view." },
+      { title: "Rounded ends", description: "rounded rounds both ends of each arc; suits gauges and progress." },
+      { title: "One ring per value", description: "layout=\"rings\" draws each datum as its own concentric ring on one scale (maxValue or the largest value), labeled at the start of each ring." },
+    ],
+    dos: [
+      "Use it for progress, completion or a total with a clear maximum.",
+      "Show the number in the center so readers don't estimate from the arc.",
+    ],
+    donts: ["Don't compare many close values without numbers.", "Don't make the track or the animation the only signal."],
+    props: {
+      rounded: "Rounds both ends of each arc.",
+      layout: "One ring with segments in a row, or one labeled concentric ring per datum.",
+      "data / maxValue": "Values and the maximum; stacked uses several segments.",
+      "startAngle / endAngle": "Angles in degrees; 0 is 12 o'clock, clockwise.",
+      "stacked / track": "Segments in a row, and the background track.",
+      "size / thickness / centerValue / centerLabel": "Size, thickness and the center content.",
+      "legend / valueFormat / locale": "Legend and number format.",
+    },
+    defaults: { "legend / valueFormat / locale": "true / default / vi-VN" },
+  },
 };
