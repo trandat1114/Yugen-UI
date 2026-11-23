@@ -77,6 +77,8 @@ export interface CallSurfaceProps extends Omit<React.HTMLAttributes<HTMLElement>
   avatar?: React.ReactNode;
   state: CallState;
   duration?: number;
+  /** Thay chữ của trạng thái (CallStatus `label`). */
+  statusLabel?: React.ReactNode;
   /** Dòng phụ dưới tên (số máy, vai trò). */
   description?: React.ReactNode;
   /** Thanh điều khiển (CallControls). */
@@ -92,6 +94,7 @@ export function CallSurface({
   avatar,
   state,
   duration,
+  statusLabel,
   description,
   controls,
   layout = "stacked",
@@ -120,7 +123,7 @@ export function CallSurface({
         <div className={cn("flex min-w-0 flex-col", stacked ? "items-center gap-1" : "gap-0.5")}>
           <div className={cn("min-w-0 truncate font-semibold", stacked ? "text-title3" : "text-body1")}>{name}</div>
           {description && <div className="min-w-0 truncate text-caption1 text-foreground-3">{description}</div>}
-          <CallStatus state={state} duration={duration} />
+          <CallStatus state={state} duration={duration} label={statusLabel} />
         </div>
       </div>
       {children && <div className={cn("min-w-0", stacked ? "w-full" : "w-full sm:order-last")}>{children}</div>}

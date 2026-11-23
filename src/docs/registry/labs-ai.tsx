@@ -14,16 +14,24 @@ import {
   NotificationCenter,
   PromptInput,
   Reasoning,
+  Sheet,
+  SheetBody,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
   StreamingMarkdown,
   Tour,
   Transcript,
   useNotifications,
   useTour,
+  VoiceAssistant,
   VoiceWave,
   type CallState,
   type CitationSource,
   type NotificationItem,
   type TourStep,
+  type VoiceAssistantState,
   type TranscriptTurn,
   type VoiceWaveState,
 } from "@/components/ui";
@@ -768,6 +776,142 @@ function CallDemo() {
   );
 }
 
+
+/* ================================================================ VoiceAssistant */
+
+const VOICE_ASSISTANT_CODE = `const QUESTION = "Do I have anything after lunch tomorrow?";
+const ANSWER = "Yes, a design review at 2 pm and a call with Aiko at 4.";
+
+// A scripted session: no microphone, no network. Your app would set these from its voice provider.
+function useMockSession() {
+  const [state, setState] = useState<VoiceAssistantState>("idle");
+  const [turns, setTurns] = useState<TranscriptTurn[]>([]);
+  const [muted, setMuted] = useState(false);
+  const [run, setRun] = useState(0);
+
+  useEffect(() => {
+    if (run === 0) return;
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    const at = (ms: number, step: () => void) => timers.push(setTimeout(step, ms));
+    const typed = (id: string, speaker: string, role: "user" | "assistant", text: string, from: number) => {
+      const words = text.split(" ");
+      words.forEach((_, i) =>
+        at(from + i * 120, () =>
+          setTurns((list) => [
+            ...list.filter((t) => t.id !== id),
+            { id, speaker, role, text: words.slice(0, i + 1).join(" "), status: i === words.length - 1 ? "complete" : "streaming" },
+          ]),
+        ),
+      );
+      return from + words.length * 120;
+    };
+    setTurns([]);
+    setState("connecting");
+    at(600, () => setState("listening"));
+    const asked = typed("q", "You", "user", QUESTION, 900);
+    at(asked + 200, () => setState("thinking"));
+    at(asked + 1200, () => setState("speaking"));
+    const answered = typed("a", "Assistant", "assistant", ANSWER, asked + 1300);
+    at(answered + 300, () => setState("listening"));
+    return () => timers.forEach(clearTimeout);
+  }, [run]);
+
+  return {
+    state,
+    turns,
+    muted,
+    onMutedChange: setMuted,
+    onStart: () => setRun((r) => r + 1),
+    onRetry: () => setRun((r) => r + 1),
+    onEnd: () => setState("ended"),
+  };
+}
+
+function VoiceAssistantDemo() {
+  const session = useMockSession();
+  return <VoiceAssistant name="Assistant" description="Calendar and email" className="max-w-md" {...session} />;
+}`;
+
+const VA_QUESTION = "Do I have anything after lunch tomorrow?";
+const VA_ANSWER = "Yes, a design review at 2 pm and a call with Aiko at 4.";
+
+// A scripted session: no microphone, no network. Your app would set these from its voice provider.
+function useMockSession() {
+  const [state, setState] = useState<VoiceAssistantState>("idle");
+  const [turns, setTurns] = useState<TranscriptTurn[]>([]);
+  const [muted, setMuted] = useState(false);
+  const [run, setRun] = useState(0);
+
+  useEffect(() => {
+    if (run === 0) return;
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    const at = (ms: number, step: () => void) => timers.push(setTimeout(step, ms));
+    const typed = (id: string, speaker: string, role: "user" | "assistant", text: string, from: number) => {
+      const words = text.split(" ");
+      words.forEach((_, i) =>
+        at(from + i * 120, () =>
+          setTurns((list) => [
+            ...list.filter((t) => t.id !== id),
+            { id, speaker, role, text: words.slice(0, i + 1).join(" "), status: i === words.length - 1 ? "complete" : "streaming" },
+          ]),
+        ),
+      );
+      return from + words.length * 120;
+    };
+    setTurns([]);
+    setState("connecting");
+    at(600, () => setState("listening"));
+    const asked = typed("q", "You", "user", VA_QUESTION, 900);
+    at(asked + 200, () => setState("thinking"));
+    at(asked + 1200, () => setState("speaking"));
+    const answered = typed("a", "Assistant", "assistant", VA_ANSWER, asked + 1300);
+    at(answered + 300, () => setState("listening"));
+    return () => timers.forEach(clearTimeout);
+  }, [run]);
+
+  return {
+    state,
+    turns,
+    muted,
+    onMutedChange: setMuted,
+    onStart: () => setRun((r) => r + 1),
+    onRetry: () => setRun((r) => r + 1),
+    onEnd: () => setState("ended"),
+  };
+}
+
+function VoiceAssistantDemo() {
+  const session = useMockSession();
+  return <VoiceAssistant name="Assistant" description="Calendar and email" className="max-w-md" {...session} />;
+}
+
+const VA_PANEL_CODE = `<VoiceAssistant
+  layout="inline"
+  name="Assistant"
+  state="speaking"
+  duration={42}
+  levels={[0.3, 0.6, 0.9, 0.7, 0.4, 0.8, 0.5]}
+  turns={[
+    { id: "1", speaker: "You", role: "user", text: "Read my last email." },
+    { id: "2", speaker: "Assistant", role: "assistant", text: "From Aiko: the review moved to Friday", status: "streaming" },
+  ]}
+  className="max-w-lg"
+/>`;
+const VA_SHEET_CODE = `<Sheet mode="bottom" snapPoints={[0.6, 0.95]}>
+  <SheetTrigger asChild>
+    <Button appearance="primary">Talk to the assistant</Button>
+  </SheetTrigger>
+  <SheetContent>
+    <SheetHeader>
+      <SheetTitle>Voice assistant</SheetTitle>
+    </SheetHeader>
+    <SheetBody>
+      <VoiceAssistant name="Assistant" state="listening" className="border-0 p-0" />
+    </SheetBody>
+  </SheetContent>
+</Sheet>`;
+const VA_ERROR_CODE = `<VoiceAssistant name="Assistant" state="error" error="The microphone is blocked. Allow it in the browser settings, then try again." className="max-w-md" />`;
+
 export const docs: ComponentDoc[] = [
   {
     slug: "streamingmarkdown",
@@ -1092,6 +1236,86 @@ export const docs: ComponentDoc[] = [
       { name: "CallControlButton.confirm", type: "boolean", defaultValue: "false", description: "kind=\"end\": cần bấm hai lần trong 4 giây." },
       { name: "CallControlButton.label / icon", type: "ReactNode", description: "Thay nhãn và icon (nút tuỳ chỉnh)." },
       { name: "formatCallDuration(seconds)", type: "string", description: "Giây → m:ss hoặc h:mm:ss." },
+    ],
+  },
+  {
+    slug: "voiceassistant",
+    category: "Yugen Labs",
+    name: "VoiceAssistant",
+    lead: "VoiceAssistant đặt một cuộc trò chuyện bằng giọng nói lên một màn hình: ai đang nói, trợ lý đang làm gì, sóng âm, transcript và các nút điều khiển.",
+    description:
+      "Ghép từ CallSurface, CallStatus, CallControls, VoiceWave và Transcript, nên chỉ tải đúng các phần đó. Mọi thứ điều khiển từ ngoài: state (idle, connecting, listening, thinking, speaking, ended, error), turns, levels hoặc source cho sóng âm, muted, và các callback onStart, onEnd, onRetry, onMutedChange. Component không mở micro, không gọi Web Speech, Web Audio hay dịch vụ nào: app nối nhà cung cấp giọng nói của mình vào các prop này. Trạng thái luôn được nói bằng chữ trong vùng status (Đang nghe, Đang nghĩ…, Đang trả lời), nên người dùng không cần nhìn màu hay sóng âm. Transcript đọc mỗi lượt một lần khi xong (announce), không đọc lại lịch sử. idle và ended hiện nút Bắt đầu nói, error hiện lý do và nút Thử lại.",
+    importCode: `import { VoiceAssistant, type VoiceAssistantState, type TranscriptTurn } from "@/components/ui";`,
+    hero: { title: "Phiên giả lập theo kịch bản", code: VOICE_ASSISTANT_CODE, render: () => <VoiceAssistantDemo /> },
+    examples: [
+      {
+        title: "Panel gọn",
+        description: "layout=\"inline\" cho panel bên cạnh nội dung; transcript cuộn trong khung thấp hơn.",
+        code: VA_PANEL_CODE,
+        render: () => (
+<VoiceAssistant
+  layout="inline"
+  name="Assistant"
+  state="speaking"
+  duration={42}
+  levels={[0.3, 0.6, 0.9, 0.7, 0.4, 0.8, 0.5]}
+  turns={[
+    { id: "1", speaker: "You", role: "user", text: "Read my last email." },
+    { id: "2", speaker: "Assistant", role: "assistant", text: "From Aiko: the review moved to Friday", status: "streaming" },
+  ]}
+  className="max-w-lg"
+/>
+        ),
+      },
+      {
+        title: "Bottom sheet trên điện thoại",
+        description: "Đặt VoiceAssistant trong Sheet mode=\"bottom\": người dùng kéo lên để xem transcript.",
+        code: VA_SHEET_CODE,
+        render: () => (
+<Sheet mode="bottom" snapPoints={[0.6, 0.95]}>
+  <SheetTrigger asChild>
+    <Button appearance="primary">Talk to the assistant</Button>
+  </SheetTrigger>
+  <SheetContent>
+    <SheetHeader>
+      <SheetTitle>Voice assistant</SheetTitle>
+    </SheetHeader>
+    <SheetBody>
+      <VoiceAssistant name="Assistant" state="listening" className="border-0 p-0" />
+    </SheetBody>
+  </SheetContent>
+</Sheet>
+        ),
+      },
+      {
+        title: "Lỗi và thử lại",
+        description: "error nói rõ lý do; nút Thử lại gọi onRetry.",
+        code: VA_ERROR_CODE,
+        render: () => <VoiceAssistant name="Assistant" state="error" error="The microphone is blocked. Allow it in the browser settings, then try again." className="max-w-md" />,
+      },
+    ],
+    dos: [
+      "Cập nhật state theo sự kiện thật của nhà cung cấp giọng nói (bắt đầu nói, đang xử lý, đang phát).",
+      "Truyền source để sóng âm theo micro hoặc giọng trợ lý mà không re-render mỗi frame.",
+      "Nói rõ lý do trong error (micro bị chặn, mất mạng) để người dùng biết cách sửa.",
+    ],
+    donts: [
+      "Không chỉ dựa vào sóng âm để báo trợ lý đang nghe hay đang nói.",
+      "Không bắt đầu nghe khi người dùng chưa bấm Bắt đầu nói.",
+      "Không đọc lại cả transcript sau mỗi câu: announce đã đọc từng lượt khi xong.",
+    ],
+    props: [
+      { name: "name / avatar / description", type: "string / ReactNode / ReactNode", description: "Danh tính của trợ lý; name cũng đặt tên cho vùng." },
+      { name: "state", type: `"idle" | "connecting" | "listening" | "thinking" | "speaking" | "ended" | "error"`, description: "Trạng thái, đọc bằng chữ (messages.voiceAssistant)." },
+      { name: "turns", type: "TranscriptTurn[]", description: "Các lượt nói; rỗng thì không hiện transcript." },
+      { name: "levels / source", type: "ArrayLike<number> / () => ArrayLike<number> | null", description: "Dữ liệu cho VoiceWave." },
+      { name: "duration", type: "number (giây)", description: "Thời lượng phiên khi đang trò chuyện." },
+      { name: "muted / onMutedChange", type: "boolean", description: "Nút tắt micro." },
+      { name: "onStart / onEnd / onRetry", type: "() => void", description: "Bắt đầu, kết thúc, thử lại." },
+      { name: "error", type: "ReactNode", description: "Lý do lỗi (state=\"error\")." },
+      { name: "announce", type: "boolean", defaultValue: "true", description: "Đọc mỗi lượt một lần khi xong." },
+      { name: "layout / transcriptClassName / actions", type: `"stacked" | "inline" / string / ReactNode`, defaultValue: `"stacked"`, description: "Bố cục, lớp của khung transcript, nút thêm trong thanh điều khiển." },
+      { name: "CallSurface.statusLabel", type: "ReactNode", description: "Mới: thay chữ trạng thái của CallSurface (VoiceAssistant dùng để hiện Đang nghĩ…, Đang trả lời)." },
     ],
   },
   {

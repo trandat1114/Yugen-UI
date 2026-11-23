@@ -134,6 +134,8 @@ module.exports = [
   js("{ BarChart, LineChart }", "{ BarChart, LineChart }", "34 kB"),
   // Một IntersectionObserver cho mục lục, không phụ thuộc mới (#446): 11.45 kB.
   js("{ Article, ArticleHeader, ArticleMeta, ArticleBody, ArticleToc }", "{ Article, ArticleHeader, ArticleMeta, ArticleBody, ArticleToc }", "12.5 kB"),
+  // CallSurface + Transcript + VoiceWave, không runtime giọng nói (#443): 21.23 kB.
+  js("{ VoiceAssistant }", "{ VoiceAssistant }", "23 kB"),
   // Toolbar (roving focus) + 10 icon, không logic kết nối (#441): 14.29 kB.
   js("{ CallSurface, CallControls, CallControlButton }", "{ CallSurface, CallControls, CallControlButton }", "15.5 kB"),
   // SVG viết tay, không runtime vẽ biểu đồ (#424, #431, #432): RadarChart 22.21 kB, PieChart + RadialChart 22.61 kB.
@@ -164,7 +166,8 @@ module.exports = [
   // Citation (Popover) nạp lúc cần (#350): 57.00 → 32.42 kB (lần tải đầu; Citation là chunk riêng).
   js("{ StreamingMarkdown, PromptInput }", "{ StreamingMarkdown, PromptInput }", "35.5 kB"),
   // Chuỗi của 6 component mới (#173): 4.80 → 5.11 kB; NavigationMenu + StatusPage (#168, #238): → ~5.7 kB.
-  js("{ messagesEn }", "{ messagesEn }", "6.5 kB"),
+  // Namespace mới của 0.17 (call, transcript, voiceWave, voiceAssistant, article, timeline…): 6.38 kB.
+  js("{ messagesEn }", "{ messagesEn }", "7 kB"),
   // Bộ tiếng Việt, chỉ khi import (#277: mặc định là tiếng Anh): 17.7 kB khi thêm, phần lớn là locale vi của
   // react-day-picker cho Calendar / DatePicker. #356: locale đó sang yugen-ui/dates (calendarMessagesVi): 18.38 → 6.49 kB.
   js("{ messagesVi }", "{ messagesVi }", "7.5 kB"),

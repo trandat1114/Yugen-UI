@@ -148,6 +148,38 @@ export const en: Record<string, ComponentDocEn> = {
       "formatCallDuration(seconds)": "Seconds → m:ss or h:mm:ss.",
     },
   },
+  voiceassistant: {
+    description:
+      "Built from CallSurface, CallStatus, CallControls, VoiceWave and Transcript, so only those parts load. Everything is controlled from outside: state (idle, connecting, listening, thinking, speaking, ended, error), turns, levels or source for the wave, muted, and the onStart, onEnd, onRetry and onMutedChange callbacks. The component never opens the microphone or calls Web Speech, Web Audio or any service: your app wires its voice provider into these props. The state is always said in words in a status region (Listening, Thinking…, Speaking), so nobody has to read a color or the wave. The transcript reads each turn once when it completes (announce), never the history again. idle and ended show a Start talking button; error shows the reason and a Try again button.",
+    examples: [
+      { title: "Compact panel", description: "layout=\"inline\" for a panel beside the content; the transcript scrolls in a shorter box." },
+      { title: "Bottom sheet on phones", description: "Put VoiceAssistant in a Sheet with mode=\"bottom\": people drag it up to read the transcript." },
+      { title: "Error and retry", description: "error says why; Try again calls onRetry." },
+    ],
+    dos: [
+      "Update state from your voice provider's real events (speech started, processing, playing).",
+      "Pass source so the wave follows the microphone or the assistant's voice without a re-render per frame.",
+      "Say why in error (microphone blocked, network lost) so people know how to fix it.",
+    ],
+    donts: [
+      "Don't rely on the wave alone to show whether the assistant is listening or speaking.",
+      "Don't start listening before people press Start talking.",
+      "Don't read the whole transcript again after each sentence; announce already reads each turn when it completes.",
+    ],
+    props: {
+      "name / avatar / description": "The assistant's identity; name also names the region.",
+      state: "The state, read in words (messages.voiceAssistant).",
+      turns: "The turns; empty hides the transcript.",
+      "levels / source": "Data for VoiceWave.",
+      duration: "Session length while talking.",
+      "muted / onMutedChange": "The mute button.",
+      "onStart / onEnd / onRetry": "Start, end, retry.",
+      error: "Reason for the error (state=\"error\").",
+      announce: "Reads each turn once when it completes.",
+      "layout / transcriptClassName / actions": "Layout, class of the transcript box, extra buttons in the control bar.",
+      "CallSurface.statusLabel": "New: replaces CallSurface's state text (VoiceAssistant uses it for Thinking…, Speaking).",
+    },
+  },
   reasoning: {
     description:
       "Built on Collapsible (aria-expanded; the height animation turns off with reduced motion). autoOpen opens the block when reasoning starts and collapses it when done, unless the user has toggled it. The time is measured in an effect (Date.now() is never read during render), so it is safe for SSR; you can also pass duration. String content is rendered with a small StreamingMarkdown and has aria-busy while running.",

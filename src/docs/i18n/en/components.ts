@@ -159,6 +159,7 @@ export const COMPONENTS_EN: Record<string, { lead: string; name?: string }> = {
   voicewave: { lead: "VoiceWave shows the audio level of a voice assistant or a call as vertical bars: flat while idle or muted, moving while listening or speaking." },
   transcript: { lead: "Transcript shows the turns of a voice conversation: who spoke, when, and the reply that is still arriving." },
   callsurface: { lead: "CallSurface, CallStatus and CallControls lay out a voice or video call: who is on the line, the state in words, and the controls." },
+  voiceassistant: { lead: "VoiceAssistant puts a voice conversation on one screen: who is talking, what the assistant is doing, the wave, the transcript and the controls." },
   reasoning: { lead: "Reasoning tucks the model's thinking into a collapsible block: “Reasoning…” with a timer while it runs, “Reasoned for 12s” when done." },
   scatterchart: { lead: "ScatterChart shows the relationship between two numeric measures (correlation, clusters, outliers), with bubbles and a trend line when needed." },
   sheet: { lead: "Sheet is an adaptive overlay with one API and one content: a side panel on wide screens, a draggable bottom sheet on phones." },
