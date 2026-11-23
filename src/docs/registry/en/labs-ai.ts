@@ -90,6 +90,33 @@ export const en: Record<string, ComponentDocEn> = {
       "resampleLevels(levels, count)": "The resampling used inside, also exported.",
     },
   },
+  transcript: {
+    description:
+      "Each turn has an id, speaker, text, role (user / assistant), timestamp and status (complete, streaming, error). The current turn (by default the streaming one, or activeId) gets an accent border, a “Speaking” label and aria-current, not only a color. The list is not a live region: with announce, each turn is read once when it completes and the history is never read again. Turns are memoized, so when a token arrives only that turn re-renders (renderText is called for that turn only). Give it a height and overflow-y-auto for a scroll box: autoScroll keeps it at the end while the reader is at the end, and stops when they scroll up to read.",
+    examples: [
+      { title: "Recognition errors and the empty state", description: "status=\"error\" shows the reason as text with an icon; with no turns, empty is shown." },
+    ],
+    dos: [
+      "Turn on announce when people aren't looking at the screen (calls, voice assistants).",
+      "Keep each turn's id stable and create a new object only for the turn that changed.",
+      "Give the scroll box a fixed height so autoScroll works.",
+    ],
+    donts: [
+      "Don't wrap Transcript in an aria-live region: the whole history would be read again.",
+      "Don't use color as the only sign of who is speaking.",
+      "Don't recreate every turn on each token; the old turns would re-render.",
+    ],
+    props: {
+      turns: "The turns: id, speaker, text, role, timestamp / time, status, error, avatar.",
+      activeId: "The current turn; defaults to the last streaming turn, null for none.",
+      autoScroll: "Keeps the view at the end as text arrives, while the reader is at the end.",
+      announce: "Reads each turn once when it completes (useAnnounce).",
+      loading: "Loading: aria-busy, and “Loading transcript…” while there are no turns.",
+      empty: "Content when there are no turns (defaults to messages.transcript.empty).",
+      renderText: "Replaces how text is shown; called only for the turn that changed.",
+      locale: "Time format of timestamp; defaults to the YugenProvider locale.",
+    },
+  },
   reasoning: {
     description:
       "Built on Collapsible (aria-expanded; the height animation turns off with reduced motion). autoOpen opens the block when reasoning starts and collapses it when done, unless the user has toggled it. The time is measured in an effect (Date.now() is never read during render), so it is safe for SSR; you can also pass duration. String content is rendered with a small StreamingMarkdown and has aria-busy while running.",

@@ -82,6 +82,7 @@ import { toastMessagesEn } from "./Toast/messages";
 import { tourMessagesEn } from "./Tour/messages";
 import { traceMessagesEn } from "./Trace/messages";
 import { voiceWaveMessagesEn } from "./VoiceWave/messages";
+import { transcriptMessagesEn } from "./Transcript/messages";
 
 /**
  * Chuỗi giao diện có sẵn của mọi component, bằng tiếng Anh: đây cũng là giá trị mặc định khi không truyền `messages`.
@@ -159,6 +160,7 @@ export const messagesEn: Omit<YugenMessages, "calendar"> = {
   toast: toastMessagesEn,
   tour: tourMessagesEn,
   trace: traceMessagesEn,
+  transcript: transcriptMessagesEn,
   typingIndicator: typingIndicatorMessagesEn,
   voiceWave: voiceWaveMessagesEn,
   wizard: wizardMessagesEn,
