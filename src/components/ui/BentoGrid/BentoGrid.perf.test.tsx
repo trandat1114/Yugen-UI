@@ -27,7 +27,8 @@ function Cells({ count, version = 0 }: { count: number; version?: number }) {
   );
 }
 
-describe("BentoGrid performance (#437)", () => {
+// Đo nhiều lần trong một test: cho thời gian rộng hơn mặc định 5 s khi CI chạy song song.
+describe("BentoGrid performance (#437)", { timeout: 60_000 }, () => {
   for (const count of [6, 12, 30]) {
     it(`mounts and updates ${count} cells without measuring the layout`, () => {
       const host = document.createElement("div");
