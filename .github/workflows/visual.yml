@@ -43,8 +43,29 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Tag image Playwright = @playwright/test trong package-lock.json (như job playwright của ci.yml).
+  playwright:
+    name: Playwright image
+    if: github.event.pull_request.draft != true
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: package-lock.json
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - id: version
+        run: |
+          v="$(jq -r '.packages["node_modules/@playwright/test"].version' package-lock.json)"
+          if ! echo "$v" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then echo "::error::package-lock.json: no @playwright/test version (got '$v')."; exit 1; fi
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+
   shard:
     name: Visual shard ${{ matrix.shard }}/${{ strategy.job-total }}
+    needs: playwright
     if: github.event.pull_request.draft != true
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -54,9 +75,9 @@ jobs:
       matrix:
         shard: [1, 2, 3, 4]
     # Trình duyệt và thư viện hệ thống có sẵn trong image: không `playwright install --with-deps` (apt) mỗi lần chạy.
-    # Tag phải khớp @playwright/test trong package-lock.json (src/test/playwright-image.test.ts).
+    # Tag lấy từ package-lock.json (job playwright).
     container:
-      image: mcr.microsoft.com/playwright:v1.65.0-noble
+      image: mcr.microsoft.com/playwright:v${{ needs.playwright.outputs.version }}-noble
       options: --user 1001
     env:
       CI: true

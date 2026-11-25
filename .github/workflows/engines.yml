@@ -44,7 +44,19 @@ jobs:
       pull-requests: read
     outputs:
       run: ${{ steps.check.outputs.run }}
+      playwright: ${{ steps.playwright.outputs.version }}
     steps:
+      # Tag image Playwright = @playwright/test trong package-lock.json (như job playwright của ci.yml).
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: package-lock.json
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - id: playwright
+        run: |
+          v="$(jq -r '.packages["node_modules/@playwright/test"].version' package-lock.json)"
+          if ! echo "$v" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then echo "::error::package-lock.json: no @playwright/test version (got '$v')."; exit 1; fi
+          echo "version=$v" >> "$GITHUB_OUTPUT"
       - id: check
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -65,9 +77,9 @@ jobs:
     if: needs.scope.outputs.run == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 40
-    # Image có sẵn cả Firefox và WebKit. Tag phải khớp @playwright/test trong package-lock.json (src/test/playwright-image.test.ts).
+    # Image có sẵn cả Firefox và WebKit. Tag lấy từ package-lock.json (job scope).
     container:
-      image: mcr.microsoft.com/playwright:v1.65.0-noble
+      image: mcr.microsoft.com/playwright:v${{ needs.scope.outputs.playwright }}-noble
       options: --user 1001
     env:
       CI: true
