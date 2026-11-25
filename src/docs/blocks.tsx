@@ -55,7 +55,7 @@ export function PageHeader({
       <h1 className="font-display text-[clamp(40px,6vw,64px)] leading-[1.1] font-semibold tracking-[-0.02em] wrap-break-word text-foreground-1">
         {breakableTitle(title)}
       </h1>
-      <p className="mt-4 max-w-3xl text-subtitle1 font-normal text-foreground-1">{lead}</p>
+      <p className="mt-4 max-w-3xl whitespace-pre-line text-subtitle1 font-normal text-foreground-1">{lead}</p>
       {children && <div className="mt-4 max-w-3xl text-body2 text-foreground-2">{children}</div>}
     </header>
   );
@@ -104,13 +104,13 @@ export function DocSection({
   children,
 }: {
   id: string;
-  title: string;
+  title?: string;
   description?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} data-doc-section={title} className="scroll-mt-24 border-t border-stroke-2 pt-6 pb-8 first:border-t-0">
-      <h2 className="font-display text-title2 font-semibold text-foreground-1">{title}</h2>
+    <section id={id} data-doc-section={title || undefined} className="scroll-mt-24 border-t border-stroke-2 pt-6 pb-8 first:border-t-0">
+      {title && <h2 className="font-display text-title2 font-semibold text-foreground-1">{title}</h2>}
       {description && <p className="mt-2 max-w-3xl text-body2 text-foreground-2">{description}</p>}
       <div className="mt-5">{children}</div>
     </section>

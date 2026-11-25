@@ -5,6 +5,7 @@ import {
   Code20Regular,
   Translate20Regular,
   Grid20Regular,
+  Heart20Regular,
   Lightbulb20Regular,
   HeartPulse20Regular,
   Rocket20Regular,
@@ -51,6 +52,7 @@ import {
 } from "../roadmap";
 import { docsPath } from "../router";
 import { avatarOf, CONTRIBUTORS } from "../contributors";
+import { supportEnabled } from "../support";
 
 const WIKI = `${SITE.links.repository}/wiki`;
 
@@ -61,6 +63,9 @@ const VI = {
   title: "Cùng xây Yugen UI",
   lead: "Yugen UI là mã nguồn mở. Báo lỗi, viết block hay dịch một trang đều giúp thư viện tốt hơn cho người dùng sau.",
   waysTitle: "Cách tham gia",
+  supportTitle: "Ủng hộ Yugen UI",
+  supportText: "Bạn có thể ủng hộ bằng VND qua VietQR để góp phần duy trì thư viện.",
+  supportAction: "Mở trang ủng hộ",
   ways: [
     { title: "Đóng góp code", text: "Sửa lỗi, thêm component hoặc block. Đọc CONTRIBUTING.md và Design.md trước khi mở PR.", action: "Mở repository" },
     {
@@ -206,6 +211,9 @@ const EN: Copy = {
   title: "Build Yugen UI together",
   lead: "Yugen UI is open source. A bug report, a block or a translated page all make the library better for the next person.",
   waysTitle: "Ways to get involved",
+  supportTitle: "Support Yugen UI",
+  supportText: "Contribute in VND through VietQR to help maintain the library.",
+  supportAction: "Open Support",
   ways: [
     { title: "Contribute code", text: "Fix bugs, add components or blocks. Read CONTRIBUTING.md and Design.md before opening a PR.", action: "Open repository" },
     {
@@ -448,6 +456,22 @@ export function CommunityPage() {
 
       <DocSection id="ways" title={c.waysTitle}>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {supportEnabled() && (
+            <Card size="large" className="gap-3 rounded-2xlarge">
+              <span className="inline-flex size-10 items-center justify-center rounded-xlarge bg-brand-background-2 text-brand-foreground-2">
+                <Heart20Regular />
+              </span>
+              <div className="flex-1">
+                <p className="text-subtitle2 font-semibold">{c.supportTitle}</p>
+                <p className="mt-1 text-body1 text-foreground-2">{c.supportText}</p>
+              </div>
+              <div>
+                <Button asChild size="small" appearance="primary">
+                  <a href={docsPath("/support")}>{c.supportAction}</a>
+                </Button>
+              </div>
+            </Card>
+          )}
           {c.ways.map(({ title, text, action }, i) => {
             const Icon = WAY_ICONS[i];
             const link = WAY_LINKS[i];

@@ -5,7 +5,7 @@ const envWith = (over: Partial<AnalyticsEnv["nav"]> = {}, url: string | undefine
   url,
   nav: { sendBeacon: vi.fn(() => true), ...over },
 });
-const view = { type: "view" as const, path: "components/button", lang: "en", version: "1.0.0" };
+const view = { type: "page_view" as const, path: "/components/button", lang: "en", version: "1.0.0" };
 
 afterEach(() => vi.restoreAllMocks());
 
@@ -30,7 +30,12 @@ describe("docs analytics (#190)", () => {
     expect(send(view, env)).toBe(true);
     const [url, body] = (env.nav.sendBeacon as ReturnType<typeof vi.fn>).mock.calls[0];
     expect(url).toBe("https://collect.example.com/c");
-    expect(JSON.parse(body as string)).toEqual({ ...view, referrer: "github.com", screen: expect.stringMatching(/^[sml]$/) });
+    expect(JSON.parse(body as string)).toEqual({
+      ...view,
+      id: expect.stringMatching(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/),
+      referrer: "github.com",
+      screen: expect.stringMatching(/^[sml]$/),
+    });
   });
 
   it("counts clicks on [data-analytics] and stops after cleanup", () => {
@@ -40,7 +45,8 @@ describe("docs analytics (#190)", () => {
     document.querySelector("span")!.click();
     document.querySelector("button")!.click();
     expect(env.nav.sendBeacon).toHaveBeenCalledTimes(1);
-    expect(JSON.parse((env.nav.sendBeacon as ReturnType<typeof vi.fn>).mock.calls[0][1] as string)).toMatchObject({ type: "event", event: "stackblitz-template" });
+    expect(JSON.parse((env.nav.sendBeacon as ReturnType<typeof vi.fn>).mock.calls[0][1] as string)).toMatchObject({ type: "stackblitz-template" });
+    expect(JSON.parse((env.nav.sendBeacon as ReturnType<typeof vi.fn>).mock.calls[0][1] as string)).not.toHaveProperty("event");
     stop();
     document.querySelector("span")!.click();
     expect(env.nav.sendBeacon).toHaveBeenCalledTimes(1);

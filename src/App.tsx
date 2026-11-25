@@ -178,7 +178,7 @@ export default function App({ path }: { path?: string }) {
   // Analytics (#190): no-op unless the build sets VITE_ANALYTICS_URL. One view per page, clicks on [data-analytics].
   const viewPath = localePathOf(route, lang);
   useEffect(() => {
-    send({ type: "view", path: viewPath, lang, version: SITE.version });
+    send({ type: "page_view", path: viewPath, lang, version: SITE.version });
   }, [viewPath, lang]);
   useEffect(
     () => trackClicks(() => ({ path: localePathOf(parseLocation(window.location.pathname).route, lang), lang, version: SITE.version })),

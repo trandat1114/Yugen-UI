@@ -11,6 +11,7 @@ import {
   PuzzlePiece20Regular,
   WeatherMoon20Regular,
   Grid20Regular,
+  Heart20Regular,
   Rocket20Regular,
   PaintBrush20Regular,
   TextFont20Regular,
@@ -34,6 +35,7 @@ import { useLocale } from "../i18n";
 import { docsPath, navigate } from "../router";
 import { prefetchHref } from "../prefetch";
 import { tagTerms } from "../tags";
+import { supportEnabled } from "../support";
 
 /** Mục đang chọn đổi (phím mũi tên, gõ tìm): nạp trước trang của mục đó. cmdk đặt data-selected sau lần render này. */
 const prefetchSelected = () =>
@@ -100,6 +102,11 @@ export function DocsCommandPalette({
           <CommandItem icon={<PeopleStar20Regular />} {...nav("/contributors")} keywords={["contributors", "người đóng góp", "cảm ơn"]}>
             {t("nav.contributors")}
           </CommandItem>
+          {supportEnabled() && (
+            <CommandItem icon={<Heart20Regular />} {...nav("/support")} keywords={["support", "donate", "ủng hộ", "vietqr"]}>
+              {t("nav.support")}
+            </CommandItem>
+          )}
         </CommandGroup>
 
         <CommandGroup heading={t("palette.appearance")}>

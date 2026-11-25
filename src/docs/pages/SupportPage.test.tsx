@@ -5,10 +5,11 @@ import { SUPPORT, supportEnabled } from "../support";
 import { SupportPage } from "./SupportPage";
 
 describe("support page (#183)", () => {
-  it("stays unpublished without a link: /support is a 404", () => {
+  it("publishes with VietQR even without an external payment link", () => {
     expect(SUPPORT.links).toEqual([]);
-    expect(supportEnabled()).toBe(false);
-    expect(parsePath("/support")).toEqual({ kind: "not-found", path: "support" });
+    expect(SUPPORT.qr?.src).toBe("support/vietqr.png");
+    expect(supportEnabled()).toBe(true);
+    expect(parsePath("/support")).toEqual({ kind: "support" });
   });
 
   it("needs an https link", () => {
@@ -21,6 +22,7 @@ describe("support page (#183)", () => {
       <SupportPage
         support={{
           links: [{ label: "Ko-fi", href: "https://ko-fi.com/example", note: { en: "One-time", vi: "Một lần" } }],
+          qr: { src: "support/vietqr.png", alt: { en: "VietQR", vi: "VietQR" } },
           message: null,
           supporters: [{ name: "Alex" }],
         }}
@@ -29,6 +31,7 @@ describe("support page (#183)", () => {
     const link = screen.getByRole("link", { name: /Ko-fi/ });
     expect(link).toHaveAttribute("href", "https://ko-fi.com/example");
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
+    expect(screen.getByRole("img", { name: "VietQR" })).toHaveAttribute("src", "/support/vietqr.png");
     expect(screen.getByText("Alex")).toBeInTheDocument();
   });
 });
