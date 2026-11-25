@@ -1,4 +1,4 @@
-// Sinh bởi scripts/icons.mjs từ @fluentui/react-icons 2.0.345 — không sửa tay (`node scripts/icons.mjs`).
+// Sinh bởi scripts/icons.mjs từ @fluentui/react-icons 2.0.346 — không sửa tay (`node scripts/icons.mjs`).
 // Fluent System Icons © Microsoft Corporation, MIT License.
 import * as React from "react";
 import { cn } from "@/lib/cn";
