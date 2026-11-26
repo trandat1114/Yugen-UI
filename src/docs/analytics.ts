@@ -57,7 +57,8 @@ export function send(data: Pick<Beacon, "type" | "path" | "lang" | "version">, e
   if (!analyticsEnabled(env)) return false;
   try {
     const body: Beacon = { id: randomUuid(), ...data, referrer: referrerHost(document.referrer), screen: screenSize() };
-    return env.nav.sendBeacon(env.url!, JSON.stringify(body));
+    const payload = new Blob([JSON.stringify(body)], { type: "application/json" });
+    return env.nav.sendBeacon(env.url!, payload);
   } catch {
     return false;
   }
