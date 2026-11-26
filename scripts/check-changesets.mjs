@@ -7,10 +7,12 @@
  *   - `major` (từ 1.0) mở đầu bằng "**Breaking:**"; `patch` thì không bao giờ.
  *   - Tóm tắt mở đầu bằng "Fix" là `patch`; "New" (component, prop, token… mới) là `minor`.
  *   - PR vào `main` hoặc `release/*` chỉ mang `patch` — minor và major đi qua `next`. PR `next → main` được miễn.
+ *   - Khi chạy trên PR, chỉ kiểm tra changeset được sửa trong PR; không quét lại các changeset đang chờ từ PR khác.
  *
  *   node scripts/check-changesets.mjs [--base main]   # mặc định: GITHUB_BASE_REF (chỉ có khi CI chạy cho PR)
  */
 import fs from "node:fs";
+import { execFileSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -47,10 +49,30 @@ export function changesetErrors({ bump, summary }, { stable, patchOnly }) {
   return errors;
 }
 
+/** Chỉ giữ changeset thuộc diff hiện tại; PR bot không bị chặn bởi backlog của release khác. */
+export function changedChangesetFiles(files, changedPaths) {
+  if (!changedPaths) return files;
+  const changed = new Set(changedPaths);
+  return files.filter((file) => changed.has(`.changeset/${file}`));
+}
+
+const changedPathsFromPr = () => {
+  try {
+    return execFileSync("git", ["diff", "--name-only", "HEAD^1", "HEAD"], { encoding: "utf8" })
+      .split(/\r?\n/)
+      .map((file) => file.trim())
+      .filter(Boolean);
+  } catch {
+    // Không bỏ qua validation nếu checkout không có merge parent; quét toàn bộ như trước.
+    return undefined;
+  }
+};
+
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const files = fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => f.endsWith(".md") && f !== "README.md") : [];
+  const filesToCheck = process.env.GITHUB_BASE_REF ? changedChangesetFiles(files, changedPathsFromPr()) : files;
   const errors = [];
-  for (const file of files) {
+  for (const file of filesToCheck) {
     const changeset = parseChangeset(fs.readFileSync(path.join(dir, file), "utf8"));
     if (!changeset) continue;
     for (const e of changesetErrors(changeset, { stable, patchOnly })) errors.push(`.changeset/${file} (${changeset.bump}): ${e}`);
@@ -60,5 +82,5 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     console.error("check-changesets: xem docs › Versioning › Quy tắc cho từng số và CONTRIBUTING › Changeset.");
     process.exit(1);
   }
-  console.log(`check-changesets: OK — ${files.length} changeset${base ? `, PR vào ${base}` : ""}.`);
+  console.log(`check-changesets: OK — ${filesToCheck.length} changeset${base ? `, PR vào ${base}` : ""}.`);
 }

@@ -240,7 +240,8 @@ npx changeset    # pick yugen-ui → patch or minor → write a user-facing summ
 - Version numbers follow the **rules for each number** (docs › Versioning › Rules for each number): only new API is
   `minor`, everything else is `patch`; PRs into `main` or `release/*` carry `patch` only; `major` starts at 1.0.
   `npm run check:changesets` (CI) rejects a summary starting with "Fix" on a `minor`, "New" on a `patch` and
-  "**Breaking:**" on a `patch`. `check:release` checks the news in `src/docs/news`: no `new` / `breaking` item in a
+  "**Breaking:**" on a `patch`. On a PR it checks only changeset files changed by that PR, so pending changesets from
+  another PR or an image-only bot PR cannot cause an unrelated failure. `check:release` checks the news in `src/docs/news`: no `new` / `breaking` item in a
   patch, at least one `new` item in a minor, no skipped numbers, ≥ 14 days between minors and ≥ 180 days between
   majors.
 - Write the summary for package users (in English, like the CHANGELOG): "`Combobox`: keep focus when a tag is removed
@@ -526,7 +527,8 @@ npx changeset    # chọn yugen-ui → patch hoặc minor → viết tóm tắt 
 - Số phiên bản theo **quy tắc cho từng số** (docs › Phiên bản › Quy tắc cho từng số): chỉ có API mới mới là `minor`,
   còn lại là `patch`; PR vào `main` hoặc `release/*` chỉ mang `patch`; `major` chỉ từ 1.0. `npm run check:changesets`
   (CI) chặn changeset sai loại: tóm tắt mở đầu bằng "Fix" mà là `minor`, "New" mà là `patch`, "**Breaking:**" mà là
-  `patch`. `check:release` kiểm tin trong `src/docs/news`: bản patch không có mục `new` / `breaking`, bản minor có
+  `patch`. Trên PR, CI chỉ kiểm tra các changeset thuộc diff của PR; changeset đang chờ từ PR khác hoặc PR bot chỉ tối ưu
+  ảnh không thể làm đỏ kiểm tra không liên quan. `check:release` kiểm tin trong `src/docs/news`: bản patch không có mục `new` / `breaking`, bản minor có
   ít nhất một mục `new`, không nhảy số, minor cách nhau ≥ 14 ngày, major ≥ 180 ngày.
 - Tóm tắt viết cho người dùng gói (tiếng Anh, như CHANGELOG): "`Combobox`: keep focus when a tag is removed with
   Backspace.", không phải "fix bug".

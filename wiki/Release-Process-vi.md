@@ -28,6 +28,8 @@ Kiểm tra tự động:
 
 - `npm run check:changesets` (CI): `major` trước 1.0; `major` thiếu "**Breaking:**"; "**Breaking:**" ở `patch`; tóm tắt
   mở đầu bằng "Fix" ở `minor`, "New" ở `patch`; PR vào `main` / `release/*` (trừ `next → main`) có `minor` / `major`.
+  Trên PR, CI chỉ kiểm tra các file `.changeset/*.md` thuộc chính diff đó, nên changeset đang chờ từ PR khác (kể cả PR bot
+  chỉ tối ưu ảnh) không làm đỏ kiểm tra không liên quan.
 - `check:release` (gốc repo và CLI) đọc loại (`## Mới`, `## Sửa lỗi`…) của các tin trong `src/docs/news` — bản hiện tại và tin
   `upcoming` trên next: bản patch không có `new` / `breaking`; bản minor có ít nhất một `new` (trước 1.0: hoặc
   `breaking`); từ 1.0, `breaking` chỉ ở bản major; major có ít nhất một `breaking`; không nhảy số; nhịp minor / major
