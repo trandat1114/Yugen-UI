@@ -33,7 +33,7 @@ export const SUPPORT: {
   qr?: SupportQr;
   /** The maintainer's own words. Falls back to a neutral line when null. */
   message: { en: string; vi: string } | null;
-  /** Availability note shown as a warning when a payment route is limited. */
+  /** Short neutral note under the lead, e.g. a payment route that just opened or one that is limited. */
   notice?: { en: string; vi: string } | null;
   supporters: Supporter[];
 } = {
@@ -59,8 +59,8 @@ export const SUPPORT: {
     vi: "Nếu Yugen UI giúp bạn làm việc nhẹ hơn, một ly cà phê là lời cảm ơn chân thành.",
   },
   notice: {
-    en: "VietQR is for VND support. For international support, use GitHub Sponsors; public or anonymous recognition follows your GitHub Sponsors privacy choice.",
-    vi: "VietQR dành cho ủng hộ bằng VND. Với ủng hộ quốc tế, hãy dùng GitHub Sponsors; việc ghi nhận công khai hay ẩn danh theo lựa chọn riêng tư của bạn trên GitHub Sponsors.",
+    en: "You can now support Yugen UI through GitHub Sponsors from any country. VietQR is still available for VND.",
+    vi: "Giờ bạn có thể ủng hộ Yugen UI qua GitHub Sponsors từ mọi quốc gia. VietQR vẫn dùng cho ủng hộ bằng VND.",
   },
   supporters: [],
 };
