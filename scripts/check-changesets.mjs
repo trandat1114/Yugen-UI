@@ -58,7 +58,10 @@ export function changedChangesetFiles(files, changedPaths) {
 
 const changedPathsFromPr = () => {
   try {
-    return execFileSync("git", ["diff", "--name-only", "HEAD^1", "HEAD"], { encoding: "utf8" })
+    return execFileSync("git", ["diff", "--name-only", "HEAD^1", "HEAD"], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    })
       .split(/\r?\n/)
       .map((file) => file.trim())
       .filter(Boolean);
