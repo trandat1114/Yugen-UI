@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.17.1
+
+### Patch Changes
+
+- Add GitHub Sponsors as the international support route and document automatic supporter recognition from signed GitHub sponsorship events, while keeping VietQR reconciliation manual.
+
 ## 0.17.0
 
 ### Minor Changes
