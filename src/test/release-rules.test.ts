@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 // @ts-expect-error -- script .mjs không có khai báo kiểu
 import { level, newsEntries, releaseRuleErrors } from "../../scripts/release-rules.mjs";
 // @ts-expect-error -- script .mjs không có khai báo kiểu
-import { changesetErrors, parseChangeset } from "../../scripts/check-changesets.mjs";
+import { changedChangesetFiles, changesetErrors, parseChangeset } from "../../scripts/check-changesets.mjs";
 
 /** Quy tắc cho từng số của phiên bản: scripts/release-rules.mjs (check-release) và scripts/check-changesets.mjs. */
 type Entry = { version: string; upcoming?: boolean; date: string; kinds: string[] };
@@ -90,6 +90,10 @@ describe("check-changesets", () => {
       summary: "New `Quote` component.",
     });
     expect(parseChangeset('---\n"other-pkg": patch\n---\n\nX.')).toBeUndefined();
+  });
+
+  it("chỉ kiểm tra changeset đã đổi trong PR", () => {
+    expect(changedChangesetFiles(["old.md", "new.md"], [".changeset/new.md"])).toEqual(["new.md"]);
   });
 
   it("major chỉ từ 1.0 và luôn kèm **Breaking:**", () => {
