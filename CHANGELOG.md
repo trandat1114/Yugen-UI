@@ -1,16 +1,11 @@
 # Changelog
 
-## 0.17.2
-
-### Patch Changes
-
-- Show VietQR and GitHub Sponsors as two equal channels on the `/support` page, announce GitHub Sponsors in the page notice, keep the VietQR acknowledgement form optional and full width, and keep the QR code on a white background in dark mode.
-
 ## 0.17.1
 
 ### Patch Changes
 
 - Add GitHub Sponsors as the international support route and document automatic supporter recognition from signed GitHub sponsorship events, while keeping VietQR reconciliation manual.
+- Show VietQR and GitHub Sponsors as two equal channels on the `/support` page, announce GitHub Sponsors in the page notice, keep the VietQR acknowledgement form optional and full width, and keep the QR code on a white background in dark mode.
 
 ## 0.17.0
 

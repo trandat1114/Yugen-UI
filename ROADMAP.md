@@ -38,7 +38,6 @@ Not scheduled yet.
 
 Details on What's new (`/news`) and in `CHANGELOG.md`.
 
-- **0.17.2** (2026-11-26): Support page: two equal ways to give
 - **0.17.1** (2026-11-26): GitHub Sponsors support flow
 - **0.17.0** (2026-11-26): Native form controls, Form, an optional date stack and more charts
 - **0.16.0** (2026-11-09): Performance: lighter imports, smaller CSS and fewer re-renders
@@ -99,7 +98,6 @@ Chưa xếp lịch.
 
 Chi tiết ở trang Có gì mới (`/news`) và `CHANGELOG.md`.
 
-- **0.17.2** (2026-11-26): Trang ủng hộ: hai cách ủng hộ ngang hàng
 - **0.17.1** (2026-11-26): Luồng ủng hộ qua GitHub Sponsors
 - **0.17.0** (2026-11-26): Control form native, Form, bộ ngày tháng tuỳ chọn và thêm biểu đồ
 - **0.16.0** (2026-11-09): Hiệu năng: import nhẹ hơn, CSS gọn hơn và ít render lại hơn
