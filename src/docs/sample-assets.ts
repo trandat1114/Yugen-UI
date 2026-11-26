@@ -53,8 +53,40 @@ export const illustration =
       "<circle cx='146' cy='90' r='18'/><circle cx='137' cy='63' r='18'/></g><circle cx='160' cy='70' r='9' fill='#FFF6DC'/></svg>",
   );
 
+/** Portrait (head and shoulders) for Avatar / Persona examples. */
+export function portrait(bg: string, skin: string, hair: string, shirt: string) {
+  const svg =
+    "<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'>" +
+    "<rect width='96' height='96' fill='" + bg + "'/>" +
+    "<path d='M12 96 Q14 66 48 64 Q82 66 84 96Z' fill='" + shirt + "'/>" +
+    "<circle cx='48' cy='42' r='18' fill='" + skin + "'/>" +
+    "<path d='M29 42 Q27 20 48 19 Q69 20 67 42 Q63 30 48 30 Q34 30 29 42Z' fill='" + hair + "'/>" +
+    "</svg>";
+  return "data:image/svg+xml," + encodeURIComponent(svg);
+}
+
+export const portraits = [
+  portrait("#CFE4FA", "#F1C7A5", "#2B2118", "#2F5D8A"),
+  portrait("#FBE3D6", "#D9A27E", "#5A3420", "#B04A5A"),
+  portrait("#DDF1E4", "#8D5A3B", "#1C1410", "#2F7D5B"),
+  portrait("#EDE3F8", "#E8B48F", "#7A4A24", "#5B4A9A"),
+  portrait("#FFF1CC", "#C68863", "#3B2A20", "#8A6A1F"),
+];
+
+/** Square app logo (team, app, bot). */
+export const logo =
+  "data:image/svg+xml," +
+  encodeURIComponent(
+    "<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'>" +
+      "<rect width='96' height='96' fill='#0F6CBD'/><path d='M24 66 L48 26 L72 66Z' fill='#FFFFFF'/>" +
+      "<circle cx='48' cy='56' r='8' fill='#0F6CBD'/></svg>",
+  );
+
+/** An image that cannot be decoded: shows the initials fallback without a network request. */
+export const brokenPhoto = "data:image/png;base64,AAAA";
+
 /** Tên người mẫu cho Avatar / AvatarGroup / Persona. */
 export const people = ["Alex Chen", "Maria Garcia", "Sam Lee", "Priya Patel", "Jordan Kim", "Taylor Nguyen", "Chris Novak", "Hana Sato"];
 
 /** Tên có thể dùng trong `code` của ví dụ — converter StackBlitz tự thêm import từ "./sample-assets". */
-export const SAMPLE_ASSET_NAMES = ["photo", "texture", "mountain", "sunset", "landscape", "scenery", "wood", "marble", "fabric", "illustration", "people"];
+export const SAMPLE_ASSET_NAMES = ["photo", "texture", "mountain", "sunset", "landscape", "scenery", "wood", "marble", "fabric", "illustration", "people", "portrait", "portraits", "logo", "brokenPhoto"];

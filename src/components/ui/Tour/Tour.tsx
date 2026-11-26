@@ -17,6 +17,7 @@ import {
 } from "../TeachingPopover/TeachingPopover";
 import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
+import { SpotlightOverlay } from "../_internal/spotlight";
 import { matchesMedia } from "../hooks/useMediaQuery";
 import { tourMessagesEn } from "./messages";
 
@@ -263,20 +264,7 @@ export function Tour({
       {mounted &&
         open &&
         createPortal(
-          <div {...portalTheme} data-yugen-tour-overlay="" aria-hidden className="fixed inset-0 z-50">
-            {rect ? (
-              <div
-                className={cn(
-                  "absolute rounded-medium shadow-[0_0_0_100vmax_var(--colorBackgroundOverlay)]",
-                  "outline-2 outline-offset-2 outline-brand-stroke forced-colors:outline-[Highlight]",
-                  "transition-[top,left,width,height] duration-normal ease-easy-ease motion-reduce:transition-none",
-                )}
-                style={{ top: rect.top - pad, left: rect.left - pad, width: rect.width + pad * 2, height: rect.height + pad * 2 }}
-              />
-            ) : (
-              <div className="absolute inset-0 bg-overlay" />
-            )}
-          </div>,
+          <SpotlightOverlay {...portalTheme} data-yugen-tour-overlay="" rect={rect} padding={pad} className="z-50" />,
           document.body,
         )}
       <TeachingPopover open={open} onOpenChange={(next) => !next && setOpen(false)} appearance={appearance} modal>

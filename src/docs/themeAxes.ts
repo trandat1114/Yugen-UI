@@ -108,9 +108,12 @@ function declarations(body: string): Block {
   return map;
 }
 
+/** tokens.css without its `@layer theme {` wrapper (#354), so each rule is a top-level `selector { … }` again. */
+const tokenRules = tokensCss.replace(/@layer\s+[\w-]+\s*\{/g, "");
+
 /** Khối khai báo đầu tiên có selector khớp (selector là đoạn ngay trước `{`). */
 function block(selector: RegExp): Block {
-  for (const m of tokensCss.matchAll(/([^{}]+)\{([^}]*)\}/g)) {
+  for (const m of tokenRules.matchAll(/([^{}]+)\{([^}]*)\}/g)) {
     if (selector.test(m[1].replace(/\/\*[\s\S]*?\*\//g, "").trim())) return declarations(m[2]);
   }
   return new Map();

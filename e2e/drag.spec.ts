@@ -1,5 +1,5 @@
 import { test, expect, type Locator, type Page } from "@playwright/test";
-import { openDocs } from "./utils";
+import { openDocs, waitForDocsReady } from "./utils";
 
 /**
  * Tương tác chuột / bàn phím trên desktop: Resizable (kéo, phím mũi tên, thu gọn, persistKey, RTL lật),
@@ -93,9 +93,19 @@ test.describe("Resizable", () => {
       .not.toBeNull();
 
     await page.reload();
-    await page.locator("main h1").first().waitFor();
+    // Sau reload, `main h1` có ngay từ HTML prerender, trước khi React thay HTML đó và nạp demo: đọc lúc này thì panel bị
+    // gỡ khỏi DOM hoặc chưa có box. Chờ trang ổn định như openDocs. Ô demo dùng content-visibility: auto, nên cuộn tới nó
+    // và coi "chưa có box" là chưa khớp thay vì lỗi.
+    await waitForDocsReady(page);
+    const restored = page.locator("#mail-folders");
+    await restored.scrollIntoViewIfNeeded();
     // Bố cục lưu được áp sau lần render đầu: chờ tới khi khớp (±3px) thay vì đọc một lần lúc đang đổi.
-    await expect.poll(async () => Math.abs((await width(page.locator("#mail-folders"))) - dragged)).toBeLessThan(3);
+    await expect
+      .poll(async () => {
+        const box = await restored.boundingBox();
+        return box ? Math.abs(box.width - dragged) : Number.POSITIVE_INFINITY;
+      })
+      .toBeLessThan(3);
   });
 
   test("RTL: nhóm ngang lật, kéo / phím theo hướng nhìn thấy", async ({ page }) => {

@@ -83,6 +83,10 @@ jobs:
         env:
           DOCS_BASE: /${{ github.event.repository.name }}/
           VITE_DOCS_SW: ${{ vars.DOCS_SW }}
+          # Analytics beacon (#190): repository variable ANALYTICS_URL (https collector); unset = no beacon.
+          VITE_ANALYTICS_URL: ${{ vars.ANALYTICS_URL }}
+          # Support acknowledgement form (#183): repository variable SUPPORT_API_URL; unset keeps submissions disabled.
+          VITE_SUPPORT_API_URL: ${{ vars.SUPPORT_API_URL }}
 
       # One Open Graph image per page (dist-docs/og/, read from routes.json), drawn with Playwright's Chromium.
       - name: Open Graph images
@@ -95,6 +99,12 @@ jobs:
         env:
           DOCS_BASE: /${{ github.event.repository.name }}/
           VITE_DOCS_SW: ${{ vars.DOCS_SW }}
+
+      # Registry snapshots (#381): <docs>/r/<version>/ for every release tag since 0.16.0 (canaries too), plus the current version before its
+      # tag exists. @yugen-ui/cli fetches from these paths and checks each item against the sha256 it ships with, so this
+      # deploy (or a later one) never changes what a released CLI installs.
+      - name: Versioned registry
+        run: node scripts/registry-snapshot.mjs --all --out dist-docs/r
 
       # The router uses the URL hash, so one index.html serves every page; 404.html covers mistyped paths.
       - run: cp dist-docs/index.html dist-docs/404.html

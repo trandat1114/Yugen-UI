@@ -33,6 +33,7 @@ describe("docs i18n (en)", () => {
       "chat-ux",
       "cli",
       "component-labelling",
+      "data-tables",
       "data-visualization",
       "focus-indicator",
       "introduction",

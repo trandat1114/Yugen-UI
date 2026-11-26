@@ -5,11 +5,13 @@ import {
   reasoningMessagesVi,
   streamingMarkdownMessagesVi,
 } from "./AIKit/messages";
+import { articleMessagesVi } from "./Article/messages";
 import { appShellMessagesVi } from "./AppShell/messages";
 import { autocompleteMessagesVi } from "./Autocomplete/messages";
 import { avatarGroupMessagesVi } from "./AvatarGroup/messages";
+import { blogMessagesVi } from "./Blog/messages";
 import { breadcrumbMessagesVi } from "./Breadcrumb/messages";
-import { calendarMessagesVi } from "./Calendar/messages";
+import { callMessagesVi } from "./Call/messages";
 import { carouselMessagesVi } from "./Carousel/messages";
 import { chartMessagesVi } from "./Chart/messages";
 import {
@@ -33,6 +35,7 @@ import {
 import { descriptionListMessagesVi } from "./DescriptionList/messages";
 import { dialogMessagesVi } from "./Dialog/messages";
 import { fileUploadMessagesVi } from "./FileUpload/messages";
+import { formMessagesVi } from "./Form/messages";
 import { infoLabelMessagesVi } from "./InfoLabel/messages";
 import { inputOTPMessagesVi } from "./InputOTP/messages";
 import { linkMessagesVi } from "./Link/messages";
@@ -76,23 +79,32 @@ import { tableMessagesVi } from "./Table/messages";
 import { tagMessagesVi } from "./Tag/messages";
 import { tagPickerMessagesVi } from "./TagPicker/messages";
 import { teachingPopoverMessagesVi } from "./TeachingPopover/messages";
+import { timelineMessagesVi } from "./Timeline/messages";
 import { timePickerMessagesVi } from "./TimePicker/messages";
 import { toastMessagesVi } from "./Toast/messages";
 import { tourMessagesVi } from "./Tour/messages";
 import { traceMessagesVi } from "./Trace/messages";
+import { voiceWaveMessagesVi } from "./VoiceWave/messages";
+import { voiceAssistantMessagesVi } from "./VoiceAssistant/messages";
+import { transcriptMessagesVi } from "./Transcript/messages";
 
 /**
  * Chuỗi giao diện có sẵn của mọi component, bằng tiếng Việt: `<YugenProvider messages={messagesVi} locale="vi-VN">`.
  * Mặc định là tiếng Anh (`messagesEn`). Kiểu `YugenMessages` đầy đủ: component mới thêm namespace mà quên bản tiếng Việt ở
  * đây thì typecheck báo lỗi.
+ *
+ * Trừ `calendar` (#356): locale date-fns của Calendar đến từ react-day-picker, peer dependency tuỳ chọn, nên nằm ở
+ * `yugen-ui/dates`: `messages={{ ...messagesVi, calendar: calendarMessagesVi }}`.
  */
-export const messagesVi: YugenMessages = {
+export const messagesVi: Omit<YugenMessages, "calendar"> = {
   appShell: appShellMessagesVi,
+  article: articleMessagesVi,
   asyncContent: asyncContentMessagesVi,
   autocomplete: autocompleteMessagesVi,
   avatarGroup: avatarGroupMessagesVi,
+  blog: blogMessagesVi,
   breadcrumb: breadcrumbMessagesVi,
-  calendar: calendarMessagesVi,
+  call: callMessagesVi,
   carousel: carouselMessagesVi,
   chart: chartMessagesVi,
   chatComposer: chatComposerMessagesVi,
@@ -112,6 +124,7 @@ export const messagesVi: YugenMessages = {
   dialog: dialogMessagesVi,
   errorState: errorStateMessagesVi,
   fileUpload: fileUploadMessagesVi,
+  form: formMessagesVi,
   infoLabel: infoLabelMessagesVi,
   inputOTP: inputOTPMessagesVi,
   link: linkMessagesVi,
@@ -152,11 +165,15 @@ export const messagesVi: YugenMessages = {
   tag: tagMessagesVi,
   tagPicker: tagPickerMessagesVi,
   teachingPopover: teachingPopoverMessagesVi,
+  timeline: timelineMessagesVi,
   timePicker: timePickerMessagesVi,
   toast: toastMessagesVi,
   tour: tourMessagesVi,
   trace: traceMessagesVi,
+  transcript: transcriptMessagesVi,
   typingIndicator: typingIndicatorMessagesVi,
+  voiceAssistant: voiceAssistantMessagesVi,
+  voiceWave: voiceWaveMessagesVi,
   wizard: wizardMessagesVi,
   yearPicker: yearPickerMessagesVi,
 };

@@ -2,12 +2,19 @@ import * as React from "react";
 import { cn } from "@/lib/cn";
 import { useYugenLocale, useYugenMessages } from "../YugenProvider/context";
 import { chartMessagesEn } from "./messages";
-import { ChartContainer, ChartLegend, ChartPatterns, ChartTable, ChartTooltip } from "./ChartParts";
+import {
+  ChartContainer,
+  ChartLegend,
+  ChartPatterns,
+  ChartTable,
+  ChartTooltip,
+} from "./ChartParts";
 import {
   chartUid,
   donutSlicePath,
   makeNumberFormatter,
   ringPath,
+  pieSlicePath,
   slotFill,
   slotOf,
   useChartTexture,
@@ -42,6 +49,17 @@ export interface DonutChartProps extends Omit<ChartFrameProps, "height"> {
   thickness?: number;
   /** Legend kèm tỉ lệ bên cạnh vòng (mặc định bật). */
   legend?: boolean;
+  /** `pie` bỏ lỗ giữa nhưng giữ nguyên data/legend/table API. */
+  variant?: "donut" | "pie";
+  /** Khe giữa các lát; false cho phép các lát chạm nhau. */
+  separator?: boolean;
+  /**
+   * Nhãn ngoài mỗi lát: value (giá trị), percent (tỉ lệ), label (tên) hoặc hàm tự viết. Lát dưới 4% không có nhãn (không
+   * đủ chỗ); legend và bảng dữ liệu vẫn có đủ.
+   */
+  labels?: "value" | "percent" | "label" | ((slice: { label: string; value: number; share: number; index: number }) => string);
+  /** Lát được nhấn khi không trỏ lát nào: nổi ra, các lát khác nhạt đi; tâm donut hiện giá trị của lát đó. */
+  activeIndex?: number;
 }
 
 interface Slice {
@@ -64,6 +82,10 @@ export function DonutChart({
   size = 200,
   thickness,
   legend = true,
+  variant = "donut",
+  separator = true,
+  labels,
+  activeIndex,
   title,
   description,
   toolbar,
@@ -73,6 +95,7 @@ export function DonutChart({
   hideTableToggle,
   defaultShowTable,
   texture,
+  tooltip,
   animate = true,
   className,
   ref,
@@ -81,32 +104,55 @@ export function DonutChart({
   const locale = localeProp ?? yugenLocale;
   const msg = useYugenMessages("chart", chartMessagesEn);
   const otherLabel = otherLabelProp ?? msg.other;
-  const centerLabel = centerLabelProp ?? msg.total;
+  const centerLabelFor = (sl: Slice | undefined) => centerLabelProp ?? (sl && activeIndex !== undefined ? sl.label : msg.total);
   const indexLabel = indexLabelProp ?? msg.group;
   const textured = useChartTexture(texture);
   const uid = chartUid(React.useId());
-  const [active, setActive] = React.useState<{ i: number; kb: boolean } | null>(null);
+  const [active, setActive] = React.useState<{ i: number; kb: boolean } | null>(
+    null,
+  );
   const ringRef = React.useRef<HTMLDivElement>(null);
   const fmt = makeNumberFormatter(locale, valueFormat);
-  const pct = new Intl.NumberFormat(locale, { style: "percent", maximumFractionDigits: 1 });
+  const pct = new Intl.NumberFormat(locale, {
+    style: "percent",
+    maximumFractionDigits: 1,
+  });
 
   /* ---------- gộp phần đuôi vào "Khác" ---------- */
   const cap = Math.max(1, Math.min(6, maxSlices));
-  const positive = data.map((d, i) => ({ ...d, i })).filter((d) => Number.isFinite(d.value) && d.value > 0);
+  const positive = data
+    .map((d, i) => ({ ...d, i }))
+    .filter((d) => Number.isFinite(d.value) && d.value > 0);
   let kept = positive;
   let rest: typeof positive = [];
   if (positive.length > cap) {
-    const top = new Set([...positive].sort((a, b) => b.value - a.value).slice(0, cap - 1).map((d) => d.i));
+    const top = new Set(
+      [...positive]
+        .sort((a, b) => b.value - a.value)
+        .slice(0, cap - 1)
+        .map((d) => d.i),
+    );
     kept = positive.filter((d) => top.has(d.i));
     rest = positive.filter((d) => !top.has(d.i));
   }
-  const items: { key: string; label: string; value: number; slot: ChartSlot }[] = kept.map((d, k) => ({
+  const items: {
+    key: string;
+    label: string;
+    value: number;
+    slot: ChartSlot;
+  }[] = kept.map((d, k) => ({
     key: `d${d.i}`,
     label: d.label,
     value: d.value,
     slot: d.color ?? slotOf(undefined, k),
   }));
-  if (rest.length) items.push({ key: "__other", label: otherLabel, value: rest.reduce((a, d) => a + d.value, 0), slot: "other" });
+  if (rest.length)
+    items.push({
+      key: "__other",
+      label: otherLabel,
+      value: rest.reduce((a, d) => a + d.value, 0),
+      slot: "other",
+    });
   const total = items.reduce((a, d) => a + d.value, 0);
 
   let angle = 0;
@@ -121,14 +167,29 @@ export function DonutChart({
   const cx = S / 2;
   const cy = S / 2;
   const r1 = S / 2 - 6;
-  const ring = thickness ?? Math.max(12, Math.round(S * 0.12));
+  const ring =
+    variant === "pie" ? r1 : (thickness ?? Math.max(12, Math.round(S * 0.12)));
   const r0 = Math.max(4, r1 - ring);
-  const gap = slices.length > 1 ? 2 : 0;
-  const roving = useRovingPoints(slices.length, (i, kb) => setActive(i === null ? null : { i, kb }));
+  const gap = separator && slices.length > 1 ? 2 : 0;
+  const roving = useRovingPoints(slices.length, (i, kb) =>
+    setActive(i === null ? null : { i, kb }),
+  );
   const activeSlice = active ? slices[active.i] : undefined;
+  // Lát đang nhấn: lát được trỏ / focus, nếu không thì `activeIndex`.
+  const shownIndex = active ? active.i : activeIndex !== undefined && activeIndex >= 0 && activeIndex < slices.length ? activeIndex : null;
+  const shownSlice = shownIndex === null ? undefined : slices[shownIndex];
+  const sliceLabel = (sl: Slice, i: number) => {
+    const share = total > 0 ? sl.value / total : 0;
+    if (typeof labels === "function") return labels({ label: sl.label, value: sl.value, share, index: i });
+    return labels === "percent" ? pct.format(share) : labels === "label" ? sl.label : fmt(sl.value);
+  };
 
   const pathFor = (s: Slice, grow = 0) =>
-    slices.length === 1 ? ringPath(cx, cy, r0, r1 + grow) : donutSlicePath(cx, cy, r0, r1 + grow, s.a0, s.a1, gap);
+    variant === "pie"
+      ? pieSlicePath(cx, cy, r1 + grow, s.a0, s.a1, gap)
+      : slices.length === 1
+        ? ringPath(cx, cy, r0, r1 + grow)
+        : donutSlicePath(cx, cy, r0, r1 + grow, s.a0, s.a1, gap);
 
   const biggest = [...items].sort((a, b) => b.value - a.value)[0];
   const summary =
@@ -136,7 +197,11 @@ export function DonutChart({
     msg.donutSummary({
       groups: items.length,
       total: fmt(total),
-      largest: biggest && total > 0 ? { label: biggest.label, share: pct.format(biggest.value / total) } : undefined,
+      largest:
+        biggest && total > 0
+          ? { label: biggest.label, share: pct.format(biggest.value / total) }
+          : undefined,
+      pie: variant === "pie",
     });
 
   // Chỉ dựng khi bảng đang bật: hàng của mọi điểm dữ liệu được định dạng lại mỗi lần biểu đồ render.
@@ -149,8 +214,16 @@ export function DonutChart({
         { key: "share", label: msg.share, numeric: true },
       ]}
       rows={[
-        ...items.map((d) => ({ key: d.key, header: d.label, cells: [fmt(d.value), total > 0 ? pct.format(d.value / total) : "—"] })),
-        { key: "__total", header: msg.total, cells: [fmt(total), total > 0 ? pct.format(1) : "—"] },
+        ...items.map((d) => ({
+          key: d.key,
+          header: d.label,
+          cells: [fmt(d.value), total > 0 ? pct.format(d.value / total) : "—"],
+        })),
+        {
+          key: "__total",
+          header: msg.total,
+          cells: [fmt(total), total > 0 ? pct.format(1) : "—"],
+        },
       ]}
     />
   );
@@ -161,7 +234,10 @@ export function DonutChart({
   const anchor = activeSlice
     ? (() => {
         const mid = (activeSlice.a0 + activeSlice.a1) / 2;
-        return [offX + cx + (r1 + 3) * Math.sin(mid), offY + cy - (r1 + 3) * Math.cos(mid)] as const;
+        return [
+          offX + cx + (r1 + 3) * Math.sin(mid),
+          offY + cy - (r1 + 3) * Math.cos(mid),
+        ] as const;
       })()
     : null;
 
@@ -177,7 +253,12 @@ export function DonutChart({
       table={table}
     >
       <div className="relative flex flex-wrap items-center gap-x-6 gap-y-4">
-        <div ref={ringRef} dir="ltr" className="relative shrink-0" style={{ width: S, height: S }}>
+        <div
+          ref={ringRef}
+          dir="ltr"
+          className="relative shrink-0"
+          style={{ width: S, height: S }}
+        >
           <svg
             width={S}
             height={S}
@@ -187,26 +268,60 @@ export function DonutChart({
             className="block overflow-visible"
             onPointerLeave={() => setActive((a) => (a?.kb ? a : null))}
           >
-            {textured && <ChartPatterns prefix={uid} slots={slices.map((s) => s.slot)} />}
-            {total <= 0 && <path d={ringPath(cx, cy, r0, r1)} style={{ fill: "var(--colorChartGrid)" }} />}
+            {textured && (
+              <ChartPatterns prefix={uid} slots={slices.map((s) => s.slot)} />
+            )}
+            {total <= 0 && (
+              <path
+                d={
+                  variant === "pie"
+                    ? pieSlicePath(cx, cy, r1, 0, Math.PI * 2)
+                    : ringPath(cx, cy, r0, r1)
+                }
+                style={{ fill: "var(--colorChartGrid)" }}
+              />
+            )}
             <g
               aria-hidden
-              className={cn(animate && "animate-surface-in", "motion-reduce:animate-none")}
+              className={cn(
+                animate && "animate-surface-in",
+                "motion-reduce:animate-none",
+              )}
               style={{ transformOrigin: `${cx}px ${cy}px` }}
             >
               {slices.map((s, i) => (
                 <path
                   key={s.key}
-                  d={pathFor(s, active?.i === i ? 3 : 0)}
+                  d={pathFor(s, shownIndex === i ? 3 : 0)}
                   fillRule="evenodd"
                   className="transition-opacity duration-faster"
                   style={{
                     fill: slotFill(s.slot, textured, uid),
-                    opacity: active && active.i !== i ? "var(--chartDimOpacity)" : undefined,
+                    opacity:
+                      shownIndex !== null && shownIndex !== i
+                        ? "var(--chartDimOpacity)"
+                        : undefined,
                   }}
                 />
               ))}
             </g>
+            {labels && (
+              <g aria-hidden className="fill-foreground-2 text-caption1 tabular-nums">
+                {slices.map((sl, i) => {
+                  if (total <= 0 || sl.value / total < 0.04) return null;
+                  const mid = (sl.a0 + sl.a1) / 2;
+                  const r = r1 + 10;
+                  const x = cx + r * Math.sin(mid);
+                  const y = cy - r * Math.cos(mid);
+                  const sx = Math.sin(mid);
+                  return (
+                    <text key={sl.key} x={x} y={y} dy="0.32em" textAnchor={sx > 0.15 ? "start" : sx < -0.15 ? "end" : "middle"}>
+                      {sliceLabel(sl, i)}
+                    </text>
+                  );
+                })}
+              </g>
+            )}
             {activeSlice && active?.kb && (
               <path
                 d={pathFor(activeSlice, 3)}
@@ -221,7 +336,13 @@ export function DonutChart({
               {slices.map((s, i) => (
                 <path
                   key={s.key}
-                  d={slices.length === 1 ? ringPath(cx, cy, r0 - 4, r1 + 4) : donutSlicePath(cx, cy, r0 - 4, r1 + 4, s.a0, s.a1, 0)}
+                  d={
+                    variant === "pie"
+                      ? pieSlicePath(cx, cy, r1 + 4, s.a0, s.a1, 0)
+                      : slices.length === 1
+                        ? ringPath(cx, cy, r0 - 4, r1 + 4)
+                        : donutSlicePath(cx, cy, r0 - 4, r1 + 4, s.a0, s.a1, 0)
+                  }
                   fillRule="evenodd"
                   role="img"
                   aria-label={`${s.label}: ${fmt(s.value)} (${pct.format(total > 0 ? s.value / total : 0)})`}
@@ -232,21 +353,32 @@ export function DonutChart({
               ))}
             </g>
           </svg>
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center"
-            style={{ padding: ring + 10 }}
-          >
-            <span className="max-w-full truncate text-subtitle1 font-semibold text-foreground-1">{centerValue ?? fmt(total)}</span>
-            <span className="max-w-full truncate text-caption1 text-foreground-3">{centerLabel}</span>
-          </div>
+          {variant === "donut" && (
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center"
+              style={{ padding: ring + 10 }}
+            >
+              <span className="max-w-full truncate text-subtitle1 font-semibold text-foreground-1">
+                {centerValue ?? (shownSlice && activeIndex !== undefined ? fmt(shownSlice.value) : fmt(total))}
+              </span>
+              <span className="max-w-full truncate text-caption1 text-foreground-3">
+                {centerLabelFor(shownSlice)}
+              </span>
+            </div>
+          )}
         </div>
         {legend && (
           <ChartLegend
             orientation="vertical"
             textured={textured}
             className="min-w-40 flex-1"
-            items={items.map((d) => ({ key: d.key, label: d.label, slot: d.slot, value: total > 0 ? pct.format(d.value / total) : "—" }))}
+            items={items.map((d) => ({
+              key: d.key,
+              label: d.label,
+              slot: d.slot,
+              value: total > 0 ? pct.format(d.value / total) : "—",
+            }))}
           />
         )}
         {activeSlice && anchor && (
@@ -257,12 +389,27 @@ export function DonutChart({
             y={anchor[1]}
             title={activeSlice.label}
             rows={[
-              { key: "v", label: msg.value, value: fmt(activeSlice.value) },
-              { key: "p", label: msg.share, value: pct.format(total > 0 ? activeSlice.value / total : 0) },
+              { key: activeSlice.key, label: msg.value, value: fmt(activeSlice.value), raw: activeSlice.value, slot: activeSlice.slot },
+              {
+                key: "__share",
+                label: msg.share,
+                value: pct.format(total > 0 ? activeSlice.value / total : 0),
+              },
             ]}
+            config={tooltip}
+            index={active?.i ?? 0}
           />
         )}
       </div>
     </ChartContainer>
   );
+}
+
+export type PieChartProps = Omit<DonutChartProps, "variant">;
+
+/** PieChart — phần–tổng với tâm đặc, dùng chung API và hiệu năng của DonutChart. */
+export function PieChart(
+  props: PieChartProps & { ref?: React.Ref<HTMLElement> },
+) {
+  return <DonutChart {...props} variant="pie" />;
 }

@@ -18,7 +18,6 @@ import { Input } from "../Input/Input";
 import { Kbd } from "../Kbd/Kbd";
 import { Slide } from "../Motion/Motion";
 import { ProgressBar } from "../ProgressBar/ProgressBar";
-import { RadioGroup } from "../RadioGroup/RadioGroup";
 import { Rating } from "../Rating/Rating";
 import { Spinner } from "../Spinner/Spinner";
 import { Textarea } from "../Textarea/Textarea";
@@ -233,7 +232,7 @@ function QuestionControl({ question: q, value, onChange, controlProps, showKeys 
   switch (q.type) {
     case "single":
       return (
-        <RadioGroup {...aria} value={typeof value === "string" ? value : ""} onValueChange={onChange} className="w-full items-stretch gap-2">
+        <RadioGroupPrimitive.Root {...aria} value={typeof value === "string" ? value : ""} onValueChange={onChange} className="flex w-full flex-col items-stretch gap-2">
           {q.options.map((option, i) => (
             <RadioGroupPrimitive.Item
               key={option.value}
@@ -246,7 +245,7 @@ function QuestionControl({ question: q, value, onChange, controlProps, showKeys 
               <RadioDot />
             </RadioGroupPrimitive.Item>
           ))}
-        </RadioGroup>
+        </RadioGroupPrimitive.Root>
       );
 
     case "multiple": {
@@ -304,12 +303,11 @@ function QuestionControl({ question: q, value, onChange, controlProps, showKeys 
       const range = Array.from({ length: max - min + 1 }, (_, k) => min + k);
       return (
         <div className="flex w-full flex-col gap-1">
-          <RadioGroup
+          <RadioGroupPrimitive.Root
             {...aria}
-            layout="horizontal"
             value={typeof value === "number" ? String(value) : ""}
             onValueChange={(v) => onChange(Number(v))}
-            className="w-full flex-nowrap gap-0.5"
+            className="flex w-full flex-row flex-nowrap gap-0.5"
           >
             {range.map((n) => (
               <RadioGroupPrimitive.Item
@@ -326,7 +324,7 @@ function QuestionControl({ question: q, value, onChange, controlProps, showKeys 
                 {n}
               </RadioGroupPrimitive.Item>
             ))}
-          </RadioGroup>
+          </RadioGroupPrimitive.Root>
           {(q.minLabel || q.maxLabel) && (
             <div aria-hidden className="flex justify-between gap-3 text-caption1 text-foreground-3">
               <span>{q.minLabel}</span>
@@ -379,9 +377,8 @@ function QuestionControl({ question: q, value, onChange, controlProps, showKeys 
         { value: "no", label: q.noLabel ?? msg.no, key: "N" },
       ];
       return (
-        <RadioGroup
+        <RadioGroupPrimitive.Root
           {...aria}
-          layout="horizontal"
           value={value === true ? "yes" : value === false ? "no" : ""}
           onValueChange={(v) => onChange(v === "yes")}
           className="grid w-full grid-cols-2 gap-2"
@@ -398,7 +395,7 @@ function QuestionControl({ question: q, value, onChange, controlProps, showKeys 
               <RadioDot />
             </RadioGroupPrimitive.Item>
           ))}
-        </RadioGroup>
+        </RadioGroupPrimitive.Root>
       );
     }
   }

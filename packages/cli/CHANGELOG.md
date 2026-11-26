@@ -1,5 +1,19 @@
 # @yugen-ui/cli
 
+## Unreleased
+
+- `vite-saas`: pages opt in to a data layout with `layout: { width: "fluid", density: "compact" }` in `PAGES`, and a
+  Customers page shows a DataGrid with the compact column picker (#411).
+- `add`, `init`, `update`, `diff`, `list` and `remove` read the registry of the `yugen-ui` version the templates use, from
+  `<docs>/r/<version>/`, and check each item against the sha256 shipped in `dist/registry-integrity.json`. A mismatch
+  stops before any file is written. `--registry` and registries from `yugen.json` / `components.json` are not checked
+  and the CLI says so (#381).
+- `yugen css` and `init` add `yugen-ui/tokens/brands.css` when the app uses the web or Teams brand (#354).
+- Templates follow yugen-ui 0.17.0: `vite-admin` validates its forms with `HookForm` and `standardSchemaResolver` from
+  `yugen-ui/form` instead of its own zod resolver (#162); `vite-dashboard` and `vite-saas` import the date components
+  from `yugen-ui/dates` and list `react-day-picker` (#356); `vite-store` styles the selected radio card with
+  `has-checked:` now that Radio is a native input (#357).
+
 ## 0.8.0
 
 - `yugen css --watch` keeps the lean CSS file current while source imports change. The bundled Next.js template runs it beside

@@ -119,7 +119,7 @@ export const en: Record<string, ComponentDocEn> = {
 
   formvalidation: {
     description:
-      "react-hook-form, zod and @hookform/resolvers are optional peers. Yugen doesn't depend on them; install them yourself with npm i react-hook-form zod @hookform/resolvers. Input / Select take register(name) directly (the ref points to the native element). Controls that aren't native form elements (DatePicker, Checkbox) use Controller. Map errors to Field with validationState=\"error\" + validationMessage, and Field sets aria-invalid, aria-describedby and role=\"alert\". Put noValidate on the <form> so the browser's own error bubbles don't get in the way; the submit button uses loading={isSubmitting}.",
+      "Wiring each Field to react-hook-form by hand. HookForm from yugen-ui/form (the Form page) does this for you: Field reads its error by name, with FormErrorSummary and standardSchemaResolver. react-hook-form, zod and @hookform/resolvers are optional peers. Yugen doesn't depend on them; install them yourself with npm i react-hook-form zod @hookform/resolvers. Input / Select take register(name) directly (the ref points to the native element). Controls that aren't native form elements (DatePicker, Checkbox) use Controller. Map errors to Field with validationState=\"error\" + validationMessage, and Field sets aria-invalid, aria-describedby and role=\"alert\". Put noValidate on the <form> so the browser's own error bubbles don't get in the way; the submit button uses loading={isSubmitting}.",
     examples: [
       {
         title: "Server errors with setError",

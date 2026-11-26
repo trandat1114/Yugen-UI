@@ -53,6 +53,9 @@ describe("CSS theo component (#169)", () => {
     expect(exports.NavItem).toBe("Nav");
     expect(exports.toast).toBe("Toast");
     expect(exports.Button).toBe("Button");
+    // yugen-ui/dates (#356).
+    expect(exports.DatePicker).toBe("DatePicker");
+    expect(exports.Calendar).toBe("Calendar");
     // cn nằm trong src/lib, không có class; kiểu (ButtonProps) không có CSS.
     expect(exports.cn).toBeUndefined();
     expect(exports.ButtonProps).toBeUndefined();

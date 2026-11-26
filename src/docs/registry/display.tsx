@@ -76,7 +76,7 @@ import {
 import { DirectionProvider } from "@radix-ui/react-direction";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/Resizable/Resizable";
 import type { ComponentDoc } from "../types";
-import { landscape, mountain, people, scenery, sunset } from "../sample-assets";
+import { brokenPhoto, landscape, logo, mountain, people, portraits, scenery, sunset } from "../sample-assets";
 
 /* ================================================================== Dữ liệu mẫu */
 
@@ -556,6 +556,7 @@ const DISPLAY: Record<string, ComponentDoc> = {
       { name: "overflowIndicator", type: `"count" | "icon"`, defaultValue: `"count"`, description: "Nút tràn hiện “+N” hoặc icon “…”." },
       { name: "overflowLabel", type: "string", description: "Nhãn đọc sau số đếm của nút mở danh sách (\"+2 …\"); với overflowIndicator=\"icon\" là toàn bộ tên của nút." },
       { name: "AvatarGroupItem.name / src / color", type: "string / string / AvatarColor", defaultValue: `color "colorful"`, description: "Thông tin từng thành viên." },
+      { name: "AvatarGroupItem.image / renderImage / fallbackDelay / onLoadingStatusChange", type: "Pick<AvatarProps, …>", description: "Tuỳ chọn ảnh như của Avatar." },
     ],
   },
 
@@ -672,6 +673,87 @@ const DISPLAY: Record<string, ComponentDoc> = {
           </div>
         ),
       },
+      {
+        title: "Ảnh",
+        description: "avatar.src cho ảnh chân dung; ảnh không tải được thì quay về chữ viết tắt; shape square cho ứng dụng, bot.",
+        code: `<div className="flex flex-col items-start gap-3">
+  <Persona size="extra-large" name="Alex Chen" secondaryText="Design lead" presence="available" avatar={{ src: portraits[0] }} />
+  <Persona size="extra-large" name="Maria Garcia" secondaryText="Photo failed to load" avatar={{ src: brokenPhoto, color: "colorful" }} />
+  <Persona size="extra-large" name="Release bot" secondaryText="Runs every night" avatar={{ src: logo, shape: "square" }} />
+</div>`,
+        render: () => (
+          <div className="flex flex-col items-start gap-3">
+            <Persona size="extra-large" name="Alex Chen" secondaryText="Design lead" presence="available" avatar={{ src: portraits[0] }} />
+            <Persona size="extra-large" name="Maria Garcia" secondaryText="Photo failed to load" avatar={{ src: brokenPhoto, color: "colorful" }} />
+            <Persona size="extra-large" name="Release bot" secondaryText="Runs every night" avatar={{ src: logo, shape: "square" }} />
+          </div>
+        ),
+      },
+      {
+        title: "Nhiều người",
+        description:
+          "avatars hiện một AvatarGroup theo size của Persona: stack (mặc định) hoặc pie. Quá maxAvatars (mặc định 3) thì gom vào nút “+N”; primaryText là tên của nhóm.",
+        code: `<div className="flex flex-wrap items-start gap-6">
+  <Persona
+    size="large"
+    avatars={[
+      { name: "Alex Chen", src: portraits[0] },
+      { name: "Maria Garcia", src: portraits[1] },
+      { name: "Sam Lee", src: portraits[2] },
+      { name: "Priya Patel", src: portraits[3] },
+      { name: "Jordan Kim", src: portraits[4] },
+    ]}
+    primaryText="Alex Chen, Maria Garcia and 3 others"
+    secondaryText="Design review · 4 files"
+  />
+  <Persona
+    size="large"
+    avatarLayout="pie"
+    avatars={[{ name: "Sam Lee" }, { name: "Priya Patel" }, { name: "Jordan Kim" }]}
+    primaryText="Release crew"
+    secondaryText="3 members"
+  />
+  <Persona
+    size="large"
+    textPosition="below"
+    textAlignment="center"
+    avatars={[{ name: "Taylor Nguyen" }, { name: "Chris Novak" }, { name: "Hana Sato" }, { name: "Alex Chen" }]}
+    primaryText="Platform team"
+    secondaryText="4 members"
+  />
+</div>`,
+        render: () => (
+          <div className="flex flex-wrap items-start gap-6">
+            <Persona
+              size="large"
+              avatars={[
+                { name: "Alex Chen", src: portraits[0] },
+                { name: "Maria Garcia", src: portraits[1] },
+                { name: "Sam Lee", src: portraits[2] },
+                { name: "Priya Patel", src: portraits[3] },
+                { name: "Jordan Kim", src: portraits[4] },
+              ]}
+              primaryText="Alex Chen, Maria Garcia and 3 others"
+              secondaryText="Design review · 4 files"
+            />
+            <Persona
+              size="large"
+              avatarLayout="pie"
+              avatars={[{ name: "Sam Lee" }, { name: "Priya Patel" }, { name: "Jordan Kim" }]}
+              primaryText="Release crew"
+              secondaryText="3 members"
+            />
+            <Persona
+              size="large"
+              textPosition="below"
+              textAlignment="center"
+              avatars={[{ name: "Taylor Nguyen" }, { name: "Chris Novak" }, { name: "Hana Sato" }, { name: "Alex Chen" }]}
+              primaryText="Platform team"
+              secondaryText="4 members"
+            />
+          </div>
+        ),
+      },
     ],
     dos: [
       "Dòng phụ ngắn gọn: chức danh, trạng thái, giờ địa phương.",
@@ -689,7 +771,14 @@ const DISPLAY: Record<string, ComponentDoc> = {
       { name: "size", type: `"extra-small" | "small" | "medium" | "large" | "extra-large" | "huge"`, defaultValue: `"medium"`, description: "Avatar 20 / 24 / 32 / 40 / 48 / 64px." },
       { name: "presence", type: `"available" | "busy" | "away" | "offline"`, description: "Trạng thái hiện trên Avatar." },
       { name: "presenceOnly", type: "boolean", defaultValue: "false", description: "Chỉ hiện chấm trạng thái." },
-      { name: "avatar", type: "{ src, color, shape }", description: "Tuỳ chọn truyền cho Avatar." },
+      { name: "avatar", type: "{ src, image, renderImage, color, shape… }", description: "Tuỳ chọn truyền cho Avatar." },
+      {
+        name: "avatars",
+        type: "{ name, src?, color?, image?, renderImage? }[]",
+        description: "Nhiều người, hiện bằng AvatarGroup theo size của Persona. Không dùng cùng avatar, presence, presenceOnly.",
+      },
+      { name: "avatarLayout", type: `"stack" | "pie"`, defaultValue: `"stack"`, description: "Bố cục AvatarGroup của avatars." },
+      { name: "maxAvatars", type: "number", defaultValue: "3", description: "Số ô tối đa của avatars, tính cả nút “+N”; không áp dụng cho pie." },
       { name: "textPosition", type: `"after" | "before" | "below"`, defaultValue: `"after"`, description: "Vị trí khối chữ so với Avatar." },
       { name: "textAlignment", type: `"start" | "center"`, defaultValue: `"start"`, description: "Căn khối chữ." },
     ],
@@ -1565,6 +1654,8 @@ function TableColumnsDemo() {
       { name: "Table.sortable", type: "boolean", defaultValue: "false", description: "Mọi TableHeaderCell thành nút sắp xếp." },
       { name: "TableHeaderCell.sortDirection", type: `"ascending" | "descending"`, description: "Hiện icon ArrowSortUp/Down và aria-sort." },
       { name: "TableHeaderCell.sortable / onClick", type: "boolean / MouseEventHandler", description: "Bật / tắt sắp xếp riêng cột; onClick gắn vào nút trong header." },
+      { name: "TableHeaderCell.align", type: `"start" | "center" | "end"`, defaultValue: `"start"`, description: "Căn tiêu đề cùng hướng với ô của cột; với cột sortable, cả nút sắp xếp căn theo. end cho số, tiền tệ, ngày." },
+      { name: "TableCell.align", type: `"start" | "center" | "end"`, description: "Căn nội dung ô (đảo trong RTL). Thay thuộc tính HTML align cũ." },
       { name: "TableRow.selected / appearance", type: `boolean / "none" | "neutral" | "brand"`, description: "Trạng thái nền của hàng." },
       { name: "TableCellLayout.media / description / appearance / truncate", type: `ReactNode / ReactNode / "primary" / boolean`, description: "Bố cục ô: media + nội dung chính + mô tả." },
       { name: "TableSelectionCell.checked / onCheckedChange / subtle", type: `boolean | "mixed" / (checked) => void / boolean`, description: "Checkbox chọn hàng; trong TableHeader thành ô chọn tất cả." },
@@ -2404,12 +2495,30 @@ function TableColumnsDemo() {
       { name: "ResizablePanelGroup.orientation", type: `"horizontal" | "vertical"`, defaultValue: `"horizontal"`, description: "Hướng chia panel." },
       { name: "ResizablePanelGroup.persistKey", type: "string", description: "Lưu / khôi phục bố cục qua localStorage (khoá react-resizable-panels:<persistKey>)." },
       { name: "ResizablePanelGroup.mirrorInRtl", type: "boolean", defaultValue: "true", description: "RTL: hiển thị nhóm ngang phải → trái (kéo / phím mũi tên theo hướng nhìn thấy); false = giữ bố cục LTR." },
-      { name: "ResizablePanelGroup.onLayoutChanged", type: "(layout: Layout, meta) => void", description: "Gọi sau khi kéo xong — dùng để lưu bố cục theo cách riêng." },
+      { name: "ResizablePanelGroup.onLayoutChanged", type: "(layout: ResizableLayout, change: ResizableLayoutChange) => void", description: "Gọi sau khi kéo xong — dùng để lưu bố cục theo cách riêng." },
+      { name: "ResizablePanelGroup.defaultLayout / onLayoutChange", type: "ResizableLayout / (layout) => void", description: "Kích thước ban đầu theo id panel (phần trăm); gọi liên tục trong lúc kéo." },
+      { name: "ResizablePanelGroup.groupRef / elementRef", type: "Ref<ResizableGroupHandle> / Ref<HTMLDivElement>", description: "getLayout(), setLayout(layout); phần tử DOM của nhóm." },
+      {
+        name: "ResizablePanelGroup.disabled / disableCursor / resizePreviewMode / resizeTargetMinimumSize",
+        type: `boolean / boolean / "panel" | "separator" / { coarse, fine }`,
+        description: "Khoá mọi đường chia, giữ con trỏ mặc định, xem trước khi kéo, vùng bấm tối thiểu (px).",
+      },
       { name: "ResizablePanel.defaultSize / minSize / maxSize", type: "number | string", description: "Chuỗi “30%” = phần trăm, số = px. Nhấp đúp đường chia trả về defaultSize." },
       { name: "ResizablePanel.collapsible / collapsedSize", type: "boolean / number | string", defaultValue: `false / "0%"`, description: "Cho phép thu gọn panel (kéo qua minSize, Enter, hoặc nút)." },
+      {
+        name: "ResizablePanel.collapsedThreshold / groupResizeBehavior / disabled",
+        type: `number | string / "preserve-relative-size" | "preserve-pixel-size" / boolean`,
+        description: "Kéo quá minSize bao xa thì thu gọn; khi nhóm đổi cỡ thì giữ tỉ lệ hay số px của panel; khoá panel.",
+      },
+      {
+        name: "ResizablePanel.onResize / panelRef / elementRef",
+        type: "(size: ResizablePanelSize, id, prevSize) => void / Ref<ResizablePanelHandle> / Ref<HTMLDivElement>",
+        description: "Kích thước mới; collapse(), expand(), getSize(), isCollapsed(), resize(size); phần tử DOM.",
+      },
       { name: "ResizableHandle.withHandle", type: "boolean", defaultValue: "false", description: "Hiện grip ở giữa đường chia." },
       { name: "ResizableHandle.collapseButton", type: `"before" | "after"`, description: "Nút thu gọn / mở rộng panel trước (trên / đầu dòng) hoặc sau đường chia; panel đó phải collapsible." },
       { name: "ResizableHandle.collapseLabel / expandLabel", type: "string", defaultValue: `"Collapse panel" / "Expand panel"`, description: "Chú thích (title) của nút." },
+      { name: "ResizableHandle.preview / elementRef", type: "ReactNode / Ref<HTMLDivElement>", description: "Nội dung hiện khi kéo với resizePreviewMode=\"separator\"; phần tử DOM của đường chia." },
       { name: "ResizableHandle.disabled / disableDoubleClick", type: "boolean", defaultValue: "false", description: "Khoá đường chia / tắt nhấp đúp để đặt lại." },
     ],
   },

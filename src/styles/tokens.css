@@ -7,728 +7,669 @@
  *                 Theme light ở `:root, [data-theme="light"]`, dark ở `[data-theme="dark"]`.
  *                 Theme có thể lồng: đặt data-theme trên bất kỳ phần tử nào để đổi theme cho cả nhánh con.
  * Lớp 3  Component : chỉ được tham chiếu Alias (xem Design.md §2).
+ *
+ * Cascade layer `theme` (#354): an app's own declarations (--colorBrandBackground set on :root, or a utility such as
+ * `[--colorBrandBackground:#0a0]`) win over these whatever their order or specificity. No braces in this comment:
+ * src/docs/themeAxes.ts reads the rules with a regex.
+ * Core group: global ramps, the Sakura brand, light / dark / high contrast and the brand aliases. The other groups are
+ * separate files: brands.css (web, teams) and charts.css (imported by yugen-ui/sources/Chart.css).
  */
 
-:root {
-  /* ===== GLOBAL: neutral grey ramp ===== */
-  --grey-4: #0a0a0a;
-  --grey-8: #141414;
-  --grey-12: #1f1f1f;
-  --grey-14: #242424;
-  --grey-16: #292929;
-  --grey-18: #2e2e2e;
-  --grey-20: #333333;
-  --grey-22: #383838;
-  --grey-24: #3d3d3d;
-  --grey-26: #424242;
-  --grey-32: #525252;
-  --grey-34: #575757;
-  --grey-36: #5c5c5c;
-  --grey-38: #616161;
-  --grey-40: #666666;
-  --grey-42: #6b6b6b;
-  --grey-44: #707070;
-  --grey-46: #757575;
-  --grey-60: #999999;
-  --grey-68: #adadad;
-  --grey-70: #b3b3b3;
-  --grey-74: #bdbdbd;
-  --grey-78: #c7c7c7;
-  --grey-82: #d1d1d1;
-  --grey-84: #d6d6d6;
-  --grey-88: #e0e0e0;
-  --grey-90: #e6e6e6;
-  --grey-92: #ebebeb;
-  --grey-94: #f0f0f0;
-  --grey-96: #f5f5f5;
-  --grey-98: #fafafa;
-  --white: #ffffff;
-  --black: #000000;
+@layer theme {
+  :root {
+    /* ===== GLOBAL: neutral grey ramp ===== */
+    --grey-4: #0a0a0a;
+    --grey-8: #141414;
+    --grey-12: #1f1f1f;
+    --grey-14: #242424;
+    --grey-16: #292929;
+    --grey-18: #2e2e2e;
+    --grey-20: #333333;
+    --grey-22: #383838;
+    --grey-24: #3d3d3d;
+    --grey-26: #424242;
+    --grey-32: #525252;
+    --grey-34: #575757;
+    --grey-36: #5c5c5c;
+    --grey-38: #616161;
+    --grey-40: #666666;
+    --grey-42: #6b6b6b;
+    --grey-44: #707070;
+    --grey-46: #757575;
+    --grey-60: #999999;
+    --grey-68: #adadad;
+    --grey-70: #b3b3b3;
+    --grey-74: #bdbdbd;
+    --grey-78: #c7c7c7;
+    --grey-82: #d1d1d1;
+    --grey-84: #d6d6d6;
+    --grey-88: #e0e0e0;
+    --grey-90: #e6e6e6;
+    --grey-92: #ebebeb;
+    --grey-94: #f0f0f0;
+    --grey-96: #f5f5f5;
+    --grey-98: #fafafa;
+    --white: #ffffff;
+    --black: #000000;
 
-  /* ===== GLOBAL: brand ramp mặc định — Sakura 桜 (brand80 = #C2347A, 5.16:1 trên nền trắng) ===== */
-  --brand-10: #240c16;
-  --brand-20: #391324;
-  --brand-30: #4c1930;
-  --brand-40: #61213f;
-  --brand-50: #79274d;
-  --brand-60: #912d5c;
-  --brand-70: #a72f69;
-  --brand-80: #c2347a;
-  --brand-90: #e24a92;
-  --brand-100: #fa65a8;
-  --brand-110: #fb7cb2;
-  --brand-120: #fd8ebc;
-  --brand-130: #ffa7c9;
-  --brand-140: #fec1d7;
-  --brand-150: #fed6e4;
-  --brand-160: #fdedf3;
+    /* ===== GLOBAL: brand ramp mặc định — Sakura 桜 (brand80 = #C2347A, 5.16:1 trên nền trắng) ===== */
+    --brand-10: #240c16;
+    --brand-20: #391324;
+    --brand-30: #4c1930;
+    --brand-40: #61213f;
+    --brand-50: #79274d;
+    --brand-60: #912d5c;
+    --brand-70: #a72f69;
+    --brand-80: #c2347a;
+    --brand-90: #e24a92;
+    --brand-100: #fa65a8;
+    --brand-110: #fb7cb2;
+    --brand-120: #fd8ebc;
+    --brand-130: #ffa7c9;
+    --brand-140: #fec1d7;
+    --brand-150: #fed6e4;
+    --brand-160: #fdedf3;
 
-  /* ===== GLOBAL: app shell — nền trang ánh hồng rất nhẹ cho đồng bộ với Sakura ===== */
-  --shell-light: #fffbfc;
-  --shell-nav-light: #fff7fa;
-  --shell-dark: #1c191b;
-  --shell-nav-dark: #141213;
+    /* ===== GLOBAL: app shell — nền trang ánh hồng rất nhẹ cho đồng bộ với Sakura ===== */
+    --shell-light: #fffbfc;
+    --shell-nav-light: #fff7fa;
+    --shell-dark: #1c191b;
+    --shell-nav-dark: #141213;
 
-  /* ===== GLOBAL: shared status colors ===== */
-  --red-primary: #d13438;
-  --red-shade-10: #c50f1f;
-  --red-shade-20: #b10e1c;
-  --red-tint-30: #e37d80;
-  --red-tint-40: #eeacb2;
-  --red-tint-60: #fdf3f4;
-  --red-shade-40: #3b0509;
+    /* ===== GLOBAL: shared status colors ===== */
+    --red-primary: #d13438;
+    --red-shade-10: #c50f1f;
+    --red-shade-20: #b10e1c;
+    --red-tint-30: #e37d80;
+    --red-tint-40: #eeacb2;
+    --red-tint-60: #fdf3f4;
+    --red-shade-40: #3b0509;
 
-  --green-primary: #107c10;
-  --green-shade-10: #0e700e;
-  --green-tint-30: #54b054;
-  --green-tint-40: #9fd89f;
-  --green-tint-60: #f1faf1;
-  --green-shade-40: #052505;
+    --green-primary: #107c10;
+    --green-shade-10: #0e700e;
+    --green-tint-30: #54b054;
+    --green-tint-40: #9fd89f;
+    --green-tint-60: #f1faf1;
+    --green-shade-40: #052505;
 
-  --orange-primary: #f7630c;
-  --orange-shade-20: #bc4b09;
-  --orange-tint-30: #faa06b;
-  --orange-tint-40: #fdcfb4;
-  --orange-tint-60: #fff9f5;
-  --orange-shade-40: #4a1e04;
+    --orange-primary: #f7630c;
+    --orange-shade-20: #bc4b09;
+    --orange-tint-30: #faa06b;
+    --orange-tint-40: #fdcfb4;
+    --orange-tint-60: #fff9f5;
+    --orange-shade-40: #4a1e04;
 
-  /* ===== GLOBAL: palette dùng cho Avatar colorful (tint40 / shade30) ===== */
-  --palette-cranberry-tint: #f6d1d5;
-  --palette-cranberry-shade: #6e0811;
-  --palette-marigold-tint: #f9e2ae;
-  --palette-marigold-shade: #6a4b16;
-  --palette-teal-tint: #c3f1f2;
-  --palette-teal-shade: #02494c;
-  --palette-lavender-tint: #e3dffc;
-  --palette-lavender-shade: #3c2f95;
-  --palette-forest-tint: #d6e6c3;
-  --palette-forest-shade: #294903;
-  --palette-steel-tint: #c2dce4;
-  --palette-steel-shade: #00333f;
+    /* ===== GLOBAL: palette dùng cho Avatar colorful (tint40 / shade30) ===== */
+    --palette-cranberry-tint: #f6d1d5;
+    --palette-cranberry-shade: #6e0811;
+    --palette-marigold-tint: #f9e2ae;
+    --palette-marigold-shade: #6a4b16;
+    --palette-teal-tint: #c3f1f2;
+    --palette-teal-shade: #02494c;
+    --palette-lavender-tint: #e3dffc;
+    --palette-lavender-shade: #3c2f95;
+    --palette-forest-tint: #d6e6c3;
+    --palette-forest-shade: #294903;
+    --palette-steel-tint: #c2dce4;
+    --palette-steel-shade: #00333f;
 
-  /* ===== ALIAS: spacing (lưới 4px) ===== */
-  --spacingNone: 0px;
-  --spacingXXS: 2px;
-  --spacingXS: 4px;
-  --spacingSNudge: 6px;
-  --spacingS: 8px;
-  --spacingMNudge: 10px;
-  --spacingM: 12px;
-  --spacingL: 16px;
-  --spacingXL: 20px;
-  --spacingXXL: 24px;
-  --spacingXXXL: 32px;
+    /* ===== ALIAS: spacing (lưới 4px) ===== */
+    --spacingNone: 0px;
+    --spacingXXS: 2px;
+    --spacingXS: 4px;
+    --spacingSNudge: 6px;
+    --spacingS: 8px;
+    --spacingMNudge: 10px;
+    --spacingM: 12px;
+    --spacingL: 16px;
+    --spacingXL: 20px;
+    --spacingXXL: 24px;
+    --spacingXXXL: 32px;
 
-  /* ===== ALIAS: corner radius ===== */
-  --borderRadiusNone: 0px;
-  --borderRadiusSmall: 2px;
-  --borderRadiusMedium: 4px;
-  --borderRadiusLarge: 6px;
-  --borderRadiusXLarge: 8px;
-  --borderRadius2XLarge: 12px;
-  --borderRadius3XLarge: 16px;
-  --borderRadius4XLarge: 24px;
-  --borderRadiusCircular: 10000px;
+    /* ===== ALIAS: corner radius ===== */
+    --borderRadiusNone: 0px;
+    --borderRadiusSmall: 2px;
+    --borderRadiusMedium: 4px;
+    --borderRadiusLarge: 6px;
+    --borderRadiusXLarge: 8px;
+    --borderRadius2XLarge: 12px;
+    --borderRadius3XLarge: 16px;
+    --borderRadius4XLarge: 24px;
+    --borderRadiusCircular: 10000px;
 
-  /* ===== ALIAS: stroke width ===== */
-  --strokeWidthThin: 1px;
-  --strokeWidthThick: 2px;
-  --strokeWidthThicker: 3px;
-  --strokeWidthThickest: 4px;
+    /* ===== ALIAS: stroke width ===== */
+    --strokeWidthThin: 1px;
+    --strokeWidthThick: 2px;
+    --strokeWidthThicker: 3px;
+    --strokeWidthThickest: 4px;
 
-  /* ===== ALIAS: typography ===== */
-  --fontFamilyBase: "Segoe UI Variable Text", "Segoe UI", "Segoe UI Web (West European)",
-    -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
-  --fontFamilyDisplay: "Segoe UI Variable Display", "Segoe UI", -apple-system, BlinkMacSystemFont,
-    Roboto, "Helvetica Neue", sans-serif;
-  --fontFamilyMonospace: "Cascadia Code", Consolas, "Courier New", Courier, monospace;
+    /* ===== ALIAS: typography ===== */
+    --fontFamilyBase: "Segoe UI Variable Text", "Segoe UI", "Segoe UI Web (West European)",
+      -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+    --fontFamilyDisplay: "Segoe UI Variable Display", "Segoe UI", -apple-system, BlinkMacSystemFont,
+      Roboto, "Helvetica Neue", sans-serif;
+    --fontFamilyMonospace: "Cascadia Code", Consolas, "Courier New", Courier, monospace;
 
-  --fontSizeBase100: 10px;
-  --fontSizeBase200: 12px;
-  --fontSizeBase300: 14px;
-  --fontSizeBase400: 16px;
-  --fontSizeBase500: 20px;
-  --fontSizeBase600: 24px;
-  --fontSizeHero700: 28px;
-  --fontSizeHero800: 32px;
-  --fontSizeHero900: 40px;
-  --fontSizeHero1000: 68px;
+    --fontSizeBase100: 10px;
+    --fontSizeBase200: 12px;
+    --fontSizeBase300: 14px;
+    --fontSizeBase400: 16px;
+    --fontSizeBase500: 20px;
+    --fontSizeBase600: 24px;
+    --fontSizeHero700: 28px;
+    --fontSizeHero800: 32px;
+    --fontSizeHero900: 40px;
+    --fontSizeHero1000: 68px;
 
-  --lineHeightBase100: 14px;
-  --lineHeightBase200: 16px;
-  --lineHeightBase300: 20px;
-  --lineHeightBase400: 22px;
-  --lineHeightBase500: 28px;
-  --lineHeightBase600: 32px;
-  --lineHeightHero700: 36px;
-  --lineHeightHero800: 40px;
-  --lineHeightHero900: 52px;
-  --lineHeightHero1000: 92px;
+    --lineHeightBase100: 14px;
+    --lineHeightBase200: 16px;
+    --lineHeightBase300: 20px;
+    --lineHeightBase400: 22px;
+    --lineHeightBase500: 28px;
+    --lineHeightBase600: 32px;
+    --lineHeightHero700: 36px;
+    --lineHeightHero800: 40px;
+    --lineHeightHero900: 52px;
+    --lineHeightHero1000: 92px;
 
-  --fontWeightRegular: 400;
-  --fontWeightMedium: 500;
-  --fontWeightSemibold: 600;
-  --fontWeightBold: 700;
+    --fontWeightRegular: 400;
+    --fontWeightMedium: 500;
+    --fontWeightSemibold: 600;
+    --fontWeightBold: 700;
 
-  /* ===== ALIAS: motion ===== */
-  --durationUltraFast: 50ms;
-  --durationFaster: 100ms;
-  --durationFast: 150ms;
-  --durationNormal: 200ms;
-  --durationGentle: 250ms;
-  --durationSlow: 300ms;
-  --durationSlower: 400ms;
-  --durationUltraSlow: 500ms;
+    /* ===== ALIAS: motion ===== */
+    --durationUltraFast: 50ms;
+    --durationFaster: 100ms;
+    --durationFast: 150ms;
+    --durationNormal: 200ms;
+    --durationGentle: 250ms;
+    --durationSlow: 300ms;
+    --durationSlower: 400ms;
+    --durationUltraSlow: 500ms;
 
-  --curveAccelerateMax: cubic-bezier(0.9, 0.1, 1, 0.2);
-  --curveAccelerateMid: cubic-bezier(1, 0, 1, 1);
-  --curveDecelerateMax: cubic-bezier(0.1, 0.9, 0.2, 1);
-  --curveDecelerateMid: cubic-bezier(0, 0, 0, 1);
-  --curveEasyEase: cubic-bezier(0.33, 0, 0.67, 1);
-  --curveEasyEaseMax: cubic-bezier(0.8, 0, 0.2, 1);
-  --curveLinear: cubic-bezier(0, 0, 1, 1);
+    --curveAccelerateMax: cubic-bezier(0.9, 0.1, 1, 0.2);
+    --curveAccelerateMid: cubic-bezier(1, 0, 1, 1);
+    --curveDecelerateMax: cubic-bezier(0.1, 0.9, 0.2, 1);
+    --curveDecelerateMid: cubic-bezier(0, 0, 0, 1);
+    --curveEasyEase: cubic-bezier(0.33, 0, 0.67, 1);
+    --curveEasyEaseMax: cubic-bezier(0.8, 0, 0.2, 1);
+    --curveLinear: cubic-bezier(0, 0, 1, 1);
 
-  /* ===== ALIAS: glass (Yugen Labs) — vật liệu cho lớp điều hướng nổi trên nội dung (Design.md §4.7) ===== */
-  --glassBlur: 24px;
-  --glassSaturation: 180%;
-  --glassFilter: blur(var(--glassBlur)) saturate(var(--glassSaturation));
-  /* Có <GlassRefraction> (Chromium): blur nằm trong bộ lọc khúc xạ, CSS chỉ còn bão hoà màu. */
-  --glassLensFilter: saturate(var(--glassSaturation));
-  /* Hiệu ứng mép cuộn (scroll-edge) dưới / trên thanh glass. */
-  --glassEdgeFilter: blur(8px);
-  /* clear: trên ảnh / media, không theo theme. Luôn đặt glass-scrim lên media bên dưới: chữ trắng ≥ 4.5:1 cả khi ảnh trắng. */
-  --colorGlassClearBackground: rgb(0 0 0 / 0.4);
-  --colorGlassClearBackgroundHover: rgb(0 0 0 / 0.5);
-  --colorGlassClearBackgroundPressed: rgb(0 0 0 / 0.58);
-  --colorGlassClearBackgroundSolid: var(--grey-16);
-  --colorGlassClearForeground: #ffffff;
-  --colorGlassClearEdge: rgb(255 255 255 / 0.22);
-  --colorGlassClearStroke: rgb(255 255 255 / 0.14);
-  --colorGlassClearHover: rgb(255 255 255 / 0.1);
-  --colorGlassClearPressed: rgb(0 0 0 / 0.2);
-  --colorGlassClearSelected: rgb(0 0 0 / 0.3);
-  --colorGlassScrim: rgb(0 0 0 / 0.35);
-}
+    /* ===== ALIAS: glass (Yugen Labs) — vật liệu cho lớp điều hướng nổi trên nội dung (Design.md §4.7) ===== */
+    --glassBlur: 24px;
+    --glassSaturation: 180%;
+    --glassFilter: blur(var(--glassBlur)) saturate(var(--glassSaturation));
+    /* Có <GlassRefraction> (Chromium): blur nằm trong bộ lọc khúc xạ, CSS chỉ còn bão hoà màu. */
+    --glassLensFilter: saturate(var(--glassSaturation));
+    /* Hiệu ứng mép cuộn (scroll-edge) dưới / trên thanh glass. */
+    --glassEdgeFilter: blur(8px);
+    /* clear: trên ảnh / media, không theo theme. Luôn đặt glass-scrim lên media bên dưới: chữ trắng ≥ 4.5:1 cả khi ảnh trắng. */
+    --colorGlassClearBackground: rgb(0 0 0 / 0.4);
+    --colorGlassClearBackgroundHover: rgb(0 0 0 / 0.5);
+    --colorGlassClearBackgroundPressed: rgb(0 0 0 / 0.58);
+    --colorGlassClearBackgroundSolid: var(--grey-16);
+    --colorGlassClearForeground: #ffffff;
+    --colorGlassClearEdge: rgb(255 255 255 / 0.22);
+    --colorGlassClearStroke: rgb(255 255 255 / 0.14);
+    --colorGlassClearHover: rgb(255 255 255 / 0.1);
+    --colorGlassClearPressed: rgb(0 0 0 / 0.2);
+    --colorGlassClearSelected: rgb(0 0 0 / 0.3);
+    --colorGlassScrim: rgb(0 0 0 / 0.35);
+  }
 
-/* ===================== GLOBAL: BRAND THEMES =====================
-   Mặc định là Sakura. Đổi toàn bộ brand bằng 1 attribute: <html data-brand="web">. Có thể đặt trên phần tử con
-   (khi lồng trong theme khác, đặt data-theme + data-brand trên CÙNG một phần tử).
-   Ramp sinh bằng cách giữ đường cong lightness/chroma OKLCH của Communication Blue và đổi hue. */
-[data-brand="sakura"] {
-  --brand-10: #240c16;
-  --brand-20: #391324;
-  --brand-30: #4c1930;
-  --brand-40: #61213f;
-  --brand-50: #79274d;
-  --brand-60: #912d5c;
-  --brand-70: #a72f69;
-  --brand-80: #c2347a;
-  --brand-90: #e24a92;
-  --brand-100: #fa65a8;
-  --brand-110: #fb7cb2;
-  --brand-120: #fd8ebc;
-  --brand-130: #ffa7c9;
-  --brand-140: #fec1d7;
-  --brand-150: #fed6e4;
-  --brand-160: #fdedf3;
-}
+  /* ===================== GLOBAL: BRAND THEMES =====================
+     Mặc định là Sakura. Đổi toàn bộ brand bằng 1 attribute: <html data-brand="web">. Có thể đặt trên phần tử con
+     (khi lồng trong theme khác, đặt data-theme + data-brand trên CÙNG một phần tử).
+     Ramp sinh bằng cách giữ đường cong lightness/chroma OKLCH của Communication Blue và đổi hue. */
+  [data-brand="sakura"] {
+    --brand-10: #240c16;
+    --brand-20: #391324;
+    --brand-30: #4c1930;
+    --brand-40: #61213f;
+    --brand-50: #79274d;
+    --brand-60: #912d5c;
+    --brand-70: #a72f69;
+    --brand-80: #c2347a;
+    --brand-90: #e24a92;
+    --brand-100: #fa65a8;
+    --brand-110: #fb7cb2;
+    --brand-120: #fd8ebc;
+    --brand-130: #ffa7c9;
+    --brand-140: #fec1d7;
+    --brand-150: #fed6e4;
+    --brand-160: #fdedf3;
+  }
 
-/* Fluent 2 Communication Blue — brand gốc của Fluent */
-[data-brand="web"] {
-  --brand-10: #061724;
-  --brand-20: #082338;
-  --brand-30: #0a2e4a;
-  --brand-40: #0c3b5e;
-  --brand-50: #0e4775;
-  --brand-60: #0f548c;
-  --brand-70: #115ea3;
-  --brand-80: #0f6cbd;
-  --brand-90: #2886de;
-  --brand-100: #479ef5;
-  --brand-110: #62abf5;
-  --brand-120: #77b7f7;
-  --brand-130: #96c6fa;
-  --brand-140: #b4d6fa;
-  --brand-150: #cfe4fa;
-  --brand-160: #ebf3fc;
-}
+  /* ===================== ALIAS: LIGHT THEME (webLightTheme) ===================== */
+  :root,
+  [data-theme="light"] {
+    --colorNeutralForeground1: var(--grey-14);
+    --colorNeutralForeground2: var(--grey-26);
+    --colorNeutralForeground3: var(--grey-38);
+    --colorNeutralForeground4: var(--grey-44);
+    --colorNeutralForegroundDisabled: var(--grey-74);
+    --colorNeutralForegroundOnBrand: var(--white);
+    --colorNeutralForegroundInverted: var(--white);
+    /* Chữ tối cố định mọi theme — trên nền đặc sáng như warning Background3 (Fluent: colorNeutralForeground1Static). */
+    --colorNeutralForeground1Static: var(--grey-14);
 
-[data-brand="teams"] {
-  --brand-10: #121326;
-  --brand-20: #1c1e3b;
-  --brand-30: #25284e;
-  --brand-40: #303464;
-  --brand-50: #3a3e7c;
-  --brand-60: #464a94;
-  --brand-70: #4f53ac;
-  --brand-80: #5b5fc7;
-  --brand-90: #7177e9;
-  --brand-100: #878ffe;
-  --brand-110: #949efe;
-  --brand-120: #a2abfe;
-  --brand-130: #b4bdff;
-  --brand-140: #c8d0ff;
-  --brand-150: #dbe0fd;
-  --brand-160: #eff1fd;
-}
+    --colorShellBackground: var(--shell-light);
+    --colorShellNavBackground: var(--shell-nav-light);
 
-/* ===================== ALIAS: LIGHT THEME (webLightTheme) ===================== */
-:root,
-[data-theme="light"] {
-  --colorNeutralForeground1: var(--grey-14);
-  --colorNeutralForeground2: var(--grey-26);
-  --colorNeutralForeground3: var(--grey-38);
-  --colorNeutralForeground4: var(--grey-44);
-  --colorNeutralForegroundDisabled: var(--grey-74);
-  --colorNeutralForegroundOnBrand: var(--white);
-  --colorNeutralForegroundInverted: var(--white);
-  /* Chữ tối cố định mọi theme — trên nền đặc sáng như warning Background3 (Fluent: colorNeutralForeground1Static). */
-  --colorNeutralForeground1Static: var(--grey-14);
+    --colorNeutralBackground1: var(--white);
+    --colorNeutralBackground1Hover: var(--grey-96);
+    --colorNeutralBackground1Pressed: var(--grey-88);
+    --colorNeutralBackground2: var(--grey-98);
+    --colorNeutralBackground3: var(--grey-96);
+    --colorNeutralBackground4: var(--grey-94);
+    --colorNeutralBackground5: var(--grey-92);
+    --colorNeutralBackground6: var(--grey-90);
+    --colorNeutralBackgroundDisabled: var(--grey-94);
+    --colorNeutralBackgroundInverted: var(--grey-16);
+    --colorNeutralStencil1: var(--grey-90);
+    --colorNeutralStencil2: var(--grey-98);
+    --colorSubtleBackgroundHover: var(--grey-96);
+    --colorSubtleBackgroundPressed: var(--grey-88);
+    --colorBackgroundOverlay: rgb(0 0 0 / 0.4);
 
-  --colorShellBackground: var(--shell-light);
-  --colorShellNavBackground: var(--shell-nav-light);
+    /* Glass: đủ đục để chữ fg1 / fg2 (và brand đậm bên trong glass) đạt ≥ 4.5:1 cả khi phía sau trắng hay đen hoàn toàn. */
+    --colorGlassBackground: rgb(255 255 255 / 0.8);
+    --colorGlassBackgroundHover: rgb(255 255 255 / 0.9);
+    --colorGlassBackgroundPressed: rgb(240 240 240 / 0.9);
+    --colorGlassBackgroundSolid: var(--white);
+    --colorGlassEdge: rgb(255 255 255 / 0.7);
+    --colorGlassStroke: rgb(0 0 0 / 0.08);
+    --colorGlassHover: rgb(0 0 0 / 0.05);
+    --colorGlassPressed: rgb(0 0 0 / 0.1);
+    --colorGlassSelected: rgb(0 0 0 / 0.08);
+    --colorGlassField: rgb(0 0 0 / 0.05);
 
-  --colorNeutralBackground1: var(--white);
-  --colorNeutralBackground1Hover: var(--grey-96);
-  --colorNeutralBackground1Pressed: var(--grey-88);
-  --colorNeutralBackground2: var(--grey-98);
-  --colorNeutralBackground3: var(--grey-96);
-  --colorNeutralBackground4: var(--grey-94);
-  --colorNeutralBackground5: var(--grey-92);
-  --colorNeutralBackground6: var(--grey-90);
-  --colorNeutralBackgroundDisabled: var(--grey-94);
-  --colorNeutralBackgroundInverted: var(--grey-16);
-  --colorNeutralStencil1: var(--grey-90);
-  --colorNeutralStencil2: var(--grey-98);
-  --colorSubtleBackgroundHover: var(--grey-96);
-  --colorSubtleBackgroundPressed: var(--grey-88);
-  --colorBackgroundOverlay: rgb(0 0 0 / 0.4);
+    --colorNeutralStroke1: var(--grey-82);
+    --colorNeutralStroke1Hover: var(--grey-78);
+    --colorNeutralStroke1Pressed: var(--grey-70);
+    --colorNeutralStroke2: var(--grey-88);
+    --colorNeutralStroke3: var(--grey-94);
+    --colorNeutralStrokeAccessible: var(--grey-38);
+    --colorNeutralStrokeDisabled: var(--grey-88);
+    --colorNeutralStrokeOnBrand: var(--white);
+    --colorStrokeFocus2: var(--black);
 
-  /* Glass: đủ đục để chữ fg1 / fg2 (và brand đậm bên trong glass) đạt ≥ 4.5:1 cả khi phía sau trắng hay đen hoàn toàn. */
-  --colorGlassBackground: rgb(255 255 255 / 0.8);
-  --colorGlassBackgroundHover: rgb(255 255 255 / 0.9);
-  --colorGlassBackgroundPressed: rgb(240 240 240 / 0.9);
-  --colorGlassBackgroundSolid: var(--white);
-  --colorGlassEdge: rgb(255 255 255 / 0.7);
-  --colorGlassStroke: rgb(0 0 0 / 0.08);
-  --colorGlassHover: rgb(0 0 0 / 0.05);
-  --colorGlassPressed: rgb(0 0 0 / 0.1);
-  --colorGlassSelected: rgb(0 0 0 / 0.08);
-  --colorGlassField: rgb(0 0 0 / 0.05);
+    --colorStatusDangerBackground1: var(--red-tint-60);
+    --colorStatusDangerBackground3: var(--red-shade-10);
+    --colorStatusDangerForeground1: var(--red-shade-20);
+    --colorStatusDangerBorder1: var(--red-tint-40);
+    --colorStatusSuccessBackground1: var(--green-tint-60);
+    --colorStatusSuccessBackground3: var(--green-primary);
+    --colorStatusSuccessForeground1: var(--green-shade-10);
+    --colorStatusSuccessBorder1: var(--green-tint-40);
+    --colorStatusWarningBackground1: var(--orange-tint-60);
+    --colorStatusWarningBackground3: var(--orange-primary);
+    --colorStatusWarningForeground1: var(--orange-shade-20);
+    --colorStatusWarningBorder1: var(--orange-tint-40);
 
-  --colorNeutralStroke1: var(--grey-82);
-  --colorNeutralStroke1Hover: var(--grey-78);
-  --colorNeutralStroke1Pressed: var(--grey-70);
-  --colorNeutralStroke2: var(--grey-88);
-  --colorNeutralStroke3: var(--grey-94);
-  --colorNeutralStrokeAccessible: var(--grey-38);
-  --colorNeutralStrokeDisabled: var(--grey-88);
-  --colorNeutralStrokeOnBrand: var(--white);
-  --colorStrokeFocus2: var(--black);
+    --colorPaletteCranberryBackground2: var(--palette-cranberry-tint);
+    --colorPaletteCranberryForeground2: var(--palette-cranberry-shade);
+    --colorPaletteMarigoldBackground2: var(--palette-marigold-tint);
+    --colorPaletteMarigoldForeground2: var(--palette-marigold-shade);
+    --colorPaletteMarigoldBorderActive: #eaa300;
+    --colorPaletteTealBackground2: var(--palette-teal-tint);
+    --colorPaletteTealForeground2: var(--palette-teal-shade);
+    --colorPaletteLavenderBackground2: var(--palette-lavender-tint);
+    --colorPaletteLavenderForeground2: var(--palette-lavender-shade);
+    --colorPaletteForestBackground2: var(--palette-forest-tint);
+    --colorPaletteForestForeground2: var(--palette-forest-shade);
+    --colorPaletteSteelBackground2: var(--palette-steel-tint);
+    --colorPaletteSteelForeground2: var(--palette-steel-shade);
 
-  --colorStatusDangerBackground1: var(--red-tint-60);
-  --colorStatusDangerBackground3: var(--red-shade-10);
-  --colorStatusDangerForeground1: var(--red-shade-20);
-  --colorStatusDangerBorder1: var(--red-tint-40);
-  --colorStatusSuccessBackground1: var(--green-tint-60);
-  --colorStatusSuccessBackground3: var(--green-primary);
-  --colorStatusSuccessForeground1: var(--green-shade-10);
-  --colorStatusSuccessBorder1: var(--green-tint-40);
-  --colorStatusWarningBackground1: var(--orange-tint-60);
-  --colorStatusWarningBackground3: var(--orange-primary);
-  --colorStatusWarningForeground1: var(--orange-shade-20);
-  --colorStatusWarningBorder1: var(--orange-tint-40);
+    --shadow2: 0 0 2px rgb(0 0 0 / 0.12), 0 1px 2px rgb(0 0 0 / 0.14);
+    --shadow4: 0 0 2px rgb(0 0 0 / 0.12), 0 2px 4px rgb(0 0 0 / 0.14);
+    --shadow8: 0 0 2px rgb(0 0 0 / 0.12), 0 4px 8px rgb(0 0 0 / 0.14);
+    --shadow16: 0 0 2px rgb(0 0 0 / 0.12), 0 8px 16px rgb(0 0 0 / 0.14);
+    --shadow28: 0 0 8px rgb(0 0 0 / 0.12), 0 14px 28px rgb(0 0 0 / 0.14);
+    --shadow64: 0 0 8px rgb(0 0 0 / 0.12), 0 32px 64px rgb(0 0 0 / 0.14);
 
-  --colorPaletteCranberryBackground2: var(--palette-cranberry-tint);
-  --colorPaletteCranberryForeground2: var(--palette-cranberry-shade);
-  --colorPaletteMarigoldBackground2: var(--palette-marigold-tint);
-  --colorPaletteMarigoldForeground2: var(--palette-marigold-shade);
-  --colorPaletteMarigoldBorderActive: #eaa300;
-  --colorPaletteTealBackground2: var(--palette-teal-tint);
-  --colorPaletteTealForeground2: var(--palette-teal-shade);
-  --colorPaletteLavenderBackground2: var(--palette-lavender-tint);
-  --colorPaletteLavenderForeground2: var(--palette-lavender-shade);
-  --colorPaletteForestBackground2: var(--palette-forest-tint);
-  --colorPaletteForestForeground2: var(--palette-forest-shade);
-  --colorPaletteSteelBackground2: var(--palette-steel-tint);
-  --colorPaletteSteelForeground2: var(--palette-steel-shade);
+    /* Gradient — CHỈ dùng cho minh hoạ / hero / marketing (xem Design.md §4) */
+    /* Mọi stop đạt ≥ 3:1 trên nền trắng (dùng được cho chữ hero) */
+    --colorGradientSakura1: #c2347a;
+    --colorGradientSakura2: #e0659a;
+    --colorGradientSakura3: #a855c9;
+    --colorGradientDusk1: #6a5ae0;
+    --colorGradientDusk2: #a855c9;
+    --colorGradientDusk3: #e0457b;
+    --colorGradientSunset1: #a855c9;
+    --colorGradientSunset2: #e0457b;
+    --colorGradientSunset3: #d4704a;
+    --colorGradientAurora1: #2886de;
+    --colorGradientAurora2: #23a99b;
+    --colorGradientAurora3: #7d6cf0;
+    --gradientHeroGlow: radial-gradient(45% 60% at 18% 100%, #fde0eb 0%, transparent 70%),
+      radial-gradient(45% 60% at 85% 100%, #ebe6fd 0%, transparent 70%),
+      radial-gradient(40% 50% at 78% 18%, #fff0f6 0%, transparent 70%);
 
-  --shadow2: 0 0 2px rgb(0 0 0 / 0.12), 0 1px 2px rgb(0 0 0 / 0.14);
-  --shadow4: 0 0 2px rgb(0 0 0 / 0.12), 0 2px 4px rgb(0 0 0 / 0.14);
-  --shadow8: 0 0 2px rgb(0 0 0 / 0.12), 0 4px 8px rgb(0 0 0 / 0.14);
-  --shadow16: 0 0 2px rgb(0 0 0 / 0.12), 0 8px 16px rgb(0 0 0 / 0.14);
-  --shadow28: 0 0 8px rgb(0 0 0 / 0.12), 0 14px 28px rgb(0 0 0 / 0.14);
-  --shadow64: 0 0 8px rgb(0 0 0 / 0.12), 0 32px 64px rgb(0 0 0 / 0.14);
+    color-scheme: light;
+  }
 
-  /* Gradient — CHỈ dùng cho minh hoạ / hero / marketing (xem Design.md §4) */
-  /* Mọi stop đạt ≥ 3:1 trên nền trắng (dùng được cho chữ hero) */
-  --colorGradientSakura1: #c2347a;
-  --colorGradientSakura2: #e0659a;
-  --colorGradientSakura3: #a855c9;
-  --colorGradientDusk1: #6a5ae0;
-  --colorGradientDusk2: #a855c9;
-  --colorGradientDusk3: #e0457b;
-  --colorGradientSunset1: #a855c9;
-  --colorGradientSunset2: #e0457b;
-  --colorGradientSunset3: #d4704a;
-  --colorGradientAurora1: #2886de;
-  --colorGradientAurora2: #23a99b;
-  --colorGradientAurora3: #7d6cf0;
-  --gradientHeroGlow: radial-gradient(45% 60% at 18% 100%, #fde0eb 0%, transparent 70%),
-    radial-gradient(45% 60% at 85% 100%, #ebe6fd 0%, transparent 70%),
-    radial-gradient(40% 50% at 78% 18%, #fff0f6 0%, transparent 70%);
+  /* ===================== ALIAS: DARK THEME (webDarkTheme) ===================== */
+  [data-theme="dark"] {
+    --colorNeutralForeground1: var(--white);
+    --colorNeutralForeground2: var(--grey-84);
+    --colorNeutralForeground3: var(--grey-68);
+    --colorNeutralForeground4: var(--grey-60);
+    --colorNeutralForegroundDisabled: var(--grey-36);
+    --colorNeutralForegroundOnBrand: var(--white);
+    --colorNeutralForegroundInverted: var(--grey-14);
+    --colorNeutralForeground1Static: var(--grey-14);
 
-  color-scheme: light;
-}
+    --colorShellBackground: var(--shell-dark);
+    --colorShellNavBackground: var(--shell-nav-dark);
 
-/* ===================== ALIAS: DARK THEME (webDarkTheme) ===================== */
-[data-theme="dark"] {
-  --colorNeutralForeground1: var(--white);
-  --colorNeutralForeground2: var(--grey-84);
-  --colorNeutralForeground3: var(--grey-68);
-  --colorNeutralForeground4: var(--grey-60);
-  --colorNeutralForegroundDisabled: var(--grey-36);
-  --colorNeutralForegroundOnBrand: var(--white);
-  --colorNeutralForegroundInverted: var(--grey-14);
-  --colorNeutralForeground1Static: var(--grey-14);
+    --colorNeutralBackground1: var(--grey-16);
+    --colorNeutralBackground1Hover: var(--grey-24);
+    --colorNeutralBackground1Pressed: var(--grey-12);
+    --colorNeutralBackground2: var(--grey-12);
+    --colorNeutralBackground3: var(--grey-8);
+    --colorNeutralBackground4: var(--grey-4);
+    --colorNeutralBackground5: var(--black);
+    --colorNeutralBackground6: var(--grey-20);
+    --colorNeutralBackgroundDisabled: var(--grey-8);
+    --colorNeutralBackgroundInverted: var(--white);
+    --colorNeutralStencil1: var(--grey-34);
+    --colorNeutralStencil2: var(--grey-20);
+    --colorSubtleBackgroundHover: var(--grey-22);
+    --colorSubtleBackgroundPressed: var(--grey-18);
+    --colorBackgroundOverlay: rgb(0 0 0 / 0.5);
 
-  --colorShellBackground: var(--shell-dark);
-  --colorShellNavBackground: var(--shell-nav-dark);
+    --colorNeutralStroke1: var(--grey-40);
+    --colorNeutralStroke1Hover: var(--grey-46);
+    --colorNeutralStroke1Pressed: var(--grey-42);
+    --colorNeutralStroke2: var(--grey-32);
+    --colorNeutralStroke3: var(--grey-24);
+    --colorNeutralStrokeAccessible: var(--grey-68);
+    --colorNeutralStrokeDisabled: var(--grey-26);
+    --colorNeutralStrokeOnBrand: var(--grey-16);
+    --colorStrokeFocus2: var(--white);
 
-  --colorNeutralBackground1: var(--grey-16);
-  --colorNeutralBackground1Hover: var(--grey-24);
-  --colorNeutralBackground1Pressed: var(--grey-12);
-  --colorNeutralBackground2: var(--grey-12);
-  --colorNeutralBackground3: var(--grey-8);
-  --colorNeutralBackground4: var(--grey-4);
-  --colorNeutralBackground5: var(--black);
-  --colorNeutralBackground6: var(--grey-20);
-  --colorNeutralBackgroundDisabled: var(--grey-8);
-  --colorNeutralBackgroundInverted: var(--white);
-  --colorNeutralStencil1: var(--grey-34);
-  --colorNeutralStencil2: var(--grey-20);
-  --colorSubtleBackgroundHover: var(--grey-22);
-  --colorSubtleBackgroundPressed: var(--grey-18);
-  --colorBackgroundOverlay: rgb(0 0 0 / 0.5);
+    --colorStatusDangerBackground1: var(--red-shade-40);
+    --colorStatusDangerBackground3: var(--red-shade-10);
+    --colorStatusDangerForeground1: var(--red-tint-30);
+    --colorStatusDangerBorder1: var(--red-shade-10);
+    --colorStatusSuccessBackground1: var(--green-shade-40);
+    --colorStatusSuccessBackground3: var(--green-primary);
+    --colorStatusSuccessForeground1: var(--green-tint-30);
+    --colorStatusSuccessBorder1: var(--green-primary);
+    --colorStatusWarningBackground1: var(--orange-shade-40);
+    --colorStatusWarningBackground3: var(--orange-primary);
+    --colorStatusWarningForeground1: var(--orange-tint-30);
+    --colorStatusWarningBorder1: var(--orange-primary);
 
-  --colorNeutralStroke1: var(--grey-40);
-  --colorNeutralStroke1Hover: var(--grey-46);
-  --colorNeutralStroke1Pressed: var(--grey-42);
-  --colorNeutralStroke2: var(--grey-32);
-  --colorNeutralStroke3: var(--grey-24);
-  --colorNeutralStrokeAccessible: var(--grey-68);
-  --colorNeutralStrokeDisabled: var(--grey-26);
-  --colorNeutralStrokeOnBrand: var(--grey-16);
-  --colorStrokeFocus2: var(--white);
+    --colorPaletteCranberryBackground2: var(--palette-cranberry-shade);
+    --colorPaletteCranberryForeground2: var(--palette-cranberry-tint);
+    --colorPaletteMarigoldBackground2: var(--palette-marigold-shade);
+    --colorPaletteMarigoldForeground2: var(--palette-marigold-tint);
+    --colorPaletteMarigoldBorderActive: #f2c661;
+    --colorPaletteTealBackground2: var(--palette-teal-shade);
+    --colorPaletteTealForeground2: var(--palette-teal-tint);
+    --colorPaletteLavenderBackground2: var(--palette-lavender-shade);
+    --colorPaletteLavenderForeground2: var(--palette-lavender-tint);
+    --colorPaletteForestBackground2: var(--palette-forest-shade);
+    --colorPaletteForestForeground2: var(--palette-forest-tint);
+    --colorPaletteSteelBackground2: var(--palette-steel-shade);
+    --colorPaletteSteelForeground2: var(--palette-steel-tint);
 
-  --colorStatusDangerBackground1: var(--red-shade-40);
-  --colorStatusDangerBackground3: var(--red-shade-10);
-  --colorStatusDangerForeground1: var(--red-tint-30);
-  --colorStatusDangerBorder1: var(--red-shade-10);
-  --colorStatusSuccessBackground1: var(--green-shade-40);
-  --colorStatusSuccessBackground3: var(--green-primary);
-  --colorStatusSuccessForeground1: var(--green-tint-30);
-  --colorStatusSuccessBorder1: var(--green-primary);
-  --colorStatusWarningBackground1: var(--orange-shade-40);
-  --colorStatusWarningBackground3: var(--orange-primary);
-  --colorStatusWarningForeground1: var(--orange-tint-30);
-  --colorStatusWarningBorder1: var(--orange-primary);
+    --colorGlassBackground: rgb(41 41 41 / 0.82);
+    --colorGlassBackgroundHover: rgb(61 61 61 / 0.88);
+    --colorGlassBackgroundPressed: rgb(31 31 31 / 0.88);
+    --colorGlassBackgroundSolid: var(--grey-16);
+    --colorGlassEdge: rgb(255 255 255 / 0.14);
+    --colorGlassStroke: rgb(0 0 0 / 0.32);
+    --colorGlassHover: rgb(255 255 255 / 0.07);
+    --colorGlassPressed: rgb(0 0 0 / 0.12);
+    --colorGlassSelected: rgb(255 255 255 / 0.1);
+    --colorGlassField: rgb(255 255 255 / 0.08);
 
-  --colorPaletteCranberryBackground2: var(--palette-cranberry-shade);
-  --colorPaletteCranberryForeground2: var(--palette-cranberry-tint);
-  --colorPaletteMarigoldBackground2: var(--palette-marigold-shade);
-  --colorPaletteMarigoldForeground2: var(--palette-marigold-tint);
-  --colorPaletteMarigoldBorderActive: #f2c661;
-  --colorPaletteTealBackground2: var(--palette-teal-shade);
-  --colorPaletteTealForeground2: var(--palette-teal-tint);
-  --colorPaletteLavenderBackground2: var(--palette-lavender-shade);
-  --colorPaletteLavenderForeground2: var(--palette-lavender-tint);
-  --colorPaletteForestBackground2: var(--palette-forest-shade);
-  --colorPaletteForestForeground2: var(--palette-forest-tint);
-  --colorPaletteSteelBackground2: var(--palette-steel-shade);
-  --colorPaletteSteelForeground2: var(--palette-steel-tint);
+    --shadow2: 0 0 2px rgb(0 0 0 / 0.24), 0 1px 2px rgb(0 0 0 / 0.28);
+    --shadow4: 0 0 2px rgb(0 0 0 / 0.24), 0 2px 4px rgb(0 0 0 / 0.28);
+    --shadow8: 0 0 2px rgb(0 0 0 / 0.24), 0 4px 8px rgb(0 0 0 / 0.28);
+    --shadow16: 0 0 2px rgb(0 0 0 / 0.24), 0 8px 16px rgb(0 0 0 / 0.28);
+    --shadow28: 0 0 8px rgb(0 0 0 / 0.24), 0 14px 28px rgb(0 0 0 / 0.28);
+    --shadow64: 0 0 8px rgb(0 0 0 / 0.24), 0 32px 64px rgb(0 0 0 / 0.28);
 
-  --colorGlassBackground: rgb(41 41 41 / 0.82);
-  --colorGlassBackgroundHover: rgb(61 61 61 / 0.88);
-  --colorGlassBackgroundPressed: rgb(31 31 31 / 0.88);
-  --colorGlassBackgroundSolid: var(--grey-16);
-  --colorGlassEdge: rgb(255 255 255 / 0.14);
-  --colorGlassStroke: rgb(0 0 0 / 0.32);
-  --colorGlassHover: rgb(255 255 255 / 0.07);
-  --colorGlassPressed: rgb(0 0 0 / 0.12);
-  --colorGlassSelected: rgb(255 255 255 / 0.1);
-  --colorGlassField: rgb(255 255 255 / 0.08);
+    /* Gradient dark: các stop sáng hơn để giữ tương phản trên nền tối */
+    --colorGradientSakura1: #f08cb4;
+    --colorGradientSakura2: #f7a8c4;
+    --colorGradientSakura3: #c493ee;
+    --colorGradientDusk1: #b39dff;
+    --colorGradientDusk2: #c493ee;
+    --colorGradientDusk3: #f08cb4;
+    --colorGradientSunset1: #c493ee;
+    --colorGradientSunset2: #f08cb4;
+    --colorGradientSunset3: #f7b08f;
+    --colorGradientAurora1: #62abf5;
+    --colorGradientAurora2: #4fd1c0;
+    --colorGradientAurora3: #a395ff;
+    --gradientHeroGlow: radial-gradient(45% 60% at 18% 100%, rgb(194 52 122 / 0.24) 0%, transparent 70%),
+      radial-gradient(45% 60% at 85% 100%, rgb(106 90 224 / 0.22) 0%, transparent 70%),
+      radial-gradient(40% 50% at 78% 18%, rgb(250 101 168 / 0.12) 0%, transparent 70%);
 
-  --shadow2: 0 0 2px rgb(0 0 0 / 0.24), 0 1px 2px rgb(0 0 0 / 0.28);
-  --shadow4: 0 0 2px rgb(0 0 0 / 0.24), 0 2px 4px rgb(0 0 0 / 0.28);
-  --shadow8: 0 0 2px rgb(0 0 0 / 0.24), 0 4px 8px rgb(0 0 0 / 0.28);
-  --shadow16: 0 0 2px rgb(0 0 0 / 0.24), 0 8px 16px rgb(0 0 0 / 0.28);
-  --shadow28: 0 0 8px rgb(0 0 0 / 0.24), 0 14px 28px rgb(0 0 0 / 0.28);
-  --shadow64: 0 0 8px rgb(0 0 0 / 0.24), 0 32px 64px rgb(0 0 0 / 0.28);
+    color-scheme: dark;
+  }
 
-  /* Gradient dark: các stop sáng hơn để giữ tương phản trên nền tối */
-  --colorGradientSakura1: #f08cb4;
-  --colorGradientSakura2: #f7a8c4;
-  --colorGradientSakura3: #c493ee;
-  --colorGradientDusk1: #b39dff;
-  --colorGradientDusk2: #c493ee;
-  --colorGradientDusk3: #f08cb4;
-  --colorGradientSunset1: #c493ee;
-  --colorGradientSunset2: #f08cb4;
-  --colorGradientSunset3: #f7b08f;
-  --colorGradientAurora1: #62abf5;
-  --colorGradientAurora2: #4fd1c0;
-  --colorGradientAurora3: #a395ff;
-  --gradientHeroGlow: radial-gradient(45% 60% at 18% 100%, rgb(194 52 122 / 0.24) 0%, transparent 70%),
-    radial-gradient(45% 60% at 85% 100%, rgb(106 90 224 / 0.22) 0%, transparent 70%),
-    radial-gradient(40% 50% at 78% 18%, rgb(250 101 168 / 0.12) 0%, transparent 70%);
+  /* ===================== ALIAS: BRAND (tính lại trên mọi phần tử có data-brand) =====================
+     Bậc ramp dùng cho từng alias (light / dark):
+     Foreground1 80/100 · Foreground2 70/120 · Link 70/100 · Background 80/70 · Hover 70/80 · Pressed 40/40
+     Background2 160/20 · Background2Hover 150/30 · Background2Pressed 130/10 · CompoundStroke 80/100 · Stroke2 140/50 */
+  :root,
+  [data-theme="light"],
+  [data-brand] {
+    --colorBrandForeground1: var(--brand-80);
+    --colorBrandForeground2: var(--brand-70);
+    --colorBrandForeground2Hover: var(--brand-60);
+    --colorBrandForegroundLink: var(--brand-70);
+    --colorBrandForegroundLinkHover: var(--brand-60);
+    --colorBrandBackground: var(--brand-80);
+    --colorBrandBackgroundHover: var(--brand-70);
+    --colorBrandBackgroundPressed: var(--brand-40);
+    --colorBrandBackground2: var(--brand-160);
+    --colorBrandBackground2Hover: var(--brand-150);
+    --colorBrandBackground2Pressed: var(--brand-130);
+    --colorCompoundBrandStroke: var(--brand-80);
+    --colorBrandStroke2: var(--brand-140);
+    --colorGlassBrandForeground: var(--brand-60);
+    --colorGlassBrandStroke: var(--brand-80);
+    --colorGlassTinted: color-mix(in srgb, var(--brand-70) 90%, transparent);
+    --colorGlassTintedHover: color-mix(in srgb, var(--brand-60) 92%, transparent);
+    --colorGlassTintedPressed: color-mix(in srgb, var(--brand-40) 92%, transparent);
+    --gradientBrand: linear-gradient(110deg, var(--brand-50), var(--brand-80), var(--brand-90));
+  }
 
-  color-scheme: dark;
-}
+  [data-theme="dark"],
+  [data-theme="dark"] [data-brand],
+  [data-brand][data-theme="dark"] {
+    --colorBrandForeground1: var(--brand-100);
+    --colorBrandForeground2: var(--brand-120);
+    --colorBrandForeground2Hover: var(--brand-130);
+    --colorBrandForegroundLink: var(--brand-100);
+    --colorBrandForegroundLinkHover: var(--brand-110);
+    --colorBrandBackground: var(--brand-70);
+    --colorBrandBackgroundHover: var(--brand-80);
+    --colorBrandBackgroundPressed: var(--brand-40);
+    --colorBrandBackground2: var(--brand-20);
+    --colorBrandBackground2Hover: var(--brand-30);
+    --colorBrandBackground2Pressed: var(--brand-10);
+    --colorCompoundBrandStroke: var(--brand-100);
+    --colorBrandStroke2: var(--brand-50);
+    --colorGlassBrandForeground: var(--brand-140);
+    --colorGlassBrandStroke: var(--brand-120);
+    --colorGlassTinted: color-mix(in srgb, var(--brand-70) 90%, transparent);
+    --colorGlassTintedHover: color-mix(in srgb, var(--brand-80) 92%, transparent);
+    --colorGlassTintedPressed: color-mix(in srgb, var(--brand-40) 92%, transparent);
+    --gradientBrand: linear-gradient(110deg, var(--brand-90), var(--brand-110), var(--brand-130));
+  }
 
-/* ===================== ALIAS: BRAND (tính lại trên mọi phần tử có data-brand) =====================
-   Bậc ramp dùng cho từng alias (light / dark):
-   Foreground1 80/100 · Foreground2 70/120 · Link 70/100 · Background 80/70 · Hover 70/80 · Pressed 40/40
-   Background2 160/20 · Background2Hover 150/30 · Background2Pressed 130/10 · CompoundStroke 80/100 · Stroke2 140/50 */
-:root,
-[data-theme="light"],
-[data-brand] {
-  --colorBrandForeground1: var(--brand-80);
-  --colorBrandForeground2: var(--brand-70);
-  --colorBrandForeground2Hover: var(--brand-60);
-  --colorBrandForegroundLink: var(--brand-70);
-  --colorBrandForegroundLinkHover: var(--brand-60);
-  --colorBrandBackground: var(--brand-80);
-  --colorBrandBackgroundHover: var(--brand-70);
-  --colorBrandBackgroundPressed: var(--brand-40);
-  --colorBrandBackground2: var(--brand-160);
-  --colorBrandBackground2Hover: var(--brand-150);
-  --colorBrandBackground2Pressed: var(--brand-130);
-  --colorCompoundBrandStroke: var(--brand-80);
-  --colorBrandStroke2: var(--brand-140);
-  --colorGlassBrandForeground: var(--brand-60);
-  --colorGlassBrandStroke: var(--brand-80);
-  --colorGlassTinted: color-mix(in srgb, var(--brand-70) 90%, transparent);
-  --colorGlassTintedHover: color-mix(in srgb, var(--brand-60) 92%, transparent);
-  --colorGlassTintedPressed: color-mix(in srgb, var(--brand-40) 92%, transparent);
-  --gradientBrand: linear-gradient(110deg, var(--brand-50), var(--brand-80), var(--brand-90));
-}
+  /* data-theme="light" + data-brand trên cùng phần tử, nằm trong vùng dark */
+  [data-brand][data-theme="light"] {
+    --colorBrandForeground1: var(--brand-80);
+    --colorBrandForeground2: var(--brand-70);
+    --colorBrandForeground2Hover: var(--brand-60);
+    --colorBrandForegroundLink: var(--brand-70);
+    --colorBrandForegroundLinkHover: var(--brand-60);
+    --colorBrandBackground: var(--brand-80);
+    --colorBrandBackgroundHover: var(--brand-70);
+    --colorBrandBackgroundPressed: var(--brand-40);
+    --colorBrandBackground2: var(--brand-160);
+    --colorBrandBackground2Hover: var(--brand-150);
+    --colorBrandBackground2Pressed: var(--brand-130);
+    --colorCompoundBrandStroke: var(--brand-80);
+    --colorBrandStroke2: var(--brand-140);
+    --colorGlassBrandForeground: var(--brand-60);
+    --colorGlassBrandStroke: var(--brand-80);
+    --colorGlassTinted: color-mix(in srgb, var(--brand-70) 90%, transparent);
+    --colorGlassTintedHover: color-mix(in srgb, var(--brand-60) 92%, transparent);
+    --colorGlassTintedPressed: color-mix(in srgb, var(--brand-40) 92%, transparent);
+    --gradientBrand: linear-gradient(110deg, var(--brand-50), var(--brand-80), var(--brand-90));
+  }
 
-[data-theme="dark"],
-[data-theme="dark"] [data-brand],
-[data-brand][data-theme="dark"] {
-  --colorBrandForeground1: var(--brand-100);
-  --colorBrandForeground2: var(--brand-120);
-  --colorBrandForeground2Hover: var(--brand-130);
-  --colorBrandForegroundLink: var(--brand-100);
-  --colorBrandForegroundLinkHover: var(--brand-110);
-  --colorBrandBackground: var(--brand-70);
-  --colorBrandBackgroundHover: var(--brand-80);
-  --colorBrandBackgroundPressed: var(--brand-40);
-  --colorBrandBackground2: var(--brand-20);
-  --colorBrandBackground2Hover: var(--brand-30);
-  --colorBrandBackground2Pressed: var(--brand-10);
-  --colorCompoundBrandStroke: var(--brand-100);
-  --colorBrandStroke2: var(--brand-50);
-  --colorGlassBrandForeground: var(--brand-140);
-  --colorGlassBrandStroke: var(--brand-120);
-  --colorGlassTinted: color-mix(in srgb, var(--brand-70) 90%, transparent);
-  --colorGlassTintedHover: color-mix(in srgb, var(--brand-80) 92%, transparent);
-  --colorGlassTintedPressed: color-mix(in srgb, var(--brand-40) 92%, transparent);
-  --gradientBrand: linear-gradient(110deg, var(--brand-90), var(--brand-110), var(--brand-130));
-}
+  /* ===================== ALIAS: HIGH CONTRAST (tương đương teamsHighContrastTheme) =====================
+     Nền đen, chữ trắng, nhấn cyan, link vàng, disabled xanh lá. Không dùng bóng đổ — bề mặt nổi được
+     tách bằng viền trắng 1px (shadow* = viền). Gradient quy về trắng. */
+  [data-theme="high-contrast"] {
+    --colorNeutralForeground1: #ffffff;
+    --colorNeutralForeground2: #ffffff;
+    --colorNeutralForeground3: #ffffff;
+    --colorNeutralForeground4: #ffffff;
+    --colorNeutralForegroundDisabled: #3ff23f;
+    --colorNeutralForegroundOnBrand: #000000;
+    --colorNeutralForegroundInverted: #000000;
+    --colorNeutralForeground1Static: #000000;
 
-/* data-theme="light" + data-brand trên cùng phần tử, nằm trong vùng dark */
-[data-brand][data-theme="light"] {
-  --colorBrandForeground1: var(--brand-80);
-  --colorBrandForeground2: var(--brand-70);
-  --colorBrandForeground2Hover: var(--brand-60);
-  --colorBrandForegroundLink: var(--brand-70);
-  --colorBrandForegroundLinkHover: var(--brand-60);
-  --colorBrandBackground: var(--brand-80);
-  --colorBrandBackgroundHover: var(--brand-70);
-  --colorBrandBackgroundPressed: var(--brand-40);
-  --colorBrandBackground2: var(--brand-160);
-  --colorBrandBackground2Hover: var(--brand-150);
-  --colorBrandBackground2Pressed: var(--brand-130);
-  --colorCompoundBrandStroke: var(--brand-80);
-  --colorBrandStroke2: var(--brand-140);
-  --colorGlassBrandForeground: var(--brand-60);
-  --colorGlassBrandStroke: var(--brand-80);
-  --colorGlassTinted: color-mix(in srgb, var(--brand-70) 90%, transparent);
-  --colorGlassTintedHover: color-mix(in srgb, var(--brand-60) 92%, transparent);
-  --colorGlassTintedPressed: color-mix(in srgb, var(--brand-40) 92%, transparent);
-  --gradientBrand: linear-gradient(110deg, var(--brand-50), var(--brand-80), var(--brand-90));
-}
+    --colorShellBackground: #000000;
+    --colorShellNavBackground: #000000;
 
-/* ===================== GLOBAL: SHARED PALETTE (bảng màu dùng chung M365) =====================
-   Chỉ dùng để minh hoạ bảng màu trong docs; component dùng alias colorPalette*. */
-:root {
-  --shared-dark-red: #750b1c;
-  --shared-cranberry: #c50f1f;
-  --shared-red: #d13438;
-  --shared-dark-orange: #da3b01;
-  --shared-orange: #f7630c;
-  --shared-marigold: #eaa300;
-  --shared-yellow: #fde300;
-  --shared-forest: #498205;
-  --shared-green: #107c10;
-  --shared-teal: #038387;
-  --shared-cyan: #0099bc;
-  --shared-steel: #005b70;
-  --shared-blue: #0078d4;
-  --shared-royal-blue: #004e8c;
-  --shared-cornflower: #4f6bed;
-  --shared-navy: #0027b4;
-  --shared-lavender: #7160e8;
-  --shared-purple: #5c2e91;
-  --shared-grape: #881798;
-  --shared-berry: #c239b3;
-  --shared-pink: #e43ba6;
-  --shared-magenta: #bf0077;
-  --shared-plum: #77004d;
-}
+    --colorNeutralBackground1: #000000;
+    --colorNeutralBackground1Hover: #1a1a1a;
+    --colorNeutralBackground1Pressed: #262626;
+    --colorNeutralBackground2: #000000;
+    --colorNeutralBackground3: #000000;
+    --colorNeutralBackground4: #000000;
+    --colorNeutralBackground5: #000000;
+    --colorNeutralBackground6: #000000;
+    --colorNeutralBackgroundDisabled: #000000;
+    --colorNeutralBackgroundInverted: #ffffff;
+    --colorNeutralStencil1: #ffffff;
+    --colorNeutralStencil2: #000000;
 
-/* ===================== ALIAS: HIGH CONTRAST (tương đương teamsHighContrastTheme) =====================
-   Nền đen, chữ trắng, nhấn cyan, link vàng, disabled xanh lá. Không dùng bóng đổ — bề mặt nổi được
-   tách bằng viền trắng 1px (shadow* = viền). Gradient quy về trắng. */
-[data-theme="high-contrast"] {
-  --colorNeutralForeground1: #ffffff;
-  --colorNeutralForeground2: #ffffff;
-  --colorNeutralForeground3: #ffffff;
-  --colorNeutralForeground4: #ffffff;
-  --colorNeutralForegroundDisabled: #3ff23f;
-  --colorNeutralForegroundOnBrand: #000000;
-  --colorNeutralForegroundInverted: #000000;
-  --colorNeutralForeground1Static: #000000;
+    /* Glass ở tương phản cao: nền đặc, viền trắng, không blur. */
+    --glassFilter: none;
+    --glassLensFilter: none;
+    --glassEdgeFilter: none;
+    --colorGlassBackground: #000000;
+    --colorGlassBackgroundHover: #1a1a1a;
+    --colorGlassBackgroundPressed: #262626;
+    --colorGlassBackgroundSolid: #000000;
+    --colorGlassEdge: transparent;
+    --colorGlassStroke: #ffffff;
+    --colorGlassHover: #1a1a1a;
+    --colorGlassPressed: #262626;
+    --colorGlassSelected: #262626;
+    --colorGlassField: #000000;
+    --colorGlassClearBackground: #000000;
+    --colorGlassClearBackgroundHover: #1a1a1a;
+    --colorGlassClearBackgroundPressed: #262626;
+    --colorGlassClearBackgroundSolid: #000000;
+    --colorGlassClearEdge: transparent;
+    --colorGlassClearStroke: #ffffff;
+    --colorGlassClearHover: #1a1a1a;
+    --colorGlassClearPressed: #262626;
+    --colorGlassClearSelected: #262626;
+    --colorSubtleBackgroundHover: #1a1a1a;
+    --colorSubtleBackgroundPressed: #262626;
+    --colorBackgroundOverlay: rgb(0 0 0 / 0.8);
 
-  --colorShellBackground: #000000;
-  --colorShellNavBackground: #000000;
+    --colorNeutralStroke1: #ffffff;
+    --colorNeutralStroke1Hover: #1aebff;
+    --colorNeutralStroke1Pressed: #1aebff;
+    --colorNeutralStroke2: #ffffff;
+    --colorNeutralStroke3: #ffffff;
+    --colorNeutralStrokeAccessible: #ffffff;
+    --colorNeutralStrokeDisabled: #3ff23f;
+    --colorNeutralStrokeOnBrand: #000000;
+    --colorStrokeFocus2: #ffffff;
 
-  --colorNeutralBackground1: #000000;
-  --colorNeutralBackground1Hover: #1a1a1a;
-  --colorNeutralBackground1Pressed: #262626;
-  --colorNeutralBackground2: #000000;
-  --colorNeutralBackground3: #000000;
-  --colorNeutralBackground4: #000000;
-  --colorNeutralBackground5: #000000;
-  --colorNeutralBackground6: #000000;
-  --colorNeutralBackgroundDisabled: #000000;
-  --colorNeutralBackgroundInverted: #ffffff;
-  --colorNeutralStencil1: #ffffff;
-  --colorNeutralStencil2: #000000;
+    --colorStatusDangerBackground1: #000000;
+    --colorStatusDangerBackground3: #ff6b6b;
+    --colorStatusDangerForeground1: #ff8a8a;
+    --colorStatusDangerBorder1: #ff8a8a;
+    --colorStatusSuccessBackground1: #000000;
+    --colorStatusSuccessBackground3: #3ff23f;
+    --colorStatusSuccessForeground1: #3ff23f;
+    --colorStatusSuccessBorder1: #3ff23f;
+    --colorStatusWarningBackground1: #000000;
+    --colorStatusWarningBackground3: #ffff00;
+    --colorStatusWarningForeground1: #ffff00;
+    --colorStatusWarningBorder1: #ffff00;
 
-  /* Glass ở tương phản cao: nền đặc, viền trắng, không blur. */
-  --glassFilter: none;
-  --glassLensFilter: none;
-  --glassEdgeFilter: none;
-  --colorGlassBackground: #000000;
-  --colorGlassBackgroundHover: #1a1a1a;
-  --colorGlassBackgroundPressed: #262626;
-  --colorGlassBackgroundSolid: #000000;
-  --colorGlassEdge: transparent;
-  --colorGlassStroke: #ffffff;
-  --colorGlassHover: #1a1a1a;
-  --colorGlassPressed: #262626;
-  --colorGlassSelected: #262626;
-  --colorGlassField: #000000;
-  --colorGlassClearBackground: #000000;
-  --colorGlassClearBackgroundHover: #1a1a1a;
-  --colorGlassClearBackgroundPressed: #262626;
-  --colorGlassClearBackgroundSolid: #000000;
-  --colorGlassClearEdge: transparent;
-  --colorGlassClearStroke: #ffffff;
-  --colorGlassClearHover: #1a1a1a;
-  --colorGlassClearPressed: #262626;
-  --colorGlassClearSelected: #262626;
-  --colorSubtleBackgroundHover: #1a1a1a;
-  --colorSubtleBackgroundPressed: #262626;
-  --colorBackgroundOverlay: rgb(0 0 0 / 0.8);
+    --colorPaletteCranberryBackground2: #000000;
+    --colorPaletteCranberryForeground2: #ffffff;
+    --colorPaletteMarigoldBackground2: #000000;
+    --colorPaletteMarigoldForeground2: #ffffff;
+    --colorPaletteMarigoldBorderActive: #ffff00;
+    --colorPaletteTealBackground2: #000000;
+    --colorPaletteTealForeground2: #ffffff;
+    --colorPaletteLavenderBackground2: #000000;
+    --colorPaletteLavenderForeground2: #ffffff;
+    --colorPaletteForestBackground2: #000000;
+    --colorPaletteForestForeground2: #ffffff;
+    --colorPaletteSteelBackground2: #000000;
+    --colorPaletteSteelForeground2: #ffffff;
 
-  --colorNeutralStroke1: #ffffff;
-  --colorNeutralStroke1Hover: #1aebff;
-  --colorNeutralStroke1Pressed: #1aebff;
-  --colorNeutralStroke2: #ffffff;
-  --colorNeutralStroke3: #ffffff;
-  --colorNeutralStrokeAccessible: #ffffff;
-  --colorNeutralStrokeDisabled: #3ff23f;
-  --colorNeutralStrokeOnBrand: #000000;
-  --colorStrokeFocus2: #ffffff;
+    --shadow2: 0 0 0 1px #ffffff;
+    --shadow4: 0 0 0 1px #ffffff;
+    --shadow8: 0 0 0 1px #ffffff;
+    --shadow16: 0 0 0 1px #ffffff;
+    --shadow28: 0 0 0 1px #ffffff;
+    --shadow64: 0 0 0 2px #ffffff;
 
-  --colorStatusDangerBackground1: #000000;
-  --colorStatusDangerBackground3: #ff6b6b;
-  --colorStatusDangerForeground1: #ff8a8a;
-  --colorStatusDangerBorder1: #ff8a8a;
-  --colorStatusSuccessBackground1: #000000;
-  --colorStatusSuccessBackground3: #3ff23f;
-  --colorStatusSuccessForeground1: #3ff23f;
-  --colorStatusSuccessBorder1: #3ff23f;
-  --colorStatusWarningBackground1: #000000;
-  --colorStatusWarningBackground3: #ffff00;
-  --colorStatusWarningForeground1: #ffff00;
-  --colorStatusWarningBorder1: #ffff00;
+    --colorGradientSakura1: #ffffff;
+    --colorGradientSakura2: #ffffff;
+    --colorGradientSakura3: #ffffff;
+    --colorGradientDusk1: #ffffff;
+    --colorGradientDusk2: #ffffff;
+    --colorGradientDusk3: #ffffff;
+    --colorGradientSunset1: #ffffff;
+    --colorGradientSunset2: #ffffff;
+    --colorGradientSunset3: #ffffff;
+    --colorGradientAurora1: #ffffff;
+    --colorGradientAurora2: #ffffff;
+    --colorGradientAurora3: #ffffff;
+    --gradientHeroGlow: none;
 
-  --colorPaletteCranberryBackground2: #000000;
-  --colorPaletteCranberryForeground2: #ffffff;
-  --colorPaletteMarigoldBackground2: #000000;
-  --colorPaletteMarigoldForeground2: #ffffff;
-  --colorPaletteMarigoldBorderActive: #ffff00;
-  --colorPaletteTealBackground2: #000000;
-  --colorPaletteTealForeground2: #ffffff;
-  --colorPaletteLavenderBackground2: #000000;
-  --colorPaletteLavenderForeground2: #ffffff;
-  --colorPaletteForestBackground2: #000000;
-  --colorPaletteForestForeground2: #ffffff;
-  --colorPaletteSteelBackground2: #000000;
-  --colorPaletteSteelForeground2: #ffffff;
+    color-scheme: dark;
+  }
 
-  --shadow2: 0 0 0 1px #ffffff;
-  --shadow4: 0 0 0 1px #ffffff;
-  --shadow8: 0 0 0 1px #ffffff;
-  --shadow16: 0 0 0 1px #ffffff;
-  --shadow28: 0 0 0 1px #ffffff;
-  --shadow64: 0 0 0 2px #ffffff;
-
-  --colorGradientSakura1: #ffffff;
-  --colorGradientSakura2: #ffffff;
-  --colorGradientSakura3: #ffffff;
-  --colorGradientDusk1: #ffffff;
-  --colorGradientDusk2: #ffffff;
-  --colorGradientDusk3: #ffffff;
-  --colorGradientSunset1: #ffffff;
-  --colorGradientSunset2: #ffffff;
-  --colorGradientSunset3: #ffffff;
-  --colorGradientAurora1: #ffffff;
-  --colorGradientAurora2: #ffffff;
-  --colorGradientAurora3: #ffffff;
-  --gradientHeroGlow: none;
-
-  color-scheme: dark;
-}
-
-/* Brand ở chế độ tương phản cao luôn là cyan, bất kể data-brand.
-   :not([data-theme]) — phần tử tự đặt data-theme="light|dark" + data-brand (theme lồng trong trang HC) giữ ramp của
-   theme đó; nếu không, khối này (đứng sau) thắng [data-brand][data-theme="light"] → nền cyan + chữ trắng của light. */
-[data-theme="high-contrast"],
-[data-theme="high-contrast"] [data-brand]:not([data-theme]),
-[data-brand][data-theme="high-contrast"] {
-  --colorBrandForeground1: #1aebff;
-  --colorBrandForeground2: #1aebff;
-  --colorBrandForeground2Hover: #6ff1ff;
-  --colorBrandForegroundLink: #ffff00;
-  --colorBrandForegroundLinkHover: #ffff00;
-  --colorBrandBackground: #1aebff;
-  --colorBrandBackgroundHover: #6ff1ff;
-  --colorBrandBackgroundPressed: #00c2d6;
-  --colorBrandBackground2: #000000;
-  --colorBrandBackground2Hover: #002a30;
-  --colorBrandBackground2Pressed: #004650;
-  --colorCompoundBrandStroke: #1aebff;
-  --colorBrandStroke2: #1aebff;
-  --colorGlassBrandForeground: #1aebff;
-  --colorGlassBrandStroke: #1aebff;
-  --colorGlassTinted: #1aebff;
-  --colorGlassTintedHover: #6ff1ff;
-  --colorGlassTintedPressed: #00c2d6;
-  --gradientBrand: linear-gradient(110deg, #ffffff, #ffffff);
+  /* Brand ở chế độ tương phản cao luôn là cyan, bất kể data-brand.
+     :not([data-theme]) — phần tử tự đặt data-theme="light|dark" + data-brand (theme lồng trong trang HC) giữ ramp của
+     theme đó; nếu không, khối này (đứng sau) thắng [data-brand][data-theme="light"] → nền cyan + chữ trắng của light. */
+  [data-theme="high-contrast"],
+  [data-theme="high-contrast"] [data-brand]:not([data-theme]),
+  [data-brand][data-theme="high-contrast"] {
+    --colorBrandForeground1: #1aebff;
+    --colorBrandForeground2: #1aebff;
+    --colorBrandForeground2Hover: #6ff1ff;
+    --colorBrandForegroundLink: #ffff00;
+    --colorBrandForegroundLinkHover: #ffff00;
+    --colorBrandBackground: #1aebff;
+    --colorBrandBackgroundHover: #6ff1ff;
+    --colorBrandBackgroundPressed: #00c2d6;
+    --colorBrandBackground2: #000000;
+    --colorBrandBackground2Hover: #002a30;
+    --colorBrandBackground2Pressed: #004650;
+    --colorCompoundBrandStroke: #1aebff;
+    --colorBrandStroke2: #1aebff;
+    --colorGlassBrandForeground: #1aebff;
+    --colorGlassBrandStroke: #1aebff;
+    --colorGlassTinted: #1aebff;
+    --colorGlassTintedHover: #6ff1ff;
+    --colorGlassTintedPressed: #00c2d6;
+    --gradientBrand: linear-gradient(110deg, #ffffff, #ffffff);
+  }
 }

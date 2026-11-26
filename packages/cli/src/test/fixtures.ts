@@ -78,6 +78,7 @@ export const FIXTURE_MANIFEST = {
   exports: {
     AppShell: "AppShell",
     Button: "Button",
+    DatePicker: "DatePicker",
     Dialog: "Dialog",
     DialogTrigger: "Dialog",
     NavItem: "Nav",
@@ -86,7 +87,7 @@ export const FIXTURE_MANIFEST = {
     useMediaQuery: "hooks",
     YugenProvider: "YugenProvider",
   },
-  sources: Object.fromEntries(["AppShell", "Button", "Dialog", "Nav", "Toast", "YugenProvider", "hooks"].map((f) => [f, [f]])),
+  sources: Object.fromEntries(["AppShell", "Button", "DatePicker", "Dialog", "Nav", "Toast", "YugenProvider", "hooks"].map((f) => [f, [f]])),
 };
 
 /** node_modules/yugen-ui giả, cùng bố cục với gói thật: `exports["./sources/*"]` → dist/sources/index.json. */

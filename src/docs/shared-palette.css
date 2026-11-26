@@ -1,0 +1,26 @@
+/* Docs only (#354): the shared M365 palette shown on the Color page. Components use the colorPalette* aliases. */
+:root {
+  --shared-dark-red: #750b1c;
+  --shared-cranberry: #c50f1f;
+  --shared-red: #d13438;
+  --shared-dark-orange: #da3b01;
+  --shared-orange: #f7630c;
+  --shared-marigold: #eaa300;
+  --shared-yellow: #fde300;
+  --shared-forest: #498205;
+  --shared-green: #107c10;
+  --shared-teal: #038387;
+  --shared-cyan: #0099bc;
+  --shared-steel: #005b70;
+  --shared-blue: #0078d4;
+  --shared-royal-blue: #004e8c;
+  --shared-cornflower: #4f6bed;
+  --shared-navy: #0027b4;
+  --shared-lavender: #7160e8;
+  --shared-purple: #5c2e91;
+  --shared-grape: #881798;
+  --shared-berry: #c239b3;
+  --shared-pink: #e43ba6;
+  --shared-magenta: #bf0077;
+  --shared-plum: #77004d;
+}

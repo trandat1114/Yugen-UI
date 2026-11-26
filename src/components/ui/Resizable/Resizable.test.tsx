@@ -1,10 +1,15 @@
 import { describe, expect, it, vi } from "vitest";
 import { act, render } from "@testing-library/react";
 import { hydrateRoot } from "react-dom/client";
-import type { GroupImperativeHandle } from "react-resizable-panels";
 import { captureConsole } from "@/test/consoleCapture";
 import { renderOnServer } from "@/test/serverRender";
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup, type ResizablePanelGroupProps } from "./Resizable";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+  type ResizableGroupHandle,
+  type ResizablePanelGroupProps,
+} from "./Resizable";
 
 const KEY = "react-resizable-panels:bo-cuc";
 
@@ -85,7 +90,7 @@ describe("ResizablePanelGroup persistKey", () => {
   });
 
   it("groupRef của người dùng vẫn nhận API mệnh lệnh", () => {
-    const handles: (GroupImperativeHandle | null)[] = [];
+    const handles: (ResizableGroupHandle | null)[] = [];
     render(
       <Layout
         groupRef={(handle) => {

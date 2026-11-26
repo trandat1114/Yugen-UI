@@ -1,6 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
+import { REPO } from "./constants.js";
 import { CliError } from "./errors.js";
+import { itemDigest, type RegistryIntegrity } from "./integrity.js";
 
 /** Định dạng do scripts/build-registry.mjs sinh (https://ui.shadcn.com/schema/registry-item.json). */
 export interface RegistryFile {
@@ -41,11 +43,17 @@ export function depName(spec: string) {
   return at > 0 ? spec.slice(0, at) : spec;
 }
 
-/** Đọc registry qua HTTP (site docs) hoặc từ thư mục local (public/r sau `npm run registry`). */
+/**
+ * Đọc registry qua HTTP (site docs) hoặc từ thư mục local (public/r sau `npm run registry`).
+ * Có `integrity` (registry mặc định): mọi item phải khớp sha256 đóng gói cùng CLI, nếu không thì dừng trước khi ghi file (#381).
+ */
 export class Registry {
   private cache = new Map<string, Promise<unknown>>();
 
-  constructor(readonly base: string) {}
+  constructor(
+    readonly base: string,
+    readonly integrity: RegistryIntegrity | null = null,
+  ) {}
 
   index() {
     return this.load<RegistryIndex>("registry");
@@ -65,6 +73,24 @@ export class Registry {
   }
 
   private async read(name: string): Promise<unknown> {
+    if (!this.integrity) return this.fetch(name);
+    const { version, items } = this.integrity;
+    const expected = Object.hasOwn(items, name) ? items[name] : undefined;
+    if (!expected)
+      throw new CliError(
+        `"${name}" is not part of the yugen-ui ${version} registry this CLI was released with.`,
+        "Update @yugen-ui/cli for newer components, or pass --registry <url> to use another registry without checksums.",
+      );
+    const data = await this.fetch(name);
+    if (itemDigest(data) !== expected)
+      throw new CliError(
+        `Registry item "${name}" does not match the checksum shipped with @yugen-ui/cli (yugen-ui ${version}). Nothing was written.`,
+        `Please report it at https://github.com/${REPO}/security.`,
+      );
+    return data;
+  }
+
+  private async fetch(name: string): Promise<unknown> {
     if (!isUrl(this.base)) {
       const file = path.join(this.base, `${name}.json`);
       if (!fs.existsSync(file)) throw new CliError(`Registry item "${name}" not found in ${this.base}`);

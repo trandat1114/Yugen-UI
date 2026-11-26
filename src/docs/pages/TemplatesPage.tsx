@@ -226,7 +226,7 @@ function Actions({ t, c }: { t: TemplateInfo; c: Copy }) {
   return (
     <div className="flex flex-wrap gap-2">
       <Button asChild appearance="primary" icon={<Open16Regular />}>
-        <a href={templateStackBlitzUrl(t.dir)} target="_blank" rel="noreferrer">
+        <a href={templateStackBlitzUrl(t.dir)} target="_blank" rel="noreferrer" data-analytics="stackblitz-template">
           {c.stackblitz}
         </a>
       </Button>

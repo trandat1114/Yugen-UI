@@ -2,10 +2,11 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { Button, Field, Input, Link as TextLink, MessageBar } from "@/components/ui";
+import { HookForm, standardSchemaResolver } from "@/components/ui/HookForm/HookForm";
 import { useAdmin } from "../context";
 import { Link } from "../router";
 import { AuthCard } from "../ui";
-import { resetSchema, zodResolver } from "../validation";
+import { resetSchema } from "../validation";
 
 type Values = z.input<ReturnType<typeof resetSchema>>;
 
@@ -15,16 +16,12 @@ export default function ForgotPasswordPage() {
   const f = t.forgot;
   const schema = React.useMemo(() => resetSchema(t.form.errors), [t]);
   const [sentTo, setSentTo] = React.useState<string | null>(null);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<Values, unknown, Values>({ resolver: zodResolver(schema), mode: "onTouched", defaultValues: { email: "" } });
+  const form = useForm<Values, unknown, Values>({ resolver: standardSchemaResolver(schema), mode: "onTouched", defaultValues: { email: "" } });
 
-  const onSubmit = handleSubmit(async ({ email }) => {
+  const onSubmit = async ({ email }: Values) => {
     await api.requestPasswordReset(email);
     setSentTo(email);
-  });
+  };
 
   const back = (
     <TextLink asChild className="self-start text-body1">
@@ -42,15 +39,15 @@ export default function ForgotPasswordPage() {
           {back}
         </>
       ) : (
-        <form noValidate onSubmit={onSubmit} className="flex flex-col gap-4">
-          <Field label={t.form.email} required validationState={errors.email ? "error" : "none"} validationMessage={errors.email?.message}>
-            <Input type="email" autoComplete="email" {...register("email")} />
+        <HookForm form={form} onSubmit={onSubmit} className="flex flex-col gap-4">
+          <Field label={t.form.email} required>
+            <Input type="email" autoComplete="email" {...form.register("email")} />
           </Field>
-          <Button type="submit" appearance="primary" loading={isSubmitting}>
+          <Button type="submit" appearance="primary">
             {f.submit}
           </Button>
           {back}
-        </form>
+        </HookForm>
       )}
     </AuthCard>
   );

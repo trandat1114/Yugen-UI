@@ -11,6 +11,7 @@ import { COMPONENT_META_BY_SLUG, COMPONENTS_META } from "./docs/registry";
 import { DEFAULT_LOCALE, hrefOf, LEGACY_PREFIX, localePathOf, PREFIXED_LOCALE, pathOf, type Route } from "./docs/router";
 import { documentHead, routeMeta } from "./docs/seo";
 import { SITE } from "./docs/site";
+import { supportEnabled } from "./docs/support";
 
 export const ROUTES: Route[] = [
   { kind: "home" },
@@ -21,6 +22,7 @@ export const ROUTES: Route[] = [
   { kind: "news" },
   { kind: "community" },
   { kind: "contributors" },
+  ...(supportEnabled() ? [{ kind: "support" } as const] : []),
   ...CONCEPTS.map((c): Route => ({ kind: "concept", slug: c.meta.slug })),
   ...FOUNDATIONS.map((f): Route => ({ kind: "foundation", slug: f.slug })),
   ...COMPONENTS_META.map((c): Route => ({ kind: "component", slug: c.slug })),
@@ -48,6 +50,8 @@ export function sourcesOf(route: Route): string[] {
       return ["src/docs/pages/CommunityPage.tsx", "src/docs/roadmap.ts"];
     case "contributors":
       return ["src/docs/pages/ContributorsPage.tsx", "src/docs/contributors.json"];
+    case "support":
+      return ["src/docs/pages/SupportPage.tsx", "src/docs/support.ts"];
     case "concept":
       return [`src/docs/concepts/${route.slug}.tsx`, `src/docs/concepts/en/${route.slug}.tsx`];
     case "foundation":

@@ -22,6 +22,11 @@ export const en: Record<string, ComponentDocEn> = {
           "DataGridColumnPicker and DataGrid share hiddenColumns and columnOrder, both saved to localStorage. The menu stays open while you check columns; the hideable: false column (Customer) and the last visible column can't be unchecked. Drag an item in the menu (or press Alt + ↑ ↓) to change the column order; the grid follows right away. Hiding the sorted column keeps the row order, and the menu still shows the arrow on that column.",
       },
       {
+        title: "Column picker for dense tables",
+        description:
+          `compact: the button shows only the icon and the number of hidden columns; its label is still the button's name (give each table its own name when a page has several). mode="auto": a menu when the viewport is 768px or wider (breakpoint "3xl"), a bottom sheet below that, with one 44px row per column and a handle to reorder (drag, or Space then ↑ ↓). resettable brings back the table's default view (here: Email hidden, original order). The hideable: false column (Customer) shows a lock, still takes focus and is described as "Always shown". Make the window narrower than 768px to see the sheet.`,
+      },
+      {
         title: "Column resizing, pinned first column",
         description:
           "The handle receives focus when you Tab from a header cell: ← / → ±10px, Shift ±50px, double-click to fit the content. The sticky column stays in place when scrolling horizontally.",
@@ -102,6 +107,13 @@ export const en: Record<string, ComponentDocEn> = {
       "DataGridColumnPicker.sortState": "The sorted column shows an arrow in the menu, even while hidden.",
       "DataGridColumnPicker.align":
         "Menu alignment relative to the button. Inside a Toolbar, the button takes the Toolbar size and the subtle appearance.",
+      "DataGridColumnPicker.compact":
+        `The button shows only the icon and the number of hidden columns. The label (children or "Columns") stays the button's name for screen readers and voice control.`,
+      "DataGridColumnPicker.mode":
+        "auto: a menu when the viewport is at least breakpoint wide, a bottom sheet below that. sheet: always a Sheet (a side panel on wide screens). In the sheet, columns are reordered with a handle.",
+      "DataGridColumnPicker.breakpoint": "Minimum viewport width for the menu, the same tokens as Sheet: 3xl = 48rem (768px).",
+      "DataGridColumnPicker.resettable":
+        `Adds a "Reset columns" item (disabled when nothing changed). true: every column shown, in columns order; an object: the table's default view.`,
       "useDataGridSort / useDataGridSelection / useDataGridColumnVisibility / sortItems / getVisibleColumns / getOrderedColumns":
         "Logic you can use on its own, for example for server-side sorting, to drive the selection from a toolbar, or to build your own column picker.",
     },

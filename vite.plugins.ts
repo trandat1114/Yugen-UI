@@ -56,33 +56,46 @@ const VIRTUAL_ID = "virtual:yugen-type-exports";
 const RESOLVED_ID = "\0" + VIRTUAL_ID;
 
 /**
- * `import typeNames from "virtual:yugen-type-exports"` → tên mọi type/interface mà các module component export.
- * Converter StackBlitz / check-examples dùng để sinh `import { type X } from "yugen-ui"` (type không có lúc runtime).
+ * Files whose types `yugen-ui/dates` exports (#356): Calendar, DatePicker, DateTimePicker and their messages. A name
+ * that a root file (MonthPicker.tsx) exports as well stays a root name. Paths relative to components/ui.
+ */
+const DATE_TYPE_FILES = /^(?:Calendar\/[^/]+|DatePicker\/(?:DatePicker\.tsx|DateTimePicker\.tsx|messages\.ts))$/;
+
+/**
+ * `import typeNames, { dates } from "virtual:yugen-type-exports"` → tên mọi type/interface mà các module component
+ * export, và (`dates`) những tên chỉ có ở `yugen-ui/dates`. Converter StackBlitz / check-examples dùng để sinh
+ * `import { type X } from "yugen-ui"` / `"yugen-ui/dates"` (type không có lúc runtime).
  */
 export function yugenTypeExports(root: string): Plugin {
   const uiDir = path.join(root, "src", "components", "ui");
   const collect = () => {
     const names = new Set<string>();
+    const dates = new Set<string>();
     const walk = (dir: string) => {
       for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
         const file = path.join(dir, entry.name);
         if (entry.isDirectory()) walk(file);
         else if (/\.tsx?$/.test(entry.name) && !/\.(test|spec)\.tsx?$/.test(entry.name)) {
           const code = fs.readFileSync(file, "utf8");
-          for (const m of code.matchAll(/^export\s+(?:declare\s+)?(?:type|interface)\s+([A-Z]\w*)/gm)) names.add(m[1]);
+          const found = new Set<string>();
+          for (const m of code.matchAll(/^export\s+(?:declare\s+)?(?:type|interface)\s+([A-Z]\w*)/gm)) found.add(m[1]);
           for (const m of code.matchAll(/^export\s+(type\s+)?\{([^}]*)\}/gm))
             for (const part of m[2].split(",")) {
               const t = part.trim();
               if (!t) continue;
               const isType = Boolean(m[1]) || t.startsWith("type ");
               const name = t.replace(/^type\s+/, "").split(/\s+as\s+/).pop()!.trim();
-              if (isType && /^[A-Z]/.test(name)) names.add(name);
+              if (isType && /^[A-Z]/.test(name)) found.add(name);
             }
+          const inDates = DATE_TYPE_FILES.test(path.relative(uiDir, file).split(path.sep).join("/"));
+          for (const name of found) (inDates ? dates : names).add(name);
         }
       }
     };
     walk(uiDir);
-    return [...names].sort();
+    // A name a root file exports too (MonthPickerMessages, re-exported by MonthPicker.tsx) belongs to the root.
+    for (const name of names) dates.delete(name);
+    return { names: [...new Set([...names, ...dates])].sort(), dates: [...dates].sort() };
   };
   return {
     name: "yugen-type-exports",
@@ -90,7 +103,8 @@ export function yugenTypeExports(root: string): Plugin {
     load(id) {
       if (id !== RESOLVED_ID) return undefined;
       this.addWatchFile(uiDir);
-      return `export default ${JSON.stringify(collect())};`;
+      const { names, dates } = collect();
+      return `export default ${JSON.stringify(names)};\nexport const dates = ${JSON.stringify(dates)};`;
     },
   };
 }
@@ -129,9 +143,10 @@ export function runtimeExports(file: string, seen = new Set<string>()): string[]
 }
 
 /**
- * `import uiExports from "virtual:yugen-ui-exports"` → `{ barrel, folders }`: tên runtime mà `yugen-ui` (barrel
- * src/components/ui/index.ts) export, và thư mục component của từng tên. Docs dùng để suy ra lệnh cài / import StackBlitz mà
- * không phải nạp cả thư viện lúc chạy (trước đây là import.meta.glob eager mọi module component).
+ * `import uiExports from "virtual:yugen-ui-exports"` → `{ barrel, dates, folders }`: tên runtime mà `yugen-ui` (barrel
+ * src/components/ui/index.ts) và `yugen-ui/dates` (src/components/ui/dates.ts, #356) export, và thư mục component của
+ * từng tên. Docs dùng để suy ra lệnh cài / import StackBlitz mà không phải nạp cả thư viện lúc chạy (trước đây là
+ * import.meta.glob eager mọi module component).
  */
 export function yugenUiExports(root: string): Plugin {
   const uiDir = path.join(root, "src", "components", "ui");
@@ -151,7 +166,11 @@ export function yugenUiExports(root: string): Plugin {
     for (const rel of files) {
       for (const name of runtimeExports(path.join(uiDir, rel))) folders[name] ??= rel.split("/")[0];
     }
-    return { barrel: [...new Set(runtimeExports(path.join(uiDir, "index.ts")))].sort(), folders };
+    return {
+      barrel: [...new Set(runtimeExports(path.join(uiDir, "index.ts")))].sort(),
+      dates: [...new Set(runtimeExports(path.join(uiDir, "dates.ts")))].sort(),
+      folders,
+    };
   };
   return {
     name: "yugen-ui-exports",
@@ -177,6 +196,8 @@ export interface DocMeta {
   file: string;
   /** Có bản tiếng Anh trong src/docs/registry/en/<file>.ts. */
   translated?: true;
+  /** Thẻ chủ đề (src/docs/tags.ts), mảng chuỗi literal. */
+  tags?: string[];
 }
 
 /** Slug có trong `export const en = { … }` của một file src/docs/registry/en/*.ts (đọc tĩnh, không chạy file). */
@@ -272,6 +293,18 @@ export function extractDocsMeta(fileName: string, code: string): DocMeta[] {
       const text = stringValue(value);
       if (text === undefined) fail(value, `"${key}" phải là chuỗi literal để trích metadata lúc build (không dùng biến / biểu thức).`);
       meta[key] = text;
+    }
+    const tagsProp = obj.properties.find(
+      (p): p is ESTree.ObjectProperty => p.type === "Property" && !p.shorthand && p.kind === "init" && !p.method && propertyKey(p) === "tags",
+    );
+    if (tagsProp) {
+      const value = unwrapExpression(tagsProp.value as Expr);
+      if (value.type !== "ArrayExpression") fail(value, `"tags" phải là mảng chuỗi literal.`);
+      meta.tags = (value as ESTree.ArrayExpression).elements.map((el) => {
+        const text = el && el.type !== "SpreadElement" ? stringValue(el as Expr) : undefined;
+        if (text === undefined) return fail(el ?? value, `"tags" chỉ nhận chuỗi literal.`);
+        return text;
+      });
     }
     return meta as DocMeta;
   });
@@ -626,7 +659,7 @@ function cookTemplate(raw: string): { text: string; map: number[] } {
     } else {
       const n = raw[i + 1];
       if (n === "\r") i += raw[i + 2] === "\n" ? 3 : 2;
-      else if (n === "\n" || n === " " || n === " ") i += 2;
+      else if (n === "\n" || n === "\u2028" || n === "\u2029") i += 2;
       else if (n === "x") {
         push(String.fromCharCode(parseInt(raw.slice(i + 2, i + 4), 16)), i);
         i += 4;

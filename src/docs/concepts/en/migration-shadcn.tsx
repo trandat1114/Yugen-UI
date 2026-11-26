@@ -179,7 +179,7 @@ export default function Page() {
             row(["Drawer (vaul)"], ["Drawer", "DrawerSurface position=\"bottom\""], "No drag to close."),
             row(["DropdownMenu", "DropdownMenuContent", "DropdownMenuItem", "DropdownMenuLabel", "DropdownMenuSeparator", "DropdownMenuShortcut"], ["Menu", "MenuPopover", "MenuItem", "MenuGroupHeader", "MenuDivider", "MenuItem secondaryContent"], <><C>DropdownMenuCheckboxItem / RadioItem / Sub</C> → <C>MenuItemCheckbox / MenuItemRadio / MenuSub</C>.</>),
             row(["Field", "FieldLabel", "FieldDescription", "FieldError"], ["Field"], <>One component: <C>label</C>, <C>hint</C>, <C>validationState</C>, <C>validationMessage</C>.</>),
-            row(["Form (react-hook-form)"], ["Field"], "Use the form library you prefer and pass errors to validationMessage."),
+            row(["Form (react-hook-form)"], ["HookForm", "Field", "FormErrorSummary"], <><C>HookForm</C> from <C>yugen-ui/form</C>: Field reads its error by <C>name</C>; <C>standardSchemaResolver</C> for zod.</>),
             row(["Input Group"], ["Input contentBefore / contentAfter"], ""),
             row(["Input OTP", "InputOTPGroup", "InputOTPSlot"], ["InputOTP"], <><C>maxLength</C> → <C>length</C>; group slots with <C>groups={"{[3, 3]}"}</C>.</>),
             row(["Item"], ["List", "ListItem"], <><C>media</C>, <C>title</C>, <C>description</C>, <C>actions</C>.</>),

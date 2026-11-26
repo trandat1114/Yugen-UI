@@ -419,11 +419,21 @@ import { cn } from "@/lib/cn";
               thể dùng mọi component, nên khi gặp chúng file sinh ra quay về theme.css.
             </li>
             <li>
+              <C>theme-core.css</C> có brand Sakura và các token mọi component cần. Brand web và teams nằm ở{" "}
+              <C>yugen-ui/tokens/brands.css</C>: <C>yugen css</C> tự thêm khi mã của bạn đặt <C>brand=&quot;web&quot;</C> hoặc{" "}
+              <C>brand=&quot;teams&quot;</C>. Token biểu đồ đi kèm <C>sources/Chart.css</C>.
+            </li>
+            <li>
               Không dùng Tailwind: <C>yugen css --precompile</C> biên dịch cùng danh sách thành CSS thường để thay <C>styles.css</C>.
             </li>
             <li>
               Copy mã nguồn component (shadcn registry, <C>@yugen-ui/cli add</C>) thì không cần: Tailwind đã quét thư mục của app.{" "}
               <C>styles.css</C> (không dùng Tailwind) luôn chứa mọi component.
+            </li>
+            <li>
+              Nhúng Yugen vào trang có CSS không do bạn quản lý (CMS, widget, micro-frontend): import <C>yugen-ui/components.css</C>{" "}
+              thay cho <C>styles.css</C>. File này không reset toàn trang, không có style cho <C>html</C>, <C>body</C> hay{" "}
+              <C>::selection</C>; reset của Tailwind chỉ áp dụng bên trong <C>YugenProvider</C>.
             </li>
           </ul>
         </div>

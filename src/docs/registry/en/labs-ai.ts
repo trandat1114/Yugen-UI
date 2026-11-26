@@ -60,6 +60,126 @@ export const en: Record<string, ComponentDocEn> = {
     },
   },
 
+  voicewave: {
+    description:
+      "VoiceWave never opens the microphone or creates an AudioContext: the app passes levels (an array of 0–1, re-renders when it changes) or source, a function called once per animation frame while listening or speaking. With source the bars are updated through their transform, with no re-render and no timer or listener per bar. The bar count is fixed, so the width doesn't change with the data. Without data each state has a static shape; with reduced motion the frame loop doesn't run. The whole wave is role=\"img\" named after its state (messages.voiceWave), and the bars are hidden from screen readers.",
+    examples: [
+      { title: "Static levels", description: "levels is resampled to the bar count; align=\"bottom\" grows the bars from the bottom." },
+      { title: "States and sizes", description: "idle, muted and error lie flat; muted and error have their own color." },
+      { title: "Web Audio", description: "Read your AnalyserNode in source; the microphone permission and the AudioContext belong to the app." },
+    ],
+    dos: [
+      "Use source for a microphone stream, so nothing re-renders each frame.",
+      "Show the state as text nearby (Listening, Microphone muted) when it is the main signal on the screen.",
+      "Keep the bar count fixed within one interface.",
+    ],
+    donts: [
+      "Don't create an AudioContext or ask for the microphone only to draw the wave.",
+      "Don't use the wave's color as the only sign of a microphone error.",
+      "Don't put new levels into state every frame; use source.",
+    ],
+    props: {
+      state: "The state; sets the static shape, the color and the accessible name.",
+      levels: "Audio levels from 0 to 1, resampled to the bar count.",
+      source: "Called every animation frame while listening or speaking; updates the bars without a re-render.",
+      bars: "Number of bars (3–64).",
+      size: "Height of 20, 32 or 56 px.",
+      tone: "Color while listening or speaking.",
+      align: "Bars centered on the middle line, or growing from the bottom.",
+      label: "Accessible name; defaults to the state's name (messages.voiceWave).",
+      "resampleLevels(levels, count)": "The resampling used inside, also exported.",
+    },
+  },
+  transcript: {
+    description:
+      "Each turn has an id, speaker, text, role (user / assistant), timestamp and status (complete, streaming, error). The current turn (by default the streaming one, or activeId) gets an accent border, a “Speaking” label and aria-current, not only a color. The list is not a live region: with announce, each turn is read once when it completes and the history is never read again. Turns are memoized, so when a token arrives only that turn re-renders (renderText is called for that turn only). Give it a height and overflow-y-auto for a scroll box: autoScroll keeps it at the end while the reader is at the end, and stops when they scroll up to read.",
+    examples: [
+      { title: "Recognition errors and the empty state", description: "status=\"error\" shows the reason as text with an icon; with no turns, empty is shown." },
+    ],
+    dos: [
+      "Turn on announce when people aren't looking at the screen (calls, voice assistants).",
+      "Keep each turn's id stable and create a new object only for the turn that changed.",
+      "Give the scroll box a fixed height so autoScroll works.",
+    ],
+    donts: [
+      "Don't wrap Transcript in an aria-live region: the whole history would be read again.",
+      "Don't use color as the only sign of who is speaking.",
+      "Don't recreate every turn on each token; the old turns would re-render.",
+    ],
+    props: {
+      turns: "The turns: id, speaker, text, role, timestamp / time, status, error, avatar.",
+      activeId: "The current turn; defaults to the last streaming turn, null for none.",
+      autoScroll: "Keeps the view at the end as text arrives, while the reader is at the end.",
+      announce: "Reads each turn once when it completes (useAnnounce).",
+      loading: "Loading: aria-busy, and “Loading transcript…” while there are no turns.",
+      empty: "Content when there are no turns (defaults to messages.transcript.empty).",
+      renderText: "Replaces how text is shown; called only for the turn that changed.",
+      locale: "Time format of timestamp; defaults to the YugenProvider locale.",
+    },
+  },
+  callsurface: {
+    description:
+      "The components only receive state and callbacks: the connection and the microphone and camera permissions belong to the app. CallStatus says the state in words inside role=\"status\" (a change is read out); the duration sits outside it, so it isn't read every second, and the colored dot is only a secondary cue. CallControls is a toolbar: one Tab stop, arrow keys / Home / End between the buttons, disabled buttons skipped. CallControlButton has built-in mute, speaker, camera, hold (toggles with aria-pressed, a constant name and an icon that follows the state), add and end; confirm makes End need a second press within 4 seconds. layout=\"inline\" puts everything on one row for a panel or a bottom bar.",
+    examples: [
+      { title: "Connecting and failure", description: "The state always has words; label replaces the default text when the reason matters." },
+      { title: "One compact row", description: "layout=\"inline\" for a narrow panel; the middle content (Transcript, VoiceWave) moves to its own row." },
+    ],
+    dos: [
+      "Change state on real connection events (answered, on hold, network lost).",
+      "Use confirm on End when ending by mistake loses something (a recording, a meeting room).",
+      "Put Transcript or VoiceWave in children so everything sits in one named region.",
+    ],
+    donts: [
+      "Don't show the state with the dot's color only.",
+      "Don't change a toggle's label with its state; aria-pressed already says it.",
+      "Don't put the duration clock in a live region.",
+    ],
+    props: {
+      "CallSurface.name / avatar / description": "The other party; name also names the region (messages.call.surface).",
+      "CallSurface.state / duration": "State and duration, shown with CallStatus.",
+      "CallSurface.controls / children": "The control bar and the middle content.",
+      "CallSurface.layout": "A call screen or one compact row.",
+      "CallStatus.state": "The state, read in words (messages.call.states).",
+      "CallStatus.duration / label": "Duration (once connected) and replacement text.",
+      "CallControlButton.kind": "Built-in button: icon and label (messages.call.controls).",
+      "CallControlButton.pressed / onPressedChange": "State of a toggle (aria-pressed).",
+      "CallControlButton.confirm": "kind=\"end\": needs two presses within 4 seconds.",
+      "CallControlButton.label / icon": "Replace the label and the icon (custom button).",
+      "formatCallDuration(seconds)": "Seconds → m:ss or h:mm:ss.",
+    },
+  },
+  voiceassistant: {
+    description:
+      "Built from CallSurface, CallStatus, CallControls, VoiceWave and Transcript, so only those parts load. Everything is controlled from outside: state (idle, connecting, listening, thinking, speaking, ended, error), turns, levels or source for the wave, muted, and the onStart, onEnd, onRetry and onMutedChange callbacks. The component never opens the microphone or calls Web Speech, Web Audio or any service: your app wires its voice provider into these props. The state is always said in words in a status region (Listening, Thinking…, Speaking), so nobody has to read a color or the wave. The transcript reads each turn once when it completes (announce), never the history again. idle and ended show a Start talking button; error shows the reason and a Try again button.",
+    examples: [
+      { title: "Compact panel", description: "layout=\"inline\" for a panel beside the content; the transcript scrolls in a shorter box." },
+      { title: "Bottom sheet on phones", description: "Put VoiceAssistant in a Sheet with mode=\"bottom\": people drag it up to read the transcript." },
+      { title: "Error and retry", description: "error says why; Try again calls onRetry." },
+    ],
+    dos: [
+      "Update state from your voice provider's real events (speech started, processing, playing).",
+      "Pass source so the wave follows the microphone or the assistant's voice without a re-render per frame.",
+      "Say why in error (microphone blocked, network lost) so people know how to fix it.",
+    ],
+    donts: [
+      "Don't rely on the wave alone to show whether the assistant is listening or speaking.",
+      "Don't start listening before people press Start talking.",
+      "Don't read the whole transcript again after each sentence; announce already reads each turn when it completes.",
+    ],
+    props: {
+      "name / avatar / description": "The assistant's identity; name also names the region.",
+      state: "The state, read in words (messages.voiceAssistant).",
+      turns: "The turns; empty hides the transcript.",
+      "levels / source": "Data for VoiceWave.",
+      duration: "Session length while talking.",
+      "muted / onMutedChange": "The mute button.",
+      "onStart / onEnd / onRetry": "Start, end, retry.",
+      error: "Reason for the error (state=\"error\").",
+      announce: "Reads each turn once when it completes.",
+      "layout / transcriptClassName / actions": "Layout, class of the transcript box, extra buttons in the control bar.",
+      "CallSurface.statusLabel": "New: replaces CallSurface's state text (VoiceAssistant uses it for Thinking…, Speaking).",
+    },
+  },
   reasoning: {
     description:
       "Built on Collapsible (aria-expanded; the height animation turns off with reduced motion). autoOpen opens the block when reasoning starts and collapses it when done, unless the user has toggled it. The time is measured in an effect (Date.now() is never read during render), so it is safe for SSR; you can also pass duration. String content is rendered with a small StreamingMarkdown and has aria-busy while running.",

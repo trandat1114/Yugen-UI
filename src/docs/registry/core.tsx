@@ -42,6 +42,7 @@ import {
   TabsTrigger,
 } from "@/components/ui";
 import type { ComponentDoc } from "../types";
+import { brokenPhoto, logo, portraits } from "../sample-assets";
 
 
 /* ------------------------------------------------------------------ demos */
@@ -297,7 +298,7 @@ export const docs: ComponentDoc[] = [
       { name: "iconPosition", type: `"before" | "after"`, defaultValue: `"before"`, description: "Vị trí icon so với nhãn." },
       { name: "iconOnly", type: "boolean", defaultValue: "tự suy ra", description: "Tự bật khi có icon mà không có children." },
       { name: "asChild", type: "boolean", defaultValue: "false", description: "Render vào phần tử con (vd <a>) thay vì <button>." },
-      { name: "loading", type: "boolean", defaultValue: "false", description: "Đang xử lý: Spinner thay icon (hoặc ở giữa nút), giữ độ rộng, aria-busy + aria-disabled, bỏ qua click nhưng vẫn focus được." },
+      { name: "loading", type: "boolean", defaultValue: "false", description: "Đang xử lý: Spinner thay icon (hoặc ở giữa nút), giữ độ rộng, aria-busy + aria-disabled, bỏ qua click nhưng vẫn focus được. Trong Form / HookForm, nút type=\"submit\" tự loading khi đang gửi." },
       { name: "loadingText", type: "ReactNode", description: "Nhãn khi đang xử lý (vd. “Đang lưu…”); nút luôn rộng bằng nhãn dài hơn nên không xê dịch." },
     ],
   },
@@ -502,12 +503,39 @@ export const docs: ComponentDoc[] = [
           </>
         ),
       },
+      {
+        title: "Ảnh",
+        description:
+          "src cho ảnh; ảnh không tải được thì quay về chữ viết tắt; square cho logo. image truyền srcSet, sizes, loading… vào thẻ <img>, renderImage dùng component ảnh của framework như <Image> của Next.js.",
+        code: `<Avatar name="Alex Chen" src={portraits[0]} size={48} />
+<Avatar name="Maria Garcia" src={brokenPhoto} size={48} color="colorful" />
+<Avatar name="Design Team" src={logo} size={48} shape="square" image={{ loading: "lazy" }} />`,
+        render: () => (
+          <>
+            <Avatar name="Alex Chen" src={portraits[0]} size={48} />
+            <Avatar name="Maria Garcia" src={brokenPhoto} size={48} color="colorful" />
+            <Avatar name="Design Team" src={logo} size={48} shape="square" image={{ loading: "lazy" }} />
+          </>
+        ),
+      },
     ],
     dos: ["Dùng color=\"colorful\" khi có nhiều người cạnh nhau để dễ phân biệt.", "Dùng square cho thực thể không phải người."],
     donts: ["Không truyền name rỗng hoặc giả.", "Không tự đặt màu nền avatar bằng className."],
     props: [
       { name: "name", type: "string", description: "Bắt buộc. Sinh initials, màu và aria-label." },
       { name: "src", type: "string", description: "Ảnh đại diện; fallback về initials nếu lỗi." },
+      {
+        name: "image",
+        type: "{ srcSet, sizes, loading, decoding, crossOrigin, referrerPolicy, fetchPriority }",
+        description: "Thuộc tính cho thẻ <img>. Tên vẫn nằm trên khung role=\"img\".",
+      },
+      {
+        name: "renderImage",
+        type: "(props) => ReactNode",
+        description: "Vẽ ảnh bằng component khác, vd. (props) => <Image {...props} width={48} height={48} /> của Next.js. Vẫn có chữ viết tắt khi ảnh lỗi.",
+      },
+      { name: "onLoadingStatusChange", type: `(status: "loading" | "loaded" | "error") => void`, description: "Trạng thái tải ảnh, gọi lại cho mỗi src." },
+      { name: "fallbackDelay", type: "number", defaultValue: "400", description: "Số ms chờ trước khi hiện chữ viết tắt trong lúc ảnh đang tải." },
       { name: "size", type: "20 | 24 | 32 | 40 | 48 | 64 | 96", defaultValue: "32", description: "Kích thước px." },
       { name: "color", type: `"neutral" | "brand" | "colorful"`, defaultValue: `"neutral"`, description: "Bảng màu." },
       { name: "shape", type: `"circular" | "square"`, defaultValue: `"circular"`, description: "Hình dạng." },
@@ -813,7 +841,8 @@ export const docs: ComponentDoc[] = [
     props: [
       { name: "label", type: "ReactNode", description: "Nhãn bấm được." },
       { name: "checked / defaultChecked", type: `boolean | "indeterminate"`, description: "Controlled / uncontrolled." },
-      { name: "onCheckedChange", type: `(checked: boolean | "indeterminate") => void`, description: "Callback khi đổi." },
+      { name: "onCheckedChange", type: "(checked: boolean) => void", description: "Callback khi đổi (bấm hay Space luôn cho boolean)." },
+      { name: "name / value / required / form", type: "string / string / boolean / string", description: "Thuộc tính của <input> gốc: giá trị đi theo form, FormData và autofill. ref trỏ tới HTMLInputElement (type=\"checkbox\")." },
       { name: "size", type: `"medium" | "large"`, defaultValue: `"medium"`, description: "Ô 16 / 20px." },
       { name: "labelPosition", type: `"after" | "before"`, defaultValue: `"after"`, description: "Vị trí label." },
     ],
@@ -867,6 +896,7 @@ export const docs: ComponentDoc[] = [
       { name: "label", type: "ReactNode", description: "Nhãn." },
       { name: "checked / defaultChecked", type: "boolean", description: "Controlled / uncontrolled." },
       { name: "onCheckedChange", type: "(checked: boolean) => void", description: "Callback khi đổi." },
+      { name: "name / value / required / form", type: "string / string / boolean / string", description: "Thuộc tính của <input> gốc: giá trị đi theo form, FormData và autofill. ref trỏ tới HTMLInputElement (type=\"checkbox\" role=\"switch\")." },
       { name: "labelPosition", type: `"after" | "before"`, defaultValue: `"after"`, description: "Vị trí label." },
       { name: "material", type: `"glass"`, description: "Yugen Labs — thumb thành glass và dài ra khi đang nhấn." },
     ],

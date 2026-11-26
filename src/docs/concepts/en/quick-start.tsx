@@ -202,7 +202,7 @@ export default function Page() {
           <CodeBlock code={TEMPLATE_COMMAND} />
           <P>
             The starter comes with a remembered theme choice, toast, an <C>@/</C> alias, SEO basics and a welcome page to delete when you
-            start. Swap <C>starter</C> for <C>saas</C> (8-page SaaS app), <C>blog</C> (Markdown blog), <C>dashboard</C>, <C>ai-chat</C>,{" "}
+            start. Swap <C>starter</C> for <C>saas</C> (9-page SaaS app), <C>blog</C> (Markdown blog), <C>dashboard</C>, <C>ai-chat</C>,{" "}
             <C>glass</C> (travel journal with glass navigation), <C>landing</C> (product landing page), <C>admin</C> (back office: tables, forms, sign-in),{" "}
             <C>next-starter</C> (Next.js App Router), <C>docs</C> (Markdown documentation site) or{" "}
             <C>store</C> (shop: cart, multi-step checkout), or drop <C>--template</C> to pick in the terminal. More options on <A href={docsPath("/concepts/cli")}>@yugen-ui/cli</A>.
@@ -325,6 +325,11 @@ export default function Page() {
             <C>yugen-ui/messages-en</C> and <C>yugen-ui/messages-vi</C>. <C>cn</C> and the brand color helpers are only on the root.{" "}
             <C>readAppShellCookie</C> runs in a Server Component only when imported from <C>yugen-ui</C>; <C>yugenHtmlAttributes</C> and{" "}
             <C>yugenThemeScript</C> when imported from <C>yugen-ui</C> or <C>yugen-ui/YugenProvider/document</C>.
+          </P>
+          <P>
+            Calendar, DatePicker, DateRangePicker and DateTimePicker are not on the root: they need react-day-picker, an optional peer
+            dependency. Install it (<C>npm i react-day-picker</C>) and import them from <C>yugen-ui/dates</C> (or{" "}
+            <C>yugen-ui/Calendar</C>, <C>yugen-ui/DatePicker</C>). An app without dates installs no date library.
           </P>
           <P>
             TypeScript with <C>moduleResolution: node</C> (node10) does not read <C>exports</C>, so it finds no types for subpaths there:

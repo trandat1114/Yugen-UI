@@ -29,11 +29,37 @@ export interface RoadmapRelease {
   items: RoadmapItem[];
 }
 
-export const ROADMAP_UPDATED = "2026-11-09";
+export const ROADMAP_UPDATED = "2026-11-23";
 export const PROJECT_URL = "https://github.com/users/trandat1114/projects/6";
 
 export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
   now: [
+    {
+      milestone: "0.17.0",
+      kind: "minor",
+      vi: "Đưa sớm các thay đổi phá vỡ API của 1.0, thêm Form, biểu đồ mới, BentoGrid và component cho voice, bài viết.",
+      en: "The 1.0 breaking changes ahead of time, plus Form, new charts, BentoGrid and components for voice and articles.",
+      items: [
+        { status: "done", issue: 357, vi: "Input gốc cho Checkbox, Switch và RadioGroup", en: "Native inputs for Checkbox, Switch and RadioGroup" },
+        { status: "done", issue: 356, vi: "Phần ngày tháng thành peer tuỳ chọn (yugen-ui/dates)", en: "The date stack as an optional peer (yugen-ui/dates)" },
+        { status: "done", issue: 354, vi: "Phân lớp CSS: token trong @layer theme, nhóm token tuỳ chọn, components.css không reset toàn cục", en: "CSS layering: tokens in @layer theme, opt-in token groups, components.css without a global reset" },
+        { status: "done", issue: 371, vi: "Kiểu prop riêng của Yugen cho Calendar và Resizable", en: "Yugen-owned prop types for Calendar and Resizable" },
+        { status: "done", issue: 162, vi: "Form: kiểm tra dữ liệu, tóm tắt lỗi, react-hook-form (yugen-ui/form)", en: "Form: validation, an error summary, react-hook-form (yugen-ui/form)" },
+        { status: "done", issue: 401, vi: "Persona nhiều avatar, tuỳ chọn ảnh cho Avatar", en: "Persona with several avatars, image options for Avatar" },
+        { status: "doing", issue: 424, vi: "RadarChart: lưới đa giác / tròn / không lưới, bàn phím, bảng dữ liệu, ngân sách kích thước", en: "RadarChart: polygon, circle or no grid, keyboard, data table, size budget" },
+        { status: "doing", issue: 431, vi: "PieChart và RadialChart, các biến thể theo gallery", en: "PieChart and RadialChart, with the gallery variants" },
+        { status: "planned", issue: 433, vi: "Biểu đồ Area, Bar, Line: đủ biến thể, tooltip thống nhất, benchmark", en: "Area, Bar and Line charts: full variant set, one tooltip contract, benchmarks" },
+        { status: "doing", issue: 434, vi: "BentoGrid: lưới card responsive, truy cập được, có benchmark", en: "BentoGrid: a responsive, accessible card grid with a benchmark" },
+        { status: "doing", issue: 439, vi: "Timeline chạy theo vị trí cuộn, trạng thái từng mục", en: "Timeline that follows the scroll, with a status per item" },
+        { status: "doing", issue: 438, vi: "TeachingPopover làm tối phần còn lại của trang (spotlight)", en: "TeachingPopover spotlight that dims the rest of the page" },
+        { status: "planned", issue: 443, vi: "AI voice: VoiceWave, Transcript, giao diện cuộc gọi, block VoiceAssistant", en: "AI voice: VoiceWave, Transcript, calling UI and a VoiceAssistant block" },
+        { status: "planned", issue: 446, vi: "Article và Blog từ Markdown, trình render Markdown nhanh hơn", en: "Article and Blog from Markdown, a faster Markdown renderer" },
+        { status: "planned", issue: 445, vi: "Tìm kiếm trong docs theo nhóm: AI, voice, Article, Blog", en: "Docs search by domain: AI, voice, Article, Blog" },
+        { status: "planned", issue: 412, vi: "Bảng dữ liệu cho doanh nghiệp: mật độ, chọn cột gọn, khung app vite-saas", en: "Enterprise data tables: density, a compact column picker, a vite-saas app shell" },
+      ],
+    },
+  ],
+  next: [
     {
       milestone: "1.0.0",
       kind: "major",
@@ -42,17 +68,15 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       items: [
         { status: "planned", issue: 65, vi: "Rà soát API, gỡ deprecation, quyết định về class spacing viết hoa", en: "API review, deprecations removed, decision on upper-case spacing" },
         { status: "done", issue: 63, vi: "SEO: URL theo đường dẫn, prerender từng trang, sitemap", en: "SEO: path URLs, prerendered pages, sitemap" },
-        { status: "planned", issue: 162, vi: "Form: kiểm tra dữ liệu và tóm tắt lỗi", en: "Form: validation and an error summary" },
+        { status: "planned", issue: 164, vi: "Codemod 0.x → 1.0 (yugen migrate) cho các tên và đường import đã đổi", en: "Codemods 0.x → 1.0 (yugen migrate) for the renamed props and moved imports" },
         { status: "planned", issue: 163, vi: "Thư viện block 2.0 (marketing, ứng dụng, thương mại), cài bằng CLI", en: "Block library 2.0 (marketing, app, commerce), installable with the CLI" },
-        { status: "planned", issue: 164, vi: "Codemod 0.x → 1.0 (yugen migrate) cho các tên đã đổi", en: "Codemods 0.x → 1.0 (yugen migrate) for the renamed props" },
-        { status: "planned", issue: 371, vi: "Kiểu prop riêng của Yugen cho Calendar và Resizable (không lộ kiểu của thư viện khác)", en: "Yugen-owned prop types for Calendar and Resizable (no third-party types in public props)" },
-        { status: "planned", issue: 354, vi: "Phân lớp CSS: token trong @layer theme, nhóm token tuỳ chọn, styles.css không reset toàn cục", en: "CSS layering: tokens in @layer theme, opt-in token groups, no global reset from styles.css" },
-        { status: "planned", issue: 356, vi: "Phần ngày tháng thành peer tuỳ chọn (yugen-ui/dates)", en: "The date stack as an optional peer (yugen-ui/dates)" },
-        { status: "planned", issue: 357, vi: "Input gốc cho Checkbox, Switch và RadioGroup", en: "Native inputs for Checkbox, Switch and RadioGroup" },
+        { status: "planned", issue: 356, vi: "Lưới lịch và splitter của riêng Yugen", en: "Yugen's own calendar grid and splitter" },
+        { status: "planned", issue: 342, vi: "Rà soát hiệu năng: bundle, CSS, runtime và build", en: "Performance audit: bundle, CSS, runtime and build" },
+        { status: "planned", issue: 384, vi: "Bảo mật chuỗi cung ứng cho cả ba gói npm", en: "Supply chain security for the three npm packages" },
       ],
     },
   ],
-  next: [
+  later: [
     {
       milestone: "Backlog",
       kind: "backlog",
@@ -64,7 +88,6 @@ export const ROADMAP: Record<RoadmapStage, RoadmapRelease[]> = {
       ],
     },
   ],
-  later: [],
 };
 
 export const STAGE_LABEL: Record<RoadmapStage, { vi: string; en: string }> = {

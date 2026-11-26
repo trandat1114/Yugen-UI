@@ -122,7 +122,7 @@ function OptionLabel({ name, detail, aside }: { name: string; detail: string; as
 
 const optionClass = [
   "w-full rounded-medium border border-stroke-1 p-1 [&>label]:flex [&>label]:flex-1",
-  "has-[button[data-state=checked]]:border-brand-stroke has-[button[data-state=checked]]:bg-brand-background-2",
+  "has-checked:border-brand-stroke has-checked:bg-brand-background-2",
 ].join(" ");
 
 function ShippingStep({ form, subtotal }: { form: UseFormReturn<ShippingValues>; subtotal: number }) {

@@ -110,7 +110,8 @@ describe("Skeleton presets", () => {
   it("SkeletonTable: rows × columns (+ dòng tiêu đề), lưới theo số cột", () => {
     const { container, rerender } = render(<SkeletonTable rows={2} columns={3} />);
     expect(items(screen.getByRole("progressbar"))).toHaveLength(9);
-    expect(container.querySelector<HTMLElement>(".grid")!.style.gridTemplateColumns).toBe("repeat(3, minmax(0, 1fr))");
+    // jsdom 31 serialize `0` thành `0px`.
+    expect(container.querySelector<HTMLElement>(".grid")!.style.gridTemplateColumns).toMatch(/^repeat\(3, minmax\(0(px)?, 1fr\)\)$/);
     rerender(<SkeletonTable rows={1} columns={0} header={false} />);
     expect(items(screen.getByRole("progressbar"))).toHaveLength(1);
   });

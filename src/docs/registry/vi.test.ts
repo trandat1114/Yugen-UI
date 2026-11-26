@@ -28,6 +28,8 @@ const KEEP: (string | RegExp)[] = [
   /^(© )?(Sakura|Fluent 2|Yugen Labs|Figma|React|TypeScript|Tailwind CSS|Radix UI|Vite|Vitest|Playwright|Theme Designer|Web|Wi-Fi|Pro)\b/,
   /^(Button|Combobox|DataGrid|DatePicker|Dialog|Drawer|Sheet|Tabs|Toast|TimePicker|Breadcrumb|Terminal)\b/,
   "Email",
+  // Tên trình duyệt (ví dụ biểu đồ theo trình duyệt).
+  /^(Chrome|Safari|Firefox|Edge)$/,
   "Authorization",
   "Color", // tên trang Fluent 2 được trích dẫn
   "WCAG 2.2 — Contrast (Minimum)",
@@ -48,7 +50,7 @@ const KEEP: (string | RegExp)[] = [
   /^size \d+ · (regular|medium|semibold|bold)$/,
   // TimePicker đặt locale en-US cạnh vi-VN; tên prop trong demo.
   "Time (en-US)",
-  /^[a-z]+( \/ [a-z]+[A-Za-z]*)+$/,
+  /^[a-z]+( \/ [a-zA-Z]+){1,3}$/,
   /^title, description, toolbar/,
 ];
 

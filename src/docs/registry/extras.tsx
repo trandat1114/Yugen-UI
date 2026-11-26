@@ -38,6 +38,8 @@ import { MenuButton } from "@/components/ui/MenuButton/MenuButton";
 import { CounterBadge } from "@/components/ui/CounterBadge/CounterBadge";
 import { PresenceBadge } from "@/components/ui/PresenceBadge/PresenceBadge";
 import { ColorSwatch, EmptySwatch, ImageSwatch, SwatchPicker } from "@/components/ui/SwatchPicker/SwatchPicker";
+import { BentoGrid, BentoGridItem } from "@/components/ui/BentoGrid/BentoGrid";
+import { scenery } from "../sample-assets";
 import {
   TeachingPopover,
   TeachingPopoverBody,
@@ -1403,6 +1405,215 @@ function SwatchPickerDemo() {
     ],
   },
 
+  /* ------------------------------------------------------------ BentoGrid */
+  {
+    slug: "bentogrid",
+    name: "BentoGrid",
+    category: "Bố cục",
+    lead: "BentoGrid ghép các ô nội dung có kích thước khác nhau thành một bố cục responsive, vẫn giữ đúng thứ tự đọc.",
+    description:
+      "Bố cục CSS Grid ưu tiên CSS, không đo layout bằng JavaScript. BentoGridItem hỗ trợ header, title, description, media, icon, action và link card; colSpan / rowSpan nhận số hoặc object theo breakpoint. Demo dùng ảnh SVG placeholder sinh tại chỗ, không phụ thuộc mạng; copy ngắn để dễ quét và không bị tràn chữ.",
+    importCode: `import { BentoGrid, BentoGridItem } from "@/components/ui";`,
+    hero: {
+      title: "BentoGrid",
+      code: `<BentoGrid columns={{ base: 1, sm: 2, lg: 4 }}>
+  <BentoGridItem
+    colSpan={{ base: 1, lg: 2 }}
+    rowSpan={{ base: 1, lg: 2 }}
+    header={<img src={scenery[0].src} alt="" loading="lazy" decoding="async" />}
+    title="Overview"
+    description="Primary tile"
+  />
+  <BentoGridItem title="Usage" description="82%" />
+  <BentoGridItem title="Users" description="12.4K" />
+</BentoGrid>`,
+      render: () => (
+        <BentoGrid columns={{ base: 1, sm: 2, lg: 4 }}>
+          <BentoGridItem
+            colSpan={{ base: 1, lg: 2 }}
+            rowSpan={{ base: 1, lg: 2 }}
+            header={<img src={scenery[0].src} alt="" loading="lazy" decoding="async" />}
+            title="Overview"
+            description="Primary tile"
+          />
+          <BentoGridItem title="Usage" description="82%" />
+          <BentoGridItem title="Users" description="12.4K" />
+        </BentoGrid>
+      ),
+    },
+    examples: [
+      {
+        title: "Header & content bất đối xứng",
+        description: "Ô lớn giữ phần chính; các ô phụ lấp vào cùng grid mà không đổi thứ tự đọc.",
+        code: `<BentoGrid columns={{ base: 1, md: 3 }}>
+  <BentoGridItem
+    colSpan={{ base: 1, md: 2 }}
+    rowSpan={{ base: 1, md: 2 }}
+    header={<img src={scenery[1].src} alt="" loading="lazy" decoding="async" />}
+    title="Generate"
+    description="Primary story"
+  />
+  <BentoGridItem title="Review" description="24 notes" />
+  <BentoGridItem title="Tone" description="82% positive" />
+</BentoGrid>`,
+        render: () => (
+          <BentoGrid columns={{ base: 1, md: 3 }}>
+            <BentoGridItem
+              colSpan={{ base: 1, md: 2 }}
+              rowSpan={{ base: 1, md: 2 }}
+              header={<img src={scenery[1].src} alt="" loading="lazy" decoding="async" />}
+              title="Generate"
+              description="Primary story"
+            />
+            <BentoGridItem title="Review" description="24 notes" />
+            <BentoGridItem title="Tone" description="82% positive" />
+          </BentoGrid>
+        ),
+      },
+      {
+        title: "Lưới 2 cột",
+        description: "Bố cục đều, dễ quét.",
+        code: `<BentoGrid columns={{ base: 1, md: 2 }}>
+  <BentoGridItem header={<img src={scenery[2].src} alt="" />} title="Dawn" description="New ideas" />
+  <BentoGridItem header={<img src={scenery[3].src} alt="" />} title="Digital" description="More reach" />
+  <BentoGridItem header={<img src={scenery[4].src} alt="" />} title="Design" description="Clear defaults" />
+  <BentoGridItem title="Learn" description="Keep going" />
+</BentoGrid>`,
+        render: () => (
+          <BentoGrid columns={{ base: 1, md: 2 }}>
+            <BentoGridItem header={<img src={scenery[2].src} alt="" loading="lazy" decoding="async" />} title="Dawn" description="New ideas" />
+            <BentoGridItem header={<img src={scenery[3].src} alt="" loading="lazy" decoding="async" />} title="Digital" description="More reach" />
+            <BentoGridItem header={<img src={scenery[4].src} alt="" loading="lazy" decoding="async" />} title="Design" description="Clear defaults" />
+            <BentoGridItem title="Learn" description="Keep going" />
+          </BentoGrid>
+        ),
+      },
+      {
+        title: "Link cards & action cells",
+        description: "Một link, một hành động; action cell cho nhiều thao tác.",
+        code: `<BentoGrid columns={{ base: 1, md: 3 }}>
+  <BentoGridItem href="/reports" title="Reports" description="Open" />
+  <BentoGridItem title="Settings" description="Manage" action={<Button>Open</Button>} />
+</BentoGrid>`,
+        render: () => (
+          <BentoGrid columns={{ base: 1, md: 3 }}>
+            <BentoGridItem href="#reports" title="Reports" description="Open" />
+            <BentoGridItem title="Settings" description="Manage" action={<Button>Open</Button>} />
+          </BentoGrid>
+        ),
+      },
+      {
+        title: "Ảnh & responsive spans",
+        description: "Truyền ảnh trực tiếp; span nhỏ ở mobile.",
+        code: `<BentoGrid columns={{ base: 1, sm: 2, lg: 4 }}>
+  <BentoGridItem
+    colSpan={{ base: 1, lg: 3 }}
+    header={<img src={scenery[0].src} alt="" />}
+    title="Start"
+    description="No overflow"
+  />
+</BentoGrid>`,
+        render: () => (
+          <BentoGrid columns={{ base: 1, sm: 2, lg: 4 }}>
+            <BentoGridItem
+              colSpan={{ base: 1, lg: 3 }}
+              header={<img src={scenery[0].src} alt="" loading="lazy" decoding="async" />}
+              title="Start"
+              description="No overflow"
+            />
+          </BentoGrid>
+        ),
+      },
+      {
+        title: "Ô số liệu",
+        description: "Số lớn trong children, tiêu đề nói số đó là gì; gap=\"small\" cho bảng điều khiển dày.",
+        code: `<BentoGrid columns={{ base: 1, sm: 2, lg: 4 }} gap="small">
+  <BentoGridItem colSpan={{ base: 1, sm: 2 }} title="Monthly revenue" description="Up 12% from October">
+    <p className="text-title1 font-semibold text-foreground-1 tabular-nums">$48,210</p>
+  </BentoGridItem>
+  <BentoGridItem title="Active users">
+    <p className="text-title2 font-semibold text-foreground-1 tabular-nums">12,431</p>
+  </BentoGridItem>
+  <BentoGridItem title="Churn">
+    <p className="text-title2 font-semibold text-foreground-1 tabular-nums">1.8%</p>
+  </BentoGridItem>
+</BentoGrid>`,
+        render: () => (
+          <BentoGrid columns={{ base: 1, sm: 2, lg: 4 }} gap="small">
+            <BentoGridItem colSpan={{ base: 1, sm: 2 }} title="Monthly revenue" description="Up 12% from October">
+              <p className="text-title1 font-semibold text-foreground-1 tabular-nums">$48,210</p>
+            </BentoGridItem>
+            <BentoGridItem title="Active users">
+              <p className="text-title2 font-semibold text-foreground-1 tabular-nums">12,431</p>
+            </BentoGridItem>
+            <BentoGridItem title="Churn">
+              <p className="text-title2 font-semibold text-foreground-1 tabular-nums">1.8%</p>
+            </BentoGridItem>
+          </BentoGrid>
+        ),
+      },
+      {
+        title: "Trong khung hẹp",
+        description: "breakpoints=\"container\": số cột theo bề rộng của chính khung chứa (panel, card) thay vì màn hình.",
+        code: `<div className="w-full max-w-sm rounded-xlarge border border-stroke-2 p-3">
+  <BentoGrid breakpoints="container" columns={{ base: 1, sm: 2 }} gap="small">
+    <BentoGridItem title="Inbox" description="3 new" />
+    <BentoGridItem title="Tasks" description="5 due today" />
+    <BentoGridItem colSpan={{ base: 1, sm: 2 }} title="Calendar" description="Next: design review at 2 pm" />
+  </BentoGrid>
+</div>`,
+        render: () => (
+          <div className="w-full max-w-sm rounded-xlarge border border-stroke-2 p-3">
+            <BentoGrid breakpoints="container" columns={{ base: 1, sm: 2 }} gap="small">
+              <BentoGridItem title="Inbox" description="3 new" />
+              <BentoGridItem title="Tasks" description="5 due today" />
+              <BentoGridItem colSpan={{ base: 1, sm: 2 }} title="Calendar" description="Next: design review at 2 pm" />
+            </BentoGrid>
+          </div>
+        ),
+      },
+      {
+        title: "Chuyển từ lưới tự viết",
+        description: "Thay div grid + Card bằng BentoGrid: span theo breakpoint, heading và link card có sẵn.",
+        code: `// Before: a hand-made grid with Card and column classes (md:col-span-2 on the wide card).
+
+// After: spans per breakpoint, heading levels and link cards come with the item.
+<BentoGrid columns={{ base: 1, md: 3 }}>
+  <BentoGridItem colSpan={{ base: 1, md: 2 }} title="Getting started" description="Install and import your first component." href="#start" />
+  <BentoGridItem title="Themes" description="Light, dark and high contrast." href="#themes" />
+</BentoGrid>`,
+        render: () => (
+          <BentoGrid columns={{ base: 1, md: 3 }}>
+            <BentoGridItem colSpan={{ base: 1, md: 2 }} title="Getting started" description="Install and import your first component." href="#start" />
+            <BentoGridItem title="Themes" description="Light, dark and high contrast." href="#themes" />
+          </BentoGrid>
+        ),
+      },
+    ],
+    dos: [
+      "Đặt nội dung quan trọng trước trong DOM; span chỉ thay đổi bố cục thị giác.",
+      "Dùng link card cho một hành động chính, hoặc action cell cho nhiều control.",
+      "Giữ số ô vừa phải và dùng Grid/List thường khi nội dung cần quét nhanh.",
+      "Dùng ảnh placeholder có alt phù hợp; ảnh chỉ để trang trí thì dùng alt=\"\".",
+      "Giữ title và description ngắn để ô tự giãn theo nội dung, không cắt chữ.",
+    ],
+    donts: [
+      "Không đặt link khác trong title hoặc children của link card; nút riêng thì đưa vào action.",
+      "Không dùng span để đảo thứ tự đọc trên mobile.",
+      "Không gắn listener hoặc ResizeObserver cho từng ô để đo layout; dùng breakpoints=\"container\" khi lưới nằm trong khung hẹp.",
+      "Không dùng Bento cho danh sách dài cần quét nhanh (bảng, kết quả tìm kiếm): dùng List hoặc Table.",
+    ],
+    props: [
+      { name: "BentoGrid.columns", type: "BentoResponsive", defaultValue: "{ base: 1, sm: 2, lg: 4 }", description: "Số cột theo breakpoint (1–6)." },
+      { name: "BentoGrid.gap", type: `"small" | "medium" | "large"`, defaultValue: `"medium"`, description: "Khoảng cách giữa các ô." },
+      { name: "BentoGrid.breakpoints", type: `"viewport" | "container"`, defaultValue: `"viewport"`, description: "Breakpoint theo màn hình hoặc theo bề rộng của khung chứa (container query)." },
+      { name: "BentoGridItem.colSpan / rowSpan", type: "BentoResponsive", defaultValue: "1", description: "Số track mà ô chiếm theo breakpoint." },
+      { name: "BentoGridItem.title / titleAs", type: "ReactNode / heading", defaultValue: `titleAs="h3"`, description: "Tiêu đề và phần tử heading; dùng div khi trang đã có hierarchy riêng." },
+      { name: "BentoGridItem.header / description / media / icon / action", type: "ReactNode", description: "Header trực quan ở đầu ô và các slot nội dung tuỳ chọn." },
+      { name: "BentoGridItem.href / target / rel", type: "string", description: "Link card: tiêu đề thành link, vùng bấm phủ cả ô, mô tả đọc kèm link. action vẫn bấm được và không nằm trong link. Cần title." },
+    ],
+  },
+
   /* ------------------------------------------------------------ TeachingPopover */
   {
     slug: "teachingpopover",
@@ -1410,7 +1621,7 @@ function SwatchPickerDemo() {
     category: "Bề mặt & overlay",
     lead: "TeachingPopover giới thiệu tính năng mới hoặc hướng dẫn từng bước, gắn ngay cạnh phần tử liên quan.",
     description:
-      "Dựng trên Popover (shadow-16, có mũi tên). Gồm Header (icon + tiêu đề nhỏ + nút đóng), Body (ảnh minh hoạ tuỳ chọn, tiêu đề, nội dung), Footer (nút chính + nút phụ) và Carousel cho nhiều bước (\"1/3\", chấm điều hướng, Quay lại / Tiếp / Hoàn tất). appearance=\"brand\" phủ nền brand cho bề mặt nhỏ này.",
+      "Dựng trên Popover (shadow-16, có mũi tên). Gồm Header (icon + tiêu đề nhỏ + nút đóng), Body (ảnh minh hoạ tuỳ chọn, tiêu đề, nội dung), Footer (nút chính + nút phụ) và Carousel cho nhiều bước (\"1/3\", chấm điều hướng, Quay lại / Tiếp / Hoàn tất). appearance=\"brand\" phủ nền brand cho bề mặt nhỏ này; focus=\"spotlight\" làm tối phần còn lại của viewport để tập trung vào hướng dẫn.",
     importCode: `import {
   TeachingPopover, TeachingPopoverTrigger, TeachingPopoverSurface, TeachingPopoverHeader,
   TeachingPopoverBody, TeachingPopoverTitle, TeachingPopoverFooter, TeachingPopoverCarousel,
@@ -1476,6 +1687,38 @@ function SwatchPickerDemo() {
                 Change the brand and light/dark mode for any part of the UI with YugenProvider.
               </TeachingPopoverBody>
               <TeachingPopoverFooter primary="Explore" secondary="Skip" closeOnPrimary />
+            </TeachingPopoverSurface>
+          </TeachingPopover>
+        ),
+      },
+      {
+        title: "Spotlight hướng dẫn",
+        description: "focus=\"spotlight\" làm tối phần còn lại của trang và buộc thao tác tập trung vào TeachingPopover; Escape hoặc nút đóng vẫn khôi phục focus.",
+        code: `<TeachingPopover focus="spotlight">
+  <TeachingPopoverTrigger asChild>
+    <Button appearance="primary">Start guided tip</Button>
+  </TeachingPopoverTrigger>
+  <TeachingPopoverSurface>
+    <TeachingPopoverHeader>Focus mode</TeachingPopoverHeader>
+    <TeachingPopoverBody>
+      <TeachingPopoverTitle>Read this first</TeachingPopoverTitle>
+      The rest of the page is dimmed until you finish or dismiss this tip.
+    </TeachingPopoverBody>
+    <TeachingPopoverFooter primary="Got it" secondary="Skip" closeOnPrimary />
+  </TeachingPopoverSurface>
+</TeachingPopover>`,
+        render: () => (
+          <TeachingPopover focus="spotlight">
+            <TeachingPopoverTrigger asChild>
+              <Button appearance="primary">Start guided tip</Button>
+            </TeachingPopoverTrigger>
+            <TeachingPopoverSurface>
+              <TeachingPopoverHeader>Focus mode</TeachingPopoverHeader>
+              <TeachingPopoverBody>
+                <TeachingPopoverTitle>Read this first</TeachingPopoverTitle>
+                The rest of the page is dimmed until you finish or dismiss this tip.
+              </TeachingPopoverBody>
+              <TeachingPopoverFooter primary="Got it" secondary="Skip" closeOnPrimary />
             </TeachingPopoverSurface>
           </TeachingPopover>
         ),
@@ -1567,6 +1810,7 @@ function SwatchPickerDemo() {
       "Chỉ hiện một TeachingPopover tại một thời điểm, gắn với đúng phần tử được giới thiệu.",
       "Tiêu đề ngắn, nội dung 1–2 câu; luôn có cách đóng (nút X hoặc nút phụ).",
       "Giới hạn hướng dẫn nhiều bước ở 3–5 bước.",
+      "Dùng focus=\"spotlight\" cho một bước cần tập trung; dùng Popover mặc định cho gợi ý không chặn luồng làm việc.",
     ],
     donts: [
       "Không dùng cho thông báo lỗi hay xác nhận — dùng MessageBar / Dialog.",
@@ -1575,6 +1819,7 @@ function SwatchPickerDemo() {
     ],
     props: [
       { name: "TeachingPopover.appearance", type: `"normal" | "brand"`, defaultValue: `"normal"`, description: "Áp cho bề mặt, header, nút." },
+      { name: "TeachingPopover.focus", type: `"none" | "spotlight"`, defaultValue: `"none"`, description: "Spotlight phủ scrim lên viewport và bật hành vi modal; mặc định không chặn trang." },
       { name: "TeachingPopover.open / onOpenChange", type: "boolean / (open) => void", description: "Điều khiển hiển thị (Radix Popover)." },
       { name: "TeachingPopoverSurface.side / align / withArrow", type: "Popover props", defaultValue: "withArrow = true", description: "Vị trí bề mặt (rộng 320px)." },
       { name: "TeachingPopoverHeader.icon / dismissible", type: "ReactNode / boolean", defaultValue: "bóng đèn / true", description: "Icon trước tiêu đề; nút đóng." },

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Button, Calendar, Card, ToggleGroup, ToggleGroupItem } from "yugen-ui";
+import { Button, Card, ToggleGroup, ToggleGroupItem } from "yugen-ui";
+import { Calendar } from "yugen-ui/dates";
 import type { PageProps } from "../pages";
 
 export default function CalendarPage({ t }: PageProps) {

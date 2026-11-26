@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Locale } from "./i18n";
+import { supportEnabled } from "./support";
 
 export type Route =
   | { kind: "home" }
@@ -10,6 +11,7 @@ export type Route =
   | { kind: "news" }
   | { kind: "community" }
   | { kind: "contributors" }
+  | { kind: "support" }
   | { kind: "concept"; slug: string }
   | { kind: "foundation"; slug: string }
   | { kind: "component"; slug: string }
@@ -36,7 +38,9 @@ export interface DocsLocation {
 /** Gốc của docs: "/" khi dev, "/Yugen-UI/" trên GitHub Pages, "/Yugen-UI/next/" cho bản xem trước. Luôn có "/" cuối. */
 const BASE = import.meta.env.BASE_URL;
 
-const PAGES = ["blocks", "templates", "theme-designer", "typeset", "news", "community", "contributors"] as const;
+/** "support" only once src/docs/support.ts has a link (#183); until then /support is a 404. */
+const PAGES = ["blocks", "templates", "theme-designer", "typeset", "news", "community", "contributors", "support"] as const;
+const isPage = (s: string): s is (typeof PAGES)[number] => (PAGES as readonly string[]).includes(s) && (s !== "support" || supportEnabled());
 const SECTIONS = { concepts: "concept", foundations: "foundation", components: "component" } as const;
 
 /** "components/button" (đường dẫn sau BASE và sau "vi/", không có "/" đầu) → route; null nếu không phải trang docs. */
@@ -44,7 +48,7 @@ function matchSegments(rest: string): Route | null {
   const parts = rest.split("/").filter(Boolean);
   if (parts.length === 0) return { kind: "home" };
   const [section, slug, extra] = parts;
-  if (parts.length === 1 && (PAGES as readonly string[]).includes(section)) return { kind: section as (typeof PAGES)[number] };
+  if (parts.length === 1 && isPage(section)) return { kind: section };
   if (parts.length === 2 && !extra && section in SECTIONS) return { kind: SECTIONS[section as keyof typeof SECTIONS], slug };
   return null;
 }

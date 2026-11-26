@@ -58,27 +58,36 @@ export const en: Record<string, ComponentDocEn> = {
 
   timeline: {
     description:
-      "Timeline is an `<ol>`; each TimelineItem has a title, a time, an icon (or Avatar) and optional extra content. Pass `dateTime` to turn the time into a machine-readable `<time>`. The compact variant uses a small dot and one line per event, which suits long activity logs. Icons are decorative, so the title must describe the event on its own.",
+      "Timeline is an `<ol>`; each TimelineItem has a title, a time, an icon (or Avatar) and optional extra content. Pass `dateTime` to turn the time into a machine-readable `<time>`. `progress` adds a scroll-driven rail with one requestAnimationFrame-scheduled listener, derives upcoming/current/complete item states and exposes a progressbar to screen readers. `dateLayout=\"sticky\"` places dates in a separate column on wide screens and above the content on narrow screens. The compact variant uses a small dot and one line per event, which suits long activity logs. Icons are decorative, so the title must describe the event on its own.",
     examples: [
       { title: "Compact", description: "Small dot, title and time on one line; extra content uses caption text." },
       { title: "Intent without icons", description: "Without an icon the item shows a dot in the intent color: neutral, brand, success, warning, error." },
+      { title: "Scroll progress & current state", description: "The rail follows scroll; items move from upcoming to current to complete, with sticky dates that stack on narrow screens." },
     ],
     dos: [
       "Put the newest event first, unless people follow a process from start to end.",
       "Write titles that say who did what, because icons are not read by screen readers.",
       "Pass dateTime when the shown time is relative (“2 hours ago”).",
+      "Use progress for roadmaps, changelogs or long histories; keep scrollOffset stable so the current state is predictable.",
     ],
     donts: [
       "Don't use Timeline for steps people still have to go through. Use Stepper.",
       "Don't use intent for decoration; keep color for states that really differ.",
+      "Don't enable progress for a very short list or attach a scroll listener to every item.",
     ],
     props: {
       variant: "detailed: 32px icon, content below · compact: small dot, one line.",
+      progress: "Boolean; enables the scroll progress rail and derives upcoming/current/complete states.",
+      scrollOffset: "Number, default 0.65; viewport position of the marker line, clamped to 0.1–0.9.",
+      activeIndex: "Number; controlled current item index when progress comes from another source.",
+      progressLabel: "Name of the hidden progressbar for screen readers. Defaults to messages.timeline.progressLabel, in the app's language (\"Timeline progress\" in English).",
+      dateLayout: "inline or sticky; sticky uses a date column on wide screens and stacks the date above content on narrow screens.",
       "TimelineItem.title": "The event: who did what.",
       "TimelineItem.time": "Time shown to people.",
       "TimelineItem.dateTime": "ISO 8601 timestamp → <time dateTime>.",
       "TimelineItem.icon": "Icon or Avatar; empty = dot.",
       "TimelineItem.intent": "Color of the icon or dot. The old value \"danger\" is deprecated (removed in 1.0).",
+      "TimelineItem.status": "upcoming, current or complete; overrides the automatically derived state.",
       "TimelineItem.children": "Extra content: a comment, files, tags.",
     },
   },
@@ -166,7 +175,7 @@ export const en: Record<string, ComponentDocEn> = {
   },
   markdown: {
     description:
-      "Pass a Markdown string as children. Supports CommonMark and the common parts of GFM: headings, paragraphs, lists, task lists, quotes, tables, code fences (highlighted by CodeBlock), bold, italic, strikethrough, code and links. No HTML: tags show as text, and `javascript:` or `data:` links keep only their label. Relative links (`/path`, `#id`) are kept; external links open in a new tab. `inline` is for one-line text: inline Markdown only, in a `<span>`. `renderLink` hands links to the app's router. For text that arrives token by token (AI answers), use StreamingMarkdown.",
+      "Pass a Markdown string as children. Supports CommonMark and the common parts of GFM: headings, paragraphs, lists, task lists, quotes, tables, code fences (highlighted by CodeBlock), bold, italic, strikethrough, code, links and images. Not supported: HTML (shown as text), reference links `[x][id]`, footnotes and indented code. `javascript:` or `data:` links keep only their label; images accept http, https or relative URLs only, load lazily and need alt text (a development warning says when it's missing). Relative links (`/path`, `#id`) are kept; external links open in a new tab. `inline` is for one-line text: inline Markdown only, in a `<span>`. `renderLink` hands links to the app's router and `renderImage` hands images to a framework image component. Blocks are memoized: rendering again with the same content doesn't highlight code again. For text that arrives token by token (AI answers), use StreamingMarkdown.",
     examples: [
       { title: "Inline", description: "inline renders inline Markdown in a <span>, without a <p>: for list items, table cells, one-line descriptions." },
       {
@@ -174,6 +183,7 @@ export const en: Record<string, ComponentDocEn> = {
         description:
           "renderLink gets href, title, the label and external; internal links go through the app's router (router.navigate, the router's <Link to>) instead of reloading the page. The example stands in state for the router.",
       },
+      { title: "Images through renderImage", description: "renderImage gets the sanitized src, alt and title; pass width and height so the image holds its space before it loads." },
       { title: "Untrusted content", description: "HTML shows as text and a javascript: link keeps only its label; no need to sanitize first." },
     ],
     dos: [
@@ -193,6 +203,65 @@ export const en: Record<string, ComponentDocEn> = {
       headingIds: "Gives headings an id from their text (accents removed, -2, -3 for duplicates); pass a function to make your own ids.",
       breaks: "Single newlines become <br>.",
       renderLink: "Renders every link yourself; MarkdownLink has href, title, children and external.",
+      images: "![alt](src) becomes a lazily loaded image; false shows it as a link to the image.",
+      renderImage: "Renders images yourself; MarkdownImage has src, alt and title.",
+    },
+  },
+  article: {
+    description:
+      "Each part is its own component, to compose into your page. Article is an <article>; pass toc to put the table of contents on the right, sticky from the lg breakpoint (before the content on narrow screens). ArticleHeader is a <header> with an h1 title (titleAs changes the level), an excerpt, an eyebrow line and a cover in a 16:9 frame that holds its space. ArticleMeta shows the author, the published and updated dates in <time> elements, the reading time and the tags. ArticleBody limits the reading width; wide tables and code scroll inside their own box. ArticleToc takes the headings from markdownHeadings(), with the same ids <Markdown headingIds> renders (duplicates become -2, -3), so its links work before JavaScript loads; one IntersectionObserver marks the section being read with aria-current. readingTime() estimates minutes, and articleJsonLd() builds schema.org data for your app's script tag.",
+    examples: [{ title: "Without a table of contents", description: "Leave toc out for short posts; ArticleToc renders nothing when there are no headings." }],
+    dos: [
+      "Use the same Markdown string for markdownHeadings() and <Markdown headingIds> so the ids match.",
+      "Set ArticleToc's offset to the height of the page's sticky header.",
+      "Let the app render the JSON-LD (articleJsonLd) and meta tags in <head>.",
+    ],
+    donts: [
+      "Don't skip heading levels (h2 then h4) just for the text size.",
+      "Don't put wide tables or code outside ArticleBody: the page would scroll sideways on phones.",
+      "Don't use the cover image instead of the title; the title is always text.",
+    ],
+    props: {
+      "Article.toc": "Table of contents beside the content (sticky from lg).",
+      "ArticleHeader.title / titleAs": "Title and its heading level.",
+      "ArticleHeader.excerpt / eyebrow / meta / cover": "Excerpt, eyebrow line, ArticleMeta, 16:9 cover.",
+      "ArticleMeta.author": "Author; href becomes a rel=\"author\" link.",
+      "ArticleMeta.published / updated": "Published / updated date (the update is hidden on the same day).",
+      "ArticleMeta.readingTime / tags / renderTag / locale": "Minutes to read, tags, how a tag renders, locale for dates.",
+      "ArticleBody.width": "About 70 characters, 90 characters, or the container.",
+      "ArticleToc.items": "Headings, usually from markdownHeadings().",
+      "ArticleToc.maxLevel / title / trackActive / offset": "Deepest level, title, tracking the section being read, sticky header height (px).",
+      "markdownHeadings(markdown, options)": "Headings with the ids Markdown renders; options: headingOffset, slug.",
+      "readingTime(text, wpm) / articleJsonLd(input)": "Minutes to read (220 words per minute by default, code ignored) and schema.org Article data.",
+    },
+  },
+  blog: {
+    description:
+      "Not tied to a router or a Markdown engine: each post is an object (id, title, href, excerpt, cover, author, published, readingTime, tags), from a Markdown file's front matter or from a CMS. BlogCard is an <article>; the title is the link and its click area covers the card, and the excerpt is the link's description, so a screen reader reads the post's name instead of the whole card. The cover sits in a 16:9 frame that holds its space and loads lazily; dates use <time>. BlogList lays posts out in a grid (or a list of horizontal cards), puts the featured post first and two columns wide, shows placeholder cards while loading, an empty state when a filter finds nothing, and a Load more button. BlogTagFilter is a group of toggle buttons (aria-pressed) with an All button; filterPosts() searches titles, excerpts and tags, ignoring accents. The filter state and the URL belong to your app. For each post's page, combine Article with Markdown (see Article).",
+    examples: [
+      { title: "Loading", description: "Placeholder cards match the real cards' size, so nothing shifts when the posts arrive." },
+      { title: "No matching posts", description: "empty replaces the default text when a filter finds nothing." },
+    ],
+    dos: [
+      "Set headingLevel from the page structure (h2 when the page title is the h1).",
+      "Keep the tags and the search in the URL so people can share a filtered list.",
+      "Write alt text for covers, or an empty alt when the image is decorative.",
+    ],
+    donts: [
+      "Don't put other buttons or links inside a card: the card is already a link.",
+      "Don't cut titles with an ellipsis; only the excerpt is clamped (3 lines).",
+      "Don't use color as the only sign of an active tag: the buttons have aria-pressed and change their fill.",
+    ],
+    props: {
+      "BlogCard.post": "id, title, href, excerpt, cover, author, published, readingTime, tags.",
+      "BlogCard.headingLevel / layout / featured": "Heading level, layout, featured post.",
+      "BlogCard.renderLink": "Your router's link; keep className so the click area covers the card.",
+      "BlogList.posts / layout": "The posts and how they are arranged.",
+      "BlogList.loading / loadingCount / empty": "Loading (placeholder cards) and the empty state.",
+      "BlogList.hasMore / onLoadMore / loadingMore": "The Load more button.",
+      "BlogList.featuredId / renderCard": "Featured post moved first, replacement card.",
+      "BlogTagFilter.tags / selected / onSelectedChange / single": "Tags, selected tags (controlled), single choice.",
+      "filterPosts(posts, { query, tags, match })": "Accent-insensitive filter on title, excerpt and tags; match any / all.",
     },
   },
 };

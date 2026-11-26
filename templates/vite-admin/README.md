@@ -18,8 +18,8 @@ Check your setup any time: `npx @yugen-ui/cli doctor` (see https://trandat1114.g
 - Customers (`/customers`): a `DataGrid` paged, sorted and filtered by the server (one page plus the total per
   request), search, status and plan filters, a column picker (`DataGridColumnPicker`), and row selection with bulk
   export to CSV and bulk delete.
-- Create and edit in a `Drawer`, validated with react-hook-form and zod (`src/validation.ts`); delete after a
-  confirm `Dialog`.
+- Create and edit in a `Drawer`, validated with react-hook-form and zod (`src/validation.ts`) through
+  `yugen-ui/form`; delete after a confirm `Dialog`.
 - Optimistic updates (`useOptimisticList`): changes show at once, a toast confirms them, and a failed request puts
   the list back as it was, with a Retry button.
 - Customer page (`/customers/<id>`) with the details and the customer's orders; Orders (`/orders`), read-only.
@@ -55,8 +55,9 @@ Create it in `src/App.tsx` instead of `createMockApi`, then delete the mock API 
 a sort and the filters, and return `{ rows, total }`. Reject with an error when a request fails: the optimistic
 update rolls back on its own.
 
-Validation uses a small zod resolver in `src/validation.ts` instead of `@hookform/resolvers`, whose optional
-peer dependencies make `npm install` fail on npm 11. You can switch to it once that is fixed.
+Forms use `HookForm` and `standardSchemaResolver` from `yugen-ui/form` with the zod schemas in
+`src/validation.ts`: each `Field` shows the error of its control by name, `FormErrorSummary` lists them, and the
+submit button is loading while the form submits.
 
 ## Deploy
 
@@ -83,7 +84,7 @@ src/
   OrderList.tsx        # paged orders, for /orders and the customer page
   api.ts               # mock back end (replace with yours)
   auth.tsx             # session in sessionStorage, demo sign-in
-  validation.ts        # zod schemas and the resolver
+  validation.ts        # zod schemas
   router.tsx           # History API router, Link, next= after sign-in
   content/             # every string, one file per language
   ui.tsx · useQuery.ts · csv.ts · context.ts · appearance.ts

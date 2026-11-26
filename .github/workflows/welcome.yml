@@ -50,11 +50,10 @@ jobs:
           Automated dependency update from Dependabot. Before merging into `next`:
 
           - Wait for every check, including the `Template · …` jobs and `Visual (compare)`.
-          - `@fluentui/react-icons`: if `icons.mjs --check` fails, the upstream paths changed. Run `npm run icons` on this branch and commit `src/components/ui/_internal/icons.tsx`.
-          - A change that reaches the published packages (a `dependencies` entry of `yugen-ui` or `@yugen-ui/cli`, regenerated icons) needs a patch changeset or a line in `packages/cli/CHANGELOG.md`. Lockfile-only, devDependency and GitHub Actions updates don't.
+          - A change that reaches the published packages (a `dependencies` entry of `yugen-ui` or `@yugen-ui/cli`) needs a patch changeset or a line in `packages/cli/CHANGELOG.md`. Lockfile-only, devDependency and GitHub Actions updates don't.
           - A major update with red CI: close it and add an `ignore` with the reason in `.github/dependabot.yml`.
 
-          Cập nhật dependency tự động từ Dependabot. Trước khi merge: chờ mọi check xanh; icon Fluent đổi path thì chạy `npm run icons`; thay đổi tới gói phát hành cần changeset patch (hoặc dòng CHANGELOG của CLI); bản major đỏ thì đóng và thêm `ignore` kèm lý do.
+          Cập nhật dependency tự động từ Dependabot. Trước khi merge: chờ mọi check xanh; thay đổi tới gói phát hành cần changeset patch (hoặc dòng CHANGELOG của CLI); bản major đỏ thì đóng và thêm `ignore` kèm lý do.
           EOF
             )
           else

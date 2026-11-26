@@ -215,7 +215,9 @@ Every push to a PR reruns the whole CI (~5 min, plus Visual), so fewer PRs and f
 - **PRs that only touch Markdown / `wiki/`** skip CI.
 - **Dependabot** (`.github/dependabot.yml`): all updates go to `next`, at most one minor + patch PR and one major PR a
   week; the CLI and GitHub Actions get one PR a month; 7-day cooldown. Majors that need code changes are ignored in the
-  config and tracked in a migration issue (#91) instead of sitting as red PRs.
+  config and tracked in a migration issue (#91) instead of sitting as red PRs. The Playwright image of the browser jobs
+  takes its tag from `@playwright/test` in `package-lock.json`, so Playwright updates need no workflow edit.
+  `@fluentui/react-icons` is ignored: update it by hand when you need a new icon, and run `npm run icons` in that PR.
 
 ### Changesets
 
@@ -500,7 +502,9 @@ Mỗi lần push vào một PR chạy lại toàn bộ CI (~5 phút, cộng Visu
 - **PR chỉ đổi Markdown / `wiki/`** không chạy CI.
 - **Dependabot** (`.github/dependabot.yml`): mọi bản cập nhật vào `next`, mỗi tuần tối đa một PR minor + patch và một PR
   major; CLI và GitHub Actions mỗi tháng một PR; cooldown 7 ngày. Bản major cần sửa code được bỏ qua trong cấu hình và
-  theo dõi ở issue migration (#91), không để PR đỏ nằm chờ.
+  theo dõi ở issue migration (#91), không để PR đỏ nằm chờ. Image Playwright của các job trình duyệt lấy tag từ
+  `@playwright/test` trong `package-lock.json`, nên nâng Playwright không phải sửa workflow. `@fluentui/react-icons` bị bỏ
+  qua: nâng tay khi cần icon mới và chạy `npm run icons` trong PR đó.
 
 ### Changeset
 

@@ -3,6 +3,7 @@ import { loadConfig, type SourceConfig, type YugenConfig } from "../lib/config.j
 import { DEFAULT_REGISTRY, PACKAGE } from "../lib/constants.js";
 import { CliError } from "../lib/errors.js";
 import { exists, readText, sameText, writeText } from "../lib/fs.js";
+import { loadIntegrity, type RegistryIntegrity } from "../lib/integrity.js";
 import { addArgs, commandLine, exec } from "../lib/pm.js";
 import { allDeps, detectPackageManager, readPkg } from "../lib/project.js";
 import {
@@ -31,8 +32,24 @@ export interface AddOptions {
   registry?: string;
 }
 
-export const registryFor = (cwd: string, flag: string | undefined, config: YugenConfig | null) =>
-  new Registry(resolveRegistry(flag ?? config?.registry ?? DEFAULT_REGISTRY, cwd));
+/**
+ * Registry mặc định: bản cố định theo phiên bản `<docs>/r/<version>/`, kiểm tra sha256 đóng gói cùng CLI (#381).
+ * `--registry` hoặc `registry` trong yugen.json: dùng nguyên như vậy, không kiểm tra (báo một dòng).
+ */
+export function registryFor(
+  cwd: string,
+  flag: string | undefined,
+  config: YugenConfig | null,
+  { notice = true, integrity = loadIntegrity() }: { notice?: boolean; integrity?: RegistryIntegrity | null } = {},
+) {
+  const custom = flag ?? config?.registry;
+  if (custom) {
+    if (notice) p.log.info(pc.dim(`Registry ${custom}: items are not checked against the checksums shipped with @yugen-ui/cli.`));
+    return new Registry(resolveRegistry(custom, cwd));
+  }
+  // Bản dev chưa có dist/registry-integrity.json: registry mới nhất, không kiểm tra.
+  return integrity ? new Registry(`${DEFAULT_REGISTRY}/${integrity.version}`, integrity) : new Registry(DEFAULT_REGISTRY);
+}
 
 const pascal = (s: string) => s.replace(/(^|[-_\s]+)(\w)/g, (_m, _sep, c: string) => c.toUpperCase());
 

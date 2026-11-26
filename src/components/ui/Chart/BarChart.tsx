@@ -2,7 +2,7 @@ import * as React from "react";
 import { cn } from "@/lib/cn";
 import { useYugenLocale, useYugenMessages } from "../YugenProvider/context";
 import { chartMessagesEn } from "./messages";
-import { ChartContainer, ChartFocusRing, ChartLegend, ChartPatterns, ChartTable, ChartTooltip, type ChartTooltipRow } from "./ChartParts";
+import { ChartContainer, ChartFocusRing, ChartLegend, ChartPatterns, ChartSeriesIcon, ChartTable, ChartTooltip, type ChartTooltipRow } from "./ChartParts";
 import {
   Baseline,
   CategoryAxisBottom,
@@ -54,7 +54,15 @@ export interface BarChartProps extends ChartFrameProps {
   axisFormat?: ChartNumberFormat;
   categoryFormat?: (value: ChartValue) => string;
   /** Hiện giá trị ở đầu cột (chỉ khi vừa chỗ — không bao giờ bị cắt). Stacked: hiện tổng. */
-  showValues?: boolean;
+  /** Giá trị ở đầu mỗi cột (theo `valueFormat`), hoặc hàm tự viết nhãn: `(value, index, series)` (`series` là "__total" ở tổng cột chồng). */
+  showValues?: boolean | ((value: number, index: number, series: string) => string);
+  /**
+   * series: màu theo chuỗi (mặc định) · category: một chuỗi, mỗi danh mục một màu (legend liệt kê danh mục). Dùng khi
+   * danh mục là thực thể có màu riêng (trình duyệt, kênh); không dùng để trang trí.
+   */
+  colorBy?: "series" | "category";
+  /** Danh mục được nhấn (chỉ số trong `data`); các cột khác nhạt đi khi không có cột nào đang được trỏ. */
+  activeIndex?: number;
   /** Một chuỗi: tô âm / dương bằng cặp màu phân kỳ. */
   diverging?: boolean;
   /** Mặc định hiện khi ≥ 2 chuỗi. */
@@ -124,6 +132,8 @@ export function BarChart({
   axisFormat,
   categoryFormat,
   showValues = false,
+  colorBy = "series",
+  activeIndex,
   diverging = false,
   legend,
   barSize = 24,
@@ -137,6 +147,7 @@ export function BarChart({
   hideTableToggle,
   defaultShowTable,
   texture,
+  tooltip,
   animate = true,
   className,
   ref,
@@ -161,10 +172,13 @@ export function BarChart({
     const single = series.length === 1;
     const useDiverging = diverging && single;
     const fmt = makeNumberFormatter(locale, valueFormat);
+    const labelText = (value: number, row: number, key: string) => (typeof showValues === "function" ? showValues(value, row, key) : fmt(value));
     const n = data.length;
     const catLabels = data.map((d) => (categoryFormat ? categoryFormat(d[index]) : formatCategory(d[index], locale)));
     const slots = series.map((s, i) => slotOf(s.color, i));
     const vis = series.map((s, i) => ({ s, slot: slots[i] })).filter((v) => !hidden.has(v.s.key));
+    // Một chuỗi, mỗi danh mục một màu (colorBy="category"); nhiều chuỗi thì màu vẫn theo chuỗi.
+    const byCategory = colorBy === "category" && series.length === 1;
     const val = (r: number, key: string) => toNumber(data[r]?.[key]);
 
     /* ---------- miền giá trị (luôn gồm 0) ---------- */
@@ -317,8 +331,16 @@ export function BarChart({
           const total = totals[r].pos + totals[r].neg;
           const rows: ChartTooltipRow[] = vis
             .filter((v) => val(r, v.s.key) != null)
-            .map((v) => ({ key: v.s.key, label: v.s.label, value: fmt(val(r, v.s.key) as number), slot: v.slot, shape: "rect" as const }));
-          rows.push({ key: "__total", label: totalLabel, value: fmt(total) });
+            .map((v) => ({
+              key: v.s.key,
+              label: v.s.label,
+              value: fmt(val(r, v.s.key) as number),
+              raw: val(r, v.s.key),
+              slot: v.slot,
+              shape: "rect" as const,
+              swatch: v.s.icon ? <ChartSeriesIcon icon={v.s.icon} slot={v.slot} /> : undefined,
+            }));
+          rows.push({ key: "__total", label: totalLabel, value: fmt(total), raw: total });
           const endV = totals[r].pos > 0 ? totals[r].pos : totals[r].neg;
           const tip = vScale(endV);
           hits.push({
@@ -332,14 +354,14 @@ export function BarChart({
             ring: unionBox(boxes),
           });
           if (showValues && segs.length) {
-            const l = labelAt(c, -thick / 2, endV, fmt(total), band - 4);
+            const l = labelAt(c, -thick / 2, endV, labelText(total, r, "__total"), band - 4);
             if (l) valueLabels.push({ ...l, key: `t${r}` });
           }
         } else {
           vis.forEach((v, j) => {
             const x = val(r, v.s.key);
             const off = -groupW / 2 + j * (thick + 2);
-            const slot: ChartSlot = useDiverging ? ((x ?? 0) < 0 ? "neg" : "pos") : v.slot;
+            const slot: ChartSlot = useDiverging ? ((x ?? 0) < 0 ? "neg" : "pos") : byCategory ? slotOf(undefined, r) : v.slot;
             const m = x == null ? null : place(c, off, 0, x, true, 0);
             const hitIndex = hits.length;
             if (m?.path) marks.push({ key: `${r}-${v.s.key}`, row: r, hit: hitIndex, series: v.s.key, order: j, slot, ...m });
@@ -354,11 +376,11 @@ export function BarChart({
               anchor: horizontal ? [vScale(x ?? 0), c + off] : [c + off + thick / 2, x == null ? zero : Math.min(vScale(x), zero)],
               label: single ? `${cat}: ${valueText}` : `${cat}, ${v.s.label}: ${valueText}`,
               title: cat,
-              rows: [{ key: v.s.key, label: v.s.label, value: valueText, slot, shape: "rect" }],
+              rows: [{ key: v.s.key, label: v.s.label, value: valueText, raw: x, slot, shape: "rect", swatch: v.s.icon ? <ChartSeriesIcon icon={v.s.icon} slot={slot} /> : undefined }],
               ring: m?.path ? m.box : null,
             });
             if (showValues && x != null) {
-              const l = labelAt(c, off, x, fmt(x), whole ? band - 4 : thick + 2);
+              const l = labelAt(c, off, x, labelText(x, r, v.s.key), whole ? band - 4 : thick + 2);
               if (l) valueLabels.push({ ...l, key: `v${r}-${v.s.key}` });
             }
           });
@@ -389,11 +411,20 @@ export function BarChart({
     const usedSlots: ChartSlot[] = useDiverging ? ["pos", "neg"] : vis.map((v) => v.slot);
     const summary = ariaLabel ?? msg.barSummary({ horizontal, stacked, categories: n, series: series.map((s) => s.label) });
 
-    const legendNode = showLegend ? (
+    const legendNode = byCategory ? (
+      // Mỗi danh mục một màu: legend liệt kê danh mục (không bật / tắt được).
+      <ChartLegend textured={textured} items={data.map((_, r) => ({ key: `c${r}`, label: catLabels[r], slot: slotOf(undefined, r) }))} />
+    ) : showLegend ? (
       <ChartLegend
         textured={textured}
         onToggle={series.length > 1 ? toggleSeries : undefined}
-        items={series.map((s, i) => ({ key: s.key, label: s.label, slot: slots[i], hidden: hidden.has(s.key) }))}
+        items={series.map((s, i) => ({
+          key: s.key,
+          label: s.label,
+          slot: slots[i],
+          hidden: hidden.has(s.key),
+          swatch: s.icon ? <ChartSeriesIcon icon={s.icon} slot={slots[i]} /> : undefined,
+        }))}
       />
     ) : undefined;
 
@@ -441,7 +472,7 @@ export function BarChart({
     );
 
     return { fmt, catLabels, H, zero, marks, layers, hits, summary, legendNode, axes, overlay };
-  }, [data, index, series, hidden, toggleSeries, showLegend, horizontal, stacked, valueFormat, axisFormat, categoryFormat, showValues, diverging, barSize, height, locale, width, totalLabel, ariaLabel, msg, textured, uid]);
+  }, [data, index, series, hidden, toggleSeries, showLegend, horizontal, stacked, valueFormat, axisFormat, categoryFormat, showValues, colorBy, diverging, barSize, height, locale, width, totalLabel, ariaLabel, msg, textured, uid]);
 
   const { fmt, catLabels, H, zero, marks, layers, hits, summary } = geo;
 
@@ -494,7 +525,8 @@ export function BarChart({
     [roving.layerProps, roving.stop, hits],
   );
 
-  const dim = (m: Mark) => !!active && active.i !== m.hit;
+  // Đang trỏ một cột: nhạt các cột khác; không thì nhấn danh mục `activeIndex` (nếu có).
+  const dim = (m: Mark) => (active ? active.i !== m.hit : activeIndex !== undefined && m.row !== activeIndex);
 
   return (
     <ChartContainer
@@ -547,7 +579,15 @@ export function BarChart({
           </svg>
         )}
         {activeHit && (
-          <ChartTooltip x={activeHit.anchor[0]} y={activeHit.anchor[1]} title={activeHit.title} rows={activeHit.rows} textured={textured} />
+          <ChartTooltip
+            x={activeHit.anchor[0]}
+            y={activeHit.anchor[1]}
+            title={activeHit.title}
+            rows={activeHit.rows}
+            textured={textured}
+            config={tooltip}
+            index={activeHit.row}
+          />
         )}
       </PlotArea>
     </ChartContainer>

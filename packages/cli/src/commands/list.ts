@@ -20,7 +20,7 @@ export async function list(opts: ListOptions) {
   } catch {
     // yugen.json hỏng không cản việc xem danh sách.
   }
-  const index = await registryFor(opts.cwd, opts.registry, config).index();
+  const index = await registryFor(opts.cwd, opts.registry, config, { notice: !opts.json }).index();
   const q = opts.query?.toLowerCase();
   const items = index.items
     .filter(isComponent)

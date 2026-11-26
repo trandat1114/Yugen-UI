@@ -43,7 +43,7 @@ export const en: Record<string, ComponentDocEn> = {
       iconOnly: "Turns on when there is an icon and no children.",
       asChild: "Renders into the child element (e.g. <a>) instead of a <button>.",
       loading:
-        "Busy state: a Spinner replaces the icon (or sits in the middle of the button), the width is kept, aria-busy and aria-disabled are set, and clicks are ignored while the button stays focusable.",
+        "Busy state: a Spinner replaces the icon (or sits in the middle of the button), the width is kept, aria-busy and aria-disabled are set, and clicks are ignored while the button stays focusable. Inside Form or HookForm, a type=\"submit\" Button is loading while the form submits.",
       loadingText: "Label while loading (e.g. “Saving…”). The button is always as wide as the longer label, so nothing shifts.",
     },
     defaults: { iconOnly: "auto" },
@@ -75,12 +75,22 @@ export const en: Record<string, ComponentDocEn> = {
       { title: "Color", description: "neutral (default), brand, colorful (a stable color derived from a hash of name)." },
       { title: "Presence", description: "available, busy, away, offline." },
       { title: "Shape", description: "circular for people; square for groups, apps and bots." },
+      {
+        title: "Image",
+        description:
+          "src for a photo; an image that fails to load falls back to the initials; square for logos. image passes srcSet, sizes, loading… to the <img>, and renderImage uses a framework image component such as Next.js <Image>.",
+      },
     ],
     dos: ["Use color=\"colorful\" when several people appear side by side, so they are easier to tell apart.", "Use square for entities that aren't people."],
     donts: ["Don't pass an empty or made-up name.", "Don't set the avatar background color with className."],
     props: {
       name: "Required. Used for the initials, the color and the aria-label.",
       src: "Profile image; falls back to the initials if it fails to load.",
+      image: "Attributes for the <img>. The name stays on the role=\"img\" wrapper.",
+      renderImage:
+        "Renders the image with another component, e.g. (props) => <Image {...props} width={48} height={48} /> from Next.js. The initials still show when the image fails.",
+      onLoadingStatusChange: "Image load state, reported for each src.",
+      fallbackDelay: "Milliseconds to wait before showing the initials while the image loads.",
       size: "Size in px.",
       color: "Color palette.",
       shape: "Shape.",
@@ -143,7 +153,8 @@ export const en: Record<string, ComponentDocEn> = {
     props: {
       label: "Clickable label.",
       "checked / defaultChecked": "Controlled / uncontrolled.",
-      onCheckedChange: "Called when the value changes.",
+      onCheckedChange: "Called when the value changes (a click or Space always gives a boolean).",
+      "name / value / required / form": "Attributes of the native <input>: the value goes with the form, FormData and autofill. ref points to HTMLInputElement (type=\"checkbox\").",
       size: "Box size 16 / 20px.",
       labelPosition: "Label position.",
     },
@@ -162,6 +173,7 @@ export const en: Record<string, ComponentDocEn> = {
       label: "Label.",
       "checked / defaultChecked": "Controlled / uncontrolled.",
       onCheckedChange: "Called when the value changes.",
+      "name / value / required / form": "Attributes of the native <input>: the value goes with the form, FormData and autofill. ref points to HTMLInputElement (type=\"checkbox\" role=\"switch\").",
       labelPosition: "Label position.",
       material: "Yugen Labs — the thumb turns to glass and stretches while pressed.",
     },

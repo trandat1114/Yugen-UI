@@ -26,6 +26,9 @@ jobs:
     timeout-minutes: 20
     permissions:
       contents: read
+    env:
+      # dist/registry-integrity.json must hash the registry of a released yugen-ui tag (#381).
+      REGISTRY_REQUIRE_TAG: "1"
     outputs:
       dist_tag: ${{ steps.channel.outputs.dist_tag }}
       cli_package: ${{ steps.pack.outputs.cli_package }}

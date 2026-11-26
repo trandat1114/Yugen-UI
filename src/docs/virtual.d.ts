@@ -2,11 +2,16 @@ declare module "virtual:yugen-type-exports" {
   /** Tên type/interface export từ src/components/ui (sinh bởi vite.plugins.ts). */
   const names: string[];
   export default names;
+  /** Những tên trong đó chỉ `yugen-ui/dates` export (#356). */
+  export const dates: string[];
 }
 
 declare module "virtual:yugen-ui-exports" {
-  /** Tên runtime mà barrel `yugen-ui` export, và thư mục component của từng tên (yugenUiExports trong vite.plugins.ts). */
-  const exports: { barrel: string[]; folders: Record<string, string> };
+  /**
+   * Tên runtime mà barrel `yugen-ui` export, tên của `yugen-ui/dates` (#356), và thư mục component của từng tên
+   * (yugenUiExports trong vite.plugins.ts).
+   */
+  const exports: { barrel: string[]; dates: string[]; folders: Record<string, string> };
   export default exports;
 }
 

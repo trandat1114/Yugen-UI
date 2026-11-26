@@ -2,6 +2,8 @@ import * as React from "react";
 import { ErrorCircle12Filled, CheckmarkCircle12Filled, Warning12Filled } from "../_internal/icons";
 import { cn } from "@/lib/cn";
 import { useComponentDefaults, COMPACT_SIZE } from "../YugenProvider/context";
+import { FormContext, errorOf } from "../_internal/formContext";
+import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 
 /** Fluent 2 Field — https://fluent2.microsoft.design/components/web/react/core/field/usage */
 export type ValidationState = "none" | "error" | "warning" | "success";
@@ -20,6 +22,8 @@ export interface FieldControlProps {
   "aria-invalid"?: boolean;
   required?: boolean;
   disabled?: boolean;
+  /** Chỉ khi Field có prop `name`. */
+  name?: string;
 }
 
 export interface FieldProps {
@@ -27,8 +31,17 @@ export interface FieldProps {
   hint?: React.ReactNode;
   required?: boolean;
   disabled?: boolean;
+  /**
+   * Validation state. Inside Form or HookForm, leave it out: Field shows the error of its control (by `name`) with
+   * state "error". Passing it turns that off for this Field.
+   */
   validationState?: ValidationState;
   validationMessage?: React.ReactNode;
+  /**
+   * Name of the control. Inside Form or HookForm, Field shows the error for this name. Default: the `name` of the child
+   * element. When set, it is also passed to the control.
+   */
+  name?: string;
   orientation?: "vertical" | "horizontal";
   size?: "small" | "medium" | "large";
   className?: string;
@@ -47,8 +60,9 @@ export function Field(inProps: FieldProps) {
     hint,
     required,
     disabled,
-    validationState = "none",
-    validationMessage,
+    validationState: stateProp,
+    validationMessage: messageProp,
+    name,
     orientation = "vertical",
     size = "medium",
     className,
@@ -60,7 +74,21 @@ export function Field(inProps: FieldProps) {
   const messageId = `${controlId}-message`;
   const hintId = `${controlId}-hint`;
   const labelId = `${controlId}-label`;
+
+  // Trong Form / HookForm (#162): lỗi của control theo name, khi không truyền validationState.
+  const form = React.useContext(FormContext);
+  const childName = typeof children === "function" ? undefined : (children.props as { name?: unknown }).name;
+  const fieldName = name ?? (typeof childName === "string" && childName ? childName : undefined);
+  const formError = form && fieldName && stateProp === undefined ? errorOf(form.errors, fieldName) : undefined;
+  const validationState = stateProp ?? (formError ? "error" : "none");
+  const validationMessage = formError ?? messageProp;
   const validation = validationState !== "none" ? VALIDATION[validationState] : null;
+
+  // Nhãn + id cho FormErrorSummary (link tới control) và focus control lỗi đầu tiên.
+  const registry = form?.fields;
+  useIsomorphicLayoutEffect(() => {
+    if (registry && fieldName) return registry.set(fieldName, { label, id: controlId });
+  }, [registry, fieldName, label, controlId]);
 
   const controlProps: FieldControlProps = {
     id: controlId,
@@ -70,6 +98,7 @@ export function Field(inProps: FieldProps) {
     required,
     disabled,
   };
+  if (name) controlProps.name = name;
 
   const control =
     typeof children === "function"

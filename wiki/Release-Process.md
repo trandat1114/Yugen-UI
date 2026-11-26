@@ -169,6 +169,9 @@ are not subject to this check; the `@yugen-ui` scope is an npm org (free).
    release of `yugen-ui`, release the CLI (patch) so that `create` makes apps with the new version.
    The CLI can only be published after that `yugen-ui` version is on npm: `check-release --tag` blocks it otherwise. Before then, the
    CI job `Template · …` builds the templates with an `npm pack` of the same commit, so the release PR doesn't need the published version.
+   The CLI also ships `dist/registry-integrity.json`, the sha256 of every registry item of that `yugen-ui` version, built from the tag
+   `vX.Y.Z` (release-cli.yml sets `REGISTRY_REQUIRE_TAG=1`), and reads items from `<docs>/r/X.Y.Z/`. The Docs workflow writes those
+   snapshots (`scripts/registry-snapshot.mjs --all`), so let it deploy after the `yugen-ui` tag before tagging the CLI (#381).
 4. **Never reuse a version**, including unpublished ones: npm blocks them permanently, and `npm view` doesn't show unpublished versions.
    Check with `npm run check:release -- --npm`. For a broken version use `npm deprecate`, not unpublish.
 5. **Branches**: stable versions are tagged on `main` (dist-tag `latest`); prereleases `cli@X.Y.Z-beta.N` are tagged on `next`

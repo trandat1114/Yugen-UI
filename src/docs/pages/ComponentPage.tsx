@@ -8,6 +8,7 @@ import { installSnippets } from "../install";
 import { MessagesTable, messageNamespacesFor } from "../componentMessages";
 import { useLocale } from "../i18n";
 import { docsPath } from "../router";
+import { tagLabel } from "../tags";
 
 function InstallTabs({ importCode }: { importCode: string }) {
   const { npm, cli, shadcn } = installSnippets(importCode);
@@ -118,6 +119,16 @@ export function ComponentPage({ slug, theme, brand }: { slug: string; theme: Yug
             <ComponentDescription key={attempt} slug={slug} />
           </Suspense>
         </PageHeader>
+
+        {meta.tags && meta.tags.length > 0 && (
+          <ul aria-label={t("component.tags")} className="-mt-2 mb-6 flex list-none flex-wrap gap-1.5 p-0">
+            {meta.tags.map((tag) => (
+              <li key={tag} className="rounded-circular bg-background-3 px-2 py-0.5 text-caption1 text-foreground-2">
+                {tagLabel(tag, locale)}
+              </li>
+            ))}
+          </ul>
+        )}
 
         {/* Yugen Labs (#158): ngoài SemVer — API có thể đổi ở bản minor, ghi trong What's new. */}
         {meta.category === "Yugen Labs" && (

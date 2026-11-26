@@ -47,7 +47,6 @@ import {
   BreadcrumbItem,
   Button,
   ButtonGroup,
-  Calendar,
   Card,
   CardContent,
   CardFooter,
@@ -58,6 +57,9 @@ import {
   CarouselViewport,
   ChatComposer,
   Checkbox,
+  createColumn,
+  DataGrid,
+  DataGridColumnPicker,
   CodeBlock,
   CodeTabs,
   Collapse,
@@ -80,8 +82,6 @@ import {
   ContextMenuTrigger,
   CopyCodeButton,
   CounterBadge,
-  DatePicker,
-  DateTimePicker,
   Dialog,
   DialogSurface,
   DialogTitle,
@@ -244,6 +244,7 @@ import {
   WavyUnderline,
   YugenProvider,
 } from "@/components/ui";
+import { Calendar, DatePicker, DateTimePicker } from "@/components/ui/dates";
 
 /**
  * Giá trị của các hook (#172) nằm thẳng trong markup: server và lượt hydrate phải ra "ban đầu · hẹp · 0 · ẩn", sau hydrate client
@@ -279,6 +280,11 @@ const layoutEffectWarningAt = (component: string) =>
   new RegExp(String.raw`^Warning: useLayoutEffect does nothing on the server[^\n]*\n\s+at ${component} \(`);
 
 /** Mốc thời gian cố định cho Trace / Calendar (Date được giả lập trong test). */
+const SSR_COLUMNS = [
+  createColumn<{ id: string; name: string }>({ columnId: "name", label: "Khách hàng", renderCell: (r) => r.name, width: 240, sticky: "start", hideable: false }),
+  createColumn<{ id: string; name: string }>({ columnId: "code", label: "Mã KH", renderCell: (r) => r.id, width: 120 }),
+];
+
 export const SSR_NOW = Date.UTC(2026, 9, 20, 8, 30, 0);
 
 const revenue = [
@@ -679,6 +685,33 @@ export const SSR_CASES: SsrCase[] = [
           </TableRow>
         </TableBody>
       </Table>
+    ),
+  },
+  {
+    // DataGridColumnPicker mode="auto" đọc media query: server render menu (defaultValue), client đổi sau hydrate.
+    name: "DataGrid / DataGridColumnPicker (compact, auto)",
+    render: () => (
+      <div>
+        <DataGridColumnPicker
+          compact
+          mode="auto"
+          resettable
+          columns={SSR_COLUMNS}
+          hiddenColumns={new Set(["code"])}
+          onHiddenColumnsChange={() => {}}
+        >
+          Cột khách hàng
+        </DataGridColumnPicker>
+        <DataGrid
+          aria-label="Khách hàng"
+          items={[{ id: "KH-1", name: "Nguyễn Thị Thanh Hương" }]}
+          columns={SSR_COLUMNS}
+          getRowId={(row) => row.id}
+          hiddenColumns={new Set(["code"])}
+          size="small"
+          selectionMode="multiselect"
+        />
+      </div>
     ),
   },
   {

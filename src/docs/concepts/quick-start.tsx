@@ -202,7 +202,7 @@ export default function Page() {
           <CodeBlock code={TEMPLATE_COMMAND} />
           <P>
             Dự án starter có sẵn: lưu theme người dùng chọn, toast, alias <C>@/</C>, SEO cơ bản và một trang chào để xoá khi bắt đầu.
-            Đổi <C>starter</C> thành <C>saas</C> (ứng dụng SaaS 8 trang), <C>blog</C> (blog Markdown), <C>dashboard</C>, <C>ai-chat</C>,{" "}
+            Đổi <C>starter</C> thành <C>saas</C> (ứng dụng SaaS 9 trang), <C>blog</C> (blog Markdown), <C>dashboard</C>, <C>ai-chat</C>,{" "}
             <C>glass</C> (nhật ký du lịch với điều hướng glass), <C>landing</C> (trang giới thiệu sản phẩm), <C>admin</C> (trang quản trị: bảng, form, đăng nhập),{" "}
             <C>next-starter</C> (Next.js App Router), <C>docs</C> (trang tài liệu từ Markdown) hoặc{" "}
             <C>store</C> (cửa hàng: giỏ hàng, thanh toán nhiều bước), hoặc bỏ <C>--template</C> để chọn trong terminal. Các tuỳ chọn khác ở <A href={docsPath("/concepts/cli")}>@yugen-ui/cli</A>.
@@ -324,6 +324,11 @@ export default function Page() {
             <C>yugen-ui/messages-en</C> và <C>yugen-ui/messages-vi</C>. <C>cn</C> và các hàm màu thương hiệu chỉ có ở gốc gói;{" "}
             <C>readAppShellCookie</C> chạy được trong Server Component chỉ khi import từ <C>yugen-ui</C>, còn <C>yugenHtmlAttributes</C> và{" "}
             <C>yugenThemeScript</C> khi import từ <C>yugen-ui</C> hoặc <C>yugen-ui/YugenProvider/document</C>.
+          </P>
+          <P>
+            Calendar, DatePicker, DateRangePicker và DateTimePicker không có ở gốc gói: chúng cần react-day-picker, một peer dependency
+            tuỳ chọn. Cài nó (<C>npm i react-day-picker</C>) rồi import từ <C>yugen-ui/dates</C> (hoặc <C>yugen-ui/Calendar</C>,{" "}
+            <C>yugen-ui/DatePicker</C>). App không dùng lịch thì không cài thư viện ngày nào.
           </P>
           <P>
             TypeScript với <C>moduleResolution: node</C> (node10) không đọc <C>exports</C> nên không thấy kiểu của subpath: import từ{" "}

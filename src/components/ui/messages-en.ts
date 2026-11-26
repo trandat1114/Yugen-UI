@@ -5,11 +5,13 @@ import {
   reasoningMessagesEn,
   streamingMarkdownMessagesEn,
 } from "./AIKit/messages";
+import { articleMessagesEn } from "./Article/messages";
 import { appShellMessagesEn } from "./AppShell/messages";
 import { autocompleteMessagesEn } from "./Autocomplete/messages";
 import { avatarGroupMessagesEn } from "./AvatarGroup/messages";
+import { blogMessagesEn } from "./Blog/messages";
 import { breadcrumbMessagesEn } from "./Breadcrumb/messages";
-import { calendarMessagesEn } from "./Calendar/messages";
+import { callMessagesEn } from "./Call/messages";
 import { carouselMessagesEn } from "./Carousel/messages";
 import { chartMessagesEn } from "./Chart/messages";
 import {
@@ -33,6 +35,7 @@ import {
 import { descriptionListMessagesEn } from "./DescriptionList/messages";
 import { dialogMessagesEn } from "./Dialog/messages";
 import { fileUploadMessagesEn } from "./FileUpload/messages";
+import { formMessagesEn } from "./Form/messages";
 import { infoLabelMessagesEn } from "./InfoLabel/messages";
 import { inputOTPMessagesEn } from "./InputOTP/messages";
 import { linkMessagesEn } from "./Link/messages";
@@ -76,23 +79,29 @@ import { tableMessagesEn } from "./Table/messages";
 import { tagMessagesEn } from "./Tag/messages";
 import { tagPickerMessagesEn } from "./TagPicker/messages";
 import { teachingPopoverMessagesEn } from "./TeachingPopover/messages";
+import { timelineMessagesEn } from "./Timeline/messages";
 import { timePickerMessagesEn } from "./TimePicker/messages";
 import { toastMessagesEn } from "./Toast/messages";
 import { tourMessagesEn } from "./Tour/messages";
 import { traceMessagesEn } from "./Trace/messages";
+import { voiceWaveMessagesEn } from "./VoiceWave/messages";
+import { voiceAssistantMessagesEn } from "./VoiceAssistant/messages";
+import { transcriptMessagesEn } from "./Transcript/messages";
 
 /**
  * Chuỗi giao diện có sẵn của mọi component, bằng tiếng Anh: đây cũng là giá trị mặc định khi không truyền `messages`.
  * Tiếng Việt: `messagesVi`. Kiểu `YugenMessages` đầy đủ: component mới thêm namespace mà quên bản tiếng Anh ở đây thì
- * typecheck báo lỗi.
+ * typecheck báo lỗi. Trừ `calendar` (#356): nó ở `yugen-ui/dates`, và en-US là mặc định của Calendar.
  */
-export const messagesEn: YugenMessages = {
+export const messagesEn: Omit<YugenMessages, "calendar"> = {
   appShell: appShellMessagesEn,
+  article: articleMessagesEn,
   asyncContent: asyncContentMessagesEn,
   autocomplete: autocompleteMessagesEn,
   avatarGroup: avatarGroupMessagesEn,
+  blog: blogMessagesEn,
   breadcrumb: breadcrumbMessagesEn,
-  calendar: calendarMessagesEn,
+  call: callMessagesEn,
   carousel: carouselMessagesEn,
   chart: chartMessagesEn,
   chatComposer: chatComposerMessagesEn,
@@ -112,6 +121,7 @@ export const messagesEn: YugenMessages = {
   dialog: dialogMessagesEn,
   errorState: errorStateMessagesEn,
   fileUpload: fileUploadMessagesEn,
+  form: formMessagesEn,
   infoLabel: infoLabelMessagesEn,
   inputOTP: inputOTPMessagesEn,
   link: linkMessagesEn,
@@ -152,11 +162,15 @@ export const messagesEn: YugenMessages = {
   tag: tagMessagesEn,
   tagPicker: tagPickerMessagesEn,
   teachingPopover: teachingPopoverMessagesEn,
+  timeline: timelineMessagesEn,
   timePicker: timePickerMessagesEn,
   toast: toastMessagesEn,
   tour: tourMessagesEn,
   trace: traceMessagesEn,
+  transcript: transcriptMessagesEn,
   typingIndicator: typingIndicatorMessagesEn,
+  voiceAssistant: voiceAssistantMessagesEn,
+  voiceWave: voiceWaveMessagesEn,
   wizard: wizardMessagesEn,
   yearPicker: yearPickerMessagesEn,
 };

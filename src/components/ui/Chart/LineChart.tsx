@@ -2,11 +2,28 @@ import * as React from "react";
 import { cn } from "@/lib/cn";
 import { useYugenLocale, useYugenMessages } from "../YugenProvider/context";
 import { chartMessagesEn } from "./messages";
-import { ChartContainer, ChartFocusRing, ChartLegend, ChartTable, ChartTooltip, type ChartTooltipRow } from "./ChartParts";
+import {
+  ChartContainer,
+  ChartFocusRing,
+  ChartLegend,
+  ChartSeriesIcon,
+  ChartTable,
+  ChartTooltip,
+  type ChartTooltipRow,
+} from "./ChartParts";
 import { ChartBrush } from "./ChartBrush";
 import { normalizeDomain, stackValues, type ChartDomain } from "./chartMath";
-import { Baseline, CategoryAxisBottom, GridLines, PlotArea, ValueAxisLeft, formatCategory, pickLabelIndices } from "./cartesian";
 import {
+  Baseline,
+  CategoryAxisBottom,
+  GridLines,
+  PlotArea,
+  ValueAxisLeft,
+  formatCategory,
+  pickLabelIndices,
+} from "./cartesian";
+import {
+  chartUid,
   clamp,
   df,
   linePath,
@@ -33,7 +50,19 @@ import {
 import { useElementSize } from "../hooks/useElementSize";
 import { useControllableState } from "../hooks/useControllableState";
 
-export type ChartXFormat = Intl.DateTimeFormatOptions | ((value: ChartValue) => string);
+export type ChartXFormat =
+  Intl.DateTimeFormatOptions | ((value: ChartValue) => string);
+
+export interface LineChartMarker {
+  /** Toạ độ trong SVG. */
+  x: number;
+  y: number;
+  /** Chỉ số điểm trong dữ liệu đang hiện. */
+  index: number;
+  /** `key` của chuỗi. */
+  series: string;
+  value: number;
+}
 
 export interface LineChartProps extends ChartFrameProps {
   data: ChartDatum[];
@@ -50,7 +79,17 @@ export interface LineChartProps extends ChartFrameProps {
   xTooltipFormat?: ChartXFormat;
   /** Chấm tại mọi điểm (≥ 8px, viền bề mặt 2px). */
   markers?: boolean;
-  curve?: "linear" | "monotone";
+  /**
+   * Vẽ chấm của riêng bạn tại mọi điểm (bật markers). Phần tử nằm trong nhóm của chuỗi nên thừa hưởng màu (fill) và viền
+   * bề mặt (stroke). Trang trí: trình đọc màn hình vẫn đọc giá trị qua các điểm có thể focus.
+   */
+  renderMarker?: (point: LineChartMarker) => React.ReactNode;
+  /**
+   * Giá trị ghi ngay trên mỗi điểm. true: định dạng theo `valueFormat`; hàm: tự định dạng. Khi các điểm quá sát, chỉ ghi
+   * cách quãng (luôn có điểm cuối).
+   */
+  valueLabels?: boolean | ((value: number, index: number, series: string) => string);
+  curve?: "linear" | "monotone" | "step";
   /** Nhãn trực tiếp ở cuối đường (tên chuỗi; một chuỗi thì là giá trị). Mặc định khi ≤ 4 chuỗi; tự tắt nếu các nhãn chồng nhau. */
   endLabels?: boolean;
   /** Emphasis: tô màu một chuỗi, các chuỗi khác về xám. */
@@ -71,6 +110,8 @@ export interface LineChartProps extends ChartFrameProps {
 export interface AreaChartProps extends LineChartProps {
   /** Chồng các vùng (phần–tổng theo thời gian). */
   stacked?: boolean;
+  /** Tô vùng bằng dải màu nhạt dần xuống trục thay vì một lớp mờ đều. */
+  gradient?: boolean;
   /** Khi chồng: "expand" chuẩn hoá mỗi mốc về 100% (trục Y là tỉ lệ). */
   stackOffset?: "none" | "expand";
 }
@@ -86,6 +127,7 @@ function SeriesChart({
   variant,
   stacked = false,
   stackOffset = "none",
+  gradient = false,
   data: allData,
   index,
   series,
@@ -94,7 +136,9 @@ function SeriesChart({
   axisFormat,
   xFormat,
   xTooltipFormat,
-  markers = false,
+  markers: markersProp = false,
+  renderMarker,
+  valueLabels = false,
   curve = "monotone",
   endLabels,
   highlight,
@@ -114,24 +158,33 @@ function SeriesChart({
   hideTableToggle,
   defaultShowTable,
   texture,
+  tooltip,
   animate = true,
   className,
   ref,
-}: AreaChartProps & { variant: "line" | "area"; ref?: React.Ref<HTMLElement> }) {
+}: AreaChartProps & {
+  variant: "line" | "area";
+  ref?: React.Ref<HTMLElement>;
+}) {
   const yugenLocale = useYugenLocale();
   const locale = localeProp ?? yugenLocale;
   const msg = useYugenMessages("chart", chartMessagesEn);
   const textured = useChartTexture(texture);
   const { ref: plotRef, width } = useElementSize<HTMLDivElement>();
   const [hidden, toggleSeries] = useSeriesToggle(series.map((s) => s.key));
-  const [active, setActive] = React.useState<{ i: number; kb: boolean } | null>(null);
+  const [active, setActive] = React.useState<{ i: number; kb: boolean } | null>(
+    null,
+  );
 
   const isArea = variant === "area";
+  const uid = chartUid(React.useId());
   const isStacked = isArea && stacked && series.length > 1;
   const expand = isStacked && stackOffset === "expand";
 
   /* ---------- miền zoom (brush) ---------- */
-  const [domainRaw, setDomainRaw] = useControllableState<ChartDomain | undefined>({
+  const [domainRaw, setDomainRaw] = useControllableState<
+    ChartDomain | undefined
+  >({
     value: domainProp,
     defaultValue: defaultDomain,
     onChange: (next) => next && onDomainChange?.(next),
@@ -142,24 +195,36 @@ function SeriesChart({
 
   // Hover chỉ đổi `active`. Hình học, nhãn của mọi điểm và các lớp không phụ thuộc hover được nhớ theo props, độ rộng và
   // chuỗi đang ẩn: mỗi bước hover không tính lại, không định dạng lại, không so lại các lớp đó (#352).
+  const markers = markersProp || renderMarker !== undefined;
   const view = React.useMemo(() => {
     const data = zoomed ? allData.slice(ds, de + 1) : allData;
     const rawAll = allData.map((d) => d[index]);
 
     const n = data.length;
     const raw = data.map((d) => d[index]);
-    const isTime = xType ? xType === "time" : rawAll.some((v) => v instanceof Date);
+    const isTime = xType
+      ? xType === "time"
+      : rawAll.some((v) => v instanceof Date);
     const fmt = makeNumberFormatter(locale, valueFormat);
 
     const xAxisText = (v: ChartValue): string => {
       if (typeof xFormat === "function") return xFormat(v);
-      if (v instanceof Date) return df(locale, xFormat ?? { day: "numeric", month: "numeric" }).format(v);
+      if (v instanceof Date)
+        return df(
+          locale,
+          xFormat ?? { day: "numeric", month: "numeric" },
+        ).format(v);
       return formatCategory(v, locale);
     };
     const xLongText = (v: ChartValue): string => {
-      const f = xTooltipFormat ?? (typeof xFormat === "function" ? xFormat : undefined);
+      const f =
+        xTooltipFormat ?? (typeof xFormat === "function" ? xFormat : undefined);
       if (typeof f === "function") return f(v);
-      if (v instanceof Date) return df(locale, f ?? { day: "numeric", month: "long", year: "numeric" }).format(v);
+      if (v instanceof Date)
+        return df(
+          locale,
+          f ?? { day: "numeric", month: "long", year: "numeric" },
+        ).format(v);
       return formatCategory(v, locale);
     };
     const xLabels = raw.map(xAxisText);
@@ -167,10 +232,18 @@ function SeriesChart({
     const xLong = zoomed ? xLongAll.slice(ds, de + 1) : xLongAll;
 
     const slots = series.map((s, i) => slotOf(s.color, i));
-    const slotFor = (key: string, slot: ChartSlot): ChartSlot => (highlight && key !== highlight ? "other" : slot);
-    const vis = series.map((s, i) => ({ s, slot: slotFor(s.key, slots[i]) })).filter((v) => !hidden.has(v.s.key));
+    const slotFor = (key: string, slot: ChartSlot): ChartSlot =>
+      highlight && key !== highlight ? "other" : slot;
+    const vis = series
+      .map((s, i) => ({ s, slot: slotFor(s.key, slots[i]) }))
+      .filter((v) => !hidden.has(v.s.key));
     // Chuỗi được nhấn mạnh vẽ sau cùng (nằm trên).
-    const drawOrder = highlight ? [...vis.filter((v) => v.s.key !== highlight), ...vis.filter((v) => v.s.key === highlight)] : vis;
+    const drawOrder = highlight
+      ? [
+          ...vis.filter((v) => v.s.key !== highlight),
+          ...vis.filter((v) => v.s.key === highlight),
+        ]
+      : vis;
     const val = (r: number, key: string) => toNumber(data[r]?.[key]);
 
     /* ---------- giá trị (cộng dồn khi chồng; "expand" = tỉ lệ 0…1) ---------- */
@@ -196,8 +269,14 @@ function SeriesChart({
     const ticks = niceTicks(lo, hi, clamp(Math.round(plotH / 56), 2, 8));
     const d0 = ticks[0];
     const d1 = ticks[ticks.length - 1];
-    const axisFmt = makeAxisFormatter(locale, axisFormat ?? (expand ? { style: "percent" } : valueFormat), Math.max(Math.abs(d0), Math.abs(d1)), ticks.length > 1 ? ticks[1] - ticks[0] : 0);
-    const left = Math.ceil(Math.max(0, ...ticks.map((t) => measureText(axisFmt(t))))) + 8;
+    const axisFmt = makeAxisFormatter(
+      locale,
+      axisFormat ?? (expand ? { style: "percent" } : valueFormat),
+      Math.max(Math.abs(d0), Math.abs(d1)),
+      ticks.length > 1 ? ticks[1] - ticks[0] : 0,
+    );
+    const left =
+      Math.ceil(Math.max(0, ...ticks.map((t) => measureText(axisFmt(t))))) + 8;
 
     // Nhãn cuối đường
     const wantEndLabels = endLabels ?? series.length <= 4;
@@ -206,7 +285,11 @@ function SeriesChart({
       return -1;
     });
     const endTexts = vis.map((v, k) =>
-      lastIdx[k] < 0 || (highlight && v.s.key !== highlight) ? "" : series.length === 1 ? fmt(upper[k][lastIdx[k]] as number) : v.s.label,
+      lastIdx[k] < 0 || (highlight && v.s.key !== highlight)
+        ? ""
+        : series.length === 1
+          ? fmt(upper[k][lastIdx[k]] as number)
+          : v.s.label,
     );
     const endW = Math.max(0, ...endTexts.map((t) => (t ? measureText(t) : 0)));
     const showEnd = wantEndLabels && endW > 0 && endW + 10 <= width * 0.3;
@@ -214,12 +297,14 @@ function SeriesChart({
     const plotW = Math.max(0, width - left - right);
 
     const y = linearScale([d0, d1], [top + plotH, top]);
-    const timeOf = (v: ChartValue) => (v instanceof Date ? +v : typeof v === "number" ? v : NaN);
+    const timeOf = (v: ChartValue) =>
+      v instanceof Date ? +v : typeof v === "number" ? v : NaN;
     const times = raw.map(timeOf);
     const tMin = Math.min(...times.filter(Number.isFinite));
     const tMax = Math.max(...times.filter(Number.isFinite));
     const xs = raw.map((_, r) => {
-      if (isTime && Number.isFinite(times[r]) && tMax > tMin) return linearScale([tMin, tMax], [left, left + plotW])(times[r]);
+      if (isTime && Number.isFinite(times[r]) && tMax > tMin)
+        return linearScale([tMin, tMax], [left, left + plotW])(times[r]);
       if (n <= 1) return left + plotW / 2;
       return left + (plotW * r) / (n - 1);
     });
@@ -268,16 +353,33 @@ function SeriesChart({
       return { v, k, line, area };
     });
 
-    const pctFmt = makeNumberFormatter(locale, { style: "percent", maximumFractionDigits: 1 });
+    const pctFmt = makeNumberFormatter(locale, {
+      style: "percent",
+      maximumFractionDigits: 1,
+    });
     const totalLabel = msg.total;
     const rowsAt = (r: number): ChartTooltipRow[] => {
       const total = vis.reduce((a, v) => a + (val(r, v.s.key) ?? 0), 0);
       const rows: ChartTooltipRow[] = vis.map((v) => {
         const x = val(r, v.s.key);
-        const text = x == null ? "—" : expand && total > 0 ? `${fmt(x)} (${pctFmt(Math.max(0, x) / total)})` : fmt(x);
-        return { key: v.s.key, label: v.s.label, value: text, slot: v.slot, shape: isArea ? "rect" : "line" };
+        const text =
+          x == null
+            ? "—"
+            : expand && total > 0
+              ? `${fmt(x)} (${pctFmt(Math.max(0, x) / total)})`
+              : fmt(x);
+        return {
+          key: v.s.key,
+          label: v.s.label,
+          value: text,
+          raw: x,
+          swatch: v.s.icon ? <ChartSeriesIcon icon={v.s.icon} slot={v.slot} /> : undefined,
+          slot: v.slot,
+          shape: isArea ? "rect" : "line",
+        };
       });
-      if (isStacked) rows.push({ key: "__total", label: totalLabel, value: fmt(total) });
+      if (isStacked)
+        rows.push({ key: "__total", label: totalLabel, value: fmt(total), raw: total });
       return rows;
     };
     // Nhãn của từng điểm cho trình đọc màn hình (Intl cho mỗi chuỗi): chỉ khi đã có vùng vẽ.
@@ -294,18 +396,31 @@ function SeriesChart({
     // Nhãn cuối: bỏ hết nếu va nhau (không xếp chồng / đẩy lệch khỏi đường).
     const endLabelItems = showEnd
       ? vis
-          .map((v, k) => ({ key: v.s.key, text: endTexts[k], y: lastIdx[k] >= 0 ? y(upper[k][lastIdx[k]] as number) : 0, x: lastIdx[k] >= 0 ? xs[lastIdx[k]] : 0 }))
+          .map((v, k) => ({
+            key: v.s.key,
+            text: endTexts[k],
+            y: lastIdx[k] >= 0 ? y(upper[k][lastIdx[k]] as number) : 0,
+            x: lastIdx[k] >= 0 ? xs[lastIdx[k]] : 0,
+          }))
           .filter((l) => l.text)
           .sort((a, b) => a.y - b.y)
       : [];
-    const endCollide = endLabelItems.some((l, i) => i > 0 && l.y - endLabelItems[i - 1].y < 14);
+    const endCollide = endLabelItems.some(
+      (l, i) => i > 0 && l.y - endLabelItems[i - 1].y < 14,
+    );
 
     const xLabelIdx = width > 0 ? pickLabelIndices(xs, xLabels, 0, width) : [];
     const showLegend = legend ?? series.length > 1;
     const summary =
       ariaLabel ??
       msg.lineSummary({
-        kind: isArea ? (isStacked ? (expand ? "expand" : "stacked") : "area") : "line",
+        kind: isArea
+          ? isStacked
+            ? expand
+              ? "expand"
+              : "stacked"
+            : "area"
+          : "line",
         points: n,
         from: n ? xLong[0] : undefined,
         to: n ? xLong[n - 1] : undefined,
@@ -325,28 +440,77 @@ function SeriesChart({
     const atMin = finiteTimes.length ? Math.min(...finiteTimes) : 0;
     const atMax = finiteTimes.length ? Math.max(...finiteTimes) : 0;
     const brushPositions =
-      brush && isTime && atMax > atMin && finiteTimes.length === allTimes.length ? allTimes.map((t) => (t - atMin) / (atMax - atMin)) : undefined;
+      brush && isTime && atMax > atMin && finiteTimes.length === allTimes.length
+        ? allTimes.map((t) => (t - atMin) / (atMax - atMin))
+        : undefined;
 
     const legendNode = showLegend ? (
       <ChartLegend
         shape={isArea ? "rect" : "line"}
         textured={textured}
         onToggle={series.length > 1 ? toggleSeries : undefined}
-        items={series.map((s, i) => ({ key: s.key, label: s.label, slot: slotFor(s.key, slots[i]), hidden: hidden.has(s.key) }))}
+        items={series.map((s, i) => ({
+          swatch: s.icon ? <ChartSeriesIcon icon={s.icon} slot={slots[i]} /> : undefined,
+          key: s.key,
+          label: s.label,
+          slot: slotFor(s.key, slots[i]),
+          hidden: hidden.has(s.key),
+        }))}
       />
     ) : undefined;
 
     // Cùng một element giữa các lần hover nên React bỏ qua cả cây con (lưới, trục, vùng, đường, chấm, nhãn cuối).
     const layers = width > 0 && (
       <>
-        <GridLines ticks={ticks} scale={y} from={left} to={left + plotW} orientation="horizontal" skip={clamp(0, d0, d1)} />
+        <GridLines
+          ticks={ticks}
+          scale={y}
+          from={left}
+          to={left + plotW}
+          orientation="horizontal"
+          skip={clamp(0, d0, d1)}
+        />
         <ValueAxisLeft ticks={ticks} scale={y} x={left - 8} format={axisFmt} />
-        <CategoryAxisBottom positions={xs} labels={xLabels} indices={xLabelIdx} y={top + plotH + 8} minX={0} maxX={width} />
+        <CategoryAxisBottom
+          positions={xs}
+          labels={xLabels}
+          indices={xLabelIdx}
+          y={top + plotH + 8}
+          minX={0}
+          maxX={width}
+        />
 
         {isArea && (
-          <g aria-hidden className={cn(animate && "animate-fade-in", "motion-reduce:animate-none")}>
+          <g
+            aria-hidden
+            className={cn(
+              animate && "animate-fade-in",
+              "motion-reduce:animate-none",
+            )}
+          >
+            {gradient && (
+              <defs>
+                {shapes.map((s) => (
+                  <linearGradient key={s.v.s.key} id={`${uid}-grad-${s.k}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" style={{ stopColor: slotVar(s.v.slot), stopOpacity: 0.45 }} />
+                    <stop offset="100%" style={{ stopColor: slotVar(s.v.slot), stopOpacity: 0.02 }} />
+                  </linearGradient>
+                ))}
+              </defs>
+            )}
             {shapes.map((s) => (
-              <path key={s.v.s.key} d={s.area} style={{ fill: slotVar(s.v.slot), fillOpacity: "var(--chartAreaOpacity)" }} />
+              <path
+                key={s.v.s.key}
+                d={s.area}
+                style={
+                  gradient
+                    ? { fill: `url(#${uid}-grad-${s.k})` }
+                    : {
+                        fill: slotVar(s.v.slot),
+                        fillOpacity: "var(--chartAreaOpacity)",
+                      }
+                }
+              />
             ))}
           </g>
         )}
@@ -365,7 +529,13 @@ function SeriesChart({
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeDasharray={dash}
-                className={cn(animate && (dash ? "animate-fade-in" : "animate-chart-draw [stroke-dasharray:1]"), "motion-reduce:animate-none")}
+                className={cn(
+                  animate &&
+                    (dash
+                      ? "animate-fade-in"
+                      : "animate-chart-draw [stroke-dasharray:1]"),
+                  "motion-reduce:animate-none",
+                )}
                 style={{ stroke: slotVar(s.v.slot) }}
               />
             );
@@ -376,17 +546,60 @@ function SeriesChart({
           <g aria-hidden>
             {/* Màu và viền đặt trên nhóm của chuỗi, các chấm thừa hưởng: một style mỗi chuỗi thay vì mỗi điểm. */}
             {shapes.map((s) => (
-              <g key={s.v.s.key} strokeWidth={2} style={{ fill: slotVar(s.v.slot), stroke: "var(--colorChartSurface)" }}>
-                {upper[s.k].map((u, r) => (u == null ? null : <circle key={r} cx={xs[r]} cy={y(u)} r={4} />))}
+              <g
+                key={s.v.s.key}
+                strokeWidth={2}
+                style={{
+                  fill: slotVar(s.v.slot),
+                  stroke: "var(--colorChartSurface)",
+                }}
+              >
+                {upper[s.k].map((u, r) => {
+                  if (u == null) return null;
+                  const value = val(r, s.v.s.key);
+                  if (renderMarker && value != null)
+                    return <React.Fragment key={r}>{renderMarker({ x: xs[r], y: y(u), index: r, series: s.v.s.key, value })}</React.Fragment>;
+                  return <circle key={r} cx={xs[r]} cy={y(u)} r={4} />;
+                })}
               </g>
             ))}
+          </g>
+        )}
+
+        {valueLabels && (
+          <g aria-hidden className="text-caption1 tabular-nums">
+            {shapes.map((s) => {
+              // Điểm quá sát (< 32px): chỉ ghi cách quãng, luôn giữ điểm cuối.
+              const gap = n > 1 ? Math.abs(xs[1] - xs[0]) : Infinity;
+              const step = Math.max(1, Math.ceil(32 / Math.max(gap, 1)));
+              return (
+                <g key={s.v.s.key} style={{ fill: slotVar(s.v.slot) }}>
+                  {upper[s.k].map((u, r) => {
+                    const value = val(r, s.v.s.key);
+                    if (u == null || value == null || (r % step !== 0 && r !== n - 1)) return null;
+                    const text = typeof valueLabels === "function" ? valueLabels(value, r, s.v.s.key) : fmt(value);
+                    return (
+                      <text key={r} x={xs[r]} y={y(u) - (markers ? 10 : 6)} textAnchor="middle">
+                        {text}
+                      </text>
+                    );
+                  })}
+                </g>
+              );
+            })}
           </g>
         )}
 
         {showEnd && !endCollide && (
           <g aria-hidden>
             {endLabelItems.map((l) => (
-              <text key={l.key} x={l.x + 8} y={l.y} dy="0.32em" className="fill-foreground-2 text-caption1 tabular-nums">
+              <text
+                key={l.key}
+                x={l.x + 8}
+                y={l.y}
+                dy="0.32em"
+                className="fill-foreground-2 text-caption1 tabular-nums"
+              >
                 {l.text}
               </text>
             ))}
@@ -402,22 +615,101 @@ function SeriesChart({
         labels={xLongAll}
         value={[ds, de]}
         onValueChange={setDomainRaw}
-        lines={overview.map((st, k) => ({ key: vis[k].s.key, slot: vis[k].slot, values: st.upper }))}
+        lines={overview.map((st, k) => ({
+          key: vis[k].s.key,
+          slot: vis[k].slot,
+          values: st.upper,
+        }))}
       />
     );
 
-    return { n, isTime, fmt, xLongAll, xLong, vis, upper, top, plotH, y, columns, rowsAt, pointLabels, summary, legendNode, layers, brushNode };
-  }, [allData, ds, de, zoomed, nAll, index, series, xType, valueFormat, axisFormat, xFormat, xTooltipFormat, locale, msg, hidden, toggleSeries, highlight, isArea, isStacked, expand, includeZero, height, width, endLabels, legend, ariaLabel, curve, markers, animate, textured, brush, setDomainRaw]);
+    return {
+      n,
+      isTime,
+      fmt,
+      xLongAll,
+      xLong,
+      vis,
+      upper,
+      top,
+      plotH,
+      y,
+      columns,
+      rowsAt,
+      pointLabels,
+      summary,
+      legendNode,
+      layers,
+      brushNode,
+    };
+  }, [
+    allData,
+    ds,
+    de,
+    zoomed,
+    nAll,
+    index,
+    series,
+    xType,
+    valueFormat,
+    axisFormat,
+    xFormat,
+    xTooltipFormat,
+    locale,
+    msg,
+    hidden,
+    toggleSeries,
+    highlight,
+    isArea,
+    isStacked,
+    expand,
+    includeZero,
+    height,
+    width,
+    endLabels,
+    legend,
+    ariaLabel,
+    curve,
+    markers,
+    renderMarker,
+    valueLabels,
+    gradient,
+    uid,
+    animate,
+    textured,
+    brush,
+    setDomainRaw,
+  ]);
 
-  const { n, isTime, fmt, xLongAll, xLong, vis, upper, top, plotH, y, columns, rowsAt, pointLabels, summary } = view;
+  const {
+    n,
+    isTime,
+    fmt,
+    xLongAll,
+    xLong,
+    vis,
+    upper,
+    top,
+    plotH,
+    y,
+    columns,
+    rowsAt,
+    pointLabels,
+    summary,
+  } = view;
 
   /* ---------- tương tác ---------- */
-  const roving = useRovingPoints(n, (i, kb) => setActive(i === null ? null : { i, kb }));
+  const roving = useRovingPoints(n, (i, kb) =>
+    setActive(i === null ? null : { i, kb }),
+  );
   const activeCol = active && width > 0 ? columns[active.i] : undefined;
   const activePoints = activeCol
     ? vis
         .map((v, k) => ({ v, k, value: upper[k][activeCol.i] }))
-        .filter((p): p is { v: (typeof vis)[number]; k: number; value: number } => p.value != null)
+        .filter(
+          (p): p is { v: (typeof vis)[number]; k: number; value: number } =>
+            p.value != null,
+        )
     : [];
 
   // Một lớp điểm (vùng bắt chuột + điểm dừng bàn phím) với handler dùng chung trên `<g>`: hover không render lại lớp này.
@@ -448,7 +740,10 @@ function SeriesChart({
     <ChartTable
       caption={summary}
       columns={[
-        { key: "__index", label: indexLabel ?? (isTime ? msg.time : msg.category) },
+        {
+          key: "__index",
+          label: indexLabel ?? (isTime ? msg.time : msg.category),
+        },
         ...series.map((s) => ({ key: s.key, label: s.label, numeric: true })),
       ]}
       rows={allData.map((d, r) => ({
@@ -462,8 +757,12 @@ function SeriesChart({
     />
   );
 
-  const activeTop = activePoints.length ? Math.min(...activePoints.map((p) => y(p.value))) : top;
-  const activeBottom = activePoints.length ? Math.max(...activePoints.map((p) => y(p.value))) : top;
+  const activeTop = activePoints.length
+    ? Math.min(...activePoints.map((p) => y(p.value)))
+    : top;
+  const activeBottom = activePoints.length
+    ? Math.max(...activePoints.map((p) => y(p.value)))
+    : top;
 
   return (
     <ChartContainer
@@ -507,10 +806,21 @@ function SeriesChart({
                     cy={y(p.value)}
                     r={5}
                     strokeWidth={2}
-                    style={{ fill: slotVar(p.v.slot), stroke: "var(--colorChartSurface)" }}
+                    style={{
+                      fill: slotVar(p.v.slot),
+                      stroke: "var(--colorChartSurface)",
+                    }}
                   />
                 ))}
-                {active?.kb && <ChartFocusRing x={activeCol.x - 7} y={activeTop - 7} width={14} height={activeBottom - activeTop + 14} radius={6} />}
+                {active?.kb && (
+                  <ChartFocusRing
+                    x={activeCol.x - 7}
+                    y={activeTop - 7}
+                    width={14}
+                    height={activeBottom - activeTop + 14}
+                    radius={6}
+                  />
+                )}
               </g>
             )}
 
@@ -518,7 +828,15 @@ function SeriesChart({
           </svg>
         )}
         {activeCol && (
-          <ChartTooltip x={activeCol.x} y={activeTop} title={xLong[activeCol.i]} rows={rowsAt(activeCol.i)} textured={textured} />
+          <ChartTooltip
+            x={activeCol.x}
+            y={activeTop}
+            title={xLong[activeCol.i]}
+            rows={rowsAt(activeCol.i)}
+            textured={textured}
+            config={tooltip}
+            index={activeCol.i}
+          />
         )}
       </PlotArea>
       {view.brushNode}
@@ -527,11 +845,15 @@ function SeriesChart({
 }
 
 /** LineChart — xu hướng theo thời gian / danh mục, nhiều chuỗi, crosshair + tooltip, nhãn cuối đường. */
-export function LineChart(props: LineChartProps & { ref?: React.Ref<HTMLElement> }) {
+export function LineChart(
+  props: LineChartProps & { ref?: React.Ref<HTMLElement> },
+) {
   return <SeriesChart {...props} variant="line" />;
 }
 
 /** AreaChart — như LineChart kèm lớp phủ ~10% dưới đường; `stacked` cho phần–tổng theo thời gian. */
-export function AreaChart(props: AreaChartProps & { ref?: React.Ref<HTMLElement> }) {
+export function AreaChart(
+  props: AreaChartProps & { ref?: React.Ref<HTMLElement> },
+) {
   return <SeriesChart {...props} variant="area" />;
 }

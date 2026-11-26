@@ -71,7 +71,7 @@ describe("RadioGroup", () => {
       </RadioGroup>,
     );
     expect(radio("A")).toHaveAttribute("id", "opt-a");
-    expect(radio("A").parentElement).toHaveClass("flex-col", "w-16");
+    expect(radio("A").parentElement!.parentElement).toHaveClass("flex-col", "w-16");
     expect(screen.getByText("A")).toHaveClass("text-center");
   });
 });

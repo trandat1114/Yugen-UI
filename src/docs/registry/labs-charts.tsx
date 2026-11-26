@@ -1,4 +1,17 @@
-import { AreaChart, BarChart, DonutChart, LineChart, Sparkline, StatTile } from "@/components/ui/Chart/Chart";
+import {
+  AreaChart,
+  BarChart,
+  DonutChart,
+  LineChart,
+  PieChart,
+  RadarChart,
+  RadialChart,
+  Sparkline,
+  StatTile,
+} from "@/components/ui/Chart/Chart";
+import { useState } from "react";
+import { Globe20Regular, Phone20Regular } from "@fluentui/react-icons";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/ToggleGroup/ToggleGroup";
 import type { ComponentDoc } from "../types";
 
 /* ------------------------------------------------------------------ Dữ liệu mẫu
@@ -134,6 +147,254 @@ const usage = [
 const revenueTrend = [62, 68, 64, 71, 75, 73, 80, 84, 82, 90, 96, 104];
 const months = ["Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"];
 const churnTrend = [0.041, 0.04, 0.039, 0.042, 0.038, 0.037, 0.036, 0.035, 0.036, 0.033, 0.032, 0.031];
+
+const pieMix = [
+  { label: "Web", value: 42 },
+  { label: "App", value: 31 },
+  { label: "Store", value: 19 },
+  { label: "Partner", value: 8 },
+];
+
+const browserShare = [
+  { browser: "Chrome", visitors: 275 },
+  { browser: "Safari", visitors: 200 },
+  { browser: "Firefox", visitors: 187 },
+  { browser: "Edge", visitors: 173 },
+  { browser: "Other", visitors: 90 },
+];
+
+const deviceVisits = [
+  { month: "Jan", desktop: 186, mobile: 80 },
+  { month: "Feb", desktop: 305, mobile: 200 },
+  { month: "Mar", desktop: 237, mobile: 120 },
+  { month: "Apr", desktop: 73, mobile: 190 },
+  { month: "May", desktop: 209, mobile: 130 },
+  { month: "Jun", desktop: 214, mobile: 140 },
+];
+
+
+/* ---------- gallery demos (#428–#433) ---------- */
+
+const DEVICE_BARS_CODE = `function DeviceBars() {
+  const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
+  const totals = {
+    desktop: deviceVisits.reduce((sum, d) => sum + d.desktop, 0),
+    mobile: deviceVisits.reduce((sum, d) => sum + d.mobile, 0),
+  };
+  return (
+    <BarChart
+      title="Visits by device"
+      toolbar={
+        <ToggleGroup type="single" size="small" value={device} onValueChange={(v) => v && setDevice(v as "desktop" | "mobile")} aria-label="Device">
+          <ToggleGroupItem value="desktop">Desktop {totals.desktop}</ToggleGroupItem>
+          <ToggleGroupItem value="mobile">Mobile {totals.mobile}</ToggleGroupItem>
+        </ToggleGroup>
+      }
+      data={deviceVisits}
+      index="month"
+      series={[{ key: device, label: device === "desktop" ? "Desktop" : "Mobile", color: device === "desktop" ? 1 : 2 }]}
+      locale="en-US"
+    />
+  );
+}`;
+
+function DeviceBars() {
+  const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
+  const totals = {
+    desktop: deviceVisits.reduce((sum, d) => sum + d.desktop, 0),
+    mobile: deviceVisits.reduce((sum, d) => sum + d.mobile, 0),
+  };
+  return (
+    <BarChart
+      title="Visits by device"
+      toolbar={
+        <ToggleGroup type="single" size="small" value={device} onValueChange={(v) => v && setDevice(v as "desktop" | "mobile")} aria-label="Device">
+          <ToggleGroupItem value="desktop">Desktop {totals.desktop}</ToggleGroupItem>
+          <ToggleGroupItem value="mobile">Mobile {totals.mobile}</ToggleGroupItem>
+        </ToggleGroup>
+      }
+      data={deviceVisits}
+      index="month"
+      series={[{ key: device, label: device === "desktop" ? "Desktop" : "Mobile", color: device === "desktop" ? 1 : 2 }]}
+      locale="en-US"
+    />
+  );
+}
+
+const TOOLTIP_VARIANTS_CODE = `function TooltipVariants() {
+  return (
+    <LineChart
+      title="Visits by device"
+      data={deviceVisits}
+      index="month"
+      series={[
+        { key: "desktop", label: "Desktop", icon: <Globe20Regular /> },
+        { key: "mobile", label: "Mobile", icon: <Phone20Regular /> },
+      ]}
+      tooltip={{
+        indicator: "dot",
+        label: (label) => \`\${label} 2026\`,
+        value: (v) => \`\${v.toLocaleString("en-US")} visits\`,
+      }}
+      locale="en-US"
+    />
+  );
+}`;
+
+function TooltipVariants() {
+  return (
+    <LineChart
+      title="Visits by device"
+      data={deviceVisits}
+      index="month"
+      series={[
+        { key: "desktop", label: "Desktop", icon: <Globe20Regular /> },
+        { key: "mobile", label: "Mobile", icon: <Phone20Regular /> },
+      ]}
+      tooltip={{
+        indicator: "dot",
+        label: (label) => `${label} 2026`,
+        value: (v) => `${v.toLocaleString("en-US")} visits`,
+      }}
+      locale="en-US"
+    />
+  );
+}
+
+const TOOLTIP_CONTENT_CODE = `function TooltipContent() {
+  return (
+    <BarChart
+      title="Visits by device"
+      data={deviceVisits}
+      index="month"
+      layout="stacked"
+      series={[
+        { key: "desktop", label: "Desktop" },
+        { key: "mobile", label: "Mobile" },
+      ]}
+      tooltip={{
+        render: ({ title, rows }) => {
+          const desktop = rows.find((r) => r.key === "desktop")?.value ?? 0;
+          const mobile = rows.find((r) => r.key === "mobile")?.value ?? 0;
+          return (
+            <div className="flex flex-col gap-1">
+              <span className="font-semibold text-foreground-1">{title}</span>
+              <span>{Math.round((mobile / (desktop + mobile)) * 100)}% of visits came from phones.</span>
+            </div>
+          );
+        },
+      }}
+      locale="en-US"
+    />
+  );
+}`;
+
+function TooltipContent() {
+  return (
+    <BarChart
+      title="Visits by device"
+      data={deviceVisits}
+      index="month"
+      layout="stacked"
+      series={[
+        { key: "desktop", label: "Desktop" },
+        { key: "mobile", label: "Mobile" },
+      ]}
+      tooltip={{
+        render: ({ title, rows }) => {
+          const desktop = rows.find((r) => r.key === "desktop")?.value ?? 0;
+          const mobile = rows.find((r) => r.key === "mobile")?.value ?? 0;
+          return (
+            <div className="flex flex-col gap-1">
+              <span className="font-semibold text-foreground-1">{title}</span>
+              <span>{Math.round((mobile / (desktop + mobile)) * 100)}% of visits came from phones.</span>
+            </div>
+          );
+        },
+      }}
+      locale="en-US"
+    />
+  );
+}
+
+const radarProfile = [
+  { axis: "Speed", alpha: 86, beta: 72 },
+  { axis: "Quality", alpha: 78, beta: 88 },
+  { axis: "Support", alpha: 92, beta: 68 },
+  { axis: "Reach", alpha: 64, beta: 82 },
+  { axis: "Value", alpha: 80, beta: 74 },
+];
+
+const radarSkills = [
+  { axis: "Communication with stakeholders", lead: 90, junior: 55 },
+  { axis: "System design", lead: 82, junior: 40 },
+  { axis: "Code review", lead: 88, junior: null },
+  { axis: "Mentoring", lead: 76, junior: 30 },
+  { axis: "Incident response", lead: 70, junior: 62 },
+  { axis: "Testing", lead: 84, junior: 71 },
+];
+
+const browserSlices = [
+  { label: "Chrome", value: 275 },
+  { label: "Safari", value: 200 },
+  { label: "Firefox", value: 187 },
+  { label: "Edge", value: 173 },
+  { label: "Other", value: 90 },
+];
+
+const goals = [
+  { label: "Move", value: 420 },
+  { label: "Exercise", value: 28 },
+  { label: "Stand", value: 10 },
+];
+
+const radialProgress = [
+  { label: "Completed", value: 72 },
+  { label: "Remaining", value: 28 },
+];
+
+
+const BROWSER_PICKER_CODE = `function BrowserPicker() {
+  const [index, setIndex] = useState(0);
+  return (
+    <DonutChart
+      title="Visitors by browser"
+      toolbar={
+        <ToggleGroup type="single" size="small" value={String(index)} onValueChange={(v) => v && setIndex(Number(v))} aria-label="Browser">
+          {browserSlices.slice(0, 4).map((b, i) => (
+            <ToggleGroupItem key={b.label} value={String(i)}>
+              {b.label}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
+      }
+      data={browserSlices}
+      activeIndex={index}
+      locale="en-US"
+    />
+  );
+}`;
+
+function BrowserPicker() {
+  const [index, setIndex] = useState(0);
+  return (
+    <DonutChart
+      title="Visitors by browser"
+      toolbar={
+        <ToggleGroup type="single" size="small" value={String(index)} onValueChange={(v) => v && setIndex(Number(v))} aria-label="Browser">
+          {browserSlices.slice(0, 4).map((b, i) => (
+            <ToggleGroupItem key={b.label} value={String(i)}>
+              {b.label}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
+      }
+      data={browserSlices}
+      activeIndex={index}
+      locale="en-US"
+    />
+  );
+}
 
 /* ------------------------------------------------------------------ Docs */
 
@@ -294,6 +555,52 @@ const LABS_CHARTS: ComponentDoc[] = [
           />
         ),
       },
+      {
+        title: "Đổi chuỗi bằng nút",
+        description: "Nút trong toolbar chọn chuỗi đang xem và hiện tổng của từng chuỗi; màu đi theo chuỗi, không theo nút.",
+        setup: `const deviceVisits = ${lit(deviceVisits)};`,
+        code: DEVICE_BARS_CODE,
+        render: () => <DeviceBars />,
+      },
+      {
+        title: "Mỗi danh mục một màu",
+        description: "colorBy=\"category\" khi danh mục là thực thể có màu riêng (trình duyệt, kênh); legend liệt kê danh mục.",
+        setup: `const browserShare = ${lit(browserShare)};`,
+        code: `<BarChart title="Visitors by browser" data={browserShare} index="browser" series={[{ key: "visitors", label: "Visitors" }]} colorBy="category" orientation="horizontal" locale="en-US" />`,
+        render: () => <BarChart title="Visitors by browser" data={browserShare} index="browser" series={[{ key: "visitors", label: "Visitors" }]} colorBy="category" orientation="horizontal" locale="en-US" />,
+      },
+      {
+        title: "Cột đang nhấn và nhãn tuỳ biến",
+        description: "activeIndex nhấn một danh mục (các cột khác nhạt đi); showValues nhận hàm để tự viết nhãn.",
+        setup: `const deviceVisits = ${lit(deviceVisits)};`,
+        code: `<BarChart
+  title="Desktop visits"
+  data={deviceVisits}
+  index="month"
+  series={[{ key: "desktop", label: "Desktop" }]}
+  activeIndex={1}
+  showValues={(value, index) => (index === 1 ? \`\${value} ▲\` : String(value))}
+  locale="en-US"
+/>`,
+        render: () => (
+          <BarChart
+            title="Desktop visits"
+            data={deviceVisits}
+            index="month"
+            series={[{ key: "desktop", label: "Desktop" }]}
+            activeIndex={1}
+            showValues={(value, index) => (index === 1 ? `${value} ▲` : String(value))}
+            locale="en-US"
+          />
+        ),
+      },
+      {
+        title: "Tooltip tuỳ biến",
+        description: "tooltip.render thay nội dung tooltip bằng câu của bạn, từ giá trị gốc của từng hàng; vị trí và khung giữ nguyên.",
+        setup: `const deviceVisits = ${lit(deviceVisits)};`,
+        code: TOOLTIP_CONTENT_CODE,
+        render: () => <TooltipContent />,
+      },
     ],
     dos: [
       "Dùng cột để so sánh độ lớn; chuyển sang thanh ngang khi nhiều danh mục hoặc tên dài.",
@@ -306,6 +613,9 @@ const LABS_CHARTS: ComponentDoc[] = [
       "Không vẽ biểu đồ chỉ một cột — dùng StatTile.",
     ],
     props: [
+      { name: "colorBy", type: `"series" | "category"`, defaultValue: `"series"`, description: "Một chuỗi: mỗi danh mục một màu, legend liệt kê danh mục." },
+      { name: "activeIndex", type: "number", description: "Danh mục được nhấn; các cột khác nhạt đi khi không trỏ cột nào." },
+      { name: "tooltip", type: "ChartTooltipConfig", description: "indicator, label, value, icons, render, hidden — dùng chung mọi biểu đồ." },
       { name: "data", type: "ChartDatum[]", description: "Mảng dòng dữ liệu (object)." },
       { name: "index", type: "string", description: "Trường danh mục." },
       { name: "series", type: "{ key, label, color? }[]", description: "Chuỗi giá trị; color (1–8) ghim ô màu, mặc định theo thứ tự." },
@@ -463,6 +773,103 @@ const LABS_CHARTS: ComponentDoc[] = [
           />
         ),
       },
+      {
+        title: "Nhãn giá trị",
+        description: "valueLabels ghi giá trị ngay trên mỗi điểm, theo valueFormat; điểm quá sát thì ghi cách quãng. Hợp với ít điểm, khi người đọc cần con số chính xác.",
+        code: `const revenue = ${lit(revenue)};
+
+<LineChart
+  title="Online revenue"
+  data={revenue}
+  index="month"
+  series={[{ key: "online", label: "Online" }]}
+  markers
+  valueLabels
+  valueFormat={{ notation: "compact", style: "currency", currency: "USD" }}
+  locale="en-US"
+/>`,
+        render: () => (
+          <LineChart
+            title="Online revenue"
+            data={revenue}
+            index="month"
+            series={[{ key: "online", label: "Online" }]}
+            markers
+            valueLabels
+            valueFormat={{ notation: "compact", style: "currency", currency: "USD" }}
+            locale="en-US"
+          />
+        ),
+      },
+      {
+        title: "Chấm tuỳ biến",
+        description: "renderMarker vẽ chấm của riêng bạn; phần tử thừa hưởng màu của chuỗi. Ở đây tháng cao nhất là chấm lớn hơn.",
+        code: `const revenue = ${lit(revenue)};
+
+<LineChart
+  title="Store revenue"
+  data={revenue}
+  index="month"
+  series={[{ key: "store", label: "Store" }]}
+  renderMarker={({ x, y, value }) => <circle cx={x} cy={y} r={value === 360000 ? 7 : 3} strokeWidth={2} />}
+  valueFormat={{ notation: "compact", style: "currency", currency: "USD" }}
+  locale="en-US"
+/>`,
+        render: () => (
+          <LineChart
+            title="Store revenue"
+            data={revenue}
+            index="month"
+            series={[{ key: "store", label: "Store" }]}
+            renderMarker={({ x, y, value }) => <circle cx={x} cy={y} r={value === 360000 ? 7 : 3} strokeWidth={2} />}
+            valueFormat={{ notation: "compact", style: "currency", currency: "USD" }}
+            locale="en-US"
+          />
+        ),
+      },
+      {
+        title: "AreaChart gradient và legend có icon",
+        description: "gradient tô vùng nhạt dần xuống trục; icon của từng chuỗi thay ô màu trong legend và tooltip.",
+        setup: `const deviceVisits = ${lit(deviceVisits)};`,
+        code: `<AreaChart
+  title="Visits by device"
+  data={deviceVisits}
+  index="month"
+  gradient
+  series={[
+    { key: "desktop", label: "Desktop", icon: <Globe20Regular /> },
+    { key: "mobile", label: "Mobile", icon: <Phone20Regular /> },
+  ]}
+  locale="en-US"
+/>`,
+        render: () => (
+          <AreaChart
+            title="Visits by device"
+            data={deviceVisits}
+            index="month"
+            gradient
+            series={[
+              { key: "desktop", label: "Desktop", icon: <Globe20Regular /> },
+              { key: "mobile", label: "Mobile", icon: <Phone20Regular /> },
+            ]}
+            locale="en-US"
+          />
+        ),
+      },
+      {
+        title: "Bậc thang và kéo chọn khoảng",
+        description: "curve=\"step\" cho giá trị đổi theo bậc; brush thêm thanh kéo để xem một khoảng (bàn phím: mũi tên, Home, End).",
+        setup: `const visits = ${lit(visits)};`,
+        code: `<AreaChart title="Daily visits" data={visits} index="date" series={[{ key: "visits", label: "Visits" }]} curve="step" brush locale="en-US" />`,
+        render: () => <AreaChart title="Daily visits" data={visits} index="date" series={[{ key: "visits", label: "Visits" }]} curve="step" brush locale="en-US" />,
+      },
+      {
+        title: "Biến thể tooltip",
+        description: "tooltip: indicator chấm, label đổi tiêu đề, value định dạng lại giá trị; icon của chuỗi hiện thay khoá màu.",
+        setup: `const deviceVisits = ${lit(deviceVisits)};`,
+        code: TOOLTIP_VARIANTS_CODE,
+        render: () => <TooltipVariants />,
+      },
     ],
     dos: [
       "Dùng đường cho xu hướng; AreaChart khi chỉ một chuỗi hoặc khi cần phần–tổng theo thời gian (stacked).",
@@ -475,12 +882,17 @@ const LABS_CHARTS: ComponentDoc[] = [
       "Không ghi số ở mọi điểm — chỉ điểm cuối hoặc điểm cực trị.",
     ],
     props: [
+      { name: "gradient (AreaChart)", type: "boolean", defaultValue: "false", description: "Tô vùng nhạt dần xuống trục." },
+      { name: "series[].icon", type: "ReactNode", description: "Icon của chuỗi, thay ô màu trong legend và tooltip." },
+      { name: "tooltip", type: "ChartTooltipConfig", description: "indicator, label, value, icons, render, hidden — dùng chung mọi biểu đồ." },
       { name: "data / index / series", type: "ChartDatum[] / string / ChartSeries[]", description: "Dữ liệu sắp xếp tăng dần theo X." },
       { name: "xType", type: `"category" | "time"`, defaultValue: "tự nhận", description: "Có Date → time (vị trí theo thời gian)." },
       { name: "xFormat / xTooltipFormat", type: "Intl.DateTimeFormatOptions | (v) => string", description: "Nhãn trục / tooltip & bảng." },
       { name: "valueFormat / axisFormat", type: "Intl.NumberFormatOptions | (v) => string", description: "Định dạng giá trị và trục." },
       { name: "markers", type: "boolean", defaultValue: "false", description: "Chấm tại mọi điểm." },
-      { name: "curve", type: `"monotone" | "linear"`, defaultValue: `"monotone"`, description: "Nội suy không vượt đỉnh dữ liệu." },
+      { name: "renderMarker", type: "(point: LineChartMarker) => ReactNode", description: "Chấm của riêng bạn (x, y, index, series, value); bật markers." },
+      { name: "valueLabels", type: "boolean | (value, index, series) => string", defaultValue: "false", description: "Giá trị trên mỗi điểm; điểm quá sát thì ghi cách quãng." },
+      { name: "curve", type: `"monotone" | "linear" | "step"`, defaultValue: `"monotone"`, description: "monotone không vượt đỉnh dữ liệu; step cho giá trị đổi theo bậc." },
       { name: "endLabels", type: "boolean", defaultValue: "≤ 4 chuỗi", description: "Nhãn cuối đường; tự tắt nếu va nhau." },
       { name: "highlight", type: "string", description: "Key chuỗi được nhấn mạnh (các chuỗi khác xám)." },
       { name: "includeZero", type: "boolean", defaultValue: "false (Line) · true (Area)", description: "Trục Y bắt đầu từ 0." },
@@ -693,6 +1105,205 @@ const churnTrend = ${JSON.stringify(churnTrend)};
       { name: "StatTile.goodDirection", type: `"up" | "down" | "neutral"`, defaultValue: `"up"`, description: "Chiều nào là tốt." },
       { name: "StatTile.trend / trendLabels", type: "(number | null)[] / string[]", description: "Sparkline bên cạnh giá trị." },
       { name: "StatTile.size", type: `"medium" | "large" | "extra-large"`, defaultValue: `"medium"`, description: "28 / 40 / 68px." },
+    ],
+  },
+
+  {
+    slug: "piechart",
+    name: "PieChart",
+    category: "Yugen Labs",
+    lead: "PieChart cho phần–tổng với lát đặc, separator tuỳ chọn, legend và bảng dữ liệu truy cập.",
+    description: "PieChart dùng chung data, locale, legend, texture, tooltip và bảng dữ liệu với DonutChart; dùng khi cần lát đặc thay vì một vòng có lỗ.",
+    importCode: `import { PieChart } from "@/components/ui";`,
+    hero: {
+      title: "Traffic mix",
+      code: `const pieMix = ${lit(pieMix)};\n\n<PieChart title="Traffic mix" data={pieMix} locale="en-US" />`,
+      render: () => <PieChart title="Traffic mix" data={pieMix} locale="en-US" />,
+    },
+    examples: [
+      {
+        title: "Không có khe giữa lát",
+        description: "separator=false cho biểu đồ liền khối; bảng dữ liệu vẫn giữ nhãn và giá trị từng lát.",
+        setup: `const pieMix = ${lit(pieMix)};`,
+        code: `<PieChart data={pieMix} separator={false} legend />`,
+        render: () => <PieChart data={pieMix} separator={false} legend />,
+      },
+      {
+        title: "Nhãn phần trăm",
+        description: "labels=\"percent\" ghi tỉ lệ ngoài mỗi lát (lát dưới 4% bỏ nhãn); \"value\", \"label\" hoặc một hàm cũng được.",
+        setup: `const browserSlices = ${lit(browserSlices)};`,
+        code: `<PieChart title="Visitors by browser" data={browserSlices} labels="percent" legend={false} locale="en-US" />`,
+        render: () => <PieChart title="Visitors by browser" data={browserSlices} labels="percent" legend={false} locale="en-US" />,
+      },
+      {
+        title: "Nhãn tuỳ biến",
+        description: "labels nhận hàm ({ label, value, share, index }) để viết nhãn của riêng bạn.",
+        setup: `const browserSlices = ${lit(browserSlices)};`,
+        code: `<PieChart data={browserSlices} labels={({ label, share }) => \`\${label} \${Math.round(share * 100)}%\`} legend={false} />`,
+        render: () => <PieChart data={browserSlices} labels={({ label, share }) => `${label} ${Math.round(share * 100)}%`} legend={false} />,
+      },
+      {
+        title: "Chọn một lát",
+        description: "activeIndex nhấn một lát (nổi ra, các lát khác nhạt đi) và đưa giá trị của lát đó vào tâm donut; ở đây nút trong toolbar chọn lát.",
+        setup: `const browserSlices = ${lit(browserSlices)};`,
+        code: BROWSER_PICKER_CODE,
+        render: () => <BrowserPicker />,
+      },
+    ],
+    dos: [
+      "Dùng cho phần–tổng nhìn nhanh với ít lát (tối đa 6; phần còn lại tự gộp vào “Khác”).",
+      "Khi cần so sánh giá trị gần nhau, dùng BarChart.",
+      "Ghi tỉ lệ bằng labels khi người đọc cần con số mà không mở tooltip.",
+    ],
+    donts: ["Không dùng quá nhiều lát hoặc chỉ dựa vào màu để phân biệt.", "Không dùng pie cho chuỗi theo thời gian."],
+    props: [
+      { name: "labels", type: `"value" | "percent" | "label" | (slice) => string`, description: "Nhãn ngoài mỗi lát; lát dưới 4% bỏ nhãn." },
+      { name: "activeIndex", type: "number", description: "Lát được nhấn khi không trỏ lát nào; tâm donut hiện giá trị của lát đó." },
+      { name: "tooltip", type: "ChartTooltipConfig", description: "indicator, label, value, icons, render, hidden — dùng chung mọi biểu đồ." },
+      { name: "data", type: "{ label, value, color? }[]", description: "Các lát pie; giá trị không hữu hạn hoặc ≤ 0 bị bỏ qua." },
+      { name: "separator", type: "boolean", defaultValue: "true", description: "Khe bề mặt 2px giữa các lát." },
+      { name: "maxSlices / otherLabel", type: "number / string", defaultValue: "6 / Other", description: "Giới hạn lát và nhãn phần gộp." },
+      { name: "legend / valueFormat / locale", type: "boolean / format / string", defaultValue: "true / mặc định / vi-VN", description: "Legend, định dạng số và locale." },
+      { name: "title, description, texture, defaultShowTable…", type: "ChartFrameProps", description: "Props khung và accessibility dùng chung." },
+    ],
+  },
+
+  {
+    slug: "radarchart",
+    name: "RadarChart",
+    category: "Yugen Labs",
+    lead: "RadarChart so sánh nhiều chuỗi trên cùng tập trục, với grid polygon/circle, dots, fill và legend toggle.",
+    description: "SVG viết tay, memo hình học và điều hướng keyboard theo từng trục; dùng cho hồ sơ nhiều tiêu chí có cùng thang đo.",
+    importCode: `import { RadarChart } from "@/components/ui";`,
+    hero: {
+      title: "Product profile",
+      code: `const radarProfile = ${lit(radarProfile)};\n\n<RadarChart title="Product profile" data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} />`,
+      render: () => <RadarChart title="Product profile" data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} />,
+    },
+    examples: [
+      {
+        title: "Circle grid & dots",
+        description: "Circle grid phù hợp khi muốn nhấn mạnh khoảng cách từ tâm; dots giúp đọc từng tiêu chí.",
+        setup: `const radarProfile = ${lit(radarProfile)};`,
+        code: `<RadarChart data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} grid="circle" dots />`,
+        render: () => <RadarChart data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} grid="circle" dots />,
+      },
+      {
+        title: "Chỉ đường viền",
+        description: "linesOnly bỏ phần tô, dots đánh dấu từng giá trị: hợp khi các chuỗi chồng lên nhau nhiều.",
+        setup: `const radarProfile = ${lit(radarProfile)};`,
+        code: `<RadarChart data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} linesOnly dots />`,
+        render: () => (
+          <RadarChart data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} linesOnly dots />
+        ),
+      },
+      {
+        title: "Nhãn trục kèm giá trị",
+        description: "axisLabel đổi chữ của nhãn trục (ở đây kèm điểm của Alpha); tên đọc khi focus vẫn có mọi giá trị.",
+        setup: `const radarProfile = ${lit(radarProfile)};`,
+        code: `<RadarChart data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} axisLabel={(label, i) => \`\${label} \${radarProfile[i].alpha}\`} />`,
+        render: () => (
+          <RadarChart data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} axisLabel={(label, i) => `${label} ${radarProfile[i].alpha}`} />
+        ),
+      },
+      {
+        title: "Lưới tô xen kẽ",
+        description: "gridFill tô xen kẽ các vòng, giúp đọc mức trên nền trống.",
+        setup: `const radarProfile = ${lit(radarProfile)};`,
+        code: `<RadarChart data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} grid="circle" gridFill levels={4} />`,
+        render: () => (
+          <RadarChart data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} grid="circle" gridFill levels={4} />
+        ),
+      },
+      {
+        title: "Không lưới",
+        description: "grid=\"none\" khi chỉ cần hình dạng tổng thể; bảng dữ liệu vẫn có số chính xác.",
+        setup: `const radarProfile = ${lit(radarProfile)};`,
+        code: `<RadarChart data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} grid="none" dots />`,
+        render: () => (
+          <RadarChart data={radarProfile} index="axis" series={[{ key: "alpha", label: "Alpha" }, { key: "beta", label: "Beta" }]} grid="none" dots />
+        ),
+      },
+      {
+        title: "Nhãn dài, thiếu giá trị, khung hẹp",
+        description: "Nhãn trục dài vẫn đọc được trong card hẹp; giá trị thiếu (null) đọc là “Không có dữ liệu” và chuỗi đó không khép kín.",
+        setup: `const radarSkills = ${lit(radarSkills)};`,
+        code: `<div className="w-full max-w-xs">
+  <RadarChart data={radarSkills} index="axis" series={[{ key: "lead", label: "Lead" }, { key: "junior", label: "Junior" }]} size={280} domain={[0, 100]} />
+</div>`,
+        render: () => (
+          <div className="w-full max-w-xs">
+  <RadarChart data={radarSkills} index="axis" series={[{ key: "lead", label: "Lead" }, { key: "junior", label: "Junior" }]} size={280} domain={[0, 100]} />
+</div>
+        ),
+      },
+    ],
+    dos: [
+      "Giữ các trục cùng thang đo (đặt domain chung) và khoảng 5–12 trục, tối đa 4 chuỗi.",
+      "Dùng bảng dữ liệu hoặc tooltip khi cần đọc chính xác.",
+      "Dùng linesOnly khi các chuỗi chồng lên nhau nhiều.",
+    ],
+    donts: [
+      "Không dùng radar cho các đại lượng khác thang đo, hoặc cho hơn khoảng 12 trục: dùng BarChart ngang.",
+      "Không dùng diện tích polygon như một phép đo chính xác.",
+      "Không dựa vào màu để phân biệt chuỗi trong tương phản cao: hoa văn và nét đứt tự bật.",
+    ],
+    props: [
+      { name: "data / index / series", type: "ChartDatum[] / string / ChartSeries[]", description: "Dữ liệu trục và các chuỗi so sánh." },
+      { name: "grid", type: `"polygon" | "circle" | "none"`, defaultValue: `"polygon"`, description: "Kiểu lưới đồng tâm." },
+      { name: "levels / domain", type: "number / [number, number]", defaultValue: "5 / tự tính", description: "Số vòng và miền chuẩn hoá." },
+      { name: "gridFill", type: "boolean", defaultValue: "false", description: "Tô xen kẽ các vòng lưới." },
+      { name: "axisLabel", type: "(label: string, index: number) => string", description: "Đổi chữ của nhãn trục; tên đọc vẫn đầy đủ." },
+      { name: "tooltip", type: "ChartTooltipConfig", description: "Khoá màu, tiêu đề, giá trị, icon hoặc nội dung riêng của tooltip (dùng chung mọi biểu đồ)." },
+      { name: "dots / linesOnly / fill / legend", type: "boolean", defaultValue: "false / false / true / true", description: "Các lớp hiển thị và legend bật/tắt chuỗi." },
+      { name: "title, locale, texture, defaultShowTable…", type: "ChartFrameProps", description: "Props khung, locale và accessibility dùng chung." },
+    ],
+  },
+
+  {
+    slug: "radialchart",
+    name: "RadialChart",
+    category: "Yugen Labs",
+    lead: "RadialChart hiển thị gauge, track, cung một phần, nhãn giữa và các đoạn stacked bằng SVG nhẹ.",
+    description: "Dùng cho một chỉ số tiến độ hoặc một nhóm giá trị stacked; chunk riêng, không kéo thêm thư viện chart.",
+    importCode: `import { RadialChart } from "@/components/ui";`,
+    hero: {
+      title: "Sprint progress",
+      code: `const radialProgress = ${lit(radialProgress)};\n\n<RadialChart title="Sprint progress" data={radialProgress} stacked maxValue={100} centerValue="72%" centerLabel="complete" />`,
+      render: () => <RadialChart title="Sprint progress" data={radialProgress} stacked maxValue={100} centerValue="72%" centerLabel="complete" />,
+    },
+    examples: [
+      {
+        title: "Gauge một phần",
+        description: "startAngle/endAngle tạo gauge không kín; track giữ bối cảnh phần còn lại.",
+        code: `<RadialChart data={[{ label: "SLA", value: 86 }]} maxValue={100} endAngle={270} centerLabel="SLA" />`,
+        render: () => <RadialChart data={[{ label: "SLA", value: 86 }]} maxValue={100} endAngle={270} centerLabel="SLA" />,
+      },
+      {
+        title: "Đầu cung bo tròn",
+        description: "rounded bo tròn hai đầu cung; hợp với gauge và tiến độ.",
+        setup: `const radialProgress = ${lit(radialProgress)};`,
+        code: `<RadialChart data={radialProgress} maxValue={100} rounded startAngle={-120} endAngle={120} />`,
+        render: () => <RadialChart data={radialProgress} maxValue={100} rounded startAngle={-120} endAngle={120} />,
+      },
+      {
+        title: "Mỗi giá trị một vòng",
+        description: "layout=\"rings\" vẽ mỗi datum một vòng đồng tâm cùng thang (maxValue hoặc giá trị lớn nhất), nhãn ở đầu mỗi vòng.",
+        setup: `const goals = ${lit(goals)};`,
+        code: `<RadialChart title="Daily goals" data={goals} layout="rings" rounded maxValue={500} locale="en-US" />`,
+        render: () => <RadialChart title="Daily goals" data={goals} layout="rings" rounded maxValue={500} locale="en-US" />,
+      },
+    ],
+    dos: ["Dùng cho tiến độ, tỷ lệ hoàn thành hoặc một tổng số có mốc tối đa rõ ràng.", "Hiển thị số ở tâm để không bắt người đọc ước lượng theo cung."],
+    donts: ["Không dùng radial để so sánh nhiều giá trị gần nhau nếu không có nhãn số.", "Không biến track và animation thành tín hiệu duy nhất."],
+    props: [
+      { name: "rounded", type: "boolean", defaultValue: "false", description: "Bo tròn hai đầu cung." },
+      { name: "layout", type: `"segments" | "rings"`, defaultValue: `"segments"`, description: "Một vòng nối tiếp các đoạn, hoặc mỗi datum một vòng đồng tâm có nhãn." },
+      { name: "data / maxValue", type: "{ label, value, color? }[] / number", description: "Giá trị và mốc tối đa; stacked dùng nhiều đoạn." },
+      { name: "startAngle / endAngle", type: "number / number", defaultValue: "0 / 360", description: "Góc theo độ, 0 là 12 giờ và chiều kim đồng hồ." },
+      { name: "stacked / track", type: "boolean", defaultValue: "false / true", description: "Nối tiếp các đoạn và hiển thị track nền." },
+      { name: "size / thickness / centerValue / centerLabel", type: "number / number / ReactNode / ReactNode", description: "Kích thước, độ dày và nội dung ở tâm." },
+      { name: "legend / valueFormat / locale", type: "boolean / format / string", defaultValue: "true / mặc định / vi-VN", description: "Legend và định dạng số." },
     ],
   },
 ];

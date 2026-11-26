@@ -41,5 +41,9 @@
   "Reload": "Tải lại",
   "Return empty": "Trả về rỗng",
   "Simulate error": "Giả lập lỗi",
-  "Orders from the server": "Đơn hàng từ máy chủ"
+  "Orders from the server": "Đơn hàng từ máy chủ",
+  "The table's default view: what \"Reset columns\" brings back.": "Cột mặc định của bảng: \"Đặt lại cột\" đưa về trạng thái này.",
+  "orders": "đơn hàng",
+  "Order columns": "Cột đơn hàng",
+  "Orders, dense view": "Đơn hàng, dạng dày đặc"
 }

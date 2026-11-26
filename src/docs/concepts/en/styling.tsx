@@ -421,11 +421,21 @@ import { cn } from "@/lib/cn";
               reach any component, so the generated file falls back to theme.css when it finds one.
             </li>
             <li>
+              <C>theme-core.css</C> has the Sakura brand and the tokens every component needs. The web and teams brands are in{" "}
+              <C>yugen-ui/tokens/brands.css</C>: <C>yugen css</C> adds it when your code sets <C>brand=&quot;web&quot;</C> or{" "}
+              <C>brand=&quot;teams&quot;</C>. Chart tokens come with <C>sources/Chart.css</C>.
+            </li>
+            <li>
               Without Tailwind: <C>yugen css --precompile</C> compiles the same list into plain CSS that replaces <C>styles.css</C>.
             </li>
             <li>
               Not needed when you copy component source (shadcn registry, <C>@yugen-ui/cli add</C>): Tailwind already scans the app&apos;s
               folders. <C>styles.css</C> (no Tailwind) always contains every component.
+            </li>
+            <li>
+              Embedding Yugen in a page whose CSS you don&apos;t own (a CMS, a widget, a micro-frontend): import{" "}
+              <C>yugen-ui/components.css</C> instead of <C>styles.css</C>. It has no global reset and no styles for <C>html</C>,{" "}
+              <C>body</C> or <C>::selection</C>; Tailwind&apos;s reset only applies inside <C>YugenProvider</C>.
             </li>
           </ul>
         </div>

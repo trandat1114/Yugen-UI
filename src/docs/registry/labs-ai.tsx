@@ -1,7 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Board20Regular, Search20Regular, Settings20Regular, Sparkle16Regular } from "@fluentui/react-icons";
 import {
+  Avatar,
   Button,
+  CallControlButton,
+  CallControls,
+  CallStatus,
+  CallSurface,
   Citation,
   CitationList,
   Dropdown,
@@ -9,13 +14,26 @@ import {
   NotificationCenter,
   PromptInput,
   Reasoning,
+  Sheet,
+  SheetBody,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
   StreamingMarkdown,
   Tour,
+  Transcript,
   useNotifications,
   useTour,
+  VoiceAssistant,
+  VoiceWave,
+  type CallState,
   type CitationSource,
   type NotificationItem,
   type TourStep,
+  type VoiceAssistantState,
+  type TranscriptTurn,
+  type VoiceWaveState,
 } from "@/components/ui";
 import type { ComponentDoc } from "../types";
 import { declarationsOf } from "../setup";
@@ -499,10 +517,406 @@ const LOADING_NOTIFICATIONS_CODE = `function LoadingNotificationsDemo() {
 
 /* ================================================================ Docs */
 
+
+/* ================================================================ VoiceWave */
+
+const VOICE_WAVE_CODE = `function useFakeLevels(running: boolean) {
+  // Stands in for an AnalyserNode: smooth noise around a slow pulse.
+  const levels = useRef(new Float32Array(32));
+  const source = useCallback(() => {
+    const t = performance.now() / 1000;
+    const data = levels.current;
+    for (let i = 0; i < data.length; i++) {
+      const target = 0.35 + 0.3 * Math.sin(t * 3 + i * 0.5) * Math.sin(t * 1.3 + i * 0.17);
+      data[i] += (Math.max(0, target + (Math.random() - 0.5) * 0.3) - data[i]) * 0.3;
+    }
+    return running ? data : null;
+  }, [running]);
+  return source;
+}
+
+function VoiceDemo() {
+  const [state, setState] = useState<VoiceWaveState>("listening");
+  const source = useFakeLevels(state === "listening" || state === "speaking");
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <VoiceWave state={state} source={source} bars={32} size="large" />
+      <div className="flex flex-wrap justify-center gap-2">
+        {(["idle", "listening", "speaking", "muted", "error"] as const).map((s) => (
+          <Button key={s} size="small" appearance={s === state ? "primary" : "secondary"} onClick={() => setState(s)}>
+            {s}
+          </Button>
+        ))}
+      </div>
+    </div>
+  );
+}`;
+
+function useFakeLevels(running: boolean) {
+  // Stands in for an AnalyserNode: smooth noise around a slow pulse.
+  const levels = useRef(new Float32Array(32));
+  const source = useCallback(() => {
+    const t = performance.now() / 1000;
+    const data = levels.current;
+    for (let i = 0; i < data.length; i++) {
+      const target = 0.35 + 0.3 * Math.sin(t * 3 + i * 0.5) * Math.sin(t * 1.3 + i * 0.17);
+      data[i] += (Math.max(0, target + (Math.random() - 0.5) * 0.3) - data[i]) * 0.3;
+    }
+    return running ? data : null;
+  }, [running]);
+  return source;
+}
+
+function VoiceDemo() {
+  const [state, setState] = useState<VoiceWaveState>("listening");
+  const source = useFakeLevels(state === "listening" || state === "speaking");
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <VoiceWave state={state} source={source} bars={32} size="large" />
+      <div className="flex flex-wrap justify-center gap-2">
+        {(["idle", "listening", "speaking", "muted", "error"] as const).map((s) => (
+          <Button key={s} size="small" appearance={s === state ? "primary" : "secondary"} onClick={() => setState(s)}>
+            {s}
+          </Button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const WEB_AUDIO_CODE = `// Your app owns the microphone and the AnalyserNode; VoiceWave only reads numbers.
+async function microphoneLevels(): Promise<VoiceWaveSource> {
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  const context = new AudioContext();
+  const analyser = context.createAnalyser();
+  analyser.fftSize = 64;
+  context.createMediaStreamSource(stream).connect(analyser);
+  const bytes = new Uint8Array(analyser.frequencyBinCount);
+  const levels = new Float32Array(bytes.length);
+  return () => {
+    analyser.getByteFrequencyData(bytes);
+    for (let i = 0; i < bytes.length; i++) levels[i] = bytes[i] / 255;
+    return levels;
+  };
+}
+
+function VoiceInput() {
+  const [source, setSource] = useState<VoiceWaveSource>();
+  const start = async () => {
+    const read = await microphoneLevels();
+    setSource(() => read);
+  };
+  return (
+    <div className="flex items-center gap-3">
+      <Button onClick={start}>Use microphone</Button>
+      <VoiceWave state={source ? "listening" : "idle"} source={source} />
+    </div>
+  );
+}`;
+
+
+/* ================================================================ Transcript */
+
+const TRANSCRIPT_CODE = `const SCRIPT: TranscriptTurn[] = [
+  { id: "1", speaker: "Maya", role: "user", text: "Can you move my 3 pm meeting to tomorrow?", timestamp: Date.UTC(2026, 10, 23, 2, 4) },
+  { id: "2", speaker: "Assistant", role: "assistant", text: "Sure. Tomorrow at 3 pm is free for everyone. Should I send the update?", timestamp: Date.UTC(2026, 10, 23, 2, 4) },
+  { id: "3", speaker: "Maya", role: "user", text: "Yes, and add a note that the agenda is the same.", timestamp: Date.UTC(2026, 10, 23, 2, 5) },
+];
+const REPLY = "Done. The meeting is now tomorrow at 3 pm, and the invite says the agenda is unchanged.";
+
+function TranscriptDemo() {
+  const [turns, setTurns] = useState<TranscriptTurn[]>(SCRIPT);
+  const [run, setRun] = useState(0);
+  useEffect(() => {
+    let length = 0;
+    setTurns(SCRIPT);
+    const timer = setInterval(() => {
+      length = Math.min(REPLY.length, length + 4);
+      const done = length === REPLY.length;
+      setTurns([
+        ...SCRIPT,
+        { id: "4", speaker: "Assistant", role: "assistant", text: REPLY.slice(0, length), status: done ? "complete" : "streaming", timestamp: Date.UTC(2026, 10, 23, 2, 5) },
+      ]);
+      if (done) clearInterval(timer);
+    }, 60);
+    return () => clearInterval(timer);
+  }, [run]);
+  return (
+    <div className="flex w-full max-w-xl flex-col gap-3">
+      <Transcript turns={turns} announce locale="en-US" className="max-h-72 overflow-y-auto rounded-large border border-stroke-2 p-2" />
+      <Button size="small" className="self-start" onClick={() => setRun((r) => r + 1)}>
+        Replay
+      </Button>
+    </div>
+  );
+}`;
+
+const SCRIPT: TranscriptTurn[] = [
+  { id: "1", speaker: "Maya", role: "user", text: "Can you move my 3 pm meeting to tomorrow?", timestamp: Date.UTC(2026, 10, 23, 2, 4) },
+  { id: "2", speaker: "Assistant", role: "assistant", text: "Sure. Tomorrow at 3 pm is free for everyone. Should I send the update?", timestamp: Date.UTC(2026, 10, 23, 2, 4) },
+  { id: "3", speaker: "Maya", role: "user", text: "Yes, and add a note that the agenda is the same.", timestamp: Date.UTC(2026, 10, 23, 2, 5) },
+];
+const REPLY = "Done. The meeting is now tomorrow at 3 pm, and the invite says the agenda is unchanged.";
+
+function TranscriptDemo() {
+  const [turns, setTurns] = useState<TranscriptTurn[]>(SCRIPT);
+  const [run, setRun] = useState(0);
+  useEffect(() => {
+    let length = 0;
+    setTurns(SCRIPT);
+    const timer = setInterval(() => {
+      length = Math.min(REPLY.length, length + 4);
+      const done = length === REPLY.length;
+      setTurns([
+        ...SCRIPT,
+        { id: "4", speaker: "Assistant", role: "assistant", text: REPLY.slice(0, length), status: done ? "complete" : "streaming", timestamp: Date.UTC(2026, 10, 23, 2, 5) },
+      ]);
+      if (done) clearInterval(timer);
+    }, 60);
+    return () => clearInterval(timer);
+  }, [run]);
+  return (
+    <div className="flex w-full max-w-xl flex-col gap-3">
+      <Transcript turns={turns} announce locale="en-US" className="max-h-72 overflow-y-auto rounded-large border border-stroke-2 p-2" />
+      <Button size="small" className="self-start" onClick={() => setRun((r) => r + 1)}>
+        Replay
+      </Button>
+    </div>
+  );
+}
+
+
+/* ================================================================ Call */
+
+const CALL_CODE = `function CallDemo() {
+  const [state, setState] = useState<CallState>("connected");
+  const [muted, setMuted] = useState(false);
+  const [speaker, setSpeaker] = useState(true);
+  const [held, setHeld] = useState(false);
+  const live = state === "connected" || state === "muted" || state === "on-hold";
+  return (
+    <CallSurface
+      name="Aiko Tanaka"
+      description="Product design"
+      avatar={<Avatar name="Aiko Tanaka" size={64} color="colorful" />}
+      state={state}
+      duration={live ? 151 : undefined}
+      className="w-full max-w-sm"
+      controls={
+        state === "ended" ? (
+          <Button onClick={() => setState("connected")}>Call again</Button>
+        ) : (
+          <CallControls>
+            <CallControlButton
+              kind="mute"
+              pressed={muted}
+              onPressedChange={(next) => {
+                setMuted(next);
+                setState(next ? "muted" : "connected");
+              }}
+            />
+            <CallControlButton kind="speaker" pressed={speaker} onPressedChange={setSpeaker} />
+            <CallControlButton
+              kind="hold"
+              pressed={held}
+              onPressedChange={(next) => {
+                setHeld(next);
+                setState(next ? "on-hold" : muted ? "muted" : "connected");
+              }}
+            />
+            <CallControlButton kind="end" confirm onClick={() => setState("ended")} />
+          </CallControls>
+        )
+      }
+    />
+  );
+}`;
+
+function CallDemo() {
+  const [state, setState] = useState<CallState>("connected");
+  const [muted, setMuted] = useState(false);
+  const [speaker, setSpeaker] = useState(true);
+  const [held, setHeld] = useState(false);
+  const live = state === "connected" || state === "muted" || state === "on-hold";
+  return (
+    <CallSurface
+      name="Aiko Tanaka"
+      description="Product design"
+      avatar={<Avatar name="Aiko Tanaka" size={64} color="colorful" />}
+      state={state}
+      duration={live ? 151 : undefined}
+      className="w-full max-w-sm"
+      controls={
+        state === "ended" ? (
+          <Button onClick={() => setState("connected")}>Call again</Button>
+        ) : (
+          <CallControls>
+            <CallControlButton
+              kind="mute"
+              pressed={muted}
+              onPressedChange={(next) => {
+                setMuted(next);
+                setState(next ? "muted" : "connected");
+              }}
+            />
+            <CallControlButton kind="speaker" pressed={speaker} onPressedChange={setSpeaker} />
+            <CallControlButton
+              kind="hold"
+              pressed={held}
+              onPressedChange={(next) => {
+                setHeld(next);
+                setState(next ? "on-hold" : muted ? "muted" : "connected");
+              }}
+            />
+            <CallControlButton kind="end" confirm onClick={() => setState("ended")} />
+          </CallControls>
+        )
+      }
+    />
+  );
+}
+
+
+/* ================================================================ VoiceAssistant */
+
+const VOICE_ASSISTANT_CODE = `const QUESTION = "Do I have anything after lunch tomorrow?";
+const ANSWER = "Yes, a design review at 2 pm and a call with Aiko at 4.";
+
+// A scripted session: no microphone, no network. Your app would set these from its voice provider.
+function useMockSession() {
+  const [state, setState] = useState<VoiceAssistantState>("idle");
+  const [turns, setTurns] = useState<TranscriptTurn[]>([]);
+  const [muted, setMuted] = useState(false);
+  const [run, setRun] = useState(0);
+
+  useEffect(() => {
+    if (run === 0) return;
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    const at = (ms: number, step: () => void) => timers.push(setTimeout(step, ms));
+    const typed = (id: string, speaker: string, role: "user" | "assistant", text: string, from: number) => {
+      const words = text.split(" ");
+      words.forEach((_, i) =>
+        at(from + i * 120, () =>
+          setTurns((list) => [
+            ...list.filter((t) => t.id !== id),
+            { id, speaker, role, text: words.slice(0, i + 1).join(" "), status: i === words.length - 1 ? "complete" : "streaming" },
+          ]),
+        ),
+      );
+      return from + words.length * 120;
+    };
+    setTurns([]);
+    setState("connecting");
+    at(600, () => setState("listening"));
+    const asked = typed("q", "You", "user", QUESTION, 900);
+    at(asked + 200, () => setState("thinking"));
+    at(asked + 1200, () => setState("speaking"));
+    const answered = typed("a", "Assistant", "assistant", ANSWER, asked + 1300);
+    at(answered + 300, () => setState("listening"));
+    return () => timers.forEach(clearTimeout);
+  }, [run]);
+
+  return {
+    state,
+    turns,
+    muted,
+    onMutedChange: setMuted,
+    onStart: () => setRun((r) => r + 1),
+    onRetry: () => setRun((r) => r + 1),
+    onEnd: () => setState("ended"),
+  };
+}
+
+function VoiceAssistantDemo() {
+  const session = useMockSession();
+  return <VoiceAssistant name="Assistant" description="Calendar and email" className="max-w-md" {...session} />;
+}`;
+
+const VA_QUESTION = "Do I have anything after lunch tomorrow?";
+const VA_ANSWER = "Yes, a design review at 2 pm and a call with Aiko at 4.";
+
+// A scripted session: no microphone, no network. Your app would set these from its voice provider.
+function useMockSession() {
+  const [state, setState] = useState<VoiceAssistantState>("idle");
+  const [turns, setTurns] = useState<TranscriptTurn[]>([]);
+  const [muted, setMuted] = useState(false);
+  const [run, setRun] = useState(0);
+
+  useEffect(() => {
+    if (run === 0) return;
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    const at = (ms: number, step: () => void) => timers.push(setTimeout(step, ms));
+    const typed = (id: string, speaker: string, role: "user" | "assistant", text: string, from: number) => {
+      const words = text.split(" ");
+      words.forEach((_, i) =>
+        at(from + i * 120, () =>
+          setTurns((list) => [
+            ...list.filter((t) => t.id !== id),
+            { id, speaker, role, text: words.slice(0, i + 1).join(" "), status: i === words.length - 1 ? "complete" : "streaming" },
+          ]),
+        ),
+      );
+      return from + words.length * 120;
+    };
+    setTurns([]);
+    setState("connecting");
+    at(600, () => setState("listening"));
+    const asked = typed("q", "You", "user", VA_QUESTION, 900);
+    at(asked + 200, () => setState("thinking"));
+    at(asked + 1200, () => setState("speaking"));
+    const answered = typed("a", "Assistant", "assistant", VA_ANSWER, asked + 1300);
+    at(answered + 300, () => setState("listening"));
+    return () => timers.forEach(clearTimeout);
+  }, [run]);
+
+  return {
+    state,
+    turns,
+    muted,
+    onMutedChange: setMuted,
+    onStart: () => setRun((r) => r + 1),
+    onRetry: () => setRun((r) => r + 1),
+    onEnd: () => setState("ended"),
+  };
+}
+
+function VoiceAssistantDemo() {
+  const session = useMockSession();
+  return <VoiceAssistant name="Assistant" description="Calendar and email" className="max-w-md" {...session} />;
+}
+
+const VA_PANEL_CODE = `<VoiceAssistant
+  layout="inline"
+  name="Assistant"
+  state="speaking"
+  duration={42}
+  levels={[0.3, 0.6, 0.9, 0.7, 0.4, 0.8, 0.5]}
+  turns={[
+    { id: "1", speaker: "You", role: "user", text: "Read my last email." },
+    { id: "2", speaker: "Assistant", role: "assistant", text: "From Aiko: the review moved to Friday", status: "streaming" },
+  ]}
+  className="max-w-lg"
+/>`;
+const VA_SHEET_CODE = `<Sheet mode="bottom" snapPoints={[0.6, 0.95]}>
+  <SheetTrigger asChild>
+    <Button appearance="primary">Talk to the assistant</Button>
+  </SheetTrigger>
+  <SheetContent>
+    <SheetHeader>
+      <SheetTitle>Voice assistant</SheetTitle>
+    </SheetHeader>
+    <SheetBody>
+      <VoiceAssistant name="Assistant" state="listening" className="border-0 p-0" />
+    </SheetBody>
+  </SheetContent>
+</Sheet>`;
+const VA_ERROR_CODE = `<VoiceAssistant name="Assistant" state="error" error="The microphone is blocked. Allow it in the browser settings, then try again." className="max-w-md" />`;
+
 export const docs: ComponentDoc[] = [
   {
     slug: "streamingmarkdown",
     category: "Hiển thị dữ liệu",
+    tags: ["ai", "markdown"],
     name: "StreamingMarkdown",
     lead: "StreamingMarkdown hiển thị câu trả lời Markdown của AI ngay khi từng token về — không nháy ký hiệu thô, không chèn HTML, và không render lại cả bài mỗi lần có chữ mới.",
     description:
@@ -555,6 +969,7 @@ export const docs: ComponentDoc[] = [
   {
     slug: "citation",
     category: "Hiển thị dữ liệu",
+    tags: ["ai"],
     name: "Citation",
     lead: "Citation gắn số nguồn [1] ngay trong câu trả lời; rê chuột hoặc focus để xem nhanh tiêu đề, tên miền và đoạn trích, bấm để mở thẻ và tới link.",
     description:
@@ -618,8 +1033,301 @@ export const docs: ComponentDoc[] = [
     ],
   },
   {
+    slug: "voicewave",
+    category: "Yugen Labs",
+    tags: ["ai", "voice"],
+    name: "VoiceWave",
+    lead: "VoiceWave hiện mức âm thanh của trợ lý giọng nói hoặc cuộc gọi bằng các vạch dọc: phẳng khi chờ hay tắt micro, nhấp nhô khi đang nghe hoặc đang nói.",
+    description:
+      "VoiceWave không tự mở micro hay tạo AudioContext: app truyền levels (mảng 0–1, re-render khi đổi) hoặc source, một hàm được gọi một lần mỗi animation frame khi đang nghe / nói. Với source, các vạch được cập nhật thẳng qua transform, không re-render và không có timer hay listener cho từng vạch. Số vạch cố định nên chiều rộng không đổi khi dữ liệu đổi. Không có dữ liệu thì mỗi trạng thái có một dáng tĩnh; khi người dùng giảm chuyển động, vòng frame không chạy. Cả khối có role=\"img\" với tên theo trạng thái (messages.voiceWave), các vạch bị ẩn khỏi trình đọc màn hình.",
+    importCode: `import { VoiceWave } from "@/components/ui";`,
+    hero: { title: "Luồng âm thanh giả lập", code: VOICE_WAVE_CODE, render: () => <VoiceDemo /> },
+    examples: [
+      {
+        title: "Mức âm thanh tĩnh",
+        description: "levels được lấy mẫu lại cho đủ số vạch; align=\"bottom\" cho vạch mọc từ đáy.",
+        code: `<div className="flex items-center gap-6">
+  <VoiceWave state="speaking" levels={[0.2, 0.5, 0.9, 0.6, 0.3, 0.7, 0.4, 0.8]} bars={16} />
+  <VoiceWave state="speaking" levels={[0.2, 0.5, 0.9, 0.6, 0.3, 0.7, 0.4, 0.8]} bars={16} align="bottom" tone="neutral" />
+</div>`,
+        render: () => (
+          <div className="flex items-center gap-6">
+            <VoiceWave state="speaking" levels={[0.2, 0.5, 0.9, 0.6, 0.3, 0.7, 0.4, 0.8]} bars={16} />
+            <VoiceWave state="speaking" levels={[0.2, 0.5, 0.9, 0.6, 0.3, 0.7, 0.4, 0.8]} bars={16} align="bottom" tone="neutral" />
+          </div>
+        ),
+      },
+      {
+        title: "Trạng thái và kích thước",
+        description: "idle, muted và error nằm phẳng; muted và error có màu riêng.",
+        code: `<div className="flex flex-wrap items-center gap-6">
+  <VoiceWave state="idle" size="small" />
+  <VoiceWave state="listening" />
+  <VoiceWave state="muted" />
+  <VoiceWave state="error" size="large" />
+</div>`,
+        render: () => (
+          <div className="flex flex-wrap items-center gap-6">
+            <VoiceWave state="idle" size="small" />
+            <VoiceWave state="listening" />
+            <VoiceWave state="muted" />
+            <VoiceWave state="error" size="large" />
+          </div>
+        ),
+      },
+      {
+        title: "Web Audio",
+        description: "Đọc AnalyserNode trong source; quyền micro và AudioContext là của app.",
+        code: WEB_AUDIO_CODE,
+        render: () => <VoiceWave state="listening" bars={24} />,
+      },
+    ],
+    dos: [
+      "Dùng source cho luồng micro để không re-render mỗi frame.",
+      "Hiện trạng thái bằng chữ ở gần (Đang nghe, Đã tắt micro) khi đây là tín hiệu chính của màn hình.",
+      "Giữ số vạch cố định trong một giao diện.",
+    ],
+    donts: [
+      "Không tạo AudioContext hay xin quyền micro chỉ để hiển thị sóng.",
+      "Không dùng màu sóng làm cách duy nhất để báo lỗi micro.",
+      "Không đưa levels mới vào state mỗi frame — dùng source.",
+    ],
+    props: [
+      { name: "state", type: `"idle" | "listening" | "speaking" | "muted" | "error"`, defaultValue: `"idle"`, description: "Trạng thái; quyết định dáng tĩnh, màu và tên đọc." },
+      { name: "levels", type: "ArrayLike<number>", description: "Mức âm thanh 0–1, lấy mẫu lại cho đủ bars." },
+      { name: "source", type: "() => ArrayLike<number> | null", description: "Gọi mỗi animation frame khi listening / speaking; cập nhật vạch không re-render." },
+      { name: "bars", type: "number", defaultValue: "24", description: "Số vạch (3–64)." },
+      { name: "size", type: `"small" | "medium" | "large"`, defaultValue: `"medium"`, description: "Chiều cao 20 / 32 / 56 px." },
+      { name: "tone", type: `"brand" | "neutral"`, defaultValue: `"brand"`, description: "Màu khi nghe / nói." },
+      { name: "align", type: `"center" | "bottom"`, defaultValue: `"center"`, description: "Vạch đối xứng quanh đường giữa hoặc mọc từ đáy." },
+      { name: "label", type: "string", description: "Tên đọc; mặc định theo state (messages.voiceWave)." },
+      { name: "resampleLevels(levels, count)", type: "number[]", description: "Hàm lấy mẫu lại dùng bên trong, cũng được export." },
+    ],
+  },
+  {
+    slug: "transcript",
+    category: "Yugen Labs",
+    tags: ["ai", "voice", "transcript"],
+    name: "Transcript",
+    lead: "Transcript hiện các lượt của một cuộc hội thoại giọng nói: ai nói, lúc nào, và câu trả lời đang đến dần.",
+    description:
+      "Mỗi lượt có id, speaker, text, role (user / assistant), timestamp và status (complete, streaming, error). Lượt đang diễn ra (mặc định: lượt đang streaming, hoặc activeId) có viền nhấn, nhãn chữ “Đang nói” và aria-current, không chỉ đổi màu. Danh sách không phải vùng live: với announce, mỗi lượt được đọc một lần khi xong, lịch sử không bao giờ bị đọc lại. Mỗi lượt được memo, nên khi một token mới đến chỉ lượt đó render lại (renderText cũng chỉ được gọi cho lượt đó). Đặt chiều cao và overflow-y-auto để có khung cuộn: autoScroll giữ cuộn ở cuối khi người dùng đang ở cuối, và thôi kéo xuống khi họ cuộn lên đọc lại.",
+    importCode: `import { Transcript, type TranscriptTurn } from "@/components/ui";`,
+    hero: { title: "Trợ lý đang trả lời", code: TRANSCRIPT_CODE, render: () => <TranscriptDemo /> },
+    examples: [
+      {
+        title: "Lỗi nhận dạng và trạng thái trống",
+        description: "status=\"error\" hiện lý do bằng chữ kèm icon; không có lượt nào thì hiện empty.",
+        code: `<div className="flex w-full max-w-xl flex-col gap-4">
+  <Transcript
+    turns={[
+      { id: "1", speaker: "Maya", role: "user", text: "Call the…", status: "error", error: "The microphone stopped. Try again." },
+    ]}
+  />
+  <Transcript turns={[]} empty="Press the microphone and start talking." />
+</div>`,
+        render: () => (
+          <div className="flex w-full max-w-xl flex-col gap-4">
+            <Transcript
+              turns={[{ id: "1", speaker: "Maya", role: "user", text: "Call the…", status: "error", error: "The microphone stopped. Try again." }]}
+            />
+            <Transcript turns={[]} empty="Press the microphone and start talking." />
+          </div>
+        ),
+      },
+    ],
+    dos: [
+      "Bật announce khi người dùng không nhìn màn hình (cuộc gọi, trợ lý giọng nói).",
+      "Giữ id ổn định cho mỗi lượt và chỉ tạo object mới cho lượt vừa đổi.",
+      "Đặt khung cuộn có chiều cao cố định để autoScroll hoạt động.",
+    ],
+    donts: [
+      "Không bọc Transcript trong một vùng aria-live: cả lịch sử sẽ bị đọc lại.",
+      "Không dùng màu làm cách duy nhất để báo ai đang nói.",
+      "Không tạo lại mọi lượt mỗi token — các lượt cũ sẽ render lại.",
+    ],
+    props: [
+      { name: "turns", type: "TranscriptTurn[]", description: "Các lượt: id, speaker, text, role, timestamp / time, status, error, avatar." },
+      { name: "activeId", type: "string | null", description: "Lượt đang diễn ra; mặc định lượt streaming cuối cùng, null để tắt." },
+      { name: "autoScroll", type: "boolean", defaultValue: "true", description: "Giữ cuộn ở cuối khi có chữ mới, nếu người dùng đang ở cuối." },
+      { name: "announce", type: "boolean", defaultValue: "false", description: "Đọc mỗi lượt một lần khi xong (useAnnounce)." },
+      { name: "loading", type: "boolean", defaultValue: "false", description: "Đang tải: aria-busy, chữ “Đang tải bản ghi…” khi chưa có lượt nào." },
+      { name: "empty", type: "ReactNode", description: "Nội dung khi chưa có lượt nào (mặc định messages.transcript.empty)." },
+      { name: "renderText", type: "(turn) => ReactNode", description: "Thay cách hiện chữ; chỉ được gọi cho lượt đổi." },
+      { name: "locale", type: "string", description: "Định dạng giờ của timestamp; mặc định locale của YugenProvider." },
+    ],
+  },
+  {
+    slug: "callsurface",
+    category: "Yugen Labs",
+    tags: ["ai", "voice", "calling"],
+    name: "CallSurface",
+    lead: "CallSurface, CallStatus và CallControls dựng giao diện một cuộc gọi thoại hoặc video: ai ở đầu bên kia, trạng thái bằng chữ và các nút điều khiển.",
+    description:
+      "Các component chỉ nhận trạng thái và callback: kết nối, quyền micro và camera là việc của app. CallStatus nói trạng thái bằng chữ trong role=\"status\" (đổi trạng thái được đọc lên), thời lượng nằm ngoài vùng đó nên không bị đọc mỗi giây; chấm màu chỉ là phần phụ. CallControls là một toolbar: Tab vào một lần, phím mũi tên / Home / End giữa các nút, nút bị vô hiệu được bỏ qua. CallControlButton có sẵn mute, speaker, camera, hold (nút bật-tắt với aria-pressed, tên giữ nguyên, icon đổi theo trạng thái), add và end; confirm buộc bấm Kết thúc hai lần trong 4 giây. layout=\"inline\" xếp mọi thứ trên một hàng cho panel hoặc thanh dưới màn hình.",
+    importCode: `import { CallSurface, CallStatus, CallControls, CallControlButton } from "@/components/ui";`,
+    hero: { title: "Cuộc gọi đang diễn ra", code: CALL_CODE, render: () => <CallDemo /> },
+    examples: [
+      {
+        title: "Đang kết nối và lỗi",
+        description: "Trạng thái luôn có chữ; label thay chữ mặc định khi cần nói rõ lý do.",
+        code: `<div className="flex flex-col gap-3">
+  <CallStatus state="connecting" />
+  <CallStatus state="ringing" />
+  <CallStatus state="failed" label="No answer" />
+</div>`,
+        render: () => (
+          <div className="flex flex-col gap-3">
+            <CallStatus state="connecting" />
+            <CallStatus state="ringing" />
+            <CallStatus state="failed" label="No answer" />
+          </div>
+        ),
+      },
+      {
+        title: "Một hàng gọn",
+        description: "layout=\"inline\" cho panel hẹp; nội dung giữa (Transcript, VoiceWave) xuống hàng riêng.",
+        code: `<CallSurface
+  layout="inline"
+  name="Aiko Tanaka"
+  description="+1 415 555 0134"
+  state="muted"
+  duration={42}
+  className="w-full max-w-lg"
+  controls={
+    <CallControls>
+      <CallControlButton kind="mute" pressed />
+      <CallControlButton kind="end" />
+    </CallControls>
+  }
+/>`,
+        render: () => (
+          <CallSurface
+            layout="inline"
+            name="Aiko Tanaka"
+            description="+1 415 555 0134"
+            state="muted"
+            duration={42}
+            className="w-full max-w-lg"
+            controls={
+              <CallControls>
+                <CallControlButton kind="mute" pressed />
+                <CallControlButton kind="end" />
+              </CallControls>
+            }
+          />
+        ),
+      },
+    ],
+    dos: [
+      "Đổi state theo sự kiện thật của kết nối (đã nhận, đang giữ, mất mạng).",
+      "Dùng confirm cho nút Kết thúc khi lỡ tay kết thúc sẽ mất dữ liệu (ghi âm, phòng họp).",
+      "Đặt Transcript hoặc VoiceWave làm children để mọi thứ nằm trong cùng một vùng có tên.",
+    ],
+    donts: [
+      "Không báo trạng thái chỉ bằng màu của chấm.",
+      "Không đổi nhãn của nút bật-tắt theo trạng thái — aria-pressed đã nói điều đó.",
+      "Không đặt đồng hồ thời lượng vào vùng live.",
+    ],
+    props: [
+      { name: "CallSurface.name / avatar / description", type: "string / ReactNode / ReactNode", description: "Đầu bên kia; name cũng đặt tên cho vùng (messages.call.surface)." },
+      { name: "CallSurface.state / duration", type: "CallState / number (giây)", description: "Trạng thái và thời lượng, hiện bằng CallStatus." },
+      { name: "CallSurface.controls / children", type: "ReactNode", description: "Thanh điều khiển và nội dung giữa." },
+      { name: "CallSurface.layout", type: `"stacked" | "inline"`, defaultValue: `"stacked"`, description: "Màn hình cuộc gọi hoặc một hàng gọn." },
+      { name: "CallStatus.state", type: `"connecting" | "ringing" | "connected" | "muted" | "on-hold" | "ended" | "failed"`, description: "Trạng thái, đọc bằng chữ (messages.call.states)." },
+      { name: "CallStatus.duration / label", type: "number / ReactNode", description: "Thời lượng (khi đã kết nối) và chữ thay thế." },
+      { name: "CallControlButton.kind", type: `"mute" | "speaker" | "camera" | "hold" | "add" | "end"`, description: "Nút có sẵn: icon và nhãn (messages.call.controls)." },
+      { name: "CallControlButton.pressed / onPressedChange", type: "boolean", description: "Trạng thái của nút bật-tắt (aria-pressed)." },
+      { name: "CallControlButton.confirm", type: "boolean", defaultValue: "false", description: "kind=\"end\": cần bấm hai lần trong 4 giây." },
+      { name: "CallControlButton.label / icon", type: "ReactNode", description: "Thay nhãn và icon (nút tuỳ chỉnh)." },
+      { name: "formatCallDuration(seconds)", type: "string", description: "Giây → m:ss hoặc h:mm:ss." },
+    ],
+  },
+  {
+    slug: "voiceassistant",
+    category: "Yugen Labs",
+    tags: ["ai", "voice", "calling", "transcript"],
+    name: "VoiceAssistant",
+    lead: "VoiceAssistant đặt một cuộc trò chuyện bằng giọng nói lên một màn hình: ai đang nói, trợ lý đang làm gì, sóng âm, transcript và các nút điều khiển.",
+    description:
+      "Ghép từ CallSurface, CallStatus, CallControls, VoiceWave và Transcript, nên chỉ tải đúng các phần đó. Mọi thứ điều khiển từ ngoài: state (idle, connecting, listening, thinking, speaking, ended, error), turns, levels hoặc source cho sóng âm, muted, và các callback onStart, onEnd, onRetry, onMutedChange. Component không mở micro, không gọi Web Speech, Web Audio hay dịch vụ nào: app nối nhà cung cấp giọng nói của mình vào các prop này. Trạng thái luôn được nói bằng chữ trong vùng status (Đang nghe, Đang nghĩ…, Đang trả lời), nên người dùng không cần nhìn màu hay sóng âm. Transcript đọc mỗi lượt một lần khi xong (announce), không đọc lại lịch sử. idle và ended hiện nút Bắt đầu nói, error hiện lý do và nút Thử lại.",
+    importCode: `import { VoiceAssistant, type VoiceAssistantState, type TranscriptTurn } from "@/components/ui";`,
+    hero: { title: "Phiên giả lập theo kịch bản", code: VOICE_ASSISTANT_CODE, render: () => <VoiceAssistantDemo /> },
+    examples: [
+      {
+        title: "Panel gọn",
+        description: "layout=\"inline\" cho panel bên cạnh nội dung; transcript cuộn trong khung thấp hơn.",
+        code: VA_PANEL_CODE,
+        render: () => (
+<VoiceAssistant
+  layout="inline"
+  name="Assistant"
+  state="speaking"
+  duration={42}
+  levels={[0.3, 0.6, 0.9, 0.7, 0.4, 0.8, 0.5]}
+  turns={[
+    { id: "1", speaker: "You", role: "user", text: "Read my last email." },
+    { id: "2", speaker: "Assistant", role: "assistant", text: "From Aiko: the review moved to Friday", status: "streaming" },
+  ]}
+  className="max-w-lg"
+/>
+        ),
+      },
+      {
+        title: "Bottom sheet trên điện thoại",
+        description: "Đặt VoiceAssistant trong Sheet mode=\"bottom\": người dùng kéo lên để xem transcript.",
+        code: VA_SHEET_CODE,
+        render: () => (
+<Sheet mode="bottom" snapPoints={[0.6, 0.95]}>
+  <SheetTrigger asChild>
+    <Button appearance="primary">Talk to the assistant</Button>
+  </SheetTrigger>
+  <SheetContent>
+    <SheetHeader>
+      <SheetTitle>Voice assistant</SheetTitle>
+    </SheetHeader>
+    <SheetBody>
+      <VoiceAssistant name="Assistant" state="listening" className="border-0 p-0" />
+    </SheetBody>
+  </SheetContent>
+</Sheet>
+        ),
+      },
+      {
+        title: "Lỗi và thử lại",
+        description: "error nói rõ lý do; nút Thử lại gọi onRetry.",
+        code: VA_ERROR_CODE,
+        render: () => <VoiceAssistant name="Assistant" state="error" error="The microphone is blocked. Allow it in the browser settings, then try again." className="max-w-md" />,
+      },
+    ],
+    dos: [
+      "Cập nhật state theo sự kiện thật của nhà cung cấp giọng nói (bắt đầu nói, đang xử lý, đang phát).",
+      "Truyền source để sóng âm theo micro hoặc giọng trợ lý mà không re-render mỗi frame.",
+      "Nói rõ lý do trong error (micro bị chặn, mất mạng) để người dùng biết cách sửa.",
+    ],
+    donts: [
+      "Không chỉ dựa vào sóng âm để báo trợ lý đang nghe hay đang nói.",
+      "Không bắt đầu nghe khi người dùng chưa bấm Bắt đầu nói.",
+      "Không đọc lại cả transcript sau mỗi câu: announce đã đọc từng lượt khi xong.",
+    ],
+    props: [
+      { name: "name / avatar / description", type: "string / ReactNode / ReactNode", description: "Danh tính của trợ lý; name cũng đặt tên cho vùng." },
+      { name: "state", type: `"idle" | "connecting" | "listening" | "thinking" | "speaking" | "ended" | "error"`, description: "Trạng thái, đọc bằng chữ (messages.voiceAssistant)." },
+      { name: "turns", type: "TranscriptTurn[]", description: "Các lượt nói; rỗng thì không hiện transcript." },
+      { name: "levels / source", type: "ArrayLike<number> / () => ArrayLike<number> | null", description: "Dữ liệu cho VoiceWave." },
+      { name: "duration", type: "number (giây)", description: "Thời lượng phiên khi đang trò chuyện." },
+      { name: "muted / onMutedChange", type: "boolean", description: "Nút tắt micro." },
+      { name: "onStart / onEnd / onRetry", type: "() => void", description: "Bắt đầu, kết thúc, thử lại." },
+      { name: "error", type: "ReactNode", description: "Lý do lỗi (state=\"error\")." },
+      { name: "announce", type: "boolean", defaultValue: "true", description: "Đọc mỗi lượt một lần khi xong." },
+      { name: "layout / transcriptClassName / actions", type: `"stacked" | "inline" / string / ReactNode`, defaultValue: `"stacked"`, description: "Bố cục, lớp của khung transcript, nút thêm trong thanh điều khiển." },
+      { name: "CallSurface.statusLabel", type: "ReactNode", description: "Mới: thay chữ trạng thái của CallSurface (VoiceAssistant dùng để hiện Đang nghĩ…, Đang trả lời)." },
+    ],
+  },
+  {
     slug: "reasoning",
     category: "Yugen Labs",
+    tags: ["ai"],
     name: "Reasoning",
     lead: "Reasoning gói phần suy nghĩ của model vào một khối thu gọn: “Đang suy luận…” kèm đồng hồ khi đang chạy, “Đã suy luận trong 12s” khi xong.",
     description:
@@ -663,6 +1371,7 @@ export const docs: ComponentDoc[] = [
   {
     slug: "promptinput",
     category: "Yugen Labs",
+    tags: ["ai"],
     name: "PromptInput",
     lead: "PromptInput là ô soạn prompt đầy đủ cho trợ lý AI: tự giãn, đính kèm bằng nút / kéo thả / dán ảnh, kiểm tra tệp ngay tại chỗ và nút Gửi đổi thành Dừng khi model đang trả lời.",
     description:

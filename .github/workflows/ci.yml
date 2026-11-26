@@ -90,6 +90,8 @@ jobs:
       - run: npm run check:props
       # Code mẫu và block viết bằng tiếng Anh, trừ demo nói về ngôn ngữ (ALLOW trong scripts/check-demo-language.mjs)
       - run: npm run check:demo-language
+      # No raw U+2028 / U+2029 in tracked files: editors treat them as line breaks; write the escape instead.
+      - run: npm run check:line-terminators
       - run: node scripts/sync-templates.mjs --check
       # Icon có sẵn (src/components/ui/_internal/icons.tsx) khớp với các icon component đang import (#320).
       - run: node scripts/icons.mjs --check
@@ -104,7 +106,7 @@ jobs:
       # ignored; the CSS files have no types; ./* is a pattern, so a few subpaths stand in for it.
       - run: >-
           npx --yes @arethetypeswrong/cli@0.18.5 --pack . --profile esm-only
-          --exclude-entrypoints ./theme.css ./theme-core.css ./styles.css ./tokens.css
+          --exclude-entrypoints ./theme.css ./theme-core.css ./styles.css ./components.css ./tokens.css
           --include-entrypoints ./Button ./Chart ./AIKit
       - run: npm run build:docs
       - run: npm run pack:check
@@ -172,6 +174,27 @@ jobs:
       # npm pack yugen + create-yugen-ui, cài từ .tgz, tạo app với mọi template.
       - run: npm run smoke --prefix packages/cli
 
+  # Tag image Playwright của các job chạy trình duyệt = @playwright/test trong package-lock.json: Dependabot nâng Playwright
+  # thì image đổi theo, không ai phải sửa tay workflow (src/test/playwright-image.test.ts cấm ghi cứng tag).
+  playwright:
+    name: Playwright image
+    if: github.event.pull_request.draft != true
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: package-lock.json
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - id: version
+        run: |
+          v="$(jq -r '.packages["node_modules/@playwright/test"].version' package-lock.json)"
+          if ! echo "$v" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then echo "::error::package-lock.json: no @playwright/test version (got '$v')."; exit 1; fi
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+
   # Danh sách template cho matrix bên dưới — template mới trong templates.json được kiểm tra mà không cần sửa workflow.
   templates-list:
     name: Templates · list
@@ -180,18 +203,33 @@ jobs:
     timeout-minutes: 5
     outputs:
       dirs: ${{ steps.list.outputs.dirs }}
+      run: ${{ steps.changes.outputs.run }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          fetch-depth: 2 # PR: HEAD is the merge commit, HEAD^1 the base
           persist-credentials: false
       - id: list
         run: echo "dirs=$(node -p 'JSON.stringify(require("./templates/templates.json").map((t) => t.dir))')" >> "$GITHUB_OUTPUT"
+      # PRs that change nothing the templates build from (docs pages, e2e, wiki…) skip the template jobs (#310). Pushes
+      # always run them. The list errs on the side of running: library, styles, build scripts, packages, lockfile.
+      - id: changes
+        run: |
+          if [ "$GITHUB_EVENT_NAME" != "pull_request" ]; then echo "run=true" >> "$GITHUB_OUTPUT"; exit 0; fi
+          files="$(git diff --name-only HEAD^1 HEAD)"
+          if echo "$files" | grep -qE '^(src/(components|lib|hooks|styles)/|src/lib\.ts$|src/docs/(template-library|block-library)/|templates/|packages/|scripts/|package(-lock)?\.json$|vite\.(lib\.config|plugins)\.ts$|tsconfig|\.github/workflows/ci\.yml$)'; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::No template inputs changed: template jobs skipped."
+          fi
 
   # Mỗi template build với yugen-ui của chính PR này (npm pack), rồi scripts/check-template.mjs: ngân sách dung lượng
   # lần tải đầu + smoke test (mọi link nội bộ render, không lỗi console, không vi phạm axe) (#145).
   templates:
     name: Template · ${{ matrix.template }}
-    needs: templates-list
+    needs: [templates-list, playwright]
+    if: needs.templates-list.outputs.run == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     strategy:
@@ -199,7 +237,7 @@ jobs:
       matrix:
         template: ${{ fromJSON(needs.templates-list.outputs.dirs) }}
     container:
-      image: mcr.microsoft.com/playwright:v1.64.1-noble
+      image: mcr.microsoft.com/playwright:v${{ needs.playwright.outputs.version }}-noble
       options: --user 1001
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -258,6 +296,7 @@ jobs:
   # E2E là đường dài nhất của CI: 3 shard mất 207–249 s, 4 shard rút còn ~3/4.
   e2e:
     name: E2E · shard ${{ matrix.shard }}/4
+    needs: playwright
     if: github.event.pull_request.draft != true
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -266,9 +305,9 @@ jobs:
       matrix:
         shard: [1, 2, 3, 4]
     # Trình duyệt và thư viện hệ thống có sẵn trong image: không `playwright install --with-deps` (apt) mỗi lần chạy.
-    # Tag phải khớp @playwright/test trong package-lock.json (src/test/playwright-image.test.ts).
+    # Tag lấy từ package-lock.json (job playwright).
     container:
-      image: mcr.microsoft.com/playwright:v1.64.1-noble
+      image: mcr.microsoft.com/playwright:v${{ needs.playwright.outputs.version }}-noble
       options: --user 1001
     env:
       CI: true

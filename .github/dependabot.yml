@@ -36,6 +36,9 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "tailwindcss"
         update-types: ["version-update:semver-major"]
+      # Chỉ dùng để sinh src/components/ui/_internal/icons.tsx (#320). Bản mới có thể vẽ lại path icon → icons.mjs --check
+      # đỏ và giao diện đổi. Nâng tay khi cần icon mới, chạy `npm run icons` trong cùng PR.
+      - dependency-name: "@fluentui/react-icons"
 
   - package-ecosystem: npm
     directory: /packages/cli

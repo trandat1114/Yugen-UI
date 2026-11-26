@@ -115,7 +115,7 @@ describe("Table", () => {
     const onSelect = vi.fn();
     render(<Files onSelect={onSelect} />);
     const all = screen.getByRole("checkbox", { name: "Chọn tất cả hàng" });
-    expect(all).toHaveAttribute("aria-checked", "mixed");
+    expect(all).toBePartiallyChecked();
     expect(all.closest("th")).not.toBeNull();
     const rows = screen.getAllByRole("checkbox", { name: "Chọn hàng" });
     expect(rows[0]).toBeChecked();
@@ -153,5 +153,38 @@ describe("Table", () => {
     );
     expect(screen.getByRole("checkbox", { name: "Chọn hàng" })).toBeInTheDocument();
     expect(screen.getByRole("checkbox", { name: "Chọn Báo cáo" })).toBeInTheDocument();
+  });
+
+  it("align: cột số căn cuối, kể cả nút sắp xếp trong tiêu đề", () => {
+    render(
+      <Table aria-label="Hoá đơn" sortable>
+        <TableHeader>
+          <TableRow>
+            <TableHeaderCell>Khách hàng</TableHeaderCell>
+            <TableHeaderCell align="end" sortDirection="descending">
+              Số tiền
+            </TableHeaderCell>
+            <TableHeaderCell sortable={false} align="end">
+              Ngày
+            </TableHeaderCell>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow>
+            <TableCell>Nguyễn Văn An</TableCell>
+            <TableCell align="end">1.250.000 ₫</TableCell>
+            <TableCell align="end">18/10/2026</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>,
+    );
+    const [name, amount, date] = screen.getAllByRole("columnheader");
+    expect(name).toHaveClass("text-start");
+    expect(amount).toHaveClass("text-end");
+    expect(amount).toHaveAttribute("aria-sort", "descending");
+    expect(within(amount).getByRole("button")).toHaveClass("justify-end", "text-end");
+    expect(date).toHaveClass("text-end");
+    expect(screen.getByRole("cell", { name: "1.250.000 ₫" })).toHaveClass("text-end");
+    expect(screen.getByRole("cell", { name: "Nguyễn Văn An" })).not.toHaveClass("text-end");
   });
 });

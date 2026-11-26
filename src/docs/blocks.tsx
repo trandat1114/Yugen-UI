@@ -7,6 +7,7 @@ import {
   WeatherSunny16Regular,
   WeatherMoon16Regular,
   ChevronDown16Regular,
+  ChevronRight16Regular,
   Open16Regular,
 } from "@fluentui/react-icons";
 import { Popover, PopoverSurface, PopoverTrigger, YugenProvider, useYugen, type YugenTheme } from "@/components/ui";
@@ -54,7 +55,7 @@ export function PageHeader({
       <h1 className="font-display text-[clamp(40px,6vw,64px)] leading-[1.1] font-semibold tracking-[-0.02em] wrap-break-word text-foreground-1">
         {breakableTitle(title)}
       </h1>
-      <p className="mt-4 max-w-3xl text-subtitle1 font-normal text-foreground-1">{lead}</p>
+      <p className="mt-4 max-w-3xl whitespace-pre-line text-subtitle1 font-normal text-foreground-1">{lead}</p>
       {children && <div className="mt-4 max-w-3xl text-body2 text-foreground-2">{children}</div>}
     </header>
   );
@@ -103,13 +104,13 @@ export function DocSection({
   children,
 }: {
   id: string;
-  title: string;
+  title?: string;
   description?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} data-doc-section={title} className="scroll-mt-24 border-t border-stroke-2 pt-6 pb-8 first:border-t-0">
-      <h2 className="font-display text-title2 font-semibold text-foreground-1">{title}</h2>
+    <section id={id} data-doc-section={title || undefined} className="scroll-mt-24 border-t border-stroke-2 pt-6 pb-8 first:border-t-0">
+      {title && <h2 className="font-display text-title2 font-semibold text-foreground-1">{title}</h2>}
       {description && <p className="mt-2 max-w-3xl text-body2 text-foreground-2">{description}</p>}
       <div className="mt-5">{children}</div>
     </section>
@@ -177,6 +178,7 @@ export function ExampleFrame({
             <button
               type="button"
               aria-label="StackBlitz"
+              data-analytics="stackblitz-example"
               onClick={() =>
                 openInStackBlitz(example.code, { title: example.title, theme: look.theme, brand: look.brand, dir: pageDir, version: SITE.version, setup: example.setup })
               }
@@ -369,9 +371,28 @@ export function PropsTable({ props, contentLang }: { props: PropDoc[]; contentLa
 }
 
 /* ---------- On this page ---------- */
-export function OnThisPage({ items }: { items: { id: string; label: string }[] }) {
+type OnThisPageItem = {
+  id: string;
+  label: string;
+  onClick?: () => void;
+  children?: OnThisPageItem[];
+};
+
+export function OnThisPage({ items }: { items: OnThisPageItem[] }) {
   const [active, setActive] = React.useState(items[0]?.id);
+  const [collapsed, setCollapsed] = React.useState<Set<string>>(() => new Set());
   const { t } = useLocale();
+  const observedItems = React.useMemo(() => {
+    const result: OnThisPageItem[] = [];
+    const visit = (entries: OnThisPageItem[]) => {
+      for (const item of entries) {
+        result.push(item);
+        if (item.children) visit(item.children);
+      }
+    };
+    visit(items);
+    return result;
+  }, [items]);
 
   React.useEffect(() => {
     const observer = new IntersectionObserver(
@@ -382,7 +403,7 @@ export function OnThisPage({ items }: { items: { id: string; label: string }[] }
       { rootMargin: "-80px 0px -60% 0px" },
     );
     // Nội dung trang có thể nạp lười (Suspense) — mục chưa có trong DOM thì chờ tới khi xuất hiện.
-    const missing = new Set(items.map((item) => item.id));
+    const missing = new Set(observedItems.map((item) => item.id));
     const mutations = new MutationObserver(() => scan());
     const scan = () => {
       for (const id of missing) {
@@ -399,19 +420,29 @@ export function OnThisPage({ items }: { items: { id: string; label: string }[] }
       observer.disconnect();
       mutations.disconnect();
     };
-  }, [items]);
+  }, [observedItems]);
 
-  return (
-    <nav aria-label={t("blocks.onThisPage")} className="sticky top-24 mt-5 hidden w-52 shrink-0 self-start xl:block">
-      <p className="mb-3 text-body1 font-semibold text-foreground-1">{t("blocks.onThisPage")}</p>
-      <ul className="flex flex-col border-s border-stroke-2">
-        {items.map((item) => (
-          <li key={item.id}>
+  const renderItems = (entries: OnThisPageItem[], level = 0): React.ReactNode => {
+    const hasExpandableItems = entries.some((entry) => !!entry.children?.length);
+    return entries.map((item) => {
+      const hasChildren = !!item.children?.length;
+      const isExpanded = hasChildren && !collapsed.has(item.id);
+      const childrenId = `${item.id}-children`;
+      return (
+        <li key={item.id}>
+          <div className="flex items-stretch">
             <button
               type="button"
-              onClick={() => document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth" })}
+              onClick={() => {
+                setActive(item.id);
+                if (item.onClick) item.onClick();
+                else document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth" });
+              }}
+              aria-current={active === item.id ? "location" : undefined}
               className={cn(
-                "-ms-px w-full border-s-2 py-1 ps-3 text-start text-body1 transition-colors duration-faster",
+                hasExpandableItems ? "-ms-px min-w-0 flex-1" : "-ms-px w-full",
+                "border-s-2 text-start transition-colors duration-faster",
+                level === 0 ? "py-1 ps-3 text-body1" : level === 1 ? "py-0.5 ps-3 text-caption1" : "py-0.5 ps-6 text-caption1",
                 active === item.id
                   ? "border-brand-stroke font-semibold text-foreground-1"
                   : "border-transparent text-foreground-3 hover:text-foreground-1",
@@ -419,9 +450,42 @@ export function OnThisPage({ items }: { items: { id: string; label: string }[] }
             >
               {item.label}
             </button>
-          </li>
-        ))}
-      </ul>
+            {hasExpandableItems && hasChildren ? (
+              <button
+                type="button"
+                aria-expanded={isExpanded}
+                aria-controls={childrenId}
+                aria-label={t(isExpanded ? "blocks.collapseItem" : "blocks.expandItem", { label: item.label })}
+                onClick={() =>
+                  setCollapsed((current) => {
+                    const next = new Set(current);
+                    if (next.has(item.id)) next.delete(item.id);
+                    else next.add(item.id);
+                    return next;
+                  })
+                }
+                className="flex size-6 shrink-0 items-center justify-center rounded-small text-foreground-3 hover:bg-subtle-hover hover:text-foreground-1"
+              >
+                {isExpanded ? <ChevronDown16Regular /> : <ChevronRight16Regular />}
+              </button>
+            ) : hasExpandableItems ? (
+              <span aria-hidden className="size-6 shrink-0" />
+            ) : null}
+          </div>
+          {hasChildren && (
+            <ul id={childrenId} hidden={!isExpanded} className="flex flex-col">
+              {renderItems(item.children!, level + 1)}
+            </ul>
+          )}
+        </li>
+      );
+    });
+  };
+
+  return (
+    <nav aria-label={t("blocks.onThisPage")} className="sticky top-24 mt-5 hidden max-h-[calc(100vh-7rem)] w-52 shrink-0 self-start overflow-y-auto pe-2 xl:block">
+      <p className="mb-3 text-body1 font-semibold text-foreground-1">{t("blocks.onThisPage")}</p>
+      <ul className="flex flex-col border-s border-stroke-2">{renderItems(items)}</ul>
     </nav>
   );
 }

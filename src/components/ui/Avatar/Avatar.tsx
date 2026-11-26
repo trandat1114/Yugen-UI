@@ -1,4 +1,4 @@
-import * as AvatarPrimitive from "@radix-ui/react-avatar";
+import * as React from "react";
 import type { VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/cn";
 import { cvx } from "@/lib/cvx";
@@ -43,9 +43,34 @@ const PRESENCE = {
   offline: "bg-background-1 ring-[1.5px] ring-inset ring-foreground-3",
 } as const;
 
+export type AvatarLoadingStatus = "loading" | "loaded" | "error";
+
+/** Attributes passed to the avatar's `<img>`. The name stays on the wrapper (`role="img"` + `aria-label`). */
+export type AvatarImageOptions = Pick<
+  React.ImgHTMLAttributes<HTMLImageElement>,
+  "srcSet" | "sizes" | "loading" | "decoding" | "crossOrigin" | "referrerPolicy" | "fetchPriority"
+>;
+
+/** Props for `renderImage`: spread them on a framework image component (Next.js `<Image>`, a CDN component). */
+export interface AvatarImageRenderProps extends AvatarImageOptions {
+  src: string;
+  alt: "";
+  className: string;
+  onLoad: () => void;
+  onError: () => void;
+}
+
 export interface AvatarProps extends VariantProps<typeof avatarVariants> {
   name: string;
   src?: string;
+  /** `<img>` attributes: `srcSet`, `sizes`, `loading`, `decoding`, `crossOrigin`, `referrerPolicy`, `fetchPriority`. */
+  image?: AvatarImageOptions;
+  /** Renders the image with another component, e.g. `(props) => <Image {...props} width={40} height={40} />`. */
+  renderImage?: (props: AvatarImageRenderProps) => React.ReactNode;
+  /** Called with `"loading"`, then `"loaded"` or `"error"`, for each `src`. */
+  onLoadingStatusChange?: (status: AvatarLoadingStatus) => void;
+  /** Milliseconds to wait before showing the initials while the image loads. */
+  fallbackDelay?: number;
   color?: "neutral" | "brand" | "colorful";
   presence?: keyof typeof PRESENCE;
   className?: string;
@@ -64,8 +89,66 @@ function hashOf(name: string) {
   return Math.abs(h);
 }
 
+/**
+ * Load state of `src`, kept per URL so a new `src` starts over at "loading". The `<img>` is in the server HTML, so the
+ * browser can finish loading it before React hydrates and the load event is gone: the effect reads `complete` then.
+ */
+function useImageStatus(src: string | undefined, frame: React.RefObject<HTMLSpanElement | null>) {
+  const [state, setState] = React.useState<{ src?: string; status: AvatarLoadingStatus }>({ src, status: "loading" });
+  const status: AvatarLoadingStatus = !src ? "error" : state.src === src ? state.status : "loading";
+  const settle = React.useCallback((next: AvatarLoadingStatus) => setState({ src, status: next }), [src]);
+
+  React.useEffect(() => {
+    const img = frame.current?.querySelector("img");
+    if (!src || !img?.complete) return;
+    let active = true;
+    if (img.naturalWidth > 0) settle("loaded");
+    // An SVG without width / height can report naturalWidth 0 once loaded; decode() tells it apart from a broken image.
+    else if (typeof img.decode === "function") img.decode().then(() => active && settle("loaded"), () => active && settle("error"));
+    else settle("error");
+    return () => {
+      active = false;
+    };
+  }, [src, frame, settle]);
+
+  return { status, settle };
+}
+
 export function Avatar(inProps: AvatarProps) {
-  const { name, src, size, shape, color = "neutral", presence, className } = useComponentDefaults("Avatar", inProps);
+  const {
+    name,
+    src,
+    image,
+    renderImage,
+    onLoadingStatusChange,
+    fallbackDelay = 400,
+    size,
+    shape,
+    color = "neutral",
+    presence,
+    className,
+  } = useComponentDefaults("Avatar", inProps);
+  const frame = React.useRef<HTMLSpanElement>(null);
+  const { status, settle } = useImageStatus(src, frame);
+
+  // Initials appear at once without an image, after `fallbackDelay` while it loads, and stay hidden once it has loaded
+  // (a transparent logo would show them through).
+  const [waited, setWaited] = React.useState<string>();
+  React.useEffect(() => {
+    if (status !== "loading" || fallbackDelay <= 0) return;
+    const timer = setTimeout(() => setWaited(src), fallbackDelay);
+    return () => clearTimeout(timer);
+  }, [status, src, fallbackDelay]);
+  const showInitials = status === "error" || (status === "loading" && (fallbackDelay <= 0 || waited === src));
+
+  const onStatus = React.useRef(onLoadingStatusChange);
+  React.useEffect(() => {
+    onStatus.current = onLoadingStatusChange;
+  });
+  React.useEffect(() => {
+    if (src) onStatus.current?.(status);
+  }, [src, status]);
+
   const colorClass =
     color === "brand"
       ? "bg-brand-background text-foreground-on-brand"
@@ -74,14 +157,25 @@ export function Avatar(inProps: AvatarProps) {
         : "bg-background-6 text-foreground-3";
   const small = size === 20 || size === 24;
 
+  let img: React.ReactNode = null;
+  if (src && status !== "error") {
+    const imgProps: AvatarImageRenderProps = {
+      ...image,
+      src,
+      alt: "",
+      className: "absolute inset-0 size-full object-cover",
+      onLoad: () => settle("loaded"),
+      onError: () => settle("error"),
+    };
+    img = renderImage ? renderImage(imgProps) : <img {...imgProps} />;
+  }
+
   return (
     <span className="relative inline-flex shrink-0" role="img" aria-label={name}>
-      <AvatarPrimitive.Root className={avatarVariants({ size, shape, className: [colorClass, className] })}>
-        {src && <AvatarPrimitive.Image src={src} alt="" className="size-full object-cover" />}
-        <AvatarPrimitive.Fallback delayMs={src ? 400 : 0} aria-hidden>
-          {initialsOf(name)}
-        </AvatarPrimitive.Fallback>
-      </AvatarPrimitive.Root>
+      <span ref={frame} className={avatarVariants({ size, shape, className: [colorClass, className] })}>
+        {showInitials && <span aria-hidden>{initialsOf(name)}</span>}
+        {img}
+      </span>
       {presence && (
         <span
           className={cn(

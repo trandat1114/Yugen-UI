@@ -23,7 +23,7 @@
     "dir": "vite-saas",
     "name": "saas",
     "title": "SaaS",
-    "hint": "SaaS workspace: sidebar, Ctrl K command palette, notifications, 8 pages",
+    "hint": "SaaS workspace: sidebar, Ctrl K command palette, notifications, 9 pages",
     "budget": {
       "js": 190,
       "css": 28
@@ -31,11 +31,11 @@
     "meta": {
       "en": {
         "title": "Sakura Studio",
-        "description": "A SaaS app built with Yugen UI: sidebar, Ctrl K command palette, notifications, light / dark / high-contrast themes and 8 sample pages."
+        "description": "A SaaS app built with Yugen UI: sidebar, Ctrl K command palette, notifications, light / dark / high-contrast themes and 9 sample pages."
       },
       "vi": {
         "title": "Sakura Studio",
-        "description": "Ứng dụng SaaS dựng bằng Yugen UI: sidebar, bảng lệnh Ctrl K, thông báo, theme sáng / tối / tương phản cao và 8 trang mẫu."
+        "description": "Ứng dụng SaaS dựng bằng Yugen UI: sidebar, bảng lệnh Ctrl K, thông báo, theme sáng / tối / tương phản cao và 9 trang mẫu."
       }
     }
   },

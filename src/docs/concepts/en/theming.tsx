@@ -454,6 +454,11 @@ export default function Page() {
             Alias names match Fluent UI v9 tokens one to one, so you can look them up in the Fluent docs: <C>tokens.colorNeutralStroke1</C> is{" "}
             <C>var(--colorNeutralStroke1)</C> and the <C>border-stroke-1</C> utility.
           </P>
+          <P>
+            The tokens are declared in the <C>theme</C> cascade layer, below everything your app writes: <C>{":root { --colorBrandBackground: … }"}</C>{" "}
+            in your CSS, or a utility such as <C>[--colorBrandBackground:#0a7]</C> on an element, wins whatever the order of the files or the
+            selector.
+          </P>
         </div>
       </DocSection>
 

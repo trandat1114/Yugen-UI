@@ -4,7 +4,9 @@ import {
   Board20Regular,
   CalendarLtr20Regular,
   ChartMultiple20Regular,
+  ContactCard20Regular,
   Mail20Regular,
+  PersonAdd20Regular,
   Payment20Regular,
   People20Regular,
   Settings20Regular,
@@ -12,6 +14,7 @@ import {
 } from "@fluentui/react-icons";
 import { Button, toast } from "yugen-ui";
 import type { Content, PageId } from "./content/types";
+import type { PageLayout } from "./layout";
 
 export type { PageId };
 
@@ -30,6 +33,7 @@ const LOADERS: Record<PageId, () => Promise<PageModule>> = {
   inbox: () => import("./pages/inbox"),
   calendar: () => import("./pages/calendar"),
   team: () => import("./pages/team"),
+  customers: () => import("./pages/customers"),
   billing: () => import("./pages/billing"),
   settings: () => import("./pages/settings"),
 };
@@ -49,6 +53,8 @@ export interface PageDef {
   badge?: number;
   /** Nút cạnh tiêu đề trang. */
   actions?: (t: Content) => ReactNode;
+  /** Độ rộng và mật độ của trang (layout.ts). Bỏ trống: mặc định SaaS (cột giữa tối đa 72rem). */
+  layout?: PageLayout;
   /** Nội dung trang (pages/<id>.tsx). Nhãn, tiêu đề và mô tả nằm trong content: `t.pages[id]`. */
   Page: ComponentType<PageProps>;
 }
@@ -74,6 +80,19 @@ export const PAGES: PageDef[] = [
   { id: "inbox", icon: <Mail20Regular />, section: "workspace", badge: 3, Page: lazy(LOADERS.inbox) },
   { id: "calendar", icon: <CalendarLtr20Regular />, section: "workspace", Page: lazy(LOADERS.calendar) },
   { id: "team", icon: <People20Regular />, section: "manage", Page: lazy(LOADERS.team) },
+  {
+    id: "customers",
+    icon: <ContactCard20Regular />,
+    section: "manage",
+    // Trang dữ liệu: dùng hết bề ngang vùng nội dung, control size small, khoảng cách gọn.
+    layout: { width: "fluid", density: "compact" },
+    actions: (t) => (
+      <Button appearance="primary" icon={<PersonAdd20Regular />} onClick={() => toast({ intent: "info", ...t.customers.addToast })}>
+        {t.customers.add}
+      </Button>
+    ),
+    Page: lazy(LOADERS.customers),
+  },
   { id: "billing", icon: <Payment20Regular />, section: "manage", Page: lazy(LOADERS.billing) },
   { id: "settings", icon: <Settings20Regular />, section: "manage", Page: lazy(LOADERS.settings) },
 ];

@@ -16,7 +16,14 @@ import { cn } from "@/lib/cn";
  */
 
 const root = path.resolve(__dirname, "../..");
-const tokens = fs.readFileSync(path.join(root, "src/styles/tokens.css"), "utf8").replace(/\r\n/g, "\n");
+// tokens.css + brands.css (#354). The rules sit in `@layer theme { … }`: drop the wrapper and its two-space indent to read
+// them as top-level blocks.
+const tokens = ["tokens.css", "brands.css"]
+  .map((file) => fs.readFileSync(path.join(root, "src/styles", file), "utf8"))
+  .join("\n")
+  .replace(/\r\n/g, "\n")
+  .replace(/^@layer theme \{\n/gm, "")
+  .replace(/^ {2}/gm, "");
 const indexCss = fs.readFileSync(path.join(root, "src/index.css"), "utf8").replace(/\r\n/g, "\n");
 
 /** Khai báo trong khối CSS mở đầu đúng bằng `head` (selector + " {"). */

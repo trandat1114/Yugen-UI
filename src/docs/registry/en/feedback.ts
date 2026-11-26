@@ -277,7 +277,7 @@ export const en: Record<string, ComponentDocEn> = {
 
   calendar: {
     description:
-      "Built on react-day-picker v10 with a Fluent look: 32px day cells with a 4px radius, today in bold brand text with an underline, selected days on a brand background, days inside a range tinted with brand-background-2. Defaults to Vietnamese, with weeks starting on Monday. Accepts every DayPicker prop (mode, selected, onSelect, disabled, numberOfMonths…).",
+      "Built on react-day-picker v10 with a Fluent look: 32px day cells with a 4px radius, today in bold brand text with an underline, selected days on a brand background, days inside a range tinted with brand-background-2. Month names, weekday names and the first day of the week follow `messages.calendar.locale` (en-US by default); for Vietnamese, `messages={{ ...messagesVi, calendar: calendarMessagesVi }}`. Import it from `yugen-ui/dates` and install react-day-picker, an optional peer dependency: `npm i react-day-picker`.",
     examples: [
       { title: "Range selection", description: "mode=\"range\": the first and last days get a brand background, the days between a brand tint." },
       { title: "Multiple days & disabled days", description: "mode=\"multiple\"; disabled={{ dayOfWeek: [0, 6] }} disables weekends." },
@@ -293,17 +293,32 @@ export const en: Record<string, ComponentDocEn> = {
     props: {
       mode: "Selection mode.",
       "selected / onSelect": "Value, depending on mode.",
-      disabled: "Disabled days (Date, { before }, { after }, { dayOfWeek }…).",
+      required: "Clicking the selected day again keeps it selected.",
+      "min / max": "Fewest / most days (multiple), nights (range).",
+      "disabled / hidden": "Disabled / hidden days: Date, Date[], DateRange, { before }, { after }, { dayOfWeek }, a (date) => boolean function.",
+      "modifiers / modifiersClassNames": "Named day groups and a class per group, e.g. { booked: [...] } and { booked: \"line-through\" }.",
+      "month / defaultMonth / onMonthChange": "The month shown.",
+      "startMonth / endMonth": "Limits of month navigation.",
       numberOfMonths: "Number of months shown.",
+      captionLayout: "Month title or month / year dropdowns.",
       showOutsideDays: "Shows days of the previous / next month (foreground-4).",
-      locale: "Language; import it from react-day-picker/locale.",
-      "…": "Any other react-day-picker v10 prop.",
+      weekStartsOn: "First day of the week (0 = Sunday); defaults to the locale's.",
+      locale: "A date-fns locale, imported from react-day-picker/locale; defaults to messages.calendar.locale.",
+      timeZone: "IANA time zone, e.g. \"Asia/Ho_Chi_Minh\".",
+      "excludeDisabled / resetOnSelect": "range: never span a disabled day / a click after a complete range starts a new one.",
+      "navLayout / hideNavigation / disableNavigation / pagedNavigation / reverseMonths / reverseYears":
+        "Where the month navigation buttons go and how they behave.",
+      "fixedWeeks / showWeekNumber / ISOWeek / firstWeekContainsDate / hideWeekdays / today":
+        "Day grid: always six weeks, week numbers, ISO weeks, first week of the year, hidden weekday names, the day marked as today.",
+      "autoFocus / footer / dir / role / id / title / lang": "Focus on mount, calendar footer, reading direction and HTML attributes.",
+      "classNames / components / formatters / labels":
+        "Deprecated: react-day-picker props, still forwarded with a development warning, removed in 1.0 (#371).",
     },
   },
 
   datepicker: {
     description:
-      "The trigger shares Input's border style (accessible bottom border, brand bar on focus), with a calendar icon on the right and an optional clear button (clearable). Put it in a `<Field>` for a label, hint and error message. DateRangePicker picks a date range and shows two months side by side.",
+      "The trigger shares Input's border style (accessible bottom border, brand bar on focus), with a calendar icon on the right and an optional clear button (clearable). Put it in a `<Field>` for a label, hint and error message. DateRangePicker picks a date range and shows two months side by side. Import them from `yugen-ui/dates` and install react-day-picker, an optional peer dependency: `npm i react-day-picker`.",
     examples: [
       { title: "Date limits & validation", description: "minDate disables the days before today; Field shows the error / success message." },
       { title: "Date range", description: "DateRangePicker: the popover closes once both the start and end dates are picked." },

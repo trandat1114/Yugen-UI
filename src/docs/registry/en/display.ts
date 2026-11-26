@@ -32,6 +32,7 @@ export const en: Record<string, ComponentDocEn> = {
       overflowLabel:
         "Label read after the count on the button that opens the list (\"+2 …\"); with overflowIndicator=\"icon\" it is the button's whole name.",
       "AvatarGroupItem.name / src / color": "Details of each member.",
+      "AvatarGroupItem.image / renderImage / fallbackDelay / onLoadingStatusChange": "Image options, as on Avatar.",
     },
   },
 
@@ -46,6 +47,12 @@ export const en: Record<string, ComponentDocEn> = {
         description: "textAlignment start (default) aligns the text with the top edge of the Avatar; center centers it vertically.",
       },
       { title: "Presence only", description: "presenceOnly replaces the Avatar with a presence dot, which suits dense lists." },
+      { title: "Image", description: "avatar.src for a photo; an image that fails to load falls back to the initials; shape square for apps and bots." },
+      {
+        title: "Several people",
+        description:
+          "avatars shows an AvatarGroup at the Persona's size: stack (default) or pie. Past maxAvatars (default 3) the rest go into a “+N” button; primaryText names the group.",
+      },
     ],
     dos: [
       "Keep secondary lines short: job title, status, local time.",
@@ -64,6 +71,9 @@ export const en: Record<string, ComponentDocEn> = {
       presence: "Presence shown on the Avatar.",
       presenceOnly: "Shows only the presence dot.",
       avatar: "Options passed to the Avatar.",
+      avatars: "Several people, shown as an AvatarGroup at the Persona's size. Not combined with avatar, presence or presenceOnly.",
+      avatarLayout: "AvatarGroup layout for avatars.",
+      maxAvatars: "Most cells for avatars, the “+N” button included; not used by pie.",
       textPosition: "Position of the text block relative to the Avatar.",
       textAlignment: "Alignment of the text block.",
     },
@@ -195,6 +205,9 @@ export const en: Record<string, ComponentDocEn> = {
       "Table.sortable": "Turns every TableHeaderCell into a sort button.",
       "TableHeaderCell.sortDirection": "Shows the ArrowSortUp/Down icon and sets aria-sort.",
       "TableHeaderCell.sortable / onClick": "Turns sorting on / off for one column; onClick goes on the button in the header.",
+      "TableHeaderCell.align":
+        "Aligns the header with the column's cells; on a sortable column the sort button follows. end for numbers, amounts and dates.",
+      "TableCell.align": "Aligns the cell content (flips in RTL). Replaces the old HTML align attribute.",
       "TableRow.selected / appearance": "Background state of the row.",
       "TableCellLayout.media / description / appearance / truncate": "Cell layout: media + main content + description.",
       "TableSelectionCell.checked / onCheckedChange / subtle": "Row selection checkbox; inside TableHeader it becomes the select-all cell.",
@@ -350,12 +363,20 @@ export const en: Record<string, ComponentDocEn> = {
       "ResizablePanelGroup.mirrorInRtl":
         "RTL: horizontal groups run right → left (dragging / arrow keys follow the visible direction); false keeps the LTR layout.",
       "ResizablePanelGroup.onLayoutChanged": "Called after a drag ends. Use it to save the layout your own way.",
+      "ResizablePanelGroup.defaultLayout / onLayoutChange": "Initial sizes by panel id (percent); called continuously while dragging.",
+      "ResizablePanelGroup.groupRef / elementRef": "getLayout(), setLayout(layout); the group's DOM element.",
+      "ResizablePanelGroup.disabled / disableCursor / resizePreviewMode / resizeTargetMinimumSize":
+        "Locks every divider, keeps the default cursor, preview while dragging, smallest hit area (px).",
       "ResizablePanel.defaultSize / minSize / maxSize": "A string such as “30%” is a percentage, a number is px. Double-clicking the divider resets to defaultSize.",
       "ResizablePanel.collapsible / collapsedSize": "Lets the panel collapse (drag past minSize, Enter, or the button).",
+      "ResizablePanel.collapsedThreshold / groupResizeBehavior / disabled":
+        "How far past minSize a drag goes before the panel collapses; on group resize, keep the panel's share or its pixels; locks the panel.",
+      "ResizablePanel.onResize / panelRef / elementRef": "The new size; collapse(), expand(), getSize(), isCollapsed(), resize(size); the DOM element.",
       "ResizableHandle.withHandle": "Shows a grip in the middle of the divider.",
       "ResizableHandle.collapseButton":
         "Button that collapses / expands the panel before (above / at the start of the line) or after the divider; that panel must be collapsible.",
       "ResizableHandle.collapseLabel / expandLabel": "Tooltip text (title) of the button.",
+      "ResizableHandle.preview / elementRef": "Shown while dragging with resizePreviewMode=\"separator\"; the divider's DOM element.",
       "ResizableHandle.disabled / disableDoubleClick": "Locks the divider / turns off the double-click reset.",
     },
   },

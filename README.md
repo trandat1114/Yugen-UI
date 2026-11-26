@@ -61,7 +61,7 @@ npm install yugen-ui
 ```
 
 Peer dependencies: `react` and `react-dom` **>= 18**. `tailwindcss` **v4** is an optional peer (only needed for
-Setup A).
+Setup A). `react-day-picker` is an optional peer for the date components in `yugen-ui/dates` (`npm install react-day-picker`).
 
 ## Setup A — with Tailwind CSS v4 (recommended)
 
@@ -243,7 +243,7 @@ npm run dev
 | Template | What you get |
 | --- | --- |
 | `vite-starter` | Blank start: persisted theme, toast, `@/` alias, SEO basics, a cherry-blossom welcome page to delete |
-| `vite-saas` | 8-page SaaS app: sidebar → drawer, Ctrl K palette, notifications, themes & brands |
+| `vite-saas` | 9-page SaaS app: sidebar → drawer, Ctrl K palette, notifications, themes & brands, full-width data page |
 | `vite-blog` | Markdown blog: tags, search, TOC; build-time HTML per post, sitemap.xml, rss.xml |
 | `vite-dashboard` | KPI tiles, charts, recent transactions |
 | `vite-ai-chat` | AI assistant chat with agent trace |
@@ -289,6 +289,7 @@ so you can import components from Server Components and call these helpers on th
 |---|---|
 | `yugen-ui` | Components, hooks, `cn`, brand-ramp helpers — ESM (`preserveModules`, tree-shakeable) + `.d.ts` |
 | `yugen-ui/<Folder>` | One component folder (`yugen-ui/Button`, `yugen-ui/Chart`), plus `yugen-ui/hooks`, `yugen-ui/AppShell/Sidebar`, `yugen-ui/messages-en`, `yugen-ui/messages-vi`. Same files as the root |
+| `yugen-ui/dates` | Calendar, DatePicker, DateRangePicker, DateTimePicker and their messages; needs `react-day-picker` |
 | `yugen-ui/theme.css` | Tailwind v4 theme source (Setup A) |
 | `yugen-ui/styles.css` | Precompiled stylesheet (Setup B) |
 | `yugen-ui/tokens.css` | Raw design tokens (CSS custom properties only) |
@@ -380,6 +381,7 @@ npm install yugen-ui
 ```
 
 Peer dependency: `react`, `react-dom` **>= 18**. `tailwindcss` **v4** là peer tuỳ chọn (chỉ cần cho Cách A).
+`react-day-picker` là peer tuỳ chọn cho các component ngày trong `yugen-ui/dates` (`npm install react-day-picker`).
 
 ### Cách A — dùng cùng Tailwind CSS v4 (khuyên dùng)
 
@@ -547,7 +549,7 @@ npm run dev
 | Template | Có gì |
 | --- | --- |
 | `vite-starter` | Khởi đầu trắng: theme ghi nhớ, toast, alias `@/`, SEO cơ bản, trang chào hoa anh đào (xoá được) |
-| `vite-saas` | Ứng dụng SaaS 8 trang: sidebar → drawer, bảng lệnh Ctrl K, thông báo, theme & thương hiệu |
+| `vite-saas` | Ứng dụng SaaS 9 trang: sidebar → drawer, bảng lệnh Ctrl K, thông báo, theme & thương hiệu, trang dữ liệu rộng hết màn hình |
 | `vite-blog` | Blog Markdown: thẻ, tìm kiếm, mục lục; HTML tĩnh từng bài, sitemap.xml, rss.xml lúc build |
 | `vite-dashboard` | Thẻ KPI, biểu đồ, giao dịch gần đây |
 | `vite-ai-chat` | Trợ lý AI dạng chat, Trace các bước agent |
@@ -591,6 +593,7 @@ component được từ Server Component và gọi các hàm này ở server (im
 |---|---|
 | `yugen-ui` | Component, hook, `cn`, hàm brand ramp — ESM (`preserveModules`, tree-shake được) + `.d.ts` |
 | `yugen-ui/<Folder>` | Một thư mục component (`yugen-ui/Button`, `yugen-ui/Chart`), thêm `yugen-ui/hooks`, `yugen-ui/AppShell/Sidebar`, `yugen-ui/messages-en`, `yugen-ui/messages-vi`; cùng file với gốc gói |
+| `yugen-ui/dates` | Calendar, DatePicker, DateRangePicker, DateTimePicker và messages của chúng; cần `react-day-picker` |
 | `yugen-ui/theme.css` | Nguồn theme Tailwind v4 (Cách A) |
 | `yugen-ui/styles.css` | Stylesheet đã biên dịch (Cách B) |
 | `yugen-ui/tokens.css` | Token thô (chỉ biến CSS) |

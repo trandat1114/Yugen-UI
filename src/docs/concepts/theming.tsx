@@ -450,6 +450,10 @@ export default function Page() {
             Tên alias trùng 1-1 với token Fluent UI v9, nên tài liệu Fluent tra được trực tiếp: <C>tokens.colorNeutralStroke1</C> chính là{" "}
             <C>var(--colorNeutralStroke1)</C> và utility <C>border-stroke-1</C>.
           </P>
+          <P>
+            Token được khai báo trong cascade layer <C>theme</C>, thấp hơn mọi CSS của app: <C>{":root { --colorBrandBackground: … }"}</C> trong
+            CSS của bạn, hay utility như <C>[--colorBrandBackground:#0a7]</C> trên một phần tử, luôn thắng bất kể thứ tự file hay selector.
+          </P>
         </div>
       </DocSection>
 

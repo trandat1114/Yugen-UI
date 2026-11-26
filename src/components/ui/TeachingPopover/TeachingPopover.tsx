@@ -6,14 +6,29 @@ import { cn } from "@/lib/cn";
 import { warnDeprecated } from "@/lib/deprecate";
 import { Button } from "../Button/Button";
 import { Popover, PopoverClose, PopoverSurface, PopoverTrigger, type PopoverSurfaceProps } from "../Popover/Popover";
-import { useYugenMessages } from "../YugenProvider/context";
+import * as PopoverPrimitive from "@radix-ui/react-popover";
+import { useComposedRefs } from "../_internal/composeRefs";
+import { SpotlightOverlay, useElementRect } from "../_internal/spotlight";
+import { usePortalThemeProps, useYugenMessages } from "../YugenProvider/context";
 import { teachingPopoverMessagesEn } from "./messages";
 
 export { teachingPopoverMessages, teachingPopoverMessagesVi, teachingPopoverMessagesEn, type TeachingPopoverMessages } from "./messages";
 
 export type TeachingPopoverAppearance = "normal" | "brand";
+export type TeachingPopoverFocus = "none" | "spotlight";
 
-const TeachingPopoverContext = React.createContext<{ appearance: TeachingPopoverAppearance }>({ appearance: "normal" });
+interface TeachingPopoverContextValue {
+  appearance: TeachingPopoverAppearance;
+  focus: TeachingPopoverFocus;
+  /** TeachingPopoverTrigger báo phần tử của nó để spotlight chừa sáng quanh đó. */
+  registerAnchor: (node: HTMLElement | null) => void;
+}
+
+const TeachingPopoverContext = React.createContext<TeachingPopoverContextValue>({
+  appearance: "normal",
+  focus: "none",
+  registerAnchor: () => {},
+});
 
 function useTeachingAppearance() {
   return React.useContext(TeachingPopoverContext).appearance;
@@ -45,19 +60,61 @@ function useTeachingButtons() {
 export interface TeachingPopoverProps extends React.ComponentPropsWithoutRef<typeof Popover> {
   /** normal: bề mặt neutral · brand: nền brand chữ on-brand. */
   appearance?: TeachingPopoverAppearance;
+  /**
+   * spotlight: khi mở, làm tối phần còn lại của trang, chừa sáng TeachingPopoverTrigger (đi theo khi trang cuộn) và
+   * bật modal — trang phía sau không bấm hay Tab tới được. Mặc định none: giữ nguyên hành vi Popover.
+   */
+  focus?: TeachingPopoverFocus;
+}
+
+function TeachingPopoverScrim({ anchor }: { anchor: HTMLElement | null }) {
+  const portalTheme = usePortalThemeProps();
+  const rect = useElementRect(anchor, true);
+  return (
+    <PopoverPrimitive.Portal>
+      <SpotlightOverlay
+        {...portalTheme}
+        data-teaching-popover-scrim=""
+        rect={rect}
+        padding={4}
+        className="z-40 animate-fade-in motion-reduce:animate-none"
+      />
+    </PopoverPrimitive.Portal>
+  );
 }
 
 /** Popover hướng dẫn (coachmark / onboarding) — giới thiệu tính năng mới, gắn với phần tử trigger. */
-export function TeachingPopover({ appearance = "normal", ...props }: TeachingPopoverProps) {
-  const value = React.useMemo(() => ({ appearance }), [appearance]);
+export function TeachingPopover({
+  appearance = "normal",
+  focus = "none",
+  open: openProp,
+  defaultOpen,
+  onOpenChange,
+  modal,
+  children,
+  ...props
+}: TeachingPopoverProps) {
+  const [open, setOpen] = useControllableState({ value: openProp, defaultValue: defaultOpen ?? false, onChange: onOpenChange });
+  const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
+  const value = React.useMemo(() => ({ appearance, focus, registerAnchor: setAnchor }), [appearance, focus]);
   return (
     <TeachingPopoverContext.Provider value={value}>
-      <Popover {...props} />
+      <Popover {...props} open={open} onOpenChange={setOpen} modal={focus === "spotlight" ? true : modal}>
+        {focus === "spotlight" && open && <TeachingPopoverScrim anchor={anchor} />}
+        {children}
+      </Popover>
     </TeachingPopoverContext.Provider>
   );
 }
 
-export const TeachingPopoverTrigger = PopoverTrigger;
+export function TeachingPopoverTrigger({
+  ref,
+  ...props
+}: React.ComponentPropsWithoutRef<typeof PopoverTrigger> & { ref?: React.Ref<HTMLButtonElement> }) {
+  const { registerAnchor } = React.useContext(TeachingPopoverContext);
+  const composedRef = useComposedRefs(ref, registerAnchor);
+  return <PopoverTrigger ref={composedRef} {...props} />;
+}
 
 export type TeachingPopoverSurfaceProps = Omit<PopoverSurfaceProps, "appearance">;
 

@@ -11,7 +11,6 @@ import { Controller } from "react-hook-form";
 import {
   Button,
   Checkbox,
-  DatePicker,
   Field,
   FileUpload,
   Input,
@@ -22,6 +21,7 @@ import {
   type FileUploadEntry,
   type WizardStep,
 } from "@/components/ui";
+import { DatePicker } from "@/components/ui/dates";
 import type { ComponentDoc } from "../types";
 import RAW from "./phase3-forms.tsx?raw";
 
@@ -653,12 +653,13 @@ export const docs: ComponentDoc[] = [
     category: "Nhập liệu",
     lead: "Ghép Field, Input, Select, Checkbox, DatePicker và Button của Yugen với react-hook-form + zod để có form kiểm tra dữ liệu đầy đủ, tiếng Việt, truy cập được.",
     description:
-      "react-hook-form, zod và @hookform/resolvers là peer tuỳ chọn — Yugen không phụ thuộc vào chúng; bạn tự cài: npm i react-hook-form zod @hookform/resolvers. Input / Select nhận thẳng register(name) (ref trỏ tới phần tử gốc). Control không phải phần tử form gốc (DatePicker, Checkbox) dùng Controller. Map lỗi vào Field bằng validationState=\"error\" + validationMessage: Field tự gắn aria-invalid, aria-describedby và role=\"alert\". Đặt noValidate trên <form> để bong bóng lỗi của trình duyệt không chen vào; nút gửi dùng loading={isSubmitting}.",
+      "Cách nối tay từng Field với react-hook-form. HookForm của yugen-ui/form (trang Form) làm phần này: Field tự đọc lỗi theo name, có FormErrorSummary và standardSchemaResolver. react-hook-form, zod và @hookform/resolvers là peer tuỳ chọn — Yugen không phụ thuộc vào chúng; bạn tự cài: npm i react-hook-form zod @hookform/resolvers. Input / Select nhận thẳng register(name) (ref trỏ tới phần tử gốc). Control không phải phần tử form gốc (DatePicker, Checkbox) dùng Controller. Map lỗi vào Field bằng validationState=\"error\" + validationMessage: Field tự gắn aria-invalid, aria-describedby và role=\"alert\". Đặt noValidate trên <form> để bong bóng lỗi của trình duyệt không chen vào; nút gửi dùng loading={isSubmitting}.",
     importCode: `// Tuỳ chọn — tự cài: npm i react-hook-form zod @hookform/resolvers
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Button, Checkbox, DatePicker, Field, Input, Select } from "@/components/ui";`,
+import { Button, Checkbox, Field, Input, Select } from "@/components/ui";
+import { DatePicker } from "@/components/ui/dates";`,
     hero: {
       title: "Form đăng ký",
       description: "Kiểm tra khi rời ô (mode \"onTouched\"), sau đó kiểm tra lại mỗi lần gõ. Bấm Tạo tài khoản khi còn trống để thấy focus nhảy tới ô lỗi đầu tiên.",

@@ -1,9 +1,10 @@
 /**
  * Ngân sách dung lượng của gói npm (`npm run size`, chạy sau `npm run build:lib`).
  *
- * - JS: @size-limit/esbuild bundle + minify + tree-shake đúng phần import từ `dist/lib.js`, như bundler của người
- *   dùng. Peer dependency (`react`, `react-dom` — kể cả `react/jsx-runtime` — và `tailwindcss`) được size-limit tự
- *   loại ra; dependency thường (Radix, cmdk, react-day-picker, tailwind-merge…) được tính vào.
+ * - JS: @size-limit/esbuild bundle + minify + tree-shake đúng phần import từ `dist/lib.js` (hoặc `yugen-ui/dates`), như
+ *   bundler của người dùng. Peer dependency (`react`, `react-dom` — kể cả `react/jsx-runtime` — và `tailwindcss`) được
+ *   size-limit tự loại ra; dependency thường (Radix, cmdk, tailwind-merge…) và react-day-picker (peer tuỳ chọn của
+ *   yugen-ui/dates, `COUNTED_PEERS`) được tính vào.
  * - CSS: đo nguyên file đã phát hành (loader `copy` — esbuild không biến đổi gì, nhất là `theme.css` vốn là nguồn
  *   Tailwind v4 với `@theme` / `@utility` / `@source`), và CSS app thật sự nhận được sau khi Tailwind biên dịch
  *   (`compiledCss`, #360).
@@ -25,15 +26,33 @@ const lazyChunks = {
   },
 };
 
-/** Import thật từ entry của gói. */
-const js = (name, importStatement, limit) => ({
+/**
+ * Peer tuỳ chọn mà app dùng `yugen-ui/dates` phải cài (#356): size-limit loại mọi peer trong package.json ra, nhưng
+ * react-day-picker (và date-fns đi kèm) là phần app đó thật sự tải, nên vẫn được tính.
+ */
+const COUNTED_PEERS = ["react-day-picker"];
+
+/** Import thật từ entry của gói (`dist/lib.js`, hoặc `entry`, vd. `yugen-ui/dates`). */
+const js = (name, importStatement, limit, entry = "dist/lib.js") => ({
   name,
-  path: "dist/lib.js",
+  path: entry,
   import: importStatement,
   ignore: PEERS,
   gzip: true,
   limit,
-  modifyEsbuildConfig: (config) => ({ ...config, plugins: [...(config.plugins ?? []), lazyChunks] }),
+  modifyEsbuildConfig: (config) => ({
+    ...config,
+    external: (config.external ?? []).filter((id) => !COUNTED_PEERS.includes(id)),
+    plugins: [...(config.plugins ?? []), lazyChunks],
+  }),
+});
+const DATES = "dist/components/ui/dates.js";
+
+/** Import từ một subpath ngoài barrel (`yugen-ui/form`, #162); `peers`: peer tuỳ chọn mà app tự cài, không tính vào. */
+const subpath = (name, file, importStatement, limit, peers = []) => ({
+  ...js(name, importStatement, limit),
+  path: `dist/${file}`,
+  ignore: [...PEERS, ...peers],
 });
 
 /** File CSS phát hành, đo nguyên trạng. */
@@ -79,7 +98,8 @@ module.exports = [
   // Sortable (#175): 304.4 → 310.8 kB. Form control mới (#173): 309.3 → 318.0 kB. NavigationMenu + StatusPage
   // (#168, #238): → ~328 kB.
   // #360: mọi giới hạn đặt lại = đo được + 8%. cvx (#355) thêm 0.25–0.28 kB cho mục có Button, Input, Badge, Tag….
-  js("Toàn bộ thư viện (import *)", "*", "355.5 kB"),
+  // #356: Calendar / họ DatePicker và react-day-picker sang yugen-ui/dates: 325.25 → 298.50 kB.
+  js("Toàn bộ thư viện (import *)", "*", "322.5 kB"),
   js("{ cn }", "{ cn }", "10 kB"),
   // cvx (#355): 12.95 → 13.22 kB.
   js("{ Button }", "{ Button }", "14.5 kB"),
@@ -92,19 +112,43 @@ module.exports = [
     "62.5 kB",
   ),
   js("{ Dialog, DialogSurface }", "{ Dialog, DialogSurface }", "26 kB"),
+  // Form cho action của React 19, FormErrorSummary (#162): 13.50 kB khi thêm.
+  js("{ Form, FormErrorSummary }", "{ Form, FormErrorSummary }", "15 kB"),
+  // Adapter react-hook-form (#162), không tính react-hook-form (peer tuỳ chọn, app tự cài): 2.24 kB khi thêm.
+  subpath("yugen-ui/form: { HookForm, standardSchemaResolver }", "components/ui/HookForm/HookForm.js", "{ HookForm, standardSchemaResolver }", "2.5 kB", ["react-hook-form"]),
   // Listbox riêng thay cmdk (#351): 42.83 → 38.92 kB.
   js("{ Combobox }", "{ Combobox }", "42.5 kB"),
   // #351: không cmdk, Sortable nạp lúc cần khi `reorderable`: 50.56 → 41.01 kB.
   js("{ TagPicker }", "{ TagPicker }", "44.5 kB"),
-  // Calendar không kéo locale vi của react-day-picker (#349): 61.93 → 59.72 kB.
-  js("{ DatePicker }", "{ DatePicker }", "65 kB"),
-  // #173: họ DatePicker dùng chung vỏ; MonthPicker / DateTimePicker kéo theo Calendar (react-day-picker) như DatePicker.
+  // Calendar không kéo locale vi của react-day-picker (#349): 61.93 → 59.72 kB. Từ yugen-ui/dates (#356), react-day-picker
+  // vẫn được tính.
+  js("{ DatePicker } (yugen-ui/dates)", "{ DatePicker }", "65 kB", DATES),
+  // #173: họ DatePicker dùng chung vỏ; DateTimePicker kéo theo Calendar (react-day-picker) như DatePicker.
   // Không kéo locale vi (#349): 69.00 → 66.76 kB.
-  js("{ MonthPicker, YearPicker, DateTimePicker }", "{ MonthPicker, YearPicker, DateTimePicker }", "72.5 kB"),
+  js("{ MonthPicker, YearPicker, DateTimePicker } (yugen-ui/dates)", "{ MonthPicker, YearPicker, DateTimePicker }", "72.5 kB", DATES),
+  // #356: MonthPicker / YearPicker ở gốc gói, không cần react-day-picker: 38.19 kB.
+  js("{ MonthPicker, YearPicker }", "{ MonthPicker, YearPicker }", "41.5 kB"),
   js("{ PasswordInput, FormattedInput }", "{ PasswordInput, FormattedInput }", "17 kB"),
   js("{ ColorPicker }", "{ ColorPicker }", "30 kB"),
   // Hình học / nhãn nhớ theo props, lớp điểm dùng chung, màu tô trên nhóm (#352): 30.18 → 31.10 kB.
   js("{ BarChart, LineChart }", "{ BarChart, LineChart }", "34 kB"),
+  // Button (Xem thêm) + Intl, không router (#444): 15.50 kB.
+  js("{ BlogCard, BlogList, BlogTagFilter, filterPosts }", "{ BlogCard, BlogList, BlogTagFilter, filterPosts }", "17 kB"),
+  // Một IntersectionObserver cho mục lục, không phụ thuộc mới (#446): 11.45 kB.
+  js("{ Article, ArticleHeader, ArticleMeta, ArticleBody, ArticleToc }", "{ Article, ArticleHeader, ArticleMeta, ArticleBody, ArticleToc }", "12.5 kB"),
+  // CallSurface + Transcript + VoiceWave, không runtime giọng nói (#443): 21.23 kB.
+  js("{ VoiceAssistant }", "{ VoiceAssistant }", "23 kB"),
+  // Toolbar (roving focus) + 10 icon, không logic kết nối (#441): 14.29 kB.
+  js("{ CallSurface, CallControls, CallControlButton }", "{ CallSurface, CallControls, CallControlButton }", "15.5 kB"),
+  // SVG viết tay, không runtime vẽ biểu đồ (#424, #431, #432): RadarChart 22.21 kB, PieChart + RadialChart 22.61 kB.
+  js("{ RadarChart }", "{ RadarChart }", "24 kB"),
+  js("{ PieChart, RadialChart }", "{ PieChart, RadialChart }", "24.5 kB"),
+  // Mỗi lượt memo, đọc lượt vừa xong qua useAnnounce (#442): 12.04 kB.
+  js("{ Transcript }", "{ Transcript }", "13 kB"),
+  // CSS Grid, không đo layout bằng JavaScript (#434, #437): 11.01 kB, phần lớn là cn / tailwind-merge dùng chung.
+  js("{ BentoGrid, BentoGridItem }", "{ BentoGrid, BentoGridItem }", "12 kB"),
+  // Một vòng requestAnimationFrame, không Web Audio trong gói (#440): 10.92 kB, phần lớn là cn / tailwind-merge dùng chung.
+  js("{ VoiceWave }", "{ VoiceWave }", "12 kB"),
   // Trước đây `{ Sheet }`: chỉ context gốc (5.87 kB); SheetContent mới là phần nặng (#360): 27.52 kB.
   js("{ Sheet, SheetTrigger, SheetContent }", "{ Sheet, SheetTrigger, SheetContent }", "30 kB"),
   // Nav không import Tooltip, Sidebar của AppShell truyền Tooltip của rail (#350): 31.40 → 12.33 kB.
@@ -117,30 +161,37 @@ module.exports = [
   js("{ Trace }", "{ Trace }", "18 kB"),
   js("{ MessageScroller }", "{ MessageScroller }", "22 kB"),
   js("{ CodeBlock }", "{ CodeBlock }", "21.5 kB"),
-  js("{ DataGrid }", "{ DataGrid }", "28 kB"),
+  // Checkbox là input gốc (#357): 28 → 20.27 kB.
+  js("{ DataGrid }", "{ DataGrid }", "22 kB"),
   // Sortable tự viết (#175): 20.76 kB khi thêm, phần riêng ~6.5 kB (dnd-kit core + sortable: 16.6 kB).
   js("{ Sortable, SortableItem, SortableHandle }", "{ Sortable, SortableItem, SortableHandle }", "19.5 kB"),
   // Citation (Popover) nạp lúc cần (#350): 57.00 → 32.42 kB (lần tải đầu; Citation là chunk riêng).
   js("{ StreamingMarkdown, PromptInput }", "{ StreamingMarkdown, PromptInput }", "35.5 kB"),
   // Chuỗi của 6 component mới (#173): 4.80 → 5.11 kB; NavigationMenu + StatusPage (#168, #238): → ~5.7 kB.
-  js("{ messagesEn }", "{ messagesEn }", "6.5 kB"),
+  // Namespace mới của 0.17 (call, transcript, voiceWave, voiceAssistant, article, timeline…): 6.38 kB.
+  js("{ messagesEn }", "{ messagesEn }", "7 kB"),
   // Bộ tiếng Việt, chỉ khi import (#277: mặc định là tiếng Anh): 17.7 kB khi thêm, phần lớn là locale vi của
-  // react-day-picker cho Calendar / DatePicker.
-  js("{ messagesVi }", "{ messagesVi }", "20 kB"),
+  // react-day-picker cho Calendar / DatePicker. #356: locale đó sang yugen-ui/dates (calendarMessagesVi): 18.38 → 6.49 kB.
+  js("{ messagesVi }", "{ messagesVi }", "7.5 kB"),
   // Sonner, Timeline, DescriptionList, Stat, utility yugen-prose (#174, #234): 24.6 kB khi thêm.
   // AppShell / Sidebar + rail của Nav (#161): 24.97 kB khi thêm; 25.08 kB với layout / scroll / footer. styles.css luôn
   // chứa mọi component (#169 không làm nó nhỏ đi).
   css("styles.css", "29 kB"),
+  // #354: styles.css để nhúng vào trang không thuộc app (preflight chỉ trong :where([data-theme]), không style html / body).
+  css("components.css", "28.5 kB"),
   // Glass (#178): token + utility + fallback trợ năng (12.49 / 8.15 kB khi thêm). Prose: biến --prose-* và 4 preset (#244).
   // #353: theme.css chỉ còn `@import "./theme-core.css"` + `@source` (14.68 → 0.18 kB), nên theme được đo ở theme-core.css:
-  // 14.69 → 14.79 kB (token animate-wave-flow, keyframes vào @theme).
-  css("theme-core.css", "16 kB"),
-  // Hai dòng: giới hạn tính theo byte (0.5 kB sẽ gần gấp 3 kích thước).
-  css("theme.css", "200 B"),
+  // 14.69 → 14.79 kB (token animate-wave-flow, keyframes vào @theme). #354: brand web / teams và token chart ra file riêng,
+  // palette --shared-* về docs: 14.79 → 12.80 kB.
+  css("theme-core.css", "14 kB"),
+  // Bốn dòng (#354: + tokens/brands.css, tokens/charts.css): giới hạn tính theo byte.
+  css("theme.css", "300 B"),
+  css("tokens/brands.css", "1 kB"),
+  css("tokens/charts.css", "2.5 kB"),
   // #353: bỏ khối @theme của charts.css, 8.22 → 8.02 kB.
   css("tokens.css", "9 kB"),
-  // CSS đã biên dịch (#360): sàn của mọi app dùng theme-core.css (6.74 kB), và Starter với sources của 5 thư mục nó
-  // import (13.08 kB; 26.7 kB với theme.css quét mọi component, scripts/measure-css.mjs).
-  compiledCss("theme-core.css compiled (floor)", null, "7.5 kB"),
-  compiledCss("Starter: lean CSS compiled", "src/docs/template-library/starter", "14.5 kB"),
+  // CSS đã biên dịch (#360): sàn của mọi app dùng theme-core.css, và Starter với sources của các thư mục nó import
+  // (scripts/measure-css.mjs). #354: sàn 6.74 → 5.80 kB, Starter 13.08 → 12.14 kB.
+  compiledCss("theme-core.css compiled (floor)", null, "6.5 kB"),
+  compiledCss("Starter: lean CSS compiled", "src/docs/template-library/starter", "13 kB"),
 ];

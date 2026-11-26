@@ -14,7 +14,6 @@ import {
   SearchInfo24Regular,
   ShieldLock20Regular,
 } from "@fluentui/react-icons";
-import type { DateRange } from "react-day-picker";
 import { Avatar, Button, Checkbox, Input } from "@/components/ui";
 import { Field } from "@/components/ui/Field/Field";
 import { ProgressBar } from "@/components/ui/ProgressBar/ProgressBar";
@@ -39,8 +38,7 @@ import {
 } from "@/components/ui/Drawer/Drawer";
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel } from "@/components/ui/Accordion/Accordion";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/Collapsible/Collapsible";
-import { Calendar } from "@/components/ui/Calendar/Calendar";
-import { DatePicker, DateRangePicker } from "@/components/ui/DatePicker/DatePicker";
+import { Calendar, DatePicker, DateRangePicker, type DateRange } from "@/components/ui/dates";
 import type { ComponentDoc } from "../types";
 
 /* ------------------------------------------------------------------ demos */
@@ -1674,8 +1672,8 @@ function ToastPositionDemo() {
     category: "Nhập liệu",
     lead: "Calendar hiển thị lưới ngày theo tháng để chọn một ngày, nhiều ngày hoặc một khoảng ngày.",
     description:
-      "Dựng trên react-day-picker v10 với giao diện Fluent: ô ngày 32px bo 4px, hôm nay chữ brand đậm kèm vạch dưới, ngày chọn nền brand, khoảng giữa tint brand-background-2. Mặc định tiếng Việt, tuần bắt đầu Thứ Hai; nhận mọi prop của DayPicker (mode, selected, onSelect, disabled, numberOfMonths…).",
-    importCode: `import { Calendar } from "@/components/ui";`,
+      "Dựng trên react-day-picker v10 với giao diện Fluent: ô ngày 32px bo 4px, hôm nay chữ brand đậm kèm vạch dưới, ngày chọn nền brand, khoảng giữa tint brand-background-2. Tên tháng, tên thứ và ngày đầu tuần theo `messages.calendar.locale` (mặc định en-US); tiếng Việt: `messages={{ ...messagesVi, calendar: calendarMessagesVi }}`. Import từ `yugen-ui/dates` và cài react-day-picker, một peer dependency tuỳ chọn: `npm i react-day-picker`.",
+    importCode: `import { Calendar } from "@/components/ui/dates";`,
     hero: {
       title: "Calendar",
       code: `function CalendarDemo() {
@@ -1732,11 +1730,43 @@ function ToastPositionDemo() {
     props: [
       { name: "mode", type: `"single" | "multiple" | "range"`, description: "Kiểu chọn." },
       { name: "selected / onSelect", type: "Date | Date[] | DateRange", description: "Giá trị theo mode." },
-      { name: "disabled", type: "Matcher | Matcher[]", description: "Ngày bị khoá (Date, { before }, { after }, { dayOfWeek }…)." },
+      { name: "required", type: "boolean", defaultValue: "false", description: "Bấm lại ngày đã chọn không bỏ chọn." },
+      { name: "min / max", type: "number", description: "Số ngày ít nhất / nhiều nhất (multiple), số đêm (range)." },
+      {
+        name: "disabled / hidden",
+        type: "CalendarMatcher | CalendarMatcher[]",
+        description: "Ngày bị khoá / bị ẩn: Date, Date[], DateRange, { before }, { after }, { dayOfWeek }, hàm (date) => boolean.",
+      },
+      {
+        name: "modifiers / modifiersClassNames",
+        type: "Record<string, CalendarMatcher> / Record<string, string>",
+        description: "Nhóm ngày có tên và class cho từng nhóm, vd. { booked: [...] } và { booked: \"line-through\" }.",
+      },
+      { name: "month / defaultMonth / onMonthChange", type: "Date / Date / (month: Date) => void", description: "Tháng đang hiện." },
+      { name: "startMonth / endMonth", type: "Date", description: "Giới hạn điều hướng tháng." },
       { name: "numberOfMonths", type: "number", defaultValue: "1", description: "Số tháng hiển thị." },
+      { name: "captionLayout", type: `"label" | "dropdown" | "dropdown-months" | "dropdown-years"`, defaultValue: `"label"`, description: "Tiêu đề tháng hay hộp chọn tháng / năm." },
       { name: "showOutsideDays", type: "boolean", defaultValue: "true", description: "Hiện ngày của tháng trước / sau (foreground-4)." },
-      { name: "locale", type: "DayPickerLocale", defaultValue: "vi", description: "Ngôn ngữ; nhập từ react-day-picker/locale." },
-      { name: "…", type: "DayPickerProps", description: "Mọi prop khác của react-day-picker v10." },
+      { name: "weekStartsOn", type: "0 | 1 | 2 | 3 | 4 | 5 | 6", description: "Ngày đầu tuần (0 = Chủ nhật); mặc định theo locale." },
+      { name: "locale", type: "CalendarLocale", description: "Locale date-fns, nhập từ react-day-picker/locale; mặc định lấy từ messages.calendar.locale." },
+      { name: "timeZone", type: "string", description: "Múi giờ IANA, vd. \"Asia/Ho_Chi_Minh\"." },
+      { name: "excludeDisabled / resetOnSelect", type: "boolean", description: "range: không vắt qua ngày bị khoá / bấm sau khi đủ khoảng thì bắt đầu khoảng mới." },
+      {
+        name: "navLayout / hideNavigation / disableNavigation / pagedNavigation / reverseMonths / reverseYears",
+        type: `"around" | "after" / boolean`,
+        description: "Vị trí và hành vi của nút điều hướng tháng.",
+      },
+      {
+        name: "fixedWeeks / showWeekNumber / ISOWeek / firstWeekContainsDate / hideWeekdays / today",
+        type: "boolean / 1 | 4 / Date",
+        description: "Lưới ngày: luôn 6 tuần, số tuần, tuần ISO, tuần đầu năm, ẩn tên thứ, ngày được đánh dấu là hôm nay.",
+      },
+      { name: "autoFocus / footer / dir / role / id / title / lang", type: "boolean / ReactNode / string", description: "Focus khi mở, chân lịch, hướng đọc và thuộc tính HTML." },
+      {
+        name: "classNames / components / formatters / labels",
+        type: "react-day-picker",
+        description: "Đã ngừng hỗ trợ: prop của react-day-picker, vẫn được chuyển tiếp nhưng có cảnh báo khi dev và bị bỏ ở 1.0 (#371).",
+      },
     ],
   },
 
@@ -1746,8 +1776,9 @@ function ToastPositionDemo() {
     category: "Nhập liệu",
     lead: "DatePicker là ô nhập dạng Fluent mở Calendar trong popover để chọn ngày, hiển thị dd/MM/yyyy.",
     description:
-      "Trigger dùng chung kiểu viền với Input (viền đáy accessible, thanh brand khi focus), icon lịch bên phải, có nút xoá (clearable). Đặt trong `<Field>` để có nhãn, hint và thông báo lỗi. DateRangePicker chọn khoảng ngày với hai tháng cạnh nhau.",
-    importCode: `import { DatePicker, DateRangePicker, Field } from "@/components/ui";`,
+      "Trigger dùng chung kiểu viền với Input (viền đáy accessible, thanh brand khi focus), icon lịch bên phải, có nút xoá (clearable). Đặt trong `<Field>` để có nhãn, hint và thông báo lỗi. DateRangePicker chọn khoảng ngày với hai tháng cạnh nhau. Import từ `yugen-ui/dates` và cài react-day-picker (peer dependency tuỳ chọn): `npm i react-day-picker`.",
+    importCode: `import { DatePicker, DateRangePicker } from "@/components/ui/dates";
+import { Field } from "@/components/ui";`,
     hero: {
       title: "DatePicker",
       code: `function DatePickerDemo() {
