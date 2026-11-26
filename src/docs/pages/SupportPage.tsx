@@ -1,5 +1,6 @@
+import { useEffect, useState } from "react";
 import { Open16Regular } from "@fluentui/react-icons";
-import { Card, MessageBar, WavyUnderline } from "@/components/ui";
+import { Button, Card, Checkbox, Field, Form, FormErrorSummary, Input, MessageBar, Select, Textarea, WavyUnderline } from "@/components/ui";
 import { DocSection, PageHeader } from "../blocks";
 import { useLocale } from "../i18n";
 import { SUPPORT } from "../support";
@@ -19,6 +20,25 @@ const COPY = {
     links: "Ways to support",
     external: "(opens the payment site)",
     supporters: "Supporters",
+    formTitle: "Tell us how to acknowledge your support",
+    formLead: "After you donate, you can send a short note for the maintainer to verify. Your name is only shown after approval and consent.",
+    contributionDate: "Contribution date",
+    amount: "Amount in VND (optional)",
+    recognition: "How should we list you?",
+    anonymous: "Anonymous",
+    name: "Name",
+    github: "GitHub handle",
+    displayName: "Name to show",
+    githubHandle: "GitHub handle",
+    transferNote: "Transfer note (optional)",
+    message: "Message (optional)",
+    consent: "I agree that the maintainer may use this choice for the monthly acknowledgement after verification.",
+    submit: "Send acknowledgement",
+    submitted: "Thanks. Your acknowledgement is waiting for verification.",
+    unavailable: "The acknowledgement form is not configured yet.",
+    failed: "The form could not be sent. Please try again later.",
+    requiredName: "Enter the name or handle to display.",
+    requiredConsent: "Choose whether your acknowledgement can be published.",
   },
   vi: {
     title: "Ủng hộ Yugen UI một ly cà phê",
@@ -34,14 +54,72 @@ const COPY = {
     links: "Cách ủng hộ",
     external: "(mở trang thanh toán)",
     supporters: "Người ủng hộ",
+    formTitle: "Gửi thông tin ghi nhận ủng hộ",
+    formLead: "Sau khi chuyển khoản, bạn có thể gửi vài thông tin để maintainer đối soát. Tên chỉ hiện sau khi được duyệt và có sự đồng ý.",
+    contributionDate: "Ngày ủng hộ",
+    amount: "Số tiền VND (không bắt buộc)",
+    recognition: "Bạn muốn được ghi nhận thế nào?",
+    anonymous: "Ẩn danh",
+    name: "Tên",
+    github: "GitHub handle",
+    displayName: "Tên hiển thị",
+    githubHandle: "GitHub handle",
+    transferNote: "Nội dung chuyển khoản (không bắt buộc)",
+    message: "Lời nhắn (không bắt buộc)",
+    consent: "Tôi đồng ý để maintainer dùng lựa chọn này trong phần cảm ơn hằng tháng sau khi đối soát.",
+    submit: "Gửi thông tin ghi nhận",
+    submitted: "Cảm ơn bạn. Thông tin đang chờ đối soát.",
+    unavailable: "Form ghi nhận chưa được cấu hình.",
+    failed: "Không gửi được form. Vui lòng thử lại sau.",
+    requiredName: "Hãy nhập tên hoặc handle muốn hiển thị.",
+    requiredConsent: "Hãy chọn cách bạn cho phép ghi nhận.",
   },
 } as const;
 
 /** /support (#183): payment links and VietQR configuration come from src/docs/support.ts. */
-export function SupportPage({ support = SUPPORT }: { support?: typeof SUPPORT }) {
+export function SupportPage({ support = SUPPORT, supportApiUrl = import.meta.env.VITE_SUPPORT_API_URL as string | undefined }: { support?: typeof SUPPORT; supportApiUrl?: string }) {
   const { locale } = useLocale();
   const lang = locale === "en" ? "en" : "vi";
   const c = COPY[lang];
+  const [submitted, setSubmitted] = useState(false);
+  const [remoteSupporters, setRemoteSupporters] = useState<typeof support.supporters>([]);
+
+  useEffect(() => {
+    if (!supportApiUrl) return;
+    let cancelled = false;
+    void fetch(supportApiUrl, { headers: { Accept: "application/json" } })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((body: unknown) => {
+        const data = (body as { data?: unknown } | null)?.data;
+        if (!cancelled && Array.isArray(data)) setRemoteSupporters(data.filter((item): item is (typeof support.supporters)[number] => Boolean(item && typeof item === "object" && typeof (item as { name?: unknown }).name === "string")));
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [supportApiUrl, support.supporters]);
+
+  const supporters = [...support.supporters, ...remoteSupporters];
+  const submitAcknowledgement = async (formData: FormData) => {
+    if (!supportApiUrl) return { errors: { form: c.unavailable } };
+    const recognition = String(formData.get("recognition") ?? "anonymous");
+    const payload = {
+      contributionDate: String(formData.get("contributionDate") ?? ""),
+      amountVnd: formData.get("amountVnd") ? Number(formData.get("amountVnd")) : undefined,
+      displayName: String(formData.get("displayName") ?? "").trim() || undefined,
+      githubHandle: String(formData.get("githubHandle") ?? "").trim() || undefined,
+      recognition,
+      transferNote: String(formData.get("transferNote") ?? "").trim() || undefined,
+      message: String(formData.get("message") ?? "").trim() || undefined,
+      locale: lang,
+      consent: formData.get("consent") === "yes",
+      website: String(formData.get("website") ?? ""),
+    };
+    const response = await fetch(supportApiUrl, { method: "POST", headers: { Accept: "application/json", "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+    if (!response.ok) return { errors: { form: c.failed } };
+    setSubmitted(true);
+    return null;
+  };
   return (
     <div className="pb-16">
       <PageHeader title={c.title} lead={support.message?.[lang] ?? c.lead}>
@@ -97,6 +175,56 @@ export function SupportPage({ support = SUPPORT }: { support?: typeof SUPPORT })
             </div>
         </DocSection>
       )}
+      <DocSection id="acknowledgement" title={c.formTitle} description={c.formLead}>
+        {submitted && <MessageBar intent="success" layout="multiline">{c.submitted}</MessageBar>}
+        <Form
+          action={submitAcknowledgement}
+          validate={(formData) => {
+            const recognition = String(formData.get("recognition") ?? "anonymous");
+            if (recognition === "name" && !String(formData.get("displayName") ?? "").trim()) return { displayName: c.requiredName };
+            if (recognition === "github" && !String(formData.get("githubHandle") ?? "").trim()) return { githubHandle: c.requiredName };
+            return undefined;
+          }}
+          onChange={() => {
+            if (submitted) setSubmitted(false);
+          }}
+          className="grid max-w-3xl gap-4 rounded-2xlarge border border-stroke-2 bg-background-2 p-4 md:grid-cols-2 md:p-6"
+        >
+          <FormErrorSummary className="md:col-span-2" />
+          <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="sr-only" />
+          <Field name="contributionDate" label={c.contributionDate} required>
+            <Input name="contributionDate" type="date" required />
+          </Field>
+          <Field name="amountVnd" label={c.amount}>
+            <Input name="amountVnd" type="number" min={1} max={1000000000} inputMode="numeric" />
+          </Field>
+          <Field name="recognition" label={c.recognition} required>
+            <Select name="recognition" defaultValue="anonymous" required>
+              <option value="anonymous">{c.anonymous}</option>
+              <option value="name">{c.name}</option>
+              <option value="github">{c.github}</option>
+            </Select>
+          </Field>
+          <Field name="displayName" label={c.displayName}>
+            <Input name="displayName" maxLength={80} />
+          </Field>
+          <Field name="githubHandle" label={c.githubHandle}>
+            <Input name="githubHandle" maxLength={40} placeholder="octocat" />
+          </Field>
+          <Field name="transferNote" label={c.transferNote}>
+            <Input name="transferNote" maxLength={80} />
+          </Field>
+          <Field name="message" label={c.message} className="md:col-span-2">
+            <Textarea name="message" maxLength={280} rows={3} />
+          </Field>
+          <Field name="consent" className="md:col-span-2">
+            <Checkbox name="consent" value="yes" label={c.consent} required />
+          </Field>
+          <div className="md:col-span-2">
+            <Button type="submit" appearance="primary">{c.submit}</Button>
+          </div>
+        </Form>
+      </DocSection>
       {support.links.length > 0 && (
         <DocSection id="links" title={c.links}>
           <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -120,11 +248,11 @@ export function SupportPage({ support = SUPPORT }: { support?: typeof SUPPORT })
           </ul>
         </DocSection>
       )}
-      {support.supporters.length > 0 && (
+      {supporters.length > 0 && (
         <DocSection id="supporters" title={c.supporters}>
           <ul className="flex flex-wrap gap-x-4 gap-y-2 text-body2 text-foreground-2">
-            {support.supporters.map((s) => (
-              <li key={s.name}>
+            {supporters.map((s, index) => (
+              <li key={`${s.name}-${index}`}>
                 {s.href ? (
                   <a href={s.href} target="_blank" rel="noopener noreferrer" className="hover:text-foreground-1 hover:underline">
                     {s.name}

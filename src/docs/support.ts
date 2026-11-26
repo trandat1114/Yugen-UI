@@ -1,15 +1,16 @@
 /**
  * Support page (#183). The page goes live when a real payment link or VietQR is configured: /support and /vi/support
  * are routed, prerendered and in the sitemap, and the footer links to them. While both are empty, /support is a 404
- * and nothing links to it. Fill in only real accounts (no guessed URLs); also add `.github/FUNDING.yml` for the
- * repository's Sponsor button.
+ * and nothing links to it. The page may also send a post-donation acknowledgement to the private supporter API;
+ * that form records no payment credentials and does not process a payment. Fill in only real accounts (no guessed URLs);
+ * also add `.github/FUNDING.yml` for the repository's Sponsor button.
  *
  *   links: [{ label: "GitHub Sponsors", href: "https://github.com/sponsors/<user>" }]
  */
 export interface SupportLink {
   /** Platform name, shown as is in both languages (Buy Me a Coffee, Ko-fi, GitHub Sponsors…). */
   label: string;
-  /** https URL of the payment site. The docs never host a payment form. */
+  /** https URL of the payment site. The docs never host a payment form; the acknowledgement form is separate. */
   href: string;
   /** One short line under the label, e.g. "Monthly or one-time". */
   note?: { en: string; vi: string };
