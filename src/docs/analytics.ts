@@ -41,6 +41,12 @@ const referrerHost = (ref: string) => {
 
 const screenSize = (): Beacon["screen"] => (innerWidth < 640 ? "s" : innerWidth < 1024 ? "m" : "l");
 
+const collectorPath = (path: string) => {
+  const withoutHash = path.replace(/^#/, "");
+  const withoutQuery = withoutHash.split(/[?#]/, 1)[0];
+  return `/${withoutQuery.replace(/^\/+/, "")}`;
+};
+
 const randomUuid = () => {
   const bytes = new Uint8Array(16);
   crypto.getRandomValues(bytes);
@@ -56,7 +62,13 @@ const EVENT_TYPES = new Set<AnalyticsEvent>(["copy", "stackblitz-example", "stac
 export function send(data: Pick<Beacon, "type" | "path" | "lang" | "version">, env: AnalyticsEnv = defaultEnv()) {
   if (!analyticsEnabled(env)) return false;
   try {
-    const body: Beacon = { id: randomUuid(), ...data, referrer: referrerHost(document.referrer), screen: screenSize() };
+    const body: Beacon = {
+      id: randomUuid(),
+      ...data,
+      path: collectorPath(data.path),
+      referrer: referrerHost(document.referrer),
+      screen: screenSize(),
+    };
     const payload = new Blob([JSON.stringify(body)], { type: "application/json" });
     return env.nav.sendBeacon(env.url!, payload);
   } catch {
