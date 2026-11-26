@@ -50,7 +50,7 @@ const KEEP: (string | RegExp)[] = [
   /^size \d+ · (regular|medium|semibold|bold)$/,
   // TimePicker đặt locale en-US cạnh vi-VN; tên prop trong demo.
   "Time (en-US)",
-  /^[a-z]+( \/ [a-z]+[A-Za-z]*)+$/,
+  /^[a-z]+( \/ [a-zA-Z]+){1,3}$/,
   /^title, description, toolbar/,
 ];
 
