@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.17.2
+
+### Patch Changes
+
+- e59f7fa: Fix production analytics beacons by sending JSON with the `application/json` content type.
+
 ## 0.17.1
 
 ### Patch Changes
