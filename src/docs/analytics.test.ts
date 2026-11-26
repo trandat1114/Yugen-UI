@@ -24,13 +24,15 @@ describe("docs analytics (#190)", () => {
     expect(analyticsEnabled(envWith())).toBe(true);
   });
 
-  it("sends path, lang, version, referrer host and screen class only", () => {
+  it("sends JSON with the collector content type", async () => {
     vi.spyOn(document, "referrer", "get").mockReturnValue("https://github.com/trandat1114/Yugen-UI?tab=readme");
     const env = envWith();
     expect(send(view, env)).toBe(true);
     const [url, body] = (env.nav.sendBeacon as ReturnType<typeof vi.fn>).mock.calls[0];
     expect(url).toBe("https://collect.example.com/c");
-    expect(JSON.parse(body as string)).toEqual({
+    expect(body).toBeInstanceOf(Blob);
+    expect((body as Blob).type).toBe("application/json");
+    expect(JSON.parse(await (body as Blob).text())).toEqual({
       ...view,
       id: expect.stringMatching(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/),
       referrer: "github.com",
@@ -38,15 +40,17 @@ describe("docs analytics (#190)", () => {
     });
   });
 
-  it("counts clicks on [data-analytics] and stops after cleanup", () => {
+  it("counts clicks on [data-analytics] and stops after cleanup", async () => {
     const env = envWith();
     const stop = trackClicks(() => ({ path: "", lang: "en", version: "1.0.0" }), env);
     document.body.innerHTML = '<a data-analytics="stackblitz-template" href="#"><span>Open</span></a><button>Other</button>';
     document.querySelector("span")!.click();
     document.querySelector("button")!.click();
     expect(env.nav.sendBeacon).toHaveBeenCalledTimes(1);
-    expect(JSON.parse((env.nav.sendBeacon as ReturnType<typeof vi.fn>).mock.calls[0][1] as string)).toMatchObject({ type: "stackblitz-template" });
-    expect(JSON.parse((env.nav.sendBeacon as ReturnType<typeof vi.fn>).mock.calls[0][1] as string)).not.toHaveProperty("event");
+    const body = (env.nav.sendBeacon as ReturnType<typeof vi.fn>).mock.calls[0][1] as Blob;
+    expect(body.type).toBe("application/json");
+    expect(JSON.parse(await body.text())).toMatchObject({ type: "stackblitz-template" });
+    expect(JSON.parse(await body.text())).not.toHaveProperty("event");
     stop();
     document.querySelector("span")!.click();
     expect(env.nav.sendBeacon).toHaveBeenCalledTimes(1);
