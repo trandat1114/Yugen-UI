@@ -40,6 +40,19 @@ describe("docs analytics (#190)", () => {
     });
   });
 
+  it("normalizes route paths for the collector contract", async () => {
+    const env = envWith();
+
+    expect(send({ ...view, path: "" }, env)).toBe(true);
+    expect(send({ ...view, path: "vi/support" }, env)).toBe(true);
+    expect(send({ ...view, path: "#/components/button?tab=code" }, env)).toBe(true);
+
+    const calls = (env.nav.sendBeacon as ReturnType<typeof vi.fn>).mock.calls;
+    expect(JSON.parse(await (calls[0][1] as Blob).text()).path).toBe("/");
+    expect(JSON.parse(await (calls[1][1] as Blob).text()).path).toBe("/vi/support");
+    expect(JSON.parse(await (calls[2][1] as Blob).text()).path).toBe("/components/button");
+  });
+
   it("counts clicks on [data-analytics] and stops after cleanup", async () => {
     const env = envWith();
     const stop = trackClicks(() => ({ path: "", lang: "en", version: "1.0.0" }), env);
