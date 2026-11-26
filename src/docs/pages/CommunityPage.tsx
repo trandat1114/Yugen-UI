@@ -64,7 +64,7 @@ const VI = {
   lead: "Yugen UI là mã nguồn mở. Báo lỗi, viết block hay dịch một trang đều giúp thư viện tốt hơn cho người dùng sau.",
   waysTitle: "Cách tham gia",
   supportTitle: "Ủng hộ Yugen UI",
-  supportText: "Bạn có thể ủng hộ bằng VND qua VietQR để góp phần duy trì thư viện.",
+  supportText: "Bạn có thể ủng hộ bằng VND qua VietQR hoặc dùng GitHub Sponsors cho đóng góp quốc tế.",
   supportAction: "Mở trang ủng hộ",
   ways: [
     { title: "Đóng góp code", text: "Sửa lỗi, thêm component hoặc block. Đọc CONTRIBUTING.md và Design.md trước khi mở PR.", action: "Mở repository" },
@@ -212,7 +212,7 @@ const EN: Copy = {
   lead: "Yugen UI is open source. A bug report, a block or a translated page all make the library better for the next person.",
   waysTitle: "Ways to get involved",
   supportTitle: "Support Yugen UI",
-  supportText: "Contribute in VND through VietQR to help maintain the library.",
+  supportText: "Contribute in VND through VietQR, or use GitHub Sponsors for international support.",
   supportAction: "Open Support",
   ways: [
     { title: "Contribute code", text: "Fix bugs, add components or blocks. Read CONTRIBUTING.md and Design.md before opening a PR.", action: "Open repository" },

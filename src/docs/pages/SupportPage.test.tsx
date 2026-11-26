@@ -5,8 +5,10 @@ import { SUPPORT, supportEnabled } from "../support";
 import { SupportPage } from "./SupportPage";
 
 describe("support page (#183)", () => {
-  it("publishes with VietQR even without an external payment link", () => {
-    expect(SUPPORT.links).toEqual([]);
+  it("publishes VietQR and GitHub Sponsors", () => {
+    expect(SUPPORT.links).toEqual([
+      expect.objectContaining({ label: "GitHub Sponsors", href: "https://github.com/sponsors/trandat1114" }),
+    ]);
     expect(SUPPORT.qr?.src).toBe("support/vietqr.png");
     expect(supportEnabled()).toBe(true);
     expect(parsePath("/support")).toEqual({ kind: "support" });

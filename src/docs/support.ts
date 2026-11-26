@@ -37,7 +37,16 @@ export const SUPPORT: {
   notice?: { en: string; vi: string } | null;
   supporters: Supporter[];
 } = {
-  links: [],
+  links: [
+    {
+      label: "GitHub Sponsors",
+      href: "https://github.com/sponsors/trandat1114",
+      note: {
+        en: "International support is acknowledged automatically from GitHub Sponsors events.",
+        vi: "Ủng hộ quốc tế được tự động ghi nhận từ sự kiện GitHub Sponsors.",
+      },
+    },
+  ],
   qr: {
     src: "support/vietqr.png",
     alt: {
@@ -50,8 +59,8 @@ export const SUPPORT: {
     vi: "Nếu Yugen UI giúp bạn làm việc nhẹ hơn, một ly cà phê là lời cảm ơn chân thành.",
   },
   notice: {
-    en: "Note: Yugen UI currently accepts VND through VietQR only; international giving is not open yet.",
-    vi: "Lưu ý: hiện Yugen UI chỉ nhận VND qua VietQR; kênh quốc tế chưa mở.",
+    en: "VietQR is for VND support. For international support, use GitHub Sponsors; public or anonymous recognition follows your GitHub Sponsors privacy choice.",
+    vi: "VietQR dành cho ủng hộ bằng VND. Với ủng hộ quốc tế, hãy dùng GitHub Sponsors; việc ghi nhận công khai hay ẩn danh theo lựa chọn riêng tư của bạn trên GitHub Sponsors.",
   },
   supporters: [],
 };
