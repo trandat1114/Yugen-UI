@@ -38,6 +38,7 @@ Not scheduled yet.
 
 Details on What's new (`/news`) and in `CHANGELOG.md`.
 
+- **0.17.3** (2026-11-26): Fix production analytics beacon paths
 - **0.17.2** (2026-11-26): Production analytics beacon fix
 - **0.17.1** (2026-11-26): GitHub Sponsors support flow
 - **0.17.0** (2026-11-26): Native form controls, Form, an optional date stack and more charts
@@ -99,6 +100,7 @@ Chưa xếp lịch.
 
 Chi tiết ở trang Có gì mới (`/news`) và `CHANGELOG.md`.
 
+- **0.17.3** (2026-11-26): Sửa path beacon analytics production
 - **0.17.2** (2026-11-26): Sửa beacon analytics production
 - **0.17.1** (2026-11-26): Luồng ủng hộ qua GitHub Sponsors
 - **0.17.0** (2026-11-26): Control form native, Form, bộ ngày tháng tuỳ chọn và thêm biểu đồ
