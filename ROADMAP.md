@@ -38,6 +38,7 @@ Not scheduled yet.
 
 Details on What's new (`/news`) and in `CHANGELOG.md`.
 
+- **0.17.1** (2026-11-26): GitHub Sponsors support flow
 - **0.17.0** (2026-11-26): Native form controls, Form, an optional date stack and more charts
 - **0.16.0** (2026-11-09): Performance: lighter imports, smaller CSS and fewer re-renders
 - **0.15.0** (2026-11-04): New form controls, NavigationMenu, status pages and app-wide defaults
@@ -97,6 +98,7 @@ Chưa xếp lịch.
 
 Chi tiết ở trang Có gì mới (`/news`) và `CHANGELOG.md`.
 
+- **0.17.1** (2026-11-26): Luồng ủng hộ qua GitHub Sponsors
 - **0.17.0** (2026-11-26): Control form native, Form, bộ ngày tháng tuỳ chọn và thêm biểu đồ
 - **0.16.0** (2026-11-09): Hiệu năng: import nhẹ hơn, CSS gọn hơn và ít render lại hơn
 - **0.15.0** (2026-11-04): Form control mới, NavigationMenu, trang trạng thái và prop mặc định cho cả ứng dụng
