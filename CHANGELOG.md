@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.17.3
+
+### Patch Changes
+
+- Fix production analytics beacons by normalizing route paths to the collector contract; home and localized page paths now satisfy collector validation instead of returning `400`.
+
 ## 0.17.2
 
 ### Patch Changes
