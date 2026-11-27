@@ -288,9 +288,9 @@ export function SupportPage({
         <Button type="submit" appearance="primary">
           {c.submit}
         </Button>
-        {supportApiUrl && turnstileSiteKey && (
+        {supportApiUrl && (
           <p className="mt-2 text-caption1 text-foreground-3">
-            {c.challengeNote}{" "}
+            {turnstileSiteKey && `${c.challengeNote} `}
             <a href={`${docsPath("/community")}#privacy`} className="text-brand-foreground-1 hover:underline">
               {c.privacyLink}
             </a>

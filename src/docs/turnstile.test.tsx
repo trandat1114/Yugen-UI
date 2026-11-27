@@ -125,6 +125,8 @@ describe("Turnstile on the support form (yugen-analytics-api #14)", () => {
     expect(scripts()).toHaveLength(0);
     expect(posts[0]).not.toHaveProperty("turnstileToken");
     expect(screen.queryByText(/Cloudflare Turnstile/)).toBeNull();
+    // Source signals are kept with or without the check, so the privacy link stays.
+    expect(screen.getByRole("link", { name: "Cách form xử lý dữ liệu" })).toBeInTheDocument();
   });
 
   it("describes the form in Community › Privacy, with the check only when it is on", () => {
