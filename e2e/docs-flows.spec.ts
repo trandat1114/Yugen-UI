@@ -509,20 +509,32 @@ test("AppShell: nút thu gọn ở cuối sidebar không đổi chỗ khi bấm,
     const shell = page.locator("[data-app-shell]").filter({ has: page.locator(`[data-collapsible="${mode}"]`) }).first();
     const sidebar = shell.locator(`[data-collapsible="${mode}"]`);
     const toggle = shell.locator("[data-sidebar-toggle]");
-    await toggle.scrollIntoViewIfNeeded();
-    await expect(toggle, mode).toBeVisible();
+    // Ô ví dụ dùng content-visibility: WebKit cuộn lệch khi kích thước ô chưa tính; cuộn vào giữa tới khi nút thật sự
+    // nằm trong màn hình.
+    await expect(async () => {
+      await toggle.evaluate((el) => el.scrollIntoView({ block: "center" }));
+      await expect(toggle).toBeInViewport({ timeout: 500 });
+    }).toPass({ timeout: 10_000 });
     // Thanh trên cùng chỉ còn nút mở Drawer cho khung hẹp: không có hai nút thu gọn.
     await expect(shell.locator("header button[aria-controls], header button[aria-expanded]").first(), mode).toBeHidden();
-    const before = (await toggle.boundingBox())!;
-    const x = before.x + before.width / 2;
-    const y = before.y + before.height / 2;
-    await page.mouse.click(x, y);
+    // WebKit có thể còn cuộn sau scrollIntoView: chờ hộp đứng yên rồi mới đo.
+    let before = (await toggle.boundingBox())!;
+    await expect
+      .poll(async () => {
+        const box = (await toggle.boundingBox())!;
+        const still = box.y === before.y;
+        before = box;
+        return still;
+      }, { message: mode })
+      .toBe(true);
+    await toggle.click();
     await expect(sidebar, mode).toHaveAttribute("data-state", "collapsed");
     await expect(toggle, mode).toBeVisible();
     const after = (await toggle.boundingBox())!;
     expect(Math.abs(after.x - before.x), mode).toBeLessThan(1);
     expect(Math.abs(after.y - before.y), mode).toBeLessThan(1);
-    await page.mouse.click(x, y);
+    // Lần bấm thứ hai đúng chỗ cũ, không di chuột tới nút.
+    await page.mouse.click(before.x + before.width / 2, before.y + before.height / 2);
     await expect(sidebar, mode).toHaveAttribute("data-state", "expanded");
   }
 });
