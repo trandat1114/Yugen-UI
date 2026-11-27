@@ -18,6 +18,7 @@ import {
   NavSectionHeader,
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarTrigger,
   SkeletonText,
   useAppShell,
@@ -94,6 +95,10 @@ function DocsSidebar({ current }: { current?: string }) {
           ))}
         </Nav>
       </SidebarContent>
+      {/* Wide screens: the collapse button stays in the same spot expanded and collapsed (#482). */}
+      <SidebarFooter>
+        <SidebarTrigger />
+      </SidebarFooter>
     </Sidebar>
   );
 }

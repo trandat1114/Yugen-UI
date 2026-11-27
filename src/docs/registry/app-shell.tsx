@@ -85,7 +85,10 @@ const NAV_CODE = `      <SidebarContent>
           <NavItem value="people" icon={<People20Regular />}>Members</NavItem>
           <NavItem value="settings" icon={<Settings20Regular />}>Settings</NavItem>
         </Nav>
-      </SidebarContent>`;
+      </SidebarContent>
+      <SidebarFooter>
+        <SidebarTrigger />
+      </SidebarFooter>`;
 
 export const docs: ComponentDoc[] = [
   {
@@ -94,7 +97,7 @@ export const docs: ComponentDoc[] = [
     category: "Bố cục",
     lead: "AppShell là khung của ứng dụng: sidebar thu về icon hoặc mở thành Drawer, thanh trên cùng và nội dung chính.",
     description:
-      "AppShell xếp các phần vào lưới: Sidebar bên trái, AppShellHeader phía trên, AppShellMain ở giữa và AppShellAside bên phải; phần nào không dùng thì không chiếm chỗ. Từ `breakpoint` (container query, theo độ rộng khung chứ không theo màn hình) sidebar nằm trong bố cục và SidebarTrigger thu nó về rail chỉ còn icon, tên mục hiện trong Tooltip. Hẹp hơn, cùng nội dung mở trong Drawer: theo một link hoặc chọn một mục Nav là Drawer đóng, focus quay về nút đã mở. Ctrl+B (⌘B) làm việc giống SidebarTrigger, trừ khi đang gõ trong ô nhập hoặc bằng bộ gõ; trang có nhiều AppShell (như trang này) thì chỉ khung đang được focus hoặc vừa được bấm vào nhận phím. `persistKey` lưu trạng thái thu gọn (và độ rộng) vào cookie; Drawer không bao giờ được lưu. Render ở server: đọc cookie bằng `readAppShellCookie(cookieHeader, key)` rồi truyền `defaultCollapsed` để không nháy. AppShell là container tên `app-shell`: phần nào cần theo độ rộng khung thì dùng `@3xl/app-shell:…`. Chiều cao thanh trên cùng đổi qua biến `--app-shell-header` (mặc định 3.5rem), SidebarHeader và các phần dính theo cùng biến. Nút SidebarTrigger có Tooltip mang nhãn và phím tắt. Các demo dưới đây nằm trong trang docs nên AppShellMain dùng `asChild` với `div` (một trang chỉ có một `<main>`).",
+      "AppShell xếp các phần vào lưới: Sidebar bên trái, AppShellHeader phía trên, AppShellMain ở giữa và AppShellAside bên phải; phần nào không dùng thì không chiếm chỗ. Từ `breakpoint` (container query, theo độ rộng khung chứ không theo màn hình) sidebar nằm trong bố cục và SidebarTrigger thu nó về rail chỉ còn icon, tên mục hiện trong Tooltip. Hẹp hơn, cùng nội dung mở trong Drawer: theo một link hoặc chọn một mục Nav là Drawer đóng, focus quay về nút đã mở. Ctrl+B (⌘B) làm việc giống SidebarTrigger, trừ khi đang gõ trong ô nhập hoặc bằng bộ gõ; trang có nhiều AppShell (như trang này) thì chỉ khung đang được focus hoặc vừa được bấm vào nhận phím. `persistKey` lưu trạng thái thu gọn (và độ rộng) vào cookie; Drawer không bao giờ được lưu. Render ở server: đọc cookie bằng `readAppShellCookie(cookieHeader, key)` rồi truyền `defaultCollapsed` để không nháy. AppShell là container tên `app-shell`: phần nào cần theo độ rộng khung thì dùng `@3xl/app-shell:…`. Chiều cao thanh trên cùng đổi qua biến `--app-shell-header` (mặc định 3.5rem), SidebarHeader và các phần dính theo cùng biến. SidebarTrigger đặt ở cuối sidebar (trong SidebarFooter) là nút thu gọn của màn rộng: nằm thẳng cột icon của rail nên mở rộng hay thu gọn vẫn ở đúng một chỗ, bấm lại không phải tìm nút; với `collapsible=\"offcanvas\"` nút nổi tại góc đó khi sidebar ẩn. Khi khung có nút này, SidebarTrigger ở thanh trên cùng chỉ còn mở Drawer trên khung hẹp. Nút tự làm cũng nên giữ nguyên chỗ khi được bấm. SidebarTrigger có Tooltip mang nhãn và phím tắt. Các demo dưới đây nằm trong trang docs nên AppShellMain dùng `asChild` với `div` (một trang chỉ có một `<main>`).",
     importCode: `import {
   AppShell, AppShellHeader, AppShellMain, AppShellAside, AppShellFooter,
   Sidebar, SidebarHeader, SidebarContent, SidebarFooter, SidebarGroup, SidebarTrigger, SidebarRail,
@@ -145,6 +148,9 @@ function Placeholder() {
               <SidebarContent>
                 <AppNav />
               </SidebarContent>
+              <SidebarFooter>
+                <SidebarTrigger />
+              </SidebarFooter>
               <SidebarRail />
             </Sidebar>
             <AppShellHeader>
@@ -185,6 +191,9 @@ ${NAV_CODE}
                 <SidebarContent>
                   <AppNav />
                 </SidebarContent>
+                <SidebarFooter>
+                  <SidebarTrigger />
+                </SidebarFooter>
               </Sidebar>
               <AppShellHeader>
                 <SidebarTrigger />
@@ -238,6 +247,9 @@ ${NAV_CODE.replace(/^/gm, "    ")}
                 <SidebarContent>
                   <AppNav />
                 </SidebarContent>
+                <SidebarFooter>
+                  <SidebarTrigger />
+                </SidebarFooter>
               </Sidebar>
               <AppShellHeader>
                 <SidebarTrigger />
@@ -286,6 +298,9 @@ ${NAV_CODE}
                 <SidebarContent>
                   <AppNav />
                 </SidebarContent>
+                <SidebarFooter>
+                  <SidebarTrigger />
+                </SidebarFooter>
               </Sidebar>
               <AppShellHeader>
                 <SidebarTrigger />
@@ -384,6 +399,9 @@ ${NAV_CODE}
                 <SidebarContent>
                   <AppNav />
                 </SidebarContent>
+                <SidebarFooter>
+                  <SidebarTrigger />
+                </SidebarFooter>
               </Sidebar>
               <AppShellMain asChild>
                 <div className="p-4">Customer list</div>
@@ -424,6 +442,7 @@ function ChatShell() {
           </SidebarContent>
           <SidebarFooter>
             <NewChatButton />
+            <SidebarTrigger />
           </SidebarFooter>
         </Sidebar>
         <AppShellHeader>
@@ -454,6 +473,7 @@ function ChatShell() {
                 </SidebarContent>
                 <SidebarFooter>
                   <NewChatButton />
+                  <SidebarTrigger />
                 </SidebarFooter>
               </Sidebar>
               <AppShellHeader>

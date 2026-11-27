@@ -13,6 +13,7 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarTrigger,
 } from "yugen-ui";
 import { Logo } from "./Brand";
 import { groupConversations, type Conversation } from "./conversations";
@@ -125,6 +126,8 @@ export function ChatSidebar({ t, conversations, streaming, onRename, onDelete }:
             {t.nav.settings}
           </Link>
         </Button>
+        {/* Wide screens: hides the list and stays at this corner to bring it back (#482). */}
+        <SidebarTrigger />
       </SidebarFooter>
     </Sidebar>
   );

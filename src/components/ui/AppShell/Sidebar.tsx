@@ -14,6 +14,7 @@ import { useComposedRefs } from "../_internal/composeRefs";
 import { useIsomorphicLayoutEffect } from "../_internal/useIsomorphicLayoutEffect";
 import {
   HIDE_WIDE,
+  HIDE_WIDE_WITH_TOGGLE,
   isShown,
   SHOW_WIDE,
   SidebarContext,
@@ -253,16 +254,71 @@ function useModifierKey() {
   return mac ? "⌘" : "Ctrl";
 }
 
+type SidebarTriggerProps = ButtonProps & { ref?: React.Ref<HTMLButtonElement> };
+
 /**
- * Nút mở / thu gọn sidebar: màn hẹp mở Drawer, màn rộng thu về rail (hoặc ẩn khi `collapsible="offcanvas"`). Tooltip
- * mang nhãn và phím tắt.
+ * Nút mở / thu gọn sidebar. Đặt trong Sidebar (thường là mục cuối của SidebarFooter): nút thu gọn của màn rộng, nằm
+ * thẳng cột icon của rail nên mở rộng hay thu gọn vẫn ở đúng một chỗ, bấm lại không phải tìm nút (#482). Đặt ở thanh
+ * trên cùng: màn hẹp mở Drawer; màn rộng thu gọn khi sidebar không có nút riêng. Tooltip mang nhãn và phím tắt.
  */
-export function SidebarTrigger({
-  className,
-  onClick,
-  ref,
-  ...props
-}: ButtonProps & { ref?: React.Ref<HTMLButtonElement> }) {
+export function SidebarTrigger(props: SidebarTriggerProps) {
+  const sidebar = React.useContext(SidebarContext);
+  return sidebar ? <SidebarToggle sidebar={sidebar} {...props} /> : <HeaderTrigger {...props} />;
+}
+
+/** Nút trong sidebar: cách mép đầu 12px như icon của rail (56px), dưới cùng; offcanvas thu gọn thì nổi tại đúng chỗ đó. */
+function SidebarToggle({ sidebar, className, onClick, ref, ...props }: SidebarTriggerProps & { sidebar: SidebarContextValue }) {
+  const shell = useShell("SidebarTrigger");
+  const msg = useYugenMessages("appShell", appShellMessagesEn);
+  const modifier = useModifierKey();
+  const dir = useDirection();
+  // Drawer có nút đóng và Esc; collapsible="none" không có gì để thu gọn.
+  if (sidebar.drawer || sidebar.collapsible === "none") return null;
+  const collapsed = shell.collapsed;
+  // Cột offcanvas co về 0 và ẩn đi: nút ra khỏi luồng, giữ nguyên toạ độ (bottom-2 inset-s-3 = p-2 của footer + ms-1).
+  const floating = sidebar.collapsible === "offcanvas" && collapsed;
+  const Icon = collapsed ? PanelLeftExpand20Regular : PanelLeftContract20Regular;
+  const key = shell.shortcut ? shell.shortcut.toUpperCase() : undefined;
+  const label = collapsed ? msg.expandSidebar : msg.collapseSidebar;
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          ref={ref}
+          appearance="subtle"
+          data-sidebar-toggle=""
+          icon={<Icon className="rtl:-scale-x-100" />}
+          aria-label={label}
+          aria-expanded={!collapsed}
+          aria-controls={shell.sidebarId}
+          aria-keyshortcuts={key ? `Control+${key} Meta+${key}` : undefined}
+          className={cn(
+            "shrink-0 self-start",
+            floating ? "visible absolute inset-s-3 bottom-2 z-10 bg-background-1 shadow-4" : "ms-1",
+            className,
+          )}
+          onClick={(e) => {
+            onClick?.(e);
+            if (e.defaultPrevented) return;
+            shell.toggleSidebar();
+          }}
+          {...props}
+        />
+      </TooltipTrigger>
+      <TooltipContent side={dir === "rtl" ? "left" : "right"} className="flex items-center gap-2">
+        {label}
+        {key && (
+          <KbdGroup>
+            <Kbd size="small">{modifier}</Kbd>
+            <Kbd size="small">{key}</Kbd>
+          </KbdGroup>
+        )}
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
+function HeaderTrigger({ className, onClick, ref, ...props }: SidebarTriggerProps) {
   const shell = useShell("SidebarTrigger");
   const msg = useYugenMessages("appShell", appShellMessagesEn);
   const refs = useComposedRefs(ref, shell.triggerRef);
@@ -293,7 +349,10 @@ export function SidebarTrigger({
             aria-expanded={shell.narrow ? shell.drawerOpen : !shell.collapsed}
             aria-controls={shell.narrow ? undefined : shell.sidebarId}
             aria-keyshortcuts={key ? `Control+${key} Meta+${key}` : undefined}
-            className={cn(shell.collapsible === "none" && HIDE_WIDE[shell.breakpoint], className)}
+            className={cn(
+              shell.collapsible === "none" ? HIDE_WIDE[shell.breakpoint] : HIDE_WIDE_WITH_TOGGLE[shell.breakpoint],
+              className,
+            )}
             onClick={(e) => {
               onClick?.(e);
               if (e.defaultPrevented) return;

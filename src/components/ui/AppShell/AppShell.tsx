@@ -194,9 +194,12 @@ export function AppShell({
 
   const focusTriggerOrMain = React.useCallback(() => {
     const trigger = triggerRef.current;
+    // Màn rộng: nút ở thanh trên cùng ẩn đi khi sidebar có nút thu gọn riêng (#482), về nút đó.
+    const toggle = document.getElementById(`${id}-sidebar`)?.querySelector<HTMLElement>("[data-sidebar-toggle]");
     if (isShown(trigger)) trigger.focus();
+    else if (isShown(toggle)) toggle.focus();
     else mainRef.current?.focus();
-  }, []);
+  }, [id]);
 
   // Có gì để mở / đóng không: cần một Sidebar, và trên màn rộng nó phải thu gọn được.
   const canToggle = collapsible !== null && (narrow || collapsible !== "none");

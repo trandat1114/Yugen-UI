@@ -31,6 +31,7 @@ import {
   SearchBox,
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarHeader,
   SidebarTrigger,
   Skeleton,
@@ -125,6 +126,10 @@ function AppSidebar() {
           {item("settings")}
         </Nav>
       </SidebarContent>
+      {/* Wide screens: the collapse button stays in the same spot expanded and collapsed (#482). */}
+      <SidebarFooter>
+        <SidebarTrigger />
+      </SidebarFooter>
     </Sidebar>
   );
 }

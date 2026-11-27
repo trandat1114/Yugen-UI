@@ -10,7 +10,7 @@ import {
   readAppShellCookie,
   type AppShellProps,
 } from "./AppShell";
-import { Sidebar, SidebarContent, SidebarHeader, SidebarRail, SidebarTrigger, type SidebarProps } from "./Sidebar";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail, SidebarTrigger, type SidebarProps } from "./Sidebar";
 import { appShellMessagesEn } from "./messages";
 
 const KEY = "test-shell";
@@ -219,6 +219,97 @@ describe("AppShell on a wide frame", () => {
     act(() => screen.getByRole("button", { name: "Trang chủ" }).focus());
     resizeTo(600);
     expect(trigger()).toHaveFocus();
+  });
+});
+
+/** Như Layout, thêm nút thu gọn ở cuối sidebar (#482). */
+function FooterLayout({ collapsible }: Pick<SidebarProps, "collapsible">) {
+  return (
+    <AppShell>
+      <Sidebar collapsible={collapsible}>
+        <SidebarContent>
+          <Nav aria-label="Ứng dụng" defaultSelectedValue="home">
+            <NavItem value="home" icon={<Icon />}>
+              Trang chủ
+            </NavItem>
+          </Nav>
+        </SidebarContent>
+        <SidebarFooter>
+          <SidebarTrigger />
+        </SidebarFooter>
+      </Sidebar>
+      <AppShellHeader>
+        <SidebarTrigger />
+      </AppShellHeader>
+      <AppShellMain>Nội dung</AppShellMain>
+    </AppShell>
+  );
+}
+
+const sidebarToggle = () => document.querySelector<HTMLButtonElement>("[data-sidebar-toggle]");
+const headerTrigger = () => within(screen.getByRole("banner")).getByRole("button");
+
+describe("SidebarTrigger at the bottom of the sidebar (#482)", () => {
+  it("stays the same button in the same place when collapsing to the rail and back", () => {
+    render(<FooterLayout />);
+    resizeTo(1200);
+    const toggle = sidebarToggle()!;
+    expect(toggle).toHaveAccessibleName("Thu gọn thanh bên");
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+    expect(toggle).toHaveAttribute("aria-keyshortcuts", "Control+B Meta+B");
+    // Cách mép đầu 12px (p-2 của footer + ms-1) = tâm cột icon của rail 56px; không đổi theo trạng thái.
+    expect(toggle).toHaveClass("ms-1", "self-start");
+    fireEvent.click(toggle);
+    expect(document.querySelector("[data-rail]")).not.toBeNull();
+    expect(sidebarToggle()).toBe(toggle);
+    expect(toggle).toHaveAccessibleName("Mở rộng thanh bên");
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    expect(toggle).toHaveClass("ms-1", "self-start");
+    expect(toggle).not.toHaveClass("absolute");
+    fireEvent.click(toggle);
+    expect(document.querySelector("[data-rail]")).toBeNull();
+  });
+
+  it("leaves the header button to open the Drawer on narrow frames only", () => {
+    render(<FooterLayout />);
+    resizeTo(1200);
+    expect(headerTrigger().className).toContain("@4xl/app-shell:in-[[data-app-shell]:has([data-sidebar-toggle])]:hidden");
+    resizeTo(600);
+    fireEvent.click(headerTrigger());
+    const dialog = screen.getByRole("dialog");
+    expect(within(dialog).getByRole("button", { name: "Trang chủ" })).toBeInTheDocument();
+    expect(dialog.querySelector("[data-sidebar-toggle]")).toBeNull();
+  });
+
+  it("offcanvas: floats at the same corner while the sidebar is hidden, so it can bring it back", () => {
+    render(<FooterLayout collapsible="offcanvas" />);
+    resizeTo(1200);
+    const toggle = sidebarToggle()!;
+    fireEvent.click(toggle);
+    expect(document.querySelector('[data-state="collapsed"]')).not.toBeNull();
+    expect(toggle).toHaveClass("visible", "absolute", "inset-s-3", "bottom-2");
+    expect(toggle).not.toHaveClass("ms-1");
+    fireEvent.click(toggle);
+    expect(document.querySelector('[data-state="expanded"]')).not.toBeNull();
+    expect(toggle).toHaveClass("ms-1");
+    expect(toggle).not.toHaveClass("absolute");
+  });
+
+  it("is not rendered when the sidebar cannot collapse", () => {
+    render(<FooterLayout collapsible="none" />);
+    resizeTo(1200);
+    expect(sidebarToggle()).toBeNull();
+  });
+
+  it("takes focus when the frame widens with the Drawer open and the header button is hidden", async () => {
+    render(<FooterLayout />);
+    resizeTo(600);
+    const header = headerTrigger();
+    fireEvent.click(header);
+    header.checkVisibility = () => false;
+    resizeTo(1200);
+    expect(screen.queryByRole("dialog")).toBeNull();
+    await waitFor(() => expect(sidebarToggle()).toHaveFocus());
   });
 });
 

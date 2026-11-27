@@ -217,6 +217,14 @@ function CollapseToggle({ collapsed }: { collapsed: boolean }) {
   );
 }
 
+/**
+ * Hàng cuối của sidebar, giống nhau ở dạng mở rộng và rail: nút cách mép đầu 12px = tâm cột rail 56px, nên thu gọn hay
+ * mở rộng nút vẫn nằm đúng chỗ con trỏ (#482). Chỉ có từ lg (màn nhỏ sidebar là ngăn kéo có nút đóng riêng).
+ */
+function ToggleRow({ children }: { children: React.ReactNode }) {
+  return <div className="hidden shrink-0 border-t border-stroke-2 px-3 py-2 lg:flex">{children}</div>;
+}
+
 interface RailSection {
   title?: string;
   items: NavItem[];
@@ -424,9 +432,9 @@ export function Sidebar({
                 sections={groups.map((g) => ({ title: category(g.category), items: g.items }))}
               />
             </nav>
-            <div className="flex shrink-0 justify-center border-t border-stroke-2 py-2">
+            <ToggleRow>
               <CollapseToggle collapsed />
-            </div>
+            </ToggleRow>
           </>
         ) : (
           <>
@@ -462,7 +470,6 @@ export function Sidebar({
                 >
                   <Dismiss20Regular />
                 </button>
-                <CollapseToggle collapsed={false} />
               </div>
             </div>
 
@@ -530,6 +537,9 @@ export function Sidebar({
                 </div>
               </div>
             </nav>
+            <ToggleRow>
+              <CollapseToggle collapsed={false} />
+            </ToggleRow>
             <SidebarResizer width={layout.width} />
           </>
         )}
