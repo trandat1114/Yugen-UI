@@ -137,6 +137,10 @@ function AppSidebar({ t, page, onSelect, embedded }: { t: Content; page: PageId;
           {t.shell.upgrade}
         </Button>
       </SidebarFooter>
+      {/* Wide screens: the collapse button stays in the same spot expanded and collapsed (#482). */}
+      <SidebarFooter className="border-t-0 pt-0 in-data-rail:border-t in-data-rail:pt-2">
+        <SidebarTrigger />
+      </SidebarFooter>
     </Sidebar>
   );
 }

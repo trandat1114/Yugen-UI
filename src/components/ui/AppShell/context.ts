@@ -33,6 +33,18 @@ export const HIDE_WIDE: Record<AppShellBreakpoint, string> = {
   "4xl": "@4xl/app-shell:hidden",
   "5xl": "@5xl/app-shell:hidden",
 };
+/**
+ * Ẩn từ breakpoint khi khung có nút thu gọn trong sidebar (#482): SidebarTrigger ở thanh trên cùng chỉ còn mở Drawer.
+ * Chỉ CSS (`:has`), nên bản render ở server và lần vẽ đầu đã đúng, không có hai nút, không nhảy bố cục.
+ */
+export const HIDE_WIDE_WITH_TOGGLE: Record<AppShellBreakpoint, string> = {
+  lg: "@lg/app-shell:in-[[data-app-shell]:has([data-sidebar-toggle])]:hidden",
+  xl: "@xl/app-shell:in-[[data-app-shell]:has([data-sidebar-toggle])]:hidden",
+  "2xl": "@2xl/app-shell:in-[[data-app-shell]:has([data-sidebar-toggle])]:hidden",
+  "3xl": "@3xl/app-shell:in-[[data-app-shell]:has([data-sidebar-toggle])]:hidden",
+  "4xl": "@4xl/app-shell:in-[[data-app-shell]:has([data-sidebar-toggle])]:hidden",
+  "5xl": "@5xl/app-shell:in-[[data-app-shell]:has([data-sidebar-toggle])]:hidden",
+};
 
 /** Phần tử còn hiển thị (không nằm trong nhánh display: none / bị gỡ khỏi DOM). */
 export function isShown(el: HTMLElement | null | undefined): el is HTMLElement {

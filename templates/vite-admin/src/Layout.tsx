@@ -26,6 +26,7 @@ import {
   Persona,
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarTrigger,
   SkeletonText,
   SimpleTooltip,
@@ -113,6 +114,10 @@ function AppSidebar() {
           ))}
         </Nav>
       </SidebarContent>
+      {/* Wide screens: the collapse button stays in the same spot expanded and collapsed (#482). */}
+      <SidebarFooter>
+        <SidebarTrigger />
+      </SidebarFooter>
     </Sidebar>
   );
 }
