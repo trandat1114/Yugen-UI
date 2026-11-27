@@ -3,8 +3,10 @@ import { Heart24Filled, Open16Regular, QrCode24Regular } from "@fluentui/react-i
 import { Button, Checkbox, Field, Form, FormErrorSummary, Input, MessageBar, Select, Textarea } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { useLocale } from "../i18n";
+import { docsPath } from "../router";
 import { SakuraBlossom } from "../YugenMark";
 import { SUPPORT } from "../support";
+import { useTurnstile } from "../turnstile";
 
 const COPY = {
   en: {
@@ -41,6 +43,10 @@ const COPY = {
     submitted: "Thanks. Your acknowledgement is waiting for verification.",
     unavailable: "The acknowledgement form is not configured yet.",
     failed: "The form could not be sent. Please try again later.",
+    challengeFailed: "The security check did not pass. Please try again.",
+    tooMany: "Too many acknowledgements right now. Please try again later.",
+    challengeNote: "Sending runs a Cloudflare Turnstile check.",
+    privacyLink: "How this form handles data",
     requiredName: "Enter the name or handle to display.",
     requiredConsent: "Choose whether your acknowledgement can be published.",
   },
@@ -78,10 +84,17 @@ const COPY = {
     submitted: "Cảm ơn bạn. Thông tin đang chờ đối soát.",
     unavailable: "Form ghi nhận chưa được cấu hình.",
     failed: "Không gửi được form. Vui lòng thử lại sau.",
+    challengeFailed: "Bước kiểm tra bảo mật chưa đạt. Vui lòng thử lại.",
+    tooMany: "Hiện có quá nhiều lượt gửi. Vui lòng thử lại sau.",
+    challengeNote: "Khi gửi, form chạy bước kiểm tra Cloudflare Turnstile.",
+    privacyLink: "Cách form xử lý dữ liệu",
     requiredName: "Hãy nhập tên hoặc handle muốn hiển thị.",
     requiredConsent: "Hãy chọn cách bạn cho phép ghi nhận.",
   },
 } as const;
+
+/** Mã lỗi của API ghi nhận (yugen-analytics-api) nên chờ rồi thử lại. */
+const TRY_LATER = new Set(["rate_limited", "too_many_submissions", "queue_full"]);
 
 /** Cùng nền, viền, bo góc và padding cho mọi card của trang. */
 const CARD = "rounded-2xlarge border border-stroke-2 bg-background-2 p-4 sm:p-5";
@@ -151,10 +164,19 @@ function Section({ id, title, description, children }: { id: string; title: stri
 }
 
 /** /support (#183): payment links and VietQR configuration come from src/docs/support.ts. */
-export function SupportPage({ support = SUPPORT, supportApiUrl = import.meta.env.VITE_SUPPORT_API_URL as string | undefined }: { support?: typeof SUPPORT; supportApiUrl?: string }) {
+export function SupportPage({
+  support = SUPPORT,
+  supportApiUrl = import.meta.env.VITE_SUPPORT_API_URL as string | undefined,
+  turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined,
+}: {
+  support?: typeof SUPPORT;
+  supportApiUrl?: string;
+  turnstileSiteKey?: string;
+}) {
   const { locale } = useLocale();
   const lang = locale === "en" ? "en" : "vi";
   const c = COPY[lang];
+  const turnstile = useTurnstile(supportApiUrl ? turnstileSiteKey : undefined, lang);
   const [submitted, setSubmitted] = useState(false);
   const [remoteSupporters, setRemoteSupporters] = useState<typeof support.supporters>([]);
 
@@ -191,9 +213,18 @@ export function SupportPage({ support = SUPPORT, supportApiUrl = import.meta.env
       locale: lang,
       consent: formData.get("consent") === "yes",
       website: String(formData.get("website") ?? ""),
+      turnstileToken: await turnstile.token(),
     };
-    const response = await fetch(supportApiUrl, { method: "POST", headers: { Accept: "application/json", "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-    if (!response.ok) return { errors: { form: c.failed } };
+    let response: Response;
+    try {
+      response = await fetch(supportApiUrl, { method: "POST", headers: { Accept: "application/json", "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+    } catch {
+      return { errors: { form: c.failed } };
+    }
+    if (!response.ok) {
+      const code = await response.json().then((body: unknown) => (body as { error?: unknown } | null)?.error, () => undefined);
+      return { errors: { form: code === "challenge_failed" ? c.challengeFailed : typeof code === "string" && TRY_LATER.has(code) ? c.tooMany : c.failed } };
+    }
     setSubmitted(true);
     return null;
   };
@@ -209,6 +240,7 @@ export function SupportPage({ support = SUPPORT, supportApiUrl = import.meta.env
       onChange={() => {
         if (submitted) setSubmitted(false);
       }}
+      onFocus={turnstile.prepare}
       className="relative mt-4 grid items-start gap-4 @md/form:grid-cols-2"
     >
       <FormErrorSummary className="@md/form:col-span-2" />
@@ -251,9 +283,19 @@ export function SupportPage({ support = SUPPORT, supportApiUrl = import.meta.env
         )}
       </Field>
       <div className="@md/form:col-span-2">
+        {/* Turnstile chỉ hiện khung khi cần người dùng bấm; còn lại khung trống. */}
+        {supportApiUrl && turnstileSiteKey && <div ref={turnstile.ref} className={cn(turnstile.interactive && "mb-3")} />}
         <Button type="submit" appearance="primary">
           {c.submit}
         </Button>
+        {supportApiUrl && (
+          <p className="mt-2 text-caption1 text-foreground-3">
+            {turnstileSiteKey && `${c.challengeNote} `}
+            <a href={`${docsPath("/community")}#privacy`} className="text-brand-foreground-1 hover:underline">
+              {c.privacyLink}
+            </a>
+          </p>
+        )}
       </div>
     </Form>
   );

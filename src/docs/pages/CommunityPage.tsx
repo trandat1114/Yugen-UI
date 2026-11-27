@@ -197,6 +197,10 @@ npm run build:lib      # build gói npm vào dist/`,
     "react-day-picker, react-resizable-panels: thư viện nền.",
   ],
   privacyTitle: "Quyền riêng tư",
+  privacyForm:
+    "Form ghi nhận VietQR ở trang ủng hộ gửi những gì bạn nhập tới API riêng của maintainer. Để phát hiện spam lặp lại, mỗi lần gửi được lưu kèm nhà mạng, quốc gia và một giá trị băm có khóa của địa chỉ mạng, không lưu IP. Giá trị băm bị xóa sau 30 ngày.",
+  privacyChallenge:
+    "Khi bạn bắt đầu điền form, trang tải Cloudflare Turnstile để kiểm tra người gửi là người thật. Bước kiểm tra chạy trên Cloudflare; API chỉ xác minh token một lần và không lưu lại.",
   privacyOff: "Trang docs không thu thập số liệu truy cập: không cookie, không script theo dõi. Lựa chọn theme và ngôn ngữ chỉ lưu trong trình duyệt của bạn.",
   privacyOn:
     "Trang docs đếm lượt xem bằng một beacon nhỏ: đường dẫn trang, ngôn ngữ, phiên bản docs, tên miền trang dẫn tới và nhóm kích thước màn hình. Trình duyệt không lưu cookie hay mã định danh nào. Máy thu chỉ giữ giá trị băm của địa chỉ IP và user agent với muối đổi mỗi ngày, không giữ IP. Trình duyệt gửi Do Not Track hoặc Global Privacy Control không được đếm.",
@@ -344,6 +348,10 @@ npm run build:lib      # build the npm package into dist/`,
     "react-day-picker, react-resizable-panels: foundation libraries.",
   ],
   privacyTitle: "Privacy",
+  privacyForm:
+    "The VietQR acknowledgement form on the Support page sends what you enter to the maintainer's private API. To spot repeated spam, each submission is stored with the network operator, the country and a keyed hash of your network address, never the IP itself. The hash is deleted after 30 days.",
+  privacyChallenge:
+    "When you start filling in the form, the page loads Cloudflare Turnstile to check that a person is sending it. The check runs on Cloudflare, and the API verifies its token once without keeping it.",
   privacyOff: "These docs collect no analytics: no cookies, no tracking scripts. Theme and language choices are saved in your browser only.",
   privacyOn:
     "These docs count page views with a small beacon: page path, language, docs version, referrer host and a screen size class. Nothing is stored in your browser for it, no cookies and no identifiers. The collector keeps a hash of IP address and user agent with a salt that changes every day, never the IP itself. Browsers that send Do Not Track or Global Privacy Control are not counted.",
@@ -644,6 +652,12 @@ export function CommunityPage() {
 
       <DocSection id="privacy" title={c.privacyTitle}>
         <p className="max-w-3xl text-body1 text-foreground-2">{import.meta.env.VITE_ANALYTICS_URL ? c.privacyOn : c.privacyOff}</p>
+        {import.meta.env.VITE_SUPPORT_API_URL && supportEnabled() && (
+          <p className="mt-3 max-w-3xl text-body1 text-foreground-2">
+            {c.privacyForm}
+            {import.meta.env.VITE_TURNSTILE_SITE_KEY && ` ${c.privacyChallenge}`}
+          </p>
+        )}
       </DocSection>
     </div>
   );

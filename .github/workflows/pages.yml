@@ -87,6 +87,8 @@ jobs:
           VITE_ANALYTICS_URL: ${{ vars.ANALYTICS_URL }}
           # Support acknowledgement form (#183): repository variable SUPPORT_API_URL; unset keeps submissions disabled.
           VITE_SUPPORT_API_URL: ${{ vars.SUPPORT_API_URL }}
+          # Cloudflare Turnstile on that form: repository variable TURNSTILE_SITE_KEY (public site key); unset = no check.
+          VITE_TURNSTILE_SITE_KEY: ${{ vars.TURNSTILE_SITE_KEY }}
 
       # One Open Graph image per page (dist-docs/og/, read from routes.json), drawn with Playwright's Chromium.
       - name: Open Graph images
